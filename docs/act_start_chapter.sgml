@@ -24,7 +24,7 @@ The <COMMAND>blastall</COMMAND> command must be run with the <COMMAND>-m
           <TITLE>MEGABLAST output</TITLE>
           <PARA>
 ACT can also read the output of <ULINK
-URL="http://www.ncbi.nlm.nih.gov/BLAST/bl2seq/megablast.html">MEGABLAST</ULINK>,
+URL="http://www.ncbi.nlm.nih.gov/blast/megablast.shtml">MEGABLAST</ULINK>,
 which is part of the blast distribution.
           </PARA>
         </FORMALPARA>
