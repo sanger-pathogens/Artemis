@@ -31,8 +31,8 @@
 <!ENTITY lt CDATA "&#60;">
 <!ENTITY gt CDATA "&#62;">
 ]>
-<!-- $Header: //tmp/pathsoft/artemis/docs/act_manual.sgml,v 1.2 2004-08-06 12:45:20 tjc Exp $ -->
-<BOOK ID="act-manual">
+<!-- $Header: //tmp/pathsoft/artemis/docs/act_manual.sgml,v 1.3 2004-08-06 15:29:40 tjc Exp $ -->
+<BOOK ID="index">
   <TITLE> The &prog; Manual </TITLE>
   <BOOKINFO>
     <PRODUCTNAME>
@@ -67,7 +67,7 @@
     </LEGALNOTICE>
     <ABSTRACT>
       <PARA>
-This document describes release 2 of &prog; - a DNA sequence comparison
+This document describes release 3 of &prog; - a DNA sequence comparison
 viewer.
       </PARA>
     </ABSTRACT>
