@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.5 2004-11-24 15:59:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.6 2004-11-24 16:59:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.5 2004-11-24 15:59:36 tjc Exp $
+ *  @version $Id: Feature.java,v 1.6 2004-11-24 16:59:36 tjc Exp $
  **/
 
 public class Feature
@@ -1032,8 +1032,9 @@ public class Feature
       real_search_text = search_text;
 
     final QualifierVector qualifiers = getQualifiers();
+    int qual_size =  qualifiers.size();
 
-    for(int i = 0; i  < qualifiers.size(); ++i) 
+    for(int i = 0; i  < qual_size; ++i) 
     {
       final Qualifier this_qualifier = qualifiers.elementAt(i);
 
@@ -1045,7 +1046,8 @@ public class Feature
 
       if(values != null)
       {
-        for(int values_index = 0; values_index < values.size(); 
+        int val_size = values.size();
+        for(int values_index = 0; values_index < val_size; 
              ++values_index) 
         {
           String this_value_string = values.elementAt(values_index);
@@ -1165,7 +1167,8 @@ public class Feature
 
     try
     {
-      for(int i = 0; i < required_qualifiers.size(); ++i) 
+      int reqd_size = required_qualifiers.size();
+      for(int i = 0; i < reqd_size; ++i) 
       {
         if(getQualifierByName(required_qualifiers.elementAt(i)) == null) 
           return false;
@@ -1541,8 +1544,9 @@ public class Feature
     if(base_count == -1) 
     {
       int new_base_count = 0;
+      int seg_size = getSegments().size(); 
 
-      for(int i = 0; i < getSegments().size(); ++i) 
+      for(int i = 0; i < seg_size; ++i) 
         new_base_count += getSegments().elementAt(i).getBaseCount();
 
       base_count = new_base_count;
@@ -1559,8 +1563,9 @@ public class Feature
     if(bases == null) 
     {
       final StringBuffer buffer = new StringBuffer();
+      int seg_size = getSegments().size();
 
-      for(int i = 0; i < getSegments().size(); ++i) 
+      for(int i = 0; i < seg_size; ++i) 
         buffer.append(getSegments().elementAt(i).getBases());
 
       bases = buffer.toString();
