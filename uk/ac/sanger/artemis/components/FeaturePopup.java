@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.4 2004-12-21 13:46:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.5 2005-01-26 11:45:59 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -37,7 +37,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.4 2004-12-21 13:46:47 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.5 2005-01-26 11:45:59 tjc Exp $
  *
  **/
 
@@ -477,13 +477,13 @@ public class FeaturePopup extends JPopupMenu
       {
         feature_display_menus[14].setEnabled(true);
         feature_display_menus[15].setEnabled(true);
-        feature_display_menus[16].setEnabled(true);
+//      feature_display_menus[16].setEnabled(true);
       }
       else
       {
         feature_display_menus[14].setEnabled(false);
         feature_display_menus[15].setEnabled(false);
-        feature_display_menus[16].setEnabled(false);
+//      feature_display_menus[16].setEnabled(false);
       }
     }
 
