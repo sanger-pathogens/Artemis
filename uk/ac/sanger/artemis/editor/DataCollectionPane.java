@@ -855,7 +855,8 @@ public class DataCollectionPane extends JScrollPane
     {
       String geneName = hit.getGeneName();
 
-      if(hit.getGeneName() != null)
+      if(hit.getGeneName() != null &&
+         !hit.getGeneName().equals(""))
         orthoText.append("<br>\n/gene=\""+hit.getGeneName()+"\"");
 
       if(hit.getEC_number() != null)
