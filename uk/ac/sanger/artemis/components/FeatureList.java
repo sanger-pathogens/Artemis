@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.4 2004-10-01 15:49:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.5 2004-10-22 13:58:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import javax.swing.*;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.4 2004-10-01 15:49:09 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.5 2004-10-22 13:58:24 tjc Exp $
  *
  **/
 
@@ -116,10 +116,10 @@ public class FeatureList extends EntryGroupPanel
    *  @param goto_event_source The object to use when we need to call
    *    gotoBase ().
    **/
-  public FeatureList (final EntryGroup entry_group,
-                      final Selection selection,
-                      final GotoEventSource goto_event_source,
-                      final BasePlotGroup base_plot_group) 
+  public FeatureList(final EntryGroup entry_group,
+                     final Selection selection,
+                     final GotoEventSource goto_event_source,
+                     final BasePlotGroup base_plot_group) 
   {
     super(entry_group, selection, goto_event_source, base_plot_group);
 
@@ -583,10 +583,12 @@ public class FeatureList extends EntryGroupPanel
        **/
       int max_width = -1;
 
-      for(int i = 0; i <= last_index_in_view - first_index_in_view; ++i) 
+//    for(int i = 0; i <= last_index_in_view - first_index_in_view; ++i) 
+      for(int i = 0; i < features_in_view.size(); i++)
       {
         final Feature this_feature = features_in_view.elementAt(i);
         final String feature_string = makeFeatureString(this_feature, false);
+
         drawFeatureLine(g, this_feature, feature_string,i);
 
         if(feature_string.length() > max_width) 
@@ -603,7 +605,7 @@ public class FeatureList extends EntryGroupPanel
    **/
   private int linesInView() 
   {
-    return getSize().height / getLineHeight();
+    return (getSize().height - horiz_scrollbar.getHeight())/getLineHeight();
   }
 
   /**
