@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/BaseAlgorithm.java,v 1.3 2004-11-29 14:09:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/BaseAlgorithm.java,v 1.4 2004-11-29 17:28:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -38,7 +38,7 @@ import java.awt.BasicStroke;
  *  Strand of DNA, meaning the algorithm can't change strand part way along.
  *
  *  @author Kim Rutherford
- *  @version $Id: BaseAlgorithm.java,v 1.3 2004-11-29 14:09:54 tjc Exp $
+ *  @version $Id: BaseAlgorithm.java,v 1.4 2004-11-29 17:28:04 tjc Exp $
  **/
 
 public abstract class BaseAlgorithm extends Algorithm 
@@ -142,9 +142,9 @@ public abstract class BaseAlgorithm extends Algorithm
 
 //    System.out.println("MOD "+frame);
       g2d.setColor(Color.black);
-      g2d.drawString("5",0,font_height);
-      g2d.drawString("6",font_width*5,font_height);
-      g2d.drawString("7",font_width*10,font_height);
+      g2d.drawString("4",0,font_height);
+      g2d.drawString("5",font_width*5,font_height);
+      g2d.drawString("6",font_width*10,font_height);
 
       BasicStroke stroke = (BasicStroke)g2d.getStroke();
       g2d.setStroke(new BasicStroke(3.f));
