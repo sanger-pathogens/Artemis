@@ -36,14 +36,17 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Toolkit;
 
+import java.util.StringTokenizer;
 import java.util.Vector;
-
 import javax.swing.*;
+
+import uk.ac.sanger.artemis.*;
+import uk.ac.sanger.artemis.io.Location;
 
 public class BigPane extends JFrame
 {
 
-  protected static Font font = new Font("Monospaced",Font.PLAIN,11);
+  protected static Font font    = new Font("Monospaced",Font.PLAIN,11);
   protected static Font font_sm = new Font("Monospaced",Font.PLAIN,10);
   protected static JCheckBoxMenuItem srsBrowser;
   protected static JCheckBoxMenuItem srsTabPane;
@@ -51,11 +54,23 @@ public class BigPane extends JFrame
   protected static JInternalFrame srsFrame;
   private JTextArea qualifier;
   private DataViewInternalFrame dataView;
-  
-  public BigPane(Object dataFile[], JTextArea qualifier)
+  private FeatureVector overlapFeature;
+  private int featureStart;
+  private int featureEnd;
+  private Box evidenceBox;
+
+  public BigPane(Object dataFile[], JTextArea qualifier,
+                 FeatureVector overlapFeature, int featureStart,
+                 int featureEnd)
   {
     this(dataFile,qualifier.getText());
-    this.qualifier = qualifier;
+    this.qualifier      = qualifier;
+    this.overlapFeature = overlapFeature;
+    this.featureStart   = featureStart;
+    this.featureEnd     = featureEnd;
+
+    if(overlapFeature != null)
+      evidenceBox.add(getOverlapFeatures(overlapFeature));
   }
 
   public BigPane(Object dataFile[], String qualifier_txt)
@@ -78,26 +93,75 @@ public class BigPane extends JFrame
 
     addWindowListener(new winExit());
 
+    JScrollPane scrollEvidence = new JScrollPane();
     // data set
     int hgt = getHeight()-85;
-    int wid = getWidth()-100;
-    dataView = new DataViewInternalFrame(dataFile,desktop,
-                                       wid,qualifier_txt);
-    dataView.setLocation(50,0);
+    int wid = getWidth()/2-10;
+    
+    dataView = new DataViewInternalFrame(dataFile,desktop, scrollEvidence,
+                                   wid,hgt,qualifier_txt);
+    dataView.setLocation(5,0);
     dataView.setSize(wid,hgt);
     dataView.setVisible(true);
     desktop.add(dataView);
 
+    // evidence
+    JInternalFrame evidence = new JInternalFrame("Evidence", true,
+                                                 true, true, true);
+    evidenceBox = dataView.getEvidenceBox();
+
+    scrollEvidence.setViewportView(evidenceBox);
+    evidence.getContentPane().add(scrollEvidence);
+    evidence.setLocation(wid+10,0);
+    evidence.setSize(wid,hgt);
+    evidence.setVisible(true);
+    desktop.add(evidence);   
+
+
     JMenuBar menuBar = createMenuBar(desktop);
     setJMenuBar(menuBar);
 
-// toolbar
+    // toolbar
     JToolBar toolBar = createToolbar();
     getContentPane().add(toolBar,BorderLayout.NORTH);
 
     setVisible(true);
   }
 
+
+  /**
+  *
+  * Display for overlapping Pfam features.
+  *
+  */
+  private Box getOverlapFeatures(FeatureVector overlapFeature)
+  {
+    Box bdown = Box.createVerticalBox();
+    for(int i = 0; i<overlapFeature.size(); ++i)
+    {
+      Feature this_feature = overlapFeature.elementAt(i);
+      String note = this_feature.getNote();
+
+      int indPF   = note.indexOf("PF");  // Pfam ID
+      if(indPF == -1)
+        continue;
+
+      StringTokenizer tok = new StringTokenizer(note.substring(indPF)," ,;");
+      String pfamID = tok.nextToken();
+//    int intPFend = note.indexOf(" ",indPF);
+//    if(intPFend == -1)
+//      continue;
+//    String pfamID = note.substring(indPF,intPFend);
+      Location this_loc = this_feature.getLocation();
+
+      int start = this_loc.getFirstBase();
+      int end   = this_loc.getLastBase();     
+
+      bdown.add(new EvidenceViewer(pfamID,start,end,
+                                   featureStart,featureEnd));
+    }
+    return bdown;
+  }
 
   /**
   *

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.5 2004-08-27 15:46:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.6 2004-09-10 15:56:32 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.5 2004-08-27 15:46:21 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.6 2004-09-10 15:56:32 tjc Exp $
  **/
 
 public class FeatureEdit extends JFrame
@@ -652,8 +652,47 @@ public class FeatureEdit extends JFrame
           {
             public Object construct()
             {
+              // find overlaping features
+              Location this_loc = edit_feature.getLocation();
+              final int this_start = this_loc.getFirstBase();
+              final int this_end   = this_loc.getLastBase();
+
+              FeaturePredicate predicate = new FeaturePredicate()
+              {
+                public boolean testPredicate (final Feature feature) 
+                {
+                  Location loc = feature.getLocation();
+
+                  int start = loc.getFirstBase();
+                  int end   = loc.getLastBase();
+
+                  if((start > this_start &&
+                      start < this_end) ||
+                     (end > this_start &&
+                      end < this_end))
+                  {
+                    String note = feature.getNote();
+                    if(note.indexOf("Pfam")>-1)
+                      return true;
+                  }
+                  
+                  return false;
+                }
+              };
+
+              FeatureVector overlapFeatures = new FeatureVector();
+              FeatureEnumeration featureEnum = entry_group.features();
+              while(featureEnum.hasMoreFeatures()) 
+              {
+                Feature this_feature = featureEnum.nextFeature();
+                if(predicate.testPredicate(this_feature))
+                  overlapFeatures.add(this_feature);
+              }
+
+              // show object editor
               new uk.ac.sanger.artemis.editor.BigPane(dataFile.toArray(),
-                                                  qualifier_text_area);
+                                         qualifier_text_area,
+                                         overlapFeatures, this_start, this_end);
               progress.finished();
               FeatureEdit.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
               return null;
@@ -1129,6 +1168,11 @@ public class FeatureEdit extends JFrame
                          editor_extra_args.length);
         process_args[process_args.length - 1] = temp_file.getCanonicalPath();
       }
+
+
+      System.out.println(editor_path);
+      for(int i=0;i<process_args.length;i++)
+        System.out.println(process_args[i]);
 
       final Process process =
         ExternalProgram.startProgram(editor_path, process_args);

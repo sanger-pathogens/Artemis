@@ -25,19 +25,23 @@
 package uk.ac.sanger.artemis.editor;
 
 import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.util.Vector;
 import java.io.File;
-import java.awt.Component;
 
 public class DataViewInternalFrame extends JInternalFrame
 {
   private JTabbedPane tabPane = new JTabbedPane();
   private Annotation ann;
+  private Box evidenceBox;
 
   public DataViewInternalFrame(Object dataFile[], JDesktopPane desktop,
-                               int wid, String qualifier_txt)
+                               final JScrollPane scrollEvidence,
+                               int wid, int hgt, String qualifier_txt)
   {
     super("Document " + dataFile[0], 
               true, //resizable
@@ -45,6 +49,13 @@ public class DataViewInternalFrame extends JInternalFrame
               true, //maximizable
               true);//iconifiable
 
+// graphical evidence display
+    JInternalFrame evidence = new JInternalFrame("Evidence", true,
+                                                 true, true, true);
+    JPanel evidencePanel = (JPanel)evidence.getContentPane();
+    evidenceBox = Box.createVerticalBox();
+
+//
     ann = new Annotation(desktop);
 
     StringBuffer annFormat = new StringBuffer();
@@ -68,6 +79,17 @@ public class DataViewInternalFrame extends JInternalFrame
         }
       }
   
+      String tabName = (String)dataFile[i];
+      int ind = tabName.lastIndexOf("/");
+      if(ind > -1)
+      {
+        String go = "";
+
+        if(tabName.indexOf("blastp+go") > -1)
+          go = ":: GO :: ";
+        tabName = go + tabName.substring(ind+1);
+      }
+
       // add fasta results internal frame
       FastaTextPane fastaPane = new FastaTextPane((String)dataFile[i]);
 
@@ -80,42 +102,83 @@ public class DataViewInternalFrame extends JInternalFrame
       }
 
       // graphical view
-      JScrollPane dbviewScroll = new JScrollPane();
-      DBViewer dbview = new DBViewer(fastaPane,dbviewScroll);
+      final JScrollPane dbviewScroll = new JScrollPane();
+      final DBViewer dbview = new DBViewer(fastaPane,dbviewScroll);
       dbviewScroll.setViewportView(dbview);
+
+      final Dimension d = new Dimension((int)dbviewScroll.getPreferredSize().getWidth(), 
+                                       hgt/3);
+      final Box xBox = Box.createHorizontalBox();
+      final MouseOverButton hide = new MouseOverButton("X");
+      hide.setForeground(Color.blue);
+      hide.setBackground(Color.white);
+      hide.setFont(BigPane.font);
+      hide.setMargin(new Insets(0,0,0,0));
+      hide.setBorderPainted(false);
+      hide.setActionCommand("HIDE");
+
+      final Box bacross = Box.createHorizontalBox();
+      bacross.add(dbviewScroll);
+
+      hide.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent event)
+        {
+          if(hide.getActionCommand().equals("HIDE"))
+          {
+            bacross.remove(dbviewScroll);
+            bacross.add(xBox);
+            hide.setText("+");
+            scrollEvidence.setViewportView(evidenceBox);
+            hide.setActionCommand("SHOW");
+          }
+          else
+          {
+            bacross.remove(xBox);
+            dbviewScroll.setColumnHeaderView(xBox);
+            bacross.add(dbviewScroll);
+            hide.setText("X");
+            scrollEvidence.setViewportView(evidenceBox);
+            hide.setActionCommand("HIDE");
+          }
+        }
+      });
+
+      xBox.add(hide);
+      JLabel tabLabel = new JLabel(fastaPane.getFormat()+" "+tabName);
+      tabLabel.setFont(BigPane.font);
+
+      tabLabel.setOpaque(true);
+      xBox.add(tabLabel);
+      xBox.add(Box.createHorizontalGlue());
+
+      dbviewScroll.setPreferredSize(d);
+      dbviewScroll.setColumnHeaderView(xBox);
       fastaPane.addFastaListener(dbview);
-     
+      evidenceBox.add(bacross);
+    
       // add data pane
       DataCollectionPane dataPane =
          new DataCollectionPane(fastaPane,ann,desktop);
       fastaPane.addFastaListener(dataPane);
 
-      JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-                                        fastaPane,dataPane);
+      ActiveJSplitPane split = new ActiveJSplitPane(JSplitPane.VERTICAL_SPLIT,
+                                                    fastaPane,dataPane);
+      split.setLabel(tabLabel);
       split.setDividerLocation(150);
       split.setOneTouchExpandable(true);
+      if(i == 0)
+        split.setActive(true);
 
-      JSplitPane tabPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                                           split,dbviewScroll);
-      tabPanel.setDividerLocation(wid/2);
-      tabPanel.setOneTouchExpandable(true);
-
-      String tabName = (String)dataFile[i];
-      int ind = tabName.lastIndexOf("/");
-      if(ind > -1)
-      {
-        String go = "";
-
-        if(tabName.indexOf("blastp+go") > -1)
-          go = ":: GO :: ";         
-        tabName = go + tabName.substring(ind+1);
-      }
-
-      tabPane.add(fastaPane.getFormat()+" "+tabName,tabPanel);
-
+      tabPane.add(fastaPane.getFormat()+" "+tabName,split);
     }
+
+    evidenceBox.add(Box.createVerticalGlue());
   
-    // add annotator text pane
+    // add tab pane listener
+    tabPane.addChangeListener(new TabChangeListener());
+
+    // add setActivennotator text pane
     ann.setAnnotation(annFormat.toString().trim());
 
     JScrollPane annotationScroll = new JScrollPane(ann);   
@@ -123,10 +186,19 @@ public class DataViewInternalFrame extends JInternalFrame
 
     JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                       annotationScroll,tabPane);
+
     split.setDividerLocation(150);
     getContentPane().add(split);
      
     setVisible(true);
+    evidence.setVisible(true);
+    desktop.add(evidence);
+  }
+
+
+  protected Box getEvidenceBox()
+  {
+    return evidenceBox;
   }
 
   protected String getFeatureText()
@@ -165,5 +237,44 @@ public class DataViewInternalFrame extends JInternalFrame
     return t;
   }
 
+  public class TabChangeListener implements ChangeListener
+  {
+    ActiveJSplitPane lastSelected = (ActiveJSplitPane)tabPane.getSelectedComponent();
+    public void stateChanged(ChangeEvent e)
+    {
+      ActiveJSplitPane split = (ActiveJSplitPane)tabPane.getSelectedComponent();
+      lastSelected.setActive(false);
+      split.setActive(true);
+      lastSelected = split;
+    }
+  }
+
+
+  public class ActiveJSplitPane extends JSplitPane
+  {
+    private JLabel tabLabel;
+    private Color bg;
+
+    public ActiveJSplitPane(int newOrientation,
+                  Component newLeftComponent,
+                  Component newRightComponent)
+    {
+      super(newOrientation,newLeftComponent,newRightComponent);
+    }
+    
+    public void setLabel(JLabel tabLabel)
+    {
+      this.tabLabel = tabLabel;
+      this.bg = tabLabel.getBackground();
+    }
+
+    public void setActive(boolean active)
+    {
+      if(active)
+        tabLabel.setBackground(Color.yellow);
+      else
+        tabLabel.setBackground(bg);
+    }
+  }
 }
 

@@ -369,7 +369,7 @@ public class Annotation extends JEditorPane
 
   /**
   *
-  * Deletes the annotation line that contains an ID.
+  * Deletes the annotation similarity line that contains an ID.
   *
   */
   protected void delete(String id, boolean ortholog)
@@ -379,13 +379,16 @@ public class Annotation extends JEditorPane
     int ind1  = 0;
     int ind2  = 0;
     int indID = 0;
+    String line = null;
 
     while((ind2 = txt.indexOf("<br>",ind1)) > -1 ||
           (ind2 = txt.indexOf("</body>",ind1)) > -1)
     {
-      String line = txt.substring(ind1,ind2);
-      if( ((indID = line.indexOf(id)) > -1) &&
-          (line.indexOf("GO:") == -1) )
+      line = txt.substring(ind1,ind2);
+
+      if((line.indexOf("/similarity=") > -1) &&
+         ((indID = line.indexOf(id)) > -1) &&
+         (line.indexOf("GO:") == -1) )
         break;
       else
         ind1 = ind2+1;

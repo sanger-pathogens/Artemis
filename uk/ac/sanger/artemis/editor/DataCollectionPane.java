@@ -236,33 +236,33 @@ public class DataCollectionPane extends JScrollPane
       hiLabel.setForeground(Color.red);
 
 // align button
-      final JButton selectButt = new JButton("ALIGN");
-      selectButt.setMargin(new Insets(1,1,1,1));
-      selectButt.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          fastaTextPane.show(hit);
-        }
-      });
-      selectButt.setFont(BigPane.font);
+//    final JButton selectButt = new JButton("ALIGN");
+//    selectButt.setMargin(new Insets(1,1,1,1));
+//    selectButt.addActionListener(new ActionListener()
+//    {
+//      public void actionPerformed(ActionEvent e)
+//      {
+//        fastaTextPane.show(hit);
+//      }
+//    });
+//    selectButt.setFont(BigPane.font);
 
 // retrieve srs entry
-      JButton srsButt = new JButton("->SRS");
-      srsButt.setMargin(new Insets(1,1,1,1));
+//    JButton srsButt = new JButton("->SRS");
+//    srsButt.setMargin(new Insets(1,1,1,1));
 
-      srsButt.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          getSRSEntry(hit,desktop);
-        }
-      });
-      srsButt.setFont(BigPane.font);
+//    srsButt.addActionListener(new ActionListener()
+//    {
+//      public void actionPerformed(ActionEvent e)
+//      {
+//        getSRSEntry(hit,desktop);
+//      }
+//    });
+//    srsButt.setFont(BigPane.font);
 
       bacross.add(hiLabel);
-      bacross.add(selectButt);
-      bacross.add(srsButt);
+//    bacross.add(selectButt);
+//    bacross.add(srsButt);
      
       bacross.add(Box.createHorizontalGlue());
       bdown.add(bacross);
@@ -946,81 +946,6 @@ public class DataCollectionPane extends JScrollPane
     }
     catch(IOException ioe) { ioe.printStackTrace(); }
   }
-
-
-  /**
-  *
-  * Extend JButton to show mouse over colour change.
-  *
-  */
-  public class MouseOverButton extends JButton       
-  {
-    private boolean over = false;
-    private HitInfo hit;
-
-    public MouseOverButton()
-    {
-      super();
-    }
-
-    public MouseOverButton(String s)
-    {
-      super(s);
-    }
-
-    public MouseOverButton(HitInfo hit)
-    {
-      super(hit.getID());
-      this.hit = hit;
-    }
-
-    public void paintComponent(Graphics g)
-    {
-      super.paintComponent(g);
-
-      if(!getText().equals(""))
-        return;
-
-      Graphics2D g2 = (Graphics2D)g;
-
-      if(over)
-        g2.setColor(new Color(100,100,200));
-      else
-        g2.setColor(Color.blue);
-      g2.setStroke(new BasicStroke(1.5f));
-      g2.drawLine(1,3,11,3);
-      g2.drawLine(1,7,11,7);
-
-      setSize(12,12);
-    }
-
-    public String getToolTipText()
-    {
-      if(hit == null)
-        return null;
-
-      return hit.getOrganism();
-    }
-
-    protected void processMouseEvent(MouseEvent evt)
-    {
-      super.processMouseEvent(evt);
-      switch (evt.getID())
-      {
-	case MouseEvent.MOUSE_ENTERED:
-	  over = true; 
-          setForeground(new Color(100,100,200));
-	  repaint();
-	  break;
-	case MouseEvent.MOUSE_EXITED:
-	  over = false;
-          setForeground(Color.blue);
-	  repaint();
-	  break;
-      }
-//    super.processMouseEvent(evt);
-    }
-  }
-
+  
 }
 

@@ -246,6 +246,7 @@ public class DBViewer extends ScrollPanel
 
 // draw hits
     int ypos = bound+ydisp+hgtNumber;
+    float hit_unit = (float)resultwidth/(float)qlen;
     Enumeration enumHits = hitInfoCollection.elements();
     while(enumHits.hasMoreElements())
     {
@@ -276,7 +277,7 @@ public class DBViewer extends ScrollPanel
 
       g2.setStroke(new BasicStroke(1.f));
  
-      float hit_unit = (float)resultwidth/(float)qlen;     
+//    float hit_unit = (float)resultwidth/(float)qlen;     
       int start = (int)(bound+(hit_unit*hit.getQueryStart()));
       int end   = (int)(bound+(hit_unit*hit.getQueryEnd()));
       g2.drawLine(start,bound+ypos,end,bound+ypos);
