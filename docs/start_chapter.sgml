@@ -61,7 +61,7 @@ cd ~/artemis
 
     <PARA>
       <COMMAND>
-java -Dartemis.environment=UNIX Diana
+java -classpath .:./lib/biojava.jar:./lib/jakarta-regexp-1.2.jar:./lib/jemAlign.jar -Dartemis.environment=UNIX uk.ac.sanger.artemis.components.ArtemisMain
       </COMMAND>
     </PARA>
   </SECT1>
