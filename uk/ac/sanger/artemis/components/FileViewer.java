@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.1 2004-06-09 09:46:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.2 2004-11-29 15:25:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -40,7 +40,7 @@ import javax.swing.*;
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.1 2004-06-09 09:46:55 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.2 2004-11-29 15:25:24 tjc Exp $
  *
  **/
 
@@ -96,12 +96,18 @@ public class FileViewer
 
     setFont(font);
 
-    text_area = new JTextArea(18, 90);
+    text_area = new JTextArea();
+
+    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    
+    JScrollPane scroller = new JScrollPane(text_area);
+    scroller.setPreferredSize(new Dimension((int)screen.getWidth()/2,
+                                             (int)screen.getHeight()/2));
     text_area.setEditable(false);
     text_area.setFont(font);
     text_area.setBackground(Color.white);
 
-    getContentPane().add(new JScrollPane(text_area), "Center");
+    getContentPane().add(scroller, "Center");
 
     button_panel = new JPanel();
     getContentPane().add(button_panel, "South");
@@ -141,17 +147,17 @@ public class FileViewer
 
     pack();
 
-    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+//  final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
     if(saved_position == null) 
     {
       int screen_height = screen.height;
       int screen_width = screen.width;
 
-      if(screen_width <= 800 || screen_height <= 700) 
-        setSize(screen_width * 9 / 10, screen_height * 9 / 10);
-      else 
-        setSize(800, 700);
+//    if(screen_width <= 800 || screen_height <= 700) 
+//      setSize(screen_width * 9 / 10, screen_height * 9 / 10);
+//    else 
+//      setSize(800, 700);
 
       setLocation(new Point((screen.width - getSize().width) / 2,
                              (screen.height - getSize().height) / 2));
