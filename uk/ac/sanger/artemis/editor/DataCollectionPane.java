@@ -211,7 +211,7 @@ public class DataCollectionPane extends JScrollPane
 
             try
             {
-              setAnnotation(hit,ann,fastaTextPane.getFormat(),true);
+              setAnnotation(hit,ann,fastaTextPane.getFormat(),false);
             }
             catch(NullPointerException npe)
             {
