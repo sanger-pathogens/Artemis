@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.2 2004-06-09 14:22:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.3 2004-12-03 17:47:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -40,7 +40,7 @@ import javax.swing.*;
  *  This class is a JFileChooser that can read EMBL Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryFileDialog.java,v 1.2 2004-06-09 14:22:10 tjc Exp $
+ *  @version $Id: EntryFileDialog.java,v 1.3 2004-12-03 17:47:04 tjc Exp $
  **/
 
 public class EntryFileDialog extends StickyFileChooser 
@@ -185,7 +185,6 @@ public class EntryFileDialog extends StickyFileChooser
    **/
   public Entry getEntry(final EntryInformation entry_information,
                         final InputStreamProgressListener listener,
-                        final ProgressThread progress_thread,
                         final boolean show_progress) 
   {
     setDialogTitle("Select a file ...");
@@ -200,9 +199,6 @@ public class EntryFileDialog extends StickyFileChooser
     if(status != JFileChooser.APPROVE_OPTION ||
        getSelectedFile() == null) 
       return null;
-
-    if(progress_thread != null)
-      progress_thread.start();
 
     final File file = new File(getCurrentDirectory(),
                                getSelectedFile().getName());
@@ -276,20 +272,21 @@ public class EntryFileDialog extends StickyFileChooser
   {
     InputStreamProgressDialog progress_dialog = null;
 
-    if(show_progress) {
+    if(show_progress) 
+    {
 // XXX FIXME
 
 // This doesn't work because getEntryFromFile() is called from the Swing
 // thread so the Dialog never gets updated
 
-//     progress_dialog =
-//       new InputStreamProgressDialog(frame, "Reading ...",
-//                                      "Reading from " +
-//                                      entry_document.getName(), false);
-//     final InputStreamProgressListener listener =
-//       progress_dialog.getInputStreamProgressListener();
+       progress_dialog =
+         new InputStreamProgressDialog(frame, "Reading ...",
+                                        "Reading from " +
+                                        entry_document.getName(), false);
+       final InputStreamProgressListener listener =
+         progress_dialog.getInputStreamProgressListener();
 
-//     entry_document.addInputStreamProgressListener(listener);
+       entry_document.addInputStreamProgressListener(listener);
     }
 
     try 
@@ -321,8 +318,8 @@ public class EntryFileDialog extends StickyFileChooser
     }
     finally
     {
-//    if(progress_dialog != null) 
-//      progress_dialog.dispose();
+      if(progress_dialog != null) 
+        progress_dialog.dispose();
     }
     return null;
   }

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/LogReadListener.java,v 1.1 2004-06-09 09:47:02 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/LogReadListener.java,v 1.2 2004-12-03 17:47:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -34,7 +34,7 @@ import javax.swing.*;
  *  A class that implements ReadListener by logging all ReadEvents.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: LogReadListener.java,v 1.1 2004-06-09 09:47:02 tjc Exp $
+ *  @version $Id: LogReadListener.java,v 1.2 2004-12-03 17:47:04 tjc Exp $
  **/
 
 public class LogReadListener implements ReadListener {
@@ -51,6 +51,7 @@ public class LogReadListener implements ReadListener {
    *  Implementation of ReadListener.
    **/
   public void notify (final ReadEvent event) {
+
     if (source == null) {
       Splash.getLogger ().log (event.getMessage () + "\n");
     } else {

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.3 2004-10-05 09:24:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.4 2004-12-03 17:47:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import javax.swing.border.BevelBorder;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.3 2004-10-05 09:24:37 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.4 2004-12-03 17:47:04 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
@@ -906,9 +906,6 @@ public class MultiComparator extends JFrame
   private void readAnEntry(final EntrySource this_source,
                            final EntryGroup entry_group)
   {
-    final ProgressThread progress_thread = new ProgressThread(null,
-                                               "Loading Entry...");
-                                                                                
     SwingWorker entryWorker = new SwingWorker()
     {
       public Object construct()
@@ -916,7 +913,7 @@ public class MultiComparator extends JFrame
         try
         {
           final Entry new_entry = this_source.getEntry(entry_group.getBases(),
-                                                   progress_thread, true);
+                                                       true);
           if(new_entry != null)
             entry_group.add(new_entry);
         }
@@ -936,12 +933,6 @@ public class MultiComparator extends JFrame
         }
         return null;
       }
-                                                                                
-       public void finished()
-       {
-         if(progress_thread !=null)
-           progress_thread.finished();
-       }
     };
     entryWorker.start();
   }
@@ -952,10 +943,6 @@ public class MultiComparator extends JFrame
   private void readAnEntryFromFile(final File file,
                                    final EntryGroup entry_group)
   {
-    final ProgressThread progress_thread = new ProgressThread(null,
-                                               "Loading Entry...");
-    progress_thread.start();
-                                                                                                      
     SwingWorker entryWorker = new SwingWorker()
     {
       public Object construct()
@@ -983,12 +970,6 @@ public class MultiComparator extends JFrame
         }
         return null;
       }
-                                                                                                      
-       public void finished()
-       {
-         if(progress_thread !=null)
-           progress_thread.finished();
-       }
     };
     entryWorker.start();
   }

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileDialogEntrySource.java,v 1.1 2004-06-09 09:46:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileDialogEntrySource.java,v 1.2 2004-12-03 17:47:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -37,7 +37,7 @@ import javax.swing.JFrame;
  *  This is an EntrySource that reads Entry objects from the local filesystem.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: FileDialogEntrySource.java,v 1.1 2004-06-09 09:46:49 tjc Exp $
+ *  @version $Id: FileDialogEntrySource.java,v 1.2 2004-12-03 17:47:04 tjc Exp $
  **/
 
 public class FileDialogEntrySource
@@ -76,39 +76,14 @@ public class FileDialogEntrySource
    *  @return null if and only if the user cancels the read.
    **/
   public Entry getEntry(final Bases bases,
-                        final ProgressThread progress_thread,
                         final boolean show_progress)
       throws OutOfRangeException
   {
     try
     {
-      return getEntryInternal(bases, progress_thread, show_progress);
+      return getEntryInternal(bases, show_progress);
     }
     catch (NoSequenceException e)
-    {
-      throw new Error ("internal error - unexpected exception: " + e);
-    }
-  }
-
-
-  /**
-   *  Get an Entry object from this source (by reading from a file).
-   *  @param bases The Bases object to pass to the Entry constructor.
-   *  @exception OutOfRangeException Thrown if one of the features in
-   *    the Entry is out of range of the Bases object.
-   *  @param show_progress If true a InputStreamProgressDialog will be shown
-   *    while loading.
-   *  @return null if and only if the user cancels the read.
-   **/
-  public Entry getEntry (final Bases bases,
-                         final boolean show_progress)
-      throws OutOfRangeException
-  {
-    try 
-    {
-      return getEntryInternal (bases, null, show_progress);
-    }
-    catch (NoSequenceException e) 
     {
       throw new Error ("internal error - unexpected exception: " + e);
     }
@@ -127,26 +102,8 @@ public class FileDialogEntrySource
   public Entry getEntry (final boolean show_progress)
       throws OutOfRangeException, NoSequenceException 
   {
-    return getEntryInternal (null, null, show_progress);
+    return getEntryInternal (null, show_progress);
   }
-
-  /**
-   *  Get an Entry object from this source (by reading from a file).
-   *  @exception OutOfRangeException Thrown if one of the features in
-   *    the Entry is out of range of the Bases object.
-   *  @exception NoSequenceException Thrown if the entry that we read has no
-   *    sequence.
-   *  @param show_progress If true a InputStreamProgressDialog will be shown
-   *    while loading.
-   *  @return null if and only if the user cancels the read.
-   **/
-  public Entry getEntry (final boolean show_progress,
-                         final ProgressThread progress_thread)
-      throws OutOfRangeException, NoSequenceException
-  {
-    return getEntryInternal (null, progress_thread, show_progress);
-  }
-
 
   /**
    *  Returns true if and only if this EntrySource always returns "full"
@@ -257,7 +214,6 @@ public class FileDialogEntrySource
    *  @return null if and only if the user cancels the read.
    **/
   private Entry getEntryInternal(final Bases bases,
-                                 final ProgressThread progress_thread,
                                  final boolean show_progress)
       throws OutOfRangeException, NoSequenceException 
   {
@@ -274,7 +230,7 @@ public class FileDialogEntrySource
 
     uk.ac.sanger.artemis.io.Entry new_embl_entry =
       dialog.getEntry(new_entry_information, stream_progress_listener,
-                      progress_thread, show_progress);
+                      show_progress);
 
     if(new_embl_entry == null) 
       return null;

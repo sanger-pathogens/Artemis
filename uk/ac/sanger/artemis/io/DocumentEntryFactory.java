@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntryFactory.java,v 1.1 2004-06-09 09:49:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntryFactory.java,v 1.2 2004-12-03 17:47:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import org.biojava.bio.seq.io.GAMEFormat;
  *  DocumentEntry object of the appropriate class from a Document object.
  *
  *  @author Kim Rutherford
- *  @version $Id: DocumentEntryFactory.java,v 1.1 2004-06-09 09:49:06 tjc Exp $
+ *  @version $Id: DocumentEntryFactory.java,v 1.2 2004-12-03 17:47:04 tjc Exp $
  **/
 
 abstract public class DocumentEntryFactory 
@@ -114,7 +114,6 @@ abstract public class DocumentEntryFactory
       return new EmblDocumentEntry(entry_information, document, listener);
 
     final int first_line_type = LineGroup.getLineType(first_line);
-
     document_reader.pushBack(first_line);
 
     switch (first_line_type) {
@@ -237,5 +236,4 @@ abstract public class DocumentEntryFactory
       throw new Error ("internal error - unknown DocumentEntry type");
     }
   }
-
 }

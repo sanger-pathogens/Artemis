@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.7 2004-12-03 14:16:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.8 2004-12-03 17:47:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.7 2004-12-03 14:16:36 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.8 2004-12-03 17:47:04 tjc Exp $
  *
  */
 
@@ -95,7 +95,6 @@ public class EntryEdit extends JFrame
   private EntrySourceVector entry_sources;
 
   private SelectionInfoDisplay selection_info;
-
    
   /**
    *  Create a new EntryEdit object and JFrame.
@@ -130,13 +129,12 @@ public class EntryEdit extends JFrame
 
     final int font_height;
     final int font_base_line;
-
     final Font default_font = getDefaultFont();
 
     if(default_font != null) 
     {
       FontMetrics fm = getFontMetrics(default_font);
-      font_height = fm.getHeight();
+      font_height    = fm.getHeight();
       font_base_line = fm.getMaxAscent();
     }
     else 
@@ -1217,9 +1215,6 @@ public class EntryEdit extends JFrame
    **/
   private void readAnEntry(final EntrySource this_source)
   {
-    final ProgressThread progress_thread = new ProgressThread(null,
-                                               "Loading Entry...");
-
     SwingWorker entryWorker = new SwingWorker()
     {
       public Object construct()
@@ -1227,7 +1222,7 @@ public class EntryEdit extends JFrame
         try
         {
           final Entry new_entry = this_source.getEntry(entry_group.getBases(),
-                                                   progress_thread, true);
+                                                       true);
           if(new_entry != null)
             getEntryGroup().add(new_entry);
         }
@@ -1247,12 +1242,6 @@ public class EntryEdit extends JFrame
         }
         return null;
       }
-
-       public void finished()
-       {
-         if(progress_thread !=null)
-           progress_thread.finished();
-       }
     };
     entryWorker.start();
   }
@@ -1262,10 +1251,6 @@ public class EntryEdit extends JFrame
    **/
   private void readAnEntryFromFile(final File file)
   {
-    final ProgressThread progress_thread = new ProgressThread(null,
-                                               "Loading Entry...");
-    progress_thread.start();
-
     SwingWorker entryWorker = new SwingWorker()
     {
       public Object construct()
@@ -1278,7 +1263,7 @@ public class EntryEdit extends JFrame
           final Entry new_entry =  new Entry(entry_group.getBases(),
                          EntryFileDialog.getEntryFromFile(null,
                           new FileDocument(file),
-                          new_entry_information, false));
+                          new_entry_information, true));
 
           if(new_entry != null)
             getEntryGroup().add(new_entry);
@@ -1293,12 +1278,6 @@ public class EntryEdit extends JFrame
         }
         return null;
       }
-
-       public void finished()
-       {
-         if(progress_thread !=null)
-           progress_thread.finished();
-       }
     };
     entryWorker.start();
   }

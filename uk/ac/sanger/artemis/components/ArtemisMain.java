@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.2 2004-06-29 08:29:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.3 2004-12-03 17:47:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,7 +44,7 @@ import java.io.*;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.2 2004-06-29 08:29:15 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.3 2004-12-03 17:47:04 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -151,8 +151,7 @@ public class ArtemisMain extends Splash
   /**
    *  Read the entries named in args and in the diana.ini file.
    **/
-  public void readArgsAndOptions(final String [] args,
-                                 ProgressThread progress_thread) 
+  public void readArgsAndOptions(final String [] args)
   {
     if(args.length == 0) 
     {
@@ -172,9 +171,6 @@ public class ArtemisMain extends Splash
 
     EntryEdit last_entry_edit = null;
     boolean seen_plus = false;
-
-    if(progress_thread != null)
-      progress_thread.start();
 
     for(int i = 0 ; i<args.length ; ++i) 
     {
@@ -279,7 +275,7 @@ public class ArtemisMain extends Splash
 
     for(int entry_index=0; entry_index<entry_edit_objects.size();
         ++entry_index) 
-      entry_edit_objects.elementAt(entry_index).show();
+      entry_edit_objects.elementAt(entry_index).setVisible(true);
   }
 
   /**
@@ -527,9 +523,6 @@ public class ArtemisMain extends Splash
    **/
   private void getEntryEditFromEntrySource(final EntrySource entry_source) 
   {
-    final ProgressThread progress_thread = new ProgressThread(null,
-                                                "Loading Entry...");
-
     SwingWorker entryWorker = new SwingWorker()
     { 
       EntryEdit entry_edit;
@@ -537,7 +530,7 @@ public class ArtemisMain extends Splash
       {
         try
         {
-          final Entry entry = entry_source.getEntry(true,progress_thread);
+          final Entry entry = entry_source.getEntry(true);
           if(entry == null)
             return null;
 
@@ -568,8 +561,6 @@ public class ArtemisMain extends Splash
       {
         if(entry_edit != null)
           entry_edit.setVisible(true);
-        if(progress_thread !=null)
-          progress_thread.finished();
       }
     };
     entryWorker.start();
@@ -610,22 +601,13 @@ public class ArtemisMain extends Splash
     final ArtemisMain main_window = new ArtemisMain();
     main_window.setVisible(true);
 
-    final ProgressThread progress_thread = new ProgressThread(null,
-                                         "Loading Entry...");
-
     SwingWorker entryWorker = new SwingWorker()
     {
       public Object construct()
       {
         // read the entries given on the command line and in the diana.ini file
-        main_window.readArgsAndOptions(args,progress_thread);
+        main_window.readArgsAndOptions(args);
         return null;
-      }
-     
-      public void finished()
-      {
-        if(progress_thread !=null)
-          progress_thread.finished();
       }
     };
     entryWorker.start();

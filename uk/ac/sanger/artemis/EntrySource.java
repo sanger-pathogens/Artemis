@@ -20,13 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/EntrySource.java,v 1.1 2004-06-09 09:44:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/EntrySource.java,v 1.2 2004-12-03 17:47:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
 
 import uk.ac.sanger.artemis.sequence.*;
-import uk.ac.sanger.artemis.components.ProgressThread;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.*;
@@ -37,28 +36,11 @@ import java.io.*;
  *  from a CORBA server.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: EntrySource.java,v 1.1 2004-06-09 09:44:24 tjc Exp $
+ *  @version $Id: EntrySource.java,v 1.2 2004-12-03 17:47:04 tjc Exp $
  **/
 
 public interface EntrySource 
 {
-  /**
-   *  Get an Entry object from this source (by reading from a file, reading
-   *  from a CORBA server, or whatever).
-   *  @param bases The Bases object to pass to the Entry constructor.
-   *  @param progress_thread Thread to monitor progress of entry reading.
-   *  @exception OutOfRangeException Thrown if one of the features in
-   *    the Entry is out of range of the Bases object.
-   *  @param show_progress If true show a Dialog showing the progress while
-   *    loading (may be ignored).
-   *  @return null if and only if the read is cancelled by the user or if the
-   *    read fails.
-   **/
-  Entry getEntry(final Bases bases,
-                 final ProgressThread progress_thread,
-                 final boolean show_progress)
-      throws OutOfRangeException, IOException;
-
   /**
    *  Get an Entry object from this source (by reading from a file, reading
    *  from a CORBA server, or whatever).
@@ -88,24 +70,6 @@ public interface EntrySource
    *    fails.
    **/
   Entry getEntry(final boolean show_progress)
-      throws OutOfRangeException, NoSequenceException, IOException;
-
-  /**
-   *  Get an Entry object from this source (by reading from a file, reading
-   *  from a CORBA server, or whatever).  A Bases object will be created for
-   *  the sequence of the new Entry.
-   *  @exception OutOfRangeException Thrown if one of the features in
-   *    the Entry is out of range of the Bases object.
-   *  @exception NoSequenceException Thrown if the entry that we read has no
-   *    sequence.
-   *  @param show_progress If true show a Dialog showing the progress while
-   *    loading (may be ignored).
-   *  @param progress_thread Thread to monitor progress of entry reading.
-   *  @return null if and only if the user cancels the read or if the read
-   *    fails.
-   **/
-  Entry getEntry(final boolean show_progress,
-                 final ProgressThread progress_thread)
       throws OutOfRangeException, NoSequenceException, IOException;
 
   /**

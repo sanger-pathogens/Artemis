@@ -24,6 +24,8 @@ package uk.ac.sanger.artemis.components;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.SimpleEntryInformation;
 import uk.ac.sanger.artemis.*;
+import uk.ac.sanger.artemis.util.InputStreamProgressListener;
+import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
 import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
@@ -686,7 +688,6 @@ public class FileTree extends JTree implements DragGestureListener,
       System.out.println("Cannot read file: " + filename);
     }
     return b;
-
   }
 
   /**
@@ -695,12 +696,8 @@ public class FileTree extends JTree implements DragGestureListener,
   * @param filename     file name to display
   *
   */
-  public void showFilePane(final String filename)
+  private void showFilePane(final String filename)
   {
-    final ProgressThread progress_thread = new ProgressThread(null,
-                                                "Loading Entry...");
-
-    progress_thread.start();
     SwingWorker entryWorker = new SwingWorker()
     {
       EntryEdit entry_edit;
@@ -713,7 +710,7 @@ public class FileTree extends JTree implements DragGestureListener,
 
           final Entry entry =  new Entry(EntryFileDialog.getEntryFromFile(
                          null, new FileDocument(new File(filename)),
-                         new_entry_information, false));
+                         new_entry_information, true));
           if(entry == null)
             return null;
 
@@ -744,8 +741,6 @@ public class FileTree extends JTree implements DragGestureListener,
       {
         if(entry_edit != null)
           entry_edit.setVisible(true);
-        if(progress_thread !=null)
-          progress_thread.finished();
       }
     };
     entryWorker.start();

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DbfetchEntrySource.java,v 1.1 2004-06-09 09:46:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DbfetchEntrySource.java,v 1.2 2004-12-03 17:47:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,12 +44,13 @@ import javax.swing.*;
  *  server.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: DbfetchEntrySource.java,v 1.1 2004-06-09 09:46:12 tjc Exp $
+ *  @version $Id: DbfetchEntrySource.java,v 1.2 2004-12-03 17:47:04 tjc Exp $
  **/
 
 public class DbfetchEntrySource
     implements EntrySource 
 {
+
   /**
    *  Create a new DbfetchEntrySource.
    *  @param frame The component that created this EntrySource.  (Used for
@@ -57,24 +58,6 @@ public class DbfetchEntrySource
    **/
   public DbfetchEntrySource (final JFrame frame) 
   {
-
-  }
-
-  /**
-   *  Get an Entry object from the Ensembl Dbfetch server.
-   *  @param bases The Bases object to pass to the Entry constructor.
-   *  @param show_progress If true a InputStreamProgressDialog will be shown
-   *    while loading.  (Not implemented)
-   *  @exception OutOfRangeException Thrown if one of the features in
-   *    the Entry is out of range of the Bases object.
-   *  @return null if and only if the user cancels the read or if the read
-   *    fails.
-   **/
-  public Entry getEntry (final Bases bases, ProgressThread progress_thread,
-                         final boolean show_progress)
-      throws OutOfRangeException, IOException
-  {
-    return getEntry(bases,show_progress,progress_thread);
   }
 
   /**
@@ -88,23 +71,6 @@ public class DbfetchEntrySource
    *    fails.
    **/
   public Entry getEntry (final Bases bases, final boolean show_progress)
-      throws OutOfRangeException, IOException
-  {
-    return getEntry(bases,show_progress, null);
-  }
-
-  /**
-   *  Get an Entry object from the Ensembl Dbfetch server.
-   *  @param bases The Bases object to pass to the Entry constructor.
-   *  @param show_progress If true a InputStreamProgressDialog will be shown
-   *    while loading.  (Not implemented)
-   *  @exception OutOfRangeException Thrown if one of the features in
-   *    the Entry is out of range of the Bases object.
-   *  @return null if and only if the user cancels the read or if the read
-   *    fails.
-   **/
-  public Entry getEntry (final Bases bases, final boolean show_progress,
-                         ProgressThread progress_thread)
       throws OutOfRangeException, IOException 
   {
     final TextDialog text_dialog =
@@ -129,9 +95,6 @@ public class DbfetchEntrySource
 //    final MessageDialog message_frame =
 //      new MessageDialog (getFrame (),
 //                         "reading entry - please wait", false);
-
-      if(progress_thread != null)
-        progress_thread.start();
 
       final String url_string =
         "http://www.ebi.ac.uk/cgi-bin/dbfetch?db=EMBL&id=" + embl_id;
@@ -202,25 +165,6 @@ public class DbfetchEntrySource
   {
     return getEntry (null, show_progress);
   }
-
-  /**
-   *  Get an Entry object from the Ensembl Dbfetch server.
-   *  @param show_progress If true a InputStreamProgressDialog will be shown
-   *    while loading.  (Not implemented)
-   *  @param progress_thread Progress thread to monitor the entry reading.
-   *  @exception OutOfRangeException Thrown if one of the features in
-   *    the Entry is out of range of the Bases object.
-   *  @exception NoSequenceException Thrown if the entry that we read has no
-   *    sequence.
-   *  @return null if and only if the user cancels the read or if the read
-   *    fails.
-   **/
-  public Entry getEntry (final boolean show_progress, ProgressThread progress_thread)
-      throws OutOfRangeException, NoSequenceException, IOException 
-  {
-    return getEntry (null, show_progress, progress_thread);
-  }
-
 
   /**
    *  Return the name of this source (for display to the user in menus).
