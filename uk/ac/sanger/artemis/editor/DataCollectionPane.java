@@ -582,6 +582,9 @@ public class DataCollectionPane extends JScrollPane
             hit.setEMBL("");
 
           // EC_number
+          if(hit.getEC_number() != null)
+            continue;
+            
           String cmd3[] = { "getz", "-f", "id",
                  "[libs={uniprot}-id:"+hit.getID()+"]>enzyme" };
           app = new ExternalApplication(cmd3,env,null);
