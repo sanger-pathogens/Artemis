@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.5 2004-11-17 15:03:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.6 2004-12-02 13:47:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.5 2004-11-17 15:03:52 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.6 2004-12-02 13:47:56 tjc Exp $
  *
  */
 
@@ -234,11 +234,13 @@ public class EntryEdit extends JFrame
 
     base_display.setVisible(show_base_view);
 
+    final JScrollPane jsp_feature_list;
     feature_list =
       new FeatureList(getEntryGroup(), getSelection(),
                       getGotoEventSource(), base_plot_group);
+    jsp_feature_list = new JScrollPane(feature_list);
     feature_list.setFont(default_font);
-
+    
     final boolean list_option_value =
       Options.getOptions().getPropertyTruthValue("show_list");
 
@@ -247,7 +249,7 @@ public class EntryEdit extends JFrame
     else 
       feature_list.setVisible(false);
 
-    getContentPane().add(feature_list, "Center");
+    getContentPane().add(jsp_feature_list, "Center");
     makeMenus();
     pack();
 
@@ -276,10 +278,15 @@ public class EntryEdit extends JFrame
     int screen_height = screen.height;
     int screen_width  = screen.width;
 
-    if(screen_width <= 900 || screen_height <= 700) 
+    if(screen_width <= 900 || screen_height <= 700)
       setSize(screen_width * 9 / 10, screen_height * 9 / 10);
-    else 
+    else
       setSize(900, 700);
+
+    final int hgt = getEntryGroup().getAllFeaturesCount() * 
+                    feature_list.getLineHeight();
+    feature_list.setPreferredSize(new Dimension(getSize().width*4,hgt));
+    jsp_feature_list.getVerticalScrollBar().setUnitIncrement(feature_list.getLineHeight());
 
     Utilities.centreFrame(this);
   }

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.6 2004-11-05 14:22:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.7 2004-12-02 13:47:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import javax.swing.*;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.6 2004-11-05 14:22:41 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.7 2004-12-02 13:47:56 tjc Exp $
  *
  **/
 
@@ -63,17 +63,11 @@ public class FeatureList extends EntryGroupPanel
    **/
   private boolean show_correlation_scores = false;
 
-  /** JScrollBar for this FeatureList object. */
-  private JScrollBar scrollbar = null;
-
-  /** JScrollBar for horizontal scrolling in this FeatureList object. */
-  private JScrollBar horiz_scrollbar = null;
-
   /** Index of the first visible feature in the list. */
   private int first_index;
 
   /**
-   *  This is set to true by selectionChanged () and used by paintCanvas ().
+   *  This is set to true by selectionChanged() and used by paintComponent().
    **/
   private boolean selection_changed_flag = false;
 
@@ -81,7 +75,7 @@ public class FeatureList extends EntryGroupPanel
   private Color background_colour = Color.white;
 
   /**
-   *  If true this component will show Feature.getIDString () (ie /gene or
+   *  If true this component will show Feature.getIDString() (ie /gene or
    *  /label) instead of the key.
    **/
   private boolean show_gene_names = false;
@@ -90,15 +84,10 @@ public class FeatureList extends EntryGroupPanel
   /** show Feature.getSystematicName() */
   private boolean show_systematic_names = false;
    
-  /**
-   *  If true this component will show the /product qualifier instead of the
-   *  /note field.
-   **/
+  /** show the /product qualifier instead of /note field. */
   private boolean show_products = false;
 
-  /**
-   * If true this component will show all the qualifiers after the note.
-   **/
+  /** show all the qualifiers after the note. */
   private boolean show_qualifiers = false;
 
   /**
@@ -108,22 +97,17 @@ public class FeatureList extends EntryGroupPanel
   private int max_base_pos_width;
 
   /**
-   *  Set to true when paintCanvas() needs to call fixHorizScrollBar().
-   **/
-  private boolean need_to_fix_horiz_scrollbar = true;
-  
-  /**
    *  Create a new FeatureList with the default number of rows.
    *  @param entry_group The EntryGroup that this component will display.
    *  @param selection The Selection object for this component.  Selected
    *    objects will be highlighted.
    *  @param goto_event_source The object to use when we need to call
-   *    gotoBase ().
+   *    gotoBase().
    **/
   public FeatureList(final EntryGroup entry_group,
                      final Selection selection,
                      final GotoEventSource goto_event_source,
-                     final BasePlotGroup base_plot_group) 
+                     final BasePlotGroup base_plot_group)
   {
     super(entry_group, selection, goto_event_source, base_plot_group);
 
@@ -138,11 +122,11 @@ public class FeatureList extends EntryGroupPanel
         if(isMenuTrigger(event)) 
         {
           final FeaturePopup popup =
-            new FeaturePopup (FeatureList.this,
-                              getEntryGroup(),
-                              getSelection(),
-                              getGotoEventSource(),
-                              getBasePlotGroup());
+            new FeaturePopup(FeatureList.this,
+                             getEntryGroup(),
+                             getSelection(),
+                             getGotoEventSource(),
+                             getBasePlotGroup());
           final JComponent parent = (JComponent)event.getSource();
 
           popup.show(parent, event.getX(), event.getY());
@@ -151,8 +135,6 @@ public class FeatureList extends EntryGroupPanel
           handleCanvasMousePress(event);
       }
     });
-
-    createScrollbars();
 
     addComponentListener(new ComponentAdapter()
     {
@@ -175,7 +157,6 @@ public class FeatureList extends EntryGroupPanel
     getEntryGroup().addEntryChangeListener(this);
     getEntryGroup().addFeatureChangeListener(this);
 
-
     // find the maximum posible width for the high and low positions
     final int sequence_length = getEntryGroup().getSequenceLength();
     max_base_pos_width = (int)(Math.log(sequence_length)/Math.log(10)) + 1;
@@ -184,7 +165,6 @@ public class FeatureList extends EntryGroupPanel
       max_base_pos_width = 4;
 
     setBackground(background_colour);
-    repaint();
   }
 
   /**
@@ -192,10 +172,10 @@ public class FeatureList extends EntryGroupPanel
    **/
   void stopListening()
   {
-    getSelection().removeSelectionChangeListener (this);
-    getEntryGroup().removeEntryGroupChangeListener (this);
-    getEntryGroup().removeEntryChangeListener (this);
-    getEntryGroup().removeFeatureChangeListener (this);
+    getSelection().removeSelectionChangeListener(this);
+    getEntryGroup().removeEntryGroupChangeListener(this);
+    getEntryGroup().removeEntryChangeListener(this);
+    getEntryGroup().removeFeatureChangeListener(this);
   }
 
   /**
@@ -204,7 +184,7 @@ public class FeatureList extends EntryGroupPanel
    *  for FeatureDisplay components
    **/
 // tjc - deprecated replaced by isFocusable()
-//public boolean isFocusTraversable () 
+//public boolean isFocusTraversable() 
 //{
 //  return true;
 //}
@@ -234,7 +214,7 @@ public class FeatureList extends EntryGroupPanel
   /**
    *  Set value of the show /gene flag.
    *  @param show_gene_names If true this component will show the /gene (really
-   *    Feature.getIDString ()) instead of the key.
+   *    Feature.getIDString()) instead of the key.
    **/
   public void setShowGenes(final boolean show_gene_names) 
   {
@@ -297,7 +277,7 @@ public class FeatureList extends EntryGroupPanel
   /**
    *  Get the value of the "show qualifiers" flag.
    **/
-  public boolean getShowQualifiers () 
+  public boolean getShowQualifiers() 
   {
     return show_qualifiers;
   }
@@ -307,9 +287,9 @@ public class FeatureList extends EntryGroupPanel
    *  @param show_products If true this component will show the /product
    *    qualifier instead of the /note.
    **/
-  public void setShowProducts (final boolean show_products) 
+  public void setShowProducts(final boolean show_products) 
   {
-    if (this.show_products != show_products) 
+    if(this.show_products != show_products) 
     {
       this.show_products = show_products;
       repaint();
@@ -319,7 +299,7 @@ public class FeatureList extends EntryGroupPanel
   /**
    *  Get the value of the "show products" flag.
    **/
-  public boolean getShowProducts () 
+  public boolean getShowProducts() 
   {
     return show_products;
   }
@@ -329,23 +309,28 @@ public class FeatureList extends EntryGroupPanel
    *  EntryGroupChange events so that we can update the display if entries
    *  are added or deleted.
    **/
-  public void entryGroupChanged (EntryGroupChangeEvent event) 
+  public void entryGroupChanged(EntryGroupChangeEvent event) 
   {
-    switch (event.getType ()) 
-    {
-      case EntryGroupChangeEvent.ENTRY_ADDED:
-      case EntryGroupChangeEvent.ENTRY_ACTIVE:
-      case EntryGroupChangeEvent.ENTRY_DELETED:
-      case EntryGroupChangeEvent.ENTRY_INACTIVE:
-        repaint();
-        break;
-    }
+    final int hgt = getEntryGroup().getAllFeaturesCount() *
+                               getLineHeight();
+    setPreferredSize(new Dimension(getSize().width*4,hgt));
+    getViewport().setView(this);
+
+//  switch(event.getType()) 
+//  {
+//    case EntryGroupChangeEvent.ENTRY_ADDED:
+//    case EntryGroupChangeEvent.ENTRY_ACTIVE:
+//    case EntryGroupChangeEvent.ENTRY_DELETED:
+//    case EntryGroupChangeEvent.ENTRY_INACTIVE:
+//      repaint();
+//      break;
+//  }
   }
 
   /**
    *  Implementation of the FeatureChangeListener interface.
    **/
-  public void featureChanged (FeatureChangeEvent event) 
+  public void featureChanged(FeatureChangeEvent event) 
   {
     if(!isVisible()) 
       return;
@@ -358,7 +343,7 @@ public class FeatureList extends EntryGroupPanel
    *  EntryChange events so that we can update the list if features are added
    *  or deleted.
    **/
-  public void entryChanged (EntryChangeEvent event) 
+  public void entryChanged(EntryChangeEvent event) 
   {
     if(!isVisible()) 
       return;
@@ -371,21 +356,23 @@ public class FeatureList extends EntryGroupPanel
    *  SelectionChange events so that we can update the list to reflect the
    *  current selection.
    **/
-  public void selectionChanged (SelectionChangeEvent event) 
+  public void selectionChanged(SelectionChangeEvent event) 
   {
     if(!isVisible())
       return;
 
     // don't bother with events we sent ourself
-    if(event.getSource () == this) 
+    if(event.getSource() == this) 
       return;
 
     // if the selected range changes we don't care
-    if(getSelection ().getMarkerRange () != null &&
-       event.getType () == SelectionChangeEvent.OBJECT_CHANGED) 
+    if(getSelection().getMarkerRange() != null &&
+       event.getType() == SelectionChangeEvent.OBJECT_CHANGED) 
       return;
 
     selection_changed_flag = true;
+
+    onSelectionChange();
     repaint();
   }
 
@@ -407,54 +394,6 @@ public class FeatureList extends EntryGroupPanel
     return return_vector;
   }
 
-  /**
-   *  Create the scroll bar.
-   **/
-  private void createScrollbars()
-  {
-    scrollbar = new JScrollBar(Scrollbar.VERTICAL);
-    scrollbar.setValues(0, 1, 0,
-                        getEntryGroup().getAllFeaturesCount());
-    scrollbar.setUnitIncrement(1);
-    scrollbar.setBlockIncrement(1);
-    scrollbar.addAdjustmentListener(new AdjustmentListener() 
-    {
-      public void adjustmentValueChanged(AdjustmentEvent e) 
-      {
-        setFirstIndex(e.getValue());
-      }
-    });
-
-    horiz_scrollbar = new JScrollBar(Scrollbar.HORIZONTAL);
-    horiz_scrollbar.setValues(0, 1, 0,
-                              getEntryGroup().getAllFeaturesCount() - 1);
-    horiz_scrollbar.setUnitIncrement(getFontWidth());
-    horiz_scrollbar.setBlockIncrement(100);
-    horiz_scrollbar.addAdjustmentListener(new AdjustmentListener()
-    {
-      public void adjustmentValueChanged(AdjustmentEvent e)
-      {
-        repaint();
-      }
-    });
-
-    add(horiz_scrollbar, "South");
-
-    add(scrollbar, "East");
-  }
-
-  /**
-   *  Set the extent, max and value of the horizontal scrollbar 
-   **/
-  private void fixHorizScrollBar(final int max_width) 
-  {
-    int old_value = horiz_scrollbar.getValue();
-
-    horiz_scrollbar.setValues(horiz_scrollbar.getValue(),
-                              getSize().width,
-                               0, max_width * getFontWidth());
-    horiz_scrollbar.setBlockIncrement(getSize().width);
-  }
 
   /**
    *  Set the first visible index.
@@ -462,8 +401,33 @@ public class FeatureList extends EntryGroupPanel
   public void setFirstIndex(final int first_index) 
   {
     this.first_index = first_index;
-    need_to_fix_horiz_scrollbar = true;
     repaint();
+  }
+
+
+  /**
+  *
+  * Return the JViewport that this component is contained in.
+  *
+  */
+  private JViewport getViewport()
+  {
+    Container container = getParent();
+    while(!(container instanceof JScrollPane))
+      container = container.getParent();
+
+    return ((JScrollPane)container).getViewport();
+  }
+
+  /**
+  *
+  * Find the point at the top right hand corner of the
+  * scroll pane.
+  *
+  */
+  private Point getScrollPoint()
+  {
+    return getViewport().getViewPosition();
   }
 
   /**
@@ -477,11 +441,10 @@ public class FeatureList extends EntryGroupPanel
 
     requestFocus();
 
-    if(!event.isShiftDown ()) 
+    if(!event.isShiftDown()) 
       getSelection().clear();
 
-    final int clicked_feature_index =
-      scrollbar.getValue() + event.getY() / getLineHeight();
+    final int clicked_feature_index = event.getY()/getLineHeight();
 
     if(clicked_feature_index < getEntryGroup().getAllFeaturesCount())
     {
@@ -493,8 +456,8 @@ public class FeatureList extends EntryGroupPanel
 
       if(selected_features.contains(clicked_feature)) 
       {
-        getSelection().remove (clicked_feature);
-        getSelection().removeSegmentsOf (clicked_feature);
+        getSelection().remove(clicked_feature);
+        getSelection().removeSegmentsOf(clicked_feature);
       } 
       else 
         getSelection().add(clicked_feature);
@@ -512,6 +475,61 @@ public class FeatureList extends EntryGroupPanel
                             getGotoEventSource()).show();
         }
       }
+
+    }
+  }
+
+  private void onSelectionChange()
+  {
+    if(!selection_changed_flag)
+      return;
+
+    selection_changed_flag = false;
+    final FeatureVector selected_features =
+                         getSelection().getAllFeatures();
+
+    if(selected_features.size() > 0)
+    {
+      Point viewPoint = getScrollPoint();
+      final int feature_count = getEntryGroup().getAllFeaturesCount();
+
+      // set to true if any of the selected features is visible
+      boolean a_selected_feature_is_visible = false;
+
+      int first_line_in_view = viewPoint.y/getLineHeight();
+
+      if(first_line_in_view == -1)
+        first_line_in_view = 0;
+
+      int numberLines = linesInView();
+      for(int i = first_line_in_view;
+          i < feature_count && i < first_line_in_view + numberLines;
+          ++i)
+      {
+        final Feature this_feature = getEntryGroup().featureAt(i);
+        if(selected_features.contains(this_feature))
+        {
+          a_selected_feature_is_visible = true;
+          break;
+        }
+      }
+
+      if(!a_selected_feature_is_visible)
+      {
+        // make the first selected feature visible
+        final Feature first_selected_feature =
+          selected_features.elementAt(0);
+
+        final int index_of_first_selected_feature =
+          getEntryGroup().indexOf(first_selected_feature);
+
+        if(index_of_first_selected_feature < first_line_in_view ||
+           index_of_first_selected_feature >= first_line_in_view + numberLines)
+        {
+          getViewport().setViewPosition(new Point(0,
+                                index_of_first_selected_feature * getLineHeight()));
+        }
+      }
     }
   }
 
@@ -523,81 +541,21 @@ public class FeatureList extends EntryGroupPanel
   protected void paintComponent(Graphics g) 
   {
     super.paintComponent(g);
-    refresh();
-    
     if(!isVisible()) 
       return;
 
-    if(selection_changed_flag) 
+    Point viewPoint = getScrollPoint();
+    final int feature_count = getEntryGroup().getAllFeaturesCount();
+
+    if(feature_count != 0) 
     {
-      selection_changed_flag = false;
-
-      final FeatureVector selected_features =
-        getSelection().getAllFeatures();
-
-      if(selected_features.size () > 0) 
-      {
-        // set to true if any of the selected features is visible
-        boolean a_selected_feature_is_visible = false;
-
-        int first_line_in_view = scrollbar.getValue();
-
-        if(first_line_in_view == -1) 
-          first_line_in_view = 0;
-
-        final int feature_count = getEntryGroup().getAllFeaturesCount();
-
-        for(int i = first_line_in_view;
-            i < feature_count && i < first_line_in_view + linesInView();
-            ++i) 
-        {
-          final Feature this_feature = getEntryGroup().featureAt(i);
-          if(selected_features.contains(this_feature))
-          {
-            a_selected_feature_is_visible = true;
-            break;
-          }
-        }
-
-        if(!a_selected_feature_is_visible) 
-        {
-          // make the first selected feature visible
-          final Feature first_selected_feature =
-            selected_features.elementAt(0);
-
-          final int index_of_first_selected_feature =
-            getEntryGroup().indexOf(first_selected_feature);
-
-          if(index_of_first_selected_feature < scrollbar.getValue () ||
-             index_of_first_selected_feature >=
-             scrollbar.getValue() + linesInView()) 
-          {
-            scrollbar.setValue(index_of_first_selected_feature);
-          }
-        }
-      }
-    }
-
-//  g.setColor(background_colour);
-//  g.fillRect(0, 0, getCanvasWidth(), getCanvasHeight());
-
-    g.setColor(Color.black);
-
-    final int all_feature_count = getEntryGroup().getAllFeaturesCount();
-    
-    if(all_feature_count == 0) 
-      fixHorizScrollBar (0);
-    else
-    {
-      final int lines_in_view = linesInView();
-      int first_index_in_view = scrollbar.getValue();
+      final int lines_in_view = linesInView()+1;
+      int first_index_in_view = (viewPoint.y/getLineHeight());
 
       if(first_index_in_view == -1) 
         first_index_in_view = 0;
 
-      final int feature_count = getEntryGroup().getAllFeaturesCount();
-
-      /* jikes 1.15 bug  final */  int last_index_in_view;
+      int last_index_in_view;
 
       if(lines_in_view < feature_count - first_index_in_view) 
         last_index_in_view = first_index_in_view + lines_in_view;
@@ -608,47 +566,23 @@ public class FeatureList extends EntryGroupPanel
         getEntryGroup().getFeaturesInIndexRange(first_index_in_view,
                                                 last_index_in_view);
 
-      /**
-       *  The maximum width of the strings we have seen - used to set the
-       *  horiz_scrollbar maximum.
-       **/
-      int max_width = -1;
-
-//    for(int i = 0; i <= last_index_in_view - first_index_in_view; ++i) 
+      g.setFont(getFont());
       for(int i = 0; i < features_in_view.size(); i++)
       {
-        final Feature this_feature = features_in_view.elementAt(i);
+        final Feature this_feature  = features_in_view.elementAt(i);
         final String feature_string = makeFeatureString(this_feature, false);
-
-        drawFeatureLine(g, this_feature, feature_string,i);
-
-        if(feature_string.length() > max_width) 
-          max_width = feature_string.length();
+        drawFeatureLine(g, this_feature, feature_string);
       }
-
-      if(need_to_fix_horiz_scrollbar) 
-        fixHorizScrollBar (max_width);
     }
   }
+
 
   /**
    *  Return the number of visible text lines on canvas.
    **/
   private int linesInView() 
   {
-    return (getSize().height - horiz_scrollbar.getHeight())/getLineHeight();
-  }
-
-  /**
-   *  Update the scrollbar.
-   **/
-  private void refresh() 
-  {
-    scrollbar.setMaximum(getEntryGroup().getAllFeaturesCount());
-    final int lines_in_view = linesInView();
-    scrollbar.setBlockIncrement(lines_in_view > 0 ? lines_in_view : 1);
-    scrollbar.setUnitIncrement(1);
-    scrollbar.setVisibleAmount(linesInView ());
+    return getViewport().getExtentSize().height/getLineHeight();
   }
 
   /**
@@ -657,53 +591,36 @@ public class FeatureList extends EntryGroupPanel
    **/
   private void drawFeatureLine(final Graphics g,
                                final Feature feature,
-                               final String feature_string,
-                               final int line) 
+                               final String feature_string)
   {
-    final int y_pos = line * getLineHeight();
-
-    // the width of the coloured blob at the left of the text
+    // width of coloured blob at the left of the text
     final int BOX_WIDTH = getLineHeight();
+    final int y_pos = getEntryGroup().indexOf(feature)*BOX_WIDTH;
 
     final Color feature_colour = feature.getColour();
 
     // default colour is white
     if(feature_colour == null) 
-      g.setColor (Color.white);
+      g.setColor(Color.white);
     else 
-      g.setColor (feature_colour);
+      g.setColor(feature_colour);
     
-    g.fillRect(1 - horiz_scrollbar.getValue (), y_pos + 1,
-               BOX_WIDTH, getLineHeight () - 1);
+    g.fillRect(1, y_pos+1,
+               BOX_WIDTH, BOX_WIDTH - 1);
 
+    g.setColor(Color.black);
     if(getSelection().contains(feature)) 
     {
       // draw in reverse
-      g.setColor(Color.black);
-      g.fillRect(BOX_WIDTH + 4 - horiz_scrollbar.getValue(), y_pos,
-                 getSize().width + horiz_scrollbar.getValue(),
+      g.fillRect(BOX_WIDTH + 4, y_pos,
+                 getSize().width + getScrollPoint().x,
                  getLineHeight());
       g.setColor(background_colour);
     } 
-    else 
-      g.setColor (Color.black);
-
-    g.setFont(getFont());
 
     g.drawString(feature_string,
-                 BOX_WIDTH + 5 -
-                 horiz_scrollbar.getValue(),
+                 BOX_WIDTH + 5,
                  y_pos + getFontAscent());
-
-    g.setPaintMode();
-  }
-
-  /**
-   *  Return the list index of a feature.
-   **/
-  private int indexOf(Feature feature) 
-  {
-    return getEntryGroup().indexOf(feature);
   }
 
   /**
@@ -733,9 +650,9 @@ public class FeatureList extends EntryGroupPanel
         key_string = key_string.substring(0, KEY_FIELD_WIDTH);
     }
     else 
-      key_string = feature.getKey ().toString ();
+      key_string = feature.getKey().toString();
 
-    final Marker low_marker = feature.getFirstBaseMarker();
+    final Marker low_marker  = feature.getFirstBaseMarker();
     final Marker high_marker = feature.getLastBaseMarker();
 
     final StringBuffer description_string_buffer = new StringBuffer();
@@ -744,17 +661,14 @@ public class FeatureList extends EntryGroupPanel
     {
       final String product_string = feature.getProductString();
 
-      if (product_string == null) 
+      if(product_string == null) 
       {
-        if(feature.isCDS ())
-          description_string_buffer.append ("[no /product]");
-        else
-        {
-          // description is blank
-        }
+        // description is not blank
+        if(feature.isCDS())
+          description_string_buffer.append("[no /product]");
       } 
       else 
-        description_string_buffer.append (product_string);
+        description_string_buffer.append(product_string);
     }
     else 
     {
@@ -772,7 +686,7 @@ public class FeatureList extends EntryGroupPanel
       }
 
       if(show_qualifiers) 
-        description_string_buffer.append(getQualifierString (feature));
+        description_string_buffer.append(getQualifierString(feature));
     }
 
     final String low_pos;
@@ -780,7 +694,7 @@ public class FeatureList extends EntryGroupPanel
 
     if(low_marker == null || high_marker == null) 
     {
-      low_pos = "unknown";
+      low_pos  = "unknown";
       high_pos = "unknown";
     }
     else 
@@ -805,7 +719,7 @@ public class FeatureList extends EntryGroupPanel
     new_list_line.append(padLeftWithSpaces(low_pos, max_base_pos_width));
     new_list_line.append(" ");
     new_list_line.append(padLeftWithSpaces(high_pos, max_base_pos_width));
-    new_list_line.append (" ");
+    new_list_line.append(" ");
 
     if(feature.isForwardFeature()) 
       new_list_line.append("   ");
@@ -814,16 +728,16 @@ public class FeatureList extends EntryGroupPanel
 
     if(show_correlation_scores)
     {
-      if(feature.isCDS ()) 
+      if(feature.isCDS()) 
       {
-        new_list_line.append (getScoresString (feature));
-        new_list_line.append ("  ");
+        new_list_line.append(getScoresString(feature));
+        new_list_line.append("  ");
       } 
       else 
       {
         new_list_line.append("                         ");
-        if (getBasePlotGroup().getCodonUsageAlgorithm() != null) 
-          new_list_line.append ("      ");
+        if(getBasePlotGroup().getCodonUsageAlgorithm() != null) 
+          new_list_line.append("      ");
       }
     }
 
@@ -832,13 +746,6 @@ public class FeatureList extends EntryGroupPanel
     return new_list_line.toString();
   }
 
-  /**
-   *  Return the characters width of the Canvas.
-   **/
-  private int getWidthInChars() 
-  {
-    return getSize().width / getFontWidth();
-  }
 
   /**
    *  Return a String containing the given Qualifier and it's values (in EMBL
@@ -853,7 +760,7 @@ public class FeatureList extends EntryGroupPanel
 
     try 
     {
-      final Qualifier qualifier = feature.getQualifierByName (qualifier_name);
+      final Qualifier qualifier = feature.getQualifierByName(qualifier_name);
 
       if(qualifier != null) 
       {
@@ -874,7 +781,7 @@ public class FeatureList extends EntryGroupPanel
         }
       }
     } 
-    catch (InvalidRelationException e) {}
+    catch(InvalidRelationException e) {}
 
     return buffer.toString();
   }
@@ -907,20 +814,20 @@ public class FeatureList extends EntryGroupPanel
 
     if(similarity_qualifier != null) 
     {
-      buffer.append (formatQualifier ("similarity", feature, 0));
-      buffer.append (" ");
+      buffer.append(formatQualifier("similarity", feature, 0));
+      buffer.append(" ");
     }
 
-    for(int i = 0 ; i < qualifiers.size () ; ++i) 
+    for(int i = 0 ; i < qualifiers.size() ; ++i) 
     {
-      final Qualifier this_qualifier = qualifiers.elementAt (i);
-      final String this_qualifier_name = this_qualifier.getName ();
+      final Qualifier this_qualifier = qualifiers.elementAt(i);
+      final String this_qualifier_name = this_qualifier.getName();
 
-      if(!this_qualifier_name.equals ("note") &&
-         !this_qualifier_name.equals ("similarity")) 
+      if(!this_qualifier_name.equals("note") &&
+         !this_qualifier_name.equals("similarity")) 
       {
-        buffer.append (formatQualifier (this_qualifier_name, feature, 0));
-        buffer.append (" ");
+        buffer.append(formatQualifier(this_qualifier_name, feature, 0));
+        buffer.append(" ");
       }
     }
 
@@ -930,88 +837,88 @@ public class FeatureList extends EntryGroupPanel
   /**
    *  Return a String containing the correlation scores.
    **/
-  public String getScoresString (final Feature feature)
+  public String getScoresString(final Feature feature)
   {
-    final int base_total = feature.getTranslationBases ().length ();
+    final int base_total = feature.getTranslationBases().length();
 
-    final int c_total = feature.getBaseCount (Bases.getIndexOfBase ('c'));
-    final int g_total = feature.getBaseCount (Bases.getIndexOfBase ('g'));
+    final int c_total = feature.getBaseCount(Bases.getIndexOfBase('c'));
+    final int g_total = feature.getBaseCount(Bases.getIndexOfBase('g'));
 
     final int g1_count =
-      feature.getPositionalBaseCount (0, Bases.getIndexOfBase ('g'));
+      feature.getPositionalBaseCount(0, Bases.getIndexOfBase('g'));
 
     final int c3_count =
-      feature.getPositionalBaseCount (2, Bases.getIndexOfBase ('c'));
+      feature.getPositionalBaseCount(2, Bases.getIndexOfBase('c'));
     final int g3_count =
-      feature.getPositionalBaseCount (2, Bases.getIndexOfBase ('g'));
+      feature.getPositionalBaseCount(2, Bases.getIndexOfBase('g'));
 
     final double c3_score = 100.0 * (3 * c3_count - c_total) / c_total;
     final double g1_score = 100.0 * (3 * g1_count - g_total) / g_total;
     final double g3_score = 100.0 * (3 * g3_count - g_total) / g_total;
 
-    final double cor1_2_score = feature.get12CorrelationScore ();
+    final double cor1_2_score = feature.get12CorrelationScore();
 
-    final NumberFormat number_format = NumberFormat.getNumberInstance ();
+    final NumberFormat number_format = NumberFormat.getNumberInstance();
 
-    number_format.setMaximumFractionDigits (1);
-    number_format.setMinimumFractionDigits (1);
+    number_format.setMaximumFractionDigits(1);
+    number_format.setMinimumFractionDigits(1);
 
-    final String cor1_2_score_string = number_format.format (cor1_2_score);
+    final String cor1_2_score_string = number_format.format(cor1_2_score);
     final String c3_score_string;
     final String g1_score_string;
     final String g3_score_string;
 
 
-    if (c_total == 0) 
+    if(c_total == 0) 
       c3_score_string = "ALL";
     else 
-      c3_score_string = number_format.format (c3_score);
+      c3_score_string = number_format.format(c3_score);
 
-    if (g_total == 0) 
+    if(g_total == 0) 
       g1_score_string = "ALL";
     else 
-      g1_score_string = number_format.format (g1_score);
+      g1_score_string = number_format.format(g1_score);
 
-    if (g_total == 0)
+    if(g_total == 0)
       g3_score_string = "ALL";
     else
-      g3_score_string = number_format.format (g3_score);
+      g3_score_string = number_format.format(g3_score);
 
     String codon_usage_score_string = "";
 
     final CodonUsageAlgorithm codon_usage_alg =
-      getBasePlotGroup ().getCodonUsageAlgorithm ();
+      getBasePlotGroup().getCodonUsageAlgorithm();
 
     if(codon_usage_alg != null) 
     {
-      number_format.setMaximumFractionDigits (3);
-      number_format.setMinimumFractionDigits (3);
+      number_format.setMaximumFractionDigits(3);
+      number_format.setMinimumFractionDigits(3);
 
       codon_usage_score_string =
-        number_format.format (codon_usage_alg.getFeatureScore (feature)) + " ";
+        number_format.format(codon_usage_alg.getFeatureScore(feature)) + " ";
     }
 
     return
       codon_usage_score_string +
-      padRightWithSpaces (cor1_2_score_string, 5) + " " +
-      padRightWithSpaces (c3_score_string, 5) + " " +
-      padRightWithSpaces (g1_score_string, 5) + " " +
-      padRightWithSpaces (g3_score_string, 5);
+      padRightWithSpaces(cor1_2_score_string, 5) + " " +
+      padRightWithSpaces(c3_score_string, 5) + " " +
+      padRightWithSpaces(g1_score_string, 5) + " " +
+      padRightWithSpaces(g3_score_string, 5);
   }
 
   /**
    *  Return the given string padded with spaces to the given width.  The
    *  spaces are added on the right of the string.
    **/
-  private String padRightWithSpaces (final String string, final int width) 
+  private String padRightWithSpaces(final String string, final int width) 
   {
-    if (string.length () == width)
+    if(string.length() == width)
       return string;
 
-    final StringBuffer buffer = new StringBuffer (string);
+    final StringBuffer buffer = new StringBuffer(string);
 
-    for (int i = 0 ; i < width - string.length () ; ++i) 
-      buffer.append (' ');
+    for(int i = 0 ; i < width - string.length() ; ++i) 
+      buffer.append(' ');
 
     return buffer.toString();
   }
@@ -1020,28 +927,28 @@ public class FeatureList extends EntryGroupPanel
    *  Return the given string padded with spaces to the given width.  The
    *  spaces are added on the left of the string.
    **/
-  private String padLeftWithSpaces (final String string, final int width) 
+  private String padLeftWithSpaces(final String string, final int width) 
   {
-    if (string.length () == width) 
+    if(string.length() == width) 
       return string;
 
-    final StringBuffer buffer = new StringBuffer ();
+    final StringBuffer buffer = new StringBuffer();
 
-    for (int i = 0 ; i < width - string.length () ; ++i) 
-      buffer.append (' ');
+    for(int i = 0 ; i < width - string.length() ; ++i) 
+      buffer.append(' ');
 
-    buffer.append (string);
+    buffer.append(string);
 
-    return buffer.toString ();
+    return buffer.toString();
   }
 
   /**
    *  Return the height each line of the display should be.  Each feature will
    *  be drawn into one line.
    **/
-  private int getLineHeight () 
+  protected int getLineHeight() 
   {
-    return getFontAscent () + 2;
+    return getFontAscent() + 2;
   }
 
 }
