@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GotoMenu.java,v 1.1 2004-06-09 09:46:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GotoMenu.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -39,7 +39,7 @@ import javax.swing.*;
  *  A JMenu with commands for moving around the entries.
  *
  *  @author Kim Rutherford
- *  @version $Id: GotoMenu.java,v 1.1 2004-06-09 09:46:56 tjc Exp $
+ *  @version $Id: GotoMenu.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
  **/
 
 public class GotoMenu extends SelectionMenu {
@@ -372,7 +372,7 @@ public class GotoMenu extends SelectionMenu {
       }
     });
 
-    text_requester.show ();
+    text_requester.setVisible(true);
   }
 
   /**

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ExternalProgramOptions.java,v 1.1 2004-06-09 09:46:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ExternalProgramOptions.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -33,7 +33,7 @@ import java.awt.*;
  *  This component allows the user to set the options of an ExternalProgram.
  *
  *  @author Kim Rutherford
- *  @version $Id: ExternalProgramOptions.java,v 1.1 2004-06-09 09:46:34 tjc Exp $
+ *  @version $Id: ExternalProgramOptions.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
  **/
 
 public class ExternalProgramOptions {
@@ -58,7 +58,7 @@ public class ExternalProgramOptions {
         }
       });
 
-      requester.show ();
+      requester.setVisible(true);
     } else {
       throw new Error ("internal error - please hit the programmer");
     }

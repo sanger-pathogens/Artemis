@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.1 2004-06-09 09:45:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -53,7 +53,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.1 2004-06-09 09:45:57 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
  **/
 
 public class AddMenu extends SelectionMenu {
@@ -269,7 +269,7 @@ public class AddMenu extends SelectionMenu {
             }
           });
 
-          feature_edit.show ();
+          feature_edit.setVisible(true);
         } catch (ReadOnlyException e) {
           new MessageDialog (getParentFrame (), "feature not created: " +
                              "the default entry is read only");
@@ -372,7 +372,7 @@ public class AddMenu extends SelectionMenu {
           }
         });
 
-        feature_edit.show ();
+        feature_edit.setVisible(true);
       } catch (ReadOnlyException e) {
         new MessageDialog (frame, "feature not created: " +
                            "the default entry is read only");
@@ -919,7 +919,7 @@ public class AddMenu extends SelectionMenu {
       }
     });
 
-    text_requester.show ();
+    text_requester.setVisible(true);
   }
 
   /**

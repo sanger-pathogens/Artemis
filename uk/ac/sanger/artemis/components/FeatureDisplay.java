@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.12 2004-11-22 16:28:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.13 2004-12-03 18:11:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.12 2004-11-22 16:28:38 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.13 2004-12-03 18:11:28 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -3836,7 +3836,7 @@ public class FeatureDisplay extends EntryGroupPanel
         if(Options.readWritePossible()) 
           new FeatureEdit(clicked_feature, getEntryGroup(),
                            getSelection(),
-                           getGotoEventSource()).show();
+                           getGotoEventSource()).setVisible(true);
       }
     }
 

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePlotGroup.java,v 1.1 2004-06-09 09:46:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePlotGroup.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -41,7 +41,7 @@ import javax.swing.*;
  *  buttons and then the FeaturePlot components below.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePlotGroup.java,v 1.1 2004-06-09 09:46:43 tjc Exp $
+ *  @version $Id: FeaturePlotGroup.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
  **/
 
 public class FeaturePlotGroup extends JFrame
@@ -160,7 +160,7 @@ public class FeaturePlotGroup extends JFrame
     setLocation (new Point ((screen.width - getSize ().width) / 2,
                             (screen.height - getSize ().height) / 2));
 
-    show ();
+    setVisible(true);
 
     fixScrollbar ();
 

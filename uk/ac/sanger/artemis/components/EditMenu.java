@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.1 2004-06-09 09:46:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -53,7 +53,7 @@ import javax.swing.*;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.1 2004-06-09 09:46:18 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -550,7 +550,7 @@ public class EditMenu extends SelectionMenu
       final Feature selection_feature = features_to_edit.elementAt (i);
 
       new FeatureEdit (selection_feature, entry_group, selection,
-                       goto_event_source).show ();
+                       goto_event_source).setVisible(true);
     }
 
     selection.set (features_to_edit);
@@ -569,7 +569,7 @@ public class EditMenu extends SelectionMenu
 
     final EntryGroup new_entry_group = getEntryGroup ().truncate (range);
 
-    new EntryEdit (new_entry_group).show ();
+    new EntryEdit (new_entry_group).setVisible(true);
   }
 
   /**
@@ -1874,7 +1874,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    text_requester.show ();
+    text_requester.setVisible(true);
   }
 
 

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupMenu.java,v 1.1 2004-06-09 09:46:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupMenu.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -37,7 +37,7 @@ import javax.swing.*;
  *  A menu containing the current entries in an EntryGroup.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryGroupMenu.java,v 1.1 2004-06-09 09:46:31 tjc Exp $
+ *  @version $Id: EntryGroupMenu.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
  **/
 
 public class EntryGroupMenu extends JMenu
@@ -270,7 +270,7 @@ public class EntryGroupMenu extends JMenu
       }
     });
 
-    text_requester.show ();
+    text_requester.setVisible(true);
   }
 
   /**
