@@ -246,30 +246,74 @@ public class Annotation extends JEditorPane
 
   private String getDatabaseHTML(String s, String db)
   {
-    int ind = s.indexOf(db);
-    if(ind>-1)
+//  int ind = s.indexOf(db);
+
+//  if(ind == -1)
+//    ind = s.indexOf(db.toLowerCase());
+
+//  if(ind>-1)
+//  {
+//    s = setHyperLinks(s,ind);
+//    String startStr = s.substring(0,ind);
+//    int ind2 = s.indexOf(" ",ind);
+//    int ind3 = s.indexOf(")",ind);     
+//    if(ind3>-1 && ind3<ind2)
+//      ind2 = ind3;
+//    ind3 = s.indexOf(";",ind);
+//    if(ind3>-1 && ind3<ind2)
+//      ind2 = ind3;
+
+//    String midStr = s.substring(ind,ind2);
+//    String endStr = s.substring(ind2);
+
+//    String srscmd = "http://srs.sanger.ac.uk/srsbin/cgi-bin/wgetz?-e+" +
+//                    "["+midStr+"]";
+
+//    s = startStr + "<a href=\""+srscmd+"\">" +
+//        midStr   + "</a>" + endStr;
+//  }
+
+    int ind = 0;
+    while((ind = s.indexOf(db, ind)) > -1)
     {
-      String startStr = s.substring(0,ind);
-      int ind2 = s.indexOf(" ",ind);
-      int ind3 = s.indexOf(")",ind);     
-      if(ind3>-1 && ind3<ind2)
-        ind2 = ind3;
-      ind3 = s.indexOf(";",ind);
-      if(ind3>-1 && ind3<ind2)
-        ind2 = ind3;
-
-      String midStr = s.substring(ind,ind2);
-      String endStr = s.substring(ind2);
-
-      String srscmd = "http://srs.sanger.ac.uk/srsbin/cgi-bin/wgetz?-e+" +
-                      "["+midStr+"]";
-
-      s = startStr + "<a href=\""+srscmd+"\">" +
-          midStr   + "</a>" + endStr;
+      s = setHyperLinks(s,ind);
+      ind = s.lastIndexOf("</a>");
     }
+
+    db = db.toLowerCase();
+    ind = 0;
+    while((ind = s.indexOf(db, ind)) > -1)
+    {
+      s = setHyperLinks(s,ind);
+      ind = s.lastIndexOf("</a>");
+    }
+
     return s;
   }
 
+  private String setHyperLinks(String s, int ind)
+  {
+    String startStr = s.substring(0,ind);
+    int ind2 = s.indexOf(" ",ind);
+    if(ind2 == -1)
+      ind2 = s.indexOf(";",ind);
+
+    int ind3 = s.indexOf(")",ind);
+    if(ind3>-1 && ind3<ind2)
+      ind2 = ind3;
+    ind3 = s.indexOf(";",ind);
+    if(ind3>-1 && ind3<ind2)
+      ind2 = ind3;
+
+    String midStr = s.substring(ind,ind2);
+    String endStr = s.substring(ind2);
+
+    String srscmd = "http://srs.sanger.ac.uk/srsbin/cgi-bin/wgetz?-e+" +
+                    "["+midStr+"]";
+
+    return  startStr + "<a href=\""+srscmd+"\">" +
+            midStr   + "</a>" + endStr;
+  }
 
   private void replaceRange(String newStr,int start,int end)
   {
@@ -293,73 +337,73 @@ public class Annotation extends JEditorPane
   * Deletes the annotation line that contains an ID.
   *
   */
+  protected void deleteGo(String id, String go_id)
+  {
+    String txt = getText();
+    int ind1  = 0;
+    int ind2  = 0;
+    int indID = 0;
+  
+    while((ind2 = txt.indexOf("<br>",ind1)) > -1 ||
+          (ind2 = txt.indexOf("</body>",ind1)) > -1)
+    {
+      String line = txt.substring(ind1,ind2);
+      
+      if( ((indID = line.indexOf(id)) > -1) &&
+          (line.indexOf(go_id) > -1) )
+        break;
+      else
+        ind1 = ind2+1;
+    }
+      
+//  ind2 = txt.indexOf("<br>",indID);
+    
+    if(ind2 == -1 || ind2 > txt.length())
+      ind2 = txt.length();
+
+    if(ind1 == 0)
+      return;
+
+    setText(txt.substring(0,ind1-1)+txt.substring(ind2));
+  }
+
+  /**
+  *
+  * Deletes the annotation line that contains an ID.
+  *
+  */
   protected void delete(String id, boolean ortholog)
   {
-//  try
-//  {
-//    reportHTML();
+    String txt = getText();
 
-//    String txt = ((HTMLDocument)getDocument()).getText(0,getDocument().getLength());
-//    String line = null;
-//    int eol = 0;
-//    int len = 0;
-//    BufferedReader buffRead = new BufferedReader(new StringReader(txt));
-//    while((line = buffRead.readLine()) != null)
-//    {
-//      len = line.length()+1;
-//      if(line.indexOf("SWALL:"+id) > -1)
-//      {
-//        len += eol;
-//       
-//        if(ortholog)
-//        {
-//          line = buffRead.readLine();
-//          if(line != null && line.startsWith("/gene="))
-//            len += line.length();
-//        }
+    int ind1  = 0;
+    int ind2  = 0;
+    int indID = 0;
 
-//        if(len > txt.length())
-//          len = txt.length();
+    while((ind2 = txt.indexOf("<br>",ind1)) > -1 ||
+          (ind2 = txt.indexOf("</body>",ind1)) > -1)
+    {
+      String line = txt.substring(ind1,ind2);
+      if( ((indID = line.indexOf(id)) > -1) &&
+          (line.indexOf("GO:") == -1) )
+        break;
+      else
+        ind1 = ind2+1;
+    }
 
-//        replaceRange("",eol-1,len);
-//        reportHTML();
-//        return;
-//      }
-//      eol += len;
-//    }
-      String txt = getText();
-      int indID = txt.indexOf("SWALL:"+id);
-      if(indID == -1)
-        indID = txt.indexOf("UNIPROT:"+id);
-      if(indID == -1)
-        indID = txt.indexOf("GO:"+id);
+    // if ortholog then delete gene line as well
+    if(ortholog)
+      ind2 = txt.indexOf("<br>",ind2+4);
+   
+    if(ind2 == -1 || ind2 > txt.length())
+      ind2 = txt.length();
 
-      int ind1 = 0;
-      int ind2 = 0;
-      
-      while((ind2 = txt.indexOf("<br>",ind1)) > -1)
-      {
-        if(ind2 < indID)
-          ind1 = ind2+1; 
-        else
-          break;
-      }
-      
-      ind2 = txt.indexOf("<br>",indID);
+    if(ind1 == 0)
+      return;
 
-      // if ortholog then delete gene line as well
-      if(ortholog)
-        ind2 = txt.indexOf("<br>",ind2+4);
-      
-      if(ind2 == -1)
-        ind2 = txt.length();
-
-      setText(txt.substring(0,ind1-1)+txt.substring(ind2));
-//  }
-//  catch(BadLocationException ble) { ble.printStackTrace(); }
-//  catch(IOException ioe) { ioe.printStackTrace(); }
-    
+    setText(txt.substring(0,ind1-1)+txt.substring(ind2));
   }
+
 
 
   protected void setUpSRSFrame(URL url, String search)

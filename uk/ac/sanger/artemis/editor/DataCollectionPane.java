@@ -297,8 +297,8 @@ public class DataCollectionPane extends JScrollPane
               else
               {
                 // possibly 2 line to delete
-                ann.delete(go_id,false);
-                ann.delete(go_id,false);
+                ann.deleteGo(hit.getAcc(),go_id);
+                ann.deleteGo(hit.getAcc(),go_id);
               }
             }
           });
