@@ -6,7 +6,7 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.4 2004-07-07 13:31:21 tjc Exp $"
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.5 2004-07-08 15:28:02 tjc Exp $"
 
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
@@ -66,17 +66,12 @@ run_one_prog () {
 
 #    lsrun -R 'select[blast && mem > 500] rusage[r1m=1:mem=500]' -v $COMMAND 2>&1 > $OUTPUT_FILE | 
 
-     if [ "$seq_size" -lt 25000 ]
+     if [ "$seq_size" -lt 50000 ]
      then
-       bsub -q babelq2 -n 1 -R 'select[blast && mem > 500] rusage[r1m=1:mem=500]' -I $COMMAND 2>&1 > $OUTPUT_FILE |
-         tee ${PROG}_errors.new 1>&2
-     elif [ "$seq_size" -lt 70000 ]
-     then
-       bsub -q "longblastq" -n 1 -R 'select[blast && mem > 500] rusage[r1m=1:mem=500]' -I $COMMAND 2>&1 > $OUTPUT_FILE |
+       bsub -q normal -n 1 -R 'select[blast && mem > 500] rusage[r1m=1:mem=500]' -I $COMMAND 2>&1 > $OUTPUT_FILE |
          tee ${PROG}_errors.new 1>&2
      else
-       bsub -q "local_blastq" -n 1 -R 'select[blast && mem > 500] rusage[r1m=1:mem=500]' -I $COMMAND 2>&1 > $O
-UTPUT_FILE |
+       bsub -q "longblastq" -n 1 -R 'select[blast && mem > 500] rusage[r1m=1:mem=500]' -I $COMMAND 2>&1 > $OUTPUT_FILE |
          tee ${PROG}_errors.new 1>&2
      fi
 
