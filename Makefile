@@ -1,12 +1,12 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.9 2004-12-07 10:35:40 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.10 2004-12-16 20:26:46 tjc Exp $
 
 SHELL=/bin/sh
 
 #OPT_FLAGS = -g -deprecation
 
-JAVAC := javac $(OPT_FLAGS) $(EXTRA_FLAGS)
+JAVAC := javac -source 1.3 -target 1.3 $(OPT_FLAGS) $(EXTRA_FLAGS)
 
 REAL_CLASSPATH := CLASSPATH=.:lib/biojava.jar:lib/jobcontrol.jar:lib/jemAlign.jar:
 
