@@ -2,6 +2,9 @@
 
 # This script needs one argument - a file of file names.
 
+PATH=/nfs/disk100/pubseq/emboss/bin/:$PATH
+export PATH
+
 PERL_PROG='
 
 use strict;
@@ -20,9 +23,12 @@ if (-e $file)
   my $msf_file = "$file.fasta_msf";   
 
   my $seqnum = 1;
+  printf "$msf_file\n";
+
   open(LIST_FILE,$file);
   while(my $line = <LIST_FILE>)
   {
+    printf "$line\n";
     chomp($line);
 
     #
@@ -45,6 +51,10 @@ if (-e $file)
             die "cannot open pipe to emma: $!\n";
   close EMBOSS;
   system "jalview", "$msf_file";
+}
+else
+{
+  die "$file does not exist";
 }
 '
 
@@ -220,12 +230,14 @@ while (defined ($file = <>)) {
   }
 }'
 
+perl -w -e "$PERL_PROG" "$@"
 
-if [ $# != 1 ]
-then
-  perl -w -e "$PERL_PROG" "$@"
-else
-  perl -w -e "$PERL_PROG_FASTA" "$@"
-fi
+
+#if [ $# != 1 ]
+#then
+#  perl -w -e "$PERL_PROG" "$@"
+#else
+#  perl -w -e "$PERL_PROG_FASTA" "$@"
+#fi
 
 
