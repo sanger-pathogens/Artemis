@@ -192,6 +192,11 @@ EOF
 # delete it at some point
 echo "rm -f $new_file > /dev/null 2>&1" | at now + 36 hours
 
+# MAC OS X => Safari browser
+# The command then is the following
+# if $NETSCAPE $new_file
+
+# For Netscape or mozilla
 if $NETSCAPE -remote "openURL($new_file)"
 then
     exit 0
