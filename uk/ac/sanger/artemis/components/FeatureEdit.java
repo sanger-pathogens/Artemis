@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.4 2004-08-26 12:51:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.5 2004-08-27 15:46:21 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -29,6 +29,7 @@ import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.MarkerRange;
 
+import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.OutOfDateException;
 import uk.ac.sanger.artemis.io.LocationParseException;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
@@ -58,7 +59,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.4 2004-08-26 12:51:56 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.5 2004-08-27 15:46:21 tjc Exp $
  **/
 
 public class FeatureEdit extends JFrame
@@ -606,6 +607,13 @@ public class FeatureEdit extends JFrame
         {
           String qualifier_txt = qualifier_text_area.getText();
         
+          File base_dir = getBaseDirectoryFromEntry(edit_entry);
+          String baseDirStr = "";
+
+          if(base_dir != null)
+            baseDirStr = base_dir.getAbsolutePath() + 
+                              System.getProperty("file.separator");
+
           StringReader strRead = new StringReader(qualifier_txt);
           BufferedReader buff = new BufferedReader(strRead);
           String line;
@@ -618,19 +626,19 @@ public class FeatureEdit extends JFrame
               {
                 int ind = line.lastIndexOf("\"");
                 if(ind > -1)
-                  dataFile.add(line.substring(13,ind));
+                  dataFile.add(baseDirStr+line.substring(13,ind));
               }
               else if(line.startsWith("/blastp_file="))
               {
                 int ind = line.lastIndexOf("\"");
                 if(ind > -1)
-                  dataFile.add(line.substring(14,ind));
+                  dataFile.add(baseDirStr+line.substring(14,ind));
               }
               else if(line.startsWith("/blastp+go_file="))
               {
                 int ind = line.lastIndexOf("\"");
                 if(ind > -1)
-                  dataFile.add(line.substring(17,ind));
+                  dataFile.add(baseDirStr+line.substring(17,ind));
               }   
             }
           }
@@ -710,6 +718,31 @@ public class FeatureEdit extends JFrame
     lower_panel.add(new JScrollPane (qualifier_text_area), "Center");
 
     getContentPane().add(middle_panel, "Center");
+  }
+
+
+  /**
+   *  Return the dirtectory that the given entry was read from.
+   **/
+  private File getBaseDirectoryFromEntry(final Entry entry)
+  {
+    final uk.ac.sanger.artemis.io.Entry embl_entry = entry.getEMBLEntry();
+
+    if(embl_entry instanceof DocumentEntry)
+    {
+      final DocumentEntry document_entry =(DocumentEntry) embl_entry;
+
+      if(document_entry.getDocument() instanceof FileDocument)
+      {
+        final FileDocument file_document =
+         (FileDocument) document_entry.getDocument();
+
+        if(file_document.getFile().getParent() != null)
+          return new File(file_document.getFile().getParent());
+      }
+    }
+
+    return null;
   }
 
   /**
