@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.1 2004-06-09 09:49:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.2 2004-12-09 15:53:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,216 +35,279 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.1 2004-06-09 09:49:33 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.2 2004-12-09 15:53:10 tjc Exp $
  **/
 
-public class GFFStreamFeature
-    extends SimpleDocumentFeature
-    implements DocumentFeature, StreamFeature, ComparableFeature {
-
+public class GFFStreamFeature extends SimpleDocumentFeature
+                       implements DocumentFeature, StreamFeature, ComparableFeature 
+{
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
-   *  to an Entry (with Entry.add ()).
+   *  to an Entry (with Entry.add()).
    *  @param key The new feature key
    *  @param location The Location object for the new feature
    *  @param qualifiers The qualifiers for the new feature
    **/
-  public GFFStreamFeature (final Key key,
-                           final Location location,
-                           final QualifierVector qualifiers) {
-    super (null);
-    try {
-      setKey (key);
-      setLocation (location);
-      setQualifiers (qualifiers);
-      if (getQualifierByName ("score") == null) {
-        setQualifier (new Qualifier ("score", "."));
-      }
-      if (getQualifierByName ("gff_source") == null) {
-        setQualifier (new Qualifier ("gff_source", "artemis"));
-      }
-      if (getQualifierByName ("gff_seqname") == null) {
-        setQualifier (new Qualifier ("gff_seqname", "."));
-      }
-    } catch (EntryInformationException e) {
+  public GFFStreamFeature(final Key key, final Location location,
+                          final QualifierVector qualifiers) 
+  {
+    super(null);
+    try 
+    {
+      setKey(key);
+      setLocation(location);
+      setQualifiers(qualifiers);
+      if(getQualifierByName("score") == null)
+        setQualifier(new Qualifier("score", "."));
+      
+      if(getQualifierByName("gff_source") == null)
+        setQualifier(new Qualifier("gff_source", "artemis"));
+      
+      if(getQualifierByName("gff_seqname") == null)
+        setQualifier(new Qualifier("gff_seqname", "."));
+      
+    } 
+    catch(EntryInformationException e) 
+    {
       // this should never happen because the feature will not be in an Entry
-      throw new Error ("internal error - unexpected exception: " + e);
-    } catch (ReadOnlyException e) {
+      throw new Error("internal error - unexpected exception: " + e);
+    }
+    catch(ReadOnlyException e) 
+    {
       // this should never happen because the feature will not be in an Entry
-      throw new Error ("internal error - unexpected exception: " + e);
-    } catch (OutOfRangeException e) {
+      throw new Error("internal error - unexpected exception: " + e);
+    } 
+    catch(OutOfRangeException e) 
+    {
       // this should never happen because the feature will not be in an Entry
-      throw new Error ("internal error - unexpected exception: " + e);
+      throw new Error("internal error - unexpected exception: " + e);
     }
   }
 
   /**
    *  Create a new GFFStreamFeature with the same key, location and
    *  qualifiers as the given feature.  The feature should be added to an
-   *  Entry (with Entry.add ()).
+   *  Entry (with Entry.add()).
    *  @param feature The feature to copy.
    **/
-  public GFFStreamFeature (final Feature feature) {
-    this (feature.getKey (), feature.getLocation (), feature.getQualifiers ());
+  public GFFStreamFeature(final Feature feature) 
+  {
+    this(feature.getKey(), feature.getLocation(), feature.getQualifiers());
 
-    if (feature instanceof GFFStreamFeature) {
-      gff_lines = new StringVector (((GFFStreamFeature)feature).gff_lines);
-    }
-  }
-
-  /**
-   *  Return the reference of a new copy of this Feature.
-   **/
-  public Feature copy () {
-    final Feature return_value = new GFFStreamFeature (this);
-
-    return return_value;
+    if(feature instanceof GFFStreamFeature)
+      gff_lines = new StringVector(((GFFStreamFeature)feature).gff_lines);
   }
 
   /**
    *  Create a new GFFStreamFeature from the given line.  The String should be
    *  in gene finder format.
    **/
-  private GFFStreamFeature (final String line)
-      throws ReadFormatException {
-    super (null);
+  private GFFStreamFeature(final String line)
+      throws ReadFormatException 
+  {
+    super(null);
 
-    final StringVector line_bits = StringVector.getStrings (line, "\t", true);
+    final StringVector line_bits = StringVector.getStrings(line, "\t", true);
 
-    if (line_bits.size () < 8) {
-      throw new ReadFormatException ("invalid GFF line: 8 fields needed " +
-                                      "(got " + line_bits.size () +
-                                     " fields) from: " + line);
-    }
+    if(line_bits.size() < 8) 
+      throw new ReadFormatException("invalid GFF line: 8 fields needed " +
+                                    "(got " + line_bits.size () +
+                                    " fields) from: " + line);
 
-    final String start_base_string = line_bits.elementAt (3).trim ();
-    final String end_base_string = line_bits.elementAt (4).trim ();
+    final String start_base_string = line_bits.elementAt(3).trim();
+    final String end_base_string   = line_bits.elementAt(4).trim();
 
     final int start_base;
     final int end_base;
 
-    try {
-      start_base = Integer.parseInt (start_base_string);
-    } catch (NumberFormatException e) {
-      throw new ReadFormatException ("Could not understand the start base " +
-                                     "of a GFF feature: " + start_base_string);
+    try 
+    {
+      start_base = Integer.parseInt(start_base_string);
+    } 
+    catch(NumberFormatException e)
+    {
+      throw new ReadFormatException("Could not understand the start base " +
+                                    "of a GFF feature: " + start_base_string);
     }
 
-    try {
-      end_base = Integer.parseInt (end_base_string);
-    } catch (NumberFormatException e) {
-      throw new ReadFormatException ("Could not understand the end base " +
-                                     "of a GFF feature: " + end_base_string);
+    try 
+    {
+      end_base = Integer.parseInt(end_base_string);
+    } 
+    catch(NumberFormatException e) 
+    {
+      throw new ReadFormatException("Could not understand the end base " +
+                                    "of a GFF feature: " + end_base_string);
     }
 
     // start of qualifier parsing and setting
-    try {
-
+    try 
+    {
       final boolean complement_flag;
 
-      if (line_bits.elementAt (6).equals ("+")) {
+      if(line_bits.elementAt(6).equals("+")) 
         complement_flag = false;
-      } else {
-        if (line_bits.elementAt (6).equals ("-")) {
+      else 
+      {
+        if(line_bits.elementAt(6).equals("-")) 
           complement_flag = true;
-        } else {
+        else 
+        {
           // must be unstranded
           complement_flag = false;
 
           // best we can do
           final String note_string = "this feature is unstranded";
 
-          setQualifier (new Qualifier ("note", note_string));
+          setQualifier(new Qualifier("note", note_string));
         }
       }
 
-      if (line_bits.size () == 9) {
-        final String rest_of_line = line_bits.elementAt (8);
+      if(line_bits.size() == 9) 
+      {
+        final String rest_of_line = decode(line_bits.elementAt(8));
 
         // parse the rest of the line as ACeDB format attributes
-        final Hashtable attributes = parseAttributes (rest_of_line);
+        final Hashtable attributes = parseAttributes(rest_of_line);
 
-        for (final java.util.Enumeration attribute_enum = attributes.keys ();
-             attribute_enum.hasMoreElements();) {
-          final String name = (String) attribute_enum.nextElement();
+        for(final java.util.Enumeration attribute_enum = attributes.keys();
+            attribute_enum.hasMoreElements();)
+       {
+          final String name = (String)attribute_enum.nextElement();
+          final StringVector values = (StringVector)attributes.get(name);
 
-          final StringVector values = (StringVector) attributes.get (name);
-
-          if (values.size () == 0) {
-            setQualifier (new Qualifier (name));
-          } else {
-            setQualifier (new Qualifier (name, values));
-          }
+          if(values.size() == 0)
+            setQualifier(new Qualifier(name));
+          else
+            setQualifier(new Qualifier(name, values));
         }
       }
 
       final Qualifier gff_seqname =
-        new Qualifier ("gff_seqname", line_bits.elementAt (0));
+        new Qualifier("gff_seqname", decode(line_bits.elementAt(0)));
 
-      setQualifier (gff_seqname);
+      setQualifier(gff_seqname);
 
-      final Key key = new Key (line_bits.elementAt (2));
+      final Key key = new Key(line_bits.elementAt(2));
 
-      setKey (key);
+      setKey(key);
 
       final Qualifier source_qualifier =
-        new Qualifier ("gff_source", line_bits.elementAt (1));
+        new Qualifier("gff_source", line_bits.elementAt(1));
 
-      setQualifier (source_qualifier);
+      setQualifier(source_qualifier);
 
       final Qualifier score_qualifier =
-        new Qualifier ("score", line_bits.elementAt (5));
+        new Qualifier("score", line_bits.elementAt(5));
 
-      setQualifier (score_qualifier);
+      setQualifier(score_qualifier);
 
-      String frame = line_bits.elementAt (7);
+      String frame = line_bits.elementAt(7);
 
-      if (frame.equals ("0")) {
+      if(frame.equals ("0"))
         frame = "1";
-      } else {
-        if (frame.equals ("1")) {
+      else 
+      {
+        if(frame.equals("1"))
           frame = "2";
-        } else {
-          if (frame.equals ("2")) {
+        else
+        {
+          if(frame.equals("2")) 
             frame = "3";
-          } else {
+          else
             frame = ".";
-          }
         }
       }
 
-      if (!frame.equals ("1") && !frame.equals (".")) {
+      if(!frame.equals("1") && !frame.equals(".")) 
+      {
         final Qualifier codon_start_qualifier =
-          new Qualifier ("codon_start", frame);
+          new Qualifier("codon_start", frame);
 
-        setQualifier (codon_start_qualifier);
+        setQualifier(codon_start_qualifier);
       }
 
-      if (start_base > end_base) {
-        throw new ReadFormatException ("start position is greater than end " +
-                                       "position: " + start_base + " > " +
-                                       end_base);
-      }
+      if(start_base > end_base) 
+        throw new ReadFormatException("start position is greater than end " +
+                                      "position: " + start_base + " > " +
+                                      end_base);
 
-      if (start_base < 0) {
-        throw new ReadFormatException ("start position must be positive: " +
-                                       start_base); 
-      }
+      if(start_base < 0)
+        throw new ReadFormatException("start position must be positive: " +
+                                      start_base); 
       
-      final Range location_range = new Range (start_base, end_base);
+      final Range location_range = new Range(start_base, end_base);
 
-      final RangeVector location_ranges = new RangeVector (location_range);
+      final RangeVector location_ranges = new RangeVector(location_range);
 
-      setLocation (new Location (location_ranges, complement_flag));
-    } catch (ReadOnlyException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
-    } catch (EntryInformationException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+      setLocation(new Location(location_ranges, complement_flag));
+    }
+    catch(ReadOnlyException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
+    } 
+    catch(EntryInformationException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
+    } 
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
 
-    this.gff_lines = new StringVector (line);
+    this.gff_lines = new StringVector(line);
+  }
+
+  /**
+  *
+  * For gff-version 3:
+  * http://song.sourceforge.net/gff3-jan04.shtml
+  *
+  * Remove URL escaping rule (e.g. space="%20" or "+")
+  *
+  */
+  private String decode(String s)
+  {
+    int ind;
+
+    // white space
+    while( (ind = s.indexOf("%20")) > -1)
+      s = s.substring(0,ind) + " " + s.substring(ind+3);
+
+    // comma
+    while( (ind = s.indexOf("%2C")) > -1)
+      s = s.substring(0,ind) + "," + s.substring(ind+3);
+
+    // white space
+    while( (ind = s.indexOf("+")) > -1)
+      s = s.substring(0,ind) + " " + s.substring(ind+1);
+
+    // semi-colon
+    while( (ind = s.indexOf("%3B")) > -1)
+      s = s.substring(0,ind) + ";" + s.substring(ind+3);
+
+    // equals
+    while( (ind = s.indexOf("%3D")) > -1)
+      s = s.substring(0,ind) + "=" + s.substring(ind+3);
+
+//  ind = -1;
+//  while( (ind = s.indexOf("=",ind+2)) > -1)
+//    s = s.substring(0,ind+1) + "\"" + s.substring(ind+1);
+
+//  ind = -1;
+//  while( (ind = s.indexOf(";",ind+2)) > -1)
+//    s = s.substring(0,ind+1) + "\"" + s.substring(ind+1);
+
+    return s;
+  }
+   
+  /**
+   *  Return the reference of a new copy of this Feature.
+   **/
+  public Feature copy() 
+  {
+    final Feature return_value = new GFFStreamFeature(this);
+    return return_value;
   }
 
   /**
@@ -252,17 +315,19 @@ public class GFFStreamFeature
    *  concatenation of the Strings in the given StringVector.  The strings
    *  will be separated by four spaces
    **/
-  private String joinStringVector (final StringVector string_vector) {
-    final StringBuffer return_buffer = new StringBuffer ();
+  private String joinStringVector(final StringVector string_vector) 
+  {
+    final StringBuffer return_buffer = new StringBuffer();
 
-    for (int i = 0 ; i < string_vector.size () ; ++i) {
-      if (i != 0) {
-        return_buffer.append ("    ");
-      }
-      return_buffer.append (string_vector.elementAt (i));
+    for(int i = 0 ; i < string_vector.size() ; ++i) 
+    {
+      if(i != 0)
+        return_buffer.append("    ");
+      
+      return_buffer.append(string_vector.elementAt(i));
     }
 
-    return return_buffer.toString ();
+    return return_buffer.toString();
   }
 
   /**
@@ -276,26 +341,27 @@ public class GFFStreamFeature
    *  @return null if in_stream is at the end of file when the method is
    *    called
    */
-  protected static GFFStreamFeature readFromStream (LinePushBackReader stream)
-      throws IOException, InvalidRelationException {
+  protected static GFFStreamFeature readFromStream(LinePushBackReader stream)
+      throws IOException, InvalidRelationException 
+  {
 
-    String line = stream.readLine ();
+    String line = stream.readLine();
 
-    if (line == null) {
+    if(line == null) 
       return null;
-    }
 
-    try {
-      final GFFStreamFeature new_feature = new GFFStreamFeature (line);
-
+    try
+    {
+      final GFFStreamFeature new_feature = new GFFStreamFeature(line);
       return new_feature;
-    } catch (ReadFormatException exception) {
+    } 
+    catch(ReadFormatException exception) 
+    {
       // re-throw the exception with the line number added
+      final String new_error_string = exception.getMessage();
 
-      final String new_error_string = exception.getMessage ();
-
-      throw new ReadFormatException (new_error_string,
-                                     stream.getLineNumber ());
+      throw new ReadFormatException(new_error_string,
+                                    stream.getLineNumber());
     }
   }
 
@@ -309,10 +375,11 @@ public class GFFStreamFeature
    *    most likely ReadFormatException if the stream does not contain GFF
    *    feature.
    **/
-  public void setFromStream (final EntryInformation entry_information,
-                             final LinePushBackReader in_stream)
-      throws IOException, InvalidRelationException, ReadOnlyException {
-    throw new ReadOnlyException ();
+  public void setFromStream(final EntryInformation entry_information,
+                            final LinePushBackReader in_stream)
+      throws IOException, InvalidRelationException, ReadOnlyException 
+  {
+    throw new ReadOnlyException();
   }
 
   /**
@@ -321,80 +388,83 @@ public class GFFStreamFeature
    *  @exception IOException thrown if there is an io problem while writing
    *    the Feature.
    **/
-  public void writeToStream (final Writer writer)
-      throws IOException {
+  public void writeToStream(final Writer writer)
+      throws IOException 
+  {
     // for now GFF features are read-only so just write what we read
-    if (gff_lines == null) {
-      final RangeVector ranges = getLocation ().getRanges ();
+    if(gff_lines == null) 
+    {
+      final RangeVector ranges = getLocation().getRanges();
 
-      for (int i = 0 ; i < ranges.size () ; ++i) {
-        final Range this_range = ranges.elementAt (i);
-        Qualifier   seqname    = getQualifierByName ("gff_seqname");
-        Qualifier   source     = getQualifierByName ("gff_source");
-        Qualifier   score      = getQualifierByName ("score");
-        Qualifier   group      = getQualifierByName ("group");
+      for(int i = 0 ; i < ranges.size() ; ++i) 
+      {
+        final Range this_range = ranges.elementAt(i);
+        Qualifier   seqname    = getQualifierByName("gff_seqname");
+        Qualifier   source     = getQualifierByName("gff_source");
+        Qualifier   score      = getQualifierByName("score");
+        Qualifier   group      = getQualifierByName("group");
 
-        if (seqname == null) {
-          seqname = new Qualifier ("gff_seqname", "");
-        }
+        if(seqname == null) 
+          seqname = new Qualifier("gff_seqname", "");
 
-        if (source == null) {
-          source = new Qualifier ("source", "");
-        }
+        if(source == null) 
+          source = new Qualifier("source", "");
 
-        if (score == null) {
-          score = new Qualifier ("score", "");
-        }
+        if(score == null) 
+          score = new Qualifier("score", "");
 
-        if (group == null || group.getValues () == null ||
-            group.getValues ().elementAt (0).equals ("")) {
-          final Qualifier gene = getQualifierByName ("gene");
+        if(group == null || group.getValues() == null ||
+           group.getValues().elementAt(0).equals(""))
+        {
+          final Qualifier gene = getQualifierByName("gene");
 
-          if (gene == null) {
-            group = new Qualifier ("group", "");
-          } else {
+          if(gene == null) 
+            group = new Qualifier("group", "");
+          else 
             group = gene;
-          }
         }
 
         String frame = ".";
 
-        final Qualifier codon_start = getQualifierByName ("codon_start");
+        final Qualifier codon_start = getQualifierByName("codon_start");
 
-        if (codon_start != null && i == 0) {
-          frame = codon_start.getValues ().elementAt (0);
+        if(codon_start != null && i == 0) 
+        {
+          frame = codon_start.getValues().elementAt(0);
 
-          if (frame.equals ("1")) {
+          if(frame.equals ("1")) 
             frame = "0";
-          } else {
-            if (frame.equals ("2")) {
+          else
+          {
+            if(frame.equals("2")) 
               frame = "1";
-            } else {
-              if (frame.equals ("3")) {
+            else 
+            {
+              if(frame.equals("3")) 
                 frame = "2";
-              } else {
+              else
                 frame = ".";
-              }
             }
           }
         }
 
-        final String attribute_string = unParseAttributes ();
+        final String attribute_string = unParseAttributes();
 
-        writer.write (seqname.getValues ().elementAt (0) + "\t" +
-                      source.getValues ().elementAt (0) + "\t" +
-                      getKey () + "\t" +
-                      this_range.getStart () + "\t" +
-                      this_range.getEnd () + "\t" +
-                      score.getValues () .elementAt (0)+ "\t" +
-                      (getLocation ().isComplement () ? "-\t" : "+\t") +
+        writer.write(seqname.getValues().elementAt(0) + "\t" +
+                     source.getValues().elementAt(0) + "\t" +
+                     getKey() + "\t" +
+                     this_range.getStart() + "\t" +
+                     this_range.getEnd() + "\t" +
+                     score.getValues() .elementAt(0)+ "\t" +
+                     (getLocation().isComplement() ? "-\t" : "+\t") +
                       frame + "\t" +
                       attribute_string + "\n");
       }
-    } else {
-      for (int i = 0 ; i < gff_lines.size () ; ++i) {
-        writer.write (gff_lines.elementAt (i) + "\n");
-      }
+    } 
+    else 
+    {
+      for(int i = 0 ; i < gff_lines.size() ; ++i) 
+        writer.write(gff_lines.elementAt(i) + "\n");
     }
   }
 
@@ -405,129 +475,158 @@ public class GFFStreamFeature
    *  gff_source and score aren't included since they have corresponding
    *  fields.
    **/
-  private String unParseAttributes () {
-    final StringBuffer buffer = new StringBuffer ();
+  private String unParseAttributes() 
+  {
+    final StringBuffer buffer = new StringBuffer();
+    final QualifierVector qualifiers = getQualifiers();
+    final QualifierVector qualifiers_to_write = new QualifierVector();
 
-    final QualifierVector qualifiers = getQualifiers ();
+    for(int i = 0 ; i < qualifiers.size() ; ++i) 
+    {
+      final Qualifier this_qualifier = qualifiers.elementAt(i);
 
-    final QualifierVector qualifiers_to_write = new QualifierVector ();
+      final String name = this_qualifier.getName();
 
-    for (int i = 0 ; i < qualifiers.size () ; ++i) {
-      final Qualifier this_qualifier = qualifiers.elementAt (i);
-
-      final String name = this_qualifier.getName ();
-
-      if (name.equals ("codon_start") || name.equals ("gff_source") ||
-          name.equals ("gff_seqname") || name.equals ("score")) {
+      if(name.equals("codon_start") || name.equals("gff_source") ||
+         name.equals("gff_seqname") || name.equals("score"))
         continue;
-      }
 
-      if (i != 0) {
-        buffer.append (" ; ");
-      }
+      if(i != 0)
+        buffer.append(" ; ");
 
-      final StringVector values = this_qualifier.getValues ();
+      final StringVector values = this_qualifier.getValues();
 
-      buffer.append (name);
+      buffer.append(name);
 
-      if (values != null) {
-        for (int value_index = 0 ;
-             value_index < values.size () ;
-             ++value_index) {
-          final String this_value = values.elementAt (value_index);
-
-          buffer.append (' ');
-          try {
-            buffer.append (Integer.valueOf (this_value));
-          } catch (NumberFormatException _) {
+      if(values != null) 
+      {
+        for(int value_index = 0;
+            value_index < values.size();
+            ++value_index) 
+        {
+          final String this_value = values.elementAt(value_index);
+          buffer.append(' ');
+          try 
+          {
+            buffer.append(Integer.valueOf(this_value));
+          } 
+          catch(NumberFormatException _) 
+          {
             // not an integer
-            try {
-              buffer.append (Double.valueOf (this_value));
-            } catch (NumberFormatException __) {
+            try 
+            {
+              buffer.append(Double.valueOf(this_value));
+            }
+            catch (NumberFormatException __) 
+            {
               // not a double or integer so quote it
-              buffer.append ('"' + this_value + '"');
+              buffer.append('"' + this_value + '"');
             }
           }
         }
       }
     }
 
-    return buffer.toString ();
+    return buffer.toString();
   }
 
   /**
    *  Parse the given String as ACeDB format attributes.
    *  Adapted from code by Matthew Pocock for the BioJava project.
+   *
+   *  Modified for gff-version 3.
+   *
    *  @return Return a Hashtable.  Each key is an attribute name and each value
    *    of the Hashtable is a StringVector containing the attribute values.
    *    If the attribute has no value then the Hashtable value will be a zero
    *    length vector.
    **/
-  private Hashtable parseAttributes (final String att_val_list) {
-    Hashtable attributes = new Hashtable ();
+  private Hashtable parseAttributes(final String att_val_list) 
+  {
+    Hashtable attributes = new Hashtable();
 
-    StringTokenizer tokeniser = new StringTokenizer (att_val_list, ";", false);
+    StringTokenizer tokeniser = new StringTokenizer(att_val_list, ";", false);
 
-    while (tokeniser.hasMoreTokens()) {
+    while(tokeniser.hasMoreTokens()) 
+    {
       final String this_token = tokeniser.nextToken().trim();
-      final int index_of_first_space = this_token.indexOf(" ");
+      int index_of_first_space = this_token.indexOf(" ");
 
       final String att_name;
-      final StringVector att_values = new StringVector ();
+      final StringVector att_values = new StringVector();
 
-      if (index_of_first_space == -1) {
+      if(this_token.indexOf("=") > -1 &&
+         this_token.indexOf("=") < index_of_first_space)
+      {
+        index_of_first_space = this_token.indexOf("=");
+        att_name = this_token.substring(0, index_of_first_space);
+        att_values.add(this_token.substring(index_of_first_space+1).trim());
+      }
+      else if(index_of_first_space == -1) 
         att_name = this_token;
-      } else {
-        att_name = this_token.substring (0, index_of_first_space);
+      else 
+      {
+        att_name = this_token.substring(0, index_of_first_space);
 
         String rest_of_token =
-          this_token.substring (index_of_first_space).trim();
+          this_token.substring(index_of_first_space+1).trim();
 
-        while (rest_of_token.length () > 0) {
-          if (rest_of_token.startsWith ("\"")) {
+        while(rest_of_token.length() > 0) 
+        {
+          if(rest_of_token.startsWith("\""))
+          {
             int quote_index = 0;
-            do {
+            do 
+            {
               quote_index++;
-              quote_index = rest_of_token.indexOf ("\"", quote_index);
-            } while (quote_index > -1 &&
-                     rest_of_token.charAt(quote_index - 1) == '\\');
+              quote_index = rest_of_token.indexOf("\"", quote_index);
+            } while(quote_index > -1 &&
+                    rest_of_token.charAt(quote_index - 1) == '\\');
 
-            if (quote_index < 0) {
+            if(quote_index < 0) 
+            {
               // no closing quote - panic
-              final Hashtable panic_attributes = new Hashtable ();
-              final StringVector notes = new StringVector ();
-              notes.add (att_val_list);
-              panic_attributes.put ("note", notes);
+              final Hashtable panic_attributes = new Hashtable();
+              final StringVector notes = new StringVector();
+              notes.add(att_val_list);
+              panic_attributes.put("note", notes);
 
               return panic_attributes;
             }
 
-            final String next_bit = rest_of_token.substring (1, quote_index);
-            att_values.add (next_bit);
-            rest_of_token = rest_of_token.substring (quote_index + 1).trim();
-          } else {
-            final int index_of_next_space = rest_of_token.indexOf (" ");
+            final String next_bit = rest_of_token.substring(1, quote_index);
+            att_values.add(next_bit);
+            rest_of_token = rest_of_token.substring(quote_index + 1).trim();
+          } 
+          else
+          {
+            final int index_of_next_space = rest_of_token.indexOf(" ");
 
-            if (index_of_next_space == -1) {
-              att_values.add (rest_of_token);
+            if(index_of_next_space == -1) 
+            {
+              att_values.add(rest_of_token);
               rest_of_token = "";
-            } else {
+            } 
+            else 
+            {
               final String next_bit =
-                rest_of_token.substring (0, index_of_next_space);
+                rest_of_token.substring(0, index_of_next_space);
 
-              att_values.add (next_bit);
+              att_values.add(next_bit);
               rest_of_token =
-                rest_of_token.substring (index_of_next_space).trim ();
+                rest_of_token.substring(index_of_next_space).trim();
             }
           }
         }
+
+        if(!rest_of_token.equals(""))
+          att_values.add(rest_of_token);
       }
 
-      if (attributes.get (att_name) != null) {
-        ((StringVector) attributes.get (att_name)).add (att_values);
-      } else {
-        attributes.put (att_name, att_values);
-      }
+      if(attributes.get(att_name) != null) 
+        ((StringVector)attributes.get(att_name)).add(att_values);
+      else 
+        attributes.put(att_name, att_values);
     }
 
     return attributes;
