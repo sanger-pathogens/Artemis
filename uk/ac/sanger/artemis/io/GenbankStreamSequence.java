@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GenbankStreamSequence.java,v 1.1 2004-06-09 09:49:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GenbankStreamSequence.java,v 1.2 2004-09-17 11:29:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import java.io.Writer;
  *  This is a subclass of StreamSequence containing GENBANK format sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: GenbankStreamSequence.java,v 1.1 2004-06-09 09:49:39 tjc Exp $
+ *  @version $Id: GenbankStreamSequence.java,v 1.2 2004-09-17 11:29:01 tjc Exp $
  **/
 
 public class GenbankStreamSequence extends StreamSequence
@@ -113,10 +113,7 @@ public class GenbankStreamSequence extends StreamSequence
     }
     else 
     {
-      if(sequence_header.startsWith("ORIGIN"))
-      {
-      } 
-      else 
+      if(!sequence_header.startsWith("ORIGIN"))
         throw new ReadFormatException("Genbank sequence data should begin " +
                                        "with \"BASE COUNT\" or \"ORIGIN\"");
     }
@@ -167,20 +164,32 @@ public class GenbankStreamSequence extends StreamSequence
         break;
       }
       
-      if(line.length() < 10) 
-        continue;
-
-      line = line.substring(10).toLowerCase();
-
+      // set to true when we see a base - numbers and spaces are allowed before
+      // the first base is seen in the line
+      boolean seen_base = false;
+  
       for(int i = 0 ; i < line.length() ; ++i) 
       {
         final char this_char = line.charAt(i);
+  
+        if(!seen_base)  
+        {
+          if(Character.isDigit(this_char) ||
+             Character.isSpaceChar(this_char)) 
+          {
+              continue;
+            // ok - ignore it
+          }
+        }
 
         if(Character.isLetter(this_char) ||
-            this_char == '.' ||
-            this_char == '-' ||
-            this_char == '*') 
+           this_char == '.' ||
+           this_char == '-' ||
+           this_char == '*') 
+        {
+          seen_base = true;
           sequence_buffer.append(this_char);
+        } 
         else
         {
           if(Character.isSpaceChar(this_char)) {
