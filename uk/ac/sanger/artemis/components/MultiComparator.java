@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.2 2004-07-29 13:38:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.3 2004-10-05 09:24:37 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import javax.swing.border.BevelBorder;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.2 2004-07-29 13:38:50 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.3 2004-10-05 09:24:37 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
@@ -708,6 +708,39 @@ public class MultiComparator extends JFrame
     menu_bar.add(display_menu);
   }
 
+ 
+  /**
+   *  Print menu 
+   **/ 
+  private void printMenu()
+  {
+    JMenuItem printImage = new JMenuItem("Print Image Files (png/jpeg)...");
+    PrintACT pact = new PrintACT(this);
+    printImage.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        PrintACT pact = new PrintACT(MultiComparator.this);
+        pact.print();
+      }
+    });
+    file_menu.add(printImage);
+
+// print preview
+    JMenuItem printPreview = new JMenuItem("Print Preview");
+    file_menu.add(printPreview);
+    printPreview.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        PrintACT pact = new PrintACT(MultiComparator.this);
+        pact.printPreview();
+      }
+    });
+
+  }
+
+
   /**
    *  Make a new File menu replacing the current one(if any).
    **/
@@ -851,6 +884,8 @@ public class MultiComparator extends JFrame
     }
 
     file_menu.addSeparator();
+    printMenu();
+    file_menu.addSeparator();
 
     final JMenuItem close_button = new JMenuItem("Close");
     close_button.addActionListener(new ActionListener() 
@@ -970,7 +1005,7 @@ public class MultiComparator extends JFrame
   /**
    *  Return the EntryGroup objects that were passed to the constructor.
    **/
-  private EntryGroup[] getEntryGroupArray() 
+  protected EntryGroup[] getEntryGroupArray() 
   {
     return entry_group_array;
   }
@@ -986,7 +1021,7 @@ public class MultiComparator extends JFrame
   /**
    *  Return the AlignmentViewer objects that were created in the constructor.
    **/
-  private AlignmentViewer[] getAlignmentViewerArray() 
+  protected AlignmentViewer[] getAlignmentViewerArray() 
   {
     return alignment_viewer_array;
   }
@@ -994,7 +1029,7 @@ public class MultiComparator extends JFrame
   /**
    *  Return the FeatureDisplay objects that were created in the constructor.
    **/
-  private FeatureDisplay[] getFeatureDisplayArray() 
+  protected FeatureDisplay[] getFeatureDisplayArray() 
   {
     return feature_display_array;
   }
@@ -1018,7 +1053,7 @@ public class MultiComparator extends JFrame
   /**
    *  Return the BasePlotGroup objects that were created in the constructor.
    **/
-  private BasePlotGroup[] getBasePlotGroupArray() 
+  protected BasePlotGroup[] getBasePlotGroupArray() 
   {
     return base_plot_group_array;
   }

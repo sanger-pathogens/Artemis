@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.2 2004-07-01 12:43:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.3 2004-10-05 09:24:37 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.2 2004-07-01 12:43:21 tjc Exp $
+ *  @version $Id: Plot.java,v 1.3 2004-10-05 09:24:37 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -427,7 +427,7 @@ public abstract class Plot extends JPanel
    *  double buffering when drawing the canvas.
    *  @param g The Graphics object of the canvas.
    **/
-  private void paintCanvas(final Graphics g) 
+  protected void paintCanvas(final Graphics g) 
   {
     if(!isVisible()) 
       return;
