@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/Codon12CorrelationAlgorithm.java,v 1.1 2004-06-09 09:51:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/Codon12CorrelationAlgorithm.java,v 1.2 2004-11-30 10:52:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -29,42 +29,46 @@ import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.sequence.*;
 
+import java.awt.*;
+
 /**
- *  Objects of this class have one useful method - getValues (), which takes a
+ *  Objects of this class have one useful method - getValues(), which takes a
  *  range of bases and returns three floating point numbers, which are the
  *  codon position 1 and 2 correlation scores in each of the three frames for
  *  the given strand.  The Strand to use is set in the constructor.
  *
  *  @author Kim Rutherford
- *  @version $Id: Codon12CorrelationAlgorithm.java,v 1.1 2004-06-09 09:51:18 tjc Exp $
+ *  @version $Id: Codon12CorrelationAlgorithm.java,v 1.2 2004-11-30 10:52:38 tjc Exp $
  **/
-
-public class Codon12CorrelationAlgorithm extends BaseAlgorithm {
+public class Codon12CorrelationAlgorithm extends BaseAlgorithm 
+{
   /**
    *  Create a new Codon12CorrelationAlgorithm object.
    *  @param strand The strand to do the calculation on.
    **/
-  public Codon12CorrelationAlgorithm (final Strand strand) {
-    super (strand, makeName (strand), "correlation_score");
-
-    setScalingFlag (true);
+  public Codon12CorrelationAlgorithm(final Strand strand)
+  {
+    super(strand, makeName(strand), "correlation_score");
+    setScalingFlag(true);
   }
 
   /**
-   *  Magic numbers used by getValues () and Feature.get12CorrelationScore ()
+   *  Magic numbers used by getValues() and Feature.get12CorrelationScore()
    *  to calculate the correlation score for codon positions 1 and 2.  These
    *  are the values for t, c, a, g in the first position.
    **/
-  public static double [] correlation_score_factors_1 = {
+  public static double[] correlation_score_factors_1 = 
+  {
     17.7, 21.1, 27.7, 33.6
   };
 
   /**
-   *  Magic numbers used by getValues () and Feature.get12CorrelationScore ()
+   *  Magic numbers used by getValues() and Feature.get12CorrelationScore()
    *  to calculate the correlation score for codon positions 1 and 2.  These
    *  are the values for t, c, a, g in the second position.
    **/
-  public static double [] correlation_score_factors_2 = {
+  public static double[] correlation_score_factors_2 = 
+  {
     27.1, 23.8, 31.0, 18.2
   };
 
@@ -78,65 +82,75 @@ public class Codon12CorrelationAlgorithm extends BaseAlgorithm {
    *  @param values The three results are returned in this array, hence it
    *    should be three long.  There is one value for each frame.
    **/
-  public void getValues (int start, int end, final float [] values) {
-    if (isRevCompDisplay ()) {
+  public void getValues(int start, int end, final float[] values)
+  {
+    if(isRevCompDisplay()) 
+    {
       final int new_end =
-        getStrand ().getBases ().getComplementPosition (start);
+        getStrand().getBases().getComplementPosition(start);
       final int new_start =
-        getStrand ().getBases ().getComplementPosition (end);
+        getStrand().getBases().getComplementPosition(end);
 
       end = new_end;
       start = new_start;
     }
 
     // add 1 or 2 if necessary to make the range a multiple of 3
-    if (getStrand ().isForwardStrand ()) {
+    if(getStrand().isForwardStrand())
       end -= (end - start + 1) % 3;
-    } else {
+    else
       start += (end - start + 1) % 3;
-    }
 
     final String sub_sequence;
 
-    try {
-      sub_sequence = getStrand ().getRawSubSequence (new Range (start, end));
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+    try 
+    {
+      sub_sequence = getStrand().getRawSubSequence(new Range(start, end));
+    } 
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
 
-    final char [] sub_sequence_raw = sub_sequence.toCharArray ();
+    final char[] sub_sequence_raw = sub_sequence.toCharArray();
 
-    final float gc_counts [] = new float [3];
+    final float gc_counts[] = new float[3];
 
     // the first index is the position the second is the base (t,c,a,g)
-    final int [] [] positional_base_counts = new int [4][3];
+    final int[][] positional_base_counts = new int[4][3];
 
     final int sub_sequence_length = sub_sequence_raw.length;
 
-    if (getStrand ().isForwardStrand ()) {
-      for (int i = 0 ; i < sub_sequence_length ; ++i) {
-        final int base_index = Bases.getIndexOfBase (sub_sequence_raw[i]);
-        if (base_index < 4) {
+    if(getStrand().isForwardStrand())
+    {
+      for(int i = 0 ; i < sub_sequence_length ; ++i)
+      {
+        final int base_index = Bases.getIndexOfBase(sub_sequence_raw[i]);
+        if(base_index < 4) 
           ++positional_base_counts[base_index][i % 3];
-        }
       }
-    } else {
-      final String complement_string = Bases.complement (sub_sequence);
+    } 
+    else 
+    {
+      final String complement_string = Bases.complement(sub_sequence);
 
       final char [] complement_sub_sequence_raw =
-        complement_string.toCharArray ();
+        complement_string.toCharArray();
       
-      for (int i = 0 ; i < sub_sequence_length ; ++i) {
+      for(int i = 0 ; i < sub_sequence_length ; ++i) 
+      {
         final int base_index =
-          Bases.getIndexOfBase (complement_sub_sequence_raw[i]);
-        if (base_index < 4) {
+          Bases.getIndexOfBase(complement_sub_sequence_raw[i]);
+        if(base_index < 4) 
+        {
           final int position_index = i % 3;
           ++positional_base_counts[base_index][position_index];
         }
       }
     }
     
-    for (int frame = 0 ; frame < 3 ; ++frame) {
+    for(int frame = 0 ; frame < 3 ; ++frame) 
+    {
       final double cor1_2_score =
         3.0 * (1.0 * positional_base_counts[0][frame]/sub_sequence_length *
                correlation_score_factors_1[0] +
@@ -167,15 +181,71 @@ public class Codon12CorrelationAlgorithm extends BaseAlgorithm {
                correlation_score_factors_2[3]) +
         0.5;         // add 0.5 because that is what the old uk.ac.sanger.artemis did
       
-      values [(start + frame) % 3] = (float) cor1_2_score;
+      values [(start + frame) % 3] = (float)cor1_2_score;
     }
   }
 
   /**
+  *
+  *  Override as reverse strand is not sequence length dependent
+  *
+  */
+  public void drawLegend(Graphics g, int font_height,
+                         int font_width, Color[] frameColour)
+  {
+    Graphics2D g2d = (Graphics2D)g;
+
+    FontMetrics fm = g2d.getFontMetrics();
+    int lineHgt    = 3 * font_height/4; 
+
+    Strand strand = getStrand();
+    if(strand.isForwardStrand())
+    {
+      g2d.setColor(Color.black);
+      g2d.drawString("1",0,font_height);
+      g2d.drawString("2",font_width*5,font_height);
+      g2d.drawString("3",font_width*10,font_height);
+
+      BasicStroke stroke = (BasicStroke)g2d.getStroke();
+      g2d.setStroke(new BasicStroke(3.f));
+      g2d.setColor(frameColour[0]);
+      g2d.drawLine(font_width*2, lineHgt, font_width*4, lineHgt);
+     
+      g2d.setColor(frameColour[1]);
+      g2d.drawLine(font_width*7, lineHgt, font_width*9, lineHgt);
+
+      g2d.setColor(frameColour[2]);
+      g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
+      g2d.setStroke(stroke);
+    }
+    else
+    {
+//    int frame = strand.getSequenceLength() % 3;
+//    System.out.println("MOD "+frame);
+      g2d.setColor(Color.black);
+      g2d.drawString("4",0,font_height);
+      g2d.drawString("5",font_width*5,font_height);
+      g2d.drawString("6",font_width*10,font_height);
+
+      BasicStroke stroke = (BasicStroke)g2d.getStroke();
+      g2d.setStroke(new BasicStroke(3.f));
+      g2d.setColor(frameColour[0]);
+      g2d.drawLine(font_width*2, lineHgt, font_width*4, lineHgt);
+    
+      g2d.setColor(frameColour[2]);
+      g2d.drawLine(font_width*7, lineHgt, font_width*9, lineHgt);
+
+      g2d.setColor(frameColour[1]);
+      g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
+      g2d.setStroke(stroke);
+    }
+  }
+  /**
    *  Return the number of values a call to getValues () will return - three
    *  in this case.
    **/
-  public int getValueCount () {
+  public int getValueCount() 
+  {
     return 3;
   }
 
@@ -184,14 +254,16 @@ public class Codon12CorrelationAlgorithm extends BaseAlgorithm {
    *  @return null is returned if this algorithm doesn't have optimal window
    *    size.
    **/
-  public Integer getDefaultWindowSize () {
-    final Integer super_window_size = super.getDefaultWindowSize ();
-    if (super_window_size != null) {
-      // the superclass version of getDefaultWindowSize () returns non-null
+  public Integer getDefaultWindowSize()
+  {
+    final Integer super_window_size = super.getDefaultWindowSize();
+    if(super_window_size != null) 
+    {
+      // the superclass version of getDefaultWindowSize() returns non-null
       // iff the user has set the window size in the options file
       return super_window_size;
     }
-    return new Integer (240);
+    return new Integer(240);
   }
 
   /**
@@ -199,14 +271,16 @@ public class Codon12CorrelationAlgorithm extends BaseAlgorithm {
    *  @return null is returned if this algorithm doesn't have maximum window
    *    size.
    **/
-  public Integer getDefaultMaxWindowSize () {
-    final Integer super_max_window_size = super.getDefaultMaxWindowSize ();
-    if (super_max_window_size != null) {
-      // the superclass version of getDefaultMaxWindowSize () returns non-null
+  public Integer getDefaultMaxWindowSize()
+  {
+    final Integer super_max_window_size = super.getDefaultMaxWindowSize();
+    if(super_max_window_size != null) 
+    {
+      // the superclass version of getDefaultMaxWindowSize() returns non-null
       // iff the user has set the max window size in the options file
       return super_max_window_size;
     }
-    return new Integer (600);
+    return new Integer(600);
   }
 
   /**
@@ -214,14 +288,16 @@ public class Codon12CorrelationAlgorithm extends BaseAlgorithm {
    *  @return null is returned if this algorithm doesn't have minimum window
    *    size.
    **/
-  public Integer getDefaultMinWindowSize () {
-    final Integer super_min_window_size = super.getDefaultMinWindowSize ();
-    if (super_min_window_size != null) {
-      // the superclass version of getDefaultMinWindowSize () returns non-null
+  public Integer getDefaultMinWindowSize() 
+  {
+    final Integer super_min_window_size = super.getDefaultMinWindowSize();
+    if(super_min_window_size != null) 
+    {
+      // the superclass version of getDefaultMinWindowSize() returns non-null
       // iff the user has set the minimum window size in the options file
       return super_min_window_size;
     }
-    return new Integer (48);
+    return new Integer(48);
   }
 
   /**
@@ -229,28 +305,30 @@ public class Codon12CorrelationAlgorithm extends BaseAlgorithm {
    *  @return null is returned if this algorithm doesn't have optimal step
    *    size.
    **/
-  public Integer getDefaultStepSize (int window_size) {
-    if (window_size > 8) {
-      return new Integer (window_size / 8);
-    } else {
+  public Integer getDefaultStepSize(int window_size) 
+  {
+    if(window_size > 8) 
+      return new Integer(window_size / 8);
+    else 
       return null;
-    }
   }
 
   /**
    *  Return the maximum value of this algorithm.
    *  @return The maximum is 100.
    **/
-  protected Float getMaximumInternal () {
-    return new Float (100);
+  protected Float getMaximumInternal() 
+  {
+    return new Float(100);
   }
 
   /**
    *  Return the minimum value of this algorithm.
    *  @return The minimum is 0.
    **/
-  protected Float getMinimumInternal () {
-    return new Float (0);
+  protected Float getMinimumInternal()
+  {
+    return new Float(0);
   }
 
   /**
@@ -258,19 +336,20 @@ public class Codon12CorrelationAlgorithm extends BaseAlgorithm {
    *  @return null is returned if this algorithm doesn't have an average or if
    *    the average can't be calculated.
    **/
-  public Float getAverage () {
-    return new Float (52.7);
+  public Float getAverage() 
+  {
+    return new Float(52.7);
   }
 
   /**
    *  Returns "Codon 1 and 2 Scores" if the given strand is a forward strand
    *  otherwise returns "Reverse Codon 1 and 2 Scores".
    **/
-  private static String makeName (final Strand strand) {
-    if (strand.isForwardStrand ()) {
+  private static String makeName(final Strand strand) 
+  {
+    if(strand.isForwardStrand())
       return "Correlation Scores";
-    } else {
+    else 
       return "Reverse Correlation Scores";
-    }
   }
 }
