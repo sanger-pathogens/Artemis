@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.3 2004-06-09 13:04:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.4 2004-07-21 15:16:06 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -43,11 +43,17 @@ import javax.swing.*;
  *  A JMenu of external commands/functions.
  *
  *  @author Kim Rutherford
- *  @version $Id: RunMenu.java,v 1.3 2004-06-09 13:04:16 tjc Exp $
+ *  @version $Id: RunMenu.java,v 1.4 2004-07-21 15:16:06 tjc Exp $
  **/
 
 public class RunMenu extends SelectionMenu 
 {
+ 
+  private JMenu fastaMenu = null;
+  private JMenu fastaMenuOptions = null;
+  private JMenu blastpMenu = null;
+  private JMenu blastpMenuOptions = null;
+
   /**
    *  Create a new RunMenu object.
    *  @param frame The JFrame that owns this JMenu.
@@ -62,6 +68,7 @@ public class RunMenu extends SelectionMenu
 
     final ExternalProgramVector external_programs =
       Options.getOptions().getExternalPrograms();
+
 
     for(int i = 0 ; i < external_programs.size() ; ++i) 
       makeMenuItem(external_programs.elementAt(i));
@@ -119,7 +126,8 @@ public class RunMenu extends SelectionMenu
   private void makeMenuItem(final ExternalProgram program) 
   {
     final JMenuItem new_menu;
-
+    
+    
     if(program.getType() == ExternalProgram.AA_PROGRAM ||
        program.getType() == ExternalProgram.DNA_PROGRAM &&
        Options.getOptions().getPropertyTruthValue("sanger_options")) 
@@ -127,8 +135,14 @@ public class RunMenu extends SelectionMenu
       final String options_string = program.getProgramOptions();
 
       if(options_string.length() > 0) 
-        new_menu = new JMenuItem("Run " + program.getName() + " (" +
+      {
+        if(program.getName().startsWith("fasta") ||
+           program.getName().startsWith("blastp"))
+          new_menu = new JMenuItem(options_string);
+        else 
+          new_menu = new JMenuItem("Run " + program.getName() + " (" +
                         options_string + ") on selected features");
+      }
       else 
         new_menu =
           new JMenuItem("Run " + program.getName() + " on selected features");
@@ -196,7 +210,26 @@ public class RunMenu extends SelectionMenu
       }
     });
 
-    add(new_menu);
+    if(program.getName().startsWith("fasta"))
+    {
+      if(fastaMenu == null)
+      {
+        fastaMenu = new JMenu("Run fasta on selected features against");
+        add(fastaMenu);
+      }
+      fastaMenu.add(new_menu);
+    }
+    else if(program.getName().startsWith("blastp"))
+    {
+      if(blastpMenu == null)
+      {
+        blastpMenu = new JMenu("Run blast on selected features against");
+        add(blastpMenu);
+      }
+      blastpMenu.add(new_menu);
+    }
+    else
+      add(new_menu);
   }
 
   /**
@@ -209,8 +242,32 @@ public class RunMenu extends SelectionMenu
          program.getType() == ExternalProgram.DNA_PROGRAM)) 
       return;
 
-    final JMenuItem new_options_menu =
-      new JMenuItem("Set " + program.getName() + " options");
+    JMenuItem new_options_menu = null;
+    if(program.getName().startsWith("fasta"))
+    {
+      if(fastaMenuOptions == null)
+      {
+        fastaMenuOptions = new JMenu("Set " + program.getName() + " options");
+        add(fastaMenuOptions);
+      }
+      new_options_menu = new JMenuItem(program.getProgramOptions());
+      fastaMenuOptions.add(new_options_menu);
+    }  
+    else if(program.getName().startsWith("blastp"))
+    {
+      if(blastpMenuOptions == null)
+      {
+        blastpMenuOptions = new JMenu("Set " + program.getName() + " options");
+        add(blastpMenuOptions);
+      }
+      new_options_menu = new JMenuItem(program.getProgramOptions());
+      blastpMenuOptions.add(new_options_menu);
+    }
+    else
+    {
+      new_options_menu = new JMenuItem("Set " + program.getName() + " options");
+      add(new_options_menu);
+    }
 
     new_options_menu.addActionListener(new ActionListener() 
     {
@@ -219,8 +276,6 @@ public class RunMenu extends SelectionMenu
         new ExternalProgramOptions(program);
       }
     });
-
-    add(new_options_menu);
   }
 
   /**
