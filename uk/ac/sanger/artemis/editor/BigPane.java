@@ -122,7 +122,6 @@ public class BigPane extends JFrame
     evidence.setVisible(true);
     desktop.add(evidence);   
 
-
     final JMenuBar menuBar = createMenuBar(desktop);
     setJMenuBar(menuBar);
 

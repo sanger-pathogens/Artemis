@@ -115,6 +115,8 @@ public class DataViewInternalFrame extends JInternalFrame
 
       final Dimension d = new Dimension((int)dbviewScroll.getPreferredSize().getWidth(), 
                                        hgt/3);
+
+      final Box yBox = Box.createVerticalBox();
       final Box xBox = Box.createHorizontalBox();
       final MouseOverButton hide = new MouseOverButton("X");
       hide.setForeground(Color.blue);
@@ -159,9 +161,13 @@ public class DataViewInternalFrame extends JInternalFrame
       xBox.add(tabLabel);
       xBox.add(Box.createHorizontalGlue());
 
+      yBox.add(xBox);
+      yBox.add(dbview.getRuler());
+
       dbviewScroll.setPreferredSize(d);
-      dbviewScroll.setColumnHeaderView(xBox);
+      dbviewScroll.setColumnHeaderView(yBox);
       fastaPane.addFastaListener(dbview);
+
       evidenceBox.add(bacross);
     
       // add data pane
