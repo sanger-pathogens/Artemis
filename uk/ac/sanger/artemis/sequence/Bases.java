@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.3 2004-12-22 13:28:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.4 2004-12-22 17:44:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -45,7 +45,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.3 2004-12-22 13:28:31 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.4 2004-12-22 17:44:53 tjc Exp $ */
 
 public class Bases {
   /**
@@ -512,7 +512,7 @@ public class Bases {
 
     final String sequence_string =
       getSequence ().getSubSequence (1, getLength ());
-
+    final int sequence_string_length = sequence_string.length();
     final int range_start_index = real_range.getStart () - 1;
     final int range_end_index = real_range.getEnd () - 1;
 
@@ -521,7 +521,7 @@ public class Bases {
 
     if (direction == FORWARD) {
       for (int i = range_start_index ; i < range_end_index - 2 ; i += 3) {
-        if (i < 0 || i >= sequence_string.length () - 2) {
+        if (i < 0 || i >= sequence_string_length - 2) {
           continue;
         }
 
@@ -569,7 +569,7 @@ public class Bases {
     } else {
 
       for (int i = range_end_index ; i > range_start_index + 2 ; i -= 3) {
-        if (i < 2 || i >= sequence_string.length ()) {
+        if (i < 2 || i >= sequence_string_length) {
           continue;
         }
 
@@ -606,11 +606,11 @@ public class Bases {
           if (is_stop_codon) {
             // return the complemented base position
             return_positions[current_return_array_index] =
-              sequence_string.length () - i;
+              sequence_string_length - i;
           } else {
             // return the complemented base position
             return_positions[current_return_array_index] =
-              -(sequence_string.length () - i);
+              - (sequence_string_length - i);
           }
           ++current_return_array_index;
         }
