@@ -1,0 +1,131 @@
+/* **************************************************************************
+ *    $Source: //tmp/pathsoft/artemis/corba/seqdb.idl,v $
+ *    $Revision: 1.1 $
+ *    $Date: 2004-06-09 12:06:36 $
+ *    $Author: tjc $ 
+ * **************************************************************************/
+
+#ifndef embl_ebi_seqdb_idl
+#define embl_ebi_seqdb_idl
+ 
+#include "types.idl"
+/**
+ * seqdb contains the (abstract) definition
+ * of common attributes of biosequences
+ */
+    module seqdb {
+
+      
+      /** 
+       * generic biosequence. Provides al functionality we would like to see 
+       * on any sequence.
+       */
+      interface BioSeq {
+
+	/**
+	 * retrieve unique identifier
+	 */
+	string getBioSeqId();
+
+
+	
+	/**
+	 * length (nr of elements) of the biosequence
+	 */
+	unsigned long getLength();
+
+
+	/**
+	 * sequence of objects describing the elements in the biosequence
+	 * This is a generic description. Most subclasses
+	 * will define more convenient methods for accessing the biosequence.
+	 * @returns any containing an set of objects. The any should have 
+	 *          a typecode tk_array.
+	 */
+	any getAnySeq();
+
+
+
+	/**
+	 * Return current version of the BioSeq. returns 0 if versioning is not
+	 * implemented on the bioseq.
+	 */
+	unsigned long getBioSeqVersion();
+
+      };
+
+      /**
+       * generic Feature. Only has a key to identify it's type, an ID to 
+       * identify the instance and a version.
+       */
+      interface Feature {
+
+	/**
+	 * feature identifier.
+	 */
+	string getFeatureId();
+
+
+
+	/**
+	 * Feature types are defined by a key.
+	 */
+	string getKey();
+
+
+
+	/**
+	 * return current version of the feature. returns 0 if 
+	 * no versioning is implemented.
+	 */
+	unsigned long getFeatureVersion();
+
+      };
+      
+      /**
+       * Information associated with a sequence
+       */
+      interface SeqInfo {
+	/**
+	 * short (one line) description
+	 */
+	string getDescription()
+	  raises (type::NoResult);
+
+
+	/**
+	 * sequence of keywords, describing the characteristics of the sequence
+	 */
+	type::stringList getKeywords()
+	  raises (type::NoResult);
+
+
+	/**
+	 * sequence of comments, describing the characteristics of the sequence
+	 */
+	type::stringList getComments()
+	  raises (type::NoResult);
+
+
+	/**
+	 * cross references to other databases containing related or additional
+	 * information
+	 */
+	type::DbXrefList getDbXrefs()
+	  raises (type::NoResult);
+
+	/**
+	 * cross references to the EMBL publication database
+	 * information
+	 */
+	type::DbXrefList getReferences()
+	  raises (type::NoResult);
+
+      };
+
+    };
+
+
+
+
+#endif // embl_ebi_seqdb_idl 

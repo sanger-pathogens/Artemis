@@ -1,0 +1,560 @@
+/* **************************************************************************
+ *    $Source: //tmp/pathsoft/artemis/corba/nsdb.idl,v $
+ *    $Revision: 1.1 $
+ *    $Date: 2004-06-09 12:06:34 $
+ *    $Author: tjc $ 
+ * **************************************************************************/
+// Version 2.0
+#ifndef embl_ebi_nsdb_idl
+#define embl_ebi_nsdb_idl
+ 
+#include "types.idl"
+#include "seqdb.idl"
+
+
+    /**
+     * IDL interfaces for the 
+     * <A href="http://www.ebi.ac.uk/ebi_docs/embl_db/embl_db.html">
+     * EMBL Nucleotide Sequence Database</A>.
+     */
+    module nsdb {
+      // ====================
+      // Forward declarations
+      // ====================
+      interface NucSeq;
+      typedef sequence<NucSeq> NucSeqList;
+      interface NucFeature;
+      typedef sequence<NucFeature> NucFeatureList;
+      interface Location;
+      typedef sequence<Location> LocationList;
+      interface FeatureLocation;
+      typedef sequence<FeatureLocation> FeatureLocationList;
+      interface EntryInfo;
+      typedef sequence<EntryInfo> EntryInfoList;
+
+
+      /**
+       * If a sub-sequence is retrieved for which the location information is
+       * inexact, an InexactLocation is raised
+       */
+      exception InexactLocation { string reason;};
+
+      /**
+       * The EMBL database contains information, which is not really part of the
+       * sequence information. This information is stored in the EntryInfo.
+       */
+
+      interface EntryInfo {
+
+	/**
+	 * Retrieve entry indentifier. More information on the 
+	 * <A href="http://www.ebi.ac.uk/ebi_docs/embl_db/usrman/id_line.html">format</A> of
+	 * an entry name is available in the
+	 *  <A href="http://www.ebi.ac.uk/ebi_docs/embl_db/usrman/usrman.html">
+	 * EMBL User Manual</A>.
+	 */
+	string getEntryName();
+
+	/**
+	 * The entry version defines the current version of an EMBL Sequence Database
+	 * Entry. I.e. the complete set information related to a particular sequence.
+	 * The Entry version is incremented whenever anything changes in the sequence or it's 
+	 * associated information.
+	 */ 
+	unsigned long getEntryVersion();
+
+	
+	/**
+	 * Get entry status code.
+	 * @see meta::nsdb
+	 */
+	string getEntryStatus();
+
+
+	/**
+	 * Sequence of revisions when Entry was created/changed.
+	 */
+	type::RevisionList getRevisions();
+
+	/**
+	 * List of secondary accession numbers. I.e. accession numbers
+	 * of deprecated entries, now merged into the current entry or
+	 * split over multiple entries, as decribed in the 
+	 * <A href="http://www.ebi.ac.uk/ebi_docs/embl_db/usrman/ac_line.html">
+	 * AC line</A> documentation in the User manual.
+	 */
+	type::stringList getSecondaryIds();
+       
+        /**
+         * number of adenine
+         */
+        unsigned long getCountA();
+
+        /**
+         * number of cytosine
+         */
+        unsigned long getCountC();
+
+        /**
+         * number of guanine 
+         */
+        unsigned long getCountG();
+
+        /**
+         * number of thymine (in DNA sequence)
+         *    or
+         * number of uracil (in RNA sequence)
+         */
+        unsigned long getCountT();
+
+	
+      };
+
+      // =========================
+      // Location 
+      // =========================
+
+      
+      /**
+       * A location is built from one or more nodes forming a tree
+       * local node IDs are only unique within a location tree
+       * the root node has id == 0
+       * the Node id defines the position of the node in the sequence<LocationNode>
+       * The value is relative to the current (parent) node
+       * e.g if the current node is at position x in the LocationNodes sequence
+       *     and there is a childId with value j
+       *     then the position of this child in the LocationNodes sequence will be x+j
+       */
+      interface Location {
+
+      typedef sequence<unsigned long> IdList;
+      
+      /**
+       * valid types of Location Nodes in a Location
+       * are defined by LocNodeTypeCode. Currently values 1-4 are in use. 
+       * 6-10 are reserved for future use.
+       */
+      typedef long LocNodeTypeCode;
+      
+      /**
+       * The sequence segment is derived from another sequence
+       */
+      const long VirtualSegment_ltc = 1;
+
+      /**
+       * The sequence segment is explicitly given as a DNA string.
+       */
+      const long  PhysicalSegment_ltc = 2;
+
+      /**
+       * Sequence is unknown. Only it's (estimated) size in known.
+       */
+      const long  Gap_ltc = 3;
+
+      /**
+       * defines how to link a set of LocationNodes
+       */
+      const long  Operator_ltc = 4;
+      
+      
+
+      /**
+       * Virtual segment of a sequence.The sequence segment is derived from another sequence.
+       * <p><dl>
+       * <dt>bio_seq_id
+       * <dd>sequence from which this segment is derived
+       * <dd>contains an accession number
+       * <dt>start
+       * <dd>start position of segment (inclusive)
+       * <dt>end
+       * <dd>end position of segment (inclusive)
+       * <dd>In the case that start defines a 'between' position, end is unused
+       * <dt>complement
+       * <dd> true if segment should be complemented before any further manipulations
+       * </dl>
+       */
+      struct LocVirtualSegment {
+	string bio_seq_id;
+	type::Fuzzy start;
+	type::Fuzzy end;
+	boolean complement;
+      };
+      
+      /**
+       * spacer between sequence fragments
+       */
+      typedef type::Fuzzy LocGap;
+      
+      /**
+       * The sequence segment is explicitly given as a DNA string
+       * that should be inserted literally.
+       */
+      typedef string LocPhysicalSegment;
+      
+      /**
+       * Location operator. This is a node in the location tree that combines
+       * nodes lower down in the tree
+       * <dl>
+       * <dt> op
+       * <dd> operator defining what to do with the nodes
+       * <dd> <dl>
+       *      <dt> join
+       *       <dd> The indicated elements should be joined (placed end-to-end)
+       *            to form one contiguous sequence
+       *      <dt> order
+       *       <dd> The elements can be found in the specified order
+       *            (5' to 3' direction), but nothing is implied about the
+       *            reasonableness about joining them 
+       *      </dl>
+       * <dt> childIds
+       * <dd> identifiers of the child nodes
+       * <dd> Ids is an array of IDs relative to the current node
+       *      e.g if the current node is at position x in the LocationNodes sequence
+       *      and there is a childId with value j
+       *      then the position of this child in the LocationNodes sequence will be x+j
+       *</dl>
+       */
+      struct LocOperator {
+	string op;
+	IdList childIds;
+      };
+      
+      union LocationNode_u switch (LocNodeTypeCode) {
+      case VirtualSegment_ltc:   LocVirtualSegment  virtual;
+      case PhysicalSegment_ltc:   LocPhysicalSegment    physical;
+      case Gap_ltc:       LocGap      gap;
+      case Operator_ltc:  LocOperator operator;
+      };
+      
+      typedef sequence<LocationNode_u> LocationNodeList;
+
+	/**
+	 * retrieve 
+	 * <A href="http://www.ebi.ac.uk/ebi_docs/embl_db/ft/components.html#location">
+	 * string representation of location</A>
+	 */
+	string getLocationString();
+	
+
+	/**
+	 * retrieve tree representation of location
+	 */	     
+	LocationNodeList getNodes();
+
+
+	
+	/**
+	 * Create nucleotide sequence defined by location. This can imply getting
+	 * fragments from multiple sequences and concatenating.
+	 * If it is not possible to resolve the location into a single sequence
+	 * (e.g. when it contains a 'group' operator, or gap nodes)
+	 * each fragment will be returned as a seperate string. No assumption should be
+	 * made on the order, if multiple fragments are returned
+         * @raises InexactLocation if an exact sequence cannot be
+	 *   determined due to the location being inexact
+	 */ 
+	string getSeq()
+	  raises ( InexactLocation );
+
+      };
+      /**
+       * Location of a NucFeature
+       * This interface does not allow to change the nuc_feature
+       * If a location is assigned to a nucfeature, the inverse relation
+       * should be properly updated
+       * @see NucFeature.getLocation
+       */
+      interface FeatureLocation : Location {
+
+        /**
+         * nucfeature to which the location is associated
+         */
+        NucFeature getNucFeature();
+      };
+
+
+      // ============================
+      // Features
+      // ============================
+      /**
+       * Nucleotide Sequence Feature interface. Features are <I>owned</I> by a
+       * sequence and contain information about that (and maybe other) sequence.
+       * The relation between the feature and the sequence is defined by it's
+       * location.
+       * @see Location
+       */
+
+      interface NucFeature : seqdb::Feature {
+
+      /**
+       * Qualifier TypeCode definitions.
+       * Each Qualifier type has an assigned typecode. values 1-100
+       * are reserved to allow for future extension.
+       * <p>
+       * this is a stripped down version of the <B>featuremeta</B> IDL. Types which
+       * are typedefs of the same base-type in <B>featuremeta</B> are not
+       * distinguished here.
+       * @see featuremeta
+       */
+      typedef long QualifierTypeCode;
+      
+      // values 1-100 are reserved for EBI QualifierTypeCodes
+      const long   string_qtc = 1;
+      const long   boolean_qtc = 2;
+      const long   integer_qtc = 3;
+      const long   real_qtc = 4;
+      const long   TranslationException_qtc = 17;
+      const long   CodonTranslation_qtc = 18;
+      const long   Anticodon_qtc = 19;
+      const long   SpliceConsensus_qtc = 20;
+      const long   RepeatUnit_qtc = 21;
+      const long   DbXref_qtc = 22;
+
+      
+      union QualifierValue_u switch (QualifierTypeCode) {
+	
+	// EBI typecodes
+      case boolean_qtc       	: boolean 		applicable;
+      case string_qtc		: string 		text;
+      case integer_qtc          : long                  integer;
+      case real_qtc             : float                 real;
+      case TranslationException_qtc : type::TranslationException translation_exception;
+      case CodonTranslation_qtc : type::CodonTranslation 	codon_translation;
+      case Anticodon_qtc	: type::AntiCodon 		anti_codon;
+      case SpliceConsensus_qtc	: type::SpliceConsensus 	splice_consensus;
+      case RepeatUnit_qtc       : type::RepeatUnit		repeat_unit;
+      case DbXref_qtc		: type::DbXref                  db_xref;
+	
+	// add your own extension types below
+#ifdef ANALYSIS	
+	// analysis qualifier extension
+	// see analysis.idl
+	 case ANALYSIS::Analysis_qtc       : ANALYSIS::Scores               score;
+#endif
+      };
+      
+      
+      typedef sequence<QualifierValue_u> QualifierValueList;
+      
+      /**
+       * Qualifier.<p>
+       * <dl>
+       * <dt> name
+       * <dd> name of the qualifier
+       * <dt> values
+       * <dd> sequence of QualifierValues. All QualifierValues associated with
+       *      a single Qualifier are of the same type
+       * </dl>
+       */
+      struct Qualifier {
+	string name;
+	QualifierValueList values;
+      };
+      
+      typedef sequence<Qualifier> QualifierList;
+
+	/**
+	 * Retrieve sequence of qualifiers.
+	 * @raises type::NoResult if no qualifiers are associated with
+	 *    the feature.
+	 */
+	QualifierList getQualifiers()
+	  raises (type::NoResult);
+
+
+
+	/**
+	 * retrieve qualifier of a certain type.
+	 * To find out which qualifier/feature combinations are valid, a client should
+	 * query the NucFeatureMeta server.
+	 * @raises type::NoResult if no qualifier of this type is associated with
+	 *   the feature
+	 * @raises type::InvalidRelation if the requested qualifier cannot be
+	 *   associated to the current feature type
+	 * @see metafeature::NucFeatureMeta
+	 */
+	Qualifier getQualifier(in string qualifier_name)
+	  raises (type::NoResult, type::InvalidRelation);
+	
+	
+	/**
+	 * If the location of the feature references multiple sequences, get a 
+	 * sequence of all sequences referenced
+	 * This method is equivalent to retrieving the feature location, and looping
+	 *  through all location nodes to find the referenced sequences, converting 
+	 * the accession numbers into DbXref's.
+	 */
+	type::DbXrefList getNucSeqs();
+	
+	/**
+	 * retrieve location of feature.
+	 * @raises type::NoResult if no location is associated with the feature.
+	 */
+
+	FeatureLocation getLocation()
+	  raises (type::NoResult);
+	
+
+      };
+
+      /**
+       * Generic Nucleotide sequence interface.
+       * The accession number is retrieved using the getBioSeqId method inherited from BioSeq.
+       * @see EmblSeq
+       * @see seqdb::BioSeq
+       */
+
+      interface NucSeq : seqdb::BioSeq {
+
+
+	/**
+	 * retrieve string representation of nucleotide sequence. Each character
+	 * in the string is a 
+	 *   <href="http://www.ebi.ac.uk/ebi_docs/embl_db/ft/iupac_codes.html">
+	 *   IUPAC nucleotide base code</A>
+	 * <P>
+	 * This method can be used instead of the getAnySeq() 
+	 * method in seqdb::BioSeq
+	 * @see seqdb::BioSeq
+	 */
+	string getSeq();
+
+
+	/**
+	 * Checksum on sequence to allow validation.
+	 * 
+	 */
+	 unsigned long getCheckSum();
+
+	/**
+	 * topology of the nucleotide sequence
+	 * @see meta::nsdb
+	 */
+	string getTopology();
+
+
+	/**
+	 * molecule type of the nucleotide sequence
+	 * @see meta::nsdb
+	 */
+	string getMoleculeType();
+
+
+	/**
+	 * retrieve sequence of NucFeatureList associated with
+	 * the nucleotide sequence.
+	 * A sequence has <I>ownership</I> of all these 
+	 * features. It is possible on the other hand that
+	 * features, owned by another sequence, reference 
+	 * the current sequence. Currently there is no way to find out.
+	 * @raises type::NoResult if no features are owned by the sequence
+	 */
+	NucFeatureList getNucFeatures()
+	  raises (type::NoResult);
+
+	
+	/**
+	 * A location of a NucFeature can span multiple sequences.
+	 * If only the location of a feature relevant to the current
+	 * sequence is required, this method will calculate that.
+	 * @parm nuc_feature Feature from which location needs to be
+	 *   intersected with the current sequence.
+	 * @raises type::InvalidRelation if the nuc_feature 
+	 *   is not associated to the current sequence
+	 */
+	Location getLocalLocation(in NucFeature nuc_feature)
+	  raises (type::InvalidRelation);
+	
+	/**
+	 * organism(s) from which the NucSeq was obtained.
+	 * If the sequence is chimeric, multiple organisms will be returned.
+	 * For each organism, there should be a source feature associated
+	 * with the current sequence. This source feature has a location
+	 * defining which part of the sequence was derived from the specified
+	 * organism.
+	 * This method provides a shortcut to:
+	 * invoke getNucFeaturesByKey("source"), invoke getQualifiers() on each 
+	 * source feature and loop through qualifiers to find DbXref. 
+	 * @raises type::NoResult if no source features are associated with
+	 * the sequence (should never happen).
+	 */
+	type::DbXrefList getOrganisms()
+	  raises (type::NoResult);
+	
+	/**
+	 * retreive all features of a specific kind (FeatureKey)
+	 * @parm key Type of features to be retrieved
+	 * @raises type::NoResult if the sequence has no associated features
+	 *     of the requested type.
+	 * @raises type::InvalidArgumentValue if the key is not a 
+	 * <A href="http://www.ebi.ac.uk/ebi_docs/embl_db/ft/feature_table.html">
+	 * valid feature key</A>
+	 * @see NucFeature
+	 */
+	NucFeatureList getNucFeaturesByKey(in string key)
+	  raises (type::NoResult, type::InvalidArgumentValue);
+	
+	/**
+	 * Create nucleotide sequence of the segment specified
+	 * The first base in the sequence is numbered 1
+	 *
+	 * @parm start first base of sub-sequence (inclusive)
+	 * @parm end last base of sub-sequence (inclusive)
+	 * @raises type::IndexOutOfRange if start &lt 1
+	 *   or end &gt length
+	 */
+	 string getSubSeq(in unsigned long start, in unsigned long end) 
+	   raises (type::IndexOutOfRange);
+
+	 /** 
+	  * Create nucleotide sequence of the location derived from the specified feature
+	  * and contained in the current NucSeq.
+	  * @raises type::InvalidRelation if the nuc_feature 
+	  *   is not associated to the current sequence
+          * @raises InexactLocation if an exact sequence cannot be
+	  *   determined due to the feature's location being inexact
+	  */
+	 string getSubSeqByFeature(in NucFeature feature)
+	   raises (type::InvalidRelation, InexactLocation);
+         /**
+           * @raises type::InvalidRelation if reference does not exist
+           * @raises type::InvalidRelation if reference is not 
+           *   associated to the current sequence
+           * @raises type::NoResult if there is no location associated with this reference
+           */ 
+          Location getReferenceLocation(in string reference_id)
+            raises (type::InvalidRelation, type::NoResult);
+      };
+
+      /**
+       * EMBL Nucleotide sequence interface. An EMBL sequence contains all information
+       * to generate a flat-file entry out of it.
+       * It defines no new behaviour but inherits from 
+       * several interfaces and acts as a container of the combined functionality.
+       */
+
+      interface EmblSeq : NucSeq, seqdb::SeqInfo , EntryInfo {
+      };
+
+
+/**
+ * Entry point for Nucleotide Sequence Database.
+ * Query methods on the database are defined here.
+ * Currently this is minimal, but should be extended later on.
+ */
+interface Embl {
+
+exception Superceded { type::stringList bio_seq_ids; };
+
+  /**
+   * retrieve Nucleotide sequence, given it's accession number. If a client only supports
+   * NucSeq, and not EmblSeq, than it can widen the EmblSeq to a NucSeq (implicit).
+   * @raises type::NoResult if the accession number does not exist.
+   * @raises Superceded if the sequence referenced by the accession
+   *   number does not exist any more, because it was merged, or split.
+   */
+  EmblSeq getEmblSeq(in string bio_seq_id)
+    raises (type::NoResult, Superceded);
+};
+};
+#endif // embl_ebi_nsdb_idl

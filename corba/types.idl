@@ -1,0 +1,334 @@
+/* **************************************************************************
+ *    $Source: //tmp/pathsoft/artemis/corba/types.idl,v $
+ *    $Revision: 1.1 $
+ *    $Date: 2004-06-09 12:06:37 $
+ *    $Author: tjc $ 
+ * **************************************************************************/
+#ifndef embl_ebi_types_idl
+#define embl_ebi_types_idl
+/**
+ * The type module contains types (typedefs and structs) that are shared 
+ * between several modules of the EMBL::EBI suite.
+ * It should be included within the module EMBL::EBI.
+ */
+module type {
+  /**
+   * sequence of strings.
+   */
+  typedef sequence<string> stringList;
+
+  typedef sequence<long> longList;
+ 
+  typedef sequence<unsigned long> ulongList;
+  
+  /**
+   * If a query in a database returns no results, the NoResult is raised
+   */
+  exception NoResult {};
+
+  /**
+   * If no write permission is granted (i.e. a set-method cannot be performed)
+   * the NoWritePermission is raised
+   */
+  exception NoWritePermission { string reason;};
+  
+  /**
+   * If an object reference given as an input parameter is invalid, in the
+   * context of the current interface, an InvalidRelation is raised
+   */
+  exception InvalidRelation { string reason;};
+
+  /**
+   * If a number indicating a position in a sequence is
+   * outside the limits of the sequence, or more elements are associated to
+   * an object than it can handle, 
+   * an IndexOutOfRange exception is raised
+   */
+  exception IndexOutOfRange { string reason; };
+
+/**
+   * controlled values (i.e. an attribute can only contain a value taken
+   * from a well defined range of values, or an in parameter to a method has a
+   * restricted set of acceptable values) are presented as typescodes, used in
+   * as union. If a method tries to set a controlled value
+   * attribute/parameter to an invalid value, an invalidValue  is raised
+   */
+  exception InvalidArgumentValue { string reason; };
+
+
+  /**
+   * a sequence (e.g. string) with an expected defined format cannot be parsed
+   */
+  exception ParseError { string reason; };
+
+  /**
+   * Date is a struct to describe a date, independent of any report format
+   * <dl>
+   * <dt>day
+   * <dd>day of month as a number between 1-31 (inclusive)
+   * <dt>month
+   * <dd> month of the year as a number between 1-12 (inclusive)
+   * <dt>year
+   * <dd>year as a 4 digit number
+   * </dl>
+   */
+  struct Date {
+    unsigned short day;
+    unsigned short month;
+    unsigned short year;
+  };
+  
+  typedef sequence<Date> DateList;
+  
+
+  /**
+   * A person information : this is used to specify the authors
+   * <p><dl>
+   * <dt>surname
+   * <dd>the person surname
+   * <dt>firstname
+   * <dd>the person firstname
+   * <dt>midinitial
+   * <dd>the person mid initial
+   * <dl><p>
+   */
+  struct Person {
+    string surname;
+    string firstname;
+    string midinitial;
+  };
+  typedef sequence<Person> PersonList;
+
+   /**
+    * Revision
+    * <dl>
+    * <dt>date
+    * <dd>datestamp of revision
+    * <dt>type
+    * <dd>type of revision. Valid types are defined in meta
+    * </dl>
+    */
+   struct Revision {
+     Date date;
+     string type;
+   };
+
+   typedef sequence<Revision> RevisionList;
+
+  /**
+   * Database cross-reference. The list of valid database identifiers
+   * used by the collaboration is defined at the 
+   * <A href="http://www.ncbi.nlm.nih.gov/collab/db_xref.html">NCBI
+      collaborative web server</A> 
+   * <dl>
+   * <dt>db
+   * <dd>database identifier
+   * <dt>primary_id
+   * <dd>object identifier in the database
+   * <dt>version
+   * <dd> if the referenced database supports versioning, version
+   *      refers to the version of the object, when the cross-reference 
+   *      was generated. If can be used to verify that a cross-reference
+   *      is up to date.
+   * <dt>label
+   * <dd>secondary identifier, possibly used to indicate a sub/super-part of
+   *     the primary object or an alternative name to the primary id. 
+   *     The label can contain information for the convenience
+   *     of the user, but no assumptions should be made on the long-term 
+   *     stability of it.
+   * </dl>
+   */
+  struct DbXref {
+    string db;
+    string primary_id;
+    unsigned long version;
+    string label;
+  };
+
+  typedef sequence<DbXref> DbXrefList;
+
+  /**
+   * Amino Acid. This can be any amino acid, including modified or unusual ones.
+   * <P>
+   * <dl>
+   * <dt> code
+   * <dd> <A href="http://www.ebi.ac.uk/ebi_docs/embl_db/ft/aa_abbrevs.html">
+   *     IUPAC-IUB</A> one-letter code if the amino acid has one assigned
+   * <dd> othwerwise the code will be a blank character
+   * <dt> name
+   * <dd> descriptive name of the
+   *     <A href="http://www.ebi.ac.uk/ebi_docs/embl_db/ft/aa_abbrevs.html">
+   *      Amino Acid</A> or 
+   *      <A href="http://www.ebi.ac.uk/ebi_docs/embl_db/ft/modified_aa.html">
+   *      modified or unusual Amino Acid</A>
+   * <dt> abbreviation
+   * <dd> abbreviated name of the
+   *     <A href="http://www.ebi.ac.uk/ebi_docs/embl_db/ft/aa_abbrevs.html">
+   *      Amino Acid</A> or 
+   *      <A href="http://www.ebi.ac.uk/ebi_docs/embl_db/ft/modified_aa.html">
+   *      modified or unusual Amino Acid</A>
+   *</dl>
+   */
+  struct  AminoAcid {
+    char code;
+    string name;
+    string abbreviation;
+  };
+  typedef sequence<AminoAcid> AminoAcidList;
+
+  /**
+   * Translation rule specifying the amino acid encoded by a codon.
+   * Standard rules are defined by the genetic code of an organism.
+   * If a CDS uses non-standard rules, this can be annotated with
+   * qualifier codon (value type CodonTranslation_s). 
+   * <p>
+   * <dt> codon
+       * <dd> literal sequence of the codon.
+       * <dt> amino_acid
+       * <dd> amino acid used.
+       * <dd> No modified AA are allowed.
+       */
+  struct CodonTranslation {
+    string		codon;
+    AminoAcid	amino_acid;
+  };
+  typedef sequence<CodonTranslation> CodonTranslationList;
+
+  /**
+   * Location of the anticodon of tRNA and the amino acid for which
+   * it codes.
+   * <p>
+   * <dl>
+   * <dt> start
+   * <dd> start position of the anticodon
+   * <dt> end
+   * <dd> end position of the anticodon
+   * <dt> amino_acid
+   * <dd> amino acid used. 
+   * <dd> No modified AA are allowed.
+   * </dl>
+   */
+  struct AntiCodon {
+    long		start;
+    long		end;
+    AminoAcid	amino_acid;
+  };
+  typedef sequence<AntiCodon>  AntiCodonList; 
+
+
+  /**
+   * Translation exception of a single triplet within a sequence.
+   * <p>
+   * <dl>
+   * <dt> primary_acc
+   * <dd> This attribute is likely to change in the future. It is very rarely
+   *      used, but it is needed for translation exceptions on CDS's 
+   *     spanning entries    
+   * <dt> start
+   * <dd> startposition of exception in the sequence.
+   * <dt> end
+   * <dd> endposition of exception in the sequence
+   * <dt> amino_acid
+   * <dd> amino acid used in this exception.
+   * <dd> No modified AA are allowed. 
+   *</dl>
+   */
+  struct TranslationException {
+    string		primary_acc;
+    long		start;
+    long		end;
+    AminoAcid	amino_acid;
+  };
+  typedef sequence<TranslationException> TranslationExceptionList;
+
+  /**
+   * flag to indicate that the splice site consensus sequence is not
+   * present at one of the feature's splice junctions
+   * If no qualifier is present, the default is that both splice sites 
+   * contain the consensus
+   */
+  struct SpliceConsensus {
+    boolean	five_cons;
+    boolean	three_cons;
+  };
+  typedef sequence<SpliceConsensus> SpliceConsensusList;
+
+
+  /**
+   * A RepeatUnit identifies the exact unit that is being repeated. It can be
+   * either a base range, or can refer to the label of a labeled repeat_unit
+   * feature (but not both; this datatype is likely to be superceded by a
+   * union). 
+   * <dt> start
+   * <dd> position of first base in the first occurrence of the repeated segment
+   * <dt> end
+   * <dd> position of the last base in first occurence of the repeated segment
+   * <dt> label
+   * <dd> Currently, usually a textual description of the repeating segment,
+   *      but can refer to a labeled repeat_unit feature. 
+   * This attribute may in future become a proper DbXref to a feature; 
+   */
+  struct RepeatUnit {
+    long	start;
+    long	end;
+    string	label;
+  };
+  typedef sequence<RepeatUnit> RepeatUnitList;
+
+  /**
+   * a position can be fuzzy. FuzzyType
+   * defines how to interprete the combination of value and size, to define
+   * the range of fuzziness.
+   * Currently values 1-5 are in use. 
+   * 5-10 are reserved for future use.
+   */
+  typedef long FuzzyTypeCode;
+      
+
+  /**
+   * value is an exact position
+   */
+  const long Exact_ftc = 1;
+  
+  /**
+   *A single base chosen from a range or span of bases is indicated
+   *  by the first base number (value) and the last base number of the range
+   * (value+size) inclusive.
+   */
+  const long In_ftc = 2;
+      
+  /**
+   * A site between two points (nucleotides), such as an endonucleolytic
+   * cleavage site. The site is a single position between 2 consecutive bases
+   * in the range. The range is defined by value, value+size (inclusive)
+   */
+  const long Between_ftc = 3;
+
+
+  /**
+   * an end point is undefined but behind (and does not include) the
+   * base number specified in value.
+   * size is unused.
+   */
+  const long Less_ftc = 4;
+
+
+  /**
+   * an end point is undefined but before (and does not include) the
+   * base number specified in value.
+   * size is unused.
+   */
+  const long Greater_ftc = 5;
+  
+  struct Fuzzy {
+    long value;
+    long size;
+    FuzzyTypeCode type;
+  };
+  typedef sequence<Fuzzy> FuzzyList;
+
+};
+
+#endif
+
+

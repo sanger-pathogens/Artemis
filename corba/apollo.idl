@@ -1,0 +1,206 @@
+// Apollo transport layer
+// all syntax subject to change
+// typedef sequence <Xxx> XxxList assumed
+// maybe some of the paramsets should be
+// more strongly typed
+//
+//  Ewan Birney and Chris Mungall. Apollo list apollo@ebi.ac.uk
+//
+
+module Apollo {
+
+  exception NotSupported { string reason; }; // more exceptions to come
+  exception ProcessError { string reason; };
+  exception OutOfRange  { string reason; };
+  exception NeedsUpdate { string reason;};
+
+  struct Param {
+    string name;
+    string value;
+  };
+  typedef sequence <Param> ParamList;
+
+  // use a enum for unit (%, ratio, etc)?
+  struct Score {
+    string type;
+    string value;
+    // EB - lets also have this as a number. Clients have to figure out by the
+    // type.
+    double double_value;
+  };
+  typedef sequence <Score> ScoreList;
+
+  // we should abstract out identifier aspects into
+  // a seperate struct - that way we can attach this to
+  // any kind of object
+  struct Identifier {
+    string name;          //main display label
+    string description;   //detailed desc
+    sequence <string> synonyms;
+    // DbXrefList dbxrefs;
+  };
+  typedef sequence <Identifier> IdentifierList;
+
+
+  enum StrandType { plus, minus};
+  // a range can be attached to any seq-featurey object
+  struct Range {
+    long range_min;
+    long range_max;
+    StrandType strand;
+  };
+
+
+  struct ResultSpan {
+    string result_id;
+    ScoreList scores;
+    Range range1;
+    Range range2;
+  };
+  typedef sequence<ResultSpan> ResultSpanList;
+
+
+  // any kind of analysis result  or alignment
+  // (genscan-gene, genscan-exon, sim4exonset, sim4exon, blasthit,
+  //  blast-hsp, etc)
+  struct ResultSet {
+    string result_id;
+    ScoreList scores;
+    string type;
+    ResultSpanList ResultSpans;  // eg hsps for a blast hit
+    Range range1;              // eg query start/end
+    Range range2;              // eg subject start/end
+  };
+  typedef sequence <ResultSet> ResultSetList;
+
+
+
+  // Evidence is one of the Result lists
+  typedef  string Evidence;
+
+  typedef sequence <Evidence> EvidenceList;
+
+  // collection of analysis results
+  struct Analysis {
+    // eg Blast, Pfam
+    string program;
+    ParamList parameters;
+    ResultList results;
+  };
+  typedef sequence <Analysis> AnalysisList;
+
+  // Annotation Comments etc
+
+
+  struct Person {
+    string readable_name;
+    string person_id;
+  }
+
+  typedef long TimeStamp;
+
+
+  struct Comment {
+    string comment_id;
+    string text;
+    Person person;
+    TimeStamp time;
+  };
+  typedef sequence<Comment> CommentList;
+
+
+
+  // Design decision: most of these inherit from a notional seqfeature
+  // superclass - do we (1) merge them into a single struct, with
+  // the seqfeature struct having 'type' and contained-seqfeatures
+  // or (2) have distinct structs and delegate out the commonalities.
+  // i chose the latter, with all the strcuts having a Range attribute
+
+
+  // to fetch the sequence for a gene, it has to be spliced
+  // from the exons
+  struct Exon  {
+    Identifier ident;
+    Range range;
+    EvidenceList evidence_list;
+  };
+
+  typedef sequence <Exon> ExonList;
+
+  struct Transcript {
+    Identifier ident;
+    ExonList exons;
+    Range cds_Range;  // start/end of translation
+    // note we don't need range including UTR, its implicit from exons
+    EvidenceList evidence_list;
+    CommentList comments;
+  };
+  typedef sequence <Transcript> TranscriptList;
+
+  enum GeneType { PROTEIN_CODING_GENE, TRNA_GENE, TRANSPOSON_GENE };
+
+  // Where does silly text annotation go?
+  struct AnnotatedGene  {
+    GeneType type;
+    Identifier ident;
+    TranscriptList transcripts;
+    CommentList comments;
+  };
+  typedef sequence <AnnotatedGene> AnnotatedGeneList;
+
+  struct GenericAnnotation {
+    Identifier ident;
+    string type;
+    ParamList qualifiers;
+    CommentList comments;
+    Range range;
+    EvidenceList evidence_list;
+  };
+
+  typedef sequence <GenericAnnotation> GenericAnnotationList;
+
+
+
+  // collection of annotations and analyses on
+  // a particular piece of sequence
+  // (could be a clone, a contig , a scaffold (order&oriented contigs), an
+  //  arbitrary slice of a scaffold, a chromosome, etc)
+  interface AnnotatedRegion {
+    // bind sequence here
+    string sequence_as_string();
+    string sequence_region_as_string(in long start,in long end)
+      raises ( OutOfRange );
+
+    // gets
+    AnalysisList  get_analysis_list() raises ( ProcessError ) ;
+    AnnotatedGeneList  get_gene_list() raises (ProcessError);
+    GenericAnnotation  get_generic_annotation() raises (ProcessError);
+
+
+    // sets
+    void save_AnnotatedGenes(in AnnotatedGeneList new,
+                             in AnnotatedGeneList updated,
+                             in AnnotatedGeneList dead)
+      raises (NeedsUpdate, ProcessError,OutOfRange);
+
+    void save_GenericAnnotation(in GenericAnnotationList new,
+                                in GenericAnnotationList updated,
+                                in GenericAnnotationList dead)
+      raises (NeedsUpdate, ProcessError, OutOfRange );
+  };
+
+  // session [or persistence handle]
+  interface Session {
+    void connect(in ParamList param_set);
+    AnnotatedRegion get_AnnotatedRegion(in string id);
+  };
+
+  // singleton;
+  interface SessionManager {
+    Session initiate_Session(in ParamList param_set);
+    Session retrieve_Session(in ParamList param_set)
+      raises (NotSupported);
+  };
+
+
+};

@@ -1,0 +1,53 @@
+
+module Ensembl {
+  module artemis {
+
+    exception RequestedSequenceTooLong { };
+    exception NoEntry { string reason; };
+
+    interface BioSequence {
+      string getSubSequence(in long start,in long end) raises (RequestedSequenceTooLong);
+      long length();
+      long max_sequence_request();
+    };
+    
+    struct Qualifier {
+	string name;
+	sequence<string> values;
+    };
+
+    typedef sequence <Qualifier> QualifierList;
+
+    interface Feature {
+	string getKey();
+	string getLocation();
+	QualifierList getQualifiers();
+    };
+
+    typedef sequence <Feature> FeatureList;
+
+    interface Entry {
+	string getName(); // accession number usually.
+	long getFeatureCount(); 
+	FeatureList getAllFeatures();
+	BioSequence getSequence();
+    };
+
+    typedef sequence<string> QualifierDefinitionList;
+    struct FeatureDefinition {
+      string key;
+      QualifierDefinitionList qualifiers;
+    };
+    typedef sequence<FeatureDefinition> FeatureDefinitionList;
+
+    typedef sequence<string> EntryNameList;
+
+    interface DB {
+      Entry getEntry(in string entryname) raises (NoEntry);
+      EntryNameList getallEntryNames();
+
+      // coordination of the ORB.
+      FeatureDefinitionList getFeatureDefinitionList();
+    };
+  };
+};

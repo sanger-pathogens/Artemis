@@ -1,0 +1,260 @@
+#ifndef EMBL_EBI_NSDB_WRITE_IDL
+#define EMBL_EBI_NSDB_WRITE_IDL
+
+#include "nsdb.idl"
+
+module nsdb {
+  exception OutOfDate { };
+
+  exception ReadOnlyException { };
+
+  exception LocationParse {
+    string reason;
+  };
+
+  exception QualifierParse {
+    string reason;
+  };
+
+  exception InvalidQualifier { };
+
+  interface EmblSeqWriter;
+  interface NucFeatureWriter;
+
+  typedef sequence<NucFeatureWriter> NucFeatureWriterList;
+      
+
+  // datestamp_t is seconds since the standard "the epoch", namely
+  // January 1, 1970, 00:00:00 GMT
+  typedef long datestamp_t;
+
+  struct Datestamp {
+    datestamp_t value;
+  };
+
+  struct EntryStats {
+    string name;
+    datestamp_t last_change_time;
+  };
+
+  struct ServerInfo {
+    // Information about the loaded entries
+    sequence <EntryStats> entry_stats_list;
+    // Information about the files in the server directory
+    sequence <EntryStats> file_stats_list;
+  };
+
+  interface EmblWriter : Embl {
+
+    /**
+     * Retrieve a writable Nucleotide sequence object, given a
+     * sequence_id.
+     * @raises type::NoResult if the given sequence_id does not exist.
+     */
+    EmblSeqWriter getEmblSeqWriter (in string sequence_id)
+      raises (type::NoResult);
+
+    /**
+     *  Return a ServerInfo structure for the server.
+     **/
+    ServerInfo getServerInfo ();
+  };
+
+  
+  exception InvalidKey { };
+
+
+  exception CommitFailed {
+    string reason;
+  };
+  
+  interface EmblSeqWriter : EmblSeq {
+
+    /**
+     * Create a new feature in this EmblSeq object.
+     * @parm key Type of the feature to be created
+     * @parm location_string The location of the new NucFeature
+     * @raises LocationParse If the location string is not a valid location.
+     * @raises type::IndexOutOfRange If any part of the location is beyond the
+     *   end of the sequence
+     * @raises InvalidKey if the given key is not a possible EMBL key.
+     */
+    NucFeatureWriter createNucFeature (in string key,
+                                       in string location)
+      raises (LocationParse, type::IndexOutOfRange, InvalidKey,
+              ReadOnlyException);
+
+    /**
+     * Remove the given feature.
+     */
+    void remove (in NucFeature nuc_feature)
+        raises (ReadOnlyException);
+
+    /**
+     * retrieve sequence of NucFeatureList associated with
+     * the nucleotide sequence that are within the given range of bases.
+     * @raises type::NoResult if no features are owned by the sequence
+     * @raises type::IndexOutOfRange if either of start_base or end_base is
+     *  less than 1 or greater than the length of the sequence.
+     */
+    NucFeatureList getNucFeaturesInRange (in long start_base, in long end_base)
+        raises (type::NoResult, type::IndexOutOfRange);
+
+    
+    /**
+     *  Return the number of features
+     */
+    long getNucFeatureCount ();
+    
+    /**
+     * Return the ith NucFeature from this Entry.  The feature are returned in
+     * a consistent order, sorted by the first base of each Feature.
+     * @raises type::IndexOutOfRange if the index is less than 0 or greater
+     *   than the number of features.
+     **/
+    NucFeature getFeatureAtIndex (in long i)
+        raises (type::IndexOutOfRange);
+
+    /**
+     * Return the index of the given Feature.  This does the reverse of
+     * getFeatureAtIndex ().  Returns -1 if the given NucFeature is not in
+     * this EmblSeq object.
+     **/
+    long indexOf (in NucFeature feature);
+
+    /**
+     *  commit any pending changes to the database immediately.
+     */
+    void commit ()
+        raises (CommitFailed);
+
+    /**
+     * Return a Datestamp that will be passed to the set methods on the
+     * EmblSeqWriter methods and NucFeatureWriter methods.  The object that is
+     * returned represents the time when the entry was last changed (the last
+     * time a feature was added, removed or changed location).
+     */
+    Datestamp getDatestamp ();
+  };
+
+
+  interface NucFeatureWriter : NucFeature {
+    /**
+     * Set the key, location and qualifiers of this NucFeature
+     * @parm key The new feature key
+     * @parm location The new feature location
+     * @raises InvalidKey if the given key is not a possible EMBL key.
+     * @raises LocationParse If the location string is not a valid location.
+     * @raises type::IndexOutOfRange If any part of the location is out
+     *   of range for the sequence.
+     * @raises type::InvalidRelation if one of the qualifiers in this
+     *   feature cannot be associated with the given feature key.
+     * @raises QualifierParse if the format of any the qualifiers is not
+     *   appropriate for a Qualifier with the given name.  For
+     *   example the value part of /codon_start qualifier must be a number: 1,
+     *   2 or 3.  Also thrown if a qualifier has value when it should not or
+     *   vice versa.
+     * @raises InvalidQualifier if the name of the Qualifier is not a
+     *   valid embl qualifier name.
+     * @raises ReadOnlyException If this Feature cannot be changed.
+     * @raises OutOfDate If the key has changed since the time given by
+     *   datestamp.
+     */
+    void set (in Datestamp datestamp,
+              in string key,
+              in string location,
+              in QualifierList qualifier_list)
+      raises (InvalidKey, LocationParse, type::IndexOutOfRange,
+              type::InvalidRelation, QualifierParse,
+              InvalidQualifier, OutOfDate, ReadOnlyException);
+
+    /**
+     * Set the key of this NucFeature
+     * @parm key The new feature key
+     * @raises InvalidKey if the given key is not a possible EMBL key.
+     * @raises type::InvalidRelation if one of the qualifiers in this
+     *   feature cannot be associated with the given feature key.
+     * @raises OutOfDate If the key has changed since the time given by
+     *   datestamp.
+     */
+    void setKey (in Datestamp datestamp,
+                 in string key)
+      raises (InvalidKey, type::InvalidRelation, OutOfDate, ReadOnlyException);
+
+    /**
+     * Set the location of this NucFeature
+     * @parm location The new feature location
+     * @raises LocationParse If the location string is not a valid location.
+     * @raises type::IndexOutOfRange If any part of the location is out
+     *   of range for the sequence.
+     * @raises OutOfDate If the location has changed since the time given by
+     *   datestamp.
+     */
+    void setLocation (in Datestamp datestamp,
+                      in string location)
+      raises (LocationParse, type::IndexOutOfRange, OutOfDate, ReadOnlyException);
+
+    /**
+     * Set the qualifiers of this feature, replacing the current qualifiers.
+     * @raises InvalidRelationException if this Feature cannot
+     *   contain one of the given qualifiers.
+     * @raises QualifierParse if the format of any the qualifiers is not
+     *   appropriate for a Qualifier with the given name.  For
+     *   example the value part of /codon_start qualifier must be a number: 1,
+     *   2 or 3.  Also thrown if a qualifier has value when it should not or
+     *   vice versa.
+     * @raises InvalidQualifier if the name of the Qualifier is not a
+     *   valid embl qualifier name.
+     * @raises OutOfDate if any of the qualifiers has changed since the time
+     *   given by datestamp.
+     */
+    void setQualifiers (in Datestamp datestamp,
+                        in QualifierList qualifier_list)
+      raises (type::InvalidRelation, QualifierParse, InvalidQualifier,
+              OutOfDate, ReadOnlyException);
+
+    /**
+     * Add the given Qualifier to this Feature.  If this Feature contains a
+     * Qualifier with the same name as the new Qualifier it will be replaced.
+     * @parm qualifier The new qualifier to add.
+     * @raises InvalidRelationException if this Feature cannot
+     *   contain the given Qualifier.
+     * @raises QualifierParse if the format of the qualifier is not
+     *   appropriate for a Qualifier with the given name.  For
+     *   example the value part of /codon_start qualifier must be a number: 1,
+     *   2 or 3.  Also thrown if a qualifier has value when it should not or
+     *   vice versa.
+     * @raises InvalidQualifier if the name of the Qualifier is not a
+     *   valid embl qualifier name.
+     * @raises OutOfDate if there is a an existing qualifier with the same
+     *   name as the argument qualifier and it has changed since the time
+     *   given by datestamp.
+     */
+    void setQualifier (in Datestamp datestamp,
+                       in Qualifier qualifier)
+      raises (type::InvalidRelation, QualifierParse, InvalidQualifier,
+              OutOfDate, ReadOnlyException);
+
+    /**
+     * Remove the Qualifier with the given name.  If there is no Qualifier
+     * with that name, then return immediately.
+     * @parm name The Qualifier name to look for.
+     * @raises OutOfDate if there is a an existing qualifier with the same
+     *   name as the argument name and it has changed since the time given by
+     *   the datestamp.
+     */
+    void removeQualiferByName (in Datestamp datestamp,
+                               in string name)
+      raises (type::InvalidRelation, OutOfDate, ReadOnlyException);
+
+    /**
+     * Return a Datestamp that will be passed to the set methods on the
+     * EmblSeqWriter methods and NucFeatureWriter methods.  The object that is
+     * returned represents the time when the feature was last changed (the
+     * last time the key, location or qualifiers changed).
+     */
+    Datestamp getDatestamp ();
+  };
+};
+
+#endif
