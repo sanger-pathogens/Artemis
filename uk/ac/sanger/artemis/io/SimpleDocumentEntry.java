@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.2 2004-11-24 11:55:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.3 2004-12-24 14:00:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.Vector;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.2 2004-11-24 11:55:52 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.3 2004-12-24 14:00:53 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -972,7 +972,9 @@ abstract public class SimpleDocumentEntry
    **/
   private FeatureTable findFeatureTable() 
   {
-    for(int i = 0 ; i < line_groups.size() ; ++i) 
+    final int line_groups_size = line_groups.size();
+
+    for(int i = 0; i < line_groups_size; ++i) 
     {
       final LineGroup current_line_group = line_groups.elementAt(i);
 
