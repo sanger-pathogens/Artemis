@@ -207,9 +207,9 @@ public class FileTree extends JTree implements DragGestureListener,
 
     if(source.getText().equals("Jemboss Alignment Editor"))
     {
-//    org.emboss.jemboss.editor.AlignJFrame ajFrame =
-//             new org.emboss.jemboss.editor.AlignJFrame(f);
-//    ajFrame.setVisible(true);
+      org.emboss.jemboss.editor.AlignJFrame ajFrame =
+               new org.emboss.jemboss.editor.AlignJFrame(f);
+      ajFrame.setVisible(true);
     }
     else if(source.getText().equals("Text Editor"))
       showFilePane(f.getAbsolutePath());
