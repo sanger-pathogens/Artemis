@@ -21,18 +21,16 @@ because it can have surprising results unless the user is expecting it.  See
   </SECT3>
   
   <SECT3 ID="LAUNCH-WINDOW-OPTIONS-EUK">
-    <TITLE>Eukaroytic Mode</TITLE>
+    <TITLE>Genetic Code Tables</TITLE>
     <PARA>
-If this toggle is on, &prog; will use the eukaroytic start codon (ATG).  If
-this toggle is off it will use the prokaryotic start codons (ATG, GTG and
-TTG).  This setting effects the display of start codons (see <XREF
+These options make all the 
+<ULINK
+http://www3.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi?mode=c
+NCBI Genetic Codes</ULINK> available. The default setting is the
+Standard Code. This setting effects the display of start codons (see <XREF
 LINKEND="VIEWS-POPUPMENU-TOGGLES-STARTCODONS">) and the "Suspicious Start
 Codons ..." feature filter (see <XREF
 LINKEND="VIEWMENU-FEATURE-FILTERS-SUSPSTART">).
-    </PARA>
-    <PARA>
-This can be set in the options file (see <XREF
-LINKEND="OPTIONS-ORGANISMTYPE">).
     </PARA>
   </SECT3>
   
