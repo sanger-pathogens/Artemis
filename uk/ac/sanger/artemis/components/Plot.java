@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.5 2004-11-25 13:10:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.6 2004-11-26 16:10:24 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.5 2004-11-25 13:10:12 tjc Exp $
+ *  @version $Id: Plot.java,v 1.6 2004-11-26 16:10:24 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -470,8 +470,8 @@ public abstract class Plot extends JPanel
 
     // Redraw the graph on the canvas using the algorithm from the
     // constructor.
-    drawMultiValueGraph(og);
-    drawLabels(og);
+    int numPlots = drawMultiValueGraph(og);
+    drawLabels(og,numPlots);
     g.drawImage(offscreen, 0, 0, null);
     og.dispose();
   }
@@ -618,7 +618,7 @@ public abstract class Plot extends JPanel
    *  Redraw the graph on the canvas using the algorithm.
    *  @param g The object to draw into.
    **/
-  protected abstract void drawMultiValueGraph(final Graphics g);
+  protected abstract int drawMultiValueGraph(final Graphics g);
 
   /**
    *  Draw a line representing the average of the algorithm over the feature.
@@ -673,14 +673,25 @@ public abstract class Plot extends JPanel
    *  window size in the bottom left.
    *  @param g The object to draw into.
    **/
-  private void drawLabels(final Graphics g) 
+  private void drawLabels(final Graphics g, final int numPlots) 
   {
     g.setColor(Color.black);
-    g.drawString(getAlgorithm().getAlgorithmName() +
-                  "  Window size: " +
-                  String.valueOf(window_changer.getValue()),
-                  2,
-                  font_height);
+
+    String desc = getAlgorithm().getAlgorithmName() + "  Window size: " +
+                  String.valueOf(window_changer.getValue());
+
+    g.drawString(desc, 2, font_height);
+
+    if(numPlots < 3)
+      return;
+
+    final FontMetrics fm = g.getFontMetrics();
+    int font_width = fm.stringWidth("2");
+
+    int width = getWidth() - window_changer.getWidth() - (15*font_width);
+    g.translate(width,0);
+    ((BaseAlgorithm)getAlgorithm()).drawLegend(g,font_height,font_width);
+    g.translate(-width,0);
   }
 
   /**

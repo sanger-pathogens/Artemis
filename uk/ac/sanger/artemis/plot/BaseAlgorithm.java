@@ -20,12 +20,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/BaseAlgorithm.java,v 1.1 2004-06-09 09:51:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/BaseAlgorithm.java,v 1.2 2004-11-26 16:10:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
 
 import uk.ac.sanger.artemis.sequence.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.FontMetrics;
+import java.awt.Color;
+import java.awt.BasicStroke;
 
 /**
  *  The BaseAlgorithm class is the base class for algorithms that work
@@ -33,10 +38,13 @@ import uk.ac.sanger.artemis.sequence.*;
  *  Strand of DNA, meaning the algorithm can't change strand part way along.
  *
  *  @author Kim Rutherford
- *  @version $Id: BaseAlgorithm.java,v 1.1 2004-06-09 09:51:16 tjc Exp $
+ *  @version $Id: BaseAlgorithm.java,v 1.2 2004-11-26 16:10:24 tjc Exp $
  **/
 
-public abstract class BaseAlgorithm extends Algorithm {
+public abstract class BaseAlgorithm extends Algorithm 
+{
+  private Strand strand;
+
   /**
    *  Create a new BaseAlgorithm object.
    *  @param strand The strand to do the calculation on.
@@ -46,9 +54,11 @@ public abstract class BaseAlgorithm extends Algorithm {
    *    internally.  See the Algorithm constructor for more details.
    **/
   public BaseAlgorithm (final Strand strand, final String algorithm_name,
-                        final String algorithm_short_name) {
+                        final String algorithm_short_name) 
+  {
     super (algorithm_name, algorithm_short_name);
-    this.bases = strand.getBases ();
+    this.bases = strand.getBases();
+    this.strand = strand;
 
     if (strand.isForwardStrand ()) {
       forward_flag = true;
@@ -91,6 +101,91 @@ public abstract class BaseAlgorithm extends Algorithm {
    **/
   public boolean isRevCompDisplay () {
     return rev_comp_display;
+  }
+
+
+  /**
+  *
+  *  Draw in a legend
+  *
+  */
+  public void drawLegend(Graphics g, int font_height,
+                         int font_width)
+  {
+    Graphics2D g2d = (Graphics2D)g;
+
+    FontMetrics fm = g2d.getFontMetrics();
+    int lineHgt    = 3 * font_height/4; 
+
+    if(strand.isForwardStrand())
+    {
+      g2d.setColor(Color.black);
+      g2d.drawString("1",0,font_height);
+      g2d.drawString("2",font_width*5,font_height);
+      g2d.drawString("3",font_width*10,font_height);
+
+      BasicStroke stroke = (BasicStroke)g2d.getStroke();
+      g2d.setStroke(new BasicStroke(3.f));
+      g2d.setColor(Color.red);
+      g2d.drawLine(font_width*2, lineHgt, font_width*4, lineHgt);
+     
+      g2d.setColor(Color.green);
+      g2d.drawLine(font_width*7, lineHgt, font_width*9, lineHgt);
+
+      g2d.setColor(Color.blue);
+      g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
+      g2d.setStroke(stroke);
+    }
+    else
+    {
+      int frame = strand.getSequenceLength() % 3;
+
+//    System.out.println("MOD "+frame);
+      g2d.setColor(Color.black);
+      g2d.drawString("5",0,font_height);
+      g2d.drawString("6",font_width*5,font_height);
+      g2d.drawString("7",font_width*10,font_height);
+
+      BasicStroke stroke = (BasicStroke)g2d.getStroke();
+      g2d.setStroke(new BasicStroke(3.f));
+
+      switch(frame)
+      {
+        case 0:
+          g2d.setColor(Color.green);
+          g2d.drawLine(font_width*2, lineHgt, font_width*4, lineHgt);
+ 
+          g2d.setColor(Color.blue);
+          g2d.drawLine(font_width*7, lineHgt, font_width*9, lineHgt);
+
+          g2d.setColor(Color.red);
+          g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
+          g2d.setStroke(stroke);
+          return;
+        case 1:
+          g2d.setColor(Color.red);
+          g2d.drawLine(font_width*2, lineHgt, font_width*4, lineHgt);
+
+          g2d.setColor(Color.green);
+          g2d.drawLine(font_width*7, lineHgt, font_width*9, lineHgt);
+
+          g2d.setColor(Color.blue);
+          g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
+          g2d.setStroke(stroke);
+          return;
+        case 2:
+          g2d.setColor(Color.blue);
+          g2d.drawLine(font_width*2, lineHgt, font_width*4, lineHgt);
+
+          g2d.setColor(Color.red);
+          g2d.drawLine(font_width*7, lineHgt, font_width*9, lineHgt);
+
+          g2d.setColor(Color.green);
+          g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
+          g2d.setStroke(stroke);
+          return;
+      } 
+    }
   }
 
   /**

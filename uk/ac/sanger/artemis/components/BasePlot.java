@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.3 2004-11-25 15:24:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.4 2004-11-26 16:10:24 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -39,7 +39,7 @@ import javax.swing.*;
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.3 2004-11-25 15:24:24 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.4 2004-11-26 16:10:24 tjc Exp $
  **/
 
 public class BasePlot extends Plot
@@ -382,7 +382,7 @@ public class BasePlot extends Plot
    *  end_base.  This method plots BaseWindowAlgorithm objects only.
    *  @param g The object to draw into.
    **/
-  public void drawMultiValueGraph(Graphics g) 
+  public int drawMultiValueGraph(Graphics g) 
   {
     if(recalculate_flag)
       recalculateValues();
@@ -391,7 +391,7 @@ public class BasePlot extends Plot
     {
       // there is nothing to draw - probably because the sequence is too short
       drawMinMax(g, 0, 1);
-      return;
+      return 0;
     }
 
     final int window_size = getWindowSize();
@@ -426,10 +426,6 @@ public class BasePlot extends Plot
           default:
             g.setColor (Color.black);
         }
-        if(rev_comp_display)
-          System.out.println("TRUE "+value_index+" 0 = R, 1 = G, 2 = B");
-        else
-          System.out.println("FALSE "+value_index+" 0 = R, 1 = G, 2 = B");
       }
 
       final int offset;
@@ -531,6 +527,8 @@ public class BasePlot extends Plot
         }
       }
     }
+
+    return get_values_return_count;
   }
 
   /**
