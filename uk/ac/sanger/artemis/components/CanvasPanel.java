@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/CanvasPanel.java,v 1.2 2004-10-01 15:49:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/CanvasPanel.java,v 1.3 2004-10-04 10:00:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -36,7 +36,7 @@ import javax.swing.*;
  *  have BorderLayout.  The JComponent is added at "Center".
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: CanvasPanel.java,v 1.2 2004-10-01 15:49:09 tjc Exp $
+ *  @version $Id: CanvasPanel.java,v 1.3 2004-10-04 10:00:34 tjc Exp $
  **/
 
 abstract public class CanvasPanel extends JPanel 
@@ -73,20 +73,6 @@ abstract public class CanvasPanel extends JPanel
   }
 
   /**
-   *  Returns the sub-JPanel that contains the JComponent.
-   **/
-//protected JPanel getMidPanel() 
-//{
-//  return this;
-//  return mid_panel;
-//}
-
-  /**
-   *  Called by canvas.paint() when
-   **/
-//abstract protected void paintCanvas(final Graphics graphics);
-
-  /**
    *  Set font_width and font_ascent from the default font.
    **/
   private void setFontInfo() 
@@ -98,24 +84,6 @@ abstract public class CanvasPanel extends JPanel
     font_ascent = fm.getAscent();
     font_max_ascent = fm.getMaxAscent();
     font_descent = fm.getDescent();
-  }
-
-  /**
-   *  Return the width of the canvas.
-   **/
-  public int getCanvasWidth() 
-  {
-    return getWidth();
-//  return getCanvas().getSize().width;
-  }
-
-  /**
-   *  Return the height of the canvas.
-   **/
-  public int getCanvasHeight() 
-  {
-    return getHeight();
-//  return getCanvas().getSize().height;
   }
 
   /**

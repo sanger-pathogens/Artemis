@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.5 2004-10-01 15:49:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.6 2004-10-04 10:00:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,7 +44,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.5 2004-10-01 15:49:09 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.6 2004-10-04 10:00:35 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -1585,7 +1585,7 @@ public class FeatureDisplay extends EntryGroupPanel
     final int scale_number_y_pos = scale_line * getLineHeight();
 
     final float bases_per_pixel =
-     (float)getMaxVisibleBases() / getCanvasWidth();
+     (float)getMaxVisibleBases() / getWidth();
 
     final int base_label_spacing;
 
@@ -3618,11 +3618,11 @@ public class FeatureDisplay extends EntryGroupPanel
     if(end_coord < -1) 
       end_coord = -1;
 
-    if(end_coord > getCanvasWidth()) 
-      end_coord = getCanvasWidth();
+    if(end_coord > getWidth()) 
+      end_coord = getWidth();
 
-    if(start_coord > getCanvasWidth()) 
-      start_coord = getCanvasWidth();
+    if(start_coord > getWidth()) 
+      start_coord = getWidth();
 
     final int frame_line = getFrameDisplayLine(frame_id);
 
@@ -4660,7 +4660,7 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   public int getMaxVisibleBases() 
   {
-    return(int)(getCanvasWidth() / getScaleValue());
+    return(int)(getWidth() / getScaleValue());
   }
 
   /**
@@ -4693,7 +4693,7 @@ public class FeatureDisplay extends EntryGroupPanel
   public void setFirstAndLastBase(final int first, final int last) 
   {
     left_edge_base = first;
-    setScaleValue(1.0F * getCanvasWidth() /(last - first + 1));
+    setScaleValue(1.0F * getWidth() /(last - first + 1));
   }
 
   /**

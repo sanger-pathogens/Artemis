@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionInfoDisplay.java,v 1.3 2004-10-01 15:49:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionInfoDisplay.java,v 1.4 2004-10-04 10:00:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -46,7 +46,7 @@ import javax.swing.*;
  *  This class displays information about the selection in a Label.
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectionInfoDisplay.java,v 1.3 2004-10-01 15:49:09 tjc Exp $
+ *  @version $Id: SelectionInfoDisplay.java,v 1.4 2004-10-04 10:00:35 tjc Exp $
  **/
 public class SelectionInfoDisplay extends CanvasPanel
     implements SelectionChangeListener {
@@ -210,7 +210,7 @@ public class SelectionInfoDisplay extends CanvasPanel
 
     g.setColor (new Color (230, 230, 230));
 
-    g.fillRect (0, 0, getCanvasWidth (), getCanvasHeight ());
+    g.fillRect (0, 0, getWidth (), getHeight ());
 
     g.setColor (Color.black);
 

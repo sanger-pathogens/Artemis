@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.7 2004-10-01 15:49:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.8 2004-10-04 10:00:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -35,6 +35,7 @@ import uk.ac.sanger.artemis.io.RangeVector;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Vector;
 
 import javax.swing.*;
 
@@ -43,7 +44,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.7 2004-10-01 15:49:09 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.8 2004-10-04 10:00:34 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -115,8 +116,7 @@ public class AlignmentViewer extends CanvasPanel
   /**
    *  The objects that are listening for AlignmentSelectionChangeEvents.
    **/
-  private java.util.Vector selection_change_listeners =
-    new java.util.Vector ();
+  private Vector selection_change_listeners = new Vector();
 
   /**
    *  The number of shades of red and blue to use for percentage ID colouring.
@@ -314,8 +314,7 @@ public class AlignmentViewer extends CanvasPanel
 
     selected_matches = null;
 
-    for(int range_index = 0 ;
-        range_index < select_ranges.size () ;
+    for(int range_index = 0; range_index < select_ranges.size();
         ++range_index) 
     {
 
@@ -363,7 +362,7 @@ public class AlignmentViewer extends CanvasPanel
           continue;
 
         if(selected_matches == null) 
-          selected_matches = new AlignMatchVector ();
+          selected_matches = new AlignMatchVector();
 
         if(!selected_matches.contains (this_match)) 
           selected_matches.add (this_match);
@@ -504,7 +503,7 @@ public class AlignmentViewer extends CanvasPanel
 
     popup.add(alignmatch_list_item);
 
-    alignmatch_list_item.addActionListener(new ActionListener () 
+    alignmatch_list_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed (ActionEvent _) 
       {
@@ -513,7 +512,7 @@ public class AlignmentViewer extends CanvasPanel
         else 
         {
           final AlignMatchVector matches =
-            (AlignMatchVector)selected_matches.clone ();
+            (AlignMatchVector)selected_matches.clone();
 
           final AlignMatchViewer viewer =
             new AlignMatchViewer(AlignmentViewer.this, matches);
@@ -879,17 +878,24 @@ public class AlignmentViewer extends CanvasPanel
     final int canvas_height = getSize().height;
     final int canvas_width  = getSize().width;
 
+    final int subject_length = getSubjectForwardStrand().getSequenceLength();
+    final int query_length   = getQueryForwardStrand().getSequenceLength();
+
+    final boolean subject_flipped = subjectIsRevComp();
+    final boolean query_flipped   = queryIsRevComp();
+
     for(int i = all_matches.length - 1; i >= 0 ; --i) 
     {
       final AlignMatch this_match = all_matches [i];
 
       final int [] match_x_positions =
-        getMatchCoords(canvas_width, this_match);
+        getMatchCoords(canvas_width, this_match, subject_length, query_length,
+                       subject_flipped, query_flipped);
 
       if(match_x_positions == null) 
         continue;
 
-      if(!isVisible (this_match)) 
+      if(!isVisible(this_match)) 
         continue;
 
       final int subject_start_x = match_x_positions[0];
@@ -1033,6 +1039,7 @@ public class AlignmentViewer extends CanvasPanel
   protected void paintComponent(final Graphics g) 
   {
     super.paintComponent(g);
+ 
     if(last_subject_event != null && last_query_event != null) 
     {
       drawAlignments(g);
@@ -1231,29 +1238,35 @@ public class AlignmentViewer extends CanvasPanel
   {
     final int canvas_height = getSize().height;
     final int canvas_width = getSize().width;
+    final int OFFSCREEN    = 3000;
 
-    for (int i = 0 ; i < all_matches.length ; ++i) 
+    final int subject_length = getSubjectForwardStrand().getSequenceLength();
+    final int query_length   = getQueryForwardStrand().getSequenceLength();
+
+    final boolean subject_flipped = subjectIsRevComp();
+    final boolean query_flipped   = queryIsRevComp();
+
+    for(int i = 0 ; i < all_matches.length ; ++i) 
     {
       final AlignMatch this_match = all_matches [i];
 
-      final int [] match_x_positions =
-        getMatchCoords (canvas_width, this_match);
+      final int[] match_x_positions =
+        getMatchCoords(canvas_width, this_match, subject_length, query_length,
+                       subject_flipped, query_flipped);
 
       if(match_x_positions == null) 
         continue;
 
-      if (!isVisible (this_match)) {
-        // not visible
+      if(!isVisible(this_match)) 
         continue;
-      }
 
       final int subject_start_x = match_x_positions[0];
-      final int subject_end_x = match_x_positions[1];
-      final int query_start_x = match_x_positions[2];
-      final int query_end_x = match_x_positions[3];
+      final int subject_end_x   = match_x_positions[1];
+      final int query_start_x   = match_x_positions[2];
+      final int query_end_x     = match_x_positions[3];
 
-      final int [] x_coords = new int [4];
-      final int [] y_coords = new int [4];
+      final int[] x_coords = new int[4];
+      final int[] y_coords = new int[4];
 
       x_coords[0] = subject_start_x;
       y_coords[0] = 0;
@@ -1272,9 +1285,7 @@ public class AlignmentViewer extends CanvasPanel
       else 
         highlight_this_match = false;
 
-      final int OFFSCREEN = 3000;
-
-      final int percent_id = this_match.getPercentID ();
+      final int percent_id = this_match.getPercentID();
 
       if(highlight_this_match)
         g.setColor (Color.yellow);
@@ -1326,8 +1337,8 @@ public class AlignmentViewer extends CanvasPanel
         g.setColor (Color.black);
       }
 
-      g.drawLine (subject_start_x, 0, query_start_x, canvas_height);
-      g.drawLine (subject_end_x, 0, query_end_x, canvas_height);
+      g.drawLine(subject_start_x, 0, query_start_x, canvas_height);
+      g.drawLine(subject_end_x, 0, query_end_x, canvas_height);
     }
   }
 
@@ -1340,25 +1351,24 @@ public class AlignmentViewer extends CanvasPanel
       return false;
 
     final int score = match.getScore();
-    final int percent_id = match.getPercentID();
-
     if(score > -1) 
     {
       if(score < minimum_score || score > maximum_score) 
         return false;
     }
 
+    final int percent_id = match.getPercentID();
     if(percent_id > -1) 
     {
       if(percent_id < minimum_percent_id || percent_id > maximum_percent_id) 
         return false;
     }
 
-    final int match_length =
-      Math.abs (match.getSubjectSequenceStart () -
-                match.getSubjectSequenceEnd ());
+    final int match_length = match.getLength();
+//    Math.abs(match.getSubjectSequenceStart() -
+//             match.getSubjectSequenceEnd());
 
-    if(match_length < scroll_bar.getValue ()) 
+    if(match_length < scroll_bar.getValue()) 
       return false;
 
     return true;
@@ -1434,28 +1444,25 @@ public class AlignmentViewer extends CanvasPanel
    *  match is an inversion, in which case it will be TL,TR,BR,BL.  Returns
    *  null if and only if the match is not currently visible.
    **/
-  private int [] getMatchCoords(final int canvas_width,
-                                final AlignMatch this_match) 
+  private int[] getMatchCoords(final int canvas_width, final AlignMatch this_match,
+                               final int subject_length, final int query_length,
+                               final boolean subject_flipped, final boolean query_flipped)
   {
-    final int subject_length = getSubjectForwardStrand ().getSequenceLength ();
-    final int query_length = getQueryForwardStrand ().getSequenceLength ();
+//  final int subject_length = getSubjectForwardStrand().getSequenceLength();
+//  final int query_length   = getQueryForwardStrand().getSequenceLength();
 
     int subject_sequence_start =
-      getRealSubjectSequenceStart (this_match,
-                                   subject_length,
-                                   subjectIsRevComp ());
+      getRealSubjectSequenceStart(this_match,
+                                  subject_length, subject_flipped);
     int subject_sequence_end =
-      getRealSubjectSequenceEnd (this_match,
-                                 subject_length,
-                                 subjectIsRevComp ());
+      getRealSubjectSequenceEnd(this_match,
+                                subject_length, subject_flipped);
     int query_sequence_start =
-      getRealQuerySequenceStart (this_match,
-                                 query_length,
-                                 queryIsRevComp ());
+      getRealQuerySequenceStart(this_match,
+                                query_length, query_flipped);
     int query_sequence_end =
-      getRealQuerySequenceEnd (this_match,
-                               query_length,
-                               queryIsRevComp ());
+      getRealQuerySequenceEnd(this_match,
+                              query_length, query_flipped);
 
     // add one base because we want to draw to the end of the base
     if(subjectIsRevComp()) 
@@ -1463,31 +1470,30 @@ public class AlignmentViewer extends CanvasPanel
     else 
       subject_sequence_end += 1;
 
-    if (this_match.isRevMatch () && !queryIsRevComp () ||
-        !this_match.isRevMatch () && queryIsRevComp ()) {
+    if(this_match.isRevMatch() && !queryIsRevComp() ||
+       !this_match.isRevMatch() && queryIsRevComp()) 
       query_sequence_start += 1;
-    } else {
+    else 
       query_sequence_end += 1;
-    }
 
     final int subject_start_x =
-      getScreenPosition (canvas_width, last_subject_event,
-                         subject_sequence_start);
+      getScreenPosition(canvas_width, last_subject_event,
+                        subject_sequence_start);
     final int subject_end_x =
-      getScreenPosition (canvas_width, last_subject_event,
-                         subject_sequence_end);
+      getScreenPosition(canvas_width, last_subject_event,
+                        subject_sequence_end);
 
     final int query_start_x =
-      getScreenPosition (canvas_width, last_query_event,
-                         query_sequence_start);
+      getScreenPosition(canvas_width, last_query_event,
+                        query_sequence_start);
     final int query_end_x =
-      getScreenPosition (canvas_width, last_query_event,
-                         query_sequence_end);
+      getScreenPosition(canvas_width, last_query_event,
+                        query_sequence_end);
 
-    boolean subject_off_left = false;
+    boolean subject_off_left  = false;
     boolean subject_off_right = false;
-    boolean query_off_left = false;
-    boolean query_off_right = false;
+    boolean query_off_left    = false;
+    boolean query_off_right   = false;
 
     if(subject_start_x < 0 && subject_end_x < 0) 
       subject_off_left = true;
@@ -1502,15 +1508,13 @@ public class AlignmentViewer extends CanvasPanel
       query_off_right = true;
 
     if((subject_off_left ? 1 : 0) +
-        (query_off_left ? 1 : 0) +
-        (subject_off_right ? 1 : 0) +
-        (query_off_right ? 1 : 0) == 2) 
-    {
+       (query_off_left ? 1 : 0) +
+       (subject_off_right ? 1 : 0) +
+       (query_off_right ? 1 : 0) == 2) 
       return null;
-    }
     else 
     {
-      final int [] return_values = new int [4];
+      final int[] return_values = new int[4];
 
       return_values[0] = subject_start_x;
       return_values[1] = subject_end_x;
@@ -1709,15 +1713,15 @@ public class AlignmentViewer extends CanvasPanel
   /**
    *  Convert a base position into a screen x coordinate.
    **/
-  private int getScreenPosition (final int canvas_width,
-                                 final DisplayAdjustmentEvent event,
-                                 final int base_position) 
+  private int getScreenPosition(final int canvas_width,
+                                final DisplayAdjustmentEvent event,
+                                final int base_position) 
   {
     // this is the base that is at the left of the screen
-    final int screen_start_base = event.getStart ();
+    final int screen_start_base = event.getStart();
 
     final double base_pos_float =
-      event.getBaseWidth () * (base_position - screen_start_base);
+      event.getBaseWidth() * (base_position - screen_start_base);
 
     if(base_pos_float > 30000) 
       return 30000;
