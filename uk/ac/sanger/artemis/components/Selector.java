@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Selector.java,v 1.1 2004-06-09 09:47:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Selector.java,v 1.2 2005-01-21 09:38:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -41,7 +41,7 @@ import javax.swing.*;
  *  features in an EntryGroup on key and contents.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Selector.java,v 1.1 2004-06-09 09:47:46 tjc Exp $
+ *  @version $Id: Selector.java,v 1.2 2005-01-21 09:38:39 tjc Exp $
  **/
 
 public class Selector extends JFrame
@@ -571,7 +571,7 @@ public class Selector extends JFrame
               new FeaturePredicateVector ();
 
             final StringVector words =
-              StringVector.getStrings (search_text, " \t\n");
+              StringVector.getStrings (search_text, " ");
 
             for (int i = 0 ; i < words.size () ; ++i) {
               final String this_word = words.elementAt (i);
@@ -609,7 +609,7 @@ public class Selector extends JFrame
               new FeaturePredicateVector ();
             
             final StringVector words = 
-              StringVector.getStrings (search_text, " \t\n");
+              StringVector.getStrings (search_text, " ");
             
 
             for (int i = 0 ; i < words.size () ; ++i) {
