@@ -53,7 +53,9 @@ an easier to read format.  MSPcrunch much be run with the
 
     <PARA>
        Also there is <ULINK URL="http://www.webact.org/">WebACT</ULINK> which was 
-       designed and built by James Abbott and David Aanensen at Imperial College, London.
+       designed and built by James Abbott and David Aanensen at Imperial College, London 
+       and is hosted in the laboratory of Professor Brian Spratt at Imperial College London 
+       with funding from The Wellcome Trust.
     </PARA>
     
     <SECT2 ID="COMPARISON-BIG-BLAST">
