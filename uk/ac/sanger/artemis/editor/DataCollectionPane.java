@@ -24,6 +24,7 @@
 
 package uk.ac.sanger.artemis.editor;
 
+import uk.ac.sanger.artemis.components.SwingWorker;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.util.StringTokenizer;
@@ -461,108 +462,117 @@ public class DataCollectionPane extends JScrollPane
   * @param ortholog     true if ortholog is selected.
   *
   */
-  protected static void getzCall(Vector hits, int nretrieve)
+  protected static void getzCall(final Vector hits, final int nretrieve)
   {
-    String env[] = { "PATH=/usr/local/pubseq/bin/" };
-
-    StringBuffer query = new StringBuffer();
-
-    int n = 0;
-    query.append("[uniprot-acc:");
-
-    Enumeration ehits = hits.elements();
-    while(ehits.hasMoreElements())
+    SwingWorker getzWorker = new SwingWorker()
     {
-      if(n>nretrieve)
-        break;
-      HitInfo hit = (HitInfo)ehits.nextElement();
-      if(n > 0)
-        query.append("|");
+      public Object construct()
+      {
 
-      query.append(hit.getAcc());
-      n++;
-    }
-    query.append("]");
+        final String env[] = { "PATH=/usr/local/pubseq/bin/" };
 
-    String cmd[]   = { "getz", "-f", "acc org description gen",
-                       query.toString() };
+        StringBuffer query = new StringBuffer();
 
-    ExternalApplication app = new ExternalApplication(cmd,
+        int n = 0;
+        query.append("[uniprot-acc:");
+
+        Enumeration ehits = hits.elements();
+        while(ehits.hasMoreElements())
+        {
+          if(n>nretrieve)
+            break;
+          HitInfo hit = (HitInfo)ehits.nextElement();
+          if(n > 0)
+            query.append("|");
+
+          query.append(hit.getAcc());
+          n++;
+        }
+        query.append("]");
+
+        String cmd[]   = { "getz", "-f", "acc org description gen",
+                           query.toString() };
+
+        ExternalApplication app = new ExternalApplication(cmd,
                                                 env,null);
-    String res = app.getProcessStdout();
+        String res = app.getProcessStdout();
 
-    HitInfo hit = null;
-    String line = null;
-    String lineStrip = null;
-    StringReader strread   = new StringReader(res);
-    BufferedReader strbuff = new BufferedReader(strread);
+        HitInfo hit = null;
+        String line = null;
+        String lineStrip = null;
+        StringReader strread   = new StringReader(res);
+        BufferedReader strbuff = new BufferedReader(strread);
 
-    try
-    {
-      while((line = strbuff.readLine()) != null)
-      {
-        line = line.trim();
-        if(line.equals(""))
-          continue;
-
-        lineStrip = line.substring(3).trim();
-        if(line.startsWith("AC"))
+        try
         {
-          hit = getHitInfo(lineStrip,hits);
-
-          if(hit == null)
+          while((line = strbuff.readLine()) != null)
           {
-            System.out.println("HIT NOT FOUND "+line);
-            continue;
+            line = line.trim();
+            if(line.equals(""))
+              continue;
+
+            lineStrip = line.substring(3).trim();
+            if(line.startsWith("AC"))
+            {
+              hit = getHitInfo(lineStrip,hits);
+
+              if(hit == null)
+              {
+                System.out.println("HIT NOT FOUND "+line);
+                continue;
+              }
+
+              hit.setOrganism("");
+              hit.setGeneName("");
+            }
+
+            if(hit == null)
+              continue;
+
+            if(line.startsWith("OS "))
+              hit.setOrganism(lineStrip);
+            else if(line.startsWith("DE "))
+              hit.appendDescription(lineStrip);
+            else if(line.startsWith("GN "))
+            {
+              StringTokenizer tokGN = new StringTokenizer(lineStrip,";");
+              while(tokGN.hasMoreTokens())
+              {
+                line = tokGN.nextToken();
+                if(line.startsWith("Name="))
+                  hit.setGeneName(line.substring(5));
+                else
+                  hit.appendDescription(line);
+              }
+            }
           }
-
-          hit.setOrganism("");
-          hit.setGeneName("");
         }
+        catch(IOException ioe){}
 
-        if(hit == null)
-          continue;
-
-        if(line.startsWith("OS "))
-          hit.setOrganism(lineStrip);
-        else if(line.startsWith("DE "))
-          hit.appendDescription(lineStrip);
-        else if(line.startsWith("GN "))
+        ehits = hits.elements();
+        while(ehits.hasMoreElements())
         {
-          StringTokenizer tokGN = new StringTokenizer(lineStrip,";");
-          while(tokGN.hasMoreTokens())
-          {
-            line = tokGN.nextToken();
-            if(line.startsWith("Name="))
-              hit.setGeneName(line.substring(5));
-            else
-              hit.appendDescription(line);
-          }
-        }
-      }
-    }
-    catch(IOException ioe){}
+          hit = (HitInfo)ehits.nextElement();
 
-    ehits = hits.elements();
-    while(ehits.hasMoreElements())
-    {
-      hit = (HitInfo)ehits.nextElement();
-
-      String cmd2[]   = { "getz", "-f", "id",
+          String cmd2[] = { "getz", "-f", "id",
                  "[libs={uniprot}-id:"+hit.getID()+"]>EMBL" };
-      app = new ExternalApplication(cmd2,env,null);
-      res = app.getProcessStdout();
+          app = new ExternalApplication(cmd2,env,null);
+          res = app.getProcessStdout();
  
-      int ind1 = res.indexOf("ID ");
-      if(ind1 > -1)
-      {
-        StringTokenizer tok = new StringTokenizer(res);
-        tok.nextToken();
-        hit.setEMBL(tok.nextToken());
+          int ind1 = res.indexOf("ID ");
+          if(ind1 > -1)
+          {
+            StringTokenizer tok = new StringTokenizer(res);
+            tok.nextToken();
+            hit.setEMBL(tok.nextToken());
+          }
+          else
+            hit.setEMBL("");
+        }
+        return null;
       }
-      else
-        hit.setEMBL("");
-    }
+    };
+    getzWorker.start();
 
   }
 
