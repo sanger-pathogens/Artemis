@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.3 2004-06-10 10:38:57 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.4 2004-06-10 13:32:57 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -487,7 +487,7 @@ feature_protein_programs = \
     hth - \
     smart - \
     clustalx PROTEIN \
-    jalview -
+    jalview PROTEIN
 
 feature_dna_programs = \
     tblastx embl_other \
@@ -497,6 +497,7 @@ feature_dna_programs = \
     clustalx DNA
 
 application_programs = \
+    jalview
 
 # this is the list of keys that should be displayed by default in the edit
 # window
