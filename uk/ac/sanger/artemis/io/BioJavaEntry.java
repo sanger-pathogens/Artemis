@@ -22,7 +22,7 @@ import org.biojava.bio.seq.io.StreamReader;
 
 import uk.ac.sanger.artemis.util.*;
 
-public class BioJavaEntry implements DocumentEntry
+public class BioJavaEntry implements Entry
 {
 
   // tjc uk.ac.sanger.artemis.components/BioJavaEntrySource.java barfed 
