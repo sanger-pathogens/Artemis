@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/AminoAcidSequence.java,v 1.5 2004-12-22 13:28:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/AminoAcidSequence.java,v 1.6 2004-12-24 11:06:37 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -33,7 +33,7 @@ import uk.ac.sanger.artemis.util.*;
  *  Objects of this class represent a string of amino acids.
  *
  *  @author Kim Rutherford
- *  @version $Id: AminoAcidSequence.java,v 1.5 2004-12-22 13:28:31 tjc Exp $
+ *  @version $Id: AminoAcidSequence.java,v 1.6 2004-12-24 11:06:37 tjc Exp $
  **/
 
 public class AminoAcidSequence 
@@ -139,9 +139,9 @@ public class AminoAcidSequence
    *  @return The translated sequence in one letter abbreviated form.  The
    *    return value will be '.' if the letters do not form a codon.
    **/
-  public static char getCodonTranslation(char first_letter,
-                                         char second_letter,
-                                         char third_letter)
+  public final static char getCodonTranslation(char first_letter,
+                                               char second_letter,
+                                               char third_letter)
   {
     final int first_index = Bases.getIndexOfBase(first_letter);
     if(first_index >= 4)

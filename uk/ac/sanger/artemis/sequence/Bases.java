@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.9 2004-12-24 09:04:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.10 2004-12-24 11:06:37 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -45,7 +45,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.9 2004-12-24 09:04:20 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.10 2004-12-24 11:06:37 tjc Exp $ */
 
 public class Bases 
 {
@@ -160,9 +160,10 @@ public class Bases
 
   /**
    *  This array is used to convert between bases and indices.  See
-   *  getIndexOfBase ()
+   *  getIndexOfBase()
    **/
-  public final static char [] letter_index = {
+  public final static char[] letter_index = 
+  {
     't', 'c', 'a', 'g', 'n'
   };
 
@@ -171,19 +172,21 @@ public class Bases
    *  otherwise.
    *  See letter_index.
    **/
-  public static int getIndexOfBase (final char base) {
-    switch (base) {
-    case 'c':
-      return 1;
-    case 'a':
-      return 2;
-    case 'g':
-      return 3;
-    case 't':
-    case 'u':
-      return 0;
+  public final static int getIndexOfBase(final char base) 
+  {
+    switch(base) 
+    {
+      case 'c':
+        return 1;
+      case 'a':
+        return 2;
+      case 'g':
+        return 3;
+      case 't':
+      case 'u':
+        return 0;
     }
-
+  
     return 4;
   }
 
@@ -525,11 +528,12 @@ public class Bases
       range_end_index = sequence_length;
     
     final char sequence_string[] =
-        getSequence().getCharSubSequence(range_start_index, range_end_index);
+      getSequence().getCharSubSequence(range_start_index, range_end_index);
+//  final String sequence_string =
+//      getSequence().getSubSequence(range_start_index, range_end_index);
 
     range_start_index--;
     range_end_index--;
-
 
     if(direction == FORWARD) 
     {
@@ -982,7 +986,7 @@ public class Bases
    *  because 'y' is 'c' or 't' and 'r' is 'a' or 'g', the complement of 'n'
    *  or 'x' (any base) is 'n'.
    **/
-  public static char complement (final char base) {
+  public final static char complement (final char base) {
 
     switch (base) {
     case 'a': case 'A': return 't';
@@ -1023,6 +1027,49 @@ public class Bases
    *  complement of those three bases is a stop codon.
    *  Codons that contain an X are considered to be stop codons.
    **/
+  private static boolean isStopCodon (final String sequence_string,
+                                      final int start_index,
+                                      final int direction) {
+    final char translation;
+
+    if (direction == FORWARD) {
+      final char first_letter = sequence_string.charAt (start_index);
+      final char second_letter = sequence_string.charAt (start_index + 1);
+      final char third_letter = sequence_string.charAt (start_index + 2);
+
+      if (first_letter == 'x' || second_letter == 'x' || third_letter == 'x') {
+        // codons that contain an X are considered to be stop codons.
+        return true;
+      }
+
+      translation = AminoAcidSequence.getCodonTranslation (first_letter,
+                                                           second_letter,
+                                                           third_letter);
+    } else {
+      final char first_letter =
+        complement (sequence_string.charAt (start_index - 2));
+      final char second_letter =
+        complement (sequence_string.charAt (start_index - 1));
+      final char third_letter =
+        complement (sequence_string.charAt (start_index));
+
+      if (first_letter == 'x' || second_letter == 'x' || third_letter == 'x') {
+        // codons that contain an X are considered to be stop codons.
+        return true;
+      }
+
+      translation = AminoAcidSequence.getCodonTranslation (third_letter,
+                                                           second_letter,
+                                                           first_letter);
+    }
+
+    if (translation == '+' || translation == '*' || translation == '#') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   private static boolean isStopCodon(final char[] sequence,
                                      final int start_index,
                                      final int direction) 
@@ -1095,7 +1142,7 @@ public class Bases
    *  Return true if and only if the given base character is one of 'a', 't',
    *  'c', 'g' or 'u'.
    **/
-  public static boolean isLegalBase (final char base_char) {
+  public final static boolean isLegalBase (final char base_char) {
     switch (base_char) {
     case 'a': case 'A': return true;
     case 't': case 'T': return true;
