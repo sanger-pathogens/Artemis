@@ -212,7 +212,9 @@ public class FastaTextPane extends JScrollPane
             hitInfoCollection.add(hit);
           }
         }
-        else if(line.indexOf(" ----") > -1)
+        else if(line.indexOf(" ----") > -1 ||
+                line.indexOf(" --- ") > -1 ||
+                line.indexOf(" -- ") > -1 )
         {
         }
         else if(line.startsWith(">"))  // start of alignment
