@@ -155,11 +155,13 @@ public class FastaTextPane extends JScrollPane
       streamReader = new InputStreamReader(getInputStream(dataFile));
       buffReader = new BufferedReader(streamReader);
 
+      String qlen = null;
       String line = null;
       int textPosition = 0;
       int len     = 0;
       HitInfo hit = null;
       int ind1 = 0;
+      int endQuery = 0;
 
       while( (line = buffReader.readLine()) != null)
       {
@@ -198,6 +200,8 @@ public class FastaTextPane extends JScrollPane
           hit = getHitInfo(currentID,hitInfoCollection);
           hit.setStartPosition(textPosition);
 
+          if(qlen != null)
+            hit.setQueryLength(Integer.parseInt(qlen));
 
           String going = "";
           ind = line.indexOf("GO:");
@@ -205,18 +209,51 @@ public class FastaTextPane extends JScrollPane
             going = line.substring(ind+3);
           
           String nextLine = null;
-          buffReader.mark(210);
+//        buffReader.mark(210);
+
+// get GO numbers
           while((nextLine = buffReader.readLine()).indexOf("Length") == -1)
           {
+            len += nextLine.length()+1;
+            sbuff.append(nextLine+"\n");
             if(going.equals("") && ((ind = nextLine.indexOf("GO:")) > -1))
               going = nextLine.substring(ind+3);
             else if(!going.equals(""))
               going = going.concat(nextLine);
           }
-
-          buffReader.reset();
+          
           if(!going.equals(""))
-            hit.setGO(going); 
+            hit.setGO(going);
+
+          if(nextLine != null)
+          {
+            len += nextLine.length()+1;
+            sbuff.append(nextLine+"\n");
+            if( (ind1 = nextLine.indexOf("  Length = ")) > -1)
+              hit.setLength(nextLine.substring(ind1+11));
+          }
+
+// get query start
+          while(!(nextLine = buffReader.readLine()).startsWith("Query: "))
+          {
+            len += nextLine.length()+1;
+            sbuff.append(nextLine+"\n");
+          }
+
+          if(nextLine != null)
+          {
+            len += nextLine.length()+1;
+            sbuff.append(nextLine+"\n");
+            if(nextLine.startsWith("Query:"))
+            {
+              ind1 = nextLine.indexOf(" ",8);
+              int start = Integer.parseInt(nextLine.substring(7,ind1).trim());
+              hit.setQueryStart(start);
+              hit.setQueryEnd(Integer.parseInt(nextLine.substring(nextLine.lastIndexOf(" ")).trim()));
+            }
+          }
+          
+//        buffReader.reset();
         }
         else if( (ind1 = line.indexOf("Identities = ")) > -1)
         {
@@ -226,6 +263,29 @@ public class FastaTextPane extends JScrollPane
         }
         else if( (ind1 = line.indexOf("  Length = ")) > -1)
           hit.setLength(line.substring(ind1+11));
+        else if(line.startsWith("Query: "))
+          hit.setQueryEnd(Integer.parseInt(line.substring(line.lastIndexOf(" ")).trim()));
+        else if(line.startsWith("Query="))
+        {
+          int ind2 = 0;
+          ind1 = line.indexOf(" letters)");
+          if(ind1 == -1)
+          {
+            String nextLine = null;
+            while((nextLine = buffReader.readLine()).indexOf(" letters)") < -1)
+            {
+              len += nextLine.length()+1;
+              sbuff.append(nextLine+"\n");
+            }
+            line = nextLine;
+            ind1 = nextLine.indexOf(" letters)");
+            ind2 = nextLine.indexOf("(");
+          }
+          else
+            ind2 = line.indexOf("(");
+
+          qlen = line.substring(ind2+1,ind1).trim();
+        }
 
         textPosition += len;
       }

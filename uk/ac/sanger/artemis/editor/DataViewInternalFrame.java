@@ -43,8 +43,6 @@ public class DataViewInternalFrame extends JInternalFrame
               true);//iconifiable
 
     Annotation ann   = new Annotation(desktop);
-    JPanel dataPanel = (JPanel)getContentPane();
-    dataPanel.setLayout(new BorderLayout());
 
     StringBuffer annFormat = new StringBuffer();
 
@@ -56,15 +54,28 @@ public class DataViewInternalFrame extends JInternalFrame
       annFormat.append("/"+fastaPane.getFormat()+"_file=\""+
                                     dataFile[i]+"\"\n");
       // add data pane
-      Vector hits = fastaPane.getHitCollection();
       DataCollectionPane dataPane =
-         new DataCollectionPane(hits, dataFile[i], fastaPane, ann, desktop);
+         new DataCollectionPane(dataFile[i], fastaPane, ann, desktop);
 
       JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                         fastaPane,dataPane);
       split.setDividerLocation(150);
 
       tabPane.add(fastaPane.getFormat(),split);
+
+      JInternalFrame jif = new JInternalFrame("Viewer",
+              true, //resizable
+              true, //closable
+              true, //maximizable
+              true);//iconifiable
+      DBViewer dbview = new DBViewer(fastaPane);
+      JScrollPane dbviewScroll = new JScrollPane(dbview);
+      dbviewScroll.setPreferredSize(new Dimension(500,200));
+      jif.getContentPane().add(dbviewScroll);
+      jif.setLocation(0,0);
+      jif.setSize(500,300);
+      jif.setVisible(true);
+      desktop.add(jif);
     }
   
     // add annotator text pane
@@ -75,7 +86,7 @@ public class DataViewInternalFrame extends JInternalFrame
     JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                       annotationScroll,tabPane);
     split.setDividerLocation(250);
-    dataPanel.add(split);
+    getContentPane().add(split);
      
     setVisible(true);
   }

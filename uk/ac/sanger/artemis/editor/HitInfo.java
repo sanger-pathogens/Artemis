@@ -49,6 +49,9 @@ public class HitInfo
   private String desc   = null;
   /** Sequence length */
   private String length = null;
+  /** Query length */
+  private int queryLength = 0;
+
   /** */
   private String opt    = null;
   private String zscore = null;
@@ -71,10 +74,13 @@ public class HitInfo
   private int startPosition = 0;
   /** end position of this hit in the results output   */
   private int endPosition   = 0;
-
   /** collection of GO terms */
   private Vector go;
- 
+  /** query hit start point */
+  private int startQuery;
+  /** query hit end point */
+  private int endQuery;
+
   public HitInfo(String header, String format)
   {
     header = header.trim();
@@ -168,6 +174,53 @@ public class HitInfo
     
   }
 
+
+  /**
+  *
+  * Get the start position for the query sequence in the alignment.
+  * @return startQuery
+  *
+  */
+  protected int getQueryStart()
+  {
+    return startQuery;
+  }
+
+  /**
+  *
+  * Get the end position for the query sequence in the alignment.
+  * @return endQuery
+  *
+  */
+  protected int getQueryEnd()
+  {
+    return endQuery;
+  }
+
+
+  /**
+  *
+  * Set the start position for the query sequence in the alignment.
+  * @param startQuery 	startQuery
+  *
+  */
+  protected void setQueryStart(int startQuery)
+  {
+    this.startQuery = startQuery;
+  }
+
+  /**
+  *
+  * Set the end position for the query sequence in the alignment.
+  * @param endQuery   endQuery
+  *
+  */
+  protected void setQueryEnd(int endQuery)
+  {
+    this.endQuery = endQuery;
+  }
+
+
   /**
   *
   * Set the start position of the alignment in the
@@ -191,6 +244,29 @@ public class HitInfo
   {
     this.endPosition = endPosition;
   }
+
+  /**
+  *
+  * Set the query sequence length.
+  * @param queryLength       query sequence length.
+  *
+  */
+  protected void setQueryLength(int queryLength)
+  {
+    this.queryLength = queryLength;
+  }
+
+  /**
+  *
+  * Get the query sequence length.
+  * @return query sequence length.
+  *
+  */
+  protected int getQueryLength()
+  {
+    return queryLength;
+  }
+
 
   /**
   *

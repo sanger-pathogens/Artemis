@@ -25,6 +25,7 @@
 package uk.ac.sanger.artemis.editor;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.util.StringTokenizer;
 
 import java.io.BufferedReader;
@@ -47,7 +48,7 @@ import java.util.Hashtable;
 public class DataCollectionPane extends JScrollPane
 {
 
-  public DataCollectionPane(Vector hitInfoCollection, String dataFile,
+  public DataCollectionPane(String dataFile,
                             final FastaTextPane fastaTextPane,
                             final Annotation ann, final JDesktopPane desktop)
   {
@@ -60,6 +61,8 @@ public class DataCollectionPane extends JScrollPane
     scrollPanel.add(bdown);
 
     Hashtable goHash = new Hashtable();
+    Vector hitInfoCollection = fastaTextPane.getHitCollection();
+ 
     Enumeration hitEnum = hitInfoCollection.elements();
     while(hitEnum.hasMoreElements())
     {
@@ -190,34 +193,9 @@ public class DataCollectionPane extends JScrollPane
             try
             {
               URL url = new URL("http://"+srscmd);
-              if(BigPane.srsTabPane.isSelected())
-              {
-                if(BigPane.srsFrame == null)
-                {
-                  BigPane.setUpSRSFrame((2*desktop.getHeight())/3,desktop);
-//                int hgt = (2*desktop.getHeight())/3;
-//                BigPane.srsFrame = new JInternalFrame("SRS",
-//                                                   true, //resizable
-//                                                   true, //closable
-//                                                   true, //maximizable
-//                                                   true);//iconifiable
-//                JTabbedPane jtab = new JTabbedPane();
-//                BigPane.srsFrame.getContentPane().add(jtab);
-//                BigPane.srsFrame.setLocation(0,0);
-//                BigPane.srsFrame.setSize(800,hgt);
-  
-//                JMenuBar menuBar = new JMenuBar();
-//                menuBar.add(new CommonMenu(BigPane.srsFrame));
-//                BigPane.srsFrame.setJMenuBar(menuBar);
 
-//                desktop.add(BigPane.srsFrame);
-                }
-                Annotation edPane = new Annotation(url);
-                JScrollPane jsp = new JScrollPane(edPane);
-                JTabbedPane jtab = (JTabbedPane)BigPane.srsFrame.getContentPane().getComponent(0);
-                jtab.insertTab(search,null,jsp,null,0);
-                BigPane.srsFrame.setVisible(true);
-              }
+              if(BigPane.srsTabPane.isSelected())
+                setUpSRSFrame(url,search,desktop);
   
               if(BigPane.srsWin.isSelected())
               {
@@ -238,6 +216,14 @@ public class DataCollectionPane extends JScrollPane
                 jif.setVisible(true);
                 desktop.add(jif);
               }
+            }
+            catch(java.net.ConnectException connect)
+            {
+              JOptionPane.showMessageDialog(DataCollectionPane.this,
+                       "Cannot retrieve "+search+
+                       "\nConnection failed to:\nhttp://"+srscmd,
+                       "Connection Error",
+                       JOptionPane.WARNING_MESSAGE);
             }
             catch(Exception exp)
             {
@@ -275,6 +261,27 @@ public class DataCollectionPane extends JScrollPane
             {
               String go_cmd = "http://www.godatabase.org/cgi-bin/amigo/go.cgi?query=GO%3A"+go_id;
               BrowserControl.displayURL(go_cmd);
+
+              if(BigPane.srsTabPane.isSelected())
+              {
+                try
+                {
+                  setUpSRSFrame(new URL(go_cmd),go_id,desktop);
+                }
+                catch(java.net.ConnectException connect)
+                {
+                  JOptionPane.showMessageDialog(DataCollectionPane.this,
+                           "Cannot retrieve "+go_id+
+                           "\nConnection failed to:\n"+go_cmd,
+                           "Connection Error",
+                           JOptionPane.WARNING_MESSAGE);
+                }
+                catch(Exception exp)
+                {
+                  exp.printStackTrace();
+                }
+              }
+
             }
           });
           bacross.add(Box.createHorizontalStrut(10));
@@ -292,6 +299,30 @@ public class DataCollectionPane extends JScrollPane
 
     setViewportView(scrollPanel);
     setPreferredSize(new Dimension(500,300));
+  }
+
+
+  protected void setUpSRSFrame(URL url, String search, JDesktopPane desktop)
+                 throws IOException
+  {
+    if(BigPane.srsFrame == null)
+    {
+      BigPane.setUpSRSFrame((2*desktop.getHeight())/3,desktop);
+      Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+      Border raisedbevel = BorderFactory.createRaisedBevelBorder();
+      Border compound = BorderFactory.createCompoundBorder(raisedbevel,loweredbevel);
+
+      JTextField statusField = new JTextField();
+      statusField.setBorder(compound);
+      statusField.setEditable(false);
+      BigPane.srsFrame.getContentPane().add(statusField, BorderLayout.SOUTH);
+    }
+
+    Annotation edPane = new Annotation(url);
+    JScrollPane jsp = new JScrollPane(edPane);
+    JTabbedPane jtab = (JTabbedPane)BigPane.srsFrame.getContentPane().getComponent(0);
+    jtab.insertTab(search, null,jsp,null,0);
+    BigPane.srsFrame.setVisible(true);
   }
 
 

@@ -102,8 +102,8 @@ public class BigPane extends JFrame
     JMenu srsMenu = new JMenu("Show SRS in");
     optionMenu.add(srsMenu);
     
-    srsBrowser = new JCheckBoxMenuItem("External Broser",false);
-    srsTabPane = new JCheckBoxMenuItem("Tabbed Pane",true);
+    srsBrowser = new JCheckBoxMenuItem("Browser",false);
+    srsTabPane = new JCheckBoxMenuItem("Tab Pane",true);
     srsWin     = new JCheckBoxMenuItem("New Window",false);
 
     srsMenu.add(srsBrowser);
@@ -165,7 +165,8 @@ public class BigPane extends JFrame
       public void actionPerformed(ActionEvent e)
       {
         int select = jtab.getSelectedIndex(); 
-        jtab.removeTabAt(select);
+        if(select > -1)
+          jtab.removeTabAt(select);
       }
     });
 

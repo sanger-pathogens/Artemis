@@ -24,7 +24,9 @@
 
 package uk.ac.sanger.artemis.editor;
 
+
 import java.util.StringTokenizer;
+import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.text.html.*;
 import javax.swing.text.DefaultStyledDocument;
@@ -248,6 +250,29 @@ public class Annotation extends JEditorPane
   }
 
 
+  protected void setUpSRSFrame(URL url, String search)
+                 throws IOException
+  {
+    if(BigPane.srsFrame == null)
+    {
+      BigPane.setUpSRSFrame((2*desktop.getHeight())/3,desktop);
+      Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+      Border raisedbevel = BorderFactory.createRaisedBevelBorder();
+      Border compound = BorderFactory.createCompoundBorder(raisedbevel,loweredbevel);
+
+      JTextField statusField = new JTextField();
+      statusField.setBorder(compound);
+      statusField.setEditable(false);
+      BigPane.srsFrame.getContentPane().add(statusField, BorderLayout.SOUTH);
+    }
+
+    Annotation edPane = new Annotation(url);
+    JScrollPane jsp = new JScrollPane(edPane);
+    JTabbedPane jtab = (JTabbedPane)BigPane.srsFrame.getContentPane().getComponent(0);
+    jtab.insertTab(search, null,jsp,null,0);
+    BigPane.srsFrame.setVisible(true);
+  }
+
   /**
   *
   * Method to handle hyper link events.
@@ -256,7 +281,7 @@ public class Annotation extends JEditorPane
   */
   public void hyperlinkUpdate(HyperlinkEvent event)
   {
-    if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
+    if(event.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
     {
       setCursor(cbusy);
       try
@@ -273,15 +298,7 @@ public class Annotation extends JEditorPane
         if(desktop != null)
         {
           if(BigPane.srsTabPane.isSelected())
-          {
-            if(BigPane.srsFrame == null)
-              BigPane.setUpSRSFrame((2*desktop.getHeight())/3,desktop);
-            Annotation edPane = new Annotation(url);
-            JScrollPane jsp = new JScrollPane(edPane);
-            JTabbedPane jtab = (JTabbedPane)BigPane.srsFrame.getContentPane().getComponent(0);
-            jtab.insertTab(search, null,jsp,null,0);
-            BigPane.srsFrame.setVisible(true);
-          }
+            setUpSRSFrame(url,search);
 
           if(BigPane.srsWin.isSelected())
           {
@@ -315,12 +332,34 @@ public class Annotation extends JEditorPane
       {
         setCursor(cdone);
         ioe.printStackTrace();
+
 //      ("Can't follow link to " +
 //                event.getURL().toExternalForm() );
       }
 
       setCursor(cdone);
     }
+    else if(event.getEventType() == HyperlinkEvent.EventType.ENTERED)
+    {
+      try
+      {
+        JTextField statusField = (JTextField)BigPane.srsFrame.getContentPane().getComponent(1);
+        statusField.setText(event.getDescription());
+      }
+      catch(Exception exp){}
+      
+    }
+    else if(event.getEventType() == HyperlinkEvent.EventType.EXITED)
+    {
+      try
+      {
+        JTextField statusField = (JTextField)BigPane.srsFrame.getContentPane().getComponent(1);
+        statusField.setText("");
+      }
+      catch(Exception exp){}
+
+    }
+
   }
 
 
