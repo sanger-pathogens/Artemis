@@ -59,21 +59,42 @@ my $term_l = $apph->get_terms({products=>[@pqlist]});
 
 foreach my $term (@$term_l) 
 {
-  printf "%s; %s; ", $term->acc, $term->name;
+  my $type = $term->term_type;
+  if($type =~ m/_component/i)
+  {
+    printf "/GO_component=\"";
+  }
+  elsif($type =~ m/_function/i)
+  {
+    printf "/GO_function=\"";
+  }
+  elsif($type =~ m/_process/i)
+  {
+    printf "/GO_process=\"";
+  }
+
+  printf "%s (%s);", $term->acc, $term->name;
   if($associations)
   {
     foreach my $assoc (@{$term->selected_association_list || []}) 
     {
       my $gp = $assoc->gene_product;
       my $ev_l = $assoc->evidence_list || [];
-      printf "%s; %s; %s; evidence=%s; %s;", 
-                        $gp->full_name, $gp->acc, $gp->symbol,
-                        join('; ', map {$_->code} @$ev_l), $gp->as_str;
+      printf " %s; %s:%s", $assoc->evidence_as_str, $gp->speciesdb, $gp->acc;
 
       foreach my $syn (@{$gp->synonym_list || []})
       {
-        print " Synonym: $syn;";
+        print " ($syn)";
       }
+      printf ";";
+      printf "%s",$assoc->assocdate;
+
+      printf " db_xref=";
+      foreach my $ref (@{$term->dbxref_list || []})
+      {
+        printf "%s", $ref->as_str;
+      }
+      printf ";";
     }
   }
 
