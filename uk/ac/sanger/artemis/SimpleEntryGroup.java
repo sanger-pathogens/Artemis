@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleEntryGroup.java,v 1.1 2004-06-09 09:45:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleEntryGroup.java,v 1.2 2004-12-06 10:39:03 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -41,7 +41,7 @@ import java.util.NoSuchElementException;
  *  once.  Objects of this class act a bit like single Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: SimpleEntryGroup.java,v 1.1 2004-06-09 09:45:08 tjc Exp $
+ *  @version $Id: SimpleEntryGroup.java,v 1.2 2004-12-06 10:39:03 tjc Exp $
  **/
 
 public class SimpleEntryGroup extends EntryVector
@@ -95,7 +95,8 @@ public class SimpleEntryGroup extends EntryVector
    **/
   public boolean hasUnsavedChanges() 
   {
-    for(int entry_index = 0; entry_index < size();
+    final int my_size = size();
+    for(int entry_index = 0; entry_index < my_size;
         ++entry_index) 
     {
       if(elementAt(entry_index).hasUnsavedChanges()) 
@@ -133,9 +134,8 @@ public class SimpleEntryGroup extends EntryVector
 
     // now inform the listeners that a change has occured
     final EntryGroupChangeEvent event =
-      new EntryGroupChangeEvent(this,
-                                 getDefaultEntry(),
-                                 EntryGroupChangeEvent.NEW_DEFAULT_ENTRY);
+      new EntryGroupChangeEvent(this, getDefaultEntry(),
+                                EntryGroupChangeEvent.NEW_DEFAULT_ENTRY);
 
     fireEvent(entry_group_listener_list, event);
   }
@@ -154,11 +154,12 @@ public class SimpleEntryGroup extends EntryVector
   public int indexOf(Feature feature) 
   {
     int feature_count_of_previous_entries = 0;
+    final int active_entries_size = active_entries.size();
 
-    for(int entry_index = 0; entry_index < active_entries.size();
+    for(int entry_index = 0; entry_index < active_entries_size;
         ++entry_index) 
     {
-      final Entry this_entry = active_entries.elementAt(entry_index);
+      final Entry this_entry  = active_entries.elementAt(entry_index);
       final int feature_index = this_entry.indexOf(feature);
 
       if(feature_index != -1) 
@@ -176,7 +177,9 @@ public class SimpleEntryGroup extends EntryVector
    **/
   public boolean contains(Feature feature) 
   {
-    for(int i = 0 ; i < active_entries.size() ; ++i) 
+    final int active_entries_size = active_entries.size();
+
+    for(int i = 0; i < active_entries_size; ++i) 
     {
       final Entry current_entry = active_entries.elementAt(i);
 
@@ -223,8 +226,9 @@ public class SimpleEntryGroup extends EntryVector
         // SimpleEntryGroup
 
         final EntryVector new_active_entries = new EntryVector();
+        final int my_size = size();
 
-        for(int i = 0 ; i < size() ; ++i) 
+        for(int i = 0; i < my_size; ++i) 
         {
           if(active_entries.contains(elementAt(i)) || index == i) 
             new_active_entries.add(elementAt(i));
@@ -232,7 +236,9 @@ public class SimpleEntryGroup extends EntryVector
 
         active_entries.removeAllElements();
 
-        for(int i = 0 ; i < new_active_entries.size() ; ++i) 
+        final int new_active_entries_size = new_active_entries.size();
+
+        for(int i = 0; i < new_active_entries_size; ++i) 
           active_entries.add(new_active_entries.elementAt(i));
 
         if(active_entries.size() >= 1 && getDefaultEntry() == null) 
@@ -290,18 +296,13 @@ public class SimpleEntryGroup extends EntryVector
     // now inform the listeners that a change has occured
     final EntryGroupChangeEvent event;
 
-    // the state was inactive - now it is active
-    if(new_active) 
-      event = new EntryGroupChangeEvent(this,
-                                         entry,
-                                         EntryGroupChangeEvent.ENTRY_ACTIVE);
-    else 
-    {
-      // the state was active - now it is inactive
-      event = new EntryGroupChangeEvent(this,
-                                         entry,
-                                         EntryGroupChangeEvent.ENTRY_INACTIVE);
-    }
+    // change state
+    if(new_active)        // become active
+      event = new EntryGroupChangeEvent(this, entry,
+                                        EntryGroupChangeEvent.ENTRY_ACTIVE);
+    else                  // become inactive
+      event = new EntryGroupChangeEvent(this, entry,
+                                        EntryGroupChangeEvent.ENTRY_INACTIVE);
 
     fireEvent(entry_group_listener_list, event);
   }
@@ -369,7 +370,8 @@ public class SimpleEntryGroup extends EntryVector
    **/
   public boolean isReadOnly() 
   {
-    for(int i = 0 ; i < size() ; ++i) 
+    final int my_size = size();
+    for(int i = 0; i < my_size; ++i) 
     {
       final Entry this_entry = elementAt(i);
 
@@ -418,8 +420,7 @@ public class SimpleEntryGroup extends EntryVector
 
       // now inform the listeners that the EntryGroup is no more
       final EntryGroupChangeEvent event =
-              new EntryGroupChangeEvent(this,
-                                        null,
+              new EntryGroupChangeEvent(this, null,
                                         EntryGroupChangeEvent.DONE_GONE);
 
       fireEvent(entry_group_listener_list, event);
@@ -449,8 +450,9 @@ public class SimpleEntryGroup extends EntryVector
       throw new Error("internal error - index out of range: " + index);
 
     int feature_count_of_previous_entries = 0;
+    final int active_entries_size = active_entries.size();
 
-    for(int entry_index = 0; entry_index < active_entries.size(); 
+    for(int entry_index = 0; entry_index < active_entries_size; 
         ++entry_index)
     {
       final Entry this_entry = active_entries.elementAt(entry_index);
@@ -475,7 +477,7 @@ public class SimpleEntryGroup extends EntryVector
   {
     final FeatureVector return_vector = new FeatureVector();
 
-    for(int i = start_index ; i <= end_index ; ++i) 
+    for(int i = start_index; i <= end_index; ++i) 
       return_vector.add(featureAt(i));
 
     return return_vector;
@@ -495,8 +497,9 @@ public class SimpleEntryGroup extends EntryVector
       throws OutOfRangeException 
   {
     final FeatureVector return_vector = new FeatureVector();
+    final int my_size = size();
 
-    for(int i = 0 ; i < size() ; ++i) 
+    for(int i = 0; i < my_size; ++i) 
     {
       final Entry this_entry = elementAt(i);
 
@@ -505,9 +508,10 @@ public class SimpleEntryGroup extends EntryVector
         final FeatureVector visible_entry_features =
           elementAt(i).getFeaturesInRange(range);
 
-        for(int feature_index = 0 ;
-             feature_index < visible_entry_features.size() ;
-             ++feature_index) 
+        final int visible_entry_features_size = visible_entry_features.size();
+
+        for(int feature_index = 0; feature_index < visible_entry_features_size;
+            ++feature_index) 
         {
           final Feature this_feature =
             visible_entry_features.elementAt(feature_index);
@@ -529,16 +533,18 @@ public class SimpleEntryGroup extends EntryVector
   public FeatureVector getAllFeatures() 
   {
     final FeatureVector return_vector = new FeatureVector();
+    final int my_size = size();
 
-    for(int i = 0 ; i < size() ; ++i) 
+    for(int i = 0; i < my_size; ++i) 
     {
       final Entry this_entry = elementAt(i);
 
       if(isActive(this_entry)) 
       {
         final FeatureVector entry_features = elementAt(i).getAllFeatures();
+        final int entry_features_size = entry_features.size();
 
-        for(int feature_index = 0; feature_index < entry_features.size();
+        for(int feature_index = 0; feature_index < entry_features_size;
             ++feature_index) 
         {
           final Feature this_feature =
@@ -560,8 +566,9 @@ public class SimpleEntryGroup extends EntryVector
   public int getAllFeaturesCount() 
   {
     int return_count = 0;
+    final int my_size = size();
 
-    for(int i = 0 ; i < size() ; ++i) 
+    for(int i = 0; i < my_size; ++i) 
     {
       final Entry this_entry = elementAt(i);
 
@@ -588,9 +595,8 @@ public class SimpleEntryGroup extends EntryVector
 
     // now inform the listeners that an addition has occured
     final EntryGroupChangeEvent event =
-      new EntryGroupChangeEvent(this,
-                                 entry,
-                                 EntryGroupChangeEvent.ENTRY_ADDED);
+      new EntryGroupChangeEvent(this, entry,
+                                EntryGroupChangeEvent.ENTRY_ADDED);
 
     fireEvent(entry_group_listener_list, event);
 
@@ -610,7 +616,7 @@ public class SimpleEntryGroup extends EntryVector
           final Bases first_entry_bases = first_entry.getBases();
 
           if(first_entry_bases != null &&
-              first_entry_bases.getLength() > 0) 
+             first_entry_bases.getLength() > 0) 
             setDefaultEntry(entry);
         }
       }
@@ -653,9 +659,8 @@ public class SimpleEntryGroup extends EntryVector
 
     // now inform the listeners that a deletion has occured
     final EntryGroupChangeEvent event =
-      new EntryGroupChangeEvent(this,
-                                 entry,
-                                 EntryGroupChangeEvent.ENTRY_DELETED);
+      new EntryGroupChangeEvent(this, entry,
+                                EntryGroupChangeEvent.ENTRY_DELETED);
 
     fireEvent(entry_group_listener_list, event);
 
@@ -830,7 +835,8 @@ public class SimpleEntryGroup extends EntryVector
       targets = (Vector)listeners.clone();
     }
 
-    for(int i = 0 ; i < targets.size() ; ++i) 
+    final int targets_size = targets.size();
+    for(int i = 0; i < targets_size; ++i) 
     {
       ChangeListener target =(ChangeListener) targets.elementAt(i);
 
@@ -946,8 +952,9 @@ public class SimpleEntryGroup extends EntryVector
     final Bases new_bases = getBases().truncate(constraint);
 
     final EntryGroup new_entry_group = new SimpleEntryGroup(new_bases);
+    final int my_size = size();
 
-    for(int i = 0 ; i < size() ; ++i) 
+    for(int i = 0; i < my_size; ++i) 
     {
       final Entry this_entry = elementAt(i);
       final Entry new_entry = this_entry.truncate(new_bases, constraint);
