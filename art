@@ -6,7 +6,7 @@
 # necessary a symbolic link can be made to this script from
 # /usr/local/bin/ or elsewhere.
 
-# $Header: //tmp/pathsoft/artemis/art,v 1.1 2004-06-09 10:09:25 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/art,v 1.2 2004-06-09 10:33:42 tjc Exp $
 
 # resolve links - $0 may be a link
 PRG=$0
@@ -121,4 +121,4 @@ then
     echo starting Artemis with flags: $FLAGS $ARTEMIS_PROPERTIES 1>&2
 fi
 
-$JAVA $FLAGS $ARTEMIS_PROPERTIES Diana $*
+$JAVA $FLAGS $ARTEMIS_PROPERTIES uk.ac.sanger.artemis.components.ArtemisMain $*
