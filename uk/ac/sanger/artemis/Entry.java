@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.2 2004-08-26 14:43:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.3 2004-11-24 11:55:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.io.Reader;
  *  possible events.)
  *
  *  @author Kim Rutherford
- *  @version $Id: Entry.java,v 1.2 2004-08-26 14:43:35 tjc Exp $
+ *  @version $Id: Entry.java,v 1.3 2004-11-24 11:55:52 tjc Exp $
  **/
 
 public class Entry implements FeatureChangeListener, Selectable 
@@ -388,15 +388,14 @@ public class Entry implements FeatureChangeListener, Selectable
       throws OutOfRangeException 
   {
     final FeatureVector return_features = new FeatureVector();
-
     final uk.ac.sanger.artemis.io.FeatureVector embl_features =
       getEMBLEntry().getFeaturesInRange(range);
 
 //    System.err.println("starting getFeaturesInRange()");
-    
+    Feature diana_feature;
     for(int i = 0 ; i < embl_features.size() ; ++i)
     {
-      final Feature diana_feature = getFeatureOf(embl_features.elementAt(i));
+      diana_feature = getFeatureOf(embl_features.featureAt(i));
 
 //       System.err.println("getFeaturesInRange() - diana_feature:" +
 //                           diana_feature + " " +
@@ -420,13 +419,13 @@ public class Entry implements FeatureChangeListener, Selectable
   public FeatureVector getAllFeatures() 
   {
     final FeatureVector return_features = new FeatureVector();
-
     final uk.ac.sanger.artemis.io.FeatureVector embl_features =
       getEMBLEntry().getAllFeatures();
 
-    for(int i = 0 ; i < embl_features.size() ; ++i) 
+    Feature diana_feature;
+    for(int i = 0; i < embl_features.size(); ++i) 
     {
-      final Feature diana_feature = getFeatureOf(embl_features.elementAt(i));
+      diana_feature = getFeatureOf(embl_features.featureAt(i));
       return_features.add(diana_feature);
     }
 

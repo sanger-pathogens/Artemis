@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.3 2004-11-23 13:43:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.4 2004-11-24 11:55:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -60,7 +60,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.3 2004-11-23 13:43:57 tjc Exp $
+ *  @version $Id: Feature.java,v 1.4 2004-11-24 11:55:52 tjc Exp $
  **/
 
 public class Feature
@@ -76,8 +76,8 @@ public class Feature
   public Feature(uk.ac.sanger.artemis.io.Feature embl_feature) 
   {
     this.embl_feature = embl_feature;
-    embl_feature.setUserData (this);
-    old_location = embl_feature.getLocation ();
+    embl_feature.setUserData(this);
+    old_location = embl_feature.getLocation();
   }
 
   /**
@@ -177,7 +177,7 @@ public class Feature
     // if the eukaryotic mode option changes the sequence may change (ie. the
     // start codon may need to be translated differently) - see
     // getTranslation()
-    locationChanged(getLocation ());
+    locationChanged(getLocation());
   }
 
   /**
@@ -198,7 +198,7 @@ public class Feature
       throws IOException 
   {
     if(getEmblFeature() instanceof StreamFeature) 
-      ((StreamFeature)getEmblFeature()).writeToStream (writer);
+      ((StreamFeature)getEmblFeature()).writeToStream(writer);
     else 
     {
       final EntryInformation entry_info = getEntry().getEntryInformation();
@@ -284,10 +284,10 @@ public class Feature
 
     final String product = getProductString();
 
-    if (product == null)
-      header_buffer.append ("undefined product");
+    if(product == null)
+      header_buffer.append("undefined product");
     else
-      header_buffer.append (product);
+      header_buffer.append(product);
 
     header_buffer.append(" ").append(getWriteRange()).append(" MW:");
     header_buffer.append((int) getMolecularWeight());
@@ -411,7 +411,7 @@ public class Feature
   {
     String remaining_string = string;
 
-    while(remaining_string.length () > 0) 
+    while(remaining_string.length() > 0) 
     {
       int last_index = wrap_column;
 
@@ -751,14 +751,14 @@ public class Feature
       if(span.getEnd() > sequence_length ||
          span.getStart() < 1) 
       {
-        throw new OutOfRangeException(new_location.toString ());
+        throw new OutOfRangeException(new_location.toString());
       }
     }
 
     if(datestamp == null ||
        !(getEmblFeature() instanceof DateStampFeature)) 
     {
-      getEmblFeature().set (new_key, new_location, new_qualifiers);
+      getEmblFeature().set(new_key, new_location, new_qualifiers);
     } 
     else
     {
@@ -788,7 +788,7 @@ public class Feature
   /**
    *  This method will send a FeatureChangeEvent with type LOCATION_CHANGED to
    *  all the FeatureChangeEvent listeners when a marker changes.  It also
-   *  calls resetCache (), because changing the location will change the
+   *  calls resetCache(), because changing the location will change the
    *  translation and bases of the feature.
    **/
   private void locationChanged(final Location old_location) 
@@ -920,7 +920,7 @@ public class Feature
    *  Return the time when this feature last changed or null if this Feature
    *  doesn't support datestamps.
    **/
-  public Date getDatestamp () {
+  public Date getDatestamp() {
     if (getEmblFeature () instanceof DateStampFeature) {
       return ((DateStampFeature)getEmblFeature ()).getDatestamp ();
     } else {

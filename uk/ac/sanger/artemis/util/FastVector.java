@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/FastVector.java,v 1.1 2004-06-09 09:52:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/FastVector.java,v 1.2 2004-11-24 11:55:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.util;
@@ -35,110 +35,130 @@ import java.util.Collections;
  *  contains().
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: FastVector.java,v 1.1 2004-06-09 09:52:59 tjc Exp $
+ *  @version $Id: FastVector.java,v 1.2 2004-11-24 11:55:52 tjc Exp $
  *
  **/
 
-public class FastVector {
+public class FastVector 
+{
+  /** Initial size used for the Vector and the Hashtable. */
+  final static private int INITIAL_CAPACITY = 20;
+
+  /** Storage for objects. */
+  private ArrayList vector = new ArrayList();
+
+  /** This is used for fast lookup of objects in contains(). */
+  private HashMap table = new HashMap(INITIAL_CAPACITY);
+
   /**
    *  Create a new vector of objects.
    **/
-  public FastVector () {
-
+  public FastVector() 
+  {
   }
 
   /**
-   *  Performs the same function as Vector.addElement ()
+   *  Performs the same function as Vector.addElement()
    */
-  public void add (Object object) {
-    if (object == null) {
-      throw new Error ("internal error - adding a null object");
-    } else {
-      if (contains (object)) {
-        throw new Error ("internal error - object added a second time");
-      }
+  public void add(Object object) 
+  {
+    if(object == null) 
+      throw new Error("internal error - adding a null object");
+    else
+    {
+      if(contains(object))
+        throw new Error("internal error - object added a second time");
     }
 
-    vector.add (object);
-    table.put (object, object);
+    vector.add(object);
+    table.put(object, object);
   }
 
   /**
-   *  Performs the same function as Vector.elementAt ()
+   *  Performs the same function as Vector.elementAt()
    */
-  public Object elementAt (int index) {
-    return (Object) vector.get (index);
+  public Object elementAt(int index) 
+  {
+    return (Object)vector.get(index);
   }
 
   /**
-   *  Performs the same function as Vector.lastElement ()
+   *  Performs the same function as Vector.lastElement()
    **/
-  public Object lastElement () {
-    return (Object) vector.get (vector.size () - 1);
+  public Object lastElement() 
+  {
+    return (Object)vector.get(vector.size() - 1);
   }
 
   /**
-   *  Performs the same function as Vector.removeElement ()
+   *  Performs the same function as Vector.removeElement()
    **/
-  public boolean remove (Object object) {
-    if (contains (object)) {
-      vector.remove (object);
-      if (table.remove (object) == null) {
-        throw new Error ("internal error - remove could not find target");
-      }
+  public boolean remove(Object object) 
+  {
+    if(contains(object)) 
+    {
+      vector.remove(object);
+      if(table.remove(object) == null) 
+        throw new Error("internal error - remove could not find target");
+      
       return true;
-    } else {
+    } 
+    else 
       return false;
-    }
   }
 
   /**
    *  Return true if this object contains the given Object.
    **/
-  public boolean contains (Object object) {
-    return table.containsKey (object);
+  public boolean contains(Object object) 
+  {
+    return table.containsKey(object);
   }
 
   /**
-   *  Performs the same function as Vector.removeElement ()
+   *  Performs the same function as Vector.removeElement()
    **/
-  public int indexOf (Object object) {
-    if (!contains (object)) {
+  public int indexOf(Object object) 
+  {
+    if(!contains(object)) 
       return -1;
-    } else {
-      return vector.indexOf (object);
-    }
+    else 
+      return vector.indexOf(object);
   }
 
   /**
-   *  Performs the same function as Vector.size ()
+   *  Performs the same function as Vector.size()
    */
-  public int size () {
-    return vector.size ();
+  public int size()
+  {
+    return vector.size();
   }
 
   /**
-   *  Performs the same function as Vector.removeAllElement ()
+   *  Performs the same function as Vector.removeAllElement()
    **/
-  public void removeAllElements () {
-    vector.clear ();
-    table.clear ();
+  public void removeAllElements()
+  {
+    vector.clear();
+    table.clear();
   }
 
   /**
-   *  Performs the same function as Vector.removeElementAt ()
+   *  Performs the same function as Vector.removeElementAt()
    **/
-  public void removeElementAt(int index) {
-    final Object object = (Object) vector.remove (index);
-    table.remove (object);
+  public void removeElementAt(int index) 
+  {
+    final Object object = (Object)vector.remove(index);
+    table.remove(object);
   }
 
   /**
-   *  Performs the same function as Vector.insertElementAt ()
+   *  Performs the same function as Vector.insertElementAt()
    **/
-  public final void insertElementAt (Object object, int index) {
-    vector.add (index, object);
-    table.put (object, object);
+  public final void insertElementAt(Object object, int index) 
+  {
+    vector.add(index, object);
+    table.put(object, object);
   }
 
   /**
@@ -147,35 +167,38 @@ public class FastVector {
    *    or at the start if old_object isn't in the vector.
    *  @param new_object The new object to insert.
    **/
-  public void insertElementAfter (Object old_object, Object new_object) {
-    final int old_object_index = indexOf (old_object);
+  public void insertElementAfter(Object old_object, Object new_object) 
+  {
+    final int old_object_index = indexOf(old_object);
 
-    if (old_object_index == -1) {
-      insertElementAt (new_object, 0);
-    } else {
-      insertElementAt (new_object, old_object_index + 1);
-    }
-    table.put (new_object, new_object);
+    if(old_object_index == -1) 
+      insertElementAt(new_object, 0);
+    else 
+      insertElementAt(new_object, old_object_index + 1);
+    
+    table.put(new_object, new_object);
   }
 
   /**
-   *  Replace the Object at the given index.  (Performs the same function as
+   *  Replace the Object at the given index. (Performs the same function as
    *  Vector.elementAt())
    **/
-  public void setElementAt (final Object object, final int index) {
-    removeElementAt (index);
-    insertElementAt (object, index);
+  public void setElementAt(final Object object, final int index) 
+  {
+    removeElementAt(index);
+    insertElementAt(object, index);
   }
 
   /**
    *  Create a new FastVector with the same contents as this one.  Note that
    *  this does only a shallow copy.
    **/
-  public Object clone () {
-    final FastVector return_vector = new FastVector ();
+  public Object clone() 
+  {
+    final FastVector return_vector = new FastVector();
 
-    return_vector.vector = (ArrayList) vector.clone ();
-    return_vector.table = (HashMap) table.clone ();
+    return_vector.vector = (ArrayList)vector.clone();
+    return_vector.table = (HashMap)table.clone();
     return return_vector;
   }
 
@@ -183,26 +206,11 @@ public class FastVector {
    *  Return a sorted copy of this vector.
    *  @param cmp The returned vector will be sorted with this Comparator.
    **/
-  public FastVector sort (final Comparator cmp) {
-    final FastVector return_vector = (FastVector) clone ();
-
-    Collections.sort (return_vector.vector, cmp);
-
+  public FastVector sort(final Comparator cmp) 
+  {
+    final FastVector return_vector = (FastVector)clone();
+    Collections.sort(return_vector.vector, cmp);
     return return_vector;
   }
 
-  /**
-   *  The initial size used for the Vector and the Hashtable.
-   **/
-  final static private int INITIAL_CAPACITY = 20;
-
-  /**
-   *  Storage for objects.
-   **/
-  private ArrayList vector = new ArrayList ();
-
-  /**
-   *  This is used for fast lookup of objects in contains ().
-   **/
-  private HashMap table = new HashMap (INITIAL_CAPACITY);
 }

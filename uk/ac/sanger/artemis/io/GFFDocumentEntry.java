@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.2 2004-10-29 09:36:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.3 2004-11-24 11:55:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.Enumeration;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.2 2004-10-29 09:36:24 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.3 2004-11-24 11:55:52 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -139,17 +139,18 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     final Hashtable forward_feature_groups = new Hashtable();
     final Hashtable reverse_feature_groups = new Hashtable();
 
+    Feature this_feature;
+    Hashtable this_strand_feature_groups;
+    String group_name;
+
     for(int i = 0 ; i < original_features.size() ; ++i) 
     {
-      final Feature this_feature = original_features.elementAt(i);
-      final Hashtable this_strand_feature_groups;
+      this_feature = original_features.featureAt(i);
 
       if(this_feature.getLocation().isComplement()) 
         this_strand_feature_groups = reverse_feature_groups;
       else
         this_strand_feature_groups = forward_feature_groups;
-
-      final String group_name;
 
       try 
       {
@@ -215,13 +216,14 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
   private void combineFeaturesFromHash(final Hashtable feature_groups) 
   {
     final Enumeration enumFeat = feature_groups.keys();
+    String name;
+    FeatureVector feature_group;
 
     while(enumFeat.hasMoreElements()) 
     {
-      final String name = (String)enumFeat.nextElement();
+      name = (String)enumFeat.nextElement();
 
-      final FeatureVector feature_group =
-        (FeatureVector)feature_groups.get(name);
+      feature_group = (FeatureVector)feature_groups.get(name);
 
       if(feature_group.size() > 1) 
       {
@@ -259,7 +261,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           new_gff_lines.add(this_feature.gff_lines);
         }
 
-        final Feature first_old_feature = feature_group.elementAt(0);
+        final Feature first_old_feature = feature_group.featureAt(0);
 
         final GFFStreamFeature new_feature =
           new GFFStreamFeature(first_old_feature);

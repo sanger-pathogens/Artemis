@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/FeatureTree.java,v 1.1 2004-06-09 09:49:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/FeatureTree.java,v 1.2 2004-11-24 11:55:52 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.io;
@@ -32,7 +32,7 @@ import java.util.*;
  *  object.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureTree.java,v 1.1 2004-06-09 09:49:26 tjc Exp $
+ *  @version $Id: FeatureTree.java,v 1.2 2004-11-24 11:55:52 tjc Exp $
  **/
 
 public class FeatureTree extends TreeSet {
@@ -142,7 +142,7 @@ public class FeatureTree extends TreeSet {
    **/
   public synchronized FeatureVector getFeaturesInRange (final Range range) {
     // this default size will cover many common cases
-    final FeatureVector return_features = new FeatureVector (100);
+    final FeatureVector return_features = new FeatureVector();
 
     for (int i = 0 ;
          i < rbtree_buckets.size () && rbtree_buckets.elementAt (i) != null ;
