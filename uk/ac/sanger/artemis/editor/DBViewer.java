@@ -344,8 +344,14 @@ public class DBViewer extends ScrollPanel
     if(seqPos >= 0 && seqPos<hitInfoCollection.size())
     {
       HitInfo hit = (HitInfo)hitInfoCollection.get(seqPos);
-      return hit.getID()+"\n"+hit.getOrganism()+"\nE-value:"+hit.getEValue()+
-             " Score:"+hit.getScore();
+
+      StringBuffer tip = new StringBuffer();
+      tip.append(hit.getID()+"\n");
+      if(hit.getOrganism() != null)
+        tip.append(hit.getOrganism()+"\n");
+      tip.append("E-value:"+hit.getEValue()+" Score:"+hit.getScore());
+
+      return tip.toString();
     }
     return null;
   }

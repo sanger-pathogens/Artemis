@@ -65,6 +65,7 @@ public class Annotation extends JEditorPane
     super();
 
     this.desktop = desktop;
+
     setEditable(false);
     setContentType("text/html");
     setFont(BigPane.font);
@@ -116,6 +117,7 @@ public class Annotation extends JEditorPane
     catch(IOException ioe){}
     qualifier.add("/similarity=");
     qualifier.add("/gene=");
+    qualifier.add("/GO_component=");
 
     text = getDatabaseHTML(text,"SWALL:");
     text = getDatabaseHTML(text,"UNIPROT:");
@@ -180,6 +182,7 @@ public class Annotation extends JEditorPane
     s = getDatabaseHTML(s,"SWALL:");
     s = getDatabaseHTML(s,"UNIPROT:");
     s = getDatabaseHTML(s,"EMBL:");
+    s = getGeneDBHTML(s);
 
     int ind = s.indexOf("/gene");
     
@@ -189,6 +192,8 @@ public class Annotation extends JEditorPane
       offset = startRange;
 
     insert(s,offset);
+
+    setCaretPosition(doc.getLength());  
 //  reportHTML();
   }
 
@@ -210,6 +215,32 @@ public class Annotation extends JEditorPane
     {
       exp.printStackTrace();
     }
+  }
+
+  
+  private String getGeneDBHTML(String s)
+  {
+    int ind = s.indexOf("GeneDB");
+    if(ind>-1)
+    {
+      String startStr = s.substring(0,ind);
+      int ind2 = s.indexOf(";",ind);
+
+      String midStr = s.substring(ind,ind2);
+      String endStr = s.substring(ind2);
+
+      ind2 = midStr.indexOf(":")+1;
+
+      String db = midStr.substring(7,8)+".+"+
+                  midStr.substring(8,ind2-1);
+      String genedb = "http://www.genedb.org/genedb/Search?name="+
+                      midStr.substring(ind2)+
+                      "&organism="+db;
+                                    
+      s = startStr + "<a href=\""+genedb+"\">" +
+          midStr   + "</a>" + endStr;
+    }
+    return s;
   }
 
 
@@ -392,7 +423,13 @@ public class Annotation extends JEditorPane
         String search = "";
         if(ind1 > -1 && ind2 > -1)
           search = event.getDescription().substring(ind1+1,ind2);
-        
+        else
+        {
+          ind1 = event.getDescription().indexOf("=")+1; // genedb
+          if(ind1 > -1)
+            search = event.getDescription().substring(ind1);
+        }
+
         if(desktop != null)
         {
           if(BigPane.srsTabPane.isSelected())

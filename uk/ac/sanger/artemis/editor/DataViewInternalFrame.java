@@ -45,7 +45,7 @@ public class DataViewInternalFrame extends JInternalFrame
               true, //maximizable
               true);//iconifiable
 
-    ann   = new Annotation(desktop);
+    ann = new Annotation(desktop);
 
     StringBuffer annFormat = new StringBuffer();
     annFormat.append(htmlBreaks(qualifier_txt.trim()));
@@ -117,6 +117,7 @@ public class DataViewInternalFrame extends JInternalFrame
   
     // add annotator text pane
     ann.setAnnotation(annFormat.toString().trim());
+
     JScrollPane annotationScroll = new JScrollPane(ann);   
     annotationScroll.setPreferredSize(new Dimension(500,150));
 

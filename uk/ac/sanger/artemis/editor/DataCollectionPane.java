@@ -276,6 +276,7 @@ public class DataCollectionPane extends JScrollPane
           final String go_id = ((String)gov_enum.nextElement()).trim();
           bacross = Box.createHorizontalBox();
 
+          final String goLine = (String)goHash.get(go_id);
           final JCheckBox goBox = new JCheckBox();
           goBox.setSelected(false);
           goBox.addActionListener(new ActionListener()
@@ -287,7 +288,7 @@ public class DataCollectionPane extends JScrollPane
                 String go_term = hit.getGoAssociation(go_id);
                 if(go_term == null)
                 { 
-                  go_term = setGoAnnotation(ann,hit.getAcc(),go_id);
+                  go_term = setGoAnnotation(ann,hit,go_id,goLine);
                   hit.setGoAssociation(go_id,go_term);
                 }
                 else
@@ -339,7 +340,7 @@ public class DataCollectionPane extends JScrollPane
           bacross.add(goButton);
           goButton.setMargin(new Insets(0,1,0,1));
 
-          JLabel goLabel = new JLabel((String)goHash.get(go_id));
+          JLabel goLabel = new JLabel(goLine);
           goLabel.setFont(BigPane.font);
           bacross.add(goLabel);
           bdown.add(bacross);
@@ -595,7 +596,6 @@ public class DataCollectionPane extends JScrollPane
     if(hit.getOrganism() == null ||
        hit.getDescription() == null)
     {
-      System.out.println("CALLING GETZ");
       String cmd[]   = { "getz", "-f", "org description gen",
                          "[uniprot:"+hit.getAcc()+"]|[uniprot:"+hit.getID()+"]" };
 
@@ -657,12 +657,14 @@ public class DataCollectionPane extends JScrollPane
   * @return annotation 
   *
   */
-  private String setGoAnnotation(Annotation ann, String id, String go_id)
+  private String setGoAnnotation(Annotation ann, HitInfo hit, 
+                                 String go_id, String goLine)
   {
-    String go_ann = new String("/GO_component=\"GO:"+
-                               go_id+"; "+id+";\"");
+    String go_ann = new String("/GO_component=\"GO:"+go_id+
+                               "; "+hit.getDB()+":"+hit.getAcc()+
+                               "; "+goLine+"\"");
   
-    String cmd[]   = { "etc/go_associations.pl", "-assoc", id };
+    String cmd[]   = { "etc/go_associations.pl", "-assoc", hit.getAcc() };
     ExternalApplication app = new ExternalApplication(cmd,
                                                 null,null);
     String res = app.getProcessStdout();
@@ -687,7 +689,7 @@ public class DataCollectionPane extends JScrollPane
     if(!found)  // try SRS
     {
       String env[]  = { "PATH=/usr/local/pubseq/bin/" };
-      String cmd2[] = { "getz", "-f", "dbxref", "[uniprot:"+id+"]" };
+      String cmd2[] = { "getz", "-f", "dbxref", "[uniprot:"+hit.getAcc()+"]" };
       app = new ExternalApplication(cmd2,env,null);
       res = app.getProcessStdout();
 

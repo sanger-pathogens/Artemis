@@ -121,6 +121,9 @@ public class HitInfo
     else
       return;
 
+    if(acc.startsWith("|")) // genedb
+      acc = id;
+
     ind1 = header.lastIndexOf(" ");
     evalue = header.substring(ind1).trim();
   
