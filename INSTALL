@@ -1,0 +1,29 @@
+
+Installation instructions for UNIX
+
+   1. change to /some/directory
+
+   2. uncompress and untar the artemis_compiled.tar.gz file
+      On UNIX the command is:   gzip -d < artemis_compiled.tar.gz | tar xf -
+
+
+This will create a "artemis" directory containing all the java classes.  On
+Unix the easiest way to run the program is to run the script called art in the
+diana directory:
+
+    /some/directory/artemis/art
+
+If all goes well you will be presented with a small window with two
+menus.  From the File menu you can open a flat file containing an
+entry.  If it reads the entry successfully a new window will open,
+which shows the sequence and features for the entry.
+
+An alternative way to run it is:
+
+   cd /some/directory/artemis/
+   java -classpath .:lib/biojava.jar:lib/jobcontrol.jar uk.ac.sanger.artemis.components.ArtemisMain & 
+
+ACT can be run in this way:
+
+   cd /some/directory/artemis/
+   java -classpath .:lib/biojava.jar:lib/jobcontrol.jar uk.ac.sanger.artemis.components.ActMain &
