@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntry.java,v 1.1 2004-06-09 09:49:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntry.java,v 1.2 2005-02-03 15:17:50 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.Date;
  *  a Document object.
  *
  *  @author Kim Rutherford
- *  @version $Id: DocumentEntry.java,v 1.1 2004-06-09 09:49:03 tjc Exp $
+ *  @version $Id: DocumentEntry.java,v 1.2 2005-02-03 15:17:50 tjc Exp $
  **/
 
 public interface DocumentEntry extends Entry {
@@ -57,6 +57,15 @@ public interface DocumentEntry extends Entry {
    **/
   void save (final Document document)
       throws IOException;
+
+  /**
+   *  Write this Entry to the given stream.
+   *  @param writer The stream to write to.
+   *  @exception IOException thrown if there is a problem writing the entry.
+   **/
+  void writeToStream (final Writer writer)
+      throws IOException;
+ 
 
   /**
    *  Arrange for hasUnsavedChanges () to return true until the next save.
