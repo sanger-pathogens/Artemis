@@ -430,7 +430,7 @@ public class DataCollectionPane extends JScrollPane
   * @param desktop	desktop pane.
   *
   */
-  protected void setUpSRSFrame(URL url, String name, JDesktopPane desktop)
+  protected static void setUpSRSFrame(URL url, String name, JDesktopPane desktop)
                  throws IOException
   {
     if(BigPane.srsFrame == null)

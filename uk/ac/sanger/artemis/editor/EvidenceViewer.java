@@ -25,7 +25,10 @@
 package uk.ac.sanger.artemis.editor;
 
 import javax.swing.JPanel;
+import javax.swing.JOptionPane;
+import javax.swing.JDesktopPane;
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.util.StringTokenizer;
 
@@ -45,9 +48,13 @@ public class EvidenceViewer extends JPanel
   private int bound = 35;
   private Feature edit_feature;
   private FeatureVector overlapFeature;
+  private float unitLength;
+  private int YDISPLACEMENT = 20;
+  private JDesktopPane desktop;
+
 
   public EvidenceViewer(Feature edit_feature, 
-                        FeatureVector overlapFeature)                       
+                        FeatureVector overlapFeature, JDesktopPane desktop)
   {
     this.edit_feature   = edit_feature;
     this.overlapFeature = overlapFeature;
@@ -55,6 +62,7 @@ public class EvidenceViewer extends JPanel
     featStart = this_loc.getFirstBase();
     featEnd   = this_loc.getLastBase();
 
+    this.desktop = desktop;
     this.evidenceStart = evidenceStart;
     this.evidenceEnd   = evidenceEnd;
 
@@ -62,6 +70,8 @@ public class EvidenceViewer extends JPanel
     final Dimension dim = new Dimension(500,hgt);
     setPreferredSize(dim);
     setMaximumSize(dim);
+
+    addMouseListener(new MouseClickListener());
   }
 
   /**
@@ -87,8 +97,7 @@ public class EvidenceViewer extends JPanel
     int unit     = (int)(resultwidth/npoints);
     int featUnit = (featEnd-featStart)/npoints;
 
-    float unitLength = (float)resultwidth/(float)(featEnd-featStart);
-
+    unitLength = (float)resultwidth/(float)(featEnd-featStart);
 
 // feature segments
     final FeatureSegmentVector this_feature_segments = edit_feature.getSegments();
@@ -174,9 +183,8 @@ public class EvidenceViewer extends JPanel
       g2.setStroke(new BasicStroke(3.f));
       g2.drawString(pfamID, bound+start+(end-start-strwid)/2, bound2+ydisp+5);
      
-      ydisp += 20;
+      ydisp += YDISPLACEMENT;
     }
-
   }
 
 
@@ -201,5 +209,84 @@ public class EvidenceViewer extends JPanel
     g2.drawLine(bound+start, bound+hgtNumber+6,
                 bound+stop,  bound+hgtNumber+6);
   }
+
+  public class MouseClickListener implements MouseListener
+  {
+    public void mousePressed(MouseEvent e) 
+    {
+    }
+
+    public void mouseReleased(MouseEvent e) 
+    {
+    }
+
+    public void mouseEntered(MouseEvent e) 
+    {
+    }
+
+    public void mouseExited(MouseEvent e) 
+    {
+    }
+
+    public void mouseClicked(MouseEvent e) 
+    {
+      int ydisp  = 0;
+      int bound2 = bound*2;
+      int ydisp2 = YDISPLACEMENT/2;
+      Point loc  = e.getPoint();
+      for(int i = 0; i<overlapFeature.size(); ++i)
+      {
+        Feature this_feature = overlapFeature.elementAt(i);
+        Location this_loc = this_feature.getLocation();
+        int start = this_loc.getFirstBase();
+        int end   = this_loc.getLastBase();
+
+        start = (int)((start-featStart)*unitLength)+bound;
+        end   = (int)((end-featStart)*unitLength)+bound;
+
+        if(loc.x < end &&
+           loc.x > start &&
+           loc.y < ydisp+ydisp2+bound2 &&
+           loc.y > ydisp-ydisp2+bound2)
+        {
+          String note = this_feature.getNote();
+
+          int indPF   = note.indexOf("PF");  // Pfam ID
+          if(indPF == -1)
+            continue;
+
+          StringTokenizer tok = new StringTokenizer(note.substring(indPF)," ,;");
+          String pfamID = tok.nextToken();
+
+
+          String pfam_cmd = "http://www.sanger.ac.uk/cgi-bin/Pfam/getacc?"+pfamID;
+          BrowserControl.displayURL(pfam_cmd);
+
+          if(BigPane.srsTabPane.isSelected())
+          {
+            try
+            {
+              DataCollectionPane.setUpSRSFrame(new java.net.URL(pfam_cmd),
+                                               pfamID,desktop);
+            }
+            catch(java.net.ConnectException connect)
+            {
+              JOptionPane.showMessageDialog(EvidenceViewer.this,
+                       "Cannot retrieve "+pfamID+
+                       "\nConnection failed to:\n"+pfamID,
+                       "Connection Error",
+                       JOptionPane.WARNING_MESSAGE);
+            }
+            catch(Exception exp)
+            {
+              exp.printStackTrace();
+            }
+          }
+        }
+        ydisp += YDISPLACEMENT;
+      }
+    }
+  }
+
 }
 

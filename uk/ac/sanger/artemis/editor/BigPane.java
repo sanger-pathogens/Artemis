@@ -106,7 +106,7 @@ public class BigPane extends JFrame
 
     Box evidenceBox = dataView.getEvidenceBox();
     if(overlapFeature != null)
-      evidenceBox.add(getOverlapFeatures(overlapFeature),0);
+      evidenceBox.add(getOverlapFeatures(overlapFeature,desktop),0);
     evidenceBox.add(Box.createVerticalGlue());
 
     ScrollPanel scroller = new ScrollPanel();
@@ -135,10 +135,11 @@ public class BigPane extends JFrame
   * Display for overlapping Pfam features.
   *
   */
-  private Box getOverlapFeatures(FeatureVector overlapFeature)
+  private Box getOverlapFeatures(FeatureVector overlapFeature,
+                                 JDesktopPane desktop)
   {
     Box bdown = Box.createVerticalBox();
-    bdown.add(new EvidenceViewer(edit_feature,overlapFeature));
+    bdown.add(new EvidenceViewer(edit_feature,overlapFeature,desktop));
     return bdown;
   }
 
