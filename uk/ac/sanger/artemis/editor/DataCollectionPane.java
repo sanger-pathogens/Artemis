@@ -664,7 +664,8 @@ public class DataCollectionPane extends JScrollPane
                                "; "+hit.getDB()+":"+hit.getAcc()+
                                "; "+goLine+"\"");
   
-    String cmd[]   = { "etc/go_associations.pl", "-assoc", hit.getAcc() };
+    String prog = DataCollectionPane.class.getResource("/etc/go_associations.pl").getPath(); 
+    String cmd[]   = { prog, "-assoc", hit.getAcc() };
     ExternalApplication app = new ExternalApplication(cmd,
                                                 null,null);
     String res = app.getProcessStdout();
