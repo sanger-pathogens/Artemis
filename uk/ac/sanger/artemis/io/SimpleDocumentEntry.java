@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.4 2005-01-06 11:21:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.5 2005-02-03 15:19:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.Vector;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.4 2005-01-06 11:21:06 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.5 2005-02-03 15:19:13 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -1105,12 +1105,12 @@ abstract public class SimpleDocumentEntry
     {
 //  XXX FIXME - disabled for now because the code is suspect
 
-//       if(autosave_thread == null && getName() != null) {
-//         // this is the first change so start autosaving
-//         autosave_thread = new DocumentEntryAutosaveThread(this);
-
-//         autosave_thread.start();
-//       }
+       if(autosave_thread == null && getName() != null) 
+       {
+         // this is the first change so start autosaving
+         autosave_thread = new DocumentEntryAutosaveThread(this);
+         autosave_thread.start();
+       }
 
 
       final java.util.Calendar calendar = java.util.Calendar.getInstance();
