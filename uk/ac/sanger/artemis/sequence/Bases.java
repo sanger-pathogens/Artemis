@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.4 2004-12-22 17:44:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.5 2004-12-22 18:39:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -45,7 +45,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.4 2004-12-22 17:44:53 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.5 2004-12-22 18:39:17 tjc Exp $ */
 
 public class Bases {
   /**
@@ -510,9 +510,9 @@ public class Bases {
 
     int current_return_array_index = 0;
 
-    final String sequence_string =
-      getSequence ().getSubSequence (1, getLength ());
-    final int sequence_string_length = sequence_string.length();
+    final char sequence_string[] =
+      getSequence().getSubSequence(1, getLength()).toCharArray();
+    final int sequence_string_length = sequence_string.length;
     final int range_start_index = real_range.getStart () - 1;
     final int range_end_index = real_range.getEnd () - 1;
 
@@ -992,15 +992,15 @@ public class Bases {
    *  complement of those three bases is a stop codon.
    *  Codons that contain an X are considered to be stop codons.
    **/
-  private static boolean isStopCodon (final String sequence_string,
+  private static boolean isStopCodon (final char[] sequence,
                                       final int start_index,
                                       final int direction) {
     final char translation;
 
     if (direction == FORWARD) {
-      final char first_letter = sequence_string.charAt (start_index);
-      final char second_letter = sequence_string.charAt (start_index + 1);
-      final char third_letter = sequence_string.charAt (start_index + 2);
+      final char first_letter  = sequence[start_index];
+      final char second_letter = sequence[start_index + 1];
+      final char third_letter  = sequence[start_index + 2];
 
       if (first_letter == 'x' || second_letter == 'x' || third_letter == 'x') {
         // codons that contain an X are considered to be stop codons.
@@ -1012,11 +1012,11 @@ public class Bases {
                                                            third_letter);
     } else {
       final char first_letter =
-        complement (sequence_string.charAt (start_index - 2));
+        complement (sequence[start_index - 2]);
       final char second_letter =
-        complement (sequence_string.charAt (start_index - 1));
+        complement (sequence[start_index - 1]);
       final char third_letter =
-        complement (sequence_string.charAt (start_index));
+        complement (sequence[start_index]);
 
       if (first_letter == 'x' || second_letter == 'x' || third_letter == 'x') {
         // codons that contain an X are considered to be stop codons.
