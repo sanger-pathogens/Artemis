@@ -37,9 +37,15 @@ import javax.imageio.stream.*;
 
 import uk.ac.sanger.artemis.editor.ScrollPanel;
 
+/**
+*
+* Use to print images from ACT
+*
+*/
 public class PrintACT extends ScrollPanel
 {
 
+  /** act display to create image from */
   private MultiComparator mc;
 
   public PrintACT(MultiComparator mc)
@@ -277,6 +283,15 @@ public class PrintACT extends ScrollPanel
       if(!(i == mc.getEntryGroupArray().length - 1 &&
                 mc.getEntryGroupArray().length == 2))
       {
+        Component c[] = mc.getBasePlotGroupArray()[i].getComponents();
+        for(int j=0; j<c.length; j++)
+          if(c[j] instanceof BasePlot)
+          {
+            height += ((BasePlot)c[j]).getHeight();
+            if(((BasePlot)c[j]).getSize().width < width &&
+               ((BasePlot)c[j]).getSize().width  > 0)
+              width = ((BasePlot)c[j]).getCanvas().getSize().width;
+          }
       }
 
       height += mc.getFeatureDisplayArray()[i].getHeight();
@@ -286,8 +301,17 @@ public class PrintACT extends ScrollPanel
       if(i == mc.getEntryGroupArray().length - 1 &&
               mc.getEntryGroupArray().length == 2)
       {
+        Component c[] = mc.getBasePlotGroupArray()[i].getComponents();
+        for(int j=0; j<c.length; j++)
+          if(c[j] instanceof BasePlot)
+          {
+            height += ((BasePlot)c[j]).getHeight();
+            if(((BasePlot)c[j]).getSize().width < width &&
+               ((BasePlot)c[j]).getSize().width  > 0)
+              width = ((BasePlot)c[j]).getCanvas().getSize().width;
+          }
       }
- 
+
       if(i < mc.getAlignmentViewerArray().length)
       {
         height += mc.getAlignmentViewerArray()[i].getHeight();
@@ -302,33 +326,8 @@ public class PrintACT extends ScrollPanel
                                   BufferedImage.TYPE_INT_RGB);
     // Create a graphics contents on the buffered image
     Graphics2D g2d = bufferedImage.createGraphics();
- 
-    for(int i = 0; i < mc.getFeatureDisplayArray().length; ++i)
-    {
-      if(!(i == mc.getEntryGroupArray().length - 1 &&
-                mc.getEntryGroupArray().length == 2))
-      {
-//      getContentPane().add(base_plot_group_array[i]);
-      }
+    paintComponent(g2d);
 
- 
-      mc.getFeatureDisplayArray()[i].paintComponent(g2d);
-      g2d.translate(0,mc.getFeatureDisplayArray()[i].getHeight());
-
-      if(i == mc.getEntryGroupArray().length - 1 &&
-              mc.getEntryGroupArray().length == 2)
-      {
-//      getContentPane().add(base_plot_group_array[i]);
-      }
-
-      if(i < mc.getAlignmentViewerArray().length)
-      {
-        mc.getAlignmentViewerArray()[i].paintComponent(g2d);
-        g2d.translate(0,mc.getAlignmentViewerArray()[i].getHeight());
-//      getContentPane().add(getAlignmentViewerArray()[i]);
-      }
-    }
- 
     return bufferedImage;
   }
 
