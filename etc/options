@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.16 2005-01-27 13:48:19 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.17 2005-02-08 16:39:01 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -457,6 +457,7 @@ extra_qualifiers = \
     comment_Cterm "text" \
     comment_Nterm "text" \
     confidence_level "text" \
+    controlled_curation "text" \
     coord "text" \
     contig_id "text" \
     created "text" \
