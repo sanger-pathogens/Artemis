@@ -345,7 +345,9 @@ public class FileManager extends JFrame
         ftree.newRoot("/nfs/disk222/yeastpub");
       }
     });
-    toolBar.add(shortCut1);
+
+    if((new File("/nfs/disk222/yeastpub")).exists())
+      toolBar.add(shortCut1);
 
     JButton homeBt = new JButton()
     {
