@@ -20,14 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupDisplay.java,v 1.1 2004-06-09 09:46:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupDisplay.java,v 1.2 2004-11-09 14:24:41 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
-import java.awt.FlowLayout;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
 
@@ -38,7 +37,7 @@ import javax.swing.*;
  *  objects in an EntryGroup.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryGroupDisplay.java,v 1.1 2004-06-09 09:46:29 tjc Exp $
+ *  @version $Id: EntryGroupDisplay.java,v 1.2 2004-11-09 14:24:41 tjc Exp $
  **/
 
 public class EntryGroupDisplay extends JPanel
@@ -91,6 +90,13 @@ public class EntryGroupDisplay extends JPanel
     refreshButtons();
     
     setBackground(background_colour);
+  }
+
+ 
+  protected void printComponent(Graphics g)
+  {
+    super.paintComponent(g);
+    super.printChildren(g);
   }
 
 

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.3 2004-07-29 08:44:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.4 2004-11-09 14:24:41 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.3 2004-07-29 08:44:16 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.4 2004-11-09 14:24:41 tjc Exp $
  *
  */
 
@@ -94,7 +94,9 @@ public class EntryEdit extends JFrame
   **/
   private EntrySourceVector entry_sources;
 
+  private SelectionInfoDisplay selection_info;
 
+   
   /**
    *  Create a new EntryEdit object and JFrame.
    *  @param entry_group The EntryGroup object that this component is editing.
@@ -158,7 +160,7 @@ public class EntryEdit extends JFrame
     
     menu_bar.setFont(default_font);
 
-    SelectionInfoDisplay selection_info =
+    selection_info =
       new SelectionInfoDisplay(getEntryGroup(), getSelection());
     box_panel.add(selection_info);
 
@@ -213,7 +215,6 @@ public class EntryEdit extends JFrame
     one_line_per_entry_display.addDisplayAdjustmentListener(feature_display);
 
     box_panel.add(feature_display);
-
     feature_display.setVisible(true);
 
     base_display =
@@ -281,6 +282,82 @@ public class EntryEdit extends JFrame
       setSize(900, 700);
 
     Utilities.centreFrame(this);
+  }
+
+
+  /**
+  *
+  * Retrieve the feature list object.
+  *
+  */
+  protected FeatureList getFeatureList()
+  {
+    return feature_list;
+  }
+
+
+  /**
+  *
+  * Retrieve the base display object.
+  *
+  */
+  protected FeatureDisplay getBaseDisplay()
+  {
+    return base_display;
+  }
+
+  /**
+  *
+  * Retrieve the one line per entry object.
+  *
+  */
+  protected FeatureDisplay getOneLinePerEntryDisplay()
+  {
+    return one_line_per_entry_display;
+  }
+
+
+  /**
+  *
+  * Retrieve the base plot display object.
+  *
+  */
+  protected BasePlotGroup getBasePlotGroup()
+  {
+    return base_plot_group;
+  }
+
+
+  /**
+  *
+  * Retrieve the entry group display object.
+  *
+  */
+  protected EntryGroupDisplay getEntryGroupDisplay()
+  {
+    return group_display;
+  }
+
+
+  /**
+  *
+  * Retrieve the selection info display object.
+  *
+  */
+  protected SelectionInfoDisplay getSelectionInfoDisplay()
+  {
+    return selection_info;
+  }
+
+
+  /**
+  *
+  * Retrieve the feature display object.
+  *
+  */
+  protected FeatureDisplay getFeatureDisplay()
+  {
+    return feature_display;
   }
 
   /**
@@ -1084,7 +1161,8 @@ public class EntryEdit extends JFrame
 
     file_menu.add(clone_entry_edit);
     file_menu.addSeparator();
-
+    printMenu();
+    file_menu.addSeparator();
 
     final JMenuItem close = new JMenuItem("Close");
     close.addActionListener(new ActionListener() 
@@ -1097,6 +1175,34 @@ public class EntryEdit extends JFrame
 
     file_menu.add(close);
   }
+
+  private void printMenu()
+  {
+    JMenuItem printImage = new JMenuItem("Print Image Files (png/jpeg)...");
+    printImage.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        PrintArtemis part = new PrintArtemis(EntryEdit.this);
+        part.print();
+      }
+    });
+    file_menu.add(printImage);
+
+// print preview
+    JMenuItem printPreview = new JMenuItem("Print Preview");
+    file_menu.add(printPreview);
+    printPreview.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        PrintArtemis part = new PrintArtemis(EntryEdit.this);
+        part.printPreview();
+      }
+    });
+
+  }
+
 
   /**
    *  Read an entry
