@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.5 2005-04-05 16:16:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.6 2005-04-06 16:07:03 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.5 2005-04-05 16:16:54 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.6 2005-04-06 16:07:03 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -153,75 +153,22 @@ public class AddMenu extends SelectionMenu
       {
         public void actionPerformed (ActionEvent event) 
         {
-          Vector diffs;
-          if(alignQueryViewer != null)
-            diffs = alignQueryViewer.getDifferenceCoords(false);
-          else
-            diffs = alignSubjectViewer.getDifferenceCoords(true);
-
-          Enumeration eDiffs = diffs.elements();
-          while(eDiffs.hasMoreElements())
+          Vector diffs = null;
+          if(alignQueryViewer == null || alignSubjectViewer == null)
           {
-            Integer coords[] = (Integer[])eDiffs.nextElement();
-            int start = coords[0].intValue();
-            int end   = coords[1].intValue();
-//          System.out.println(start+" "+end);
-            
-            final Entry default_entry = entry_group.getDefaultEntry();
-            if(default_entry == null) 
-            {
-              new MessageDialog(frame, "There is no default entry");
-              return;
-            }
-
-            Location loc = null;
-            Feature temp_feature;
-            try 
-            {
-              loc = new Location(start+".."+end);
-              temp_feature = default_entry.createFeature(Key.CDS, loc);
-            } 
-            catch(EntryInformationException e) 
-            {
-              // use the default key instead
-              final Key default_key =
-                default_entry.getEntryInformation().getDefaultKey();
-
-              try
-              {
-                temp_feature =
-                    default_entry.createFeature(default_key, loc);
-              }
-              catch(EntryInformationException einfo)
-              {
-                throw new Error("internal error - unexpected exception: " + einfo);
-              }
-              catch(ReadOnlyException eRead)
-              {
-                new MessageDialog(frame, "feature not created: " +
-                                "the default entry is read only");
-              }
-              catch(OutOfRangeException eout)
-              {
-                throw new Error("internal error - unexpected exception: " + eout);
-              }
-
-            }
-            catch(ReadOnlyException e) 
-            {
-              new MessageDialog(frame, "feature not created: " +
-                              "the default entry is read only");
-            } 
-            catch(OutOfRangeException e) 
-            {
-              throw new Error("internal error - unexpected exception: " + e);
-            }
-            catch(LocationParseException  lpe)
-            {
-              throw new Error("internal error - unexpected exception: " + lpe);
-            }
+            if(alignQueryViewer != null)
+              diffs = alignQueryViewer.getDifferenceCoords(false);
+            else
+              diffs = alignSubjectViewer.getDifferenceCoords(true);
           }
-
+          else    // multi-comparison
+          {
+            Vector diffs1 = alignQueryViewer.getDifferenceCoords(false);
+            Vector diffs2 = alignSubjectViewer.getDifferenceCoords(true);
+            
+            diffs = union(diffs1,diffs2);
+          }
+          createFeatures(diffs, frame);
         }
       });
 
@@ -323,6 +270,123 @@ public class AddMenu extends SelectionMenu
     });
 
     add (mark_ambiguities_item);
+  }
+
+  /**
+  *
+  * Find the union of coordinates in two Vecor objects.
+  * @param v1 Vector of Integer coordinates
+  * @param v2 Vector of Integer coordinates
+  *  
+  */
+  private Vector union(Vector v1, Vector v2)
+  {
+    Vector union = new Vector();
+
+    for(int i=0; i<v1.size(); i++)
+    {
+      Integer[] imatch = (Integer[])v1.get(i);
+      int istart = imatch[0].intValue();
+      int iend   = imatch[1].intValue();
+
+      for(int j=0; j<v2.size(); j++)
+      {
+        Integer[] jmatch = (Integer[])v2.get(j);
+        int jstart = jmatch[0].intValue();
+        int jend   = jmatch[1].intValue();
+
+        if( (istart >= jstart && istart <= jend) ||
+            (iend >= jstart && iend <= jend) ||
+            (jstart > istart && jend < iend) )
+        {
+          if(jstart > istart)
+            istart = jstart;
+          
+          if(iend < jend)
+            jend = iend;
+
+          Integer coords[] = new Integer[2];
+          coords[0] = new Integer(istart);
+          coords[1] = new Integer(jend);
+          union.add(coords);
+        }
+      }
+    }
+
+    return union;
+  }
+
+  /**
+  *
+  * Create features from Vector of coordinates.
+  * @param diffs Vector of coordinates to create feature from.
+  * @param frame The JFrame that owns this JMenu.
+  *
+  */
+  private void createFeatures(Vector diffs, JFrame frame) 
+  {
+    Enumeration eDiffs = diffs.elements();
+    while(eDiffs.hasMoreElements())
+    {
+      Integer coords[] = (Integer[])eDiffs.nextElement();
+      int start = coords[0].intValue();
+      int end   = coords[1].intValue();
+//    System.out.println(start+" "+end);
+         
+      final Entry default_entry = entry_group.getDefaultEntry();
+      if(default_entry == null) 
+      {
+        new MessageDialog(frame, "There is no default entry");
+        return;
+      }
+
+      Location loc = null;
+      Feature temp_feature;
+      try 
+      {
+        loc = new Location(start+".."+end);
+        temp_feature = default_entry.createFeature(Key.CDS, loc);
+      } 
+      catch(EntryInformationException e) 
+      {
+        // use the default key instead
+        final Key default_key =
+          default_entry.getEntryInformation().getDefaultKey();
+
+        try
+        {
+          temp_feature =
+              default_entry.createFeature(default_key, loc);
+        }
+        catch(EntryInformationException einfo)
+        {
+          throw new Error("internal error - unexpected exception: " + einfo);
+        }
+        catch(ReadOnlyException eRead)
+        {
+          new MessageDialog(frame, "feature not created: " +
+                          "the default entry is read only");
+        }
+        catch(OutOfRangeException eout)
+        {
+          throw new Error("internal error - unexpected exception: " + eout);
+        }
+
+      }
+      catch(ReadOnlyException e) 
+      {
+        new MessageDialog(frame, "feature not created: " +
+                        "the default entry is read only");
+      } 
+      catch(OutOfRangeException e) 
+      {
+        throw new Error("internal error - unexpected exception: " + e);
+      }
+      catch(LocationParseException  lpe)
+      {
+        throw new Error("internal error - unexpected exception: " + lpe);
+      }
+    }
   }
 
   /**
