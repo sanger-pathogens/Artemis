@@ -51,6 +51,8 @@ public class DataCollectionPane extends JScrollPane
   private FastaTextPane fastaTextPane;
   private Annotation ann;
   private JDesktopPane desktop;
+  private DataViewInternalFrame dataView;
+
 
   /**
   *
@@ -60,12 +62,14 @@ public class DataCollectionPane extends JScrollPane
   *
   */
   public DataCollectionPane(FastaTextPane fastaTextPane,
-                            Annotation ann, JDesktopPane desktop)
+                            Annotation ann, JDesktopPane desktop,
+                            DataViewInternalFrame dataView)
   {
     super();
     this.fastaTextPane = fastaTextPane;
     this.ann = ann;
-    this.desktop = desktop;
+    this.desktop  = desktop;
+    this.dataView = dataView;
 
     Box bdown = Box.createVerticalBox();
     ScrollPanel scrollPanel = new ScrollPanel();
@@ -159,7 +163,11 @@ public class DataCollectionPane extends JScrollPane
             setAnnotation(hit,ann,fastaTextPane.getFormat(),true);
           }
           else
-            ann.delete(hit.getID(),true);           
+            ann.delete(hit.getID(),true);
+
+          ann.deleteNote();
+          if(BigPane.addNote.isSelected())
+            dataView.updateNote();  
         }
       });
 
@@ -176,11 +184,15 @@ public class DataCollectionPane extends JScrollPane
               orthoBox.setSelected(false);
               ann.delete(hit.getID(),true);
             }
-           
+
             setAnnotation(hit,ann,fastaTextPane.getFormat(),false);
           }
           else
             ann.delete(hit.getID(),false);
+
+          ann.deleteNote();
+          if(BigPane.addNote.isSelected())
+            dataView.updateNote();
         }
       });
 
@@ -591,6 +603,20 @@ public class DataCollectionPane extends JScrollPane
   }
 
 
+  private HitInfo findHitInfo(String acc)
+  {
+    Enumeration hitEnum = fastaTextPane.getHitCollection().elements();
+    while(hitEnum.hasMoreElements())
+    {
+      HitInfo hit = (HitInfo)hitEnum.nextElement();
+      if(acc.equals(hit.getID()))
+        return hit;
+    }
+
+    return null;
+  }
+
+
   private static HitInfo getHitInfo(String acc, Vector hits)
   {
     int ind = 0;
@@ -862,7 +888,11 @@ public class DataCollectionPane extends JScrollPane
       if(hit.getEC_number() != null)
         orthoText.append("<br>\n/EC_number=\""+hit.getEC_number()+"\"");
 
-      orthoText.append("<br>\n/product=\""+hit.getDescription()+"\"");
+      String product = hit.getDescription().toLowerCase();
+      if(product.endsWith("."))
+        product = product.substring(0,product.length()-1);
+
+      orthoText.append("\n<br>\n/product=\""+product+"\"");
     }
 
 //  System.out.println("ID "+hit.getID());

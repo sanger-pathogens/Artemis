@@ -51,6 +51,8 @@ public class BigPane extends JFrame
   protected static JCheckBoxMenuItem srsTabPane;
   protected static JCheckBoxMenuItem srsWin;
   protected static JInternalFrame srsFrame;
+  protected static JCheckBox addNote = new JCheckBox("Add Note");
+
   private JTextArea qualifier;
   private final DataViewInternalFrame dataView;
   private final FeatureVector overlapFeature;
@@ -168,6 +170,18 @@ public class BigPane extends JFrame
     applyButt.setMargin(new Insets(0,0,0,0));
     applyButt.setFont(font);
     toolBar.add(applyButt);
+
+    addNote.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if(addNote.isSelected())
+          dataView.updateNote();
+        else
+          dataView.deleteNote();
+      }
+    });
+    toolBar.add(addNote);
     
     return toolBar;
   }

@@ -118,7 +118,9 @@ public class Annotation extends JEditorPane
     qualifier.add("/similarity=");
     qualifier.add("/gene=");
     qualifier.add("/GO_component=");
-
+    qualifier.add("/product=");
+    qualifier.add("/EC_number=");
+ 
     text = getDatabaseHTML(text,"SWALL:");
     text = getDatabaseHTML(text,"UniProt:");
     text = getDatabaseHTML(text,"EMBL:");
@@ -157,6 +159,7 @@ public class Annotation extends JEditorPane
         String tokTxt = "/"+tok.nextToken().trim();
 
         int ind = tokTxt.indexOf("=");
+
         if(ntok != 0 && ind > -1 && qualifier.contains(tokTxt.substring(0,ind+1)))
           buff.append("\n"+tokTxt);
         else
@@ -414,6 +417,41 @@ public class Annotation extends JEditorPane
     setText(txt.substring(0,ind1-1)+txt.substring(ind2));
   }
 
+
+
+  /**
+  *
+  * Deletes the annotation note line that contains an ID.
+  *
+  */
+  protected void deleteNote()
+  {
+    String txt = getText();
+
+    int ind1  = 0;
+    int ind2  = 0;
+    int indID = 0;
+    String line = null;
+
+    while((ind2 = txt.indexOf("<br>",ind1)) > -1 ||
+          (ind2 = txt.indexOf("</body>",ind1)) > -1)
+    {
+      line = txt.substring(ind1,ind2);
+
+      if(line.indexOf("/note=&quot;Similar to ") > -1)
+        break;
+      else
+        ind1 = ind2+1;
+    }
+
+    if(ind2 == -1 || ind2 > txt.length())
+      ind2 = txt.length();
+
+    if(ind1 == 0)
+      return;
+
+    setText(txt.substring(0,ind1-1)+txt.substring(ind2));
+  }
 
 
   protected void setUpSRSFrame(URL url, String search)

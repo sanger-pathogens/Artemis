@@ -31,7 +31,12 @@ import javax.swing.event.ChangeEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.Vector;
+import java.util.StringTokenizer;
+import java.util.Enumeration;
 import java.io.File;
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.io.IOException;
 
 public class DataViewInternalFrame extends JInternalFrame
 {
@@ -159,7 +164,7 @@ public class DataViewInternalFrame extends JInternalFrame
     
       // add data pane
       DataCollectionPane dataPane =
-         new DataCollectionPane(fastaPane,ann,desktop);
+         new DataCollectionPane(fastaPane,ann,desktop,this);
       fastaPane.addFastaListener(dataPane);
 
       ActiveJSplitPane split = new ActiveJSplitPane(JSplitPane.VERTICAL_SPLIT,
@@ -218,6 +223,96 @@ public class DataViewInternalFrame extends JInternalFrame
         return;
       }
     }
+  }
+
+
+  /**
+  *
+  * Delete note field in for all similar hits.
+  *
+  */
+  protected void deleteNote()
+  {
+    ann.deleteNote();
+  }
+
+
+  /**
+  * 
+  * Add a note field in for all similar hits.
+  *
+  */
+  protected void updateNote()
+  {
+    StringReader in     = new StringReader(getFeatureText());
+    BufferedReader buff = new BufferedReader(in);
+    String line       = null;
+    StringBuffer note = null;
+
+    try
+    {
+      while((line = buff.readLine()) != null)
+      {
+        if(line.startsWith("/similarity="))
+        {
+          if(note == null)
+            note = new StringBuffer("\n/note=\"Similar to");
+          else
+            note.append(", and to");
+
+          StringTokenizer tok = new StringTokenizer(line,";");
+          String type = tok.nextToken();
+          int ind1 = type.indexOf("\"");
+          type = type.substring(ind1+1);
+
+          String id   = tok.nextToken();
+          ind1 = id.indexOf(":");
+          id = id.substring(ind1+1).trim();
+
+          note.append(tok.nextToken());
+          note.append(tok.nextToken());
+          note.append(" "+id);
+
+          String length = tok.nextToken();
+
+          ind1 = length.indexOf("=");
+          length = length.substring(ind1+1);
+
+          note.append(" ("+length+") ");
+          note.append(type+" scores: ");
+          
+          String pid  = tok.nextToken().trim();  // percent id
+          ind1 = pid.indexOf(" ");
+          pid  = pid.substring(ind1+1);
+
+          tok.nextToken();                       // ungapped id
+          String eval = tok.nextToken().trim();
+          String len  = tok.nextToken().trim();
+          len = len.substring(0,len.length()-8);
+
+          note.append(eval);
+          note.append(" "+pid+" id in ");
+          note.append(len);
+        }
+      }
+    }
+    catch(IOException ioe){}
+
+    if(note != null)
+      note.append("\"");
+    else
+      return;
+
+    ann.insert(note.toString(),true);
+//  System.out.println(note.toString());
+//  Enumeration enumHits = hits.elements();
+//  while(enumHits.hasMoreElements())
+//  {
+//    String id = (String)enumHits.nextElement();
+//    System.out.println(id);
+//    findHitInfo(String
+//  }
+    return;
   }
 
   private String htmlBreaks(String t)
