@@ -208,13 +208,12 @@ public class PrintACT extends ScrollPanel
   */
   public void print()
   {
-
     // file chooser
     String cwd = System.getProperty("user.dir");
     JFileChooser fc = new JFileChooser(cwd);
     File fselect = new File(cwd+
                             System.getProperty("file.separator")+
-                            "act.jpeg");
+                            "act.png");
     fc.setSelectedFile(fselect);
      
     // file name prefix
@@ -227,6 +226,8 @@ public class PrintACT extends ScrollPanel
     Box bacross = Box.createHorizontalBox();
     JComboBox formatSelect =
        new JComboBox(javax.imageio.ImageIO.getWriterFormatNames());
+    formatSelect.setSelectedItem("png");
+
     Dimension d = formatSelect.getPreferredSize();
     formatSelect.setMaximumSize(d);
     bacross.add(Box.createHorizontalGlue());
