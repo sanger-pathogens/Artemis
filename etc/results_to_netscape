@@ -17,6 +17,9 @@ then
 elif [ -f "/usr/bin/mozilla" ]
 then
   NETSCAPE=/usr/bin/mozilla
+elif [ -f "/Applications/Camino.app/Contents/MacOS/Camino" ]
+then
+  NETSCAPE=/Applications/Camino.app/Contents/MacOS/Camino
 elif [ -f "/Applications/Safari.app/Contents/MacOS/Safari" ]
 then
   NETSCAPE=/Applications/Safari.app/Contents/MacOS/Safari
