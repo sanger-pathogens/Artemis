@@ -211,7 +211,7 @@ public class FastaTextPane extends JScrollPane
           }
 
         }
-        else if(line.indexOf("-------------------------") > -1)
+        else if(line.indexOf(" ----") > -1)
         {
         }
         else if(line.startsWith(">"))  // start of alignment
