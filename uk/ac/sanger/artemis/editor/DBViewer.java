@@ -213,11 +213,11 @@ public class DBViewer extends ScrollPanel
     Graphics2D g2   = (Graphics2D)g;
     int resultwidth = (int)getPreferredSize().getWidth()-(2*bound);
     g2.setColor(Color.black);
-    g2.setStroke(new BasicStroke(2.f));
+    g2.setStroke(new BasicStroke(3.f));
     g2.drawLine(bound,bound+hgtNumber,bound+resultwidth,bound+hgtNumber);
 
 // draw ruler
-    g2.setStroke(new BasicStroke(1.f));
+    g2.setStroke(new BasicStroke(2.f));
     g2.drawLine(bound,bound+hgtNumber,bound,bound+hgtNumber-6);
     g2.drawString("0",bound,hgtNumber+3);
 
@@ -344,7 +344,8 @@ public class DBViewer extends ScrollPanel
     if(seqPos >= 0 && seqPos<hitInfoCollection.size())
     {
       HitInfo hit = (HitInfo)hitInfoCollection.get(seqPos);
-      return hit.getID()+", "+hit.getEValue()+", "+hit.getScore();
+      return hit.getID()+"\n"+hit.getOrganism()+"\nE-value:"+hit.getEValue()+
+             " Score:"+hit.getScore();
     }
     return null;
   }

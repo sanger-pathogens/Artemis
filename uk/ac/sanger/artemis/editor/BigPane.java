@@ -57,6 +57,7 @@ public class BigPane extends JFrame
   {
     super("Object Editor");
 
+    MultiLineToolTipUI.initialize();
     setFont(font);
     JDesktopPane desktop = new JDesktopPane();
     desktop.setDragMode(JDesktopPane.LIVE_DRAG_MODE);

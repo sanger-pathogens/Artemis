@@ -200,7 +200,7 @@ public class DataCollectionPane extends JScrollPane
       bacross.add(Box.createHorizontalStrut(2));
 
 // SRS entry
-      MouseOverButton srsRetrieve = new MouseOverButton(hit.getID());
+      MouseOverButton srsRetrieve = new MouseOverButton(hit);
       srsRetrieve.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
@@ -209,10 +209,21 @@ public class DataCollectionPane extends JScrollPane
         }
       });
      srsRetrieve.setForeground(Color.blue);
+     srsRetrieve.setToolTipText("");
      srsRetrieve.setFont(BigPane.font);
      srsRetrieve.setMargin(new Insets(1,1,1,1));
      srsRetrieve.setBorderPainted(false);
      bacross.add(srsRetrieve);
+
+//
+//    String org = hit.getOrganism();
+//    if(org != null)
+//    {
+//      JLabel orgLabel = new JLabel(org);
+//      orgLabel.setFont(BigPane.font);
+//      orgLabel.setForeground(Color.green);
+//      bacross.add(orgLabel);
+//    }
 
 // heading
       String head = hit.getHeader();
@@ -416,18 +427,20 @@ public class DataCollectionPane extends JScrollPane
   * @param ortholog     true if ortholog is selected.
   *
   */
-  protected static void getzCall(Vector hits, boolean ortholog)
+  protected static void getzCall(Vector hits, int nretrieve)
   {
     String env[] = { "PATH=/usr/local/pubseq/bin/" };
 
     StringBuffer query = new StringBuffer();
 
     int n = 0;
-    query.append("[uniprot:");
+    query.append("[uniprot-acc:");
 
     Enumeration ehits = hits.elements();
     while(ehits.hasMoreElements())
     {
+      if(n>nretrieve)
+        break;
       HitInfo hit = (HitInfo)ehits.nextElement();
       if(n > 0)
         query.append("|");
@@ -447,7 +460,7 @@ public class DataCollectionPane extends JScrollPane
     HitInfo hit = null;
     String line = null;
     String lineStrip = null;
-    StringReader strread   = new StringReader(res);;
+    StringReader strread   = new StringReader(res);
     BufferedReader strbuff = new BufferedReader(strread);
 
     try
@@ -460,7 +473,18 @@ public class DataCollectionPane extends JScrollPane
 
         lineStrip = line.substring(3).trim();
         if(line.startsWith("AC"))
+        {
           hit = getHitInfo(lineStrip,hits);
+
+          if(hit == null)
+          {
+            System.out.println("HIT NOT FOUND "+line);
+            continue;
+          }
+
+          hit.setOrganism("");
+          hit.setGeneName("");
+        }
 
         if(hit == null)
           continue;
@@ -511,9 +535,11 @@ public class DataCollectionPane extends JScrollPane
 
   private static HitInfo getHitInfo(String acc, Vector hits)
   {
-    acc = acc.trim(); 
-    if(acc.endsWith(";"))
-      acc = acc.substring(0,acc.length()-1);
+    int ind = 0;
+    acc     = acc.trim(); 
+    
+    if((ind = acc.indexOf(";")) > -1)
+      acc = acc.substring(0,ind);
 
     Enumeration ehits = hits.elements();
     HitInfo hit = null;
@@ -523,6 +549,7 @@ public class DataCollectionPane extends JScrollPane
       if(hit.getAcc().equals(acc))
         return hit;
     }
+
     return null;
   }
 
@@ -535,10 +562,10 @@ public class DataCollectionPane extends JScrollPane
   protected static void getzCall(HitInfo hit, boolean ortholog)
   {
     String env[] = { "PATH=/usr/local/pubseq/bin/" };
+
     if(hit.getOrganism() == null ||
        hit.getDescription() == null)
     {
-
       System.out.println("CALLING GETZ");
       String cmd[]   = { "getz", "-f", "org description gen",
                          "[uniprot:"+hit.getAcc()+"]|[uniprot:"+hit.getID()+"]" };
@@ -590,35 +617,6 @@ public class DataCollectionPane extends JScrollPane
       }
     }
 
-//  if(ortholog)
-//  {
-//    String geneName = hit.getGeneName();
-//    if(geneName == null)
-//    {
-//      String cmd3[]   = { "getz", "-f", "gen",
-//                     "[libs={uniprot}-acc:"+
-//                      hit.getAcc()+"]|[libs={uniprot}-id:"+hit.getID()+"]" };
-//      ExternalApplication app = new ExternalApplication(cmd3,
-//                                              env,null);
-//      geneName = app.getProcessStdout();
-//    }
-
-//    int ind1 = geneName.indexOf("GN ");
-//    if(ind1 > -1)
-//    {
-//      geneName = geneName.substring(ind1+3).trim();
-//      if(geneName.startsWith("Name="))
-//      {
-//        geneName = geneName.substring(5);
-//        ind1 = geneName.indexOf(";");
-//        if(ind1 > -1)
-//          geneName = geneName.substring(0,ind1);
-//      }
-
-//      if(!geneName.toLowerCase().startsWith("orderedlocusnames="))
-//        hit.setGeneName(geneName);
-//    }
-//  }
   }
 
 
@@ -661,9 +659,11 @@ public class DataCollectionPane extends JScrollPane
       buff.append(" (EMBL:"+hit.getEMBL()+")");
     buff.append(";");
 
-    if(hit.getOrganism() != null)
+    if(hit.getOrganism() != null &&
+       !hit.getOrganism().equals(""))
       buff.append(" "+hit.getOrganism()+";");
-    if(hit.getGeneName() != null)
+    if(hit.getGeneName() != null &&
+       !hit.getGeneName().equals(""))
       buff.append(" "+hit.getGeneName()+";");
     if(hit.getDescription() != null)
       buff.append(" "+hit.getDescription()+";");
@@ -752,15 +752,17 @@ public class DataCollectionPane extends JScrollPane
   public class MouseOverButton extends JButton       
   {
     private boolean over = false;
+    private HitInfo hit;
 
     public MouseOverButton()
     {
       super();
     }
 
-    public MouseOverButton(String s)
+    public MouseOverButton(HitInfo hit)
     {
-      super(s);
+      super(hit.getID());
+      this.hit = hit;
     }
 
     public void paintComponent(Graphics g)
@@ -781,6 +783,14 @@ public class DataCollectionPane extends JScrollPane
       g2.drawLine(1,7,11,7);
 
       setSize(12,12);
+    }
+
+    public String getToolTipText()
+    {
+      if(hit == null)
+        return null;
+
+      return hit.getOrganism();
     }
 
     protected void processMouseEvent(MouseEvent evt)

@@ -150,7 +150,7 @@ public class HitInfo
     ind1 = ind2;
     ind2 = header.indexOf("(",ind1);
     if(ind2 > -1)
-      org = header.substring(ind1,ind2).trim();
+      desc = header.substring(ind1,ind2).trim();
     else
       return;
 
