@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.1 2004-06-09 12:51:51 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.2 2004-06-09 15:10:51 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -8,7 +8,6 @@ OPT_FLAGS = -g
 
 JAVAC := javac $(OPT_FLAGS) -target 1.1 -deprecation -J-mx150m $(EXTRA_FLAGS)
 
-#REAL_CLASSPATH := CLASSPATH=.:lib/biojava.jar:lib/jobcontrol.jar:/nfs/team81/kmr/psu/jobcontrol/ant-build/src/main:/nfs/pathsoft/prod/javalibs/psu_all.jar:/nfs/pathsoft/external/javalib/velocity-dep-1.2.jar:/nfs/pathsoft/external/javalib/log4j-1.1.3.jar:$(CLASSPATH)
 REAL_CLASSPATH := CLASSPATH=.:lib/biojava.jar:lib/jobcontrol.jar
 
 NAMES:= \
