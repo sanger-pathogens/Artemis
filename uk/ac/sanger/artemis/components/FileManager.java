@@ -320,6 +320,7 @@ public class FileManager extends JFrame
     });
     toolBar.add(upBt);
 
+// yeastpub
     JButton shortCut1 = new JButton()
     {
       public void paintComponent(Graphics g)
@@ -349,6 +350,37 @@ public class FileManager extends JFrame
     if((new File("/nfs/disk222/yeastpub")).exists())
       toolBar.add(shortCut1);
 
+// pathdata
+   JButton shortCut2 = new JButton()
+    {
+      public void paintComponent(Graphics g)
+      {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D)g;
+        Font font = new Font("Monospaced", Font.BOLD, 14);
+        g2.setFont(font);
+
+        g2.setColor(Color.black);
+        g2.drawString("P",4,18);
+        g2.setColor(Color.red);
+        g2.drawString("D",10,15);
+        setSize(22,24);
+      }
+    };
+    shortCut2.setPreferredSize(buttonSize);
+    shortCut2.setMinimumSize(buttonSize);
+    shortCut2.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        ftree.newRoot("/nfs/pathdata/");
+      }
+    });
+
+    if((new File("/nfs/pathdata/")).exists())
+      toolBar.add(shortCut2);
+
+// home button
     JButton homeBt = new JButton()
     {
       public void paintComponent(Graphics g)
