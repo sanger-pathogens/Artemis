@@ -11,8 +11,8 @@
 # If you are under KDE, you should use Konqueror then
 # If you are under MAC OS X, use Safari
 
-#NETSCAPE=/usr/bin/X11/real-netscape
-NETSCAPE=/usr/bin/mozilla
+NETSCAPE=/usr/bin/X11/real-netscape
+#NETSCAPE=/usr/bin/mozilla
 # MAC OS X   
 # NETSCAPE=/Applications/Safari.app/Contents/MacOS/Safari
 
