@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.6 2005-01-12 13:44:30 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.7 2005-01-18 16:58:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.border.Border;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.6 2005-01-12 13:44:30 tjc Exp $
+ *  @version $Id: Splash.java,v 1.7 2005-01-18 16:58:52 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -366,7 +366,10 @@ abstract public class Splash extends JFrame
   {
     menu_bar = new JMenuBar();
     file_menu = new JMenu("File");
+    file_menu.setMnemonic(KeyEvent.VK_F);
+
     options_menu = new JMenu("Options");
+    options_menu.setMnemonic(KeyEvent.VK_O);
 
     menu_bar.add(file_menu);
     menu_bar.add(options_menu);

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.6 2004-12-14 11:34:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.7 2005-01-18 16:54:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -57,7 +57,7 @@ import javax.swing.border.BevelBorder;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.6 2004-12-14 11:34:54 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.7 2005-01-18 16:54:53 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
@@ -65,7 +65,7 @@ public class MultiComparator extends JFrame
 {
 
   /** The menu_bar is created in makeMenus(). */
-  private final JMenuBar menu_bar = new JMenuBar();
+//private final JMenuBar menu_bar = new JMenuBar();
 
   /**
    *  An array of EntryGroup objects to display(set by the constructor).  The
@@ -537,34 +537,43 @@ public class MultiComparator extends JFrame
   private void makeMenus() 
   {
     final Font default_font = getDefaultFont();
+    final JMenuBar menu_bar = new JMenuBar();
 
     setJMenuBar(menu_bar);
 
     makeFileMenu();
-
     menu_bar.add(file_menu);
 
     final JMenu entries_menu = new JMenu("Entries");
+    entries_menu.setMnemonic(KeyEvent.VK_N);
     menu_bar.add(entries_menu);
     final JMenu select_menu = new JMenu("Select");
+    select_menu.setMnemonic(KeyEvent.VK_S);
     menu_bar.add(select_menu);
     final JMenu view_menu = new JMenu("View");
+    view_menu.setMnemonic(KeyEvent.VK_V);
     menu_bar.add(view_menu);
     final JMenu goto_menu = new JMenu("Goto");
+    goto_menu.setMnemonic(KeyEvent.VK_O);
     menu_bar.add(goto_menu);
     final JMenu edit_menu = new JMenu("Edit");
+    edit_menu.setMnemonic(KeyEvent.VK_E);
     menu_bar.add(edit_menu);
     final JMenu create_menu = new JMenu("Create");
+    create_menu.setMnemonic(KeyEvent.VK_C);
     menu_bar.add(create_menu);
     final JMenu write_menu = new JMenu("Write");
+    write_menu.setMnemonic(KeyEvent.VK_W);
     menu_bar.add(write_menu);
     JMenu run_menu = null;
     if(Options.isUnixHost()) 
     {
       run_menu = new JMenu("Run");
+      run_menu.setMnemonic(KeyEvent.VK_R);
       menu_bar.add(run_menu);
     }
     final JMenu graph_menu = new JMenu("Graph");
+    graph_menu.setMnemonic(KeyEvent.VK_G);
     menu_bar.add(graph_menu);
 
     for(int i = 0 ; i < getEntryGroupArray().length ; ++i)
@@ -654,6 +663,7 @@ public class MultiComparator extends JFrame
     }
 
     final JMenu display_menu = new JMenu("Display");
+    display_menu.setMnemonic(KeyEvent.VK_D);
 
     final JMenuItem hide_on_frame_lines_item =
       new JMenuItem("Hide Frame Lines");
@@ -728,7 +738,7 @@ public class MultiComparator extends JFrame
   private void makeFileMenu() 
   {
     file_menu.removeAll();
-
+    file_menu.setMnemonic(KeyEvent.VK_F);
     final EntryGroup[] entry_group_array = getEntryGroupArray();
 
     JMenuItem popFileManager = new JMenuItem("Show File Manager ...");
