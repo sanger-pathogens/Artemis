@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.8 2005-01-06 11:21:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.9 2005-01-27 14:38:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.8 2005-01-06 11:21:06 tjc Exp $
+ *  @version $Id: Feature.java,v 1.9 2005-01-27 14:38:53 tjc Exp $
  **/
 
 public class Feature
@@ -1433,7 +1433,7 @@ public class Feature
    *  Return the gene name (the value of the first /gene qualifier) of this
    *  Feature or null if there it has no gene name.
    **/
-  private String getGeneName() 
+  public String getGeneName() 
   {
     try 
     {
@@ -1475,6 +1475,7 @@ public class Feature
     else 
       return picked_name;
   }
+
 
   /**
    *  Look at the qualifier_names one-by-one and return the first value of the
