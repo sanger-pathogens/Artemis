@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.16 2005-04-05 14:45:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.17 2005-04-06 13:40:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,7 +47,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.16 2005-04-05 14:45:33 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.17 2005-04-06 13:40:00 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -1519,7 +1519,8 @@ public class AlignmentViewer extends CanvasPanel
     }
 
     // sort alignment matches based on where they start
-    Arrays.sort(sorted_all_matches, comparator);
+    Arrays.sort(sorted_all_matches, 0, imatch, comparator);
+
     int start = 1;
     Vector differences = new Vector();
 
@@ -1528,7 +1529,7 @@ public class AlignmentViewer extends CanvasPanel
     {
       Integer coords[] = new Integer[2];
       final AlignMatch this_match = sorted_all_matches[i];
-      
+
       if(this_match == null)
         continue;
 
@@ -1546,7 +1547,6 @@ public class AlignmentViewer extends CanvasPanel
         this_end   = this_match.getQuerySequenceEnd();
       }
 
-//    System.out.println(i+" "+this_start+" "+this_end);
       if(this_start > this_end)
       {
         int tmp_this_start = this_start;
@@ -1554,7 +1554,6 @@ public class AlignmentViewer extends CanvasPanel
         this_end   = tmp_this_start;
       }
 
-//    System.out.println("******* "+this_start+" "+this_end+"   --> "+start);
       if(i == 0 && this_start > 1)
       {
         coords[0] = new Integer(start);
@@ -1567,12 +1566,36 @@ public class AlignmentViewer extends CanvasPanel
 
       if(i < imatch-1)
       {
-        final AlignMatch next_match = sorted_all_matches[i+1];
-        int next_start;
-        if(subject)
-          next_start = next_match.getSubjectSequenceStart();
-        else
-          next_start = next_match.getQuerySequenceStart();
+        int next_start = 0;
+
+        // quicksort doesn't get it quite right so check
+        // start position of several ahead
+        for(int j=1; j<11; j++)
+        {
+          if(i+j > imatch-1)
+            continue;
+
+          final AlignMatch next_match = sorted_all_matches[i+j];
+          int jstart;
+          int jend;
+
+          if(subject)
+          {
+            jstart = next_match.getSubjectSequenceStart();
+            jend   = next_match.getSubjectSequenceEnd();
+          }
+          else
+          {
+            jstart = next_match.getQuerySequenceStart();
+            jend   = next_match.getQuerySequenceEnd();
+          }
+
+          if(jend < jstart)
+            jstart = jend;
+  
+          if(j == 1 || jstart < next_start)
+            next_start = jstart;
+        }
 
         if(next_start > start)
         {
@@ -1912,7 +1935,7 @@ public class AlignmentViewer extends CanvasPanel
     return comparison_data;
   }
 
-  public class AlignMatchComparator implements java.util.Comparator
+  public class AlignMatchComparator implements Comparator
   {
     final private boolean subject;
     public AlignMatchComparator(boolean subject)
@@ -1922,12 +1945,12 @@ public class AlignmentViewer extends CanvasPanel
 
     public int compare(Object o1,Object o2) throws ClassCastException
     {
-      if(o1 == null && o2 == null)
-        return 0;
-      else if (o1 == null)
-        return 1;
-      else if (o2 == null)
-        return -1;
+//    if(o1 == null && o2 == null)
+//      return 0;
+//    else if (o1 == null)
+//      return 1;
+//    else if (o2 == null)
+//      return -1;
 
       if(!(o1 instanceof AlignMatch))
         throw new ClassCastException();
@@ -1938,8 +1961,8 @@ public class AlignmentViewer extends CanvasPanel
       AlignMatch c1 = (AlignMatch)o1;
       AlignMatch c2 = (AlignMatch)o2;
         
-      int start1 = 0;
-      int start2 = 0;
+      int start1;
+      int start2;
     
       if(subject)
       {
@@ -1947,17 +1970,7 @@ public class AlignmentViewer extends CanvasPanel
         int end1 = c1.getSubjectSequenceEnd();
         if(end1 < start1)
           start1 = end1;
-      }
-      else
-      {
-        start1   = c1.getQuerySequenceStart();   
-        int end1 = c1.getQuerySequenceEnd();
-        if(end1 < start1)
-          start1 = end1;
-      }
 
-      if(subject)
-      {
         start2   = c2.getSubjectSequenceStart();
         int end2 = c2.getSubjectSequenceEnd();
         if(end2 < start2)
@@ -1965,7 +1978,12 @@ public class AlignmentViewer extends CanvasPanel
       }
       else
       {
-        start2 = c2.getQuerySequenceStart();
+        start1   = c1.getQuerySequenceStart();   
+        int end1 = c1.getQuerySequenceEnd();
+        if(end1 < start1)
+          start1 = end1;
+
+        start2   = c2.getQuerySequenceStart();
         int end2 = c2.getQuerySequenceEnd();
         if(end2 < start2)
           start2 = end2;
