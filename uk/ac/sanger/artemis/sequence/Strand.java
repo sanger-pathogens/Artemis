@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Strand.java,v 1.1 2004-06-09 09:52:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Strand.java,v 1.2 2004-12-22 13:28:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -39,7 +39,7 @@ import org.biojava.bio.symbol.IllegalSymbolException;
  *  what direction the Strand represents.
  *
  *  @author Kim Rutherford
- *  @version $Id: Strand.java,v 1.1 2004-06-09 09:52:27 tjc Exp $
+ *  @version $Id: Strand.java,v 1.2 2004-12-22 13:28:31 tjc Exp $
  **/
 
 public class Strand {
@@ -583,10 +583,16 @@ public class Strand {
    *    translated as '.'
    *  @return The translated sequence in one letter abbreviated form.
    **/
-  public AminoAcidSequence getTranslation (final Range range,
-                                           final boolean unknown_is_x) {
+  public AminoAcidSequence getTranslation(final Range range,
+                                          final boolean unknown_is_x) {
     return getBases ().getTranslation (range, getDirection (), unknown_is_x);
   }
+
+  public AminoAcidSequence getSpacedTranslation(final Range range,
+                                          final boolean unknown_is_x) {
+    return getBases ().getSpacedTranslation (range, getDirection (), unknown_is_x);
+  }
+
 
   /**
    *  Return a sub-sequence of bases from this strand.

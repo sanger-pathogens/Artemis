@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.2 2004-11-17 13:20:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.3 2004-12-22 13:28:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -45,7 +45,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.2 2004-11-17 13:20:10 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.3 2004-12-22 13:28:31 tjc Exp $ */
 
 public class Bases {
   /**
@@ -247,6 +247,17 @@ public class Bases {
     final String sub_sequence = getSubSequence (range, direction);
 
     return AminoAcidSequence.getTranslation (sub_sequence, unknown_is_x);
+  }
+
+
+  public AminoAcidSequence getSpacedTranslation (final Range range,
+                                           final int direction,
+                                           final boolean unknown_is_x) {
+    // getSubSequence () will return a sequence going in the right direction
+    // so we don't have to worry.
+    final String sub_sequence = getSubSequence (range, direction);
+
+    return AminoAcidSequence.getSpacedTranslation (sub_sequence, unknown_is_x);
   }
 
   /**

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.16 2004-12-21 13:46:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.17 2004-12-22 13:28:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.16 2004-12-21 13:46:47 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.17 2004-12-22 13:28:31 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -1988,7 +1988,7 @@ public class FeatureDisplay extends EntryGroupPanel
       final int frame_line = getFrameDisplayLine(FORWARD_FRAME_1 + i);
 
       final AminoAcidSequence this_frame_translation =
-                   strand.getTranslation(newRange(start_base, end_base), false);
+                   strand.getSpacedTranslation(newRange(start_base, end_base), false);
 
       final String this_frame_translation_string =
                    this_frame_translation.toString();
@@ -2027,7 +2027,7 @@ public class FeatureDisplay extends EntryGroupPanel
       final int frame_line = getFrameDisplayLine(REVERSE_FRAME_1 - i);
 
       final AminoAcidSequence this_frame_translation =
-                    strand.getTranslation(newRange(start_base, end_base), false);
+                    strand.getSpacedTranslation(newRange(start_base, end_base), false);
 
       final String this_frame_translation_string =
                     this_frame_translation.toString();
@@ -2051,11 +2051,9 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param direction The direction to draw the letters in(see the
    *    frame_start parameter).
    **/
-  private void drawCodonLine(Graphics g,
-                              int frame_start,
-                              int line_number,
-                              String codons,
-                              int direction) 
+  private void drawCodonLine(Graphics g, int frame_start,
+                             int line_number, String codons,
+                             int direction) 
   {
     final int offset;
 
@@ -2064,26 +2062,22 @@ public class FeatureDisplay extends EntryGroupPanel
     else 
       offset = 0;
 
-    final String upper_case_codons = codons.toUpperCase();
+    codons = codons.toUpperCase();
     final int draw_y_position = line_number * getLineHeight();
-
-    // draw each AA letter
-    for(int i = 0 ; i < upper_case_codons.length() ; ++i) 
+    final int draw_x_position;
+    
+    if(direction == REVERSE)
     {
-      int draw_x_position =
-       (int)((offset + frame_start + 3 * i + 1) * getScaleValue());
+      draw_x_position = getLowXPositionOfBase(getLastVisibleForwardBase()) -
+           (int)((offset+frame_start+codons.length()) * getScaleValue());
 
-      if(direction == REVERSE) 
-      {
-        // draw in the opposite direction
-        draw_x_position =
-          getLowXPositionOfBase(getLastVisibleForwardBase()) -
-          draw_x_position;
-      }
-
-      g.drawString(upper_case_codons.substring(i,i+1),
-                   draw_x_position, draw_y_position + getFontAscent() + 1);
+      codons = reverse(codons);
     }
+    else
+       draw_x_position = (int)((offset + frame_start + 1) * getScaleValue());
+
+    g.drawString(codons, draw_x_position,
+                 draw_y_position + getFontAscent() + 1);
   }
 
   /**

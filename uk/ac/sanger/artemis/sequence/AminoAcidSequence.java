@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/AminoAcidSequence.java,v 1.4 2004-12-21 10:28:02 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/AminoAcidSequence.java,v 1.5 2004-12-22 13:28:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -33,7 +33,7 @@ import uk.ac.sanger.artemis.util.*;
  *  Objects of this class represent a string of amino acids.
  *
  *  @author Kim Rutherford
- *  @version $Id: AminoAcidSequence.java,v 1.4 2004-12-21 10:28:02 tjc Exp $
+ *  @version $Id: AminoAcidSequence.java,v 1.5 2004-12-22 13:28:31 tjc Exp $
  **/
 
 public class AminoAcidSequence 
@@ -77,7 +77,36 @@ public class AminoAcidSequence
       else 
         aa_buffer.append (aa);
     }
+    return new AminoAcidSequence(aa_buffer.toString());
+  }
 
+  /**
+   *  Translate a sequence of bases into the corresponding single letter amino
+   *  acid codes and appending 2 spaces after each amino acid character.
+   *  @param bases The bases to translated.  If the string length is not a
+   *    multiple of three the last codon is incomplete and will not be
+   *    translated.
+   *  @param unknown_is_x If this parameter is true codons that contain
+   *    ambiguous bases will be translated as 'x', if false they will be
+   *    translated as '.'
+   *  @return The translated sequence in one letter abbreviated form.
+   **/
+  public static AminoAcidSequence getSpacedTranslation(final String bases,
+                                               final boolean unknown_is_x)
+  {
+    final StringBuffer aa_buffer = new StringBuffer();
+    final int number_of_codons = bases.length() / 3;
+    for(int i = 0 ; i < number_of_codons * 3 ; i += 3)
+    {
+      final char aa = getCodonTranslation(bases.charAt(i),
+                                          bases.charAt(i+1),
+                                          bases.charAt(i+2));
+      if(aa == '.' && unknown_is_x)
+        aa_buffer.append('x');
+      else
+        aa_buffer.append(aa);
+      aa_buffer.append("  ");
+    }
     return new AminoAcidSequence(aa_buffer.toString());
   }
 
