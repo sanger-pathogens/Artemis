@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SearchResultViewer.java,v 1.1 2004-06-09 09:47:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SearchResultViewer.java,v 1.2 2005-01-11 15:01:02 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -40,51 +40,60 @@ import javax.swing.*;
  *  ability to send the results to a netscape process.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SearchResultViewer.java,v 1.1 2004-06-09 09:47:34 tjc Exp $
+ *  @version $Id: SearchResultViewer.java,v 1.2 2005-01-11 15:01:02 tjc Exp $
  **/
 
-public class SearchResultViewer extends FileViewer {
+public class SearchResultViewer extends FileViewer 
+{
   /**
    *  Create a new SearchResultViewer component.
    *  @param title The name to attach to the new JFrame.
    *  @param file_name The file to read into the new viewer.
    **/
-  public SearchResultViewer (final String label,
-                             final Document document)
-      throws IOException {
-
+  public SearchResultViewer(final String label,
+                            final Document document)
+      throws IOException 
+  {
     super (label);
 
-    try {
-      readFile (document.getReader ());
-    } catch (IOException e) {
-      System.out.println ("error while reading results: " + e);
-      dispose ();
+    try 
+    {
+      readFile(document.getReader());
+    } 
+    catch (IOException e) 
+    {
+      System.out.println("error while reading results: " + e);
+      dispose();
       throw e;
     }
 
-    if (!Options.getOptions ().getPropertyTruthValue ("sanger_options")) {
+    if(!Options.getOptions().getPropertyTruthValue("sanger_options")) 
       return;
-    }
 
-    final JButton to_browser = new JButton ("Send to browser");
+    final JButton to_browser = new JButton("Send to browser");
+    getButtonPanel().add(to_browser);
 
-    getButtonPanel ().add (to_browser);
-
-    to_browser.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        try {
-          sendToBrowser (document.toString ());
-        } catch (IOException e) {
+    to_browser.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        try 
+        {
+          sendToBrowser(document.toString());
+        }
+        catch (IOException e) 
+        {
           System.out.println ("error while reading results: " + e);
-          new MessageDialog (SearchResultViewer.this,
-                             "Message",
-                             "Send to browser failed: " + e);
-        } catch (ExternalProgramException e) {
-          System.out.println ("error while reading results: " + e);
-          new MessageDialog (SearchResultViewer.this,
-                             "Message",
-                             "Send to browser failed: " + e);
+          new MessageDialog(SearchResultViewer.this,
+                            "Message",
+                            "Send to browser failed: " + e);
+        } 
+        catch(ExternalProgramException e) 
+        {
+          System.out.println("error while reading results: " + e);
+          new MessageDialog(SearchResultViewer.this,
+                            "Message",
+                            "Send to browser failed: " + e);
         }
       }
     });
@@ -94,15 +103,17 @@ public class SearchResultViewer extends FileViewer {
    *  Mark up the contents of the given file (which should contain blast or
    *  fasta output) and send it to a web browser (with netscape -remote).
    **/
-  public static void sendToBrowser (final String file_name)
-      throws IOException, ExternalProgramException {
-    final String [] arguments = {
+  protected static void sendToBrowser(final String file_name)
+      throws IOException, ExternalProgramException
+  {
+    final String[] arguments =
+    {
       file_name
     };
 
     final Process process =
-      ExternalProgram.startProgram ("../etc/results_to_netscape", arguments);
+      ExternalProgram.startProgram("../etc/results_to_netscape", arguments);
 
-    new ProcessWatcher (process, "results_to_netscape", false);
+    new ProcessWatcher(process, "results_to_netscape", false);
   }
 }
