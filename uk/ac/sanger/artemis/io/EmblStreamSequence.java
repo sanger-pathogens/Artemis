@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/EmblStreamSequence.java,v 1.1 2004-06-09 09:49:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/EmblStreamSequence.java,v 1.2 2004-12-08 11:13:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import java.io.Writer;
  *  This is a subclass of StreamSequence containing EMBL sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: EmblStreamSequence.java,v 1.1 2004-06-09 09:49:13 tjc Exp $
+ *  @version $Id: EmblStreamSequence.java,v 1.2 2004-12-08 11:13:34 tjc Exp $
  **/
 
 public class EmblStreamSequence extends StreamSequence 
@@ -213,6 +213,9 @@ public class EmblStreamSequence extends StreamSequence
     // first count A,C,G,T and other bases
 
     final int SEQUENCE_LINE_BASE_COUNT = 60;
+
+    if(header_line != null)
+      writer.write(header_line);
 
     writer.write("SQ   Sequence " +
                   sequence.length() + " BP; " +

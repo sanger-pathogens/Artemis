@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.3 2004-12-07 15:07:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.4 2004-12-08 11:13:03 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -39,14 +39,13 @@ import uk.ac.sanger.artemis.io.StreamSequenceFactory;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-
 import javax.swing.*;
 
 /**
  *  A menu of commands for writing out protein and bases.
  *
  *  @author Kim Rutherford
- *  @version $Id: WriteMenu.java,v 1.3 2004-12-07 15:07:01 tjc Exp $
+ *  @version $Id: WriteMenu.java,v 1.4 2004-12-08 11:13:03 tjc Exp $
  **/
 public class WriteMenu extends SelectionMenu 
 {
@@ -58,10 +57,8 @@ public class WriteMenu extends SelectionMenu
    *  @param entry_group The EntryGroup object to use when writing a sequence.
    *  @param menu_name The name of the new menu.
    **/
-  public WriteMenu(final JFrame frame,
-                   final Selection selection,
-                   final EntryGroup entry_group,
-                   final String menu_name) 
+  public WriteMenu(final JFrame frame, final Selection selection,
+                   final EntryGroup entry_group, final String menu_name)
   {
     super(frame, menu_name, selection);
 
@@ -307,8 +304,7 @@ public class WriteMenu extends SelectionMenu
    *    operate on.
    *  @param entry_group The EntryGroup object to use when writing a sequence.
    **/
-  public WriteMenu(final JFrame frame,
-                   final Selection selection,
+  public WriteMenu(final JFrame frame, final Selection selection,
                    final EntryGroup entry_group) 
   {
     this(frame, selection, entry_group, "Write");
@@ -324,7 +320,7 @@ public class WriteMenu extends SelectionMenu
       return;
 
     final File write_file =
-      getWriteFile("Select a PIR output file name ...", "cosmid.pir");
+      getWriteFile("Select a PIR output file name ...", "cosmid.pir", null);
 
     if(write_file == null)
       return;
@@ -361,7 +357,7 @@ public class WriteMenu extends SelectionMenu
       return;
 
     final File write_file =
-      getWriteFile("Select an output file name..", "amino_acids");
+      getWriteFile("Select an output file name..", "amino_acids", null);
 
     if(write_file == null)
       return;
@@ -419,13 +415,18 @@ public class WriteMenu extends SelectionMenu
    *    getWriteFile()
    *  @param output_type One of EMBL_FORMAT, RAW_FORMAT etc.
    **/
-  private void writeBases(final String sequence,
-                          final String header,
+  private void writeBases(final String sequence, String header,
                           final String default_output_filename,
                           final int output_type) 
   {
-    final File write_file =
-      getWriteFile("Select an output file name ...", default_output_filename);
+    JTextField headerField = null;
+
+    if(output_type == StreamSequenceFactory.FASTA_FORMAT ||
+       output_type == StreamSequenceFactory.EMBL_FORMAT)
+      headerField = new JTextField(header);
+
+    final File write_file = getWriteFile("Select an output file name ...",
+                                    default_output_filename, headerField);
 
     if(write_file == null)
       return;
@@ -438,29 +439,36 @@ public class WriteMenu extends SelectionMenu
       switch(output_type) 
       {
         case StreamSequenceFactory.FASTA_FORMAT:
-          stream_sequence =
-            new FastaStreamSequence(sequence, header);
+          if(headerField != null && !headerField.getText().equals(""))
+            header = headerField.getText().trim();
+
+          stream_sequence = new FastaStreamSequence(sequence, header);
           break;
 
         case StreamSequenceFactory.EMBL_FORMAT:
-          stream_sequence =
-            new EmblStreamSequence(sequence);
+          stream_sequence = new EmblStreamSequence(sequence);
+
+          if(headerField != null && !headerField.getText().equals(""))
+          {
+            header = "ID   "+headerField.getText().trim();
+            header = header.concat("\nFH   Key             "+
+                                   "Location/Qualifiers\nFH\n");
+            ((EmblStreamSequence)stream_sequence).setHeader(header);
+          }
+
           break;
 
         case StreamSequenceFactory.GENBANK_FORMAT:
-          stream_sequence =
-            new GenbankStreamSequence(sequence);
+          stream_sequence = new GenbankStreamSequence(sequence);
           break;
 
         case StreamSequenceFactory.RAW_FORMAT:
         default:
-          stream_sequence =
-            new RawStreamSequence(sequence);
+          stream_sequence = new RawStreamSequence(sequence);
           break;
       }
 
       stream_sequence.writeToStream(writer);
-
       writer.close();
     } 
     catch(IOException e) 
@@ -481,8 +489,9 @@ public class WriteMenu extends SelectionMenu
     if(!checkForSelectionFeatures())
       return;
 
+
     final File write_file =
-      getWriteFile("Select an output file name ...", "bases");
+      getWriteFile("Select an output file name ...", "bases", null);
 
     if(write_file == null)
       return;
@@ -595,7 +604,7 @@ public class WriteMenu extends SelectionMenu
 
           final File write_file =
             getWriteFile("Select an output file name ...",
-                         "upstream_" + getSequenceFileName(output_type));
+                         "upstream_" + getSequenceFileName(output_type), null);
 
           if(write_file == null)
             return;
@@ -684,7 +693,7 @@ public class WriteMenu extends SelectionMenu
 
           final File write_file =
             getWriteFile("Select an output file name ...",
-                         "downstream_" + getSequenceFileName(output_type));
+                         "downstream_" + getSequenceFileName(output_type), null);
 
           if(write_file == null)
             return;
@@ -793,9 +802,14 @@ public class WriteMenu extends SelectionMenu
    *  @param title The title of the new FileDialog JFrame.
    *  @param default_name The name to put in the FileDialog as a default.
    **/
-  private File getWriteFile(final String title, final String default_name) 
+  private File getWriteFile(final String title, final String default_name,
+                            final JTextField idField) 
   {
     final JFileChooser dialog = new StickyFileChooser();
+
+    JCheckBox header = new JCheckBox("Add Header", false);
+    if(idField != null)
+      dialog.setAccessory(header);
 
     dialog.setDialogTitle(title);
     dialog.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -823,6 +837,25 @@ public class WriteMenu extends SelectionMenu
           return null;
       }
 
+      // request user to provide header
+      if(idField != null)
+      {
+        if(header.isSelected())
+        {
+          Box bdown = Box.createVerticalBox();
+          bdown.add(idField);
+
+          int n = JOptionPane.showConfirmDialog(null, bdown,
+                            "Enter the entry ID",
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
+
+          if(n == JOptionPane.CANCEL_OPTION)
+            idField.setText("");
+        }
+        else
+          idField.setText("");
+      }
       return write_file;
     }
   }
@@ -837,7 +870,7 @@ public class WriteMenu extends SelectionMenu
       return;
 
     final File write_file =
-      getWriteFile("Select a codon usage output file ...", "usage");
+      getWriteFile("Select a codon usage output file ...", "usage", null);
 
     if(write_file == null)
       return;
