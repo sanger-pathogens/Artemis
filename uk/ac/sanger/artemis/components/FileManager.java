@@ -354,7 +354,7 @@ public class FileManager extends JFrame
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
                                                                                 
-        g2.setColor(Color.gray);
+        g2.setColor(Color.blue);
         float loc1[][] = { {3,14}, {11,3}, {19,14},
                            {17,14}, {17,18}, {5,18}, {5,14} };
         g2.fill(makeShape(loc1));
