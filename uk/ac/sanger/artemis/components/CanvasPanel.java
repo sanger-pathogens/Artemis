@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/CanvasPanel.java,v 1.1 2004-06-09 09:46:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/CanvasPanel.java,v 1.2 2004-10-01 15:49:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -36,7 +36,7 @@ import javax.swing.*;
  *  have BorderLayout.  The JComponent is added at "Center".
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: CanvasPanel.java,v 1.1 2004-06-09 09:46:07 tjc Exp $
+ *  @version $Id: CanvasPanel.java,v 1.2 2004-10-01 15:49:09 tjc Exp $
  **/
 
 abstract public class CanvasPanel extends JPanel 
@@ -46,12 +46,6 @@ abstract public class CanvasPanel extends JPanel
    *  Off screen image used for double buffering when drawing the canvas.
    **/
   private Image offscreen;
-
-  /** Contains the canvas. */
-  private JPanel mid_panel = null;
-
-  /** The drawing area for this component. */
-  private JComponent canvas = null;
 
   /** The height of the font used in this component. */
   private int font_ascent;
@@ -68,6 +62,7 @@ abstract public class CanvasPanel extends JPanel
   /** base line of the font used in this component. */
   private int font_base_line;
 
+
   /**
    *  Create a new JPanel(mid_panel) and a JComponent.
    **/
@@ -75,95 +70,21 @@ abstract public class CanvasPanel extends JPanel
   {
     setLayout(new BorderLayout());
     setFontInfo();
-    createCanvas();
-  }
-
-  /**
-   *  Call repaint() on the canvas object.
-   **/
-  protected void repaintCanvas() 
-  {
-    getCanvas().repaint();
-  }
-
-  /**
-   *  Create a JPanel(mid_panel) and a JComponent object.
-   **/
-  private void createCanvas() 
-  {
-    mid_panel = new JPanel();
-    mid_panel.setLayout(new BorderLayout());
-
-    canvas = new JComponent() 
-    {
-      /**
-       *  Set the offscreen buffer to null as part of invalidation.
-       **/
-      public void invalidate() 
-      {
-        super.invalidate();
-        offscreen = null;
-      }
-
-      /**
-       *  Override update to *not* erase the background before painting
-       */
-      public void update(final Graphics g) 
-      {
-        paint(g);
-      }
-
-      /**
-       *  Paint the canvas.
-       */
-      public void paint(final Graphics g) 
-      {
-        final int canvas_width = canvas.getSize().width;
-        final int canvas_height = canvas.getSize().height;
-
-        // there is no point drawing into a zero width canvas
-        if(canvas_height <= 0 || canvas_width <= 0) 
-          return;
-
-        if(!canvas.isVisible()) 
-          return;
-
-        if(offscreen == null) 
-          offscreen = canvas.createImage(canvas_width, canvas_height);
-
-        Graphics og = offscreen.getGraphics();
-        og.setClip(0, 0, canvas_width, canvas_height);
-
-        paintCanvas(og);
-        g.drawImage(offscreen, 0, 0, null);
-        g.dispose();
-      }
-    };
-
-    mid_panel.add(canvas, "Center");
-    add(mid_panel, "Center");
-  }
-
-  /**
-   *  Return the JComponent that was created by createCanvas().
-   **/
-  protected JComponent getCanvas() 
-  {
-    return canvas;
   }
 
   /**
    *  Returns the sub-JPanel that contains the JComponent.
    **/
-  protected JPanel getMidPanel() 
-  {
-    return mid_panel;
-  }
+//protected JPanel getMidPanel() 
+//{
+//  return this;
+//  return mid_panel;
+//}
 
   /**
    *  Called by canvas.paint() when
    **/
-  abstract protected void paintCanvas(final Graphics graphics);
+//abstract protected void paintCanvas(final Graphics graphics);
 
   /**
    *  Set font_width and font_ascent from the default font.
@@ -184,7 +105,8 @@ abstract public class CanvasPanel extends JPanel
    **/
   public int getCanvasWidth() 
   {
-    return getCanvas().getSize().width;
+    return getWidth();
+//  return getCanvas().getSize().width;
   }
 
   /**
@@ -192,7 +114,8 @@ abstract public class CanvasPanel extends JPanel
    **/
   public int getCanvasHeight() 
   {
-    return getCanvas().getSize().height;
+    return getHeight();
+//  return getCanvas().getSize().height;
   }
 
   /**

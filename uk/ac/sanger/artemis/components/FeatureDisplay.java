@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.4 2004-10-01 09:37:28 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.5 2004-10-01 15:49:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,7 +44,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.4 2004-10-01 09:37:28 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.5 2004-10-01 15:49:09 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -252,7 +252,8 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private final char [] draw_one_char_temp_array = new char [1];
 
- 
+  private int scrollbar_style;
+
   /**
    *  Create a new FeatureDisplay object with the horizontal scrollbar at the
    *  bottom of the component.
@@ -293,6 +294,8 @@ public class FeatureDisplay extends EntryGroupPanel
   {
     super(entry_group, selection, goto_event_source, base_plot_group);
 
+    this.scrollbar_style = scrollbar_style;
+
     show_feature_arrows =
       Options.getOptions().getPropertyTruthValue("draw_feature_arrows");
 
@@ -308,7 +311,6 @@ public class FeatureDisplay extends EntryGroupPanel
     show_labels =
       Options.getOptions().getPropertyTruthValue("feature_labels");
 
-//  getCanvas().addComponentListener(new ComponentAdapter()
     addComponentListener(new ComponentAdapter()
     {
       public void componentResized(ComponentEvent e) 
@@ -354,6 +356,7 @@ public class FeatureDisplay extends EntryGroupPanel
     getBases().addSequenceChangeListener(this, Bases.MIN_PRIORITY);
 
     Options.getOptions().addOptionChangeListener(this);
+    setBackground(Color.white);
   }
 
   /**
@@ -362,10 +365,10 @@ public class FeatureDisplay extends EntryGroupPanel
    *  for FeatureDisplay components
    **/
 // tjc - deprecated replaced by isFocusable().
-  public boolean isFocusTraversable()
-  {
-    return true;
-  }
+//public boolean isFocusTraversable()
+//{
+//  return true;
+//}
 
   /**
    *  Overriden to call fixCanvasSize()
@@ -452,8 +455,7 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       this.show_source_features = show_source_features;
       needVisibleFeatureVectorUpdate();
-      getCanvas().repaint();
-//    repaint();
+      repaint();
     } 
   }
 
@@ -477,7 +479,6 @@ public class FeatureDisplay extends EntryGroupPanel
       this.show_base_colours = show_base_colours;
       if(getScaleFactor() > 1) 
         setScaleFactor(1);
-//    getCanvas().repaint();
       repaint();
     } 
   }
@@ -548,7 +549,7 @@ public class FeatureDisplay extends EntryGroupPanel
     if(this.show_stop_codons != show_stop_codons) 
     {
       this.show_stop_codons = show_stop_codons;
-      getCanvas().repaint();
+      repaint();
     } 
   }
 
@@ -570,7 +571,7 @@ public class FeatureDisplay extends EntryGroupPanel
     if(this.show_start_codons != show_start_codons) 
     {
       this.show_start_codons = show_start_codons;
-      getCanvas().repaint();
+      repaint();
     } 
   }
 
@@ -614,7 +615,7 @@ public class FeatureDisplay extends EntryGroupPanel
 
       needVisibleFeatureVectorUpdate();
       fixScrollbar();
-      getCanvas().repaint();
+      repaint();
     }
   }
 
@@ -636,7 +637,7 @@ public class FeatureDisplay extends EntryGroupPanel
     if(this.show_feature_arrows != show_feature_arrows)
     {
       this.show_feature_arrows = show_feature_arrows;
-      getCanvas().repaint();
+      repaint();
     } 
   }
 
@@ -658,7 +659,7 @@ public class FeatureDisplay extends EntryGroupPanel
     if(this.show_feature_borders != show_feature_borders) 
     {
       this.show_feature_borders = show_feature_borders;
-      getCanvas().repaint();
+      repaint();
     } 
   }
 
@@ -680,7 +681,7 @@ public class FeatureDisplay extends EntryGroupPanel
     if(this.frame_features_flag != frame_features_flag) 
     {
       this.frame_features_flag = frame_features_flag;
-      getCanvas().repaint();
+      repaint();
     } 
   }
 
@@ -700,7 +701,7 @@ public class FeatureDisplay extends EntryGroupPanel
   {
     current_min_score = minimum_score;
     needVisibleFeatureVectorUpdate();
-    getCanvas().repaint();
+    repaint();
   }
 
   /**
@@ -720,7 +721,7 @@ public class FeatureDisplay extends EntryGroupPanel
   {
     current_max_score = maximum_score;
     needVisibleFeatureVectorUpdate();
-    getCanvas().repaint();
+    repaint();
   }
 
   /**
@@ -739,7 +740,7 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   public void redisplay() 
   {
-    getCanvas().repaint();
+    repaint();
   }
 
   /**
@@ -877,7 +878,7 @@ public class FeatureDisplay extends EntryGroupPanel
       fireAdjustmentEvent(DisplayAdjustmentEvent.SCALE_ADJUST_EVENT);
       needVisibleFeatureVectorUpdate();
 
-      getCanvas().repaint();
+      repaint();
     }
   }
 
@@ -911,7 +912,7 @@ public class FeatureDisplay extends EntryGroupPanel
           getVisibleFeatures().add(event_feature);
       }
 
-      getCanvas().repaint();
+      repaint();
     }
   }
 
@@ -935,7 +936,7 @@ public class FeatureDisplay extends EntryGroupPanel
       break;
     }
 
-    getCanvas().repaint();
+    repaint();
   }
 
   /**
@@ -972,7 +973,7 @@ public class FeatureDisplay extends EntryGroupPanel
     if(event.getType() == SelectionChangeEvent.SELECTION_CHANGED) 
       raise_selection_flag = true;
 
-    getCanvas().repaint();
+    repaint();
   }
 
   /**
@@ -996,7 +997,7 @@ public class FeatureDisplay extends EntryGroupPanel
 
     fixScrollbar();
     needVisibleFeatureVectorUpdate();
-    getCanvas().repaint();
+    repaint();
 
     if(event.getType() == SequenceChangeEvent.REVERSE_COMPLEMENT) 
       fireAdjustmentEvent(DisplayAdjustmentEvent.REV_COMP_EVENT);
@@ -1009,7 +1010,7 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   public void optionChanged(OptionChangeEvent event) 
   {
-    getCanvas().repaint();
+    repaint();
   }
 
   /**
@@ -1069,7 +1070,7 @@ public class FeatureDisplay extends EntryGroupPanel
     if(getVisibleFeatures().remove(feature)) 
     {
       getVisibleFeatures().addElementAtEnd(feature);
-      getCanvas().repaint();
+      repaint();
     }
   }
 
@@ -1082,7 +1083,7 @@ public class FeatureDisplay extends EntryGroupPanel
     if(getVisibleFeatures().remove(feature))
     {
       getVisibleFeatures().insertElementAt(feature, 0);
-      getCanvas().repaint();
+      repaint();
     }
   }
 
@@ -1094,7 +1095,7 @@ public class FeatureDisplay extends EntryGroupPanel
   {
     visible_features = new FeatureVector();
     needVisibleFeatureVectorUpdate();
-    getCanvas().repaint();
+    repaint();
   }
 
   /**
@@ -1183,7 +1184,7 @@ public class FeatureDisplay extends EntryGroupPanel
         getVisibleFeatures().addElementAtEnd(feature);
     }
 
-    getCanvas().repaint();
+    repaint();
   }
 
 
@@ -1197,7 +1198,7 @@ public class FeatureDisplay extends EntryGroupPanel
     if(visible_features != null) 
       visible_features.remove(feature);
 
-    getCanvas().repaint();
+    repaint();
   }
 
   /**
@@ -1243,7 +1244,7 @@ public class FeatureDisplay extends EntryGroupPanel
   {
     final Range visible_range;
 
-    if(getCanvas().getSize().width == 0)
+    if(getSize().width == 0)
     {
       // don't bother doing any thinking
       visible_features = new FeatureVector();
@@ -1432,10 +1433,18 @@ public class FeatureDisplay extends EntryGroupPanel
    *  used for double buffering when drawing the canvas.
    *  @param g The Graphics object of the canvas.
    **/
-  protected void paintCanvas(Graphics g) 
+  protected void paintComponent(Graphics g) 
   {
+    super.paintComponent(g);
     if(!isVisible()) 
       return;
+
+    int scrollbar_hgt = 0;
+    if(scrollbar_style == SCROLLBAR_AT_TOP)
+    {
+      scrollbar_hgt = scrollbar.getPreferredSize().height;
+      ((Graphics2D)g).translate(0,scrollbar_hgt);
+    }
 
     if(update_visible_features) 
       updateVisibleFeatureVector();
@@ -1463,6 +1472,9 @@ public class FeatureDisplay extends EntryGroupPanel
     for(int i = 0 ; i < getVisibleFeatures().size() ; ++i) 
       drawFeature(g, getVisibleFeatures().elementAt(i),
                   false, selected_features, selected_segments);
+
+    if(scrollbar_style == SCROLLBAR_AT_TOP)
+      ((Graphics2D)g).translate(0,-scrollbar_hgt);
   }
 
   /**
@@ -1470,11 +1482,6 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private void fillBackground(Graphics g) 
   {
-    g.setColor(Color.white);
-
-    g.fillRect(0, 0, getCanvas().getSize().width,
-                     getCanvas().getSize().height);
-
     final int first_visible_base_coord =
       getLowXPositionOfBase(getFirstVisibleForwardBase());
 
@@ -1547,7 +1554,10 @@ public class FeatureDisplay extends EntryGroupPanel
   private void fillLane(Graphics g, int fill_line_number, 
                         int first_visible_base_coord, int last_visible_base_coord) 
   {
-    final int fill_line_top = fill_line_number*getLineHeight() + 1;
+    int fill_line_top = fill_line_number*getLineHeight() + 1;
+
+//  if(scrollbar_style == SCROLLBAR_AT_TOP)
+//    fill_line_top += scrollbar.getPreferredSize().height;
 
 //  g.setColor(colour);
 
@@ -2820,6 +2830,9 @@ public class FeatureDisplay extends EntryGroupPanel
     int base_position;
     final Strand strand;
 
+    if(scrollbar_style == SCROLLBAR_AT_TOP)
+      position.x += scrollbar.getPreferredSize().height;
+
     if(getOneLinePerEntryFlag()) 
     {
       final int scale_line = getFrameDisplayLine(SCALE_LINE);
@@ -2854,6 +2867,7 @@ public class FeatureDisplay extends EntryGroupPanel
     else
     {
       frame_id = getFrameFromPoint(position);
+
       // calculate the frame/strand line and base position
       switch(frame_id) 
       {
@@ -3193,7 +3207,7 @@ public class FeatureDisplay extends EntryGroupPanel
       label_x_coord = getLowXPositionOfBase(segment_end_pos);
     }
 
-    if(label_x_coord >= getCanvas().getSize().width) 
+    if(label_x_coord >= getSize().width) 
       return;
 
 //  if(label_x_coord + string_width <= 0) {
@@ -3267,8 +3281,8 @@ public class FeatureDisplay extends EntryGroupPanel
       getLowXPositionOfMarker(segment_start_marker);
 
     // make sure we don't wrap around when drawing
-    if(segment_start_coord > getCanvas().getSize().width) 
-      segment_start_coord = getCanvas().getSize().width;
+    if(segment_start_coord > getSize().width) 
+      segment_start_coord = getSize().width;
 
     // make sure we don't wrap around when drawing
     if(segment_start_coord < 0) 
@@ -3288,8 +3302,8 @@ public class FeatureDisplay extends EntryGroupPanel
     int segment_end_coord = getHighXPositionOfMarker(segment_end_marker);
 
     // make sure we don't wrap around when drawing
-    if(segment_end_coord > getCanvas().getSize().width) 
-      segment_end_coord = getCanvas().getSize().width;
+    if(segment_end_coord > getSize().width) 
+      segment_end_coord = getSize().width;
 
     // make sure we don't wrap around when drawing
     if(segment_end_coord < 0) 
@@ -3329,8 +3343,8 @@ public class FeatureDisplay extends EntryGroupPanel
     int segment_end_coord = getSegmentEndCoord(segment);
 
     if(segment_end_coord < 0 && segment_start_coord < 0 ||
-        segment_start_coord >= getCanvas().getSize().width &&
-        segment_end_coord >= getCanvas().getSize().width) 
+        segment_start_coord >= getSize().width &&
+        segment_end_coord >= getSize().width) 
       return false;
     else 
       return true;
@@ -3516,8 +3530,8 @@ public class FeatureDisplay extends EntryGroupPanel
     final int end_coord = getHighXPositionOfMarker(raw_end_base);
 
     // not on screen
-    if(start_coord > getCanvas().getSize().width &&
-        end_coord > getCanvas().getSize().width) 
+    if(start_coord > getSize().width &&
+        end_coord > getSize().width) 
       return;
 
     // not on screen
@@ -3661,7 +3675,7 @@ public class FeatureDisplay extends EntryGroupPanel
   private void addListeners() 
   {
 
-    getCanvas().addMouseListener(new MouseAdapter() 
+    addMouseListener(new MouseAdapter() 
     {
       /**
        *  Listen for mouse press events so that we can do popup menus and
@@ -3669,6 +3683,10 @@ public class FeatureDisplay extends EntryGroupPanel
        **/
       public void mousePressed(MouseEvent event)
       {
+        // adjust for scrollbar 
+        if(scrollbar_style == SCROLLBAR_AT_TOP)
+          event.translatePoint(0,-scrollbar.getPreferredSize().height);
+
         // finish dragging if the user presses any other button because
         // we may not get a mouseReleased() call on some platforms
         if(click_segment_marker != null) 
@@ -3704,6 +3722,10 @@ public class FeatureDisplay extends EntryGroupPanel
        **/
       public void mouseReleased(MouseEvent event) 
       {
+        // adjust for scrollbar
+        if(scrollbar_style == SCROLLBAR_AT_TOP)
+          event.translatePoint(0,-scrollbar.getPreferredSize().height);
+
         last_mouse_press_event = null;
 
         if(click_segment_marker != null) 
@@ -3715,17 +3737,21 @@ public class FeatureDisplay extends EntryGroupPanel
     });
 
     // Listen for mouse motion events so that we can select ranges of bases.
-    getCanvas().addMouseMotionListener(new MouseMotionAdapter() 
+    addMouseMotionListener(new MouseMotionAdapter() 
     {
       public void mouseDragged(MouseEvent event) 
       {
+        // adjust for scrollbar
+        if(scrollbar_style == SCROLLBAR_AT_TOP)
+          event.translatePoint(0,-scrollbar.getPreferredSize().height);
+
         if(last_mouse_press_event != null &&
-            !isMenuTrigger(last_mouse_press_event)) 
+           !isMenuTrigger(last_mouse_press_event)) 
           handleCanvasMouseDrag(event);
       }
     });
 
-    getCanvas().addKeyListener(new KeyAdapter() 
+    addKeyListener(new KeyAdapter() 
     {
       public void keyPressed(final KeyEvent event) 
       {
@@ -3743,14 +3769,14 @@ public class FeatureDisplay extends EntryGroupPanel
     if(event.getID() != MouseEvent.MOUSE_PRESSED) 
       return;
 
-    getCanvas().requestFocus();
+    requestFocus();
 
     if(event.getClickCount() == 2) 
       handleCanvasDoubleClick(event);
     else
       handleCanvasSingleClick(event);
 
-    getCanvas().repaint();
+    repaint();
   }
 
   /**
@@ -4051,7 +4077,7 @@ public class FeatureDisplay extends EntryGroupPanel
   private void handleCanvasMouseDrag(final MouseEvent event)
   {
     if(event.isShiftDown() &&
-        getSelection().getAllFeatures().size() > 0) 
+       getSelection().getAllFeatures().size() > 0) 
       return;
 
     if(click_segment_marker != null) 
@@ -4070,7 +4096,7 @@ public class FeatureDisplay extends EntryGroupPanel
     // if the start and current positions of the drag are not on the
     // same Strand then ignore this event
     if(selected_range != null &&
-        drag_range.getStrand() != selected_range.getStrand()) 
+       drag_range.getStrand() != selected_range.getStrand()) 
       return;
 
     try 
@@ -4092,7 +4118,7 @@ public class FeatureDisplay extends EntryGroupPanel
     }
 
     final boolean start_base_is_visible = baseVisible(drag_range.getStart());
-    final boolean end_base_is_visible = baseVisible(drag_range.getEnd());
+    final boolean end_base_is_visible   = baseVisible(drag_range.getEnd());
 
     if(!start_base_is_visible) 
       makeBaseVisible(drag_range.getStart());
@@ -4113,7 +4139,7 @@ public class FeatureDisplay extends EntryGroupPanel
 
     getSelection().setMarkerRange(new_marker_range);
 
-    getCanvas().repaint();
+    repaint();
   }
 
   /**
@@ -4195,16 +4221,16 @@ public class FeatureDisplay extends EntryGroupPanel
 
           fireAdjustmentEvent(DisplayAdjustmentEvent.SCROLL_ADJUST_EVENT);
           needVisibleFeatureVectorUpdate();
-          getCanvas().repaint();
+          repaint();
         }
       }
     });
 
 
     if(scrollbar_at_top) 
-      getMidPanel().add(scrollbar, "North");
+      add(scrollbar, "North");
     else 
-      getMidPanel().add(scrollbar, "South");
+      add(scrollbar, "South");
     
 //  fixScrollbar();
 //  fireAdjustmentEvent(DisplayAdjustmentEvent.ALL_CHANGE_ADJUST_EVENT);
@@ -4331,21 +4357,26 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private void fixCanvasSize() 
   {
-    final int new_width  = getCanvas().getSize().width;
-    final int new_height = getLineHeight() * getLineCount();
+    int new_width  = getSize().width;
+    int new_height = getLineHeight() * getLineCount();
 
-    if(new_height != getCanvas().getSize().width ||
-        new_width != getCanvas().getSize().height) 
+    if(scale_changer != null)
+      new_width  += scale_changer.getPreferredSize().height;
+    if(scrollbar != null)
+      new_height += scrollbar.getPreferredSize().height;
+
+    if(new_height != getSize().width ||
+        new_width != getSize().height) 
     {
       final Dimension preferred_size =
-        new Dimension(getCanvas().getSize().width, new_height);
-      getCanvas().setPreferredSize(preferred_size);
+        new Dimension(getSize().width, new_height);
+      setPreferredSize(preferred_size);
 
       final Dimension minimum_size = new Dimension(1, new_height);
-      getCanvas().setMinimumSize(minimum_size);
+      setMinimumSize(minimum_size);
 
-      getCanvas().revalidate();
-      getCanvas().repaint();
+      revalidate();
+      repaint();
     }
   }
 
@@ -4373,7 +4404,7 @@ public class FeatureDisplay extends EntryGroupPanel
         scrollbar.setValue(new_position);
       
       needVisibleFeatureVectorUpdate();
-      getCanvas().repaint();
+      repaint();
     }
   }
 
@@ -4418,13 +4449,20 @@ public class FeatureDisplay extends EntryGroupPanel
       return REVERSE_STRAND;
   }
 
+
+  private int getDisplayHeight()
+  {
+    return getHeight() - scrollbar.getHeight();
+  }
+
+
   /**
    *  Return the display line that contains the given point, or -1 if
    *  the point is off screen.
    **/
   private int getLineFromPoint(final Point point) 
   {
-    if(point.y >= getCanvasHeight()) 
+    if(point.y >= getDisplayHeight()) 
       return -1;
 
     final int return_value = point.y / getLineHeight();
@@ -4696,7 +4734,7 @@ public class FeatureDisplay extends EntryGroupPanel
 
     fixScrollbar();
     needVisibleFeatureVectorUpdate();
-    getCanvas().repaint();
+    repaint();
     fireAdjustmentEvent(DisplayAdjustmentEvent.SCALE_ADJUST_EVENT);
   }
 

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.3 2004-09-07 11:08:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.4 2004-10-01 15:49:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import javax.swing.*;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.3 2004-09-07 11:08:08 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.4 2004-10-01 15:49:09 tjc Exp $
  *
  **/
 
@@ -123,7 +123,7 @@ public class FeatureList extends EntryGroupPanel
   {
     super(entry_group, selection, goto_event_source, base_plot_group);
 
-    getCanvas().addMouseListener(new MouseAdapter() 
+    addMouseListener(new MouseAdapter() 
     {
       /**
        *  Listen for mouse press events so that we can do popup menus and
@@ -154,11 +154,11 @@ public class FeatureList extends EntryGroupPanel
     {
       public void componentShown(ComponentEvent e)
       {
-        repaintCanvas();
+        repaint();
       }
       public void componentResized(ComponentEvent e) 
       {
-        repaintCanvas();
+        repaint();
       }
     });
 
@@ -179,7 +179,8 @@ public class FeatureList extends EntryGroupPanel
     if(max_base_pos_width < 4) 
       max_base_pos_width = 4;
 
-    repaintCanvas();
+    setBackground(background_colour);
+    repaint();
   }
 
   /**
@@ -214,7 +215,7 @@ public class FeatureList extends EntryGroupPanel
     if(this.show_correlation_scores != show_correlation_scores) 
     {
       this.show_correlation_scores = show_correlation_scores;
-      repaintCanvas ();
+      repaint();
     } 
   }
 
@@ -236,7 +237,7 @@ public class FeatureList extends EntryGroupPanel
     if (this.show_gene_names != show_gene_names) 
     {
       this.show_gene_names = show_gene_names;
-      repaintCanvas ();
+      repaint();
     }
   }
 
@@ -258,7 +259,7 @@ public class FeatureList extends EntryGroupPanel
     if(this.show_qualifiers != show_qualifiers) 
     {
       this.show_qualifiers = show_qualifiers;
-      repaintCanvas ();
+      repaint();
     }
   }
 
@@ -280,7 +281,7 @@ public class FeatureList extends EntryGroupPanel
     if (this.show_products != show_products) 
     {
       this.show_products = show_products;
-      repaintCanvas ();
+      repaint();
     }
   }
 
@@ -305,7 +306,7 @@ public class FeatureList extends EntryGroupPanel
       case EntryGroupChangeEvent.ENTRY_ACTIVE:
       case EntryGroupChangeEvent.ENTRY_DELETED:
       case EntryGroupChangeEvent.ENTRY_INACTIVE:
-        repaintCanvas ();
+        repaint();
         break;
     }
   }
@@ -318,7 +319,7 @@ public class FeatureList extends EntryGroupPanel
     if(!isVisible()) 
       return;
 
-    repaintCanvas();
+    repaint();
   }
 
   /**
@@ -331,7 +332,7 @@ public class FeatureList extends EntryGroupPanel
     if(!isVisible()) 
       return;
 
-    repaintCanvas();
+    repaint();
   }
 
   /**
@@ -354,7 +355,7 @@ public class FeatureList extends EntryGroupPanel
       return;
 
     selection_changed_flag = true;
-    repaintCanvas();
+    repaint();
   }
 
   /**
@@ -402,11 +403,11 @@ public class FeatureList extends EntryGroupPanel
     {
       public void adjustmentValueChanged(AdjustmentEvent e)
       {
-        repaintCanvas();
+        repaint();
       }
     });
 
-    getMidPanel().add(horiz_scrollbar, "South");
+    add(horiz_scrollbar, "South");
 
     add(scrollbar, "East");
   }
@@ -419,9 +420,9 @@ public class FeatureList extends EntryGroupPanel
     int old_value = horiz_scrollbar.getValue();
 
     horiz_scrollbar.setValues(horiz_scrollbar.getValue(),
-                              getCanvas().getSize().width,
+                              getSize().width,
                                0, max_width * getFontWidth());
-    horiz_scrollbar.setBlockIncrement(getCanvas().getSize().width);
+    horiz_scrollbar.setBlockIncrement(getSize().width);
   }
 
   /**
@@ -431,7 +432,7 @@ public class FeatureList extends EntryGroupPanel
   {
     this.first_index = first_index;
     need_to_fix_horiz_scrollbar = true;
-    repaintCanvas();
+    repaint();
   }
 
   /**
@@ -443,7 +444,7 @@ public class FeatureList extends EntryGroupPanel
     if(event.getID() != MouseEvent.MOUSE_PRESSED) 
       return;
 
-    getCanvas().requestFocus();
+    requestFocus();
 
     if(!event.isShiftDown ()) 
       getSelection().clear();
@@ -488,8 +489,9 @@ public class FeatureList extends EntryGroupPanel
    *  double buffering when drawing the canvas.
    *  @param g The Graphics object of the canvas.
    **/
-  protected void paintCanvas(Graphics g) 
+  protected void paintComponent(Graphics g) 
   {
+    super.paintComponent(g);
     refresh();
     
     if(!isVisible()) 
@@ -545,9 +547,8 @@ public class FeatureList extends EntryGroupPanel
       }
     }
 
-    g.setColor(background_colour);
-
-    g.fillRect(0, 0, getCanvasWidth(), getCanvasHeight());
+//  g.setColor(background_colour);
+//  g.fillRect(0, 0, getCanvasWidth(), getCanvasHeight());
 
     g.setColor(Color.black);
 
@@ -602,7 +603,7 @@ public class FeatureList extends EntryGroupPanel
    **/
   private int linesInView() 
   {
-    return getCanvas().getSize().height / getLineHeight();
+    return getSize().height / getLineHeight();
   }
 
   /**
@@ -647,7 +648,7 @@ public class FeatureList extends EntryGroupPanel
       // draw in reverse
       g.setColor(Color.black);
       g.fillRect(BOX_WIDTH + 4 - horiz_scrollbar.getValue(), y_pos,
-                 getCanvas().getSize().width + horiz_scrollbar.getValue(),
+                 getSize().width + horiz_scrollbar.getValue(),
                  getLineHeight());
       g.setColor(background_colour);
     } 
@@ -796,7 +797,7 @@ public class FeatureList extends EntryGroupPanel
    **/
   private int getWidthInChars() 
   {
-    return getCanvas().getSize().width / getFontWidth();
+    return getSize().width / getFontWidth();
   }
 
   /**

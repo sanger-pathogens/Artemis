@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionInfoDisplay.java,v 1.2 2004-08-23 10:45:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionInfoDisplay.java,v 1.3 2004-10-01 15:49:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -46,7 +46,7 @@ import javax.swing.*;
  *  This class displays information about the selection in a Label.
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectionInfoDisplay.java,v 1.2 2004-08-23 10:45:42 tjc Exp $
+ *  @version $Id: SelectionInfoDisplay.java,v 1.3 2004-10-01 15:49:09 tjc Exp $
  **/
 public class SelectionInfoDisplay extends CanvasPanel
     implements SelectionChangeListener {
@@ -62,20 +62,20 @@ public class SelectionInfoDisplay extends CanvasPanel
 
     getSelection ().addSelectionChangeListener (this);
 
-    getCanvas ().addComponentListener (new ComponentAdapter () {
+    addComponentListener (new ComponentAdapter () {
       public void componentResized(ComponentEvent e) {
-        getCanvas ().setSize (getCanvas ().getSize ().width,
+        setSize (getSize ().width,
                               getFontHeight () + 1);
-        getCanvas ().repaint ();
+        repaint();
       }
       public void componentShown (ComponentEvent e) {
-        getCanvas ().setSize (getCanvas ().getSize ().width,
+        setSize (getSize ().width,
                               getFontHeight () + 1);
-        getCanvas ().repaint ();
+        repaint();
       }
     });
 
-    int canvas_width = getCanvas ().getSize ().width;
+    int canvas_width = getSize ().width;
 
     setBackground (Color.white);
 
@@ -102,16 +102,17 @@ public class SelectionInfoDisplay extends CanvasPanel
    *  current selection.
    **/
   public void selectionChanged (SelectionChangeEvent event) {
-    repaintCanvas ();
+    repaint();
   }
 
   /**
    *  Draw the label.
    **/
-  public void paintCanvas (final Graphics g) {
-    if (!isVisible ()) {
+  public void repaintComponent(final Graphics g) 
+  {
+    super.paintComponent(g);
+    if(!isVisible ()) 
       return;
-    }
 
     final FeatureVector features = getSelection ().getAllFeatures ();
 

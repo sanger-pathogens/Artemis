@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupPanel.java,v 1.1 2004-06-09 09:46:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupPanel.java,v 1.2 2004-10-01 15:49:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -36,7 +36,7 @@ import javax.swing.*;
  *  A JPanel that can show an EntryGroup(in some way).
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: EntryGroupPanel.java,v 1.1 2004-06-09 09:46:32 tjc Exp $
+ *  @version $Id: EntryGroupPanel.java,v 1.2 2004-10-01 15:49:09 tjc Exp $
  **/
 
 abstract public class EntryGroupPanel extends CanvasPanel 
@@ -91,7 +91,7 @@ abstract public class EntryGroupPanel extends CanvasPanel
     this.goto_event_source = goto_event_source;
     this.base_plot_group   = base_plot_group;
 
-    getCanvas().addKeyListener(new KeyAdapter() 
+    addKeyListener(new KeyAdapter() 
     {
       public void keyPressed(final KeyEvent event) 
       {

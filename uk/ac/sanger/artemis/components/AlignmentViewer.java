@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.6 2004-09-20 12:51:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.7 2004-10-01 15:49:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.6 2004-09-20 12:51:11 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.7 2004-10-01 15:49:09 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -124,10 +124,10 @@ public class AlignmentViewer extends CanvasPanel
   private static int NUMBER_OF_SHADES = 13;
 
   /** Reds used to display the percent identity of matches.  */
-  private Color [] red_percent_id_colours;
+  private Color[] red_percent_id_colours;
 
   /** Blues used to display the percent identity of matches. */
-  private Color [] blue_percent_id_colours;
+  private Color[] blue_percent_id_colours;
 
   /** Scroll bar used to set the minimum length of the visible matches. */
   private JScrollBar scroll_bar = null;
@@ -183,7 +183,7 @@ public class AlignmentViewer extends CanvasPanel
   /** colour for reverse matches */
   private Color revMatchColour = Color.blue;
   /** colour for matches         */
-  private Color matchColour = Color.red;
+  private Color matchColour    = Color.red;
 
   /**
    *  Create a new AlignmentViewer for the given entries.
@@ -215,22 +215,22 @@ public class AlignmentViewer extends CanvasPanel
     final SelectionChangeListener subject_listener =
       new SelectionChangeListener() 
     {
-        public void selectionChanged(SelectionChangeEvent event) 
-        {
-          final RangeVector ranges = subject_selection.getSelectionRanges();
-          selectFromSubjectRanges(ranges);
-        }
-      };
+      public void selectionChanged(SelectionChangeEvent event) 
+      {
+        final RangeVector ranges = subject_selection.getSelectionRanges();
+        selectFromSubjectRanges(ranges);
+      }
+    };
 
     final SelectionChangeListener query_listener =
       new SelectionChangeListener() 
+    {
+      public void selectionChanged (SelectionChangeEvent event) 
       {
-        public void selectionChanged (SelectionChangeEvent event) 
-        {
-          final RangeVector ranges = query_selection.getSelectionRanges ();
-          selectFromQueryRanges (ranges);
-        }
-      };
+        final RangeVector ranges = query_selection.getSelectionRanges ();
+        selectFromQueryRanges (ranges);
+      }
+    };
 
     makeColours();
 
@@ -243,7 +243,7 @@ public class AlignmentViewer extends CanvasPanel
     orig_subject_forward_strand = getSubjectForwardStrand();
     orig_query_forward_strand   = getQueryForwardStrand();
 
-    getCanvas().addMouseListener(new MouseAdapter() 
+    addMouseListener(new MouseAdapter() 
     {
       public void mousePressed(final MouseEvent event) 
       {
@@ -256,7 +256,7 @@ public class AlignmentViewer extends CanvasPanel
       }
     });
 
-    getCanvas().addMouseMotionListener(new MouseMotionAdapter() 
+    addMouseMotionListener(new MouseMotionAdapter() 
     {
       public void mouseDragged(final MouseEvent event) 
       {
@@ -270,7 +270,7 @@ public class AlignmentViewer extends CanvasPanel
             selected_matches = null;
             toggleSelection (event.getPoint());
           }
-          repaintCanvas();
+          repaint();
         }
       }
     });
@@ -283,13 +283,14 @@ public class AlignmentViewer extends CanvasPanel
     {
       public void adjustmentValueChanged(AdjustmentEvent e) 
       {
-        repaintCanvas();
+        repaint();
       }
     });
 
     maximum_score = getComparisonData().getMaximumScore();
 
-    add (scroll_bar, "East");
+    add(scroll_bar, "East");
+    setBackground(Color.white);
   }
 
   /**
@@ -456,7 +457,7 @@ public class AlignmentViewer extends CanvasPanel
   public void setSubjectSequencePosition(final DisplayAdjustmentEvent event) 
   {
     last_subject_event = event;
-    repaintCanvas();
+    repaint();
   }
 
   /**
@@ -466,7 +467,7 @@ public class AlignmentViewer extends CanvasPanel
   public void setQuerySequencePosition(final DisplayAdjustmentEvent event) 
   {
     last_query_event = event;
-    repaintCanvas();
+    repaint();
   }
 
   /**
@@ -475,7 +476,7 @@ public class AlignmentViewer extends CanvasPanel
    **/
   public void sequenceChanged(final SequenceChangeEvent event) 
   {
-    repaintCanvas ();
+    repaint();
   }
 
   /**
@@ -592,7 +593,7 @@ public class AlignmentViewer extends CanvasPanel
           public void scoreChanged(final ScoreChangeEvent event)
           {
             minimum_score = event.getValue();
-            repaintCanvas();
+            repaint();
           }
         };
 
@@ -602,7 +603,7 @@ public class AlignmentViewer extends CanvasPanel
           public void scoreChanged(final ScoreChangeEvent event) 
           {
             maximum_score = event.getValue();
-            repaintCanvas();
+            repaint();
           }
         };
 
@@ -631,7 +632,7 @@ public class AlignmentViewer extends CanvasPanel
           public void scoreChanged(final ScoreChangeEvent event) 
           {
             minimum_percent_id = event.getValue();
-            repaintCanvas();
+            repaint();
           }
         };
 
@@ -641,7 +642,7 @@ public class AlignmentViewer extends CanvasPanel
           public void scoreChanged(final ScoreChangeEvent event) 
           {
             maximum_percent_id = event.getValue();
-            repaintCanvas();
+            repaint();
           }
         };
 
@@ -663,7 +664,7 @@ public class AlignmentViewer extends CanvasPanel
       public void itemStateChanged(ItemEvent e)
       {
         reverseMatchColour = sameColour.getState();
-        repaintCanvas();
+        repaint();
       }
     });
     popup.add(sameColour);
@@ -678,7 +679,7 @@ public class AlignmentViewer extends CanvasPanel
         if(shades != null)
         {
           red_percent_id_colours = shades.getDefinedColour();
-          repaintCanvas();
+          repaint();
         }
       }
     });
@@ -696,7 +697,7 @@ public class AlignmentViewer extends CanvasPanel
           if(shades != null)
           {
             blue_percent_id_colours = shades.getDefinedColour();
-            repaintCanvas();
+            repaint();
           }
         }
       });
@@ -726,7 +727,7 @@ public class AlignmentViewer extends CanvasPanel
       public void itemStateChanged(ItemEvent event)
       {
         ignore_self_match_flag = ignore_self_match_item.getState();
-        repaintCanvas();
+        repaint();
       }
     });
 
@@ -734,8 +735,8 @@ public class AlignmentViewer extends CanvasPanel
 
     popup.add(ignore_self_match_item);
 
-    getCanvas().add(popup);
-    popup.show(getCanvas(), event.getX(), event.getY());
+    add(popup);
+    popup.show(this, event.getX(), event.getY());
   }
 
 
@@ -781,7 +782,7 @@ public class AlignmentViewer extends CanvasPanel
     else 
       handleCanvasSingleClick (event);
 
-    repaintCanvas();
+    repaint();
   }
 
   /**
@@ -875,8 +876,8 @@ public class AlignmentViewer extends CanvasPanel
    **/
   private AlignMatch getAlignMatchFromPosition (final Point click_point) 
   {
-    final int canvas_height = getCanvas().getSize().height;
-    final int canvas_width  = getCanvas().getSize().width;
+    final int canvas_height = getSize().height;
+    final int canvas_width  = getSize().width;
 
     for(int i = all_matches.length - 1; i >= 0 ; --i) 
     {
@@ -925,7 +926,7 @@ public class AlignmentViewer extends CanvasPanel
    *  selected/highlighted hits changes.  Calls alignmentSelectionChanged ()
    *  on all interested AlignmentSelectionChangeListener objects, moves the
    *  selected matches to the top of the display and then calls
-   *  repaintCanvas ().
+   *  repaint
    **/
   private void selectionChanged()
   {
@@ -972,7 +973,7 @@ public class AlignmentViewer extends CanvasPanel
       }
     }
 
-    repaintCanvas ();
+    repaint();
   }
 
   /**
@@ -1029,27 +1030,16 @@ public class AlignmentViewer extends CanvasPanel
    *  double buffering when drawing the canvas.
    *  @param g The Graphics object of the canvas.
    **/
-  protected void paintCanvas(final Graphics g) 
+  protected void paintComponent(final Graphics g) 
   {
-    fillBackground (g);
-
+    super.paintComponent(g);
     if(last_subject_event != null && last_query_event != null) 
     {
-      drawAlignments (g);
-      drawLabels (g);
+      drawAlignments(g);
+      drawLabels(g);
     }
   }
 
-  /**
-   *  Draw the background colour of the frames.
-   **/
-  private void fillBackground(final Graphics g) 
-  {
-    g.setColor(Color.white);
-
-    g.fillRect(0, 0, getCanvas ().getSize ().width,
-               getCanvas ().getSize ().height);
-  }
 
   /**
    *  Draw the labels into the given Graphics object.  There is a label at the
@@ -1067,8 +1057,12 @@ public class AlignmentViewer extends CanvasPanel
   private void drawLabels(final Graphics g) 
   {
     final FontMetrics fm   = g.getFontMetrics();
-    final int canvas_width = getCanvas().getSize().width;
-    final int canvas_height = getCanvas().getSize().height;
+    int canvas_width  = getSize().width;
+
+    if(scroll_bar != null)
+      canvas_width -= scroll_bar.getPreferredSize().width;
+
+    final int canvas_height = getSize().height;
 
     final String cutoff_label =
       Integer.toString(scroll_bar.getValue());
@@ -1101,12 +1095,12 @@ public class AlignmentViewer extends CanvasPanel
       cutoff_label_position - getFontAscent (),
     };
 
-    g.setColor (Color.white);
-    g.fillPolygon (cutoff_x_points, cutoff_y_points, 4);
+    g.setColor(Color.white);
+    g.fillPolygon(cutoff_x_points, cutoff_y_points, 4);
 
-    g.setColor (Color.black);
+    g.setColor(Color.black);
 
-    g.drawString (cutoff_label, canvas_width - cutoff_label_width,
+    g.drawString(cutoff_label, canvas_width - cutoff_label_width,
                   cutoff_label_position);
 
     final int font_height = getFontAscent () + getFontDescent ();
@@ -1235,8 +1229,8 @@ public class AlignmentViewer extends CanvasPanel
    **/
   private void drawAlignments(final Graphics g) 
   {
-    final int canvas_height = getCanvas ().getSize ().height;
-    final int canvas_width = getCanvas ().getSize ().width;
+    final int canvas_height = getSize().height;
+    final int canvas_width = getSize().width;
 
     for (int i = 0 ; i < all_matches.length ; ++i) 
     {
@@ -1664,7 +1658,7 @@ public class AlignmentViewer extends CanvasPanel
   public void lockDisplays () 
   {
     displays_are_locked = true;
-    repaintCanvas ();
+    repaint();
   }
 
   /**
@@ -1673,7 +1667,7 @@ public class AlignmentViewer extends CanvasPanel
   public void unlockDisplays () 
   {
     displays_are_locked = false;
-    repaintCanvas ();
+    repaint();
   }
 
   /**
@@ -1690,7 +1684,7 @@ public class AlignmentViewer extends CanvasPanel
   public void toggleDisplayLock () 
   {
     displays_are_locked = !displays_are_locked;
-    repaintCanvas ();
+    repaint();
   }
 
   /**
