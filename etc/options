@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.8 2004-07-20 09:38:57 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.9 2004-07-30 15:31:01 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -480,12 +480,22 @@ invisible_qualifiers = \
 # For blast and fasta the parameter string is the name of the database to
 # search.
 feature_protein_programs = \
-    fasta %L \
-    fasta %M \
-    fasta %K \
+    fasta %uniprot \
+    fasta %uniprot_archaea \
+    fasta %uniprot_bacteria \
+    fasta %uniprot_eukaryota \
+    fasta %uniprot_viruses \
+    fasta %uniprot_rest \
+    fasta %malaria \
+    fasta %kineto_aa \
     sigcleave 0 \
     pepstats - \
     blastp %uniprot \
+    blastp %uniprot_archaea \
+    blastp %uniprot_bacteria \
+    blastp %uniprot_eukaryota \
+    blastp %uniprot_viruses \
+    blastp %uniprot_rest \
     blastp psu/Kineto_aa \
     tblastn %embl_other \
     blastp+go /nfs/pathsoft/databases/protein/go_all \
