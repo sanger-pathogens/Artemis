@@ -43,16 +43,20 @@ public class ProgressThread extends Thread
 
   public void run()
   {
-    progress_frame = new JFrame("Loading...");
-    Dimension d = progress_frame.getToolkit().getScreenSize();
-    progressBar.setIndeterminate(true);
-    progressBar.setBackground(Color.white);
-    progress_frame.getContentPane().add(progressBar);
-    progress_frame.pack();
-    progress_frame.setLocation(
+    try
+    {
+      progress_frame = new JFrame("Loading...");
+      Dimension d = progress_frame.getToolkit().getScreenSize();
+      progressBar.setIndeterminate(true);
+      progressBar.setBackground(Color.white);
+      progress_frame.getContentPane().add(progressBar);
+      progress_frame.pack();
+      progress_frame.setLocation(
               ((int)d.getWidth()-progress_frame.getWidth())/2,
               ((int)d.getHeight()-progress_frame.getHeight())/2);
-    progress_frame.setVisible(true);
+      progress_frame.setVisible(true);
+    }
+    catch(NoSuchMethodError nsme){}
   }
 
   public void finished()
