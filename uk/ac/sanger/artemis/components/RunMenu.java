@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.2 2004-06-09 13:02:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.3 2004-06-09 13:04:16 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.*;
  *  A JMenu of external commands/functions.
  *
  *  @author Kim Rutherford
- *  @version $Id: RunMenu.java,v 1.2 2004-06-09 13:02:33 tjc Exp $
+ *  @version $Id: RunMenu.java,v 1.3 2004-06-09 13:04:16 tjc Exp $
  **/
 
 public class RunMenu extends SelectionMenu 
@@ -71,10 +71,10 @@ public class RunMenu extends SelectionMenu
     for(int i = 0 ; i < external_programs.size() ; ++i) 
       makeOptionsMenuItem(external_programs.elementAt(i));
 
-    if(Options.getOptions().getProperty("jcon_min_jobs") != null) 
-    {
-      addSeparator();
-      final JMenuItem jcon_status = new JMenuItem("Show Job Status ...");
+//  if(Options.getOptions().getProperty("jcon_min_jobs") != null) 
+//  {
+//    addSeparator();
+//    final JMenuItem jcon_status = new JMenuItem("Show Job Status ...");
 
 //    jcon_status.addActionListener(new ActionListener() 
 //    {
