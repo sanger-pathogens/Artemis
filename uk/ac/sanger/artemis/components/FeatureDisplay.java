@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.1 2004-06-09 09:46:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.2 2004-07-01 11:26:55 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,7 +44,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.1 2004-06-09 09:46:37 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.2 2004-07-01 11:26:55 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -3690,7 +3690,8 @@ public class FeatureDisplay extends EntryGroupPanel
     });
 
     // Listen for mouse motion events so that we can select ranges of bases.
-    getCanvas().addMouseMotionListener(new MouseMotionAdapter() {
+    getCanvas().addMouseMotionListener(new MouseMotionAdapter() 
+    {
       public void mouseDragged(MouseEvent event) 
       {
         if(last_mouse_press_event != null &&
@@ -3699,7 +3700,8 @@ public class FeatureDisplay extends EntryGroupPanel
       }
     });
 
-    getCanvas().addKeyListener(new KeyAdapter() {
+    getCanvas().addKeyListener(new KeyAdapter() 
+    {
       public void keyPressed(final KeyEvent event) 
       {
         handleKeyPress(FeatureDisplay.this, event);

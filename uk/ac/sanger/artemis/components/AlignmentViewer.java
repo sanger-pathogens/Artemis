@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.1 2004-06-09 09:46:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.2 2004-07-01 11:26:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -43,11 +43,12 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.1 2004-06-09 09:46:01 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.2 2004-07-01 11:26:49 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
-    implements SequenceChangeListener {
+    implements SequenceChangeListener 
+{
   /**
    *  Create a new AlignmentViewer for the given entries.
    *  @param subject_feature_display The FeatureDisplay that is above this
@@ -59,7 +60,8 @@ public class AlignmentViewer extends CanvasPanel
    **/
   public AlignmentViewer (final FeatureDisplay subject_feature_display,
                           final FeatureDisplay query_feature_display,
-                          final ComparisonData comparison_data) {
+                          final ComparisonData comparison_data) 
+  {
     this.subject_feature_display = subject_feature_display;
     this.query_feature_display   = query_feature_display;
     this.comparison_data         = comparison_data;
@@ -101,26 +103,34 @@ public class AlignmentViewer extends CanvasPanel
     orig_subject_forward_strand = getSubjectForwardStrand ();
     orig_query_forward_strand = getQueryForwardStrand ();
 
-    getCanvas ().addMouseListener (new MouseAdapter () {
-      public void mousePressed (final MouseEvent event) {
+    getCanvas().addMouseListener(new MouseAdapter() 
+    {
+      public void mousePressed(final MouseEvent event) 
+      {
         // on windows we have to check isPopupTrigger in mouseReleased(),
         // but do it in mousePressed() on UNIX
-        if (isMenuTrigger (event)) {
-          popupMenu (event);
-        } else {
-          handleCanvasMousePress (event);
-        }
+        if(isMenuTrigger(event)) 
+          popupMenu(event);
+        else 
+          handleCanvasMousePress(event);
       }
     });
 
-    getCanvas ().addMouseMotionListener (new MouseMotionAdapter () {
-      public void mouseDragged (final MouseEvent event) {
-        if (!modifiersForLockToggle (event)) {
-          if (!event.isShiftDown ()) {
+    getCanvas().addMouseMotionListener(new MouseMotionAdapter() 
+    {
+      public void mouseDragged(final MouseEvent event) 
+      {
+        if(isMenuTrigger(event))
+          return;
+
+        if (!modifiersForLockToggle(event))
+        {
+          if (!event.isShiftDown()) 
+          {
             selected_matches = null;
-            toggleSelection (event.getPoint ());
+            toggleSelection (event.getPoint());
           }
-          repaintCanvas ();
+          repaintCanvas();
         }
       }
     });
@@ -129,9 +139,11 @@ public class AlignmentViewer extends CanvasPanel
     scroll_bar.setValues (1, 1, 1, 1000);
     scroll_bar.setBlockIncrement (10);
 
-    scroll_bar.addAdjustmentListener (new AdjustmentListener () {
-      public void adjustmentValueChanged(AdjustmentEvent e) {
-        repaintCanvas ();
+    scroll_bar.addAdjustmentListener(new AdjustmentListener() 
+    {
+      public void adjustmentValueChanged(AdjustmentEvent e) 
+      {
+        repaintCanvas();
       }
     });
 
