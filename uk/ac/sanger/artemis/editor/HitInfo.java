@@ -172,7 +172,7 @@ public class HitInfo
     {
       opt    = tok.nextToken();
       zscore = tok.nextToken();
-      evalue = tok.nextToken();
+      setEValue(tok.nextToken());
     }
     catch(NoSuchElementException exp){}
     
