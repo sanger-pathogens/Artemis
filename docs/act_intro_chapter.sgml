@@ -76,7 +76,7 @@ pages</ULINK>, which will create a local copy of the the &art; application
     <SECT2 ID="DOSINSTALLATION">
       <TITLE>Installation Instructions for Windows</TITLE>
       <PARA>
-On Windows systems with Java 1.2 (see <XREF LINKEND="INSTALLINGJAVA">),
+On Windows systems with Java 1.3 (or higher, see <XREF LINKEND="INSTALLINGJAVA">),
 installing &prog; is as simple as copying the
 <ULINK URL="ftp://ftp.sanger.ac.uk/pub/pathogens/software/act/act.jar"
 TYPE="external">act.jar file</ULINK> to an appropriate place (such as the

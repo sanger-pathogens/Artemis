@@ -169,7 +169,7 @@ icon.
   <SECT1 ID="RUNNINGPC">
     <TITLE>Running &prog; on Windows Systems</TITLE>
     <PARA>
-On systems with Java 1.2 (AKA Java 2) or better installed &prog; can be
+On systems with Java 1.3 (or higher) installed &prog; can be
 started by double clicking on the act.jar icon.
     </PARA>
   </SECT1>
