@@ -230,6 +230,11 @@ public class EvidenceViewer extends JPanel
 
     public void mouseClicked(MouseEvent e) 
     {
+      if(e.getClickCount() < 2)
+        return;
+
+      setCursor(new Cursor(Cursor.WAIT_CURSOR));
+
       int ydisp  = 0;
       int bound2 = bound*2;
       int ydisp2 = YDISPLACEMENT/2;
@@ -280,11 +285,13 @@ public class EvidenceViewer extends JPanel
             catch(Exception exp)
             {
               exp.printStackTrace();
+              setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
           }
         }
         ydisp += YDISPLACEMENT;
       }
+      setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
   }
 
