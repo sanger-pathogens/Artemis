@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.4 2004-11-26 16:10:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.5 2004-11-29 14:09:54 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -39,7 +39,7 @@ import javax.swing.*;
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.4 2004-11-26 16:10:24 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.5 2004-11-29 14:09:54 tjc Exp $
  **/
 
 public class BasePlot extends Plot
@@ -184,7 +184,7 @@ public class BasePlot extends Plot
   public void displayAdjustmentValueChanged(DisplayAdjustmentEvent event) 
   {
     start_base = event.getStart();
-    end_base = event.getEnd();
+    end_base   = event.getEnd();
     width_in_bases = event.getWidthInBases();
     rev_comp_display = event.isRevCompDisplay();
     recalculate_flag = true;
@@ -193,6 +193,7 @@ public class BasePlot extends Plot
     {
       selection_start_marker = null;
       selection_end_marker = null;
+      resetOffscreenImage();
     }
 
     repaint();
@@ -382,7 +383,7 @@ public class BasePlot extends Plot
    *  end_base.  This method plots BaseWindowAlgorithm objects only.
    *  @param g The object to draw into.
    **/
-  public int drawMultiValueGraph(Graphics g) 
+  public int drawMultiValueGraph(Graphics g, Color[] frameColour) 
   {
     if(recalculate_flag)
       recalculateValues();
@@ -415,16 +416,16 @@ public class BasePlot extends Plot
         switch(value_index) 
         {
           case 0:
-            g.setColor (new Color (255, 0, 0));
+            g.setColor(frameColour[0]);
             break;
           case 1:
-            g.setColor (new Color (0, 200, 0));
+            g.setColor(frameColour[1]);
             break;
           case 2:
-            g.setColor (new Color (0, 0, 255));
+            g.setColor(frameColour[2]);
             break;
           default:
-            g.setColor (Color.black);
+            g.setColor(frameColour[3]);
         }
       }
 

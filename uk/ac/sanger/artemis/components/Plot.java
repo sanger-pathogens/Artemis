@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.6 2004-11-26 16:10:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.7 2004-11-29 14:09:54 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -33,6 +33,10 @@ import java.awt.event.*;
 
 import javax.swing.JPanel;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.Box;
 import javax.swing.JTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -45,7 +49,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.6 2004-11-26 16:10:24 tjc Exp $
+ *  @version $Id: Plot.java,v 1.7 2004-11-29 14:09:54 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -106,6 +110,15 @@ public abstract class Plot extends JPanel
    **/
   protected abstract int getPointPosition(final int canvas_x_position);
 
+  /** number of graph lines to be drawn */
+  private int numPlots;
+
+  /** colour array for graph drawing */
+  private Color frameColour[] = { Color.red, 
+                                  new Color(0,200,0), 
+                                  Color.blue,
+                                  Color.black };
+ 
   /**
    *  Create a new plot component.
    *  @param algorithm The object that will generate the values we plot in
@@ -115,6 +128,7 @@ public abstract class Plot extends JPanel
    **/
   public Plot(Algorithm algorithm, boolean draw_scale) 
   {
+    super();
     this.algorithm = algorithm;
     this.draw_scale = draw_scale;
 
@@ -173,8 +187,9 @@ public abstract class Plot extends JPanel
       }
     });
 
-    add(window_changer, "East");
+
 //  setBackground(Color.white);
+    add(window_changer, "East");
 
     addMouseListener(mouse_listener);
     addMouseMotionListener(mouse_motion_listener);
@@ -212,7 +227,56 @@ public abstract class Plot extends JPanel
         final JComponent parent = (JComponent)event.getSource();
         final JPopupMenu popup  = new JPopupMenu("Plot Options");
 
-        final JMenuItem setScale = new JMenuItem("Set the Window Size");
+        // configure colours for multiple graph plots
+        if(numPlots > 1)  
+        {
+          final JMenuItem config = new JMenuItem("Configure...");
+          config.addActionListener(new ActionListener()
+          {
+            public void actionPerformed(ActionEvent _)
+            {
+              Box bdown   = Box.createVerticalBox();
+              Box bacross;
+            
+              for(int i=0; i<numPlots; i++)
+              {
+                final int colourNumber = i;
+                bacross = Box.createHorizontalBox();
+                final JLabel colourLabel = new JLabel("   ");
+                colourLabel.setBackground(frameColour[i]);
+                colourLabel.setOpaque(true);
+                bacross.add(colourLabel);
+                bacross.add(Box.createHorizontalStrut(2));
+
+                JButton butt = new JButton("Select");
+                butt.addActionListener(new ActionListener()
+                {
+                  public void actionPerformed(ActionEvent _)
+                  {
+                    Color newColour = JColorChooser.showDialog(null, "Colour Chooser",
+                                                               frameColour[colourNumber]);
+                    frameColour[colourNumber] = newColour;
+                    colourLabel.setBackground(frameColour[colourNumber]);
+                    repaint();
+                  }
+                });
+                bacross.add(butt);
+                bdown.add(bacross);
+                bdown.add(Box.createVerticalStrut(2));
+              }
+
+              String config_options[] = { "OK" };
+              int select = JOptionPane.showOptionDialog(null,
+                                          bdown, "Configure Colours",
+                                           JOptionPane.DEFAULT_OPTION,
+                                           JOptionPane.QUESTION_MESSAGE,
+                                           null, config_options, config_options[0]);
+            }
+          });
+          popup.add(config);
+        }
+
+        final JMenuItem setScale = new JMenuItem("Set the Window Size...");
         setScale.addActionListener(new ActionListener()
         {
           public void actionPerformed(ActionEvent _)
@@ -470,10 +534,15 @@ public abstract class Plot extends JPanel
 
     // Redraw the graph on the canvas using the algorithm from the
     // constructor.
-    int numPlots = drawMultiValueGraph(og);
+    numPlots = drawMultiValueGraph(og,frameColour);
     drawLabels(og,numPlots);
     g.drawImage(offscreen, 0, 0, null);
     og.dispose();
+  }
+
+  protected void resetOffscreenImage()
+  {
+    offscreen = null;
   }
 
   /**
@@ -618,7 +687,7 @@ public abstract class Plot extends JPanel
    *  Redraw the graph on the canvas using the algorithm.
    *  @param g The object to draw into.
    **/
-  protected abstract int drawMultiValueGraph(final Graphics g);
+  protected abstract int drawMultiValueGraph(final Graphics g, Color[] frameColour);
 
   /**
    *  Draw a line representing the average of the algorithm over the feature.
@@ -690,7 +759,8 @@ public abstract class Plot extends JPanel
 
     int width = getWidth() - window_changer.getWidth() - (15*font_width);
     g.translate(width,0);
-    ((BaseAlgorithm)getAlgorithm()).drawLegend(g,font_height,font_width);
+    ((BaseAlgorithm)getAlgorithm()).drawLegend(g,font_height,
+                                               font_width,frameColour);
     g.translate(-width,0);
   }
 
