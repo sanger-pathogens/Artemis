@@ -7,11 +7,14 @@
 # /usr/local/bin/ or elsewhere.
 
 
-# $Header: //tmp/pathsoft/artemis/act,v 1.1 2004-06-29 08:33:41 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/act,v 1.2 2004-12-07 10:35:40 tjc Exp $
 
 # resolve links - $0 may be a link
 PRG=$0
 progname=`basename $0`
+
+PSU_PROD_JAVA_VERSION=1.4.2
+. $PSU_CONFIG_DIR/shell/java_environment.sh
 
 while [ -h "$PRG" ] ; do
   ls=`ls -ld "$PRG"`

@@ -6,14 +6,14 @@
 # necessary a symbolic link can be made to this script from
 # /usr/local/bin/ or elsewhere.
 
-# $Header: //tmp/pathsoft/artemis/art,v 1.4 2004-08-06 14:10:29 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/art,v 1.5 2004-12-07 10:35:40 tjc Exp $
 
 # resolve links - $0 may be a link
 PRG=$0
 progname=`basename $0`
 
-#PSU_PROD_JAVA_VERSION=1.4.2
-#. $PSU_CONFIG_DIR/shell/java_environment.sh
+PSU_PROD_JAVA_VERSION=1.4.2
+. $PSU_CONFIG_DIR/shell/java_environment.sh
 
 while [ -h "$PRG" ] ; do
   ls=`ls -ld "$PRG"`

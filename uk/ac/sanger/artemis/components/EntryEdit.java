@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.9 2004-12-06 10:56:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.10 2004-12-07 10:35:40 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.9 2004-12-06 10:56:52 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.10 2004-12-07 10:35:40 tjc Exp $
  *
  */
 
@@ -391,8 +391,8 @@ public class EntryEdit extends JFrame
    **/
   public void redisplay() 
   {
-    feature_display.redisplay();
-    base_display.redisplay();
+    feature_display.repaint();
+    base_display.repaint();
   }
 
   /**

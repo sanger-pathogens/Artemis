@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.9 2004-12-03 18:11:28 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.10 2004-12-07 10:35:40 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import javax.swing.*;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.9 2004-12-03 18:11:28 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.10 2004-12-07 10:35:40 tjc Exp $
  *
  **/
 
@@ -491,7 +491,8 @@ public class FeatureList extends EntryGroupPanel
     if(selected_features.size() > 0)
     {
       Point viewPoint = getScrollPoint();
-      final int feature_count = getEntryGroup().getAllFeaturesCount();
+      final EntryGroup entry_group = getEntryGroup();
+      final int feature_count = entry_group.getAllFeaturesCount();
 
       // set to true if any of the selected features is visible
       boolean a_selected_feature_is_visible = false;
@@ -506,7 +507,7 @@ public class FeatureList extends EntryGroupPanel
           i < feature_count && i <= first_line_in_view + numberLines;
           ++i)
       {
-        final Feature this_feature = getEntryGroup().featureAt(i);
+        final Feature this_feature = entry_group.featureAt(i);
         if(selected_features.contains(this_feature))
         {
           a_selected_feature_is_visible = true;
@@ -521,7 +522,7 @@ public class FeatureList extends EntryGroupPanel
           selected_features.elementAt(0);
 
         final int index_of_first_selected_feature =
-          getEntryGroup().indexOf(first_selected_feature);
+                         entry_group.indexOf(first_selected_feature);
 
         if(index_of_first_selected_feature < first_line_in_view ||
            index_of_first_selected_feature >= first_line_in_view + numberLines)
