@@ -7,7 +7,14 @@
 # To enable this in Artemis, sanger_options must be set to true in the options
 # file.
 
-NETSCAPE=/usr/bin/X11/real-netscape
+# Default browser is mozilla
+# If you are under KDE, you should use Konqueror then
+# If you are under MAC OS X, use Safari
+
+# NETSCAPE=/usr/bin/X11/real-netscape
+NETSCAPE=/usr/bin/mozilla
+# MAC OS X   
+# NETSCAPE=/Applications/Safari.app/Contents/MacOS/Safari
 
 if [ -f "$DIANA_ENVIRONMENT_FILE" ]
 then
