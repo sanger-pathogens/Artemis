@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.6 2004-11-24 16:59:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.7 2004-12-22 15:27:30 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.6 2004-11-24 16:59:36 tjc Exp $
+ *  @version $Id: Feature.java,v 1.7 2004-12-22 15:27:30 tjc Exp $
  **/
 
 public class Feature
@@ -156,7 +156,9 @@ public class Feature
    *  stopListening() is called.
    **/
   private int listen_count = 0;
-  
+ 
+  private Color colour = null;
+ 
   /**
    *  Create a new Feature object.
    *  @param entry The uk.ac.sanger.artemis.Entry object that contains this Feature.
@@ -2224,14 +2226,21 @@ public class Feature
     return -1;
   }
 
+  public void resetColour()
+  {
+    colour = null;
+  }
+
   /**
    *  Return the colour (the value of the /colour qualifier) of this Feature
    *  or null if there is no colour qualifier and no default colour.
    **/
   public Color getColour()
   {
-    String colour_qualifier;
+    if(colour != null)
+      return colour;
 
+    String colour_qualifier;
     try 
     {
       colour_qualifier = getValueOfQualifier("colour");
@@ -2247,12 +2256,18 @@ public class Feature
 
     // use default colour for this type of feature
     if(colour_qualifier == null) 
-      return Options.getOptions().getDefaultFeatureColour(getKey());
+    {
+      colour = Options.getOptions().getDefaultFeatureColour(getKey());
+      return colour;
+    }
 
     final StringVector colours = StringVector.getStrings(colour_qualifier);
 
     if(colours.size() < 1) 
-      return Options.getOptions().getDefaultFeatureColour(getKey());
+    {
+      colour = Options.getOptions().getDefaultFeatureColour(getKey());
+      return colour;
+    }
 
     try 
     {
@@ -2280,7 +2295,8 @@ public class Feature
         if(blue > 255)
           blue = 255;
 
-        return new Color(red, green, blue);
+        colour = new Color(red, green, blue);
+        return colour;
       } 
       else
       {
@@ -2289,14 +2305,15 @@ public class Feature
         final int colour_number;
 
         colour_number = Integer.parseInt(colour_string);
-        return Options.getOptions().getColorFromColourNumber(colour_number);
+        colour = Options.getOptions().getColorFromColourNumber(colour_number);
+        return colour;
       }
     } 
     catch(NumberFormatException e) 
     {
       // use default colour for this type of feature
-
-      return Options.getOptions().getDefaultFeatureColour(getKey());
+      colour = Options.getOptions().getDefaultFeatureColour(getKey());
+      return colour;
     }
   }
 
