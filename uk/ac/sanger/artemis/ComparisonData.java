@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ComparisonData.java,v 1.1 2004-06-09 09:44:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ComparisonData.java,v 1.2 2004-12-14 10:41:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -35,23 +35,24 @@ import uk.ac.sanger.artemis.sequence.*;
  *  for the alignment of two sequences.
  *
  *  @author Kim Rutherford
- *  @version $Id: ComparisonData.java,v 1.1 2004-06-09 09:44:15 tjc Exp $
+ *  @version $Id: ComparisonData.java,v 1.2 2004-12-14 10:41:42 tjc Exp $
  **/
 
-public interface ComparisonData {
+public interface ComparisonData 
+{
   /**
    *  Return an array containing all the AlignMatch objects for this
    *  comparison.
    **/
-  public AlignMatch [] getMatches ();
+  public AlignMatch[] getMatches();
 
   /**
    *  Return all the AlignMatch objects in this comparison which overlap
    *  first_seq_range on the first sequence or second_seq_range on the second
    *  sequence.
    **/
-  public AlignMatch [] getMatchesInRange (final Range first_seq_range,
-                                          final Range second_seq_range);
+//public AlignMatch[] getMatchesInRange(final Range first_seq_range,
+//                                      final Range second_seq_range);
 
   /**
    *  If this object contain valid matches for a comparison between
@@ -64,17 +65,17 @@ public interface ComparisonData {
    *  @exception OutOfRangeException Thrown if the data in this object is not
    *    valid for either orientation.
    **/
-  public ComparisonData flipMatchesIfNeeded (final Bases first_sequence,
-                                             final Bases second_sequence)
+  public ComparisonData flipMatchesIfNeeded(final Bases first_sequence,
+                                            final Bases second_sequence)
       throws OutOfRangeException;
 
   /**
    *  Return the maximum score of all the AlignMatch objects in this object.
    **/
-  public int getMaximumScore ();
+  public int getMaximumScore();
 
   /**
    *  Return the minimum score of all the AlignMatch objects in this object.
    **/
-  public int getMinimumScore ();
+  public int getMinimumScore();
 }
