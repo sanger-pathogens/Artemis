@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DbfetchEntrySource.java,v 1.2 2004-12-03 17:47:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DbfetchEntrySource.java,v 1.3 2004-12-16 10:44:33 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,7 +44,7 @@ import javax.swing.*;
  *  server.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: DbfetchEntrySource.java,v 1.2 2004-12-03 17:47:04 tjc Exp $
+ *  @version $Id: DbfetchEntrySource.java,v 1.3 2004-12-16 10:44:33 tjc Exp $
  **/
 
 public class DbfetchEntrySource
@@ -90,26 +90,26 @@ public class DbfetchEntrySource
       final LogReadListener read_event_logger = new LogReadListener (embl_id);
 
       final EntryInformation entry_information =
-        new SimpleEntryInformation (Options.getArtemisEntryInformation ());
+        new SimpleEntryInformation(Options.getArtemisEntryInformation ());
 
 //    final MessageDialog message_frame =
 //      new MessageDialog (getFrame (),
 //                         "reading entry - please wait", false);
 
       final String url_string =
-        "http://www.ebi.ac.uk/cgi-bin/dbfetch?db=EMBL&id=" + embl_id;
+        "http://www.ebi.ac.uk/cgi-bin/dbfetch?db=EMBL&id=" + embl_id +"&style=raw";
 
       final Document url_document =
-        DocumentFactory.makeDocument (url_string);
+        DocumentFactory.makeDocument(url_string);
 
       try
       {
         final uk.ac.sanger.artemis.io.Entry new_embl_entry =
-          DocumentEntryFactory.makeDocumentEntry (entry_information,
-                                                  url_document,
-                                                  read_event_logger);
+          DocumentEntryFactory.makeDocumentEntry(entry_information,
+                                                 url_document,
+                                                 read_event_logger);
 
-        if (read_event_logger.seenMessage ()) {
+        if (read_event_logger.seenMessage()) {
           final YesNoDialog yes_no_dialog =
             new YesNoDialog (frame,
                              "there were warnings while reading - view now?");
