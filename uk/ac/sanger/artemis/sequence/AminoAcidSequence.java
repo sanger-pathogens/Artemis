@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/AminoAcidSequence.java,v 1.3 2004-11-17 13:50:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/AminoAcidSequence.java,v 1.4 2004-12-21 10:28:02 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -33,7 +33,7 @@ import uk.ac.sanger.artemis.util.*;
  *  Objects of this class represent a string of amino acids.
  *
  *  @author Kim Rutherford
- *  @version $Id: AminoAcidSequence.java,v 1.3 2004-11-17 13:50:09 tjc Exp $
+ *  @version $Id: AminoAcidSequence.java,v 1.4 2004-12-21 10:28:02 tjc Exp $
  **/
 
 public class AminoAcidSequence 
@@ -61,7 +61,9 @@ public class AminoAcidSequence
   public static AminoAcidSequence getTranslation(final String bases,
                                                  final boolean unknown_is_x) 
   {
-    setGeneCode();    
+//  this is set in Splash.java
+//  setGeneCode();    
+//
     final StringBuffer aa_buffer = new StringBuffer();
     final int number_of_codons = bases.length() / 3;
 
