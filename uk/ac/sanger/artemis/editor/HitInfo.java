@@ -125,7 +125,7 @@ public class HitInfo
       acc = id;
 
     ind1 = header.lastIndexOf(" ");
-    evalue = header.substring(ind1).trim();
+    setEValue(header.substring(ind1).trim());
   
     ind2  = header.substring(0,ind1).trim().lastIndexOf(" ");
     if(ind2>-1)
@@ -499,6 +499,8 @@ public class HitInfo
   */
   protected void setEValue(String evalue)
   {
+    if(evalue.startsWith("e"))
+      evalue = "0"+evalue;
     this.evalue = evalue;
   }
 
