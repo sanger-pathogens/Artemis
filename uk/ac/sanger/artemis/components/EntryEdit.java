@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.1 2004-06-09 09:46:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.2 2004-06-09 14:22:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.1 2004-06-09 09:46:24 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.2 2004-06-09 14:22:09 tjc Exp $
  *
  */
 
@@ -477,7 +477,7 @@ public class EntryEdit extends JFrame
     {
       if(ask_for_name || entry.getName() == null)
       {
-        JCheckBox emblHeader = new JCheckBox("Add EMBL Header",
+        JCheckBox emblHeader = new JCheckBox("Add EMBL ID Header",
                                               false);
         Box bdown = Box.createVerticalBox();
         JTextField fileField = new JTextField(
@@ -486,11 +486,13 @@ public class EntryEdit extends JFrame
         fileField.selectAll();
         bdown.add(fileField);
    
-        if(destination_type == DocumentEntryFactory.EMBL_FORMAT)
+        if( destination_type == DocumentEntryFactory.EMBL_FORMAT &&
+           (entry.getHeaderText() == null ||  
+           !isHeaderEMBL(entry.getHeaderText())) )
           bdown.add(emblHeader);
 
         int n = JOptionPane.showConfirmDialog(null, bdown,
-                            "Enter filename",
+                            "Enter a filename",
                             JOptionPane.OK_CANCEL_OPTION,
                             JOptionPane.QUESTION_MESSAGE);
         if(n == JOptionPane.CANCEL_OPTION)
@@ -498,9 +500,24 @@ public class EntryEdit extends JFrame
 
         if(emblHeader.isSelected())
         {
-          if( entry.getHeaderText() == null || 
-              isHeaderEMBL(entry.getHeaderText()) )
-            System.out.println("NO HEADER PLEASE SET");
+          bdown = Box.createVerticalBox();
+          JTextField idField = new JTextField("");
+          bdown.add(idField);
+           
+          n = JOptionPane.showConfirmDialog(null, bdown,
+                            "Enter the entry ID",
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
+
+          if(n != JOptionPane.CANCEL_OPTION &&
+             !idField.getText().trim().equals(""))
+          {
+            String header = "ID   "+idField.getText().trim();
+            if(entry.getFeatureCount() > 0)
+              header = header.concat("\nFH   Key             "+
+                                     "Location/Qualifiers\nFH\n");
+            entry.setHeaderText(header); 
+          }
         }
 
         File file = new File(fileField.getText());

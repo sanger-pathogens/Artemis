@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.1 2004-06-09 09:46:28 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.2 2004-06-09 14:22:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -33,16 +33,14 @@ import uk.ac.sanger.artemis.io.ReadFormatException;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.FileNotFoundException;
+import java.io.*;
 import javax.swing.*;
 
 /**
  *  This class is a JFileChooser that can read EMBL Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryFileDialog.java,v 1.1 2004-06-09 09:46:28 tjc Exp $
+ *  @version $Id: EntryFileDialog.java,v 1.2 2004-06-09 14:22:10 tjc Exp $
  **/
 
 public class EntryFileDialog extends StickyFileChooser 
@@ -359,16 +357,42 @@ public class EntryFileDialog extends StickyFileChooser
       {
         JCheckBox emblHeader = new JCheckBox("Add EMBL Header",
                                              false);
+        emblHeader.setSelected(false);
+
         setDialogTitle("Save to ...");
         setDialogType(JFileChooser.SAVE_DIALOG);
 
-//      if(destination_type == DocumentEntryFactory.EMBL_FORMAT)
-//        setAccessory(emblHeader);
+        if( destination_type == DocumentEntryFactory.EMBL_FORMAT &&
+           (entry.getHeaderText() == null ||
+           !isHeaderEMBL(entry.getHeaderText())) )
+          setAccessory(emblHeader);
         int status = showSaveDialog(owner);
 
         if(status != JFileChooser.APPROVE_OPTION ||
            getSelectedFile() == null) 
           return;
+
+        if(emblHeader.isSelected())
+        {
+          Box bdown = Box.createVerticalBox();
+          JTextField idField = new JTextField("");
+          bdown.add(idField);
+
+          int n = JOptionPane.showConfirmDialog(null, bdown,
+                            "Enter the entry ID",
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
+
+          if(n != JOptionPane.CANCEL_OPTION &&
+             !idField.getText().trim().equals(""))
+          {
+            String header = "ID   "+idField.getText().trim();
+            if(entry.getFeatureCount() > 0)
+              header = header.concat("\nFH   Key             "+
+                                     "Location/Qualifiers\nFH\n");
+            entry.setHeaderText(header);
+          }
+        }
 
         File file = new File(getCurrentDirectory(),
                         getSelectedFile().getName());
@@ -458,6 +482,28 @@ public class EntryFileDialog extends StickyFileChooser
       return;
     }
   }
+
+  /**
+  *
+  * Test for that the header of an EMBL entry begins
+  * with an ID line.
+  * @param header embl header
+  *
+  */
+  private boolean isHeaderEMBL(String header)
+  {
+    StringReader reader = new StringReader(header);
+    BufferedReader buff_reader = new BufferedReader(reader);
+
+    try
+    {  
+      if(!buff_reader.readLine().startsWith("ID"))
+        return false;
+    }
+    catch(IOException ioe){}
+    return true;
+  }
+
 
 }
 
