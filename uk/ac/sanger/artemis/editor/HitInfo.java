@@ -160,7 +160,8 @@ public class HitInfo
       return;
 
     ind1 = ind2;
-    ind2 = header.indexOf("(",ind1);
+    ind2 = header.lastIndexOf("(");
+
     if(ind2 > -1)
       desc = "";
 //    desc = header.substring(ind1,ind2).trim();
@@ -174,6 +175,7 @@ public class HitInfo
     else
       return;
 
+    
     StringTokenizer tok = new StringTokenizer(header.substring(ind2+1));
     try
     {

@@ -273,9 +273,9 @@ public class DataViewInternalFrame extends JInternalFrame
         if(line.startsWith("/similarity="))
         {
           if(note == null)
-            note = new StringBuffer("\n/note=\"Similar to");
+            note = new StringBuffer("\n/note=\"Similar to ");
           else
-            note.append(", and to");
+            note.append(", and to ");
 
           StringTokenizer tok = new StringTokenizer(line,";");
           String type = tok.nextToken();
@@ -290,11 +290,18 @@ public class DataViewInternalFrame extends JInternalFrame
 //        ind1 = id.indexOf(":");
           id = id.substring(ind1+1).trim();
 
-          note.append(tok.nextToken());
+          String next = tok.nextToken().trim();
+          if(next.endsWith("."))
+            next = next.substring(0,next.length()-1);
+
+          note.append(next);
           note.append(tok.nextToken().toLowerCase());
-          note.append(" "+id);
 
           String length = tok.nextToken().trim();
+          if(!length.startsWith("length"))
+            note.append(" "+length.toLowerCase());
+          note.append(" "+id);
+
           while(!length.startsWith("length"))
             length = tok.nextToken().trim();
 
