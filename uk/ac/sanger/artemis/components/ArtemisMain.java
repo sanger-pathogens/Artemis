@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.8 2005-03-31 12:09:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.9 2005-04-01 09:43:03 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.JScrollPane;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.8 2005-03-31 12:09:38 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.9 2005-04-01 09:43:03 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -547,6 +547,11 @@ public class ArtemisMain extends Splash
   }
 
 
+  /**
+  *
+  * Display a list of the available relational database entries.
+  *
+  */
   private String displayDatabases()
   {
     DatabaseEntrySource entry_source = new DatabaseEntrySource();
@@ -579,6 +584,11 @@ public class ArtemisMain extends Splash
     return (String)db.get((String)list_db.getSelectedValue());
   }
 
+  /**
+  *
+  * Retrieve a database entry.
+  *
+  */
   private void getEntryEditFromDatabase(String id)
   {
     try
