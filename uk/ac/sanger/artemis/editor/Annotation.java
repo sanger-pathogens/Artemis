@@ -300,6 +300,8 @@ public class Annotation extends JEditorPane
       int indID = txt.indexOf("SWALL:"+id);
       if(indID == -1)
         indID = txt.indexOf("UNIPROT:"+id);
+      if(indID == -1)
+        indID = txt.indexOf("GO:"+id);
 
       int ind1 = 0;
       int ind2 = 0;
