@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.3 2004-12-03 17:47:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.4 2004-12-08 13:35:43 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,7 +44,7 @@ import java.io.*;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.3 2004-12-03 17:47:04 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.4 2004-12-08 13:35:43 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -279,14 +279,22 @@ public class ArtemisMain extends Splash
   }
 
   /**
+   *
    *  Handle the -biojava option
+   * 
+   *  Command line syntax:  
+   *  art -biojava org.biojava.bio.seq.io.EmblLikeFormat foo.embl
+   *
+   *  BioJava formats:
+   *  EmblLikeFormat, FastaFormat, GAMEFormat, GenbankFormat, PhredFormat
+   *
    **/
   private void handleBioJava(final String [] args) 
   {
     if(args.length == 3) 
     {
       final String class_name = args[1];
-      final String location = args[2];
+      final String location   = args[2];
 
       final Document location_document =
         DocumentFactory.makeDocument(location);
@@ -303,18 +311,15 @@ public class ArtemisMain extends Splash
 
         if(biojava_object instanceof SequenceFormat)
         {
-          final SequenceFormat sequence_format =
-           (SequenceFormat) biojava_object;
+          final SequenceFormat sequence_format = (SequenceFormat)biojava_object;
 
           emblEntry =
             new uk.ac.sanger.artemis.io.BioJavaEntry(entry_information,
-                                                          location_document,
-                                                          sequence_format);
+                                                     location_document,
+                                                     sequence_format);
 
           final Entry new_entry = new Entry(emblEntry);
-
           final EntryEdit new_entry_edit = makeEntryEdit(new_entry);
-
           new_entry_edit.setVisible(true);
         } 
         else 
