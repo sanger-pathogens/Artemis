@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/CanvasPanel.java,v 1.3 2004-10-04 10:00:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/CanvasPanel.java,v 1.4 2004-12-14 11:38:11 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -36,17 +36,11 @@ import javax.swing.*;
  *  have BorderLayout.  The JComponent is added at "Center".
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: CanvasPanel.java,v 1.3 2004-10-04 10:00:34 tjc Exp $
+ *  @version $Id: CanvasPanel.java,v 1.4 2004-12-14 11:38:11 tjc Exp $
  **/
 
 abstract public class CanvasPanel extends JPanel 
 {
-
-  /**
-   *  Off screen image used for double buffering when drawing the canvas.
-   **/
-  private Image offscreen;
-
   /** The height of the font used in this component. */
   private int font_ascent;
 
