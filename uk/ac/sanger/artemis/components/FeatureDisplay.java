@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.3 2004-09-30 16:17:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.4 2004-10-01 09:37:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,7 +44,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.3 2004-09-30 16:17:32 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.4 2004-10-01 09:37:28 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -1475,9 +1475,16 @@ public class FeatureDisplay extends EntryGroupPanel
     g.fillRect(0, 0, getCanvas().getSize().width,
                      getCanvas().getSize().height);
 
+    final int first_visible_base_coord =
+      getLowXPositionOfBase(getFirstVisibleForwardBase());
+
+    final int last_visible_base_coord =
+      getHighXPositionOfBase(getLastVisibleForwardBase());
+
     if(getOneLinePerEntryFlag()) 
     {
-      for(int i = 0 ; i < getEntryGroup().size() ; ++i) 
+      final int group_size = getEntryGroup().size();
+      for(int i = 0 ; i < group_size; ++i) 
       {
         final int forward_entry_line = getDisplayLineOfEntryIndex(i, true);
         final int reverse_entry_line = getDisplayLineOfEntryIndex(i, false);
@@ -1487,55 +1494,72 @@ public class FeatureDisplay extends EntryGroupPanel
         if(getEntryGroup().getDefaultEntry() == current_entry &&
             Options.getOptions().highlightActiveEntryFlag())
         {
-          fillLane(g, forward_entry_line, active_entry_colour);
-          fillLane(g, reverse_entry_line, active_entry_colour);
+          g.setColor(active_entry_colour);
+          fillLane(g, forward_entry_line,
+                   first_visible_base_coord, last_visible_base_coord);
+          fillLane(g, reverse_entry_line,
+                   first_visible_base_coord, last_visible_base_coord);
         } 
         else
         {
-          fillLane(g, forward_entry_line, light_grey);
-          fillLane(g, reverse_entry_line, light_grey);
+          g.setColor(light_grey);
+          fillLane(g, forward_entry_line,
+                   first_visible_base_coord, last_visible_base_coord);
+          fillLane(g, reverse_entry_line,
+                   first_visible_base_coord, last_visible_base_coord);
         }
       }
     } 
     else
     {
+      g.setColor(light_grey);
       if(show_forward_lines) 
       {
-        fillLane(g, getFrameDisplayLine(FORWARD_FRAME_1), light_grey);
-        fillLane(g, getFrameDisplayLine(FORWARD_FRAME_2), light_grey);
-        fillLane(g, getFrameDisplayLine(FORWARD_FRAME_3), light_grey);
+        fillLane(g, getFrameDisplayLine(FORWARD_FRAME_1),
+                 first_visible_base_coord, last_visible_base_coord);
+        fillLane(g, getFrameDisplayLine(FORWARD_FRAME_2),
+                 first_visible_base_coord, last_visible_base_coord);
+        fillLane(g, getFrameDisplayLine(FORWARD_FRAME_3),
+                 first_visible_base_coord, last_visible_base_coord);
       }
 
       if(show_reverse_lines) 
       {
-        fillLane(g, getFrameDisplayLine(REVERSE_FRAME_1), light_grey);
-        fillLane(g, getFrameDisplayLine(REVERSE_FRAME_2), light_grey);
-        fillLane(g, getFrameDisplayLine(REVERSE_FRAME_3), light_grey);
+        fillLane(g, getFrameDisplayLine(REVERSE_FRAME_1),
+                 first_visible_base_coord, last_visible_base_coord);
+        fillLane(g, getFrameDisplayLine(REVERSE_FRAME_2),
+                 first_visible_base_coord, last_visible_base_coord);
+        fillLane(g, getFrameDisplayLine(REVERSE_FRAME_3), 
+                 first_visible_base_coord, last_visible_base_coord);
       }
     }
 
-    fillLane(g, getFrameDisplayLine(FORWARD_STRAND), not_so_light_grey);
-    fillLane(g, getFrameDisplayLine(REVERSE_STRAND), not_so_light_grey);
+    g.setColor(not_so_light_grey);
+    fillLane(g, getFrameDisplayLine(FORWARD_STRAND), 
+             first_visible_base_coord, last_visible_base_coord);
+    fillLane(g, getFrameDisplayLine(REVERSE_STRAND), 
+             first_visible_base_coord, last_visible_base_coord);
   }
 
   /**
    *  Fill one lane/frame line with the given colour.
    **/
-  private void fillLane(Graphics g, int fill_line_number, Color colour) 
+  private void fillLane(Graphics g, int fill_line_number, 
+                        int first_visible_base_coord, int last_visible_base_coord) 
   {
     final int fill_line_top = fill_line_number*getLineHeight() + 1;
 
-    g.setColor(colour);
+//  g.setColor(colour);
 
-    final int first_visible_base_coord =
-      getLowXPositionOfBase(getFirstVisibleForwardBase());
+//  final int first_visible_base_coord =
+//    getLowXPositionOfBase(getFirstVisibleForwardBase());
 
-    final int last_visible_base_coord =
-      getHighXPositionOfBase(getLastVisibleForwardBase());
+//  final int last_visible_base_coord =
+//    getHighXPositionOfBase(getLastVisibleForwardBase());
 
     g.fillRect(first_visible_base_coord, fill_line_top,
-                last_visible_base_coord - first_visible_base_coord + 1,
-                getFeatureHeight());
+               last_visible_base_coord - first_visible_base_coord + 1,
+               getFeatureHeight());
   }
 
 
@@ -1572,9 +1596,10 @@ public class FeatureDisplay extends EntryGroupPanel
     final int label_spacing =(int)(base_label_spacing / bases_per_pixel);
 
     final int possible_index_of_first_label;
+    final int seq_length = getSequenceLength();
 
     if(isRevCompDisplay()) 
-      possible_index_of_first_label = (getSequenceLength() -
+      possible_index_of_first_label = (seq_length -
                          getLastVisibleForwardBase() + 1) / base_label_spacing;
     else 
       possible_index_of_first_label =
@@ -1590,11 +1615,16 @@ public class FeatureDisplay extends EntryGroupPanel
     final int index_of_last_label;
 
     if(isRevCompDisplay()) 
-      index_of_last_label = (getSequenceLength() -
+      index_of_last_label = (seq_length -
                    getFirstVisibleForwardBase() + 1) / base_label_spacing;
     else 
       index_of_last_label =
                    getLastVisibleForwardBase() / base_label_spacing;
+
+    g.setFont(getFont());
+    final int font_ascent   = getFontAscent();
+    final int font_width    = getFontWidth();
+    final int font_line_hgt = getLineHeight();
 
     for(int i = index_of_first_label; i <= index_of_last_label; ++i)
     {
@@ -1604,29 +1634,27 @@ public class FeatureDisplay extends EntryGroupPanel
 
       if(isRevCompDisplay()) 
         scale_number_x_pos =
-          getLowXPositionOfBase(getSequenceLength() -
+          getLowXPositionOfBase(seq_length -
                                  i * base_label_spacing + 1);
       else 
         scale_number_x_pos = 
           getLowXPositionOfBase(i * base_label_spacing);
 
-      g.setFont(getFont());
-
       g.drawString(label_string,
                     scale_number_x_pos + 2,
-                    scale_number_y_pos + getFontAscent() + 1);
+                    scale_number_y_pos + font_ascent + 1);
 
       g.drawLine(scale_number_x_pos, scale_number_y_pos,
-                  scale_number_x_pos, scale_number_y_pos + getLineHeight());
+                  scale_number_x_pos, scale_number_y_pos + font_line_hgt);
 
       if(isRevCompDisplay())
         g.drawLine(scale_number_x_pos, scale_number_y_pos,
-                    scale_number_x_pos + getFontWidth(), scale_number_y_pos);
+                    scale_number_x_pos + font_width, scale_number_y_pos);
       else
         g.drawLine(scale_number_x_pos,
-                    scale_number_y_pos + getLineHeight(),
-                    scale_number_x_pos + getFontWidth(),
-                    scale_number_y_pos + getLineHeight());
+                    scale_number_y_pos + font_line_hgt,
+                    scale_number_x_pos + font_width,
+                    scale_number_y_pos + font_line_hgt);
     }
   }
 
