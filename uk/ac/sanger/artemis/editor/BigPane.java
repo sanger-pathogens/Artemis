@@ -179,6 +179,8 @@ public class BigPane extends JFrame
                                            true, //closable
                                            true, //maximizable
                                            true);//iconifiable
+    BigPane.srsFrame.setDefaultCloseOperation(JInternalFrame.HIDE_ON_CLOSE);
+    
     BigPane.srsFrame.setLocation(0,0);
     BigPane.srsFrame.setSize(500,hgt);
     final JTabbedPane jtab = new JTabbedPane();
