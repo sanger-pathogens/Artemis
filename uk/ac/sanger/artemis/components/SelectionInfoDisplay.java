@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionInfoDisplay.java,v 1.4 2004-10-04 10:00:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionInfoDisplay.java,v 1.5 2004-10-04 15:05:02 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -46,54 +46,61 @@ import javax.swing.*;
  *  This class displays information about the selection in a Label.
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectionInfoDisplay.java,v 1.4 2004-10-04 10:00:35 tjc Exp $
+ *  @version $Id: SelectionInfoDisplay.java,v 1.5 2004-10-04 15:05:02 tjc Exp $
  **/
 public class SelectionInfoDisplay extends CanvasPanel
-    implements SelectionChangeListener {
+    implements SelectionChangeListener 
+{
   /**
    *  Create a new SelectionInfoDisplay component.
    *  @param entry_group The EntryGroup that this component will display.
    *  @param selection The Selection that this component will display.
    **/
-  public SelectionInfoDisplay (final EntryGroup entry_group,
-                               final Selection selection) {
+  public SelectionInfoDisplay(final EntryGroup entry_group,
+                              final Selection selection) 
+  {
     this.entry_group = entry_group;
     this.selection = selection;
 
-    getSelection ().addSelectionChangeListener (this);
+    getSelection().addSelectionChangeListener(this);
 
-    addComponentListener (new ComponentAdapter () {
-      public void componentResized(ComponentEvent e) {
-        setSize (getSize ().width,
-                              getFontHeight () + 1);
+    addComponentListener(new ComponentAdapter() 
+    {
+      public void componentResized(ComponentEvent e) 
+      {
+        setSize(getSize().width,
+                getFontHeight() + 1);
         repaint();
       }
-      public void componentShown (ComponentEvent e) {
-        setSize (getSize ().width,
-                              getFontHeight () + 1);
+      public void componentShown (ComponentEvent e) 
+      {
+        setSize(getSize ().width,
+                getFontHeight () + 1);
         repaint();
       }
     });
 
     int canvas_width = getSize ().width;
 
-    setBackground (Color.white);
+    setBackground(new Color(230,230,230));
 
-    setSize (100, getFontHeight ());
+    setSize(100, getFontHeight());
   }
 
   /**
    *
    **/
-  public Dimension getPreferredSize () {
-    return new Dimension (10, getFontHeight ());
+  public Dimension getPreferredSize() 
+  {
+    return new Dimension(10, getFontHeight());
   }
 
   /**
    *
    **/
-  public Dimension getMinimumSize () {
-    return new Dimension (10, getFontHeight ());
+  public Dimension getMinimumSize() 
+  {
+    return new Dimension(10, getFontHeight());
   }
 
   /**
@@ -101,14 +108,15 @@ public class SelectionInfoDisplay extends CanvasPanel
    *  SelectionChange events so that we can update the list to reflect the
    *  current selection.
    **/
-  public void selectionChanged (SelectionChangeEvent event) {
+  public void selectionChanged(SelectionChangeEvent event) 
+  {
     repaint();
   }
 
   /**
    *  Draw the label.
    **/
-  public void repaintComponent(final Graphics g) 
+  public void paintComponent(final Graphics g) 
   {
     super.paintComponent(g);
     if(!isVisible ()) 
@@ -124,96 +132,98 @@ public class SelectionInfoDisplay extends CanvasPanel
     int aa_total = 0;
     boolean saw_a_non_cds = false;
 
-    if (features.size () > 0) {
+    if(features.size () > 0) 
+    {
       final StringBuffer feature_names = new StringBuffer ();
 
-      if (features.size () < 100) {
-        if (features.size () > 1) {
+      if(features.size () < 100) 
+      {
+        if(features.size () > 1)
           feature_names.append ("  (");
-        }
 
         // show up to 10 features
-        for (int i = 0 ; i < features.size () ; ++i) {
+        for(int i = 0 ; i < features.size () ; ++i) 
+        {
           final Feature current_feature = features.elementAt (i);
 
           base_total += current_feature.getBaseCount ();
 
           aa_total += current_feature.getAACount ();
 
-          if (!current_feature.getKey ().equals ("CDS")) {
+          if(!current_feature.getKey().equals ("CDS")) 
             saw_a_non_cds = true;
-          }
 
-          if (i < 10) {
-            if (i != 0) {
+          if(i < 10) 
+          {
+            if(i != 0) 
               feature_names.append (' ');
-            }
+            
             feature_names.append (current_feature.getIDString ());
           }
         }
 
-        if (features.size () > 10) {
+        if(features.size () > 10) 
           feature_names.append ("...");
-        }
 
-        if (features.size () == 1) {
+        if(features.size () == 1) 
+        {
           // only one feature so append some qualifiers
           feature_names.append ("  (");
           feature_names.append (getQualifierString (features.elementAt (0)));
         }
         feature_names.append (")");
-
       }
 
-      if (features.size () == 1) {
+      if(features.size () == 1) 
         new_text.append ("Selected feature:  ");
-      } else {
+      else 
         new_text.append (features.size () + " selected features  ");
-      }
 
-      if (features.size () < 100) {
+      if(features.size () < 100) 
+      {
         // show a count of the number of bases and amino acids in the selected
         // feature
-        if (features.size () > 1) {
+        if(features.size () > 1) 
+        {
           new_text.append ("total bases " + base_total);
 
-          if (!saw_a_non_cds) {
+          if(!saw_a_non_cds) 
             new_text.append ("  total amino acids " + aa_total);
-          }
-        } else {
-          if (features.size () == 1) {
+        }
+        else
+        {
+          if(features.size () == 1) 
+          {
             new_text.append ("bases " + base_total);
-
-            if (!saw_a_non_cds) {
+            if(!saw_a_non_cds) 
               new_text.append ("  amino acids " + aa_total);
-            }
           }
         }
       }
 
-      new_text.append ("  ");
+      new_text.append("  ");
 
-      new_text.append (feature_names.toString());
+      new_text.append(feature_names.toString());
     }
 
 
-    String text = new_text.toString ();
+    String text = new_text.toString();
 
-    if (text.length () > 0) {
-      if (text.length () > 150) {
+    if(text.length () > 0) 
+    {
+      if (text.length () > 150) 
+      {
         // call substring () just to keep the String a sensible length
         text = text.substring (0, 150);
       }
-    } else {
+    } 
+    else 
       text = "Nothing selected";
-    }
 
-    g.setColor (new Color (230, 230, 230));
-
-    g.fillRect (0, 0, getWidth (), getHeight ());
+//  g.setColor(new Color (230, 230, 230));
+//  g.fillRect(0, 0, getCanvasWidth(), getCanvasHeight());
 
     g.setColor (Color.black);
-
     g.drawString (text, 2, getFontMaxAscent () + 1);
   }
 
@@ -221,28 +231,32 @@ public class SelectionInfoDisplay extends CanvasPanel
    *  Return a String containing the qualifiers (except the /note) of given
    *  feature.
    **/
-  private String getQualifierString (final Feature feature) {
-    final QualifierVector qualifiers = feature.getQualifiers ();
+  private String getQualifierString(final Feature feature) 
+  {
+    final QualifierVector qualifiers = feature.getQualifiers();
 
     // if we see a /note or /fasta_file it gets saved for later
-    final Vector saved_qualifiers = new Vector ();
+    final Vector saved_qualifiers = new Vector();
 
-    final StringBuffer string_buffer = new StringBuffer ();
+    final StringBuffer string_buffer = new StringBuffer();
 
     final EntryInformation entry_information =
-      feature.getEntry ().getEntryInformation ();
+      feature.getEntry().getEntryInformation();
 
-    for (int i = 0 ; i < qualifiers.size () ; ++i) {
+    for (int i = 0 ; i < qualifiers.size () ; ++i) 
+    {
       final Qualifier this_qualifier = qualifiers.elementAt (i);
 
       if (this_qualifier.getName ().equals ("note") ||
-          this_qualifier.getName ().endsWith ("_file")) {
+          this_qualifier.getName ().endsWith ("_file")) 
+      {
         // save the qualifier and put it last
         saved_qualifiers.addElement (this_qualifier);
         continue;
       }
 
-      if (string_buffer.length () > 0) {
+      if (string_buffer.length () > 0)
+      {
         // put spaces between the qualifiers
         string_buffer.append (' ');
       }
@@ -254,8 +268,10 @@ public class SelectionInfoDisplay extends CanvasPanel
                                                       this_qualifier));
     }
 
-    for (int i = 0 ; i < saved_qualifiers.size () ; ++i) {
-      if (string_buffer.length () > 0) {
+    for(int i = 0 ; i < saved_qualifiers.size () ; ++i) 
+    {
+      if(string_buffer.length () > 0) 
+      {
         // put spaces between the qualifiers
         string_buffer.append (' ');
       }
@@ -281,34 +297,45 @@ public class SelectionInfoDisplay extends CanvasPanel
    *  @param current_selection The selection to summarize.
    *  @param entry_group The EntryGroup that the selection refers to.
    **/
-  static String markerRangeText (final Selection current_selection,
-                                 final EntryGroup entry_group) {
+  static String markerRangeText(final Selection current_selection,
+                                final EntryGroup entry_group) 
+  {
     final MarkerRange marker_range = current_selection.getMarkerRange ();
 
-    if (marker_range == null) {
+    if (marker_range == null) 
       return "";
-    } else {
+    else
+    {
       final StringBuffer buffer = new StringBuffer ();
 
       final int start_pos = marker_range.getStart ().getPosition ();
       final int end_pos = marker_range.getEnd ().getPosition ();
 
-      if (marker_range.getStrand ().isForwardStrand ()) {
-        if (start_pos == end_pos) {
+      if(marker_range.getStrand ().isForwardStrand ()) 
+      {
+        if(start_pos == end_pos) 
+        {
           buffer.append ("One selected base on forward strand: " +
                          start_pos + "  ");
-        } else {
+        }
+        else 
+        {
           buffer.append ((end_pos - start_pos + 1) +
                          " selected bases on forward strand: " +
                          start_pos + ".." + end_pos + " ");
         }
-      } else {
-        if (start_pos == end_pos) {
+      }
+      else 
+      {
+        if(start_pos == end_pos) 
+        {
           buffer.append ("One selected base on reverse strand: " +
                          marker_range.getStart ().getPosition () +
                          "  = complement (" +
                          marker_range.getEnd ().getRawPosition () + ") ");
-        } else {
+        }
+        else 
+        {
           buffer.append ((end_pos - start_pos + 1) +
                          " selected bases on reverse strand: " +
                          marker_range.getStart ().getPosition () + ".." +
@@ -319,29 +346,36 @@ public class SelectionInfoDisplay extends CanvasPanel
         }
       }
 
-      if (marker_range.getCount () >= 3) {
+      if(marker_range.getCount () >= 3) 
+      {
         // check if this codon is in a feature
 
         final Range raw_range = marker_range.getRawRange ();
 
         final FeatureVector features;
 
-        try {
+        try 
+        {
           features = entry_group.getFeaturesInRange (raw_range);
-        } catch (OutOfRangeException e) {
+        } 
+        catch (OutOfRangeException e) 
+        {
           return "illegal marker range";
         }
 
-        for (int i = 0 ; i < features.size () ; ++i) {
+        for(int i = 0 ; i < features.size () ; ++i)
+        {
           final Feature this_feature = features.elementAt (i);
 
-          if (!this_feature.isProteinFeature ()) {
+          if(!this_feature.isProteinFeature ()) 
+          {
             // only display protein features
             continue;
           }
 
-          if (marker_range.isForwardMarker () !=
-              this_feature.isForwardFeature ()) {
+          if(marker_range.isForwardMarker () !=
+             this_feature.isForwardFeature ()) 
+          {
             // only display feature positions in features on the same strand
             // as the selected bases
             continue;
@@ -361,8 +395,10 @@ public class SelectionInfoDisplay extends CanvasPanel
 
           String start_string = null;
 
-          if (start_position_in_feature != -1) {
-            if (start_codon_position % 3 == 0) {
+          if(start_position_in_feature != -1) 
+          {
+            if (start_codon_position % 3 == 0) 
+            {
               start_string = "codon " + (start_codon_position / 3 + 1);
             }
           }
@@ -375,49 +411,51 @@ public class SelectionInfoDisplay extends CanvasPanel
           final int end_codon_position =
             end_position_in_feature - this_feature.getCodonStart () - 1;
 
-          if (end_position_in_feature != -1) {
+          if (end_position_in_feature != -1) 
+          {
             if (start_codon_position != end_codon_position &&
-                end_codon_position % 3 == 0) {
+                end_codon_position % 3 == 0)
+            {
               end_string = "codon " + (end_codon_position / 3 + 1);
             }
           }
 
-          if (!(start_string == null && end_string == null)) {
+          if(!(start_string == null && end_string == null)) 
+          {
             buffer.append (" (");
 
-            if (start_string != null) {
+            if(start_string != null) 
               buffer.append (start_string);
-            }
 
-            if (start_string != null && end_string != null) {
+            if(start_string != null && end_string != null) 
               buffer.append (" to ");
-            }
 
-            if (end_string != null) {
+            if(end_string != null) 
               buffer.append (end_string);
-            }
 
-            buffer.append (" in feature " + this_feature.getIDString () +
-                           ") ");
+            buffer.append(" in feature " + this_feature.getIDString () +
+                          ") ");
           }
         }
       }
 
-      return buffer.append (" ").toString ();
+      return buffer.append(" ").toString();
     }
   }
 
   /**
    *  Return the Selection reference that was passed to the constructor.
    **/
-  private Selection getSelection () {
+  private Selection getSelection () 
+  {
     return selection;
   }
 
   /**
    *  Return the Selection object that was passed to the constructor.
    **/
-  private EntryGroup getEntryGroup () {
+  private EntryGroup getEntryGroup () 
+  {
     return entry_group;
   }
 
