@@ -1,0 +1,72 @@
+# All feature keys and qualifiers for EMBL/GenBank feature tables
+
+# From: http://www.ebi.ac.uk/~faruque/art/keyqual.txt
+
+# key           Qualifiers (@=mandatory)
+# =======       ========================
+-               EC_number PCR_conditions allele anticodon bound_moiety cell_line cell_type chromosome citation clone clone_lib codon codon_start cons_splice country cultivar db_xref dev_stage direction ecotype environmental_sa evidence exception focus frequency function gene germline haplotype insertion_seq isolate isolation_source lab_host label locus_tag macronuclear map mod_base mol_type note number organelle organism partial phenotype plasmid pop_variant product protein_id proviral pseudo rearranged replace rpt_family rpt_type rpt_unit segment sequenced_mol serotype serovar sex specific_host specimen_voucher standard_name strain sub_clone sub_species sub_strain tissue_lib tissue_type transgenic transl_except transl_table translation transposon usedin variety virion
+-10_signal      allele citation db_xref evidence function gene label locus_tag map note operon partial standard_name usedin
+-35_signal      allele citation db_xref evidence function gene label locus_tag map note operon partial standard_name usedin
+3'UTR           allele citation db_xref evidence function gene label locus_tag map note partial standard_name usedin
+3'clip          allele citation db_xref evidence function gene label locus_tag map note partial standard_name usedin
+5'UTR           allele citation db_xref evidence function gene label locus_tag map note partial standard_name usedin
+5'clip          allele citation db_xref evidence function gene label locus_tag map note partial standard_name usedin
+CAAT_signal     allele citation db_xref evidence gene label locus_tag map note partial usedin
+CDS             EC_number allele citation codon codon_start db_xref evidence exception function gene label locus_tag map note number operon partial product protein_id pseudo standard_name transl_except transl_table translation usedin
+C_region        allele citation codon codon_start db_xref evidence gene label locus_tag map note partial product pseudo standard_name transl_except translation usedin
+D-loop          allele citation db_xref evidence gene label locus_tag map note partial usedin
+D_segment       allele citation codon codon_start db_xref evidence gene label locus_tag map note partial product pseudo standard_name transl_except translation usedin
+GC_signal       allele citation db_xref evidence gene label locus_tag map note partial usedin
+J_segment       allele citation codon codon_start db_xref evidence gene label locus_tag map note partial product pseudo standard_name transl_except translation usedin
+LTR             allele citation db_xref evidence function gene label locus_tag map note partial standard_name usedin
+N_region        allele citation codon codon_start db_xref evidence gene label locus_tag map note partial product pseudo standard_name transl_except translation usedin
+RBS             allele citation db_xref evidence gene label locus_tag map note partial standard_name usedin
+STS             allele citation db_xref evidence gene label locus_tag map note partial standard_name usedin
+S_region        allele citation codon codon_start db_xref evidence gene label locus_tag map note partial product pseudo standard_name transl_except translation usedin
+TATA_signal     allele citation db_xref evidence gene label locus_tag map note partial usedin
+V_region        allele citation codon codon_start db_xref evidence gene label locus_tag map note partial product pseudo standard_name transl_except translation usedin
+V_segment       allele citation codon codon_start db_xref evidence gene label locus_tag map note partial product pseudo standard_name transl_except translation usedin
+attenuator      allele citation db_xref evidence gene label locus_tag map note operon partial phenotype usedin
+conflict        @citation allele db_xref evidence gene label locus_tag map note replace usedin
+enhancer        allele citation db_xref evidence gene label locus_tag map note partial standard_name usedin
+exon            EC_number allele citation codon codon_start db_xref evidence function gene label locus_tag map note number partial product pseudo standard_name transl_except usedin
+gap             @estimated_length
+gene            allele citation db_xref evidence function gene label locus_tag map note operon partial phenotype product pseudo standard_name usedin
+iDNA            allele citation db_xref evidence function gene label locus_tag map note number partial standard_name usedin
+intron          allele citation cons_splice db_xref evidence function gene label locus_tag map note number partial standard_name usedin
+mRNA            allele citation db_xref evidence exception function gene label locus_tag map note operon partial product pseudo standard_name transcript_id usedin
+mat_peptide     EC_number allele citation codon codon_start db_xref evidence function gene label locus_tag map note partial product pseudo standard_name transl_except usedin
+misc_RNA        allele citation db_xref evidence function gene label locus_tag map note operon partial product standard_name usedin
+misc_binding    @bound_moiety allele citation db_xref evidence function gene label locus_tag map note partial usedin
+misc_difference allele citation clone db_xref evidence gene label locus_tag map note partial phenotype replace standard_name usedin
+misc_feature    allele citation db_xref evidence function gene label locus_tag map note number partial phenotype product pseudo standard_name usedin
+misc_recomb     allele citation db_xref evidence gene label locus_tag map note organism partial standard_name usedin
+misc_signal     allele citation db_xref evidence function gene label locus_tag map note operon partial phenotype standard_name usedin
+misc_structure  allele citation db_xref evidence function gene label locus_tag map note partial standard_name usedin
+modified_base   @mod_base allele citation db_xref evidence frequency gene label locus_tag map note usedin
+old_sequence    @citation allele db_xref evidence gene label locus_tag map note partial replace usedin
+operon          @operon allele citation db_xref evidence function label map note phenotype pseudo standard_name usedin
+oriT            allele bound_moiety citation db_xref direction evidence gene label locus_tag map note rpt_family rpt_type rpt_unit standard_name usedin
+polyA_signal    allele citation db_xref evidence gene label locus_tag map note partial usedin
+polyA_site      allele citation db_xref evidence gene label locus_tag map note usedin
+precursor_RNA   allele citation db_xref evidence function gene label locus_tag map note operon partial product standard_name usedin
+prim_transcript allele citation db_xref evidence function gene label locus_tag map note operon partial standard_name usedin
+primer_bind     PCR_conditions allele citation db_xref evidence gene label locus_tag map note partial standard_name usedin
+promoter        allele citation db_xref evidence function gene label locus_tag map note operon partial phenotype pseudo standard_name usedin
+protein_bind    @bound_moiety allele citation db_xref evidence function gene label locus_tag map note partial standard_name usedin
+rRNA            allele citation db_xref evidence function gene label locus_tag map note partial product pseudo standard_name usedin
+rep_origin      allele citation db_xref direction evidence gene label locus_tag map note partial standard_name usedin
+repeat_region   allele citation db_xref evidence function gene insertion_seq label locus_tag map note partial rpt_family rpt_type rpt_unit standard_name transposon usedin
+repeat_unit     allele citation db_xref evidence function gene label locus_tag map note partial rpt_family rpt_type rpt_unit usedin
+satellite       allele citation db_xref evidence gene label locus_tag map note partial rpt_family rpt_type rpt_unit standard_name usedin
+scRNA           allele citation db_xref evidence function gene label locus_tag map note partial product pseudo standard_name usedin
+sig_peptide     allele citation codon codon_start db_xref evidence function gene label locus_tag map note partial product pseudo standard_name transl_except usedin
+snRNA           allele citation db_xref evidence function gene label locus_tag map note partial product pseudo standard_name usedin
+snoRNA          allele citation db_xref evidence function gene label locus_tag map note partial product pseudo standard_name usedin
+source          @organism cell_line cell_type chloroplast chromoplast chromosome citation clone clone_lib country cultivar cyanelle db_xref dev_stage ecotype environmental_sample evidence focus frequency germline haplotype insertion_seq isolate isolation_source kinetoplast lab_host label macronuclear map mitochondrion mol_type note organelle plasmid pop_variant proviral rearranged segment sequenced_mol serotype serovar sex specific_host specimen_voucher strain sub_clone sub_species sub_strain tissue_lib tissue_type transgenic transposon usedin variety virion
+stem_loop       allele citation db_xref evidence function gene label locus_tag map note operon partial standard_name usedin
+tRNA            allele anticodon citation db_xref evidence function gene label locus_tag map note partial product pseudo standard_name usedin
+terminator      allele citation db_xref evidence gene label locus_tag map note operon partial standard_name usedin
+transit_peptide allele citation codon codon_start db_xref evidence function gene label locus_tag map note partial product pseudo standard_name transl_except usedin
+unsure          allele citation db_xref evidence gene label locus_tag map note replace usedin
+variation       allele citation db_xref evidence frequency gene label locus_tag map note partial phenotype product replace standard_name usedin

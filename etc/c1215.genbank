@@ -1,0 +1,277 @@
+LOCUS       SPBC1215     6490 bp    DNA             PLN       16-JUL-1999
+DEFINITION  S.pombe chromosome II cosmid c1215.
+ACCESSION   AL096846
+VERSION     AL096846.1  GI:5531459
+KEYWORDS    actin cytoskeleton organisation; COX complex biogenesis; DEC1
+            homologue; mitochondrial inheritance; SURF-family protein.
+SOURCE      fission yeast.
+  ORGANISM  Schizosaccharomyces pombe
+            Eukaryota; Fungi; Ascomycota; Schizosaccharomycetes;
+            Schizosaccharomycetales; Schizosaccharomycetaceae;
+            Schizosaccharomyces.
+REFERENCE   1  (bases 1 to 6490)
+  AUTHORS   Lyne,M.H., Rajandream,M.A., Barrell,B.G., Seeger,K., Quail,M. and
+            Harris,D.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (16-JUL-1999) European Schizosaccharomyces genome
+            sequencing project, Sanger Centre, The Wellcome Trust Genome
+            Campus, Hinxton, Cambridge CB10 1SA, E-mail: barrell@sanger.ac.uk
+            and
+COMMENT     Notes:
+            Details of yeast sequencing at the Sanger Centre are available on
+            the World Wide Web.
+            (URL, http://www.sanger.ac.uk/Projects/S_pombe/)
+            During 1995 to 1996 about 66% of S. pombe chromosome 1 was
+            sequenced by the Sanger Centre.  The sequencing of the S. pombe
+            genome is now being continued with funding from The European
+            Commission. Fourteen European sequencing laboratories, including
+            the Sanger Centre, are participating in the project.
+            Protein coding regions (CDS) have been predicted with the help of
+            computer analysis using the Genefinder program in PomBase (an ACEDB
+            database) with additional predictions for the branch-acceptor sites
+            supplied by the program Sp3splice. CAUTION: It is possible that for
+            any individual CDS we may have underestimated or overestimated the
+            number of introns/exons or we may not have chosen the correct
+            splice donor/acceptor sites. 
+            CDS are numbered using the following system eg SPBC25H2.01c. SP (S.
+            pombe), B (chromosome 2), c25H2 (cosmid name), .01 (first CDS), c
+            (complementary strand).
+            The more significant matches with motifs in the PROSITE database
+            are also included but some of these may be fortuitous. 
+            The length in codons is given for each CDS.
+            IMPORTANT: This sequence MAY NOT be the entire insert of the
+            sequenced clone.  It may be shorter because we only sequence
+            overlapping sections once, or longer, because we arrange for a
+            small overlap between neighbouring submissions. 
+            Cosmid c1215 is overlapped at the 5' end by cosmid c1750, EMBL
+            entry SPAB4534, accession number AB004534, and at the 3' end by
+            cosmid c83, EMBL entry SPBC83, accession number AL035536.
+FEATURES             Location/Qualifiers
+     source          1..6490
+                     /organism="Schizosaccharomyces pombe"
+                     /strain="972h-"
+                     /db_xref="taxon:4896"
+                     /chromosome="II"
+                     /map="IIL"
+                     /clone="cosmid c1215"
+     misc_feature    complement(1..82)
+                     /note="nominal overlap with cosmid SPAB4534 (c1750) S.
+                     pombe chromosome 2"
+     tRNA            36..107
+                     /note="tRNA Thr anticodon TGT, Cove score 78.51"
+                     /product="tRNA-Thr"
+     rRNA            415..581
+                     /note="SPRG5SD K00771 Yeast (s.pombe) 5s rrna gene and
+                     flanks"
+     gene            join(1501..1760,1844..2456)
+                     /gene="SPBC1215.01"
+     CDS             join(1501..1760,1844..2456)
+                     /gene="SPBC1215.01"
+                     /note="SPBC1215.01, len:290, SIMILARITY:Saccharomyces
+                     cerevisiae, YG2X_YEAST, hypothetical 45.1 kd protein in
+                     clb6-spt6 intergenic region, (389 aa), fasta scores: opt:
+                     385, E():2.8e-19, (29.0% identity in 314 aa)"
+                     /codon_start=1
+                     /label=SPBC1215.01
+                     /product="putative SURF-family protein"
+                     /protein_id="CAB50922.1"
+                     /db_xref="GI:5531460"
+                     /translation="MFWWKSATKFTFSKRGPCVFRYLSTLEGTTVRPKKNKFLVGLLS
+                     AVPIVTFALGTWQVKRREWKMGIINTLTERLQQPAILLPKTVTEQDTKKLEWTRVLLR
+                     GVFCHDQEMLVGPRTKEGQPGYHVVTPFILDDGRRILVNRGWIARSFAEQSSRDPSSL
+                     PKGPVVIEGLLRQHTDKPRFMMKNEPEKNSFYFLNVREFAQLKGTLPILITELQPSLT
+                     PLQEADHVKRGLPLGHPLKVEIFNSHTEYIITWYSLSVVSAIMLYVYFKRGSGTSSLN
+                     SAYERSKILNNKRL"
+     misc_feature    1761..1766
+                     /gene="SPBC1215.01"
+                     /note="gtacgt, splice donor sequence"
+     misc_feature    1827..1843
+                     /gene="SPBC1215.01"
+                     /note="ctaacataatcacttag, splice branch and acceptor"
+     gene            complement(join(2495..2602,2663..2881,2953..4071,
+                     4111..4372,4413..4849,4889..5007,5251..5389,5434..5466))
+                     /gene="SPBC1215.02c"
+     CDS             complement(join(2495..2602,2663..2881,2953..4071,
+                     4111..4372,4413..4849,4889..5007,5251..5389,5434..5466))
+                     /gene="SPBC1215.02c"
+                     /note="SPBC1215.02c, len:811, SIMILARITY:Saccharomyces
+                     cerevisiae, DEC1_YEAST, dec1 protein, (796 aa), fasta
+                     scores: opt: 184, E():0.00014, (23.4% identity in 577 aa)"
+                     /codon_start=1
+                     /label=SPBC1215.02c
+                     /product="similar to yeast DEC1 mitochondrial inheritance
+                     and actin cytoskeleton organisation protein"
+                     /protein_id="CAB50923.1"
+                     /db_xref="GI:5531461"
+                     /translation="MRRSGSKESTIVYSALSLAQAGRGPEALALLEPLKSTPINSLEL
+                     LDIIQAVYDDQKKGEESFVFWEKFLQTYGKQEKNLLAYFKASIRIKSLSHQRKAAVEL
+                     QKNFPSRKHTLWVISSLYLLSKKSENEVEQRLLKALAEKTAKLIFEKPTGYIDSCEEF
+                     HLYLDVLLLVGDKDRALDALIHQDADRFVDADADLLLRKLELLASCARWDSLFTFSLS
+                     LFQTGNTDWKVCKALLDSASNDDSKLVPLKDCILKALSTSSTKRNLHLLWIEASARFF
+                     PEEHESALLGYIKKLYMKPIVFEDLRPYLLKLNVDAQHRLLDAFKLADLGESNESQKV
+                     DKLYAEVLLLKIHFLLFESFTAESVVDYVRRCFVAFEKGLSLSKGLLPTDFTHGYEAL
+                     LLAVHSLIYMWEGNKDLKPAEKQALIFDAICLLEKGITYSQHNFHLKLPLIRLYLLLD
+                     GGFPAAAKVYDTMSIKQIQNDTLDHYLLTRATTYYPSSVTSHYINSSLKIYGSNEFET
+                     PEMISMAYEDGAYSQIEDMRNFRSRLDHSTWKSISLVERARIHYLTAFKPPKQYLPKC
+                     SSPKDNRDLKVFADYGSDKLPTVEESLRNSPKPDTLWIHLTVIGHSLVQDSIVNGDFE
+                     KAVLSAKEMEVLCENNDLSKQLTSEEIVHMKLLIQLGLLSVKVKNGDYENSSFETIEN
+                     LIESFDYENSTPLSQLTKYTEIINDLITCLNSFLYHVSATKKKEFTRQYQLLKNISSN
+                     KLGSISGITKHKKKAARKYVSELLSNSWLSNLSETQVPYDPKFAKQVGEGMIDSYIQT
+                     TDAVSKLPKFVKF"
+     misc_feature    complement(2603..2612)
+                     /gene="SPBC1215.02c"
+                     /note="ctaataatag, splice branch and acceptor"
+     misc_feature    complement(2657..2662)
+                     /gene="SPBC1215.02c"
+                     /note="gtacgt, splice donor sequence"
+     misc_feature    complement(2882..2896)
+                     /gene="SPBC1215.02c"
+                     /note="ctaaccgaattatag, splice branch and acceptor"
+     misc_feature    complement(2947..2952)
+                     /gene="SPBC1215.02c"
+                     /note="gtaagt, splice donor sequence"
+     misc_feature    complement(4072..4085)
+                     /gene="SPBC1215.02c"
+                     /note="ttaactcgtcgtag, splice branch and acceptor"
+     misc_feature    complement(4105..4110)
+                     /gene="SPBC1215.02c"
+                     /note="gtaagt, splice donor sequence"
+     misc_feature    complement(4373..4387)
+                     /gene="SPBC1215.02c"
+                     /note="ctaacttctccatag, splice branch and acceptor"
+     misc_feature    complement(4407..4412)
+                     /gene="SPBC1215.02c"
+                     /note="gtaagt, splice donor sequence"
+     misc_feature    complement(4850..4861)
+                     /gene="SPBC1215.02c"
+                     /note="ctaactcctcag, splice branch and acceptor"
+     misc_feature    complement(4883..4888)
+                     /gene="SPBC1215.02c"
+                     /note="gtaaga, splice donor sequence"
+     misc_feature    complement(5008..5021)
+                     /gene="SPBC1215.02c"
+                     /note="ttaactatttgaag, splice branch and acceptor"
+     misc_feature    complement(5245..5250)
+                     /gene="SPBC1215.02c"
+                     /note="gtaagt, splice donor sequence"
+     misc_feature    complement(5390..5405)
+                     /gene="SPBC1215.02c"
+                     /note="ttaacatcctttttag, splice branch and acceptor"
+     misc_feature    complement(5428..5433)
+                     /gene="SPBC1215.02c"
+                     /note="gtaagt, splice donor sequence"
+     misc_feature    6387..6490
+                     /note="nominal overlap with cosmid SPBC83 S. pombe
+                     chromosome 2"
+BASE COUNT     2097 a   1138 c   1138 g   2117 t
+ORIGIN      
+        1 tatatataat ttaataaata cattccgacg atactgcctc tatggcttag tggtacagca
+       61 tcgcacttgt aatgcgaaga tccttggttc gattccgagt ggaggcatat acattatatt
+      121 atattctttt tcatgcggaa aaaagatttc aaatttttgg gtatgatatt aatatgactg
+      181 taacgttaat agcaaagtga gtgttaataa tgataaaata gcagcaaaat ctcttttccg
+      241 agtaagacgt tttccagtct aaatttggag tctgcagttg tttcgcaatt cttaatgtat
+      301 ggttatacta aatacaaact ttaaagctct gatttatgtt tgcaataaac taaaataaaa
+      361 gcacaaaaac ctttacccat taatttcaaa caacttataa actaccggta aacttttttt
+      421 ctaaccttta taatttataa actagaatgt ttaatgtcta cggccatacc taggcgaaaa
+      481 caccagttcc cgtccgatca ctgcagttaa gcgtctgagg gcctcgttag tactatggtt
+      541 ggagacaaca tgggaatccg gggtgctgta ggctattttt ttatatccgt ctttcttact
+      601 acttgcctaa caagtcatga tgtactctca aaatatgttt gcatgccttg taatattggt
+      661 tatggatagc tccttctgga cttgatcttt tgtagccaag aacaatgggt atagactctg
+      721 accttgtgat gttgtagcca cagattataa taggtatttt caagtacagt aacaaaaatc
+      781 ttctagtttt tttttagaaa ggatacacca agtataagca aattcaggaa ttgttgatta
+      841 aactgtcaac ttcggtaaaa ctttgggcat aagtagtgtg ggagcaagtt taactaaaat
+      901 tctattcaga tgtcgaatcc aaaccgctaa ttttgctcaa ctagcttttc ataaaaacca
+      961 attcatagtt tcatactaat aaagacgatt gtttacttta aaacatacgt cgtaagaaca
+     1021 tatattgctt tatcgaaaga taacaaatgt taagctatta tattatttaa ctatagcgca
+     1081 gatttcgctt cctttactta aaaaagacat gtgacttgta gaagcttgga gtgaatacgc
+     1141 aaaggtacct acttagacat tcgcgtctct cttagctgtc aacatcaaca aactggcccc
+     1201 gtattgaaca gtatcttact tgtcgaagga tttgactaag aaaattttat ttctttatag
+     1261 caatattccg ttttcgctta gaagattcta gtcaattgcc ctattctact tacgctttac
+     1321 agtagtatca gaagacctga gtgggatttt gctgctagta gaggccattc aagttaactc
+     1381 cgttttgcaa cattttaaaa gtttttgaat tgaatataaa tatcaattgt ttgattcctt
+     1441 ttaggattta atcttttctt tttatttttg tttcgattga atcttggatt cctgtctatc
+     1501 atgttttggt ggaaaagtgc tactaaattc acattctcaa agcgtggacc gtgtgtcttt
+     1561 cgctatttga gtactcttga aggaacaact gtgaggccta aaaaaaataa atttttagtt
+     1621 ggattgcttt ctgccgttcc aattgtcacg tttgctttag gaacttggca ggtaaagcga
+     1681 cgagaatgga aaatgggtat catcaataca ctcacggaaa ggcttcaaca gcccgcaatt
+     1741 ttattaccga aaactgttac gtacgttaag ttaacatata cacaaattgc acgttttgca
+     1801 attgaactgt cgttttttac attaagctaa cataatcact tagagagcaa gatacaaaaa
+     1861 aacttgagtg gactagggtt ttgcttcgtg gtgtgttttg tcacgaccaa gaaatgttgg
+     1921 tcggtccaag aacgaaggaa ggccaacctg gctatcacgt agtaacccca tttattttag
+     1981 acgatgggcg tcgaatttta gtcaacagag gatggattgc tcgatcattt gctgaacagt
+     2041 cttctcgaga tcctagttct ttacctaaag gtccagtggt cattgaaggt cttttgagac
+     2101 aacatactga taagccaaga tttatgatga agaatgagcc tgaaaaaaat tctttttact
+     2161 tcttaaatgt tcgtgagttt gcacaattga aaggaactct ccccattttg ataacagaac
+     2221 tacaaccatc gcttacaccg ttgcaagaag ccgatcatgt taagagaggc ttgcctcttg
+     2281 gtcatcctct aaaagttgaa attttcaaca gtcatacaga atatattatc acttggtatt
+     2341 ctctaagtgt ggtatcagct ataatgcttt acgtctattt taagagaggt tcaggcacat
+     2401 cttctctgaa ttctgcatac gaaagaagca agattctaaa caacaaacga ttataaaaaa
+     2461 ttttcatatt tataagtttc taaatattat ctacctaaaa ttttacaaat tttggaagct
+     2521 tgcttactgc gtccgtcgtt tgaatgtatg aatcgatcat tccttcacca acttgttttg
+     2581 caaacttcgg atcgtaagga acctattatt aggaagttag ttctcatgcc tataatttta
+     2641 atgctctata atcatcacgt acctgagttt cagataaatt gctcagccaa gagtttgaca
+     2701 acaattctga tacatatttt ctggcggcct tctttttatg cttcgtaatt ccagagatac
+     2761 ttcctaattt gttactgctg atgtttttaa gaagttggta ttgtctggta aattcttttt
+     2821 tcttggtagc tgacacgtga tataggaagc tgtttagaca agtgataagg tcatttatga
+     2881 tctataattc ggttagttta gaaattttta tatcattttt tttaaaaaaa aaaaccagtt
+     2941 tggtaaactt acttcagtgt actttgtcaa ttgacttaaa ggcgtggagt tctcataatc
+     3001 gaatgactca attaaatttt caatcgtttc gaacgaggaa ttttcgtagt ctccgttctt
+     3061 gacctttacc gaaagtaatc ccagttggat caataatttc atatgaacaa tttcttccga
+     3121 agttaattgc ttcgataaat cattgttttc gcacaaaact tccatttcct tagcacttaa
+     3181 aacggccttt tcaaaatcgc cgtttactat gctgtcttga acgagagaat gaccaatgac
+     3241 agtcaaatgg atccaaagcg tgtccggttt aggcgaattt cttaaacttt cttcaactgt
+     3301 tggcaattta tcagatccat aatctgcaaa gacctttaaa tctcgattat ctttcggaga
+     3361 tgaacatttg ggaagatact gtttgggtgg tttaaaagcg gtaagataat gtatcctagc
+     3421 ccgctcgacc aaagaaatgc ttttccaggt actgtggtct aaacgggatc ggaaattacg
+     3481 catatcttcg atttgagagt aagcaccatc ttcataagcc atagaaatca tctctggtgt
+     3541 ttcaaactca ttcgaaccat atattttgag acttgagtta atatagtgag aagtaacaga
+     3601 agatggataa taggtagtag cacgagtcaa gagataatga tcaagggtat cgttttgaat
+     3661 ttgcttaatg gacatagtgt cgtaaacttt agcagcagca gggaagcctc catcaagaag
+     3721 aagatataaa cgaataaggg gtagctttaa atgaaagtta tgttgactat aagtaatgcc
+     3781 tttttctaaa agacagattg cgtcaaaaat taaagcttgt ttttcggcag gttttaaatc
+     3841 cttattcccc tcccacatat atatcaatga atgaactgct aataacaaag cttcataacc
+     3901 gtgcgtaaag tcagtgggta ataagccttt acttaaagac aaaccctttt caaatgcgac
+     3961 gaagcatcta cgcacgtaat cgacaaccga ttctgcagta aacgactcaa agagcaaaaa
+     4021 atggatcttc agaagcaaaa cctcagcata taatttatcg actttttgag actacgacga
+     4081 gttaatattg aaagatgaat aaatacttac ttcattggat tcacctagat cagccaactt
+     4141 aaatgcatct aataaccggt gttgtgcatc aacattcagc ttcaatagat aaggtctcaa
+     4201 atcttcaaaa acaattggtt tcatatacag ctttttgata tagccaagta atgctgattc
+     4261 gtgttcttca ggaaaaaacc gtgcgctggc ttcaatccaa agtaaatgaa gatttctttt
+     4321 tgtgctgctg gttgacaacg ctttcaatat acaatccttt aatgggacta atctatggag
+     4381 aagttagtaa taatgcaaaa aaaaaaactt actttgaatc atcattggaa gcactatcca
+     4441 gcaaagcttt gcaaaccttc caatcagtat tcccagtttg gaaaagagaa agcgaaaacg
+     4501 tgaataaaga atcccaacgc gcacaggaag caagcaattc aagcttcctc aaaagaaggt
+     4561 cggcgtcagc atcaacaaag cgatcagcat cttgatgtat taaagcatct aacgctctgt
+     4621 ccttgtctcc cactaaaagc aacacgtcta aataaagatg aaactcctca caagaatcga
+     4681 tataacctgt tggtttttcg aaaatgagtt tagcagtttt ttcagctagt gctttcagca
+     4741 aacgttgttc aacctcattt tccgactttt tggacaaaag atacaaagat gagataaccc
+     4801 ataaggtatg tttcctagaa ggaaagttct tttgcaattc tacagcagcc tgaggagtta
+     4861 gtaaaaaaaa aacaaattaa gatcttacct ttctttggtg agacaatgat ttgatgcgaa
+     4921 tagatgcttt gaagtaagct aataagtttt tttcctgctt tccataagtt tgcaagaact
+     4981 tttcccaaaa tacaaacgat tcttctcctt caaatagtta ataacttaaa agtaagaggg
+     5041 taaaaacaag tccattgaga aataaaacgt tgcacttgaa tcatcaagct acgaaaagaa
+     5101 caaagatcgt ttttcttaag caaagtttaa ccgatcaaat aactaaagcc tttatctcaa
+     5161 ggaaatagta gaatattcaa aataaaaaat acgaccaaag tgctatcaac atttatgttc
+     5221 atctgttcaa tagaacctaa ttatacttac ccttcttttg atcatcataa acagcttgta
+     5281 taatgtctaa aagttccaag ctgttgatgg gagtcgattt taacggttct aaaagtgcta
+     5341 gagcctcggg accacgtcct gcctgagcca aggataacgc tgaataaacc taaaaaggat
+     5401 gttaacagct aaaaacataa ctcgattact tacaattgtt gattctttac tcccagaacg
+     5461 acgcattgta gtaggcaatg aaattaaagc ccaaacagta gtcagaagtt ggtaggtgtt
+     5521 gcagtcaaat tattattcta cagaggagaa tattatagcc agcgtggtag aatctggata
+     5581 tatatctact gcaaaagtgt aattgcattg gtttaaaggg tatactatgg ttaagtaata
+     5641 tattcacagc tgtacaattt acagtcataa ctaaaacttc cttaagccgt aaagaaatac
+     5701 ctggtgttgt aaaatttgtt gtatatccac ggcatggtca tataatgtga ttttgtgctc
+     5761 aaataaatat aaaatatgca taatttttgt acatttaatt tgagaaaccc atcttttgtt
+     5821 gagaggctgt caatgaatag cagtttcatt gaaaagcagc gggatgacca gaaaagtatt
+     5881 ttacaatggc aagggagtag aaagctagcg taatattcag aaagctaggt aattgagcaa
+     5941 tcctttaatt cattgctaag catgctaggt aaacgcagta aacctttcag ttttcattta
+     6001 ggtataaggc tgtttaatga gtatctccac taaatttaaa gatcaaaact cagtatcaat
+     6061 tcttaaaagt tttattttat ttaataatca tatacttctc ataatctttc aattttttcc
+     6121 ccattttgat gatattttta ttaatcctac agtaagctct atgatatcgt tattcttcaa
+     6181 ataggctggt cagcacgtgg acggtgttac ttatcgttaa ataaatcgta ctaaggaggt
+     6241 gcgatgtaaa tgatatgctt gtcaagtatt aactgctctc caccaaccgc cggtttaact
+     6301 gattattgtt gaaaagcgca gacgaagttt agagaattac tagcgtattt taaatttaat
+     6361 caacggacta ttttttattc ctttgagatc cgactttatc gctttgcttc taattttcca
+     6421 aaattcagtc tatctacgcg atccagccct gtttgcgtaa atttcatatt atttttcttt
+     6481 aaacgtttgg 
+//

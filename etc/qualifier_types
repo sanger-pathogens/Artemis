@@ -1,0 +1,110 @@
+# Feature qualifiers for EMBL/GenBank feature tables
+# 
+# From: http://www.ebi.ac.uk/~faruque/art/keyqual.txt
+#
+# valid qualifier types are:
+#         (::)		(text:text,text:text)
+#         EC		"n.n.n.n"
+#         feature		dbname::accno:location
+#         item		single text item
+#         list		one of the listed values
+#         modbase         one of the stored modbase values
+#         none		no value
+#         number		nn
+#         (other)		(text)
+#         location	a valid location range (or feature label)
+#         real		n.n within specified range
+#         ref     	[nn]
+#         text		any text, no quotes added, spaces allowed if quoted
+#         "text"		quoted text, double any contained quotes
+#         "opt"		optional quoted text, double any contained quotes
+#         "list"		quoted text, list of accepted values
+# 
+# if not specified, the default is text (so anything is accepted)
+# 
+# Name           required   Type    Value(s) ..
+allele           no         "text"
+anticodon        yes        (::)    pos aa
+bound_moiety     no         "text"
+cell_line        no         "text"
+cell_type        no         "text"
+chromosome       no         "opt"
+citation         no         ref
+clone            no         "text"
+clone_lib        no         "text"
+codon            no         (::)    seq aa
+codon_start      yes        number  1 3
+cons_splice      yes        (::)    5'site 3'site
+country          no         "text"
+cultivar         no         "text"
+db_xref          no         "text"
+dev_stage        no         "text"
+direction        yes        list    LEFT RIGHT BOTH
+ecotype          no         "text"
+EC_number        no         "text"
+environmental_sample   no   none
+estimated_length no         "text"
+evidence         yes        list    EXPERIMENTAL NOT_EXPERIMENTAL
+exception        no         "text"
+focus            no         none
+frequency        yes        real    0.0  1.0
+function         yes        "text"
+gene             no         "text"
+germline         yes        none
+haplotype        no         "text"
+insertion_seq    no         "text"
+isolation_source no         "text"
+isolate          no         "text"
+kinetoplast      no         "opt"
+label            yes        item
+lab_host         no         "text"
+locus_tag        no         "text"
+macronuclear     no         none
+map              no         "text"
+mod_base         no         modbase
+mol_type         no         "text"
+note             no         "text"
+number           yes        number  1 99999999
+operon           no         "text"
+organell         no         "text"
+organism         yes        "text"
+partial          yes        none
+PCR_conditions   no         "text"
+phenotype        no         "text"
+plasmid          no         "text"
+pop_variant      no         "text"
+product          no         "text"
+protein_id       no         "text"
+proviral         yes        none
+pseudo           yes        none
+rearranged       yes        none
+replace          no         "text"
+rpt_family       no         "text"
+rpt_type         no         list    TANDEM INVERTED FLANKING TERMINAL DIRECT \
+                                    DISPERSED OTHER
+rpt_unit         no         location
+segment          no         "text"
+sequenced_mol    no         "list"  "cDNA" "cDNA to genomic RNA" \
+                                    "cDNA to mRNA" "cDNA to other RNA" \
+                                    "cDNA to rRNA" "DNA" "mRNA" \
+                                    "RNA" "rRNA" "scRNA" "snRNA" "tRNA"
+serotype         no         "text"
+serovar          no         "text"
+sex              no         "text"
+specific_host    no         "text"
+specimen_voucher no         "text"
+standard_name    no         "text"
+strain           no         "text"
+sub_clone        no         "text"
+sub_species      no         "text"
+sub_strain       no         "text"
+tissue_lib       no         "text"  
+tissue_type      no         "text"
+transgenic       no         "text"
+translation      no         "text"
+transl_except    no         (::)    pos aa
+transl_table     no         number  1 11
+transposon       no         "text"
+usedin           no         feature
+variety          no         "text"
+virion           no         none

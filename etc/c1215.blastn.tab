@@ -1,0 +1,630 @@
+FT   BLASTN_HIT      1474..6490
+FT                   /note="match to SPBC1215 1474..6490  blast score 9583  percent identity 99  AL096846 S.pombe chromosome II cosmid c1215."
+FT                   /label=SPBC1215
+FT                   /score=99
+FT                   /colour=255 2 2
+FT   BLASTN_HIT      1..1437
+FT                   /note="match to SPBC1215 1..1437  blast score 2712  percent identity 98  AL096846 S.pombe chromosome II cosmid c1215."
+FT                   /label=SPBC1215
+FT                   /score=98
+FT                   /colour=255 5 5
+FT   BLASTN_HIT      429..574
+FT                   /note="match to SPAC1142 7588..7734  blast score 276  percent identity 99  AL159951 S.pombe chromosome I cosmid c1142."
+FT                   /label=SPAC1142
+FT                   /score=99
+FT                   /colour=255 2 2
+FT   BLASTN_HIT      429..574
+FT                   /note="match to SPRG5SC 174..319  blast score 274  percent identity 99  K00770 yeast (s.pombe) 5s rrna gene and flanks, clone pspr36."
+FT                   /label=SPRG5SC
+FT                   /score=99
+FT                   /colour=255 2 2
+FT   BLASTN_HIT      453..574
+FT                   /note="match to SPRG5S 48..169  blast score 242  percent identity 100  K00569 yeast (s.pombe) 5s rrna gene, clone pym3."
+FT                   /label=SPRG5S
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      453..574
+FT                   /note="match to SPCC63 20954..21075  blast score 242  percent identity 100  AL049522 S.pombe chromosome III cosmid c63."
+FT                   /label=SPCC63
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      453..574
+FT                   /note="match to SPCC417 33755..33876  blast score 242  percent identity 100  AL035076 S.pombe chromosome III cosmid c417."
+FT                   /label=SPCC417
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      456..574
+FT                   /note="match to SPCC417 22579..22697  blast score 228  percent identity 99  AL035076 S.pombe chromosome III cosmid c417."
+FT                   /label=SPCC417
+FT                   /score=99
+FT                   /colour=255 2 2
+FT   BLASTN_HIT      453..574
+FT                   /note="match to SPCC338 30966..31087  blast score 242  percent identity 100  AL023781 S.pombe chromosome III cosmid c338."
+FT                   /label=SPCC338
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      35..107
+FT                   /note="match to SPCC338 22022..22094  blast score 129  percent identity 97  AL023781 S.pombe chromosome III cosmid c338."
+FT                   /label=SPCC338
+FT                   /score=97
+FT                   /colour=255 7 7
+FT   BLASTN_HIT      453..574
+FT                   /note="match to SPBC17A3 6258..6379  blast score 242  percent identity 100  AL109652 S.pombe chromosome II cosmid c17A3."
+FT                   /label=SPBC17A3
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      453..574
+FT                   /note="match to SPAC5H10 3214..3335  blast score 242  percent identity 100  Z49811 S.pombe chromosome I cosmid c5H10."
+FT                   /label=SPAC5H10
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      453..574
+FT                   /note="match to SPAC4H3 8450..8571  blast score 242  percent identity 100  Z69380 S.pombe chromosome I cosmid c4H3."
+FT                   /label=SPAC4H3
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      453..574
+FT                   /note="match to SPAC25B8 30707..30828  blast score 242  percent identity 100  AL133225 S.pombe chromosome I cosmid c25B8."
+FT                   /label=SPAC25B8
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      453..574
+FT                   /note="match to SPAC1F7 24447..24568  blast score 242  percent identity 100  Z67998 S.pombe chromosome I cosmid c1F7."
+FT                   /label=SPAC1F7
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      453..574
+FT                   /note="match to SPAB4537 17099..17220  blast score 242  percent identity 100  AB004537 Schizosaccharomyces pombe 37 kb genomic DNA, clone c213."
+FT                   /label=SPAB4537
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      453..573
+FT                   /note="match to SPAC926 7747..7867  blast score 240  percent identity 100  AL110469 S.pombe chromosome I cosmid c926."
+FT                   /label=SPAC926
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      455..574
+FT                   /note="match to SPCC965 29496..29615  blast score 238  percent identity 100  AL023590 S.pombe chromosome III cosmid c965."
+FT                   /label=SPCC965
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      455..574
+FT                   /note="match to SPCC24B10 24228..24347  blast score 238  percent identity 100  AL157991 S.pombe chromosome III cosmid c24B10."
+FT                   /label=SPCC24B10
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      455..574
+FT                   /note="match to SPCC10H11 5316..5435  blast score 238  percent identity 100  AL162771 S.pombe chromosome III cosmid c10H11."
+FT                   /label=SPCC10H11
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      455..574
+FT                   /note="match to SPBC428 23752..23871  blast score 238  percent identity 100  AL034382 S.pombe chromosome II cosmid c428."
+FT                   /label=SPBC428
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      455..574
+FT                   /note="match to SPBC4 15895..16014  blast score 238  percent identity 100  AL121863 S.pombe chromosome II cosmid c4."
+FT                   /label=SPBC4
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      455..574
+FT                   /note="match to SPBC342 9354..9473  blast score 238  percent identity 100  AL096809 S.pombe chromosome II cosmid c342."
+FT                   /label=SPBC342
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      456..575
+FT                   /note="match to SPBC21H7 9546..9665  blast score 238  percent identity 100  AL023286 S.pombe chromosome II cosmid c21H7."
+FT                   /label=SPBC21H7
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      455..574
+FT                   /note="match to SPBC1685 24026..24145  blast score 238  percent identity 100  AL031154 S.pombe chromosome II cosmid c1685."
+FT                   /label=SPBC1685
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      456..574
+FT                   /note="match to SPRG5SE 202..320  blast score 236  percent identity 100  K00570 yeast (s.pombe) 5s rrna and asp-trna genes, clone pym116."
+FT                   /label=SPRG5SE
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      456..574
+FT                   /note="match to SPBP23A10 34701..34819  blast score 236  percent identity 100  AL136535 S.pombe chromosome II p1 p23A10."
+FT                   /label=SPBP23A10
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      456..574
+FT                   /note="match to SPBC577 31520..31638  blast score 236  percent identity 100  AL110506 S.pombe chromosome II cosmid c577."
+FT                   /label=SPBC577
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      456..574
+FT                   /note="match to SPBC1677 6163..6281  blast score 236  percent identity 100  AL035581 S.pombe chromosome II cosmid c1677."
+FT                   /label=SPBC1677
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      456..574
+FT                   /note="match to SPAC3G9 18044..18162  blast score 236  percent identity 100  AL021046 S.pombe chromosome I cosmid c3G9."
+FT                   /label=SPAC3G9
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      456..574
+FT                   /note="match to SPA 1..119  blast score 236  percent identity 100  K01049 Yeast (S.pombe) 5S ribosomal RNA."
+FT                   /label=SPA
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      453..574
+FT                   /note="match to SPCC188 1543..1664  blast score 234  percent identity 99  AL049662 S.pombe chromosome III cosmid c188."
+FT                   /label=SPCC188
+FT                   /score=99
+FT                   /colour=255 2 2
+FT   BLASTN_HIT      453..574
+FT                   /note="match to SPCC11E10 20718..20839  blast score 234  percent identity 99  AL121783 S.pombe chromosome III cosmid c11E10."
+FT                   /label=SPCC11E10
+FT                   /score=99
+FT                   /colour=255 2 2
+FT   BLASTN_HIT      453..574
+FT                   /note="match to SPBC21D10 23287..23408  blast score 234  percent identity 99  AL031536 S.pombe chromosome II cosmid c21D10."
+FT                   /label=SPBC21D10
+FT                   /score=99
+FT                   /colour=255 2 2
+FT   BLASTN_HIT      455..575
+FT                   /note="match to SPBC24C6 3099..3219  blast score 232  percent identity 99  AL031786 S.pombe chromosome II cosmid c24C6."
+FT                   /label=SPBC24C6
+FT                   /score=99
+FT                   /colour=255 2 2
+FT   BLASTN_HIT      455..574
+FT                   /note="match to SPRG5SA 200..319  blast score 230  percent identity 99  K00768 yeast (s.pombe) 5s rrna gene and flanks, clone pspr1."
+FT                   /label=SPRG5SA
+FT                   /score=99
+FT                   /colour=255 2 2
+FT   BLASTN_HIT      455..574
+FT                   /note="match to SPBC354 24833..24952  blast score 230  percent identity 99  AL022071 S.pombe chromosome II cosmid c354."
+FT                   /label=SPBC354
+FT                   /score=99
+FT                   /colour=255 2 2
+FT   BLASTN_HIT      455..574
+FT                   /note="match to SPAC167 14612..14731  blast score 230  percent identity 99  AL035248 S.pombe chromosome I cosmid c167."
+FT                   /label=SPAC167
+FT                   /score=99
+FT                   /colour=255 2 2
+FT   BLASTN_HIT      456..574
+FT                   /note="match to SPRG5SD 201..319  blast score 228  percent identity 99  K00771 yeast (s.pombe) 5s rrna gene and flanks, clone pspr41."
+FT                   /label=SPRG5SD
+FT                   /score=99
+FT                   /colour=255 2 2
+FT   BLASTN_HIT      453..574
+FT                   /note="match to SPRG5SB 198..319  blast score 226  percent identity 98  K00769 yeast (s.pombe) 5s rrna gene and flanks, clone pspr11."
+FT                   /label=SPRG5SB
+FT                   /score=98
+FT                   /colour=255 5 5
+FT   BLASTN_HIT      455..572
+FT                   /note="match to SPAC24H6 2544..2661  blast score 226  percent identity 99  Z54142 S.pombe chromosome I cosmid c24H6."
+FT                   /label=SPAC24H6
+FT                   /score=99
+FT                   /colour=255 2 2
+FT   BLASTN_HIT      453..574
+FT                   /note="match to SPAC1B1 12984..13105  blast score 226  percent identity 98  Z98532 S.pombe chromosome I cosmid c1B1."
+FT                   /label=SPAC1B1
+FT                   /score=98
+FT                   /colour=255 5 5
+FT   BLASTN_HIT      457..572
+FT                   /note="match to SPAC1687 8969..9084  blast score 222  percent identity 99  AL035064 S.pombe chromosome I cosmid c1687."
+FT                   /label=SPAC1687
+FT                   /score=99
+FT                   /colour=255 2 2
+FT   BLASTN_HIT      454..564
+FT                   /note="match to SPBC14F5 11350..11460  blast score 220  percent identity 100  AL023780 S.pombe chromosome II cosmid c14F5."
+FT                   /label=SPBC14F5
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      6387..6490
+FT                   /note="match to SPBC83 1..104  blast score 206  percent identity 100  AL035536 S.pombe chromosome II cosmid c83."
+FT                   /label=SPBC83
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      1..82
+FT                   /note="match to SPAB4534 1..82  blast score 163  percent identity 100  AB004534 Schizosaccharomyces pombe 38 kb genomic DNA, clone 1750."
+FT                   /label=SPAB4534
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      496..574
+FT                   /note="match to SPBC725 1..79  blast score 157  percent identity 100  AL034352 S.pombe chromosome II cosmid c725."
+FT                   /label=SPBC725
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      496..574
+FT                   /note="match to SPBC530 1..79  blast score 157  percent identity 100  AL023634 S.pombe chromosome II cosmid c530."
+FT                   /label=SPBC530
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      455..506
+FT                   /note="match to SPRHP9 1..52  blast score 103  percent identity 100  Y09431 S.pombe rhp9 gene"
+FT                   /label=SPRHP9
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      463..575
+FT                   /note="match to SPBC609 14716..14821  blast score 93.7  percent identity 85  AL035226 S.pombe chromosome II cosmid c609."
+FT                   /label=SPBC609
+FT                   /score=85
+FT                   /colour=255 38 38
+FT   BLASTN_HIT      456..512
+FT                   /note="match to UURNA1 1..57  blast score 65.9  percent identity 89  X00998 Urechis unicinctus 5S rRNA sequence"
+FT                   /label=UURNA1
+FT                   /score=89
+FT                   /colour=255 28 28
+FT   BLASTN_HIT      476..512
+FT                   /note="match to PGRNA01 21..57  blast score 58.0  percent identity 95  X00994 Phascolopsis gouldii 5S rRNA sequence"
+FT                   /label=PGRNA01
+FT                   /score=95
+FT                   /colour=255 12 12
+FT   BLASTN_HIT      476..512
+FT                   /note="match to CFRRN285 868..904  blast score 58.0  percent identity 95  X06056 Calanus finmarchicus DNA for 23S and 5S rRNA"
+FT                   /label=CFRRN285
+FT                   /score=95
+FT                   /colour=255 12 12
+FT   BLASTN_HIT      477..516
+FT                   /note="match to SPBC1778 1074..1113  blast score 56.0  percent identity 93  AL049489 S.pombe chromosome II cosmid c1778."
+FT                   /label=SPBC1778
+FT                   /score=93
+FT                   /colour=255 17 17
+FT   BLASTN_HIT      6059..6084
+FT                   /note="match to AE003531 233479..233504  blast score 52.0  percent identity 100  AE003531 Drosophila melanogaster genomic scaffold 142000013386050 section 37 of 54, complete sequence."
+FT                   /label=AE003531
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      476..512
+FT                   /note="match to PRRRN5S 21..57  blast score 50.1  percent identity 92  X01550 Planocera reticulata 5S ribosomal RNA"
+FT                   /label=PRRRN5S
+FT                   /score=92
+FT                   /colour=255 20 20
+FT   BLASTN_HIT      476..512
+FT                   /note="match to EGRN01 21..57  blast score 50.1  percent identity 92  X00022 Ribbon worm Emplectonema gracile 5S rRNA (Short)"
+FT                   /label=EGRN01
+FT                   /score=92
+FT                   /colour=255 20 20
+FT   BLASTN_HIT      480..512
+FT                   /note="match to AMRRN5S 25..57  blast score 50.1  percent identity 94  X01518 Acyrthosiphon magnoliae (aphid) 5S ribosomal RNA"
+FT                   /label=AMRRN5S
+FT                   /score=94
+FT                   /colour=255 15 15
+FT   BLASTN_HIT      461..512
+FT                   /note="match to CR1619 6..58  blast score 50.1  percent identity 89  D10528 Candida rugosa 5S rRNA."
+FT                   /label=CR1619
+FT                   /score=89
+FT                   /colour=255 28 28
+FT   BLASTN_HIT      521..569
+FT                   /note="match to AERRA 66..114  blast score 50.1  percent identity 88  K03161 Agaricus edulis 5S ribosomal RNA (5S rRNA)."
+FT                   /label=AERRA
+FT                   /score=88
+FT                   /colour=255 30 30
+FT   BLASTN_HIT      2466..2493
+FT                   /note="match to AC010292 10814..10841  blast score 48.1  percent identity 96  AC010292 Homo sapiens chromosome 5 clone CTB-131H22, complete sequence."
+FT                   /label=AC010292
+FT                   /score=96
+FT                   /colour=255 10 10
+FT   BLASTN_HIT      458..512
+FT                   /note="match to PDHISTCL 5510..5564  blast score 46.1  percent identity 85  X53330 P.dumerilii histone gene cluster for core histones H2A, H2B, H3 and H4"
+FT                   /label=PDHISTCL
+FT                   /score=85
+FT                   /colour=255 38 38
+FT   BLASTN_HIT      4802..4824
+FT                   /note="match to HSU165H7 28053..28075  blast score 46.1  percent identity 100  Z70225 Human DNA sequence from cosmid U165H7, between markers DXS366 and DXS87 on chromosome X."
+FT                   /label=HSU165H7
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      526..568
+FT                   /note="match to TDRRA 72..114  blast score 46.1  percent identity 88  M58385 Taphrina deformans 5S ribosomal RNA."
+FT                   /label=TDRRA
+FT                   /score=88
+FT                   /colour=255 30 30
+FT   BLASTN_HIT      487..513
+FT                   /note="match to SPRRAAS 3..29  blast score 46.1  percent identity 96  M19951 Schizosaccharomyces pombe 5S ribosomal RNA gene, partial sequence."
+FT                   /label=SPRRAAS
+FT                   /score=96
+FT                   /colour=255 10 10
+FT   BLASTN_HIT      4816..4837
+FT                   /note="match to AC084760 88052..88073  blast score 44.1  percent identity 100  AC084760 Gallus gallus clone 65N20, complete sequence."
+FT                   /label=AC084760
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      57..98
+FT                   /note="match to CHPTTRPG 69197..69238  blast score 44.1  percent identity 88  D17510 Pinus thunbergii chloroplast DNA, complete sequence."
+FT                   /label=CHPTTRPG
+FT                   /score=88
+FT                   /colour=255 30 30
+FT   BLASTN_HIT      57..98
+FT                   /note="match to CHNTXX 48522..48563  blast score 44.1  percent identity 88  Z00044 Nicotiana tabacum chloroplast genome DNA"
+FT                   /label=CHNTXX
+FT                   /score=88
+FT                   /colour=255 30 30
+FT   BLASTN_HIT      57..98
+FT                   /note="match to CHNTTB2 97..138  blast score 44.1  percent identity 88  M16897 Tobacco Thr-tRNA gene."
+FT                   /label=CHNTTB2
+FT                   /score=88
+FT                   /colour=255 30 30
+FT   BLASTN_HIT      57..98
+FT                   /note="match to AP002983 14879..14920  blast score 44.1  percent identity 88  AP002983 Lotus japonicus chloroplast DNA, complete genome."
+FT                   /label=AP002983
+FT                   /score=88
+FT                   /colour=255 30 30
+FT   BLASTN_HIT      57..98
+FT                   /note="match to AP000423 46222..46263  blast score 44.1  percent identity 88  AP000423 Arabidopsis thaliana chloroplast genomic DNA, complete sequence, strain:Columbia."
+FT                   /label=AP000423
+FT                   /score=88
+FT                   /colour=255 30 30
+FT   BLASTN_HIT      893..914
+FT                   /note="match to HSEVMHC 49861..49882  blast score 44.1  percent identity 100  X87344 H.sapiens DMA, DMB, HLA-Z1, IPP2, LMP2, TAP1, LMP7, TAP2, DOB, DQB2 and RING8, 9, 13 and 14 genes"
+FT                   /label=HSEVMHC
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      6061..6082
+FT                   /note="match to HS377H14 143296..143317  blast score 44.1  percent identity 100  AL022723 Human DNA sequence from clone 377H14 on chromosome 6p21.32-22.1. Contains the HLA-G gene for major histocompatibility complex, class I, G (HLA 6.0) two MHC class I pseudogenes, an RPL7A (60S Ribosomal Protein L7A) pseudogene, a gene for a novel MHC class 1 protein, an interferon-inducible protein 1-8U pseudogene, an RPL23A (60S Ribosomal Protein L23A) pseudogene, an HCGIX pseudogene, an MICB or PERB11.1 pseudogene,the HLA-F gene for major histocompatibility complex, class I, F (CDA12), and four P5-1 pseudogenes. Contains EST, STSs, GSS and six putative CpG islands."
+FT                   /label=HS377H14
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      1237..1258
+FT                   /note="match to AP001207 3128..3149  blast score 44.1  percent identity 100  AP001207 Homo sapiens genomic DNA, chromosome 8q23, clone:KB1562D12."
+FT                   /label=AP001207
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      1237..1258
+FT                   /note="match to AP000426 201909..201930  blast score 44.1  percent identity 100  AP000426 Homo sapiens genomic DNA, chromosome 8q23, clone:KB1107E3."
+FT                   /label=AP000426
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      2454..2483
+FT                   /note="match to AC023426 75294..75323  blast score 44.1  percent identity 93  AC023426 Homo sapiens 12 BAC RP11-396L8 (Roswell Park Cancer Institute Human BAC Library) complete sequence."
+FT                   /label=AC023426
+FT                   /score=93
+FT                   /colour=255 17 17
+FT   BLASTN_HIT      6061..6082
+FT                   /note="match to AC004213 34735..34756  blast score 44.1  percent identity 100  AC004213 Homo sapiens clone UWGC:y19c060 from 6p21, complete sequence."
+FT                   /label=AC004213
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      521..570
+FT                   /note="match to AI5SRRNA2 364..413  blast score 44.1  percent identity 86  X99089 A.immersus 5S rRNA gene, b2-type"
+FT                   /label=AI5SRRNA2
+FT                   /score=86
+FT                   /colour=255 35 35
+FT   BLASTN_HIT      1245..1265
+FT                   /note="match to BBU43414 12959..12979  blast score 42.1  percent identity 100  U43414 Borrelia burgdorferi linear plasmid lp16 DNA, complete sequence."
+FT                   /label=BBU43414
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      2454..2474
+FT                   /note="match to AP001119 278671..278691  blast score 42.1  percent identity 100  AP001119 Buchnera sp. APS genomic DNA, complete sequence, segment 2/2."
+FT                   /label=AP001119
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      1245..1265
+FT                   /note="match to AE000793 12931..12951  blast score 42.1  percent identity 100  AE000793 Borrelia burgdorferi plasmid lp17, complete plasmid sequence."
+FT                   /label=AE000793
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      818..838
+FT                   /note="match to OSU77637 2451..2471  blast score 42.1  percent identity 100  U77637 Oryza sativa class III ADH enzyme (AdhIII) gene, complete cds."
+FT                   /label=OSU77637
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      1241..1265
+FT                   /note="match to H0505A02 79773..79797  blast score 42.1  percent identity 96  AL512543 Oryza sativa genomic DNA, chromosome 4, BAC clone: H0505A02, complete sequence"
+FT                   /label=H0505A02
+FT                   /score=96
+FT                   /colour=255 10 10
+FT   BLASTN_HIT      343..371
+FT                   /note="match to AB018121 29118..29146  blast score 42.1  percent identity 93  AB018121 Arabidopsis thaliana genomic DNA, chromosome 3, P1 clone: MXE2."
+FT                   /label=AB018121
+FT                   /score=93
+FT                   /colour=255 17 17
+FT   BLASTN_HIT      456..512
+FT                   /note="match to SSRRAB 1..57  blast score 42.1  percent identity 84  K02349 Jellyfish (Spirocodon saltatrix) 5S ribosomal RNA."
+FT                   /label=SSRRAB
+FT                   /score=84
+FT                   /colour=255 40 40
+FT   BLASTN_HIT      476..512
+FT                   /note="match to PCRN5SA 21..57  blast score 42.1  percent identity 89  X13039 Philosamia cynthia ricini 5S rRNA"
+FT                   /label=PCRN5SA
+FT                   /score=89
+FT                   /colour=255 28 28
+FT   BLASTN_HIT      476..512
+FT                   /note="match to PCRN5S 21..57  blast score 42.1  percent identity 89  K02354 Philosamia cythia ricini (silkworm) 5S ribosomal RNA."
+FT                   /label=PCRN5S
+FT                   /score=89
+FT                   /colour=255 28 28
+FT   BLASTN_HIT      476..512
+FT                   /note="match to OV5SRRN 21..57  blast score 42.1  percent identity 89  X06835 Octopus vulgaris 5S rRNA"
+FT                   /label=OV5SRRN
+FT                   /score=89
+FT                   /colour=255 28 28
+FT   BLASTN_HIT      476..512
+FT                   /note="match to ME5SRNA 21..57  blast score 42.1  percent identity 89  J01869 Mussel (Mytilus edulis) 5S ribosomal RNA."
+FT                   /label=ME5SRNA
+FT                   /score=89
+FT                   /colour=255 28 28
+FT   BLASTN_HIT      476..512
+FT                   /note="match to LGRNO1 21..57  blast score 42.1  percent identity 89  X00020 Ribbon worm Lineus geniculatus 5S rRNA"
+FT                   /label=LGRNO1
+FT                   /score=89
+FT                   /colour=255 28 28
+FT   BLASTN_HIT      476..512
+FT                   /note="match to HSRRN5S 21..57  blast score 42.1  percent identity 89  X01535 Hymeniacidon sanguinea 5S ribosomal RNA"
+FT                   /label=HSRRN5S
+FT                   /score=89
+FT                   /colour=255 28 28
+FT   BLASTN_HIT      476..512
+FT                   /note="match to HJRN01 21..57  blast score 42.1  percent identity 89  V00475 Halichondria japonica 5S ribosomal RNA (complete sequence)."
+FT                   /label=HJRN01
+FT                   /score=89
+FT                   /colour=255 28 28
+FT   BLASTN_HIT      456..512
+FT                   /note="match to EARRN5S 1..57  blast score 42.1  percent identity 84  X03911 Enchytraeus albidus 5S rRNA"
+FT                   /label=EARRN5S
+FT                   /score=84
+FT                   /colour=255 40 40
+FT   BLASTN_HIT      6340..6360
+FT                   /note="match to CEK02B12 25954..25974  blast score 42.1  percent identity 100  Z75711 Caenorhabditis elegans cosmid K02B12"
+FT                   /label=CEK02B12
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      1213..1233
+FT                   /note="match to CEF14B8 5436..5456  blast score 42.1  percent identity 100  U28737 Caenorhabditis elegans cosmid F14B8."
+FT                   /label=CEF14B8
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      456..512
+FT                   /note="match to CED132199 1..57  blast score 42.1  percent identity 84  AJ132199 Cerastoderma edule 5S rRNA gene and nontranscribed spacer, clone 4"
+FT                   /label=CED132199
+FT                   /score=84
+FT                   /colour=255 40 40
+FT   BLASTN_HIT      456..512
+FT                   /note="match to CED132198 1..57  blast score 42.1  percent identity 84  AJ132198 Cerastoderma edule 5S rRNA gene and nontranscribed spacer, clone 3"
+FT                   /label=CED132198
+FT                   /score=84
+FT                   /colour=255 40 40
+FT   BLASTN_HIT      476..512
+FT                   /note="match to BN5SRRN 21..57  blast score 42.1  percent identity 89  X06834 Bugula neritina (moss-animal) 5S rRNA"
+FT                   /label=BN5SRRN
+FT                   /score=89
+FT                   /colour=255 28 28
+FT   BLASTN_HIT      5756..5776
+FT                   /note="match to BMU86876 2219..2239  blast score 42.1  percent identity 100  U86876 Bombyx mori chitinase-like protein mRNA, complete cds."
+FT                   /label=BMU86876
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      476..512
+FT                   /note="match to APRN5SA 21..57  blast score 42.1  percent identity 89  X13035 Antheraea pernyi 5S rRNA"
+FT                   /label=APRN5SA
+FT                   /score=89
+FT                   /colour=255 28 28
+FT   BLASTN_HIT      5756..5776
+FT                   /note="match to AF326596 2256..2276  blast score 42.1  percent identity 100  AF326596 Bombyx mandarina chitinase mRNA, complete cds."
+FT                   /label=AF326596
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      136..156
+FT                   /note="match to AC084626 6350..6370  blast score 42.1  percent identity 100  AC084626 Caenorhabditis briggsae cosmid G45C20, complete sequence."
+FT                   /label=AC084626
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      6091..6111
+FT                   /note="match to AC006830 27211..27231  blast score 42.1  percent identity 100  AC006830 Caenorhabditis elegans cosmid ZK105, complete sequence."
+FT                   /label=AC006830
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      5756..5776
+FT                   /note="match to AB052914 2225..2245  blast score 42.1  percent identity 100  AB052914 Bombyx mori chiB mRNA for chitinase precursor, complete cds."
+FT                   /label=AB052914
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      1395..1415
+FT                   /note="match to HSMX1A 145576..145596  blast score 42.1  percent identity 100  AL442166 Homo sapiens chromosome 21 from 5 PACs and 5 Cosmids map 21q22.2,D21S349-MX1; segment 1/2"
+FT                   /label=HSMX1A
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      6065..6085
+FT                   /note="match to HS994L9 70745..70765  blast score 42.1  percent identity 100  AL034554 Human DNA sequence from clone 994L9 on chromosome 20p12.3-13 Contains STS and GSSs."
+FT                   /label=HS994L9
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      1395..1415
+FT                   /note="match to HS21C084 173941..173961  blast score 42.1  percent identity 100  AL163284 Homo sapiens chromosome 21 segment HS21C084."
+FT                   /label=HS21C084
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      5172..5192
+FT                   /note="match to HS21C013 8879..8899  blast score 42.1  percent identity 100  AL163213 Homo sapiens chromosome 21 segment HS21C013."
+FT                   /label=HS21C013
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      3691..3715
+FT                   /note="match to AP001732 222756..222780  blast score 42.1  percent identity 96  AP001732 Homo sapiens genomic DNA, chromosome 21q, section 76/105."
+FT                   /label=AP001732
+FT                   /score=96
+FT                   /colour=255 10 10
+FT   BLASTN_HIT      334..358
+FT                   /note="match to AP001677 234235..234259  blast score 42.1  percent identity 96  AP001677 Homo sapiens genomic DNA, chromosome 21q, section 21/105."
+FT                   /label=AP001677
+FT                   /score=96
+FT                   /colour=255 10 10
+FT   BLASTN_HIT      3691..3715
+FT                   /note="match to AP001038 97170..97194  blast score 42.1  percent identity 96  AP001038 Homo sapiens genomic DNA, chromosome 21, clone:P178O22, ERG-ETS2 region."
+FT                   /label=AP001038
+FT                   /score=96
+FT                   /colour=255 10 10
+FT   BLASTN_HIT      334..358
+FT                   /note="match to AP000946 117541..117565  blast score 42.1  percent identity 96  AP000946 Homo sapiens genomic DNA, chromosome 21q21.1-q21.2, clone:B335N5, LL56-APP region."
+FT                   /label=AP000946
+FT                   /score=96
+FT                   /colour=255 10 10
+FT   BLASTN_HIT      6106..6126
+FT                   /note="match to AP000810 179419..179439  blast score 42.1  percent identity 100  AP000810 Homo sapiens genomic DNA, chromosome 11q, clone:RP11-765H23."
+FT                   /label=AP000810
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      5172..5192
+FT                   /note="match to AP000473 94384..94404  blast score 42.1  percent identity 100  AP000473 Homo sapiens genomic DNA, chromosome 21q21.1-q21.2, clone:B291N6, LL56-APP region."
+FT                   /label=AP000473
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      1801..1825
+FT                   /note="match to AL355365 6090..6114  blast score 42.1  percent identity 96  AL355365 Human DNA sequence from clone RP11-361F15 on chromosome 6"
+FT                   /label=AL355365
+FT                   /score=96
+FT                   /colour=255 10 10
+FT   BLASTN_HIT      5531..5555
+FT                   /note="match to AL354861 79645..79669  blast score 42.1  percent identity 96  AL354861 Human DNA sequence from clone RP11-180I4 on chromosome 9"
+FT                   /label=AL354861
+FT                   /score=96
+FT                   /colour=255 10 10
+FT   BLASTN_HIT      1..21
+FT                   /note="match to AL139378 28666..28686  blast score 42.1  percent identity 100  AL139378 Human DNA sequence from clone RP11-271B5 on chromosome 13 Contains a gene for a protein similar to ribosomal protein S7, the FGF9 (fibroblast growth factor 9 (glia-activating factor)) gene, ESTs, STSs, GSSs and CpG islands."
+FT                   /label=AL139378
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      5783..5803
+FT                   /note="match to AL139163 15259..15279  blast score 42.1  percent identity 100  AL139163 Human DNA sequence from clone RP11-523O15 on chromosome 20 Contains GSSs and STSs."
+FT                   /label=AL139163
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      3803..3823
+FT                   /note="match to AL136301 20782..20802  blast score 42.1  percent identity 100  AL136301 Human DNA sequence from clone RP11-195L15 on chromosome 13"
+FT                   /label=AL136301
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      5752..5784
+FT                   /note="match to AL133462 74511..74543  blast score 42.1  percent identity 91  AL133462 Human DNA sequence from clone RP11-108A16 on chromosome 20 Contains ESTs, STSs and GSSs."
+FT                   /label=AL133462
+FT                   /score=91
+FT                   /colour=255 22 22
+FT   BLASTN_HIT      334..358
+FT                   /note="match to AF238375 119422..119446  blast score 42.1  percent identity 96  AF238375 Homo sapiens chromosome 21 clone BAC 49B5 map 21q21, complete sequence."
+FT                   /label=AF238375
+FT                   /score=96
+FT                   /colour=255 10 10
+FT   BLASTN_HIT      1242..1262
+FT                   /note="match to AF130342 42069..42089  blast score 42.1  percent identity 100  AF130342 Homo sapiens chromosome 8 clone PAC 87.1 map 8q24.1, complete sequence."
+FT                   /label=AF130342
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      5752..5784
+FT                   /note="match to AC012380 49339..49371  blast score 42.1  percent identity 91  AC012380 Genomic Sequence For Homo sapiens Clone 125H5, Chromosome 20, complete sequence."
+FT                   /label=AC012380
+FT                   /score=91
+FT                   /colour=255 22 22
+FT   BLASTN_HIT      1230..1258
+FT                   /note="match to AC007392 135475..135503  blast score 42.1  percent identity 93  AC007392 Homo sapiens BAC clone RP11-444B4 from 2, complete sequence."
+FT                   /label=AC007392
+FT                   /score=93
+FT                   /colour=255 17 17
+FT   BLASTN_HIT      1414..1434
+FT                   /note="match to PCAROMX 4290..4310  blast score 42.1  percent identity 100  L18918 Pneumocystis carinii pentafunctional enzyme (arom) gene, complete cds."
+FT                   /label=PCAROMX
+FT                   /score=100
+FT                   /colour=255 0 0
+FT   BLASTN_HIT      521..565
+FT                   /note="match to CH1457 66..110  blast score 42.1  percent identity 87  D10531 Cryptococcus humicolus 5S rRNA."
+FT                   /label=CH1457
+FT                   /score=87
+FT                   /colour=255 33 33

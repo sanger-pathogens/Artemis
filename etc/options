@@ -1,0 +1,508 @@
+# The standard options file for Artemis
+
+# (Note that comment lines start with a hash (#) symbol)
+
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.1 2004-06-09 10:02:52 tjc Exp $
+
+# This file should contain option settings that look like this:
+#
+# option_name = option_value
+#
+# If the value of an options is too long to fit on one line it can be split
+# over several lines by ending each line with a backslash like this:
+#
+# option_name = option_value another_option_value \
+#     a_third_option_value a_forth_option_value
+
+
+# This option will set the font size for all the Artemis windows.
+
+font_size = 12
+
+
+# Set the name of the font to use in Artemis.  These possibilites are
+# available on all platforms:
+#   Dialog, DialogInput, Monospaced, Serif, SansSerif, Symbol.
+
+font_name = Monospaced
+
+# This option is used to set the default minimum size (in amino acids)
+# of a "large" open reading frame, which controls which ORFS are
+# marked by the "Mark Open Reading Frames" menu item.
+
+minimum_orf_size = 100
+
+# Set the default value for the direct edit option (see
+# http://www.sanger.ac.uk/Software/Artemis/stable/manual/launch-window.html#LAUNCH-WINDOW-OPTIONS-DIRECT-EDIT
+# for more)
+direct_edit = yes
+
+# This setting controls which set of codons will be used for start codons.
+# This can be changed from the options menu.
+# There are two possible settings: eukaryote or prokaryote
+organism_type = eukaryote
+
+# This option gives the bases of the possible start codons
+eukaryotic_start_codons = atg
+prokaryotic_start_codons = atg gtg ttg
+
+
+# The translation_table option is used to lookup codon translations.  The
+# table must have exactly 64 entries, and there is one entry for each codon.
+# The entries should appear in this order:
+#   TTT, TTC, TTA, TTG,
+#   TCT, TCC, ...,
+#   ...
+
+# this is the default table:
+#
+# translation_table = \
+#     f f l l \
+#     s s s s \
+#     y y # + \
+#     c c * w \
+#             \
+#     l l l l \
+#     p p p p \
+#     h h q q \
+#     r r r r \
+#             \
+#     i i i m \
+#     t t t t \
+#     n n k k \
+#     s s r r \
+#             \
+#     v v v v \
+#     a a a a \
+#     d d e e \
+#     g g g g
+
+# this is the eukaryotic mitochondrial table:
+#
+# translation_table = \
+#     f f l l \
+#     s s s s \
+#     y y * * \
+#     c c w w \
+#             \
+#     l l l l \
+#     p p p p \
+#     h h q q \
+#     r r r r \
+#             \
+#     i i m m \
+#     t t t t \
+#     n n k k \
+#     s s * * \
+#             \
+#     v v v v \
+#     a a a a \
+#     d d e e \
+#     g g g g
+
+
+# the sequence of colour numbers must not have any gaps - if for example
+# colour_5 is missing then all colours with higher numbers will be ignored
+
+# the three numbers for each colour correspond to red, green and blue
+# respectively.  each number is an intensity from 0 to 255
+
+# white
+colour_0 = 255 255 255
+# dark grey
+colour_1 = 100 100 100
+# red
+colour_2 = 255 0 0
+# green
+colour_3 = 0 255 0
+# blue
+colour_4 = 0 0 255
+# cyan
+colour_5 = 0 255 255
+# magenta
+colour_6 = 255 0 255
+# yellow
+colour_7 = 245 245 0
+# pale green
+colour_8 = 152 251 152
+# light sky blue
+colour_9 = 135 206 250
+# orange
+colour_10 = 255 165 0
+# brown
+colour_11 = 200 150 100
+# pink
+colour_12 = 255 200 200
+# light grey
+colour_13 = 170 170 170
+# black
+colour_14 = 0 0 0
+# reds:
+colour_15 = 255  63  63
+colour_16 = 255 127 127
+colour_17 = 255 191 191
+
+colour_of_CDS = 5
+colour_of_cds? = 7
+colour_of_BLASTCDS = 2
+colour_of_BLASTN_HIT = 6
+colour_of_CRUNCH_D = 2
+colour_of_CRUNCH_X = 15
+colour_of_source = 0
+colour_of_prim_tran = 0
+colour_of_stem_loop = 2
+colour_of_misc_feature = 3
+colour_of_misc_RNA = 12
+colour_of_delta = 3
+colour_of_LTR = 4
+colour_of_repeat_region = 9
+colour_of_repeat_unit = 9
+colour_of_terminator = 3
+colour_of_promoter = 3
+colour_of_intron = 1
+colour_of_exon = 7
+colour_of_mRNA = 1
+colour_of_tRNA = 8
+colour_of_TATA = 3
+colour_of_bldA = 2
+colour_of_GFF = 11
+
+colour_of_start_codon = 6
+
+# suffixes used on files that contain features - used in file requesters
+feature_file_suffixes = tab embl gbk genbank tab_embl gff feature feat \
+   art artemis
+
+# suffixes used on files that contain sequence - used in file requesters
+sequence_file_suffixes = embl gbk genbank tab_embl seq dna \
+   art artemis
+
+# this is the URL that contains the IOR of the EMBL server
+embl_ior_url = http://corba.ebi.ac.uk/EMBL/IOR/Embl.IOR
+
+# this is the URL that contains the IOR of the EnsEMBL server
+# ensembl_ior_url = file:///nfs/disk12/kmr/powmap/db.ior
+
+
+# the default height for the base plot window
+base_plot_height = 150
+
+
+# the default height for the feature plot window
+feature_plot_height = 160
+
+
+# if this option is no then the feature labels in the overview will be off at
+# startup (the default is yes)
+# overview_feature_labels = no
+
+
+# if this option is yes then the overview will start in one line per entry
+# mode (the default is no)
+# overview_one_line_per_entry = yes
+
+
+# if this option is "yes" then the feature list will be displayed on startup
+# (this is the default)
+show_list = yes
+
+
+# if this option is "yes" then the base view will be displayed on startup
+# (this is the default)
+show_base_view = yes
+
+
+# if this option is "yes" then the entry buttons will be displayed on
+# startup
+show_entry_buttons = yes
+
+
+# if this option is "yes" then artemis will offer to show the results of a
+# search when it finishes
+show_results = no
+
+
+# if this option is "yes" the "all features on frame lines" option will
+# default to true on start up
+features_on_frame_lines = no
+
+
+# if this option is "yes" the "feature labels" option will
+# default to true on start up
+feature_labels = yes
+
+
+# if this option is "yes" the "one line per entry" option will default to
+# true on start up 
+one_line_per_entry = no
+
+
+# if this option is "yes" Sanger specific menu items and functions will be
+# visible in the display
+sanger_options = no
+
+
+# the full path to the editor used for editing the qualifiers
+#external_editor = emacs
+
+
+# if set to yes, borders will be drawn around each feature and each exon.  if
+# set to no borders will only be drawn around the selected features.
+draw_feature_borders = yes
+
+
+# if set to yes, a direction arrow will be drawn around at the end of each
+# feature.  if set to no, no arrows will be drawn.
+draw_feature_arrows = yes
+
+
+# the number of levels of undo to save or 0 if undo is disabled.  more undo
+# levels will require more memory.
+undo_levels = 20
+
+
+# this list is added to the keys from the feature_keys file
+extra_keys = \
+    BLASTN_HIT CDS_BEFORE CDS_AFTER CDS_before CDS_after \
+    CDS_motif BLASTCDS polymorphism GFF WUBLASTN_HIT \
+    WUBLASTX_HIT BLASTX_HIT TBLASTX_HIT BLASTN_HIT \
+    CRUNCH_D CRUNCH_X fasta_record allele mutation splicesite \
+    TMM signalP
+
+# Names of qualifiers to search when attempting to find the primary or display
+# name of a gene.  These qualifiers names are searched in order when looking
+# for gene names.
+display_name_qualifiers = primary_name synonym systematic_id \
+    temporary_systematic_id gene locus_tag label
+
+# Names of qualifiers to search when attempting to find the systematic name of
+# a gene
+systematic_name_qualifiers = systematic_id temporary_systematic_id \
+     locus_tag gene label
+
+
+# this list is added to the qualifiers from the qualifier_types file
+extra_qualifiers = \
+    CHROMO_LINK text \
+    C_processing "text" \  
+    C_processing_BigPi "text" \
+    C_processing_DGPI "text" \ 
+    COM_NAME "text" \
+    FEAT_NAME text \
+    GO_component "text" \
+    GO_function "text" \
+    GO_process "text" \
+    GO_slim "text" \
+    GO "text" \
+    LOCUS "text"  \
+    PUB_LOCUS text \
+    PUB_COMMENT "text" \
+    REPEAT_TYPE "text" \
+    SNP "text" \
+    algorithm "text" \
+    anchor "text" \ 
+    annotation_source "text" \
+    assembly_id "text" \
+    bb_orthologue "text" \
+    bound_moiety "text" \
+    bpp_orthologue "text" \
+    bp_orthologue "text" \
+    bicsw_file "text" \
+    blast_score text \
+    blast_file "text" \
+    blastn_file "text" \
+    blastp_file "text" \
+    blastp+go_file "text" \
+    blastp_match "text" \
+    blastx_file "text" \
+    cds_id "text" \
+    chloroplast "text" \
+    chromoplast "text" \
+    class "text" \
+    cleavage "text" \
+    cluster "text" \
+    color text \
+    colour text \
+    comment_Cterm "text" \
+    comment_Nterm "text" \
+    confidence_level "text" \
+    coord "text" \
+    contig_id "text" \
+    created "text" \
+    curation "text" \
+    curated_ortholog "text" \
+    cyanelle "text" \
+    domain "text" \
+    end_phase text \
+    exon_id "text" \
+    fasta_file "text" \
+    fasta_match "text" \
+    fastx_file "text" \
+    filename "text" \
+    function "text" \
+    gene "text" \
+    gene_id "text" \
+    gff_feature text \
+    gff_group text \
+    gff_seqname text \
+    gff_source text \
+    go_from_interpro "text" \
+    hp_match "text" \
+    hth_file "text" \
+    id "text" \
+    interaction "text" \
+    interpro "text" \
+    job "text" \
+    label text \
+    literature "text" \
+    manual none \
+    mitochondrion "text" \
+    modified "text" \
+    mutation "text" \
+    obsolete_name "text" \
+    obsolete_product "text" \
+    origid "text" \
+    ortholog "text" \
+    paralog "text" \
+    pepstats_file "text" \
+    percent_id text \
+    pfam_match "text" \
+    previous_systematic_id "text" \
+    primary_name "text" \
+    prosite_match "text" \
+    psu_db_xref "text" \
+    psu_domain "text" \
+    reserved_name "text" \
+    query_id text \
+    score text \
+    sequence_source "text" \
+    sequence_status "text" \
+    sigcleave_file "text" \
+    signal "text" \
+    similarity "text" \
+    smart_file "text" \
+    sptr_display "text" \
+    start_phase text \
+    subject_end text \
+    subject_id text \
+    subject_start text \
+    synonym "text" \
+    synteny "text" \
+    systematic_id "text" \
+    taxon_id "text" \
+    tblastn_file "text" \
+    tblastx_file "text" \
+    tb_orthologue "text" \
+    temporary_systematic_id "text" \
+    tmhelix "text" \
+    transferred_gene "text" \
+    transferred_locus_tag "text" \
+    transferred_note "text" \
+    transferred_primary_name "text" \
+    transferred_product "text" \
+    transferred_synonym "text" \
+    transferred_systematic_id "text" \
+    type "text"
+
+# this is a list of extra qualifiers that are legal but are not displayed in
+# popup menus (such as the one in the feature editor window).  this hack is
+# used by diana.components.QualifierChoice to limit the number of qualifers
+# that are displayed in the popup menu.  on some VMs if there are too many in
+# the popup the bottom ones aren't visible
+invisible_qualifiers = \
+    CHROMO_LINK    \
+    C_processing       \ 
+    C_processing_BigPi \
+    C_processing_DGPI  \
+    COM_NAME       \
+    FEAT_NAME      \
+    LOCUS          \
+    PUB_LOCUS      \
+    PUB_COMMENT    \
+    REPEAT_TYPE    \
+    SNP            \
+    bicsw_file     \
+    blast_file     \
+    blast_score    \
+    blastn_file    \
+    blastp+go_file \
+    blastp_file    \
+    blastx_file    \
+    cds_id         \
+    chloroplast    \
+    chromoplast    \
+    codon          \
+    comment_Cterm  \
+    comment_Nterm  \
+    created        \
+    cyanelle       \
+    end_phase      \
+    exception      \
+    exon_id        \
+    fasta_file     \
+    fasta_match    \
+    gene_id        \
+    gff_feature    \
+    gff_group      \
+    gff_seqname    \
+    gff_source     \
+    go_from_interpro \
+    hp_match       \
+    hth_file       \
+    interpro       \
+    map            \
+    mitochondrion  \
+    modified       \
+    number         \
+    obsolete_gene_name \
+    pepstats_file  \
+    percent_id     \
+    pfam_match     \
+    prosite_match  \
+    psu_domain     \
+    reserved_gene_name \
+    query_id       \
+    sigcleave_file \
+    score          \
+    smart_file     \
+    start_phase    \
+    tblastn_file   \
+    tblastx_file   \
+    temporary_systematic_id \
+    transl_table   \
+    translation    \
+    type           \
+    usedin
+
+
+# These pairs consist of a program name and a parameter string.
+# For blast and fasta the parameter string is the name of the database to
+# search.
+feature_protein_programs = \
+    fasta %L \
+    sigcleave 0 \
+    pepstats - \
+    blastp swall \
+    tblastn embl_other \
+    hth - \
+    smart - \
+    clustalx PROTEIN \
+    jalview -
+
+feature_dna_programs = \
+    tblastx embl_other \
+    blastn embl_other \
+    blastx swall \
+    fastx %L \ 
+    clustalx DNA
+
+application_programs = \
+
+# this is the list of keys that should be displayed by default in the edit
+# window
+common_keys = \
+    allele attenuator CDS conflict exon intron LTR misc_feature misc_RNA mRNA \
+    mutation polyA_signal polyA_site promoter protein_bind RBS repeat_region \
+    repeat_unit rRNA scRNA snRNA source stem_loop STS TATA_signal terminator \
+    tRNA unsure variation -10_signal -35_signal CDS_motif gene \
+    BLASTN_HIT BLASTCDS 3'UTR 5'UTR

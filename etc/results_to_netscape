@@ -1,0 +1,214 @@
+#!/bin/sh -
+
+# This script will send a file to netscape with database IDs linked to SRS.
+# To customize this script edit the $DATABASES and $SRS_SERVER variable in the
+# perl code below and the NETSCAPE variable at the top of the script.
+
+# To enable this in Artemis, sanger_options must be set to true in the options
+# file.
+
+NETSCAPE=/usr/bin/X11/real-netscape
+
+if [ -f "$DIANA_ENVIRONMENT_FILE" ]
+then
+   . $DIANA_ENVIRONMENT_FILE
+fi
+
+if [ $# = 0 ]
+then
+    echo no argument given 1>&2
+    exit 1
+fi
+
+file_arg=$1
+
+unique_bit=$$.`hostname`
+
+# sanger hack:
+file_arg=`echo $file_arg | sed 's@^/tmp_mnt/nfs/@/nfs/@' | sed 's@^/tmp_mnt/tmp_nfs/@/nfs/@'`
+# fix for pcs3:
+file_arg=`echo $file_arg | sed 's@^/yeastpub4/@/nfs/disk222/yeastpub4/@'`
+
+
+if [ -f ./$file_arg ]
+then
+    # the file is in the current directory - we need the full path so netscape
+    # can find the file
+    new_file=$PWD/$file_arg.$unique_bit.html
+else
+    new_file=$file_arg.$unique_bit.html
+fi
+
+cat <<EOF > $new_file
+<HTML>
+ <HEAD>
+  <TITLE>
+  Results for $file_arg
+ </TITLE>
+ </HEAD>
+ <BODY>
+<PRE>
+EOF
+
+perl -e '
+BEGIN {
+  # change these variable to list the databases to search for the IDs - the
+  # database names should be separated by spaces
+  $PROTEIN_DATABASES = "swall";
+  $DNA_DATABASES = "embl";
+
+  # change this to point to the wgetz script of your SRS server
+  $SRS_SERVER = "www.sanger.ac.uk/srs6bin/cgi-bin/wgetz?-e+";
+
+  $PROTEIN_DATABASES =~ s/ /%20/g;
+  $DNA_DATABASES =~ s/ /%20/g;
+
+  %GENEDB_PATTERNS = (tryp => q!Tb\d+\.\d+\.\d+|TRYP_\S+!,
+                      leish => q!LmjF\d+.\d+!);
+
+  $GENEDB_PATTERN = join ("|", values %GENEDB_PATTERNS);
+
+  $BLAST_START_LINE = "Sequences producing High-scoring Segment Pairs|" .
+    "Sequences producing significant alignments:";
+  $FASTA_START_LINE = "The best scores are";
+
+  # the list of IDs we have seen so far
+  @ids = ();
+
+  # the list of IDs we have made anchors for so far
+  @anchored_ids = ();
+
+  $db_type = "unknown";
+}
+
+sub hyperlink_to_anchor
+{
+  $id = shift;
+  qq(<a href="#$id">$id</a>);
+}
+
+sub hyperlink_id
+{
+  $id = shift;
+
+  if ($db_type eq "dna") {
+    $r = qq#<a href="http://$SRS_SERVER\[\{$DNA_DATABASES\}-ID:$id*]|[\{$DNA_DATABASES\}-AccNumber:$id*]">$id</a>#;
+  } else {
+    for my $org (keys %GENEDB_PATTERNS) {
+      my $pattern = $GENEDB_PATTERNS{$org};
+
+      if ($id =~ /$pattern/) {
+        $r = qq#<a href="http://www.genedb.org/genedb/Search?organism=$org&name=$id">$id</a>#;
+        return $r
+      }
+    }
+
+    $r = qq#<a href="http://$SRS_SERVER\[\{$PROTEIN_DATABASES\}-ID:$id*]|[\{$PROTEIN_DATABASES\}-AccNumber:$id*]">$id</a>#;
+  }
+  return $r
+}
+
+$file_name = $ARGV[0];
+
+if ($file_name =~ /\.gz$/) {
+  open IN_FILE, "gzip -d < $file_name |" or die "failed to open $file_name\n";
+} else {
+  open IN_FILE, "$file_name" or die "failed to open $file_name\n";
+}
+
+while (<IN_FILE>) {
+  if ($. == 1) {
+    if (/^\s*([^\s]+)/) {
+      if (lc $1 eq "blastn" or lc $1 eq "tblastn" or lc $1 eq "tblastx") {
+        $db_type = "dna";
+      } else {
+        if (lc $1 eq "fasta" or lc $1 eq "blastp" or lc $1 eq "blastx") {
+          $db_type = "protein";
+        } else {
+          print "\nWARNING: could not identify file type: $1\n";
+        }
+      }
+    } else {
+      print "\nWARNING: could not identify file type\n";
+    }
+  }
+
+
+  # ignore header lines
+  if (1..m/$BLAST_START_LINE|$FASTA_START_LINE/) {
+    print;
+    next;
+  }
+
+  if (@ids && /^\s*$/) {
+    $summary_finished = 1;
+  }
+
+  if (/^(?:(?:>?>?(?:[A-Z]+:)?)(\w+)|($GENEDB_PATTERN)) /) {
+    $id = $1;
+
+    if (!defined $id) {
+      $id = $2;
+    }
+
+    if ($summary_finished) {
+      if ((grep {$_ eq $id} @ids) && (!grep {$_ eq $id} @anchored_ids)) {
+        # not anchored yet so make it an anchor
+        if (s/\b$id\b/"<a name=\"$id\">" . (hyperlink_id($id)) . "<\/a>"/e) {
+          push @anchored_ids, $id;
+        }
+      }
+    } else {
+      if (!grep {$_ eq $id} @ids) {
+        push @ids, $id;
+      }
+
+      s/$id/hyperlink_to_anchor($id)/ei;
+
+      if (!s/ $id/" " . hyperlink_id($id)/ei) {
+        # if the id occurs once in the line put a link at end of line
+        s/$/"  LINK:" . hyperlink_id($id)/e;
+      }
+    }
+  }
+  print;
+}
+
+' $file_arg >> $new_file
+
+cat <<EOF >> $new_file;
+</PRE>
+  </BODY>
+</HTML>
+EOF
+
+# delete it at some point
+echo "rm -f $new_file > /dev/null 2>&1" | at now + 36 hours
+
+if $NETSCAPE -remote "openURL($new_file)"
+then
+    exit 0
+else
+    echo starting new netscape 2>&1
+    # netscape isn't running - so start it
+    ($NETSCAPE &)&
+
+    # now send the URL.  we do things this way so that the script doesn't exit
+    # until netscape has successfully shown the URL
+
+    sleep 1
+
+    # don't exit the script until the file is successfully displayed or until
+    # 40 seconds is up
+    for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
+    do
+        if $NETSCAPE -remote "openURL($new_file)" 2> /dev/null
+        then
+            exit 0
+        else
+            sleep 2
+        fi
+    done
+
+    exit 1
+fi

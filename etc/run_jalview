@@ -1,0 +1,51 @@
+#!/bin/sh -
+
+# This script needs one argument - a file of file names.
+
+PERL_PROG='
+
+use strict;
+
+if (@ARGV < 1)
+{ 
+  die "$0 needs one argument - a file of sequence file names\n";
+}
+
+my $file = $ARGV[0];
+
+chomp $file;
+
+if (-e $file)
+{
+  my $msf_file = "$file.fasta_msf";   
+
+  my $seqnum = 1;
+  open(LIST_FILE,$file);
+  while(my $line = <LIST_FILE>)
+  {
+    chomp($line);
+
+    #
+    # run descseq to ensure unique names
+    #
+    my $emboss_command_line = "descseq -append -name _$seqnum $line $line.new -auto";
+
+    open EMBOSS, "|$emboss_command_line" or
+              die "cannot open pipe to descseq: $!\n";
+    close EMBOSS;
+
+    unlink("$line");
+    rename("$line.new","$line");
+    $seqnum++;
+  }
+
+  my $emboss_command_line = "emma \"\@$file\" -filter -stdout -osf msf  -dendoutfile /dev/null -outseq $msf_file";
+
+  open EMBOSS, "|$emboss_command_line" or
+            die "cannot open pipe to emma: $!\n";
+  close EMBOSS;
+  system "jalview", "$msf_file";
+}
+'
+
+perl -w -e "$PERL_PROG" "$@" 

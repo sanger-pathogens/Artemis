@@ -1,0 +1,258 @@
+ID   SPBC1215 standard; DNA; FUN; 6490 BP.
+XX
+AC   AL096846;
+XX
+DE   S.pombe chromosome II cosmid c1215.
+XX
+KW   SURF-family protein; COX complex biogenesis; DEC1 homologue;
+KW   mitochondrial inheritance; actin cytoskeleton organisation.
+XX
+OS   Schizosaccharomyces pombe (yeast)
+OC   Eukaryota; Plantae; Thallobionta; Eumycota; Hemiascomycetes;
+OC   Endomycetales; Saccharomycetaceae.
+XX
+RN   [1]
+RP   1-6490
+RA   Lyne M.H., Rajandream M.A., Barrell B.G., Seeger K., Quail M., Harris D.;
+RT   ;
+RL   Submitted (16-JUL-1999) to the EMBL/GenBank/DDBJ databases.      
+RL   European Schizosaccharomyces genome sequencing project,
+RL   Sanger Centre, The Wellcome Trust Genome Campus, Hinxton, 
+RL   Cambridge CB10 1SA, E-mail: barrell@sanger.ac.uk and  
+XX
+CC   Notes:
+CC
+CC   Details of yeast sequencing at the Sanger Centre are available on
+CC   the World Wide Web. 
+CC   (URL, http://www.sanger.ac.uk/Projects/S_pombe/)
+CC   During 1995 to 1996 about 66% of S. pombe chromosome 1 was sequenced 
+CC   by the Sanger Centre.  The sequencing of the S. pombe genome is now 
+CC   being continued with funding from The European Commission.  
+CC   Fourteen European sequencing laboratories, including the Sanger Centre,  
+CC   are participating in the project.
+CC
+CC   Protein coding regions (CDS) have been predicted with the help 
+CC   of computer analysis using the Genefinder program in PomBase
+CC   (an ACEDB database) with additional predictions for the
+CC   branch-acceptor sites supplied by the program Sp3splice.
+CC   CAUTION: It is possible that for any individual CDS we may have
+CC   underestimated or overestimated the number of introns/exons or
+CC   we may not have chosen the correct splice donor/acceptor sites.
+CC   
+CC   CDS are numbered using the following system eg SPBC25H2.01c.
+CC   SP (S. pombe), B (chromosome 2), c25H2 (cosmid name),
+CC   .01 (first CDS), c (complementary strand).
+CC
+CC   The more significant matches with motifs in the PROSITE
+CC   database are also included but some of these may be fortuitous.
+CC
+CC   The length in codons is given for each CDS.
+CC   
+CC   IMPORTANT: This sequence MAY NOT be the entire insert of
+CC   the sequenced clone.  It may be shorter because we only
+CC   sequence overlapping sections once, or longer, because we
+CC   arrange for a small overlap between neighbouring submissions.
+CC
+CC   Cosmid c1215 is overlapped at the 5' end by cosmid c1750, 
+CC   EMBL entry SPAB4534, accession number AB004534, and at the 3' 
+CC   end by cosmid c83, EMBL entry SPBC83, accession number AL035536.
+XX
+XX
+FH   Key             Location/Qualifiers
+FH
+FT   source          1..6490
+FT                   /organism="Schizosaccharomyces pombe"
+FT                   /strain="972h-"
+FT                   /chromosome="II"
+FT                   /clone="cosmid c1215"
+FT                   /map="IIL"
+FT   misc_feature    complement(1..82)
+FT                   /note="nominal overlap with cosmid SPAB4534 (c1750) S.
+FT                   pombe chromosome 2"
+FT   tRNA            36..107
+FT                   /note="tRNA Thr anticodon TGT, Cove score 78.51"
+FT   rRNA            415..581
+FT                   /note="SPRG5SD K00771 Yeast (s.pombe) 5s rrna gene and
+FT                   flanks"
+FT   CDS             join(1501..1760,1844..2456)
+FT                   /fasta_file="fasta/gf.tab.seq.00001.out"
+FT                   /note="SPBC1215.01, len:290, SIMILARITY:Saccharomyces
+FT                   cerevisiae, YG2X_YEAST, hypothetical 45.1 kd protein in
+FT                   clb6-spt6 intergenic region, (389 aa), fasta scores: opt:
+FT                   385, E():2.8e-19, (29.0% identity in 314 aa)"
+FT                   /gene="SPBC1215.01"
+FT                   /product="putative SURF-family protein"
+FT                   /colour=7
+FT                   /label=SPBC1215.01
+FT   misc_feature    1761..1766
+FT                   /note="gtacgt, splice donor sequence"
+FT                   /colour=6
+FT   misc_feature    1827..1843
+FT                   /note="ctaacataatcacttag, splice branch and acceptor"
+FT                   /colour=6
+FT   CDS             complement(join(2495..2602,2663..2881,2953..4071,4111..4372,4413..4849,4889..5007,5251..5389,5434..5466))
+FT                   /fasta_file="fasta/gf.tab.seq.00002.out"
+FT                   /note="SPBC1215.02c, len:811, SIMILARITY:Saccharomyces
+FT                   cerevisiae, DEC1_YEAST, dec1 protein, (796 aa), fasta
+FT                   scores: opt: 184, E():0.00014, (23.4% identity in 577 aa)"
+FT                   /gene="SPBC1215.02c"
+FT                   /product="similar to yeast DEC1 mitochondrial inheritance
+FT                   and actin cytoskeleton organisation protein"
+FT                   /colour=7
+FT                   /label=SPBC1215.02c
+FT   misc_feature    complement(2603..2612)
+FT                   /note="ctaataatag, splice branch and acceptor"
+FT                   /colour=6
+FT   misc_feature    complement(2657..2662)
+FT                   /note="gtacgt, splice donor sequence"
+FT                   /colour=6
+FT   misc_feature    complement(2882..2896)
+FT                   /note="ctaaccgaattatag, splice branch and acceptor"
+FT                   /colour=6
+FT   misc_feature    complement(2947..2952)
+FT                   /note="gtaagt, splice donor sequence"
+FT                   /colour=6
+FT   misc_feature    complement(4072..4085)
+FT                   /note="ttaactcgtcgtag, splice branch and acceptor"
+FT                   /colour=6
+FT   misc_feature    complement(4105..4110)
+FT                   /note="gtaagt, splice donor sequence"
+FT                   /colour=6
+FT   misc_feature    complement(4373..4387)
+FT                   /note="ctaacttctccatag, splice branch and acceptor"
+FT                   /colour=6
+FT   misc_feature    complement(4407..4412)
+FT                   /note="gtaagt, splice donor sequence"
+FT                   /colour=6
+FT   misc_feature    complement(4850..4861)
+FT                   /note="ctaactcctcag, splice branch and acceptor"
+FT                   /colour=6
+FT   misc_feature    complement(4883..4888)
+FT                   /note="gtaaga, splice donor sequence"
+FT                   /colour=6
+FT   misc_feature    complement(5008..5021)
+FT                   /note="ttaactatttgaag, splice branch and acceptor"
+FT                   /colour=6
+FT   misc_feature    complement(5245..5250)
+FT                   /note="gtaagt, splice donor sequence"
+FT                   /colour=6
+FT   misc_feature    complement(5390..5405)
+FT                   /note="ttaacatcctttttag, splice branch and acceptor"
+FT                   /colour=6
+FT   misc_feature    complement(5428..5433)
+FT                   /note="gtaagt, splice donor sequence"
+FT                   /colour=6
+FT   misc_feature    6387..6490
+FT                   /note="nominal overlap with cosmid SPBC83 S. pombe
+FT                   chromosome 2"
+SQ   Sequence 6490 BP; 2097 A; 1138 C; 1138 G; 2117 T; 0 other;
+     tatatataat ttaataaata cattccgacg atactgcctc tatggcttag tggtacagca        60
+     tcgcacttgt aatgcgaaga tccttggttc gattccgagt ggaggcatat acattatatt       120
+     atattctttt tcatgcggaa aaaagatttc aaatttttgg gtatgatatt aatatgactg       180
+     taacgttaat agcaaagtga gtgttaataa tgataaaata gcagcaaaat ctcttttccg       240
+     agtaagacgt tttccagtct aaatttggag tctgcagttg tttcgcaatt cttaatgtat       300
+     ggttatacta aatacaaact ttaaagctct gatttatgtt tgcaataaac taaaataaaa       360
+     gcacaaaaac ctttacccat taatttcaaa caacttataa actaccggta aacttttttt       420
+     ctaaccttta taatttataa actagaatgt ttaatgtcta cggccatacc taggcgaaaa       480
+     caccagttcc cgtccgatca ctgcagttaa gcgtctgagg gcctcgttag tactatggtt       540
+     ggagacaaca tgggaatccg gggtgctgta ggctattttt ttatatccgt ctttcttact       600
+     acttgcctaa caagtcatga tgtactctca aaatatgttt gcatgccttg taatattggt       660
+     tatggatagc tccttctgga cttgatcttt tgtagccaag aacaatgggt atagactctg       720
+     accttgtgat gttgtagcca cagattataa taggtatttt caagtacagt aacaaaaatc       780
+     ttctagtttt tttttagaaa ggatacacca agtataagca aattcaggaa ttgttgatta       840
+     aactgtcaac ttcggtaaaa ctttgggcat aagtagtgtg ggagcaagtt taactaaaat       900
+     tctattcaga tgtcgaatcc aaaccgctaa ttttgctcaa ctagcttttc ataaaaacca       960
+     attcatagtt tcatactaat aaagacgatt gtttacttta aaacatacgt cgtaagaaca      1020
+     tatattgctt tatcgaaaga taacaaatgt taagctatta tattatttaa ctatagcgca      1080
+     gatttcgctt cctttactta aaaaagacat gtgacttgta gaagcttgga gtgaatacgc      1140
+     aaaggtacct acttagacat tcgcgtctct cttagctgtc aacatcaaca aactggcccc      1200
+     gtattgaaca gtatcttact tgtcgaagga tttgactaag aaaattttat ttctttatag      1260
+     caatattccg ttttcgctta gaagattcta gtcaattgcc ctattctact tacgctttac      1320
+     agtagtatca gaagacctga gtgggatttt gctgctagta gaggccattc aagttaactc      1380
+     cgttttgcaa cattttaaaa gtttttgaat tgaatataaa tatcaattgt ttgattcctt      1440
+     ttaggattta atcttttctt tttatttttg tttcgattga atcttggatt cctgtctatc      1500
+     atgttttggt ggaaaagtgc tactaaattc acattctcaa agcgtggacc gtgtgtcttt      1560
+     cgctatttga gtactcttga aggaacaact gtgaggccta aaaaaaataa atttttagtt      1620
+     ggattgcttt ctgccgttcc aattgtcacg tttgctttag gaacttggca ggtaaagcga      1680
+     cgagaatgga aaatgggtat catcaataca ctcacggaaa ggcttcaaca gcccgcaatt      1740
+     ttattaccga aaactgttac gtacgttaag ttaacatata cacaaattgc acgttttgca      1800
+     attgaactgt cgttttttac attaagctaa cataatcact tagagagcaa gatacaaaaa      1860
+     aacttgagtg gactagggtt ttgcttcgtg gtgtgttttg tcacgaccaa gaaatgttgg      1920
+     tcggtccaag aacgaaggaa ggccaacctg gctatcacgt agtaacccca tttattttag      1980
+     acgatgggcg tcgaatttta gtcaacagag gatggattgc tcgatcattt gctgaacagt      2040
+     cttctcgaga tcctagttct ttacctaaag gtccagtggt cattgaaggt cttttgagac      2100
+     aacatactga taagccaaga tttatgatga agaatgagcc tgaaaaaaat tctttttact      2160
+     tcttaaatgt tcgtgagttt gcacaattga aaggaactct ccccattttg ataacagaac      2220
+     tacaaccatc gcttacaccg ttgcaagaag ccgatcatgt taagagaggc ttgcctcttg      2280
+     gtcatcctct aaaagttgaa attttcaaca gtcatacaga atatattatc acttggtatt      2340
+     ctctaagtgt ggtatcagct ataatgcttt acgtctattt taagagaggt tcaggcacat      2400
+     cttctctgaa ttctgcatac gaaagaagca agattctaaa caacaaacga ttataaaaaa      2460
+     ttttcatatt tataagtttc taaatattat ctacctaaaa ttttacaaat tttggaagct      2520
+     tgcttactgc gtccgtcgtt tgaatgtatg aatcgatcat tccttcacca acttgttttg      2580
+     caaacttcgg atcgtaagga acctattatt aggaagttag ttctcatgcc tataatttta      2640
+     atgctctata atcatcacgt acctgagttt cagataaatt gctcagccaa gagtttgaca      2700
+     acaattctga tacatatttt ctggcggcct tctttttatg cttcgtaatt ccagagatac      2760
+     ttcctaattt gttactgctg atgtttttaa gaagttggta ttgtctggta aattcttttt      2820
+     tcttggtagc tgacacgtga tataggaagc tgtttagaca agtgataagg tcatttatga      2880
+     tctataattc ggttagttta gaaattttta tatcattttt tttaaaaaaa aaaaccagtt      2940
+     tggtaaactt acttcagtgt actttgtcaa ttgacttaaa ggcgtggagt tctcataatc      3000
+     gaatgactca attaaatttt caatcgtttc gaacgaggaa ttttcgtagt ctccgttctt      3060
+     gacctttacc gaaagtaatc ccagttggat caataatttc atatgaacaa tttcttccga      3120
+     agttaattgc ttcgataaat cattgttttc gcacaaaact tccatttcct tagcacttaa      3180
+     aacggccttt tcaaaatcgc cgtttactat gctgtcttga acgagagaat gaccaatgac      3240
+     agtcaaatgg atccaaagcg tgtccggttt aggcgaattt cttaaacttt cttcaactgt      3300
+     tggcaattta tcagatccat aatctgcaaa gacctttaaa tctcgattat ctttcggaga      3360
+     tgaacatttg ggaagatact gtttgggtgg tttaaaagcg gtaagataat gtatcctagc      3420
+     ccgctcgacc aaagaaatgc ttttccaggt actgtggtct aaacgggatc ggaaattacg      3480
+     catatcttcg atttgagagt aagcaccatc ttcataagcc atagaaatca tctctggtgt      3540
+     ttcaaactca ttcgaaccat atattttgag acttgagtta atatagtgag aagtaacaga      3600
+     agatggataa taggtagtag cacgagtcaa gagataatga tcaagggtat cgttttgaat      3660
+     ttgcttaatg gacatagtgt cgtaaacttt agcagcagca gggaagcctc catcaagaag      3720
+     aagatataaa cgaataaggg gtagctttaa atgaaagtta tgttgactat aagtaatgcc      3780
+     tttttctaaa agacagattg cgtcaaaaat taaagcttgt ttttcggcag gttttaaatc      3840
+     cttattcccc tcccacatat atatcaatga atgaactgct aataacaaag cttcataacc      3900
+     gtgcgtaaag tcagtgggta ataagccttt acttaaagac aaaccctttt caaatgcgac      3960
+     gaagcatcta cgcacgtaat cgacaaccga ttctgcagta aacgactcaa agagcaaaaa      4020
+     atggatcttc agaagcaaaa cctcagcata taatttatcg actttttgag actacgacga      4080
+     gttaatattg aaagatgaat aaatacttac ttcattggat tcacctagat cagccaactt      4140
+     aaatgcatct aataaccggt gttgtgcatc aacattcagc ttcaatagat aaggtctcaa      4200
+     atcttcaaaa acaattggtt tcatatacag ctttttgata tagccaagta atgctgattc      4260
+     gtgttcttca ggaaaaaacc gtgcgctggc ttcaatccaa agtaaatgaa gatttctttt      4320
+     tgtgctgctg gttgacaacg ctttcaatat acaatccttt aatgggacta atctatggag      4380
+     aagttagtaa taatgcaaaa aaaaaaactt actttgaatc atcattggaa gcactatcca      4440
+     gcaaagcttt gcaaaccttc caatcagtat tcccagtttg gaaaagagaa agcgaaaacg      4500
+     tgaataaaga atcccaacgc gcacaggaag caagcaattc aagcttcctc aaaagaaggt      4560
+     cggcgtcagc atcaacaaag cgatcagcat cttgatgtat taaagcatct aacgctctgt      4620
+     ccttgtctcc cactaaaagc aacacgtcta aataaagatg aaactcctca caagaatcga      4680
+     tataacctgt tggtttttcg aaaatgagtt tagcagtttt ttcagctagt gctttcagca      4740
+     aacgttgttc aacctcattt tccgactttt tggacaaaag atacaaagat gagataaccc      4800
+     ataaggtatg tttcctagaa ggaaagttct tttgcaattc tacagcagcc tgaggagtta      4860
+     gtaaaaaaaa aacaaattaa gatcttacct ttctttggtg agacaatgat ttgatgcgaa      4920
+     tagatgcttt gaagtaagct aataagtttt tttcctgctt tccataagtt tgcaagaact      4980
+     tttcccaaaa tacaaacgat tcttctcctt caaatagtta ataacttaaa agtaagaggg      5040
+     taaaaacaag tccattgaga aataaaacgt tgcacttgaa tcatcaagct acgaaaagaa      5100
+     caaagatcgt ttttcttaag caaagtttaa ccgatcaaat aactaaagcc tttatctcaa      5160
+     ggaaatagta gaatattcaa aataaaaaat acgaccaaag tgctatcaac atttatgttc      5220
+     atctgttcaa tagaacctaa ttatacttac ccttcttttg atcatcataa acagcttgta      5280
+     taatgtctaa aagttccaag ctgttgatgg gagtcgattt taacggttct aaaagtgcta      5340
+     gagcctcggg accacgtcct gcctgagcca aggataacgc tgaataaacc taaaaaggat      5400
+     gttaacagct aaaaacataa ctcgattact tacaattgtt gattctttac tcccagaacg      5460
+     acgcattgta gtaggcaatg aaattaaagc ccaaacagta gtcagaagtt ggtaggtgtt      5520
+     gcagtcaaat tattattcta cagaggagaa tattatagcc agcgtggtag aatctggata      5580
+     tatatctact gcaaaagtgt aattgcattg gtttaaaggg tatactatgg ttaagtaata      5640
+     tattcacagc tgtacaattt acagtcataa ctaaaacttc cttaagccgt aaagaaatac      5700
+     ctggtgttgt aaaatttgtt gtatatccac ggcatggtca tataatgtga ttttgtgctc      5760
+     aaataaatat aaaatatgca taatttttgt acatttaatt tgagaaaccc atcttttgtt      5820
+     gagaggctgt caatgaatag cagtttcatt gaaaagcagc gggatgacca gaaaagtatt      5880
+     ttacaatggc aagggagtag aaagctagcg taatattcag aaagctaggt aattgagcaa      5940
+     tcctttaatt cattgctaag catgctaggt aaacgcagta aacctttcag ttttcattta      6000
+     ggtataaggc tgtttaatga gtatctccac taaatttaaa gatcaaaact cagtatcaat      6060
+     tcttaaaagt tttattttat ttaataatca tatacttctc ataatctttc aattttttcc      6120
+     ccattttgat gatattttta ttaatcctac agtaagctct atgatatcgt tattcttcaa      6180
+     ataggctggt cagcacgtgg acggtgttac ttatcgttaa ataaatcgta ctaaggaggt      6240
+     gcgatgtaaa tgatatgctt gtcaagtatt aactgctctc caccaaccgc cggtttaact      6300
+     gattattgtt gaaaagcgca gacgaagttt agagaattac tagcgtattt taaatttaat      6360
+     caacggacta ttttttattc ctttgagatc cgactttatc gctttgcttc taattttcca      6420
+     aaattcagtc tatctacgcg atccagccct gtttgcgtaa atttcatatt atttttcttt      6480
+     aaacgtttgg                                                             6490
+//

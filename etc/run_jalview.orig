@@ -1,0 +1,167 @@
+#!/bin/sh -
+
+# This script needs one argument - a file of file names.
+# Each name should refer to a file that contains a EMBL format feature.
+# The feature must have a /fasta_file= qualifier which is used to read the
+# FASTA search results for the feature and to find the protein sequence of the
+# feature.  The sequence and the sequence of the FASTA hits will be passed to
+# jalview.
+
+PERL_PROG='
+
+use strict;
+
+if (@ARGV != 1) {
+  die "$0 needs one argument - a file of feature file names\n";
+}
+
+
+sub process_fasta
+{
+  my $feature_file = shift;
+  my $fasta_results_file = shift;
+
+  my $sequence_file;
+
+  if ($fasta_results_file =~ /(.*).out/) {
+    $sequence_file = $1;
+  } else {
+    die "cannot understand $fasta_results_file\n";
+  }
+
+  if (! -e $sequence_file) {
+    die "cannot find $sequence_file\n";
+  }
+
+  my $fasta_seq_for_alignment = "";
+
+  open SEQ_FILE, $sequence_file or die "cannot open $sequence_file: $!\n";
+
+  while (<SEQ_FILE>) {
+    $fasta_seq_for_alignment .= $_;
+  }
+
+  close SEQ_FILE;
+
+  if (-e $fasta_results_file) {
+    open FASTA_OUTPUT, $fasta_results_file
+      or die "cannot open $fasta_results_file: $!\n";
+  } else {
+    my $gzip_fasta_results_file = $fasta_results_file . ".gz";
+    if (-e $gzip_fasta_results_file) {
+      open FASTA_OUTPUT, "gzip -d < $gzip_fasta_results_file |"
+        or die "cannot open $gzip_fasta_results_file: $!\n";
+    } else {
+      die "cannot find $fasta_results_file or $gzip_fasta_results_file\n";
+    }
+  }
+
+
+  my $top_re = "^The best scores are:";
+
+  my $seen_top = 0;
+  my $seen_bottom = 0;
+
+  my @protein_ids = ();
+
+  while (<FASTA_OUTPUT>) {
+    if (/$top_re/) {
+      $seen_top = 1;
+      next;
+    }
+
+    if ($seen_top && /^\s*$/) {
+      $seen_bottom = 1;
+      next;
+    }
+
+    if ($seen_top && !$seen_bottom) {
+      if (/^(\S+)/) {
+        if (@protein_ids < 20) {
+          push @protein_ids, "$1"
+        } else {
+          last;
+        }
+      } else {
+        warn "cannot understand this line:\n$_\n";
+      }
+    }
+  }
+
+  my %hash = ();
+
+  @hash{@protein_ids} = (1) x @protein_ids;
+
+  @protein_ids = sort keys %hash;
+
+  my $protein_db = "swall";
+
+  # look for each of the IDs from the FASTA output in each of the DBs
+
+  for my $id (@protein_ids) {
+    my $fetch = "getz -sf fasta -f seq [swall-id:$id]";
+
+    my $temp_seq = "";
+
+    open FETCH, "$fetch |" or
+      die "cannot open pipe to $fetch: $!\n";
+
+    while (<FETCH>) {
+      $temp_seq .= $_;
+    }
+
+    close FETCH;
+
+    if ($? == 0) {
+      $fasta_seq_for_alignment .= $temp_seq;
+    } else {
+      print STDERR "$id was not found in $protein_db\n";
+    }
+  }
+
+  my $msf_file = "$feature_file.fasta_msf";
+
+  my $emboss_prog = "emma";
+
+  my $emboss_command_line = "$emboss_prog -filter -stdout -osf msf  -dendoutfile /dev/null > $msf_file";
+
+  open EMBOSS, "|$emboss_command_line" or
+     die "cannot open pipe to $emboss_prog: $!\n";
+
+  print EMBOSS $fasta_seq_for_alignment;
+
+  close EMBOSS;
+
+  my $jalview_prog = "jalview";
+
+  print STDERR "\nstarting $jalview_prog:\n";
+
+  system "$jalview_prog", "$msf_file";
+}
+
+
+my $file;
+
+while (defined ($file = <>)) {
+  chomp $file;
+
+  if (-e $file) {
+    open IN_FILE, "$file\n" or die "cannot open $file\n";
+
+    my $line;
+
+    while (defined ($line = <IN_FILE>)) {
+      if ($line  =~ m!/fasta_file="(.*)"!) {
+        my $fasta_results_file = $1;
+
+        process_fasta $file, $fasta_results_file;
+
+        last;
+      }
+    }
+
+    close IN_FILE;
+  }
+}'
+
+perl -w -e "$PERL_PROG" "$@"
