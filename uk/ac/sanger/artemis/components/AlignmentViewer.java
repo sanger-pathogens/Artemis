@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.13 2005-02-24 16:48:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.14 2005-02-25 10:21:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.13 2005-02-24 16:48:49 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.14 2005-02-25 10:21:13 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -1027,6 +1027,17 @@ public class AlignmentViewer extends CanvasPanel
   {
     return offer_to_flip_flag;
   }
+
+
+  /**
+  *  Set the offscreen buffer to null as part of invalidation.
+  **/
+  public void invalidate()
+  {
+    super.invalidate();
+    offscreen = null;
+  }
+
 
   /**
    *  The main paint function for the canvas.  An off screen image used for
