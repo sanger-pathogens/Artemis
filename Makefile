@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.3 2004-06-22 16:20:14 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.4 2004-07-29 10:45:06 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -210,7 +210,7 @@ all: idl code
 code: $(CLASSES)
 
 topdown: idl
-	$(REAL_CLASSPATH) $(JAVAC) Diana.java
+	$(REAL_CLASSPATH) $(JAVAC) uk/ac/sanger/artemis/components/ArtemisMain.java
 
 %.class : %.java
 	$(REAL_CLASSPATH) $(JAVAC) $<
@@ -249,16 +249,19 @@ dist :
 	mkdir tar_build
 	mkdir tar_build/artemis
 	rm -f artemis_compiled_latest.tar.gz
-	if [ ! -d org ]; then unzip lib/minimal_biojava.jar; fi
 	tar cf - $(OTHER_FILES) art etc | (cd tar_build/artemis; tar xf -)
-	tar cf - $(CLASS_FILES) | (cd tar_build/artemis; tar xf -)
-	(cd tar_build; tar czvf ../artemis_compiled.tar.gz artemis)
+	tar cf - uk nsdb type seqdb lib | (cd tar_build/artemis; tar xf -)
+	(cd tar_build; tar czvf ../artemis_compiled.tar artemis)
 
 jar : all powmap.jar
 
 powmap.jar : $(CLASSES)
 	rm -f powmap.jar
-	if [ ! -d org ]; then unzip lib/minimal_biojava.jar; fi
+	if [ ! -d org ]; then \
+	  for fileJar in lib/*.jar; do \
+	    unzip $$fileJar; \
+	  done; \
+        fi
 	(echo $(CLASS_FILES) ; echo $(OTHER_FILES) ; \
 	echo etc/options; echo etc/feature_keys; echo etc/qualifier_types) | \
 	perl -pne 's/ /\n/g' | \
