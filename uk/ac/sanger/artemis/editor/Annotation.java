@@ -397,7 +397,11 @@ public class Annotation extends JEditorPane
     // if ortholog then delete gene and product lines as well
     if(ortholog)
     {
-      ind2 = txt.indexOf("<br>/product=");
+      if(ind1 > -1)
+        ind2 = txt.indexOf("/product=",ind1);
+      else
+        ind2 = txt.indexOf("/product=");
+
       if(ind2 > -1)
         ind2 = txt.indexOf("<br>",ind2+4);
     }

@@ -75,6 +75,8 @@ public class HitInfo
   private int endPosition   = 0;
   /** collection of GO terms */
   private Vector go;
+  /** EC_number */
+  private String ec_number = null;
 
   /** query hit range */
   private Vector queryPosition = new Vector();
@@ -176,6 +178,28 @@ public class HitInfo
     }
     catch(NoSuchElementException exp){}
     
+  }
+
+  
+  /**
+  *
+  * Set EC_number
+  *
+  */
+  protected void setEC_number(String ec_number)
+  {
+    this.ec_number = ec_number;
+  }
+
+ 
+  /**
+  *
+  * Get EC_number
+  *
+  */
+  protected String getEC_number()
+  {
+    return ec_number;
   }
 
 

@@ -567,6 +567,20 @@ public class DataCollectionPane extends JScrollPane
           }
           else
             hit.setEMBL("");
+
+          // EC_number
+          String cmd3[] = { "getz", "-f", "id",
+                 "[libs={uniprot}-id:"+hit.getID()+"]>enzyme" };
+          app = new ExternalApplication(cmd3,env,null);
+          res = app.getProcessStdout();
+
+          ind1 = res.indexOf("ID ");
+          if(ind1 > -1)
+          {
+            StringTokenizer tok = new StringTokenizer(res);
+            tok.nextToken();
+            hit.setEC_number(tok.nextToken());
+          }
         }
         return null;
       }
@@ -835,15 +849,18 @@ public class DataCollectionPane extends JScrollPane
     getzCall(hit,ortholog);
 
 // gene name for orthologs
-    String orthoText = "";
+    StringBuffer orthoText = new StringBuffer();
     if(ortholog)
     {
       String geneName = hit.getGeneName();
+
       if(hit.getGeneName() != null)
-        orthoText = "<br>\n/gene=\""+hit.getGeneName()+"\""+
-                    "<br>\n/product=\""+hit.getDescription()+"\"";
-      else
-        orthoText = "<br>\n/product=\""+hit.getDescription()+"\"";
+        orthoText.append("<br>\n/gene=\""+hit.getGeneName()+"\"");
+
+      if(hit.getEC_number() != null)
+        orthoText.append("<br>\n/EC_number=\""+hit.getEC_number()+"\"");
+
+      orthoText.append("<br>\n/product=\""+hit.getDescription()+"\"");
     }
 
 //  System.out.println("ID "+hit.getID());
@@ -888,7 +905,7 @@ public class DataCollectionPane extends JScrollPane
     buff.append("\"");
 
     ann.insert("\n/similarity=\""+resultFormat+";"+
-               buff.toString()+orthoText, ortholog);
+               buff.toString()+orthoText.toString(), ortholog);
   }
 
 
