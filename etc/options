@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.4 2004-06-10 13:32:57 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.5 2004-06-11 10:24:42 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -480,19 +480,22 @@ invisible_qualifiers = \
 # search.
 feature_protein_programs = \
     fasta %L \
+    fasta %M \
+    fasta %K \
     sigcleave 0 \
     pepstats - \
     blastp swall \
-    tblastn embl_other \
+    blastp psu/Kineto_aa \
+    tblastn %embl_other \
     hth - \
     smart - \
     clustalx PROTEIN \
     jalview PROTEIN
 
 feature_dna_programs = \
-    tblastx embl_other \
-    blastn embl_other \
-    blastx swall \
+    tblastx %embl_other \
+    blastn %embl_other \
+    blastx %swall \
     fastx %L \
     clustalx DNA
 
