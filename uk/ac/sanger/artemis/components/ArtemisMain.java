@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.7 2005-02-21 11:24:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.8 2005-03-31 12:09:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -39,18 +39,25 @@ import org.biojava.bio.seq.io.SequenceFormat;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.*;
+import java.util.Hashtable;
+import java.util.Enumeration;
+
+import javax.swing.ListSelectionModel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 
 /**
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.7 2005-02-21 11:24:54 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.8 2005-03-31 12:09:38 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
 {
   /** Version String use for banner messages and title bars. */
-  public static final String version = "Release 7";
+  public static final String version = "Release 8";
 
   /** A vector containing all EntryEdit object we have created. */
   private EntryEditVector entry_edit_objects = new EntryEditVector();
@@ -102,6 +109,23 @@ public class ArtemisMain extends Splash
       makeMenuItem(file_menu, menu_name, menu_listener);
     }
 
+    menu_listener = new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        String id = displayDatabases();
+
+        if(id != null)
+          getEntryEditFromDatabase(id);
+      }
+    };
+
+    final boolean sanger_options =
+      Options.getOptions().getPropertyTruthValue("sanger_options");
+
+    if(sanger_options)
+      makeMenuItem(file_menu, "Database Entry ...", menu_listener);
+   
     menu_listener = new ActionListener() 
     {
       public void actionPerformed(ActionEvent event)
@@ -521,6 +545,76 @@ public class ArtemisMain extends Splash
   {
     entry_edit_objects.addElement(entry_edit);
   }
+
+
+  private String displayDatabases()
+  {
+    DatabaseEntrySource entry_source = new DatabaseEntrySource();
+    Hashtable db = entry_source.getDatabaseEntries();
+
+    String db_array[] = new String[db.size()];
+
+    Enumeration enum_db = db.keys();
+    for(int i=0; enum_db.hasMoreElements(); i++)
+      db_array[i] = (String)enum_db.nextElement();
+
+    java.util.Arrays.sort(db_array);
+    JList list_db = new JList(db_array);
+    list_db.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    JScrollPane scroll_list = new JScrollPane(list_db);
+
+    Object[] options = { "OPEN IN ARTEMIS >", "CANCEL"};
+    boolean selecting = true;
+
+    int select = JOptionPane.showOptionDialog(null, scroll_list,
+                                "Database Selection",
+                                 JOptionPane.YES_NO_CANCEL_OPTION,
+                                 JOptionPane.QUESTION_MESSAGE,
+                                 null,
+                                 options,
+                                 options[0]);
+    if(select == 1 || list_db.getSelectedValue() == null)
+      return null;
+
+    return (String)db.get((String)list_db.getSelectedValue());
+  }
+
+  private void getEntryEditFromDatabase(String id)
+  {
+    try
+    {
+      DatabaseEntrySource entry_source = new DatabaseEntrySource();
+      final Entry entry = entry_source.getEntry(id);
+      if(entry == null)
+        return;
+
+      final EntryEdit new_entry_edit = makeEntryEdit(entry);
+      new_entry_edit.setVisible(true);
+
+//    final EntryGroup entry_group =
+//            new SimpleEntryGroup(entry.getBases());
+
+//    entry_group.add(entry);
+
+//    EntryEdit entry_edit = new EntryEdit(entry_group);
+//    entry_edit.setVisible(true);
+    }
+    catch(OutOfRangeException e)
+    {
+      new MessageDialog(ArtemisMain.this, "read failed: one of the features in " +
+                 " the entry has an out of range " +
+                 "location: " + e.getMessage());
+    }
+    catch(NoSequenceException e)
+    {
+      new MessageDialog(ArtemisMain.this, "read failed: entry contains no sequence");
+    }
+    catch(IOException e)
+    {
+      new MessageDialog(ArtemisMain.this, "read failed due to IO error: " + e);
+    }
+  }
+
 
   /**
    *  Read an Entry from the given EntrySource and make a new EntryEdit

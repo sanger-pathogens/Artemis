@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LineGroup.java,v 1.2 2004-07-30 12:55:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LineGroup.java,v 1.3 2005-03-31 12:08:02 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import uk.ac.sanger.artemis.util.LinePushBackReader;
  *  that start with FT.
  *
  *  @author Kim Rutherford
- *  @version $Id: LineGroup.java,v 1.2 2004-07-30 12:55:10 tjc Exp $
+ *  @version $Id: LineGroup.java,v 1.3 2005-03-31 12:08:02 tjc Exp $
  *
  */
 
@@ -132,7 +132,13 @@ abstract class LineGroup
    *  The tag for GAME XML files.
    **/
   final static int GAME_XML = 15;
-                                                                                                
+
+  /**
+   *  The tag for Chado files.
+   **/
+  final static int CHADO_FEATURE = 16;
+
+
   /**
    *  This hash table contains the GENBANK start of line keywords (LOCUS,
    *  DEFINITION, FEATURES etc.)
@@ -193,84 +199,91 @@ abstract class LineGroup
 
     reader.pushBack (line);
 
-    switch (line_type) {
-    case SEQUENCE:
-      return StreamSequenceFactory.makeStreamSequence (reader);
+    switch (line_type) 
+    {
+      case CHADO_FEATURE:
+        return DatabaseStreamFeature.readFromStream (reader);
 
-    case EMBL_FEATURE:
-      return EmblStreamFeature.readFromStream (reader);
+      case SEQUENCE:
+        return StreamSequenceFactory.makeStreamSequence (reader);
 
-    case EMBL_FEATURE_HEADER:
-      return new FeatureHeader (reader);
+      case EMBL_FEATURE:
+        return EmblStreamFeature.readFromStream (reader);
 
-    case GENBANK_FEATURE:
-      return GenbankStreamFeature.readFromStream (reader);
+      case EMBL_FEATURE_HEADER:
+        return new FeatureHeader (reader);
 
-    case GFF_FEATURE:
-      return GFFStreamFeature.readFromStream (reader);
+      case GENBANK_FEATURE:
+        return GenbankStreamFeature.readFromStream (reader);
 
-    case BLAST_FEATURE:
-      return BlastStreamFeature.readFromStream (reader);
+      case GFF_FEATURE:
+        return GFFStreamFeature.readFromStream (reader);
 
-    case MSPCRUNCH_FEATURE:
-      return MSPcrunchStreamFeature.readFromStream (reader);
+      case BLAST_FEATURE:
+        return BlastStreamFeature.readFromStream (reader);
 
-    case END_OF_ENTRY:
-      // in this case we do want to read the line (which will be //) so that
-      // the next call to readNextEntry () starts on the next entry
-      reader.readLine ();
-      return null;
+      case MSPCRUNCH_FEATURE:
+        return MSPcrunchStreamFeature.readFromStream (reader);
 
-    case EMBL_MISC:
-      return new EmblMisc (reader);
+      case END_OF_ENTRY:
+        // in this case we do want to read the line (which will be //) so that
+        // the next call to readNextEntry () starts on the next entry
+        reader.readLine ();
+        return null;
 
-    case GENBANK_MISC:
-      return new GenbankMisc (reader);
+      case EMBL_MISC:
+        return new EmblMisc (reader);
 
-    case GFF_MISC:
-      return new GFFMisc (reader);
+      case GENBANK_MISC:
+        return new GenbankMisc (reader);
 
-    case BINARY_CHARACTERS:
-      throw new ReadFormatException ("cannot recognise format of binary file");
+      case GFF_MISC:
+        return new GFFMisc (reader);
 
-    default:
-      throw new ReadFormatException ("reader got confused - " +
-                                     "unknown line type",
-                                     reader.getLineNumber ());
+      case BINARY_CHARACTERS:
+        throw new ReadFormatException ("cannot recognise format of binary file");
+
+      default:
+        throw new ReadFormatException ("reader got confused - " +
+                                       "unknown line type",
+                                       reader.getLineNumber ());
     }
   }
 
   /**
    *  Return the embl line type of the line contained in the argument String.
    */
-  public static int getLineType (String line)
+  public static int getLineType(String line)
   {
-    if (line.startsWith ("<?xml")) 
+    if(line.startsWith("CHADO="))
+      return CHADO_FEATURE;
+
+    if(line.startsWith ("<?xml")) 
       return GAME_XML;
 
-    if (line.startsWith ("#")) 
+    if(line.startsWith ("#")) 
       return GFF_MISC;
 
-    if (line.length () >= 2 &&
-        (line.charAt (0) == '/' || Character.isLetter (line.charAt (0))) &&
-        (line.charAt (1) == '/' || Character.isLetter (line.charAt (1))) &&
-        (line.length () == 2 ||
-         line.length () == 3 && line.endsWith (" ") ||
-         line.length () == 4 && line.endsWith ("  ") ||
-         (line.length () >= 5 && line.substring (2,5).equals ("   ") || 
-          line.startsWith("HD * confidential") )))                       // EMBL pre-submission line
+    if(line.length () >= 2 &&
+       (line.charAt (0) == '/' || Character.isLetter (line.charAt (0))) &&
+       (line.charAt (1) == '/' || Character.isLetter (line.charAt (1))) &&
+       (line.length () == 2 ||
+        line.length () == 3 && line.endsWith (" ") ||
+        line.length () == 4 && line.endsWith ("  ") ||
+        (line.length () >= 5 && line.substring (2,5).equals ("   ") || 
+         line.startsWith("HD * confidential") )))                       // EMBL pre-submission line
     {
 
-      if(line.startsWith (EMBL_FEATURE_STRING)) 
+      if(line.startsWith(EMBL_FEATURE_STRING)) 
         return EMBL_FEATURE;
 
-      if(line.startsWith (END_OF_ENTRY_STRING)) 
+      if(line.startsWith(END_OF_ENTRY_STRING)) 
         return END_OF_ENTRY;
 
-      if(line.startsWith (EMBL_SEQUENCE_STRING)) 
+      if(line.startsWith(EMBL_SEQUENCE_STRING)) 
         return SEQUENCE;
 
-      if(line.startsWith (EMBL_FEATURE_HEADER_STRING)) 
+      if(line.startsWith(EMBL_FEATURE_HEADER_STRING)) 
         return EMBL_FEATURE_HEADER;
 
       // this covers all the lines in the header
@@ -287,21 +300,21 @@ abstract class LineGroup
           line.trim ().length () > 0))) 
       return GENBANK_FEATURE;
 
-    final int genbank_type = getGenbankType (line);
+    final int genbank_type = getGenbankType(line);
 
     if(genbank_type != UNKNOWN) 
       return GENBANK_MISC;
     
-    if(isMSPcrunchLine (line)) 
+    if(isMSPcrunchLine(line)) 
       return MSPCRUNCH_FEATURE;
 
-    if(isBlastLine (line)) 
+    if(isBlastLine(line)) 
       return BLAST_FEATURE;
 
-    if(isGFFLine (line)) 
+    if(isGFFLine(line)) 
       return GFF_FEATURE;
 
-    if(looksLikeBinary (line)) 
+    if(looksLikeBinary(line)) 
       return BINARY_CHARACTERS;
 
     // default is sequence

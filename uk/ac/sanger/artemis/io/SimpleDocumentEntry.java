@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.5 2005-02-03 15:19:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.6 2005-03-31 12:07:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.Vector;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.5 2005-02-03 15:19:13 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.6 2005-03-31 12:07:52 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -106,7 +106,8 @@ abstract public class SimpleDocumentEntry
     this.entry_information = new SimpleEntryInformation(entry_information);
     this.in_constructor    = true;  // flag used by setDirtyFlag()
 
-    addReadListener(read_listener);
+    if(read_listener != null)
+      addReadListener(read_listener);
 
 //tjc  final Reader in_file = getDocument().getReader();
 
@@ -118,6 +119,13 @@ abstract public class SimpleDocumentEntry
     while((new_line_group =
             LineGroup.readNextLineGroup(pushback_reader)) != null) 
     {
+//    if(document instanceof DatabaseDocument)
+//    {
+//      addLineGroup(new_line_group);
+//      System.out.println("SimpleDocumentEntry DatabaseDocument ******************************"); 
+//      if(new_line_group instanceof StreamSequence)
+//        System.out.println("SimpleDocumentEntry StreamSequence  ******************************");
+//    }
       if(new_line_group instanceof SimpleDocumentFeature) 
       {
         final SimpleDocumentFeature new_feature =
