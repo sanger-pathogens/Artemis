@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntryAutosaveThread.java,v 1.1 2004-06-09 09:49:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntryAutosaveThread.java,v 1.2 2005-02-03 15:18:51 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import java.io.*;
  *  called #entry_name# every 120 seconds.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: DocumentEntryAutosaveThread.java,v 1.1 2004-06-09 09:49:05 tjc Exp $
+ *  @version $Id: DocumentEntryAutosaveThread.java,v 1.2 2005-02-03 15:18:51 tjc Exp $
  **/
 
 public class DocumentEntryAutosaveThread extends Thread {
@@ -88,7 +88,9 @@ public class DocumentEntryAutosaveThread extends Thread {
            last_change_time.after (last_save_time))) {
         final Document save_document = new FileDocument (save_file);
         try {
-          document_entry.save (save_document);
+          final Writer out_file = save_document.getWriter ();
+          document_entry.writeToStream (out_file);
+          out_file.close ();
           have_saved = true;
         } catch (IOException e) {
           System.err.println ("warning: could not auto save to: " +
