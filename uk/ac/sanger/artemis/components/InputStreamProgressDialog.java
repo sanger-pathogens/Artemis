@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/InputStreamProgressDialog.java,v 1.1 2004-06-09 09:46:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/InputStreamProgressDialog.java,v 1.2 2004-12-13 15:04:08 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -31,17 +31,29 @@ import java.awt.event.*;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
 
-import javax.swing.*;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+
 
 /**
  *  A JDialog the show the byte count of an InputStream (via
  *  InputStreamProgressEvent objects)
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: InputStreamProgressDialog.java,v 1.1 2004-06-09 09:46:58 tjc Exp $
+ *  @version $Id: InputStreamProgressDialog.java,v 1.2 2004-12-13 15:04:08 tjc Exp $
  **/
 
-public class InputStreamProgressDialog extends JDialog {
+public class InputStreamProgressDialog extends JDialog
+{
+
+  /**
+   *  An InputStreamProgressListener used to update the label with the
+   *  current number of chars read.
+   **/
+  private InputStreamProgressListener stream_progress_listener = null;
+
   /**
    *  Create a blocking InputStreamProgressDialog JFrame.
    *  @param parent The parent window.
@@ -49,7 +61,8 @@ public class InputStreamProgressDialog extends JDialog {
    *    frame title.
    **/
   public InputStreamProgressDialog (final JFrame parent,
-                                    final String message) {
+                                    final String message)
+  {
     this (parent, message, message, true);
   }
 
@@ -61,66 +74,65 @@ public class InputStreamProgressDialog extends JDialog {
    *  @param modal If true, dialog blocks input to the parent window when
    *    shown.
    **/
-  public InputStreamProgressDialog (final JFrame parent_frame,
-                                    final String title,
-                                    final String message,
-                                    final boolean modal) {
-    super (parent_frame, title, modal);
-    getContentPane ().add (new JLabel (message), "North");
+  public InputStreamProgressDialog(final JFrame parent_frame,
+                                   final String title,
+                                   final String message,
+                                   final boolean modal) 
+  {
+    super(parent_frame, title, modal);
+    getContentPane().add(new JLabel(message), "North");
 
-    final JLabel bytes_label = new JLabel ("                               ");
-    getContentPane ().add (bytes_label, "Center");
+    final JLabel bytes_label = new JLabel("                               ");
+    getContentPane().add(bytes_label, "Center");
 
-    final JPanel panel = new JPanel ();
+    final JButton ok_button = new JButton ("OK");
 
-    panel.add (ok_button);
-    ok_button.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent e) {
-        InputStreamProgressDialog.this.dispose ();
+    ok_button.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e) 
+      {
+        InputStreamProgressDialog.this.dispose();
       }
     });
 
-    addWindowListener (new WindowAdapter () {
-      public void windowClosing (WindowEvent event) {
-        InputStreamProgressDialog.this.dispose ();
+    addWindowListener(new WindowAdapter() 
+    {
+      public void windowClosing(WindowEvent event) 
+      {
+        InputStreamProgressDialog.this.dispose();
       }
     });
 
-    stream_progress_listener = new InputStreamProgressListener () {
-      public void progressMade (final InputStreamProgressEvent event) {
-
-        final int char_count = event.getCharCount ();
-        if (char_count == -1) {
+    stream_progress_listener = new InputStreamProgressListener() 
+    {
+      public void progressMade(final InputStreamProgressEvent event)
+      {
+        final int char_count = event.getCharCount();
+        if(char_count == -1)
           bytes_label.setText ("");
-        } else {
-          setVisible (true);
-          bytes_label.setText ("Characters read so far: " + char_count);
+        else 
+        {
+          bytes_label.setText("Characters read so far: " + char_count);
+          if(!isVisible())
+            setVisible(true);
         }
       }
     };
-
-    getContentPane ().add (panel, "South");
-    pack ();
+    getContentPane().add(ok_button, "South");
+    pack();
 
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    setLocation (new Point ((screen.width - getSize ().width) / 2,
-                            (screen.height - getSize ().height) / 2));
+    setLocation(new Point((screen.width  - getSize().width) / 2,
+                          (screen.height - getSize().height) / 2));
 
-    setVisible (false);
+    setVisible(false);
   }
 
   /**
    *  Return an InputStreamProgressListener to pass to FileProgressDocument.
    **/
-  public InputStreamProgressListener getInputStreamProgressListener () {
+  public InputStreamProgressListener getInputStreamProgressListener()
+  {
     return stream_progress_listener;
   }
-
-  /**
-   *  An InputStreamProgressListener used to update the label with the
-   *  current number of chars read.
-   **/
-  private InputStreamProgressListener stream_progress_listener = null;
-
-  final private JButton ok_button = new JButton ("OK");
 }
