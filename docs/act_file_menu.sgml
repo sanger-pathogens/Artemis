@@ -1,0 +1,88 @@
+<SECT1 ID="FILEMENU">
+  <TITLE>The File Menu</TITLE>
+  <PARA>
+  </PARA>
+
+  <SECT2 ID="FILEMENU-READ-AN-ENTRY">
+    <TITLE>Read An Entry ...</TITLE>
+    <PARA>
+Read an entry for this sequence, but keep it separate from the others.  See
+<XREF LINKEND="CONCEPTS-ENTRY"> to see what we mean when we say "entry".  The
+new entry will be marked as active (see <XREF LINKEND="CONCEPTS-ACTIVEENTRY">)
+and will be the new default entry (see <XREF
+LINKEND="CONCEPTS-DEFAULTENTRY">).
+    </PARA>
+    <PARA>
+This function only reads the feature section of the input file - the sequence
+(if any) is ignored.
+    </PARA>
+    <PARA>
+&prog; can read these feature files formats:
+    </PARA>
+    <ITEMIZEDLIST>
+      <LISTITEM>
+        <PARA>
+          <ULINK URL="http://www.ebi.ac.uk/embl/Documentation/FT_definitions/feature_table.html">EMBL or GenBank feature tables</ULINK>
+        </PARA>
+      </LISTITEM>
+      <LISTITEM>
+        <PARA>
+          <ULINK URL="http://www.sanger.ac.uk/Software/formats/GFF/">GFF files</ULINK>
+        </PARA>
+      </LISTITEM>
+      <LISTITEM>
+        <PARA>
+The output of <ULINK
+URL="http://www.cgr.ki.se/cgr/groups/sonnhammer/MSPcrunch.html"><COMMAND>MSPcrunch</COMMAND></ULINK>.
+<COMMAND>MSPcrunch</COMMAND> must be run with the <COMMAND>-x</COMMAND> or
+<COMMAND>-d</COMMAND> flags.
+        </PARA>
+      </LISTITEM>
+      <LISTITEM>
+        <PARA>
+The output of <ULINK URL="http://www.ncbi.nlm.nih.gov/BLAST/">blastall</ULINK>
+version 2.2.2 or better.  <COMMAND>blastall</COMMAND> must be run with the
+<COMMAND>-m 8</COMMAND> flag which generates one line of information per HSP.
+Note that currently &prog; displays each Blast HSP is a separate feature
+rather than displaying each BLAST hit as a feature.
+        </PARA>
+      </LISTITEM>
+    </ITEMIZEDLIST>
+  </SECT2>
+
+  <SECT2 ID="FILEMENU-SAVE-ENTRY">
+    <TITLE>Save Entry</TITLE>
+    <PARA>
+Save the entry to the file it came from, unless the entry has been
+given a new name, in which case the entry is saved to a file with that name.
+If the entry has no name, &prog; will prompt the user for a new name.
+    </PARA>
+  </SECT2>
+
+  <SECT2 ID="FILEMENU-SAVE-ALL">
+    <TITLE>Save All</TITLE>
+    <PARA>
+Save all the entries that have been loaded on top of this sequence.
+    </PARA>
+  </SECT2>
+
+  <SECT2 ID="FILEMENU-EDIT-IN-ARTEMIS">
+    <TITLE>Edit In Artemis ...</TITLE>
+    <PARA>
+Open an &art; edit window for this sequence and features.  All changes
+made in the &art; window will be immediately visible in the &prog; window and
+vice versa.
+    </PARA>
+    <PARA>
+See <ULINK URL="http://www.sanger.ac.uk/Software/Artemis/stable/manual/">the
+&art; manual</ULINK> for more about &art;.
+    </PARA>
+  </SECT2>
+
+  <SECT2 ID="FILEMENU-CLOSE">
+    <TITLE>Close</TITLE>
+    <PARA>
+Close this window.
+    </PARA>
+  </SECT2>
+</SECT1>

@@ -1,0 +1,133 @@
+<CHAPTER ID="START">
+  <TITLE>Starting &prog;</TITLE>
+
+  <SECT1 ID="RUNNINGUNIX"> 
+    <TITLE>Running &prog; on UNIX and GNU/Linux Systems</TITLE>
+    <PARA>
+On Unix and GNU/Linux the easiest way to run the program is to run the script
+called <COMMAND>art</COMMAND> in the &prog; installation directory (see <XREF
+LINKEND="INSTALLATION">) like this:
+    </PARA>
+
+    <PARA>
+      <COMMAND>artemis/art</COMMAND>
+    </PARA>
+
+    <PARA>
+If all goes well you will be presented with a small window with two
+menus.  See <XREF LINKEND="LAUNCH-WINDOW"> to find out what to do next.
+    </PARA>
+
+    <PARA>
+Alternatively you start &prog; with the name of a sequence file or embl file
+eg:
+    </PARA>
+
+    <PARA>
+      <COMMAND>artemis/art artemis/etc/c1215.embl</COMMAND>
+    </PARA>
+
+    <PARA>
+Or if you have a sequence file and extra feature table files you can read
+them all with a command like this (the example file c1215.blastn.tab is the
+result of a BLASTN search against EMBL which has been converted to feature
+table format):
+    </PARA>
+
+    <PARA>
+      <COMMAND>
+artemis/art artemis/etc/c1215.embl + artemis/etc/c1215.blastn.tab
+      </COMMAND> 
+    </PARA>
+    <PARA>
+Note that any number of feature files can be read by listing them after the
+plus sign.  The "+" must be surrounded by spaces.
+    </PARA>
+
+    <PARA>
+See <XREF LINKEND="UNIXARGS"> for a list of the other possible arguments.
+    </PARA>
+
+    <PARA>
+Here is an alternative way to run &prog; if the <COMMAND>art</COMMAND> script
+doesn't work for you:
+    </PARA>
+
+    <PARA>
+      <COMMAND>
+cd ~/artemis
+      </COMMAND>
+    </PARA>
+
+    <PARA>
+      <COMMAND>
+java -Dartemis.environment=UNIX Diana
+      </COMMAND>
+    </PARA>
+  </SECT1>
+
+&unixargs;
+
+  <SECT1 ID="RUNNINGMAC">
+    <TITLE>Running &prog; on Macintosh Systems</TITLE>
+    <PARA>
+On Macintosh machines &prog; can be started by double clicking on the Artemis
+icon.
+    </PARA>
+  </SECT1>
+
+  <SECT1 ID="RUNNINGPC">
+    <TITLE>Running &prog; on Windows Systems</TITLE>
+    <PARA>
+On systems with Java 1.2 (AKA Java 2) or Java 1.3 installed &prog; can be
+started by double clicking on the artemis.jar icon.
+    </PARA>
+  </SECT1>
+
+  <SECT1 ID="LAUNCH-WINDOW">
+    <TITLE>The &prog; Launch Window</TITLE>
+    <PARA>
+This is the first window that opens when you start &prog;.  The menus at the
+top of this window allow you to read a new sequence or embl entry.
+    </PARA>
+    <SECT2 ID="LAUNCH-WINDOW-FILE-MENU">
+      <TITLE>The File Menu</TITLE>
+      <SECT3 ID="LAUNCH-WINDOW-FILE-MENU-OPEN">
+        <TITLE>Open ...</TITLE>
+        <PARA>
+If you select this menu item a file requester will be displayed which allows
+you to open a flat file containing an entry.  If the file you select is
+successfully read a new window will open, which shows the sequence and
+features for the entry.  See <XREF LINKEND="MAINWINDOW-CHAPTER"> to find out
+how to use the main window.
+        </PARA>
+      </SECT3>
+
+      <SECT3 ID="LAUNCH-WINDOW-FILE-MENU-READ-FROM-EBI">
+        <TITLE>Read from EBI ...</TITLE>
+        <PARA>
+The functions will ask the user for an accession number and then will attempt
+to read it directly from the <ULINK URL="http://www.ebi.ac.uk"
+TYPE="external">EBI</ULINK> using <ULINK
+URL="http://corba.ebi.ac.uk/index.html" TYPE="external">CORBA</ULINK>.  If all
+goes well you will be presented with an view/edit window (see <XREF
+LINKEND="MAINWINDOW-CHAPTER">).
+        </PARA>
+        <PARA>
+Please note that this feature is still experimental and is not be available on
+all platforms.  The menu is currently disabled on Macintosh and Windows
+machines.
+        </PARA>
+      </SECT3>
+
+      <SECT3 ID="LAUNCH-WINDOW-FILE-MENU-QUIT">
+        <TITLE>Quit</TITLE>
+        <PARA>
+This menu item will close all windows and then exit the program
+        </PARA>
+      </SECT3>
+    </SECT2>
+
+&options-menu;
+  </SECT1>
+</CHAPTER>

@@ -1,0 +1,178 @@
+<CHAPTER ID="INTRODUCTION">
+  <TITLE>Introduction to &prog;</TITLE>
+  
+  <SECT1 ID="WHATIS">
+    <TITLE>What is &prog;?</TITLE>
+    <PARA>
+  &prog; is a DNA sequence viewer and annotation tool that allows visualisation
+of sequence features and the results of analyses within the context of the
+sequence, and its six-frame translation.  &prog; is written in Java, reads
+EMBL or GENBANK format sequences and feature tables, and can work on sequences
+of any size.
+    </PARA>
+
+    <PARA>
+On Unix and GNU/Linux systems, given an EMBL accession number &prog; also can
+read an entry directly from the
+<ULINK URL="http://www.ebi.ac.uk" TYPE="external">EBI</ULINK> using <ULINK
+URL="http://corba.ebi.ac.uk/index.html" TYPE="external">CORBA</ULINK>.  This
+feature is still experimental, but copes well with straightforward entries
+(see <XREF LINKEND="LAUNCH-WINDOW-FILE-MENU-READ-FROM-EBI">).
+    </PARA>
+
+    <PARA>
+For more information on go to <ULINK 
+URL="http://www.sanger.ac.uk/Software/Artemis/" TYPE="external">the &prog;
+web pages</ULINK>.
+    </PARA>
+  </SECT1>
+
+&requirements;
+
+  <SECT1 ID="INSTALLATION">
+    <TITLE>Getting and Installing &prog;</TITLE>
+    <PARA>
+The most up to date version of &prog; is always available from the <ULINK
+URL="http://www.sanger.ac.uk/Software/Artemis/">&art; web pages</ULINK>.
+    </PARA>
+
+&gettingjava;
+
+    <SECT2 ID="UNIXINSTALLATION">
+      <TITLE>Installation Instructions for UNIX and GNU/Linux</TITLE>
+      <PARA>
+        <ITEMIZEDLIST>
+          <LISTITEM>
+            <PARA>
+Change directory to the directory you wish to install &prog; in.  We will use
+<LITERAL>~/</LITERAL> in this example and in the next chapter.
+            </PARA>
+          </LISTITEM>
+          <LISTITEM>
+            <PARA>
+uncompress and untar the <LITERAL>artemis_compiled.tar.gz</LITERAL> file.  On
+UNIX the command is:
+            </PARA>
+            <PARA>
+              <COMMAND>
+gzip -d &lt; artemis_compiled.tar.gz | tar xf -
+              </COMMAND>
+            </PARA>
+          </LISTITEM>
+        </ITEMIZEDLIST>
+This will create a directory called <LITERAL>~/artemis</LITERAL> which will
+contain all the files necessity for running &prog;.
+      </PARA>
+  
+      <PARA>
+For instructions on how to run &prog; on UNIX and GNU/Linux once the archive
+is unpacked see <XREF LINKEND="RUNNINGUNIX">.
+      </PARA>
+    </SECT2>
+
+    <SECT2 ID="MACINSTALLATION">
+      <TITLE>Installation Instructions for Macintosh Systems</TITLE>
+      <PARA>
+Macintosh users should download and run the <LITERAL>Artemis.bin</LITERAL>
+file from the <ULINK URL="http://www.sanger.ac.uk/Software/Artemis">&art; web
+pages</ULINK>, which will create a local copy of the the &art; application
+(along with an icon).
+      </PARA>
+
+      <SECT3 ID="MACINSTALLATION-OSX">
+        <TITLE></TITLE>
+        <PARA>
+Notes from Carton Chen &lt;cwchen@ym.edu.tw&gt;
+          <SYNOPSIS>
+Running Artemis under Mac OSX
+(using Artemis v. 5 beta as example)
+
+Mac OS X is built on Unix, and therefore there is no reason why Unix version
+of Artemis, written in Java, cannot be made to run under this operation
+system. We have discovered a rather simple procedure to set it up so that
+Artemis will come alive upon a double click. Below is a step-by-step guide
+using the newest Artemis version (v. 5 beta) as example. Procedures for
+other versions should be pretty much the same.
+
+Down load 'artemis_compiled_v5.tar.gz' from
+ftp://ftp.sanger.ac.uk/pub/pathogens/software/artemis/v5/
+
+Place the downloaded original file into Applications subdirectory
+    [Note: Do not use Stuffit Expander to decompress the file. If your ftp
+program automatically uses Stuffit Expander to decompress downloaded files,
+turn if off, or simply make sure that you move the original file (not the
+decompressed file) here. This is because somehow Stuffit Expander limited
+file names to 31 characters, and therefore files with longer names cannot be
+found by the program during execution].
+
+Go to Terminal and go to the Applications subdirectory by typing:
+    cd /Applications/
+
+Decompress the file by typing:
+    tar zxvf [file name]
+
+A new subdirectory 'artemis' will be created. Delete the downloaded file,
+and go to the artemis subdirectory by typing:
+    cd artemis
+
+Now you can execute artemis right there by typing
+    ./art
+    (Don't overlook the period!)
+
+For ultimate convenience, you want to be able to start Artemis right from
+the Finder without getting into Terminal. To do that, quit Terminal and go
+to the artemis subdirectory (under Applications) in the Finder, and change
+the file name 'art' to 'art.command'.
+
+That's it. Now whenever you double click 'art.command'. It will start
+Terminal automatically and present you Artemis right in your face.
+
+Now the question is which should I play with using this fantastic program.
+
+The above procedure has been worked out by my student Chi Chen who may be
+contacted at g39008006@ym.edu.tw.
+
+Have fun.
+Carton W. Chen
+National Yang-Ming Universtiy
+Taipei, Taiwan
+cwchen@ym,edu.tw
+          </SYNOPSIS>
+        </PARA>
+      </SECT3>
+    </SECT2>
+
+    <SECT2 ID="DOSINSTALLATION">
+      <TITLE>Installation Instructions for Windows</TITLE>
+      <PARA>
+On Windows systems with Java 1.2, installing &prog; is as simple as copying the
+<ULINK URL="ftp://ftp.sanger.ac.uk/pub/pathogens/software/artemis/artemis.jar"
+TYPE="external">artemis.jar file</ULINK> to an appropriate place (such as the
+desktop or the Programs folder).
+      </PARA>
+
+      <PARA>
+For instructions on how to run &prog; on Windows once it is unpacked see <XREF
+LINKEND="RUNNINGPC"> .
+      </PARA>
+    </SECT2>
+  </SECT1>
+
+&concepts;
+
+  <SECT1 ID="CONTRIBUTIONS">
+    <TITLE>Contributions and Suggestions</TITLE> 
+    <PARA> 
+We welcome contributions to &prog;, bug reports from users and suggestions for
+new features.  An email discussion list has been set up for this purpose.  To
+join, send a message to 'majordomo@sanger.ac.uk' with 'subscribe
+artemis-users' in the body (not the subject).  Announcements will also be sent
+to this list.
+    </PARA>
+  </SECT1>
+
+&acknowledgments;
+
+&copyright;
+
+</CHAPTER>

@@ -1,0 +1,110 @@
+<CHAPTER ID="INTRODUCTION">
+  <TITLE>Introduction to &prog;</TITLE>
+  
+  <SECT1 ID="WHATIS">
+    <TITLE>What is &prog;?</TITLE>
+    <PARA>
+&prog; is a DNA sequence comparison viewer based on <ULINK
+URL="http://www.sanger.ac.uk/Software/Artemis/"
+type="external">Artemis</ULINK>.  The name &prog; stands for Artemis
+Comparison Tool.  &prog; is written in Java, reads EMBL or GENBANK format
+sequences and feature tables, and can work on sequences of any size.
+    </PARA>
+
+    <PARA>
+&prog; understands several different comparison file formats.  See <XREF
+LINKEND="COMPARISON-RUN"> for details.  Note that &prog; is a comparison
+viewer only.  The comparison information itself must be generated externally.
+See <XREF LINKEND="COMPARISON-RUN"> for more details.
+    </PARA>
+
+    <PARA>
+For other information see the <ULINK
+URL="http://www.sanger.ac.uk/Software/ACT/" TYPE="external">the &prog; web
+pages</ULINK>, <ULINK URL="http://www.sanger.ac.uk/Software/ACT/Examples/"
+TYPE="external">the &prog; example pages</ULINK> or the <ULINK
+URL="http://www.sanger.ac.uk/Software/Artemis/" TYPE="external">the &art; web
+pages</ULINK>.
+    </PARA>
+  </SECT1>
+
+&requirements;
+
+  <SECT1 ID="INSTALLATION">
+    <TITLE>Getting and Installing &prog;</TITLE>
+    <PARA>
+The most up to date version of &prog; is always available from the <ULINK
+URL="http://www.sanger.ac.uk/Software/ACT/">&prog; web pages</ULINK>.
+    </PARA>
+
+&gettingjava;
+
+    <SECT2 ID="UNIXINSTALLATION">
+      <TITLE>Installation Instructions for UNIX and GNU/Linux</TITLE>
+      <PARA>
+Change directory to the directory you wish to install &prog; in.  We will use
+<LITERAL>~/</LITERAL> in this example and in the next chapter.  Uncompress and
+untar the <LITERAL>act_compiled.tar.gz</LITERAL> file.  The command
+is:
+      </PARA>
+      <PARA>
+         <COMMAND>
+gzip -d &lt; act_compiled.tar.gz | tar xf -
+         </COMMAND>
+      </PARA>
+      <PARA>
+This will create a directory called <LITERAL>~/act</LITERAL> which will
+contain all the files necessity for running &prog;.
+      </PARA>
+  
+      <PARA>
+For instructions on how to run &prog; on UNIX and GNU/Linux once the archive
+is unpacked see <XREF LINKEND="RUNNINGUNIX">.
+      </PARA>
+    </SECT2>
+
+    <SECT2 ID="MACINSTALLATION">
+      <TITLE>Installation Instructions for Macintosh Systems</TITLE>
+      <PARA>
+Macintosh users should download and run the <LITERAL>ACT.bin</LITERAL> file
+from the <ULINK URL="http://www.sanger.ac.uk/Software/ACT">&prog; web
+pages</ULINK>, which will create a local copy of the the &art; application
+(along with an icon).
+      </PARA>
+    </SECT2>
+
+    <SECT2 ID="DOSINSTALLATION">
+      <TITLE>Installation Instructions for Windows</TITLE>
+      <PARA>
+On Windows systems with Java 1.2 (see <XREF LINKEND="INSTALLINGJAVA">),
+installing &prog; is as simple as copying the
+<ULINK URL="ftp://ftp.sanger.ac.uk/pub/pathogens/software/act/act.jar"
+TYPE="external">act.jar file</ULINK> to an appropriate place (such as the
+desktop or the Programs folder).
+      </PARA>
+
+      <PARA>
+For instructions on how to run &prog; on Windows once it is unpacked see <XREF
+LINKEND="RUNNINGPC"> .
+      </PARA>
+    </SECT2>
+  </SECT1>
+
+&concepts;
+
+  <SECT1 ID="CONTRIBUTIONS">
+    <TITLE>Contributions and Suggestions</TITLE> 
+    <PARA> 
+We welcome contributions to &prog; and to &art;, bug reports from users and
+suggestions for new features.  An email discussion list has been set up for
+this purpose.  To join, send a message to 'majordomo@sanger.ac.uk' with
+'subscribe artemis-users' in the body (not the subject).  Announcements will
+also be sent to this list. 
+    </PARA>
+  </SECT1>
+
+&acknowledgments;
+
+&copyright;
+
+</CHAPTER>

@@ -1,0 +1,161 @@
+<SECT1 ID="FILEMENU">
+  <TITLE>The File Menu</TITLE>
+  <PARA>
+Most of the items in this menu are used to read and write entries and parts of
+entries, the exceptions are Clone and Close.
+  </PARA>
+
+  <SECT2 ID="FILEMENU-READ-AN-ENTRY">
+    <TITLE>Read An Entry ...</TITLE>
+    <PARA>
+Read an entry (see <XREF LINKEND="CONCEPTS-ENTRY">), but keep it separate from
+the others.  A new button will be created on the entry button line for the new
+entry.  The new entry will be marked as active (see <XREF
+LINKEND="CONCEPTS-ACTIVEENTRY">) and will be the new default entry (see <XREF
+LINKEND="CONCEPTS-DEFAULTENTRY">).
+    </PARA>
+    <PARA>
+This function only reads the feature section of the input file - the sequence
+(if any) is ignored.
+    </PARA>
+    <PARA>
+&prog; can read these feature file formats:
+    </PARA>
+    <ITEMIZEDLIST>
+      <LISTITEM>
+        <PARA>
+          <ULINK URL="http://www.ebi.ac.uk/embl/Documentation/FT_definitions/feature_table.html">EMBL or GenBank feature tables</ULINK>
+        </PARA>
+      </LISTITEM>
+      <LISTITEM>
+        <PARA>
+          <ULINK URL="http://www.sanger.ac.uk/Software/formats/GFF/">GFF files</ULINK>
+        </PARA>
+      </LISTITEM>
+      <LISTITEM>
+        <PARA>
+The output of <ULINK
+URL="http://www.cgr.ki.se/cgr/groups/sonnhammer/MSPcrunch.html"><COMMAND>MSPcrunch</COMMAND></ULINK>.
+<COMMAND>MSPcrunch</COMMAND> must be run with the <COMMAND>-x</COMMAND> or
+<COMMAND>-d</COMMAND> flags.
+        </PARA>
+      </LISTITEM>
+      <LISTITEM>
+        <PARA>
+The output of <ULINK URL="http://www.ncbi.nlm.nih.gov/blast/">blastall version
+2.2.2</ULINK> or better.  <COMMAND>blastall</COMMAND> must be run with the
+<COMMAND>-m 8</COMMAND> flag which generates one line of information per HSP.
+Note that currently &prog; displays each Blast HSP is a separate feature
+rather than displaying each BLAST hit as a feature.
+        </PARA>
+      </LISTITEM>
+    </ITEMIZEDLIST>
+  </SECT2>
+
+  <SECT2 ID="FILEMENU-READ-ENTRY-INTO">
+    <TITLE>Read Entry Into</TITLE>
+    <PARA>
+Read the features from an entry (see <XREF LINKEND="CONCEPTS-ENTRY">)
+chosen by the user and then insert them into the entry selected by
+the user.
+    </PARA>
+  </SECT2>
+
+  <SECT2 ID="FILEMENU-SAVE-DEFAULT-ENTRY">
+    <TITLE>Save Default Entry</TITLE>
+    <PARA>
+Save the default entry to the file it came from, unless the entry has been
+given a new name, in which case the entry is saved to a file with that name.
+If the entry has no name, &prog; will prompt the user for a new name.
+[shortcut key: S]
+    </PARA>
+  </SECT2>
+
+  <SECT2 ID="FILEMENU-SAVE-AN-ENTRY">
+    <TITLE>Save An Entry</TITLE>
+    <PARA>
+This item will do the same as "Save Default Entry" for the chosen entry.
+    </PARA>
+  </SECT2>
+
+  <SECT2 ID="FILEMENU-SAVE-ENTRY-AS-MENU">
+    <TITLE>Save An Entry As</TITLE>
+    <PARA>
+This sub-menu contains the less frequently used save functions.
+    </PARA>
+
+    <SECT3 ID="FILEMENU-SAVE-ENTRY-AS">
+      <TITLE>New File</TITLE>
+      <PARA>
+Ask for the name of file to save the given entry to.  The name of entry (as
+displayed in the entry button line) will change to the new name.
+      </PARA>
+    </SECT3>
+
+    <SECT3 ID="FILEMENU-SAVE-ENTRY-AS-EMBL">
+      <TITLE>EMBL Format</TITLE>
+      <PARA>
+This does the same as "Save An Entry As -> New File ...", but will write the
+features and sequence of the entry in EMBL format.  Note that currently the
+header of a GENBANK entry can't be converted to the equivalent EMBL header (it
+will be discarded instead).
+      </PARA>
+    </SECT3>
+
+    <SECT3 ID="FILEMENU-SAVE-ENTRY-AS-GENBANK">
+      <TITLE>GENBANK Format</TITLE>
+      <PARA>
+This does the same as "Save An Entry As -> New File ...", but will write the
+features and sequence of the entry in GENBANK format.  Note that currently the
+header of a EMBL entry can't be converted to the equivalent GENBANK header (it
+will be discarded instead).
+      </PARA>
+    </SECT3>
+
+    <SECT3 ID="FILEMENU-SAVE-ENTRY-AS-GFF">
+      <TITLE>GFF Format</TITLE>
+      <PARA>
+Writes the features in GFF format and sequence of the entry in FASTA format to
+a file selected by the user.  Note that if you use this function on an EMBL or
+GENBANK entry the header will discarded.
+      </PARA>
+    </SECT3>
+
+    <SECT3 ID="FILEMENU-SAVE-EMBL-SUBMISSION">
+      <TITLE>EMBL Submission Format</TITLE>
+      <PARA>
+This does the same as "Save An Entry As -> EMBL Format ...", but
+will write an entry/tab file that contains only valid EMBL qualifiers (see
+<XREF LINKEND="OPTIONS-EXTRAQUALIFIERS">) and valid EMBL keys (see <XREF
+LINKEND="OPTIONS-EXTRAKEYS">).  It will also check that the start and stop
+codons of each CDS are sensible, that no two features have the same key and
+location and that all required EMBL qualifiers are present.
+      </PARA>
+    </SECT3>
+  </SECT2>
+
+  <SECT2 ID="FILEMENU-SAVE-ALL-ENTRIES">
+    <TITLE>Save All Entries</TITLE>
+    <PARA>
+This acts like "Save Default Entry", but save all the entries.
+    </PARA>
+  </SECT2>
+
+  <SECT2 ID="FILEMENU-CLONE-WINDOW">
+    <TITLE>Clone This Window</TITLE>
+    <PARA>
+Make a new main window with the same contents as the current window.  All
+changes in the old window will be reflected in the new window, and vice
+versa.  The exception to this rule is the selection (see <XREF
+LINKEND="CONCEPTS-SELECTION">), which is not shared between the
+old and new window.
+    </PARA>
+  </SECT2>
+
+  <SECT2 ID="FILEMENU-CLOSE">
+    <TITLE>Close</TITLE>
+    <PARA>
+Close this window.
+    </PARA>
+  </SECT2>
+</SECT1>

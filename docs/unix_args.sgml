@@ -1,0 +1,40 @@
+  <SECT1 ID="UNIXARGS">
+    <TITLE>UNIX Command Line Arguments for &prog;</TITLE>
+    <PARA>
+As well as the listing file names on the command line, the following switches
+are available to UNIX users:
+    </PARA>
+
+    <SECT2 ID="UNIXARGS-QUIET">
+      <TITLE><LITERAL>-quiet</LITERAL></TITLE>
+      <PARA>
+This option tells &prog; to suppress normal informational messages while
+running.
+      </PARA>
+    </SECT2>
+
+    <SECT2 ID="UNIXARGS-OPTIONS">
+      <TITLE><LITERAL>-options</LITERAL></TITLE>
+      <PARA>
+This option instructs &prog; to read an extra file of options after reading
+the standard options.  (See <XREF LINKEND="OPTIONS-INTRO"> for more about the
+&prog; options file.)
+      </PARA>
+      <PARA>
+For example <LITERAL>-options ./new_options</LITERAL> will instruct &prog; to
+read <LITERAL>new_options</LITERAL> in the current directory as an options
+file.
+      </PARA>
+    </SECT2>
+
+    <SECT2 ID="UNIXARGS-FAST">
+      <TITLE><LITERAL>-fast</LITERAL></TITLE>
+      <PARA>
+On Digital Unix (AKA Tru64) the <LITERAL>-fast</LITERAL> flag selects the
+"fast" Java virtual machine, which usually gives &prog; a big speed boast.
+This isn't on by default because the fast VM uses a lot more memory and it
+isn't as reliable.
+      </PARA>
+    </SECT2>
+  </SECT1>
+  
