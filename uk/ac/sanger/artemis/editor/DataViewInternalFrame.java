@@ -136,15 +136,15 @@ public class DataViewInternalFrame extends JInternalFrame
           if(hide.getActionCommand().equals("HIDE"))
           {
             bacross.remove(dbviewScroll);
-            bacross.add(xBox);
+            bacross.add(yBox);
             hide.setText("+");
             scrollEvidence.setViewportView(evidenceBox);
             hide.setActionCommand("SHOW");
           }
           else
           {
-            bacross.remove(xBox);
-            dbviewScroll.setColumnHeaderView(xBox);
+            bacross.remove(yBox);
+            dbviewScroll.setColumnHeaderView(yBox);
             bacross.add(dbviewScroll);
             hide.setText("X");
             scrollEvidence.setViewportView(evidenceBox);

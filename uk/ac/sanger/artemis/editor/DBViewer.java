@@ -47,8 +47,6 @@ public class DBViewer extends ScrollPanel
   private boolean colourByScore = false;
   /** popup menu */
   private JPopupMenu popup;
-  /** number height */
-  private int hgtNumber;
   /** scroll bar this panel sits in */ 
   private JScrollPane jsp;
   /** initial scale */
@@ -218,7 +216,7 @@ public class DBViewer extends ScrollPanel
         Font font = new Font("monospaced",Font.PLAIN,10);
         g.setFont(font);
         FontMetrics metrics = g.getFontMetrics();
-        hgtNumber = metrics.getAscent();
+        int hgtNumber = metrics.getAscent();
 
         Graphics2D g2   = (Graphics2D)g;
         int resultwidth = (int)getPreferredSize().getWidth()-(2*bound);
@@ -275,7 +273,6 @@ public class DBViewer extends ScrollPanel
     Font font = new Font("monospaced",Font.PLAIN,10);
     g.setFont(font);
     FontMetrics metrics = g.getFontMetrics();
-    hgtNumber = metrics.getAscent();
 
     Graphics2D g2   = (Graphics2D)g;
     int resultwidth = (int)getPreferredSize().getWidth()-(2*bound);
