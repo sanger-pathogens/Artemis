@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.1 2004-06-09 09:47:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.2 2004-06-09 13:02:33 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.*;
  *  A JMenu of external commands/functions.
  *
  *  @author Kim Rutherford
- *  @version $Id: RunMenu.java,v 1.1 2004-06-09 09:47:20 tjc Exp $
+ *  @version $Id: RunMenu.java,v 1.2 2004-06-09 13:02:33 tjc Exp $
  **/
 
 public class RunMenu extends SelectionMenu 
@@ -76,28 +76,28 @@ public class RunMenu extends SelectionMenu
       addSeparator();
       final JMenuItem jcon_status = new JMenuItem("Show Job Status ...");
 
-      jcon_status.addActionListener(new ActionListener() 
-      {
-        public void actionPerformed(ActionEvent event) 
-        {
-          try 
-          {
-            final int ids[] = getIds();
-            TaskViewerFrame tvf = new TaskViewerFrame(ids);
+//    jcon_status.addActionListener(new ActionListener() 
+//    {
+//      public void actionPerformed(ActionEvent event) 
+//      {
+//        try 
+//        {
+//          final int ids[] = getIds();
+//          TaskViewerFrame tvf = new TaskViewerFrame(ids);
 
-            tvf.setSize(400, 600);
-            tvf.setVisible(true);
-          }
-          catch(Exception e) 
-          {
-            e.printStackTrace();
-            new MessageDialog(frame, "unable to view job status: " + e);
-          }
-        }
-      });
+//          tvf.setSize(400, 600);
+//          tvf.setVisible(true);
+//        }
+//        catch(Exception e) 
+//        {
+//          e.printStackTrace();
+//          new MessageDialog(frame, "unable to view job status: " + e);
+//        }
+//      }
+//    });
 
-      add(jcon_status);
-    }
+//    add(jcon_status);
+//  }
   }
 
   /**
