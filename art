@@ -1,0 +1,124 @@
+#!/bin/sh -
+
+# This script will start Artemis on a UNIX system.  This script should
+# be left in the same directory as the rest of the Artemis
+# distribution, so that the java class files can be found.  If
+# necessary a symbolic link can be made to this script from
+# /usr/local/bin/ or elsewhere.
+
+# $Header: //tmp/pathsoft/artemis/art,v 1.1 2004-06-09 10:09:25 tjc Exp $
+
+# resolve links - $0 may be a link
+PRG=$0
+progname=`basename $0`
+
+while [ -h "$PRG" ] ; do
+  ls=`ls -ld "$PRG"`
+  link=`expr "$ls" : '.*-> \(.*\)$'`
+  if expr "$link" : '.*/.*' > /dev/null; then
+    PRG="$link"
+  else
+    PRG="`dirname $PRG`/$link"
+  fi
+done
+
+EXTLIBDIR=/nfs/pathsoft/external/javalib
+ARTEMIS_HOME=`dirname "$PRG"`/.
+LIBDIR=/nfs/pathsoft/prod/javalibs
+#TMP_CLASSPATH=/nfs/team81/kmr/psu/jobcontrol/ant-build/classes/main:$LIBDIR/psu_all.jar:$EXTLIBDIR/oracle.jar:$EXTLIBDIR/jdbc-2.0-stdext.jar:$EXTLIBDIR/activation-1.0.1.jar:$EXTLIBDIR/mail-1.2.jar:$EXTLIBDIR/velocity-dep-1.2.jar:$EXTLIBDIR/gnu-getopt-1.0.9.jar:$PSU_PROD_CLASSPATH
+
+TMP_CLASSPATH=
+
+if [ "$CLASSPATH" = "" ]
+then
+    CLASSPATH=$ARTEMIS_HOME:$ARTEMIS_HOME/lib/biojava.jar
+else
+    CLASSPATH=$ARTEMIS_HOME:$ARTEMIS_HOME/lib/biojava.jar:$CLASSPATH
+fi
+
+export CLASSPATH
+
+
+ARTEMIS_PROPERTIES="-Dartemis.environment=UNIX"
+
+# Allow URLs to work from behind firewalls
+if [ "$http_proxy" = "" ]
+then
+  http_proxy=$HTTP_PROXY
+fi
+
+if [ "$http_proxy" = "" ]
+then
+  http_proxy=$HTTP_proxy
+fi
+
+if [ "$http_proxy" != "" ]
+then
+  ARTEMIS_PROPERTIES="$ARTEMIS_PROPERTIES -DproxySet=true "`echo $http_proxy | sed 's/http:\/\/\(.*\):\(.*\)/ -DproxyHost=\1 -DproxyPort=\2/'`
+fi
+
+
+# "-mx500m" sets the maximum amount of memory that Artemis can use.  This may
+# need to be increased when dealing with large files
+MEM="-mx500m -ms20m"
+
+if [ "$JVM_FLAGS" = "" ]
+then
+    FLAGS="$MEM -noverify"
+else
+    FLAGS="$MEM -noverify $JVM_FLAGS"
+fi
+
+
+QUIET=no
+DEBUG=no
+
+if [ $# = 0 ]
+then
+    :
+else
+    if [ "$1" = "-h" -o "$1" = "--help" -o "$1" = "-help" ]
+    then
+        cat <<EOF
+usage: $0 [-options options_file] [EMBL/GENBANK/SEQUENCE_FILE [+FEATURE_FILE] [+FEATURE_FILE] ...] ...
+EOF
+        exit 0
+    fi
+
+
+    while test $# != 0
+    do
+        case $1 in
+        -options) FLAGS="$FLAGS -Dextra_options=$2"; shift ;;
+        -D*) FLAGS="$FLAGS $1" ;;
+        -fast) FAST_FLAG="-fast " ;; # -fast must be the first argument
+        -fast64) FAST_FLAG="-fast64 " ;; # -fast64 must be the first argument
+        -quiet) QUIET=yes ; FLAGS="$FLAGS -Drun_quietly=true" ;;
+        -debug) DEBUG=yes ;;
+        *) break ;;
+        esac
+        shift
+    done
+fi
+
+FLAGS=$FAST_FLAG$FLAGS
+
+if [ "$JAVA_VM" = "" ]
+then
+    if [ "$DEBUG" = yes ]
+    then
+        JAVA=java_g
+    else
+        JAVA=java
+    fi
+else
+    JAVA=$JAVA_VM
+fi
+
+
+if [ "$QUIET" = no ]
+then
+    echo starting Artemis with flags: $FLAGS $ARTEMIS_PROPERTIES 1>&2
+fi
+
+$JAVA $FLAGS $ARTEMIS_PROPERTIES Diana $*
