@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.10 2004-11-17 13:50:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.11 2004-11-19 16:49:59 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -36,6 +36,7 @@ import java.awt.*;
 import java.lang.Math;
 import java.util.Vector;
 import java.util.Comparator;
+import java.util.Enumeration;
 
 import javax.swing.JScrollBar;
 import javax.swing.JComponent;
@@ -44,7 +45,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.10 2004-11-17 13:50:09 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.11 2004-11-19 16:49:59 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -252,7 +253,7 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private final char [] draw_one_char_temp_array = new char [1];
 
-  private int scrollbar_style;
+  private final int scrollbar_style;
 
   /**
    *  Create a new FeatureDisplay object with the horizontal scrollbar at the
@@ -271,7 +272,7 @@ public class FeatureDisplay extends EntryGroupPanel
                         final BasePlotGroup base_plot_group) 
   {
     this(entry_group, selection, goto_event_source,
-          base_plot_group, SCROLLBAR_AT_BOTTOM);
+         base_plot_group, SCROLLBAR_AT_BOTTOM);
   }
 
   /**
@@ -1441,6 +1442,9 @@ public class FeatureDisplay extends EntryGroupPanel
     if(!isVisible()) 
       return;
 
+    g.setFont(getFont());
+
+//  System.out.println("1 "+ System.currentTimeMillis());
     int scrollbar_hgt = 0;
     if(scrollbar_style == SCROLLBAR_AT_TOP)
     {
@@ -1453,27 +1457,56 @@ public class FeatureDisplay extends EntryGroupPanel
 
     fillBackground(g);
 
+//  System.out.println("2 "+ System.currentTimeMillis());
     final Selection selection = getSelection();
     final FeatureVector selected_features = selection.getAllFeatures();
 
     final FeatureSegmentVector selected_segments =
       selection.getSelectedSegments();
 
+
+    int num_visible_features = getVisibleFeatures().size();
+    final int segment_height = getFeatureHeight() - 1;
+    final int seq_length = getSequenceLength();
+
+//  System.out.println("3 "+ System.currentTimeMillis());
+    FontMetrics fm = g.getFontMetrics();
+
     // we draw the feature backgrounds first then the visible indication
     // that there is a MarkerRange selected, then the feature outlines.
-    for(int i = 0 ; i < getVisibleFeatures().size() ; ++i) 
-      drawFeature(g, getVisibleFeatures().elementAt(i),
-                  true, selected_features, selected_segments);
+    Vector segment_borders = null;
 
+    segment_borders = new Vector(num_visible_features);
+
+    for(int i = 0; i < num_visible_features; ++i)
+      drawFeature(g, segment_borders, getVisibleFeatures().elementAt(i),
+                  true, selected_features, selected_segments,
+                  segment_height, seq_length, fm);
+
+
+//  System.out.println("4 "+ System.currentTimeMillis());
     drawBaseSelection(g);
     drawScale(g);
     drawCodons(g);
     drawBases(g);
 
-    // now draw the feature outlines
-    for(int i = 0 ; i < getVisibleFeatures().size() ; ++i) 
-      drawFeature(g, getVisibleFeatures().elementAt(i),
-                  false, selected_features, selected_segments);
+//  System.out.println("5 "+ System.currentTimeMillis());
+
+    // draw the segment borders
+    g.setColor(Color.black);
+
+    Enumeration enumSegmentBorder = segment_borders.elements();
+    while(enumSegmentBorder.hasMoreElements())
+    {
+      SegmentBorder fb = (SegmentBorder)enumSegmentBorder.nextElement();
+
+      drawSegmentBorder(g, fb.isFeatureHighlight(), fb.isSegmentHighlight(), fb.showArrow(),
+                        fb.getXPoint(), fb.getYPoint(),
+                        fb.getWidth(), fb.getHeight(),
+                        fb.getFeatureDirection());
+    } 
+
+//  System.out.println("6 "+ System.currentTimeMillis());
 
     if(scrollbar_style == SCROLLBAR_AT_TOP)
       ((Graphics2D)g).translate(0,-scrollbar_hgt);
@@ -1635,7 +1668,7 @@ public class FeatureDisplay extends EntryGroupPanel
       index_of_last_label =
                    getLastVisibleForwardBase() / base_label_spacing;
 
-    g.setFont(getFont());
+//  g.setFont(getFont());
     final int font_ascent   = getFontAscent();
     final int font_width    = getFontWidth();
     final int font_line_hgt = getLineHeight();
@@ -2719,7 +2752,7 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private int getLowXPositionOfBase(int base_number) 
   {
-    return(int)((base_number - getForwardBaseAtLeftEdge()) *
+    return (int)((base_number - getForwardBaseAtLeftEdge()) *
                   getScaleValue());
   }
 
@@ -3000,15 +3033,20 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param feature The feature to draw.
    **/
   private void drawFeature(final Graphics g,
+                           final Vector segment_borders,
                            final Feature feature,
                            final boolean draw_feature_fill,
                            final FeatureVector selected_features,
-                           final FeatureSegmentVector selected_segments) 
+                           final FeatureSegmentVector selected_segments, 
+                           final int segment_height,
+                           final int seq_length,
+                           final FontMetrics fm) 
   {
     final FeatureSegmentVector this_feature_segments = feature.getSegments();
+    final int num_segs = this_feature_segments.size();
 
     // don't try to draw a feature with no segments
-    if(this_feature_segments.size() == 0) 
+    if(num_segs == 0) 
       return;
 
     // set to true if and only if the whole of this feature should be
@@ -3025,41 +3063,45 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       // if the feature border flag is off and the feature is not selected
       // then don't draw the border
-      if(!show_feature_borders && !draw_feature_fill) 
-        return;
+//    if(!show_feature_borders && !draw_feature_fill) 
+//      return;
+      
 
       highlight_feature_flag = false;
     }
 
+    boolean highlight_segment_flag;
+    boolean draw_direction_arrow_flag;
+    FeatureSegment current_segment;
+     
+    if(show_labels)
+      drawFeatureLabel(g, feature, seq_length, fm);
+
     // draw each segment/exon
-    for(int i = 0 ; i < this_feature_segments.size() ; ++i) 
+    for(int i = 0; i < num_segs; ++i) 
     {
-      final FeatureSegment current_segment =
-                           this_feature_segments.elementAt(i);
-      final boolean highlight_segment_flag;
+      current_segment = this_feature_segments.elementAt(i);
 
       if(selected_segments.indexOf(current_segment) == -1) 
         highlight_segment_flag = false;
       else 
         highlight_segment_flag = true;
 
-      final boolean draw_direction_arrow_flag;
-
       // draw an arrow only on the last segment
-      if(i == this_feature_segments.size() - 1 && show_feature_arrows) 
+      if(i == num_segs - 1 && show_feature_arrows) 
         draw_direction_arrow_flag = true;
       else 
         draw_direction_arrow_flag = false;
 
-      drawSegment(g, current_segment,
-                   highlight_feature_flag, highlight_segment_flag,
-                   draw_feature_fill,
-                   draw_direction_arrow_flag);
+      SegmentBorder fb = drawSegment(g, current_segment,
+                                     highlight_feature_flag, highlight_segment_flag,
+                                     draw_direction_arrow_flag, segment_height);
+      if(fb != null)
+        segment_borders.add(fb);
 
-      if(i + 1 < this_feature_segments.size()) 
+      // draw a line between the segments
+      if(i + 1 < num_segs) 
       {
-          // draw a line between the segments
-
         final FeatureSegment next_segment =
           this_feature_segments.elementAt(i + 1);
 
@@ -3069,10 +3111,8 @@ public class FeatureDisplay extends EntryGroupPanel
 
     // draw the label last if the is no label line because in this case the
     // label is draw on top of the feature segments
-    if(draw_feature_fill) 
-      drawFeatureLabel(g, feature);
-
-//  Thread.yield();
+    if(!show_labels) 
+      drawFeatureLabel(g, feature, seq_length, fm);
   }
 
   /**
@@ -3148,14 +3188,14 @@ public class FeatureDisplay extends EntryGroupPanel
       g.setColor(feature_colour);
 
     g.drawLine(this_segment_end_coord,
-                line_y_position_for_this,
-                horizontal_position_of_centre,
-                line_y_position_for_centre);
+               line_y_position_for_this,
+               horizontal_position_of_centre,
+               line_y_position_for_centre);
 
     g.drawLine(horizontal_position_of_centre,
-                line_y_position_for_centre,
-                next_segment_start_coord,
-                line_y_position_for_next);
+               line_y_position_for_centre,
+               next_segment_start_coord,
+               line_y_position_for_next);
   }
 
   /**
@@ -3165,30 +3205,38 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param g The Graphics object on which to draw.
    *  @param feature The feature to draw the label for.
    **/
-  private void drawFeatureLabel(Graphics g, Feature feature) 
+  private void drawFeatureLabel(Graphics g, final Feature feature, 
+                                final int seq_length,
+                                final FontMetrics fm) 
   {
+    //tjc  300 ms
+//  if(true)
+//    return;
 
     // the three frame translation is visible when the scale factor is 0,
     // don't draw labels over it
     if(!show_labels && getScaleFactor() == 0) 
       return;
 
-    String label_or_gene = feature.getIDString();
     final String label = feature.getLabel();
 
     // special case - don't display a label if the label qualifier is "*"
-    if(label != null && label.equals("*")) 
-      label_or_gene = "";
+    if(label != null && label.equals("*"))
+      return;
+  
+    final String label_or_gene = feature.getIDString(); 
 
     // don't waste time drawing nothing
-    if(label_or_gene.length() == 0) 
+    if(label_or_gene.length() == 0)
       return;
 
-    final FontMetrics fm = g.getFontMetrics();
     final int string_width = fm.stringWidth(label_or_gene);
-
     final FeatureSegment first_segment = feature.getSegments().elementAt(0);
     final int label_x_coord;
+
+    //tjc 600 ms
+//  if(true)
+//    return;
 
     if(feature.isForwardFeature() ^ isRevCompDisplay())
     {
@@ -3196,7 +3244,7 @@ public class FeatureDisplay extends EntryGroupPanel
         first_segment.getStart().getRawPosition();
 
       if(isRevCompDisplay()) 
-        segment_start_pos = getSequenceLength() - segment_start_pos + 1;
+        segment_start_pos = seq_length - segment_start_pos + 1;
 
       label_x_coord = getLowXPositionOfBase(segment_start_pos);
     } 
@@ -3206,11 +3254,15 @@ public class FeatureDisplay extends EntryGroupPanel
         first_segment.getEnd().getRawPosition();
 
       if(isRevCompDisplay()) 
-        segment_end_pos = getSequenceLength() - segment_end_pos + 1;
+        segment_end_pos = seq_length - segment_end_pos + 1;
 
       // reverse the start and end on the complementary strand
       label_x_coord = getLowXPositionOfBase(segment_end_pos);
     }
+
+    //tjc 650
+//  if(true)
+//    return;
 
     if(label_x_coord >= getSize().width) 
       return;
@@ -3219,7 +3271,6 @@ public class FeatureDisplay extends EntryGroupPanel
       // don't draw the label if it is not visible on screen
 //  }
 
-
     int vertical_offset =
       getSegmentVerticalOffset(first_segment);
 
@@ -3227,7 +3278,13 @@ public class FeatureDisplay extends EntryGroupPanel
       vertical_offset += getLineHeight(); // move to the label line
 
     // save this so we can restore it later
-    final Shape saved_clip = g.getClip();
+    Shape saved_clip = null;
+    if(!show_labels)
+      saved_clip = g.getClip();
+ 
+    // tjc 600ms
+//  if(true)
+//    return;
 
     // if we have a labels line draw a white background behind the
     // label
@@ -3236,9 +3293,9 @@ public class FeatureDisplay extends EntryGroupPanel
       g.setColor(Color.white);
 
       g.fillRect(label_x_coord - getFontWidth(),
-                 vertical_offset,
+                 vertical_offset+2,
                  string_width + getFontWidth() * 2,
-                 getLineHeight());
+                 getLineHeight()-1);
     } 
     else
     {
@@ -3253,30 +3310,39 @@ public class FeatureDisplay extends EntryGroupPanel
       {
         if(segment_end_coord > segment_start_coord)
           g.setClip(segment_start_coord, vertical_offset,
-                     segment_end_coord - segment_start_coord,
-                     getFeatureHeight());
+                    segment_end_coord - segment_start_coord,
+                    getFeatureHeight());
         else 
           g.setClip(segment_end_coord, vertical_offset,
-                     segment_start_coord - segment_end_coord,
-                     getFeatureHeight());
+                    segment_start_coord - segment_end_coord,
+                    getFeatureHeight());
       }
       else 
         return;  // don't draw small labels if there is no room
     }
 
+    //tjc  670
+//  if(true)
+//    return;
+
     g.setColor(Color.black);
-    g.setFont(getFont());
     g.drawString(label_or_gene, label_x_coord + 1,
-                  vertical_offset + getFontAscent() + 1);
+                 vertical_offset + getFontAscent() + 1);
+
+    // tjc 1700ms
+//  if(true)
+//    return;
 
     if(!show_labels)
       g.setClip(saved_clip);
+
+    // tjc 1800ms
   }
 
   /**
    *  Return the position on the canvas where this segment starts.  The
    *  returned value will be -1 if the position is off the left of the screen
-   *  and will be(width of the canvas) if the position is off the right of
+   *  and will be (width of the canvas) if the position is off the right of
    *  the screen.
    **/
   private int getSegmentStartCoord(FeatureSegment segment) 
@@ -3288,9 +3354,7 @@ public class FeatureDisplay extends EntryGroupPanel
     // make sure we don't wrap around when drawing
     if(segment_start_coord > getSize().width) 
       segment_start_coord = getSize().width;
-
-    // make sure we don't wrap around when drawing
-    if(segment_start_coord < 0) 
+    else if(segment_start_coord < 0) 
       segment_start_coord = -1;
 
     return segment_start_coord;
@@ -3394,24 +3458,22 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param draw_arrow If true draw a direction arrow at the end of the
    *    segment.
    **/
-  private void drawSegment(Graphics g, FeatureSegment segment,
-                            boolean highlight_feature,
-                            boolean highlight_segment,
-                            boolean draw_feature_fill,
-                            boolean draw_arrow) 
+  private SegmentBorder drawSegment(Graphics g, FeatureSegment segment,
+                           boolean highlight_feature,
+                           boolean highlight_segment,
+                           boolean draw_arrow,
+                           final int segment_height) 
   {
     // not on screen
     if(!segmentVisible(segment)) 
-      return;
+      return null;
 
     final Feature segment_feature = segment.getFeature();
 
     final int vertical_offset = getSegmentVerticalOffset(segment) + 1;
 
     int segment_start_coord = getSegmentStartCoord(segment);
-    int segment_end_coord = getSegmentEndCoord(segment);
-
-    final int segment_height = getFeatureHeight() - 1;
+    int segment_end_coord   = getSegmentEndCoord(segment);
 
     // this is 1 if the feature is on the forward strand or on a forward frame
     // and -1 otherwise.  this used to draw the feature arrow in the right
@@ -3422,87 +3484,99 @@ public class FeatureDisplay extends EntryGroupPanel
     else 
       feature_direction = -1;
 
-    final int [] x_points = {
+    final int[] x_points = 
+    {
       segment_start_coord, segment_end_coord,
       segment_end_coord, segment_start_coord
     };
 
-    final int [] y_points = {
+    final int[] y_points = 
+    {
       vertical_offset, vertical_offset,
       vertical_offset + segment_height, vertical_offset + segment_height
     };
 
-    if(draw_feature_fill) 
-    {
-      final Color feature_colour = segment_feature.getColour();
+    final Color feature_colour = segment_feature.getColour();
 
-      // no colour means draw in white
-      if(feature_colour == null) 
-        g.setColor(Color.white);
-      else 
-        g.setColor(feature_colour);
-
-      if(segment_feature.isForwardFeature() ^ isRevCompDisplay()) 
-      {
-        final int segment_width = segment_end_coord - segment_start_coord + 1;
-
-        g.fillRect(segment_start_coord, vertical_offset,
-                    segment_width, segment_height + 1);
-      }
-      else
-      {
-        final int segment_width = segment_start_coord - segment_end_coord + 1;
-
-        g.fillRect(segment_end_coord, vertical_offset,
-                    segment_width, segment_height + 1);
-      }
-    }
+    // no colour means draw in white
+    if(feature_colour == null) 
+      g.setColor(Color.white);
     else 
+      g.setColor(feature_colour);
+
+    final int segment_width;
+    if(feature_direction == 1)
     {
-      g.setColor(Color.black);
-      g.drawPolygon(x_points, y_points, 4);
+      segment_width = segment_end_coord - segment_start_coord + 1;
 
-      if(highlight_feature)  // highlight selected features
+      g.fillRect(segment_start_coord, vertical_offset,
+                 segment_width, segment_height + 1);
+    }
+    else
+    {
+      segment_width = segment_start_coord - segment_end_coord + 1;
+
+      g.fillRect(segment_end_coord, vertical_offset,
+                 segment_width, segment_height + 1);
+    }
+
+    if(!show_feature_borders && !highlight_feature)
+      return null;
+
+    if(feature_direction == 1)
+      return new SegmentBorder(highlight_feature, highlight_segment, draw_arrow,
+                               segment_start_coord, vertical_offset,
+                               segment_width, segment_height,
+                               feature_direction);
+    else
+      return new SegmentBorder(highlight_feature, highlight_segment, draw_arrow,
+                               segment_end_coord, vertical_offset,
+                               segment_width, segment_height,
+                               feature_direction);
+  }
+
+
+  private void drawSegmentBorder(Graphics g,
+                                 boolean highlight_feature,
+                                 boolean highlight_segment,
+                                 boolean draw_arrow,
+                                 int x, int y, 
+                                 int width, int height,
+                                 int feature_direction)
+  {
+    
+    Graphics2D g2d = (Graphics2D)g; 
+    if(highlight_feature)  // highlight selected features
+    {
+      // selected - highlight by drawing a thicker line
+      BasicStroke stroke = (BasicStroke)g2d.getStroke();
+
+      if(highlight_segment)
+        g2d.setStroke(new BasicStroke(4.f));
+      else
+        g2d.setStroke(new BasicStroke(3.f));
+
+      g2d.drawRect(x, y, width, height);
+      g2d.setStroke(stroke);
+    }
+    else
+      g.drawRect(x, y, width, height);
+
+    // draw the arrow point
+    if(draw_arrow)
+    {
+      int xpos = x;
+      int arrow_tip_x = x + feature_direction * getFontWidth() * 8 / 10;
+      if(feature_direction ==1)
       {
-        // selected - highlight by drawing a thicker line
-
-        x_points[0] -= feature_direction; x_points[1] += feature_direction;
-        x_points[2] += feature_direction; x_points[3] -= feature_direction;
-        y_points[0] -= 1; y_points[1] -= 1;
-        y_points[2] += 1; y_points[3] += 1;
-        g.drawPolygon(x_points, y_points, 4);
-
-        x_points[0] -= feature_direction; x_points[1] += feature_direction;
-        x_points[2] += feature_direction; x_points[3] -= feature_direction;
-        y_points[0] -= 1; y_points[1] -= 1;
-        y_points[2] += 1; y_points[3] += 1;
-        g.drawPolygon(x_points, y_points, 4);
-
-        if(highlight_segment) {
-          x_points[0] -= feature_direction; x_points[1] += feature_direction;
-          x_points[2] += feature_direction; x_points[3] -= feature_direction;
-          y_points[0] -= 1; y_points[1] -= 1;
-          y_points[2] += 1; y_points[3] += 1;
-          g.drawPolygon(x_points, y_points, 4);
-
-          x_points[0] -= feature_direction; x_points[1] += feature_direction;
-          x_points[2] += feature_direction; x_points[3] -= feature_direction;
-          y_points[0] -= 1; y_points[1] -= 1;
-          y_points[2] += 1; y_points[3] += 1;
-          g.drawPolygon(x_points, y_points, 4);
-        }
+        xpos += width;
+        arrow_tip_x += width;
       }
 
-      if(draw_arrow)
-      {
-        // now draw the arrow point
-        final int arrow_tip_x =
-          x_points[1] + feature_direction * getFontWidth() * 8 / 10;
-        final int arrow_tip_y =(y_points[1] + y_points[2]) / 2;
+      final int arrow_tip_y = y + (height/2);
 
-        g.drawLine(x_points[1], y_points[1], arrow_tip_x, arrow_tip_y);
-        g.drawLine(arrow_tip_x, arrow_tip_y, x_points[2], y_points[2]);
-      }
+      g.drawLine(xpos, y, arrow_tip_x, arrow_tip_y);
+      g.drawLine(arrow_tip_x, arrow_tip_y, xpos, y+height);
     }
   }
 
