@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.4 2004-07-21 15:16:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.5 2004-09-03 17:03:12 axk Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.*;
  *  A JMenu of external commands/functions.
  *
  *  @author Kim Rutherford
- *  @version $Id: RunMenu.java,v 1.4 2004-07-21 15:16:06 tjc Exp $
+ *  @version $Id: RunMenu.java,v 1.5 2004-09-03 17:03:12 axk Exp $
  **/
 
 public class RunMenu extends SelectionMenu 
@@ -223,7 +223,7 @@ public class RunMenu extends SelectionMenu
     {
       if(blastpMenu == null)
       {
-        blastpMenu = new JMenu("Run blast on selected features against");
+        blastpMenu = new JMenu("Run blastp on selected features against");
         add(blastpMenu);
       }
       blastpMenu.add(new_menu);
