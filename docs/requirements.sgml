@@ -1,11 +1,11 @@
 <SECT1 ID="REQUIREMENTS">
   <TITLE>System Requirements</TITLE>
   <PARA>
-&prog; will run on any machine that has a recent version of Java.  Most of the
-development has been done using JDK v1.1.7 and v1.1.8, but any version better
-than v1.1.1 is sufficient for running &prog; on UNIX.  (Early versions of v1.1
-have some bugs, so later is better.)  Version 1.2 or better is needed on
-Windows.  Please note that the version of Java that comes with Netscape and
+&prog; will run on any machine that has a recent version of Java.
+This version of &prog; requires Java 1.3 at least. Most of the
+development has been done using JDK v1.4, but any version better
+than v1.3 is sufficient for running &prog; on UNIX.
+Please note that the version of Java that comes with Netscape and
 Internet Explorer is not sufficient to run &prog;.  See <XREF
 LINKEND="INSTALLATION"> for details on how to get Java.
   </PARA>

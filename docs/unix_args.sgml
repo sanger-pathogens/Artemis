@@ -36,5 +36,21 @@ This isn't on by default because the fast VM uses a lot more memory and it
 isn't as reliable.
       </PARA>
     </SECT2>
+
+    <SECT2 ID="UNIXARGS-MEM">
+      <TITLE><LITERAL>-Xmsn -Xmxn</LITERAL></TITLE>
+      <PARA>
+Use <LITERAL>-Xmsn</LITERAL> to specify the initial size, in bytes, of the
+memory allocation pool. This value must be a multiple of 1024 greater than
+1MB. Append the letter k or K to indicate kilobytes, or m or M to indicate
+megabytes.
+      </PARA>
+      <PARA>
+Use <LITERAL>-Xmxn</LITERAL> to specify the maximum size, in bytes, of the
+memory allocation pool. This value must a multiple of 1024 greater than
+2MB. Append the letter k or K to indicate kilobytes, or m or M to indicate
+megabytes.
+      </PARA>
+    </SECT2>
+
   </SECT1>
-  

@@ -145,7 +145,8 @@ cwchen@ym,edu.tw
     <SECT2 ID="DOSINSTALLATION">
       <TITLE>Installation Instructions for Windows</TITLE>
       <PARA>
-On Windows systems with Java 1.2, installing &prog; is as simple as copying the
+On Windows systems with Java (version 1.3 or higher), installing &prog; 
+is as simple as copying the
 <ULINK URL="ftp://ftp.sanger.ac.uk/pub/pathogens/software/artemis/artemis.jar"
 TYPE="external">artemis.jar file</ULINK> to an appropriate place (such as the
 desktop or the Programs folder).

@@ -92,6 +92,17 @@ top of this window allow you to read a new sequence or embl entry.
     </PARA>
     <SECT2 ID="LAUNCH-WINDOW-FILE-MENU">
       <TITLE>The File Menu</TITLE>
+
+      <SECT3 ID="LAUNCH-WINDOW-FILEMANAGER">
+        <TITLE>Open File Manager ...</TITLE>
+        <PARA>
+Selecting this shows the files and directories that are in the directory &prog;
+is launched in. At the top are 2 shortcut buttons to go up a directory and to go 
+to your home directory. At the bottom of the file manager is a file filter.
+You can select a file and double click on it to launch artemis.
+        </PARA>
+      </SECT3>
+
       <SECT3 ID="LAUNCH-WINDOW-FILE-MENU-OPEN">
         <TITLE>Open ...</TITLE>
         <PARA>

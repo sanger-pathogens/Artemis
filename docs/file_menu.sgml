@@ -5,6 +5,16 @@ Most of the items in this menu are used to read and write entries and parts of
 entries, the exceptions are Clone and Close.
   </PARA>
 
+  <SECT2 ID="FILEMENU-SHOW-FILEMANAGER">
+    <TITLE>Show File Manager ...</TITLE>
+    <PARA>
+This will open the file manager, or if it is already open will bring it
+to the foreground. Entries can be dragged from the file manager into
+the artemis main window and dropped. When dropped the entry is then read 
+in and displayed.
+    </PARA>
+  </SECT2>
+
   <SECT2 ID="FILEMENU-READ-AN-ENTRY">
     <TITLE>Read An Entry ...</TITLE>
     <PARA>

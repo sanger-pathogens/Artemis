@@ -8,45 +8,36 @@ Explorer is not sufficient to run &prog;.
   <ITEMIZEDLIST>
     <LISTITEM>
       <PARA>
-UNIX users should get Java version 1.1 from the <ULINK
-URL="http://java.sun.com/products/jdk/1.1/">Sun JDK 1.1 download page</ULINK>
-or the <ULINK URL="http://java.sun.com/cgi-bin/java-ports.cgi">JDK 1.1 ports
-page</ULINK> (Newer versions will also work, but may have problems on some
-platforms.) 
+UNIX users should get the current Java version from the <ULINK
+URL="http://java.sun.com/">Sun</ULINK>.
       </PARA>
     </LISTITEM>
     <LISTITEM>
       <PARA>
-<ULINK URL="http://www.linux.org/">GNU/Linux</ULINK> users should install the
-<ULINK URL="http://www.blackdown.org/">Blackdown.org</ULINK> release of <ULINK
-URL="http://www.mirror.ac.uk/sites/ftp.blackdown.org/java-linux/JDK-1.4.1/i386/01/">JRE
-version 1.4.1</ULINK>.  The Sun versions of Java 1.3.1, 1.4.0 and 1.4.1 have
-various long-standing bugs (<ULINK
-URL="http://www.sanger.ac.uk/Users/kmr/4533641.html">4533641</ULINK>, <ULINK
-URL="http://www.sanger.ac.uk/Users/kmr/4627564.html">4627564</ULINK>) which
-make them unsuitable for Artemis.  Newer releases from Sun may fix these
-problems.
+<ULINK URL="http://www.linux.org/">GNU/Linux</ULINK> users should install the latest
+java stable Java release from
+<ULINK URL="http://www.blackdown.org/">Blackdown.org</ULINK> .
+The Sun versions of Java 1.3.1, 1.4.0 and 1.4.1 have
+various long-standing bugs which make them unsuitable for Artemis.
+Newer releases from Sun may fix these problems.
       </PARA>
     </LISTITEM>
     <LISTITEM>
       <PARA>
-Windows users should get Java <ULINK
-URL="http://java.sun.com/products/jdk/1.3/">version 1.3</ULINK> or better
-from <ULINK
-URL="http://www.sun.com">Sun Microsystems</ULINK>.
+Windows users should get latest <ULINK
+URL="http://java.sun.com/">Java version</ULINK> or better
+from Sun Microsystems.
 On some versions of Windows (such as Windows 2000) you will need be have
 administrator privileges for your machine to successfully install Java.
       </PARA>
     </LISTITEM>
     <LISTITEM>
       <PARA>
-Macintosh users with MacOS version 8 or 9 should install the <ULINK
-URL="http://developer.apple.com/java/text/download.html">Macintosh Runtime
-for Java (MRJ)</ULINK> version 2.2 or better before downloading &prog;.
 Macintosh users with MacOS X (ie MacOS version 10) or better do not need to
 install Java because it comes as a standard feature of the operating system.
-Note, however, that Java on the older versions of MacOS X has has irritating
+Note, however, that Java on the older versions of MacOS X has irritating
 bugs so we recommend using the latest version of MacOS, which runs &prog; well.
+Macintosh users with older MacOS versions cannot use this release of &prog;.
       </PARA>
     </LISTITEM>
   </ITEMIZEDLIST>
