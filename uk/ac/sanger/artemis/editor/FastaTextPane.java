@@ -211,6 +211,9 @@ public class FastaTextPane extends JScrollPane
           }
 
         }
+        else if(line.indexOf("-------------------------") > -1)
+        {
+        }
         else if(line.startsWith(">"))  // start of alignment
         {
           String currentID = line;
@@ -300,7 +303,7 @@ public class FastaTextPane extends JScrollPane
           if(ind1 == -1)
           {
             String nextLine = null;
-            while((nextLine = buffReader.readLine()).indexOf(" letters)") < -1)
+            while((nextLine = buffReader.readLine()).indexOf(" letters)") < 0)
             {
               len += nextLine.length()+1;
               sbuff.append(nextLine+"\n");
