@@ -305,21 +305,27 @@ public class DataViewInternalFrame extends JInternalFrame
           note.append(type+" scores: ");
           
           String pid  = tok.nextToken().trim();  // percent id
-          ind1 = pid.indexOf(" ");
-          pid  = pid.substring(ind1+1);
 
-          tok.nextToken();                       // ungapped id
-          String eval = tok.nextToken().trim();
-          String len  = tok.nextToken().trim();
+          if(pid.endsWith("%"))  // fasta
+          {
+            ind1 = pid.indexOf(" ");
+            pid  = pid.substring(ind1+1);
 
-          while(!len.endsWith("aa overlap"))
-            len  = tok.nextToken().trim();
+            tok.nextToken();                       // ungapped id
+            String eval = tok.nextToken().trim();
+            String len  = tok.nextToken().trim();
 
-          len = len.substring(0,len.length()-8);
+            while(!len.endsWith("aa overlap"))
+              len  = tok.nextToken().trim();
 
-          note.append(eval);
-          note.append(", "+pid+" id in ");
-          note.append(len);
+            len = len.substring(0,len.length()-8);
+
+            note.append(eval);
+            note.append(", "+pid+" id in ");
+            note.append(len);
+          }
+          else                  // blastp
+            note.append(pid);
         }
       }
     }
