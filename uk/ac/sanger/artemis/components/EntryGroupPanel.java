@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupPanel.java,v 1.2 2004-10-01 15:49:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupPanel.java,v 1.3 2004-11-04 09:41:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -36,7 +36,7 @@ import javax.swing.*;
  *  A JPanel that can show an EntryGroup(in some way).
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: EntryGroupPanel.java,v 1.2 2004-10-01 15:49:09 tjc Exp $
+ *  @version $Id: EntryGroupPanel.java,v 1.3 2004-11-04 09:41:17 tjc Exp $
  **/
 
 abstract public class EntryGroupPanel extends CanvasPanel 
@@ -292,9 +292,9 @@ abstract public class EntryGroupPanel extends CanvasPanel
                                          getSelection(),
                                          getGotoEventSource());
           break;
-        case EditMenu.UNDO_KEY_CODE:
-          EditMenu.undo(getParentFrame(), getSelection(), getEntryGroup());
-          break;
+//      case EditMenu.UNDO_KEY_CODE:
+//        EditMenu.undo(getParentFrame(), getSelection(), getEntryGroup());
+//        break;
         case EditMenu.MERGE_FEATURES_KEY_CODE:
           EditMenu.mergeFeatures(getParentFrame(), getSelection(),
                                   getEntryGroup());
