@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.1 2004-06-09 09:46:45 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.2 2004-11-05 14:22:41 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,7 +38,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.1 2004-06-09 09:46:45 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.2 2004-11-05 14:22:41 tjc Exp $
  *
  **/
 
@@ -105,6 +105,7 @@ public class FeaturePopup extends JPopupMenu
   private JCheckBoxMenuItem base_colours_item = null;
   private JCheckBoxMenuItem correlation_scores_item = null;
   private JCheckBoxMenuItem show_genes_item = null;
+  private JCheckBoxMenuItem show_sysid_item = null;
   private JCheckBoxMenuItem show_products_item = null;
   private JCheckBoxMenuItem show_qualifiers_item = null;
   private JMenuItem entry_group_menu_item = null;
@@ -199,6 +200,7 @@ public class FeaturePopup extends JPopupMenu
     maybeAdd(base_colours_item);
     maybeAdd(correlation_scores_item);
     maybeAdd(show_genes_item);
+    maybeAdd(show_sysid_item);
     maybeAdd(show_qualifiers_item);
     maybeAdd(show_products_item);
     addSeparator();
@@ -539,7 +541,30 @@ public class FeaturePopup extends JPopupMenu
     {
       public void itemStateChanged(ItemEvent e) 
       {
+        if(show_sysid_item.getState() && show_genes_item.getState())
+        {
+          show_sysid_item.setState(false);
+          feature_list.setShowSystematicID(show_sysid_item.getState());
+        }
+
         feature_list.setShowGenes(show_genes_item.getState());
+      }
+    });
+
+    show_sysid_item = new JCheckBoxMenuItem("Show Systematic ID");
+    show_sysid_item.setState(feature_list.getShowSysID());
+    show_sysid_item.addItemListener(new ItemListener()
+    {
+      public void itemStateChanged(ItemEvent e)
+      {
+
+        if(show_genes_item.getState() && show_sysid_item.getState())
+        {
+          show_genes_item.setState(false);
+          feature_list.setShowGenes(show_genes_item.getState());
+        }
+
+        feature_list.setShowSystematicID(show_sysid_item.getState());
       }
     });
 

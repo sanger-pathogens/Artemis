@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.5 2004-10-22 13:58:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.6 2004-11-05 14:22:41 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import javax.swing.*;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.5 2004-10-22 13:58:24 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.6 2004-11-05 14:22:41 tjc Exp $
  *
  **/
 
@@ -86,6 +86,10 @@ public class FeatureList extends EntryGroupPanel
    **/
   private boolean show_gene_names = false;
 
+
+  /** show Feature.getSystematicName() */
+  private boolean show_systematic_names = false;
+   
   /**
    *  If true this component will show the /product qualifier instead of the
    *  /note field.
@@ -234,12 +238,28 @@ public class FeatureList extends EntryGroupPanel
    **/
   public void setShowGenes(final boolean show_gene_names) 
   {
-    if (this.show_gene_names != show_gene_names) 
+    if(this.show_gene_names != show_gene_names) 
     {
       this.show_gene_names = show_gene_names;
       repaint();
     }
   }
+
+
+  /**
+   *  Set value of the show /systematic_id flag.
+   *  @param show_systematic_names If true this component will show the /gene (really
+   *    Feature.getSystematicName()) instead of the key.
+   **/
+  public void setShowSystematicID(final boolean show_systematic_names)
+  {
+    if(this.show_systematic_names != show_systematic_names)
+    {
+      this.show_systematic_names = show_systematic_names;
+      repaint();
+    }
+  }
+
 
   /**
    *  Get the value of the "show genes" flag.
@@ -248,6 +268,17 @@ public class FeatureList extends EntryGroupPanel
   {
     return show_gene_names;
   }
+
+
+  /**
+   *  Get the value of the "show systematic id" flag.
+   **/
+  public boolean getShowSysID()
+  {
+    return show_systematic_names;
+  }
+
+
 
   /**
    *  Set value of the show qualifiers flag.
@@ -516,12 +547,12 @@ public class FeatureList extends EntryGroupPanel
 
         final int feature_count = getEntryGroup().getAllFeaturesCount();
 
-        for (int i = first_line_in_view ;
-             i < feature_count && i < first_line_in_view + linesInView() ;
-             ++i) 
+        for(int i = first_line_in_view;
+            i < feature_count && i < first_line_in_view + linesInView();
+            ++i) 
         {
           final Feature this_feature = getEntryGroup().featureAt(i);
-          if (selected_features.contains (this_feature))
+          if(selected_features.contains(this_feature))
           {
             a_selected_feature_is_visible = true;
             break;
@@ -687,13 +718,20 @@ public class FeatureList extends EntryGroupPanel
 
     final int KEY_FIELD_WIDTH = 15;
 
-    if (show_gene_names)
+    if(show_gene_names)
     {
       key_string = feature.getIDString();
 
       if(key_string.length() > KEY_FIELD_WIDTH && !dont_truncate) 
-        key_string = key_string.substring (0, KEY_FIELD_WIDTH);
+        key_string = key_string.substring(0, KEY_FIELD_WIDTH);
     } 
+    else if(show_systematic_names)
+    {
+      key_string = feature.getSystematicName();
+
+      if(key_string.length() > KEY_FIELD_WIDTH && !dont_truncate)
+        key_string = key_string.substring(0, KEY_FIELD_WIDTH);
+    }
     else 
       key_string = feature.getKey ().toString ();
 
