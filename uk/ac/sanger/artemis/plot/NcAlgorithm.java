@@ -34,6 +34,7 @@ import uk.ac.sanger.artemis.sequence.*;
  *  @author Derek Gatherer
  *  original version 09-09-03
  *  revised 01-12-04
+ *  division by zero bugremoved 08-12-04
  **/
 
 public class NcAlgorithm extends BaseAlgorithm 
@@ -71,7 +72,6 @@ public class NcAlgorithm extends BaseAlgorithm
 
       end = new_end;
       start = new_start;
-//      System.out.println("Revcomp, so new start:"+start+"new end:"+end);
     }
     final String sub_sequence;
     
@@ -118,8 +118,13 @@ public class NcAlgorithm extends BaseAlgorithm
     float[] F4 = new float [3];
     float[] F6 = new float [3];
     float[] Nc = new float [3]; // hold Nc for each frame
+    float NC2 = 0;
+    float NC3 = 0;
+    float NC4 = 0;
+    float NC6 = 0;
+    
 
-// initialise all arrays to zero
+// initialise all arrays to zero, or 1 to prevent infinity (check paper is this valid?)
 
     for(int x = 0 ; x < 4 ; ++x) {
       for(int y = 0 ; y < 4 ; ++y) {
@@ -146,8 +151,6 @@ public class NcAlgorithm extends BaseAlgorithm
         this_f_base = sequence_raw[i + frame];
         next_f_base = sequence_raw[i + 1 + frame];
         last_f_base = sequence_raw[i + 2 + frame];
-        
-//      System.out.println("reading "+this_f_base+next_f_base+last_f_base);
 
         this_f_base_index = Bases.getIndexOfBase(this_f_base);
         next_f_base_index = Bases.getIndexOfBase(next_f_base);
@@ -349,18 +352,84 @@ public class NcAlgorithm extends BaseAlgorithm
       p[0][3][2][frame] = 0;  // don't count STOP
 
 // having calculated p2 value, now do Faa, ie. F for each amino acid.
+// various tedious routines to catch abset amino acids
 
-      F2[frame] = (p2_cys[frame]+p2_asp[frame]+p2_glu[frame]+p2_phe[frame]+p2_his[frame]+p2_lys[frame]+
-                    p2_asn[frame]+p2_gln[frame]+p2_tyr[frame])/9;
-      F6[frame] = (p2_leu[frame]+p2_arg[frame]+p2_ser[frame])/3;
-      F4[frame] = (p2_gly[frame]+p2_pro[frame]+p2_thr[frame]+p2_val[frame]+p2_ala[frame])/5;
+      int F2_aa = 0;
+      if(p2_cys[frame]>0) { F2_aa++; }
+      if(p2_asp[frame]>0) { F2_aa++; }
+      if(p2_glu[frame]>0) { F2_aa++; }
+      if(p2_phe[frame]>0) { F2_aa++; }
+      if(p2_his[frame]>0) { F2_aa++; }
+      if(p2_lys[frame]>0) { F2_aa++; }
+      if(p2_asn[frame]>0) { F2_aa++; }
+      if(p2_gln[frame]>0) { F2_aa++; }
+      if(p2_tyr[frame]>0) { F2_aa++; }
+      if(F2_aa>0)
+      {
+        F2[frame] = (p2_cys[frame]+p2_asp[frame]+p2_glu[frame]+p2_phe[frame]+p2_his[frame]+p2_lys[frame]+
+                    p2_asn[frame]+p2_gln[frame]+p2_tyr[frame])/F2_aa;
+      }
+      else { F2[frame] = 0; }
+//      System.out.println("F2["+frame+"]="+F2[frame]+" cys: "+p2_cys[frame]+" asp: "+p2_asp[frame]+" glu: "+p2_glu[frame]
+//      +" phe: "+p2_phe[frame]+" his: "+p2_his[frame]+" lys: "+p2_lys[frame]+" asn: "+p2_asn[frame]+" gln: "+p2_gln[frame]+" tyr: "+p2_tyr[frame]);
+
+      int F6_aa = 0;
+      if(p2_leu[frame]>0) { F6_aa++; }
+      if(p2_arg[frame]>0) { F6_aa++; }
+      if(p2_ser[frame]>0) { F6_aa++; }
+      if(F6_aa>0)
+      {
+        F6[frame] = (p2_leu[frame]+p2_arg[frame]+p2_ser[frame])/F6_aa;
+      }
+      else { F6[frame] = 0; }
+//      System.out.println("F6["+frame+"]="+F6[frame]);
+      
+      int F4_aa = 0;
+      if(p2_gly[frame]>0) { F4_aa++; }
+      if(p2_pro[frame]>0) { F4_aa++; }
+      if(p2_thr[frame]>0) { F4_aa++; }
+      if(p2_val[frame]>0) { F4_aa++; }
+      if(p2_ala[frame]>0) { F4_aa++; }
+      if(F4_aa>0)
+      {
+        F4[frame] = (p2_gly[frame]+p2_pro[frame]+p2_thr[frame]+p2_val[frame]+p2_ala[frame])/F4_aa;
+      }
+      else { F4[frame] = 0; }
+//      System.out.println("F4["+frame+"]="+F4[frame]);
+      
       if(p2_ile[frame]>0) 
       {
         F3[frame] = p2_ile[frame];
       } else {
            F3[frame]= (F2[frame] + F4[frame])/2;
       }
-      Nc[frame] = (9/F2[frame])+(5/F4[frame])+(3/F6[frame])+(1/F3[frame])+2;
+//      System.out.println("F3["+frame+"]="+F3[frame]);
+
+// the line below gives the occasional div by zero error
+//      Nc[frame] = (9/F2[frame])+(5/F4[frame])+(3/F6[frame])+(1/F3[frame])+2;
+      if(F2[frame]>0)
+      {
+        NC2 = F2_aa/F2[frame];
+      }
+      else {  NC2 = 0; }
+      if(F4[frame]>0)
+      {
+        NC4 = F4_aa/F4[frame];
+      }
+      else {  NC4 = 0; }
+      if(F6[frame]>0)
+      {
+        NC6 = F6_aa/F6[frame];
+      }
+      else {  NC6 = 0; }
+      if(F3[frame]>0)
+      {
+        NC3 = 1/F3[frame];
+      }
+      else {  NC3 = 0; }
+      
+      Nc[frame] = NC2+NC4+NC6+NC3+2;
+//      System.out.println("Nc["+frame+"] is "+"NC2: "+NC2+" NC4: "+NC4+" NC6: "+NC6+" NC3: "+NC3+" + 2 = "+Nc[frame]);
       values[frame] = Nc[frame];
     }
   } 
