@@ -11,7 +11,7 @@
 # If you are under KDE, you should use Konqueror then
 # If you are under MAC OS X, use Safari
 
-# NETSCAPE=/usr/bin/X11/real-netscape
+#NETSCAPE=/usr/bin/X11/real-netscape
 NETSCAPE=/usr/bin/mozilla
 # MAC OS X   
 # NETSCAPE=/Applications/Safari.app/Contents/MacOS/Safari
@@ -45,6 +45,21 @@ then
 else
     new_file=$file_arg.$unique_bit.html
 fi
+
+###
+# sanger fix for /nfs/repository which isn't mounted on workstations:
+REPOSITORY=`echo $new_file | sed -n  -e 's|^\/nfs\/repository\/\(.*\)\(\/\)\(.*\)$|\3|p'`
+
+if [ "$REPOSITORY" != "" ]; then
+
+  if [ ! -d $HOME/artemis_tmp ]; then
+    mkdir $HOME/artemis_tmp
+  fi
+  new_file="$HOME/artemis_tmp/$REPOSITORY"
+ 
+fi
+#
+###
 
 cat <<EOF > $new_file
 <HTML>
@@ -190,14 +205,14 @@ cat <<EOF >> $new_file;
 EOF
 
 # delete it at some point
-echo "rm -f $new_file > /dev/null 2>&1" | at now + 36 hours
+echo "rm -f $new_file > /dev/null 2>&1" | at now + 12 hours
 
 # MAC OS X => Safari browser
 # The command then is the following
 # if $NETSCAPE $new_file
 
 # For Netscape or mozilla
-if $NETSCAPE -remote "openURL($new_file)"
+if $NETSCAPE -remote "openURL($new_file, new-tab)"
 then
     exit 0
 else
