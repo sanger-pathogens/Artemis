@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.6 2004-09-10 15:56:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.7 2004-09-20 08:34:40 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.6 2004-09-10 15:56:32 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.7 2004-09-20 08:34:40 tjc Exp $
  **/
 
 public class FeatureEdit extends JFrame
@@ -653,7 +653,7 @@ public class FeatureEdit extends JFrame
             public Object construct()
             {
               // find overlaping features
-              Location this_loc = edit_feature.getLocation();
+              final Location this_loc = edit_feature.getLocation();
               final int this_start = this_loc.getFirstBase();
               final int this_end   = this_loc.getLastBase();
 
@@ -661,17 +661,17 @@ public class FeatureEdit extends JFrame
               {
                 public boolean testPredicate (final Feature feature) 
                 {
-                  Location loc = feature.getLocation();
+                  final Location loc = feature.getLocation();
 
-                  int start = loc.getFirstBase();
-                  int end   = loc.getLastBase();
+                  final int start = loc.getFirstBase();
+                  final int end   = loc.getLastBase();
 
                   if((start > this_start &&
                       start < this_end) ||
                      (end > this_start &&
                       end < this_end))
                   {
-                    String note = feature.getNote();
+                    final String note = feature.getNote();
                     if(note.indexOf("Pfam")>-1)
                       return true;
                   }
@@ -680,8 +680,8 @@ public class FeatureEdit extends JFrame
                 }
               };
 
-              FeatureVector overlapFeatures = new FeatureVector();
-              FeatureEnumeration featureEnum = entry_group.features();
+              final FeatureVector overlapFeatures = new FeatureVector();
+              final FeatureEnumeration featureEnum = entry_group.features();
               while(featureEnum.hasMoreFeatures()) 
               {
                 Feature this_feature = featureEnum.nextFeature();
@@ -691,8 +691,8 @@ public class FeatureEdit extends JFrame
 
               // show object editor
               new uk.ac.sanger.artemis.editor.BigPane(dataFile.toArray(),
-                                         qualifier_text_area,
-                                         overlapFeatures, this_start, this_end);
+                                         qualifier_text_area, overlapFeatures,
+                                         edit_feature);
               progress.finished();
               FeatureEdit.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
               return null;

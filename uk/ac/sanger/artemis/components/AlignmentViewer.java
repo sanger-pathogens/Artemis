@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.3 2004-09-06 10:09:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.4 2004-09-20 08:34:40 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.3 2004-09-06 10:09:42 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.4 2004-09-20 08:34:40 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -673,8 +673,10 @@ public class AlignmentViewer extends CanvasPanel
     {
       public void actionPerformed(ActionEvent event)
       {
-        matchColour = JColorChooser.showDialog(AlignmentViewer.this, 
-                                     "Colour Matches", matchColour);
+        red_percent_id_colours = createColours("Colour Matches", matchColour);
+        
+//      matchColour = JColorChooser.showDialog(AlignmentViewer.this, 
+//                                   "Colour Matches", matchColour);
         repaintCanvas();
       }
     });
@@ -726,6 +728,40 @@ public class AlignmentViewer extends CanvasPanel
     getCanvas().add(popup);
     popup.show(getCanvas(), event.getX(), event.getY());
   }
+
+
+  private Color[] createColours(String title, Color initialColour) 
+  {
+    //Make sure we have nice window decorations.
+    JFrame.setDefaultLookAndFeelDecorated(true);
+
+    //Create and set up the window.
+    JFrame frame = new JFrame("ColorChooserDemo");
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    //Create and set up the content pane.
+    ColorChooserShades newContentPane = new ColorChooserShades(title,initialColour);
+
+    Object[] possibleValues = { "OK", "CANCEL" };
+    int select = JOptionPane.showOptionDialog(null,
+                                 newContentPane,
+                                 "Colour Selection",
+                                 JOptionPane.DEFAULT_OPTION, 
+                                 JOptionPane.QUESTION_MESSAGE,null,
+                                 possibleValues, possibleValues[0]);
+
+    if(select == 0)
+      return newContentPane.getDefinedColour();
+
+    return null;
+//  newContentPane.setOpaque(true); //content panes must be opaque
+//  frame.setContentPane(newContentPane);
+
+    //Display the window.
+//  frame.pack();
+//  frame.setVisible(true);
+  }
+
 
 
   /**
@@ -1702,12 +1738,12 @@ public class AlignmentViewer extends CanvasPanel
    **/
   private void makeColours() 
   {
-    red_percent_id_colours = new Color [NUMBER_OF_SHADES];
-    blue_percent_id_colours = new Color [NUMBER_OF_SHADES];
+    red_percent_id_colours  = new Color[NUMBER_OF_SHADES];
+    blue_percent_id_colours = new Color[NUMBER_OF_SHADES];
 
-    for(int i = 0 ; i < blue_percent_id_colours.length ; ++i) 
+    for(int i = 0; i < blue_percent_id_colours.length; ++i) 
     {
-      final int shade_value = 255 - (int) (256 * 1.0 * i / NUMBER_OF_SHADES);
+      final int shade_value = 255 - (int) (256 * i / NUMBER_OF_SHADES);
       red_percent_id_colours[i] = new Color (255, shade_value, shade_value);
       blue_percent_id_colours[i] = new Color (shade_value, shade_value, 255);
     }
@@ -1719,6 +1755,103 @@ public class AlignmentViewer extends CanvasPanel
   private ComparisonData getComparisonData () 
   {
     return comparison_data;
+  }
+
+  public class ColorChooserShades extends JPanel
+                              implements javax.swing.event.ChangeListener
+  {
+    private JPanel bannerPanel = new JPanel(new BorderLayout());
+    private JColorChooser tcc;
+    private Color definedColour[] = new Color[NUMBER_OF_SHADES];
+    private JLabel banner[]       = new JLabel[NUMBER_OF_SHADES];
+    private JSlider scaleColour;
+    private Box bacross = Box.createHorizontalBox();
+
+    public ColorChooserShades(String title, Color initialColour)
+    {
+      super(new BorderLayout());
+
+      Dimension d = new Dimension(20, 35);
+      for(int i = 0; i < NUMBER_OF_SHADES; ++i)
+      {
+        banner[i] = new JLabel(" ",JLabel.CENTER);
+        banner[i].setOpaque(true);
+        banner[i].setPreferredSize(d);
+        banner[i].setMaximumSize(d);
+        bacross.add(banner[i]);
+      }
+
+      //Set up color chooser for setting text color
+      tcc = new JColorChooser(initialColour);
+      tcc.getSelectionModel().addChangeListener(ColorChooserShades.this);
+      tcc.setBorder(BorderFactory.createTitledBorder(title));
+
+      //set scale
+      scaleColour = new JSlider(0,10,1);
+      scaleColour.addChangeListener(ColorChooserShades.this);
+
+      makeColours();
+
+      //Set up the banner at the top of the window
+      colourBox();
+      bannerPanel.add(bacross, BorderLayout.CENTER);
+      bannerPanel.add(scaleColour, BorderLayout.SOUTH);
+      bannerPanel.setBorder(BorderFactory.createTitledBorder("Scale"));
+
+      add(bannerPanel, BorderLayout.CENTER);
+      add(tcc, BorderLayout.SOUTH);
+    }
+
+    public void stateChanged(javax.swing.event.ChangeEvent e) 
+    {
+      System.out.println("stateChanged");
+      makeColours(); 
+      colourBox();
+      bannerPanel.repaint();
+      repaint();
+    } 
+
+    private void colourBox()
+    {
+      Dimension d = new Dimension(20, 35);
+      for(int i = 0; i < NUMBER_OF_SHADES; ++i)
+      {
+        banner[i].setBackground(definedColour[i]);
+        banner[i].repaint();
+      }
+    }
+    
+
+    /**
+     *  Return an array of colours that will be used for colouring the matches
+     *  (depending on score).
+     **/
+    private void makeColours()
+    {
+      Color newColour = tcc.getColor();
+
+      for(int i = 0; i < NUMBER_OF_SHADES; ++i)
+      {
+        int R = newColour.getRed();
+        int G = newColour.getGreen();
+        int B = newColour.getBlue();
+
+        int scale = i*scaleColour.getValue()*10;
+        if((R+scale) < 255)
+          R += scale;
+        if((G+scale) < 255)
+          G += scale;
+        if((B+scale) < 255)
+          B += scale;
+         
+        definedColour[i] = new Color(R,G,B);
+      }
+    }
+
+    public Color[] getDefinedColour()
+    {
+      return definedColour;
+    }
   }
 
 }
