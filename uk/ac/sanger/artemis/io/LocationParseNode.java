@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LocationParseNode.java,v 1.2 2004-10-21 14:10:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LocationParseNode.java,v 1.3 2004-11-08 17:47:45 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -32,7 +32,7 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
  *  Location.  It is a utility class for EMBL.Location.
  *
  *  @author Kim Rutherford
- *  @version $Id: LocationParseNode.java,v 1.2 2004-10-21 14:10:27 tjc Exp $
+ *  @version $Id: LocationParseNode.java,v 1.3 2004-11-08 17:47:45 tjc Exp $
  *
  **/
 
@@ -94,7 +94,7 @@ class LocationParseNode extends EMBLObject
     this.child = children;
 
     if(children.size() < 1) 
-      throw new Error ("A functional must have at least one argument");
+      throw new Error("A functional must have at least one argument");
   }
 
   /**
@@ -143,7 +143,7 @@ class LocationParseNode extends EMBLObject
 
   /**
    *  Returns the value of this LocationParseNode and it's children as a
-   *  string.  The method will call toString () on the children of this node
+   *  string.  The method will call toString() on the children of this node
    *  and return those strings as part of the result.
    **/
   public String toString() 
@@ -152,19 +152,19 @@ class LocationParseNode extends EMBLObject
     switch(getType())
     {
         case COMPLEMENT:
-        return_string = "complement(" + toStringChild () + ")";
+        return_string = "complement(" + toStringChild() + ")";
         break;
       case JOIN:
-        return_string = "join(" + toStringChildren () + ")";
+        return_string = "join(" + toStringChildren() + ")";
         break;
       case ORDER:
-        return_string = "order(" + toStringChildren () + ")";
+        return_string = "order(" + toStringChildren() + ")";
         break;
       case RANGE:
-        return_string = child.toString ();
+        return_string = child.toString();
         break;
       case ENTRY_RANGE:
-        return_string = entry_name + ":" + toStringChild ();
+        return_string = entry_name + ":" + toStringChild();
         break;
 
       default:
@@ -185,17 +185,17 @@ class LocationParseNode extends EMBLObject
     {
       case ENTRY_RANGE:
       case COMPLEMENT:
-        return ((LocationParseNode) child).changeRange (old_range, new_range);
+        return ((LocationParseNode) child).changeRange(old_range, new_range);
       case JOIN:
       case ORDER:
-        final LocationParseNodeVector children = getChildren ();
+        final LocationParseNodeVector children = getChildren();
 
         for(int i = 0; i < children.size(); ++i) 
         {
-          final LocationParseNode this_child = children.elementAt (i);
+          final LocationParseNode this_child = children.elementAt(i);
   
           final boolean return_value =
-            this_child.changeRange (old_range, new_range);
+            this_child.changeRange(old_range, new_range);
   
           if(return_value) 
             return true;
@@ -204,7 +204,7 @@ class LocationParseNode extends EMBLObject
       case RANGE:
         if(getRange().equals(old_range))
         {
-          setRange (new_range);
+          setRange(new_range);
           return true;
         } 
         else 
@@ -263,19 +263,19 @@ class LocationParseNode extends EMBLObject
     }
     else
     {
-      for(int i = 0 ; i < children.size () ; ++i) 
+      for(int i = 0 ; i < children.size() ; ++i) 
       {
-        final LocationParseNode this_child = children.elementAt (i);
+        final LocationParseNode this_child = children.elementAt(i);
 
-        if(this_child.getType () == RANGE &&
-           this_child.getRange ().getStart () > new_range_start) 
+        if(this_child.getType() == RANGE &&
+           this_child.getRange().getStart() > new_range_start) 
         {
-          children.insertElementAt (new_node, i);
+          children.insertElementAt(new_node, i);
           return;
         }
 
       }
-      children.addElementAtEnd (new_node);
+      children.addElementAtEnd(new_node);
     }
   }
 
@@ -385,12 +385,12 @@ class LocationParseNode extends EMBLObject
         return this;
       case RANGE:
       case COMPLEMENT:
-        throw new Error ("internal error - inconsistent location");
+        throw new Error("internal error - inconsistent location");
       case JOIN:
       case ORDER:
-        return removeRangeFromJoin (remove_range);
+        return removeRangeFromJoin(remove_range);
       default:
-        throw new Error ("internal error - unknown location node type");
+        throw new Error("internal error - unknown location node type");
     }
   }
 
@@ -502,7 +502,7 @@ class LocationParseNode extends EMBLObject
       final LocationParseNodeVector entry_range_nodes =
         new LocationParseNodeVector();
 
-      for(int i = new_children.size () - 1 ; i >= 0 ; --i) 
+      for(int i = new_children.size() - 1 ; i >= 0 ; --i) 
       {
         final LocationParseNode node = new_children.elementAt(i);
         if(node.getType() == ENTRY_RANGE) 
@@ -533,10 +533,10 @@ class LocationParseNode extends EMBLObject
         while(true) 
         {
           boolean change_happened = false;
-          for (int i = 0 ; i < new_children.size () - 1 ; ++i) 
+          for(int i = 0 ; i < new_children.size() - 1 ; ++i) 
           {
-            final LocationParseNode this_node = new_children.elementAt (i);
-            final LocationParseNode next_node = new_children.elementAt (i + 1);
+            final LocationParseNode this_node = new_children.elementAt(i);
+            final LocationParseNode next_node = new_children.elementAt(i + 1);
             if(this_node.getComplementChild().getRange().getEnd() <
                next_node.getComplementChild().getRange().getEnd()) {
               // swap the to nodes
@@ -560,7 +560,7 @@ class LocationParseNode extends EMBLObject
         while(true) 
         {
           boolean change_happened = false;
-          for(int i = 0 ; i < new_children.size () - 1 ; ++i) 
+          for(int i = 0 ; i < new_children.size() - 1 ; ++i) 
           {
             final LocationParseNode this_node = new_children.elementAt(i);
             final LocationParseNode next_node = new_children.elementAt(i + 1);
@@ -578,11 +578,11 @@ class LocationParseNode extends EMBLObject
         }
       }
 
-      for(int i = 0 ; i < entry_range_nodes.size () ; ++i) 
-        new_children.addElementAtEnd (entry_range_nodes.elementAt (i));
+      for(int i = 0 ; i < entry_range_nodes.size() ; ++i) 
+        new_children.addElementAtEnd(entry_range_nodes.elementAt(i));
     } 
     else 
-      throw new Error ("internal error - a JOIN should have > 1 child");
+      throw new Error("internal error - a JOIN should have > 1 child");
 
     return new_tree;
   }
@@ -594,7 +594,7 @@ class LocationParseNode extends EMBLObject
    *  ORDER node must be all RANGE nodes or all COMPLEMENT nodes - there can't
    *  be a mixture.
    **/
-  public boolean isValid () 
+  public boolean isValid() 
   {
     // 2 means check that we have at most two levels.
     // UNKNOWN means the parent isn't a JOIN, ORDER or COMPLEMENT node (there
@@ -609,7 +609,7 @@ class LocationParseNode extends EMBLObject
   public LocationParseNode getComplementChild()
   {
     if(getType() != COMPLEMENT) 
-      throw new Error("in LocationParseNode.getComplementChild () - node " +
+      throw new Error("in LocationParseNode.getComplementChild() - node " +
                       "is not a COMPLEMENT");
     
     return (LocationParseNode)child;
@@ -635,7 +635,7 @@ class LocationParseNode extends EMBLObject
   public LocationParseNodeVector getJoinChildren()
   {
     if(getType() != JOIN) 
-      throw new Error("in LocationParseNode.getJoinChildren () - node " +
+      throw new Error("in LocationParseNode.getJoinChildren() - node " +
                       "is not a JOIN");
     
     return (LocationParseNodeVector) child;
@@ -648,7 +648,7 @@ class LocationParseNode extends EMBLObject
   public LocationParseNodeVector getOrderChildren()
   {
     if(getType() != ORDER) 
-      throw new Error("in LocationParseNode.getOrderChildren () - node " +
+      throw new Error("in LocationParseNode.getOrderChildren() - node " +
                        "is not an ORDER");
     
     return(LocationParseNodeVector) child;
@@ -662,7 +662,7 @@ class LocationParseNode extends EMBLObject
   public LocationParseNode getEntryRangeChild()
   {
     if(getType() != ENTRY_RANGE) 
-      throw new Error("in LocationParseNode.getEntryRangeChild () - node " +
+      throw new Error("in LocationParseNode.getEntryRangeChild() - node " +
                       "is not an ENTRY_RANGE");
     
     return (LocationParseNode)child;
@@ -675,15 +675,15 @@ class LocationParseNode extends EMBLObject
   public Range getRange() 
   {
     if(getType() != RANGE)
-      throw new Error("in LocationParseNode.getRange () - node " +
-                      "is not a RANGE " + getType ());
+      throw new Error("in LocationParseNode.getRange() - node " +
+                      "is not a RANGE " + getType());
     
     return (Range)child;
   }
 
 
   /**
-   *  Internal method that implements copy () and copyClean ().
+   *  Internal method that implements copy() and copyClean().
    *  @param copy_user_data user_data (from EMBLObject) will be copied if and
    *    only if this parameter is true.
    **/
@@ -696,9 +696,9 @@ class LocationParseNode extends EMBLObject
       case COMPLEMENT:
       {
         final LocationParseNode new_child =
-          getComplementChild ().copyInternal (copy_user_data);
+          getComplementChild().copyInternal(copy_user_data);
 
-        new_node = new LocationParseNode (getType (), new_child);
+        new_node = new LocationParseNode(getType(), new_child);
       }
       break;
       case JOIN:
@@ -730,7 +730,7 @@ class LocationParseNode extends EMBLObject
     }
 
     if(copy_user_data)
-      new_node.setUserData(getUserData ());
+      new_node.setUserData(getUserData());
     else 
       new_node.setUserData(null);
    
@@ -762,13 +762,13 @@ class LocationParseNode extends EMBLObject
   void setRange(final Range range) 
   {
     if(getType() != RANGE) 
-      throw new Error("in LocationParseNode.getRange () - node " +
-                      "is not a RANGE " + getType ());
+      throw new Error("in LocationParseNode.getRange() - node " +
+                      "is not a RANGE " + getType());
     this.child = range;
   }
 
   /**
-   *  Returns the result of calling toString () on each of the children of
+   *  Returns the result of calling toString() on each of the children of
    *  this node separated by ",".
    **/
   private String toStringChildren() 
@@ -777,19 +777,19 @@ class LocationParseNode extends EMBLObject
 
     final LocationParseNodeVector children = (LocationParseNodeVector) child;
 
-    if(getType () == JOIN || getType () == ORDER) 
+    if(getType() == JOIN || getType() == ORDER) 
     {
-      for(int i = 0; i<children.size (); ++i) 
+      for(int i = 0; i<children.size(); ++i) 
       {
         if(0 != i) 
           return_string = return_string + ",";
 
-        //        System.out.println ("adding:" + children.elementAt (i).toString ());
-        return_string = return_string + children.elementAt (i).toString ();
+        //        System.out.println("adding:" + children.elementAt(i).toString());
+        return_string = return_string + children.elementAt(i).toString();
       }
     }
     else 
-      throw new Error ("LocationParseNode.toStringChildren (): Illegal type");
+      throw new Error("LocationParseNode.toStringChildren(): Illegal type");
 
     return return_string;
   }
@@ -803,7 +803,7 @@ class LocationParseNode extends EMBLObject
     if(child instanceof LocationParseNode) 
       return ((LocationParseNode)child).toString();
     else 
-      throw new Error("LocationParseNode.toStringChild () was called on " +
+      throw new Error("LocationParseNode.toStringChild() was called on " +
                       "the wrong type of Object");
   }
 
@@ -814,9 +814,9 @@ class LocationParseNode extends EMBLObject
   LocationParseNode getNodeComplement() 
   {
     if(getType() == COMPLEMENT) 
-      return getComplementChild ().copy ();
+      return getComplementChild().copy();
     else 
-      return new LocationParseNode (COMPLEMENT, copy ());
+      return new LocationParseNode(COMPLEMENT, copy());
   }
 
   /**
@@ -854,7 +854,7 @@ class LocationParseNode extends EMBLObject
 
   /**
    *  Return true if and only if the tree starting at this node is valid.
-   *  @see #isValid ()
+   *  @see #isValid()
    *  @param max_levels The maximum number of levels below this node - more
    *    than this number of levels means that the tree is invalid.
    **/
@@ -871,7 +871,7 @@ class LocationParseNode extends EMBLObject
       return getEntryRangeChild().isValid();
     }
 
-    if (max_levels == 0) 
+    if(max_levels == 0) 
     {
       // we are at the lowest level and this isn't a RANGE so this tree is
       // nonsense
@@ -883,7 +883,7 @@ class LocationParseNode extends EMBLObject
       {
         case JOIN:
         case ORDER:
-          if (parent_type == UNKNOWN || parent_type == COMPLEMENT) 
+          if(parent_type == UNKNOWN || parent_type == COMPLEMENT) 
           {
             // parent has the correct type
 
@@ -896,7 +896,7 @@ class LocationParseNode extends EMBLObject
             final LocationParseNodeVector children =
               (LocationParseNodeVector) child;
 
-            for (int i = 0; i < children.size(); ++i) 
+            for(int i = 0; i < children.size(); ++i) 
             {
               final LocationParseNode child_node = children.elementAt(i);
               final boolean return_val =
@@ -931,7 +931,7 @@ class LocationParseNode extends EMBLObject
              parent_type == JOIN ||
              parent_type == ORDER) 
           {
-            return getComplementChild ().isValid (max_levels - 1, getType ());
+            return getComplementChild().isValid(max_levels - 1, getType());
           } 
           else    // parent has the wrong type (ie. it is a COMPLEMENT)
             return false;
