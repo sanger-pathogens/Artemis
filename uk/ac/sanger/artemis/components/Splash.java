@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.2 2004-11-17 13:19:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.3 2004-11-29 17:19:30 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -42,7 +42,7 @@ import javax.swing.border.Border;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.2 2004-11-17 13:19:43 tjc Exp $
+ *  @version $Id: Splash.java,v 1.3 2004-11-29 17:19:30 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -396,13 +396,100 @@ abstract public class Splash extends JFrame
     });
     options_menu.add(enable_direct_edit_item);
 
+    options_menu.addSeparator();
+    options_menu.add(new JLabel(" --- Genetic Codes Tables ---"));
 
+    makeGenticCodeMenu(options_menu);
+    options_menu.addSeparator();
+
+
+//  final JCheckBoxMenuItem enable_euk_mode_item = new JCheckBoxMenuItem(
+//                                                    "Eukaryotic Mode");
+//  enable_euk_mode_item.setState(Options.getOptions().isEukaryoticMode());
+//  enable_euk_mode_item.addItemListener(new ItemListener() 
+//  {
+//    public void itemStateChanged(ItemEvent event) 
+//    {
+//      final boolean item_state = enable_euk_mode_item.getState();
+//      Options.getOptions().setEukaryoticMode(item_state);
+//      helix_canvas.repaint();
+//    }
+//  });
+//  options_menu.add(enable_euk_mode_item);
+
+    final JCheckBoxMenuItem highlight_active_entry_item =
+      new JCheckBoxMenuItem("Highlight Active Entry");
+    final boolean highlight_active_entry_state =
+      Options.getOptions().highlightActiveEntryFlag();
+    highlight_active_entry_item.setState(highlight_active_entry_state);
+    highlight_active_entry_item.addItemListener(new ItemListener() 
+    {
+      public void itemStateChanged(ItemEvent event) 
+      {
+        final boolean item_state = highlight_active_entry_item.getState();
+        Options.getOptions().setHighlightActiveEntryFlag(item_state);
+      }
+    });
+    options_menu.add(highlight_active_entry_item);
+
+    if(Options.getOptions().getPropertyTruthValue("sanger_options") &&
+        Options.getOptions().getProperty("black_belt_mode") != null) 
+    {
+      final JCheckBoxMenuItem black_belt_mode_item =
+        new JCheckBoxMenuItem("Black Belt Mode");
+      final boolean state =
+        Options.getOptions().isBlackBeltMode();
+      black_belt_mode_item.setState(state);
+      black_belt_mode_item.addItemListener(new ItemListener() 
+      {
+        public void itemStateChanged(ItemEvent event) 
+        {
+          final boolean item_state = black_belt_mode_item.getState();
+          if(item_state) 
+            Options.getOptions().put("black_belt_mode", "true");
+          else 
+            Options.getOptions().put("black_belt_mode", "false");
+        }
+      });
+      options_menu.add(black_belt_mode_item);
+    }
+
+    if(Options.isUnixHost()) 
+    {
+      options_menu.addSeparator();
+
+      menu_listener = new ActionListener() 
+      {
+        public void actionPerformed(ActionEvent event) 
+        {
+          showLog();
+        }
+      };
+      makeMenuItem(options_menu, "Show Log Window", menu_listener);
+
+      menu_listener = new ActionListener() 
+      {
+        public void actionPerformed(ActionEvent event) 
+        {
+          logger.setVisible(false);
+        }
+      };
+      makeMenuItem(options_menu, "Hide Log Window", menu_listener);
+    }
+  }
+
+  /**
+  *
+  * Construct menu for genetic code tables.
+  *
+  */
+  protected void makeGenticCodeMenu(final JMenu options_menu)
+  {
     // available genetic codes
     String gcodes[] = Options.getOptions().getOptionValues("genetic_codes").getArray();
 
     ButtonGroup gcodeGroup = new ButtonGroup();
-    options_menu.addSeparator();
-    options_menu.add(new JLabel(" --- Genetic Codes Tables ---"));
+
     for(int i = 0; i< gcodes.length; i++)
     {
       if(gcodes[i].equals("-"))
@@ -489,84 +576,8 @@ abstract public class Splash extends JFrame
       if(i == 0)
         geneCode.setState(true);
     }
-    options_menu.addSeparator();
-
-
-//  final JCheckBoxMenuItem enable_euk_mode_item = new JCheckBoxMenuItem(
-//                                                    "Eukaryotic Mode");
-//  enable_euk_mode_item.setState(Options.getOptions().isEukaryoticMode());
-//  enable_euk_mode_item.addItemListener(new ItemListener() 
-//  {
-//    public void itemStateChanged(ItemEvent event) 
-//    {
-//      final boolean item_state = enable_euk_mode_item.getState();
-//      Options.getOptions().setEukaryoticMode(item_state);
-//      helix_canvas.repaint();
-//    }
-//  });
-//  options_menu.add(enable_euk_mode_item);
-
-    final JCheckBoxMenuItem highlight_active_entry_item =
-      new JCheckBoxMenuItem("Highlight Active Entry");
-    final boolean highlight_active_entry_state =
-      Options.getOptions().highlightActiveEntryFlag();
-    highlight_active_entry_item.setState(highlight_active_entry_state);
-    highlight_active_entry_item.addItemListener(new ItemListener() 
-    {
-      public void itemStateChanged(ItemEvent event) 
-      {
-        final boolean item_state = highlight_active_entry_item.getState();
-        Options.getOptions().setHighlightActiveEntryFlag(item_state);
-      }
-    });
-    options_menu.add(highlight_active_entry_item);
-
-    if(Options.getOptions().getPropertyTruthValue("sanger_options") &&
-        Options.getOptions().getProperty("black_belt_mode") != null) 
-    {
-      final JCheckBoxMenuItem black_belt_mode_item =
-        new JCheckBoxMenuItem("Black Belt Mode");
-      final boolean state =
-        Options.getOptions().isBlackBeltMode();
-      black_belt_mode_item.setState(state);
-      black_belt_mode_item.addItemListener(new ItemListener() 
-      {
-        public void itemStateChanged(ItemEvent event) 
-        {
-          final boolean item_state = black_belt_mode_item.getState();
-          if(item_state) 
-            Options.getOptions().put("black_belt_mode", "true");
-          else 
-            Options.getOptions().put("black_belt_mode", "false");
-        }
-      });
-      options_menu.add(black_belt_mode_item);
-    }
-
-    if(Options.isUnixHost()) 
-    {
-      options_menu.addSeparator();
-
-      menu_listener = new ActionListener() 
-      {
-        public void actionPerformed(ActionEvent event) 
-        {
-          showLog();
-        }
-      };
-      makeMenuItem(options_menu, "Show Log Window", menu_listener);
-
-      menu_listener = new ActionListener() 
-      {
-        public void actionPerformed(ActionEvent event) 
-        {
-          logger.setVisible(false);
-        }
-      };
-      makeMenuItem(options_menu, "Hide Log Window", menu_listener);
-    }
   }
-
+  
   /**
    *  Make a new menu item in the given menu, with its label given the
    *  String and add the given ActionListener to it.
