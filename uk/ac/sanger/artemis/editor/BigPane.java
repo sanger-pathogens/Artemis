@@ -57,7 +57,7 @@ public class BigPane extends JFrame
   private DataViewInternalFrame dataView;
   private FeatureVector overlapFeature;
   private Feature edit_feature;
-
+  private JDesktopPane desktop = null;
 
   public BigPane()
   {
@@ -83,9 +83,13 @@ public class BigPane extends JFrame
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     MultiLineToolTipUI.initialize();
     setFont(font);
-    final JDesktopPane desktop = new JDesktopPane();
-    desktop.setDragMode(JDesktopPane.LIVE_DRAG_MODE);
-    getContentPane().add(desktop);
+
+    if(desktop == null)
+    {
+      desktop = new JDesktopPane();
+      desktop.setDragMode(JDesktopPane.LIVE_DRAG_MODE);
+      getContentPane().add(desktop);
+    }
 
     //Make the big window be indented 80 pixels from each edge
     //of the screen.
@@ -319,10 +323,10 @@ public class BigPane extends JFrame
     }
 
     // stop getz processes
+    setVisible(false);
     dataView.stopGetz();
-
+    dataView.dispose();
     BigPane.srsFrame = null;
-    dispose();
   }
 
 
