@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlotGroup.java,v 1.5 2004-11-24 09:38:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlotGroup.java,v 1.6 2004-11-30 16:16:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -42,7 +42,7 @@ import javax.swing.*;
  *  which can toggled off and on.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlotGroup.java,v 1.5 2004-11-24 09:38:20 tjc Exp $
+ *  @version $Id: BasePlotGroup.java,v 1.6 2004-11-30 16:16:17 tjc Exp $
  **/
 
 public class BasePlotGroup extends JPanel
@@ -69,15 +69,17 @@ public class BasePlotGroup extends JPanel
     final Strand forward_strand =
       entry_group.getBases().getForwardStrand();
 
+    // obtain the reverse complement
     final Strand reverse_strand =
       entry_group.getBases().getReverseStrand();
 
     // the following arrays are from failed tests
-    final float [] [] test_weights = {
+    final float [] [] test_weights = 
+    {
       {1, 0,39,99,11}, // a
-      {76,8,15,1,45}, // c
-      {2,0,42,0,6}, // g
-      {21,91,4,0,38}  // t
+      {76,8,15,1,45},  // c
+      {2,0,42,0,6},    // g
+      {21,91,4,0,38}   // t
     };
 
     final float[][] test_weights2 = 
