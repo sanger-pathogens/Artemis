@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.5 2004-12-13 14:10:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.6 2004-12-14 11:34:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -41,7 +41,10 @@ import java.io.IOException;
 import java.io.File;
 import java.util.Vector;
 import java.net.URL;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import java.awt.dnd.*;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -54,7 +57,7 @@ import javax.swing.border.BevelBorder;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.5 2004-12-13 14:10:49 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.6 2004-12-14 11:34:54 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
@@ -360,8 +363,6 @@ public class MultiComparator extends JFrame
 
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
-    packme();
-
     int screen_height = screen.height;
     int screen_width = screen.width;
 
@@ -441,31 +442,13 @@ public class MultiComparator extends JFrame
   }
 
   /**
-   *  This method will call pack() and then move the JFrame to the centre of
-   *  the screen. (Implementation of the FeatureDisplayOwner interface).
-   **/
-  public void packme() 
-  {
-    pack();
-
-    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-
-    final int x_position =(screen.width - getSize().width) / 2;
-    int y_position =(screen.height - getSize().height) / 2;
-
-    if(y_position < 10) 
-      y_position = 10;
-
-    setLocation(new Point(x_position, y_position));
-  }
-
-  /**
    *  Make one Selection object each EntryGroup.
    **/
   private void makeSelectionArray() 
   {
-    selection_array = new Selection[getEntryGroupArray().length];
-    for(int i = 0 ; i < selection_array.length ; ++i) 
+    final int length = getEntryGroupArray().length;
+    selection_array = new Selection[length];
+    for(int i = 0 ; i < length ; ++i) 
       selection_array[i] = new Selection(null);
   }
 
@@ -475,10 +458,10 @@ public class MultiComparator extends JFrame
    **/
   private void makeGotoEventSourceArray() 
   {
-    goto_event_source_array =
-      new GotoEventSource[getEntryGroupArray().length];
+    final int length = getEntryGroupArray().length;
+    goto_event_source_array = new GotoEventSource[length];
 
-    for(int i = 0 ; i < goto_event_source_array.length ; ++i) 
+    for(int i = 0 ; i < length ; ++i) 
     {
       goto_event_source_array[i] =
         new SimpleGotoEventSource(getEntryGroupArray()[i]) 
@@ -507,8 +490,7 @@ public class MultiComparator extends JFrame
       final EntryFileDialog file_dialog = new EntryFileDialog(this, true);
 
       file_dialog.saveEntry(entry, true, true,
-                             true, DocumentEntryFactory.ANY_FORMAT);
-
+                            true, DocumentEntryFactory.ANY_FORMAT);
     }
     else 
     {
@@ -737,7 +719,6 @@ public class MultiComparator extends JFrame
         pact.printPreview();
       }
     });
-
   }
 
 
