@@ -71,9 +71,23 @@ sub process_fasta
     die "cannot understand $fasta_results_file\n";
   }
 
+  
   if (! -e $sequence_file) {
-    die "cannot find $sequence_file\n";
+    if ($feature_file =~ /(.*)(\/jalview\/)(.+)$/)
+    {
+      $sequence_file = "$1/$sequence_file";
+      if (! -e $fasta_results_file &&
+          ! -e "$fasta_results_file.gz")
+      {
+        $fasta_results_file = "$1/$fasta_results_file";
+      }
+    }
+    if (! -e $sequence_file)
+    {
+      die "cannot find $sequence_file\n";
+    }
   }
+
 
   my $fasta_seq_for_alignment = "";
 
