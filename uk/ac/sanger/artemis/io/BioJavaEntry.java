@@ -296,10 +296,17 @@ public class BioJavaEntry implements DocumentEntry
     if (reallyRemoved) {
       ((BioJavaFeature)feature).setBioJavaEntry (null);
 
-      try {
+      try
+      {
         bioJavaSequence.removeFeature ((org.biojava.bio.seq.Feature) ((BioJavaFeature)feature).getBioJavaFeature ());
-      } catch (org.biojava.utils.ChangeVetoException e) {
-        throw new ReadOnlyException ("read only - feature cannot be removed");
+      }
+      catch(org.biojava.utils.ChangeVetoException e) 
+      {
+        throw new ReadOnlyException("read only - feature cannot be removed");
+      }
+      catch(org.biojava.bio.BioException e)
+      {
+        //A nestable biological exception.
       }
 
       setDirtyFlag ();
