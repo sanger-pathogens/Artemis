@@ -74,6 +74,7 @@ public class BigPane extends JFrame
     this.overlapFeature = overlapFeature;
     this.edit_feature   = edit_feature;
 
+    addNote.setSelected(false);
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     MultiLineToolTipUI.initialize();
     setFont(font);

@@ -277,17 +277,29 @@ public class DataViewInternalFrame extends JInternalFrame
           type = type.substring(ind1+1);
 
           String id   = tok.nextToken();
-          ind1 = id.indexOf(":");
+          ind1 = id.indexOf("with=");
+          if(ind1 == -1)
+            ind1 = 0;         
+            
+//        ind1 = id.indexOf(":");
           id = id.substring(ind1+1).trim();
 
           note.append(tok.nextToken());
           note.append(tok.nextToken());
           note.append(" "+id);
 
-          String length = tok.nextToken();
+          String length = tok.nextToken().trim();
+          while(!length.startsWith("length"))
+            length = tok.nextToken().trim();
 
           ind1 = length.indexOf("=");
+          if(ind1 == -1)
+            ind1 = length.indexOf(" ");
+
           length = length.substring(ind1+1);
+
+          if(!length.endsWith(" aa"))
+            length = length + " aa";
 
           note.append(" ("+length+") ");
           note.append(type+" scores: ");
@@ -299,10 +311,14 @@ public class DataViewInternalFrame extends JInternalFrame
           tok.nextToken();                       // ungapped id
           String eval = tok.nextToken().trim();
           String len  = tok.nextToken().trim();
+
+          while(!len.endsWith("aa overlap"))
+            len  = tok.nextToken().trim();
+
           len = len.substring(0,len.length()-8);
 
           note.append(eval);
-          note.append(" "+pid+" id in ");
+          note.append(", "+pid+" id in ");
           note.append(len);
         }
       }
