@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.1 2004-06-09 09:45:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.2 2004-06-28 10:06:41 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -44,7 +44,7 @@ import java.util.*;
  *  read in new options.
  *
  *  @author Kim Rutherford
- *  @version $Id: Options.java,v 1.1 2004-06-09 09:45:00 tjc Exp $
+ *  @version $Id: Options.java,v 1.2 2004-06-28 10:06:41 tjc Exp $
  **/
 
 public class Options extends Properties 
@@ -231,7 +231,7 @@ public class Options extends Properties
         // system property (if it is set)
         final String [] standard_option_file_names = 
         {
-          "uk.ac.sanger.artemis.ini",
+          "Diana.ini",
           "options",
           "options.txt",
           "options.text",
