@@ -304,10 +304,10 @@ public class BioJavaEntry implements DocumentEntry
       {
         throw new ReadOnlyException("read only - feature cannot be removed");
       }
-      catch(org.biojava.bio.BioException e)
-      {
+//    catch(org.biojava.bio.BioException e)
+//    {
         //A nestable biological exception.
-      }
+//    }
 
       setDirtyFlag ();
 
