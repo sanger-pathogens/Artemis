@@ -277,8 +277,8 @@ public class DataViewInternalFrame extends JInternalFrame
           type = type.substring(ind1+1);
 
           String id   = tok.nextToken();
-          ind1 = id.indexOf("with=");
-          if(ind1 == -1)
+          ind1 = id.indexOf("with=")+4;
+          if(ind1 == 3)
             ind1 = 0;         
             
 //        ind1 = id.indexOf(":");
