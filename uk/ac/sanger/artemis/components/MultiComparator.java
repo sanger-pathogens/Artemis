@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.8 2005-04-05 11:46:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.9 2005-04-05 16:16:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -57,7 +57,7 @@ import javax.swing.border.BevelBorder;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.8 2005-04-05 11:46:21 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.9 2005-04-05 16:16:54 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
@@ -624,18 +624,29 @@ public class MultiComparator extends JFrame
                         sub_menu_name);
         edit_menu.add(this_edit_menu);
 
-        boolean subject = false;
+//      boolean subject = false;
+//      if(i%2 == 0)  
+//        subject = true;
 
-        if(i%2 == 0)  
-          subject = true;
+        AlignmentViewer alignQueryViewer;
+        if(i==0)
+          alignQueryViewer = null;
+        else
+          alignQueryViewer = getAlignmentViewerArray()[i-1];
+
+        AlignmentViewer alignSubjectViewer;
+        if(i == getEntryGroupArray().length-1)
+          alignSubjectViewer = null;
+        else
+          alignSubjectViewer = getAlignmentViewerArray()[i];
 
         this_create_menu =
           new AddMenu(this, getSelectionArray()[i],
                       getEntryGroupArray()[i],
                       getGotoEventSourceArray()[i],
                       getBasePlotGroupArray()[i],
-                      getAlignmentViewerArray()[0],
-                      sub_menu_name, subject);
+                      alignQueryViewer, alignSubjectViewer,
+                      sub_menu_name);
         create_menu.add(this_create_menu);
 
         final WriteMenu this_write_menu =

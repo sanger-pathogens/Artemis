@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.4 2005-04-05 14:45:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.5 2005-04-05 16:16:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.4 2005-04-05 14:45:33 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.5 2005-04-05 16:16:54 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -66,8 +66,8 @@ public class AddMenu extends SelectionMenu
 
   final static public int CREATE_FROM_BASE_RANGE_KEY_CODE = KeyEvent.VK_C;
 
-  private AlignmentViewer alignment_viewer;
-  private boolean subject;
+  private AlignmentViewer alignQueryViewer;
+  private AlignmentViewer alignSubjectViewer;
 
   /**
    *  Create a new AddMenu object.
@@ -92,7 +92,7 @@ public class AddMenu extends SelectionMenu
                   final String menu_name) 
   {
     this(frame,selection,entry_group,
-         goto_event_source,base_plot_group,null,menu_name,false);
+         goto_event_source,base_plot_group,null,null,menu_name);
   }
 
   /**
@@ -113,14 +113,14 @@ public class AddMenu extends SelectionMenu
                  final EntryGroup entry_group,
                  final GotoEventSource goto_event_source,
                  final BasePlotGroup base_plot_group,
-                 final AlignmentViewer alignment_viewer,
-                 final String menu_name, 
-                 final boolean subject) 
+                 final AlignmentViewer alignQueryViewer, 
+                 final AlignmentViewer alignSubjectViewer,
+                 final String menu_name)
   {
     super (frame, menu_name, selection);
 
-    this.subject = subject;
-    this.alignment_viewer = alignment_viewer;
+    this.alignQueryViewer   = alignQueryViewer;
+    this.alignSubjectViewer = alignSubjectViewer;
     this.entry_group = entry_group;
     this.base_plot_group = base_plot_group;
 
@@ -145,7 +145,7 @@ public class AddMenu extends SelectionMenu
 
     add (create_feature_from_range_item);
 
-    if(alignment_viewer != null)
+    if(alignQueryViewer != null || alignSubjectViewer != null)
     {
       JMenuItem create_difference_feature  =
         new JMenuItem("Create Features From Differences");
@@ -153,7 +153,12 @@ public class AddMenu extends SelectionMenu
       {
         public void actionPerformed (ActionEvent event) 
         {
-          Vector diffs = alignment_viewer.getDifferenceCoords(subject);
+          Vector diffs;
+          if(alignQueryViewer != null)
+            diffs = alignQueryViewer.getDifferenceCoords(false);
+          else
+            diffs = alignSubjectViewer.getDifferenceCoords(true);
+
           Enumeration eDiffs = diffs.elements();
           while(eDiffs.hasMoreElements())
           {
