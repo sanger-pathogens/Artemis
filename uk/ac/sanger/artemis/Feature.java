@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.4 2004-11-24 11:55:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.5 2004-11-24 15:59:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -42,7 +42,6 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.EmblStreamFeature;
 import uk.ac.sanger.artemis.io.FastaStreamSequence;
 import uk.ac.sanger.artemis.io.StreamFeature;
-
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.plot.*;
 
@@ -60,13 +59,104 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.4 2004-11-24 11:55:52 tjc Exp $
+ *  @version $Id: Feature.java,v 1.5 2004-11-24 15:59:36 tjc Exp $
  **/
 
 public class Feature
     implements EntryChangeListener, Selectable, SequenceChangeListener,
                MarkerChangeListener, OptionChangeListener
 {
+
+  /**
+   *  The Entry that controls/contains this feature.  This is the Entry object
+   *  that was passed to the constructor.
+   **/
+  private Entry entry;
+
+  /**
+   *  This is a reference to the low level Feature object that this class is
+   *  providing a wrapper for.  This is the embl.Feature object that was
+   *  passed to constructor.
+   **/
+  private uk.ac.sanger.artemis.io.Feature embl_feature;
+
+  /**
+   *  The segment of this Feature.  All features have at least one segment.
+   **/
+  private FeatureSegmentVector segments = null;
+
+  /**
+   *  A vector of those objects listening for feature change events.
+   **/
+  private final Vector feature_listener_list = new Vector();
+
+  /**
+   *  The translation of the bases of this feature.
+   **/
+  private AminoAcidSequence amino_acids = null;
+
+  /**
+   *  The bases of this feature.
+   **/
+  private String bases = null;
+
+  /**
+   *  The count of the number of amino acids in this feature. (set by
+   *  getAACount() and resetCache()).
+   **/
+  private int aa_count = -1;
+
+  /**
+   *  The count of the bases in this feature (set by getBaseCount() and
+   *  resetCache()).
+   **/
+  private int base_count = -1;
+
+  /**
+   *  This array contains counts of the occurrences of each three bases.  The
+   *  first index is the first base, the second index is the second base, etc.
+   *  The indices are the same as those for Bases.letter_index.
+   *  (set by resetCache()).
+   **/
+  private int [][][] codon_counts = null;
+
+  /**
+   *  This array contains counts of the occurrences of each amino acids in the
+   *  translation of the bases of the current feature.
+   *  (set by resetCache()).
+   **/
+  private int [] residue_counts = null;
+
+  /**
+   *  This array contains counts of number of each base that appear in each
+   *  codon position.  The first index is the codon position and the second is
+   *  the base (indexed in the same way as Bases.letter_index).
+   *  (set by resetCache()).
+   **/
+  private int [][] positional_base_counts = null;
+
+  /**
+   *  This array contains the counts of the total number of each base in the
+   *  feature.
+   *  The indices are the same as those for Bases.letter_index.
+   *  (set by resetCache()).
+   **/
+  private int [] base_counts = null;
+
+  /**
+   *  The current Location reference is saved each time setLocation() is
+   *  called so that if the reference changes resetCache() can
+   *  be called.  This is needed to handle RWCorbaFeature objects which can
+   *  change their Location at arbitrary times.
+   **/
+  private Location old_location = null;
+
+  /**
+   *  Incremented when startListening() is called - decremented when
+   *  stopListening() is called.
+   **/
+  private int listen_count = 0;
+  
   /**
    *  Create a new Feature object.
    *  @param entry The uk.ac.sanger.artemis.Entry object that contains this Feature.
@@ -89,7 +179,6 @@ public class Feature
    **/
   public void entryChanged(EntryChangeEvent event) 
   {
-
   }
 
   /**
@@ -103,10 +192,7 @@ public class Feature
       updateEMBLFeatureLocation();
       locationChanged(old_location);
     }
-    catch(ReadOnlyException e) 
-    {
-      // ignore the change
-    }
+    catch(ReadOnlyException e) {}
   }
 
   /**
@@ -135,21 +221,23 @@ public class Feature
         final Range this_feature_range = getMaxRawRange();
 
         boolean feature_changed = false;
+        int eventPosition = event.getPosition();
 
-        if(event.getPosition() >= this_feature_range.getStart() &&
-           event.getPosition() <= this_feature_range.getEnd() + 1) 
+        if(eventPosition >= this_feature_range.getStart() &&
+           eventPosition <= this_feature_range.getEnd() + 1) 
         {
           // check each segment
           final FeatureSegmentVector segments = getSegments();
+          int seg_size = segments.size();
 
-          for(int i = 0 ; i < segments.size() ; ++i) 
+          for(int i = 0; i < seg_size; ++i) 
           {
             final FeatureSegment this_segment = segments.elementAt(i);
 
             final Range this_segment_range = this_segment.getRawRange();
 
-            if(event.getPosition() >= this_segment_range.getStart() &&
-               event.getPosition() <= this_segment_range.getEnd() + 1) 
+            if(eventPosition >= this_segment_range.getStart() &&
+               eventPosition <= this_segment_range.getEnd() + 1) 
               feature_changed = true;
           }
         }
@@ -353,8 +441,9 @@ public class Feature
     final int feature_end_base = getLastBase();
     final int start_base;
     final int end_base;
-
-    if(feature_end_base == getSequenceLength())
+    final int sequenceLength = getSequenceLength();
+    
+    if(feature_end_base == sequenceLength)
     {
       // there are no bases after this feature
       return "";
@@ -363,10 +452,10 @@ public class Feature
     {
       start_base = feature_end_base + 1;
 
-      if(getSequenceLength() - feature_end_base > count) 
+      if(sequenceLength - feature_end_base > count) 
         end_base = feature_end_base + count;
       else 
-        end_base = getSequenceLength();
+        end_base = sequenceLength;
     }
 
     final String bases_string;
@@ -564,20 +653,13 @@ public class Feature
   }
 
   /**
-   *  Return the embl.QualifierVector from the underlying embl.Feature object.
-   **/
-  private QualifierVector getEmblQualifiers() 
-  {
-    return getEmblFeature().getQualifiers();
-  }
-
-  /**
    *  Return a Vector containing the qualifiers of this Feature.
    *  XXX - FIXME - should return a copy or be private
    **/
   public QualifierVector getQualifiers()
   {
-    return getEmblQualifiers();
+    // return the embl.QualifierVector from the underlying embl.Feature object
+    return getEmblFeature().getQualifiers();
   }
 
   /**
@@ -920,12 +1002,12 @@ public class Feature
    *  Return the time when this feature last changed or null if this Feature
    *  doesn't support datestamps.
    **/
-  public Date getDatestamp() {
-    if (getEmblFeature () instanceof DateStampFeature) {
-      return ((DateStampFeature)getEmblFeature ()).getDatestamp ();
-    } else {
+  public Date getDatestamp() 
+  {
+    if(getEmblFeature() instanceof DateStampFeature) 
+      return ((DateStampFeature)getEmblFeature()).getDatestamp();
+    else 
       return null;
-    }
   }
 
   /**
@@ -937,50 +1019,48 @@ public class Feature
    *  @param qualifier_names If null search all qualifiers, otherwise just
    *    search these names,
    **/
-  public boolean containsText (final String search_text,
-                               final boolean fold_case,
-                               final boolean match_substring,
-                               final StringVector qualifier_names) {
+  public boolean containsText(final String search_text,
+                              final boolean fold_case,
+                              final boolean match_substring,
+                              final StringVector qualifier_names) 
+  {
     final String real_search_text;
 
-    if (fold_case) {
-      real_search_text = search_text.toLowerCase ();
-    } else {
+    if(fold_case) 
+      real_search_text = search_text.toLowerCase();
+    else 
       real_search_text = search_text;
-    }
 
-    final QualifierVector qualifiers = getQualifiers ();
+    final QualifierVector qualifiers = getQualifiers();
 
-    for (int i = 0 ; i  < qualifiers.size () ; ++i) {
-      final Qualifier this_qualifier = qualifiers.elementAt (i);
+    for(int i = 0; i  < qualifiers.size(); ++i) 
+    {
+      final Qualifier this_qualifier = qualifiers.elementAt(i);
 
-      if (qualifier_names != null &&
-          !qualifier_names.contains (this_qualifier.getName ())) {
+      if(qualifier_names != null &&
+         !qualifier_names.contains(this_qualifier.getName())) 
         continue;
-      }
 
-      final StringVector values = this_qualifier.getValues ();
+      final StringVector values = this_qualifier.getValues();
 
-      if (values != null) {
-        for (int values_index = 0 ;
-             values_index < values.size () ;
-             ++values_index) {
-          String this_value_string = values.elementAt (values_index);
+      if(values != null)
+      {
+        for(int values_index = 0; values_index < values.size(); 
+             ++values_index) 
+        {
+          String this_value_string = values.elementAt(values_index);
 
-          if (this_value_string == null) {
+          if(this_value_string == null) 
             continue;
-          }
 
-          if (fold_case) {
-            this_value_string = this_value_string.toLowerCase ();
-          }
+          if(fold_case) 
+            this_value_string = this_value_string.toLowerCase();
 
-          if (! match_substring &&
-              this_value_string.equals (real_search_text) ||
-              match_substring &&
-              this_value_string.indexOf (real_search_text) != -1) {
+          if(! match_substring &&
+             this_value_string.equals(real_search_text) ||
+             match_substring &&
+             this_value_string.indexOf(real_search_text) != -1) 
             return true;
-          }
         }
       }
     }
@@ -991,113 +1071,109 @@ public class Feature
   /**
    *  Return true if and only if this feature ends in a valid stop codon.
    **/
-  public boolean hasValidStartCodon () {
-    if (!isCDS ()) {
+  public boolean hasValidStartCodon() 
+  {
+    if(!isCDS())
       return true;
-    }
 
-    try {
-      if (getQualifierByName ("codon_start") != null &&
-          isPartialCDS () &&
-          getFirstBase () == 1) {
+    try 
+    {
+      if(getQualifierByName("codon_start") != null &&
+         isPartialCDS() &&
+         getFirstBase() == 1) 
         return true;
-      }
-    } catch (InvalidRelationException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+    }
+    catch(InvalidRelationException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
 
-    final AminoAcidSequence translation = getTranslation ();
+    final AminoAcidSequence translation = getTranslation();
 
-    if (translation.length () < 1) {
+    if(translation.length() < 1) 
       return false;
-    }
 
-    final String first_codon = getTranslationBases ().substring (0, 3);
+    final String first_codon = getTranslationBases().substring(0, 3);
 
-    final StringVector start_codons;
+    final StringVector start_codons = Options.getOptions().getStartCodons();
 
-    start_codons = Options.getOptions().getStartCodons();
+//  if(Options.getOptions().isEukaryoticMode()) 
+//    start_codons = Options.getOptions().getEukaryoticStartCodons();
+//  else
+//    start_codons = Options.getOptions().getProkaryoticStartCodons();
 
-//  if (Options.getOptions ().isEukaryoticMode ()) {
-//    start_codons = Options.getOptions ().getEukaryoticStartCodons ();
-//  } else {
-//    start_codons = Options.getOptions ().getProkaryoticStartCodons ();
-//  }
-
-    if (start_codons.contains (first_codon)) {
+    if(start_codons.contains(first_codon)) 
       return true;
-    } else {
+    else 
       return false;
-    }
   }
 
   /**
    *  Return true if and only if this feature ends in a valid stop codon.
    **/
-  public boolean hasValidStopCodon () {
-    if (!isCDS ()) {
+  public boolean hasValidStopCodon() 
+  {
+    if(!isCDS())
       return true;
-    }
 
-    if (isPartialCDS () &&
-        getLastBase () == getEntry ().getBases ().getLength ()) {
+    if(isPartialCDS() &&
+       getLastBase() == getEntry().getBases().getLength()) 
       return true;
-    }
 
-    final int bases_length = getBaseCount () - getCodonStart () + 1;
+    final int bases_length = getBaseCount() - getCodonStart() + 1;
 
-    if (bases_length % 3 != 0) {
+    if(bases_length % 3 != 0) 
       return false;
-    }
 
-    if (bases_length < 3) {
+    if(bases_length < 3) 
       return false;
-    }
 
-    final String codon_string = getBases ().substring (getBaseCount () - 3);
+    final String codon_string = getBases().substring(getBaseCount() - 3);
 
     final char last_codon_translation =
-      AminoAcidSequence.getCodonTranslation (codon_string);
+      AminoAcidSequence.getCodonTranslation(codon_string);
 
-    if (AminoAcidSequence.isStopCodon (last_codon_translation)) {
+    if(AminoAcidSequence.isStopCodon(last_codon_translation))
       return true;
-    } else {
+    else
       return false;
-    }
   }
 
   /**
    *  Return true if and only if this feature has a valid EMBL key (rather
    *  than an Artemis extension).
    **/
-  public boolean hasValidEMBLKey () {
-    if (getEntry ().getEntryInformation ().isValidKey (getKey ())) {
+  public boolean hasValidEMBLKey() 
+  {
+    if(getEntry().getEntryInformation().isValidKey(getKey()))
       return true;
-    } else {
+    else
       return false;
-    }
   }
 
   /**
    *  Return true if and only if this feature has all the required EMBL
    *  qualifiers (for submission to EMBL).
    **/
-  public boolean hasRequiredQualifiers () {
+  public boolean hasRequiredQualifiers()
+  {
     final StringVector required_qualifiers =
-      getEntry ().getEntryInformation ().getRequiredQualifiers (getKey ());
+      getEntry().getEntryInformation().getRequiredQualifiers(getKey());
 
-    if (required_qualifiers == null) {
+    if(required_qualifiers == null)
       return true;
-    }
 
-    try {
-      for (int i = 0 ; i < required_qualifiers.size () ; ++i) {
-        if (getQualifierByName (required_qualifiers.elementAt (i)) == null) {
+    try
+    {
+      for(int i = 0; i < required_qualifiers.size(); ++i) 
+      {
+        if(getQualifierByName(required_qualifiers.elementAt(i)) == null) 
           return false;
-        }
       }
-    } catch (InvalidRelationException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+    } 
+    catch(InvalidRelationException e)
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
 
     return true;
@@ -1109,79 +1185,85 @@ public class Feature
    *  @return true if and only if the feature has a stop codon or if a stop
    *    codon was successfully added (by moving the end by three bases).
    **/
-  public boolean fixStopCodon ()
-      throws ReadOnlyException {
+  public boolean fixStopCodon() 
+      throws ReadOnlyException 
+  {
+    final Location old_location = getLocation();
+    final int codon_start = getCodonStart();
 
-    final Location old_location = getLocation ();
-
-    final int codon_start = getCodonStart ();
-
-    if ((getBaseCount () - codon_start + 1) % 3 != 0) {
-      // there is no possible way to fix this feature
+    // there is no possible way to fix this feature
+    if((getBaseCount() - codon_start + 1) % 3 != 0)
       return false;
-    }
 
-    final FeatureSegment last_segment = getSegments ().lastElement ();
-
-    final Marker last_base_marker = last_segment.getEnd ();
-
+    final FeatureSegment last_segment = getSegments().lastElement();
+    final Marker last_base_marker = last_segment.getEnd();
     final Marker last_codon_marker;
 
-    try {
-      last_codon_marker = last_base_marker.moveBy (-2);
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+    try
+    {
+      last_codon_marker = last_base_marker.moveBy(-2);
+    } 
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
 
     final Range last_codon_range;
 
-    try {
-      last_codon_range =
-        new Range (last_codon_marker.getPosition (),
-                   last_codon_marker.getPosition () + 2);
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+    try 
+    {
+      last_codon_range = new Range(last_codon_marker.getPosition(),
+                                   last_codon_marker.getPosition() + 2);
+    } 
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
 
     final String last_codon_string =
-      last_codon_marker.getStrand ().getSubSequence (last_codon_range);
+      last_codon_marker.getStrand().getSubSequence(last_codon_range);
 
     final char last_amino_acid_char =
-      AminoAcidSequence.getCodonTranslation (last_codon_string);
+      AminoAcidSequence.getCodonTranslation(last_codon_string);
 
-    if (AminoAcidSequence.isStopCodon (last_amino_acid_char)) {
+    if(AminoAcidSequence.isStopCodon(last_amino_acid_char))
       return true;
-    }
 
     final Range next_codon_range;
 
-    try {
+    try 
+    {
       next_codon_range =
-        new Range (last_codon_marker.getPosition () + 3,
-                   last_codon_marker.getPosition () + 5);
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+        new Range(last_codon_marker.getPosition() + 3,
+                  last_codon_marker.getPosition() + 5);
+    } 
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
 
     final String next_codon_string =
-      last_codon_marker.getStrand ().getSubSequence (next_codon_range);
+      last_codon_marker.getStrand().getSubSequence(next_codon_range);
 
     final char next_amino_acid_char =
-      AminoAcidSequence.getCodonTranslation (next_codon_string);
+      AminoAcidSequence.getCodonTranslation(next_codon_string);
 
-    if (AminoAcidSequence.isStopCodon (next_amino_acid_char)) {
-      try {
+    if(AminoAcidSequence.isStopCodon(next_amino_acid_char)) 
+    {
+      try 
+      {
         // move the end marker to the next codon
-        final Marker new_end_marker = last_base_marker.moveBy (3);
+        final Marker new_end_marker = last_base_marker.moveBy(3);
 
-        last_segment.setEndPosition (new_end_marker.getPosition ());
-      } catch (OutOfRangeException e) {
-        throw new Error ("internal error - unexpected exception: " + e);
+        last_segment.setEndPosition(new_end_marker.getPosition());
+      } 
+      catch(OutOfRangeException e) 
+      {
+        throw new Error("internal error - unexpected exception: " + e);
       }
 
-      updateEMBLFeatureLocation ();
-
-      locationChanged (old_location);
+      updateEMBLFeatureLocation();
+      locationChanged(old_location);
 
       return true;
     }
@@ -1204,105 +1286,124 @@ public class Feature
    *    segment is less than 6 bases long or if there is no start codon in the
    *    first segment or in the first 30% of the feature.
    **/
-  public boolean trimStart (final boolean trim_to_any,
-                            final boolean trim_to_next)
-      throws ReadOnlyException {
+  public boolean trimStart(final boolean trim_to_any,
+                           final boolean trim_to_next)
+      throws ReadOnlyException 
+  {
+    final Location old_location = getLocation();
+    final FeatureSegment first_segment = getSegments().elementAt(0);
 
-    final Location old_location = getLocation ();
-
-    final FeatureSegment first_segment = getSegments ().elementAt (0);
-
-    if (first_segment.getBaseCount () < 6) {
-      // too short to trim
+    // too short to trim
+    if(first_segment.getBaseCount() < 6) 
       return false;
-    }
 
     final BasePattern search_pattern;
 
-    try {
-      if (trim_to_any) {
-        search_pattern = new BasePattern ("dtg");
-      } else {
-        search_pattern = new BasePattern ("atg");
-      }
-    } catch (BasePatternFormatException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+    try 
+    {
+      if(trim_to_any) 
+        search_pattern = new BasePattern("dtg");
+      else 
+        search_pattern = new BasePattern("atg");
+    } 
+    catch(BasePatternFormatException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
 
-    final String first_codon_bases = getTranslationBases ().substring (0, 3);
+    final String first_codon_bases = getTranslationBases().substring(0, 3);
 
-    Marker current_marker = first_segment.getStart ();
+    Marker current_marker = first_segment.getStart();
 
-    try {
-      current_marker = current_marker.moveBy (getCodonStart () - 1);
-    } catch (OutOfRangeException e) {
+    try 
+    {
+      current_marker = current_marker.moveBy(getCodonStart() - 1);
+    } 
+    catch(OutOfRangeException e) 
+    {
       return false;
     }
 
-    if (search_pattern.matches (first_codon_bases)) {
+    if(search_pattern.matches(first_codon_bases)) 
+    {
       // the segment already starts on a start codon
-      if (trim_to_next) {
+      if(trim_to_next) 
+      {
         // move passed the current start codon
-        try {
-          current_marker = current_marker.moveBy (3);
-        } catch (OutOfRangeException e) {
+        try 
+        {
+          current_marker = current_marker.moveBy(3);
+        } 
+        catch(OutOfRangeException e) 
+        {
           return false;
         }
-      } else {
+      } 
+      else 
         return true;
-      }
     }
 
     final int end_of_segment_position =
-      first_segment.getEnd ().getPosition ();
+      first_segment.getEnd().getPosition();
 
     final int start_of_feature_position =
-      first_segment.getStart ().getPosition ();
+      first_segment.getStart().getPosition();
 
-    while (true) {
-      try {
-        final String current_codon = Strand.getCodonAtMarker (current_marker);
+    while(true) 
+    {
+      try 
+      {
+        final String current_codon = Strand.getCodonAtMarker(current_marker);
 
-        if (search_pattern.matches (current_codon)) {
+        if(search_pattern.matches(current_codon)) 
           break;
-        }
 
-        current_marker = current_marker.moveBy (3);
+        current_marker = current_marker.moveBy(3);
 
-        final int current_marker_position = current_marker.getPosition ();
+        final int current_marker_position = current_marker.getPosition();
 
-        if (current_marker_position > end_of_segment_position - 2 ||
-            (!trim_to_next &&
-             1.0 * (current_marker_position - start_of_feature_position) /
-             getTranslationBasesLength () > 0.3)) {
+        if(current_marker_position > end_of_segment_position - 2 ||
+           (!trim_to_next &&
+            1.0 * (current_marker_position - start_of_feature_position) /
+            getTranslationBasesLength() > 0.3)) 
+        {
           // the current_marker is past the end of the first segment or is
           // more than 30% into the feature
           return false;
         }
-      } catch (OutOfRangeException e) {
+      }
+      catch(OutOfRangeException e) 
+      {
         return false;
       }
     }
 
-    try {
-      first_segment.setStartPosition (current_marker.getPosition ());
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+    try
+    {
+      first_segment.setStartPosition(current_marker.getPosition());
+    } 
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
 
-    try {
+    try 
+    {
       // remove /codon_start (if it exists) since the new location will be in
       // the correct frame
-      removeQualifierByName ("codon_start");
-    } catch (OutOfDateException _) {
+      removeQualifierByName("codon_start");
+    } 
+    catch(OutOfDateException _) 
+    {
       // do nothing
-    } catch (EntryInformationException _) {
+    } 
+    catch(EntryInformationException _) 
+    {
       // do nothing
     }
 
-    updateEMBLFeatureLocation ();
-
-    locationChanged (old_location);
+    updateEMBLFeatureLocation();
+    locationChanged(old_location);
 
     return true;
   }
@@ -1311,10 +1412,14 @@ public class Feature
    *  Return the label (the value of the first /label qualifier) of this
    *  Feature, but return null if there is no label or if the label is "*".
    **/
-  public String getLabel () {
-    try {
-      return getValueOfQualifier ("label");
-    } catch (InvalidRelationException e) {
+  public String getLabel() 
+  {
+    try
+    {
+      return getValueOfQualifier("label");
+    }
+    catch(InvalidRelationException e)
+    {
       return null;
     }
   }
@@ -1323,10 +1428,14 @@ public class Feature
    *  Return the gene name (the value of the first /gene qualifier) of this
    *  Feature or null if there it has no gene name.
    **/
-  private String getGeneName () {
-    try {
-      return getValueOfQualifier ("gene");
-    } catch (InvalidRelationException e) {
+  private String getGeneName() 
+  {
+    try 
+    {
+      return getValueOfQualifier("gene");
+    }
+    catch(InvalidRelationException e) 
+    {
       return null;
     }
   }
@@ -1337,52 +1446,55 @@ public class Feature
    *  /gene, /locus_tag, /label.  If none of the qualifiers exists return
    *  the feature key of this feature.
    **/
-  public String getIDString () {
+  public String getIDString() 
+  {
     final String picked_name =
-      pickName (Options.getOptions ().getDisplayQualifierNames ());
+      pickName(Options.getOptions().getDisplayQualifierNames());
 
-    if (picked_name == null) {
-      return getKey ().toString ();
-    } else {
+    if(picked_name == null) 
+      return getKey().toString();
+    else 
       return picked_name;
-    }
   }
 
   /**
    *  Return the systematic name of this feature.
    **/
-  public String getSystematicName () {
+  public String getSystematicName() 
+  {
     final String picked_name =
-      pickName (Options.getOptions ().getSystematicQualifierNames ());
+      pickName(Options.getOptions().getSystematicQualifierNames());
 
-    if (picked_name == null) {
-      return getIDString ();
-    } else {
+    if(picked_name == null) 
+      return getIDString();
+    else 
       return picked_name;
-    }
   }
 
   /**
    *  Look at the qualifier_names one-by-one and return the first value of the
    *  first qualifier found.
    **/
-  private String pickName (final StringVector qualifier_names) {
-    for (int i = 0 ; i < qualifier_names.size () ; ++i) {
-      try {
+  private String pickName(final StringVector qualifier_names) 
+  {
+    int qn_size = qualifier_names.size();
+    for(int i = 0; i < qn_size; ++i)
+    {
+      try
+      {
         final Qualifier qualifier =
-          getQualifierByName (qualifier_names.elementAt (i));
+          getQualifierByName(qualifier_names.elementAt(i));
 
-        if (qualifier != null) {
-          final StringVector values = qualifier.getValues ();
+        if(qualifier != null)
+        {
+          final StringVector values = qualifier.getValues();
 
-          if (values != null && values.size () > 0 &&
-              values.elementAt (0) != null) {
-            return values.elementAt (0);
-          }
+          if(values != null && values.size() > 0 &&
+             values.elementAt(0) != null) 
+            return values.elementAt(0);
         }
-      } catch (InvalidRelationException e) {
-        // ignore and try a different qualifier name
-      }
+      } 
+      catch(InvalidRelationException e){}
     }
 
     return null;
@@ -1392,22 +1504,30 @@ public class Feature
    *  Return the note (the value of the first /note qualifier) of this
    *  Feature or null if there is no /note.
    **/
-  public String getNote () {
-    try {
-      return getValueOfQualifier ("note");
-    } catch (InvalidRelationException e) {
+  public String getNote()
+  {
+    try
+    {
+      return getValueOfQualifier("note");
+    } 
+    catch(InvalidRelationException e)
+    {
       return null;
     }
   }
 
   /**
-   *  Return the product (the value of the first /priduct qualifier) of this
+   *  Return the product (the value of the first /product qualifier) of this
    *  Feature or null if there is no /product.
    **/
-  public String getProductString () {
-    try {
-      return getValueOfQualifier ("product");
-    } catch (InvalidRelationException e) {
+  public String getProductString()
+  {
+    try 
+    {
+      return getValueOfQualifier("product");
+    }
+    catch(InvalidRelationException e) 
+    {
       return null;
     }
   }
@@ -1416,13 +1536,14 @@ public class Feature
    *  Return the number of bases in this feature not inclding introns (total of
    *  all segments).
    **/
-  public int getBaseCount () {
-    if (base_count == -1) {
+  public int getBaseCount() 
+  {
+    if(base_count == -1) 
+    {
       int new_base_count = 0;
 
-      for (int i = 0 ; i < getSegments ().size () ; ++i) {
-        new_base_count += getSegments ().elementAt (i).getBaseCount ();
-      }
+      for(int i = 0; i < getSegments().size(); ++i) 
+        new_base_count += getSegments().elementAt(i).getBaseCount();
 
       base_count = new_base_count;
     }
@@ -1433,15 +1554,16 @@ public class Feature
   /**
    *  Return the bases in this feature (all bases in all segments).
    **/
-  public String getBases () {
-    if (bases == null) {
-      final StringBuffer buffer = new StringBuffer ();
+  public String getBases() 
+  {
+    if(bases == null) 
+    {
+      final StringBuffer buffer = new StringBuffer();
 
-      for (int i = 0 ; i < getSegments ().size () ; ++i) {
-        buffer.append (getSegments ().elementAt (i).getBases ());
-      }
+      for(int i = 0; i < getSegments().size(); ++i) 
+        buffer.append(getSegments().elementAt(i).getBases());
 
-      bases = buffer.toString ();
+      bases = buffer.toString();
     }
 
     return bases;
@@ -1451,12 +1573,12 @@ public class Feature
    *  Return the number of coding bases in this feature, that is, the number
    *  of codons divided by three.
    **/
-  public int getTranslationBasesLength () {
-    final int codon_start = getCodonStart ();
-
+  public int getTranslationBasesLength()
+  {
+    final int codon_start = getCodonStart();
     final int start_index = codon_start - 1;
 
-    int end_index = getBases ().length ();
+    int end_index = getBases().length();
 
     final int mod_value = (end_index - start_index) % 3;
 
@@ -1465,17 +1587,17 @@ public class Feature
 
     final int new_length = end_index - start_index;
 
-    if (new_length >= 3) {
+    if(new_length >= 3) 
+    {
       // remove the stop codon (if present)
 
-      final String last_codon = getBases ().substring (end_index - 3);
+      final String last_codon = getBases().substring(end_index - 3);
 
       final char amino_acid_char =
-        AminoAcidSequence.getCodonTranslation (last_codon);
+        AminoAcidSequence.getCodonTranslation(last_codon);
 
-      if (AminoAcidSequence.isStopCodon (amino_acid_char)) {
+      if(AminoAcidSequence.isStopCodon(amino_acid_char)) 
         return new_length - 3;
-      }
     }
 
     return new_length;
@@ -1485,14 +1607,13 @@ public class Feature
    *  Return the bases in this feature (all bases in all segments), taking
    *  the /start_codon qualifier into consideration.
    **/
-  public String getTranslationBases () {
-    final int codon_start = getCodonStart ();
-
+  public String getTranslationBases() 
+  {
+    final int codon_start = getCodonStart();
     final int start_index = codon_start - 1;
+    final int end_index = getTranslationBasesLength() + start_index;
 
-    final int end_index = getTranslationBasesLength () + start_index;
-
-    return getBases ().substring (start_index, end_index);
+    return getBases().substring(start_index, end_index);
   }
 
   /**
@@ -1501,131 +1622,137 @@ public class Feature
    *  if there are no valid /transl_except qualifiers (ie. parsable and with
    *  coordinates in range).
    **/
-  private AminoAcidSequence fixTranslationExceptions () {
-    final String amino_acids_string = amino_acids.toString ();
-
+  private AminoAcidSequence fixTranslationExceptions() 
+  {
+    final String amino_acids_string = amino_acids.toString();
     String new_amino_acids_string = amino_acids_string;
 
-    try {
+    try
+    {
       final Qualifier except_qualifier =
-        getQualifierByName ("transl_except");
+        getQualifierByName("transl_except");
 
-      if (except_qualifier != null) {
-        final StringVector values = except_qualifier.getValues ();
+      if(except_qualifier != null) 
+      {
+        final StringVector values = except_qualifier.getValues();
 
-        if (values != null) {
-          for (int i = 0 ; i < values.size () ; ++i) {
-            final String value = values.elementAt (i);
+        if(values != null) 
+        {
+          for(int i = 0; i < values.size(); ++i) 
+          {
+            final String value = values.elementAt(i);
 
             final String START_STRING = "(pos:";
             final String COMMA_STRING = ",aa:";
 
-            if (value.startsWith (START_STRING) && value.endsWith (")")) {
+            if(value.startsWith(START_STRING) && value.endsWith(")")) 
+            {
+              final int comma_pos = value.lastIndexOf(COMMA_STRING);
 
-              final int comma_pos = value.lastIndexOf (COMMA_STRING);
-
-              if (comma_pos >= 0) {
+              if(comma_pos >= 0) 
+              {
                 final String location_part =
-                  value.substring (START_STRING.length (), comma_pos);
+                  value.substring(START_STRING.length(), comma_pos);
 
                 final String aa_part =
-                  value.substring (comma_pos + COMMA_STRING.length (),
-                                   value.length () - 1);
+                  value.substring(comma_pos + COMMA_STRING.length(),
+                                  value.length() - 1);
 
                 char aa_part_one_letter_code =
-                  AminoAcidSequence.getOneLetterCode (aa_part);
+                  AminoAcidSequence.getOneLetterCode(aa_part);
 
-                if (aa_part_one_letter_code == (char)-1) {
-                  // aa_part is probably "OTHER"
+                // aa_part is probably "OTHER"
+                if(aa_part_one_letter_code == (char)-1) 
                   aa_part_one_letter_code = '.';
-                }
 
-                final Location location = new Location (location_part);
+                final Location location = new Location(location_part);
 
                 int start_base_in_feature;
 
-                if (isForwardFeature ()) {
+                if(isForwardFeature())
+                {
                   start_base_in_feature =
-                    location.getFirstBase () - getRawFirstBase () -
-                    (getCodonStart () - 1);
-                } else {
+                    location.getFirstBase() - getRawFirstBase() -
+                    (getCodonStart() - 1);
+                }
+                else 
+                {
                   start_base_in_feature =
-                    getRawLastBase () - location.getLastBase () -
-                    (getCodonStart () - 1);
+                    getRawLastBase() - location.getLastBase() -
+                    (getCodonStart() - 1);
                 }
 
-                if (start_base_in_feature >= 0 &&
-                    start_base_in_feature <
-                    getBaseCount () - getCodonStart () + 1) {
-
+                if(start_base_in_feature >= 0 &&
+                   start_base_in_feature <
+                   getBaseCount() - getCodonStart() + 1) 
+                {
                   final int start_aa_in_feature = start_base_in_feature / 3;
 
                   new_amino_acids_string =
-                    new_amino_acids_string.substring (0, start_aa_in_feature) +
+                    new_amino_acids_string.substring(0, start_aa_in_feature) +
                     aa_part_one_letter_code +
-                    new_amino_acids_string.substring (start_aa_in_feature + 1);
+                    new_amino_acids_string.substring(start_aa_in_feature + 1);
                 }
               }
             }
           }
         }
       }
-    } catch (InvalidRelationException e) {
-      // ignore it
-    } catch (LocationParseException e) {
-      // ignore it
     }
+    catch(InvalidRelationException e) {}
+    catch(LocationParseException e) {}
 
-    if (new_amino_acids_string == amino_acids_string) {
+    if(new_amino_acids_string == amino_acids_string) 
       return null;
-    } else {
-      return new AminoAcidSequence (new_amino_acids_string);
-    }
+    else
+      return new AminoAcidSequence(new_amino_acids_string);
   }
 
   /**
    *  Return the translation of the bases in this feature.
    **/
-  public AminoAcidSequence getTranslation () {
-    if (amino_acids == null) {
+  public AminoAcidSequence getTranslation() 
+  {
+    if(amino_acids == null)
+    {
       amino_acids =
-        AminoAcidSequence.getTranslation (getTranslationBases (), true);
+        AminoAcidSequence.getTranslation(getTranslationBases(), true);
 
-      if (amino_acids.length () == 0) {
-        // a very short feature
+      // a very short feature
+      if(amino_acids.length() == 0) 
         return amino_acids;
-      }
 
       final AminoAcidSequence fixed_amino_acids =
-        fixTranslationExceptions ();
+        fixTranslationExceptions();
 
-      if (fixed_amino_acids != null) {
+      if(fixed_amino_acids != null) 
         amino_acids = fixed_amino_acids;
-      }
 
-      if (isCDS () && !isPartialCDS () && hasValidStartCodon ()) {
-        if (amino_acids.elementAt (0) != 'm') {
+      if(isCDS() && !isPartialCDS() && hasValidStartCodon())
+      {
+        if(amino_acids.elementAt(0) != 'm') 
+        {
           // translation should always start with M
-          final String amino_acids_string = amino_acids.toString ();
+          final String amino_acids_string = amino_acids.toString();
 
           final String new_amino_acids_string =
-            'M' + amino_acids_string.substring (1);
+            'M' + amino_acids_string.substring(1);
 
-          amino_acids = new AminoAcidSequence (new_amino_acids_string);
+          amino_acids = new AminoAcidSequence(new_amino_acids_string);
         }
       }
     }
-
     return amino_acids;
   }
 
   /**
    *  Return the number of amino acids in this feature (total of all segments).
    **/
-  public int getAACount () {
-    if (aa_count == -1) {
-      aa_count = getTranslationBasesLength () / 3;
-    }
+  public int getAACount() 
+  {
+    if(aa_count == -1) 
+      aa_count = getTranslationBasesLength() / 3;
+    
     return aa_count;
   }
 
@@ -1633,36 +1760,39 @@ public class Feature
    *  Return the total molecular weight of the amino acid translation of the
    *  bases of this feature.
    **/
-  public float getMolecularWeight () {
-    return getTranslation ().getMolecularWeight ();
+  public float getMolecularWeight() 
+  {
+    return getTranslation().getMolecularWeight();
   }
 
   /**
    *  Return the number of occurrences of the given codon in the frame
    *  starting at the correct frame for this feature (see the
-   *  getTranslationBases () method).  The first index is the first base, the
+   *  getTranslationBases() method).  The first index is the first base, the
    *  second index is the second base, etc.  The indices are the same as those
-   *  for Bases.letter_index.  An example: calling getCodonCount (0, 0, 1)
+   *  for Bases.letter_index.  An example: calling getCodonCount(0, 0, 1)
    *  will return the count of the codon with the sequence t,t,c.
    **/
-  public int getCodonCount (final int first,
-                            final int second,
-                            final int third) {
-    if (codon_counts == null) {
-      setArrays ();
-    }
+  public int getCodonCount(final int first,
+                           final int second,
+                           final int third) 
+  {
+    if(codon_counts == null) 
+      setArrays();
+    
     return codon_counts[first][second][third];
   }
 
   /**
    *  Return a count of the occurrences of each amino acids in the translation
    *  of the bases of the current feature.  The index should be the same as
-   *  the index that is returned by AminoAcidSequence.getSymbolIndex ().
+   *  the index that is returned by AminoAcidSequence.getSymbolIndex().
    **/
-  public int getResidueCount (final int amino_acid_index) {
-    if (residue_counts == null) {
-      setArrays ();
-    }
+  public int getResidueCount(final int amino_acid_index) 
+  {
+    if(residue_counts == null) 
+      setArrays();
+    
     return residue_counts[amino_acid_index];
   }
 
@@ -1671,22 +1801,24 @@ public class Feature
    *  or 3).  The first index is the codon position and the second is the base
    *  (indexed in the same way as Bases.letter_index).  (set by resetCache ()).
    **/
-  public int getPositionalBaseCount (final int codon_base_position,
-                                     final int base_index) {
-    if (positional_base_counts == null) {
-      setArrays ();
-    }
+  public int getPositionalBaseCount(final int codon_base_position,
+                                    final int base_index) 
+  {
+    if(positional_base_counts == null)
+      setArrays();
+   
     return positional_base_counts[codon_base_position][base_index];
   }
 
   /**
    *  Return the count each base in the feature.  The indices are the same as
-   *  those for Bases.letter_index.  (set by resetCache ()).
+   *  those for Bases.letter_index. (set by resetCache()).
    **/
-  public int getBaseCount (final int base_index) {
-    if (base_counts == null) {
-      setArrays ();
-    }
+  public int getBaseCount(final int base_index) 
+  {
+    if(base_counts == null)
+      setArrays();
+    
     return base_counts[base_index];
   }
 
@@ -1694,31 +1826,32 @@ public class Feature
    *  Return the codon position 1 and 2 correlation score for the bases of
    *  this feature.
    **/
-  public double get12CorrelationScore () {
+  public double get12CorrelationScore() 
+  {
     final int t1_count =
-      getPositionalBaseCount (0, Bases.getIndexOfBase ('t'));
+      getPositionalBaseCount(0, Bases.getIndexOfBase('t'));
     final int c1_count =
-      getPositionalBaseCount (0, Bases.getIndexOfBase ('c'));
+      getPositionalBaseCount(0, Bases.getIndexOfBase('c'));
     final int a1_count =
-      getPositionalBaseCount (0, Bases.getIndexOfBase ('a'));
+      getPositionalBaseCount(0, Bases.getIndexOfBase('a'));
     final int g1_count =
-      getPositionalBaseCount (0, Bases.getIndexOfBase ('g'));
+      getPositionalBaseCount(0, Bases.getIndexOfBase('g'));
 
     final int t2_count =
-      getPositionalBaseCount (1, Bases.getIndexOfBase ('t'));
+      getPositionalBaseCount(1, Bases.getIndexOfBase('t'));
     final int c2_count =
-      getPositionalBaseCount (1, Bases.getIndexOfBase ('c'));
+      getPositionalBaseCount(1, Bases.getIndexOfBase('c'));
     final int a2_count =
-      getPositionalBaseCount (1, Bases.getIndexOfBase ('a'));
+      getPositionalBaseCount(1, Bases.getIndexOfBase('a'));
     final int g2_count =
-      getPositionalBaseCount (1, Bases.getIndexOfBase ('g'));
+      getPositionalBaseCount(1, Bases.getIndexOfBase('g'));
 
     final int c3_count =
-      getPositionalBaseCount (2, Bases.getIndexOfBase ('c'));
+      getPositionalBaseCount(2, Bases.getIndexOfBase('c'));
     final int g3_count =
-      getPositionalBaseCount (2, Bases.getIndexOfBase ('g'));
+      getPositionalBaseCount(2, Bases.getIndexOfBase('g'));
 
-    final int base_total = getTranslationBases ().length ();
+    final int base_total = getTranslationBases().length();
 
     final double cor1_2_score =
       3.0 * t1_count/base_total *
@@ -1745,27 +1878,29 @@ public class Feature
   /**
    *  Return the percentage GC content of the bases of this feature.
    **/
-  public double getPercentGC () {
-    final String bases = getBases ();
+  public double getPercentGC() 
+  {
+    final String bases = getBases();
 
-    if (bases.length () > 0) {
+    if(bases.length() > 0)
+    {
       int gc_count = 0;
 
-      final char [] sequence_chars = new char [bases.length ()];
+      final char[] sequence_chars = new char[bases.length()];
 
-      bases.getChars (0, bases.length (), sequence_chars, 0);
+      bases.getChars(0, bases.length(), sequence_chars, 0);
 
-      for (int i = 0 ; i < bases.length () ; ++i) {
+      for(int i = 0 ; i < bases.length() ; ++i) 
+      {
         final char this_char = sequence_chars[i];
-        if (this_char == 'g' || this_char == 'c') {
+        if(this_char == 'g' || this_char == 'c') 
           ++gc_count;
-        }
       }
 
-      return 100.0 * gc_count / bases.length ();
-    } else {
+      return 100.0 * gc_count / bases.length();
+    } 
+    else
       return 0.0;
-    }
   }
 
   /**
@@ -1775,14 +1910,14 @@ public class Feature
    *  @return The first base of this feature or 0 if this feature doesn't know
    *    where it is.
    **/
-  public int getFirstBase () {
-    final Marker first_base_marker = getFirstBaseMarker ();
+  public int getFirstBase()
+  {
+    final Marker first_base_marker = getFirstBaseMarker();
 
-    if (first_base_marker == null) {
+    if(first_base_marker == null) 
       return 0;
-    } else {
+    else 
       return first_base_marker.getPosition ();
-    }
   }
 
   /**
@@ -1792,36 +1927,40 @@ public class Feature
    *  @return The last base of this feature or 0 if this feature doesn't know
    *    where it is.
    **/
-  public int getLastBase () {
-    final Marker last_base_marker = getLastBaseMarker ();
+  public int getLastBase()
+  {
+    final Marker last_base_marker = getLastBaseMarker();
 
-    if (last_base_marker == null) {
+    if(last_base_marker == null)
       return 0;
-    } else {
+    else
       return last_base_marker.getPosition ();
-    }
   }
 
   /**
    *  Return true if and only if the first base of this Feature is less than
    *  the argument Feature with respect to the Feature's Strand.
    **/
-  public boolean lessThan (Feature other_feature) {
-    if (getFirstBase () < other_feature.getFirstBase ()) {
+  public boolean lessThan(Feature other_feature) 
+  {
+    if(getFirstBase() < other_feature.getFirstBase())
       return true;
-    } else {
+    else
       return false;
-    }
   }
 
   /**
    *  Return true if and only if the first base of this Feature is greater
    *  than the argument Feature with respect to the Feature's Strand.
    **/
-  public boolean greaterThan (Feature other_feature) {
-    if (getFirstBase () > other_feature.getFirstBase ()) {
+  public boolean greaterThan(Feature other_feature) 
+  {
+    if(getFirstBase() > other_feature.getFirstBase())
+    {
       return true;
-    } else {
+    } 
+    else 
+    {
       return false;
     }
   }
@@ -1833,30 +1972,33 @@ public class Feature
    *  @return The first base of this feature or 0 if this feature doesn't know
    *    where it is.
    **/
-  public int getRawFirstBase () {
+  public int getRawFirstBase()
+  {
     final int A_BIG_NUMBER = 0x7fffffff; // largest integer
     int minimum = A_BIG_NUMBER;
 
-    for (int i = 0 ; i < getSegments ().size () ; ++i) {
+    for(int i = 0; i < getSegments().size(); ++i) 
+    {
       final int current_minimum;
-      if (isForwardFeature ()) {
+      if(isForwardFeature()) 
+      {
         current_minimum =
-          getSegments ().elementAt (i).getStart ().getRawPosition ();
-      } else {
+          getSegments().elementAt(i).getStart().getRawPosition();
+      } 
+      else 
+      {
         current_minimum =
-          getSegments ().elementAt (i).getEnd ().getRawPosition ();
+          getSegments().elementAt(i).getEnd().getRawPosition();
       }
 
-      if (current_minimum < minimum) {
+      if(current_minimum < minimum)
         minimum = current_minimum;
-      }
     }
 
-    if (minimum == A_BIG_NUMBER) {
+    if(minimum == A_BIG_NUMBER) 
       return 0;
-    } else {
+    else
       return minimum;
-    }
   }
 
   /**
@@ -1866,41 +2008,49 @@ public class Feature
    *  @return The last base of this feature or 0 if this feature doesn't know
    *    where it is.
    **/
-  public int getRawLastBase () {
+  public int getRawLastBase()
+  {
     final int A_SMALL_NUMBER = -1;
     int maximum = A_SMALL_NUMBER;
+    int seg_size = getSegments().size();
 
-    for (int i = 0 ; i < getSegments ().size () ; ++i) {
+    for(int i = 0; i < seg_size; ++i)
+    {
       final int current_maximum;
-      if (isForwardFeature ()) {
+      if(isForwardFeature())
+      {
         current_maximum =
-          getSegments ().elementAt (i).getEnd ().getRawPosition ();
-      } else {
+          getSegments().elementAt(i).getEnd().getRawPosition();
+      } 
+      else
+      {
         current_maximum =
-          getSegments ().elementAt (i).getStart ().getRawPosition ();
+          getSegments().elementAt(i).getStart().getRawPosition();
       }
 
-      if (current_maximum > maximum) {
+      if(current_maximum > maximum) 
         maximum = current_maximum;
-      }
     }
 
-    if (maximum == A_SMALL_NUMBER) {
+    if(maximum == A_SMALL_NUMBER) 
       return 0;
-    } else {
+    else
       return maximum;
-    }
   }
 
   /**
    *  Return the maximum extent of this feature.  The range returned starts at
-   *  getRawFirstBase () and ends at getRawLastBase ().
+   *  getRawFirstBase() and ends at getRawLastBase().
    **/
-  public Range getMaxRawRange () {
-    try {
-      return new Range (getRawFirstBase (), getRawLastBase ());
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+  public Range getMaxRawRange()
+  {
+    try 
+    {
+      return new Range(getRawFirstBase(), getRawLastBase());
+    } 
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
   }
 
@@ -1909,24 +2059,24 @@ public class Feature
    *  Return true if and only if the first base of this Feature is less than
    *  the argument Feature with to the raw sequence.
    **/
-  public boolean rawLessThan (Feature other_feature) {
-    if (getRawFirstBase () < other_feature.getRawFirstBase ()) {
+  public boolean rawLessThan(Feature other_feature) 
+  {
+    if(getRawFirstBase() < other_feature.getRawFirstBase()) 
       return true;
-    } else {
+    else
       return false;
-    }
   }
 
   /**
    *  Return true if and only if the first base of this Feature is greater
    *  than the argument Feature with to the raw sequence.
    **/
-  public boolean rawGreaterThan (Feature other_feature) {
-    if (getRawFirstBase () > other_feature.getRawFirstBase ()) {
+  public boolean rawGreaterThan(Feature other_feature) 
+  {
+    if(getRawFirstBase() > other_feature.getRawFirstBase())
       return true;
-    } else {
+    else
       return false;
-    }
   }
 
   /**
@@ -1936,16 +2086,19 @@ public class Feature
    *  @return The Marker of the first base of this feature or null if this
    *    feature doesn't know where it is.
    **/
-  public Marker getFirstBaseMarker () {
+  public Marker getFirstBaseMarker() 
+  {
     final int A_BIG_NUMBER = 0x7fffffff; // largest integer
     int minimum = A_BIG_NUMBER;
     Marker minimum_marker = null;
 
-    for (int i = 0 ; i < getSegments ().size () ; ++i) {
-      final Marker current_marker = getSegments ().elementAt (i).getStart ();
-      final int current_minimum = current_marker.getPosition ();
+    for(int i = 0 ; i < getSegments().size() ; ++i)
+    {
+      final Marker current_marker = getSegments().elementAt(i).getStart();
+      final int current_minimum = current_marker.getPosition();
 
-      if (current_minimum < minimum) {
+      if(current_minimum < minimum)  
+      {
         minimum = current_minimum;
         minimum_marker = current_marker;
       }
@@ -1961,16 +2114,19 @@ public class Feature
    *  @return The Marker of the last base of this feature or null if this
    *    feature doesn't know where it is.
    **/
-  public Marker getLastBaseMarker () {
+  public Marker getLastBaseMarker() 
+  {
     final long A_SMALL_NUMBER = -1;
     long maximum = A_SMALL_NUMBER;
     Marker maximum_marker = null;
 
-    for (int i = 0 ; i < getSegments ().size () ; ++i) {
-      final Marker current_marker = getSegments ().elementAt (i).getEnd ();
-      final int current_maximum = current_marker.getPosition ();
+    for(int i = 0; i < getSegments().size(); ++i) 
+    {
+      final Marker current_marker = getSegments().elementAt(i).getEnd();
+      final int current_maximum = current_marker.getPosition();
 
-      if (current_maximum > maximum) {
+      if(current_maximum > maximum) 
+      {
         maximum = current_maximum;
         maximum_marker = current_marker;
       }
@@ -1986,12 +2142,16 @@ public class Feature
    *  @return The Marker of the first coding base of this feature or null if
    *    this feature doesn't know where it is.
    **/
-  public Marker getFirstCodingBaseMarker () {
-    final Marker first_base_marker = getFirstBaseMarker ();
+  public Marker getFirstCodingBaseMarker() 
+  {
+    final Marker first_base_marker = getFirstBaseMarker();
 
-    try {
-      return first_base_marker.moveBy (getCodonStart () - 1);
-    } catch (OutOfRangeException e) {
+    try 
+    {
+      return first_base_marker.moveBy(getCodonStart() - 1);
+    } 
+    catch(OutOfRangeException e) 
+    {
       // if we are at the end of the sequence then just return the first base
       // marker
       return first_base_marker;
@@ -2006,53 +2166,54 @@ public class Feature
    *    or greater than the length of the sequence.
    **/
   public Marker getPositionInSequence (final int position)
-      throws OutOfRangeException {
-
-    if (position < 1) {
-      // the position is outside of the feature
-      throw new OutOfRangeException ("position: " + position);
-    }
+      throws OutOfRangeException 
+  {
+    // the position is outside of the feature
+    if(position < 1) 
+      throw new OutOfRangeException("position: " + position);
 
     // subtract one because positions are numbered from 1 not 0
     int bases_remaining = position - 1;
 
-    for (int i = 0 ; i < segments.size () ; ++i) {
-      final FeatureSegment this_segment = segments.elementAt (i);
+    for(int i = 0; i < segments.size(); ++i) 
+    {
+      final FeatureSegment this_segment = segments.elementAt(i);
 
-      if (bases_remaining < this_segment.getBaseCount ()) {
-        return this_segment.getStart ().moveBy (bases_remaining);
-      } else {
-        bases_remaining -= this_segment.getBaseCount ();
-      }
+      if(bases_remaining < this_segment.getBaseCount()) 
+        return this_segment.getStart().moveBy(bases_remaining);
+      else
+        bases_remaining -= this_segment.getBaseCount();
     }
 
     // the position is outside of the feature
-    throw new OutOfRangeException ("position: " + position);
+    throw new OutOfRangeException("position: " + position);
   }
 
   /**
    *  Return the (base) position in this feature of the given Marker or -1 if
    *  the given Marker does not correspond to any bases in this Feature.
    **/
-  public int getFeaturePositionFromMarker (final Marker base_marker) {
+  public int getFeaturePositionFromMarker(final Marker base_marker) 
+  {
     // counts the bases in the previous segments as we loop over them
     int bases_so_far = 0;
+    final int marker_position = base_marker.getPosition();
+    int seg_size = segments.size();
 
-    final int marker_position = base_marker.getPosition ();
-
-    for (int i = 0 ; i < segments.size () ; ++i) {
-      final FeatureSegment this_segment = segments.elementAt (i);
-
-      final int this_segment_start = this_segment.getStart ().getPosition ();
+    for(int i = 0; i < seg_size; ++i) 
+    {
+      final FeatureSegment this_segment = segments.elementAt(i);
+      final int this_segment_start = this_segment.getStart().getPosition();
 
       final int marker_start_diff = marker_position - this_segment_start;
 
-      if (marker_start_diff >= 0 &&
-          marker_start_diff < this_segment.getBaseCount ()) {
+      if(marker_start_diff >= 0 &&
+         marker_start_diff < this_segment.getBaseCount())
+      {
         return bases_so_far + marker_start_diff;
       }
 
-      bases_so_far += this_segment.getBaseCount ();
+      bases_so_far += this_segment.getBaseCount();
     }
 
     return -1;
@@ -2062,74 +2223,75 @@ public class Feature
    *  Return the colour (the value of the /colour qualifier) of this Feature
    *  or null if there is no colour qualifier and no default colour.
    **/
-  public Color getColour () {
+  public Color getColour()
+  {
     String colour_qualifier;
 
-    try {
-      colour_qualifier = getValueOfQualifier ("colour");
-      if (colour_qualifier == null) {
-        // it's international "be nice to Americans day":
-        colour_qualifier = getValueOfQualifier ("color");
-      }
-    } catch (InvalidRelationException e) {
+    try 
+    {
+      colour_qualifier = getValueOfQualifier("colour");
+
+      // it's international "be nice to Americans day":
+      if(colour_qualifier == null) 
+        colour_qualifier = getValueOfQualifier("color");
+    }
+    catch(InvalidRelationException e) 
+    {
       colour_qualifier = null;
     }
 
-    if (colour_qualifier == null) {
-      // use default colour for this type of feature
+    // use default colour for this type of feature
+    if(colour_qualifier == null) 
+      return Options.getOptions().getDefaultFeatureColour(getKey());
 
-      return Options.getOptions ().getDefaultFeatureColour (getKey ());
-    }
+    final StringVector colours = StringVector.getStrings(colour_qualifier);
 
-    final StringVector colours = StringVector.getStrings (colour_qualifier);
+    if(colours.size() < 1) 
+      return Options.getOptions().getDefaultFeatureColour(getKey());
 
-    if (colours.size () < 1) {
-      return Options.getOptions ().getDefaultFeatureColour (getKey ());
-    }
+    try 
+    {
+      if(colours.size() == 3)
+      {
+        int red   = Integer.parseInt(colours.elementAt(0));
+        int green = Integer.parseInt(colours.elementAt(1));
+        int blue  = Integer.parseInt(colours.elementAt(2));
 
-    try {
-      if (colours.size () == 3) {
-        int red = Integer.parseInt (colours.elementAt (0));
-        int green = Integer.parseInt (colours.elementAt (1));
-        int blue = Integer.parseInt (colours.elementAt (2));
-
-        if (red < 0) {
+        if(red < 0) 
           red = 0;
-        }
 
-        if (red > 255) {
+        if(red > 255) 
           red = 255;
-        }
 
-        if (green < 0) {
+        if(green < 0)
           green = 0;
-        }
 
-        if (green > 255) {
+        if(green > 255) 
           green = 255;
-        }
 
-        if (blue < 0) {
+        if(blue < 0)
           blue = 0;
-        }
 
-        if (blue > 255) {
+        if(blue > 255)
           blue = 255;
-        }
 
-        return new Color (red, green, blue);
-      } else {
-        final String colour_string = colours.elementAt (0);
+        return new Color(red, green, blue);
+      } 
+      else
+      {
+        final String colour_string = colours.elementAt(0);
 
         final int colour_number;
 
-        colour_number = Integer.parseInt (colour_string);
-        return Options.getOptions ().getColorFromColourNumber (colour_number);
+        colour_number = Integer.parseInt(colour_string);
+        return Options.getOptions().getColorFromColourNumber(colour_number);
       }
-    } catch (NumberFormatException e) {
+    } 
+    catch(NumberFormatException e) 
+    {
       // use default colour for this type of feature
 
-      return Options.getOptions ().getDefaultFeatureColour (getKey ());
+      return Options.getOptions().getDefaultFeatureColour(getKey());
     }
   }
 
@@ -2141,15 +2303,15 @@ public class Feature
    *  "SPTREMBL:O43016".
    *  Returns null if the is no Qualifier with the given name.
    **/
-  public StringVector getValuesOfQualifier (String qualifier_name)
-      throws InvalidRelationException {
-    final Qualifier this_qualifier = getQualifierByName (qualifier_name);
+  public StringVector getValuesOfQualifier(String qualifier_name)
+      throws InvalidRelationException 
+  {
+    final Qualifier this_qualifier = getQualifierByName(qualifier_name);
 
-    if (this_qualifier == null) {
+    if(this_qualifier == null) 
       return null;
-    } else {
-      return this_qualifier.getValues ();
-    }
+    else
+      return this_qualifier.getValues();
   }
 
   /**
@@ -2157,9 +2319,10 @@ public class Feature
    *  there no such Qualifier.
    *  @param name The qualifier name to look for.
    **/
-  public Qualifier getQualifierByName (final String name)
-      throws InvalidRelationException {
-    return getEmblFeature ().getQualifierByName (name);
+  public Qualifier getQualifierByName(final String name)
+      throws InvalidRelationException 
+  {
+    return getEmblFeature().getQualifierByName(name);
   }
 
   /**
@@ -2169,23 +2332,25 @@ public class Feature
    *  then it will return "" - a zero length String.
    *  @param qualifier_name The name of the qualifier to search for.
    **/
-  public String getValueOfQualifier (String qualifier_name)
-      throws InvalidRelationException {
-    final StringVector values = getValuesOfQualifier (qualifier_name);
+  public String getValueOfQualifier(String qualifier_name)
+      throws InvalidRelationException 
+  {
+    final StringVector values = getValuesOfQualifier(qualifier_name);
 
-    if (values == null) {
+    if(values == null) 
       return null;
-    } else {
-      if (values.size () == 0) {
+    else
+    {
+      if(values.size() == 0) 
         return "";
-      } else {
-        final String first_element = values.elementAt (0);
+      else
+      {
+        final String first_element = values.elementAt(0);
 
-        if (first_element == null) {
+        if(first_element == null)
           return "";
-        } else {
+        else
           return first_element;
-        }
       }
     }
   }
@@ -2194,26 +2359,31 @@ public class Feature
    *  Remove this Feature from the Entry object that contains it.  It will
    *  also be removed from the underlying embl.Entry object.
    **/
-  public void removeFromEntry ()
-      throws ReadOnlyException {
-    getEntry ().remove (this);
+  public void removeFromEntry()
+      throws ReadOnlyException 
+  {
+    getEntry().remove(this);
   }
 
   /**
    *  Return the vector containing the references of the FeatureSegment
    *  objects of this Feature.
    **/
-  public FeatureSegmentVector getSegments () {
-    final Location current_location = getEmblFeature ().getLocation ();
+  public FeatureSegmentVector getSegments() 
+  {
+    final Location current_location = getEmblFeature().getLocation();
 
-    if (segments == null) {
-      createSegments ();
-    } else {
+    if(segments == null) 
+      createSegments();
+    else 
+    {
       // see comment on old_location
-      if (current_location != old_location) {
-        reexamineSegments ();
-        if (!old_location.equals (current_location)) {
-          locationChanged (old_location);
+      if(current_location != old_location) 
+      {
+        reexamineSegments();
+        if(!old_location.equals(current_location)) 
+        {
+          locationChanged(old_location);
           old_location = current_location;
         }
       }
@@ -2229,46 +2399,45 @@ public class Feature
    *  necessary because the feature location may change at any time in a
    *  client/server environment.
    **/
-  private void reexamineSegments () {
-    stopSegmentsListening ();
+  private void reexamineSegments()
+  {
+    stopSegmentsListening();
     
-    final Location current_location = getEmblFeature ().getLocation ();
+    final Location current_location = getEmblFeature().getLocation();
+    final RangeVector ranges = current_location.getRanges();
+    final Vector new_segments = new Vector();
 
-    final RangeVector ranges = current_location.getRanges ();
-    final Vector new_segments = new Vector ();
-
-    new_segments.setSize (ranges.size ());
+    int ranges_size = ranges.size();
+    new_segments.setSize(ranges_size);
   
     FeatureSegmentVector old_segments =
-      (FeatureSegmentVector)segments.clone ();
+      (FeatureSegmentVector)segments.clone();
 
-    if (current_location.isComplement () != old_location.isComplement ()) {
-      // if the feature has changed strand, give up and recreate all
-      // segments
+    // if the feature has changed strand, give up and recreate all
+    // segments
+    if(current_location.isComplement() != old_location.isComplement())
       old_segments.removeAllElements();
-    }
 
     // first find exact matches
 EXACT_SEGMENTS:
-    for (int old_segment_index = old_segments.size () - 1 ;
-         old_segment_index >= 0 ;
-         --old_segment_index) {
-
+    for(int old_segment_index = old_segments.size() - 1; old_segment_index >= 0;
+        --old_segment_index) 
+    {
       final FeatureSegment old_segment =
-        old_segments.elementAt (old_segment_index);
+        old_segments.elementAt(old_segment_index);
 
-      for (int range_index = 0;
-           range_index < ranges.size () ;
-           ++range_index) {
+      for(int range_index = 0; range_index < ranges_size;
+          ++range_index)
+      {
+        final Range new_range = ranges.elementAt(range_index);
 
-        final Range new_range = ranges.elementAt (range_index);
-
-        if (old_segment.getRawRange ().equals (new_range)) {
-          // there is a Range in the new Location that exactly matches a Range
-          // in an old FeatureSegment so reuse the old FeatureSegment
-          old_segment.setRange (new_range);
-          new_segments.setElementAt (old_segment, range_index);
-          old_segments.removeElementAt (old_segment_index);
+        // there is a Range in the new Location that exactly matches a Range
+        // in an old FeatureSegment so reuse the old FeatureSegment
+        if(old_segment.getRawRange().equals(new_range)) 
+        {
+          old_segment.setRange(new_range);
+          new_segments.setElementAt(old_segment, range_index);
+          old_segments.removeElementAt(old_segment_index);
           continue EXACT_SEGMENTS;
         }
       }
@@ -2276,67 +2445,65 @@ EXACT_SEGMENTS:
 
     // find matches where the start or end has changed
 CHANGED_END:
-    for (int old_segment_index = old_segments.size () - 1 ;
-         old_segment_index >= 0 ;
-         --old_segment_index) {
-
+    for(int old_segment_index = old_segments.size() - 1; old_segment_index >= 0;
+        --old_segment_index) 
+    {
       final FeatureSegment old_segment =
-        old_segments.elementAt (old_segment_index);
+        old_segments.elementAt(old_segment_index);
 
-      for (int range_index = 0;
-           range_index < ranges.size () ;
-           ++range_index) {
+      for(int range_index = 0; range_index < ranges_size;
+          ++range_index) 
+      {
+        final Range new_range = ranges.elementAt(range_index);
 
-        final Range new_range = ranges.elementAt (range_index);
-
-        if (old_segment.getRawRange ().getStart () ==
-            new_range.getStart () ||
-            old_segment.getRawRange ().getEnd () ==
-            new_range.getEnd ()) {
-
+        if(old_segment.getRawRange().getStart() ==
+           new_range.getStart() ||
+           old_segment.getRawRange().getEnd() ==
+           new_range.getEnd()) 
+        {
           // there is a Range in the new Location that partly matches a Range
           // in an old FeatureSegment so reuse the old FeatureSegment
-          old_segment.setRange (new_range);
-          new_segments.setElementAt (old_segment, range_index);
-          old_segments.removeElementAt (old_segment_index);
+          old_segment.setRange(new_range);
+          new_segments.setElementAt(old_segment, range_index);
+          old_segments.removeElementAt(old_segment_index);
           continue CHANGED_END;
         }
       }
     }
 
     // create a segment for each range that we don't have a segment for
-    for (int new_segment_index = 0 ;
-         new_segment_index < ranges.size () ;
-         ++new_segment_index) {
-      final Range missing_range = ranges.elementAt (new_segment_index);
+    for(int new_segment_index = 0; new_segment_index < ranges_size;
+        ++new_segment_index) 
+    {
+      final Range missing_range = ranges.elementAt(new_segment_index);
       
-      if (new_segments.elementAt (new_segment_index) == null) {
+      if(new_segments.elementAt(new_segment_index) == null) 
+      {
         // new Range -> create a segment
-        new_segments.setElementAt (makeSegment (missing_range),
+        new_segments.setElementAt(makeSegment(missing_range),
                                    new_segment_index);
       }
     }
 
-    segments = new FeatureSegmentVector ();
+    segments = new FeatureSegmentVector();
 
-    for (int i = 0 ; i < ranges.size () ; ++i) {
-      segments.addElementAtEnd ((FeatureSegment) new_segments.elementAt (i));
-    }
+    for(int i = 0; i < ranges.size(); ++i)
+      segments.addElementAtEnd((FeatureSegment) new_segments.elementAt(i));
     
-    startSegmentsListening ();
+    startSegmentsListening();
   }
 
   /**
    *  Return the reference of the Strand that this Feature and it's
    *  FeatureSegment objects is associated with.
    **/
-  public Strand getStrand () {
+  public Strand getStrand() 
+  {
     // get the strand of the first entry in the entry group
-    if (isForwardFeature ()) {
-      return entry.getBases ().getForwardStrand ();
-    } else {
-      return entry.getBases ().getReverseStrand ();
-    }
+    if(isForwardFeature())
+      return entry.getBases().getForwardStrand();
+    else
+      return entry.getBases().getReverseStrand();
   }
 
   /**
@@ -2345,19 +2512,25 @@ CHANGED_END:
    *  in the same Entry object as this one.
    *  @return The reference of the new feature.
    **/
-  public Feature duplicate ()
-      throws ReadOnlyException {
+  public Feature duplicate()
+      throws ReadOnlyException
+  {
     uk.ac.sanger.artemis.io.Feature new_embl_feature =
-      new EmblStreamFeature (getEmblFeature ());
+                      new EmblStreamFeature(getEmblFeature());
 
-    final Feature return_feature = new Feature (new_embl_feature);
+    final Feature return_feature = new Feature(new_embl_feature);
 
-    try {
-      getEntry ().add (return_feature, false);
-    } catch (EntryInformationException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+    try 
+    {
+      getEntry().add(return_feature, false);
+    } 
+    catch(EntryInformationException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
+    } 
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
 
     return return_feature;
@@ -2379,34 +2552,42 @@ CHANGED_END:
    *    destination type cannot contain the Key, Qualifier or Key/Qualifier
    *    combination of the given feature.
    **/
-  public void moveTo (final Entry destination_entry, final boolean force)
+  public void moveTo(final Entry destination_entry, final boolean force)
       throws EntryInformationException, OutOfRangeException,
-      ReadOnlyException {
-    if (destination_entry.isReadOnly ()) {
-      throw new ReadOnlyException ();
-    } else {
+      ReadOnlyException 
+  {
+    if(destination_entry.isReadOnly()) 
+      throw new ReadOnlyException();
+    else 
+    {
       // this (hack) causes the calls to stopListening() and startListening()
       // in setEntry() to return immediately which improves the speed a lot
       // when many features are loaded
-      startListening ();
+      startListening();
 
-      try {
-        final Entry old_entry = getEntry ();
+      try 
+      {
+        final Entry old_entry = getEntry();
 
-        getEntry ().remove (this);
+        getEntry().remove(this);
         
-        try {
-          destination_entry.add (this, force);
-        } catch (EntryInformationException e) {
+        try 
+        {
+          destination_entry.add(this, force);
+        } 
+        catch(EntryInformationException e) 
+        {
           // put the feature back where it was
-          old_entry.add (this, true);
+          old_entry.add(this, true);
           
           // re-throw
           throw e;
         }
-      } finally {
+      } 
+      finally 
+      {
         // see note above on startListening()
-        stopListening ();
+        stopListening();
       }
     }
   }
@@ -2418,19 +2599,19 @@ CHANGED_END:
    *    cannot contain a Feature with this Key, Qualifier or Key/Qualifier
    *    combination.
    **/
-  public Feature copyTo (final Entry destination_entry)
+  public Feature copyTo(final Entry destination_entry)
       throws EntryInformationException, OutOfRangeException,
-      ReadOnlyException {
-    if (destination_entry.isReadOnly ()) {
-      throw new ReadOnlyException ();
-    }
+      ReadOnlyException 
+  {
+    if(destination_entry.isReadOnly())
+      throw new ReadOnlyException();
 
     uk.ac.sanger.artemis.io.Feature new_embl_feature =
-      new EmblStreamFeature (getEmblFeature ());
+                         new EmblStreamFeature(getEmblFeature());
 
-    final Feature return_feature = new Feature (new_embl_feature);
+    final Feature return_feature = new Feature(new_embl_feature);
 
-    destination_entry.add (return_feature, false);
+    destination_entry.add(return_feature, false);
 
     return return_feature;
   }
@@ -2440,8 +2621,9 @@ CHANGED_END:
    *  this object.
    *  @param l the change event listener.
    **/
-  public void addFeatureChangeListener (FeatureChangeListener l) {
-    feature_listener_list.addElement (l);
+  public void addFeatureChangeListener(FeatureChangeListener l) 
+  {
+    feature_listener_list.addElement(l);
   }
 
   /**
@@ -2449,16 +2631,18 @@ CHANGED_END:
    *  feature change events from this object.
    *  @param l the change event listener.
    **/
-  public void removeFeatureChangeListener (FeatureChangeListener l) {
-    feature_listener_list.removeElement (l);
+  public void removeFeatureChangeListener(FeatureChangeListener l) 
+  {
+    feature_listener_list.removeElement(l);
   }
 
   /**
    *  Returns true if and only if this feature is read only or is in a read
    *  only entry.
    **/
-  public boolean isReadOnly () {
-    return getEmblFeature ().isReadOnly ();
+  public boolean isReadOnly()
+  {
+    return getEmblFeature().isReadOnly();
   }
 
   /**
@@ -2468,28 +2652,28 @@ CHANGED_END:
    *  the sequence (the sequence as represented by the Strand and Bases
    *  objects).  This method does not fire off any FeatureChange events.
    **/
-  private void updateEMBLFeatureLocation ()
-      throws ReadOnlyException {
+  private void updateEMBLFeatureLocation()
+      throws ReadOnlyException 
+  {
+    final boolean complement = getLocation().isComplement();
+    final RangeVector ranges = new RangeVector();
 
-    final boolean complement = getLocation ().isComplement ();
+    for(int i = 0; i < segments.size(); ++i) 
+      ranges.addElement(segments.elementAt (i).getRawRange ());
 
-    final RangeVector ranges = new RangeVector ();
+    try 
+    {
+      final Location new_location = new Location(ranges, complement);
 
-    for (int i = 0 ; i < segments.size () ; ++i) {
-      ranges.addElement (segments.elementAt (i).getRawRange ());
-    }
-
-    try {
-      final Location new_location = new Location (ranges, complement);
-
-      getEmblFeature ().setLocation (new_location);
+      getEmblFeature().setLocation(new_location);
       old_location = new_location;
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - inconsistent location information: " +
-                       e.getMessage ());
+    }
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - inconsistent location information: " +
+                       e.getMessage());
     }
   }
-
 
 
   /**
@@ -2498,20 +2682,23 @@ CHANGED_END:
    *    to.
    *  @param event The event to send
    **/
-  private void fireAction (Vector listeners, ChangeEvent event) {
+  private void fireAction(Vector listeners, ChangeEvent event) 
+  {
     final Vector targets;
     // copied from a book - synchronising the whole method might cause a
     // deadlock
-    synchronized (this) {
-      targets = (Vector) listeners.clone ();
+    synchronized(this)
+    {
+      targets = (Vector)listeners.clone();
     }
 
-    for (int i = 0 ; i < targets.size () ; ++i) {
-      ChangeListener target = (ChangeListener) targets.elementAt (i);
+    for(int i = 0 ; i < targets.size() ; ++i) 
+    {
+      ChangeListener target = (ChangeListener)targets.elementAt(i);
 
       final FeatureChangeListener feature_change_listener =
-        (FeatureChangeListener) target;
-      feature_change_listener.featureChanged ((FeatureChangeEvent) event);
+                                           (FeatureChangeListener)target;
+      feature_change_listener.featureChanged((FeatureChangeEvent) event);
     }
   }
 
@@ -2519,7 +2706,8 @@ CHANGED_END:
    *  Reset these arrays: segments, amino_acids, bases, codon_counts,
    *  residue_counts, positional_base_counts and base_counts.
    **/
-  private void resetCache () {
+  private void resetCache()
+  {
     amino_acids = null;
     bases = null;
     codon_counts = null;
@@ -2534,84 +2722,86 @@ CHANGED_END:
    *  Update the values stored in residue_counts, codon_counts, base_counts
    *  and positional_base_counts.
    **/
-  private void setArrays () {
-    final String translation_bases = getTranslationBases ();
-    final AminoAcidSequence translation = getTranslation ();
+  private void setArrays() 
+  {
+    final String translation_bases = getTranslationBases();
+    final AminoAcidSequence translation = getTranslation();
 
-    final String translation_string = translation.toString ();
+    final String translation_string = translation.toString();
 
-    codon_counts = new int [4][4][4];
-    residue_counts = new int [AminoAcidSequence.symbol_count];
-    base_counts = new int [4];
-    positional_base_counts = new int [3][4];
+    codon_counts = new int[4][4][4];
+    residue_counts = new int[AminoAcidSequence.symbol_count];
+    base_counts = new int[4];
+    positional_base_counts = new int[3][4];
 
     // zero the residue_counts array
-    for (int i = 0 ; i < residue_counts.length ; ++i) {
+    for(int i = 0; i < residue_counts.length; ++i) 
       residue_counts[i] = 0;
-    }
 
-    for (int i = 0 ; i < translation_string.length () ; ++i) {
+    int trans_len = translation_string.length();
+    for(int i = 0; i < trans_len; ++i) 
+    {
       final int symbol_index =
-        AminoAcidSequence.getSymbolIndex (translation_string.charAt (i));
+        AminoAcidSequence.getSymbolIndex(translation_string.charAt(i));
       ++residue_counts[symbol_index];
     }
 
     // zero the codon_counts array
-    for (int first = 0 ; first < 4 ; ++first) {
-      for (int second = 0 ; second < 4 ; ++second) {
-        for (int third = 0 ; third < 4 ; ++third) {
+    for(int first = 0 ; first < 4 ; ++first) 
+    {
+      for(int second = 0 ; second < 4 ; ++second) 
+      {
+        for(int third = 0 ; third < 4 ; ++third)
           codon_counts[first][second][third] = 0;
-        }
       }
     }
 
-    for (int base_index = 0 ;
-         base_index < translation_bases.length () ;
-         ++base_index) {
-
+    int base_len = translation_bases.length();
+    for(int base_index = 0; base_index < base_len;
+        ++base_index)
+    {
       // this is 0, 1, 2 or 3
       final int index_of_base =
-        Bases.getIndexOfBase (translation_bases.charAt(base_index));
+        Bases.getIndexOfBase(translation_bases.charAt(base_index));
 
-      if (index_of_base < 4) {
+      if(index_of_base < 4) 
         ++base_counts[index_of_base];
-      }
     }
 
-    for (int i = 0 ; i < translation_bases.length () / 3 ; ++i) {
+    for(int i = 0; i < translation_bases.length() / 3; ++i) 
+    {
       final int first_base_index =
-        Bases.getIndexOfBase (translation_bases.charAt (i * 3));
+        Bases.getIndexOfBase(translation_bases.charAt(i * 3));
       final int second_base_index =
-        Bases.getIndexOfBase (translation_bases.charAt (i * 3 + 1));
+        Bases.getIndexOfBase(translation_bases.charAt(i * 3 + 1));
       final int third_base_index =
-        Bases.getIndexOfBase (translation_bases.charAt (i * 3 + 2));
+        Bases.getIndexOfBase(translation_bases.charAt(i * 3 + 2));
 
-      if (first_base_index < 4) {
+      if(first_base_index < 4) 
         ++positional_base_counts[0][first_base_index];
-      }
-      if (second_base_index < 4) {
+      
+      if(second_base_index < 4) 
         ++positional_base_counts[1][second_base_index];
-      }
-      if (third_base_index < 4) {
+      
+      if(third_base_index < 4)
         ++positional_base_counts[2][third_base_index];
-      }
-
-      if (first_base_index < 4 &&
-          second_base_index < 4 &&
-          third_base_index < 4) {
+      
+      if(first_base_index < 4 && second_base_index < 4 && third_base_index < 4) 
         ++codon_counts[first_base_index][second_base_index][third_base_index];
-      }
     }
   }
 
   /**
    *  Remove all FeatureSegments from all listener lists.
    **/
-  private void stopSegmentsListening () {
-    if (segments != null) {
-      for (int i = 0 ; i < segments.size () ; ++i) {
-        segments.elementAt (i).stopListening ();
-        segments.elementAt (i).removeMarkerChangeListener (this);
+  private void stopSegmentsListening() 
+  {
+    if(segments != null) 
+    {
+      for(int i = 0 ; i < segments.size(); ++i) 
+      {
+        segments.elementAt(i).stopListening();
+        segments.elementAt(i).removeMarkerChangeListener(this);
       }
     }
   }
@@ -2619,34 +2809,39 @@ CHANGED_END:
   /**
    *  Remove this Feature and its FeatureSegments from all listener lists.
    **/
-  private void stopListening () {
-    if (listen_count == 1) {
-      if (getEntry () != null && getEntry ().getBases () != null) {
-        final Bases bases = getEntry ().getBases ();
-
-        bases.removeSequenceChangeListener (this);
+  private void stopListening()
+  {
+    if(listen_count == 1) 
+    {
+      if(getEntry() != null && getEntry().getBases() != null)
+      {
+        final Bases bases = getEntry().getBases();
+        bases.removeSequenceChangeListener(this);
       }
 
-      stopSegmentsListening ();
+      stopSegmentsListening();
 
-      Options.getOptions ().removeOptionChangeListener (this);
+      Options.getOptions().removeOptionChangeListener(this);
     }
 
     --listen_count;
 
-    if (listen_count < 0) {
-      throw new Error ("Feature.listen_count < 0");
-    }
+    if(listen_count < 0) 
+      throw new Error("Feature.listen_count < 0");
   }
 
   /**
    *  Add all FeatureSegments to all appropriate listener lists.
    **/
-  private void startSegmentsListening () {
-    if (segments != null) {
-      for (int i = 0 ; i < segments.size () ; ++i) {
-        segments.elementAt (i).startListening ();
-        segments.elementAt (i).addMarkerChangeListener (this);
+  private void startSegmentsListening() 
+  {
+    if(segments != null)
+    {
+      int seg_size = segments.size();
+      for (int i = 0; i < seg_size; ++i) 
+      {
+        segments.elementAt(i).startListening();
+        segments.elementAt(i).addMarkerChangeListener(this);
       }
     }
   }
@@ -2655,21 +2850,23 @@ CHANGED_END:
    *  Add this Feature and its FeatureSegments to the all appropriate listener
    *  lists.
    **/
-  private void startListening () {
-    if (listen_count == 0) {
-      if (getEntry () != null && getEntry ().getBases () != null) {
-        final Bases bases = getEntry ().getBases ();
-
-        startSegmentsListening ();
+  private void startListening() 
+  {
+    if(listen_count == 0) 
+    {
+      if(getEntry() != null && getEntry().getBases() != null) 
+      {
+        final Bases bases = getEntry().getBases();
+        startSegmentsListening();
 
         // it doesn't matter what the priority is as long as it is lower than
         // the FeatureSegment priority, so that all FeatureSegment objects get
         // updated before we try to update the location of this feature
         final int PRIORITY = Marker.LISTENER_PRIORITY - 2;
-        bases.addSequenceChangeListener (this, PRIORITY);
+        bases.addSequenceChangeListener(this, PRIORITY);
       }
 
-      Options.getOptions ().addOptionChangeListener (this);
+      Options.getOptions().addOptionChangeListener(this);
     }
 
     ++listen_count;
@@ -2678,82 +2875,85 @@ CHANGED_END:
   /**
    *  Create one FeatureSegment object for each segment/exon of this Feature.
    **/
-  private void createSegments () {
+  private void createSegments() 
+  {
     // this call will remove each segment from the MarkerChangeListener list
     // of the start and end Marker objects of the segment.  If we don't do
     // this the segments will not be garbage collected.
-    stopSegmentsListening ();
+    stopSegmentsListening();
 
-    segments = new FeatureSegmentVector ();
+    segments = new FeatureSegmentVector();
+    final Location location = getLocation();
+    final RangeVector ranges = location.getRanges();
 
-    final Location location = getLocation ();
-
-    final RangeVector ranges = location.getRanges ();
-
-    for (int i = 0 ; i < ranges.size () ; ++i) {
-      final Range this_range = ranges.elementAt (i);
-
-      segments.add (makeSegment (this_range));
+    int ranges_size = ranges.size();
+    for(int i = 0; i < ranges_size; ++i) 
+    {
+      final Range this_range = ranges.elementAt(i);
+      segments.add(makeSegment(this_range));
     }
 
-    startSegmentsListening ();
+    startSegmentsListening();
   }
 
   /**
    *  Make a single FeatureSegment.
    *  @param range Provides the start and end positions of the segment.
    **/
-  private FeatureSegment makeSegment (final Range range) {
-    return new FeatureSegment (this, range);
+  private FeatureSegment makeSegment(final Range range) 
+  {
+    return new FeatureSegment(this, range);
   }
 
   /**
    *  Set the Location of this feature and reset old_location and
    *  segments.  Don't send any FeatureChangeEvents.
    **/
-  private void setLocationInternal (final Location new_location)
-      throws ReadOnlyException, OutOfRangeException {
-    getEmblFeature ().setLocation (new_location);
+  private void setLocationInternal(final Location new_location)
+      throws ReadOnlyException, OutOfRangeException 
+  {
+    getEmblFeature().setLocation(new_location);
 
-    if (new_location != old_location) {
-      reexamineSegments ();
-    }
+    if(new_location != old_location) 
+      reexamineSegments();
 
     old_location = new_location;
-
-    resetCache ();
+    resetCache();
   }
 
   /**
    *  Set the Location of this feature and notify any FeatureChangeListeners.
    **/
-  public void setLocation (final Location new_location)
-      throws ReadOnlyException, OutOfRangeException {
-    final Location old_location = getLocation ();
-    setLocationInternal (new_location);
-    locationChanged (old_location);
+  public void setLocation(final Location new_location)
+      throws ReadOnlyException, OutOfRangeException 
+  {
+    final Location old_location = getLocation();
+    setLocationInternal(new_location);
+    locationChanged(old_location);
   }
 
   /**
    *  Add a FeatureSegment to this Feature.
    *  @param range Provides the start and end positions of the segment.
    **/
-  public void addSegment (final Range range)
-      throws ReadOnlyException {
-    final Location old_location = getLocation ();
+  public void addSegment(final Range range)
+      throws ReadOnlyException 
+  {
+    final Location old_location = getLocation();
+    final Location new_location = old_location.addRange(range);
 
-    final Location new_location = old_location.addRange (range);
-
-    try {
-      setLocationInternal (new_location);
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - inconsistent location " +
-                       "information: " + e);
+    try
+    {
+      setLocationInternal(new_location);
+    } 
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - inconsistent location " +
+                      "information: " + e);
     }
 
-    reexamineSegments ();
-
-    locationChanged (old_location);
+    reexamineSegments();
+    locationChanged(old_location);
   }
 
   /**
@@ -2763,56 +2963,60 @@ CHANGED_END:
    *  @exception LastSegmentException thrown if an attempt is made to remove
    *    the last segment.
    **/
-  public void removeSegment (FeatureSegment segment)
-      throws ReadOnlyException, LastSegmentException {
-    if (getSegments ().size () > 1) {
-      final Location old_location = getLocation ();
+  public void removeSegment(FeatureSegment segment)
+      throws ReadOnlyException, LastSegmentException 
+  {
+    if(getSegments().size() > 1) 
+    {
+      final Location old_location = getLocation();
 
       final Location new_location =
-        old_location.removeRange (segment.getRawRange ());
+        old_location.removeRange(segment.getRawRange());
 
-      try {
-        setLocationInternal (new_location);
-      } catch (OutOfRangeException e) {
-        throw new Error ("internal error - inconsistent location " +
-                         "information: " + e);
+      try 
+      {
+        setLocationInternal(new_location);
+      } 
+      catch(OutOfRangeException e) 
+      {
+        throw new Error("internal error - inconsistent location " +
+                        "information: " + e);
       }
 
-      reexamineSegments ();
+      reexamineSegments();
 
-      locationChanged (old_location);
-    } else {
-      throw new LastSegmentException ();
-    }
+      locationChanged(old_location);
+    } 
+    else 
+      throw new LastSegmentException();
   }
 
   /**
    *  Return a list of all the names of the qualifiers in the given features.
    **/
-  public static StringVector
-    getAllQualifierNames (final FeatureVector features) {
+  public static StringVector getAllQualifierNames(final FeatureVector features)
+  {
+    final StringVector qualifier_names = new StringVector();
+    int feat_size = features.size();
 
-    final StringVector qualifier_names = new StringVector ();
+    for(int i = 0; i < feat_size; ++i)
+    {
+      final Feature feature = features.elementAt(i);
+      final QualifierVector qualifiers = feature.getQualifiers();
 
-    for (int i = 0 ; i < features.size () ; ++i) {
-      final Feature feature = features.elementAt (i);
+      int qualifiers_size = qualifiers.size();
+      for(int qualifier_index = 0; qualifier_index < qualifiers_size;
+          ++qualifier_index)
+      {
+        final Qualifier this_qualifier = qualifiers.elementAt(qualifier_index);
+        final String name = this_qualifier.getName();
 
-      final QualifierVector qualifiers = feature.getQualifiers ();
-
-      for (int qualifier_index = 0 ;
-           qualifier_index < qualifiers.size () ;
-           ++qualifier_index) {
-        final Qualifier this_qualifier =
-          qualifiers.elementAt (qualifier_index);
-        final String name = this_qualifier.getName ();
-
-        if (!qualifier_names.contains (name)) {
-          qualifier_names.add (name);
-        }
+        if(!qualifier_names.contains(name)) 
+          qualifier_names.add(name);
       }
     }
 
-    qualifier_names.sort ();
+    qualifier_names.sort();
 
     return qualifier_names;
   }
@@ -2822,15 +3026,19 @@ CHANGED_END:
    *  @param sequence_length The length of the sequence that this Feature is
    *    associated with.
    **/
-  private void reverseComplement (final int sequence_length)
-      throws ReadOnlyException {
-    try {
+  private void reverseComplement(final int sequence_length)
+      throws ReadOnlyException 
+  {
+    try 
+    {
       final Location new_location =
-        getLocation ().reverseComplement (sequence_length);
+        getLocation().reverseComplement(sequence_length);
 
-      setLocationInternal (new_location);
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - inconsistent location: " + e);
+      setLocationInternal(new_location);
+    } 
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - inconsistent location: " + e);
     }
   }
 
@@ -2838,112 +3046,18 @@ CHANGED_END:
    *  Return the sequence length of the Strand that this feature is attached
    *  to.
    **/
-  private int getSequenceLength () {
-    return getFirstSegment ().getStart ().getStrand ().getSequenceLength ();
-  }
-
-  /**
-   *  Return the first segment of this Feature.
-   **/
-  private FeatureSegment getFirstSegment () {
-    return getSegments ().elementAt (0);
+  private int getSequenceLength()
+  {
+    FeatureSegment first_seg = getSegments().elementAt(0);
+    return first_seg.getStart().getStrand().getSequenceLength();
   }
 
   /**
    *  Set the embl.Feature reference of this Feature to be the given reference.
    **/
-  void setEmblFeature (final uk.ac.sanger.artemis.io.Feature
-                         new_embl_feature) {
+  void setEmblFeature(final uk.ac.sanger.artemis.io.Feature new_embl_feature)
+  {
     embl_feature = new_embl_feature;
   }
 
-  /**
-   *  The Entry that controls/contains this feature.  This is the Entry object
-   *  that was passed to the constructor.
-   **/
-  private Entry entry;
-
-  /**
-   *  This is a reference to the low level Feature object that this class is
-   *  providing a wrapper for.  This is the embl.Feature object that was
-   *  passed to constructor.
-   **/
-  private uk.ac.sanger.artemis.io.Feature embl_feature;
-
-  /**
-   *  The segment of this Feature.  All features have at least one segment.
-   **/
-  private FeatureSegmentVector segments = null;
-
-  /**
-   *  A vector of those objects listening for feature change events.
-   **/
-  private final Vector feature_listener_list = new Vector ();
-
-  /**
-   *  The translation of the bases of this feature.
-   **/
-  private AminoAcidSequence amino_acids = null;
-
-  /**
-   *  The bases of this feature.
-   **/
-  private String bases = null;
-
-  /**
-   *  The count of the number of amino acids in this feature.  (set by
-   *  getAACount () and resetCache ()).
-   **/
-  private int aa_count = -1;
-
-  /**
-   *  The count of the bases in this feature (set by getBaseCount () and
-   *  resetCache ()).
-   **/
-  private int base_count = -1;
-
-  /**
-   *  This array contains counts of the occurrences of each three bases.  The
-   *  first index is the first base, the second index is the second base, etc.
-   *  The indices are the same as those for Bases.letter_index.
-   *  (set by resetCache ()).
-   **/
-  private int [] [] [] codon_counts = null;
-
-  /**
-   *  This array contains counts of the occurrences of each amino acids in the
-   *  translation of the bases of the current feature.
-   *  (set by resetCache ()).
-   **/
-  private int [] residue_counts = null;
-
-  /**
-   *  This array contains counts of number of each base that appear in each
-   *  codon position.  The first index is the codon position and the second is
-   *  the base (indexed in the same way as Bases.letter_index).
-   *  (set by resetCache ()).
-   **/
-  private int [] [] positional_base_counts = null;
-
-  /**
-   *  This array contains the counts of the total number of each base in the
-   *  feature.
-   *  The indices are the same as those for Bases.letter_index.
-   *  (set by resetCache ()).
-   **/
-  private int [] base_counts = null;
-
-  /**
-   *  The current Location reference is saved each time setLocation () is
-   *  called so that if the reference changes resetCache () can
-   *  be called.  This is needed to handle RWCorbaFeature objects which can
-   *  change their Location at arbitrary times.
-   **/
-  private Location old_location = null;
-
-  /**
-   *  Incremented when startListening () is called - decremented when
-   *  stopListening () is called.
-   **/
-  private int listen_count = 0;
 }
