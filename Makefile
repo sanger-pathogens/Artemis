@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.2 2004-06-09 15:10:51 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.3 2004-06-22 16:20:14 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -8,7 +8,7 @@ OPT_FLAGS = -g
 
 JAVAC := javac $(OPT_FLAGS) -target 1.1 -deprecation -J-mx150m $(EXTRA_FLAGS)
 
-REAL_CLASSPATH := CLASSPATH=.:lib/biojava.jar:lib/jobcontrol.jar
+REAL_CLASSPATH := CLASSPATH=.:lib/biojava.jar:lib/jobcontrol.jar:lib/jemAlign.jar:
 
 NAMES:= \
 	uk/ac/sanger/artemis/OptionChangeListener \
