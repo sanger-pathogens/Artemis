@@ -25,7 +25,7 @@ because it can have surprising results unless the user is expecting it.  See
     <PARA>
 These options make all the 
 <ULINK
-http://www3.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi?mode=c
+URL="http://www3.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi?mode=c">
 NCBI Genetic Codes</ULINK> available. The default setting is the
 Standard Code. This setting effects the display of start codons (see <XREF
 LINKEND="VIEWS-POPUPMENU-TOGGLES-STARTCODONS">) and the "Suspicious Start
