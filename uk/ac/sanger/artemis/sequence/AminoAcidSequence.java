@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/AminoAcidSequence.java,v 1.2 2004-11-17 13:20:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/AminoAcidSequence.java,v 1.3 2004-11-17 13:50:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -33,7 +33,7 @@ import uk.ac.sanger.artemis.util.*;
  *  Objects of this class represent a string of amino acids.
  *
  *  @author Kim Rutherford
- *  @version $Id: AminoAcidSequence.java,v 1.2 2004-11-17 13:20:10 tjc Exp $
+ *  @version $Id: AminoAcidSequence.java,v 1.3 2004-11-17 13:50:09 tjc Exp $
  **/
 
 public class AminoAcidSequence 
@@ -936,7 +936,7 @@ public class AminoAcidSequence
   public final static int amino_acid_symbol_count = 20;
 
 
-  private static void setGeneCode()
+  public static void setGeneCode()
   {
     // if translation_table is in the options file use it to set
     // codon_translation_array
