@@ -87,7 +87,6 @@ foreach my $term (@$term_l)
         print " ($syn)";
       }
       printf ";";
-      printf "%s",$assoc->assocdate;
 
       printf " db_xref=";
       foreach my $ref (@{$term->dbxref_list || []})
