@@ -202,7 +202,8 @@ public class PrintACT extends ScrollPanel
     menuBar.add(optionsmenu);
 
 // draw labels
-    JMenuItem showLabels = new JMenuItem("Display Labels");
+    JCheckBoxMenuItem showLabels = new JCheckBoxMenuItem("Display Labels",
+                                                         drawLabels.isSelected());
     showLabels.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
