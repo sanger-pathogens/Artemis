@@ -49,8 +49,6 @@ public class HitInfo
   private String desc   = null;
   /** Sequence length */
   private String length = null;
-  /** Query length */
-  private int queryLength = 0;
 
   /** */
   private String opt    = null;
@@ -243,28 +241,6 @@ public class HitInfo
   protected void setEndPosition(int endPosition)
   {
     this.endPosition = endPosition;
-  }
-
-  /**
-  *
-  * Set the query sequence length.
-  * @param queryLength       query sequence length.
-  *
-  */
-  protected void setQueryLength(int queryLength)
-  {
-    this.queryLength = queryLength;
-  }
-
-  /**
-  *
-  * Get the query sequence length.
-  * @return query sequence length.
-  *
-  */
-  protected int getQueryLength()
-  {
-    return queryLength;
   }
 
 

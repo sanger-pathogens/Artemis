@@ -70,7 +70,7 @@ public class DataViewInternalFrame extends JInternalFrame
               true);//iconifiable
       DBViewer dbview = new DBViewer(fastaPane);
       JScrollPane dbviewScroll = new JScrollPane(dbview);
-      dbviewScroll.setPreferredSize(new Dimension(500,200));
+      dbviewScroll.setPreferredSize(new Dimension(500,300));
       jif.getContentPane().add(dbviewScroll);
       jif.setLocation(0,0);
       jif.setSize(500,300);

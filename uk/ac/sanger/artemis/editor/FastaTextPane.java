@@ -48,6 +48,7 @@ public class FastaTextPane extends JScrollPane
   private JTextArea textArea;
   private Vector hitInfoCollection = null;
   private String format = null;
+  private int qlen;
 
   public FastaTextPane(String dataFile)
   {
@@ -155,7 +156,6 @@ public class FastaTextPane extends JScrollPane
       streamReader = new InputStreamReader(getInputStream(dataFile));
       buffReader = new BufferedReader(streamReader);
 
-      String qlen = null;
       String line = null;
       int textPosition = 0;
       int len     = 0;
@@ -199,9 +199,6 @@ public class FastaTextPane extends JScrollPane
 
           hit = getHitInfo(currentID,hitInfoCollection);
           hit.setStartPosition(textPosition);
-
-          if(qlen != null)
-            hit.setQueryLength(Integer.parseInt(qlen));
 
           String going = "";
           ind = line.indexOf("GO:");
@@ -284,7 +281,7 @@ public class FastaTextPane extends JScrollPane
           else
             ind2 = line.indexOf("(");
 
-          qlen = line.substring(ind2+1,ind1).trim();
+          qlen = Integer.parseInt(line.substring(ind2+1,ind1).trim());
         }
 
         textPosition += len;
@@ -413,6 +410,17 @@ public class FastaTextPane extends JScrollPane
       System.out.println("Cannot read file: " + dataFile);
     }
     return sbuff;
+  }
+
+  /**
+  *
+  * Get the query sequence length.
+  * @return query sequence length.
+  *
+  */
+  protected int getQueryLength()
+  {
+    return qlen;
   }
 
   protected Vector getHitCollection()
