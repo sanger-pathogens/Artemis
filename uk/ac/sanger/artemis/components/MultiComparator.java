@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.4 2004-12-03 17:47:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.5 2004-12-13 14:10:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import javax.swing.border.BevelBorder;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.4 2004-12-03 17:47:04 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.5 2004-12-13 14:10:49 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
@@ -955,7 +955,7 @@ public class MultiComparator extends JFrame
           final Entry new_entry =  new Entry(entry_group.getBases(),
                          EntryFileDialog.getEntryFromFile(null,
                           new FileDocument(file),
-                          new_entry_information, false));
+                          new_entry_information, true));
                                                                                                       
           if(new_entry != null)
             entry_group.add(new_entry);
