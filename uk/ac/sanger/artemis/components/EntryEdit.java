@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.6 2004-12-02 13:47:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.7 2004-12-03 14:16:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.6 2004-12-02 13:47:56 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.7 2004-12-03 14:16:36 tjc Exp $
  *
  */
 
@@ -1162,7 +1162,8 @@ public class EntryEdit extends JFrame
     {
       public void actionPerformed(ActionEvent event) 
       {
-        new EntryEdit(getEntryGroup()).show();
+        EntryEdit clone = new EntryEdit(getEntryGroup());
+        clone.setVisible(true);
       }
     });
 
