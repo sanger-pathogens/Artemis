@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.10 2004-12-07 10:35:40 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.11 2005-01-18 16:45:22 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.10 2004-12-07 10:35:40 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.11 2005-01-18 16:45:22 tjc Exp $
  *
  */
 
@@ -707,21 +707,25 @@ public class EntryEdit extends JFrame
     if(Options.readWritePossible() || getEntryGroup().size() > 1) 
     {
       JMenu entry_group_menu = new EntryGroupMenu(this, getEntryGroup());
+      entry_group_menu.setMnemonic(KeyEvent.VK_N);
       menu_bar.add(entry_group_menu);
     }
 
     JMenu select_menu = new SelectMenu(this, getSelection(),
                      getGotoEventSource(), getEntryGroup(),
                      base_plot_group);
+    select_menu.setMnemonic(KeyEvent.VK_S);
     menu_bar.add(select_menu);
 
     ViewMenu view_menu = new ViewMenu(this, getSelection(),
                              getGotoEventSource(), getEntryGroup(),
                              base_plot_group);
+    view_menu.setMnemonic(KeyEvent.VK_V);
     menu_bar.add(view_menu);
 
     JMenu goto_menu = new GotoMenu(this, getSelection(),
                              getGotoEventSource(), getEntryGroup());
+    goto_menu.setMnemonic(KeyEvent.VK_O);
     menu_bar.add(goto_menu);
 
     if(Options.readWritePossible()) 
@@ -729,18 +733,22 @@ public class EntryEdit extends JFrame
       JMenu edit_menu = new EditMenu(this, getSelection(),
                                getGotoEventSource(), getEntryGroup(),
                                base_plot_group);
+      edit_menu.setMnemonic(KeyEvent.VK_E);
       menu_bar.add(edit_menu);
 
       AddMenu add_menu = new AddMenu(this, getSelection(), getEntryGroup(),
                              getGotoEventSource(), base_plot_group);
+      add_menu.setMnemonic(KeyEvent.VK_C);
       menu_bar.add(add_menu);
 
       JMenu write_menu = new WriteMenu(this, getSelection(), getEntryGroup());
+      write_menu.setMnemonic(KeyEvent.VK_W);
       menu_bar.add(write_menu);
 
       if(Options.isUnixHost()) 
       {
         JMenu run_menu = new RunMenu(this, getSelection());
+        run_menu.setMnemonic(KeyEvent.VK_R);
         menu_bar.add(run_menu);
       }
     }
@@ -748,9 +756,11 @@ public class EntryEdit extends JFrame
     JMenu graph_menu = new GraphMenu(this, getEntryGroup(),
                                      base_plot_group,
                                      feature_display);
+    graph_menu.setMnemonic(KeyEvent.VK_G);
     menu_bar.add(graph_menu);
 
     final JMenu display_menu = new JMenu("Display");
+    display_menu.setMnemonic(KeyEvent.VK_D);
     final JCheckBoxMenuItem show_entry_buttons_item =
                            new JCheckBoxMenuItem("Show Entry Buttons");
     show_entry_buttons_item.setState(true);
@@ -817,6 +827,7 @@ public class EntryEdit extends JFrame
   private void makeFileMenu() 
   {
     file_menu.removeAll();
+    file_menu.setMnemonic(KeyEvent.VK_F);
 
     if(Options.readWritePossible()) 
     {
