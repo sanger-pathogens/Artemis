@@ -6,7 +6,7 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.6 2004-07-12 12:59:22 tjc Exp $"
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.7 2004-07-13 08:21:38 tjc Exp $"
 
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
@@ -114,10 +114,15 @@ while(my $inFile = <LIST_FILE>)
 
   if($inFile =~ m/^($pwd)(.*)/)
   {
-    $inFile = $2;
-    if($inFile =~ m/^(\/)(.*)/)
+    my $inFile_tmp = $2;
+    while($inFile_tmp =~ m/^(\/)(.*)/)
     {
-      $inFile = $2;
+      $inFile_tmp = $2;
+    }
+
+    if( -e $inFile_tmp )
+    {
+      $inFile = $inFile_tmp;
     }
   }
   
