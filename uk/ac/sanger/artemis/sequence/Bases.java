@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.5 2004-12-22 18:39:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.6 2004-12-23 10:19:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -45,7 +45,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.5 2004-12-22 18:39:17 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.6 2004-12-23 10:19:05 tjc Exp $ */
 
 public class Bases {
   /**
@@ -510,8 +510,12 @@ public class Bases {
 
     int current_return_array_index = 0;
 
+//  final char sequence_string[] =
+//    getSequence().getSubSequence(1, getLength()).toCharArray();
+
     final char sequence_string[] =
-      getSequence().getSubSequence(1, getLength()).toCharArray();
+      getSequence().getCharSubSequence(1, getLength());
+
     final int sequence_string_length = sequence_string.length;
     final int range_start_index = real_range.getStart () - 1;
     final int range_end_index = real_range.getEnd () - 1;

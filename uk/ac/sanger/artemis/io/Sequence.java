@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Sequence.java,v 1.1 2004-06-09 09:50:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Sequence.java,v 1.2 2004-12-23 10:19:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -32,7 +32,7 @@ import org.biojava.bio.symbol.IllegalSymbolException;
  *  Sequence interface
  *
  *  @author Kim Rutherford
- *  @version $Id: Sequence.java,v 1.1 2004-06-09 09:50:27 tjc Exp $
+ *  @version $Id: Sequence.java,v 1.2 2004-12-23 10:19:05 tjc Exp $
  *
  */
 
@@ -44,6 +44,8 @@ public interface Sequence
    *  @param end The end base of the range.
    **/
   String getSubSequence(int start, int end);
+
+  char[] getCharSubSequence(int start, int end);
 
   /**
    *  Set this sequence to hold the bases in the given String.

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.17 2004-12-22 13:28:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.18 2004-12-23 10:19:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.17 2004-12-22 13:28:31 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.18 2004-12-23 10:19:05 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -2128,6 +2128,11 @@ public class FeatureDisplay extends EntryGroupPanel
     // used to remember the position of the previously drawn codon
     int last_x_position = -1;
 
+    if(height_percent < 100)
+      g.setColor(start_codon_colour);
+    else
+      g.setColor(Color.black);
+
     for(int i = 0 ; i < codon_positions.length ; ++i) 
     {
       final int codon_base_start = codon_positions[i];
@@ -2150,12 +2155,8 @@ public class FeatureDisplay extends EntryGroupPanel
       // draw only if we haven't drawn on the position already
       if(last_x_position == -1 || draw_x_position != last_x_position) 
       {
-        if(height_percent < 100) 
-          drawOneCodonMark(g, draw_x_position, draw_y_position,
-                            direction, mark_height, start_codon_colour);
-        else 
-          drawOneCodonMark(g, draw_x_position, draw_y_position,
-                            direction, mark_height, Color.black);
+        drawOneCodonMark(g, draw_x_position, draw_y_position,
+                         direction, mark_height);
 
         last_x_position = draw_x_position;
       }
@@ -2195,32 +2196,28 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param direction If this is FORWARD the line is draw from the y position
    *    to the right, otherwise it is drawn to the left.
    *  @param height The height in pixels of the codon mark.
-   *  @param colour The colour to use when drawing the mark.
    **/
   private void drawOneCodonMark(final Graphics g,
                                  final int x_pos, final int y_pos,
                                  final int direction,
-                                 final int height,
-                                 final Color colour) 
+                                 final int height)
   {
-    g.setColor(colour);
-
     if(getScaleFactor() == 1) 
     {
       // draw a line three pixels/bases wide
       if(direction == FORWARD) 
       {
         g.drawLine(x_pos + 1, y_pos,
-                    x_pos + 1, y_pos + height - 1);
+                   x_pos + 1, y_pos + height - 1);
         g.drawLine(x_pos + 2, y_pos,
-                    x_pos + 2, y_pos + height - 1);
+                   x_pos + 2, y_pos + height - 1);
       } 
       else
       {
         g.drawLine(x_pos - 1, y_pos,
-                    x_pos - 1, y_pos + height - 1);
+                   x_pos - 1, y_pos + height - 1);
         g.drawLine(x_pos - 2, y_pos,
-                    x_pos - 2, y_pos + height - 1);
+                   x_pos - 2, y_pos + height - 1);
       }
     }
     g.drawLine(x_pos, y_pos, x_pos, y_pos + height - 1);

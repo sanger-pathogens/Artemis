@@ -99,6 +99,15 @@ public class BioJavaSequence implements Sequence
 	return subSeq;
     }
 
+  public char[] getCharSubSequence (int start, int end)
+  {
+    char[] dst = new char[end-start];
+    StringBuffer buff = new StringBuffer(getSubSequence(start,end));
+    buff.getChars(start, end, dst, 0);
+    return dst;
+  }
+
+
     public void setFromString(String seqString)
         throws ReadOnlyException, IllegalSymbolException
     {

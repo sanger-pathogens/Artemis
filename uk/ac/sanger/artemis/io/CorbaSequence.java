@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/CorbaSequence.java,v 1.1 2004-06-09 09:49:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/CorbaSequence.java,v 1.2 2004-12-23 10:19:05 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import java.io.IOException;
  *  object.
  *
  *  @author Kim Rutherford
- *  @version $Id: CorbaSequence.java,v 1.1 2004-06-09 09:49:01 tjc Exp $
+ *  @version $Id: CorbaSequence.java,v 1.2 2004-12-23 10:19:05 tjc Exp $
  **/
 
 public class CorbaSequence implements Sequence {
@@ -72,6 +72,15 @@ public class CorbaSequence implements Sequence {
       return sequence.substring (start - 1, end);
     }
   }
+
+  public char[] getCharSubSequence (int start, int end)
+  {
+    char[] dst = new char[end-start+1];
+    StringBuffer buff = new StringBuffer(sequence);
+    buff.getChars(start-1, end, dst, 0);
+    return dst;
+  }
+
 
   /**
    *  Set this sequence to hold the bases in the given String - throws
