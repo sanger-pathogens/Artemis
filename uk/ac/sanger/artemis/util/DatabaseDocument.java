@@ -40,6 +40,7 @@ public class DatabaseDocument extends Document
   private String name = null;
   private String feature_id = "1";
   private Hashtable cvterm;
+  private InputStreamProgressListener progress_listener;
 
   /**
    *
@@ -67,6 +68,13 @@ public class DatabaseDocument extends Document
     this.feature_id = feature_id;
   }
 
+  public DatabaseDocument(String location, String feature_id,
+                          InputStreamProgressListener progress_listener)
+  {
+    super(location);
+    this.feature_id = feature_id;
+    this.progress_listener = progress_listener;
+  }
 
   /**
    *
@@ -172,16 +180,20 @@ public class DatabaseDocument extends Document
     ResultSet rs = st.executeQuery(sql);
 
     StringBuffer cdsBuffer = new StringBuffer();
+
+    int loop = 1;
+
     while(rs.next())
     {
       int fmin        = rs.getInt("fmin")+1;
       int fmax        = rs.getInt("fmax");
       long type_id    = rs.getLong("type_id");
       int strand      = rs.getInt("strand");
+      String name     = rs.getString("uniquename");
       String typeName = getCvtermName(conn,type_id);
 
 // start with uniquename
-      cdsBuffer.append("CHADO="+rs.getString("uniquename")+" ");
+      cdsBuffer.append("CHADO="+name+" ");
 
       if(strand == -1)
         cdsBuffer.append("complement(");
@@ -193,6 +205,8 @@ public class DatabaseDocument extends Document
       cdsBuffer.append(";");
       cdsBuffer.append("/"+typeName+"=\"");
       cdsBuffer.append(rs.getString("value")+"\"\n");
+
+      progress_listener.progressMade("Read from database: "+name);
     }
 
     return cdsBuffer.toString();

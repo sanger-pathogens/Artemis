@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.9 2005-04-01 09:43:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.10 2005-04-01 16:08:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.JScrollPane;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.9 2005-04-01 09:43:03 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.10 2005-04-01 16:08:23 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -589,40 +589,46 @@ public class ArtemisMain extends Splash
   * Retrieve a database entry.
   *
   */
-  private void getEntryEditFromDatabase(String id)
+  private void getEntryEditFromDatabase(final String id)
   {
-    try
+    SwingWorker entryWorker = new SwingWorker()
     {
-      DatabaseEntrySource entry_source = new DatabaseEntrySource();
-      final Entry entry = entry_source.getEntry(id);
-      if(entry == null)
-        return;
+      public Object construct()
+      {
+        try
+        {
+          final InputStreamProgressListener progress_listener =
+                                     getInputStreamProgressListener();
 
-      final EntryEdit new_entry_edit = makeEntryEdit(entry);
-      new_entry_edit.setVisible(true);
+          DatabaseEntrySource entry_source = new DatabaseEntrySource();
 
-//    final EntryGroup entry_group =
-//            new SimpleEntryGroup(entry.getBases());
+          final Entry entry = entry_source.getEntry(id, progress_listener);
+          if(entry == null)
+            return null;
 
-//    entry_group.add(entry);
-
-//    EntryEdit entry_edit = new EntryEdit(entry_group);
-//    entry_edit.setVisible(true);
-    }
-    catch(OutOfRangeException e)
-    {
-      new MessageDialog(ArtemisMain.this, "read failed: one of the features in " +
+          final EntryEdit new_entry_edit = makeEntryEdit(entry);
+          new_entry_edit.setVisible(true);
+        }
+        catch(OutOfRangeException e)
+        {
+          new MessageDialog(ArtemisMain.this, "read failed: one of the features in " +
                  " the entry has an out of range " +
                  "location: " + e.getMessage());
-    }
-    catch(NoSequenceException e)
-    {
-      new MessageDialog(ArtemisMain.this, "read failed: entry contains no sequence");
-    }
-    catch(IOException e)
-    {
-      new MessageDialog(ArtemisMain.this, "read failed due to IO error: " + e);
-    }
+        }
+        catch(NoSequenceException e)
+        {
+          new MessageDialog(ArtemisMain.this, "read failed: entry contains no sequence");
+        }
+        catch(IOException e)
+        {
+          new MessageDialog(ArtemisMain.this, "read failed due to IO error: " + e);
+        }
+        return null;
+      }
+
+    };
+    entryWorker.start();
+
   }
 
 

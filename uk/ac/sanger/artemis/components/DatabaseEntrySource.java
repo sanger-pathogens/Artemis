@@ -85,10 +85,10 @@ public class DatabaseEntrySource implements EntrySource
    *  @return null if and only if the user cancels the read or if the read
    *    fails.
    **/
-  public Entry getEntry(String id)
+  public Entry getEntry(String id, InputStreamProgressListener progress_listener)
       throws OutOfRangeException, NoSequenceException, IOException
   {
-    return makeFromID(null,id,false);
+    return makeFromID(null,id,false,progress_listener);
   }
 
   /**
@@ -132,7 +132,8 @@ public class DatabaseEntrySource implements EntrySource
    **/
   protected Entry makeFromID(final Bases bases,
                              final String id,
-                             final boolean read_only)
+                             final boolean read_only,
+                             InputStreamProgressListener progress_listener)
       throws OutOfRangeException, IOException 
   {
     try 
@@ -148,7 +149,7 @@ public class DatabaseEntrySource implements EntrySource
       else 
       {
         DatabaseDocument doc = new DatabaseDocument("jdbc:postgresql://pcs3:13001/chadoCVS?user=es2",
-                                                    id);
+                                                    id, progress_listener);
         db_entry = new DatabaseDocumentEntry(entry_information, doc);
       }
 

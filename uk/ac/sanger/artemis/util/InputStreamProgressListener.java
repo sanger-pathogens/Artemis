@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/InputStreamProgressListener.java,v 1.1 2004-06-09 09:53:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/InputStreamProgressListener.java,v 1.2 2005-04-01 16:08:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.util;
@@ -31,9 +31,11 @@ package uk.ac.sanger.artemis.util;
  *  bytes have been read.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: InputStreamProgressListener.java,v 1.1 2004-06-09 09:53:03 tjc Exp $
+ *  @version $Id: InputStreamProgressListener.java,v 1.2 2005-04-01 16:08:23 tjc Exp $
  **/
 
-public interface InputStreamProgressListener {
-  void progressMade (final InputStreamProgressEvent event);
+public interface InputStreamProgressListener 
+{
+  void progressMade(final InputStreamProgressEvent event);
+  void progressMade(final String progress);
 }

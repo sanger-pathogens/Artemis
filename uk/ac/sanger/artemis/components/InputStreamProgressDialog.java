@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/InputStreamProgressDialog.java,v 1.2 2004-12-13 15:04:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/InputStreamProgressDialog.java,v 1.3 2005-04-01 16:08:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -42,7 +42,7 @@ import javax.swing.JButton;
  *  InputStreamProgressEvent objects)
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: InputStreamProgressDialog.java,v 1.2 2004-12-13 15:04:08 tjc Exp $
+ *  @version $Id: InputStreamProgressDialog.java,v 1.3 2005-04-01 16:08:23 tjc Exp $
  **/
 
 public class InputStreamProgressDialog extends JDialog
@@ -117,6 +117,12 @@ public class InputStreamProgressDialog extends JDialog
             setVisible(true);
         }
       }
+
+      public void progressMade(String progress)
+      {
+        bytes_label.setText(progress);
+      }
+
     };
     getContentPane().add(ok_button, "South");
     pack();

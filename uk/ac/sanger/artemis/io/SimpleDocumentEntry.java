@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.6 2005-03-31 12:07:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.7 2005-04-01 16:08:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.Vector;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.6 2005-03-31 12:07:52 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.7 2005-04-01 16:08:23 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -757,6 +757,8 @@ abstract public class SimpleDocumentEntry
 
     if(this instanceof EmblDocumentEntry) 
       new_feature = new EmblStreamFeature(key, location, qualifiers);
+    else if(this instanceof DatabaseDocumentEntry)
+      new_feature = new DatabaseStreamFeature(key, location, qualifiers);
     else
       new_feature = new GenbankStreamFeature(key, location, qualifiers);
 
