@@ -660,8 +660,8 @@ public class DataCollectionPane extends JScrollPane
   private String setGoAnnotation(Annotation ann, HitInfo hit, 
                                  String go_id, String goLine)
   {
-    String go_ann = new String("/GO_component=\"GO:"+go_id+
-                               "; "+hit.getDB()+":"+hit.getAcc()+
+    String go_ann = new String("/GO=\"GOid=GO:"+go_id+
+                               "; with="+hit.getDB()+":"+hit.getAcc()+
                                "; "+goLine+"\"");
   
     String prog = DataCollectionPane.class.getResource("/etc/go_associations.pl").getPath(); 
@@ -679,7 +679,41 @@ public class DataCollectionPane extends JScrollPane
       {
         if(line.indexOf(go_id) > -1)
         {
-          go_ann = new String("/GO_component=\""+line+"\"");
+// see http://intweb.sanger.ac.uk/help/wiki/html/Intweb/PSUEukaryoticQualifiers.html
+          int ref = line.indexOf("db_xref=");
+          String db_xref = null;
+          if(ref > -1)
+          {
+            db_xref = line.substring(ref);
+            line = line.substring(0,ref);
+          }
+
+          // build GO line
+          StringBuffer goBuff = new StringBuffer();
+          if(go_ann.startsWith("/GO_component"))
+            goBuff.append("/GO=\"aspect=component; ");
+          else if(go_ann.startsWith("/GO_process"))
+            goBuff.append("/GO=\"aspect=process; ");
+          else
+            goBuff.append("/GO=\"aspect=function; ");
+          goBuff.append("GOid=GO:"+go_id+"; ");
+
+          int ind1 = line.indexOf("(");
+          int ind2 = line.indexOf(")")+1; 
+          if(ind1 > -1 && ind2 > -1)
+            goBuff.append("term="+line.substring(ind1,ind2)+"; ");
+
+          ind1 = ind2+1;
+          ind2 = line.indexOf(";",ind1);
+          if(ind1 > -1 && ind2 > -1)
+            goBuff.append("evidence="+line.substring(ind1,ind2)+"; ");
+
+          if(db_xref != null)
+            goBuff.append(db_xref+"; ");
+
+          goBuff.append("with="+hit.getDB()+":"+hit.getAcc()+"; "); 
+          go_ann = line + "\"<br>" + goBuff.toString() +"\"";
+
           found = true;
           break;
         }
@@ -702,7 +736,49 @@ public class DataCollectionPane extends JScrollPane
         {
           if(line.indexOf(go_id) > -1)
           {
-            go_ann = new String("/GO_component=\""+line.substring(3).trim()+"\"");
+            line = line.substring(3).trim();
+            String aspect = null;
+            String term   = null;
+            String evidence = null;
+            int ind1 = -1; 
+            int ind2 = -1;
+            if((ind1 = line.indexOf(" F:"))> -1)
+            {
+              aspect = "function";
+              ind2 = line.indexOf(";",ind1+4);
+            }
+            else if((ind1 = line.indexOf(" P:"))> -1)
+            {
+              aspect = "process";
+              ind2 = line.indexOf(";",ind1+4);
+            }
+            else if((ind1 = line.indexOf(" C:"))> -1)
+            {
+              aspect = "component";
+              ind2 = line.indexOf(";",ind1+4);
+            }
+
+            if(ind1 > -1 && ind2 > -1)
+              term = line.substring(ind1+3,ind2);
+
+            if(ind2 > -1)
+              evidence = line.substring(ind2+1).trim();
+
+            StringBuffer goBuff = new StringBuffer();
+
+            goBuff.append("/GO_"+aspect);
+            goBuff.append("=\"GO:"+go_id+"; ");
+            goBuff.append(evidence+"; ");
+            goBuff.append(hit.getDB()+":"+hit.getAcc()+";\"<br>");
+
+            goBuff.append("/GO=\"aspect=function; ");
+            goBuff.append("GOid=GO:"+go_id+"; ");
+            goBuff.append("term="+term+"; ");
+            goBuff.append("evidence="+evidence+"; ");
+            goBuff.append("db_xref= ;");
+            goBuff.append("with="+hit.getDB()+":"+hit.getAcc()+";\"");
+            go_ann = goBuff.toString();
+//          go_ann = new String("/GO=\""+line.substring(3).trim()+"\"");
             found = true;
             break;
           }
