@@ -52,7 +52,7 @@ public class DataViewInternalFrame extends JInternalFrame
       FastaTextPane fastaPane = new FastaTextPane(dataFile[i]);
 
       annFormat.append("/"+fastaPane.getFormat()+"_file=\""+
-                                    dataFile[i]+"\"\n");
+                                    dataFile[i]+"\"\n<br>");
       // add data pane
       DataCollectionPane dataPane =
          new DataCollectionPane(dataFile[i], fastaPane, ann, desktop);
@@ -61,16 +61,24 @@ public class DataViewInternalFrame extends JInternalFrame
                                         fastaPane,dataPane);
       split.setDividerLocation(150);
 
-      tabPane.add(fastaPane.getFormat(),split);
+      tabPane.add(fastaPane.getFormat()+" "+dataFile[i],split);
 
+      JScrollPane dbviewScroll = new JScrollPane();
       JInternalFrame jif = new JInternalFrame("Viewer",
               true, //resizable
               true, //closable
               true, //maximizable
               true);//iconifiable
-      DBViewer dbview = new DBViewer(fastaPane);
-      JScrollPane dbviewScroll = new JScrollPane(dbview);
+      DBViewer dbview = new DBViewer(fastaPane,dbviewScroll);
+      dbviewScroll.setViewportView(dbview);
       dbviewScroll.setPreferredSize(new Dimension(500,300));
+
+      JMenuBar menuBar = new JMenuBar();
+      menuBar.add(dbview.getFileMenu(jif));
+      JMenu menu = new JMenu("Options");
+      dbview.getOptionsMenu(menu);
+      menuBar.add(menu);
+      jif.setJMenuBar(menuBar);
       jif.getContentPane().add(dbviewScroll);
       jif.setLocation(0,0);
       jif.setSize(500,300);

@@ -32,7 +32,6 @@ import java.util.Enumeration;
 
 public class DBViewer extends ScrollPanel
 {
-
   /** collection of hits */
   private Vector hitInfoCollection = null;
   /** query length */
@@ -49,10 +48,15 @@ public class DBViewer extends ScrollPanel
   private JPopupMenu popup;
   /** number height */
   private int hgtNumber;
+  /** scroll bar this panel sits in */ 
+  private JScrollPane jsp;
 
-  public DBViewer(FastaTextPane fastaPane)
+  public DBViewer(FastaTextPane fastaPane, final JScrollPane jsp)
   {
     super();
+
+    this.jsp = jsp;
+
     hitInfoCollection = fastaPane.getHitCollection();
     qlen = fastaPane.getQueryLength();
     
@@ -73,6 +77,52 @@ public class DBViewer extends ScrollPanel
     // Popup menu
     addMouseListener(new PopupListener());
     popup = new JPopupMenu();
+    getOptionsMenu(popup);
+  }
+
+  protected JMenu getFileMenu(final JInternalFrame jif)
+  {
+    JMenu fileMenu = new JMenu("File");
+
+    JMenuItem exitMenu = new JMenuItem("Close");
+    exitMenu.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        jif.dispose();
+      }
+    });
+    fileMenu.add(exitMenu);
+    return fileMenu;  
+  }
+
+  protected void getOptionsMenu(JComponent menuOptions)
+  {
+    JMenuItem zoomInMenu = new JMenuItem("Zoom In");
+    zoomInMenu.setAccelerator(KeyStroke.getKeyStroke('I',
+        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+    zoomInMenu.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        setZoom(1.1f);
+      }
+    });
+    menuOptions.add(zoomInMenu);
+
+    JMenuItem zoomOutMenu = new JMenuItem("Zoom Out");
+    zoomOutMenu.setAccelerator(KeyStroke.getKeyStroke('O',
+        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+    zoomOutMenu.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        setZoom(0.9f);
+      }
+    });
+    menuOptions.add(zoomOutMenu);
+
+    menuOptions.add(new JSeparator());
 
     JRadioButtonMenuItem colourScore = new JRadioButtonMenuItem("Colour by Score");
     colourScore.addActionListener(new ActionListener()
@@ -82,7 +132,7 @@ public class DBViewer extends ScrollPanel
         setColourByScore(true);
       }
     });
-    popup.add(colourScore);
+    menuOptions.add(colourScore);
 
     JRadioButtonMenuItem colourEval  = new JRadioButtonMenuItem("Colour by E-value");
     colourEval.setSelected(true);
@@ -93,12 +143,29 @@ public class DBViewer extends ScrollPanel
         setColourByScore(false);
       }
     });
-    popup.add(colourEval);
+    menuOptions.add(colourEval);
 
     ButtonGroup butt = new ButtonGroup();
     butt.add(colourScore);
     butt.add(colourEval);
   }
+
+
+  /**
+  *
+  * Set the scale to zoom in/out by.
+  * @param scale 	scale to zoom in/out by.
+  *
+  */
+  protected void setZoom(float scale)
+  {
+    Dimension d  = getPreferredSize();
+    double width = d.getWidth()*scale;
+    d = new Dimension((int)width,(int)d.getHeight());
+    setPreferredSize(d);
+    jsp.setViewportView(this);
+  }
+
 
   /**
   *
@@ -111,12 +178,10 @@ public class DBViewer extends ScrollPanel
 // let UI delegate paint first (incl. background filling)
     super.paintComponent(g);
  
+    Font font = new Font("monospaced",Font.PLAIN,10);
+    g.setFont(font);
     FontMetrics metrics = g.getFontMetrics();
     hgtNumber = metrics.getAscent();
-
-//  Dimension d = new Dimension(500,
-//                             (hitInfoCollection.size()*ydisp)+(4*bound)+hgtNumber);
-//  setPreferredSize(d);
 
     Graphics2D g2 = (Graphics2D)g;
     int width = (int)getPreferredSize().getWidth()-(2*bound);
@@ -124,10 +189,33 @@ public class DBViewer extends ScrollPanel
     g2.setStroke(new BasicStroke(3.f));
     g2.drawLine(bound,bound+hgtNumber,bound+width,bound+hgtNumber);
 
+// draw scale
     g2.setStroke(new BasicStroke(1.f));
     g2.drawLine(bound,bound+hgtNumber,bound,bound+hgtNumber-6);
     g2.drawString("0",bound,hgtNumber+3);
-    
+
+//  Point viewPos = jsp.getViewport().getViewPosition();
+//  Dimension d = jsp.getViewport().getExtentSize();
+//  double fraction = d.getWidth()/((double)width);
+//  int unit  = (int)(d.getWidth()/10);
+//  int units = (int)(qlen*fraction/10);
+
+//  for(int i=1; i<10; i++)
+//  {
+//    int ipos = i+(((int)viewPos.getX())*qlen/width);
+//    String strPos = Integer.toString(ipos*units);
+//    int strwid = metrics.stringWidth(strPos); 
+//    g2.drawLine(bound+(ipos*unit),bound+hgtNumber,
+//                bound+(ipos*unit),bound+hgtNumber-6);
+//    g2.drawString(strPos,bound+(ipos*unit)-strwid,hgtNumber+3);
+//  }
+
+    String strQlen = Integer.toString(qlen);
+    int strwid = metrics.stringWidth(strQlen);
+
+    g2.drawLine(bound+width,bound+hgtNumber,bound+width,bound+hgtNumber-6);
+    g2.drawString(strQlen,bound+width-strwid,hgtNumber+3);
+
 // draw hits
     int ypos = bound+ydisp+hgtNumber;
     Enumeration enumHits = hitInfoCollection.elements();
@@ -216,13 +304,14 @@ public class DBViewer extends ScrollPanel
     Point loc = e.getPoint();
     int seqPos = (int)((loc.y-bound-ydisp-bound-ydisp-hgtNumber)/ydisp);
 
-    if(seqPos >= 0 && seqPos<=hitInfoCollection.size())
+    if(seqPos >= 0 && seqPos<hitInfoCollection.size())
     {
       HitInfo hit = (HitInfo)hitInfoCollection.get(seqPos);
       return hit.getID();
     }
     return null;
   }
+
 
 }
 
