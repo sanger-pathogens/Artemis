@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBStreamFeature.java,v 1.1 2004-06-09 09:50:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBStreamFeature.java,v 1.2 2005-01-06 11:21:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import java.io.*;
  *  EMBL or GENBANK stream.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBStreamFeature.java,v 1.1 2004-06-09 09:50:05 tjc Exp $
+ *  @version $Id: PublicDBStreamFeature.java,v 1.2 2005-01-06 11:21:06 tjc Exp $
  **/
 
 abstract public class PublicDBStreamFeature
@@ -583,7 +583,7 @@ abstract public class PublicDBStreamFeature
   private void writeQualifiers (final Writer writer)
       throws IOException {
     for (int i = 0 ; i < getQualifiers ().size () ; ++i) {
-      final Qualifier current_qualifier = getQualifiers ().elementAt (i);
+      final Qualifier current_qualifier = (Qualifier)getQualifiers ().elementAt (i);
 
       final String qualifier_name = current_qualifier.getName ();
 

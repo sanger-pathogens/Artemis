@@ -375,7 +375,7 @@ public class BioJavaFeature extends EMBLObject implements ComparableFeature
     try {
       clearAnnotation ();
       for (int i = 0 ; i < qualifiers.size () ; ++i) {
-        setQualifierInternal (qualifiers.elementAt (i));
+        setQualifierInternal((Qualifier)qualifiers.elementAt (i));
       }
     } catch (ChangeVetoException e) {
       throw new ReadOnlyException ("cannot set qualifiers");

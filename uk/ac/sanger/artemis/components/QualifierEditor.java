@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierEditor.java,v 1.1 2004-06-09 09:47:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierEditor.java,v 1.2 2005-01-06 11:21:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -46,7 +46,7 @@ import javax.swing.*;
  *  features at once.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: QualifierEditor.java,v 1.1 2004-06-09 09:47:18 tjc Exp $
+ *  @version $Id: QualifierEditor.java,v 1.2 2005-01-06 11:21:06 tjc Exp $
  **/
 
 public class QualifierEditor extends JFrame {
@@ -226,7 +226,7 @@ public class QualifierEditor extends JFrame {
              qualifier_index < qualifier_vector.size () ;
              ++qualifier_index) {
           final Qualifier this_qualifier =
-            qualifier_vector.elementAt (qualifier_index);
+            (Qualifier)qualifier_vector.elementAt (qualifier_index);
 
           if (replace) {
             try {

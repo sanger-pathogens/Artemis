@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionInfoDisplay.java,v 1.6 2004-10-04 15:35:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionInfoDisplay.java,v 1.7 2005-01-06 11:21:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -46,7 +46,7 @@ import javax.swing.*;
  *  This class displays information about the selection in a Label.
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectionInfoDisplay.java,v 1.6 2004-10-04 15:35:44 tjc Exp $
+ *  @version $Id: SelectionInfoDisplay.java,v 1.7 2005-01-06 11:21:06 tjc Exp $
  **/
 public class SelectionInfoDisplay extends CanvasPanel
     implements SelectionChangeListener 
@@ -239,7 +239,7 @@ public class SelectionInfoDisplay extends CanvasPanel
 
     for (int i = 0 ; i < qualifiers.size () ; ++i) 
     {
-      final Qualifier this_qualifier = qualifiers.elementAt (i);
+      final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt (i);
 
       if (this_qualifier.getName ().equals ("note") ||
           this_qualifier.getName ().endsWith ("_file")) 

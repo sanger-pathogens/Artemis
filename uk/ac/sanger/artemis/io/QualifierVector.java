@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/QualifierVector.java,v 1.3 2005-01-04 10:37:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/QualifierVector.java,v 1.4 2005-01-06 11:21:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,11 +37,11 @@ import java.io.IOException;
  *  differently to the Vector class (see addElement() and replaceElement()).
  *
  *  @author Kim Rutherford
- *  @version $Id: QualifierVector.java,v 1.3 2005-01-04 10:37:48 tjc Exp $
+ *  @version $Id: QualifierVector.java,v 1.4 2005-01-06 11:21:06 tjc Exp $
  *
  */
 
-public class QualifierVector 
+public class QualifierVector extends Vector
 {
   /**
    *  Create a new (empty) vector of Qualifier objects.
@@ -68,12 +68,12 @@ public class QualifierVector
 
     if(index_of_qualifier == -1) 
     {
-      vector.addElement(qualifier.copy());
+      addElement(qualifier.copy());
       return null;
     } 
     else
     {
-      final Qualifier current_qualifier = elementAt(index_of_qualifier);
+      final Qualifier current_qualifier = (Qualifier)elementAt(index_of_qualifier);
       current_qualifier.addValues(qualifier.getValues());
       return current_qualifier;
     }
@@ -91,12 +91,12 @@ public class QualifierVector
     if(index == -1) 
     {
       // just add it
-      vector.addElement(qualifier);
+      addElement(qualifier);
     } 
     else 
     {
       removeQualifierByName(qualifier.getName());
-      vector.addElement(qualifier.copy());
+      addElement(qualifier.copy());
     }
   }
 
@@ -110,24 +110,9 @@ public class QualifierVector
     final int index = indexOfQualifierWithName(name);
 
     if(index != -1)
-      vector.removeElementAt(index);
+      removeElementAt(index);
   }
 
-  /**
-   *  Performs the same function as Vector.elementAt()
-   */
-  public Qualifier elementAt(int index) 
-  {
-    return (Qualifier)vector.elementAt(index);
-  }
-
-  /**
-   *  Performs the same function as Vector.size()
-   */
-  public int size()
-  {
-    return vector.size();
-  }
 
   /**
    *  Returns true if and only if this QualifierVector contains a qualifier
@@ -152,7 +137,7 @@ public class QualifierVector
     final int vsize = size();
     for(int i = 0; i < vsize; ++i) 
     {
-      if(elementAt(i).getName().equals(name)) 
+      if(((Qualifier)elementAt(i)).getName().equals(name)) 
         return i;
     }
     return -1;
@@ -169,7 +154,7 @@ public class QualifierVector
     if(index_of_named_qualifier == -1)
       return null; 
     else
-      return elementAt(index_of_named_qualifier);
+      return (Qualifier)elementAt(index_of_named_qualifier);
   }
   
   /**
@@ -178,18 +163,14 @@ public class QualifierVector
    **/
   public QualifierVector copy() 
   {
-    final QualifierVector return_vector = new QualifierVector();
-    final int vsize = size();  
-    for(int i = 0 ; i < vsize; ++i) 
-      return_vector.vector.addElement(elementAt(i).copy());
+    return (QualifierVector)super.clone();
+//  final QualifierVector return_vector = new QualifierVector();
+//  final int vsize = size();  
+//  for(int i = 0 ; i < vsize; ++i) 
+//    return_vector.addElement(((Qualifier)elementAt(i)).copy());
 
-    return return_vector;
+//  return return_vector;
   }
 
-  /**
-   *  Storage for Qualifier objects.
-   */
-  final private Vector vector = new Vector(7);
 }
-
 

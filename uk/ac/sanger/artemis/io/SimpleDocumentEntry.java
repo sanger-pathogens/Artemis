@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.3 2004-12-24 14:00:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.4 2005-01-06 11:21:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.Vector;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.3 2004-12-24 14:00:53 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.4 2005-01-06 11:21:06 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -494,7 +494,7 @@ abstract public class SimpleDocumentEntry
     // check the qualifiers
     for(int i = 0 ; i < new_qualifiers.size() ; ++i) 
     {
-      final Qualifier this_qualifier = new_qualifiers.elementAt(i);
+      final Qualifier this_qualifier = (Qualifier)new_qualifiers.elementAt(i);
       final String this_qualifier_name = this_qualifier.getName();
 
       if(!entry_information.isValidQualifier(new_key, this_qualifier_name)) 
@@ -596,7 +596,7 @@ abstract public class SimpleDocumentEntry
     // check the qualifiers
     for(int i = 0 ; i < feature_qualifiers.size() ; ++i)
     {
-      final Qualifier this_qualifier = feature_qualifiers.elementAt(i);
+      final Qualifier this_qualifier = (Qualifier)feature_qualifiers.elementAt(i);
 
       final String this_qualifier_name = this_qualifier.getName();
 

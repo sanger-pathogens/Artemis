@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentFeature.java,v 1.1 2004-06-09 09:50:30 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentFeature.java,v 1.2 2005-01-06 11:21:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -32,7 +32,7 @@ import java.io.*;
  *  SimpleDocumentFeature class
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentFeature.java,v 1.1 2004-06-09 09:50:30 tjc Exp $
+ *  @version $Id: SimpleDocumentFeature.java,v 1.2 2005-01-06 11:21:06 tjc Exp $
  **/
 
 abstract class SimpleDocumentFeature extends LineGroup
@@ -221,14 +221,14 @@ abstract class SimpleDocumentFeature extends LineGroup
     }
 
     for (int i = 0 ; i < qualifiers.size () ; ++i) {
-      final String this_name = qualifiers.elementAt (i).getName ();
+      final String this_name = ((Qualifier)qualifiers.elementAt(i)).getName();
 
       if (!getEntryInformation ().isValidQualifier (key, this_name)) {
         final String message =
-          key + " cannot have /" + qualifiers.elementAt (i).getName () +
+          key + " cannot have /" + this_name +
           " as a qualifier";
-        throw new InvalidRelationException (message, key,
-                                            qualifiers.elementAt (i));
+        throw new InvalidRelationException(message, key,
+                                           (Qualifier)qualifiers.elementAt(i));
       }
     }
 
@@ -329,14 +329,13 @@ abstract class SimpleDocumentFeature extends LineGroup
     } else {
       for (int i = 0 ; i < qualifiers.size () ; ++i) {
 
-        final String this_name = qualifiers.elementAt (i).getName ();
+        final String this_name = ((Qualifier)qualifiers.elementAt(i)).getName();
 
         if (!getEntryInformation ().isValidQualifier (getKey (), this_name)) {
           final String message =
-            getKey () + " cannot have /" +
-            qualifiers.elementAt (i).getName () + " as a qualifier";
-          throw new InvalidRelationException (message, getKey (),
-                                              qualifiers.elementAt (i));
+            getKey () + " cannot have /" + this_name + " as a qualifier";
+          throw new InvalidRelationException(message, getKey(),
+                                             (Qualifier)qualifiers.elementAt(i));
         }
       }
       this.qualifiers = qualifiers.copy ();

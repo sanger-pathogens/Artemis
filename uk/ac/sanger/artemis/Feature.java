@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.7 2004-12-22 15:27:30 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.8 2005-01-06 11:21:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.7 2004-12-22 15:27:30 tjc Exp $
+ *  @version $Id: Feature.java,v 1.8 2005-01-06 11:21:06 tjc Exp $
  **/
 
 public class Feature
@@ -1038,7 +1038,7 @@ public class Feature
 
     for(int i = 0; i  < qual_size; ++i) 
     {
-      final Qualifier this_qualifier = qualifiers.elementAt(i);
+      final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(i);
 
       if(qualifier_names != null &&
          !qualifier_names.contains(this_qualifier.getName())) 
@@ -3030,7 +3030,7 @@ CHANGED_END:
       for(int qualifier_index = 0; qualifier_index < qualifiers_size;
           ++qualifier_index)
       {
-        final Qualifier this_qualifier = qualifiers.elementAt(qualifier_index);
+        final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
         final String name = this_qualifier.getName();
 
         if(!qualifier_names.contains(name)) 
