@@ -22,6 +22,7 @@
 
 package uk.ac.sanger.artemis.components;
 
+import java.awt.*;
 
 /**
  *
@@ -36,7 +37,6 @@ public class SegmentBorder
   private int x;
   private int y;
   private int width;
-  private int height;
   private int feature_direction;
  
   /**
@@ -50,12 +50,11 @@ public class SegmentBorder
   * @param x                  top right hand x position of the segment
   * @param y                  top right hand y position of the segment
   * @param width              segment width
-  * @param height             segment height
   * @param feature_direction  feature direction 
   *
   */
   public SegmentBorder(boolean highlight_feature, boolean highlight_segment, 
-                       boolean draw_arrow, int x, int y, int width, int height,
+                       boolean draw_arrow, int x, int y, int width,
                        int feature_direction)
   {
     this.highlight_feature = highlight_feature;
@@ -65,50 +64,46 @@ public class SegmentBorder
     this.x = x;
     this.y = y;
     this.width  = width;
-    this.height = height;
 
     this.feature_direction = feature_direction;
   }
 
- 
-  protected int getXPoint()
-  {
-    return x;
-  }
 
-  protected int getYPoint()
+  protected void drawSegmentBorder(Graphics g, int height, int arrowWidth)
   {
-    return y;
-  }
+    Graphics2D g2d = (Graphics2D)g;
+    if(highlight_feature)  // highlight selected features
+    {
+      // selected - highlight by drawing a thicker line
+      BasicStroke stroke = (BasicStroke)g2d.getStroke();
 
-  protected int getWidth()
-  {
-    return width;
-  }
+      if(highlight_segment)
+        g2d.setStroke(new BasicStroke(4.f));
+      else
+        g2d.setStroke(new BasicStroke(3.f));
 
-  protected int getHeight()
-  {
-    return height;
-  }
+      g2d.drawRect(x, y, width, height);
+      g2d.setStroke(stroke);
+    }
+    else
+      g.drawRect(x, y, width, height);
 
-  protected int getFeatureDirection()
-  {
-    return feature_direction;
-  }
+    // draw the arrow point
+    if(draw_arrow)
+    {
+      int xpos = x;
+      int arrow_tip_x = x + feature_direction * arrowWidth;
+      if(feature_direction ==1)
+      {
+        xpos += width;
+        arrow_tip_x += width;
+      }
 
-  protected boolean isFeatureHighlight()
-  {
-    return highlight_feature;
-  }
+      final int arrow_tip_y = y + (height/2);
 
-  protected boolean isSegmentHighlight()
-  {
-    return highlight_segment;
-  }
-
-  protected boolean showArrow()
-  {
-    return draw_arrow;
+      g.drawLine(xpos, y, arrow_tip_x, arrow_tip_y);
+      g.drawLine(arrow_tip_x, arrow_tip_y, xpos, y+height);
+    }
   }
 
 }

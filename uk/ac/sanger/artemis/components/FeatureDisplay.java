@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.11 2004-11-19 16:49:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.12 2004-11-22 16:28:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.11 2004-11-19 16:49:59 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.12 2004-11-22 16:28:38 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -75,6 +75,7 @@ public class FeatureDisplay extends EntryGroupPanel
   public final static int REVERSE_FRAME_2 = FeatureSegment.REVERSE_FRAME_2;
   public final static int REVERSE_FRAME_1 = FeatureSegment.REVERSE_FRAME_1;
   public final static int SCALE_LINE      = FeatureSegment.SCALE_LINE;
+
 
   /**
    *  The JScrollBar for this FeatureDisplay object.  We create the scrollbar
@@ -384,7 +385,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Set value of the show label flag.
    *  @param show_label Show labels if and only if this argument is true.
    **/
-  public void setShowLabels(boolean show_labels) 
+  protected void setShowLabels(boolean show_labels) 
   {
     if(this.show_labels != show_labels) 
     {
@@ -396,7 +397,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  Get the value of the "show label" flag.
    **/
-  public boolean getShowLabels() 
+  protected boolean getShowLabels() 
   {
     return show_labels;
   }
@@ -406,7 +407,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param show_forward_lines Show forward frame lines if and only if
    *    this argument is true.
    **/
-  public void setShowForwardFrameLines(boolean show_forward_lines) 
+  protected void setShowForwardFrameLines(boolean show_forward_lines) 
   {
     if(this.show_forward_lines != show_forward_lines) 
     {
@@ -418,7 +419,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  Get the value of the "show forward frame lines" flag.
    **/
-  public boolean getShowForwardFrameLines() 
+  protected boolean getShowForwardFrameLines() 
   {
     return show_forward_lines;
   }
@@ -428,7 +429,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param show_reverse_lines Show frame lines if and only if this
    *    argument is true.
    **/
-  public void setShowReverseFrameLines(boolean show_reverse_lines) 
+  protected void setShowReverseFrameLines(boolean show_reverse_lines) 
   {
     if(this.show_reverse_lines != show_reverse_lines) 
     {
@@ -440,7 +441,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  Get the value of the "show source features" flag.
    **/
-  public boolean getShowSourceFeatures() 
+  protected boolean getShowSourceFeatures() 
   {
     return show_source_features;
   }
@@ -450,7 +451,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param show_source_features Show features with a "source" key if and
    *    only if this argument is true.
    **/
-  public void setShowSourceFeatures(boolean show_source_features) 
+  protected void setShowSourceFeatures(boolean show_source_features) 
   {
     if(this.show_source_features != show_source_features) 
     {
@@ -463,7 +464,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  Get the value of the "show frame lines" flag.
    **/
-  public boolean getShowReverseFrameLines()
+  protected boolean getShowReverseFrameLines()
   {
     return show_reverse_lines;
   }
@@ -473,7 +474,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param show_base_colours At scale_factor less than two show each base in
    *    a different colour if and only if this argument is true.
    **/
-  public void setShowBaseColours(boolean show_base_colours) 
+  protected void setShowBaseColours(boolean show_base_colours) 
   {
     if(this.show_base_colours != show_base_colours) 
     {
@@ -487,7 +488,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  Get the value of the "show base colours" flag.
    **/
-  public boolean getShowBaseColours() 
+  protected boolean getShowBaseColours() 
   {
     return show_base_colours;
   }
@@ -497,7 +498,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param one_line_per_entry If true then each entry will be shown on a
    *    different line, instead of showing frame lines.
    **/
-  public void setOneLinePerEntry(final boolean one_line_per_entry)
+  protected void setOneLinePerEntry(final boolean one_line_per_entry)
   {
     if(this.one_line_per_entry != one_line_per_entry) 
     {
@@ -509,7 +510,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  Get the value of the "one line per entry" flag.
    **/
-  public boolean getOneLinePerEntryFlag() 
+  protected boolean getOneLinePerEntryFlag() 
   {
     return one_line_per_entry;
   }
@@ -520,7 +521,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *    left edge of the screen and the first visible base.  If false base one
    *    can be moved to the centre of the display.
    **/
-  public void setHardLeftEdge(final boolean hard_left_edge) 
+  protected void setHardLeftEdge(final boolean hard_left_edge) 
   {
     if(this.hard_left_edge != hard_left_edge) 
     {
@@ -533,19 +534,11 @@ public class FeatureDisplay extends EntryGroupPanel
   }
 
   /**
-   *  Get the value of the "hard left edge" flag.
-   **/
-  public boolean getHardLeftEdgeFlag() 
-  {
-    return hard_left_edge;
-  }
-
-  /**
    *  Set value of the show stop codons flag.
    *  @param show_stop_codons Show stop codons if and only if this argument is
    *    true.
    **/
-  public void setShowStopCodons(boolean show_stop_codons) 
+  protected void setShowStopCodons(boolean show_stop_codons) 
   {
     if(this.show_stop_codons != show_stop_codons) 
     {
@@ -557,8 +550,8 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  Return the value of the "show stop codons" flag.
    **/
-  public boolean getShowStopCodons() 
-  {
+  protected boolean getShowStopCodons() 
+  { 
     return show_stop_codons;
   }
 
@@ -567,7 +560,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param show_start_codons Show start codons if and only if this argument
    *    is true.
    **/
-  public void setShowStartCodons(boolean show_start_codons) 
+  protected void setShowStartCodons(boolean show_start_codons) 
   {
     if(this.show_start_codons != show_start_codons) 
     {
@@ -579,7 +572,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  Return the value of the "show start codons" flag.
    **/
-  public boolean getShowStartCodons() 
+  protected boolean getShowStartCodons() 
   {
     return show_start_codons;
   }
@@ -589,7 +582,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param show_start_codons Draw all features and sequence reverse
    *    complemented if and only if this argument is true.
    **/
-  public void setRevCompDisplay(boolean rev_comp_display) 
+  protected void setRevCompDisplay(boolean rev_comp_display) 
   {
     if(this.rev_comp_display != rev_comp_display) 
     {
@@ -623,7 +616,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  Return the value of the "reverse complement display" flag.
    **/
-  public boolean isRevCompDisplay() 
+  protected boolean isRevCompDisplay() 
   {
     return rev_comp_display;
   }
@@ -633,7 +626,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param show_feature_arrows Show directional arrows if and only if this
    *    argument is true.
    **/
-  public void setShowFeatureArrows(boolean show_feature_arrows)
+  protected void setShowFeatureArrows(boolean show_feature_arrows)
   {
     if(this.show_feature_arrows != show_feature_arrows)
     {
@@ -645,7 +638,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  Return the value of the "show feature arrows" flag.
    **/
-  public boolean getShowFeatureArrows() 
+  protected boolean getShowFeatureArrows() 
   {
     return show_feature_arrows;
   }
@@ -655,7 +648,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param show_feature_borders Draw a border around each feature if and
    *    only if this argument is true.
    **/
-  public void setShowFeatureBorders(boolean show_feature_borders) 
+  protected void setShowFeatureBorders(boolean show_feature_borders) 
   {
     if(this.show_feature_borders != show_feature_borders) 
     {
@@ -667,7 +660,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  Return the value of the "show feature borders" flag.
    **/
-  public boolean getShowFeatureBorders() 
+  protected boolean getShowFeatureBorders() 
   {
     return show_feature_borders;
   }
@@ -677,7 +670,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  @param frame_features_flag All features(not just CDS features) will be
    *    drawn on the frame lines if and only if this argument is true.
    **/
-  public void setFrameFeaturesFlag(boolean frame_features_flag) 
+  protected void setFrameFeaturesFlag(boolean frame_features_flag) 
   {
     if(this.frame_features_flag != frame_features_flag) 
     {
@@ -689,7 +682,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  Return the value of the "show frame features" flag.
    **/
-  public boolean getFrameFeaturesFlag() 
+  protected boolean getFrameFeaturesFlag() 
   {
     return frame_features_flag;
   }
@@ -698,7 +691,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Set the value of the minimum score for this FeatureDisplay - features
    *  that have a /score lower than this value are never shown.
    **/
-  public void setMinimumScore(final int minimum_score) 
+  protected void setMinimumScore(final int minimum_score) 
   {
     current_min_score = minimum_score;
     needVisibleFeatureVectorUpdate();
@@ -709,7 +702,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Return the value of the minimum score for this FeatureDisplay - see
    *  setMinimumScore().
    **/
-  public int getMinimumScore() 
+  private int getMinimumScore() 
   {
     return current_min_score;
   }
@@ -718,7 +711,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Set the value of the maximum score for this FeatureDisplay - features
    *  that have a /score higher than this value are never shown.
    **/
-  public void setMaximumScore(final int maximum_score) 
+  protected void setMaximumScore(final int maximum_score) 
   {
     current_max_score = maximum_score;
     needVisibleFeatureVectorUpdate();
@@ -729,7 +722,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Return the value of the maximum score for this FeatureDisplay - see
    *  setMaximumScore().
    **/
-  public int getMaximumScore() 
+  private int getMaximumScore() 
   {
     return current_max_score;
   }
@@ -739,7 +732,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  force an update.  for example this is called when the options files is
    *  re-read.
    **/
-  public void redisplay() 
+  protected void redisplay() 
   {
     repaint();
   }
@@ -749,7 +742,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  change events from this object.
    *  @param l the event change listener.
    **/
-  public void addDisplayAdjustmentListener(DisplayAdjustmentListener l) 
+  protected void addDisplayAdjustmentListener(DisplayAdjustmentListener l) 
   {
     adjustment_listener_list.addElement(l);
   }
@@ -759,7 +752,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  adjustment change events from this object.
    *  @param l the event change listener.
    **/
-  public void removeDisplayAdjustmentListener(DisplayAdjustmentListener l) 
+  protected void removeDisplayAdjustmentListener(DisplayAdjustmentListener l) 
   {
     adjustment_listener_list.removeElement(l);
   }
@@ -792,7 +785,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  At higher scale factors only stop codons are visible, and a bigger
    *  number will mean more bases are visible.
    **/
-  public void setScaleFactor(int scale_factor) 
+  protected void setScaleFactor(int scale_factor) 
   {
     if(this.scale_factor != scale_factor) 
     {
@@ -1047,7 +1040,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  Return a MarkerRange that exactly covers the visible bases
    **/
-  public MarkerRange getVisibleMarkerRange() 
+  protected MarkerRange getVisibleMarkerRange() 
   {
     final int first_base = getFirstVisibleForwardBase();
     final int last_base  = getLastVisibleForwardBase();
@@ -1068,7 +1061,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Arrange for the given feature to be drawn last - ie. so that it will
    *  appear at the front of the other features.
    **/
-  void raiseFeature(Feature feature) 
+  protected void raiseFeature(Feature feature) 
   {
     if(getVisibleFeatures().remove(feature)) 
     {
@@ -1081,7 +1074,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Arrange for the given feature to be drawn first - ie. so that it will
    *  appear at the back of the other features.
    **/
-  void lowerFeature(Feature feature) 
+  protected void lowerFeature(Feature feature) 
   {
     if(getVisibleFeatures().remove(feature))
     {
@@ -1094,7 +1087,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Redraw the display with the smallest features on top.  Selected features
    *  will always be on top.
    **/
-  void smallestToFront() 
+  protected void smallestToFront() 
   {
     visible_features = new FeatureVector();
     needVisibleFeatureVectorUpdate();
@@ -1164,7 +1157,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Scroll the display so that the given base is in the middle of the screen.
    *  @param base The base to scroll to.
    **/
-  public void makeBaseVisible(final int base) 
+  protected void makeBaseVisible(final int base) 
   {
     makeBaseVisibleInternal(base, true, true);
   }
@@ -1189,7 +1182,6 @@ public class FeatureDisplay extends EntryGroupPanel
 
     repaint();
   }
-
 
   /**
    *  The method is called when a Feature should be removed from the display.
@@ -1216,9 +1208,9 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Returns a copy of the vector containing those features that are
    *  currently visible.
    **/
-  public FeatureVector getCurrentVisibleFeatures() 
+  protected FeatureVector getCurrentVisibleFeatures() 
   {
-    return(FeatureVector)visible_features.clone();
+    return (FeatureVector)visible_features.clone();
   }
 
   /**
@@ -1409,8 +1401,8 @@ public class FeatureDisplay extends EntryGroupPanel
 
           // features with no /score are always shown
           if(this_feature_score != -1 &&
-             (this_feature_score < getMinimumScore() ||
-               this_feature_score > getMaximumScore()) &&
+             (this_feature_score < min_score ||
+              this_feature_score > max_score) &&
               !getSelection().contains(this_feature)) 
             continue;
         }
@@ -1431,6 +1423,24 @@ public class FeatureDisplay extends EntryGroupPanel
     }
   }
 
+//private BufferedImage getBackDrop()
+//{
+//  if(backDrop != null && getHeight() <= backDrop.getHeight()
+//                      && getWidth()  <= backDrop.getWidth())
+//  {
+//    System.out.println("USE BUFFERED IMAGE");     
+//    return backDrop;
+//  }
+
+//  backDrop = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+//  Graphics2D g2d = backDrop.createGraphics();
+//  g2d.setColor(Color.white);
+//  g2d.fillRect(0,0,getWidth(), getHeight());
+//  fillBackground(g2d);
+
+//  return backDrop;
+//}
+  
   /**
    *  The main paint function for the canvas.  An off screen image 
    *  used for double buffering when drawing the canvas.
@@ -1441,8 +1451,6 @@ public class FeatureDisplay extends EntryGroupPanel
     super.paintComponent(g);
     if(!isVisible()) 
       return;
-
-    g.setFont(getFont());
 
 //  System.out.println("1 "+ System.currentTimeMillis());
     int scrollbar_hgt = 0;
@@ -1455,15 +1463,16 @@ public class FeatureDisplay extends EntryGroupPanel
     if(update_visible_features) 
       updateVisibleFeatureVector();
 
+//  g.drawImage(getBackDrop(), 0, 0, null);
     fillBackground(g);
 
+    g.setFont(getFont());
 //  System.out.println("2 "+ System.currentTimeMillis());
     final Selection selection = getSelection();
     final FeatureVector selected_features = selection.getAllFeatures();
 
     final FeatureSegmentVector selected_segments =
       selection.getSelectedSegments();
-
 
     int num_visible_features = getVisibleFeatures().size();
     final int segment_height = getFeatureHeight() - 1;
@@ -1474,9 +1483,7 @@ public class FeatureDisplay extends EntryGroupPanel
 
     // we draw the feature backgrounds first then the visible indication
     // that there is a MarkerRange selected, then the feature outlines.
-    Vector segment_borders = null;
-
-    segment_borders = new Vector(num_visible_features);
+    Vector segment_borders = new Vector(num_visible_features);
 
     for(int i = 0; i < num_visible_features; ++i)
       drawFeature(g, segment_borders, getVisibleFeatures().elementAt(i),
@@ -1495,15 +1502,12 @@ public class FeatureDisplay extends EntryGroupPanel
     // draw the segment borders
     g.setColor(Color.black);
 
+    final int arrowWidth = getFontWidth() * 8 / 10;
     Enumeration enumSegmentBorder = segment_borders.elements();
     while(enumSegmentBorder.hasMoreElements())
     {
       SegmentBorder fb = (SegmentBorder)enumSegmentBorder.nextElement();
-
-      drawSegmentBorder(g, fb.isFeatureHighlight(), fb.isSegmentHighlight(), fb.showArrow(),
-                        fb.getXPoint(), fb.getYPoint(),
-                        fb.getWidth(), fb.getHeight(),
-                        fb.getFeatureDirection());
+      fb.drawSegmentBorder(g, segment_height, arrowWidth);
     } 
 
 //  System.out.println("6 "+ System.currentTimeMillis());
@@ -2457,7 +2461,7 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       if(getShowForwardFrameLines()) 
       {
-        if(getShowLabels()) 
+        if(show_labels) 
           return entry_index * 2;
         else 
           return entry_index;
@@ -2468,7 +2472,7 @@ public class FeatureDisplay extends EntryGroupPanel
     else
     {
       int return_value = 0;
-      if(getShowLabels()) 
+      if(show_labels) 
       {
         return_value = getEntryGroup().size() * 2 + 3 - entry_index * 2;
 
@@ -3209,10 +3213,6 @@ public class FeatureDisplay extends EntryGroupPanel
                                 final int seq_length,
                                 final FontMetrics fm) 
   {
-    //tjc  300 ms
-//  if(true)
-//    return;
-
     // the three frame translation is visible when the scale factor is 0,
     // don't draw labels over it
     if(!show_labels && getScaleFactor() == 0) 
@@ -3230,13 +3230,9 @@ public class FeatureDisplay extends EntryGroupPanel
     if(label_or_gene.length() == 0)
       return;
 
-    final int string_width = fm.stringWidth(label_or_gene);
+    final int string_width = fm.stringWidth(label_or_gene); 
     final FeatureSegment first_segment = feature.getSegments().elementAt(0);
     final int label_x_coord;
-
-    //tjc 600 ms
-//  if(true)
-//    return;
 
     if(feature.isForwardFeature() ^ isRevCompDisplay())
     {
@@ -3260,10 +3256,6 @@ public class FeatureDisplay extends EntryGroupPanel
       label_x_coord = getLowXPositionOfBase(segment_end_pos);
     }
 
-    //tjc 650
-//  if(true)
-//    return;
-
     if(label_x_coord >= getSize().width) 
       return;
 
@@ -3282,10 +3274,6 @@ public class FeatureDisplay extends EntryGroupPanel
     if(!show_labels)
       saved_clip = g.getClip();
  
-    // tjc 600ms
-//  if(true)
-//    return;
-
     // if we have a labels line draw a white background behind the
     // label
     if(show_labels) 
@@ -3321,22 +3309,13 @@ public class FeatureDisplay extends EntryGroupPanel
         return;  // don't draw small labels if there is no room
     }
 
-    //tjc  670
-//  if(true)
-//    return;
-
     g.setColor(Color.black);
     g.drawString(label_or_gene, label_x_coord + 1,
                  vertical_offset + getFontAscent() + 1);
 
-    // tjc 1700ms
-//  if(true)
-//    return;
-
     if(!show_labels)
       g.setClip(saved_clip);
 
-    // tjc 1800ms
   }
 
   /**
@@ -3526,59 +3505,15 @@ public class FeatureDisplay extends EntryGroupPanel
     if(feature_direction == 1)
       return new SegmentBorder(highlight_feature, highlight_segment, draw_arrow,
                                segment_start_coord, vertical_offset,
-                               segment_width, segment_height,
+                               segment_width, 
                                feature_direction);
     else
       return new SegmentBorder(highlight_feature, highlight_segment, draw_arrow,
                                segment_end_coord, vertical_offset,
-                               segment_width, segment_height,
+                               segment_width, 
                                feature_direction);
   }
 
-
-  private void drawSegmentBorder(Graphics g,
-                                 boolean highlight_feature,
-                                 boolean highlight_segment,
-                                 boolean draw_arrow,
-                                 int x, int y, 
-                                 int width, int height,
-                                 int feature_direction)
-  {
-    
-    Graphics2D g2d = (Graphics2D)g; 
-    if(highlight_feature)  // highlight selected features
-    {
-      // selected - highlight by drawing a thicker line
-      BasicStroke stroke = (BasicStroke)g2d.getStroke();
-
-      if(highlight_segment)
-        g2d.setStroke(new BasicStroke(4.f));
-      else
-        g2d.setStroke(new BasicStroke(3.f));
-
-      g2d.drawRect(x, y, width, height);
-      g2d.setStroke(stroke);
-    }
-    else
-      g.drawRect(x, y, width, height);
-
-    // draw the arrow point
-    if(draw_arrow)
-    {
-      int xpos = x;
-      int arrow_tip_x = x + feature_direction * getFontWidth() * 8 / 10;
-      if(feature_direction ==1)
-      {
-        xpos += width;
-        arrow_tip_x += width;
-      }
-
-      final int arrow_tip_y = y + (height/2);
-
-      g.drawLine(xpos, y, arrow_tip_x, arrow_tip_y);
-      g.drawLine(arrow_tip_x, arrow_tip_y, xpos, y+height);
-    }
-  }
 
   /**
    *  Draw/highlight the selected range of bases on the FORWARD_STRAND or
@@ -4724,7 +4659,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  -(scale_factor - 1), except for a scale_factor of zero which gives a
    *  scale value of font_width.
    **/
-  float getScaleValue() 
+  protected float getScaleValue() 
   {
     return scale_value;
   }
