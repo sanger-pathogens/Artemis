@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.6 2004-10-04 10:00:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.7 2004-10-28 13:06:41 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,7 +44,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.6 2004-10-04 10:00:35 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.7 2004-10-28 13:06:41 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -1475,6 +1475,8 @@ public class FeatureDisplay extends EntryGroupPanel
 
     if(scrollbar_style == SCROLLBAR_AT_TOP)
       ((Graphics2D)g).translate(0,-scrollbar_hgt);
+    
+    Thread.yield();
   }
 
   /**
@@ -3067,7 +3069,7 @@ public class FeatureDisplay extends EntryGroupPanel
     if(draw_feature_fill) 
       drawFeatureLabel(g, feature);
 
-    Thread.yield();
+//  Thread.yield();
   }
 
   /**
