@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.2 2004-06-29 08:46:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.3 2004-12-09 16:45:07 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -40,7 +40,7 @@ import javax.swing.JFrame;
  *  The main window for the Artemis Comparison Tool.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ActMain.java,v 1.2 2004-06-29 08:46:13 tjc Exp $
+ *  @version $Id: ActMain.java,v 1.3 2004-12-09 16:45:07 tjc Exp $
  **/
 
 public class ActMain extends Splash 
@@ -125,7 +125,7 @@ public class ActMain extends Splash
           final uk.ac.sanger.artemis.io.Entry embl_entry =
             EntryFileDialog.getEntryFromFile(frame, entry_document,
                                          entry_information,
-                                         true);
+                                         false);
 
           // getEntryFromFile() has alerted the user so we just need to quit
           if(embl_entry == null) 
