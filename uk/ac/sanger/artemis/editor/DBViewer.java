@@ -50,6 +50,8 @@ public class DBViewer extends ScrollPanel
   private int hgtNumber;
   /** scroll bar this panel sits in */ 
   private JScrollPane jsp;
+  /** initial scale */
+  private float scale = 1.f;
 
   public DBViewer(FastaTextPane fastaPane, final JScrollPane jsp)
   {
@@ -157,10 +159,11 @@ public class DBViewer extends ScrollPanel
   * @param scale 	scale to zoom in/out by.
   *
   */
-  protected void setZoom(float scale)
+  protected void setZoom(float new_scale)
   {
+    scale = scale*new_scale;
     Dimension d  = getPreferredSize();
-    double width = d.getWidth()*scale;
+    double width = d.getWidth()*new_scale;
     d = new Dimension((int)width,(int)d.getHeight());
     setPreferredSize(d);
     jsp.setViewportView(this);
@@ -183,38 +186,39 @@ public class DBViewer extends ScrollPanel
     FontMetrics metrics = g.getFontMetrics();
     hgtNumber = metrics.getAscent();
 
-    Graphics2D g2 = (Graphics2D)g;
-    int width = (int)getPreferredSize().getWidth()-(2*bound);
+    Graphics2D g2   = (Graphics2D)g;
+    int resultwidth = (int)getPreferredSize().getWidth()-(2*bound);
     g2.setColor(Color.black);
-    g2.setStroke(new BasicStroke(3.f));
-    g2.drawLine(bound,bound+hgtNumber,bound+width,bound+hgtNumber);
+    g2.setStroke(new BasicStroke(2.f));
+    g2.drawLine(bound,bound+hgtNumber,bound+resultwidth,bound+hgtNumber);
 
-// draw scale
+// draw ruler
     g2.setStroke(new BasicStroke(1.f));
     g2.drawLine(bound,bound+hgtNumber,bound,bound+hgtNumber-6);
     g2.drawString("0",bound,hgtNumber+3);
 
-//  Point viewPos = jsp.getViewport().getViewPosition();
-//  Dimension d = jsp.getViewport().getExtentSize();
-//  double fraction = d.getWidth()/((double)width);
-//  int unit  = (int)(d.getWidth()/10);
-//  int units = (int)(qlen*fraction/10);
+    Point viewPos    = jsp.getViewport().getViewPosition();
+    Dimension extent = jsp.getViewport().getExtentSize();
 
-//  for(int i=1; i<10; i++)
-//  {
-//    int ipos = i+(((int)viewPos.getX())*qlen/width);
-//    String strPos = Integer.toString(ipos*units);
-//    int strwid = metrics.stringWidth(strPos); 
-//    g2.drawLine(bound+(ipos*unit),bound+hgtNumber,
-//                bound+(ipos*unit),bound+hgtNumber-6);
-//    g2.drawString(strPos,bound+(ipos*unit)-strwid,hgtNumber+3);
-//  }
+    int npoints   = (int)(scale*10);
+    int unit      = (int)(resultwidth/npoints);
+    int blastUnit = qlen/npoints;
+
+    for(int i=1; i<npoints; i++)
+    {
+      String strPos = Integer.toString(i*blastUnit);
+      int strwid = metrics.stringWidth(strPos);
+
+      g2.drawLine(bound+(unit*i), bound+hgtNumber,
+                  bound+(unit*i), bound+hgtNumber-6);
+      g2.drawString(strPos,bound+(unit*i)-strwid,hgtNumber+3);
+    }
 
     String strQlen = Integer.toString(qlen);
     int strwid = metrics.stringWidth(strQlen);
 
-    g2.drawLine(bound+width,bound+hgtNumber,bound+width,bound+hgtNumber-6);
-    g2.drawString(strQlen,bound+width-strwid,hgtNumber+3);
+    g2.drawLine(bound+resultwidth,bound+hgtNumber,bound+resultwidth,bound+hgtNumber-6);
+    g2.drawString(strQlen,bound+resultwidth-strwid,hgtNumber+3);
 
 // draw hits
     int ypos = bound+ydisp+hgtNumber;
@@ -247,13 +251,13 @@ public class DBViewer extends ScrollPanel
 
       g2.setStroke(new BasicStroke(1.f));
  
-      float hit_unit = (float)width/(float)qlen;     
+      float hit_unit = (float)resultwidth/(float)qlen;     
       int start = (int)(bound+(hit_unit*hit.getQueryStart()));
       int end   = (int)(bound+(hit_unit*hit.getQueryEnd()));
       g2.drawLine(start,bound+ypos,end,bound+ypos);
 
 //    System.out.println(hit.getID()+" "+hit.getQueryStart()+" -> "+hit.getQueryEnd()+
-//                       " start "+start+" end "+end+" width "+width);
+//                       " start "+start+" end "+end+" resultwidth "+resultwidth);
 //                       ", E = "+hit.getEValue()+"  Length = "+hit.getQueryLength());
     }
   

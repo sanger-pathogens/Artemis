@@ -330,7 +330,14 @@ public class FastaTextPane extends JScrollPane
 
         int ind1;
 
-        if(line.startsWith("The best scores are:"))
+        if(line.endsWith(" aa"))
+        {
+          int in1 = line.indexOf(":");
+          int in2 = line.lastIndexOf(" ");
+          if(in1 > -1 && in2 > -1)
+            qlen = Integer.parseInt(line.substring(in1+1,in2).trim());
+        }
+        else if(line.startsWith("The best scores are:"))
         {
           while( !(line = buffReader.readLine()).equals("") )
           {
@@ -379,7 +386,16 @@ public class FastaTextPane extends JScrollPane
             ind1 = ind2+1;
             ind2 = line.indexOf(":",ind1);
             if(ind2 > -1)
-              hi.setQueryRange(line.substring(ind1,ind2));
+            {
+              String range = line.substring(ind1,ind2);
+              hi.setQueryRange(range);
+              int split = range.indexOf("-");
+              if(split > -1)
+              {   
+                hi.setQueryStart(Integer.parseInt(range.substring(0,split)));
+                hi.setQueryEnd(Integer.parseInt(range.substring(split+1)));
+              }
+            }
 
             ind1 = ind2+1;
             ind2 = line.indexOf(")",ind1);

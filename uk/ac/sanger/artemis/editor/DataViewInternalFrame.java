@@ -34,7 +34,7 @@ public class DataViewInternalFrame extends JInternalFrame
   private JTabbedPane tabPane = new JTabbedPane();
 
   public DataViewInternalFrame(String dataFile[],
-                               JDesktopPane desktop)
+                               JDesktopPane desktop, int wid)
   {
     super("Document " + dataFile[0], 
               true, //resizable
@@ -45,45 +45,64 @@ public class DataViewInternalFrame extends JInternalFrame
     Annotation ann   = new Annotation(desktop);
 
     StringBuffer annFormat = new StringBuffer();
-
+   
     for(int i=0; i<dataFile.length; i++)
     {
       // add fasta results internal frame
       FastaTextPane fastaPane = new FastaTextPane(dataFile[i]);
 
+      if(i > 0)
+        annFormat.append("\n<br>");
       annFormat.append("/"+fastaPane.getFormat()+"_file=\""+
-                                    dataFile[i]+"\"\n<br>");
+                                    dataFile[i]+"\"");
+
+      // graphical view
+      JScrollPane dbviewScroll = new JScrollPane();
+      DBViewer dbview = new DBViewer(fastaPane,dbviewScroll);
+      dbviewScroll.setViewportView(dbview);
+      
       // add data pane
       DataCollectionPane dataPane =
-         new DataCollectionPane(dataFile[i], fastaPane, ann, desktop);
+         new DataCollectionPane(dataFile[i],fastaPane,ann,desktop);
 
       JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                         fastaPane,dataPane);
       split.setDividerLocation(150);
+      split.setOneTouchExpandable(true);
 
-      tabPane.add(fastaPane.getFormat()+" "+dataFile[i],split);
+      JSplitPane tabPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                                           split,dbviewScroll);
+      tabPanel.setDividerLocation(wid/2);
+      tabPanel.setOneTouchExpandable(true);
 
-      JScrollPane dbviewScroll = new JScrollPane();
-      JInternalFrame jif = new JInternalFrame("Viewer",
-              true, //resizable
-              true, //closable
-              true, //maximizable
-              true);//iconifiable
-      DBViewer dbview = new DBViewer(fastaPane,dbviewScroll);
-      dbviewScroll.setViewportView(dbview);
-      dbviewScroll.setPreferredSize(new Dimension(500,300));
+      String tabName = dataFile[i];
+      int ind = tabName.lastIndexOf("/");
+      if(ind > -1)
+        tabName = tabName.substring(ind+1);
 
-      JMenuBar menuBar = new JMenuBar();
-      menuBar.add(dbview.getFileMenu(jif));
-      JMenu menu = new JMenu("Options");
-      dbview.getOptionsMenu(menu);
-      menuBar.add(menu);
-      jif.setJMenuBar(menuBar);
-      jif.getContentPane().add(dbviewScroll);
-      jif.setLocation(0,0);
-      jif.setSize(500,300);
-      jif.setVisible(true);
-      desktop.add(jif);
+      tabPane.add(fastaPane.getFormat()+" "+tabName,tabPanel);
+
+//    JScrollPane dbviewScroll = new JScrollPane();
+//    JInternalFrame jif = new JInternalFrame("Viewer",
+//            true, //resizable
+//            true, //closable
+//            true, //maximizable
+//            true);//iconifiable
+//    DBViewer dbview = new DBViewer(fastaPane,dbviewScroll);
+//    dbviewScroll.setViewportView(dbview);
+//    dbviewScroll.setPreferredSize(new Dimension(500,300));
+
+//    JMenuBar menuBar = new JMenuBar();
+//    menuBar.add(dbview.getFileMenu(jif));
+//    JMenu menu = new JMenu("Options");
+//    dbview.getOptionsMenu(menu);
+//    menuBar.add(menu);
+//    jif.setJMenuBar(menuBar);
+//    jif.getContentPane().add(dbviewScroll);
+//    jif.setLocation(0,0);
+//    jif.setSize(500,300);
+//    jif.setVisible(true);
+//    desktop.add(jif);
     }
   
     // add annotator text pane

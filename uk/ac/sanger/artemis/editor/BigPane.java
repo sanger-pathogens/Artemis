@@ -53,9 +53,9 @@ public class BigPane extends JFrame
     desktop.setDragMode(JDesktopPane.LIVE_DRAG_MODE);
     getContentPane().add(desktop);
 
-    //Make the big window be indented 100 pixels from each edge
+    //Make the big window be indented 80 pixels from each edge
     //of the screen.
-    int inset = 100;
+    int inset = 80;
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     setBounds(inset, inset,
               screenSize.width  - inset*2,
@@ -68,10 +68,10 @@ public class BigPane extends JFrame
 
     // data set
     int hgt = getHeight()-60;
-    int wid = (getWidth()/2)-400;
-    DataViewInternalFrame dataView = new DataViewInternalFrame(dataFile,desktop);
-    dataView.setLocation(wid,0);
-    dataView.setSize(800,hgt);
+    int wid = getWidth()-100;
+    DataViewInternalFrame dataView = new DataViewInternalFrame(dataFile,desktop,wid);
+    dataView.setLocation(50,0);
+    dataView.setSize(wid,hgt);
     dataView.setVisible(true);
     desktop.add(dataView);
 
