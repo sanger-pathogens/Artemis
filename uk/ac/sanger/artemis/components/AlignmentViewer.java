@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.12 2005-01-11 13:36:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.13 2005-02-24 16:48:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,12 +45,14 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.12 2005-01-11 13:36:10 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.13 2005-02-24 16:48:49 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
     implements SequenceChangeListener 
 {
+  private Image offscreen;
+
   /** Comparison data that will be displayed in this component. */
   final private ComparisonData comparison_data;
 
@@ -1037,8 +1039,24 @@ public class AlignmentViewer extends CanvasPanel
  
     if(last_subject_event != null && last_query_event != null) 
     {
-      drawAlignments(g);
-      drawLabels(g);
+      final int canvas_height = getSize().height;
+      int canvas_width  = getSize().width;
+      if(scroll_bar != null)
+        canvas_width -= scroll_bar.getPreferredSize().width;
+
+      // need to do this off-screen otherwise it
+      // does not draw properly on windows
+      if(offscreen == null)
+        offscreen = createImage(canvas_width, canvas_height);
+
+      Graphics og = offscreen.getGraphics();
+      og.setClip(0,0,canvas_width,canvas_height);
+      og.setColor(Color.white);
+      og.fillRect(0, 0, canvas_width, canvas_height);
+      drawAlignments(og);
+      drawLabels(og);
+      g.drawImage(offscreen, 0, 0, null);
+      og.dispose();
     }
   }
 
@@ -1055,9 +1073,22 @@ public class AlignmentViewer extends CanvasPanel
 
     if(last_subject_event != null && last_query_event != null)
     {
-      drawAlignments(g);
-      if(drawLabel)
-        drawLabels(g);
+      final int canvas_height = getSize().height;
+      int canvas_width  = getSize().width;
+      if(scroll_bar != null)
+        canvas_width -= scroll_bar.getPreferredSize().width;
+
+      if(offscreen == null)
+        offscreen = createImage(canvas_width, canvas_height);
+
+      Graphics og = offscreen.getGraphics();
+      og.setClip(0,0,canvas_width,canvas_height);
+      og.setColor(Color.white);
+      og.fillRect(0, 0, canvas_width, canvas_height);
+      drawAlignments(og);
+      drawLabels(og);
+      g.drawImage(offscreen, 0, 0, null);
+      og.dispose();
     }
   }
 
