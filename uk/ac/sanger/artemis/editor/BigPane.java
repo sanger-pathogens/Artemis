@@ -52,9 +52,9 @@ public class BigPane extends JFrame
   protected static JCheckBoxMenuItem srsWin;
   protected static JInternalFrame srsFrame;
   private JTextArea qualifier;
-  private DataViewInternalFrame dataView;
-  private FeatureVector overlapFeature;
-  private Feature edit_feature;
+  private final DataViewInternalFrame dataView;
+  private final FeatureVector overlapFeature;
+  private final Feature edit_feature;
 
   public BigPane(Object dataFile[], JTextArea qualifier,
                  FeatureVector overlapFeature, 
@@ -80,7 +80,7 @@ public class BigPane extends JFrame
 
     //Make the big window be indented 80 pixels from each edge
     //of the screen.
-    int inset = 80;
+    final int inset = 80;
     final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     setBounds(inset, inset,
               screenSize.width  - inset*2,
@@ -90,8 +90,8 @@ public class BigPane extends JFrame
 
     final JScrollPane scrollEvidence = new JScrollPane();
     // data set
-    int hgt = getHeight()-85;
-    int wid = getWidth()/2-10;
+    final int hgt = getHeight()-85;
+    final int wid = getWidth()/2-10;
     
     dataView = new DataViewInternalFrame(dataFile,desktop, scrollEvidence,
                                          wid,hgt,qualifier_txt);
@@ -105,11 +105,13 @@ public class BigPane extends JFrame
                                                       true, true, true);
 
     Box evidenceBox = dataView.getEvidenceBox();
-        if(overlapFeature != null)
-    evidenceBox.add(getOverlapFeatures(overlapFeature),0);
+    if(overlapFeature != null)
+      evidenceBox.add(getOverlapFeatures(overlapFeature),0);
     evidenceBox.add(Box.createVerticalGlue());
 
-    scrollEvidence.setViewportView(evidenceBox);
+    ScrollPanel scroller = new ScrollPanel();
+    scroller.add(evidenceBox);
+    scrollEvidence.setViewportView(scroller);
     evidence.getContentPane().add(scrollEvidence);
     evidence.setLocation(wid+10,0);
     evidence.setSize(wid,hgt);
@@ -182,7 +184,7 @@ public class BigPane extends JFrame
     JMenu fileMenu = new JMenu("File");
     menuBar.add(fileMenu);
 
-    JMenuItem reReadMenu = new JMenuItem("Re-read selected results");
+    final JMenuItem reReadMenu = new JMenuItem("Re-read selected results");
     reReadMenu.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -204,7 +206,7 @@ public class BigPane extends JFrame
     fileMenu.add(applyMenu);
     fileMenu.add(new JSeparator());
 //
-    JMenuItem exitMenu = new JMenuItem("Close");
+    final JMenuItem exitMenu = new JMenuItem("Close");
     exitMenu.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -212,8 +214,8 @@ public class BigPane extends JFrame
         if(qualifier == null)
           System.exit(0);
 
-        String oldTxt = qualifier.getText().trim();
-        String newTxt = dataView.getFeatureText().trim();
+        final String oldTxt = qualifier.getText().trim();
+        final String newTxt = dataView.getFeatureText().trim();
 
         // changes have been made to feature annotation
         if(!oldTxt.equals(newTxt))
@@ -239,10 +241,10 @@ public class BigPane extends JFrame
     fileMenu.add(exitMenu);
 
    //srs menu items
-    JMenu optionMenu = new JMenu("Options");
+    final JMenu optionMenu = new JMenu("Options");
     menuBar.add(optionMenu);
 
-    JMenu srsMenu = new JMenu("Show SRS in");
+    final JMenu srsMenu = new JMenu("Show SRS in");
     optionMenu.add(srsMenu);
     
     srsBrowser = new JCheckBoxMenuItem("Browser",false);
@@ -254,7 +256,7 @@ public class BigPane extends JFrame
     srsMenu.add(srsWin);
 
    //drag mode
-    JMenu dragMenu = new JMenu("Drag Mode");
+    final JMenu dragMenu = new JMenu("Drag Mode");
     optionMenu.add(dragMenu);
 
     JRadioButtonMenuItem liveDrag = new JRadioButtonMenuItem("Live",true);
@@ -268,7 +270,7 @@ public class BigPane extends JFrame
 
     dragMenu.add(liveDrag);
 
-    JRadioButtonMenuItem outlineDrag = new JRadioButtonMenuItem("Outline",false);
+    final JRadioButtonMenuItem outlineDrag = new JRadioButtonMenuItem("Outline",false);
     outlineDrag.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -303,10 +305,10 @@ public class BigPane extends JFrame
     final JTabbedPane jtab = new JTabbedPane();
     BigPane.srsFrame.getContentPane().add(jtab);
 
-    JMenuBar menuBar = new JMenuBar();
-    CommonMenu cmen = new CommonMenu(BigPane.srsFrame);
+    final JMenuBar menuBar = new JMenuBar();
+    final CommonMenu cmen = new CommonMenu(BigPane.srsFrame);
     menuBar.add(cmen);
-    JMenuItem closeTabMenu = new JMenuItem("Close tab");
+    final JMenuItem closeTabMenu = new JMenuItem("Close tab");
     cmen.add(closeTabMenu);
     closeTabMenu.addActionListener(new ActionListener()
     {

@@ -75,10 +75,10 @@ public class HitInfo
   private int endPosition   = 0;
   /** collection of GO terms */
   private Vector go;
-  /** query hit start point */
-  private int startQuery;
-  /** query hit end point */
-  private int endQuery;
+
+  /** query hit range */
+  private Vector queryPosition = new Vector();
+
   /** hastable for go terms */
   private Hashtable go_hash;
 
@@ -181,49 +181,27 @@ public class HitInfo
 
   /**
   *
-  * Get the start position for the query sequence in the alignment.
-  * @return startQuery
-  *
-  */
-  protected int getQueryStart()
-  {
-    return startQuery;
-  }
-
-  /**
-  *
-  * Get the end position for the query sequence in the alignment.
-  * @return endQuery
-  *
-  */
-  protected int getQueryEnd()
-  {
-    return endQuery;
-  }
-
-
-  /**
-  *
   * Set the start position for the query sequence in the alignment.
   * @param startQuery 	startQuery
   *
   */
-  protected void setQueryStart(int startQuery)
+  protected void setQueryPosition(int startQuery, int endQuery)
   {
-    this.startQuery = startQuery;
+    queryPosition.add(new Integer(startQuery));
+    queryPosition.add(new Integer(endQuery));
   }
+
 
   /**
   *
-  * Set the end position for the query sequence in the alignment.
-  * @param endQuery   endQuery
+  * Get the start position for the query sequence in the alignment.
+  * @param startQuery   startQuery
   *
   */
-  protected void setQueryEnd(int endQuery)
+  protected Vector getQueryPosition()
   {
-    this.endQuery = endQuery;
+    return queryPosition;
   }
-
 
   /**
   *

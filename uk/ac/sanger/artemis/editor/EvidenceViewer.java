@@ -24,6 +24,7 @@
 
 package uk.ac.sanger.artemis.editor;
 
+import javax.swing.JPanel;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.StringTokenizer;
@@ -32,7 +33,7 @@ import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.Marker;
 
-public class EvidenceViewer extends ScrollPanel
+public class EvidenceViewer extends JPanel
 {
 
   private String evidenceType;

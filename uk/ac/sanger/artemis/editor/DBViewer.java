@@ -284,10 +284,19 @@ public class DBViewer extends ScrollPanel
 
       g2.setStroke(new BasicStroke(1.f));
  
-//    float hit_unit = (float)resultwidth/(float)qlen;     
-      int start = (int)(bound+(hit_unit*hit.getQueryStart()));
-      int end   = (int)(bound+(hit_unit*hit.getQueryEnd()));
-      g2.drawLine(start,bound+ypos,end,bound+ypos);
+//    float hit_unit = (float)resultwidth/(float)qlen;    
+
+      Vector queryPosition = hit.getQueryPosition();
+       
+      if(queryPosition.size() == 0)
+        continue;
+
+      for(int i=0; i<queryPosition.size(); i+=2)
+      {
+        int start = (int)(bound+(hit_unit*((Integer)queryPosition.elementAt(i)).intValue()));
+        int end   = (int)(bound+(hit_unit*((Integer)queryPosition.elementAt(i+1)).intValue()));
+        g2.drawLine(start,bound+ypos,end,bound+ypos);
+      }
 
 //    System.out.println(hit.getID()+" "+hit.getQueryStart()+" -> "+hit.getQueryEnd()+
 //                       " start "+start+" end "+end+" resultwidth "+resultwidth);

@@ -209,7 +209,6 @@ public class FastaTextPane extends JScrollPane
             hit = new HitInfo(line,format);
             hitInfoCollection.add(hit);
           }
-
         }
         else if(line.indexOf(" ----") > -1)
         {
@@ -265,26 +264,40 @@ public class FastaTextPane extends JScrollPane
           }
 
 // get query start
-          while(!(nextLine = buffReader.readLine()).startsWith("Query: "))
-          {
-            len += nextLine.length()+1;
-            sbuff.append(nextLine+"\n");
-          }
+          int start = 999999;
+          int end   = 0;
+          boolean seen = false;
 
-          if(nextLine != null)
+          while((nextLine = buffReader.readLine()) != null &&
+                !nextLine.startsWith(">"))
           {
             len += nextLine.length()+1;
             sbuff.append(nextLine+"\n");
-            if(nextLine.startsWith("Query:"))
+
+            if(nextLine.startsWith(" Score ="))
+            {
+//            System.out.println("start:: "+start+"  end:: "+end);
+              if(end != 0)
+                hit.setQueryPosition(start,end);
+              start = 999999;
+              end   = 0;
+              seen  = true;
+            }
+            else if(nextLine.startsWith("Query:"))
             {
               ind1 = nextLine.indexOf(" ",8);
-              int start = Integer.parseInt(nextLine.substring(7,ind1).trim());
-              hit.setQueryStart(start);
-              hit.setQueryEnd(Integer.parseInt(nextLine.substring(nextLine.lastIndexOf(" ")).trim()));
+              int nstart = Integer.parseInt(nextLine.substring(7,ind1).trim());
+              if(nstart < start)
+                start = nstart;
+              end  = Integer.parseInt(nextLine.substring(nextLine.lastIndexOf(" ")).trim());
+              seen = false;
             }
+            buffReader.mark(100); 
           }
-          
-//        buffReader.reset();
+          if(!seen && end != 0)
+            hit.setQueryPosition(start,end);
+
+          buffReader.reset();
         }
         else if( (ind1 = line.indexOf("Identities = ")) > -1)
         {
@@ -294,8 +307,10 @@ public class FastaTextPane extends JScrollPane
         }
         else if( (ind1 = line.indexOf("  Length = ")) > -1)
           hit.setLength(line.substring(ind1+11));
-        else if(line.startsWith("Query: "))
-          hit.setQueryEnd(Integer.parseInt(line.substring(line.lastIndexOf(" ")).trim()));
+//      else if(line.startsWith("Query: "))
+//      {
+//        hit.setQueryEnd(Integer.parseInt(line.substring(line.lastIndexOf(" ")).trim()));
+//      }
         else if(line.startsWith("Query="))
         {
           int ind2 = 0;
@@ -426,8 +441,10 @@ public class FastaTextPane extends JScrollPane
               int split = range.indexOf("-");
               if(split > -1)
               {   
-                hi.setQueryStart(Integer.parseInt(range.substring(0,split)));
-                hi.setQueryEnd(Integer.parseInt(range.substring(split+1)));
+//              hi.setQueryStart(Integer.parseInt(range.substring(0,split)));
+//              hi.setQueryEnd(Integer.parseInt(range.substring(split+1)));
+                hi.setQueryPosition(Integer.parseInt(range.substring(0,split)),
+                                    Integer.parseInt(range.substring(split+1)));
               }
             }
 
