@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/QualifierVector.java,v 1.1 2004-06-09 09:50:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/QualifierVector.java,v 1.2 2004-12-24 13:52:46 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,44 +34,22 @@ import java.io.IOException;
 
 /**
  *  This class implements a vector of Qualifier objects.  It behaves
- *  differently to the Vector class (see addElement () and replaceElement ()).
+ *  differently to the Vector class (see addElement() and replaceElement()).
  *
  *  @author Kim Rutherford
- *  @version $Id: QualifierVector.java,v 1.1 2004-06-09 09:50:14 tjc Exp $
+ *  @version $Id: QualifierVector.java,v 1.2 2004-12-24 13:52:46 tjc Exp $
  *
  */
 
-public class QualifierVector {
+public class QualifierVector 
+{
   /**
    *  Create a new (empty) vector of Qualifier objects.
    */
-  public QualifierVector () {
-
+  public QualifierVector() 
+  {
   }
 
-  /**
-   *  Return true if object has the same Qualifiers (determined by
-   *  Qualifier.equals()) in the same order as this QualifierVector.
-   **/
-  public boolean equals (final Object object) {
-    if (object instanceof QualifierVector) {
-      final QualifierVector comp_vector = (QualifierVector) object;
-
-      if (comp_vector.size () == size ()) {
-        for (int i = 0 ; i < size () ; ++i) {
-          if (!comp_vector.elementAt (i).equals (elementAt (i))) {
-            return false;
-          }
-        }
-
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  }
 
   /**
    *  Add the values from the given qualifier to the Qualifier object with the
@@ -80,20 +58,23 @@ public class QualifierVector {
    *  @param qualifier This object contians name and values to add.
    *  @return The Qualifier that was changed or created.
    **/
-  public Qualifier addQualifierValues (Qualifier qualifier) {
-    if (qualifier.getName () == null) {
-      throw new Error ("");
-    }
+  public Qualifier addQualifierValues(Qualifier qualifier) 
+  {
+    if(qualifier.getName() == null) 
+      throw new Error("");
 
     final int index_of_qualifier =
-      indexOfQualifierWithName (qualifier.getName ());
+      indexOfQualifierWithName(qualifier.getName());
 
-    if (index_of_qualifier == -1) {
-      vector.addElement (qualifier.copy ());
+    if(index_of_qualifier == -1) 
+    {
+      vector.addElement(qualifier.copy());
       return null;
-    } else {
-      final Qualifier current_qualifier = elementAt (index_of_qualifier);
-      current_qualifier.addValues (qualifier.getValues ());
+    } 
+    else
+    {
+      final Qualifier current_qualifier = elementAt(index_of_qualifier);
+      current_qualifier.addValues(qualifier.getValues());
       return current_qualifier;
     }
   }
@@ -103,15 +84,19 @@ public class QualifierVector {
    *  Qualifier with the same name.
    *  @param qualifier The Qualifier to add.
    **/
-  public void setQualifier (final Qualifier qualifier) {
-    final int index = indexOfQualifierWithName (qualifier.getName ());
+  public void setQualifier(final Qualifier qualifier) 
+  {
+    final int index = indexOfQualifierWithName(qualifier.getName());
 
-    if (index == -1) {
+    if(index == -1) 
+    {
       // just add it
-      vector.addElement (qualifier);
-    } else {
-      removeQualifierByName (qualifier.getName ());
-      vector.addElement (qualifier.copy ());
+      vector.addElement(qualifier);
+    } 
+    else 
+    {
+      removeQualifierByName(qualifier.getName());
+      vector.addElement(qualifier.copy());
     }
   }
 
@@ -120,38 +105,40 @@ public class QualifierVector {
    *  that name return immediately.
    *  @param name The Qualifier name to look for.
    **/
-  public void removeQualifierByName (final String name) {
-    final int index = indexOfQualifierWithName (name);
+  public void removeQualifierByName(final String name) 
+  {
+    final int index = indexOfQualifierWithName(name);
 
-    if (index != -1) {
-      vector.removeElementAt (index);
-    }
+    if(index != -1)
+      vector.removeElementAt(index);
   }
 
   /**
-   *  Performs the same function as Vector.elementAt ()
+   *  Performs the same function as Vector.elementAt()
    */
-  public Qualifier elementAt (int index) {
-    return (Qualifier) vector.elementAt (index);
+  public Qualifier elementAt(int index) 
+  {
+    return (Qualifier)vector.elementAt(index);
   }
 
   /**
-   *  Performs the same function as Vector.size ()
+   *  Performs the same function as Vector.size()
    */
-  public int size () {
-    return vector.size ();
+  public int size()
+  {
+    return vector.size();
   }
 
   /**
    *  Returns true if and only if this QualifierVector contains a qualifier
    *  with given name.
    **/
-  public boolean contains (final String name) {
-    if (indexOfQualifierWithName (name) == -1) {
+  public boolean contains(final String name) 
+  {
+    if(indexOfQualifierWithName (name) == -1) 
       return false;
-    } else {
+    else 
       return true;
-    }
   }
   
   /**
@@ -159,13 +146,15 @@ public class QualifierVector {
    *  given name of -1 if no such Qualifier exists.
    *  @param name The Qualifier name to look for.
    **/
-  public int indexOfQualifierWithName (String name) {
-    for (int i = 0 ; i < size () ; ++i) {
-      if (elementAt (i).getName ().equals (name)) {
-        return i;
-      }
-    }
-    return -1;
+  public int indexOfQualifierWithName(String name) 
+  {
+    return vector.indexOf(name);
+//  for (int i = 0 ; i < size () ; ++i) {
+//    if (elementAt (i).getName ().equals (name)) {
+//      return i;
+//    }
+//  }
+//  return -1;
   }
   
   /**
@@ -173,25 +162,25 @@ public class QualifierVector {
    *  null if no such Qualifier exists.
    *  @param name The Qualifier name to look for.
    **/
-  public Qualifier getQualifierByName (String name) {
-    final int index_of_named_qualifier = indexOfQualifierWithName (name);
-    if (index_of_named_qualifier == -1) {
+  public Qualifier getQualifierByName(String name) 
+  {
+    final int index_of_named_qualifier = indexOfQualifierWithName(name);
+    if(index_of_named_qualifier == -1)
       return null; 
-    } else {
-      return elementAt (index_of_named_qualifier);
-    }
+    else
+      return elementAt(index_of_named_qualifier);
   }
   
   /**
    *  Return the reference of a new copy of this QualifierVector.  All of the
    *  Qualifier objects in the vector will be copied too.
    **/
-  public QualifierVector copy () {
-    final QualifierVector return_vector = new QualifierVector ();
-    
-    for (int i = 0 ; i < size () ; ++i) {
-      return_vector.vector.addElement (elementAt (i).copy ());
-    }
+  public QualifierVector copy() 
+  {
+    final QualifierVector return_vector = new QualifierVector();
+    final int vsize = size();  
+    for(int i = 0 ; i < vsize; ++i) 
+      return_vector.vector.addElement(elementAt(i).copy());
 
     return return_vector;
   }
@@ -199,7 +188,7 @@ public class QualifierVector {
   /**
    *  Storage for Qualifier objects.
    */
-  final private Vector vector = new Vector (7);
+  final private Vector vector = new Vector(7);
 }
 
 
