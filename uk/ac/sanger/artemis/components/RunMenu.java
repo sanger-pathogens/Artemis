@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.5 2004-09-03 17:03:12 axk Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.6 2004-12-21 10:59:37 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.*;
  *  A JMenu of external commands/functions.
  *
  *  @author Kim Rutherford
- *  @version $Id: RunMenu.java,v 1.5 2004-09-03 17:03:12 axk Exp $
+ *  @version $Id: RunMenu.java,v 1.6 2004-12-21 10:59:37 tjc Exp $
  **/
 
 public class RunMenu extends SelectionMenu 
@@ -67,15 +67,18 @@ public class RunMenu extends SelectionMenu
     super(frame, menu_name, selection);
 
     final ExternalProgramVector external_programs =
-      Options.getOptions().getExternalPrograms();
+            Options.getOptions().getExternalPrograms();
 
+    boolean sanger_options = 
+            Options.getOptions().getPropertyTruthValue("sanger_options");
 
-    for(int i = 0 ; i < external_programs.size() ; ++i) 
-      makeMenuItem(external_programs.elementAt(i));
+    final int external_programs_size = external_programs.size();
+    for(int i = 0; i < external_programs_size; ++i) 
+      makeMenuItem(external_programs.elementAt(i), sanger_options);
 
     addSeparator();
 
-    for(int i = 0 ; i < external_programs.size() ; ++i) 
+    for(int i = 0; i < external_programs_size; ++i) 
       makeOptionsMenuItem(external_programs.elementAt(i));
 
 //  if(Options.getOptions().getProperty("jcon_min_jobs") != null) 
@@ -123,33 +126,34 @@ public class RunMenu extends SelectionMenu
    *  Make a new menu item for running the given ExternalProgram object.
    *  @param program Create two menu items for this program.
    **/
-  private void makeMenuItem(final ExternalProgram program) 
+  private void makeMenuItem(final ExternalProgram program,
+                            final boolean sanger_options) 
   {
     final JMenuItem new_menu;
-    
+    final String program_name = program.getName();  
     
     if(program.getType() == ExternalProgram.AA_PROGRAM ||
        program.getType() == ExternalProgram.DNA_PROGRAM &&
-       Options.getOptions().getPropertyTruthValue("sanger_options")) 
+       sanger_options) 
     {
       final String options_string = program.getProgramOptions();
 
       if(options_string.length() > 0) 
       {
-        if(program.getName().startsWith("fasta") ||
-           program.getName().startsWith("blastp"))
+        if(program_name.startsWith("fasta") ||
+           program_name.startsWith("blastp"))
           new_menu = new JMenuItem(options_string);
         else 
-          new_menu = new JMenuItem("Run " + program.getName() + " (" +
+          new_menu = new JMenuItem("Run " + program_name + " (" +
                         options_string + ") on selected features");
       }
       else 
         new_menu =
-          new JMenuItem("Run " + program.getName() + " on selected features");
+          new JMenuItem("Run " + program_name + " on selected features");
     } 
     else 
       new_menu =
-        new JMenuItem("Run " + program.getName() + " on selected features");
+        new JMenuItem("Run " + program_name + " on selected features");
 
     new_menu.addActionListener(new ActionListener() 
     {
@@ -184,33 +188,33 @@ public class RunMenu extends SelectionMenu
         catch(EntryInformationException e)
         {
           new MessageDialog(getParentFrame(),
-                             "execution of " + program.getName() +
+                             "execution of " + program_name +
                              " failed because: " + e.getMessage());
         }
         catch(ReadOnlyException e)
         {
           new MessageDialog(getParentFrame(),
-                             "execution of " + program.getName() +
+                             "execution of " + program_name +
                              " failed because one of the features is " +
                              "read only");
         }
         catch(IOException e)
         {
           new MessageDialog(getParentFrame(),
-                             "execution of " + program.getName() +
+                             "execution of " + program_name +
                              " failed because of an I/O error: " +
                              e);
         }
         catch(ExternalProgramException e) 
         {
           new MessageDialog(getParentFrame(),
-                            "execution of " + program.getName() +
+                            "execution of " + program_name +
                             " failed: " + e.getMessage());
         }
       }
     });
 
-    if(program.getName().startsWith("fasta"))
+    if(program_name.startsWith("fasta"))
     {
       if(fastaMenu == null)
       {
@@ -242,22 +246,24 @@ public class RunMenu extends SelectionMenu
          program.getType() == ExternalProgram.DNA_PROGRAM)) 
       return;
 
-    JMenuItem new_options_menu = null;
-    if(program.getName().startsWith("fasta"))
+    final JMenuItem new_options_menu;
+    final String program_name = program.getName();
+
+    if(program_name.startsWith("fasta"))
     {
       if(fastaMenuOptions == null)
       {
-        fastaMenuOptions = new JMenu("Set " + program.getName() + " options");
+        fastaMenuOptions = new JMenu("Set " + program_name + " options");
         add(fastaMenuOptions);
       }
       new_options_menu = new JMenuItem(program.getProgramOptions());
       fastaMenuOptions.add(new_options_menu);
     }  
-    else if(program.getName().startsWith("blastp"))
+    else if(program_name.startsWith("blastp"))
     {
       if(blastpMenuOptions == null)
       {
-        blastpMenuOptions = new JMenu("Set " + program.getName() + " options");
+        blastpMenuOptions = new JMenu("Set " + program_name + " options");
         add(blastpMenuOptions);
       }
       new_options_menu = new JMenuItem(program.getProgramOptions());
@@ -265,7 +271,7 @@ public class RunMenu extends SelectionMenu
     }
     else
     {
-      new_options_menu = new JMenuItem("Set " + program.getName() + " options");
+      new_options_menu = new JMenuItem("Set " + program_name + " options");
       add(new_options_menu);
     }
 
