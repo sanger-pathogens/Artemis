@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.2 2004-08-13 10:31:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.3 2004-08-13 13:59:20 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -56,7 +56,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.2 2004-08-13 10:31:06 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.3 2004-08-13 13:59:20 tjc Exp $
  **/
 
 public class FeatureEdit extends JFrame
@@ -1048,7 +1048,6 @@ public class FeatureEdit extends JFrame
       final PrintWriter print_writer = new PrintWriter(out_writer);
 
       print_writer.write(qualifier_text_area.getText());
-
       print_writer.close();
       out_writer.close();
 
@@ -1103,38 +1102,32 @@ public class FeatureEdit extends JFrame
 
             final StringBuffer buffer = new StringBuffer();
 
-            while(true) 
-            {
-              final String line = buffered_reader.readLine();
+            String line;
 
-              if(line == null) 
-              {
-                final String current_qualifier_text =
+            while((line = buffered_reader.readLine()) != null) 
+              buffer.append(line + "\n");
+
+            final String current_qualifier_text =
                                        qualifier_text_area.getText();
-                  
-                if(!current_qualifier_text.equals(pre_edit_text))
-                {
-                  final String message =
-                      "the qualifiers have changed - apply changes from the " +
-                      "external editor?";
 
-                  final YesNoDialog yes_no_dialog =
-                      new YesNoDialog (FeatureEdit.this, message);
+            if(!current_qualifier_text.equals(pre_edit_text))
+            {
+              final String message =
+                  "the qualifiers have changed - apply changes from the " +
+                  "external editor?";
 
-                  if(!yes_no_dialog.getResult ()) 
-                      return;
-                }
+              final YesNoDialog yes_no_dialog =
+                  new YesNoDialog(FeatureEdit.this, message);
 
-                qualifier_text_area.setText(buffer.toString());
-
-                temp_file.delete();
-                sequence_temp_file.delete();
-
+              if(!yes_no_dialog.getResult())
                 return;
-              } 
-              else 
-                  buffer.append (line + "\n");
             }
+
+            qualifier_text_area.setText(buffer.toString());
+            temp_file.delete();
+            sequence_temp_file.delete();
+
+            return;
           }
           catch(IOException e) 
           {
