@@ -91,7 +91,7 @@ perl -e '
 BEGIN {
   # change these variable to list the databases to search for the IDs - the
   # database names should be separated by spaces
-  $PROTEIN_DATABASES = "swall";
+  $PROTEIN_DATABASES = "uniprot";
   $DNA_DATABASES = "embl";
 
   # change this to point to the wgetz script of your SRS server
@@ -140,7 +140,7 @@ sub hyperlink_id
       }
     }
 
-    $r = qq#<a href="http://$SRS_SERVER\[\{$PROTEIN_DATABASES\}-ID:$id*]|[\{$PROTEIN_DATABASES\}-AccNumber:$id*]">$id</a>#;
+    $r = qq#<a href="http://$SRS_SERVER-id+1+\[\{$PROTEIN_DATABASES\}-ID:$id*]|[\{$PROTEIN_DATABASES\}-AccNumber:$id*]">$id</a>#;
   }
   return $r
 }
