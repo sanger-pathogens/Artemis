@@ -172,7 +172,7 @@ public class DataViewInternalFrame extends JInternalFrame
       ActiveJSplitPane split = new ActiveJSplitPane(JSplitPane.VERTICAL_SPLIT,
                                                     fastaPane,dataPane);
       split.setLabel(tabLabel);
-      split.setDividerLocation(150);
+      split.setDividerLocation(250);
       split.setOneTouchExpandable(true);
       if(i == 0)
         split.setActive(true);
