@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.8 2004-12-23 17:01:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.9 2004-12-24 09:04:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -45,7 +45,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.8 2004-12-23 17:01:15 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.9 2004-12-24 09:04:20 tjc Exp $ */
 
 public class Bases 
 {
@@ -517,12 +517,12 @@ public class Bases
     int range_start_index = real_range.getStart();
     int range_end_index   = real_range.getEnd();
 
-    final int sequence_string_length = getLength();
+    final int sequence_length = getLength();
 
     if(range_start_index < 1)
       range_start_index =  1;
-    if(range_end_index > sequence_string_length)
-      range_end_index = sequence_string_length;
+    if(range_end_index > sequence_length)
+      range_end_index = sequence_length;
     
     final char sequence_string[] =
         getSequence().getCharSubSequence(range_start_index, range_end_index);
@@ -530,14 +530,13 @@ public class Bases
     range_start_index--;
     range_end_index--;
 
-    final byte[] forward_stop_codon_flags = getForwardStopCodonCache();
-    final byte[] reverse_stop_codon_flags = getReverseStopCodonCache();
 
     if(direction == FORWARD) 
     {
+      final byte[] forward_stop_codon_flags = getForwardStopCodonCache();
       for(int i = range_start_index; i < range_end_index - 2; i += 3)
       {
-        if(i < 0 || i >= sequence_string_length - 2) 
+        if(i < 0 || i >= sequence_length - 2) 
           continue;
 
         final boolean is_stop_codon;
@@ -591,9 +590,10 @@ public class Bases
     } 
     else
     {
+      final byte[] reverse_stop_codon_flags = getReverseStopCodonCache();
       for (int i = range_end_index ; i > range_start_index + 2 ; i -= 3) 
       {
-        if(i < 2 || i >= sequence_string_length)
+        if(i < 2 || i >= sequence_length)
           continue;
 
         final boolean is_stop_codon;
@@ -636,10 +636,10 @@ public class Bases
           // return the complemented base position
           if(is_stop_codon) 
             return_positions[current_return_array_index] =
-              sequence_string_length - i;
+              sequence_length - i;
           else 
             return_positions[current_return_array_index] =
-              - (sequence_string_length - i);
+              - (sequence_length - i);
           
           ++current_return_array_index;
         }
