@@ -20,14 +20,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.9 2004-11-01 15:41:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.10 2004-12-15 13:48:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
-import uk.ac.sanger.artemis.sequence.*;
-
+import uk.ac.sanger.artemis.sequence.Strand;
+import uk.ac.sanger.artemis.sequence.Bases;
+import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
+import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.io.Range;
@@ -36,7 +38,6 @@ import uk.ac.sanger.artemis.io.RangeVector;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
-
 import javax.swing.*;
 
 /**
@@ -44,13 +45,12 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.9 2004-11-01 15:41:12 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.10 2004-12-15 13:48:56 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
     implements SequenceChangeListener 
 {
-
   /** Comparison data that will be displayed in this component. */
   final private ComparisonData comparison_data;
 
@@ -139,12 +139,12 @@ public class AlignmentViewer extends CanvasPanel
   private int maximum_score = 99999999;
 
   /**
-   *  Matches with percent identity values below this number will not be shown.
+   *  Matches with percent id values below this number will not be shown.
    **/
   private int minimum_percent_id = 0;
 
   /**
-   *  Matches with percent identity values above this number will not be shown.
+   *  Matches with percent id values above this number will not be shown.
    **/
   private int maximum_percent_id = 100;
 
@@ -228,7 +228,7 @@ public class AlignmentViewer extends CanvasPanel
       public void selectionChanged (SelectionChangeEvent event) 
       {
         final RangeVector ranges = query_selection.getSelectionRanges ();
-        selectFromQueryRanges (ranges);
+        selectFromQueryRanges(ranges);
       }
     };
 
@@ -263,7 +263,7 @@ public class AlignmentViewer extends CanvasPanel
         if(isMenuTrigger(event))
           return;
 
-        if (!modifiersForLockToggle(event))
+        if(!modifiersForLockToggle(event))
         {
           if(!event.isShiftDown()) 
           {
@@ -277,7 +277,7 @@ public class AlignmentViewer extends CanvasPanel
 
     scroll_bar = new JScrollBar(Scrollbar.VERTICAL);
     scroll_bar.setValues(1, 1, 1, 1000);
-    scroll_bar.setBlockIncrement (10);
+    scroll_bar.setBlockIncrement(10);
 
     scroll_bar.addAdjustmentListener(new AdjustmentListener() 
     {
@@ -313,38 +313,39 @@ public class AlignmentViewer extends CanvasPanel
       return;
 
     selected_matches = null;
+    final int all_matches_length = all_matches.length;
+    final int select_ranges_size = select_ranges.size();
 
-    for(int range_index = 0; range_index < select_ranges.size();
+    final Strand current_subject_fwd_strand =
+                              getSubjectForwardStrand();
+
+    final int subject_length =
+          current_subject_fwd_strand.getSequenceLength();
+
+    for(int range_index = 0; range_index < select_ranges_size;
         ++range_index) 
     {
+      final Range select_range = select_ranges.elementAt(range_index);
+      final int select_range_start = select_range.getStart();
+      final int select_range_end   = select_range.getEnd();
 
-      final Range select_range = select_ranges.elementAt (range_index);
-
-      for(int match_index = 0 ;
-          match_index < all_matches.length ;
+ 
+      for(int match_index = 0; match_index < all_matches_length;
           ++match_index) 
       {
-        final AlignMatch this_match = all_matches [match_index];
+        final AlignMatch this_match = all_matches[match_index];
 
         if(!isVisible(this_match)) 
           continue;
 
-        final Strand current_subject_forward_strand =
-          getSubjectForwardStrand();
-
-        final int subject_length =
-          current_subject_forward_strand.getSequenceLength();
-
         int subject_sequence_start =
-          getRealSubjectSequenceStart(this_match,
-                                      subject_length,
+          getRealSubjectSequenceStart(this_match, subject_length,
                                       (getOrigSubjectForwardStrand () !=
-                                       current_subject_forward_strand));
+                                      current_subject_fwd_strand));
         int subject_sequence_end =
-          getRealSubjectSequenceEnd(this_match,
-                                    subject_length,
+          getRealSubjectSequenceEnd(this_match, subject_length,
                                     (getOrigSubjectForwardStrand () !=
-                                     current_subject_forward_strand));
+                                    current_subject_fwd_strand));
 
         if(subject_sequence_end < subject_sequence_start) 
         {
@@ -353,19 +354,19 @@ public class AlignmentViewer extends CanvasPanel
           subject_sequence_end = tmp;
         }
 
-        if(select_range.getStart () < subject_sequence_start &&
-           select_range.getEnd () < subject_sequence_start) 
+        if(select_range_start < subject_sequence_start &&
+           select_range_end   < subject_sequence_start) 
           continue;
 
-        if(select_range.getStart() > subject_sequence_end &&
-           select_range.getEnd() > subject_sequence_end) 
+        if(select_range_start > subject_sequence_end &&
+           select_range_end   > subject_sequence_end) 
           continue;
 
         if(selected_matches == null) 
           selected_matches = new AlignMatchVector();
 
-        if(!selected_matches.contains (this_match)) 
-          selected_matches.add (this_match);
+        if(!selected_matches.contains(this_match)) 
+          selected_matches.add(this_match);
       }
     }
 
@@ -381,37 +382,35 @@ public class AlignmentViewer extends CanvasPanel
       return;
 
     selected_matches = null;
+    final int select_ranges_size = select_ranges.size();
+    final int all_matches_length = all_matches.length;
+    final Strand current_query_forward_strand = getQueryForwardStrand();
+    final int query_length =
+          current_query_forward_strand.getSequenceLength();
 
-    for(int range_index = 0 ;
-        range_index < select_ranges.size () ;
+    for(int range_index = 0; range_index < select_ranges_size;
         ++range_index) 
     {
-      final Range select_range = select_ranges.elementAt (range_index);
+      final Range select_range = select_ranges.elementAt(range_index);
+      final int select_range_start = select_range.getStart();
+      final int select_range_end   = select_range.getEnd();
 
-      for(int match_index = 0 ;
-          match_index < all_matches.length ;
+      for(int match_index = 0; match_index < all_matches_length;
           ++match_index) 
       {
-        final AlignMatch this_match = all_matches [match_index];
+        final AlignMatch this_match = all_matches[match_index];
 
         if(!isVisible (this_match)) 
           continue;
 
-        final Strand current_query_forward_strand = getQueryForwardStrand();
-
-        final int query_length =
-          current_query_forward_strand.getSequenceLength();
-
         int query_sequence_start =
-          getRealQuerySequenceStart(this_match,
-                                    query_length,
-                                    (getOrigQueryForwardStrand () !=
-                                     current_query_forward_strand));
+          getRealQuerySequenceStart(this_match, query_length,
+                                    (getOrigQueryForwardStrand() !=
+                                    current_query_forward_strand));
         int query_sequence_end =
-          getRealQuerySequenceEnd(this_match,
-                                  query_length,
-                                  (getOrigQueryForwardStrand () !=
-                                   current_query_forward_strand));
+          getRealQuerySequenceEnd(this_match, query_length,
+                                  (getOrigQueryForwardStrand() !=
+                                  current_query_forward_strand));
 
         if(query_sequence_end < query_sequence_start) 
         {
@@ -420,19 +419,19 @@ public class AlignmentViewer extends CanvasPanel
           query_sequence_end = tmp;
         }
 
-        if(select_range.getStart () < query_sequence_start &&
-           select_range.getEnd () < query_sequence_start) 
+        if(select_range_start < query_sequence_start &&
+           select_range_end < query_sequence_start) 
           continue;
 
-        if(select_range.getStart () > query_sequence_end &&
-           select_range.getEnd () > query_sequence_end) 
+        if(select_range_start > query_sequence_end &&
+           select_range_end > query_sequence_end) 
           continue;
 
         if(selected_matches == null) 
-          selected_matches = new AlignMatchVector ();
+          selected_matches = new AlignMatchVector();
 
-        if(!selected_matches.contains (this_match)) 
-          selected_matches.add (this_match);
+        if(!selected_matches.contains(this_match)) 
+          selected_matches.add(this_match);
       }
     }
 
@@ -445,7 +444,7 @@ public class AlignmentViewer extends CanvasPanel
   public void setSelection(final AlignMatch match) 
   {
     selected_matches = new AlignMatchVector();
-    selected_matches.add (match);
+    selected_matches.add(match);
     selectionChanged();
   }
 
@@ -482,10 +481,10 @@ public class AlignmentViewer extends CanvasPanel
    *  Return true if and only if the given MouseEvent (a mouse press) should
    *  pop up a JPopupMenu.
    **/
-  private boolean isMenuTrigger (final MouseEvent event) 
+  private boolean isMenuTrigger(final MouseEvent event) 
   {
-    if( event.isPopupTrigger () ||
-       (event.getModifiers () & InputEvent.BUTTON3_MASK) != 0) 
+    if( event.isPopupTrigger() ||
+       (event.getModifiers() & InputEvent.BUTTON3_MASK) != 0) 
       return true;
     else 
       return false;
@@ -496,7 +495,7 @@ public class AlignmentViewer extends CanvasPanel
    **/
   private void popupMenu(final MouseEvent event) 
   {
-    final JPopupMenu popup = new JPopupMenu ();
+    final JPopupMenu popup = new JPopupMenu();
 
     final JMenuItem alignmatch_list_item =
       new JMenuItem("View Selected Matches");
@@ -517,13 +516,13 @@ public class AlignmentViewer extends CanvasPanel
           final AlignMatchViewer viewer =
             new AlignMatchViewer(AlignmentViewer.this, matches);
 
-          viewer.setVisible (true);
+          viewer.setVisible(true);
         }
       }
     });
 
     final JMenuItem flip_subject_item =
-      new JMenuItem ("Flip Subject Sequence");
+      new JMenuItem("Flip Subject Sequence");
 
     popup.add (flip_subject_item);
 
@@ -531,10 +530,10 @@ public class AlignmentViewer extends CanvasPanel
     {
       public void actionPerformed(ActionEvent _) 
       {
-        if(getSubjectDisplay().isRevCompDisplay ()) 
-          getSubjectDisplay().setRevCompDisplay (false);
+        if(getSubjectDisplay().isRevCompDisplay()) 
+          getSubjectDisplay().setRevCompDisplay(false);
         else 
-          getSubjectDisplay().setRevCompDisplay (true);
+          getSubjectDisplay().setRevCompDisplay(true);
       }
     });
 
@@ -554,32 +553,7 @@ public class AlignmentViewer extends CanvasPanel
       }
     });
 
-    final JMenuItem lock_item = new JMenuItem("Lock Sequences");
-
-    popup.add(lock_item);
-
-    lock_item.addActionListener(new ActionListener () 
-    {
-      public void actionPerformed(ActionEvent _) 
-      {
-        lockDisplays ();
-      }
-    });
-
-    final JMenuItem unlock_item = new JMenuItem("Unlock Sequences");
-
-    popup.add(unlock_item);
-
-    unlock_item.addActionListener(new ActionListener () 
-    {
-      public void actionPerformed(ActionEvent _) 
-      {
-        unlockDisplays ();
-      }
-    });
-
     final JMenuItem cutoffs_item = new JMenuItem("Set Score Cutoffs ...");
-
     popup.add(cutoffs_item);
 
     cutoffs_item.addActionListener(new ActionListener() 
@@ -597,7 +571,7 @@ public class AlignmentViewer extends CanvasPanel
         };
 
         final ScoreChangeListener maximum_listener =
-          new ScoreChangeListener ()
+          new ScoreChangeListener()
         {
           public void scoreChanged(final ScoreChangeEvent event) 
           {
@@ -618,7 +592,6 @@ public class AlignmentViewer extends CanvasPanel
 
     final JMenuItem percent_id_cutoffs_item =
       new JMenuItem("Set Percent ID Cutoffs ...");
-
     popup.add(percent_id_cutoffs_item);
 
     percent_id_cutoffs_item.addActionListener(new ActionListener () 
@@ -651,6 +624,22 @@ public class AlignmentViewer extends CanvasPanel
                            0, 100);
 
         score_changer.setVisible(true);
+      }
+    });
+
+
+    final JCheckBoxMenuItem lock_item = new JCheckBoxMenuItem("Lock Sequences");
+    lock_item.setSelected(displaysAreLocked());
+    popup.add(lock_item);
+
+    lock_item.addItemListener(new ItemListener()
+    {
+      public void itemStateChanged(ItemEvent e)
+      {
+        if(lock_item.isSelected())
+          lockDisplays();
+        else
+          unlockDisplays();
       }
     });
 
@@ -752,19 +741,16 @@ public class AlignmentViewer extends CanvasPanel
     ColorChooserShades newContentPane = new ColorChooserShades(title,initialColour);
 
     Object[] possibleValues = { "OK", "CANCEL" };
-    int select = JOptionPane.showOptionDialog(null,
-                                 newContentPane,
+    int select = JOptionPane.showOptionDialog(null, newContentPane,
                                  "Colour Selection",
                                  JOptionPane.DEFAULT_OPTION, 
                                  JOptionPane.QUESTION_MESSAGE,null,
                                  possibleValues, possibleValues[0]);
-
     if(select == 0)
       return newContentPane;
 
     return null;
   }
-
 
 
   /**
@@ -777,9 +763,9 @@ public class AlignmentViewer extends CanvasPanel
       return;
 
     if(event.getClickCount() == 2) 
-      handleCanvasDoubleClick (event);
+      handleCanvasDoubleClick(event);
     else 
-      handleCanvasSingleClick (event);
+      handleCanvasSingleClick(event);
 
     repaint();
   }
@@ -789,12 +775,9 @@ public class AlignmentViewer extends CanvasPanel
    **/
   private void handleCanvasDoubleClick(final MouseEvent event) 
   {
+    // there should be only one match in the array
     if(selected_matches != null) 
-    {
-      // there should be only one match in the array because
-      // handleCanvasSingleClick () has been called
-      alignAt(selected_matches.elementAt (0));
-    }
+      alignAt(selected_matches.elementAt(0));
   }
 
   /**
@@ -832,7 +815,7 @@ public class AlignmentViewer extends CanvasPanel
       if(!event.isShiftDown()) 
         selected_matches = null;
       
-      toggleSelection (event.getPoint ());
+      toggleSelection(event.getPoint());
     }
   }
 
@@ -853,19 +836,18 @@ public class AlignmentViewer extends CanvasPanel
       } 
       else 
       {
-        if (selected_matches.contains (clicked_align_match)) {
-          selected_matches.remove (clicked_align_match);
-          if (selected_matches.size () == 0) {
+        if(selected_matches.contains(clicked_align_match)) 
+        {
+          selected_matches.remove(clicked_align_match);
+          if(selected_matches.size() == 0)
             selected_matches = null;
-          }
-        } else {
-          selected_matches.add (clicked_align_match);
         }
+        else
+          selected_matches.add(clicked_align_match);
       }
-
     }
 
-    selectionChanged ();
+    selectionChanged();
   }
 
   /**
@@ -873,7 +855,7 @@ public class AlignmentViewer extends CanvasPanel
    *  no match at that point.  The alignment_data_array is searched in reverse
    *  order.
    **/
-  private AlignMatch getAlignMatchFromPosition (final Point click_point) 
+  private AlignMatch getAlignMatchFromPosition(final Point click_point) 
   {
     final int canvas_height = getSize().height;
     final int canvas_width  = getSize().width;
@@ -884,7 +866,9 @@ public class AlignmentViewer extends CanvasPanel
     final boolean subject_flipped = subjectIsRevComp();
     final boolean query_flipped   = queryIsRevComp();
 
-    for(int i = all_matches.length - 1; i >= 0 ; --i) 
+    final int all_matches_length = all_matches.length;
+
+    for(int i = all_matches_length - 1; i >= 0 ; --i) 
     {
       final AlignMatch this_match = all_matches [i];
 
@@ -928,38 +912,40 @@ public class AlignmentViewer extends CanvasPanel
   }
 
   /**
-   *  This method is called by setSelection () and others whenever the list of
-   *  selected/highlighted hits changes.  Calls alignmentSelectionChanged ()
+   *  This method is called by setSelection() and others whenever the list of
+   *  selected/highlighted hits changes. Calls alignmentSelectionChanged()
    *  on all interested AlignmentSelectionChangeListener objects, moves the
    *  selected matches to the top of the display and then calls
    *  repaint
    **/
   private void selectionChanged()
   {
-    for(int i = 0 ; i < selection_change_listeners.size () ; ++i) 
+    for(int i = 0 ; i < selection_change_listeners.size() ; ++i) 
     {
       final AlignMatchVector matches =
-        (AlignMatchVector) selected_matches.clone ();
+        (AlignMatchVector) selected_matches.clone();
 
       final AlignmentSelectionChangeEvent ev =
-        new AlignmentSelectionChangeEvent (this, matches);
+        new AlignmentSelectionChangeEvent(this, matches);
 
       final AlignmentSelectionChangeListener listener =
-        (AlignmentSelectionChangeListener) selection_change_listeners.elementAt (i);
+        (AlignmentSelectionChangeListener)selection_change_listeners.elementAt(i);
 
-      listener.alignmentSelectionChanged (ev);
+      listener.alignmentSelectionChanged(ev);
     }
 
-    if(selected_matches != null && selected_matches.size () > 0) 
+    final int selected_matches_size = selected_matches.size();
+    if(selected_matches != null && selected_matches_size > 0) 
     {
       // a count of the number of selected matches seen so far
       int seen_and_selected_count = 0;
+      final int all_matches_length = all_matches.length;
 
-      for(int i = 0 ; i < all_matches.length ; ++i) 
+      for(int i = 0 ; i < all_matches_length ; ++i) 
       {
         final AlignMatch this_match = all_matches[i];
 
-        if (selected_matches.contains (this_match)) 
+        if(selected_matches.contains(this_match)) 
           ++seen_and_selected_count;
         else
         { 
@@ -972,10 +958,10 @@ public class AlignmentViewer extends CanvasPanel
       }
 
       // put the selected_matches at the end of all_matches
-      for(int i = 0 ; i < selected_matches.size () ; ++i) 
+      for(int i = 0; i < selected_matches_size; ++i) 
       {
-        all_matches[all_matches.length - selected_matches.size () + i] =
-          selected_matches.elementAt (i);
+        all_matches[all_matches_length - selected_matches_size + i] =
+          selected_matches.elementAt(i);
       }
     }
 
@@ -1101,11 +1087,11 @@ public class AlignmentViewer extends CanvasPanel
             (scroll_bar.getMaximum() -
              scroll_bar.getMinimum())) * canvas_height);
 
-    if(cutoff_label_position < getFontAscent ()) 
-      cutoff_label_position = getFontAscent ();
+    if(cutoff_label_position < getFontAscent()) 
+      cutoff_label_position = getFontAscent();
 
 
-    final int [] cutoff_x_points = 
+    final int[] cutoff_x_points = 
     {
       canvas_width - cutoff_label_width,
       canvas_width - 2,
@@ -1113,120 +1099,119 @@ public class AlignmentViewer extends CanvasPanel
       canvas_width - cutoff_label_width,
     };
 
-    final int [] cutoff_y_points = 
+    final int[] cutoff_y_points = 
     {
       cutoff_label_position + 1,
       cutoff_label_position + 1,
-      cutoff_label_position - getFontAscent (),
-      cutoff_label_position - getFontAscent (),
+      cutoff_label_position - getFontAscent(),
+      cutoff_label_position - getFontAscent(),
     };
 
     g.setColor(Color.white);
     g.fillPolygon(cutoff_x_points, cutoff_y_points, 4);
 
     g.setColor(Color.black);
-
     g.drawString(cutoff_label, canvas_width - cutoff_label_width,
-                  cutoff_label_position);
+                 cutoff_label_position);
 
-    final int font_height = getFontAscent () + getFontDescent ();
+    final int font_height = getFontAscent() + getFontDescent();
 
     if(selected_matches != null) 
     {
       final String match_string_1;
 
-      if(selected_matches.size () > 1) 
-        match_string_1 = selected_matches.size () + " matches selected";
+      if(selected_matches.size() > 1) 
+        match_string_1 = selected_matches.size() + " matches selected";
       else 
       {
-        final AlignMatch selected_align_match = selected_matches.elementAt (0);
+        final AlignMatch selected_align_match = selected_matches.elementAt(0);
 
         match_string_1 =
-          selected_align_match.getQuerySequenceStart () + ".." +
-          selected_align_match.getQuerySequenceEnd () + " -> " +
-          selected_align_match.getSubjectSequenceStart () + ".." +
-          selected_align_match.getSubjectSequenceEnd ();
+          selected_align_match.getQuerySequenceStart() + ".." +
+          selected_align_match.getQuerySequenceEnd() + " -> " +
+          selected_align_match.getSubjectSequenceStart() + ".." +
+          selected_align_match.getSubjectSequenceEnd();
       }
 
-      final int match_string_1_width = fm.stringWidth (match_string_1);
+      final int match_string_1_width = fm.stringWidth(match_string_1);
 
-      final int [] match_1_x_points = 
+      final int[] match_1_x_points = 
       {
         0, 0, match_string_1_width, match_string_1_width
       };
 
-      final int [] match_1_y_points = 
+      final int[] match_1_y_points = 
       {
         0, font_height, font_height, 0
       };
 
-      g.setColor (Color.white);
-      g.fillPolygon (match_1_x_points, match_1_y_points, 4);
+      g.setColor(Color.white);
+      g.fillPolygon(match_1_x_points, match_1_y_points, 4);
 
-      g.setColor (Color.black);
-      g.drawString (match_string_1, 0, getFontAscent ());
+      g.setColor(Color.black);
+      g.drawString(match_string_1, 0, getFontAscent ());
 
-      if (selected_matches.size () == 1) 
+      if(selected_matches.size() == 1) 
       {
-        final AlignMatch selected_align_match = selected_matches.elementAt (0);
+        final AlignMatch selected_align_match = selected_matches.elementAt(0);
 
         final String match_string_2 = "score: " +
-          selected_align_match.getScore () + "  percent id: " +
-          selected_align_match.getPercentID () + "%";
+          selected_align_match.getScore() + "  percent id: " +
+          selected_align_match.getPercentID() + "%";
         
-        final int match_string_2_width = fm.stringWidth (match_string_2);
+        final int match_string_2_width = fm.stringWidth(match_string_2);
         
-        final int [] match_2_x_points = 
+        final int[] match_2_x_points = 
         {
           0, 0, match_string_2_width, match_string_2_width
         };
         
-        final int [] match_2_y_points = 
+        final int[] match_2_y_points = 
         {
           font_height, font_height * 2, font_height * 2, font_height
         };
         
-        g.setColor (Color.white);
-        g.fillPolygon (match_2_x_points, match_2_y_points, 4);
+        g.setColor(Color.white);
+        g.fillPolygon(match_2_x_points, match_2_y_points, 4);
         
-        g.setColor (Color.black);
-        g.drawString (match_string_2, 0, getFontAscent () + font_height);
+        g.setColor(Color.black);
+        g.drawString(match_string_2, 0, getFontAscent() + font_height);
       }
     }
 
-    final StringVector status_strings = new StringVector ();
+    final StringVector status_strings = new StringVector();
 
-    if(displaysAreLocked ()) 
-      status_strings.add ("LOCKED");
+    if(displaysAreLocked()) 
+      status_strings.add("LOCKED");
 
-    if(getSubjectDisplay ().isRevCompDisplay ()) 
-      status_strings.add ("Subject: Flipped");
+    if(getSubjectDisplay().isRevCompDisplay()) 
+      status_strings.add("Subject: Flipped");
 
-    if(getQueryDisplay ().isRevCompDisplay ()) 
-      status_strings.add ("Query: Flipped");
+    if(getQueryDisplay().isRevCompDisplay()) 
+      status_strings.add("Query: Flipped");
 
-    if(getOrigSubjectForwardStrand () != getSubjectForwardStrand ()) 
-      status_strings.add ("Subject: Reverse Complemented");
+    if(getOrigSubjectForwardStrand() != getSubjectForwardStrand()) 
+      status_strings.add("Subject: Reverse Complemented");
 
-    if(getOrigQueryForwardStrand () != getQueryForwardStrand ()) 
-      status_strings.add ("Query: Reverse Complemented");
+    if(getOrigQueryForwardStrand() != getQueryForwardStrand()) 
+      status_strings.add("Query: Reverse Complemented");
 
     g.setColor(Color.white);
 
-    for(int i = 0 ; i < status_strings.size () ; ++i) 
+    for(int i = 0 ; i < status_strings.size() ; ++i) 
     {
-      final String status_string = status_strings.elementAt (i);
+      final String status_string = status_strings.elementAt(i);
 
-      final int status_string_width = fm.stringWidth (status_string);
+      final int status_string_width = fm.stringWidth(status_string);
 
-      final int [] x_points = 
+      final int[] x_points = 
       {
         0, 0, status_string_width, status_string_width
       };
 
       final int string_offset = font_height * (status_strings.size () - i - 1);
 
-      final int [] y_points = 
+      final int[] y_points = 
       {
         canvas_height - string_offset,
         canvas_height - font_height - string_offset,
@@ -1234,19 +1219,17 @@ public class AlignmentViewer extends CanvasPanel
         canvas_height - string_offset
       };
 
-      g.fillPolygon (x_points, y_points, 4);
+      g.fillPolygon(x_points, y_points, 4);
     }
 
-    g.setColor (Color.black);
-
-    for(int i = 0 ; i < status_strings.size () ; ++i) 
+    g.setColor(Color.black);
+    for(int i = 0; i < status_strings.size(); ++i) 
     {
-      final String status_string = status_strings.elementAt (i);
-
-      final int string_offset = font_height * (status_strings.size () - i - 1);
+      final String status_string = status_strings.elementAt(i);
+      final int string_offset = font_height * (status_strings.size() - i - 1);
 
       g.drawString(status_string, 0,
-                   canvas_height - string_offset - getFontDescent ());
+                   canvas_height - string_offset - getFontDescent());
     }
   }
 
@@ -1256,8 +1239,8 @@ public class AlignmentViewer extends CanvasPanel
   private void drawAlignments(final Graphics g) 
   {
     final int canvas_height = getSize().height;
-    final int canvas_width = getSize().width;
-    final int OFFSCREEN    = 3000;
+    final int canvas_width  = getSize().width;
+    final int OFFSCREEN     = 3000;
 
     final int subject_length = getSubjectForwardStrand().getSequenceLength();
     final int query_length   = getQueryForwardStrand().getSequenceLength();
@@ -1339,14 +1322,13 @@ public class AlignmentViewer extends CanvasPanel
 
       g.fillPolygon(x_coords, y_coords, x_coords.length);
 
-      if (subject_end_x - subject_start_x < 5 &&
-          subject_end_x - subject_start_x > -5 ||
-          subject_start_x < -OFFSCREEN ||
-          subject_end_x > OFFSCREEN ||
-          query_start_x < -OFFSCREEN ||
-          query_end_x > OFFSCREEN)
+      if(subject_end_x - subject_start_x < 5 &&
+         subject_end_x - subject_start_x > -5 ||
+         subject_start_x < -OFFSCREEN ||
+         subject_end_x > OFFSCREEN ||
+         query_start_x < -OFFSCREEN ||
+         query_end_x > OFFSCREEN)
       {
-
         // match is (probably) narrow so draw the border to the same colour as
         // the polygon
       } 
@@ -1404,9 +1386,9 @@ public class AlignmentViewer extends CanvasPanel
                                          final boolean reverse_position) 
   {
     if(reverse_position) 
-      return sequence_length - match.getSubjectSequenceStart () + 1;
+      return sequence_length - match.getSubjectSequenceStart() + 1;
     else 
-      return match.getSubjectSequenceStart ();
+      return match.getSubjectSequenceStart();
   }
 
   /**
@@ -1420,9 +1402,9 @@ public class AlignmentViewer extends CanvasPanel
                                        final boolean reverse_position) 
   {
     if(reverse_position) 
-      return sequence_length - match.getSubjectSequenceEnd () + 1;
+      return sequence_length - match.getSubjectSequenceEnd() + 1;
     else 
-      return match.getSubjectSequenceEnd ();
+      return match.getSubjectSequenceEnd();
   }
 
   /**
@@ -1451,10 +1433,10 @@ public class AlignmentViewer extends CanvasPanel
                                      final int sequence_length,
                                      final boolean reverse_position) 
   {
-    if (reverse_position)
-      return sequence_length - match.getQuerySequenceEnd () + 1;
+    if(reverse_position)
+      return sequence_length - match.getQuerySequenceEnd() + 1;
     else 
-      return match.getQuerySequenceEnd ();
+      return match.getQuerySequenceEnd();
   }
 
   /**
@@ -1614,12 +1596,11 @@ public class AlignmentViewer extends CanvasPanel
    **/
   boolean subjectIsRevComp() 
   {
-    final Strand current_subject_forward_strand = getSubjectForwardStrand ();
+    final Strand current_subject_forward_strand = getSubjectForwardStrand();
 
-    if(getOrigSubjectForwardStrand () == current_subject_forward_strand ^
-       getSubjectDisplay ().isRevCompDisplay ()) {
+    if(getOrigSubjectForwardStrand() == current_subject_forward_strand ^
+       getSubjectDisplay().isRevCompDisplay()) 
       return false;
-    }
     else 
       return true;
   }
@@ -1632,8 +1613,8 @@ public class AlignmentViewer extends CanvasPanel
   {
     final Strand current_query_forward_strand = getQueryForwardStrand ();
 
-    if(getOrigQueryForwardStrand () == current_query_forward_strand ^
-       getQueryDisplay ().isRevCompDisplay ()) 
+    if(getOrigQueryForwardStrand() == current_query_forward_strand ^
+       getQueryDisplay().isRevCompDisplay()) 
       return false;
     else 
       return true;
@@ -1643,7 +1624,7 @@ public class AlignmentViewer extends CanvasPanel
    *  Return the forward Strand of the subject EntryGroup from when the
    *  Comparator was created.
    **/
-  public Strand getOrigSubjectForwardStrand () 
+  public Strand getOrigSubjectForwardStrand() 
   {
     return orig_subject_forward_strand;
   }
@@ -1652,7 +1633,7 @@ public class AlignmentViewer extends CanvasPanel
    *  Return the forward Strand of the query EntryGroup from when the
    *  Comparator was created.
    **/
-  public Strand getOrigQueryForwardStrand () 
+  public Strand getOrigQueryForwardStrand() 
   {
     return orig_query_forward_strand;
   }
@@ -1661,7 +1642,7 @@ public class AlignmentViewer extends CanvasPanel
    *  Return the reverse Strand of the subject EntryGroup from when the
    *  Comparator was created.
    **/
-  public Strand getOrigSubjectReverseStrand () 
+  public Strand getOrigSubjectReverseStrand() 
   {
     return orig_subject_reverse_strand;
   }
@@ -1670,7 +1651,7 @@ public class AlignmentViewer extends CanvasPanel
    *  Return the reverse Strand of the query EntryGroup from when the
    *  Comparator was created.
    **/
-  public Strand getOrigQueryReverseStrand () 
+  public Strand getOrigQueryReverseStrand() 
   {
     return orig_query_reverse_strand;
   }
@@ -1678,7 +1659,7 @@ public class AlignmentViewer extends CanvasPanel
   /**
    *  Arrange for the two FeatureDisplay objects to scroll in parallel.
    **/
-  public void lockDisplays () 
+  protected void lockDisplays() 
   {
     displays_are_locked = true;
     repaint();
@@ -1687,7 +1668,7 @@ public class AlignmentViewer extends CanvasPanel
   /**
    *  Arrange for the two FeatureDisplay objects to scroll independently.
    **/
-  public void unlockDisplays () 
+  protected void unlockDisplays() 
   {
     displays_are_locked = false;
     repaint();
@@ -1696,7 +1677,7 @@ public class AlignmentViewer extends CanvasPanel
   /**
    *  Return true if and only if the displays are currently locked.
    **/
-  public boolean displaysAreLocked () 
+  protected boolean displaysAreLocked() 
   {
     return displays_are_locked;
   }
@@ -1704,7 +1685,7 @@ public class AlignmentViewer extends CanvasPanel
   /**
    *  Toggle whether the two displays are locked.
    **/
-  public void toggleDisplayLock () 
+  protected void toggleDisplayLock() 
   {
     displays_are_locked = !displays_are_locked;
     repaint();
@@ -1716,7 +1697,7 @@ public class AlignmentViewer extends CanvasPanel
    *  the selections of the top and bottom FeatureDisplays to be set without
    *  changing which AlignMatches are selected.
    **/
-  public void disableSelection () 
+  protected void disableSelection() 
   {
     disable_selection_from_ranges = true;
   }
@@ -1724,7 +1705,7 @@ public class AlignmentViewer extends CanvasPanel
   /**
    *  Enable selectFromQueryRange() and selectFromSubjectRange().
    **/
-  public void enableSelection () 
+  protected void enableSelection() 
   {
     disable_selection_from_ranges = false;
   }
@@ -1802,7 +1783,6 @@ public class AlignmentViewer extends CanvasPanel
         banner[i] = new JLabel(" "+percent_id+"  ",JLabel.CENTER);
         banner[i].setOpaque(true);
         banner[i].setPreferredSize(d);
-//      banner[i].setMaximumSize(d);
         bacross.add(banner[i]);
       }
 
