@@ -55,7 +55,9 @@ public class PrintArtemis extends ScrollPanel
 
   public PrintArtemis(EntryEdit entry)
   {
+    super();
     this.entry = entry;
+    setBackground(Color.white);
   }
 
   /**
@@ -111,7 +113,14 @@ public class PrintArtemis extends ScrollPanel
 
     // feature list
     if(featListDisplay.isSelected())
-      entry.getFeatureList().paintComponent(g2d);
+    {
+      FeatureList flist = entry.getFeatureList();
+      Point ploc = flist.getViewport().getViewPosition();
+      flist.setOpaque(false);
+      g2d.translate(0,-ploc.y);
+      flist.paintComponent(g2d);
+      flist.setOpaque(true);
+    }
   }
 
 
@@ -143,7 +152,7 @@ public class PrintArtemis extends ScrollPanel
       height += entry.getFeatureDisplay().getHeight();
 
     if(featListDisplay.isSelected())
-      height += entry.getFeatureList().getHeight();
+      height += entry.getFeatureList().getViewport().getExtentSize().height;
     setPreferredSize(new Dimension(width,height));
   }
 

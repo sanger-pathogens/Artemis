@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.10 2004-12-07 10:35:40 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.11 2004-12-14 09:55:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import javax.swing.*;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.10 2004-12-07 10:35:40 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.11 2004-12-14 09:55:12 tjc Exp $
  *
  **/
 
@@ -410,7 +410,7 @@ public class FeatureList extends EntryGroupPanel
   * Return the JViewport that this component is contained in.
   *
   */
-  private JViewport getViewport()
+  protected JViewport getViewport()
   {
     Container container = getParent();
     while(!(container instanceof JScrollPane))
