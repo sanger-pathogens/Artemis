@@ -120,7 +120,7 @@ public class Annotation extends JEditorPane
     qualifier.add("/GO_component=");
 
     text = getDatabaseHTML(text,"SWALL:");
-    text = getDatabaseHTML(text,"UNIPROT:");
+    text = getDatabaseHTML(text,"UniProt:");
     text = getDatabaseHTML(text,"EMBL:");
     setText("<html><body><font size=3>"+text+"</font></html></body>");
     startRange = getDocument().getLength();
@@ -180,7 +180,7 @@ public class Annotation extends JEditorPane
   protected void insert(String s, boolean ortholog)
   {
     s = getDatabaseHTML(s,"SWALL:");
-    s = getDatabaseHTML(s,"UNIPROT:");
+    s = getDatabaseHTML(s,"UniProt:");
     s = getDatabaseHTML(s,"EMBL:");
     s = getGeneDBHTML(s);
 

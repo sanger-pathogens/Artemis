@@ -871,9 +871,9 @@ public class DataCollectionPane extends JScrollPane
     StringBuffer buff = new StringBuffer();
     
     if(hit.getDB() != null)
-      buff.append(hit.getDB()+":"+hit.getID());
+      buff.append(" with="+hit.getDB()+":"+hit.getID());
     else
-      buff.append(" UNIPROT:"+hit.getID());
+      buff.append(" with=UniProt:"+hit.getID());
 
     if(hit.getEMBL() != null &&
        !hit.getEMBL().equals(""))

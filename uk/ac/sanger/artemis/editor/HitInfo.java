@@ -114,6 +114,10 @@ public class HitInfo
     if(ind1a > -1)
     {
       db = id.substring(0,ind1a);
+
+      if(db.equals("UNIPROT"))
+        db = "UniProt";
+
       id = id.substring(ind1a+1);
     }
 
