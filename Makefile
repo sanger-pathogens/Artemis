@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.6 2004-08-09 14:13:20 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.7 2004-08-09 15:31:56 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -249,7 +249,7 @@ dist :
 	mkdir tar_build
 	mkdir tar_build/artemis
 	rm -f artemis_compiled_latest.tar.gz
-	tar cf - $(OTHER_FILES) art etc | (cd tar_build/artemis; tar xf -)
+	tar cf - $(OTHER_FILES) act art etc | (cd tar_build/artemis; tar xf -)
 	tar cf - uk nsdb type seqdb lib | (cd tar_build/artemis; tar xf -)
 	(cd tar_build; tar czvf ../artemis_compiled.tar artemis)
 
