@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.1 2004-06-09 09:47:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.2 2004-08-23 10:48:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -40,7 +40,7 @@ import javax.swing.*;
  *  This component is a TextArea that understands qualifiers.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: QualifierTextArea.java,v 1.1 2004-06-09 09:47:19 tjc Exp $
+ *  @version $Id: QualifierTextArea.java,v 1.2 2004-08-23 10:48:16 tjc Exp $
  **/
 
 public class QualifierTextArea extends JTextArea {
@@ -56,7 +56,11 @@ public class QualifierTextArea extends JTextArea {
     setLineWrap (true);
     setBackground (Color.white);
 
-    setDragEnabled(true);
+    try  // no such method in java1.3
+    {
+      setDragEnabled(true);
+    }
+    catch(java.lang.NoSuchMethodError err){}
   }
 
   /**
