@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierEditor.java,v 1.3 2005-02-04 17:08:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierEditor.java,v 1.4 2005-02-17 10:36:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -46,7 +46,7 @@ import javax.swing.*;
  *  features at once.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: QualifierEditor.java,v 1.3 2005-02-04 17:08:36 tjc Exp $
+ *  @version $Id: QualifierEditor.java,v 1.4 2005-02-17 10:36:28 tjc Exp $
  **/
 
 public class QualifierEditor extends JFrame {
@@ -172,97 +172,121 @@ public class QualifierEditor extends JFrame {
    *    name in the features will be deleted.
    **/
   private void addOrReplace (final boolean replace) {
-    try {
-      entry_group.getActionController ().startAction ();
+    try 
+    {
+      entry_group.getActionController().startAction();
 
       // this will contain one QualifierVector object for each Feature in the
       // features vector (in the same order)
-      final Vector qualifier_vector_vector = new Vector ();
+      final Vector qualifier_vector_vector = new Vector();
+      final int features_size = features.size();
 
-      for (int i = 0 ; i < features.size () ; ++i) {
-        final Feature this_feature = features.elementAt (i);
+      for(int i = 0; i<features_size; ++i) 
+      {
+        final Feature this_feature = features.elementAt(i);
 
-        final Entry this_feature_entry = this_feature.getEntry ();
+        final Entry this_feature_entry = this_feature.getEntry();
 
-        if (this_feature_entry == null) {
+        if(this_feature_entry == null)
+        {
           // feature has already been deleted
-          qualifier_vector_vector.addElement (null);
-        } else {
+          qualifier_vector_vector.addElement(null);
+        } 
+        else 
+        {
           final EntryInformation entry_information =
-            this_feature_entry.getEntryInformation ();
+            this_feature_entry.getEntryInformation();
 
-          try {
+          try 
+          {
             final QualifierVector qualifiers =
-              qualifier_text_area.getParsedQualifiers (entry_information);
+              qualifier_text_area.getParsedQualifiers(entry_information);
 
-            qualifier_vector_vector.addElement (qualifiers);
+            qualifier_vector_vector.addElement(qualifiers);
 
-          } catch (QualifierParseException e) {
-            new MessageDialog (this,
-                               "error while parsing: " + e.getMessage ());
+          }
+          catch(QualifierParseException e) 
+          {
+            new MessageDialog(this,
+                              "error while parsing: " + e.getMessage());
             return;
           }
         }
       }
 
-      if (qualifier_vector_vector.size () != features.size ()) {
-        throw new Error ("Internal error in QualifierEditor.add() - " +
-                         "mismatched array sizes");
-      }
+      if(qualifier_vector_vector.size() != features_size) 
+        throw new Error("Internal error in QualifierEditor.add() - " +
+                        "mismatched array sizes");
 
-      for (int feature_index = 0 ;
-           feature_index < features.size () ;
-           ++feature_index) {
-        final Feature this_feature = features.elementAt (feature_index);
+      for(int feature_index = 0; feature_index < features_size;
+          ++feature_index) 
+      {
+        final Feature this_feature = features.elementAt(feature_index);
         this_feature.resetColour();
 
-        if (qualifier_vector_vector.elementAt (feature_index) == null) {
+        if(qualifier_vector_vector.elementAt(feature_index) == null)
           continue;
-        }
 
         final QualifierVector qualifier_vector =
-          (QualifierVector) qualifier_vector_vector.elementAt (feature_index);
+          (QualifierVector)qualifier_vector_vector.elementAt(feature_index);
 
-        for (int qualifier_index = 0 ;
-             qualifier_index < qualifier_vector.size () ;
-             ++qualifier_index) {
+        final int qualifier_vector_size = qualifier_vector.size();
+
+        for(int qualifier_index = 0; qualifier_index < qualifier_vector_size;
+            ++qualifier_index) 
+        {
           final Qualifier this_qualifier =
-            (Qualifier)qualifier_vector.elementAt (qualifier_index);
+            (Qualifier)qualifier_vector.elementAt(qualifier_index);
 
-          if (replace) {
-            try {
-              this_feature.setQualifier (this_qualifier);
-            } catch (EntryInformationException e) {
-              new MessageDialog (this,
-                                 "failed to add qualifiers to: " +
-                                 this_feature.getIDString () + ": " +
-                                 e.getMessage ());
-            } catch (ReadOnlyException e) {
-              new MessageDialog (this,
-                                 "failed to add qualifiers to read-only " +
-                                 "feature: " + this_feature.getIDString () +
-                                 ": " + e.getMessage ());
+          if(replace) 
+          {
+            try 
+            {
+              this_feature.setQualifier(this_qualifier);
+            } 
+            catch(EntryInformationException e) 
+            {
+              new MessageDialog(this,
+                                "failed to add qualifiers to: " +
+                                this_feature.getIDString() + ": " +
+                                e.getMessage());
+            } 
+            catch(ReadOnlyException e) 
+            {
+              new MessageDialog(this,
+                                "failed to add qualifiers to read-only " +
+                                "feature: " + this_feature.getIDString() +
+                                ": " + e.getMessage());
             }
-          } else {
-            try {
-              this_feature.addQualifierValues (this_qualifier);
-            } catch (EntryInformationException e) {
-              new MessageDialog (this,
-                                 "failed to add qualifiers to: " +
-                                 this_feature.getIDString () + ": " +
-                                 e.getMessage ());
-            } catch (ReadOnlyException e) {
-              new MessageDialog (this,
-                                 "failed to add qualifiers to read-only " +
-                                 "feature: " + this_feature.getIDString () +
-                                 ": " + e.getMessage ());
+          } 
+          else 
+          {
+            try
+            {
+              this_feature.addQualifierValues(this_qualifier);
+            } 
+            catch(EntryInformationException e) 
+            {
+              new MessageDialog(this,
+                                "failed to add qualifiers to: " +
+                                this_feature.getIDString() + ": " +
+                                e.getMessage());
+            } 
+            catch(ReadOnlyException e) 
+            {
+              new MessageDialog(this,
+                                "failed to add qualifiers to read-only " +
+                                "feature: " + this_feature.getIDString() +
+                                ": " + e.getMessage());
             }
 
           }
         }
       }
-    } finally {
-      entry_group.getActionController ().endAction ();
+    } 
+    finally 
+    {
+      entry_group.getActionController().endAction();
     }
   }
 
