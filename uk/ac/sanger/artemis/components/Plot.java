@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.3 2004-10-05 09:24:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.4 2004-11-24 09:38:20 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -43,30 +43,19 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.3 2004-10-05 09:24:37 tjc Exp $
+ *  @version $Id: Plot.java,v 1.4 2004-11-24 09:38:20 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
 {
 
-  /**
-   *  The drawing area for this component.
-   **/
-  private JComponent canvas = null;
-
-  /**
-   *  A scroll bar for changing the window size.
-   **/
+  /** scroll bar for changing the window size. */
   private JScrollBar window_changer = null;
 
-  /**
-   *  The height of the font used in this component.
-   **/
+  /** height of the font used in this component. */
   private int font_height;
 
-  /**
-   *  Off screen image used for double buffering when drawing the canvas.
-   **/
+  /** off screen image used for double buffering when drawing */
   private Image offscreen;
 
   /**
@@ -76,13 +65,13 @@ public abstract class Plot extends JPanel
 
   /**
    *  If true then a scale line will be drawn at the bottom of the graph when
-   *  drawScaleLine () is called.
+   *  drawScaleLine() is called.
    **/
   private boolean draw_scale;
 
   /**
-   *  Set to true if drawMultiValueGraph () should call recalculateValues ().
-   *  It is reset to false by recalculateValues ().
+   *  Set to true if drawMultiValueGraph() should call recalculateValues().
+   *  It is reset to false by recalculateValues().
    **/
   protected boolean recalculate_flag = true;
 
@@ -101,7 +90,19 @@ public abstract class Plot extends JPanel
   /**
    *  A vector of those objects listening for PlotMouse events.
    **/
-  final private java.util.Vector listener_list = new java.util.Vector ();
+  final private java.util.Vector listener_list = new java.util.Vector();
+
+  /**
+   *  Recalculate the values all the state that is used for drawing the plot
+   **/
+  protected abstract void recalculateValues();
+
+  /**
+   *  Get the position in the Feature or Sequence of the given x canvas
+   *  position.  This is the label used when the user clicks the mouse in on
+   *  the canvas (see drawCrossHair()).
+   **/
+  protected abstract int getPointPosition(final int canvas_x_position);
 
   /**
    *  Create a new plot component.
@@ -110,30 +111,30 @@ public abstract class Plot extends JPanel
    *  @param draw_scale If true then a scale line will be drawn at the bottom
    *    of the graph.
    **/
-  public Plot (Algorithm algorithm, boolean draw_scale) 
+  public Plot(Algorithm algorithm, boolean draw_scale) 
   {
     this.algorithm = algorithm;
     this.draw_scale = draw_scale;
 
-    final Font font = Options.getOptions ().getFont ();
+    final Font font = Options.getOptions().getFont();
 
-    setFont (font);
-    FontMetrics fm = getFontMetrics (font);
+    setFont(font);
+    FontMetrics fm = getFontMetrics(font);
     font_height = fm.getHeight();
 
     setLayout(new BorderLayout());
 
     final int MAX_WINDOW;
 
-    if(getAlgorithm().getDefaultMaxWindowSize () != null) 
+    if(getAlgorithm().getDefaultMaxWindowSize() != null) 
       MAX_WINDOW = getAlgorithm().getDefaultMaxWindowSize().intValue();
     else 
       MAX_WINDOW = 500;
 
     final int MIN_WINDOW;
 
-    if(getAlgorithm ().getDefaultMinWindowSize () != null) 
-      MIN_WINDOW = getAlgorithm ().getDefaultMinWindowSize ().intValue ();
+    if(getAlgorithm().getDefaultMinWindowSize() != null) 
+      MIN_WINDOW = getAlgorithm().getDefaultMinWindowSize().intValue();
     else 
       MIN_WINDOW = 5;
 
@@ -144,20 +145,20 @@ public abstract class Plot extends JPanel
     else 
       START_WINDOW = getAlgorithm().getDefaultWindowSize().intValue();
 
-    window_changer = new JScrollBar (Scrollbar.VERTICAL);
-    window_changer.setValues (START_WINDOW, SCROLL_NOB_SIZE,
-                              MIN_WINDOW, MAX_WINDOW + SCROLL_NOB_SIZE);
-    if (MAX_WINDOW >= 50) 
-      window_changer.setBlockIncrement (MAX_WINDOW/50);
+    window_changer = new JScrollBar(Scrollbar.VERTICAL);
+    window_changer.setValues(START_WINDOW, SCROLL_NOB_SIZE,
+                             MIN_WINDOW, MAX_WINDOW + SCROLL_NOB_SIZE);
+    if(MAX_WINDOW >= 50) 
+      window_changer.setBlockIncrement(MAX_WINDOW/50);
     else 
-      window_changer.setBlockIncrement (1);
+      window_changer.setBlockIncrement(1);
 
     window_changer.addAdjustmentListener(new AdjustmentListener()
     {
       public void adjustmentValueChanged(AdjustmentEvent e) 
       {
         recalculate_flag = true;
-        repaintCanvas ();
+        repaint();
       }
     });
 
@@ -166,15 +167,15 @@ public abstract class Plot extends JPanel
       public void componentShown(ComponentEvent e) 
       {
         recalculate_flag = true;
-        repaintCanvas ();
+        repaint();
       }
     });
 
     add(window_changer, "East");
+//  setBackground(Color.white);
 
-    createCanvas();
-
-    getCanvas().setBackground (Color.white);
+    addMouseListener(mouse_listener);
+    addMouseMotionListener(mouse_motion_listener);
   }
 
   final int SCROLL_NOB_SIZE = 10;
@@ -193,159 +194,122 @@ public abstract class Plot extends JPanel
    **/
   public int getWindowSize()
   {
-    return window_changer.getValue ();
+    return window_changer.getValue();
   }
 
-  /**
-   *  Create the canvas object for this BasePlot and add it to the component.
-   **/
-  private void createCanvas()
+  final MouseListener mouse_listener = new MouseAdapter()
   {
-    canvas = new JComponent() 
+    /**
+     *  Listen for mouse press events so that we can do a popup menu and a
+     *  crosshair.
+     **/
+    public void mousePressed(MouseEvent event) 
     {
-      /**
-       *  Set the offscreen buffer to null as part of invalidation.
-       **/
-      public void invalidate() 
+      if(event.isPopupTrigger() || event.isMetaDown()) 
       {
-        super.invalidate();
-        offscreen = null;
-      }
+        final JComponent parent = (JComponent)event.getSource();
+        final JPopupMenu popup  = new JPopupMenu("Plot Options");
 
-      /**
-       *  Override update to *not* erase the background before painting
-       */
-      public void update(Graphics g) 
-      {
-        paint(g);
-      }
+        final JCheckBoxMenuItem scaling_toggle =
+          new JCheckBoxMenuItem("Scaling");
 
-      /**
-       *  Paint the canvas.
-       */
-      public void paint(Graphics g) 
-      {
-        paintCanvas (g);
-      }
-    };
-
-    final MouseListener mouse_listener = new MouseAdapter()
-    {
-        /**
-         *  Listen for mouse press events so that we can do a popup menu and a
-         *  crosshair.
-         **/
-        public void mousePressed(MouseEvent event) 
+        scaling_toggle.setState(getAlgorithm().scalingFlag());
+        scaling_toggle.addItemListener(new ItemListener() 
         {
-          if(event.isPopupTrigger() || event.isMetaDown()) 
+          public void itemStateChanged(ItemEvent _) 
           {
-            final JComponent parent = (JComponent)event.getSource();
-            final JPopupMenu popup  = new JPopupMenu("Plot Options");
-
-            final JCheckBoxMenuItem scaling_toggle =
-              new JCheckBoxMenuItem ("Scaling");
-
-            scaling_toggle.setState(getAlgorithm ().scalingFlag ());
-            scaling_toggle.addItemListener(new ItemListener () 
-            {
-              public void itemStateChanged (ItemEvent _) 
-              {
-                getAlgorithm ().setScalingFlag (scaling_toggle.getState ());
-                recalculate_flag = true;
-                repaintCanvas();
-              }
-            });
-
-            popup.add(scaling_toggle);
-            popup.addSeparator();
-
-            final JMenuItem max_window_size =
-              new JMenuItem ("Maximum Window Size:");
-
-            popup.add (max_window_size);
-
-            final int [] window_sizes = 
-            {
-              100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000,
-              200000, 500000, 1000000
-            };
-
-            for(int i = 0 ; i < window_sizes.length ; ++i) 
-            {
-              final int size = i;
-
-              JMenuItem window_size_item = new JMenuItem(" " + window_sizes[i]);
-
-              window_size_item.addActionListener(new ActionListener() 
-              {
-                public void actionPerformed (ActionEvent _) 
-                {
-                  final int new_maximum = window_sizes[size];
-                  if(new_maximum > window_changer.getMinimum ()) 
-                  {
-                    window_changer.setMaximum(new_maximum + SCROLL_NOB_SIZE);
-                    recalculate_flag = true;
-                    repaintCanvas ();
-                  }
-                }
-              });
-
-              popup.add (window_size_item);
-            }
-
-            parent.add (popup);
-            popup.show (parent, event.getX (), event.getY ());
-          } 
-          else 
-          {
-            final int point_x = event.getPoint ().x;
-            final int point_y = event.getPoint ().y;
-
-            if(point_y > getLabelHeight ()) 
-            {
-              cross_hair_position = point_x;
-              drag_start_position = point_x;
-            } 
-            else
-              cancelCrossHairs ();
-
-            if(event.getClickCount() == 2) 
-              fireDoubleClickEvent();
-            else
-              fireClickEvent();
-
-            repaintCanvas();
+            getAlgorithm().setScalingFlag(scaling_toggle.getState());
+            recalculate_flag = true;
+            repaint();
           }
+        });
+
+        popup.add(scaling_toggle);
+        popup.addSeparator();
+
+        final JMenuItem max_window_size =
+              new JMenuItem("Maximum Window Size:");
+
+        popup.add(max_window_size);
+
+        final int[] window_sizes = 
+        {
+          100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000,
+          200000, 500000, 1000000
+        };
+
+
+        JMenuItem window_size_item;
+
+        for(int i = 0 ; i < window_sizes.length ; ++i) 
+        {
+          final int size = i;
+          window_size_item = new JMenuItem(" " + window_sizes[i]);
+
+          window_size_item.addActionListener(new ActionListener() 
+          {
+            public void actionPerformed(ActionEvent _) 
+            {
+              final int new_maximum = window_sizes[size];
+              if(new_maximum > window_changer.getMinimum()) 
+              {
+                window_changer.setMaximum(new_maximum + SCROLL_NOB_SIZE);
+                recalculate_flag = true;
+                repaint();
+              }
+            }
+          });
+
+          popup.add(window_size_item);
         }
-      };
 
-    canvas.addMouseListener (mouse_listener);
-
-    final MouseMotionListener mouse_motion_listener =
-      new MouseMotionAdapter() 
-    {
-      public void mouseDragged (MouseEvent event) 
+        parent.add(popup);
+        popup.show(parent, event.getX(), event.getY());
+      } 
+      else 
       {
-        if(isMenuTrigger(event))
-          return;
-
         final int point_x = event.getPoint().x;
         final int point_y = event.getPoint().y;
 
         if(point_y > getLabelHeight()) 
+        {
           cross_hair_position = point_x;
-        else 
+          drag_start_position = point_x;
+        } 
+        else
           cancelCrossHairs();
 
-        fireDragEvent();
-        repaintCanvas();
+        if(event.getClickCount() == 2) 
+          fireDoubleClickEvent();
+        else
+          fireClickEvent();
+
+        repaint();
       }
-    };
+    }
+  };
 
-    canvas.addMouseMotionListener (mouse_motion_listener);
+  final MouseMotionListener mouse_motion_listener =
+      new MouseMotionAdapter() 
+  {
+    public void mouseDragged(MouseEvent event) 
+    {
+      if(isMenuTrigger(event))
+        return;
 
-    add (canvas, "Center");
-  }
+      final int point_x = event.getPoint().x;
+      final int point_y = event.getPoint().y;
+
+      if(point_y > getLabelHeight()) 
+        cross_hair_position = point_x;
+      else 
+        cancelCrossHairs();
+
+      fireDragEvent();
+      repaint();
+    }
+  };
+
 
   /**
    *  Return true if and only if the given MouseEvent (a mouse press) should
@@ -361,44 +325,44 @@ public abstract class Plot extends JPanel
   }
 
   /**
-   *  Call mouseClick () on each of the PlotMouseListener objects in the
+   *  Call mouseClick() on each of the PlotMouseListener objects in the
    *  listener list.
    **/
   private void fireClickEvent() 
   {
-    for (int i = 0 ; i < listener_list.size() ; ++i)
+    PlotMouseListener listener;
+    for(int i = 0; i < listener_list.size(); ++i)
     {
-      final PlotMouseListener listener =
-        (PlotMouseListener)listener_list.elementAt(i);
+      listener = (PlotMouseListener)listener_list.elementAt(i);
       listener.mouseClick(getPointPosition(cross_hair_position));
     }
   }
 
   /**
-   *  Call mouseDragged () on each of the PlotMouseListener objects in the
+   *  Call mouseDragged() on each of the PlotMouseListener objects in the
    *  listener list.
    **/
   private void fireDragEvent()
   {
+    PlotMouseListener listener;
     for(int i = 0; i < listener_list.size(); ++i) 
     {
-      final PlotMouseListener listener =
-        (PlotMouseListener)listener_list.elementAt(i);
+      listener = (PlotMouseListener)listener_list.elementAt(i);
       listener.mouseDrag(getPointPosition(drag_start_position),
                          getPointPosition(cross_hair_position));
     }
   }
 
   /**
-   *  Call mouseDoubleClick () on each of the PlotMouseListener objects in the
+   *  Call mouseDoubleClick() on each of the PlotMouseListener objects in the
    *  listener list.
    **/
   private void fireDoubleClickEvent() 
   {
+    PlotMouseListener listener;
     for(int i = 0; i < listener_list.size(); ++i) 
     {
-      final PlotMouseListener listener =
-        (PlotMouseListener)listener_list.elementAt (i);
+      listener = (PlotMouseListener)listener_list.elementAt(i);
       listener.mouseDoubleClick(getPointPosition(cross_hair_position));
     }
   }
@@ -427,37 +391,31 @@ public abstract class Plot extends JPanel
    *  double buffering when drawing the canvas.
    *  @param g The Graphics object of the canvas.
    **/
-  protected void paintCanvas(final Graphics g) 
+  protected void paintComponent(final Graphics g) 
   {
+    super.paintComponent(g);
     if(!isVisible()) 
       return;
 
-    final int canvas_width  = canvas.getSize().width;
-    final int canvas_height = canvas.getSize().height;
+    final int width  = getWidth() - window_changer.getWidth();
+    final int height = getHeight();
 
-    if(canvas_height <= 0 || canvas_width <= 0) 
-    {
-      // there is no point painting a zero width canvas
+    // there is no point painting a zero width canvas
+    if(height <= 0 || width <= 0) 
       return;
-    }
 
     if(offscreen == null) 
-      offscreen = createImage(canvas_width,
-                              canvas_height);
+      offscreen = createImage(width, height);
 
-    Graphics og = offscreen.getGraphics ();
-    og.setClip(0, 0, canvas_width, canvas_height);
-
-    og.setColor(new Color (240, 240, 240));
-
-    og.fillRect(0, 0, canvas.getSize().width, canvas.getSize().height);
+    Graphics og = offscreen.getGraphics();
+    og.setClip(0, 0, width, height);
+    og.setColor(new Color(240, 240, 240));
+    og.fillRect(0, 0, width, height);
 
     // Redraw the graph on the canvas using the algorithm from the
     // constructor.
     drawMultiValueGraph(og);
-
     drawLabels(og);
-
     g.drawImage(offscreen, 0, 0, null);
     og.dispose();
   }
@@ -468,7 +426,7 @@ public abstract class Plot extends JPanel
    **/
   protected int getCrossHairPosition() 
   {
-    if(cross_hair_position >= getCanvas().getSize().width) 
+    if(cross_hair_position >= getSize().width) 
       return -1;
     else 
       return cross_hair_position;
@@ -494,10 +452,10 @@ public abstract class Plot extends JPanel
   protected void drawScaleLine(final Graphics g,
                                final int start, final int end) 
   {
-    final int canvas_width = canvas.getSize ().width;
-    final int canvas_height = canvas.getSize ().height;
+    final int width  = getWidth() - window_changer.getWidth();
+    final int height = getHeight();
 
-    final int scale_number_y_pos =  canvas_height - 1;
+    final int scale_number_y_pos =  height - 1;
 
     final float bases_per_pixel = 1.0F;
 
@@ -510,29 +468,27 @@ public abstract class Plot extends JPanel
 
     final int index_of_first_label;
 
-    if (possible_index_of_first_label == 0) 
+    if(possible_index_of_first_label == 0) 
       index_of_first_label = 1;
     else 
       index_of_first_label = possible_index_of_first_label;
 
     final int index_of_last_label = end / base_label_spacing;
 
-    for (int i = index_of_first_label ;
-         i <= index_of_last_label ;
-         ++i) 
+    String label_string;
+    for(int i = index_of_first_label; i <= index_of_last_label; i++)
     {
-      final String label_string =
-        String.valueOf ((int)(i * base_label_spacing));
+      label_string = String.valueOf((int)(i * base_label_spacing));
 
       final int scale_number_x_pos =
-        (int) ((i * base_label_spacing - start) / bases_per_pixel);
+        (int)((i * base_label_spacing - start) / bases_per_pixel);
 
-      g.drawString (label_string,
-                    scale_number_x_pos + 2,
-                    scale_number_y_pos);
+      g.drawString(label_string,
+                   scale_number_x_pos + 2,
+                   scale_number_y_pos);
 
-      g.drawLine (scale_number_x_pos, canvas_height - getScaleHeight () / 2,
-                  scale_number_x_pos, canvas_height - getScaleHeight ());
+      g.drawLine(scale_number_x_pos, height - getScaleHeight() / 2,
+                 scale_number_x_pos, height - getScaleHeight());
     }
   }
 
@@ -550,54 +506,55 @@ public abstract class Plot extends JPanel
    *    in residues/bases) to start drawing the plot.
    *  @param plot_values The values to plot.
    **/
-  protected void drawPoints (final Graphics g,
-                             final float min_value, final float max_value,
-                             final int step_size, final int window_size,
-                             final int total_unit_count,
-                             final int start_position,
-                             final float [] plot_values) 
+  protected void drawPoints(final Graphics g,
+                            final float min_value, final float max_value,
+                            final int step_size, final int window_size,
+                            final int total_unit_count,
+                            final int start_position,
+                            final float [] plot_values) 
   {
     final float residues_per_pixel =
-      (float) total_unit_count / canvas.getSize ().width;
+      (float) total_unit_count / getSize().width;
 
     // this is the height of the graph (slightly smaller than the canvas for
     // ease of viewing).
-    final int graph_height = canvas.getSize ().height -
-      getLabelHeight () -       // leave room for the algorithm name
-      getScaleHeight () -       // leave room for the scale
+    final int graph_height = getSize().height -
+      getLabelHeight() -       // leave room for the algorithm name
+      getScaleHeight() -       // leave room for the scale
       2;
 
-    if (graph_height < 5) {
-      // too small to draw
+    // too small to draw
+    if(graph_height < 5) 
       return;
-    }
 
     final int number_of_values = plot_values.length;
+    int start_residue;
+    int end_residue;
+    int start_x;
+    int end_x;
 
     for(int i = 0; i<number_of_values - 1; ++i) 
     {
-      final int start_residue =
-        window_size / 2 + i * step_size + start_position;
-      final int end_residue =
-        start_residue + step_size;
+      start_residue = window_size / 2 + i * step_size + start_position;
+      end_residue   = start_residue + step_size;
 
-      final int start_x = (int) (start_residue / residues_per_pixel);
-      final int end_x = (int) (end_residue / residues_per_pixel);
+      start_x = (int)(start_residue / residues_per_pixel);
+      end_x = (int)(end_residue / residues_per_pixel);
 
       // this is a number between 0.0 and 1.0
       final float scaled_start_value =
         (plot_values[i] - min_value) / (max_value - min_value);
       final int start_y =
-        graph_height - (int) (scaled_start_value * graph_height) +
-        getLabelHeight () + 1;
+        graph_height - (int)(scaled_start_value * graph_height) +
+        getLabelHeight() + 1;
 
       final float scaled_end_value =
         (plot_values[i+1] - min_value) / (max_value - min_value);
       final int end_y =
-        graph_height - (int) (scaled_end_value * graph_height) +
-        getLabelHeight () + 1;
+        graph_height - (int)(scaled_end_value * graph_height) +
+        getLabelHeight() + 1;
 
-      g.drawLine (start_x, start_y, end_x, end_y);
+      g.drawLine(start_x, start_y, end_x, end_y);
     }
   }
 
@@ -605,7 +562,7 @@ public abstract class Plot extends JPanel
    *  Redraw the graph on the canvas using the algorithm.
    *  @param g The object to draw into.
    **/
-  protected abstract void drawMultiValueGraph (final Graphics g);
+  protected abstract void drawMultiValueGraph(final Graphics g);
 
   /**
    *  Draw a line representing the average of the algorithm over the feature.
@@ -615,42 +572,43 @@ public abstract class Plot extends JPanel
    *  @param max_value The maximum value of the function for the range we are
    *    viewing
    **/
-  protected void drawGlobalAverage (final Graphics g,
+  protected void drawGlobalAverage(final Graphics g,
                                     final float min_value,
                                     final float max_value) 
   {
-    final Float average = getAlgorithm ().getAverage ();
+    final Float average = getAlgorithm().getAverage();
 
-    if (average != null) {
-      g.setColor (Color.gray);
+    if(average != null) 
+    {
+      g.setColor(Color.gray);
 
       // this is the height of the graph (slightly smaller than the canvas for
       // ease of viewing).
       final int graph_height =
-        canvas.getSize ().height - getFontHeight ();
+        getSize().height - getFontHeight();
 
       // this is a number between 0.0 and 1.0
       final float scaled_average =
-        (average.floatValue () - min_value) / (max_value - min_value);
+        (average.floatValue() - min_value) / (max_value - min_value);
 
       final int position =
         graph_height -
-        (int) (scaled_average * graph_height) +
-        getFontHeight () + 1;
+        (int)(scaled_average * graph_height) +
+        getFontHeight() + 1;
 
-      g.drawLine (0, position,
-                  canvas.getSize ().width, position);
+      g.drawLine(0, position,
+                 getSize().width, position);
 
-      final FontMetrics fm = g.getFontMetrics ();
+      final FontMetrics fm = g.getFontMetrics();
 
-      final int canvas_width = canvas.getSize ().width;
+      final int width = getSize().width;
 
       final String average_string =
-        String.valueOf (Math.round (average.floatValue () * 100.0) / 100.0);
+        String.valueOf(Math.round(average.floatValue() * 100.0) / 100.0);
 
-      g.drawString (average_string,
-                    canvas_width - fm.stringWidth (average_string) - 1,
-                    position);
+      g.drawString(average_string,
+                   width - fm.stringWidth(average_string) - 1,
+                   position);
     }
   }
 
@@ -659,12 +617,12 @@ public abstract class Plot extends JPanel
    *  window size in the bottom left.
    *  @param g The object to draw into.
    **/
-  private void drawLabels (final Graphics g) 
+  private void drawLabels(final Graphics g) 
   {
-    g.setColor (Color.black);
-    g.drawString (getAlgorithm ().getAlgorithmName () +
+    g.setColor(Color.black);
+    g.drawString(getAlgorithm().getAlgorithmName() +
                   "  Window size: " +
-                  String.valueOf (window_changer.getValue ()),
+                  String.valueOf(window_changer.getValue()),
                   2,
                   font_height);
   }
@@ -677,32 +635,32 @@ public abstract class Plot extends JPanel
   protected void drawMinMax(final Graphics g,
                             final float min_value, final float max_value)
   {
-    g.setColor (Color.black);
+    g.setColor(Color.black);
 
-    final int canvas_width = canvas.getSize ().width;
-    final int canvas_height = canvas.getSize ().height;
+    final int width  = getWidth() - window_changer.getWidth();
+    final int height = getHeight();
 
-    g.drawLine (0, canvas_height - getScaleHeight (),
-                canvas_width, canvas_height - getScaleHeight ());
+    g.drawLine(0, height - getScaleHeight(),
+               width, height - getScaleHeight());
 
-    g.drawLine (0, getLabelHeight (),
-                canvas_width, getLabelHeight ());
+    g.drawLine(0, getLabelHeight(),
+               width, getLabelHeight());
 
-    final FontMetrics fm = g.getFontMetrics ();
+    final FontMetrics fm = g.getFontMetrics();
 
     final String min_string =
-      String.valueOf (((int) (min_value * 100)) / 100.0);
+      String.valueOf(((int)(min_value * 100)) / 100.0);
 
-    g.drawString (min_string,
-                  canvas_width - fm.stringWidth (min_string) - 1,
-                  canvas_height - 1 - getScaleHeight ());
+    g.drawString(min_string,
+                 width - fm.stringWidth(min_string) - 1,
+                 height - 1 - getScaleHeight());
 
     final String max_string =
-      String.valueOf (((int) (max_value * 100)) / 100.0);
+      String.valueOf(((int)(max_value * 100)) / 100.0);
 
-    g.drawString (max_string,
-                  canvas_width - fm.stringWidth (max_string) - 1,
-                  1 + getFontHeight () * 2);
+    g.drawString(max_string,
+                 width - fm.stringWidth(max_string) - 1,
+                 1 + getFontHeight() * 2);
   }
 
   /**
@@ -714,50 +672,22 @@ public abstract class Plot extends JPanel
   protected void drawCrossHair(final Graphics g, final int x_position,
                                final String label, final int label_pos) 
   {
-    if (x_position >= 0) 
+    if(x_position >= 0) 
     {
-      g.drawLine (x_position, getLabelHeight (),
-                  x_position, canvas.getSize ().height);
+      g.drawLine(x_position, getLabelHeight(),
+                  x_position, getSize().height);
 
-      g.drawString (label, x_position + 2,
-                    getFontHeight () * (2 + label_pos) + 2);
+      g.drawString(label, x_position + 2,
+                   getFontHeight() * (2 + label_pos) + 2);
     }
   }
-
-  /**
-   *  Return the JComponent of this Plot.
-   **/
-  protected JComponent getCanvas() 
-  {
-    return canvas;
-  }
-
-  /**
-   *  Call repaint () on the canvas object.
-   **/
-  protected void repaintCanvas() 
-  {
-    canvas.repaint ();
-  }
-
-  /**
-   *  Recalculate the values all the state that is used for drawing the plot
-   **/
-  protected abstract void recalculateValues ();
-
-  /**
-   *  Get the position in the Feature or Sequence of the given x canvas
-   *  position.  This is the label used when the user clicks the mouse in on
-   *  the canvas (see drawCrossHair ()).
-   **/
-  protected abstract int getPointPosition (final int canvas_x_position);
 
   /**
    *  Return the amount of vertical space (in pixels) to use for the scale.
    **/
   private int getScaleHeight() 
   {
-    if (draw_scale) 
+    if(draw_scale) 
       return getFontHeight() + 2;
     else 
       return 0;

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePlot.java,v 1.1 2004-06-09 09:46:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePlot.java,v 1.2 2004-11-24 09:38:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -36,7 +36,7 @@ import java.awt.event.*;
  *  particular feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePlot.java,v 1.1 2004-06-09 09:46:42 tjc Exp $
+ *  @version $Id: FeaturePlot.java,v 1.2 2004-11-24 09:38:20 tjc Exp $
  **/
 
 public class FeaturePlot extends Plot
@@ -104,7 +104,7 @@ public class FeaturePlot extends Plot
 
     recalculate_flag = true;
 
-    repaintCanvas ();
+    repaint();
   }
 
   /**
@@ -325,7 +325,7 @@ public class FeaturePlot extends Plot
       }
 
       drawPoints (g, min_value, max_value, step_size, window_size,
-                  getCanvas ().getSize ().width,
+                  getSize ().width,
                   0, // no offset.
                   value_array_array[value_index]);
     }

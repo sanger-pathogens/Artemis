@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.1 2004-06-09 09:46:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.2 2004-11-24 09:38:20 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -40,7 +40,7 @@ import javax.swing.*;
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.1 2004-06-09 09:46:04 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.2 2004-11-24 09:38:20 tjc Exp $
  **/
 
 public class BasePlot extends Plot
@@ -181,7 +181,7 @@ public class BasePlot extends Plot
       selection_end_marker = null;
     }
 
-    repaintCanvas ();
+    repaint();
   }
 
   /**
@@ -191,7 +191,7 @@ public class BasePlot extends Plot
   public void selectionChanged (SelectionChangeEvent event) {
     selection_start_marker = null;
     selection_end_marker = null;
-    repaintCanvas ();
+    repaint();
   }
 
   /**
@@ -500,7 +500,7 @@ public class BasePlot extends Plot
    *  canvas (see drawCrossHair ()).
    **/
   protected int getPointPosition (final int canvas_x_position) {
-    return (int) ((1.0 * canvas_x_position / getCanvas ().getSize ().width) *
+    return (int) ((1.0 * canvas_x_position / getSize ().width) *
                   getWidthInBases ()) + getStart ();
   }
 
@@ -509,7 +509,7 @@ public class BasePlot extends Plot
    **/
   private int getCanvasPosition (final int base) {
     return (int) ((1.0 * base - getStart ()) / getWidthInBases () *
-                  getCanvas ().getSize ().width);
+                  getSize ().width);
   }
 
   /**

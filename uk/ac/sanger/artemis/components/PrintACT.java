@@ -71,7 +71,7 @@ public class PrintACT extends ScrollPanel
         {
           if(c[j] instanceof BasePlot)
           {
-            ((BasePlot)c[j]).paintCanvas(g2d);
+            ((BasePlot)c[j]).paintComponent(g2d);
             g2d.translate(0,((BasePlot)c[j]).getHeight());
           }
         }
@@ -89,7 +89,7 @@ public class PrintACT extends ScrollPanel
         {
           if(c[j] instanceof BasePlot)
           {
-            ((BasePlot)c[j]).paintCanvas(g2d);
+            ((BasePlot)c[j]).paintComponent(g2d);
             g2d.translate(0,((BasePlot)c[j]).getHeight());
           }
         }
@@ -125,7 +125,7 @@ public class PrintACT extends ScrollPanel
             height += ((BasePlot)c[j]).getHeight();
             if(((BasePlot)c[j]).getSize().width < width &&
                ((BasePlot)c[j]).getSize().width  > 0)
-              width = ((BasePlot)c[j]).getCanvas().getSize().width;
+              width = ((BasePlot)c[j]).getSize().width;
           }
       }
 
@@ -143,7 +143,7 @@ public class PrintACT extends ScrollPanel
             height += ((BasePlot)c[j]).getHeight();
             if(((BasePlot)c[j]).getSize().width < width &&
                ((BasePlot)c[j]).getSize().width  > 0)
-              width = ((BasePlot)c[j]).getCanvas().getSize().width;
+              width = ((BasePlot)c[j]).getSize().width;
           }
       }
 
@@ -313,7 +313,7 @@ public class PrintACT extends ScrollPanel
             height += ((BasePlot)c[j]).getHeight();
             if(((BasePlot)c[j]).getSize().width < width &&
                ((BasePlot)c[j]).getSize().width  > 0)
-              width = ((BasePlot)c[j]).getCanvas().getSize().width;
+              width = ((BasePlot)c[j]).getSize().width;
           }
       }
 
@@ -331,7 +331,7 @@ public class PrintACT extends ScrollPanel
             height += ((BasePlot)c[j]).getHeight();
             if(((BasePlot)c[j]).getSize().width < width &&
                ((BasePlot)c[j]).getSize().width  > 0)
-              width = ((BasePlot)c[j]).getCanvas().getSize().width;
+              width = ((BasePlot)c[j]).getSize().width;
           }
       }
 

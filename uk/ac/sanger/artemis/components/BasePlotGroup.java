@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlotGroup.java,v 1.4 2004-11-17 13:19:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlotGroup.java,v 1.5 2004-11-24 09:38:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -42,7 +42,7 @@ import javax.swing.*;
  *  which can toggled off and on.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlotGroup.java,v 1.4 2004-11-17 13:19:43 tjc Exp $
+ *  @version $Id: BasePlotGroup.java,v 1.5 2004-11-24 09:38:20 tjc Exp $
  **/
 
 public class BasePlotGroup extends JPanel
@@ -199,7 +199,7 @@ public class BasePlotGroup extends JPanel
         BasePlot bp = (BasePlot)children[i];
         if(!bp.isVisible())
           continue;
-        bp.paintCanvas(g);
+        bp.paintComponent(g);
         g.translate(0,bp.getHeight());
       }
   }
