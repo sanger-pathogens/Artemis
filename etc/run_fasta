@@ -6,7 +6,7 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.3 2004-06-22 10:39:58 tjc Exp $"
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.4 2004-07-07 13:31:21 tjc Exp $"
 
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
@@ -39,6 +39,15 @@ run_one_prog () {
     OUTPUT_FILE=$2
     DATABASE=$3
 
+### strip out directory from command line
+
+    IN=`echo $INPUT_FILE | sed -n -e "s|$PWD//||p"`
+ 
+    if test "$IN" != "" && test -f $IN; then
+      INPUT_FILE="$IN"
+    fi
+   
+    echo "\n\nIN=$IN\nPWD=$PWD\nINPUT_FILE=$INPUT_FILE\n\n"
     ### change these lines:
 
     ### get sequence size
