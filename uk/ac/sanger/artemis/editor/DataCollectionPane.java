@@ -467,145 +467,6 @@ public class DataCollectionPane extends JScrollPane
   }
 
 
-  /**
-  *
-  * Creates and executes an SRS query for all the hits in the
-  * collection.
-  * @param hit          HitInfo for a single hit.
-  * @param ortholog     true if ortholog is selected.
-  *
-  */
-  protected static void getzCall(final Vector hits, final int nretrieve)
-  {
-    SwingWorker getzWorker = new SwingWorker()
-    {
-      public Object construct()
-      {
-        final String env[] = { "PATH=/usr/local/pubseq/bin/" };
-
-        StringBuffer query = new StringBuffer();
-
-        int n = 0;
-        query.append("[uniprot-acc:");
-
-        Enumeration ehits = hits.elements();
-        while(ehits.hasMoreElements())
-        {
-          if(n>nretrieve)
-            break;
-          HitInfo hit = (HitInfo)ehits.nextElement();
-          if(n > 0)
-            query.append("|");
-
-          query.append(hit.getAcc());
-          n++;
-        }
-        query.append("]");
-
-        String cmd[]   = { "getz", "-f", "acc org description gen",
-                           query.toString() };
-
-        ExternalApplication app = new ExternalApplication(cmd,
-                                                env,null);
-        String res = app.getProcessStdout();
-
-        HitInfo hit = null;
-        String line = null;
-        String lineStrip = null;
-        StringReader strread   = new StringReader(res);
-        BufferedReader strbuff = new BufferedReader(strread);
-
-        try
-        {
-          while((line = strbuff.readLine()) != null)
-          {
-            line = line.trim();
-            if(line.equals(""))
-              continue;
-
-            lineStrip = line.substring(3).trim();
-            if(line.startsWith("AC"))
-            {
-              hit = getHitInfo(lineStrip,hits);
-
-              if(hit == null)
-              {
-                System.out.println("HIT NOT FOUND "+line);
-                continue;
-              }
-
-              hit.setOrganism("");
-              hit.setGeneName("");
-            }
-
-            if(hit == null)
-              continue;
-
-            if(line.startsWith("OS "))
-              hit.setOrganism(lineStrip);
-            else if(line.startsWith("DE "))
-              hit.appendDescription(lineStrip);
-            else if(line.startsWith("GN "))
-            {
-              StringTokenizer tokGN = new StringTokenizer(lineStrip,";");
-              while(tokGN.hasMoreTokens())
-              {
-                line = tokGN.nextToken();
-                if(line.startsWith("Name="))
-                  hit.setGeneName(line.substring(5));
-//              else
-//                hit.appendDescription(line);
-              }
-            }
-          }
-        }
-        catch(IOException ioe){}
-
-        ehits = hits.elements();
-        while(ehits.hasMoreElements())
-        {
-          hit = (HitInfo)ehits.nextElement();
-
-          String cmd2[] = { "getz", "-f", "id",
-                 "[libs={uniprot}-id:"+hit.getID()+"]>EMBL" };
-          app = new ExternalApplication(cmd2,env,null);
-          res = app.getProcessStdout();
- 
-          int ind1 = res.indexOf("ID ");
-          if(ind1 > -1)
-          {
-            StringTokenizer tok = new StringTokenizer(res);
-            tok.nextToken();
-            hit.setEMBL(tok.nextToken());
-          }
-          else
-            hit.setEMBL("");
-
-          // EC_number
-          if(hit.getEC_number() != null)
-            continue;
-            
-          String cmd3[] = { "getz", "-f", "id",
-                 "[libs={uniprot}-id:"+hit.getID()+"]>enzyme" };
-          app = new ExternalApplication(cmd3,env,null);
-          res = app.getProcessStdout();
-
-          ind1 = res.indexOf("ID ");
-          if(ind1 > -1)
-          {
-            StringTokenizer tok = new StringTokenizer(res);
-            tok.nextToken();
-            hit.setEC_number(tok.nextToken());
-          }
-        }
-        return null;
-      }
-    };
-    getzWorker.start();
-
-  }
-
-
   private HitInfo findHitInfo(String acc)
   {
     Enumeration hitEnum = fastaTextPane.getHitCollection().elements();
@@ -620,25 +481,25 @@ public class DataCollectionPane extends JScrollPane
   }
 
 
-  private static HitInfo getHitInfo(String acc, Vector hits)
-  {
-    int ind = 0;
-    acc     = acc.trim(); 
-    
-    if((ind = acc.indexOf(";")) > -1)
-      acc = acc.substring(0,ind);
+//private static HitInfo getHitInfo(String acc, Vector hits)
+//{
+//  int ind = 0;
+//  acc     = acc.trim(); 
+//  
+//  if((ind = acc.indexOf(";")) > -1)
+//    acc = acc.substring(0,ind);
 
-    Enumeration ehits = hits.elements();
-    HitInfo hit = null;
-    while(ehits.hasMoreElements())
-    {
-      hit = (HitInfo)ehits.nextElement();
-      if(hit.getAcc().equals(acc))
-        return hit;
-    }
+//  Enumeration ehits = hits.elements();
+//  HitInfo hit = null;
+//  while(ehits.hasMoreElements())
+//  {
+//    hit = (HitInfo)ehits.nextElement();
+//    if(hit.getAcc().equals(acc))
+//      return hit;
+ // }
 
-    return null;
-  }
+//  return null;
+//}
 
   /**
   *

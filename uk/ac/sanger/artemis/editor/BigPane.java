@@ -248,6 +248,8 @@ public class BigPane extends JFrame
             qualifier.setText(newTxt);
         }
 
+        dataView.stopGetz();
+
         BigPane.srsFrame = null;
         dispose();
       }

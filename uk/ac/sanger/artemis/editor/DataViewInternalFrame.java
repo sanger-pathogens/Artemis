@@ -43,6 +43,7 @@ public class DataViewInternalFrame extends JInternalFrame
   private JTabbedPane tabPane = new JTabbedPane();
   private Annotation ann;
   private Box evidenceBox;
+  private Vector fastaCollection = new Vector();
 
   public DataViewInternalFrame(Object dataFile[], JDesktopPane desktop,
                                final JScrollPane scrollEvidence,
@@ -97,6 +98,7 @@ public class DataViewInternalFrame extends JInternalFrame
 
       // add fasta results internal frame
       FastaTextPane fastaPane = new FastaTextPane((String)dataFile[i]);
+      fastaCollection.add(fastaPane);
 
       if(qualifier_txt.indexOf("/"+fastaPane.getFormat()+"_file=\"") == -1)
       {
@@ -223,6 +225,15 @@ public class DataViewInternalFrame extends JInternalFrame
         return;
       }
     }
+  }
+
+
+  protected void stopGetz()
+  {
+    Enumeration fastaEnum = fastaCollection.elements();
+
+    while(fastaEnum.hasMoreElements())
+      ((FastaTextPane)fastaEnum.nextElement()).stopGetz();
   }
 
 

@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.File;
+import java.io.StringReader;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.util.Vector;
@@ -51,6 +52,7 @@ public class FastaTextPane extends JScrollPane
   private String dataFile;
   private int qlen;
   private Vector listerners = new Vector();
+  private Vector threads = new Vector();
 
   public FastaTextPane(String dataFile)
   {
@@ -344,6 +346,7 @@ public class FastaTextPane extends JScrollPane
 
       GetzThread getz = new GetzThread(hitInfoCollection);
       getz.start();
+      threads.add(getz);
     }
     catch (IOException ioe)
     {
@@ -471,6 +474,7 @@ public class FastaTextPane extends JScrollPane
 
       GetzThread getz = new GetzThread(hitInfoCollection);
       getz.start();
+      threads.add(getz);
     }
     catch (IOException ioe)
     {
@@ -495,23 +499,60 @@ public class FastaTextPane extends JScrollPane
     return hitInfoCollection;
   }
 
-  protected HitInfo getHitInfo(String ID, Vector hitInfoCollection)
+
+  private static HitInfo getHitInfo(String acc, Vector hits)
   {
-    Enumeration hitInfo = hitInfoCollection.elements();
-    
-    while(hitInfo.hasMoreElements())
+    int ind = 0;
+    acc     = acc.trim();
+
+    if((ind = acc.indexOf(";")) > -1)
+      acc = acc.substring(0,ind);
+
+    Enumeration ehits = hits.elements();
+    HitInfo hit = null;
+    while(ehits.hasMoreElements())
     {
-      HitInfo hi = (HitInfo)hitInfo.nextElement();
-      if(hi.getID().equals(ID))
-        return hi;
+      hit = (HitInfo)ehits.nextElement();
+      if(hit.getAcc().equals(acc) ||
+         hit.getID().equals(acc))
+        return hit;
     }
 
     return null;
   }
 
+//protected HitInfo getHitInfo(String ID, Vector hitInfoCollection)
+//{
+//  Enumeration hitInfo = hitInfoCollection.elements();
+//  
+//  while(hitInfo.hasMoreElements())
+//  {
+//    HitInfo hi = (HitInfo)hitInfo.nextElement();
+//    if(hi.getID().equals(ID))
+//      return hi;
+//  }
+
+//  return null;
+//}
+
+   
+  /**
+  *
+  * Stop all getz processes
+  *
+  */
+  protected void stopGetz()
+  {
+    Enumeration threadEnum = threads.elements();
+
+    while(threadEnum.hasMoreElements())
+      ((GetzThread)threadEnum.nextElement()).stopMe();
+  }
+
   class GetzThread extends Thread
   {
     private Vector hitInfoCollection;
+    private boolean keepRunning = true;
 
     protected GetzThread(Vector hitInfoCollection)
     {
@@ -527,8 +568,143 @@ public class FastaTextPane extends JScrollPane
 //    for(int i=0; i<max; i++)
 //      DataCollectionPane.getzCall((HitInfo)hitInfoCollection.get(i),false);
 
-      DataCollectionPane.getzCall(hitInfoCollection,hitInfoCollection.size());
+//    DataCollectionPane.getzCall(hitInfoCollection,hitInfoCollection.size());
+      getzCall(hitInfoCollection,hitInfoCollection.size());
     }
+
+    protected void stopMe()
+    {
+      keepRunning = false;
+    }
+
+    /**
+    *
+    * Creates and executes an SRS query for all the hits in the
+    * collection.
+    * @param hit          HitInfo for a single hit.
+    * @param ortholog     true if ortholog is selected.
+    *
+    */
+    private void getzCall(final Vector hits, final int nretrieve)
+    {
+      final String env[] = { "PATH=/usr/local/pubseq/bin/" };
+
+      StringBuffer query = new StringBuffer();
+
+      int n = 0;
+      query.append("[uniprot-acc:");
+
+      Enumeration ehits = hits.elements();
+      while(ehits.hasMoreElements() && keepRunning)
+      {
+        if(n>nretrieve)
+          break;
+        HitInfo hit = (HitInfo)ehits.nextElement();
+        if(n > 0)
+          query.append("|");
+
+        query.append(hit.getAcc());
+        n++;
+      }
+      query.append("]");
+                      
+      String cmd[]   = { "getz", "-f", "acc org description gen",
+                         query.toString() };
+                      
+      ExternalApplication app = new ExternalApplication(cmd,
+                                              env,null);
+      String res = app.getProcessStdout();
+                      
+      HitInfo hit = null;
+      String line = null;
+      String lineStrip = null;
+      StringReader strread   = new StringReader(res);
+      BufferedReader strbuff = new BufferedReader(strread);
+
+      try             
+      { 
+        while((line = strbuff.readLine()) != null)
+        {             
+          line = line.trim();
+          if(line.equals(""))
+            continue; 
+                      
+          lineStrip = line.substring(3).trim();
+          if(line.startsWith("AC"))
+          {           
+            hit = getHitInfo(lineStrip,hits);
+                      
+            if(hit == null)
+            {         
+              System.out.println("HIT NOT FOUND "+line);
+              continue;
+            }         
+                      
+            hit.setOrganism("");
+            hit.setGeneName("");
+          }           
+                      
+          if(hit == null)
+            continue; 
+                      
+          if(line.startsWith("OS "))
+            hit.setOrganism(lineStrip);
+          else if(line.startsWith("DE "))
+            hit.appendDescription(lineStrip);
+          else if(line.startsWith("GN "))
+          {           
+            StringTokenizer tokGN = new StringTokenizer(lineStrip,";");
+            while(tokGN.hasMoreTokens())
+            {         
+              line = tokGN.nextToken();
+              if(line.startsWith("Name="))
+                hit.setGeneName(line.substring(5));
+//            else    
+//              hit.appendDescription(line);
+            }         
+          }           
+        }   
+      }   
+      catch(IOException ioe){}
+
+      ehits = hits.elements();
+      while(ehits.hasMoreElements() && keepRunning)
+      {               
+        hit = (HitInfo)ehits.nextElement();
+                      
+        String cmd2[] = { "getz", "-f", "id",
+               "[libs={uniprot}-id:"+hit.getID()+"]>EMBL" };
+        app = new ExternalApplication(cmd2,env,null);
+        res = app.getProcessStdout();
+                      
+        int ind1 = res.indexOf("ID ");
+        if(ind1 > -1) 
+        {             
+          StringTokenizer tok = new StringTokenizer(res);
+          tok.nextToken();
+          hit.setEMBL(tok.nextToken());
+        }             
+        else          
+          hit.setEMBL("");
+                      
+        // EC_number  
+        if(hit.getEC_number() != null)
+          continue;   
+                      
+        String cmd3[] = { "getz", "-f", "id",
+               "[libs={uniprot}-id:"+hit.getID()+"]>enzyme" };
+        app = new ExternalApplication(cmd3,env,null);
+        res = app.getProcessStdout();
+                      
+        ind1 = res.indexOf("ID ");
+        if(ind1 > -1) 
+        {             
+          StringTokenizer tok = new StringTokenizer(res);
+          tok.nextToken();
+          hit.setEC_number(tok.nextToken());
+        }             
+      }               
+    }              
 
   }
 
