@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.11 2005-01-06 11:21:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.12 2005-01-11 13:27:55 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.11 2005-01-06 11:21:06 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.12 2005-01-11 13:27:55 tjc Exp $
  **/
 
 public class FeatureEdit extends JFrame
@@ -602,6 +602,9 @@ public class FeatureEdit extends JFrame
     {
       JButton oo_edit_button = new JButton("ObjectEdit");
       location_button_panel.add(oo_edit_button);
+      final uk.ac.sanger.artemis.editor.BigPane bp =
+                             new uk.ac.sanger.artemis.editor.BigPane();
+
       oo_edit_button.addActionListener(new ActionListener ()
       {
         public void actionPerformed(ActionEvent e)
@@ -694,9 +697,8 @@ public class FeatureEdit extends JFrame
               // show object editor
               try
               {
-                new uk.ac.sanger.artemis.editor.BigPane(dataFile.toArray(),
-                                         qualifier_text_area, overlapFeatures,
-                                         edit_feature);
+               bp.set(dataFile.toArray(), qualifier_text_area, overlapFeatures,
+                      edit_feature);
               }
               catch(ArrayIndexOutOfBoundsException e)
               {
