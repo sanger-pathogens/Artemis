@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+
+<!--
+
+  Ant build file for Artemis
+
+-->
+
+<project default="package" basedir=".">
+
+  <target name="init">
+    <tstamp />
+    <property name="name" value="artemis" />
+    <property name="version" value="live" />
+
+    <property name="build.compiler" value="modern" />
+
+    <property name="classpath" value="" />
+
+    <property name="src.dir" value="./" />
+    <property name="docs.dir" value="./docs" />
+
+    <property name="packages" value="uk.* diana.*" />
+
+    <property name="build.dir" value="./ant-build" />
+    <!-- Subdirectories for main source and classes -->
+    <property name="build.src.main" value="${build.dir}/src/main" />
+    <property name="build.dest.main" value="${build.dir}/classes/main" />
+
+    <!-- Subdirectories for tests source and classes -->
+    <property name="build.src.tests" value="${build.dir}/src/tests" />
+    <property name="build.dest.tests" value="${build.dir}/classes/tests" />
+
+    <!-- Subdirectories for docs -->
+    <property name="build.src.docs" value="${build.dir}/src/docs" />
+    <property name="build.dest.docs" value="${build.dir}/docs" />
+    <property name="build.dest.javadocs" value="${build.dest.docs}/api" />
+
+    <!-- Subdirectory for libraries used during build -->
+    <property name="build.lib" value="${build.dir}/lib" />
+
+    <!-- Subdirectory for test reports -->
+    <property name="reports.tests" value="./reports/tests" />
+
+    <property name="dist.root" value="./dist" />
+    <property name="dist.dir" value="${dist.root}/${name}-${version}" />
+  </target>
+
+  <!-- Prepares the build directory -->
+  <target name="prepare" depends="init">
+    <mkdir dir="${build.dir}" />
+  </target>
+
+  <!-- Prepares the source code -->
+  <target name="prepare-core" depends="init,prepare">
+
+    <!-- Creates directories -->
+    <mkdir dir="${build.src.main}" />
+    <mkdir dir="${build.dest.main}" />
+    <mkdir dir="${build.src.tests}" />
+    <mkdir dir="${build.dest.tests}" />
+    <mkdir dir="${reports.tests}" />
+    <mkdir dir="${build.src.docs}" />
+    <mkdir dir="${build.dest.docs}" />
+    <mkdir dir="${build.dest.javadocs}" />
+    <mkdir dir="${build.lib}" />
+
+    <!-- Copies src files -->
+    <copy todir="${build.src.main}">
+      <fileset dir="${src.dir}">
+        <include name="*.class" />
+      </fileset>
+    </copy>
+
+    <!-- Copies docs files -->
+    <copy todir="${build.src.docs}">
+      <fileset dir="${docs.dir}">
+        <exclude name="**/CVS/**" />
+      </fileset>
+    </copy>
+
+    <!-- Copies jars -->
+    <copy todir="${build.dir}">
+      <fileset dir=".">
+        <include name="*.jar" />
+        <exclude name="${docbook.tools.file}" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="prepare-src" depends="init,prepare-core" />
+
+  <!-- Compiles the source directory -->
+  <target name="compile" depends="init,prepare-src">
+    <javac
+      srcdir="${build.src.main}"
+      destdir="${build.dest.main}"
+      classpath="${classpath}"
+      deprecation="false"
+      depend="no"
+      debug="true"
+    />
+  </target>
+
+  <!-- Compiles the tests directory -->
+  <target name="compile-tests" depends="init,prepare-src,compile">
+    <javac
+      srcdir="${build.src.tests}"
+      destdir="${build.dest.tests}"
+      debug="true"
+      deprecation="false"
+      depend="yes">
+      <classpath>
+        <pathelement path="${classpath}" />
+        <pathelement path="${build.dest.main}" />
+      </classpath>
+    </javac>
+  </target>
+
+  <!-- Creates the class package (tests are left in the parallel tree) -->
+  <target name="package" depends="init,compile">
+    <jar
+      jarfile="${build.dir}/${name}.jar"
+      basedir="${build.dest.main}"
+      manifest="META-INF/MANIFEST.MF"
+      includes="**"
+    />
+  </target>
+  
+  <!-- Runs tests if the Ant optional JUnit support is available -->
+  <target name="runtests" depends="init,compile-tests" >
+    <junit maxmemory="128m" printsummary="yes" haltonfailure="no" dir="${build.dest.tests}">
+      <formatter type="plain" usefile="true" />
+      <classpath>
+        <!-- main classes from build -->
+        <pathelement path="${build.dest.main}" />
+        <!-- test classes from build -->
+        <pathelement path="${build.dest.tests}" />
+        <!-- test data from build -->
+        <pathelement path="${build.src.tests}" />
+        <!-- classes specified in this file -->
+        <pathelement path="${classpath}" />
+        <!-- classes specified in system classpath -->
+        <pathelement path="${java.class.path}" />
+      </classpath>
+      <batchtest fork="yes" todir="${reports.tests}">
+        <fileset dir="${build.dest.tests}">
+          <include name="**/*Test.class" />
+          <include name="**/*TestSuite.class" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!-- Cleans everything -->
+  <target name="clean" depends="init">
+    <delete dir="${build.dir}" />
+    <delete dir="${dist.root}" />
+    <delete file="${name}-${version}.tar.gz" />
+    <delete file="${name}-${version}.tar" />
+    <delete file="${name}-${version}.zip" />
+  </target>
+</project>
