@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FilteredEntryGroup.java,v 1.1 2004-06-09 09:44:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FilteredEntryGroup.java,v 1.2 2005-02-17 09:21:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -37,7 +37,7 @@ import java.util.NoSuchElementException;
  *  object.
  *
  *  @author Kim Rutherford
- *  @version $Id: FilteredEntryGroup.java,v 1.1 2004-06-09 09:44:50 tjc Exp $
+ *  @version $Id: FilteredEntryGroup.java,v 1.2 2005-02-17 09:21:10 tjc Exp $
  **/
 
 public class FilteredEntryGroup implements EntryGroup
@@ -686,7 +686,27 @@ public class FilteredEntryGroup implements EntryGroup
    *  Return those features in the given FeatureVector that pass
    *  feature_predicate.
    **/
-  protected FeatureVector filterFeatures(final FeatureVector features) 
+  protected FeatureVector filterFeatures() 
+  {
+    final FeatureEnumeration test_enumerator = entry_group.features();
+    final FeatureVector return_features = new FeatureVector();
+
+    while(test_enumerator.hasMoreFeatures())
+    {
+      final Feature this_feature = test_enumerator.nextFeature();
+
+      if (feature_predicate.testPredicate (this_feature))
+            return_features.add (this_feature);
+    }
+
+    return return_features;
+  }
+
+  /**
+   *  Return those features in the given FeatureVector that pass
+   *  feature_predicate.
+   **/
+  protected FeatureVector filterFeatures(final FeatureVector features)
   {
     final FeatureVector return_features = new FeatureVector();
 
@@ -707,7 +727,7 @@ public class FilteredEntryGroup implements EntryGroup
   private FeatureVector getFilteredFeatures() 
   {
     if(filtered_features == null) 
-      filtered_features = filterFeatures(getEntryGroup().getAllFeatures());
+      filtered_features = filterFeatures();
     
     return filtered_features;
   }
