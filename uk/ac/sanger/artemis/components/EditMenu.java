@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.3 2004-12-17 15:24:52 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -53,17 +53,34 @@ import javax.swing.*;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.3 2004-12-17 15:24:52 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
-    implements EntryGroupChangeListener, EntryChangeListener {
+    implements EntryGroupChangeListener, EntryChangeListener 
+{
+
+  /**
+   *  The GotoEventSource object that was passed to the constructor.
+   **/
+  private GotoEventSource goto_event_source = null;
+
+  /**
+   *  The EntryGroup object that was passed to the constructor.
+   **/
+  private EntryGroup entry_group = null;
+
+  /**
+   *  The BasePlotGroup object that was passed to the constructor.
+   **/
+  private BasePlotGroup base_plot_group = null;
+
   /**
    *  Create a new EditMenu object.
    *  @param frame The JFrame that owns this JMenu.
    *  @param selection The Selection that the commands in the menu will
    *    operate on.
-   *  @param goto_event_source The object the we will call makeBaseVisible ()
+   *  @param goto_event_source The object the we will call makeBaseVisible()
    *    on.
    *  @param entry_group The EntryGroup object where new features/entries will
    *    be added.
@@ -71,22 +88,22 @@ public class EditMenu extends SelectionMenu
    *    needed to call getCodonUsageAlgorithm()
    *  @param menu_name The name of the new menu.
    **/
-  public EditMenu (final JFrame frame,
-                   final Selection selection,
-                   final GotoEventSource goto_event_source,
-                   final EntryGroup entry_group,
-                   final BasePlotGroup base_plot_group,
-                   final String menu_name) {
-    super (frame, menu_name, selection);
+  public EditMenu(final JFrame frame,
+                  final Selection selection,
+                  final GotoEventSource goto_event_source,
+                  final EntryGroup entry_group,
+                  final BasePlotGroup base_plot_group,
+                  final String menu_name)
+  {
+    super(frame, menu_name, selection);
 
     this.entry_group = entry_group;
     this.goto_event_source = goto_event_source;
     this.base_plot_group = base_plot_group;
 
-    getEntryGroup ().addEntryGroupChangeListener (this);
-    getEntryGroup ().addEntryChangeListener (this);
-
-    refreshMenu ();
+    getEntryGroup().addEntryGroupChangeListener(this);
+    getEntryGroup().addEntryChangeListener(this);
+    refreshMenu();
   }
 
   /**
@@ -94,62 +111,63 @@ public class EditMenu extends SelectionMenu
    *  @param frame The JFrame that owns this JMenu.
    *  @param selection The Selection that the commands in the menu will
    *    operate on.
-   *  @param goto_event_source The object the we will call makeBaseVisible ()
+   *  @param goto_event_source The object the we will call makeBaseVisible()
    *    on.
    *  @param entry_group The EntryGroup object where new features/entries will
    *    be added.
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  public EditMenu (final JFrame frame,
-                   final Selection selection,
-                   final GotoEventSource goto_event_source,
-                   final EntryGroup entry_group,
-                   final BasePlotGroup base_plot_group) {
-    this (frame, selection, goto_event_source, entry_group,
-          base_plot_group, "Edit");
+  public EditMenu(final JFrame frame,
+                  final Selection selection,
+                  final GotoEventSource goto_event_source,
+                  final EntryGroup entry_group,
+                  final BasePlotGroup base_plot_group) 
+  {
+    this(frame, selection, goto_event_source, entry_group,
+         base_plot_group, "Edit");
   }
 
   /**
    *  The shortcut for Edit Selected Features.
    **/
   final static KeyStroke EDIT_FEATURES_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_E, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK);
   final static public int EDIT_FEATURES_KEY_CODE = KeyEvent.VK_E;
 
   /**
    *  The shortcut for Merge Selected Features.
    **/
   final static KeyStroke MERGE_FEATURES_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_M, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_MASK);
   final static public int MERGE_FEATURES_KEY_CODE = KeyEvent.VK_M;
 
   /**
    *  The shortcut for Duplicate Selected Features.
    **/
   final static KeyStroke DUPLICATE_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_D, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK);
   final static public int DUPLICATE_KEY_CODE = KeyEvent.VK_D;
 
   /**
    *  The shortcut for Delete Selected Features.
    **/
   final static KeyStroke DELETE_FEATURES_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_DELETE, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, InputEvent.CTRL_MASK);
   final static public int DELETE_FEATURES_KEY_CODE = KeyEvent.VK_DELETE;
 
   /**
    *  The shortcut for Trim Selected Features.
    **/
   final static KeyStroke TRIM_FEATURES_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_T, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_MASK);
   final static public int TRIM_FEATURES_KEY_CODE = KeyEvent.VK_T;
 
   /**
    *  The shortcut for Trim Selected Features To Next Any.
    **/
   final static KeyStroke TRIM_FEATURES_TO_NEXT_ANY_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_Y, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK);
   final static public int TRIM_FEATURES_TO_NEXT_ANY_KEY_CODE = KeyEvent.VK_Y;
 
   /**
@@ -158,337 +176,396 @@ public class EditMenu extends SelectionMenu
   final static public int EXTEND_TO_PREVIOUS_STOP_CODON_KEY_CODE =
     KeyEvent.VK_Q;
   final static KeyStroke EXTEND_TO_PREVIOUS_STOP_CODON_KEY =
-    makeMenuKeyStroke (EXTEND_TO_PREVIOUS_STOP_CODON_KEY_CODE);
+    makeMenuKeyStroke(EXTEND_TO_PREVIOUS_STOP_CODON_KEY_CODE);
 
   /**
    *  The shortcut for Undo.
    **/
   final static public int UNDO_KEY_CODE = KeyEvent.VK_U;
   final static KeyStroke UNDO_KEY =
-    KeyStroke.getKeyStroke (UNDO_KEY_CODE, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(UNDO_KEY_CODE, InputEvent.CTRL_MASK);
 
   /**
    *  Implementation of the EntryGroupChangeListener interface.  We listen to
    *  EntryGroupChange events so that we can update the display if entries
    *  are added or deleted.
    **/
-  public void entryGroupChanged (final EntryGroupChangeEvent event) {
-    switch (event.getType ()) {
-    case EntryGroupChangeEvent.ENTRY_ADDED:
-    case EntryGroupChangeEvent.ENTRY_DELETED:
-    case EntryGroupChangeEvent.ENTRY_INACTIVE:
-    case EntryGroupChangeEvent.ENTRY_ACTIVE:
-    case EntryGroupChangeEvent.NEW_DEFAULT_ENTRY:
-      refreshMenu ();
-      break;
+  public void entryGroupChanged(final EntryGroupChangeEvent event) 
+  {
+    switch(event.getType()) 
+    {
+      case EntryGroupChangeEvent.ENTRY_ADDED:
+      case EntryGroupChangeEvent.ENTRY_DELETED:
+      case EntryGroupChangeEvent.ENTRY_INACTIVE:
+      case EntryGroupChangeEvent.ENTRY_ACTIVE:
+      case EntryGroupChangeEvent.NEW_DEFAULT_ENTRY:
+        refreshMenu();
+        break;
     }
   }
 
   /**
    *  Implementation of the EntryChangeListener interface.
    **/
-  public void entryChanged (final EntryChangeEvent event) {
-    if (event.getType () == EntryChangeEvent.NAME_CHANGED) {
-      refreshMenu ();
-    }
+  public void entryChanged(final EntryChangeEvent event) 
+  {
+    if(event.getType() == EntryChangeEvent.NAME_CHANGED) 
+      refreshMenu();
   }
 
   /**
    *  Update the menus to the reflect the current contents of the EntryGroup.
    **/
-  private void refreshMenu () {
-    removeAll ();
+  private void refreshMenu() 
+  {
+    removeAll();
 
-    undo_item = new JMenuItem ("Undo");
-    undo_item.setAccelerator (UNDO_KEY);
-    undo_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        undo (getParentFrame (), getSelection (), getEntryGroup ());
+    final JMenuItem undo_item = new JMenuItem("Undo");
+    undo_item.setAccelerator(UNDO_KEY);
+    undo_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        undo(getParentFrame(), getSelection(), getEntryGroup());
       }
     });
 
-    edit_feature_item = new JMenuItem ("Edit Selected Features");
-    edit_feature_item.setAccelerator (EDIT_FEATURES_KEY);
-    edit_feature_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        editSelectedFeatures (getParentFrame (), getEntryGroup (),
-                              getSelection (), getGotoEventSource ());
+    final JMenuItem edit_feature_item = new JMenuItem("Edit Selected Features");
+    edit_feature_item.setAccelerator(EDIT_FEATURES_KEY);
+    edit_feature_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        editSelectedFeatures(getParentFrame(), getEntryGroup(),
+                             getSelection(), goto_event_source);
       }
     });
 
-    edit_subsequence_item = new JMenuItem ("Edit Subsequence (and Features)");
-    edit_subsequence_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        editSubSequence ();
+    final JMenuItem edit_subsequence_item = new JMenuItem("Edit Subsequence (and Features)");
+    edit_subsequence_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        editSubSequence();
       }
     });
 
-    add_qualifiers_item = new JMenuItem ("Change Qualifiers Of Selected ...");
-    add_qualifiers_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        addQualifiers (getParentFrame (), getSelection ());
+    final JMenuItem add_qualifiers_item = new JMenuItem("Change Qualifiers Of Selected ...");
+    add_qualifiers_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        addQualifiers(getParentFrame(), getSelection());
       }
     });
 
-    remove_qualifier_item = new JMenuItem ("Remove Qualifier Of Selected ...");
-    remove_qualifier_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        removeQualifier (getParentFrame (), getSelection ());
+    final JMenuItem remove_qualifier_item = new JMenuItem("Remove Qualifier Of Selected ...");
+    remove_qualifier_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        removeQualifier(getParentFrame(), getSelection());
       }
     });
 
 
-    merge_features_item = new JMenuItem ("Merge Selected Features");
-    merge_features_item.setAccelerator (MERGE_FEATURES_KEY);
-    merge_features_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        mergeFeatures (getParentFrame (), getSelection (), getEntryGroup ());
+    final JMenuItem merge_features_item = new JMenuItem("Merge Selected Features");
+    merge_features_item.setAccelerator(MERGE_FEATURES_KEY);
+    merge_features_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        mergeFeatures(getParentFrame(), getSelection(), getEntryGroup());
       }
     });
 
-    unmerge_feature_item = new JMenuItem ("Unmerge Selected Feature");
-    unmerge_feature_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        unmergeFeature (getParentFrame (), getSelection (), getEntryGroup ());
+    final JMenuItem unmerge_feature_item = new JMenuItem("Unmerge Selected Feature");
+    unmerge_feature_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        unmergeFeature(getParentFrame(), getSelection(), getEntryGroup());
       }
     });
 
-    duplicate_item = new JMenuItem ("Duplicate Selected Features");
-    duplicate_item.setAccelerator (DUPLICATE_KEY);
-    duplicate_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        duplicateFeatures (getParentFrame (), getSelection (),
-                           getEntryGroup ());
+    final JMenuItem duplicate_item = new JMenuItem("Duplicate Selected Features");
+    duplicate_item.setAccelerator(DUPLICATE_KEY);
+    duplicate_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        duplicateFeatures(getParentFrame(), getSelection(),
+                          getEntryGroup());
       }
     });
 
-    delete_features_item = new JMenuItem ("Delete Selected Features");
-    delete_features_item.setAccelerator (DELETE_FEATURES_KEY);
-    delete_features_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        deleteSelectedFeatures (getParentFrame (), getSelection (),
-                                getEntryGroup ());
+    final JMenuItem delete_features_item = new JMenuItem("Delete Selected Features");
+    delete_features_item.setAccelerator(DELETE_FEATURES_KEY);
+    delete_features_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        deleteSelectedFeatures(getParentFrame(), getSelection(),
+                               getEntryGroup());
       }
     });
 
-    delete_segments_item = new JMenuItem ("Delete Selected Exons");
-    delete_segments_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        deleteSelectedSegments ();
+    final JMenuItem delete_segments_item = new JMenuItem("Delete Selected Exons");
+    delete_segments_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        deleteSelectedSegments();
       }
     });
 
-    delete_introns_item =
-      new JMenuItem ("Remove Introns of Selected Features");
-    delete_introns_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        removeIntrons ();
+    final JMenuItem delete_introns_item =
+      new JMenuItem("Remove Introns of Selected Features");
+    delete_introns_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        removeIntrons();
       }
     });
 
-    edit_header_item = new JMenuItem ("Edit Header Of Default Entry");
-    edit_header_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        editHeader ();
+    final JMenuItem edit_header_item = new JMenuItem("Edit Header Of Default Entry");
+    edit_header_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        editHeader();
       }
     });
 
-    move_features_menu = new JMenu ("Move Selected Features To");
-    copy_features_menu = new JMenu ("Copy Selected Features To");
+    final JMenu move_features_menu = new JMenu("Move Selected Features To");
+    final JMenu copy_features_menu = new JMenu("Copy Selected Features To");
 
-    if (entry_group == null || getEntryGroup ().size () == 0) {
-      move_features_menu.add (new JMenuItem ("(No Entries Currently)"));
-      copy_features_menu.add (new JMenuItem ("(No Entries Currently)"));
-    } else {
-      for (int i = 0 ; i < getEntryGroup ().size () ; ++i) {
-        final Entry this_entry = getEntryGroup ().elementAt (i);
+    if(entry_group == null || getEntryGroup().size() == 0) 
+    {
+      move_features_menu.add(new JMenuItem("(No Entries Currently)"));
+      copy_features_menu.add(new JMenuItem("(No Entries Currently)"));
+    }
+    else
+    {
+      for(int i = 0 ; i < getEntryGroup().size() ; ++i) 
+      {
+        final Entry this_entry = getEntryGroup().elementAt(i);
 
-        String entry_name = this_entry.getName ();
-
-        if (entry_name == null) {
+        String entry_name = this_entry.getName();
+        if(entry_name == null)
           entry_name = "no name";
-        }
 
-        final JMenuItem move_to_item = new JMenuItem (entry_name);
-
-        move_to_item.addActionListener (new ActionListener () {
-          public void actionPerformed (ActionEvent event) {
+        final JMenuItem move_to_item = new JMenuItem(entry_name);
+        move_to_item.addActionListener(new ActionListener() 
+        {
+          public void actionPerformed(ActionEvent event) 
+          {
             // unselect, move, then reselect (for speed)
             final FeatureVector selected_features =
-              getSelection ().getAllFeatures ();
-            getSelection ().clear ();
-            moveFeatures (selected_features, this_entry);
-            getSelection ().set (selected_features);
+              getSelection().getAllFeatures();
+            getSelection().clear();
+            moveFeatures(selected_features, this_entry);
+            getSelection().set(selected_features);
           }
         });
-        move_features_menu.add (move_to_item);
+        move_features_menu.add(move_to_item);
 
-        final JMenuItem copy_to_item = new JMenuItem (entry_name);
+        final JMenuItem copy_to_item = new JMenuItem(entry_name);
 
-        copy_to_item.addActionListener (new ActionListener () {
-          public void actionPerformed (ActionEvent event) {
-            copyFeatures (getSelection ().getAllFeatures (), this_entry);
+        copy_to_item.addActionListener(new ActionListener() 
+        {
+          public void actionPerformed(ActionEvent event) 
+          {
+            copyFeatures(getSelection().getAllFeatures(), this_entry);
           }
         });
-        copy_features_menu.add (copy_to_item);
+        copy_features_menu.add(copy_to_item);
       }
     }
 
-    trim_to_any_item = new JMenuItem ("Trim Selected Features To Any");
-    trim_to_any_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        EditMenu.trimSelected (getParentFrame (), getSelection (),
-                               getEntryGroup (), true, false);
+    final JMenuItem trim_to_any_item = new JMenuItem("Trim Selected Features To Any");
+    trim_to_any_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) {
+        EditMenu.trimSelected(getParentFrame(), getSelection(),
+                              getEntryGroup(), true, false);
       }
     });
 
-    trim_item = new JMenuItem ("Trim Selected Features To Met");
-    trim_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        EditMenu.trimSelected (getParentFrame (), getSelection (),
-                               getEntryGroup (), false, false);
+    final JMenuItem trim_item = new JMenuItem("Trim Selected Features To Met");
+    trim_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        EditMenu.trimSelected(getParentFrame(), getSelection(),
+                              getEntryGroup(), false, false);
       }
     });
 
-    trim_to_next_any_item =
-      new JMenuItem ("Trim Selected Features To Next Any");
-    trim_to_next_any_item.setAccelerator (TRIM_FEATURES_TO_NEXT_ANY_KEY);
-    trim_to_next_any_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        EditMenu.trimSelected (getParentFrame (), getSelection (),
-                               getEntryGroup (), true, true);
+    final JMenuItem trim_to_next_any_item =
+      new JMenuItem("Trim Selected Features To Next Any");
+    trim_to_next_any_item.setAccelerator(TRIM_FEATURES_TO_NEXT_ANY_KEY);
+    trim_to_next_any_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        EditMenu.trimSelected(getParentFrame(), getSelection(),
+                              getEntryGroup(), true, true);
       }
     });
 
-    trim_to_next_item = new JMenuItem ("Trim Selected Features To Next Met");
-    trim_to_next_item.setAccelerator (TRIM_FEATURES_KEY);
-    trim_to_next_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        EditMenu.trimSelected (getParentFrame (), getSelection (),
-                               getEntryGroup (), false, true);
+    final JMenuItem trim_to_next_item = new JMenuItem("Trim Selected Features To Next Met");
+    trim_to_next_item.setAccelerator(TRIM_FEATURES_KEY);
+    trim_to_next_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        EditMenu.trimSelected(getParentFrame(), getSelection(),
+                              getEntryGroup(), false, true);
       }
     });
 
-    extend_to_prev_stop_item =
-      new JMenuItem ("Extend to Previous Stop Codon");
-    extend_to_prev_stop_item.setAccelerator (EXTEND_TO_PREVIOUS_STOP_CODON_KEY);
-    extend_to_prev_stop_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        extendToORF (getParentFrame (), getSelection (),
-                     getEntryGroup (), false);
+    final JMenuItem extend_to_prev_stop_item =
+      new JMenuItem("Extend to Previous Stop Codon");
+    extend_to_prev_stop_item.setAccelerator(EXTEND_TO_PREVIOUS_STOP_CODON_KEY);
+    extend_to_prev_stop_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        extendToORF(getParentFrame(), getSelection(),
+                    getEntryGroup(), false);
       }
     });
 
-    extend_to_next_stop_item = new JMenuItem ("Extend to Next Stop Codon");
-    extend_to_next_stop_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        extendToORF (getParentFrame (), getSelection (),
-                     getEntryGroup (), true);
+    final JMenuItem extend_to_next_stop_item = new JMenuItem("Extend to Next Stop Codon");
+    extend_to_next_stop_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        extendToORF(getParentFrame(), getSelection(),
+                    getEntryGroup(), true);
       }
     });
 
-    fix_stop_codons_item = new JMenuItem ("Fix Stop Codons");
-    fix_stop_codons_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        fixStopCodons ();
+    final JMenuItem fix_stop_codons_item = new JMenuItem("Fix Stop Codons");
+    fix_stop_codons_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        fixStopCodons();
       }
     });
 
-    auto_gene_name_item = new JMenuItem ("Automatically Create Gene Names");
-    auto_gene_name_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        autoGeneName ();
+    final JMenuItem auto_gene_name_item = new JMenuItem("Automatically Create Gene Names");
+    auto_gene_name_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        autoGeneName();
       }
     });
 
-    fix_gene_names_item = new JMenuItem ("Fix Gene Names");
-    fix_gene_names_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        fixGeneNames (getParentFrame (), getEntryGroup (),
-                      getSelection ());
+    final JMenuItem fix_gene_names_item = new JMenuItem("Fix Gene Names");
+    fix_gene_names_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        fixGeneNames(getParentFrame(), getEntryGroup(),
+                     getSelection());
       }
     });
 
-    reverse_complement_item = new JMenuItem ("Reverse And Complement");
-    reverse_complement_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        reverseAndComplement ();
+    final JMenuItem reverse_complement_item = new JMenuItem("Reverse And Complement");
+    reverse_complement_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        reverseAndComplement();
       }
     });
 
-    delete_bases_item = new JMenuItem ("Delete Selected Bases");
-    delete_bases_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        deleteSelectedBases ();
+    final JMenuItem delete_bases_item = new JMenuItem("Delete Selected Bases");
+    delete_bases_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        deleteSelectedBases();
       }
     });
 
-    add_bases_item = new JMenuItem ("Add Bases At Selection");
-    add_bases_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        addBases ();
+    final JMenuItem add_bases_item = new JMenuItem("Add Bases At Selection");
+    add_bases_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        addBases();
       }
     });
 
-    if (Options.readWritePossible ()) {
+    if(Options.getOptions().getPropertyTruthValue("val_mode")) 
+    {
+      add(edit_feature_item);
+      add(edit_subsequence_item);
+      addSeparator();
+      add(edit_header_item);
+      addSeparator();
+    }
+
+    if(Options.getOptions().getUndoLevels() > 0) 
+    {
+      add(undo_item);
+      addSeparator();
+    }
+
+    if(!Options.getOptions().getPropertyTruthValue("val_mode")) 
+    {
+      add(edit_feature_item);
+      add(edit_subsequence_item);
+      addSeparator();
+      add(edit_header_item);
+      addSeparator();
+    }
+
+    add(add_qualifiers_item);
+    add(remove_qualifier_item);
+    add(duplicate_item);
+    add(merge_features_item);
+    add(unmerge_feature_item);
+    add(delete_features_item);
+    add(delete_segments_item);
+    add(delete_introns_item);
+    addSeparator();
+    add(move_features_menu);
+    add(copy_features_menu);
+    addSeparator();
+    add(trim_item);
+    add(trim_to_any_item);
+    add(trim_to_next_item);
+    add(trim_to_next_any_item);
+    add(extend_to_prev_stop_item);
+    add(extend_to_next_stop_item);
+    add(fix_stop_codons_item);
+    addSeparator();
+    add(auto_gene_name_item);
+    add(fix_gene_names_item);
+    add(reverse_complement_item);
+    add(delete_bases_item);
+    add(add_bases_item);
+
+    if(Options.readWritePossible()) 
+    {
       // only the standalone version can save or read
-      add_bases_from_file_item = new JMenuItem ("Add Bases From File ...");
-      add_bases_from_file_item.addActionListener (new ActionListener () {
-        public void actionPerformed (ActionEvent event) {
-          addBasesFromFile ();
+      final JMenuItem add_bases_from_file_item = new JMenuItem("Add Bases From File ...");
+      add_bases_from_file_item.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent event)
+        {
+          addBasesFromFile();
         }
       });
-    }
 
-    if (Options.getOptions ().getPropertyTruthValue ("val_mode")) {
-      add (edit_feature_item);
-      add (edit_subsequence_item);
-      addSeparator ();
-      add (edit_header_item);
-      addSeparator ();
-    }
-
-    if (Options.getOptions ().getUndoLevels () > 0) {
-      add (undo_item);
-      addSeparator ();
-    }
-
-    if (!Options.getOptions ().getPropertyTruthValue ("val_mode")) {
-      add (edit_feature_item);
-      add (edit_subsequence_item);
-      addSeparator ();
-      add (edit_header_item);
-      addSeparator ();
-    }
-
-    add (add_qualifiers_item);
-    add (remove_qualifier_item);
-    add (duplicate_item);
-    add (merge_features_item);
-    add (unmerge_feature_item);
-    add (delete_features_item);
-    add (delete_segments_item);
-    add (delete_introns_item);
-    addSeparator ();
-    add (move_features_menu);
-    add (copy_features_menu);
-    addSeparator ();
-    add (trim_item);
-    add (trim_to_any_item);
-    add (trim_to_next_item);
-    add (trim_to_next_any_item);
-    add (extend_to_prev_stop_item);
-    add (extend_to_next_stop_item);
-    add (fix_stop_codons_item);
-    addSeparator ();
-    add (auto_gene_name_item);
-    add (fix_gene_names_item);
-    add (reverse_complement_item);
-    add (delete_bases_item);
-    add (add_bases_item);
-    if (Options.readWritePossible ()) {
-      // only the standalone version can save or read
-      add (add_bases_from_file_item);
+      add(add_bases_from_file_item);
     }
   }
 
@@ -499,29 +576,22 @@ public class EditMenu extends SelectionMenu
    *  @param entry_group Used to get the ActionController for calling
    *    ActionController.undo().
    **/
-  public static void undo (final JFrame frame,
-                           final Selection selection,
-                           final EntryGroup entry_group) {
-    if (Options.getOptions ().getUndoLevels () == 0) {
-      // undo disabled
+  private static void undo(final JFrame frame,
+                          final Selection selection,
+                          final EntryGroup entry_group) 
+  {
+    // undo disabled
+    if(Options.getOptions().getUndoLevels() == 0)
       return;
-    }
 
-    if (entry_group.getActionController ().canUndo ()) {
-      // clear the selection because something in the selection might
-      // disappear after the undo() eg. create a feature, select it then undo
-      selection.clear ();
-    }
+    // clear the selection because something in the selection might
+    // disappear after the undo() eg. create a feature, select it then undo
+    if(entry_group.getActionController().canUndo())
+      selection.clear();
 
-    if (!entry_group.getActionController ().undo ()) {
-      new MessageDialog (frame, "sorry - no further undo information");
-    }
+    if(!entry_group.getActionController().undo()) 
+      new MessageDialog(frame, "sorry - no further undo information");
   }
-
-  /**
-   *  editSelectedFeatures () etc. will only edit this many features.
-   **/
-  private static final int MAXIMUM_SELECTED_FEATURES = 25;
 
   /**
    *  Open an edit window (FeatureEdit) for each of the selected features.
@@ -532,65 +602,67 @@ public class EditMenu extends SelectionMenu
    *  @param entry_group Used to get the ActionController for calling
    *    startAction() and endAction().
    **/
-  static void editSelectedFeatures (final JFrame frame,
-                                    final EntryGroup entry_group,
-                                    final Selection selection,
-                                    final GotoEventSource goto_event_source) {
-    final FeatureVector features_to_edit = selection.getAllFeatures ();
+  protected static void editSelectedFeatures(final JFrame frame,
+                                   final EntryGroup entry_group,
+                                   final Selection selection,
+                                   final GotoEventSource goto_event_source) 
+  {
+    final int MAX_SELECTED_FEATURES = 25;
+    final FeatureVector features_to_edit = selection.getAllFeatures();
 
-    if (features_to_edit.size () > MAXIMUM_SELECTED_FEATURES) {
-      new MessageDialog (frame, "warning: only editing the first " +
-                         MAXIMUM_SELECTED_FEATURES +
-                         " selected features");
+    if(features_to_edit.size() > MAX_SELECTED_FEATURES)
+      new MessageDialog(frame, "warning: only editing the first " +
+                        MAX_SELECTED_FEATURES + " selected features");
+
+    for(int i = 0; i < features_to_edit.size() && i < MAX_SELECTED_FEATURES;
+        ++i)
+    {
+      final Feature selection_feature = features_to_edit.elementAt(i);
+
+      new FeatureEdit(selection_feature, entry_group, selection,
+                      goto_event_source).setVisible(true);
     }
 
-    for (int i = 0 ;
-         i < features_to_edit.size () && i < MAXIMUM_SELECTED_FEATURES ;
-         ++i) {
-      final Feature selection_feature = features_to_edit.elementAt (i);
-
-      new FeatureEdit (selection_feature, entry_group, selection,
-                       goto_event_source).setVisible(true);
-    }
-
-    selection.set (features_to_edit);
+    selection.set(features_to_edit);
   }
 
   /**
    *  Create a new EntryEdit component that contains only the selected
    *  sequence and the features in the selected range.
    **/
-  private void editSubSequence () {
-    if (getSelection ().isEmpty ()) {
-      new MessageDialog (getParentFrame (), "nothing selected");
-    }
+  private void editSubSequence() 
+  {
+    if(getSelection().isEmpty()) 
+      new MessageDialog(getParentFrame(), "nothing selected");
 
-    final Range range = getSelection ().getSelectionRange ();
-
-    final EntryGroup new_entry_group = getEntryGroup ().truncate (range);
-
-    new EntryEdit (new_entry_group).setVisible(true);
+    final Range range = getSelection().getSelectionRange();
+    final EntryGroup new_entry_group = getEntryGroup().truncate(range);
+    new EntryEdit(new_entry_group).setVisible(true);
   }
 
   /**
    *  Open a EntryHeaderEdit window for the default entry.
    **/
-  private void editHeader () {
-    final Entry default_entry = getEntryGroup ().getDefaultEntry ();
+  private void editHeader()
+  {
+    final Entry default_entry = getEntryGroup().getDefaultEntry();
 
-    if (default_entry == null) {
-      final String message =
-        "there is no default entry";
-      new MessageDialog (getParentFrame (), message);
-    } else {
-      if (default_entry.isReadOnly ()) {
-        new MessageDialog (getParentFrame (),
-                           "the default entry is read-only " +
-                           "- cannot continue");
+    if(default_entry == null)
+    {
+      final String message = "there is no default entry";
+      new MessageDialog(getParentFrame(), message);
+    }
+    else 
+    {
+      if(default_entry.isReadOnly()) 
+      {
+        new MessageDialog(getParentFrame(),
+                          "the default entry is read-only " +
+                          "- cannot continue");
         return;
       }
 
-      new EntryHeaderEdit (entry_group, default_entry);
+      new EntryHeaderEdit(entry_group, default_entry);
     }
   }
 
@@ -603,122 +675,135 @@ public class EditMenu extends SelectionMenu
    *  @param entry_group Used to get the ActionController for calling
    *    startAction() and endAction().
    **/
-  static void mergeFeatures (final JFrame frame,
-                             final Selection selection,
-                             final EntryGroup entry_group) {
-    try {
-      entry_group.getActionController ().startAction ();
+  protected static void mergeFeatures(final JFrame frame,
+                            final Selection selection,
+                            final EntryGroup entry_group) 
+  {
+    try 
+    {
+      entry_group.getActionController().startAction();
 
-      if (!checkForSelectionFeatures (frame, selection,
-                                      10, "really merge all (>10) " +
-                                      "selected features?")) {
+      if(!checkForSelectionFeatures(frame, selection, 10,
+                 "really merge all (>10) " + "selected features?"))
+        return;
+
+      final FeatureVector features_to_merge = selection.getAllFeatures();
+
+      if(features_to_merge.size() < 2) 
+      {
+        new MessageDialog(frame,
+                          "nothing to merge - select more than one feature");
         return;
       }
 
-      final FeatureVector features_to_merge = selection.getAllFeatures ();
-
-      if (features_to_merge.size () < 2) {
-        new MessageDialog (frame,
-                           "nothing to merge - select more than one feature");
-        return;
-      }
-
-      final Feature merge_feature = features_to_merge.elementAt (0);
+      final Feature merge_feature = features_to_merge.elementAt(0);
 
       // make sure all the features are on the same strand
-      for (int i = 1 ; i < features_to_merge.size () ; ++i) {
-        final Feature this_feature = features_to_merge.elementAt (i);
+      for(int i = 1; i < features_to_merge.size(); ++i) 
+      {
+        final Feature this_feature = features_to_merge.elementAt(i);
 
-        if (this_feature.isForwardFeature () !=
-            merge_feature.isForwardFeature ()) {
-          new MessageDialog (frame,
-                             "all the features in a merge must be on the " +
-                             "same strand");
+        if(this_feature.isForwardFeature() !=
+           merge_feature.isForwardFeature()) 
+        {
+          new MessageDialog(frame,
+                            "all the features in a merge must be on the " +
+                            "same strand");
           return;
         }
 
-        if (! this_feature.getKey ().equals (merge_feature.getKey ())) {
-          new MessageDialog (frame,
-                             "all the features in a merge must have the " +
-                             "same key");
+        if(!this_feature.getKey().equals(merge_feature.getKey())) 
+        {
+          new MessageDialog(frame,
+                            "all the features in a merge must have the " +
+                            "same key");
           return;
         }
       }
 
-      if (Options.getOptions ().isNoddyMode ()) {
+      if(Options.getOptions().isNoddyMode()) 
+      {
         final YesNoDialog dialog =
-          new YesNoDialog (frame,
-                           "Are you sure you want to merge the selected " +
-                           "features?");
-
-        if (!dialog.getResult ()) {
+          new YesNoDialog(frame, "Are you sure you want to merge the selected " +
+                                 "features?");
+        if(!dialog.getResult())
           return;
-        }
       }
 
       final Feature new_feature;
 
-      try {
-        new_feature = merge_feature.duplicate ();
-      } catch (ReadOnlyException e) {
+      try 
+      {
+        new_feature = merge_feature.duplicate();
+      }
+      catch(ReadOnlyException e) 
+      {
         final String message =
           "one or more of the features is read-only or is in a " +
           "read-only entry - cannot continue";
-        new MessageDialog (frame, message);
+        new MessageDialog(frame, message);
         return;
       }
 
-      for (int i = 1 ; i < features_to_merge.size () ; ++i) {
-        final Feature this_feature = features_to_merge.elementAt (i);
+      for(int i = 1; i < features_to_merge.size(); ++i) 
+      {
+        final Feature this_feature = features_to_merge.elementAt(i);
+        final QualifierVector qualifiers = this_feature.getQualifiers();
 
-        final QualifierVector qualifiers = this_feature.getQualifiers ();
+        for(int j = 0; j < qualifiers.size(); ++j)
+        {
+          final Qualifier this_qualifier = qualifiers.elementAt(j);
 
-        for (int qualifier_index = 0 ;
-             qualifier_index < qualifiers.size () ;
-             ++qualifier_index) {
-          final Qualifier this_qualifier =
-            qualifiers.elementAt (qualifier_index);
-
-          try {
-            new_feature.addQualifierValues (this_qualifier);
-          } catch (EntryInformationException e) {
-            try {
-              new_feature.removeFromEntry ();
-            } catch (ReadOnlyException _) {
+          try 
+          {
+            new_feature.addQualifierValues(this_qualifier);
+          }
+          catch(EntryInformationException e) 
+          {
+            try 
+            {
+              new_feature.removeFromEntry();
+            } 
+            catch(ReadOnlyException _) 
+            {
               // give up ...
             }
             final String message =
               "destination entry does not support all the qualifiers " +
-              "needed by " + this_feature.getIDString ();
-            new MessageDialog (frame, message);
-          } catch (ReadOnlyException e) {
+              "needed by " + this_feature.getIDString();
+            new MessageDialog(frame, message);
+          } 
+          catch(ReadOnlyException e) 
+          {
             final String message = "the new feature is read-only so " +
               "some qualifiers have been lost";
-            new MessageDialog (frame, message);
+            new MessageDialog(frame, message);
           }
         }
 
-        final FeatureSegmentVector segments = this_feature.getSegments ();
+        final FeatureSegmentVector segments = this_feature.getSegments();
 
-        for (int segment_index = 0 ;
-             segment_index < segments.size () ;
-             ++segment_index) {
+        for(int j = 0; j < segments.size(); ++j)
+        {
           final FeatureSegment this_segment =
-            segments.elementAt (segment_index);
+            segments.elementAt(j);
 
-          final Range this_range = this_segment.getRawRange ();
+          final Range this_range = this_segment.getRawRange();
 
-          try {
-            new_feature.addSegment (this_range);
-          } catch (ReadOnlyException e) {
+          try 
+          {
+            new_feature.addSegment(this_range);
+          }
+          catch(ReadOnlyException e) 
+          {
             final String message =
               "merging failed because the entry is read-only";
-            new MessageDialog (frame, message);
-            try {
-              new_feature.removeFromEntry ();
-            } catch (ReadOnlyException _) {
-              // oh dear ...
+            new MessageDialog(frame, message);
+            try 
+            {
+              new_feature.removeFromEntry();
             }
+            catch(ReadOnlyException _) {}
           }
         }
       }
@@ -728,45 +813,50 @@ public class EditMenu extends SelectionMenu
 
       // this is a bit inefficient, but there aren't normally many segments
   LOOP:
-      while (keep_looping) {
+      while(keep_looping)
+      {
         final FeatureSegmentVector feature_segments =
-          new_feature.getSegments ();
+          new_feature.getSegments();
 
         keep_looping = false;
 
         // now merge overlapping ranges
-        for (int segment_index = 0 ;
-             segment_index < feature_segments.size () - 1;
-             ++segment_index) {
-
+        for(int i = 0; i < feature_segments.size() - 1; ++i)
+        {
           final FeatureSegment this_segment =
-            feature_segments.elementAt (segment_index);
-          final MarkerRange this_range = this_segment.getMarkerRange ();
+                                         feature_segments.elementAt(i);
+          final MarkerRange this_range = this_segment.getMarkerRange();
 
           final FeatureSegment next_segment =
-            feature_segments.elementAt (segment_index + 1);
-          final MarkerRange next_range = next_segment.getMarkerRange ();
+                                     feature_segments.elementAt(i + 1);
+          final MarkerRange next_range = next_segment.getMarkerRange();
 
           // if it overlaps the next Range then merge it
-          if (this_range.overlaps (next_range) &&
-              this_segment.getFrameID () == next_segment.getFrameID ()) {
-            try {
+          if(this_range.overlaps(next_range) &&
+              this_segment.getFrameID() == next_segment.getFrameID()) 
+          {
+            try 
+            {
               final Range new_range =
-                this_range.combineRanges (next_range, false).getRawRange ();
-              new_feature.addSegment (new_range);
-              new_feature.removeSegment (this_segment);
-              new_feature.removeSegment (next_segment);
+                this_range.combineRanges(next_range, false).getRawRange();
+              new_feature.addSegment(new_range);
+              new_feature.removeSegment(this_segment);
+              new_feature.removeSegment(next_segment);
 
               // start again
               keep_looping = true;
               continue LOOP;
-            } catch (ReadOnlyException e) {
+            }
+            catch(ReadOnlyException e) 
+            {
               final String message =
                 "merging failed because the entry is read-only";
-              new MessageDialog (frame, message);
-            } catch (LastSegmentException e) {
-              throw new Error ("internal error - tried to remove " +
-                               "last segment: " + e);
+              new MessageDialog(frame, message);
+            } 
+            catch(LastSegmentException e) 
+            {
+              throw new Error("internal error - tried to remove " +
+                              "last segment: " + e);
             }
           }
         }
@@ -774,34 +864,42 @@ public class EditMenu extends SelectionMenu
 
       boolean delete_old_features;
 
-      if (Options.getOptions ().isNoddyMode ()) {
+      if(Options.getOptions().isNoddyMode()) 
+      {
         final YesNoDialog delete_old_dialog =
-          new YesNoDialog (frame, "delete old features?");
+          new YesNoDialog(frame, "delete old features?");
 
-        delete_old_features = delete_old_dialog.getResult ();
-      } else {
+        delete_old_features = delete_old_dialog.getResult();
+      } 
+      else
         delete_old_features = true;
-      }
 
-      if (delete_old_features) {
-        if (getReadOnlyFeatures (features_to_merge).size () > 0) {
-          new MessageDialog (frame, "deletion failed because the features " +
-                             "are read-only");
-       } else {
-          for (int i = 0 ; i < features_to_merge.size () ; ++i) {
-            try {
-              features_to_merge.elementAt (i).removeFromEntry ();
-            } catch (ReadOnlyException e) {
-              new MessageDialog (frame, "deletion failed one or more of the " +
-                                 "features are read-only");
+      if(delete_old_features) 
+      {
+        if(getReadOnlyFeatures(features_to_merge).size() > 0)
+          new MessageDialog(frame, "deletion failed because the features " +
+                            "are read-only");
+        else
+        {
+          for(int i = 0; i < features_to_merge.size(); ++i) 
+          {
+            try 
+            {
+              features_to_merge.elementAt(i).removeFromEntry();
+            }
+            catch(ReadOnlyException e) 
+            {
+              new MessageDialog(frame, "deletion failed one or more of the " +
+                                "features are read-only");
             }
           }
         }
       }
-
-      selection.set (new_feature);
-    } finally {
-      entry_group.getActionController ().endAction ();
+      selection.set(new_feature);
+    } 
+    finally 
+    {
+      entry_group.getActionController().endAction();
     }
   }
 
@@ -815,7 +913,7 @@ public class EditMenu extends SelectionMenu
    *  @param entry_group Used to get the ActionController for calling
    *    startAction() and endAction().
    **/
-  static void unmergeFeature (final JFrame frame,
+  private static void unmergeFeature (final JFrame frame,
                               final Selection selection,
                               final EntryGroup entry_group) {
     try {
@@ -1022,7 +1120,7 @@ public class EditMenu extends SelectionMenu
    *  @param entry_group Used to get the ActionController for calling
    *    startAction() and endAction().
    **/
-  static void duplicateFeatures (final JFrame frame,
+  protected static void duplicateFeatures (final JFrame frame,
                                  final Selection selection,
                                  final EntryGroup entry_group) {
     try {
@@ -1080,7 +1178,7 @@ public class EditMenu extends SelectionMenu
    *  @param entry_group Used to get the ActionController for calling
    *    startAction() and endAction().
    **/
-  static void deleteSelectedFeatures (final JFrame frame,
+  protected static void deleteSelectedFeatures (final JFrame frame,
                                       final Selection selection,
                                       final EntryGroup entry_group) {
     try {
@@ -1457,7 +1555,7 @@ public class EditMenu extends SelectionMenu
    *    feature currently start on a start codon.  If false then the feature
    *    will only be trimmed if the feature doesn't start on a start codon.
    **/
-  static public void trimSelected (final JFrame frame,
+  private static void trimSelected (final JFrame frame,
                                    final Selection selection,
                                    final EntryGroup entry_group,
                                    final boolean trim_to_any,
@@ -1523,10 +1621,11 @@ public class EditMenu extends SelectionMenu
    *    is extended to the previous stop codon (but it won't include the
    *    previous stop).
    **/
-  public static void extendToORF (final JFrame frame,
-                                  final Selection selection,
-                                  final EntryGroup entry_group,
-                                  final boolean extend_to_next_stop) {
+  private static void extendToORF(final JFrame frame,
+                                 final Selection selection,
+                                 final EntryGroup entry_group,
+                                 final boolean extend_to_next_stop) 
+  {
     try {
       entry_group.getActionController ().startAction ();
 
@@ -2149,10 +2248,10 @@ public class EditMenu extends SelectionMenu
       new YesNoDialog (getParentFrame (),
                        "append \"c\" to names of reverse strand features?");
 
-    autoGeneNameHelper (features_to_name,
-                        prefix_string, start_value, increment_value,
-                        qualifier_name_string,
-                        complement_tag_dialog.getResult ());
+    autoGeneNameHelper(features_to_name,
+                       prefix_string, start_value, increment_value,
+                       qualifier_name_string,
+                       complement_tag_dialog.getResult());
   }
 
   /**
@@ -2161,159 +2260,172 @@ public class EditMenu extends SelectionMenu
    *  features.  Warn about inconsistencies.
    *  @return true if all went well, false if fixing should stop immediately
    **/
-  private static boolean fixGeneNamesHelper (final JFrame frame,
-                                             final EntryGroup entry_group,
-                                             final Feature cds_to_fix) {
-    if (cds_to_fix.isReadOnly ()) {
+  private static boolean fixGeneNamesHelper(final JFrame frame,
+                                            final EntryGroup entry_group,
+                                            final Feature cds_to_fix) 
+  {
+    if(cds_to_fix.isReadOnly()) 
+    {
       final String message =
         "one or more of the of the selected features are read only " +
         "- cannot continue";
-      new MessageDialog (frame, message);
+      new MessageDialog(frame, message);
       return false;
     }
 
-    try {
-      final Strand cds_to_fix_strand = cds_to_fix.getStrand ();
-
-      Marker cds_start_marker = cds_to_fix.getFirstBaseMarker ();
-      Marker cds_end_marker = cds_to_fix.getLastBaseMarker ();
+    try 
+    {
+      final Strand cds_to_fix_strand = cds_to_fix.getStrand();
+      Marker cds_start_marker = cds_to_fix.getFirstBaseMarker();
+      Marker cds_end_marker = cds_to_fix.getLastBaseMarker();
 
       // move the start one base back and the end one base forward so that
       // when we call getFeaturesInRange() we get the UTRs
 
-      try {
-        cds_start_marker = cds_start_marker.moveBy (-1);
-      } catch (OutOfRangeException _) {
+      try 
+      {
+        cds_start_marker = cds_start_marker.moveBy(-1);
+      }
+      catch(OutOfRangeException _) 
+      {
         // ignore and use the original cds_start_marker
       }
 
-      try {
-        cds_end_marker = cds_end_marker.moveBy (1);
-      } catch (OutOfRangeException _) {
+      try 
+      {
+        cds_end_marker = cds_end_marker.moveBy(1);
+      } 
+      catch(OutOfRangeException _) 
+      {
         // ignore and use the original cds_end_marker
       }
 
       final Range search_range;
 
-      if (cds_start_marker.getRawPosition () <
-          cds_end_marker.getRawPosition ()) {
+      if(cds_start_marker.getRawPosition() < cds_end_marker.getRawPosition())
+      {
         search_range =
-          new Range (cds_start_marker.getRawPosition (),
-                     cds_end_marker.getRawPosition ());
-     } else {
-       search_range =
-         new Range (cds_end_marker.getRawPosition (),
-                    cds_start_marker.getRawPosition ());
-     }
+          new Range(cds_start_marker.getRawPosition(),
+                    cds_end_marker.getRawPosition());
+      }
+      else
+      {
+        search_range =
+          new Range(cds_end_marker.getRawPosition(),
+                   cds_start_marker.getRawPosition());
+      }
 
       final FeatureVector features_in_range =
-        entry_group.getFeaturesInRange (search_range);
+        entry_group.getFeaturesInRange(search_range);
 
       final FeatureVector features_to_change =
-        new FeatureVector ();
+        new FeatureVector();
 
-      for (int i = 0 ; i < features_in_range.size () ; ++i) {
-        final Feature this_feature = features_in_range.elementAt (i);
+      for(int i = 0 ; i < features_in_range.size() ; ++i) 
+      {
+        final Feature this_feature = features_in_range.elementAt(i);
 
-        if (this_feature.getStrand () == cds_to_fix_strand &&
-            (this_feature.isCDS () ||
-             this_feature.getKey ().equals ("mRNA") ||
-             this_feature.getKey ().equals ("intron") ||
-             this_feature.getKey ().equals ("exon") ||
-             this_feature.getKey ().equals ("5'UTR") &&
-             (cds_to_fix.getFirstBase () ==
-              this_feature.getLastBase () + 1) ||
-             this_feature.getKey ().equals ("3'UTR") &&
-             (cds_to_fix.getLastBase () + 1 ==
-              this_feature.getFirstBase ()) ||
-             this_feature.getKey ().equals ("gene"))) {
-
-          if (this_feature.isReadOnly ()) {
+        if(this_feature.getStrand() == cds_to_fix_strand &&
+           (this_feature.isCDS() ||
+            this_feature.getKey().equals("mRNA") ||
+            this_feature.getKey().equals("intron") ||
+            this_feature.getKey().equals("exon") ||
+             this_feature.getKey().equals("5'UTR") &&
+             (cds_to_fix.getFirstBase() ==
+              this_feature.getLastBase() + 1) ||
+             this_feature.getKey().equals("3'UTR") &&
+             (cds_to_fix.getLastBase() + 1 ==
+              this_feature.getFirstBase()) ||
+             this_feature.getKey().equals("gene"))) 
+        {
+          if(this_feature.isReadOnly()) 
+          {
             final String message =
               "one or more of the of the overlapping features are read only " +
               "- cannot continue";
-            new MessageDialog (frame, message);
+            new MessageDialog(frame, message);
             return false;
           }
-          features_to_change.add (this_feature);
+          features_to_change.add(this_feature);
         }
       }
 
-      final FeatureVector overlapping_cds_features = new FeatureVector ();
-
-      for (int i = 0 ; i < features_to_change.size () ; ++i) {
-        final Feature this_test_feature = features_to_change.elementAt (i);
-
-        if (this_test_feature != cds_to_fix &&
-            this_test_feature.isCDS ()) {
-          overlapping_cds_features.add (this_test_feature);
-          features_to_change.remove (this_test_feature);
+      final FeatureVector overlapping_cds_features = new FeatureVector();
+      for(int i = 0 ; i < features_to_change.size() ; ++i) 
+      {
+        final Feature this_test_feature = features_to_change.elementAt(i);
+        if(this_test_feature != cds_to_fix && this_test_feature.isCDS())
+        {
+          overlapping_cds_features.add(this_test_feature);
+          features_to_change.remove(this_test_feature);
         }
       }
 
-      if (overlapping_cds_features.size () > 0) {
+      if(overlapping_cds_features.size() > 0) 
+      {
         final String message =
-          "your CDS (" + cds_to_fix.getIDString () +
-          ") overlaps " + overlapping_cds_features.size () +
+          "your CDS (" + cds_to_fix.getIDString() +
+          ") overlaps " + overlapping_cds_features.size() +
           " other CDS feature" +
-          (overlapping_cds_features.size () == 1 ?
+          (overlapping_cds_features.size() == 1 ?
            "" : "s") + " - continue?";
 
         final YesNoDialog dialog =
-          new YesNoDialog (frame, message);
+          new YesNoDialog(frame, message);
 
-        if (!dialog.getResult ()) {
+        if(!dialog.getResult())
           return false;
-        }
       }
 
       final StringVector gene_names = new StringVector ();
 
-      for (int feature_index = 0 ;
-           feature_index < features_to_change.size () ;
-           ++feature_index) {
+      for(int i = 0; i < features_to_change.size(); ++i)
+      {
         final Feature test_feature =
-          features_to_change.elementAt (feature_index);
+          features_to_change.elementAt(i);
 
         final StringVector test_feature_gene_names =
-          test_feature.getValuesOfQualifier ("gene");
+          test_feature.getValuesOfQualifier("gene");
 
-        if (test_feature_gene_names != null) {
-          for (int test_feature_gene_name_index = 0 ;
-               test_feature_gene_name_index < test_feature_gene_names.size ();
-               ++test_feature_gene_name_index) {
+        if(test_feature_gene_names != null) 
+        {
+          for(int j = 0; j < test_feature_gene_names.size(); ++j)
+         {
             final String this_gene_name =
-              test_feature_gene_names.elementAt (test_feature_gene_name_index);
+              test_feature_gene_names.elementAt(j);
 
-            if (!gene_names.contains (this_gene_name)) {
+            if(!gene_names.contains(this_gene_name))
               gene_names.add (this_gene_name);
-            }
           }
         }
       }
 
-      if (gene_names.size () == 0) {
-        // ignore this feature, but continue with the other features
+      // ignore this feature, but continue with the other features
+      if (gene_names.size () == 0)
         return true;
-      }
 
-      for (int feature_index = 0 ;
-           feature_index < features_to_change.size () ;
-           ++feature_index) {
-        final Feature this_feature =
-          features_to_change.elementAt (feature_index);
-        final Qualifier qualifier = new Qualifier ("gene", gene_names);
-
-        this_feature.setQualifier (qualifier);
+      for(int i = 0; i < features_to_change.size(); ++i)
+      {
+        final Feature this_feature = features_to_change.elementAt(i);
+        final Qualifier qualifier = new Qualifier("gene", gene_names);
+        this_feature.setQualifier(qualifier);
       }
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
-    } catch (InvalidRelationException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
-    } catch (EntryInformationException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
-    } catch (ReadOnlyException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+    } 
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
+    } 
+    catch(InvalidRelationException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
+    } 
+    catch(EntryInformationException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
+    } 
+    catch(ReadOnlyException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
 
     return true;
@@ -2327,31 +2439,33 @@ public class EditMenu extends SelectionMenu
    *  @param selection The Selection that the commands in the menu will
    *    operate on.
    **/
-  public static void fixGeneNames (final JFrame frame,
-                                   final EntryGroup entry_group,
-                                   final Selection selection) {
-    try {
-      entry_group.getActionController ().startAction ();
-
-      final FeatureVector features_to_fix = selection.getAllFeatures ();
-
+  private static void fixGeneNames(final JFrame frame,
+                                  final EntryGroup entry_group,
+                                  final Selection selection) 
+  {
+    try 
+    {
+      entry_group.getActionController().startAction();
+      final FeatureVector features_to_fix = selection.getAllFeatures();
       int cds_features_found = 0;
 
-      for (int i = 0 ; i < features_to_fix.size () ; ++i) {
-        final Feature selection_feature = features_to_fix.elementAt (i);
+      for(int i = 0; i < features_to_fix.size(); ++i)
+      {
+        final Feature selection_feature = features_to_fix.elementAt(i);
 
-        if (selection_feature.isCDS ()) {
+        if(selection_feature.isCDS()) 
+        {
           ++cds_features_found;
-          if (!fixGeneNamesHelper (frame, entry_group, selection_feature)) {
+          if(!fixGeneNamesHelper(frame, entry_group, selection_feature))
             return;
-          }
         }
       }
 
-      if (cds_features_found == 0) {
-        new MessageDialog (frame, "no CDS features selected");
-      }
-    } finally {
+      if(cds_features_found == 0) 
+        new MessageDialog(frame, "no CDS features selected");
+    } 
+    finally
+    {
       entry_group.getActionController ().endAction ();
     }
   }
@@ -2359,7 +2473,8 @@ public class EditMenu extends SelectionMenu
   /**
    *  Return the EntryGroup that was passed to the constructor.
    **/
-  private EntryGroup getEntryGroup () {
+  private EntryGroup getEntryGroup() 
+  {
     return entry_group;
   }
 
@@ -2367,81 +2482,28 @@ public class EditMenu extends SelectionMenu
    *  This method sends an GotoEvent to all the GotoEvent listeners that will
    *  make the first base of the selection visible.
    **/
-  private void makeSelectionStartVisible () {
-    final GotoEvent new_event =
-      new GotoEvent (this, getSelection ().getStartBaseOfSelection ());
-
-    goto_event_source.sendGotoEvent (new_event);
-  }
-
-  /**
-   *  Return the GotoEventSource object that was passed to the constructor.
-   **/
-  private GotoEventSource getGotoEventSource () {
-    return goto_event_source;
+  private void makeSelectionStartVisible() 
+  {
+    final GotoEvent new_event = new GotoEvent(this,
+                                      getSelection().getStartBaseOfSelection());
+    goto_event_source.sendGotoEvent(new_event);
   }
 
   /**
    *  Returns a Vector containing those features in the given vector of
    *  features which are read only or are in a read only entry.
    **/
-  private static FeatureVector
-    getReadOnlyFeatures (final FeatureVector features) {
-    final FeatureVector return_vector = new FeatureVector ();
+  private static FeatureVector getReadOnlyFeatures(final FeatureVector features)
+  {
+    final FeatureVector return_vector = new FeatureVector();
 
-    for (int i = 0 ; i < features.size () ; ++i) {
-      final Feature this_feature = features.elementAt (i);
-      if (this_feature.isReadOnly ()) {
-        return_vector.add (this_feature);
-      }
+    for(int i = 0; i < features.size(); ++i) 
+    {
+      final Feature this_feature = features.elementAt(i);
+      if(this_feature.isReadOnly()) 
+        return_vector.add(this_feature);
     }
 
     return return_vector;
   }
-
-  /**
-   *  The GotoEventSource object that was passed to the constructor.
-   **/
-  private GotoEventSource goto_event_source = null;
-
-  /**
-   *  The EntryGroup object that was passed to the constructor.
-   **/
-  private EntryGroup entry_group = null;
-
-  /**
-   *  The BasePlotGroup object that was passed to the constructor.
-   **/
-  private BasePlotGroup base_plot_group = null;
-
-  private JMenuItem undo_item = null;
-  private JMenuItem edit_feature_item = null;
-  private JMenuItem raw_edit_feature_item = null;
-  private JMenuItem duplicate_item = null;
-  private JMenuItem merge_features_item = null;
-  private JMenuItem unmerge_feature_item = null;
-  private JMenuItem delete_features_item = null;
-  private JMenuItem edit_header_item = null;
-  private JMenuItem add_qualifiers_item = null;
-  private JMenuItem remove_qualifier_item = null;
-  private JMenuItem delete_segments_item = null;
-  private JMenuItem delete_introns_item = null;
-  private JMenuItem edit_subsequence_item = null;
-  private JMenuItem paste_item = null;
-  private JMenu move_features_menu = null;
-  private JMenu copy_features_menu = null;
-  private JMenuItem trim_item = null;
-  private JMenuItem trim_to_any_item = null;
-  private JMenuItem trim_to_next_item = null;
-  private JMenuItem trim_to_next_any_item = null;
-  private JMenuItem extend_to_next_stop_item = null;
-  private JMenuItem extend_to_prev_stop_item = null;
-  private JMenuItem auto_label_item = null;
-  private JMenuItem auto_gene_name_item = null;
-  private JMenuItem fix_gene_names_item = null;
-  private JMenuItem fix_stop_codons_item = null;
-  private JMenuItem reverse_complement_item = null;
-  private JMenuItem delete_bases_item = null;
-  private JMenuItem add_bases_item = null;
-  private JMenuItem add_bases_from_file_item = null;
 }
