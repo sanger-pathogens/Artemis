@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.2 2004-11-29 15:25:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.3 2005-01-11 15:54:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -40,17 +40,12 @@ import javax.swing.*;
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.2 2004-11-29 15:25:24 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.3 2005-01-11 15:54:32 tjc Exp $
  *
  **/
 
-public class FileViewer
-  extends JFrame 
+public class FileViewer extends JFrame
 {
-
-  /** Pressing this button will distroy the JFrame. */
-  private JButton close_button;
-
   /** A JPanel to hold the close button. */
   private JPanel button_panel;
 
@@ -91,18 +86,15 @@ public class FileViewer
     super(label);
 
     getContentPane().setLayout(new BorderLayout());
-
     final Font font = Options.getOptions().getFont();
-
     setFont(font);
 
     text_area = new JTextArea();
-
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     
     JScrollPane scroller = new JScrollPane(text_area);
     scroller.setPreferredSize(new Dimension((int)screen.getWidth()/2,
-                                             (int)screen.getHeight()/2));
+                                            (int)screen.getHeight()/2));
     text_area.setEditable(false);
     text_area.setFont(font);
     text_area.setBackground(Color.white);
@@ -112,7 +104,7 @@ public class FileViewer
     button_panel = new JPanel();
     getContentPane().add(button_panel, "South");
 
-    close_button = new JButton("Close");
+    final JButton close_button = new JButton("Close");
     close_button.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent e) 
@@ -120,7 +112,6 @@ public class FileViewer
         dispose();
       }
     });
-
     button_panel.add(close_button);
 
     addWindowListener(new WindowAdapter() 
@@ -160,7 +151,7 @@ public class FileViewer
 //      setSize(800, 700);
 
       setLocation(new Point((screen.width - getSize().width) / 2,
-                             (screen.height - getSize().height) / 2));
+                            (screen.height - getSize().height) / 2));
     } 
     else
     {
@@ -186,7 +177,7 @@ public class FileViewer
   /**
    *  Clear the viewer window.
    **/
-  public void clear()  
+  protected void clear()  
   {
     text_area.setText("");
   }
@@ -195,7 +186,7 @@ public class FileViewer
    *  Read from the given Reader and append the text to this FileViewer.
    *  @param read_stream The stream to read the contents of the viewer from.
    **/
-  public void appendFile(Reader read_stream)
+  protected void appendFile(Reader read_stream)
       throws IOException 
   {
     final BufferedReader buffered_reader = new BufferedReader(read_stream);
@@ -230,7 +221,6 @@ public class FileViewer
 
     final String new_text = line_buffer.toString();
     text_area.setText(new_text);
-//  text_area.getCaret().setDot(0);
     text_area.setCaretPosition(0);
   }
 
@@ -238,12 +228,11 @@ public class FileViewer
    *  Clear the viewer window and display the lines from the given String.
    *  @param read_string The string to read the contents of the viewer from.
    **/
-  public void setText(String read_string) 
+  protected void setText(String read_string) 
   {
     if(!read_string.equals(text_area.getText())) 
     {
       text_area.setText(read_string);
-//    text_area.getCaret().setDot(0);
       text_area.setCaretPosition(0);
     }
   }
@@ -253,7 +242,7 @@ public class FileViewer
    *  Clear the viewer window and display the lines from the given String.
    *  @param read_string The string to read the contents of the viewer from.
    **/
-  public void appendString(String read_string) 
+  protected void appendString(String read_string) 
   {
     text_area.append(read_string);
     text_area.getCaret().setDot(0);
@@ -262,7 +251,7 @@ public class FileViewer
   /**
    *  Return a String containing the text that this component is displaying.
    **/
-  public String getText() 
+  protected String getText() 
   {
     return getTextArea().getText();
   }
@@ -274,7 +263,7 @@ public class FileViewer
   {
     setVisible(false);
     
-    saved_size = getSize();
+    saved_size     = getSize();
     saved_position = getLocation();
 
     super.dispose();
@@ -283,7 +272,7 @@ public class FileViewer
   /**
    *  return the TextArea component from this FileViewer.
    **/
-  public JTextArea getTextArea() 
+  protected JTextArea getTextArea() 
   {
     return text_area;
   }
