@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.8 2004-09-24 15:37:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.9 2004-10-29 10:01:48 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.8 2004-09-24 15:37:00 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.9 2004-10-29 10:01:48 tjc Exp $
  **/
 
 public class FeatureEdit extends JFrame
@@ -691,9 +691,19 @@ public class FeatureEdit extends JFrame
               }
 
               // show object editor
-              new uk.ac.sanger.artemis.editor.BigPane(dataFile.toArray(),
+              try
+              {
+                new uk.ac.sanger.artemis.editor.BigPane(dataFile.toArray(),
                                          qualifier_text_area, overlapFeatures,
                                          edit_feature);
+              }
+              catch(ArrayIndexOutOfBoundsException e)
+              {
+                JOptionPane.showMessageDialog(null,"No results files.",
+                        "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+              }
+
               progress.finished();
               FeatureEdit.this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
               return null;
