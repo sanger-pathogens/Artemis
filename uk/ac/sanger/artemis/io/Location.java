@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Location.java,v 1.2 2004-10-21 14:10:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Location.java,v 1.3 2004-10-29 09:36:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import uk.ac.sanger.artemis.io.LocationLexer.TokenEnumeration;
  *  functions for parsing and manipulating the location.
  *
  *  @author Kim Rutherford
- *  @version $Id: Location.java,v 1.2 2004-10-21 14:10:34 tjc Exp $
+ *  @version $Id: Location.java,v 1.3 2004-10-29 09:36:24 tjc Exp $
  *
  */
 public class Location 
@@ -510,44 +510,44 @@ public class Location
   private LocationParseNode getParseTree(String location_string)
       throws LocationParseException 
   {
-    final LocationLexer lexer    = new LocationLexer(location_string);
-    final TokenEnumeration enum  = lexer.getTokens();
-    final LocationParseNode join = parseJoinContents(enum);
+    final LocationLexer lexer     = new LocationLexer(location_string);
+    final TokenEnumeration enumTk = lexer.getTokens();
+    final LocationParseNode join  = parseJoinContents(enumTk);
 
-    if(enum.peekElement () != null) 
+    if(enumTk.peekElement() != null) 
       throw new LocationParseException("garbage at the end of the " +
-                                       "location string", enum);
+                                       "location string", enumTk);
     return join;
   }
 
   /**
    *  Parse and return a location in the form of a LocationParseNode.  A
    *  location is of the form: complement(...), join(...), order(...) or
-   *  <range> (where <range> is described in parseRange ()).  If the next
+   *  <range> (where <range> is described in parseRange()).  If the next
    *  tokens in the TokenEnumeration are not a location then an exception is
    *  thrown.  */
-  private static LocationParseNode parseLocation(TokenEnumeration enum)
+  private static LocationParseNode parseLocation(TokenEnumeration enumTk)
       throws LocationParseException 
   {
-    // failed to parse a range - try parsing a functional (join, etc.)
+    // failed to parse a range - try parsing a functional(join, etc.)
 
-    final LocationParseNode parsed_functional = parseFunctional(enum);
+    final LocationParseNode parsed_functional = parseFunctional(enumTk);
 
     if(parsed_functional != null)
        return parsed_functional;
 
-    final LocationParseNode entry_range = parseEntryRange (enum);
+    final LocationParseNode entry_range = parseEntryRange(enumTk);
 
     if(entry_range != null)
       return entry_range;
 
-    final LocationParseNode parsed_range = parseRange (enum);
+    final LocationParseNode parsed_range = parseRange(enumTk);
 
     if(parsed_range != null) 
        return parsed_range;
     else 
       throw new LocationParseException("expected a range or a functional",
-                                       enum);
+                                       enumTk);
   }
 
   /**
@@ -557,19 +557,19 @@ public class Location
    *  made to parse the next tokens as an entry range.  If the parse fails
    *  part way through then a LocationParseException is thrown.
    **/
-  private static LocationParseNode parseEntryRange (TokenEnumeration enum)
+  private static LocationParseNode parseEntryRange(TokenEnumeration enumTk)
       throws LocationParseException 
   {
-    if(!(enum.peekElement() instanceof String)) 
+    if(!(enumTk.peekElement() instanceof String)) 
       return null;
 
-    final String entry_string = (String)enum.nextElement();
+    final String entry_string = (String)enumTk.nextElement();
 
-    if(!enum.eatToken (':'))
+    if(!enumTk.eatToken(':'))
       throw new LocationParseException("parse error after reading \"" +
-                                        entry_string + "\"", enum);
+                                        entry_string + "\"", enumTk);
 
-    final LocationParseNode entry_location = parseLocation(enum);
+    final LocationParseNode entry_location = parseLocation(enumTk);
 
      return new LocationParseNode(entry_string, entry_location);
   }
@@ -578,25 +578,25 @@ public class Location
    *  Attempt to parse and return the contents of a JOIN node (or the top
    *  level node).
    **/
-  private static LocationParseNode parseJoinContents(TokenEnumeration enum)
+  private static LocationParseNode parseJoinContents(TokenEnumeration enumTk)
       throws LocationParseException 
   {
     final LocationParseNodeVector return_ranges =
       new LocationParseNodeVector();
 
-    final LocationParseNode parsed_range = parseLocation(enum);
+    final LocationParseNode parsed_range = parseLocation(enumTk);
 
     if(parsed_range == null)
       return null;
 
     return_ranges.addElement(parsed_range);
 
-    final Object peek_element = enum.peekElement();
+    final Object peek_element = enumTk.peekElement();
 
-    while(enum.eatToken(',')) 
+    while(enumTk.eatToken(',')) 
     {
-      LocationParseNode new_child = parseLocation(enum);
-      return_ranges.addElement (new_child);
+      LocationParseNode new_child = parseLocation(enumTk);
+      return_ranges.addElement(new_child);
     }
 
     if(return_ranges.size() > 1) 
@@ -611,40 +611,40 @@ public class Location
    *  made to read a range.  If the parse fails part way through what looks
    *  like a range then a LocationParseException is thrown.
    **/
-  private static LocationParseNode parseRange(TokenEnumeration enum)
+  private static LocationParseNode parseRange(TokenEnumeration enumTk)
       throws LocationParseException 
   {
     boolean is_lower_unbounded_range = false;
     boolean is_upper_unbounded_range = false;
 
     // returns Integer, UpperInteger, LowerInteger, Range or null
-    Object start_object = parseRangeBound(enum);
+    Object start_object = parseRangeBound(enumTk);
 
     if(start_object == null) 
       return null;
 
-    final Object middle_token = enum.peekElement();
+    final Object middle_token = enumTk.peekElement();
 
-    if(!enum.eatToken("..") && !enum.eatToken('^')) 
-       return new LocationParseNode(FuzzyRange.makeRange (start_object));
+    if(!enumTk.eatToken("..") && !enumTk.eatToken('^')) 
+       return new LocationParseNode(FuzzyRange.makeRange(start_object));
 
-    if(enum.peekElement() == null) 
+    if(enumTk.peekElement() == null) 
       throw new LocationParseException("location ends in the middle of " +
-                                        "a range", enum);
+                                        "a range", enumTk);
 
     if(start_object instanceof UpperInteger) 
       throw new LocationParseException("range cannot start with: " +
-                                       start_object, enum);
+                                       start_object, enumTk);
 
-    Object end_object = parseRangeBound(enum);
+    Object end_object = parseRangeBound(enumTk);
 
     if(end_object == null) 
       throw new LocationParseException("unexpected characters in location",
-                                       enum);
+                                       enumTk);
 
     if(end_object instanceof LowerInteger) 
       throw new LocationParseException("a range cannot end with: " +
-                                       end_object, enum);
+                                       end_object, enumTk);
 
     if(middle_token instanceof Character &&
        ((Character)middle_token).charValue() == '^') 
@@ -654,20 +654,20 @@ public class Location
         try 
         {
           final Range new_range =
-            new BetweenRange(((Integer) start_object).intValue (),
-                             ((Integer) end_object).intValue ());
+            new BetweenRange(((Integer) start_object).intValue(),
+                             ((Integer) end_object).intValue());
            return new LocationParseNode(new_range);
         }
         catch(OutOfRangeException e) 
         {
           throw new LocationParseException("a range must start before it " +
-                                           "ends", enum);
+                                           "ends", enumTk);
         }
       } 
       else 
-        throw new LocationParseException ("a range that contains a " +
+        throw new LocationParseException("a range that contains a " +
                                           "'^' must start and end with a " +
-                                          "plain number", enum);
+                                          "plain number", enumTk);
     }
 
     try
@@ -678,55 +678,55 @@ public class Location
     catch(OutOfRangeException e) 
     {
       throw new LocationParseException("a range must start before it ends",
-                                        enum);
+                                        enumTk);
     }
   }
 
   /**
    *  Parse the start or end of a range.
    **/
-  private static Object parseRangeBound (TokenEnumeration enum) throws
+  private static Object parseRangeBound(TokenEnumeration enumTk) throws
       LocationParseException 
   {
-    final Object peek_element = enum.peekElement();
+    final Object peek_element = enumTk.peekElement();
     
     if(peek_element instanceof Integer)
     {
-      if(((Integer) peek_element).intValue () < 1) 
+      if(((Integer) peek_element).intValue() < 1) 
         throw new LocationParseException("range bounds must be " +
-                                          "greater than 0", enum);
-      return enum.nextElement();
+                                          "greater than 0", enumTk);
+      return enumTk.nextElement();
     }
 
     if(peek_element instanceof LowerInteger) 
     {
-      if(((LowerInteger) peek_element).getPosition () < 1) 
-        throw new LocationParseException ("range bounds must be " +
-                                          "greater than 0", enum);
+      if(((LowerInteger) peek_element).getPosition() < 1) 
+        throw new LocationParseException("range bounds must be " +
+                                          "greater than 0", enumTk);
 
-      return enum.nextElement ();
+      return enumTk.nextElement();
     }
 
     if(peek_element instanceof UpperInteger)
     {
       if(((UpperInteger)peek_element).getPosition() < 1)
         throw new LocationParseException("range bounds must be " +
-                                          "greater than 0", enum);
-      return enum.nextElement();
+                                          "greater than 0", enumTk);
+      return enumTk.nextElement();
     }
 
     // try to parse a range of the form (100.200)
-    if(enum.eatToken ('(')) 
+    if(enumTk.eatToken ('(')) 
     {
-      if(enum.peekElement() instanceof Integer) 
+      if(enumTk.peekElement() instanceof Integer) 
       {
-        final Integer start = (Integer)enum.nextElement();
+        final Integer start = (Integer)enumTk.nextElement();
 
-        if(enum.eatToken('.')) 
+        if(enumTk.eatToken('.')) 
         {
-          if(enum.peekElement() instanceof Integer) 
+          if(enumTk.peekElement() instanceof Integer) 
           {
-            final Integer end = (Integer)enum.nextElement ();
+            final Integer end = (Integer)enumTk.nextElement();
 
             int start_value = start.intValue();
             int end_value   = end.intValue();
@@ -743,10 +743,10 @@ public class Location
 
             if(start_value < 1) 
               throw new LocationParseException("range bounds must be " +
-                                               "greater than 0", enum);
+                                               "greater than 0", enumTk);
 
             if(start_value == end_value) 
-              return_object = new Integer (start_value);
+              return_object = new Integer(start_value);
             else 
             {
               try
@@ -759,24 +759,24 @@ public class Location
               }
             }
 
-            if(enum.eatToken (')')) 
+            if(enumTk.eatToken(')')) 
                return return_object;
             else
             {
               final String message =
                 "expected a closing parenthesis after reading: (" +
-                start.intValue () + "." + end.intValue ();
-              throw new LocationParseException (message, enum);
+                start.intValue() + "." + end.intValue();
+              throw new LocationParseException(message, enumTk);
             }
           }
           else 
-            throw new LocationParseException ("expected an integer", enum);
+            throw new LocationParseException("expected an integer", enumTk);
         } 
         else 
-          throw new LocationParseException ("expected a '.'", enum);
+          throw new LocationParseException("expected a '.'", enumTk);
       } 
       else 
-        throw new LocationParseException ("expected an integer", enum);
+        throw new LocationParseException("expected an integer", enumTk);
     }
 
     return null;
@@ -789,41 +789,41 @@ public class Location
    *  through what looks like a functional then a LocationParseException is
    *  thrown.
    */
-  private static LocationParseNode parseFunctional (TokenEnumeration enum)
+  private static LocationParseNode parseFunctional(TokenEnumeration enumTk)
       throws LocationParseException 
   {
-    Object peeked_element = enum.peekElement ();
+    Object peeked_element = enumTk.peekElement();
 
     if(peeked_element instanceof String &&
        ("complement".equals((String) peeked_element) ||
         "join".equals((String) peeked_element) ||
         "order".equals((String) peeked_element))) 
     {
-      // remove the first token from the enum
-      String functional_name = (String)enum.nextElement();
+      // remove the first token from the enumTk
+      String functional_name = (String)enumTk.nextElement();
 
-      if(!enum.eatToken('(')) 
-        throw new LocationParseException ("expected (", enum);
+      if(!enumTk.eatToken('(')) 
+        throw new LocationParseException("expected(", enumTk);
 
       if("complement".equals(functional_name)) 
       {
         // special case for complement - it should have only one argument
-        LocationParseNode child = parseJoinContents(enum);
+        LocationParseNode child = parseJoinContents(enumTk);
 
-        if (!enum.eatToken (')')) {
-//          throw new LocationParseException ("expected )", enum);
+        if(!enumTk.eatToken(')')) {
+//          throw new LocationParseException ("expected )", enumTk);
         }
 
         // create a COMPLEMENT type node
-         return new LocationParseNode (LocationParseNode.COMPLEMENT, child);
+         return new LocationParseNode(LocationParseNode.COMPLEMENT, child);
       } 
       else
       {
-        // parseLocation () will parse range,range,range as a JOIN
-        LocationParseNode join = parseJoinContents (enum);
+        // parseLocation() will parse range,range,range as a JOIN
+        LocationParseNode join = parseJoinContents(enumTk);
 
-        if (!enum.eatToken (')')) {
-//          throw new LocationParseException ("expected )", enum);
+        if(!enumTk.eatToken(')')) {
+//          throw new LocationParseException("expected )", enumTk);
         }
 
         if(join.getType() == LocationParseNode.JOIN) 
@@ -833,8 +833,8 @@ public class Location
             return new LocationParseNode(LocationParseNode.JOIN,
                                          join.getChildren());
           else 
-            return new LocationParseNode (LocationParseNode.ORDER,
-                                          join.getChildren ());
+            return new LocationParseNode(LocationParseNode.ORDER,
+                                          join.getChildren());
         }
         else 
           return join;
