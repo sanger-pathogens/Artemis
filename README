@@ -6,12 +6,18 @@ sequence, and its six-frame translation.  Artemis is written in Java, reads
 EMBL or GENBANK format sequences and feature tables, and can work on sequences
 of any size.
 
+ACT is a DNA sequence comparison viewer based on Artemis. The name ACT stands
+for Artemis Comparison Tool. ACT is written in Java, reads EMBL or GENBANK 
+format sequences and feature tables, and can work on sequences of any size.
+
 
 DOCUMENTATION
 
 The Artemis user manual is at:
   http://www.sanger.ac.uk/Software/Artemis/manual
 
+The ACT user manual is at:
+  http://www.sanger.ac.uk/Software/ACT/manual
 
 INSTALLATION
 
