@@ -184,24 +184,18 @@ LINKEND="OPTIONS-PROKSTARTCODONS">.
       </PARA>
     </SECT2>
 
-    <SECT2 ID="OPTIONS-EUKSTARTCODONS">
-      <TITLE><LITERAL>eukaryotic_start_codons</LITERAL></TITLE>
+    <SECT2 ID="OPTIONS-GENETICCODES">
+      <TITLE><LITERAL>genetic_codes</LITERAL></TITLE>
       <PARA>
-This option gives the bases of the possible start codons when &prog; is in
-eukaryotic mode.
-      </PARA>
-    </SECT2>
-
-    <SECT2 ID="OPTIONS-PROKSTARTCODONS">
-      <TITLE><LITERAL>prokaryotic_start_codons</LITERAL></TITLE>
-      <PARA>
-This option gives the bases of the possible start codons when &prog; is in
-prokaryotic mode.
+This option gives the list of names of the available genetic code tables.
+For each name in the list there is a translation_table_NUMBER entry (see
+below) where NUMBER is its location in the genetic_codes list. Similarly
+the start codons are defined as start_codons_NUMBER for each code.
       </PARA>
     </SECT2>
 
     <SECT2 ID="OPTIONS-TRANSLATION-TABLE">
-      <TITLE><LITERAL>translation_table</LITERAL></TITLE>
+      <TITLE><LITERAL>translation_table_1</LITERAL></TITLE>
       <PARA>
 The translation_table option is used to lookup codon translations.  The
 table must have exactly 64 entries, and there is one entry for each codon.
@@ -215,12 +209,12 @@ The entries should appear in this order:
         </SYNOPSIS>
       </PARA>
       <PARA>
-This is the default setting for this option:
+This is the default setting for this option is the Standard Code:
         <SYNOPSIS>
-translation_table = \
+translation_table_1 = \
      f f l l \
      s s s s \
-     y y # + \
+     y y * * \
      c c * w \
              \
      l l l l \
@@ -238,6 +232,12 @@ translation_table = \
      d d e e \
      g g g g
         </SYNOPSIS>
+      </PARA>
+      <PARA>
+The other translation table entries are defined by giving the differences
+to the Standard Code. These are given as the bases that make up the codon
+immediately followed by the translation (e.g. atam, so that 'ata' codes
+for 'm').
       </PARA>
     </SECT2>
 
