@@ -74,6 +74,7 @@ public class BigPane extends JFrame
     this.overlapFeature = overlapFeature;
     this.edit_feature   = edit_feature;
 
+    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     MultiLineToolTipUI.initialize();
     setFont(font);
     final JDesktopPane desktop = new JDesktopPane();
@@ -226,32 +227,7 @@ public class BigPane extends JFrame
     {
       public void actionPerformed(ActionEvent e)
       {
-        if(qualifier == null)
-          System.exit(0);
-
-        final String oldTxt = qualifier.getText().trim();
-        final String newTxt = dataView.getFeatureText().trim();
-
-        // changes have been made to feature annotation
-        if(!oldTxt.equals(newTxt))
-        {
-          int ok = JOptionPane.showConfirmDialog(BigPane.this, 
-                              "Apply changes now?",
-                              "Apply Changes",
-                              JOptionPane.YES_NO_CANCEL_OPTION,
-                              JOptionPane.QUESTION_MESSAGE);
-
-          if(ok == JOptionPane.CANCEL_OPTION)
-            return;
-
-          if(ok == JOptionPane.OK_OPTION)
-            qualifier.setText(newTxt);
-        }
-
-        dataView.stopGetz();
-
-        BigPane.srsFrame = null;
-        dispose();
+        onClose();
       }
     });
         
@@ -305,6 +281,43 @@ public class BigPane extends JFrame
 
   /**
   *
+  * Routine to call when the editor is closed.
+  *
+  */
+  private void onClose()
+  {
+    if(qualifier == null)
+      System.exit(0);
+
+    final String oldTxt = qualifier.getText().trim();
+    final String newTxt = dataView.getFeatureText().trim();
+
+    // changes have been made to feature annotation
+    if(!oldTxt.equals(newTxt))
+    {
+      int ok = JOptionPane.showConfirmDialog(BigPane.this,
+                          "Apply changes now?",
+                          "Apply Changes",
+                          JOptionPane.YES_NO_CANCEL_OPTION,
+                          JOptionPane.QUESTION_MESSAGE);
+
+      if(ok == JOptionPane.CANCEL_OPTION)
+        return;
+
+      if(ok == JOptionPane.OK_OPTION)
+        qualifier.setText(newTxt);
+    }
+
+    // stop getz processes
+    dataView.stopGetz();
+
+    BigPane.srsFrame = null;
+    dispose();
+  }
+
+
+  /**
+  *
   * Set up the tabbed SRS frame
   *
   */ 
@@ -350,13 +363,7 @@ public class BigPane extends JFrame
   {
      public void windowClosing(WindowEvent we)
      {
-        if(qualifier == null)
-          System.exit(0);
-
-        qualifier.setText(dataView.getFeatureText());
-        BigPane.srsFrame = null;
-        dispose();
-
+       onClose();
      }
   }
 

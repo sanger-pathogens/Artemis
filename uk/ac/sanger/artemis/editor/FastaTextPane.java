@@ -546,7 +546,11 @@ public class FastaTextPane extends JScrollPane
     Enumeration threadEnum = threads.elements();
 
     while(threadEnum.hasMoreElements())
-      ((GetzThread)threadEnum.nextElement()).stopMe();
+    {
+      GetzThread gthread = (GetzThread)threadEnum.nextElement();
+      if(gthread.isAlive())
+        gthread.stopMe();
+    }
   }
 
   class GetzThread extends Thread
