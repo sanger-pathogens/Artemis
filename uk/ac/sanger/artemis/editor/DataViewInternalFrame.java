@@ -47,7 +47,7 @@ public class DataViewInternalFrame extends JInternalFrame
     Annotation ann   = new Annotation(desktop);
 
     StringBuffer annFormat = new StringBuffer();
-    annFormat.append(htmlBreaks(qualifier_txt));
+    annFormat.append(htmlBreaks(qualifier_txt.trim()));
 
     for(int i=0; i<dataFile.length; i++)
     {
