@@ -185,7 +185,7 @@ public class DataViewInternalFrame extends JInternalFrame
     // add tab pane listener
     tabPane.addChangeListener(new TabChangeListener());
 
-    // add setActivennotator text pane
+    // add setActive annotator text pane
     ann.setAnnotation(annFormat.toString().trim());
 
     JScrollPane annotationScroll = new JScrollPane(ann);   

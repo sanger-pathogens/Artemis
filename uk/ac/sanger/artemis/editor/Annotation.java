@@ -120,7 +120,8 @@ public class Annotation extends JEditorPane
     qualifier.add("/GO_component=");
     qualifier.add("/product=");
     qualifier.add("/EC_number=");
- 
+    qualifier.add("/note=");
+
     text = getDatabaseHTML(text,"SWALL:");
     text = getDatabaseHTML(text,"UniProt:");
     text = getDatabaseHTML(text,"EMBL:");
@@ -150,6 +151,7 @@ public class Annotation extends JEditorPane
     try
     {
       txt = ((HTMLDocument)getDocument()).getText(0,getDocument().getLength()).trim();
+
       StringBuffer buff = new StringBuffer();
       StringTokenizer tok = new StringTokenizer(txt,"/");
       int ntok = 0;
