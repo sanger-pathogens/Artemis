@@ -162,7 +162,8 @@ public class HitInfo
     ind1 = ind2;
     ind2 = header.indexOf("(",ind1);
     if(ind2 > -1)
-      desc = header.substring(ind1,ind2).trim();
+      desc = "";
+//    desc = header.substring(ind1,ind2).trim();
     else
       return;
 
@@ -387,7 +388,7 @@ public class HitInfo
   */
   protected void appendDescription(String s)
   {
-    if(desc == null)
+    if(desc == null || desc.equals(""))
       desc = new String(s);
     else 
       desc = desc + " " + s;

@@ -532,7 +532,7 @@ public class DataCollectionPane extends JScrollPane
             if(line.startsWith("OS "))
               hit.setOrganism(lineStrip);
             else if(line.startsWith("DE "))
-              hit.setDescription(lineStrip);
+              hit.appendDescription(lineStrip);
             else if(line.startsWith("GN "))
             {
               StringTokenizer tokGN = new StringTokenizer(lineStrip,";");
@@ -642,7 +642,7 @@ public class DataCollectionPane extends JScrollPane
         if(token.startsWith("OS "))
           hit.setOrganism(tokenline);
         else if(token.startsWith("DE "))
-          hit.setDescription(tokenline);
+          hit.appendDescription(tokenline);
         else if(token.startsWith("GN "))
         {
           StringTokenizer tokGN = new StringTokenizer(tokenline,";");
