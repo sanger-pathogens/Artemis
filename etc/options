@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.6 2004-06-11 15:44:23 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.7 2004-07-02 13:22:37 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -359,6 +359,7 @@ extra_qualifiers = \
     mitochondrion "text" \
     modified "text" \
     mutation "text" \
+    note "text" \
     obsolete_name "text" \
     obsolete_product "text" \
     origid "text" \
