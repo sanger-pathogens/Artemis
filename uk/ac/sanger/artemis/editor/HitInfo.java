@@ -27,6 +27,7 @@ package uk.ac.sanger.artemis.editor;
 import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
 import java.util.Vector;
+import java.util.Hashtable;
 
 /**
 *
@@ -78,6 +79,8 @@ public class HitInfo
   private int startQuery;
   /** query hit end point */
   private int endQuery;
+  /** hastable for go terms */
+  private Hashtable go_hash;
 
   public HitInfo(String header, String format)
   {
@@ -597,6 +600,12 @@ public class HitInfo
     return geneName;
   }
 
+
+  /**
+  *
+  * Set the GO term
+  *
+  */
   protected void setGO(String go_terms)
   {
     go_terms = go_terms.trim();
@@ -609,9 +618,41 @@ public class HitInfo
     }
   }
 
+  
+  /**
+  *
+  * Get GO collection.
+  *
+  */
   protected Vector getGO()
   {
     return go;
   }
+
+
+  /**
+  *
+  * Set a GO association.
+  *
+  */
+  protected void setGoAssociation(String go_id, String assoc)
+  {
+    if(go_hash == null)
+      go_hash = new Hashtable();
+    go_hash.put(go_id,assoc);
+  }
+
+  /**
+  *
+  * Get a GO association.
+  *
+  */
+  protected String getGoAssociation(String go_id)
+  {
+    if(go_hash != null && go_hash.containsKey(go_id))
+      return (String)go_hash.get(go_id);
+    return null;
+  }
+
 }
 

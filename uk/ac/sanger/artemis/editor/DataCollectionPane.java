@@ -275,7 +275,31 @@ public class DataCollectionPane extends JScrollPane
         {
           final String go_id = ((String)gov_enum.nextElement()).trim();
           bacross = Box.createHorizontalBox();
-          JButton goButton = new JButton("GO:"+go_id);
+
+          final JCheckBox goBox = new JCheckBox();
+          goBox.setSelected(false);
+          goBox.addActionListener(new ActionListener()
+          {
+            public void actionPerformed(ActionEvent e)
+            {
+              if(goBox.isSelected())
+              {
+                String go_term = hit.getGoAssociation(go_id);
+                if(go_term == null)
+                { 
+                  go_term = setGoAnnotation(ann,hit.getAcc(),go_id);
+                  hit.setGoAssociation(go_id,go_term);
+                }
+                else
+                  ann.insert(go_term,false);
+              }
+              else
+                ann.delete(go_id,false);
+            }
+          });
+          goBox.setMargin(new Insets(0,1,0,1));
+
+          MouseOverButton goButton = new MouseOverButton("GO:"+go_id);
           goButton.setFont(BigPane.font);
           goButton.addActionListener(new ActionListener()
           {
@@ -306,7 +330,12 @@ public class DataCollectionPane extends JScrollPane
 
             }
           });
+          goButton.setForeground(Color.blue);
+          goButton.setMargin(new Insets(1,1,1,1));
+          goButton.setBorderPainted(false);
+
           bacross.add(Box.createHorizontalStrut(10));
+          bacross.add(goBox);
           bacross.add(goButton);
           goButton.setMargin(new Insets(0,1,0,1));
 
@@ -616,7 +645,71 @@ public class DataCollectionPane extends JScrollPane
         hit.setEMBL(tok.nextToken());
       }
     }
+  }
 
+  /**
+  *
+  * Sets the GO annotation for a given ID, first by querying
+  * Amigo and if not successful querying SRS.
+  * @param ann		annotation display
+  * @param id		database id
+  * @param go_id	GO id
+  * @return annotation 
+  *
+  */
+  private String setGoAnnotation(Annotation ann, String id, String go_id)
+  {
+    String go_ann = new String("/GO_component=\"GO:"+
+                               go_id+"; "+id+";\"");
+  
+    String cmd[]   = { "etc/go_associations.pl", "-assoc", id };
+    ExternalApplication app = new ExternalApplication(cmd,
+                                                null,null);
+    String res = app.getProcessStdout();
+    boolean found = false;
+
+    try
+    {
+      String line;
+      BufferedReader buffRead = new BufferedReader(new StringReader(res));
+      while((line = buffRead.readLine()) != null)
+      {
+        if(line.indexOf(go_id) > -1)
+        {
+          go_ann = new String("/GO_component=\""+line+"\"");
+          found = true;
+          break;
+        }
+      }
+    }
+    catch(IOException ioe) { ioe.printStackTrace(); }
+
+    if(!found)  // try SRS
+    {
+      String env[]  = { "PATH=/usr/local/pubseq/bin/" };
+      String cmd2[] = { "getz", "-f", "dbxref", "[uniprot:"+id+"]" };
+      app = new ExternalApplication(cmd2,env,null);
+      res = app.getProcessStdout();
+
+      try
+      {
+        String line;
+        BufferedReader buffRead = new BufferedReader(new StringReader(res));
+        while((line = buffRead.readLine()) != null)
+        {
+          if(line.indexOf(go_id) > -1)
+          {
+            go_ann = new String("/GO_component=\""+line.substring(3).trim()+"\"");
+            found = true;
+            break;
+          }
+        }
+      }
+      catch(IOException ioe) { ioe.printStackTrace(); }
+    }
+    ann.insert(go_ann,false);
+
+    return go_ann;
   }
 
 
@@ -759,6 +852,11 @@ public class DataCollectionPane extends JScrollPane
       super();
     }
 
+    public MouseOverButton(String s)
+    {
+      super(s);
+    }
+
     public MouseOverButton(HitInfo hit)
     {
       super(hit.getID());
@@ -795,6 +893,7 @@ public class DataCollectionPane extends JScrollPane
 
     protected void processMouseEvent(MouseEvent evt)
     {
+      super.processMouseEvent(evt);
       switch (evt.getID())
       {
 	case MouseEvent.MOUSE_ENTERED:
@@ -808,7 +907,7 @@ public class DataCollectionPane extends JScrollPane
 	  repaint();
 	  break;
       }
-      super.processMouseEvent(evt);
+//    super.processMouseEvent(evt);
     }
   }
 

@@ -46,6 +46,7 @@ public class BigPane extends JFrame
   protected static JCheckBoxMenuItem srsWin;
   protected static JInternalFrame srsFrame;
   private JTextArea qualifier;
+  private DataViewInternalFrame dataView;
   
   public BigPane(Object dataFile[], JTextArea qualifier)
   {
@@ -76,21 +77,27 @@ public class BigPane extends JFrame
     // data set
     int hgt = getHeight()-60;
     int wid = getWidth()-100;
-    DataViewInternalFrame dataView = new DataViewInternalFrame(dataFile,desktop,
-                                                               wid,qualifier_txt);
+    dataView = new DataViewInternalFrame(dataFile,desktop,
+                                       wid,qualifier_txt);
     dataView.setLocation(50,0);
     dataView.setSize(wid,hgt);
     dataView.setVisible(true);
     desktop.add(dataView);
 
-    JMenuBar menuBar = createMenuBar(desktop,dataView);
+    JMenuBar menuBar = createMenuBar(desktop);
     setJMenuBar(menuBar);
 
     setVisible(true);
   }
 
-  private JMenuBar createMenuBar(final JDesktopPane desktop,
-                                 final DataViewInternalFrame dataView)
+  /**
+  *
+  * Create a menu bar. 
+  * @param desktop pane.
+  * @return menu bar.
+  *
+  */
+  private JMenuBar createMenuBar(final JDesktopPane desktop)
   {
     JMenuBar menuBar = new JMenuBar();
     JMenu fileMenu = new JMenu("File");
@@ -107,6 +114,16 @@ public class BigPane extends JFrame
     fileMenu.add(reReadMenu);
     fileMenu.add(new JSeparator());
  
+    JMenuItem applyMenu = new JMenuItem("Apply to Feature Editor");
+    applyMenu.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        qualifier.setText(dataView.getFeatureText());
+      }
+    });
+    fileMenu.add(applyMenu);
+    fileMenu.add(new JSeparator());
 //
     JMenuItem exitMenu = new JMenuItem("Close");
     exitMenu.addActionListener(new ActionListener()
@@ -166,12 +183,15 @@ public class BigPane extends JFrame
     ButtonGroup buttGroup = new ButtonGroup();
     buttGroup.add(liveDrag);
     buttGroup.add(outlineDrag);
-      
 
     return menuBar;
   }
 
-  
+  /**
+  *
+  * Set up the tabbed SRS frame
+  *
+  */ 
   protected static void setUpSRSFrame(int hgt, JDesktopPane desktop)
   {
     BigPane.srsFrame = new JInternalFrame("SRS",
@@ -214,7 +234,13 @@ public class BigPane extends JFrame
   {
      public void windowClosing(WindowEvent we)
      {
-       System.exit(0); 
+        if(qualifier == null)
+          System.exit(0);
+
+        qualifier.setText(dataView.getFeatureText());
+        BigPane.srsFrame = null;
+        dispose();
+
      }
   }
 
