@@ -40,10 +40,14 @@ import java.io.IOException;
 
 public class DataViewInternalFrame extends JInternalFrame
 {
+  protected static int dataDividerLocation = 250;
+  protected static int annotationDividerLocation = 150;
+
   private JTabbedPane tabPane = new JTabbedPane();
   private Annotation ann;
   private Box evidenceBox;
   private Vector fastaCollection = new Vector();
+  private JSplitPane split;
 
   public DataViewInternalFrame(Object dataFile[], JDesktopPane desktop,
                                final JScrollPane scrollEvidence,
@@ -178,7 +182,7 @@ public class DataViewInternalFrame extends JInternalFrame
       ActiveJSplitPane split = new ActiveJSplitPane(JSplitPane.VERTICAL_SPLIT,
                                                     fastaPane,dataPane);
       split.setLabel(tabLabel);
-      split.setDividerLocation(250);
+      split.setDividerLocation(DataViewInternalFrame.dataDividerLocation);
       split.setOneTouchExpandable(true);
       if(i == 0)
         split.setActive(true);
@@ -197,10 +201,10 @@ public class DataViewInternalFrame extends JInternalFrame
     JScrollPane annotationScroll = new JScrollPane(ann);   
     annotationScroll.setPreferredSize(new Dimension(500,150));
 
-    JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-                                      annotationScroll,tabPane);
+    split = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+                           annotationScroll,tabPane);
 
-    split.setDividerLocation(150);
+    split.setDividerLocation(annotationDividerLocation);
     getContentPane().add(split);
      
     setVisible(true);
@@ -381,6 +385,17 @@ public class DataViewInternalFrame extends JInternalFrame
       split.setActive(true);
       lastSelected = split;
     }
+  }
+
+  protected void setDataDividerLocation()
+  {
+    ActiveJSplitPane lastSelected = (ActiveJSplitPane)tabPane.getSelectedComponent();
+    dataDividerLocation = lastSelected.getDividerLocation();
+  }
+
+  protected void setAnnotationDividerLocation()
+  {
+    annotationDividerLocation = split.getDividerLocation();
   }
 
 

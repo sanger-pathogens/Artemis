@@ -54,23 +54,28 @@ public class BigPane extends JFrame
   protected static JCheckBox addNote = new JCheckBox("Add Note");
 
   private JTextArea qualifier;
-  private final DataViewInternalFrame dataView;
-  private final FeatureVector overlapFeature;
-  private final Feature edit_feature;
+  private DataViewInternalFrame dataView;
+  private FeatureVector overlapFeature;
+  private Feature edit_feature;
 
-  public BigPane(Object dataFile[], JTextArea qualifier,
-                 FeatureVector overlapFeature, 
-                 final Feature edit_feature) 
+
+  public BigPane()
   {
-    this(dataFile,qualifier.getText(),overlapFeature,edit_feature);
+    super("Object Editor");
+  }
+
+  public void set(Object dataFile[], JTextArea qualifier,
+             FeatureVector overlapFeature, 
+             final Feature edit_feature) 
+  {
+    set(dataFile,qualifier.getText(),overlapFeature,edit_feature);
     this.qualifier      = qualifier;
   }
 
-  public BigPane(Object dataFile[], String qualifier_txt,
-                 FeatureVector overlapFeature,
-                 final Feature edit_feature)
+  public void set(Object dataFile[], String qualifier_txt,
+             FeatureVector overlapFeature,
+             final Feature edit_feature)
   {
-    super("Object Editor");
     this.overlapFeature = overlapFeature;
     this.edit_feature   = edit_feature;
 
@@ -289,6 +294,11 @@ public class BigPane extends JFrame
     if(qualifier == null)
       System.exit(0);
 
+    // remember the splitpane divider locations
+    dataView.setDataDividerLocation();
+    dataView.setAnnotationDividerLocation();
+
+    // update feature text
     final String oldTxt = qualifier.getText().trim();
     final String newTxt = dataView.getFeatureText().trim();
 
@@ -375,6 +385,7 @@ public class BigPane extends JFrame
       System.out.println("Usage:: java BigPane data_file");
       System.exit(0);
     }
-    new BigPane(args,"",null,null);
+    BigPane bp = new BigPane();
+    bp.set(args,"",null,null);
   }
 }
