@@ -1,0 +1,59 @@
+#!/bin/sh -
+
+# this script will run clustalx on a temporary file containing the concatenated
+# contents of files listed in a file of filenames
+
+
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_clustalx.sanger,v 1.1 2005-02-21 11:49:41 tjc Exp $"
+
+PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
+
+
+if [ $# != 1 ]
+then
+    echo usage: $0 file_of_filenames
+fi
+
+(echo "#!/bin/sh -"; echo "kill $$") > $PROG.kill
+
+chmod a+x $PROG.kill
+
+file_of_filenames=$1
+date=`date +"%y_%m_%d"`
+hostname=`hostname`
+temp_file_name=clustalx/artemis_temp.$$.$hostname.$date.clustalx_input.fasta
+
+cat $file_of_filenames | xargs cat > $temp_file_name
+
+# make sure that the identifiers are unique for clustalx
+perl -pne 'if (/^>(\S+)/) {
+  $name = $1;
+  if (exists $h{$name}) {
+    $i = $h{$name}++;
+    s/^>(\S+)/>$name.$i/;
+  } else {
+    $h{$name} = 0;
+  }
+}' $temp_file_name > $temp_file_name.processed
+
+# delete it at some point
+echo "rm -f $temp_file_name* > /dev/null 2>&1" | at now + 8 hours
+
+HOSTNAME=`hostname`
+REMOTE=N
+
+case $HOSTNAME in
+    deskpro*)
+      REMOTE=Y ;;
+    *)
+esac
+
+if [ $REMOTE = "Y" ]; then
+  WDIR=`pwd`
+  export WDIR
+  ssh babel "cd $WDIR; clustalx $temp_file_name.processed"
+else
+  clustalx $temp_file_name.processed
+fi
+
+exit 0
