@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.4 2004-07-29 10:45:06 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.5 2004-08-09 14:09:11 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -242,7 +242,7 @@ manual :
 
 CLASS_FILES := `find org uk nsdb type seqdb -name '*.class' -print`
 
-OTHER_FILES := `find images/icon.gif META-INF/MANIFEST.MF images/helix.gif images/sanger-centre.gif COPYING README`
+OTHER_FILES := `find images/icon.gif images/helix.gif images/sanger-centre.gif COPYING README`
 
 dist :
 	rm -rf artemis_compiled.tar.gz tar_build
@@ -253,21 +253,31 @@ dist :
 	tar cf - uk nsdb type seqdb lib | (cd tar_build/artemis; tar xf -)
 	(cd tar_build; tar czvf ../artemis_compiled.tar artemis)
 
-jar : all powmap.jar
+jar : all artemis.jar
 
-powmap.jar : $(CLASSES)
-	rm -f powmap.jar
+artemis.jar : $(CLASSES)
+	mkdir jar_build
+	rm -f artemis.jar
+	cd jar_build; \
 	if [ ! -d org ]; then \
-	  for fileJar in lib/*.jar; do \
-	    unzip $$fileJar; \
+	  for fileJar in ../lib/*.jar; do \
+	    jar xvf $$fileJar; \
+	    rm -rf META-INF/MANIFEST.MF; \
 	  done; \
-        fi
-	(echo $(CLASS_FILES) ; echo $(OTHER_FILES) ; \
-	echo etc/options; echo etc/feature_keys; echo etc/qualifier_types) | \
-	perl -pne 's/ /\n/g' | \
-	zip -u9@ powmap.jar
+        fi; \
+	cp -R ../uk ../nsdb ../type ../seqdb ../etc ../images \
+	      ../images/icon.gif ../images/helix.gif ../images/sanger-centre.gif ../README .
+	find jar_build -name '*.java' -print | xargs rm -f
+	cd jar_build; \
+	rm -rf META-INF/MANIFEST.MF; \
+	echo "Main-Class: uk.ac.sanger.artemis.components.ArtemisMain" > manifest-art; \
+	jar cmf manifest-art artemis.jar images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
+	                     org uk nsdb type seqdb; \
+	echo "Main-Class: uk.ac.sanger.artemis.components.ActMain" > manifest-act; \
+	jar cmf manifest-act act.jar images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
+	                     org uk nsdb type seqdb
 
 clean :
-	-rm -rf *.html powmap.jar seqdb nsdb type org
+	-rm -rf *.html artemis.jar seqdb nsdb type org resources uk/ac/sanger/jcon/ jar_build
 	-rm -rf TAGS* *.o
 	-find . -name '*.class' -print | xargs rm -f
