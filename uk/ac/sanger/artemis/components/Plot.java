@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.4 2004-11-24 09:38:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.5 2004-11-25 13:10:12 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -33,6 +33,8 @@ import java.awt.event.*;
 
 import javax.swing.JPanel;
 import javax.swing.JComponent;
+import javax.swing.JTextField;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
@@ -43,7 +45,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.4 2004-11-24 09:38:20 tjc Exp $
+ *  @version $Id: Plot.java,v 1.5 2004-11-25 13:10:12 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -209,6 +211,60 @@ public abstract class Plot extends JPanel
       {
         final JComponent parent = (JComponent)event.getSource();
         final JPopupMenu popup  = new JPopupMenu("Plot Options");
+
+        final JMenuItem setScale = new JMenuItem("Set the Window Size");
+        setScale.addActionListener(new ActionListener()
+        {
+          public void actionPerformed(ActionEvent _)
+          {
+            final JTextField newWinSize = new JTextField(Integer.toString(getWindowSize()));
+            String window_options[] = { "Set Window Size", "Cancel" };
+            int select = JOptionPane.showOptionDialog(null,
+                                        newWinSize,
+                                        "Set Window Size",
+                                         JOptionPane.DEFAULT_OPTION,
+                                         JOptionPane.QUESTION_MESSAGE,
+                                         null, window_options, window_options[0]);
+            final int value;
+            try
+            {
+              value = Integer.parseInt(newWinSize.getText().trim());
+            }
+            catch(NumberFormatException nfe)
+            {
+              return;
+            }
+            if(value > window_changer.getMaximum() ||
+               value < window_changer.getMinimum())
+            {
+              window_options[0] = "Continue";
+              select = JOptionPane.showOptionDialog(null,
+                                        "Value selected: " + value +
+                                        " is outside the range\n"+
+                                        " Min: "+window_changer.getMinimum() +
+                                        " Max: "+window_changer.getMaximum(),
+                                        "Set Window Size",
+                                         JOptionPane.DEFAULT_OPTION,
+                                         JOptionPane.WARNING_MESSAGE,
+                                         null, window_options, window_options[1]);
+              if(select == 1)
+                return;
+
+              if(value > window_changer.getMaximum())
+                window_changer.setMaximum(value+10);
+              else
+                window_changer.setMinimum(value);
+            }
+
+            if(select == 0)
+            {
+              recalculate_flag = true;
+              window_changer.setValue(value);
+              repaint();
+            }
+          }
+        });
+        popup.add(setScale);
 
         final JCheckBoxMenuItem scaling_toggle =
           new JCheckBoxMenuItem("Scaling");
