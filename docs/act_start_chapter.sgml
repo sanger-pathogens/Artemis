@@ -151,7 +151,7 @@ cd ~/act
 
     <PARA>
       <COMMAND>
-java -Dartemis.environment=UNIX Dad
+java -Dartemis.environment=UNIX -classpath .:./lib/biojava.jar:./lib/jakarta-regexp-1.2.jar:./lib/jemAlign.jar -Dartemis.environment=UNIX uk.ac.sanger.artemis.components.ActMain
       </COMMAND>
     </PARA>
   </SECT1>
