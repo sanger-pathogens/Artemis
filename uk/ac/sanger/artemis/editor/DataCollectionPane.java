@@ -173,7 +173,18 @@ public class DataCollectionPane extends JScrollPane
               ann.delete(hit.getID(),false);
             }
 
-            setAnnotation(hit,ann,fastaTextPane.getFormat(),true);
+            try
+            {
+              setAnnotation(hit,ann,fastaTextPane.getFormat(),true);
+            }
+            catch(NullPointerException npe)
+            {
+              JOptionPane.showMessageDialog(DataCollectionPane.this,
+                           "There may be a probelem retrieving "+hit.getID()+
+                           "\nfrom SRS",
+                           "Connection Error to SRS?",
+                           JOptionPane.WARNING_MESSAGE);
+            }
           }
           else
             ann.delete(hit.getID(),true);
@@ -198,7 +209,18 @@ public class DataCollectionPane extends JScrollPane
               ann.delete(hit.getID(),true);
             }
 
-            setAnnotation(hit,ann,fastaTextPane.getFormat(),false);
+            try
+            {
+              setAnnotation(hit,ann,fastaTextPane.getFormat(),true);
+            }
+            catch(NullPointerException npe)
+            {
+              JOptionPane.showMessageDialog(DataCollectionPane.this,
+                           "There may be a probelem retrieving "+hit.getID()+
+                           "\nfrom SRS",
+                           "Connection Error to SRS?",
+                           JOptionPane.WARNING_MESSAGE);
+            }
           }
           else
             ann.delete(hit.getID(),false);
