@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.1 2004-06-09 09:44:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.2 2004-08-26 14:43:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.io.Reader;
  *  possible events.)
  *
  *  @author Kim Rutherford
- *  @version $Id: Entry.java,v 1.1 2004-06-09 09:44:18 tjc Exp $
+ *  @version $Id: Entry.java,v 1.2 2004-08-26 14:43:35 tjc Exp $
  **/
 
 public class Entry implements FeatureChangeListener, Selectable 
@@ -1170,7 +1170,7 @@ public class Entry implements FeatureChangeListener, Selectable
   /**
    *  Return the embl.Entry object that was passed to the constructor.
    **/
-  uk.ac.sanger.artemis.io.Entry getEMBLEntry() 
+  public uk.ac.sanger.artemis.io.Entry getEMBLEntry() 
   {
     return embl_entry;
   }
