@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionInfoDisplay.java,v 1.5 2004-10-04 15:05:02 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionInfoDisplay.java,v 1.6 2004-10-04 15:35:44 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -46,7 +46,7 @@ import javax.swing.*;
  *  This class displays information about the selection in a Label.
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectionInfoDisplay.java,v 1.5 2004-10-04 15:05:02 tjc Exp $
+ *  @version $Id: SelectionInfoDisplay.java,v 1.6 2004-10-04 15:35:44 tjc Exp $
  **/
 public class SelectionInfoDisplay extends CanvasPanel
     implements SelectionChangeListener 
@@ -69,22 +69,19 @@ public class SelectionInfoDisplay extends CanvasPanel
       public void componentResized(ComponentEvent e) 
       {
         setSize(getSize().width,
-                getFontHeight() + 1);
+                getFontHeight()+1);
         repaint();
       }
-      public void componentShown (ComponentEvent e) 
+      public void componentShown(ComponentEvent e) 
       {
-        setSize(getSize ().width,
-                getFontHeight () + 1);
+        setSize(getSize().width,
+                getFontHeight()+1);
         repaint();
       }
     });
 
-    int canvas_width = getSize ().width;
-
     setBackground(new Color(230,230,230));
-
-    setSize(100, getFontHeight());
+    setSize(80, getFontHeight());
   }
 
   /**
@@ -122,11 +119,10 @@ public class SelectionInfoDisplay extends CanvasPanel
     if(!isVisible ()) 
       return;
 
-    final FeatureVector features = getSelection ().getAllFeatures ();
+    final FeatureVector features = getSelection().getAllFeatures();
+    final StringBuffer new_text  = new StringBuffer();
 
-    final StringBuffer new_text = new StringBuffer ();
-
-    new_text.append (markerRangeText (getSelection (), entry_group));
+    new_text.append(markerRangeText(getSelection(), entry_group));
 
     int base_total = 0;
     int aa_total = 0;
@@ -147,8 +143,7 @@ public class SelectionInfoDisplay extends CanvasPanel
           final Feature current_feature = features.elementAt (i);
 
           base_total += current_feature.getBaseCount ();
-
-          aa_total += current_feature.getAACount ();
+          aa_total   += current_feature.getAACount ();
 
           if(!current_feature.getKey().equals ("CDS")) 
             saw_a_non_cds = true;
@@ -156,34 +151,34 @@ public class SelectionInfoDisplay extends CanvasPanel
           if(i < 10) 
           {
             if(i != 0) 
-              feature_names.append (' ');
+              feature_names.append(' ');
             
-            feature_names.append (current_feature.getIDString ());
+            feature_names.append(current_feature.getIDString ());
           }
         }
 
-        if(features.size () > 10) 
+        if(features.size() > 10) 
           feature_names.append ("...");
 
-        if(features.size () == 1) 
+        if(features.size() == 1) 
         {
           // only one feature so append some qualifiers
-          feature_names.append ("  (");
-          feature_names.append (getQualifierString (features.elementAt (0)));
+          feature_names.append("  (");
+          feature_names.append(getQualifierString(features.elementAt (0)));
         }
-        feature_names.append (")");
+        feature_names.append(")");
       }
 
-      if(features.size () == 1) 
+      if(features.size() == 1) 
         new_text.append ("Selected feature:  ");
       else 
         new_text.append (features.size () + " selected features  ");
 
-      if(features.size () < 100) 
+      if(features.size() < 100) 
       {
         // show a count of the number of bases and amino acids in the selected
         // feature
-        if(features.size () > 1) 
+        if(features.size() > 1) 
         {
           new_text.append ("total bases " + base_total);
 
@@ -192,7 +187,7 @@ public class SelectionInfoDisplay extends CanvasPanel
         }
         else
         {
-          if(features.size () == 1) 
+          if(features.size() == 1) 
           {
             new_text.append ("bases " + base_total);
             if(!saw_a_non_cds) 
@@ -202,7 +197,6 @@ public class SelectionInfoDisplay extends CanvasPanel
       }
 
       new_text.append("  ");
-
       new_text.append(feature_names.toString());
     }
 
@@ -223,8 +217,8 @@ public class SelectionInfoDisplay extends CanvasPanel
 //  g.setColor(new Color (230, 230, 230));
 //  g.fillRect(0, 0, getCanvasWidth(), getCanvasHeight());
 
-    g.setColor (Color.black);
-    g.drawString (text, 2, getFontMaxAscent () + 1);
+    g.setColor(Color.black);
+    g.drawString(text, 2, getFontMaxAscent() + 1);
   }
 
   /**
