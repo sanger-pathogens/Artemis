@@ -6,7 +6,7 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.8 2004-07-21 15:16:45 tjc Exp $"
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.9 2004-10-05 12:39:52 tjc Exp $"
 
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
@@ -145,11 +145,11 @@ while(my $inFile = <LIST_FILE>)
       $inFile = $inFile_tmp;
     }
   }
-  
+ 
   print BSUB "$EXEC -B -S -q -b 100 -H $inFile $database ktup 2 > $inFile\.out\n";
   print BSUB "gzip -9 $inFile\.out\n";
 }
-close BSUB or die "Could not submit job : $!";
+close BSUB or die "--Could not submit job : $!";
 close LIST_FILE;
 
 '
@@ -158,9 +158,25 @@ close LIST_FILE;
 
 chmod a+x $PROG.kill
 
+HOSTNAME=`hostname`
+REMOTE=N
+
+case $HOSTNAME in
+    deskpro*)
+      REMOTE=Y ;;
+    *)
+esac
+
 if [ x$ONEFILE = x ]
 then
-    perl -w -e "$PERL_PROG" "$1" "$EXPANDED_DATABASE" "$PWD"
+   if [ $REMOTE = "Y" ]; then
+      WDIR=`pwd`
+      export WDIR
+      CMD=`echo $PERL_PROG`
+      rsh babel "cd $WDIR; perl -w -e '$CMD' \"$1\" \"$EXPANDED_DATABASE\" \"$PWD\""
+   else
+      perl -w -e "$PERL_PROG" "$1" "$EXPANDED_DATABASE" "$PWD"
+   fi
 else
     run_one_prog $1 $2 $EXPANDED_DATABASE
 fi
