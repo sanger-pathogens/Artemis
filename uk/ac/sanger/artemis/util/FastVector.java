@@ -20,12 +20,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/FastVector.java,v 1.2 2004-11-24 11:55:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/FastVector.java,v 1.3 2004-12-21 09:55:33 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.util;
 
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Collections;
@@ -35,20 +34,14 @@ import java.util.Collections;
  *  contains().
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: FastVector.java,v 1.2 2004-11-24 11:55:52 tjc Exp $
+ *  @version $Id: FastVector.java,v 1.3 2004-12-21 09:55:33 tjc Exp $
  *
  **/
 
 public class FastVector 
 {
-  /** Initial size used for the Vector and the Hashtable. */
-  final static private int INITIAL_CAPACITY = 20;
-
   /** Storage for objects. */
   private ArrayList vector = new ArrayList();
-
-  /** This is used for fast lookup of objects in contains(). */
-  private HashMap table = new HashMap(INITIAL_CAPACITY);
 
   /**
    *  Create a new vector of objects.
@@ -64,14 +57,10 @@ public class FastVector
   {
     if(object == null) 
       throw new Error("internal error - adding a null object");
-    else
-    {
-      if(contains(object))
-        throw new Error("internal error - object added a second time");
-    }
+    else if(contains(object))
+      throw new Error("internal error - object added a second time");
 
     vector.add(object);
-    table.put(object, object);
   }
 
   /**
@@ -98,9 +87,6 @@ public class FastVector
     if(contains(object)) 
     {
       vector.remove(object);
-      if(table.remove(object) == null) 
-        throw new Error("internal error - remove could not find target");
-      
       return true;
     } 
     else 
@@ -112,7 +98,7 @@ public class FastVector
    **/
   public boolean contains(Object object) 
   {
-    return table.containsKey(object);
+    return vector.contains(object);
   }
 
   /**
@@ -140,7 +126,6 @@ public class FastVector
   public void removeAllElements()
   {
     vector.clear();
-    table.clear();
   }
 
   /**
@@ -149,7 +134,6 @@ public class FastVector
   public void removeElementAt(int index) 
   {
     final Object object = (Object)vector.remove(index);
-    table.remove(object);
   }
 
   /**
@@ -158,7 +142,6 @@ public class FastVector
   public final void insertElementAt(Object object, int index) 
   {
     vector.add(index, object);
-    table.put(object, object);
   }
 
   /**
@@ -175,8 +158,6 @@ public class FastVector
       insertElementAt(new_object, 0);
     else 
       insertElementAt(new_object, old_object_index + 1);
-    
-    table.put(new_object, new_object);
   }
 
   /**
@@ -196,9 +177,7 @@ public class FastVector
   public Object clone() 
   {
     final FastVector return_vector = new FastVector();
-
     return_vector.vector = (ArrayList)vector.clone();
-    return_vector.table = (HashMap)table.clone();
     return return_vector;
   }
 
