@@ -48,29 +48,53 @@ public class FastaTextPane extends JScrollPane
   private JTextArea textArea;
   private Vector hitInfoCollection = null;
   private String format = null;
+  private String dataFile;
   private int qlen;
+  private Vector listerners = new Vector();
 
   public FastaTextPane(String dataFile)
   {
     super();
     //read fasta file
 
-    format = getResultsFormat(dataFile);
+    this.dataFile = dataFile;
+    format = getResultsFormat();
     StringBuffer contents = null;
 
     if(format.equals("fasta"))
-      contents = readFASTAFile(dataFile,format);
+      contents = readFASTAFile(format);
     else if(format.equals("blastp"))
-      contents = readBLASTPFile(dataFile,format);
-
-    Font font = new Font("Monospaced",Font.PLAIN,12);
+      contents = readBLASTPFile(format);
 
     textArea = new JTextArea(contents.toString());
-    setTextAreaFont(font);
+    setTextAreaFont(BigPane.font);
     textArea.setEditable(false);
 
     setViewportView(textArea);
     setPreferredSize(new Dimension(500,300));
+  }
+
+  protected void addFastaListener(FastaListener obj)
+  {
+    listerners.add(obj);
+  }
+
+  protected void reRead()
+  {
+    StringBuffer contents = null;
+
+    format = getResultsFormat();
+    if(format.equals("fasta"))
+      contents = readFASTAFile(format);
+    else if(format.equals("blastp"))
+      contents = readBLASTPFile(format);
+
+    textArea.setText(contents.toString());
+    setViewportView(textArea);
+
+    Enumeration enumListeners = listerners.elements();
+    while(enumListeners.hasMoreElements())
+      ((FastaListener)enumListeners.nextElement()).update();
   }
 
   /**
@@ -89,7 +113,7 @@ public class FastaTextPane extends JScrollPane
     textArea.setFont(f);
   }
   
-  protected InputStream getInputStream(String dataFile)
+  protected InputStream getInputStream()
             throws IOException
   {
     FileInputStream inStream = new FileInputStream(dataFile);
@@ -105,9 +129,16 @@ public class FastaTextPane extends JScrollPane
   * BLASTP are supported.
   *
   */
-  protected String getResultsFormat(String dataFile)
+  protected String getResultsFormat()
   {
     File fn = new File(dataFile);
+
+    if(!fn.exists())
+    {
+      dataFile = dataFile+".gz";
+      fn = new File(dataFile);
+    }
+
     InputStreamReader streamReader = null;
     BufferedReader buffReader = null;
     String line = null;
@@ -115,7 +146,7 @@ public class FastaTextPane extends JScrollPane
 
     try
     {
-      streamReader = new InputStreamReader(getInputStream(dataFile));
+      streamReader = new InputStreamReader(getInputStream());
       buffReader = new BufferedReader(streamReader);
       while( (line = buffReader.readLine()) != null)
       {
@@ -133,16 +164,16 @@ public class FastaTextPane extends JScrollPane
       streamReader.close();
       buffReader.close();
     }
-    catch (IOException ioe)
+    catch(IOException ioe)
     {
-      System.out.println("Cannot read file: " + dataFile);
+      System.out.println("Cannot read file: " + fn.getAbsolutePath() );
     }
     
     return format;
   }
 
 
-  protected StringBuffer readBLASTPFile(String dataFile, String format)
+  protected StringBuffer readBLASTPFile(String format)
   {
     File fn = new File(dataFile);
     StringBuffer sbuff = new StringBuffer();
@@ -153,7 +184,7 @@ public class FastaTextPane extends JScrollPane
     hitInfoCollection = new Vector();
     try
     {
-      streamReader = new InputStreamReader(getInputStream(dataFile));
+      streamReader = new InputStreamReader(getInputStream());
       buffReader = new BufferedReader(streamReader);
 
       String line = null;
@@ -304,7 +335,7 @@ public class FastaTextPane extends JScrollPane
   }
 
 
-  protected StringBuffer readFASTAFile(String dataFile, String format)
+  protected StringBuffer readFASTAFile(String format)
   {
     File fn = new File(dataFile);
     StringBuffer sbuff = new StringBuffer();
@@ -315,7 +346,7 @@ public class FastaTextPane extends JScrollPane
     hitInfoCollection = new Vector();
     try
     {
-      streamReader = new InputStreamReader(getInputStream(dataFile));
+      streamReader = new InputStreamReader(getInputStream());
       buffReader = new BufferedReader(streamReader);
 
       String line = null;

@@ -62,8 +62,7 @@ public class Annotation extends JEditorPane
     this.desktop = desktop;
     setEditable(false);
     setContentType("text/html");
-    Font font = new Font("Monospaced",Font.PLAIN,12);
-    setFont(font);
+    setFont(BigPane.font);
     addHyperlinkListener(this);
   }
 

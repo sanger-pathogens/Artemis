@@ -38,13 +38,15 @@ import javax.swing.*;
 public class BigPane extends JFrame
 {
 
-  Font font = new Font("Monospaced",Font.PLAIN,12);
+  protected static Font font = new Font("Monospaced",Font.PLAIN,11);
+  protected static Font font_sm = new Font("Monospaced",Font.PLAIN,10);
   protected static JCheckBoxMenuItem srsBrowser;
   protected static JCheckBoxMenuItem srsTabPane;
   protected static JCheckBoxMenuItem srsWin;
   protected static JInternalFrame srsFrame;
 
-  public BigPane(String dataFile[])
+  
+  public BigPane(Object dataFile[], String qualifier_txt)
   {
     super();
 
@@ -63,33 +65,47 @@ public class BigPane extends JFrame
 
     addWindowListener(new winExit());
 
-    JMenuBar menuBar = createMenuBar(desktop);
-    setJMenuBar(menuBar);
-
     // data set
     int hgt = getHeight()-60;
     int wid = getWidth()-100;
-    DataViewInternalFrame dataView = new DataViewInternalFrame(dataFile,desktop,wid);
+    DataViewInternalFrame dataView = new DataViewInternalFrame(dataFile,desktop,
+                                                               wid,qualifier_txt);
     dataView.setLocation(50,0);
     dataView.setSize(wid,hgt);
     dataView.setVisible(true);
     desktop.add(dataView);
 
+    JMenuBar menuBar = createMenuBar(desktop,dataView);
+    setJMenuBar(menuBar);
+
     setVisible(true);
   }
 
-  private JMenuBar createMenuBar(final JDesktopPane desktop)
+  private JMenuBar createMenuBar(final JDesktopPane desktop,
+                                 final DataViewInternalFrame dataView)
   {
     JMenuBar menuBar = new JMenuBar();
     JMenu fileMenu = new JMenu("File");
     menuBar.add(fileMenu);
 
-    JMenuItem exitMenu = new JMenuItem("Exit");
+    JMenuItem reReadMenu = new JMenuItem("Re-read selected results");
+    reReadMenu.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        dataView.reReadSelectedResults();
+      }
+    });
+    fileMenu.add(reReadMenu);
+    fileMenu.add(new JSeparator());
+ 
+//
+    JMenuItem exitMenu = new JMenuItem("Close");
     exitMenu.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
-        System.exit(0);
+        dispose();
       }
     });
         
@@ -195,6 +211,6 @@ public class BigPane extends JFrame
       System.out.println("Usage:: java BigPane data_file");
       System.exit(0);
     }
-    new BigPane(args);
+    new BigPane(args,"");
   }
 }

@@ -32,11 +32,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.Dimension;
-import java.awt.Color;
-import java.awt.Insets;
+import java.awt.*;
+import java.awt.event.*;
 import java.net.URL;
 
 import java.awt.event.ActionListener;
@@ -46,43 +43,53 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 public class DataCollectionPane extends JScrollPane
+                                implements FastaListener
 {
 
-  public DataCollectionPane(String dataFile,
-                            final FastaTextPane fastaTextPane,
-                            final Annotation ann, final JDesktopPane desktop)
+  private FastaTextPane fastaTextPane;
+  private Annotation ann;
+  private JDesktopPane desktop;
+
+  public DataCollectionPane(String dataFile, FastaTextPane fastaTextPane,
+                            Annotation ann, JDesktopPane desktop)
   {
     super();
-
-    Font font = new Font("Monospaced",Font.PLAIN,12);
+    this.fastaTextPane = fastaTextPane;
+    this.ann = ann;
+    this.desktop = desktop;
 
     Box bdown = Box.createVerticalBox();
     ScrollPanel scrollPanel = new ScrollPanel();
     scrollPanel.add(bdown);
 
-    Hashtable goHash = new Hashtable();
     Vector hitInfoCollection = fastaTextPane.getHitCollection();
- 
-    Enumeration hitEnum = hitInfoCollection.elements();
-    while(hitEnum.hasMoreElements())
-    {
-      HitInfo hit = (HitInfo)hitEnum.nextElement();
-      Vector gov = hit.getGO();
-      if(gov != null)
-      {
-        Enumeration gov_enum = gov.elements();
-        while(gov_enum.hasMoreElements())
-        {
-          String id = ((String)gov_enum.nextElement()).trim();
-          goHash.put(id,"");
-        }
-      }
-    }
-
+    Hashtable goHash = getIDHash(hitInfoCollection);
     getGoHash("/nfs/disk222/yeastpub/analysis/pathogen/GO/go.flat",goHash);
 
+    setResultLines(bdown,hitInfoCollection,goHash);
+    setViewportView(scrollPanel);
+    setPreferredSize(new Dimension(500,300));
+  }
+
+  public void update()
+  {
+    Box bdown = Box.createVerticalBox();
+    ScrollPanel scrollPanel = new ScrollPanel();
+    scrollPanel.add(bdown);
+
+    Vector hitInfoCollection = fastaTextPane.getHitCollection();
+    Hashtable goHash = getIDHash(hitInfoCollection);
+    getGoHash("/nfs/disk222/yeastpub/analysis/pathogen/GO/go.flat",goHash);
+
+    setResultLines(bdown,hitInfoCollection,goHash);
+    setViewportView(scrollPanel);
+  }
+
+  private void setResultLines(Box bdown, Vector hitInfoCollection, 
+	                      Hashtable goHash)
+  {
     final Vector orthoCheckBox = new Vector();
-    hitEnum = hitInfoCollection.elements();
+    Enumeration hitEnum = hitInfoCollection.elements();
 
     while(hitEnum.hasMoreElements())
     {
@@ -91,16 +98,18 @@ public class DataCollectionPane extends JScrollPane
 
 // ortholog / paralog
       final JCheckBox orthoBox = new JCheckBox("ORTH");
+      orthoBox.setFont(BigPane.font_sm);
       final JCheckBox paraBox  = new JCheckBox("PARA");
+      paraBox.setFont(BigPane.font_sm);
 
-      orthoBox.setMargin(new Insets(2,1,1,1));
-      paraBox.setMargin(new Insets(2,1,1,1));
+      orthoBox.setMargin(new Insets(1,1,1,1));
+      paraBox.setMargin(new Insets(1,1,1,1));
   
       orthoBox.setActionCommand(hit.getID());
       orthoCheckBox.add(orthoBox);
 
       bacross.add(orthoBox);
-      orthoBox.setFont(font);
+      orthoBox.setFont(BigPane.font);
       orthoBox.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
@@ -133,7 +142,7 @@ public class DataCollectionPane extends JScrollPane
       });
 
       bacross.add(paraBox);
-      paraBox.setFont(font);
+      paraBox.setFont(BigPane.font);
       paraBox.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
@@ -154,10 +163,44 @@ public class DataCollectionPane extends JScrollPane
       });
 
 
+// go to alignment
+      AlignButton butt = new AlignButton();
+      butt.setPreferredSize(new Dimension(12,12));
+      butt.setBorderPainted(false);
+      butt.setToolTipText("Go to alignment");
+      butt.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          fastaTextPane.show(hit);
+        }
+      });
+      bacross.add(butt);
+      bacross.add(Box.createHorizontalStrut(2));
+
+// SRS entry
+      AlignButton srsRetrieve = new AlignButton(hit.getID());
+      srsRetrieve.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          getSRSEntry(hit,desktop);
+        }
+      });
+     srsRetrieve.setForeground(Color.blue);
+     srsRetrieve.setFont(BigPane.font);
+     srsRetrieve.setMargin(new Insets(1,1,1,1));
+     srsRetrieve.setBorderPainted(false);
+     bacross.add(srsRetrieve);
+
 // heading
-      JLabel hiLabel = new JLabel(hit.getHeader());
-      hiLabel.setFont(font);
-      hiLabel.setForeground(Color.RED);
+      String head = hit.getHeader();
+      if(head.startsWith(hit.getID()))
+        head = head.substring(hit.getID().length());        
+
+      JLabel hiLabel = new JLabel(head);
+      hiLabel.setFont(BigPane.font);
+      hiLabel.setForeground(Color.red);
 
 // align button
       final JButton selectButt = new JButton("ALIGN");
@@ -169,7 +212,7 @@ public class DataCollectionPane extends JScrollPane
           fastaTextPane.show(hit);
         }
       });
-      selectButt.setFont(font);
+      selectButt.setFont(BigPane.font);
 
 // retrieve srs entry
       JButton srsButt = new JButton("->SRS");
@@ -179,64 +222,10 @@ public class DataCollectionPane extends JScrollPane
       {
         public void actionPerformed(ActionEvent e)
         {
-          String srscmd = "srs.sanger.ac.uk/srsbin/cgi-bin/wgetz?-e+";
-          if(hit.getID() != null)
-          {
-            String search = hit.getID();
-            srscmd = srscmd.concat("[{swall}-ID:"+search+"*]");
-            if(hit.getAcc() != null)
-              srscmd = srscmd.concat("|[{swall}-AccNumber:"+hit.getAcc()+"*]");  
-
-            if(BigPane.srsBrowser.isSelected())
-              BrowserControl.displayURL(srscmd);
-
-            try
-            {
-              URL url = new URL("http://"+srscmd);
-
-              if(BigPane.srsTabPane.isSelected())
-                setUpSRSFrame(url,search,desktop);
-  
-              if(BigPane.srsWin.isSelected())
-              {
-                int hgt = (2*desktop.getHeight())/3;
-                Annotation edPane = new Annotation(url);
-                JScrollPane jsp = new JScrollPane(edPane);
-                JInternalFrame jif = new JInternalFrame("SRS "+search,
-                                                     true, //resizable
-                                                     true, //closable
-                                                     true, //maximizable
-                                                     true);//iconifiable);
-                JMenuBar menuBar = new JMenuBar();
-                menuBar.add(new CommonMenu(jif));
-                jif.setJMenuBar(menuBar);
-                jif.getContentPane().add(jsp);
-                jif.setLocation(0,0);
-                jif.setSize(800,hgt);
-                jif.setVisible(true);
-                desktop.add(jif);
-              }
-            }
-            catch(java.net.ConnectException connect)
-            {
-              JOptionPane.showMessageDialog(DataCollectionPane.this,
-                       "Cannot retrieve "+search+
-                       "\nConnection failed to:\nhttp://"+srscmd,
-                       "Connection Error",
-                       JOptionPane.WARNING_MESSAGE);
-            }
-            catch(Exception exp)
-            {
-              exp.printStackTrace();  
-            }
-          } 
-          else
-            JOptionPane.showMessageDialog(DataCollectionPane.this, 
-                     "No ID to retrieve SRS entry!", "Missing ID",
-                                  JOptionPane.INFORMATION_MESSAGE); 
+          getSRSEntry(hit,desktop);
         }
       });
-      srsButt.setFont(font);
+      srsButt.setFont(BigPane.font);
 
       bacross.add(hiLabel);
       bacross.add(selectButt);
@@ -245,6 +234,7 @@ public class DataCollectionPane extends JScrollPane
       bacross.add(Box.createHorizontalGlue());
       bdown.add(bacross);
 
+// go entry
       Vector gov = hit.getGO();
       if(gov != null)
       {
@@ -254,7 +244,7 @@ public class DataCollectionPane extends JScrollPane
           final String go_id = ((String)gov_enum.nextElement()).trim();
           bacross = Box.createHorizontalBox();
           JButton goButton = new JButton("GO:"+go_id);
-          goButton.setFont(font);
+          goButton.setFont(BigPane.font);
           goButton.addActionListener(new ActionListener()
           {
             public void actionPerformed(ActionEvent e)
@@ -289,18 +279,74 @@ public class DataCollectionPane extends JScrollPane
           goButton.setMargin(new Insets(0,1,0,1));
 
           JLabel goLabel = new JLabel((String)goHash.get(go_id));
-          goLabel.setFont(font);
+          goLabel.setFont(BigPane.font);
           bacross.add(goLabel);
           bdown.add(bacross);
           bacross.add(Box.createHorizontalGlue());
         }
       }
     }
-
-    setViewportView(scrollPanel);
-    setPreferredSize(new Dimension(500,300));
   }
 
+  private void getSRSEntry(HitInfo hit, JDesktopPane desktop)
+  {
+    String srscmd = "srs.sanger.ac.uk/srsbin/cgi-bin/wgetz?-e+";
+    if(hit.getID() != null)
+    {
+      String search = hit.getID();
+      srscmd = srscmd.concat("[{uniprot}-ID:"+search+"*]");
+      if(hit.getAcc() != null)
+        srscmd = srscmd.concat("|[{uniprot}-AccNumber:"+hit.getAcc()+"*]");
+
+      if(BigPane.srsBrowser.isSelected())
+        BrowserControl.displayURL(srscmd);
+
+      try
+      {
+        URL url = new URL("http://"+srscmd);
+
+        if(BigPane.srsTabPane.isSelected())
+          setUpSRSFrame(url,search,desktop);
+
+        if(BigPane.srsWin.isSelected())
+        {
+          int hgt = (2*desktop.getHeight())/3;
+          Annotation edPane = new Annotation(url);
+          JScrollPane jsp = new JScrollPane(edPane);
+          JInternalFrame jif = new JInternalFrame("SRS "+search,
+                                               true, //resizable
+                                               true, //closable
+                                               true, //maximizable
+                                               true);//iconifiable);
+          JMenuBar menuBar = new JMenuBar();
+          menuBar.add(new CommonMenu(jif));
+          jif.setJMenuBar(menuBar);
+          jif.getContentPane().add(jsp);
+          jif.setLocation(0,0);
+          jif.setSize(800,hgt);
+          jif.setVisible(true);
+          desktop.add(jif);
+        }
+      }
+      catch(java.net.ConnectException connect)
+      {
+        JOptionPane.showMessageDialog(DataCollectionPane.this,
+                 "Cannot retrieve "+search+
+                 "\nConnection failed to:\nhttp://"+srscmd,
+                 "Connection Error",
+                 JOptionPane.WARNING_MESSAGE);
+      }
+      catch(Exception exp)
+      {
+        exp.printStackTrace();
+      }
+    }
+    else
+      JOptionPane.showMessageDialog(DataCollectionPane.this,
+               "No ID to retrieve SRS entry!", "Missing ID",
+                            JOptionPane.INFORMATION_MESSAGE);
+  }
+  
 
   protected void setUpSRSFrame(URL url, String search, JDesktopPane desktop)
                  throws IOException
@@ -334,8 +380,8 @@ public class DataCollectionPane extends JScrollPane
     {
 
       String cmd[]   = { "getz", "-f", "org description",
-                         "[libs={swall}-acc:"+
-                          hit.getAcc()+"]|[libs={swall}-id:"+hit.getID()+"]" };
+                         "[libs={uniprot}-acc:"+
+                          hit.getAcc()+"]|[libs={uniprot}-id:"+hit.getID()+"]" };
       ExternalApplication app = new ExternalApplication(cmd,
                                                   env,null);
       String res = app.getProcessStdout();
@@ -354,7 +400,7 @@ public class DataCollectionPane extends JScrollPane
     if(hit.getEMBL() == null)
     {
       String cmd2[]   = { "getz", "-f", "id",
-                 "[libs={swall}-id:"+hit.getID()+"]>EMBL" };
+                 "[libs={uniprot}-id:"+hit.getID()+"]>EMBL" };
       ExternalApplication app = new ExternalApplication(cmd2,env,null);
       String res = app.getProcessStdout();
   
@@ -373,8 +419,8 @@ public class DataCollectionPane extends JScrollPane
       if(geneName == null)
       {
         String cmd3[]   = { "getz", "-f", "gen",
-                       "[libs={swall}-acc:"+
-                        hit.getAcc()+"]|[libs={swall}-id:"+hit.getID()+"]" };
+                       "[libs={uniprot}-acc:"+
+                        hit.getAcc()+"]|[libs={uniprot}-id:"+hit.getID()+"]" };
         ExternalApplication app = new ExternalApplication(cmd3,
                                                 env,null);
         geneName = app.getProcessStdout();
@@ -456,6 +502,30 @@ public class DataCollectionPane extends JScrollPane
 //                   orthoText, ortholog);
   }
 
+
+  private Hashtable getIDHash(Vector hitInfoCollection)
+  {
+    Hashtable goHash = new Hashtable();
+ 
+    Enumeration hitEnum = hitInfoCollection.elements();
+    while(hitEnum.hasMoreElements())
+    {
+      HitInfo hit = (HitInfo)hitEnum.nextElement();
+      Vector gov = hit.getGO();
+      if(gov != null)
+      {
+        Enumeration gov_enum = gov.elements();
+        while(gov_enum.hasMoreElements())
+        {
+          String id = ((String)gov_enum.nextElement()).trim();
+          goHash.put(id,"");
+        }
+      }
+    }
+
+    return goHash;
+  }
+  
   public void getGoHash(String filename, Hashtable goHash)
   {
     try
@@ -478,6 +548,59 @@ public class DataCollectionPane extends JScrollPane
     catch(IOException ioe) { ioe.printStackTrace(); }
   }
 
+
+  public class AlignButton extends JButton       
+  {
+    private boolean over = false;
+
+    public AlignButton()
+    {
+      super();
+    }
+
+    public AlignButton(String s)
+    {
+      super(s);
+    }
+
+    public void paintComponent(Graphics g)
+    {
+      super.paintComponent(g);
+
+      if(!getText().equals(""))
+        return;
+
+      Graphics2D g2 = (Graphics2D)g;
+
+      if(over)
+        g2.setColor(new Color(100,100,200));
+      else
+        g2.setColor(Color.blue);
+      g2.setStroke(new BasicStroke(1.5f));
+      g2.drawLine(1,3,11,3);
+      g2.drawLine(1,7,11,7);
+
+      setSize(12,12);
+    }
+
+    protected void processMouseEvent(MouseEvent evt)
+    {
+      switch (evt.getID())
+      {
+	case MouseEvent.MOUSE_ENTERED:
+	  over = true; 
+          setForeground(new Color(100,100,200));
+	  repaint();
+	  break;
+	case MouseEvent.MOUSE_EXITED:
+	  over = false;
+          setForeground(Color.blue);
+	  repaint();
+	  break;
+      }
+      super.processMouseEvent(evt);
+    }
+  }
 
 }
 

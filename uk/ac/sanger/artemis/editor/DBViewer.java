@@ -31,6 +31,7 @@ import java.util.Vector;
 import java.util.Enumeration;
 
 public class DBViewer extends ScrollPanel
+                      implements FastaListener
 {
   /** collection of hits */
   private Vector hitInfoCollection = null;
@@ -52,15 +53,19 @@ public class DBViewer extends ScrollPanel
   private JScrollPane jsp;
   /** initial scale */
   private float scale = 1.f;
+  /** blast/fasta results text view */
+  private FastaTextPane fastaTextPane;
 
-  public DBViewer(FastaTextPane fastaPane, final JScrollPane jsp)
+
+  public DBViewer(FastaTextPane fastaTextPane, final JScrollPane jsp)
   {
     super();
 
     this.jsp = jsp;
+    this.fastaTextPane = fastaTextPane;
 
-    hitInfoCollection = fastaPane.getHitCollection();
-    qlen = fastaPane.getQueryLength();
+    hitInfoCollection = fastaTextPane.getHitCollection();
+    qlen = fastaTextPane.getQueryLength();
     
     Dimension d = new Dimension(500,
                                (hitInfoCollection.size()*ydisp)+(6*bound));
@@ -80,6 +85,25 @@ public class DBViewer extends ScrollPanel
     addMouseListener(new PopupListener());
     popup = new JPopupMenu();
     getOptionsMenu(popup);
+  }
+
+  public void update()
+  {
+    hitInfoCollection = fastaTextPane.getHitCollection();
+    qlen = fastaTextPane.getQueryLength();
+    Dimension d = new Dimension(500,
+                               (hitInfoCollection.size()*ydisp)+(6*bound));
+    setPreferredSize(d);
+
+    Enumeration enumHits = hitInfoCollection.elements();
+    while(enumHits.hasMoreElements())
+    {
+      HitInfo hit = (HitInfo)enumHits.nextElement();
+      float score = Float.parseFloat(hit.getScore());
+      if(score > max_score)
+        max_score = score;
+    }
+    jsp.setViewportView(this);
   }
 
   protected JMenu getFileMenu(final JInternalFrame jif)
@@ -263,6 +287,7 @@ public class DBViewer extends ScrollPanel
   
   }
 
+
   protected void setColourByScore(boolean colourByScore)
   {
     this.colourByScore = colourByScore;
@@ -279,7 +304,14 @@ public class DBViewer extends ScrollPanel
   {
     public void mousePressed(MouseEvent e)
     {
-      maybeShowPopup(e);
+      if(e.isPopupTrigger())
+        maybeShowPopup(e);
+      else if(e.getClickCount() == 2)
+      {
+        int seqPos = (int)((e.getY()-bound-ydisp-bound-ydisp-hgtNumber)/ydisp);
+        HitInfo hit = (HitInfo)hitInfoCollection.get(seqPos);
+        fastaTextPane.show(hit);
+      }
     }
 
     public void mouseReleased(MouseEvent e)
