@@ -468,7 +468,6 @@ public class DataCollectionPane extends JScrollPane
     {
       public Object construct()
       {
-
         final String env[] = { "PATH=/usr/local/pubseq/bin/" };
 
         StringBuffer query = new StringBuffer();
@@ -841,7 +840,10 @@ public class DataCollectionPane extends JScrollPane
     {
       String geneName = hit.getGeneName();
       if(hit.getGeneName() != null)
-        orthoText = "<br>\n/gene=\""+hit.getGeneName()+"\"";
+        orthoText = "<br>\n/gene=\""+hit.getGeneName()+"\""+
+                    "<br>\n/product=\""+hit.getDescription()+"\"";
+      else
+        orthoText = "<br>\n/product=\""+hit.getDescription()+"\"";
     }
 
 //  System.out.println("ID "+hit.getID());

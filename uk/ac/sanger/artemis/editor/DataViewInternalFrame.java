@@ -208,21 +208,14 @@ public class DataViewInternalFrame extends JInternalFrame
 
   protected void reReadSelectedResults()
   {
-    JSplitPane split = (JSplitPane)tabPane.getSelectedComponent();
+    ActiveJSplitPane split = (ActiveJSplitPane)tabPane.getSelectedComponent();
     Component comps[] = split.getComponents();
     for(int i=0; i<comps.length;i++)
     {
-      if(comps[i] instanceof JSplitPane) 
+      if(comps[i] instanceof FastaTextPane)
       {
-        Component comps2[] = ((JSplitPane)comps[i]).getComponents();
-        for(int j=0; j<comps2.length;j++)
-        {
-          if(comps2[j] instanceof FastaTextPane)
-          {
-            ((FastaTextPane)comps2[j]).reRead();
-            return;
-          }
-        }
+        ((FastaTextPane)comps[i]).reRead();
+        return;
       }
     }
   }

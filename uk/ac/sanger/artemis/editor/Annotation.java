@@ -184,7 +184,7 @@ public class Annotation extends JEditorPane
     s = getDatabaseHTML(s,"EMBL:");
     s = getGeneDBHTML(s);
 
-    int ind = s.indexOf("/gene");
+//  int ind = s.indexOf("/gene");
     
     Document doc = getDocument();
     int offset = doc.getLength();
@@ -394,9 +394,13 @@ public class Annotation extends JEditorPane
         ind1 = ind2+1;
     }
 
-    // if ortholog then delete gene line as well
+    // if ortholog then delete gene and product lines as well
     if(ortholog)
-      ind2 = txt.indexOf("<br>",ind2+4);
+    {
+      ind2 = txt.indexOf("<br>/product=");
+      if(ind2 > -1)
+        ind2 = txt.indexOf("<br>",ind2+4);
+    }
    
     if(ind2 == -1 || ind2 > txt.length())
       ind2 = txt.length();
