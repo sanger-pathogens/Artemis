@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.14 2004-12-07 10:35:40 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.15 2004-12-07 17:42:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.14 2004-12-07 10:35:40 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.15 2004-12-07 17:42:20 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -2760,14 +2760,12 @@ public class FeatureDisplay extends EntryGroupPanel
   private MarkerRange getMarkerRangeFromPosition(final Point position,
                                                   final boolean whole_codon) 
   {
-
     final int frame_id;
-
     int base_position;
     final Strand strand;
 
-    if(scrollbar_style == SCROLLBAR_AT_TOP)
-      position.x += scrollbar.getPreferredSize().height;
+//  if(scrollbar_style == SCROLLBAR_AT_TOP)
+//    position.x += scrollbar.getPreferredSize().height;
 
     if(getOneLinePerEntryFlag()) 
     {
