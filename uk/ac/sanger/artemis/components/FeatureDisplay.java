@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.18 2004-12-23 10:19:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.19 2004-12-23 15:33:46 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.18 2004-12-23 10:19:05 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.19 2004-12-23 15:33:46 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -60,21 +60,21 @@ public class FeatureDisplay extends EntryGroupPanel
 
   final static public int SCROLLBAR_AT_TOP = 1;
   final static public int SCROLLBAR_AT_BOTTOM = 2;
-  final static public int NO_SCROLLBAR = 3;
+  final static private int NO_SCROLLBAR = 3;
 
-  public final static int FORWARD = Bases.FORWARD;
-  public final static int REVERSE = Bases.REVERSE;
+  private final static int FORWARD = Bases.FORWARD;
+  private final static int REVERSE = Bases.REVERSE;
 
-  public final static int NO_FRAME        = FeatureSegment.NO_FRAME;
-  public final static int FORWARD_STRAND  = FeatureSegment.FORWARD_STRAND;
-  public final static int REVERSE_STRAND  = FeatureSegment.REVERSE_STRAND;
-  public final static int FORWARD_FRAME_1 = FeatureSegment.FORWARD_FRAME_1;
-  public final static int FORWARD_FRAME_2 = FeatureSegment.FORWARD_FRAME_2;
-  public final static int FORWARD_FRAME_3 = FeatureSegment.FORWARD_FRAME_3;
-  public final static int REVERSE_FRAME_3 = FeatureSegment.REVERSE_FRAME_3;
-  public final static int REVERSE_FRAME_2 = FeatureSegment.REVERSE_FRAME_2;
-  public final static int REVERSE_FRAME_1 = FeatureSegment.REVERSE_FRAME_1;
-  public final static int SCALE_LINE      = FeatureSegment.SCALE_LINE;
+  private final static int NO_FRAME        = FeatureSegment.NO_FRAME;
+  private final static int FORWARD_STRAND  = FeatureSegment.FORWARD_STRAND;
+  private final static int REVERSE_STRAND  = FeatureSegment.REVERSE_STRAND;
+  private final static int FORWARD_FRAME_1 = FeatureSegment.FORWARD_FRAME_1;
+  private final static int FORWARD_FRAME_2 = FeatureSegment.FORWARD_FRAME_2;
+  private final static int FORWARD_FRAME_3 = FeatureSegment.FORWARD_FRAME_3;
+  private final static int REVERSE_FRAME_3 = FeatureSegment.REVERSE_FRAME_3;
+  private final static int REVERSE_FRAME_2 = FeatureSegment.REVERSE_FRAME_2;
+  private final static int REVERSE_FRAME_1 = FeatureSegment.REVERSE_FRAME_1;
+  private final static int SCALE_LINE      = FeatureSegment.SCALE_LINE;
 
 
   /**
@@ -2133,7 +2133,13 @@ public class FeatureDisplay extends EntryGroupPanel
     else
       g.setColor(Color.black);
 
-    for(int i = 0 ; i < codon_positions.length ; ++i) 
+
+    int length = 0;
+    if(direction != FORWARD)
+      length = getBases().getLength();
+
+    final int codon_positions_length = codon_positions.length;
+    for(int i = 0; i < codon_positions_length; ++i) 
     {
       final int codon_base_start = codon_positions[i];
 
@@ -2147,13 +2153,14 @@ public class FeatureDisplay extends EntryGroupPanel
         draw_x_position = getLowXPositionOfBase(codon_base_start);
       else
       { 
-        final int raw_base_position =
-          getBases().getComplementPosition(codon_base_start);
+        final int raw_base_position = length - codon_base_start + 1;
+//      final int raw_base_position =
+//        getBases().getComplementPosition(codon_base_start);
         draw_x_position = getLowXPositionOfBase(raw_base_position);
       }
 
       // draw only if we haven't drawn on the position already
-      if(last_x_position == -1 || draw_x_position != last_x_position) 
+      if(draw_x_position != last_x_position || last_x_position == -1) 
       {
         drawOneCodonMark(g, draw_x_position, draw_y_position,
                          direction, mark_height);
@@ -4316,7 +4323,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  than or equal to zero than controls the number of bases that can appear
    *  on screen.  See getScaleValue().
    **/
-  public int getScaleFactor() 
+  protected int getScaleFactor() 
   {
     return scale_factor;
   }
@@ -4427,7 +4434,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  the sequence length.  If hard_left_edge is true this method will always
    *  return the same as getForwardBaseAtLeftEdge*(.
    **/
-  public int getFirstVisibleForwardBase() 
+  protected int getFirstVisibleForwardBase() 
   {
     if(left_edge_base < 1) 
       return 1;
@@ -4442,7 +4449,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  being display in the forward direction will be the reverse strand if
    *  rev_comp_display is true.
    **/
-  public int getForwardBaseAtLeftEdge() 
+  protected int getForwardBaseAtLeftEdge() 
   {
     return left_edge_base;
   }
@@ -4476,7 +4483,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  edge of the canvas.  The number returned will always be > 1 and < the
    *  sequence length.
    **/
-  public int getLastVisibleForwardBase() 
+  protected int getLastVisibleForwardBase() 
   {
     final int possible_last_base =
      (int)(getForwardBaseAtLeftEdge() + getMaxVisibleBases());
@@ -4558,7 +4565,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Return the number of bases we can fit on screen at once, ie the number
    *  that will fit side by side on the canvas.
    **/
-  public int getMaxVisibleBases() 
+  protected int getMaxVisibleBases() 
   {
     return(int)(getWidth() / getScaleValue());
   }
@@ -4590,7 +4597,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Scroll and scale the display so that the given first base is at the left
    *  edge of the screen and the given last base is at the right edge.
    **/
-  public void setFirstAndLastBase(final int first, final int last) 
+  protected void setFirstAndLastBase(final int first, final int last) 
   {
     left_edge_base = first;
     setScaleValue(1.0F * getWidth() /(last - first + 1));
@@ -4600,7 +4607,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Scroll the display so that the given first base is at the left edge of
    *  the screen.
    **/
-  public void setFirstBase(int base_position) 
+  protected void setFirstBase(int base_position) 
   {
     if(base_position > getSequenceLength()) 
       base_position = getSequenceLength();

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.6 2004-12-23 10:19:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.7 2004-12-23 15:33:46 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -45,7 +45,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.6 2004-12-23 10:19:05 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.7 2004-12-23 15:33:46 tjc Exp $ */
 
 public class Bases {
   /**
@@ -167,15 +167,15 @@ public class Bases {
    **/
   public static int getIndexOfBase (final char base) {
     switch (base) {
-    case 't':
-    case 'u':
-      return 0;
     case 'c':
       return 1;
     case 'a':
       return 2;
     case 'g':
       return 3;
+    case 't':
+    case 'u':
+      return 0;
     }
 
     return 4;
@@ -510,13 +510,13 @@ public class Bases {
 
     int current_return_array_index = 0;
 
+    final String sequence_string =
+      getSequence().getSubSequence(1, getLength());
+
 //  final char sequence_string[] =
-//    getSequence().getSubSequence(1, getLength()).toCharArray();
+//    getSequence().getCharSubSequence(1, getLength());
 
-    final char sequence_string[] =
-      getSequence().getCharSubSequence(1, getLength());
-
-    final int sequence_string_length = sequence_string.length;
+    final int sequence_string_length = sequence_string.length();
     final int range_start_index = real_range.getStart () - 1;
     final int range_end_index = real_range.getEnd () - 1;
 
@@ -957,6 +957,7 @@ public class Bases {
    *  or 'x' (any base) is 'n'.
    **/
   public static char complement (final char base) {
+
     switch (base) {
     case 'a': case 'A': return 't';
     case 't': case 'T': case 'u': case 'U': return 'a';
@@ -996,31 +997,31 @@ public class Bases {
    *  complement of those three bases is a stop codon.
    *  Codons that contain an X are considered to be stop codons.
    **/
-  private static boolean isStopCodon (final char[] sequence,
+  private static boolean isStopCodon (final String sequence_string,
                                       final int start_index,
                                       final int direction) {
     final char translation;
 
     if (direction == FORWARD) {
-      final char first_letter  = sequence[start_index];
-      final char second_letter = sequence[start_index + 1];
-      final char third_letter  = sequence[start_index + 2];
+      final char first_letter = sequence_string.charAt (start_index);
+      final char second_letter = sequence_string.charAt (start_index + 1);
+      final char third_letter = sequence_string.charAt (start_index + 2);
 
       if (first_letter == 'x' || second_letter == 'x' || third_letter == 'x') {
         // codons that contain an X are considered to be stop codons.
         return true;
       }
-      
+
       translation = AminoAcidSequence.getCodonTranslation (first_letter,
                                                            second_letter,
                                                            third_letter);
     } else {
       final char first_letter =
-        complement (sequence[start_index - 2]);
+        complement (sequence_string.charAt (start_index - 2));
       final char second_letter =
-        complement (sequence[start_index - 1]);
+        complement (sequence_string.charAt (start_index - 1));
       final char third_letter =
-        complement (sequence[start_index]);
+        complement (sequence_string.charAt (start_index));
 
       if (first_letter == 'x' || second_letter == 'x' || third_letter == 'x') {
         // codons that contain an X are considered to be stop codons.
@@ -1038,6 +1039,7 @@ public class Bases {
       return false;
     }
   }
+
 
   /**
    *  Check a three character substring and return true if and only if the
