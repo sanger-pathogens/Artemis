@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.1 2004-06-09 09:46:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.2 2004-06-29 08:29:15 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,13 +44,13 @@ import java.io.*;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.1 2004-06-09 09:46:03 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.2 2004-06-29 08:29:15 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
 {
   /** Version String use for banner messages and title bars. */
-  public static final String version = "Swing 1";
+  public static final String version = "Release 6 (Java2)";
 
   /** A vector containing all EntryEdit object we have created. */
   private EntryEditVector entry_edit_objects = new EntryEditVector();
