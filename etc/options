@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.9 2004-07-30 15:31:01 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.10 2004-08-09 14:32:39 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -178,7 +178,7 @@ sequence_file_suffixes = embl gbk genbank tab_embl seq dna \
    art artemis
 
 # this is the URL that contains the IOR of the EMBL server
-embl_ior_url = http://corba.ebi.ac.uk/EMBL/IOR/Embl.IOR
+#embl_ior_url = http://corba.ebi.ac.uk/EMBL/IOR/Embl.IOR
 
 # this is the URL that contains the IOR of the EnsEMBL server
 # ensembl_ior_url = file:///nfs/disk12/kmr/powmap/db.ior
