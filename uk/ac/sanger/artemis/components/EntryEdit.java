@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.4 2004-11-09 14:24:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.5 2004-11-17 15:03:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.4 2004-11-09 14:24:41 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.5 2004-11-17 15:03:52 tjc Exp $
  *
  */
 
@@ -525,17 +525,17 @@ public class EntryEdit extends JFrame
         return;
     }
 
-    if(!System.getProperty("os.arch").equals("alpha"))
-    {
+//  if(!System.getProperty("os.arch").equals("alpha"))
+//  {
       final EntryFileDialog file_dialog = new EntryFileDialog(this,
                                                               false);
 
       file_dialog.saveEntry(entry, include_diana_extensions, ask_for_name,
                           keep_new_name, destination_type);
-    }
-    else
-      alphaBug(entry, include_diana_extensions, ask_for_name,
-               keep_new_name, destination_type);
+//  }
+//  else
+//    alphaBug(entry, include_diana_extensions, ask_for_name,
+//             keep_new_name, destination_type);
   }
 
 
