@@ -285,7 +285,7 @@ public class DataViewInternalFrame extends JInternalFrame
           id = id.substring(ind1+1).trim();
 
           note.append(tok.nextToken());
-          note.append(tok.nextToken());
+          note.append(tok.nextToken().toLowerCase());
           note.append(" "+id);
 
           String length = tok.nextToken().trim();
