@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.14 2005-02-25 10:21:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.15 2005-04-05 11:46:21 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,6 +38,8 @@ import uk.ac.sanger.artemis.io.RangeVector;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
+import java.util.Comparator;
+import java.util.Arrays;
 import javax.swing.*;
 
 /**
@@ -45,7 +47,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.14 2005-02-25 10:21:13 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.15 2005-04-05 11:46:21 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -1491,6 +1493,106 @@ public class AlignmentViewer extends CanvasPanel
   }
 
   /**
+  *
+  * Find regions where there are no matches.
+  * @return vector of coordinates of regions where there are 
+  *         no matches.
+  *
+  */
+  protected Vector getDifferenceCoords(boolean subject)
+  {
+    final int length;
+
+    if(subject)
+      length = getSubjectForwardStrand().getSequenceLength();
+    else
+      length = getQueryForwardStrand().getSequenceLength();
+
+    AlignMatchComparator comparator = new AlignMatchComparator(subject);
+
+    int imatch = 0;
+    final AlignMatch[] sorted_all_matches = new AlignMatch[all_matches.length];   
+    for(int i = 0; i < sorted_all_matches.length; ++i)
+    {
+      if(isVisible(all_matches[i]))
+        sorted_all_matches[imatch++] = AlignMatch.copy(all_matches[i]);
+    }
+
+    // sort alignment matches based on where they start
+    Arrays.sort(sorted_all_matches, comparator);
+    int start = 1;
+    Vector differences = new Vector();
+
+    // find & record regions of no match
+    for(int i = 0; i < imatch; ++i)
+    {
+      Integer coords[] = new Integer[2];
+      final AlignMatch this_match = sorted_all_matches[i];
+      
+      if(this_match == null)
+        continue;
+
+      int this_start;
+      int this_end;
+
+      if(subject)
+      {
+        this_start = this_match.getSubjectSequenceStart();
+        this_end   = this_match.getSubjectSequenceEnd();
+      }
+      else
+      {
+        this_start = this_match.getQuerySequenceStart();
+        this_end   = this_match.getQuerySequenceEnd();
+      }
+
+      System.out.println(i+" "+this_start+" "+this_end);
+      if(this_start > this_end)
+      {
+        int tmp_this_start = this_start;
+        this_start = this_end;
+        this_end   = tmp_this_start;
+      }
+
+//    System.out.println("******* "+this_start+" "+this_end+"   --> "+start);
+      if(i == 0 && this_start > 1)
+      {
+        coords[0] = new Integer(start);
+        coords[1] = new Integer(this_start-1);
+        differences.add(coords);
+      }
+
+      if(this_end > start)
+        start = this_end;
+
+      if(i < imatch-1)
+      {
+        final AlignMatch next_match = sorted_all_matches[i+1];
+        int next_start;
+        if(subject)
+          next_start = next_match.getSubjectSequenceStart();
+        else
+          next_start = next_match.getQuerySequenceStart();
+
+        if(next_start > start)
+        {
+          coords[0] = new Integer(start+1);
+          coords[1] = new Integer(next_start-1);
+          differences.add(coords);
+        }
+      }
+      else if(i == imatch-1 &&
+              this_end < length)
+      {
+        coords[0] = new Integer(start+1);
+        coords[1] = new Integer(length);
+        differences.add(coords);
+      }
+    }
+    return differences;
+  }
+
+  /**
    *  Return the screen x positions of the corners of the given match.  The
    *  order is Top Left, Top Right, Bottom Left, Bottom Right, unless the
    *  match is an inversion, in which case it will be TL,TR,BR,BL.  Returns
@@ -1808,6 +1910,74 @@ public class AlignmentViewer extends CanvasPanel
   private ComparisonData getComparisonData () 
   {
     return comparison_data;
+  }
+
+  public class AlignMatchComparator implements java.util.Comparator
+  {
+    final private boolean subject;
+    public AlignMatchComparator(boolean subject)
+    {
+      this.subject = subject;
+    }
+
+    public int compare(Object o1,Object o2) throws ClassCastException
+    {
+      if(o1 == null && o2 == null)
+        return 0;
+      else if (o1 == null)
+        return 1;
+      else if (o2 == null)
+        return -1;
+
+      if(!(o1 instanceof AlignMatch))
+        throw new ClassCastException();
+       
+      if(!(o2 instanceof AlignMatch))
+        throw new ClassCastException();
+        
+      AlignMatch c1 = (AlignMatch)o1;
+      AlignMatch c2 = (AlignMatch)o2;
+        
+      int start1 = 0;
+      int start2 = 0;
+    
+      if(subject)
+      {
+        start1   = c1.getSubjectSequenceStart();
+        int end1 = c1.getSubjectSequenceEnd();
+        if(end1 < start1)
+          start1 = end1;
+      }
+      else
+      {
+        start1   = c1.getQuerySequenceStart();   
+        int end1 = c1.getQuerySequenceEnd();
+        if(end1 < start1)
+          start1 = end1;
+      }
+
+      if(subject)
+      {
+        start2   = c2.getSubjectSequenceStart();
+        int end2 = c2.getSubjectSequenceEnd();
+        if(end2 < start2)
+          start2 = end2;
+      }
+      else
+      {
+        start2 = c2.getQuerySequenceStart();
+        int end2 = c2.getQuerySequenceEnd();
+        if(end2 < start2)
+          start2 = end2;
+      }
+
+      if(start1 < start2)
+        return -1;
+      else if(start1 > start2)
+        return 1;
+      else
+        return 0;
+    }
   }
 
   public class ColorChooserShades extends JPanel

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/AlignMatch.java,v 1.3 2004-12-14 10:41:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/AlignMatch.java,v 1.4 2005-04-05 11:46:21 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -31,7 +31,7 @@ import uk.ac.sanger.artemis.io.Range;
  *  Each object of this class represents a single match from an alignment.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignMatch.java,v 1.3 2004-12-14 10:41:42 tjc Exp $
+ *  @version $Id: AlignMatch.java,v 1.4 2005-04-05 11:46:21 tjc Exp $
  **/
 
 public class AlignMatch 
@@ -78,6 +78,15 @@ public class AlignMatch
 
     match_length = Math.abs(getSubjectSequenceStart() -
                             getSubjectSequenceEnd());
+  }
+
+  public static AlignMatch copy(AlignMatch m)
+  {
+    return new AlignMatch(m.subject_sequence_range,
+                          m.query_sequence_range,
+                          m.rev_match, 
+                          m.score,
+                          m.percent_id);
   }
 
   public int getLength()

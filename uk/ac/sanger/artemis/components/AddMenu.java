@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.3 2005-04-05 11:46:21 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,8 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
 
 import java.awt.*;
 import java.awt.event.*;
-
+import java.util.Vector;
+import java.util.Enumeration;
 import javax.swing.*;
 
 /**
@@ -53,10 +54,10 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.3 2005-04-05 11:46:21 tjc Exp $
  **/
-
-public class AddMenu extends SelectionMenu {
+public class AddMenu extends SelectionMenu 
+{
   /**
    *  The shortcut for "Create From Base Range".
    **/
@@ -64,6 +65,35 @@ public class AddMenu extends SelectionMenu {
     KeyStroke.getKeyStroke (KeyEvent.VK_C, InputEvent.CTRL_MASK);
 
   final static public int CREATE_FROM_BASE_RANGE_KEY_CODE = KeyEvent.VK_C;
+
+  private AlignmentViewer alignment_viewer;
+  private boolean subject;
+
+  /**
+   *  Create a new AddMenu object.
+   *  @param frame The JFrame that owns this JMenu.
+   *  @param selection The Selection that the commands in the menu will
+   *    operate on.
+   *  @param entry_group The EntryGroup object where new features/entries will
+   *    be added.
+   *  @param goto_event_source The object the we will call makeBaseVisible ()
+   *    on.
+   *  @param base_plot_group The BasePlotGroup associated with this JMenu -
+   *    needed to call getCodonUsageAlgorithm()
+   *  @param base_plot_group The AlignmentViewer associated with this JMenu
+   *
+   *  @param menu_name The name of the new menu.
+   **/
+  public AddMenu (final JFrame frame,
+                  final Selection selection,
+                  final EntryGroup entry_group,
+                  final GotoEventSource goto_event_source,
+                  final BasePlotGroup base_plot_group,
+                  final String menu_name) 
+  {
+    this(frame,selection,entry_group,
+         goto_event_source,base_plot_group,null,menu_name,false);
+  }
 
   /**
    *  Create a new AddMenu object.
@@ -78,14 +108,19 @@ public class AddMenu extends SelectionMenu {
    *    needed to call getCodonUsageAlgorithm()
    *  @param menu_name The name of the new menu.
    **/
-  public AddMenu (final JFrame frame,
-                  final Selection selection,
-                  final EntryGroup entry_group,
-                  final GotoEventSource goto_event_source,
-                  final BasePlotGroup base_plot_group,
-                  final String menu_name) {
+  public AddMenu(final JFrame frame,
+                 final Selection selection,
+                 final EntryGroup entry_group,
+                 final GotoEventSource goto_event_source,
+                 final BasePlotGroup base_plot_group,
+                 final AlignmentViewer alignment_viewer,
+                 final String menu_name, 
+                 final boolean subject) 
+  {
     super (frame, menu_name, selection);
 
+    this.subject = subject;
+    this.alignment_viewer = alignment_viewer;
     this.entry_group = entry_group;
     this.base_plot_group = base_plot_group;
 
@@ -109,6 +144,84 @@ public class AddMenu extends SelectionMenu {
     });
 
     add (create_feature_from_range_item);
+
+    if(alignment_viewer != null)
+    {
+      JMenuItem create_difference_feature  =
+        new JMenuItem("Create Features From Differences");
+      create_difference_feature.addActionListener(new ActionListener()
+      {
+        public void actionPerformed (ActionEvent event) 
+        {
+          Vector diffs = alignment_viewer.getDifferenceCoords(subject);
+          Enumeration eDiffs = diffs.elements();
+          while(eDiffs.hasMoreElements())
+          {
+            Integer coords[] = (Integer[])eDiffs.nextElement();
+            int start = coords[0].intValue();
+            int end   = coords[1].intValue();
+            System.out.println(start+" "+end);
+            
+            final Entry default_entry = entry_group.getDefaultEntry();
+            if(default_entry == null) 
+            {
+              new MessageDialog(frame, "There is no default entry");
+              return;
+            }
+
+            Location loc = null;
+            Feature temp_feature;
+            try 
+            {
+              loc = new Location(start+".."+end);
+              temp_feature = default_entry.createFeature(Key.CDS, loc);
+            } 
+            catch(EntryInformationException e) 
+            {
+              // use the default key instead
+              final Key default_key =
+                default_entry.getEntryInformation().getDefaultKey();
+
+              try
+              {
+                temp_feature =
+                    default_entry.createFeature(default_key, loc);
+              }
+              catch(EntryInformationException einfo)
+              {
+                throw new Error("internal error - unexpected exception: " + einfo);
+              }
+              catch(ReadOnlyException eRead)
+              {
+                new MessageDialog(frame, "feature not created: " +
+                                "the default entry is read only");
+              }
+              catch(OutOfRangeException eout)
+              {
+                throw new Error("internal error - unexpected exception: " + eout);
+              }
+
+            }
+            catch(ReadOnlyException e) 
+            {
+              new MessageDialog(frame, "feature not created: " +
+                              "the default entry is read only");
+            } 
+            catch(OutOfRangeException e) 
+            {
+              throw new Error("internal error - unexpected exception: " + e);
+            }
+            catch(LocationParseException  lpe)
+            {
+              throw new Error("internal error - unexpected exception: " + lpe);
+            }
+          }
+
+        }
+      });
+
+      add (create_difference_feature);
+    }
 
     create_intron_features_item =
       new JMenuItem ("Create Intron Features");
