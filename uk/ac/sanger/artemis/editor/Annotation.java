@@ -124,7 +124,6 @@ public class Annotation extends JEditorPane
     text = getDatabaseHTML(text,"EMBL:");
     setText("<html><body><font size=3>"+text+"</font></html></body>");
     startRange = getDocument().getLength();
-
   }
 
 

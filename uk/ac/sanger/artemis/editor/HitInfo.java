@@ -389,7 +389,7 @@ public class HitInfo
   {
     if(desc == null)
       desc = new String(s);
-    else
+    else 
       desc = desc + " " + s;
 
     desc = desc.trim();

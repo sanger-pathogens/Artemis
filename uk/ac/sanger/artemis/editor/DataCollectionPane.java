@@ -233,7 +233,8 @@ public class DataCollectionPane extends JScrollPane
 
       JLabel hiLabel = new JLabel(head);
       hiLabel.setFont(BigPane.font);
-      hiLabel.setForeground(Color.red);
+      hiLabel.setForeground(Color.black);
+//    hiLabel.setForeground(Color.red);
 
 // align button
 //    final JButton selectButt = new JButton("ALIGN");
@@ -531,7 +532,7 @@ public class DataCollectionPane extends JScrollPane
             if(line.startsWith("OS "))
               hit.setOrganism(lineStrip);
             else if(line.startsWith("DE "))
-              hit.appendDescription(lineStrip);
+              hit.setDescription(lineStrip);
             else if(line.startsWith("GN "))
             {
               StringTokenizer tokGN = new StringTokenizer(lineStrip,";");
@@ -540,8 +541,8 @@ public class DataCollectionPane extends JScrollPane
                 line = tokGN.nextToken();
                 if(line.startsWith("Name="))
                   hit.setGeneName(line.substring(5));
-                else
-                  hit.appendDescription(line);
+//              else
+//                hit.appendDescription(line);
               }
             }
           }
@@ -641,7 +642,7 @@ public class DataCollectionPane extends JScrollPane
         if(token.startsWith("OS "))
           hit.setOrganism(tokenline);
         else if(token.startsWith("DE "))
-          hit.appendDescription(tokenline);
+          hit.setDescription(tokenline);
         else if(token.startsWith("GN "))
         {
           StringTokenizer tokGN = new StringTokenizer(tokenline,";");
@@ -650,8 +651,8 @@ public class DataCollectionPane extends JScrollPane
             token = tokGN.nextToken();
             if(token.startsWith("Name="))          
               hit.setGeneName(tokenline.substring(5));
-            else
-              hit.appendDescription(token);
+//          else
+//            hit.appendDescription(token);
           }
         }
       }
