@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.8 2004-11-09 14:24:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.9 2004-11-17 13:19:43 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,7 +44,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.8 2004-11-09 14:24:41 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.9 2004-11-17 13:19:43 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -1010,6 +1010,7 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   public void optionChanged(OptionChangeEvent event) 
   {
+    getBases().clearStopCodonCache();
     repaint();
   }
 
@@ -1832,7 +1833,8 @@ public class FeatureDisplay extends EntryGroupPanel
 
     if(show_stop_codons) 
     {
-      forward_stop_codons = new int [][] {
+      forward_stop_codons = new int [][] 
+      {
         strand.getStopCodons(newRange(start_base, end_base)),
         strand.getStopCodons(newRange(start_base + 1, end_base)),
         strand.getStopCodons(newRange(start_base + 2, end_base))
@@ -1844,14 +1846,15 @@ public class FeatureDisplay extends EntryGroupPanel
 
     if(show_start_codons) 
     {
-      final StringVector start_codons;
+      final StringVector start_codons = Options.getOptions().getStartCodons();
+      
+//    if(Options.getOptions().isEukaryoticMode()) 
+//      start_codons = Options.getOptions().getEukaryoticStartCodons();
+//    else 
+//      start_codons = Options.getOptions().getProkaryoticStartCodons();
 
-      if(Options.getOptions().isEukaryoticMode()) 
-        start_codons = Options.getOptions().getEukaryoticStartCodons();
-      else 
-        start_codons = Options.getOptions().getProkaryoticStartCodons();
-
-      forward_start_codons = new int [][] {
+      forward_start_codons = new int [][] 
+      {
         strand.getMatchingCodons(newRange(start_base, end_base),
                                   start_codons),
         strand.getMatchingCodons(newRange(start_base + 1, end_base),
@@ -1864,7 +1867,6 @@ public class FeatureDisplay extends EntryGroupPanel
     for(int i = 0 ; i < 3 ; ++i) 
     {
       final int frame_line = getFrameDisplayLine(FORWARD_FRAME_1 + i);
-
       final int frame_x_start = i;
 
       if(show_start_codons) 
@@ -1933,12 +1935,12 @@ public class FeatureDisplay extends EntryGroupPanel
 
     if(show_start_codons) 
     {
-      final StringVector start_codons;
+      final StringVector start_codons = Options.getOptions().getStartCodons();;
 
-      if(Options.getOptions().isEukaryoticMode()) 
-        start_codons = Options.getOptions().getEukaryoticStartCodons();
-      else 
-        start_codons = Options.getOptions().getProkaryoticStartCodons();
+//    if(Options.getOptions().isEukaryoticMode()) 
+//      start_codons = Options.getOptions().getEukaryoticStartCodons();
+//    else 
+//      start_codons = Options.getOptions().getProkaryoticStartCodons();
 
       reverse_start_codons = new int [][] {
         strand.getMatchingCodons(newRange(start_base, end_base),

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.1 2004-06-09 09:44:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.2 2004-11-17 13:20:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -60,7 +60,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.1 2004-06-09 09:44:36 tjc Exp $
+ *  @version $Id: Feature.java,v 1.2 2004-11-17 13:20:34 tjc Exp $
  **/
 
 public class Feature
@@ -953,11 +953,13 @@ public class Feature
 
     final StringVector start_codons;
 
-    if (Options.getOptions ().isEukaryoticMode ()) {
-      start_codons = Options.getOptions ().getEukaryoticStartCodons ();
-    } else {
-      start_codons = Options.getOptions ().getProkaryoticStartCodons ();
-    }
+    start_codons = Options.getOptions().getStartCodons();
+
+//  if (Options.getOptions ().isEukaryoticMode ()) {
+//    start_codons = Options.getOptions ().getEukaryoticStartCodons ();
+//  } else {
+//    start_codons = Options.getOptions ().getProkaryoticStartCodons ();
+//  }
 
     if (start_codons.contains (first_codon)) {
       return true;

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.1 2004-06-09 09:47:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.2 2004-11-17 13:19:43 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -30,6 +30,8 @@ import uk.ac.sanger.artemis.EntrySourceVector;
 import uk.ac.sanger.artemis.Logger;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
+import uk.ac.sanger.artemis.util.StringVector;
+import uk.ac.sanger.artemis.sequence.Bases;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -40,7 +42,7 @@ import javax.swing.border.Border;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.1 2004-06-09 09:47:48 tjc Exp $
+ *  @version $Id: Splash.java,v 1.2 2004-11-17 13:19:43 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -79,6 +81,8 @@ abstract public class Splash extends JFrame
   protected JMenu file_menu;
 
   protected JMenu options_menu;
+
+  private String geneticCode;
 
   /**
    *  Create a new JFrame for a Splash screen.
@@ -187,13 +191,14 @@ abstract public class Splash extends JFrame
       }
 
       // return the program name and the program mode in one String
-      private String getNameString() 
-      {
-        if(Options.getOptions().isEukaryoticMode())
-          return program_name + "  [Eukaryotic mode]";
-        else
-          return program_name + "  [Prokaryotic mode]";
-      }
+//    private String getNameString() 
+//    {
+//      if(Options.getOptions().isEukaryoticMode())
+//        return program_name + "  [Eukaryotic mode]";
+//      else
+//        return program_name + "  [Prokaryotic mode]";
+//      return geneticCode;
+//    }
 
       /**
        *  Draws the splash screen text.
@@ -209,13 +214,16 @@ abstract public class Splash extends JFrame
                      helix_width + left_margin, font_height);
         g.drawString(program_version,
                       helix_width + left_margin, font_height * 2);
-        if(Options.getOptions().isEukaryoticMode()) 
-          g.drawString("[Eukaryotic mode]",
+//      if(Options.getOptions().isEukaryoticMode()) 
+//        g.drawString("[Eukaryotic mode]",
+//                      helix_width + left_margin, font_height * 3);
+//      else
+//        g.drawString("[Prokaryotic mode]",
+//                      helix_width + left_margin, font_height * 3);
+        g.drawString(geneticCode,
                         helix_width + left_margin, font_height * 3);
-        else
-          g.drawString("[Prokaryotic mode]",
-                        helix_width + left_margin, font_height * 3);
-        g.drawString("Copyright 1998 - 2003",
+
+        g.drawString("Copyright 1998 - 2004",
                       helix_width + left_margin, font_height * 9 / 2);
         g.drawString("Genome Research Limited",
                       helix_width + left_margin, font_height * 11 / 2);
@@ -388,20 +396,115 @@ abstract public class Splash extends JFrame
     });
     options_menu.add(enable_direct_edit_item);
 
-    final JCheckBoxMenuItem enable_euk_mode_item = new JCheckBoxMenuItem(
-                                                      "Eukaryotic Mode");
-    enable_euk_mode_item.setState(Options.getOptions().isEukaryoticMode());
-    enable_euk_mode_item.addItemListener(new ItemListener() 
-    {
-      public void itemStateChanged(ItemEvent event) 
-      {
-        final boolean item_state = enable_euk_mode_item.getState();
-        Options.getOptions().setEukaryoticMode(item_state);
 
-        helix_canvas.repaint();
-      }
-    });
-    options_menu.add(enable_euk_mode_item);
+    // available genetic codes
+    String gcodes[] = Options.getOptions().getOptionValues("genetic_codes").getArray();
+
+    ButtonGroup gcodeGroup = new ButtonGroup();
+    options_menu.addSeparator();
+    options_menu.add(new JLabel(" --- Genetic Codes Tables ---"));
+    for(int i = 0; i< gcodes.length; i++)
+    {
+      if(gcodes[i].equals("-"))
+        continue;
+
+      int ind1; 
+      while((ind1 = gcodes[i].indexOf("_")) > -1)
+        gcodes[i] = gcodes[i].substring(0,ind1) + " " +
+                    gcodes[i].substring(ind1+1,gcodes[i].length());
+
+      String num = Integer.toString(i+1);
+      final String gc_name = num+". "+gcodes[i];
+      final JCheckBoxMenuItem geneCode = new JCheckBoxMenuItem(gc_name);
+      gcodeGroup.add(geneCode);
+      geneCode.setActionCommand(num);
+
+      geneCode.addItemListener(new ItemListener()
+      {
+        public void itemStateChanged(ItemEvent event)
+        {
+          if(geneCode.getState())
+          {
+            geneticCode = gc_name;
+            String tab = "translation_table_"+geneCode.getActionCommand();
+            String startCodons = "start_codons_"+geneCode.getActionCommand();
+
+            StringVector options_file_table =
+                         Options.getOptions().getOptionValues(tab);
+
+            if(options_file_table != null)
+            {
+              if(options_file_table.size() == 64) 
+              {
+                StringBuffer sbuff = new StringBuffer();
+                for(int i = 0; i < 64; ++i) 
+                  sbuff.append(options_file_table.elementAt(i)+" ");
+
+                Options.getOptions().setGeneticCode(sbuff.toString());
+              }
+              else
+              {
+                StringVector table = Options.getOptions().getOptionValues("translation_table_1");
+
+                for(int i = 0; i < options_file_table.size(); ++i)
+                {
+                  String cod_plus_aa = options_file_table.elementAt(i);
+//                System.out.println(cod_plus_aa);
+                  final int codon_index = Bases.getIndexOfBase(cod_plus_aa.charAt(0)) * 16 +
+                                          Bases.getIndexOfBase(cod_plus_aa.charAt(1)) * 4 +
+                                          Bases.getIndexOfBase(cod_plus_aa.charAt(2));
+
+//                System.out.println(cod_plus_aa.substring(3)+"  "+codon_index+"  "+
+//                                   table.elementAt(codon_index));
+                  table.setElementAt(cod_plus_aa.substring(3), codon_index);
+                }
+                
+                StringBuffer sbuff = new StringBuffer();
+                for(int i = 0; i < 64; ++i)
+                  sbuff.append(table.elementAt(i)+" ");
+
+                Options.getOptions().setGeneticCode(sbuff.toString());
+              }
+
+              options_file_table =
+                         Options.getOptions().getOptionValues(startCodons);
+
+              if(options_file_table != null)
+              {
+                StringBuffer sbuff = new StringBuffer();
+                for(int i = 0; i < options_file_table.size(); ++i)
+                  sbuff.append(options_file_table.elementAt(i)+" ");
+                
+                Options.getOptions().setProperty("start_codons",sbuff.toString());
+              }
+            }
+            
+            if(helix_canvas != null)
+              helix_canvas.repaint();
+          }
+        }
+      });
+      options_menu.add(geneCode);
+
+      if(i == 0)
+        geneCode.setState(true);
+    }
+    options_menu.addSeparator();
+
+
+//  final JCheckBoxMenuItem enable_euk_mode_item = new JCheckBoxMenuItem(
+//                                                    "Eukaryotic Mode");
+//  enable_euk_mode_item.setState(Options.getOptions().isEukaryoticMode());
+//  enable_euk_mode_item.addItemListener(new ItemListener() 
+//  {
+//    public void itemStateChanged(ItemEvent event) 
+//    {
+//      final boolean item_state = enable_euk_mode_item.getState();
+//      Options.getOptions().setEukaryoticMode(item_state);
+//      helix_canvas.repaint();
+//    }
+//  });
+//  options_menu.add(enable_euk_mode_item);
 
     final JCheckBoxMenuItem highlight_active_entry_item =
       new JCheckBoxMenuItem("Highlight Active Entry");

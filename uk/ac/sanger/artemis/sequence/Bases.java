@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.1 2004-06-09 09:52:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.2 2004-11-17 13:20:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -45,7 +45,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.1 2004-06-09 09:52:15 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.2 2004-11-17 13:20:10 tjc Exp $ */
 
 public class Bases {
   /**
@@ -451,6 +451,15 @@ public class Bases {
     return reverse_stop_codon_cache;
   }
 
+  /**
+   *  Clear stop codon cache (forward and reverse).
+   **/
+  public void clearStopCodonCache()
+  {
+    forward_stop_codon_cache = null;
+    reverse_stop_codon_cache = null;
+  }
+ 
   /**
    *  Return an array containing the positions of the stop codons.  Only those
    *  codons that are in the same frame as the first base of the range are

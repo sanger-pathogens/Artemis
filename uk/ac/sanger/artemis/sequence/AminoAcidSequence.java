@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/AminoAcidSequence.java,v 1.1 2004-06-09 09:52:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/AminoAcidSequence.java,v 1.2 2004-11-17 13:20:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -33,16 +33,18 @@ import uk.ac.sanger.artemis.util.*;
  *  Objects of this class represent a string of amino acids.
  *
  *  @author Kim Rutherford
- *  @version $Id: AminoAcidSequence.java,v 1.1 2004-06-09 09:52:11 tjc Exp $
+ *  @version $Id: AminoAcidSequence.java,v 1.2 2004-11-17 13:20:10 tjc Exp $
  **/
 
-public class AminoAcidSequence {
+public class AminoAcidSequence 
+{
   /**
    *  Create a new AminoAcidSequence object from a string containing single
    *  character amino acids symbols.
    **/
-  public AminoAcidSequence (String amino_acid_string) {
-    this.amino_acid_string = amino_acid_string.toLowerCase ();
+  public AminoAcidSequence(String amino_acid_string) 
+  {
+    this.amino_acid_string = amino_acid_string.toLowerCase();
   }
 
   /**
@@ -56,24 +58,25 @@ public class AminoAcidSequence {
    *    translated as '.'
    *  @return The translated sequence in one letter abbreviated form.
    **/
-  public static AminoAcidSequence getTranslation (final String bases,
-                                                  final boolean unknown_is_x) {
-    final StringBuffer aa_buffer = new StringBuffer ();
+  public static AminoAcidSequence getTranslation(final String bases,
+                                                 final boolean unknown_is_x) 
+  {
+    setGeneCode();    
+    final StringBuffer aa_buffer = new StringBuffer();
+    final int number_of_codons = bases.length() / 3;
 
-    final int number_of_codons = bases.length () / 3;
-
-    for (int i = 0 ; i < number_of_codons * 3 ; i += 3) {
-      final char aa = getCodonTranslation (bases.charAt (i),
-                                           bases.charAt (i+1),
-                                           bases.charAt (i+2));
-      if (aa == '.' && unknown_is_x) {
+    for(int i = 0 ; i < number_of_codons * 3 ; i += 3) 
+    {
+      final char aa = getCodonTranslation(bases.charAt(i),
+                                          bases.charAt(i+1),
+                                          bases.charAt(i+2));
+      if(aa == '.' && unknown_is_x) 
         aa_buffer.append ('x');
-      } else {
+      else 
         aa_buffer.append (aa);
-      }
     }
 
-    return new AminoAcidSequence (aa_buffer.toString ());
+    return new AminoAcidSequence(aa_buffer.toString());
   }
 
   /**
@@ -86,13 +89,14 @@ public class AminoAcidSequence {
    *    contains more or less than three letters or the letters aren't from
    *    "CTAG")
    **/
-  public static char getCodonTranslation (String codon_string) {
-    if (codon_string.length () < 3) {
+  public static char getCodonTranslation(String codon_string) 
+  {
+    if(codon_string.length() < 3) 
       return '.';
-    }
-    return getCodonTranslation (codon_string.charAt (0),
-                                codon_string.charAt (1),
-                                codon_string.charAt (2));
+    
+    return getCodonTranslation(codon_string.charAt(0),
+                               codon_string.charAt(1),
+                               codon_string.charAt(2));
   }
 
   /**
@@ -104,75 +108,82 @@ public class AminoAcidSequence {
    *  @return The translated sequence in one letter abbreviated form.  The
    *    return value will be '.' if the letters do not form a codon.
    **/
-  public static char getCodonTranslation (char first_letter,
-                                          char second_letter,
-                                          char third_letter) {
-    final int first_index = Bases.getIndexOfBase (first_letter);
-
-    if (first_index >= 4) {
+  public static char getCodonTranslation(char first_letter,
+                                         char second_letter,
+                                         char third_letter)
+  {
+    final int first_index = Bases.getIndexOfBase(first_letter);
+    if(first_index >= 4)
       return '.';
-    }
 
-    final int second_index = Bases.getIndexOfBase (second_letter);
-
-    if (second_index >= 4) {
+    final int second_index = Bases.getIndexOfBase(second_letter);
+    if(second_index >= 4) 
       return '.';
-    }
 
-    final int third_index = Bases.getIndexOfBase (third_letter);
-
-    if (third_index >= 4) {
+    final int third_index = Bases.getIndexOfBase(third_letter);
+    if(third_index >= 4) 
       return '.';
-    }
 
     final int codon_index = first_index * 16 + second_index * 4 + third_index;
 
+//  char[] codon = { first_letter,
+//                   second_letter,
+//                   third_letter,
+//                   codon_translation_array[codon_index] };
+//  System.out.println(new String(codon));
     return codon_translation_array[codon_index];
   }
+
 
   /**
    *  Return the number of units in this amino acid sequence.
    **/
-  public int length () {
-    return amino_acid_string.length ();
+  public int length() 
+  {
+    return amino_acid_string.length();
   }
 
   /**
    *  Return the one letter codon code of the codon at the given index
    *  (counting from zero).
    **/
-  public char elementAt (final int index) {
-    return amino_acid_string.charAt (index);
+  public char elementAt(final int index) 
+  {
+    return amino_acid_string.charAt(index);
   }
 
   /**
    *  Return the total molecular weight of the amino acids in this
    *  AminoAcidSequence..
    **/
-  public float getMolecularWeight () {
+  public float getMolecularWeight() 
+  {
     float return_weight = 0;
 
-    for (int i = 0 ; i < amino_acid_string.length () ; ++i) {
-      final char this_char = amino_acid_string.charAt (i);
+    for(int i = 0 ; i < amino_acid_string.length() ; ++i) 
+    {
+      final char this_char = amino_acid_string.charAt(i);
 
       return_weight +=
-        molecular_weights[getSymbolIndex (this_char)];
+        molecular_weights[getSymbolIndex(this_char)];
     }
 
-    if (amino_acid_string.length () > 1) {
+    if(amino_acid_string.length() > 1) 
+    {
       // need to take off the weight of a water molecule for each peptide bond
       return return_weight -
         molecular_weight_of_water * (amino_acid_string.length () - 1);
-    } else {
-      return return_weight;
     }
+    else
+      return return_weight;
   }
 
   /**
    *  Return a string representation of this object.  This string will contain
    *  the one character amino acid codes for each acid in sequence.
    **/
-  public String toString () {
+  public String toString()
+  {
     return amino_acid_string;
   }
 
@@ -180,31 +191,31 @@ public class AminoAcidSequence {
    *  Search the subject_sequence for this AminoAcidSequence as a substring.
    *  'X' AAs are treated as wildcards in both sequences.
    **/
-  public boolean checkForMatch (final AminoAcidSequence subject_sequence) {
-    final String subject_sequence_string = subject_sequence.toString ();
+  public boolean checkForMatch(final AminoAcidSequence subject_sequence) 
+  {
+    final String subject_sequence_string = subject_sequence.toString();
 
-    for (int subject_index = 0 ;
-         subject_index < subject_sequence_string.length () -
-           toString ().length () + 1 ;
-         ++subject_index) {
+    for(int subject_index = 0;
+        subject_index < subject_sequence_string.length() -
+          toString ().length () + 1;
+         ++subject_index)
+    {
       int query_index = 0;
       boolean is_matching = true;
-      for (;
-           query_index < toString ().length () ;
-           ++query_index) {
+      for(; query_index < toString().length(); 
+           ++query_index)
+      {
         final char this_query_char =
-          toString ().charAt (query_index);
+                     toString().charAt(query_index);
         final char this_subject_char =
-          subject_sequence_string.charAt (subject_index + query_index);
-        if (!aminoAcidMatches (this_subject_char,
-                               this_query_char)) {
+                     subject_sequence_string.charAt(subject_index + query_index);
+        if(!aminoAcidMatches(this_subject_char,
+                             this_query_char)) 
           break;
-        }
       }
 
-      if (query_index == toString ().length ()) {
+      if(query_index == toString().length())
         return true;
-      }
     }
 
     return false;
@@ -214,16 +225,17 @@ public class AminoAcidSequence {
    *  Return true if and only if the two argument are the same AA or if one is
    *  an X.
    **/
-  private static boolean aminoAcidMatches (final char aa_char1,
-                                           final char aa_char2) {
-    if (aa_char1 == aa_char2) {
+  private static boolean aminoAcidMatches(final char aa_char1,
+                                          final char aa_char2) 
+  {
+    if (aa_char1 == aa_char2) 
       return true;
-    } else {
-      if (aa_char1 == 'x' || aa_char2 == 'x') {
+    else 
+    {
+      if(aa_char1 == 'x' || aa_char2 == 'x')
         return true;
-      } else {
+      else
         return false;
-      }
     }
   }
 
@@ -245,10 +257,11 @@ public class AminoAcidSequence {
    *  @return A MarkerRange covering the matching bases or null if there is no
    *    match in the given range.
    **/
-  public MarkerRange findMatch (final Bases bases,
-                                final Marker search_start_marker,
-                                final boolean search_backwards) {
-    final String bases_string = bases.toString ();
+  public MarkerRange findMatch(final Bases bases,
+                               final Marker search_start_marker,
+                               final boolean search_backwards) 
+  {
+    final String bases_string = bases.toString();
 
     // search the bases_string forward for the pattern_string and its
     // complement
@@ -261,84 +274,108 @@ public class AminoAcidSequence {
     // for the reverse complement of this position
     final int complement_search_start_index;
 
-    if (search_backwards) {
-      if (search_start_marker == null) {
+    if(search_backwards) 
+    {
+      if(search_start_marker == null) 
+      {
         forward_search_start_index = bases.getLength () - 1;
         complement_search_start_index = bases.getLength () - 1;
-      } else {
+      } 
+      else 
+      {
         complement_search_start_index =
-          search_start_marker.getRawPosition () - 2;
-        if (search_start_marker.getStrand ().isForwardStrand ()) {
+                     search_start_marker.getRawPosition() - 2;
+        if(search_start_marker.getStrand().isForwardStrand()) 
+        {
           forward_search_start_index =
-            search_start_marker.getRawPosition () - 2;
-        } else {
+            search_start_marker.getRawPosition() - 2;
+        } 
+        else 
+        {
           forward_search_start_index =
-            search_start_marker.getRawPosition () - 1;
+            search_start_marker.getRawPosition() - 1;
         }
       }
-    } else {
-      if (search_start_marker == null) {
+    } 
+    else
+    {
+      if(search_start_marker == null) 
+      {
         forward_search_start_index = 0;
         complement_search_start_index = 0;
-      } else {
-        forward_search_start_index = search_start_marker.getRawPosition ();
-        if (search_start_marker.getStrand ().isForwardStrand ()) {
+      }
+      else
+      {
+        forward_search_start_index = search_start_marker.getRawPosition();
+        if(search_start_marker.getStrand().isForwardStrand()) 
+        {
           complement_search_start_index =
-            search_start_marker.getRawPosition () - 1;
-        } else {
+            search_start_marker.getRawPosition() - 1;
+        } 
+        else
+        {
           complement_search_start_index =
-            search_start_marker.getRawPosition ();
+            search_start_marker.getRawPosition();
         }
       }
     }
 
     final int forward_search_result =
-      searchFor (bases_string,
-                 forward_search_start_index,
-                 search_backwards);
+      searchFor(bases_string,
+                forward_search_start_index,
+                search_backwards);
 
     final int complement_search_result =
-       reverseComplementSearchFor (bases_string,
-                                   complement_search_start_index,
-                                   search_backwards);
+       reverseComplementSearchFor(bases_string,
+                                  complement_search_start_index,
+                                  search_backwards);
 
     final int match_first_base;
     final int match_last_base;
 
     final Strand match_strand;
 
-    if (forward_search_result == -1) {
-      if (complement_search_result == -1) {
-        // no match
+    if(forward_search_result == -1)
+    {
+      // no match
+      if(complement_search_result == -1) 
         return null;
-      }
     }
 
-    if (search_backwards) {
+    if(search_backwards) 
+    {
       // take the match that is closest to the end, or the complement match if
       // there is a tie
-      if (complement_search_result != -1 &&
-          (forward_search_result == -1 ||
-           complement_search_result >= forward_search_result)) {
+      if(complement_search_result != -1 &&
+         (forward_search_result == -1 ||
+          complement_search_result >= forward_search_result)) 
+      {
         match_first_base =
           bases.getComplementPosition (complement_search_result + 1);
         match_last_base = match_first_base - (length () * 3 - 1);
         match_strand = bases.getReverseStrand ();
-      } else {
+      }
+      else
+      {
         match_first_base = forward_search_result + 1;
         match_last_base = match_first_base + length () * 3 - 1;
         match_strand = bases.getForwardStrand ();
       }
-    } else {
+    }
+    else
+    {
       // take the match that is closest to base 1, or the forward match if
       // there is a tie
-      if (forward_search_result != -1 &&
-          (complement_search_result == -1 ||
-           forward_search_result <= complement_search_result)) {
+      if(forward_search_result != -1 &&
+         (complement_search_result == -1 ||
+          forward_search_result <= complement_search_result)) 
+      {
         match_first_base = forward_search_result + 1;
         match_last_base = match_first_base + length () * 3 - 1;
         match_strand = bases.getForwardStrand ();
-      } else {
+      }
+      else
+      {
         match_first_base =
           bases.getComplementPosition (complement_search_result + 1);
         match_last_base = match_first_base - (length () * 3 - 1);
@@ -346,12 +383,15 @@ public class AminoAcidSequence {
       }
     }
 
-    try {
-      return new MarkerRange (match_strand,
-                              match_first_base,
-                              match_last_base);
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+    try 
+    {
+      return new MarkerRange(match_strand,
+                             match_first_base,
+                             match_last_base);
+    } 
+    catch (OutOfRangeException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
   }
 
@@ -366,14 +406,14 @@ public class AminoAcidSequence {
    *    first base, otherwise first to last.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int searchFor (final String bases_string,
-                        final int start_index,
-                        final boolean search_backwards) {
-    if (search_backwards) {
-      return searchBackwardFor (bases_string, start_index);
-    } else {
-      return searchForwardFor (bases_string, start_index);
-    }
+  public int searchFor(final String bases_string,
+                       final int start_index,
+                       final boolean search_backwards) 
+  {
+    if(search_backwards) 
+      return searchBackwardFor(bases_string, start_index);
+    else 
+      return searchForwardFor(bases_string, start_index);
   }
 
   /**
@@ -385,37 +425,38 @@ public class AminoAcidSequence {
    *    should start.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int searchForwardFor (final String bases_string,
-                               final int start_index) {
-    final int pattern_base_length = length () * 3;
+  public int searchForwardFor(final String bases_string,
+                              final int start_index) 
+  {
+    final int pattern_base_length = length() * 3;
 
-    for (int base_index = start_index ;
-         base_index <= bases_string.length () - pattern_base_length ;
-         ++base_index) {
-
+    for(int base_index = start_index;
+        base_index <= bases_string.length() - pattern_base_length ;
+        ++base_index) 
+    {
       boolean matched = true;
 
-      for (int offset = 0 ; offset < length () ; ++offset) {
-        final char search_aa = amino_acid_string.charAt (offset);
+      for(int offset = 0 ; offset < length(); ++offset) 
+      {
+        final char search_aa = amino_acid_string.charAt(offset);
 
-        if (search_aa == 'x') {
-          // X matches any AA
+        // X matches any AA
+        if(search_aa == 'x') 
           continue;
-        }
 
-        final char base1 = bases_string.charAt (base_index + offset * 3 + 0);
-        final char base2 = bases_string.charAt (base_index + offset * 3 + 1);
-        final char base3 = bases_string.charAt (base_index + offset * 3 + 2);
+        final char base1 = bases_string.charAt(base_index + offset * 3 + 0);
+        final char base2 = bases_string.charAt(base_index + offset * 3 + 1);
+        final char base3 = bases_string.charAt(base_index + offset * 3 + 2);
 
-        if (getCodonTranslation (base1, base2, base3) != search_aa) {
+        if(getCodonTranslation(base1, base2, base3) != search_aa)
+        {
           matched = false;
           break;
         }
       }
 
-      if (matched) {
+      if(matched)
         return base_index;
-      }
     }
 
     return -1;
@@ -430,39 +471,38 @@ public class AminoAcidSequence {
    *    should start.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int searchBackwardFor (final String bases_string,
-                                int start_index) {
-    if (bases_string.length () - start_index < length () * 3) {
-      start_index = bases_string.length () - length () * 3;
-    }
+  public int searchBackwardFor(final String bases_string,
+                               int start_index) 
+  {
+    if(bases_string.length() - start_index < length() * 3) 
+      start_index = bases_string.length() - length() * 3;
 
-    for (int base_index = start_index ;
-         base_index >= 0 ;
-         --base_index) {
-
+    for(int base_index = start_index; base_index >= 0;
+        --base_index) 
+    {
       boolean matched = true;
 
-      for (int offset = 0 ; offset < length () ; ++offset) {
-        final char search_aa = amino_acid_string.charAt (offset);
+      for(int offset = 0 ; offset < length() ; ++offset) 
+      {
+        final char search_aa = amino_acid_string.charAt(offset);
 
-        if (search_aa == 'x') {
-          // X matches any AA
+        // X matches any AA
+        if(search_aa == 'x') 
           continue;
-        }
 
-        final char base1 = bases_string.charAt (base_index + offset * 3 + 0);
-        final char base2 = bases_string.charAt (base_index + offset * 3 + 1);
-        final char base3 = bases_string.charAt (base_index + offset * 3 + 2);
+        final char base1 = bases_string.charAt(base_index + offset * 3 + 0);
+        final char base2 = bases_string.charAt(base_index + offset * 3 + 1);
+        final char base3 = bases_string.charAt(base_index + offset * 3 + 2);
 
-        if (getCodonTranslation (base1, base2, base3) != search_aa) {
+        if(getCodonTranslation(base1, base2, base3) != search_aa) 
+        {
           matched = false;
           break;
         }
       }
 
-      if (matched) {
+      if(matched)
         return base_index;
-      }
     }
 
     return -1;
@@ -479,14 +519,14 @@ public class AminoAcidSequence {
    *    first base, otherwise first to last.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int reverseComplementSearchFor (final String bases_string,
-                                         final int start_index,
-                                         final boolean search_backwards) {
-    if (search_backwards) {
-      return reverseComplementSearchBackwardFor (bases_string, start_index);
-    } else {
-      return reverseComplementSearchForwardFor (bases_string, start_index);
-    }
+  public int reverseComplementSearchFor(final String bases_string,
+                                        final int start_index,
+                                        final boolean search_backwards) 
+  {
+    if(search_backwards) 
+      return reverseComplementSearchBackwardFor(bases_string, start_index);
+    else 
+      return reverseComplementSearchForwardFor(bases_string, start_index);
   }
 
   /**
@@ -499,41 +539,43 @@ public class AminoAcidSequence {
    *    should start.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int reverseComplementSearchForwardFor (final String bases_string,
-                                                final int start_index) {
-    final int pattern_base_length = length () * 3;
+  public int reverseComplementSearchForwardFor(final String bases_string,
+                                               final int start_index) 
+  {
+    final int pattern_base_length = length() * 3;
 
-    for (int base_index = start_index ;
-         base_index <= bases_string.length () - pattern_base_length ;
-         ++base_index) {
-
+    for(int base_index = start_index ;
+        base_index <= bases_string.length() - pattern_base_length ;
+        ++base_index) 
+    {
       boolean matched = true;
 
-      for (int offset = 0 ; offset < length () ; ++offset) {
+      for(int offset = 0; offset < length (); ++offset)
+      {
         final char base1 =
-          Bases.complement (bases_string.charAt (base_index + offset * 3 + 0));
+          Bases.complement(bases_string.charAt(base_index + offset * 3 + 0));
         final char base2 =
-          Bases.complement (bases_string.charAt (base_index + offset * 3 + 1));
+          Bases.complement(bases_string.charAt(base_index + offset * 3 + 1));
         final char base3 =
-          Bases.complement (bases_string.charAt (base_index + offset * 3 + 2));
+          Bases.complement(bases_string.charAt(base_index + offset * 3 + 2));
 
         final char amino_acid_char =
-          amino_acid_string.charAt (amino_acid_string.length () - offset - 1);
+          amino_acid_string.charAt(amino_acid_string.length() - offset - 1);
 
-        if (amino_acid_char == 'x') {
+        // X matches any AA
+        if(amino_acid_char == 'x')
           // X matches any AA
           continue;
-        }
 
-        if (getCodonTranslation (base3, base2, base1) != amino_acid_char) {
+        if(getCodonTranslation(base3, base2, base1) != amino_acid_char) 
+        {
           matched = false;
           break;
         }
       }
 
-      if (matched) {
+      if(matched)
         return base_index;
-      }
     }
 
     return -1;
@@ -549,44 +591,42 @@ public class AminoAcidSequence {
    *    should start.
    *  @return The index of the match or -1 if there is no match.
    **/
-  public int reverseComplementSearchBackwardFor (final String bases_string,
-                                                 int start_index) {
+  public int reverseComplementSearchBackwardFor(final String bases_string,
+                                                int start_index) 
+  {
+    if(bases_string.length() - start_index < length() * 3) 
+      start_index = bases_string.length() - length() * 3;
 
-    if (bases_string.length () - start_index < length () * 3) {
-      start_index = bases_string.length () - length () * 3;
-    }
-
-    for (int base_index = start_index ;
-         base_index >= 0 ;
-         --base_index) {
-
+    for(int base_index = start_index; base_index >= 0;
+         --base_index)
+    {
       boolean matched = true;
 
-      for (int offset = 0 ; offset < length () ; ++offset) {
+      for(int offset = 0 ; offset < length() ; ++offset)
+      {
         final char base1 =
-          Bases.complement (bases_string.charAt (base_index + offset * 3 + 0));
+          Bases.complement(bases_string.charAt(base_index + offset * 3 + 0));
         final char base2 =
-          Bases.complement (bases_string.charAt (base_index + offset * 3 + 1));
+          Bases.complement(bases_string.charAt(base_index + offset * 3 + 1));
         final char base3 =
-          Bases.complement (bases_string.charAt (base_index + offset * 3 + 2));
+          Bases.complement(bases_string.charAt(base_index + offset * 3 + 2));
 
         final char amino_acid_char =
-          amino_acid_string.charAt (amino_acid_string.length () - offset - 1);
+          amino_acid_string.charAt(amino_acid_string.length() - offset - 1);
 
-        if (amino_acid_char == 'x') {
-          // X matches any AA
+        // X matches any AA
+        if(amino_acid_char == 'x') 
           continue;
-        }
 
-        if (getCodonTranslation (base3, base2, base1) != amino_acid_char) {
+        if(getCodonTranslation(base3, base2, base1) != amino_acid_char)
+        {
           matched = false;
           break;
         }
       }
 
-      if (matched) {
+      if(matched) 
         return base_index;
-      }
     }
 
     return -1;
@@ -595,13 +635,14 @@ public class AminoAcidSequence {
   /**
    *  Return true if and only if this sequence contains a stop codon.
    **/
-  public boolean containsStopCodon () {
-    for (int i = 0 ; i < amino_acid_string.length () ; ++i) {
-      final char this_char = amino_acid_string.charAt (i);
+  public boolean containsStopCodon()
+  {
+    for(int i = 0 ; i < amino_acid_string.length() ; ++i) 
+    {
+      final char this_char = amino_acid_string.charAt(i);
 
-      if (isStopCodon (this_char)) {
+      if(isStopCodon (this_char))
         return true;
-      }
     }
 
     return false;
@@ -611,35 +652,37 @@ public class AminoAcidSequence {
    *  Return true if and only if the given amino acid symbol is the
    *  translation of a stop codon. ie #, * or +.
    **/
-  public static boolean isStopCodon (final char amino_acid_char) {
-    if (amino_acid_char == '#' ||
-        amino_acid_char == '*' ||
-        amino_acid_char == '+') {
+  public static boolean isStopCodon(final char amino_acid_char) 
+  {
+    if(amino_acid_char == '#' ||
+       amino_acid_char == '*' ||
+       amino_acid_char == '+') 
       return true;
-    } else {
+    else 
       return false;
-    }
   }
 
   /**
    *  Return true if and only if the given one letter code symbol is the a
    *  legal amino acid or stop symbol.
    **/
-  public static boolean isLegalCodon (final char one_letter_code) {
-    switch (one_letter_code) {
-    case 'a': case 'r': case 'n': case 'd': case 'c': case 'q': case 'e':
-    case 'g': case 'h': case 'i': case 'l': case 'k': case 'm': case 'f':
-    case 'p': case 's': case 't': case 'w': case 'y': case 'v': case '*':
-    case '#': case '+':
-      return true;
-    default:
-      return false;
+  public static boolean isLegalCodon(final char one_letter_code)
+  {
+    switch(one_letter_code) 
+    {
+      case 'a': case 'r': case 'n': case 'd': case 'c': case 'q': case 'e':
+      case 'g': case 'h': case 'i': case 'l': case 'k': case 'm': case 'f':
+      case 'p': case 's': case 't': case 'w': case 'y': case 'v': case '*':
+      case '#': case '+':
+        return true;
+      default:
+        return false;
     }
   }
 
   /**
    *  This table is used for fast lookup of codon translations by
-   *  getCodonTranslation ().  There is one entry for each codon and the
+   *  getCodonTranslation().  There is one entry for each codon and the
    *  entries are in this order: TTT, TTC, TTA, TTG, TCT, TCC, ...
    **/
   final public static char [] codon_translation_array = {
@@ -665,35 +708,35 @@ public class AminoAcidSequence {
   };
 
   /**
-   *  Used by getAminoAcidType ().
+   *  Used by getAminoAcidType().
    **/
   public final static int POLAR_UNCHARGED_AA    = 0;
   /**
-   *  Used by getAminoAcidType ().
+   *  Used by getAminoAcidType().
    **/
   public final static int POSITIVELY_CHARGED_AA = 1;
   /**
-   *  Used by getAminoAcidType ().
+   *  Used by getAminoAcidType().
    **/
   public final static int NEGATIVELY_CHARGED_AA = 2;
   /**
-   *  Used by getAminoAcidType ().
+   *  Used by getAminoAcidType().
    **/
   public final static int HYDROPHOBIC_AA        = 3;
   /**
-   *  Used by getAminoAcidType ().
+   *  Used by getAminoAcidType().
    **/
   public final static int SPECIAL_AA            = 4;
   /**
-   *  Used by getAminoAcidType ().
+   *  Used by getAminoAcidType().
    **/
   public final static int STOP_AA               = 5;
   /**
-   *  Used by getAminoAcidType ().
+   *  Used by getAminoAcidType().
    **/
   public final static int UNKNOWN_AA            = 6;
   /**
-   *  Used by getAminoAcidType ().
+   *  Used by getAminoAcidType().
    **/
   public final static int ILLEGAL_AA            = 7;
   
@@ -702,29 +745,31 @@ public class AminoAcidSequence {
    *  NEGATIVELY_CHARGED_AA, HYDROPHOBIC_AA, SPECIAL_AA or STOP_AA depending
    *  on the aa_char argument.
    **/
-  public static int getAminoAcidType (final char aa_char) {
-    switch (aa_char) {
-    case 'S': case 'T': case 'N': case 'Q':
-      return POLAR_UNCHARGED_AA;
+  public static int getAminoAcidType(final char aa_char) 
+  {
+    switch (aa_char) 
+    {
+      case 'S': case 'T': case 'N': case 'Q':
+        return POLAR_UNCHARGED_AA;
 
-    case 'K': case 'R': case 'H':
-      return POSITIVELY_CHARGED_AA;
+      case 'K': case 'R': case 'H':
+        return POSITIVELY_CHARGED_AA;
 
-    case 'E': case 'D':
-      return NEGATIVELY_CHARGED_AA;
+      case 'E': case 'D':
+        return NEGATIVELY_CHARGED_AA;
 
-    case 'A': case 'I': case 'L': case 'M': case 'F': case 'W': case 'V':
-    case 'Y':
-      return HYDROPHOBIC_AA;
+      case 'A': case 'I': case 'L': case 'M': case 'F': case 'W': case 'V':
+      case 'Y':
+        return HYDROPHOBIC_AA;
 
-    case 'C': case 'G': case 'P':
-      return SPECIAL_AA;
+      case 'C': case 'G': case 'P':
+        return SPECIAL_AA;
 
-    case '#': case '*': case '+':
-      return STOP_AA;
+      case '#': case '*': case '+':
+        return STOP_AA;
 
-    default:
-      return ILLEGAL_AA;
+      default:
+        return ILLEGAL_AA;
     }
   }
 
@@ -734,15 +779,16 @@ public class AminoAcidSequence {
    *  name.
    *  @return A one letter code or -1 if three_letter_code can't be understood.
    **/
-  public static char getOneLetterCode (final String three_letter_code) {
+  public static char getOneLetterCode(final String three_letter_code) 
+  {
     final String real_code =
-      three_letter_code.substring (0, 1).toUpperCase () +
-      three_letter_code.substring (1).toLowerCase ();
+      three_letter_code.substring(0, 1).toUpperCase() +
+      three_letter_code.substring(1).toLowerCase();
     
-    for (int i = 0 ; i < amino_acid_one_letter_names.length ; ++i) {
-      if (real_code.equals (amino_acid_abbreviated_names[i])) {
+    for(int i = 0 ; i < amino_acid_one_letter_names.length ; ++i) 
+    {
+      if(real_code.equals(amino_acid_abbreviated_names[i]))
         return amino_acid_one_letter_names[i];
-      }
     }
 
     return (char) -1;
@@ -752,20 +798,22 @@ public class AminoAcidSequence {
    *  Return the three letter abbreviation for the given one letter amino acid
    *  code.
    **/
-  public static String getThreeLetterAbbreviation (char one_letter_code) {
-    for (int i = 0 ; i < amino_acid_one_letter_names.length ; ++i) {
-      if (one_letter_code == amino_acid_one_letter_names[i]) {
+  public static String getThreeLetterAbbreviation(char one_letter_code) 
+  {
+    for(int i = 0 ; i < amino_acid_one_letter_names.length ; ++i) 
+    {
+      if(one_letter_code == amino_acid_one_letter_names[i]) 
         return amino_acid_abbreviated_names[i];
-      }
     }
 
-    throw new Error ("internal error - illegal one letter amino acid code");
+    throw new Error("internal error - illegal one letter amino acid code");
   }
 
   /**
    *  Return the three letter abbreviation for the given index code.
    **/
-  public static String getThreeLetterAbbreviation (final int index) {
+  public static String getThreeLetterAbbreviation(final int index) 
+  {
     return amino_acid_abbreviated_names[index];
   }
 
@@ -773,45 +821,48 @@ public class AminoAcidSequence {
    *  Return an integer from 0 to 22 representing the index of a codon
    *  symbol.
    **/
-  public static int getSymbolIndex (char one_letter_code) {
-    switch (one_letter_code) {
-    case 'a': return 0;
-    case 'r': return 1;
-    case 'n': return 2;
-    case 'd': return 3;
-    case 'c': return 4;
-    case 'q': return 5;
-    case 'e': return 6;
-    case 'g': return 7;
-    case 'h': return 8;
-    case 'i': return 9;
-    case 'l': return 10;
-    case 'k': return 11;
-    case 'm': return 12;
-    case 'f': return 13;
-    case 'p': return 14;
-    case 's': return 15;
-    case 't': return 16;
-    case 'w': return 17;
-    case 'y': return 18;
-    case 'v': return 19;
-    case '*': return 20;
-    case '#': return 21;
-    case '+': return 22;
-    case '.': return 23;
-    case 'x': return 23;
-    case 'u': return 24;
-    default:
-      throw new Error ("Internal error - illegal one letter codon symbol: " +
-                       one_letter_code);
+  public static int getSymbolIndex(char one_letter_code) 
+  {
+    switch(one_letter_code) 
+    {
+      case 'a': return 0;
+      case 'r': return 1;
+      case 'n': return 2;
+      case 'd': return 3;
+      case 'c': return 4;
+      case 'q': return 5;
+      case 'e': return 6;
+      case 'g': return 7;
+      case 'h': return 8;
+      case 'i': return 9;
+      case 'l': return 10;
+      case 'k': return 11;
+      case 'm': return 12;
+      case 'f': return 13;
+      case 'p': return 14;
+      case 's': return 15;
+      case 't': return 16;
+      case 'w': return 17;
+      case 'y': return 18;
+      case 'v': return 19;
+      case '*': return 20;
+      case '#': return 21;
+      case '+': return 22;
+      case '.': return 23;
+      case 'x': return 23;
+      case 'u': return 24;
+      default:
+        throw new Error("Internal error - illegal one letter codon symbol: " +
+                        one_letter_code);
     }
   }
 
   /**
    *  Given an index return a one letter codon symbol.  This method is the
-   *  inverse of getSymbolIndex ().
+   *  inverse of getSymbolIndex().
    **/
-  public static char getSymbolFromIndex (final int index) {
+  public static char getSymbolFromIndex(final int index) 
+  {
     return amino_acid_one_letter_names[index];
   }
 
@@ -825,7 +876,8 @@ public class AminoAcidSequence {
    *  The names here correspond to the letter codes at the same indices in
    *  amino_acid_one_letter_names.
    **/
-  private final static String [] amino_acid_abbreviated_names = {
+  private final static String [] amino_acid_abbreviated_names = 
+  {
     "Ala", "Arg", "Asn", "Asp", "Cys",
     "Gln", "Glu", "Gly", "His", "Ile",
     "Leu", "Lys", "Met", "Phe", "Pro",
@@ -839,7 +891,8 @@ public class AminoAcidSequence {
    *  The names here correspond to the three letter codes at the same indices
    *  in amino_acid_abbreviated_names.
    **/
-  private final static char [] amino_acid_one_letter_names = {
+  private final static char [] amino_acid_one_letter_names = 
+  {
     'a', 'r', 'n', 'd', 'c',
     'q', 'e', 'g', 'h', 'i',
     'l', 'k', 'm', 'f', 'p',
@@ -852,7 +905,8 @@ public class AminoAcidSequence {
    *  three letter codes at the same indices in amino_acid_abbreviated_names.
    *  For example "Met" corresponds to a weight of 149.22
    **/
-  private final static float [] molecular_weights = {
+  private final static float [] molecular_weights = 
+  {
     89.09F,  174.21F, 132.12F, 133.10F, 121.15F,
     146.15F, 147.13F, 75.07F,  155.16F, 131.18F,
     131.18F, 146.19F, 149.22F, 165.19F, 115.13F,
@@ -882,23 +936,26 @@ public class AminoAcidSequence {
   public final static int amino_acid_symbol_count = 20;
 
 
-  static {
+  private static void setGeneCode()
+  {
     // if translation_table is in the options file use it to set
     // codon_translation_array
     final StringVector options_file_table =
-      Options.getOptions ().getOptionValues ("translation_table");
+             Options.getOptions().getOptionValues("translation_table");
 
-    if (options_file_table != null) {
-      if (options_file_table.size () == 64) {
-        for (int i = 0 ; i < 64 ; ++i) {
+    if(options_file_table != null) 
+    {
+      if(options_file_table.size () == 64) 
+      {
+        for(int i = 0 ; i < 64 ; ++i) 
+        {
           final char new_table_char =
-            options_file_table.elementAt (i).charAt (0);
+                      options_file_table.elementAt(i).charAt(0);
 
-          if (isLegalCodon (new_table_char)) {
+          if(isLegalCodon (new_table_char)) 
             codon_translation_array[i] = new_table_char;
-          } else {
+          else 
             codon_translation_array[i] = '.';
-          }
         }
       }
     }

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.3 2004-10-29 09:36:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.4 2004-11-17 13:20:46 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -44,7 +44,7 @@ import java.util.*;
  *  read in new options.
  *
  *  @author Kim Rutherford
- *  @version $Id: Options.java,v 1.3 2004-10-29 09:36:23 tjc Exp $
+ *  @version $Id: Options.java,v 1.4 2004-11-17 13:20:46 tjc Exp $
  **/
 
 public class Options extends Properties 
@@ -710,36 +710,58 @@ public class Options extends Properties
   }
 
 
-
   /**
    *  Return a StringVector containing the bases of the possible start codons
    *  for prokaryotes.  This is stored in the prokaryotic_start_codons option
    *  in the options file.
    **/
-  public StringVector getProkaryoticStartCodons() 
-  {
-    final StringVector option_values =
-      getOptionValues("prokaryotic_start_codons");
+//public StringVector getProkaryoticStartCodons() 
+//{
+//  final StringVector option_values =
+//    getOptionValues("prokaryotic_start_codons");
 
-    for(int i = 0; i<option_values.size() ; ++i) 
-    {
-      final String new_value = option_values.elementAt(i).toLowerCase();
-      option_values.setElementAt(new_value, i);
-    }
-    return option_values;
-  }
+//  for(int i = 0; i<option_values.size() ; ++i) 
+//  {
+//    final String new_value = option_values.elementAt(i).toLowerCase();
+//    option_values.setElementAt(new_value, i);
+//  }
+//  return option_values;
+//}
 
   /**
    *  Return a StringVector containing the bases of the possible eukaryotic
    *  start codons.  This is stored in the eukaryotic_start_codons option in
    *  the options file.
    **/
-  public StringVector getEukaryoticStartCodons() 
-  {
-    final StringVector option_values =
-      getOptionValues("eukaryotic_start_codons");
+//public StringVector getEukaryoticStartCodons() 
+//{
+//  final StringVector option_values =
+//    getOptionValues("eukaryotic_start_codons");
 
-    for(int i = 0; i<option_values.size() ; ++i) 
+//  for(int i = 0; i<option_values.size() ; ++i) 
+//  {
+//    final String new_value = option_values.elementAt(i).toLowerCase();
+//    option_values.setElementAt(new_value, i);
+//  }
+
+//  return option_values;
+//}
+
+  public StringVector getStartCodons()
+  {
+    final StringVector option_values;
+
+    if(getProperty("start_codons") == null)
+    {
+      if(isEukaryoticMode())
+        option_values = getOptionValues("eukaryotic_start_codons");
+      else
+        option_values = getOptionValues("prokaryotic_start_codons");
+    }
+    else
+      option_values = getOptionValues("start_codons");
+
+    for(int i = 0; i<option_values.size() ; ++i)
     {
       final String new_value = option_values.elementAt(i).toLowerCase();
       option_values.setElementAt(new_value, i);
@@ -975,6 +997,12 @@ public class Options extends Properties
       return true;
     else 
       return false;
+  }
+
+  public void setGeneticCode(String table)
+  {
+    put("translation_table",table);
+    fireChangeEvent("translation_table");
   }
 
   /**

@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.12 2004-10-05 15:45:06 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.13 2004-11-17 13:20:55 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -100,6 +100,174 @@ prokaryotic_start_codons = atg gtg ttg
 #     d d e e \
 #     g g g g
 
+#
+# Genetic Codes :
+# http://www3.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi?mode=t#SG1
+# http://www.ncbi.nlm.nih.gov/collab/FT/#7.5.5
+#
+
+genetic_codes = \
+     Standard \
+     Vertebrate_Mitochondrial \
+     Yeast_Mitochondrial \
+     Mold,_Protozoan,_Coelenterate_Mitochondrial_and_Mycoplasma/Spiroplasma \
+     Invertebrate_Mitochondrial \
+     Ciliate_Dasycladacean_and_Hexamita \
+     - \
+     - \
+     Echinoderm_Flatworm_Mitochondrial \
+     Euplotid \
+     Bacterial_and_Plant_Plastid \
+     Alternative_Yeast_Nuclear \
+     Ascidian_Mitochondrial \
+     Alternative_Flatworm_Mitochondrial \
+     Blepharisma_Nuclear \
+     Chlorophycean_Mitochondrial \
+     - \
+     - \
+     - \
+     - \
+     Trematode_Mitochondrial \
+     Scenedesmus_Obliquus_Mitochondrial \
+     Thraustochytrium_Mitochondrial
+
+
+# 1. standard code (default)
+translation_table_1 = \
+     f f l l \
+     s s s s \
+     y y * * \
+     c c * w \
+             \
+     l l l l \
+     p p p p \
+     h h q q \
+     r r r r \
+             \
+     i i i m \
+     t t t t \
+     n n k k \
+     s s r r \
+             \
+     v v v v \
+     a a a a \
+     d d e e \
+     g g g g
+
+start_codons_1 = atg
+
+#
+# For the following Genetic Code tables the differences
+# from the Standard Code are given.
+#
+#
+# 2. Vertebrate Mitochondrial Code
+#
+translation_table_2 = \
+      aga* agg* atam tgaw
+ 
+start_codons_2 = atg      
+#start_codons_2_bos = ata
+#start_codons_2_homo = ata att
+#start_codons_2_mus = ata att atc
+#start_codons_2_coturnix_gallus = gtg 
+
+# 3. Yeast Mitochondrial Code
+translation_table_3 = \
+      atam cttt ctct ctat ctgt tgaw
+
+start_codons_3 = ata atg
+
+# 4. Mold, Protozoan, and Coelenterate Mitochondrial Code and the
+#    Mycoplasma/Spiroplasma Code 
+translation_table_4 = \
+      tgaw
+
+start_codons_4 = atg
+
+#start_codons_4_Trypanosoma = tta ttg ctg
+#start_codons_4_Leishmania = att ata
+#start_codons_4_Tertrahymena = att ata atg
+#start_codons_4_Paramecium = att ata atg atc gtg gta
+
+# 5. Invertebrate Mitochondrial Code
+translation_table_5 = \
+      agas aggs atam tgaw
+
+start_codons_5 = atg ata att
+#start_codons_5_apis = atg ata atc att
+#start_codons_5_polyplacophora = atg ata gtg
+
+# 6. Ciliate, Dasycladacean and Hexamita Nuclear Code
+translation_table_6 = \
+      taaq tagq 
+
+start_codons_6 = atg
+
+# 9. Echinoderm and Flatworm Mitochondrial Code
+translation_table_9 = \
+      aaan agas aggs tgaw 
+
+start_codons_9 = atg gtg
+
+# 10. Euplotid Nuclear Code
+translation_table_10 = \
+      tgac
+
+start_codons_10 = atg
+
+# 11. Bacterial and Plant Plastid 
+translation_table_11 = 
+
+start_codons_11 = atg gtg ttg
+
+# 12. Alternative Yeast Nuclear Code
+translation_table_12 = \
+      ctgs
+
+start_codons_12 = ctg atg
+
+# 13.  Ascidian Mitochondrial Code      
+translation_table_13 = \
+      agag aggg atam tgaw
+ 
+start_codons_13 = atg
+
+# 14. Alternative Flatworm Mitochondrial Code
+translation_table_14 = \
+      aaan agas aggs taay tgaw
+
+start_codons_14 = atg
+
+# 15. Blepharisma
+translation_table_15 = \
+      tagq
+
+start_codons_15 = atg
+
+# 16. Chlorophycean Mitochondrial
+translation_table_16 = \
+      tagl
+
+start_codons_16 = atg
+
+# 21. Trematode Mitochondrial
+translation_table_21 = \
+      tgaw atam aaan agas aggs
+
+start_codons_21 = atg gtg
+
+# 22. Scenedesmus obliquus mitochondrial
+translation_table_22 = \
+      tca* tagl
+
+start_codons_22 = atg
+
+# 23. Thraustochytrium Mitochondrial 
+translation_table_23 = \
+      tta*
+
+start_codons_23 = att atg gtg
 
 # the sequence of colour numbers must not have any gaps - if for example
 # colour_5 is missing then all colours with higher numbers will be ignored

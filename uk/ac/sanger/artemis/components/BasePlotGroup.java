@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlotGroup.java,v 1.3 2004-11-09 16:21:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlotGroup.java,v 1.4 2004-11-17 13:19:43 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -42,7 +42,7 @@ import javax.swing.*;
  *  which can toggled off and on.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlotGroup.java,v 1.3 2004-11-09 16:21:16 tjc Exp $
+ *  @version $Id: BasePlotGroup.java,v 1.4 2004-11-17 13:19:43 tjc Exp $
  **/
 
 public class BasePlotGroup extends JPanel
@@ -80,21 +80,24 @@ public class BasePlotGroup extends JPanel
       {21,91,4,0,38}  // t
     };
 
-    final float [] [] test_weights2 = {
+    final float[][] test_weights2 = 
+    {
       {11,11,10, 8,11,10,11,11, 7, 8,25, 3,100,  0,27},
       {29,33,30,30,32,34,37,38,39,36,26,75,  0,  0,14},
       {14,12,10,10, 9,11,10, 9, 7, 6,26, 1,  0,100,49},
       {46,44,50,52,48,45,42,43,47,51,23,21,  0,  0,10}
     };
 
-    final float [] [] test_weights3 = {
+    final float[][] test_weights3 = 
+    {
       {0,0,1,0,0,0},
       {0,0,0,1,0,0},
       {1,0,0,0,1,0},
       {0,1,0,0,0,1},
     };
 
-    final float [] cai_test = {
+    final float[] cai_test = 
+    {
       0.113F, 1.0F,   0.117F, 1.0F,
       1.0F,   0.693F, 0.036F, 0.005F,
       0.071F, 1.0F,   0.0F,   0.0F,
@@ -142,6 +145,43 @@ public class BasePlotGroup extends JPanel
     addAlgorithm(new GCDeviationAlgorithm(forward_strand));
     addAlgorithm(new ATDeviationAlgorithm(forward_strand));
     addAlgorithm(new KarlinSigAlgorithm(forward_strand));
+    
+
+    //CumulativeATSkewAlgorithm
+    addAlgorithm(new CumulativeATSkewAlgorithm(forward_strand));
+    addAlgorithm(new CumulativeGCSkewAlgorithm(forward_strand));
+
+    //Positional Asymmetry
+    addAlgorithm(new PositionalAsymmetryAlgorithm(forward_strand));
+
+    //Informational Entropy
+    addAlgorithm(new EntropyAlgorithm(forward_strand));
+
+    //Scaled Chi
+    addAlgorithm(new ScaledChiAlgorithm(forward_strand));
+    addAlgorithm(new ScaledChiAlgorithm(reverse_strand));
+//  addAlgorithm(new ScaledChiRevAlgorithm(reverse_strand));
+
+    //Corrected Scaled Chi Square
+    addAlgorithm(new CSCSAlgorithm(forward_strand));
+    addAlgorithm(new CSCSAlgorithm(reverse_strand));
+//  addAlgorithm(new CSCSRevAlgorithm(reverse_strand));
+
+    //Mutational Response Index
+    addAlgorithm(new MRIAlgorithm(forward_strand));
+    addAlgorithm(new MRIAlgorithm(reverse_strand));
+//  addAlgorithm(new MRIRevAlgorithm(reverse_strand));
+
+    //Effective Codon Number
+    addAlgorithm(new NcAlgorithm(forward_strand));
+    addAlgorithm(new NcAlgorithm(reverse_strand));
+//  addAlgorithm(new NcRevAlgorithm(reverse_strand));
+
+    //Intrinsic Codon Deviation Index
+    addAlgorithm(new ICDIAlgorithm(forward_strand));
+    addAlgorithm(new ICDIAlgorithm(reverse_strand));
+//  addAlgorithm(new ICDIRevAlgorithm(reverse_strand));
+
   }
 
  
