@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.13 2004-11-17 13:20:55 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.14 2005-01-12 10:37:28 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -705,3 +705,6 @@ common_keys = \
     repeat_unit rRNA scRNA snRNA source stem_loop STS TATA_signal terminator \
     tRNA unsure variation -10_signal -35_signal CDS_motif gene \
     BLASTN_HIT BLASTCDS 3'UTR 5'UTR
+
+srs_url = http://srs.sanger.ac.uk/srsbin/cgi-bin/ 
+#srs_url = http://srs.ebi.ac.uk/srsbin/cgi-bin/ 
