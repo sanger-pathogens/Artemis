@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.1 2004-06-09 09:47:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.2 2004-12-14 15:53:11 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.*;
  *  A popup menu with viewing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: ViewMenu.java,v 1.1 2004-06-09 09:47:58 tjc Exp $
+ *  @version $Id: ViewMenu.java,v 1.2 2004-12-14 15:53:11 tjc Exp $
  **/
 
 public class ViewMenu extends SelectionMenu {
@@ -148,7 +148,7 @@ public class ViewMenu extends SelectionMenu {
     forward_overview_item.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         new EntryGroupInfoDisplay (getParentFrame (), entry_group,
-                                   EntryGroupInfoDisplay.FORWARD);
+                                   Bases.FORWARD);
       }
     });
 
@@ -156,7 +156,7 @@ public class ViewMenu extends SelectionMenu {
     reverse_overview_item.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         new EntryGroupInfoDisplay (getParentFrame (), entry_group,
-                                   EntryGroupInfoDisplay.REVERSE);
+                                   Bases.REVERSE);
       }
     });
 
