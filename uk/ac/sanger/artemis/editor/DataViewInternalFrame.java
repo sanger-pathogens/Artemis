@@ -118,11 +118,11 @@ public class DataViewInternalFrame extends JInternalFrame
     // add annotator text pane
     ann.setAnnotation(annFormat.toString().trim());
     JScrollPane annotationScroll = new JScrollPane(ann);   
-    annotationScroll.setPreferredSize(new Dimension(500,300));
+    annotationScroll.setPreferredSize(new Dimension(500,150));
 
     JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                       annotationScroll,tabPane);
-    split.setDividerLocation(250);
+    split.setDividerLocation(150);
     getContentPane().add(split);
      
     setVisible(true);

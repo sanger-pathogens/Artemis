@@ -35,6 +35,7 @@ public class ProgressThread extends Thread
   private String msg;
   private JProgressBar progressBar = new JProgressBar();
 
+
   public ProgressThread(JFrame frame, String msg)
   {
     this.frame = frame;
@@ -45,7 +46,7 @@ public class ProgressThread extends Thread
   {
     try
     {
-      progress_frame = new JFrame("Loading...");
+      progress_frame = new JFrame(msg);
       Dimension d = progress_frame.getToolkit().getScreenSize();
       progressBar.setIndeterminate(true);
       progressBar.setBackground(Color.white);

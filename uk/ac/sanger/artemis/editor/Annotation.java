@@ -120,7 +120,7 @@ public class Annotation extends JEditorPane
     text = getDatabaseHTML(text,"SWALL:");
     text = getDatabaseHTML(text,"UNIPROT:");
     text = getDatabaseHTML(text,"EMBL:");
-    setText("<html><body>"+text+"</html></body>");
+    setText("<html><body><font size=3>"+text+"</font></html></body>");
     startRange = getDocument().getLength();
 
   }

@@ -28,10 +28,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.Font;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.Toolkit;
+
 import java.util.Vector;
 
 import javax.swing.*;
@@ -75,7 +79,7 @@ public class BigPane extends JFrame
     addWindowListener(new winExit());
 
     // data set
-    int hgt = getHeight()-60;
+    int hgt = getHeight()-85;
     int wid = getWidth()-100;
     dataView = new DataViewInternalFrame(dataFile,desktop,
                                        wid,qualifier_txt);
@@ -87,7 +91,41 @@ public class BigPane extends JFrame
     JMenuBar menuBar = createMenuBar(desktop);
     setJMenuBar(menuBar);
 
+// toolbar
+    JToolBar toolBar = createToolbar();
+    getContentPane().add(toolBar,BorderLayout.NORTH);
+
     setVisible(true);
+  }
+
+
+  /**
+  *
+  * Create a toolbar
+  * @return toolbar.
+  *
+  */
+  private JToolBar createToolbar()
+  {
+    JToolBar toolBar = new JToolBar();
+    
+    JButton applyButt = new JButton("APPLY");
+    applyButt.setToolTipText("Apply annotation changed to feature editor");
+    applyButt.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        qualifier.setText(dataView.getFeatureText());
+      }
+    });
+    applyButt.setBackground(new Color(0,0,81));
+    applyButt.setForeground(Color.white);
+    applyButt.setBorderPainted(false);
+    applyButt.setMargin(new Insets(0,0,0,0));
+    applyButt.setFont(font);
+    toolBar.add(applyButt);
+    
+    return toolBar;
   }
 
   /**
@@ -133,7 +171,17 @@ public class BigPane extends JFrame
         if(qualifier == null)
           System.exit(0);
 
-        qualifier.setText(dataView.getFeatureText());
+        int ok = JOptionPane.showConfirmDialog(BigPane.this, 
+                              "Apply changes now?",
+                              "Apply Changes",
+                              JOptionPane.YES_NO_CANCEL_OPTION,
+                              JOptionPane.QUESTION_MESSAGE);
+
+        if(ok == JOptionPane.CANCEL_OPTION)
+          return;
+
+        if(ok == JOptionPane.OK_OPTION)
+          qualifier.setText(dataView.getFeatureText());
         BigPane.srsFrame = null;
         dispose();
       }
