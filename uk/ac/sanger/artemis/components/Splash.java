@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.5 2005-01-10 14:20:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.6 2005-01-12 13:44:30 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.border.Border;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.5 2005-01-10 14:20:39 tjc Exp $
+ *  @version $Id: Splash.java,v 1.6 2005-01-12 13:44:30 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -222,7 +222,7 @@ abstract public class Splash extends JFrame
 //        g.drawString("[Prokaryotic mode]",
 //                      helix_width + left_margin, font_height * 3);
         g.drawString(geneticCode,
-                        helix_width + left_margin, font_height * 3);
+                     helix_width + left_margin, font_height * 3);
 
         g.drawString("Copyright 1998 - 2005",
                       helix_width + left_margin, font_height * 9 / 2);
@@ -400,7 +400,7 @@ abstract public class Splash extends JFrame
     options_menu.addSeparator();
     options_menu.add(new JLabel(" --- Genetic Codes Tables ---"));
 
-    makeGenticCodeMenu(options_menu);
+    makeGeneticCodeMenu(options_menu);
     options_menu.addSeparator();
 
 
@@ -484,11 +484,36 @@ abstract public class Splash extends JFrame
   * Construct menu for genetic code tables.
   *
   */
-  protected void makeGenticCodeMenu(final JMenu options_menu)
+  protected void makeGeneticCodeMenu(final JMenu options_menu)
   {
     // available genetic codes
     String gcodes[] = Options.getOptions().getOptionValues("genetic_codes").getArray();
 
+    // get the default
+    StringVector gcode_default = Options.getOptions().getOptionValues("genetic_code_default");
+
+    // determine default genetic code table
+    int default_code = 0;
+    if(gcode_default != null)
+    {
+      String defS = gcode_default.elementAt(0);
+      if(defS.length() < 3)
+      {
+        try
+        {
+          int num = Integer.parseInt(defS);
+          if(num > 0 && num <= gcodes.length)
+            default_code = num-1;
+          else
+            System.err.println(defS+" is not a valid number");
+        }
+        catch(NumberFormatException nfe)
+        {
+          System.err.println(defS+" is not a valid number");
+        }
+      }
+    }
+    
     ButtonGroup gcodeGroup = new ButtonGroup();
 
     for(int i = 0; i< gcodes.length; i++)
@@ -576,7 +601,7 @@ abstract public class Splash extends JFrame
       });
       options_menu.add(geneCode);
 
-      if(i == 0)
+      if(i == default_code)
         geneCode.setState(true);
     }
   }
