@@ -101,10 +101,12 @@ public class BioJavaSequence implements Sequence
 
   public char[] getCharSubSequence (int start, int end)
   {
-    char[] dst = new char[end-start];
-    StringBuffer buff = new StringBuffer(getSubSequence(start,end));
-    buff.getChars(start, end, dst, 0);
-    return dst;
+//  char[] dst = new char[end-start+1];
+//  StringBuffer buff = new StringBuffer(getSubSequence(start,end));
+//  
+//  System.out.println("CHAR ARRAY:"+dst.length+" STRING:"+buff.length()+" START:"+start+" END:"+end);
+//  buff.getChars(start-1, end, dst, 0);
+    return getSubSequence(start,end).toCharArray();
   }
 
 
