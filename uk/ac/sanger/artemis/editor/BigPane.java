@@ -31,6 +31,7 @@ import java.awt.event.WindowEvent;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Font;
+import java.awt.Component;
 import java.util.Vector;
 
 import javax.swing.*;
@@ -44,11 +45,17 @@ public class BigPane extends JFrame
   protected static JCheckBoxMenuItem srsTabPane;
   protected static JCheckBoxMenuItem srsWin;
   protected static JInternalFrame srsFrame;
-
+  private JTextArea qualifier;
   
+  public BigPane(Object dataFile[], JTextArea qualifier)
+  {
+    this(dataFile,qualifier.getText());
+    this.qualifier = qualifier;
+  }
+
   public BigPane(Object dataFile[], String qualifier_txt)
   {
-    super();
+    super("Object Editor");
 
     setFont(font);
     JDesktopPane desktop = new JDesktopPane();
@@ -105,6 +112,11 @@ public class BigPane extends JFrame
     {
       public void actionPerformed(ActionEvent e)
       {
+        if(qualifier == null)
+          System.exit(0);
+
+        qualifier.setText(dataView.getFeatureText());
+        BigPane.srsFrame = null;
         dispose();
       }
     });

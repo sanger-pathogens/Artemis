@@ -34,6 +34,7 @@ import java.awt.Component;
 public class DataViewInternalFrame extends JInternalFrame
 {
   private JTabbedPane tabPane = new JTabbedPane();
+  private Annotation ann;
 
   public DataViewInternalFrame(Object dataFile[], JDesktopPane desktop,
                                int wid, String qualifier_txt)
@@ -44,7 +45,7 @@ public class DataViewInternalFrame extends JInternalFrame
               true, //maximizable
               true);//iconifiable
 
-    Annotation ann   = new Annotation(desktop);
+    ann   = new Annotation(desktop);
 
     StringBuffer annFormat = new StringBuffer();
     annFormat.append(htmlBreaks(qualifier_txt.trim()));
@@ -86,7 +87,7 @@ public class DataViewInternalFrame extends JInternalFrame
      
       // add data pane
       DataCollectionPane dataPane =
-         new DataCollectionPane((String)dataFile[i],fastaPane,ann,desktop);
+         new DataCollectionPane(fastaPane,ann,desktop);
       fastaPane.addFastaListener(dataPane);
 
       JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
@@ -100,7 +101,6 @@ public class DataViewInternalFrame extends JInternalFrame
       tabPanel.setOneTouchExpandable(true);
 
       String tabName = (String)dataFile[i];
-      System.out.println("tabName "+tabName);
       int ind = tabName.lastIndexOf("/");
       if(ind > -1)
       {
@@ -126,6 +126,11 @@ public class DataViewInternalFrame extends JInternalFrame
     getContentPane().add(split);
      
     setVisible(true);
+  }
+
+  protected String getFeatureText()
+  {
+    return ann.getFeatureText();
   }
 
   protected void reReadSelectedResults()

@@ -264,10 +264,11 @@ public class DBViewer extends ScrollPanel
       }
       else
       {
-        double evalue = Double.parseDouble(hit.getEValue());
-        if(evalue < 0.005)
+        Double evalue = new Double(hit.getEValue());
+
+        if(evalue.compareTo(new Double("0.005")) < 0)
           g2.setColor(Color.red);
-        else if(evalue < 0.)
+        else if(evalue.compareTo(new Double("0.0")) < 0)
           g2.setColor(Color.blue);
         else
           g2.setColor(Color.cyan);
@@ -343,7 +344,7 @@ public class DBViewer extends ScrollPanel
     if(seqPos >= 0 && seqPos<hitInfoCollection.size())
     {
       HitInfo hit = (HitInfo)hitInfoCollection.get(seqPos);
-      return hit.getID();
+      return hit.getID()+", "+hit.getEValue()+", "+hit.getScore();
     }
     return null;
   }

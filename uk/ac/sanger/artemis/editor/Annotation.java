@@ -26,6 +26,7 @@ package uk.ac.sanger.artemis.editor;
 
 
 import java.util.StringTokenizer;
+import java.util.Vector;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.text.html.*;
@@ -33,10 +34,8 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.Document;
 import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.Cursor;
-import java.awt.Dimension;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.io.IOException;
@@ -54,6 +53,12 @@ public class Annotation extends JEditorPane
   private Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
   /** desktop pane */
   private JDesktopPane desktop = null;
+  /** back option */
+  private Vector back = new Vector();
+  /** popup menu */
+  private JPopupMenu popup;
+  /** known qualifiers */
+  private Vector qualifier = new Vector();
 
   public Annotation(JDesktopPane desktop)
   {
@@ -73,15 +78,53 @@ public class Annotation extends JEditorPane
 
     setEditable(false);
     addHyperlinkListener(this);
-  }
 
+// popup 
+    addMouseListener(new PopupListener());
+    popup = new JPopupMenu();
+    JMenuItem backMenu = new JMenuItem("Back");
+    popup.add(backMenu);
+    backMenu.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        goBack();
+      }
+    });
+    back.add(url);
+  }
+  
 
   protected void setAnnotation(String text)
   {
+//  setText("<html><body>"+text+"</html></body>");
+//  reportHTML();
+//  startRange = getDocument().getLength();
+    String line = null;
+
+// record qualifiers used
+    try
+    {
+      BufferedReader buffRead = new BufferedReader(new StringReader(text));
+      while((line = buffRead.readLine()) != null)
+      {
+        int ind = line.indexOf("=");
+        if(ind > -1)
+          qualifier.add(line.substring(0,ind+1).toLowerCase());
+      }
+    }
+    catch(IOException ioe){}
+    qualifier.add("/similarity=");
+    qualifier.add("/gene=");
+
+    text = getDatabaseHTML(text,"SWALL:");
+    text = getDatabaseHTML(text,"UNIPROT:");
+    text = getDatabaseHTML(text,"EMBL:");
     setText("<html><body>"+text+"</html></body>");
-    reportHTML();
     startRange = getDocument().getLength();
+
   }
+
 
   protected void reportHTML()
   {
@@ -97,6 +140,41 @@ public class Annotation extends JEditorPane
     }
   }
 
+  
+  protected String getFeatureText()
+  {
+    String txt = "";
+    try
+    {
+      txt = ((HTMLDocument)getDocument()).getText(0,getDocument().getLength()).trim();
+      StringBuffer buff = new StringBuffer();
+      StringTokenizer tok = new StringTokenizer(txt,"/");
+      int ntok = 0;
+
+      while(tok.hasMoreTokens())
+      {
+        String tokTxt = "/"+tok.nextToken();
+
+        int ind = tokTxt.indexOf("=");
+        if(ntok != 0 && ind > -1 && qualifier.contains(tokTxt.substring(0,ind+1)))
+          buff.append("\n"+tokTxt);
+        else
+          buff.append(tokTxt);
+
+        ntok++;
+      }
+
+      txt = buff.toString();
+    }
+    catch(BadLocationException ble)
+    {
+      ble.printStackTrace();
+    }
+
+    return txt;
+  }
+
+
   protected void insert(String s, boolean ortholog)
   {
     s = getDatabaseHTML(s,"SWALL:");
@@ -111,7 +189,7 @@ public class Annotation extends JEditorPane
       offset = startRange;
 
     insert(s,offset);
-    reportHTML();
+//  reportHTML();
   }
 
 
@@ -161,6 +239,7 @@ public class Annotation extends JEditorPane
     return s;
   }
 
+
   private void replaceRange(String newStr,int start,int end)
   {
     HTMLDocument doc = (HTMLDocument)getDocument();
@@ -176,6 +255,7 @@ public class Annotation extends JEditorPane
     }
     setDocument(doc);
   }
+
 
   /**
   *
@@ -272,6 +352,23 @@ public class Annotation extends JEditorPane
     BigPane.srsFrame.setVisible(true);
   }
 
+  protected void goBack()
+  {
+    if(back.size() < 2)
+      return;
+
+    try
+    {
+      URL url = (URL)back.get(back.size()-2);
+      back.remove(back.size()-1);
+      setPage(url);
+    }
+    catch(IOException ioe) 
+    {
+      ioe.printStackTrace();
+    }
+  }
+
   /**
   *
   * Method to handle hyper link events.
@@ -325,13 +422,20 @@ public class Annotation extends JEditorPane
         else
         {
           setPage(url); 
+          back.add(url);
         }
       }
       catch(IOException ioe)
       {
-        setCursor(cdone);
-        ioe.printStackTrace();
+        String msg = event.getDescription();
+        if(msg.length() > 50)
+          msg = msg.substring(0,50)+"....";
 
+        JOptionPane.showMessageDialog(this,
+                       "Cannot reach URL:\n"+msg,
+                       "Cannot Connect",
+                       JOptionPane.INFORMATION_MESSAGE);
+//      ioe.printStackTrace();
 //      ("Can't follow link to " +
 //                event.getURL().toExternalForm() );
       }
@@ -361,6 +465,30 @@ public class Annotation extends JEditorPane
 
   }
 
+  /**
+  *
+  * Popup menu listener
+  *
+  */
+  class PopupListener extends MouseAdapter
+  {
+    public void mousePressed(MouseEvent e)
+    {
+      maybeShowPopup(e);
+    }
+
+    public void mouseReleased(MouseEvent e)
+    {
+      maybeShowPopup(e);
+    }
+
+    private void maybeShowPopup(MouseEvent e)
+    {
+      if(e.isPopupTrigger() && back.size() > 1)
+        popup.show(e.getComponent(),
+                e.getX(), e.getY());
+    }
+  }
 
 }
 

@@ -366,6 +366,24 @@ public class HitInfo
     this.desc = desc;
   }
 
+
+  /**
+  *
+  * Append to the description.
+  * @param description to append.
+  *
+  */
+  protected void appendDescription(String s)
+  {
+    if(desc == null)
+      desc = new String(s);
+    else
+      desc = desc + " " + s;
+
+    desc = desc.trim();
+  }
+
+
   /**
   *
   * Get the description (DE).
