@@ -227,7 +227,10 @@ echo "rm -f $new_file > /dev/null 2>&1" | at now + 12 hours
 # if $NETSCAPE $new_file
 
 # For Netscape or mozilla
-if $NETSCAPE -remote "openURL($new_file, new-tab)"
+#
+# Use openURL($new_file, new-tab) to get new-tab
+#
+if $NETSCAPE -remote "openURL($new_file)"
 then
     exit 0
 else
