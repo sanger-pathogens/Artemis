@@ -1566,4 +1566,65 @@ Opinion in Microbiology 1998, 1:598-610</ULINK>.
 [Default: off] [short name: <LITERAL>karlin_sig</LITERAL>]
     </PARA>
   </SECT2>
+
+
+  <SECT2 ID="DISPLAYMENU-CUMULATIVEAT">
+    <TITLE>Cumulative AT Skew, (A-T)/(A+T) and Cumulative GC Skew, (G-C)/(G+C)</TITLE>
+    <PARA>
+       Grigoriev A (1999)  Strand-specific compositional asymmetries in 
+       double-stranded DNA viruses. Virus Research 60, 1-19.
+    </PARA>
+  </SECT2>
+
+  <SECT2 ID="DISPLAYMENU-POSITIONALASYM">
+    <TITLE>Positional Asymmetry</TITLE>
+    <PARA>
+       Shulman MJ, Steinberg CM, Westmoreland N (1981) The coding function of 
+       nucleotide sequences can be discerned by statistical analysis. J Theor Biol 
+       88:409-20
+    </PARA>
+  </SECT2>
+
+   <SECT2 ID="DISPLAYMENU-ENTROPY">
+    <TITLE>Informational Entropy</TITLE>
+    <PARA>
+       Konopka A (1984) Is the information content of DNA evolutionarily 
+       significant? J Theor Biol 107:697-704
+    </PARA>
+  </SECT2>
+ 
+  <SECT2 ID="DISPLAYMENU-SCALEDCHISQ">
+    <TITLE>Scaled Chi Square</TITLE>
+    <PARA>
+      Shields DC, Sharp PM (1987) Synonymous codon usage in Bacillus subtilis 
+      reflects both translational selection and mutational biases. Nucleic Acids 
+      Res 15:8023-40
+    </PARA>
+  </SECT2>
+
+  <SECT2 ID="DISPLAYMENU-MUTRES">
+    <TITLE>Mutational Response Index</TITLE>
+    <PARA>
+      Gatherer D, McEwan NR (1997) Small regions of preferential codon usage and 
+      their effect on overall codon bias--the case of the plp gene. Biochem Mol 
+      Biol Int 43:107-14
+    </PARA>
+  </SECT2>
+
+  <SECT2 ID="DISPLAYMENU-NC">
+    <TITLE>Effective Codon Number</TITLE>
+    <PARA>
+      Wright F (1990) The 'effective number of codons' used in a gene. Gene 87:23-9
+    </PARA>
+  </SECT2>
+
+  <SECT2 ID="DISPLAYMENU-INTRINSIC">
+    <TITLE>Intrinsic Codon Deviation Index</TITLE>
+    <PARA>
+      Freire-Picos MA, Gonzalez-Siso MI, Rodriguez-Belmonte E, Rodriguez-Torres 
+      AM, Ramil E, Cerdan ME (1994) Codon usage in Kluyveromyces lactis and in 
+      yeast cytochrome c-encoding genes. Gene 139:43-9
+    </PARA>
+  </SECT2>
+
 </SECT1>
