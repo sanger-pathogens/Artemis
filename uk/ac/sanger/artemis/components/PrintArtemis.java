@@ -1,7 +1,7 @@
-/* PrintACT.java
+/* PrintArtemis.java
  *
  *
- * Copyright(C) 2000  Genome Research Limited
+ * Copyright(C) 2004  Genome Research Limited
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,16 +22,11 @@
 package uk.ac.sanger.artemis.components;
 
 import java.awt.*;
-import java.awt.print.Paper;
-import java.awt.print.PageFormat;
-import java.awt.print.PrinterJob;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.event.*;
 import javax.swing.*;
-import java.util.*;
 import java.io.*;
-import javax.swing.border.*;
 import javax.imageio.*;
 import javax.imageio.stream.*;
 
@@ -45,8 +40,7 @@ import uk.ac.sanger.artemis.editor.ScrollPanel;
 public class PrintArtemis extends ScrollPanel
 {
 
-  /** act display to create image from */
-  private JCheckBox demisrawLabels = new JCheckBox("Show labels on alignment");
+  /** entry to create image from */
   private EntryEdit entry;
 
   private JCheckBox selectDisplay   = new JCheckBox("Show Selection Header",true);
@@ -64,7 +58,11 @@ public class PrintArtemis extends ScrollPanel
     this.entry = entry;
   }
 
-
+  /**
+  *
+  * Override paintComponent to draw entry
+  *
+  */
   public void paintComponent(Graphics g)
   {
 // let UI delegate paint first (incl. background filling)
@@ -117,6 +115,11 @@ public class PrintArtemis extends ScrollPanel
   }
 
 
+  /**
+  *
+  * Set the size of the image
+  *
+  */
   private void setImageSize()
   {
     height = 0;
@@ -227,6 +230,11 @@ public class PrintArtemis extends ScrollPanel
 // draw graphs
     JCheckBoxMenuItem showPlots = new JCheckBoxMenuItem("Show Graphs",
                                                          plotsDisplay.isSelected());
+
+// only enable if graphs displayed
+    if(entry.getBasePlotGroup().getNumberBasePlots() == 0)
+      showPlots.setEnabled(false);
+
     showPlots.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -240,6 +248,9 @@ public class PrintArtemis extends ScrollPanel
 // draw one line 
     JCheckBoxMenuItem showOneLine = new JCheckBoxMenuItem("Show One Line Display",
                                                           onelineDisplay.isSelected());
+    if(!entry.getOneLinePerEntryDisplay().isVisible())
+      showOneLine.setEnabled(false);
+    
     showOneLine.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -327,38 +338,44 @@ public class PrintArtemis extends ScrollPanel
     YBox.add(bacross);
 
     bacross = Box.createHorizontalBox();
-    bacross.add(Box.createHorizontalGlue());
     bacross.add(selectDisplay);
+    bacross.add(Box.createHorizontalGlue());
     YBox.add(bacross);
 
     bacross = Box.createHorizontalBox();
-    bacross.add(Box.createHorizontalGlue());
     bacross.add(groupsDisplay);
+    bacross.add(Box.createHorizontalGlue());
     YBox.add(bacross);
 
-    bacross = Box.createHorizontalBox();
-    bacross.add(Box.createHorizontalGlue());
-    bacross.add(plotsDisplay);
-    YBox.add(bacross);
+    if(entry.getBasePlotGroup().getNumberBasePlots() > 0)
+    {
+      bacross = Box.createHorizontalBox();
+      bacross.add(plotsDisplay);
+      bacross.add(Box.createHorizontalGlue());
+      YBox.add(bacross);
+    }
+
+    if(!entry.getOneLinePerEntryDisplay().isVisible())
+    {
+      bacross = Box.createHorizontalBox();
+      bacross.add(onelineDisplay);
+      bacross.add(Box.createHorizontalGlue());
+      YBox.add(bacross);
+    }
 
     bacross = Box.createHorizontalBox();
-    bacross.add(Box.createHorizontalGlue());
-    bacross.add(onelineDisplay);
-    YBox.add(bacross);
- 
-    bacross = Box.createHorizontalBox();
-    bacross.add(Box.createHorizontalGlue());
     bacross.add(featDisplay);
+    bacross.add(Box.createHorizontalGlue());
     YBox.add(bacross);
 
     bacross = Box.createHorizontalBox();
-    bacross.add(Box.createHorizontalGlue());
     bacross.add(baseDisplay);
+    bacross.add(Box.createHorizontalGlue());
     YBox.add(bacross);
 
     bacross = Box.createHorizontalBox();
-    bacross.add(Box.createHorizontalGlue());
     bacross.add(featListDisplay);
+    bacross.add(Box.createHorizontalGlue());
     YBox.add(bacross);
     
     // file prefix & format options

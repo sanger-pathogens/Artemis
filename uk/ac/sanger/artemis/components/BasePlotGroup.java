@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlotGroup.java,v 1.2 2004-11-09 14:24:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlotGroup.java,v 1.3 2004-11-09 16:21:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -42,7 +42,7 @@ import javax.swing.*;
  *  which can toggled off and on.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlotGroup.java,v 1.2 2004-11-09 14:24:41 tjc Exp $
+ *  @version $Id: BasePlotGroup.java,v 1.3 2004-11-09 16:21:16 tjc Exp $
  **/
 
 public class BasePlotGroup extends JPanel
@@ -164,6 +164,26 @@ public class BasePlotGroup extends JPanel
       }
   }
 
+
+  /**
+  *
+  * Return the number of visible BasePlot objects
+  *
+  */
+  protected int getNumberBasePlots()
+  {
+    final Component[] children = getComponents();
+    int num = 0;
+
+    for(int i = 0 ; i<children.length ; ++i)
+      if(children[i] instanceof BasePlot)
+      {
+        BasePlot bp = (BasePlot)children[i];
+        if(bp.isVisible())
+          num++;
+      }
+    return num;
+  }
 
   /**
    *  Implementation of the DisplayAdjustmentListener interface.  Invoked when
