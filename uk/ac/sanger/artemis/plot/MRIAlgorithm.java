@@ -34,7 +34,7 @@ import uk.ac.sanger.artemis.sequence.*;
  * Biol Int 43:107-14
  *
  *  @author Derek Gatherer
- *  @version $Id: MRIAlgorithm.java,v 1.3 2004-12-02 16:52:55 tjc Exp $
+ *  @version $Id: MRIAlgorithm.java,v 1.4 2004-12-02 16:54:08 tjc Exp $
  *  original version 10-09-03
  *  revised 01-12-04
  **/
@@ -61,7 +61,11 @@ public class MRIAlgorithm extends BaseAlgorithm
    **/
   public void getValues(int start, int end, final float [] values) 
   {
-    if(!getStrand().isForwardStrand() || isRevCompDisplay()) 
+    if(getStrand().isForwardStrand())  // rather than isRevCompDisplay()
+    {
+//    System.out.println("isRevCompDisplay does not activate here");
+    }
+    else
     {
       final int new_end =
         getStrand().getBases().getComplementPosition(start);
@@ -70,6 +74,7 @@ public class MRIAlgorithm extends BaseAlgorithm
 
       end = new_end;
       start = new_start;
+//      System.out.println("Revcomp, so new start:"+start+"new end:"+end);
     }
     
     final String sub_sequence;
