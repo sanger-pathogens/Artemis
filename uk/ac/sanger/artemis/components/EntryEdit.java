@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.8 2004-12-03 17:47:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.9 2004-12-06 10:56:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.8 2004-12-03 17:47:04 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.9 2004-12-06 10:56:52 tjc Exp $
  *
  */
 
@@ -376,7 +376,7 @@ public class EntryEdit extends JFrame
     {
       final YesNoDialog yes_no_dialog =
         new YesNoDialog(EntryEdit.this,
-                        "there are unsaved changes - really close?");
+                        "There are unsaved changes - really close?");
 
       if(!yes_no_dialog.getResult()) 
         return;
@@ -544,158 +544,6 @@ public class EntryEdit extends JFrame
   }
 
 
-  /**
-  *
-  * This routine is needed to circumvent the problem
-  * of opening a JFileChooser on alpha o/s only.
-  *
-  */
-  private void alphaBug(Entry entry, 
-                        boolean include_diana_extensions,
-                        boolean ask_for_name,
-                        boolean keep_new_name,
-                        int destination_type)
-  {
-    try
-    {
-      if(ask_for_name || entry.getName() == null)
-      {
-        JCheckBox emblHeader = new JCheckBox("Add EMBL ID Header",
-                                              false);
-        Box bdown = Box.createVerticalBox();
-        JTextField fileField = new JTextField(
-                   System.getProperty("user.dir")+
-                   System.getProperty("file.separator"));
-        fileField.selectAll();
-        bdown.add(fileField);
-   
-        if( destination_type == DocumentEntryFactory.EMBL_FORMAT &&
-           (entry.getHeaderText() == null ||  
-           !isHeaderEMBL(entry.getHeaderText())) )
-          bdown.add(emblHeader);
-
-        int n = JOptionPane.showConfirmDialog(null, bdown,
-                            "Enter a filename",
-                            JOptionPane.OK_CANCEL_OPTION,
-                            JOptionPane.QUESTION_MESSAGE);
-        if(n == JOptionPane.CANCEL_OPTION)
-          return;
-
-        if(emblHeader.isSelected())
-        {
-          bdown = Box.createVerticalBox();
-          JTextField idField = new JTextField("");
-          bdown.add(idField);
-           
-          n = JOptionPane.showConfirmDialog(null, bdown,
-                            "Enter the entry ID",
-                            JOptionPane.OK_CANCEL_OPTION,
-                            JOptionPane.QUESTION_MESSAGE);
-
-          if(n != JOptionPane.CANCEL_OPTION &&
-             !idField.getText().trim().equals(""))
-          {
-            String header = "ID   "+idField.getText().trim();
-            if(entry.getFeatureCount() > 0)
-              header = header.concat("\nFH   Key             "+
-                                     "Location/Qualifiers\nFH\n");
-            entry.setHeaderText(header); 
-          }
-        }
-
-        File file = new File(fileField.getText());
-
-        if(file.exists())
-        {
-          final YesNoDialog yes_no_dialog = new YesNoDialog(this,
-                           "this file exists: " + file.getName() +
-                           " overwrite it?");
-          if(!yes_no_dialog.getResult())
-            return;
-        }
-
-        final MessageDialog message = new MessageDialog(this,
-                        "saving to " + file.getName() + " ...",
-                        false);
-        try
-        {
-          if(include_diana_extensions)
-            entry.save(file, destination_type, false);
-          else
-            entry.saveStandardOnly(file, destination_type, true);
-        }
-        catch(EntryInformationException e)
-        {
-          final YesNoDialog yes_no_dialog = new YesNoDialog(this,
-                         "destination format can't handle all " +
-                         "keys/qualifiers - continue?");
-          if(yes_no_dialog.getResult())
-          {
-            try
-            {
-              if(include_diana_extensions)
-                entry.save(file, destination_type, true);
-              else
-                entry.saveStandardOnly(file, destination_type, true);
-            }
-            catch(EntryInformationException e2)
-            {
-              throw new Error("internal error - unexpected exception: "+ e);
-            }
-            catch(IOException ioe)
-            {
-              new MessageDialog(this, "error while saving: " + ioe);
-              return;
-            }
-          }
-          else
-            return;
-        }
-        finally
-        {
-          if(message != null)
-            message.dispose();
-        }
-
-        if(keep_new_name)
-          entry.setName(file.getName());
-      }
-      else
-      {
-        final MessageDialog message = new MessageDialog(this,
-                             "saving to " + entry.getName() + " ...",
-                             false);
-        try
-        {
-          if(include_diana_extensions)
-            entry.save(destination_type);
-          else
-            entry.saveStandardOnly(destination_type);
-        }
-        finally
-        {
-          message.dispose();
-        }
-      }
-    }
-    catch(ReadOnlyException e)
-    {
-      new MessageDialog(this, "this entry is read only");
-      return;
-    }
-    catch(IOException e)
-    {
-      new MessageDialog(this, "error while saving: " + e);
-      return;
-    }
-    catch(EntryInformationException e)
-    {
-      new MessageDialog(this, "error while saving: " + e);
-      return;
-    }
-  }
-
-
   private boolean isHeaderEMBL(String header)
   {
     StringReader reader = new StringReader(header);
@@ -716,8 +564,8 @@ public class EntryEdit extends JFrame
    **/
   public void saveAllEntries() 
   {
-    for(int entry_index = 0 ;
-        entry_index < entry_group.size() ;
+    final int entry_group_size = entry_group.size();
+    for(int entry_index = 0; entry_index < entry_group_size;
         ++entry_index) 
       saveEntry(entry_group.elementAt(entry_index), true, false, true,
                 DocumentEntryFactory.ANY_FORMAT);
@@ -742,8 +590,7 @@ public class EntryEdit extends JFrame
 
     // this predicate will filter out those features that aren't in the
     // entry we are trying to save
-    final FeaturePredicate predicate =
-      new FeaturePredicate() 
+    final FeaturePredicate predicate = new FeaturePredicate()
     {
       public boolean testPredicate(final Feature feature)
       {
@@ -989,8 +836,9 @@ public class EntryEdit extends JFrame
 
       // only the standalone version can save or read
       EntrySource filesystem_entry_source = null;
-
-      for(int source_index = 0; source_index < entry_sources.size();
+      final int entry_sources_size = entry_sources.size();
+     
+      for(int source_index = 0; source_index < entry_sources_size;
           ++source_index) 
       {
         final EntrySource this_source =
@@ -1060,8 +908,9 @@ public class EntryEdit extends JFrame
         final JMenu save_as_genbank = new JMenu("GENBANK Format");
         final JMenu save_as_gff     = new JMenu("GFF Format");
         final JMenu save_embl_only  = new JMenu("EMBL Submission Format");
+        final int entry_group_size  = getEntryGroup().size();
 
-        for(int i = 0; i < getEntryGroup().size(); ++i) 
+        for(int i = 0; i < entry_group_size; ++i) 
         {
           final Entry this_entry = getEntryGroup().elementAt(i);
           String entry_name = this_entry.getName();
