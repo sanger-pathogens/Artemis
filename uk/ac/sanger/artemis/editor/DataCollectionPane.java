@@ -28,6 +28,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.util.StringTokenizer;
 
+import java.io.StringReader;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -409,6 +410,124 @@ public class DataCollectionPane extends JScrollPane
 
   /**
   *
+  * Creates and executes an SRS query for all the hits in the
+  * collection.
+  * @param hit          HitInfo for a single hit.
+  * @param ortholog     true if ortholog is selected.
+  *
+  */
+  protected static void getzCall(Vector hits, boolean ortholog)
+  {
+    String env[] = { "PATH=/usr/local/pubseq/bin/" };
+
+    StringBuffer query = new StringBuffer();
+
+    int n = 0;
+    query.append("[uniprot:");
+
+    Enumeration ehits = hits.elements();
+    while(ehits.hasMoreElements())
+    {
+      HitInfo hit = (HitInfo)ehits.nextElement();
+      if(n > 0)
+        query.append("|");
+
+      query.append(hit.getAcc());
+      n++;
+    }
+    query.append("]");
+
+    String cmd[]   = { "getz", "-f", "acc org description gen",
+                       query.toString() };
+
+    ExternalApplication app = new ExternalApplication(cmd,
+                                                env,null);
+    String res = app.getProcessStdout();
+
+    HitInfo hit = null;
+    String line = null;
+    String lineStrip = null;
+    StringReader strread   = new StringReader(res);;
+    BufferedReader strbuff = new BufferedReader(strread);
+
+    try
+    {
+      while((line = strbuff.readLine()) != null)
+      {
+        line = line.trim();
+        if(line.equals(""))
+          continue;
+
+        lineStrip = line.substring(3).trim();
+        if(line.startsWith("AC"))
+          hit = getHitInfo(lineStrip,hits);
+
+        if(hit == null)
+          continue;
+
+        if(line.startsWith("OS "))
+          hit.setOrganism(lineStrip);
+        else if(line.startsWith("DE "))
+          hit.appendDescription(lineStrip);
+        else if(line.startsWith("GN "))
+        {
+          StringTokenizer tokGN = new StringTokenizer(lineStrip,";");
+          while(tokGN.hasMoreTokens())
+          {
+            line = tokGN.nextToken();
+            if(line.startsWith("Name="))
+              hit.setGeneName(line.substring(5));
+            else
+              hit.appendDescription(line);
+          }
+        }
+      }
+    }
+    catch(IOException ioe){}
+
+    ehits = hits.elements();
+    while(ehits.hasMoreElements())
+    {
+      hit = (HitInfo)ehits.nextElement();
+
+      String cmd2[]   = { "getz", "-f", "id",
+                 "[libs={uniprot}-id:"+hit.getID()+"]>EMBL" };
+      app = new ExternalApplication(cmd2,env,null);
+      res = app.getProcessStdout();
+ 
+      int ind1 = res.indexOf("ID ");
+      if(ind1 > -1)
+      {
+        StringTokenizer tok = new StringTokenizer(res);
+        tok.nextToken();
+        hit.setEMBL(tok.nextToken());
+      }
+      else
+        hit.setEMBL("");
+    }
+
+  }
+
+
+  private static HitInfo getHitInfo(String acc, Vector hits)
+  {
+    acc = acc.trim(); 
+    if(acc.endsWith(";"))
+      acc = acc.substring(0,acc.length()-1);
+
+    Enumeration ehits = hits.elements();
+    HitInfo hit = null;
+    while(ehits.hasMoreElements())
+    {
+      hit = (HitInfo)ehits.nextElement();
+      if(hit.getAcc().equals(acc))
+        return hit;
+    }
+    return null;
+  }
+
+  /**
+  *
   * @param hit		HitInfo for a single hit.
   * @param ortholog	true if ortholog is selected.
   *
@@ -417,8 +536,10 @@ public class DataCollectionPane extends JScrollPane
   {
     String env[] = { "PATH=/usr/local/pubseq/bin/" };
     if(hit.getOrganism() == null ||
-       hit.getDescription()== null)
+       hit.getDescription() == null)
     {
+
+      System.out.println("CALLING GETZ");
       String cmd[]   = { "getz", "-f", "org description gen",
                          "[uniprot:"+hit.getAcc()+"]|[uniprot:"+hit.getID()+"]" };
 
@@ -535,7 +656,8 @@ public class DataCollectionPane extends JScrollPane
     else
       buff.append(" UNIPROT:"+hit.getID());
 
-    if(hit.getEMBL() != null)
+    if(hit.getEMBL() != null &&
+       !hit.getEMBL().equals(""))
       buff.append(" (EMBL:"+hit.getEMBL()+")");
     buff.append(";");
 

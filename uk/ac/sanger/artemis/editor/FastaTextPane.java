@@ -504,8 +504,10 @@ public class FastaTextPane extends JScrollPane
       if(max > 10)
         max = 10;
 
-      for(int i=0; i<max; i++)
-        DataCollectionPane.getzCall((HitInfo)hitInfoCollection.get(i),false);
+//    for(int i=0; i<max; i++)
+//      DataCollectionPane.getzCall((HitInfo)hitInfoCollection.get(i),false);
+
+      DataCollectionPane.getzCall(hitInfoCollection,false);
     }
 
   }
