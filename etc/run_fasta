@@ -6,7 +6,7 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.9 2004-10-05 12:39:52 tjc Exp $"
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.10 2004-12-15 12:54:46 tjc Exp $"
 
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
@@ -146,6 +146,21 @@ while(my $inFile = <LIST_FILE>)
     }
   }
  
+# if the filename is still long
+  if($inFile =~ m/^(\S{100})/)
+  {
+    if($inFile =~ m/^(\S{90,})(fasta\/\S+)/)
+    {
+      my $inFile_tmp = $1;
+
+      if( -e $inFile_tmp )
+      {
+        print BSUB "cd $inFile_tmp\n";
+        $inFile = $2;
+      }
+    }
+  }
+
   print BSUB "$EXEC -B -S -q -b 100 -H $inFile $database ktup 2 > $inFile\.out\n";
   print BSUB "gzip -9 $inFile\.out\n";
 }
