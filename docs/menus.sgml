@@ -1569,52 +1569,65 @@ Opinion in Microbiology 1998, 1:598-610</ULINK>.
 
 
   <SECT2 ID="DISPLAYMENU-CUMULATIVEAT">
-    <TITLE>Cumulative AT Skew, (A-T)/(A+T) and Cumulative GC Skew, (G-C)/(G+C)</TITLE>
+    <TITLE>Cumulative AT Skew and Cumulative GC Skew</TITLE>
     <PARA>
-       Grigoriev A (1999)  Strand-specific compositional asymmetries in 
-       double-stranded DNA viruses. Virus Research 60, 1-19.
+       AT skew is calculated as ([A]-[T])/([A]+[T]), where [A] and [T] are the counts of
+       these bases in the window. 
+       Grigoriev A (1999) <ULINK
+URL="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=pubmed&amp;dopt=Abstract&amp;list_uids=10225270"> 
+Strand-specific compositional asymmetries in double-stranded DNA viruses. Virus Research 60, 1-19</ULINK>.
     </PARA>
   </SECT2>
 
   <SECT2 ID="DISPLAYMENU-POSITIONALASYM">
     <TITLE>Positional Asymmetry</TITLE>
     <PARA>
-       Shulman MJ, Steinberg CM, Westmoreland N (1981) The coding function of 
-       nucleotide sequences can be discerned by statistical analysis. J Theor Biol 
-       88:409-20
+       Shulman MJ, Steinberg CM, Westmoreland N (1981) <ULINK
+URL="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=pubmed&amp;dopt=Abstract&amp;list_uids=6456380"> 
+The coding function of nucleotide sequences can be discerned by statistical analysis. J Theor Biol
+88:409-20</ULINK>.
     </PARA>
   </SECT2>
 
    <SECT2 ID="DISPLAYMENU-ENTROPY">
     <TITLE>Informational Entropy</TITLE>
     <PARA>
-       Konopka A (1984) Is the information content of DNA evolutionarily 
-       significant? J Theor Biol 107:697-704
+       Konopka A (1984) <ULINK
+URL="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=pubmed&amp;dopt=Abstract&amp;list_uids=6738090"> 
+Is the information content of DNA evolutionarily significant? J Theor Biol 107:697-704</ULINK>.
     </PARA>
   </SECT2>
  
   <SECT2 ID="DISPLAYMENU-SCALEDCHISQ">
     <TITLE>Scaled Chi Square</TITLE>
     <PARA>
-      Shields DC, Sharp PM (1987) Synonymous codon usage in Bacillus subtilis 
-      reflects both translational selection and mutational biases. Nucleic Acids 
-      Res 15:8023-40
+      Shields DC, Sharp PM (1987) <ULINK 
+URL="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=pubmed&amp;dopt=Abstract&amp;list_uids=3118331">
+Synonymous codon usage in Bacillus subtilis 
+reflects both translational selection and mutational biases. Nucleic Acids 
+Res 15:8023-40</ULINK>.
     </PARA>
   </SECT2>
 
   <SECT2 ID="DISPLAYMENU-MUTRES">
     <TITLE>Mutational Response Index</TITLE>
     <PARA>
-      Gatherer D, McEwan NR (1997) Small regions of preferential codon usage and 
-      their effect on overall codon bias--the case of the plp gene. Biochem Mol 
-      Biol Int 43:107-14
+      Gatherer D, McEwan NR (1997) <ULINK
+URL="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=pubmed&amp;dopt=Abstract&amp;list_uids=9315288">
+Small regions of preferential codon usage and 
+their effect on overall codon bias--the case of the plp gene. Biochem Mol 
+Biol Int 43:107-14</ULINK>.
     </PARA>
   </SECT2>
 
   <SECT2 ID="DISPLAYMENU-NC">
     <TITLE>Effective Codon Number</TITLE>
     <PARA>
-      Wright F (1990) The 'effective number of codons' used in a gene. Gene 87:23-9
+      Wright F (1990) <ULINK
+URL="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=pubmed&amp;dopt=Abstract&amp;list_uids=2110097">
+The 'effective number of codons' used in a gene. Gene 87:23-9</ULINK>, and Fuglsang A (2004) <ULINK
+URL="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=pubmed&amp;dopt=Abstract&amp;list_uids=15081433">
+The 'effective number of codons' revisited. Biochem Biophys Res Commun. May 7;317(3):957-64</ULINK>. 
     </PARA>
   </SECT2>
 
@@ -1622,8 +1635,9 @@ Opinion in Microbiology 1998, 1:598-610</ULINK>.
     <TITLE>Intrinsic Codon Deviation Index</TITLE>
     <PARA>
       Freire-Picos MA, Gonzalez-Siso MI, Rodriguez-Belmonte E, Rodriguez-Torres 
-      AM, Ramil E, Cerdan ME (1994) Codon usage in Kluyveromyces lactis and in 
-      yeast cytochrome c-encoding genes. Gene 139:43-9
+      AM, Ramil E, Cerdan ME (1994) <ULINK
+URL="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=pubmed&amp;dopt=Abstract&amp;list_uids=8112587">
+Codon usage in Kluyveromyces lactis and in yeast cytochrome c-encoding genes. Gene 139:43-9</ULINK>.
     </PARA>
   </SECT2>
 
