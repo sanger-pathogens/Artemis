@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.14 2005-01-12 10:37:28 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.15 2005-01-12 13:49:43 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -39,66 +39,14 @@ direct_edit = yes
 
 # This setting controls which set of codons will be used for start codons.
 # This can be changed from the options menu.
-# There are two possible settings: eukaryote or prokaryote
-organism_type = eukaryote
+# Give the translation table number.
+#
+genetic_code_default = 1
 
 # This option gives the bases of the possible start codons
 eukaryotic_start_codons = atg
 prokaryotic_start_codons = atg gtg ttg
 
-
-# The translation_table option is used to lookup codon translations.  The
-# table must have exactly 64 entries, and there is one entry for each codon.
-# The entries should appear in this order:
-#   TTT, TTC, TTA, TTG,
-#   TCT, TCC, ...,
-#   ...
-
-# this is the default table:
-#
-# translation_table = \
-#     f f l l \
-#     s s s s \
-#     y y # + \
-#     c c * w \
-#             \
-#     l l l l \
-#     p p p p \
-#     h h q q \
-#     r r r r \
-#             \
-#     i i i m \
-#     t t t t \
-#     n n k k \
-#     s s r r \
-#             \
-#     v v v v \
-#     a a a a \
-#     d d e e \
-#     g g g g
-
-# this is the eukaryotic mitochondrial table:
-#
-# translation_table = \
-#     f f l l \
-#     s s s s \
-#     y y * * \
-#     c c w w \
-#             \
-#     l l l l \
-#     p p p p \
-#     h h q q \
-#     r r r r \
-#             \
-#     i i m m \
-#     t t t t \
-#     n n k k \
-#     s s * * \
-#             \
-#     v v v v \
-#     a a a a \
-#     d d e e \
-#     g g g g
 
 #
 # Genetic Codes :
@@ -131,6 +79,12 @@ genetic_codes = \
      Scenedesmus_Obliquus_Mitochondrial \
      Thraustochytrium_Mitochondrial
 
+# The translation_table option is used to lookup codon translations.  The
+# table must have exactly 64 entries, and there is one entry for each codon.
+# The entries should appear in this order:
+#   TTT, TTC, TTA, TTG,
+#   TCT, TCC, ...,
+#   ...
 
 # 1. standard code (default)
 translation_table_1 = \
