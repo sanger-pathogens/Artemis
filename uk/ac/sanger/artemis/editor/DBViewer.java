@@ -57,6 +57,13 @@ public class DBViewer extends ScrollPanel
   private FastaTextPane fastaTextPane;
 
 
+  /**
+  *
+  * Database results graphical viewer.
+  * @param fastaTextPane	fasta/blast parser
+  * @param jsp			scroll pane to add this object to
+  *
+  */
   public DBViewer(FastaTextPane fastaTextPane, final JScrollPane jsp)
   {
     super();

@@ -173,7 +173,7 @@ public class DataViewInternalFrame extends JInternalFrame
       tabPane.add(fastaPane.getFormat()+" "+tabName,split);
     }
 
-    evidenceBox.add(Box.createVerticalGlue());
+//  evidenceBox.add(Box.createVerticalGlue());
   
     // add tab pane listener
     tabPane.addChangeListener(new TabChangeListener());

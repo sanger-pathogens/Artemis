@@ -45,7 +45,6 @@ import uk.ac.sanger.artemis.io.Location;
 
 public class BigPane extends JFrame
 {
-
   protected static Font font    = new Font("Monospaced",Font.PLAIN,11);
   protected static Font font_sm = new Font("Monospaced",Font.PLAIN,10);
   protected static JCheckBoxMenuItem srsBrowser;
@@ -55,60 +54,60 @@ public class BigPane extends JFrame
   private JTextArea qualifier;
   private DataViewInternalFrame dataView;
   private FeatureVector overlapFeature;
-  private int featureStart;
-  private int featureEnd;
-  private Box evidenceBox;
+  private Feature edit_feature;
 
   public BigPane(Object dataFile[], JTextArea qualifier,
-                 FeatureVector overlapFeature, int featureStart,
-                 int featureEnd)
+                 FeatureVector overlapFeature, 
+                 final Feature edit_feature) 
   {
-    this(dataFile,qualifier.getText());
+    this(dataFile,qualifier.getText(),overlapFeature,edit_feature);
     this.qualifier      = qualifier;
-    this.overlapFeature = overlapFeature;
-    this.featureStart   = featureStart;
-    this.featureEnd     = featureEnd;
-
-    if(overlapFeature != null)
-      evidenceBox.add(getOverlapFeatures(overlapFeature));
   }
 
-  public BigPane(Object dataFile[], String qualifier_txt)
+  public BigPane(Object dataFile[], String qualifier_txt,
+                 FeatureVector overlapFeature,
+                 final Feature edit_feature)
   {
     super("Object Editor");
+    this.overlapFeature = overlapFeature;
+    this.edit_feature   = edit_feature;
 
     MultiLineToolTipUI.initialize();
     setFont(font);
-    JDesktopPane desktop = new JDesktopPane();
+    final JDesktopPane desktop = new JDesktopPane();
     desktop.setDragMode(JDesktopPane.LIVE_DRAG_MODE);
     getContentPane().add(desktop);
 
     //Make the big window be indented 80 pixels from each edge
     //of the screen.
     int inset = 80;
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     setBounds(inset, inset,
               screenSize.width  - inset*2,
               screenSize.height - inset*2);
 
     addWindowListener(new winExit());
 
-    JScrollPane scrollEvidence = new JScrollPane();
+    final JScrollPane scrollEvidence = new JScrollPane();
     // data set
     int hgt = getHeight()-85;
     int wid = getWidth()/2-10;
     
     dataView = new DataViewInternalFrame(dataFile,desktop, scrollEvidence,
-                                   wid,hgt,qualifier_txt);
+                                         wid,hgt,qualifier_txt);
     dataView.setLocation(5,0);
     dataView.setSize(wid,hgt);
     dataView.setVisible(true);
     desktop.add(dataView);
 
     // evidence
-    JInternalFrame evidence = new JInternalFrame("Evidence", true,
-                                                 true, true, true);
-    evidenceBox = dataView.getEvidenceBox();
+    final JInternalFrame evidence = new JInternalFrame("Evidence", true,
+                                                      true, true, true);
+
+    Box evidenceBox = dataView.getEvidenceBox();
+        if(overlapFeature != null)
+    evidenceBox.add(getOverlapFeatures(overlapFeature),0);
+    evidenceBox.add(Box.createVerticalGlue());
 
     scrollEvidence.setViewportView(evidenceBox);
     evidence.getContentPane().add(scrollEvidence);
@@ -118,11 +117,11 @@ public class BigPane extends JFrame
     desktop.add(evidence);   
 
 
-    JMenuBar menuBar = createMenuBar(desktop);
+    final JMenuBar menuBar = createMenuBar(desktop);
     setJMenuBar(menuBar);
 
     // toolbar
-    JToolBar toolBar = createToolbar();
+    final JToolBar toolBar = createToolbar();
     getContentPane().add(toolBar,BorderLayout.NORTH);
 
     setVisible(true);
@@ -137,29 +136,7 @@ public class BigPane extends JFrame
   private Box getOverlapFeatures(FeatureVector overlapFeature)
   {
     Box bdown = Box.createVerticalBox();
-    for(int i = 0; i<overlapFeature.size(); ++i)
-    {
-      Feature this_feature = overlapFeature.elementAt(i);
-      String note = this_feature.getNote();
-
-      int indPF   = note.indexOf("PF");  // Pfam ID
-      if(indPF == -1)
-        continue;
-
-      StringTokenizer tok = new StringTokenizer(note.substring(indPF)," ,;");
-      String pfamID = tok.nextToken();
-//    int intPFend = note.indexOf(" ",indPF);
-//    if(intPFend == -1)
-//      continue;
-//    String pfamID = note.substring(indPF,intPFend);
-      Location this_loc = this_feature.getLocation();
-
-      int start = this_loc.getFirstBase();
-      int end   = this_loc.getLastBase();     
-
-      bdown.add(new EvidenceViewer(pfamID,start,end,
-                                   featureStart,featureEnd));
-    }
+    bdown.add(new EvidenceViewer(edit_feature,overlapFeature));
     return bdown;
   }
 
@@ -372,6 +349,6 @@ public class BigPane extends JFrame
       System.out.println("Usage:: java BigPane data_file");
       System.exit(0);
     }
-    new BigPane(args,"");
+    new BigPane(args,"",null,null);
   }
 }
