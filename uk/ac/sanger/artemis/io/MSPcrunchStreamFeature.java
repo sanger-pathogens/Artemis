@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/MSPcrunchStreamFeature.java,v 1.1 2004-06-09 09:49:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/MSPcrunchStreamFeature.java,v 1.2 2005-01-06 10:33:27 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import java.io.*;
  *  A StreamFeature that thinks it is a MSPcrunch feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: MSPcrunchStreamFeature.java,v 1.1 2004-06-09 09:49:59 tjc Exp $
+ *  @version $Id: MSPcrunchStreamFeature.java,v 1.2 2005-01-06 10:33:27 tjc Exp $
  **/
 
 public class MSPcrunchStreamFeature
@@ -110,7 +110,7 @@ public class MSPcrunchStreamFeature
       throws ReadFormatException {
     super (null);
 
-    final StringVector line_bits = StringVector.getStrings (line, " \t");
+    final StringVector line_bits = StringVector.getStrings (line, " ");
 
     if (line_bits.size () < 7) {
       throw new ReadFormatException ("invalid MSPcrunch line (not enough " +
