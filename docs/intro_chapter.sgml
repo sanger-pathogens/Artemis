@@ -15,14 +15,14 @@ of any size.
 On Unix and GNU/Linux systems, given an EMBL accession number &prog; also can
 read an entry directly from the
 <ULINK URL="http://www.ebi.ac.uk" TYPE="external">EBI</ULINK> using <ULINK
-URL="http://corba.ebi.ac.uk/index.html" TYPE="external">CORBA</ULINK>.  This
+URL="http://www.ebi.ac.uk/cgi-bin/dbfetch" TYPE="external">Dbfetch</ULINK>.  This
 feature is still experimental, but copes well with straightforward entries
 (see <XREF LINKEND="LAUNCH-WINDOW-FILE-MENU-READ-FROM-EBI">).
     </PARA>
 
     <PARA>
-For more information on go to <ULINK 
-URL="http://www.sanger.ac.uk/Software/Artemis/" TYPE="external">the &prog;
+For more information on &prog; go to 
+<ULINK URL="http://www.sanger.ac.uk/Software/Artemis/" TYPE="external">the &prog;
 web pages</ULINK>.
     </PARA>
   </SECT1>

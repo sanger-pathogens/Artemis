@@ -79,7 +79,7 @@ icon.
   <SECT1 ID="RUNNINGPC">
     <TITLE>Running &prog; on Windows Systems</TITLE>
     <PARA>
-On systems with Java 1.2 (AKA Java 2) or Java 1.3 installed &prog; can be
+On systems with Java 1.3 (or above) installed &prog; can be
 started by double clicking on the artemis.jar icon.
     </PARA>
   </SECT1>
@@ -115,20 +115,16 @@ how to use the main window.
       </SECT3>
 
       <SECT3 ID="LAUNCH-WINDOW-FILE-MENU-READ-FROM-EBI">
-        <TITLE>Read from EBI ...</TITLE>
+        <TITLE>Open from EBI - Dbfetch ...</TITLE>
         <PARA>
 The functions will ask the user for an accession number and then will attempt
 to read it directly from the <ULINK URL="http://www.ebi.ac.uk"
-TYPE="external">EBI</ULINK> using <ULINK
-URL="http://corba.ebi.ac.uk/index.html" TYPE="external">CORBA</ULINK>.  If all
-goes well you will be presented with an view/edit window (see <XREF
+TYPE="external">EBI</ULINK> using 
+<ULINK URL="http://www.ebi.ac.uk/cgi-bin/dbfetch" TYPE="external">Dbfetch</ULINK>.  
+If all goes well you will be presented with an view/edit window (see <XREF
 LINKEND="MAINWINDOW-CHAPTER">).
         </PARA>
         <PARA>
-Please note that this feature is still experimental and is not be available on
-all platforms.  The menu is currently disabled on Macintosh and Windows
-machines.
-        </PARA>
       </SECT3>
 
       <SECT3 ID="LAUNCH-WINDOW-FILE-MENU-QUIT">
