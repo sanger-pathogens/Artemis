@@ -34,7 +34,9 @@ import uk.ac.sanger.artemis.sequence.*;
  * Biol Int 43:107-14
  *
  *  @author Derek Gatherer
- *  @version $Id: MRIAlgorithm.java,v 1.1 2004-11-17 13:29:58 tjc Exp $
+ *  @version $Id: MRIAlgorithm.java,v 1.2 2004-12-01 16:33:27 tjc Exp $
+ *  original version 10-09-03
+ *  revised 01-12-04
  **/
 
 public class MRIAlgorithm extends BaseAlgorithm 
@@ -45,7 +47,7 @@ public class MRIAlgorithm extends BaseAlgorithm
    **/
   public MRIAlgorithm(final Strand strand) 
   {
-    super(strand, makeName(strand), "rewritten version 10-09-03");
+    super(strand, makeName(strand), "");
     setScalingFlag(true);
   }
 
@@ -59,14 +61,28 @@ public class MRIAlgorithm extends BaseAlgorithm
    **/
   public void getValues(int start, int end, final float [] values) 
   {
+    if(getStrand().isForwardStrand())  // rather than isRevCompDisplay()
+    {
+//    System.out.println("isRevCompDisplay does not activate here");
+    }
+    else
+    {
+      final int new_end =
+        getStrand().getBases().getComplementPosition(start);
+      final int new_start =
+        getStrand().getBases().getComplementPosition(end);
+
+      end = new_end;
+      start = new_start;
+//      System.out.println("Revcomp, so new start:"+start+"new end:"+end);
+    }
+    
     final String sub_sequence;
-    final String whole_seq;
     
     // add 1 or 2 if necessary to make the range a multiple of 3
-//    start += (start % 3);
-    if(getStrand().isForwardStrand()) 
+    if(getStrand().isForwardStrand())
       end -= (end - start + 1) % 3;
-    else 
+    else
       start += (end - start + 1) % 3;
 
     try 
@@ -82,19 +98,8 @@ public class MRIAlgorithm extends BaseAlgorithm
     final float [][][][] uncorr_exp_value = new float [4][4][4][4];
 
     final char [] sequence_raw;
-    if(getStrand().isForwardStrand()) 
-      sequence_raw = sub_sequence.toCharArray();
-    else
-      sequence_raw = Bases.complement(sub_sequence).toCharArray();
+    sequence_raw = sub_sequence.toCharArray();
 
-/*
-    System.out.println("whole");
-    System.out.println(whole_seq_raw);
-    System.out.println("reverse, start: "+start+" end: "+end);
-    System.out.println(sequence_reverse_raw);
-    System.out.println("forward, start: "+start+" end: "+end);
-    System.out.println(sequence_forward_raw);
-*/
     int [][][][] obs_value = new int [4][4][4][4];
     float [] chi_square = new float [3];
     float [] uncorr_chi_square = new float [3];
@@ -130,11 +135,10 @@ public class MRIAlgorithm extends BaseAlgorithm
     {
       char this_base = sequence_raw[c];
       if(this_base == 'g' || this_base == 'c') 
-        GC++; //System.out.println("GC: "+GC);
+        GC++;
     }
 
     GCfreq = (float)GC/sequence_raw.length;
-//    System.out.println("GC: "+GC+" length: "+sequence_raw.length+" GCfreq: "+GCfreq);
 
     chi_square = new float [3];
     for(int i = 0 ; i < sequence_raw.length - 5 ; i+=3) 
@@ -144,8 +148,6 @@ public class MRIAlgorithm extends BaseAlgorithm
         this_f_base = sequence_raw[i + frame];
         next_f_base = sequence_raw[i + 1 + frame];
         last_f_base = sequence_raw[i + 2 + frame];
-          
-//      System.out.println("reading "+this_f_base+next_f_base+last_f_base);
 
         this_f_base_index = Bases.getIndexOfBase(this_f_base);
         next_f_base_index = Bases.getIndexOfBase(next_f_base);
@@ -380,7 +382,7 @@ public class MRIAlgorithm extends BaseAlgorithm
       uncorr_exp_value[0][2][3][frame] = 0;  // don't count STOP
       uncorr_exp_value[0][3][2][frame] = 0;  // don't count STOP
 
-// having calculed expected, now do chi_square
+// having calculated expected, now do chi_square
       chi_square[0]=0; chi_square[1]=0; chi_square[2]=0;
       uncorr_chi_square[0]=0; uncorr_chi_square[1]=0; uncorr_chi_square[2]=0;
       for(int first_base = 0; first_base < 4; ++first_base) 
@@ -419,7 +421,6 @@ public class MRIAlgorithm extends BaseAlgorithm
           }
         }  
       }
-//    System.out.println("frame is "+frame+" and start is "+start);
       values[frame] = uncorr_chi_square[frame]-chi_square[frame];
     } 
   }

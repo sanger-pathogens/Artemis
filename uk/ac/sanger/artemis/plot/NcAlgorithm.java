@@ -32,6 +32,8 @@ import uk.ac.sanger.artemis.sequence.*;
  * Wright F (1990) The 'effective number of codons' used in a gene. Gene 87:23-9
  *
  *  @author Derek Gatherer
+ *  original version 09-09-03
+ *  revised 01-12-04
  **/
 
 public class NcAlgorithm extends BaseAlgorithm 
@@ -42,7 +44,7 @@ public class NcAlgorithm extends BaseAlgorithm
    **/
   public NcAlgorithm(final Strand strand) 
   {
-    super(strand, makeName(strand), "rewritten version 09-09-03");
+    super(strand, makeName(strand), "Nc");
     setScalingFlag(true);
   }
 
@@ -56,13 +58,27 @@ public class NcAlgorithm extends BaseAlgorithm
    **/
   public void getValues(int start, int end, final float [] values) 
   {
+    if(getStrand().isForwardStrand())  // rather than isRevCompDisplay()
+    {
+//    System.out.println("isRevCompDisplay does not activate here");
+    }
+    else
+    {
+      final int new_end =
+        getStrand().getBases().getComplementPosition(start);
+      final int new_start =
+        getStrand().getBases().getComplementPosition(end);
+
+      end = new_end;
+      start = new_start;
+//      System.out.println("Revcomp, so new start:"+start+"new end:"+end);
+    }
     final String sub_sequence;
-    final String whole_seq;
     
     // add 1 or 2 if necessary to make the range a multiple of 3
-    if(getStrand().isForwardStrand()) 
+    if(getStrand().isForwardStrand())
       end -= (end - start + 1) % 3;
-    else 
+    else
       start += (end - start + 1) % 3;
 
     try 
@@ -74,28 +90,8 @@ public class NcAlgorithm extends BaseAlgorithm
       throw new Error("internal error - unexpected exception: " + e);
     }
 
-    try
-    {
-      whole_seq = getStrand().getSubSequence(new Range(1, 671));
-    } 
-    catch(OutOfRangeException e) 
-    {
-      throw new Error("internal error - unexpected exception: " + e);
-    }
-
     final char[] sequence_raw;
-    if(getStrand().isForwardStrand())
-      sequence_raw = sub_sequence.toCharArray();
-    else
-      sequence_raw = Bases.complement(sub_sequence).toCharArray();
-/*
-    System.out.println("whole");
-    System.out.println(whole_seq_raw);
-    System.out.println("reverse, start: "+start+" end: "+end);
-    System.out.println(sequence_reverse_raw);
-    System.out.println("forward, start: "+start+" end: "+end);
-    System.out.println(sequence_raw);
-*/
+    sequence_raw = sub_sequence.toCharArray();
 
     float[][][][] p = new float [4][4][4][4]; // holds p
     float[][][][] obs_value = new float [4][4][4][4];
@@ -365,10 +361,8 @@ public class NcAlgorithm extends BaseAlgorithm
            F3[frame]= (F2[frame] + F4[frame])/2;
       }
       Nc[frame] = (9/F2[frame])+(5/F4[frame])+(3/F6[frame])+(1/F3[frame])+2;
-//      System.out.println("frame is "+frame+" and F2: "+(9/F2[frame])+" F3: "+(1/F3[frame])+" F4:  "+(5/F4[frame])+" F6: "+(3/F6[frame]));
       values[frame] = Nc[frame];
-//      values[frame] = 0;
-    } 
+    }
   } 
 
   /**
@@ -459,7 +453,7 @@ public class NcAlgorithm extends BaseAlgorithm
    **/
   protected Float getMaximumInternal() 
   {
-    return new Float(1000);
+    return new Float(10000000);
   }
 
   /**

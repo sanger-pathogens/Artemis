@@ -60,6 +60,22 @@ public class PositionalAsymmetryAlgorithm extends BaseAlgorithm
    **/
   public void getValues(int start, int end, final float [] values) 
   {
+    if(getStrand().isForwardStrand())  // rather than isRevCompDisplay()
+    {
+//    System.out.println("isRevCompDisplay does not activate here");
+    }
+    else
+    {
+      final int new_end =
+        getStrand().getBases().getComplementPosition(start);
+      final int new_start =
+        getStrand().getBases().getComplementPosition(end);
+
+      end = new_end;
+      start = new_start;
+//      System.out.println("Revcomp, so new start:"+start+"new end:"+end);
+    }
+    
     final String sequence;
 
     try 
@@ -183,7 +199,7 @@ public class PositionalAsymmetryAlgorithm extends BaseAlgorithm
       // iff the user has set the window size in the options file
       return super_window_size;
     }
-    return new Integer(250);
+    return new Integer(500);
   } 
 
   /**
@@ -239,7 +255,7 @@ public class PositionalAsymmetryAlgorithm extends BaseAlgorithm
    **/
   protected Float getMaximumInternal() 
   {
-    return new Float(100);
+    return new Float(10000);
   } 
 
   /**
@@ -256,10 +272,6 @@ public class PositionalAsymmetryAlgorithm extends BaseAlgorithm
    *  @return null is returned if this algorithm doesn't have an average or if
    *    the average can't be calculated.
    **/
-  public Float getAverage() 
-  {
-    return new Float(getStrand().getBases().getAverageGCPercent());
-  } 
   
   private static String makeName(final Strand strand) 
   {

@@ -34,6 +34,8 @@ import uk.ac.sanger.artemis.sequence.*;
  * Res 15:8023-40
  *
  *  @author Derek Gatherer
+ *  original version 27-08-03
+ *  revised 01-12-04
  **/
 
 public class ScaledChiAlgorithm extends BaseAlgorithm 
@@ -44,7 +46,7 @@ public class ScaledChiAlgorithm extends BaseAlgorithm
    **/
   public ScaledChiAlgorithm(final Strand strand) 
   {
-    super(strand, makeName(strand), "rewritten version 27-08-03");
+    super(strand, makeName(strand), "Scaled Chi Square");
     setScalingFlag(true);
   }
 
@@ -58,15 +60,30 @@ public class ScaledChiAlgorithm extends BaseAlgorithm
    **/
   public void getValues(int start, int end, final float [] values) 
   {
+    if(getStrand().isForwardStrand())  // rather than isRevCompDisplay()
+    {
+//    System.out.println("isRevCompDisplay does not activate here");
+    }
+    else
+    {
+      final int new_end =
+        getStrand().getBases().getComplementPosition(start);
+      final int new_start =
+        getStrand().getBases().getComplementPosition(end);
+
+      end = new_end;
+      start = new_start;
+//      System.out.println("Revcomp, so new start:"+start+"new end:"+end);
+    }
+    
     final String sub_sequence;
-    final String whole_seq;
     
     // add 1 or 2 if necessary to make the range a multiple of 3
-    if(getStrand().isForwardStrand()) 
+    if(getStrand().isForwardStrand())
       end -= (end - start + 1) % 3;
-    else 
+    else
       start += (end - start + 1) % 3;
-
+      
     try 
     {
       sub_sequence = getStrand().getSubSequence(new Range(start, end));
@@ -76,22 +93,14 @@ public class ScaledChiAlgorithm extends BaseAlgorithm
       throw new Error("internal error - unexpected exception: " + e);
     }
 
+//    System.out.println("start:"+start+"end:"+end);
+//    System.out.println(sub_sequence);
+
     final float[][][][] exp_value = new float[4][4][4][4];  // 3D for bases, 1 for frame
 
     final char[] sequence_raw;
-    if(getStrand().isForwardStrand())
-      sequence_raw = sub_sequence.toCharArray();
-    else
-      sequence_raw = Bases.complement(sub_sequence).toCharArray();
+    sequence_raw = sub_sequence.toCharArray();
 
-/*
-    System.out.println("whole");
-    System.out.println(whole_seq_raw);
-    System.out.println("reverse, start: "+start+" end: "+end);
-    System.out.println(sequence_reverse_raw);
-    System.out.println("forward, start: "+start+" end: "+end);
-    System.out.println(sequence_forward_raw);
-*/
     int[][][][] obs_value = new int [4][4][4][4];
     float[] chi_square = new float [3];
     
@@ -125,8 +134,6 @@ public class ScaledChiAlgorithm extends BaseAlgorithm
         this_f_base = sequence_raw[i + frame];
         next_f_base = sequence_raw[i + 1 + frame];
         last_f_base = sequence_raw[i + 2 + frame];
-        
-//      System.out.println("reading "+this_f_base+next_f_base+last_f_base);
 
         this_f_base_index = Bases.getIndexOfBase(this_f_base);
         next_f_base_index = Bases.getIndexOfBase(next_f_base);
@@ -238,7 +245,7 @@ public class ScaledChiAlgorithm extends BaseAlgorithm
       exp_value[3][3][2][frame] = (obs_value[3][3][0][frame]+obs_value[3][3][1][frame]+obs_value[3][3][2][frame]+obs_value[3][3][3][frame])/4;
       exp_value[3][3][3][frame] = (obs_value[3][3][0][frame]+obs_value[3][3][1][frame]+obs_value[3][3][2][frame]+obs_value[3][3][3][frame])/4;
 
-      chi_square[frame] = 0;
+//      chi_square[frame] = 0;
       exp_value[2][0][3][frame] = 0;  // don't count Met
       exp_value[0][3][3][frame] = 0;  // don't count Trp
       exp_value[0][2][2][frame] = 0;  // don't count STOP
@@ -270,7 +277,6 @@ public class ScaledChiAlgorithm extends BaseAlgorithm
           }
         }
       }
-//      System.out.println("frame is "+frame+" and start is "+start);
       values[frame] = chi_square[frame];
     }  // end of final frame loop
   } 

@@ -60,6 +60,22 @@ public class EntropyAlgorithm extends BaseAlgorithm
    **/
   public void getValues(int start, int end, final float [] values) 
   {
+    if(getStrand().isForwardStrand())  // rather than isRevCompDisplay()
+    {
+//    System.out.println("isRevCompDisplay does not activate here");
+    }
+    else
+    {
+      final int new_end =
+        getStrand().getBases().getComplementPosition(start);
+      final int new_start =
+        getStrand().getBases().getComplementPosition(end);
+
+      end = new_end;
+      start = new_start;
+//      System.out.println("Revcomp, so new start:"+start+"new end:"+end);
+    }
+    
     final String sequence;
     
     Collator co = Collator.getInstance();
@@ -75,13 +91,18 @@ public class EntropyAlgorithm extends BaseAlgorithm
       throw new Error("internal error - unexpected exception: " + e);
     }
 
-    for(int i = 0; i < sequence.length()-3; ++i) 
+//    System.out.println("start:"+start+"end:"+end);
+//    System.out.println(sequence);
+
+// calculates the overlapping triplet entropy
+
+    for(int i = 0; i < sequence.length()-3; ++i)   // increment by 1, therefore overlapping
     {
-      String codon = sequence.substring(i,i+3);
+      String codon = sequence.substring(i,i+3);   // codon String is 3 in length
       Integer number = (Integer)wordSet.get(codon);
       if(number == null)
 	number = new Integer(0);
-      wordSet.put(codon, new Integer(number.intValue()+1));
+      wordSet.put(codon, new Integer(number.intValue()+1)); // count them up
       total++;	      
     }
 
@@ -94,7 +115,7 @@ public class EntropyAlgorithm extends BaseAlgorithm
       String in_hash = e.getValue().toString();
       float as_num = Float.parseFloat(in_hash);
       float freq = as_num/total;
-      ent -= freq*Math.log(freq)/Math.log(2);
+      ent -= freq*Math.log(freq)/Math.log(2);  //  H = sigma(p* log(2) p)
     }
     values[0] = (float)ent;
   }
@@ -122,7 +143,7 @@ public class EntropyAlgorithm extends BaseAlgorithm
       // iff the user has set the window size in the options file
       return super_window_size;
     }
-    return new Integer(250);
+    return new Integer(500);
   } 
 
   /**
@@ -156,7 +177,7 @@ public class EntropyAlgorithm extends BaseAlgorithm
       // iff the user has set the minimum window size in the options file
       return super_min_window_size;
     }
-    return new Integer(10);
+    return new Integer(25);
   } 
 
   /**

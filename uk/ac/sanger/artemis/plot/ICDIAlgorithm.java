@@ -34,6 +34,8 @@ import uk.ac.sanger.artemis.sequence.*;
  * yeast cytochrome c-encoding genes. Gene 139:43-9
  *
  *  @author Derek Gatherer
+ *  original version 09-09-03
+ *  rewritten 01-12-04
  **/
 
 public class ICDIAlgorithm extends BaseAlgorithm 
@@ -44,7 +46,7 @@ public class ICDIAlgorithm extends BaseAlgorithm
    **/
   public ICDIAlgorithm(final Strand strand) 
   {
-    super(strand, makeName(strand), "rewritten version 09-09-03");
+    super(strand, makeName(strand), "ICDI");
     setScalingFlag(true);
   }
 
@@ -58,28 +60,33 @@ public class ICDIAlgorithm extends BaseAlgorithm
    **/
   public void getValues(int start, int end, final float [] values) 
   {
+    if(getStrand().isForwardStrand())  // rather than isRevCompDisplay()
+    {
+//    System.out.println("isRevCompDisplay does not activate here");
+    }
+    else
+    {
+      final int new_end =
+        getStrand().getBases().getComplementPosition(start);
+      final int new_start =
+        getStrand().getBases().getComplementPosition(end);
+
+      end = new_end;
+      start = new_start;
+//      System.out.println("Revcomp, so new start:"+start+"new end:"+end);
+    }
+    
     final String sub_sequence;
-    final String whole_seq;
     
     // add 1 or 2 if necessary to make the range a multiple of 3
-//    start += (start % 3);
-    if(getStrand().isForwardStrand()) 
+    if(getStrand().isForwardStrand())
       end -= (end - start + 1) % 3;
-    else 
+    else
       start += (end - start + 1) % 3;
 
     try 
     {
       sub_sequence = getStrand().getSubSequence(new Range(start, end));
-    } 
-    catch(OutOfRangeException e) 
-    {
-      throw new Error("internal error - unexpected exception: " + e);
-    }
-
-    try 
-    {
-      whole_seq = getStrand().getSubSequence(new Range(1, 671));
     } 
     catch(OutOfRangeException e) 
     {
@@ -123,8 +130,6 @@ public class ICDIAlgorithm extends BaseAlgorithm
         this_f_base = sequence_forward_raw[i + frame];
         next_f_base = sequence_forward_raw[i + 1 + frame];
         last_f_base = sequence_forward_raw[i + 2 + frame];
-        
-//      System.out.println("reading "+this_f_base+next_f_base+last_f_base);
 
         this_f_base_index = Bases.getIndexOfBase(this_f_base);
         next_f_base_index = Bases.getIndexOfBase(next_f_base);
@@ -148,7 +153,6 @@ public class ICDIAlgorithm extends BaseAlgorithm
         icdi[frame] += Math.pow((rscu-1),2)/2;
         rscu = obs_value[0][0][1][frame]/exp;
         icdi[frame] += Math.pow((rscu-1),2)/2;
- //       System.out.println("Phe UUU has "+obs_value[0][0][1][frame]+" occurrences, is expected "+exp+" and contributes "+(Math.pow((rscu-1),2)/2));
       }
  // Leu = 002 003 100 101 102 103
       exp = (obs_value[0][0][2][frame]+obs_value[0][0][3][frame]+obs_value[1][0][0][frame]
@@ -352,7 +356,6 @@ public class ICDIAlgorithm extends BaseAlgorithm
         rscu =  obs_value[3][3][3][frame]/exp;
         icdi[frame] += Math.pow((rscu-1),2)/12;
       }
-//      System.out.println("frame is "+frame+" and start is "+start);
       values[frame] = icdi[frame]/18;
     }
   } 
