@@ -160,12 +160,12 @@ sub process_fasta
 
   @protein_ids = sort keys %hash;
 
-  my $protein_db = "swall";
+  my $protein_db = "uniprot";
 
   # look for each of the IDs from the FASTA output in each of the DBs
 
   for my $id (@protein_ids) {
-    my $fetch = "getz -sf fasta -f seq [swall-id:$id]";
+    my $fetch = "getz -sf fasta -f seq [uniprot-acc:$id]";
 
     my $temp_seq = "";
 
@@ -230,8 +230,15 @@ while (defined ($file = <>)) {
   }
 }'
 
-perl -w -e "$PERL_PROG" "$@"
+echo "Arguments: $@"
+test=`wc -l "$@" | awk '{print $1}'`
 
+if [ $test != 1 ]
+then
+  perl -w -e "$PERL_PROG" "$@"
+else
+  perl -w -e "$PERL_PROG_FASTA" "$@"
+fi
 
 #if [ $# != 1 ]
 #then
