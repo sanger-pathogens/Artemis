@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCFrameAlgorithm.java,v 1.1 2004-06-09 09:51:28 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCFrameAlgorithm.java,v 1.2 2004-11-30 11:08:55 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -36,24 +36,24 @@ import uk.ac.sanger.artemis.io.Range;
  *  constructor.
  *
  *  @author Kim Rutherford
- *  @version $Id: GCFrameAlgorithm.java,v 1.1 2004-06-09 09:51:28 tjc Exp $
+ *  @version $Id: GCFrameAlgorithm.java,v 1.2 2004-11-30 11:08:55 tjc Exp $
  **/
-
-public class GCFrameAlgorithm extends BaseAlgorithm {
+public class GCFrameAlgorithm extends BaseAlgorithm 
+{
   /**
    *  Create a new GCFrameAlgorithm object.
    *  @param strand The Strand to do the calculation on.
    **/
-  public GCFrameAlgorithm (final Strand strand) {
-    super (strand, makeName (strand), "gc_frame");
-
-    setScalingFlag (true);
+  public GCFrameAlgorithm(final Strand strand) 
+  {
+    super(strand, makeName(strand), "gc_frame");
+    setScalingFlag(true);
   }
 
   /**
-   *  This is used as temporary storage by getValues ().
+   *  This is used as temporary storage by getValues().
    **/
-  private int gc_counts [] = new int [getValueCount ()];
+  private int gc_counts [] = new int [getValueCount()];
 
   /**
    *  Return the percent gc between a pair of bases in each of the three
@@ -67,77 +67,82 @@ public class GCFrameAlgorithm extends BaseAlgorithm {
    *    start, start+3, start+6, etc, the second value is start+1, start+4,
    *    etc.
    **/
-  public void getValues (int start, int end, final float [] values) {
-    if (isRevCompDisplay ()) {
+  public void getValues(int start, int end, final float [] values) 
+  {
+    if(isRevCompDisplay())
+    {
       final int new_end =
-        getStrand ().getBases ().getComplementPosition (start);
+        getStrand().getBases().getComplementPosition(start);
       final int new_start =
-        getStrand ().getBases ().getComplementPosition (end);
+        getStrand().getBases().getComplementPosition(end);
 
       end = new_end;
       start = new_start;
     }
 
     // add 1 or 2 if necessary to make the range a multiple of 3
-    if (getStrand ().isForwardStrand ()) {
+    if(getStrand().isForwardStrand())
       end -= (end - start + 1) % 3;
-    } else {
+    else
       start += (end - start + 1) % 3;
-    }
 
-    for (int i = 0 ; i < getValueCount () ; ++i) {
+    for(int i = 0; i < getValueCount(); ++i)
       gc_counts[i] = 0;
-    }
     
     final String sub_sequence;
 
-    try {
-      sub_sequence = getStrand ().getRawSubSequence (new Range (start, end));
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+    try 
+    {
+      sub_sequence = getStrand().getRawSubSequence(new Range(start, end));
+    } 
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
 
-    final int sub_sequence_length = sub_sequence.length ();
+    final int sub_sequence_length = sub_sequence.length();
 
-    if (getStrand ().isForwardStrand ()) {
-      for (int i = 0 ; i < sub_sequence_length ; i += 3) {
-        for (int frame = 0 ; frame < 3 ; ++frame) {
-          final char this_char = sub_sequence.charAt (i + frame);
+    if(getStrand().isForwardStrand()) 
+    {
+      for(int i = 0 ; i < sub_sequence_length ; i += 3) 
+      {
+        for(int frame = 0 ; frame < 3 ; ++frame) 
+        {
+          final char this_char = sub_sequence.charAt(i + frame);
 
-          if (this_char == 'g' || this_char == 'c') {
+          if(this_char == 'g' || this_char == 'c') 
             ++gc_counts[(frame + start) % 3];
-          }
         }
       }
-    } else {
-      final int whole_sequence_length = getStrand ().getSequenceLength ();
-
+    } 
+    else
+    {
+      final int whole_sequence_length = getStrand().getSequenceLength();
       final int whole_sequence_length_mod3 = whole_sequence_length % 3;
 
-      for (int i = 0 ;
-           i < sub_sequence_length ;
-           i += 3) {
-        for (int frame = 0 ; frame < 3 ; ++frame) {
-          final char this_char = sub_sequence.charAt (i + frame);
+      for(int i = 0; i < sub_sequence_length; i += 3)
+      {
+        for(int frame = 0; frame < 3; ++frame) 
+        {
+          final char this_char = sub_sequence.charAt(i + frame);
 
-          if (this_char == 'g' || this_char == 'c') {
+          if(this_char == 'g' || this_char == 'c') 
             ++gc_counts[(frame + start + 3 - whole_sequence_length_mod3) % 3];
-          }
         }
       }
     }
 
-    for (int frame = 0 ; frame < 3 ; ++frame) {
-      // multiply by 3 because we are taking every third base
+    // multiply by 3 because we are taking every third base
+    for(int frame = 0 ; frame < 3 ; ++frame) 
       values[frame] = 1.0F * gc_counts[frame]/sub_sequence_length * 3 * 100;
-    }
   }
 
   /**
-   *  Return the number of values a call to getValues () will return - three
+   *  Return the number of values a call to getValues() will return - three
    *  in this case.
    **/
-  public int getValueCount () {
+  public int getValueCount()
+  {
     return 3;
   }
 
@@ -146,14 +151,16 @@ public class GCFrameAlgorithm extends BaseAlgorithm {
    *  @return null is returned if this algorithm doesn't have optimal window
    *    size.
    **/
-  public Integer getDefaultWindowSize () {
-    final Integer super_window_size = super.getDefaultWindowSize ();
-    if (super_window_size != null) {
-      // the superclass version of getDefaultWindowSize () returns non-null
+  public Integer getDefaultWindowSize()
+  {
+    final Integer super_window_size = super.getDefaultWindowSize();
+    if(super_window_size != null) 
+    {
+      // the superclass version of getDefaultWindowSize() returns non-null
       // iff the user has set the window size in the options file
       return super_window_size;
     }
-    return new Integer (120);
+    return new Integer(120);
   }
 
   /**
@@ -161,14 +168,16 @@ public class GCFrameAlgorithm extends BaseAlgorithm {
    *  @return null is returned if this algorithm doesn't have maximum window
    *    size.
    **/
-  public Integer getDefaultMaxWindowSize () {
-    final Integer super_max_window_size = super.getDefaultMaxWindowSize ();
-    if (super_max_window_size != null) {
-      // the superclass version of getDefaultMaxWindowSize () returns non-null
+  public Integer getDefaultMaxWindowSize()
+  {
+    final Integer super_max_window_size = super.getDefaultMaxWindowSize();
+    if(super_max_window_size != null) 
+    {
+      // the superclass version of getDefaultMaxWindowSize() returns non-null
       // iff the user has set the max window size in the options file
       return super_max_window_size;
     }
-    return new Integer (500);
+    return new Integer(500);
   }
 
   /**
@@ -176,14 +185,16 @@ public class GCFrameAlgorithm extends BaseAlgorithm {
    *  @return null is returned if this algorithm doesn't have minimum window
    *    size.
    **/
-  public Integer getDefaultMinWindowSize () {
-    final Integer super_min_window_size = super.getDefaultMinWindowSize ();
-    if (super_min_window_size != null) {
-      // the superclass version of getDefaultMinWindowSize () returns non-null
+  public Integer getDefaultMinWindowSize()
+  {
+    final Integer super_min_window_size = super.getDefaultMinWindowSize();
+    if(super_min_window_size != null) 
+    {
+      // the superclass version of getDefaultMinWindowSize() returns non-null
       // iff the user has set the minimum window size in the options file
       return super_min_window_size;
     }
-    return new Integer (24);
+    return new Integer(24);
   }
 
   /**
@@ -191,28 +202,30 @@ public class GCFrameAlgorithm extends BaseAlgorithm {
    *  @return null is returned if this algorithm doesn't have optimal step
    *    size.
    **/
-  public Integer getDefaultStepSize (int window_size) {
-    if (window_size > 8) {
-      return new Integer (window_size / 8);
-    } else {
+  public Integer getDefaultStepSize(int window_size) 
+  {
+    if(window_size > 8)
+      return new Integer(window_size / 8);
+    else
       return null;
-    }
   }
 
   /**
    *  Return the maximum value of this algorithm.
    *  @return The maximum is 100.
    **/
-  protected Float getMaximumInternal () {
-    return new Float (100);
+  protected Float getMaximumInternal()
+  {
+    return new Float(100);
   }
 
   /**
    *  Return the minimum value of this algorithm.
    *  @return The minimum is 0.
    **/
-  protected Float getMinimumInternal () {
-    return new Float (0);
+  protected Float getMinimumInternal() 
+  {
+    return new Float(0);
   }
 
   /**
@@ -220,19 +233,20 @@ public class GCFrameAlgorithm extends BaseAlgorithm {
    *  @return null is returned if this algorithm doesn't have an average or if
    *    the average can't be calculated.
    **/
-  public Float getAverage () {
-    return new Float (getStrand ().getBases ().getAverageGCPercent ());
+  public Float getAverage() 
+  {
+    return new Float(getStrand().getBases().getAverageGCPercent());
   }
 
   /**
    *  Returns "GC Frame Plot" if the given strand is a forward strand
    *  otherwise returns "Reverse GC Frame Plot".
    **/
-  private static String makeName (final Strand strand) {
-    if (strand.isForwardStrand ()) {
+  private static String makeName(final Strand strand) 
+  {
+    if(strand.isForwardStrand())
       return "GC Frame Plot";
-    } else {
+    else
       return "Reverse GC Frame Plot";
-    }
   }
 }
