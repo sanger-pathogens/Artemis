@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.8 2004-10-04 10:00:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.9 2004-11-01 15:41:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,7 +44,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.8 2004-10-04 10:00:34 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.9 2004-11-01 15:41:12 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -1044,6 +1044,25 @@ public class AlignmentViewer extends CanvasPanel
     {
       drawAlignments(g);
       drawLabels(g);
+    }
+  }
+
+ 
+  /**
+   *  The paint function for printing.
+   *  
+   *  @param g The Graphics object of the canvas.
+   *  @param drawLabel draw the labels
+   **/
+  protected void paintComponentForPrint(final Graphics g, final boolean drawLabel)
+  {
+    super.paintComponent(g);
+
+    if(last_subject_event != null && last_query_event != null)
+    {
+      drawAlignments(g);
+      if(drawLabel)
+        drawLabels(g);
     }
   }
 

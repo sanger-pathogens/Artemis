@@ -47,6 +47,7 @@ public class PrintACT extends ScrollPanel
 
   /** act display to create image from */
   private MultiComparator mc;
+  private JCheckBox drawLabels = new JCheckBox("Show labels on alignment");
 
   public PrintACT(MultiComparator mc)
   {
@@ -96,7 +97,7 @@ public class PrintACT extends ScrollPanel
 
       if(i < mc.getAlignmentViewerArray().length)
       {
-        mc.getAlignmentViewerArray()[i].paintComponent(g2d);
+        mc.getAlignmentViewerArray()[i].paintComponentForPrint(g2d,drawLabels.isSelected());
         g2d.translate(0,mc.getAlignmentViewerArray()[i].getHeight());
       }
     }
@@ -197,6 +198,21 @@ public class PrintACT extends ScrollPanel
       }
     });
 
+    JMenu optionsmenu = new JMenu("Options");
+    menuBar.add(optionsmenu);
+
+// draw labels
+    JMenuItem showLabels = new JMenuItem("Display Labels");
+    showLabels.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        drawLabels.setSelected(!drawLabels.isSelected());
+        repaint();
+      }
+    });
+    optionsmenu.add(showLabels);
+
     f.setJMenuBar(menuBar);
     f.setVisible(true);
   }
@@ -234,6 +250,11 @@ public class PrintACT extends ScrollPanel
     bacross.add(formatSelect);
     YBox.add(bacross);
 
+    bacross = Box.createHorizontalBox();
+    bacross.add(Box.createHorizontalGlue());
+    bacross.add(drawLabels);
+    YBox.add(bacross);
+    
     // file prefix & format options
     fc.setAccessory(YBox);
     int n = fc.showSaveDialog(null);
