@@ -861,16 +861,18 @@ public class DataCollectionPane extends JScrollPane
       buff.append(" "+hit.getDescription()+";");
     if(hit.getLength() != null)
       buff.append(" length="  + hit.getLength()+";");
+    if(hit.getIdentity() != null)
+      buff.append(" id " + hit.getIdentity()+";");
     if(hit.getUngapped() != null)
-      buff.append("ungapped id=" + hit.getUngapped()+";");
+      buff.append(" ungapped id " + hit.getUngapped()+";");
     if(hit.getEValue() != null)
       buff.append(" E()="     + hit.getEValue()+";");
     if(hit.getOverlap() != null)
       buff.append(" "+hit.getOverlap()+";");
     if(hit.getQueryRange() != null)
-      buff.append("query "   + hit.getQueryRange()+";");
+      buff.append(" query "   + hit.getQueryRange()+";");
     if(hit.getSubjectRange() != null)
-      buff.append("subject " + hit.getSubjectRange());
+      buff.append(" subject " + hit.getSubjectRange());
     buff.append("\"");
 
     ann.insert("\n/similarity=\""+resultFormat+";"+
