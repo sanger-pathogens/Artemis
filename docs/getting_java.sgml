@@ -24,8 +24,8 @@ Newer releases from Sun may fix these problems.
     </LISTITEM>
     <LISTITEM>
       <PARA>
-Windows users should get latest <ULINK
-URL="http://java.sun.com/">Java version</ULINK> or better
+Windows users should get latest stable release from<ULINK
+URL="http://java.sun.com/">Java version</ULINK> 
 from Sun Microsystems.
 On some versions of Windows (such as Windows 2000) you will need be have
 administrator privileges for your machine to successfully install Java.
@@ -33,7 +33,7 @@ administrator privileges for your machine to successfully install Java.
     </LISTITEM>
     <LISTITEM>
       <PARA>
-Macintosh users with MacOS X (ie MacOS version 10) or better do not need to
+Macintosh users with MacOS X (i.e. MacOS version 10) or better do not need to
 install Java because it comes as a standard feature of the operating system.
 Note, however, that Java on the older versions of MacOS X has irritating
 bugs so we recommend using the latest version of MacOS, which runs &prog; well.
