@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.2 2004-07-01 11:26:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.3 2004-09-30 16:17:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,7 +44,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.2 2004-07-01 11:26:55 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.3 2004-09-30 16:17:32 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -74,7 +74,6 @@ public class FeatureDisplay extends EntryGroupPanel
   public final static int REVERSE_FRAME_2 = FeatureSegment.REVERSE_FRAME_2;
   public final static int REVERSE_FRAME_1 = FeatureSegment.REVERSE_FRAME_1;
   public final static int SCALE_LINE      = FeatureSegment.SCALE_LINE;
-
 
   /**
    *  The JScrollBar for this FeatureDisplay object.  We create the scrollbar
@@ -333,20 +332,17 @@ public class FeatureDisplay extends EntryGroupPanel
 
     if(scrollbar_style == SCROLLBAR_AT_TOP) 
       createScrollbar(true);
-    else
-    {
-      if(scrollbar_style == SCROLLBAR_AT_BOTTOM) 
-        createScrollbar(false);
-    }
+    else if(scrollbar_style == SCROLLBAR_AT_BOTTOM)
+      createScrollbar(false);
 
     createScaleScrollbar();
-    fixCanvasSize();
-    fixScrollbar();
+//  fixCanvasSize();
+//  fixScrollbar();
     addListeners();
 
     needVisibleFeatureVectorUpdate();
 
-    fireAdjustmentEvent(DisplayAdjustmentEvent.ALL_CHANGE_ADJUST_EVENT);
+//  fireAdjustmentEvent(DisplayAdjustmentEvent.ALL_CHANGE_ADJUST_EVENT);
 
     getSelection().addSelectionChangeListener(this);
     getGotoEventSource().addGotoListener(this);
@@ -366,10 +362,10 @@ public class FeatureDisplay extends EntryGroupPanel
    *  for FeatureDisplay components
    **/
 // tjc - deprecated replaced by isFocusable().
-//public boolean isFocusTraversable()
-//{
-//  return true;
-//}
+  public boolean isFocusTraversable()
+  {
+    return true;
+  }
 
   /**
    *  Overriden to call fixCanvasSize()
@@ -456,8 +452,8 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       this.show_source_features = show_source_features;
       needVisibleFeatureVectorUpdate();
-//    getCanvas().repaint();
-      repaint();
+      getCanvas().repaint();
+//    repaint();
     } 
   }
 
@@ -3636,6 +3632,7 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private void addListeners() 
   {
+
     getCanvas().addMouseListener(new MouseAdapter() 
     {
       /**
@@ -4151,6 +4148,7 @@ public class FeatureDisplay extends EntryGroupPanel
   private void createScrollbar(final boolean scrollbar_at_top) 
   {
     scrollbar = new JScrollBar(Scrollbar.HORIZONTAL);
+     
     scrollbar.addAdjustmentListener(new AdjustmentListener() 
     {
       public void adjustmentValueChanged(AdjustmentEvent e) 
@@ -4168,20 +4166,20 @@ public class FeatureDisplay extends EntryGroupPanel
           }
 
           fireAdjustmentEvent(DisplayAdjustmentEvent.SCROLL_ADJUST_EVENT);
-
           needVisibleFeatureVectorUpdate();
           getCanvas().repaint();
         }
       }
     });
 
+
     if(scrollbar_at_top) 
       getMidPanel().add(scrollbar, "North");
     else 
       getMidPanel().add(scrollbar, "South");
     
-    fixScrollbar();
-    fireAdjustmentEvent(DisplayAdjustmentEvent.ALL_CHANGE_ADJUST_EVENT);
+//  fixScrollbar();
+//  fireAdjustmentEvent(DisplayAdjustmentEvent.ALL_CHANGE_ADJUST_EVENT);
   }
 
   /**
@@ -4224,7 +4222,7 @@ public class FeatureDisplay extends EntryGroupPanel
     // deadlock
     synchronized(this) 
     {
-      targets =(Vector) listeners.clone();
+      targets = (Vector)listeners.clone();
     }
 
     for(int i = 0; i < targets.size(); ++i) 
