@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.3 2004-11-29 17:19:30 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.4 2004-12-21 10:27:44 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -32,6 +32,7 @@ import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.sequence.Bases;
+import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -42,7 +43,7 @@ import javax.swing.border.Border;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.3 2004-11-29 17:19:30 tjc Exp $
+ *  @version $Id: Splash.java,v 1.4 2004-12-21 10:27:44 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -565,7 +566,9 @@ abstract public class Splash extends JFrame
                 Options.getOptions().setProperty("start_codons",sbuff.toString());
               }
             }
-            
+           
+            AminoAcidSequence.setGeneCode();
+ 
             if(helix_canvas != null)
               helix_canvas.repaint();
           }
