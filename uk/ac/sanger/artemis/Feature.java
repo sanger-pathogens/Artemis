@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.2 2004-11-17 13:20:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.3 2004-11-23 13:43:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -60,23 +60,23 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.2 2004-11-17 13:20:34 tjc Exp $
+ *  @version $Id: Feature.java,v 1.3 2004-11-23 13:43:57 tjc Exp $
  **/
 
 public class Feature
     implements EntryChangeListener, Selectable, SequenceChangeListener,
-               MarkerChangeListener, OptionChangeListener {
+               MarkerChangeListener, OptionChangeListener
+{
   /**
    *  Create a new Feature object.
    *  @param entry The uk.ac.sanger.artemis.Entry object that contains this Feature.
    *  @param embl_feature The embl.Feature object that this class is
    *    providing a wrapper for.
    **/
-  Feature (uk.ac.sanger.artemis.io.Feature embl_feature) {
+  public Feature(uk.ac.sanger.artemis.io.Feature embl_feature) 
+  {
     this.embl_feature = embl_feature;
-
     embl_feature.setUserData (this);
-
     old_location = embl_feature.getLocation ();
   }
 
@@ -87,19 +87,24 @@ public class Feature
    *
    *  NOTE: not active currently
    **/
-  public void entryChanged (EntryChangeEvent event) {
+  public void entryChanged(EntryChangeEvent event) 
+  {
 
   }
 
   /**
    *  This method fixes up the location of this Feature when a Marker changes.
    **/
-  public void markerChanged (final MarkerChangeEvent event) {
-    try {
-      final Location old_location = getLocation ();
-      updateEMBLFeatureLocation ();
-      locationChanged (old_location);
-    } catch (ReadOnlyException e) {
+  public void markerChanged(final MarkerChangeEvent event) 
+  {
+    try 
+    {
+      final Location old_location = getLocation();
+      updateEMBLFeatureLocation();
+      locationChanged(old_location);
+    }
+    catch(ReadOnlyException e) 
+    {
       // ignore the change
     }
   }
@@ -108,8 +113,10 @@ public class Feature
    *  This method fixes up the location of this Feature when a sequence
    *  changes.
    **/
-  public void sequenceChanged (final SequenceChangeEvent event) {
-    try {
+  public void sequenceChanged(final SequenceChangeEvent event) 
+  {
+    try 
+    {
       // we don't send a FeatureChangeEvent because the logical location
       // hasn't changed
 
@@ -117,60 +124,67 @@ public class Feature
       // before this method is called because the markers are added as
       // SequenceChangeListener with a higher priority than this Feature
 
-      if (event.getType () == SequenceChangeEvent.REVERSE_COMPLEMENT) {
-        reverseComplement (getEntry ().getBases ().getLength ());
-      } else {
-        final Location old_location = getLocation ();
+      if(event.getType() == SequenceChangeEvent.REVERSE_COMPLEMENT) 
+        reverseComplement(getEntry().getBases().getLength());
+      else 
+      {
+        final Location old_location = getLocation();
 
         // if the event is contained within this feature then the feature
         // sequence may have changed
-        final Range this_feature_range = getMaxRawRange ();
+        final Range this_feature_range = getMaxRawRange();
 
         boolean feature_changed = false;
 
-        if (event.getPosition () >= this_feature_range.getStart () &&
-            event.getPosition () <= this_feature_range.getEnd () + 1) {
+        if(event.getPosition() >= this_feature_range.getStart() &&
+           event.getPosition() <= this_feature_range.getEnd() + 1) 
+        {
           // check each segment
-          final FeatureSegmentVector segments = getSegments ();
+          final FeatureSegmentVector segments = getSegments();
 
-          for (int i = 0 ; i < segments.size () ; ++i) {
-            final FeatureSegment this_segment = segments.elementAt (i);
+          for(int i = 0 ; i < segments.size() ; ++i) 
+          {
+            final FeatureSegment this_segment = segments.elementAt(i);
 
-            final Range this_segment_range = this_segment.getRawRange ();
+            final Range this_segment_range = this_segment.getRawRange();
 
-            if (event.getPosition () >= this_segment_range.getStart () &&
-                event.getPosition () <= this_segment_range.getEnd () + 1) {
+            if(event.getPosition() >= this_segment_range.getStart() &&
+               event.getPosition() <= this_segment_range.getEnd() + 1) 
               feature_changed = true;
-            }
           }
         }
 
-        updateEMBLFeatureLocation ();
+        updateEMBLFeatureLocation();
 
-        if (feature_changed) {
-          resetCache ();
-          locationChanged (old_location);
+        if(feature_changed) 
+        {
+          resetCache();
+          locationChanged(old_location);
         }
       }
-    } catch (ReadOnlyException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+    }
+    catch(ReadOnlyException e)
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
   }
 
   /**
    *  Invoked when an Option is changed.
    **/
-  public void optionChanged (OptionChangeEvent event) {
+  public void optionChanged(OptionChangeEvent event) 
+  {
     // if the eukaryotic mode option changes the sequence may change (ie. the
     // start codon may need to be translated differently) - see
-    // getTranslation ()
-    locationChanged (getLocation ());
+    // getTranslation()
+    locationChanged(getLocation ());
   }
 
   /**
    *  Returns the embl feature that was passed to the constructor.
    **/
-  uk.ac.sanger.artemis.io.Feature getEmblFeature () {
+  uk.ac.sanger.artemis.io.Feature getEmblFeature() 
+  {
     return embl_feature;
   }
 
@@ -180,22 +194,24 @@ public class Feature
    *  Genbank feature and EMBL format otherwise.
    *  @param writer The record is written to this Writer.
    **/
-  public void writeNative (final Writer writer)
-      throws IOException {
-    if (getEmblFeature () instanceof StreamFeature) {
-      ((StreamFeature) getEmblFeature ()).writeToStream (writer);
-    } else {
-      final EntryInformation entry_info = getEntry ().getEntryInformation ();
+  public void writeNative(final Writer writer)
+      throws IOException 
+  {
+    if(getEmblFeature() instanceof StreamFeature) 
+      ((StreamFeature)getEmblFeature()).writeToStream (writer);
+    else 
+    {
+      final EntryInformation entry_info = getEntry().getEntryInformation();
 
       // this is a hack to make the correct EntryInformation object available
       // to the feature writing code.
       final uk.ac.sanger.artemis.io.EmblDocumentEntry document_entry =
-        new uk.ac.sanger.artemis.io.EmblDocumentEntry (entry_info);
+        new uk.ac.sanger.artemis.io.EmblDocumentEntry(entry_info);
 
       final uk.ac.sanger.artemis.io.Feature returned_feature =
-        document_entry.forcedAdd (new EmblStreamFeature (getEmblFeature ()));
+        document_entry.forcedAdd(new EmblStreamFeature(getEmblFeature()));
 
-      ((EmblStreamFeature) returned_feature).writeToStream (writer);
+      ((EmblStreamFeature)returned_feature).writeToStream(writer);
     }
   }
 
@@ -203,122 +219,126 @@ public class Feature
    *  Write a PIR database record of this feature to the given Writer.
    *  @param writer The record is written to this Writer.
    **/
-  public void writePIROfFeature (final Writer writer) {
-    final String gene_name = getGeneName ();
+  public void writePIROfFeature(final Writer writer) 
+  {
+    final String gene_name = getGeneName();
 
     final String pir_name;
 
-    if (gene_name == null) {
-      if (getLabel () == null) {
-        pir_name = getKey ().toString ();
-      } else {
-        pir_name = getLabel ();
-      }
-    } else {
-      pir_name = gene_name;
+    if(gene_name == null) 
+    {
+      if(getLabel() == null) 
+        pir_name = getKey().toString();
+      else 
+        pir_name = getLabel();
     }
+    else 
+      pir_name = gene_name;
 
     final String header_line =
       ">BL;" + pir_name + ", " +
-      getEntry ().getName () + " " +
-      getWriteRange () +
-      " MW:" + (int) getMolecularWeight ();
+      getEntry().getName() + " " +
+      getWriteRange() +
+      " MW:" + (int) getMolecularWeight();
 
-    final PrintWriter print_writer = new PrintWriter (writer);
+    final PrintWriter print_writer = new PrintWriter(writer);
 
-    print_writer.println (header_line);
+    print_writer.println(header_line);
 
     final String translation_string =
-      getTranslation ().toString ().toUpperCase ();
+      getTranslation().toString().toUpperCase();
 
-    wrapAndWrite (print_writer, translation_string, 80);
-
-    print_writer.println ("*");
-
-    print_writer.flush ();
+    wrapAndWrite(print_writer, translation_string, 80);
+    print_writer.println("*");
+    print_writer.flush();
   }
 
   /**
    *  Write the bases of this feature to the given Writer.
    *  @param writer The bases are written to this Writer.
    **/
-  public void writeBasesOfFeature (final Writer writer)
-      throws IOException {
+  public void writeBasesOfFeature(final Writer writer)
+      throws IOException 
+  {
     final FastaStreamSequence stream_sequence =
-      new FastaStreamSequence (getBases (),
-                               getIDString () + ", " +
-                               getWriteRange ());
+      new FastaStreamSequence(getBases(),
+                              getIDString() + ", " +
+                              getWriteRange());
 
-    stream_sequence.writeToStream (writer);
+    stream_sequence.writeToStream(writer);
   }
 
   /**
    *  Write the amino acid symbols of this feature to the given Writer.
    *  @param writer The amino acids are written to this Writer.
    **/
-  public void writeAminoAcidsOfFeature (final Writer writer)
-      throws IOException {
-    final StringBuffer header_buffer = new StringBuffer (">");
+  public void writeAminoAcidsOfFeature(final Writer writer)
+      throws IOException 
+  {
+    final StringBuffer header_buffer = new StringBuffer(">");
 
-    header_buffer.append (getSystematicName ());
-    header_buffer.append (" ");
-    header_buffer.append (getIDString ());
-    header_buffer.append (" ");
+    header_buffer.append(getSystematicName());
+    header_buffer.append(" ");
+    header_buffer.append(getIDString());
+    header_buffer.append(" ");
 
-    final String product = getProductString ();
+    final String product = getProductString();
 
-    if (product == null) {
+    if (product == null)
       header_buffer.append ("undefined product");
-    } else {
+    else
       header_buffer.append (product);
-    }
 
-    header_buffer.append (" ").append (getWriteRange ()).append (" MW:");
-    header_buffer.append ((int) getMolecularWeight ());
+    header_buffer.append(" ").append(getWriteRange()).append(" MW:");
+    header_buffer.append((int) getMolecularWeight());
 
-    final PrintWriter print_writer = new PrintWriter (writer);
+    final PrintWriter print_writer = new PrintWriter(writer);
 
-    print_writer.println (header_buffer);
+    print_writer.println(header_buffer);
 
     final String translation_string =
-      getTranslation ().toString ().toUpperCase ();
+      getTranslation().toString().toUpperCase();
 
-    wrapAndWrite (print_writer, translation_string, 60);
+    wrapAndWrite(print_writer, translation_string, 60);
 
-    print_writer.flush ();
+    print_writer.flush();
   }
 
   /**
    *  Return a String containing the bases upstream of this feature.
    *  @param count The number of (immediately) upstream bases to return.
    **/
-  public String getUpstreamBases (final int count) {
-    final int feature_start_base = getFirstBase ();
-
+  public String getUpstreamBases(final int count) 
+  {
+    final int feature_start_base = getFirstBase();
     final int start_base;
-
     final int end_base;
 
-    if (feature_start_base == 1) {
+    if(feature_start_base == 1) 
+    {
       // there are no bases before this feature
       return "";
-    } else {
+    }
+    else
+    {
       end_base = feature_start_base - 1;
 
-      if (feature_start_base > count) {
+      if(feature_start_base > count) 
         start_base = feature_start_base - count;
-      } else {
+      else 
         start_base = 1;
-      }
     }
 
     final String bases_string;
 
-    try {
+    try 
+    {
       bases_string =
-        getStrand ().getSubSequence (new Range (start_base, end_base));
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+        getStrand().getSubSequence(new Range(start_base, end_base));
+    } 
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
 
     return bases_string;
@@ -328,48 +348,53 @@ public class Feature
    *  Return a String containing the bases downstream of this feature.
    *  @param count The number of (immediately) downstream bases to return.
    **/
-  public String getDownstreamBases (final int count) {
-    final int feature_end_base = getLastBase ();
-
+  public String getDownstreamBases(final int count) 
+  {
+    final int feature_end_base = getLastBase();
     final int start_base;
-
     final int end_base;
 
-    if (feature_end_base == getSequenceLength ()) {
+    if(feature_end_base == getSequenceLength())
+    {
       // there are no bases after this feature
       return "";
-    } else {
+    }
+    else 
+    {
       start_base = feature_end_base + 1;
 
-      if (getSequenceLength () - feature_end_base > count) {
+      if(getSequenceLength() - feature_end_base > count) 
         end_base = feature_end_base + count;
-      } else {
-        end_base = getSequenceLength ();
-      }
+      else 
+        end_base = getSequenceLength();
     }
 
     final String bases_string;
 
-    try {
+    try 
+    {
       bases_string =
-        getStrand ().getSubSequence (new Range (start_base, end_base));
-    } catch (OutOfRangeException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+        getStrand().getSubSequence(new Range(start_base, end_base));
+    } 
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
 
     return bases_string;
   }
 
   /**
-   *  Helper method for writePIROfFeature ().
+   *  Helper method for writePIROfFeature().
    *  @return A string of the form "100:200 reverse" or "1:2222 forward".
    **/
-  public String getWriteRange () {
-    return (isForwardFeature () ?
-       getFirstCodingBaseMarker ().getRawPosition () + ":" +
-       getLastBaseMarker ().getRawPosition () + " forward" :
-       getLastBaseMarker ().getRawPosition () + ":" +
-       getFirstCodingBaseMarker ().getRawPosition () + " reverse");
+  public String getWriteRange()
+  {
+    return (isForwardFeature() ?
+       getFirstCodingBaseMarker().getRawPosition() + ":" +
+       getLastBaseMarker().getRawPosition() + " forward" :
+       getLastBaseMarker().getRawPosition() + ":" +
+       getFirstCodingBaseMarker().getRawPosition() + " reverse");
   }
 
   /**
@@ -380,23 +405,22 @@ public class Feature
    *  @param wrap_column The lines of output will be no longer than this many
    *    characters.
    **/
-  private void wrapAndWrite (final PrintWriter writer,
-                             final String string,
-                             final int wrap_column) {
+  private void wrapAndWrite(final PrintWriter writer,
+                            final String string,
+                            final int wrap_column) 
+  {
     String remaining_string = string;
 
-    while (remaining_string.length () > 0) {
+    while(remaining_string.length () > 0) 
+    {
       int last_index = wrap_column;
 
-      if (wrap_column > remaining_string.length ()) {
-        last_index = remaining_string.length ();
-      }
+      if(wrap_column > remaining_string.length()) 
+        last_index = remaining_string.length();
 
-      final String write_string = remaining_string.substring (0, last_index);
-
-      writer.println (write_string);
-
-      remaining_string = remaining_string.substring (last_index);
+      final String write_string = remaining_string.substring(0, last_index);
+      writer.println(write_string);
+      remaining_string = remaining_string.substring(last_index);
     }
   }
 
@@ -404,42 +428,48 @@ public class Feature
    *  Return this Feature as a EMBL, Genbank or GFF formatted String
    *  (depending on the type of this Feature).
    **/
-   public String toString () {
-     final StringWriter string_writer = new StringWriter ();
+   public String toString() 
+   {
+     final StringWriter string_writer = new StringWriter();
 
-     try {
-       writeNative (string_writer);
-     } catch (IOException e) {
-       throw new Error ("internal error - unexpected exception: " + e);
+     try 
+     {
+       writeNative(string_writer);
+     } 
+     catch(IOException e) 
+     {
+       throw new Error("internal error - unexpected exception: " + e);
      }
 
-     return string_writer.toString () ;
+     return string_writer.toString() ;
    }
 
   /**
    *  Return a Reader object that gives an EMBL format version of this
    *  Feature when read.
    **/
-  public Reader toReader () {
-    return new StringReader (toString ());
+  public Reader toReader()
+  {
+    return new StringReader(toString());
   }
 
   /**
    *  Return true if and only if this Feature is on the forward strand.
    **/
-  public boolean isForwardFeature () {
-    if (getLocation ().isComplement ()) {
+  public boolean isForwardFeature() 
+  {
+    if(getLocation().isComplement()) 
       return false;
-    } else {
+    else
       return true;
-    }
   }
 
   /**
    *  Return the key of this Feature.
    **/
-  public Key getKey () {
-    return getEmblFeature ().getKey ();
+  public Key getKey()
+  {
+    return getEmblFeature().getKey();
   }
 
   /**
@@ -447,39 +477,42 @@ public class Feature
    *  one that should be displayed on the translation lines of the
    *  FeatureDisplay component rather than on the forward or backward strand.
    **/
-  public boolean isProteinFeature () {
-    if (getKey ().toString ().startsWith ("CDS") ||
-        getKey ().equals ("BLASTCDS")) {
+  public boolean isProteinFeature() 
+  {
+    if(getKey().toString().startsWith("CDS") ||
+       getKey().equals("BLASTCDS"))
       return true;
-    } else {
+    else
       return false;
-    }
   }
 
   /**
    *  Return true if and only if the key of this feature is CDS feature.
    **/
-  public boolean isCDS () {
-    if (getKey ().equals ("CDS")) {
+  public boolean isCDS() 
+  {
+    if(getKey().equals("CDS")) 
       return true;
-    } else {
+    else
       return false;
-    }
   }
 
   /**
    *  Return true if and only if the key of this feature is CDS feature and
    *  the feature has a /pseudo qualifier.
    **/
-  public boolean isPseudoCDS () {
-    try {
-      if (getKey ().equals ("CDS") && getQualifierByName ("pseudo") != null) {
+  public boolean isPseudoCDS() 
+  {
+    try 
+    {
+      if(getKey().equals("CDS") && getQualifierByName("pseudo") != null) 
         return true;
-      } else {
+      else 
         return false;
-      }
-    } catch (InvalidRelationException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+    }
+    catch(InvalidRelationException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
   }
 
@@ -487,15 +520,18 @@ public class Feature
    *  Return true if and only if the key of this feature is CDS feature and
    *  the feature has a /partial qualifier.
    **/
-  public boolean isPartialCDS () {
-    try {
-      if (getKey ().equals ("CDS") && getQualifierByName ("partial") != null) {
+  public boolean isPartialCDS() 
+  {
+    try 
+    {
+      if(getKey().equals("CDS") && getQualifierByName("partial") != null) 
         return true;
-      } else {
+      else
         return false;
-      }
-    } catch (InvalidRelationException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+    }
+    catch(InvalidRelationException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
   }
 
@@ -503,49 +539,52 @@ public class Feature
    *  Return true if and only if the key of this feature is an RNA feature or
    *  is a CDS feature and doesn't have a /pseudo qualifier.
    **/
-  public boolean isCodingFeature () {
-    if (getKey ().equals ("CDS") && ! isPseudoCDS () ||
-        getKey ().equals ("misc_RNA") ||
-        getKey ().equals ("mRNA") ||
-        getKey ().equals ("precursor_RNA") ||
-        getKey ().equals ("rRNA") ||
-        getKey ().equals ("scRNA") ||
-        getKey ().equals ("snRNA") ||
-        getKey ().equals ("tRNA")) {
+  public boolean isCodingFeature() 
+  {
+    if(getKey().equals("CDS") && ! isPseudoCDS() ||
+       getKey().equals("misc_RNA") ||
+       getKey().equals("mRNA") ||
+       getKey().equals("precursor_RNA") ||
+       getKey().equals("rRNA") ||
+       getKey().equals("scRNA") ||
+       getKey().equals("snRNA") ||
+       getKey().equals("tRNA")) 
       return true;
-    } else {
+    else 
       return false;
-    }
   }
 
   /**
    *  Return the Location of this Feature.
    **/
-  public Location getLocation () {
-    final Location current_location = getEmblFeature ().getLocation ();
-
+  public Location getLocation()
+  {
+    final Location current_location = getEmblFeature().getLocation();
     return current_location;
   }
 
   /**
    *  Return the embl.QualifierVector from the underlying embl.Feature object.
    **/
-  private QualifierVector getEmblQualifiers () {
-    return getEmblFeature ().getQualifiers ();
+  private QualifierVector getEmblQualifiers() 
+  {
+    return getEmblFeature().getQualifiers();
   }
 
   /**
    *  Return a Vector containing the qualifiers of this Feature.
    *  XXX - FIXME - should return a copy or be private
    **/
-  public QualifierVector getQualifiers () {
-    return getEmblQualifiers ();
+  public QualifierVector getQualifiers()
+  {
+    return getEmblQualifiers();
   }
 
   /**
    *  Return the Entry that owns this object.
    **/
-  public Entry getEntry () {
+  public Entry getEntry() 
+  {
     return entry;
   }
 
@@ -553,26 +592,30 @@ public class Feature
    *  Return the value of the first /codon_start qualifier as an integer or
    *  returns 1 if codon_start doesn't exist or if it makes no sense.
    **/
-  public int getCodonStart () {
-    try {
-      final String codon_start_string = getValueOfQualifier ("codon_start");
+  public int getCodonStart()
+  {
+    try 
+    {
+      final String codon_start_string = getValueOfQualifier("codon_start");
 
-      if (codon_start_string == null) {
+      if(codon_start_string == null) 
+      {
         // default value
         return 1;
       }
 
-      if (codon_start_string.equals ("2")) {
+      if(codon_start_string.equals("2")) 
         return 2;
-      } else {
-        if (codon_start_string.equals ("3")) {
+      else 
+      {
+        if(codon_start_string.equals("3")) 
           return 3;
-        } else {
-          // default value
-          return 1;
-        }
+        else 
+          return 1;  // default value
       }
-    } catch (InvalidRelationException e) {
+    } 
+    catch(InvalidRelationException e) 
+    {
       return 1;
     }
   }
@@ -582,67 +625,73 @@ public class Feature
    *  integer.
    *  @return The score or -1 if the feature has no /score qualifier.
    **/
-  public int getScore () {
-    try {
-      final String score_string = getValueOfQualifier ("score");
+  public int getScore() 
+  {
+    try
+    {
+      final String score_string = getValueOfQualifier("score");
 
-      if (score_string == null) {
+      if(score_string == null) 
+      {
         // default value
         return -1;
       }
 
-      try {
-        final int score_int = Float.valueOf (score_string).intValue ();
+      try 
+      {
+        final int score_int = Float.valueOf(score_string).intValue();
 
-        if (score_int > 100) {
+        if(score_int > 100) 
           return 100;
-        }
 
-        if (score_int < 0) {
+        if(score_int < 0)
           return 0;
-        }
 
         return score_int;
-      } catch (NumberFormatException e) {
+      }  
+      catch(NumberFormatException e) 
+      {
         // assume there is no /score
 
         return -1;
       }
-    } catch (InvalidRelationException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+    } 
+    catch(InvalidRelationException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
   }
 
   /**
    *  Set the Entry that owns this object.
    **/
-  void setEntry (final Entry entry) {
-    if (this.entry != null) {
-      stopListening ();
-    }
+  void setEntry(final Entry entry) 
+  {
+    if(this.entry != null)
+      stopListening();
 
     final Entry old_entry = this.entry;
 
     this.entry = entry;
 
-    if (old_entry == entry) {
+    if(old_entry == entry) 
       return;
-    } else {
-      if (old_entry != null) {
-        removeFeatureChangeListener (old_entry);
-      }
+    else 
+    {
+      if(old_entry != null)
+        removeFeatureChangeListener(old_entry);
 
-      if (entry != null) {
+      if(entry != null)
+      {
         // the Entry object acts as a proxy for FeatureChange events, other
-        // objects can can addFeatureChangeListener () once on the Entry object
+        // objects can can addFeatureChangeListener() once on the Entry object
         // instead of calling it for every Feature.
-        addFeatureChangeListener (getEntry ());
+        addFeatureChangeListener(getEntry());
       }
     }
 
-    if (this.entry != null) {
-      startListening ();
-    }
+    if(this.entry != null)
+      startListening();
   }
 
   /**
@@ -654,15 +703,19 @@ public class Feature
    *    range for this Entry.
    *  @exception ReadOnlyException Thrown if this Feature cannot be changed.
    **/
-  public void set (Key new_key,
-                   Location new_location,
-                   QualifierVector new_qualifiers)
+  public void set(Key new_key,
+                  Location new_location,
+                  QualifierVector new_qualifiers)
       throws EntryInformationException, OutOfRangeException,
-             ReadOnlyException {
-    try {
-      set ((Date)null, new_key, new_location, new_qualifiers);
-    } catch (OutOfDateException e) {
-      throw new Error ("internal error - unexpected exception: " + e);
+             ReadOnlyException
+  {
+    try
+    {
+      set((Date)null, new_key, new_location, new_qualifiers);
+    } 
+    catch(OutOfDateException e) 
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
   }
 
@@ -678,54 +731,58 @@ public class Feature
    *    the time given by datestamp.  If datestamp argument is null then this
    *    exception will never be thrown.
    **/
-  public void set (final Date datestamp,
-                   final Key new_key,
-                   final Location new_location,
-                   final QualifierVector new_qualifiers)
+  public void set(final Date datestamp,
+                  final Key new_key,
+                  final Location new_location,
+                  final QualifierVector new_qualifiers)
       throws EntryInformationException, OutOfRangeException,
-             ReadOnlyException, OutOfDateException {
+             ReadOnlyException, OutOfDateException 
+  {
+    final Key old_key = getKey();
+    old_location = getLocation();
+    final QualifierVector old_qualifiers = getQualifiers().copy();
 
-    final Key old_key = getKey ();
-    old_location = getLocation ();
-    final QualifierVector old_qualifiers = getQualifiers ().copy ();
+    final int sequence_length = getEntry().getBases().getLength();
 
-    final int sequence_length = getEntry ().getBases ().getLength ();
+    if(new_location != null) 
+    {
+      final Range span = new_location.getTotalRange();
 
-    if (new_location != null) {
-      final Range span = new_location.getTotalRange ();
-
-      if (span.getEnd () > sequence_length ||
-          span.getStart () < 1) {
-        throw new OutOfRangeException (new_location.toString ());
+      if(span.getEnd() > sequence_length ||
+         span.getStart() < 1) 
+      {
+        throw new OutOfRangeException(new_location.toString ());
       }
     }
 
-    if (datestamp == null ||
-        !(getEmblFeature () instanceof DateStampFeature)) {
-      getEmblFeature ().set (new_key, new_location, new_qualifiers);
-    } else {
-      ((DateStampFeature)getEmblFeature ()).set (datestamp,
-                                                 new_key,
-                                                 new_location,
-                                                 new_qualifiers);
+    if(datestamp == null ||
+       !(getEmblFeature() instanceof DateStampFeature)) 
+    {
+      getEmblFeature().set (new_key, new_location, new_qualifiers);
+    } 
+    else
+    {
+      ((DateStampFeature)getEmblFeature()).set(datestamp,
+                                               new_key,
+                                               new_location,
+                                               new_qualifiers);
     }
 
-    resetCache ();
+    resetCache();
 
-    if (new_location != old_location) {
-      reexamineSegments ();
-    }
+    if(new_location != old_location) 
+      reexamineSegments();
 
     // now inform the listeners that a change has occured
     final FeatureChangeEvent event =
-      new FeatureChangeEvent (this,
-                              this,
-                              old_key,
-                              old_location,
-                              old_qualifiers,
-                              FeatureChangeEvent.ALL_CHANGED);
+      new FeatureChangeEvent(this,
+                             this,
+                             old_key,
+                             old_location,
+                             old_qualifiers,
+                             FeatureChangeEvent.ALL_CHANGED);
 
-    fireAction (feature_listener_list, event);
+    fireAction(feature_listener_list, event);
   }
 
   /**
@@ -734,21 +791,22 @@ public class Feature
    *  calls resetCache (), because changing the location will change the
    *  translation and bases of the feature.
    **/
-  private void locationChanged (final Location old_location) {
-    resetCache ();
+  private void locationChanged(final Location old_location) 
+  {
+    resetCache();
 
     // now inform the listeners that a change has occured
     final FeatureChangeEvent feature_change_event =
-      new FeatureChangeEvent (this,
-                              this,
-                              null,
-                              old_location,
-                              null,
-                              FeatureChangeEvent.LOCATION_CHANGED);
+      new FeatureChangeEvent(this,
+                             this,
+                             null,
+                             old_location,
+                             null,
+                             FeatureChangeEvent.LOCATION_CHANGED);
 
-    this.old_location = getLocation ();
+    this.old_location = getLocation();
 
-    fireAction (feature_listener_list, feature_change_event);
+    fireAction(feature_listener_list, feature_change_event);
   }
 
   /**
@@ -758,36 +816,36 @@ public class Feature
    *  @param qualifier This object contians name and values to add.
    *  @return The Qualifier that was changed or created.
    **/
-  public Qualifier addQualifierValues (Qualifier qualifier)
-      throws EntryInformationException, ReadOnlyException {
+  public Qualifier addQualifierValues(Qualifier qualifier)
+      throws EntryInformationException, ReadOnlyException 
+  {
 
-    final QualifierVector old_qualifiers = getQualifiers ().copy ();
-
+    final QualifierVector old_qualifiers = getQualifiers().copy();
     final Qualifier return_qualifier;
 
     final Qualifier current_qualifier =
-      getEmblFeature ().getQualifierByName (qualifier.getName ());
+      getEmblFeature().getQualifierByName(qualifier.getName());
 
-    if (current_qualifier == null) {
-      return_qualifier = qualifier.copy ();
-    } else {
-      return_qualifier = current_qualifier.copy ();
-
-      return_qualifier.addValues (qualifier.getValues ());
+    if(current_qualifier == null)
+      return_qualifier = qualifier.copy();
+    else
+    {
+      return_qualifier = current_qualifier.copy();
+      return_qualifier.addValues(qualifier.getValues());
     }
 
-    setQualifier (return_qualifier);
+    setQualifier(return_qualifier);
 
     // now inform the listeners that a change has occured
     final FeatureChangeEvent event =
-      new FeatureChangeEvent (qualifier,
-                              this,
-                              null,
-                              null,
-                              old_qualifiers,
-                              FeatureChangeEvent.QUALIFIER_CHANGED);
+      new FeatureChangeEvent(qualifier,
+                             this,
+                             null,
+                             null,
+                             old_qualifiers,
+                             FeatureChangeEvent.QUALIFIER_CHANGED);
 
-    fireAction (feature_listener_list, event);
+    fireAction(feature_listener_list, event);
 
     return return_qualifier;
   }
@@ -797,27 +855,29 @@ public class Feature
    *  Qualifier that have the same name.
    *  @param qualifier The Qualifier to add.
    **/
-  public void setQualifier (final Qualifier qualifier)
-      throws EntryInformationException, ReadOnlyException {
-    final QualifierVector old_qualifiers = getQualifiers ().copy ();
+  public void setQualifier(final Qualifier qualifier)
+      throws EntryInformationException, ReadOnlyException 
+  {
+    final QualifierVector old_qualifiers = getQualifiers().copy();
 
-    getEmblFeature ().setQualifier (qualifier);
+    getEmblFeature().setQualifier(qualifier);
 
     // now inform the listeners that a change has occured
     final FeatureChangeEvent event =
-      new FeatureChangeEvent (qualifier,
-                              this,
-                              null,
-                              null,
-                              old_qualifiers,
-                              FeatureChangeEvent.QUALIFIER_CHANGED);
+      new FeatureChangeEvent(qualifier,
+                             this,
+                             null,
+                             null,
+                             old_qualifiers,
+                             FeatureChangeEvent.QUALIFIER_CHANGED);
 
-    if (qualifier.getName ().equals ("transl_except")) {
+    if(qualifier.getName().equals("transl_except"))
+    {
       // discard cache
       amino_acids = null;
     }
 
-    fireAction (feature_listener_list, event);
+    fireAction(feature_listener_list, event);
   }
 
   /**
@@ -825,32 +885,35 @@ public class Feature
    *  that name then return immediately.
    *  @param name The qualifier name to look for.
    **/
-  public void removeQualifierByName (final String name)
-      throws EntryInformationException, ReadOnlyException, OutOfDateException {
-    if (getEmblFeature ().getQualifierByName (name) == null) {
+  public void removeQualifierByName(final String name)
+      throws EntryInformationException, ReadOnlyException, OutOfDateException 
+  {
+    if(getEmblFeature().getQualifierByName(name) == null)
+    {
       // nothing to remove
       return;
     }
 
-    final QualifierVector old_qualifiers = getQualifiers ().copy ();
+    final QualifierVector old_qualifiers = getQualifiers().copy();
 
-    getEmblFeature ().removeQualifierByName (name);
+    getEmblFeature().removeQualifierByName(name);
 
     // now inform the listeners that a change has occured
     final FeatureChangeEvent event =
-      new FeatureChangeEvent (this,
-                              this,
-                              null,
-                              null,
-                              old_qualifiers,
-                              FeatureChangeEvent.QUALIFIER_CHANGED);
+      new FeatureChangeEvent(this,
+                             this,
+                             null,
+                             null,
+                             old_qualifiers,
+                             FeatureChangeEvent.QUALIFIER_CHANGED);
 
-    if (name.equals ("transl_except")) {
+    if(name.equals("transl_except"))
+    {
       // discard cache
       amino_acids = null;
     }
 
-    fireAction (feature_listener_list, event);
+    fireAction(feature_listener_list, event);
   }
 
   /**
