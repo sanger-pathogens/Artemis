@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.2 2004-11-05 14:22:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.3 2004-12-17 11:32:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -29,8 +29,6 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.util.StringVector;
 
 import java.io.*;
-import java.awt.MenuItem;
-import java.awt.CheckboxMenuItem;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -38,13 +36,12 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.2 2004-11-05 14:22:41 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.3 2004-12-17 11:32:49 tjc Exp $
  *
  **/
 
 public class FeaturePopup extends JPopupMenu 
 {
-
   /**
    *  The reference of the EntryGroup object that was passed to the
    *  constructor.
@@ -90,42 +87,6 @@ public class FeaturePopup extends JPopupMenu
    *  features.
    **/
   private FeatureSegmentVector selection_segments;
-
-  private JCheckBoxMenuItem show_labels_item = null;
-  private JCheckBoxMenuItem one_line_per_entry_item = null;
-  private JCheckBoxMenuItem show_forward_frame_lines_item = null;
-  private JCheckBoxMenuItem show_reverse_frame_lines_item = null;
-  private JCheckBoxMenuItem show_start_codons_item = null;
-  private JCheckBoxMenuItem show_stop_codons_item = null;
-  private JCheckBoxMenuItem show_feature_arrows_item = null;
-  private JCheckBoxMenuItem show_feature_borders_item = null;
-  private JCheckBoxMenuItem frame_features_item = null;
-  private JCheckBoxMenuItem source_features_item = null;
-  private JCheckBoxMenuItem rev_comp_display_item = null;
-  private JCheckBoxMenuItem base_colours_item = null;
-  private JCheckBoxMenuItem correlation_scores_item = null;
-  private JCheckBoxMenuItem show_genes_item = null;
-  private JCheckBoxMenuItem show_sysid_item = null;
-  private JCheckBoxMenuItem show_products_item = null;
-  private JCheckBoxMenuItem show_qualifiers_item = null;
-  private JMenuItem entry_group_menu_item = null;
-  private JMenuItem select_menu_item = null;
-  private JMenuItem add_menu_item = null;
-  private JMenuItem view_menu_item = null;
-  private JMenuItem edit_menu_item = null;
-  private JMenuItem goto_menu_item = null;
-  private JMenuItem write_menu_item = null;
-  private JMenuItem run_menu_item = null;
-  private JMenuItem broadcast_item = null;
-  private JMenuItem raise_feature_item = null;
-  private JMenuItem lower_feature_item = null;
-  private JMenuItem smallest_to_front_item = null;
-  private JMenuItem zoom_to_selection_item = null;
-  private JMenuItem score_cutoffs_item = null;
-  private JMenuItem select_visible_range = null;
-  private JMenuItem save_feature_list_item = null;
-  private JMenuItem select_visible_features = null;
-
   private BasePlotGroup base_plot_group = null;
 
   /**
@@ -152,59 +113,44 @@ public class FeaturePopup extends JPopupMenu
     selection_features = selection.getSelectedFeatures();
     selection_segments = selection.getSelectedSegments();
 
-    makeSubMenus();
+    final JMenuItem action_menus[] = makeSubMenus();
+    JMenuItem feature_display_menus[] = null;
+    JMenuItem feature_list_menus[] = null;
 
-    addGenericItems();
+    if(owner instanceof FeatureDisplay)
+    {
+      feature_display = (FeatureDisplay)owner;
+      feature_display_menus = addFeatureDisplayItems();
+      for(int i = 0; i<feature_display_menus.length; i++)
+        if(!(feature_display_menus[i] instanceof JCheckBoxMenuItem))
+          maybeAdd(feature_display_menus[i]);
+    }
+    else // must be a FeatureList
+    {
+      feature_list = (FeatureList)owner;
+      feature_list_menus = addFeatureListItems();
+      for(int i=0; i<feature_list_menus.length; i++)
+        if(!(feature_list_menus[i] instanceof JCheckBoxMenuItem))
+          maybeAdd(feature_list_menus[i]);
+    }
+    addSeparator();
 
+    for(int i = 0; i<action_menus.length; i++)
+      maybeAdd(action_menus[i]);
+
+    addSeparator();
     if(owner instanceof FeatureDisplay) 
     {
-      feature_display =(FeatureDisplay) owner;
-      addFeatureDisplayItems();
-    } 
+      for(int i = 0; i<feature_display_menus.length; i++)
+        if((feature_display_menus[i] instanceof JCheckBoxMenuItem))
+          maybeAdd(feature_display_menus[i]);
+    }
     else 
     {
-      // must be a FeatureList
-      feature_list =(FeatureList) owner;
-      addFeatureListItems();
+      for(int i=0; i<feature_list_menus.length; i++)
+        if((feature_list_menus[i] instanceof JCheckBoxMenuItem))
+          maybeAdd(feature_list_menus[i]);
     }
-
-    maybeAdd(raise_feature_item);
-    maybeAdd(lower_feature_item);
-    maybeAdd(smallest_to_front_item);
-    maybeAdd(zoom_to_selection_item);
-    maybeAdd(select_visible_range);
-    maybeAdd(select_visible_features);
-    maybeAdd(score_cutoffs_item);
-    maybeAdd(save_feature_list_item);
-    addSeparator();
-    maybeAdd(entry_group_menu_item);
-    maybeAdd(select_menu_item);
-    maybeAdd(goto_menu_item);
-    maybeAdd(view_menu_item);
-    maybeAdd(edit_menu_item);
-    maybeAdd(add_menu_item);
-    maybeAdd(write_menu_item);
-    maybeAdd(run_menu_item);
-    addSeparator();
-    maybeAdd(show_labels_item);
-    maybeAdd(one_line_per_entry_item);
-    maybeAdd(show_forward_frame_lines_item);
-    maybeAdd(show_reverse_frame_lines_item);
-    maybeAdd(show_start_codons_item);
-    maybeAdd(show_stop_codons_item);
-    maybeAdd(show_feature_arrows_item);
-    maybeAdd(show_feature_borders_item);
-    maybeAdd(frame_features_item);
-    maybeAdd(source_features_item);
-    maybeAdd(rev_comp_display_item);
-    maybeAdd(base_colours_item);
-    maybeAdd(correlation_scores_item);
-    maybeAdd(show_genes_item);
-    maybeAdd(show_sysid_item);
-    maybeAdd(show_qualifiers_item);
-    maybeAdd(show_products_item);
-    addSeparator();
-    maybeAdd(broadcast_item);
   }
 
   /**
@@ -228,190 +174,204 @@ public class FeaturePopup extends JPopupMenu
   }
 
   /**
-   *  Create those menu items that are relevant to all components.
-   **/
-  private void addGenericItems() 
-  {
-    if(selection_features.size() > 0 || selection_segments.size() > 0) {
-
-    }
-  }
-
-  /**
    *  Create the Edit, Add and View sub menus.
    **/
-  public void makeSubMenus() 
+  private JMenuItem[] makeSubMenus()
   {
-    final JFrame frame = owner.getParentFrame();
-    entry_group_menu_item = new EntryGroupMenu(frame, getEntryGroup());
+    final JMenuItem[] action_menus = new JMenuItem[8];
 
-    select_menu_item = new SelectMenu(frame, selection,
+    final JFrame frame = owner.getParentFrame();
+    action_menus[0] = new EntryGroupMenu(frame, getEntryGroup());
+
+    action_menus[1] = new SelectMenu(frame, selection,
                                       getGotoEventSource(),
                                       getEntryGroup(),
                                       base_plot_group);
 
-    view_menu_item = new ViewMenu(frame, selection,
+    action_menus[2] = new ViewMenu(frame, selection,
                                   getGotoEventSource(),
                                   getEntryGroup(),
                                   base_plot_group);
 
-    goto_menu_item = new GotoMenu(frame, selection,
+    action_menus[3] = new GotoMenu(frame, selection,
                                   getGotoEventSource(),
                                   getEntryGroup());
 
     if(Options.readWritePossible()) 
     {
-      edit_menu_item = new EditMenu(frame, selection,
+      action_menus[4] = new EditMenu(frame, selection,
                                     getGotoEventSource(),
                                     getEntryGroup(),
                                     base_plot_group);
       if(entry_group instanceof SimpleEntryGroup) 
-        add_menu_item = new AddMenu(frame, selection,
+        action_menus[5] = new AddMenu(frame, selection,
                                     getEntryGroup(),
                                     getGotoEventSource(),
                                     base_plot_group);
 
-      write_menu_item = new WriteMenu(frame, selection,
+      action_menus[6] = new WriteMenu(frame, selection,
                                       getEntryGroup());
       if(Options.isUnixHost()) 
-        run_menu_item = new RunMenu(frame, selection);
+        action_menus[7] = new RunMenu(frame, selection);
     }
+    return action_menus;
   }
 
   /**
    *  Create those menu items that are relevant only to FeatureDisplay objects.
    **/
-  private void addFeatureDisplayItems() 
+  private JMenuItem[] addFeatureDisplayItems() 
   {
-    show_start_codons_item = new JCheckBoxMenuItem("Start Codons");
-    show_start_codons_item.setState(feature_display.getShowStartCodons());
-    show_start_codons_item.addItemListener(new ItemListener()
+    final JMenuItem[] feature_display_menus = new JMenuItem[19];
+
+    feature_display_menus[0] = new JCheckBoxMenuItem("Start Codons");
+    ((JCheckBoxMenuItem)feature_display_menus[0]).setState(
+                               feature_display.getShowStartCodons());
+    feature_display_menus[0].addItemListener(new ItemListener()
     {
       public void itemStateChanged(ItemEvent event) 
       {
-        feature_display.setShowStartCodons(show_start_codons_item.getState());
+        feature_display.setShowStartCodons(
+                   ((JCheckBoxMenuItem)feature_display_menus[0]).getState());
       }
     });
 
-    show_stop_codons_item = new JCheckBoxMenuItem("Stop Codons");
-    show_stop_codons_item.setState(feature_display.getShowStopCodons());
-    show_stop_codons_item.addItemListener(new ItemListener() 
+    feature_display_menus[1] = new JCheckBoxMenuItem("Stop Codons");
+    ((JCheckBoxMenuItem)feature_display_menus[1]).setState(
+                               feature_display.getShowStopCodons());
+    feature_display_menus[1].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent event) 
       {
-        feature_display.setShowStopCodons(show_stop_codons_item.getState());
+        feature_display.setShowStopCodons(
+                  ((JCheckBoxMenuItem)feature_display_menus[1]).getState());
       }
     });
 
-    show_feature_arrows_item = new JCheckBoxMenuItem("Feature Arrows");
-    show_feature_arrows_item.setState(feature_display.getShowFeatureArrows());
-    show_feature_arrows_item.addItemListener(new ItemListener() 
+    feature_display_menus[2] = new JCheckBoxMenuItem("Feature Arrows");
+    ((JCheckBoxMenuItem)feature_display_menus[2]).setState(
+                               feature_display.getShowFeatureArrows());
+    feature_display_menus[2].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent event) 
       {
-        feature_display.setShowFeatureArrows(show_feature_arrows_item.getState());
+        feature_display.setShowFeatureArrows(
+                  ((JCheckBoxMenuItem)feature_display_menus[2]).getState());
       }
     });
 
-    show_feature_borders_item = new JCheckBoxMenuItem("Feature Borders");
-    show_feature_borders_item.setState(feature_display.getShowFeatureBorders());
-    show_feature_borders_item.addItemListener(new ItemListener() 
+    feature_display_menus[3] = new JCheckBoxMenuItem("Feature Borders");
+    ((JCheckBoxMenuItem)feature_display_menus[3]).setState(
+                                   feature_display.getShowFeatureBorders());
+    feature_display_menus[3].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent event) 
       {
-        feature_display.setShowFeatureBorders(show_feature_borders_item.getState());
+        feature_display.setShowFeatureBorders(
+                  ((JCheckBoxMenuItem)feature_display_menus[3]).getState());
       }
     });
 
-    show_labels_item = new JCheckBoxMenuItem("Feature Labels");
-    show_labels_item.setState(feature_display.getShowLabels());
-    show_labels_item.addItemListener(new ItemListener() 
+    feature_display_menus[4] = new JCheckBoxMenuItem("Feature Labels");
+    ((JCheckBoxMenuItem)feature_display_menus[4]).setState(feature_display.getShowLabels());
+    feature_display_menus[4].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        feature_display.setShowLabels(show_labels_item.getState());
+        feature_display.setShowLabels(
+                  ((JCheckBoxMenuItem)feature_display_menus[4]).getState());
       }
     });
 
-    one_line_per_entry_item = new JCheckBoxMenuItem("One Line Per Entry");
-    one_line_per_entry_item.setState(feature_display.getOneLinePerEntryFlag());
-    one_line_per_entry_item.addItemListener(new ItemListener() 
+    feature_display_menus[5] = new JCheckBoxMenuItem("One Line Per Entry");
+    ((JCheckBoxMenuItem)feature_display_menus[5]).setState(
+                                 feature_display.getOneLinePerEntryFlag());
+    feature_display_menus[5].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        final boolean new_state = one_line_per_entry_item.getState();
+        final boolean new_state = 
+                  ((JCheckBoxMenuItem)feature_display_menus[5]).getState();
         if(new_state && getEntryGroup().size() > 8) 
           feature_display.setShowLabels(false);
         feature_display.setOneLinePerEntry(new_state);
       }
     });
 
-    show_forward_frame_lines_item =
-      new JCheckBoxMenuItem("Forward Frame Lines");
-    show_forward_frame_lines_item.setState(feature_display.getShowForwardFrameLines());
-    show_forward_frame_lines_item.addItemListener(new ItemListener() 
+    feature_display_menus[6] = new JCheckBoxMenuItem("Forward Frame Lines");
+    ((JCheckBoxMenuItem)feature_display_menus[6]).setState(
+                                feature_display.getShowForwardFrameLines());
+    feature_display_menus[6].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        feature_display.setShowForwardFrameLines(show_forward_frame_lines_item.getState());
+        feature_display.setShowForwardFrameLines(
+                  ((JCheckBoxMenuItem)feature_display_menus[6]).getState());
       }
     });
 
-    show_reverse_frame_lines_item =
-      new JCheckBoxMenuItem("Reverse Frame Lines");
-    show_reverse_frame_lines_item.setState(feature_display.getShowReverseFrameLines());
-    show_reverse_frame_lines_item.addItemListener(new ItemListener() 
+    feature_display_menus[7] = new JCheckBoxMenuItem("Reverse Frame Lines");
+    ((JCheckBoxMenuItem)feature_display_menus[7]).setState(
+                               feature_display.getShowReverseFrameLines());
+    feature_display_menus[7].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        feature_display.setShowReverseFrameLines(show_reverse_frame_lines_item.getState());
+        feature_display.setShowReverseFrameLines(
+                  ((JCheckBoxMenuItem)feature_display_menus[7]).getState());
       }
     });
 
-    frame_features_item = new JCheckBoxMenuItem("All Features On Frame Lines");
-    frame_features_item.setState(feature_display.getFrameFeaturesFlag());
-    frame_features_item.addItemListener(new ItemListener() 
+    feature_display_menus[8] = new JCheckBoxMenuItem("All Features On Frame Lines");
+    ((JCheckBoxMenuItem)feature_display_menus[8]).setState(
+                                            feature_display.getFrameFeaturesFlag());
+    feature_display_menus[8].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        feature_display.setFrameFeaturesFlag(frame_features_item.getState());
+        feature_display.setFrameFeaturesFlag(
+                  ((JCheckBoxMenuItem)feature_display_menus[8]).getState());
       }
     });
 
-    source_features_item = new JCheckBoxMenuItem("Show Source Features");
-    source_features_item.setState(feature_display.getShowSourceFeatures());
-    source_features_item.addItemListener(new ItemListener() 
+    feature_display_menus[9] = new JCheckBoxMenuItem("Show Source Features");
+    ((JCheckBoxMenuItem)feature_display_menus[9]).setState(
+                                    feature_display.getShowSourceFeatures());
+    feature_display_menus[9].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        feature_display.setShowSourceFeatures(source_features_item.getState());
+        feature_display.setShowSourceFeatures(
+                  ((JCheckBoxMenuItem)feature_display_menus[9]).getState());
       }
     });
 
-    rev_comp_display_item = new JCheckBoxMenuItem("Flip Display");
- 
-    rev_comp_display_item.setState(feature_display.isRevCompDisplay());
-    rev_comp_display_item.addItemListener(new ItemListener()
+    feature_display_menus[10] = new JCheckBoxMenuItem("Flip Display");
+    ((JCheckBoxMenuItem)feature_display_menus[10]).setState(
+                                  feature_display.isRevCompDisplay());
+    feature_display_menus[10].addItemListener(new ItemListener()
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        feature_display.setRevCompDisplay(rev_comp_display_item.getState());
+        feature_display.setRevCompDisplay(
+                  ((JCheckBoxMenuItem)feature_display_menus[10]).getState());
       }
     });
 
-    base_colours_item = new JCheckBoxMenuItem("Colourise Bases");
-    base_colours_item.setState(feature_display.getShowBaseColours());
-    base_colours_item.addItemListener(new ItemListener() 
+    feature_display_menus[11] = new JCheckBoxMenuItem("Colourise Bases");
+    ((JCheckBoxMenuItem)feature_display_menus[11]).setState(
+                                   feature_display.getShowBaseColours());
+    feature_display_menus[11].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        feature_display.setShowBaseColours(base_colours_item.getState());
+        feature_display.setShowBaseColours(
+                  ((JCheckBoxMenuItem)feature_display_menus[11]).getState());
       }
     });
 
-    smallest_to_front_item =
-      new JMenuItem("Smallest Features In Front");
-    smallest_to_front_item.addActionListener(new ActionListener() 
+    feature_display_menus[12] = new JMenuItem("Smallest Features In Front");
+    feature_display_menus[12].addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent e) 
       {
@@ -422,9 +382,8 @@ public class FeaturePopup extends JPopupMenu
       }
     });
 
-    score_cutoffs_item = new JMenuItem("Set Score Cutoffs ...");
-
-    score_cutoffs_item.addActionListener(new ActionListener() 
+    feature_display_menus[13] = new JMenuItem("Set Score Cutoffs ...");
+    feature_display_menus[13].addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent e) 
       {
@@ -457,8 +416,8 @@ public class FeaturePopup extends JPopupMenu
 
     if(selection_features.size() > 0 || selection_segments.size() > 0) 
     {
-      raise_feature_item = new JMenuItem("Raise Selected Features");
-      raise_feature_item.addActionListener(new ActionListener() 
+      feature_display_menus[14] = new JMenuItem("Raise Selected Features");
+      feature_display_menus[14].addActionListener(new ActionListener() 
       {
         public void actionPerformed(ActionEvent event) 
         {
@@ -466,8 +425,8 @@ public class FeaturePopup extends JPopupMenu
         }
       });
 
-      lower_feature_item = new JMenuItem("Lower Selected Features");
-      lower_feature_item.addActionListener(new ActionListener() 
+      feature_display_menus[15] = new JMenuItem("Lower Selected Features");
+      feature_display_menus[15].addActionListener(new ActionListener() 
       {
         public void actionPerformed(ActionEvent event) 
         {
@@ -478,8 +437,8 @@ public class FeaturePopup extends JPopupMenu
 
     if(!selection.isEmpty()) 
     {
-      zoom_to_selection_item = new JMenuItem("Zoom to Selection");
-      zoom_to_selection_item.addActionListener(new ActionListener() 
+      feature_display_menus[16] = new JMenuItem("Zoom to Selection");
+      feature_display_menus[16].addActionListener(new ActionListener() 
       {
         public void actionPerformed(ActionEvent event) 
         {
@@ -488,10 +447,8 @@ public class FeaturePopup extends JPopupMenu
       });
     }
 
-
-    select_visible_range =
-      new JMenuItem("Select Visible Range");
-    select_visible_range.addActionListener(new ActionListener() 
+    feature_display_menus[17] = new JMenuItem("Select Visible Range");
+    feature_display_menus[17].addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent e) 
       {
@@ -499,24 +456,28 @@ public class FeaturePopup extends JPopupMenu
       }
     });
 
-    select_visible_features =
-      new JMenuItem("Select Visible Features");
-    select_visible_features.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+    feature_display_menus[18] = new JMenuItem("Select Visible Features");
+    feature_display_menus[18].addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent e) 
+      {
         selection.set(feature_display.getCurrentVisibleFeatures());
       }
     });
+
+    return feature_display_menus;
   }
 
   /**
    *  Create those menu items that are relevant only to FeatureList objects.
    **/
-  private void addFeatureListItems() 
+  private JMenuItem[] addFeatureListItems() 
   {
+    final JMenuItem feature_list_menus[] = new JMenuItem[6];
     if(Options.getOptions().readWritePossible()) 
     {
-      save_feature_list_item = new JMenuItem("Save List To File ...");
-      save_feature_list_item.addActionListener(new ActionListener() 
+      feature_list_menus[0] = new JMenuItem("Save List To File ...");
+      feature_list_menus[0].addActionListener(new ActionListener() 
       {
         public void actionPerformed(ActionEvent e) 
         {
@@ -525,73 +486,82 @@ public class FeaturePopup extends JPopupMenu
       });
     }
 
-    correlation_scores_item = new JCheckBoxMenuItem("Show Correlation Scores");
-    correlation_scores_item.setState(feature_list.getCorrelationScores());
-    correlation_scores_item.addItemListener(new ItemListener() 
+    feature_list_menus[1] = new JCheckBoxMenuItem("Show Correlation Scores");
+    ((JCheckBoxMenuItem)feature_list_menus[1]).setState(
+                                        feature_list.getCorrelationScores());
+    feature_list_menus[1].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        feature_list.setCorrelationScores(correlation_scores_item.getState());
+        feature_list.setCorrelationScores(
+                      ((JCheckBoxMenuItem)feature_list_menus[1]).getState());
       }
     });
 
-    show_genes_item = new JCheckBoxMenuItem("Show Gene Names");
-    show_genes_item.setState(feature_list.getShowGenes());
-    show_genes_item.addItemListener(new ItemListener() 
+    feature_list_menus[2] = new JCheckBoxMenuItem("Show Gene Names");
+    ((JCheckBoxMenuItem)feature_list_menus[2]).setState(feature_list.getShowGenes());
+    feature_list_menus[2].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        if(show_sysid_item.getState() && show_genes_item.getState())
+        boolean show_sysid = ((JCheckBoxMenuItem)feature_list_menus[3]).getState();
+        boolean show_genes = ((JCheckBoxMenuItem)feature_list_menus[2]).getState();
+        if(show_sysid && show_genes)
         {
-          show_sysid_item.setState(false);
-          feature_list.setShowSystematicID(show_sysid_item.getState());
+          ((JCheckBoxMenuItem)feature_list_menus[3]).setState(false);
+          feature_list.setShowSystematicID(false);
         }
 
-        feature_list.setShowGenes(show_genes_item.getState());
+        feature_list.setShowGenes(show_genes);
       }
     });
 
-    show_sysid_item = new JCheckBoxMenuItem("Show Systematic ID");
-    show_sysid_item.setState(feature_list.getShowSysID());
-    show_sysid_item.addItemListener(new ItemListener()
+    feature_list_menus[3] = new JCheckBoxMenuItem("Show Systematic ID");
+    ((JCheckBoxMenuItem)feature_list_menus[3]).setState(feature_list.getShowSysID());
+    feature_list_menus[3].addItemListener(new ItemListener()
     {
       public void itemStateChanged(ItemEvent e)
       {
-
-        if(show_genes_item.getState() && show_sysid_item.getState())
+        boolean show_sysid = ((JCheckBoxMenuItem)feature_list_menus[3]).getState();
+        boolean show_genes = ((JCheckBoxMenuItem)feature_list_menus[2]).getState();
+        if(show_genes && show_sysid)
         {
-          show_genes_item.setState(false);
-          feature_list.setShowGenes(show_genes_item.getState());
+          ((JCheckBoxMenuItem)feature_list_menus[2]).setState(false);
+          feature_list.setShowGenes(false);
         }
 
-        feature_list.setShowSystematicID(show_sysid_item.getState());
+        feature_list.setShowSystematicID(show_sysid);
       }
     });
 
-    show_products_item = new JCheckBoxMenuItem("Show Products");
-    show_products_item.setState(feature_list.getShowProducts());
-    show_products_item.addItemListener(new ItemListener() 
+    feature_list_menus[4] = new JCheckBoxMenuItem("Show Products");
+    ((JCheckBoxMenuItem)feature_list_menus[4]).setState(feature_list.getShowProducts());
+    feature_list_menus[4].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        if(show_products_item.getState()) 
+        boolean show_products = ((JCheckBoxMenuItem)feature_list_menus[4]).getState();
+        if(show_products) 
           feature_list.setShowQualifiers(false);
         
-        feature_list.setShowProducts(show_products_item.getState());
+        feature_list.setShowProducts(show_products);
       }
     });
     
-    show_qualifiers_item = new JCheckBoxMenuItem("Show Qualifiers");
-    show_qualifiers_item.setState(feature_list.getShowQualifiers());
-    show_qualifiers_item.addItemListener(new ItemListener() 
+    feature_list_menus[5] = new JCheckBoxMenuItem("Show Qualifiers");
+    ((JCheckBoxMenuItem)feature_list_menus[5]).setState(feature_list.getShowQualifiers());
+    feature_list_menus[5].addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent e) 
       {
-        feature_list.setShowQualifiers(show_qualifiers_item.getState());
-        if(show_qualifiers_item.getState()) 
+        boolean show_qualifiers = ((JCheckBoxMenuItem)feature_list_menus[5]).getState();
+        feature_list.setShowQualifiers(show_qualifiers);
+        if(show_qualifiers) 
           feature_list.setShowProducts(false);
       }
     });
+    
+    return feature_list_menus;
   }
 
   /**
@@ -730,54 +700,6 @@ public class FeaturePopup extends JPopupMenu
   public GotoEventSource getGotoEventSource() 
   {
     return goto_event_source;
-  }
-
-  /**
-   *  Return a new CheckboxMenuItem unless the VM is 1.2 or worse(ie. 1.3 or
-   *  1.4) on GNU/Linux, in which case return a new ArtemisCheckboxMenuItem
-   **/
-  private MenuItem makeCheckboxMenuItem(final String item_name) 
-  {
-    if(Options.getOptions().isBuggyLinuxVM() &&
-        Options.getOptions().getPropertyTruthValue("buggy_linux_vm_fix")) 
-      return new ArtemisCheckboxMenuItem(item_name);
-    else 
-      return new CheckboxMenuItem(item_name);
-  }
-
-  /**
-   *  Add a ItemListener to a ArtemisCheckboxMenuItem or a CheckboxMenuItem.
-   **/
-  private void addMenuItemListener(final MenuItem menu_item,
-                                    final ItemListener listener)
-  {
-    if(menu_item instanceof ArtemisCheckboxMenuItem) 
-     ((ArtemisCheckboxMenuItem)menu_item).addItemListener(listener);
-    else 
-     ((CheckboxMenuItem)menu_item).addItemListener(listener);
-  }
-
-  /**
-   *  Set the state of a ArtemisCheckboxMenuItem or a CheckboxMenuItem.
-   **/
-  private void setCheckboxMenuItemState(final MenuItem menu_item,
-                                         final boolean state) 
-  {
-    if(menu_item instanceof ArtemisCheckboxMenuItem) 
-     ((ArtemisCheckboxMenuItem)menu_item).setState(state);
-    else 
-     ((CheckboxMenuItem)menu_item).setState(state);
-  }
-
-  /**
-   *  Get the state of a ArtemisCheckboxMenuItem or a CheckboxMenuItem.
-   **/
-  private boolean getCheckboxMenuItemState(final MenuItem menu_item) 
-  {
-    if(menu_item instanceof ArtemisCheckboxMenuItem) 
-      return((ArtemisCheckboxMenuItem)menu_item).getState();
-    else 
-      return((CheckboxMenuItem)menu_item).getState();
   }
 
 }
