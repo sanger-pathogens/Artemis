@@ -394,6 +394,15 @@ public class HitInfo
       desc = desc + " " + s;
 
     desc = desc.trim();
+
+    // check for EC number
+    int ind1 = s.indexOf("(EC ");
+    if(ind1 > -1)
+    {
+      int ind2 = s.indexOf(")",ind1);
+      if(ind2 > -1)
+        setEC_number(s.substring(ind1+4,ind2).trim());
+    }
   }
 
 

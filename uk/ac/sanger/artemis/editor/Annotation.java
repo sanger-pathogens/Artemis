@@ -211,6 +211,7 @@ public class Annotation extends JEditorPane
     }
     catch(BadLocationException ble)
     {
+      System.out.println("Offset "+offset);
       ble.printStackTrace();
     }
     catch(Exception exp)
