@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.3 2004-12-23 15:33:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.4 2005-01-13 16:52:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import java.io.Writer;
  *  stream.
  *
  *  @author Kim Rutherford
- *  @version $Id: StreamSequence.java,v 1.3 2004-12-23 15:33:46 tjc Exp $
+ *  @version $Id: StreamSequence.java,v 1.4 2005-01-13 16:52:34 tjc Exp $
  **/
 
 public abstract class StreamSequence
@@ -91,9 +91,15 @@ public abstract class StreamSequence
     }
   }
 
+  private char[] dst = null;
+
   public char[] getCharSubSequence (int start, int end) 
   {
-    char[] dst = new char[end-start+1];
+    if(dst == null || dst.length < end-start+1) 
+    {
+      dst = new char[end-start+3];
+//    System.out.println("REALLOCATE");
+    }
     sequence.getChars(start-1, end, dst, 0);
     return dst;
   }
