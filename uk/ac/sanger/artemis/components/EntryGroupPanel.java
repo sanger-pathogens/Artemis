@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupPanel.java,v 1.3 2004-11-04 09:41:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupPanel.java,v 1.4 2004-11-04 14:14:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -36,7 +36,7 @@ import javax.swing.*;
  *  A JPanel that can show an EntryGroup(in some way).
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: EntryGroupPanel.java,v 1.3 2004-11-04 09:41:17 tjc Exp $
+ *  @version $Id: EntryGroupPanel.java,v 1.4 2004-11-04 14:14:56 tjc Exp $
  **/
 
 abstract public class EntryGroupPanel extends CanvasPanel 
@@ -307,18 +307,18 @@ abstract public class EntryGroupPanel extends CanvasPanel
           EditMenu.deleteSelectedFeatures(getParentFrame(), getSelection(),
                                            getEntryGroup());
           break;
-        case EditMenu.TRIM_FEATURES_KEY_CODE:
-          EditMenu.trimSelected(getParentFrame(), getSelection(),
-                                 getEntryGroup(), false, true);
-          break;
-        case EditMenu.TRIM_FEATURES_TO_NEXT_ANY_KEY_CODE:
-          EditMenu.trimSelected(getParentFrame(), getSelection(),
-                                 getEntryGroup(), true, true);
-          break;
-        case EditMenu.EXTEND_TO_PREVIOUS_STOP_CODON_KEY_CODE:
-          EditMenu.extendToORF(getParentFrame(), getSelection(),
-                                getEntryGroup(), false);
-          break;
+//      case EditMenu.TRIM_FEATURES_KEY_CODE:
+//        EditMenu.trimSelected(getParentFrame(), getSelection(),
+//                               getEntryGroup(), false, true);
+//        break;
+//      case EditMenu.TRIM_FEATURES_TO_NEXT_ANY_KEY_CODE:
+//        EditMenu.trimSelected(getParentFrame(), getSelection(),
+//                               getEntryGroup(), true, true);
+//        break;
+//      case EditMenu.EXTEND_TO_PREVIOUS_STOP_CODON_KEY_CODE:
+//        EditMenu.extendToORF(getParentFrame(), getSelection(),
+//                              getEntryGroup(), false);
+//        break;
         case AddMenu.CREATE_FROM_BASE_RANGE_KEY_CODE:
           AddMenu.createFeatureFromBaseRange(getParentFrame(), getSelection(),
                                               entry_group,
