@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.11 2004-12-14 09:55:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.12 2004-12-21 13:46:47 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import javax.swing.*;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.11 2004-12-14 09:55:12 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.12 2004-12-21 13:46:47 tjc Exp $
  *
  **/
 
@@ -113,6 +113,8 @@ public class FeatureList extends EntryGroupPanel
 
     addMouseListener(new MouseAdapter() 
     {
+      private FeaturePopup popup = null;
+
       /**
        *  Listen for mouse press events so that we can do popup menus and
        *  selection.
@@ -121,12 +123,12 @@ public class FeatureList extends EntryGroupPanel
       {
         if(isMenuTrigger(event)) 
         {
-          final FeaturePopup popup =
-            new FeaturePopup(FeatureList.this,
-                             getEntryGroup(),
-                             getSelection(),
-                             getGotoEventSource(),
-                             getBasePlotGroup());
+          if(popup == null)
+            popup = new FeaturePopup(FeatureList.this,
+                                     getEntryGroup(),
+                                     getSelection(),
+                                     getGotoEventSource(),
+                                     getBasePlotGroup());
           final JComponent parent = (JComponent)event.getSource();
 
           popup.show(parent, event.getX(), event.getY());

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.15 2004-12-07 17:42:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.16 2004-12-21 13:46:47 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.15 2004-12-07 17:42:20 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.16 2004-12-21 13:46:47 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -3583,6 +3583,8 @@ public class FeatureDisplay extends EntryGroupPanel
 
     addMouseListener(new MouseAdapter() 
     {
+      private FeaturePopup popup = null;
+
       /**
        *  Listen for mouse press events so that we can do popup menus and
        *  selection.
@@ -3610,12 +3612,12 @@ public class FeatureDisplay extends EntryGroupPanel
 
         if(isMenuTrigger(event)) 
         {
-          final FeaturePopup popup =
-            new FeaturePopup(FeatureDisplay.this,
-                             getEntryGroup(),
-                             getSelection(),
-                             getGotoEventSource(),
-                             getBasePlotGroup());
+          if(popup == null)
+            popup = new FeaturePopup(FeatureDisplay.this,
+                                     getEntryGroup(),
+                                     getSelection(),
+                                     getGotoEventSource(),
+                                     getBasePlotGroup());
           final JComponent parent = (JComponent)event.getSource();
 
           parent.add(popup);

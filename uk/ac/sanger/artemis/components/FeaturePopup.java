@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.3 2004-12-17 11:32:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.4 2004-12-21 13:46:47 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -29,6 +29,7 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.util.StringVector;
 
 import java.io.*;
+import java.awt.Component;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -36,7 +37,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.3 2004-12-17 11:32:49 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.4 2004-12-21 13:46:47 tjc Exp $
  *
  **/
 
@@ -88,6 +89,7 @@ public class FeaturePopup extends JPopupMenu
    **/
   private FeatureSegmentVector selection_segments;
   private BasePlotGroup base_plot_group = null;
+  private JMenuItem feature_display_menus[] = null;
 
   /**
    *  Create a new FeaturePopup object.
@@ -114,7 +116,6 @@ public class FeaturePopup extends JPopupMenu
     selection_segments = selection.getSelectedSegments();
 
     final JMenuItem action_menus[] = makeSubMenus();
-    JMenuItem feature_display_menus[] = null;
     JMenuItem feature_list_menus[] = null;
 
     if(owner instanceof FeatureDisplay)
@@ -414,38 +415,32 @@ public class FeaturePopup extends JPopupMenu
       }
     });
 
-    if(selection_features.size() > 0 || selection_segments.size() > 0) 
+    feature_display_menus[14] = new JMenuItem("Raise Selected Features");
+    feature_display_menus[14].addActionListener(new ActionListener() 
     {
-      feature_display_menus[14] = new JMenuItem("Raise Selected Features");
-      feature_display_menus[14].addActionListener(new ActionListener() 
+      public void actionPerformed(ActionEvent event) 
       {
-        public void actionPerformed(ActionEvent event) 
-        {
-          raiseSelection();
-        }
-      });
+        raiseSelection();
+      }
+    });
 
-      feature_display_menus[15] = new JMenuItem("Lower Selected Features");
-      feature_display_menus[15].addActionListener(new ActionListener() 
-      {
-        public void actionPerformed(ActionEvent event) 
-        {
-          lowerSelection();
-        }
-      });
-    }
-
-    if(!selection.isEmpty()) 
+    feature_display_menus[15] = new JMenuItem("Lower Selected Features");
+    feature_display_menus[15].addActionListener(new ActionListener() 
     {
-      feature_display_menus[16] = new JMenuItem("Zoom to Selection");
-      feature_display_menus[16].addActionListener(new ActionListener() 
+      public void actionPerformed(ActionEvent event) 
       {
-        public void actionPerformed(ActionEvent event) 
-        {
-          zoomToSelection((FeatureDisplay) owner);
-        }
-      });
-    }
+        lowerSelection();
+      }
+    });
+
+    feature_display_menus[16] = new JMenuItem("Zoom to Selection");
+    feature_display_menus[16].addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        zoomToSelection((FeatureDisplay) owner);
+      }
+    });
 
     feature_display_menus[17] = new JMenuItem("Select Visible Range");
     feature_display_menus[17].addActionListener(new ActionListener() 
@@ -466,6 +461,33 @@ public class FeaturePopup extends JPopupMenu
     });
 
     return feature_display_menus;
+  }
+
+
+  /**
+  *
+  * Override show() 
+  *
+  */
+  public void show(Component invoker, int x, int y)
+  {
+    if(owner instanceof FeatureDisplay)
+    {
+      if(selection_features.size() > 0 || selection_segments.size() > 0)
+      {
+        feature_display_menus[14].setEnabled(true);
+        feature_display_menus[15].setEnabled(true);
+        feature_display_menus[16].setEnabled(true);
+      }
+      else
+      {
+        feature_display_menus[14].setEnabled(false);
+        feature_display_menus[15].setEnabled(false);
+        feature_display_menus[16].setEnabled(false);
+      }
+    }
+
+    super.show(invoker, x, y);
   }
 
   /**

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.6 2004-12-21 10:59:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.7 2004-12-21 13:46:47 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.*;
  *  A JMenu of external commands/functions.
  *
  *  @author Kim Rutherford
- *  @version $Id: RunMenu.java,v 1.6 2004-12-21 10:59:37 tjc Exp $
+ *  @version $Id: RunMenu.java,v 1.7 2004-12-21 13:46:47 tjc Exp $
  **/
 
 public class RunMenu extends SelectionMenu 
@@ -121,6 +121,7 @@ public class RunMenu extends SelectionMenu
   {
     this(frame, selection, "Run");
   }
+
 
   /**
    *  Make a new menu item for running the given ExternalProgram object.
