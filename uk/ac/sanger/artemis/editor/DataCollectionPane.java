@@ -24,7 +24,10 @@
 
 package uk.ac.sanger.artemis.editor;
 
+import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.components.SwingWorker;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.util.StringTokenizer;
@@ -52,7 +55,7 @@ public class DataCollectionPane extends JScrollPane
   private Annotation ann;
   private JDesktopPane desktop;
   private DataViewInternalFrame dataView;
-
+  protected static String srs_url;
 
   /**
   *
@@ -71,6 +74,7 @@ public class DataCollectionPane extends JScrollPane
     this.desktop  = desktop;
     this.dataView = dataView;
 
+    getSrsSite();
     Box bdown = Box.createVerticalBox();
     ScrollPanel scrollPanel = new ScrollPanel();
     scrollPanel.add(bdown);
@@ -82,6 +86,15 @@ public class DataCollectionPane extends JScrollPane
     setResultLines(bdown,hitInfoCollection,goHash);
     setViewportView(scrollPanel);
     setPreferredSize(new Dimension(500,300));
+  }
+
+  private void getSrsSite()
+  {
+    StringVector srs = Options.getOptions().getOptionValues("srs_url");
+    if(srs != null)
+      srs_url = srs.elementAt(0);
+    else
+      srs_url = "http://srs.sanger.ac.uk/srsbin/cgi-bin/";
   }
 
   /**
@@ -377,7 +390,7 @@ public class DataCollectionPane extends JScrollPane
   */
   private void getSRSEntry(HitInfo hit, JDesktopPane desktop)
   {
-    String srscmd = "srs.sanger.ac.uk/srsbin/cgi-bin/wgetz?-e+";
+    String srscmd = "/wgetz?-e+";
 
     if(hit.getID() != null)
     {
@@ -387,11 +400,11 @@ public class DataCollectionPane extends JScrollPane
         srscmd = srscmd.concat("|[{uniprot}-AccNumber:"+hit.getAcc()+"*]");
 
       if(BigPane.srsBrowser.isSelected())
-        BrowserControl.displayURL(srscmd);
+        BrowserControl.displayURL(srs_url+srscmd);
 
       try
       {
-        URL url = new URL("http://"+srscmd);
+        URL url = new URL(srs_url+srscmd);
 
         if(BigPane.srsTabPane.isSelected())
           setUpSRSFrame(url,search,desktop);
@@ -420,7 +433,7 @@ public class DataCollectionPane extends JScrollPane
       {
         JOptionPane.showMessageDialog(DataCollectionPane.this,
                  "Cannot retrieve "+search+
-                 "\nConnection failed to:\nhttp://"+srscmd,
+                 "\nConnection failed to:\n"+srs_url+srscmd,
                  "Connection Error",
                  JOptionPane.WARNING_MESSAGE);
       }

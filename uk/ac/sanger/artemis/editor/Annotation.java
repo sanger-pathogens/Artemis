@@ -24,6 +24,8 @@
 
 package uk.ac.sanger.artemis.editor;
 
+import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.util.StringVector;
 
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -63,7 +65,6 @@ public class Annotation extends JEditorPane
   public Annotation(JDesktopPane desktop)
   {
     super();
-
     this.desktop = desktop;
 
     setEditable(false);
@@ -94,8 +95,7 @@ public class Annotation extends JEditorPane
     });
     back.add(url);
   }
-  
-
+ 
   protected void setAnnotation(String text)
   {
 //  setText("<html><body>"+text+"</html></body>");
@@ -312,9 +312,7 @@ public class Annotation extends JEditorPane
 
     String midStr = s.substring(ind,ind2);
     String endStr = s.substring(ind2);
-
-    String srscmd = "http://srs.sanger.ac.uk/srsbin/cgi-bin/wgetz?-e+" +
-                    "["+midStr+"]";
+    String srscmd = DataCollectionPane.srs_url+"/wgetz?-e+["+midStr+"]";
 
     return  startStr + "<a href=\""+srscmd+"\">" +
             midStr   + "</a>" + endStr;
