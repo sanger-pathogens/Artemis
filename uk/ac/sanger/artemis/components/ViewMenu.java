@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.2 2004-12-14 15:53:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.3 2004-12-17 16:44:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.*;
  *  A popup menu with viewing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: ViewMenu.java,v 1.2 2004-12-14 15:53:11 tjc Exp $
+ *  @version $Id: ViewMenu.java,v 1.3 2004-12-17 16:44:48 tjc Exp $
  **/
 
 public class ViewMenu extends SelectionMenu {
@@ -56,19 +56,20 @@ public class ViewMenu extends SelectionMenu {
    *    operate on.
    *  @param entry_group The EntryGroup object where new features/entries will
    *    be added.
-   *  @param goto_event_source The object that we will call makeBaseVisible ()
+   *  @param goto_event_source The object that we will call makeBaseVisible()
    *    on.
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    *  @param menu_name The name of the new menu.
    **/
-  public ViewMenu (final JFrame frame,
-                   final Selection selection,
-                   final GotoEventSource goto_event_source,
-                   final EntryGroup entry_group,
-                   final BasePlotGroup base_plot_group,
-                   final String menu_name) {
-    super (frame, menu_name, selection);
+  public ViewMenu(final JFrame frame,
+                  final Selection selection,
+                  final GotoEventSource goto_event_source,
+                  final EntryGroup entry_group,
+                  final BasePlotGroup base_plot_group,
+                  final String menu_name) 
+  {
+    super(frame, menu_name, selection);
 
     this.entry_group = entry_group;
     this.selection = selection;
@@ -76,317 +77,352 @@ public class ViewMenu extends SelectionMenu {
 
     this.base_plot_group = base_plot_group;
 
-    plot_features_item = new JMenuItem ("Show Feature Plots");
-    plot_features_item.setAccelerator (PLOT_FEATURES_KEY);
-    plot_features_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        plotSelectedFeatures (getParentFrame (), getSelection ());
+    final JMenuItem plot_features_item = new JMenuItem("Show Feature Plots");
+    plot_features_item.setAccelerator(PLOT_FEATURES_KEY);
+    plot_features_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        plotSelectedFeatures(getParentFrame(), getSelection());
       }
     });
 
-    view_feature_item = new JMenuItem ("View Selected Features");
-    view_feature_item.setAccelerator (VIEW_FEATURES_KEY);
-    view_feature_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        viewSelectedFeatures (getParentFrame (), getSelection ());
+    final JMenuItem view_feature_item = new JMenuItem("View Selected Features");
+    view_feature_item.setAccelerator(VIEW_FEATURES_KEY);
+    view_feature_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        viewSelectedFeatures(getParentFrame(), getSelection());
       }
     });
 
-    view_selection_item = new JMenuItem ("View Selection");
-    view_selection_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        new SelectionViewer (getSelection (), entry_group);
+    final JMenuItem view_selection_item = new JMenuItem("View Selection");
+    view_selection_item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
+        new SelectionViewer(getSelection(), entry_group);
       }
     });
 
-    feature_info_item = new JMenuItem ("Show Feature Statistics");
-    feature_info_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        viewSelectedFeatureInfo ();
+    final JMenuItem feature_info_item = new JMenuItem("Show Feature Statistics");
+    feature_info_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        viewSelectedFeatureInfo();
       }
     });
 
-    view_bases_item = new JMenuItem ("View Bases Of Selection");
-    view_bases_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        viewSelectedBases (true);
+    final JMenuItem view_bases_item = new JMenuItem("View Bases Of Selection");
+    view_bases_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        viewSelectedBases(true);
       }
     });
 
-    view_bases_as_fasta_item =
-      new JMenuItem ("View Bases Of Selection As FASTA");
-    view_bases_as_fasta_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        viewSelectedBases (false);
+    final JMenuItem view_bases_as_fasta_item =
+      new JMenuItem("View Bases Of Selection As FASTA");
+    view_bases_as_fasta_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        viewSelectedBases(false);
       }
     });
 
-    view_aa_item = new JMenuItem ("View Amino Acids Of Selection");
-    view_aa_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        viewSelectedAminoAcids (true);
+    final JMenuItem view_aa_item = new JMenuItem("View Amino Acids Of Selection");
+    view_aa_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        viewSelectedAminoAcids(true);
       }
     });
 
-    view_aa_as_fasta_item =
-      new JMenuItem ("View Amino Acids Of Selection As FASTA");
-    view_aa_as_fasta_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        viewSelectedAminoAcids (false);
+    final JMenuItem view_aa_as_fasta_item =
+      new JMenuItem("View Amino Acids Of Selection As FASTA");
+    view_aa_as_fasta_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        viewSelectedAminoAcids(false);
       }
     });
 
-    overview_item = new JMenuItem ("Show Overview");
-    overview_item.setAccelerator (OVERVIEW_KEY);
-    overview_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        new EntryGroupInfoDisplay (getParentFrame (), entry_group);
+    final JMenuItem overview_item = new JMenuItem("Show Overview");
+    overview_item.setAccelerator(OVERVIEW_KEY);
+    overview_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        new EntryGroupInfoDisplay(getParentFrame(), entry_group);
       }
     });
 
-    forward_overview_item = new JMenuItem ("Show Forward Strand Overview");
-    forward_overview_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        new EntryGroupInfoDisplay (getParentFrame (), entry_group,
-                                   Bases.FORWARD);
+    final JMenuItem forward_overview_item = new JMenuItem("Show Forward Strand Overview");
+    forward_overview_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        new EntryGroupInfoDisplay(getParentFrame(), entry_group,
+                                  Bases.FORWARD);
       }
     });
 
-    reverse_overview_item = new JMenuItem ("Show Reverse Strand Overview");
-    reverse_overview_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        new EntryGroupInfoDisplay (getParentFrame (), entry_group,
-                                   Bases.REVERSE);
+    final JMenuItem reverse_overview_item = new JMenuItem("Show Reverse Strand Overview");
+    reverse_overview_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        new EntryGroupInfoDisplay(getParentFrame(), entry_group,
+                                  Bases.REVERSE);
       }
     });
 
-    view_cds_item = new JMenuItem ("Show CDS Genes And Products");
-    view_cds_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
+    final JMenuItem view_cds_item = new JMenuItem("Show CDS Genes And Products");
+    view_cds_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
         final FeaturePredicate feature_predicate =
-          new FeatureKeyPredicate (Key.CDS);
+          new FeatureKeyPredicate(Key.CDS);
 
         final String filter_name =
           "CDS features (filtered from: " +
-          getParentFrame ().getTitle () + ")";
+          getParentFrame().getTitle() + ")";
 
         final FilteredEntryGroup filtered_entry_group =
-          new FilteredEntryGroup (entry_group, feature_predicate, filter_name);
+          new FilteredEntryGroup(entry_group, feature_predicate, filter_name);
 
         final FeatureListFrame feature_list_frame =
-          new FeatureListFrame (filter_name,
+          new FeatureListFrame(filter_name,
                                 selection, goto_event_source,
                                 filtered_entry_group,
                                 base_plot_group);
 
-        feature_list_frame.getFeatureList ().setShowGenes (true);
-        feature_list_frame.getFeatureList ().setShowProducts (true);
+        feature_list_frame.getFeatureList().setShowGenes(true);
+        feature_list_frame.getFeatureList().setShowProducts(true);
 
-        feature_list_frame.setVisible (true);
+        feature_list_frame.setVisible(true);
       }
     });
 
     JMenu search_results_menu = null;
 
-    search_results_menu = new JMenu ("Search Results");
+    search_results_menu = new JMenu("Search Results");
 
     final boolean sanger_options =
-      Options.getOptions ().getPropertyTruthValue ("sanger_options");
+      Options.getOptions().getPropertyTruthValue("sanger_options");
 
     final ExternalProgramVector external_programs =
-      Options.getOptions ().getExternalPrograms ();
+      Options.getOptions().getExternalPrograms();
 
-    final StringVector external_program_names = new StringVector ();
+    final StringVector external_program_names = new StringVector();
 
-    for (int i = 0 ; i < external_programs.size () ; ++i) {
+    for(int i = 0 ; i < external_programs.size() ; ++i) 
+    {
       final ExternalProgram external_program =
-        external_programs.elementAt (i);
+        external_programs.elementAt(i);
 
-      final String new_name = external_program.getName ();
+      final String new_name = external_program.getName();
 
-      if (!external_program_names.contains (new_name)) {
-        external_program_names.add (new_name);
-      }
+      if(!external_program_names.contains(new_name)) 
+        external_program_names.add(new_name);
     }
 
-    for (int i = 0 ; i < external_program_names.size () ; ++i) {
+    for(int i = 0 ; i < external_program_names.size() ; ++i) 
+    {
       final String external_program_name =
-        external_program_names.elementAt (i);
+        external_program_names.elementAt(i);
 
       final JMenuItem new_menu =
-        makeSearchResultsMenu (external_program_name, false, sanger_options);
-      search_results_menu.add (new_menu);
+        makeSearchResultsMenu(external_program_name, false, sanger_options);
+      search_results_menu.add(new_menu);
     }
 
-    if (sanger_options) {
-      search_results_menu.addSeparator ();
+    if(sanger_options) 
+    {
+      search_results_menu.addSeparator();
 
-      for (int i = 0 ; i < external_program_names.size () ; ++i) {
+      for(int i = 0 ; i < external_program_names.size() ; ++i)
+      {
         final String external_program_name =
-          external_program_names.elementAt (i);
+          external_program_names.elementAt(i);
 
         final JMenuItem new_menu =
-          makeSearchResultsMenu (external_program_name, true, sanger_options);
-        search_results_menu.add (new_menu);
+          makeSearchResultsMenu(external_program_name, true, sanger_options);
+        search_results_menu.add(new_menu);
       }
     }
 
     final int MAX_FILTER_FEATURE_COUNT = 10000;
 
-    final JMenu feature_filters_menu = new JMenu ("Feature Filters");
+    final JMenu feature_filters_menu = new JMenu("Feature Filters");
 
     final JMenuItem bad_start_codons_item =
-      new JMenuItem ("Suspicious Start Codons ...");
-    bad_start_codons_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        if (checkEntryGroupSize (MAX_FILTER_FEATURE_COUNT)) {
-          showBadStartCodons (getParentFrame (),
-                              selection, entry_group, goto_event_source,
-                              base_plot_group);
-        }
+      new JMenuItem("Suspicious Start Codons ...");
+    bad_start_codons_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        if(checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT))
+          showBadStartCodons(getParentFrame(), selection, 
+                             entry_group, goto_event_source,
+                             base_plot_group);
       }
     });
 
     final JMenuItem bad_stop_codons_item =
-      new JMenuItem ("Suspicious Stop Codons ...");
-    bad_stop_codons_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        if (checkEntryGroupSize (MAX_FILTER_FEATURE_COUNT)) {
-          showBadStopCodons (getParentFrame (),
-                             selection, entry_group, goto_event_source,
-                             base_plot_group);
-        }
+      new JMenuItem("Suspicious Stop Codons ...");
+    bad_stop_codons_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        if(checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT)) 
+          showBadStopCodons(getParentFrame(), selection,
+                            entry_group, goto_event_source,
+                            base_plot_group);
       }
     });
 
     final JMenuItem stop_codons_in_translation =
-      new JMenuItem ("Stop Codons In Translation ...");
-    stop_codons_in_translation.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        if (checkEntryGroupSize (MAX_FILTER_FEATURE_COUNT)) {
-          showStopsInTranslation (getParentFrame (),
-                                  selection, entry_group, goto_event_source,
-                                  base_plot_group);
-        }
+      new JMenuItem("Stop Codons In Translation ...");
+    stop_codons_in_translation.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        if(checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT)) 
+          showStopsInTranslation(getParentFrame(), selection,
+                                 entry_group, goto_event_source,
+                                 base_plot_group);
       }
     });
 
     final JMenuItem bad_feature_keys_item =
-      new JMenuItem ("Non EMBL Keys ...");
-    bad_feature_keys_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        if (checkEntryGroupSize (MAX_FILTER_FEATURE_COUNT)) {
-          showNonEMBLKeys (getParentFrame (),
-                           selection, entry_group, goto_event_source,
-                           base_plot_group);
-        }
+      new JMenuItem("Non EMBL Keys ...");
+    bad_feature_keys_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        if(checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT))
+          showNonEMBLKeys(getParentFrame(), selection,
+                          entry_group, goto_event_source,
+                          base_plot_group);
       }
     });
 
     final JMenuItem duplicated_keys_item =
-      new JMenuItem ("Duplicated Features ...");
-    duplicated_keys_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        if (checkEntryGroupSize (MAX_FILTER_FEATURE_COUNT)) {
-          showDuplicatedFeatures (getParentFrame (),
-                                  selection, entry_group, goto_event_source,
-                                  base_plot_group);
-        }
+      new JMenuItem("Duplicated Features ...");
+    duplicated_keys_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        if(checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT)) 
+          showDuplicatedFeatures(getParentFrame(), selection,
+                                 entry_group, goto_event_source,
+                                 base_plot_group);
       }
     });
 
     final JMenuItem overlapping_cds_features_item =
-      new JMenuItem ("Overlapping CDS Features ...");
-    overlapping_cds_features_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        if (checkEntryGroupSize (MAX_FILTER_FEATURE_COUNT)) {
-          showOverlappingCDSs (getParentFrame (),
-                               selection, entry_group, goto_event_source,
-                               base_plot_group);
-        }
+      new JMenuItem("Overlapping CDS Features ...");
+    overlapping_cds_features_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        if(checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT)) 
+          showOverlappingCDSs(getParentFrame(), selection,
+                              entry_group, goto_event_source,
+                              base_plot_group);
       }
     });
 
     final JMenuItem same_stop_cds_features_item =
-      new JMenuItem ("CDSs Sharing Stop Codons ...");
-    same_stop_cds_features_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        if (checkEntryGroupSize (MAX_FILTER_FEATURE_COUNT)) {
-          showFeaturesWithSameStopCodons (getParentFrame (),
-                                          selection, entry_group,
-                                          goto_event_source,
-                                          base_plot_group);
-        }
+      new JMenuItem("CDSs Sharing Stop Codons ...");
+    same_stop_cds_features_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        if(checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT)) 
+          showFeaturesWithSameStopCodons(getParentFrame(), 
+                                         selection, entry_group,
+                                         goto_event_source,
+                                         base_plot_group);
       }
     });
 
     final JMenuItem missing_qualifier_features_item =
-      new JMenuItem ("Features Missing Required Qualifiers ...");
-    missing_qualifier_features_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        if (checkEntryGroupSize (MAX_FILTER_FEATURE_COUNT)) {
-          showMissingQualifierFeatures (getParentFrame (),
-                                        selection,
-                                        entry_group, goto_event_source,
-                                        base_plot_group);
-        }
+      new JMenuItem("Features Missing Required Qualifiers ...");
+    missing_qualifier_features_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        if(checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT)) 
+          showMissingQualifierFeatures(getParentFrame(), selection,
+                                       entry_group, goto_event_source,
+                                       base_plot_group);
       }
     });
 
     final JMenuItem filter_by_key_item =
-      new JMenuItem ("Filter By Key ...");
-    filter_by_key_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        if (checkEntryGroupSize (MAX_FILTER_FEATURE_COUNT)) {
-          showFilterByKey (getParentFrame (),
-                           selection, entry_group, goto_event_source,
-                           base_plot_group);
-        }
+      new JMenuItem("Filter By Key ...");
+    filter_by_key_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        if(checkEntryGroupSize(MAX_FILTER_FEATURE_COUNT)) 
+          showFilterByKey(getParentFrame(), selection,
+                          entry_group, goto_event_source,
+                          base_plot_group);
       }
     });
 
     final JMenuItem filter_by_selection_item =
-      new JMenuItem ("Selected Features ...");
-    filter_by_selection_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        showFilterBySelection (getParentFrame (),
-                               selection, entry_group, goto_event_source,
-                               base_plot_group);
+      new JMenuItem("Selected Features ...");
+    filter_by_selection_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        showFilterBySelection(getParentFrame(),
+                              selection, entry_group, goto_event_source,
+                              base_plot_group);
       }
     });
 
-    feature_filters_menu.add (bad_start_codons_item);
-    feature_filters_menu.add (bad_stop_codons_item);
-    feature_filters_menu.add (stop_codons_in_translation);
-    feature_filters_menu.add (bad_feature_keys_item);
-    feature_filters_menu.add (duplicated_keys_item);
-    feature_filters_menu.add (overlapping_cds_features_item);
-    feature_filters_menu.add (same_stop_cds_features_item);
-    feature_filters_menu.add (missing_qualifier_features_item);
-    feature_filters_menu.addSeparator ();
-    feature_filters_menu.add (filter_by_key_item);
-    feature_filters_menu.add (filter_by_selection_item);
+    feature_filters_menu.add(bad_start_codons_item);
+    feature_filters_menu.add(bad_stop_codons_item);
+    feature_filters_menu.add(stop_codons_in_translation);
+    feature_filters_menu.add(bad_feature_keys_item);
+    feature_filters_menu.add(duplicated_keys_item);
+    feature_filters_menu.add(overlapping_cds_features_item);
+    feature_filters_menu.add(same_stop_cds_features_item);
+    feature_filters_menu.add(missing_qualifier_features_item);
+    feature_filters_menu.addSeparator();
+    feature_filters_menu.add(filter_by_key_item);
+    feature_filters_menu.add(filter_by_selection_item);
 
-    add (view_feature_item);
-    add (view_selection_item);
-    addSeparator ();
-    if (search_results_menu != null) {
-      add (search_results_menu);
-    }
-    add (view_cds_item);
-    add (feature_filters_menu);
-    addSeparator ();
-    add (overview_item);
-    add (forward_overview_item);
-    add (reverse_overview_item);
-    addSeparator ();
-    add (view_bases_item);
-    add (view_bases_as_fasta_item);
-    add (view_aa_item);
-    add (view_aa_as_fasta_item);
-    addSeparator ();
-    add (feature_info_item);
-    add (plot_features_item);
+    add(view_feature_item);
+    add(view_selection_item);
+    addSeparator();
+    if(search_results_menu != null)
+      add(search_results_menu);
+    
+    add(view_cds_item);
+    add(feature_filters_menu);
+    addSeparator();
+    add(overview_item);
+    add(forward_overview_item);
+    add(reverse_overview_item);
+    addSeparator();
+    add(view_bases_item);
+    add(view_bases_as_fasta_item);
+    add(view_aa_item);
+    add(view_aa_as_fasta_item);
+    addSeparator();
+    add(feature_info_item);
+    add(plot_features_item);
   }
 
   /**
@@ -396,17 +432,18 @@ public class ViewMenu extends SelectionMenu {
    *    operate on.
    *  @param entry_group The EntryGroup object where new features/entries will
    *    be added.
-   *  @param goto_event_source The object that we will call makeBaseVisible ()
+   *  @param goto_event_source The object that we will call makeBaseVisible()
    *    on.
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  public ViewMenu (final JFrame frame,
-                   final Selection selection,
-                   final GotoEventSource goto_event_source,
-                   final EntryGroup entry_group,
-                   final BasePlotGroup base_plot_group) {
-    this (frame, selection, goto_event_source, entry_group,
+  public ViewMenu(final JFrame frame,
+                  final Selection selection,
+                  final GotoEventSource goto_event_source,
+                  final EntryGroup entry_group,
+                  final BasePlotGroup base_plot_group) 
+  {
+    this(frame, selection, goto_event_source, entry_group,
           base_plot_group, "View");
   }
 
@@ -481,52 +518,43 @@ public class ViewMenu extends SelectionMenu {
    *  @param sanger_options true if the sanger_options is set to true in the
    *    options file.
    **/
-  private JMenuItem makeSearchResultsMenu (final String program_name,
+  private JMenuItem makeSearchResultsMenu(final String program_name,
                                           final boolean send_to_browser,
-                                          final boolean sanger_options) {
-    final String new_menu_name;
+                                          final boolean sanger_options) 
+  {
+    final String suffix;
+    if(send_to_browser)
+      suffix = new String(" results (in browser)");
+    else
+      suffix = new String(" results");
 
-    if (send_to_browser) {
-      new_menu_name = program_name + " results (in browser)";
-    } else {
-      new_menu_name = program_name + " results";
-    }
-
-    final JMenuItem new_menu;
+    final JMenuItem new_menu = new JMenuItem(program_name + suffix);
 
     if ((sanger_options && send_to_browser || !sanger_options)
-        && program_name.equals ("fasta")) {
-      new_menu = new JMenuItem (new_menu_name);
+        && program_name.equals("fasta"))
       new_menu.setAccelerator (FASTA_IN_BROWSER_KEY);
-    } else {
+    else 
+    {
       if ((sanger_options && send_to_browser || !sanger_options)
-          && program_name.equals ("blastp")) {
-        new_menu = new JMenuItem (new_menu_name);
+          && program_name.equals("blastp")) 
         new_menu.setAccelerator (BLASTP_IN_BROWSER_KEY);
-      } else {
-        if (program_name.equals ("fasta")) {
-          new_menu = new JMenuItem (new_menu_name);
+      else 
+      {
+        if(program_name.equals("fasta"))
           new_menu.setAccelerator (VIEW_FASTA_KEY);
-        } else {
-          if (program_name.equals ("blastp")) {
-            new_menu = new JMenuItem (new_menu_name);
-            new_menu.setAccelerator (VIEW_BLASTP_KEY);
-          } else {
-            if (program_name.equals ("hth")) {
-              new_menu = new JMenuItem (new_menu_name);
-              new_menu.setAccelerator (VIEW_HTH_KEY);
-            } else {
-              new_menu = new JMenuItem (new_menu_name);
-            }
-          }
-        }
+        else if(program_name.equals("blastp")) 
+          new_menu.setAccelerator (VIEW_BLASTP_KEY);
+        else if(program_name.equals("hth")) 
+          new_menu.setAccelerator (VIEW_HTH_KEY);
       }
     }
 
-    new_menu.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        viewExternalResults (getParentFrame (), getSelection (),
-                             program_name, send_to_browser);
+    new_menu.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        viewExternalResults(getParentFrame(), getSelection(),
+                            program_name, send_to_browser);
       }
     });
 
@@ -543,7 +571,7 @@ public class ViewMenu extends SelectionMenu {
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  public static void showBadStartCodons (final JFrame parent_frame,
+  protected static void showBadStartCodons (final JFrame parent_frame,
                                          final Selection selection,
                                          final EntryGroup entry_group,
                                          final GotoEventSource goto_source,
@@ -592,7 +620,7 @@ public class ViewMenu extends SelectionMenu {
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  public static void showBadStopCodons (final JFrame parent_frame,
+  protected static void showBadStopCodons (final JFrame parent_frame,
                                         final Selection selection,
                                         final EntryGroup entry_group,
                                         final GotoEventSource goto_source,
@@ -641,7 +669,7 @@ public class ViewMenu extends SelectionMenu {
    *  @param base_plot_group The BasePlotGroup associated with this Menu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  public static void showStopsInTranslation (final Frame parent_frame,
+  private static void showStopsInTranslation (final Frame parent_frame,
                                              final Selection selection,
                                              final EntryGroup entry_group,
                                              final GotoEventSource goto_source,
@@ -691,7 +719,7 @@ public class ViewMenu extends SelectionMenu {
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  public static void showNonEMBLKeys (final JFrame parent_frame,
+  protected static void showNonEMBLKeys (final JFrame parent_frame,
                                       final Selection selection,
                                       final EntryGroup entry_group,
                                       final GotoEventSource goto_source,
@@ -734,7 +762,7 @@ public class ViewMenu extends SelectionMenu {
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  public static void showDuplicatedFeatures (final JFrame parent_frame,
+  protected static void showDuplicatedFeatures (final JFrame parent_frame,
                                              final Selection selection,
                                              final EntryGroup entry_group,
                                              final GotoEventSource goto_source,
@@ -789,7 +817,7 @@ public class ViewMenu extends SelectionMenu {
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  public static void showOverlappingCDSs (final JFrame parent_frame,
+  protected static void showOverlappingCDSs (final JFrame parent_frame,
                                           final Selection selection,
                                           final EntryGroup entry_group,
                                           final GotoEventSource goto_source,
@@ -854,7 +882,7 @@ public class ViewMenu extends SelectionMenu {
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  public static void
+  private static void
     showFeaturesWithSameStopCodons (final JFrame parent_frame,
                                     final Selection selection,
                                     final EntryGroup entry_group,
@@ -927,14 +955,11 @@ public class ViewMenu extends SelectionMenu {
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  public static void showMissingQualifierFeatures (final JFrame parent_frame,
-                                                   final Selection selection,
-                                                   final EntryGroup
-                                                     entry_group,
-                                                   final GotoEventSource
-                                                     goto_source,
-                                                   final BasePlotGroup
-                                                     base_plot_group) {
+  protected static void showMissingQualifierFeatures(final JFrame parent_frame,
+                      final Selection selection, final EntryGroup entry_group,
+                      final GotoEventSource goto_source,
+                      final BasePlotGroup base_plot_group)
+  {
     final FeaturePredicate feature_predicate =
       new FeaturePredicate () {
         public boolean testPredicate (final Feature feature) {
@@ -972,7 +997,7 @@ public class ViewMenu extends SelectionMenu {
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  public static void showFilterByKey (final JFrame parent_frame,
+  private static void showFilterByKey (final JFrame parent_frame,
                                       final Selection selection,
                                       final EntryGroup entry_group,
                                       final GotoEventSource goto_source,
@@ -1020,14 +1045,12 @@ public class ViewMenu extends SelectionMenu {
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  public static void showFilterByKeyHelper (final JFrame parent_frame,
-                                            final Key key,
-                                            final Selection selection,
-                                            final EntryGroup entry_group,
-                                            final GotoEventSource
-                                              goto_source,
-                                            final BasePlotGroup
-                                              base_plot_group) {
+  private static void showFilterByKeyHelper (final JFrame parent_frame,
+                      final Key key, final Selection selection,
+                      final EntryGroup entry_group, 
+                      final GotoEventSource goto_source,
+                      final BasePlotGroup base_plot_group)
+  {
     final String filter_name =
       "features with key: " + key + " (filtered from: " +
       parent_frame.getTitle () + ")";
@@ -1055,13 +1078,11 @@ public class ViewMenu extends SelectionMenu {
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  public static void showFilterBySelection (final JFrame parent_frame,
-                                            final Selection selection,
-                                            final EntryGroup entry_group,
-                                            final GotoEventSource
-                                              goto_source,
-                                            final BasePlotGroup
-                                              base_plot_group) {
+  private static void showFilterBySelection (final JFrame parent_frame,
+                      final Selection selection, final EntryGroup entry_group,
+                      final GotoEventSource goto_source,
+                      final BasePlotGroup base_plot_group)
+  {
     final FeaturePredicate predicate =
       new FeatureFromVectorPredicate (selection.getAllFeatures ());
 
@@ -1092,8 +1113,9 @@ public class ViewMenu extends SelectionMenu {
    *  @param frame The JFrame to use for MessageDialog components.
    *  @param selection The Selection containing the features to merge.
    **/
-  static void viewSelectedFeatures (final JFrame frame,
-                                    final Selection selection) {
+  protected static void viewSelectedFeatures (final JFrame frame,
+                                    final Selection selection) 
+  {
     final FeatureVector features_to_view = selection.getAllFeatures ();
 
     if (features_to_view.size () > MAXIMUM_SELECTED_FEATURES) {
@@ -1116,8 +1138,9 @@ public class ViewMenu extends SelectionMenu {
    *  @param frame The JFrame to use for MessageDialog components.
    *  @param selection The Selection containing the features to plot.
    **/
-  static void plotSelectedFeatures (final JFrame frame,
-                                    final Selection selection) {
+  protected static void plotSelectedFeatures (final JFrame frame,
+                                    final Selection selection) 
+  {
     final FeatureVector features_to_plot = selection.getAllFeatures ();
 
     if (features_to_plot.size () > MAXIMUM_SELECTED_FEATURES) {
@@ -1143,10 +1166,11 @@ public class ViewMenu extends SelectionMenu {
    *  @param send_to_browser if true the results should be sent straight to
    *    the web browser rather than using a SearchResultViewer object.
    **/
-  static void viewExternalResults (final JFrame frame,
+  protected static void viewExternalResults (final JFrame frame,
                                    final Selection selection,
                                    final String program_name,
-                                   final boolean send_to_browser) {
+                                   final boolean send_to_browser) 
+  {
     final FeatureVector features_to_view = selection.getAllFeatures ();
 
     if (features_to_view.size () > MAXIMUM_SELECTED_FEATURES) {
@@ -1263,7 +1287,8 @@ public class ViewMenu extends SelectionMenu {
    *  Open a FeatureInfo component for each of the selected features.  The
    *  new component will listen for feature change events and update itself.
    **/
-  private void viewSelectedFeatureInfo () {
+  private void viewSelectedFeatureInfo () 
+  {
     final FeatureVector features_to_view = getSelection ().getAllFeatures ();
 
     if (features_to_view.size () > MAXIMUM_SELECTED_FEATURES) {
@@ -1393,23 +1418,10 @@ public class ViewMenu extends SelectionMenu {
   /**
    *  Return the EntryGroup that was passed to the constructor.
    **/
-  private EntryGroup getEntryGroup () {
+  private EntryGroup getEntryGroup () 
+  {
     return entry_group;
   }
-
-  private JMenuItem feature_info_item = null;
-  private JMenuItem plot_features_item = null;
-  private JMenuItem view_feature_item = null;
-  private JMenuItem view_selection_item = null;
-  private JMenuItem view_fasta_item = null;
-  private JMenuItem view_bases_item = null;
-  private JMenuItem view_bases_as_fasta_item = null;
-  private JMenuItem view_aa_item = null;
-  private JMenuItem view_aa_as_fasta_item = null;
-  private JMenuItem overview_item = null;
-  private JMenuItem forward_overview_item = null;
-  private JMenuItem reverse_overview_item = null;
-  private JMenuItem view_cds_item = null;
 
   /**
    *  The EntryGroup that was passed to the constructor.
