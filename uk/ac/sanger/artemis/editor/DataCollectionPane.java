@@ -289,13 +289,17 @@ public class DataCollectionPane extends JScrollPane
                 if(go_term == null)
                 { 
                   go_term = setGoAnnotation(ann,hit,go_id,goLine);
-                  hit.setGoAssociation(go_id,go_term);
+ //               hit.setGoAssociation(go_id,go_term);
                 }
                 else
                   ann.insert(go_term,false);
               }
               else
+              {
+                // possibly 2 line to delete
                 ann.delete(go_id,false);
+                ann.delete(go_id,false);
+              }
             }
           });
           goBox.setMargin(new Insets(0,1,0,1));
@@ -677,8 +681,13 @@ public class DataCollectionPane extends JScrollPane
       BufferedReader buffRead = new BufferedReader(new StringReader(res));
       while((line = buffRead.readLine()) != null)
       {
-        if(line.indexOf(go_id) > -1)
+
+        int ind1 = line.indexOf("GO:");
+        int ind2 = line.indexOf(" ",ind1);
+        if(ind1 > -1 && ind2 > -1)
         {
+          String this_go_id = line.substring(ind1+3,ind2).trim();
+          
 // see http://intweb.sanger.ac.uk/help/wiki/html/Intweb/PSUEukaryoticQualifiers.html
           int ref = line.indexOf("db_xref=");
           String db_xref = null;
@@ -690,16 +699,16 @@ public class DataCollectionPane extends JScrollPane
 
           // build GO line
           StringBuffer goBuff = new StringBuffer();
-          if(go_ann.startsWith("/GO_component"))
+          if(line.startsWith("/GO_component"))
             goBuff.append("/GO=\"aspect=component; ");
-          else if(go_ann.startsWith("/GO_process"))
+          else if(line.startsWith("/GO_process"))
             goBuff.append("/GO=\"aspect=process; ");
           else
             goBuff.append("/GO=\"aspect=function; ");
-          goBuff.append("GOid=GO:"+go_id+"; ");
+          goBuff.append("GOid=GO:"+this_go_id+"; ");
 
-          int ind1 = line.indexOf("(");
-          int ind2 = line.indexOf(")")+1; 
+          ind1 = line.indexOf("(");
+          ind2 = line.indexOf(")")+1; 
           if(ind1 > -1 && ind2 > -1)
             goBuff.append("term="+line.substring(ind1,ind2)+"; ");
 
@@ -709,13 +718,15 @@ public class DataCollectionPane extends JScrollPane
             goBuff.append("evidence="+line.substring(ind1,ind2)+"; ");
 
           if(db_xref != null)
-            goBuff.append(db_xref+"; ");
+            goBuff.append(db_xref+" ");
 
           goBuff.append("with="+hit.getDB()+":"+hit.getAcc()+"; "); 
-          go_ann = line + "\"<br>" + goBuff.toString() +"\"";
 
+          if(go_id.equals(this_go_id))
+            go_ann = line + "\"<br>" + goBuff.toString() +"\"";
+
+          hit.setGoAssociation(this_go_id,line + "\"<br>" + goBuff.toString() +"\"");
           found = true;
-          break;
         }
       }
     }
@@ -734,14 +745,20 @@ public class DataCollectionPane extends JScrollPane
         BufferedReader buffRead = new BufferedReader(new StringReader(res));
         while((line = buffRead.readLine()) != null)
         {
-          if(line.indexOf(go_id) > -1)
+
+          int ind1 = line.indexOf("GO:");
+          int ind2 = line.indexOf(";",ind1);
+          if(ind1 > -1 && ind2 > -1)
           {
+            String this_go_id = line.substring(ind1+3,ind2).trim();
+
             line = line.substring(3).trim();
             String aspect = null;
             String term   = null;
             String evidence = null;
-            int ind1 = -1; 
-            int ind2 = -1;
+            ind1 = -1; 
+            ind2 = -1;
+
             if((ind1 = line.indexOf(" F:"))> -1)
             {
               aspect = "function";
@@ -767,20 +784,23 @@ public class DataCollectionPane extends JScrollPane
             StringBuffer goBuff = new StringBuffer();
 
             goBuff.append("/GO_"+aspect);
-            goBuff.append("=\"GO:"+go_id+"; ");
+            goBuff.append("=\"GO:"+this_go_id+"; ");
             goBuff.append(evidence+"; ");
             goBuff.append(hit.getDB()+":"+hit.getAcc()+";\"<br>");
 
-            goBuff.append("/GO=\"aspect=function; ");
-            goBuff.append("GOid=GO:"+go_id+"; ");
+            goBuff.append("/GO=\"aspect="+aspect+"; ");
+            goBuff.append("GOid=GO:"+this_go_id+"; ");
             goBuff.append("term="+term+"; ");
             goBuff.append("evidence="+evidence+"; ");
             goBuff.append("db_xref= ;");
             goBuff.append("with="+hit.getDB()+":"+hit.getAcc()+";\"");
-            go_ann = goBuff.toString();
-//          go_ann = new String("/GO=\""+line.substring(3).trim()+"\"");
+
+            if(go_id.equals(this_go_id))
+              go_ann = goBuff.toString();
+
+            hit.setGoAssociation(this_go_id,goBuff.toString());
             found = true;
-            break;
+//          break;
           }
         }
       }
