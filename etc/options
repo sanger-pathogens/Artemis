@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.5 2004-06-11 10:24:42 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.6 2004-06-11 15:44:23 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -484,9 +484,10 @@ feature_protein_programs = \
     fasta %K \
     sigcleave 0 \
     pepstats - \
-    blastp swall \
+    blastp %swall \
     blastp psu/Kineto_aa \
     tblastn %embl_other \
+    blastp+go /nfs/pathsoft/databases/protein/go_all \
     hth - \
     smart - \
     clustalx PROTEIN \
