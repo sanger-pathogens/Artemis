@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.1 2004-06-09 09:47:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.2 2004-07-29 13:38:50 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import javax.swing.border.BevelBorder;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.1 2004-06-09 09:47:09 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.2 2004-07-29 13:38:50 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
@@ -141,6 +141,10 @@ public class MultiComparator extends JFrame
                          final InputStreamProgressListener
                             progress_listener) 
   {
+    super();
+
+    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
     if(entry_group_array.length != comparison_data_array.length + 1) 
       throw new Error("internal error - " +
                       "MultiComparator got illegal arguments");
