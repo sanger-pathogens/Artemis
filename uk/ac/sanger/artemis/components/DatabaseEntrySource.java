@@ -112,6 +112,7 @@ public class DatabaseEntrySource implements EntrySource
   protected Hashtable getDatabaseEntries()
   {
     DatabaseDocument doc = new DatabaseDocument("jdbc:postgresql://pcs3:13001/chadoCVS?user=es2");
+//  DatabaseDocument doc = new DatabaseDocument("jdbc:postgresql://tim1:2999/chadoCVS?user=tim");
     return doc.getDatabaseEntries();
   }
 
