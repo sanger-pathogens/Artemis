@@ -171,17 +171,25 @@ public class BigPane extends JFrame
         if(qualifier == null)
           System.exit(0);
 
-        int ok = JOptionPane.showConfirmDialog(BigPane.this, 
+        String oldTxt = qualifier.getText().trim();
+        String newTxt = dataView.getFeatureText().trim();
+
+        // changes have been made to feature annotation
+        if(!oldTxt.equals(newTxt))
+        {
+          int ok = JOptionPane.showConfirmDialog(BigPane.this, 
                               "Apply changes now?",
                               "Apply Changes",
                               JOptionPane.YES_NO_CANCEL_OPTION,
                               JOptionPane.QUESTION_MESSAGE);
 
-        if(ok == JOptionPane.CANCEL_OPTION)
-          return;
+          if(ok == JOptionPane.CANCEL_OPTION)
+            return;
 
-        if(ok == JOptionPane.OK_OPTION)
-          qualifier.setText(dataView.getFeatureText());
+          if(ok == JOptionPane.OK_OPTION)
+            qualifier.setText(newTxt);
+        }
+
         BigPane.srsFrame = null;
         dispose();
       }

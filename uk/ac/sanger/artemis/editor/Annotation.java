@@ -153,7 +153,7 @@ public class Annotation extends JEditorPane
 
       while(tok.hasMoreTokens())
       {
-        String tokTxt = "/"+tok.nextToken();
+        String tokTxt = "/"+tok.nextToken().trim();
 
         int ind = tokTxt.indexOf("=");
         if(ntok != 0 && ind > -1 && qualifier.contains(tokTxt.substring(0,ind+1)))
