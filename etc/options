@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.1 2004-06-09 10:02:52 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.2 2004-06-10 10:15:31 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -493,7 +493,7 @@ feature_dna_programs = \
     tblastx embl_other \
     blastn embl_other \
     blastx swall \
-    fastx %L \ 
+    fastx %L \
     clustalx DNA
 
 application_programs = \
