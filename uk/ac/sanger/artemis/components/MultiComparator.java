@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.9 2005-04-05 16:16:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.10 2005-04-07 09:59:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -57,7 +57,7 @@ import javax.swing.border.BevelBorder;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.9 2005-04-05 16:16:54 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.10 2005-04-07 09:59:32 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
@@ -624,9 +624,6 @@ public class MultiComparator extends JFrame
                         sub_menu_name);
         edit_menu.add(this_edit_menu);
 
-//      boolean subject = false;
-//      if(i%2 == 0)  
-//        subject = true;
 
         AlignmentViewer alignQueryViewer;
         if(i==0)

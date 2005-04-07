@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.6 2005-04-06 16:07:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.7 2005-04-07 09:59:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.6 2005-04-06 16:07:03 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.7 2005-04-07 09:59:32 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -346,6 +346,8 @@ public class AddMenu extends SelectionMenu
       {
         loc = new Location(start+".."+end);
         temp_feature = default_entry.createFeature(Key.CDS, loc);
+        Qualifier note = new Qualifier("note","Automatically generated region of difference.");
+        temp_feature.setQualifier(note);
       } 
       catch(EntryInformationException e) 
       {
