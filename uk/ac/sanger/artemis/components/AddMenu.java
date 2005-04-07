@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.7 2005-04-07 09:59:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.8 2005-04-07 13:57:21 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.7 2005-04-07 09:59:32 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.8 2005-04-07 13:57:21 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -154,21 +154,39 @@ public class AddMenu extends SelectionMenu
         public void actionPerformed (ActionEvent event) 
         {
           Vector diffs = null;
+          String comparisonNote = "";
           if(alignQueryViewer == null || alignSubjectViewer == null)
           {
+            final Entry sequence_entry;
             if(alignQueryViewer != null)
+            {
               diffs = alignQueryViewer.getDifferenceCoords(false);
+              sequence_entry = alignQueryViewer.getSubjectEntryGroup().getSequenceEntry();
+            }
             else
+            {
               diffs = alignSubjectViewer.getDifferenceCoords(true);
+              sequence_entry = alignSubjectViewer.getQueryEntryGroup().getSequenceEntry();
+            }
+
+            comparisonNote = comparisonNote + sequence_entry.getName();
           }
           else    // multi-comparison
           {
             Vector diffs1 = alignQueryViewer.getDifferenceCoords(false);
             Vector diffs2 = alignSubjectViewer.getDifferenceCoords(true);
-            
+          
+            Entry sequence_entry;
+            sequence_entry = alignQueryViewer.getSubjectEntryGroup().getSequenceEntry();
+            comparisonNote = comparisonNote + sequence_entry.getName();
+
+            sequence_entry = alignSubjectViewer.getQueryEntryGroup().getSequenceEntry();
+            comparisonNote = comparisonNote + " and " + sequence_entry.getName();
+  
             diffs = union(diffs1,diffs2);
           }
-          createFeatures(diffs, frame);
+          
+          createFeatures(diffs, frame, comparisonNote);
         }
       });
 
@@ -323,7 +341,7 @@ public class AddMenu extends SelectionMenu
   * @param frame The JFrame that owns this JMenu.
   *
   */
-  private void createFeatures(Vector diffs, JFrame frame) 
+  private void createFeatures(Vector diffs, JFrame frame, String name) 
   {
     Enumeration eDiffs = diffs.elements();
     while(eDiffs.hasMoreElements())
@@ -345,8 +363,11 @@ public class AddMenu extends SelectionMenu
       try 
       {
         loc = new Location(start+".."+end);
-        temp_feature = default_entry.createFeature(Key.CDS, loc);
-        Qualifier note = new Qualifier("note","Automatically generated region of difference.");
+        Key misc_feature = new Key("misc_feature");
+        temp_feature = default_entry.createFeature(misc_feature, loc);
+        Qualifier note = new Qualifier("note",
+                                       "Automatically generated region of difference with "+
+                                       name);
         temp_feature.setQualifier(note);
       } 
       catch(EntryInformationException e) 
