@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Selection.java,v 1.1 2004-06-09 09:45:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Selection.java,v 1.2 2005-04-07 16:27:51 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -40,7 +40,7 @@ import java.awt.datatransfer.*;
  *  the user has selected.
  *
  *  @author Kim Rutherford
- *  @version $Id: Selection.java,v 1.1 2004-06-09 09:45:04 tjc Exp $
+ *  @version $Id: Selection.java,v 1.2 2005-04-07 16:27:51 tjc Exp $
  *
  **/
 
@@ -325,6 +325,7 @@ public class Selection
       }
     }
   }
+
 
   /**
    *  Return true if and only if there is nothing in the selection.

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.1 2004-06-09 09:47:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.2 2005-04-07 16:27:51 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -37,10 +37,12 @@ import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.InvalidKeyException;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.EntryInformation;
+import uk.ac.sanger.artemis.io.Location;
 
 import java.awt.*;
 import java.awt.event.*;
-
+import java.util.Vector;
+import java.util.Enumeration;
 import javax.swing.*;
 
 /**
@@ -48,10 +50,56 @@ import javax.swing.*;
  *  "Select by key".
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectMenu.java,v 1.1 2004-06-09 09:47:37 tjc Exp $
+ *  @version $Id: SelectMenu.java,v 1.2 2005-04-07 16:27:51 tjc Exp $
  **/
 
-public class SelectMenu extends SelectionMenu {
+public class SelectMenu extends SelectionMenu 
+{
+
+  /**
+   *  The EntryGroup object that was passed to the constructor.
+   **/
+  private EntryGroup entry_group;
+
+  /**
+   *  The GotoEventSource object that was passed to the constructor.
+   **/
+  private GotoEventSource goto_event_source;
+
+  private JMenuItem selector_item = null;
+  private JMenuItem all_item = null;
+  private JMenuItem all_bases_item = null;
+  private JMenuItem none_item = null;
+  private JMenuItem selection_toggle_item = null;
+  private JMenuItem select_same_type_item = null;
+  private JMenuItem select_matching_qualifiers_item = null;
+  private JMenuItem select_features_in_range_item = null;
+  private JMenuItem select_base_range_item = null;
+  private JMenuItem select_aa_range_in_feature_item = null;
+  private JMenuItem select_orf_item = null;
+  private JMenuItem select_by_key_item = null;
+  private JMenuItem select_non_pseudo_cds_item = null;
+  private JMenuItem select_all_cds_item = null;
+
+  /**
+   *  The shortcut for Select All
+   **/
+  final static KeyStroke SELECT_ALL_KEY =
+    KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK);
+
+  /**
+   *  The shortcut for Select None
+   **/
+  final static KeyStroke SELECT_NONE_KEY =
+    KeyStroke.getKeyStroke (KeyEvent.VK_N, InputEvent.CTRL_MASK);
+
+
+  /**
+   *  Warn if the user tries to select more than this number of features.
+   **/
+  final private int MAX_FEATURE_TO_SELECT_COUNT = 10000;
+
+
   /**
    *  Create a new SelectMenu object and all it's menu items.
    *  @param frame The JFrame that owns this JMenu.
@@ -65,176 +113,252 @@ public class SelectMenu extends SelectionMenu {
    *    needed to call getCodonUsageAlgorithm()
    *  @param menu_name The name of the new menu.
    **/
-  public SelectMenu (final JFrame frame,
-                     final Selection selection,
-                     final GotoEventSource goto_event_source,
-                     final EntryGroup entry_group,
-                     final BasePlotGroup base_plot_group,
-                     final String menu_name) {
-    super (frame, menu_name, selection);
+  public SelectMenu(final JFrame frame,
+                    final Selection selection,
+                    final GotoEventSource goto_event_source,
+                    final EntryGroup entry_group,
+                    final BasePlotGroup base_plot_group,
+                    final String menu_name)
+ {
+   this(frame,selection,goto_event_source,entry_group,
+        base_plot_group,null,null,menu_name);
+ }
+
+  /**
+   *  Create a new SelectMenu object and all it's menu items.
+   *  @param frame The JFrame that owns this JMenu.
+   *  @param selection The Selection that the commands in the menu will
+   *    operate on.
+   *  @param goto_event_source The object the we will call makeBaseVisible ()
+   *    on.
+   *  @param entry_group The EntryGroup object where features and exons are
+   *    selected from.
+   *  @param base_plot_group The BasePlotGroup associated with this JMenu -
+   *    needed to call getCodonUsageAlgorithm()
+   *  @param menu_name The name of the new menu.
+   **/
+  public SelectMenu(final JFrame frame,
+                    final Selection selection,
+                    final GotoEventSource goto_event_source,
+                    final EntryGroup entry_group,
+                    final BasePlotGroup base_plot_group,
+                    final AlignmentViewer alignQueryViewer,  
+                    final AlignmentViewer alignSubjectViewer,
+                    final String menu_name) 
+ {
+    super(frame, menu_name, selection);
 
     this.entry_group = entry_group;
     this.goto_event_source = goto_event_source;
 
-    selector_item = new JMenuItem ("Feature Selector ...");
-    selector_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        new Selector (selection, goto_event_source, getEntryGroup (),
-                      base_plot_group);
+    selector_item = new JMenuItem("Feature Selector ...");
+    selector_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        new Selector(selection, goto_event_source, getEntryGroup(),
+                     base_plot_group);
       }
     });
 
-    add (selector_item);
+    add(selector_item);
 
-    addSeparator ();
+    addSeparator();
 
-    all_item = new JMenuItem ("All");
-    all_item.setAccelerator (SELECT_ALL_KEY);
-    all_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        selectAll ();
+    all_item = new JMenuItem("All");
+    all_item.setAccelerator(SELECT_ALL_KEY);
+    all_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        selectAll();
       }
     });
 
-    add (all_item);
+    add(all_item);
 
-    all_bases_item = new JMenuItem ("All Bases");
-    all_bases_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        selectAllBases ();
+    all_bases_item = new JMenuItem("All Bases");
+    all_bases_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        selectAllBases();
       }
     });
 
-    add (all_bases_item);
+    add(all_bases_item);
 
-    none_item = new JMenuItem ("None");
-    none_item.setAccelerator (SELECT_NONE_KEY);
-    none_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        clearSelection ();
+
+    if(alignQueryViewer != null || alignSubjectViewer != null)
+    {
+      JMenuItem all_diffs = new JMenuItem("All Features in Non-matching Regions");
+      all_diffs.addActionListener(new ActionListener() 
+      {
+        public void actionPerformed(ActionEvent event) 
+        {
+          Vector diffs = null;
+          if(alignQueryViewer == null || alignSubjectViewer == null)
+          {
+            if(alignQueryViewer != null)
+              diffs = alignQueryViewer.getDifferenceCoords(false);
+            else
+              diffs = alignSubjectViewer.getDifferenceCoords(false);
+          }
+          else
+          {
+            final Vector diffs1 = alignQueryViewer.getDifferenceCoords(false);
+            final Vector diffs2 = alignSubjectViewer.getDifferenceCoords(false);
+            diffs = AddMenu.union(diffs1,diffs2);
+          }
+
+          if(diffs != null)
+            selectAllFeatures(diffs);
+        }
+      });
+
+      add(all_diffs);
+
+    }
+
+    none_item = new JMenuItem("None");
+    none_item.setAccelerator(SELECT_NONE_KEY);
+    none_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        clearSelection();
       }
     });
 
-    add (none_item);
+    add(none_item);
 
-    select_by_key_item = new JMenuItem ("By Key");
-    select_by_key_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        selectByKeyPopup ();
+    select_by_key_item = new JMenuItem("By Key");
+    select_by_key_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        selectByKeyPopup();
       }
     });
 
-    add (select_by_key_item);
+    add(select_by_key_item);
 
     select_non_pseudo_cds_item =
-      new JMenuItem ("CDS Features without /pseudo");
-    select_non_pseudo_cds_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
+      new JMenuItem("CDS Features without /pseudo");
+    select_non_pseudo_cds_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
         // select all CDS features that do not have the /pseudo qualifier
         final FeatureKeyQualifierPredicate predicate =
-          new FeatureKeyQualifierPredicate (Key.CDS, "pseudo", false);
+          new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false);
 
-        clearSelection ();
+        clearSelection();
 
-        selectFeaturesByPredicate (predicate);
+        selectFeaturesByPredicate(predicate);
       }
     });
 
-    add (select_non_pseudo_cds_item);
+    add(select_non_pseudo_cds_item);
 
-    select_all_cds_item = new JMenuItem ("All CDS Features");
-    select_all_cds_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
+    select_all_cds_item = new JMenuItem("All CDS Features");
+    select_all_cds_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
         final FeatureKeyPredicate predicate =
-          new FeatureKeyPredicate (Key.CDS);
+          new FeatureKeyPredicate(Key.CDS);
 
-        clearSelection ();
+        clearSelection();
 
-        selectFeaturesByPredicate (predicate);
+        selectFeaturesByPredicate(predicate);
       }
     });
 
-    add (select_all_cds_item);
+    add(select_all_cds_item);
 
-    select_same_type_item = new JMenuItem ("Same Key");
-    select_same_type_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        selectSameKey ();
+    select_same_type_item = new JMenuItem("Same Key");
+    select_same_type_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        selectSameKey();
       }
     });
 
-    add (select_same_type_item);
+    add(select_same_type_item);
 
     select_matching_qualifiers_item =
-      new JMenuItem ("Features Matching Qualifier");
-    select_matching_qualifiers_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        selectMatchingQualifiers ();
+      new JMenuItem("Features Matching Qualifier");
+    select_matching_qualifiers_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        selectMatchingQualifiers();
       }
     });
 
-    add (select_matching_qualifiers_item);
+    add(select_matching_qualifiers_item);
 
-    select_orf_item = new JMenuItem ("Open Reading Frame");
-    select_orf_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        selectOrf ();
+    select_orf_item = new JMenuItem("Open Reading Frame");
+    select_orf_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        selectOrf();
       }
     });
 
-    add (select_orf_item);
+    add(select_orf_item);
 
     select_features_in_range_item =
-      new JMenuItem ("Features Overlapping Selection");
-    select_features_in_range_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        selectOverlappingFeatures ();
+      new JMenuItem("Features Overlapping Selection");
+    select_features_in_range_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        selectOverlappingFeatures();
       }
     });
 
-    add (select_features_in_range_item);
+    add(select_features_in_range_item);
 
-    select_base_range_item = new JMenuItem ("Base Range ...");
-    select_base_range_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        selectBaseRange ();
+    select_base_range_item = new JMenuItem("Base Range ...");
+    select_base_range_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        selectBaseRange();
       }
     });
 
-    add (select_base_range_item);
+    add(select_base_range_item);
 
-    select_aa_range_in_feature_item = new JMenuItem ("Feature AA Range ...");
-    select_aa_range_in_feature_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        selectFeatureAARange ();
+    select_aa_range_in_feature_item = new JMenuItem("Feature AA Range ...");
+    select_aa_range_in_feature_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        selectFeatureAARange();
       }
     });
 
-    add (select_aa_range_in_feature_item);
+    add(select_aa_range_in_feature_item);
 
-    addSeparator ();
+    addSeparator();
 
-    selection_toggle_item = new JMenuItem ("Toggle Selection");
-    selection_toggle_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
-        toggleSelection ();
+    selection_toggle_item = new JMenuItem("Toggle Selection");
+    selection_toggle_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        toggleSelection();
       }
     });
 
-    add (selection_toggle_item);
+    add(selection_toggle_item);
   }
 
-  /**
-   *  The shortcut for Select All
-   **/
-  final static KeyStroke SELECT_ALL_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_A, InputEvent.CTRL_MASK);
-
-  /**
-   *  The shortcut for Select None
-   **/
-  final static KeyStroke SELECT_NONE_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_N, InputEvent.CTRL_MASK);
 
   /**
    *  Create a new SelectMenu object and all it's menu items.
@@ -248,64 +372,97 @@ public class SelectMenu extends SelectionMenu {
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  public SelectMenu (final JFrame frame,
-                     final Selection selection,
-                     final GotoEventSource goto_event_source,
-                     final EntryGroup entry_group,
-                     final BasePlotGroup base_plot_group) {
+  public SelectMenu(final JFrame frame,
+                    final Selection selection,
+                    final GotoEventSource goto_event_source,
+                    final EntryGroup entry_group,
+                    final BasePlotGroup base_plot_group) 
+  {
     this (frame, selection, goto_event_source, entry_group,
           base_plot_group, "Select");
   }
 
-  /**
-   *  Warn if the user tries to select more than this number of features.
-   **/
-  final private int MAX_FEATURE_TO_SELECT_COUNT = 10000;
 
   /**
    *  Select all the features in the active entries.  If there are more than
    *  1000 features the user is asked for confirmation.
    **/
-  private void selectAll () {
-    if (getEntryGroup ().getAllFeaturesCount () >
-        MAX_FEATURE_TO_SELECT_COUNT) {
+  private void selectAll() 
+  {
+    if(getEntryGroup().getAllFeaturesCount() >
+       MAX_FEATURE_TO_SELECT_COUNT) 
+    {
       final YesNoDialog dialog =
-        new YesNoDialog (getParentFrame (),
-                         "Are you sure you want to select " +
-                          getEntryGroup ().getAllFeaturesCount () +
-                         " features?");
+        new YesNoDialog(getParentFrame(),
+                        "Are you sure you want to select " +
+                         getEntryGroup().getAllFeaturesCount() +
+                        " features?");
 
-      if (!dialog.getResult ()) {
+      if(!dialog.getResult ()) 
         return;
-      }
     }
 
-    final FeatureVector all_features = getEntryGroup ().getAllFeatures ();
+    final FeatureVector all_features = getEntryGroup().getAllFeatures();
 
-    if (getEntryGroup () instanceof SimpleEntryGroup) {
+    if(getEntryGroup() instanceof SimpleEntryGroup) 
+    {
       // special case for speed
-      getSelection ().set (all_features);
-    } else {
-      clearSelection ();
-
-      getSelection ().add (all_features);
+      getSelection().set(all_features);
+    } 
+    else 
+    {
+      clearSelection();
+      getSelection().add(all_features);
     }
   }
 
   /**
    *  Select all the bases.
    **/
-  private void selectAllBases () {
-    try {
-      final Strand strand = getEntryGroup ().getBases ().getForwardStrand ();
+  private void selectAllBases()
+  {
+    try 
+    {
+      final Strand strand = getEntryGroup().getBases().getForwardStrand();
 
       final MarkerRange new_range =
-        strand.makeMarkerRangeFromPositions (1, strand.getSequenceLength ());
+        strand.makeMarkerRangeFromPositions(1, strand.getSequenceLength());
 
-      getSelection ().setMarkerRange (new_range);
-    } catch (OutOfRangeException e) {
+      getSelection().setMarkerRange(new_range);
+    }
+    catch (OutOfRangeException e) 
+    {
       throw new Error ("internal error - unexpected exception: " + e);
     }
+  }
+
+  private void selectAllFeatures(final Vector regions)
+  {
+    
+    final FeaturePredicate predicate = new FeaturePredicate()
+    {
+      public boolean testPredicate(final Feature feature)
+      {
+        final Location loc = feature.getLocation();
+        final int feat_start = loc.getFirstBase();
+        final int feat_end   = loc.getLastBase();
+
+        Enumeration eDiffs = regions.elements();
+        while(eDiffs.hasMoreElements())
+        {
+          final Integer coords[] = (Integer[])eDiffs.nextElement();
+          final int start = coords[0].intValue();
+          final int end   = coords[1].intValue();
+          if( (start > feat_start && start < feat_end)  ||  
+              (end > feat_start && end < feat_end) ) 
+            return true;
+        }
+
+        return false;
+      }
+    };
+
+    selectFeaturesByPredicate(predicate);
   }
 
   /**
@@ -313,7 +470,8 @@ public class SelectMenu extends SelectionMenu {
    *  Selection.  If the current EntryGroup is a SimpleEntryGroup then this
    *  method just calls getSelection ().clear ();
    **/
-  private void clearSelection () {
+  private void clearSelection () 
+  {
     if (getEntryGroup () instanceof SimpleEntryGroup) {
       // special case for speed
       getSelection ().clear ();
@@ -800,28 +958,4 @@ public class SelectMenu extends SelectionMenu {
     return entry_group;
   }
 
-  /**
-   *  The EntryGroup object that was passed to the constructor.
-   **/
-  private EntryGroup entry_group;
-
-  /**
-   *  The GotoEventSource object that was passed to the constructor.
-   **/
-  private GotoEventSource goto_event_source;
-
-  private JMenuItem selector_item = null;
-  private JMenuItem all_item = null;
-  private JMenuItem all_bases_item = null;
-  private JMenuItem none_item = null;
-  private JMenuItem selection_toggle_item = null;
-  private JMenuItem select_same_type_item = null;
-  private JMenuItem select_matching_qualifiers_item = null;
-  private JMenuItem select_features_in_range_item = null;
-  private JMenuItem select_base_range_item = null;
-  private JMenuItem select_aa_range_in_feature_item = null;
-  private JMenuItem select_orf_item = null;
-  private JMenuItem select_by_key_item = null;
-  private JMenuItem select_non_pseudo_cds_item = null;
-  private JMenuItem select_all_cds_item = null;
 }

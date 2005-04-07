@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.10 2005-04-07 09:59:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.11 2005-04-07 16:27:51 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -57,7 +57,7 @@ import javax.swing.border.BevelBorder;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.10 2005-04-07 09:59:32 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.11 2005-04-07 16:27:51 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
@@ -576,8 +576,19 @@ public class MultiComparator extends JFrame
     for(int i = 0 ; i < getEntryGroupArray().length ; ++i)
     {
       final EntryGroup entry_group = getEntryGroupArray()[i];
-
       final String sub_menu_name = makeNewSubMenuName(entry_group);
+
+      AlignmentViewer alignQueryViewer;
+      if(i==0)
+        alignQueryViewer = null;
+      else
+        alignQueryViewer = getAlignmentViewerArray()[i-1];
+
+      AlignmentViewer alignSubjectViewer;
+      if(i == getEntryGroupArray().length-1)
+        alignSubjectViewer = null;
+      else
+        alignSubjectViewer = getAlignmentViewerArray()[i];
 
       final EntryGroupMenu this_entries_menu =
         new EntryGroupMenu(this,
@@ -591,6 +602,7 @@ public class MultiComparator extends JFrame
                         getGotoEventSourceArray()[i],
                         getEntryGroupArray()[i],
                         getBasePlotGroupArray()[i],
+                        alignQueryViewer, alignSubjectViewer,
                         sub_menu_name);
       select_menu.add(this_select_menu);
 
@@ -623,19 +635,6 @@ public class MultiComparator extends JFrame
                         getBasePlotGroupArray()[i],
                         sub_menu_name);
         edit_menu.add(this_edit_menu);
-
-
-        AlignmentViewer alignQueryViewer;
-        if(i==0)
-          alignQueryViewer = null;
-        else
-          alignQueryViewer = getAlignmentViewerArray()[i-1];
-
-        AlignmentViewer alignSubjectViewer;
-        if(i == getEntryGroupArray().length-1)
-          alignSubjectViewer = null;
-        else
-          alignSubjectViewer = getAlignmentViewerArray()[i];
 
         this_create_menu =
           new AddMenu(this, getSelectionArray()[i],
