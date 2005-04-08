@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.6 2005-04-07 09:59:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.7 2005-04-08 14:03:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -37,7 +37,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.6 2005-04-07 09:59:32 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.7 2005-04-08 14:03:14 tjc Exp $
  *
  **/
 
@@ -184,10 +184,46 @@ public class FeaturePopup extends JPopupMenu
     final JFrame frame = owner.getParentFrame();
     action_menus[0] = new EntryGroupMenu(frame, getEntryGroup());
 
-    action_menus[1] = new SelectMenu(frame, selection,
-                                      getGotoEventSource(),
-                                      getEntryGroup(),
-                                      base_plot_group);
+    AlignmentViewer alignQueryViewer   = null;
+    AlignmentViewer alignSubjectViewer = null;
+
+    if(frame instanceof MultiComparator)
+    {
+      MultiComparator mc = (MultiComparator)frame;
+
+      // determine which FeatureDisplay
+      int ifeature_display;
+      for(ifeature_display = 0; ifeature_display < mc.getEntryGroupArray().length;
+          ++ifeature_display)
+      {
+        final EntryGroup this_entry_group = mc.getEntryGroupArray()[ifeature_display];
+        if(this_entry_group == getEntryGroup())
+          break;
+      }
+
+      if(ifeature_display==0)
+        alignQueryViewer = null;
+      else
+        alignQueryViewer = mc.getAlignmentViewerArray()[ifeature_display-1];
+
+      if(ifeature_display == mc.getEntryGroupArray().length-1)
+        alignSubjectViewer = null;
+      else
+        alignSubjectViewer = mc.getAlignmentViewerArray()[ifeature_display];
+
+      action_menus[1] =
+          new SelectMenu(frame, selection,
+                         getGotoEventSource(),
+                         getEntryGroup(),
+                         base_plot_group,
+                         alignQueryViewer, alignSubjectViewer,
+                         "Select");
+    }
+    else
+      action_menus[1] = new SelectMenu(frame, selection,
+                                       getGotoEventSource(),
+                                       getEntryGroup(),
+                                       base_plot_group);
 
     action_menus[2] = new ViewMenu(frame, selection,
                                   getGotoEventSource(),
@@ -207,38 +243,12 @@ public class FeaturePopup extends JPopupMenu
       if(entry_group instanceof SimpleEntryGroup) 
       {
         if(frame instanceof MultiComparator)
-        {
-          MultiComparator mc = (MultiComparator)frame;
-
-          // determine which FeatureDisplay 
-          int ifeature_display;
-          for(ifeature_display = 0; ifeature_display < mc.getEntryGroupArray().length; 
-              ++ifeature_display)
-          {
-            final EntryGroup this_entry_group = mc.getEntryGroupArray()[ifeature_display];
-            if(this_entry_group == getEntryGroup())
-              break;
-          }
-
-          AlignmentViewer alignQueryViewer;
-          if(ifeature_display==0)
-            alignQueryViewer = null;
-          else
-            alignQueryViewer = mc.getAlignmentViewerArray()[ifeature_display-1];
-
-          AlignmentViewer alignSubjectViewer;
-          if(ifeature_display == mc.getEntryGroupArray().length-1)
-            alignSubjectViewer = null;
-          else
-            alignSubjectViewer = mc.getAlignmentViewerArray()[ifeature_display];
-     
           action_menus[5] = new AddMenu(frame, selection,
                                     getEntryGroup(),
                                     getGotoEventSource(),
                                     base_plot_group,
                                     alignQueryViewer, alignSubjectViewer,
                                     "Create");
-        }
         else
           action_menus[5] = new AddMenu(frame, selection,
                                     getEntryGroup(),
