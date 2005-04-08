@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.2 2005-04-07 16:27:51 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.3 2005-04-08 13:51:40 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -50,7 +50,7 @@ import javax.swing.*;
  *  "Select by key".
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectMenu.java,v 1.2 2005-04-07 16:27:51 tjc Exp $
+ *  @version $Id: SelectMenu.java,v 1.3 2005-04-08 13:51:40 tjc Exp $
  **/
 
 public class SelectMenu extends SelectionMenu 
@@ -98,6 +98,11 @@ public class SelectMenu extends SelectionMenu
    *  Warn if the user tries to select more than this number of features.
    **/
   final private int MAX_FEATURE_TO_SELECT_COUNT = 10000;
+
+  /** busy cursor */
+  private Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
+  /** done cursor */
+  private Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
 
 
   /**
@@ -171,7 +176,9 @@ public class SelectMenu extends SelectionMenu
     {
       public void actionPerformed(ActionEvent event) 
       {
+        frame.setCursor(cbusy);
         selectAll();
+        frame.setCursor(cdone);
       }
     });
 
@@ -182,7 +189,9 @@ public class SelectMenu extends SelectionMenu
     {
       public void actionPerformed(ActionEvent event) 
       {
+        frame.setCursor(cbusy);
         selectAllBases();
+        frame.setCursor(cdone);
       }
     });
 
@@ -196,6 +205,7 @@ public class SelectMenu extends SelectionMenu
       {
         public void actionPerformed(ActionEvent event) 
         {
+          frame.setCursor(cbusy);
           Vector diffs = null;
           if(alignQueryViewer == null || alignSubjectViewer == null)
           {
@@ -213,6 +223,7 @@ public class SelectMenu extends SelectionMenu
 
           if(diffs != null)
             selectAllFeatures(diffs);
+          frame.setCursor(cdone);
         }
       });
 
@@ -436,6 +447,13 @@ public class SelectMenu extends SelectionMenu
     }
   }
 
+
+  /**
+  *
+  * Select all features in a given collection of regions.
+  * @param regions Vector of coordinates.
+  *
+  */
   private void selectAllFeatures(final Vector regions)
   {
     
@@ -444,6 +462,10 @@ public class SelectMenu extends SelectionMenu
       public boolean testPredicate(final Feature feature)
       {
         final Location loc = feature.getLocation();
+        Key key = feature.getKey();
+        if(key.equals("source"))
+          return false;
+
         final int feat_start = loc.getFirstBase();
         final int feat_end   = loc.getLastBase();
 
@@ -453,9 +475,13 @@ public class SelectMenu extends SelectionMenu
           final Integer coords[] = (Integer[])eDiffs.nextElement();
           final int start = coords[0].intValue();
           final int end   = coords[1].intValue();
-          if( (start > feat_start && start < feat_end)  ||  
-              (end > feat_start && end < feat_end) ) 
+          if( (feat_start >= start && feat_start <= end)  ||  
+              (feat_end >= start && feat_end <= end) ||
+              (start >= feat_start && start <= feat_end) ||
+              (end >= feat_start&& end <= feat_end ) )
             return true;
+          else if(start > feat_end)
+            return false;
         }
 
         return false;
