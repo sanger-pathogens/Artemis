@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.9 2005-04-07 16:27:51 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.10 2005-04-08 14:08:21 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.9 2005-04-07 16:27:51 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.10 2005-04-08 14:08:21 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -65,6 +65,11 @@ public class AddMenu extends SelectionMenu
     KeyStroke.getKeyStroke (KeyEvent.VK_C, InputEvent.CTRL_MASK);
 
   final static public int CREATE_FROM_BASE_RANGE_KEY_CODE = KeyEvent.VK_C;
+
+  /** busy cursor */
+  private Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
+  /** done cursor */
+  private Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
 
   private AlignmentViewer alignQueryViewer;
   private AlignmentViewer alignSubjectViewer;
@@ -148,11 +153,12 @@ public class AddMenu extends SelectionMenu
     if(alignQueryViewer != null || alignSubjectViewer != null)
     {
       JMenuItem create_difference_feature  =
-        new JMenuItem("Create Features From Differences");
+        new JMenuItem("Create Features From Non-matching Regions");
       create_difference_feature.addActionListener(new ActionListener()
       {
         public void actionPerformed (ActionEvent event) 
         {
+          frame.setCursor(cbusy);
           Vector diffs = null;
           String comparisonNote = "";
           if(alignQueryViewer == null || alignSubjectViewer == null)
@@ -187,6 +193,7 @@ public class AddMenu extends SelectionMenu
           }
           
           createFeatures(diffs, frame, comparisonNote);
+          frame.setCursor(cdone);
         }
       });
 
