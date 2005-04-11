@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.4 2005-04-08 15:48:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.5 2005-04-11 09:17:58 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -50,7 +50,7 @@ import javax.swing.*;
  *  "Select by key".
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectMenu.java,v 1.4 2005-04-08 15:48:48 tjc Exp $
+ *  @version $Id: SelectMenu.java,v 1.5 2005-04-11 09:17:58 tjc Exp $
  **/
 
 public class SelectMenu extends SelectionMenu 
@@ -468,6 +468,7 @@ public class SelectMenu extends SelectionMenu
 
         final int feat_start = loc.getFirstBase();
         final int feat_end   = loc.getLastBase();
+//      final int feat_len   = feature.getBaseCount();
 
         Enumeration eDiffs = regions.elements();
         while(eDiffs.hasMoreElements())
@@ -481,9 +482,8 @@ public class SelectMenu extends SelectionMenu
               (diff_start >= feat_start && diff_start <= feat_end) ||
               (diff_end >= feat_start   && diff_end <= feat_end ) )
             return true;
-          
-//        else if(diff_start > feat_end)
-//          return false;
+          else if(diff_start > feat_end)
+            return false;
         }
 
         return false;
