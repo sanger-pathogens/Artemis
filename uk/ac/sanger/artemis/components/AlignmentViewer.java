@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.19 2005-04-07 14:15:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.20 2005-04-15 09:39:51 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,7 +47,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.19 2005-04-07 14:15:36 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.20 2005-04-15 09:39:51 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -219,8 +219,14 @@ public class AlignmentViewer extends CanvasPanel
     final SelectionChangeListener subject_listener =
       new SelectionChangeListener() 
     {
+      JFrame frame = null;
       public void selectionChanged(SelectionChangeEvent event) 
       {
+        if(frame == null)
+          frame = subject_feature_display.getParentFrame();
+        if(!frame.isVisible())
+          return;
+
         final RangeVector ranges = subject_selection.getSelectionRanges();
         selectFromSubjectRanges(ranges);
       }
@@ -229,8 +235,14 @@ public class AlignmentViewer extends CanvasPanel
     final SelectionChangeListener query_listener =
       new SelectionChangeListener() 
     {
+      JFrame frame = null;
       public void selectionChanged (SelectionChangeEvent event) 
       {
+        if(frame == null)
+          frame = query_feature_display.getParentFrame();
+        if(!frame.isVisible())
+          return;
+
         final RangeVector ranges = query_selection.getSelectionRanges ();
         selectFromQueryRanges(ranges);
       }
