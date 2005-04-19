@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.3 2005-01-06 11:21:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.4 2005-04-19 09:22:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,12 +35,15 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.3 2005-01-06 11:21:06 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.4 2005-04-19 09:22:18 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
                        implements DocumentFeature, StreamFeature, ComparableFeature 
 {
+
+  private String region_name = null;
+
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
    *  to an Entry (with Entry.add()).
@@ -147,20 +150,16 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
       if(line_bits.elementAt(6).equals("+")) 
         complement_flag = false;
+      else if(line_bits.elementAt(6).equals("-"))
+        complement_flag = true;
       else 
       {
-        if(line_bits.elementAt(6).equals("-")) 
-          complement_flag = true;
-        else 
-        {
-          // must be unstranded
-          complement_flag = false;
+        // must be unstranded
+        complement_flag = false;
 
-          // best we can do
-          final String note_string = "this feature is unstranded";
-
-          setQualifier(new Qualifier("note", note_string));
-        }
+        // best we can do
+        final String note_string = "this feature is unstranded";
+        setQualifier(new Qualifier("note", note_string));
       }
 
       if(line_bits.size() == 9) 
@@ -169,12 +168,22 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
         // parse the rest of the line as ACeDB format attributes
         final Hashtable attributes = parseAttributes(rest_of_line);
+        final String type = line_bits.elementAt(2);
 
         for(final java.util.Enumeration attribute_enum = attributes.keys();
             attribute_enum.hasMoreElements();)
-       {
-          final String name = (String)attribute_enum.nextElement();
+        {
+          String name = (String)attribute_enum.nextElement();
+
           final StringVector values = (StringVector)attributes.get(name);
+
+          if(name.equals("ID"))
+            name = "systematic_id";
+
+          region_name = line_bits.elementAt(0).trim();
+
+          if(name.equals("Name"))
+            name = type;
 
           if(values.size() == 0)
             setQualifier(new Qualifier(name));
@@ -256,6 +265,18 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     }
 
     this.gff_lines = new StringVector(line);
+  }
+
+
+  /**
+  *
+  * The ID of the landmark used to establish the coordinate 
+  * system for the current feature - GFF3.
+  *
+  */ 
+  protected String getRegionName()
+  {
+    return region_name;
   }
 
   /**
@@ -551,12 +572,13 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     {
       final String this_token = tokeniser.nextToken().trim();
       int index_of_first_space = this_token.indexOf(" ");
-
+       
       final String att_name;
       final StringVector att_values = new StringVector();
 
-      if(this_token.indexOf("=") > -1 &&
-         this_token.indexOf("=") < index_of_first_space)
+      if( this_token.indexOf("=") > -1 &&
+         (this_token.indexOf("=") < index_of_first_space ||
+          index_of_first_space == -1) )
       {
         index_of_first_space = this_token.indexOf("=");
         att_name = this_token.substring(0, index_of_first_space);

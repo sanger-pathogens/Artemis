@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.3 2004-11-24 11:55:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.4 2005-04-19 09:22:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,11 +35,12 @@ import java.util.Enumeration;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.3 2004-11-24 11:55:52 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.4 2005-04-19 09:22:18 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
-    implements DocumentEntry {
+    implements DocumentEntry 
+{
   /**
    *  Create a new GFFDocumentEntry object associated with the given
    *  Document.
@@ -100,7 +101,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
    **/
   public boolean isReadOnly() 
   {
-    return finished_constructor;
+//  return finished_constructor;
+    return false;
   }
 
   /**

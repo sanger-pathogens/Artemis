@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.7 2005-04-01 16:08:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.8 2005-04-19 09:22:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -30,16 +30,18 @@ import uk.ac.sanger.artemis.util.*;
 import java.io.*;
 import java.util.Date;
 import java.util.Vector;
+import java.util.Hashtable;
+import java.util.Enumeration;
 
 /**
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.7 2005-04-01 16:08:23 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.8 2005-04-19 09:22:18 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
-                       implements DocumentEntry 
+                      implements DocumentEntry 
 {
 
   /**
@@ -116,6 +118,9 @@ abstract public class SimpleDocumentEntry
 
     LineGroup new_line_group;
 
+    Vector gff_regions = null;
+    boolean isGFF = false;
+
     while((new_line_group =
             LineGroup.readNextLineGroup(pushback_reader)) != null) 
     {
@@ -126,11 +131,20 @@ abstract public class SimpleDocumentEntry
 //      if(new_line_group instanceof StreamSequence)
 //        System.out.println("SimpleDocumentEntry StreamSequence  ******************************");
 //    }
-      if(new_line_group instanceof SimpleDocumentFeature) 
+      if(new_line_group instanceof SimpleDocumentFeature)
       {
         final SimpleDocumentFeature new_feature =
                    (SimpleDocumentFeature)new_line_group;
 
+        if(new_line_group instanceof GFFStreamFeature)
+        {
+          isGFF = true;
+          if(gff_regions == null)
+            gff_regions = new Vector();
+          
+          gff_regions.add(new_feature);
+        }
+        
         // try several times because adding the Feature may cause more than
         // one exception
         int i;
@@ -193,7 +207,7 @@ abstract public class SimpleDocumentEntry
                                                header_strings[i]);
 
               new_range = new Range(header_positions[i] + 1,
-                                     fasta_sequence.length());
+                                    fasta_sequence.length());
             }  
             else
             {
@@ -202,7 +216,7 @@ abstract public class SimpleDocumentEntry
                                                header_strings[i]);
 
               new_range = new Range(header_positions[i] + 1,
-                                     header_positions[i+1]);
+                                    header_positions[i+1]);
             }
 
             final QualifierVector qualifiers = new QualifierVector();
@@ -222,6 +236,33 @@ abstract public class SimpleDocumentEntry
                                              qualifiers);
 
             fake_fasta_features.add(new_feature);
+
+            // adjust coordinates of features
+            if(isGFF)
+            {
+              Enumeration gff_features = gff_regions.elements();
+              while(gff_features.hasMoreElements())
+              {
+                GFFStreamFeature feature = (GFFStreamFeature)gff_features.nextElement();
+                String id = feature.getRegionName();
+                if(id != null && id.equals(header_strings[i]))
+                {
+                  try
+                  {
+                    final Location loc = feature.getLocation();
+                    int start = feature.getFirstBase()+new_range.getStart()-1;
+                    int end   = feature.getLastBase()+new_range.getStart()-1;
+                    final Range feat_range = new Range(start, end);
+                    final RangeVector location_ranges = new RangeVector(feat_range);
+                    feature.setLocation(new Location(location_ranges, loc.isComplement()));
+                  }
+                  catch(OutOfRangeException e)
+                  {
+                    e.printStackTrace();
+                  }
+                }
+              }   
+            }
           }
           catch(InvalidRelationException e) 
           {
