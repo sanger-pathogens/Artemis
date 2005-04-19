@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.8 2005-04-19 09:22:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.9 2005-04-19 14:49:47 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.util.Enumeration;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.8 2005-04-19 09:22:18 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.9 2005-04-19 14:49:47 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -244,8 +244,9 @@ abstract public class SimpleDocumentEntry
               while(gff_features.hasMoreElements())
               {
                 GFFStreamFeature feature = (GFFStreamFeature)gff_features.nextElement();
-                String id = feature.getRegionName();
-                if(id != null && id.equals(header_strings[i]))
+                Qualifier qualifier = feature.getQualifierByName("gff_seqname");
+                    
+                if(qualifier.getValues().contains(header_strings[i]))
                 {
                   try
                   {

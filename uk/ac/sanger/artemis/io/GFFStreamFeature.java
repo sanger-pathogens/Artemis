@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.4 2005-04-19 09:22:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.5 2005-04-19 14:49:47 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,14 +35,12 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.4 2005-04-19 09:22:18 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.5 2005-04-19 14:49:47 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
                        implements DocumentFeature, StreamFeature, ComparableFeature 
 {
-
-  private String region_name = null;
 
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
@@ -179,10 +177,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
           if(name.equals("ID"))
             name = "systematic_id";
-
-          region_name = line_bits.elementAt(0).trim();
-
-          if(name.equals("Name"))
+          else if(name.equals("Name"))
             name = type;
 
           if(values.size() == 0)
@@ -246,9 +241,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
                                       start_base); 
       
       final Range location_range = new Range(start_base, end_base);
-
       final RangeVector location_ranges = new RangeVector(location_range);
-
       setLocation(new Location(location_ranges, complement_flag));
     }
     catch(ReadOnlyException e) 
@@ -267,17 +260,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     this.gff_lines = new StringVector(line);
   }
 
-
-  /**
-  *
-  * The ID of the landmark used to establish the coordinate 
-  * system for the current feature - GFF3.
-  *
-  */ 
-  protected String getRegionName()
-  {
-    return region_name;
-  }
 
   /**
   *
@@ -329,26 +311,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     final Feature return_value = new GFFStreamFeature(this);
     return return_value;
-  }
-
-  /**
-   *  Helper method for the constructor - returns a String that is the
-   *  concatenation of the Strings in the given StringVector.  The strings
-   *  will be separated by four spaces
-   **/
-  private String joinStringVector(final StringVector string_vector) 
-  {
-    final StringBuffer return_buffer = new StringBuffer();
-
-    for(int i = 0 ; i < string_vector.size() ; ++i) 
-    {
-      if(i != 0)
-        return_buffer.append("    ");
-      
-      return_buffer.append(string_vector.elementAt(i));
-    }
-
-    return return_buffer.toString();
   }
 
   /**
