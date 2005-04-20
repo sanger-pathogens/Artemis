@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.4 2005-04-19 09:22:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.5 2005-04-20 14:11:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.Enumeration;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.4 2005-04-19 09:22:18 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.5 2005-04-20 14:11:06 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -143,7 +143,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
 
     Feature this_feature;
     Hashtable this_strand_feature_groups;
-    String group_name;
+    String group_name = null;
 
     for(int i = 0 ; i < original_features.size() ; ++i) 
     {
@@ -156,6 +156,19 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
 
       try 
       {
+
+        if(this_feature.getQualifierByName("CDS") != null)
+        {
+          if(this_feature.getQualifierByName("Parent") != null)
+          {
+            final StringVector values =
+              this_feature.getQualifierByName("Parent").getValues();
+            group_name = values.elementAt(0);
+          }
+        }
+        else
+          continue;
+/*
         if(this_feature.getQualifierByName("gene") == null)
         {
           if(this_feature.getQualifierByName("group") == null)
@@ -184,6 +197,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           
           group_name = values.elementAt(0);
         }
+*/
       }
       catch(InvalidRelationException e) 
       {
@@ -196,9 +210,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       if(other_features == null) 
       {
         final FeatureVector new_feature_vector = new FeatureVector();
-
         new_feature_vector.add(this_feature);
-
         this_strand_feature_groups.put(group_name, new_feature_vector);
       } 
       else 
