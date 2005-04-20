@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.9 2005-04-19 14:49:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.10 2005-04-20 14:54:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.util.Enumeration;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.9 2005-04-19 14:49:47 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.10 2005-04-20 14:54:28 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -118,7 +118,6 @@ abstract public class SimpleDocumentEntry
 
     LineGroup new_line_group;
 
-    Vector gff_regions = null;
     boolean isGFF = false;
 
     while((new_line_group =
@@ -137,13 +136,7 @@ abstract public class SimpleDocumentEntry
                    (SimpleDocumentFeature)new_line_group;
 
         if(new_line_group instanceof GFFStreamFeature)
-        {
           isGFF = true;
-          if(gff_regions == null)
-            gff_regions = new Vector();
-          
-          gff_regions.add(new_feature);
-        }
         
         // try several times because adding the Feature may cause more than
         // one exception
@@ -240,7 +233,8 @@ abstract public class SimpleDocumentEntry
             // adjust coordinates of features
             if(isGFF)
             {
-              Enumeration gff_features = gff_regions.elements();
+              FeatureVector gff_regions = getAllFeatures();
+              Enumeration gff_features  = gff_regions.elements();
               while(gff_features.hasMoreElements())
               {
                 GFFStreamFeature feature = (GFFStreamFeature)gff_features.nextElement();
