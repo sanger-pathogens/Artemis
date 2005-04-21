@@ -4,7 +4,7 @@
  *
  * This file is part of Artemis
  *
- * Copyright (C) 1999,2000,2001  Genome Research Limited
+ * Copyright (C) 1999-2005  Genome Research Limited
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.6 2005-04-21 12:55:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.7 2005-04-21 12:57:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.util.Vector;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.6 2005-04-21 12:55:10 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.7 2005-04-21 12:57:54 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
