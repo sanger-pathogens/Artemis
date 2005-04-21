@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.7 2005-04-21 12:57:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.8 2005-04-21 13:01:26 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,12 +36,14 @@ import java.util.Vector;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.7 2005-04-21 12:57:54 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.8 2005-04-21 13:01:26 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
     implements DocumentEntry 
 {
+  private boolean finished_constructor = false;
+
   /**
    *  Create a new GFFDocumentEntry object associated with the given
    *  Document.
@@ -282,7 +284,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           final Location this_feature_location = this_feature.getLocation();
 
           if(this_feature_location.getRanges().size() > 1)
-           {
+          {
             throw new Error("internal error - new location should have " +
                              "exactly one range");
           }
@@ -353,8 +355,4 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     }
   }
 
-  /**
-   *
-   **/
-  private boolean finished_constructor = false;
 }
