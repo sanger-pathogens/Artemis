@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.5 2005-04-20 14:11:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.6 2005-04-21 12:55:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -30,12 +30,13 @@ import uk.ac.sanger.artemis.util.*;
 import java.io.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.5 2005-04-20 14:11:06 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.6 2005-04-21 12:55:10 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -145,6 +146,27 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     Hashtable this_strand_feature_groups;
     String group_name = null;
 
+
+    // find the genes
+    Vector genes = new Vector();
+    for(int i = 0 ; i < original_features.size() ; ++i)
+    {
+      this_feature = original_features.featureAt(i);
+      try
+      {
+        if(this_feature.getQualifierByName("gene") != null)
+        {
+          final StringVector values =
+                this_feature.getQualifierByName("gene").getValues();
+          genes.add(values.elementAt(0));
+        }
+      }
+      catch(InvalidRelationException e)
+      {
+        throw new Error("internal error - unexpected exception: " + e);
+      }
+    }
+
     for(int i = 0 ; i < original_features.size() ; ++i) 
     {
       this_feature = original_features.featureAt(i);
@@ -156,7 +178,6 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
 
       try 
       {
-
         if(this_feature.getQualifierByName("CDS") != null)
         {
           if(this_feature.getQualifierByName("Parent") != null)
@@ -164,6 +185,10 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
             final StringVector values =
               this_feature.getQualifierByName("Parent").getValues();
             group_name = values.elementAt(0);
+
+            // check the parent is a gene
+            if(!genes.contains(group_name))
+              continue;
           }
         }
         else
