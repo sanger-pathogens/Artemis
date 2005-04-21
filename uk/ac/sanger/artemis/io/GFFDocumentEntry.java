@@ -20,14 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.8 2005-04-21 13:01:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.9 2005-04-21 13:11:51 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
 import uk.ac.sanger.artemis.util.*;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -36,7 +36,7 @@ import java.util.Vector;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.8 2005-04-21 13:01:26 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.9 2005-04-21 13:11:51 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -61,7 +61,6 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
 
     // join the separate exons into one feature (if appropriate)
     combineFeatures();
-
     finished_constructor = true;
   }
 
@@ -81,7 +80,6 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       throws EntryInformationException 
   {
     super(new GFFEntryInformation(), new_entry, force);
-
     finished_constructor = true;
   }
 
@@ -94,7 +92,6 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
   public GFFDocumentEntry(final EntryInformation entry_information) 
   {
     super(new GFFEntryInformation());
-
     finished_constructor = true;
   }
 
@@ -147,7 +144,6 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     Feature this_feature;
     Hashtable this_strand_feature_groups;
     String group_name = null;
-
 
     // find the genes
     Vector genes = new Vector();
