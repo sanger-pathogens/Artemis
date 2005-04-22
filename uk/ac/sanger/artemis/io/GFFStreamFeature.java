@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.5 2005-04-19 14:49:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.6 2005-04-22 15:04:25 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,12 +35,26 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.5 2005-04-19 14:49:47 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.6 2005-04-22 15:04:25 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
                        implements DocumentFeature, StreamFeature, ComparableFeature 
 {
+
+
+  /**
+   *  The DocumentEntry object that contains this Feature as passed to the
+   *  constructor.
+   **/
+  private DocumentEntry entry;
+
+  /**
+   *  This is the line of GFF input that was read to get this
+   *  GFFStreamFeature.  A GFFStreamFeature that was created from multiple GFF
+   *  lines will have a gff_lines variable that contains multiple line.
+   **/
+  StringVector gff_lines = null;
 
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
@@ -175,10 +189,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
           final StringVector values = (StringVector)attributes.get(name);
 
-          if(name.equals("ID"))
-            name = "systematic_id";
-          else if(name.equals("Name"))
-            name = type;
+//        if(name.equals("ID"))
+//          name = "systematic_id";
+//        else if(name.equals("Name"))
+//          name = type;
 
           if(values.size() == 0)
             setQualifier(new Qualifier(name));
@@ -303,6 +317,30 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
     return s;
   }
+
+  private String encode(String s)
+  {
+    int ind;
+
+    // white space
+    while( (ind = s.indexOf(" ")) > -1)
+      s = s.substring(0,ind) + "%20" + s.substring(ind+1);
+
+    // comma
+    while( (ind = s.indexOf(",")) > -1)
+      s = s.substring(0,ind) + "%2C" + s.substring(ind+1);
+
+    // semi-colon
+    while( (ind = s.indexOf(";")) > -1)
+      s = s.substring(0,ind) + "%3B" + s.substring(ind+1);
+
+    // equals
+    while( (ind = s.indexOf("=")) > -1)
+      s = s.substring(0,ind) + "%3D" + s.substring(ind+1);
+
+    return s;
+  }
+
    
   /**
    *  Return the reference of a new copy of this Feature.
@@ -375,8 +413,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       throws IOException 
   {
     // for now GFF features are read-only so just write what we read
-    if(gff_lines == null) 
-    {
+ // if(gff_lines == null) 
+ // {
       final RangeVector ranges = getLocation().getRanges();
 
       for(int i = 0 ; i < ranges.size() ; ++i) 
@@ -443,12 +481,12 @@ public class GFFStreamFeature extends SimpleDocumentFeature
                       frame + "\t" +
                       attribute_string + "\n");
       }
-    } 
-    else 
-    {
-      for(int i = 0 ; i < gff_lines.size() ; ++i) 
-        writer.write(gff_lines.elementAt(i) + "\n");
-    }
+ // } 
+ // else 
+ // {
+ //   for(int i = 0 ; i < gff_lines.size() ; ++i) 
+ //     writer.write(gff_lines.elementAt(i) + "\n");
+ // }
   }
 
   /**
@@ -464,52 +502,85 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     final QualifierVector qualifiers = getQualifiers();
     final QualifierVector qualifiers_to_write = new QualifierVector();
 
-    for(int i = 0 ; i < qualifiers.size() ; ++i) 
+    final String names[] = { "ID", "Name", "Alias", "Parent",
+                             "Target", "Gap", "Note", 
+                             "Dbxref", "Ontology_term" };
+    int count = 0;
+
+    for(int i=0; i<names.length; i++)
     {
-      final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(i);
-
-      final String name = this_qualifier.getName();
-
-      if(name.equals("codon_start") || name.equals("gff_source") ||
-         name.equals("gff_seqname") || name.equals("score"))
+      Qualifier this_qualifier = (Qualifier)qualifiers.getQualifierByName(names[i]);
+ 
+      if(this_qualifier == null)
         continue;
 
-      if(i != 0)
-        buffer.append(" ; ");
+      String this_qualifier_str = getQualifierString(this_qualifier);
+      if(this_qualifier_str == null)
+        continue;
 
-      final StringVector values = this_qualifier.getValues();
+      if(count != 0)
+        buffer.append(";");
+      buffer.append(this_qualifier_str);
+      count++;
+    }
 
-      buffer.append(name);
+/*
+    for(int i = 0 ; i < qualifiers.size() ; ++i) 
+    {
+      this_qualifier = (Qualifier)qualifiers.elementAt(i);
 
-      if(values != null) 
+      String this_qualifier_str = getQualifierString(this_qualifier);
+      if(this_qualifier_str == null)
+        continue;
+
+      if(count != 0)
+        buffer.append("; ");
+      buffer.append(this_qualifier_str);
+    }
+*/
+
+    return buffer.toString();
+  }
+
+
+  private String getQualifierString(Qualifier q)
+  {
+    StringBuffer buffer = new StringBuffer();
+    final String name = q.getName();
+
+    if(name.equals("codon_start") || name.equals("gff_source") ||
+       name.equals("gff_seqname") || name.equals("score"))
+      return null;
+
+    final StringVector values = q.getValues();
+    buffer.append(encode(name));
+
+    if(values != null)
+    {
+      for(int value_index = 0; value_index < values.size();
+          ++value_index)
       {
-        for(int value_index = 0;
-            value_index < values.size();
-            ++value_index) 
+        final String this_value = values.elementAt(value_index);
+        buffer.append('=');
+        try
         {
-          final String this_value = values.elementAt(value_index);
-          buffer.append(' ');
-          try 
+          buffer.append(Integer.valueOf(this_value));
+        }
+        catch(NumberFormatException _)
+        {
+          // not an integer
+          try
           {
-            buffer.append(Integer.valueOf(this_value));
-          } 
-          catch(NumberFormatException _) 
+            buffer.append(Double.valueOf(this_value));
+          }
+          catch (NumberFormatException __)
           {
-            // not an integer
-            try 
-            {
-              buffer.append(Double.valueOf(this_value));
-            }
-            catch (NumberFormatException __) 
-            {
-              // not a double or integer so quote it
-              buffer.append('"' + this_value + '"');
-            }
+            // not a double or integer so quote it
+            buffer.append('"' + encode(this_value) + '"');
           }
         }
       }
     }
-
     return buffer.toString();
   }
 
@@ -616,16 +687,4 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     return attributes;
   }
 
-  /**
-   *  The DocumentEntry object that contains this Feature as passed to the
-   *  constructor.
-   **/
-  private DocumentEntry entry;
-
-  /**
-   *  This is the line of GFF input that was read to get this
-   *  GFFStreamFeature.  A GFFStreamFeature that was created from multiple GFF
-   *  lines will have a gff_lines variable that contains multiple line.
-   **/
-  StringVector gff_lines = null;
 }

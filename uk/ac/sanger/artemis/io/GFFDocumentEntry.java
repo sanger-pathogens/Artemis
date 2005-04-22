@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.9 2005-04-21 13:11:51 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.10 2005-04-22 15:04:25 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.util.Vector;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.9 2005-04-21 13:11:51 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.10 2005-04-22 15:04:25 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -176,7 +176,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
 
       try 
       {
-        if(this_feature.getQualifierByName("CDS") != null)
+        if(this_feature.getKey().getKeyString().equals("CDS"))
         {
           if(this_feature.getQualifierByName("Parent") != null)
           {
@@ -185,8 +185,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
             group_name = values.elementAt(0);
 
             // check the parent is a gene
-            if(!genes.contains(group_name))
-              continue;
+//          if(!genes.contains(group_name))
+//            continue;
           }
         }
         else

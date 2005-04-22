@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.10 2005-04-20 14:54:28 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.11 2005-04-22 15:04:25 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.util.Enumeration;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.10 2005-04-20 14:54:28 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.11 2005-04-22 15:04:25 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -907,46 +907,43 @@ abstract public class SimpleDocumentEntry
         }
       }
     } 
-    else
+    else if(new_line_group instanceof Feature)
     {
-      if(new_line_group instanceof Feature)
+      // Features before the Sequence and FeatureTable(if any)
+      for(int i = 0 ; i < line_groups.size() ; ++i) 
       {
-        // Features before the Sequence and FeatureTable(if any)
-        for(int i = 0 ; i < line_groups.size() ; ++i) 
-        {
-          final LineGroup this_line_group = line_groups.elementAt(i);
+        final LineGroup this_line_group = line_groups.elementAt(i);
 
-          if(this_line_group instanceof FeatureTable ||
-              this_line_group instanceof Sequence) 
-          {
-            line_groups.insertElementAt(new_line_group, i);
-            return;
-          }
+        if(this_line_group instanceof FeatureTable ||
+            this_line_group instanceof Sequence) 
+        {
+          line_groups.insertElementAt(new_line_group, i);
+          return;
         }
-      } 
-      else
-      {
-        if(!(new_line_group instanceof Sequence) &&
+      }
+    } 
+    else if(!(new_line_group instanceof Sequence) &&
             !(new_line_group instanceof FeatureTable)) 
-        {
-          // insert before features and sequence
-          for(int i = 0 ; i < line_groups.size() ; ++i) 
-          {
-            final LineGroup this_line_group = line_groups.elementAt(i);
+    {
+      if(new_line_group instanceof GFFMisc)
+      {
+        String line = ((GFFMisc)new_line_group).toString();
+        if(line.indexOf("FASTA") > -1)  // ignore
+          return;
+      }   
 
-            if(this_line_group instanceof Feature ||
-                this_line_group instanceof FeatureTable ||
-                this_line_group instanceof FeatureHeader ||
-                this_line_group instanceof Sequence)
-            {
-              line_groups.insertElementAt(new_line_group, i);
-              return;
-            }
-          }
-        }
-        else
+      // insert before features and sequence
+      for(int i = 0 ; i < line_groups.size() ; ++i) 
+      {
+        final LineGroup this_line_group = line_groups.elementAt(i);
+
+        if(this_line_group instanceof Feature ||
+           this_line_group instanceof FeatureTable ||
+           this_line_group instanceof FeatureHeader ||
+           this_line_group instanceof Sequence)
         {
-          // fall throw
+          line_groups.insertElementAt(new_line_group, i);
+          return;
         }
       }
     }
