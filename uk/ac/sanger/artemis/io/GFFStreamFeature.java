@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.6 2005-04-22 15:04:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.7 2005-04-22 15:26:47 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.6 2005-04-22 15:04:25 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.7 2005-04-22 15:26:47 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -506,10 +506,11 @@ public class GFFStreamFeature extends SimpleDocumentFeature
                              "Target", "Gap", "Note", 
                              "Dbxref", "Ontology_term" };
     int count = 0;
+    Qualifier this_qualifier;
 
     for(int i=0; i<names.length; i++)
     {
-      Qualifier this_qualifier = (Qualifier)qualifiers.getQualifierByName(names[i]);
+      this_qualifier = (Qualifier)qualifiers.getQualifierByName(names[i]);
  
       if(this_qualifier == null)
         continue;
@@ -524,7 +525,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       count++;
     }
 
-/*
     for(int i = 0 ; i < qualifiers.size() ; ++i) 
     {
       this_qualifier = (Qualifier)qualifiers.elementAt(i);
@@ -533,11 +533,14 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       if(this_qualifier_str == null)
         continue;
 
+      for(int j=0; j<names.length; j++)
+        if(this_qualifier_str.equals(names[j]))
+          continue;
+
       if(count != 0)
-        buffer.append("; ");
+        buffer.append(";");
       buffer.append(this_qualifier_str);
     }
-*/
 
     return buffer.toString();
   }
