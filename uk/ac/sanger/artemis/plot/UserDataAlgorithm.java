@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.1 2004-06-09 09:51:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.2 2005-04-22 13:32:40 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -39,7 +39,7 @@ import java.io.*;
  *  set in the constructor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: UserDataAlgorithm.java,v 1.1 2004-06-09 09:51:37 tjc Exp $
+ *  @version $Id: UserDataAlgorithm.java,v 1.2 2005-04-22 13:32:40 tjc Exp $
  **/
 
 public class UserDataAlgorithm extends BaseAlgorithm {
@@ -59,7 +59,7 @@ public class UserDataAlgorithm extends BaseAlgorithm {
 
     final String first_line = pushback_reader.readLine ();
 
-    final StringVector tokens = StringVector.getStrings (first_line, " \t");
+    final StringVector tokens = StringVector.getStrings (first_line, " ");
 
     if (tokens.size () < 1) {
       throw new ReadFormatException ("unknown file type");
@@ -89,7 +89,7 @@ public class UserDataAlgorithm extends BaseAlgorithm {
         throw new ReadFormatException ("too many values in input file");
       }
 
-      final StringVector tokens = StringVector.getStrings (line, " \t");
+      final StringVector tokens = StringVector.getStrings (line, " ");
 
       final int read_base;
 
