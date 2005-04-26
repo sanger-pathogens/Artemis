@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.19 2004-12-23 15:33:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.20 2005-04-26 09:21:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.19 2004-12-23 15:33:46 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.20 2005-04-26 09:21:39 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -2150,7 +2150,7 @@ public class FeatureDisplay extends EntryGroupPanel
       int draw_x_position;
 
       if(direction == FORWARD) 
-        draw_x_position = getLowXPositionOfBase(codon_base_start);
+        draw_x_position = getLowXPositionOfBase(codon_base_start+2);
       else
       { 
         final int raw_base_position = length - codon_base_start + 1;
