@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.7 2005-04-22 15:26:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.8 2005-04-26 14:31:44 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.7 2005-04-22 15:26:47 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.8 2005-04-26 14:31:44 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -525,6 +525,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       count++;
     }
 
+    boolean lname;
     for(int i = 0 ; i < qualifiers.size() ; ++i) 
     {
       this_qualifier = (Qualifier)qualifiers.elementAt(i);
@@ -533,9 +534,13 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       if(this_qualifier_str == null)
         continue;
 
+      lname = false;
       for(int j=0; j<names.length; j++)
-        if(this_qualifier_str.equals(names[j]))
-          continue;
+        if(this_qualifier_str.startsWith(names[j]))
+          lname = true;
+
+      if(lname)
+        continue;
 
       if(count != 0)
         buffer.append(";");
@@ -579,7 +584,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
           catch (NumberFormatException __)
           {
             // not a double or integer so quote it
-            buffer.append('"' + encode(this_value) + '"');
+            buffer.append(encode(this_value));
           }
         }
       }
@@ -609,7 +614,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       final String this_token = tokeniser.nextToken().trim();
       int index_of_first_space = this_token.indexOf(" ");
        
-      final String att_name;
+      String att_name;
       final StringVector att_values = new StringVector();
 
       if( this_token.indexOf("=") > -1 &&
