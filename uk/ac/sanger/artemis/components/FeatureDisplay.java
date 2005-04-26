@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.20 2005-04-26 09:21:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.21 2005-04-26 12:53:25 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.20 2005-04-26 09:21:39 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.21 2005-04-26 12:53:25 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -1809,7 +1809,7 @@ public class FeatureDisplay extends EntryGroupPanel
 
     // base to start translation at - we start slightly off the 
     // left of the screen
-    final int start_base = first_visible_base - frame_shift;
+    int start_base = first_visible_base - frame_shift;
 
     // base to end translation at
     // we + 3 to the upper bound because partial codons do not get translated
@@ -1821,6 +1821,9 @@ public class FeatureDisplay extends EntryGroupPanel
 
     if(show_stop_codons) 
     {
+      if(start_base < 1)
+        start_base = 1;
+ 
       forward_stop_codons = new int [][] 
       {
         strand.getStopCodons(newRange(start_base, end_base)),
