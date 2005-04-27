@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.10 2005-04-22 15:04:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.11 2005-04-27 08:26:58 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.util.Vector;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.10 2005-04-22 15:04:25 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.11 2005-04-27 08:26:58 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -178,10 +178,10 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       {
         if(this_feature.getKey().getKeyString().equals("CDS"))
         {
-          if(this_feature.getQualifierByName("Parent") != null)
+          if(this_feature.getQualifierByName("ID") != null)
           {
             final StringVector values =
-              this_feature.getQualifierByName("Parent").getValues();
+              this_feature.getQualifierByName("ID").getValues();
             group_name = values.elementAt(0);
 
             // check the parent is a gene
@@ -191,53 +191,36 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         }
         else
           continue;
-/*
-        if(this_feature.getQualifierByName("gene") == null)
+
+        final FeatureVector other_features =
+          (FeatureVector) this_strand_feature_groups.get(group_name);
+
+        if(other_features == null)
         {
-          if(this_feature.getQualifierByName("group") == null)
-          {
-            // no gene names and no groups - give up
-            return;
-          } 
-          else
-          {
-            final StringVector values =
-              this_feature.getQualifierByName("group").getValues();
-            if(values == null) 
-              throw new Error("internal error - " +
-                               "no value for group qualifier");
-            else
-              group_name = values.elementAt(0);
-          }
-        } 
+          final FeatureVector new_feature_vector = new FeatureVector();
+          new_feature_vector.add(this_feature);
+          this_strand_feature_groups.put(group_name, new_feature_vector);
+        }
         else
         {
-          final StringVector values =
-            this_feature.getQualifierByName("gene").getValues();
-          if(values == null) 
-            throw new Error("internal error - " +
-                            "no value for gene qualifier");
-          
-          group_name = values.elementAt(0);
+          StringVector values =
+                this_feature.getQualifierByName("Parent").getValues();
+          String parent = values.elementAt(0);
+
+          Feature stored_feature = other_features.featureAt(0);
+          values = stored_feature.getQualifierByName("Parent").getValues();
+  
+          // same ID with same Parent
+          if(parent.equals(values.elementAt(0)))
+            other_features.add(this_feature);
         }
-*/
+
       }
       catch(InvalidRelationException e) 
       {
         throw new Error("internal error - unexpected exception: " + e);
       }
 
-      final FeatureVector other_features =
-        (FeatureVector) this_strand_feature_groups.get(group_name);
-
-      if(other_features == null) 
-      {
-        final FeatureVector new_feature_vector = new FeatureVector();
-        new_feature_vector.add(this_feature);
-        this_strand_feature_groups.put(group_name, new_feature_vector);
-      } 
-      else 
-        other_features.add(this_feature);
     }
 
     combineFeaturesFromHash(forward_feature_groups);
