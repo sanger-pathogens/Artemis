@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.11 2005-04-27 08:26:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.12 2005-04-27 10:43:15 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.util.Vector;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.11 2005-04-27 08:26:58 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.12 2005-04-27 10:43:15 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -176,18 +176,21 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
 
       try 
       {
-        if(this_feature.getKey().getKeyString().equals("CDS"))
+        String key = this_feature.getKey().getKeyString();
+        if(key.equals("CDS") || key.equals("polypeptide_domain"))
         {
-          if(this_feature.getQualifierByName("ID") != null)
+          if(this_feature.getQualifierByName("Parent") != null)
           {
             final StringVector values =
-              this_feature.getQualifierByName("ID").getValues();
+              this_feature.getQualifierByName("Parent").getValues();
             group_name = values.elementAt(0);
 
             // check the parent is a gene
 //          if(!genes.contains(group_name))
 //            continue;
           }
+          else
+            continue; 
         }
         else
           continue;
@@ -203,15 +206,24 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         }
         else
         {
-          StringVector values =
-                this_feature.getQualifierByName("Parent").getValues();
-          String parent = values.elementAt(0);
+          String parent1 = null;
+          String parent2 = null;
 
-          Feature stored_feature = other_features.featureAt(0);
-          values = stored_feature.getQualifierByName("Parent").getValues();
-  
+          try
+          {
+            StringVector values =
+                this_feature.getQualifierByName("ID").getValues();
+            parent1 = values.elementAt(0);
+
+            Feature stored_feature = other_features.featureAt(0);
+            values = stored_feature.getQualifierByName("ID").getValues();
+            parent2 = values.elementAt(0);
+          }
+          catch(NullPointerException e){}
+          
           // same ID with same Parent
-          if(parent.equals(values.elementAt(0)))
+          if((parent1 == null && parent2 == null) ||
+             parent1.equals(parent2))
             other_features.add(this_feature);
         }
 
