@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.12 2005-04-27 10:43:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.13 2005-04-28 08:12:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.util.Vector;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.12 2005-04-27 10:43:15 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.13 2005-04-28 08:12:52 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -145,26 +145,6 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     Hashtable this_strand_feature_groups;
     String group_name = null;
 
-    // find the genes
-    Vector genes = new Vector();
-    for(int i = 0 ; i < original_features.size() ; ++i)
-    {
-      this_feature = original_features.featureAt(i);
-      try
-      {
-        if(this_feature.getQualifierByName("gene") != null)
-        {
-          final StringVector values =
-                this_feature.getQualifierByName("gene").getValues();
-          genes.add(values.elementAt(0));
-        }
-      }
-      catch(InvalidRelationException e)
-      {
-        throw new Error("internal error - unexpected exception: " + e);
-      }
-    }
-
     for(int i = 0 ; i < original_features.size() ; ++i) 
     {
       this_feature = original_features.featureAt(i);
@@ -181,13 +161,16 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         {
           if(this_feature.getQualifierByName("Parent") != null)
           {
-            final StringVector values =
+            StringVector values =
               this_feature.getQualifierByName("Parent").getValues();
             group_name = values.elementAt(0);
 
-            // check the parent is a gene
-//          if(!genes.contains(group_name))
-//            continue;
+            if(this_feature.getQualifierByName("ID") != null)
+            {
+              values =
+                  this_feature.getQualifierByName("ID").getValues();
+              group_name = group_name+values.elementAt(0);
+            }
           }
           else
             continue; 
@@ -205,27 +188,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           this_strand_feature_groups.put(group_name, new_feature_vector);
         }
         else
-        {
-          String parent1 = null;
-          String parent2 = null;
-
-          try
-          {
-            StringVector values =
-                this_feature.getQualifierByName("ID").getValues();
-            parent1 = values.elementAt(0);
-
-            Feature stored_feature = other_features.featureAt(0);
-            values = stored_feature.getQualifierByName("ID").getValues();
-            parent2 = values.elementAt(0);
-          }
-          catch(NullPointerException e){}
-          
-          // same ID with same Parent
-          if((parent1 == null && parent2 == null) ||
-             parent1.equals(parent2))
-            other_features.add(this_feature);
-        }
+          other_features.add(this_feature);
 
       }
       catch(InvalidRelationException e) 
