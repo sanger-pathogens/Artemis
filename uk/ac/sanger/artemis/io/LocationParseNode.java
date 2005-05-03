@@ -20,11 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LocationParseNode.java,v 1.3 2004-11-08 17:47:45 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LocationParseNode.java,v 1.4 2005-05-03 09:12:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
+import javax.swing.JOptionPane;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 
 /**
@@ -32,7 +33,7 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
  *  Location.  It is a utility class for EMBL.Location.
  *
  *  @author Kim Rutherford
- *  @version $Id: LocationParseNode.java,v 1.3 2004-11-08 17:47:45 tjc Exp $
+ *  @version $Id: LocationParseNode.java,v 1.4 2005-05-03 09:12:09 tjc Exp $
  *
  **/
 
@@ -521,60 +522,56 @@ class LocationParseNode extends EMBLObject
         }
       }
 
-      if(new_children.size() > 0 &&
-         new_children.elementAt(0).getType() == COMPLEMENT) 
+      if(new_children.size() > 0)
       {
-        // if the first element is a COMPLEMENT then they all are (probably)
-
-        // the new head node is a JOIN or ORDER and the children are
-        // COMPLEMENT nodes so put the children in order - ascending right
-        // to left
-
-        while(true) 
-        {
-          boolean change_happened = false;
-          for(int i = 0 ; i < new_children.size() - 1 ; ++i) 
-          {
-            final LocationParseNode this_node = new_children.elementAt(i);
-            final LocationParseNode next_node = new_children.elementAt(i + 1);
-            if(this_node.getComplementChild().getRange().getEnd() <
-               next_node.getComplementChild().getRange().getEnd()) {
-              // swap the to nodes
-              new_children.setElementAt(next_node, i);
-              new_children.setElementAt(this_node, i + 1);
-              change_happened = true;
-            }
-          }
-          if(!change_happened) 
-            break;
-        }
-      } 
-      else
-      {
+      
         // the new head node is a JOIN or ORDER and the children are RANGE
         // nodes so put the children in order - ascending left to right
+        // or
+        // the children are COMPLEMENT nodes so put the children in order 
+        // - ascending right to left
 
         // bubble sort in place putting the RANGE with the smallest start
         // base first
 
-        while(true) 
+        boolean change_happened = true;
+        while(change_happened) 
         {
-          boolean change_happened = false;
+          change_happened = false;
+          int this_start;
+          int next_start;
+
           for(int i = 0 ; i < new_children.size() - 1 ; ++i) 
           {
             final LocationParseNode this_node = new_children.elementAt(i);
-            final LocationParseNode next_node = new_children.elementAt(i + 1);
-            if(this_node.getRange().getStart() >
-               next_node.getRange().getStart()) 
+            final LocationParseNode next_node = new_children.elementAt(i+1);
+
+            if(this_node.getType() == RANGE)
+              this_start = this_node.getRange().getStart();
+            else
+              this_start = this_node.getComplementChild().getRange().getEnd();
+
+            if(next_node.getType() == RANGE)
+              next_start = next_node.getRange().getStart();
+            else
+              next_start = next_node.getComplementChild().getRange().getEnd();
+
+            if(this_node.getType() != RANGE && next_node.getType() != RANGE)
             {
-              // swap the to nodes
+              if(this_start < next_start)      // swap the two nodes
+              {
+                new_children.setElementAt(next_node, i);
+                new_children.setElementAt(this_node, i + 1);
+                change_happened = true;
+              }
+            }
+            else if(this_start > next_start)   // swap the two nodes
+            {
               new_children.setElementAt(next_node, i);
               new_children.setElementAt(this_node, i + 1);
               change_happened = true;
             }
           }
-          if(!change_happened) 
-            break;
         }
       }
 
@@ -789,7 +786,7 @@ class LocationParseNode extends EMBLObject
       }
     }
     else 
-      throw new Error("LocationParseNode.toStringChildren(): Illegal type");
+      throw new Error ("LocationParseNode.toStringChildren(): Illegal type");
 
     return return_string;
   }
@@ -918,7 +915,11 @@ class LocationParseNode extends EMBLObject
             if(found_range_child && found_complement_child) 
             {
               // a mixture of RANGE and COMPLEMENT nodes is not valid
-              return false;
+              //return false;
+              JOptionPane.showMessageDialog(null, "Contains trans-spliced feature!",
+                                            "Trans-spliced site found",
+                                            JOptionPane.INFORMATION_MESSAGE);
+              return true;
             } 
             else 
               return true;

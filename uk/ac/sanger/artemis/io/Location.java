@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Location.java,v 1.3 2004-10-29 09:36:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Location.java,v 1.4 2005-05-03 09:12:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import uk.ac.sanger.artemis.io.LocationLexer.TokenEnumeration;
  *  functions for parsing and manipulating the location.
  *
  *  @author Kim Rutherford
- *  @version $Id: Location.java,v 1.3 2004-10-29 09:36:24 tjc Exp $
+ *  @version $Id: Location.java,v 1.4 2005-05-03 09:12:09 tjc Exp $
  *
  */
 public class Location 
@@ -66,7 +66,7 @@ public class Location
       throws LocationParseException 
   {
     parse_tree = getParseTree(location_string).getCanonical();
-
+    
     if(parse_tree == null)
       throw new LocationParseException("invalid location", location_string);
   }
@@ -174,6 +174,36 @@ public class Location
     return toString().equals(other_location.toString());
   }
 
+
+  /**
+  *
+  * Test whether this is a trans-spliced feature location.
+  *
+  */
+  private boolean isTransSpliced()
+  {
+    final LocationParseNode top = getParsedLocation();
+    if(top.getType () != LocationParseNode.JOIN)
+      return false;
+
+    final LocationParseNodeVector children = 
+               top.getJoinChildren();
+    
+    int num_complement = 0;
+
+    for(int i = children.size() - 1; i >= 0; --i)
+    {
+      final LocationParseNode child_node = children.elementAt(i);
+      if(child_node.getType() == LocationParseNode.COMPLEMENT)
+        num_complement++;
+    }
+   
+    if(num_complement == 0 || num_complement == children.size())
+      return false;
+
+    return true;
+  }
+
   /**
    *  Returns the value of this Location as a string with the complement (if
    *  any) as the top node and the join or order (if any) below it.
@@ -182,6 +212,10 @@ public class Location
   public String toStringShort() 
   {
     final LocationParseNode top = getParsedLocation();
+
+    // cope with trans-spliced locations
+    if(isTransSpliced())
+      return toString();
 
     if((top.getType () == LocationParseNode.JOIN &&
         top.getJoinChildren ().elementAt (0).getType () ==
@@ -844,4 +878,42 @@ public class Location
       return null;
   }
 
+  /**
+  *
+  * Given a range check which strand it is on.
+  *
+  */
+  public boolean isComplement(Range range)
+  {
+    final LocationParseNode parse_tree = getParsedLocation();
+ 
+    if(parse_tree.getType() != LocationParseNode.JOIN)
+      return isComplement();
+
+    final LocationParseNodeVector children =
+                                parse_tree.getJoinChildren();
+
+    for(int i = children.size() - 1; i >= 0; --i)
+    {
+      LocationParseNode child_node = children.elementAt(i);
+
+      Range child_range =  null;
+      if(child_node.getType() == LocationParseNode.COMPLEMENT)
+        child_range = child_node.getComplementChild().getRange();
+      else if(child_node.getType() == LocationParseNode.RANGE)
+        child_range = child_node.getRange();
+
+      if((child_node.getType() == LocationParseNode.RANGE ||
+          child_node.getType() == LocationParseNode.COMPLEMENT) &&
+          child_range.equals(range))
+      {
+        if(child_node.getType() == LocationParseNode.COMPLEMENT)
+          return true;
+        else
+          return false;
+      }
+    }
+
+    return isComplement();
+  }
 }

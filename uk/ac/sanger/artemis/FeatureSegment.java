@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FeatureSegment.java,v 1.1 2004-06-09 09:44:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FeatureSegment.java,v 1.2 2005-05-03 09:12:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -28,7 +28,6 @@ package uk.ac.sanger.artemis;
 import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.FuzzyRange;
-import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.sequence.*;
 
@@ -40,26 +39,34 @@ import java.util.Vector;
  *  must be a coding sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureSegment.java,v 1.1 2004-06-09 09:44:47 tjc Exp $
+ *  @version $Id: FeatureSegment.java,v 1.2 2005-05-03 09:12:09 tjc Exp $
  *
  **/
 
 public class FeatureSegment
-    implements Selectable, SequenceChangeListener, MarkerChangeListener {
+    implements Selectable, SequenceChangeListener, MarkerChangeListener 
+{
+
+  private boolean complement;
+
   /**
    *  Create a new FeatureSegment object.
    *  @param feature The reference of the Feature that contains this segment.
    *  @param range The Range of this segment.
    **/
   public FeatureSegment (final Feature feature,
-                         final Range range) {
+                         final Range range) 
+  {
     this.feature = feature;
 
-    if (feature == null) {
-      throw new Error ();
-    }
+    if(feature == null)
+      throw new Error();
 
-    setRange (range);
+    setRange(range);
+
+    // check which strand this is on (used to test for trans spliced)
+    final Location location = feature.getLocation();
+    this.complement = location.isComplement(range);
   }
 
   /**
@@ -373,17 +380,37 @@ public class FeatureSegment
    *  translating one base ahead of the start position and 2 means start
    *  translating two bases ahead of the start position.
    **/
-  private int getFrameShift () {
+  private int getFrameShift() 
+  {
     // find the number of bases in the segments before this one
     int base_count = 0;
 
     final FeatureSegmentVector segments =
       getFeature ().getSegments ();
 
-    for (int i = 0 ; i < segments.size () ; ++i) {
-      if (segments.elementAt (i) == this) {
+    int direction = 0;
+    for(int i = 0; i < segments.size(); ++i) 
+    {
+      int this_direction;
+      if(segments.elementAt(i).isForwardSegment())
+        this_direction = 1;
+      else
+        this_direction = -1;
+
+      if(segments.elementAt (i) == this) 
+      {
+        if(i != 0 && this_direction != direction)
+          base_count = 0;
+
         break;
-      } else {
+      }
+      else 
+      {
+        if(i == 0)
+          direction = this_direction;
+        else if(this_direction != direction)
+          base_count = 0;
+
         base_count += segments.elementAt (i).getBaseCount ();
       }
     }
@@ -412,7 +439,9 @@ public class FeatureSegment
     final int start_base_modulo =
       (getStart ().getPosition () - 1 + getFrameShift ()) % 3;
 
-    if (getFeature ().getStrand ().isForwardStrand ()) {
+//  if (getFeature ().getStrand ().isForwardStrand ()) 
+    if(isForwardSegment())
+    {
       switch (start_base_modulo) {
       case 0:
         return FORWARD_FRAME_1;
@@ -433,6 +462,11 @@ public class FeatureSegment
     }
 
     return NO_FRAME;
+  }
+
+  public boolean isForwardSegment()
+  {
+    return !complement;
   }
 
   /**

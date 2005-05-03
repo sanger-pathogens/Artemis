@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.21 2005-04-26 12:53:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.22 2005-05-03 09:12:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.21 2005-04-26 12:53:25 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.22 2005-05-03 09:12:09 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -2262,16 +2262,16 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       final Feature feature = segment.getFeature();
       if((feature.isProteinFeature() || frame_features_flag) &&
-         (show_forward_lines &&(feature.isForwardFeature() ^
+          (show_forward_lines && (segment.isForwardSegment() ^
                                   isRevCompDisplay()) ||
-          show_reverse_lines &&(!feature.isForwardFeature() ^
-                                  isRevCompDisplay()))) 
+           show_reverse_lines && (!segment.isForwardSegment() ^
+                                  isRevCompDisplay())))
       {
-        return getFeatureDisplayLine(feature);
+        return getFeatureDisplayLine(feature,segment);
       } 
       else
       {
-        if(feature.isForwardFeature() ^ isRevCompDisplay()) 
+        if(segment.isForwardSegment() ^ isRevCompDisplay())
           return getFrameDisplayLine(FORWARD_STRAND);
         else 
           return getFrameDisplayLine(REVERSE_STRAND);
@@ -2281,7 +2281,7 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       final int frame_id =
         maybeFlipFrameDirection(getSegmentFrameID(segment));
-
+  
       return getFrameDisplayLine(frame_id);
     }
   }
@@ -2292,13 +2292,12 @@ public class FeatureDisplay extends EntryGroupPanel
   private int getSegmentFrameID(final FeatureSegment segment) 
   {
     final int frame_id = segment.getFrameID();
-
     final Feature feature = segment.getFeature();
 
     if((feature.isProteinFeature() || frame_features_flag) &&
-       (show_forward_lines &&(feature.isForwardFeature() ^
+       (show_forward_lines && (segment.isForwardSegment() ^
                                 isRevCompDisplay())||
-         show_reverse_lines &&(! feature.isForwardFeature() ^
+         show_reverse_lines && (!segment.isForwardSegment() ^
                                 isRevCompDisplay()))) 
     {
       return frame_id;
@@ -2335,11 +2334,12 @@ public class FeatureDisplay extends EntryGroupPanel
    *  total number of lines.  Each line is getLineHeight() pixels high.
    *  @return The line to draw into.
    **/
-  private int getFeatureDisplayLine(final Feature feature) 
+  private int getFeatureDisplayLine(final Feature feature,
+                                    final FeatureSegment segment) 
   {
     final int entry_index = getEntryGroup().indexOf(feature.getEntry());
     return getDisplayLineOfEntryIndex(entry_index,
-                                      feature.isForwardFeature() ^
+                                      segment.isForwardSegment() ^
                                       isRevCompDisplay());
   }
 
@@ -2628,7 +2628,6 @@ public class FeatureDisplay extends EntryGroupPanel
     // one "line" is font_height pixels high,(the number of lines times the
     // font_height is the height of the height of canvas)
     final int line = getSegmentDisplayLine(segment);
-
     return getLineOffset(line);
   }
 
@@ -2975,6 +2974,7 @@ public class FeatureDisplay extends EntryGroupPanel
       drawFeatureLabel(g, feature, seq_length, fm);
 
     // draw each segment/exon
+    boolean trans_spliced = false;
     for(int i = 0; i < num_segs; ++i) 
     {
       current_segment = this_feature_segments.elementAt(i);
@@ -3002,7 +3002,8 @@ public class FeatureDisplay extends EntryGroupPanel
         final FeatureSegment next_segment =
           this_feature_segments.elementAt(i + 1);
 
-        drawSegmentConnection(g, current_segment, next_segment);
+        trans_spliced = drawSegmentConnection(g, current_segment, 
+                                    next_segment, trans_spliced);
       }
     }
 
@@ -3023,12 +3024,30 @@ public class FeatureDisplay extends EntryGroupPanel
    *    the start of the Strand.  The connection line will finish at the end
    *    of this segment.
    **/
-  private void drawSegmentConnection(Graphics g,
+  private boolean drawSegmentConnection(Graphics g,
                                      FeatureSegment lower_segment,
-                                     FeatureSegment upper_segment) 
+                                     FeatureSegment upper_segment,
+                                     boolean trans_spliced) 
   {
-    final Marker upper_segment_start_marker = upper_segment.getStart();
-    final Marker lower_segment_end_marker = lower_segment.getEnd();
+    Marker upper_segment_start_marker = upper_segment.getStart();
+    Marker lower_segment_end_marker   = lower_segment.getEnd();
+
+    // trans-spliced
+    if((upper_segment.isForwardSegment() ^ lower_segment.isForwardSegment()) ||
+       trans_spliced)
+    {
+      trans_spliced = true;
+      int start = upper_segment.getStart().getRawPosition();
+      int end   = upper_segment.getEnd().getRawPosition();
+      if(end < start)
+        upper_segment_start_marker = upper_segment.getEnd();
+
+      start = lower_segment.getStart().getRawPosition();
+      end   = lower_segment.getEnd().getRawPosition();
+
+      if(end < start)
+        lower_segment_end_marker = lower_segment.getStart(); 
+    }
 
     int next_segment_start_coord =
       getLowXPositionOfMarker(upper_segment_start_marker);
@@ -3093,6 +3112,8 @@ public class FeatureDisplay extends EntryGroupPanel
                line_y_position_for_centre,
                next_segment_start_coord,
                line_y_position_for_next);
+
+    return trans_spliced;
   }
 
   /**
@@ -3127,7 +3148,7 @@ public class FeatureDisplay extends EntryGroupPanel
     final FeatureSegment first_segment = feature.getSegments().elementAt(0);
     final int label_x_coord;
 
-    if(feature.isForwardFeature() ^ isRevCompDisplay())
+    if(first_segment.isForwardSegment() ^ isRevCompDisplay())
     {
       int segment_start_pos =
         first_segment.getStart().getRawPosition();
@@ -3351,10 +3372,26 @@ public class FeatureDisplay extends EntryGroupPanel
     // and -1 otherwise.  this used to draw the feature arrow in the right
     // direction.
     final int feature_direction;
-    if(segment.getFeature().isForwardFeature() ^ isRevCompDisplay()) 
+    if(segment.isForwardSegment() ^ isRevCompDisplay())
+    {
       feature_direction = 1;
+      if(segment_end_coord < segment_start_coord)
+      {
+        int tmp = segment_start_coord;
+        segment_start_coord = segment_end_coord;
+        segment_end_coord   = tmp;
+      }
+    }
     else 
+    {
       feature_direction = -1;
+      if(segment_end_coord > segment_start_coord)
+      {
+        int tmp = segment_start_coord;
+        segment_start_coord = segment_end_coord;
+        segment_end_coord   = tmp;
+      }
+    }
 
     final int[] x_points = 
     {
