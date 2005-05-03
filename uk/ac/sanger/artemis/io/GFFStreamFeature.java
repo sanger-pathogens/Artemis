@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.8 2005-04-26 14:31:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.9 2005-05-03 13:25:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.8 2005-04-26 14:31:44 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.9 2005-05-03 13:25:57 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -307,6 +307,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     while( (ind = s.indexOf("%3D")) > -1)
       s = s.substring(0,ind) + "=" + s.substring(ind+3);
 
+    //tabs 
+    while( (ind = s.indexOf("%09")) > -1)
+      s = s.substring(0,ind) + "=" + s.substring(ind+3);
+
 //  ind = -1;
 //  while( (ind = s.indexOf("=",ind+2)) > -1)
 //    s = s.substring(0,ind+1) + "\"" + s.substring(ind+1);
@@ -337,6 +341,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     // equals
     while( (ind = s.indexOf("=")) > -1)
       s = s.substring(0,ind) + "%3D" + s.substring(ind+1);
+
+    //tabs 
+    while( (ind = s.indexOf("\t")) > -1)
+      s = s.substring(0,ind) + "%09" + s.substring(ind+1);
 
     return s;
   }
