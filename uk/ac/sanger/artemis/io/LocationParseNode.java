@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LocationParseNode.java,v 1.4 2005-05-03 09:12:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LocationParseNode.java,v 1.5 2005-05-03 09:14:43 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
  *  Location.  It is a utility class for EMBL.Location.
  *
  *  @author Kim Rutherford
- *  @version $Id: LocationParseNode.java,v 1.4 2005-05-03 09:12:09 tjc Exp $
+ *  @version $Id: LocationParseNode.java,v 1.5 2005-05-03 09:14:43 tjc Exp $
  *
  **/
 
@@ -916,7 +916,7 @@ class LocationParseNode extends EMBLObject
             {
               // a mixture of RANGE and COMPLEMENT nodes is not valid
               //return false;
-              JOptionPane.showMessageDialog(null, "Contains trans-spliced feature!",
+              JOptionPane.showMessageDialog(null, "Contains trans-spliced feature!\n"+toString(),
                                             "Trans-spliced site found",
                                             JOptionPane.INFORMATION_MESSAGE);
               return true;
