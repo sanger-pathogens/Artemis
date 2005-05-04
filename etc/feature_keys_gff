@@ -5,37 +5,37 @@
 #
 # key               Qualifiers (@=mandatory)
 # =======           ========================
-region              ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score
-contig              ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score
-supercontig         ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score
-chromosome          ID Name Alias Parent Note note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score
-gene                ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score
-CDS                 ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score
-polypeptide         ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score
-pseudogene          ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score
-intron              ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score
-exon                ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score
-three_prime_UTR     ID Alias Parent Note systematic_id db_xref note
-five_prime_UTR      ID Alias Parent Note systematic_id db_xref note
+region              ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score colour color
+contig              ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score colour color
+supercontig         ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score colour color
+chromosome          ID Name Alias Parent Note note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score colour color
+gene                ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score colour color
+CDS                 ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score colour color
+polypeptide         ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref Product molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score colour color mass isoelectric charge
+pseudogene          ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score colour color
+intron              ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score colour color
+exon                ID Name Alias Parent Note description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain translation_table topology localization gff_source gff_seqname score colour color
+three_prime_UTR     ID Alias Parent Note systematic_id db_xref note colour color
+five_prime_UTR      ID Alias Parent Note systematic_id db_xref note colour color
 transcript
-primary_transcript  ID Name Alias Parent Note db_xref product note controlled_curation
-tRNA                ID Name Alias Parent Note db_xref product note controlled_curation
-rRNA                ID Name Alias Parent Note db_xref product note controlled_curation
-mRNA                ID Name Alias Parent Note db_xref product note controlled_curation
-snRNA               ID Name Alias Parent Note db_xref product note controlled_curation
-scRNA               ID Name Alias Parent Note db_xref product note controlled_curation
-snoRNA              ID Name Alias Parent Note db_xref product note controlled_curation
-polypeptide_domain  ID Name Alias Parent Note 
-signal_peptide      ID Name Alias Parent Note
-matches             ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term
-nucleotide_match    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term gff_source gff_seqname score
-translated_nucleotide_match    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term
-protein_match       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term
-sequence_difference ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term
-repeat_region       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term
-direct_repeat       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term
-inverted_repeat     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term
-dispersed_repeat    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term
-repeat_family       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term gff_source gff_seqname score
-transposable_element  ID Name Alias Parent Target Gap Derives_from Note Dbxref Ontology_term
-binding_site        ID Name Alias Parent Target Gap Derives_from Note Dbxref Ontology_term
+primary_transcript  ID Name Alias Parent Note db_xref product note controlled_curation colour color
+tRNA                ID Name Alias Parent Note db_xref product note controlled_curation colour color
+rRNA                ID Name Alias Parent Note db_xref product note controlled_curation colour color
+mRNA                ID Name Alias Parent Note db_xref product note controlled_curation colour color
+snRNA               ID Name Alias Parent Note db_xref product note controlled_curation colour color
+scRNA               ID Name Alias Parent Note db_xref product note controlled_curation colour color
+snoRNA              ID Name Alias Parent Note db_xref product note controlled_curation colour color
+polypeptide_domain  ID Name Alias Parent Note  colour color
+signal_peptide      ID Name Alias Parent Note colour color
+matches             ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
+nucleotide_match    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term gff_source gff_seqname score colour color
+translated_nucleotide_match    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
+protein_match       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
+sequence_difference ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
+repeat_region       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
+direct_repeat       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
+inverted_repeat     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
+dispersed_repeat    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
+repeat_family       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term gff_source gff_seqname score colour color
+transposable_element  ID Name Alias Parent Target Gap Derives_from Note Dbxref Ontology_term colour color
+binding_site        ID Name Alias Parent Target Gap Derives_from Note Dbxref Ontology_term colour color
