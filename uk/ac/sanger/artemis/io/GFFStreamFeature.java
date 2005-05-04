@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.9 2005-05-03 13:25:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.10 2005-05-04 10:13:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.9 2005-05-03 13:25:57 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.10 2005-05-04 10:13:17 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -138,21 +138,13 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     try 
     {
       start_base = Integer.parseInt(start_base_string);
+      end_base   = Integer.parseInt(end_base_string);
     } 
     catch(NumberFormatException e)
     {
-      throw new ReadFormatException("Could not understand the start base " +
-                                    "of a GFF feature: " + start_base_string);
-    }
-
-    try 
-    {
-      end_base = Integer.parseInt(end_base_string);
-    } 
-    catch(NumberFormatException e) 
-    {
-      throw new ReadFormatException("Could not understand the end base " +
-                                    "of a GFF feature: " + end_base_string);
+      throw new ReadFormatException("Could not understand the start or end base " +
+                                    "of a GFF feature: " + start_base_string + 
+                                    " " + end_base_string);
     }
 
     // start of qualifier parsing and setting
@@ -170,8 +162,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         complement_flag = false;
 
         // best we can do
-        final String note_string = "this feature is unstranded";
-        setQualifier(new Qualifier("note", note_string));
+        //final String note_string = "this feature is unstranded";
+        //setQualifier(new Qualifier("note", note_string));
       }
 
       if(line_bits.size() == 9) 
@@ -207,35 +199,26 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       setQualifier(gff_seqname);
 
       final Key key = new Key(line_bits.elementAt(2));
-
       setKey(key);
 
       final Qualifier source_qualifier =
         new Qualifier("gff_source", line_bits.elementAt(1));
-
       setQualifier(source_qualifier);
 
       final Qualifier score_qualifier =
         new Qualifier("score", line_bits.elementAt(5));
-
       setQualifier(score_qualifier);
 
       String frame = line_bits.elementAt(7);
 
       if(frame.equals ("0"))
         frame = "1";
-      else 
-      {
-        if(frame.equals("1"))
-          frame = "2";
-        else
-        {
-          if(frame.equals("2")) 
-            frame = "3";
-          else
-            frame = ".";
-        }
-      }
+      else if(frame.equals("1"))
+        frame = "2";
+      else if(frame.equals("2")) 
+        frame = "3";
+      else
+        frame = ".";
 
       if(!frame.equals("1") && !frame.equals(".")) 
       {
@@ -373,9 +356,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   protected static GFFStreamFeature readFromStream(LinePushBackReader stream)
       throws IOException, InvalidRelationException 
   {
-
     String line = stream.readLine();
-
     if(line == null) 
       return null;
 
@@ -420,81 +401,71 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   public void writeToStream(final Writer writer)
       throws IOException 
   {
-    // for now GFF features are read-only so just write what we read
- // if(gff_lines == null) 
- // {
-      final RangeVector ranges = getLocation().getRanges();
+    final RangeVector ranges = getLocation().getRanges();
+    final int ranges_size = ranges.size();
 
-      for(int i = 0 ; i < ranges.size() ; ++i) 
+    for(int i = 0; i < ranges_size; ++i) 
+    {
+      final Range this_range = ranges.elementAt(i);
+
+      Qualifier seqname = getQualifierByName("gff_seqname");
+      Qualifier source  = getQualifierByName("gff_source");
+      Qualifier score   = getQualifierByName("score");
+      Qualifier group   = getQualifierByName("group");
+
+      if(seqname == null) 
+        seqname = new Qualifier("gff_seqname", "");
+
+      if(source == null) 
+        source = new Qualifier("source", "");
+
+      if(score == null) 
+        score = new Qualifier("score", "");
+
+      if(group == null || group.getValues() == null ||
+         group.getValues().elementAt(0).equals(""))
       {
-        final Range this_range = ranges.elementAt(i);
-        Qualifier   seqname    = getQualifierByName("gff_seqname");
-        Qualifier   source     = getQualifierByName("gff_source");
-        Qualifier   score      = getQualifierByName("score");
-        Qualifier   group      = getQualifierByName("group");
+        final Qualifier gene = getQualifierByName("gene");
 
-        if(seqname == null) 
-          seqname = new Qualifier("gff_seqname", "");
-
-        if(source == null) 
-          source = new Qualifier("source", "");
-
-        if(score == null) 
-          score = new Qualifier("score", "");
-
-        if(group == null || group.getValues() == null ||
-           group.getValues().elementAt(0).equals(""))
-        {
-          final Qualifier gene = getQualifierByName("gene");
-
-          if(gene == null) 
-            group = new Qualifier("group", "");
-          else 
-            group = gene;
-        }
-
-        String frame = ".";
-
-        final Qualifier codon_start = getQualifierByName("codon_start");
-
-        if(codon_start != null && i == 0) 
-        {
-          frame = codon_start.getValues().elementAt(0);
-
-          if(frame.equals ("1")) 
-            frame = "0";
-          else
-          {
-            if(frame.equals("2")) 
-              frame = "1";
-            else 
-            {
-              if(frame.equals("3")) 
-                frame = "2";
-              else
-                frame = ".";
-            }
-          }
-        }
-
-        final String attribute_string = unParseAttributes();
-
-        writer.write(seqname.getValues().elementAt(0) + "\t" +
-                     source.getValues().elementAt(0) + "\t" +
-                     getKey() + "\t" +
-                     this_range.getStart() + "\t" +
-                     this_range.getEnd() + "\t" +
-                     score.getValues() .elementAt(0)+ "\t" +
-                     (getLocation().isComplement() ? "-\t" : "+\t") +
-                      frame + "\t" +
-                      attribute_string + "\n");
+        if(gene == null) 
+          group = new Qualifier("group", "");
+        else 
+          group = gene;
       }
- // } 
- // else 
- // {
- //   for(int i = 0 ; i < gff_lines.size() ; ++i) 
- //     writer.write(gff_lines.elementAt(i) + "\n");
- // }
+
+      String frame = ".";
+
+      final Qualifier codon_start = getQualifierByName("codon_start");
+
+      if(codon_start != null && i == 0) 
+      {
+        frame = codon_start.getValues().elementAt(0);
+
+        if(frame.equals ("1")) 
+          frame = "0";
+        else if(frame.equals("2"))
+          frame = "1";
+        else if(frame.equals("3"))
+          frame = "2";
+        else
+          frame = ".";
+      }
+
+      final String attribute_string = unParseAttributes();
+
+      writer.write(seqname.getValues().elementAt(0) + "\t" +
+                   source.getValues().elementAt(0) + "\t" +
+                   getKey() + "\t" +
+                   this_range.getStart() + "\t" +
+                   this_range.getEnd() + "\t" +
+                   score.getValues() .elementAt(0)+ "\t" +
+                   (getLocation().isComplement() ? "-\t" : "+\t") +
+                   frame + "\t" +
+                   attribute_string + "\n");
+    }
+
+ // for(int i = 0 ; i < gff_lines.size() ; ++i) 
+ //   writer.write(gff_lines.elementAt(i) + "\n");
   }
 
   /**
@@ -515,15 +486,16 @@ public class GFFStreamFeature extends SimpleDocumentFeature
                              "Dbxref", "Ontology_term" };
     int count = 0;
     Qualifier this_qualifier;
+    final int names_length = names.length;
 
-    for(int i=0; i<names.length; i++)
+    for(int i=0; i<names_length; i++)
     {
       this_qualifier = (Qualifier)qualifiers.getQualifierByName(names[i]);
  
       if(this_qualifier == null)
         continue;
 
-      String this_qualifier_str = getQualifierString(this_qualifier);
+      final String this_qualifier_str = getQualifierString(this_qualifier);
       if(this_qualifier_str == null)
         continue;
 
@@ -534,7 +506,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     }
 
     boolean lname;
-    for(int i = 0 ; i < qualifiers.size() ; ++i) 
+    final int qualifiers_size = qualifiers.size();
+    for(int i = 0; i < qualifiers_size; ++i) 
     {
       this_qualifier = (Qualifier)qualifiers.elementAt(i);
 
@@ -543,7 +516,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         continue;
 
       lname = false;
-      for(int j=0; j<names.length; j++)
+      for(int j=0; j<names_length; j++)
         if(this_qualifier_str.startsWith(names[j]))
           lname = true;
 
@@ -615,11 +588,22 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     Hashtable attributes = new Hashtable();
 
-    StringTokenizer tokeniser = new StringTokenizer(att_val_list, ";", false);
+//  StringTokenizer tokeniser = new StringTokenizer(att_val_list, ";", false);
+//  while(tokeniser.hasMoreTokens()) 
+//  {
+//    final String this_token = tokeniser.nextToken().trim();
 
-    while(tokeniser.hasMoreTokens()) 
+    int ind_start = 0;
+    int ind_end;
+    while( (ind_end = att_val_list.indexOf(";",ind_start)) > -1 || 
+           ind_start < att_val_list.length() )
     {
-      final String this_token = tokeniser.nextToken().trim();
+      if(ind_end < 0)
+        ind_end = att_val_list.length();
+
+      final String this_token = att_val_list.substring(ind_start, ind_end).trim();
+      ind_start = ind_end+1;
+
       int index_of_first_space = this_token.indexOf(" ");
        
       String att_name;
