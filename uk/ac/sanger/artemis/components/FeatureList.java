@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.14 2005-01-27 14:40:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.15 2005-05-05 10:57:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,17 +38,25 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.StreamQualifier;
 import uk.ac.sanger.artemis.util.StringVector;
 
-import java.awt.event.*;
-import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.Container;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Graphics;
+import java.awt.Dimension;
 import java.text.NumberFormat;
-import javax.swing.*;
+import javax.swing.JScrollPane;
+import javax.swing.JViewport;
+import javax.swing.JComponent;
 
 /**
  *  This component gives the user a list containing the details the current
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.14 2005-01-27 14:40:17 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.15 2005-05-05 10:57:57 tjc Exp $
  *
  **/
 
@@ -138,18 +146,6 @@ public class FeatureList extends EntryGroupPanel
       }
     });
 
-    addComponentListener(new ComponentAdapter()
-    {
-      public void componentShown(ComponentEvent e)
-      {
-        repaint();
-      }
-      public void componentResized(ComponentEvent e) 
-      {
-        repaint();
-      }
-    });
-
     getSelection().addSelectionChangeListener(this);
 
     // changes to the EntryGroup will be noticed by listening for EntryChange
@@ -181,22 +177,11 @@ public class FeatureList extends EntryGroupPanel
   }
 
   /**
-   *  Returns the value of a flag that indicates whether this component can be
-   *  traversed using Tab or Shift-Tab keyboard focus traversal - returns true
-   *  for FeatureDisplay components
-   **/
-// tjc - deprecated replaced by isFocusable()
-//public boolean isFocusTraversable() 
-//{
-//  return true;
-//}
-
-  /**
    *  Set value of the show correlation scores flag.
    *  @param show_correlation_scores Show correlation scores in the list if
    *    and only if this argument is true.
    **/
-  public void setCorrelationScores(final boolean show_correlation_scores) 
+  protected void setCorrelationScores(final boolean show_correlation_scores) 
   {
     if(this.show_correlation_scores != show_correlation_scores) 
     {
@@ -208,7 +193,7 @@ public class FeatureList extends EntryGroupPanel
   /**
    *  Get the value of the "show correlation scores" flag.
    **/
-  public boolean getCorrelationScores() 
+  protected boolean getCorrelationScores() 
   {
     return show_correlation_scores;
   }
@@ -218,7 +203,7 @@ public class FeatureList extends EntryGroupPanel
    *  @param show_gene_names If true this component will show the /gene (really
    *    Feature.getIDString()) instead of the key.
    **/
-  public void setShowGenes(final boolean show_gene_names) 
+  protected void setShowGenes(final boolean show_gene_names) 
   {
     if(this.show_gene_names != show_gene_names) 
     {
@@ -233,7 +218,7 @@ public class FeatureList extends EntryGroupPanel
    *  @param show_systematic_names If true this component will show the /gene (really
    *    Feature.getSystematicName()) instead of the key.
    **/
-  public void setShowSystematicID(final boolean show_systematic_names)
+  protected void setShowSystematicID(final boolean show_systematic_names)
   {
     if(this.show_systematic_names != show_systematic_names)
     {
@@ -246,7 +231,7 @@ public class FeatureList extends EntryGroupPanel
   /**
    *  Get the value of the "show genes" flag.
    **/
-  public boolean getShowGenes() 
+  protected boolean getShowGenes() 
   {
     return show_gene_names;
   }
@@ -255,11 +240,10 @@ public class FeatureList extends EntryGroupPanel
   /**
    *  Get the value of the "show systematic id" flag.
    **/
-  public boolean getShowSysID()
+  protected boolean getShowSysID()
   {
     return show_systematic_names;
   }
-
 
 
   /**
@@ -267,7 +251,7 @@ public class FeatureList extends EntryGroupPanel
    *  @param show_quailfiers If true this component will show all the
    *    qualifiers after the note.
    **/
-  public void setShowQualifiers(final boolean show_qualifiers) 
+  protected void setShowQualifiers(final boolean show_qualifiers) 
   {
     if(this.show_qualifiers != show_qualifiers) 
     {
@@ -279,7 +263,7 @@ public class FeatureList extends EntryGroupPanel
   /**
    *  Get the value of the "show qualifiers" flag.
    **/
-  public boolean getShowQualifiers() 
+  protected boolean getShowQualifiers() 
   {
     return show_qualifiers;
   }
@@ -289,7 +273,7 @@ public class FeatureList extends EntryGroupPanel
    *  @param show_products If true this component will show the /product
    *    qualifier instead of the /note.
    **/
-  public void setShowProducts(final boolean show_products) 
+  protected void setShowProducts(final boolean show_products) 
   {
     if(this.show_products != show_products) 
     {
@@ -301,10 +285,11 @@ public class FeatureList extends EntryGroupPanel
   /**
    *  Get the value of the "show products" flag.
    **/
-  public boolean getShowProducts() 
+  protected boolean getShowProducts() 
   {
     return show_products;
   }
+  
 
   /**
    *  Implementation of the EntryGroupChangeListener interface.  We listen to
@@ -570,7 +555,9 @@ public class FeatureList extends EntryGroupPanel
                                                 last_index_in_view);
 
       g.setFont(getFont());
-      for(int i = 0; i < features_in_view.size(); i++)
+
+      final int features_in_view_size = features_in_view.size();
+      for(int i = 0; i < features_in_view_size; i++)
       {
         final Feature this_feature  = features_in_view.elementAt(i);
         final String feature_string = makeFeatureString(this_feature, false);
@@ -635,7 +622,6 @@ public class FeatureList extends EntryGroupPanel
                                    final boolean dont_truncate) 
   {
     String key_string;
-
     final int KEY_FIELD_WIDTH = 15;
 
     if(show_gene_names)
@@ -780,7 +766,8 @@ public class FeatureList extends EntryGroupPanel
           StreamQualifier.toStringVector(qualifier_info,
                                          qualifier);
 
-        for(int i = start_index; i < qualifier_strings.size() ; ++i)
+        final int qualifier_strings_size = qualifier_strings.size();
+        for(int i = start_index; i < qualifier_strings_size; ++i)
         {
           final String qualifier_string = qualifier_strings.elementAt(i);
           buffer.append(qualifier_string + " ");
@@ -824,7 +811,8 @@ public class FeatureList extends EntryGroupPanel
       buffer.append(" ");
     }
 
-    for(int i = 0 ; i < qualifiers.size() ; ++i) 
+    final int qualifiers_size = qualifiers.size();
+    for(int i = 0 ; i < qualifiers_size; ++i) 
     {
       final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(i);
       final String this_qualifier_name = this_qualifier.getName();
@@ -843,7 +831,7 @@ public class FeatureList extends EntryGroupPanel
   /**
    *  Return a String containing the correlation scores.
    **/
-  public String getScoresString(final Feature feature)
+  protected String getScoresString(final Feature feature)
   {
     final int base_total = feature.getTranslationBases().length();
 
@@ -918,12 +906,12 @@ public class FeatureList extends EntryGroupPanel
    **/
   private String padRightWithSpaces(final String string, final int width) 
   {
-    if(string.length() == width)
+    final int len = string.length();
+    if(len == width)
       return string;
 
     final StringBuffer buffer = new StringBuffer(string);
-
-    for(int i = 0 ; i < width - string.length() ; ++i) 
+    for(int i = 0 ; i < width - len; ++i) 
       buffer.append(' ');
 
     return buffer.toString();
@@ -935,16 +923,16 @@ public class FeatureList extends EntryGroupPanel
    **/
   private String padLeftWithSpaces(final String string, final int width) 
   {
-    if(string.length() == width) 
+    final int len = string.length();
+    if(len == width) 
       return string;
 
     final StringBuffer buffer = new StringBuffer();
 
-    for(int i = 0 ; i < width - string.length() ; ++i) 
+    for(int i = 0; i < width - len; ++i) 
       buffer.append(' ');
 
     buffer.append(string);
-
     return buffer.toString();
   }
 
