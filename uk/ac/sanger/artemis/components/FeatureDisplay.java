@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.22 2005-05-03 09:12:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.23 2005-05-05 14:50:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.22 2005-05-03 09:12:09 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.23 2005-05-05 14:50:39 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -1230,7 +1230,8 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       final FeatureVector all_features = getSelection().getAllFeatures();
 
-      for(int i = 0 ; i < all_features.size() ; ++i) 
+      final int all_features_size = all_features.size();
+      for(int i = 0 ; i < all_features_size; ++i) 
         raiseFeature(all_features.elementAt(i));
 
       raise_selection_flag = false;
@@ -1258,7 +1259,8 @@ public class FeatureDisplay extends EntryGroupPanel
 
     // add features that are in visible_features and
     // real_visible_features - ie features that are still visible
-    for(int i = 0 ; i < visible_features.size() ; ++i) 
+    final int visible_features_size = visible_features.size();
+    for(int i = 0 ; i < visible_features_size; ++i) 
     {
       final Feature new_feature = visible_features.elementAt(i);
       if(real_visible_features.contains(new_feature)) 
@@ -1268,26 +1270,26 @@ public class FeatureDisplay extends EntryGroupPanel
     // add features that are in real_visible_features and not currently
     // in visible_features and are not selected(selected features will be
     // added last so that they stay on top).
-    for(int i = 0 ; i < real_visible_features.size() ; ++i) 
+    final int real_visible_features_size = real_visible_features.size();
+    for(int i = 0 ; i < real_visible_features_size; ++i) 
     {
       final Feature new_feature = real_visible_features.elementAt(i);
 
       if(!visible_features.contains(new_feature) &&
-          !getSelection().contains(new_feature)) {
+         !getSelection().contains(new_feature)) 
         new_visible_features.addElementAtEnd(new_feature);
-      }
     }
 
     final FeatureVector selection_features = getSelection().getAllFeatures();
 
     // now add features that are in real_visible_features, are not in
-    // visible_features and are selected(selected features are added last so
+    // visible_features and are selected (selected features are added last so
     // that they stay on top).
-    for(int i = 0 ; i < real_visible_features.size() ; ++i) 
+    for(int i = 0 ; i < real_visible_features_size; ++i) 
     {
       final Feature new_feature = real_visible_features.elementAt(i);
       if(!visible_features.contains(new_feature) &&
-          selection_features.contains(new_feature)) 
+         selection_features.contains(new_feature)) 
         new_visible_features.addElementAtEnd(new_feature);
     }
 
@@ -1364,7 +1366,7 @@ public class FeatureDisplay extends EntryGroupPanel
 
       final FeatureVector filtered_features = new FeatureVector();
 
-      // filter out low and high scoring features and(possibly) source
+      // filter out low and high scoring features and (possibly) source
       // features
       for(int i = features_from_entry.size() - 1 ; i >= 0 ; --i)
       {
@@ -1576,7 +1578,7 @@ public class FeatureDisplay extends EntryGroupPanel
     final int scale_number_y_pos = scale_line * getLineHeight();
 
     final float bases_per_pixel =
-     (float)getMaxVisibleBases() / getWidth();
+     (float)getMaxVisibleBases()/getWidth();
 
     final int base_label_spacing;
 
@@ -1594,7 +1596,7 @@ public class FeatureDisplay extends EntryGroupPanel
           (int)Math.ceil(MINIMUM_LABEL_SPACING * bases_per_pixel / 100) * 100;
     }
 
-    final int label_spacing =(int)(base_label_spacing / bases_per_pixel);
+    final int label_spacing = (int)(base_label_spacing / bases_per_pixel);
 
     final int possible_index_of_first_label;
     final int seq_length = getSequenceLength();
@@ -1782,49 +1784,70 @@ public class FeatureDisplay extends EntryGroupPanel
         if(!getOneLinePerEntryFlag()) 
         {
           if(show_forward_lines) 
-            drawForwardCodons(g);
+            drawCodons(g,true);
 
           if(show_reverse_lines) 
-            drawReverseCodons(g);
+           // drawReverseCodons(g);
+            drawCodons(g,false);
         }
       }
     }
   }
 
+
   /**
    *  Mark the start and stop codons on the three forward frame lines.
    *  @param g The object to draw into.
    **/
-  private void drawForwardCodons(Graphics g) 
+  private void drawCodons(Graphics g, boolean fwd) 
   {
     final Strand strand;
+    final int first_visible_base;
+    final int end_base;
+    final int direction;
 
-    if(isRevCompDisplay()) 
-      strand = getBases().getReverseStrand();
-    else 
-      strand = getBases().getForwardStrand();
-
-    final int first_visible_base = getForwardBaseAtLeftEdge();
+    if(fwd)
+    {
+      direction = FORWARD;
+      if(isRevCompDisplay()) 
+        strand = getBases().getReverseStrand();
+      else 
+        strand = getBases().getForwardStrand();
+      first_visible_base = getForwardBaseAtLeftEdge();
+      // base to end translation at
+      // we + 3 to the upper bound because partial codons do not get translated
+      // by getTranslation()
+      end_base   = getLastVisibleForwardBase() + 3;
+    }
+    else
+    {
+      direction = REVERSE;
+      if(isRevCompDisplay()) 
+        strand = getBases().getForwardStrand();
+      else 
+        strand = getBases().getReverseStrand();
+      first_visible_base = getFirstVisibleReverseBase();
+      // base to end translation at
+      // we + 3 to the upper bound because partial codons do not get translated
+      // by getTranslation()
+      end_base   = getLastVisibleReverseBase() + 3;
+    }
+     
     final int frame_shift = (first_visible_base - 1) % 3;
 
     // base to start translation at - we start slightly off the 
     // left of the screen
     int start_base = first_visible_base - frame_shift;
 
-    // base to end translation at
-    // we + 3 to the upper bound because partial codons do not get translated
-    // by getTranslation()
-    final int end_base = getLastVisibleForwardBase() + 3;
-
     // not used if show_stop_codons is false
-    int [][] forward_stop_codons = null;
+    int [][] stop_codons = null;
 
     if(show_stop_codons) 
     {
-      if(start_base < 1)
+      if(fwd && start_base < 1)
         start_base = 1;
  
-      forward_stop_codons = new int [][] 
+      stop_codons = new int [][] 
       {
         strand.getStopCodons(newRange(start_base, end_base)),
         strand.getStopCodons(newRange(start_base + 1, end_base)),
@@ -1833,134 +1856,51 @@ public class FeatureDisplay extends EntryGroupPanel
     }
 
     // not used if show_start_codons is false
-    int [][] forward_start_codons = null;
+    int [][] start_codons = null;
 
     if(show_start_codons) 
     {
-      final StringVector start_codons = Options.getOptions().getStartCodons();
+      final StringVector starts = Options.getOptions().getStartCodons();
       
-//    if(Options.getOptions().isEukaryoticMode()) 
-//      start_codons = Options.getOptions().getEukaryoticStartCodons();
-//    else 
-//      start_codons = Options.getOptions().getProkaryoticStartCodons();
-
-      forward_start_codons = new int [][] 
+      start_codons = new int [][] 
       {
         strand.getMatchingCodons(newRange(start_base, end_base),
-                                 start_codons),
+                                 starts),
         strand.getMatchingCodons(newRange(start_base + 1, end_base),
-                                 start_codons),
+                                 starts),
         strand.getMatchingCodons(newRange(start_base + 2, end_base),
-                                 start_codons)
+                                 starts)
       };
     }
 
     for(int i = 0 ; i < 3 ; ++i) 
     {
-      final int frame_line = getFrameDisplayLine(FORWARD_FRAME_1 + i);
+      final int this_frame_line;
+      if(fwd)
+        this_frame_line = getFrameDisplayLine(FORWARD_FRAME_1 + i);
+      else
+        this_frame_line = getFrameDisplayLine(REVERSE_FRAME_1 - i);
 
       if(show_start_codons) 
       {
-        final int [] this_frame_start_codons = forward_start_codons [i];
+        final int[] this_frame_start_codons = start_codons[i];
 
-        drawCodonMarkLine(g, frame_line,
+        drawCodonMarkLine(g, this_frame_line,
                           this_frame_start_codons,
-                          FORWARD, 80);
+                          direction, 80);
       }
 
       if(show_stop_codons) 
       {
-        final int [] this_frame_stop_codons = forward_stop_codons [i];
+        final int[] this_frame_stop_codons = stop_codons[i];
 
-        drawCodonMarkLine(g, frame_line,
+        drawCodonMarkLine(g, this_frame_line,
                           this_frame_stop_codons,
-                          FORWARD, 100);
+                          direction, 100);
       }
     }
   }
-
-  /**
-   *  Mark the stop codons into the three reverse frame lines.
-   *  @param g The object to draw into.
-   **/
-  private void drawReverseCodons(Graphics g) 
-  {
-    final Strand strand;
-
-    if(isRevCompDisplay()) 
-      strand = getBases().getForwardStrand();
-    else 
-      strand = getBases().getReverseStrand();
-
-    final int first_visible_base = getFirstVisibleReverseBase();
-
-    final int frame_shift = (first_visible_base - 1) % 3;
-
-    // base to start translation at
-    final int start_base = first_visible_base - frame_shift;
-
-    // base to end translation at
-    // we + 3 to the upper bound because partial codons do not get translated
-    // by getTranslation()
-    final int end_base = getLastVisibleReverseBase() + 3;
-
-    // not used if show_stop_codons is false
-    int [][] reverse_stop_codons = null;
-
-    if(show_stop_codons) 
-    {
-      reverse_stop_codons = new int [][] 
-      {
-        strand.getStopCodons(newRange(start_base, end_base)),
-        strand.getStopCodons(newRange(start_base + 1, end_base)),
-        strand.getStopCodons(newRange(start_base + 2, end_base))
-      };
-    }
-
-    // not used if show_start_codons is false
-    int [][] reverse_start_codons = null;
-
-    if(show_start_codons) 
-    {
-      final StringVector start_codons = Options.getOptions().getStartCodons();;
-
-//    if(Options.getOptions().isEukaryoticMode()) 
-//      start_codons = Options.getOptions().getEukaryoticStartCodons();
-//    else 
-//      start_codons = Options.getOptions().getProkaryoticStartCodons();
-
-      reverse_start_codons = new int [][] 
-      {
-        strand.getMatchingCodons(newRange(start_base, end_base),
-                                  start_codons),
-        strand.getMatchingCodons(newRange(start_base + 1, end_base),
-                                  start_codons),
-        strand.getMatchingCodons(newRange(start_base + 2, end_base),
-                                  start_codons)
-      };
-    }
-
-    for(int i = 0 ; i < 3 ; ++i) 
-    {
-      final int frame_line = getFrameDisplayLine(REVERSE_FRAME_1 - i);
-
-      if(show_start_codons) 
-      {
-        final int [] this_frame_start_codons = reverse_start_codons [i];
-        drawCodonMarkLine(g, frame_line,
-                          this_frame_start_codons,
-                          REVERSE, 80);
-      }
-
-      if(show_stop_codons) 
-      {
-        final int [] this_frame_stop_codons = reverse_stop_codons [i];
-        drawCodonMarkLine(g, frame_line,
-                          this_frame_stop_codons,
-                          REVERSE, 100);
-      }
-    }
-  }
+  
 
   /**
    *  Draw the codon letters into the three forward frame lines.
