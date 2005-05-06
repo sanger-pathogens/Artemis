@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.23 2005-05-05 14:50:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.24 2005-05-06 10:20:26 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.23 2005-05-05 14:50:39 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.24 2005-05-06 10:20:26 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -351,16 +351,6 @@ public class FeatureDisplay extends EntryGroupPanel
     setBackground(Color.white);
   }
 
-  /**
-   *  Returns the value of a flag that indicates whether this component can be
-   *  traversed using Tab or Shift-Tab keyboard focus traversal - returns true
-   *  for FeatureDisplay components
-   **/
-// tjc - deprecated replaced by isFocusable().
-//public boolean isFocusTraversable()
-//{
-//  return true;
-//}
 
   /**
    *  Overriden to call fixCanvasSize()
@@ -1107,8 +1097,8 @@ public class FeatureDisplay extends EntryGroupPanel
    *    true
    **/
   private void makeBaseVisibleInternal(final int base_position,
-                                        final boolean forward,
-                                        final boolean send_event) 
+                                       final boolean forward,
+                                       final boolean send_event) 
   {
     int forward_base_position = base_position;
 
@@ -1129,8 +1119,8 @@ public class FeatureDisplay extends EntryGroupPanel
   private void makeBaseVisible(final Marker base_marker) 
   {
     makeBaseVisibleInternal(base_marker.getPosition(),
-                             base_marker.getStrand().isForwardStrand(),
-                             true);
+                            base_marker.getStrand().isForwardStrand(),
+                            true);
   }
 
   /**
@@ -1150,7 +1140,7 @@ public class FeatureDisplay extends EntryGroupPanel
   private void add(Feature feature) 
   {
     if(getEntryGroup().isActive(feature.getEntry()) &&
-        featureVisible(feature)) 
+       featureVisible(feature)) 
     {
       if(visible_features.contains(feature)) 
       {
@@ -1368,7 +1358,7 @@ public class FeatureDisplay extends EntryGroupPanel
 
       // filter out low and high scoring features and (possibly) source
       // features
-      for(int i = features_from_entry.size() - 1 ; i >= 0 ; --i)
+      for(int i = features_from_entry.size() - 1; i >= 0; --i)
       {
         final Feature this_feature = features_from_entry.elementAt(i);
 
@@ -1558,7 +1548,7 @@ public class FeatureDisplay extends EntryGroupPanel
   private void fillLane(Graphics g, int fill_line_number, 
                         int first_visible_base_coord, int last_visible_base_coord) 
   {
-    int fill_line_top = fill_line_number*getLineHeight() + 1;
+    int fill_line_top = fill_line_number*getFontHeight() + 1;
 
     g.fillRect(first_visible_base_coord, fill_line_top,
                last_visible_base_coord - first_visible_base_coord + 1,
@@ -1575,7 +1565,7 @@ public class FeatureDisplay extends EntryGroupPanel
     g.setColor(Color.black);
 
     final int scale_line = getFrameDisplayLine(SCALE_LINE);
-    final int scale_number_y_pos = scale_line * getLineHeight();
+    final int scale_number_y_pos = scale_line * getFontHeight();
 
     final float bases_per_pixel =
      (float)getMaxVisibleBases()/getWidth();
@@ -1624,10 +1614,9 @@ public class FeatureDisplay extends EntryGroupPanel
       index_of_last_label =
                    getLastVisibleForwardBase() / base_label_spacing;
 
-//  g.setFont(getFont());
     final int font_ascent   = getFontAscent();
     final int font_width    = getFontWidth();
-    final int font_line_hgt = getLineHeight();
+    final int font_line_hgt = getFontHeight();
 
     for(int i = index_of_first_label; i <= index_of_last_label; ++i)
     {
@@ -1644,20 +1633,20 @@ public class FeatureDisplay extends EntryGroupPanel
           getLowXPositionOfBase(i * base_label_spacing);
 
       g.drawString(label_string,
-                    scale_number_x_pos + 2,
-                    scale_number_y_pos + font_ascent + 1);
+                   scale_number_x_pos + 2,
+                   scale_number_y_pos + font_ascent + 1);
 
       g.drawLine(scale_number_x_pos, scale_number_y_pos,
-                  scale_number_x_pos, scale_number_y_pos + font_line_hgt);
+                 scale_number_x_pos, scale_number_y_pos + font_line_hgt);
 
       if(isRevCompDisplay())
         g.drawLine(scale_number_x_pos, scale_number_y_pos,
-                    scale_number_x_pos + font_width, scale_number_y_pos);
+                   scale_number_x_pos + font_width, scale_number_y_pos);
       else
         g.drawLine(scale_number_x_pos,
-                    scale_number_y_pos + font_line_hgt,
-                    scale_number_x_pos + font_width,
-                    scale_number_y_pos + font_line_hgt);
+                   scale_number_y_pos + font_line_hgt,
+                   scale_number_x_pos + font_width,
+                   scale_number_y_pos + font_line_hgt);
     }
   }
 
@@ -1702,7 +1691,7 @@ public class FeatureDisplay extends EntryGroupPanel
       offset = 0;
     
     g.setFont(getFont());
-    int yposition = forward_frame_line * getLineHeight();
+    int yposition = forward_frame_line * getFontHeight();
 
     // draw fwd bases
     if(getScaleFactor() == 0)
@@ -1726,7 +1715,7 @@ public class FeatureDisplay extends EntryGroupPanel
 
     final int reverse_frame_line = getFrameDisplayLine(REVERSE_STRAND);
     final int reverse_sequence_length = reverse_visible_bases.length();
-    yposition = reverse_frame_line * getLineHeight();
+    yposition = reverse_frame_line * getFontHeight();
 
     // draw bwd bases
     if(getScaleFactor() == 0)
@@ -1787,7 +1776,6 @@ public class FeatureDisplay extends EntryGroupPanel
             drawCodons(g,true);
 
           if(show_reverse_lines) 
-           // drawReverseCodons(g);
             drawCodons(g,false);
         }
       }
@@ -1827,9 +1815,6 @@ public class FeatureDisplay extends EntryGroupPanel
       else 
         strand = getBases().getReverseStrand();
       first_visible_base = getFirstVisibleReverseBase();
-      // base to end translation at
-      // we + 3 to the upper bound because partial codons do not get translated
-      // by getTranslation()
       end_base   = getLastVisibleReverseBase() + 3;
     }
      
@@ -2006,7 +1991,7 @@ public class FeatureDisplay extends EntryGroupPanel
       offset = 0;
 
     codons = codons.toUpperCase();
-    final int draw_y_position = line_number * getLineHeight();
+    final int draw_y_position = line_number * getFontHeight();
     final int draw_x_position;
     
     if(direction == REVERSE)
@@ -2024,7 +2009,7 @@ public class FeatureDisplay extends EntryGroupPanel
   }
 
   /**
-   *  Draw one line of codons marks(stop codons or start codons).
+   *  Draw one line of codons marks (stop codons or start codons).
    *  @param g The object to draw into.
    *  @param line_number The frame line to draw into. (see
    *    getFrameDisplayLine() for more details about these line numbers).
@@ -2047,7 +2032,7 @@ public class FeatureDisplay extends EntryGroupPanel
     final int last_visible_forward_base = getLastVisibleForwardBase();
     final double scale_value = getScaleValue();
 
-    final int line_height = getLineHeight();
+    final int line_height = getFontHeight();
 
     final Integer colour_number =
       Options.getOptions().getIntegerProperty("colour_of_start_codon");
@@ -2188,7 +2173,7 @@ public class FeatureDisplay extends EntryGroupPanel
                                  int x_pos, int y_pos) 
   {
     g.setColor(getColourOfBase(base_char));
-    g.drawLine(x_pos, y_pos, x_pos, y_pos + getLineHeight() - 1);
+    g.drawLine(x_pos, y_pos, x_pos, y_pos + getFontHeight() - 1);
   }
 
   /**
@@ -2271,7 +2256,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  Return the line on the canvas where the given feature should be drawn
    *  when one_line_per_entry is true.  Call getLineCount() to find out the
-   *  total number of lines.  Each line is getLineHeight() pixels high.
+   *  total number of lines.  Each line is getFontHeight() pixels high.
    *  @return The line to draw into.
    **/
   private int getFeatureDisplayLine(final Feature feature,
@@ -2364,7 +2349,7 @@ public class FeatureDisplay extends EntryGroupPanel
   /**
    *  Return the line on the canvas where this frame ID should be drawn.  Call
    *  getLineCount() to find out the total number of lines.  Each line is
-   *  getLineHeight() pixels high.
+   *  getFontHeight() pixels high.
    *  @param frame_id The frame ID.
    *  @return The line to draw into.
    **/
@@ -2577,7 +2562,7 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private int getLineOffset(int line) 
   {
-    return line * getLineHeight();
+    return line * getFontHeight();
   }
 
   /**
@@ -2899,10 +2884,6 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       // if the feature border flag is off and the feature is not selected
       // then don't draw the border
-//    if(!show_feature_borders && !draw_feature_fill) 
-//      return;
-      
-
       highlight_feature_flag = false;
     }
 
@@ -3121,7 +3102,7 @@ public class FeatureDisplay extends EntryGroupPanel
       getSegmentVerticalOffset(first_segment);
 
     if(show_labels) 
-      vertical_offset += getLineHeight(); // move to the label line
+      vertical_offset += getFontHeight(); // move to the label line
 
     // save this so we can restore it later
     Shape saved_clip = null;
@@ -3137,7 +3118,7 @@ public class FeatureDisplay extends EntryGroupPanel
       g.fillRect(label_x_coord - getFontWidth(),
                  vertical_offset+2,
                  string_width + getFontWidth() * 2,
-                 getLineHeight()-1);
+                 getFontHeight()-1);
     } 
     else
     {
@@ -3558,7 +3539,6 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private void addListeners() 
   {
-
     addMouseListener(new MouseAdapter() 
     {
       private FeaturePopup popup = null;
@@ -3855,7 +3835,7 @@ public class FeatureDisplay extends EntryGroupPanel
       }
 
       if(Options.getOptions().canDirectEdit() &&
-          !clicked_feature.isReadOnly()) 
+         !clicked_feature.isReadOnly()) 
       {
         // check to see if the click was on a marker, the second argument is
         // false because we want the range to cover just one base
@@ -3907,10 +3887,10 @@ public class FeatureDisplay extends EntryGroupPanel
   private Feature getFeatureOf(final Object object) 
   {
     if(object instanceof Feature) 
-      return(Feature) object;
+      return (Feature)object;
     else 
       // object must be a FeatureSegment
-      return((FeatureSegment) object).getFeature();
+      return ((FeatureSegment)object).getFeature();
   }
 
   /**
@@ -4239,7 +4219,7 @@ public class FeatureDisplay extends EntryGroupPanel
   private void fixCanvasSize() 
   {
     int new_width  = getSize().width;
-    int new_height = getLineHeight() * getLineCount();
+    int new_height = getFontHeight() * getLineCount();
 
     if(scale_changer != null)
       new_width  += scale_changer.getPreferredSize().height;
@@ -4290,15 +4270,6 @@ public class FeatureDisplay extends EntryGroupPanel
   }
 
   /**
-   *  Return the height each line of the display should be.  Each frame will
-   *  be drawn into one line.
-   **/
-  private int getLineHeight() 
-  {
-    return getFontHeight();
-  }
-
-  /**
    *  Return the current scale factor.  The scale factor is a number greater
    *  than or equal to zero than controls the number of bases that can appear
    *  on screen.  See getScaleValue().
@@ -4331,12 +4302,6 @@ public class FeatureDisplay extends EntryGroupPanel
   }
 
 
-  private int getDisplayHeight()
-  {
-    return getHeight() - scrollbar.getHeight();
-  }
-
-
   protected int getDisplayWidth()
   {
     return getWidth() - scale_changer.getWidth();
@@ -4349,10 +4314,10 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private int getLineFromPoint(final Point point) 
   {
-    if(point.y >= getDisplayHeight()) 
+    if(point.y >= getHeight() - scrollbar.getHeight()) 
       return -1;
 
-    final int return_value = point.y / getLineHeight();
+    final int return_value = point.y / getFontHeight();
 
     if(return_value < 0)
       return -1;
@@ -4392,9 +4357,9 @@ public class FeatureDisplay extends EntryGroupPanel
         final int line_height;
 
         if(show_labels) 
-          line_height = getLineHeight() * 2;
+          line_height = getFontHeight() * 2;
         else 
-          line_height = getLineHeight();
+          line_height = getFontHeight();
 
         if(point.y >= top_of_line &&
            point.y < top_of_line + line_height) 
@@ -4536,7 +4501,7 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private int getFeatureHeight() 
   {
-    // don't use getLineHeight() because we want a nice space between
+    // we want a nice space between
     // frames/lines
     return getFontAscent() + 2;
   }
@@ -4547,7 +4512,7 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   protected int getMaxVisibleBases() 
   {
-    return(int)(getWidth() / getScaleValue());
+    return (int)(getWidth()/getScaleValue());
   }
 
   /**
