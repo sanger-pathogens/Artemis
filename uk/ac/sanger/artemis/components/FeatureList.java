@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.16 2005-05-06 08:47:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.17 2005-05-06 09:27:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -56,7 +56,7 @@ import javax.swing.JComponent;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.16 2005-05-06 08:47:47 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.17 2005-05-06 09:27:13 tjc Exp $
  *
  **/
 
@@ -103,6 +103,9 @@ public class FeatureList extends EntryGroupPanel
    *  stop positions.  Set in the constructor.
    **/
   private int max_base_pos_width;
+
+  /** JScrollPane viewport that this panel is the view of */
+  private JViewport viewport = null;
 
   /**
    *  Create a new FeatureList with the default number of rows.
@@ -303,16 +306,6 @@ public class FeatureList extends EntryGroupPanel
     setPreferredSize(new Dimension(getSize().width*4,hgt));
     revalidate();
     repaint();
-
-//  switch(event.getType()) 
-//  {
-//    case EntryGroupChangeEvent.ENTRY_ADDED:
-//    case EntryGroupChangeEvent.ENTRY_ACTIVE:
-//    case EntryGroupChangeEvent.ENTRY_DELETED:
-//    case EntryGroupChangeEvent.ENTRY_INACTIVE:
-//      repaint();
-//      break;
-//  }
   }
 
   /**
@@ -400,11 +393,15 @@ public class FeatureList extends EntryGroupPanel
   */
   protected JViewport getViewport()
   {
+    if(viewport != null)
+      return viewport;
+
     Container container = getParent();
     while(!(container instanceof JScrollPane))
       container = container.getParent();
 
-    return ((JScrollPane)container).getViewport();
+    viewport = ((JScrollPane)container).getViewport();
+    return viewport;
   }
 
   /**
