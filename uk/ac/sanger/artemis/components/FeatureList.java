@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.15 2005-05-05 10:57:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.16 2005-05-06 08:47:47 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -56,7 +56,7 @@ import javax.swing.JComponent;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.15 2005-05-05 10:57:57 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.16 2005-05-06 08:47:47 tjc Exp $
  *
  **/
 
@@ -301,7 +301,8 @@ public class FeatureList extends EntryGroupPanel
     final int hgt = getEntryGroup().getAllFeaturesCount() *
                                getLineHeight();
     setPreferredSize(new Dimension(getSize().width*4,hgt));
-    getViewport().setView(this);
+    revalidate();
+    repaint();
 
 //  switch(event.getType()) 
 //  {
@@ -892,12 +893,11 @@ public class FeatureList extends EntryGroupPanel
         number_format.format(codon_usage_alg.getFeatureScore(feature)) + " ";
     }
 
-    return
-      codon_usage_score_string +
-      padRightWithSpaces(cor1_2_score_string, 5) + " " +
-      padRightWithSpaces(c3_score_string, 5) + " " +
-      padRightWithSpaces(g1_score_string, 5) + " " +
-      padRightWithSpaces(g3_score_string, 5);
+    return codon_usage_score_string +
+           padRightWithSpaces(cor1_2_score_string, 5) + " " +
+           padRightWithSpaces(c3_score_string, 5) + " " +
+           padRightWithSpaces(g1_score_string, 5) + " " +
+           padRightWithSpaces(g3_score_string, 5);
   }
 
   /**
