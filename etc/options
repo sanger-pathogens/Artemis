@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.17 2005-02-08 16:39:01 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.18 2005-05-23 12:55:14 es2 Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -404,12 +404,12 @@ extra_keys = \
 # name of a gene.  These qualifiers names are searched in order when looking
 # for gene names.
 display_name_qualifiers = primary_name synonym systematic_id \
-    temporary_systematic_id gene locus_tag label
+    temporary_systematic_id gene locus_tag label Name ID
 
 # Names of qualifiers to search when attempting to find the systematic name of
 # a gene
 systematic_name_qualifiers = systematic_id temporary_systematic_id \
-     locus_tag gene label
+     locus_tag gene label ID
 
 
 # this list is added to the qualifiers from the qualifier_types file
