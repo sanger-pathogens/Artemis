@@ -6,7 +6,7 @@
 # necessary a symbolic link can be made to this script from
 # /usr/local/bin/ or elsewhere.
 
-# $Header: //tmp/pathsoft/artemis/art,v 1.6 2004-12-07 10:46:17 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/art,v 1.7 2005-05-25 10:59:25 tjc Exp $
 
 # resolve links - $0 may be a link
 PRG=$0
@@ -28,7 +28,7 @@ done
 ARTEMIS_HOME=`dirname "$PRG"`/.
 LIBDIR=/nfs/pathsoft/prod/javalibs
 
-CLASSPATH=$ARTEMIS_HOME:$ARTEMIS_HOME/lib/biojava.jar:$ARTEMIS_HOME/lib/jemAlign.jar:$ARTEMIS_HOME/lib/jakarta-regexp-1.2.jar:$CLASSPATH
+CLASSPATH=$ARTEMIS_HOME:$ARTEMIS_HOME/lib/biojava.jar:$ARTEMIS_HOME/lib/jemAlign.jar:$ARTEMIS_HOME/lib/jakarta-regexp-1.2.jar:$ARTEMIS_HOME/lib/macos.jar:$CLASSPATH
 
 export CLASSPATH
 
@@ -115,4 +115,4 @@ then
     echo starting Artemis with flags: $FLAGS $ARTEMIS_PROPERTIES 1>&2
 fi
 
-$JAVA $FLAGS $ARTEMIS_PROPERTIES uk.ac.sanger.artemis.components.ArtemisMain $*
+$JAVA -Dcom.apple.mrj.application.apple.menu.about.name="Artemis" $FLAGS $ARTEMIS_PROPERTIES uk.ac.sanger.artemis.components.ArtemisMain $*
