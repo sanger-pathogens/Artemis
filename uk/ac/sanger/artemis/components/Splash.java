@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.8 2005-04-01 16:08:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.9 2005-05-25 12:33:02 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,12 +38,13 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
+import java.lang.reflect.Constructor;
 
 /**
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.8 2005-04-01 16:08:23 tjc Exp $
+ *  @version $Id: Splash.java,v 1.9 2005-05-25 12:33:02 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -96,6 +97,22 @@ abstract public class Splash extends JFrame
                 final String program_version) 
   {
     super(program_title + " " + program_version);
+
+    if(isMac()) 
+    {
+      try 
+      {
+	Object[] args = { this, program_title };
+	Class[] arglist = { Splash.class, String.class };
+	Class mac_class = getClass().forName("uk.ac.sanger.artemis.components.MacHandler");
+	Constructor new_one = mac_class.getConstructor(arglist);
+	new_one.newInstance(args);
+      }
+      catch(Exception e) 
+      {
+	System.out.println(e);
+      }
+    }
 
     this.program_name    = program_name;
     this.program_version = program_version;
@@ -178,6 +195,30 @@ abstract public class Splash extends JFrame
     setLocation(new Point((screen.width - getSize().width) / 2,
                           (screen.height - getSize().height) / 2));
   }
+
+  
+  private boolean isMac() 
+  {
+    return System.getProperty("mrj.version") != null;
+  }
+
+ 
+  public void about()
+  {
+    ClassLoader cl = this.getClass().getClassLoader();
+    ImageIcon icon = new ImageIcon(cl.getResource("images/icon.gif"));
+
+    JOptionPane.showMessageDialog(this,
+            getTitle()+ "\nthis is free software and is distributed"+
+                        "\nunder the terms of the GNU General Public License.",
+            "About", JOptionPane.INFORMATION_MESSAGE,
+            icon);
+
+//  JOptionPane.showMessageDialog(this,
+//          getTitle()+ "\nthis is free software and is distributed"+
+//                      "\nunder the terms of the GNU General Public License.");
+  }
+
 
   /**
    *  Return a JComponent object that will display a helix and a short
