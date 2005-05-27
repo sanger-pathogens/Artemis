@@ -25,6 +25,10 @@
 package uk.ac.sanger.artemis.components;
 
 import javax.swing.JOptionPane;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.Box;
+
 import java.net.*;
 import java.io.*;
 import java.util.*;
@@ -47,6 +51,8 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
 
 public class DatabaseEntrySource implements EntrySource 
 {
+  private String location;
+
   /**
    *  Create a new DatabaseEntrySource.
    **/
@@ -108,10 +114,33 @@ public class DatabaseEntrySource implements EntrySource
     return "Database";
   }
 
+  protected boolean setLocation()
+  {
+    Box bacross = Box.createHorizontalBox();
+
+    JLabel label = new JLabel("jdbc:postgresql://");
+    bacross.add(label);
+    JTextField text = new JTextField("localhost:13001/chadoCVS?user=es2");
+    bacross.add(text);
+    bacross.add(Box.createHorizontalGlue());
+
+    int n = JOptionPane.showConfirmDialog(null, bacross,
+                            "Enter Database Address",
+                           JOptionPane.OK_CANCEL_OPTION,
+                           JOptionPane.QUESTION_MESSAGE);
+    if(n == JOptionPane.CANCEL_OPTION)
+      return false;
+
+    location = "jdbc:postgresql://" +
+               text.getText().trim();
+    return true;
+  }
+
 
   protected Hashtable getDatabaseEntries()
   {
-    DatabaseDocument doc = new DatabaseDocument("jdbc:postgresql://pcs3:13001/chadoCVS?user=es2");
+    DatabaseDocument doc = new DatabaseDocument(location);
+//  DatabaseDocument doc = new DatabaseDocument("jdbc:postgresql://localhost:13001/chadoCVS?user=es2");
 //  DatabaseDocument doc = new DatabaseDocument("jdbc:postgresql://tim1:2999/chadoCVS?user=tim");
     return doc.getDatabaseEntries();
   }
@@ -149,8 +178,9 @@ public class DatabaseEntrySource implements EntrySource
       } 
       else 
       {
-        DatabaseDocument doc = new DatabaseDocument("jdbc:postgresql://pcs3:13001/chadoCVS?user=es2",
-                                                    id, progress_listener);
+        DatabaseDocument doc = new DatabaseDocument(location, id, progress_listener);
+//      DatabaseDocument doc = new DatabaseDocument("jdbc:postgresql://localhost:13001/chadoCVS?user=es2",
+//                                                  id, progress_listener);
         db_entry = new DatabaseDocumentEntry(entry_information, doc);
       }
 

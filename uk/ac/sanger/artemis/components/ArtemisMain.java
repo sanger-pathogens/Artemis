@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.10 2005-04-01 16:08:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.11 2005-05-27 14:49:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.JScrollPane;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.10 2005-04-01 16:08:23 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.11 2005-05-27 14:49:53 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -113,10 +113,13 @@ public class ArtemisMain extends Splash
     {
       public void actionPerformed(ActionEvent event)
       {
-        String id = displayDatabases();
+        DatabaseEntrySource entry_source = new DatabaseEntrySource();
+        entry_source.setLocation();
+
+        String id = displayDatabases(entry_source);
 
         if(id != null)
-          getEntryEditFromDatabase(id);
+          getEntryEditFromDatabase(id, entry_source);
       }
     };
 
@@ -552,9 +555,8 @@ public class ArtemisMain extends Splash
   * Display a list of the available relational database entries.
   *
   */
-  private String displayDatabases()
+  private String displayDatabases(DatabaseEntrySource entry_source)
   {
-    DatabaseEntrySource entry_source = new DatabaseEntrySource();
     Hashtable db = entry_source.getDatabaseEntries();
 
     String db_array[] = new String[db.size()];
@@ -589,7 +591,8 @@ public class ArtemisMain extends Splash
   * Retrieve a database entry.
   *
   */
-  private void getEntryEditFromDatabase(final String id)
+  private void getEntryEditFromDatabase(final String id,
+                                        final DatabaseEntrySource entry_source)
   {
     SwingWorker entryWorker = new SwingWorker()
     {
@@ -600,7 +603,7 @@ public class ArtemisMain extends Splash
           final InputStreamProgressListener progress_listener =
                                      getInputStreamProgressListener();
 
-          DatabaseEntrySource entry_source = new DatabaseEntrySource();
+//        DatabaseEntrySource entry_source = new DatabaseEntrySource();
 
           final Entry entry = entry_source.getEntry(id, progress_listener);
           if(entry == null)

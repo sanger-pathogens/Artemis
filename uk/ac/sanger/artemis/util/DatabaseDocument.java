@@ -303,17 +303,25 @@ public class DatabaseDocument extends Document
     }
     catch(java.sql.SQLException sqlExp)
     {
-      JOptionPane.showMessageDialog(null, "Problems connecting...",
-                                "Database Connection Error",
+      JOptionPane.showMessageDialog(null, "SQL Problems...",
+                                "SQL Error",
                                 JOptionPane.ERROR_MESSAGE);
       sqlExp.printStackTrace();
+    }
+    catch(java.net.ConnectException conn)
+    {
+      JOptionPane.showMessageDialog(null, "Problems connecting...",
+                                "Database Connection Error - Check Server",
+                                JOptionPane.ERROR_MESSAGE);
+      conn.printStackTrace();    
     }
 
     return db;
   }
 
 
-  public Connection getConnection() throws java.sql.SQLException
+  public Connection getConnection() throws java.sql.SQLException,
+                                           java.net.ConnectException
   {
     return DriverManager.getConnection((String)getLocation());
   }
