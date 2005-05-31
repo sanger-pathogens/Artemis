@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.11 2005-05-27 14:49:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.12 2005-05-31 15:35:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.JScrollPane;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.11 2005-05-27 14:49:53 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.12 2005-05-31 15:35:53 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -114,7 +114,8 @@ public class ArtemisMain extends Splash
       public void actionPerformed(ActionEvent event)
       {
         DatabaseEntrySource entry_source = new DatabaseEntrySource();
-        entry_source.setLocation();
+        if(!entry_source.setLocation())
+          return;
 
         String id = displayDatabases(entry_source);
 
