@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.19 2005-05-23 13:00:11 es2 Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.20 2005-05-31 13:09:32 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -305,7 +305,7 @@ feature_file_suffixes = tab embl gbk genbank tab_embl gff feature feat \
    art artemis
 
 # suffixes used on files that contain sequence - used in file requesters
-sequence_file_suffixes = embl gbk genbank tab_embl seq dna \
+sequence_file_suffixes = embl gbk genbank gff tab_embl seq dna \
    art artemis
 
 # this is the URL that contains the IOR of the EMBL server
