@@ -309,6 +309,9 @@ public class Annotation extends JEditorPane
     ind3 = s.indexOf(";",ind);
     if(ind3>-1 && ind3<ind2)
       ind2 = ind3;
+    ind3 = s.indexOf("\"",ind);
+    if(ind3>-1 && ind3<ind2)
+      ind2 = ind3;
 
     String midStr = s.substring(ind,ind2);
     String endStr = s.substring(ind2);
