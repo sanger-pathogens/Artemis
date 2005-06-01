@@ -32,6 +32,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Cursor;
+import java.awt.Container;
+import java.awt.GridLayout;
 import java.net.*;
 import java.io.*;
 import java.util.*;
@@ -118,26 +120,52 @@ public class DatabaseEntrySource implements EntrySource
     return "Database";
   }
 
+
+  /**
+  *
+  * Set the database location as:
+  * jdbc:postgresql://localhost:13001/chadoCVS?user=es2
+  *
+  */
   protected boolean setLocation()
   {
-    Box bacross = Box.createHorizontalBox();
+    Container bacross = new Container();
+    bacross.setLayout(new GridLayout(5,2,5,5));
 
-    JLabel label = new JLabel("jdbc:postgresql://");
-    bacross.add(label);
-    JTextField text = new JTextField("localhost:13001/chadoCVS?user=es2");
-    bacross.add(text);
-    bacross.add(Box.createHorizontalGlue());
+    JLabel lServer = new JLabel("Server : ");
+    bacross.add(lServer);
+    JTextField inServer = new JTextField("localhost");
+    bacross.add(inServer);
+
+    JLabel lPort = new JLabel("Port : ");
+    bacross.add(lPort);
+    JTextField inPort = new JTextField("13001");
+    bacross.add(inPort);
+
+    JLabel lDB = new JLabel("Database : ");
+    bacross.add(lDB);
+    JTextField inDB = new JTextField("chadoCVS");
+    bacross.add(inDB);
+
+    JLabel lUser = new JLabel("User : ");
+    bacross.add(lUser);
+    JTextField inUser = new JTextField("es2");
+    bacross.add(inUser);
 
     int n = JOptionPane.showConfirmDialog(null, bacross,
-                            "Enter Database Address",
-                           JOptionPane.OK_CANCEL_OPTION,
-                           JOptionPane.QUESTION_MESSAGE);
+                      "Enter Database Address",
+                      JOptionPane.OK_CANCEL_OPTION,
+                      JOptionPane.QUESTION_MESSAGE);
     if(n == JOptionPane.CANCEL_OPTION)
       return false;
 
-    location = "jdbc:postgresql://" +
-               text.getText().trim();
-    return true;
+    location = "jdbc:postgresql://"
+      +inServer.getText().trim()+ ":"
+      +inPort.getText().trim()+ "/"
+      +inDB.getText().trim()+ "?user="
+      +inUser.getText().trim();
+
+     return true;
   }
 
 
