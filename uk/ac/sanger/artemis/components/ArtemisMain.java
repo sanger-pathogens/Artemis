@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.12 2005-05-31 15:35:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.13 2005-06-01 11:06:43 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,20 +38,17 @@ import org.biojava.bio.seq.io.SequenceFormat;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Toolkit;
 import java.io.*;
-import java.util.Hashtable;
-import java.util.Enumeration;
 
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.ListSelectionModel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 
 /**
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.12 2005-05-31 15:35:53 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.13 2005-06-01 11:06:43 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -117,10 +114,9 @@ public class ArtemisMain extends Splash
         if(!entry_source.setLocation())
           return;
 
-        String id = displayDatabases(entry_source);
-
-        if(id != null)
-          getEntryEditFromDatabase(id, entry_source);
+        final DatabaseJFrame frame = new DatabaseJFrame(entry_source,
+                                                   ArtemisMain.this);
+        frame.setVisible(true);
       }
     };
 
@@ -213,7 +209,6 @@ public class ArtemisMain extends Splash
         continue;
       }
 
-      
       if(new_entry_name.startsWith("+") && last_entry_edit != null ||
          seen_plus) 
       {
@@ -512,7 +507,7 @@ public class ArtemisMain extends Splash
   /**
    *  Make an EntryEdit component from the given Entry.
    **/
-  private EntryEdit makeEntryEdit(final Entry entry) 
+  protected EntryEdit makeEntryEdit(final Entry entry) 
   {
     final Bases bases = entry.getBases();
     final EntryGroup entry_group = new SimpleEntryGroup(bases);
@@ -548,91 +543,6 @@ public class ArtemisMain extends Splash
   public synchronized void addEntryEdit(EntryEdit entry_edit) 
   {
     entry_edit_objects.addElement(entry_edit);
-  }
-
-
-  /**
-  *
-  * Display a list of the available relational database entries.
-  *
-  */
-  private String displayDatabases(DatabaseEntrySource entry_source)
-  {
-    Hashtable db = entry_source.getDatabaseEntries();
-
-    String db_array[] = new String[db.size()];
-
-    Enumeration enum_db = db.keys();
-    for(int i=0; enum_db.hasMoreElements(); i++)
-      db_array[i] = (String)enum_db.nextElement();
-
-    java.util.Arrays.sort(db_array);
-    JList list_db = new JList(db_array);
-    list_db.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    JScrollPane scroll_list = new JScrollPane(list_db);
-
-    Object[] options = { "OPEN IN ARTEMIS >", "CANCEL"};
-    boolean selecting = true;
-
-    int select = JOptionPane.showOptionDialog(null, scroll_list,
-                                "Database Selection",
-                                 JOptionPane.YES_NO_CANCEL_OPTION,
-                                 JOptionPane.QUESTION_MESSAGE,
-                                 null,
-                                 options,
-                                 options[0]);
-    if(select == 1 || list_db.getSelectedValue() == null)
-      return null;
-
-    return (String)db.get((String)list_db.getSelectedValue());
-  }
-
-  /**
-  *
-  * Retrieve a database entry.
-  *
-  */
-  private void getEntryEditFromDatabase(final String id,
-                                        final DatabaseEntrySource entry_source)
-  {
-    SwingWorker entryWorker = new SwingWorker()
-    {
-      public Object construct()
-      {
-        try
-        {
-          final InputStreamProgressListener progress_listener =
-                                     getInputStreamProgressListener();
-
-//        DatabaseEntrySource entry_source = new DatabaseEntrySource();
-
-          final Entry entry = entry_source.getEntry(id, progress_listener);
-          if(entry == null)
-            return null;
-
-          final EntryEdit new_entry_edit = makeEntryEdit(entry);
-          new_entry_edit.setVisible(true);
-        }
-        catch(OutOfRangeException e)
-        {
-          new MessageDialog(ArtemisMain.this, "read failed: one of the features in " +
-                 " the entry has an out of range " +
-                 "location: " + e.getMessage());
-        }
-        catch(NoSequenceException e)
-        {
-          new MessageDialog(ArtemisMain.this, "read failed: entry contains no sequence");
-        }
-        catch(IOException e)
-        {
-          new MessageDialog(ArtemisMain.this, "read failed due to IO error: " + e);
-        }
-        return null;
-      }
-
-    };
-    entryWorker.start();
-
   }
 
 

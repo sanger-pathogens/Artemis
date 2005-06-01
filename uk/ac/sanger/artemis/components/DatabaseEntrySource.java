@@ -24,11 +24,14 @@
 
 package uk.ac.sanger.artemis.components;
 
-import javax.swing.JOptionPane;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.Box;
-
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
+import javax.swing.tree.TreePath;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.Cursor;
 import java.net.*;
 import java.io.*;
 import java.util.*;
@@ -49,9 +52,10 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
  *
  **/
 
-public class DatabaseEntrySource implements EntrySource 
+public class DatabaseEntrySource implements EntrySource
 {
   private String location;
+  private Hashtable entries;
 
   /**
    *  Create a new DatabaseEntrySource.
@@ -137,12 +141,83 @@ public class DatabaseEntrySource implements EntrySource
   }
 
 
-  protected Hashtable getDatabaseEntries()
+  /**
+  *
+  *  Given the entry name get the seq feature_id
+  *
+  */
+  protected String getEntryID(String name)
+  {
+    return (String)entries.get(name);
+  }
+
+  /**
+  *
+  * Create database organism JTree.
+  *
+  */
+  protected JTree getDatabaseTree()
   {
     DatabaseDocument doc = new DatabaseDocument(location);
-//  DatabaseDocument doc = new DatabaseDocument("jdbc:postgresql://localhost:13001/chadoCVS?user=es2");
-//  DatabaseDocument doc = new DatabaseDocument("jdbc:postgresql://tim1:2999/chadoCVS?user=tim");
-    return doc.getDatabaseEntries();
+
+    entries = doc.getDatabaseEntries();
+    Vector organism   = doc.getOrganism();
+
+    DefaultMutableTreeNode top =
+        new DefaultMutableTreeNode("PSU Organism List");
+    createNodes(top,organism,entries);
+    final JTree tree = new JTree(top);
+    tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+
+    return tree;
+  }
+
+  /**
+  *
+  * Get DefaultMutableTreeNode of selected node
+  * @return     node that is currently selected
+  *
+  */
+  protected DefaultMutableTreeNode getSelectedNode(JTree tree)
+  {
+    TreePath path = tree.getLeadSelectionPath();
+    if(path == null)
+      return null;
+    return (DefaultMutableTreeNode)path.getLastPathComponent();
+  }
+
+  /**
+  *
+  * Create the nodes of the organism JTree
+  * @param top		root node
+  * @param org  	organism collection
+  * @param organism 	sequences collection 
+  *
+  */
+  private void createNodes(DefaultMutableTreeNode top, Vector org,
+                           Hashtable organism)
+  {
+    Enumeration enum_org = org.elements();
+    DefaultMutableTreeNode org_node;
+    DefaultMutableTreeNode seq_node;
+
+    while(enum_org.hasMoreElements())
+    { 
+      String name = (String)enum_org.nextElement();
+      org_node = new DefaultMutableTreeNode(name);
+      top.add(org_node);
+
+      Enumeration enum_seq = organism.keys();
+      while(enum_seq.hasMoreElements())
+      {
+        String seq_name = (String)enum_seq.nextElement();
+        if(seq_name.startsWith(name))
+        {
+          seq_node = new DefaultMutableTreeNode(seq_name);
+          org_node.add(seq_node);
+        }
+      }
+    }
   }
 
 

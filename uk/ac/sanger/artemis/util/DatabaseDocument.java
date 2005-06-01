@@ -27,6 +27,7 @@ package uk.ac.sanger.artemis.util;
 import java.sql.*;
 import java.io.*;
 import java.util.Hashtable;
+import java.util.Vector;
 import javax.swing.JOptionPane;
 
 /**
@@ -36,11 +37,12 @@ import javax.swing.JOptionPane;
 
 public class DatabaseDocument extends Document 
 {
-
   private String name = null;
   private String feature_id = "1";
   private Hashtable cvterm;
   private InputStreamProgressListener progress_listener;
+  private Hashtable db;
+  private Vector organism;
 
   /**
    *
@@ -278,7 +280,9 @@ public class DatabaseDocument extends Document
    **/
   public Hashtable getDatabaseEntries()
   {
-    Hashtable db = new Hashtable();
+    db = new Hashtable();
+    organism = new Vector();
+
     try
     {
       Connection conn = getConnection();
@@ -299,7 +303,12 @@ public class DatabaseDocument extends Document
 
       rs = st.executeQuery(sql);
       while(rs.next())
-        db.put(rs.getString("abbreviation")+" - "+rs.getString("name"), rs.getString("feature_id"));
+      {
+        String org = rs.getString("abbreviation");
+        db.put(org+" - "+rs.getString("name"), rs.getString("feature_id"));
+        if(!organism.contains(org))
+          organism.add(org);
+      }
     }
     catch(java.sql.SQLException sqlExp)
     {
@@ -319,6 +328,10 @@ public class DatabaseDocument extends Document
     return db;
   }
 
+  public Vector getOrganism()
+  {
+    return organism;
+  }
 
   public Connection getConnection() throws java.sql.SQLException,
                                            java.net.ConnectException
