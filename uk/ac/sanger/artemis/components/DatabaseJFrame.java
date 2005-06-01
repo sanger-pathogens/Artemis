@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DatabaseJFrame.java,v 1.2 2005-06-01 11:37:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DatabaseJFrame.java,v 1.3 2005-06-01 15:07:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -37,6 +37,11 @@ import javax.swing.JSeparator;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.BorderFactory;
+import javax.swing.border.Border;
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
@@ -45,11 +50,13 @@ import java.awt.event.MouseEvent;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Cursor;
+import java.awt.FontMetrics;
 import java.io.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 public class DatabaseJFrame extends JFrame
 {
+  private JLabel status_line = new JLabel("");
 
   public DatabaseJFrame(final DatabaseEntrySource entry_source,
                         final ArtemisMain art_main)
@@ -76,7 +83,22 @@ public class DatabaseJFrame extends JFrame
 
     setJMenuBar(makeMenuBar(entry_source,tree,art_main));
 
-    getContentPane().add(scroll);
+    JPanel pane = (JPanel)getContentPane();
+    pane.add(scroll, BorderLayout.CENTER);
+
+    final FontMetrics fm =
+      this.getFontMetrics(status_line.getFont());
+
+    final int font_height = fm.getHeight()+10;
+    status_line.setMinimumSize(new Dimension(100, font_height));
+    status_line.setPreferredSize(new Dimension(100, font_height));
+
+    Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+    Border raisedbevel = BorderFactory.createRaisedBevelBorder();
+    Border compound = BorderFactory.createCompoundBorder(raisedbevel,loweredbevel);
+    status_line.setBorder(compound);
+    pane.add(status_line, BorderLayout.SOUTH);
+
     pack();
     Utilities.rightJustifyFrame(this);
   }
@@ -93,15 +115,13 @@ public class DatabaseJFrame extends JFrame
     Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
     Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
 
-    tree.setCursor(cbusy);
     DefaultMutableTreeNode node = entry_source.getSelectedNode(tree);
-    if(!node.isLeaf())
+    if(node == null || !node.isLeaf())
       return;
+
     String id =  entry_source.getEntryID((String)node.getUserObject());
     if(id != null)
-      getEntryEditFromDatabase(id, entry_source, art_main);
-
-    tree.setCursor(cdone);
+      getEntryEditFromDatabase(id, entry_source, tree, art_main);
   }
 
 
@@ -112,12 +132,18 @@ public class DatabaseJFrame extends JFrame
   */
   private void getEntryEditFromDatabase(final String id,
                                         final DatabaseEntrySource entry_source,
+                                        final JTree tree,
                                         final ArtemisMain art_main)
   {
     SwingWorker entryWorker = new SwingWorker()
     {
       public Object construct()
       {
+        Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
+        Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
+
+        status_line.setText("Retrieving sequence....");
+        tree.setCursor(cbusy);
         try
         {
           final InputStreamProgressListener progress_listener =
@@ -125,10 +151,15 @@ public class DatabaseJFrame extends JFrame
 
           final Entry entry = entry_source.getEntry(id, progress_listener);
           if(entry == null)
+          {
+            tree.setCursor(cdone);
+            status_line.setText("No entry.");
             return null;
+          }
 
           final EntryEdit new_entry_edit = art_main.makeEntryEdit(entry);
           new_entry_edit.setVisible(true);
+          status_line.setText("Sequence loaded.");
         }
         catch(OutOfRangeException e)
         {
@@ -144,6 +175,7 @@ public class DatabaseJFrame extends JFrame
         {
           new MessageDialog(art_main, "read failed due to IO error: " + e);
         }
+        tree.setCursor(cdone);
         return null;
       }
 
