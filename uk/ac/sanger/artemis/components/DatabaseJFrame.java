@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DatabaseJFrame.java,v 1.1 2005-06-01 11:06:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DatabaseJFrame.java,v 1.2 2005-06-01 11:37:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -33,6 +33,12 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
 import javax.swing.JFrame;
 import javax.swing.JTree;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -54,24 +60,10 @@ public class DatabaseJFrame extends JFrame
     //Listen for when the selection changes.
     MouseListener mouseListener = new MouseAdapter()
     {
-      private Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
-      private Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
-
       public void mouseClicked(MouseEvent e)
       {
-        if(e.getClickCount() == 2 &&
-           !e.isPopupTrigger())
-        {
-          tree.setCursor(cbusy);
-          DefaultMutableTreeNode node = entry_source.getSelectedNode(tree);
-          if(!node.isLeaf())
-            return;
-          String id =  entry_source.getEntryID((String)node.getUserObject());
-          if(id != null)
-            getEntryEditFromDatabase(id, entry_source, art_main);
-
-          tree.setCursor(cdone);
-        }
+        if(e.getClickCount() == 2 && !e.isPopupTrigger())
+          showSelected(entry_source,tree,art_main);
       }
     };
     tree.addMouseListener(mouseListener);
@@ -82,10 +74,36 @@ public class DatabaseJFrame extends JFrame
     Dimension dim_frame = new Dimension(screen.width*2 / 10, screen.height*6 / 10);
     scroll.setPreferredSize(dim_frame);
 
+    setJMenuBar(makeMenuBar(entry_source,tree,art_main));
+
     getContentPane().add(scroll);
     pack();
     Utilities.rightJustifyFrame(this);
   }
+
+
+  /**
+  *
+  * Show the selected sequence in the tree
+  *
+  */
+  private void showSelected(final DatabaseEntrySource entry_source,
+                            final JTree tree, final ArtemisMain art_main)
+  {
+    Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
+    Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
+
+    tree.setCursor(cbusy);
+    DefaultMutableTreeNode node = entry_source.getSelectedNode(tree);
+    if(!node.isLeaf())
+      return;
+    String id =  entry_source.getEntryID((String)node.getUserObject());
+    if(id != null)
+      getEntryEditFromDatabase(id, entry_source, art_main);
+
+    tree.setCursor(cdone);
+  }
+
 
   /**
   *
@@ -134,4 +152,34 @@ public class DatabaseJFrame extends JFrame
 
   }
 
+  private JMenuBar makeMenuBar(final DatabaseEntrySource entry_source,
+                         final JTree tree, final ArtemisMain art_main)
+  {
+    JMenuBar mBar = new JMenuBar();
+    JMenu fileMenu = new JMenu("File");
+    mBar.add(fileMenu);
+
+    JMenuItem fileShow = new JMenuItem("Open Selected Sequence ...");
+    fileShow.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        showSelected(entry_source,tree,art_main);
+      }
+    });
+    fileMenu.add(fileShow);
+    fileMenu.add(new JSeparator());
+
+    JMenuItem fileMenuClose = new JMenuItem("Close");
+    fileMenuClose.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        setVisible(false);
+      }
+    });
+    fileMenu.add(fileMenuClose);
+
+    return mBar;
+  }
 }
