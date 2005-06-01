@@ -169,7 +169,7 @@ public class DatabaseDocument extends Document
     return null;
   }
 
-  public String getGene(Connection conn, String parentFeatureID) 
+  private String getGene(Connection conn, String parentFeatureID) 
           throws java.sql.SQLException
   {
     Statement st = conn.createStatement();
