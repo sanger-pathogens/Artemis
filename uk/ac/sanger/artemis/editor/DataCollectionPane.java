@@ -144,7 +144,7 @@ public class DataCollectionPane extends JScrollPane
       orthoBox.setMargin(new Insets(1,1,1,1));
       paraBox.setMargin(new Insets(1,1,1,1));
   
-      orthoBox.setActionCommand(hit.getID());
+      orthoBox.setActionCommand(hit.getAcc());
       orthoCheckBox.add(orthoBox);
 
       bacross.add(orthoBox);
@@ -170,7 +170,7 @@ public class DataCollectionPane extends JScrollPane
             if(paraBox.isSelected())
             {
               paraBox.setSelected(false);
-              ann.delete(hit.getID(),false);
+              ann.delete(hit.getAcc(),false);
             }
 
             try
@@ -180,14 +180,14 @@ public class DataCollectionPane extends JScrollPane
             catch(NullPointerException npe)
             {
               JOptionPane.showMessageDialog(DataCollectionPane.this,
-                           "There may be a probelem retrieving "+hit.getID()+
+                           "There may be a probelem retrieving "+hit.getAcc()+
                            "\nfrom SRS",
                            "Connection Error to SRS?",
                            JOptionPane.WARNING_MESSAGE);
             }
           }
           else
-            ann.delete(hit.getID(),true);
+            ann.delete(hit.getAcc(),true);
 
           ann.deleteNote();
           if(BigPane.addNote.isSelected())
@@ -206,7 +206,7 @@ public class DataCollectionPane extends JScrollPane
             if(orthoBox.isSelected())
             {
               orthoBox.setSelected(false);
-              ann.delete(hit.getID(),true);
+              ann.delete(hit.getAcc(),true);
             }
 
             try
@@ -216,14 +216,14 @@ public class DataCollectionPane extends JScrollPane
             catch(NullPointerException npe)
             {
               JOptionPane.showMessageDialog(DataCollectionPane.this,
-                           "There may be a probelem retrieving "+hit.getID()+
+                           "There may be a probelem retrieving "+hit.getAcc()+
                            "\nfrom SRS",
                            "Connection Error to SRS?",
                            JOptionPane.WARNING_MESSAGE);
             }
           }
           else
-            ann.delete(hit.getID(),false);
+            ann.delete(hit.getAcc(),false);
 
           ann.deleteNote();
           if(BigPane.addNote.isSelected())
@@ -802,9 +802,9 @@ public class DataCollectionPane extends JScrollPane
     StringBuffer buff = new StringBuffer();
     
     if(hit.getDB() != null)
-      buff.append(" with="+hit.getDB()+":"+hit.getID());
+      buff.append(" with="+hit.getDB()+":"+hit.getAcc());
     else
-      buff.append(" with=UniProt:"+hit.getID());
+      buff.append(" with=UniProt:"+hit.getAcc());
 
     if(hit.getEMBL() != null &&
        !hit.getEMBL().equals(""))
