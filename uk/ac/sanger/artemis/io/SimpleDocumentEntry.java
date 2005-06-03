@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.11 2005-04-22 15:04:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.12 2005-06-03 16:04:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.util.Enumeration;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.11 2005-04-22 15:04:25 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.12 2005-06-03 16:04:18 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -170,6 +170,7 @@ abstract public class SimpleDocumentEntry
     last_change_time = null;
 
     final Sequence sequence = getSequence();
+    Hashtable contig_ranges = null;
 
     if(sequence != null && sequence instanceof FastaStreamSequence) 
     {
@@ -230,33 +231,12 @@ abstract public class SimpleDocumentEntry
 
             fake_fasta_features.add(new_feature);
 
-            // adjust coordinates of features
+            // record coordinates to adjust feature coordinateds
             if(isGFF)
             {
-              FeatureVector gff_regions = getAllFeatures();
-              Enumeration gff_features  = gff_regions.elements();
-              while(gff_features.hasMoreElements())
-              {
-                GFFStreamFeature feature = (GFFStreamFeature)gff_features.nextElement();
-                Qualifier qualifier = feature.getQualifierByName("gff_seqname");
-                    
-                if(qualifier.getValues().contains(header_strings[i]))
-                {
-                  try
-                  {
-                    final Location loc = feature.getLocation();
-                    int start = feature.getFirstBase()+new_range.getStart()-1;
-                    int end   = feature.getLastBase()+new_range.getStart()-1;
-                    final Range feat_range = new Range(start, end);
-                    final RangeVector location_ranges = new RangeVector(feat_range);
-                    feature.setLocation(new Location(location_ranges, loc.isComplement()));
-                  }
-                  catch(OutOfRangeException e)
-                  {
-                    e.printStackTrace();
-                  }
-                }
-              }   
+              if(contig_ranges == null)
+                contig_ranges = new Hashtable();
+              contig_ranges.put(header_strings[i], new_range);
             }
           }
           catch(InvalidRelationException e) 
@@ -267,6 +247,38 @@ abstract public class SimpleDocumentEntry
           {
             throw new Error("internal error - unexpected exception: " + e);
           }
+        }
+
+        // adjust feature coordinates
+        if(isGFF && contig_ranges != null)
+        {
+          FeatureVector gff_regions = getAllFeatures();
+          Enumeration gff_features  = gff_regions.elements();
+          while(gff_features.hasMoreElements())
+          {
+            GFFStreamFeature feature = (GFFStreamFeature)gff_features.nextElement();
+            Qualifier seqname = feature.getQualifierByName("gff_seqname");
+            String name = seqname.getValues().elementAt(0);
+            if(contig_ranges.containsKey(name))
+            {
+              try
+              {
+                Range new_range = (Range)contig_ranges.get(name);
+                final Location loc = feature.getLocation();
+                int start = feature.getFirstBase()+new_range.getStart()-1;
+                int end   = feature.getLastBase()+new_range.getStart()-1;
+                final Range feat_range = new Range(start, end);
+                final RangeVector location_ranges = new RangeVector(feat_range);
+                feature.setLocation(new Location(location_ranges, loc.isComplement()));
+              }
+              catch(OutOfRangeException e)
+              {
+                throw new Error("internal error - unexpected exception: " + e);
+              }
+            }
+          }
+          // store so these can be used when writing out
+          GFFStreamFeature.contig_ranges = contig_ranges;
         }
 
         addFakeFeatures();
