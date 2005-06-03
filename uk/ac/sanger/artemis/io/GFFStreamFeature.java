@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.12 2005-05-31 14:23:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.13 2005-06-03 16:04:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,19 +35,12 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.12 2005-05-31 14:23:47 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.13 2005-06-03 16:04:39 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
                        implements DocumentFeature, StreamFeature, ComparableFeature 
 {
-
-
-  /**
-   *  The DocumentEntry object that contains this Feature as passed to the
-   *  constructor.
-   **/
-  private DocumentEntry entry;
 
   /**
    *  This is the line of GFF input that was read to get this
@@ -109,8 +102,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     this(feature.getKey(), feature.getLocation(), feature.getQualifiers());
 
-//  if(feature instanceof GFFStreamFeature)
-//    gff_lines = new StringVector(((GFFStreamFeature)feature).gff_lines);
+    if(feature instanceof GFFStreamFeature)
+      gff_lines = new StringVector(((GFFStreamFeature)feature).gff_lines);
   }
 
   /**
@@ -392,6 +385,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     throw new ReadOnlyException();
   }
 
+  protected static Hashtable contig_ranges;
+
   /**
    *  Write this Feature to the given stream.
    *  @param writer The stream to write to.
@@ -404,9 +399,11 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     final RangeVector ranges = getLocation().getRanges();
     final int ranges_size = ranges.size();
 
+//  final Hashtable contig_ranges = SimpleDocumentEntry.getContigRanges();
+
     for(int i = 0; i < ranges_size; ++i) 
     {
-      final Range this_range = ranges.elementAt(i);
+      Range this_range = ranges.elementAt(i);
 
       Qualifier seqname = getQualifierByName("gff_seqname");
       Qualifier source  = getQualifierByName("gff_source");
@@ -421,6 +418,16 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
       if(score == null) 
         score = new Qualifier("score", "");
+
+      int start = this_range.getStart();
+      int end   = this_range.getEnd();
+      if(seqname != null && contig_ranges != null &&
+         contig_ranges.containsKey(seqname.getValues().elementAt(0)))
+      {
+        Range offset_range = (Range)contig_ranges.get(seqname.getValues().elementAt(0));
+        start = start-offset_range.getStart()+1;
+        end   = end-offset_range.getStart()+1;
+      }
 
       if(group == null || group.getValues() == null ||
          group.getValues().elementAt(0).equals(""))
@@ -456,8 +463,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       writer.write(seqname.getValues().elementAt(0) + "\t" +
                    source.getValues().elementAt(0) + "\t" +
                    getKey() + "\t" +
-                   this_range.getStart() + "\t" +
-                   this_range.getEnd() + "\t" +
+                   start + "\t" +
+                   end + "\t" +
                    score.getValues() .elementAt(0)+ "\t" +
                    (getLocation().isComplement() ? "-\t" : "+\t") +
                    frame + "\t" +
