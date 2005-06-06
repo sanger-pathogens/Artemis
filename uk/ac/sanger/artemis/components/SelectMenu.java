@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.6 2005-04-11 10:26:22 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.7 2005-06-06 18:48:55 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -50,7 +50,7 @@ import javax.swing.*;
  *  "Select by key".
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectMenu.java,v 1.6 2005-04-11 10:26:22 tjc Exp $
+ *  @version $Id: SelectMenu.java,v 1.7 2005-06-06 18:48:55 tjc Exp $
  **/
 
 public class SelectMenu extends SelectionMenu 
@@ -205,6 +205,16 @@ public class SelectMenu extends SelectionMenu
       {
         public void actionPerformed(ActionEvent event) 
         {
+          final JCheckBox cbox_strict = new JCheckBox("Strictly no overlapping regions",true);
+
+          int n = JOptionPane.showConfirmDialog(null, cbox_strict,
+                            "Selecting Features in Non-matching Regions",
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
+
+          if(n == JOptionPane.CANCEL_OPTION)
+            return;
+
           frame.setCursor(cbusy);
           Vector diffs = null;
           if(alignQueryViewer == null || alignSubjectViewer == null)
@@ -222,7 +232,7 @@ public class SelectMenu extends SelectionMenu
           }
 
           if(diffs != null)
-            selectAllFeatures(diffs);
+            selectAllFeatures(diffs,cbox_strict.isSelected());
           frame.setCursor(cdone);
         }
       });
@@ -451,10 +461,11 @@ public class SelectMenu extends SelectionMenu
   /**
   *
   * Select all features in a given collection of regions.
-  * @param regions Vector of coordinates.
+  * @param regions   Vector of coordinates of non-matching region.
+  * @param isStrict  true if not allowing any overlap with matching region.
   *
   */
-  private void selectAllFeatures(final Vector regions)
+  private void selectAllFeatures(final Vector regions, final boolean isStrict)
   {
     
     final FeaturePredicate predicate = new FeaturePredicate()
@@ -481,10 +492,14 @@ public class SelectMenu extends SelectionMenu
           diff_start = coords[0].intValue();
           diff_end   = coords[1].intValue();
 
-          if( (feat_start >= diff_start && feat_start <= diff_end)  ||  
-              (feat_end >= diff_start   && feat_end <= diff_end) ||
-              (diff_start >= feat_start && diff_start <= feat_end) ||
-              (diff_end >= feat_start   && diff_end <= feat_end ) )
+          if( isStrict && feat_start >= diff_start && feat_start <= diff_end &&
+                           feat_end >= diff_start   && feat_end <= diff_end )
+            return true;
+          else if( !isStrict && 
+                   ((feat_start >= diff_start && feat_start <= diff_end)  ||
+                    (feat_end >= diff_start   && feat_end <= diff_end) ||
+                    (diff_start >= feat_start && diff_start <= feat_end) ||
+                    (diff_end >= feat_start   && diff_end <= feat_end )) )
             return true;
           else if(diff_start > feat_end)
             return false;
