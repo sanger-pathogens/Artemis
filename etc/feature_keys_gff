@@ -39,3 +39,4 @@ dispersed_repeat    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ont
 repeat_family       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term gff_source gff_seqname score colour color
 transposable_element  ID Name Alias Parent Target Gap Derives_from Note Dbxref Ontology_term colour color
 binding_site        ID Name Alias Parent Target Gap Derives_from Note Dbxref Ontology_term colour color
+gap                 ID Name Alias Parent gff_source gff_seqname score
