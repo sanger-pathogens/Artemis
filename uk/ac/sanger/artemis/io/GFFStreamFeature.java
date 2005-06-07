@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.13 2005-06-03 16:04:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.14 2005-06-07 14:13:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.13 2005-06-03 16:04:39 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.14 2005-06-07 14:13:42 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -161,7 +161,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
       if(line_bits.size() == 9) 
       {
-        final String rest_of_line = decode(line_bits.elementAt(8));
+        final String rest_of_line = line_bits.elementAt(8);  //decode(line_bits.elementAt(8));
 
         // parse the rest of the line as ACeDB format attributes
         final Hashtable attributes = parseAttributes(rest_of_line);
@@ -608,7 +608,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       if(ind_end < 0)
         ind_end = att_val_list.length();
 
-      final String this_token = att_val_list.substring(ind_start, ind_end).trim();
+      final String this_token = decode(att_val_list.substring(ind_start, ind_end).trim());
       ind_start = ind_end+1;
 
       int index_of_first_space = this_token.indexOf(" ");
