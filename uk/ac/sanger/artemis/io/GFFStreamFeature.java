@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.14 2005-06-07 14:13:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.15 2005-06-08 11:01:25 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.14 2005-06-07 14:13:42 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.15 2005-06-08 11:01:25 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -161,7 +161,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
       if(line_bits.size() == 9) 
       {
-        final String rest_of_line = line_bits.elementAt(8);  //decode(line_bits.elementAt(8));
+        final String rest_of_line = line_bits.elementAt(8); 
 
         // parse the rest of the line as ACeDB format attributes
         final Hashtable attributes = parseAttributes(rest_of_line);
@@ -287,6 +287,14 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     while( (ind = s.indexOf("%09")) > -1)
       s = s.substring(0,ind) + "=" + s.substring(ind+3);
 
+    // left bracket (
+    while( (ind = s.indexOf("%28")) > -1)
+      s = s.substring(0,ind) + "=" + s.substring(ind+3);
+
+    // right bracket )
+    while( (ind = s.indexOf("%29")) > -1)
+      s = s.substring(0,ind) + "=" + s.substring(ind+3);
+
 //  ind = -1;
 //  while( (ind = s.indexOf("=",ind+2)) > -1)
 //    s = s.substring(0,ind+1) + "\"" + s.substring(ind+1);
@@ -321,6 +329,14 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     //tabs 
     while( (ind = s.indexOf("\t")) > -1)
       s = s.substring(0,ind) + "%09" + s.substring(ind+1);
+
+    // left bracket (
+    while( (ind = s.indexOf(")")) > -1)
+      s = s.substring(0,ind) + "%28" + s.substring(ind+1);
+
+    // right bracket )
+    while( (ind = s.indexOf(")")) > -1)
+      s = s.substring(0,ind) + "%29" + s.substring(ind+1);
 
     return s;
   }
