@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.15 2005-06-08 11:01:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.16 2005-06-08 15:19:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.15 2005-06-08 11:01:25 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.16 2005-06-08 15:19:38 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -261,82 +261,64 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   */
   private String decode(String s)
   {
+    final String map[][] = {
+                             { " ",  "%20" },  // white space
+                             { ",",  "%2C" },  // comma
+                             { ";",  "%3B" },  // semi-colon
+                             { "=",  "%3D" },  // equals
+                             { "\t", "%09" },  // tab
+                             { " ",  "+"   },  // white space
+                             { "(",  "%28" },  // left bracket
+                             { ")",  "%29" }   // right bracket )
+                           };
+
     int ind;
+    String enc;
+    String dec;
 
-    // white space
-    while( (ind = s.indexOf("%20")) > -1)
-      s = s.substring(0,ind) + " " + s.substring(ind+3);
-
-    // comma
-    while( (ind = s.indexOf("%2C")) > -1)
-      s = s.substring(0,ind) + "," + s.substring(ind+3);
-
-    // white space
-    while( (ind = s.indexOf("+")) > -1)
-      s = s.substring(0,ind) + " " + s.substring(ind+1);
-
-    // semi-colon
-    while( (ind = s.indexOf("%3B")) > -1)
-      s = s.substring(0,ind) + ";" + s.substring(ind+3);
-
-    // equals
-    while( (ind = s.indexOf("%3D")) > -1)
-      s = s.substring(0,ind) + "=" + s.substring(ind+3);
-
-    //tabs 
-    while( (ind = s.indexOf("%09")) > -1)
-      s = s.substring(0,ind) + "=" + s.substring(ind+3);
-
-    // left bracket (
-    while( (ind = s.indexOf("%28")) > -1)
-      s = s.substring(0,ind) + "=" + s.substring(ind+3);
-
-    // right bracket )
-    while( (ind = s.indexOf("%29")) > -1)
-      s = s.substring(0,ind) + "=" + s.substring(ind+3);
-
-//  ind = -1;
-//  while( (ind = s.indexOf("=",ind+2)) > -1)
-//    s = s.substring(0,ind+1) + "\"" + s.substring(ind+1);
-
-//  ind = -1;
-//  while( (ind = s.indexOf(";",ind+2)) > -1)
-//    s = s.substring(0,ind+1) + "\"" + s.substring(ind+1);
+    for(int i=0; i<map.length; i++)
+    {
+      enc = map[i][1];
+      dec = map[i][0];
+      while( (ind = s.indexOf(enc)) > -1)
+        s = s.substring(0,ind) + dec + s.substring(ind+enc.length());
+    }
 
     return s;
   }
 
+  /**
+  *
+  * For gff-version 3:
+  * http://song.sourceforge.net/gff3-jan04.shtml
+  *
+  * Add URL escaping rule (e.g. space="%20" or "+")
+  *
+  */
   private String encode(String s)
   {
+    final String map[][] = {
+//                           { " ",  "%20" },  // white space
+                             { ",",  "%2C" },  // comma 
+                             { ";",  "%3B" },  // semi-colon
+                             { "=",  "%3D" },  // equals
+                             { "\t", "%09" },  // tab
+                             { " ",  "+"   },  // white space
+                             { "(",  "%28" },  // left bracket
+                             { ")",  "%29" }   // right bracket )
+                           };
+
     int ind;
+    String enc;
+    String dec;
 
-    // white space
-    //while( (ind = s.indexOf(" ")) > -1)
-    //  s = s.substring(0,ind) + "%20" + s.substring(ind+1);
-
-    // comma
-    while( (ind = s.indexOf(",")) > -1)
-      s = s.substring(0,ind) + "%2C" + s.substring(ind+1);
-
-    // semi-colon
-    while( (ind = s.indexOf(";")) > -1)
-      s = s.substring(0,ind) + "%3B" + s.substring(ind+1);
-
-    // equals
-    while( (ind = s.indexOf("=")) > -1)
-      s = s.substring(0,ind) + "%3D" + s.substring(ind+1);
-
-    //tabs 
-    while( (ind = s.indexOf("\t")) > -1)
-      s = s.substring(0,ind) + "%09" + s.substring(ind+1);
-
-    // left bracket (
-    while( (ind = s.indexOf(")")) > -1)
-      s = s.substring(0,ind) + "%28" + s.substring(ind+1);
-
-    // right bracket )
-    while( (ind = s.indexOf(")")) > -1)
-      s = s.substring(0,ind) + "%29" + s.substring(ind+1);
+    for(int i=0; i<map.length; i++)
+    {
+      enc = map[i][1];
+      dec = map[i][0];
+      while( (ind = s.indexOf(dec)) > -1 )
+        s = s.substring(0,ind) + enc + s.substring(ind+1);
+    }
 
     return s;
   }
