@@ -45,14 +45,6 @@ public class DatabaseDocumentEntry extends SimpleDocumentEntry
     super(entry_information, doc,  null);
   }
 
-//public DatabaseDocumentEntry(final EntryInformation entry_information,
-//                             final Document doc, 
-//                             final InputStreamProgressListener progress_listener)
-//       throws EntryInformationException, IOException
-//{
-//  super(entry_information, doc,  (ReadListener)progress_listener);
-//}
-
   /**
    *  Returns true if and only if this entry is read only.  For now this
    *  always returns true - BlastDocumentEntry objects can't be changed.
@@ -90,20 +82,6 @@ public class DatabaseDocumentEntry extends SimpleDocumentEntry
     }
     else
       return new DatabaseStreamFeature(feature);      
-
-//  if (!copy)
-//    return (PublicDBStreamFeature) feature;
-//  else
-//  {
-//    final PublicDBStreamFeature feature_copy;
-
-//    if (this instanceof EmblDocumentEntry)
-//      feature_copy = new EmblStreamFeature (feature);
-//    else
-//      feature_copy = new GenbankStreamFeature (feature);
-
-//    return feature_copy;
-//  }
   }
 
 }

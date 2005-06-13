@@ -31,13 +31,19 @@ import java.io.*;
  *  This is an implementation of Feature that can read and write itself to a
  *  CHADO stream.
  *
- *  @version $Id: DatabaseStreamFeature.java,v 1.3 2005-06-13 18:51:26 tjc Exp $
+ *  @version $Id: DatabaseStreamFeature.java,v 1.4 2005-06-13 18:56:57 tjc Exp $
  **/
 
 public class DatabaseStreamFeature
     extends GFFStreamFeature
     implements DocumentFeature, StreamFeature, ComparableFeature
 {
+
+  public DatabaseStreamFeature(final Key key, final Location location,
+                          final QualifierVector qualifiers)
+  {
+    super(key, location, qualifiers);
+  }
 
   /**
    *  Create a new DatabaseStreamFeature with the same key, location and
