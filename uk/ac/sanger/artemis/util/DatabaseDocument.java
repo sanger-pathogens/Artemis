@@ -28,6 +28,7 @@ import java.sql.*;
 import java.io.*;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.Date;
 import javax.swing.JOptionPane;
 
 /**
@@ -43,6 +44,8 @@ public class DatabaseDocument extends Document
   private InputStreamProgressListener progress_listener;
   private Hashtable db;
   private Vector organism;
+  private String sqlLog = System.getProperty("user.home")+
+                          System.getProperty("file.separator")+"art_sql.log";
 
   /**
    *
@@ -179,8 +182,8 @@ public class DatabaseDocument extends Document
                  " and featureloc.feature_id=feature.feature_id" +
                  " and feature.type_id=cvterm.cvterm_id and cvterm.name='gene'";
 
+    appendToLogFile(sql,sqlLog);
     ResultSet rs = st.executeQuery(sql);
-
     StringBuffer cdsBuffer = new StringBuffer();
 
     int loop = 1;
@@ -230,6 +233,8 @@ public class DatabaseDocument extends Document
     if(cv_name != null)
       sql = sql + " AND cv.name='"+cv_name+"'";
 
+    appendToLogFile(sql,sqlLog);
+
     cvterm = new Hashtable();
 
     try 
@@ -265,6 +270,8 @@ public class DatabaseDocument extends Document
     String sql = "SELECT name, residues from feature where feature_id = '"+
                                      feature_id+"'";
 
+    appendToLogFile(sql,sqlLog);
+
     ResultSet rs = st.executeQuery(sql);
 
     rs.next();
@@ -290,16 +297,23 @@ public class DatabaseDocument extends Document
 
       Statement st = conn.createStatement();
 
-      String sql = "select cvterm.cvterm_id, cvterm.name FROM cvterm, cv "+
-                   "WHERE cv.cv_id = cvterm.cv_id and cvterm.name = 'region'";
-      ResultSet rs = st.executeQuery(sql);
+      String sql = "select type_id from feature where residues notnull";
+      appendToLogFile(sql,sqlLog);
 
+      ResultSet rs = st.executeQuery(sql);
       rs.next();
-      String cvterm_id = rs.getString("cvterm_id");
+      String cvterm_id = rs.getString("type_id");
+
+//    String sql = "select cvterm.cvterm_id, cvterm.name FROM cvterm, cv "+
+//                 "WHERE cv.cv_id = cvterm.cv_id and cvterm.name = 'chromosome'";
+//    ResultSet rs = st.executeQuery(sql);
+//    rs.next();
+//    String cvterm_id = rs.getString("cvterm_id");
 
       sql = new String("SELECT abbreviation, name, feature_id FROM organism, feature WHERE type_id = '"+
                         cvterm_id+"' and organism.organism_id=feature.organism_id "+
                         "ORDER BY abbreviation, name");
+      appendToLogFile(sql,sqlLog);
 
       rs = st.executeQuery(sql);
       while(rs.next())
@@ -349,6 +363,40 @@ public class DatabaseDocument extends Document
   {
     System.out.println("DatabaseDocument - ReadOnlyException");
     throw new ReadOnlyException ("this Database Document can not be written to");
+  }
+
+  /**
+  *
+  * Appends a log entry to the log file
+  * @param logEntry     entry to add to log file
+  * @param logFileName  log file name
+  *
+  */
+  private void appendToLogFile(String logEntry, String logFileName)
+  {
+    BufferedWriter bw = null;
+    try
+    {
+      String dat = new java.util.Date().toString();
+      bw = new BufferedWriter(new FileWriter(dat+":: "+logFileName, true));
+      bw.write(logEntry);
+      bw.newLine();
+      bw.flush();
+    }
+    catch (Exception ioe)
+    {
+      System.out.println("Error writing to log file "+logFileName);
+      ioe.printStackTrace();
+    }
+    finally                     // always close the file
+    {
+      if(bw != null)
+      try
+      {
+        bw.close();
+      }
+      catch (IOException ioe2) {}
+    }
   }
 
 }
