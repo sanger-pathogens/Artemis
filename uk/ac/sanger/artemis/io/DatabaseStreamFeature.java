@@ -31,47 +31,13 @@ import java.io.*;
  *  This is an implementation of Feature that can read and write itself to a
  *  CHADO stream.
  *
- *  @version $Id: DatabaseStreamFeature.java,v 1.2 2005-06-13 18:36:49 tjc Exp $
+ *  @version $Id: DatabaseStreamFeature.java,v 1.3 2005-06-13 18:51:26 tjc Exp $
  **/
 
 public class DatabaseStreamFeature
     extends GFFStreamFeature
     implements DocumentFeature, StreamFeature, ComparableFeature
 {
-  /**
-   *  Create a new DatabaseStreamFeature object.  The feature should be added
-   *  to an Entry (with Entry.add ()).
-   *  @param key The new feature key
-   *  @param location The Location object for the new feature
-   *  @param qualifiers The qualifiers for the new feature
-   **/
-  public DatabaseStreamFeature(final Key key,
-                               final Location location,
-                               final QualifierVector qualifiers)
-  {
-    super (null);
-    try 
-    {
-      setKey (key);
-      setLocation (location);
-      setQualifiers (qualifiers);
-    } 
-    catch (EntryInformationException e) 
-    {
-      // this should never happen because the feature will not be in an Entry
-      throw new Error ("internal error - unexpected exception: " + e);
-    } 
-    catch (ReadOnlyException e) 
-    {
-      // this should never happen because the feature will not be in an Entry
-      throw new Error ("internal error - unexpected exception: " + e);
-    } 
-    catch (OutOfRangeException e) 
-    {
-      // this should never happen because the feature will not be in an Entry
-      throw new Error ("internal error - unexpected exception: " + e);
-    }
-  }
 
   /**
    *  Create a new DatabaseStreamFeature with the same key, location and
@@ -81,39 +47,7 @@ public class DatabaseStreamFeature
    **/
   public DatabaseStreamFeature (final Feature feature) 
   {
-    super (null);
-    try 
-    {
-      setKey (feature.getKey ());
-      setLocation (feature.getLocation ());
-      setQualifiers (feature.getQualifiers ());
-    } 
-    catch (EntryInformationException e) 
-    {
-      throw new Error ("internal error - unexpected exception: " + e);
-    } 
-    catch (ReadOnlyException e) 
-    {
-      throw new Error ("internal error - unexpected exception: " + e);
-    } 
-    catch(OutOfRangeException e) 
-    {
-      throw new Error ("internal error - unexpected exception: " + e);
-    }
-  }
-
-
-  public DatabaseStreamFeature(String line)
-  {
-    super(null);
-    try
-    {
-      setFromString(line);
-    }
-    catch(IOException ioe)
-    {
-      throw new Error ("internal error - unexpected exception: " + ioe);
-    }
+    super(feature);
   }
 
   /**
@@ -140,36 +74,6 @@ public class DatabaseStreamFeature
   }
 
   /**
-   *  Read and return a PublicDBStreamFeature from a stream.  A feature must
-   *  be the next thing in the stream.
-   *  @param stream the Feature is read from this stream
-   *  @param feature_type this flag indicates whether to read the feature as
-   *    an EMBL feature (flag == LineGroup.EMBL_FEATURE_TABLE) or as a GENBANK
-   *    feature (flag == LineGroup.GENBANK_FEATURE_TABLE).
-   *  @exception IOException thrown if there is a problem reading the Feature -
-   *    most likely ReadFormatException.
-   *  @return null if in_stream is at the end of file when the method is
-   *  called
-   **/
-//protected static DatabaseStreamFeature
-//  readFromStream(LinePushBackReader stream)
-//    throws IOException
-//{
-//  String line = stream.readLine ();
-//  return readFromStream(line);
-//}
-
-//protected static DatabaseStreamFeature
-//  readFromStream(String line)
-//    throws IOException
-//{
-//  if(line == null)
-//    return null;
-
-//  return new DatabaseStreamFeature(line);
-//}
-
-  /**
    *  This is used by readFromStream() as temporary storage.  It is a class
    *  member rather than a local variable so that we don't need to allocate a
    *  object for each call.  The number we pick for the initial StringBuffer
@@ -177,116 +81,6 @@ public class DatabaseStreamFeature
    **/
   final static private StringBuffer qualifier_string_buffer =
     new StringBuffer (1500);
-
-
-  /**
-   *  Read the details of a feature from an EMBL stream into the current
-   *  object.  (Called only by readFromStream ()).
-   *  @param in_stream the Feature is read from this stream
-   *  @exception IOException thrown if there is a problem reading the Feature -
-   *    most likely ReadFormatException.
-   **/
-  private void setFromStream(final LinePushBackReader in_stream)
-      throws IOException
-  {
-    final String first_line = in_stream.readLine();
-    setFromString(first_line);
-  }
-
-  /**
-   *  Read the details of a feature from an EMBL stream into the current
-   *  object.  (Called only by readFromStream ()).
-   *  @param in_stream the Feature is read from this stream
-   *  @exception IOException thrown if there is a problem reading the Feature -
-   *    most likely ReadFormatException.
-   **/
-  private void setFromString(String first_line)
-      throws IOException 
-  {
-    if(first_line == null) 
-      throw new EOFException ("while reading a feature");
-
-    final String key_string = getKeyStringFromLine(first_line);
-
-    if(key_string == null)
-      throw new ReadFormatException("expected the first line of a " +
-                                    "feature");
-
-    final Key key = new Key(key_string);
-    final Location location;
-
-    int ind1 = first_line.indexOf(" ")+1;
-    int ind2 = first_line.indexOf(";");
-
-    try 
-    {
-      location = new Location(first_line.substring(ind1,ind2));
-    } 
-    catch(LocationParseException exception) 
-    {
-      // re-throw the exception with the line number added
-
-      final String new_error_string = exception.getMessage();
-
-      // subtract 1 because the error was on the previous line
-      throw new ReadFormatException(new_error_string);
-    }
-
-
-    final QualifierVector qualifiers;
-    final String qualifier_string = first_line.substring(ind2+1);
-
-    try 
-    {
-      qualifiers = getQualifiersFromString(qualifier_string,
-                                           getEntryInformation());
-    } 
-    catch (QualifierParseException exception) 
-    {
-      // re-throw the exception with the line number added
-      final String new_error_string = exception.getMessage ();
-
-      // subtract 1 because the error was on the previous line
-      throw new ReadFormatException(new_error_string);
-    }
-
-    try 
-    {
-      set(key, location, qualifiers);
-    }
-    catch(EntryInformationException e) 
-    {
-      throw new Error("internal error - unexpected exception: " + e);
-    } 
-    catch (OutOfRangeException e)
-    {
-      throw new Error("internal error - unexpected exception: " + e);
-    }
-
-    setDirtyFlag();
-  }
-
-
-  /**
-   *  Return the key from a embl entry line.
-   *  @param line_string the text of the entry line to process
-   *  @return null if this isn't the first line of a feature, otherwise the
-   *    key of this feature
-   */
-  private static String getKeyStringFromLine(final String line_string)
-      throws ReadFormatException 
-  {
-    if(line_string == null ||
-       line_string.startsWith (" ")) 
-      return null;
-    else
-    {
-      int ind1 = line_string.indexOf("=")+1;
-      int ind2 = line_string.indexOf(" ");
-      final String key_field = line_string.substring(ind1,ind2);
-      return key_field.trim();
-    }
-  }
 
   /**
    *  Read some embl feature qualifiers from a stream into a QualifierVector
@@ -353,32 +147,6 @@ public class DatabaseStreamFeature
     }
 
     return return_vector;
-  }
-
-  /**
-   *  Return a QualifierVector containing the qualifiers from a String.
-   *  @param qual_string contains the qualifiers to parse
-   */
-  private static QualifierVector
-    getQualifiersFromString(final String qual_string,
-                            final EntryInformation entry_information)
-      throws QualifierParseException 
-  {
-    final StringReader string_reader = new StringReader(qual_string);
-    final QualifierVector qualifiers;
-
-    try 
-    {
-      qualifiers = readQualifiers (string_reader, entry_information);
-    } 
-    catch (IOException exception) 
-    {
-      throw (new QualifierParseException (exception.getMessage ()));
-    }
-
-    string_reader.close ();
-
-    return qualifiers;
   }
 
   /**
