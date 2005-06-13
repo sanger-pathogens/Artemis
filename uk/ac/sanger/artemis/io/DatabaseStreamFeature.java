@@ -31,11 +31,11 @@ import java.io.*;
  *  This is an implementation of Feature that can read and write itself to a
  *  CHADO stream.
  *
- *  @version $Id: DatabaseStreamFeature.java,v 1.1 2005-03-31 12:09:13 tjc Exp $
+ *  @version $Id: DatabaseStreamFeature.java,v 1.2 2005-06-13 18:36:49 tjc Exp $
  **/
 
 public class DatabaseStreamFeature
-    extends SimpleDocumentFeature
+    extends GFFStreamFeature
     implements DocumentFeature, StreamFeature, ComparableFeature
 {
   /**
@@ -151,23 +151,23 @@ public class DatabaseStreamFeature
    *  @return null if in_stream is at the end of file when the method is
    *  called
    **/
-  protected static DatabaseStreamFeature
-    readFromStream(LinePushBackReader stream)
-      throws IOException
-  {
-    String line = stream.readLine ();
-    return readFromStream(line);
-  }
+//protected static DatabaseStreamFeature
+//  readFromStream(LinePushBackReader stream)
+//    throws IOException
+//{
+//  String line = stream.readLine ();
+//  return readFromStream(line);
+//}
 
-  protected static DatabaseStreamFeature
-    readFromStream(String line)
-      throws IOException
-  {
-    if(line == null)
-      return null;
+//protected static DatabaseStreamFeature
+//  readFromStream(String line)
+//    throws IOException
+//{
+//  if(line == null)
+//    return null;
 
-    return new DatabaseStreamFeature(line);
-  }
+//  return new DatabaseStreamFeature(line);
+//}
 
   /**
    *  This is used by readFromStream() as temporary storage.  It is a class

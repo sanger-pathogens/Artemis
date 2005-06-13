@@ -86,7 +86,7 @@ public class DatabaseDocumentEntry extends SimpleDocumentEntry
       if(feature instanceof DatabaseStreamFeature)
         return (DatabaseStreamFeature)feature;
       else
-        return (EmblStreamFeature)feature;
+        return (GFFStreamFeature)feature;
     }
     else
       return new DatabaseStreamFeature(feature);      

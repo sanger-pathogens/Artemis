@@ -115,11 +115,28 @@ public class DatabaseDocument extends Document
    *  Return a Document with the last element stripped off.
    *
    **/
-  public Document getParent() 
+  public String getFeatureName(String feature_id, Connection conn)
+                  throws java.sql.SQLException
+  { 
+    Statement st = conn.createStatement();
+
+    String sql = "SELECT name FROM feature WHERE feature_id= "+feature_id;
+    appendToLogFile(sql,sqlLog);
+    ResultSet rs = st.executeQuery(sql);
+    rs.next();
+    return rs.getString("name");
+  }
+  
+  /**
+   *
+   *  Return a Document with the last element stripped off.
+   *
+   **/
+  public Document getParent()
   {
     return null;
   }
-  
+
   /**
    *
    *  Return true if and only if the Document refered to by this object exists
@@ -157,9 +174,9 @@ public class DatabaseDocument extends Document
       Connection conn = getConnection();
       System.out.println("Connected");
 
-      String entry = getGene(conn,feature_id) + getSequence(conn);
+      String entry = getGFF(conn,feature_id) + getSequence(conn);
 //    String entry = getSequence(conn);
-      
+      appendToLogFile(entry,sqlLog);
       ByteArrayInputStream instream = new ByteArrayInputStream(entry.getBytes());
       return instream;
     }
@@ -172,45 +189,47 @@ public class DatabaseDocument extends Document
     return null;
   }
 
-  private String getGene(Connection conn, String parentFeatureID) 
+  private String getGFF(Connection conn, String parentFeatureID) 
           throws java.sql.SQLException
   {
     Statement st = conn.createStatement();
-    String sql = "SELECT strand, fmin, fmax, value, uniquename, featureprop.type_id, strand"+
+    String sql = "SELECT strand, fmin, fmax, value, uniquename, feature.type_id, featureprop.type_id, strand"+
                  " FROM feature, featureloc, featureprop WHERE srcfeature_id = "+parentFeatureID+
                  " and featureloc.feature_id=featureprop.feature_id"+
                  " and featureloc.feature_id=feature.feature_id" +
-                 " and feature.type_id=cvterm.cvterm_id and cvterm.name='gene'";
+                 " and feature.type_id=cvterm.cvterm_id"; // and cvterm.name='gene'";
 
     appendToLogFile(sql,sqlLog);
     ResultSet rs = st.executeQuery(sql);
     StringBuffer cdsBuffer = new StringBuffer();
 
+    String parentFeature = getFeatureName(parentFeatureID,conn);
     int loop = 1;
 
     while(rs.next())
     {
-      int fmin        = rs.getInt("fmin")+1;
-      int fmax        = rs.getInt("fmax");
-      long type_id    = rs.getLong("type_id");
+      int fmin          = rs.getInt("fmin")+1;
+      int fmax          = rs.getInt("fmax");
+      long type_id      = rs.getLong(6);
+      long prop_type_id = rs.getLong(7);
       int strand      = rs.getInt("strand");
       String name     = rs.getString("uniquename");
       String typeName = getCvtermName(conn,type_id);
+      String propTypeName = getCvtermName(conn,prop_type_id);
+// make gff format
 
-// start with uniquename
-      cdsBuffer.append("CHADO="+name+" ");
-
-      if(strand == -1)
-        cdsBuffer.append("complement(");
-      cdsBuffer.append(fmin+"..");
-      cdsBuffer.append(fmax);
-      if(strand == -1)
-        cdsBuffer.append(")");
-
-      cdsBuffer.append(";");
-      cdsBuffer.append("/"+typeName+"=\"");
-      cdsBuffer.append(rs.getString("value")+"\"\n");
-
+      cdsBuffer.append(parentFeature+"\t");    // seqid
+      cdsBuffer.append("chado\t");             // source
+      cdsBuffer.append(typeName+"\t");         // type
+      cdsBuffer.append(fmin+"\t");             // start
+      cdsBuffer.append(fmax+"\t");             // end
+      cdsBuffer.append(".\t");                 // score
+      if(strand == -1)                         // strand
+        cdsBuffer.append("-\t");
+      else
+        cdsBuffer.append("+\t");
+      cdsBuffer.append(".\t");                 // phase
+      cdsBuffer.append("ID="+name+";"+propTypeName+"="+rs.getString("value")+"\n"); // attributes
       progress_listener.progressMade("Read from database: "+name);
     }
 
@@ -276,7 +295,7 @@ public class DatabaseDocument extends Document
 
     rs.next();
     name = rs.getString("name");
-    return rs.getString("residues");
+    return "##FASTA\n>" + name + "\n" + rs.getString("residues");
   }
 
 
@@ -378,8 +397,8 @@ public class DatabaseDocument extends Document
     try
     {
       String dat = new java.util.Date().toString();
-      bw = new BufferedWriter(new FileWriter(dat+":: "+logFileName, true));
-      bw.write(logEntry);
+      bw = new BufferedWriter(new FileWriter(logFileName, true));
+      bw.write(dat+":: "+logEntry);
       bw.newLine();
       bw.flush();
     }
