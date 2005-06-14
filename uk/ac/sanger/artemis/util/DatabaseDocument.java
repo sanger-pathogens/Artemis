@@ -193,11 +193,11 @@ public class DatabaseDocument extends Document
           throws java.sql.SQLException
   {
     Statement st = conn.createStatement();
-    String sql = "SELECT strand, fmin, fmax, value, uniquename, feature.type_id, featureprop.type_id, strand"+
+    String sql = "SELECT strand, fmin, fmax, value, uniquename, feature.type_id, featureprop.type_id AS prop_type_id, strand"+
                  " FROM feature, featureloc, featureprop WHERE srcfeature_id = "+parentFeatureID+
                  " and featureloc.feature_id=featureprop.feature_id"+
-                 " and featureloc.feature_id=feature.feature_id" +
-                 " and feature.type_id=cvterm.cvterm_id"; // and cvterm.name='gene'";
+                 " and featureloc.feature_id=feature.feature_id";
+//                 " and feature.type_id=cvterm.cvterm_id"; // and cvterm.name='gene'";
 
     appendToLogFile(sql,sqlLog);
     ResultSet rs = st.executeQuery(sql);
@@ -210,8 +210,8 @@ public class DatabaseDocument extends Document
     {
       int fmin          = rs.getInt("fmin")+1;
       int fmax          = rs.getInt("fmax");
-      long type_id      = rs.getLong(6);
-      long prop_type_id = rs.getLong(7);
+      long type_id      = rs.getLong("type_id");
+      long prop_type_id = rs.getLong("prop_type_id");
       int strand      = rs.getInt("strand");
       String name     = rs.getString("uniquename");
       String typeName = getCvtermName(conn,type_id);
@@ -393,6 +393,9 @@ public class DatabaseDocument extends Document
   */
   private void appendToLogFile(String logEntry, String logFileName)
   {
+    if(System.getProperty("debug") == null)
+      return;
+
     BufferedWriter bw = null;
     try
     {
