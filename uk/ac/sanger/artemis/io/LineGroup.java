@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LineGroup.java,v 1.4 2005-05-23 12:08:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LineGroup.java,v 1.5 2005-06-14 08:18:41 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import uk.ac.sanger.artemis.util.LinePushBackReader;
  *  that start with FT.
  *
  *  @author Kim Rutherford
- *  @version $Id: LineGroup.java,v 1.4 2005-05-23 12:08:47 tjc Exp $
+ *  @version $Id: LineGroup.java,v 1.5 2005-06-14 08:18:41 tjc Exp $
  *
  */
 
@@ -134,12 +134,6 @@ abstract class LineGroup
   final static int GAME_XML = 15;
 
   /**
-   *  The tag for Chado files.
-   **/
-  final static int CHADO_FEATURE = 16;
-
-
-  /**
    *  This hash table contains the GENBANK start of line keywords (LOCUS,
    *  DEFINITION, FEATURES etc.)
    **/
@@ -201,9 +195,6 @@ abstract class LineGroup
 
     switch (line_type) 
     {
-      case CHADO_FEATURE:
-        return DatabaseStreamFeature.readFromStream (reader);
-
       case SEQUENCE:
         return StreamSequenceFactory.makeStreamSequence (reader);
 
@@ -255,9 +246,6 @@ abstract class LineGroup
    */
   public static int getLineType(String line)
   {
-    if(line.startsWith("CHADO="))
-      return CHADO_FEATURE;
-
     if(line.startsWith ("<?xml")) 
       return GAME_XML;
 
