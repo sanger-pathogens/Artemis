@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.4 2004-11-17 13:20:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.5 2005-06-14 13:58:48 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -44,7 +44,7 @@ import java.util.*;
  *  read in new options.
  *
  *  @author Kim Rutherford
- *  @version $Id: Options.java,v 1.4 2004-11-17 13:20:46 tjc Exp $
+ *  @version $Id: Options.java,v 1.5 2005-06-14 13:58:48 tjc Exp $
  **/
 
 public class Options extends Properties 
@@ -582,8 +582,14 @@ public class Options extends Properties
 
     if(colour_number >= colour_map.size() ||
         colour_map.elementAt(colour_number) == null) 
+    {
+      String col = getProperty("colour_" + colour_number);
+      if(col != null)
+        return parseColour(col);
+
       // there is no colour for this colour_number
       return null;
+    }
     else 
       return (Color) colour_map.elementAt(colour_number);
   }
