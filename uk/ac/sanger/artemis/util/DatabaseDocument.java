@@ -192,12 +192,11 @@ public class DatabaseDocument extends Document
   private String getGFF(Connection conn, String parentFeatureID) 
           throws java.sql.SQLException
   {
-    Statement st = conn.createStatement();
-    String sql = "SELECT strand, fmin, fmax, value, uniquename, feature.type_id, featureprop.type_id AS prop_type_id, strand"+
+    Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+    String sql = "SELECT strand, fmin, fmax, uniquename, feature.type_id, featureprop.type_id AS prop_type_id, value"+
                  " FROM feature, featureloc, featureprop WHERE srcfeature_id = "+parentFeatureID+
                  " and featureloc.feature_id=featureprop.feature_id"+
-                 " and featureloc.feature_id=feature.feature_id";
-//                 " and feature.type_id=cvterm.cvterm_id"; // and cvterm.name='gene'";
+                 " and featureloc.feature_id=feature.feature_id ORDER BY uniquename";
 
     appendToLogFile(sql,sqlLog);
     ResultSet rs = st.executeQuery(sql);
@@ -216,8 +215,8 @@ public class DatabaseDocument extends Document
       String name     = rs.getString("uniquename");
       String typeName = getCvtermName(conn,type_id);
       String propTypeName = getCvtermName(conn,prop_type_id);
-// make gff format
 
+// make gff format
       cdsBuffer.append(parentFeature+"\t");    // seqid
       cdsBuffer.append("chado\t");             // source
       cdsBuffer.append(typeName+"\t");         // type
@@ -229,7 +228,22 @@ public class DatabaseDocument extends Document
       else
         cdsBuffer.append("+\t");
       cdsBuffer.append(".\t");                 // phase
-      cdsBuffer.append("ID="+name+";"+propTypeName+"="+rs.getString("value")+"\n"); // attributes
+      cdsBuffer.append("ID="+name+";"+propTypeName+"="+rs.getString("value")); // attributes
+
+      int rewind = 0;
+      while(rs.next() && rs.getString("uniquename").equals(name))
+      {
+        prop_type_id = rs.getLong("prop_type_id");
+        propTypeName = getCvtermName(conn,prop_type_id);
+        cdsBuffer.append(";"+propTypeName+"="+rs.getString("value"));
+        rewind++;
+      }
+
+      if(rewind > 0)
+        rs.previous();
+
+      cdsBuffer.append("\n");
+
       progress_listener.progressMade("Read from database: "+name);
     }
 
