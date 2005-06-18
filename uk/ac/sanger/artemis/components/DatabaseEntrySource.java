@@ -28,10 +28,6 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 import javax.swing.tree.TreePath;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.Cursor;
 import java.awt.Container;
 import java.awt.GridLayout;
 import java.net.*;
@@ -189,7 +185,7 @@ public class DatabaseEntrySource implements EntrySource
     DatabaseDocument doc = new DatabaseDocument(location);
 
     entries = doc.getDatabaseEntries();
-    Vector organism   = doc.getOrganism();
+    Vector organism = doc.getOrganism();
 
     DefaultMutableTreeNode top =
         new DefaultMutableTreeNode("PSU Organism List");
@@ -206,12 +202,19 @@ public class DatabaseEntrySource implements EntrySource
   * @return     node that is currently selected
   *
   */
-  protected DefaultMutableTreeNode getSelectedNode(JTree tree)
+  protected String getSelectedNode(JTree tree)
   {
     TreePath path = tree.getLeadSelectionPath();
     if(path == null)
       return null;
-    return (DefaultMutableTreeNode)path.getLastPathComponent();
+
+    DefaultMutableTreeNode seq_node  = (DefaultMutableTreeNode)path.getLastPathComponent();
+    DefaultMutableTreeNode type_node = (DefaultMutableTreeNode)seq_node.getParent();
+    DefaultMutableTreeNode org_node  = (DefaultMutableTreeNode)type_node.getParent();
+
+    return (String)org_node.getUserObject() + " - " +
+           (String)type_node.getUserObject() + " - " +
+           (String)seq_node.getUserObject();
   }
 
   /**
@@ -228,6 +231,7 @@ public class DatabaseEntrySource implements EntrySource
     Enumeration enum_org = org.elements();
     DefaultMutableTreeNode org_node;
     DefaultMutableTreeNode seq_node;
+    DefaultMutableTreeNode typ_node;
 
     while(enum_org.hasMoreElements())
     { 
@@ -235,14 +239,31 @@ public class DatabaseEntrySource implements EntrySource
       org_node = new DefaultMutableTreeNode(name);
       top.add(org_node);
 
+      Hashtable seq_type_node = new Hashtable();
+
       Enumeration enum_seq = organism.keys();
       while(enum_seq.hasMoreElements())
       {
         String seq_name = (String)enum_seq.nextElement();
         if(seq_name.startsWith(name))
         {
+          int ind1 = seq_name.indexOf( "- ");
+          int ind2 = seq_name.lastIndexOf("- ");
+
+          String type =  seq_name.substring(ind1+2,ind2).trim();
+          seq_name = seq_name.substring(ind2+2).trim();
+
+          if(!seq_type_node.containsKey(type))
+          {   
+            typ_node = new DefaultMutableTreeNode(type);
+            seq_type_node.put(type,typ_node);
+            org_node.add(typ_node);          
+          }
+          else
+            typ_node= (DefaultMutableTreeNode)seq_type_node.get(type);
+         
           seq_node = new DefaultMutableTreeNode(seq_name);
-          org_node.add(seq_node);
+          typ_node.add(seq_node);
         }
       }
     }

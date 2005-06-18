@@ -189,6 +189,13 @@ public class DatabaseDocument extends Document
     return null;
   }
 
+
+  /**
+  *
+  * Given a parent (chromosome, contig, supercontig) retrieve the features
+  * in the form of a GFF stream.
+  *
+  */ 
   private String getGFF(Connection conn, String parentFeatureID) 
           throws java.sql.SQLException
   {
@@ -338,13 +345,7 @@ public class DatabaseDocument extends Document
       while(rs.next())
         cvterm_id.add(rs.getString("type_id"));
 
-//    String sql = "select cvterm.cvterm_id, cvterm.name FROM cvterm, cv "+
-//                 "WHERE cv.cv_id = cvterm.cv_id and cvterm.name = 'chromosome'";
-//    ResultSet rs = st.executeQuery(sql);
-//    rs.next();
-//    String cvterm_id = rs.getString("cvterm_id");
-
-      sql = new String("SELECT abbreviation, name, feature_id FROM organism, feature WHERE (");
+      sql = new String("SELECT abbreviation, name, feature_id, type_id FROM organism, feature WHERE (");
 
       for(int i=0; i<cvterm_id.size(); i++)
       {
@@ -356,16 +357,15 @@ public class DatabaseDocument extends Document
       sql = sql + ") " + " and organism.organism_id=feature.organism_id "+
             "ORDER BY abbreviation, name";
 
-//    sql = new String("SELECT abbreviation, name, feature_id FROM organism, feature WHERE type_id = '"+
-//                      cvterm_id+"' and organism.organism_id=feature.organism_id "+
-//                      "ORDER BY abbreviation, name");
       appendToLogFile(sql,sqlLog);
 
       rs = st.executeQuery(sql);
       while(rs.next())
       {
-        String org = rs.getString("abbreviation");
-        db.put(org+" - "+rs.getString("name"), rs.getString("feature_id"));
+        String org      = rs.getString("abbreviation");
+        String typeName = getCvtermName(conn,rs.getLong("type_id"));
+        db.put(org+" - "+typeName+" - "+rs.getString("name"), 
+               rs.getString("feature_id"));
         if(!organism.contains(org))
           organism.add(org);
       }

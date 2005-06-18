@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DatabaseJFrame.java,v 1.3 2005-06-01 15:07:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DatabaseJFrame.java,v 1.4 2005-06-18 07:01:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -115,11 +115,8 @@ public class DatabaseJFrame extends JFrame
     Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
     Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
 
-    DefaultMutableTreeNode node = entry_source.getSelectedNode(tree);
-    if(node == null || !node.isLeaf())
-      return;
-
-    String id =  entry_source.getEntryID((String)node.getUserObject());
+    String node_name = entry_source.getSelectedNode(tree);
+    String id =  entry_source.getEntryID(node_name);
     if(id != null)
       getEntryEditFromDatabase(id, entry_source, tree, art_main);
   }
