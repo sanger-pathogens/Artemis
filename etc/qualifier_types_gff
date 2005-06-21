@@ -28,7 +28,7 @@ Name             no         text
 Alias            no         text
 Parent           no         text
 Note             no         "text"
-Product          no         "text" 
+product          no         "text" 
 description      no         text
 Ontology_term    no         text
 gff_source       no         text
@@ -40,8 +40,11 @@ Derives_from     no         text
 Dbxref           no         "text"
 polypeptide      no         text
 polypeptide_domain no       text
+pseudo           no         text
 colour           no         text
 color            no         text
+cluster          no         text
 mass             no         text
 isoelectric      no         text
 charge           no         text
+source           no         text

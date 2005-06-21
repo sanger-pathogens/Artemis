@@ -17,12 +17,12 @@ then
 elif [ -f "/usr/bin/mozilla" ]
 then
   NETSCAPE=/usr/bin/mozilla
-elif [ -f "/Applications/Camino.app/Contents/MacOS/Camino" ]
-then
-  NETSCAPE=/Applications/Camino.app/Contents/MacOS/Camino
 elif [ -f "/Applications/Safari.app/Contents/MacOS/Safari" ]
 then
   NETSCAPE=/Applications/Safari.app/Contents/MacOS/Safari
+elif [ -f "/Applications/Camino.app/Contents/MacOS/Camino" ]
+then
+  NETSCAPE=/Applications/Camino.app/Contents/MacOS/Camino
 fi
 
 
@@ -224,13 +224,15 @@ echo "rm -f $new_file > /dev/null 2>&1" | at now + 12 hours
 
 # MAC OS X => Safari browser
 # The command then is the following
-# if $NETSCAPE $new_file
-
+if [ -f "/Applications/Safari.app/Contents/MacOS/Safari" ]
+then
+  if $NETSCAPE $new_file
+  then
+    exit 0
+  fi
 # For Netscape or mozilla
-#
 # Use openURL($new_file, new-tab) to get new-tab
-#
-if $NETSCAPE -remote "openURL($new_file)"
+elif $NETSCAPE -remote "openURL($new_file)"
 then
     exit 0
 else

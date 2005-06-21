@@ -30,7 +30,7 @@ signal_peptide      ID Name Alias Parent Note colour color
 matches             ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
 nucleotide_match    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term gff_source gff_seqname score colour color
 translated_nucleotide_match    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
-protein_match       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color cluster
+protein_match       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color cluster gff_source gff_seqname score
 sequence_difference ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
 repeat_region       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
 direct_repeat       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
