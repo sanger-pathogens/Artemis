@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ActionController.java,v 1.1 2004-06-09 09:44:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ActionController.java,v 1.2 2005-06-23 16:00:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -36,7 +36,7 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
  *  This class is maintains a Vector of Action objects to allow Undo.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ActionController.java,v 1.1 2004-06-09 09:44:04 tjc Exp $
+ *  @version $Id: ActionController.java,v 1.2 2005-06-23 16:00:49 tjc Exp $
  **/
 
 public class ActionController
@@ -72,8 +72,11 @@ public class ActionController
     }
 
     if (current_action == null) {
-      throw new Error ("internal error - in ActionController.endAction() " +
-                       "no Action in progress");
+//
+// believed to cause problems with FeatureList update if thrown...
+//
+//    throw new Error ("internal error - in ActionController.endAction() " +
+//                     "no Action in progress");
     } else {
       if (!current_action.isEmpty ()) {
         action_vector.add (current_action);
