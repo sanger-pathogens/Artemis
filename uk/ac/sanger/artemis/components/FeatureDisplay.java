@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.27 2005-06-20 10:20:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.28 2005-06-23 14:38:19 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.27 2005-06-20 10:20:05 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.28 2005-06-23 14:38:19 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -1142,11 +1142,7 @@ public class FeatureDisplay extends EntryGroupPanel
     if(getEntryGroup().isActive(feature.getEntry()) &&
        featureVisible(feature)) 
     {
-      if(visible_features.contains(feature)) 
-      {
-//      throw new Error("internal error - feature added a second time");
-      } 
-      else 
+      if(!visible_features.contains(feature)) 
         getVisibleFeatures().addElementAtEnd(feature);
     }
 
@@ -1309,24 +1305,14 @@ public class FeatureDisplay extends EntryGroupPanel
 
       if(feature1_size > feature2_size) 
         return -1;
-      else 
-      {
-        if(feature1_size < feature2_size) 
-          return 1;
-        else
-        {
-          // use hash value as a last resort
-          if(feature1.hashCode() < feature2.hashCode()) 
-            return -1;
-          else 
-          {
-            if(feature1.hashCode() == feature2.hashCode())
-              return 0;
-            else
-              return 1;
-          }
-        }
-      }
+      else if(feature1_size < feature2_size)
+        return 1;
+      else if(feature1.hashCode() < feature2.hashCode())  // use hash value as a last resort
+        return -1;
+      else if(feature1.hashCode() == feature2.hashCode())
+        return 0;
+      else
+        return 1;
     }
   };
 
@@ -1468,7 +1454,7 @@ public class FeatureDisplay extends EntryGroupPanel
     if(scrollbar_style == SCROLLBAR_AT_TOP)
       ((Graphics2D)g).translate(0,-scrollbar_hgt);
     
-    Thread.yield();
+//  Thread.yield();
   }
 
   /**
@@ -1493,7 +1479,7 @@ public class FeatureDisplay extends EntryGroupPanel
         final Entry current_entry = getEntryGroup().elementAt(i);
 
         if(getEntryGroup().getDefaultEntry() == current_entry &&
-            Options.getOptions().highlightActiveEntryFlag())
+           Options.getOptions().highlightActiveEntryFlag())
         {
           g.setColor(active_entry_colour);
           fillLane(g, forward_entry_line,
@@ -2520,16 +2506,10 @@ public class FeatureDisplay extends EntryGroupPanel
 
     int extra_line_count;
 
-    if(getOneLinePerEntryFlag())
-    {
-      // some number of entry lines
+    if(getOneLinePerEntryFlag())  // some number of entry lines
       extra_line_count = getEntryGroup().size();
-    } 
-    else
-    {
-      // three frame line
+    else    // three frame line
       extra_line_count = 3;
-    }
 
     if(show_labels) 
       extra_line_count *= 2;
@@ -3396,7 +3376,7 @@ public class FeatureDisplay extends EntryGroupPanel
 
     // not on screen
     if(start_coord > getSize().width &&
-        end_coord > getSize().width) 
+       end_coord > getSize().width) 
       return;
 
     // not on screen
@@ -3656,7 +3636,6 @@ public class FeatureDisplay extends EntryGroupPanel
     if((event.getModifiers() & InputEvent.BUTTON2_MASK) != 0 ||
         event.isAltDown()) 
     {
-
       final Selectable clicked_thing = getThingAtPoint(event.getPoint());
 
       if(clicked_thing == null) 
@@ -3754,7 +3733,6 @@ public class FeatureDisplay extends EntryGroupPanel
 
       getSelection().setMarkerRange(new_selection_range);
       click_range = new_selection_range;
-
     }  
     else
     {
@@ -4141,7 +4119,8 @@ public class FeatureDisplay extends EntryGroupPanel
       targets = (Vector)listeners.clone();
     }
 
-    for(int i = 0; i < targets.size(); ++i) 
+    final int targets_size = targets.size();
+    for(int i = 0; i < targets_size; ++i) 
     {
       ChangeListener change_listener = (ChangeListener)targets.elementAt(i);
 
@@ -4237,7 +4216,7 @@ public class FeatureDisplay extends EntryGroupPanel
       setMinimumSize(minimum_size);
 
       revalidate();
-      repaint();
+//    repaint();
     }
   }
 
