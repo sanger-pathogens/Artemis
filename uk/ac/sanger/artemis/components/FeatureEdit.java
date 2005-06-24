@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.12 2005-01-11 13:27:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.13 2005-06-24 13:48:35 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.12 2005-01-11 13:27:55 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.13 2005-06-24 13:48:35 tjc Exp $
  **/
 
 public class FeatureEdit extends JFrame
@@ -357,7 +357,7 @@ public class FeatureEdit extends JFrame
             
               final String go_string = "aspect=; term=; GOid=GO:; "+
                                        "evidence=ISS; db_xref=GOC:unpublished; " +
-                                       "with=UNIPROT:; date=" + result_buffer;
+                                       "with=Uniprot:; date=" + result_buffer;
               qualifier_text_area.append("=\"" + go_string + "\"");
             } 
             else 
