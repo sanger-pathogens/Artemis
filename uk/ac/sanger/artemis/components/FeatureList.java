@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.18 2005-07-08 12:20:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.19 2005-07-08 12:21:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -56,7 +56,7 @@ import javax.swing.JComponent;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.18 2005-07-08 12:20:25 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.19 2005-07-08 12:21:13 tjc Exp $
  *
  **/
 
@@ -304,7 +304,6 @@ public class FeatureList extends EntryGroupPanel
     final int hgt = getEntryGroup().getAllFeaturesCount() *
                                getLineHeight();
 
-    System.out.println("HERE FeatureList "+getEntryGroup().getAllFeaturesCount());
     setPreferredSize(new Dimension(getSize().width*4,hgt));
     revalidate();
     repaint();
