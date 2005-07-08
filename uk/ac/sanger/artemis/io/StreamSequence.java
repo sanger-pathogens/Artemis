@@ -4,7 +4,7 @@
  *
  * This file is part of Artemis
  *
- * Copyright (C) 1998,1999,2000  Genome Research Limited
+ * Copyright (C) 1998-2005  Genome Research Limited
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.4 2005-01-13 16:52:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.5 2005-07-08 15:11:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -32,45 +32,50 @@ import java.io.Writer;
  *  This is an implementation of Sequence that can read and write itself to a
  *  stream.
  *
+ *  Sequence stored in 4 bit chunks.
+ *
  *  @author Kim Rutherford
- *  @version $Id: StreamSequence.java,v 1.4 2005-01-13 16:52:34 tjc Exp $
+ *  @version $Id: StreamSequence.java,v 1.5 2005-07-08 15:11:12 tjc Exp $
  **/
 
 public abstract class StreamSequence
-    extends LineGroup implements Sequence {
-  /**
-   *  Create a new StreamSequence object that contains no sequence.
-   **/
-  protected StreamSequence () {
-    setFromString ("");
-  }
+    extends LineGroup implements Sequence 
+{
   
   /**
    *  Return a new StreamSequence object that is a copy of this one.
    **/
-  abstract public StreamSequence copy ();
+  abstract public StreamSequence copy();
 
   /**
    *  Return the sequence type (one of EMBL_FORMAT, RAW_FORMAT, FASTA_FORMAT,
    *  etc.)
    **/
-  abstract public int getFormatType ();
+  abstract public int getFormatType();
 
   /**
-   *  Return the type of this LineGroup object (SEQUENCE, FEATURE_TABLE, etc.)
-   *  Returns SEQUENCE for objects of this class.
+   *  Contains the sequence data for this object.  It will contain the bases
+   *  of the sequence with no spaces after the Feature constructor finishes.
    **/
-  public int getType () {
-    return SEQUENCE;
-  }
+  private byte[] sequencePacked;
 
-  /**
-   *  Return the contents of this Sequence as a String.  This currently does
-   *  not return a copy so any changes will change the Sequence object.
-   **/
-  public String toString () {
-    return sequence;
-  }
+  /** Count of the a bases in the sequence. */
+  private int a_count = 0;
+
+  /** Count of the c bases in the sequence. */
+  private int c_count = 0;
+
+  /** Count of the g bases in the sequence. */
+  private int g_count = 0;
+
+  /** Count of the t bases in the sequence. */
+  private int t_count = 0;
+
+  /** char array for returning sequence chunks */
+  private char[] dst = null;
+
+  private int sequence_length;
+  private char bases[];
 
   /**
    *  Return a the given range of bases as a String.  Returns an empty
@@ -78,105 +83,357 @@ public abstract class StreamSequence
    *  @param start The start base of the range.
    *  @param end The end base of the range.
    **/
-  public String getSubSequence (int start, int end) {
-    if (end < start) {
-      // empty range
+  public String getSubSequence(int start, int end) 
+  {
+    if(end < start)    // empty range
       return "";
-    } else {
-      if (start == 1 && end == length ()) {
-        return sequence;
-      }
+    else 
+    {
+      final char[] c = getCharSubSequence(start,end);
+      if(end > length())
+        end = length();
 
-      return sequence.substring (start - 1, end);
+      return new String(c,0,end-start+1);
     }
   }
 
-  private char[] dst = null;
-
-  public char[] getCharSubSequence (int start, int end) 
+  protected void forceReset()
   {
-    if(dst == null || dst.length < end-start+1) 
+    dst = null;
+  }
+
+  public char[] getCharSubSequence(int start, int end) 
+  {
+    char[] this_dst = null;
+    if(end-start > 1000)
+      this_dst = dst;
+
+    int dst_length = 0;
+    if(this_dst != null)
+      dst_length = this_dst.length;
+
+    if(this_dst == null || dst_length < end-start+1 || end >= length()) 
     {
-      dst = new char[end-start+3];
-//    System.out.println("REALLOCATE");
+      if(end-start > 1000)
+      {
+        dst = new char[end-start+1];
+        this_dst = dst;
+      }
+      else
+        this_dst = new char[end-start+1];
+      
+      dst_length = this_dst.length;
+//    dst = new char[end-start+3];
+//    System.out.println("REALLOCATE "+ this_dst.length);
     }
-    sequence.getChars(start-1, end, dst, 0);
-    return dst;
+
+//  int packStart = Math.round( (float)start/2.f ) - 1;
+    int packStart = (start - 1) >> 1;
+    int packEnd   = Math.round( (float)end/2.f );
+
+    int count = 0;
+    byte currStorageUnit;
+    int index1;
+    int index2;
+
+    // skip first four bits
+    if(start % 2 == 0)
+    {
+      currStorageUnit = sequencePacked[packStart];
+      index1 = (int)(currStorageUnit & 0x000F);
+      this_dst[count] = bases[index1];
+      packStart++;
+      count++;
+    }
+
+//  System.out.println("start "+start+" end "+end+"  packStart "+packStart+" packEnd "+packEnd);
+    for(int i=packStart; i < packEnd; i++) 
+    {
+      currStorageUnit = sequencePacked[i];
+      index1 = (int)(currStorageUnit & 0x000F);
+      index2 = (int)( (currStorageUnit >> 4) & 0x000F);
+      this_dst[count] = bases[index2];
+      count++;
+
+      if(count < dst_length)
+        this_dst[count] = bases[index1]; 
+        
+      count++;
+    }
+
+    return this_dst;
+  }
+
+  public char[] getCharSequence()
+  {
+    char dst[] = new char[length()];
+    int packEnd = Math.round( (float)length()/2.f );
+    int count = 0;
+    byte currStorageUnit = 0;
+
+    for(int i=0; i < packEnd; i++)
+    {
+      currStorageUnit = sequencePacked[i];
+      int index1 = (int)(currStorageUnit & 0x000F);
+      currStorageUnit = (byte) (currStorageUnit>>4);
+      int index2 = (int)(currStorageUnit & 0x000F);
+
+      dst[count]   = bases[index2];
+      count++;
+
+      if(count < dst.length)
+        dst[count] = bases[index1];
+
+//    System.out.print(Packing.unpack(index2));
+//    if(count < dst.length)
+//      System.out.print(Packing.unpack(index1));
+
+      count++;
+    }
+//  System.out.println("\n"+currStorageUnit);
+
+    return dst;  
+  }
+
+  public char charAt(final int i)
+  {
+    final int packStart = (i-1) >> 1;
+    final byte currStorageUnit = sequencePacked[packStart];
+    final int index;
+
+    if(i % 2 == 0)
+      index = (int)(currStorageUnit & 0x000F);
+    else
+      index = (int)( (currStorageUnit >> 4) & 0x000F);
+  
+    return bases[index];
+  }
+
+  public void setFromChar(final char dna[])
+  { 
+    sequence_length = dna.length;
+    int numBytes = Math.round( (float)sequence_length/2.f );
+    sequencePacked = new byte[numBytes];
+    setFromChar(dna, 0, 0, sequence_length);
+    setCounts(dna);
+  }
+
+  /** 
+   *
+   *  Set this sequence to hold the bases in the given byte array.
+   *
+   **/
+  public void setFromChar(final char dna[], int offset, 
+                          final int bit_shift,
+                          final int new_sequence_length)
+  {
+    int offsetSize    = offset >> 1;
+    int bytePointer   = offset >> 1;
+    int symbolPointer = 0;
+    int numBytes      = Math.round( (float)dna.length/2.f );
+
+    // filled last unit if = 0
+    int filledLastUnit = dna.length & 0x0001;
+    byte currByte;
+    if(bit_shift != 0)
+    {
+//    System.out.println("Bit Shifty..."+offset);
+      currByte = sequencePacked[sequence_length>>1];
+      currByte = (byte)(currByte | Packing.pack(dna[symbolPointer]));
+      sequencePacked[bytePointer] = currByte;
+      bytePointer++;
+      symbolPointer++;
+      if(filledLastUnit == 0)
+        offsetSize += 1;
+    }
+    else 
+      currByte = 0; 
+
+    for(int i=bytePointer; i<numBytes+offsetSize; i++) 
+    {
+      // each byte consists of 4 bit nibbles
+      // process each separately
+      for(int j=0; j < 2; j++) 
+      {
+        currByte = (byte)(currByte<<4 | Packing.pack(dna[symbolPointer]));
+//      System.out.print(dna[symbolPointer]);
+        symbolPointer++;
+
+        if(j == 0 && symbolPointer == dna.length) 
+        {
+          currByte = (byte)(currByte<<4);
+          break;
+        }
+      }
+      sequencePacked[bytePointer] = currByte;
+//    System.out.println(" "+symbolPointer+" bytePointer " + bytePointer + " to " +
+//                          Integer.toString((int) currByte, 2) + " decimal " +
+//                          Integer.toString((int) currByte, 10) + " hex " +
+//                          Integer.toString((int) currByte, 16));
+      bytePointer++;
+      currByte = 0;
+    }
+
+    if(bases == null)
+      bases = Packing.bases;
+
+//  setCounts(dna);
+  }
+
+  protected void appendChar(final char dna[])
+  {
+    int newlength = sequence_length + dna.length;
+    int numBytes  = Math.round( (float)newlength/2.f );
+    if(numBytes > capacity())
+      expandCapacity(numBytes);
+
+//  System.out.println("capacity "+capacity()+" numBytes "+numBytes);
+    // filled last unit if = 0
+    int filledLastUnit = sequence_length & 0x0001;
+
+    setFromChar(dna, sequence_length, filledLastUnit, newlength);
+    sequence_length = newlength;
+  }
+
+  protected void setSequencePackingCapacity(final int n)
+  {
+    int numBytes  = Math.round( (float)n/2.f );
+    sequencePacked = new byte[numBytes];
   }
 
 
   /**
-   *  Set this sequence to hold the bases in the given String.
-   **/
-  public void setFromString (final String new_sequence) {
-    sequence = new_sequence;
-    setCounts ();
+  * This implements the expansion semantics of ensureCapacity but is
+  * unsynchronized for use internally by methods which are already
+  * synchronized.
+  *
+  * @see java.lang.StringBuffer#ensureCapacity(int)
+  */
+  private void expandCapacity(int minimumCapacity) 
+  {
+    int newCapacity = (sequencePacked.length + 1) * 2;
+    if(newCapacity < 0) 
+      newCapacity = Integer.MAX_VALUE;
+    else if(minimumCapacity > newCapacity) 
+      newCapacity = minimumCapacity;
+	
+//  System.out.println("EXPANDING.... "+newCapacity);
+    byte newValue[] = new byte[newCapacity];
+    System.arraycopy(sequencePacked, 0, newValue, 0, sequencePacked.length);
+    sequencePacked = newValue;
   }
+
+  /**
+  * Returns the current capacity of the String buffer. The capacity
+  * is the amount of storage available for newly inserted
+  * characters; beyond which an allocation will occur.
+  *
+  * @return  the current capacity of this string buffer.
+  */
+  private synchronized int capacity() 
+  {
+    return sequencePacked.length;
+  }
+
 
   /**
    *  Write this Sequence to the given stream.
    *  @param writer The stream to write to.
    **/
-  public abstract void writeToStream (final Writer writer)
+  public abstract void writeToStream(final Writer writer)
       throws IOException;
 
   /**
    *  Returns the length of the sequence in bases.
    **/
-  public int length () {
-    return sequence.length ();
+  public int length() 
+  {
+    return sequence_length;
   }
 
   /**
    *  Return the count of c bases in the whole sequence.
    **/
-  public int getCCount () {
+  public int getCCount()  
+  {
     return c_count;
   }
 
   /**
    *  Return the count of g bases in the whole sequence.
    **/
-  public int getGCount () {
+  public int getGCount()
+  {
     return g_count;
   }
 
   /**
    *  Return the count of a bases in the whole sequence.
    **/
-  public int getACount () {
+  public int getACount() 
+  {
     return a_count;
   }
 
   /**
    *  Return the count of t bases in the whole sequence.
    **/
-  public int getTCount () {
+  public int getTCount() 
+  {
     return t_count;
   }
 
   /**
    *  Return the count of non-g,c,t,a bases in the whole sequence.
    **/
-  public int getOtherCount () {
+  public int getOtherCount() 
+  {
     return
-      length () - (getCCount () + getACount () + getTCount () + getGCount ());
+      length() - (getCCount() + getACount() + getTCount() + getGCount());
   }
+
 
   /**
    *  Set the a_count, c_count, t_count and g_count variables.
    **/
-  private void setCounts () {
+  protected void setCounts()
+  {
+    final int packEnd = Math.round( (float)length()/2.f );
+    int count = 0;
+    byte currStorageUnit = 0;
+
+    for(int i=0; i < packEnd; i++)
+    {
+      currStorageUnit = sequencePacked[i];
+      int index1 = (int)(currStorageUnit & 0x000F);
+      int index2 = (int)( (currStorageUnit>>4) & 0x000F);
+
+      counter(bases[index2]);
+      count++;
+
+      if(count < length())
+        counter(bases[index1]);
+
+      count++;
+    }
+  }
+
+
+  /**
+   *  Set the a_count, c_count, t_count and g_count variables.
+   **/
+  private void setCounts(char[] sequence_chars) 
+  {
     a_count = c_count = t_count = g_count = 0;
 
-    final int sequence_length = sequence.length ();
+    for(int i = 0 ; i < length(); ++i) 
+      counter(sequence_chars[i]);
+  }
 
-    final char [] sequence_chars = new char [sequence_length];
-
-    sequence.getChars (0, sequence_length, sequence_chars, 0);
-
-    for (int i = 0 ; i < sequence_length ; ++i) {
-      switch (sequence_chars[i]) {
+  private void counter(char c)
+  {
+    switch(c)
+    {
       case 'a':
         ++a_count;
         break;
@@ -191,33 +448,7 @@ public abstract class StreamSequence
         break;
       default:
         break;
-      }
     }
   }
 
-  /**
-   *  Contains the sequence data for this object.  It will contain the bases
-   *  of the sequence with no spaces after the Feature constructor finishes.
-   **/
-  private String sequence;
-
-  /**
-   *  Count of the a bases in the sequence.
-   **/
-  private int a_count = 0;
-
-  /**
-   *  Count of the c bases in the sequence.
-   **/
-  private int c_count = 0;
-
-  /**
-   *  Count of the g bases in the sequence.
-   **/
-  private int g_count = 0;
-
-  /**
-   *  Count of the t bases in the sequence.
-   **/
-  private int t_count = 0;
 }

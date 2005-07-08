@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Sequence.java,v 1.2 2004-12-23 10:19:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Sequence.java,v 1.3 2005-07-08 15:11:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -32,7 +32,7 @@ import org.biojava.bio.symbol.IllegalSymbolException;
  *  Sequence interface
  *
  *  @author Kim Rutherford
- *  @version $Id: Sequence.java,v 1.2 2004-12-23 10:19:05 tjc Exp $
+ *  @version $Id: Sequence.java,v 1.3 2005-07-08 15:11:12 tjc Exp $
  *
  */
 
@@ -44,14 +44,15 @@ public interface Sequence
    *  @param end The end base of the range.
    **/
   String getSubSequence(int start, int end);
-
   char[] getCharSubSequence(int start, int end);
+
+  char charAt(int i);
 
   /**
    *  Set this sequence to hold the bases in the given String.
    *  @exception ReadOnlyException If this Sequence cannot be changed.
    **/
-  void setFromString(final String new_sequence)
+  void setFromChar(final char sequence[])
       throws ReadOnlyException, IllegalSymbolException;
 
   /**

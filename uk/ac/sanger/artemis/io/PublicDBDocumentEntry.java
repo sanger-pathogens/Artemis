@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.1 2004-06-09 09:50:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.2 2005-07-08 15:11:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -31,8 +31,6 @@ import java.util.Vector;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.BufferedReader;
-import java.io.Writer;
-import java.io.FileWriter;
 import java.io.File;
 import java.io.IOException;
 
@@ -42,7 +40,7 @@ import java.io.IOException;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.1 2004-06-09 09:50:03 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.2 2005-07-08 15:11:12 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry

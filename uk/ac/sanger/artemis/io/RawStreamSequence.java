@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RawStreamSequence.java,v 1.1 2004-06-09 09:50:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RawStreamSequence.java,v 1.2 2005-07-08 15:11:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.Vector;
  *  This is a subclass of StreamSequence containing raw sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: RawStreamSequence.java,v 1.1 2004-06-09 09:50:20 tjc Exp $
+ *  @version $Id: RawStreamSequence.java,v 1.2 2005-07-08 15:11:12 tjc Exp $
  **/
 
 public class RawStreamSequence extends StreamSequence 
@@ -91,7 +91,7 @@ public class RawStreamSequence extends StreamSequence
    **/
   public RawStreamSequence(final String sequence_string) 
   {
-    setFromString(sequence_string);
+    setFromChar(sequence_string.toCharArray());
   }
 
   /**
@@ -133,20 +133,20 @@ public class RawStreamSequence extends StreamSequence
     fasta_header_positions = new Vector();
     fasta_header_strings   = new Vector();
 
-    final int buffer_capacity = 50000;
+    final int buffer_capacity = 5000;
 
     // we buffer up the sequence bases then assign them to sequence once all
     // bases are read
-    StringBuffer sequence_buffer = new StringBuffer(buffer_capacity);
-    String line;
+    setSequencePackingCapacity(buffer_capacity);
 
+    String line;
+    int nbase = 0;
     while((line = in_stream.readLine()) !=null) 
     {
       if(line.startsWith(">")) 
       {
         final String header_string = line.substring(1);
-        final Integer header_position =
-          new Integer(sequence_buffer.length());
+        final Integer header_position = new Integer(nbase);
 
         fasta_header_strings.addElement(header_string);
         fasta_header_positions.addElement(header_position);
@@ -155,35 +155,12 @@ public class RawStreamSequence extends StreamSequence
         continue;
       }
 
-      line = line.toLowerCase();
-
-      for(int i = 0 ; i < line.length() ; ++i) 
-      {
-        final char this_char = line.charAt(i);
-
-        if(Character.isLetter(this_char) ||
-            this_char == '.' ||
-            this_char == '-' ||
-            this_char == '*') 
-          sequence_buffer.append(this_char);
-        else 
-        {
-          if(Character.isSpaceChar(this_char)) 
-          {
-            // just ignore it
-          } 
-          else 
-          {
-            throw new ReadFormatException("sequence file contains a " +
-                                           "character that is not a letter: " +
-                                           this_char,
-                                           in_stream.getLineNumber());
-          }
-        }
-      }
+      line = line.trim().toLowerCase();
+//    System.out.println(line);
+      appendChar(line.toCharArray());
+      nbase += line.length();
     }
 
-    setFromString(sequence_buffer.toString());
   }
 
   /**

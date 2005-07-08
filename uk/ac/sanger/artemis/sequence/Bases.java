@@ -4,7 +4,7 @@
  *
  * This file is part of Artemis
  *
- * Copyright (C) 1998,1999,2000  Genome Research Limited
+ * Copyright (C) 1998-2005  Genome Research Limited
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.12 2005-04-26 14:31:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.13 2005-07-08 15:11:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -45,7 +45,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.12 2005-04-26 14:31:44 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.13 2005-07-08 15:11:12 tjc Exp $ */
 
 public class Bases 
 {
@@ -125,7 +125,7 @@ public class Bases
    **/
   public String toString() 
   {
-    return embl_sequence.toString();
+    return embl_sequence.getSubSequence(1,getLength());
   }
 
   /**
@@ -146,9 +146,12 @@ public class Bases
     final String new_sequence =
       reverseComplement(getSequence().getSubSequence(1, getLength()));
 
-    try {
-      getSequence ().setFromString (new_sequence);
-    } catch (IllegalSymbolException e) {
+    try 
+    {
+      getSequence().setFromChar(new_sequence.toCharArray());
+    } 
+    catch (IllegalSymbolException e) 
+    {
       throw new Error ("internal error - unexpected exception: " + e);
     }
 
@@ -248,25 +251,25 @@ public class Bases
    *    translated as '.'
    *  @return The translated sequence in one letter abbreviated form.
    **/
-  public AminoAcidSequence getTranslation (final Range range,
-                                           final int direction,
-                                           final boolean unknown_is_x) {
-    // getSubSequence () will return a sequence going in the right direction
+  public AminoAcidSequence getTranslation(final Range range,
+                                          final int direction,
+                                          final boolean unknown_is_x) 
+  {
+    // getSubSequenceC() will return a sequence going in the right direction
     // so we don't have to worry.
-    final String sub_sequence = getSubSequence (range, direction);
-
-    return AminoAcidSequence.getTranslation (sub_sequence, unknown_is_x);
+    final char[] sub_sequence = getSubSequenceC(range, direction);
+    return AminoAcidSequence.getTranslation(sub_sequence, unknown_is_x);
   }
 
 
-  public AminoAcidSequence getSpacedTranslation (final Range range,
+  public AminoAcidSequence getSpacedTranslation(final Range range,
                                            final int direction,
-                                           final boolean unknown_is_x) {
-    // getSubSequence () will return a sequence going in the right direction
+                                           final boolean unknown_is_x) 
+  {
+    // getSubSequenceC() will return a sequence going in the right direction
     // so we don't have to worry.
-    final String sub_sequence = getSubSequence (range, direction);
-
-    return AminoAcidSequence.getSpacedTranslation (sub_sequence, unknown_is_x);
+    final char[] sub_sequence = getSubSequenceC(range, direction);
+    return AminoAcidSequence.getSpacedTranslation(sub_sequence, unknown_is_x);
   }
 
   /**
@@ -286,29 +289,27 @@ public class Bases
                                    final StringVector query_codons) {
     final Range real_range;
 
-    if (direction == FORWARD) {
+    if(direction == FORWARD)
       real_range = range;
-    } else {
-      real_range = complementRange (range);
-    }
+    else
+      real_range = complementRange(range);
 
     // guess the number of codons in getCount () bases - there are
     // query_codons.size() search codons in every 64 codons if G+C is 50%
     // and we have getCount()/3 codons to look at.
 
-    float at_content = (100 - getAverageGCPercent ()) / 100;
+    float at_content = (100 - getAverageGCPercent()) / 100;
 
     int array_start_size =
       (int) (range.getCount () *
              at_content * at_content * (2-at_content) *
              query_codons.size () / 64);
 
-    if (array_start_size < 20) {
+    if(array_start_size < 20)
       array_start_size = 20;
-    }
 
     // this array will be resized as necessary
-    int [] return_positions = new int [array_start_size];
+    int[] return_positions = new int[array_start_size];
 
     int current_return_array_index = 0;
 
@@ -318,7 +319,8 @@ public class Bases
     final int range_start_index = real_range.getStart () - 1;
     final int range_end_index = real_range.getEnd () - 1;
 
-    if (direction == FORWARD) {
+    if(direction == FORWARD) 
+    {
       for (int i = range_start_index ; i < range_end_index - 2 ; i += 3) {
         if (i < 0 || i >= sequence_string.length () - 2) {
           continue;
@@ -452,9 +454,12 @@ public class Bases
   /**
    *  Returns forward_stop_codon_cache after allocating it (if it is null).
    **/
-  private byte [] getForwardStopCodonCache () {
-    if (forward_stop_codon_cache == null) {
-      forward_stop_codon_cache = new byte [getLength ()];
+  private byte[] getForwardStopCodonCache() 
+  {
+    if (forward_stop_codon_cache == null) 
+    { 
+      final int nbytes = getLength() >> 1 >> 1;
+      forward_stop_codon_cache = new byte[nbytes];
     }
 
     return forward_stop_codon_cache;
@@ -463,13 +468,17 @@ public class Bases
   /**
    *  Returns reverse_stop_codon_cache after allocating it (if it is null).
    **/
-  private byte [] getReverseStopCodonCache () {
-    if (reverse_stop_codon_cache == null) {
-      reverse_stop_codon_cache = new byte [getLength ()];
+  private byte[] getReverseStopCodonCache() 
+  {
+    if (reverse_stop_codon_cache == null) 
+    {
+      final int nbytes = (getLength() >> 1 >> 1) + 1;
+      reverse_stop_codon_cache = new byte[nbytes];
     }
 
     return reverse_stop_codon_cache;
   }
+
 
   /**
    *  Clear stop codon cache (forward and reverse).
@@ -480,6 +489,7 @@ public class Bases
     reverse_stop_codon_cache = null;
   }
  
+
   /**
    *  Return an array containing the positions of the stop codons.  Only those
    *  codons that are in the same frame as the first base of the range are
@@ -491,7 +501,7 @@ public class Bases
    *  @return An array containing the positions of the first base of the stop
    *    codons.  This array is padded with zeros at the end.
    **/
-  public int[] getStopCodons(final Range range, final int direction) 
+  public int[] getStopCodons(final Range range, final int direction)
   {
     final Range real_range;
 
@@ -531,132 +541,324 @@ public class Bases
     }
     if(range_end_index > sequence_length)
       range_end_index = sequence_length;
- 
+
     final char sequence_string[] =
       getSequence().getCharSubSequence(range_start_index, range_end_index);
-//  final String sequence_string =
-//      getSequence().getSubSequence(range_start_index, range_end_index);
 
     range_start_index--;
     range_end_index--;
 
-    if(direction == FORWARD) 
+    // whether a codon is a stp codon or not is cached in
+    // 2 bit chuncks (i.e. 4 per byte)
+    int ncurrent_byte;
+    int bit_position;
+    int nframe;
+    byte bitty;
+
+    if(direction == FORWARD)
     {
       final byte[] forward_stop_codon_flags = getForwardStopCodonCache();
       for(int i = range_start_index; i < range_end_index - 2; i += 3)
       {
-        if(i < 0 || i >= sequence_length - 2) 
+        if(i < 0 || i >= sequence_length - 2)
           continue;
 
-        final boolean is_stop_codon;
+        nframe = (i-range_start_index) % 3;
+        ncurrent_byte = i >> 1 >> 1;
+        bit_position  = i % 4;
 
-        if(forward_stop_codon_flags[i] == 0) 
+        // determine if codon type is cached or not
+        bitty = (byte) ((forward_stop_codon_flags[ncurrent_byte]
+                                >> (2*bit_position) ) & 0x0003);
+
+        if(bitty == 0)
         {
           // not cached yet
-          if(isStopCodon (sequence_string, i-range_start_index, direction)) 
+          if(isStopCodon(sequence_string[i-range_start_index],
+                         sequence_string[i-range_start_index+1],
+                         sequence_string[i-range_start_index+2]))
           {
-            forward_stop_codon_flags[i] = 2;
-            is_stop_codon = true;
-          } 
-          else 
-          {
-            forward_stop_codon_flags[i] = 1;
-            is_stop_codon = false;
+            forward_stop_codon_flags[ncurrent_byte] =
+                    (byte)(forward_stop_codon_flags[ncurrent_byte] 
+                           | (0x0002 << 2*bit_position));
           }
-        } 
-        else 
-        {
-          // used the cached value
-          if(forward_stop_codon_flags[i] == 2)
-            is_stop_codon = true;
           else
-            is_stop_codon = false;
+          {
+            forward_stop_codon_flags[ncurrent_byte] =
+                    (byte)(forward_stop_codon_flags[ncurrent_byte] 
+                           | (0x0001 << 2*bit_position));
+            continue;
+          }
+        }
+        else if(bitty == 1)
+          continue;
+
+        // if we reach here this is a stop codon
+        if(current_return_array_index == return_positions.length)
+        {
+          // first reallocate the array
+          final int[] new_array =
+            new int[return_positions.length * 3 / 2 + 1];
+
+          System.arraycopy(return_positions, 0,
+                           new_array, 0,
+                           return_positions.length);
+          return_positions = new_array;
         }
 
-        if(is_stop_codon)
-        {
-          if(current_return_array_index == return_positions.length) 
-          {
-            // first reallocate the array
-            final int[] new_array =
-              new int[return_positions.length * 3 / 2 + 1];
-
-            System.arraycopy(return_positions, 0,
-                             new_array, 0,
-                             return_positions.length);
-            return_positions = new_array;
-          }
-
-
-          // negative position marks an illegal codon
-          if(is_stop_codon)
-            return_positions[current_return_array_index] = i + 1;
-          else
-            return_positions[current_return_array_index] = -(i + 1);
-          ++current_return_array_index;
-        }
+        return_positions[current_return_array_index] = i + 1;
+        ++current_return_array_index;
       }
-    } 
+    }
     else
     {
       final byte[] reverse_stop_codon_flags = getReverseStopCodonCache();
-      for (int i = range_end_index ; i > range_start_index + 2 ; i -= 3) 
+      for (int i = range_end_index ; i > range_start_index + 2 ; i -= 3)
       {
         if(i < 2 || i >= sequence_length)
           continue;
 
-        final boolean is_stop_codon;
+        nframe = (range_end_index-i) % 3;
+        ncurrent_byte = i >> 1 >> 1;
+        bit_position  = i % 4;
+        bitty = (byte) ((reverse_stop_codon_flags[ncurrent_byte]
+                                >> (2*bit_position) ) & 0x0003);
 
-        if(reverse_stop_codon_flags[i] == 0) 
+        if(bitty == 0)
         {
-          if(isStopCodon(sequence_string, i-range_start_index, direction)) 
+          if(isStopCodon(complement(sequence_string[i-range_start_index]),
+                         complement(sequence_string[i-range_start_index-1]),
+                         complement(sequence_string[i-range_start_index-2])))
           {
-            reverse_stop_codon_flags[i] = 2;
-            is_stop_codon = true;
-          } 
-          else 
-          {
-            reverse_stop_codon_flags[i] = 1;
-            is_stop_codon = false;
+            reverse_stop_codon_flags[ncurrent_byte] =
+                    (byte)(reverse_stop_codon_flags[ncurrent_byte] 
+                           | (0x0002 << 2*bit_position));
           }
-        } 
-        else 
-        {
-          if(reverse_stop_codon_flags[i] == 2) 
-            is_stop_codon = true;
           else
-            is_stop_codon = false;
-        }
-
-        if(is_stop_codon) 
-        {
-          if(current_return_array_index == return_positions.length) 
           {
-            // first reallocate the array
-            final int[] new_array =
-              new int[return_positions.length * 3 / 2 + 1];
-
-            System.arraycopy(return_positions, 0,
-                             new_array, 0,
-                             return_positions.length);
-            return_positions = new_array;
+            reverse_stop_codon_flags[ncurrent_byte] =
+                    (byte)(reverse_stop_codon_flags[ncurrent_byte]
+                           | (0x0001 << 2*bit_position));
+            continue;
           }
-
-          // return the complemented base position
-          if(is_stop_codon) 
-            return_positions[current_return_array_index] =
-              sequence_length - i;
-          else 
-            return_positions[current_return_array_index] =
-              - (sequence_length - i);
-          
-          ++current_return_array_index;
         }
+        else if(bitty == 1)
+          continue;
+
+        // if we reach here this is a stop codon
+        if(current_return_array_index == return_positions.length)
+        {
+          // first reallocate the array
+          final int[] new_array =
+            new int[return_positions.length * 3 / 2 + 1];
+
+          System.arraycopy(return_positions, 0,
+                           new_array, 0,
+                           return_positions.length);
+          return_positions = new_array;
+        }
+
+        return_positions[current_return_array_index] =
+              sequence_length - i;
+
+        ++current_return_array_index;
       }
     }
 
     return return_positions;
   }
+
+  /**
+   *  Return an array containing the positions of the stop codons.  Only those
+   *  codons that are in the same frame as the first base of the range are
+   *  returned.
+   *  @param range The inclusive range of bases to get the stop codons from.
+   *  @param direction The direction of the translation.  REVERSE means
+   *    translate the reverse complement bases (the positions in the range
+   *    argument are complemented first.)
+   *  @return An array containing the positions of the first base of the stop
+   *    codons.  This array is padded with zeros at the end.
+   **/
+  protected int[][] getStopCodons2(final Range range, final int direction) 
+  {
+    final Range real_range;
+
+    if(direction == FORWARD)
+      real_range = range;
+    else
+      real_range = complementRange (range);
+
+    // guess the number of stop codons in getCount() bases - there are 3
+    // stop codons in every 64 codons if G+C is 50% and we have getCount()/3
+    // codons to look at.
+
+    float at_content = (100 - getAverageGCPercent()) / 100;
+
+    int array_start_size =
+      (int)(range.getCount() *
+             at_content * at_content * (2-at_content) * 3 / 64);
+
+    if(array_start_size < 20)
+      array_start_size = 20;
+    // this array will be resized as necessary
+    int[][] return_positions = new int[3][array_start_size];
+
+    int[] current_return_array_index = new int[3];
+    current_return_array_index[0] = 0;
+    current_return_array_index[1] = 0;
+    current_return_array_index[2] = 0;
+
+    int range_start_index = real_range.getStart();
+    int range_end_index   = real_range.getEnd();
+
+    final int sequence_length = getLength();
+
+    if(range_start_index < 1)
+    {
+      if(direction == FORWARD)
+        range_start_index = 3 + (range_start_index % 3);
+      else
+        range_start_index =  1;
+    }
+    if(range_end_index > sequence_length)
+      range_end_index = sequence_length;
+ 
+    range_start_index--;
+    range_end_index--;
+    char[] sequence_string = null;
+
+    // whether a codon is a stp codon or not is cached in
+    // 2 bit chuncks (i.e. 4 per byte)
+    int ncurrent_byte;
+    int bit_position;
+    int nframe;
+    byte bitty;
+
+    if(direction == FORWARD) 
+    {
+      final byte[] forward_stop_codon_flags = getForwardStopCodonCache();
+
+      for(int i = range_start_index; i < range_end_index - 2; i += 1)
+      {
+        if(i < 0 || i >= sequence_length - 2) 
+          continue;
+
+        nframe = (i-range_start_index) % 3;
+        ncurrent_byte = i >> 1 >> 1;
+        bit_position  = i % 4;
+
+        // determine if codon type is cached or not
+        bitty = (byte) ((forward_stop_codon_flags[ncurrent_byte]
+                                >> (2*bit_position) ) & 0x0003);
+        
+        if(bitty == 0)  // not cached yet
+        {
+          if(sequence_string == null)
+            sequence_string = getSequence().getCharSubSequence(range_start_index+1,
+                                                               range_end_index+1);
+
+          if(isStopCodon(sequence_string[i-range_start_index],
+                         sequence_string[i-range_start_index+1],
+                         sequence_string[i-range_start_index+2]))
+          {
+            forward_stop_codon_flags[ncurrent_byte] =
+                    (byte)(forward_stop_codon_flags[ncurrent_byte] 
+                           | (0x0002 << 2*bit_position));
+          } 
+          else 
+          {
+            forward_stop_codon_flags[ncurrent_byte] =
+                    (byte)(forward_stop_codon_flags[ncurrent_byte] 
+                           | (0x0001 << 2*bit_position));
+            continue;
+          }
+        } 
+        else if(bitty == 1)  // not a stop codon
+          continue;
+
+        // if we reach here this is a stop codon
+
+        if(current_return_array_index[nframe] == return_positions[nframe].length) 
+        {
+          // first reallocate the array
+          final int[][] new_array =
+            new int[3][return_positions[nframe].length * 3 / 2 + 1];
+
+          for(int j=0; j<3; j++)
+            System.arraycopy(return_positions[j], 0,
+                             new_array[j], 0,
+                             return_positions[j].length);
+          return_positions = new_array;
+        }
+
+        return_positions[nframe][current_return_array_index[nframe]] = i + 1;
+        ++current_return_array_index[nframe];
+      }
+    } 
+    else
+    {
+      final byte[] reverse_stop_codon_flags = getReverseStopCodonCache();
+      for (int i = range_end_index ; i > range_start_index + 2 ; i -= 1) 
+      {
+        if(i < 2 || i >= sequence_length)
+          continue;
+
+        nframe = (range_end_index-i) % 3;
+        ncurrent_byte = i >> 1 >> 1;
+        bit_position  = i % 4;
+        bitty = (byte) ((reverse_stop_codon_flags[ncurrent_byte]
+                                >> (2*bit_position) ) & 0x0003);
+
+        if(bitty == 0)    //reverse_stop_codon_flags[i] == 0) 
+        {
+          if(sequence_string == null)
+            sequence_string = getSequence().getCharSubSequence(range_start_index+1,
+                                                               range_end_index+1);
+
+          if(isStopCodon(complement(sequence_string[i-range_start_index]),
+                         complement(sequence_string[i-range_start_index-1]),
+                         complement(sequence_string[i-range_start_index-2]))) 
+          {
+            reverse_stop_codon_flags[ncurrent_byte] =
+                    (byte)(reverse_stop_codon_flags[ncurrent_byte] 
+                           | (0x0002 << 2*bit_position));
+          } 
+          else 
+          {
+            reverse_stop_codon_flags[ncurrent_byte] =
+                    (byte)(reverse_stop_codon_flags[ncurrent_byte]
+                           | (0x0001 << 2*bit_position));
+            continue;
+          }
+        } 
+        else if(bitty == 1)  // not a stop codon
+          continue;
+
+        // if we reach here then this is a stop codon
+        if(current_return_array_index[nframe] == return_positions[nframe].length) 
+        {
+          // first reallocate the array
+          final int[][] new_array =
+            new int[3][return_positions[nframe].length * 3 / 2 + 1];
+
+          for(int j=0; j<3; j++)
+            System.arraycopy(return_positions[j], 0,
+                             new_array[j], 0,
+                             return_positions[j].length);
+
+          return_positions = new_array;
+        }
+
+        // return the complemented base position
+          return_positions[nframe][current_return_array_index[nframe]] =
+            sequence_length - i;
+        ++current_return_array_index[nframe];
+      }
+    }
+
+    return return_positions;
+  }
+
 
   /**
    *  Return the base at the given position.
@@ -670,7 +872,7 @@ public class Bases
     if(position < 1) 
       throw new OutOfRangeException(position + " < " + 1);
     
-    return toString().charAt(position - 1);
+    return getSequence().charAt(position);
   }
 
   /**
@@ -685,31 +887,28 @@ public class Bases
   public String getSubSequence (final Range range, final int direction) {
     final Range real_range;
 
-    if (direction == FORWARD) {
+    if(direction == FORWARD) 
       real_range = range;
-    } else {
+    else 
       real_range = complementRange (range);
-    }
-
+    
     // we need to make sure that we pass in-range coordinates to
     // Sequence.getSubSequence()
     final int sub_seq_start_index;
     final int sub_seq_end_index;
 
-    if (real_range.getStart () < 1) {
+    if(real_range.getStart () < 1)
       sub_seq_start_index = 1;
-    } else {
+    else
       sub_seq_start_index = real_range.getStart ();
-    }
 
-    if (real_range.getEnd () > getLength ()) {
+    if(real_range.getEnd () > getLength ()) 
       sub_seq_end_index = getLength ();
-    } else {
+    else
       sub_seq_end_index = real_range.getEnd ();
-    }
 
-    String sub_sequence =
-      getSequence ().getSubSequence (sub_seq_start_index, sub_seq_end_index);
+    String sub_sequence = 
+      getSequence().getSubSequence(sub_seq_start_index, sub_seq_end_index);  
 
     // sanity checks - if the user asks for more bases than we
     // have, we return the symbol "@" for the out-of-range bases.
@@ -740,6 +939,64 @@ public class Bases
     } else {
       return reverseComplement (sub_sequence);
     }
+  }
+
+  public char[] getSubSequenceC(final Range range, final int direction)
+  {
+    final Range real_range;
+
+    if(direction == FORWARD)  
+      real_range = range;
+    else   
+      real_range = complementRange (range);
+    
+    // we need to make sure that we pass in-range coordinates to
+    // Sequence.getSubSequence()
+    final int sub_seq_start_index;
+    final int sub_seq_end_index;
+
+    if(real_range.getStart () < 1) 
+      sub_seq_start_index = 1;
+    else 
+      sub_seq_start_index = real_range.getStart ();
+
+    if(real_range.getEnd () > getLength ()) 
+      sub_seq_end_index = getLength ();
+    else
+      sub_seq_end_index = real_range.getEnd ();
+
+    char[] sub_sequence = 
+      getSequence().getCharSubSequence(sub_seq_start_index, sub_seq_end_index);
+
+    if(real_range.getStart() < 1) 
+    {
+      final int dummy_base_count = 1 - real_range.getStart();
+      final char[] dummy_bases = new char[dummy_base_count+sub_sequence.length];
+
+      for(int i = 0; i < dummy_base_count; ++i)
+        dummy_bases[i] = '@';
+
+      System.arraycopy(sub_sequence, 0, dummy_bases, dummy_base_count, sub_sequence.length);
+      sub_sequence = dummy_bases;
+    }
+
+    if(real_range.getEnd() > getLength()) 
+    {
+      final int dummy_base_count = real_range.getEnd() - getLength();
+      final char[] dummy_bases = new char[dummy_base_count+sub_sequence.length];
+
+      for(int i = sub_sequence.length; i < dummy_bases.length; ++i)
+        dummy_bases[i] = '@';
+
+      System.arraycopy(sub_sequence, 0, dummy_bases, 0, sub_sequence.length);
+      sub_sequence = dummy_bases;
+    }
+
+
+    if(FORWARD == direction)
+      return sub_sequence;
+    else
+      return reverseComplement(sub_sequence);
   }
 
   /**
@@ -777,7 +1034,7 @@ public class Bases
                                      embl_sequence.length ());
 
     try {
-      embl_sequence.setFromString (new_sequence);
+      embl_sequence.setFromChar(new_sequence.toCharArray());
     } catch (IllegalSymbolException e) {
       throw new Error ("internal error - unexpected exception: " + e);
     } 
@@ -831,7 +1088,7 @@ public class Bases
       real_bases +
       getSequence ().getSubSequence (real_position, getLength ());
 
-    getSequence ().setFromString (new_sequence);
+    getSequence ().setFromChar(new_sequence.toCharArray());
 
     final SequenceChangeEvent event =
       new SequenceChangeEvent (this,
@@ -971,6 +1228,26 @@ public class Bases
   }
 
   /**
+   *  Return a char[] containing the reverse complement of the argument
+   *  String.  For example an argument of "aatc" will result in "gatt".
+   **/
+  public static char[] reverseComplement (final char[] sequence_char) 
+  {
+    final int length = sequence_char.length;
+    final char[] return_sequence = new char[length];
+    int j = 0;
+
+    for(int i = length - 1 ; i >= 0 ; --i) 
+    {
+      return_sequence[j] = complement(sequence_char[i]);
+      j++;
+    }
+
+    return return_sequence;
+  }
+
+
+  /**
    *  Return a String containing the complement of the argument String.  For
    *  example an argument of "aatc" will result in "ttag".
    **/
@@ -1020,7 +1297,8 @@ public class Bases
   /**
    *  Return the Sequence object that was passed to the constructor.
    **/
-  public Sequence getSequence () {
+  public Sequence getSequence () 
+  {
     return embl_sequence;
   }
 
@@ -1032,83 +1310,15 @@ public class Bases
    *  complement of those three bases is a stop codon.
    *  Codons that contain an X are considered to be stop codons.
    **/
-  private static boolean isStopCodon (final String sequence_string,
-                                      final int start_index,
-                                      final int direction) {
-    final char translation;
-
-    if (direction == FORWARD) {
-      final char first_letter = sequence_string.charAt (start_index);
-      final char second_letter = sequence_string.charAt (start_index + 1);
-      final char third_letter = sequence_string.charAt (start_index + 2);
-
-      if (first_letter == 'x' || second_letter == 'x' || third_letter == 'x') {
-        // codons that contain an X are considered to be stop codons.
-        return true;
-      }
-
-      translation = AminoAcidSequence.getCodonTranslation (first_letter,
-                                                           second_letter,
-                                                           third_letter);
-    } else {
-      final char first_letter =
-        complement (sequence_string.charAt (start_index - 2));
-      final char second_letter =
-        complement (sequence_string.charAt (start_index - 1));
-      final char third_letter =
-        complement (sequence_string.charAt (start_index));
-
-      if (first_letter == 'x' || second_letter == 'x' || third_letter == 'x') {
-        // codons that contain an X are considered to be stop codons.
-        return true;
-      }
-
-      translation = AminoAcidSequence.getCodonTranslation (third_letter,
-                                                           second_letter,
-                                                           first_letter);
-    }
-
-    if (translation == '+' || translation == '*' || translation == '#') {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  private static boolean isStopCodon(final char[] sequence,
-                                     final int start_index,
-                                     final int direction) 
+  private static boolean isStopCodon(char first_letter, char second_letter, char third_letter)
   {
-    final char translation;
+    // codons that contain an X are considered to be stop codons.
+    if(first_letter == 'x' || second_letter == 'x' || third_letter == 'x')
+      return true;
 
-    if(direction == FORWARD)
-    {
-      final char first_letter  = sequence[start_index];
-      final char second_letter = sequence[start_index + 1];
-      final char third_letter  = sequence[start_index + 2];
-
-      // codons that contain an X are considered to be stop codons.
-      if(first_letter == 'x' || second_letter == 'x' || third_letter == 'x')
-        return true;
-
-      translation = AminoAcidSequence.getCodonTranslation(first_letter,
-                                                          second_letter,
-                                                          third_letter);
-    } 
-    else 
-    {
-      final char first_letter  = complement(sequence[start_index - 2]);
-      final char second_letter = complement(sequence[start_index - 1]);
-      final char third_letter  = complement(sequence[start_index]);
-
-      // codons that contain an X are considered to be stop codons.
-      if (first_letter == 'x' || second_letter == 'x' || third_letter == 'x')
-        return true;
-
-      translation = AminoAcidSequence.getCodonTranslation(third_letter,
-                                                          second_letter,
-                                                          first_letter);
-    }
+    final char translation = AminoAcidSequence.getCodonTranslation(first_letter,
+                                                                  second_letter,
+                                                                  third_letter);
 
     if(translation == '+' || translation == '*' || translation == '#') 
       return true;

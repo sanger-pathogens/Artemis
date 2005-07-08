@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GenbankStreamSequence.java,v 1.2 2004-09-17 11:29:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GenbankStreamSequence.java,v 1.3 2005-07-08 15:11:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import java.io.Writer;
  *  This is a subclass of StreamSequence containing GENBANK format sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: GenbankStreamSequence.java,v 1.2 2004-09-17 11:29:01 tjc Exp $
+ *  @version $Id: GenbankStreamSequence.java,v 1.3 2005-07-08 15:11:12 tjc Exp $
  **/
 
 public class GenbankStreamSequence extends StreamSequence
@@ -62,7 +62,7 @@ public class GenbankStreamSequence extends StreamSequence
    **/
   public GenbankStreamSequence(final Sequence sequence) 
   {
-    setFromString(sequence.toString());
+    setFromChar(((GenbankStreamSequence)sequence).getCharSequence());
   }
 
   /**
@@ -73,7 +73,7 @@ public class GenbankStreamSequence extends StreamSequence
    **/
   public GenbankStreamSequence(final String sequence_string) 
   {
-    setFromString(sequence_string);
+    setFromChar(sequence_string.toCharArray());
   }
 
   /**
@@ -152,9 +152,9 @@ public class GenbankStreamSequence extends StreamSequence
 
     // we buffer up the sequence bases then assign them to sequence once all
     // bases are read
-    StringBuffer sequence_buffer = new StringBuffer(buffer_capacity);
     String line;
-
+    setSequencePackingCapacity(buffer_capacity);
+    final StringBuffer this_line_sequence_buffer = new StringBuffer(100);
     while((line = in_stream.readLine()) != null) 
     {
       if(line.equals("//")) 
@@ -167,7 +167,8 @@ public class GenbankStreamSequence extends StreamSequence
       // set to true when we see a base - numbers and spaces are allowed before
       // the first base is seen in the line
       boolean seen_base = false;
-  
+      this_line_sequence_buffer.setLength(0);
+
       for(int i = 0 ; i < line.length() ; ++i) 
       {
         final char this_char = line.charAt(i);
@@ -188,7 +189,7 @@ public class GenbankStreamSequence extends StreamSequence
            this_char == '*') 
         {
           seen_base = true;
-          sequence_buffer.append(this_char);
+          this_line_sequence_buffer.append(this_char);
         } 
         else
         {
@@ -202,9 +203,9 @@ public class GenbankStreamSequence extends StreamSequence
                                            in_stream.getLineNumber());
         }
       }
+      appendChar(this_line_sequence_buffer.toString().toCharArray());
     }
     
-    setFromString(sequence_buffer.toString());
   }
 
   /**
@@ -215,7 +216,6 @@ public class GenbankStreamSequence extends StreamSequence
       throws IOException 
   {
     final StringBuffer line_buffer = new StringBuffer(90);
-    final String sequence = toString();
 
     // first count A,C,G,T and other bases
 
@@ -242,13 +242,13 @@ public class GenbankStreamSequence extends StreamSequence
   
     writer.write(line_buffer + "\nORIGIN\n");
 
-    for(int i = 0 ; i < sequence.length() ; i += SEQUENCE_LINE_BASE_COUNT) 
+    for(int i = 0 ; i < length() ; i += SEQUENCE_LINE_BASE_COUNT) 
     {
       // get the bases in chunks of at most 60
       final int this_line_length;
 
-      if(sequence.length() - i < SEQUENCE_LINE_BASE_COUNT)
-        this_line_length = sequence.length() - i;
+      if(length() - i < SEQUENCE_LINE_BASE_COUNT)
+        this_line_length = length() - i;
       else 
         this_line_length = SEQUENCE_LINE_BASE_COUNT;
 
@@ -281,8 +281,10 @@ public class GenbankStreamSequence extends StreamSequence
         else 
           this_block_length = BLOCK_LENGTH;
 
-        line_buffer.append(sequence.substring(i + j,
-                                              i + j + this_block_length));
+        line_buffer.append(getCharSubSequence(i + j + 1, i + j + this_block_length));
+
+//sequence.substring(i + j,
+//                                            i + j + this_block_length));
       }
    
       line_buffer.append("\n");

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/EmblStreamSequence.java,v 1.2 2004-12-08 11:13:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/EmblStreamSequence.java,v 1.3 2005-07-08 15:11:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import java.io.Writer;
  *  This is a subclass of StreamSequence containing EMBL sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: EmblStreamSequence.java,v 1.2 2004-12-08 11:13:34 tjc Exp $
+ *  @version $Id: EmblStreamSequence.java,v 1.3 2005-07-08 15:11:12 tjc Exp $
  **/
 
 public class EmblStreamSequence extends StreamSequence 
@@ -62,7 +62,7 @@ public class EmblStreamSequence extends StreamSequence
    **/
   public EmblStreamSequence(final Sequence sequence) 
   {
-    setFromString(sequence.toString());
+    setFromChar(((EmblStreamSequence)sequence).getCharSequence());
   }
 
   /**
@@ -73,7 +73,7 @@ public class EmblStreamSequence extends StreamSequence
    **/
   public EmblStreamSequence(final String sequence_string)
   {
-    setFromString(sequence_string);
+    setFromChar(sequence_string.toCharArray());
   }
 
   /**
@@ -99,7 +99,6 @@ public class EmblStreamSequence extends StreamSequence
       throws IOException 
   {
     final String seq_header_line = in_stream.readLine();
-
     setHeader(seq_header_line);
   }
 
@@ -128,6 +127,8 @@ public class EmblStreamSequence extends StreamSequence
   protected void readSequence(final LinePushBackReader in_stream)
       throws IOException 
   {
+
+//  long startT = System.currentTimeMillis();
     final StringBuffer this_line_sequence_buffer = new StringBuffer(81);
     final String seq_header_line = getHeader();
     final int header_base_count  = getHeaderBaseCount(seq_header_line);
@@ -147,9 +148,11 @@ public class EmblStreamSequence extends StreamSequence
 
     // we buffer up the sequence bases then assign them to sequence once all
     // bases are read
-    StringBuffer sequence_buffer = new StringBuffer(buffer_capacity);
+    setSequencePackingCapacity(buffer_capacity);
 
     String line;
+    String this_line_sequence;
+    char[] char_array = new char[60];
 
     while((line = in_stream.readLine()) != null) 
     {
@@ -172,32 +175,35 @@ public class EmblStreamSequence extends StreamSequence
       // separating them). The first column starts at index 5 of the input
       // line.
 
-      final char [] this_line_char_array = line.toCharArray();
-
+      int nbase = 0;
       for(int i = 0 ; i < 6 ; ++i) 
       {
         final int first_base = 5 + i * 11;
-
-        this_line_sequence_buffer.append(this_line_char_array,
-                                         first_base,
-                                         10);
+        for(int j=first_base; j<first_base+10; j++)
+        {
+          char c = line.charAt(j);
+          char_array[nbase] = c; 
+          nbase++;
+        }
       }
 
-      // add the sequence from this line to the sequence we already have.
-
-      String this_line_sequence =
-        this_line_sequence_buffer.toString();
-
-      if(this_line_char_array[59] == ' ') 
+      if(Character.isSpaceChar(char_array[59]))
       {
-        // call trim() because this line(the last line) ends in spaces.
-        sequence_buffer.append(this_line_sequence.trim().toLowerCase());
-      } 
-      else 
-        sequence_buffer.append(this_line_sequence.toLowerCase());
+        int j = 0;
+        for(j=0; j<60; j++)
+        {
+          if(Character.isSpaceChar(char_array[j]))
+            break;
+        }
+        appendChar((new String(char_array,0,j)).toCharArray());
+      }
+      else
+        appendChar(char_array);
     }
 
-    setFromString(sequence_buffer.toString());
+    setCounts();
+//  long endT = System.currentTimeMillis() - startT;
+//  System.out.println(endT);
   }
 
   /**
@@ -218,7 +224,7 @@ public class EmblStreamSequence extends StreamSequence
       writer.write(header_line);
 
     writer.write("SQ   Sequence " +
-                  sequence.length() + " BP; " +
+                  length()    + " BP; " +
                   getACount() + " A; " +
                   getCCount() + " C; " +
                   getGCount() + " G; " +
@@ -226,22 +232,20 @@ public class EmblStreamSequence extends StreamSequence
                   getOtherCount() + " other;\n");
 
     int line_length_so_far = 0;
-
-    for(int i = 0 ; i < sequence.length() ; i += SEQUENCE_LINE_BASE_COUNT) 
+    final int BLOCK_LENGTH = 10;
+ 
+    for(int i = 0 ; i < length() ; i += SEQUENCE_LINE_BASE_COUNT) 
     {
       // get the bases in chunks of at most 60
       final int this_line_length;
 
-      if(sequence.length() - i < SEQUENCE_LINE_BASE_COUNT) 
-        this_line_length = sequence.length() - i;
+      if(length() - i < SEQUENCE_LINE_BASE_COUNT) 
+        this_line_length = length() - i;
       else 
         this_line_length = SEQUENCE_LINE_BASE_COUNT;
 
       writer.write("    ");
       line_length_so_far += 4;
-
-      final int BLOCK_LENGTH = 10;
-      final int BLOCK_COUNT  = 6;
 
       for(int j = 0 ; j < this_line_length ; j += BLOCK_LENGTH)
       {
@@ -249,12 +253,14 @@ public class EmblStreamSequence extends StreamSequence
         writer.write(' ');
 
         if(this_line_length - j < BLOCK_LENGTH) 
+        {
           this_block_length = this_line_length - j;
+          forceReset();
+        }
         else 
           this_block_length = BLOCK_LENGTH;
 
-        writer.write(sequence.substring(i + j, i + j + this_block_length));
-
+        writer.write(getCharSubSequence(i + j + 1, i + j + this_block_length));
         line_length_so_far += this_block_length + 1;
       }
 

@@ -31,7 +31,12 @@ public class BioJavaSequence implements Sequence
     {
 	this.symbols = symbols;
     }
-    
+  
+    public char charAt(int i)
+    {
+      return ' ';
+    }
+   
     public int length()
     {
 	return symbols.length();
@@ -101,27 +106,22 @@ public class BioJavaSequence implements Sequence
 
   public char[] getCharSubSequence (int start, int end)
   {
-//  char[] dst = new char[end-start+1];
-//  StringBuffer buff = new StringBuffer(getSubSequence(start,end));
-//  
-//  System.out.println("CHAR ARRAY:"+dst.length+" STRING:"+buff.length()+" START:"+start+" END:"+end);
-//  buff.getChars(start-1, end, dst, 0);
     return getSubSequence(start,end).toCharArray();
   }
 
 
-    public void setFromString(String seqString)
+  public void setFromChar(final char[] seqString)
         throws ReadOnlyException, IllegalSymbolException
-    {
-      Edit ed = new Edit(1, length (), DNATools.createDNA(seqString));
-      try {
-        symbols.edit(ed);
-      } catch (ChangeVetoException e) {
-        throw new ReadOnlyException ("cannot set sequence - readonly");
-      } catch (IllegalAlphabetException e) {
-        throw new Error ("internal error - unexpected exception: " + e);
-      }
+  {
+    Edit ed = new Edit(1, length (), DNATools.createDNA(new String(seqString)));
+    try {
+      symbols.edit(ed);
+    } catch (ChangeVetoException e) {
+      throw new ReadOnlyException ("cannot set sequence - readonly");
+    } catch (IllegalAlphabetException e) {
+      throw new Error ("internal error - unexpected exception: " + e);
     }
+  }
 
     private void countSymbols()
     {

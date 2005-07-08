@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.28 2005-06-23 14:38:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.29 2005-07-08 15:11:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JComponent;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.28 2005-06-23 14:38:19 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.29 2005-07-08 15:11:12 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -1818,12 +1818,13 @@ public class FeatureDisplay extends EntryGroupPanel
       if(fwd && start_base < 1)
         start_base = 1;
  
-      stop_codons = new int [][] 
-      {
-        strand.getStopCodons(newRange(start_base, end_base)),
-        strand.getStopCodons(newRange(start_base + 1, end_base)),
-        strand.getStopCodons(newRange(start_base + 2, end_base))
-      };
+      stop_codons = strand.getStopCodons2(newRange(start_base, end_base));
+//    stop_codons = new int [][] 
+//    {
+//      strand.getStopCodons(newRange(start_base, end_base)),
+//      strand.getStopCodons(newRange(start_base + 1, end_base)),
+//      strand.getStopCodons(newRange(start_base + 2, end_base))
+//    };
     }
 
     // not used if show_start_codons is false
@@ -1976,7 +1977,7 @@ public class FeatureDisplay extends EntryGroupPanel
     else 
       offset = 0;
 
-    codons = codons.toUpperCase();
+//  codons = codons.toUpperCase();
     final int draw_y_position = line_number * getFontHeight();
     final int draw_x_position;
     
