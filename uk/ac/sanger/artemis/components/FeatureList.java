@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.17 2005-05-06 09:27:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.18 2005-07-08 12:20:25 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -56,7 +56,7 @@ import javax.swing.JComponent;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.17 2005-05-06 09:27:13 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.18 2005-07-08 12:20:25 tjc Exp $
  *
  **/
 
@@ -303,6 +303,8 @@ public class FeatureList extends EntryGroupPanel
   {
     final int hgt = getEntryGroup().getAllFeaturesCount() *
                                getLineHeight();
+
+    System.out.println("HERE FeatureList "+getEntryGroup().getAllFeaturesCount());
     setPreferredSize(new Dimension(getSize().width*4,hgt));
     revalidate();
     repaint();
@@ -527,11 +529,19 @@ public class FeatureList extends EntryGroupPanel
   protected void paintComponent(Graphics g) 
   {
     super.paintComponent(g);
+
     if(!isVisible()) 
       return;
 
     Point viewPoint = getScrollPoint();
     final int feature_count = getEntryGroup().getAllFeaturesCount();
+
+    // must check size in case new features/entries added
+    if(feature_count*getLineHeight() > getPreferredSize().height)
+    {
+      final int hgt = feature_count * getLineHeight();
+      setPreferredSize(new Dimension(getSize().width*4,hgt));
+    }
 
     if(feature_count != 0) 
     {
