@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.21 2005-07-11 12:24:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.22 2005-07-11 12:57:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,7 +47,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.21 2005-07-11 12:24:04 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.22 2005-07-11 12:57:57 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -1664,16 +1664,20 @@ public class AlignmentViewer extends CanvasPanel
       query_sequence_start += 1;
     else 
       query_sequence_end += 1;
+ 
+    // this is the base that is at the left of the screen
+    final float base_width = last_subject_event.getBaseWidth();
+    int start = last_subject_event.getStart();
+    final int subject_start_x = getScreenPosition(base_width, subject_sequence_start,
+                                                  start);
+    final int subject_end_x   = getScreenPosition(base_width, subject_sequence_end,
+                                                  start);
 
-    final int subject_start_x = getScreenPosition(last_subject_event,
-                                                  subject_sequence_start);
-    final int subject_end_x   = getScreenPosition(last_subject_event,
-                                                  subject_sequence_end);
-
-    final int query_start_x = getScreenPosition(last_query_event,
-                                                query_sequence_start);
-    final int query_end_x   = getScreenPosition(last_query_event,
-                                                query_sequence_end);
+    start = last_query_event.getStart();
+    final int query_start_x = getScreenPosition(base_width, query_sequence_start,
+                                                start);
+    final int query_end_x   = getScreenPosition(base_width, query_sequence_end,
+                                                start);
 
     boolean subject_off_left  = false;
     boolean subject_off_right = false;
@@ -1897,21 +1901,18 @@ public class AlignmentViewer extends CanvasPanel
   /**
    *  Convert a base position into a screen x coordinate.
    **/
-  private int getScreenPosition(final DisplayAdjustmentEvent event,
-                                final int base_position) 
+  private int getScreenPosition(final float base_width,
+                                final int base_position,
+                                final int screen_start_base) 
   {
-    // this is the base that is at the left of the screen
-    final int screen_start_base = event.getStart();
-
-    final int base_pos = (int)(event.getBaseWidth() *
-                               (base_position - screen_start_base));
-
+    final float base_pos =  base_width *
+                            (base_position - screen_start_base);
     if(base_pos > 30000) 
       return 30000;
     else if(base_pos < -30000) 
         return -30000;
     else 
-      return base_pos;
+      return (int)base_pos;
   }
 
   /**
