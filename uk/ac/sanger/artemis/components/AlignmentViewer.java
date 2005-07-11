@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.23 2005-07-11 13:24:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.24 2005-07-11 14:00:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,7 +47,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.23 2005-07-11 13:24:56 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.24 2005-07-11 14:00:05 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -892,6 +892,7 @@ public class AlignmentViewer extends CanvasPanel
     final float base_width = last_subject_event.getBaseWidth();
     final int subject_start = last_subject_event.getStart();
     final int query_start   = last_query_event.getStart();
+    final boolean subject_is_rev_comp = subjectIsRevComp();
 
     for(int i = all_matches_length - 1; i >= 0 ; --i) 
     {
@@ -899,7 +900,8 @@ public class AlignmentViewer extends CanvasPanel
 
       final int [] match_x_positions =
         getMatchCoords(canvas_width, this_match, subject_length, query_length,
-                       subject_flipped, query_flipped, base_width, subject_start, query_start);
+                       subject_flipped, query_flipped, base_width, subject_start, 
+                       query_start, subject_is_rev_comp);
 
       if(match_x_positions == null) 
         continue;
@@ -1319,6 +1321,7 @@ public class AlignmentViewer extends CanvasPanel
     final float base_width = last_subject_event.getBaseWidth();
     final int subject_start = last_subject_event.getStart();
     final int query_start   = last_query_event.getStart();
+    final boolean subject_is_rev_comp = subjectIsRevComp();
 
     for(int i = 0 ; i < all_matches.length ; ++i) 
     {
@@ -1326,7 +1329,8 @@ public class AlignmentViewer extends CanvasPanel
 
       final int[] match_x_positions =
         getMatchCoords(canvas_width, this_match, subject_length, query_length,
-                       subject_flipped, query_flipped, base_width, subject_start, query_start);
+                       subject_flipped, query_flipped, base_width, subject_start, 
+                       query_start, subject_is_rev_comp);
 
       if(match_x_positions == null) 
         continue;
@@ -1643,7 +1647,8 @@ public class AlignmentViewer extends CanvasPanel
   private int[] getMatchCoords(final int canvas_width, final AlignMatch this_match,
                                final int subject_length, final int query_length,
                                final boolean subject_flipped, final boolean query_flipped,
-                               final float base_width, final int subject_start, final int query_start)
+                               final float base_width, final int subject_start, final int query_start,
+                               final boolean subject_is_rev_comp)
   {
     int subject_sequence_start =
       getRealSubjectSequenceStart(this_match,
@@ -1659,7 +1664,7 @@ public class AlignmentViewer extends CanvasPanel
                               query_length, query_flipped);
 
     // add one base because we want to draw to the end of the base
-    if(subjectIsRevComp()) 
+    if(subject_is_rev_comp) 
       subject_sequence_start += 1;
     else 
       subject_sequence_end += 1;
@@ -1671,13 +1676,11 @@ public class AlignmentViewer extends CanvasPanel
       query_sequence_end += 1;
  
     // this is the base that is at the left of the screen
-//  int start = last_subject_event.getStart();
     final int subject_start_x = getScreenPosition(base_width, subject_sequence_start,
                                                   subject_start);
     final int subject_end_x   = getScreenPosition(base_width, subject_sequence_end,
                                                   subject_start);
 
-//  start = last_query_event.getStart();
     final int query_start_x = getScreenPosition(base_width, query_sequence_start,
                                                 query_start);
     final int query_end_x   = getScreenPosition(base_width, query_sequence_end,
