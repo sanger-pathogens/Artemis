@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.20 2005-05-31 13:09:32 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.21 2005-07-11 08:52:08 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -88,25 +88,25 @@ genetic_codes = \
 
 # 1. standard code (default)
 translation_table_1 = \
-     f f l l \
-     s s s s \
-     y y # + \
-     c c * w \
+     F F L L \
+     S S S S \
+     Y Y # + \
+     C C * W \
              \
-     l l l l \
-     p p p p \
-     h h q q \
-     r r r r \
+     L L L L \
+     P P P P \
+     H H Q Q \
+     R R R R \
              \
-     i i i m \
-     t t t t \
-     n n k k \
-     s s r r \
+     I I I M \
+     T T T T \
+     N N K K \
+     S S R R \
              \
-     v v v v \
-     a a a a \
-     d d e e \
-     g g g g
+     V V V V \
+     A A A A \
+     D D E E \
+     G G G G
 
 start_codons_1 = atg
 
