@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.5 2005-07-08 15:11:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.6 2005-07-11 10:00:08 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.io.Writer;
  *  Sequence stored in 4 bit chunks.
  *
  *  @author Kim Rutherford
- *  @version $Id: StreamSequence.java,v 1.5 2005-07-08 15:11:12 tjc Exp $
+ *  @version $Id: StreamSequence.java,v 1.6 2005-07-11 10:00:08 tjc Exp $
  **/
 
 public abstract class StreamSequence
@@ -230,7 +230,7 @@ public abstract class StreamSequence
     int offsetSize    = offset >> 1;
     int bytePointer   = offset >> 1;
     int symbolPointer = 0;
-    int numBytes      = Math.round( (float)dna.length/2.f );
+    int numBytes      = Math.round( dna.length/2.f );
 
     // filled last unit if = 0
     int filledLastUnit = dna.length & 0x0001;
@@ -277,7 +277,6 @@ public abstract class StreamSequence
     if(bases == null)
       bases = Packing.bases;
 
-//  setCounts(dna);
   }
 
   protected void appendChar(final char dna[])
@@ -398,20 +397,21 @@ public abstract class StreamSequence
    **/
   protected void setCounts()
   {
-    final int packEnd = Math.round( (float)length()/2.f );
+    final int len = length();
+    final int packEnd = Math.round( len/2.f );
     int count = 0;
     byte currStorageUnit = 0;
 
     for(int i=0; i < packEnd; i++)
     {
       currStorageUnit = sequencePacked[i];
-      int index1 = (int)(currStorageUnit & 0x000F);
-      int index2 = (int)( (currStorageUnit>>4) & 0x000F);
+      int index1 = currStorageUnit & 0x000F;
+      int index2 = (currStorageUnit>>4) & 0x000F;
 
       counter(bases[index2]);
       count++;
 
-      if(count < length())
+      if(count < len)
         counter(bases[index1]);
 
       count++;
