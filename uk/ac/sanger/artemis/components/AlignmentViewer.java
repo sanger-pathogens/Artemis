@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.24 2005-07-11 14:00:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.25 2005-07-11 14:16:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,7 +47,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.24 2005-07-11 14:00:05 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.25 2005-07-11 14:16:06 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -893,7 +893,8 @@ public class AlignmentViewer extends CanvasPanel
     final int subject_start = last_subject_event.getStart();
     final int query_start   = last_query_event.getStart();
     final boolean subject_is_rev_comp = subjectIsRevComp();
-
+    final boolean query_is_rev_comp   = queryIsRevComp();
+ 
     for(int i = all_matches_length - 1; i >= 0 ; --i) 
     {
       final AlignMatch this_match = all_matches [i];
@@ -901,7 +902,7 @@ public class AlignmentViewer extends CanvasPanel
       final int [] match_x_positions =
         getMatchCoords(canvas_width, this_match, subject_length, query_length,
                        subject_flipped, query_flipped, base_width, subject_start, 
-                       query_start, subject_is_rev_comp);
+                       query_start, subject_is_rev_comp, query_is_rev_comp);
 
       if(match_x_positions == null) 
         continue;
@@ -1322,6 +1323,7 @@ public class AlignmentViewer extends CanvasPanel
     final int subject_start = last_subject_event.getStart();
     final int query_start   = last_query_event.getStart();
     final boolean subject_is_rev_comp = subjectIsRevComp();
+    final boolean query_is_rev_comp   = queryIsRevComp();
 
     for(int i = 0 ; i < all_matches.length ; ++i) 
     {
@@ -1330,7 +1332,7 @@ public class AlignmentViewer extends CanvasPanel
       final int[] match_x_positions =
         getMatchCoords(canvas_width, this_match, subject_length, query_length,
                        subject_flipped, query_flipped, base_width, subject_start, 
-                       query_start, subject_is_rev_comp);
+                       query_start, subject_is_rev_comp, query_is_rev_comp);
 
       if(match_x_positions == null) 
         continue;
@@ -1648,7 +1650,7 @@ public class AlignmentViewer extends CanvasPanel
                                final int subject_length, final int query_length,
                                final boolean subject_flipped, final boolean query_flipped,
                                final float base_width, final int subject_start, final int query_start,
-                               final boolean subject_is_rev_comp)
+                               final boolean subject_is_rev_comp, final boolean query_is_rev_comp)
   {
     int subject_sequence_start =
       getRealSubjectSequenceStart(this_match,
@@ -1669,8 +1671,8 @@ public class AlignmentViewer extends CanvasPanel
     else 
       subject_sequence_end += 1;
 
-    if(this_match.isRevMatch() && !queryIsRevComp() ||
-       !this_match.isRevMatch() && queryIsRevComp()) 
+    if(this_match.isRevMatch() && !query_is_rev_comp ||
+       !this_match.isRevMatch() && query_is_rev_comp) 
       query_sequence_start += 1;
     else 
       query_sequence_end += 1;
