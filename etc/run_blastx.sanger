@@ -6,7 +6,7 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_blastx.sanger,v 1.1 2005-02-21 11:46:35 tjc Exp $"
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_blastx.sanger,v 1.2 2005-07-11 15:06:21 tjc Exp $"
 
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
@@ -66,9 +66,10 @@ run_one_prog () {
       rsh babel "cd $WDIR; lsrun -v blastwrap.pl $EXEC -d $DATABASE -i $INPUT_FILE -p blastx \
                             $EXTRA_ARGS >! $OUTPUT_FILE"
     else
-      lsrun -v blastwrap.pl $EXEC -d $DATABASE -i $INPUT_FILE -p blastx \
-          $EXTRA_ARGS 2>&1 > $OUTPUT_FILE |
-          tee ${PROG}_errors.new 1>&2
+      bsub -q  longblastq -o $OUTPUT_FILE -e ${PROG}_errors.new -I flexi_blast.pl -x $DATABASE $INPUT_FILE $EXTRA_ARGS
+#     lsrun -v blastwrap.pl $EXEC -d $DATABASE -i $INPUT_FILE -p blastx \
+#         $EXTRA_ARGS 2>&1 > $OUTPUT_FILE |
+#         tee ${PROG}_errors.new 1>&2
     fi
 
 #   lsrun -v blastwrap.pl $EXEC -d $DATABASE -i $INPUT_FILE -p blastx \
