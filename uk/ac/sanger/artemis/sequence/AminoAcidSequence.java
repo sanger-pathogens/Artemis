@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/AminoAcidSequence.java,v 1.7 2005-07-08 15:11:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/AminoAcidSequence.java,v 1.8 2005-07-11 14:51:59 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -32,7 +32,7 @@ import uk.ac.sanger.artemis.util.*;
  *  Objects of this class represent a string of amino acids.
  *
  *  @author Kim Rutherford
- *  @version $Id: AminoAcidSequence.java,v 1.7 2005-07-08 15:11:12 tjc Exp $
+ *  @version $Id: AminoAcidSequence.java,v 1.8 2005-07-11 14:51:59 tjc Exp $
  **/
 
 public class AminoAcidSequence 
@@ -935,6 +935,7 @@ public class AminoAcidSequence
    **/
   public static int getSymbolIndex(char one_letter_code) 
   {
+    one_letter_code = Character.toLowerCase(one_letter_code);
     switch(one_letter_code) 
     {
       case 'a': return 0;
