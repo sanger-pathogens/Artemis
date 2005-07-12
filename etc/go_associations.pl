@@ -5,7 +5,8 @@ use strict;
 BEGIN 
 {
 
-  my $configFile = "/nfs/pathdb/dev/go-cgi/config.pl";
+#  my $configFile = "/nfs/pathdb/dev/go-cgi/config.pl";
+  my $configFile = "/nfs/pathdb/amigo/conf/config.pl";
 
   if (-f $configFile) 
   {
@@ -31,14 +32,15 @@ if(@ARGV == 0)
 
 my $acc_num = $ARGV[0];
 
+
 my $dbname = $ENV{GO_DBNAME};
 my $dbport = $ENV{GO_DBPORT};
 my $dbhost = $ENV{GO_DBHOST};
 my $dbuser = $ENV{GO_DBUSER};
+my $dbauth = $ENV{GO_DBAUTH};
 
-if (not $dbname =~ /go\d/) 
-{
-  print STDERR "GO database name uncorrect, must be go1 or go2 !!";
+if (not $dbname =~ /^go/) {
+  print STDERR "GO database name uncorrect, must start 'go...' !!";
   exit 1;
 }
 
@@ -47,8 +49,10 @@ my $apph = GO::AppHandle->connect (
                                    -dbport => $dbport,
                                    -dbhost => $dbhost,
                                    -dbuser => $dbuser,
+                                   -dbauth => $dbauth,
                                   ) 
-or die "can't connect to GO database, $dbname!!!\n";
+    or die "can't connect to GO database, $dbname!!!\n";
+
 
 #my @accs = qw(O00221);
 my @accs;
