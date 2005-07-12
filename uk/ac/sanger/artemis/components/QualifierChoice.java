@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierChoice.java,v 1.1 2004-06-09 09:47:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierChoice.java,v 1.2 2005-07-12 14:44:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.event.*;
  *  key.
  *
  *  @author Kim Rutherford
- *  @version $Id: QualifierChoice.java,v 1.1 2004-06-09 09:47:17 tjc Exp $
+ *  @version $Id: QualifierChoice.java,v 1.2 2005-07-12 14:44:31 tjc Exp $
  **/
 
 public class QualifierChoice extends JComboBox {
@@ -67,7 +67,14 @@ public class QualifierChoice extends JComboBox {
       this.default_qualifier = null;
     }
 
-    final int MAX_VISIBLE_ROWS = 30;
+    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    int screen_height = screen.height;
+
+    final int MAX_VISIBLE_ROWS;
+    if(screen_height < 1024)
+      MAX_VISIBLE_ROWS = 20;
+    else
+      MAX_VISIBLE_ROWS = 30;
     
     setMaximumRowCount (MAX_VISIBLE_ROWS);
 
