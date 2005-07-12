@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.25 2005-07-11 14:16:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.26 2005-07-12 09:45:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,7 +47,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.25 2005-07-11 14:16:06 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.26 2005-07-12 09:45:42 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -894,15 +894,17 @@ public class AlignmentViewer extends CanvasPanel
     final int query_start   = last_query_event.getStart();
     final boolean subject_is_rev_comp = subjectIsRevComp();
     final boolean query_is_rev_comp   = queryIsRevComp();
- 
+    boolean is_rev_match;
+
     for(int i = all_matches_length - 1; i >= 0 ; --i) 
     {
       final AlignMatch this_match = all_matches [i];
 
+      is_rev_match = this_match.isRevMatch();
       final int [] match_x_positions =
         getMatchCoords(canvas_width, this_match, subject_length, query_length,
                        subject_flipped, query_flipped, base_width, subject_start, 
-                       query_start, subject_is_rev_comp, query_is_rev_comp);
+                       query_start, subject_is_rev_comp, query_is_rev_comp, is_rev_match);
 
       if(match_x_positions == null) 
         continue;
@@ -1324,15 +1326,17 @@ public class AlignmentViewer extends CanvasPanel
     final int query_start   = last_query_event.getStart();
     final boolean subject_is_rev_comp = subjectIsRevComp();
     final boolean query_is_rev_comp   = queryIsRevComp();
+    boolean is_rev_match;
 
     for(int i = 0 ; i < all_matches.length ; ++i) 
     {
       final AlignMatch this_match = all_matches [i];
 
+      is_rev_match = this_match.isRevMatch();
       final int[] match_x_positions =
         getMatchCoords(canvas_width, this_match, subject_length, query_length,
                        subject_flipped, query_flipped, base_width, subject_start, 
-                       query_start, subject_is_rev_comp, query_is_rev_comp);
+                       query_start, subject_is_rev_comp, query_is_rev_comp, is_rev_match);
 
       if(match_x_positions == null) 
         continue;
@@ -1373,7 +1377,7 @@ public class AlignmentViewer extends CanvasPanel
       {
         if(percent_id == -1) 
         {
-          if(this_match.isRevMatch())
+          if(is_rev_match)
             g.setColor(revMatchColour);
           else 
             g.setColor(matchColour);
@@ -1390,8 +1394,7 @@ public class AlignmentViewer extends CanvasPanel
                     (maximum_percent_id - minimum_percent_id));
           }
 
-          if(this_match.isRevMatch() &&
-             !reverseMatchColour) 
+          if(is_rev_match && !reverseMatchColour) 
             g.setColor(blue_percent_id_colours[colour_index]);
           else
             g.setColor(red_percent_id_colours[colour_index]);
@@ -1650,7 +1653,8 @@ public class AlignmentViewer extends CanvasPanel
                                final int subject_length, final int query_length,
                                final boolean subject_flipped, final boolean query_flipped,
                                final float base_width, final int subject_start, final int query_start,
-                               final boolean subject_is_rev_comp, final boolean query_is_rev_comp)
+                               final boolean subject_is_rev_comp, final boolean query_is_rev_comp,
+                               final boolean is_rev_match)
   {
     int subject_sequence_start =
       getRealSubjectSequenceStart(this_match,
@@ -1671,8 +1675,8 @@ public class AlignmentViewer extends CanvasPanel
     else 
       subject_sequence_end += 1;
 
-    if(this_match.isRevMatch() && !query_is_rev_comp ||
-       !this_match.isRevMatch() && query_is_rev_comp) 
+    if(is_rev_match && !query_is_rev_comp ||
+       !is_rev_match && query_is_rev_comp) 
       query_sequence_start += 1;
     else 
       query_sequence_end += 1;
