@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/AlignMatch.java,v 1.4 2005-04-05 11:46:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/AlignMatch.java,v 1.5 2005-07-12 10:39:45 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -31,7 +31,7 @@ import uk.ac.sanger.artemis.io.Range;
  *  Each object of this class represents a single match from an alignment.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignMatch.java,v 1.4 2005-04-05 11:46:21 tjc Exp $
+ *  @version $Id: AlignMatch.java,v 1.5 2005-07-12 10:39:45 tjc Exp $
  **/
 
 public class AlignMatch 
@@ -115,10 +115,10 @@ public class AlignMatch
    **/
   public int getQuerySequenceStart() 
   {
-    if(isRevMatch())
+    if(rev_match)
       return query_sequence_range.getEnd();
-    else
-      return query_sequence_range.getStart();
+    
+    return query_sequence_range.getStart();
   }
 
   /**
@@ -126,10 +126,10 @@ public class AlignMatch
    **/
   public int getQuerySequenceEnd() 
   {
-    if(isRevMatch()) 
+    if(rev_match) 
       return query_sequence_range.getStart();
-    else 
-      return query_sequence_range.getEnd();
+     
+    return query_sequence_range.getEnd();
   }
 
   /**
