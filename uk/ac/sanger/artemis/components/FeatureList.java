@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.20 2005-07-08 12:25:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.21 2005-07-12 14:10:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -56,7 +56,7 @@ import javax.swing.JComponent;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.20 2005-07-08 12:25:21 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.21 2005-07-12 14:10:12 tjc Exp $
  *
  **/
 
@@ -88,6 +88,7 @@ public class FeatureList extends EntryGroupPanel
    **/
   private boolean show_gene_names = false;
 
+  private String user_defined_qualifier = null;
 
   /** show Feature.getSystematicName() */
   private boolean show_systematic_names = false;
@@ -231,6 +232,12 @@ public class FeatureList extends EntryGroupPanel
   }
 
 
+  protected void setShowUserDefinedQualifier(final String user_defined_qualifier)
+  {
+    this.user_defined_qualifier = user_defined_qualifier;
+    repaint();
+  }
+
   /**
    *  Get the value of the "show genes" flag.
    **/
@@ -258,6 +265,9 @@ public class FeatureList extends EntryGroupPanel
   {
     if(this.show_qualifiers != show_qualifiers) 
     {
+      if(show_qualifiers)
+        user_defined_qualifier = null;
+
       this.show_qualifiers = show_qualifiers;
       repaint();
     }
@@ -280,6 +290,9 @@ public class FeatureList extends EntryGroupPanel
   {
     if(this.show_products != show_products) 
     {
+      if(show_products)
+        user_defined_qualifier = null;
+
       this.show_products = show_products;
       repaint();
     }
@@ -657,7 +670,17 @@ public class FeatureList extends EntryGroupPanel
 
     final StringBuffer description_string_buffer = new StringBuffer();
 
-    if(show_products) 
+    if(user_defined_qualifier != null)
+    {
+      try
+      {
+        final String user_defined_qualifier_string = feature.getValueOfQualifier(user_defined_qualifier);
+        if(user_defined_qualifier_string != null)
+          description_string_buffer.append(user_defined_qualifier_string);
+      }
+      catch(InvalidRelationException ire){}
+    }
+    else if(show_products) 
     {
       final String product_string = feature.getProductString();
 

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.7 2005-04-08 14:03:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.8 2005-07-12 14:10:02 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -37,7 +37,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.7 2005-04-08 14:03:14 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.8 2005-07-12 14:10:02 tjc Exp $
  *
  **/
 
@@ -541,7 +541,7 @@ public class FeaturePopup extends JPopupMenu
    **/
   private JMenuItem[] addFeatureListItems() 
   {
-    final JMenuItem feature_list_menus[] = new JMenuItem[6];
+    final JMenuItem feature_list_menus[] = new JMenuItem[7];
     if(Options.getOptions().readWritePossible()) 
     {
       feature_list_menus[0] = new JMenuItem("Save List To File ...");
@@ -610,8 +610,10 @@ public class FeaturePopup extends JPopupMenu
       {
         boolean show_products = ((JCheckBoxMenuItem)feature_list_menus[4]).getState();
         if(show_products) 
+        {
+          ((JCheckBoxMenuItem)feature_list_menus[5]).setState(false);
           feature_list.setShowQualifiers(false);
-        
+        }
         feature_list.setShowProducts(show_products);
       }
     });
@@ -625,10 +627,36 @@ public class FeaturePopup extends JPopupMenu
         boolean show_qualifiers = ((JCheckBoxMenuItem)feature_list_menus[5]).getState();
         feature_list.setShowQualifiers(show_qualifiers);
         if(show_qualifiers) 
+        { 
+          ((JCheckBoxMenuItem)feature_list_menus[4]).setState(false);
           feature_list.setShowProducts(false);
+        }
       }
     });
     
+    feature_list_menus[6] = new JMenuItem("Show Selected Qualifiers ...");
+    feature_list_menus[6].addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        QualifierChoice qualifier_choice = new QualifierChoice(
+                           entry_group.elementAt(0).getEntryInformation(),
+                                                               null,null);
+
+        int select = JOptionPane.showConfirmDialog(null, qualifier_choice,
+                                "Select Qualifier to Display",
+                                 JOptionPane.OK_CANCEL_OPTION,
+                                 JOptionPane.QUESTION_MESSAGE);
+
+        if(select == JOptionPane.CANCEL_OPTION)
+          return;
+
+        ((JCheckBoxMenuItem)feature_list_menus[4]).setState(false);
+        ((JCheckBoxMenuItem)feature_list_menus[5]).setState(false);
+        feature_list.setShowUserDefinedQualifier((String)qualifier_choice.getSelectedItem());
+      }
+    });
+
     return feature_list_menus;
   }
 
