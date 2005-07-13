@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Selector.java,v 1.4 2005-05-23 14:22:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Selector.java,v 1.5 2005-07-13 10:00:50 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -41,7 +41,7 @@ import javax.swing.*;
  *  features in an EntryGroup on key and contents.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Selector.java,v 1.4 2005-05-23 14:22:37 tjc Exp $
+ *  @version $Id: Selector.java,v 1.5 2005-07-13 10:00:50 tjc Exp $
  **/
 
 public class Selector extends JFrame
@@ -95,11 +95,14 @@ public class Selector extends JFrame
 //  final EntryInformation default_entry_information =
 //    Options.getArtemisEntryInformation ();
 
+    Entry default_entry = getEntryGroup().getDefaultEntry();
+    if(default_entry == null)
+      default_entry = getEntryGroup().elementAt(0);
+  
     final EntryInformation default_entry_information =
-                  getEntryGroup().getDefaultEntry().getEntryInformation();
+                        default_entry.getEntryInformation();
 
     key_selector = new KeyChoice (default_entry_information);
-    key_selector = new KeyChoice(getEntryGroup().getDefaultEntry().getEntryInformation());
 
     c.gridwidth = GridBagConstraints.REMAINDER;
     gridbag.setConstraints (key_selector, c);
