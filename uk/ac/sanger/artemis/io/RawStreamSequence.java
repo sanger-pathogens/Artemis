@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RawStreamSequence.java,v 1.2 2005-07-08 15:11:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RawStreamSequence.java,v 1.3 2005-07-14 16:27:26 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.Vector;
  *  This is a subclass of StreamSequence containing raw sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: RawStreamSequence.java,v 1.2 2005-07-08 15:11:12 tjc Exp $
+ *  @version $Id: RawStreamSequence.java,v 1.3 2005-07-14 16:27:26 tjc Exp $
  **/
 
 public class RawStreamSequence extends StreamSequence 
@@ -171,7 +171,7 @@ public class RawStreamSequence extends StreamSequence
       throws IOException 
   {
     final StringBuffer line_buffer = new StringBuffer(90);
-    final String sequence = toString();
+    final String sequence = new String(getCharSequence());
 
     final int SEQUENCE_LINE_BASE_COUNT = 60;
 
