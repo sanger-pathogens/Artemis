@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.26 2005-07-12 09:45:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.27 2005-07-14 09:03:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,7 +47,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.26 2005-07-12 09:45:42 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.27 2005-07-14 09:03:24 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -895,13 +895,14 @@ public class AlignmentViewer extends CanvasPanel
     final boolean subject_is_rev_comp = subjectIsRevComp();
     final boolean query_is_rev_comp   = queryIsRevComp();
     boolean is_rev_match;
+    int[] match_x_positions;
 
     for(int i = all_matches_length - 1; i >= 0 ; --i) 
     {
       final AlignMatch this_match = all_matches [i];
 
       is_rev_match = this_match.isRevMatch();
-      final int [] match_x_positions =
+      match_x_positions =
         getMatchCoords(canvas_width, this_match, subject_length, query_length,
                        subject_flipped, query_flipped, base_width, subject_start, 
                        query_start, subject_is_rev_comp, query_is_rev_comp, is_rev_match);
@@ -1327,13 +1328,16 @@ public class AlignmentViewer extends CanvasPanel
     final boolean subject_is_rev_comp = subjectIsRevComp();
     final boolean query_is_rev_comp   = queryIsRevComp();
     boolean is_rev_match;
+    int[] match_x_positions;
+    AlignMatch this_match;
+    final int all_matches_length = all_matches.length;    
 
-    for(int i = 0 ; i < all_matches.length ; ++i) 
+    for(int i = 0 ; i < all_matches_length ; ++i) 
     {
-      final AlignMatch this_match = all_matches [i];
+      this_match = all_matches[i];
 
       is_rev_match = this_match.isRevMatch();
-      final int[] match_x_positions =
+      match_x_positions =
         getMatchCoords(canvas_width, this_match, subject_length, query_length,
                        subject_flipped, query_flipped, base_width, subject_start, 
                        query_start, subject_is_rev_comp, query_is_rev_comp, is_rev_match);
@@ -1364,7 +1368,7 @@ public class AlignmentViewer extends CanvasPanel
       final boolean highlight_this_match;
 
       if(selected_matches != null &&
-         selected_matches.contains (this_match)) 
+         selected_matches.contains(this_match)) 
         highlight_this_match = true;
       else 
         highlight_this_match = false;
