@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.13 2005-06-24 13:48:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.14 2005-07-14 13:25:31 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -53,13 +53,15 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.Date;
 import java.util.Vector;
+import java.util.Collections;
+import java.util.Comparator;
 import javax.swing.*;
 
 /**
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.13 2005-06-24 13:48:35 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.14 2005-07-14 13:25:31 tjc Exp $
  **/
 
 public class FeatureEdit extends JFrame
@@ -456,6 +458,7 @@ public class FeatureEdit extends JFrame
           try 
           {
             tidy();
+            tidyGO();
           } 
           catch(QualifierParseException exception) 
           {
@@ -885,6 +888,47 @@ public class FeatureEdit extends JFrame
 
     qualifier_text_area.setText(buffer.toString());
   }
+
+  private void tidyGO() throws QualifierParseException
+  {
+    String qualifier_txt = qualifier_text_area.getText();
+    StringReader strRead = new StringReader(qualifier_txt);
+    BufferedReader buff = new BufferedReader(strRead);
+    String line;
+    final Vector qual_str = new Vector();
+    try
+    {
+      while((line = buff.readLine()) != null)
+        qual_str.add(line);
+    }
+    catch(IOException ioe){}
+
+    Comparator comparator = new Comparator()
+    {
+      public int compare (Object fst, Object snd)
+      {
+        if( !((String)fst).startsWith("/GO") ||
+            !((String)snd).startsWith("/GO") )
+          return 0;
+
+        return ((String)fst).compareTo((String)snd);
+      }
+    };
+  
+    Collections.sort(qual_str, comparator);
+    
+    StringBuffer buffer = new StringBuffer();
+    for(int i = 0; i < qual_str.size(); i++)
+    {
+      final String qualifier_string = 
+                           (String)qual_str.elementAt(i);
+
+      buffer.append(tidyHelper(qualifier_string) + "\n");
+    }
+
+    qualifier_text_area.setText(buffer.toString());
+  }
+
 
   /**
    *  Perform the action of tidy() on the String version of one qualifier.
