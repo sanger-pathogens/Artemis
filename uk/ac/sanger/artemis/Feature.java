@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.10 2005-06-07 14:55:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.11 2005-07-15 10:15:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.10 2005-06-07 14:55:13 tjc Exp $
+ *  @version $Id: Feature.java,v 1.11 2005-07-15 10:15:06 tjc Exp $
  **/
 
 public class Feature
@@ -571,6 +571,7 @@ public class Feature
   public boolean isProteinFeature() 
   {
     if(getKey().toString().startsWith("CDS") ||
+       getKey().equals("exon") ||
        getKey().equals("BLASTCDS") || 
        getKey().equals("polypeptide"))
       return true;
