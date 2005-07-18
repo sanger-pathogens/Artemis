@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/EmblStreamSequence.java,v 1.3 2005-07-08 15:11:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/EmblStreamSequence.java,v 1.4 2005-07-18 14:31:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import java.io.Writer;
  *  This is a subclass of StreamSequence containing EMBL sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: EmblStreamSequence.java,v 1.3 2005-07-08 15:11:12 tjc Exp $
+ *  @version $Id: EmblStreamSequence.java,v 1.4 2005-07-18 14:31:05 tjc Exp $
  **/
 
 public class EmblStreamSequence extends StreamSequence 
@@ -175,6 +175,7 @@ public class EmblStreamSequence extends StreamSequence
       // separating them). The first column starts at index 5 of the input
       // line.
 
+      line = line.toLowerCase();
       int nbase = 0;
       for(int i = 0 ; i < 6 ; ++i) 
       {
