@@ -294,8 +294,8 @@ public class DatabaseEntrySource implements EntrySource
     {
       DatabaseDocumentEntry db_entry = null;
 
-      final EntryInformation entry_information =
-        new SimpleEntryInformation(Options.getArtemisEntryInformation());
+//    final EntryInformation entry_information =
+//      new SimpleEntryInformation(Options.getArtemisEntryInformation());
 
       if(read_only) 
       {
@@ -305,7 +305,7 @@ public class DatabaseEntrySource implements EntrySource
         DatabaseDocument doc = new DatabaseDocument(location, id, progress_listener);
 //      DatabaseDocument doc = new DatabaseDocument("jdbc:postgresql://localhost:13001/chadoCVS?user=es2",
 //                                                  id, progress_listener);
-        db_entry = new DatabaseDocumentEntry(entry_information, doc);
+        db_entry = new DatabaseDocumentEntry(doc);
       }
 
       final Bases real_bases;

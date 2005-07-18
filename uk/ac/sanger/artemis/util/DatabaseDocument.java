@@ -199,18 +199,24 @@ public class DatabaseDocument extends Document
   private String getGFF(Connection conn, String parentFeatureID) 
           throws java.sql.SQLException
   {
+
     Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-    String sql = "SELECT strand, fmin, fmax, uniquename, feature.type_id, featureprop.type_id AS prop_type_id, value"+
-                 " FROM feature, featureloc, featureprop WHERE srcfeature_id = "+parentFeatureID+
-                 " and featureloc.feature_id=featureprop.feature_id"+
-                 " and featureloc.feature_id=feature.feature_id ORDER BY uniquename";
+//  String sql = "SELECT feature_id, strand, fmin, fmax, uniquename, feature.type_id, featureprop.type_id AS prop_type_id, value"+
+//               " FROM feature, featureloc, featureprop WHERE srcfeature_id = "+parentFeatureID+
+//               " and featureloc.feature_id=featureprop.feature_id"+
+//               " and featureloc.feature_id=feature.feature_id";
+
+    String sql = "SELECT feature.feature_id, object_id, strand, fmin, fmax, uniquename, feature.type_id, "+
+                 " featureprop.type_id AS prop_type_id, featureprop.value FROM feature, featureloc, featureprop, feature_relationship "+
+                 " WHERE srcfeature_id = "+parentFeatureID+" and featureloc.feature_id=featureprop.feature_id and "+
+                 " featureloc.feature_id=feature.feature_id and feature_relationship.subject_id=feature.feature_id";
 
     appendToLogFile(sql,sqlLog);
     ResultSet rs = st.executeQuery(sql);
     StringBuffer cdsBuffer = new StringBuffer();
 
     String parentFeature = getFeatureName(parentFeatureID,conn);
-    int loop = 1;
+    Hashtable hstore = new Hashtable();
 
     while(rs.next())
     {
@@ -223,6 +229,13 @@ public class DatabaseDocument extends Document
       String typeName = getCvtermName(conn,type_id);
       String propTypeName = getCvtermName(conn,prop_type_id);
 
+      String feature_id = rs.getString("feature_id");
+      hstore.put(feature_id, name);
+
+      String parent_id  = rs.getString("object_id");
+      if(parent_id != null && hstore.containsKey(parent_id))
+        parent_id = (String)hstore.get(parent_id);
+      
 // make gff format
       cdsBuffer.append(parentFeature+"\t");    // seqid
       cdsBuffer.append("chado\t");             // source
@@ -236,6 +249,9 @@ public class DatabaseDocument extends Document
         cdsBuffer.append("+\t");
       cdsBuffer.append(".\t");                 // phase
       cdsBuffer.append("ID="+name+";"+propTypeName+"="+rs.getString("value")); // attributes
+
+      if(parent_id != null)
+        cdsBuffer.append(";Parent="+parent_id);
 
       int rewind = 0;
       while(rs.next() && rs.getString("uniquename").equals(name))

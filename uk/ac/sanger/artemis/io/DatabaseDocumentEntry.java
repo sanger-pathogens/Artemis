@@ -34,15 +34,14 @@ import java.io.*;
  *  relational database entry
  **/
 
-public class DatabaseDocumentEntry extends SimpleDocumentEntry
+public class DatabaseDocumentEntry extends GFFDocumentEntry 
     implements DocumentEntry 
 {
 
-  public DatabaseDocumentEntry(final EntryInformation entry_information,
-                               final Document doc)
+  public DatabaseDocumentEntry(final Document doc)
          throws EntryInformationException, IOException
   {
-    super(entry_information, doc,  null);
+    super(doc,null);
   }
 
   /**
