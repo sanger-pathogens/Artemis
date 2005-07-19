@@ -199,17 +199,24 @@ public class DatabaseDocument extends Document
   private String getGFF(Connection conn, String parentFeatureID) 
           throws java.sql.SQLException
   {
-
     Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-//  String sql = "SELECT feature_id, strand, fmin, fmax, uniquename, feature.type_id, featureprop.type_id AS prop_type_id, value"+
+
+//  String sql = "SELECT strand, fmin, fmax, uniquename, feature.type_id, featureprop.type_id AS prop_type_id, value"+
 //               " FROM feature, featureloc, featureprop WHERE srcfeature_id = "+parentFeatureID+
 //               " and featureloc.feature_id=featureprop.feature_id"+
 //               " and featureloc.feature_id=feature.feature_id";
 
+//  String sql = "SELECT feature.feature_id, object_id, strand, fmin, fmax, uniquename, feature.type_id, "+
+//     " featureprop.type_id AS prop_type_id, featureprop.value FROM feature, featureloc, featureprop, feature_relationship "+
+//     " WHERE srcfeature_id = "+parentFeatureID+" and featureloc.feature_id=featureprop.feature_id and "+
+//     " featureloc.feature_id=feature.feature_id and feature_relationship.subject_id=feature.feature_id";
+
     String sql = "SELECT feature.feature_id, object_id, strand, fmin, fmax, uniquename, feature.type_id, "+
-                 " featureprop.type_id AS prop_type_id, featureprop.value FROM feature, featureloc, featureprop, feature_relationship "+
-                 " WHERE srcfeature_id = "+parentFeatureID+" and featureloc.feature_id=featureprop.feature_id and "+
-                 " featureloc.feature_id=feature.feature_id and feature_relationship.subject_id=feature.feature_id";
+       " featureprop.type_id AS prop_type_id, featureprop.value FROM  featureloc, featureprop, "+
+       " feature LEFT JOIN feature_relationship ON feature_relationship.subject_id=feature.feature_id "+
+       " WHERE srcfeature_id = "+parentFeatureID+" and featureloc.feature_id=featureprop.feature_id and "+
+       " featureloc.feature_id=feature.feature_id ORDER BY uniquename";
+
 
     appendToLogFile(sql,sqlLog);
     ResultSet rs = st.executeQuery(sql);
@@ -245,8 +252,11 @@ public class DatabaseDocument extends Document
       cdsBuffer.append(".\t");                 // score
       if(strand == -1)                         // strand
         cdsBuffer.append("-\t");
-      else
+      else if(strand == 1)
         cdsBuffer.append("+\t");
+      else 
+        cdsBuffer.append(".\t");
+
       cdsBuffer.append(".\t");                 // phase
       cdsBuffer.append("ID="+name+";"+propTypeName+"="+rs.getString("value")); // attributes
 
