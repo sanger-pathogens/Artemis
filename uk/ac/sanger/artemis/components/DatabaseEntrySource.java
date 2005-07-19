@@ -148,6 +148,28 @@ public class DatabaseEntrySource implements EntrySource
     JTextField inUser = new JTextField("es2");
     bacross.add(inUser);
 
+    // given -Dchado=localhost:port/dbname?username
+    if(System.getProperty("chado") != null)
+    {
+      String db_url = System.getProperty("chado").trim();
+      int index;
+      if((index = db_url.indexOf(":")) > -1)
+      {
+        inServer.setText(db_url.substring(0,index));
+        int index2;
+        if((index2 = db_url.indexOf("/")) > -1)
+        {
+          inPort.setText(db_url.substring(index+1,index2));
+          int index3;
+          if((index3 = db_url.indexOf("?")) > -1)
+          {
+            inDB.setText(db_url.substring(index2+1,index3));
+            inUser.setText(db_url.substring(index3+1));
+          }
+        }
+      }
+    }
+
     int n = JOptionPane.showConfirmDialog(null, bacross,
                       "Enter Database Address",
                       JOptionPane.OK_CANCEL_OPTION,
