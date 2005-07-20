@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.11 2005-07-15 10:15:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.12 2005-07-20 17:47:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -40,6 +40,7 @@ import uk.ac.sanger.artemis.io.DateStampFeature;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.EmblStreamFeature;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.FastaStreamSequence;
 import uk.ac.sanger.artemis.io.StreamFeature;
 import uk.ac.sanger.artemis.sequence.*;
@@ -59,7 +60,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.11 2005-07-15 10:15:06 tjc Exp $
+ *  @version $Id: Feature.java,v 1.12 2005-07-20 17:47:39 tjc Exp $
  **/
 
 public class Feature
@@ -2540,8 +2541,12 @@ CHANGED_END:
   public Feature duplicate()
       throws ReadOnlyException
   {
-    uk.ac.sanger.artemis.io.Feature new_embl_feature =
-                      new EmblStreamFeature(getEmblFeature());
+    uk.ac.sanger.artemis.io.Feature new_embl_feature;
+
+    if(getEmblFeature() instanceof GFFStreamFeature)
+      new_embl_feature = new GFFStreamFeature(getEmblFeature());
+    else
+      new_embl_feature = new EmblStreamFeature(getEmblFeature());
 
     final Feature return_feature = new Feature(new_embl_feature);
 
