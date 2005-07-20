@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.12 2005-06-22 19:39:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.13 2005-07-20 13:03:25 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -36,6 +36,7 @@ import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.SimpleEntryInformation;
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -51,7 +52,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.12 2005-06-22 19:39:41 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.13 2005-07-20 13:03:25 tjc Exp $
  *
  */
 
@@ -821,6 +822,27 @@ public class EntryEdit extends JFrame
 
     if(Options.readWritePossible()) 
     {
+      boolean db = false;
+      final EntryVector entries = getEntryGroup().getActiveEntries();
+      for(int i=0; i<entries.size(); i++)
+      {
+        Entry entry = entries.elementAt(i);
+        if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
+          db = true;
+      }
+
+      if(db)
+      {
+        JMenuItem commit = new JMenuItem("Commit to Database");
+        commit.addActionListener(new ActionListener()
+        {
+          public void actionPerformed(ActionEvent event)
+          {
+          }
+        });
+        file_menu.add(commit);
+        file_menu.addSeparator();
+      }
 
       JMenuItem popFileManager = new JMenuItem("Show File Manager ...");
       popFileManager.addActionListener(new ActionListener()

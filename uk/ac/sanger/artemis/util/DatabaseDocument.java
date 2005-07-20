@@ -211,7 +211,7 @@ public class DatabaseDocument extends Document
 //     " WHERE srcfeature_id = "+parentFeatureID+" and featureloc.feature_id=featureprop.feature_id and "+
 //     " featureloc.feature_id=feature.feature_id and feature_relationship.subject_id=feature.feature_id";
 
-    String sql = "SELECT feature.feature_id, object_id, strand, fmin, fmax, uniquename, feature.type_id, "+
+    String sql = "SELECT timelastmodified, feature.feature_id, object_id, strand, fmin, fmax, uniquename, feature.type_id, "+
        " featureprop.type_id AS prop_type_id, featureprop.value FROM  featureloc, featureprop, "+
        " feature LEFT JOIN feature_relationship ON feature_relationship.subject_id=feature.feature_id "+
        " WHERE srcfeature_id = "+parentFeatureID+" and featureloc.feature_id=featureprop.feature_id and "+
@@ -231,11 +231,11 @@ public class DatabaseDocument extends Document
       int fmax          = rs.getInt("fmax");
       long type_id      = rs.getLong("type_id");
       long prop_type_id = rs.getLong("prop_type_id");
-      int strand      = rs.getInt("strand");
-      String name     = rs.getString("uniquename");
-      String typeName = getCvtermName(conn,type_id);
+      int strand        = rs.getInt("strand");
+      String name       = rs.getString("uniquename");
+      String typeName   = getCvtermName(conn,type_id);
       String propTypeName = getCvtermName(conn,prop_type_id);
-
+      String timelastmodified = rs.getString("timelastmodified");
       String feature_id = rs.getString("feature_id");
       hstore.put(feature_id, name);
 
@@ -258,10 +258,13 @@ public class DatabaseDocument extends Document
         cdsBuffer.append(".\t");
 
       cdsBuffer.append(".\t");                 // phase
-      cdsBuffer.append("ID="+name+";"+propTypeName+"="+rs.getString("value")); // attributes
+      cdsBuffer.append("ID="+name+";");
 
       if(parent_id != null)
-        cdsBuffer.append(";Parent="+parent_id);
+        cdsBuffer.append("Parent="+parent_id+";");
+
+      cdsBuffer.append("timelastmodified="+timelastmodified+";");
+      cdsBuffer.append(propTypeName+"="+rs.getString("value")); // attributes
 
       int rewind = 0;
       while(rs.next() && rs.getString("uniquename").equals(name))
