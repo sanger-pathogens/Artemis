@@ -24,6 +24,7 @@
 
 package uk.ac.sanger.artemis.util;
 
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import java.sql.*;
 import java.io.*;
 import java.util.Hashtable;
@@ -264,14 +265,17 @@ public class DatabaseDocument extends Document
         cdsBuffer.append("Parent="+parent_id+";");
 
       cdsBuffer.append("timelastmodified="+timelastmodified+";");
-      cdsBuffer.append(propTypeName+"="+rs.getString("value")); // attributes
+   
+      String value = GFFStreamFeature.encode(rs.getString("value"));
+      cdsBuffer.append(propTypeName+"="+value); // attributes
 
       int rewind = 0;
       while(rs.next() && rs.getString("uniquename").equals(name))
       {
         prop_type_id = rs.getLong("prop_type_id");
         propTypeName = getCvtermName(conn,prop_type_id);
-        cdsBuffer.append(";"+propTypeName+"="+rs.getString("value"));
+        value = GFFStreamFeature.encode(rs.getString("value"));
+        cdsBuffer.append(";"+propTypeName+"="+value);
         rewind++;
       }
 

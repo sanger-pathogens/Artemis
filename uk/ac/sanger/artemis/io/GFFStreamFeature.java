@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.16 2005-06-08 15:19:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.17 2005-07-20 13:28:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.16 2005-06-08 15:19:38 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.17 2005-07-20 13:28:24 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -295,7 +295,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   * Add URL escaping rule (e.g. space="%20" or "+")
   *
   */
-  private String encode(String s)
+  public static String encode(String s)
   {
     final String map[][] = {
 //                           { " ",  "%20" },  // white space
