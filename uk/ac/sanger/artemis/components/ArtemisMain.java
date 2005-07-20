@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.15 2005-06-22 19:39:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.16 2005-07-20 09:29:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import java.io.*;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.15 2005-06-22 19:39:41 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.16 2005-07-20 09:29:56 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -107,13 +107,7 @@ public class ArtemisMain extends Splash
     {
       public void actionPerformed(ActionEvent event)
       {
-        DatabaseEntrySource entry_source = new DatabaseEntrySource();
-        if(!entry_source.setLocation())
-          return;
-
-        final DatabaseJFrame frame = new DatabaseJFrame(entry_source,
-                                                   ArtemisMain.this);
-        frame.setVisible(true);
+        launchDatabaseJFrame(true);
       }
     };
 
@@ -121,8 +115,12 @@ public class ArtemisMain extends Splash
       Options.getOptions().getPropertyTruthValue("sanger_options");
 
     if(sanger_options)
+    {
       makeMenuItem(file_menu, "Database Entry ...", menu_listener);
-   
+      if(System.getProperty("chado") != null)
+        launchDatabaseJFrame(false);
+    }
+
     menu_listener = new ActionListener() 
     {
       public void actionPerformed(ActionEvent event)
@@ -168,6 +166,32 @@ public class ArtemisMain extends Splash
 //        pasteClipboard();
 //      }
 //    }
+
+  /**
+  *
+  * Launch database manager window
+  *
+  */
+  private void launchDatabaseJFrame(final boolean prompt_user)
+  {
+    SwingWorker entryWorker = new SwingWorker()
+    {
+      public Object construct()
+      {
+        getStatusLabel().setText("Connecting ...");
+        DatabaseEntrySource entry_source = new DatabaseEntrySource();
+        if(!entry_source.setLocation(prompt_user))
+          return null;
+
+        final DatabaseJFrame frame = new DatabaseJFrame(entry_source,
+                                               ArtemisMain.this);
+        frame.setVisible(true);
+        getStatusLabel().setText("");
+        return null;
+      }
+    };
+    entryWorker.start();
+  }
 
   /**
    *  Read the entries named in args and in the diana.ini file.

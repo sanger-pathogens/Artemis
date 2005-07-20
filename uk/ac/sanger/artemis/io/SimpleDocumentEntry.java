@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.12 2005-06-03 16:04:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.13 2005-07-20 09:29:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.util.Enumeration;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.12 2005-06-03 16:04:18 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.13 2005-07-20 09:29:56 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -123,13 +123,6 @@ abstract public class SimpleDocumentEntry
     while((new_line_group =
             LineGroup.readNextLineGroup(pushback_reader)) != null) 
     {
-//    if(document instanceof DatabaseDocument)
-//    {
-//      addLineGroup(new_line_group);
-//      System.out.println("SimpleDocumentEntry DatabaseDocument ******************************"); 
-//      if(new_line_group instanceof StreamSequence)
-//        System.out.println("SimpleDocumentEntry StreamSequence  ******************************");
-//    }
       if(new_line_group instanceof SimpleDocumentFeature)
       {
         final SimpleDocumentFeature new_feature =

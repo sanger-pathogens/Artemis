@@ -123,7 +123,7 @@ public class DatabaseEntrySource implements EntrySource
   * jdbc:postgresql://localhost:13001/chadoCVS?user=es2
   *
   */
-  protected boolean setLocation()
+  protected boolean setLocation(final boolean prompt_user)
   {
     Container bacross = new Container();
     bacross.setLayout(new GridLayout(5,2,5,5));
@@ -165,6 +165,16 @@ public class DatabaseEntrySource implements EntrySource
           {
             inDB.setText(db_url.substring(index2+1,index3));
             inUser.setText(db_url.substring(index3+1));
+            
+            if(!prompt_user)
+            {
+              location = "jdbc:postgresql://"
+                 +inServer.getText().trim()+ ":"
+                 +inPort.getText().trim()+ "/"
+                 +inDB.getText().trim()+ "?user="
+                 +inUser.getText().trim();
+              return true;
+            }
           }
         }
       }
