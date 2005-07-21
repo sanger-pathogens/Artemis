@@ -46,7 +46,7 @@ public class DatabaseDocument extends Document
   private Hashtable db;
   private Vector organism;
   private String sqlLog = System.getProperty("user.home")+
-                          System.getProperty("file.separator")+"art_sql.log";
+                          System.getProperty("file.separator")+"art_sql_debug.log";
 
   /**
    *
@@ -229,7 +229,7 @@ public class DatabaseDocument extends Document
     while(rs.next())
     {
       int fmin          = rs.getInt("fmin")+1;
-      int fmax          = rs.getInt("fmax");
+      int fmax          = rs.getInt("fmax")+1;
       long type_id      = rs.getLong("type_id");
       long prop_type_id = rs.getLong("prop_type_id");
       int strand        = rs.getInt("strand");
