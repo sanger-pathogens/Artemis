@@ -229,7 +229,7 @@ public class DatabaseDocument extends Document
     while(rs.next())
     {
       int fmin          = rs.getInt("fmin")+1;
-      int fmax          = rs.getInt("fmax")+1;
+      int fmax          = rs.getInt("fmax");
       long type_id      = rs.getLong("type_id");
       long prop_type_id = rs.getLong("prop_type_id");
       int strand        = rs.getInt("strand");
