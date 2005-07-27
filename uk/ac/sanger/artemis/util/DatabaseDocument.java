@@ -295,16 +295,16 @@ public class DatabaseDocument extends Document
     return cdsBuffer.toString();
   }
 
-  public static long getCvtermID(String name)
+  public static Long getCvtermID(String name)
   {
     Enumeration enum_cvterm = cvterm.keys();
     while(enum_cvterm.hasMoreElements())
     {
       Long key = (Long)enum_cvterm.nextElement();
       if(name.equals(cvterm.get(key)))
-        return key.longValue();
+        return key;
     }
-    return (long)-1.;
+    return new Long("-1.");
   }
 
   private String getCvtermName(Connection conn, long id)

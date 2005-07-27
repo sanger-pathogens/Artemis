@@ -46,7 +46,7 @@ public class ChadoTransaction
   /** properties store */
   protected Hashtable properties; 
   /** old properties store */
-  protected Hashtable old_properties;
+  protected Hashtable constraint;
 
   /** type of statement */
   protected int type;
@@ -109,21 +109,16 @@ public class ChadoTransaction
   */
   public void addProperty(String name, String value) 
   {
-    if (properties == null)
+    if(properties == null)
       properties = new Hashtable();
     properties.put(name, value);
   }
 
-  /**
-  * 
-  *  Add a property to this transaction that will be changed.
-  *
-  */
-  public void addOldProperty(String name, String old_value)
+  public void setConstraint(String name, String value)
   {
-    if (properties == null)
-      old_properties = new Hashtable();
-    old_properties.put(name, old_value);
+    if(constraint == null)
+      constraint = new Hashtable();
+    constraint.put(name, value);
   }
 
   public String getSqlQuery()
@@ -146,8 +141,19 @@ public class ChadoTransaction
         if(enum_prop.hasMoreElements())
           sqlBuff.append(" , ");
       }
-      sqlBuff.append(" WHERE feature.feature_id=featureloc.feature_id AND feature.uniquename='");
+      sqlBuff.append(" WHERE feature.feature_id="+chadoTable+".feature_id AND feature.uniquename='");
       sqlBuff.append(uniquename+"'");
+
+      if(constraint != null)
+      {
+        Enumeration enum_constraint = constraint.keys();
+        while(enum_constraint.hasMoreElements())
+        {
+          name  = (String)enum_constraint.nextElement();
+          value = (String)constraint.get(name);
+          sqlBuff.append(" AND "+name+"="+value);
+        }
+      }
     }
 //  else if(type == INSERT)
 //  else

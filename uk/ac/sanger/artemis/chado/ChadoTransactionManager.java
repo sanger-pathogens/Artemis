@@ -176,15 +176,23 @@ public class ChadoTransactionManager
           final StringVector qualifier_strings =
                        StreamQualifier.toStringVector(null, this_qualifier);
 
-          long cvterm_id = DatabaseDocument.getCvtermID(name);
-
+          String cvterm_id = DatabaseDocument.getCvtermID(name).toString();
+          
           for(int value_index = 0; value_index < qualifier_strings.size();
               ++value_index)
           {
-            final String qualifier_string = qualifier_strings.elementAt(value_index);
-//          tsn.addProperty("value", qualifier_string);
-          }
+            String qualifier_string = qualifier_strings.elementAt(value_index);
+            int index = qualifier_string.indexOf("=");
+            if(index > -1)
+              qualifier_string = qualifier_string.substring(index+1);
 
+            tsn.addProperty("value", "'"+qualifier_string+"'");
+          }
+          tsn.setConstraint("featureprop.type_id", cvterm_id);
+          sql.add(tsn);
+ 
+          System.out.println("******** "+DatabaseDocument.getCvtermID(name));
+          System.out.println(tsn.getSqlQuery());
         }
         else                                                   // insert qualifier
         {}
