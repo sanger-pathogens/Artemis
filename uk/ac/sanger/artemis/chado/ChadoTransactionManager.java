@@ -64,9 +64,7 @@ public class ChadoTransactionManager
     if(event.featureHasChanged())
     {
       final GFFStreamFeature feature = (GFFStreamFeature)event.getFeature().getEmblFeature();
-      System.out.println("HERE featureChanged() "+event.getType()+" "+event.getFeature().getIDString());
 
-      ChadoTransaction tsn = null;
       if(event.getType() == event.LOCATION_CHANGED)
       {
         System.out.println("LOCATION_CHANGED ");
@@ -75,19 +73,36 @@ public class ChadoTransactionManager
         RangeVector rv_old = event.getOldLocation().getRanges();
 
         int ichanged;
+        Vector changes = new Vector();
         for(ichanged=0; ichanged<rv_old.size(); ichanged++)
         {
-          if(!rv_new.contains(rv_old.elementAt(ichanged)))
-            break; 
+          Range rnew = (Range)rv_new.elementAt(ichanged);
+          Range rold = (Range)rv_old.elementAt(ichanged);
+   
+          if(rnew.getStart() != rold.getStart() ||
+             rnew.getEnd()   != rold.getEnd())
+            changes.add(new Integer(ichanged));
         }
  
-        Range range_new = (Range)rv_new.elementAt(ichanged);
-        String seg_id   = feature.getSegmentID(range_new);
+        ChadoTransaction tsn;
+        for(int i=0; i<changes.size();i++)
+        {
+          ichanged = ((Integer)changes.elementAt(i)).intValue();
+
+          Range range_new = (Range)rv_new.elementAt(ichanged);
+          Range range_old = (Range)rv_old.elementAt(ichanged);
+          String seg_id   = feature.getSegmentID(range_new);
  
-        tsn = new ChadoTransaction(ChadoTransaction.UPDATE, 
-                                   seg_id, "featureloc");
-        tsn.addProperty("fmin", Integer.toString(range_new.getStart()-1));
-        tsn.addProperty("fmax", Integer.toString(range_new.getEnd()));
+          tsn = new ChadoTransaction(ChadoTransaction.UPDATE, 
+                                     seg_id, "featureloc");
+
+          if(range_new.getStart() != range_old.getStart())
+            tsn.addProperty("fmin", Integer.toString(range_new.getStart()-1));
+          if(range_new.getEnd() != range_old.getEnd())
+            tsn.addProperty("fmax", Integer.toString(range_new.getEnd()));
+
+          sql.add(tsn);
+        }
       }
       else if(event.getType() == event.QUALIFIER_CHANGED)
       {
@@ -96,10 +111,16 @@ public class ChadoTransactionManager
         System.out.println(getQualifierString(event.getNewQualifiers()));
       }
       else if(event.getType() == event.ALL_CHANGED)
+      {
+        System.out.println("OLD");
+        System.out.println(getQualifierString(event.getOldQualifiers()));
+        System.out.println("NEW");
+        System.out.println(getQualifierString(event.getNewQualifiers()));
+
         System.out.println("ALL_CHANGED");
- 
-      if(tsn != null)  
-        sql.add(tsn);
+        
+        getUpdateQualifiers(event.getOldQualifiers(),event.getNewQualifiers(),feature);
+      }
     }
   }
  
@@ -113,6 +134,7 @@ public class ChadoTransactionManager
   {
     final StringBuffer buffer = new StringBuffer();
 
+    ChadoTransaction tsn;
     for(int qualifier_index = 0; qualifier_index < qualifiers.size();
         ++qualifier_index)
     {
@@ -130,6 +152,45 @@ public class ChadoTransactionManager
     }
 
     return buffer.toString();
+  }
+
+
+  private void getUpdateQualifiers(QualifierVector qualifiers_old, 
+                                   QualifierVector qualifiers_new, GFFStreamFeature feature)
+  {
+  
+    String feature_id = feature.getQualifierByName("ID").getValues().elementAt(0);
+    ChadoTransaction tsn;
+    for(int qualifier_index = 0; qualifier_index < qualifiers_new.size();
+        ++qualifier_index)
+    {
+      final Qualifier this_qualifier = (Qualifier)qualifiers_new.elementAt(qualifier_index);
+      if(!qualifiers_old.contains(this_qualifier))
+      {
+        String name = this_qualifier.getName();
+        if(qualifiers_old.indexOfQualifierWithName(name) > -1)  // update qualifier
+        {
+          tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                                     feature_id, "featureprop");
+
+          final StringVector qualifier_strings =
+                       StreamQualifier.toStringVector(null, this_qualifier);
+
+          long cvterm_id = DatabaseDocument.getCvtermID(name);
+
+          for(int value_index = 0; value_index < qualifier_strings.size();
+              ++value_index)
+          {
+            final String qualifier_string = qualifier_strings.elementAt(value_index);
+//          tsn.addProperty("value", qualifier_string);
+          }
+
+        }
+        else                                                   // insert qualifier
+        {}
+      }
+    }
+
   }
 
 

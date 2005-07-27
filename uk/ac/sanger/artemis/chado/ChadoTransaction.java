@@ -45,6 +45,9 @@ public class ChadoTransaction
 
   /** properties store */
   protected Hashtable properties; 
+  /** old properties store */
+  protected Hashtable old_properties;
+
   /** type of statement */
   protected int type;
   /** feature uniquename */
@@ -109,6 +112,18 @@ public class ChadoTransaction
     if (properties == null)
       properties = new Hashtable();
     properties.put(name, value);
+  }
+
+  /**
+  * 
+  *  Add a property to this transaction that will be changed.
+  *
+  */
+  public void addOldProperty(String name, String old_value)
+  {
+    if (properties == null)
+      old_properties = new Hashtable();
+    old_properties.put(name, old_value);
   }
 
   public String getSqlQuery()

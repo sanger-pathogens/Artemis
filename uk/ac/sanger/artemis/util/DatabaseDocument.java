@@ -44,7 +44,7 @@ public class DatabaseDocument extends Document
 {
   private String name = null;
   private String feature_id = "1";
-  private Hashtable cvterm;
+  private static Hashtable cvterm;
   private InputStreamProgressListener progress_listener;
   private Hashtable db;
   private Vector organism;
@@ -293,6 +293,18 @@ public class DatabaseDocument extends Document
     }
 
     return cdsBuffer.toString();
+  }
+
+  public static long getCvtermID(String name)
+  {
+    Enumeration enum_cvterm = cvterm.keys();
+    while(enum_cvterm.hasMoreElements())
+    {
+      Long key = (Long)enum_cvterm.nextElement();
+      if(name.equals(cvterm.get(key)))
+        return key.longValue();
+    }
+    return (long)-1.;
   }
 
   private String getCvtermName(Connection conn, long id)
