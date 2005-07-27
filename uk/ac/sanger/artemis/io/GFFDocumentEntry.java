@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.16 2005-07-18 19:20:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.17 2005-07-27 08:24:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.util.Vector;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.16 2005-07-18 19:20:25 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.17 2005-07-27 08:24:17 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -227,10 +227,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         // combine the features (exons) and delete the orignals
 
         final RangeVector new_range_vector = new RangeVector();
-
-        // storage for the original GFF lines.  the new feature will have a
-        // multi-line gff_line
-        StringVector new_gff_lines = new StringVector();
+        QualifierVector qualifier_vector = new QualifierVector();
+        Hashtable id_range_store = new Hashtable();
 
         for (int i = 0 ; i < feature_group.size() ; ++i) 
         {
@@ -246,7 +244,15 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           }
 
           final Range new_range =
-            this_feature_location.getRanges().elementAt(0);
+            (Range)this_feature_location.getRanges().elementAt(0);
+
+          Qualifier id_qualifier = this_feature.getQualifierByName("ID");
+          if(id_qualifier != null)
+          {
+            String id = id_qualifier.getValues().elementAt(0);
+            id_range_store.put(new_range, id);
+          }
+
 
           if(this_feature_location.isComplement()) 
             new_range_vector.insertElementAt(new_range, 0);
@@ -254,20 +260,18 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
             new_range_vector.add(new_range);
 
           removeInternal(this_feature);
-
-          new_gff_lines.add(this_feature.gff_lines);
+          qualifier_vector.addAll(this_feature.getQualifiers());
         }
 
         final Feature first_old_feature = feature_group.featureAt(0);
 
-        final GFFStreamFeature new_feature =
-          new GFFStreamFeature(first_old_feature);
+        final Location new_location = new Location(new_range_vector,
+                    first_old_feature.getLocation().isComplement());
 
-        new_feature.gff_lines = new_gff_lines;
-
-        final Location new_location =
-          new Location(new_range_vector,
-                        first_old_feature.getLocation().isComplement());
+        qualifier_vector = mergeQualifiers(qualifier_vector);
+        final GFFStreamFeature new_feature = new GFFStreamFeature(first_old_feature.getKey(),
+                                                             new_location, qualifier_vector);
+        new_feature.setSegmentRangeStore(id_range_store);
 
         try 
         {
@@ -309,6 +313,33 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         }
       }
     }
+  }
+
+  private QualifierVector mergeQualifiers(QualifierVector qualifier_vector)
+  {
+    QualifierVector merge_qualifier_vector = new QualifierVector();
+    
+    for(int i = 0 ; i < qualifier_vector.size() ; ++i)
+    {
+      Qualifier qual = (Qualifier)qualifier_vector.elementAt(i);
+      if(!qual.getName().equals("ID"))
+        merge_qualifier_vector.setQualifier(qual);
+      else
+      { 
+        Qualifier id_qualifier = merge_qualifier_vector.getQualifierByName("ID");
+
+        if(id_qualifier == null)
+          merge_qualifier_vector.addElement(qual);
+        else
+        {
+          String id1 = id_qualifier.getValues().elementAt(0);
+          String id2 = qual.getValues().elementAt(0);
+          id_qualifier.removeValue(id1);
+          id_qualifier.addValue(id1+","+id2);
+        }
+      }
+    }
+    return merge_qualifier_vector;
   }
 
 }

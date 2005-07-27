@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.12 2005-07-20 17:47:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.13 2005-07-27 08:24:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -60,7 +60,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.12 2005-07-20 17:47:39 tjc Exp $
+ *  @version $Id: Feature.java,v 1.13 2005-07-27 08:24:16 tjc Exp $
  **/
 
 public class Feature
@@ -274,7 +274,7 @@ public class Feature
   /**
    *  Returns the embl feature that was passed to the constructor.
    **/
-  uk.ac.sanger.artemis.io.Feature getEmblFeature() 
+  public uk.ac.sanger.artemis.io.Feature getEmblFeature() 
   {
     return embl_feature;
   }
@@ -2455,7 +2455,7 @@ EXACT_SEGMENTS:
       for(int range_index = 0; range_index < ranges_size;
           ++range_index)
       {
-        final Range new_range = ranges.elementAt(range_index);
+        final Range new_range = (Range)ranges.elementAt(range_index);
 
         // there is a Range in the new Location that exactly matches a Range
         // in an old FeatureSegment so reuse the old FeatureSegment
@@ -2480,7 +2480,7 @@ CHANGED_END:
       for(int range_index = 0; range_index < ranges_size;
           ++range_index) 
       {
-        final Range new_range = ranges.elementAt(range_index);
+        final Range new_range = (Range)ranges.elementAt(range_index);
 
         if(old_segment.getRawRange().getStart() ==
            new_range.getStart() ||
@@ -2501,7 +2501,7 @@ CHANGED_END:
     for(int new_segment_index = 0; new_segment_index < ranges_size;
         ++new_segment_index) 
     {
-      final Range missing_range = ranges.elementAt(new_segment_index);
+      final Range missing_range = (Range)ranges.elementAt(new_segment_index);
       
       if(new_segments.elementAt(new_segment_index) == null) 
       {
@@ -2919,7 +2919,7 @@ CHANGED_END:
     int ranges_size = ranges.size();
     for(int i = 0; i < ranges_size; ++i) 
     {
-      final Range this_range = ranges.elementAt(i);
+      final Range this_range = (Range)ranges.elementAt(i);
       segments.add(makeSegment(this_range));
     }
 

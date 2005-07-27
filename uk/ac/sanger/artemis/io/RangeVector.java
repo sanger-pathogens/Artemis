@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RangeVector.java,v 1.1 2004-06-09 09:50:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RangeVector.java,v 1.2 2005-07-27 08:24:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -31,93 +31,43 @@ import java.util.Vector;
  *  This class implements a Vector of Range objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: RangeVector.java,v 1.1 2004-06-09 09:50:19 tjc Exp $
+ *  @version $Id: RangeVector.java,v 1.2 2005-07-27 08:24:17 tjc Exp $
  *
  **/
 
-public class RangeVector {
+public class RangeVector extends Vector
+{
+
   /**
    *  Create a new vector of Range objects.
    **/
-  public RangeVector () {
-
+  public RangeVector() 
+  {
   }
 
   /**
    *  Create a new vector of Range objects containing just the given Range.
    **/
-  public RangeVector (final Range range) {
+  public RangeVector(final Range range) 
+  {
     add (range);
   }
 
-  /**
-   *  Performs the same function as Vector.addElement ()
-   */
-  public void addElement (Range node) {
-    vector.addElement (node);
-  }
 
   /**
-   *  Performs the same function as Vector.insertElementAt ()
-   **/
-  public final void insertElementAt (Range range, int index) {
-    vector.insertElementAt (range, index);
-  }
-
-  /**
-   *  Performs the same function as Vector.addElement ()
-   */
-  public void add (Range node) {
-    vector.addElement (node);
-  }
-  
-  /**
-   *  Performs the same function as Vector.elementAt ()
-   */
-  public Range elementAt (int index) {
-    return (Range) vector.elementAt (index);
-  }
-
-
-  /**
-   *  Performs the same function as Vector.removeElement ()
-   **/
-  public boolean removeElement (Range Range) {
-    return vector.removeElement (Range);
-  }
-  
-
-  /**
-   *  Performs the same function as Vector.removeElement ()
-   **/
-  public int indexOf (Range Range) {
-    return vector.indexOf (Range);
-  }
-
-
-  /**
-   *  Performs the same function as Vector.size ()
-   */
-  public int size () {
-    return vector.size ();
-  }
-
-  /**
-   *  Reverse this RangeVector in place.
-   **/
-  public void reverse () {
-    for (int i = 0 ; i < vector.size () / 2 ; ++i) {
-      final int swap_position = vector.size () - i - 1;
-      final Object tmp = vector.elementAt (i);
-      vector.setElementAt (vector.elementAt (swap_position), i);
-      vector.setElementAt (tmp, swap_position);
+  *  Reverse this RangeVector in place.
+  **/
+  public void reverse()
+  {
+    for(int i = 0 ; i < size () / 2 ; ++i) 
+    {
+      final int swap_position = size () - i - 1;
+      final Object tmp = elementAt(i);
+      setElementAt(elementAt(swap_position), i);
+      setElementAt(tmp, swap_position);
     }
   }
   
-  /**
-   *  Storage for Range objects.
-   */
-  final private Vector vector = new Vector ();
 }
 
 

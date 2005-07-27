@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.10 2005-04-08 14:08:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.11 2005-07-27 08:24:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.10 2005-04-08 14:08:21 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.11 2005-07-27 08:24:16 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -643,9 +643,9 @@ public class AddMenu extends SelectionMenu
              range_index < cds_ranges.size () - 1 ;
              ++range_index) {
           final int end_of_range_1 =
-            cds_ranges.elementAt (range_index).getEnd ();
+            ((Range)cds_ranges.elementAt(range_index)).getEnd ();
           final int start_of_range_2 =
-            cds_ranges.elementAt (range_index + 1).getStart ();
+            ((Range)cds_ranges.elementAt(range_index + 1)).getStart ();
 
           if (end_of_range_1 > start_of_range_2) {
             // ignore - the exons overlap so there is no room for an intron
@@ -726,7 +726,7 @@ public class AddMenu extends SelectionMenu
         for (int range_index = 0 ;
              range_index < cds_ranges.size () ;
              ++range_index) {
-          final Range this_range = cds_ranges.elementAt (range_index);
+          final Range this_range = (Range)cds_ranges.elementAt (range_index);
 
           final RangeVector exon_ranges = new RangeVector ();
 

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.27 2005-07-14 09:03:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.28 2005-07-27 08:24:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,7 +47,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.27 2005-07-14 09:03:24 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.28 2005-07-27 08:24:16 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -341,7 +341,7 @@ public class AlignmentViewer extends CanvasPanel
     for(int range_index = 0; range_index < select_ranges_size;
         ++range_index) 
     {
-      final Range select_range = select_ranges.elementAt(range_index);
+      final Range select_range = (Range)select_ranges.elementAt(range_index);
       final int select_range_start = select_range.getStart();
       final int select_range_end   = select_range.getEnd();
 
@@ -410,7 +410,7 @@ public class AlignmentViewer extends CanvasPanel
     for(int range_index = 0; range_index < select_ranges_size;
         ++range_index) 
     {
-      final Range select_range = select_ranges.elementAt(range_index);
+      final Range select_range = (Range)select_ranges.elementAt(range_index);
       final int select_range_start = select_range.getStart();
       final int select_range_end   = select_range.getEnd();
 

@@ -25,10 +25,13 @@
 package uk.ac.sanger.artemis.util;
 
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.chado.ChadoTransaction;
+
 import java.sql.*;
 import java.io.*;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.Enumeration;
 import java.util.Date;
 import javax.swing.JOptionPane;
 
@@ -179,6 +182,8 @@ public class DatabaseDocument extends Document
 //    String entry = getSequence(conn);
       appendToLogFile(entry,sqlLog);
       ByteArrayInputStream instream = new ByteArrayInputStream(entry.getBytes());
+
+      conn.close();
       return instream;
     }
     catch(java.sql.SQLException sqlExp)
@@ -402,6 +407,8 @@ public class DatabaseDocument extends Document
         if(!organism.contains(org))
           organism.add(org);
       }
+
+      conn.close();
     }
     catch(java.sql.SQLException sqlExp)
     {
@@ -481,5 +488,37 @@ public class DatabaseDocument extends Document
     }
   }
 
+  public void commit(Vector sql)
+  {
+    try
+    {
+      Connection conn = getConnection();
+      int row = 0;
+
+      for(int i=0; i<sql.size(); i++)
+      {
+        ChadoTransaction tsn = (ChadoTransaction)sql.get(i);
+        System.out.println(tsn.getSqlQuery());
+
+        Statement st = conn.createStatement();
+        row += st.executeUpdate(tsn.getSqlQuery());
+      }
+
+      conn.close();
+    }
+    catch(java.sql.SQLException sqlExp)
+    {
+      sqlExp.printStackTrace();
+    }
+    catch(java.net.ConnectException conn)
+    {
+      JOptionPane.showMessageDialog(null, "Problems connecting...",
+                                "Database Connection Error - Check Server",
+                                JOptionPane.ERROR_MESSAGE);
+      conn.printStackTrace();
+    }
+
+  }
+  
 }
 

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.14 2005-07-14 13:25:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.15 2005-07-27 08:24:17 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -61,7 +61,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.14 2005-07-14 13:25:31 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.15 2005-07-27 08:24:17 tjc Exp $
  **/
 
 public class FeatureEdit extends JFrame
@@ -1083,7 +1083,7 @@ public class FeatureEdit extends JFrame
     // completely contained then the appropriate end of the range is truncated
     for(int i = 0; i < location_ranges.size(); ++i) 
     {
-      final Range this_range = location_ranges.elementAt(i);
+      final Range this_range = (Range)location_ranges.elementAt(i);
 
       if(selected_range.overlaps(this_range)) 
       {

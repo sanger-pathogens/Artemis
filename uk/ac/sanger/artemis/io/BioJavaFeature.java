@@ -270,7 +270,7 @@ public class BioJavaFeature extends EMBLObject implements ComparableFeature
     final RangeVector ranges = artemisLocation.getRanges ();
 
     for (int i = 0 ; i < ranges.size () ; ++i) {
-      final Range range = ranges.elementAt (i);
+      final Range range = (Range)ranges.elementAt (i);
       al.add (LocationTools.makeLocation (range.getStart (), range.getEnd ()));
     }
       

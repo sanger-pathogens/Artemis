@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.17 2005-07-20 13:28:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.18 2005-07-27 08:24:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -29,13 +29,14 @@ import uk.ac.sanger.artemis.util.*;
 
 import java.io.*;
 import java.util.Hashtable;
+import java.util.Enumeration;
 import java.util.StringTokenizer;
 
 /**
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.17 2005-07-20 13:28:24 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.18 2005-07-27 08:24:17 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -48,6 +49,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    *  lines will have a gff_lines variable that contains multiple line.
    **/
   StringVector gff_lines = null;
+
+  /** store for spliced features containing id and range of each segment */
+  private Hashtable id_range_store;
 
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
@@ -253,6 +257,35 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
   /**
   *
+  * Store for spliced regions of segments ID's and ranges.
+  *
+  */
+  public void setSegmentRangeStore(Hashtable id_range_store)
+  {
+    this.id_range_store = id_range_store;
+  }
+
+
+  public String getSegmentID(Range r)
+  {
+    if(id_range_store != null)
+    {
+      Enumeration enum_ranges = id_range_store.keys();
+      while(enum_ranges.hasMoreElements())
+      {
+        Range range = (Range)enum_ranges.nextElement();
+        if(range.getStart() == r.getStart() ||
+           range.getEnd()   == r.getEnd())
+        return (String)id_range_store.get(range);
+      }
+    }
+
+    return getQualifierByName("ID").getValues().elementAt(0);
+  }
+
+
+  /**
+  *
   * For gff-version 3:
   * http://song.sourceforge.net/gff3-jan04.shtml
   *
@@ -401,7 +434,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
     for(int i = 0; i < ranges_size; ++i) 
     {
-      Range this_range = ranges.elementAt(i);
+      Range this_range = (Range)ranges.elementAt(i);
 
       Qualifier seqname = getQualifierByName("gff_seqname");
       Qualifier source  = getQualifierByName("gff_source");

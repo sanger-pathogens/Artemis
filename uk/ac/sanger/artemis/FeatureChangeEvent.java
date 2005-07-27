@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FeatureChangeEvent.java,v 1.1 2004-06-09 09:44:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FeatureChangeEvent.java,v 1.2 2005-07-27 08:24:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -29,12 +29,14 @@ import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.QualifierVector;
 
+import java.io.*;
+
 /**
  *  This event is sent when a change occurs within a feature.  eg the location
  *  or qualifier changes.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureChangeEvent.java,v 1.1 2004-06-09 09:44:37 tjc Exp $
+ *  @version $Id: FeatureChangeEvent.java,v 1.2 2005-07-27 08:24:16 tjc Exp $
   */
 
 public class FeatureChangeEvent extends ChangeEvent {
@@ -176,6 +178,7 @@ public class FeatureChangeEvent extends ChangeEvent {
     return false;
   }
   
+
   /**
    *  The feature that this event was generated for.
    **/

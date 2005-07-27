@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Location.java,v 1.4 2005-05-03 09:12:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Location.java,v 1.5 2005-07-27 08:24:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import uk.ac.sanger.artemis.io.LocationLexer.TokenEnumeration;
  *  functions for parsing and manipulating the location.
  *
  *  @author Kim Rutherford
- *  @version $Id: Location.java,v 1.4 2005-05-03 09:12:09 tjc Exp $
+ *  @version $Id: Location.java,v 1.5 2005-07-27 08:24:17 tjc Exp $
  *
  */
 public class Location 
@@ -103,7 +103,7 @@ public class Location
 
     for(int i = 0 ; i<ranges.size() ; ++i) 
     {
-      final LocationParseNode range_node = new LocationParseNode(ranges.elementAt(i));
+      final LocationParseNode range_node = new LocationParseNode((Range)ranges.elementAt(i));
 
       if(complement)
       {
@@ -143,7 +143,7 @@ public class Location
     for(int i = 0 ; i<ranges.size () ; ++i) 
     {
       final Range truncated_range =
-        ranges.elementAt(i).truncate(constraint);
+        ((Range)ranges.elementAt(i)).truncate(constraint);
 
       if(truncated_range != null) 
         new_ranges.add(truncated_range);
@@ -400,8 +400,8 @@ public class Location
         
         for(int i = 0 ; i<ranges.size() ; ++i) 
         {
-          final int this_start = ranges.elementAt(i).getStart();
-          final int this_end   = ranges.elementAt(i).getEnd();
+          final int this_start = ((Range)ranges.elementAt(i)).getStart();
+          final int this_end   = ((Range)ranges.elementAt(i)).getEnd();
           
           if(lowest_so_far == -1 || this_start < lowest_so_far) 
             lowest_so_far = this_start;

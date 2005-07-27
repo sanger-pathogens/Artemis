@@ -20,18 +20,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.13 2005-07-20 13:03:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.14 2005-07-27 08:24:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
+import uk.ac.sanger.artemis.chado.*;
 import uk.ac.sanger.artemis.sequence.Marker;
 import uk.ac.sanger.artemis.sequence.Bases;
 
 import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.Document;
+import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.EntryInformation;
@@ -52,7 +56,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.13 2005-07-20 13:03:25 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.14 2005-07-27 08:24:17 tjc Exp $
  *
  */
 
@@ -833,11 +837,31 @@ public class EntryEdit extends JFrame
 
       if(db)
       {
+        final ChadoTransactionManager ctm = new ChadoTransactionManager();
+        getEntryGroup().addFeatureChangeListener(ctm);
+
         JMenuItem commit = new JMenuItem("Commit to Database");
         commit.addActionListener(new ActionListener()
         {
           public void actionPerformed(ActionEvent event)
           {
+            try
+            {
+              Document dbDoc =
+                  ((DocumentEntry)getEntryGroup().getDefaultEntry().getEMBLEntry()).getDocument();
+
+              if(dbDoc instanceof DatabaseDocument)
+                ctm.commit((DatabaseDocument)dbDoc);
+              else
+                new MessageDialog(EntryEdit.this,
+                         "No database associated with the default entry");
+            }
+            catch(NullPointerException npe)
+            {
+              new MessageDialog(EntryEdit.this,
+                         "No default entry to write to");
+              npe.printStackTrace();
+            }
           }
         });
         file_menu.add(commit);
