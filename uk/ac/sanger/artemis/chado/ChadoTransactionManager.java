@@ -173,15 +173,15 @@ public class ChadoTransactionManager
           tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                                      feature_id, "featureprop");
 
-          final StringVector qualifier_strings =
+          final StringVector new_qualifier_strings =
                        StreamQualifier.toStringVector(null, this_qualifier);
 
           String cvterm_id = DatabaseDocument.getCvtermID(name).toString();
-          
-          for(int value_index = 0; value_index < qualifier_strings.size();
+
+          for(int value_index = 0; value_index < new_qualifier_strings.size();
               ++value_index)
           {
-            String qualifier_string = qualifier_strings.elementAt(value_index);
+            String qualifier_string = new_qualifier_strings.elementAt(value_index);
             int index = qualifier_string.indexOf("=");
             if(index > -1)
               qualifier_string = qualifier_string.substring(index+1);

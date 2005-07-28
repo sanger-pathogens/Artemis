@@ -28,6 +28,7 @@ import java.util.Properties;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
+import java.util.StringTokenizer;
 
 /**
 *
@@ -141,8 +142,17 @@ public class ChadoTransaction
         if(enum_prop.hasMoreElements())
           sqlBuff.append(" , ");
       }
-      sqlBuff.append(" WHERE feature.feature_id="+chadoTable+".feature_id AND feature.uniquename='");
-      sqlBuff.append(uniquename+"'");
+      sqlBuff.append(" WHERE feature.feature_id="+chadoTable+".feature_id AND (");
+    
+      StringTokenizer tok = new StringTokenizer(uniquename,",");
+      while(tok.hasMoreTokens())
+      {
+        sqlBuff.append(" feature.uniquename='" + tok.nextToken()+"' ");
+        if(tok.hasMoreTokens())
+          sqlBuff.append("OR");
+      }
+
+      sqlBuff.append(")");
 
       if(constraint != null)
       {
