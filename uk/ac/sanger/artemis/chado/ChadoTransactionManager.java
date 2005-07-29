@@ -39,7 +39,7 @@ import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 
 import java.util.Vector;
-
+import javax.swing.JOptionPane;
 
 /**
 *
@@ -165,40 +165,95 @@ public class ChadoTransactionManager
         ++qualifier_index)
     {
       final Qualifier this_qualifier = (Qualifier)qualifiers_new.elementAt(qualifier_index);
+
       if(!qualifiers_old.contains(this_qualifier))
       {
         String name = this_qualifier.getName();
-        if(qualifiers_old.indexOfQualifierWithName(name) > -1)  // update qualifier
+        int old_index = qualifiers_old.indexOfQualifierWithName(name);
+
+        Qualifier this_old_qualifier = null;
+        StringVector old_qualifier_strings = null;
+        if(old_index> -1)  // update qualifier
+        {
+          this_old_qualifier = (Qualifier)qualifiers_old.elementAt(old_index);
+
+          old_qualifier_strings =
+                     StreamQualifier.toStringVector(null, this_old_qualifier);
+        }
+
+        final StringVector new_qualifier_strings =
+                     StreamQualifier.toStringVector(null, this_qualifier);
+
+        String cvterm_id = DatabaseDocument.getCvtermID(name).toString();
+
+        if(cvterm_id == null)   // chado doesn't recognise this
+        {
+          JOptionPane.showMessageDialog(null, 
+                      name+" is not a valid qualifier!",
+                      "Invalid Qualifier",
+                      JOptionPane.WARNING_MESSAGE);
+          continue;
+        }
+ 
+        if(old_index > -1 &&
+           new_qualifier_strings.size() == 1 &&
+           old_qualifier_strings.size() == 1)
         {
           tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                                      feature_id, "featureprop");
 
-          final StringVector new_qualifier_strings =
-                       StreamQualifier.toStringVector(null, this_qualifier);
+          String qualifier_string = new_qualifier_strings.elementAt(0);
+          int index = qualifier_string.indexOf("=");
+          if(index > -1)
+            qualifier_string = qualifier_string.substring(index+1);
 
-          String cvterm_id = DatabaseDocument.getCvtermID(name).toString();
+          tsn.addProperty("value", "'"+ stripQuotes(qualifier_string) +"'");
+          tsn.setConstraint("featureprop.type_id", cvterm_id);
+          sql.add(tsn);
+        }
+        else
+        {
+          if(old_index > -1)   // delete existing featureprops
+          {
+            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+                                       feature_id, "featureprop");
 
+            tsn.setConstraint("type_id", cvterm_id);
+            sql.add(tsn);
+            System.out.println(tsn.getSqlQuery());
+          }
+          
+          // insert new featureprops
           for(int value_index = 0; value_index < new_qualifier_strings.size();
               ++value_index)
           {
+            tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+                                       feature_id, "featureprop");
             String qualifier_string = new_qualifier_strings.elementAt(value_index);
             int index = qualifier_string.indexOf("=");
             if(index > -1)
               qualifier_string = qualifier_string.substring(index+1);
 
-            tsn.addProperty("value", "'"+qualifier_string+"'");
+            tsn.addProperty("value", "'"+ stripQuotes(qualifier_string) +"'");
+            tsn.addProperty("type_id", "'"+cvterm_id+"'");
+            tsn.addProperty("rank", Integer.toString(value_index));
+            sql.add(tsn);
+            System.out.println(tsn.getSqlQuery());
           }
-          tsn.setConstraint("featureprop.type_id", cvterm_id);
-          sql.add(tsn);
- 
+
           System.out.println("******** "+DatabaseDocument.getCvtermID(name));
-          System.out.println(tsn.getSqlQuery());
         }
-        else                                                   // insert qualifier
-        {}
       }
     }
 
+  }
+
+  private String stripQuotes(String s)
+  {
+    if(s.startsWith("\"") && s.endsWith("\""))
+      s = s.substring(1,s.length()-1);
+    
+    return s;
   }
 
 

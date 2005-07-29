@@ -304,7 +304,8 @@ public class DatabaseDocument extends Document
       if(name.equals(cvterm.get(key)))
         return key;
     }
-    return new Long("-1.");
+    return null;
+//  return new Long("-1.");
   }
 
   private String getCvtermName(Connection conn, long id)
