@@ -122,7 +122,7 @@ public class ChadoTransaction
     constraint.put(name, value);
   }
 
-  public String getSqlQuery()
+  public String[] getSqlQuery()
   {
     StringBuffer sqlBuff = new StringBuffer();
 
@@ -167,48 +167,68 @@ public class ChadoTransaction
     }
     else if(type == INSERT)
     {
-      sqlBuff.append("INSERT INTO "+chadoTable);
-      StringBuffer sqlKeys   = new StringBuffer();
-      StringBuffer sqlValues = new StringBuffer();
-
-      sqlKeys.append("feature_id , ");
-      sqlValues.append("(SELECT feature_id FROM feature WHERE uniquename='"+uniquename+"') , ");
- 
-      String name;
-      Enumeration enum_prop = properties.keys();
-      while(enum_prop.hasMoreElements())
+      StringTokenizer tok = new StringTokenizer(uniquename,",");
+      while(tok.hasMoreTokens())
       {
-        name  = (String)enum_prop.nextElement();
-        sqlKeys.append(name);
-        sqlValues.append((String)properties.get(name));
-        if(enum_prop.hasMoreElements())
+        sqlBuff.append("INSERT INTO "+chadoTable);
+        StringBuffer sqlKeys   = new StringBuffer();
+        StringBuffer sqlValues = new StringBuffer();
+
+        sqlKeys.append("feature_id , ");
+        sqlValues.append("(SELECT feature_id FROM feature WHERE uniquename='"+
+                           tok.nextToken()+"') , ");
+ 
+        String name;
+        Enumeration enum_prop = properties.keys();
+        while(enum_prop.hasMoreElements())
         {
-          sqlKeys.append(" , ");
-          sqlValues.append(" , ");
+          name  = (String)enum_prop.nextElement();
+          sqlKeys.append(name);
+          sqlValues.append((String)properties.get(name));
+          if(enum_prop.hasMoreElements())
+          {
+            sqlKeys.append(" , ");
+            sqlValues.append(" , ");
+          }
         }
-      }
      
-      sqlBuff.append(" ( "+sqlKeys.toString()+" ) ");
-      sqlBuff.append(" values ");
-      sqlBuff.append(" ( "+sqlValues.toString()+" ) ");
+        sqlBuff.append(" ( "+sqlKeys.toString()+" ) ");
+        sqlBuff.append(" values ");
+        sqlBuff.append(" ( "+sqlValues.toString()+" )");
+        sqlBuff.append("\t");
+      }
     }
     else if(type == DELETE)
     {
-      sqlBuff.append("DELETE FROM "+chadoTable+" WHERE ");
-
-      String name;
-      String value;
-      Enumeration enum_constraint = constraint.keys();
-      while(enum_constraint.hasMoreElements())
+      StringTokenizer tok = new StringTokenizer(uniquename,",");
+      while(tok.hasMoreTokens())
       {
-        name  = (String)enum_constraint.nextElement();
-        value = (String)constraint.get(name);
-        sqlBuff.append(name+"="+value+" AND ");
+        sqlBuff.append("DELETE FROM "+chadoTable+" WHERE ");
+
+        String name;
+        String value;
+        Enumeration enum_constraint = constraint.keys();
+        while(enum_constraint.hasMoreElements())
+        {
+          name  = (String)enum_constraint.nextElement();
+          value = (String)constraint.get(name);
+          sqlBuff.append(name+"="+value+" AND ");
+        }
+        sqlBuff.append("feature_id=(SELECT feature_id FROM feature WHERE uniquename='"+
+                       tok.nextToken()+"')");
+        sqlBuff.append("\t");
       }
-      sqlBuff.append("feature_id=(SELECT feature_id FROM feature WHERE uniquename='"+
-                     uniquename+"')");
     }
      
-    return sqlBuff.toString();
+    String sql = sqlBuff.toString();
+    StringTokenizer tok = new StringTokenizer(sql,"\t");
+    final int count = tok.countTokens();
+    String[] sql_array = new String[count];
+    
+    for(int i=0; i<count; i++)
+      sql_array[i] = tok.nextToken();
+
+    return sql_array;
   }
+
 }

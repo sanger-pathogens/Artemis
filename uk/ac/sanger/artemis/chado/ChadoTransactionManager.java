@@ -211,7 +211,10 @@ public class ChadoTransactionManager
             tsn.setConstraint("featureprop.type_id", "'"+cvterm_id+"'");
             tsn.setConstraint("rank", Integer.toString(value_index));
             sql.add(tsn);
-            System.out.println(tsn.getSqlQuery());
+
+            String[] sql_array = tsn.getSqlQuery();
+            for(int i=0; i<sql_array.length; i++)
+              System.out.println(sql_array[i]);
           }
 
         }
@@ -225,7 +228,9 @@ public class ChadoTransactionManager
 
             tsn.setConstraint("type_id", cvterm_id);
             sql.add(tsn);
-            System.out.println(tsn.getSqlQuery());
+            String[] sql_array = tsn.getSqlQuery();
+            for(int i=0; i<sql_array.length; i++)
+              System.out.println(sql_array[i]);
           }
           
           // INSERT new featureprops
@@ -243,7 +248,9 @@ public class ChadoTransactionManager
             tsn.addProperty("type_id", "'"+cvterm_id+"'");
             tsn.addProperty("rank", Integer.toString(value_index));
             sql.add(tsn);
-            System.out.println(tsn.getSqlQuery());
+            String[] sql_array = tsn.getSqlQuery();
+            for(int i=0; i<sql_array.length; i++)
+              System.out.println(sql_array[i]);
           }
 
           System.out.println("******** "+DatabaseDocument.getCvtermID(name));

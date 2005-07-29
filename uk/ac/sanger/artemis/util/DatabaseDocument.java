@@ -511,10 +511,15 @@ public class DatabaseDocument extends Document
       for(int i=0; i<sql.size(); i++)
       {
         ChadoTransaction tsn = (ChadoTransaction)sql.get(i);
-        System.out.println(tsn.getSqlQuery());
+        String[] sql_array = tsn.getSqlQuery();
 
-        Statement st = conn.createStatement();
-        row += st.executeUpdate(tsn.getSqlQuery());
+        for(int j=0; j<sql_array.length; j++)
+        {
+          System.out.println(sql_array[j]);
+
+          Statement st = conn.createStatement();
+          row += st.executeUpdate(sql_array[j]);
+        }
       }
 
       conn.close();
