@@ -107,8 +107,6 @@ public class ChadoTransactionManager
       else if(event.getType() == event.QUALIFIER_CHANGED)
       {
         System.out.println("QUALIFIER_CHANGED ");
-        System.out.println(getQualifierString(event.getOldQualifiers()));
-        System.out.println(getQualifierString(event.getNewQualifiers()));
       }
       else if(event.getType() == event.ALL_CHANGED)
       {
@@ -149,9 +147,19 @@ public class ChadoTransactionManager
     return buffer.toString();
   }
 
-
+  /**
+  *
+  * Find the qualifiers that have changed or been added and UPDATE
+  * INSERT or DELETE accordingly.
+  *
+  * @param qualifiers_old	old qualifiers
+  * @param qualifiers_new	new qualifiers
+  * @param feature		GFF feature that has been changed
+  *
+  */
   private void editQualifiers(QualifierVector qualifiers_old, 
-                              QualifierVector qualifiers_new, GFFStreamFeature feature)
+                              QualifierVector qualifiers_new, 
+                              GFFStreamFeature feature)
   {
   
     String feature_id = feature.getQualifierByName("ID").getValues().elementAt(0);
@@ -194,9 +202,9 @@ public class ChadoTransactionManager
         if(old_index > -1 &&
            new_qualifier_strings.size() == old_qualifier_strings.size())
         {
-    
+          //  
           // UPDATE existing featureprop's
-    
+          //
           for(int value_index = 0; value_index < new_qualifier_strings.size();
               ++value_index)
           {
@@ -212,28 +220,33 @@ public class ChadoTransactionManager
             tsn.setConstraint("rank", Integer.toString(value_index));
             sql.add(tsn);
 
-            String[] sql_array = tsn.getSqlQuery();
-            for(int i=0; i<sql_array.length; i++)
-              System.out.println(sql_array[i]);
+//          String[] sql_array = tsn.getSqlQuery();
+//          for(int i=0; i<sql_array.length; i++)
+//            System.out.println(sql_array[i]);
           }
 
         }
         else
         {
       
-          if(old_index > -1)   // DELETE existing featureprops
+          //
+          // DELETE existing featureprops
+          //
+          if(old_index > -1)
           {
             tsn = new ChadoTransaction(ChadoTransaction.DELETE,
                                        feature_id, "featureprop");
 
             tsn.setConstraint("type_id", cvterm_id);
             sql.add(tsn);
-            String[] sql_array = tsn.getSqlQuery();
-            for(int i=0; i<sql_array.length; i++)
-              System.out.println(sql_array[i]);
+//          String[] sql_array = tsn.getSqlQuery();
+//          for(int i=0; i<sql_array.length; i++)
+//            System.out.println(sql_array[i]);
           }
           
+          //
           // INSERT new featureprops
+          //
           for(int value_index = 0; value_index < new_qualifier_strings.size();
               ++value_index)
           {
@@ -248,18 +261,23 @@ public class ChadoTransactionManager
             tsn.addProperty("type_id", "'"+cvterm_id+"'");
             tsn.addProperty("rank", Integer.toString(value_index));
             sql.add(tsn);
-            String[] sql_array = tsn.getSqlQuery();
-            for(int i=0; i<sql_array.length; i++)
-              System.out.println(sql_array[i]);
+//          String[] sql_array = tsn.getSqlQuery();
+//          for(int i=0; i<sql_array.length; i++)
+//            System.out.println(sql_array[i]);
           }
 
-          System.out.println("******** "+DatabaseDocument.getCvtermID(name));
+//        System.out.println("******** "+DatabaseDocument.getCvtermID(name));
         }
       }
     }
 
   }
 
+  /**
+  *
+  * Strip out quotes around a string.
+  *
+  */
   private String stripQuotes(String s)
   {
     if(s.startsWith("\"") && s.endsWith("\""))
