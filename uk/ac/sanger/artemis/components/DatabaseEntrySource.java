@@ -391,8 +391,8 @@ public class DatabaseEntrySource implements EntrySource
       DatabaseDocument[] new_docs = doc.getGffDocuments(location, id);
       db_entry = new DatabaseDocumentEntry[new_docs.length];
 
-      for(int i=1; i<new_docs.length; i++)
-        db_entry[i-1] = new DatabaseDocumentEntry(new_docs[i]);
+      for(int i=0; i<new_docs.length; i++)
+        db_entry[i] = new DatabaseDocumentEntry(new_docs[i]);
     }
     catch(EntryInformationException e)
     {

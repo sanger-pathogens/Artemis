@@ -240,8 +240,7 @@ public class DatabaseDocument extends Document
       else
         name = types[i];
 
-      if(gff_buffer[i].length() > 0)
-        new_docs[i-1] = new DatabaseDocument(location, id, gff_buffer[i], name);
+      new_docs[i-1] = new DatabaseDocument(location, id, gff_buffer[i], name);
     }
 
     return new_docs;
