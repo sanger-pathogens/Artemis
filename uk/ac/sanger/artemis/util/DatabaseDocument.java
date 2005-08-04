@@ -50,6 +50,10 @@ public class DatabaseDocument extends Document
   private Vector organism;
   private String sqlLog = System.getProperty("user.home")+
                           System.getProperty("file.separator")+"art_sql_debug.log";
+  private StringBuffer[] gff_buffer;
+  private StringBuffer gff_buff;
+  private String[] types = { "exon", "gene", "CDS", "transcript" };
+  private boolean splitGFFEntry;
 
   /**
    *
@@ -78,11 +82,22 @@ public class DatabaseDocument extends Document
   }
 
   public DatabaseDocument(String location, String feature_id,
+                          boolean splitGFFEntry,
                           InputStreamProgressListener progress_listener)
   {
     super(location);
     this.feature_id = feature_id;
+    this.splitGFFEntry = splitGFFEntry;
     this.progress_listener = progress_listener;
+  }
+
+  public DatabaseDocument(String location, String feature_id,
+                          StringBuffer gff_buff, String name)
+  {
+    super(location);
+    this.feature_id = feature_id;
+    this.gff_buff   = gff_buff;
+    this.name = name;
   }
 
   /**
@@ -173,15 +188,34 @@ public class DatabaseDocument extends Document
    **/
   public InputStream getInputStream() throws IOException 
   {
+    ByteArrayInputStream instream;
+
+    if(gff_buff != null)
+    {
+      instream = new ByteArrayInputStream(gff_buff.toString().getBytes());
+      return instream;
+    }
+
     try
     {
       Connection conn = getConnection();
       System.out.println("Connected");
 
-      String entry = getGFF(conn,feature_id) + getSequence(conn);
-//    String entry = getSequence(conn);
+      gff_buffer = getGFF(conn,feature_id);
+      String entry;
+
+      if(splitGFFEntry)
+        entry = gff_buffer[0] + getSequence(conn);
+      else
+      {
+        entry = new String();
+        for(int i=0; i<gff_buffer.length; i++)
+          entry = entry + gff_buffer[i];
+        entry = entry + getSequence(conn);
+      }
+
       appendToLogFile(entry,sqlLog);
-      ByteArrayInputStream instream = new ByteArrayInputStream(entry.getBytes());
+      instream = new ByteArrayInputStream(entry.getBytes());
 
       conn.close();
       return instream;
@@ -195,6 +229,24 @@ public class DatabaseDocument extends Document
     return null;
   }
 
+  public DatabaseDocument[] getGffDocuments(String location, String id)
+  {
+    DatabaseDocument[] new_docs = new DatabaseDocument[gff_buffer.length-1];
+    for(int i=1; i<gff_buffer.length; i++)
+    {
+      String name;
+      if(i >= types.length)
+        name = "other";
+      else
+        name = types[i];
+
+      if(gff_buffer[i].length() > 0)
+        new_docs[i-1] = new DatabaseDocument(location, id, gff_buffer[i], name);
+    }
+
+    return new_docs;
+  }
+
 
   /**
   *
@@ -202,34 +254,28 @@ public class DatabaseDocument extends Document
   * in the form of a GFF stream.
   *
   */ 
-  private String getGFF(Connection conn, String parentFeatureID) 
+  private StringBuffer[] getGFF(Connection conn, String parentFeatureID) 
           throws java.sql.SQLException
   {
     Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-
-//  String sql = "SELECT strand, fmin, fmax, uniquename, feature.type_id, featureprop.type_id AS prop_type_id, value"+
-//               " FROM feature, featureloc, featureprop WHERE srcfeature_id = "+parentFeatureID+
-//               " and featureloc.feature_id=featureprop.feature_id"+
-//               " and featureloc.feature_id=feature.feature_id";
-
-//  String sql = "SELECT feature.feature_id, object_id, strand, fmin, fmax, uniquename, feature.type_id, "+
-//     " featureprop.type_id AS prop_type_id, featureprop.value FROM feature, featureloc, featureprop, feature_relationship "+
-//     " WHERE srcfeature_id = "+parentFeatureID+" and featureloc.feature_id=featureprop.feature_id and "+
-//     " featureloc.feature_id=feature.feature_id and feature_relationship.subject_id=feature.feature_id";
 
     String sql = "SELECT timelastmodified, feature.feature_id, object_id, strand, fmin, fmax, uniquename, feature.type_id, "+
        " featureprop.type_id AS prop_type_id, featureprop.value FROM  featureloc, featureprop, "+
        " feature LEFT JOIN feature_relationship ON feature_relationship.subject_id=feature.feature_id "+
        " WHERE srcfeature_id = "+parentFeatureID+" and featureloc.feature_id=featureprop.feature_id and "+
-       " featureloc.feature_id=feature.feature_id ORDER BY uniquename";
+       " featureloc.feature_id=feature.feature_id ORDER BY feature.type_id,  uniquename";
 
 
     appendToLogFile(sql,sqlLog);
     ResultSet rs = st.executeQuery(sql);
-    StringBuffer cdsBuffer = new StringBuffer();
+
+    StringBuffer[] buffers = new StringBuffer[types.length+1];
+    for(int i=0; i<buffers.length; i++)
+      buffers[i] = new StringBuffer();
 
     String parentFeature = getFeatureName(parentFeatureID,conn);
     Hashtable hstore = new Hashtable();
+    StringBuffer this_buff;
 
     while(rs.next())
     {
@@ -250,29 +296,38 @@ public class DatabaseDocument extends Document
         parent_id = (String)hstore.get(parent_id);
       
 // make gff format
-      cdsBuffer.append(parentFeature+"\t");    // seqid
-      cdsBuffer.append("chado\t");             // source
-      cdsBuffer.append(typeName+"\t");         // type
-      cdsBuffer.append(fmin+"\t");             // start
-      cdsBuffer.append(fmax+"\t");             // end
-      cdsBuffer.append(".\t");                 // score
-      if(strand == -1)                         // strand
-        cdsBuffer.append("-\t");
-      else if(strand == 1)
-        cdsBuffer.append("+\t");
-      else 
-        cdsBuffer.append(".\t");
 
-      cdsBuffer.append(".\t");                 // phase
-      cdsBuffer.append("ID="+name+";");
+      // select buffer
+      this_buff = buffers[types.length];
+      for(int i=0; i<types.length; i++)
+      {
+        if(types[i].equals(typeName))
+          this_buff = buffers[i];
+      }
+
+      this_buff.append(parentFeature+"\t");    // seqid
+      this_buff.append("chado\t");             // source
+      this_buff.append(typeName+"\t");         // type
+      this_buff.append(fmin+"\t");             // start
+      this_buff.append(fmax+"\t");             // end
+      this_buff.append(".\t");                 // score
+      if(strand == -1)                         // strand
+        this_buff.append("-\t");
+      else if(strand == 1)
+        this_buff.append("+\t");
+      else 
+        this_buff.append(".\t");
+
+      this_buff.append(".\t");                 // phase
+      this_buff.append("ID="+name+";");
 
       if(parent_id != null)
-        cdsBuffer.append("Parent="+parent_id+";");
+        this_buff.append("Parent="+parent_id+";");
 
-      cdsBuffer.append("timelastmodified="+timelastmodified+";");
+      this_buff.append("timelastmodified="+timelastmodified+";");
    
       String value = GFFStreamFeature.encode(rs.getString("value"));
-      cdsBuffer.append(propTypeName+"="+value); // attributes
+      this_buff.append(propTypeName+"="+value); // attributes
 
       int rewind = 0;
       while(rs.next() && rs.getString("uniquename").equals(name))
@@ -280,19 +335,19 @@ public class DatabaseDocument extends Document
         prop_type_id = rs.getLong("prop_type_id");
         propTypeName = getCvtermName(conn,prop_type_id);
         value = GFFStreamFeature.encode(rs.getString("value"));
-        cdsBuffer.append(";"+propTypeName+"="+value);
+        this_buff.append(";"+propTypeName+"="+value);
         rewind++;
       }
 
       if(rewind > 0)
         rs.previous();
 
-      cdsBuffer.append("\n");
+      this_buff.append("\n");
 
       progress_listener.progressMade("Read from database: "+name);
     }
 
-    return cdsBuffer.toString();
+    return buffers;
   }
 
   public static Long getCvtermID(String name)

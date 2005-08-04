@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DatabaseJFrame.java,v 1.4 2005-06-18 07:01:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DatabaseJFrame.java,v 1.5 2005-08-04 15:58:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -29,6 +29,8 @@ import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 
 import javax.swing.JFrame;
 import javax.swing.JTree;
@@ -37,6 +39,7 @@ import javax.swing.JSeparator;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.BorderFactory;
@@ -57,6 +60,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public class DatabaseJFrame extends JFrame
 {
   private JLabel status_line = new JLabel("");
+  private boolean splitGFFEntry = true;
 
   public DatabaseJFrame(final DatabaseEntrySource entry_source,
                         final ArtemisMain art_main)
@@ -146,6 +150,7 @@ public class DatabaseJFrame extends JFrame
           final InputStreamProgressListener progress_listener =
                                      art_main.getInputStreamProgressListener();
 
+          entry_source.setSplitGFF(splitGFFEntry);
           final Entry entry = entry_source.getEntry(id, progress_listener);
           if(entry == null)
           {
@@ -155,6 +160,24 @@ public class DatabaseJFrame extends JFrame
           }
 
           final EntryEdit new_entry_edit = art_main.makeEntryEdit(entry);
+
+          // add gff entries
+          if(splitGFFEntry)
+          {
+            DatabaseDocumentEntry db_entry = (DatabaseDocumentEntry)entry.getEMBLEntry();
+           
+            final DatabaseDocumentEntry[] entries = 
+                     entry_source.makeFromGff((DatabaseDocument)db_entry.getDocument(), id);
+            for(int i=0; i< entries.length; i++)
+            {
+              if(entries[i] == null)
+                continue;
+
+              final Entry new_entry = new Entry(new_entry_edit.getEntryGroup().getBases(), entries[i]);
+              new_entry_edit.getEntryGroup().add(new_entry);
+            }
+          }
+
           new_entry_edit.setVisible(true);
           status_line.setText("Sequence loaded.");
         }
@@ -208,6 +231,23 @@ public class DatabaseJFrame extends JFrame
       }
     });
     fileMenu.add(fileMenuClose);
+
+    JMenu optionMenu = new JMenu("Options");
+    mBar.add(optionMenu);
+
+    final JCheckBoxMenuItem splitGFF = new JCheckBoxMenuItem("Split GFF into entries",
+                                                        splitGFFEntry);
+    splitGFF.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if(splitGFF.isSelected())
+          splitGFFEntry = true;
+        else
+          splitGFFEntry = false;
+      }
+    });
+    optionMenu.add(splitGFF);
 
     return mBar;
   }

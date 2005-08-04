@@ -54,6 +54,7 @@ public class DatabaseEntrySource implements EntrySource
 {
   private String location;
   private Hashtable entries;
+  private boolean splitGFFEntry;
 
   /**
    *  Create a new DatabaseEntrySource.
@@ -301,6 +302,10 @@ public class DatabaseEntrySource implements EntrySource
     }
   }
 
+  protected void setSplitGFF(final boolean splitGFFEntry)
+  {
+    this.splitGFFEntry = splitGFFEntry;
+  }
 
   /**
    *
@@ -326,17 +331,13 @@ public class DatabaseEntrySource implements EntrySource
     {
       DatabaseDocumentEntry db_entry = null;
 
-//    final EntryInformation entry_information =
-//      new SimpleEntryInformation(Options.getArtemisEntryInformation());
-
       if(read_only) 
       {
       } 
       else 
       {
-        DatabaseDocument doc = new DatabaseDocument(location, id, progress_listener);
-//      DatabaseDocument doc = new DatabaseDocument("jdbc:postgresql://localhost:13001/chadoCVS?user=es2",
-//                                                  id, progress_listener);
+        DatabaseDocument doc = new DatabaseDocument(location, id, 
+                               splitGFFEntry, progress_listener);
         db_entry = new DatabaseDocumentEntry(doc);
       }
 
@@ -377,6 +378,31 @@ public class DatabaseEntrySource implements EntrySource
     }
 
     return null;
+  }
+
+  protected DatabaseDocumentEntry[] 
+                         makeFromGff(final DatabaseDocument doc, String id)
+               throws OutOfRangeException, IOException
+  {
+    DatabaseDocumentEntry[] db_entry = null;
+ 
+    try
+    {
+      DatabaseDocument[] new_docs = doc.getGffDocuments(location, id);
+      db_entry = new DatabaseDocumentEntry[new_docs.length];
+
+      for(int i=1; i<new_docs.length; i++)
+        db_entry[i-1] = new DatabaseDocumentEntry(new_docs[i]);
+    }
+    catch(EntryInformationException e)
+    {
+      JOptionPane.showMessageDialog(null,
+                       "Failed to get entry: " + e,
+                       "Entry Information Exception",
+                       JOptionPane.ERROR_MESSAGE);
+    }
+
+    return db_entry;
   }
 
 }
