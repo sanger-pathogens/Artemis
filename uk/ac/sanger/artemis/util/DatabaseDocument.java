@@ -335,7 +335,10 @@ public class DatabaseDocument extends Document
 
       this_buff.append("timelastmodified="+timelastmodified+";");
    
-      String value = GFFStreamFeature.encode(rs.getString("value"));
+      String value = "";
+      if(rs.getString("value") != null)
+        value = GFFStreamFeature.encode(rs.getString("value"));
+
       this_buff.append(propTypeName+"="+value); // attributes
 
       int rewind = 0;
