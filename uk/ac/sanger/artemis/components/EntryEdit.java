@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.14 2005-07-27 08:24:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.15 2005-08-05 12:26:25 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -56,10 +56,9 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.14 2005-07-27 08:24:17 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.15 2005-08-05 12:26:25 tjc Exp $
  *
  */
-
 public class EntryEdit extends JFrame
     implements EntryGroupChangeListener, EntryChangeListener,
                DropTargetListener 
@@ -182,16 +181,34 @@ public class EntryEdit extends JFrame
 
     base_plot_group.setVisible(true);
 
+    // one line per entry display
     one_line_per_entry_display =
       new FeatureDisplay(getEntryGroup(), getSelection(),
                          getGotoEventSource(), base_plot_group);
 
     one_line_per_entry_display.setShowLabels(false);
     one_line_per_entry_display.setOneLinePerEntry(true);
-
-    box_panel.add(one_line_per_entry_display);
     one_line_per_entry_display.setVisible(false);
-    
+
+    // one line per entry expander button
+    final JButton one_line_display_button = new JButton(">>");
+    final Box one_line_button_box_across = setExpanderButton(one_line_display_button);
+    one_line_display_button.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        if(one_line_per_entry_display.isVisible())
+          one_line_display_button.setText(">>");
+        else
+          one_line_display_button.setText("<<");
+        one_line_per_entry_display.setVisible(!one_line_per_entry_display.isVisible());
+        validate();
+      }
+    });
+    box_panel.add(one_line_button_box_across);
+    box_panel.add(one_line_per_entry_display);
+
+    // feature display
     feature_display =
       new FeatureDisplay(getEntryGroup(), getSelection(),
                          getGotoEventSource(), base_plot_group);
@@ -217,14 +234,46 @@ public class EntryEdit extends JFrame
 
     one_line_per_entry_display.addDisplayAdjustmentListener(feature_display);
 
+    // feature display expander button
+    final JButton feature_display_button = new JButton("<<");
+    final Box feature_display_button_box_across = setExpanderButton(feature_display_button);
+    feature_display_button.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        if(feature_display.isVisible())
+          feature_display_button.setText(">>");
+        else
+          feature_display_button.setText("<<");
+        feature_display.setVisible(!feature_display.isVisible());
+      }
+    });
+    box_panel.add(feature_display_button_box_across);
     box_panel.add(feature_display);
     feature_display.setVisible(true);
 
+    // base display
     base_display =
       new FeatureDisplay(getEntryGroup(), getSelection(),
                          getGotoEventSource(), base_plot_group);
     base_display.setShowLabels(false);
     base_display.setScaleFactor(0);
+
+    // base display expander button
+    final JButton base_display_button = new JButton("<<");
+    final Box base_display_button_box_across = setExpanderButton(base_display_button);
+    base_display_button.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        if(base_display.isVisible())
+          base_display_button.setText(">>");
+        else
+          base_display_button.setText("<<");
+        base_display.setVisible(!base_display.isVisible());
+      }
+    });
+    box_panel.add(base_display_button_box_across);
     box_panel.add(base_display);
 
     final boolean show_base_view;
@@ -235,6 +284,8 @@ public class EntryEdit extends JFrame
     else 
       show_base_view = true;
 
+    if(!show_base_view)
+      base_display_button.setText(">>");
     base_display.setVisible(show_base_view);
 
     final JScrollPane jsp_feature_list;
@@ -243,14 +294,50 @@ public class EntryEdit extends JFrame
                       getGotoEventSource(), base_plot_group);
     jsp_feature_list = new JScrollPane(feature_list);
     feature_list.setFont(default_font);
-    
-    final boolean list_option_value =
-      Options.getOptions().getPropertyTruthValue("show_list");
 
-    if(list_option_value) 
+    // feature list expander button
+    final JButton scroll_button = new JButton();
+    final Box box_across = setExpanderButton(scroll_button);
+    scroll_button.addActionListener(new ActionListener()
+    {
+      private int hgt = 0;
+      public void actionPerformed(ActionEvent event)
+      {
+        Dimension dim = getSize();
+        if(jsp_feature_list.isVisible())
+        {
+          Dimension dim_box = box_across.getPreferredSize();
+          jsp_feature_list.setVisible(false);
+          box_across.setPreferredSize(new Dimension(dim.width, dim_box.height)); 
+          scroll_button.setText(">>");
+          hgt = jsp_feature_list.getSize().height;
+        }
+        else
+        {
+          if(hgt == 0)
+            hgt = getEntryGroup().getAllFeaturesCount() *
+                                    feature_list.getLineHeight();
+          
+          jsp_feature_list.setPreferredSize(new Dimension(dim.width,hgt));
+          jsp_feature_list.setVisible(true);
+          scroll_button.setText("<<");
+        }
+        
+        pack();
+      }
+    });
+    box_panel.add(box_across);
+
+    if(Options.getOptions().getPropertyTruthValue("show_list"))  
+    {
+      scroll_button.setText("<<");
       feature_list.setVisible(true);
-    else 
+    }
+    else
+    {
+      scroll_button.setText(">>"); 
       feature_list.setVisible(false);
+    }
 
     getContentPane().add(jsp_feature_list, "Center");
     makeMenus();
@@ -294,6 +381,19 @@ public class EntryEdit extends JFrame
     Utilities.centreFrame(this);
   }
 
+  private Box setExpanderButton(final JButton butt)
+  {
+    butt.setMargin(new Insets(0,1,0,1));
+    butt.setHorizontalTextPosition(SwingConstants.RIGHT);
+    butt.setPreferredSize(new Dimension(15,9));
+    butt.setBorderPainted(false);
+    butt.setFont(new Font("SansSerif", Font.BOLD, 9));
+    final Box box_across = Box.createHorizontalBox();
+    box_across.add(butt);
+    box_across.add(Box.createHorizontalGlue());
+
+    return box_across;
+  }
 
   /**
   *
