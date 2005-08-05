@@ -265,6 +265,7 @@ public class DatabaseDocument extends Document
        " LEFT JOIN feature_relationship ON feature_relationship.subject_id=feature.feature_id"+
        " LEFT JOIN featureprop ON featureprop.feature_id=feature.feature_id"+
        " WHERE srcfeature_id = "+parentFeatureID+" and  featureloc.feature_id=feature.feature_id"+
+       " and (featureloc.rank=feature_relationship.rank OR feature_relationship.rank IS NULL)"+
        " ORDER BY feature.type_id,  uniquename";
 
 //     "SELECT timelastmodified, feature.feature_id, object_id, strand, fmin, fmax, uniquename, feature.type_id, "+

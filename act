@@ -7,7 +7,7 @@
 # /usr/local/bin/ or elsewhere.
 
 
-# $Header: //tmp/pathsoft/artemis/act,v 1.4 2005-06-06 18:34:40 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/act,v 1.5 2005-08-05 15:47:32 tjc Exp $
 
 # resolve links - $0 may be a link
 PRG=$0
@@ -35,7 +35,7 @@ export CLASSPATH
 
 ACT_PROPERTIES="-Dartemis.environment=UNIX"
 
-MEM="-mx150m -ms20m"
+MEM="-mx500m -ms20m"
 
 if [ "$JVM_FLAGS" = "" ]
 then
