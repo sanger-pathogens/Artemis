@@ -258,11 +258,20 @@ public class DatabaseDocument extends Document
   {
     Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
-    String sql = "SELECT timelastmodified, feature.feature_id, object_id, strand, fmin, fmax, uniquename, feature.type_id, "+
-       " featureprop.type_id AS prop_type_id, featureprop.value FROM  featureloc, featureprop, "+
-       " feature LEFT JOIN feature_relationship ON feature_relationship.subject_id=feature.feature_id "+
-       " WHERE srcfeature_id = "+parentFeatureID+" and featureloc.feature_id=featureprop.feature_id and "+
-       " featureloc.feature_id=feature.feature_id ORDER BY feature.type_id,  uniquename";
+    String sql = 
+       "SELECT timelastmodified, feature.feature_id, object_id, strand, fmin, fmax, uniquename,"+
+       " feature.type_id,  featureprop.type_id AS prop_type_id, featureprop.value"+
+       " FROM  featureloc, feature"+
+       " LEFT JOIN feature_relationship ON feature_relationship.subject_id=feature.feature_id"+
+       " LEFT JOIN featureprop ON featureprop.feature_id=feature.feature_id"+
+       " WHERE srcfeature_id = "+parentFeatureID+" and  featureloc.feature_id=feature.feature_id"+
+       " ORDER BY feature.type_id,  uniquename";
+
+//     "SELECT timelastmodified, feature.feature_id, object_id, strand, fmin, fmax, uniquename, feature.type_id, "+
+//     " featureprop.type_id AS prop_type_id, featureprop.value FROM  featureloc, featureprop, "+
+//     " feature LEFT JOIN feature_relationship ON feature_relationship.subject_id=feature.feature_id "+
+//     " WHERE srcfeature_id = "+parentFeatureID+" and featureloc.feature_id=featureprop.feature_id and "+
+//     " featureloc.feature_id=feature.feature_id ORDER BY feature.type_id,  uniquename";
 
 
     appendToLogFile(sql,sqlLog);
