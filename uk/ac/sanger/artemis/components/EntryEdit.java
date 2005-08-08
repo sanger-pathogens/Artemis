@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.15 2005-08-05 12:26:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.16 2005-08-08 10:35:26 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -56,7 +56,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.15 2005-08-05 12:26:25 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.16 2005-08-08 10:35:26 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -384,8 +384,7 @@ public class EntryEdit extends JFrame
   private Box setExpanderButton(final JButton butt)
   {
     butt.setMargin(new Insets(0,1,0,1));
-    butt.setHorizontalTextPosition(SwingConstants.RIGHT);
-    butt.setPreferredSize(new Dimension(15,9));
+    butt.setPreferredSize(new Dimension( butt.getPreferredSize().width,9));
     butt.setBorderPainted(false);
     butt.setFont(new Font("SansSerif", Font.BOLD, 9));
     final Box box_across = Box.createHorizontalBox();
