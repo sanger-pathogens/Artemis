@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.18 2005-08-08 10:56:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.19 2005-08-11 16:12:43 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -56,7 +56,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.18 2005-08-08 10:56:46 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.19 2005-08-11 16:12:43 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -939,6 +939,7 @@ public class EntryEdit extends JFrame
       {
         final ChadoTransactionManager ctm = new ChadoTransactionManager();
         getEntryGroup().addFeatureChangeListener(ctm);
+        getEntryGroup().addEntryChangeListener(ctm);
 
         JMenuItem commit = new JMenuItem("Commit to Database");
         commit.addActionListener(new ActionListener()

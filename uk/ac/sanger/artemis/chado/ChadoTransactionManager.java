@@ -24,6 +24,8 @@
 
 package uk.ac.sanger.artemis.chado;
 
+import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
 import uk.ac.sanger.artemis.io.QualifierVector;
@@ -37,7 +39,8 @@ import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
-
+import uk.ac.sanger.artemis.EntryChangeListener;
+import uk.ac.sanger.artemis.EntryChangeEvent;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 
@@ -48,7 +51,7 @@ import javax.swing.JOptionPane;
 *
 **/
 public class ChadoTransactionManager
-       implements FeatureChangeListener, SequenceChangeListener 
+       implements FeatureChangeListener, EntryChangeListener, SequenceChangeListener 
 {
 
   private Vector sql = new Vector();
@@ -117,6 +120,22 @@ public class ChadoTransactionManager
     }
   }
  
+  public void entryChanged(EntryChangeEvent event)
+  {
+    System.out.println("HERE");
+    if(event.getType() == EntryChangeEvent.FEATURE_ADDED)
+      System.out.println("HERE FEATURE_ADDED");
+
+    Feature feature = event.getFeature();
+
+    if(feature == null)
+      System.out.println("HERE feature == null");
+    else
+      System.out.println("HERE feature != null");
+
+    System.out.println(event.getEntry().getName());
+  }
+
   /**
   *
   *  Return a string containing one qualifier per line.  These are the

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.7 2004-12-21 13:46:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.8 2005-08-11 16:12:43 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.*;
  *  A JMenu of external commands/functions.
  *
  *  @author Kim Rutherford
- *  @version $Id: RunMenu.java,v 1.7 2004-12-21 13:46:47 tjc Exp $
+ *  @version $Id: RunMenu.java,v 1.8 2005-08-11 16:12:43 tjc Exp $
  **/
 
 public class RunMenu extends SelectionMenu 
@@ -171,6 +171,9 @@ public class RunMenu extends SelectionMenu
           final ExternalProgramMonitor monitor =
                         program.run(selection_features, Splash.getLogger());
 
+          if(monitor == null)
+            return;
+
           monitor.addExternalProgramListener(new ExternalProgramListener() 
           {
             public void statusChanged(final ExternalProgramEvent e) 
@@ -288,53 +291,53 @@ public class RunMenu extends SelectionMenu
   /**
    *  
    **/
-  private int[] getIds() 
-  {
-    final FeatureVector selected_features = getSelection().getAllFeatures();
-    final Vector ids_vector = new Vector();
+//private int[] getIds() 
+//{
+//  final FeatureVector selected_features = getSelection().getAllFeatures();
+//  final Vector ids_vector = new Vector();
 
-    for(int feature_index = 0; feature_index < selected_features.size();
-        ++feature_index) 
-    {
-      final Feature this_feature = selected_features.elementAt(feature_index);
+//  for(int feature_index = 0; feature_index < selected_features.size();
+//      ++feature_index) 
+//  {
+//    final Feature this_feature = selected_features.elementAt(feature_index);
 
-      try
-      {
-        final Qualifier job_qualifier =
-          this_feature.getQualifierByName("job");
-        
-        final StringVector values = job_qualifier.getValues();
+//    try
+//    {
+//      final Qualifier job_qualifier =
+//        this_feature.getQualifierByName("job");
+//      
+//      final StringVector values = job_qualifier.getValues();
 
-        if(values != null && values.size() > 0) 
-        {
-          for(int value_index=0; value_index<values.size();
-              ++value_index) 
-          {
-            final String job_value = values.elementAt(value_index);
-            final StringVector bits = StringVector.getStrings(job_value);
+//      if(values != null && values.size() > 0) 
+//      {
+//        for(int value_index=0; value_index<values.size();
+//            ++value_index) 
+//        {
+//          final String job_value = values.elementAt(value_index);
+//          final StringVector bits = StringVector.getStrings(job_value);
 
-            if(bits.size() > 4 && bits.elementAt(2).equals("task:")) 
-            {
-              try 
-              {
-                final Integer task_id = Integer.valueOf(bits.elementAt(3));
+//          if(bits.size() > 4 && bits.elementAt(2).equals("task:")) 
+//          {
+//            try 
+//            {
+//              final Integer task_id = Integer.valueOf(bits.elementAt(3));
 
-                if(!ids_vector.contains(task_id)) 
-                  ids_vector.add(task_id);
-              }
-              catch(NumberFormatException e) {}
-            }
-          }
-        }
-      } 
-      catch(InvalidRelationException e) {}
-    }
+//              if(!ids_vector.contains(task_id)) 
+//                ids_vector.add(task_id);
+//            }
+//            catch(NumberFormatException e) {}
+//          }
+//        }
+//      }
+//    } 
+//    catch(InvalidRelationException e) {}
+//  }
 
-    final int[] ids = new int[ids_vector.size()];
+//  final int[] ids = new int[ids_vector.size()];
 
-    for(int i=0 ; i<ids.length ; ++i) 
-      ids[i] =((Integer)ids_vector.elementAt(i)).intValue();
+//  for(int i=0 ; i<ids.length ; ++i) 
+//    ids[i] =((Integer)ids_vector.elementAt(i)).intValue();
 
-    return ids;
-  }
+//  return ids;
+//}
 }

@@ -50,7 +50,7 @@ import java.util.logging.SimpleFormatter;
 /**
  *
  */
-public class SftpPSUClient 
+public class SftpPSUClient extends Thread
 {
 
   private String hostname = null;
@@ -65,7 +65,7 @@ public class SftpPSUClient
 
   public SftpPSUClient(String args[])
   {
-
+    // process arguments
     if(args != null && args.length > 0)
     {
       for(int i=0; i<args.length; i++)
@@ -90,8 +90,12 @@ public class SftpPSUClient
           wdir = args[i+1];
       }
     }
+  }
 
-    // get properties
+  public void run()
+  {
+    String program = cmd;
+    // get properties from j2ssh.properties
     Properties settings = getProperties();
     if(hostname == null && settings.getProperty("host") != null)
       hostname = settings.getProperty("host");
@@ -108,8 +112,10 @@ public class SftpPSUClient
       else
         db = "%uniprot";
     }
-    if(cmd.equals("blast") && settings.getProperty("blast") != null)
-      cmd = settings.getProperty("blast");
+    if(cmd.equals("blastp") && settings.getProperty("blastp") != null)
+      cmd = settings.getProperty("blastp");
+    if(cmd.equals("fasta") && settings.getProperty("fasta") != null)
+      cmd = settings.getProperty("fasta");
 
     try
     {
@@ -127,42 +133,53 @@ public class SftpPSUClient
 
       ConfigurationLoader.initialize(false);
 
-      if(hostname == null)
-        hostname = (String)JOptionPane.showInputDialog(
-                             null, "Name of server machine:",
-                             "Server hostname",
-                             JOptionPane.PLAIN_MESSAGE, null,
-                             null, null);
+//    if(hostname == null)
+//      hostname = (String)JOptionPane.showInputDialog(
+//                           null, "Name of server machine:",
+//                           "Server hostname",
+//                           JOptionPane.PLAIN_MESSAGE, null,
+//                           null, null);
      
       BufferedReader reader =
           new BufferedReader(new InputStreamReader(System.in));
-
-      // Make a client connection
-      SshClient ssh = new SshClient();
-      // Connect to the host
-      if(port < 0)
-        ssh.connect(hostname);
-      else
-        ssh.connect(hostname,port);
 
       // Create a password authentication instance
       PasswordAuthenticationClient pwd = new PasswordAuthenticationClient();
       // Get the users name
 
-      JPanel promptPanel = new JPanel(new GridLayout(2,2));
+      JPanel promptPanel = new JPanel(new GridLayout(4,2));
+
+      JTextField hostfield  = new JTextField(16);
+      if(hostname != null)
+        hostfield.setText(hostname);
+      
+      JTextField portfield  = new JTextField(16);
+      if(port >-1)
+        portfield.setText(Integer.toString(port));
+
       JTextField ufield  = new JTextField(16);
       if(user != null)
         ufield.setText(user);
       JPasswordField pfield = new JPasswordField(16);
 
+      JLabel hostlab = new JLabel(" Hostname:", SwingConstants.LEFT);
+      JLabel portlab = new JLabel("     Port:", SwingConstants.LEFT);
+
       JLabel ulab = new JLabel(" Username:", SwingConstants.LEFT);
       JLabel plab = new JLabel(" Password:", SwingConstants.LEFT);
       //add labels etc
+      promptPanel.add(hostlab);
+      promptPanel.add(hostfield);
+
+      promptPanel.add(portlab);
+      promptPanel.add(portfield);
+
       promptPanel.add(ulab);
       promptPanel.add(ufield);
+
       promptPanel.add(plab);
       promptPanel.add(pfield);
-
+     
       Object[] options = { "CANCEL", "LOGIN"};
 
       int select = JOptionPane.showOptionDialog(null, promptPanel,
@@ -173,9 +190,22 @@ public class SftpPSUClient
                                options,
                                options[1]);
 
-
       if(select == 0)
-        System.exit(0);
+        return;
+
+      // Make a client connection
+      SshClient ssh = new SshClient();
+      hostname = hostfield.getText().trim();
+      if(portfield.getText().trim().equals(""))
+        port = -1;
+      else
+        port = Integer.parseInt(portfield.getText().trim());
+
+      // Connect to the host
+      if(port < 0)
+        ssh.connect(hostname);
+      else
+        ssh.connect(hostname,port);
 
       user = ufield.getText().trim();
       pwd.setUsername(user);
@@ -194,7 +224,7 @@ public class SftpPSUClient
           if(returnVal == JFileChooser.APPROVE_OPTION) 
             listfilepath = chooser.getSelectedFile().getAbsolutePath();
           else
-            System.exit(0);
+            return;
         }
 
         SftpClient sftp = ssh.openSftpClient();
@@ -219,11 +249,21 @@ public class SftpPSUClient
           SessionChannelClient session = ssh.openSessionChannel();
 
           String outputfile = wdir+filename+".out";
+          final String actualCMD;
 
-          cmd = bsub+" -o "+ outputfile +" "+
+          if(cmd.indexOf("fasta33") > -1)
+          {
+            if(settings.getProperty(db) != null)
+              db = settings.getProperty(db);
+            actualCMD = bsub+" -o "+ outputfile +" -e "+ outputfile + ".err " +
+                           cmd+" "+wdir+filename+" "+db;
+          }
+          else
+            actualCMD = bsub+" -o "+ outputfile +" -e "+ outputfile + ".err " +
                            cmd+" "+db+" "+wdir+filename;
-          System.out.println(cmd);
-          session.executeCommand(cmd);
+
+          System.out.println(actualCMD);
+          session.executeCommand(actualCMD);
 
           // Reading from the session InputStream
           StdoutStdErrHandler stdouth = new StdoutStdErrHandler(session, true);
@@ -267,9 +307,11 @@ public class SftpPSUClient
           System.out.println(stdouth.getOutput());
           System.out.println(stderrh.getOutput());
 
-          ByteArrayOutputStream os = new ByteArrayOutputStream();
-          sftp.get(outputfile, os);
-          System.out.println(os.toString());
+//        ByteArrayOutputStream os = new ByteArrayOutputStream();
+//        sftp.get(outputfile, os);
+//        System.out.println(os.toString());
+
+          sftp.get(outputfile, filepath+".out");
 
           session.close();
         }
@@ -280,15 +322,18 @@ public class SftpPSUClient
       }
       else 
         JOptionPane.showMessageDialog(null, 
-                                "Problem logging in!\nCheck username and password.",
-                                "Authentication Problem",
-                                JOptionPane.ERROR_MESSAGE);
+            "Problem logging in!\nCheck username and password.",
+            "Authentication Problem",
+            JOptionPane.ERROR_MESSAGE);
 
 
     } catch(IOException ioe){}
     finally
     {
-      System.out.println("ENDED");
+      JOptionPane.showMessageDialog(null,
+            "Finished \n" + program,
+            "Process Finished",
+            JOptionPane.INFORMATION_MESSAGE);
     }
   }
 
