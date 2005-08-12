@@ -1,8 +1,12 @@
 
+j2ssh-artemis-plugin.jar   - artemis plugin
+
 This plugin uses the Java implementation of the SSH version 2
 protocol from:
 
 http://freshmeat.net/projects/sshtools-j2ssh/
+
+j2ssh-0.2.7 - is the release being used.
 
 Currently the following jars are needed to be put into this 
 directory:
