@@ -114,7 +114,9 @@ public class SshPSUClient extends Thread
     }
     if(cmd.equals("blastp") && settings.getProperty("blastp") != null)
       cmd = settings.getProperty("blastp");
-    if(cmd.equals("fasta") && settings.getProperty("fasta") != null)
+    else if(cmd.equals("blastn") && settings.getProperty("blastn") != null)
+      cmd = settings.getProperty("blastn");
+    else if(cmd.equals("fasta") && settings.getProperty("fasta") != null)
       cmd = settings.getProperty("fasta");
 
     try
@@ -237,10 +239,13 @@ public class SshPSUClient extends Thread
           if(index > -1)
             filename = filename.substring(index+1);
 
-          wdir = wdir+"/"+user+"/";
           try
           {
+            wdir = wdir+"/"+user;
             sftp.mkdir(wdir);
+            wdir = wdir+"/"+program+"/";
+            sftp.mkdir(wdir);
+
             sftp.put(filepath, wdir+filename);
           }
           catch(IOException ioe)
@@ -293,6 +298,7 @@ public class SshPSUClient extends Thread
               } 
               count++;
             }
+            Thread.currentThread().sleep(5000);
           }
           catch(InterruptedException ie)
           {
@@ -306,6 +312,7 @@ public class SshPSUClient extends Thread
           // stdout
           System.out.println(stdouth.getOutput());
           System.out.println(stderrh.getOutput());
+
 
 //        ByteArrayOutputStream os = new ByteArrayOutputStream();
 //        sftp.get(outputfile, os);
