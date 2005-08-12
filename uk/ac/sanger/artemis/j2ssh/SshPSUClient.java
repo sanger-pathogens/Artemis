@@ -116,8 +116,14 @@ public class SshPSUClient extends Thread
       cmd = settings.getProperty("blastp");
     else if(cmd.equals("blastn") && settings.getProperty("blastn") != null)
       cmd = settings.getProperty("blastn");
+    else if(cmd.equals("blastx") && settings.getProperty("blastx") != null)
+      cmd = settings.getProperty("blastx");
+    else if(cmd.equals("tblastx") && settings.getProperty("tblastx") != null)
+      cmd = settings.getProperty("tblastx");
     else if(cmd.equals("fasta") && settings.getProperty("fasta") != null)
       cmd = settings.getProperty("fasta");
+    else if(cmd.equals("fastx") && settings.getProperty("fastx") != null)
+      cmd = settings.getProperty("fastx");
 
     try
     {
@@ -256,7 +262,8 @@ public class SshPSUClient extends Thread
           String outputfile = wdir+filename+".out";
           final String actualCMD;
 
-          if(cmd.indexOf("fasta33") > -1)
+          if( (cmd.indexOf("fasta33") > -1) ||
+              (cmd.indexOf("fastx33") > -1) )
           {
             if(settings.getProperty(db) != null)
               db = settings.getProperty(db);
