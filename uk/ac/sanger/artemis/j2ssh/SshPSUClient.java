@@ -62,6 +62,10 @@ public class SshPSUClient extends Thread
   private String db       = null;
   private String wdir     = "/nfs/pathscratch1/scratch";
   private int port        = -1;
+  private static JPasswordField pfield = new JPasswordField(16);
+  private static JTextField portfield  = new JTextField(16);
+  private static JTextField hostfield  = new JTextField(16);
+  private static JTextField ufield  = new JTextField(16);
 
   public SshPSUClient(String args[])
   {
@@ -141,34 +145,22 @@ public class SshPSUClient extends Thread
 
       ConfigurationLoader.initialize(false);
 
-//    if(hostname == null)
-//      hostname = (String)JOptionPane.showInputDialog(
-//                           null, "Name of server machine:",
-//                           "Server hostname",
-//                           JOptionPane.PLAIN_MESSAGE, null,
-//                           null, null);
-     
       BufferedReader reader =
           new BufferedReader(new InputStreamReader(System.in));
 
       // Create a password authentication instance
       PasswordAuthenticationClient pwd = new PasswordAuthenticationClient();
-      // Get the users name
 
       JPanel promptPanel = new JPanel(new GridLayout(4,2));
 
-      JTextField hostfield  = new JTextField(16);
-      if(hostname != null)
+      if(hostname != null && hostfield.getText().equals(""))
         hostfield.setText(hostname);
-      
-      JTextField portfield  = new JTextField(16);
-      if(port >-1)
+    
+      if(port >-1 && portfield.getText().equals(""))
         portfield.setText(Integer.toString(port));
 
-      JTextField ufield  = new JTextField(16);
-      if(user != null)
+      if(user != null && ufield.getText().equals(""))
         ufield.setText(user);
-      JPasswordField pfield = new JPasswordField(16);
 
       JLabel hostlab = new JLabel(" Hostname:", SwingConstants.LEFT);
       JLabel portlab = new JLabel("     Port:", SwingConstants.LEFT);
@@ -187,19 +179,23 @@ public class SshPSUClient extends Thread
 
       promptPanel.add(plab);
       promptPanel.add(pfield);
-     
-      Object[] options = { "CANCEL", "LOGIN"};
+   
+      Object[] options = { "CANCEL", "LOGIN AND RUN"};
 
       int select = JOptionPane.showOptionDialog(null, promptPanel,
-                              "LOGIN",
-                               JOptionPane.YES_NO_CANCEL_OPTION,
-                               JOptionPane.QUESTION_MESSAGE,
-                               null,
-                               options,
-                               options[1]);
+                            "LOGIN",
+                             JOptionPane.YES_NO_CANCEL_OPTION,
+                             JOptionPane.QUESTION_MESSAGE,
+                             null,
+                             options,
+                             options[1]);
 
       if(select == 0)
         return;
+   
+      user = ufield.getText().trim();
+      pwd.setUsername(user);
+      pwd.setPassword(new String(pfield.getPassword()));
 
       // Make a client connection
       SshClient ssh = new SshClient();
@@ -208,16 +204,11 @@ public class SshPSUClient extends Thread
         port = -1;
       else
         port = Integer.parseInt(portfield.getText().trim());
-
-      // Connect to the host
+     
       if(port < 0)
         ssh.connect(hostname);
       else
         ssh.connect(hostname,port);
-
-      user = ufield.getText().trim();
-      pwd.setUsername(user);
-      pwd.setPassword(new String(pfield.getPassword()));
 
       // Try the authentication
       int result = ssh.authenticate(pwd);
