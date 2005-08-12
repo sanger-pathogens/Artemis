@@ -129,6 +129,7 @@ public class SshPSUClient extends Thread
     else if(cmd.equals("fastx") && settings.getProperty("fastx") != null)
       cmd = settings.getProperty("fastx");
 
+    boolean completed = false;
     try
     {
       // Setup a logfile
@@ -265,7 +266,9 @@ public class SshPSUClient extends Thread
             actualCMD = bsub+" -o "+ outputfile +" -e "+ outputfile + ".err " +
                            cmd+" "+db+" "+wdir+filename;
 
-          System.out.println(actualCMD);
+          // run the application
+          if(System.getProperty("debug") != null)
+            System.out.println(actualCMD);
           session.executeCommand(actualCMD);
 
           // Reading from the session InputStream
@@ -307,17 +310,19 @@ public class SshPSUClient extends Thread
             ioe.printStackTrace();
           }
           
-          // stdout
-          System.out.println(stdouth.getOutput());
-          System.out.println(stderrh.getOutput());
-
+          if(System.getProperty("debug") != null)
+          {
+            // stdout & stderr
+            System.out.println(stdouth.getOutput());
+            System.out.println(stderrh.getOutput());
+          }
 
 //        ByteArrayOutputStream os = new ByteArrayOutputStream();
 //        sftp.get(outputfile, os);
 //        System.out.println(os.toString());
 
           sftp.get(outputfile, filepath+".out");
-
+          completed = true; 
           session.close();
         }
 
@@ -335,7 +340,8 @@ public class SshPSUClient extends Thread
     } catch(IOException ioe){}
     finally
     {
-      JOptionPane.showMessageDialog(null,
+      if(completed)
+        JOptionPane.showMessageDialog(null,
             "Finished \n" + program,
             "Process Finished",
             JOptionPane.INFORMATION_MESSAGE);
