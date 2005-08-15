@@ -25,19 +25,21 @@
 package uk.ac.sanger.artemis.j2ssh;
 
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.*;
-import com.sshtools.j2ssh.SshClient;
-import com.sshtools.j2ssh.authentication.AuthenticationProtocolState;
-import com.sshtools.j2ssh.authentication.PasswordAuthenticationClient;
-import com.sshtools.j2ssh.io.UnsignedInteger32;
-import com.sshtools.j2ssh.session.SessionChannelClient;
-import com.sshtools.j2ssh.sftp.FileAttributes;
-import com.sshtools.j2ssh.sftp.SftpFile;
-import com.sshtools.j2ssh.sftp.SftpFileOutputStream;
-import com.sshtools.j2ssh.SftpClient;
-import com.sshtools.j2ssh.configuration.ConfigurationLoader;
+import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JPasswordField;
+import javax.swing.SwingConstants;
+
+import java.awt.GridLayout;
+import java.io.File;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.IOException;
 
 import java.util.Vector;
 import java.util.Properties;
@@ -47,20 +49,37 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import com.sshtools.j2ssh.SshClient;
+import com.sshtools.j2ssh.authentication.AuthenticationProtocolState;
+import com.sshtools.j2ssh.authentication.PasswordAuthenticationClient;
+import com.sshtools.j2ssh.session.SessionChannelClient;
+import com.sshtools.j2ssh.sftp.FileAttributes;
+import com.sshtools.j2ssh.sftp.SftpFile;
+import com.sshtools.j2ssh.sftp.SftpFileOutputStream;
+import com.sshtools.j2ssh.SftpClient;
+import com.sshtools.j2ssh.configuration.ConfigurationLoader;
+
+
 /**
- *
- */
+*
+* Client to use ssh connection to server to run blast/fasta
+* remotely. 
+*
+*/
 public class SshPSUClient extends Thread
 {
 
-  private String hostname = null;
-  private String user     = null;
+  // defaults
   private String listfilepath = null;
   private String cmd      = null;
   private String bsub     = null;
   private String logfile  = null;
   private String db       = null;
   private String wdir     = "/nfs/pathscratch1/scratch";
+
+  // login variables
+  private String hostname = null;
+  private String user     = null;
   private int port        = -1;
   private static JPasswordField pfield = new JPasswordField(16);
   private static JTextField portfield  = new JTextField(16);
@@ -94,42 +113,7 @@ public class SshPSUClient extends Thread
           wdir = args[i+1];
       }
     }
-  }
 
-  public void run()
-  {
-    String program = cmd;
-    // get properties from j2ssh.properties
-    Properties settings = getProperties();
-    if(hostname == null && settings.getProperty("host") != null)
-      hostname = settings.getProperty("host");
-    if(port < 0 && settings.getProperty("port") != null)
-      port = Integer.parseInt(settings.getProperty("port"));
-    if(bsub == null && settings.getProperty("bsub") != null)
-      bsub = settings.getProperty("bsub");
-    if(user == null)
-      user = System.getProperty("user.name");
-    if(db == null)
-    {
-      if(settings.getProperty("default_db") != null)
-        db = settings.getProperty("default_db");
-      else
-        db = "%uniprot";
-    }
-    if(cmd.equals("blastp") && settings.getProperty("blastp") != null)
-      cmd = settings.getProperty("blastp");
-    else if(cmd.equals("blastn") && settings.getProperty("blastn") != null)
-      cmd = settings.getProperty("blastn");
-    else if(cmd.equals("blastx") && settings.getProperty("blastx") != null)
-      cmd = settings.getProperty("blastx");
-    else if(cmd.equals("tblastx") && settings.getProperty("tblastx") != null)
-      cmd = settings.getProperty("tblastx");
-    else if(cmd.equals("fasta") && settings.getProperty("fasta") != null)
-      cmd = settings.getProperty("fasta");
-    else if(cmd.equals("fastx") && settings.getProperty("fastx") != null)
-      cmd = settings.getProperty("fastx");
-
-    boolean completed = false;
     try
     {
       // Setup a logfile
@@ -143,57 +127,26 @@ public class SshPSUClient extends Thread
       }
       else
         Logger.getLogger("com.sshtools").setLevel(Level.OFF);
+    }
+    catch(IOException ioe){}
+  }
 
+  public void run()
+  {
+    String program = cmd;
+    // get properties from j2ssh.properties
+    Properties settings = getProperties();
+
+    boolean completed = false;
+    try
+    {
       ConfigurationLoader.initialize(false);
 
-      BufferedReader reader =
-          new BufferedReader(new InputStreamReader(System.in));
+      if(!setLogin())
+        return;
 
       // Create a password authentication instance
       PasswordAuthenticationClient pwd = new PasswordAuthenticationClient();
-
-      JPanel promptPanel = new JPanel(new GridLayout(4,2));
-
-      if(hostname != null && hostfield.getText().equals(""))
-        hostfield.setText(hostname);
-    
-      if(port >-1 && portfield.getText().equals(""))
-        portfield.setText(Integer.toString(port));
-
-      if(user != null && ufield.getText().equals(""))
-        ufield.setText(user);
-
-      JLabel hostlab = new JLabel(" Hostname:", SwingConstants.LEFT);
-      JLabel portlab = new JLabel("     Port:", SwingConstants.LEFT);
-
-      JLabel ulab = new JLabel(" Username:", SwingConstants.LEFT);
-      JLabel plab = new JLabel(" Password:", SwingConstants.LEFT);
-      //add labels etc
-      promptPanel.add(hostlab);
-      promptPanel.add(hostfield);
-
-      promptPanel.add(portlab);
-      promptPanel.add(portfield);
-
-      promptPanel.add(ulab);
-      promptPanel.add(ufield);
-
-      promptPanel.add(plab);
-      promptPanel.add(pfield);
-   
-      Object[] options = { "CANCEL", "LOGIN AND RUN"};
-
-      int select = JOptionPane.showOptionDialog(null, promptPanel,
-                            "LOGIN",
-                             JOptionPane.YES_NO_CANCEL_OPTION,
-                             JOptionPane.QUESTION_MESSAGE,
-                             null,
-                             options,
-                             options[1]);
-
-      if(select == 0)
-        return;
-   
       user = ufield.getText().trim();
       pwd.setUsername(user);
       pwd.setPassword(new String(pfield.getPassword()));
@@ -228,6 +181,8 @@ public class SshPSUClient extends Thread
         }
 
         SftpClient sftp = ssh.openSftpClient();
+
+        // loop over sequence files in the listfile
         Vector seqfile = readListFile(listfilepath);
         for(int i=0; i<seqfile.size();i++)
         {
@@ -285,29 +240,11 @@ public class SshPSUClient extends Thread
             while(stdouth.isAlive() || stderrh.isAlive())
               Thread.currentThread().sleep(10);
 
-            int count = 0;
-
-            while(!isFile && count < 100)
-            {
-              Thread.currentThread().sleep(5000);
-              Object list[] = sftp.ls(wdir).toArray();
-
-              for(int j=0; j<list.length;j++)
-              {
-                if(((SftpFile)list[j]).getFilename().equals(filename+".out"))
-                  isFile = true;
-              } 
-              count++;
-            }
-            Thread.currentThread().sleep(5000);
+            isFile = waitUntilFileAppears(sftp, filename+".out");
           }
           catch(InterruptedException ie)
           {
             ie.printStackTrace();
-          }
-          catch(java.io.IOException ioe)
-          {
-            ioe.printStackTrace();
           }
           
           if(System.getProperty("debug") != null)
@@ -348,6 +285,14 @@ public class SshPSUClient extends Thread
     }
   }
 
+
+  /**
+  *
+  * Read the sequence filenames in a list file 
+  * @param String file	list filename
+  * @return the sequence filename collection
+  * 
+  */
   private Vector readListFile(String file)
   {
     Vector seqfiles = new Vector();
@@ -371,6 +316,87 @@ public class SshPSUClient extends Thread
     return seqfiles;
   }
 
+  /**
+  *
+  *  Wait until a file appears on the server.  
+  *
+  */
+  private boolean waitUntilFileAppears(SftpClient sftp, String file)
+                   throws InterruptedException, IOException
+  {
+    for(int i=0; i < 100; i++)
+    {
+      Thread.currentThread().sleep(5000);
+      Object list[] = sftp.ls(wdir).toArray();
+
+      for(int j=0; j<list.length;j++)
+      {
+        if( ((SftpFile)list[j]).getFilename().equals(file) )
+          return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+  *
+  * Set the login information.
+  *
+  */
+  private boolean setLogin()
+  {
+    JPanel promptPanel = new JPanel(new GridLayout(4,2));
+
+    if(hostname != null && hostfield.getText().equals(""))
+      hostfield.setText(hostname);
+   
+    if(port >-1 && portfield.getText().equals(""))
+      portfield.setText(Integer.toString(port));
+
+    if(user != null && ufield.getText().equals(""))
+      ufield.setText(user);
+
+    JLabel hostlab = new JLabel(" Hostname:", SwingConstants.LEFT);
+    JLabel portlab = new JLabel("     Port:", SwingConstants.LEFT);
+
+    JLabel ulab = new JLabel(" Username:", SwingConstants.LEFT);
+    JLabel plab = new JLabel(" Password:", SwingConstants.LEFT);
+    //add labels etc
+    promptPanel.add(hostlab);
+    promptPanel.add(hostfield);
+
+    promptPanel.add(portlab);
+    promptPanel.add(portfield);
+
+    promptPanel.add(ulab);
+    promptPanel.add(ufield);
+
+    promptPanel.add(plab);
+    promptPanel.add(pfield);
+  
+    Object[] options = { "CANCEL", "LOGIN AND RUN"};
+
+    int select = JOptionPane.showOptionDialog(null, promptPanel,
+                          "LOGIN",
+                           JOptionPane.YES_NO_CANCEL_OPTION,
+                           JOptionPane.QUESTION_MESSAGE,
+                           null,
+                           options,
+                           options[1]);
+
+    if(select == 0)
+      return false;
+
+    return true;
+  }
+
+
+  /**
+  *
+  * Get the properties from the j2ssh.properties file.
+  *
+  */
   private Properties getProperties()
   {
     Properties settings = new Properties();
@@ -383,10 +409,43 @@ public class SshPSUClient extends Thread
     catch (Exception e)
     {
     }
+
+    if(hostname == null && settings.getProperty("host") != null)
+      hostname = settings.getProperty("host");
+    if(port < 0 && settings.getProperty("port") != null)
+      port = Integer.parseInt(settings.getProperty("port"));
+    if(bsub == null && settings.getProperty("bsub") != null)
+      bsub = settings.getProperty("bsub");
+    if(user == null)
+      user = System.getProperty("user.name");
+    if(db == null)
+    {
+      if(settings.getProperty("default_db") != null)
+        db = settings.getProperty("default_db");
+      else
+        db = "%uniprot";
+    } 
+    if(cmd.equals("blastp") && settings.getProperty("blastp") != null)
+      cmd = settings.getProperty("blastp");
+    else if(cmd.equals("blastn") && settings.getProperty("blastn") != null)
+      cmd = settings.getProperty("blastn");
+    else if(cmd.equals("blastx") && settings.getProperty("blastx") != null)
+      cmd = settings.getProperty("blastx");
+    else if(cmd.equals("tblastx") && settings.getProperty("tblastx") != null)
+      cmd = settings.getProperty("tblastx"); 
+    else if(cmd.equals("fasta") && settings.getProperty("fasta") != null) 
+      cmd = settings.getProperty("fasta");
+    else if(cmd.equals("fastx") && settings.getProperty("fastx") != null)
+      cmd = settings.getProperty("fastx");
+
     return settings;
   }
 
-
+  /**
+  *
+  * Thread to handle stdout/stderr reading without blocking.
+  *
+  */
   class StdoutStdErrHandler extends Thread
   {
     private SessionChannelClient session;
