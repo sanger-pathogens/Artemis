@@ -142,135 +142,13 @@ public class SshPSUClient extends Thread
     {
       ConfigurationLoader.initialize(false);
 
-      int result = AuthenticationProtocolState.FAILED;
+      SshClient ssh = login();
+      if(ssh == null)
+        return;
 
-      SshClient ssh = null;
-
-      // login
-      while(result != AuthenticationProtocolState.COMPLETE)
-      {
-        if(!setLogin())
-          return;
-
-        // Create a password authentication instance
-        PasswordAuthenticationClient pwd = new PasswordAuthenticationClient();
-        user = ufield.getText().trim();
-        pwd.setUsername(user);
-        pwd.setPassword(new String(pfield.getPassword()));
-
-        // Make a client connection
-        ssh = new SshClient();
-        hostname = hostfield.getText().trim();
-        if(portfield.getText().trim().equals(""))
-          port = -1;
-        else
-          port = Integer.parseInt(portfield.getText().trim());
-     
-        if(port < 0)
-          ssh.connect(hostname);
-        else
-          ssh.connect(hostname,port);
-
-        // Try the authentication
-        result = ssh.authenticate(pwd);
-      }
-
-      // prompt for local listfile
-      if(listfilepath == null)
-      {
-        JFileChooser chooser = new JFileChooser();
-        int returnVal = chooser.showOpenDialog(null);
-        if(returnVal == JFileChooser.APPROVE_OPTION) 
-          listfilepath = chooser.getSelectedFile().getAbsolutePath();
-        else
-          return;
-      }
-
-      SftpClient sftp = ssh.openSftpClient();
-
-      // loop over sequence files in the listfile
-      Vector seqfile = readListFile(listfilepath);
-      for(int i=0; i<seqfile.size();i++)
-      {
-        String filepath = (String)seqfile.get(i);
-        int index = filepath.lastIndexOf(System.getProperty("file.separator"));
-        String filename = filepath;
-        if(index > -1)
-          filename = filename.substring(index+1);
-
-        try
-        {
-          wdir = wdir+"/"+user;
-          sftp.mkdir(wdir);
-          wdir = wdir+"/"+program+"/";
-          sftp.mkdir(wdir);
-
-          sftp.put(filepath, wdir+filename);
-        }
-        catch(IOException ioe)
-        {}
-    
-        SessionChannelClient session = ssh.openSessionChannel();
-
-        String outputfile = wdir+filename+".out";
-        final String actualCMD;
-
-        if( (cmd.indexOf("fasta33") > -1) ||
-            (cmd.indexOf("fastx33") > -1) )
-        {
-          if(settings.getProperty(db) != null)
-            db = settings.getProperty(db);
-          actualCMD = bsub+" -o "+ outputfile +" -e "+ outputfile + ".err " +
-                         cmd+" "+wdir+filename+" "+db;
-        }
-        else
-          actualCMD = bsub+" -o "+ outputfile +" -e "+ outputfile + ".err " +
-                         cmd+" "+db+" "+wdir+filename;
-
-        // run the application
-        if(System.getProperty("debug") != null)
-          System.out.println(actualCMD);
-        session.executeCommand(actualCMD);
-
-        // Reading from the session InputStream
-        StdoutStdErrHandler stdouth = new StdoutStdErrHandler(session, true);
-        StdoutStdErrHandler stderrh = new StdoutStdErrHandler(session, false);
-      
-        stdouth.start();
-        stderrh.start();
-
-        boolean isFile = false;
-        try
-        {
-          // make sure we hang around for stdout
-          while(stdouth.isAlive() || stderrh.isAlive())
-            Thread.currentThread().sleep(10);
-
-          isFile = waitUntilFileAppears(sftp, filename+".out");
-        }
-        catch(InterruptedException ie)
-        {
-          ie.printStackTrace();
-        }
-          
-        if(System.getProperty("debug") != null)
-        {
-          // stdout & stderr
-          System.out.println(stdouth.getOutput());
-          System.out.println(stderrh.getOutput());
-        }
-
-//      ByteArrayOutputStream os = new ByteArrayOutputStream();
-//      sftp.get(outputfile, os);
-//      System.out.println(os.toString());
-
-        sftp.get(outputfile, filepath+".out");
-        completed = true; 
-        session.close();
-      }
+      completed = runBlastOrFasta(ssh, program, settings);
 
       // Quit
-      sftp.quit();
       ssh.disconnect();
     }
     catch(IOException ioe){}
@@ -336,6 +214,47 @@ public class SshPSUClient extends Thread
     }
 
     return false;
+  }
+
+  /**
+  *
+  * Log the user in.
+  *
+  */
+  private SshClient login()
+            throws IOException
+  {
+    SshClient ssh = null;
+    int result = AuthenticationProtocolState.FAILED;
+
+    while(result != AuthenticationProtocolState.COMPLETE)
+    {
+      if(!setLogin())
+        return null;
+
+      // Create a password authentication instance
+      PasswordAuthenticationClient pwd = new PasswordAuthenticationClient();
+      user = ufield.getText().trim();
+      pwd.setUsername(user);
+      pwd.setPassword(new String(pfield.getPassword()));
+
+      // Make a client connection
+      ssh = new SshClient();
+      hostname = hostfield.getText().trim();
+      if(portfield.getText().trim().equals(""))
+        port = -1;
+      else
+        port = Integer.parseInt(portfield.getText().trim());
+
+      if(port < 0)
+        ssh.connect(hostname);
+      else
+        ssh.connect(hostname,port);
+
+      // Try the authentication
+      result = ssh.authenticate(pwd);
+    }
+    return ssh;
   }
 
   /**
@@ -438,6 +357,111 @@ public class SshPSUClient extends Thread
       cmd = settings.getProperty("fastx");
 
     return settings;
+  }
+
+  /**
+  *
+  * Run fasta or blast on the server ssh'ed into
+  *
+  */
+  private boolean runBlastOrFasta(SshClient ssh, String program, Properties settings)
+                    throws IOException
+  {
+    // prompt for local listfile
+    if(listfilepath == null)
+    {
+      JFileChooser chooser = new JFileChooser();
+      int returnVal = chooser.showOpenDialog(null);
+      if(returnVal == JFileChooser.APPROVE_OPTION) 
+        listfilepath = chooser.getSelectedFile().getAbsolutePath();
+      else
+        return false;
+    }
+
+    SftpClient sftp = ssh.openSftpClient();
+
+    // loop over sequence files in the listfile
+    Vector seqfile = readListFile(listfilepath);
+    for(int i=0; i<seqfile.size();i++)
+    {
+      String filepath = (String)seqfile.get(i);
+      int index = filepath.lastIndexOf(System.getProperty("file.separator"));
+      String filename = filepath;
+      if(index > -1)
+        filename = filename.substring(index+1);
+
+      try
+      {
+        wdir = wdir+"/"+user;
+        sftp.mkdir(wdir);
+        wdir = wdir+"/"+program+"/";
+        sftp.mkdir(wdir);
+
+        sftp.put(filepath, wdir+filename);
+      }
+      catch(IOException ioe)
+      {}
+  
+      SessionChannelClient session = ssh.openSessionChannel();
+
+      String outputfile = wdir+filename+".out";
+      final String actualCMD;
+
+      if( (cmd.indexOf("fasta33") > -1) ||
+          (cmd.indexOf("fastx33") > -1) )
+      {
+        if(settings.getProperty(db) != null)
+          db = settings.getProperty(db);
+        actualCMD = bsub+" -o "+ outputfile +" -e "+ outputfile + ".err " +
+                       cmd+" "+wdir+filename+" "+db;
+      }
+      else
+        actualCMD = bsub+" -o "+ outputfile +" -e "+ outputfile + ".err " +
+                       cmd+" "+db+" "+wdir+filename;
+
+      // run the application
+      if(System.getProperty("debug") != null)
+        System.out.println(actualCMD);
+      session.executeCommand(actualCMD);
+
+      // Reading from the session InputStream
+      StdoutStdErrHandler stdouth = new StdoutStdErrHandler(session, true);
+      StdoutStdErrHandler stderrh = new StdoutStdErrHandler(session, false);
+    
+      stdouth.start();
+      stderrh.start();
+
+      boolean isFile = false;
+      try
+      {
+        // make sure we hang around for stdout
+        while(stdouth.isAlive() || stderrh.isAlive())
+          Thread.currentThread().sleep(10);
+
+        isFile = waitUntilFileAppears(sftp, filename+".out");
+      }
+      catch(InterruptedException ie)
+      {
+        ie.printStackTrace();
+      }
+        
+      if(System.getProperty("debug") != null)
+      {
+        // stdout & stderr
+        System.out.println(stdouth.getOutput());
+        System.out.println(stderrh.getOutput());
+      }
+
+//    ByteArrayOutputStream os = new ByteArrayOutputStream();
+//    sftp.get(outputfile, os);
+//    System.out.println(os.toString());
+
+      sftp.get(outputfile, filepath+".out");
+      session.close();
+    }
+    sftp.quit();
+
+    return true;
   }
 
   /**
