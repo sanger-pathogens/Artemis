@@ -47,8 +47,6 @@ public class RemoteFileNode extends DefaultMutableTreeNode
 
   /** parent directory listing */
   private transient FileList parentList;        // make transient for
-  /** jemboss properties */
-  private transient Properties mysettings;      // Transferable to work
   /** remote server file roots */
   private transient String froots;
   /** file separator for server files */
@@ -59,25 +57,27 @@ public class RemoteFileNode extends DefaultMutableTreeNode
   static DataFlavor remoteFlavors[] = { REMOTEFILENODE, 
                              DataFlavor.stringFlavor };
 
+  public RemoteFileNode(boolean isDir)
+  {
+    this.isDir = isDir;
+  }
 
   /**
   *
-  * @param mysettings		jemboss properties
   * @param froots		remote server file roots
   * @param file		file for this node
   * @param parentList		parent directory listing
   * @param parent		parent to this node
   *
   */
-  public RemoteFileNode(Properties mysettings, String froots,
-                  String file, FileList parentList, String parent)
+  public RemoteFileNode(String froots, String file,
+                        FileList parentList, String parent)
   {
-    this(mysettings, froots, file, parentList, parent, false);
+    this(froots, file, parentList, parent, false);
   }
 
   /**
   *
-  * @param mysettings         jemboss properties
   * @param froots             remote server file roots
   * @param file               file for this node
   * @param parentList         parent directory listing
@@ -85,11 +85,10 @@ public class RemoteFileNode extends DefaultMutableTreeNode
   * @param ldir		true if the node is a directory
   *
   */
-  public RemoteFileNode(Properties mysettings, String froots,
-                  String file, FileList parentList, String parent,
-                  boolean ldir)
+  public RemoteFileNode(String froots, String file,
+                        FileList parentList, String parent,
+                        boolean ldir)
   { 
-    this.mysettings = mysettings;
     this.froots = froots;
     this.parentList = parentList;
     isDir = ldir;
@@ -143,11 +142,6 @@ public class RemoteFileNode extends DefaultMutableTreeNode
   /** @return         true if explored */
   public boolean isExplored() { return explored; }
    
-  protected void setDir(boolean isDir)
-  {
-    this.isDir = isDir;
-  }
-
   /**
   *
   * Get the server name 
@@ -190,7 +184,7 @@ public class RemoteFileNode extends DefaultMutableTreeNode
       flist.getDirList(dir);
       Vector children = flist.fileVector();
       for(int i=0;i<children.size();i++)
-        add(new RemoteFileNode(mysettings,froots,(String)children.get(i),
+        add(new RemoteFileNode(froots,(String)children.get(i),
                                flist,fullname));
     }
       explored = true;

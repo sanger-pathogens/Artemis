@@ -30,6 +30,9 @@ import java.io.FileFilter;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.*;
+import java.util.Properties;
+import java.util.Vector;
+import java.util.Enumeration;
 
 public class FileManager extends JFrame
 {
@@ -54,7 +57,7 @@ public class FileManager extends JFrame
   {
     super("File Manager");
 
-    FileTree ftree  = new FileTree(new File(System.getProperty("user.dir")),
+    FileTree ftree  = new FileTree(getLocalDirectories(),
                                    frame, filter);
     JScrollPane jsp = new JScrollPane(ftree);
     JPanel pane = (JPanel)getContentPane();
@@ -71,6 +74,45 @@ public class FileManager extends JFrame
     int yloc = (int)((screen.getHeight()-getHeight())/2);
     setLocation(0,yloc);  
     setVisible(true);
+  }
+
+  /**
+  *
+  * Look in j2ssh.properties for local directories.
+  *
+  */
+  private File[] getLocalDirectories()
+  {
+    final Properties settings = new Properties();
+    ClassLoader cl = getClass().getClassLoader();
+    // try out of the classpath
+    try
+    {
+      settings.load(cl.getResourceAsStream("j2ssh.properties"));
+    }
+    catch (Exception e)
+    {
+    }
+
+    Enumeration enum_prop = settings.propertyNames();
+    Vector dirs = new Vector();
+
+    dirs.add(new File(System.getProperty("user.home")));
+    dirs.add(new File(System.getProperty("user.dir")));
+
+    while(enum_prop.hasMoreElements())
+    {
+      final String property = (String)enum_prop.nextElement();
+      File f = new File(settings.getProperty(property));
+      if(property.startsWith("localdir") && f.exists())
+        dirs.add(f);
+    }
+
+    File fdirs[] = new File[dirs.size()];
+    for(int i=0; i<dirs.size(); i++)
+      fdirs[i] = (File)dirs.get(i);
+
+    return fdirs;
   }
 
   protected JComboBox getFileFileterComboBox(final FileTree ftree)
@@ -229,45 +271,6 @@ public class FileManager extends JFrame
     JMenu fileMenu = new JMenu("File");
     mBar.add(fileMenu);
     
-    JMenuItem fileMenuGoto = new JMenuItem("Go to Directory ...");
-    fileMenuGoto.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        String dir = ftree.getRoot().getAbsolutePath();
-        String newDir = JOptionPane.showInputDialog(FileManager.this,
-                                             "Go to Directory:",dir);      
-
-        if(newDir == null)
-          return;
-       
-        newDir = newDir.trim();
-        File newDirFile = new File(newDir);
-        
-        if(newDirFile.exists() &&
-           newDirFile.canRead() &&
-           !newDir.equals(dir))
-          ftree.newRoot(newDir);
-        else
-        {
-          String error = null;
-          if(!newDirFile.exists())
-            error = new String(newDir+" doesn't exist!");
-          else if(!newDirFile.canRead())
-            error = new String(newDir+" cannot be read!");
-          else if(newDir.equals(dir))
-            error = new String("Same directory!");
-
-          if(error != null)
-            JOptionPane.showMessageDialog(FileManager.this,
-                                        error, "Warning",
-                                        JOptionPane.WARNING_MESSAGE);
-        }
-      }
-    });
-    fileMenu.add(fileMenuGoto);
-    fileMenu.add(new JSeparator());
-    
     JMenuItem fileMenuClose = new JMenuItem("Close");
     fileMenuClose.addActionListener(new ActionListener()
     {
@@ -277,138 +280,6 @@ public class FileManager extends JFrame
       }
     });
     fileMenu.add(fileMenuClose);
-
-    // tool bar set up
-    JToolBar toolBar  = new JToolBar();
-    Dimension buttonSize = new Dimension(22,24);
-
-    JButton upBt = new JButton()
-    {
-      public void paintComponent(Graphics g)
-      {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D)g;
-
-        g2.setColor(new Color(0,128,0));
-        float loc1[][] = { {11,18}, {7,18}, {7,14},
-                           {3,14},  {11,4} };
-                  
-        g2.fill(makeShape(loc1));
-        g2.setColor(Color.green);
-
-        float loc2[][] = { {11,18}, {15,18}, {15,14},
-                           {19,14},  {11,4} };
-        g2.fill(makeShape(loc2));
-
-        setSize(22,24);
-      }
-    };
-    upBt.setPreferredSize(buttonSize);
-    upBt.setMinimumSize(buttonSize);
-
-    upBt.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        FileManager.this.setCursor(cbusy);
-        File root = ftree.getRoot();
-        String parent = root.getParent();
-        if(parent != null)
-          ftree.newRoot(parent);
-        FileManager.this.setCursor(cdone);
-      }
-    });
-    toolBar.add(upBt);
-
-// yeastpub
-    JButton shortCut1 = new JButton()
-    {
-      public void paintComponent(Graphics g)
-      {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D)g;
-        Font font = new Font("Monospaced", Font.BOLD, 14);
-        g2.setFont(font);
-
-        g2.setColor(Color.black);
-        g2.drawString("Y",4,18);
-        g2.setColor(Color.red);
-        g2.drawString("P",10,15);
-        setSize(22,24);
-      }
-    };
-    shortCut1.setPreferredSize(buttonSize);
-    shortCut1.setMinimumSize(buttonSize);
-    shortCut1.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        ftree.newRoot("/nfs/disk222/yeastpub");
-      }
-    });
-
-    if((new File("/nfs/disk222/yeastpub")).exists())
-      toolBar.add(shortCut1);
-
-// pathdata
-   JButton shortCut2 = new JButton()
-    {
-      public void paintComponent(Graphics g)
-      {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D)g;
-        Font font = new Font("Monospaced", Font.BOLD, 14);
-        g2.setFont(font);
-
-        g2.setColor(Color.black);
-        g2.drawString("P",4,18);
-        g2.setColor(Color.red);
-        g2.drawString("D",10,15);
-        setSize(22,24);
-      }
-    };
-    shortCut2.setPreferredSize(buttonSize);
-    shortCut2.setMinimumSize(buttonSize);
-    shortCut2.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        ftree.newRoot("/nfs/pathdata/");
-      }
-    });
-
-    if((new File("/nfs/pathdata/")).exists())
-      toolBar.add(shortCut2);
-
-// home button
-    JButton homeBt = new JButton()
-    {
-      public void paintComponent(Graphics g)
-      {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D)g;
-                                                                                
-        g2.setColor(Color.blue);
-        float loc1[][] = { {3,14}, {11,3}, {19,14},
-                           {17,14}, {17,18}, {5,18}, {5,14} };
-        g2.fill(makeShape(loc1));
-                                                                                
-        setSize(22,24);
-      }
-    };
-    homeBt.setPreferredSize(buttonSize);
-    homeBt.setMinimumSize(buttonSize);
-    homeBt.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        ftree.newRoot(System.getProperty("user.home"));
-      }
-    });
-    toolBar.add(homeBt);
-
-    toolBar.add(Box.createVerticalStrut(35));
-    pane.add(toolBar, BorderLayout.NORTH);
 
     return mBar;
   }

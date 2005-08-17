@@ -34,6 +34,7 @@ import java.util.*;
 public class FileNode extends DefaultMutableTreeNode 
                  implements Transferable, Serializable
 {
+    private boolean isDir;
     /** true if explored */
     private boolean explored = false;
     /** data flavour of a file node */
@@ -50,6 +51,7 @@ public class FileNode extends DefaultMutableTreeNode
     public FileNode(File file)
     { 
       setUserObject(file); 
+      this.isDir = file.isDirectory();
     }
 
     /** Determine if this is a directory */
@@ -62,9 +64,13 @@ public class FileNode extends DefaultMutableTreeNode
     public boolean isExplored() { return explored; }
     /** Determine if this is a directory */
     public boolean isDirectory() 
+    { 
+      return isDir;
+    }
+
+    protected void setDirectory(boolean isDir)
     {
-      File file = getFile();
-      return file.isDirectory();
+      this.isDir = isDir;
     }
 
     /**

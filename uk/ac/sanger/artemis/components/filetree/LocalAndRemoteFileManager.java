@@ -21,6 +21,7 @@
 
 package uk.ac.sanger.artemis.components.filetree;
 
+import uk.ac.sanger.artemis.j2ssh.SshLogin;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.Options;
 
@@ -30,6 +31,10 @@ import java.io.FileFilter;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.*;
+import java.util.Properties;
+import java.util.Enumeration;
+import java.util.Vector;
+import javax.swing.border.Border;
 
 public class LocalAndRemoteFileManager extends JFrame
 {
@@ -54,19 +59,24 @@ public class LocalAndRemoteFileManager extends JFrame
   {
     super("File Manager");
 
+    FileList flist = new FileList();
     final JPanel localPanel = new JPanel(new BorderLayout());
-    FileTree ftree  = new FileTree(new File(System.getProperty("user.dir")),
-                                       frame, filter);
+    
+    FileTree ftree  = new FileTree(getLocalDirectories(), this, filter);
     JScrollPane localTree = new JScrollPane(ftree);
     localPanel.add(localTree,BorderLayout.CENTER);
 
+    final JLabel local_status_line = getStatusLabel("LOCAL");
+    localPanel.add(local_status_line,BorderLayout.NORTH);
+
     final JPanel remotePanel = new JPanel(new BorderLayout());
 
-    FileList flist = new FileList();
-    String pwd = flist.pwd();
-    SshFileTree sshtree = new SshFileTree(pwd);
+    SshFileTree sshtree = new SshFileTree( getRemoteDirectories(flist.pwd()) );
     JScrollPane remoteTree = new JScrollPane(sshtree);
     remotePanel.add(remoteTree,BorderLayout.CENTER);
+    
+    final JLabel remote_status_line = getStatusLabel("REMOTE");
+    remotePanel.add(remote_status_line,BorderLayout.NORTH);
 
     final JSplitPane treePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                                localPanel,remotePanel);
@@ -76,7 +86,7 @@ public class LocalAndRemoteFileManager extends JFrame
     pane.add(treePane, BorderLayout.CENTER);
 
     Dimension screen    = Toolkit.getDefaultToolkit().getScreenSize();
-    Dimension panelSize = new Dimension(210, (int)(screen.getHeight()/3));
+    Dimension panelSize = new Dimension(240, (int)(screen.getHeight()/2));
     setJMenuBar(makeMenuBar(pane,ftree,sshtree,localPanel,remotePanel,treePane,panelSize));
     localPanel.add(getFileFileterComboBox(ftree), BorderLayout.SOUTH);
   
@@ -88,6 +98,82 @@ public class LocalAndRemoteFileManager extends JFrame
     int yloc = (int)((screen.getHeight()-getHeight())/2);
     setLocation(0,yloc);  
     setVisible(true);
+  }
+
+  /**
+  *
+  * Create a status JLabel with bevelled border
+  *
+  */
+  private JLabel getStatusLabel(String status)
+  {
+    final JLabel status_line = new JLabel(status);
+    Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+    Border raisedbevel = BorderFactory.createRaisedBevelBorder();
+    Border compound = BorderFactory.createCompoundBorder(raisedbevel,loweredbevel);
+    status_line.setBorder(compound);
+
+    final FontMetrics fm =
+      this.getFontMetrics(status_line.getFont());
+    final int font_height = fm.getHeight()+10;
+
+    status_line.setMinimumSize(new Dimension(100, font_height));
+    status_line.setPreferredSize(new Dimension(100, font_height));
+    return status_line;
+  }
+
+  /**
+  *
+  * Look in j2ssh.properties for local directories.
+  *
+  */
+  private File[] getLocalDirectories()
+  {
+    final Properties settings = SshLogin.getProperties();
+    Enumeration enum_prop = settings.propertyNames();
+    Vector dirs = new Vector();
+
+    dirs.add(new File(System.getProperty("user.home")));
+    dirs.add(new File(System.getProperty("user.dir")));
+
+    while(enum_prop.hasMoreElements())
+    {
+      final String property = (String)enum_prop.nextElement();
+      File f = new File(settings.getProperty(property));
+      if(property.startsWith("localdir") && f.exists())
+        dirs.add(f);
+    }
+
+    File fdirs[] = new File[dirs.size()];
+    for(int i=0; i<dirs.size(); i++)
+      fdirs[i] = (File)dirs.get(i);
+
+    return fdirs;
+  }
+
+  /**
+  *
+  * Look in j2ssh.properties for remote directories.
+  *
+  */
+  private String[] getRemoteDirectories(String pwd)
+  {
+    final Properties settings = SshLogin.getProperties();
+    Enumeration enum_prop = settings.propertyNames();
+    Vector dirs = new Vector();
+    dirs.add(pwd);
+    while(enum_prop.hasMoreElements())
+    {
+      final String property = (String)enum_prop.nextElement();
+      if(property.startsWith("remotedir"))
+        dirs.add(settings.getProperty(property));
+    }
+
+    String sdirs[] = new String[dirs.size()];
+    for(int i=0; i<dirs.size(); i++)
+      sdirs[i] = (String)dirs.get(i);
+
+    return sdirs;
   }
 
   protected JComboBox getFileFileterComboBox(final FileTree ftree)
@@ -248,45 +334,6 @@ public class LocalAndRemoteFileManager extends JFrame
     JMenu fileMenu = new JMenu("File");
     mBar.add(fileMenu);
     
-    JMenuItem fileMenuGoto = new JMenuItem("Go to Directory ...");
-    fileMenuGoto.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        String dir = ftree.getRoot().getAbsolutePath();
-        String newDir = JOptionPane.showInputDialog(LocalAndRemoteFileManager.this,
-                                             "Go to Directory:",dir);      
-
-        if(newDir == null)
-          return;
-       
-        newDir = newDir.trim();
-        File newDirFile = new File(newDir);
-        
-        if(newDirFile.exists() &&
-           newDirFile.canRead() &&
-           !newDir.equals(dir))
-          ftree.newRoot(newDir);
-        else
-        {
-          String error = null;
-          if(!newDirFile.exists())
-            error = new String(newDir+" doesn't exist!");
-          else if(!newDirFile.canRead())
-            error = new String(newDir+" cannot be read!");
-          else if(newDir.equals(dir))
-            error = new String("Same directory!");
-
-          if(error != null)
-            JOptionPane.showMessageDialog(LocalAndRemoteFileManager.this,
-                                        error, "Warning",
-                                        JOptionPane.WARNING_MESSAGE);
-        }
-      }
-    });
-    fileMenu.add(fileMenuGoto);
-    fileMenu.add(new JSeparator());
-    
     JRadioButtonMenuItem prefV = new JRadioButtonMenuItem("Vertical Split");
     fileMenu.add(prefV);
     prefV.addActionListener(new ActionListener()
@@ -342,137 +389,12 @@ public class LocalAndRemoteFileManager extends JFrame
     fileMenu.add(fileMenuClose);
 
     // remote tool bar set up
-    JToolBar remoteToolBar  = new JToolBar();
-    Dimension buttonSize = new Dimension(22,24);
-
-    JButton remoteUpBt = new UpButton();
-    remoteUpBt.setPreferredSize(buttonSize);
-    remoteUpBt.setMinimumSize(buttonSize);
-
-    remoteUpBt.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        LocalAndRemoteFileManager.this.setCursor(cbusy);
-        sshtree.up();
-        LocalAndRemoteFileManager.this.setCursor(cdone);
-      }
-    });
-    remoteToolBar.add(remoteUpBt);
-
-    remoteToolBar.add(Box.createVerticalStrut(35));
-    remotePanel.add(remoteToolBar, BorderLayout.NORTH);
+//  JToolBar remoteToolBar  = new JToolBar();
+//  remotePanel.add(remoteToolBar, BorderLayout.NORTH);
 
     // local tool bar set up
-    JToolBar toolBar  = new JToolBar();
-
-    JButton upBt = new UpButton();
-    upBt.setPreferredSize(buttonSize);
-    upBt.setMinimumSize(buttonSize);
-
-    upBt.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        LocalAndRemoteFileManager.this.setCursor(cbusy);
-        File root = ftree.getRoot();
-        String parent = root.getParent();
-        if(parent != null)
-          ftree.newRoot(parent);
-        LocalAndRemoteFileManager.this.setCursor(cdone);
-      }
-    });
-    toolBar.add(upBt);
-
-// yeastpub
-    JButton shortCut1 = new JButton()
-    {
-      public void paintComponent(Graphics g)
-      {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D)g;
-        Font font = new Font("Monospaced", Font.BOLD, 14);
-        g2.setFont(font);
-
-        g2.setColor(Color.black);
-        g2.drawString("Y",4,18);
-        g2.setColor(Color.red);
-        g2.drawString("P",10,15);
-        setSize(22,24);
-      }
-    };
-    shortCut1.setPreferredSize(buttonSize);
-    shortCut1.setMinimumSize(buttonSize);
-    shortCut1.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        ftree.newRoot("/nfs/disk222/yeastpub");
-      }
-    });
-
-    if((new File("/nfs/disk222/yeastpub")).exists())
-      toolBar.add(shortCut1);
-
-// pathdata
-   JButton shortCut2 = new JButton()
-    {
-      public void paintComponent(Graphics g)
-      {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D)g;
-        Font font = new Font("Monospaced", Font.BOLD, 14);
-        g2.setFont(font);
-
-        g2.setColor(Color.black);
-        g2.drawString("P",4,18);
-        g2.setColor(Color.red);
-        g2.drawString("D",10,15);
-        setSize(22,24);
-      }
-    };
-    shortCut2.setPreferredSize(buttonSize);
-    shortCut2.setMinimumSize(buttonSize);
-    shortCut2.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        ftree.newRoot("/nfs/pathdata/");
-      }
-    });
-
-    if((new File("/nfs/pathdata/")).exists())
-      toolBar.add(shortCut2);
-
-// home button
-    JButton homeBt = new JButton()
-    {
-      public void paintComponent(Graphics g)
-      {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D)g;
-                                                                                
-        g2.setColor(Color.blue);
-        float loc1[][] = { {3,14}, {11,3}, {19,14},
-                           {17,14}, {17,18}, {5,18}, {5,14} };
-        g2.fill(makeShape(loc1));
-                                                                                
-        setSize(22,24);
-      }
-    };
-    homeBt.setPreferredSize(buttonSize);
-    homeBt.setMinimumSize(buttonSize);
-    homeBt.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        ftree.newRoot(System.getProperty("user.home"));
-      }
-    });
-    toolBar.add(homeBt);
-
-    toolBar.add(Box.createVerticalStrut(35));
-    localPanel.add(toolBar, BorderLayout.NORTH);
+//  JToolBar toolBar  = new JToolBar();
+//  localPanel.add(toolBar, BorderLayout.NORTH);
 
     return mBar;
   }
@@ -515,6 +437,40 @@ public class LocalAndRemoteFileManager extends JFrame
       setSize(22,24);
     }
   }
+
+  class TextButton extends JButton
+  {
+    private String s1;
+    private String s2;
+    private Color c;
+
+    public TextButton(String text)
+    {
+      this(text, Color.black);
+    }
+
+    public TextButton(String text, Color c)
+    {
+      super();
+      this.s1 = text.substring(0);
+      this.s2 = text.substring(1);
+    }
+
+    public void paintComponent(Graphics g)
+    {
+      super.paintComponent(g);
+      Graphics2D g2 = (Graphics2D)g;
+      Font font = new Font("Monospaced", Font.BOLD, 14);
+      g2.setFont(font);
+
+      g2.setColor(c);
+      g2.drawString(s1,4,18);
+      g2.setColor(Color.red);
+      g2.drawString(s2,10,15);
+      setSize(22,24);
+    }
+  }
+
 
   public static void main(String args[])
   {

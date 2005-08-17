@@ -74,6 +74,7 @@ public class SshLogin
   {
     try
     {
+      logfile = System.getProperty("logfile");
       // Setup a logfile
       if(logfile != null)
       {
@@ -89,7 +90,7 @@ public class SshLogin
     catch(IOException ioe){}
 
    if(settings == null)
-      settings = getProperties();
+      settings = setProperties();
   }
 
   public SshClient getSshClient()
@@ -108,6 +109,11 @@ public class SshLogin
   public String getUser()
   {
     return ufield.getText().trim();
+  }
+
+  public static Properties getProperties()
+  {
+    return settings;
   }
 
   /**
@@ -208,7 +214,7 @@ public class SshLogin
   * Get the properties from the j2ssh.properties file.
   *
   */
-  private Properties getProperties()
+  private Properties setProperties()
   {
     Properties settings = new Properties();
     ClassLoader cl = this.getClass().getClassLoader();

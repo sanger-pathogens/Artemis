@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.5 2005-08-12 16:01:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.6 2005-08-17 17:03:06 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -41,7 +41,7 @@ import java.util.Enumeration;
  *  and contains methods for invoking it.
  *
  *  @author Kim Rutherford
- *  @version $Id: ExternalProgram.java,v 1.5 2005-08-12 16:01:48 tjc Exp $
+ *  @version $Id: ExternalProgram.java,v 1.6 2005-08-17 17:03:06 tjc Exp $
  **/
 
 public class ExternalProgram 
@@ -152,6 +152,7 @@ public class ExternalProgram
           String [] args = { "-f", file_of_filenames.getPath(),
                              "-cmd", getRealName(),
                              "-d", getProgramOptions()};
+
           uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
                 new uk.ac.sanger.artemis.j2ssh.SshPSUClient(args);
           ssh.start();

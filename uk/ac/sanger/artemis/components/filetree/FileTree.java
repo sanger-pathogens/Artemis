@@ -60,7 +60,7 @@ public class FileTree extends JTree implements DragGestureListener,
 {
 
   /** root directory */
-  private File root;
+  private File root[];
   /** store of directories that are opened */
   private Vector openNode;
   /** file separator */
@@ -78,13 +78,14 @@ public class FileTree extends JTree implements DragGestureListener,
   /** file filter */
   private FileFilter filter = null;
 
+
   /**
   *
   * @param rt		root directory
   * @param f		frame
   *
   */
-  public FileTree(File rt, final JFrame f,
+  public FileTree(File rt[], final JFrame f,
                   FileFilter filter)
   {
     this.root   = rt;
@@ -193,7 +194,7 @@ public class FileTree extends JTree implements DragGestureListener,
     if(source.getText().equals("Refresh")) 
     {
       if(node == null)
-        newRoot(root.getAbsolutePath());
+        return;
       else if(node.isLeaf())
         refresh((FileNode)node.getParent());
       else 
@@ -369,7 +370,8 @@ public class FileTree extends JTree implements DragGestureListener,
   */
   public void newRoot(String newRoot)
   {
-    root = new File(newRoot);
+//  root = new File(newRoot);
+    
     DefaultTreeModel model = (DefaultTreeModel)getModel();
     model = createTreeModel(root);
     setModel(model);
@@ -383,7 +385,7 @@ public class FileTree extends JTree implements DragGestureListener,
   */
   public File getRoot()
   {
-    return root;
+    return null;
   }
 
   /**
@@ -495,12 +497,24 @@ public class FileTree extends JTree implements DragGestureListener,
   *                     to the given directory
   *
   */
-  private DefaultTreeModel createTreeModel(File root)
+  private DefaultTreeModel createTreeModel(File root[])
   {
-    FileNode rootNode = new FileNode(root);
-    rootNode.explore(filter);
-    openNode = new Vector();
-    openNode.add(rootNode);
+    FileNode rootNode = new FileNode(new File(""));
+    rootNode.setDirectory(true);
+
+    for(int i=0; i<root.length; i++)
+    {
+      FileNode node = new FileNode(root[i]);
+
+      if(i == 0)
+      {
+        node.explore(filter);
+        openNode = new Vector();
+        openNode.add(node);
+      }
+      rootNode.add(node);
+    }
+
     return new DefaultTreeModel(rootNode);
   }
 
@@ -935,8 +949,10 @@ public class FileTree extends JTree implements DragGestureListener,
   public static void main(String[] args)
   {
     JFrame tree_frame = new JFrame("File Manager");
-    FileTree ftree    = new FileTree(new File(System.getProperty("user.home")),
-                                     tree_frame,null);
+
+    File dirs[]  = new File[1];
+    dirs[0] = new File(System.getProperty("user.home"));
+    FileTree ftree    = new FileTree(dirs, tree_frame, null);
     JScrollPane jsp   = new JScrollPane(ftree);
     tree_frame.getContentPane().add(jsp);
     tree_frame.pack();

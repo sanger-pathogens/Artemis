@@ -33,7 +33,7 @@ public class FileList
   private Vector vdir;
   private Vector vfile;
   private static SshFileManager ssh_client = new SshFileManager();
-
+ 
   public FileList()
   {
   }
@@ -125,7 +125,15 @@ public class FileList
   */
   public Vector fileVector() 
   {
-    return vfile;
+    final Vector vfile_filtered = new Vector();
+    for(int i=0; i<vfile.size(); i++)
+    {
+      String sfile = (String)vfile.get(i);
+      if(!sfile.startsWith("."))
+        vfile_filtered.add(sfile);
+    }
+
+    return vfile_filtered;
   }
 
 

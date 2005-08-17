@@ -56,7 +56,7 @@ public class SshFileTree extends JTree implements DragGestureListener,
   /** properties */
   private Properties mysettings; 
   /** remote directory roots */
-  private static String froots;
+  private static String froots[];
   /** popup menu */
   private JPopupMenu popup;
   /** file separator */
@@ -80,7 +80,7 @@ public class SshFileTree extends JTree implements DragGestureListener,
   * @param froots	remote directory roots
   *
   */
-  public SshFileTree(String froots)
+  public SshFileTree(String froots[])
   {
     this.froots = froots;
 
@@ -193,14 +193,31 @@ public class SshFileTree extends JTree implements DragGestureListener,
   *                     the tree.
   *
   */
+/*
   public void up()
   {
     File current = new File(froots);
-    froots = current.getParentFile().getAbsolutePath();
+    String new_froots = current.getParentFile().getAbsolutePath();
+    newRoot(new_froots);
+  }
+*/
+
+  /**
+  *
+  * Define a directory root for the file tree
+  * @param newRoot      directory to use as the root for
+  *                     the tree.
+  *
+  */
+/*
+  protected void newRoot(final String froots)
+  {
+    this.froots = froots;
     DefaultTreeModel model = (DefaultTreeModel)getModel();
     model = createTreeModel(froots);
     setModel(model);
   }
+*/
 
   /**
   *
@@ -457,8 +474,8 @@ public class SshFileTree extends JTree implements DragGestureListener,
     }
     else
     {
-      childNode = new RemoteFileNode(mysettings,froots,
-                                     child,null,path,ldir);
+      childNode = new RemoteFileNode(froots[0],child,
+                                     null,path,ldir);
 
       //find the index for the child
       int num = parentNode.getChildCount();
@@ -578,18 +595,28 @@ public class SshFileTree extends JTree implements DragGestureListener,
   * @return             tree model
   *
   */
-  private DefaultTreeModel createTreeModel(String root)
+  private DefaultTreeModel createTreeModel(String froot[])
   {
     setCursor(cbusy);
   
-    File f = new File(root);
-    RemoteFileNode rootNode = new RemoteFileNode(mysettings,froots,
-                                                 f.getName(),null,null);
+    RemoteFileNode rootNode = new RemoteFileNode(true);
+                
+    for(int i=0; i<froots.length; i++)
+    {
+      File f = new File(froot[i]);
+      RemoteFileNode node = new RemoteFileNode(froots[i], f.getName(),
+                                              null, null, true);
+      rootNode.add(node);
+      if(i == 0)
+      {
+        node.explore();
+        openNode = new Vector();
+        openNode.add(node);
+      }
+    }
 
-    rootNode.setDir(true);
-    rootNode.explore();
-    openNode = new Vector();
-    openNode.add(rootNode);
+     
+
     setCursor(cdone);
     return new DefaultTreeModel(rootNode);
   }
@@ -991,7 +1018,8 @@ public class SshFileTree extends JTree implements DragGestureListener,
     }
 
    JFrame frame = new JFrame("SSH :: File Manager");
-   JScrollPane jsp = new JScrollPane(new SshFileTree("/nfs/team81/tjc"));
+   String roots[] = { "/nfs/team81/tjc" };
+   JScrollPane jsp = new JScrollPane(new SshFileTree(roots));
    frame.getContentPane().add(jsp);
    frame.pack();
    frame.setVisible(true);

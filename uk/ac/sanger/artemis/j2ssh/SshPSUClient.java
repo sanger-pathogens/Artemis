@@ -43,19 +43,10 @@ import java.io.IOException;
 
 import java.util.Vector;
 import java.util.Properties;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import com.sshtools.j2ssh.SshClient;
-import com.sshtools.j2ssh.authentication.AuthenticationProtocolState;
-import com.sshtools.j2ssh.authentication.PasswordAuthenticationClient;
 import com.sshtools.j2ssh.session.SessionChannelClient;
-import com.sshtools.j2ssh.sftp.FileAttributes;
 import com.sshtools.j2ssh.sftp.SftpFile;
-import com.sshtools.j2ssh.sftp.SftpFileOutputStream;
 import com.sshtools.j2ssh.SftpClient;
 import com.sshtools.j2ssh.configuration.ConfigurationLoader;
 
@@ -76,14 +67,9 @@ public class SshPSUClient extends Thread
   private String db       = null;
   private String wdir     = "/nfs/pathscratch1/scratch";
 
-  // login variables
-  private String hostname = null;
-  private String user     = null;
-  private int port        = -1;
-  private static JPasswordField pfield = new JPasswordField(16);
-  private static JTextField portfield  = new JTextField(16);
-  private static JTextField hostfield  = new JTextField(16);
-  private static JTextField ufield  = new JTextField(16);
+  //
+  private SshClient ssh;
+  private String user;
 
   public SshPSUClient(String args[])
   {
@@ -92,11 +78,7 @@ public class SshPSUClient extends Thread
     {
       for(int i=0; i<args.length; i++)
       {
-        if(args[i].equals("-h") && i < args.length-1)
-          hostname = args[i+1];
-        else if(args[i].equals("-u") && i < args.length-1)
-          user = args[i+1];
-        else if(args[i].equals("-f") && i < args.length-1)
+        if(args[i].equals("-f") && i < args.length-1)
           listfilepath = args[i+1];
         else if(args[i].equals("-cmd") && i < args.length-1)
           cmd = args[i+1];
@@ -104,8 +86,6 @@ public class SshPSUClient extends Thread
           bsub = args[i+1];
         else if(args[i].equals("-l") && i < args.length-1)
           logfile = args[i+1];
-        else if(args[i].equals("-p") && i < args.length-1)
-          port = Integer.parseInt(args[i+1]);
         else if(args[i].equals("-d") && i < args.length-1)
           db = args[i+1];
         else if(args[i].equals("-wdir") && i < args.length-1)
@@ -113,26 +93,15 @@ public class SshPSUClient extends Thread
       }
     }
 
-    try
-    {
-      // Setup a logfile
-      if(logfile != null)
-      {
-        Handler fh = new FileHandler(logfile);
-        fh.setFormatter(new SimpleFormatter());
-        Logger.getLogger("com.sshtools").setUseParentHandlers(false);
-        Logger.getLogger("com.sshtools").addHandler(fh);
-        Logger.getLogger("com.sshtools").setLevel(Level.ALL);
-      }
-      else
-        Logger.getLogger("com.sshtools").setLevel(Level.OFF);
-    }
-    catch(IOException ioe){}
+    SshLogin sshLogin = new SshLogin();
+    ssh = sshLogin.getSshClient();
+    user = sshLogin.getUser();
   }
 
   public void run()
   {
     String program = cmd;
+
     // get properties from j2ssh.properties
     Properties settings = getProperties();
 
@@ -141,14 +110,13 @@ public class SshPSUClient extends Thread
     {
       ConfigurationLoader.initialize(false);
 
-      SshClient ssh = login();
       if(ssh == null)
         return;
 
       completed = runBlastOrFasta(ssh, program, settings);
 
       // Quit
-      ssh.disconnect();
+      //ssh.disconnect();
     }
     catch(IOException ioe){}
     finally
@@ -215,99 +183,6 @@ public class SshPSUClient extends Thread
     return false;
   }
 
-  /**
-  *
-  * Log the user in.
-  *
-  */
-  private SshClient login()
-            throws IOException
-  {
-    SshClient ssh = null;
-    int result = AuthenticationProtocolState.FAILED;
-
-    while(result != AuthenticationProtocolState.COMPLETE)
-    {
-      if(!setLogin())
-        return null;
-
-      // Create a password authentication instance
-      PasswordAuthenticationClient pwd = new PasswordAuthenticationClient();
-      user = ufield.getText().trim();
-      pwd.setUsername(user);
-      pwd.setPassword(new String(pfield.getPassword()));
-
-      // Make a client connection
-      ssh = new SshClient();
-      hostname = hostfield.getText().trim();
-      if(portfield.getText().trim().equals(""))
-        port = -1;
-      else
-        port = Integer.parseInt(portfield.getText().trim());
-
-      if(port < 0)
-        ssh.connect(hostname);
-      else
-        ssh.connect(hostname,port);
-
-      // Try the authentication
-      result = ssh.authenticate(pwd);
-    }
-    return ssh;
-  }
-
-  /**
-  *
-  * Set the login information.
-  *
-  */
-  private boolean setLogin()
-  {
-    JPanel promptPanel = new JPanel(new GridLayout(4,2));
-
-    if(hostname != null && hostfield.getText().equals(""))
-      hostfield.setText(hostname);
-   
-    if(port >-1 && portfield.getText().equals(""))
-      portfield.setText(Integer.toString(port));
-
-    if(user != null && ufield.getText().equals(""))
-      ufield.setText(user);
-
-    JLabel hostlab = new JLabel(" Hostname:", SwingConstants.LEFT);
-    JLabel portlab = new JLabel("     Port:", SwingConstants.LEFT);
-
-    JLabel ulab = new JLabel(" Username:", SwingConstants.LEFT);
-    JLabel plab = new JLabel(" Password:", SwingConstants.LEFT);
-    //add labels etc
-    promptPanel.add(hostlab);
-    promptPanel.add(hostfield);
-
-    promptPanel.add(portlab);
-    promptPanel.add(portfield);
-
-    promptPanel.add(ulab);
-    promptPanel.add(ufield);
-
-    promptPanel.add(plab);
-    promptPanel.add(pfield);
-  
-    Object[] options = { "CANCEL", "LOGIN AND RUN"};
-
-    int select = JOptionPane.showOptionDialog(null, promptPanel,
-                          "LOGIN",
-                           JOptionPane.YES_NO_CANCEL_OPTION,
-                           JOptionPane.QUESTION_MESSAGE,
-                           null,
-                           options,
-                           options[1]);
-
-    if(select == 0)
-      return false;
-
-    return true;
-  }
-
 
   /**
   *
@@ -327,14 +202,8 @@ public class SshPSUClient extends Thread
     {
     }
 
-    if(hostname == null && settings.getProperty("host") != null)
-      hostname = settings.getProperty("host");
-    if(port < 0 && settings.getProperty("port") != null)
-      port = Integer.parseInt(settings.getProperty("port"));
     if(bsub == null && settings.getProperty("bsub") != null)
       bsub = settings.getProperty("bsub");
-    if(user == null)
-      user = System.getProperty("user.name");
     if(db == null)
     {
       if(settings.getProperty("default_db") != null)
@@ -404,7 +273,9 @@ public class SshPSUClient extends Thread
         sftp.put(filepath, wdir+filename);
       }
       catch(IOException ioe)
-      {}
+      { 
+        ioe.printStackTrace();
+      }
   
       SessionChannelClient session = ssh.openSessionChannel();
 
