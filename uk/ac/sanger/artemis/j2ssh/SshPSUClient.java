@@ -68,10 +68,6 @@ import com.sshtools.j2ssh.configuration.ConfigurationLoader;
 */
 public class SshPSUClient extends Thread
 {
-
-  private Vector dir_list;
-  private Vector file_list;
-
   // defaults
   private String listfilepath = null;
   private String cmd      = null;
