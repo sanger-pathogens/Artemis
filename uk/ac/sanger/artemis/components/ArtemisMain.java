@@ -20,11 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.16 2005-07-20 09:29:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.17 2005-08-17 08:43:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
+import uk.ac.sanger.artemis.components.filetree.FileManager;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.sequence.Bases;
@@ -45,7 +46,7 @@ import java.io.*;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.16 2005-07-20 09:29:56 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.17 2005-08-17 08:43:05 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 

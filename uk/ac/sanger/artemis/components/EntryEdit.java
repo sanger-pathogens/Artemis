@@ -20,13 +20,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.19 2005-08-11 16:12:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.20 2005-08-17 08:43:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.chado.*;
+import uk.ac.sanger.artemis.components.filetree.FileManager;
+import uk.ac.sanger.artemis.components.filetree.FileNode;
 import uk.ac.sanger.artemis.sequence.Marker;
 import uk.ac.sanger.artemis.sequence.Bases;
 
@@ -56,7 +58,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.19 2005-08-11 16:12:43 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.20 2005-08-17 08:43:05 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame

@@ -69,6 +69,9 @@ import com.sshtools.j2ssh.configuration.ConfigurationLoader;
 public class SshPSUClient extends Thread
 {
 
+  private Vector dir_list;
+  private Vector file_list;
+
   // defaults
   private String listfilepath = null;
   private String cmd      = null;
@@ -343,22 +346,27 @@ public class SshPSUClient extends Thread
       else
         db = "%uniprot";
     } 
-    if(cmd.equals("blastp") && settings.getProperty("blastp") != null)
-      cmd = settings.getProperty("blastp");
-    else if(cmd.equals("blastn") && settings.getProperty("blastn") != null)
-      cmd = settings.getProperty("blastn");
-    else if(cmd.equals("blastx") && settings.getProperty("blastx") != null)
-      cmd = settings.getProperty("blastx");
-    else if(cmd.equals("tblastx") && settings.getProperty("tblastx") != null)
-      cmd = settings.getProperty("tblastx"); 
-    else if(cmd.equals("fasta") && settings.getProperty("fasta") != null) 
-      cmd = settings.getProperty("fasta");
-    else if(cmd.equals("fastx") && settings.getProperty("fastx") != null)
-      cmd = settings.getProperty("fastx");
+
+    if(cmd != null)
+    {
+      if(cmd.equals("blastp") && settings.getProperty("blastp") != null)
+        cmd = settings.getProperty("blastp");
+      else if(cmd.equals("blastn") && settings.getProperty("blastn") != null)
+        cmd = settings.getProperty("blastn");
+      else if(cmd.equals("blastx") && settings.getProperty("blastx") != null)
+        cmd = settings.getProperty("blastx");
+      else if(cmd.equals("tblastx") && settings.getProperty("tblastx") != null)
+        cmd = settings.getProperty("tblastx"); 
+      else if(cmd.equals("fasta") && settings.getProperty("fasta") != null) 
+        cmd = settings.getProperty("fasta");
+      else if(cmd.equals("fastx") && settings.getProperty("fastx") != null)
+        cmd = settings.getProperty("fastx");
+    }
 
     return settings;
   }
 
+ 
   /**
   *
   * Run fasta or blast on the server ssh'ed into

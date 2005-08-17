@@ -20,13 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.6 2005-02-21 11:25:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.7 2005-08-17 08:43:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.Bases;
+import uk.ac.sanger.artemis.components.filetree.FileManager;
 
 import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.io.EntryInformation;
@@ -40,7 +41,7 @@ import javax.swing.JFrame;
  *  The main window for the Artemis Comparison Tool.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ActMain.java,v 1.6 2005-02-21 11:25:43 tjc Exp $
+ *  @version $Id: ActMain.java,v 1.7 2005-08-17 08:43:05 tjc Exp $
  **/
 
 public class ActMain extends Splash 

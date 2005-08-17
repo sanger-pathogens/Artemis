@@ -20,13 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.12 2005-04-15 09:53:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.13 2005-08-17 08:43:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
-
+import uk.ac.sanger.artemis.components.filetree.FileManager;
+import uk.ac.sanger.artemis.components.filetree.FileNode;
 import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
@@ -57,7 +58,7 @@ import javax.swing.border.BevelBorder;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.12 2005-04-15 09:53:08 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.13 2005-08-17 08:43:05 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
