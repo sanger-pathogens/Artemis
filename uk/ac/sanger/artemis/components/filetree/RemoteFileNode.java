@@ -211,7 +211,13 @@ public class RemoteFileNode extends DefaultMutableTreeNode
   protected boolean put(File local_file)
   {
     FileList flist = new FileList();
-    return flist.put(getRootDir()+"/"+getFullName(), local_file);
+    final String dir;
+    if(!isDirectory())
+      dir = getRootDir();
+    else
+      dir = getRootDir()+"/"+getFullName();
+
+    return flist.put(dir, local_file);
   }
 
 
