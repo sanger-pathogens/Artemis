@@ -131,7 +131,7 @@ public class RemoteFileDocument extends Document
     if(write_file.exists())
     {
       int n = JOptionPane.showConfirmDialog(null,
-                 "The file\n"+getName()+
+                 "The file :\n"+getName()+
                  "\nalready exists on the local disk.\nOverwrite?",
                  "Overwrite "+getName(),
                  JOptionPane.YES_NO_OPTION);

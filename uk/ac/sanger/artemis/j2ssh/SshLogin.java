@@ -82,7 +82,7 @@ public class SshLogin
         fh.setFormatter(new SimpleFormatter());
         Logger.getLogger("com.sshtools").setUseParentHandlers(false);
         Logger.getLogger("com.sshtools").addHandler(fh);
-        Logger.getLogger("com.sshtools").setLevel(Level.ALL);
+        Logger.getLogger("com.sshtools").setLevel(Level.WARNING);
       }
       else
         Logger.getLogger("com.sshtools").setLevel(Level.OFF);

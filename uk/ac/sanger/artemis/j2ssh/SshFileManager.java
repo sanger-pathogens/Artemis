@@ -85,10 +85,30 @@ public class SshFileManager
     ssh = sshLogin.getSshClient();
   }
 
+  private void rescue()
+  {
+    ssh.disconnect();
+    SshLogin sshLogin = new SshLogin();
+    ssh = sshLogin.getSshClient();
+  }
+
+  private SftpClient getSftpClient()
+             throws IOException
+  {
+    SftpClient sftp;
+    try
+    {
+      sftp = ssh.getActiveSftpClient();
+      return sftp;
+    }
+    catch(IOException ioe){}
+    return ssh.openSftpClient();   
+  }
+
   public boolean remoteList(String remoteRootDir)
                     throws IOException
   {
-    SftpClient sftp = ssh.openSftpClient();
+    SftpClient sftp = getSftpClient();
 
     try
     {
@@ -112,7 +132,7 @@ public class SshFileManager
       file_list.add(sfile.getFilename());
     }
      
-    sftp.quit();
+//  sftp.quit();
     return true;
   }
 
@@ -120,9 +140,9 @@ public class SshFileManager
   {
     try
     {
-      SftpClient sftp = ssh.openSftpClient();
+      SftpClient sftp = getSftpClient();
       sftp.rm(filename);
-      sftp.quit();
+//    sftp.quit();
     }
     catch(IOException ioe)
     {
@@ -137,9 +157,9 @@ public class SshFileManager
   {
     try
     {
-      SftpClient sftp = ssh.openSftpClient();
+      SftpClient sftp = getSftpClient();
       sftp.mkdir(dir);
-      sftp.quit();
+//    sftp.quit();
     }
     catch(IOException ioe)
     {
@@ -155,9 +175,9 @@ public class SshFileManager
     String pwd = null;
     try
     {
-      SftpClient sftp = ssh.openSftpClient();
+      SftpClient sftp = getSftpClient();
       pwd = sftp.pwd();
-      sftp.quit();
+//    sftp.quit();
     }
     catch(IOException ioe)
     {
@@ -171,12 +191,14 @@ public class SshFileManager
   {
     try
     {
-      SftpClient sftp = ssh.openSftpClient();
+      SftpClient sftp = getSftpClient();
       sftp.rename(old_file,new_file);
-      sftp.quit();
+//    sftp.quit();
     }
     catch(IOException ioe)
     {
+      rescue();
+      rename(old_file, new_file);
       ioe.printStackTrace();
       return false;
     }
@@ -197,7 +219,7 @@ public class SshFileManager
 
     try
     {
-      sftp = ssh.openSftpClient();
+      sftp = getSftpClient();
       FileAttributes attr = sftp.stat(dir+"/"+local_file.getName());
 
       if(attr.isDirectory())
@@ -231,7 +253,7 @@ public class SshFileManager
     {
       sftp.put(local_file.getCanonicalPath(), 
                dir+"/"+local_file.getName());
-      sftp.quit();
+//    sftp.quit();
     }
     catch(IOException ioe)
     {
@@ -253,11 +275,11 @@ public class SshFileManager
   {
     try 
     {
-      SftpClient sftp = ssh.openSftpClient();
+      SftpClient sftp = getSftpClient();
 
       ByteArrayOutputStream os = new ByteArrayOutputStream();
       sftp.get(file, os);
-      sftp.quit();
+//    sftp.quit();
       return os.toByteArray();
     }
     catch(IOException ioe)

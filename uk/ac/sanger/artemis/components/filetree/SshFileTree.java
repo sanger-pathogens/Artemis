@@ -360,15 +360,26 @@ public class SshFileTree extends JTree implements DragGestureListener,
   * @param child	child to test for
   *
   */
-  public boolean nodeExists(RemoteFileNode parentNode,String child)
+  public boolean nodeExists(RemoteFileNode parentNode, final String child)
   {
+    if(!parentNode.isDirectory())
+      parentNode = (RemoteFileNode)parentNode.getParent();
+
     RemoteFileNode childNode = getChildNode(parentNode,child);
+
     if(childNode != null)
     {
-      String ls = System.getProperty("line.separator");
-      JOptionPane.showMessageDialog(null, child+ls+" already exists!",
+      Runnable warnMsg = new Runnable()
+      {
+        public void run ()
+        {
+          String ls = System.getProperty("line.separator");
+          JOptionPane.showMessageDialog(null, child+ls+" already exists!",
                                     "File Exists",
                                     JOptionPane.ERROR_MESSAGE);
+        };
+      };
+      SwingUtilities.invokeLater(warnMsg);
       return true;
     }
 
@@ -633,6 +644,7 @@ public class SshFileTree extends JTree implements DragGestureListener,
     {
       RemoteFileNode childNode = (RemoteFileNode)children.nextElement();
       String nodeName = childNode.getServerName();
+//    System.out.println(nodeName+" childName= "+childName);
       if(childName.equals(nodeName))
         return childNode;
     }
@@ -757,7 +769,19 @@ public class SshFileTree extends JTree implements DragGestureListener,
           else
             dropFile = fdropPath.getFile()+"/"+fn.getFile();
 
-          if(!nodeExists(fdropPath,fdropPath.getServerName()+fn.getFile()))
+           if(!fdropPath.isDirectory())
+             fdropPath= (RemoteFileNode)fdropPath.getParent();
+
+          String serverName;
+          if(fdropPath.getServerName().endsWith("/"))
+            serverName = fdropPath.getServerName()+fn.getFile();
+          else
+            serverName = fdropPath.getServerName()+"/"+fn.getFile();
+
+          if(!fdropPath.isExplored())
+            exploreNode(fdropPath);
+ 
+          if(!nodeExists(fdropPath,serverName))
             rename(fn.getRootDir(),fn.getFullName(),
                    fdropPath.getPathName(),
                    dropFile, fn, fdropPath);
@@ -777,8 +801,16 @@ public class SshFileTree extends JTree implements DragGestureListener,
           File lfn = fn.getFile();
 
           RemoteFileNode pn = (RemoteFileNode)dropPath.getLastPathComponent();
+          if(!pn.isDirectory())
+            pn = (RemoteFileNode)pn.getParent();
 
-          if(!nodeExists(pn,pn.getServerName()+lfn.getName()))
+          String serverName;
+          if(pn.getServerName().endsWith("/"))
+            serverName = pn.getServerName()+lfn.getName();
+          else
+            serverName = pn.getServerName()+"/"+lfn.getName();
+
+          if(!nodeExists(pn,serverName))
           {
             pn.put(lfn);
             try 
