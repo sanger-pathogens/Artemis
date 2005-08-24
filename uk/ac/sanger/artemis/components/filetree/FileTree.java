@@ -708,6 +708,35 @@ public class FileTree extends JTree implements DragGestureListener,
     return b;
   }
 
+
+  private boolean writeByteFile(byte[] contents, File fn)
+  {
+    if(fn.exists())
+    {
+      int n = JOptionPane.showConfirmDialog(null,
+                                 "Overwrite \n"+fn.getName()+"?",
+                                 "Overwrite File",
+                                 JOptionPane.YES_NO_OPTION);
+      if(n == JOptionPane.NO_OPTION)
+        return false;
+    }
+    else if(!fn.getParentFile().canWrite())
+      JOptionPane.showMessageDialog(null,"Cannot write to "+fn.getName(),
+                        "Write Permission Denied",
+                        JOptionPane.WARNING_MESSAGE);
+
+    try
+    {
+      FileOutputStream out = new FileOutputStream(fn);
+      out.write(contents);
+      out.close(); 
+    }
+    catch(FileNotFoundException fnfe) {return false;} 
+    catch(IOException ioe) {return false;}
+  
+    return true;
+  }
+
   /**
   *
   * Opens a JFrame with the file contents displayed.
@@ -793,7 +822,8 @@ public class FileTree extends JTree implements DragGestureListener,
 // drop sink
   public void dragEnter(DropTargetDragEvent e)
   {
-    if(e.isDataFlavorSupported(FileNode.FILENODE)) 
+    if(e.isDataFlavorSupported(FileNode.FILENODE) ||
+       e.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE)) 
       e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
   }
 
@@ -828,6 +858,57 @@ public class FileTree extends JTree implements DragGestureListener,
        }
        catch(Exception ufe){}        
     }
+    else if(t.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE))
+    {
+      try
+      {
+        final RemoteFileNode fn =
+          (RemoteFileNode)t.getTransferData(RemoteFileNode.REMOTEFILENODE);
+        final File dropDest;
+        String dropDir = null;
+        if (dropNode.isLeaf())
+        {
+          FileNode pn = (FileNode)dropNode.getParent();
+          dropDir = pn.getFile().getAbsolutePath();
+          dropDest = new File(dropDir,fn.getFile());
+        }
+        else
+        {
+          dropDir = dropNode.getFile().getAbsolutePath();
+          dropDest = new File(dropDir,fn.getFile());
+        }
+        try
+        {
+          setCursor(cbusy);
+
+          final byte[] contents = fn.getFileContents();
+          final String ndropDir = dropDir;
+          Runnable updateTheTree = new Runnable()
+          {
+            public void run ()
+            {
+              if(writeByteFile(contents, dropDest))
+                addObject(fn.getFile(),ndropDir,dropNode);
+            };
+          };
+          SwingUtilities.invokeLater(updateTheTree);
+          
+          setCursor(cdone);
+        }
+        catch (Exception exp)
+        {
+          setCursor(cdone);
+          System.out.println("FileTree: caught exception");
+        }
+        e.getDropTargetContext().dropComplete(true);
+      }
+      catch (Exception exp)
+      {
+        e.rejectDrop();
+        return;
+      }
+
+    }
     else
     {
       e.rejectDrop();
@@ -859,6 +940,18 @@ public class FileTree extends JTree implements DragGestureListener,
       if(!node.isDirectory())
         e.rejectDrag();
       else 
+      {
+        setSelectionPath(ePath);
+        e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
+      }
+    }
+    else if(e.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE))
+    {
+      Point ploc = e.getLocation();
+      TreePath ePath = getPathForLocation(ploc.x,ploc.y);
+      if (ePath == null)
+        e.rejectDrag();
+      else
       {
         setSelectionPath(ePath);
         e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
