@@ -75,7 +75,11 @@ public class LocalAndRemoteFileManager extends JFrame
     JScrollPane remoteTree = new JScrollPane(sshtree);
     remotePanel.add(remoteTree,BorderLayout.CENTER);
     
-    final JLabel remote_status_line = getStatusLabel("REMOTE");
+    String remote_name = SshLogin.getHostname();
+    if(!SshLogin.getPort().equals(""))
+      remote_name = remote_name + ":" + SshLogin.getPort();
+
+    final JLabel remote_status_line = getStatusLabel("REMOTE "+remote_name);
     remotePanel.add(remote_status_line,BorderLayout.NORTH);
 
     final JSplitPane treePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,

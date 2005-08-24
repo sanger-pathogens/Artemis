@@ -402,8 +402,12 @@ public class SshFileTree extends JTree implements DragGestureListener,
                       final RemoteFileNode node, final RemoteFileNode parentNode)
   {
     setCursor(cbusy);
-    node.rename(pathToNewFile+"/"+newfile);
+    boolean lrename = node.rename(pathToNewFile+"/"+newfile);
     setCursor(cdone);
+
+    if(!lrename)
+      return;
+
     Runnable deleteFileFromTree = new Runnable()
     {
       public void run ()
@@ -782,9 +786,11 @@ public class SshFileTree extends JTree implements DragGestureListener,
             exploreNode(fdropPath);
  
           if(!nodeExists(fdropPath,serverName))
+          { 
             rename(fn.getRootDir(),fn.getFullName(),
                    fdropPath.getPathName(),
                    dropFile, fn, fdropPath);
+          }
         }
       }
       catch(Exception ex){}

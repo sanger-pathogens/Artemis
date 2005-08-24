@@ -1,4 +1,4 @@
-/* ExternalProgram.java
+/* SshLogin.java
  *
  * created: Aug 2005
  *
@@ -95,7 +95,7 @@ public class SshLogin
 
   public SshClient getSshClient()
   {
-    if(ssh == null)
+    if(ssh == null || !ssh.isConnected())
     {
       try
       {
@@ -110,6 +110,16 @@ public class SshLogin
   {
     return ufield.getText().trim();
   }
+
+  public static String getHostname()
+  {
+    return hostfield.getText().trim();
+  }
+
+  public static String getPort()
+  {
+    return portfield.getText().trim();
+  } 
 
   public static Properties getProperties()
   {
@@ -126,11 +136,15 @@ public class SshLogin
   {
     SshClient ssh = null;
     int result = AuthenticationProtocolState.FAILED;
+    int count  = 0;
 
     while(result != AuthenticationProtocolState.COMPLETE)
     {
-      if(!setLogin())
-        return null;
+      if( !(count == 0 && pfield.getPassword().length > 0) ) 
+      {
+        if(!setLogin())
+          return null;
+      }
 
       // Create a password authentication instance
       PasswordAuthenticationClient pwd = new PasswordAuthenticationClient();

@@ -146,6 +146,7 @@ public class SshFileManager
     }
     catch(IOException ioe)
     {
+      rescue();
       ioe.printStackTrace();
       return false;
     }
@@ -163,6 +164,7 @@ public class SshFileManager
     }
     catch(IOException ioe)
     {
+      rescue();
       ioe.printStackTrace();
       return false;
     }
@@ -181,6 +183,7 @@ public class SshFileManager
     }
     catch(IOException ioe)
     {
+      rescue();
       ioe.printStackTrace();
     }
 
@@ -198,8 +201,7 @@ public class SshFileManager
     catch(IOException ioe)
     {
       rescue();
-      rename(old_file, new_file);
-      ioe.printStackTrace();
+//    ioe.printStackTrace();
       return false;
     }
 
@@ -243,6 +245,7 @@ public class SshFileManager
     }
     catch(IOException ioe)
     {
+      rescue();
       // remote file doesn't exist
     }
 
@@ -257,6 +260,7 @@ public class SshFileManager
     }
     catch(IOException ioe)
     {
+      rescue();
       ioe.printStackTrace();
       return false;
     }
@@ -284,6 +288,7 @@ public class SshFileManager
     }
     catch(IOException ioe)
     {
+      rescue();
       ioe.printStackTrace();
       return null;
     }
