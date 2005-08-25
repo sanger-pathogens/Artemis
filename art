@@ -6,7 +6,7 @@
 # necessary a symbolic link can be made to this script from
 # /usr/local/bin/ or elsewhere.
 
-# $Header: //tmp/pathsoft/artemis/art,v 1.10 2005-08-12 15:55:04 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/art,v 1.11 2005-08-25 10:53:56 tjc Exp $
 
 # resolve links - $0 may be a link
 PRG=$0
@@ -31,7 +31,7 @@ LIBDIR=/nfs/pathsoft/prod/javalibs
 CLASSPATH=$ARTEMIS_HOME:$ARTEMIS_HOME/lib/biojava.jar:$ARTEMIS_HOME/lib/jemAlign.jar:$ARTEMIS_HOME/lib/jakarta-regexp-1.2.jar:$ARTEMIS_HOME/lib/macos.jar:$ARTEMIS_HOME/lib/postgresql-8.0-310.jdbc2ee.jar:$CLASSPATH
 
 # j2ssh jars
-CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/j2ssh/commons-logging.jar:$ARTEMIS_HOME/lib/j2ssh/j2ssh-core.jar:$ARTEMIS_HOME/lib/j2ssh/jce-jdk13-119.jar:$ARTEMIS_HOME/lib/j2ssh/xercesImpl.jar:$ARTEMIS_HOME/lib/j2ssh/
+CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/j2ssh/commons-logging.jar:$ARTEMIS_HOME/lib/j2ssh/j2ssh-core.jar:$ARTEMIS_HOME/lib/j2ssh/
 
 export CLASSPATH
 
