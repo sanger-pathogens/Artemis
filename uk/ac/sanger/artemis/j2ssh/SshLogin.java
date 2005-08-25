@@ -45,6 +45,7 @@ import java.util.logging.SimpleFormatter;
 import com.sshtools.j2ssh.SshClient;
 import com.sshtools.j2ssh.authentication.AuthenticationProtocolState;
 import com.sshtools.j2ssh.authentication.PasswordAuthenticationClient;
+import com.sshtools.j2ssh.transport.IgnoreHostKeyVerification;
 
 
 /**
@@ -161,9 +162,9 @@ public class SshLogin
         port = Integer.parseInt(portfield.getText().trim());
 
       if(port < 0)
-        ssh.connect(hostname);
+        ssh.connect(hostname, new IgnoreHostKeyVerification());
       else
-        ssh.connect(hostname,port);
+        ssh.connect(hostname,port, new IgnoreHostKeyVerification());
 
       // Try the authentication
       result = ssh.authenticate(pwd);
