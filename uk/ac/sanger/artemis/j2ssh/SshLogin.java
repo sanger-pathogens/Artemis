@@ -162,9 +162,9 @@ public class SshLogin
         port = Integer.parseInt(portfield.getText().trim());
 
       if(port < 0)
-        ssh.connect(hostname, new IgnoreHostKeyVerification());
+        ssh.connect(hostname); //, new IgnoreHostKeyVerification());
       else
-        ssh.connect(hostname,port, new IgnoreHostKeyVerification());
+        ssh.connect(hostname,port); //, new IgnoreHostKeyVerification());
 
       // Try the authentication
       result = ssh.authenticate(pwd);

@@ -245,7 +245,6 @@ public class SshFileManager
     }
     catch(IOException ioe)
     {
-      rescue();
       // remote file doesn't exist
     }
 
