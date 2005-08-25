@@ -58,7 +58,6 @@ public class SshLogin
 {
   // defaults
   private String logfile  = null;
-  private String wdir     = "/nfs/pathscratch1/scratch";
 
   // login variables
   private String hostname = null;

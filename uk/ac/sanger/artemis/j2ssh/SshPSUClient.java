@@ -212,6 +212,9 @@ public class SshPSUClient extends Thread
         db = "%uniprot";
     } 
 
+    if(settings.getProperty("wdir") != null)
+      wdir = settings.getProperty("wdir");
+
     if(cmd != null)
     {
       if(cmd.equals("blastp") && settings.getProperty("blastp") != null)
