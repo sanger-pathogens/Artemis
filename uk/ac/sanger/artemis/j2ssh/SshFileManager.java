@@ -73,10 +73,6 @@ public class SshFileManager
   private Vector dir_list;
   private Vector file_list;
 
-  // defaults
-  private String logfile  = null;
-  private String wdir     = "/nfs/pathscratch1/scratch";
-
   private SshClient ssh;
 
   public SshFileManager()
