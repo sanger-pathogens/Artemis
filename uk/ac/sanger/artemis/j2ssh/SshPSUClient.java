@@ -335,6 +335,9 @@ public class SshPSUClient extends Thread
 //    System.out.println(os.toString());
 
       sftp.get(outputfile, filepath+".out");
+      sftp.rm(outputfile);
+      sftp.rm(wdir+filename);
+
       session.close();
     }
     sftp.quit();
