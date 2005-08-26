@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.13 2005-08-25 10:47:09 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.14 2005-08-26 16:57:25 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -264,18 +264,22 @@ artemis.jar : $(CLASSES)
 	    jar xvf $$fileJar; \
 	    rm -rf META-INF/MANIFEST.MF; \
 	  done; \
+          for fileJar in ../lib/j2ssh/*.jar; do \
+            jar xvf $$fileJar; \
+            rm -rf META-INF/MANIFEST.MF; \
+          done; \
         fi; \
-	cp -R ../lib/LICENSE.Apache ../uk ../nsdb ../type ../seqdb ../etc ../images \
+	cp -R ../lib/LICENSE.Apache ../uk ../nsdb ../type ../seqdb ../etc ../images ../lib/j2ssh/j2ssh.properties \
 	      ../images/icon.gif ../images/helix.gif ../images/sanger-centre.gif ../README .
 	find jar_build -name '*.java' -print | xargs rm -f
 	cd jar_build; \
 	rm -rf META-INF/MANIFEST.MF; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ArtemisMain" > manifest-art; \
 	jar cmf manifest-art artemis.jar images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
-	                     org uk nsdb type seqdb LICENSE.Apache; \
+	                     org uk com nsdb type seqdb LICENSE.Apache j2ssh.properties; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ActMain" > manifest-act; \
 	jar cmf manifest-act act.jar images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
-	                     org uk nsdb type seqdb LICENSE.Apache
+	                     org uk com nsdb type seqdb LICENSE.Apache j2ssh.properties
 
 clean :
 	-rm -rf *.html artemis.jar seqdb nsdb type org resources uk/ac/sanger/jcon/ jar_build
