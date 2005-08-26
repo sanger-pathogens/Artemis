@@ -34,6 +34,7 @@ import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.components.MessageDialog;
+import uk.ac.sanger.artemis.j2ssh.FileTransferProgressMonitor;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -827,10 +828,10 @@ public class FileTree extends JTree implements DragGestureListener,
       e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
   }
 
-  public void drop(DropTargetDropEvent e)
+  public void drop(final DropTargetDropEvent e)
   {
 
-    Transferable t = e.getTransferable();
+    final Transferable t = e.getTransferable();
     final FileNode dropNode = getSelectedNode();
     if(dropNode == null)
     {
@@ -860,6 +861,11 @@ public class FileTree extends JTree implements DragGestureListener,
     }
     else if(t.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE))
     {
+      SwingWorker getFileWorker = new SwingWorker()
+      {
+        public Object construct()
+        {
+
       try
       {
         final RemoteFileNode fn =
@@ -879,9 +885,8 @@ public class FileTree extends JTree implements DragGestureListener,
         }
         try
         {
-          setCursor(cbusy);
-
-          final byte[] contents = fn.getFileContents();
+          final byte[] contents = fn.getFileContents(
+                 new FileTransferProgressMonitor(FileTree.this, fn.getFile()));
           final String ndropDir = dropDir;
           Runnable updateTheTree = new Runnable()
           {
@@ -892,12 +897,9 @@ public class FileTree extends JTree implements DragGestureListener,
             };
           };
           SwingUtilities.invokeLater(updateTheTree);
-          
-          setCursor(cdone);
         }
         catch (Exception exp)
         {
-          setCursor(cdone);
           System.out.println("FileTree: caught exception");
         }
         e.getDropTargetContext().dropComplete(true);
@@ -905,8 +907,13 @@ public class FileTree extends JTree implements DragGestureListener,
       catch (Exception exp)
       {
         e.rejectDrop();
-        return;
       }
+
+
+          return null;
+        }
+      };
+      getFileWorker.start();
 
     }
     else

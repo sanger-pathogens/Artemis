@@ -21,6 +21,7 @@
 
 package uk.ac.sanger.artemis.components.filetree;
 
+import uk.ac.sanger.artemis.j2ssh.FileTransferProgressMonitor;
 import java.awt.datatransfer.*;
 import javax.swing.tree.*;
 import java.io.*;
@@ -208,7 +209,7 @@ public class RemoteFileNode extends DefaultMutableTreeNode
     return flist.rename(getRootDir()+"/"+getFullName(), new_file);
   }
 
-  protected boolean put(File local_file)
+  protected boolean put(File local_file, FileTransferProgressMonitor monitor)
   {
     FileList flist = new FileList();
     final String dir;
@@ -217,14 +218,14 @@ public class RemoteFileNode extends DefaultMutableTreeNode
     else
       dir = getRootDir()+"/"+getFullName();
 
-    return flist.put(dir, local_file);
+    return flist.put(dir, local_file, monitor);
   }
 
 
-  public byte[] getFileContents()
+  public byte[] getFileContents(FileTransferProgressMonitor monitor)
   {
     FileList flist = new FileList();
-    return flist.getFileContents(getRootDir()+"/"+getFullName());
+    return flist.getFileContents(getRootDir()+"/"+getFullName(), monitor);
   }
 
 // Transferable

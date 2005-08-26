@@ -31,6 +31,7 @@ import uk.ac.sanger.artemis.util.RemoteFileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.components.MessageDialog;
+import uk.ac.sanger.artemis.j2ssh.FileTransferProgressMonitor;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -192,7 +193,6 @@ public class SshFileTree extends JTree implements DragGestureListener,
   */
   public void actionPerformed(ActionEvent e)
   {
-
     JMenuItem source = (JMenuItem)(e.getSource());
     final RemoteFileNode node = getSelectedNode();
     if(node == null)
@@ -214,7 +214,9 @@ public class SshFileTree extends JTree implements DragGestureListener,
     }
     else if(source.getText().equals("Jemboss Aligmnment Editor"))
     {
-      final byte[] contents = node.getFileContents();
+      FileTransferProgressMonitor  monitor =
+                     new FileTransferProgressMonitor(SshFileTree.this, node.getFile());
+      final byte[] contents = node.getFileContents(monitor);
       org.emboss.jemboss.editor.AlignJFrame ajFrame =
                     new org.emboss.jemboss.editor.AlignJFrame(new String(contents), fn);
       ajFrame.setVisible(true);
@@ -747,9 +749,9 @@ public class SshFileTree extends JTree implements DragGestureListener,
       e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
   }
 
-  public void drop(DropTargetDropEvent e)
+  public void drop(final DropTargetDropEvent e)
   {
-    Transferable t = e.getTransferable();
+    final Transferable t = e.getTransferable();
 
     if(t.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE))
     {
@@ -797,60 +799,65 @@ public class SshFileTree extends JTree implements DragGestureListener,
     }
     else if(t.isDataFlavorSupported(FileNode.FILENODE))
     {
-      try
+      //put this in separate thread for progress bar
+      SwingWorker putWorker = new SwingWorker()
       {
-        Point ploc = e.getLocation();
-        TreePath dropPath = getPathForLocation(ploc.x,ploc.y);
-        if (dropPath != null) 
+        public Object construct()
         {
-          FileNode fn = (FileNode)t.getTransferData(FileNode.FILENODE);
-          File lfn = fn.getFile();
-
-          RemoteFileNode pn = (RemoteFileNode)dropPath.getLastPathComponent();
-          if(!pn.isDirectory())
-            pn = (RemoteFileNode)pn.getParent();
-
-          String serverName;
-          if(pn.getServerName().endsWith("/"))
-            serverName = pn.getServerName()+lfn.getName();
-          else
-            serverName = pn.getServerName()+"/"+lfn.getName();
-
-          if(!nodeExists(pn,serverName))
+          try
           {
-            pn.put(lfn);
-            try 
+            Point ploc = e.getLocation();
+            TreePath dropPath = getPathForLocation(ploc.x,ploc.y);
+            if (dropPath != null) 
             {
-              //add file to remote file tree
-              if(pn.isLeaf())
+              FileNode fn = (FileNode)t.getTransferData(FileNode.FILENODE);
+              final File lfn = fn.getFile();
+
+              RemoteFileNode pn = (RemoteFileNode)dropPath.getLastPathComponent();
+              if(!pn.isDirectory())
                 pn = (RemoteFileNode)pn.getParent();
-           
-              if(pn.isExplored())
-                addObject(pn,lfn.getName(),false);
+
+              String serverName;
+              if(pn.getServerName().endsWith("/"))
+                serverName = pn.getServerName()+lfn.getName();
               else
+                serverName = pn.getServerName()+"/"+lfn.getName();
+
+              if(!nodeExists(pn,serverName))
               {
-                exploreNode(pn);
-                RemoteFileNode childNode = getNode(pn.getServerName() 
+                pn.put(lfn, new FileTransferProgressMonitor(SshFileTree.this, 
+                                                             lfn.getName()));
+                try 
+                {
+                  //add file to remote file tree
+                  if(pn.isLeaf())
+                    pn = (RemoteFileNode)pn.getParent();
+           
+                  if(pn.isExplored())
+                    addObject(pn,lfn.getName(),false);
+                  else
+                  {
+                    exploreNode(pn);
+                    RemoteFileNode childNode = getNode(pn.getServerName() 
                                                    + "/" + lfn.getName());
-                scrollPathToVisible(new TreePath(childNode.getPath())); 
+                    scrollPathToVisible(new TreePath(childNode.getPath())); 
+                  }
+                } 
+                catch (Exception exp) {}
               }
-            } 
-            catch (Exception exp) 
-            {
-              setCursor(cdone);
+              else
+                e.rejectDrop();
             }
           }
-          else
-            e.rejectDrop();
+          catch (Exception ex) {}
+
+          return null;
         }
-      }
-      catch (Exception ex) 
-      {
-      }
+      };
+      putWorker.start();
     } 
     else
       e.rejectDrop();
-
   }
 
   /**

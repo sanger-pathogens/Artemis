@@ -24,6 +24,7 @@
 
 package uk.ac.sanger.artemis.j2ssh;
 
+import uk.ac.sanger.artemis.components.SwingWorker;
 
 import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
@@ -211,7 +212,8 @@ public class SshFileManager
   * @param local_file file to copy to the server
   *
   */
-  public boolean put(String dir, File local_file)
+  public boolean put(final String dir, final File local_file,
+                     final FileTransferProgressMonitor monitor)
   { 
     SftpClient sftp = null;
 
@@ -247,11 +249,12 @@ public class SshFileManager
     if(sftp == null)
       return false;
 
+     
     try
     {
       sftp.put(local_file.getCanonicalPath(), 
-               dir+"/"+local_file.getName());
-//    sftp.quit();
+         dir+"/"+local_file.getName(), monitor);
+      return true;
     }
     catch(IOException ioe)
     {
@@ -259,25 +262,54 @@ public class SshFileManager
       ioe.printStackTrace();
       return false;
     }
-
-    return true;
   }
 
+  private boolean putTransfer(final SftpClient sftp, 
+                              final String dir, final File local_file)
+  {
+    
+    SwingWorker progressWorker = new SwingWorker()
+    {
+      public Object construct()
+      {
+        try
+        {
+          FileTransferProgressMonitor progress =
+              new FileTransferProgressMonitor(null, local_file.getName());
 
+          sftp.put(local_file.getCanonicalPath(),
+             dir+"/"+local_file.getName(), progress);
+          return new Boolean(true);
+        }
+        catch(IOException ioe)
+        {
+          rescue();
+          ioe.printStackTrace();
+          return new Boolean(false);
+        }
+
+      }
+    };
+    progressWorker.start();
+
+ 
+    return true;
+//  return ((Boolean)progressWorker.get()).booleanValue();
+  }
 
   /**
   *
   * Return the file contents as a byte array
   *
   */
-  public byte[] getFileContents(String file)
+  public byte[] getFileContents(String file, final FileTransferProgressMonitor monitor)
   {
     try 
     {
       SftpClient sftp = getSftpClient();
 
       ByteArrayOutputStream os = new ByteArrayOutputStream();
-      sftp.get(file, os);
+      sftp.get(file, os, monitor);
 //    sftp.quit();
       return os.toByteArray();
     }

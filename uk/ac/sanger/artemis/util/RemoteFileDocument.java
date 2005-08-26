@@ -27,6 +27,7 @@ package uk.ac.sanger.artemis.util;
 import java.io.*;
 import javax.swing.JOptionPane;
 import uk.ac.sanger.artemis.components.filetree.*;
+import uk.ac.sanger.artemis.j2ssh.FileTransferProgressMonitor;
 
 /**
  *  Objects of this class are Documents created from a file.
@@ -106,7 +107,9 @@ public class RemoteFileDocument extends Document
       throws IOException 
   {
     final RemoteFileNode node = getRemoteFileNode();
-    final byte[] bytes = node.getFileContents();
+
+    FileTransferProgressMonitor monitor = new FileTransferProgressMonitor(null, node.getFile());
+    final byte[] bytes = node.getFileContents(monitor);
 
     final InputStream file_input_stream =
       new ProgressInputStream(new ByteArrayInputStream(bytes),

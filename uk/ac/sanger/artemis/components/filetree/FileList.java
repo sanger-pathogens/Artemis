@@ -21,6 +21,7 @@
 
 package uk.ac.sanger.artemis.components.filetree;
 
+import uk.ac.sanger.artemis.j2ssh.FileTransferProgressMonitor;
 import uk.ac.sanger.artemis.j2ssh.SshFileManager;
 import java.util.Vector;
 import java.util.Collections;
@@ -100,9 +101,9 @@ public class FileList
   * Put a file
   *
   */
-  protected boolean put(String dir, File local_file)
+  protected boolean put(String dir, File local_file, FileTransferProgressMonitor monitor)
   {
-    return ssh_client.put(dir, local_file);
+    return ssh_client.put(dir, local_file, monitor);
   }
 
 
@@ -111,9 +112,9 @@ public class FileList
   * Get the file contents
   *
   */
-  protected byte[] getFileContents(String file)
+  protected byte[] getFileContents(String file, FileTransferProgressMonitor monitor)
   {
-    return ssh_client.getFileContents(file);
+    return ssh_client.getFileContents(file, monitor);
   }
 
 
