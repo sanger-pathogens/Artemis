@@ -810,9 +810,23 @@ public class FileTree extends JTree implements DragGestureListener,
     
     // drag only files 
     if(isFileSelection())
-      e.startDrag(DragSource.DefaultCopyDrop,     // cursor
-                 (Transferable)getSelectedNode(), // transferable data
-                                       this);     // drag source listener
+    {
+      final int nlist = getSelectionCount();
+      if(nlist > 1)
+      {
+        TransferableFileNodeList list = new TransferableFileNodeList(nlist);
+        FileNode nodes[] = getSelectedNodes();
+        for(int i=0; i<nodes.length; i++)
+          list.add(nodes[i]);
+        e.startDrag(DragSource.DefaultCopyDrop,     // cursor
+                   (Transferable)list,              // transferable data
+                                         this);     // drag source listener
+      }
+      else
+        e.startDrag(DragSource.DefaultCopyDrop,     // cursor
+                   (Transferable)getSelectedNode(), // transferable data
+                                         this);     // drag source listener
+    }
   }
   public void dragDropEnd(DragSourceDropEvent e) {}
   public void dragEnter(DragSourceDragEvent e) {}
@@ -824,7 +838,8 @@ public class FileTree extends JTree implements DragGestureListener,
   public void dragEnter(DropTargetDragEvent e)
   {
     if(e.isDataFlavorSupported(FileNode.FILENODE) ||
-       e.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE)) 
+       e.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE) || 
+       e.isDataFlavorSupported(TransferableFileNodeList.TRANSFERABLEFILENODELIST)) 
       e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
   }
 
@@ -839,79 +854,42 @@ public class FileTree extends JTree implements DragGestureListener,
       return;
     }
 
-    //local drop
-    if(t.isDataFlavorSupported(FileNode.FILENODE))
+    if(t.isDataFlavorSupported(TransferableFileNodeList.TRANSFERABLEFILENODELIST))
     {
-       try
-       {
-         FileNode fn = (FileNode)t.getTransferData(FileNode.FILENODE);
-         fn = getNode(fn.getFile().getAbsolutePath());
-
-         if (dropNode.isLeaf())
-         {
-           e.rejectDrop();
-           return;
-         }
-        
-         String dropDir = dropNode.getFile().getAbsolutePath();
-         String newFullName = dropDir+fs+fn.toString();
-         renameFile(fn.getFile(),fn,newFullName);  
-       }
-       catch(Exception ufe){}        
+      try
+      {
+        TransferableFileNodeList filelist = (TransferableFileNodeList)
+                  t.getTransferData(TransferableFileNodeList.TRANSFERABLEFILENODELIST);
+        for(int i=0; i<filelist.size(); i++)
+        {
+          Object node = filelist.get(i);
+          if(node instanceof RemoteFileNode)
+            remoteDrop(e, (RemoteFileNode)node, dropNode);
+          else
+            localDrop(e, (FileNode)node, dropNode);
+        }
+      }
+      catch(UnsupportedFlavorException exp){}
+      catch(IOException ioe){}
+    }
+    else if(t.isDataFlavorSupported(FileNode.FILENODE))
+    {
+      try
+      {
+        FileNode fn = (FileNode)t.getTransferData(FileNode.FILENODE);
+        localDrop(e, fn, dropNode);
+      }
+      catch(Exception ufe){}        
     }
     else if(t.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE))
     {
-      SwingWorker getFileWorker = new SwingWorker()
+      try
       {
-        public Object construct()
-        {
-          try
-          {
-            final RemoteFileNode fn =
-              (RemoteFileNode)t.getTransferData(RemoteFileNode.REMOTEFILENODE);
-            final File dropDest;
-            String dropDir = null;
-            if (dropNode.isLeaf())
-            {
-              FileNode pn = (FileNode)dropNode.getParent();
-              dropDir = pn.getFile().getAbsolutePath();
-              dropDest = new File(dropDir,fn.getFile());
-            }
-            else
-            {
-              dropDir = dropNode.getFile().getAbsolutePath();
-              dropDest = new File(dropDir,fn.getFile());
-            }
-            try
-            {
-              final byte[] contents = fn.getFileContents(
-                 new FileTransferProgressMonitor(FileTree.this, fn.getFile()));
-              final String ndropDir = dropDir;
-              Runnable updateTheTree = new Runnable()
-              {
-                public void run ()
-                {
-                  if(writeByteFile(contents, dropDest))
-                    addObject(fn.getFile(),ndropDir,dropNode);
-                };
-              };
-              SwingUtilities.invokeLater(updateTheTree);
-            }
-            catch (Exception exp)
-            {
-              System.out.println("FileTree: caught exception");
-            }
-            e.getDropTargetContext().dropComplete(true);
-          }
-          catch (Exception exp)
-          {
-            e.rejectDrop();
-          }
-          return null;
-        }
-      };
-      getFileWorker.start();
-
+        final RemoteFileNode fn =
+             (RemoteFileNode)t.getTransferData(RemoteFileNode.REMOTEFILENODE);
+        remoteDrop(e, fn, dropNode);
+      }
+      catch(Exception ufe){}
     }
     else
     {
@@ -949,7 +927,8 @@ public class FileTree extends JTree implements DragGestureListener,
         e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
       }
     }
-    else if(e.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE))
+    else if(e.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE) ||
+            e.isDataFlavorSupported(TransferableFileNodeList.TRANSFERABLEFILENODELIST))
     {
       Point ploc = e.getLocation();
       TreePath ePath = getPathForLocation(ploc.x,ploc.y);
@@ -969,6 +948,79 @@ public class FileTree extends JTree implements DragGestureListener,
 
   public void dropActionChanged(DropTargetDragEvent e) {}
   public void dragExit(DropTargetEvent e){}
+
+
+  private void localDrop(DropTargetDropEvent e, FileNode fn, FileNode dropNode)
+  {
+    try
+    {
+      fn = getNode(fn.getFile().getAbsolutePath());
+
+      if (dropNode.isLeaf())
+      {
+        e.rejectDrop();
+        return;
+      }
+
+      String dropDir = dropNode.getFile().getAbsolutePath();
+      String newFullName = dropDir+fs+fn.toString();
+      renameFile(fn.getFile(),fn,newFullName);
+    }
+    catch(Exception ufe){}
+  }
+
+  private void remoteDrop(final DropTargetDropEvent e, 
+                          final RemoteFileNode fn, final FileNode dropNode)
+  {
+    SwingWorker getFileWorker = new SwingWorker()
+    {
+      public Object construct()
+      {
+        try
+        {
+          final File dropDest;
+            String dropDir = null;
+          if (dropNode.isLeaf())
+          {
+            FileNode pn = (FileNode)dropNode.getParent();
+            dropDir = pn.getFile().getAbsolutePath();
+            dropDest = new File(dropDir,fn.getFile());
+          }
+          else
+          {
+            dropDir = dropNode.getFile().getAbsolutePath();
+            dropDest = new File(dropDir,fn.getFile());
+          }
+          try
+          {
+            final byte[] contents = fn.getFileContents(
+               new FileTransferProgressMonitor(FileTree.this, fn.getFile()));
+            final String ndropDir = dropDir;
+            Runnable updateTheTree = new Runnable()
+            {
+              public void run ()
+              {
+                if(writeByteFile(contents, dropDest))
+                  addObject(fn.getFile(),ndropDir,dropNode);
+              };
+            };
+            SwingUtilities.invokeLater(updateTheTree);
+          }
+          catch (Exception exp)
+          {
+            System.out.println("FileTree: caught exception");
+          }
+          e.getDropTargetContext().dropComplete(true);
+        }
+        catch (Exception exp)
+        {
+          e.rejectDrop();
+        }
+        return null;
+      }
+    };
+    getFileWorker.start();
+  }
 
 
 ////////////////////
