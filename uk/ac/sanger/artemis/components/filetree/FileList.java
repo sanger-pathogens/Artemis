@@ -39,6 +39,13 @@ public class FileList
   {
   }
 
+  /**
+  *
+  * Routine to obtain a directory listing distinguishing between
+  * files and directories.
+  * @param dir	remote directory to list
+  *
+  */
   protected void getDirList(String dir)
   {
     try
@@ -148,6 +155,4 @@ public class FileList
   {
     return vdir.contains(d);
   }
- 
-
 }

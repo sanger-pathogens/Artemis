@@ -865,51 +865,48 @@ public class FileTree extends JTree implements DragGestureListener,
       {
         public Object construct()
         {
-
-      try
-      {
-        final RemoteFileNode fn =
-          (RemoteFileNode)t.getTransferData(RemoteFileNode.REMOTEFILENODE);
-        final File dropDest;
-        String dropDir = null;
-        if (dropNode.isLeaf())
-        {
-          FileNode pn = (FileNode)dropNode.getParent();
-          dropDir = pn.getFile().getAbsolutePath();
-          dropDest = new File(dropDir,fn.getFile());
-        }
-        else
-        {
-          dropDir = dropNode.getFile().getAbsolutePath();
-          dropDest = new File(dropDir,fn.getFile());
-        }
-        try
-        {
-          final byte[] contents = fn.getFileContents(
-                 new FileTransferProgressMonitor(FileTree.this, fn.getFile()));
-          final String ndropDir = dropDir;
-          Runnable updateTheTree = new Runnable()
+          try
           {
-            public void run ()
+            final RemoteFileNode fn =
+              (RemoteFileNode)t.getTransferData(RemoteFileNode.REMOTEFILENODE);
+            final File dropDest;
+            String dropDir = null;
+            if (dropNode.isLeaf())
             {
-              if(writeByteFile(contents, dropDest))
-                addObject(fn.getFile(),ndropDir,dropNode);
-            };
-          };
-          SwingUtilities.invokeLater(updateTheTree);
-        }
-        catch (Exception exp)
-        {
-          System.out.println("FileTree: caught exception");
-        }
-        e.getDropTargetContext().dropComplete(true);
-      }
-      catch (Exception exp)
-      {
-        e.rejectDrop();
-      }
-
-
+              FileNode pn = (FileNode)dropNode.getParent();
+              dropDir = pn.getFile().getAbsolutePath();
+              dropDest = new File(dropDir,fn.getFile());
+            }
+            else
+            {
+              dropDir = dropNode.getFile().getAbsolutePath();
+              dropDest = new File(dropDir,fn.getFile());
+            }
+            try
+            {
+              final byte[] contents = fn.getFileContents(
+                 new FileTransferProgressMonitor(FileTree.this, fn.getFile()));
+              final String ndropDir = dropDir;
+              Runnable updateTheTree = new Runnable()
+              {
+                public void run ()
+                {
+                  if(writeByteFile(contents, dropDest))
+                    addObject(fn.getFile(),ndropDir,dropNode);
+                };
+              };
+              SwingUtilities.invokeLater(updateTheTree);
+            }
+            catch (Exception exp)
+            {
+              System.out.println("FileTree: caught exception");
+            }
+            e.getDropTargetContext().dropComplete(true);
+          }
+          catch (Exception exp)
+          {
+            e.rejectDrop();
+          }
           return null;
         }
       };

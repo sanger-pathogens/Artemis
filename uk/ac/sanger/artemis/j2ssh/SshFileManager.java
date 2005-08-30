@@ -70,10 +70,8 @@ import com.sshtools.j2ssh.configuration.ConfigurationLoader;
 */
 public class SshFileManager
 {
-
   private Vector dir_list;
   private Vector file_list;
-
   private SshClient ssh;
 
   public SshFileManager()
@@ -89,6 +87,12 @@ public class SshFileManager
     ssh = sshLogin.getSshClient();
   }
 
+
+  /**
+  *
+  * Return an active SftpClient object
+  *
+  */
   private SftpClient getSftpClient()
              throws IOException
   {
@@ -102,6 +106,12 @@ public class SshFileManager
     return ssh.openSftpClient();   
   }
 
+
+  /**
+  *
+  * Remote directory listing
+  *
+  */
   public boolean remoteList(String remoteRootDir)
                     throws IOException
   {
@@ -113,6 +123,7 @@ public class SshFileManager
     }
     catch(java.io.FileNotFoundException fnf)
     {
+      return false;
     }
 
     Object list[] = sftp.ls().toArray();
@@ -133,6 +144,11 @@ public class SshFileManager
     return true;
   }
 
+  /**
+  *
+  * Delete file or directory
+  *
+  */
   public boolean delete(String filename)
   {
     try
@@ -151,6 +167,11 @@ public class SshFileManager
     return true;
   }
 
+  /**
+  *
+  * Make directory
+  *
+  */
   public boolean mkdir(String dir)
   {
     try
@@ -169,6 +190,11 @@ public class SshFileManager
     return true;
   }
 
+  /**
+  *
+  * Get working directory
+  *
+  */
   public String pwd()
   {
     String pwd = null;
@@ -187,6 +213,11 @@ public class SshFileManager
     return pwd;
   }
 
+  /**
+  *
+  *
+  *
+  */
   public boolean rename(String old_file, String new_file)
   {
     try

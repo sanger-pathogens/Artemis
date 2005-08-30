@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.20 2005-08-17 08:43:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.21 2005-08-30 08:57:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -31,7 +31,9 @@ import uk.ac.sanger.artemis.components.filetree.FileManager;
 import uk.ac.sanger.artemis.components.filetree.FileNode;
 import uk.ac.sanger.artemis.sequence.Marker;
 import uk.ac.sanger.artemis.sequence.Bases;
+import uk.ac.sanger.artemis.components.filetree.RemoteFileNode;
 
+import uk.ac.sanger.artemis.util.RemoteFileDocument;
 import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
@@ -58,7 +60,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.20 2005-08-17 08:43:05 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.21 2005-08-30 08:57:36 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1282,6 +1284,44 @@ public class EntryEdit extends JFrame
   }
 
   /**
+  *
+  *  Read an entry from a remote file node (ssh)
+  *
+  **/ 
+  private void readAnEntryFromRemoteFileNode(final RemoteFileNode node)
+  {
+    SwingWorker entryWorker = new SwingWorker()
+    {
+      public Object construct()
+      {
+        try
+        {
+          EntryInformation new_entry_information =
+             new SimpleEntryInformation(Options.getArtemisEntryInformation());
+
+          final Entry entry =  new Entry(entry_group.getBases(),
+                           EntryFileDialog.getEntryFromFile(null,
+                           new RemoteFileDocument(node),
+                           new_entry_information, true));
+          if(entry != null)
+            getEntryGroup().add(entry);
+        }
+        catch(final OutOfRangeException e)
+        {
+          new MessageDialog(EntryEdit.this,
+                         "read failed: one of the features " +
+                         "in the entry has an out of " +
+                         "range location: " +
+                         e.getMessage());
+        }
+        return null;
+      }
+    };
+    entryWorker.start();
+  }
+
+
+  /**
    *  Return the current default font(from Diana.options).
    **/
   private Font getDefaultFont() 
@@ -1300,6 +1340,12 @@ public class EntryEdit extends JFrame
       {
         FileNode fn = (FileNode)t.getTransferData(FileNode.FILENODE);
         readAnEntryFromFile(fn.getFile());
+      }
+      else if(t.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE))
+      {
+        final RemoteFileNode node =
+            (RemoteFileNode)t.getTransferData(RemoteFileNode.REMOTEFILENODE);
+        readAnEntryFromRemoteFileNode(node);
       }
       else
         e.rejectDrop();
@@ -1326,7 +1372,8 @@ public class EntryEdit extends JFrame
 
   public void dragOver(DropTargetDragEvent e)
   {
-    if(e.isDataFlavorSupported(FileNode.FILENODE))
+    if(e.isDataFlavorSupported(FileNode.FILENODE) ||
+       e.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE))
     {
       Point ploc = e.getLocation();
       if(this.contains(ploc.x,ploc.y))
@@ -1341,7 +1388,8 @@ public class EntryEdit extends JFrame
 
   public void dragEnter(DropTargetDragEvent e)
   {
-    if(e.isDataFlavorSupported(FileNode.FILENODE))
+    if(e.isDataFlavorSupported(FileNode.FILENODE) ||
+       e.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE))
       e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
   }
 
