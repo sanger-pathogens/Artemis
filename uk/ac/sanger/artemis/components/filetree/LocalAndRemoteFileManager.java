@@ -60,48 +60,52 @@ public class LocalAndRemoteFileManager extends JFrame
     super("File Manager");
 
     FileList flist = new FileList();
-    final JPanel localPanel = new JPanel(new BorderLayout());
+
+    if(flist.isConnected())
+    {
+      final JPanel localPanel = new JPanel(new BorderLayout());
     
-    FileTree ftree  = new FileTree(getLocalDirectories(), this, filter);
-    JScrollPane localTree = new JScrollPane(ftree);
-    localPanel.add(localTree,BorderLayout.CENTER);
+      FileTree ftree  = new FileTree(getLocalDirectories(), this, filter);
+      JScrollPane localTree = new JScrollPane(ftree);
+      localPanel.add(localTree,BorderLayout.CENTER);
 
-    final JLabel local_status_line = getStatusLabel("LOCAL");
-    localPanel.add(local_status_line,BorderLayout.NORTH);
+      final JLabel local_status_line = getStatusLabel("LOCAL");
+      localPanel.add(local_status_line,BorderLayout.NORTH);
 
-    final JPanel remotePanel = new JPanel(new BorderLayout());
+      final JPanel remotePanel = new JPanel(new BorderLayout());
 
-    SshFileTree sshtree = new SshFileTree( getRemoteDirectories(flist.pwd()) );
-    JScrollPane remoteTree = new JScrollPane(sshtree);
-    remotePanel.add(remoteTree,BorderLayout.CENTER);
+      SshFileTree sshtree = new SshFileTree( getRemoteDirectories(flist.pwd()) );
+      JScrollPane remoteTree = new JScrollPane(sshtree);
+      remotePanel.add(remoteTree,BorderLayout.CENTER);
     
-    String remote_name = SshLogin.getHostname();
-    if(!SshLogin.getPort().equals(""))
-      remote_name = remote_name + ":" + SshLogin.getPort();
+      String remote_name = SshLogin.getHostname();
+      if(!SshLogin.getPort().equals(""))
+        remote_name = remote_name + ":" + SshLogin.getPort();
 
-    final JLabel remote_status_line = getStatusLabel("REMOTE "+remote_name);
-    remotePanel.add(remote_status_line,BorderLayout.NORTH);
+      final JLabel remote_status_line = getStatusLabel("REMOTE "+remote_name);
+      remotePanel.add(remote_status_line,BorderLayout.NORTH);
 
-    final JSplitPane treePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                                               localPanel,remotePanel);
+      final JSplitPane treePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                                                 localPanel,remotePanel);
 
-    JPanel pane = (JPanel)getContentPane();
-    pane.setLayout(new BorderLayout());
-    pane.add(treePane, BorderLayout.CENTER);
+      JPanel pane = (JPanel)getContentPane();
+      pane.setLayout(new BorderLayout());
+      pane.add(treePane, BorderLayout.CENTER);
 
-    Dimension screen    = Toolkit.getDefaultToolkit().getScreenSize();
-    Dimension panelSize = new Dimension(240, (int)(screen.getHeight()/2));
-    setJMenuBar(makeMenuBar(pane,ftree,sshtree,localPanel,remotePanel,treePane,panelSize));
-    localPanel.add(getFileFileterComboBox(ftree), BorderLayout.SOUTH);
+      Dimension screen    = Toolkit.getDefaultToolkit().getScreenSize();
+      Dimension panelSize = new Dimension(240, (int)(screen.getHeight()/2));
+      setJMenuBar(makeMenuBar(pane,ftree,sshtree,localPanel,remotePanel,treePane,panelSize));
+      localPanel.add(getFileFileterComboBox(ftree), BorderLayout.SOUTH);
   
-    remoteTree.setPreferredSize(panelSize);
-    localTree.setPreferredSize(panelSize);
+      remoteTree.setPreferredSize(panelSize);
+      localTree.setPreferredSize(panelSize);
 
-    pack();
+      pack();
     
-    int yloc = (int)((screen.getHeight()-getHeight())/2);
-    setLocation(0,yloc);  
-    setVisible(true);
+      int yloc = (int)((screen.getHeight()-getHeight())/2);
+      setLocation(0,yloc);  
+      setVisible(true);
+    }
   }
 
   /**

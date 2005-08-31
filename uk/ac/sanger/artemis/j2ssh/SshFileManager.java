@@ -363,4 +363,11 @@ public class SshFileManager
     return dir_list;
   }
  
+  public boolean isConnected()
+  {
+    if(ssh == null || !ssh.isConnected())
+      return false;
+
+    return true;
+  }
 }

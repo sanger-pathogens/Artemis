@@ -155,4 +155,9 @@ public class FileList
   {
     return vdir.contains(d);
   }
+
+  protected boolean isConnected()
+  {
+    return ssh_client.isConnected();
+  }
 }
