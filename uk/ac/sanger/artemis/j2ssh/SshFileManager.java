@@ -244,7 +244,7 @@ public class SshFileManager
   *
   */
   public boolean put(final String dir, final File local_file,
-                     final FileTransferProgressMonitor monitor)
+                     final FTProgress monitor)
   { 
     SftpClient sftp = null;
 
@@ -305,8 +305,9 @@ public class SshFileManager
       {
         try
         {
-          FileTransferProgressMonitor progress =
-              new FileTransferProgressMonitor(null, local_file.getName());
+          FileTransferProgressMonitor monitor =
+              new FileTransferProgressMonitor(null);
+          FTProgress progress = monitor.add(local_file.getName());
 
           sftp.put(local_file.getCanonicalPath(),
              dir+"/"+local_file.getName(), progress);
@@ -333,7 +334,7 @@ public class SshFileManager
   * Return the file contents as a byte array
   *
   */
-  public byte[] getFileContents(String file, final FileTransferProgressMonitor monitor)
+  public byte[] getFileContents(String file, final FTProgress monitor)
   {
     try 
     {

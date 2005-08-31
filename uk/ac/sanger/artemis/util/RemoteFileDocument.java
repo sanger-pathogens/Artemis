@@ -28,6 +28,7 @@ import java.io.*;
 import javax.swing.JOptionPane;
 import uk.ac.sanger.artemis.components.filetree.*;
 import uk.ac.sanger.artemis.j2ssh.FileTransferProgressMonitor;
+import uk.ac.sanger.artemis.j2ssh.FTProgress;
 
 /**
  *  Objects of this class are Documents created from a file.
@@ -108,8 +109,10 @@ public class RemoteFileDocument extends Document
   {
     final RemoteFileNode node = getRemoteFileNode();
 
-    FileTransferProgressMonitor monitor = new FileTransferProgressMonitor(null, node.getFile());
-    final byte[] bytes = node.getFileContents(monitor);
+    FileTransferProgressMonitor monitor = new FileTransferProgressMonitor(null);
+    FTProgress progress = monitor.add(node.getFile());
+    final byte[] bytes = node.getFileContents(progress);
+    monitor.close();
 
     final InputStream file_input_stream =
       new ProgressInputStream(new ByteArrayInputStream(bytes),

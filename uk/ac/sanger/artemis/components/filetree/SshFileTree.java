@@ -32,6 +32,7 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.j2ssh.FileTransferProgressMonitor;
+import uk.ac.sanger.artemis.j2ssh.FTProgress;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -214,9 +215,13 @@ public class SshFileTree extends JTree implements DragGestureListener,
     }
     else if(source.getText().equals("Jemboss Aligmnment Editor"))
     {
-      FileTransferProgressMonitor  monitor =
-                     new FileTransferProgressMonitor(SshFileTree.this, node.getFile());
-      final byte[] contents = node.getFileContents(monitor);
+      FileTransferProgressMonitor monitor =
+                     new FileTransferProgressMonitor(SshFileTree.this);
+      FTProgress progress = monitor.add(node.getFile());
+   
+      final byte[] contents = node.getFileContents(progress);
+      monitor.close();
+
       org.emboss.jemboss.editor.AlignJFrame ajFrame =
                     new org.emboss.jemboss.editor.AlignJFrame(new String(contents), fn);
       ajFrame.setVisible(true);
@@ -775,14 +780,11 @@ public class SshFileTree extends JTree implements DragGestureListener,
       {
         TransferableFileNodeList filelist = (TransferableFileNodeList)
                   t.getTransferData(TransferableFileNodeList.TRANSFERABLEFILENODELIST);
-        for(int i=0; i<filelist.size(); i++)
-        {
-          Object node = filelist.get(i);
-          if(node instanceof RemoteFileNode)
-            remoteDrop(e, (RemoteFileNode)node);
-          else
-            localDrop(e, (FileNode)node);
-        }
+
+        if(filelist.get(0) instanceof RemoteFileNode)
+          remoteDrop(e, filelist);
+        else
+          localDrop(e, filelist);
       }
       catch(UnsupportedFlavorException exp){}
       catch(IOException ioe){}
@@ -791,10 +793,11 @@ public class SshFileTree extends JTree implements DragGestureListener,
     {
       try
       {
+        Vector v = new Vector();
         RemoteFileNode node =
             (RemoteFileNode)t.getTransferData(RemoteFileNode.REMOTEFILENODE);
-
-        remoteDrop(e, node);
+        v.add(node);
+        remoteDrop(e, v);
       }
       catch(UnsupportedFlavorException exp){}
       catch(IOException ioe){}
@@ -803,8 +806,10 @@ public class SshFileTree extends JTree implements DragGestureListener,
     {
       try
       {
+        Vector v = new Vector();
         FileNode fn = (FileNode)t.getTransferData(FileNode.FILENODE);
-        localDrop(e, fn);
+        v.add(fn);
+        localDrop(e, v);
       }
       catch(UnsupportedFlavorException exp){}
       catch(IOException ioe){}
@@ -857,68 +862,80 @@ public class SshFileTree extends JTree implements DragGestureListener,
   public void dropActionChanged(DropTargetDragEvent e) {}
   public void dragExit(DropTargetEvent e){}
 
-
-  private void localDrop(final DropTargetDropEvent e, final FileNode fn)
+  private void localDrop(final DropTargetDropEvent e, final Vector fn)
   {
     //put this in separate thread for progress bar
     SwingWorker putWorker = new SwingWorker()
     {
+      FileTransferProgressMonitor monitor;
       public Object construct()
       {
         try
         {
           Point ploc = e.getLocation();
           TreePath dropPath = getPathForLocation(ploc.x,ploc.y);
-          if (dropPath != null) 
+
+          if(dropPath != null) 
           {
-            final File lfn = fn.getFile();
-
-            RemoteFileNode pn = (RemoteFileNode)dropPath.getLastPathComponent();
-            if(!pn.isDirectory())
-              pn = (RemoteFileNode)pn.getParent();
-
-            String serverName;
-            if(pn.getServerName().endsWith("/"))
-              serverName = pn.getServerName()+lfn.getName();
-            else
-              serverName = pn.getServerName()+"/"+lfn.getName();
-
-            if(!nodeExists(pn,serverName))
+            monitor = new FileTransferProgressMonitor(SshFileTree.this);
+            for(int i=0; i<fn.size(); i++)
             {
-              pn.put(lfn, new FileTransferProgressMonitor(SshFileTree.this,
-                                                           lfn.getName()));
-                try
+              final File lfn = ((FileNode)fn.get(i)).getFile();
+
+              RemoteFileNode pn = (RemoteFileNode)dropPath.getLastPathComponent();
+              if(!pn.isDirectory())
+                pn = (RemoteFileNode)pn.getParent();
+
+              String serverName;
+              if(pn.getServerName().endsWith("/"))
+                serverName = pn.getServerName()+lfn.getName();
+              else
+                serverName = pn.getServerName()+"/"+lfn.getName();
+
+              if(!nodeExists(pn,serverName))
               {
-                //add file to remote file tree
-                if(pn.isLeaf())
-                  pn = (RemoteFileNode)pn.getParent();
+                FTProgress progress = monitor.add(lfn.getName());
+                pn.put(lfn, progress);
   
-                if(pn.isExplored())
-                  addObject(pn,lfn.getName(),false);
-                else
+                try
                 {
-                  exploreNode(pn);
-                  RemoteFileNode childNode = getNode(pn.getServerName()
-                                                 + "/" + lfn.getName());
-                  scrollPathToVisible(new TreePath(childNode.getPath()));
+                  //add file to remote file tree
+                  if(pn.isLeaf())
+                    pn = (RemoteFileNode)pn.getParent();
+  
+                  if(pn.isExplored())
+                    addObject(pn,lfn.getName(),false);
+                  else
+                  {
+                    exploreNode(pn);
+                    RemoteFileNode childNode = getNode(pn.getServerName()
+                                                   + "/" + lfn.getName());
+                    scrollPathToVisible(new TreePath(childNode.getPath()));
+                  }
                 }
+                catch (Exception exp) {}
               }
-              catch (Exception exp) {}
+              else
+                e.rejectDrop();
             }
-            else
-              e.rejectDrop();
           }
         }
         catch (Exception ex) {}
 
         return null;
       }
+
+      public void finished()
+      {
+        if(monitor != null)
+          monitor.close();
+      }
     };
     putWorker.start();
   }
 
 
-  private void remoteDrop(DropTargetDropEvent e, RemoteFileNode fn)
+  private void remoteDrop(DropTargetDropEvent e, Vector vnode)
   {
     try
     {
@@ -926,34 +943,38 @@ public class SshFileTree extends JTree implements DragGestureListener,
       TreePath dropPath = getPathForLocation(ploc.x,ploc.y);
       if(dropPath != null)
       {
-        fn = getNode(fn.getServerName()); // need to get the instance of
-                                          // this directly to manipulate tree
-        String dropDest = null;
-        RemoteFileNode fdropPath = (RemoteFileNode)dropPath.getLastPathComponent();
-        String dropRoot = fdropPath.getRootDir();
-        String dropFile = null;
-        if(fdropPath.getFile().equals(" "))
-          dropFile = fn.getFile();
-        else
-          dropFile = fdropPath.getFile()+"/"+fn.getFile();
-
-         if(!fdropPath.isDirectory())
-           fdropPath= (RemoteFileNode)fdropPath.getParent();
-
-        String serverName;
-        if(fdropPath.getServerName().endsWith("/"))
-          serverName = fdropPath.getServerName()+fn.getFile();
-        else
-          serverName = fdropPath.getServerName()+"/"+fn.getFile();
-
-        if(!fdropPath.isExplored())
-          exploreNode(fdropPath);
-
-        if(!nodeExists(fdropPath,serverName))
+        for(int i=0; i<vnode.size();i++)
         {
-          rename(fn.getRootDir(),fn.getFullName(),
-                 fdropPath.getPathName(),
-                 dropFile, fn, fdropPath);
+          RemoteFileNode fn = (RemoteFileNode)vnode.get(i);
+          fn = getNode(fn.getServerName()); // need to get the instance of
+                                            // this directly to manipulate tree
+          String dropDest = null;
+          RemoteFileNode fdropPath = (RemoteFileNode)dropPath.getLastPathComponent();
+          String dropRoot = fdropPath.getRootDir();
+          String dropFile = null;
+          if(fdropPath.getFile().equals(" "))
+            dropFile = fn.getFile();
+          else
+            dropFile = fdropPath.getFile()+"/"+fn.getFile();
+
+           if(!fdropPath.isDirectory())
+             fdropPath= (RemoteFileNode)fdropPath.getParent();
+
+          String serverName;
+          if(fdropPath.getServerName().endsWith("/"))
+            serverName = fdropPath.getServerName()+fn.getFile();
+          else
+            serverName = fdropPath.getServerName()+"/"+fn.getFile();
+
+          if(!fdropPath.isExplored())
+            exploreNode(fdropPath);
+
+          if(!nodeExists(fdropPath,serverName))
+          {
+            rename(fn.getRootDir(),fn.getFullName(),
+                   fdropPath.getPathName(),
+                   dropFile, fn, fdropPath);
+          } 
         }
       }
     }

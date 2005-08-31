@@ -1,4 +1,4 @@
-/* FileTransferProgressMonitor.java
+/* fILEtRANSFERpROGRESSmONITOR.JAVA
  *
  * created: Aug 2005
  *
@@ -28,33 +28,22 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import java.awt.Component;
 import java.awt.Point;
+import javax.swing.Box;
 
 import com.sshtools.j2ssh.FileTransferProgress;
 
 import uk.ac.sanger.artemis.components.SwingWorker;
 
 public class FileTransferProgressMonitor
-              implements FileTransferProgress
 {
-
-  private JProgressBar progress;
+  private FTProgress ftprogress;
   private JFrame progressFrame;
-  private long bytesTotal;
-  private String filename;
+  private Box yBox = Box.createVerticalBox();
 
-  public FileTransferProgressMonitor(Component parent, final String filename)
+  public FileTransferProgressMonitor(Component parent)
   {
-    this.filename = filename;
-
-    if(filename.length() > 25)
-      this.filename = filename.substring(0,25)+"...";
-
-    progress = new JProgressBar();
-    progress.setStringPainted(true);
-    progress.setString("    "+filename+" 0 %    ");
     progressFrame = new JFrame("Transfer");
-    progressFrame.getContentPane().add(progress);
-    progressFrame.pack();
+    progressFrame.getContentPane().add(yBox);
 
     if(parent != null)
     {
@@ -63,33 +52,31 @@ public class FileTransferProgressMonitor
       loc.y+=100;
       progressFrame.setLocation(loc);
     }
-      
+
+    yBox.add(Box.createHorizontalStrut(30));
+    progressFrame.pack();
     progressFrame.setVisible(true);
   }
 
-  public void completed()
+  public FTProgress add(String filename)
+  {
+    if(filename.length() > 25)
+      filename = filename.substring(0,25)+"...";
+    JProgressBar progress = new JProgressBar();
+    progress.setStringPainted(true);
+    progress.setString("    "+filename+" 0 %    ");
+    yBox.add(progress);
+
+    progressFrame.pack();
+    progressFrame.validate();
+    ftprogress = new FTProgress(progress, filename);
+    return ftprogress;
+  }
+
+  public void close()
   { 
     progressFrame.setVisible(false);
     progressFrame.dispose();
-  }
-
-  public boolean isCancelled()
-  {
-    return false;
-  }
-
-  public void progressed(long bytesSoFar)
-  {
-    progress.setValue((new Long(bytesSoFar)).intValue());
-    int percent = (int)((bytesSoFar*100)/bytesTotal);
-    progress.setString(filename+" "+percent+" %");
-  }
-
-  public void started(final long bytesTotal, final String remoteFile)
-  {
-    this.bytesTotal = bytesTotal;
-    progress.setMinimum(0);
-    progress.setMaximum((new Long(bytesTotal)).intValue());
   }
 }
 
