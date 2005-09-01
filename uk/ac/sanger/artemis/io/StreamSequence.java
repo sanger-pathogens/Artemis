@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.7 2005-07-11 10:21:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.8 2005-09-01 10:50:43 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.io.Writer;
  *  Sequence stored in 4 bit chunks.
  *
  *  @author Kim Rutherford
- *  @version $Id: StreamSequence.java,v 1.7 2005-07-11 10:21:05 tjc Exp $
+ *  @version $Id: StreamSequence.java,v 1.8 2005-09-01 10:50:43 tjc Exp $
  **/
 
 public abstract class StreamSequence
@@ -129,7 +129,7 @@ public abstract class StreamSequence
 
 //  int packStart = Math.round( (float)start/2.f ) - 1;
     int packStart = (start - 1) >> 1;
-    int packEnd   = Math.round( (float)end/2.f );
+    int packEnd   = end/2;    // Math.round( (float)end/2.f );
 
     int count = 0;
     byte currStorageUnit;
@@ -146,13 +146,22 @@ public abstract class StreamSequence
       count++;
     }
 
-//  System.out.println("start "+start+" end "+end+"  packStart "+packStart+" packEnd "+packEnd);
     for(int i=packStart; i < packEnd; i++) 
     {
       currStorageUnit = sequencePacked[i];
       index1 = (int)(currStorageUnit & 0x000F);
       index2 = (int)( (currStorageUnit >> 4) & 0x000F);
-      this_dst[count] = bases[index2];
+
+      try
+      {
+        this_dst[count] = bases[index2];
+      }
+      catch(ArrayIndexOutOfBoundsException oob)
+      {
+        System.out.println("start "+start+" end "+end+"  packStart "+packStart+" packEnd "+packEnd);
+        System.out.println("count "+count+"  this_dst.length "+this_dst.length+"  index2 "+index2);
+        oob.printStackTrace();
+      }
       count++;
 
       if(count < dst_length)
