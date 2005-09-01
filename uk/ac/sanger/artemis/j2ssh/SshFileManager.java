@@ -60,7 +60,7 @@ import com.sshtools.j2ssh.sftp.SftpFile;
 import com.sshtools.j2ssh.sftp.SftpFileOutputStream;
 import com.sshtools.j2ssh.SftpClient;
 import com.sshtools.j2ssh.configuration.ConfigurationLoader;
-
+import com.sshtools.j2ssh.SshException;
 
 /**
 *
@@ -203,6 +203,13 @@ public class SshFileManager
       SftpClient sftp = getSftpClient();
       pwd = sftp.pwd();
 //    sftp.quit();
+    }
+    catch(SshException exp)
+    {
+      JOptionPane.showMessageDialog(null,
+               "Cannot start SSH session.\n",
+               "SSH Error",
+               JOptionPane.ERROR_MESSAGE);
     }
     catch(IOException ioe)
     {

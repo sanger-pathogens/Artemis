@@ -1,4 +1,4 @@
-/* fILEtRANSFERpROGRESSmONITOR.JAVA
+/* FileTransferProgressMonitor
  *
  * created: Aug 2005
  *
@@ -26,9 +26,12 @@ package uk.ac.sanger.artemis.j2ssh;
 
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JViewport;
 import java.awt.Component;
-import java.awt.Point;
 import javax.swing.Box;
+import java.awt.Point;
+import java.awt.Dimension;
 
 import com.sshtools.j2ssh.FileTransferProgress;
 
@@ -39,11 +42,16 @@ public class FileTransferProgressMonitor
   private FTProgress ftprogress;
   private JFrame progressFrame;
   private Box yBox = Box.createVerticalBox();
+  private JScrollPane scroll;
+  private int count = 0;
 
   public FileTransferProgressMonitor(Component parent)
   {
     progressFrame = new JFrame("Transfer");
-    progressFrame.getContentPane().add(yBox);
+    progressFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    scroll = new JScrollPane(yBox);
+    scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    progressFrame.getContentPane().add(scroll);
 
     if(parent != null)
     {
@@ -53,7 +61,7 @@ public class FileTransferProgressMonitor
       progressFrame.setLocation(loc);
     }
 
-    yBox.add(Box.createHorizontalStrut(30));
+    yBox.add(Box.createHorizontalStrut(240));
     progressFrame.pack();
     progressFrame.setVisible(true);
   }
@@ -62,14 +70,27 @@ public class FileTransferProgressMonitor
   {
     if(filename.length() > 25)
       filename = filename.substring(0,25)+"...";
+
     JProgressBar progress = new JProgressBar();
     progress.setStringPainted(true);
     progress.setString("    "+filename+" 0 %    ");
     yBox.add(progress);
 
+    if(count == 6)
+      scroll.setPreferredSize(scroll.getSize());
+
     progressFrame.pack();
+    if(count > 5)
+    {
+      JViewport vport = scroll.getViewport();
+      vport.setViewPosition(
+          new Point(0,vport.getSize().height));
+    }
+
     progressFrame.validate();
     ftprogress = new FTProgress(progress, filename);
+
+    count++;
     return ftprogress;
   }
 

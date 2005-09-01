@@ -109,6 +109,9 @@ public class FileNode extends DefaultMutableTreeNode
         children = file.listFiles(filter);
         
 // sort into alphabetic order
+        if(children == null)
+          return;
+
         java.util.Arrays.sort(children);
         for(int i=0; i < children.length; ++i)
           add(new FileNode(children[i]));

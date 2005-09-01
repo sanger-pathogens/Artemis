@@ -1010,15 +1010,15 @@ public class FileTree extends JTree implements DragGestureListener,
 
               final byte[] contents = fn.getFileContents(progress);
               final String ndropDir = dropDir;
-              Runnable updateTheTree = new Runnable()
-              {
-                public void run ()
-                {
+//            Runnable updateTheTree = new Runnable()
+//            {
+//              public void run ()
+//              {
                   if(writeByteFile(contents, dropDest))
                     addObject(fn.getFile(),ndropDir,dropNode);
-                };
-              };
-              SwingUtilities.invokeLater(updateTheTree);
+//              };
+//            };
+//            SwingUtilities.invokeLater(updateTheTree);
             }
             catch (Exception exp)
             {
