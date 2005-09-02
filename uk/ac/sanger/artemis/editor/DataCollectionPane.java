@@ -36,10 +36,15 @@ import java.io.StringReader;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
+import java.net.MalformedURLException;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -55,7 +60,7 @@ public class DataCollectionPane extends JScrollPane
   private Annotation ann;
   private JDesktopPane desktop;
   private DataViewInternalFrame dataView;
-  protected static String srs_url;
+  protected static String srs_url = getSrsSite();
 
   /**
   *
@@ -74,7 +79,7 @@ public class DataCollectionPane extends JScrollPane
     this.desktop  = desktop;
     this.dataView = dataView;
 
-    getSrsSite();
+//  getSrsSite();
     Box bdown = Box.createVerticalBox();
     ScrollPanel scrollPanel = new ScrollPanel();
     scrollPanel.add(bdown);
@@ -88,13 +93,14 @@ public class DataCollectionPane extends JScrollPane
     setPreferredSize(new Dimension(500,300));
   }
 
-  private void getSrsSite()
+  private static String getSrsSite()
   {
     StringVector srs = Options.getOptions().getOptionValues("srs_url");
     if(srs != null)
       srs_url = srs.elementAt(0);
     else
       srs_url = "http://srs.sanger.ac.uk/srsbin/cgi-bin/";
+    return srs_url;
   }
 
   /**
@@ -546,15 +552,41 @@ public class DataCollectionPane extends JScrollPane
   {
     String env[] = { "PATH=/usr/local/pubseq/bin/" };
 
+    File fgetz = new File("/usr/local/pubseq/bin/getz");
     if(hit.getOrganism() == null ||
        hit.getDescription() == null)
     {
-      String cmd[]   = { "getz", "-f", "org description gen",
-                         "[uniprot:"+hit.getAcc()+"]|[uniprot:"+hit.getID()+"]" };
+      String res = null;
+      if(!fgetz.exists())
+      {
+        try
+        {
+          URL wgetz = new URL(DataCollectionPane.srs_url+
+                            "/wgetz?-f+acc%20org%20description%20gen+"+
+                            "[uniprot:"+hit.getAcc()+"]|[uniprot:"+hit.getID()+"]");
+          InputStream in = wgetz.openStream();
 
-      ExternalApplication app = new ExternalApplication(cmd,
-                                                  env,null);
-      String res = app.getProcessStdout();
+          BufferedReader strbuff = new BufferedReader(new InputStreamReader(in));
+          StringBuffer resBuff = new StringBuffer();
+          String line;
+          while((line = strbuff.readLine()) != null)
+            resBuff.append(line);
+          res = resBuff.toString();
+          res = FastaTextPane.insertNewline(res, "DE");
+          res = FastaTextPane.insertNewline(res, "GN");
+        }
+        catch(MalformedURLException e) {System.err.println(e);}
+        catch(IOException e) {System.err.println(e);}
+      }
+      else
+      {
+        String cmd[]   = { "getz", "-f", "org description gen",
+                           "[uniprot:"+hit.getAcc()+"]|[uniprot:"+hit.getID()+"]" };
+
+        ExternalApplication app = new ExternalApplication(cmd,
+                                                    env,null);
+        res = app.getProcessStdout();
+      }
 
       StringTokenizer tok = new StringTokenizer(res,"\n");
       while(tok.hasMoreTokens())
@@ -585,10 +617,7 @@ public class DataCollectionPane extends JScrollPane
 
     if(hit.getEMBL() == null)
     {
-      String cmd2[]   = { "getz", "-f", "id",
-                 "[libs={uniprot}-id:"+hit.getID()+"]>EMBL" };
-      ExternalApplication app = new ExternalApplication(cmd2,env,null);
-      String res = app.getProcessStdout();
+      String res = FastaTextPane.getUniprotLinkToDatabase(fgetz, hit, env, "EMBL");
   
       int ind1 = res.indexOf("ID ");
       if(ind1 > -1)
@@ -598,6 +627,7 @@ public class DataCollectionPane extends JScrollPane
         hit.setEMBL(tok.nextToken());
       }
     }
+
   }
 
   /**
@@ -787,17 +817,19 @@ public class DataCollectionPane extends JScrollPane
       if(hit.getEC_number() != null)
         orthoText.append("<br>\n/EC_number=\""+hit.getEC_number()+"\"");
 
-      String product = hit.getDescription().toLowerCase();
-      if(product.endsWith("."))
-        product = product.substring(0,product.length()-1);
+      String product = hit.getDescription();
 
-      orthoText.append("\n<br>\n/product=\""+product+"\"");
+      if(product != null && !product.equals(""))
+      {
+        if(product.endsWith("."))
+          product = product.substring(0,product.length()-1);
+
+        orthoText.append("\n<br>\n/product=\""+product.toLowerCase()+"\"");
+      }
     }
 
-//  System.out.println("ID "+hit.getID());
-//  System.out.println("OS "+hit.getOrganism());
-//  System.out.println("DE "+hit.getDescription());
-//  System.out.println("GN "+hit.getGeneName());
+//  System.out.println("ID "+hit.getID()+"\nOS "+hit.getOrganism()+
+//                   "\nDE "+hit.getDescription()+"\nGN "+hit.getGeneName());
     
     StringBuffer buff = new StringBuffer();
     
@@ -894,6 +926,7 @@ public class DataCollectionPane extends JScrollPane
           goHash.put(ID,desc);
       }
     }
+    catch(FileNotFoundException fnf) { System.err.println(filename+" not found"); }
     catch(IOException ioe) { ioe.printStackTrace(); }
   }
   

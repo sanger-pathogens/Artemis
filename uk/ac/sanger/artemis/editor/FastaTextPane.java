@@ -32,6 +32,7 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Dimension;
 import java.io.InputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.File;
@@ -41,6 +42,8 @@ import java.io.BufferedReader;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 import uk.ac.sanger.artemis.util.WorkingGZIPInputStream;
 
@@ -523,20 +526,6 @@ public class FastaTextPane extends JScrollPane
     return null;
   }
 
-//protected HitInfo getHitInfo(String ID, Vector hitInfoCollection)
-//{
-//  Enumeration hitInfo = hitInfoCollection.elements();
-//  
-//  while(hitInfo.hasMoreElements())
-//  {
-//    HitInfo hi = (HitInfo)hitInfo.nextElement();
-//    if(hi.getID().equals(ID))
-//      return hi;
-//  }
-
-//  return null;
-//}
-
    
   /**
   *
@@ -613,24 +602,57 @@ public class FastaTextPane extends JScrollPane
         n++;
       }
       query.append("]");
+       
+      BufferedReader strbuff = null;
+      File fgetz = new File("/usr/local/pubseq/bin/getz");
+      if(!fgetz.exists())
+      {
+        try
+        {
+          URL wgetz = new URL(DataCollectionPane.srs_url+
+                             "/wgetz?-f+acc%20org%20description%20gen+"+query.toString());
+          InputStream in = wgetz.openStream();
+
+          strbuff = new BufferedReader(new InputStreamReader(in));
+          StringBuffer resBuff = new StringBuffer();
+          String line;
+          while((line = strbuff.readLine()) != null)
+            resBuff.append(line);
+          String res = resBuff.toString();
+          res= insertNewline(res, "OS");
+          res= insertNewline(res, "DE");
+          res= insertNewline(res, "GN");
+          res= insertNewline(res, "AC");
+
+          StringReader strread   = new StringReader(res);
+          strbuff = new BufferedReader(strread);
+        }
+        catch(MalformedURLException e) {System.err.println(e);}
+        catch(IOException e) {System.err.println(e);} 
+
+//      System.out.println("http://srs.sanger.ac.uk/srsbin/cgi-bin/wgetz?-f+"+
+//                         "acc%20org%20description%20gen+"+query.toString());
+      }
+      else
+      {
+        String cmd[]   = { "getz", "-f", "acc org description gen",
+                           query.toString() };
                       
-      String cmd[]   = { "getz", "-f", "acc org description gen",
-                         query.toString() };
-                      
-      ExternalApplication app = new ExternalApplication(cmd,
-                                              env,null);
-      String res = app.getProcessStdout();
-                      
+        ExternalApplication app = new ExternalApplication(cmd,
+                                                   env,null);
+        String res = app.getProcessStdout();
+        StringReader strread   = new StringReader(res);
+        strbuff = new BufferedReader(strread);
+      }             
+
       HitInfo hit = null;
       String line = null;
       String lineStrip = null;
-      StringReader strread   = new StringReader(res);
-      BufferedReader strbuff = new BufferedReader(strread);
 
       try             
       { 
         while((line = strbuff.readLine()) != null)
-        {             
+        { 
           line = line.trim();
           if(line.equals(""))
             continue; 
@@ -673,16 +695,13 @@ public class FastaTextPane extends JScrollPane
       }   
       catch(IOException ioe){}
 
+      String res = null;
       ehits = hits.elements();
       while(ehits.hasMoreElements() && keepRunning)
       {               
         hit = (HitInfo)ehits.nextElement();
-                      
-        String cmd2[] = { "getz", "-f", "id",
-               "[libs={uniprot}-id:"+hit.getID()+"]>EMBL" };
-        app = new ExternalApplication(cmd2,env,null);
-        res = app.getProcessStdout();
-                      
+        res = getUniprotLinkToDatabase(fgetz, hit, env, "EMBL");
+              
         int ind1 = res.indexOf("ID ");
         if(ind1 > -1) 
         {             
@@ -696,12 +715,9 @@ public class FastaTextPane extends JScrollPane
         // EC_number  
         if(hit.getEC_number() != null)
           continue;   
-                      
-        String cmd3[] = { "getz", "-f", "id",
-               "[libs={uniprot}-id:"+hit.getID()+"]>enzyme" };
-        app = new ExternalApplication(cmd3,env,null);
-        res = app.getProcessStdout();
-                      
+
+        res = getUniprotLinkToDatabase(fgetz, hit, env, "enzyme");
+
         ind1 = res.indexOf("ID ");
         if(ind1 > -1) 
         {             
@@ -714,6 +730,62 @@ public class FastaTextPane extends JScrollPane
 
   }
 
+  protected static String insertNewline(String s1, String s2)
+  {
+    int index = 0;
+    while((index = s1.indexOf(s2, index)) > -1)
+    {
+      if(index > 0)
+        s1 = s1.substring(0,index-1)+"\n"+s1.substring(index);
+      index++;
+    }
+    return s1;
+  }
+
+  /**
+  *
+  * Link Uniprot to the another database (e.g. EMBL or ENZYME)
+  *
+  */
+  protected static String getUniprotLinkToDatabase(File fgetz, HitInfo hit,
+                                                  String env[], String DB)
+  {
+    String res = null;
+    if(!fgetz.exists())
+    {
+      try
+      {
+        URL wgetz = new URL(DataCollectionPane.srs_url+
+                         "/wgetz?-f+id+[uniprot-acc:"+hit.getAcc()+"]%3E"+DB);
+
+        InputStream in = wgetz.openStream();
+        BufferedReader strbuff = new BufferedReader(new InputStreamReader(in));
+        StringBuffer resBuff = new StringBuffer();
+        String line;
+        while((line = strbuff.readLine()) != null)
+          resBuff.append(line);
+        res = resBuff.toString();
+
+        if(res.indexOf("SRS error") > -1)
+          return "";
+ 
+//      System.out.println(DataCollectionPane.srs_url+
+//                         "/wgetz?-f+id+[uniprot-acc:"+hit.getAcc()+"]%3E"+DB);
+      }
+      catch(MalformedURLException e) {System.err.println(e);}
+      catch(IOException e) {System.err.println(e);}
+
+    }
+    else
+    {
+      String cmd3[] = { "getz", "-f", "id",
+             "[libs={uniprot}-id:"+hit.getID()+"]>"+DB };
+      ExternalApplication app = new ExternalApplication(cmd3,env,null);
+      res = app.getProcessStdout();
+    }
+
+    return res;
+  }
 
   public void show(Object obj)
   {

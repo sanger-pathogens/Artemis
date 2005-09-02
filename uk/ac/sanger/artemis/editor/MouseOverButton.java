@@ -98,7 +98,6 @@ public class MouseOverButton extends JButton
         repaint();
         break;
     }
-//  super.processMouseEvent(evt);
   }
 }
 
