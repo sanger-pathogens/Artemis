@@ -76,11 +76,11 @@ public class FileTransferProgressMonitor
     progress.setString("    "+filename+" 0 %    ");
     yBox.add(progress);
 
-    if(count == 6)
+    if(count == 16)
       scroll.setPreferredSize(scroll.getSize());
 
     progressFrame.pack();
-    if(count > 5)
+    if(count > 15)
     {
       JViewport vport = scroll.getViewport();
       vport.setViewPosition(
