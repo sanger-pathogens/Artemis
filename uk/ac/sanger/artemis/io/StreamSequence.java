@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.8 2005-09-01 10:50:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.9 2005-09-02 16:25:50 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.io.Writer;
  *  Sequence stored in 4 bit chunks.
  *
  *  @author Kim Rutherford
- *  @version $Id: StreamSequence.java,v 1.8 2005-09-01 10:50:43 tjc Exp $
+ *  @version $Id: StreamSequence.java,v 1.9 2005-09-02 16:25:50 tjc Exp $
  **/
 
 public abstract class StreamSequence
@@ -129,8 +129,8 @@ public abstract class StreamSequence
 
 //  int packStart = Math.round( (float)start/2.f ) - 1;
     int packStart = (start - 1) >> 1;
-    int packEnd   = end/2;    // Math.round( (float)end/2.f );
-
+    int packEnd   = Math.round( (float)end/2.f ); // end/2;
+    
     int count = 0;
     byte currStorageUnit;
     int index1;
@@ -158,9 +158,9 @@ public abstract class StreamSequence
       }
       catch(ArrayIndexOutOfBoundsException oob)
       {
-        System.out.println("start "+start+" end "+end+"  packStart "+packStart+" packEnd "+packEnd);
-        System.out.println("count "+count+"  this_dst.length "+this_dst.length+"  index2 "+index2);
-        oob.printStackTrace();
+//      System.out.println("start "+start+" end "+end+"  packStart "+packStart+" packEnd "+packEnd);
+//      System.out.println("count "+count+"  this_dst.length "+this_dst.length+"  index2 "+index2);
+//      oob.printStackTrace();
       }
       count++;
 
