@@ -65,11 +65,12 @@ public class SshPSUClient extends Thread
   private String bsub     = null;
   private String logfile  = null;
   private String db       = null;
-  private String wdir     = "/nfs/pathscratch1/scratch";
+  private String wdir     = null;
 
   //
   private SshClient ssh;
   private String user;
+  private boolean keep = false;
 
   public SshPSUClient(String args[])
   {
@@ -90,6 +91,8 @@ public class SshPSUClient extends Thread
           db = args[i+1];
         else if(args[i].equals("-wdir") && i < args.length-1)
           wdir = args[i+1];
+        else if(args[i].equals("-keep"))
+          keep = true;
       }
     }
 
@@ -102,9 +105,6 @@ public class SshPSUClient extends Thread
   {
     String program = cmd;
 
-    // get properties from j2ssh.properties
-    Properties settings = getProperties();
-
     boolean completed = false;
     try
     {
@@ -113,7 +113,7 @@ public class SshPSUClient extends Thread
       if(ssh == null)
         return;
 
-      completed = runBlastOrFasta(ssh, program, settings);
+      completed = runBlastOrFasta(ssh, program);
 
       // Quit
       //ssh.disconnect();
@@ -212,7 +212,7 @@ public class SshPSUClient extends Thread
         db = "%uniprot";
     } 
 
-    if(settings.getProperty("wdir") != null)
+    if(wdir == null && settings.getProperty("wdir") != null)
       wdir = settings.getProperty("wdir");
 
     if(cmd != null)
@@ -240,9 +240,11 @@ public class SshPSUClient extends Thread
   * Run fasta or blast on the server ssh'ed into
   *
   */
-  private boolean runBlastOrFasta(SshClient ssh, String program, Properties settings)
+  private boolean runBlastOrFasta(SshClient ssh, String program)
                     throws IOException
   {
+    Properties settings = getProperties();
+
     // prompt for local listfile
     if(listfilepath == null)
     {
@@ -268,11 +270,12 @@ public class SshPSUClient extends Thread
 
       try
       {
-        wdir = wdir+"/"+user;
+        if(!keep)
+          wdir = wdir+"/"+user;
         sftp.mkdir(wdir);
         wdir = wdir+"/"+program+"/";
-        sftp.mkdir(wdir);
 
+        sftp.mkdir(wdir);
         sftp.put(filepath, wdir+filename);
       }
       catch(IOException ioe)
@@ -335,8 +338,12 @@ public class SshPSUClient extends Thread
 //    System.out.println(os.toString());
 
       sftp.get(outputfile, filepath+".out");
-      sftp.rm(outputfile);
-      sftp.rm(wdir+filename);
+
+      if(!keep)
+      {
+        sftp.rm(outputfile);
+        sftp.rm(wdir+filename);
+      }
 
       session.close();
     }

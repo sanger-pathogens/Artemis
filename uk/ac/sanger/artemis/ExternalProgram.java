@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.6 2005-08-17 17:03:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.7 2005-09-05 17:37:49 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.Qualifier;
+import uk.ac.sanger.artemis.components.filetree.RemoteFileNode;
 
 import java.io.*;
 import java.text.*;
@@ -41,7 +42,7 @@ import java.util.Enumeration;
  *  and contains methods for invoking it.
  *
  *  @author Kim Rutherford
- *  @version $Id: ExternalProgram.java,v 1.6 2005-08-17 17:03:06 tjc Exp $
+ *  @version $Id: ExternalProgram.java,v 1.7 2005-09-05 17:37:49 tjc Exp $
  **/
 
 public class ExternalProgram 
@@ -149,9 +150,38 @@ public class ExternalProgram
         if( System.getProperty("j2ssh") != null &&
             (getRealName().indexOf("blast") > -1 || getRealName().startsWith("fast")) )
         {
-          String [] args = { "-f", file_of_filenames.getPath(),
-                             "-cmd", getRealName(),
-                             "-d", getProgramOptions()};
+
+          final Feature this_feature = features.elementAt(0);
+          Entry entry = this_feature.getEntry();
+          String [] args;
+
+          if(((DocumentEntry)entry.getEMBLEntry()).getDocument()
+                            instanceof RemoteFileDocument)
+          {
+            RemoteFileDocument nodeDoc =
+               (RemoteFileDocument)(((DocumentEntry)entry.getEMBLEntry()).getDocument());
+            RemoteFileNode node = nodeDoc.getRemoteFileNode();
+
+            String wdir = node.getRootDir()+"/"+node.getFullName();
+            int index = wdir.lastIndexOf("/");
+            wdir = wdir.substring(0,index);
+
+            args = new String[9];
+
+            args[0] = "-f";    args[1] = file_of_filenames.getPath();
+            args[2] = "-cmd";  args[3] = getRealName();
+            args[4] = "-wdir"; args[5] = wdir; 
+            args[6] = "-d";    args[7] = getProgramOptions();
+            args[8] = "-keep";
+          }
+          else
+          {
+            args = new String[6];
+
+            args[0] = "-f";    args[1] = file_of_filenames.getPath();
+            args[2] = "-cmd";  args[3] = getRealName();
+            args[4] = "-d";    args[5] = getProgramOptions();
+          }
 
           uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
                 new uk.ac.sanger.artemis.j2ssh.SshPSUClient(args);
