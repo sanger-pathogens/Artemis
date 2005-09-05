@@ -209,12 +209,16 @@ public class RemoteFileNode extends DefaultMutableTreeNode
     return flist.rename(getRootDir()+"/"+getFullName(), new_file);
   }
 
-  protected boolean put(File local_file, FTProgress monitor)
+  public boolean put(File local_file, FTProgress monitor)
   {
     FileList flist = new FileList();
-    final String dir;
+    String dir;
     if(!isDirectory())
-      dir = getRootDir();
+    {
+      dir = getRootDir()+"/"+getFullName();
+      int index = dir.lastIndexOf("/");
+      dir = dir.substring(0,index);
+    }
     else
       dir = getRootDir()+"/"+getFullName();
 

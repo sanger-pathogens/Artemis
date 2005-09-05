@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.3 2004-12-03 17:47:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.4 2005-09-05 13:35:55 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -32,6 +32,7 @@ import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.ReadFormatException;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
+import uk.ac.sanger.artemis.io.DocumentEntry;
 
 import java.io.*;
 import javax.swing.*;
@@ -40,7 +41,7 @@ import javax.swing.*;
  *  This class is a JFileChooser that can read EMBL Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryFileDialog.java,v 1.3 2004-12-03 17:47:04 tjc Exp $
+ *  @version $Id: EntryFileDialog.java,v 1.4 2005-09-05 13:35:55 tjc Exp $
  **/
 
 public class EntryFileDialog extends StickyFileChooser 
@@ -348,13 +349,20 @@ public class EntryFileDialog extends StickyFileChooser
                   final boolean keep_new_name,
                   final int destination_type) 
   {
+
+    JCheckBox remoteSave = new JCheckBox("Ssh/Remote Save",
+                                         true);
+    File file = null;
+
     try 
     {
       if(ask_for_name || entry.getName() == null) 
       {
+        Box yBox = Box.createVerticalBox();
+        boolean useAccessory = false;
+
         JCheckBox emblHeader = new JCheckBox("Add EMBL Header",
                                              false);
-        emblHeader.setSelected(false);
 
         setDialogTitle("Save to ...");
         setDialogType(JFileChooser.SAVE_DIALOG);
@@ -362,7 +370,21 @@ public class EntryFileDialog extends StickyFileChooser
         if( destination_type == DocumentEntryFactory.EMBL_FORMAT &&
            (entry.getHeaderText() == null ||
            !isHeaderEMBL(entry.getHeaderText())) )
-          setAccessory(emblHeader);
+        {
+          yBox.add(emblHeader);
+          useAccessory = true;
+        }
+
+        if(((DocumentEntry)entry.getEMBLEntry()).getDocument() 
+                                       instanceof RemoteFileDocument)
+        {
+          yBox.add(remoteSave);
+          useAccessory = true;
+        }
+
+        if(useAccessory)
+          setAccessory(yBox);
+
         int status = showSaveDialog(owner);
 
         if(status != JFileChooser.APPROVE_OPTION ||
@@ -391,7 +413,7 @@ public class EntryFileDialog extends StickyFileChooser
           }
         }
 
-        File file = new File(getCurrentDirectory(),
+        file = new File(getCurrentDirectory(),
                         getSelectedFile().getName());
 
         if(file.exists()) 
@@ -478,6 +500,20 @@ public class EntryFileDialog extends StickyFileChooser
       new MessageDialog(owner, "error while saving: " + e);
       return;
     }
+
+    // save it back to ssh server
+    if(((DocumentEntry)entry.getEMBLEntry()).getDocument()
+                                   instanceof RemoteFileDocument &&
+        remoteSave.isSelected())
+    {
+       RemoteFileDocument node =
+           (RemoteFileDocument)(((DocumentEntry)entry.getEMBLEntry()).getDocument());
+
+       if(file == null)
+         file = new File( ((DocumentEntry)entry.getEMBLEntry()).getDocument().toString() );
+       node.saveEntry(file);
+    }
+
   }
 
   /**
