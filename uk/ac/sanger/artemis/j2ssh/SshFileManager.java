@@ -251,7 +251,7 @@ public class SshFileManager
   *
   */
   public boolean put(final String dir, final File local_file,
-                     final FTProgress monitor)
+                     final FTProgress monitor, final boolean force)
   { 
     SftpClient sftp = null;
 
@@ -268,7 +268,7 @@ public class SshFileManager
                JOptionPane.ERROR_MESSAGE);
         return false;
       }
-      else
+      else if(!force)
       {
         int n = JOptionPane.showConfirmDialog(null,
                "Overwrite\n"+
@@ -352,10 +352,15 @@ public class SshFileManager
 //    sftp.quit();
       return os.toByteArray();
     }
+    catch(SshException se)
+    {
+      rescue();
+      return getFileContents(file, monitor);
+    }
     catch(IOException ioe)
     {
       rescue();
-      ioe.printStackTrace();
+//    ioe.printStackTrace();
       return null;
     }
   }

@@ -197,7 +197,7 @@ public class RemoteFileNode extends DefaultMutableTreeNode
     return flist.delete(getRootDir()+"/"+getFullName());
   }
 
-  protected boolean mkdir(String dir)
+  public boolean mkdir(String dir)
   {
     FileList flist = new FileList();
     return flist.mkdir(dir);
@@ -211,7 +211,6 @@ public class RemoteFileNode extends DefaultMutableTreeNode
 
   public boolean put(File local_file, FTProgress monitor)
   {
-    FileList flist = new FileList();
     String dir;
     if(!isDirectory())
     {
@@ -222,14 +221,26 @@ public class RemoteFileNode extends DefaultMutableTreeNode
     else
       dir = getRootDir()+"/"+getFullName();
 
-    return flist.put(dir, local_file, monitor);
+    return put(dir, local_file, monitor, false);
   }
 
+  public boolean put(String dir, File local_file, 
+                     FTProgress monitor, boolean force)
+  {
+    FileList flist = new FileList();
+    return flist.put(dir, local_file, monitor, force);
+  }
 
   public byte[] getFileContents(FTProgress monitor)
   {
     FileList flist = new FileList();
     return flist.getFileContents(getRootDir()+"/"+getFullName(), monitor);
+  }
+
+  public byte[] getFileContents(FTProgress monitor, String filename)
+  {
+    FileList flist = new FileList();
+    return flist.getFileContents(filename, monitor);
   }
 
 // Transferable

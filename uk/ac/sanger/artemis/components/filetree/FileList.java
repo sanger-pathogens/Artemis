@@ -108,9 +108,10 @@ public class FileList
   * Put a file
   *
   */
-  protected boolean put(String dir, File local_file, FTProgress monitor)
+  protected boolean put(String dir, File local_file, 
+                        FTProgress monitor, boolean force)
   {
-    return ssh_client.put(dir, local_file, monitor);
+    return ssh_client.put(dir, local_file, monitor, force);
   }
 
 

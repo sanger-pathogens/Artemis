@@ -113,6 +113,9 @@ public class SshPSUClient extends Thread
       if(ssh == null)
         return;
 
+      if(System.getProperty("debug") != null)
+         System.out.println("RUN "+program);
+
       completed = runBlastOrFasta(ssh, program);
 
       // Quit
@@ -256,7 +259,7 @@ public class SshPSUClient extends Thread
         return false;
     }
 
-    SftpClient sftp = ssh.openSftpClient();
+    SftpClient sftp = getSftpClient();
 
     // loop over sequence files in the listfile
     Vector seqfile = readListFile(listfilepath);
@@ -287,7 +290,7 @@ public class SshPSUClient extends Thread
 
       String outputfile = wdir+filename+".out";
       final String actualCMD;
-
+     
       if( (cmd.indexOf("fasta33") > -1) ||
           (cmd.indexOf("fastx33") > -1) )
       {
@@ -350,6 +353,24 @@ public class SshPSUClient extends Thread
     sftp.quit();
 
     return true;
+  }
+
+  /**
+  *
+  * Return an active SftpClient object
+  *
+  */
+  private SftpClient getSftpClient()
+             throws IOException
+  {
+    SftpClient sftp;
+    try
+    {
+      sftp = ssh.getActiveSftpClient();
+      return sftp;
+    }
+    catch(IOException ioe){}
+    return ssh.openSftpClient();
   }
 
   /**
