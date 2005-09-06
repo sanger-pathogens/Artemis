@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/HydroAlgorithm.java,v 1.1 2004-06-09 09:51:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/HydroAlgorithm.java,v 1.2 2005-09-06 07:23:15 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -34,7 +34,7 @@ import uk.ac.sanger.artemis.sequence.Bases;
  *  HydrophilicityAlgorithm.
  *
  *  @author Kim Rutherford
- *  @version $Id: HydroAlgorithm.java,v 1.1 2004-06-09 09:51:32 tjc Exp $
+ *  @version $Id: HydroAlgorithm.java,v 1.2 2005-09-06 07:23:15 tjc Exp $
  **/
 
 public abstract class HydroAlgorithm extends FeatureAlgorithm {
@@ -64,9 +64,9 @@ public abstract class HydroAlgorithm extends FeatureAlgorithm {
    **/
   public void getValues (int start, int end, float [] values) {
     final String translation =
-      getFeature ().getTranslation ().toString ().substring (start, end);
+      getFeature().getTranslation().toString().substring(start, end).toLowerCase();
 
-//        System.out.println (start + " " + end + " " +
+//  System.out.println(translation+"   "+start + " " + end + " " +
 //                            getFeature ().getTranslation ().length ());
 
     float total = 0;
@@ -77,8 +77,8 @@ public abstract class HydroAlgorithm extends FeatureAlgorithm {
 
     values[0] = total / translation.length ();
 
-//      System.out.println ("foo: " + values[0] + " " + total + " " +
-//                          translation.length ());
+//  System.out.println("foo: " + values[0] + " " + total + " " +
+//                     translation.length ());
   }
 
   /**
@@ -151,8 +151,8 @@ public abstract class HydroAlgorithm extends FeatureAlgorithm {
   private float getCodonValue (float [] data_array, char amino_acid_symbol) {
     final int index = amino_acid_array.indexOf (amino_acid_symbol);
 
-//      System.out.println ("getCodonValue (): " + index + " " +
-//                          amino_acid_symbol + " " + data_array[index]);
+//  System.out.println("getCodonValue (): " + index + " " +
+//                      amino_acid_symbol) ; // + " " + data_array[index]);
     
     if (index == -1) {
       // return the average value in this case.
