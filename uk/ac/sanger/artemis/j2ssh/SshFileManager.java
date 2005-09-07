@@ -294,6 +294,11 @@ public class SshFileManager
          dir+"/"+local_file.getName(), monitor);
       return true;
     }
+    catch(SshException sshe)
+    {
+      rescue();
+      return put(dir, local_file, monitor, true);
+    }
     catch(IOException ioe)
     {
       rescue();
