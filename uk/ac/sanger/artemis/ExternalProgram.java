@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.8 2005-09-06 15:39:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.9 2005-09-07 14:31:32 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -42,7 +42,7 @@ import java.util.Enumeration;
  *  and contains methods for invoking it.
  *
  *  @author Kim Rutherford
- *  @version $Id: ExternalProgram.java,v 1.8 2005-09-06 15:39:44 tjc Exp $
+ *  @version $Id: ExternalProgram.java,v 1.9 2005-09-07 14:31:32 tjc Exp $
  **/
 
 public class ExternalProgram 
@@ -551,17 +551,19 @@ public class ExternalProgram
                                   file_counter_filename));
       else
       {
-        String dir = node.getRootDir()+ File.separatorChar +
+        String fs  = "/";    // assume ssh to unix server
+
+        String dir = node.getRootDir()+ fs +
                      node.getFullName();
-        int index  = dir.lastIndexOf(File.separatorChar);
-        dir = dir.substring(0,index) + File.separatorChar + getName();
-        byte[] contents = node.getFileContents(null, dir+
-                               File.separatorChar+file_counter_filename);
+        int index  = dir.lastIndexOf(fs);
+        dir = dir.substring(0,index) + fs + getName();
+        byte[] contents = node.getFileContents(null, dir+fs+ 
+                                               file_counter_filename);
         if(contents == null)
         {
           if(System.getProperty("debug") != null)
             System.out.println("getFileNumber() creating "+dir+
-                                File.separatorChar+file_counter_filename);
+                                fs+file_counter_filename);
 
           node.mkdir(dir);
           return setFileNumber(directory, 1, node);
@@ -635,11 +637,12 @@ public class ExternalProgram
     
     if(node != null)
     {
-      String dir = node.getRootDir()+ File.separatorChar +
+      final String fs = "/";  // assume unix ssh server
+      String dir = node.getRootDir()+ fs +
                    node.getFullName();
-      int index  = dir.lastIndexOf(File.separatorChar);
-      dir = dir.substring(0,index) + File.separatorChar +
-                         getName() + File.separatorChar;
+      int index  = dir.lastIndexOf(fs);
+      dir = dir.substring(0,index) + fs +
+                         getName() + fs;
 
       if(System.getProperty("debug") != null)
         System.out.println("setFileNumber() "+
