@@ -572,8 +572,10 @@ public class DataCollectionPane extends JScrollPane
           while((line = strbuff.readLine()) != null)
             resBuff.append(line);
           res = resBuff.toString();
+          res = FastaTextPane.insertNewline(res, "OS");
           res = FastaTextPane.insertNewline(res, "DE");
           res = FastaTextPane.insertNewline(res, "GN");
+          res = FastaTextPane.insertNewline(res, "AC");
         }
         catch(MalformedURLException e) {System.err.println(e);}
         catch(IOException e) {System.err.println(e);}

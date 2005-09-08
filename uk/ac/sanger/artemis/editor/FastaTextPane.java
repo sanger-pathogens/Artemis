@@ -656,7 +656,10 @@ public class FastaTextPane extends JScrollPane
           line = line.trim();
           if(line.equals(""))
             continue; 
-                      
+           
+          if(line.length() < 3)  // empty description line
+            continue;
+        
           lineStrip = line.substring(3).trim();
           if(line.startsWith("AC"))
           {           
