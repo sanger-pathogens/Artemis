@@ -134,7 +134,7 @@ public class SshFileManager
     for(int i=0; i < list.length; i++)
     {
       SftpFile sfile = (SftpFile)list[i];
-      if(sfile.isDirectory())
+      if(sfile.isDirectory() || sfile.isLink())
         dir_list.add(sfile.getFilename());
 
       file_list.add(sfile.getFilename());
