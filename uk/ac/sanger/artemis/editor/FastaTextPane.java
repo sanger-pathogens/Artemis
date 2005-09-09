@@ -618,6 +618,10 @@ public class FastaTextPane extends JScrollPane
           String line;
           while((line = strbuff.readLine()) != null)
             resBuff.append(line);
+   
+          strbuff.close();
+          in.close();
+
           String res = resBuff.toString();
           res= insertNewline(res, "OS");
           res= insertNewline(res, "DE");
@@ -767,6 +771,10 @@ public class FastaTextPane extends JScrollPane
         String line;
         while((line = strbuff.readLine()) != null)
           resBuff.append(line);
+   
+        strbuff.close();
+        in.close();
+
         res = resBuff.toString();
 
         if(res.indexOf("SRS error") > -1)
