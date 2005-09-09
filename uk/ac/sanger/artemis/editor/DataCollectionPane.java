@@ -574,11 +574,16 @@ public class DataCollectionPane extends JScrollPane
           strbuff.close();
           in.close();
 
+          if(hit.getOrganism() == null)
+            System.out.println("HERE getOrganism == null");
+          else if(hit.getDescription() == null)
+            System.out.println("HERE getDescription == null");
+ 
           res = resBuff.toString();
-          res = FastaTextPane.insertNewline(res, "OS");
-          res = FastaTextPane.insertNewline(res, "DE");
-          res = FastaTextPane.insertNewline(res, "GN");
-          res = FastaTextPane.insertNewline(res, "AC");
+          res = FastaTextPane.insertNewline(res, "OS ");
+          res = FastaTextPane.insertNewline(res, "DE ");
+          res = FastaTextPane.insertNewline(res, "GN ");
+          res = FastaTextPane.insertNewline(res, "AC ");
         }
         catch(MalformedURLException e) {System.err.println(e);}
         catch(IOException e) {System.err.println(e);}
@@ -602,7 +607,10 @@ public class DataCollectionPane extends JScrollPane
           continue;
 
         if(token.startsWith("OS "))
+        {
           hit.setOrganism(tokenline);
+          System.out.println("HERE organism= "+hit.getOrganism());
+        }
         else if(token.startsWith("DE "))
           hit.appendDescription(tokenline);
         else if(token.startsWith("GN "))

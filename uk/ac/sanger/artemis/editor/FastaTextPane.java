@@ -587,7 +587,6 @@ public class FastaTextPane extends JScrollPane
       StringBuffer query = new StringBuffer();
 
       int n = 0;
-      query.append("[uniprot-acc:");
 
       Enumeration ehits = hits.elements();
       while(ehits.hasMoreElements() && keepRunning)
@@ -601,7 +600,6 @@ public class FastaTextPane extends JScrollPane
         query.append(hit.getAcc());
         n++;
       }
-      query.append("]");
        
       BufferedReader strbuff = null;
       File fgetz = new File("/usr/local/pubseq/bin/getz");
@@ -610,7 +608,8 @@ public class FastaTextPane extends JScrollPane
         try
         {
           URL wgetz = new URL(DataCollectionPane.srs_url+
-                             "/wgetz?-f+acc%20org%20description%20gen+"+query.toString());
+                             "/wgetz?-f+acc%20org%20description%20gen+[uniprot-acc:"+
+                             query.toString()+"]+-lv+500");
           InputStream in = wgetz.openStream();
 
           strbuff = new BufferedReader(new InputStreamReader(in));
@@ -623,24 +622,26 @@ public class FastaTextPane extends JScrollPane
           in.close();
 
           String res = resBuff.toString();
-          res= insertNewline(res, "OS");
-          res= insertNewline(res, "DE");
-          res= insertNewline(res, "GN");
-          res= insertNewline(res, "AC");
+          res= insertNewline(res, "OS ");
+          res= insertNewline(res, "DE ");
+          res= insertNewline(res, "GN ");
+          res= insertNewline(res, "AC ");
 
           StringReader strread   = new StringReader(res);
           strbuff = new BufferedReader(strread);
+
+//        System.out.println(DataCollectionPane.srs_url+
+//                           "/wgetz?-f+acc%20org%20description%20gen+[uniprot-acc:"+
+//                           query.toString()+"]+-lv+500");
+//        System.out.println("HERE\n"+res);
         }
         catch(MalformedURLException e) {System.err.println(e);}
         catch(IOException e) {System.err.println(e);} 
-
-//      System.out.println("http://srs.sanger.ac.uk/srsbin/cgi-bin/wgetz?-f+"+
-//                         "acc%20org%20description%20gen+"+query.toString());
       }
       else
       {
         String cmd[]   = { "getz", "-f", "acc org description gen",
-                           query.toString() };
+                           "[uniprot-acc:"+query.toString()+"]" };
                       
         ExternalApplication app = new ExternalApplication(cmd,
                                                    env,null);
@@ -665,7 +666,7 @@ public class FastaTextPane extends JScrollPane
             continue;
         
           lineStrip = line.substring(3).trim();
-          if(line.startsWith("AC"))
+          if(line.startsWith("AC "))
           {           
             hit = getHitInfo(lineStrip,hits);
                       
@@ -698,7 +699,9 @@ public class FastaTextPane extends JScrollPane
 //              hit.appendDescription(line);
             }         
           }           
-        }   
+        }
+
+        strbuff.close();   
       }   
       catch(IOException ioe){}
 
