@@ -6,7 +6,7 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta.sanger,v 1.2 2005-06-15 19:08:48 tjc Exp $"
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta.sanger,v 1.3 2005-09-14 11:03:58 tjc Exp $"
 
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
@@ -123,7 +123,7 @@ chomp $database;
 $ENV{'FASTLIBS'} = "/nfs/disk222/yeastpub/bio-soft/fasta/pubseqgbs_test";
 
 
-open(BSUB, "| bsub -q normal -o fasta_errors -n 1 -R \"select[blast && mem > 500] rusage[r1m=1:mem=500]\" -K") or die "could not open bsub pipe : $!";
+open(BSUB, "| bsub -q normal -o fasta_errors -n 1 -R \"select[blast && mem > 500] rusage[mem=500]\" -K") or die "could not open bsub pipe : $!";
 open(LIST_FILE,$file);
 
 $EXEC="/nfs/disk222/yeastpub/bio-soft/fasta/fasta33_t";
