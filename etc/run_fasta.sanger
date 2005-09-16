@@ -6,7 +6,7 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta.sanger,v 1.3 2005-09-14 11:03:58 tjc Exp $"
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta.sanger,v 1.4 2005-09-16 19:14:44 tjc Exp $"
 
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
@@ -74,7 +74,8 @@ run_one_prog () {
     seq_size=`infoseq "$INPUT_FILE" -length -only -auto | awk '{ sum += $1 } END { print sum }`
 
     FASTLIBS=/nfs/disk222/yeastpub/bio-soft/fasta/pubseqgbs export FASTLIBS
-    EXEC=/nfs/disk222/yeastpub/bio-soft/fasta/fasta33_t
+#   EXEC=/nfs/disk222/yeastpub/bio-soft/fasta/fasta33_t
+    EXEC=/nfs/disk222/yeastpub/bio-soft/fasta/fasta33
 
     echo "about to start $EXEC with input from $INPUT_FILE and output to" 1>&2
     echo "$OUTPUT_FILE using database $DATABASE" 1>&2
@@ -121,12 +122,9 @@ chomp $file;
 chomp $database;
 
 $ENV{'FASTLIBS'} = "/nfs/disk222/yeastpub/bio-soft/fasta/pubseqgbs_test";
-
-
-open(BSUB, "| bsub -q normal -o fasta_errors -n 1 -R \"select[blast && mem > 500] rusage[mem=500]\" -K") or die "could not open bsub pipe : $!";
 open(LIST_FILE,$file);
 
-$EXEC="/nfs/disk222/yeastpub/bio-soft/fasta/fasta33_t";
+$EXEC="/nfs/disk222/yeastpub/bio-soft/fasta/fasta33";
 
 while(my $inFile = <LIST_FILE>)
 {
@@ -154,17 +152,166 @@ while(my $inFile = <LIST_FILE>)
 
       if( -e $inFile_tmp )
       {
-        print BSUB "cd $inFile_tmp\n";
+        chdir "$inFile_tmp" || die "Cannot cd to $inFile_tmp: $!\n";
         $inFile = $2;
       }
     }
   }
 
-  print BSUB "$EXEC -B -S -q -b 100 -H $inFile $database ktup 2 > $inFile\.out\n";
-  print BSUB "gzip -9 $inFile\.out\n";
+  # find number of leading zero
+
+  if($inFile =~ m/^(.*)(\/fasta\/)([^\/]*)(0{4})(\d{1})/)
+  {
+    push(@jobs10, $inFile);
+  }
+  elsif($inFile =~ m/^(.*)(\/fasta\/)([^\/]*)(0{3})(\d{2})/)
+  {
+    push(@jobs100, $inFile);
+  }
+  elsif($inFile =~ m/^(.*)(\/fasta\/)([^\/]*)(0{2})(\d{3})/)
+  {
+    push(@jobs1000, $inFile);
+  }
+  elsif($inFile =~ m/^(.*)(\/fasta\/)([^\/]*)(0{1})(\d{4})/)
+  {
+    push(@jobs10000, $inFile);
+  }
+  else
+  {
+    push(@jobs100000, $inFile);
+  }
 }
-close BSUB or die "--Could not submit job : $!";
 close LIST_FILE;
+
+if(defined @jobs10)
+{
+  my( $num ) = sprintf( "%04d", 0);
+  submit($num, @jobs10);
+}
+
+if(defined @jobs100)
+{
+  my( $num ) = sprintf( "%03d", 0);
+  submit($num, @jobs100);
+}
+
+if(defined @jobs1000)
+{
+  my( $num ) = sprintf( "%02d", 0);
+  submit($num, @jobs1000);
+}
+
+if(defined @jobs10000)
+{
+  my( $num ) = sprintf( "%01d", 0);
+  submit($num, @jobs10000);
+}
+
+if(defined @jobs100000)
+{
+  submit("", @jobs100000);
+}
+
+for($count = 0; $count < @bsub_jobs; $count++)
+{
+  print "$count bsub -q longblastq -o /dev/null -e /dev/null -K -w \"ended($bsub_jobs[$count])\" -J \"$bsub_jobs[$count]\_fin\"\n";
+
+  open(BSUB, "| bsub -q longblastq -R \"select[mem > 1] rusage[mem=1]\" -o /dev/null -e /dev/null -w \"ended($bsub_jobs[$count])\" -K -J \"$bsub_jobs[$count]\_fin\"")  or die "could not open bsub pipe  : $!";
+  print BSUB "\"echo finished > /dev/null\" > /dev/null 2> /dev/null";
+  close BSUB; # or die "--Could not submit job : $!";
+} 
+ 
+
+sub submit
+{
+  my ($num, @jobs) = @_;
+   
+  my $prefix;
+  my @starts;
+  my @prefixes;
+
+  if($jobs[0] =~ m/^(.*)(\/fasta\/)([^\/]*)(\d{5})/)
+  {
+    $prefix = $1.$2.$3;
+    push(@starts, "$4");
+
+    if($prefix =~ /\+/)
+    {
+      $prefix =~ s/\+/\\+/;
+    }
+    push(@prefixes, $prefix);
+  }
+
+  
+  #different entries have different prefixes
+  for($count =0; $count < @jobs; $count++)
+  {
+    if($jobs[$count] !~ m/^$prefix(.*)/)
+    {
+      if($jobs[$count] =~ m/^(.*)(\/fasta\/)([^\/]*)(\d{5})/)
+      {
+        $prefix = $1.$2.$3;
+
+        push(@starts, "$4");
+
+         if($prefix =~ /\+/)
+         {
+           $prefix =~ s/\+/\\+/;
+         }
+
+        push(@prefixes, $prefix);
+      }
+    }
+  }
+
+  my $last;
+  if($jobs[@jobs-1] =~ m/^(.*)(\/fasta\/)([^\/]*)(\d{5})/)
+  {
+    $last = "$4";
+  }
+
+  for($count =0; $count < @prefixes; $count++)
+  {
+    $prefix = $prefixes[$count];
+    $start  = $starts[$count];
+
+    if($count == @prefixes-1)
+    {   
+      $end = $last;
+    }
+    else
+    {
+      $end = $starts[$count+1]-1;
+    }
+ 
+    bsub($prefix, $start, $end, $num);
+  }
+}
+
+
+# start job arrays
+sub bsub
+{
+  my ($prefix, $start, $end, $num) = @_;
+
+  my $name = $prefix;
+  if($prefix =~ m/(\/fasta\/)(.*)/)
+  {
+    $name = "$2";
+  }
+
+  push(@bsub_jobs, "$name\_fasta");
+
+  open(BSUB, "| bsub -q longblastq -o /dev/null -n 1 -R \"select[blast && mem > 500] rusage[mem=500]\" -J$name\_fasta\"[$start-$end]%16\"")  or die "could not open bsub pipe  : $!";
+  print BSUB "$EXEC -B -S -q -b 100 -H $prefix$num";
+  print BSUB "\${LSB_JOBINDEX} $database ktup 2 > $prefix$num";
+  print BSUB "\${LSB_JOBINDEX}\.out\n";
+
+  print BSUB "gzip -9f $prefix$num";
+  print BSUB "\${LSB_JOBINDEX}\.out\n";
+
+ close BSUB or die "--Could not submit job : $!";
+}
 
 '
 
