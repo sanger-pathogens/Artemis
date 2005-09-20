@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LineGroup.java,v 1.6 2005-06-15 19:44:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LineGroup.java,v 1.7 2005-09-20 13:11:47 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import uk.ac.sanger.artemis.util.LinePushBackReader;
  *  that start with FT.
  *
  *  @author Kim Rutherford
- *  @version $Id: LineGroup.java,v 1.6 2005-06-15 19:44:26 tjc Exp $
+ *  @version $Id: LineGroup.java,v 1.7 2005-09-20 13:11:47 tjc Exp $
  *
  */
 
@@ -451,6 +451,12 @@ abstract class LineGroup
   {
     writer.write (END_OF_ENTRY_STRING + "\n");
   }
+
+  public static void writeStartOfGFFEntry (Writer writer) throws IOException
+  {
+    writer.write ("##FASTA\n");
+  }
+
 
   /**
    *  Write this object to the given stream.

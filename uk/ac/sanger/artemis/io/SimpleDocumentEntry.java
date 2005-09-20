@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.13 2005-07-20 09:29:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.14 2005-09-20 13:14:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.util.Enumeration;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.13 2005-07-20 09:29:56 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.14 2005-09-20 13:14:17 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -452,6 +452,9 @@ abstract public class SimpleDocumentEntry
       for(int i = 0 ; i < line_groups.size() ; ++i) 
       {
         final LineGroup current_line_group = line_groups.elementAt(i);
+        if(this instanceof GFFDocumentEntry && 
+           current_line_group instanceof FastaStreamSequence)
+          LineGroup.writeStartOfGFFEntry(writer);
         current_line_group.writeToStream(writer);
       }
 
@@ -471,13 +474,14 @@ abstract public class SimpleDocumentEntry
           // don't write out the "//" end of entry marker if this is raw or
           // FASTA sequence
           if(second_line_group instanceof RawStreamSequence ||
-              second_line_group instanceof FastaStreamSequence) 
+             second_line_group instanceof FastaStreamSequence) 
             return;
         }
       }
 
       if(this instanceof PublicDBDocumentEntry) 
         LineGroup.writeEndOfEMBLEntry(writer);
+
     } 
     finally
     {
