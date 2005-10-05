@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.3 2005-01-11 15:54:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.4 2005-10-05 08:57:27 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -40,7 +40,7 @@ import javax.swing.*;
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.3 2005-01-11 15:54:32 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.4 2005-10-05 08:57:27 tjc Exp $
  *
  **/
 
@@ -205,7 +205,7 @@ public class FileViewer extends JFrame
    *  Clear the viewer window and display the lines from the given Reader.
    *  @param read_stream The stream to read the contents of the viewer from.
    **/
-  public void readFile(Reader read_stream)
+  protected void readFile(Reader read_stream)
       throws IOException 
   {
     final BufferedReader buffered_reader = new BufferedReader(read_stream);
