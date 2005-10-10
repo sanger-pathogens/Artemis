@@ -6,7 +6,7 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta.sanger,v 1.6 2005-10-10 09:36:05 tjc Exp $"
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta.sanger,v 1.7 2005-10-10 10:52:51 tjc Exp $"
 
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
@@ -161,19 +161,19 @@ while(my $inFile = <LIST_FILE>)
   }
   # find number of leading zero
 
-  if($inFile =~ m/^(.*)(fasta\/)([^\/]*)(0{4})(\d{1})/)
+  if($inFile =~ m/^(.*)(fasta\/)([^\/]*)(0{4})(\d{1})$/)
   {
     push(@jobs10, $inFile);
   }
-  elsif($inFile =~ m/^(.*)(fasta\/)([^\/]*)(0{3})(\d{2})/)
+  elsif($inFile =~ m/^(.*)(fasta\/)([^\/]*)(0{3})(\d{2})$/)
   {
     push(@jobs100, $inFile);
   }
-  elsif($inFile =~ m/^(.*)(fasta\/)([^\/]*)(0{2})(\d{3})/)
+  elsif($inFile =~ m/^(.*)(fasta\/)([^\/]*)(0{2})(\d{3})$/)
   {
     push(@jobs1000, $inFile);
   }
-  elsif($inFile =~ m/^(.*)(fasta\/)([^\/]*)(0{1})(\d{4})/)
+  elsif($inFile =~ m/^(.*)(fasta\/)([^\/]*)(0{1})(\d{4})$/)
   {
     push(@jobs10000, $inFile);
   }
