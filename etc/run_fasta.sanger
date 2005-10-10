@@ -6,7 +6,7 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta.sanger,v 1.5 2005-09-19 13:47:12 tjc Exp $"
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta.sanger,v 1.6 2005-10-10 09:36:05 tjc Exp $"
 
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
@@ -323,14 +323,17 @@ sub bsub
   my ($prefix, $index, $num) = @_;
 
   my $name = $prefix;
+ 
   if($prefix =~ m/(\/fasta\/)(.*)/)
   {
     $name = "$2";
   }
 
-  push(@bsub_jobs, "$name\_fasta");
+  my $random = int( rand( 999+1 ) );
+  
+  push(@bsub_jobs, "$name$random\_fasta");
 
-  open(BSUB, "| bsub -q longblastq -o /dev/null -n 1 -R \"select[blast && mem > 500] rusage[mem=500]\" -J$name\_fasta\"[$index]%16\"")  or die "could not open bsub pipe  : $!";
+  open(BSUB, "| bsub -q longblastq -o /dev/null -n 1 -R \"select[blast && mem > 500] rusage[mem=500]\" -J$name$random\_fasta\"[$index]%16\"")  or die "could not open bsub pipe  : $!";
   print BSUB "cd $NEW_WDIR\n";
   print BSUB "$EXEC -B -S -q -b 100 -H $prefix$num";
   print BSUB "\${LSB_JOBINDEX} $database ktup 2 > $prefix$num";
