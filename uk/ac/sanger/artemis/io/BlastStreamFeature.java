@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/BlastStreamFeature.java,v 1.1 2004-06-09 09:48:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/BlastStreamFeature.java,v 1.2 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import java.io.*;
  *  A StreamFeature that thinks it is a Blast feature.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: BlastStreamFeature.java,v 1.1 2004-06-09 09:48:57 tjc Exp $
+ *  @version $Id: BlastStreamFeature.java,v 1.2 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class BlastStreamFeature
@@ -117,18 +117,18 @@ public class BlastStreamFeature
     }
 
     try {
-      int query_start = Integer.valueOf (line_bits.elementAt (6)).intValue ();
-      int query_end = Integer.valueOf (line_bits.elementAt (7)).intValue ();
+      int query_start = Integer.valueOf ((String)line_bits.elementAt (6)).intValue ();
+      int query_end = Integer.valueOf ((String)line_bits.elementAt (7)).intValue ();
 
-      final String percent_id = line_bits.elementAt (2);
+      final String percent_id = (String)line_bits.elementAt (2);
 
-      final String query_id = line_bits.elementAt (0);
-      final String subject_id = line_bits.elementAt (1);
-      final String subject_start_string = line_bits.elementAt (8);
-      final String subject_end_string = line_bits.elementAt (9);
+      final String query_id = (String)line_bits.elementAt (0);
+      final String subject_id = (String)line_bits.elementAt (1);
+      final String subject_start_string = (String)line_bits.elementAt (8);
+      final String subject_end_string = (String)line_bits.elementAt (9);
 
-      final String score = line_bits.elementAt (11);
-      final String e_value = line_bits.elementAt (10);
+      final String score = (String)line_bits.elementAt (11);
+      final String e_value = (String)line_bits.elementAt (10);
 
       final Qualifier blast_score_qualifier =
         new Qualifier ("blast_score", score);

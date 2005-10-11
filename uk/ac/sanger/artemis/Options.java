@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.5 2005-06-14 13:58:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.6 2005-10-11 14:20:31 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -44,7 +44,7 @@ import java.util.*;
  *  read in new options.
  *
  *  @author Kim Rutherford
- *  @version $Id: Options.java,v 1.5 2005-06-14 13:58:48 tjc Exp $
+ *  @version $Id: Options.java,v 1.6 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class Options extends Properties 
@@ -259,7 +259,7 @@ public class Options extends Properties
             for(int i = 0 ; i < extra_option_file_names.size() ; ++i) 
             {
               final String extra_option_file_name =
-                extra_option_file_names.elementAt(i);
+                (String)extra_option_file_names.elementAt(i);
 
               if(new File(extra_option_file_name).canRead()) 
                 option_file_names[i] = extra_option_file_name;
@@ -459,9 +459,9 @@ public class Options extends Properties
 
     for(int i = 0 ; i < extra_qualifiers_strings.size() / 2 ; ++i) 
     {
-      final String name = extra_qualifiers_strings.elementAt(i * 2);
+      final String name = (String)extra_qualifiers_strings.elementAt(i * 2);
       final String type_string =
-        extra_qualifiers_strings.elementAt(i * 2 + 1);
+        (String)extra_qualifiers_strings.elementAt(i * 2 + 1);
       final int type = QualifierInfo.getQualifierTypeID(type_string);
 
       return_vector.add(new QualifierInfo(name, type, null, null, false));
@@ -610,11 +610,11 @@ public class Options extends Properties
         StringVector.getStrings(colour_string.trim());
 
       final int first_int =
-        Integer.valueOf(value_strings.elementAt(0)).intValue();
+        Integer.valueOf((String)value_strings.elementAt(0)).intValue();
       final int second_int =
-        Integer.valueOf(value_strings.elementAt(1)).intValue();
+        Integer.valueOf((String)value_strings.elementAt(1)).intValue();
       final int third_int =
-        Integer.valueOf(value_strings.elementAt(2)).intValue();
+        Integer.valueOf((String)value_strings.elementAt(2)).intValue();
 
       return new Color(first_int, second_int, third_int);
 
@@ -663,9 +663,9 @@ public class Options extends Properties
         for(int i = 0; i < protein_value_strings.size() / 2; ++i) 
         {
           final String program_name =
-            protein_value_strings.elementAt(i * 2);
+            (String)protein_value_strings.elementAt(i * 2);
           final String program_options =
-            protein_value_strings.elementAt(i * 2 + 1);
+            (String)protein_value_strings.elementAt(i * 2 + 1);
 
           final ExternalProgram program =
             new ExternalProgram(program_name, program_options,
@@ -683,9 +683,9 @@ public class Options extends Properties
         for(int i = 0; i < dna_value_strings.size() / 2; ++i) 
         {
           final String program_name =
-            dna_value_strings.elementAt(i * 2);
+            (String)dna_value_strings.elementAt(i * 2);
           final String program_options =
-            dna_value_strings.elementAt(i * 2 + 1);
+            (String)dna_value_strings.elementAt(i * 2 + 1);
 
           final ExternalProgram program =
             new ExternalProgram(program_name, program_options,
@@ -702,7 +702,7 @@ public class Options extends Properties
       {
         for(int i = 0; i < application_value_strings.size(); ++i) 
         {
-          final String program_name = application_value_strings.elementAt(i);
+          final String program_name = (String)application_value_strings.elementAt(i);
 
           final ExternalProgram program =
             new ExternalProgram(program_name, null,
@@ -769,7 +769,7 @@ public class Options extends Properties
 
     for(int i = 0; i<option_values.size() ; ++i)
     {
-      final String new_value = option_values.elementAt(i).toLowerCase();
+      final String new_value = ((String)option_values.elementAt(i)).toLowerCase();
       option_values.setElementAt(new_value, i);
     }
 
@@ -1184,7 +1184,7 @@ public class Options extends Properties
 
     for(int i = 0 ; i < extra_keys.size() ; ++i) 
     {
-      final Key new_key = new Key(extra_keys.elementAt(i));
+      final Key new_key = new Key((String)extra_keys.elementAt(i));
       return_entry_information.addKey(new_key);
     }
 
@@ -1273,7 +1273,7 @@ public class Options extends Properties
       final boolean once_only =
         current_qualifier_values.elementAt(0).equals("yes");
 
-      final String type_string = current_qualifier_values.elementAt(1);
+      final String type_string = (String)current_qualifier_values.elementAt(1);
 
       // find the keys for which this qualifier name is valid or required
 

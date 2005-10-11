@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RWCorbaFeature.java,v 1.2 2005-01-06 11:21:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RWCorbaFeature.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.io;
@@ -40,7 +40,7 @@ import java.util.Date;
  *  CORBA using a nsdb.NucFeatureWriter object.
  *
  *  @author Kim Rutherford
- *  @version $Id: RWCorbaFeature.java,v 1.2 2005-01-06 11:21:06 tjc Exp $
+ *  @version $Id: RWCorbaFeature.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class RWCorbaFeature extends EMBLObject implements DateStampFeature {
@@ -425,7 +425,7 @@ public class RWCorbaFeature extends EMBLObject implements DateStampFeature {
 
       for (int i = 0 ; i < return_values.length ; ++i) {
         return_values[i] = new QualifierValue_u ();
-        return_values[i].text (qualifier_values.elementAt (i));
+        return_values[i].text ((String)qualifier_values.elementAt (i));
       }
 
       return new nsdb.NucFeaturePackage.Qualifier (qualifier.getName (),

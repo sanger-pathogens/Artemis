@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.13 2005-07-08 15:11:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.14 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -45,7 +45,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.13 2005-07-08 15:11:12 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.14 2005-10-11 14:20:31 tjc Exp $ */
 
 public class Bases 
 {
@@ -396,7 +396,7 @@ public class Bases
          query_codon_index < query_codons.size () ;
          ++query_codon_index) {
       if (isMatchingCodon (sequence_string, start_index, direction,
-                           query_codons.elementAt (query_codon_index))) {
+                           (String)query_codons.elementAt (query_codon_index))) {
         return true;
       }
     }

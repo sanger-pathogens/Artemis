@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Qualifier.java,v 1.1 2004-06-09 09:50:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Qualifier.java,v 1.2 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import uk.ac.sanger.artemis.util.*;
  *  one name and many values.
  *
  *  @author Kim Rutherford
- *  @version $Id: Qualifier.java,v 1.1 2004-06-09 09:50:06 tjc Exp $
+ *  @version $Id: Qualifier.java,v 1.2 2005-10-11 14:20:31 tjc Exp $
  * */
 
 public class Qualifier {
@@ -92,6 +92,7 @@ public class Qualifier {
       }
 
       this.values = values.copy ();
+//    this.values = values;
     }
   }
 
@@ -226,7 +227,7 @@ public class Qualifier {
             comp_string_vector.sort ();
 
             for (int i = 0 ; i < values.size () ; ++i) {
-              final String this_string = this_string_vector.elementAt (i);
+              final String this_string = (String)this_string_vector.elementAt (i);
 
               if (this_string != null &&
                   !this_string.equals (comp_string_vector.elementAt (i))) {

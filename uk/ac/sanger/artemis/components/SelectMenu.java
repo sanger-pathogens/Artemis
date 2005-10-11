@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.7 2005-06-06 18:48:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.8 2005-10-11 14:20:31 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -50,7 +50,7 @@ import javax.swing.*;
  *  "Select by key".
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectMenu.java,v 1.7 2005-06-06 18:48:55 tjc Exp $
+ *  @version $Id: SelectMenu.java,v 1.8 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class SelectMenu extends SelectionMenu 
@@ -734,7 +734,7 @@ public class SelectMenu extends SelectionMenu
     }
 
     if (qualifier_values.size () == 1) {
-      selectByQualifier (null, name, qualifier_values.elementAt (0));
+      selectByQualifier (null, name, (String)qualifier_values.elementAt (0));
     } else {
       final ChoiceFrame value_choice_frame =
         new ChoiceFrame ("Select a qualifier value", qualifier_values);

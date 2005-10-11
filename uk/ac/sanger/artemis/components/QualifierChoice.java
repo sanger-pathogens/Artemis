@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierChoice.java,v 1.2 2005-07-12 14:44:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierChoice.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.event.*;
  *  key.
  *
  *  @author Kim Rutherford
- *  @version $Id: QualifierChoice.java,v 1.2 2005-07-12 14:44:31 tjc Exp $
+ *  @version $Id: QualifierChoice.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class QualifierChoice extends JComboBox {
@@ -149,7 +149,7 @@ public class QualifierChoice extends JComboBox {
 //      Options.getOptions ().getInvisibleQualifiers ();
 
     for (int i = 0 ; i < qualifier_names.size () ; ++i) {
-      final String qualifier_name = qualifier_names.elementAt (i);
+      final String qualifier_name = (String)qualifier_names.elementAt (i);
 //      if (!invisible_qualifiers.contains (qualifier_name)) {
         addItem (qualifier_name);
 //      }

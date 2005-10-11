@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.2 2005-04-22 13:32:40 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -39,7 +39,7 @@ import java.io.*;
  *  set in the constructor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: UserDataAlgorithm.java,v 1.2 2005-04-22 13:32:40 tjc Exp $
+ *  @version $Id: UserDataAlgorithm.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class UserDataAlgorithm extends BaseAlgorithm {
@@ -97,7 +97,7 @@ public class UserDataAlgorithm extends BaseAlgorithm {
         for (int i = 0 ; i < tokens.size () ; ++i) {
           try {
             final float value =
-              Float.valueOf (tokens.elementAt (i)).floatValue ();
+              Float.valueOf ((String)tokens.elementAt (i)).floatValue ();
 
             if (value > data_max) {
               data_max = value;

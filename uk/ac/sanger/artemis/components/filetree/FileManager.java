@@ -171,7 +171,7 @@ public class FileManager extends JFrame
           
         for(int i = 0; i<sequence_suffixes.size(); ++i)
         {
-          final String suffix = sequence_suffixes.elementAt(i);
+          final String suffix = (String)sequence_suffixes.elementAt(i);
 
           if(pathname.getName().endsWith("." + suffix) ||
              pathname.getName().endsWith("." + suffix + ".gz"))
@@ -180,7 +180,7 @@ public class FileManager extends JFrame
 
         for(int i = 0; i<feature_suffixes.size(); ++i)
         {
-          final String suffix = feature_suffixes.elementAt(i);
+          final String suffix = (String)feature_suffixes.elementAt(i);
 
           if(pathname.getName().endsWith("." + suffix) ||
              pathname.getName().endsWith("." + suffix + ".gz"))
@@ -213,7 +213,7 @@ public class FileManager extends JFrame
 
         for(int i = 0; i<feature_suffixes.size(); ++i)
         {
-          final String suffix = feature_suffixes.elementAt(i);
+          final String suffix = (String)feature_suffixes.elementAt(i);
 
           if(pathname.getName().endsWith("." + suffix) ||
              pathname.getName().endsWith("." + suffix + ".gz"))
@@ -245,7 +245,7 @@ public class FileManager extends JFrame
          
         for(int i = 0; i<sequence_suffixes.size(); ++i)
         {
-          final String suffix = sequence_suffixes.elementAt(i);
+          final String suffix = (String)sequence_suffixes.elementAt(i);
 
           if(pathname.getName().endsWith("." + suffix) ||
              pathname.getName().endsWith("." + suffix + ".gz"))

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/MSPcrunchStreamFeature.java,v 1.2 2005-01-06 10:33:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/MSPcrunchStreamFeature.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import java.io.*;
  *  A StreamFeature that thinks it is a MSPcrunch feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: MSPcrunchStreamFeature.java,v 1.2 2005-01-06 10:33:27 tjc Exp $
+ *  @version $Id: MSPcrunchStreamFeature.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class MSPcrunchStreamFeature
@@ -118,8 +118,8 @@ public class MSPcrunchStreamFeature
     }
 
     try {
-      int query_start = Integer.valueOf (line_bits.elementAt (2)).intValue ();
-      int query_end = Integer.valueOf (line_bits.elementAt (3)).intValue ();
+      int query_start = Integer.valueOf ((String)line_bits.elementAt (2)).intValue ();
+      int query_end = Integer.valueOf ((String)line_bits.elementAt (3)).intValue ();
 
       final boolean crunch_x;
       final boolean complement_flag;
@@ -132,8 +132,8 @@ public class MSPcrunchStreamFeature
           crunch_x = true;
           complement_flag = true;
         } else {
-          if (line_bits.elementAt (1).charAt (0) == '.' ||
-              Character.isDigit (line_bits.elementAt (1).charAt (0))) {
+          if (((String)line_bits.elementAt (1)).charAt (0) == '.' ||
+              Character.isDigit (((String)line_bits.elementAt (1)).charAt (0))) {
             crunch_x = false;
             if (query_start > query_end) {
               complement_flag = true;
@@ -156,14 +156,14 @@ public class MSPcrunchStreamFeature
         query_start = tmp;
       }
 
-      final String score = line_bits.elementAt (0);
+      final String score = (String)line_bits.elementAt (0);
 
       final String percent_id;
 
       if (crunch_x) {
         percent_id = null;
       } else {
-        percent_id = line_bits.elementAt (1);
+        percent_id = (String)line_bits.elementAt (1);
       }
 
       final String query_id;
@@ -174,25 +174,25 @@ public class MSPcrunchStreamFeature
 
       if (crunch_x) {
         query_id = "unknown";
-        subject_start = line_bits.elementAt (4);
-        subject_end = line_bits.elementAt (5);
-        subject_id = line_bits.elementAt (6);
+        subject_start = (String)line_bits.elementAt (4);
+        subject_end = (String)line_bits.elementAt (5);
+        subject_id = (String)line_bits.elementAt (6);
         final StringBuffer desc_buffer = new StringBuffer ();
         for (int i = 7 ; i < line_bits.size () ; ++i) {
-          desc_buffer.append (line_bits.elementAt (i));
+          desc_buffer.append ((String)line_bits.elementAt (i));
           if (i < line_bits.size () - 1) {
             desc_buffer.append (" ");
           }
         }
         description = desc_buffer.toString ();
       } else {
-        query_id = line_bits.elementAt (4);
-        subject_start = line_bits.elementAt (5);
-        subject_end = line_bits.elementAt (6);
-        subject_id = line_bits.elementAt (7);
+        query_id = (String)line_bits.elementAt (4);
+        subject_start = (String)line_bits.elementAt (5);
+        subject_end = (String)line_bits.elementAt (6);
+        subject_id = (String)line_bits.elementAt (7);
         final StringBuffer desc_buffer = new StringBuffer ();
         for (int i = 8 ; i < line_bits.size () ; ++i) {
-          desc_buffer.append (line_bits.elementAt (i));
+          desc_buffer.append ((String)line_bits.elementAt (i));
           if (i < line_bits.size () - 1) {
             desc_buffer.append (" ");
           }

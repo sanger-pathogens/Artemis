@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamQualifier.java,v 1.1 2004-06-09 09:50:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamQualifier.java,v 1.2 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import java.io.IOException;
  *  This class contains routines for reading and writing Qualifiers.
  *
  *  @author Kim Rutherford
- *  @version $Id: StreamQualifier.java,v 1.1 2004-06-09 09:50:35 tjc Exp $
+ *  @version $Id: StreamQualifier.java,v 1.2 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public // XXX
@@ -109,7 +109,7 @@ class StreamQualifier {
           buffer.append ('=');
           buffer.append (quotedValue (qualifier_info,
                                       qualifier.getName (),
-                                      values.elementAt (i)));
+                                      (String)values.elementAt (i)));
         }
       }
 
@@ -143,7 +143,7 @@ class StreamQualifier {
           buffer.append ('=');
           buffer.append (quotedValue (qualifier_info,
                                       qualifier.getName (),
-                                      values.elementAt (i)));
+                                      (String)values.elementAt (i)));
         }
         return_vector.add (buffer.toString ());
       }

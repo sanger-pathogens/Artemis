@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.4 2005-01-06 11:21:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.5 2005-10-11 14:20:31 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -53,7 +53,7 @@ import javax.swing.*;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.4 2005-01-06 11:21:06 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.5 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -2392,7 +2392,7 @@ public class EditMenu extends SelectionMenu
           for(int j = 0; j < test_feature_gene_names.size(); ++j)
          {
             final String this_gene_name =
-              test_feature_gene_names.elementAt(j);
+              (String)test_feature_gene_names.elementAt(j);
 
             if(!gene_names.contains(this_gene_name))
               gene_names.add (this_gene_name);

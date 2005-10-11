@@ -20,35 +20,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/StringVector.java,v 1.3 2004-12-21 10:02:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/StringVector.java,v 1.4 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.util;
 
 import java.util.Vector;
-//import java.util.StringTokenizer;
 import java.util.Collections;
-import java.util.Collection;
 import java.util.Comparator;
 
 /**
  *  This class implements a Vector of String objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: StringVector.java,v 1.3 2004-12-21 10:02:43 tjc Exp $
+ *  @version $Id: StringVector.java,v 1.4 2005-10-11 14:20:31 tjc Exp $
  **/
 
-public class StringVector 
+public class StringVector extends Vector
 {
-  /**  Storage for String objects. */
-  private Vector vector;
-
   /**
    *  Create a new vector of String objects.
    **/
   public StringVector()
   {
-    vector = new Vector();
+    super();
   }
 
   /**
@@ -56,10 +51,16 @@ public class StringVector
    **/
   public StringVector(final String[] new_strings) 
   {
+    super(new_strings.length);
     int len = new_strings.length;
-    vector = new Vector(len);
     for(int i = 0; i < len; ++i) 
       add(new_strings[i]);
+  }
+
+  public StringVector(final String new_string)
+  {
+    super();
+    add(new_string);
   }
 
   /**
@@ -67,27 +68,10 @@ public class StringVector
    **/
   public StringVector(final StringVector new_strings) 
   {
+    super(new_strings.size());
     int len = new_strings.size();
-    vector = new Vector(len);
     for(int i = 0; i < len; ++i) 
       add(new_strings.elementAt (i));
-  }
-
-  /**
-   *  Create a new vector which contains only the given String.
-   **/
-  public StringVector(final String new_string) 
-  {
-    vector = new Vector();
-    add(new_string);
-  }
-
-  /**
-   *  Performs the same function as Vector.addElement()
-   **/
-  public void add(final String node) 
-  {
-    vector.addElement(node);
   }
 
   /**
@@ -97,79 +81,6 @@ public class StringVector
   {
     for (int i = 0; i < new_strings.size(); ++i)
       add (new_strings.elementAt(i));
-  }
-
-  /**
-   *  Performs the same function as Vector.removeElement()
-   **/
-  public boolean remove(final String node) 
-  {
-    return vector.removeElement(node);
-  }
-
-  /**
-   *  Return the elements of the Vector as an String array.
-   **/
-  public String[] getArray() 
-  {
-    final String[] return_array = new String[size()];
-    vector.copyInto(return_array);
-    return return_array;
-  }
-
-  /**
-   *  Return the elements of the Vector as Collection.
-   **/
-  public Collection asCollection() 
-  {
-    return (Collection)vector.clone();
-  }
-
-  /**
-   *  Performs the same function as Vector.elementAt()
-   **/
-  public String elementAt(final int index) 
-  {
-    return (String)vector.elementAt(index);
-  }
-
-  /**
-   *  Performs the same function as Vector.setElementAt ()
-   **/
-  public void setElementAt(final String string, final int index) 
-  {
-    vector.setElementAt(string, index);
-  }
-
-  /**
-   *  Performs the same function as Vector.size ()
-   **/
-  public int size()
-  {
-    return vector.size();
-  }
-
-  /**
-   *  Searches for the first occurence of the given argument, testing for
-   *  equality using the equals method.
-   *  @return the index of the first occurrence of the argument in this
-   *    vector; returns -1 if the object is not found.
-   **/
-  public int indexOf(final String string) 
-  {
-    return vector.indexOf(string);
-  }
-
-  /**
-   *  Return true if this object contains the given String, testing for
-   *  equality using the equals method.
-   **/
-  public boolean contains(final String string) 
-  {
-    if(indexOf(string) == -1)
-      return false;
-    else
-      return true;
   }
 
   /**
@@ -198,7 +109,7 @@ public class StringVector
       }
     };
 
-    Collections.sort(vector, comparator);
+    Collections.sort(this, comparator);
   }
 
   /**
@@ -299,13 +210,11 @@ public class StringVector
 
   public static void main(String args[])
   {
-    String argument = "a c g t c g c a t c g a c t c";
+    String argument = "a a g g g c a c g t c g c a t c g a c t c";
     long startTime = System.currentTimeMillis();
 
     for(int i=0; i<10000000; i++)
-    {
       getStrings(argument, " ", true);
-    }
 
     long endTime = System.currentTimeMillis();
 

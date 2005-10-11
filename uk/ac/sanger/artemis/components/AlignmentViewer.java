@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.28 2005-07-27 08:24:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.29 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,7 +47,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.28 2005-07-27 08:24:16 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.29 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -1274,7 +1274,7 @@ public class AlignmentViewer extends CanvasPanel
 
     for(int i = 0 ; i < status_strings.size() ; ++i) 
     {
-      final String status_string = status_strings.elementAt(i);
+      final String status_string = (String)status_strings.elementAt(i);
 
       final int status_string_width = fm.stringWidth(status_string);
 
@@ -1299,7 +1299,7 @@ public class AlignmentViewer extends CanvasPanel
     g.setColor(Color.black);
     for(int i = 0; i < status_strings.size(); ++i) 
     {
-      final String status_string = status_strings.elementAt(i);
+      final String status_string = (String)status_strings.elementAt(i);
       final int string_offset = font_height * (status_strings.size() - i - 1);
 
       g.drawString(status_string, 0,

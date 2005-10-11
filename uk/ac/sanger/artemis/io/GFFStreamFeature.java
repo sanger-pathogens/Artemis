@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.19 2005-09-20 13:10:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.20 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.19 2005-09-20 13:10:31 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.20 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -126,8 +126,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
                                     "(got " + line_bits.size () +
                                     " fields) from: " + line);
 
-    final String start_base_string = line_bits.elementAt(3).trim();
-    final String end_base_string   = line_bits.elementAt(4).trim();
+    final String start_base_string = ((String)line_bits.elementAt(3)).trim();
+    final String end_base_string   = ((String)line_bits.elementAt(4)).trim();
 
     final int start_base;
     final int end_base;
@@ -149,9 +149,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     {
       final boolean complement_flag;
 
-      if(line_bits.elementAt(6).equals("+")) 
+      if(((String)line_bits.elementAt(6)).equals("+")) 
         complement_flag = false;
-      else if(line_bits.elementAt(6).equals("-"))
+      else if(((String)line_bits.elementAt(6)).equals("-"))
         complement_flag = true;
       else 
       {
@@ -165,11 +165,11 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
       if(line_bits.size() == 9) 
       {
-        final String rest_of_line = line_bits.elementAt(8); 
+        final String rest_of_line = (String)line_bits.elementAt(8); 
 
         // parse the rest of the line as ACeDB format attributes
         final Hashtable attributes = parseAttributes(rest_of_line);
-        final String type = line_bits.elementAt(2);
+        final String type = (String)line_bits.elementAt(2);
 
         for(final java.util.Enumeration attribute_enum = attributes.keys();
             attribute_enum.hasMoreElements();)
@@ -191,22 +191,22 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       }
 
       final Qualifier gff_seqname =
-        new Qualifier("gff_seqname", decode(line_bits.elementAt(0)));
+        new Qualifier("gff_seqname", decode((String)line_bits.elementAt(0)));
 
       setQualifier(gff_seqname);
 
-      final Key key = new Key(line_bits.elementAt(2));
+      final Key key = new Key((String)line_bits.elementAt(2));
       setKey(key);
 
       final Qualifier source_qualifier =
-        new Qualifier("gff_source", line_bits.elementAt(1));
+        new Qualifier("gff_source", (String)line_bits.elementAt(1));
       setQualifier(source_qualifier);
 
       final Qualifier score_qualifier =
-        new Qualifier("score", line_bits.elementAt(5));
+        new Qualifier("score", (String)line_bits.elementAt(5));
       setQualifier(score_qualifier);
 
-      String frame = line_bits.elementAt(7);
+      String frame = (String)line_bits.elementAt(7);
 
       if(frame.equals ("0"))
         frame = "1";
@@ -280,7 +280,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       }
     }
 
-    return getQualifierByName("ID").getValues().elementAt(0);
+    return (String)(getQualifierByName("ID").getValues()).elementAt(0);
   }
 
 
@@ -477,7 +477,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
       if(codon_start != null && i == 0) 
       {
-        frame = codon_start.getValues().elementAt(0);
+        frame = (String)(codon_start.getValues()).elementAt(0);
 
         if(frame.equals ("1")) 
           frame = "0";
@@ -587,7 +587,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       for(int value_index = 0; value_index < values.size();
           ++value_index)
       {
-        final String this_value = values.elementAt(value_index);
+        final String this_value = (String)values.elementAt(value_index);
         buffer.append('=');
         try
         {

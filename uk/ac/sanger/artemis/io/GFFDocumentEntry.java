@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.17 2005-07-27 08:24:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.18 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.util.Vector;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.17 2005-07-27 08:24:17 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.18 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -164,7 +164,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           {
             StringVector values =
               this_feature.getQualifierByName("Parent").getValues();
-            group_name = values.elementAt(0);
+            group_name = (String)values.elementAt(0);
 
             if(this_feature.getQualifierByName("ID") != null &&
                !key.equals("exon"))
@@ -249,7 +249,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           Qualifier id_qualifier = this_feature.getQualifierByName("ID");
           if(id_qualifier != null)
           {
-            String id = id_qualifier.getValues().elementAt(0);
+            String id = (String)(id_qualifier.getValues()).elementAt(0);
             id_range_store.put(new_range, id);
           }
 
@@ -282,7 +282,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
 
           if(gene_qualifier != null &&
              gene_qualifier.getValues().size() > 0 &&
-             gene_qualifier.getValues().elementAt(0).startsWith("Phat"))
+             ((String)(gene_qualifier.getValues()).elementAt(0)).startsWith("Phat"))
           {
             // special case to handle incorrect output of the Phat gene
             // prediction tool
@@ -332,8 +332,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           merge_qualifier_vector.addElement(qual);
         else
         {
-          String id1 = id_qualifier.getValues().elementAt(0);
-          String id2 = qual.getValues().elementAt(0);
+          String id1 = (String)(id_qualifier.getValues()).elementAt(0);
+          String id2 = (String)(qual.getValues()).elementAt(0);
           id_qualifier.removeValue(id1);
           id_qualifier.addValue(id1+","+id2);
         }

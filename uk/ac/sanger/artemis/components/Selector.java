@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Selector.java,v 1.5 2005-07-13 10:00:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Selector.java,v 1.6 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -41,7 +41,7 @@ import javax.swing.*;
  *  features in an EntryGroup on key and contents.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Selector.java,v 1.5 2005-07-13 10:00:50 tjc Exp $
+ *  @version $Id: Selector.java,v 1.6 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class Selector extends JFrame
@@ -582,7 +582,7 @@ public class Selector extends JFrame
               StringVector.getStrings (search_text, " ");
 
             for (int i = 0 ; i < words.size () ; ++i) {
-              final String this_word = words.elementAt (i);
+              final String this_word = (String)words.elementAt (i);
               final FeaturePredicate new_predicate =
                 new FeatureKeyQualifierPredicate (key_selector.getSelectedItem (),
                                                   qualifier_name,
@@ -621,7 +621,7 @@ public class Selector extends JFrame
             
 
             for (int i = 0 ; i < words.size () ; ++i) {
-              final String this_word = words.elementAt (i);
+              final String this_word = (String)words.elementAt (i);
               final FeaturePredicate new_predicate =
                 new FeatureKeyQualifierPredicate (key_selector.getSelectedItem (),
                                                   null, // match any qialifier

@@ -97,7 +97,7 @@ public class DataCollectionPane extends JScrollPane
   {
     StringVector srs = Options.getOptions().getOptionValues("srs_url");
     if(srs != null)
-      srs_url = srs.elementAt(0);
+      srs_url = (String)srs.elementAt(0);
     else
       srs_url = "http://srs.sanger.ac.uk/srsbin/cgi-bin/";
     return srs_url;

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.16 2005-08-16 13:11:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.17 2005-10-11 14:20:31 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -61,7 +61,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.16 2005-08-16 13:11:19 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.17 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class FeatureEdit extends JFrame
@@ -880,7 +880,7 @@ public class FeatureEdit extends JFrame
           ++value_index)
       {
         final String qualifier_string =
-          qualifier_strings.elementAt(value_index);
+          (String)qualifier_strings.elementAt(value_index);
 
         buffer.append(tidyHelper(qualifier_string) + "\n");
       }
@@ -1328,7 +1328,7 @@ public class FeatureEdit extends JFrame
       for(int value_index = 0; value_index < qualifier_strings.size();
           ++value_index)
       {
-        final String qualifier_string = qualifier_strings.elementAt(value_index);
+        final String qualifier_string = (String)qualifier_strings.elementAt(value_index);
         buffer.append(qualifier_string + "\n");
       }
     }

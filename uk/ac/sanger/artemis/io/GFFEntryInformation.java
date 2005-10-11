@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFEntryInformation.java,v 1.2 2005-04-26 14:31:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFEntryInformation.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import uk.ac.sanger.artemis.Options;
  *  An EntryInformation object for GFFDocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: GFFEntryInformation.java,v 1.2 2005-04-26 14:31:44 tjc Exp $
+ *  @version $Id: GFFEntryInformation.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class GFFEntryInformation extends SimpleEntryInformation 
@@ -145,7 +145,7 @@ public class GFFEntryInformation extends SimpleEntryInformation
       final boolean once_only =
         current_qualifier_values.elementAt(0).equals("yes");
 
-      final String type_string = current_qualifier_values.elementAt(1);
+      final String type_string = (String)current_qualifier_values.elementAt(1);
 
       // find the keys for which this qualifier name is valid or required
 

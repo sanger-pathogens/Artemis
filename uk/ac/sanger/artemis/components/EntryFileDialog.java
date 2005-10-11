@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.4 2005-09-05 13:35:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.5 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -41,7 +41,7 @@ import javax.swing.*;
  *  This class is a JFileChooser that can read EMBL Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryFileDialog.java,v 1.4 2005-09-05 13:35:55 tjc Exp $
+ *  @version $Id: EntryFileDialog.java,v 1.5 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class EntryFileDialog extends StickyFileChooser 
@@ -82,7 +82,7 @@ public class EntryFileDialog extends StickyFileChooser
 
           for(int i = 0; i<sequence_suffixes.size(); ++i) 
           {
-            final String this_suffix = sequence_suffixes.elementAt(i);
+            final String this_suffix = (String)sequence_suffixes.elementAt(i);
 
             if(file.getName().endsWith("." + this_suffix) ||
                 file.getName().endsWith("." + this_suffix + ".gz")) 
@@ -91,7 +91,7 @@ public class EntryFileDialog extends StickyFileChooser
 
           for(int i = 0; i<feature_suffixes.size(); ++i) 
           {
-            final String this_suffix = feature_suffixes.elementAt(i);
+            final String this_suffix = (String)feature_suffixes.elementAt(i);
 
             if(file.getName().endsWith("." + this_suffix) ||
                file.getName().endsWith("." + this_suffix + ".gz")) 
@@ -116,7 +116,7 @@ public class EntryFileDialog extends StickyFileChooser
 
           for(int i = 0 ; i < feature_suffixes.size() ; ++i) 
           {
-            final String this_suffix = feature_suffixes.elementAt(i);
+            final String this_suffix = (String)feature_suffixes.elementAt(i);
 
             if(file.getName().endsWith("." + this_suffix) ||
                file.getName().endsWith("." + this_suffix + ".gz")) 
@@ -142,7 +142,7 @@ public class EntryFileDialog extends StickyFileChooser
 
           for(int i = 0 ; i<sequence_suffixes.size() ; ++i) 
           {
-            final String this_suffix = sequence_suffixes.elementAt(i);
+            final String this_suffix = (String)sequence_suffixes.elementAt(i);
 
             if(file.getName().endsWith("." + this_suffix) ||
                file.getName().endsWith("." + this_suffix + ".gz")) 

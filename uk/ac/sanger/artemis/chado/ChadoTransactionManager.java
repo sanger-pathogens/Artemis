@@ -158,7 +158,7 @@ public class ChadoTransactionManager
       for(int value_index = 0; value_index < qualifier_strings.size();
           ++value_index)
       {
-        final String qualifier_string = qualifier_strings.elementAt(value_index);
+        final String qualifier_string = (String)qualifier_strings.elementAt(value_index);
         buffer.append(qualifier_string + "\n");
       }
     }
@@ -181,7 +181,7 @@ public class ChadoTransactionManager
                               GFFStreamFeature feature)
   {
   
-    String feature_id = feature.getQualifierByName("ID").getValues().elementAt(0);
+    String feature_id = (String)(feature.getQualifierByName("ID").getValues()).elementAt(0);
     ChadoTransaction tsn;
     for(int qualifier_index = 0; qualifier_index < qualifiers_new.size();
         ++qualifier_index)
@@ -229,7 +229,7 @@ public class ChadoTransactionManager
           {
             tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                                        feature_id, "featureprop");
-            String qualifier_string = new_qualifier_strings.elementAt(value_index);
+            String qualifier_string = (String)new_qualifier_strings.elementAt(value_index);
             int index = qualifier_string.indexOf("=");
             if(index > -1)
               qualifier_string = qualifier_string.substring(index+1);
@@ -271,7 +271,7 @@ public class ChadoTransactionManager
           {
             tsn = new ChadoTransaction(ChadoTransaction.INSERT,
                                        feature_id, "featureprop");
-            String qualifier_string = new_qualifier_strings.elementAt(value_index);
+            String qualifier_string = (String)new_qualifier_strings.elementAt(value_index);
             int index = qualifier_string.indexOf("=");
             if(index > -1)
               qualifier_string = qualifier_string.substring(index+1);

@@ -321,7 +321,7 @@ public class BioJavaFeature extends EMBLObject implements ComparableFeature
                                 qualifier.getValues ().elementAt (0));
       } else {
         annotation.setProperty (qualifier.getName (),
-                                qualifier.getValues ().asCollection ());
+                                (Collection)qualifier.getValues ());
       }
     }
   }

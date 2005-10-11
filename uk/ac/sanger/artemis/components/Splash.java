@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.9 2005-05-25 12:33:02 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.10 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,7 +44,7 @@ import java.lang.reflect.Constructor;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.9 2005-05-25 12:33:02 tjc Exp $
+ *  @version $Id: Splash.java,v 1.10 2005-10-11 14:20:31 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -531,7 +531,9 @@ abstract public class Splash extends JFrame
   protected void makeGeneticCodeMenu(final JMenu options_menu)
   {
     // available genetic codes
-    String gcodes[] = Options.getOptions().getOptionValues("genetic_codes").getArray();
+
+    StringVector v_genetic_codes = Options.getOptions().getOptionValues("genetic_codes");
+    String gcodes[] = (String[])v_genetic_codes.toArray(new String[v_genetic_codes.size()]);
 
     // get the default
     StringVector gcode_default = Options.getOptions().getOptionValues("genetic_code_default");
@@ -540,7 +542,7 @@ abstract public class Splash extends JFrame
     int default_code = 0;
     if(gcode_default != null)
     {
-      String defS = gcode_default.elementAt(0);
+      String defS = (String)gcode_default.elementAt(0);
       if(defS.length() < 3)
       {
         try
@@ -605,7 +607,7 @@ abstract public class Splash extends JFrame
 
                 for(int i = 0; i < options_file_table.size(); ++i)
                 {
-                  String cod_plus_aa = options_file_table.elementAt(i);
+                  String cod_plus_aa = (String)options_file_table.elementAt(i);
 //                System.out.println(cod_plus_aa);
                   final int codon_index = Bases.getIndexOfBase(cod_plus_aa.charAt(0)) * 16 +
                                           Bases.getIndexOfBase(cod_plus_aa.charAt(1)) * 4 +

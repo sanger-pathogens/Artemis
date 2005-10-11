@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.13 2005-07-27 08:24:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.14 2005-10-11 14:20:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -60,7 +60,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.13 2005-07-27 08:24:16 tjc Exp $
+ *  @version $Id: Feature.java,v 1.14 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class Feature
@@ -1055,7 +1055,7 @@ public class Feature
         for(int values_index = 0; values_index < val_size; 
              ++values_index) 
         {
-          String this_value_string = values.elementAt(values_index);
+          String this_value_string = (String)values.elementAt(values_index);
 
           if(this_value_string == null) 
             continue;
@@ -1175,7 +1175,7 @@ public class Feature
       int reqd_size = required_qualifiers.size();
       for(int i = 0; i < reqd_size; ++i) 
       {
-        if(getQualifierByName(required_qualifiers.elementAt(i)) == null) 
+        if(getQualifierByName((String)required_qualifiers.elementAt(i)) == null) 
           return false;
       }
     } 
@@ -1492,7 +1492,7 @@ public class Feature
       try
       {
         final Qualifier qualifier =
-          getQualifierByName(qualifier_names.elementAt(i));
+          getQualifierByName((String)qualifier_names.elementAt(i));
 
         if(qualifier != null)
         {
@@ -1500,7 +1500,7 @@ public class Feature
 
           if(values != null && values.size() > 0 &&
              values.elementAt(0) != null) 
-            return values.elementAt(0);
+            return (String)values.elementAt(0);
         }
       } 
       catch(InvalidRelationException e){}
@@ -1651,7 +1651,7 @@ public class Feature
         {
           for(int i = 0; i < values.size(); ++i) 
           {
-            final String value = values.elementAt(i);
+            final String value = (String)values.elementAt(i);
 
             final String START_STRING = "(pos:";
             final String COMMA_STRING = ",aa:";
@@ -2277,9 +2277,9 @@ public class Feature
     {
       if(colours.size() == 3)
       {
-        int red   = Integer.parseInt(colours.elementAt(0));
-        int green = Integer.parseInt(colours.elementAt(1));
-        int blue  = Integer.parseInt(colours.elementAt(2));
+        int red   = Integer.parseInt((String)colours.elementAt(0));
+        int green = Integer.parseInt((String)colours.elementAt(1));
+        int blue  = Integer.parseInt((String)colours.elementAt(2));
 
         if(red < 0) 
           red = 0;
@@ -2304,7 +2304,7 @@ public class Feature
       } 
       else
       {
-        final String colour_string = colours.elementAt(0);
+        final String colour_string = (String)colours.elementAt(0);
 
         final int colour_number;
 
@@ -2371,7 +2371,7 @@ public class Feature
         return "";
       else
       {
-        final String first_element = values.elementAt(0);
+        final String first_element = (String)values.elementAt(0);
 
         if(first_element == null)
           return "";

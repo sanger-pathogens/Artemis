@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleEntryInformation.java,v 1.1 2004-06-09 09:50:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleEntryInformation.java,v 1.2 2005-10-11 14:20:31 tjc Exp $
  */
 
 
@@ -35,7 +35,7 @@ import java.util.*;
  *  qualifier.
  *
  *  @author Kim Rutherford
- *  @version $Id: SimpleEntryInformation.java,v 1.1 2004-06-09 09:50:31 tjc Exp $
+ *  @version $Id: SimpleEntryInformation.java,v 1.2 2005-10-11 14:20:31 tjc Exp $
  **/
 
 public class SimpleEntryInformation
@@ -209,7 +209,7 @@ public class SimpleEntryInformation
 
     for (int i = 0 ; i < all_names.size () ; ++i) {
       final QualifierInfo this_qualifier_info =
-        getQualifierInfoHash ().get (all_names.elementAt (i));
+        getQualifierInfoHash ().get ((String)all_names.elementAt (i));
 
       if (this_qualifier_info.isValidFor (key)) {
         return_names.add (this_qualifier_info.getName ());
@@ -240,7 +240,7 @@ public class SimpleEntryInformation
 
     for (int i = 0 ; i < all_names.size () ; ++i) {
       final QualifierInfo this_qualifier_info =
-        getQualifierInfoHash ().get (all_names.elementAt (i));
+        getQualifierInfoHash ().get ((String)all_names.elementAt (i));
 
       if (this_qualifier_info.isRequiredFor (key)) {
         return_names.add (this_qualifier_info.getName ());
