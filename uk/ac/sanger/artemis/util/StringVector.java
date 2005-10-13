@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/StringVector.java,v 1.4 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/StringVector.java,v 1.5 2005-10-13 12:06:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.util;
@@ -33,7 +33,7 @@ import java.util.Comparator;
  *  This class implements a Vector of String objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: StringVector.java,v 1.4 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: StringVector.java,v 1.5 2005-10-13 12:06:12 tjc Exp $
  **/
 
 public class StringVector extends Vector
@@ -68,10 +68,7 @@ public class StringVector extends Vector
    **/
   public StringVector(final StringVector new_strings) 
   {
-    super(new_strings.size());
-    int len = new_strings.size();
-    for(int i = 0; i < len; ++i) 
-      add(new_strings.elementAt (i));
+    super(new_strings);
   }
 
   /**
@@ -117,9 +114,7 @@ public class StringVector extends Vector
    **/
   public StringVector copy() 
   {
-    final StringVector new_string_vector = new StringVector(this);
-//  new_string_vector.vector = (Vector)vector.clone();
-    return new_string_vector;
+    return new StringVector(this);
   }
 
   /**
