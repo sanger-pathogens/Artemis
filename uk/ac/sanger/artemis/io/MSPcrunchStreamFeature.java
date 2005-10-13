@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/MSPcrunchStreamFeature.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/MSPcrunchStreamFeature.java,v 1.4 2005-10-13 12:21:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import java.io.*;
  *  A StreamFeature that thinks it is a MSPcrunch feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: MSPcrunchStreamFeature.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: MSPcrunchStreamFeature.java,v 1.4 2005-10-13 12:21:24 tjc Exp $
  **/
 
 public class MSPcrunchStreamFeature
@@ -110,37 +110,76 @@ public class MSPcrunchStreamFeature
       throws ReadFormatException {
     super (null);
 
-    final StringVector line_bits = StringVector.getStrings (line, " ");
+//  final StringVector line_bits = StringVector.getStrings (line, " ");
 
-    if (line_bits.size () < 7) {
-      throw new ReadFormatException ("invalid MSPcrunch line (not enough " +
-                                     "fields): " + line);
+    int index = 0;
+    int lastIndex = 0;
+    int count = 1;
+
+    while( (index = line.indexOf(" ", index)) > -1)
+    {
+      count++;
+      index++;
     }
 
-    try {
-      int query_start = Integer.valueOf ((String)line_bits.elementAt (2)).intValue ();
-      int query_end = Integer.valueOf ((String)line_bits.elementAt (3)).intValue ();
+    if(count > 8)
+      count = 9;
+    else if(count < 7) 
+      throw new ReadFormatException ("invalid MSPcrunch line (not enough " +
+                                     "fields): " + line);
+
+    final String line_bits[] = new String[count];
+    count = 0;
+    index = 0;
+
+    while( (index = line.indexOf(" ", index)) > -1 &&
+           count < line_bits.length-1)
+    {
+      line_bits[count] = line.substring(lastIndex, index);
+      count++;
+      index++;
+      lastIndex = index;  
+    }
+    if(lastIndex < line.length())
+    {
+      line_bits[count] = line.substring(lastIndex);
+      count++;
+    }
+
+    try
+    {
+      int query_start = Integer.valueOf (line_bits[2]).intValue ();
+      int query_end = Integer.valueOf (line_bits[3]).intValue ();
 
       final boolean crunch_x;
       final boolean complement_flag;
       
-      if (line_bits.elementAt (1).equals ("(+1)")) {
+      if (line_bits[1].equals ("(+1)")) 
+      {
         crunch_x = true;
         complement_flag = false;
-      } else {
-        if (line_bits.elementAt (1).equals ("(-1)")) {
+      } 
+      else 
+      {
+        if (line_bits[1].equals ("(-1)")) 
+        {
           crunch_x = true;
           complement_flag = true;
-        } else {
-          if (((String)line_bits.elementAt (1)).charAt (0) == '.' ||
-              Character.isDigit (((String)line_bits.elementAt (1)).charAt (0))) {
+        } 
+        else 
+        {
+          if (line_bits[1].charAt (0) == '.' ||
+              Character.isDigit (line_bits[1].charAt (0))) 
+          {
             crunch_x = false;
-            if (query_start > query_end) {
+            if (query_start > query_end) 
               complement_flag = true;
-            } else {
+            else 
               complement_flag = false;
-            }
-          } else {
+            
+          } 
+          else 
+          {
             final String message =
               "invalid MSPcrunch line - column 3 should be a " +
               "number, (-1) or (+1): " + line;
@@ -150,61 +189,50 @@ public class MSPcrunchStreamFeature
       }
 
       
-      if (query_start > query_end) {
+      if(query_start > query_end) 
+      {
         final int tmp = query_end;
         query_end = query_start;
         query_start = tmp;
       }
 
-      final String score = (String)line_bits.elementAt (0);
+      if(crunch_x) 
+        line_bits[1] = null;
 
-      final String percent_id;
+      final Qualifier query_id_qualifier;
 
-      if (crunch_x) {
-        percent_id = null;
-      } else {
-        percent_id = (String)line_bits.elementAt (1);
-      }
-
-      final String query_id;
       final String subject_start;
       final String subject_end;
       final String subject_id;
       final String description;
 
-      if (crunch_x) {
-        query_id = "unknown";
-        subject_start = (String)line_bits.elementAt (4);
-        subject_end = (String)line_bits.elementAt (5);
-        subject_id = (String)line_bits.elementAt (6);
+      if(crunch_x) 
+      {
+        query_id_qualifier = new Qualifier ("query_id", "unknown");
+        subject_start = line_bits[4];
+        subject_end = line_bits[5];
+        subject_id = line_bits[6];
         final StringBuffer desc_buffer = new StringBuffer ();
-        for (int i = 7 ; i < line_bits.size () ; ++i) {
-          desc_buffer.append ((String)line_bits.elementAt (i));
-          if (i < line_bits.size () - 1) {
+
+        for (int i = 7 ; i < line_bits.length ; ++i) 
+        {
+          desc_buffer.append (line_bits[i]);
+          if(i < line_bits.length - 1)
             desc_buffer.append (" ");
-          }
         }
         description = desc_buffer.toString ();
-      } else {
-        query_id = (String)line_bits.elementAt (4);
-        subject_start = (String)line_bits.elementAt (5);
-        subject_end = (String)line_bits.elementAt (6);
-        subject_id = (String)line_bits.elementAt (7);
-        final StringBuffer desc_buffer = new StringBuffer ();
-        for (int i = 8 ; i < line_bits.size () ; ++i) {
-          desc_buffer.append ((String)line_bits.elementAt (i));
-          if (i < line_bits.size () - 1) {
-            desc_buffer.append (" ");
-          }
-        }
-        description = desc_buffer.toString ();
+      } 
+      else 
+      {
+        query_id_qualifier = new Qualifier ("query_id", line_bits[4]);
+        subject_start = line_bits[5];
+        subject_end = line_bits[6];
+        subject_id  = line_bits[7];
+        description = line_bits[8];
       }
 
       final Qualifier blast_score_qualifier =
-        new Qualifier ("blast_score", score);
-
-      final Qualifier query_id_qualifier =
-        new Qualifier ("query_id", query_id);
+        new Qualifier ("blast_score", line_bits[0]);
 
       final Qualifier subject_start_qualifier =
         new Qualifier ("subject_start", subject_start);
@@ -217,13 +245,14 @@ public class MSPcrunchStreamFeature
 
       setQualifier (blast_score_qualifier);
 
-      if (percent_id != null) {
+      if(line_bits[1] != null) 
+      {
         // score qualifier must be 1-100
         final Qualifier score_qualifier =
-          new Qualifier ("score", percent_id);
+          new Qualifier ("score", line_bits[1]);
         
         final Qualifier percent_id_qualifier =
-          new Qualifier ("percent_id", percent_id);
+          new Qualifier ("percent_id", line_bits[1]);
         
         setQualifier (score_qualifier);
         setQualifier (percent_id_qualifier);
@@ -244,17 +273,18 @@ public class MSPcrunchStreamFeature
 
       setKey (key);
 
-      final StringVector note_values = new StringVector ();
+//    final StringVector note_values = new StringVector ();
+//    note_values.add (description);
+//
+// This is more memory intensive than just using the description:
+//    note_values.add ("hit to " + subject_id + " " + subject_start +
+//                     ".." + subject_end + "  score: " + line_bits[0] +
+//                     (line_bits[1] == null ?
+//                      "" :
+//                      "  percent id: " + line_bits[1]) +
+//                     "  " + description);
 
-      note_values.add ("hit to " + subject_id + " " + subject_start +
-                       ".." + subject_end + "  score: " + score +
-                       (percent_id == null ?
-                        "" :
-                        "  percent id: " + percent_id) +
-                       "  " + description);
-
-      final Qualifier note_qualifier = new Qualifier ("note", note_values);
-
+      final Qualifier note_qualifier = new Qualifier ("note", description);
       setQualifier (note_qualifier);
 
       final RangeVector ranges =
