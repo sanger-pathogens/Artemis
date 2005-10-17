@@ -266,8 +266,9 @@ public class DatabaseEntrySource implements EntrySource
     DefaultMutableTreeNode seq_node;
     DefaultMutableTreeNode typ_node;
 
-    final Vector v_organism = new Vector(organism.keySet());
-    Collections.sort(v_organism);
+    final Object v_organism[] = organism.keySet().toArray();
+    final int v_organism_size = v_organism.length;
+    Arrays.sort(v_organism);
 
     while(enum_org.hasMoreElements())
     { 
@@ -277,16 +278,16 @@ public class DatabaseEntrySource implements EntrySource
 
       Hashtable seq_type_node = new Hashtable();
 
-      for(int i=0; i<v_organism.size(); i++)
+      for(int i=0; i<v_organism_size; i++)
       {
-        String seq_name = (String)v_organism.get(i);
+        String seq_name = (String)v_organism[i];
         if(seq_name.startsWith(name))
         {
           int ind1 = seq_name.indexOf( "- ");
           int ind2 = seq_name.lastIndexOf("- ");
 
-          String type =  seq_name.substring(ind1+2,ind2).trim();
-          seq_name = seq_name.substring(ind2+2).trim();
+          String type =  seq_name.substring(ind1+2,ind2-1);
+          seq_name = seq_name.substring(ind2+2);
 
           if(!seq_type_node.containsKey(type))
           {   
