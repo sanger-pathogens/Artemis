@@ -499,7 +499,7 @@ public class DatabaseDocument extends Document
       }
 
       sql = sql + ") " + " and organism.organism_id=feature.organism_id "+
-            "ORDER BY abbreviation, name";
+            "ORDER BY abbreviation";
 
       appendToLogFile(sql,sqlLog);
 
