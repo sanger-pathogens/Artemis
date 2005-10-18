@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.14 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.15 2005-10-18 08:42:55 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -45,7 +45,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.14 2005-10-11 14:20:31 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.15 2005-10-18 08:42:55 tjc Exp $ */
 
 public class Bases 
 {
@@ -143,12 +143,16 @@ public class Bases
     forward_strand = reverse_strand;
     reverse_strand = temp;
 
-    final String new_sequence =
-      reverseComplement(getSequence().getSubSequence(1, getLength()));
+//  final String new_sequence =
+//    reverseComplement(getSequence().getSubSequence(1, getLength()));
+
+    final char[] new_sequence =
+      reverseComplement(getSequence().getCharSubSequence(1, getLength()));
 
     try 
     {
-      getSequence().setFromChar(new_sequence.toCharArray());
+//    getSequence().setFromChar(new_sequence.toCharArray());
+      getSequence().setFromChar(new_sequence);
     } 
     catch (IllegalSymbolException e) 
     {
