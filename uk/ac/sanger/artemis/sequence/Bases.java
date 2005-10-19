@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.15 2005-10-18 08:42:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.16 2005-10-19 08:27:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -45,7 +45,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.15 2005-10-18 08:42:55 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.16 2005-10-19 08:27:00 tjc Exp $ */
 
 public class Bases 
 {
@@ -201,7 +201,7 @@ public class Bases
    *  Return the complement of the given Range.  eg. if the sequence length is
    *  100 and the Range is 1..10 then the return value will be 90..100.
    **/
-  public Range complementRange (final Range range) {
+  private Range complementRange (final Range range) {
     final int real_start = getComplementPosition (range.getEnd ());
     final int real_end   = getComplementPosition (range.getStart ());
 
