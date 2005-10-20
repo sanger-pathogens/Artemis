@@ -6,7 +6,7 @@
 # necessary a symbolic link can be made to this script from
 # /usr/local/bin/ or elsewhere.
 
-# $Header: //tmp/pathsoft/artemis/art,v 1.12 2005-09-07 13:35:24 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/art,v 1.13 2005-10-20 12:49:29 tjc Exp $
 
 # resolve links - $0 may be a link
 PRG=$0
@@ -112,10 +112,15 @@ else
     JAVA=$JAVA_VM
 fi
 
+PLATTMP=`uname`
+if [ "$PLATTMP" = "Darwin" ]
+then
+  FLAGS="$FLAGS -Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=Artemis"
+fi
 
 if [ "$QUIET" = no ]
 then
     echo starting Artemis with flags: $FLAGS $ARTEMIS_PROPERTIES 1>&2
 fi
 
-$JAVA -Dj2ssh -Dcom.apple.mrj.application.apple.menu.about.name="Artemis" -Djdbc.drivers=org.postgresql.Driver $FLAGS $ARTEMIS_PROPERTIES uk.ac.sanger.artemis.components.ArtemisMain $*
+$JAVA -Dj2ssh -Djdbc.drivers=org.postgresql.Driver $FLAGS $ARTEMIS_PROPERTIES uk.ac.sanger.artemis.components.ArtemisMain $*

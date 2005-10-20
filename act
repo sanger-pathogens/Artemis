@@ -7,7 +7,7 @@
 # /usr/local/bin/ or elsewhere.
 
 
-# $Header: //tmp/pathsoft/artemis/act,v 1.7 2005-08-25 10:55:38 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/act,v 1.8 2005-10-20 12:51:37 tjc Exp $
 
 # resolve links - $0 may be a link
 PRG=$0
@@ -96,11 +96,17 @@ else
     JAVA=$JAVA_VM
 fi
 
+PLATTMP=`uname`
+if [ "$PLATTMP" = "Darwin" ]
+then
+  FLAGS="$FLAGS -Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=ACT"
+fi
+
 
 if [ $QUIET = no ]
 then
     echo starting ACT with flags: $FLAGS 1>&2
 fi
 
-$JAVA -Dcom.apple.mrj.application.apple.menu.about.name="ACT" $FLAGS $ACT_PROPERTIES uk.ac.sanger.artemis.components.ActMain $*
+$JAVA $FLAGS $ACT_PROPERTIES uk.ac.sanger.artemis.components.ActMain $*
 
