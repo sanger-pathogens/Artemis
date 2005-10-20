@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.29 2005-07-08 15:11:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.30 2005-10-20 13:28:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,14 +38,16 @@ import java.util.Vector;
 import java.util.Comparator;
 import java.util.Enumeration;
 
+import javax.swing.Box;
 import javax.swing.JScrollBar;
 import javax.swing.JComponent;
+import javax.swing.UIManager;
 
 /**
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.29 2005-07-08 15:11:12 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.30 2005-10-20 13:28:36 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -4071,10 +4073,16 @@ public class FeatureDisplay extends EntryGroupPanel
       }
     });
 
+    Box box = Box.createHorizontalBox();
+    box.add(scrollbar);
+
+    if(UIManager.getLookAndFeel().getName().equals("Mac OS X Aqua"))
+      box.add(Box.createHorizontalStrut(scrollbar.getPreferredSize().height));
+
     if(scrollbar_at_top) 
-      add(scrollbar, "North");
+      add(box, "North");
     else 
-      add(scrollbar, "South");
+      add(box, "South");
   }
 
   /**
