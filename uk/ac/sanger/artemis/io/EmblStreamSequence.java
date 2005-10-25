@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/EmblStreamSequence.java,v 1.4 2005-07-18 14:31:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/EmblStreamSequence.java,v 1.5 2005-10-25 10:46:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import java.io.Writer;
  *  This is a subclass of StreamSequence containing EMBL sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: EmblStreamSequence.java,v 1.4 2005-07-18 14:31:05 tjc Exp $
+ *  @version $Id: EmblStreamSequence.java,v 1.5 2005-10-25 10:46:53 tjc Exp $
  **/
 
 public class EmblStreamSequence extends StreamSequence 
@@ -224,13 +224,16 @@ public class EmblStreamSequence extends StreamSequence
     if(header_line != null)
       writer.write(header_line);
 
-    writer.write("SQ   Sequence " +
+    if(header_line == null || !header_line.startsWith("SQ "))
+      writer.write("SQ   Sequence " +
                   length()    + " BP; " +
                   getACount() + " A; " +
                   getCCount() + " C; " +
                   getGCount() + " G; " +
                   getTCount() + " T; " +
                   getOtherCount() + " other;\n");
+    else
+      writer.write("\n");
 
     int line_length_so_far = 0;
     final int BLOCK_LENGTH = 10;
@@ -290,6 +293,7 @@ public class EmblStreamSequence extends StreamSequence
    **/
   private int getHeaderBaseCount(final String line) 
   {
+
     if(line.startsWith("SQ   Sequence ")) 
     {
       final String temp_line = line.substring(14);
