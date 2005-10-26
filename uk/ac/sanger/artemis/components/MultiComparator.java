@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.13 2005-08-17 08:43:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.14 2005-10-26 16:10:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -28,6 +28,7 @@ package uk.ac.sanger.artemis.components;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
 import uk.ac.sanger.artemis.components.filetree.FileNode;
+import uk.ac.sanger.artemis.util.RemoteFileDocument;
 import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
@@ -35,6 +36,7 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.SimpleEntryInformation;
+import uk.ac.sanger.artemis.io.DocumentEntry;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -58,7 +60,7 @@ import javax.swing.border.BevelBorder;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.13 2005-08-17 08:43:05 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.14 2005-10-26 16:10:38 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
@@ -496,6 +498,18 @@ public class MultiComparator extends JFrame
       try
       {
         entry.save(DocumentEntryFactory.ANY_FORMAT);
+
+        // save it back to ssh server
+        if(((DocumentEntry)entry.getEMBLEntry()).getDocument()
+                                   instanceof RemoteFileDocument)
+        {
+           RemoteFileDocument node =
+               (RemoteFileDocument)(((DocumentEntry)entry.getEMBLEntry()).getDocument());
+
+           File file = new File( ((DocumentEntry)entry.getEMBLEntry()).getDocument().toString() );
+           node.saveEntry(file);
+        }
+
       }
       catch(IOException e)
       {

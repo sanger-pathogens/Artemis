@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/DocumentFactory.java,v 1.1 2004-06-09 09:52:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/DocumentFactory.java,v 1.2 2005-10-26 16:10:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.util;
@@ -28,11 +28,13 @@ package uk.ac.sanger.artemis.util;
 import java.net.*;
 import java.io.*;
 
+import uk.ac.sanger.artemis.components.filetree.RemoteFileNode;
+
 /**
  *  A Factory for Document objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: DocumentFactory.java,v 1.1 2004-06-09 09:52:58 tjc Exp $
+ *  @version $Id: DocumentFactory.java,v 1.2 2005-10-26 16:10:38 tjc Exp $
  **/
 
 public class DocumentFactory {
@@ -47,8 +49,18 @@ public class DocumentFactory {
       } catch (MalformedURLException e) {
         return new FileDocument (new File (source_string));
       }
-    } else {
-      return new FileDocument (new File (source_string));
+    } 
+    else 
+    {
+      File file = new File (source_string);
+      if(file.exists())                    // assume a local file
+        return new FileDocument(file);
+      else                                 // assume a remote file
+      {
+        RemoteFileNode node = new RemoteFileNode("", file.getName(), null,
+                                                 file.getParent(), false);
+        return new RemoteFileDocument(node);
+      }  
     }
   }
 }

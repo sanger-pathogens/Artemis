@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.15 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.16 2005-10-26 16:10:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.util.Enumeration;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.15 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.16 2005-10-26 16:10:38 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -1116,7 +1116,16 @@ abstract public class SimpleDocumentEntry
   public void save(final Document document)
       throws IOException 
   {
-    final Writer out_file = document.getWriter();
+    final Writer out_file;
+    try
+    {
+      out_file = document.getWriter();
+    }
+    catch(NullPointerException npe)
+    {
+      return;
+    }
+
     writeToStream(out_file);
     out_file.close();
 
