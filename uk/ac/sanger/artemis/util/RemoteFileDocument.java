@@ -117,7 +117,7 @@ public class RemoteFileDocument extends Document
 
     final InputStream file_input_stream =
       new ProgressInputStream(new ByteArrayInputStream(bytes),
-                              getProgressListeners());;
+                              getProgressListeners());
     
     if(getName().endsWith(".gz")) 
       return new WorkingGZIPInputStream(file_input_stream);
