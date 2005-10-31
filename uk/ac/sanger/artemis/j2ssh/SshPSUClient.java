@@ -104,9 +104,17 @@ public class SshPSUClient extends Thread
 
   private SshClient rescue()
   {
-    ssh.disconnect();
-    SshLogin sshLogin = new SshLogin();
-    ssh = sshLogin.getSshClient();
+    try
+    {
+      ssh.disconnect();
+      SshLogin sshLogin = new SshLogin();
+      ssh = sshLogin.getSshClient();
+    }
+    catch(Exception exp)
+    {
+      System.out.println("SshPSUClient.rescue()");
+      exp.printStackTrace();
+    }
     return ssh;
   }
 
@@ -177,32 +185,51 @@ public class SshPSUClient extends Thread
   *  Wait until a file appears on the server.  
   *
   */
-  private boolean waitUntilFileAppears(SftpClient sftp, String file)
+  private boolean waitUntilFileAppears(String file)
                    throws InterruptedException, IOException
   {
+    SftpClient sftp;
+
     for(int i=0; i < 100; i++)
     {
       Thread.currentThread().sleep(10000);
-
+      sftp = getSftpClient();
       try
       {
-        Object list[] = sftp.ls(wdir).toArray();
-
-        for(int j=0; j<list.length;j++)
-        {
-          if( ((SftpFile)list[j]).getFilename().equals(file) )
-            return true;
-        }
+        if(fileExists(sftp, file))
+          return true;
       }
       catch(SshException sshe)
       {
+        if(System.getProperty("debug") != null)
+        {
+          System.out.println("waitUntilFileAppears()");
+          sshe.printStackTrace();
+        }
         rescue();
+        sftp = getSftpClient();
+        try
+        {
+          if(fileExists(sftp, file))
+            return true;
+        } catch(SshException sshe2) {}
       }
     }
 
     return false;
   }
 
+  private boolean fileExists(SftpClient sftp, String file)
+             throws SshException, IOException
+  {
+    Object list[] = sftp.ls(wdir).toArray();
+    for(int j=0; j<list.length;j++)
+    {
+      if( ((SftpFile)list[j]).getFilename().equals(file) )
+        return true;
+    }
+    return false;
+  }
 
   /**
   *
@@ -300,7 +327,13 @@ public class SshPSUClient extends Thread
       }
       catch(SshException sshe)
       {
+        if(System.getProperty("debug") != null)
+        {
+          System.out.println("runBlastOrFasta()");
+          sshe.printStackTrace();
+        }
         rescue();
+        sftp = getSftpClient();
       }
       catch(IOException ioe)
       {
@@ -317,7 +350,13 @@ public class SshPSUClient extends Thread
       }
       catch(SshException ioe)
       {
+        if(System.getProperty("debug") != null)
+        {
+          System.out.println("runBlastOrFasta() - 2");
+          ioe.printStackTrace();
+        }
         rescue();
+        sftp = getSftpClient();
         sftp.put(filepath, wdir+filename);
       }
 
@@ -335,6 +374,11 @@ public class SshPSUClient extends Thread
       }
       catch(IOException exp)
       {
+        if(System.getProperty("debug") != null)
+        {
+          System.out.println("runBlastOrFasta() - 3");
+          exp.printStackTrace();
+        }
         rescue();
       }
 
@@ -375,13 +419,15 @@ public class SshPSUClient extends Thread
         while(stdouth.isAlive() || stderrh.isAlive())
           Thread.currentThread().sleep(10);
 
-        isFile = waitUntilFileAppears(sftp, filename+".out");
+        isFile = waitUntilFileAppears(filename+".out");
       }
       catch(InterruptedException ie)
       {
         ie.printStackTrace();
       }
-        
+       
+      sftp = getSftpClient();
+ 
       if(System.getProperty("debug") != null)
       {
         // stdout & stderr
@@ -403,6 +449,11 @@ public class SshPSUClient extends Thread
       }
       catch(Exception ioe)
       {
+        if(System.getProperty("debug") != null)
+        {
+          System.out.println("runBlastOrFasta() - 3");
+          ioe.printStackTrace();
+        }
         rescue();
         sftp.get(outputfile, filepath+".out");
       }
@@ -437,6 +488,11 @@ public class SshPSUClient extends Thread
     }
     catch(IOException ioe)
     { 
+      if(System.getProperty("debug") != null)
+      {
+        System.out.println("getSftpClient()");
+        ioe.printStackTrace();
+      }
       rescue();
     }
     return ssh.openSftpClient();

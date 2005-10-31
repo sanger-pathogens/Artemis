@@ -82,9 +82,17 @@ public class SshFileManager
 
   private void rescue()
   {
-    ssh.disconnect();
-    SshLogin sshLogin = new SshLogin();
-    ssh = sshLogin.getSshClient();
+    try
+    {
+      ssh.disconnect();
+      SshLogin sshLogin = new SshLogin();
+      ssh = sshLogin.getSshClient();
+    }
+    catch(Exception exp)
+    {  
+      System.out.println("SshFileManager.rescue()");
+      exp.printStackTrace();
+    }
   }
 
 
@@ -279,6 +287,17 @@ public class SshFileManager
           return false;
       }      
     }
+    catch(SshException sshe)
+    {
+      if(System.getProperty("debug") != null)
+      {
+        System.out.println("put() ");
+        sshe.printStackTrace();
+      }
+
+      rescue();
+      return put(dir, local_file, monitor, force);
+    }
     catch(IOException ioe)
     {
       // remote file doesn't exist
@@ -296,6 +315,11 @@ public class SshFileManager
     }
     catch(SshException sshe)
     {
+      if(System.getProperty("debug") != null)
+      {
+        System.out.println("put() 2");
+        sshe.printStackTrace();
+      }
       rescue();
       return put(dir, local_file, monitor, true);
     }
@@ -305,6 +329,7 @@ public class SshFileManager
       ioe.printStackTrace();
       return false;
     }
+
   }
 
   private boolean putTransfer(final SftpClient sftp, 
