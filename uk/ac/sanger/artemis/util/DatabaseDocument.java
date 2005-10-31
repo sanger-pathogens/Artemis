@@ -220,8 +220,8 @@ public class DatabaseDocument extends Document
         getSequence(conn, entry);
       }
 
-//    if(System.getProperty("debug") != null)
-//      appendToLogFile(new String(entry.getBytes()),sqlLog);
+      if(System.getProperty("debug") != null)
+        appendToLogFile(new String(entry.getBytes()),sqlLog);
 
       instream = new ByteArrayInputStream(entry.getBytes());
 
