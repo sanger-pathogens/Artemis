@@ -81,6 +81,17 @@ public class DatabaseDocument extends Document
     this.feature_id = feature_id;
   }
 
+  /**
+   *
+   *  Create a new Document from a database.
+   *  @param location This should be a URL string giving:
+   *         jdbc:postgresql://host:port/datbase_name?user=username
+   *  @param feature_id ID of a feature to be extracted.
+   *  @param splitGFFEntry split into separate entries based on feature 
+   *         types.
+   *  @param progress_listener input stream progress listener
+   *
+   **/
   public DatabaseDocument(String location, String feature_id,
                           boolean splitGFFEntry,
                           InputStreamProgressListener progress_listener)
@@ -124,7 +135,7 @@ public class DatabaseDocument extends Document
       int ind = ((String)getLocation()).indexOf("?");
       String name = ((String)getLocation()).substring(0,ind);
       ind = name.lastIndexOf("/");
-      return name.substring(ind);
+      return name.substring(ind+1);
     }
     return name;
   }
@@ -237,6 +248,12 @@ public class DatabaseDocument extends Document
     return null;
   }
 
+  /**
+  *
+  * Called (by DatabaseEntrySource) to retrieve all the documents for each 
+  * entry created. 
+  *
+  */
   public DatabaseDocument[] getGffDocuments(String location, String id)
   {
     int nentries = 0;
@@ -403,6 +420,11 @@ public class DatabaseDocument extends Document
     return (String)cvterm.get(new Long(id));
   }
 
+  /**
+  *
+  * Look up cvterms names and id and return in a hashtable.
+  *
+  */
   private Hashtable getCvterm(Connection conn, String cv_name)
   {
     String sql = "SELECT cvterm.cvterm_id, cvterm.name " +
