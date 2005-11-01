@@ -378,17 +378,16 @@ public class DatabaseDocument extends Document
 
       this_buff.append(propTypeName+"="+value); // attributes
 
-      int rewind = 0;
-      while(rs.next() && rs.getString("uniquename").equals(name))
+      boolean rewind = false;
+      while( (rewind = rs.next()) && rs.getString("uniquename").equals(name))
       {
         prop_type_id = rs.getLong("prop_type_id");
         propTypeName = getCvtermName(conn,prop_type_id);
         value = GFFStreamFeature.encode(rs.getString("value"));
         this_buff.append(";"+propTypeName+"="+value);
-        rewind++;
       }
 
-      if(rewind > 0)
+      if(rewind) 
         rs.previous();
 
       this_buff.append("\n");
