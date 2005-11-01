@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.29 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.30 2005-11-01 12:01:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,7 +47,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.29 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.30 2005-11-01 12:01:04 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -1637,7 +1637,8 @@ public class AlignmentViewer extends CanvasPanel
         }
       }
       else if(i == imatch-1 &&
-              this_end < length)
+              this_end < length &&
+              start+1 < length)
       {
         coords[0] = new Integer(start+1);
         coords[1] = new Integer(length);
