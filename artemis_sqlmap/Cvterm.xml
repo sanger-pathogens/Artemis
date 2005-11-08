@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="Cvterm"> 
+ 
+    <resultMap id="select-cvterm-names-result" class="uk.ac.sanger.ibatis.Cvterm">
+   	<result property="id" column="cvterm_id"/>
+  	<result property="name" column="name"/>
+     </resultMap>
+
+    <!-- look up cvterms names and id -->
+     <select id="getCvterm" resultMap="select-cvterm-names-result"> 
+   	SELECT  
+	  cvterm.CVTERM_ID, cvterm.NAME
+        FROM cvterm, cv WHERE cv.cv_id = cvterm.cv_id
+     </select> 
+ 
+</sqlMap> 

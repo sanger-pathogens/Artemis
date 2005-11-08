@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+<sqlMap namespace="Organism"> 
+ 
+      <!-- Use primitive wrapper type (e.g. Integer) as parameter and allow results to 
+            be auto-mapped results to Organism object (JavaBean) properties --> 
+      <select id="getOrganism" parameterClass="java.lang.String" resultClass="uk.ac.sanger.ibatis.Organism"> 
+   	SELECT  
+	  ORGANISM_ID as id,
+	  ABBREVIATION, 
+	  GENUS,
+	  SPECIES,
+	  COMMON_NAME,
+	  COMMENT
+ 	FROM Organism WHERE COMMON_NAME = #value# 
+      </select> 
+ 
+</sqlMap> 

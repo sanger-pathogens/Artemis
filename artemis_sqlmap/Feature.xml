@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="Feature"> 
+ 
+    <resultMap id="select-feature-properties-result" class="uk.ac.sanger.ibatis.Feature">
+        <result property="timelastmodified" column="timelastmodified"/>
+   	<result property="id" column="id"/>
+  	<result property="object_id" column="object_id"/>
+        <result property="strand" column="strand"/>
+        <result property="fmin" column="fmin"/>
+        <result property="fmax" column="fmax"/>
+        <result property="uniquename" column="uniquename"/>
+        <result property="type_id" column="type_id"/>
+        <result property="prop_type_id" column="prop_type_id"/>
+        <result property="value" column="value"/>
+     </resultMap>
+
+     <resultMap id="select-feature-sequence-result" class="uk.ac.sanger.ibatis.Feature">
+        <result property="name" column="name"/>
+        <result property="residues" column="residues"/>
+     </resultMap>
+    
+     <resultMap id="select-feature-with-residues-result" class="uk.ac.sanger.ibatis.Feature">
+        <result property="abbreviation" column="abbreviation"/>
+        <result property="name" column="name"/>
+        <result property="id" column="feature_id"/>
+        <result property="type_id" column="type_id"/>
+     </resultMap>
+
+     <!-- get feature name -->
+     <select id="getFeatureName" parameterClass="java.lang.String" resultClass="java.lang.String"> 
+   	SELECT  
+	  name
+        FROM feature WHERE feature_id=#value#
+     </select> 
+
+     <select id="getGffLine" parameterClass="int" resultMap="select-feature-properties-result">
+        SELECT
+          timelastmodified, 
+          feature.feature_id AS id, 
+          object_id, 
+          strand, 
+          fmin, 
+          fmax, 
+          uniquename,
+          feature.type_id AS type_id,  
+          featureprop.type_id AS prop_type_id, 
+          featureprop.value AS value
+        FROM  featureloc, feature
+        LEFT JOIN feature_relationship ON feature_relationship.subject_id=feature.feature_id
+        LEFT JOIN featureprop ON featureprop.feature_id=feature.feature_id
+        WHERE srcfeature_id=#value# and  featureloc.feature_id=feature.feature_id
+        and (featureloc.rank=feature_relationship.rank OR feature_relationship.rank IS NULL)
+        ORDER BY feature.type_id,  uniquename
+     </select>
+ 
+    <select id="getSequence" parameterClass="int" resultMap="select-feature-sequence-result">
+       SELECT
+         name, 
+         residues 
+       FROM feature 
+       WHERE feature_id=#value#
+    </select>
+
+    <select id="getResidueType" resultClass="java.lang.String">
+       SELECT DISTINCT type_id FROM feature WHERE residues notnull
+    </select>
+
+    <select id="getResidueFeatures" parameterClass="java.util.List" resultMap="select-feature-with-residues-result">
+       SELECT 
+         abbreviation, 
+         name, 
+         feature_id, 
+         type_id 
+       FROM organism, feature WHERE
+         organism.organism_id=feature.organism_id AND
+         residues notnull
+         <iterate prepend="AND" conjunction="OR" open="(" close=")">
+           type_id=#[]#
+         </iterate>
+       ORDER BY abbreviation
+    </select>
+</sqlMap> 
