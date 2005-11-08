@@ -24,6 +24,8 @@
 
 package uk.ac.sanger.artemis.util;
 
+import com.ibatis.sqlmap.client.SqlMapClient;
+import uk.ac.sanger.ibatis.*;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.chado.ChadoTransaction;
 
@@ -33,6 +35,8 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.Date;
+import java.util.List;
+import java.util.Iterator;
 import javax.swing.JOptionPane;
 
 /**
@@ -54,6 +58,7 @@ public class DatabaseDocument extends Document
   private ByteBuffer gff_buff;
   private String[] types = { "exon", "gene", "CDS", "transcript" };
   private boolean splitGFFEntry;
+  private boolean iBatis = false;
 
   /**
    *
@@ -65,6 +70,8 @@ public class DatabaseDocument extends Document
   public DatabaseDocument(String location)
   {
     super(location);
+    if(System.getProperty("ibatis") != null)
+      iBatis = true;
   }
 
   /**
@@ -79,6 +86,8 @@ public class DatabaseDocument extends Document
   {
     super(location);
     this.feature_id = feature_id;
+    if(System.getProperty("ibatis") != null)
+      iBatis = true;
   }
 
   /**
@@ -100,6 +109,8 @@ public class DatabaseDocument extends Document
     this.feature_id = feature_id;
     this.splitGFFEntry = splitGFFEntry;
     this.progress_listener = progress_listener;
+    if(System.getProperty("ibatis") != null)
+      iBatis = true;
   }
 
   public DatabaseDocument(String location, String feature_id,
@@ -109,6 +120,8 @@ public class DatabaseDocument extends Document
     this.feature_id = feature_id;
     this.gff_buff   = gff_buff;
     this.name = name;
+    if(System.getProperty("ibatis") != null)
+      iBatis = true;
   }
 
   /**
@@ -140,23 +153,7 @@ public class DatabaseDocument extends Document
     return name;
   }
 
-  /**
-   *
-   *  Return a Document with the last element stripped off.
-   *
-   **/
-  public String getFeatureName(String feature_id, Connection conn)
-                  throws java.sql.SQLException
-  { 
-    Statement st = conn.createStatement();
 
-    String sql = "SELECT name FROM feature WHERE feature_id= "+feature_id;
-    appendToLogFile(sql,sqlLog);
-    ResultSet rs = st.executeQuery(sql);
-    rs.next();
-    return rs.getString("name");
-  }
-  
   /**
    *
    *  Return a Document with the last element stripped off.
@@ -209,17 +206,26 @@ public class DatabaseDocument extends Document
 
     try
     {
-      Connection conn = getConnection();
-      System.out.println("Connected");
+      Connection conn = null;
 
-      gff_buffer = getGFF(conn,feature_id);
+      if(!iBatis)
+        conn = getConnection();
+
+      if(iBatis)
+        gff_buffer = getGFFiBatis(feature_id);
+      else
+        gff_buffer = getGFFJdbc(conn,feature_id);
+
       ByteBuffer entry = new ByteBuffer();
-
       if(splitGFFEntry)
       {
         if(gff_buffer[0].size() > 0)
           entry.append(gff_buffer[0]);
-        getSequence(conn, entry);
+
+        if(iBatis)
+          getSequenceIbatis(entry);
+        else
+          getSequence(conn, entry);
       }
       else
       {
@@ -228,7 +234,11 @@ public class DatabaseDocument extends Document
           if(gff_buffer[i].size() > 0)
             entry.append(gff_buffer[i]);
         }
-        getSequence(conn, entry);
+
+        if(iBatis)
+          getSequenceIbatis(entry);
+        else
+          getSequence(conn, entry);
       }
 
       if(System.getProperty("debug") != null)
@@ -236,7 +246,8 @@ public class DatabaseDocument extends Document
 
       instream = new ByteArrayInputStream(entry.getBytes());
 
-      conn.close();
+      if(conn != null)
+        conn.close();
       return instream;
     }
     catch(java.sql.SQLException sqlExp)
@@ -285,12 +296,148 @@ public class DatabaseDocument extends Document
 
 
   /**
+   *
+   *  Return a feature name given the feature_id.
+   *
+   **/
+  private String getFeatureNameIbatis(String feature_id)
+                  throws java.sql.SQLException
+  {
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    return (String)sqlMap.queryForObject("getFeatureName",
+                                              feature_id);
+  }
+
+  /**
+   *
+   *  Return a feature name given the feature_id.
+   *
+   **/
+  private String getFeatureNameJdbc(String feature_id, Connection conn)
+                  throws java.sql.SQLException
+  {
+    Statement st = conn.createStatement();
+
+    String sql = "SELECT name FROM feature WHERE feature_id= "+feature_id;
+    appendToLogFile(sql,sqlLog);
+    ResultSet rs = st.executeQuery(sql);
+    rs.next();
+    return rs.getString("name");
+  }
+
+  private ByteBuffer[] getGFFiBatis(String parentFeatureID)
+          throws java.sql.SQLException
+  {
+
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    List featList = sqlMap.queryForList("getGffLine",
+                              new Integer(feature_id));
+
+    ByteBuffer[] buffers = new ByteBuffer[types.length+1];
+    for(int i=0; i<buffers.length; i++)
+      buffers[i] = new ByteBuffer();
+
+    String parentFeature = getFeatureNameIbatis(parentFeatureID);
+    Hashtable hstore = new Hashtable();
+    ByteBuffer this_buff;
+
+    int feature_size = featList.size();
+
+    for(int i=0; i<feature_size; i++)
+    {
+      Feature feat = (Feature)featList.get(i);
+      int fmin          = feat.getFmin()+1;
+      int fmax          = feat.getFmax();
+      long type_id      = feat.getType_id();
+      long prop_type_id = feat.getProp_type_id();
+      int strand        = feat.getStrand();
+      String name       = feat.getUniquename();
+      String typeName   = getCvtermName(null,type_id);
+      String propTypeName = getCvtermName(null,prop_type_id);
+      String timelastmodified = feat.getTimelastmodified().toString();
+      String feature_id = Integer.toString(feat.getId());
+      hstore.put(feature_id, name);
+
+      String parent_id  = feat.getObject_id();
+      if(parent_id != null && hstore.containsKey(parent_id))
+        parent_id = (String)hstore.get(parent_id);
+
+// make gff format
+
+      // select buffer
+      this_buff = buffers[types.length];
+      for(int j=0; j<types.length; j++)
+      {
+        if(types[j].equals(typeName))
+          this_buff = buffers[j];
+      }
+
+      this_buff.append(parentFeature+"\t");    // seqid
+      this_buff.append("chado\t");             // source
+      this_buff.append(typeName+"\t");         // type
+      this_buff.append(fmin+"\t");             // start
+      this_buff.append(fmax+"\t");             // end
+      this_buff.append(".\t");                 // score
+      if(strand == -1)                         // strand
+        this_buff.append("-\t");
+      else if(strand == 1)
+        this_buff.append("+\t");
+      else
+        this_buff.append(".\t");
+
+      this_buff.append(".\t");                 // phase
+      this_buff.append("ID="+name+";");
+
+      if(parent_id != null)
+        this_buff.append("Parent="+parent_id+";");
+
+      this_buff.append("timelastmodified="+timelastmodified+";");
+
+      String value = "";
+      if(feat.getValue() != null)
+        value = GFFStreamFeature.encode(feat.getValue());
+
+      this_buff.append(propTypeName+"="+value); // attributes
+
+      // is the next line part of the same feature, if so merge
+      boolean rewind = false;
+
+      Feature featNext = null;
+
+      if(i < feature_size-1)
+        featNext = (Feature)featList.get(i+1);
+     
+      // merge next line if part of the same feature
+      while(featNext != null &&
+            featNext.getUniquename().equals(name))
+      {
+        prop_type_id = feat.getProp_type_id();
+        propTypeName = getCvtermName(null,prop_type_id);
+        value = GFFStreamFeature.encode(feat.getValue());
+        this_buff.append(";"+propTypeName+"="+value);
+        i++;
+        if(i < feature_size-1)
+          featNext = (Feature)featList.get(i+1);
+        else 
+          break;
+      }
+
+      this_buff.append("\n");
+
+      progress_listener.progressMade("Read from database: "+name);
+    }
+
+    return buffers;
+  }
+
+
+  /**
   *
   * Given a parent (chromosome, contig, supercontig) retrieve the features
   * in the form of a GFF stream.
   *
   */ 
-  private ByteBuffer[] getGFF(Connection conn, String parentFeatureID) 
+  private ByteBuffer[] getGFFJdbc(Connection conn, String parentFeatureID) 
           throws java.sql.SQLException
   {
     Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
@@ -305,13 +452,6 @@ public class DatabaseDocument extends Document
        " and (featureloc.rank=feature_relationship.rank OR feature_relationship.rank IS NULL)"+
        " ORDER BY feature.type_id,  uniquename";
 
-//     "SELECT timelastmodified, feature.feature_id, object_id, strand, fmin, fmax, uniquename, feature.type_id, "+
-//     " featureprop.type_id AS prop_type_id, featureprop.value FROM  featureloc, featureprop, "+
-//     " feature LEFT JOIN feature_relationship ON feature_relationship.subject_id=feature.feature_id "+
-//     " WHERE srcfeature_id = "+parentFeatureID+" and featureloc.feature_id=featureprop.feature_id and "+
-//     " featureloc.feature_id=feature.feature_id ORDER BY feature.type_id,  uniquename";
-
-
     appendToLogFile(sql,sqlLog);
     ResultSet rs = st.executeQuery(sql);
 
@@ -319,7 +459,7 @@ public class DatabaseDocument extends Document
     for(int i=0; i<buffers.length; i++)
       buffers[i] = new ByteBuffer();
 
-    String parentFeature = getFeatureName(parentFeatureID,conn);
+    String parentFeature = getFeatureNameJdbc(parentFeatureID,conn);
     Hashtable hstore = new Hashtable();
     ByteBuffer this_buff;
 
@@ -378,6 +518,7 @@ public class DatabaseDocument extends Document
 
       this_buff.append(propTypeName+"="+value); // attributes
 
+      // is the next line part of the same feature, if so merge
       boolean rewind = false;
       while( (rewind = rs.next()) && rs.getString("uniquename").equals(name))
       {
@@ -414,9 +555,45 @@ public class DatabaseDocument extends Document
   private String getCvtermName(Connection conn, long id)
   {
     if(cvterm == null)
-      getCvterm(conn,null);
- 
+    {
+      if(iBatis)
+        getCvtermIbatis(null);
+      else
+        getCvterm(conn,null);
+    }
+
     return (String)cvterm.get(new Long(id));
+  }
+
+  /**
+  *
+  * Look up cvterms names and id and return in a hashtable.
+  *
+  */
+  private Hashtable getCvtermIbatis(String cv_name)
+  {
+    cvterm = new Hashtable();
+
+    try
+    {
+      SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+
+      List cvtem_list = sqlMap.queryForList("getCvterm", null);
+      Iterator it = cvtem_list.iterator();
+
+      while(it.hasNext())
+      {
+        Cvterm cv = (Cvterm)it.next();
+        cvterm.put(new Long(cv.getId()), cv.getName());
+      }
+    }
+    catch (SQLException sqle)
+    {
+      System.err.println(this.getClass() + ": SQLException retrieving CvTerms");
+      System.err.println(sqle);
+    }
+
+    return cvterm;
   }
 
   /**
@@ -463,6 +640,17 @@ public class DatabaseDocument extends Document
   }
 
 
+  public ByteBuffer getSequenceIbatis(ByteBuffer buff) throws java.sql.SQLException
+  {
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    Feature feat = (Feature)sqlMap.queryForObject("getSequence", new Integer(feature_id));
+    buff.append("##FASTA\n>");
+    buff.append(feat.getName());
+    buff.append("\n");
+    buff.append(feat.getResidues());
+    return buff;
+  }
+
   public ByteBuffer getSequence(Connection conn, ByteBuffer buff) throws java.sql.SQLException
   {
     Statement st = conn.createStatement();
@@ -485,12 +673,20 @@ public class DatabaseDocument extends Document
   }
 
 
+  public Hashtable getDatabaseEntries()
+  {
+    if(iBatis)
+      return getDatabaseEntriesIbatis();
+    else
+      return getDatabaseEntriesJdbc();
+  }
+
   /**
    *
    *  Create a hashtable of the available entries.
    * 
    **/
-  public Hashtable getDatabaseEntries()
+  private Hashtable getDatabaseEntriesJdbc()
   {
     db = new Hashtable();
     organism = new Vector();
@@ -519,7 +715,8 @@ public class DatabaseDocument extends Document
           sql = sql + " OR ";
       }
 
-      sql = sql + ") " + " and organism.organism_id=feature.organism_id "+
+      sql = sql + ") and organism.organism_id=feature.organism_id "+
+            "and residues notnull "+
             "ORDER BY abbreviation";
 
       appendToLogFile(sql,sqlLog);
@@ -552,6 +749,44 @@ public class DatabaseDocument extends Document
       conn.printStackTrace();    
     }
 
+    return db;
+  }
+
+   /**
+   *
+   *  Create a hashtable of the available entries.
+   *
+   **/
+  private Hashtable getDatabaseEntriesIbatis()
+  {
+    db = new Hashtable();
+    organism = new Vector();
+
+    try
+    {
+      SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+      List list = sqlMap.queryForList("getResidueType", null);
+      List list_residue_features = sqlMap.queryForList("getResidueFeatures", list);
+      Iterator it = list_residue_features.iterator();
+
+      while(it.hasNext())
+      {
+        Feature feat = (Feature)it.next();
+        String org      = feat.getAbbreviation();
+        String typeName = getCvtermName(null,feat.getType_id());
+        db.put(org+" - "+typeName+" - "+feat.getName(),
+               Integer.toString(feat.getId()));
+        if(!organism.contains(org))
+          organism.add(org);
+      }
+    }
+    catch(java.sql.SQLException sqlExp)
+    {
+      JOptionPane.showMessageDialog(null, "SQL Problems...",
+                                "SQL Error",
+                                JOptionPane.ERROR_MESSAGE);
+      sqlExp.printStackTrace();
+    }
     return db;
   }
 
