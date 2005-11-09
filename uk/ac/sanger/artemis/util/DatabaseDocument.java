@@ -71,7 +71,10 @@ public class DatabaseDocument extends Document
   {
     super(location);
     if(System.getProperty("ibatis") != null)
+    {
       iBatis = true;
+      System.setProperty("chado",location);
+    }
   }
 
   /**
@@ -87,7 +90,10 @@ public class DatabaseDocument extends Document
     super(location);
     this.feature_id = feature_id;
     if(System.getProperty("ibatis") != null)
+    {
       iBatis = true;
+      System.setProperty("chado",location);
+    }
   }
 
   /**
@@ -110,7 +116,10 @@ public class DatabaseDocument extends Document
     this.splitGFFEntry = splitGFFEntry;
     this.progress_listener = progress_listener;
     if(System.getProperty("ibatis") != null)
+    {
       iBatis = true;
+      System.setProperty("chado",location);
+    }
   }
 
   public DatabaseDocument(String location, String feature_id,
@@ -121,7 +130,10 @@ public class DatabaseDocument extends Document
     this.gff_buff   = gff_buff;
     this.name = name;
     if(System.getProperty("ibatis") != null)
+    {
       iBatis = true;
+      System.setProperty("chado",location);
+    }
   }
 
   /**

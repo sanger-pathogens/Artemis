@@ -48,11 +48,22 @@ public class DbSqlConfig
      if(System.getProperty("chado") != null)
      {
        String url = System.getProperty("chado");
-       int index = url.indexOf("?");
+       int index  = url.indexOf("?");
+       int index2 = url.indexOf("user=");
        properties = new Properties();
 
-       properties.put("chado", url.substring(0,index)); 
-       properties.put("username", url.substring(index+1));      
+       int index3 = url.indexOf("://");
+       if(index3 < 0)
+         index3 = 0;
+       else
+         index3 = index3+3;
+
+       properties.put("chado", url.substring(index3,index)); 
+
+       if(index2 < 0)
+         properties.put("username", url.substring(index+1));
+       else
+         properties.put("username", url.substring(index2+5));
      }
 
      sqlMap =  SqlMapClientBuilder.buildSqlMapClient(reader, 
