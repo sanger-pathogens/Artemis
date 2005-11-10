@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.11 2005-07-27 08:24:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.12 2005-11-10 14:29:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.11 2005-07-27 08:24:16 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.12 2005-11-10 14:29:14 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -639,6 +639,7 @@ public class AddMenu extends SelectionMenu
           cds_ranges.reverse ();
         }
 
+        int select = 0;
         for (int range_index = 0 ;
              range_index < cds_ranges.size () - 1 ;
              ++range_index) {
@@ -652,13 +653,29 @@ public class AddMenu extends SelectionMenu
             continue;
           }
 
-          final Range new_range;
+          Range new_range = null;
 
           try {
             new_range = new Range (end_of_range_1 + 1,
                                    start_of_range_2 - 1);
           } catch (OutOfRangeException e) {
-            throw new Error ("internal error - unexpected exception: " + e);
+            Object[] options = { "CANCEL", "IGNORE", "IGNORE ALL"};
+
+            if(select != 2)
+            {
+              select = JOptionPane.showOptionDialog(null,
+                          "Found overlapping CDS\n"+e,
+                          "Out of Range",
+                           JOptionPane.YES_NO_CANCEL_OPTION,
+                           JOptionPane.WARNING_MESSAGE,
+                           null,
+                           options,
+                           options[0]);
+              if(select == 0)
+                throw new Error ("internal error - unexpected exception: " + e);
+             
+              continue;
+            }
           }
 
           final RangeVector intron_ranges = new RangeVector ();
@@ -679,7 +696,21 @@ public class AddMenu extends SelectionMenu
           } catch (EntryInformationException e) {
             throw new Error ("internal error - unexpected exception: " + e);
           } catch (OutOfRangeException e) {
-            throw new Error ("internal error - unexpected exception: " + e);
+            Object[] options = { "CANCEL", "IGNORE", "IGNORE ALL"};
+
+            if(select != 2)
+            {
+              select = JOptionPane.showOptionDialog(null, 
+                          "Found overlapping CDS\n"+e,
+                          "Out of Range",
+                           JOptionPane.YES_NO_CANCEL_OPTION,
+                           JOptionPane.WARNING_MESSAGE,
+                           null,
+                           options,
+                           options[0]);
+              if(select == 0)
+                throw new Error ("internal error - unexpected exception: " + e);
+            }
           }
         }
       }
