@@ -423,9 +423,9 @@ public class DatabaseDocument extends Document
       while(featNext != null &&
             featNext.getUniquename().equals(name))
       {
-        prop_type_id = feat.getProp_type_id();
+        prop_type_id = featNext.getProp_type_id();
         propTypeName = getCvtermName(null,prop_type_id);
-        value = GFFStreamFeature.encode(feat.getValue());
+        value = GFFStreamFeature.encode(featNext.getValue());
         this_buff.append(";"+propTypeName+"="+value);
         i++;
         if(i < feature_size-1)
