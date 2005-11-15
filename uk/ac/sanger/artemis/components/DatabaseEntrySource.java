@@ -173,6 +173,7 @@ public class DatabaseEntrySource implements EntrySource
             inDB.setText(db_url.substring(index2+1,index3));
             inUser.setText(db_url.substring(index3+1));
             
+/*
             if(!prompt_user)
             {
               location = "jdbc:postgresql://"
@@ -182,6 +183,7 @@ public class DatabaseEntrySource implements EntrySource
                  +inUser.getText().trim();
               return true;
             }
+*/
           }
         }
       }
