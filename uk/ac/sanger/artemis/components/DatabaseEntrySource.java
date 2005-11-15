@@ -53,6 +53,7 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
 public class DatabaseEntrySource implements EntrySource
 {
   private String location;
+  private JPasswordField pfield;
   private Hashtable entries;
   private boolean splitGFFEntry;
 
@@ -127,7 +128,7 @@ public class DatabaseEntrySource implements EntrySource
   protected boolean setLocation(final boolean prompt_user)
   {
     Container bacross = new Container();
-    bacross.setLayout(new GridLayout(5,2,5,5));
+    bacross.setLayout(new GridLayout(6,2,5,5));
 
     JLabel lServer = new JLabel("Server : ");
     bacross.add(lServer);
@@ -136,18 +137,23 @@ public class DatabaseEntrySource implements EntrySource
 
     JLabel lPort = new JLabel("Port : ");
     bacross.add(lPort);
-    JTextField inPort = new JTextField("13001");
+    JTextField inPort = new JTextField("5432");
     bacross.add(inPort);
 
     JLabel lDB = new JLabel("Database : ");
     bacross.add(lDB);
-    JTextField inDB = new JTextField("chadoCVS");
+    JTextField inDB = new JTextField("chado");
     bacross.add(inDB);
 
     JLabel lUser = new JLabel("User : ");
     bacross.add(lUser);
-    JTextField inUser = new JTextField("es2");
+    JTextField inUser = new JTextField("afumigatus");
     bacross.add(inUser);
+
+    JLabel lpasswd = new JLabel("Password : ");
+    bacross.add(lpasswd);
+    pfield = new JPasswordField(16);
+    bacross.add(pfield);
 
     // given -Dchado=localhost:port/dbname?username
     if(System.getProperty("chado") != null)
@@ -194,6 +200,7 @@ public class DatabaseEntrySource implements EntrySource
       +inDB.getText().trim()+ "?user="
       +inUser.getText().trim();
 
+     
      return true;
   }
 
@@ -215,7 +222,7 @@ public class DatabaseEntrySource implements EntrySource
   */
   protected JTree getDatabaseTree()
   {
-    DatabaseDocument doc = new DatabaseDocument(location);
+    DatabaseDocument doc = new DatabaseDocument(location, pfield);
 
     entries = doc.getDatabaseEntries();
     Vector organism = doc.getOrganism();
@@ -339,7 +346,7 @@ public class DatabaseEntrySource implements EntrySource
       } 
       else 
       {
-        DatabaseDocument doc = new DatabaseDocument(location, id, 
+        DatabaseDocument doc = new DatabaseDocument(location, pfield, id, 
                                splitGFFEntry, progress_listener);
         db_entry = new DatabaseDocumentEntry(doc);
       }

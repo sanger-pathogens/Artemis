@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Iterator;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 
 /**
  *  Objects of this class are Documents created from a relational database.
@@ -59,6 +60,7 @@ public class DatabaseDocument extends Document
   private String[] types = { "exon", "gene", "CDS", "transcript" };
   private boolean splitGFFEntry;
   private boolean iBatis = false;
+  private JPasswordField pfield;
 
   /**
    *
@@ -67,9 +69,11 @@ public class DatabaseDocument extends Document
    *         jdbc:postgresql://host:port/datbase_name?user=username
    *
    **/
-  public DatabaseDocument(String location)
+  public DatabaseDocument(String location, JPasswordField pfield)
   {
     super(location);
+    this.pfield = pfield;
+
     if(System.getProperty("ibatis") != null)
     {
       iBatis = true;
@@ -85,9 +89,12 @@ public class DatabaseDocument extends Document
    *  @param feature_id ID of a feature to be extracted.
    *
    **/
-  public DatabaseDocument(String location, String feature_id)
+  public DatabaseDocument(String location, JPasswordField pfield,
+                          String feature_id)
   {
     super(location);
+    this.pfield = pfield;
+
     this.feature_id = feature_id;
     if(System.getProperty("ibatis") != null)
     {
@@ -107,11 +114,13 @@ public class DatabaseDocument extends Document
    *  @param progress_listener input stream progress listener
    *
    **/
-  public DatabaseDocument(String location, String feature_id,
+  public DatabaseDocument(String location, JPasswordField pfield,
+                          String feature_id,
                           boolean splitGFFEntry,
                           InputStreamProgressListener progress_listener)
   {
     super(location);
+    this.pfield = pfield;
     this.feature_id = feature_id;
     this.splitGFFEntry = splitGFFEntry;
     this.progress_listener = progress_listener;
@@ -122,10 +131,12 @@ public class DatabaseDocument extends Document
     }
   }
 
-  public DatabaseDocument(String location, String feature_id,
+  public DatabaseDocument(String location, JPasswordField pfield,
+                          String feature_id,
                           ByteBuffer gff_buff, String name)
   {
     super(location);
+    this.pfield = pfield;
     this.feature_id = feature_id;
     this.gff_buff   = gff_buff;
     this.name = name;
@@ -144,7 +155,7 @@ public class DatabaseDocument extends Document
    **/
   public Document append(String name) throws IOException 
   {
-    return new DatabaseDocument(((String)getLocation()) + name);
+    return new DatabaseDocument(((String)getLocation()) + name, pfield);
   }
 
   /**
@@ -299,7 +310,7 @@ public class DatabaseDocument extends Document
       else
         name = types[i];
 
-      new_docs[nentries] = new DatabaseDocument(location, id, gff_buffer[i], name);
+      new_docs[nentries] = new DatabaseDocument(location, pfield, id, gff_buffer[i], name);
       nentries++;
     }
 
@@ -776,6 +787,7 @@ public class DatabaseDocument extends Document
 
     try
     {
+      DbSqlConfig.init(pfield);
       SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
       List list = sqlMap.queryForList("getResidueType", null);
       List list_residue_features = sqlMap.queryForList("getResidueFeatures", list);
@@ -807,10 +819,26 @@ public class DatabaseDocument extends Document
     return organism;
   }
 
+
+  /**
+  *
+  * Make a connetion with the jdbc 
+  * jdbc:postgresql://localhost:13001/chadoCVS?user=es2
+  *
+  */
   public Connection getConnection() throws java.sql.SQLException,
                                            java.net.ConnectException
   {
-    return DriverManager.getConnection((String)getLocation());
+    String location = (String)getLocation();
+    if(pfield == null ||
+       pfield.getPassword().length == 0)
+      return DriverManager.getConnection(location);
+    
+     // assume we have a password
+     final int index = location.indexOf("?user=");
+     return DriverManager.getConnection(location.substring(0,index),
+                                        location.substring(index+6),
+                                        new String(pfield.getPassword()));
   }
 
 

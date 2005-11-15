@@ -29,15 +29,16 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapClientBuilder;
 import com.ibatis.common.resources.Resources;
 
+import javax.swing.JPasswordField;
 import java.util.Properties;
 import java.io.Reader;
 
 public class DbSqlConfig
 {
 
-  private static final SqlMapClient sqlMap;
+  private static SqlMapClient sqlMap;
 
-  static
+  public static void init(JPasswordField fpasswd)
   {
     try
     {
@@ -64,6 +65,9 @@ public class DbSqlConfig
          properties.put("username", url.substring(index+1));
        else
          properties.put("username", url.substring(index2+5));
+
+       if(fpasswd != null && fpasswd.getPassword().length > 0)
+         properties.put("password", new String(fpasswd.getPassword()));
      }
 
      sqlMap =  SqlMapClientBuilder.buildSqlMapClient(reader, 
