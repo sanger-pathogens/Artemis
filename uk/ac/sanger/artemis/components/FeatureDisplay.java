@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.30 2005-10-20 13:28:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.31 2005-11-15 12:21:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,7 +47,7 @@ import javax.swing.UIManager;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.30 2005-10-20 13:28:36 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.31 2005-11-15 12:21:18 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -958,14 +958,14 @@ public class FeatureDisplay extends EntryGroupPanel
 
       makeBaseVisibleInternal(new_centre_position, true, false);
     } 
-    else 
+    else if(event.getType() != SequenceChangeEvent.CONTIG_REVERSE_COMPLEMENT)
       makeBaseVisibleInternal(event.getPosition(), true, false);
 
     fixScrollbar();
     needVisibleFeatureVectorUpdate();
     repaint();
 
-    if(event.getType() == SequenceChangeEvent.REVERSE_COMPLEMENT) 
+    if(event.getType() == SequenceChangeEvent.REVERSE_COMPLEMENT ) 
       fireAdjustmentEvent(DisplayAdjustmentEvent.REV_COMP_EVENT);
     else 
       fireAdjustmentEvent(DisplayAdjustmentEvent.SCROLL_ADJUST_EVENT);

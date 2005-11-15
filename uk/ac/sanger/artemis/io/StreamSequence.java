@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.9 2005-09-02 16:25:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.10 2005-11-15 12:21:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.io.Writer;
  *  Sequence stored in 4 bit chunks.
  *
  *  @author Kim Rutherford
- *  @version $Id: StreamSequence.java,v 1.9 2005-09-02 16:25:50 tjc Exp $
+ *  @version $Id: StreamSequence.java,v 1.10 2005-11-15 12:21:18 tjc Exp $
  **/
 
 public abstract class StreamSequence
@@ -97,7 +97,7 @@ public abstract class StreamSequence
     }
   }
 
-  protected void forceReset()
+  public void forceReset()
   {
     dst = null;
   }

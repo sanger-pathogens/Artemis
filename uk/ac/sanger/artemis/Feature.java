@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.14 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.15 2005-11-15 12:21:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -60,7 +60,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.14 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: Feature.java,v 1.15 2005-11-15 12:21:18 tjc Exp $
  **/
 
 public class Feature
@@ -215,6 +215,34 @@ public class Feature
 
       if(event.getType() == SequenceChangeEvent.REVERSE_COMPLEMENT) 
         reverseComplement(getEntry().getBases().getLength());
+      else if(event.getType() == SequenceChangeEvent.CONTIG_REVERSE_COMPLEMENT)
+      {
+         final Location old_location = getLocation();
+
+        // if the event is contained within this feature then the feature
+        // sequence may have changed
+        final Range this_feature_range = getMaxRawRange();
+
+        boolean feature_changed = false;
+        Range eventRange = event.getRange();
+        
+        // reverse complement feature if within contig region
+        if(eventRange.getStart() <= this_feature_range.getStart() &&
+           eventRange.getEnd() >= this_feature_range.getEnd())
+        {
+          try
+          {
+            final Location new_location =
+               getLocation().reverseComplement(event.getLength(), eventRange.getStart());
+     
+            setLocationInternal(new_location);
+          }
+          catch(OutOfRangeException e)
+          {
+            throw new Error("internal error - inconsistent location: " + e);
+          }
+        } 
+      }
       else 
       {
         final Location old_location = getLocation();

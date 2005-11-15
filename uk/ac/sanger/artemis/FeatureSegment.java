@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FeatureSegment.java,v 1.2 2005-05-03 09:12:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FeatureSegment.java,v 1.3 2005-11-15 12:21:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -39,7 +39,7 @@ import java.util.Vector;
  *  must be a coding sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureSegment.java,v 1.2 2005-05-03 09:12:09 tjc Exp $
+ *  @version $Id: FeatureSegment.java,v 1.3 2005-11-15 12:21:18 tjc Exp $
  *
  **/
 
@@ -264,10 +264,12 @@ public class FeatureSegment
    *  Implementation of the SequenceChangeListener interface.  We listen for
    *  this event so that we can update the range of this segment.
    **/
-  public void sequenceChanged (final SequenceChangeEvent event) {
+  public void sequenceChanged (final SequenceChangeEvent event) 
+  {
     // the location of the feature itself will change later
-
-    if (event.getType () != SequenceChangeEvent.REVERSE_COMPLEMENT) {
+    if(event.getType () != SequenceChangeEvent.REVERSE_COMPLEMENT &&
+       event.getType () != SequenceChangeEvent.CONTIG_REVERSE_COMPLEMENT) 
+    {
       updateRange ();
     }
   }

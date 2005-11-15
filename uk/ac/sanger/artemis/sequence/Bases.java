@@ -20,15 +20,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.16 2005-10-19 08:27:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.17 2005-11-15 12:21:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
 
+import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.EmblStreamSequence;
 import uk.ac.sanger.artemis.io.Sequence;
+import uk.ac.sanger.artemis.io.StreamSequence;
 
 import org.biojava.bio.symbol.IllegalSymbolException;
 
@@ -45,7 +47,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.16 2005-10-19 08:27:00 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.17 2005-11-15 12:21:18 tjc Exp $ */
 
 public class Bases 
 {
@@ -1015,6 +1017,66 @@ public class Bases
     final Sequence new_sequence = new EmblStreamSequence (bases_string);
 
     return new Bases (new_sequence);
+  }
+
+
+  /**
+  *
+  * Reverse complement a range of the sequence.
+  *
+  */
+  public void reverseComplement(Feature feature)
+              throws ReadOnlyException 
+  {
+    forward_stop_codon_cache = null;
+    reverse_stop_codon_cache = null;
+   
+    final Range range = feature.getMaxRawRange();
+    final int range_start_index = range.getStart();
+    final int range_end_index   = range.getEnd();
+
+    // ensure we just get subsequence of interest
+    ((StreamSequence)getSequence()).forceReset();
+    // sequence to reverse complement
+    final char[] sub_sequence = reverseComplement(getSequence().getCharSubSequence(
+                                              range_start_index, range_end_index));  
+    final char[] new_sequence = new char[getLength()];
+    final char[] old_sequence = ((StreamSequence)getSequence()).getCharSequence();
+
+//  System.out.println("range_start_index  "+range_start_index);
+//  System.out.println("range_end_index    "+range_end_index);
+//  System.out.println("getLength          "+getLength());
+//  System.out.println("sub_sequence.length "+sub_sequence.length);
+//  System.out.println(feature.getEntry().getEMBLEntry().toString());
+//  System.out.println(new String(sub_sequence));
+
+    // if not first contig
+    if(range_start_index != 1)
+      System.arraycopy(old_sequence, 0, new_sequence, 0, range_start_index-2);
+
+    // copy in new sequence fragment that has been reverse complemented
+    System.arraycopy(sub_sequence, 0, new_sequence, range_start_index-1, 
+                                                    sub_sequence.length);
+
+    // if not last contig
+    if(range_end_index != getLength())
+      System.arraycopy(old_sequence, range.getEnd(), new_sequence, range_end_index,
+                                                    getLength()-range_end_index-1);
+                                                     
+    try 
+    {
+      embl_sequence.setFromChar(new_sequence);
+    } 
+    catch (IllegalSymbolException e) 
+    {
+      throw new Error ("internal error - unexpected exception: " + e);
+    }
+
+    final SequenceChangeEvent event =
+      new SequenceChangeEvent(this, SequenceChangeEvent.CONTIG_REVERSE_COMPLEMENT,
+                              range, sub_sequence.length);
+
+    fireSequenceChangeEvent (event);
   }
 
   /**

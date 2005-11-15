@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.16 2005-10-26 16:10:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.17 2005-11-15 12:21:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.util.Enumeration;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.16 2005-10-26 16:10:38 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.17 2005-11-15 12:21:18 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -217,8 +217,9 @@ abstract public class SimpleDocumentEntry
             else 
               qualifiers.setQualifier(new Qualifier("colour", "11"));
 
-            final ReadOnlyEmblStreamFeature new_feature =
-              new ReadOnlyEmblStreamFeature(new Key("fasta_record"),
+            //ReadOnlyEmblStreamFeature
+            final EmblStreamFeature new_feature =
+              new EmblStreamFeature(new Key("fasta_record"),
                                              new Location(new_range),
                                              qualifiers);
 

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.5 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.6 2005-11-15 12:21:18 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -53,7 +53,7 @@ import javax.swing.*;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.5 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.6 2005-11-15 12:21:18 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -485,6 +485,40 @@ public class EditMenu extends SelectionMenu
       }
     });
 
+    final JMenuItem reverse_complement_range_item = new JMenuItem("Reverse And Complement Selected Contig");
+    reverse_complement_range_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        final FeatureVector selected_features = getSelection().getAllFeatures();
+
+        if(selected_features.size() == 1)
+        {
+
+          final Feature selection_feature = selected_features.elementAt(0);
+          try 
+          {
+            getEntryGroup().getBases().reverseComplement(selection_feature);
+          }
+          catch(ReadOnlyException roe)
+          {
+            final String message =
+              "one or more of the features is read-only or is in a " +
+              "read-only entry - cannot continue";
+            new MessageDialog(null, message);
+            return;
+          }
+        }
+        else
+        {
+          final String message =
+              "Select a single contig to reverse and complement";
+          new MessageDialog(null, message);
+          return;   
+        }
+      }
+    });
+
     final JMenuItem delete_bases_item = new JMenuItem("Delete Selected Bases");
     delete_bases_item.addActionListener(new ActionListener() 
     {
@@ -549,7 +583,8 @@ public class EditMenu extends SelectionMenu
     addSeparator();
     add(auto_gene_name_item);
     add(fix_gene_names_item);
-    add(reverse_complement_item);
+    add(reverse_complement_item); 
+    add(reverse_complement_range_item);
     add(delete_bases_item);
     add(add_bases_item);
 

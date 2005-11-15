@@ -20,16 +20,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/SequenceChangeEvent.java,v 1.1 2004-06-09 09:52:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/SequenceChangeEvent.java,v 1.2 2005-11-15 12:21:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
+
+import uk.ac.sanger.artemis.io.Range;
 
 /**
  *  This event is sent when the sequence of bases in a strand changes.
  *
  *  @author Kim Rutherford
- *  @version $Id: SequenceChangeEvent.java,v 1.1 2004-06-09 09:52:24 tjc Exp $
+ *  @version $Id: SequenceChangeEvent.java,v 1.2 2005-11-15 12:21:18 tjc Exp $
  *
  **/
 
@@ -53,6 +55,17 @@ public class SequenceChangeEvent extends uk.ac.sanger.artemis.ChangeEvent {
     this.sub_sequence = sub_sequence;
   }
 
+  public SequenceChangeEvent (final Bases bases,
+                              final int type,
+                              final Range range,
+                              final int length) {
+    super (bases);
+    this.type = type;
+    this.range  = range;
+    this.length = length;
+  }
+
+
   /**
    *  Create a new SequenceChangeEvent object.
    *  @param bases The Bases object that generated the event.
@@ -71,6 +84,8 @@ public class SequenceChangeEvent extends uk.ac.sanger.artemis.ChangeEvent {
   final public static int INSERTION = 2;
 
   final public static int REVERSE_COMPLEMENT = 3;
+
+  final public static int CONTIG_REVERSE_COMPLEMENT = 4;
 
   /**
    *  Return the Bases reference that was passed to the constructor.
@@ -101,6 +116,16 @@ public class SequenceChangeEvent extends uk.ac.sanger.artemis.ChangeEvent {
     return sub_sequence;
   }
 
+  public int getLength()
+  {
+    return length;
+  }
+
+  public Range getRange()
+  {
+    return range;
+  }
+
   /**
    *  The type that was passed to the constructor.
    **/
@@ -115,6 +140,10 @@ public class SequenceChangeEvent extends uk.ac.sanger.artemis.ChangeEvent {
    *  The sub sequence of bases that was passed to the constructor.
    **/
   /* final */ private String sub_sequence;
+
+  private int length;
+ 
+  private Range range;
 }
 
 

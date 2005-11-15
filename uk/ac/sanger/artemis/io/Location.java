@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Location.java,v 1.5 2005-07-27 08:24:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Location.java,v 1.6 2005-11-15 12:21:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import uk.ac.sanger.artemis.io.LocationLexer.TokenEnumeration;
  *  functions for parsing and manipulating the location.
  *
  *  @author Kim Rutherford
- *  @version $Id: Location.java,v 1.5 2005-07-27 08:24:17 tjc Exp $
+ *  @version $Id: Location.java,v 1.6 2005-11-15 12:21:18 tjc Exp $
  *
  */
 public class Location 
@@ -384,6 +384,27 @@ public class Location
     return new_location;
   }
 
+   /**
+   *  Return a reversed and complemented copy of this Location.
+   *  @param sequence_length The length of the sequence that this Location is
+   *    associated with.
+   *  @return a new Location that will be a reversed and complemented copy of
+   *    this Location.  The user_data fields in the returned Location will be
+   *    the same as the original.
+   **/
+  public Location reverseComplement(final int sequence_length, 
+                                    final int offset)
+  {
+    final Location new_location = new Location(getParsedLocation().copy());
+
+    new_location.parse_tree =
+      new_location.getParsedLocation().reverseComplement(sequence_length, offset);
+
+    new_location.parse_tree = new_location.parse_tree.getCanonical();
+    return new_location;
+  }
+
+
   /**
    *  Return a Range that spans the whole Location.
    **/
@@ -527,6 +548,12 @@ public class Location
   {
     return parse_tree;
   }
+
+  public void setParsedLocation(LocationParseNode parse_tree)
+  {
+    this.parse_tree = parse_tree;
+  }
+
 
   /**
    *  Create a new Location object from the given LocationParseNode tree.

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LocationParseNode.java,v 1.5 2005-05-03 09:14:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LocationParseNode.java,v 1.6 2005-11-15 12:21:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
  *  Location.  It is a utility class for EMBL.Location.
  *
  *  @author Kim Rutherford
- *  @version $Id: LocationParseNode.java,v 1.5 2005-05-03 09:14:43 tjc Exp $
+ *  @version $Id: LocationParseNode.java,v 1.6 2005-11-15 12:21:18 tjc Exp $
  *
  **/
 
@@ -401,7 +401,21 @@ class LocationParseNode extends EMBLObject
    *    associated with.
    *  @return a reversed and complemented tree.
    **/
-  LocationParseNode reverseComplement(final int sequence_length) 
+  LocationParseNode reverseComplement(final int sequence_length)
+  {
+    return reverseComplement(sequence_length, 0);
+  }
+
+  /**
+   *  Return a reversed and complemented copy of this Location.
+   *  @param sequence_length The length of the sequence that this Location is
+   *    associated with.
+   *  @param offset this is set to zero if the whole sequence is being
+   *    operated on or to the start of the region being reverse complemented.
+   *  @return a reversed and complemented tree.
+   **/
+  LocationParseNode reverseComplement(final int sequence_length,
+                                      final int offset) 
   {
     try
     {
@@ -412,9 +426,15 @@ class LocationParseNode extends EMBLObject
         case RANGE:
         {
           final Range range = getRange();
-          final Range new_range =
-            new Range(sequence_length - range.getEnd() + 1,
-                      sequence_length - range.getStart() + 1);
+          final int start = sequence_length - (range.getEnd() - offset + 1) + offset;
+          final int end   = sequence_length - (range.getStart() - offset + 1) + offset;
+
+//        System.out.println("LocationParseNode.reverseComplement() HERE "+ 
+//                  start+ ".."+ end +"   sequence_length="+sequence_length+
+//                 "   range.getEnd()="+range.getEnd()+ "   range.getStart()="+range.getStart()+
+//                 "   offset="+offset);
+
+          final Range new_range = new Range(start, end);
           final LocationParseNode new_range_node =
             new LocationParseNode(new_range);
           return new LocationParseNode(COMPLEMENT, new_range_node);
@@ -426,9 +446,12 @@ class LocationParseNode extends EMBLObject
           if(child.getType() == RANGE) 
           {
             final Range range = child.getRange();
-            final Range new_range =
-              new Range(sequence_length - range.getEnd() + 1,
-                        sequence_length - range.getStart() + 1);
+            final int start = sequence_length - (range.getEnd() - offset + 1) + offset;
+            final int end   = sequence_length - (range.getStart() - offset + 1) + offset;
+
+            final Range new_range = new Range(start, end);
+//            new Range(sequence_length - (range.getEnd() - offset + 1) + offset,
+//                      sequence_length - (range.getStart() - offset + 1) + offset);
             return new LocationParseNode(new_range);
           }
           else
@@ -447,7 +470,7 @@ class LocationParseNode extends EMBLObject
             final LocationParseNode this_child = children.elementAt(i);
 
             final LocationParseNode new_child =
-              this_child.reverseComplement(sequence_length);
+              this_child.reverseComplement(sequence_length, offset);
             new_children.addElementAtEnd(new_child);
           }
 
