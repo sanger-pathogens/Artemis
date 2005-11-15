@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Location.java,v 1.6 2005-11-15 12:21:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Location.java,v 1.7 2005-11-15 14:02:37 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import uk.ac.sanger.artemis.io.LocationLexer.TokenEnumeration;
  *  functions for parsing and manipulating the location.
  *
  *  @author Kim Rutherford
- *  @version $Id: Location.java,v 1.6 2005-11-15 12:21:18 tjc Exp $
+ *  @version $Id: Location.java,v 1.7 2005-11-15 14:02:37 tjc Exp $
  *
  */
 public class Location 
@@ -375,13 +375,7 @@ public class Location
    **/
   public Location reverseComplement(final int sequence_length) 
   {
-    final Location new_location = new Location(getParsedLocation().copy());
-
-    new_location.parse_tree =
-      new_location.getParsedLocation().reverseComplement(sequence_length);
-
-    new_location.parse_tree = new_location.parse_tree.getCanonical();
-    return new_location;
+    return reverseComplement(sequence_length, 1);
   }
 
    /**

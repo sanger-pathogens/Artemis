@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LocationParseNode.java,v 1.6 2005-11-15 12:21:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LocationParseNode.java,v 1.7 2005-11-15 14:02:37 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
  *  Location.  It is a utility class for EMBL.Location.
  *
  *  @author Kim Rutherford
- *  @version $Id: LocationParseNode.java,v 1.6 2005-11-15 12:21:18 tjc Exp $
+ *  @version $Id: LocationParseNode.java,v 1.7 2005-11-15 14:02:37 tjc Exp $
  *
  **/
 
@@ -399,17 +399,6 @@ class LocationParseNode extends EMBLObject
    *  Return a reversed and complemented copy of this Location.
    *  @param sequence_length The length of the sequence that this Location is
    *    associated with.
-   *  @return a reversed and complemented tree.
-   **/
-  LocationParseNode reverseComplement(final int sequence_length)
-  {
-    return reverseComplement(sequence_length, 0);
-  }
-
-  /**
-   *  Return a reversed and complemented copy of this Location.
-   *  @param sequence_length The length of the sequence that this Location is
-   *    associated with.
    *  @param offset this is set to zero if the whole sequence is being
    *    operated on or to the start of the region being reverse complemented.
    *  @return a reversed and complemented tree.
@@ -432,7 +421,8 @@ class LocationParseNode extends EMBLObject
 //        System.out.println("LocationParseNode.reverseComplement() HERE "+ 
 //                  start+ ".."+ end +"   sequence_length="+sequence_length+
 //                 "   range.getEnd()="+range.getEnd()+ "   range.getStart()="+range.getStart()+
-//                 "   offset="+offset);
+//                 "   offset="+offset+ " "+
+//                 start_old+ ".."+end_old);
 
           final Range new_range = new Range(start, end);
           final LocationParseNode new_range_node =
