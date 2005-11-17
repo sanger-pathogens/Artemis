@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.31 2005-11-17 16:50:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.32 2005-11-17 19:22:58 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,7 +47,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.31 2005-11-17 16:50:50 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.32 2005-11-17 19:22:58 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -1530,18 +1530,16 @@ public class AlignmentViewer extends CanvasPanel
    */
   public void removeMatch(final int index)
   {
-	AlignMatch tmp_matches[] = new AlignMatch[all_matches.length - 1];
-	System.arraycopy(all_matches,0,tmp_matches,0,index);
+    AlignMatch tmp_matches[] = new AlignMatch[all_matches.length - 1];
+    System.arraycopy(all_matches,0,tmp_matches,0,index);
 	
-	if(index < tmp_matches.length -1)
-	{
-	  System.out.println("removeMatch() ");
-		
+    if(index < tmp_matches.length -1)
+    {
       System.arraycopy(all_matches,index+1,tmp_matches,
-    		              index,all_matches.length-index);
-	}
-	this.all_matches = new AlignMatch[tmp_matches.length];
-	this.all_matches = tmp_matches;
+                       index, all_matches.length-index-1);
+    }
+    this.all_matches = new AlignMatch[tmp_matches.length];
+    this.all_matches = tmp_matches;
   }
   
   /**
@@ -1553,71 +1551,75 @@ public class AlignmentViewer extends CanvasPanel
    */
   protected void flippingContig(boolean subject, int start, int end)
   {
-	  int match_start;
-	  int match_end;
-	  int delete_overlaps = -1;
-	  
-	  for(int i = 0; i < all_matches.length; ++i)
-	  {
-		  if(subject)
-		  {
-			match_start = all_matches[i].getSubjectSequenceStart();
-			match_end   = all_matches[i].getSubjectSequenceEnd();
+    int match_start;
+    int match_end;
+    int delete_overlaps = -1;
+    Vector removals = new Vector();
+
+    for(int i = 0; i < all_matches.length; ++i)
+    {
+      if(subject)
+      {
+	match_start = all_matches[i].getSubjectSequenceStart();
+	match_end   = all_matches[i].getSubjectSequenceEnd();
 			
-		    if(match_start >= start &&
-		       match_end <= end)
-	        {
-		      match_start = end - (match_start - start);
-	          match_end   = end - (match_end -start);
-	          all_matches[i].setRange(match_start, match_end, subject);
-	        }
-		    else if( (match_start >= start && match_start <= end) ||
-		             (match_end <= end && match_end >= start) )
-		    {
-		    	  // this match extends past end of contig
-		    	  if(delete_overlaps == -1)
-				delete_overlaps = JOptionPane.showConfirmDialog(null,
-				                 "Found a match extending past the boundary of the contig:\n"+
-				                 match_start+".."+match_end+
-				                 "\nDelete all such matches?",
-				                 "Delete Overlapping Matches",
-				                 JOptionPane.YES_NO_OPTION);
+       if(match_start >= start &&
+          match_end <= end)
+       {
+         match_start = end - (match_start - start);
+         match_end   = end - (match_end -start);
+         all_matches[i].setRange(match_start, match_end, subject);
+       }
+       else if( (match_start >= start && match_start <= end) ||
+                (match_end <= end && match_end >= start) )
+       {
+	  // this match extends past end of contig
+	  if(delete_overlaps == -1)
+	    delete_overlaps = JOptionPane.showConfirmDialog(null,
+	                 "Found a match extending past the boundary of the contig:\n"+
+	                 match_start+".."+match_end+
+	                 "\nDelete all such matches?",
+	                 "Delete Overlapping Matches",
+	                 JOptionPane.YES_NO_OPTION);
 		      
 		      
-		      if(delete_overlaps == JOptionPane.YES_OPTION)
-  		    	    removeMatch(i);
-		    }
-		  }
-		  else
-		  {
-			match_start = all_matches[i].getQuerySequenceStart();
-			match_end   = all_matches[i].getQuerySequenceEnd();
+          if(delete_overlaps == JOptionPane.YES_OPTION)
+  	    removals.add(new Integer(i));
+	}
+      }
+      else
+      {
+	match_start = all_matches[i].getQuerySequenceStart();
+	match_end   = all_matches[i].getQuerySequenceEnd();
 			
-		    if(match_start >= start &&
-		       match_end <= end)
-		    {
-	           match_start = end - (match_start - start);
-	           match_end   = end - (match_end -start);
-	           all_matches[i].setRange(match_start, match_end, subject);
-		    }
-		    else if( (match_start >= start && match_start <= end) ||
-		             (match_end <= end && match_end >= start) )
-		    {
-               // this match extends past end of contig
-		    	  if(delete_overlaps == -1)
-				delete_overlaps = JOptionPane.showConfirmDialog(null,
-				                 "Found a match extending past the boundary of the contig:\n"+
-				                 match_start+".."+match_end+
-				                 "\nDelete all such matches?",
-				                 "Delete Overlapping Matches",
-				                 JOptionPane.YES_NO_OPTION);
+        if(match_start >= start &&
+           match_end <= end)
+        {
+          match_start = end - (match_start - start);
+          match_end   = end - (match_end -start);
+          all_matches[i].setRange(match_start, match_end, subject);
+        }
+        else if( (match_start >= start && match_start <= end) ||
+                 (match_end <= end && match_end >= start) )
+        {
+          // this match extends past end of contig
+    	  if(delete_overlaps == -1)
+	    delete_overlaps = JOptionPane.showConfirmDialog(null,
+	                 "Found a match extending past the boundary of the contig:\n"+
+	                 match_start+".."+match_end+
+	                 "\nDelete all such matches?",
+	                 "Delete Overlapping Matches",
+	                 JOptionPane.YES_NO_OPTION);
 		      
 		      
-		      if(delete_overlaps == JOptionPane.YES_OPTION)
-		    	    removeMatch(i);
-		    }
-		  }
-	  }
+	  if(delete_overlaps == JOptionPane.YES_OPTION)
+	    removals.add(new Integer(i));
+	}
+      }
+    }
+
+    for(int i=0; i<removals.size(); i++)
+      removeMatch( ((Integer)removals.get(i)).intValue()-i );
   }
   
   /**
