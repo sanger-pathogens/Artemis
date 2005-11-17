@@ -20,18 +20,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/AlignMatch.java,v 1.5 2005-07-12 10:39:45 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/AlignMatch.java,v 1.6 2005-11-17 16:50:50 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
 
 import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
 
 /**
  *  Each object of this class represents a single match from an alignment.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignMatch.java,v 1.5 2005-07-12 10:39:45 tjc Exp $
+ *  @version $Id: AlignMatch.java,v 1.6 2005-11-17 16:50:50 tjc Exp $
  **/
 
 public class AlignMatch 
@@ -148,6 +149,38 @@ public class AlignMatch
     return query_sequence_range;
   }
 
+  /**
+   * Set the range for either the query or the subject match. This
+   * is used when flipping contigs round.
+   * @param start
+   * @param end
+   * @param subject
+   */
+  public void setRange(final int start, final int end, boolean subject)
+  {
+	try
+	{
+	  if(subject)
+	  {
+		if(start < end)
+		  this.subject_sequence_range = new Range(start, end);
+		else
+	      this.subject_sequence_range = new Range(end, start);
+	  }
+	  else
+	  {
+	    if(start < end)
+	      this.query_sequence_range = new Range(start, end);
+	    else
+	      this.query_sequence_range = new Range(end, start);
+	  }
+	}
+	catch(OutOfRangeException ex)
+	{
+	  ex.printStackTrace();
+	}
+	this.rev_match = !this.rev_match;
+  }
   /**
    *  Returns true if and only if the query hits the reverse complement of the
    *  subject.

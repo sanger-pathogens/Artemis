@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ComparatorGlue.java,v 1.1 2004-06-09 09:46:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ComparatorGlue.java,v 1.2 2005-11-17 16:50:50 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -41,7 +41,7 @@ import javax.swing.*;
  *  and an AlignmentViewer.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ComparatorGlue.java,v 1.1 2004-06-09 09:46:10 tjc Exp $
+ *  @version $Id: ComparatorGlue.java,v 1.2 2005-11-17 16:50:50 tjc Exp $
  **/
 
 public class ComparatorGlue {
@@ -75,11 +75,21 @@ public class ComparatorGlue {
    *  Wire-up the two FeatureDisplay objects with DisplayAdjustmentListeners.
    **/
   private void addDisplayListeners (final FeatureDisplay subject_display,
-                                    final FeatureDisplay query_display) {
+                                    final FeatureDisplay query_display) 
+  {
 
-    subject_listener = new DisplayAdjustmentListener () {
-      public void displayAdjustmentValueChanged (DisplayAdjustmentEvent e) {
-        if (e.getType () == DisplayAdjustmentEvent.REV_COMP_EVENT) {
+    subject_listener = new DisplayAdjustmentListener () 
+    {
+      public void displayAdjustmentValueChanged (DisplayAdjustmentEvent e) 
+      {
+        if (e.getType () == DisplayAdjustmentEvent.REV_COMP_EVENT) 
+        {
+          getAlignmentViewer ().unlockDisplays ();
+          return;
+        }
+        else if (e.getType () == DisplayAdjustmentEvent.CONTIG_REV_COMP_EVENT) 
+        {
+          getAlignmentViewer().flippingContig(true, e.getStart(), e.getEnd());
           getAlignmentViewer ().unlockDisplays ();
           return;
         }
@@ -107,10 +117,19 @@ public class ComparatorGlue {
       }
     };
 
-    query_listener = new DisplayAdjustmentListener () {
-      public void displayAdjustmentValueChanged (DisplayAdjustmentEvent e) {
-        if (e.getType () == DisplayAdjustmentEvent.REV_COMP_EVENT) {
-          getAlignmentViewer ().unlockDisplays ();
+    query_listener = new DisplayAdjustmentListener () 
+    {
+      public void displayAdjustmentValueChanged (DisplayAdjustmentEvent e) 
+      {
+        if (e.getType () == DisplayAdjustmentEvent.REV_COMP_EVENT) 
+        {
+          getAlignmentViewer().unlockDisplays();
+          return;
+        }
+        else if (e.getType () == DisplayAdjustmentEvent.CONTIG_REV_COMP_EVENT) 
+        {
+        	  getAlignmentViewer().flippingContig(false, e.getStart(), e.getEnd());
+        	  getAlignmentViewer().unlockDisplays();
           return;
         }
 
@@ -121,7 +140,8 @@ public class ComparatorGlue {
 
         if (getAlignmentViewer ().displaysAreLocked () &&
             (e.getType () == DisplayAdjustmentEvent.SCROLL_ADJUST_EVENT ||
-             e.getType () == DisplayAdjustmentEvent.ALL_CHANGE_ADJUST_EVENT)) {
+             e.getType () == DisplayAdjustmentEvent.ALL_CHANGE_ADJUST_EVENT)) 
+        {
           final int difference = e.getStart () - query_first_base_position;
 
           subject_first_base_position =
@@ -141,8 +161,10 @@ public class ComparatorGlue {
     query_display.addDisplayAdjustmentListener (query_listener);
 
     final DisplayAdjustmentListener subject_align_listener =
-      new DisplayAdjustmentListener () {
-        public void displayAdjustmentValueChanged (DisplayAdjustmentEvent e) {
+      new DisplayAdjustmentListener () 
+      {
+        public void displayAdjustmentValueChanged (DisplayAdjustmentEvent e) 
+        {
           getAlignmentViewer ().setSubjectSequencePosition (e);
         }
       };

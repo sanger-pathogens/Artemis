@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DisplayAdjustmentEvent.java,v 1.1 2004-06-09 09:46:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DisplayAdjustmentEvent.java,v 1.2 2005-11-17 16:50:50 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -31,7 +31,7 @@ import uk.ac.sanger.artemis.ChangeEvent;
  *  This event is sent when a FeatureDisplay is scrolled.
  *
  *  @author Kim Rutherford
- *  @version $Id: DisplayAdjustmentEvent.java,v 1.1 2004-06-09 09:46:13 tjc Exp $
+ *  @version $Id: DisplayAdjustmentEvent.java,v 1.2 2005-11-17 16:50:50 tjc Exp $
  **/
 
 public class DisplayAdjustmentEvent extends ChangeEvent 
@@ -90,6 +90,14 @@ public class DisplayAdjustmentEvent extends ChangeEvent
    *  the the scale has changed.
    **/
   final static public int ALL_CHANGE_ADJUST_EVENT = 3;
+  
+  /**
+   *  The type of DisplayAdjustmentEvent where the display has been reverse
+   *  complemented.
+   **/
+  final static public int CONTIG_REV_COMP_EVENT = 4;
+
+  
 
   /**
    *  Create a new DisplayAdjustmentEvent.

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.17 2005-11-15 12:21:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.18 2005-11-17 16:50:50 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -47,7 +47,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.17 2005-11-15 12:21:18 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.18 2005-11-17 16:50:50 tjc Exp $ */
 
 public class Bases 
 {
@@ -1224,7 +1224,8 @@ public class Bases
       if (this_hash_map != null) {
         final Iterator iter = this_hash_map.keySet ().iterator ();
 
-        while (iter.hasNext()) {
+        while (iter.hasNext()) 
+        {
           final SequenceChangeListener this_listener =
             (SequenceChangeListener) iter.next();
           this_listener.sequenceChanged (event);

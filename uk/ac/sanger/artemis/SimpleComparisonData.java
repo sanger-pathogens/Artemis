@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleComparisonData.java,v 1.2 2004-12-14 10:41:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleComparisonData.java,v 1.3 2005-11-17 16:50:50 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -41,7 +41,7 @@ import java.util.Hashtable;
  *  objects.  In particular it has methods for managing AlignMatch objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleComparisonData.java,v 1.2 2004-12-14 10:41:42 tjc Exp $
+ *  @version $Id: SimpleComparisonData.java,v 1.3 2005-11-17 16:50:50 tjc Exp $
  **/
 
 abstract class SimpleComparisonData implements ComparisonData 
@@ -111,6 +111,7 @@ abstract class SimpleComparisonData implements ComparisonData
     return matches;
   }
 
+  
   /**
    *  If this object contains only valid matches for a comparison between
    *  subject_sequence and query_sequence return null (subject_sequence is the
