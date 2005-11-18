@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.32 2005-11-17 19:22:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.33 2005-11-18 09:39:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,7 +47,7 @@ import javax.swing.*;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.32 2005-11-17 19:22:58 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.33 2005-11-18 09:39:28 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -1532,7 +1532,7 @@ public class AlignmentViewer extends CanvasPanel
   {
     AlignMatch tmp_matches[] = new AlignMatch[all_matches.length - 1];
     System.arraycopy(all_matches,0,tmp_matches,0,index);
-	
+
     if(index < tmp_matches.length -1)
     {
       System.arraycopy(all_matches,index+1,tmp_matches,
@@ -1560,8 +1560,8 @@ public class AlignmentViewer extends CanvasPanel
     {
       if(subject)
       {
-	match_start = all_matches[i].getSubjectSequenceStart();
-	match_end   = all_matches[i].getSubjectSequenceEnd();
+        match_start = all_matches[i].getSubjectSequenceStart();
+        match_end   = all_matches[i].getSubjectSequenceEnd();
 			
        if(match_start >= start &&
           match_end <= end)
@@ -1585,13 +1585,13 @@ public class AlignmentViewer extends CanvasPanel
 		      
           if(delete_overlaps == JOptionPane.YES_OPTION)
   	    removals.add(new Integer(i));
-	}
+        }
       }
       else
       {
-	match_start = all_matches[i].getQuerySequenceStart();
-	match_end   = all_matches[i].getQuerySequenceEnd();
-			
+        match_start = all_matches[i].getQuerySequenceStart();
+        match_end   = all_matches[i].getQuerySequenceEnd();
+
         if(match_start >= start &&
            match_end <= end)
         {
@@ -1603,8 +1603,8 @@ public class AlignmentViewer extends CanvasPanel
                  (match_end <= end && match_end >= start) )
         {
           // this match extends past end of contig
-    	  if(delete_overlaps == -1)
-	    delete_overlaps = JOptionPane.showConfirmDialog(null,
+          if(delete_overlaps == -1)
+            delete_overlaps = JOptionPane.showConfirmDialog(null,
 	                 "Found a match extending past the boundary of the contig:\n"+
 	                 match_start+".."+match_end+
 	                 "\nDelete all such matches?",
@@ -1614,7 +1614,7 @@ public class AlignmentViewer extends CanvasPanel
 		      
 	  if(delete_overlaps == JOptionPane.YES_OPTION)
 	    removals.add(new Integer(i));
-	}
+        }
       }
     }
 
