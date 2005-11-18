@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.7 2005-11-15 14:40:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.8 2005-11-18 09:53:26 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -53,7 +53,7 @@ import javax.swing.*;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.7 2005-11-15 14:40:17 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.8 2005-11-18 09:53:26 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -490,6 +490,15 @@ public class EditMenu extends SelectionMenu
     {
       public void actionPerformed(ActionEvent event)
       {
+        if(getEntryGroup().isReadOnly()) 
+        {
+          final String message =
+            "one or more of the entries or features are read only - " +
+            "cannot continue";
+          new MessageDialog(getParentFrame(), message);
+          return;
+        }
+
         final FeatureVector selected_features = getSelection().getAllFeatures();
 
         if(selected_features.size() == 1)
