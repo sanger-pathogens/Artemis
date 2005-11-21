@@ -14,5 +14,5 @@
 	<classpathentry kind="lib" path="lib/ibatis/ibatis-sqlmap-2.jar"/>
 	<classpathentry kind="lib" path="lib/ibatis/ibatis-common-2.jar"/>
 	<classpathentry kind="lib" path="lib/jobcontrol.jar"/>
-	<classpathentry kind="output" path="build"/>
+	<classpathentry kind="output" path="ant-build/classes/main"/>
 </classpath>
