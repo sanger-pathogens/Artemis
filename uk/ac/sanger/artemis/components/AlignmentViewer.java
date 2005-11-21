@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.33 2005-11-18 09:39:28 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.34 2005-11-21 15:49:02 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -41,13 +41,15 @@ import java.util.Vector;
 import java.util.Comparator;
 import java.util.Arrays;
 import javax.swing.*;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  *  This component shows an alignment of two sequences using the data from a
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.33 2005-11-18 09:39:28 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.34 2005-11-21 15:49:02 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -518,6 +520,66 @@ public class AlignmentViewer extends CanvasPanel
   private void popupMenu(final MouseEvent event) 
   {
     final JPopupMenu popup = new JPopupMenu();
+
+
+    final JMenuItem save_matches = new JMenuItem("Save Comparison File...");
+    save_matches.addActionListener(new ActionListener()
+    {
+      public void actionPerformed (ActionEvent _)
+      {
+        StickyFileChooser fc = new StickyFileChooser();
+
+        int returnVal = fc.showSaveDialog(null);  
+        if(returnVal != JFileChooser.APPROVE_OPTION) 
+          return;
+        else if(fc.getSelectedFile().exists())
+        {
+          Object[] possibleValues = { "YES", "NO" };
+          int select = JOptionPane.showOptionDialog(null, 
+                                 fc.getSelectedFile().getName()+"\n"+
+                                 "exists. Overwrite?",
+                                 "File Exists",
+                                 JOptionPane.DEFAULT_OPTION,
+                                 JOptionPane.QUESTION_MESSAGE,null,
+                                 possibleValues, possibleValues[0]);
+          if(select == 1)
+            return;  
+        }
+
+        try
+        {
+          if(!fc.getSelectedFile().canWrite())
+          {
+            JOptionPane.showMessageDialog(null,
+                        "Cannot write to "+
+                        fc.getSelectedFile().getCanonicalPath(),
+                        "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+            return;
+          }
+        
+          final FileWriter out_writer = new FileWriter(fc.getSelectedFile());
+          final String query = getQueryEntryGroup().getDefaultEntry().getName();
+          final String subject = getSubjectEntryGroup().getDefaultEntry().getName();
+
+          for(int i = 0; i < all_matches.length; ++i)
+            MSPcrunchComparisonData.writeMatchFromAlignMatch(all_matches[i],
+                                               query, subject,
+                                               out_writer);
+          out_writer.close();
+        }
+        catch(IOException ioe)
+        {
+          JOptionPane.showMessageDialog(null,
+                        "Error writing out comparison file.", 
+                        "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+          ioe.printStackTrace();
+        }
+      }
+    });
+    popup.add(save_matches);
+    popup.add(new JSeparator());
 
     final JMenuItem alignmatch_list_item =
       new JMenuItem("View Selected Matches");
@@ -1620,6 +1682,7 @@ public class AlignmentViewer extends CanvasPanel
 
     for(int i=0; i<removals.size(); i++)
       removeMatch( ((Integer)removals.get(i)).intValue()-i );
+
   }
   
   /**

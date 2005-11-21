@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/MSPcrunchComparisonData.java,v 1.1 2004-06-09 09:44:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/MSPcrunchComparisonData.java,v 1.2 2005-11-21 15:49:02 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -36,7 +36,7 @@ import java.util.Vector;
  *  output.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MSPcrunchComparisonData.java,v 1.1 2004-06-09 09:44:56 tjc Exp $
+ *  @version $Id: MSPcrunchComparisonData.java,v 1.2 2005-11-21 15:49:02 tjc Exp $
  **/
 
 public class MSPcrunchComparisonData extends SimpleComparisonData
@@ -105,6 +105,21 @@ public class MSPcrunchComparisonData extends SimpleComparisonData
                              "failed to parse a number from this string: " +
                              e.getMessage ());
     }
+  }
+
+  public static void writeMatchFromAlignMatch(final AlignMatch match,
+                                              final String query, final String subject,
+                                              final Writer writer)
+     throws IOException 
+  {
+    writer.write( match.getScore() + " " +
+                  match.getPercentID() + " " +
+                  match.getQuerySequenceStart() + " " +
+                  match.getQuerySequenceEnd() + " " +
+                  query + " " +
+                  match.getSubjectSequenceStart() + " " +
+                  match.getSubjectSequenceEnd() + " " +
+                  subject + "\n" );
   }
 
   /**
