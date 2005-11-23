@@ -268,7 +268,7 @@ public class DatabaseDocument extends Document
         conn = getConnection();
 
       if(iBatis)
-        gff_buffer = getGFFiBatis(feature_id);
+        gff_buffer = getGFFiBatis(feature_id, schema);
       else
         gff_buffer = getGFFJdbc(conn, feature_id, schema);
 
@@ -279,7 +279,7 @@ public class DatabaseDocument extends Document
           entry.append(gff_buffer[0]);
 
         if(iBatis)
-          getSequenceIbatis(entry);
+          getSequenceIbatis(entry, schema);
         else
           getSequence(conn, entry, schema);
       }
@@ -292,7 +292,7 @@ public class DatabaseDocument extends Document
         }
 
         if(iBatis)
-          getSequenceIbatis(entry);
+          getSequenceIbatis(entry, schema);
         else
           getSequence(conn, entry, schema);
       }
@@ -357,11 +357,11 @@ public class DatabaseDocument extends Document
    * Return a feature name given the feature_id.
    * 
    */
-  private String getFeatureNameIbatis(String feature_id)
+  private String getFeatureNameIbatis(final Feature feature)
       throws java.sql.SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    return (String) sqlMap.queryForObject("getFeatureName", feature_id);
+    return (String) sqlMap.queryForObject("getFeatureName", feature);
   }
 
   /**
@@ -382,18 +382,22 @@ public class DatabaseDocument extends Document
     return rs.getString("name");
   }
 
-  private ByteBuffer[] getGFFiBatis(String parentFeatureID)
+  private ByteBuffer[] getGFFiBatis(String parentFeatureID, String schema)
       throws java.sql.SQLException
   {
-
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    List featList = sqlMap.queryForList("getGffLine", new Integer(feature_id));
+
+    Feature feature = new Feature();
+    feature.setId(Integer.parseInt(parentFeatureID));
+    feature.setSchema(schema);
+
+    List featList = sqlMap.queryForList("getGffLine", feature);
 
     ByteBuffer[] buffers = new ByteBuffer[types.length + 1];
     for(int i = 0; i < buffers.length; i++)
       buffers[i] = new ByteBuffer();
 
-    String parentFeature = getFeatureNameIbatis(parentFeatureID);
+    String parentFeature = getFeatureNameIbatis(feature);
     Hashtable hstore = new Hashtable();
     ByteBuffer this_buff;
 
@@ -709,16 +713,21 @@ public class DatabaseDocument extends Document
     return cvterm;
   }
 
-  public ByteBuffer getSequenceIbatis(ByteBuffer buff)
+  public ByteBuffer getSequenceIbatis(ByteBuffer buff, String schema)
       throws java.sql.SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    Feature feat = (Feature)sqlMap.queryForObject("getSequence", new Integer(
-        feature_id));
+
+    Feature feature = new Feature();
+    feature.setId(Integer.parseInt(feature_id));
+    feature.setSchema(schema);
+
+    feature = (Feature)sqlMap.queryForObject("getSequence", 
+                                              feature);
     buff.append("##FASTA\n>");
-    buff.append(feat.getName());
+    buff.append(feature.getName());
     buff.append("\n");
-    buff.append(feat.getResidues());
+    buff.append(feature.getResidues());
     return buff;
   }
 
@@ -858,25 +867,42 @@ public class DatabaseDocument extends Document
   {
     db = new Hashtable();
     organism = new Vector();
+    org2schema = new Hashtable();
 
     try
     {
       DbSqlConfig.init(pfield);
       SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-      List list = sqlMap.queryForList("getResidueType", null);
-      List list_residue_features = sqlMap.queryForList("getResidueFeatures",
-                                                       list);
-      Iterator it = list_residue_features.iterator();
+
+      List schema_list = sqlMap.queryForList("getShema", null);
+      Iterator it      = schema_list.iterator();
 
       while(it.hasNext())
       {
-        Feature feat = (Feature)it.next();
-        String org = feat.getAbbreviation();
-        String typeName = getCvtermName(null, feat.getType_id());
-        db.put(org + " - " + typeName + " - " + feat.getName(), 
-               Integer.toString(feat.getId()));
-        if(!organism.contains(org))
-          organism.add(org);
+        String schema = (String)it.next();
+  
+        SchemaCVList schema_CVlist = new SchemaCVList();
+        schema_CVlist.setSchema(schema);
+         
+        List list = sqlMap.queryForList("getResidueType", schema);
+        schema_CVlist.setCvlist(list);
+
+        List list_residue_features = sqlMap.queryForList("getSchemaResidueFeatures",
+                                                         schema_CVlist);
+        Iterator it_residue_features = list_residue_features.iterator();
+        while(it_residue_features.hasNext())
+        {
+          Feature feature = (Feature)it_residue_features.next();
+          String org      = feature.getAbbreviation();
+          String typeName = getCvtermName(null, feature.getType_id());
+
+          db.put(org + " - " + typeName + " - " + feature.getName(), 
+                 Integer.toString(feature.getId()));
+          if(!organism.contains(org))
+            organism.add(org);
+          if(!org2schema.containsKey(org))
+            org2schema.put(org, schema);
+        }
       }
     }
     catch(java.sql.SQLException sqlExp)
@@ -1006,4 +1032,27 @@ public class DatabaseDocument extends Document
 
   }
 
+/*
+  public static void main(String args[])
+  {
+    try
+    {
+      DbSqlConfig.init(new JPasswordField());
+      SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+
+      SchemaCVList schema_CVlist = new SchemaCVList();
+      schema_CVlist.setSchema("lbraziliensis");
+
+      List list = sqlMap.queryForList("getResidueType", "lbraziliensis");
+
+      schema_CVlist.setCvlist(list);
+      List list_residue_features = sqlMap.queryForList("getSchemaResidueFeatures",
+                                                       schema_CVlist);
+    }
+    catch(SQLException sqle)
+    {
+      sqle.printStackTrace();
+    }
+  }
+*/
 }

@@ -29,7 +29,9 @@ import java.util.Date;
 
 public class Feature
 {
-
+ 
+  /** schema */
+  private String schema;
   /** feature id */
   private int id;
   /** id of the parent feature */
@@ -66,6 +68,16 @@ public class Feature
   public void setId(int id)
   {
     this.id = id;
+  }
+
+  public String getSchema()
+  {
+    return schema;
+  }
+
+  public void setSchema(String schema)
+  {
+    this.schema = schema;
   }
 
   public String getObject_id()
