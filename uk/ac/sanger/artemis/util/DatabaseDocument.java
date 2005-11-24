@@ -783,7 +783,8 @@ public class DatabaseDocument extends Document
 
       Statement st = conn.createStatement();
 
-      String query = "SELECT schema_name FROM information_schema.schemata WHERE schema_name=schema_owner";
+      String query = "SELECT schema_name FROM information_schema.schemata "+ 
+                     "WHERE schema_name=schema_owner ORDER BY schema_name";
       appendToLogFile(query, sqlLog);
 
       ResultSet rs = st.executeQuery(query);
