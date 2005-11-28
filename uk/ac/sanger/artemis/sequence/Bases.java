@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.20 2005-11-28 16:46:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.21 2005-11-28 16:52:59 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -49,7 +49,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.20 2005-11-28 16:46:38 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.21 2005-11-28 16:52:59 tjc Exp $ */
 
 public class Bases 
 {
@@ -1101,7 +1101,6 @@ public class Bases
     int contig_length = 0;
     if(new_base_pos < range_start_index)
     {
-      System.out.println("A contigRearrange()");
       // if not first contig
       if(new_base_pos != 1)
         System.arraycopy(old_sequence, 0, new_sequence, 0, new_base_pos-2);
@@ -1123,7 +1122,6 @@ public class Bases
     }
     else 
     {
-      System.out.println("B contigRearrange()");
       System.arraycopy(old_sequence, 0, new_sequence, 0, range_start_index-1);
 
       System.arraycopy(old_sequence, range_end_index,
