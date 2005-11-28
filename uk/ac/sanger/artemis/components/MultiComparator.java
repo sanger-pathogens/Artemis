@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.14 2005-10-26 16:10:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.15 2005-11-28 16:46:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -60,11 +60,10 @@ import javax.swing.border.BevelBorder;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.14 2005-10-26 16:10:38 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.15 2005-11-28 16:46:38 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
-                             implements DropTargetListener
 {
 
   /**
@@ -157,7 +156,6 @@ public class MultiComparator extends JFrame
     this.progress_listener = progress_listener;
     this.entry_sources = Utilities.getEntrySources(this, null);
 
-    setDropTarget(new DropTarget(this,this));
     final StringBuffer title_buffer = new StringBuffer();
 
     title_buffer.append("ACT: ");
@@ -954,44 +952,6 @@ public class MultiComparator extends JFrame
   }
 
   /**
-   *  Read an entry
-   **/
-  private void readAnEntryFromFile(final File file,
-                                   final EntryGroup entry_group)
-  {
-    SwingWorker entryWorker = new SwingWorker()
-    {
-      public Object construct()
-      {
-        try
-        {
-          EntryInformation new_entry_information =
-             new SimpleEntryInformation(Options.getArtemisEntryInformation());
-                                                                                                      
-          final Entry new_entry =  new Entry(entry_group.getBases(),
-                         EntryFileDialog.getEntryFromFile(null,
-                          new FileDocument(file),
-                          new_entry_information, true));
-                                                                                                      
-          if(new_entry != null)
-            entry_group.add(new_entry);
-        }
-        catch(final OutOfRangeException e)
-        {
-          new MessageDialog(MultiComparator.this,
-                         "read failed: one of the features " +
-                         "in the entry has an out of " +
-                         "range location: " +
-                         e.getMessage());
-        }
-        return null;
-      }
-    };
-    entryWorker.start();
-  }
-
-
-  /**
    *  Return the current default font(from Diana.options).
    **/
   private Font getDefaultFont() 
@@ -1053,75 +1013,6 @@ public class MultiComparator extends JFrame
   protected BasePlotGroup[] getBasePlotGroupArray() 
   {
     return base_plot_group_array;
-  }
-
-  // DropTargetListener methods
-
-  protected static Border dropBorder = new BevelBorder(BevelBorder.LOWERED);
-  public void drop(DropTargetDropEvent e)
-  {
-    Transferable t = e.getTransferable();
-    try
-    {
-      if(t.isDataFlavorSupported(FileNode.FILENODE))
-      {
-        FileNode fn = (FileNode)t.getTransferData(FileNode.FILENODE);
-        readAnEntryFromFile(fn.getFile(), 
-                            entry_group_array[current_group]);
-      }
-      else
-        e.rejectDrop();
-    }
-    catch(UnsupportedFlavorException ufe)
-    {
-      ufe.printStackTrace();
-    }
-    catch(IOException ioe)
-    {
-      ioe.printStackTrace();
-    }
-    finally
-    {
-      feature_display_array[current_group].setBorder(null);
-    }
-  }
-
-  public void dragExit(DropTargetEvent e)
-  {
-    for(int i=0;i<feature_display_array.length;i++)
-      feature_display_array[i].setBorder(null);
-  }
-  public void dropActionChanged(DropTargetDragEvent e) {}
-                                                                                                               
-  public void dragOver(DropTargetDragEvent e)
-  {
-    if(e.isDataFlavorSupported(FileNode.FILENODE))
-    {
-      Point ploc = e.getLocation();
-      boolean over_feature_display = false;
-
-      for(int i=0;i<feature_display_array.length;i++)
-      {
-        int top = feature_display_array[i].getY();
-        int btm = top + feature_display_array[i].getHeight();
- 
-        if(ploc.y > top && ploc.y < btm)
-        {
-          feature_display_array[i].setBorder(dropBorder);
-          e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
-          current_group = i;
-          return;
-        }
-      }
-
-      e.rejectDrag();
-    }
-  }
-                                                                                                               
-  public void dragEnter(DropTargetDragEvent e)
-  {
-    if(e.isDataFlavorSupported(FileNode.FILENODE))
-      e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
   }
 
 }

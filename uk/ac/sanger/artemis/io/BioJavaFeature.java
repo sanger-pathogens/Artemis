@@ -233,6 +233,12 @@ public class BioJavaFeature extends EMBLObject implements ComparableFeature
   public void setLocation(Location location)
       throws OutOfRangeException, ReadOnlyException
   {
+    setLocation(location, null);
+  }
+
+  public void setLocation(Location location, Entry entry)
+      throws OutOfRangeException, ReadOnlyException
+  {
     if (location == null || getEntry () == null) {
       return;
     }

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FeatureSegment.java,v 1.3 2005-11-15 12:21:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FeatureSegment.java,v 1.4 2005-11-28 16:46:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -39,7 +39,7 @@ import java.util.Vector;
  *  must be a coding sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureSegment.java,v 1.3 2005-11-15 12:21:18 tjc Exp $
+ *  @version $Id: FeatureSegment.java,v 1.4 2005-11-28 16:46:38 tjc Exp $
  *
  **/
 
@@ -268,7 +268,8 @@ public class FeatureSegment
   {
     // the location of the feature itself will change later
     if(event.getType () != SequenceChangeEvent.REVERSE_COMPLEMENT &&
-       event.getType () != SequenceChangeEvent.CONTIG_REVERSE_COMPLEMENT) 
+       event.getType () != SequenceChangeEvent.CONTIG_REVERSE_COMPLEMENT &&
+       event.getType () != SequenceChangeEvent.CONTIG_REORDER) 
     {
       updateRange ();
     }

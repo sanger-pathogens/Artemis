@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/CorbaFeature.java,v 1.1 2004-06-09 09:49:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/CorbaFeature.java,v 1.2 2005-11-28 16:46:38 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import type.NoResult;
  *  server.
  *
  *  @author Kim Rutherford
- *  @version $Id: CorbaFeature.java,v 1.1 2004-06-09 09:49:00 tjc Exp $
+ *  @version $Id: CorbaFeature.java,v 1.2 2005-11-28 16:46:38 tjc Exp $
  **/
 
 public class CorbaFeature extends EMBLObject
@@ -96,6 +96,11 @@ public class CorbaFeature extends EMBLObject
    *  @param key The new feature key
    **/
   public void setKey (Key key)
+      throws ReadOnlyException {
+    throw new ReadOnlyException ();
+  }
+
+  public void setLocation (Location location, Entry entry)
       throws ReadOnlyException {
     throw new ReadOnlyException ();
   }

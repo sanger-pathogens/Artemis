@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentFeature.java,v 1.2 2005-01-06 11:21:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentFeature.java,v 1.3 2005-11-28 16:46:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -32,7 +32,7 @@ import java.io.*;
  *  SimpleDocumentFeature class
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentFeature.java,v 1.2 2005-01-06 11:21:06 tjc Exp $
+ *  @version $Id: SimpleDocumentFeature.java,v 1.3 2005-11-28 16:46:38 tjc Exp $
  **/
 
 abstract class SimpleDocumentFeature extends LineGroup
@@ -262,11 +262,16 @@ abstract class SimpleDocumentFeature extends LineGroup
     }
   }
 
+  public void setLocation (final Location location)
+      throws ReadOnlyException, OutOfRangeException {
+    setLocation(location, null);
+  }
+
   /**
    *  Set the location of this object.
    *  @param location The Location object for the new feature
    **/
-  public void setLocation (final Location location)
+  public void setLocation (final Location location, Entry saved_entry)
       throws ReadOnlyException, OutOfRangeException {
 
     if (getEntry () != null && getEntry ().isReadOnly ()) {
@@ -274,7 +279,8 @@ abstract class SimpleDocumentFeature extends LineGroup
     }
 
     // save the Entry because the call to remove () will set it to null
-    final Entry saved_entry = getEntry ();
+    if(saved_entry == null)
+      saved_entry = getEntry ();
       
     try {
       if (saved_entry != null) {

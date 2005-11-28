@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Feature.java,v 1.1 2004-06-09 09:49:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Feature.java,v 1.2 2005-11-28 16:46:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -31,7 +31,7 @@ import uk.ac.sanger.artemis.util.*;
  *  Feature interface
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.1 2004-06-09 09:49:21 tjc Exp $
+ *  @version $Id: Feature.java,v 1.2 2005-11-28 16:46:38 tjc Exp $
  *
  */
 
@@ -69,6 +69,9 @@ public interface Feature {
    *  @param location The Location object for the new feature
    **/
   void setLocation (final Location location)
+      throws OutOfRangeException, ReadOnlyException;
+
+  void setLocation (final Location location, Entry saved_entry)
       throws OutOfRangeException, ReadOnlyException;
 
   /**

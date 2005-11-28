@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.15 2005-11-15 12:21:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.16 2005-11-28 16:46:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -60,7 +60,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.15 2005-11-15 12:21:18 tjc Exp $
+ *  @version $Id: Feature.java,v 1.16 2005-11-28 16:46:38 tjc Exp $
  **/
 
 public class Feature
@@ -198,6 +198,7 @@ public class Feature
     catch(ReadOnlyException e) {}
   }
 
+
   /**
    *  This method fixes up the location of this Feature when a sequence
    *  changes.
@@ -242,6 +243,50 @@ public class Feature
             throw new Error("internal error - inconsistent location: " + e);
           }
         } 
+      }
+      else if(event.getType() == SequenceChangeEvent.CONTIG_REORDER)
+      {
+        final Location old_location = getLocation();
+
+        final int new_base_pos = event.getPosition();
+        final int range_start  = event.getRange().getStart(); 
+        final int range_end = event.getRange().getEnd();
+        final Range this_feature_range = getMaxRawRange();
+        
+        // check if feature is effected
+        if( (this_feature_range.getStart() >= new_base_pos ||
+             this_feature_range.getStart() >= range_start) &&
+            (this_feature_range.getStart() < new_base_pos ||
+             this_feature_range.getStart() < range_end) )
+        {
+          try
+          {
+            final int diff;
+            
+            if(range_start <= this_feature_range.getStart() &&
+               range_end   >= this_feature_range.getEnd())
+            {
+              if(new_base_pos < range_start)
+                diff = new_base_pos-range_start;
+              else
+                diff = new_base_pos-range_end-1;
+            }
+            else
+            {
+              if(this_feature_range.getStart() < range_start)
+                diff = range_end-range_start+1;
+              else
+                diff = range_start-range_end-1;
+            }
+
+            Location new_location = moveSegments(diff);
+            setLocationInternal(new_location);
+          }
+          catch(OutOfRangeException e)
+          {
+            throw new Error("internal error - inconsistent location: " + e);
+          }
+        }
       }
       else 
       {
@@ -2970,7 +3015,7 @@ CHANGED_END:
   private void setLocationInternal(final Location new_location)
       throws ReadOnlyException, OutOfRangeException 
   {
-    getEmblFeature().setLocation(new_location);
+    getEmblFeature().setLocation(new_location, getEntry().getEMBLEntry());
 
     if(new_location != old_location) 
       reexamineSegments();
@@ -3012,6 +3057,28 @@ CHANGED_END:
 
     reexamineSegments();
     locationChanged(old_location);
+  }
+
+  private Location moveSegments(final int shift)
+      throws OutOfRangeException, ReadOnlyException
+  {
+    Location location = getLocation();
+    RangeVector ranges = old_location.getRanges();
+    for(int i=0; i<ranges.size(); i++)
+    {
+      old_location = location;
+      final Range seg_range = (Range)ranges.elementAt(i);
+      final Range seg_new_range = new Range(seg_range.getStart() + shift,
+                                            seg_range.getEnd() + shift);
+      location = location.changeRange(seg_range, seg_new_range);
+   
+      System.out.println("DIFF "+ shift+" "+seg_new_range.getStart()+".."+
+                                            seg_new_range.getEnd()+"  was "+
+                                            seg_range.getStart()+".."+
+                                            seg_range.getEnd());
+    }
+
+    return location;
   }
 
   /**

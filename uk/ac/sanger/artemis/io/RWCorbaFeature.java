@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RWCorbaFeature.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RWCorbaFeature.java,v 1.4 2005-11-28 16:46:38 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.io;
@@ -40,7 +40,7 @@ import java.util.Date;
  *  CORBA using a nsdb.NucFeatureWriter object.
  *
  *  @author Kim Rutherford
- *  @version $Id: RWCorbaFeature.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: RWCorbaFeature.java,v 1.4 2005-11-28 16:46:38 tjc Exp $
  **/
 
 public class RWCorbaFeature extends EMBLObject implements DateStampFeature {
@@ -166,6 +166,11 @@ public class RWCorbaFeature extends EMBLObject implements DateStampFeature {
     } catch (type.InvalidRelation e) {
       throw new InvalidRelationException (e.reason, key);
     }
+  }
+
+  public void setLocation (Location location, Entry entry)
+      throws OutOfRangeException, ReadOnlyException {
+    setLocation(location);
   }
 
   /**

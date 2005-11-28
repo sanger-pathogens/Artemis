@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.17 2005-11-15 12:21:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.18 2005-11-28 16:46:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.util.Enumeration;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.17 2005-11-15 12:21:18 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.18 2005-11-28 16:46:38 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -1032,7 +1032,7 @@ abstract public class SimpleDocumentEntry
       final LineGroup current_line_group = line_groups.elementAt(i);
 
       if(current_line_group instanceof FeatureTable) 
-        return(FeatureTable) current_line_group;
+        return (FeatureTable)current_line_group;
     }
 
     return null;

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Marker.java,v 1.2 2005-11-15 12:21:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Marker.java,v 1.3 2005-11-28 16:46:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -32,7 +32,7 @@ import java.util.Vector;
  *  Objects of this class mark postions on one strand of DNA.
  *
  *  @author Kim Rutherford
- *  @version $Id: Marker.java,v 1.2 2005-11-15 12:21:18 tjc Exp $
+ *  @version $Id: Marker.java,v 1.3 2005-11-28 16:46:38 tjc Exp $
  *
  **/
 
@@ -224,7 +224,7 @@ public class Marker {
  *  alive by having a reference on the sequence change listener list.
  *
  *  @author Kim Rutherford
- *  @version $Id: Marker.java,v 1.2 2005-11-15 12:21:18 tjc Exp $
+ *  @version $Id: Marker.java,v 1.3 2005-11-28 16:46:38 tjc Exp $
  *
  **/
 class MarkerInternal
@@ -286,7 +286,8 @@ class MarkerInternal
    **/
   public void sequenceChanged (final SequenceChangeEvent event) {
     if(event.getType () == SequenceChangeEvent.REVERSE_COMPLEMENT ||
-       event.getType () == SequenceChangeEvent.CONTIG_REVERSE_COMPLEMENT) 
+       event.getType () == SequenceChangeEvent.CONTIG_REVERSE_COMPLEMENT ||
+       event.getType () == SequenceChangeEvent.CONTIG_REORDER) 
       return;
 
     final int sub_sequence_length = event.getSubSequence ().length ();

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.21 2005-08-30 08:57:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.22 2005-11-28 16:46:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -52,6 +52,7 @@ import java.io.*;
 import java.awt.dnd.*;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.datatransfer.DataFlavor;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.BevelBorder;
@@ -60,12 +61,11 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.21 2005-08-30 08:57:36 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.22 2005-11-28 16:46:38 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
-    implements EntryGroupChangeListener, EntryChangeListener,
-               DropTargetListener 
+    implements EntryGroupChangeListener, EntryChangeListener
 {
 
   /** The shortcut for Delete Selected Features. */
@@ -113,7 +113,6 @@ public class EntryEdit extends JFrame
     super("Artemis Entry Edit");
 
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-    setDropTarget(new DropTarget(this,this));
     entry_group.ref();
     this.entry_group = entry_group;
 
@@ -1248,42 +1247,6 @@ public class EntryEdit extends JFrame
   }
 
   /**
-   *  Read an entry
-   **/
-  private void readAnEntryFromFile(final File file)
-  {
-    SwingWorker entryWorker = new SwingWorker()
-    {
-      public Object construct()
-      {
-        try
-        {
-          EntryInformation new_entry_information =
-             new SimpleEntryInformation(Options.getArtemisEntryInformation());
-
-          final Entry new_entry =  new Entry(entry_group.getBases(),
-                         EntryFileDialog.getEntryFromFile(null,
-                          new FileDocument(file),
-                          new_entry_information, true));
-
-          if(new_entry != null)
-            getEntryGroup().add(new_entry);
-        }
-        catch(final OutOfRangeException e)
-        {
-          new MessageDialog(EntryEdit.this,
-                         "read failed: one of the features " +
-                         "in the entry has an out of " +
-                         "range location: " +
-                         e.getMessage());
-        }
-        return null;
-      }
-    };
-    entryWorker.start();
-  }
-
-  /**
   *
   *  Read an entry from a remote file node (ssh)
   *
@@ -1327,70 +1290,6 @@ public class EntryEdit extends JFrame
   private Font getDefaultFont() 
   {
     return Options.getOptions().getFont();
-  }
-
-  // DropTargetListener methods
-  protected static Border dropBorder = new BevelBorder(BevelBorder.LOWERED);
-  public void drop(DropTargetDropEvent e)
-  {
-    Transferable t = e.getTransferable();
-    try
-    {
-      if(t.isDataFlavorSupported(FileNode.FILENODE))
-      {
-        FileNode fn = (FileNode)t.getTransferData(FileNode.FILENODE);
-        readAnEntryFromFile(fn.getFile());
-      }
-      else if(t.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE))
-      {
-        final RemoteFileNode node =
-            (RemoteFileNode)t.getTransferData(RemoteFileNode.REMOTEFILENODE);
-        readAnEntryFromRemoteFileNode(node);
-      }
-      else
-        e.rejectDrop();
-    }
-    catch(UnsupportedFlavorException ufe)
-    {
-      ufe.printStackTrace();
-    }
-    catch(IOException ioe)
-    {
-      ioe.printStackTrace();
-    }
-    finally
-    {
-      ((JComponent)getContentPane()).setBorder(null);
-    }
-  }
-
-  public void dragExit(DropTargetEvent e)
-  {
-    ((JComponent)getContentPane()).setBorder(null);
-  }
-  public void dropActionChanged(DropTargetDragEvent e) {}
-
-  public void dragOver(DropTargetDragEvent e)
-  {
-    if(e.isDataFlavorSupported(FileNode.FILENODE) ||
-       e.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE))
-    {
-      Point ploc = e.getLocation();
-      if(this.contains(ploc.x,ploc.y))
-      {
-        ((JComponent)getContentPane()).setBorder(dropBorder);
-        e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
-      }
-      else
-        e.rejectDrag();
-    }
-  }
-
-  public void dragEnter(DropTargetDragEvent e)
-  {
-    if(e.isDataFlavorSupported(FileNode.FILENODE) ||
-       e.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE))
-      e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
   }
 
 }

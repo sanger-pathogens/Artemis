@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/FeatureTree.java,v 1.2 2004-11-24 11:55:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/FeatureTree.java,v 1.3 2005-11-28 16:46:38 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.io;
@@ -32,7 +32,7 @@ import java.util.*;
  *  object.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureTree.java,v 1.2 2004-11-24 11:55:52 tjc Exp $
+ *  @version $Id: FeatureTree.java,v 1.3 2005-11-28 16:46:38 tjc Exp $
  **/
 
 public class FeatureTree extends TreeSet {
@@ -77,6 +77,7 @@ public class FeatureTree extends TreeSet {
                        final QualifierVector qv) {}
       public void setKey (final Key _) {}
       public void setLocation (final Location _) {}
+      public void setLocation (final Location _, Entry entry) {}
       public void setQualifiers (final QualifierVector _) {}
       public void setQualifier (final Qualifier _) {}
       public void removeQualifierByName (final String _) {}

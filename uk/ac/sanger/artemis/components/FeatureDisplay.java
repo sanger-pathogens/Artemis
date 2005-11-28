@@ -20,42 +20,58 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.32 2005-11-17 16:50:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.33 2005-11-28 16:46:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
+import uk.ac.sanger.artemis.components.filetree.FileNode;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
+import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.io.EntryInformation;
+import uk.ac.sanger.artemis.io.SimpleEntryInformation;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 
+import java.io.IOException;
+import java.io.File;
 import java.awt.event.*;
 import java.awt.*;
 import java.lang.Math;
 import java.util.Vector;
 import java.util.Comparator;
 import java.util.Enumeration;
+import javax.swing.border.Border;
+import javax.swing.border.BevelBorder;
 
+import java.awt.datatransfer.*;
+import java.awt.dnd.*;
 import javax.swing.Box;
 import javax.swing.JScrollBar;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
+import javax.swing.ImageIcon;
 
 /**
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.32 2005-11-17 16:50:50 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.33 2005-11-28 16:46:38 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
   implements EntryGroupChangeListener,
              EntryChangeListener, FeatureChangeListener,
              SelectionChangeListener, GotoListener, SequenceChangeListener,
-             DisplayComponent, OptionChangeListener, DisplayAdjustmentListener
+             DisplayComponent, OptionChangeListener, DisplayAdjustmentListener,
+             DragGestureListener, DropTargetListener,
+             DragSourceListener
 {
+
+  private int highlight_drop_base = -1;
 
   /** Key code for calling zoomToSelection(). */
   final static public int ZOOM_TO_SELECTION_KEY = KeyEvent.VK_Z;
@@ -351,6 +367,15 @@ public class FeatureDisplay extends EntryGroupPanel
 
     Options.getOptions().addOptionChangeListener(this);
     setBackground(Color.white);
+
+    DragSource dragSource = DragSource.getDefaultDragSource();
+
+    dragSource.createDefaultDragGestureRecognizer(
+       this,                             // component where drag originates
+       DnDConstants.ACTION_COPY_OR_MOVE, // actions
+       this);                            // drag gesture recognizer
+
+    setDropTarget(new DropTarget(this,this));
   }
 
 
@@ -1468,7 +1493,21 @@ public class FeatureDisplay extends EntryGroupPanel
 
     if(scrollbar_style == SCROLLBAR_AT_TOP)
       ((Graphics2D)g).translate(0,-scrollbar_hgt);
-    
+ 
+    if(highlight_drop_base > 0)
+    {   
+      g.setColor(Color.red);
+      final int draw_x_position = getLowXPositionOfBase(highlight_drop_base);
+      int nlines = 16;
+       
+      if(!show_forward_lines)
+        nlines -= 6; 
+      if(!show_reverse_lines)
+        nlines -= 6;
+
+      g.drawLine(draw_x_position, 0,
+                 draw_x_position, (nlines*getFontHeight()));
+    }
 //  Thread.yield();
   }
 
@@ -4614,5 +4653,196 @@ public class FeatureDisplay extends EntryGroupPanel
   {
     update_visible_features = true;
   }
+
+
+////////////////////
+// DRAG AND DROP
+////////////////////
+
+  /**
+   *  Read an entry
+   **/
+  private void readAnEntryFromFile(final File file,
+                                   final EntryGroup entry_group)
+  {
+    SwingWorker entryWorker = new SwingWorker()
+    {
+      public Object construct()
+      {
+        try
+        {
+          EntryInformation new_entry_information =
+             new SimpleEntryInformation(Options.getArtemisEntryInformation());
+
+          final Entry new_entry =  new Entry(entry_group.getBases(),
+                         EntryFileDialog.getEntryFromFile(null,
+                          new FileDocument(file),
+                          new_entry_information, true));
+
+          if(new_entry != null)
+            entry_group.add(new_entry);
+        }
+        catch(final OutOfRangeException e)
+        {
+          new MessageDialog(null,
+                         "read failed: one of the features " +
+                         "in the entry has an out of " +
+                         "range location: " +
+                         e.getMessage());
+        }
+        return null;
+      }
+    };
+    entryWorker.start();
+  }
+
+// drop
+  protected static Border dropBorder = new BevelBorder(BevelBorder.LOWERED);
+
+  private void getNearestFeatureEnd(Point loc)
+  {
+    final int base_pos = getBasePositionOfPoint(loc, FORWARD_STRAND);
+    FeatureVector features_from_entry = getVisibleFeatures();   
+    int first;
+    int last;
+
+    for(int i = 0; i < features_from_entry.size(); i++)
+    {
+      final Feature this_feature = features_from_entry.elementAt(i);
+
+      if(this_feature.getKey().equals("fasta_record"))
+      {
+        first = this_feature.getRawFirstBase();
+        last  = this_feature.getRawLastBase();
+ 
+        if( Math.abs(first - base_pos) < Math.abs(base_pos - highlight_drop_base) )
+          highlight_drop_base = first;
+        if( Math.abs(last - base_pos) < Math.abs(base_pos - highlight_drop_base) )
+          highlight_drop_base = last+1;
+      }
+    }
+  }
+
+  public void drop(DropTargetDropEvent e)
+  {
+    Transferable t = e.getTransferable();
+    try
+    {
+      if(t.isDataFlavorSupported(FileNode.FILENODE))
+      {
+        FileNode fn = (FileNode)t.getTransferData(FileNode.FILENODE);
+        readAnEntryFromFile(fn.getFile(), getEntryGroup());
+      }
+      else if(e.isDataFlavorSupported(DataFlavor.stringFlavor))
+      {
+        // rearrange contigs
+        final FeatureVector selected_features = getSelection().getAllFeatures();
+         
+        try
+        {
+          getEntryGroup().getBases().contigRearrange(selected_features.elementAt(0), 
+                                                  highlight_drop_base);
+        }
+        catch(ReadOnlyException roe)
+        {
+          final String message =
+            "one or more of the features is read-only or is in a " +
+            "read-only entry - cannot continue";
+          new MessageDialog(null, message);
+          highlight_drop_base = -1;
+
+          return;
+        }
+      }
+      else
+        e.rejectDrop();
+    }
+    catch(UnsupportedFlavorException ufe)
+    {
+      ufe.printStackTrace();
+    }
+    catch(IOException ioe)
+    {
+      ioe.printStackTrace();
+    }
+    finally
+    {
+      highlight_drop_base = -1;
+      setBorder(null);
+    }
+  }
+
+  public void dragExit(DropTargetEvent e)
+  {
+    highlight_drop_base = -1;
+    setBorder(null);
+    repaint();
+  }
+
+  public void dropActionChanged(DropTargetDragEvent e) {}
+
+  public void dragOver(DropTargetDragEvent e)
+  {
+    if(e.isDataFlavorSupported(FileNode.FILENODE))
+    {
+      setBorder(dropBorder);
+      e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
+      return;
+    }
+    else if(e.isDataFlavorSupported(DataFlavor.stringFlavor))
+    {
+      Point ploc = e.getLocation();
+      getNearestFeatureEnd(ploc);
+      repaint();
+    }
+    e.rejectDrag();
+  }
+
+  public void dragEnter(DropTargetDragEvent e)
+  {
+    if(e.isDataFlavorSupported(FileNode.FILENODE))
+      e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
+  }
+
+
+// drag source
+  public void dragGestureRecognized(DragGestureEvent e)
+  {
+    // ignore if mouse popup trigger
+    InputEvent ie = e.getTriggerEvent();
+    if(ie instanceof MouseEvent)
+      if(((MouseEvent)ie).isPopupTrigger())
+        return;
+
+    final FeatureVector selected_features = getSelection().getAllFeatures();
+    if(selected_features.size() == 1 &&
+       ( selected_features.elementAt(0).getKey().equals("source") ||
+         selected_features.elementAt(0).getKey().equals("fasta_record") ))
+    {
+      ClassLoader cl = this.getClass().getClassLoader();
+      ImageIcon icon = new ImageIcon(cl.getResource("images/icon.gif"));
+      final Image icon_image = icon.getImage();
+
+      TransferableContig tcontig = new TransferableContig(selected_features.elementAt(0)); 
+      StringSelection name = new StringSelection(selected_features.elementAt(0).getGeneName());
+
+      e.startDrag(DragSource.DefaultCopyDrop,     // cursor
+                  icon_image, new Point(-1, -1),
+                 (Transferable)name,              // transferable data
+                                       this);     // drag source listener
+    }
+  }
+
+  public void dragDropEnd(DragSourceDropEvent e) {}
+  public void dragEnter(DragSourceDragEvent e) 
+  {
+  }
+
+  public void dragExit(DragSourceEvent e) 
+  {
+    highlight_drop_base = -1;
+  }
+  public void dragOver(DragSourceDragEvent e) {}
+  public void dropActionChanged(DragSourceDragEvent e) {}
 
 }

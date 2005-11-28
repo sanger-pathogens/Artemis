@@ -20,10 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.19 2005-11-21 18:56:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.20 2005-11-28 16:46:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
+
+//import uk.ac.sanger.artemis.FeatureVector;
 
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.util.*;
@@ -47,7 +49,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.19 2005-11-21 18:56:27 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.20 2005-11-28 16:46:38 tjc Exp $ */
 
 public class Bases 
 {
@@ -1025,7 +1027,7 @@ public class Bases
   * Reverse complement a range of the sequence.
   *
   */
-  public void reverseComplement(Feature feature)
+  public void reverseComplement(final Feature feature)
               throws ReadOnlyException 
   {
     forward_stop_codon_cache = null;
@@ -1076,8 +1078,86 @@ public class Bases
       new SequenceChangeEvent(this, SequenceChangeEvent.CONTIG_REVERSE_COMPLEMENT,
                               range, sub_sequence.length);
 
-    fireSequenceChangeEvent (event);
+    fireSequenceChangeEvent(event);
   }
+
+  
+  public void contigRearrange(final Feature feature, final int new_base_pos)
+              throws ReadOnlyException
+  {
+    forward_stop_codon_cache = null;
+    reverse_stop_codon_cache = null;
+  
+    final Range range = feature.getMaxRawRange();
+    final int range_start_index = range.getStart();
+    final int range_end_index   = range.getEnd();
+
+    if(new_base_pos == range_start_index)
+      return;
+
+    final char[] new_sequence = new char[getLength()];
+    final char[] old_sequence = ((StreamSequence)getSequence()).getCharSequence();
+
+    int contig_length = 0;
+    if(new_base_pos < range_start_index)
+    {
+      System.out.println("A contigRearrange()");
+      // if not first contig
+      if(new_base_pos != 1)
+        System.arraycopy(old_sequence, 0, new_sequence, 0, new_base_pos-2);
+
+      contig_length = range_end_index - range_start_index + 1;
+      // copy in new sequence fragment that has been reverse complemented
+      System.arraycopy(old_sequence, range_start_index-1, 
+                       new_sequence, new_base_pos-1, contig_length);
+
+      System.arraycopy(old_sequence, new_base_pos-1,
+                       new_sequence, new_base_pos+contig_length-1, 
+                       range_start_index-new_base_pos);
+
+      // if not last contig
+      if(new_base_pos < getLength()+1)
+        System.arraycopy(old_sequence, range_end_index,
+                         new_sequence, range_end_index,
+                         getLength()-range_end_index);
+    }
+    else 
+    {
+      System.out.println("B contigRearrange()");
+      System.arraycopy(old_sequence, 0, new_sequence, 0, range_start_index-1);
+
+      System.arraycopy(old_sequence, range_end_index,
+                       new_sequence, range_start_index-1, 
+                       new_base_pos-range_end_index-1);
+
+      System.arraycopy(old_sequence, range_start_index-1,
+                       new_sequence, (range_start_index-1)+(new_base_pos-range_end_index)-1,
+                       range_end_index - range_start_index + 1);
+
+      // if not last contig
+      if(new_base_pos < getLength()+1)
+        System.arraycopy(old_sequence, new_base_pos-1,
+                         new_sequence, new_base_pos-1,
+                         getLength()-new_base_pos);
+    }
+    
+
+    try 
+    { 
+      embl_sequence.setFromChar(new_sequence);
+    }
+    catch (IllegalSymbolException e)  
+    {
+      throw new Error ("internal error - unexpected exception: " + e);
+    }
+
+    final SequenceChangeEvent event =
+      new SequenceChangeEvent(SequenceChangeEvent.CONTIG_REORDER,
+                              new_base_pos, range);
+
+    fireSequenceChangeEvent(event);
+  }
+
 
   /**
    *  Delete the bases in the given range and send out a SequenceChange event
