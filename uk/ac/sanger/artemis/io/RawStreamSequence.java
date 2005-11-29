@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RawStreamSequence.java,v 1.6 2005-10-31 10:41:51 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RawStreamSequence.java,v 1.7 2005-11-29 18:06:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.Vector;
  *  This is a subclass of StreamSequence containing raw sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: RawStreamSequence.java,v 1.6 2005-10-31 10:41:51 tjc Exp $
+ *  @version $Id: RawStreamSequence.java,v 1.7 2005-11-29 18:06:00 tjc Exp $
  **/
 
 public class RawStreamSequence extends StreamSequence 
@@ -178,9 +178,15 @@ public class RawStreamSequence extends StreamSequence
 
     final int SEQUENCE_LINE_BASE_COUNT = 60;
 
-    int header_counter = 0;
-
+    int header_counter  = 0;
     final int [] header_positions = getFastaHeaderPositions();
+
+    int [] header_positions_sorted = new int[header_positions.length];
+    System.arraycopy(header_positions, 0,
+                     header_positions_sorted, 0,
+                     header_positions.length);
+    java.util.Arrays.sort(header_positions_sorted);
+
     final String [] header_strings = getFastaHeaderStrings();
 
     int i = 0;
@@ -189,10 +195,21 @@ public class RawStreamSequence extends StreamSequence
     {
       if(header_counter < header_positions.length) 
       {
-        if(i == header_positions[header_counter]) 
+        if(i == header_positions_sorted[header_counter]) 
         {
           // dump a header
-          writer.write(">" + header_strings[header_counter] + "\n");
+          String header = "";
+          for(int j = 0; j<header_positions.length; j++)
+          {
+            if(header_positions_sorted[header_counter] ==
+               header_positions[j])
+            {
+              header = header_strings[j];
+              continue;
+            }
+          }
+
+          writer.write(">" + header +" "+header_positions_sorted[header_counter]+ "\n");
           ++header_counter;
         }
       }
@@ -208,8 +225,8 @@ public class RawStreamSequence extends StreamSequence
 
       if(header_counter < header_positions.length) 
       {
-        if(i + this_line_length > header_positions[header_counter]) 
-          this_line_length = header_positions[header_counter] - i;
+        if(i + this_line_length > header_positions_sorted[header_counter]) 
+          this_line_length = header_positions_sorted[header_counter] - i;
       }
 
       line_buffer.setLength(0);
@@ -223,14 +240,36 @@ public class RawStreamSequence extends StreamSequence
 
       if(header_counter < header_positions.length) 
       {
-        if(header_positions[header_counter] < i + SEQUENCE_LINE_BASE_COUNT) 
+        if(header_positions_sorted[header_counter] < i + SEQUENCE_LINE_BASE_COUNT) 
         {
-          i = header_positions[header_counter];
+          i = header_positions_sorted[header_counter];
           continue;
         }
       }
 
       i += SEQUENCE_LINE_BASE_COUNT;
+    }
+  }
+
+  public void setFastaHeaderPosition(final int old_position, final int new_position)
+  {
+    if(old_position == new_position)
+      return;
+
+    if(fasta_header_positions != null && fasta_header_positions.size() > 0)
+    {
+      if(!fasta_header_positions.contains(new Integer(old_position)))
+        return;
+       
+      for(int i = 0 ; i < fasta_header_positions.size(); ++i)
+      {
+        int current_position = ((Integer)fasta_header_positions.elementAt(i)).intValue();
+        
+        if(current_position == old_position)
+        {
+          fasta_header_positions.set(i, new Integer(new_position));
+        }
+      }
     }
   }
 
@@ -246,9 +285,11 @@ public class RawStreamSequence extends StreamSequence
       final int [] return_value = new int [fasta_header_positions.size()];
 
       for(int i = 0 ; i < return_value.length ; ++i) 
+      {
         return_value[i] =
                 ((Integer)fasta_header_positions.elementAt(i)).intValue();
-      
+      }
+
       return return_value;
     } 
     else 

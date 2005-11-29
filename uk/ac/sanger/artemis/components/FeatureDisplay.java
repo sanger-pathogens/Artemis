@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.33 2005-11-28 16:46:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.34 2005-11-29 18:06:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -33,6 +33,8 @@ import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.SimpleEntryInformation;
+import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.io.RawStreamSequence;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 
@@ -59,7 +61,7 @@ import javax.swing.ImageIcon;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.33 2005-11-28 16:46:38 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.34 2005-11-29 18:06:00 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -4740,8 +4742,41 @@ public class FeatureDisplay extends EntryGroupPanel
          
         try
         {
-          getEntryGroup().getBases().contigRearrange(selected_features.elementAt(0), 
-                                                  highlight_drop_base);
+          // find all fasta_record features
+          final FeaturePredicate key_and_qualifier_predicate
+                  =  new FeatureKeyQualifierPredicate(new Key("fasta_record"),
+                                                      null, // match any qialifier
+                                                      false);
+          final FeatureEnumeration test_enumerator = getEntryGroup().features();
+          final FeatureVector contig_features = new FeatureVector();
+
+          while(test_enumerator.hasMoreFeatures())
+          {
+            final Feature this_feature = test_enumerator.nextFeature();
+
+            if(key_and_qualifier_predicate.testPredicate(this_feature))
+              contig_features.add(this_feature);
+          }
+  
+          // get fasta_record old positions        
+          int old_pos[] = new int[contig_features.size()];
+          for(int i=0; i<old_pos.length; i++)
+            old_pos[i] = contig_features.elementAt(i).getMaxRawRange().getStart();
+
+          // rearrange contig order
+          Feature contig_feature = selected_features.elementAt(0);
+          getEntryGroup().getBases().contigRearrange(contig_feature, 
+                                                     highlight_drop_base);
+
+          // get fasta_record new positions
+          int new_pos[] = new int[contig_features.size()];
+          for(int i=0; i<new_pos.length; i++)
+            new_pos[i] = contig_features.elementAt(i).getMaxRawRange().getStart();
+
+          // update header record
+          RawStreamSequence sequence = (RawStreamSequence)getBases().getSequence();
+          for(int i=0; i<new_pos.length; i++)
+            sequence.setFastaHeaderPosition(old_pos[i]-1,new_pos[i]-1);
         }
         catch(ReadOnlyException roe)
         {
