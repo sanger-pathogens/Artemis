@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.34 2005-11-29 18:06:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.35 2005-11-30 09:44:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -61,7 +61,7 @@ import javax.swing.ImageIcon;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.34 2005-11-29 18:06:00 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.35 2005-11-30 09:44:56 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -4761,7 +4761,7 @@ public class FeatureDisplay extends EntryGroupPanel
           // get fasta_record old positions        
           int old_pos[] = new int[contig_features.size()];
           for(int i=0; i<old_pos.length; i++)
-            old_pos[i] = contig_features.elementAt(i).getMaxRawRange().getStart();
+            old_pos[i] = contig_features.elementAt(i).getMaxRawRange().getStart()-1;
 
           // rearrange contig order
           Feature contig_feature = selected_features.elementAt(0);
@@ -4771,12 +4771,11 @@ public class FeatureDisplay extends EntryGroupPanel
           // get fasta_record new positions
           int new_pos[] = new int[contig_features.size()];
           for(int i=0; i<new_pos.length; i++)
-            new_pos[i] = contig_features.elementAt(i).getMaxRawRange().getStart();
+            new_pos[i] = contig_features.elementAt(i).getMaxRawRange().getStart()-1;
 
           // update header record
           RawStreamSequence sequence = (RawStreamSequence)getBases().getSequence();
-          for(int i=0; i<new_pos.length; i++)
-            sequence.setFastaHeaderPosition(old_pos[i]-1,new_pos[i]-1);
+          sequence.setFastaHeaderPosition(old_pos,new_pos);
         }
         catch(ReadOnlyException roe)
         {

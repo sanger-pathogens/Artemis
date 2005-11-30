@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RawStreamSequence.java,v 1.7 2005-11-29 18:06:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RawStreamSequence.java,v 1.8 2005-11-30 09:44:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.Vector;
  *  This is a subclass of StreamSequence containing raw sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: RawStreamSequence.java,v 1.7 2005-11-29 18:06:00 tjc Exp $
+ *  @version $Id: RawStreamSequence.java,v 1.8 2005-11-30 09:44:56 tjc Exp $
  **/
 
 public class RawStreamSequence extends StreamSequence 
@@ -209,7 +209,7 @@ public class RawStreamSequence extends StreamSequence
             }
           }
 
-          writer.write(">" + header +" "+header_positions_sorted[header_counter]+ "\n");
+          writer.write(">" + header + "\n");
           ++header_counter;
         }
       }
@@ -251,23 +251,27 @@ public class RawStreamSequence extends StreamSequence
     }
   }
 
-  public void setFastaHeaderPosition(final int old_position, final int new_position)
+  /**
+  *
+  * Reset the header positions. This is used when contigs a reordered
+  * by a SequenceChangeEvent.CONTIG_REORDER event.
+  *
+  */
+  public void setFastaHeaderPosition(final int old_position[], 
+                                     final int new_position[])
   {
     if(old_position == new_position)
       return;
 
     if(fasta_header_positions != null && fasta_header_positions.size() > 0)
     {
-      if(!fasta_header_positions.contains(new Integer(old_position)))
-        return;
-       
       for(int i = 0 ; i < fasta_header_positions.size(); ++i)
       {
         int current_position = ((Integer)fasta_header_positions.elementAt(i)).intValue();
         
-        if(current_position == old_position)
+        if(current_position == old_position[i])
         {
-          fasta_header_positions.set(i, new Integer(new_position));
+          fasta_header_positions.set(i, new Integer(new_position[i]));
         }
       }
     }
