@@ -24,6 +24,7 @@
 
 package uk.ac.sanger.artemis.j2ssh;
 
+import uk.ac.sanger.artemis.components.MessageDialog;
 
 import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
@@ -142,10 +143,10 @@ public class SshPSUClient extends Thread
     finally
     {
       if(completed)
-        JOptionPane.showMessageDialog(null,
-            "Finished \n" + program,
+        new MessageDialog(null,
+            "Finished \n" + program, 
             "Process Finished",
-            JOptionPane.INFORMATION_MESSAGE);
+            false);
     }
   }
 
