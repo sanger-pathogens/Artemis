@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.35 2005-11-30 09:44:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.36 2005-11-30 13:47:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -35,6 +35,8 @@ import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.SimpleEntryInformation;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.RawStreamSequence;
+import uk.ac.sanger.artemis.io.FastaStreamSequence;
+import uk.ac.sanger.artemis.io.Sequence;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 
@@ -61,7 +63,7 @@ import javax.swing.ImageIcon;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.35 2005-11-30 09:44:56 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.36 2005-11-30 13:47:53 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -4740,28 +4742,38 @@ public class FeatureDisplay extends EntryGroupPanel
         // rearrange contigs
         final FeatureVector selected_features = getSelection().getAllFeatures();
          
+        if(selected_features.size() > 1)
+          return;
+
         try
         {
-          // find all fasta_record features
-          final FeaturePredicate key_and_qualifier_predicate
+          Sequence sequence = getBases().getSequence();
+          FeatureVector contig_features = null;
+          int old_pos[] = null;
+
+          if(sequence instanceof FastaStreamSequence)
+          {
+            // find all fasta_record features
+            final FeaturePredicate key_and_qualifier_predicate
                   =  new FeatureKeyQualifierPredicate(new Key("fasta_record"),
                                                       null, // match any qialifier
                                                       false);
-          final FeatureEnumeration test_enumerator = getEntryGroup().features();
-          final FeatureVector contig_features = new FeatureVector();
+            final FeatureEnumeration test_enumerator = getEntryGroup().features();
+            contig_features = new FeatureVector();
 
-          while(test_enumerator.hasMoreFeatures())
-          {
-            final Feature this_feature = test_enumerator.nextFeature();
+            while(test_enumerator.hasMoreFeatures())
+            {
+              final Feature this_feature = test_enumerator.nextFeature();
 
-            if(key_and_qualifier_predicate.testPredicate(this_feature))
-              contig_features.add(this_feature);
+              if(key_and_qualifier_predicate.testPredicate(this_feature))
+                contig_features.add(this_feature);
+            }
+ 
+            // get fasta_record old positions        
+            old_pos = new int[contig_features.size()];
+            for(int i=0; i<old_pos.length; i++)
+              old_pos[i] = contig_features.elementAt(i).getMaxRawRange().getStart()-1;
           }
-  
-          // get fasta_record old positions        
-          int old_pos[] = new int[contig_features.size()];
-          for(int i=0; i<old_pos.length; i++)
-            old_pos[i] = contig_features.elementAt(i).getMaxRawRange().getStart()-1;
 
           // rearrange contig order
           Feature contig_feature = selected_features.elementAt(0);
@@ -4769,13 +4781,16 @@ public class FeatureDisplay extends EntryGroupPanel
                                                      highlight_drop_base);
 
           // get fasta_record new positions
-          int new_pos[] = new int[contig_features.size()];
-          for(int i=0; i<new_pos.length; i++)
-            new_pos[i] = contig_features.elementAt(i).getMaxRawRange().getStart()-1;
+          if(sequence instanceof FastaStreamSequence &&
+             old_pos != null)
+          {
+            int new_pos[] = new int[old_pos.length];
+            for(int i=0; i<new_pos.length; i++)
+              new_pos[i] = contig_features.elementAt(i).getMaxRawRange().getStart()-1;
 
-          // update header record
-          RawStreamSequence sequence = (RawStreamSequence)getBases().getSequence();
-          sequence.setFastaHeaderPosition(old_pos,new_pos);
+            // update header record
+            ((RawStreamSequence)sequence).setFastaHeaderPosition(old_pos,new_pos);
+          }
         }
         catch(ReadOnlyException roe)
         {
