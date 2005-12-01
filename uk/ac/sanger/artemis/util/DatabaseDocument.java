@@ -792,7 +792,7 @@ public class DatabaseDocument extends Document
 
       while(rs.next())
         schemas.add(rs.getString("schema_name"));
-
+      
       for(int i = 0; i < schemas.size(); i++)
       {
         String schema = (String)schemas.get(i);
@@ -807,6 +807,9 @@ public class DatabaseDocument extends Document
 
         while(rs.next())
           cvterm_id.add(rs.getString("type_id"));
+
+        if(cvterm_id.size() == 0)  // no residues for this organism
+          continue;
 
         sql = new String(
             "SELECT abbreviation, name, feature_id, type_id FROM organism, "+
@@ -886,6 +889,9 @@ public class DatabaseDocument extends Document
         schema_CVlist.setSchema(schema);
          
         List list = sqlMap.queryForList("getResidueType", schema);
+        if(list.size() == 0)  // no residues for this organism
+          continue;
+
         schema_CVlist.setCvlist(list);
 
         List list_residue_features = sqlMap.queryForList("getSchemaResidueFeatures",
