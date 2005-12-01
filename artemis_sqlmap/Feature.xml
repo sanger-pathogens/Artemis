@@ -21,7 +21,7 @@
         <result property="fmax" column="fmax"/>
         <result property="uniquename" column="uniquename"/>
         <result property="type_id" column="type_id"/>
-        <result property="prop_type_id" column="prop_type_id"/>
+        <result property="prop_type_id" column="prop_type_id" nullValue="0"/>
         <result property="value" column="value"/>
      </resultMap>
 
