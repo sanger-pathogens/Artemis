@@ -1039,7 +1039,6 @@ public class DatabaseDocument extends Document
 
   }
 
-/*
   public static void main(String args[])
   {
     try
@@ -1047,19 +1046,30 @@ public class DatabaseDocument extends Document
       DbSqlConfig.init(new JPasswordField());
       SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
 
-      SchemaCVList schema_CVlist = new SchemaCVList();
-      schema_CVlist.setSchema("lbraziliensis");
+      Feature feature = new Feature();
+      feature.setId(2);
+      feature.setSchema("lbraziliensis");
 
-      List list = sqlMap.queryForList("getResidueType", "lbraziliensis");
+      List featureList = sqlMap.queryForList("getGffLine", feature);
+ 
+      for(int i = 0; i < featureList.size(); i++)
+      {
+        feature = (Feature)featureList.get(i);
+        int fmin     = feature.getFmin() + 1;
+        int fmax     = feature.getFmax();
 
-      schema_CVlist.setCvlist(list);
-      List list_residue_features = sqlMap.queryForList("getSchemaResidueFeatures",
-                                                       schema_CVlist);
+        System.out.print(fmin+" "+fmax);
+        System.out.print(" "+feature.getType_id());
+        System.out.print(" "+feature.getProp_type_id());
+        System.out.print(" "+feature.getStrand());
+        System.out.print(" "+feature.getUniquename());
+        System.out.print(" "+feature.getTimelastmodified().toString());
+        System.out.println(" "+Integer.toString(feature.getId()));
+      }
     }
     catch(SQLException sqle)
     {
       sqle.printStackTrace();
     }
   }
-*/
 }
