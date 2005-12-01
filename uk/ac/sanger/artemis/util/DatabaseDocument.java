@@ -1047,8 +1047,8 @@ public class DatabaseDocument extends Document
       SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
 
       Feature feature = new Feature();
-      feature.setId(2);
-      feature.setSchema("lbraziliensis");
+      feature.setId(Integer.parseInt(args[0]));
+      feature.setSchema(args[1]);
 
       List featureList = sqlMap.queryForList("getGffLine", feature);
  
