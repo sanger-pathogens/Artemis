@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.34 2005-11-21 15:49:02 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.35 2005-12-02 14:58:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import java.io.IOException;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.34 2005-11-21 15:49:02 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.35 2005-12-02 14:58:57 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -1605,6 +1605,96 @@ public class AlignmentViewer extends CanvasPanel
   }
   
   /**
+   * Reorder matches on reordering contigs
+   * 
+   * @param subject true if reordering the subject
+   * @param start of the contig
+   * @param end of the contig
+   */
+  protected void reorder(boolean subject, final int start, final int end,
+                         final int drop_position)
+  {
+    int match_start;
+    int match_end;
+    int delete_overlaps = -1;
+
+    Vector removals = new Vector();
+
+    for(int i = 0; i < all_matches.length; ++i)
+    {
+      if(subject)
+      {
+        match_start = all_matches[i].getSubjectSequenceStart();
+        match_end   = all_matches[i].getSubjectSequenceEnd();
+      }
+      else
+      {
+        match_start = all_matches[i].getQuerySequenceStart();
+        match_end   = all_matches[i].getQuerySequenceEnd();
+      }
+
+      // catch matches that span 2 contigs that need moving
+      if( (match_start <= start && match_end >= start) ||
+          (match_start <= end   && match_end >= end)   ||
+          (match_start <= drop_position && match_end >= drop_position) )
+      {
+        // this match extends past end of contig
+        if(delete_overlaps == -1)
+          delete_overlaps = JOptionPane.showConfirmDialog(null,
+                  "Found a match extending past the boundary of a contig:\n"+
+                  match_start+".."+match_end+
+                  "\nDelete all such matches?",
+                  "Delete Overlapping Matches",
+                  JOptionPane.YES_NO_OPTION);
+
+
+         if(delete_overlaps == JOptionPane.YES_OPTION)
+           removals.add(new Integer(i));
+      }
+      else if(match_start >= start || match_start>=drop_position)
+      {
+        if(drop_position < start)
+        {
+          if(match_start < start &&
+             match_end < start)
+          {
+            match_start = match_start + (end-start);
+            match_end   = match_end   + (end-start);
+            all_matches[i].setRange(match_start, match_end, subject);
+          } 
+          else if(match_start >= start && match_start <= end &&  // within contig
+                  match_end   >= start && match_end <= end)
+          {
+            match_start = match_start - (start - drop_position);
+            match_end   = match_end   - (start - drop_position);
+            all_matches[i].setRange(match_start, match_end, subject);
+          }
+        }
+        else
+        {
+          if(match_start < end &&   // within contig
+             match_end <= end)
+          {
+            match_start = match_start + (drop_position-end);
+            match_end   = match_end   + (drop_position-end);
+            all_matches[i].setRange(match_start, match_end, subject); 
+          }
+          else if(match_start > end && match_start < drop_position &&
+                  match_end  > end && match_end < drop_position)
+          {
+            match_start = match_start - (end-start);
+            match_end   = match_end   - (end-start);
+            all_matches[i].setRange(match_start, match_end, subject);
+          }
+        }
+      }
+    }
+
+    for(int i=0; i<removals.size(); i++)
+      removeMatch( ((Integer)removals.get(i)).intValue()-i );
+  }
+
+  /**
    * Flip the matches within a contig and deleted those that overlap
    * with other contigs
    * @param subject true if flipping the subject
@@ -1682,7 +1772,6 @@ public class AlignmentViewer extends CanvasPanel
 
     for(int i=0; i<removals.size(); i++)
       removeMatch( ((Integer)removals.get(i)).intValue()-i );
-
   }
   
   /**

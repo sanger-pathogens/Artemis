@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.36 2005-11-30 13:47:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.37 2005-12-02 14:58:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -63,7 +63,7 @@ import javax.swing.ImageIcon;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.36 2005-11-30 13:47:53 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.37 2005-12-02 14:58:57 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -998,10 +998,10 @@ public class FeatureDisplay extends EntryGroupPanel
       fireAdjustmentEvent(DisplayAdjustmentEvent.REV_COMP_EVENT);
     else if(event.getType() == SequenceChangeEvent.CONTIG_REVERSE_COMPLEMENT ) 
     {
-    	   final Range range = event.getRange();
+      final Range range = event.getRange();
       
-    	   fireAction(adjustment_listener_list, 
-    			   new DisplayAdjustmentEvent(FeatureDisplay.this,
+      fireAction(adjustment_listener_list, 
+                  new DisplayAdjustmentEvent(FeatureDisplay.this,
                            range.getStart(),
                            range.getEnd(),
                            getMaxVisibleBases(),
@@ -1009,6 +1009,18 @@ public class FeatureDisplay extends EntryGroupPanel
                            isRevCompDisplay(), 
                            DisplayAdjustmentEvent.CONTIG_REV_COMP_EVENT));
     }
+    else if(event.getType() == SequenceChangeEvent.CONTIG_REORDER)
+    {
+      final Range range  = event.getRange();
+      final int drop_position = event.getPosition();
+
+      fireAction(adjustment_listener_list,
+                  new DisplayAdjustmentEvent(
+                           FeatureDisplay.this,
+                           range.getStart(), range.getEnd(),
+                           drop_position,
+                           DisplayAdjustmentEvent.CONTIG_REORDER));
+    }   
     else 
       fireAdjustmentEvent(DisplayAdjustmentEvent.SCROLL_ADJUST_EVENT);
   }
@@ -1039,6 +1051,9 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   public void displayAdjustmentValueChanged(DisplayAdjustmentEvent event) 
   {
+    if(event.getType() == DisplayAdjustmentEvent.CONTIG_REORDER)
+      return;
+
     disable_display_events = true;
     try 
     {

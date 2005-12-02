@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ComparatorGlue.java,v 1.3 2005-11-18 12:00:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ComparatorGlue.java,v 1.4 2005-12-02 14:58:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -41,7 +41,7 @@ import javax.swing.*;
  *  and an AlignmentViewer.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ComparatorGlue.java,v 1.3 2005-11-18 12:00:42 tjc Exp $
+ *  @version $Id: ComparatorGlue.java,v 1.4 2005-12-02 14:58:57 tjc Exp $
  **/
 
 public class ComparatorGlue {
@@ -94,6 +94,19 @@ public class ComparatorGlue {
           getSubjectDisplay().setFirstBase(e.getStart());
           return;
         }
+        else if(e.getType() == DisplayAdjustmentEvent.CONTIG_REORDER)
+        {
+          getAlignmentViewer().reorder(true, e.getStart(), e.getEnd(), 
+                                        e.getDropPosition());
+          getAlignmentViewer().unlockDisplays();
+
+          if(e.getStart() < e.getDropPosition())
+            getSubjectDisplay().setFirstBase(e.getStart());
+          else
+            getSubjectDisplay().setFirstBase(e.getDropPosition());
+
+          return;
+        }
 
         subject_display.removeDisplayAdjustmentListener(subject_listener);
         query_display.removeDisplayAdjustmentListener(query_listener);
@@ -132,6 +145,19 @@ public class ComparatorGlue {
           getAlignmentViewer().flippingContig(false, e.getStart(), e.getEnd());
           getAlignmentViewer().unlockDisplays();
           getQueryDisplay().setFirstBase(e.getStart());
+          return;
+        }
+        else if(e.getType() == DisplayAdjustmentEvent.CONTIG_REORDER)
+        {
+          getAlignmentViewer().reorder(false, e.getStart(), e.getEnd(),
+                                       e.getDropPosition());
+          getAlignmentViewer().unlockDisplays();
+
+          if(e.getStart() < e.getDropPosition())
+            getSubjectDisplay().setFirstBase(e.getStart());
+          else
+            getSubjectDisplay().setFirstBase(e.getDropPosition());
+
           return;
         }
 

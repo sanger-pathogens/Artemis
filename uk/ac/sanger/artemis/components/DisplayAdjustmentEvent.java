@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DisplayAdjustmentEvent.java,v 1.2 2005-11-17 16:50:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DisplayAdjustmentEvent.java,v 1.3 2005-12-02 14:58:57 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -31,7 +31,7 @@ import uk.ac.sanger.artemis.ChangeEvent;
  *  This event is sent when a FeatureDisplay is scrolled.
  *
  *  @author Kim Rutherford
- *  @version $Id: DisplayAdjustmentEvent.java,v 1.2 2005-11-17 16:50:50 tjc Exp $
+ *  @version $Id: DisplayAdjustmentEvent.java,v 1.3 2005-12-02 14:58:57 tjc Exp $
  **/
 
 public class DisplayAdjustmentEvent extends ChangeEvent 
@@ -55,6 +55,8 @@ public class DisplayAdjustmentEvent extends ChangeEvent
 
   /** The scale factor, as passed to the constructor. */
   private int scale_factor;
+
+  private int drop_position;
 
   /**
    *  True if and only if the FeatureDisplay is drawing in
@@ -97,7 +99,18 @@ public class DisplayAdjustmentEvent extends ChangeEvent
    **/
   final static public int CONTIG_REV_COMP_EVENT = 4;
 
-  
+  final static public int CONTIG_REORDER = 5;
+
+  public DisplayAdjustmentEvent(Object source,
+                                int start_base, int end_base,
+                                int drop_position, int type)
+  {
+    super(source);
+    this.start_base    = start_base;
+    this.end_base      = end_base;
+    this.drop_position = drop_position;
+    this.type          = type;
+  }
 
   /**
    *  Create a new DisplayAdjustmentEvent.
@@ -146,6 +159,11 @@ public class DisplayAdjustmentEvent extends ChangeEvent
   public int getEnd() 
   {
     return end_base;
+  }
+
+  public int getDropPosition()
+  {
+    return drop_position;
   }
 
   /**
