@@ -37,6 +37,7 @@
         <result property="type_id" column="type_id"/>
      </resultMap>
 
+
      <!-- get feature name -->
      <select id="getFeatureName" parameterClass="uk.ac.sanger.ibatis.Feature" 
                                  resultClass="java.lang.String"> 
@@ -63,7 +64,16 @@
               ON $schema$.feature_relationship.subject_id=$schema$.feature.feature_id
         LEFT JOIN $schema$.featureprop 
               ON $schema$.featureprop.feature_id=$schema$.feature.feature_id
-        WHERE srcfeature_id=$id$ AND $schema$.featureloc.feature_id=$schema$.feature.feature_id
+        WHERE
+            <dynamic>
+             <isGreaterThan property="id" compareValue="0"> 
+               srcfeature_id=$id$ AND
+             </isGreaterThan>
+             <isNotNull property="uniquename">                        
+               uniquename=$uniquename$ AND
+             </isNotNull>
+           </dynamic>
+           $schema$.featureloc.feature_id=$schema$.feature.feature_id
            AND ($schema$.featureloc.rank=$schema$.feature_relationship.rank OR 
                 $schema$.feature_relationship.rank IS NULL)
         ORDER BY $schema$.feature.type_id,  uniquename
