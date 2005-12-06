@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.10 2005-11-15 12:21:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.11 2005-12-06 13:41:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.io.Writer;
  *  Sequence stored in 4 bit chunks.
  *
  *  @author Kim Rutherford
- *  @version $Id: StreamSequence.java,v 1.10 2005-11-15 12:21:18 tjc Exp $
+ *  @version $Id: StreamSequence.java,v 1.11 2005-12-06 13:41:23 tjc Exp $
  **/
 
 public abstract class StreamSequence
@@ -143,10 +143,11 @@ public abstract class StreamSequence
       index1 = (int)(currStorageUnit & 0x000F);
       this_dst[count] = bases[index1];
       packStart++;
+      packEnd++;
       count++;
     }
 
-    for(int i=packStart; i < packEnd; i++) 
+    for(int i=packStart; i < packEnd && count < dst_length; i++) 
     {
       currStorageUnit = sequencePacked[i];
       index1 = (int)(currStorageUnit & 0x000F);
@@ -166,7 +167,6 @@ public abstract class StreamSequence
 
       if(count < dst_length)
         this_dst[count] = bases[index1]; 
-        
       count++;
     }
 
