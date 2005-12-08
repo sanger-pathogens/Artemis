@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.10 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.11 2005-12-08 12:37:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,7 +44,7 @@ import java.lang.reflect.Constructor;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.10 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: Splash.java,v 1.11 2005-12-08 12:37:13 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -447,20 +447,27 @@ abstract public class Splash extends JFrame
     makeGeneticCodeMenu(options_menu);
     options_menu.addSeparator();
 
+    final JCheckBoxMenuItem j2ssh_option = new JCheckBoxMenuItem(
+                                         "Send Searches via SSH");
 
-//  final JCheckBoxMenuItem enable_euk_mode_item = new JCheckBoxMenuItem(
-//                                                    "Eukaryotic Mode");
-//  enable_euk_mode_item.setState(Options.getOptions().isEukaryoticMode());
-//  enable_euk_mode_item.addItemListener(new ItemListener() 
-//  {
-//    public void itemStateChanged(ItemEvent event) 
-//    {
-//      final boolean item_state = enable_euk_mode_item.getState();
-//      Options.getOptions().setEukaryoticMode(item_state);
-//      helix_canvas.repaint();
-//    }
-//  });
-//  options_menu.add(enable_euk_mode_item);
+    if(System.getProperty("j2ssh") != null)
+      j2ssh_option.setState(true);
+    else
+      j2ssh_option.setState(false);
+
+    j2ssh_option.addItemListener(new ItemListener() 
+    {
+      public void itemStateChanged(ItemEvent event) 
+      {
+        final boolean item_state = j2ssh_option.getState();
+        if(item_state) 
+          System.setProperty("j2ssh", "");
+        else
+          System.setProperty("j2ssh", "false");
+      }
+    });
+    options_menu.add(j2ssh_option);
+    options_menu.addSeparator();
 
     final JCheckBoxMenuItem highlight_active_entry_item =
       new JCheckBoxMenuItem("Highlight Active Entry");
