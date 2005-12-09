@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.8 2005-07-12 14:10:02 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.9 2005-12-09 16:17:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -37,7 +37,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.8 2005-07-12 14:10:02 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.9 2005-12-09 16:17:13 tjc Exp $
  *
  **/
 
@@ -239,7 +239,7 @@ public class FeaturePopup extends JPopupMenu
       action_menus[4] = new EditMenu(frame, selection,
                                     getGotoEventSource(),
                                     getEntryGroup(),
-                                    base_plot_group);
+                                    base_plot_group, owner);
       if(entry_group instanceof SimpleEntryGroup) 
       {
         if(frame instanceof MultiComparator)

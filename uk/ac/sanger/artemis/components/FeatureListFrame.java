@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureListFrame.java,v 1.2 2004-12-02 13:47:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureListFrame.java,v 1.3 2005-12-09 16:17:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -35,7 +35,7 @@ import javax.swing.*;
  *  A JFrame that contains a FeatureList component and an Close button.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureListFrame.java,v 1.2 2004-12-02 13:47:56 tjc Exp $
+ *  @version $Id: FeatureListFrame.java,v 1.3 2005-12-09 16:17:13 tjc Exp $
  **/
 
 public class FeatureListFrame extends JFrame
@@ -106,7 +106,7 @@ public class FeatureListFrame extends JFrame
     {
       final JMenu edit_menu =
         new EditMenu(this, selection, goto_event_source, entry_group,
-                     base_plot_group);
+                     base_plot_group, null);
       menu_bar.add(edit_menu);
 
       final JMenu write_menu = new WriteMenu(this, selection, entry_group);

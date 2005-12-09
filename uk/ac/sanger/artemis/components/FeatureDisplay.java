@@ -20,12 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.37 2005-12-02 14:58:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.38 2005-12-09 16:17:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
-import uk.ac.sanger.artemis.components.filetree.FileNode;
+import uk.ac.sanger.artemis.components.filetree.*;
+import uk.ac.sanger.artemis.util.RemoteFileDocument;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
@@ -63,7 +64,7 @@ import javax.swing.ImageIcon;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.37 2005-12-02 14:58:57 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.38 2005-12-09 16:17:13 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -1513,6 +1514,7 @@ public class FeatureDisplay extends EntryGroupPanel
     if(scrollbar_style == SCROLLBAR_AT_TOP)
       ((Graphics2D)g).translate(0,-scrollbar_hgt);
  
+// draw drag and drop line
     if(highlight_drop_base > 0)
     {   
       g.setColor(Color.red);
@@ -4679,6 +4681,44 @@ public class FeatureDisplay extends EntryGroupPanel
 ////////////////////
 
   /**
+  *
+  *  Read an entry from a remote file node (ssh)
+  *
+  **/
+  private void readAnEntryFromRemoteFileNode(final RemoteFileNode node)
+  {
+    SwingWorker entryWorker = new SwingWorker()
+    {
+      public Object construct()
+      {
+        try
+        {
+          EntryInformation new_entry_information =
+             new SimpleEntryInformation(Options.getArtemisEntryInformation());
+
+          final Entry entry =  new Entry(getEntryGroup().getBases(),
+                           EntryFileDialog.getEntryFromFile(null,
+                           new RemoteFileDocument(node),
+                           new_entry_information, true));
+          if(entry != null)
+            getEntryGroup().add(entry);
+        }
+        catch(final OutOfRangeException e)
+        {
+          new MessageDialog(null,
+                         "read failed: one of the features " +
+                         "in the entry has an out of " +
+                         "range location: " +
+                         e.getMessage());
+        }
+        return null;
+      }
+    };
+    entryWorker.start();
+  }
+
+
+  /**
    *  Read an entry
    **/
   private void readAnEntryFromFile(final File file,
@@ -4715,6 +4755,84 @@ public class FeatureDisplay extends EntryGroupPanel
     entryWorker.start();
   }
 
+
+  /**
+  *
+  */
+  protected FeatureVector getContigs()
+  {
+    FeatureVector contig_features = new FeatureVector();
+    // find all fasta_record features
+    final FeaturePredicate key_and_qualifier_predicate
+              =  new FeatureKeyQualifierPredicate(new Key("fasta_record"),
+                                                  null, // match any qialifier
+                                                  false);
+    final FeatureEnumeration test_enumerator = getEntryGroup().features();
+    contig_features = new FeatureVector();
+
+    while(test_enumerator.hasMoreFeatures())
+    {
+      final Feature this_feature = test_enumerator.nextFeature();
+
+      if(key_and_qualifier_predicate.testPredicate(this_feature))
+        contig_features.add(this_feature);
+    }
+    return contig_features;
+  }
+
+  /**
+  *
+  * Contig reordering. The current selection is moved to highlight_drop_base
+  * base position in the sequence.
+  *
+  */
+  protected void reorder(int highlight_drop_base, Feature selected_feature)
+  {
+    // rearrange contigs
+    try
+    {
+      Sequence sequence = getBases().getSequence();
+      FeatureVector contig_features = null;
+      int old_pos[] = null;
+
+      if(sequence instanceof FastaStreamSequence)
+      {
+        contig_features = getContigs();
+
+        // get fasta_record old positions
+        old_pos = new int[contig_features.size()];
+        for(int i=0; i<old_pos.length; i++)
+          old_pos[i] = contig_features.elementAt(i).getMaxRawRange().getStart()-1;
+      }
+
+      // rearrange contig order
+      getEntryGroup().getBases().contigRearrange(selected_feature,
+                                                 highlight_drop_base);
+
+      // get fasta_record new positions
+      if(sequence instanceof FastaStreamSequence &&
+         old_pos != null)
+      {
+        int new_pos[] = new int[old_pos.length];
+        for(int i=0; i<new_pos.length; i++)
+          new_pos[i] = contig_features.elementAt(i).getMaxRawRange().getStart()-1;
+
+        // update header record
+        ((RawStreamSequence)sequence).setFastaHeaderPosition(old_pos,new_pos);
+      }
+    }
+    catch(ReadOnlyException roe)
+    {
+      final String message =
+        "one or more of the features is read-only or is in a " +
+        "read-only entry - cannot continue";
+      new MessageDialog(null, message);
+      highlight_drop_base = -1;
+
+      return;
+    }
+
+  }
 // drop
   protected static Border dropBorder = new BevelBorder(BevelBorder.LOWERED);
 
@@ -4752,71 +4870,19 @@ public class FeatureDisplay extends EntryGroupPanel
         FileNode fn = (FileNode)t.getTransferData(FileNode.FILENODE);
         readAnEntryFromFile(fn.getFile(), getEntryGroup());
       }
+      else if(t.isDataFlavorSupported(RemoteFileNode.REMOTEFILENODE))
+      {
+        final RemoteFileNode node =
+            (RemoteFileNode)t.getTransferData(RemoteFileNode.REMOTEFILENODE);
+        readAnEntryFromRemoteFileNode(node);
+      }
       else if(e.isDataFlavorSupported(DataFlavor.stringFlavor))
       {
-        // rearrange contigs
         final FeatureVector selected_features = getSelection().getAllFeatures();
-         
         if(selected_features.size() > 1)
           return;
-
-        try
-        {
-          Sequence sequence = getBases().getSequence();
-          FeatureVector contig_features = null;
-          int old_pos[] = null;
-
-          if(sequence instanceof FastaStreamSequence)
-          {
-            // find all fasta_record features
-            final FeaturePredicate key_and_qualifier_predicate
-                  =  new FeatureKeyQualifierPredicate(new Key("fasta_record"),
-                                                      null, // match any qialifier
-                                                      false);
-            final FeatureEnumeration test_enumerator = getEntryGroup().features();
-            contig_features = new FeatureVector();
-
-            while(test_enumerator.hasMoreFeatures())
-            {
-              final Feature this_feature = test_enumerator.nextFeature();
-
-              if(key_and_qualifier_predicate.testPredicate(this_feature))
-                contig_features.add(this_feature);
-            }
  
-            // get fasta_record old positions        
-            old_pos = new int[contig_features.size()];
-            for(int i=0; i<old_pos.length; i++)
-              old_pos[i] = contig_features.elementAt(i).getMaxRawRange().getStart()-1;
-          }
-
-          // rearrange contig order
-          Feature contig_feature = selected_features.elementAt(0);
-          getEntryGroup().getBases().contigRearrange(contig_feature, 
-                                                     highlight_drop_base);
-
-          // get fasta_record new positions
-          if(sequence instanceof FastaStreamSequence &&
-             old_pos != null)
-          {
-            int new_pos[] = new int[old_pos.length];
-            for(int i=0; i<new_pos.length; i++)
-              new_pos[i] = contig_features.elementAt(i).getMaxRawRange().getStart()-1;
-
-            // update header record
-            ((RawStreamSequence)sequence).setFastaHeaderPosition(old_pos,new_pos);
-          }
-        }
-        catch(ReadOnlyException roe)
-        {
-          final String message =
-            "one or more of the features is read-only or is in a " +
-            "read-only entry - cannot continue";
-          new MessageDialog(null, message);
-          highlight_drop_base = -1;
-
-          return;
-        }
+        reorder(highlight_drop_base, selected_features.elementAt(0));       // rearrange contigs
       }
       else
         e.rejectDrop();

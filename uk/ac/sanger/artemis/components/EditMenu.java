@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.8 2005-11-18 09:53:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.9 2005-12-09 16:17:13 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -53,7 +53,7 @@ import javax.swing.*;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.8 2005-11-18 09:53:26 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.9 2005-12-09 16:17:13 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -75,6 +75,9 @@ public class EditMenu extends SelectionMenu
    **/
   private BasePlotGroup base_plot_group = null;
 
+  /** FeatureDisplay */
+  private DisplayComponent owner;
+
   /**
    *  Create a new EditMenu object.
    *  @param frame The JFrame that owns this JMenu.
@@ -93,13 +96,15 @@ public class EditMenu extends SelectionMenu
                   final GotoEventSource goto_event_source,
                   final EntryGroup entry_group,
                   final BasePlotGroup base_plot_group,
-                  final String menu_name)
+                  final String menu_name,
+                  final DisplayComponent owner)
   {
     super(frame, menu_name, selection);
 
     this.entry_group = entry_group;
     this.goto_event_source = goto_event_source;
     this.base_plot_group = base_plot_group;
+    this.owner = owner;
 
     getEntryGroup().addEntryGroupChangeListener(this);
     getEntryGroup().addEntryChangeListener(this);
@@ -122,10 +127,11 @@ public class EditMenu extends SelectionMenu
                   final Selection selection,
                   final GotoEventSource goto_event_source,
                   final EntryGroup entry_group,
-                  final BasePlotGroup base_plot_group) 
+                  final BasePlotGroup base_plot_group,
+                  final DisplayComponent owner) 
   {
     this(frame, selection, goto_event_source, entry_group,
-         base_plot_group, "Edit");
+         base_plot_group, "Edit", owner);
   }
 
   /**
@@ -227,6 +233,34 @@ public class EditMenu extends SelectionMenu
       public void actionPerformed(ActionEvent event) 
       {
         undo(getParentFrame(), getSelection(), getEntryGroup());
+      }
+    });
+
+    final JMenuItem contig_reordering = new JMenuItem("Contig Reordering");
+    contig_reordering.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        FeatureDisplay display = (FeatureDisplay)owner;
+        FeatureVector contig_features = display.getContigs();
+         
+        JFrame frame = new JFrame("Contig Tool");
+
+        JScrollPane jsp = new JScrollPane();
+        ContigTool ct = new ContigTool(contig_features, 
+                                 (FeatureDisplay)owner, jsp);
+        jsp.setViewportView(ct);
+
+        jsp.getViewport().setBackground(Color.white);
+        jsp.setPreferredSize(new Dimension(display.getWidth(),
+                 ct.getPreferredSize().height+
+                 jsp.getVerticalScrollBar().getPreferredSize().height));
+        frame.getContentPane().add(jsp, BorderLayout.CENTER);
+        frame.getContentPane().add(ct.getStatusBar(), 
+                                 BorderLayout.SOUTH);
+
+        frame.pack();
+        frame.setVisible(true);
       }
     });
 
@@ -553,6 +587,9 @@ public class EditMenu extends SelectionMenu
         addBases();
       }
     });
+
+    if(owner instanceof FeatureDisplay)
+      add(contig_reordering);
 
     if(Options.getOptions().getPropertyTruthValue("val_mode")) 
     {

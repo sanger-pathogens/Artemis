@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.15 2005-11-28 16:46:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.16 2005-12-09 16:17:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -60,7 +60,7 @@ import javax.swing.border.BevelBorder;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.15 2005-11-28 16:46:38 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.16 2005-12-09 16:17:13 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
@@ -647,7 +647,8 @@ public class MultiComparator extends JFrame
                         getGotoEventSourceArray()[i],
                         getEntryGroupArray()[i],
                         getBasePlotGroupArray()[i],
-                        sub_menu_name);
+                        sub_menu_name,
+                        getFeatureDisplayArray()[i]);
         edit_menu.add(this_edit_menu);
 
         this_create_menu =
