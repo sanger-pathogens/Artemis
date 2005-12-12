@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.9 2005-12-09 16:17:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.10 2005-12-12 11:45:54 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -53,7 +53,7 @@ import javax.swing.*;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.9 2005-12-09 16:17:13 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.10 2005-12-12 11:45:54 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -588,9 +588,6 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    if(owner instanceof FeatureDisplay)
-      add(contig_reordering);
-
     if(Options.getOptions().getPropertyTruthValue("val_mode")) 
     {
       add(edit_feature_item);
@@ -655,6 +652,12 @@ public class EditMenu extends SelectionMenu
       });
 
       add(add_bases_from_file_item);
+    }
+
+    if(owner instanceof FeatureDisplay)
+    {
+      add(new JSeparator());
+      add(contig_reordering);
     }
   }
 
