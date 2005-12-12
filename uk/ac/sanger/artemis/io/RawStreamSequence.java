@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RawStreamSequence.java,v 1.8 2005-11-30 09:44:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RawStreamSequence.java,v 1.9 2005-12-12 15:56:45 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.Vector;
  *  This is a subclass of StreamSequence containing raw sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: RawStreamSequence.java,v 1.8 2005-11-30 09:44:56 tjc Exp $
+ *  @version $Id: RawStreamSequence.java,v 1.9 2005-12-12 15:56:45 tjc Exp $
  **/
 
 public class RawStreamSequence extends StreamSequence 
@@ -265,13 +265,23 @@ public class RawStreamSequence extends StreamSequence
 
     if(fasta_header_positions != null && fasta_header_positions.size() > 0)
     {
+      Vector seen = new Vector(fasta_header_positions.size());
       for(int i = 0 ; i < fasta_header_positions.size(); ++i)
       {
         int current_position = ((Integer)fasta_header_positions.elementAt(i)).intValue();
         
-        if(current_position == old_position[i])
+        for(int j = 0; j < old_position.length; ++j)
         {
-          fasta_header_positions.set(i, new Integer(new_position[i]));
+          if(current_position == old_position[j] &&
+             !seen.contains(new Integer(j)))
+          {
+            fasta_header_positions.set(i, new Integer(new_position[j]));
+//          System.out.println("CHANGED current_position="+current_position+
+//                             "  old_position[i]="+old_position[i]+
+//                             "  new_position[i]="+new_position[i]);
+            seen.add(new Integer(j));
+            break;
+          }
         }
       }
     }
