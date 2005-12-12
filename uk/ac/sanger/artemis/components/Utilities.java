@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Utilities.java,v 1.2 2005-06-01 11:06:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Utilities.java,v 1.3 2005-12-12 13:40:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -37,7 +37,7 @@ import javax.swing.*;
  *  Utilities methods used by the uk.ac.sanger.artemis.components package.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Utilities.java,v 1.2 2005-06-01 11:06:43 tjc Exp $
+ *  @version $Id: Utilities.java,v 1.3 2005-12-12 13:40:13 tjc Exp $
  **/
 
 public class Utilities 
@@ -82,6 +82,19 @@ public class Utilities
 
     frame.setLocation(new Point(0, y_position));
   }
+
+  /**
+   *  Move the given JFrame to the centre of the screen.
+   **/
+  public static void centreJustifyFrame(final JFrame frame, final int y_position)
+  {
+    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+    final int x_position =(screen.width - frame.getSize().width) / 2;
+
+    frame.setLocation(new Point(x_position, y_position));
+  }
+
 
 
   /**
