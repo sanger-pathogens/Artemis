@@ -405,7 +405,8 @@ public class ContigTool extends JPanel
       getNearestFeatureEnd(ploc);
       repaint();
     }
-    e.rejectDrag();
+    else
+      e.rejectDrag();
   }
 
   public void dragEnter(DropTargetDragEvent e)
@@ -446,7 +447,7 @@ public class ContigTool extends JPanel
 
   public void dragExit(DragSourceEvent e)
   {
-    highlight_drop_base = -1;
+//  highlight_drop_base = -1;
   }
   public void dragOver(DragSourceDragEvent e) {}
   public void dropActionChanged(DragSourceDragEvent e) {}

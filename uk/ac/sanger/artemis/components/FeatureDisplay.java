@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.38 2005-12-09 16:17:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.39 2005-12-12 14:27:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -64,7 +64,7 @@ import javax.swing.ImageIcon;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.38 2005-12-09 16:17:13 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.39 2005-12-12 14:27:13 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -4786,7 +4786,7 @@ public class FeatureDisplay extends EntryGroupPanel
   * base position in the sequence.
   *
   */
-  protected void reorder(int highlight_drop_base, Feature selected_feature)
+  protected void reorder(int drop_base, Feature selected_feature)
   {
     // rearrange contigs
     try
@@ -4807,7 +4807,7 @@ public class FeatureDisplay extends EntryGroupPanel
 
       // rearrange contig order
       getEntryGroup().getBases().contigRearrange(selected_feature,
-                                                 highlight_drop_base);
+                                                 drop_base);
 
       // get fasta_record new positions
       if(sequence instanceof FastaStreamSequence &&
@@ -4925,7 +4925,8 @@ public class FeatureDisplay extends EntryGroupPanel
       getNearestFeatureEnd(ploc);
       repaint();
     }
-    e.rejectDrag();
+    else
+      e.rejectDrag();
   }
 
   public void dragEnter(DropTargetDragEvent e)
