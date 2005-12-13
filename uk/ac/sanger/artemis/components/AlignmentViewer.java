@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.35 2005-12-02 14:58:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.36 2005-12-13 10:33:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import java.io.IOException;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.35 2005-12-02 14:58:57 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.36 2005-12-13 10:33:42 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -1660,14 +1660,14 @@ public class AlignmentViewer extends CanvasPanel
           {
             match_start = match_start + (end-start);
             match_end   = match_end   + (end-start);
-            all_matches[i].setRange(match_start, match_end, subject);
+            all_matches[i].setRange(match_start, match_end, subject, false);
           } 
           else if(match_start >= start && match_start <= end &&  // within contig
                   match_end   >= start && match_end <= end)
           {
             match_start = match_start - (start - drop_position);
             match_end   = match_end   - (start - drop_position);
-            all_matches[i].setRange(match_start, match_end, subject);
+            all_matches[i].setRange(match_start, match_end, subject, false);
           }
         }
         else
@@ -1677,14 +1677,14 @@ public class AlignmentViewer extends CanvasPanel
           {
             match_start = match_start + (drop_position-end);
             match_end   = match_end   + (drop_position-end);
-            all_matches[i].setRange(match_start, match_end, subject); 
+            all_matches[i].setRange(match_start, match_end, subject, false); 
           }
           else if(match_start > end && match_start < drop_position &&
                   match_end  > end && match_end < drop_position)
           {
             match_start = match_start - (end-start);
             match_end   = match_end   - (end-start);
-            all_matches[i].setRange(match_start, match_end, subject);
+            all_matches[i].setRange(match_start, match_end, subject, false);
           }
         }
       }
@@ -1720,7 +1720,7 @@ public class AlignmentViewer extends CanvasPanel
        {
          match_start = end - (match_start - start);
          match_end   = end - (match_end -start);
-         all_matches[i].setRange(match_start, match_end, subject);
+         all_matches[i].setRange(match_start, match_end, subject, true);
        }
        else if( (match_start >= start && match_start <= end) ||
                 (match_end <= end && match_end >= start) )
@@ -1749,7 +1749,7 @@ public class AlignmentViewer extends CanvasPanel
         {
           match_start = end - (match_start - start);
           match_end   = end - (match_end -start);
-          all_matches[i].setRange(match_start, match_end, subject);
+          all_matches[i].setRange(match_start, match_end, subject, true);
         }
         else if( (match_start >= start && match_start <= end) ||
                  (match_end <= end && match_end >= start) )
