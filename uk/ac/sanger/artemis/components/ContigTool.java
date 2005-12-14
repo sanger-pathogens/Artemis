@@ -36,7 +36,6 @@ import uk.ac.sanger.artemis.Selection;
 import java.awt.*;
 import java.awt.event.*;
 
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.*;
 import javax.swing.border.Border;
