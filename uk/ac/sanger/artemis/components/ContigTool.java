@@ -29,24 +29,13 @@ import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
+import uk.ac.sanger.artemis.SelectionChangeListener;
+import uk.ac.sanger.artemis.SelectionChangeEvent;
+import uk.ac.sanger.artemis.Selection;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.InputEvent;
+import java.awt.*;
+import java.awt.event.*;
+
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.*;
@@ -57,13 +46,13 @@ import java.awt.dnd.*;
 
 public class ContigTool extends JPanel
        implements DragGestureListener, DropTargetListener,
-             DragSourceListener, Autoscroll
-
+                  DragSourceListener, Autoscroll,
+                  SelectionChangeListener
 {
 
   private FeatureVector contig_features;
-  private FeatureVector selected_features = new FeatureVector();
   private FeatureDisplay feature_display;
+  private Selection selection;
 
   private int scale  = 1000;
   private int xbound = 50;
@@ -83,12 +72,15 @@ public class ContigTool extends JPanel
 
   public ContigTool(final FeatureVector contig_features,
                     final FeatureDisplay feature_display,
-                    final JScrollPane jsp)
+                    final JScrollPane jsp,
+                    final Selection selection)
   {
     super();
     this.contig_features = contig_features;
     this.feature_display = feature_display;
+    this.selection       = selection;
 
+    setFocusable(true); // required for KeyEvent to work
     MultiLineToolTipUI.initialize();
     setToolTipText("");   //enable tooltip display
 
@@ -110,9 +102,37 @@ public class ContigTool extends JPanel
 
     setDropTarget(new DropTarget(this,this));
 
+    getSelection().addSelectionChangeListener(this);
+
+    addKeyListener(new KeyAdapter()
+    {
+      public void keyPressed(final KeyEvent event)
+      {
+        // this is done so that menu shortcuts don't cause each action to be
+        // performed twice
+        if(event.getModifiers() != 0)
+          return;
+
+        switch(event.getKeyCode())
+        {
+          case KeyEvent.VK_UP:
+            goToNext(true);
+            repaint();
+            break;
+          case KeyEvent.VK_DOWN:
+            goToNext(false);
+            repaint();
+            break;
+          default:
+            break;
+        }
+      }
+    });
+
+
     addMouseListener(new MouseAdapter()
     {
-      public void mousePressed(MouseEvent event)
+      public void mouseReleased(MouseEvent event)
       {
         if(event.isPopupTrigger())
         {
@@ -122,7 +142,8 @@ public class ContigTool extends JPanel
         }
 
         FeatureVector contig_features = ContigTool.this.contig_features;
-        if(event.getClickCount() == 1)
+        if(event.getClickCount() == 1 &&
+           event.getID() == MouseEvent.MOUSE_RELEASED)
         {
           Point p = event.getPoint();
           for(int i=0; i<contig_features.size(); i++)
@@ -135,11 +156,11 @@ public class ContigTool extends JPanel
 
             if(p.x >= xstart && p.x <= xend)
             {
-              if(selected_features.contains(feature))
-                selected_features.remove(feature);
+              if(getSelection().contains(feature))
+                getSelection().remove(feature);
               else
               {
-                selected_features.removeAllElements();
+                clearSelection();
 
                 String tt = this_feature_range.getStart()+".."+
                             this_feature_range.getEnd();
@@ -148,7 +169,8 @@ public class ContigTool extends JPanel
                   tt = tt + ", " + feature.getIDString();
 
                 status_line.setText(tt);
-                selected_features.add(feature); 
+
+                getSelection().add(feature);
               }
             }
           }
@@ -156,7 +178,7 @@ public class ContigTool extends JPanel
         }
       }
    
-      public void mouseReleased(MouseEvent event)
+      public void mousePressed(MouseEvent event)
       {
       }
     });
@@ -206,6 +228,86 @@ public class ContigTool extends JPanel
     Border raisedbevel = BorderFactory.createRaisedBevelBorder();
     Border compound = BorderFactory.createCompoundBorder(raisedbevel,loweredbevel);
     status_line.setBorder(compound);
+  }
+
+  /**
+   *  
+   * Clear all selected features
+   *
+   **/
+  private void clearSelection()
+  {
+    FeatureVector selected_features = getSelection().getAllFeatures();
+
+    for(int i=0; i<selected_features.size(); i++)
+    {
+      Feature this_feature = selected_features.elementAt(i);
+      getSelection().remove(this_feature);
+    }
+  }
+
+  private Selection getSelection()
+  {
+    return selection;
+  }
+
+  /**
+   *  Implementation of the SelectionChangeListener interface.  We listen to
+   *  SelectionChange events so that we can update the list to reflect the
+   *  current selection.
+   **/
+  public void selectionChanged(SelectionChangeEvent event)
+  {
+    if(!isVisible())
+      return;
+
+    // don't bother with events we sent ourself
+    if(event.getSource() == this)
+      return;
+
+    // if the selected range changes we don't care
+    if(getSelection().getMarkerRange() != null &&
+       event.getType() == SelectionChangeEvent.OBJECT_CHANGED)
+      return;
+
+    repaint();
+  }
+
+  /**
+   * 
+   * Select the next feature in the sequence.
+   *
+   */
+  private void goToNext(boolean up)
+  {
+    if(getSelection().getSelectedFeatures().size() != 1)
+      return;
+
+    final Feature curr_feature = getSelection().getSelectedFeatures().elementAt(0);
+    final Range curr_feature_range = curr_feature.getMaxRawRange();
+    int start = curr_feature_range.getStart();
+    int end   = curr_feature_range.getEnd();
+
+    if(up && start == 1)
+      return;
+
+    for(int i=0; i<contig_features.size(); i++)
+    {
+      final Feature feature = contig_features.elementAt(i);
+      final Range this_feature_range = feature.getMaxRawRange();
+      if(up && this_feature_range.getEnd() == start-1)
+      {
+        clearSelection();
+        getSelection().add(feature);
+        return;
+      }
+      else if(!up && this_feature_range.getStart() == end+1)
+      {
+        clearSelection();
+        getSelection().add(feature);
+        return;
+      }
+    }
   }
 
   /**
@@ -275,6 +377,7 @@ public class ContigTool extends JPanel
     BasicStroke stroke2 = new BasicStroke(2.f);
     g2.setColor(Color.black);
 
+    FeatureVector selected_features = getSelection().getSelectedFeatures();
     // draw feature outline
     for(int i=0; i<contig_features.size(); i++)
     {
@@ -383,8 +486,19 @@ public class ContigTool extends JPanel
     Transferable t = e.getTransferable();
     if(e.isDataFlavorSupported(DataFlavor.stringFlavor))
     {
+      FeatureVector selected_features = getSelection().getSelectedFeatures();
       feature_display.reorder(highlight_drop_base, 
                               selected_features.elementAt(0));   // rearrange contigs
+
+      // reset status bar
+      final Range this_feature_range = selected_features.elementAt(0).getMaxRawRange();
+      String tt = this_feature_range.getStart()+".."+
+                  this_feature_range.getEnd();
+
+      if(selected_features.elementAt(0).getIDString() != null)
+        tt = tt + ", " + selected_features.elementAt(0).getIDString();
+
+      status_line.setText(tt);
       repaint();
     }
     highlight_drop_base = -1;
@@ -424,6 +538,7 @@ public class ContigTool extends JPanel
       if(((MouseEvent)ie).isPopupTrigger())
         return;
 
+    FeatureVector selected_features = getSelection().getSelectedFeatures();
     if(selected_features.size() == 1 &&
        ( selected_features.elementAt(0).getKey().equals("source") ||
          selected_features.elementAt(0).getKey().equals("fasta_record") ))
