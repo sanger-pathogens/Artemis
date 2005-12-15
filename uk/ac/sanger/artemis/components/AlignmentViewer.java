@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.36 2005-12-13 10:33:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.37 2005-12-15 10:57:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import java.io.IOException;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.36 2005-12-13 10:33:42 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.37 2005-12-15 10:57:14 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -1587,19 +1587,30 @@ public class AlignmentViewer extends CanvasPanel
   }
 
   /**
-   * Remove an AlignMatch from the all_matches array
-   * @param index for the array
+   * Remove AlignMatch from the all_matches array
+   * @param collection of indexes to be removed from the array
    */
-  public void removeMatch(final int index)
+  private void removeMatches(Vector index)
   {
-    AlignMatch tmp_matches[] = new AlignMatch[all_matches.length - 1];
-    System.arraycopy(all_matches,0,tmp_matches,0,index);
+    AlignMatch tmp_matches[] = new AlignMatch[all_matches.length - index.size()];
+    int start_old  = 0;
+    int curr_index = 0;
 
-    if(index < tmp_matches.length -1)
+    for(int i=0; i<index.size(); i++)
     {
-      System.arraycopy(all_matches,index+1,tmp_matches,
-                       index, all_matches.length-index-1);
+      curr_index = ( (Integer)index.get(i) ).intValue();
+
+      if(curr_index !=0)
+        System.arraycopy(all_matches, start_old, tmp_matches,
+                         start_old-i, curr_index-start_old);
+      start_old = curr_index+1;
     }
+
+    if(start_old < all_matches.length)
+      System.arraycopy(all_matches, start_old, tmp_matches,
+                       start_old-index.size(), 
+                       all_matches.length-start_old);
+
     this.all_matches = new AlignMatch[tmp_matches.length];
     this.all_matches = tmp_matches;
   }
@@ -1690,8 +1701,10 @@ public class AlignmentViewer extends CanvasPanel
       }
     }
 
-    for(int i=0; i<removals.size(); i++)
-      removeMatch( ((Integer)removals.get(i)).intValue()-i );
+    if(removals.size() > 0)
+      removeMatches(removals);
+//  for(int i=0; i<removals.size(); i++)
+//    removeMatch( ((Integer)removals.get(i)).intValue()-i );
   }
 
   /**
@@ -1770,8 +1783,11 @@ public class AlignmentViewer extends CanvasPanel
       }
     }
 
-    for(int i=0; i<removals.size(); i++)
-      removeMatch( ((Integer)removals.get(i)).intValue()-i );
+    if(removals.size() > 0)
+      removeMatches(removals);
+
+//  for(int i=0; i<removals.size(); i++)
+//    removeMatch( ((Integer)removals.get(i)).intValue()-i );
   }
   
   /**
