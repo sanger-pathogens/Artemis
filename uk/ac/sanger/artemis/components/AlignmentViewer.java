@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.37 2005-12-15 10:57:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.38 2005-12-15 16:37:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import java.io.IOException;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.37 2005-12-15 10:57:14 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.38 2005-12-15 16:37:06 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -1615,6 +1615,42 @@ public class AlignmentViewer extends CanvasPanel
     this.all_matches = tmp_matches;
   }
   
+
+  private void  splitMatches(final Vector matches_to_split,
+                             boolean subject,
+                             final int start, final int end,
+                             final int drop_position)
+  {
+    AlignMatch tmp_matches[] = new AlignMatch[all_matches.length +
+                                              (matches_to_split.size()*2)];
+    int curr_index;
+    int match_start;
+    int match_end;
+    int split_at;
+
+    for(int i=0; i<matches_to_split.size(); i++)
+    {
+      curr_index = ((Integer)matches_to_split.get(i)).intValue();
+      if(subject)
+      {
+        match_start = all_matches[i].getSubjectSequenceStart();
+        match_end   = all_matches[i].getSubjectSequenceEnd();
+      }
+      else
+      {
+        match_start = all_matches[i].getQuerySequenceStart();
+        match_end   = all_matches[i].getQuerySequenceEnd();
+      }
+
+      if(match_start <= start && match_end >= start)
+        split_at = start-1;
+      else if(match_start <= end   && match_end >= end)
+        split_at = end;
+      else
+        split_at = drop_position;
+    }
+  }
+
   /**
    * Reorder matches on reordering contigs
    * 
@@ -1666,11 +1702,11 @@ public class AlignmentViewer extends CanvasPanel
       {
         if(drop_position < start)
         {
-          if(match_start < start &&
+          if(match_start <= start &&
              match_end < start)
           {
-            match_start = match_start + (end-start);
-            match_end   = match_end   + (end-start);
+            match_start = match_start + (end-start+1);
+            match_end   = match_end   + (end-start+1);
             all_matches[i].setRange(match_start, match_end, subject, false);
           } 
           else if(match_start >= start && match_start <= end &&  // within contig
@@ -1686,15 +1722,15 @@ public class AlignmentViewer extends CanvasPanel
           if(match_start < end &&   // within contig
              match_end <= end)
           {
-            match_start = match_start + (drop_position-end);
-            match_end   = match_end   + (drop_position-end);
+            match_start = match_start + (drop_position-end-1);
+            match_end   = match_end   + (drop_position-end-1);
             all_matches[i].setRange(match_start, match_end, subject, false); 
           }
           else if(match_start > end && match_start < drop_position &&
                   match_end  > end && match_end < drop_position)
           {
-            match_start = match_start - (end-start);
-            match_end   = match_end   - (end-start);
+            match_start = match_start - (end-start+1);
+            match_end   = match_end   - (end-start+1);
             all_matches[i].setRange(match_start, match_end, subject, false);
           }
         }
