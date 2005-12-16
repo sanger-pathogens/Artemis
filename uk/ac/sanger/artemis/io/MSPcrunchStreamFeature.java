@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/MSPcrunchStreamFeature.java,v 1.4 2005-10-13 12:21:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/MSPcrunchStreamFeature.java,v 1.5 2005-12-16 13:55:21 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import java.io.*;
  *  A StreamFeature that thinks it is a MSPcrunch feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: MSPcrunchStreamFeature.java,v 1.4 2005-10-13 12:21:24 tjc Exp $
+ *  @version $Id: MSPcrunchStreamFeature.java,v 1.5 2005-12-16 13:55:21 tjc Exp $
  **/
 
 public class MSPcrunchStreamFeature
@@ -135,7 +135,10 @@ public class MSPcrunchStreamFeature
     while( (index = line.indexOf(" ", index)) > -1 &&
            count < line_bits.length-1)
     {
-      line_bits[count] = line.substring(lastIndex, index);
+      line_bits[count] = line.substring(lastIndex, index).trim();
+      if(line_bits[count].equals(""))
+        count--;
+
       count++;
       index++;
       lastIndex = index;  
