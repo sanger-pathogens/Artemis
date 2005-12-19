@@ -6,7 +6,7 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.12 2005-02-21 11:51:32 tjc Exp $"
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.13 2005-12-19 19:38:39 tjc Exp $"
 
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
@@ -41,9 +41,12 @@ run_one_prog () {
 
 
     ### change these lines:
+    EXEC=${EXEC-`which fasta34 2>/dev/null`}
 
-    EXEC=fasta34
-
+    if [ ! -x "$EXEC" ]; then
+      EXEC=`find Artemis* -name fasta34 2>/dev/null`
+    fi
+    
     echo "about to start $EXEC with input from $INPUT_FILE and output to" 1>&2
     echo "$OUTPUT_FILE using database $DATABASE" 1>&2
 
