@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.38 2005-12-15 16:37:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.39 2005-12-19 10:47:30 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import java.io.IOException;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.38 2005-12-15 16:37:06 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.39 2005-12-19 10:47:30 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -1615,22 +1615,33 @@ public class AlignmentViewer extends CanvasPanel
     this.all_matches = tmp_matches;
   }
   
-
-  private void  splitMatches(final Vector matches_to_split,
-                             boolean subject,
-                             final int start, final int end,
-                             final int drop_position)
+  /**
+   * Used in contig reordering.
+   * Split alignment matches that go over boundaries of contig
+   * that is being moved. If the match contains gaps (i.e. subject
+   * and query length of match not same length) then we don't know
+   * where to split so these are deleted.
+   *
+   * @param subject true if contig is on the subject sequence
+   * @param start of the contig
+   * @param end of the contig
+   * @param drop_position position where the contig is moving to
+   */
+  private void splitMatches(final boolean subject,
+                            final int start, final int end,
+                            final int drop_position)
   {
-    AlignMatch tmp_matches[] = new AlignMatch[all_matches.length +
-                                              (matches_to_split.size()*2)];
     int curr_index;
     int match_start;
     int match_end;
     int split_at;
+    int delete_overlaps = -1;
 
-    for(int i=0; i<matches_to_split.size(); i++)
+    Vector matches_to_split = new Vector();
+    Vector removals = new Vector();
+
+    for(int i=0; i<all_matches.length; i++)
     {
-      curr_index = ((Integer)matches_to_split.get(i)).intValue();
       if(subject)
       {
         match_start = all_matches[i].getSubjectSequenceStart();
@@ -1642,13 +1653,106 @@ public class AlignmentViewer extends CanvasPanel
         match_end   = all_matches[i].getQuerySequenceEnd();
       }
 
+      // catch matches that span 2 contigs that need moving
+      if( (match_start < start && match_end >= start) ||
+          (match_start <= end   && match_end > end)   ||
+          (match_start < drop_position && match_end >= drop_position) )
+      {
+        // check query and subject ranges same length
+        //
+        if( (all_matches[i].getQuerySequenceEnd()-
+             all_matches[i].getQuerySequenceStart()) !=
+            (all_matches[i].getSubjectSequenceStart()-
+             all_matches[i].getSubjectSequenceEnd()) )
+        {
+          // this match extends past end of contig
+          if(delete_overlaps == -1) 
+          {
+            Range q_range = all_matches[i].getQuerySequenceRange();
+            Range s_range = all_matches[i].getSubjectSequenceRange();
+            delete_overlaps = JOptionPane.showConfirmDialog(null,
+                  "Found a match that extends past the boundary of a contig\n"+
+                  "with query and subject ranges of different lengths:\n"+
+                  q_range.toString()+
+                  " ("+q_range.getCount()+")\n"+
+                  s_range.toString()+
+                  " ("+s_range.getCount()+")\n"+
+                  "Delete all such matches?",
+                  "Delete Overlapping Matches",
+                  JOptionPane.YES_NO_OPTION);
+         }
+
+         if(delete_overlaps == JOptionPane.YES_OPTION)
+           removals.add(new Integer(i));
+        }
+        else
+          matches_to_split.add(new Integer(i));
+      }
+    }
+
+    // now split the matches
+    AlignMatch tmp_matches[] = new AlignMatch[all_matches.length+
+                                              matches_to_split.size()];
+    System.arraycopy(all_matches, 0, tmp_matches,
+                     0, all_matches.length);
+    int tmp_match_start;
+
+    for(int i=0; i<matches_to_split.size(); i++)
+    {
+      curr_index = ((Integer)matches_to_split.get(i)).intValue();
+
+      //
+      if(subject)
+      {
+        match_start = tmp_matches[curr_index].getSubjectSequenceStart();
+        match_end   = tmp_matches[curr_index].getSubjectSequenceEnd();
+      }
+      else
+      {
+        match_start = tmp_matches[curr_index].getQuerySequenceStart();
+        match_end   = tmp_matches[curr_index].getQuerySequenceEnd();
+      }
+
       if(match_start <= start && match_end >= start)
         split_at = start-1;
       else if(match_start <= end   && match_end >= end)
         split_at = end;
       else
-        split_at = drop_position;
+        split_at = drop_position-1;
+
+      tmp_matches[curr_index].setRange(match_start, split_at, subject, false);
+      tmp_matches[all_matches.length+i] = AlignMatch.copy(tmp_matches[curr_index]);
+      tmp_matches[all_matches.length+i].setRange(split_at+1, match_end, subject, false);
+
+      tmp_match_start = match_start;
+      //
+      if(!subject)
+      {
+        match_start = tmp_matches[curr_index].getSubjectSequenceStart();
+        match_end   = tmp_matches[curr_index].getSubjectSequenceEnd();
+      }
+      else
+      {
+        match_start = tmp_matches[curr_index].getQuerySequenceStart();
+        match_end   = tmp_matches[curr_index].getQuerySequenceEnd();
+      }
+
+      split_at = match_start+(tmp_match_start-split_at);
+      tmp_matches[curr_index].setRange(match_start, split_at, !subject, false);
+
+      if(tmp_matches[curr_index].isRevMatch())
+        split_at--;
+      else
+        split_at++;
+
+      tmp_matches[all_matches.length+i].setRange(split_at, match_end, !subject, false);
     }
+
+    this.all_matches = new AlignMatch[tmp_matches.length];
+    this.all_matches = tmp_matches;
+
+    if(removals.size() > 0)
+      removeMatches(removals);
   }
 
   /**
@@ -1661,6 +1765,9 @@ public class AlignmentViewer extends CanvasPanel
   protected void reorder(boolean subject, final int start, final int end,
                          final int drop_position)
   {
+    // find matches that cross contig boundary
+    splitMatches(subject,start,end,drop_position);
+
     int match_start;
     int match_end;
     int delete_overlaps = -1;
@@ -1680,25 +1787,7 @@ public class AlignmentViewer extends CanvasPanel
         match_end   = all_matches[i].getQuerySequenceEnd();
       }
 
-      // catch matches that span 2 contigs that need moving
-      if( (match_start <= start && match_end >= start) ||
-          (match_start <= end   && match_end >= end)   ||
-          (match_start <= drop_position && match_end >= drop_position) )
-      {
-        // this match extends past end of contig
-        if(delete_overlaps == -1)
-          delete_overlaps = JOptionPane.showConfirmDialog(null,
-                  "Found a match extending past the boundary of a contig:\n"+
-                  match_start+".."+match_end+
-                  "\nDelete all such matches?",
-                  "Delete Overlapping Matches",
-                  JOptionPane.YES_NO_OPTION);
-
-
-         if(delete_overlaps == JOptionPane.YES_OPTION)
-           removals.add(new Integer(i));
-      }
-      else if(match_start >= start || match_start>=drop_position)
+      if(match_start >= start || match_start>=drop_position)
       {
         if(drop_position < start)
         {
@@ -1737,10 +1826,6 @@ public class AlignmentViewer extends CanvasPanel
       }
     }
 
-    if(removals.size() > 0)
-      removeMatches(removals);
-//  for(int i=0; i<removals.size(); i++)
-//    removeMatch( ((Integer)removals.get(i)).intValue()-i );
   }
 
   /**
@@ -1821,9 +1906,6 @@ public class AlignmentViewer extends CanvasPanel
 
     if(removals.size() > 0)
       removeMatches(removals);
-
-//  for(int i=0; i<removals.size(); i++)
-//    removeMatch( ((Integer)removals.get(i)).intValue()-i );
   }
   
   /**
