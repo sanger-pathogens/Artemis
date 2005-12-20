@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SearchResultViewer.java,v 1.2 2005-01-11 15:01:02 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SearchResultViewer.java,v 1.3 2005-12-20 14:11:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -40,7 +40,7 @@ import javax.swing.*;
  *  ability to send the results to a netscape process.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SearchResultViewer.java,v 1.2 2005-01-11 15:01:02 tjc Exp $
+ *  @version $Id: SearchResultViewer.java,v 1.3 2005-12-20 14:11:10 tjc Exp $
  **/
 
 public class SearchResultViewer extends FileViewer 
@@ -112,7 +112,7 @@ public class SearchResultViewer extends FileViewer
     };
 
     final Process process =
-      ExternalProgram.startProgram("../etc/results_to_netscape", arguments);
+      ExternalProgram.startProgram("results_to_netscape", arguments);
 
     new ProcessWatcher(process, "results_to_netscape", false);
   }
