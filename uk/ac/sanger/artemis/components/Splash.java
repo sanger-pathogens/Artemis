@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.11 2005-12-08 12:37:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.12 2005-12-21 10:08:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -34,6 +34,7 @@ import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 
+import java.io.File;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -44,7 +45,7 @@ import java.lang.reflect.Constructor;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.11 2005-12-08 12:37:13 tjc Exp $
+ *  @version $Id: Splash.java,v 1.12 2005-12-21 10:08:36 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -100,6 +101,34 @@ abstract public class Splash extends JFrame
 
     if(isMac()) 
     {
+      Box bacross = Box.createHorizontalBox();
+      final JTextField wdir = new JTextField(System.getProperty("user.dir")+"   ");
+      JButton browse = new JButton("Browse...");
+      browse.addActionListener(new ActionListener () 
+      {
+        public void actionPerformed (ActionEvent e) 
+        {
+          final StickyFileChooser file_dialog = new StickyFileChooser();
+          file_dialog.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+          final int status = file_dialog.showOpenDialog(null);
+          if(status == JFileChooser.APPROVE_OPTION) 
+            wdir.setText(file_dialog.getSelectedFile().getAbsolutePath());
+        }
+      });
+      bacross.add(wdir);
+      bacross.add(browse);
+
+      Object[] possibleValues = { "OK" };
+      int select = JOptionPane.showOptionDialog(null,
+                                 bacross,
+                                 "Set Working Directory",
+                                 JOptionPane.DEFAULT_OPTION,
+                                 JOptionPane.QUESTION_MESSAGE,null,
+                                 possibleValues, possibleValues[0]);
+
+      if( (new File(wdir.getText().trim())).exists() )
+        System.setProperty("user.dir", wdir.getText().trim());
+
       try 
       {
 	Object[] args = { this, program_title };
