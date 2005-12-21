@@ -90,6 +90,7 @@
 
     <select id="getShema" resultClass="java.lang.String">
        SELECT schema_name FROM information_schema.schemata WHERE schema_name=schema_owner
+         ORDER BY schema_name
     </select>
 
     <select id="getResidueType" parameterClass="java.lang.String" resultClass="java.lang.Long">
