@@ -122,18 +122,17 @@ public class ChadoTransactionManager
  
   public void entryChanged(EntryChangeEvent event)
   {
-    System.out.println("HERE");
     if(event.getType() == EntryChangeEvent.FEATURE_ADDED)
       System.out.println("HERE FEATURE_ADDED");
 
-    Feature feature = event.getFeature();
+//  Feature feature = event.getFeature();
 
-    if(feature == null)
-      System.out.println("HERE feature == null");
-    else
-      System.out.println("HERE feature != null");
+//  if(feature == null)
+//    System.out.println("HERE feature == null");
+//  else
+//    System.out.println("HERE feature != null");
 
-    System.out.println(event.getEntry().getName());
+//  System.out.println(event.getEntry().getName());
   }
 
   /**
@@ -191,6 +190,14 @@ public class ChadoTransactionManager
       if(!qualifiers_old.contains(this_qualifier))
       {
         String name = this_qualifier.getName();
+
+        if(name.equals("ID") ||
+           name.equals("Parent") ||
+           name.equals("gff_seqname") ||
+           name.equals("gff_source") ||
+           name.equals("timelastmodified"))
+          continue;
+
         int old_index = qualifiers_old.indexOfQualifierWithName(name);
 
         Qualifier this_old_qualifier = null;
@@ -207,9 +214,9 @@ public class ChadoTransactionManager
                      StreamQualifier.toStringVector(null, this_qualifier);
 
         // get the cvterm_id for this featureprop/qualifier
-        String cvterm_id = DatabaseDocument.getCvtermID(name).toString();
+        Long lcvterm_id = DatabaseDocument.getCvtermID(name);
 
-        if(cvterm_id == null)   // chado doesn't recognise this
+        if(lcvterm_id == null)   // chado doesn't recognise this
         {
           JOptionPane.showMessageDialog(null, 
                       name+" is not a valid qualifier!",
@@ -217,7 +224,9 @@ public class ChadoTransactionManager
                       JOptionPane.WARNING_MESSAGE);
           continue;
         }
- 
+  
+        String cvterm_id = lcvterm_id.toString();
+
         if(old_index > -1 &&
            new_qualifier_strings.size() == old_qualifier_strings.size())
         {
@@ -227,10 +236,14 @@ public class ChadoTransactionManager
           for(int value_index = 0; value_index < new_qualifier_strings.size();
               ++value_index)
           {
+            String qualifier_string = (String)new_qualifier_strings.elementAt(value_index);
+            if(old_qualifier_strings.contains(qualifier_string))
+              continue;
+
             tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                                        feature_id, "featureprop");
-            String qualifier_string = (String)new_qualifier_strings.elementAt(value_index);
             int index = qualifier_string.indexOf("=");
+
             if(index > -1)
               qualifier_string = qualifier_string.substring(index+1);
 

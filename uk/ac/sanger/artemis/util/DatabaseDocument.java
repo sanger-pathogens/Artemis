@@ -1012,7 +1012,7 @@ public class DatabaseDocument extends Document
       for(int i = 0; i < sql.size(); i++)
       {
         ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
-        String[] sql_array = tsn.getSqlQuery();
+        String[] sql_array = tsn.getSqlQuery(schema);
 
         for(int j = 0; j < sql_array.length; j++)
         {

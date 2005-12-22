@@ -122,13 +122,13 @@ public class ChadoTransaction
     constraint.put(name, value);
   }
 
-  public String[] getSqlQuery()
+  public String[] getSqlQuery(String schema)
   {
     StringBuffer sqlBuff = new StringBuffer();
 
     if(type == UPDATE)
     {
-      sqlBuff.append("UPDATE "+chadoTable);
+      sqlBuff.append("UPDATE "+schema+"."+chadoTable);
       sqlBuff.append(" SET ");
 
       String name; 
@@ -142,12 +142,14 @@ public class ChadoTransaction
         if(enum_prop.hasMoreElements())
           sqlBuff.append(" , ");
       }
-      sqlBuff.append(" WHERE feature.feature_id="+chadoTable+".feature_id AND (");
+      sqlBuff.append(" FROM "+schema+".feature");
+      sqlBuff.append(" WHERE "+schema+".feature.feature_id="+
+                               schema+"."+chadoTable+".feature_id AND (");
     
       StringTokenizer tok = new StringTokenizer(uniquename,",");
       while(tok.hasMoreTokens())
       {
-        sqlBuff.append(" feature.uniquename='" + tok.nextToken()+"' ");
+        sqlBuff.append(" "+schema+"."+"feature.uniquename='" + tok.nextToken()+"' ");
         if(tok.hasMoreTokens())
           sqlBuff.append("OR");
       }
@@ -161,7 +163,11 @@ public class ChadoTransaction
         {
           name  = (String)enum_constraint.nextElement();
           value = (String)constraint.get(name);
-          sqlBuff.append(" AND "+name+"="+value);
+          sqlBuff.append(" AND ");
+          // looks like specifying table, so include schema
+          if(name.indexOf(".") > -1)
+           sqlBuff.append(schema+".");
+          sqlBuff.append(name+"="+value);
         }
       }
     }
@@ -170,12 +176,12 @@ public class ChadoTransaction
       StringTokenizer tok = new StringTokenizer(uniquename,",");
       while(tok.hasMoreTokens())
       {
-        sqlBuff.append("INSERT INTO "+chadoTable);
+        sqlBuff.append("INSERT INTO "+schema+"."+chadoTable);
         StringBuffer sqlKeys   = new StringBuffer();
         StringBuffer sqlValues = new StringBuffer();
 
         sqlKeys.append("feature_id , ");
-        sqlValues.append("(SELECT feature_id FROM feature WHERE uniquename='"+
+        sqlValues.append("(SELECT "+schema+".feature_id FROM "+schema+".feature WHERE uniquename='"+
                            tok.nextToken()+"') , ");
  
         String name;
@@ -203,7 +209,7 @@ public class ChadoTransaction
       StringTokenizer tok = new StringTokenizer(uniquename,",");
       while(tok.hasMoreTokens())
       {
-        sqlBuff.append("DELETE FROM "+chadoTable+" WHERE ");
+        sqlBuff.append("DELETE FROM "+schema+"."+chadoTable+" WHERE ");
 
         String name;
         String value;
@@ -214,7 +220,7 @@ public class ChadoTransaction
           value = (String)constraint.get(name);
           sqlBuff.append(name+"="+value+" AND ");
         }
-        sqlBuff.append("feature_id=(SELECT feature_id FROM feature WHERE uniquename='"+
+        sqlBuff.append(schema+".feature_id=(SELECT feature_id FROM "+schema+".feature WHERE uniquename='"+
                        tok.nextToken()+"')");
         sqlBuff.append("\t");
       }
