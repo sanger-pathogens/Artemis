@@ -181,7 +181,7 @@ public class ChadoTransaction
         StringBuffer sqlValues = new StringBuffer();
 
         sqlKeys.append("feature_id , ");
-        sqlValues.append("(SELECT "+schema+".feature_id FROM "+schema+".feature WHERE uniquename='"+
+        sqlValues.append("(SELECT feature_id FROM "+schema+".feature WHERE uniquename='"+
                            tok.nextToken()+"') , ");
  
         String name;
@@ -220,7 +220,7 @@ public class ChadoTransaction
           value = (String)constraint.get(name);
           sqlBuff.append(name+"="+value+" AND ");
         }
-        sqlBuff.append(schema+".feature_id=(SELECT feature_id FROM "+schema+".feature WHERE uniquename='"+
+        sqlBuff.append("feature_id=(SELECT feature_id FROM "+schema+".feature WHERE uniquename='"+
                        tok.nextToken()+"')");
         sqlBuff.append("\t");
       }
