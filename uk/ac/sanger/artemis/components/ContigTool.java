@@ -36,6 +36,8 @@ import uk.ac.sanger.artemis.Selection;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.util.Vector;
+
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -179,6 +181,12 @@ public class ContigTool extends JPanel
    
       public void mousePressed(MouseEvent event)
       {
+        if(event.isPopupTrigger())
+        {
+          popup.show(event.getComponent(),
+                  event.getX(), event.getY());
+          return;
+        }
       }
     });
 
@@ -359,7 +367,9 @@ public class ContigTool extends JPanel
       final Feature feature = contig_features.elementAt(i);
       final Range this_feature_range = feature.getMaxRawRange();     
       Color colour = feature.getColour();
-     
+      if(colour == null)
+        colour = Color.white;
+
       int xstart = xbound + this_feature_range.getStart()/scale;
       int xend   = xbound + this_feature_range.getEnd()/scale;
 
@@ -461,12 +471,13 @@ public class ContigTool extends JPanel
     final int base_pos = (loc.x-50)*scale;
     int first;
     int last;
+    final Vector contig_keys = FeatureDisplay.getContigKeys();
 
     for(int i = 0; i < contig_features.size(); i++)
     {
       final Feature this_feature = contig_features.elementAt(i);
 
-      if(this_feature.getKey().equals("fasta_record"))
+      if(contig_keys.contains(this_feature.getKey()))
       {
         first = this_feature.getRawFirstBase();
         last  = this_feature.getRawLastBase();
@@ -537,10 +548,11 @@ public class ContigTool extends JPanel
       if(((MouseEvent)ie).isPopupTrigger())
         return;
 
+    final Vector contig_keys = FeatureDisplay.getContigKeys();
+
     FeatureVector selected_features = getSelection().getSelectedFeatures();
     if(selected_features.size() == 1 &&
-       ( selected_features.elementAt(0).getKey().equals("source") ||
-         selected_features.elementAt(0).getKey().equals("fasta_record") ))
+       contig_keys.contains(selected_features.elementAt(0).getKey()))
     {
       ClassLoader cl = this.getClass().getClassLoader();
       ImageIcon icon = new ImageIcon(cl.getResource("images/icon.gif"));

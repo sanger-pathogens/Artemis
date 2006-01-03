@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.39 2005-12-12 14:27:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.40 2006-01-03 13:15:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -64,7 +64,7 @@ import javax.swing.ImageIcon;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.39 2005-12-12 14:27:13 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.40 2006-01-03 13:15:09 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -4755,6 +4755,15 @@ public class FeatureDisplay extends EntryGroupPanel
     entryWorker.start();
   }
 
+  protected static Vector getContigKeys()
+  {
+    Vector contig_keys = new Vector(3);
+    contig_keys.add("fasta_record");
+    contig_keys.add("contig");
+    contig_keys.add("insertion_gap");
+    
+    return contig_keys;
+  }
 
   /**
   *
@@ -4763,10 +4772,16 @@ public class FeatureDisplay extends EntryGroupPanel
   {
     FeatureVector contig_features = new FeatureVector();
     // find all fasta_record features
-    final FeaturePredicate key_and_qualifier_predicate
-              =  new FeatureKeyQualifierPredicate(new Key("fasta_record"),
-                                                  null, // match any qialifier
-                                                  false);
+    Vector contigKeys = getContigKeys();
+    final FeaturePredicate key_predicate_contig[]
+           =  new FeatureKeyQualifierPredicate[contigKeys.size()];
+
+    for(int i=0; i<contigKeys.size(); i++)
+      key_predicate_contig[i] = new FeatureKeyQualifierPredicate(
+                                             new Key((String)contigKeys.get(i)),
+                                             null, // match any qialifier
+                                             false);
+
     final FeatureEnumeration test_enumerator = getEntryGroup().features();
     contig_features = new FeatureVector();
 
@@ -4774,8 +4789,11 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       final Feature this_feature = test_enumerator.nextFeature();
 
-      if(key_and_qualifier_predicate.testPredicate(this_feature))
-        contig_features.add(this_feature);
+      for(int i=0; i<contigKeys.size(); i++)
+      {
+        if(key_predicate_contig[i].testPredicate(this_feature))
+          contig_features.add(this_feature);
+      }
     }
     return contig_features;
   }
@@ -4842,12 +4860,13 @@ public class FeatureDisplay extends EntryGroupPanel
     FeatureVector features_from_entry = getVisibleFeatures();   
     int first;
     int last;
+    Vector contig_keys = getContigKeys();
 
     for(int i = 0; i < features_from_entry.size(); i++)
     {
       final Feature this_feature = features_from_entry.elementAt(i);
 
-      if(this_feature.getKey().equals("fasta_record"))
+      if(contig_keys.contains(this_feature.getKey()))
       {
         first = this_feature.getRawFirstBase();
         last  = this_feature.getRawLastBase();
@@ -4945,10 +4964,10 @@ public class FeatureDisplay extends EntryGroupPanel
       if(((MouseEvent)ie).isPopupTrigger())
         return;
 
+    final Vector contig_keys = getContigKeys();
     final FeatureVector selected_features = getSelection().getAllFeatures();
     if(selected_features.size() == 1 &&
-       ( selected_features.elementAt(0).getKey().equals("source") ||
-         selected_features.elementAt(0).getKey().equals("fasta_record") ))
+       contig_keys.contains(selected_features.elementAt(0).getKey()))
     {
       ClassLoader cl = this.getClass().getClassLoader();
       ImageIcon icon = new ImageIcon(cl.getResource("images/icon.gif"));
