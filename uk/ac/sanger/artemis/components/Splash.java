@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.12 2005-12-21 10:08:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.13 2006-01-03 16:46:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -34,7 +34,7 @@ import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 
-import java.io.File;
+import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -45,7 +45,7 @@ import java.lang.reflect.Constructor;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.12 2005-12-21 10:08:36 tjc Exp $
+ *  @version $Id: Splash.java,v 1.13 2006-01-03 16:46:01 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -87,6 +87,8 @@ abstract public class Splash extends JFrame
 
   private String geneticCode;
 
+  private static boolean save_properties = false;
+
   /**
    *  Create a new JFrame for a Splash screen.
    *  @param program_name The full name of the program.
@@ -101,33 +103,7 @@ abstract public class Splash extends JFrame
 
     if(isMac()) 
     {
-      Box bacross = Box.createHorizontalBox();
-      final JTextField wdir = new JTextField(System.getProperty("user.dir")+"   ");
-      JButton browse = new JButton("Browse...");
-      browse.addActionListener(new ActionListener () 
-      {
-        public void actionPerformed (ActionEvent e) 
-        {
-          final StickyFileChooser file_dialog = new StickyFileChooser();
-          file_dialog.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-          final int status = file_dialog.showOpenDialog(null);
-          if(status == JFileChooser.APPROVE_OPTION) 
-            wdir.setText(file_dialog.getSelectedFile().getAbsolutePath());
-        }
-      });
-      bacross.add(wdir);
-      bacross.add(browse);
-
-      Object[] possibleValues = { "OK" };
-      int select = JOptionPane.showOptionDialog(null,
-                                 bacross,
-                                 "Set Working Directory",
-                                 JOptionPane.DEFAULT_OPTION,
-                                 JOptionPane.QUESTION_MESSAGE,null,
-                                 possibleValues, possibleValues[0]);
-
-      if( (new File(wdir.getText().trim())).exists() )
-        System.setProperty("user.dir", wdir.getText().trim());
+      setWorkingDirectory();
 
       try 
       {
@@ -150,7 +126,7 @@ abstract public class Splash extends JFrame
     {
       public void windowClosing(WindowEvent event) 
       {
-        exit();
+        exitApp();
       }
     });
 
@@ -557,6 +533,160 @@ abstract public class Splash extends JFrame
       };
       makeMenuItem(options_menu, "Hide Log Window", menu_listener);
     }
+
+    menu_listener = new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        setWorkingDirectory();
+      }
+    };
+    makeMenuItem(options_menu, "Set Working Directory...", menu_listener);
+
+  }
+
+  /**
+   *
+   * Set the working directory, used by the file manager.
+   *
+   */
+  public static void setWorkingDirectory()
+  {
+    final JTextField wdir = new JTextField(System.getProperty("user.dir")+"   ");
+
+    if(Options.getOptions() != null &&
+       Options.getOptions().getProperty("artemis.user.dir") != null)
+      wdir.setText( Options.getOptions().getProperty("artemis.user.dir") );
+
+    Box bdown   = Box.createVerticalBox();
+    Box bacross = Box.createHorizontalBox();
+    JButton browse = new JButton("Browse...");
+    browse.addActionListener(new ActionListener ()
+    {
+      public void actionPerformed (ActionEvent e)
+      {
+        final StickyFileChooser file_dialog = new StickyFileChooser();
+        file_dialog.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        final int status = file_dialog.showOpenDialog(null);
+        if(status == JFileChooser.APPROVE_OPTION)
+          wdir.setText(file_dialog.getSelectedFile().getAbsolutePath());
+      }
+    });
+    bacross.add(wdir);
+    bacross.add(browse);
+    bdown.add(bacross);
+
+    bacross = Box.createHorizontalBox();
+    JCheckBox saveDir = new JCheckBox("Save between sessions");
+    bacross.add(saveDir);
+    bacross.add(Box.createHorizontalGlue());
+    bdown.add(bacross);    
+ 
+    Object[] possibleValues = { "OK" };
+    int select = JOptionPane.showOptionDialog(null,
+                               bdown,
+                               "Set Working Directory",
+                               JOptionPane.DEFAULT_OPTION,
+                               JOptionPane.QUESTION_MESSAGE,null,
+                               possibleValues, possibleValues[0]);
+
+    if( (new File(wdir.getText().trim())).exists() )
+    {
+      System.setProperty("user.dir", wdir.getText().trim());
+      if(saveDir.isSelected())
+        save_properties = true;
+    }
+  }
+
+  protected static void exitApp()
+  {
+    if(save_properties)
+      saveProperties();
+    System.exit(0);
+  }
+
+  /**
+   *
+   * Save properties (working directory) between sessions.
+   *
+   */
+  private static void saveProperties()
+  {
+    String uhome = System.getProperty("user.home");
+    String fs = System.getProperty("file.separator");
+    String prop = uhome+fs+".artemis_options";
+
+    String wdir = addEscapeChars("artemis.user.dir="+System.getProperty("user.dir"));
+    writeProperties(prop,wdir);
+  }
+
+  /**
+  *
+  * Write or re-write properties and insert/update the user.dir property
+  * @param jemProp      properties file
+  * @param uHome        user working directory
+  *
+  */
+  private static void writeProperties(String prop, String wdir)
+  {
+     File file_txt = new File(prop);
+     File file_tmp = new File(prop + ".tmp");
+     try
+     {
+       if(file_txt.exists())
+       {
+         BufferedReader bufferedreader = new BufferedReader(new FileReader(file_txt));
+         BufferedWriter bufferedwriter = new BufferedWriter(new FileWriter(file_tmp));
+         String line;
+         while ((line = bufferedreader.readLine()) != null)
+         {
+           if(line.startsWith("artemis.user.dir"))
+             line = wdir;
+
+           bufferedwriter.write(line);
+           bufferedwriter.newLine();
+         }
+         bufferedreader.close();
+         bufferedwriter.close();
+         file_txt.delete();
+         file_tmp.renameTo(file_txt);
+       }
+       else
+       {
+         BufferedWriter bufferedwriter = new BufferedWriter(new FileWriter(file_txt));
+         bufferedwriter.write(wdir);
+         bufferedwriter.newLine();
+         bufferedwriter.close();
+       }
+     }
+     catch (FileNotFoundException filenotfoundexception)
+     {
+       System.err.println("jemboss.properties read error");
+     }
+     catch (IOException e)
+     {
+       System.err.println("jemboss.properties i/o error");
+     }
+
+  }
+
+
+  /**
+  *
+  * Add in escape chars (for windows) to the backslash chars
+  * @param l    string to insert escape characters to
+  *
+  */
+  private static String addEscapeChars(String l)
+  {
+    int n = l.indexOf("\\");
+
+    while( n > -1)
+    {
+      l = l.substring(0,n)+"\\"+l.substring(n,l.length());
+      n = l.indexOf("\\",n+2);
+    }
+    return l;
   }
 
   /**
