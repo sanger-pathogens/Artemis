@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.19 2006-01-03 16:46:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.20 2006-01-04 14:25:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -31,6 +31,7 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.util.Document;
+import uk.ac.sanger.artemis.util.TextDocument;
 import uk.ac.sanger.artemis.util.DocumentFactory;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
@@ -38,16 +39,16 @@ import uk.ac.sanger.artemis.io.EntryInformation;
 
 import org.biojava.bio.seq.io.SequenceFormat;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
 import java.awt.Toolkit;
 import java.io.*;
+import java.awt.datatransfer.*;
 
 /**
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.19 2006-01-03 16:46:01 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.20 2006-01-04 14:25:09 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -92,7 +93,6 @@ public class ArtemisMain extends Splash
       }
     };
     makeMenuItem(file_menu, "Open SSH File Manager ...", menu_listener_ssh);
-
 
 
     final EntrySourceVector entry_sources = getEntrySources(this);
@@ -148,15 +148,17 @@ public class ArtemisMain extends Splash
     };
     makeMenuItem(file_menu, "Quit", menu_listener);
 
-//      getCanvas().addMouseListener(new MouseAdapter() {
-//        /**
-//         *  Listen for mouse press events so that we can do popup menus and
-//         *  selection.
-//         **/
-//        public void mousePressed(MouseEvent event) {
-//          handleCanvasMousePress(event);
-//        }
-//      });
+    getCanvas().addMouseListener(new MouseAdapter() 
+    {
+      /**
+       *  Listen for mouse press events so that we can do popup menus and
+       *  selection.
+       **/
+      public void mousePressed(MouseEvent event)  
+      {
+        handleCanvasMousePress(event);
+      }
+    });
 
 //  java.util.Properties props = System.getProperties();
 //  java.util.Enumeration en = props.propertyNames();
@@ -169,21 +171,75 @@ public class ArtemisMain extends Splash
   }
 
 
-// XXX add pasteClipboard() one day
+  /**
+   *  Handle a mouse press event on the drawing canvas - select on click,
+   *  select and broadcast it on double click.
+   **/
+  private void handleCanvasMousePress(MouseEvent event) 
+  {
+    if(event.getID() != MouseEvent.MOUSE_PRESSED)
+      return;
 
-//    /**
-//     *  Handle a mouse press event on the drawing canvas - select on click,
-//     *  select and broadcast it on double click.
-//     **/
-//    private void handleCanvasMousePress(MouseEvent event) {
-//      if(event.getID() != MouseEvent.MOUSE_PRESSED) {
-//        return;
-//      }
+    if((event.getModifiers() & InputEvent.BUTTON2_MASK) != 0)
+    {
+      openClipboardContents();
+    }
+  }
 
-//      if((event.getModifiers() & InputEvent.BUTTON2_MASK) != 0) {
-//        pasteClipboard();
-//      }
-//    }
+  /**
+  * Get the String residing on the clipboard.
+  *
+  * @return any text found on the Clipboard; if none found, return an
+  * empty String.
+  */
+  public void openClipboardContents() 
+  {
+    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    //odd: the Object param of getContents is not currently used
+    Transferable contents = clipboard.getContents(null);
+    boolean hasTransferableText = (contents != null) &&
+                                  contents.isDataFlavorSupported(DataFlavor.stringFlavor);
+    if(hasTransferableText)
+    {
+      TextDocument entry_document = new TextDocument();
+      final InputStreamProgressListener progress_listener =
+                                     getInputStreamProgressListener();
+
+      entry_document.addInputStreamProgressListener(progress_listener);
+
+      final EntryInformation artemis_entry_information =
+                          Options.getArtemisEntryInformation();
+
+      final uk.ac.sanger.artemis.io.Entry new_embl_entry =
+          EntryFileDialog.getEntryFromFile(this, entry_document,
+                                           artemis_entry_information,
+                                           false);
+
+      if(new_embl_entry == null)  // the read failed
+        return;
+
+      try 
+      {
+        final Entry entry = new Entry(new_embl_entry);
+        EntryEdit last_entry_edit = makeEntryEdit(entry);
+        addEntryEdit(last_entry_edit);
+        getStatusLabel().setText("");
+        last_entry_edit.setVisible(true);
+      }
+      catch(OutOfRangeException e) 
+      {
+        new MessageDialog(this, "read failed: one of the features in " +
+                           " cut and paste has an out of range " +
+                           "location: " + e.getMessage());
+      } 
+      catch(NoSequenceException e) 
+      {
+        new MessageDialog(this, "read failed: " +
+                           " cut and paste contains no sequence");
+      }
+    }
+  }
+
 
   /**
   *
