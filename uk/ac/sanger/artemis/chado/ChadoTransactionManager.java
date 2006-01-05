@@ -182,124 +182,150 @@ public class ChadoTransactionManager
   
     String feature_id = (String)(feature.getQualifierByName("ID").getValues()).elementAt(0);
     ChadoTransaction tsn;
-    for(int qualifier_index = 0; qualifier_index < qualifiers_new.size();
+
+    // look for qualifiers to DELETE
+    for(int qualifier_index = 0; qualifier_index < qualifiers_old.size();
         ++qualifier_index)
     {
-      final Qualifier this_qualifier = (Qualifier)qualifiers_new.elementAt(qualifier_index);
+      final Qualifier this_qualifier = (Qualifier)qualifiers_old.elementAt(qualifier_index);
+      String name = this_qualifier.getName();
 
-      if(!qualifiers_old.contains(this_qualifier))
+      if(!qualifiers_new.contains(name))
       {
-        String name = this_qualifier.getName();
-
-        if(name.equals("ID") ||
-           name.equals("Parent") ||
-           name.equals("gff_seqname") ||
-           name.equals("gff_source") ||
-           name.equals("timelastmodified"))
-          continue;
-
-        int old_index = qualifiers_old.indexOfQualifierWithName(name);
-
-        Qualifier this_old_qualifier = null;
-        StringVector old_qualifier_strings = null;
-        if(old_index> -1)  // update qualifier
-        {
-          this_old_qualifier = (Qualifier)qualifiers_old.elementAt(old_index);
-
-          old_qualifier_strings =
-                     StreamQualifier.toStringVector(null, this_old_qualifier);
-        }
-
-        final StringVector new_qualifier_strings =
-                     StreamQualifier.toStringVector(null, this_qualifier);
-
         // get the cvterm_id for this featureprop/qualifier
         Long lcvterm_id = DatabaseDocument.getCvtermID(name);
-
         if(lcvterm_id == null)   // chado doesn't recognise this
         {
-          JOptionPane.showMessageDialog(null, 
+          JOptionPane.showMessageDialog(null,
                       name+" is not a valid qualifier!",
                       "Invalid Qualifier",
                       JOptionPane.WARNING_MESSAGE);
           continue;
         }
-  
+
         String cvterm_id = lcvterm_id.toString();
+        tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+                                   feature_id, "featureprop");
 
-        if(old_index > -1 &&
-           new_qualifier_strings.size() == old_qualifier_strings.size())
+        tsn.setConstraint("type_id", cvterm_id);
+        sql.add(tsn);
+      }
+    }
+
+    // look for qualifiers to INSERT/UPDATE
+    for(int qualifier_index = 0; qualifier_index < qualifiers_new.size();
+        ++qualifier_index)
+    {
+      final Qualifier this_qualifier = (Qualifier)qualifiers_new.elementAt(qualifier_index);
+      String name = this_qualifier.getName();
+
+      if(name.equals("ID") ||
+         name.equals("Parent") ||
+         name.equals("gff_seqname") ||
+         name.equals("gff_source") ||
+         name.equals("timelastmodified"))
+        continue;
+
+      int old_index = qualifiers_old.indexOfQualifierWithName(name);
+
+      Qualifier this_old_qualifier = null;
+      StringVector old_qualifier_strings = null;
+      if(old_index> -1)  // update qualifier
+      {
+        this_old_qualifier = (Qualifier)qualifiers_old.elementAt(old_index);
+
+        old_qualifier_strings =
+                   StreamQualifier.toStringVector(null, this_old_qualifier);
+      }
+
+      final StringVector new_qualifier_strings =
+                   StreamQualifier.toStringVector(null, this_qualifier);
+
+      // get the cvterm_id for this featureprop/qualifier
+      Long lcvterm_id = DatabaseDocument.getCvtermID(name);
+
+      if(lcvterm_id == null)   // chado doesn't recognise this
+      {
+        JOptionPane.showMessageDialog(null, 
+                    name+" is not a valid qualifier!",
+                    "Invalid Qualifier",
+                    JOptionPane.WARNING_MESSAGE);
+        continue;
+      }
+  
+      String cvterm_id = lcvterm_id.toString();
+
+      if(old_index > -1 &&
+         new_qualifier_strings.size() == old_qualifier_strings.size())
+      {
+        //  
+        // UPDATE existing featureprop's
+        //
+        for(int value_index = 0; value_index < new_qualifier_strings.size();
+            ++value_index)
         {
-          //  
-          // UPDATE existing featureprop's
-          //
-          for(int value_index = 0; value_index < new_qualifier_strings.size();
-              ++value_index)
-          {
-            String qualifier_string = (String)new_qualifier_strings.elementAt(value_index);
-            if(old_qualifier_strings.contains(qualifier_string))
-              continue;
+          String qualifier_string = (String)new_qualifier_strings.elementAt(value_index);
+          if(old_qualifier_strings.contains(qualifier_string))
+            continue;
 
-            tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                                       feature_id, "featureprop");
-            int index = qualifier_string.indexOf("=");
+          tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                                     feature_id, "featureprop");
+          int index = qualifier_string.indexOf("=");
 
-            if(index > -1)
-              qualifier_string = qualifier_string.substring(index+1);
+          if(index > -1)
+            qualifier_string = qualifier_string.substring(index+1);
 
-            tsn.addProperty("value", "'"+ stripQuotes(qualifier_string) +"'");
-            tsn.setConstraint("featureprop.type_id", "'"+cvterm_id+"'");
-            tsn.setConstraint("rank", Integer.toString(value_index));
-            sql.add(tsn);
+          tsn.addProperty("value", "'"+ stripQuotes(qualifier_string) +"'");
+          tsn.setConstraint("featureprop.type_id", "'"+cvterm_id+"'");
+          tsn.setConstraint("rank", Integer.toString(value_index));
+          sql.add(tsn);
 
 //          String[] sql_array = tsn.getSqlQuery();
 //          for(int i=0; i<sql_array.length; i++)
 //            System.out.println(sql_array[i]);
-          }
-
         }
-        else
-        {
-      
-          //
-          // DELETE existing featureprops
-          //
-          if(old_index > -1)
-          {
-            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
-                                       feature_id, "featureprop");
 
-            tsn.setConstraint("type_id", cvterm_id);
-            sql.add(tsn);
-//          String[] sql_array = tsn.getSqlQuery();
-//          for(int i=0; i<sql_array.length; i++)
-//            System.out.println(sql_array[i]);
-          }
+      }
+      else
+      {
+        //
+        // DELETE any existing featureprops
+        //
+        if(old_index > -1)
+        {
+          tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+                                     feature_id, "featureprop");
+
+          tsn.setConstraint("type_id", cvterm_id);
+          sql.add(tsn);
+//        String[] sql_array = tsn.getSqlQuery();
+//        for(int i=0; i<sql_array.length; i++)
+//          System.out.println(sql_array[i]);
+        }
           
-          //
-          // INSERT new featureprops
-          //
-          for(int value_index = 0; value_index < new_qualifier_strings.size();
-              ++value_index)
-          {
-            tsn = new ChadoTransaction(ChadoTransaction.INSERT,
-                                       feature_id, "featureprop");
-            String qualifier_string = (String)new_qualifier_strings.elementAt(value_index);
-            int index = qualifier_string.indexOf("=");
-            if(index > -1)
-              qualifier_string = qualifier_string.substring(index+1);
+        //
+        // INSERT new featureprops
+        //
+        for(int value_index = 0; value_index < new_qualifier_strings.size();
+            ++value_index)
+        {
+          tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+                                     feature_id, "featureprop");
+          String qualifier_string = (String)new_qualifier_strings.elementAt(value_index);
+          int index = qualifier_string.indexOf("=");
+          if(index > -1)
+            qualifier_string = qualifier_string.substring(index+1);
 
-            tsn.addProperty("value", "'"+ stripQuotes(qualifier_string) +"'");
-            tsn.addProperty("type_id", "'"+cvterm_id+"'");
-            tsn.addProperty("rank", Integer.toString(value_index));
-            sql.add(tsn);
-//          String[] sql_array = tsn.getSqlQuery();
-//          for(int i=0; i<sql_array.length; i++)
-//            System.out.println(sql_array[i]);
-          }
-
-//        System.out.println("******** "+DatabaseDocument.getCvtermID(name));
+          tsn.addProperty("value", "'"+ stripQuotes(qualifier_string) +"'");
+          tsn.addProperty("type_id", "'"+cvterm_id+"'");
+          tsn.addProperty("rank", Integer.toString(value_index));
+          sql.add(tsn);
+//        String[] sql_array = tsn.getSqlQuery();
+//        for(int i=0; i<sql_array.length; i++)
+//          System.out.println(sql_array[i]);
         }
+
+//      System.out.println("******** "+DatabaseDocument.getCvtermID(name));
       }
     }
 
