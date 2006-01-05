@@ -403,6 +403,15 @@ public class DatabaseDocument extends Document
 
     int feature_size = featList.size();
 
+// build feature name store
+    for(int i = 0; i < feature_size; i++)
+    {
+      Feature feat = (Feature)featList.get(i);
+      String name       = feat.getUniquename();
+      String feature_id = Integer.toString(feat.getId());
+      hstore.put(feature_id, name);
+    }
+
     for(int i = 0; i < feature_size; i++)
     {
       Feature feat = (Feature)featList.get(i);
@@ -416,7 +425,7 @@ public class DatabaseDocument extends Document
       String propTypeName     = getCvtermName(null, prop_type_id);
       String timelastmodified = feat.getTimelastmodified().toString();
       String feature_id       = Integer.toString(feat.getId());
-      hstore.put(feature_id, name);
+//    hstore.put(feature_id, name);
 
       String parent_id = feat.getObject_id();
       if(parent_id != null && hstore.containsKey(parent_id))
@@ -524,7 +533,7 @@ public class DatabaseDocument extends Document
         + schema + ".feature_relationship.rank OR "
         + schema + ".feature_relationship.rank IS NULL)"
         + " ORDER BY "
-        + schema + ".feature.type_id,  uniquename";
+        + schema + ".feature.type_id, uniquename";
 
     appendToLogFile(sql, sqlLog);
     ResultSet rs = st.executeQuery(sql);
@@ -539,6 +548,14 @@ public class DatabaseDocument extends Document
 
     while(rs.next())
     {
+      String name       = rs.getString("uniquename");
+      String feature_id = rs.getString("feature_id");
+      hstore.put(feature_id, name);
+    }
+
+    rs.first();
+    while(rs.next())
+    {
       int fmin                = rs.getInt("fmin") + 1;
       int fmax                = rs.getInt("fmax");
       long type_id            = rs.getLong("type_id");
@@ -549,7 +566,7 @@ public class DatabaseDocument extends Document
       String propTypeName     = getCvtermName(conn, prop_type_id);
       String timelastmodified = rs.getString("timelastmodified");
       String feature_id       = rs.getString("feature_id");
-      hstore.put(feature_id, name);
+//    hstore.put(feature_id, name);
 
       String parent_id = rs.getString("object_id");
       if(parent_id != null && hstore.containsKey(parent_id))
