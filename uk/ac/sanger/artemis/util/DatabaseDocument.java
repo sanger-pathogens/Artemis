@@ -398,10 +398,10 @@ public class DatabaseDocument extends Document
       buffers[i] = new ByteBuffer();
 
     String parentFeature = getFeatureNameIbatis(feature);
-    Hashtable hstore = new Hashtable();
     ByteBuffer this_buff;
 
     int feature_size = featList.size();
+    Hashtable hstore = new Hashtable(feature_size);
 
 // build feature name store
     for(int i = 0; i < feature_size; i++)
