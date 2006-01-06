@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.4 2004-12-08 11:13:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.5 2006-01-06 19:13:10 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -35,6 +35,7 @@ import uk.ac.sanger.artemis.io.RawStreamSequence;
 import uk.ac.sanger.artemis.io.EmblStreamSequence;
 import uk.ac.sanger.artemis.io.GenbankStreamSequence;
 import uk.ac.sanger.artemis.io.StreamSequenceFactory;
+import uk.ac.sanger.artemis.io.Range;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -45,7 +46,7 @@ import javax.swing.*;
  *  A menu of commands for writing out protein and bases.
  *
  *  @author Kim Rutherford
- *  @version $Id: WriteMenu.java,v 1.4 2004-12-08 11:13:03 tjc Exp $
+ *  @version $Id: WriteMenu.java,v 1.5 2006-01-06 19:13:10 tjc Exp $
  **/
 public class WriteMenu extends SelectionMenu 
 {
@@ -88,6 +89,7 @@ public class WriteMenu extends SelectionMenu
     add(pir_item);
     addSeparator();
 
+    
     final JMenu bases_menu = new JMenu("Bases Of Selection");
     final JMenuItem raw_bases_item = new JMenuItem("Raw Format");
     raw_bases_item.addActionListener(new ActionListener() 
@@ -133,6 +135,18 @@ public class WriteMenu extends SelectionMenu
 
     bases_menu.add(genbank_bases_item);
     add(bases_menu);
+
+    final JMenu exons_menu = new JMenu("Exons Of Selection");
+    final JMenuItem fasta_exons_item = new JMenuItem("Multiple FASTA Format");
+    fasta_exons_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        writeExonsOfSelection(StreamSequenceFactory.FASTA_FORMAT);
+      }
+    });
+    exons_menu.add(fasta_exons_item);
+    add(exons_menu);
 
     final JMenu upstream_bases_menu =
       new JMenu("Upstream Bases Of Selected Features");
@@ -404,6 +418,7 @@ public class WriteMenu extends SelectionMenu
     }
   }
 
+
   /**
    *  Write the bases of the selected features to a file choosen by the user
    *  or show a message and return immediately if there are no selected
@@ -472,6 +487,73 @@ public class WriteMenu extends SelectionMenu
       writer.close();
     } 
     catch(IOException e) 
+    {
+      new MessageDialog(getParentFrame(),
+                        "error while writing: " + e.getMessage());
+    }
+  }
+
+  /**
+  *
+  * Write selected exons to a mutiple FASTA file.
+  *
+  */
+  private void writeExonsOfSelection(final int output_type)
+  {
+    if(!checkForSelectionFeatures())
+      return;
+
+    final File write_file =
+      getWriteFile("Select an output file name ...", "exons", null);
+
+    if(write_file == null)
+      return;
+
+    try
+    {
+      final FileWriter writer = new FileWriter(write_file);
+      final FeatureVector features_to_write =
+                           getSelection().getAllFeatures();
+      for(int i = 0; i < features_to_write.size(); ++i)
+      {
+        final Feature selection_feature = features_to_write.elementAt(i);
+        final StringBuffer header_buffer = new StringBuffer();
+
+        header_buffer.append(selection_feature.getSystematicName());
+        header_buffer.append(" ");
+        header_buffer.append(selection_feature.getIDString());
+        header_buffer.append(" ");
+
+        final String product = selection_feature.getProductString();
+
+        if(product == null)
+          header_buffer.append("undefined product");
+        else
+          header_buffer.append(product);
+
+        int seg_size = selection_feature.getSegments().size();
+        for(int j = 0; j < seg_size; ++j)
+        {
+          String bases = selection_feature.getSegments().elementAt(j).getBases();
+          Range range = selection_feature.getSegments().elementAt(j).getRawRange();
+
+          String s_range = " "+range.getStart()+":"+range.getEnd();
+          if(selection_feature.isForwardFeature())
+            s_range = s_range+" forward";
+          else
+            s_range = s_range+" reverse";
+
+          final StreamSequence stream_sequence =
+            getStreamSequence(bases,
+                              header_buffer.toString()+s_range,
+                              output_type);
+
+          stream_sequence.writeToStream(writer);
+        }
+      }
+      writer.close();
+    }
+    catch(IOException e)
     {
       new MessageDialog(getParentFrame(),
                         "error while writing: " + e.getMessage());
