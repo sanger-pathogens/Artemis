@@ -210,6 +210,17 @@ public class DatabaseDocument extends Document
     return name;
   }
 
+
+  /**
+  *
+  *  Set the name of this document.
+  *
+  */
+  public void setName(String name)
+  {
+    this.name = name;
+  }
+
   /**
    * 
    * Return a Document with the last element stripped off.
@@ -401,7 +412,7 @@ public class DatabaseDocument extends Document
     ByteBuffer this_buff;
 
     int feature_size = featList.size();
-    Hashtable hstore = new Hashtable(feature_size);
+    Hashtable id_store = new Hashtable(feature_size);
 
 // build feature name store
     for(int i = 0; i < feature_size; i++)
@@ -409,7 +420,8 @@ public class DatabaseDocument extends Document
       Feature feat = (Feature)featList.get(i);
       String name       = feat.getUniquename();
       String feature_id = Integer.toString(feat.getId());
-      hstore.put(feature_id, name);
+
+      id_store.put(feature_id, name);
     }
 
     for(int i = 0; i < feature_size; i++)
@@ -425,11 +437,11 @@ public class DatabaseDocument extends Document
       String propTypeName     = getCvtermName(null, prop_type_id);
       String timelastmodified = feat.getTimelastmodified().toString();
       String feature_id       = Integer.toString(feat.getId());
-//    hstore.put(feature_id, name);
+
 
       String parent_id = feat.getObject_id();
-      if(parent_id != null && hstore.containsKey(parent_id))
-        parent_id = (String)hstore.get(parent_id);
+      if(parent_id != null && id_store.containsKey(parent_id))
+        parent_id = (String)id_store.get(parent_id);
 
       // make gff format
 
@@ -543,14 +555,16 @@ public class DatabaseDocument extends Document
       buffers[i] = new ByteBuffer();
 
     String parentFeature = getFeatureNameJdbc(parentFeatureID, conn, schema);
-    Hashtable hstore = new Hashtable();
+    Hashtable id_store = new Hashtable();
+
     ByteBuffer this_buff;
 
     while(rs.next())
     {
       String name       = rs.getString("uniquename");
       String feature_id = rs.getString("feature_id");
-      hstore.put(feature_id, name);
+
+      id_store.put(feature_id, name);
     }
 
     rs.first();
@@ -566,11 +580,10 @@ public class DatabaseDocument extends Document
       String propTypeName     = getCvtermName(conn, prop_type_id);
       String timelastmodified = rs.getString("timelastmodified");
       String feature_id       = rs.getString("feature_id");
-//    hstore.put(feature_id, name);
 
       String parent_id = rs.getString("object_id");
-      if(parent_id != null && hstore.containsKey(parent_id))
-        parent_id = (String)hstore.get(parent_id);
+      if(parent_id != null && id_store.containsKey(parent_id))
+        parent_id = (String)id_store.get(parent_id);
 
       // make gff format
 

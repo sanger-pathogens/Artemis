@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DatabaseJFrame.java,v 1.7 2005-11-22 11:02:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DatabaseJFrame.java,v 1.8 2006-01-10 12:04:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -128,7 +128,8 @@ public class DatabaseJFrame extends JFrame
       node_name = entry_source.getSelectedNode(tree);
       String id = entry_source.getEntryID(node_name);
       if(id != null)
-        getEntryEditFromDatabase(id, entry_source, tree, art_main);
+        getEntryEditFromDatabase(id, entry_source, tree,
+                                 art_main, node_name);
     }
     catch(NullPointerException npe)
     {
@@ -142,7 +143,7 @@ public class DatabaseJFrame extends JFrame
    */
   private void getEntryEditFromDatabase(final String id,
       final DatabaseEntrySource entry_source, final JTree tree,
-      final ArtemisMain art_main)
+      final ArtemisMain art_main, final String node_name)
   {
     SwingWorker entryWorker = new SwingWorker()
     {
@@ -164,6 +165,18 @@ public class DatabaseJFrame extends JFrame
 
           final Entry entry = entry_source.getEntry(id, schema,
                                                     progress_listener);
+
+
+          DatabaseDocumentEntry db_entry =
+                         (DatabaseDocumentEntry)entry.getEMBLEntry();
+
+          int ind = 0;
+          String name = node_name;
+          if( (ind = name.lastIndexOf("-")) > -1)
+            name = name.substring(ind+1).trim();
+
+          ((DatabaseDocument)db_entry.getDocument()).setName(name);
+
           if(entry == null)
           {
             tree.setCursor(cdone);
@@ -176,8 +189,8 @@ public class DatabaseJFrame extends JFrame
           // add gff entries
           if(splitGFFEntry)
           {
-            DatabaseDocumentEntry db_entry = 
-                         (DatabaseDocumentEntry)entry.getEMBLEntry();
+//          DatabaseDocumentEntry db_entry = 
+//                       (DatabaseDocumentEntry)entry.getEMBLEntry();
 
             final DatabaseDocumentEntry[] entries = entry_source.makeFromGff(
                         (DatabaseDocument)db_entry.getDocument(), id, schema);
