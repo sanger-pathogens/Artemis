@@ -38,8 +38,6 @@ Target           no         text
 Gap              no         text     
 Derives_from     no         text     
 Dbxref           no         "text"
-polypeptide      no         text
-polypeptide_domain no       text
 pseudo           no         text
 colour           no         text
 color            no         text
@@ -48,3 +46,10 @@ mass             no         text
 isoelectric      no         text
 charge           no         text
 source           no         text
+go               no         text
+ortholog         no         "text"
+similarity       no         "text"
+pseudo           no         "text"
+partial          no         "text"
+private          no         "text"
+curation         no         "text"
