@@ -390,9 +390,13 @@ public class FastaTextPane extends JScrollPane
         if(line.endsWith(" aa"))
         {
           int in1 = line.indexOf(":");
-          int in2 = line.lastIndexOf(" ");
-          if(in1 > -1 && in2 > -1)
-            qlen = Integer.parseInt(line.substring(in1+1,in2).trim());
+          if(in1 > -1)
+          {
+            String tmp = line.substring(in1+1).trim();
+            int in2 = tmp.indexOf(" ");
+            if(in2 > -1)
+              qlen = Integer.parseInt(tmp.substring(0,in2).trim());
+          }
         }
         else if(line.startsWith("The best scores are:"))
         {
