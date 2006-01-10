@@ -27,7 +27,7 @@ scRNA               ID Name Alias Parent Note db_xref product note controlled_cu
 snoRNA              ID Name Alias Parent Note db_xref product note controlled_curation colour color
 polypeptide_domain  ID Name Alias Parent Note  colour color
 signal_peptide      ID Name Alias Parent Note colour color
-matches             ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
+match               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
 nucleotide_match    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term gff_source gff_seqname score colour color
 translated_nucleotide_match    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color
 protein_match       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term colour color cluster gff_source gff_seqname score
