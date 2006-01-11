@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.12 2005-12-14 12:06:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.13 2006-01-11 17:48:20 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -48,12 +48,13 @@ import java.awt.event.*;
 import java.io.IOException;
 
 import javax.swing.*;
+import java.util.Vector;
 
 /**
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.12 2005-12-14 12:06:16 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.13 2006-01-11 17:48:20 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -333,6 +334,15 @@ public class EditMenu extends SelectionMenu
       }
     });
 
+    final JMenuItem unmerge_all_feature_item = new JMenuItem("Unmerge A Whole Feature");
+    unmerge_all_feature_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        unmergeAllFeature(getParentFrame(), getSelection(), getEntryGroup());
+      }
+    });
+
     final JMenuItem duplicate_item = new JMenuItem("Duplicate Selected Features");
     duplicate_item.setAccelerator(DUPLICATE_KEY);
     duplicate_item.addActionListener(new ActionListener() 
@@ -599,6 +609,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
+
     if(Options.getOptions().getPropertyTruthValue("val_mode")) 
     {
       add(edit_feature_item);
@@ -628,6 +639,7 @@ public class EditMenu extends SelectionMenu
     add(duplicate_item);
     add(merge_features_item);
     add(unmerge_feature_item);
+    add(unmerge_all_feature_item);
     add(delete_features_item);
     add(delete_segments_item);
     add(delete_introns_item);
@@ -1108,6 +1120,94 @@ public class EditMenu extends SelectionMenu
       entry_group.getActionController ().endAction ();
     }
   }
+
+  /**
+   *  If the selection contains exactly one feature this routine will
+   *  remove all the joins.
+   *  @param frame The JFrame to use for MessageDialog components.
+   *  @param selection The Selection containing the segments to unmerge.
+   *  @param entry_group Used to get the ActionController for calling
+   *    startAction() and endAction().
+   **/
+  private void unmergeAllFeature(final JFrame frame,
+                                 final Selection selection,
+                                 final EntryGroup entry_group) 
+  {
+    try 
+    {
+      entry_group.getActionController ().startAction ();
+
+      final FeatureVector delete_features = selection.getAllFeatures();
+      if(delete_features.size() > 1)
+      {
+        new MessageDialog (frame, "Select just one feature");             
+        return;
+      }
+
+      final FeatureSegmentVector selected_segments =
+                   delete_features.elementAt(0).getSegments();
+      try  
+      {
+        Vector new_features = new Vector();
+        Vector segment_to_remove = new Vector();
+
+        FeatureSegment[] selected_segments_array = new FeatureSegment[selected_segments.size()];
+        for(int i=0; i<selected_segments.size(); i++)
+        {
+          FeatureSegment seg   = selected_segments.elementAt(i);
+          int index_of_segment = selected_segments.indexOf(seg); 
+          selected_segments_array[index_of_segment] = seg;
+        }
+        
+        for(int i=0; i<selected_segments.size()-1; i++)
+        {
+          FeatureSegment segment = selected_segments_array[i];
+          Feature segment_feature = segment.getFeature();
+          final Feature new_feature = segment_feature.duplicate ();
+          segment_to_remove.add(segment);
+
+          FeatureSegmentVector new_segments = new_feature.getSegments();
+
+          Vector removals = new Vector();
+          for(int j = 0 ; j <new_segments.size(); j++)
+          {
+            if(i != j)
+             removals.add(new_segments.elementAt(j));
+          }
+
+          for(int j = 0; j < removals.size(); j++)
+            new_feature.removeSegment( (FeatureSegment)removals.get(j) );  
+
+          new_features.add(new_feature);
+        }
+
+        for(int i=0; i<segment_to_remove.size(); i++)
+        {
+          selected_segments_array[selected_segments.size()-1].getFeature().removeSegment( (FeatureSegment)segment_to_remove.get(i) );
+        }
+
+        for(int i=0; i<new_features.size(); i++)
+          selection.add(((Feature)new_features.get(i)).getSegments().elementAt(0));
+      } 
+      catch(ReadOnlyException e)
+      {
+        final String message =
+          "the selected exons (in " +
+          delete_features.elementAt(0).getIDString () +
+          ") are in a read only entry - cannot continue";
+        new MessageDialog (frame, message);
+      }
+      catch (LastSegmentException e) 
+      {
+        throw new Error ("internal error - unexpected exception: " + e);
+      }
+    } 
+    finally 
+    {
+      entry_group.getActionController ().endAction ();
+    }
+  }
+
 
   /**
    *  Create a QualifierEditor JFrame that acts on the selected features.
