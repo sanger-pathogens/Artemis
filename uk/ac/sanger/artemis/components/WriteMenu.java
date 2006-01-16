@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.5 2006-01-06 19:13:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.6 2006-01-16 10:01:25 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -46,7 +46,7 @@ import javax.swing.*;
  *  A menu of commands for writing out protein and bases.
  *
  *  @author Kim Rutherford
- *  @version $Id: WriteMenu.java,v 1.5 2006-01-06 19:13:10 tjc Exp $
+ *  @version $Id: WriteMenu.java,v 1.6 2006-01-16 10:01:25 tjc Exp $
  **/
 public class WriteMenu extends SelectionMenu 
 {
@@ -136,17 +136,17 @@ public class WriteMenu extends SelectionMenu
     bases_menu.add(genbank_bases_item);
     add(bases_menu);
 
-    final JMenu exons_menu = new JMenu("Exons Of Selection");
-    final JMenuItem fasta_exons_item = new JMenuItem("Multiple FASTA Format");
-    fasta_exons_item.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent event)
-      {
-        writeExonsOfSelection(StreamSequenceFactory.FASTA_FORMAT);
-      }
-    });
-    exons_menu.add(fasta_exons_item);
-    add(exons_menu);
+//  final JMenu exons_menu = new JMenu("Exons Of Selection");
+//  final JMenuItem fasta_exons_item = new JMenuItem("Multiple FASTA Format");
+//  fasta_exons_item.addActionListener(new ActionListener()
+//  {
+//    public void actionPerformed(ActionEvent event)
+//    {
+//      writeExonsOfSelection(StreamSequenceFactory.FASTA_FORMAT);
+//    }
+//  });
+//  exons_menu.add(fasta_exons_item);
+//  add(exons_menu);
 
     final JMenu upstream_bases_menu =
       new JMenu("Upstream Bases Of Selected Features");
@@ -498,6 +498,7 @@ public class WriteMenu extends SelectionMenu
   * Write selected exons to a mutiple FASTA file.
   *
   */
+/*
   private void writeExonsOfSelection(final int output_type)
   {
     if(!checkForSelectionFeatures())
@@ -559,6 +560,7 @@ public class WriteMenu extends SelectionMenu
                         "error while writing: " + e.getMessage());
     }
   }
+*/
 
   /**
    *  Write the bases of the selected features to a file choosen by the user
