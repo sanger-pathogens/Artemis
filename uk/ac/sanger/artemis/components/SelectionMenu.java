@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionMenu.java,v 1.1 2004-06-09 09:47:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionMenu.java,v 1.2 2006-01-17 15:49:27 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -30,6 +30,8 @@ import uk.ac.sanger.artemis.*;
 
 import java.awt.event.*;
 import javax.swing.*;
+import java.awt.*;
+import java.util.Vector;
 
 /**
  *  This a super class for EditMenu, ViewMenu and GotoMenu.  It is a JMenu that
@@ -37,7 +39,7 @@ import javax.swing.*;
  *  getParentFrame() to find the owning JFrame of the menu.
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectionMenu.java,v 1.1 2004-06-09 09:47:44 tjc Exp $
+ *  @version $Id: SelectionMenu.java,v 1.2 2006-01-17 15:49:27 tjc Exp $
  **/
 
 public class SelectionMenu extends JMenu 
@@ -290,5 +292,128 @@ public class SelectionMenu extends JMenu
     return KeyStroke.getKeyStroke(key_code, InputEvent.CTRL_MASK);
   }
 
+  private void getJMenuItems(JMenu menu, Vector menu_items)
+  {
+    Component menus[] = menu.getMenuComponents();
+    for(int i=0; i<menus.length; i++)
+    {
+      if(menus[i] instanceof JMenuItem)
+        menu_items.add(menus[i]);
+    }
+  }
+
+  protected JScrollPane getShortCuts()
+  {
+    Vector menu_items = new Vector();
+//  getJMenuItems(this, menu_items);
+
+    Component menus[] = getMenuComponents();
+    for(int i=0; i<menus.length; i++)
+    {
+      if(menus[i] instanceof JMenu)
+      {
+        menu_items.add(menus[i]);
+        getJMenuItems((JMenu)menus[i], menu_items);
+      }
+      else if(menus[i] instanceof JMenuItem)
+        menu_items.add(menus[i]);
+    }
+
+    Box bdown = Box.createVerticalBox();
+    String alist[] = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+                       "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+                       "W", "X", "Y", "Z", "--"};
+    for(int i=0; i<menu_items.size(); i++)
+    {
+      Box bacross = Box.createHorizontalBox();
+      if(menu_items.get(i) instanceof JMenu)
+      {
+        bacross.add(new JLabel( ((JMenu)menu_items.get(i)).getText() ));
+        bacross.add(Box.createHorizontalGlue());
+        bdown.add(bacross);
+        continue;
+      }
+
+      final JMenuItem mi = (JMenuItem)menu_items.get(i);
+      
+      bacross.add(new JLabel(mi.getText()));
+
+      final JComboBox combo = new JComboBox(alist);
+      KeyStroke ks = mi.getAccelerator();
+      if(ks != null)
+      {
+        String keystroke = getKeyText(ks.getKeyCode());
+        combo.setSelectedItem( getKeyText(ks.getKeyCode()) );
+//      System.out.println( mi.getText() + "   " +keystroke+ "  :::  " +ks.toString());
+      }
+      else
+        combo.setSelectedItem("--");
+
+      Dimension dim = combo.getPreferredSize();
+      dim = new Dimension(100, dim.height);
+      combo.setPreferredSize(dim);
+      combo.setMaximumSize(dim);
+      combo.addItemListener(new ItemListener()
+      {
+        public void itemStateChanged(ItemEvent e) 
+        {
+          if(e.getStateChange() == ItemEvent.SELECTED)
+          {
+            if(combo.getSelectedItem() == "--")
+              mi.setAccelerator(null);
+            else
+            {
+              char c[] = ((String)combo.getSelectedItem()).toCharArray();
+
+              mi.setAccelerator(KeyStroke.getKeyStroke(c[0],
+                               Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            }
+          }
+        }
+      });
+
+      bacross.add(Box.createHorizontalGlue());
+      bacross.add(combo);
+      bdown.add(bacross);
+    }
+
+    bdown.add(Box.createVerticalGlue());
+
+    JScrollPane jsp = new JScrollPane(bdown);
+    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+    jsp.setPreferredSize(new Dimension(jsp.getPreferredSize().width,
+                         screen.height/2));
+
+    return jsp;
+  }
+
+  public static String getKeyText(int keyCode)
+  {
+    if(keyCode >= KeyEvent.VK_0 && keyCode <= KeyEvent.VK_9 ||
+       keyCode >= KeyEvent.VK_A && keyCode <= KeyEvent.VK_Z) 
+      return String.valueOf((char)keyCode);
+    
+    switch(keyCode) 
+    {
+      case KeyEvent.VK_BACK_SPACE: return "BACK_SPACE";
+      case KeyEvent.VK_CONTROL: return "CONTROL";
+      case KeyEvent.VK_LEFT: return "LEFT";
+      case KeyEvent.VK_UP: return "UP";
+      case KeyEvent.VK_RIGHT: return "RIGHT";
+      case KeyEvent.VK_DOWN: return "DOWN";
+    
+      case KeyEvent.VK_DELETE: return "DELETE";
+    
+      case KeyEvent.VK_BACK_QUOTE: return "BACK_QUOTE";
+    
+      case KeyEvent.VK_KP_UP: return "KP_UP";
+      case KeyEvent.VK_KP_DOWN: return "KP_DOWN";
+      case KeyEvent.VK_KP_LEFT: return "KP_LEFT";
+      case KeyEvent.VK_KP_RIGHT: return "KP_RIGHT";
+    }
+    
+    return "unknown(0x" + Integer.toString(keyCode, 16) + ")";
+  }
 }
 

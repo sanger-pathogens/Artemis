@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.23 2005-12-09 16:17:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.24 2006-01-17 15:49:37 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -61,7 +61,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.23 2005-12-09 16:17:13 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.24 2006-01-17 15:49:37 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -103,7 +103,9 @@ public class EntryEdit extends JFrame
   private EntrySourceVector entry_sources;
 
   private SelectionInfoDisplay selection_info;
-   
+ 
+  private JTabbedPane shortcut_pane = new JTabbedPane();
+  
   /**
    *  Create a new EntryEdit object and JFrame.
    *  @param entry_group The EntryGroup object that this component is editing.
@@ -809,17 +811,19 @@ public class EntryEdit extends JFrame
       menu_bar.add(entry_group_menu);
     }
 
-    JMenu select_menu = new SelectMenu(this, getSelection(),
+    SelectMenu select_menu = new SelectMenu(this, getSelection(),
                      getGotoEventSource(), getEntryGroup(),
                      base_plot_group);
     select_menu.setMnemonic(KeyEvent.VK_S);
     menu_bar.add(select_menu);
+    shortcut_pane.add("Select Menu", select_menu.getShortCuts());
 
     ViewMenu view_menu = new ViewMenu(this, getSelection(),
                              getGotoEventSource(), getEntryGroup(),
                              base_plot_group);
     view_menu.setMnemonic(KeyEvent.VK_V);
     menu_bar.add(view_menu);
+    shortcut_pane.add("View Menu", view_menu.getShortCuts());
 
     JMenu goto_menu = new GotoMenu(this, getSelection(),
                              getGotoEventSource(), getEntryGroup());
@@ -828,11 +832,12 @@ public class EntryEdit extends JFrame
 
     if(Options.readWritePossible()) 
     {
-      JMenu edit_menu = new EditMenu(this, getSelection(),
+      EditMenu edit_menu = new EditMenu(this, getSelection(),
                                getGotoEventSource(), getEntryGroup(),
                                base_plot_group, feature_display);
       edit_menu.setMnemonic(KeyEvent.VK_E);
       menu_bar.add(edit_menu);
+      shortcut_pane.add("Edit Menu", edit_menu.getShortCuts());
 
       AddMenu add_menu = new AddMenu(this, getSelection(), getEntryGroup(),
                              getGotoEventSource(), base_plot_group);
@@ -1168,6 +1173,29 @@ public class EntryEdit extends JFrame
     file_menu.add(clone_entry_edit);
     file_menu.addSeparator();
     printMenu();
+
+    file_menu.addSeparator();
+    final JMenuItem prefs = new JMenuItem("Preferences");
+    prefs.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+//      JScrollPane jsp = new JScrollPane(shortcut_pane);
+        final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+        shortcut_pane.setPreferredSize(new Dimension(
+                           shortcut_pane.getPreferredSize().width+50,
+                           screen.height/2));
+
+        Object[] possibleValues = { "OK" };
+        JOptionPane.showMessageDialog(null,
+                               shortcut_pane,
+                               "Set Short Cuts",
+                               JOptionPane.PLAIN_MESSAGE);
+      }
+    });
+    file_menu.add(prefs);
+
     file_menu.addSeparator();
 
     final JMenuItem close = new JMenuItem("Close");
