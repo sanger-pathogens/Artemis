@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GotoMenu.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GotoMenu.java,v 1.3 2006-01-17 16:05:05 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -39,7 +39,7 @@ import javax.swing.*;
  *  A JMenu with commands for moving around the entries.
  *
  *  @author Kim Rutherford
- *  @version $Id: GotoMenu.java,v 1.2 2004-12-03 18:11:28 tjc Exp $
+ *  @version $Id: GotoMenu.java,v 1.3 2006-01-17 16:05:05 tjc Exp $
  **/
 
 public class GotoMenu extends SelectionMenu {
@@ -150,31 +150,36 @@ public class GotoMenu extends SelectionMenu {
    *  The shortcut for the Navigator.
    **/
   final static KeyStroke NAVIGATOR_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_G, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke (KeyEvent.VK_G, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   /**
    *  The shortcut to go to the start of the selection.
    **/
   final static KeyStroke START_OF_SELECTION_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_LEFT, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke (KeyEvent.VK_LEFT, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   /**
    *  The shortcut to go to the end of the selection.
    **/
   final static KeyStroke END_OF_SELECTION_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_RIGHT, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke (KeyEvent.VK_RIGHT, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   /**
    *  The shortcut to go to the start of the sequence.
    **/
   final static KeyStroke START_OF_SEQUENCE_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_UP, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke (KeyEvent.VK_UP, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   /**
    *  The shortcut to go to the end of the sequence.
    **/
   final static KeyStroke END_OF_SEQUENCE_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_DOWN, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke (KeyEvent.VK_DOWN, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   /**
    *  Create a new GotoMenu object.

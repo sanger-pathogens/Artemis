@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.24 2006-01-17 15:49:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.25 2006-01-17 16:05:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -61,7 +61,7 @@ import javax.swing.border.BevelBorder;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.24 2006-01-17 15:49:37 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.25 2006-01-17 16:05:05 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -70,7 +70,8 @@ public class EntryEdit extends JFrame
 
   /** The shortcut for Delete Selected Features. */
   final static KeyStroke SAVE_DEFAULT_KEY =
-    KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(KeyEvent.VK_S,
+                           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); // InputEvent.CTRL_MASK);
 
   /**
    *  A vector containing the Entry objects that this 

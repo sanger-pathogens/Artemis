@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.8 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.9 2006-01-17 16:05:05 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -50,7 +50,7 @@ import javax.swing.*;
  *  "Select by key".
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectMenu.java,v 1.8 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: SelectMenu.java,v 1.9 2006-01-17 16:05:05 tjc Exp $
  **/
 
 public class SelectMenu extends SelectionMenu 
@@ -85,13 +85,15 @@ public class SelectMenu extends SelectionMenu
    *  The shortcut for Select All
    **/
   final static KeyStroke SELECT_ALL_KEY =
-    KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(KeyEvent.VK_A, 
+                           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   /**
    *  The shortcut for Select None
    **/
   final static KeyStroke SELECT_NONE_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_N, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke (KeyEvent.VK_N, 
+                           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
 
   /**

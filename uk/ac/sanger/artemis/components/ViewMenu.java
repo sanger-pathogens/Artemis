@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.4 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.5 2006-01-17 16:05:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.*;
  *  A popup menu with viewing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: ViewMenu.java,v 1.4 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: ViewMenu.java,v 1.5 2006-01-17 16:05:05 tjc Exp $
  **/
 
 public class ViewMenu extends SelectionMenu {
@@ -451,7 +451,8 @@ public class ViewMenu extends SelectionMenu {
    *  The shortcut for Show Feature Plots.
    **/
   final static KeyStroke PLOT_FEATURES_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_W, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke (KeyEvent.VK_W, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   final static public int PLOT_FEATURES_KEY_CODE = KeyEvent.VK_W;
 
@@ -459,7 +460,8 @@ public class ViewMenu extends SelectionMenu {
    *  The shortcut for View Selected Features.
    **/
   final static KeyStroke VIEW_FEATURES_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_V, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke (KeyEvent.VK_V, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   final static public int VIEW_FEATURES_KEY_CODE = KeyEvent.VK_V;
 
@@ -467,7 +469,8 @@ public class ViewMenu extends SelectionMenu {
    *  The shortcut for Show Overview.
    **/
   final static KeyStroke OVERVIEW_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_O, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke (KeyEvent.VK_O, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   final static public int OVERVIEW_KEY_CODE = KeyEvent.VK_O;
 
@@ -475,7 +478,8 @@ public class ViewMenu extends SelectionMenu {
    *  The shortcut for View FASTA in browser.
    **/
   final static KeyStroke FASTA_IN_BROWSER_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_F, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke (KeyEvent.VK_F, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   final static public int FASTA_IN_BROWSER_KEY_CODE = KeyEvent.VK_F;
 
@@ -483,7 +487,8 @@ public class ViewMenu extends SelectionMenu {
    *  The shortcut for View FASTA.
    **/
   final static KeyStroke VIEW_FASTA_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_R, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke (KeyEvent.VK_R, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   final static public int VIEW_FASTA_KEY_CODE = KeyEvent.VK_R;
 
@@ -491,7 +496,8 @@ public class ViewMenu extends SelectionMenu {
    *  The shortcut for View BLASTP in browser.
    **/
   final static KeyStroke BLASTP_IN_BROWSER_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_B, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke (KeyEvent.VK_B, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   final static public int BLASTP_IN_BROWSER_KEY_CODE = KeyEvent.VK_B;
 
@@ -499,7 +505,8 @@ public class ViewMenu extends SelectionMenu {
    *  The shortcut for View BLASTP.
    **/
   final static KeyStroke VIEW_BLASTP_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_BACK_QUOTE , InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke (KeyEvent.VK_BACK_QUOTE , 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   final static public int VIEW_BLASTP_KEY_CODE = KeyEvent.VK_BACK_QUOTE;
 
@@ -507,7 +514,8 @@ public class ViewMenu extends SelectionMenu {
    *  The shortcut for View HTH.
    **/
   final static KeyStroke VIEW_HTH_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_H, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke (KeyEvent.VK_H, 
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   final static public int VIEW_HTH_KEY_CODE = KeyEvent.VK_H;
 

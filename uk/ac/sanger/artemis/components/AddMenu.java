@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.12 2005-11-10 14:29:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.13 2006-01-17 16:05:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.12 2005-11-10 14:29:14 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.13 2006-01-17 16:05:05 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -62,7 +62,8 @@ public class AddMenu extends SelectionMenu
    *  The shortcut for "Create From Base Range".
    **/
   final static KeyStroke CREATE_FROM_BASE_RANGE_KEY =
-    KeyStroke.getKeyStroke (KeyEvent.VK_C, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke (KeyEvent.VK_C,
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   final static public int CREATE_FROM_BASE_RANGE_KEY_CODE = KeyEvent.VK_C;
 

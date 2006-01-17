@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.14 2006-01-16 10:01:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.15 2006-01-17 16:05:05 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.14 2006-01-16 10:01:01 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.15 2006-01-17 16:05:05 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -139,42 +139,48 @@ public class EditMenu extends SelectionMenu
    *  The shortcut for Edit Selected Features.
    **/
   final static KeyStroke EDIT_FEATURES_KEY =
-    KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(KeyEvent.VK_E, 
+                           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
   final static public int EDIT_FEATURES_KEY_CODE = KeyEvent.VK_E;
 
   /**
    *  The shortcut for Merge Selected Features.
    **/
   final static KeyStroke MERGE_FEATURES_KEY =
-    KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(KeyEvent.VK_M,
+                           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); // InputEvent.CTRL_MASK);
   final static public int MERGE_FEATURES_KEY_CODE = KeyEvent.VK_M;
 
   /**
    *  The shortcut for Duplicate Selected Features.
    **/
   final static KeyStroke DUPLICATE_KEY =
-    KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(KeyEvent.VK_D,
+                           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); // InputEvent.CTRL_MASK);
   final static public int DUPLICATE_KEY_CODE = KeyEvent.VK_D;
 
   /**
    *  The shortcut for Delete Selected Features.
    **/
   final static KeyStroke DELETE_FEATURES_KEY =
-    KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,
+                           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); // InputEvent.CTRL_MASK);
   final static public int DELETE_FEATURES_KEY_CODE = KeyEvent.VK_DELETE;
 
   /**
    *  The shortcut for Trim Selected Features.
    **/
   final static KeyStroke TRIM_FEATURES_KEY =
-    KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(KeyEvent.VK_T,
+                           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); // InputEvent.CTRL_MASK);
   final static public int TRIM_FEATURES_KEY_CODE = KeyEvent.VK_T;
 
   /**
    *  The shortcut for Trim Selected Features To Next Any.
    **/
   final static KeyStroke TRIM_FEATURES_TO_NEXT_ANY_KEY =
-    KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(KeyEvent.VK_Y,
+                           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); // InputEvent.CTRL_MASK);
   final static public int TRIM_FEATURES_TO_NEXT_ANY_KEY_CODE = KeyEvent.VK_Y;
 
   /**
@@ -190,7 +196,8 @@ public class EditMenu extends SelectionMenu
    **/
   final static public int UNDO_KEY_CODE = KeyEvent.VK_U;
   final static KeyStroke UNDO_KEY =
-    KeyStroke.getKeyStroke(UNDO_KEY_CODE, InputEvent.CTRL_MASK);
+    KeyStroke.getKeyStroke(UNDO_KEY_CODE,
+                           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); // InputEvent.CTRL_MASK);
 
   /**
    *  Implementation of the EntryGroupChangeListener interface.  We listen to

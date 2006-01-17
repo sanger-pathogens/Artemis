@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionMenu.java,v 1.2 2006-01-17 15:49:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionMenu.java,v 1.3 2006-01-17 16:05:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -39,7 +39,7 @@ import java.util.Vector;
  *  getParentFrame() to find the owning JFrame of the menu.
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectionMenu.java,v 1.2 2006-01-17 15:49:27 tjc Exp $
+ *  @version $Id: SelectionMenu.java,v 1.3 2006-01-17 16:05:05 tjc Exp $
  **/
 
 public class SelectionMenu extends JMenu 
@@ -289,7 +289,8 @@ public class SelectionMenu extends JMenu
    **/
   protected static KeyStroke makeMenuKeyStroke(final int key_code)
   {
-    return KeyStroke.getKeyStroke(key_code, InputEvent.CTRL_MASK);
+    return KeyStroke.getKeyStroke(key_code, 
+                  Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
   }
 
   private void getJMenuItems(JMenu menu, Vector menu_items)
