@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionMenu.java,v 1.3 2006-01-17 16:05:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionMenu.java,v 1.4 2006-01-17 17:46:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -39,7 +39,7 @@ import java.util.Vector;
  *  getParentFrame() to find the owning JFrame of the menu.
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectionMenu.java,v 1.3 2006-01-17 16:05:05 tjc Exp $
+ *  @version $Id: SelectionMenu.java,v 1.4 2006-01-17 17:46:18 tjc Exp $
  **/
 
 public class SelectionMenu extends JMenu 
@@ -324,6 +324,9 @@ public class SelectionMenu extends JMenu
     String alist[] = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
                        "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
                        "W", "X", "Y", "Z", "--"};
+
+    String mod_list[] = { "Default", "Alt", "Ctrl", "Shift" };
+
     for(int i=0; i<menu_items.size(); i++)
     {
       Box bacross = Box.createHorizontalBox();
@@ -339,13 +342,14 @@ public class SelectionMenu extends JMenu
       
       bacross.add(new JLabel(mi.getText()));
 
+// short cut
       final JComboBox combo = new JComboBox(alist);
+      final JComboBox mod_combo = new JComboBox(mod_list);
       KeyStroke ks = mi.getAccelerator();
       if(ks != null)
       {
         String keystroke = getKeyText(ks.getKeyCode());
         combo.setSelectedItem( getKeyText(ks.getKeyCode()) );
-//      System.out.println( mi.getText() + "   " +keystroke+ "  :::  " +ks.toString());
       }
       else
         combo.setSelectedItem("--");
@@ -359,22 +363,27 @@ public class SelectionMenu extends JMenu
         public void itemStateChanged(ItemEvent e) 
         {
           if(e.getStateChange() == ItemEvent.SELECTED)
-          {
-            if(combo.getSelectedItem() == "--")
-              mi.setAccelerator(null);
-            else
-            {
-              char c[] = ((String)combo.getSelectedItem()).toCharArray();
-
-              mi.setAccelerator(KeyStroke.getKeyStroke(c[0],
-                               Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-            }
-          }
+            setAccelerator(combo,mod_combo,mi);
         }
       });
 
+// modifier
+      mod_combo.setSelectedItem("Default");
+      mod_combo.setPreferredSize(dim);
+      mod_combo.setMaximumSize(dim);
+      mod_combo.addItemListener(new ItemListener()
+      {
+        public void itemStateChanged(ItemEvent e)
+        {
+          if(e.getStateChange() == ItemEvent.SELECTED)
+            setAccelerator(combo,mod_combo,mi);
+        }
+      });
+
+
       bacross.add(Box.createHorizontalGlue());
       bacross.add(combo);
+      bacross.add(mod_combo);
       bdown.add(bacross);
     }
 
@@ -387,6 +396,30 @@ public class SelectionMenu extends JMenu
                          screen.height/2));
 
     return jsp;
+  }
+
+  private void setAccelerator(final JComboBox combo, final JComboBox mod_combo, 
+                              final JMenuItem mi)
+  {
+    if(combo.getSelectedItem() == "--")
+      mi.setAccelerator(null);
+    else
+    {
+      char c[] = ((String)combo.getSelectedItem()).toCharArray();
+      int modifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+
+      if( ((String)mod_combo.getSelectedItem()).equals("Alt") )
+        modifier = InputEvent.ALT_MASK;
+      else if( ((String)mod_combo.getSelectedItem()).equals("Ctrl") )
+        modifier = InputEvent.CTRL_MASK;
+      else if( ((String)mod_combo.getSelectedItem()).equals("Shift") )
+        modifier = InputEvent.SHIFT_MASK;
+
+      mi.setAccelerator(KeyStroke.getKeyStroke(c[0], modifier));
+      mi.setText(mi.getText());
+      mi.revalidate();
+      mi.repaint();
+    }
   }
 
   public static String getKeyText(int keyCode)
