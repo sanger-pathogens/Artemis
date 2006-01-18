@@ -70,7 +70,7 @@
                srcfeature_id=$id$ AND
              </isGreaterThan>
              <isNotNull property="uniquename">                        
-               uniquename=$uniquename$ AND
+               uniquename=#uniquename# AND
              </isNotNull>
            </dynamic>
            $schema$.featureloc.feature_id=$schema$.feature.feature_id
