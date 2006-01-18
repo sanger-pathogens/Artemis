@@ -224,6 +224,7 @@ public class SshPSUClient extends Thread
              throws SshException, IOException
   {
     Object list[] = sftp.ls(wdir).toArray();
+  
     for(int j=0; j<list.length;j++)
     {
       if( ((SftpFile)list[j]).getFilename().equals(file) )
@@ -335,6 +336,7 @@ public class SshPSUClient extends Thread
         }
         rescue();
         sftp = getSftpClient();
+        wdir = wdir+"/"+program+"/";
       }
       catch(IOException ioe)
       {
@@ -464,6 +466,7 @@ public class SshPSUClient extends Thread
       {
         sftp.rm(outputfile);
         sftp.rm(wdir+filename);
+        sftp.rm(outputfile+".err");
       }
 
       session.close();
