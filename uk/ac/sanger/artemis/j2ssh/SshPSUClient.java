@@ -336,7 +336,8 @@ public class SshPSUClient extends Thread
         }
         rescue();
         sftp = getSftpClient();
-        wdir = wdir+"/"+program+"/";
+        if(!wdir.endsWith(program+"/"))
+          wdir = wdir+"/"+program+"/";
       }
       catch(IOException ioe)
       {
