@@ -35,6 +35,7 @@ import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.io.StreamQualifier;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.FeatureChangeListener;
@@ -43,6 +44,9 @@ import uk.ac.sanger.artemis.EntryChangeListener;
 import uk.ac.sanger.artemis.EntryChangeEvent;
 import java.util.Vector;
 import javax.swing.JOptionPane;
+import javax.swing.Box;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 /**
 *
@@ -123,14 +127,43 @@ public class ChadoTransactionManager
   public void entryChanged(EntryChangeEvent event)
   {
     if(event.getType() == EntryChangeEvent.FEATURE_ADDED)
+    {
       System.out.println("HERE FEATURE_ADDED");
+      Feature feature = event.getFeature();
 
-//  Feature feature = event.getFeature();
+      String feature_uniquename = null;
 
-//  if(feature == null)
-//    System.out.println("HERE feature == null");
-//  else
-//    System.out.println("HERE feature != null");
+      try
+      {
+        Qualifier qualifier_uniquename = feature.getQualifierByName("ID");
+
+        if(qualifier_uniquename != null)
+          feature_uniquename = (String)(qualifier_uniquename.getValues()).elementAt(0);
+        else
+        {
+          while(feature_uniquename == null ||
+                feature_uniquename.equals(""))
+          {
+            feature_uniquename = JOptionPane.showInputDialog(null,
+                                 "Provide a systematic_id : ",
+                                 "systematic_id missing "+
+                                 feature.getIDString(),
+                                 JOptionPane.QUESTION_MESSAGE).trim();
+          }
+        }  
+      }
+      catch(InvalidRelationException ire)
+      {
+        ire.printStackTrace();
+      }
+      if(feature_uniquename == null)
+        System.out.println("HERE feature_uniquename == null");
+      else
+        System.out.println("HERE feature_uniquename != null "+feature_uniquename);
+
+//    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+                                       
+    }
 
 //  System.out.println(event.getEntry().getName());
   }
