@@ -171,6 +171,7 @@ public class RemoteFileDocument extends Document
         FTProgress progress = monitor.add(local_file.getName());
 
         getRemoteFileNode().put(local_file, progress);
+        getRemoteFileNode().stat();
         monitor.close();
         return null;
       }

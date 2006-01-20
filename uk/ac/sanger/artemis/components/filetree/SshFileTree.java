@@ -487,6 +487,7 @@ public class SshFileTree extends JTree implements DragGestureListener,
     {
       childNode = new RemoteFileNode(froots[0],child,
                                      null,path,ldir);
+      childNode.stat();
 
       //find the index for the child
       int num = parentNode.getChildCount();
@@ -934,6 +935,7 @@ public class SshFileTree extends JTree implements DragGestureListener,
                     exploreNode(pn);
                     RemoteFileNode childNode = getNode(pn.getServerName()
                                                    + "/" + lfn.getName());
+
                     scrollPathToVisible(new TreePath(childNode.getPath()));
                   }
                 }

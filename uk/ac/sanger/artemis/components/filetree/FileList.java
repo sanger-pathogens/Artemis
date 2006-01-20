@@ -26,6 +26,7 @@ import uk.ac.sanger.artemis.j2ssh.SshFileManager;
 import java.util.Vector;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.Date;
 import java.io.IOException;
 import java.io.File;
 
@@ -113,6 +114,16 @@ public class FileList
                         FTProgress monitor, boolean force)
   {
     return ssh_client.put(dir, local_file, monitor, force);
+  }
+
+  /**
+  *
+  * @param name of file to get status for
+  *
+  */ 
+  public Date stat(String filename)
+  {
+    return ssh_client.stat(filename);
   }
 
 

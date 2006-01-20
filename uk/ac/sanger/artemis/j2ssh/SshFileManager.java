@@ -258,6 +258,33 @@ public class SshFileManager
     return true;
   }
 
+  /**
+  *
+  * @param name of file to get status for
+  *
+  */
+  public Date stat(String filename) 
+  {
+    SftpClient sftp = null;
+    try
+    {
+      sftp = getSftpClient();
+      FileAttributes fat = sftp.stat(filename);
+      long modTime = fat.getModifiedTime().longValue()*1000;
+      return new Date(modTime);
+    }
+    catch(SshException sshe)
+    {
+      rescue();
+      return stat(filename);
+    }  
+    catch(IOException ioe)
+    {
+      return null;
+      // remote file doesn't exist
+    }
+
+  }
 
   /**
   *
@@ -339,39 +366,6 @@ public class SshFileManager
 
   }
 
-  private boolean putTransfer(final SftpClient sftp, 
-                              final String dir, final File local_file)
-  {
-    
-    SwingWorker progressWorker = new SwingWorker()
-    {
-      public Object construct()
-      {
-        try
-        {
-          FileTransferProgressMonitor monitor =
-              new FileTransferProgressMonitor(null);
-          FTProgress progress = monitor.add(local_file.getName());
-
-          sftp.put(local_file.getCanonicalPath(),
-             dir+"/"+local_file.getName(), progress);
-          return new Boolean(true);
-        }
-        catch(IOException ioe)
-        {
-          rescue();
-          ioe.printStackTrace();
-          return new Boolean(false);
-        }
-
-      }
-    };
-    progressWorker.start();
-
- 
-    return true;
-//  return ((Boolean)progressWorker.get()).booleanValue();
-  }
 
   /**
   *

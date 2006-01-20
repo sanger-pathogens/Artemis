@@ -250,7 +250,19 @@ public class RemoteFileNode extends DefaultMutableTreeNode
                      FTProgress monitor, boolean force)
   {
     FileList flist = new FileList();
-    return flist.put(dir, local_file, monitor, force);
+    boolean lput = flist.put(dir, local_file, monitor, force);
+    if(!lput)
+      return false;
+
+    if(!isDirectory())
+      modifiedTime = flist.stat(dir);
+    return true;
+  }
+
+  public void stat()
+  {
+    FileList flist = new FileList();
+    modifiedTime = flist.stat(getServerName());
   }
 
   public byte[] getFileContents(FTProgress monitor)
