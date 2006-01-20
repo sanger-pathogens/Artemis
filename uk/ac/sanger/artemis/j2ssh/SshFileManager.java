@@ -43,6 +43,8 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import java.util.Date;
+import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Properties;
 import java.util.logging.FileHandler;
@@ -51,6 +53,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import com.sshtools.j2ssh.io.UnsignedInteger32;
 import com.sshtools.j2ssh.SshClient;
 import com.sshtools.j2ssh.authentication.AuthenticationProtocolState;
 import com.sshtools.j2ssh.authentication.PasswordAuthenticationClient;
@@ -70,8 +73,8 @@ import com.sshtools.j2ssh.SshException;
 */
 public class SshFileManager
 {
-  private Vector dir_list;
-  private Vector file_list;
+  private Hashtable dir_list;
+  private Hashtable file_list;
   private SshClient ssh;
 
   public SshFileManager()
@@ -136,16 +139,20 @@ public class SshFileManager
 
     Object list[] = sftp.ls().toArray();
     
-    dir_list  = new Vector();
-    file_list = new Vector();
+    dir_list  = new Hashtable();
+    file_list = new Hashtable(); 
 
     for(int i=0; i < list.length; i++)
     {
       SftpFile sfile = (SftpFile)list[i];
-      if(sfile.isDirectory() || sfile.isLink())
-        dir_list.add(sfile.getFilename());
+      FileAttributes fat = sfile.getAttributes();
+//    String modTime = fat.getModTimeString();
+      long modTime = fat.getModifiedTime().longValue()*1000;
 
-      file_list.add(sfile.getFilename());
+      if(sfile.isDirectory() || sfile.isLink())
+        dir_list.put(sfile.getFilename(), new Date(modTime));
+
+      file_list.put(sfile.getFilename(), new Date(modTime));
     }
      
 //  sftp.quit();
@@ -396,12 +403,12 @@ public class SshFileManager
   }
 
 
-  public Vector getFileList()
+  public Hashtable getFileList()
   {
     return file_list;
   }
 
-  public Vector getDirList()
+  public Hashtable getDirList()
   {
     return dir_list;
   }

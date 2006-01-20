@@ -25,14 +25,15 @@ import uk.ac.sanger.artemis.j2ssh.FTProgress;
 import uk.ac.sanger.artemis.j2ssh.SshFileManager;
 import java.util.Vector;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.io.IOException;
 import java.io.File;
 
 public class FileList 
 {
   /** vector containing directories */
-  private Vector vdir;
-  private Vector vfile;
+  private Hashtable vdir;
+  private Hashtable vfile;
   private static SshFileManager ssh_client = new SshFileManager();
  
   public FileList()
@@ -46,7 +47,7 @@ public class FileList
   * @param dir	remote directory to list
   *
   */
-  protected void getDirList(String dir)
+  protected Hashtable getDirList(String dir)
   {
     try
     {
@@ -57,8 +58,8 @@ public class FileList
       ioe.printStackTrace();
     }
     vdir  = ssh_client.getDirList(); 
-    vfile = ssh_client.getFileList();
-    Collections.sort(vfile);
+    return ssh_client.getFileList();
+//  Collections.sort(vfile);
   }
 
   /**
@@ -128,33 +129,13 @@ public class FileList
 
   /**
   *
-  * Gets the list of files as a Vector
-  * @return     list of files as a Vector
-  *
-  */
-  public Vector fileVector() 
-  {
-    final Vector vfile_filtered = new Vector();
-    for(int i=0; i<vfile.size(); i++)
-    {
-      String sfile = (String)vfile.get(i);
-      if(!sfile.startsWith("."))
-        vfile_filtered.add(sfile);
-    }
-
-    return vfile_filtered;
-  }
-
-
-  /**
-  *
   * Gets whether this name is a directory
   * @return     true if it is a directory
   *
   */
   public boolean isDirectory(String d) 
   {
-    return vdir.contains(d);
+    return vdir.containsKey(d);
   }
 
   protected boolean isConnected()

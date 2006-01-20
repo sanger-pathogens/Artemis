@@ -97,6 +97,7 @@ public class SshFileTree extends JTree implements DragGestureListener,
     this.getSelectionModel().setSelectionMode
                   (TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 
+    setToolTipText("");   //enable tooltip display
 // popup menu
     addMouseListener(new PopupListener());
     popup = new JPopupMenu();
@@ -312,6 +313,29 @@ public class SshFileTree extends JTree implements DragGestureListener,
     }
   }
 
+
+  /**
+   *
+   * Determine the tool tip to display
+   * @param e    mouse event
+   * @return     tool tip
+   *
+   */
+  public String getToolTipText(MouseEvent e)
+  {
+    Point loc = e.getPoint();
+        
+    TreePath path = getClosestPathForLocation(loc.x, loc.y);
+    if(path == null)
+      return null;
+
+    RemoteFileNode node = (RemoteFileNode)path.getLastPathComponent();
+    if(node.getModifiedTime() == null)
+      return null;
+
+    
+    return node.getFile() + " :: " + node.getModifiedTime();
+  }
 
   /**
   *

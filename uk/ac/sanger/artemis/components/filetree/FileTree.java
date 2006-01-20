@@ -48,6 +48,7 @@ import java.io.*;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Date;
 
 
 /**
@@ -108,6 +109,7 @@ public class FileTree extends JTree implements DragGestureListener,
     this.getSelectionModel().setSelectionMode
                   (TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 
+    setToolTipText("");
     // Popup menu
     addMouseListener(new PopupListener());
     popup = new JPopupMenu();
@@ -297,6 +299,29 @@ public class FileTree extends JTree implements DragGestureListener,
         catch(IOException ioe){}
       }
     }
+  }
+
+
+  /**
+   *
+   * Determine the tool tip to display
+   * @param e    mouse event
+   * @return     tool tip
+   *
+   */
+  public String getToolTipText(MouseEvent e)
+  {
+    Point loc = e.getPoint();
+        
+    TreePath path = getClosestPathForLocation(loc.x, loc.y);
+    if(path == null)
+      return null;
+
+    FileNode node = (FileNode)path.getLastPathComponent();
+    File file = node.getFile();
+    Date lastModified = new Date(file.lastModified());
+    
+    return file.getName() + " :: " + lastModified;
   }
 
 

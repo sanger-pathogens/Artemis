@@ -52,6 +52,8 @@ public class RemoteFileNode extends DefaultMutableTreeNode
   private transient String froots;
   /** file separator for server files */
   private String fs = "/";
+  /** last modified time */
+  private Date modifiedTime = null;
 
   final public static DataFlavor REMOTEFILENODE = 
          new DataFlavor(RemoteFileNode.class, "Remote file");
@@ -72,9 +74,11 @@ public class RemoteFileNode extends DefaultMutableTreeNode
   *
   */
   public RemoteFileNode(String froots, String file,
-                        FileList parentList, String parent)
+                        FileList parentList, String parent,
+                        Date modifiedTime)
   {
     this(froots, file, parentList, parent, false);
+    this.modifiedTime = modifiedTime;
   }
 
   /**
@@ -182,13 +186,31 @@ public class RemoteFileNode extends DefaultMutableTreeNode
         dir = new String(getRootDir()+"/"+getFullName());
       dir = dir.trim();
 
-      flist.getDirList(dir);
-      Vector children = flist.fileVector();
-      for(int i=0;i<children.size();i++)
-        add(new RemoteFileNode(froots,(String)children.get(i),
-                               flist,fullname));
+      Hashtable children = flist.getDirList(dir);
+      Object files[] = children.keySet().toArray();
+      Arrays.sort(files);
+      for(int i=0;i<files.length;i++)
+      {
+        String fn = (String)files[i];
+        if(!fn.startsWith("."))
+        {
+          Date modifiedTime = (Date)children.get(fn);
+          add(new RemoteFileNode(froots,fn,
+              flist,fullname,modifiedTime));
+        }
+      }
+ 
+//    Vector children = flist.fileVector();
+//    for(int i=0;i<children.size();i++)
+//      add(new RemoteFileNode(froots,(String)children.get(i),
+//                             flist,fullname));
     }
       explored = true;
+  }
+
+  protected Date getModifiedTime()
+  {
+    return modifiedTime;
   }
 
   protected boolean delete()
