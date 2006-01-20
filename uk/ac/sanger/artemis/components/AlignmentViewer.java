@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.39 2005-12-19 10:47:30 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.40 2006-01-20 16:46:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import java.io.IOException;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.39 2005-12-19 10:47:30 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.40 2006-01-20 16:46:17 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -548,6 +548,7 @@ public class AlignmentViewer extends CanvasPanel
 
         try
         {
+/*
           if(!fc.getSelectedFile().canWrite())
           {
             JOptionPane.showMessageDialog(null,
@@ -557,7 +558,7 @@ public class AlignmentViewer extends CanvasPanel
                         JOptionPane.WARNING_MESSAGE);
             return;
           }
-        
+*/
           final FileWriter out_writer = new FileWriter(fc.getSelectedFile());
           final String query = getQueryEntryGroup().getDefaultEntry().getName();
           final String subject = getSubjectEntryGroup().getDefaultEntry().getName();
