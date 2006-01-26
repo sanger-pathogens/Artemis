@@ -124,7 +124,7 @@ public class JTreeTable extends JTable
     setDefaultEditor(TreeTableModel.class, new TreeTableCellEditor());  
 
     setShowGrid(false);
-    setIntercellSpacing(new Dimension(0, 0)); 	        
+    setIntercellSpacing(new Dimension(3, 0)); 	        
 
     //Listen for when a file is selected
     MouseListener mouseListener = new MouseAdapter()
@@ -175,6 +175,10 @@ public class JTreeTable extends JTable
     menuItem = new JMenuItem("De-select All");
     menuItem.addActionListener(this);
     popup.add(menuItem);
+
+// Set the first visible column to 10 pixels wide
+    TableColumn col = getColumnModel().getColumn(1);
+    col.setPreferredWidth(10);
   }
 
   public TreeTableCellRenderer getTree()

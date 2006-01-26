@@ -129,7 +129,7 @@ public class SshJTreeTable extends JTable
     setDefaultEditor(TreeTableModel.class, new TreeTableCellEditor());  
 
     setShowGrid(false);
-    setIntercellSpacing(new Dimension(0, 0)); 	        
+    setIntercellSpacing(new Dimension(3, 0)); 	        
 
 // popup menu
     addMouseListener(new PopupListener());
@@ -186,6 +186,9 @@ public class SshJTreeTable extends JTable
       public void mouseReleased(MouseEvent me){}
     });
 
+// Set the first visible column to 10 pixels wide
+    TableColumn col = getColumnModel().getColumn(1);
+    col.setPreferredWidth(10);
   }
 
   /**
