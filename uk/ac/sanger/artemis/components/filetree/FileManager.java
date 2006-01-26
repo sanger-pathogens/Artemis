@@ -57,17 +57,17 @@ public class FileManager extends JFrame
   {
     super("File Manager");
 
-    FileTree ftree  = new FileTree(getLocalDirectories(),
-                                   frame, filter);
+    FileSystemModel model = new FileSystemModel(getLocalDirectories(), filter);
+    JTreeTable ftree = new JTreeTable(model);
     JScrollPane jsp = new JScrollPane(ftree);
     JPanel pane = (JPanel)getContentPane();
     pane.setLayout(new BorderLayout());
     pane.add(jsp, BorderLayout.CENTER);
     setJMenuBar(makeMenuBar(pane,ftree));
-    pane.add(getFileFileterComboBox(ftree), BorderLayout.SOUTH);
+    pane.add(getFileFileterComboBox(model, ftree), BorderLayout.SOUTH);
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    jsp.setPreferredSize(new Dimension(210,
+    jsp.setPreferredSize(new Dimension((int)(screen.getWidth()/3),
                          (int)(screen.getHeight()/2)));
     pack();
     
@@ -115,7 +115,8 @@ public class FileManager extends JFrame
     return fdirs;
   }
 
-  protected JComboBox getFileFileterComboBox(final FileTree ftree)
+  protected JComboBox getFileFileterComboBox(final FileSystemModel model,
+                                             final JTreeTable ftree)
   {
     String[] filters = { "Artemis Files", "Sequence Files", 
                          "Feature Files", "All Files" };
@@ -126,14 +127,14 @@ public class FileManager extends JFrame
       {
         String select = (String)comboFilter.getSelectedItem(); 
         if(select.equals("Artemis Files"))
-          ftree.setFilter(getArtemisFilter());
+          model.setFilter(getArtemisFilter());
         else if(select.equals("Sequence Files"))
-          ftree.setFilter(getSequenceFilter());
+          model.setFilter(getSequenceFilter());
         else if(select.equals("Feature Files"))
-          ftree.setFilter(getFeatureFilter());
+          model.setFilter(getFeatureFilter());
         else if(select.equals("All Files"))
         {
-          ftree.setFilter(new FileFilter()
+          model.setFilter(new FileFilter()
           {
             public boolean accept(File pathname)
             {
@@ -143,6 +144,7 @@ public class FileManager extends JFrame
             }
           });
         }
+        ftree.refreshAll();
       }
     });
     return comboFilter;
@@ -265,7 +267,7 @@ public class FileManager extends JFrame
   * @param ftree  file tree display
   *
   */
-  private JMenuBar makeMenuBar(JPanel pane, final FileTree ftree)
+  private JMenuBar makeMenuBar(JPanel pane, final JTreeTable ftree)
   {
     JMenuBar mBar = new JMenuBar();
     JMenu fileMenu = new JMenu("File");

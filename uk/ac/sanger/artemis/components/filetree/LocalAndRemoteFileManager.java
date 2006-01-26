@@ -60,12 +60,12 @@ public class LocalAndRemoteFileManager extends JFrame
     super("File Manager");
 
     FileList flist = new FileList();
-
+    
     if(flist.isConnected())
     {
       final JPanel localPanel = new JPanel(new BorderLayout());
     
-      FileTree ftree  = new FileTree(getLocalDirectories(), this, filter);
+      JTreeTable ftree = new JTreeTable(new FileSystemModel(getLocalDirectories(), filter));
       JScrollPane localTree = new JScrollPane(ftree);
       localPanel.add(localTree,BorderLayout.CENTER);
 
@@ -74,7 +74,8 @@ public class LocalAndRemoteFileManager extends JFrame
 
       final JPanel remotePanel = new JPanel(new BorderLayout());
 
-      SshFileTree sshtree = new SshFileTree( getRemoteDirectories(flist.pwd()) );
+      SshJTreeTable sshtree = new SshJTreeTable(
+                       new FileSystemModel( getRemoteDirectories(flist.pwd()) ));
       JScrollPane remoteTree = new JScrollPane(sshtree);
       remotePanel.add(remoteTree,BorderLayout.CENTER);
     
@@ -85,7 +86,7 @@ public class LocalAndRemoteFileManager extends JFrame
       final JLabel remote_status_line = getStatusLabel("REMOTE "+remote_name);
       remotePanel.add(remote_status_line,BorderLayout.NORTH);
 
-      final JSplitPane treePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+      final JSplitPane treePane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                                  localPanel,remotePanel);
 
       JPanel pane = (JPanel)getContentPane();
@@ -93,7 +94,9 @@ public class LocalAndRemoteFileManager extends JFrame
       pane.add(treePane, BorderLayout.CENTER);
 
       Dimension screen    = Toolkit.getDefaultToolkit().getScreenSize();
-      Dimension panelSize = new Dimension(240, (int)(screen.getHeight()/2));
+      Dimension panelSize = new Dimension((int)(screen.getWidth()/3), 
+                                          (int)(screen.getHeight()/3));
+      treePane.setDividerLocation((int)(screen.getHeight()/3));
       setJMenuBar(makeMenuBar(pane,ftree,sshtree,localPanel,remotePanel,treePane,panelSize));
       localPanel.add(getFileFileterComboBox(ftree), BorderLayout.SOUTH);
   
@@ -184,7 +187,7 @@ public class LocalAndRemoteFileManager extends JFrame
     return sdirs;
   }
 
-  protected JComboBox getFileFileterComboBox(final FileTree ftree)
+  protected JComboBox getFileFileterComboBox(final JTreeTable ftree)
   {
     String[] filters = { "Artemis Files", "Sequence Files", 
                          "Feature Files", "All Files" };
@@ -193,16 +196,17 @@ public class LocalAndRemoteFileManager extends JFrame
     {
       public void actionPerformed(ActionEvent e)
       {
+        FileSystemModel model = (FileSystemModel)(ftree.getTree().getModel());
         String select = (String)comboFilter.getSelectedItem(); 
         if(select.equals("Artemis Files"))
-          ftree.setFilter(getArtemisFilter());
+          model.setFilter(getArtemisFilter());
         else if(select.equals("Sequence Files"))
-          ftree.setFilter(getSequenceFilter());
+          model.setFilter(getSequenceFilter());
         else if(select.equals("Feature Files"))
-          ftree.setFilter(getFeatureFilter());
+          model.setFilter(getFeatureFilter());
         else if(select.equals("All Files"))
         {
-          ftree.setFilter(new FileFilter()
+          model.setFilter(new FileFilter()
           {
             public boolean accept(File pathname)
             {
@@ -212,6 +216,7 @@ public class LocalAndRemoteFileManager extends JFrame
             }
           });
         }
+        ftree.refreshAll();
       }
     });
     return comboFilter;
@@ -334,7 +339,7 @@ public class LocalAndRemoteFileManager extends JFrame
   * @param ftree  file tree display
   *
   */
-  private JMenuBar makeMenuBar(JPanel pane, final FileTree ftree, final SshFileTree sshtree,
+  private JMenuBar makeMenuBar(JPanel pane, final JTreeTable ftree, final SshJTreeTable sshtree,
                                final JPanel localPanel, final JPanel remotePanel,
                                final JSplitPane treePane, final Dimension panelSize)
   {

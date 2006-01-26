@@ -29,6 +29,7 @@ import java.util.Hashtable;
 import java.util.Date;
 import java.io.IOException;
 import java.io.File;
+import com.sshtools.j2ssh.sftp.FileAttributes;
 
 public class FileList 
 {
@@ -121,7 +122,7 @@ public class FileList
   * @param name of file to get status for
   *
   */ 
-  public Date stat(String filename)
+  public FileAttributes stat(String filename)
   {
     return ssh_client.stat(filename);
   }

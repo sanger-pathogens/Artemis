@@ -21,6 +21,7 @@
 
 package uk.ac.sanger.artemis.components.filetree;
 
+import com.sshtools.j2ssh.sftp.FileAttributes;
 import uk.ac.sanger.artemis.j2ssh.FTProgress;
 import java.awt.datatransfer.*;
 import javax.swing.tree.*;
@@ -54,6 +55,12 @@ public class RemoteFileNode extends DefaultMutableTreeNode
   private String fs = "/";
   /** last modified time */
   private Date modifiedTime = null;
+  /** file length */
+  private Integer file_length;
+
+  /** parent node */
+  private RemoteFileNode parentNode = null;
+
 
   final public static DataFlavor REMOTEFILENODE = 
          new DataFlavor(RemoteFileNode.class, "Remote file");
@@ -75,10 +82,13 @@ public class RemoteFileNode extends DefaultMutableTreeNode
   */
   public RemoteFileNode(String froots, String file,
                         FileList parentList, String parent,
-                        Date modifiedTime)
+                        FileAttributes fat)
   {
     this(froots, file, parentList, parent, false);
-    this.modifiedTime = modifiedTime;
+
+    long modTime = fat.getModifiedTime().longValue()*1000;
+    this.modifiedTime = new Date(modTime);
+    this.file_length  = new Integer(fat.getSize().intValue());
   }
 
   /**
@@ -165,55 +175,88 @@ public class RemoteFileNode extends DefaultMutableTreeNode
     return prefix + (String)getUserObject();
   }
 
-  /**
-  *
-  * Explore the node and add new child nodes 
-  *
-  */
-  public void explore() 
+
+  private Object child_cache[];
+
+  public Object[] getChildren()
   {
     if(!isDir)
-      return;
-
-    if(!explored)
+      return null;
+    
+    if(getRootDir() == null)
     {
-      FileList flist = new FileList();
-
-      String dir;
-      if(getRootDir().equals(""))
-        dir = new String("~/"+getFullName());
-      else
-        dir = new String(getRootDir()+"/"+getFullName());
-      dir = dir.trim();
-
-      Hashtable children = flist.getDirList(dir);
-      Object files[] = children.keySet().toArray();
-      Arrays.sort(files);
-      for(int i=0;i<files.length;i++)
-      {
-        String fn = (String)files[i];
-        if(!fn.startsWith("."))
-        {
-          Date modifiedTime = (Date)children.get(fn);
-          add(new RemoteFileNode(froots,fn,
-              flist,fullname,modifiedTime));
-        }
-      }
- 
-//    Vector children = flist.fileVector();
-//    for(int i=0;i<children.size();i++)
-//      add(new RemoteFileNode(froots,(String)children.get(i),
-//                             flist,fullname));
+      Enumeration child_enum = children();
+      child_cache = new Object[getChildCount()];
+      int i = 0;
+      while(child_enum.hasMoreElements()) 
+        child_cache[i++] = child_enum.nextElement();
+      return child_cache; 
     }
-      explored = true;
+
+    if(child_cache != null)
+      return child_cache;
+
+    FileList flist = new FileList();
+
+    String dir;
+    if(getRootDir().equals(""))
+      dir = new String("~/"+getFullName());
+    else
+      dir = new String(getRootDir()+"/"+getFullName());
+    dir = dir.trim();
+
+    Hashtable children = flist.getDirList(dir);
+    Object files[] = children.keySet().toArray();
+    Arrays.sort(files);
+
+    Vector vchildren = new Vector(); 
+    for(int i=0;i<files.length;i++)
+    {
+      String fn = (String)files[i];
+      if(!fn.startsWith("."))
+      {
+        FileAttributes fat = (FileAttributes)children.get(fn);
+
+//      Date modifiedTime = (Date)children.get(fn);
+        RemoteFileNode node = new RemoteFileNode(froots,fn,
+                                    flist,fullname,fat);
+        node.setParentNode(this);
+        vchildren.add(node);
+        add(node);
+      }
+    }
+
+    child_cache = vchildren.toArray();
+    return child_cache;
   }
 
-  protected Date getModifiedTime()
+  protected void setParentNode(RemoteFileNode parentNode)
+  {
+    this.parentNode = parentNode;
+  }
+
+  public RemoteFileNode getParentNode()
+  {
+    return parentNode;
+  }
+
+
+  public void reset()
+  {
+    child_cache = null;
+  }
+
+  public Date getModifiedTime()
   {
     return modifiedTime;
   }
 
-  protected boolean delete()
+  protected Integer length()
+  {
+    return file_length;
+  }
+
+  public boolean delete()
   {
     FileList flist = new FileList();
     return flist.delete(getRootDir()+"/"+getFullName());
@@ -225,7 +268,7 @@ public class RemoteFileNode extends DefaultMutableTreeNode
     return flist.mkdir(dir);
   }
 
-  protected boolean rename(String new_file)
+  public boolean rename(String new_file)
   {
     FileList flist = new FileList();
     return flist.rename(getRootDir()+"/"+getFullName(), new_file);
@@ -255,14 +298,23 @@ public class RemoteFileNode extends DefaultMutableTreeNode
       return false;
 
     if(!isDirectory())
-      modifiedTime = flist.stat(dir);
+    {
+      FileAttributes fat = flist.stat(dir);
+      long modTime = fat.getModifiedTime().longValue()*1000;
+      modifiedTime = new Date(modTime);
+      file_length  = new Integer(fat.getSize().intValue());
+    }
+
     return true;
   }
 
   public void stat()
   {
     FileList flist = new FileList();
-    modifiedTime = flist.stat(getServerName());
+    FileAttributes fat = flist.stat(getServerName());
+    long modTime = fat.getModifiedTime().longValue()*1000;
+    modifiedTime = new Date(modTime);
+    file_length  = new Integer(fat.getSize().intValue());
   }
 
   public byte[] getFileContents(FTProgress monitor)

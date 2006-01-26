@@ -147,12 +147,12 @@ public class SshFileManager
       SftpFile sfile = (SftpFile)list[i];
       FileAttributes fat = sfile.getAttributes();
 //    String modTime = fat.getModTimeString();
-      long modTime = fat.getModifiedTime().longValue()*1000;
+//    long modTime = fat.getModifiedTime().longValue()*1000;
 
       if(sfile.isDirectory() || sfile.isLink())
-        dir_list.put(sfile.getFilename(), new Date(modTime));
+        dir_list.put(sfile.getFilename(), fat);
 
-      file_list.put(sfile.getFilename(), new Date(modTime));
+      file_list.put(sfile.getFilename(), fat);
     }
      
 //  sftp.quit();
@@ -263,15 +263,14 @@ public class SshFileManager
   * @param name of file to get status for
   *
   */
-  public Date stat(String filename) 
+  public FileAttributes stat(String filename) 
   {
     SftpClient sftp = null;
     try
     {
       sftp = getSftpClient();
       FileAttributes fat = sftp.stat(filename);
-      long modTime = fat.getModifiedTime().longValue()*1000;
-      return new Date(modTime);
+      return fat;
     }
     catch(SshException sshe)
     {

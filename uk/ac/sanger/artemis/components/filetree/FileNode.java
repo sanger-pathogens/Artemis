@@ -35,8 +35,6 @@ public class FileNode extends DefaultMutableTreeNode
                  implements Transferable, Serializable
 {
     private boolean isDir;
-    /** true if explored */
-    private boolean explored = false;
     /** data flavour of a file node */
     public static DataFlavor FILENODE =
            new DataFlavor(FileNode.class, "Local file");
@@ -60,15 +58,13 @@ public class FileNode extends DefaultMutableTreeNode
     public boolean isLeaf() { return !isDirectory(); }
     /** Get the File this node represents */
     public File getFile() { return (File)getUserObject(); }
-    /** Determine if this node has been explored */
-    public boolean isExplored() { return explored; }
     /** Determine if this is a directory */
     public boolean isDirectory() 
     { 
       return isDir;
     }
 
-    protected void setDirectory(boolean isDir)
+    public void setDirectory(boolean isDir)
     {
       this.isDir = isDir;
     }
@@ -89,47 +85,27 @@ public class FileNode extends DefaultMutableTreeNode
                                             filename;
     }
 
-    /**
-    *
-    * Explores a directory adding a FileNode for each
-    * child
-    *
-    */
-    public void explore(FileFilter filter) 
+    public Object[] getChildren(FileFilter filter)
     {
       if(!isDirectory())
-        return;
-
-      if(!isExplored()) 
-      {
-        File file = getFile();
-        explored = true;
-        File[] children;
-// filter files
-        children = file.listFiles(filter);
+        return null;
+      File file = getFile();
+      File[] children = file.listFiles(filter);
         
 // sort into alphabetic order
-        if(children == null)
-          return;
+      if(children == null)
+        return null;
 
-        java.util.Arrays.sort(children);
-        for(int i=0; i < children.length; ++i)
-          add(new FileNode(children[i]));
+      java.util.Arrays.sort(children);
+      Object[] child_nodes = new Object[children.length];
+      for(int i=0; i < children.length; ++i)
+      {
+        child_nodes[i] = new FileNode(children[i]);
+        ((FileNode)child_nodes[i]).setParent(this);
       }
+      return child_nodes;
     }
 
-    /**
-    *
-    * Forces the directory to be re-explored
-    *
-    */
-    public void reExplore(FileFilter filter)
-    {
-      explored = false;
-      removeAllChildren();
-      explore(filter);
-    }
- 
 // Transferable
     public DataFlavor[] getTransferDataFlavors()
     {
