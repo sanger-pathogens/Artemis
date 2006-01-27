@@ -374,44 +374,41 @@ public class SshJTreeTable extends JTable
             newfile = parent+"/"+inputValue;
 
           if(!nodeExists(pn,newfile))
-            rename(rootPath,fn,inputValue,node,pn);
+          {
+            rename(node,rootPath+"/"+inputValue);
+
+             Runnable addDirToTree = new Runnable()
+             {
+               public void run () { refresh(node.getParentNode()); };
+             };
+             SwingUtilities.invokeLater(addDirToTree);
+          }
         }
       }
     }
 
   }
 
+
   /**
   *
   * Rename a node from the tree
-  * @param rootPath             root path
-  * @param fullname             full name of node to rename
-  * @param pathToNewFile        path to new file
-  * @param newfile              new file name
   * @param node                 node to rename
+  * @param newfile              new file name
   *
   */
-  private void rename(String rootPath, final String fullname,
-                      final String newfile,
-                      final RemoteFileNode node, final RemoteFileNode parentNode)
+  private void rename(final RemoteFileNode node,
+                      final String newfile)
   {
     setCursor(cbusy);
 
-    boolean lrename = node.rename(rootPath+"/"+newfile);
+    boolean lrename = node.rename(newfile);
     setCursor(cdone);
 
     if(!lrename)
       return;
-
-    Runnable deleteFileFromTree = new Runnable()
-    {
-      public void run ()
-      {
-        refresh(node.getParentNode());
-      };
-    };
-    SwingUtilities.invokeLater(deleteFileFromTree);
   }
+
 
   /**
   *
@@ -671,27 +668,16 @@ public class SshJTreeTable extends JTable
           RemoteFileNode fn = (RemoteFileNode)vnode.get(i);
           String dropDest = null;
           RemoteFileNode fdropPath = (RemoteFileNode)dropPath.getLastPathComponent();
-          String dropRoot = fdropPath.getRootDir();
-          String dropFile = null;
-          if(fdropPath.getFile().equals(" "))
-            dropFile = fn.getFile();
-          else
-            dropFile = fdropPath.getFile()+"/"+fn.getFile();
 
-           if(!fdropPath.isDirectory())
-             fdropPath= (RemoteFileNode)fdropPath.getParent();
+          if(!fdropPath.isDirectory())
+            fdropPath= (RemoteFileNode)fdropPath.getParent();
 
-          String serverName;
-          if(fdropPath.getServerName().endsWith("/"))
-            serverName = fdropPath.getServerName()+fn.getFile();
-          else
-            serverName = fdropPath.getServerName()+"/"+fn.getFile();
-
+          String serverName = fdropPath.getServerName()+"/"+fn.getFile();
           if(!nodeExists(fdropPath,serverName))
           {
-            rename(fn.getRootDir(),fn.getFullName(),
-                   dropFile, fn, (RemoteFileNode)fn.getParent());
-            refresh(fn);
+            String root = fn.getRootDir();
+            rename(fn, serverName);
+            refresh(fdropPath);
           }
         }
       }
