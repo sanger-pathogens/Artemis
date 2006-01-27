@@ -377,11 +377,14 @@ public class SshJTreeTable extends JTable
           {
             rename(node,rootPath+"/"+inputValue);
 
-             Runnable addDirToTree = new Runnable()
-             {
-               public void run () { refresh(node.getParentNode()); };
-             };
-             SwingUtilities.invokeLater(addDirToTree);
+            Runnable addDirToTree = new Runnable()
+            {
+              public void run () 
+              {
+                refresh(node.getParentNode()); 
+              };
+            };
+            SwingUtilities.invokeLater(addDirToTree);
           }
         }
       }
@@ -663,21 +666,33 @@ public class SshJTreeTable extends JTable
       TreePath dropPath = tree.getPathForLocation(ploc.x,ploc.y);
       if(dropPath != null)
       {
+        RemoteFileNode drop = (RemoteFileNode)dropPath.getLastPathComponent();
+        final RemoteFileNode fdropPath;
+        if(!drop.isDirectory())
+          fdropPath = (RemoteFileNode)drop.getParent();
+        else
+          fdropPath = drop;
+
         for(int i=0; i<vnode.size();i++)
         {
-          RemoteFileNode fn = (RemoteFileNode)vnode.get(i);
+          final RemoteFileNode fn = (RemoteFileNode)vnode.get(i);
           String dropDest = null;
-          RemoteFileNode fdropPath = (RemoteFileNode)dropPath.getLastPathComponent();
-
-          if(!fdropPath.isDirectory())
-            fdropPath= (RemoteFileNode)fdropPath.getParent();
 
           String serverName = fdropPath.getServerName()+"/"+fn.getFile();
           if(!nodeExists(fdropPath,serverName))
           {
             String root = fn.getRootDir();
             rename(fn, serverName);
-            refresh(fdropPath);
+
+            Runnable addDirToTree = new Runnable()
+            {
+              public void run ()
+              {
+                refresh(fdropPath);
+                repaint();
+              };
+            };
+            SwingUtilities.invokeLater(addDirToTree);
           }
         }
       }
