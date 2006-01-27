@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.14 2006-01-17 16:05:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.15 2006-01-27 16:08:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import java.lang.reflect.Constructor;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.14 2006-01-17 16:05:05 tjc Exp $
+ *  @version $Id: Splash.java,v 1.15 2006-01-27 16:08:28 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -103,7 +103,7 @@ abstract public class Splash extends JFrame
 
     if(isMac()) 
     {
-      setWorkingDirectory();
+//    setWorkingDirectory();
 
       try 
       {
@@ -534,14 +534,14 @@ abstract public class Splash extends JFrame
       makeMenuItem(options_menu, "Hide Log Window", menu_listener);
     }
 
-    menu_listener = new ActionListener()
-    {
-      public void actionPerformed(ActionEvent event)
-      {
-        setWorkingDirectory();
-      }
-    };
-    makeMenuItem(options_menu, "Set Working Directory...", menu_listener);
+//  menu_listener = new ActionListener()
+//  {
+//    public void actionPerformed(ActionEvent event)
+//    {
+//      setWorkingDirectory();
+//    }
+//  };
+//  makeMenuItem(options_menu, "Set Working Directory...", menu_listener);
 
   }
 
