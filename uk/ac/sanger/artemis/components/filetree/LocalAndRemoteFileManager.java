@@ -383,7 +383,7 @@ public class LocalAndRemoteFileManager extends JFrame
         treePane.setDividerLocation(0.5);
       }
     });
-//  prefV.setSelected(true);
+    prefV.setSelected(true);
     ButtonGroup group = new ButtonGroup();
     group.add(prefV);
 
@@ -407,7 +407,7 @@ public class LocalAndRemoteFileManager extends JFrame
       }
     });
     group.add(prefH);
-    prefH.setSelected(true);
+//  prefH.setSelected(true);
 
     JMenuItem fileMenuClose = new JMenuItem("Close");
     fileMenuClose.addActionListener(new ActionListener()
