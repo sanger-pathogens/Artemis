@@ -90,10 +90,9 @@ public class SshJTreeTable extends JTable
   private static final int AUTOSCROLL_MARGIN = 45;
   /** used by AutoScroll method */
   private Insets autoscrollInsets = new Insets( 0, 0, 0, 0 );
-
   protected TreeTableCellRenderer tree;
 
-  public SshJTreeTable(TreeModel treeTableModel) 
+  public SshJTreeTable(TreeModel treeTableModel, final JFrame frame) 
   {
     super();
 
@@ -174,10 +173,10 @@ public class SshJTreeTable extends JTable
           RemoteFileNode node = (RemoteFileNode)tree.getLastSelectedPathComponent();
           if(node==null)
             return;
-          setCursor(cbusy);
+          frame.setCursor(cbusy);
           if(node.isLeaf())
             showFilePane(node);
-          setCursor(cdone);
+          frame.setCursor(cdone);
         }
       }
       public void mousePressed(MouseEvent me){}
@@ -186,9 +185,6 @@ public class SshJTreeTable extends JTable
       public void mouseReleased(MouseEvent me){}
     });
 
-// Set the first visible column to 10 pixels wide
-    TableColumn col = getColumnModel().getColumn(1);
-    col.setPreferredWidth(10);
   }
 
   /**
@@ -580,21 +576,21 @@ public class SshJTreeTable extends JTable
     { 
       super(model); 
 
-      addTreeExpansionListener(new TreeExpansionListener()
-      {
-        public void treeCollapsed(TreeExpansionEvent e){}
-        public void treeExpanded(TreeExpansionEvent e)
-        {
-          TreePath path = e.getPath();
-          if(path != null)
-          {
-            setCursor(cbusy);
-            RemoteFileNode node = (RemoteFileNode)path.getLastPathComponent();
-            refresh(node);
-            setCursor(cdone);
-          }
-        }
-      });
+//    addTreeExpansionListener(new TreeExpansionListener()
+//    {
+//      public void treeCollapsed(TreeExpansionEvent e){}
+//      public void treeExpanded(TreeExpansionEvent e)
+//      {
+//        TreePath path = e.getPath();
+//        if(path != null)
+//        {
+//          setCursor(cbusy);
+//          RemoteFileNode node = (RemoteFileNode)path.getLastPathComponent();
+//          refresh(node);
+//          setCursor(cdone);
+//        }
+//      }
+//    });
     }
 
     public void setBounds(int x, int y, int w, int h)

@@ -27,22 +27,21 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.awt.Cursor;
 
+import javax.swing.JFrame;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import uk.ac.sanger.artemis.components.filetree.FileNode;
 import uk.ac.sanger.artemis.components.filetree.RemoteFileNode;
 
 /**
+ *
  * FileSystemModel is a TreeTableModel representing a hierarchical file 
  * system. Nodes in the FileSystemModel are FileNodes which, when they 
  * are directory nodes, cache their children to avoid repeatedly querying 
  * the real file system. 
  * 
- * @version %I% %G%
- *
- * @author Philip Milne
- * @author Scott Violet
  */
 public class FileSystemModel extends DefaultTreeModel 
 {
@@ -52,14 +51,19 @@ public class FileSystemModel extends DefaultTreeModel
 
   // Types of the columns.
   static protected Class[]  cTypes = {TreeTableModel.class, Integer.class, String.class};
+  /** busy cursor */
+  private Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
+  /** done cursor */
+  private Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
 
   private FileFilter filter;
-
+  private JFrame frame;
   SimpleDateFormat formatter  = new SimpleDateFormat("MMM dd HH:mm yyyy");
 
-  public FileSystemModel() 
+  public FileSystemModel(final JFrame frame) 
   {
     super(new FileNode(new File("")));
+    this.frame = frame;
 
     filter = new FileFilter()
     {
@@ -79,10 +83,11 @@ public class FileSystemModel extends DefaultTreeModel
     rootNode.add( new FileNode(new File( System.getProperty("user.home") )) );
   }
 
-  public FileSystemModel(File rt[], FileFilter filter)
+  public FileSystemModel(File rt[], FileFilter filter, JFrame frame)
   {
     super(new FileNode(new File("")));
 
+    this.frame = frame;
     this.filter = filter;
     FileNode rootNode = (FileNode)getRoot();
     rootNode.setDirectory(true);
@@ -97,9 +102,11 @@ public class FileSystemModel extends DefaultTreeModel
     }
   }
 
-  public FileSystemModel(String froots[])
+  public FileSystemModel(String froots[], final JFrame frame)
   {
     super(new RemoteFileNode(true));
+    this.frame = frame;
+
     RemoteFileNode rootNode = (RemoteFileNode)getRoot();
     for(int i=0; i<froots.length; i++)
     {
@@ -153,7 +160,13 @@ public class FileSystemModel extends DefaultTreeModel
   //
   public int getChildCount(Object node) 
   { 
+    if(node instanceof RemoteFileNode)
+      frame.setCursor(cbusy);
     Object[] children = getChildren(node); 
+
+    if(node instanceof RemoteFileNode)
+      frame.setCursor(cdone);
+
     return (children == null) ? 0 : children.length;
   }
 

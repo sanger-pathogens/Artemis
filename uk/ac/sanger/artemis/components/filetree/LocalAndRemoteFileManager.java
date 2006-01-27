@@ -25,6 +25,7 @@ import uk.ac.sanger.artemis.j2ssh.SshLogin;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.Options;
 
+import javax.swing.table.TableColumn;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileFilter;
@@ -38,11 +39,6 @@ import javax.swing.border.Border;
 
 public class LocalAndRemoteFileManager extends JFrame
 {
-
-  /** busy cursor */
-  private Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
-  /** done cursor */
-  private Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
 
   public LocalAndRemoteFileManager(JFrame frame)
   {
@@ -65,7 +61,7 @@ public class LocalAndRemoteFileManager extends JFrame
     {
       final JPanel localPanel = new JPanel(new BorderLayout());
     
-      JTreeTable ftree = new JTreeTable(new FileSystemModel(getLocalDirectories(), filter));
+      JTreeTable ftree = new JTreeTable(new FileSystemModel(getLocalDirectories(), filter, this));
       JScrollPane localTree = new JScrollPane(ftree);
       localPanel.add(localTree,BorderLayout.CENTER);
 
@@ -75,7 +71,7 @@ public class LocalAndRemoteFileManager extends JFrame
       final JPanel remotePanel = new JPanel(new BorderLayout());
 
       SshJTreeTable sshtree = new SshJTreeTable(
-                       new FileSystemModel( getRemoteDirectories(flist.pwd()) ));
+                       new FileSystemModel( getRemoteDirectories(flist.pwd()),this ), this);
       JScrollPane remoteTree = new JScrollPane(sshtree);
       remotePanel.add(remoteTree,BorderLayout.CENTER);
     
@@ -102,6 +98,28 @@ public class LocalAndRemoteFileManager extends JFrame
   
       remoteTree.setPreferredSize(panelSize);
       localTree.setPreferredSize(panelSize);
+
+
+      // Set the column width
+      int width = panelSize.width;
+      TableColumn col0 = sshtree.getColumnModel().getColumn(0);
+      col0.setPreferredWidth( (int)(width*0.60) );
+
+      TableColumn col1  = sshtree.getColumnModel().getColumn(1);
+      col1.setPreferredWidth( (int)(width*0.12) );
+ 
+      TableColumn col2 = sshtree.getColumnModel().getColumn(2);
+      col2.setPreferredWidth( (int)(width*0.28) );
+     
+      col0 = ftree.getColumnModel().getColumn(0);
+      col0.setPreferredWidth( (int)(width*0.60) );
+
+      col1  = ftree.getColumnModel().getColumn(1);
+      col1.setPreferredWidth( (int)(width*0.12) );
+
+      col2 = ftree.getColumnModel().getColumn(2);
+      col2.setPreferredWidth( (int)(width*0.28) );
+
 
       pack();
     

@@ -24,6 +24,7 @@ package uk.ac.sanger.artemis.components.filetree;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.Options;
 
+import javax.swing.table.TableColumn;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileFilter;
@@ -57,7 +58,7 @@ public class FileManager extends JFrame
   {
     super("File Manager");
 
-    FileSystemModel model = new FileSystemModel(getLocalDirectories(), filter);
+    FileSystemModel model = new FileSystemModel(getLocalDirectories(), filter, this);
     JTreeTable ftree = new JTreeTable(model);
     JScrollPane jsp = new JScrollPane(ftree);
     JPanel pane = (JPanel)getContentPane();
@@ -67,8 +68,21 @@ public class FileManager extends JFrame
     pane.add(getFileFileterComboBox(model, ftree), BorderLayout.SOUTH);
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    jsp.setPreferredSize(new Dimension((int)(screen.getWidth()/3),
-                         (int)(screen.getHeight()/2)));
+
+    Dimension panelSize = new Dimension((int)(screen.getWidth()/3),
+                                        (int)(screen.getHeight()/2));
+    jsp.setPreferredSize(panelSize);
+
+    int width = panelSize.width;
+    TableColumn col0 = ftree.getColumnModel().getColumn(0);
+    col0.setPreferredWidth( (int)(width*0.60) );
+
+    TableColumn col1  = ftree.getColumnModel().getColumn(1);
+    col1.setPreferredWidth( (int)(width*0.12) );
+
+    TableColumn col2 = ftree.getColumnModel().getColumn(2);
+    col2.setPreferredWidth( (int)(width*0.28) );
+
     pack();
     
     int yloc = (int)((screen.getHeight()-getHeight())/2);
