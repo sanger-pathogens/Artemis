@@ -61,6 +61,8 @@ public class FileManager extends JFrame
     FileSystemModel model = new FileSystemModel(getLocalDirectories(), filter, this);
     JTreeTable ftree = new JTreeTable(model);
     JScrollPane jsp = new JScrollPane(ftree);
+    jsp.getViewport().setBackground(Color.white);
+
     JPanel pane = (JPanel)getContentPane();
     pane.setLayout(new BorderLayout());
     pane.add(jsp, BorderLayout.CENTER);
@@ -158,7 +160,9 @@ public class FileManager extends JFrame
             }
           });
         }
+  
         ftree.refreshAll();
+        ftree.revalidate();
       }
     });
     return comboFilter;

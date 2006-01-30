@@ -63,6 +63,7 @@ public class LocalAndRemoteFileManager extends JFrame
     
       JTreeTable ftree = new JTreeTable(new FileSystemModel(getLocalDirectories(), filter, this));
       JScrollPane localTree = new JScrollPane(ftree);
+      localTree.getViewport().setBackground(Color.white);
       localPanel.add(localTree,BorderLayout.CENTER);
 
       final JLabel local_status_line = getStatusLabel("LOCAL");
@@ -73,6 +74,7 @@ public class LocalAndRemoteFileManager extends JFrame
       SshJTreeTable sshtree = new SshJTreeTable(
                        new FileSystemModel( getRemoteDirectories(flist.pwd()),this ), this);
       JScrollPane remoteTree = new JScrollPane(sshtree);
+      remoteTree.getViewport().setBackground(Color.white);
       remotePanel.add(remoteTree,BorderLayout.CENTER);
     
       String remote_name = SshLogin.getHostname();
@@ -235,6 +237,7 @@ public class LocalAndRemoteFileManager extends JFrame
           });
         }
         ftree.refreshAll();
+        ftree.revalidate();
       }
     });
     return comboFilter;
