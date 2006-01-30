@@ -61,5 +61,11 @@ public class FTProgress implements FileTransferProgress
   public void completed()
   {
   }
+
+  public long getProgress()
+  {
+    return progress.getValue();
+  }
+
 }
 

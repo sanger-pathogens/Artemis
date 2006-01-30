@@ -121,6 +121,7 @@ public class SshPSUClient extends Thread
 
   public void run()
   {
+    
     String program = cmd;
 
     boolean completed = false;
@@ -173,6 +174,7 @@ public class SshPSUClient extends Thread
           seqfiles.add(seq.getAbsolutePath());
         }
       }
+      in.close();
     }
     catch (IOException e)
     {
@@ -191,9 +193,11 @@ public class SshPSUClient extends Thread
   {
     SftpClient sftp;
 
-    for(int i=0; i < 100; i++)
+    for(int i=0; i < 500; i++)
     {
-      Thread.currentThread().sleep(10000);
+      if(System.getProperty("debug") != null)
+        System.out.println("waitUntilFileAppears() "+file);
+      Thread.currentThread().sleep(1000);
       sftp = getSftpClient();
       try
       {
@@ -207,13 +211,16 @@ public class SshPSUClient extends Thread
           System.out.println("waitUntilFileAppears()");
           sshe.printStackTrace();
         }
-        rescue();
-        sftp = getSftpClient();
+//      sftp = getSftpClient();
         try
         {
-          if(fileExists(sftp, file))
-            return true;
-        } catch(SshException sshe2) {}
+
+          rescue();
+          continue;
+//        if(fileExists(sftp, file))
+//          return true;
+          
+        } catch(Exception exp) {}
       }
     }
 
@@ -435,8 +442,8 @@ public class SshPSUClient extends Thread
       if(System.getProperty("debug") != null)
       {
         // stdout & stderr
-        System.out.println(stdouth.getOutput());
-        System.out.println(stderrh.getOutput());
+        System.out.println("STDOUT "+filename+"\n"+stdouth.getOutput());
+        System.out.println("STDERR "+filename+"\n"+stderrh.getOutput());
       }
 
 //    ByteArrayOutputStream os = new ByteArrayOutputStream();

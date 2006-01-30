@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.10 2005-12-08 12:41:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.11 2006-01-30 11:11:35 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -31,6 +31,8 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.components.filetree.RemoteFileNode;
+import uk.ac.sanger.artemis.j2ssh.FileTransferProgressMonitor;
+import uk.ac.sanger.artemis.j2ssh.FTProgress;
 
 import java.io.*;
 import java.text.*;
@@ -42,7 +44,7 @@ import java.util.Enumeration;
  *  and contains methods for invoking it.
  *
  *  @author Kim Rutherford
- *  @version $Id: ExternalProgram.java,v 1.10 2005-12-08 12:41:59 tjc Exp $
+ *  @version $Id: ExternalProgram.java,v 1.11 2006-01-30 11:11:35 tjc Exp $
  **/
 
 public class ExternalProgram 
@@ -151,6 +153,9 @@ public class ExternalProgram
             !System.getProperty("j2ssh").equals("false") &&
             (getRealName().indexOf("blast") > -1 || getRealName().startsWith("fast")) )
         {
+
+          if(System.getProperty("debug") != null) 
+            System.out.println("GET READY TO CALL SSH CLIENT "+getRealName());
 
           final Feature this_feature = features.elementAt(0);
           Entry entry = this_feature.getEntry();
@@ -558,8 +563,14 @@ public class ExternalProgram
                      node.getFullName();
         int index  = dir.lastIndexOf(fs);
         dir = dir.substring(0,index) + fs + getName();
-        byte[] contents = node.getFileContents(null, dir+fs+ 
+
+        FileTransferProgressMonitor monitor =
+                   new FileTransferProgressMonitor(null);
+        FTProgress progress = monitor.add(node.getFile());
+        byte[] contents = node.getFileContents(progress, dir+fs+ 
                                                file_counter_filename);
+        monitor.close();
+
         if(contents == null)
         {
           if(System.getProperty("debug") != null)

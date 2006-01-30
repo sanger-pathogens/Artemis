@@ -373,26 +373,31 @@ public class SshFileManager
   */
   public byte[] getFileContents(String file, final FTProgress monitor)
   {
-    try 
-    {
-      SftpClient sftp = getSftpClient();
+    // sometimes SftpClient.get() hangs so put in 
+    // separate thread
 
-      ByteArrayOutputStream os = new ByteArrayOutputStream();
-      sftp.get(file, os, monitor);
-//    sftp.quit();
-      return os.toByteArray();
-    }
-    catch(SshException se)
+    SshGet get = new SshGet(file, monitor);
+    get.start();
+
+    try
     {
-      rescue();
-      return getFileContents(file, monitor);
+      int count = 0;
+      while(get.isAlive())
+      {
+        Thread.currentThread().sleep(50);
+        count++;
+        if(count > 100 && monitor.getProgress() < 1.)
+        {
+          get.destroy();
+          SshLogin sshLogin = new SshLogin();
+          ssh = sshLogin.getSshClient();
+          return getFileContents(file,monitor);
+        }
+      }
     }
-    catch(IOException ioe)
-    {
-      rescue();
-//    ioe.printStackTrace();
-      return null;
-    }
+    catch(InterruptedException iex){}
+
+    return get.getByteArray();
   }
 
 
@@ -412,5 +417,51 @@ public class SshFileManager
       return false;
 
     return true;
+  }
+
+  public class SshGet extends Thread
+  {
+    private String file;
+    private FTProgress monitor;
+    private ByteArrayOutputStream os;
+    private boolean done = false;
+
+    public SshGet(final String file, final FTProgress monitor)
+    {
+      this.file = file;
+      this.monitor = monitor; 
+      this.os = os;
+    }
+  
+    public void run()
+    {
+      while(!done)
+      {
+        try
+        {
+          SftpClient sftp = getSftpClient();
+
+          os = new ByteArrayOutputStream();
+          sftp.get(file, os, monitor);
+          done = true;
+          os.close();
+        }
+        catch(SshException se2)
+        {
+          rescue();
+        }
+        catch(IOException ioe2){}
+      }
+    }
+
+    public void destroy()
+    {
+      done = true;
+    }
+
+    public byte[] getByteArray()
+    {
+      return os.toByteArray();
+    }
   }
 }

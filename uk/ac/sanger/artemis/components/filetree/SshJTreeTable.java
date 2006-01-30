@@ -91,11 +91,13 @@ public class SshJTreeTable extends JTable
   /** used by AutoScroll method */
   private Insets autoscrollInsets = new Insets( 0, 0, 0, 0 );
   protected TreeTableCellRenderer tree;
+  private JFrame frame;
 
   public SshJTreeTable(TreeModel treeTableModel, final JFrame frame) 
   {
     super();
 
+    this.frame = frame;
     DragSource dragSource = DragSource.getDefaultDragSource();
 
     dragSource.createDefaultDragGestureRecognizer(
@@ -403,10 +405,10 @@ public class SshJTreeTable extends JTable
   private void rename(final RemoteFileNode node,
                       final String newfile)
   {
-    setCursor(cbusy);
+    frame.setCursor(cbusy);
 
     boolean lrename = node.rename(newfile);
-    setCursor(cdone);
+    frame.setCursor(cdone);
 
     if(!lrename)
       return;
@@ -422,7 +424,7 @@ public class SshJTreeTable extends JTable
   */
   private void deleteNode(final RemoteFileNode node)
   {
-    setCursor(cbusy);
+    frame.setCursor(cbusy);
 
     boolean deleted = false;
     deleted = node.delete();
@@ -447,7 +449,7 @@ public class SshJTreeTable extends JTable
       SwingUtilities.invokeLater(deleteFileFromTree);
     }
 
-    setCursor(cdone);
+    frame.setCursor(cdone);
   }
 
 
