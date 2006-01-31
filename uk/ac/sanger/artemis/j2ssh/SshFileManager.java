@@ -85,7 +85,7 @@ public class SshFileManager
 
   public SshFileManager(SshLogin sshLogin)
   {
-    ssh = sshLogin.getSshClient();
+    ssh = sshLogin.getSshClient(true);
     pwd();
   }
 
@@ -119,7 +119,8 @@ public class SshFileManager
       sftp = ssh.getActiveSftpClient();
       return sftp;
     }
-    catch(IOException ioe){}
+    catch(IOException ioe)
+    {}
     return ssh.openSftpClient();   
   }
 

@@ -96,13 +96,21 @@ public class SshLogin
 
   public SshClient getSshClient()
   {
+    return getSshClient(false);
+  }
+
+  public SshClient getSshClient(final boolean fail)
+  {
     if(ssh == null || !ssh.isConnected())
     {
       try
       {
-        ssh = login();
+        ssh = login(fail);
       }
-      catch(java.net.ConnectException ce){}
+      catch(java.net.ConnectException ce)
+      {
+        ce.printStackTrace(); 
+      }
       catch(IOException ioe){}
     }
     return ssh;
@@ -133,7 +141,7 @@ public class SshLogin
   * Log the user in.
   *
   */
-  private SshClient login()
+  private SshClient login(final boolean fail)
             throws IOException
   {
     SshClient ssh = null;
@@ -169,6 +177,10 @@ public class SshLogin
 
       // Try the authentication
       result = ssh.authenticate(pwd);
+      if(fail && result == AuthenticationProtocolState.FAILED)
+        return null;
+
+      count++;
     }
     return ssh;
   }

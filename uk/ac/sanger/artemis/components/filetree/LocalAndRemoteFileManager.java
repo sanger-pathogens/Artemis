@@ -92,7 +92,20 @@ public class LocalAndRemoteFileManager extends JFrame
         {
           setCursor(new Cursor(Cursor.WAIT_CURSOR));
    
-          SshFileManager ssh_fm = new SshFileManager(ssh_login);
+          final SshFileManager ssh_fm;
+
+          try
+          {
+            ssh_fm = new SshFileManager(ssh_login);
+          }
+          catch(NullPointerException npe)
+          {
+            setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            JOptionPane.showMessageDialog(LocalAndRemoteFileManager.this, 
+                                          "Check login details and try again.",
+                                          "Failed Login", JOptionPane.ERROR_MESSAGE);
+            return;
+          }
           FileList flist = new FileList(ssh_fm);
           remotePanel.remove(bdown);
           int divider_loc = treePane.getDividerLocation();
