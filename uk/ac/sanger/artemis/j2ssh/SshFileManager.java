@@ -83,6 +83,12 @@ public class SshFileManager
     ssh = sshLogin.getSshClient();
   }
 
+  public SshFileManager(SshLogin sshLogin)
+  {
+    ssh = sshLogin.getSshClient();
+    pwd();
+  }
+
   private void rescue()
   {
     try

@@ -32,6 +32,7 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.SwingConstants;
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.io.IOException;
 import java.util.Properties;
@@ -101,6 +102,7 @@ public class SshLogin
       {
         ssh = login();
       }
+      catch(java.net.ConnectException ce){}
       catch(IOException ioe){}
     }
     return ssh;
@@ -171,29 +173,25 @@ public class SshLogin
     return ssh;
   }
 
-  /**
-  *
-  * Set the login information.
-  *
-  */
-  private boolean setLogin()
+  public JPanel getLogin()
   {
     JPanel promptPanel = new JPanel(new GridLayout(4,2));
 
     if(hostname != null && hostfield.getText().equals(""))
       hostfield.setText(hostname);
-   
+
     if(port >-1 && portfield.getText().equals(""))
       portfield.setText(Integer.toString(port));
 
     if(user != null && ufield.getText().equals(""))
       ufield.setText(user);
 
-    JLabel hostlab = new JLabel(" Hostname:", SwingConstants.LEFT);
-    JLabel portlab = new JLabel("     Port:", SwingConstants.LEFT);
+    JLabel hostlab = new JLabel(" Hostname:  ", SwingConstants.RIGHT);
+    JLabel portlab = new JLabel("     Port:  ", SwingConstants.RIGHT);
 
-    JLabel ulab = new JLabel(" Username:", SwingConstants.LEFT);
-    JLabel plab = new JLabel(" Password:", SwingConstants.LEFT);
+    JLabel ulab = new JLabel(" Username:  ", SwingConstants.RIGHT);
+    JLabel plab = new JLabel(" Password:  ", SwingConstants.RIGHT);
+
     //add labels etc
     promptPanel.add(hostlab);
     promptPanel.add(hostfield);
@@ -206,7 +204,18 @@ public class SshLogin
 
     promptPanel.add(plab);
     promptPanel.add(pfield);
-  
+    return promptPanel;
+  }
+
+  /**
+  *
+  * Set the login information.
+  *
+  */
+  private boolean setLogin()
+  {
+    JPanel promptPanel = getLogin();
+
     Object[] options = { "CANCEL", "LOGIN AND RUN"};
 
     int select = JOptionPane.showOptionDialog(null, promptPanel,

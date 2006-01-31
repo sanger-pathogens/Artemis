@@ -22,6 +22,7 @@
 package uk.ac.sanger.artemis.components.filetree;
 
 import uk.ac.sanger.artemis.j2ssh.SshLogin;
+import uk.ac.sanger.artemis.j2ssh.SshFileManager;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.Options;
 
@@ -40,6 +41,10 @@ import javax.swing.border.Border;
 public class LocalAndRemoteFileManager extends JFrame
 {
 
+  private JScrollPane remoteTree;
+  private SshJTreeTable sshtree;
+  private JSplitPane treePane = null;
+
   public LocalAndRemoteFileManager(JFrame frame)
   {
     this(frame,getArtemisFilter());
@@ -49,86 +54,135 @@ public class LocalAndRemoteFileManager extends JFrame
   *
   * File Manager Frame
   * @param frame  parent frame
+  * @param filter file name filter
   *
   */
   public LocalAndRemoteFileManager(JFrame frame, FileFilter filter)
   {
     super("File Manager");
 
-    FileList flist = new FileList();
+    final JPanel localPanel = new JPanel(new BorderLayout());
     
-    if(flist.isConnected())
-    {
-      final JPanel localPanel = new JPanel(new BorderLayout());
-    
-      JTreeTable ftree = new JTreeTable(new FileSystemModel(getLocalDirectories(), filter, this));
-      JScrollPane localTree = new JScrollPane(ftree);
-      localTree.getViewport().setBackground(Color.white);
-      localPanel.add(localTree,BorderLayout.CENTER);
+    final SshLogin ssh_login = new SshLogin();
+    JTreeTable ftree = new JTreeTable(new FileSystemModel(getLocalDirectories(), 
+                                      filter, this));
+    JScrollPane localTree = new JScrollPane(ftree);
+    localTree.getViewport().setBackground(Color.white);
+    localPanel.add(localTree,BorderLayout.CENTER);
 
-      final JLabel local_status_line = getStatusLabel("LOCAL");
-      localPanel.add(local_status_line,BorderLayout.NORTH);
+    final JLabel local_status_line = getStatusLabel("LOCAL");
+    localPanel.add(local_status_line,BorderLayout.NORTH);
 
-      final JPanel remotePanel = new JPanel(new BorderLayout());
+    final JPanel remotePanel = new JPanel(new BorderLayout());
 
-      SshJTreeTable sshtree = new SshJTreeTable(
-                       new FileSystemModel( getRemoteDirectories(flist.pwd()),this ), this);
-      JScrollPane remoteTree = new JScrollPane(sshtree);
-      remoteTree.getViewport().setBackground(Color.white);
-      remotePanel.add(remoteTree,BorderLayout.CENTER);
-    
-      String remote_name = SshLogin.getHostname();
-      if(!SshLogin.getPort().equals(""))
-        remote_name = remote_name + ":" + SshLogin.getPort();
-
-      final JLabel remote_status_line = getStatusLabel("REMOTE "+remote_name);
-      remotePanel.add(remote_status_line,BorderLayout.NORTH);
-
-      final JSplitPane treePane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-                                                 localPanel,remotePanel);
-
-      JPanel pane = (JPanel)getContentPane();
-      pane.setLayout(new BorderLayout());
-      pane.add(treePane, BorderLayout.CENTER);
-
-      Dimension screen    = Toolkit.getDefaultToolkit().getScreenSize();
-      Dimension panelSize = new Dimension((int)(screen.getWidth()/3), 
+    //
+    final Dimension screen    = Toolkit.getDefaultToolkit().getScreenSize();
+    final Dimension panelSize = new Dimension((int)(screen.getWidth()/3),
                                           (int)(screen.getHeight()/3));
-      treePane.setDividerLocation((int)(screen.getHeight()/3));
-      setJMenuBar(makeMenuBar(pane,ftree,sshtree,localPanel,remotePanel,treePane,panelSize));
-      localPanel.add(getFileFileterComboBox(ftree), BorderLayout.SOUTH);
-  
-      remoteTree.setPreferredSize(panelSize);
-      localTree.setPreferredSize(panelSize);
+    String remote_name = "";
+    final JLabel remote_status_line = getStatusLabel("");
 
+    if(FileList.ssh_client == null)  // if no connection etablished yet
+    {
+      final Box bdown = Box.createVerticalBox();
+      JButton connect = new JButton("Connect");
+      connect.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          setCursor(new Cursor(Cursor.WAIT_CURSOR));
+   
+          SshFileManager ssh_fm = new SshFileManager(ssh_login);
+          FileList flist = new FileList(ssh_fm);
+          remotePanel.remove(bdown);
+          int divider_loc = treePane.getDividerLocation();
+          setRemoteTree(flist, sshtree, remoteTree, remotePanel, 
+                        panelSize, remote_status_line);
+   
+          if(treePane.getOrientation() == JSplitPane.HORIZONTAL_SPLIT)
+            treePane.setBottomComponent(remotePanel);
+          else
+            treePane.setRightComponent(remotePanel);
 
-      // Set the column width
-      int width = panelSize.width;
-      TableColumn col0 = sshtree.getColumnModel().getColumn(0);
-      col0.setPreferredWidth( (int)(width*0.60) );
+          treePane.setDividerLocation(divider_loc);
 
-      TableColumn col1  = sshtree.getColumnModel().getColumn(1);
-      col1.setPreferredWidth( (int)(width*0.12) );
+          setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        }
+      });
  
-      TableColumn col2 = sshtree.getColumnModel().getColumn(2);
-      col2.setPreferredWidth( (int)(width*0.28) );
-     
-      col0 = ftree.getColumnModel().getColumn(0);
-      col0.setPreferredWidth( (int)(width*0.60) );
-
-      col1  = ftree.getColumnModel().getColumn(1);
-      col1.setPreferredWidth( (int)(width*0.12) );
-
-      col2 = ftree.getColumnModel().getColumn(2);
-      col2.setPreferredWidth( (int)(width*0.28) );
-
-
-      pack();
-    
-      int yloc = (int)((screen.getHeight()-getHeight())/2);
-      setLocation(0,yloc);  
-      setVisible(true);
+      bdown.add(ssh_login.getLogin());
+      bdown.add(connect);
+      int ypos = panelSize.height-connect.getPreferredSize().height;
+      if(ypos>0)
+        bdown.add(Box.createVerticalStrut(ypos/2));
+      remotePanel.add(bdown, BorderLayout.SOUTH);
+      remotePanel.setPreferredSize(panelSize);
     }
+    else
+    {
+      FileList flist = new FileList();
+      setRemoteTree(flist, sshtree, remoteTree, remotePanel,
+                    panelSize, remote_status_line);
+    }
+
+    remote_status_line.setText("REMOTE "+remote_name);
+    remotePanel.add(remote_status_line,BorderLayout.NORTH);
+
+    treePane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+                                 localPanel,remotePanel);
+
+    JPanel pane = (JPanel)getContentPane();
+    pane.setLayout(new BorderLayout());
+    pane.add(treePane, BorderLayout.CENTER);
+
+    treePane.setDividerLocation((int)(screen.getHeight()/3));
+    setJMenuBar(makeMenuBar(pane,ftree,sshtree,localPanel,remotePanel,treePane,panelSize));
+    localPanel.add(getFileFileterComboBox(ftree), BorderLayout.SOUTH);
+
+    localTree.setPreferredSize(panelSize);
+
+    // Set the column width
+    int width = panelSize.width;
+    setColumnWidth(ftree, width);
+
+    pack();
+  
+    int yloc = (int)((screen.getHeight()-getHeight())/2);
+    setLocation(0,yloc);  
+    setVisible(true);
+  }
+
+
+  private void setRemoteTree(final FileList flist, SshJTreeTable sshtree, 
+                          JScrollPane remoteTree, JPanel remotePanel,
+                          final Dimension panelSize, final JLabel remote_status_line)
+  {
+    sshtree = new SshJTreeTable(new FileSystemModel( 
+                                getRemoteDirectories(flist.pwd()), LocalAndRemoteFileManager.this),
+                                LocalAndRemoteFileManager.this);
+    remoteTree = new JScrollPane(sshtree);
+    remoteTree.setPreferredSize(panelSize);
+    remoteTree.getViewport().setBackground(Color.white);
+    remotePanel.add(remoteTree,BorderLayout.CENTER);
+
+    String remote_name = SshLogin.getHostname();
+    if(!SshLogin.getPort().equals(""))
+      remote_name = remote_name + ":" + SshLogin.getPort();
+    remote_status_line.setText("REMOTE "+remote_name);
+    setColumnWidth(sshtree, panelSize.width);
+  }
+
+
+  private void setColumnWidth(JTable table, int width)
+  {
+    TableColumn col0 = table.getColumnModel().getColumn(0);
+    col0.setPreferredWidth( (int)(width*0.60) );
+
+    TableColumn col1  = table.getColumnModel().getColumn(1);
+    col1.setPreferredWidth( (int)(width*0.12) );
+
+    TableColumn col2 = table.getColumnModel().getColumn(2);
+    col2.setPreferredWidth( (int)(width*0.28) );
   }
 
   /**

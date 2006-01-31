@@ -36,10 +36,16 @@ public class FileList
   /** vector containing directories */
   private Hashtable vdir;
   private Hashtable vfile;
-  private static SshFileManager ssh_client = new SshFileManager();
+  protected static SshFileManager ssh_client;
  
   public FileList()
   {
+    ssh_client = new SshFileManager();
+  }
+
+  public FileList(SshFileManager ssh_client)
+  {
+    this.ssh_client = ssh_client;
   }
 
   /**
