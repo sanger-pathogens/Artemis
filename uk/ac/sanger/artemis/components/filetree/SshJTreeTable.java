@@ -577,22 +577,6 @@ public class SshJTreeTable extends JTable
     public TreeTableCellRenderer(TreeModel model) 
     { 
       super(model); 
-
-//    addTreeExpansionListener(new TreeExpansionListener()
-//    {
-//      public void treeCollapsed(TreeExpansionEvent e){}
-//      public void treeExpanded(TreeExpansionEvent e)
-//      {
-//        TreePath path = e.getPath();
-//        if(path != null)
-//        {
-//          setCursor(cbusy);
-//          RemoteFileNode node = (RemoteFileNode)path.getLastPathComponent();
-//          refresh(node);
-//          setCursor(cdone);
-//        }
-//      }
-//    });
     }
 
     public void setBounds(int x, int y, int w, int h)
