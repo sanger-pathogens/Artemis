@@ -457,7 +457,10 @@ public class SshFileManager
         {
           rescue();
         }
-        catch(IOException ioe2){}
+        catch(IOException ioe2)
+        {
+          done = true; // file doesn't exist?
+        }
       }
     }
 
