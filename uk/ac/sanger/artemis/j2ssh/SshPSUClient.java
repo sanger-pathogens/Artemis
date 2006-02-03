@@ -191,17 +191,14 @@ public class SshPSUClient extends Thread
   private boolean waitUntilFileAppears(String file)
                    throws InterruptedException, IOException
   {
-    SftpClient sftp;
-
     for(int i=0; i < 500; i++)
     {
       if(System.getProperty("debug") != null)
         System.out.println("waitUntilFileAppears() "+file);
       Thread.currentThread().sleep(1000);
-      sftp = getSftpClient();
       try
       {
-        if(fileExists(sftp, file))
+        if(fileExists(getSftpClient() , file))
           return true;
       }
       catch(SshException sshe)
@@ -211,15 +208,10 @@ public class SshPSUClient extends Thread
           System.out.println("waitUntilFileAppears()");
           sshe.printStackTrace();
         }
-//      sftp = getSftpClient();
         try
         {
-
           rescue();
           continue;
-//        if(fileExists(sftp, file))
-//          return true;
-          
         } catch(Exception exp) {}
       }
     }
@@ -230,8 +222,17 @@ public class SshPSUClient extends Thread
   private boolean fileExists(SftpClient sftp, String file)
              throws SshException, IOException
   {
-    Object list[] = sftp.ls(wdir).toArray();
-  
+    Object list[] = null;
+    try
+    {
+      list = sftp.ls(wdir).toArray();
+    }
+    catch(SshException sshe)
+    {
+      sftp = getSftpClient();
+      list = sftp.ls(wdir).toArray();
+    }
+
     for(int j=0; j<list.length;j++)
     {
       if( ((SftpFile)list[j]).getFilename().equals(file) )
@@ -387,15 +388,12 @@ public class SshPSUClient extends Thread
       {
         if(System.getProperty("debug") != null)
         {
-          System.out.println("runBlastOrFasta() - 3");
+          System.out.println("NOT STARTED runBlastOrFasta() ----- 3 "+filename);
           exp.printStackTrace();
         }
         rescue();
       }
 
-      if(System.getProperty("debug") != null)
-        System.out.println("STARTED session");
-     
       String outputfile = wdir+filename+".out";
       final String actualCMD;
      
@@ -414,7 +412,22 @@ public class SshPSUClient extends Thread
       // run the application
       if(System.getProperty("debug") != null)
         System.out.println(actualCMD);
-      session.executeCommand(actualCMD);
+
+      try
+      {
+        session.executeCommand(actualCMD);
+      }
+      catch(IOException exp)
+      {
+        if(System.getProperty("debug") != null)
+        {
+          System.out.println("runBlastOrFasta() - 3");
+          exp.printStackTrace();
+        }
+      }
+
+      if(System.getProperty("debug") != null)
+        System.out.println("STARTED session "+filename);
 
       // Reading from the session InputStream
       StdoutStdErrHandler stdouth = new StdoutStdErrHandler(session, true);
@@ -437,8 +450,6 @@ public class SshPSUClient extends Thread
         ie.printStackTrace();
       }
        
-      sftp = getSftpClient();
- 
       if(System.getProperty("debug") != null)
       {
         // stdout & stderr
@@ -446,17 +457,10 @@ public class SshPSUClient extends Thread
         System.out.println("STDERR "+filename+"\n"+stderrh.getOutput());
       }
 
-//    ByteArrayOutputStream os = new ByteArrayOutputStream();
-//    sftp.get(outputfile, os);
-//    System.out.println(os.toString());
-
-      
       try
       {
+        sftp = getSftpClient();
         sftp.get(outputfile, filepath+".out");
-
-        if(System.getProperty("debug") != null)
-          System.out.println("GET SUCCESS "+filepath+".out");
       }
       catch(Exception ioe)
       {
@@ -466,20 +470,22 @@ public class SshPSUClient extends Thread
           ioe.printStackTrace();
         }
         rescue();
+        sftp = getSftpClient();
         sftp.get(outputfile, filepath+".out");
       }
 
+      if(System.getProperty("debug") != null)
+        System.out.println("GET SUCCESS "+filepath+".out");
 
       if(!keep)
       {
         sftp.rm(outputfile);
         sftp.rm(wdir+filename);
-        sftp.rm(outputfile+".err");
       }
-
+      sftp = getSftpClient();
+      sftp.rm(outputfile+".err");
       session.close();
     }
-    sftp.quit();
 
     return true;
   }
@@ -489,21 +495,42 @@ public class SshPSUClient extends Thread
   * Return an active SftpClient object
   *
   */
-  private SftpClient getSftpClient()
+  private synchronized SftpClient getSftpClient()
              throws IOException
   {
     SftpClient sftp;
+      
     try
     {
+      if(!ssh.hasActiveSftpClient())
+        return ssh.openSftpClient();
+
       sftp = ssh.getActiveSftpClient();
       return sftp;
     }
-    catch(IOException ioe)
+    catch(SshException sshe)
+    {
+      try
+      {
+        sftp = ssh.openSftpClient();
+        return sftp;
+      }
+      catch(IOException ioe)
+      {
+        if(System.getProperty("debug") != null)
+        {
+          System.out.println("getSftpClient() -- 2");
+          ioe.printStackTrace();
+        }
+        rescue();
+      }
+    }
+    catch(IOException ioe2)
     { 
       if(System.getProperty("debug") != null)
       {
         System.out.println("getSftpClient()");
-        ioe.printStackTrace();
+        ioe2.printStackTrace();
       }
       rescue();
     }
@@ -542,11 +569,16 @@ public class SshPSUClient extends Thread
         int read;
         while((read = in.read(buffer)) > 0)
           buff.append(new String(buffer, 0, read));
+
+        in.close();
       }
-      catch(IOException ioe){}
+      catch(Exception ioe)
+      {
+        ioe.printStackTrace();
+      }
     }
 
-    public String getOutput()
+    public synchronized String getOutput()
     {
       return buff.toString();
     }

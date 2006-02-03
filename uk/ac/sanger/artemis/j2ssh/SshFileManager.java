@@ -113,17 +113,19 @@ public class SshFileManager
   private SftpClient getSftpClient()
              throws IOException
   {
-    SftpClient sftp;
+    SftpClient sftp;  
     try
     {
+      if(!ssh.hasActiveSftpClient())
+        return ssh.openSftpClient(); 
+ 
       sftp = ssh.getActiveSftpClient();
-      return sftp;
+      return sftp; 
     }
     catch(IOException ioe)
-    {}
-    return ssh.openSftpClient();   
+    {} 
+    return ssh.openSftpClient();
   }
-
 
   /**
   *
@@ -134,18 +136,17 @@ public class SshFileManager
                     throws IOException
   {
     SftpClient sftp = getSftpClient();
+    Object list[] = null;
 
     try
     {
-      sftp.cd(remoteRootDir);
+      list = sftp.ls(remoteRootDir).toArray();     
     }
     catch(java.io.FileNotFoundException fnf)
     {
       return false;
     }
 
-    Object list[] = sftp.ls().toArray();
-    
     dir_list  = new Hashtable();
     file_list = new Hashtable(); 
 
@@ -153,8 +154,6 @@ public class SshFileManager
     {
       SftpFile sfile = (SftpFile)list[i];
       FileAttributes fat = sfile.getAttributes();
-//    String modTime = fat.getModTimeString();
-//    long modTime = fat.getModifiedTime().longValue()*1000;
 
       if(sfile.isDirectory() || sfile.isLink())
         dir_list.put(sfile.getFilename(), fat);
@@ -162,7 +161,6 @@ public class SshFileManager
       file_list.put(sfile.getFilename(), fat);
     }
      
-//  sftp.quit();
     return true;
   }
 
