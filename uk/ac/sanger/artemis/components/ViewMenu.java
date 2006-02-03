@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.5 2006-01-17 16:05:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.6 2006-02-03 09:33:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.*;
  *  A popup menu with viewing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: ViewMenu.java,v 1.5 2006-01-17 16:05:05 tjc Exp $
+ *  @version $Id: ViewMenu.java,v 1.6 2006-02-03 09:33:42 tjc Exp $
  **/
 
 public class ViewMenu extends SelectionMenu {
@@ -1237,6 +1237,7 @@ public class ViewMenu extends SelectionMenu {
             root_document.append (file_name),
             new FileDocument (new File (file_name)),
             new FileDocument (dir_name).append (file_name),
+            new FileDocument ( new File(System.getProperty("user.dir")) ).append(program_name).append (file_name)
           };
 
         for (int possible_document_index = 0 ;
