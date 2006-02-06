@@ -25,6 +25,18 @@
         <result property="value" column="value"/>
      </resultMap>
 
+    <resultMap id="select-feature-result" class="uk.ac.sanger.ibatis.Feature">
+   	<result property="id" column="id"/>
+        <result property="uniquename" column="uniquename"/>
+        <result property="name" column="name"/>
+        <result property="type_id" column="type_id"/>
+        <result property="length" column="length" nullValue="-999" />
+  	<result property="srcfeature_id" column="srcfeature_id" nullValue="-999" />
+        <result property="fmin" column="fmin" nullValue="-999" />
+        <result property="fmax" column="fmax" nullValue="-999" />
+        <result property="strand" column="strand" nullValue="0" />
+     </resultMap>
+
      <resultMap id="select-feature-sequence-result" class="uk.ac.sanger.ibatis.Feature">
         <result property="name" column="name"/>
         <result property="residues" column="residues"/>
@@ -130,4 +142,32 @@
        ORDER BY abbreviation
     </select>
 
+    <select id="getFeature" resultMap ="select-feature-result" parameterClass="uk.ac.sanger.ibatis.Feature">
+	 SELECT
+	 	$schema$.feature.feature_id AS id,
+	 	uniquename,
+		name,
+	 	$schema$.feature.type_id AS type_id,
+		seqlen AS length,
+	 	srcfeature_id,
+	 	fmin,
+	 	fmax,
+	 	strand
+	 FROM $schema$.feature
+	 LEFT JOIN $schema$.featureloc
+	 	ON $schema$.feature.feature_id=$schema$.featureloc.feature_id
+	 WHERE
+	 	<dynamic>
+             <isGreaterThan property="id" compareValue="0"> 
+               $schema$.feature.feature_id=$id$ AND
+             </isGreaterThan>
+	 		<isNotNull property="uniquename">                        
+               uniquename=#uniquename# AND
+             </isNotNull>
+             <isGreaterThan property="type_id" compareValue="0"> 
+               $schema$.feature.type_id=$type_id$ AND
+             </isGreaterThan>
+         </dynamic>
+         $schema$.feature.feature_id > 0
+    </select>
 </sqlMap> 

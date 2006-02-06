@@ -35,6 +35,8 @@ public class Feature
   /** feature id */
   private int id;
   /** id of the parent feature */
+  private int srcfeature_id;
+  /** id of the parent feature */
   private String object_id;
   /** time last changed */
   private Date timelastmodified;
@@ -44,8 +46,10 @@ public class Feature
   private int fmin;
   /** end position */
   private int fmax;
+  /** sequence length */
+  private int length;
   /** features unique name */
-  private String uniquename;
+  private String uniquename = null;
   /** features name */
   private String name;
   /** features residues */
@@ -130,6 +134,16 @@ public class Feature
     this.fmax = fmax;
   }
 
+  public int getLength()
+  {
+    return length;
+  }
+
+  public void setLength(int length)
+  {
+    this.length = length;
+  }
+
   public String getUniquename()
   {
     return uniquename;
@@ -198,6 +212,16 @@ public class Feature
   public void setAbbreviation(String abbreviation)
   {
     this.abbreviation = abbreviation;
+  }
+
+  public int getSrcfeature_id()
+  {
+    return srcfeature_id;
+  }
+
+  public void setSrcfeature_id(int srcfeature_id)
+  {
+    this.srcfeature_id = srcfeature_id;
   }
 
 }
