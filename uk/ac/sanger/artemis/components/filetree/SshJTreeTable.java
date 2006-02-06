@@ -344,16 +344,23 @@ public class SshJTreeTable extends JTable
     else if(source.getText().equals("Delete..."))
     {
       RemoteFileNode nodes[] = getSelectedNodes();
-      String sname = "";
+      String sname[] = new String[nodes.length];
       for(int i=0;i<nodes.length;i++)
-        sname = sname.concat(nodes[i].getServerName()+ls);
+        sname[i] = nodes[i].getServerName();
 
+      JList list = new JList(sname);
+      JScrollPane jsp = new JScrollPane(list);
       int n = JOptionPane.showConfirmDialog(null,
-             "Delete"+ls+sname+"?", "Delete "+sname,
+             jsp, "Delete "+nodes.length+" File(s)",
              JOptionPane.YES_NO_OPTION);
+
       if(n == JOptionPane.YES_OPTION)
+      {
+        frame.setCursor(cbusy);
         for(int i=0;i<nodes.length;i++)
           deleteNode(nodes[i]);
+        frame.setCursor(cdone);
+      }
     }
     else if(source.getText().equals("De-select All"))
       clearSelection();
@@ -424,8 +431,6 @@ public class SshJTreeTable extends JTable
   */
   private void deleteNode(final RemoteFileNode node)
   {
-    frame.setCursor(cbusy);
-
     boolean deleted = false;
     deleted = node.delete();
 
@@ -449,7 +454,6 @@ public class SshJTreeTable extends JTable
       SwingUtilities.invokeLater(deleteFileFromTree);
     }
 
-    frame.setCursor(cdone);
   }
 
 
