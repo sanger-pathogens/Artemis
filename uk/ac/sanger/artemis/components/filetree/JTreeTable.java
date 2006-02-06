@@ -370,12 +370,15 @@ public class JTreeTable extends JTable
     else if(source.getText().equals("Delete..."))
     {
       File fn[] = getSelectedFiles();
-      String names = "";
+      String[] names = new String[fn.length];
       for(int i=0; i<fn.length;i++)
-         names = names.concat(fn[i].getAbsolutePath()+"\n");
+        names[i] = fn[i].getAbsolutePath();  
+
+      JList list = new JList(names);
+      JScrollPane jsp = new JScrollPane(list);
       int n = JOptionPane.showConfirmDialog(null,
-                                 "Delete \n"+names+"?",
-                                 "Delete Files",
+                                 jsp,
+                                 "Delete "+fn.length+" Files",
                                  JOptionPane.YES_NO_OPTION);
 
       FileNode nodes[] = getSelectedNodes();
