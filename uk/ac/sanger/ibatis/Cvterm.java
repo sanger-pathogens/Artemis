@@ -30,6 +30,7 @@ public class Cvterm
 
   private long id;
   private String name;
+  private String cv_name;
 
   public long getId()
   {
@@ -49,5 +50,15 @@ public class Cvterm
   public void setName(String name)
   {
     this.name = name;
+  }
+
+  public String getCv_name()
+  {
+    return cv_name;
+  }
+
+  public void setCv_name(String name)
+  {
+    this.cv_name = name;
   }
 }

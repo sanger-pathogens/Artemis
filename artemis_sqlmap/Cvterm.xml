@@ -9,14 +9,25 @@
  
     <resultMap id="select-cvterm-names-result" class="uk.ac.sanger.ibatis.Cvterm">
    	<result property="id" column="cvterm_id"/>
-  	<result property="name" column="name"/>
+  	<result property="name" column="cvterm_name"/>
+        <result property="cv_name" column="cv_name"/>
      </resultMap>
 
     <!-- look up cvterms names and id -->
      <select id="getCvterm" resultMap="select-cvterm-names-result"> 
    	SELECT  
-	  cvterm.CVTERM_ID, cvterm.NAME
-        FROM cvterm, cv WHERE cv.cv_id = cvterm.cv_id
+	  cvterm.CVTERM_ID, cvterm.NAME as cvterm_name, cv.NAME as cv_name
+        FROM cvterm, cv
+        WHERE 
+            <dynamic>
+             <isNotNull property="name">
+               cvterm.name=#name# AND
+             </isNotNull>
+             <isNotNull property="cv_name">
+               cv.name=#cv_name# AND
+             </isNotNull>
+            </dynamic>
+	    cv.cv_id = cvterm.cv_id
      </select> 
  
 </sqlMap> 
