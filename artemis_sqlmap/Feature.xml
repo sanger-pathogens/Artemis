@@ -111,20 +111,6 @@
        WHERE residues notnull
     </select>
 
-    <select id="getResidueFeatures" parameterClass="java.util.List" resultMap="select-feature-with-residues-result">
-       SELECT 
-         abbreviation, 
-         name, 
-         feature_id, 
-         type_id 
-       FROM organism, feature WHERE
-         organism.organism_id=feature.organism_id AND
-         residues notnull
-         <iterate prepend="AND" conjunction="OR" open="(" close=")">
-           type_id=#[]#
-         </iterate>
-       ORDER BY abbreviation
-    </select>
 
     <select id="getSchemaResidueFeatures" parameterMap="schema-cvlist"
             resultMap="select-feature-with-residues-result">
