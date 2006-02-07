@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.17 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.18 2006-02-07 20:19:26 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -61,7 +61,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.17 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.18 2006-02-07 20:19:26 tjc Exp $
  **/
 
 public class FeatureEdit extends JFrame
@@ -362,6 +362,24 @@ public class FeatureEdit extends JFrame
                                        "with=UniProt:; date=" + result_buffer;
               qualifier_text_area.append("=\"" + go_string + "\"");
             } 
+            else if(qualifier_name.equals("controlled_curation"))
+            {
+              final java.util.Calendar calendar =
+                      java.util.Calendar.getInstance();
+
+              final Date current_time = calendar.getTime();
+
+              final java.text.SimpleDateFormat date_format =
+                  new java.text.SimpleDateFormat("yyyyMMdd");
+
+              final StringBuffer result_buffer = new StringBuffer();
+
+              date_format.format(current_time, result_buffer,
+                                 new java.text.FieldPosition(java.text.DateFormat.DATE_FIELD));
+
+              final String cc_string = "term=; db_xref=; date="+ result_buffer;
+              qualifier_text_area.append("=\"" + cc_string + "\"");
+            }
             else 
               qualifier_text_area.append ("=\"\"");
             break;
