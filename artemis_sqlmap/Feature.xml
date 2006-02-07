@@ -100,7 +100,7 @@
        WHERE feature_id=$id$
     </select>
 
-    <select id="getShema" resultClass="java.lang.String">
+    <select id="getSchema" resultClass="java.lang.String">
        SELECT schema_name FROM information_schema.schemata WHERE schema_name=schema_owner
          ORDER BY schema_name
     </select>

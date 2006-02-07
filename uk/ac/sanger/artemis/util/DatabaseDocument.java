@@ -908,7 +908,7 @@ public class DatabaseDocument extends Document
       DbSqlConfig.init(pfield);
       SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
 
-      List schema_list = sqlMap.queryForList("getShema", null);
+      List schema_list = sqlMap.queryForList("getSchema", null);
       Iterator it      = schema_list.iterator();
 
       while(it.hasNext())
