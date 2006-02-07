@@ -368,18 +368,6 @@ public class DatabaseDocument extends Document
    * Return a feature name given the feature_id.
    * 
    */
-  private String getFeatureNameIbatis(final Feature feature)
-      throws java.sql.SQLException
-  {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    return (String) sqlMap.queryForObject("getFeatureName", feature);
-  }
-
-  /**
-   * 
-   * Return a feature name given the feature_id.
-   * 
-   */
   private String getFeatureNameJdbc(String feature_id, Connection conn,
       String schema) throws java.sql.SQLException
   {
@@ -396,19 +384,14 @@ public class DatabaseDocument extends Document
   private ByteBuffer[] getGFFiBatis(String parentFeatureID, String schema)
       throws java.sql.SQLException
   {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-
-    Feature feature = new Feature();
-    feature.setId(Integer.parseInt(parentFeatureID));
-    feature.setSchema(schema);
-
-    List featList = sqlMap.queryForList("getGffLine", feature);
+    final int srcfeature_id = Integer.parseInt(parentFeatureID);
+    List featList = ConnectionIBatis.getGff(srcfeature_id, schema);
 
     ByteBuffer[] buffers = new ByteBuffer[types.length + 1];
     for(int i = 0; i < buffers.length; i++)
       buffers[i] = new ByteBuffer();
 
-    String parentFeature = getFeatureNameIbatis(feature);
+    String parentFeature = ConnectionIBatis.getFeatureName(srcfeature_id, schema);
     ByteBuffer this_buff;
 
     int feature_size = featList.size();
@@ -680,9 +663,8 @@ public class DatabaseDocument extends Document
 
     try
     {
-      SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+      List cvtem_list = ConnectionIBatis.getCvterm();
 
-      List cvtem_list = sqlMap.queryForList("getCvterm", null);
       Iterator it = cvtem_list.iterator();
 
       while(it.hasNext())
@@ -746,14 +728,9 @@ public class DatabaseDocument extends Document
   public ByteBuffer getSequenceIbatis(ByteBuffer buff, String schema)
       throws java.sql.SQLException
   {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    Feature feature = ConnectionIBatis.getSequence(Integer.parseInt(feature_id),
+                                      schema);
 
-    Feature feature = new Feature();
-    feature.setId(Integer.parseInt(feature_id));
-    feature.setSchema(schema);
-
-    feature = (Feature)sqlMap.queryForObject("getSequence", 
-                                              feature);
     buff.append("##FASTA\n>");
     buff.append(feature.getName());
     buff.append("\n");
@@ -906,26 +883,20 @@ public class DatabaseDocument extends Document
     try
     {
       DbSqlConfig.init(pfield);
-      SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
 
-      List schema_list = sqlMap.queryForList("getSchema", null);
+      List schema_list = ConnectionIBatis.getSchema();
       Iterator it      = schema_list.iterator();
 
       while(it.hasNext())
       {
         String schema = (String)it.next();
   
-        SchemaCVList schema_CVlist = new SchemaCVList();
-        schema_CVlist.setSchema(schema);
+        List list = ConnectionIBatis.getResidueType(schema);
          
-        List list = sqlMap.queryForList("getResidueType", schema);
         if(list.size() == 0)  // no residues for this organism
           continue;
 
-        schema_CVlist.setCvlist(list);
-
-        List list_residue_features = sqlMap.queryForList("getSchemaResidueFeatures",
-                                                         schema_CVlist);
+        List list_residue_features = ConnectionIBatis.getResidueFeatures(list, schema);
         Iterator it_residue_features = list_residue_features.iterator();
         while(it_residue_features.hasNext())
         {
