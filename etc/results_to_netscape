@@ -181,7 +181,8 @@ while (<IN_FILE>) {
     $summary_finished = 1;
   }
 
-  if (/^(?:(?:>?>?(?:[A-Z]+:)?)(\w+)|($GENEDB_PATTERN)) /) {
+  if (/^(?:(?:>?>?(?:[A-Z]+:)?)(\w+)|($GENEDB_PATTERN))|^(?:(?:>?>?(?:[A-Z]+:)?)(\w+)\\.\d+\s+) /) {
+
     $id = $1;
 
     if (!defined $id) {
@@ -202,10 +203,10 @@ while (<IN_FILE>) {
 
       s/$id/hyperlink_to_anchor($id)/ei;
 
-      if (!s/ $id/" " . hyperlink_id($id)/ei) {
+#     if (!s/ $id/" " . hyperlink_id($id)/ei) {
         # if the id occurs once in the line put a link at end of line
         s/$/"  LINK:" . hyperlink_id($id)/e;
-      }
+#     }
     }
   }
   print;
