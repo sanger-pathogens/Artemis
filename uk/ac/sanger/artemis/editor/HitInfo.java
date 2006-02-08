@@ -106,7 +106,13 @@ public class HitInfo
   {
     int ind1 = header.indexOf(" ");
     if(ind1 > -1)
+    {
       id = header.substring(0,ind1);
+
+      int indDot;
+      if( (indDot = id.indexOf(".")) > 5)
+        id = id.substring(0,indDot);
+    }
     else
       return;
 
@@ -149,7 +155,12 @@ public class HitInfo
   {
     int ind1 = header.indexOf(" ");
     if(ind1 > -1)
+    {
       id = header.substring(0,ind1);
+      int indDot;
+      if( (indDot = id.indexOf(".")) > 5)
+        id = id.substring(0,indDot);
+    }
     else
       return;
 

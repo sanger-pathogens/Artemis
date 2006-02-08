@@ -212,6 +212,7 @@ public class FastaTextPane extends JScrollPane
             sbuff.append(line+"\n");
   
             hit = new HitInfo(line,format);
+
             hitInfoCollection.add(hit);
           }
         }
@@ -226,7 +227,12 @@ public class FastaTextPane extends JScrollPane
 
           int ind = line.indexOf(" ");
           if(ind > -1)
+          {
             currentID = line.substring(1,ind);
+            int indDot;
+            if( (indDot = currentID.indexOf(".")) > 5)
+              currentID= currentID.substring(0,indDot);
+          }
 
           int ind2 = currentID.indexOf(":");
           if(ind2 > -1)
@@ -407,7 +413,11 @@ public class FastaTextPane extends JScrollPane
         {
           int ind = line.indexOf(" ");
           String currentID = line.substring(2,ind);
-          
+ 
+          int indDot;
+          if( (indDot = currentID.indexOf(".")) > 5)
+            currentID= currentID.substring(0,indDot);
+
           if(hi != null)
             hi.setEndPosition(textPosition);
 
