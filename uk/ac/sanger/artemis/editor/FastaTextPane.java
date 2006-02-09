@@ -804,7 +804,7 @@ public class FastaTextPane extends JScrollPane
     else
     {
       String cmd3[] = { "getz", "-f", "id",
-             "[libs={uniprot}-id:"+hit.getID()+"]>"+DB };
+             "[libs={uniprot}-acc:"+hit.getID()+"]>"+DB };
       ExternalApplication app = new ExternalApplication(cmd3,env,null);
       res = app.getProcessStdout();
     }
