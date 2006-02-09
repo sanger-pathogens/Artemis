@@ -317,6 +317,11 @@ public class Annotation extends JEditorPane
     String endStr = s.substring(ind2);
     String srscmd = DataCollectionPane.srs_url+"/wgetz?-e+["+midStr+"]";
 
+    // link to uniprot accession
+    if( (ind2 = srscmd.indexOf("UniProt:")) > -1)
+      srscmd = srscmd.substring(0,ind2+7)+"-acc:"+
+               srscmd.substring(ind2+8);
+
     return  startStr + "<a href=\""+srscmd+"\">" +
             midStr   + "</a>" + endStr;
   }

@@ -110,8 +110,16 @@ public class HitInfo
       id = header.substring(0,ind1);
 
       int indDot;
+      
       if( (indDot = id.indexOf(".")) > 5)
+      {
+        //
+        // uniprot fasta headers
+        // >pac.sv id desc
+        //
         id = id.substring(0,indDot);
+        acc = id;
+      }
     }
     else
       return;
@@ -129,7 +137,12 @@ public class HitInfo
 
     int ind2 = header.indexOf(" ",ind1+1);
     if(ind2 > -1)
-      acc = header.substring(ind1+1,ind2);
+    {
+      if(acc == null)
+        acc = header.substring(ind1+1,ind2);
+//    else
+//      id = header.substring(ind1+1,ind2);
+    }
     else
       return;
 
@@ -159,14 +172,26 @@ public class HitInfo
       id = header.substring(0,ind1);
       int indDot;
       if( (indDot = id.indexOf(".")) > 5)
+      {
+        //
+        // uniprot fasta headers
+        // >pac.sv id desc
+        //
         id = id.substring(0,indDot);
+        acc = id;
+      }
     }
     else
       return;
 
     int ind2 = header.indexOf(" ",ind1+1);
     if(ind2 > -1)
-      acc = header.substring(ind1+1,ind2);
+    {
+     if(acc == null)
+        acc = header.substring(ind1+1,ind2);
+//   else
+//      id = header.substring(ind1+1,ind2);
+    }
     else
       return;
 
