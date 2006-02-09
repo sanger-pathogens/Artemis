@@ -221,6 +221,16 @@ public class SshLogin
 
   /**
   *
+  * Get password field
+  *
+  */
+  public JPasswordField getJPasswordField()
+  {
+    return pfield;
+  }
+
+  /**
+  *
   * Set the login information.
   *
   */

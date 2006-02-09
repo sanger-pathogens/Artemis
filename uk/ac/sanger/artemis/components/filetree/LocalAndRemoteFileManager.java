@@ -86,44 +86,28 @@ public class LocalAndRemoteFileManager extends JFrame
     {
       final Box bdown = Box.createVerticalBox();
       JButton connect = new JButton("Connect");
+
       connect.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
         {
-          setCursor(new Cursor(Cursor.WAIT_CURSOR));
-   
-          final SshFileManager ssh_fm;
-
-          try
-          {
-            ssh_fm = new SshFileManager(ssh_login);
-          }
-          catch(NullPointerException npe)
-          {
-            setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            JOptionPane.showMessageDialog(LocalAndRemoteFileManager.this, 
-                                          "Check login details and try again.",
-                                          "Failed Login", JOptionPane.ERROR_MESSAGE);
-            return;
-          }
-          FileList flist = new FileList(ssh_fm);
-          remotePanel.remove(bdown);
-          int divider_loc = treePane.getDividerLocation();
-          setRemoteTree(flist, sshtree, remoteTree, remotePanel, 
-                        panelSize, remote_status_line);
-   
-          if(treePane.getOrientation() == JSplitPane.HORIZONTAL_SPLIT)
-            treePane.setBottomComponent(remotePanel);
-          else
-            treePane.setRightComponent(remotePanel);
-
-          treePane.setDividerLocation(divider_loc);
-
-          setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+          login(remotePanel, bdown, ssh_login, panelSize, 
+                local_status_line, remote_status_line);
         }
       });
  
       bdown.add(ssh_login.getLogin());
+      // listen to passwd field for return press
+      JPasswordField pwf = ssh_login.getJPasswordField();
+      pwf.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          login(remotePanel, bdown, ssh_login, panelSize, 
+                local_status_line, remote_status_line); 
+        }
+      });
+
       bdown.add(connect);
       int ypos = panelSize.height-connect.getPreferredSize().height;
       if(ypos>0)
@@ -165,14 +149,48 @@ public class LocalAndRemoteFileManager extends JFrame
     setVisible(true);
   }
 
+  private void login(JPanel remotePanel, Box bdown, SshLogin ssh_login,
+                     Dimension panelSize, JLabel local_status_line,
+                     JLabel remote_status_line)
+  {
+    setCursor(new Cursor(Cursor.WAIT_CURSOR));
+
+    final SshFileManager ssh_fm;
+    try
+    {
+      ssh_fm = new SshFileManager(ssh_login);
+    }
+    catch(NullPointerException npe)
+    {
+      setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      JOptionPane.showMessageDialog(LocalAndRemoteFileManager.this,
+                                    "Check login details and try again.",
+                                    "Failed Login", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+    FileList flist = new FileList(ssh_fm);
+    remotePanel.remove(bdown);
+    int divider_loc = treePane.getDividerLocation();
+    setRemoteTree(flist, sshtree, remoteTree, remotePanel,
+                  panelSize, remote_status_line);
+
+    if(treePane.getOrientation() == JSplitPane.HORIZONTAL_SPLIT)
+      treePane.setBottomComponent(remotePanel);
+    else
+      treePane.setRightComponent(remotePanel);
+
+    treePane.setDividerLocation(divider_loc);
+
+    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+  }
 
   private void setRemoteTree(final FileList flist, SshJTreeTable sshtree, 
                           JScrollPane remoteTree, JPanel remotePanel,
                           final Dimension panelSize, final JLabel remote_status_line)
   {
     sshtree = new SshJTreeTable(new FileSystemModel( 
-                                getRemoteDirectories(flist.pwd()), LocalAndRemoteFileManager.this),
-                                LocalAndRemoteFileManager.this);
+                      getRemoteDirectories(flist.pwd()), LocalAndRemoteFileManager.this),
+                      LocalAndRemoteFileManager.this);
     remoteTree = new JScrollPane(sshtree);
     remoteTree.setPreferredSize(panelSize);
     remoteTree.getViewport().setBackground(Color.white);
