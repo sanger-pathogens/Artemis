@@ -315,6 +315,8 @@ public class JTreeTable extends JTable
       node.getChildren( ((FileSystemModel)tree.getModel()).getFilter() );
       ((DefaultTreeModel)tree.getModel()).nodeStructureChanged(node);
       tree.repaint();
+      revalidate();
+      repaint();
       return;
     }
 
