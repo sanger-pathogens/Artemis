@@ -216,8 +216,12 @@ public class JTreeTable extends JTable
   private void refresh(FileNode node)
   {
     node.removeAllChildren();
+    node.reset();
+
     node.getChildren( ((FileSystemModel)tree.getModel()).getFilter() );
     ((DefaultTreeModel)tree.getModel()).nodeStructureChanged(node);
+    tree.revalidate();
+    tree.repaint();
   }
 
   public void refreshAll()
@@ -227,10 +231,6 @@ public class JTreeTable extends JTable
 
     Vector vnodes = new Vector();
     addChildren(vnodes, (FileNode)root, model);
-
-//  int vsize = vnodes.size();
-//  for(int i = 0; i<vsize; i++)
-//    addChildren(vnodes, (FileNode)vnodes.get(i), model);
 
     for(int i = 0; i<vnodes.size(); i++)
       refresh((FileNode)vnodes.get(i));
@@ -309,8 +309,10 @@ public class JTreeTable extends JTable
         node = (FileNode)node.getParent();
 
       node.removeAllChildren();
+      node.reset();
       node.getChildren( ((FileSystemModel)tree.getModel()).getFilter() );
       ((DefaultTreeModel)tree.getModel()).nodeStructureChanged(node);
+      tree.repaint();
       return;
     }
 

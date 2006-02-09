@@ -85,26 +85,39 @@ public class FileNode extends DefaultMutableTreeNode
                                             filename;
     }
 
+    private Object child_cache[];
+
     public Object[] getChildren(FileFilter filter)
     {
       if(!isDirectory())
         return null;
+
       File file = getFile();
       File[] children = file.listFiles(filter);
-        
-// sort into alphabetic order
+ 
       if(children == null)
         return null;
+      
+      if(child_cache != null &&
+         child_cache.length == children.length)
+        return child_cache;
 
+// sort into alphabetic order
       java.util.Arrays.sort(children);
-      Object[] child_nodes = new Object[children.length];
+      child_cache = new Object[children.length];
       for(int i=0; i < children.length; ++i)
       {
-        child_nodes[i] = new FileNode(children[i]);
-        ((FileNode)child_nodes[i]).setParent(this);
+        child_cache[i] = new FileNode(children[i]);
+        ((FileNode)child_cache[i]).setParent(this);
       }
-      return child_nodes;
+      return child_cache;
     }
+
+    public void reset()
+    {
+      child_cache = null;
+    }
+
 
 // Transferable
     public DataFlavor[] getTransferDataFlavors()
