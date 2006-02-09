@@ -92,15 +92,18 @@ public class FileNode extends DefaultMutableTreeNode
       if(!isDirectory())
         return null;
 
+      if(child_cache != null)
+        return child_cache;
+
       File file = getFile();
       File[] children = file.listFiles(filter);
  
       if(children == null)
         return null;
       
-      if(child_cache != null &&
-         child_cache.length == children.length)
-        return child_cache;
+//    if(child_cache != null &&
+//       child_cache.length == children.length)
+//      return child_cache;
 
 // sort into alphabetic order
       java.util.Arrays.sort(children);

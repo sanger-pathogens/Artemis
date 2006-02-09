@@ -221,7 +221,8 @@ public class JTreeTable extends JTable
     node.getChildren( ((FileSystemModel)tree.getModel()).getFilter() );
     ((DefaultTreeModel)tree.getModel()).nodeStructureChanged(node);
     tree.revalidate();
-    tree.repaint();
+    tree.repaint(); 
+    revalidate();
   }
 
   public void refreshAll()
@@ -236,7 +237,8 @@ public class JTreeTable extends JTable
       refresh((FileNode)vnodes.get(i));
     
     tree.revalidate();  
-    repaint();
+    repaint(); 
+    revalidate();
   }
 
   private void addChildren(Vector v, FileNode node, FileSystemModel model)
