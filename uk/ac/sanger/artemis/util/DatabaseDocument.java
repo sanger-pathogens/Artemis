@@ -31,6 +31,7 @@ import uk.ac.sanger.artemis.chado.ChadoTransaction;
 
 import java.sql.*;
 import java.io.*;
+import java.net.ConnectException;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
@@ -64,9 +65,11 @@ public class DatabaseDocument extends Document
 
   private Hashtable org2schema;
 
-  private String sqlLog = System.getProperty("user.home") +
-                          System.getProperty("file.separator") + 
-                          "art_sql_debug.log";
+  /** JDBC DAO */
+  private JdbcDAO jdbcDAO = null;
+
+  /** iBatis DAO */
+  private IBatisDAO connIB = null;
 
   private ByteBuffer[] gff_buffer;
 
@@ -273,15 +276,8 @@ public class DatabaseDocument extends Document
 
     try
     {
-      Connection conn = null;
-
-      if(!iBatis)
-        conn = getConnection();
-
-      if(iBatis)
-        gff_buffer = getGFFiBatis(feature_id, schema);
-      else
-        gff_buffer = getGFFJdbc(conn, feature_id, schema);
+      ChadoDAO dao = getDAO();
+      gff_buffer = getGff(dao, feature_id);
 
       ByteBuffer entry = new ByteBuffer();
       if(splitGFFEntry)
@@ -289,10 +285,7 @@ public class DatabaseDocument extends Document
         if(gff_buffer[0].size() > 0)
           entry.append(gff_buffer[0]);
 
-        if(iBatis)
-          getSequenceIbatis(entry, schema);
-        else
-          getSequence(conn, entry, schema);
+        getSequence(dao, entry);
       }
       else
       {
@@ -302,19 +295,10 @@ public class DatabaseDocument extends Document
             entry.append(gff_buffer[i]);
         }
 
-        if(iBatis)
-          getSequenceIbatis(entry, schema);
-        else
-          getSequence(conn, entry, schema);
+        getSequence(dao, entry);
       }
 
-      if(System.getProperty("debug") != null)
-        appendToLogFile(new String(entry.getBytes()), sqlLog);
-
       instream = new ByteArrayInputStream(entry.getBytes());
-
-      if(conn != null)
-        conn.close();
       return instream;
     }
     catch(java.sql.SQLException sqlExp)
@@ -364,34 +348,21 @@ public class DatabaseDocument extends Document
   }
 
   /**
-   * 
-   * Return a feature name given the feature_id.
-   * 
+   *
+   * Create an array of GFF-like lines
+   *
    */
-  private String getFeatureNameJdbc(String feature_id, Connection conn,
-      String schema) throws java.sql.SQLException
-  {
-    Statement st = conn.createStatement();
-
-    String sql = "SELECT name FROM " + schema + ".feature WHERE feature_id= " +
-                  feature_id;
-    appendToLogFile(sql, sqlLog);
-    ResultSet rs = st.executeQuery(sql);
-    rs.next();
-    return rs.getString("name");
-  }
-
-  private ByteBuffer[] getGFFiBatis(String parentFeatureID, String schema)
-      throws java.sql.SQLException
+  private ByteBuffer[] getGff(ChadoDAO dao, String parentFeatureID)
+                       throws java.sql.SQLException
   {
     final int srcfeature_id = Integer.parseInt(parentFeatureID);
-    List featList = ConnectionIBatis.getGff(srcfeature_id, schema);
+    List featList = dao.getGff(srcfeature_id, schema);
 
     ByteBuffer[] buffers = new ByteBuffer[types.length + 1];
     for(int i = 0; i < buffers.length; i++)
       buffers[i] = new ByteBuffer();
 
-    String parentFeature = ConnectionIBatis.getFeatureName(srcfeature_id, schema);
+    String parentFeature = dao.getFeatureName(srcfeature_id, schema);
     ByteBuffer this_buff;
 
     int feature_size = featList.size();
@@ -416,11 +387,10 @@ public class DatabaseDocument extends Document
       long prop_type_id       = feat.getProp_type_id();
       int strand              = feat.getStrand();
       String name             = feat.getUniquename();
-      String typeName         = getCvtermName(null, type_id);
-      String propTypeName     = getCvtermName(null, prop_type_id);
+      String typeName         = getCvtermName(type_id);
+      String propTypeName     = getCvtermName(prop_type_id);
       String timelastmodified = feat.getTimelastmodified().toString();
       String feature_id       = Integer.toString(feat.getId());
-
 
       String parent_id = feat.getObject_id();
       if(parent_id != null && id_store.containsKey(parent_id))
@@ -466,7 +436,7 @@ public class DatabaseDocument extends Document
       // is the next line part of the same feature, if so merge
       boolean rewind = false;
       Feature featNext = null;
-
+    
       if(i < feature_size - 1)
         featNext = (Feature)featList.get(i + 1);
 
@@ -474,7 +444,7 @@ public class DatabaseDocument extends Document
       while(featNext != null && featNext.getUniquename().equals(name))
       {
         prop_type_id = featNext.getProp_type_id();
-        propTypeName = getCvtermName(null, prop_type_id);
+        propTypeName = getCvtermName(prop_type_id);
         value = GFFStreamFeature.encode(featNext.getValue());
         this_buff.append(";" + propTypeName + "=" + value);
         i++;
@@ -490,140 +460,7 @@ public class DatabaseDocument extends Document
     }
 
     return buffers;
-  }
 
-  /**
-   * 
-   * Given a parent (chromosome, contig, supercontig) retrieve the features in
-   * the form of a GFF stream.
-   * 
-   */
-  private ByteBuffer[] getGFFJdbc(Connection conn, String parentFeatureID,
-                                  String schema) 
-          throws java.sql.SQLException
-  {
-    Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-        ResultSet.CONCUR_UPDATABLE);
-
-    String sql = "SELECT timelastmodified, feature.feature_id, object_id, strand, fmin, fmax, uniquename, "
-        + schema + ".feature.type_id, "
-        + schema + ".featureprop.type_id AS prop_type_id, featureprop.value"
-        + " FROM  "
-        + schema + ".featureloc, "
-        + schema + ".feature"
-        + " LEFT JOIN "
-        + schema + ".feature_relationship ON "
-        + schema + ".feature_relationship.subject_id="
-        + schema + ".feature.feature_id"
-        + " LEFT JOIN "
-        + schema + ".featureprop ON "
-        + schema + ".featureprop.feature_id="
-        + schema + ".feature.feature_id"
-        + " WHERE srcfeature_id = "
-        + parentFeatureID + " AND "
-        + schema + ".featureloc.feature_id="
-        + schema + ".feature.feature_id"
-        + " AND ("
-        + schema + ".featureloc.rank="
-        + schema + ".feature_relationship.rank OR "
-        + schema + ".feature_relationship.rank IS NULL)"
-        + " ORDER BY "
-        + schema + ".feature.type_id, uniquename";
-
-    appendToLogFile(sql, sqlLog);
-    ResultSet rs = st.executeQuery(sql);
-
-    ByteBuffer[] buffers = new ByteBuffer[types.length + 1];
-    for(int i = 0; i < buffers.length; i++)
-      buffers[i] = new ByteBuffer();
-
-    String parentFeature = getFeatureNameJdbc(parentFeatureID, conn, schema);
-    Hashtable id_store = new Hashtable();
-
-    ByteBuffer this_buff;
-
-    while(rs.next())
-    {
-      String name       = rs.getString("uniquename");
-      String feature_id = rs.getString("feature_id");
-
-      id_store.put(feature_id, name);
-    }
-
-    rs.first();
-    while(rs.next())
-    {
-      int fmin                = rs.getInt("fmin") + 1;
-      int fmax                = rs.getInt("fmax");
-      long type_id            = rs.getLong("type_id");
-      long prop_type_id       = rs.getLong("prop_type_id");
-      int strand              = rs.getInt("strand");
-      String name             = rs.getString("uniquename");
-      String typeName         = getCvtermName(conn, type_id);
-      String propTypeName     = getCvtermName(conn, prop_type_id);
-      String timelastmodified = rs.getString("timelastmodified");
-      String feature_id       = rs.getString("feature_id");
-
-      String parent_id = rs.getString("object_id");
-      if(parent_id != null && id_store.containsKey(parent_id))
-        parent_id = (String)id_store.get(parent_id);
-
-      // make gff format
-
-      // select buffer
-      this_buff = buffers[types.length];
-      for(int i = 0; i < types.length; i++)
-      {
-        if(types[i].equals(typeName))
-          this_buff = buffers[i];
-      }
-
-      this_buff.append(parentFeature + "\t"); // seqid
-      this_buff.append("chado\t");            // source
-      this_buff.append(typeName + "\t");      // type
-      this_buff.append(fmin + "\t");          // start
-      this_buff.append(fmax + "\t");          // end
-      this_buff.append(".\t");                // score
-      if (strand == -1)                       // strand
-        this_buff.append("-\t");
-      else if (strand == 1)
-        this_buff.append("+\t");
-      else
-        this_buff.append(".\t");
-
-      this_buff.append(".\t");               // phase
-      this_buff.append("ID=" + name + ";");
-
-      if(parent_id != null)
-        this_buff.append("Parent=" + parent_id + ";");
-
-      this_buff.append("timelastmodified=" + timelastmodified + ";");
-
-      String value = "";
-      if(rs.getString("value") != null)
-        value = GFFStreamFeature.encode(rs.getString("value"));
-
-      this_buff.append(propTypeName + "=" + value); // attributes
-
-      // is the next line part of the same feature, if so merge
-      boolean rewind = false;
-      while((rewind = rs.next()) && rs.getString("uniquename").equals(name))
-      {
-        prop_type_id = rs.getLong("prop_type_id");
-        propTypeName = getCvtermName(conn, prop_type_id);
-        value = GFFStreamFeature.encode(rs.getString("value"));
-        this_buff.append(";" + propTypeName + "=" + value);
-      }
-
-      if(rewind)
-        rs.previous();
-
-      this_buff.append("\n");
-
-      progress_listener.progressMade("Read from database: " + name);
-    }
-
-    return buffers;
   }
 
   public static Long getCvtermID(String name)
@@ -639,32 +476,44 @@ public class DatabaseDocument extends Document
     // return new Long("-1.");
   }
 
-  private String getCvtermName(Connection conn, long id)
+  /**
+   *
+   * Lookup a cvterm name from the collection of cvterms.
+   *
+   */
+  private String getCvtermName(long id)
   {
     if(cvterm == null)
     {
-      if(iBatis)
-        getCvtermIbatis(null);
-      else
-        getCvterm(conn, null);
+      try
+      {
+        getCvterm(getDAO());
+      }
+      catch(ConnectException ce)
+      {
+        ce.printStackTrace();
+      }
+      catch(SQLException sqle)
+      {
+        sqle.printStackTrace();
+      }
     }
 
     return (String)cvterm.get(new Long(id));
   }
 
   /**
-   * 
+   *
    * Look up cvterms names and id and return in a hashtable.
-   * 
+   *
    */
-  private Hashtable getCvtermIbatis(String cv_name)
+  private Hashtable getCvterm(ChadoDAO dao)
   {
     cvterm = new Hashtable();
 
     try
     {
-      List cvtem_list = ConnectionIBatis.getCvterm();
-
+      List cvtem_list = dao.getCvterm();
       Iterator it = cvtem_list.iterator();
 
       while(it.hasNext())
@@ -682,54 +531,11 @@ public class DatabaseDocument extends Document
     return cvterm;
   }
 
-  /**
-   * 
-   * Look up cvterms names and id and return in a hashtable.
-   * 
-   */
-  private Hashtable getCvterm(Connection conn, String cv_name)
+  private ByteBuffer getSequence(ChadoDAO dao, ByteBuffer buff)
+                     throws java.sql.SQLException
   {
-    String sql = "SELECT cvterm.cvterm_id, cvterm.name " +
-                 "FROM cvterm, cv WHERE cv.cv_id = cvterm.cv_id";
-
-    if(cv_name != null)
-      sql = sql + " AND cv.name='" + cv_name + "'";
-
-    appendToLogFile(sql, sqlLog);
-
-    cvterm = new Hashtable();
-
-    try
-    {
-      Statement s = conn.createStatement();
-      ResultSet rs = s.executeQuery(sql);
-
-      while(rs.next())
-      {
-        long id = rs.getLong("cvterm_id");
-        String name = rs.getString("name");
-
-        if(cvterm.get(name) != null)
-          System.err.println(this.getClass()
-              + ": WARNING - read multiple CvTerms with name = '" + name + "'");
-
-        cvterm.put(new Long(id), name);
-      }
-    }
-    catch(SQLException sqle)
-    {
-      System.err.println(this.getClass() + ": SQLException retrieving CvTerms");
-      System.err.println(sqle);
-    }
-
-    return cvterm;
-  }
-
-  public ByteBuffer getSequenceIbatis(ByteBuffer buff, String schema)
-      throws java.sql.SQLException
-  {
-    Feature feature = ConnectionIBatis.getSequence(Integer.parseInt(feature_id),
-                                      schema);
+    Feature feature = dao.getSequence(Integer.parseInt(feature_id),
+                                         schema);
 
     buff.append("##FASTA\n>");
     buff.append(feature.getName());
@@ -738,173 +544,47 @@ public class DatabaseDocument extends Document
     return buff;
   }
 
-  public ByteBuffer getSequence(Connection conn, ByteBuffer buff, String schema)
-      throws java.sql.SQLException
-  {
-    Statement st = conn.createStatement();
-    String sql = "SELECT name, residues from " + schema +
-                 ".feature where feature_id = '" + feature_id + "'";
-
-    appendToLogFile(sql, sqlLog);
-
-    ResultSet rs = st.executeQuery(sql);
-    rs.next();
-
-    buff.append("##FASTA\n>");
-    buff.append(rs.getBytes("name"));
-    buff.append("\n");
-    buff.append(rs.getBytes("residues"));
-    return buff;
-
-    // return "##FASTA\n>" + name + "\n" + rs.getString("residues");
-  }
-
-  public Hashtable getDatabaseEntries()
-  {
-    if(iBatis)
-      return getDatabaseEntriesIbatis();
-    else
-      return getDatabaseEntriesJdbc();
-  }
-
   public Hashtable getSchemaEntries()
   {
     return org2schema;
   }
 
-  /**
-   * 
-   * Create a hashtable of the available entries.
-   * 
-   */
-  private Hashtable getDatabaseEntriesJdbc()
-  {
-    db = new Hashtable();
-    organism = new Vector();
-    org2schema = new Hashtable();
-
-    try
-    {
-      Connection conn = getConnection();
-      System.out.println("JDBC Connection");
-
-      Statement st = conn.createStatement();
-
-      String query = "SELECT schema_name FROM information_schema.schemata "+ 
-                     "WHERE schema_name=schema_owner ORDER BY schema_name";
-      appendToLogFile(query, sqlLog);
-
-      ResultSet rs = st.executeQuery(query);
-      Vector schemas = new Vector();
-
-      while(rs.next())
-        schemas.add(rs.getString("schema_name"));
-      
-      for(int i = 0; i < schemas.size(); i++)
-      {
-        String schema = (String)schemas.get(i);
-        appendToLogFile(schema, sqlLog);
-
-        String sql = "SELECT DISTINCT type_id FROM " + schema +
-                     ".feature WHERE residues notnull";
-        appendToLogFile(sql, sqlLog);
-
-        Vector cvterm_id = new Vector();
-        rs = st.executeQuery(sql);
-
-        while(rs.next())
-          cvterm_id.add(rs.getString("type_id"));
-
-        if(cvterm_id.size() == 0)  // no residues for this organism
-          continue;
-
-        sql = new String(
-            "SELECT abbreviation, name, feature_id, type_id FROM organism, "+
-            schema + ".feature WHERE (");
-
-        for(int j = 0; j < cvterm_id.size(); j++)
-        {
-          sql = sql + " type_id = " + (String)cvterm_id.get(j);
-          if(j < cvterm_id.size() - 1)
-            sql = sql + " OR ";
-        }
-
-        sql = sql + ") and organism.organism_id=" + schema
-            + ".feature.organism_id " + "and residues notnull "
-            + "ORDER BY abbreviation";
-
-        appendToLogFile(sql, sqlLog);
-
-        rs = st.executeQuery(sql);
-        while(rs.next())
-        {
-          String org      = rs.getString("abbreviation");
-          String typeName = getCvtermName(conn, rs.getLong("type_id"));
-          db.put(org + " - " + typeName + " - " + rs.getString("name"), 
-                 rs.getString("feature_id"));
-          if(!organism.contains(org))
-            organism.add(org);
-          if(!org2schema.containsKey(org))
-          {
-            org2schema.put(org, schema);
-          }
-        }
-      }
-      conn.close();
-    }
-    catch(java.sql.SQLException sqlExp)
-    {
-      JOptionPane.showMessageDialog(null, "SQL Problems...", "SQL Error",
-                                    JOptionPane.ERROR_MESSAGE);
-      sqlExp.printStackTrace();
-    }
-    catch (java.net.ConnectException conn)
-    {
-      JOptionPane.showMessageDialog(null, "Problems connecting...",
-                                    "Database Connection Error - Check Server",
-                                    JOptionPane.ERROR_MESSAGE);
-      conn.printStackTrace();
-    }
-
-    return db;
-  }
 
   /**
-   * 
+   *
    * Create a hashtable of the available entries.
    * 
-   */
-  private Hashtable getDatabaseEntriesIbatis()
+   */ 
+  public Hashtable getDatabaseEntries()
   {
     db = new Hashtable();
-    organism = new Vector();
-    org2schema = new Hashtable();
-
+    organism = new Vector(); 
+    org2schema = new Hashtable(); 
+ 
     try
     {
-      DbSqlConfig.init(pfield);
-
-      List schema_list = ConnectionIBatis.getSchema();
+      ChadoDAO dao = getDAO();
+      List schema_list = dao.getSchema();
       Iterator it      = schema_list.iterator();
 
       while(it.hasNext())
       {
         String schema = (String)it.next();
   
-        List list = ConnectionIBatis.getResidueType(schema);
+        List list = dao.getResidueType(schema);
          
         if(list.size() == 0)  // no residues for this organism
           continue;
 
-        List list_residue_features = ConnectionIBatis.getResidueFeatures(list, schema);
+        List list_residue_features = dao.getResidueFeatures(list, schema);
         Iterator it_residue_features = list_residue_features.iterator();
         while(it_residue_features.hasNext())
         {
           Feature feature = (Feature)it_residue_features.next();
           String org      = feature.getAbbreviation();
-          String typeName = getCvtermName(null, feature.getType_id());
+          String typeName = getCvtermName(feature.getType_id());
 
-          db.put(org + " - " + typeName + " - " + feature.getName(), 
+          db.put(org + " - " + typeName + " - " + feature.getName(),
                  Integer.toString(feature.getId()));
           if(!organism.contains(org))
             organism.add(org);
@@ -913,6 +593,10 @@ public class DatabaseDocument extends Document
         }
       }
     }
+    catch(ConnectException ce)
+    {
+      ce.printStackTrace();
+    }
     catch(java.sql.SQLException sqlExp)
     {
       JOptionPane.showMessageDialog(null, "SQL Problems...", "SQL Error",
@@ -921,6 +605,7 @@ public class DatabaseDocument extends Document
     }
     return db;
   }
+
 
   public Vector getOrganism()
   {
@@ -936,6 +621,11 @@ public class DatabaseDocument extends Document
   public Connection getConnection() throws java.sql.SQLException,
       java.net.ConnectException
   {
+//  if(!iBatis)
+//    jdbcDAO = new JdbcDAO((String)getLocation(), pfield);
+//  else
+//    connIB = new IBatisDAO(pfield);
+
     String location = (String)getLocation();
     if(pfield == null || pfield.getPassword().length == 0)
       return DriverManager.getConnection(location);
@@ -946,6 +636,30 @@ public class DatabaseDocument extends Document
                                        location.substring(index + 6),
                                        new String(pfield.getPassword()));
   }
+
+  /**
+   *
+   * Get the data access object (DAO).
+   * @return data access object
+   *
+   */
+  private ChadoDAO getDAO()
+     throws java.net.ConnectException, SQLException
+  {
+    if(!iBatis)
+    {
+      if(jdbcDAO == null)
+       jdbcDAO = new JdbcDAO((String)getLocation(), pfield); 
+      return jdbcDAO;
+    }
+    else
+    {
+      if(connIB == null)
+        connIB = new IBatisDAO(pfield);
+      return connIB;
+    }
+  }
+
 
   /**
    * Create a new OutputStream object from this Document. The contents of the
@@ -960,48 +674,6 @@ public class DatabaseDocument extends Document
     throw new ReadOnlyException("this Database Document can not be written to");
   }
 
-  /**
-   * 
-   * Appends a log entry to the log file
-   * 
-   * @param logEntry
-   *          entry to add to log file
-   * @param logFileName
-   *          log file name
-   * 
-   */
-  private void appendToLogFile(String logEntry, String logFileName)
-  {
-    if(System.getProperty("debug") == null)
-      return;
-
-    BufferedWriter bw = null;
-    try
-    {
-      String dat = new java.util.Date().toString();
-      bw = new BufferedWriter(new FileWriter(logFileName, true));
-      bw.write(dat + ":: " + logEntry);
-      bw.newLine();
-      bw.flush();
-    }
-    catch(Exception ioe)
-    {
-      System.out.println("Error writing to log file " + logFileName);
-      ioe.printStackTrace();
-    }
-    finally
-    // always close the file
-    {
-      if(bw != null)
-        try
-        {
-          bw.close();
-        }
-        catch(IOException ioe2)
-        {
-        }
-    }
-  }
 
   public void commit(Vector sql)
   {
