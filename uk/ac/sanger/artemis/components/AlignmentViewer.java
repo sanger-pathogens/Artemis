@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.40 2006-01-20 16:46:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.41 2006-02-14 11:47:25 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import java.io.IOException;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.40 2006-01-20 16:46:17 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.41 2006-02-14 11:47:25 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -1919,13 +1919,21 @@ public class AlignmentViewer extends CanvasPanel
   protected Vector getDifferenceCoords(boolean subject)
   {
     final int length;
+    final boolean flipped;
 
     if(subject)
-      length = getSubjectForwardStrand().getSequenceLength();
+    {
+      flipped = subjectIsRevComp();
+      length  = getSubjectForwardStrand().getSequenceLength();
+    }
     else
-      length = getQueryForwardStrand().getSequenceLength();
+    {
+      flipped = queryIsRevComp();
+      length  = getQueryForwardStrand().getSequenceLength();
+    }
 
-    AlignMatchComparator comparator = new AlignMatchComparator(subject);
+    AlignMatchComparator comparator = new AlignMatchComparator(subject, length,
+                                                               flipped);
 
     int imatch = 0;
     final AlignMatch[] sorted_all_matches = new AlignMatch[all_matches.length];   
@@ -1944,7 +1952,7 @@ public class AlignmentViewer extends CanvasPanel
     // find & record regions of no match
     for(int i = 0; i < imatch; ++i)
     {
-      Integer coords[] = new Integer[2];
+      Integer coords[];
       final AlignMatch this_match = sorted_all_matches[i];
 
       if(this_match == null)
@@ -1955,13 +1963,17 @@ public class AlignmentViewer extends CanvasPanel
 
       if(subject)
       {
-        this_start = this_match.getSubjectSequenceStart();
-        this_end   = this_match.getSubjectSequenceEnd();
+        this_start = getRealSubjectSequenceStart(this_match,
+                                                 length, flipped);
+        this_end   = getRealSubjectSequenceEnd(this_match,
+                                               length, flipped);
       }
       else
       {
-        this_start = this_match.getQuerySequenceStart();
-        this_end   = this_match.getQuerySequenceEnd();
+        this_start = getRealQuerySequenceStart(this_match,
+                                               length, flipped);
+        this_end   = getRealQuerySequenceEnd(this_match,
+                                             length, flipped);
       }
 
       if(this_start > this_end)
@@ -1973,6 +1985,7 @@ public class AlignmentViewer extends CanvasPanel
 
       if(i == 0 && this_start > 1)
       {
+        coords = new Integer[2];
         coords[0] = new Integer(start);
         coords[1] = new Integer(this_start-1);
         differences.add(coords);
@@ -1998,13 +2011,13 @@ public class AlignmentViewer extends CanvasPanel
 
           if(subject)
           {
-            jstart = next_match.getSubjectSequenceStart();
-            jend   = next_match.getSubjectSequenceEnd();
+            jstart = getRealSubjectSequenceStart(next_match, length, flipped);
+            jend   = getRealSubjectSequenceEnd(next_match, length, flipped);
           }
           else
           {
-            jstart = next_match.getQuerySequenceStart();
-            jend   = next_match.getQuerySequenceEnd();
+            jstart = getRealQuerySequenceStart(next_match, length, flipped);
+            jend   = getRealQuerySequenceEnd(next_match, length, flipped);
           }
 
           if(jend < jstart)
@@ -2016,6 +2029,7 @@ public class AlignmentViewer extends CanvasPanel
 
         if(next_start > start+1)
         {
+          coords = new Integer[2];
           coords[0] = new Integer(start+1);
           coords[1] = new Integer(next_start-1);
           differences.add(coords);
@@ -2025,11 +2039,13 @@ public class AlignmentViewer extends CanvasPanel
               this_end < length &&
               start+1 < length)
       {
+        coords = new Integer[2];
         coords[0] = new Integer(start+1);
         coords[1] = new Integer(length);
         differences.add(coords);
       }
     }
+
     return differences;
   }
 
@@ -2346,9 +2362,15 @@ public class AlignmentViewer extends CanvasPanel
   public class AlignMatchComparator implements Comparator
   {
     final private boolean subject;
-    public AlignMatchComparator(boolean subject)
+    final private int length;
+    final private boolean flipped;
+
+    public AlignMatchComparator(boolean subject, int length,
+                                boolean flipped)
     {
       this.subject = subject;
+      this.length  = length;
+      this.flipped = flipped;
     }
 
     public int compare(Object o1,Object o2) throws ClassCastException
@@ -2374,25 +2396,25 @@ public class AlignmentViewer extends CanvasPanel
     
       if(subject)
       {
-        start1   = c1.getSubjectSequenceStart();
-        int end1 = c1.getSubjectSequenceEnd();
+        start1   = getRealSubjectSequenceStart(c1, length, flipped);
+        int end1 = getRealSubjectSequenceEnd(c1, length, flipped);
         if(end1 < start1)
           start1 = end1;
 
-        start2   = c2.getSubjectSequenceStart();
-        int end2 = c2.getSubjectSequenceEnd();
+        start2   = getRealSubjectSequenceStart(c2, length, flipped);
+        int end2 = getRealSubjectSequenceEnd(c2, length, flipped);
         if(end2 < start2)
           start2 = end2;
       }
       else
       {
-        start1   = c1.getQuerySequenceStart();   
-        int end1 = c1.getQuerySequenceEnd();
+        start1   = getRealQuerySequenceStart(c1, length, flipped);
+        int end1 = getRealQuerySequenceEnd(c1, length, flipped);
         if(end1 < start1)
           start1 = end1;
 
-        start2   = c2.getQuerySequenceStart();
-        int end2 = c2.getQuerySequenceEnd();
+        start2   = getRealQuerySequenceStart(c2, length, flipped);
+        int end2 = getRealQuerySequenceEnd(c2, length, flipped);
         if(end2 < start2)
           start2 = end2;
       }
