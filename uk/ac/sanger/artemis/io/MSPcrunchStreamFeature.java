@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/MSPcrunchStreamFeature.java,v 1.5 2005-12-16 13:55:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/MSPcrunchStreamFeature.java,v 1.6 2006-02-14 13:04:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import java.io.*;
  *  A StreamFeature that thinks it is a MSPcrunch feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: MSPcrunchStreamFeature.java,v 1.5 2005-12-16 13:55:21 tjc Exp $
+ *  @version $Id: MSPcrunchStreamFeature.java,v 1.6 2006-02-14 13:04:42 tjc Exp $
  **/
 
 public class MSPcrunchStreamFeature
@@ -157,14 +157,14 @@ public class MSPcrunchStreamFeature
       final boolean crunch_x;
       final boolean complement_flag;
       
-      if (line_bits[1].equals ("(+1)")) 
+      if (line_bits[1].startsWith("(+")) 
       {
         crunch_x = true;
         complement_flag = false;
       } 
       else 
       {
-        if (line_bits[1].equals ("(-1)")) 
+        if (line_bits[1].startsWith("(-")) 
         {
           crunch_x = true;
           complement_flag = true;
@@ -181,10 +181,11 @@ public class MSPcrunchStreamFeature
               complement_flag = false;
             
           } 
+          
           else 
           {
             final String message =
-              "invalid MSPcrunch line - column 3 should be a " +
+              "invalid MSPcrunch line - column 2 should be a " +
               "number, (-1) or (+1): " + line;
             throw new ReadFormatException (message);
           }
