@@ -110,10 +110,20 @@ the sequence.
     </PARA>
   </SECT2>
 
+  <SECT2 ID="SELECTMENU-ALLFEATURES-NONMATCHING-REGIONS">
+    <TITLE>Select All Features in Non-matching Regions</TITLE>
+    <PARA>
+Select all features that have no corresponding match in ACT. This is used to
+higlight regions that are different between sets of sequence. It will only take 
+into account matches that have not been filtered out using the score, identity 
+or length cut-off.
+    </PARA>
+  </SECT2>
+
   <SECT2 ID="SELECTMENU-NONE">
     <TITLE>None</TITLE>
     <PARA>
-Reset the selection so that nothing is selected.  [shortcut key: N]
+Clear the selection so that nothing is selected.  [shortcut key: N]
     </PARA>
   </SECT2>
 
@@ -1055,6 +1065,19 @@ Reverse and complement the sequence and all the features in all the entries
     </PARA>
   </SECT2>
 
+  <SECT2 ID="EDITMENU-REVERSE-AND-COMPLEMENT-CONTIG"> 
+    <TITLE>Reverse And Complement Selected Contig</TITLE>
+    <PARA>
+Reverse and complement the sequence and all the features in a selected 
+contig feature. If this option is used in ACT then all the matches within the contig are
+also reversed. Any matches extending past the boundary of the contig are
+deleted. The changes to the comparison file can be saved by right clicking
+in the comparison window and selecting "Save Comparison File...". However,
+ideally the comparison between the two sequences should be recalculated.
+    </PARA>
+  </SECT2>
+
+
   <SECT2 ID="EDITMENU-DELETE-SELECTED-BASES">
     <TITLE>Delete Selected Bases</TITLE>
     <PARA>
@@ -1081,6 +1104,27 @@ Prompt the user for the name of a file containing the bases to insert just
 before the selected bases.
     </PARA>
   </SECT2>
+
+  <SECT2 ID="EDITMENU-CONTIG-REORDERING">
+    <TITLE>Contig Reordering ...</TITLE>
+    <PARA>
+Opens a 'Contig Tool' displaying contigs, i.e. with feature keys 'fasta_record'
+or 'contig'. The former being created automatically for each sequence when a 
+mutiple fasta sequence file is read in. The contigs in this tool can then individually 
+be selected and dragged and dropped to another location. In this way the order
+of contigs and features within a contig can be changed. 
+    </PARA>
+    <PARA>
+If this is used in ACT then the matches are also reordered with respect to the 
+change in the sequence. If a match spans the boundary of a contig that is being
+moved then if possible it is split. In some situations where there is a match
+with 'indels' then this is not possible and the match is deleted. The changes to 
+the comparison file can be saved by right clicking in the comparison window and 
+selecting "Save Comparison File...". However, ideally the comparison between the 
+two sequences should be recalculated.
+    </PARA>
+  </SECT2>
+
 </SECT1>
 
 <SECT1 ID="CREATEMENU">
@@ -1106,6 +1150,14 @@ Create a new feature in the default entry with a key of "misc_feature", no
 qualifiers and a location that exactly matches the selected range of bases.
 If no bases are selected an error will be reported.
 [shortcut key: C]
+    </PARA>
+  </SECT2>
+
+  <SECT2 ID="CREATEMENU-CREATE-FEATURES-FROM-NON-MATCHING-REGIONS">
+    <TITLE>Create Features From Non-matching Regions</TITLE>
+    <PARA>
+Create features in ACT spanning all the regions where a match is not to be
+found.
     </PARA>
   </SECT2>
 
