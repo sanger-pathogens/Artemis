@@ -108,7 +108,7 @@ are shown and can be navigated.
         <TITLE>Open SSH File Manager ...</TITLE>
         <PARA>
 This opens a window displaying a local file manager at the top and login
-options to access a remote file systemn via Secure Shell (SSH). When the
+options to access a remote file system via Secure Shell (SSH). When the
 login details are typed in and 'Connect' pressed the bottom half of the 
 window will display the other (remote) file system. 
         </PARA>
