@@ -73,7 +73,8 @@ java -classpath .:./lib/biojava.jar:./lib/jakarta-regexp-1.2.jar:./lib/jemAlign.
     <TITLE>Running &prog; on Macintosh Systems</TITLE>
     <PARA>
 On Macintosh machines &prog; can be started by double clicking on the Artemis
-icon.
+icon. The icon can be added to the dock by dragging it from a 'Finder' window
+and dropping it onto the position in the dock you want it.
     </PARA>
   </SECT1>
 
@@ -98,11 +99,21 @@ top of this window allow you to read a new sequence or embl entry.
         <TITLE>Open File Manager ...</TITLE>
         <PARA>
 Selecting this shows the files and directories that are in the directory &prog;
-is launched from. At the top are 2 shortcut buttons to go up a directory and to go 
-to your home directory. At the bottom of the file manager is a file filter.
-You can select a file and double click on it to launch artemis.
+is launched from. The user home directory and the current working directories
+are shown and can be navigated.
         </PARA>
       </SECT3>
+
+      <SECT3 ID="LAUNCH-WINDOW-SSH-FILEMANAGER">
+        <TITLE>Open SSH File Manager ...</TITLE>
+        <PARA>
+This opens a window displaying a local file manager at the top and login
+options to access a remote file systemn via Secure Shell (SSH). When the
+login details are typed in and 'Connect' pressed the bottom half of the 
+window will display the other (remote) file system. 
+        </PARA>
+      </SECT3>
+
 
       <SECT3 ID="LAUNCH-WINDOW-FILE-MENU-OPEN">
         <TITLE>Open ...</TITLE>

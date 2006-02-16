@@ -66,21 +66,22 @@ is unpacked see <XREF LINKEND="RUNNINGUNIX">.
     <SECT2 ID="MACINSTALLATION">
       <TITLE>Installation Instructions for Macintosh Systems</TITLE>
       <PARA>
-Macintosh users should download and run the <LITERAL>ACT.bin</LITERAL> file
-from the <ULINK URL="http://www.sanger.ac.uk/Software/ACT">&prog; web
-pages</ULINK>, which will create a local copy of the the &art; application
-(along with an icon).
-      </PARA>
+For MacOSX users a disk image is provided. This should be downloaded and
+double clicked on and the 'Readme.txt' opened and followed.
+          </SYNOPSIS>
+        </PARA>
+      </SECT3>
     </SECT2>
 
     <SECT2 ID="DOSINSTALLATION">
       <TITLE>Installation Instructions for Windows</TITLE>
       <PARA>
-On Windows systems with Java 1.3 (or higher, see <XREF LINKEND="INSTALLINGJAVA">),
-installing &prog; is as simple as copying the
-<ULINK URL="ftp://ftp.sanger.ac.uk/pub/pathogens/software/act/act.jar"
-TYPE="external">act.jar file</ULINK> to an appropriate place (such as the
-desktop or the Programs folder).
+On Windows systems with Java (version 1.3 or higher), installing &prog;
+is as simple as downloading the the act.jar file to an appropriate 
+place (such as the desktop or the Programs folder). When downloading
+some versions of windows mistake this file for a zip file ensure it
+does not name this act.zip, if it does rename it to act.jar 
+(DO NOT UNZIP THIS FILE).
       </PARA>
 
       <PARA>

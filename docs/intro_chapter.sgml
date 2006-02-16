@@ -73,70 +73,8 @@ is unpacked see <XREF LINKEND="RUNNINGUNIX">.
     <SECT2 ID="MACINSTALLATION">
       <TITLE>Installation Instructions for Macintosh Systems</TITLE>
       <PARA>
-Macintosh users should download and run the <LITERAL>Artemis.bin</LITERAL>
-file from the <ULINK URL="http://www.sanger.ac.uk/Software/Artemis">&art; web
-pages</ULINK>, which will create a local copy of the the &art; application
-(along with an icon).
-      </PARA>
-
-      <SECT3 ID="MACINSTALLATION-OSX">
-        <TITLE></TITLE>
-        <PARA>
-Notes from Carton Chen &lt;cwchen@ym.edu.tw&gt;
-          <SYNOPSIS>
-Running Artemis under Mac OSX
-(using Artemis v. 5 beta as example)
-
-Mac OS X is built on Unix, and therefore there is no reason why Unix version
-of Artemis, written in Java, cannot be made to run under this operation
-system. We have discovered a rather simple procedure to set it up so that
-Artemis will come alive upon a double click. Below is a step-by-step guide
-using the newest Artemis version (v. 5 beta) as example. Procedures for
-other versions should be pretty much the same.
-
-Down load 'artemis_compiled_v5.tar.gz' from
-ftp://ftp.sanger.ac.uk/pub/pathogens/software/artemis/v5/
-
-Place the downloaded original file into Applications subdirectory
-    [Note: Do not use Stuffit Expander to decompress the file. If your ftp
-program automatically uses Stuffit Expander to decompress downloaded files,
-turn if off, or simply make sure that you move the original file (not the
-decompressed file) here. This is because somehow Stuffit Expander limited
-file names to 31 characters, and therefore files with longer names cannot be
-found by the program during execution].
-
-Go to Terminal and go to the Applications subdirectory by typing:
-    cd /Applications/
-
-Decompress the file by typing:
-    tar zxvf [file name]
-
-A new subdirectory 'artemis' will be created. Delete the downloaded file,
-and go to the artemis subdirectory by typing:
-    cd artemis
-
-Now you can execute artemis right there by typing
-    ./art
-    (Don't overlook the period!)
-
-For ultimate convenience, you want to be able to start Artemis right from
-the Finder without getting into Terminal. To do that, quit Terminal and go
-to the artemis subdirectory (under Applications) in the Finder, and change
-the file name 'art' to 'art.command'.
-
-That's it. Now whenever you double click 'art.command'. It will start
-Terminal automatically and present you Artemis right in your face.
-
-Now the question is which should I play with using this fantastic program.
-
-The above procedure has been worked out by my student Chi Chen who may be
-contacted at g39008006@ym.edu.tw.
-
-Have fun.
-Carton W. Chen
-National Yang-Ming Universtiy
-Taipei, Taiwan
-cwchen@ym,edu.tw
+For MacOSX users a disk image is provided. This should be downloaded and
+double clicked on and the 'Readme.txt' opened and followed.
           </SYNOPSIS>
         </PARA>
       </SECT3>
@@ -146,10 +84,11 @@ cwchen@ym,edu.tw
       <TITLE>Installation Instructions for Windows</TITLE>
       <PARA>
 On Windows systems with Java (version 1.3 or higher), installing &prog; 
-is as simple as copying the
-<ULINK URL="ftp://ftp.sanger.ac.uk/pub/pathogens/software/artemis/artemis.jar"
-TYPE="external">artemis.jar file</ULINK> to an appropriate place (such as the
-desktop or the Programs folder).
+is as simple as downloading the the artemis.jar file to an appropriate 
+place (such as the desktop or the Programs folder). When downloading
+some versions of windows mistake this file for a zip file ensure it
+does not name this artemis.zip, if it does rename it to artemis.jar 
+(DO NOT UNZIP THIS FILE).
       </PARA>
 
       <PARA>
