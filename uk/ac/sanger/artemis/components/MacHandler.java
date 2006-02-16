@@ -26,15 +26,18 @@ package uk.ac.sanger.artemis.components;
 
 import com.apple.mrj.*;
 import javax.swing.SwingUtilities;
+import javax.swing.JOptionPane;
 
 class MacHandler
 	implements MRJQuitHandler, MRJPrefsHandler, MRJAboutHandler 
 {
-  Splash us;
+  private Splash us;
+  private String title;
 
   public MacHandler(Splash theProgram, String title) 
   {
     us = theProgram;
+    this.title = title;
 //  System.setProperty("com.apple.mrj.application.apple.menu.about.name", title);
     System.setProperty("apple.laf.useScreenMenuBar", "true");
     MRJApplicationUtils.registerAboutHandler(this);
@@ -58,10 +61,18 @@ class MacHandler
     {
       public void run() 
       {
-        us.exit();
+        int select = JOptionPane.showConfirmDialog(null,
+                          "Quit "+title+"?", "Quit", 
+                          JOptionPane.YES_NO_OPTION,
+                          JOptionPane.QUESTION_MESSAGE);
+        if(select == JOptionPane.YES_OPTION)
+          us.exitApp();
       }
     });
     throw new IllegalStateException("Let the quit handler do it");
   }
+
+  
+
 }
 
