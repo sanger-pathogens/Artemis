@@ -33,7 +33,15 @@ Codons ..." feature filter (see <XREF
 LINKEND="VIEWMENU-FEATURE-FILTERS-SUSPSTART">).
     </PARA>
   </SECT3>
-  
+ 
+  <SECT3 ID="LAUNCH-WINDOW-OPTIONS-SSHSEARCHES">
+    <TITLE>Send Searches Via SSH</TITLE>
+    <PARA>
+This is an advanced option for sites that have set up the ability to
+submit searches via SSH to another machine.
+    </PARA>
+  </SECT3>
+ 
   <SECT3 ID="LAUNCH-WINDOW-OPTIONS-HIGHLIGHTACTIVE">
     <TITLE>Highlight Active Entry</TITLE>
     <PARA>
