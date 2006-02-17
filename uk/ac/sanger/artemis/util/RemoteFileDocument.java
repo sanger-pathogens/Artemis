@@ -133,12 +133,16 @@ public class RemoteFileDocument extends Document
    **/
   public OutputStream getOutputStream() throws IOException 
   {
-    final File write_file = new File(getName());
+    final File write_file = new File(System.getProperty("user.dir")+
+                                     System.getProperty("file.separator")+
+                                     getName());
 
     if(write_file.exists())
     {
       int n = JOptionPane.showConfirmDialog(null,
-                 "The file :\n"+getName()+
+                 "The file :\n"+System.getProperty("user.dir")+
+                                System.getProperty("file.separator")+
+                                getName()+
                  "\nalready exists on the local disk.\nOverwrite?",
                  "Overwrite "+getName(),
                  JOptionPane.YES_NO_OPTION);
