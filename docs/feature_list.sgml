@@ -57,6 +57,21 @@ shortcuts to some of the main window menus and three toggle buttons:
       </PARA>
 
       <SECT3>
+        <TITLE>Save List to File</TITLE>
+        <PARA>
+Save the list of features to a file.
+        </PARA>
+      </SECT3>
+
+      <SECT3>
+        <TITLE>Show Selected Qualifier</TITLE>
+        <PARA>
+A qualifier can be selected to be displayed in the feature list.
+        </PARA>
+      </SECT3>
+
+
+      <SECT3>
         <TITLE>Show Correlation Scores</TITLE>
         <PARA>
 If this toggle is on the correlation scores for each feature will be show
