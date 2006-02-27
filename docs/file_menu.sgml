@@ -39,7 +39,7 @@ This function only reads the feature section of the input file - the sequence
       </LISTITEM>
       <LISTITEM>
         <PARA>
-          <ULINK URL="http://www.sanger.ac.uk/Software/formats/GFF/">GFF files</ULINK>
+          <ULINK URL="http://song.sourceforge.net/gff3.shtml">GFF Version 3 files</ULINK>
         </PARA>
       </LISTITEM>
       <LISTITEM>
