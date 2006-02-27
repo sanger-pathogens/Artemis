@@ -173,10 +173,19 @@ window panels can be select  for printing to an image file.
   <SECT2 ID="FILEMENU-PRINT-PREVIEW-WINDOW">
     <TITLE>Print Preview</TITLE>
     <PARA>
-This opens the print image in a preview window. This enables shows
+This opens the print image in a preview window. This shows
 what the image will look like when printed to a file.
     </PARA>
   </SECT2>
+
+
+  <SECT2 ID="FILEMENU-PREFERENCES">
+    <TITLE>Preferences</TITLE>
+    <PARA>
+This enables the user to define their own shortcut preferences.
+    </PARA>
+  </SECT2>
+
 
 
   <SECT2 ID="FILEMENU-CLOSE">
