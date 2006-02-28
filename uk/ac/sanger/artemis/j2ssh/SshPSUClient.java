@@ -397,17 +397,34 @@ public class SshPSUClient extends Thread
       String outputfile = wdir+filename+".out";
       final String actualCMD;
      
-      if( (cmd.indexOf("fasta33") > -1) ||
-          (cmd.indexOf("fastx33") > -1) )
+      if(bsub == null)
       {
-        if(settings.getProperty(db) != null)
+        if( ((cmd.indexOf("fasta3") > -1) || (cmd.indexOf("fastx3") > -1))
+            && settings.getProperty(db) != null)
           db = settings.getProperty(db);
-        actualCMD = bsub+" -o "+ outputfile +" -e "+ outputfile + ".err " +
-                       cmd+" "+wdir+filename+" "+db;
+        else if(db.startsWith("%"))
+          db = db.substring(1,db.length());
+
+        if( (cmd.indexOf("fasta3") > -1) ||
+            (cmd.indexOf("fastx3") > -1) )
+          actualCMD = cmd+" "+wdir+filename+" "+db+" > "+outputfile;
+        else
+          actualCMD = cmd+" -d "+db+" -i "+wdir+filename+" -o "+outputfile;
       }
       else
-        actualCMD = bsub+" -o "+ outputfile +" -e "+ outputfile + ".err " +
+      {
+        if( (cmd.indexOf("fasta3") > -1) ||
+            (cmd.indexOf("fastx3") > -1) )
+        {
+          if(settings.getProperty(db) != null)
+            db = settings.getProperty(db);
+          actualCMD = bsub+" -o "+ outputfile +" -e "+ outputfile + ".err " +
+                       cmd+" "+wdir+filename+" "+db;
+        }
+        else
+          actualCMD = bsub+" -o "+ outputfile +" -e "+ outputfile + ".err " +
                        cmd+" "+db+" "+wdir+filename;
+      }
 
       // run the application
       if(System.getProperty("debug") != null)
