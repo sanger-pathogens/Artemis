@@ -1644,9 +1644,13 @@ The coding function of nucleotide sequences can be discerned by statistical anal
    <SECT2 ID="DISPLAYMENU-ENTROPY">
     <TITLE>Informational Entropy</TITLE>
     <PARA>
-       Konopka A (1984) <ULINK
+       Konopka Andrzej (1984) <ULINK
 URL="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=pubmed&amp;dopt=Abstract&amp;list_uids=6738090"> 
 Is the information content of DNA evolutionarily significant? J Theor Biol 107:697-704</ULINK>.
+
+Informational entropy is calculated from a table of overlapping DNA 
+triplet frequencies, using equation 1 in the above reference. 
+The use of overlapping triplets smooths the frame effect.
     </PARA>
   </SECT2>
  
