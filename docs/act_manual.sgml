@@ -31,7 +31,7 @@
 <!ENTITY lt CDATA "&#60;">
 <!ENTITY gt CDATA "&#62;">
 ]>
-<!-- $Header: //tmp/pathsoft/artemis/docs/act_manual.sgml,v 1.5 2005-02-22 11:52:29 tjc Exp $ -->
+<!-- $Header: //tmp/pathsoft/artemis/docs/act_manual.sgml,v 1.6 2006-03-01 11:32:37 tjc Exp $ -->
 <BOOK ID="index">
   <TITLE> The &prog; Manual </TITLE>
   <BOOKINFO>
@@ -40,7 +40,7 @@
     </PRODUCTNAME>
     <PUBDATE>16 May 2000</PUBDATE>
     <COPYRIGHT>
-      <YEAR>2000-2005</YEAR>
+      <YEAR>2000-2006</YEAR>
       <HOLDER>Genome Research Limited</HOLDER>
     </COPYRIGHT>
     <LEGALNOTICE>

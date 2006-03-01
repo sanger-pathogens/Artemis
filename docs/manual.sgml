@@ -2,6 +2,7 @@
 <!ENTITY intro SYSTEM "intro_chapter.sgml">
 <!ENTITY start SYSTEM "start_chapter.sgml">
 <!ENTITY mainwindow SYSTEM "main_window_chapter.sgml">
+<!ENTITY ssh SYSTEM "ssh_chapter.sgml">
 <!ENTITY options SYSTEM "options.sgml">
 <!ENTITY filemenu SYSTEM "file_menu.sgml">
 <!ENTITY menus SYSTEM "menus.sgml">
@@ -34,7 +35,7 @@
 ]>
 <!-- see: http://www.pcmedia.co.nz/~michaelh/intro-to-sgml/html/c04.htm-->
 <!-- and: http://www.pcmedia.co.nz/~michaelh/intro-to-sgml/html/template.sgml-->
-<!-- $Header: //tmp/pathsoft/artemis/docs/manual.sgml,v 1.5 2004-12-07 11:12:19 tjc Exp $ -->
+<!-- $Header: //tmp/pathsoft/artemis/docs/manual.sgml,v 1.6 2006-03-01 11:32:37 tjc Exp $ -->
 <BOOK ID="index">
   <TITLE> The &art; Manual </TITLE>
   <BOOKINFO>
@@ -43,7 +44,7 @@
     </PRODUCTNAME>
     <PUBDATE>22 February 1999</PUBDATE>
     <COPYRIGHT>
-      <YEAR>1999-2005</YEAR>
+      <YEAR>1999-2006</YEAR>
       <HOLDER>Genome Research Limited</HOLDER>
     </COPYRIGHT>
     <LEGALNOTICE>
@@ -79,5 +80,6 @@ sequence annotation tool.
   &intro;
   &start;
   &mainwindow;
+  &ssh;
   &options;
 </BOOK>

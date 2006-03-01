@@ -75,9 +75,7 @@ is unpacked see <XREF LINKEND="RUNNINGUNIX">.
       <PARA>
 For MacOSX users a disk image is provided. This should be downloaded and
 double clicked on and the 'Readme.txt' opened and followed.
-          </SYNOPSIS>
         </PARA>
-      </SECT3>
     </SECT2>
 
     <SECT2 ID="DOSINSTALLATION">
