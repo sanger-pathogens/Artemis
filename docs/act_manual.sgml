@@ -2,6 +2,7 @@
 <!ENTITY intro SYSTEM "act_intro_chapter.sgml">
 <!ENTITY start SYSTEM "act_start_chapter.sgml">
 <!ENTITY mainwindow SYSTEM "act_main_window.sgml">
+<!ENTITY ssh SYSTEM "ssh_chapter.sgml">
 <!ENTITY options SYSTEM "options.sgml">
 <!ENTITY act-filemenu SYSTEM "act_file_menu.sgml">
 <!ENTITY menus SYSTEM "menus.sgml">
@@ -31,7 +32,7 @@
 <!ENTITY lt CDATA "&#60;">
 <!ENTITY gt CDATA "&#62;">
 ]>
-<!-- $Header: //tmp/pathsoft/artemis/docs/act_manual.sgml,v 1.6 2006-03-01 11:32:37 tjc Exp $ -->
+<!-- $Header: //tmp/pathsoft/artemis/docs/act_manual.sgml,v 1.7 2006-03-01 14:43:22 tjc Exp $ -->
 <BOOK ID="index">
   <TITLE> The &prog; Manual </TITLE>
   <BOOKINFO>
@@ -67,7 +68,7 @@
     </LEGALNOTICE>
     <ABSTRACT>
       <PARA>
-This document describes release 4 of &prog; - a DNA sequence comparison
+This document describes release 5 of &prog; - a DNA sequence comparison
 viewer.
       </PARA>
     </ABSTRACT>
@@ -76,5 +77,6 @@ viewer.
   &intro;
   &start;
   &mainwindow;
+  &ssh;
   &options;
 </BOOK>
