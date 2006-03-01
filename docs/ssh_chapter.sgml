@@ -5,7 +5,7 @@
     <TITLE>Overview of the SSH Plugin</TITLE>
     <PARA>
 This is a plug-in to &prog that enables you to view and transfer
-files from a local machine (e.g. PC/MacOSX/deskpro) to another remote
+files from a local machine (e.g. PC/MacOSX/UNIX) to another remote
 file system (i.e. any other file system that you have ssh access to).
 The main areas where this is useful are:
    </PARA>
@@ -92,7 +92,7 @@ window to set up a tunnel.
     </PARA>
 
     <PARA>
-On <EMPHASIS>Windows</EMPHASIS> you can use <XREF LINKEND="PUTTY">.
+On <EMPHASIS>Windows</EMPHASIS> you can use Putty, see <XREF LINKEND="PUTTY">.
     </PARA>
 
     <PARA>
