@@ -64,11 +64,29 @@ is unpacked see <XREF LINKEND="RUNNINGUNIX">.
     </SECT2>
 
     <SECT2 ID="MACINSTALLATION">
-      <TITLE>Installation Instructions for Macintosh Systems</TITLE>
+      <TITLE>Installation Instructions for MacOSX</TITLE>
       <PARA>
-For MacOSX users a disk image is provided. This should be downloaded and
-double clicked on and the 'Readme.txt' opened and followed.
-          </SYNOPSIS>
+For MacOSX users an archive artemis_act.dmg.gz disk image is provided.
+This can be uncompressed using gunzip:
+      </PARA>
+      <PARA>
+<ComputerOutput>gunzip artemis_act.dmg.gz</ComputerOutput>
+      </PARA>
+      <PARA>
+Alternatively on OS X an easier solution is provided by StuffIt Expander.
+Double-click on any file ending in ".gz" and StuffIt Expander will be
+launched to uncompress that file.
+
+<MEDIAOBJECT>
+<IMAGEOBJECT>
+   <IMAGEDATA FORMAT="gif" FILEREF="mac_osx_dmg.gif">
+            </IMAGEOBJECT>
+</MEDIAOBJECT>
+
+The uncompressed disk image file "artemis_act.dmg" can be double clicked on
+to mound the disk image. This mounted image, "artemis_act", can then be opened
+and the software contents displayed by double clicking on it. Open an read the
+"Readme.txt" file.
         </PARA>
       </SECT3>
     </SECT2>

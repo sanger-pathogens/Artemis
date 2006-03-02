@@ -13,7 +13,7 @@ entry (and hence open one of these windows).
     <PARA>
 The following images show a breakdown of the main &prog; edit window.  The full
 screen shot <ULINK
-URL="http://www.sanger.ac.uk/Software/Artemis/user_manual_screen_shot.gif"
+URL="user_manual_screen_shot.gif"
 TYPE="external">is here</ULINK>.
     </PARA>
 
@@ -22,99 +22,111 @@ TYPE="external">is here</ULINK>.
 
       <ORDEREDLIST ID="MAINWINDOW-BREAKDOWN-LIST">
         <LISTITEM ID="MAINWINDOW-BREAKDOWN-MENU">
+        <PARA>
           <SCREENSHOT>
             <SCREENINFO>
 The menu bar of the main &prog; window
             </SCREENINFO>
             <MEDIAOBJECT>
               <IMAGEOBJECT>
-                <IMAGEDATA FORMAT="gif" FILEREF="main_window_1.gif">
+                <IMAGEDATA FORMAT="png" FILEREF="main_window_1.png">
               </IMAGEOBJECT>
               <IMAGEOBJECT>
                 <IMAGEDATA FORMAT="eps" FILEREF="main_window_1.eps">
               </IMAGEOBJECT>
             </MEDIAOBJECT>
           </SCREENSHOT>
+          </PARA>
         </LISTITEM>
 
         <LISTITEM ID="MAINWINDOW-BREAKDOWN-SELECTIONSTATUS">
+        <PARA>
           <SCREENSHOT>
             <SCREENINFO>
 A one line summary of the what is currently selected
             </SCREENINFO>
             <MEDIAOBJECT>
               <IMAGEOBJECT>
-                <IMAGEDATA FORMAT="gif" FILEREF="main_window_2.gif">
+                <IMAGEDATA FORMAT="png" FILEREF="main_window_2.png">
               </IMAGEOBJECT>
               <IMAGEOBJECT>
                 <IMAGEDATA FORMAT="eps" FILEREF="main_window_2.eps">
               </IMAGEOBJECT>
             </MEDIAOBJECT>
           </SCREENSHOT>
+        </PARA>
         </LISTITEM>
         
         <LISTITEM ID="MAINWINDOW-BREAKDOWN-ENTRY-BUTTONS">
+        <PARA>
           <SCREENSHOT>
             <SCREENINFO>
 The entry buttons from the main &prog; window
             </SCREENINFO>
             <MEDIAOBJECT>
               <IMAGEOBJECT>
-                <IMAGEDATA FORMAT="gif" FILEREF="main_window_3.gif">
+                <IMAGEDATA FORMAT="png" FILEREF="main_window_3.png">
               </IMAGEOBJECT>
               <IMAGEOBJECT>
                 <IMAGEDATA FORMAT="eps" FILEREF="main_window_3.eps">
               </IMAGEOBJECT>
             </MEDIAOBJECT>
           </SCREENSHOT>
+        </PARA>
         </LISTITEM>
         
         <LISTITEM ID="MAINWINDOW-BREAKDOWN-OVERVIEW">
+          <PARA>
           <SCREENSHOT>
             <SCREENINFO>
 The sequence overview
             </SCREENINFO>
             <MEDIAOBJECT>
               <IMAGEOBJECT>
-                <IMAGEDATA FORMAT="gif" FILEREF="main_window_4.gif">
+                <IMAGEDATA FORMAT="png" FILEREF="main_window_4.png">
               </IMAGEOBJECT>
               <IMAGEOBJECT>
                 <IMAGEDATA FORMAT="eps" FILEREF="main_window_4.eps">
               </IMAGEOBJECT>
             </MEDIAOBJECT>
           </SCREENSHOT>
+          </PARA>
         </LISTITEM>
         
         <LISTITEM ID="MAINWINDOW-BREAKDOWN-DNAVIEW">
+          <PARA>
           <SCREENSHOT>
             <SCREENINFO>
 The DNA view
             </SCREENINFO>
             <MEDIAOBJECT>
               <IMAGEOBJECT>
-                <IMAGEDATA FORMAT="gif" FILEREF="main_window_5.gif">
+                <IMAGEDATA FORMAT="png" FILEREF="main_window_5.png">
               </IMAGEOBJECT>
               <IMAGEOBJECT>
                 <IMAGEDATA FORMAT="eps" FILEREF="main_window_5.eps">
               </IMAGEOBJECT>
             </MEDIAOBJECT>
           </SCREENSHOT>
+          </PARA>
         </LISTITEM>
         
         <LISTITEM ID="MAINWINDOW-BREAKDOWN-FEATURELIST">
+          <PARA>
           <SCREENSHOT>
             <SCREENINFO>
 The feature list
             </SCREENINFO>
             <MEDIAOBJECT>
               <IMAGEOBJECT>
-                <IMAGEDATA FORMAT="gif" FILEREF="main_window_6.gif">
+                <IMAGEDATA FORMAT="png" FILEREF="main_window_6.png">
               </IMAGEOBJECT>
               <IMAGEOBJECT>
                 <IMAGEDATA FORMAT="eps" FILEREF="main_window_6.eps">
               </IMAGEOBJECT>
             </MEDIAOBJECT>
           </SCREENSHOT>
+          </PARA>
         </LISTITEM>
       </ORDEREDLIST>
       <PARA>
