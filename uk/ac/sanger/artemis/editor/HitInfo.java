@@ -117,7 +117,16 @@ public class HitInfo
         // uniprot fasta headers
         // >pac.sv id desc
         //
-        id = id.substring(0,indDot);
+        String version = id.substring(indDot+1);
+        try
+        {
+          int version_no = Integer.parseInt(version);
+          // version number looks like uniprot so strip this
+          if(version_no < 50)
+            id = id.substring(0,indDot);
+        }
+        catch(NumberFormatException nfe){}
+
         acc = id;
       }
     }
@@ -177,7 +186,15 @@ public class HitInfo
         // uniprot fasta headers
         // >pac.sv id desc
         //
-        id = id.substring(0,indDot);
+        String version = id.substring(indDot+1);
+        try
+        {
+          int version_no = Integer.parseInt(version);
+          // version number looks like uniprot so strip this
+          if(version_no < 50)
+            id = id.substring(0,indDot);
+        }
+        catch(NumberFormatException nfe){}
         acc = id;
       }
     }
