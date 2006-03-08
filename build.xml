@@ -114,7 +114,7 @@
     <javac
     	  srcdir="${build.src.main}"
       destdir="${build.dest.main}"
-    	  excludes="nsdb/**,seqdb/**,type/**,uk/ac/sanger/artemis/ExternalProgramUtils.java"
+    	  excludes="nsdb/**,seqdb/**,type/**,uk/ac/sanger/artemis/components/filetree/FileTree.java,uk/ac/sanger/artemis/components/filetree/SshFileTree.java,uk/ac/sanger/artemis/ExternalProgramUtils.java"
       deprecation="false"
       depend="no"
       debug="true">
