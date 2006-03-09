@@ -69,7 +69,7 @@ public class PrintACT extends ScrollPanel
         Component c[] = mc.getBasePlotGroupArray()[i].getComponents();
         for(int j=0; j<c.length; j++)
         {
-          if(c[j] instanceof BasePlot)
+          if(c[j] instanceof BasePlot && c[j].isVisible())
           {
             ((BasePlot)c[j]).paintComponent(g2d);
             g2d.translate(0,((BasePlot)c[j]).getHeight());
@@ -87,7 +87,7 @@ public class PrintACT extends ScrollPanel
         Component c[] = mc.getBasePlotGroupArray()[i].getComponents();
         for(int j=0; j<c.length; j++)
         {
-          if(c[j] instanceof BasePlot)
+          if(c[j] instanceof BasePlot && c[j].isVisible())
           {
             ((BasePlot)c[j]).paintComponent(g2d);
             g2d.translate(0,((BasePlot)c[j]).getHeight());
@@ -120,7 +120,7 @@ public class PrintACT extends ScrollPanel
       {
         Component c[] = mc.getBasePlotGroupArray()[i].getComponents();
         for(int j=0; j<c.length; j++)
-          if(c[j] instanceof BasePlot)
+          if(c[j] instanceof BasePlot && c[j].isVisible())
           {
             height += ((BasePlot)c[j]).getHeight();
             if(((BasePlot)c[j]).getSize().width < width &&
@@ -138,7 +138,7 @@ public class PrintACT extends ScrollPanel
       {
         Component c[] = mc.getBasePlotGroupArray()[i].getComponents();
         for(int j=0; j<c.length; j++)
-          if(c[j] instanceof BasePlot)
+          if(c[j] instanceof BasePlot && c[j].isVisible())
           {
             height += ((BasePlot)c[j]).getHeight();
             if(((BasePlot)c[j]).getSize().width < width &&
