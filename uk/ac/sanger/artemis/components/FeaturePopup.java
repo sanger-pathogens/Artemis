@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.9 2005-12-09 16:17:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.10 2006-03-10 10:15:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.util.StringVector;
 
 import java.io.*;
 import java.awt.Component;
+import java.awt.BorderLayout;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -37,7 +38,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.9 2005-12-09 16:17:13 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.10 2006-03-10 10:15:32 tjc Exp $
  *
  **/
 
@@ -505,6 +506,24 @@ public class FeaturePopup extends JPopupMenu
         selection.set(feature_display.getCurrentVisibleFeatures());
       }
     });
+
+/*
+    feature_display_menus[19] = new JMenuItem("Define Frame Line Features");
+    feature_display_menus[19].addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        JPanel frame_keys = new JPanel(new BorderLayout());
+        int select = JOptionPane.showConfirmDialog(null, frame_keys,
+                                "Define Frame Line Features",
+                                 JOptionPane.OK_CANCEL_OPTION,
+                                 JOptionPane.QUESTION_MESSAGE);
+
+        if(select == JOptionPane.CANCEL_OPTION)
+          return;
+      }
+    });
+*/
 
     return feature_display_menus;
   }

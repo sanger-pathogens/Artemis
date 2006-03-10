@@ -26,6 +26,8 @@
 package uk.ac.sanger.ibatis;
 
 import java.util.Date;
+import java.util.Hashtable;
+import java.util.Vector;
 
 public class Feature
 {
@@ -62,7 +64,8 @@ public class Feature
   private String value;
   /** feature organism abbreviation */
   private String abbreviation;
-
+  /** hashtable of qualifiers */
+  private Hashtable qualifiers;
  
   public int getId()
   {
@@ -224,4 +227,27 @@ public class Feature
     this.srcfeature_id = srcfeature_id;
   }
 
+  public void addQualifier(long prop_type_id, String value)
+  {
+    if(qualifiers == null)
+      qualifiers = new Hashtable();
+     
+    final Long type_id = new Long(prop_type_id);
+    if(qualifiers.contains(type_id))
+    {
+      Vector v = (Vector)qualifiers.get(type_id);
+      v.add(value);
+    }
+    else
+    {
+      Vector v = new Vector();
+      v.add(value);
+      qualifiers.put(type_id, v);
+    }
+  }
+
+  public Hashtable getQualifiers()
+  {
+    return qualifiers;
+  }
 }

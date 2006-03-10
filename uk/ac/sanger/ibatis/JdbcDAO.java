@@ -109,30 +109,30 @@ public class JdbcDAO
     Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                                         ResultSet.CONCUR_UPDATABLE);
 
-    String sql = "SELECT timelastmodified, feature.feature_id, object_id, strand, fmin, fmax, uniquename, "
-        + schema + ".feature.type_id, "
+    String sql = "SELECT timelastmodified, f.feature_id, object_id, "
+        + "strand, fmin, fmax, uniquename, f.type_id, "
         + schema + ".featureprop.type_id AS prop_type_id, featureprop.value"
         + " FROM  "
-        + schema + ".featureloc, "
-        + schema + ".feature"
+        + schema + ".featureloc fl, "
+        + schema + ".feature f"
         + " LEFT JOIN "
-        + schema + ".feature_relationship ON "
-        + schema + ".feature_relationship.subject_id="
-        + schema + ".feature.feature_id"
+        + schema + ".feature_relationship fr ON "
+        + "fr.subject_id="
+        + "f.feature_id"
         + " LEFT JOIN "
         + schema + ".featureprop ON "
         + schema + ".featureprop.feature_id="
-        + schema + ".feature.feature_id"
+        + "f.feature_id"
         + " WHERE srcfeature_id = "
         + parentFeatureID + " AND "
-        + schema + ".featureloc.feature_id="
-        + schema + ".feature.feature_id"
+        + "fl.feature_id="
+        + "f.feature_id"
         + " AND ("
-        + schema + ".featureloc.rank="
-        + schema + ".feature_relationship.rank OR "
-        + schema + ".feature_relationship.rank IS NULL)"
+        + "fl.rank="
+        + "fr.rank OR "
+        + "fr.rank IS NULL)"
         + " ORDER BY "
-        + schema + ".feature.type_id, uniquename";
+        + "f.type_id, uniquename";
 
     appendToLogFile(sql, sqlLog);
     ResultSet rs = st.executeQuery(sql);
@@ -154,7 +154,53 @@ public class JdbcDAO
 
       list.add(feature);
     }
-    return list;
+
+    // merge same features in the list
+    return mergeList(list);
+  }
+
+  /**
+   *
+   * Takes a list and creates a new one merging all feature objects
+   * within it with the same feature and stores the qualifiers/attributes
+   *  as a hash
+   * @param list of feature objects
+   * @return list of flattened/merged feature objects
+   * 
+   */
+  protected static List mergeList(List list)
+  {
+    // merge same features in the list
+    int feature_size  = list.size();
+    List flatten_list = new Vector();
+    Feature featNext  = null;
+
+    for(int i = 0; i < feature_size; i++)
+    {
+      Feature feat = (Feature)list.get(i);
+      String name  = feat.getUniquename();
+
+      feat.addQualifier(feat.getProp_type_id(),
+                        feat.getValue());
+
+      if(i < feature_size - 1)
+        featNext = (Feature)list.get(i + 1);
+
+      // merge next line if part of the same feature
+      while(featNext != null && featNext.getUniquename().equals(name))
+      {
+        feat.addQualifier(featNext.getProp_type_id(),
+                          featNext.getValue());
+        i++;
+        if(i < feature_size - 1)
+          featNext = (Feature)list.get(i + 1);
+        else
+          break;
+      }
+      flatten_list.add(feat);
+    }
+
+    return flatten_list;
   }
 
   /**

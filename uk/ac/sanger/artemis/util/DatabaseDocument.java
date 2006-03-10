@@ -431,28 +431,26 @@ public class DatabaseDocument extends Document
       if(feat.getValue() != null)
         value = GFFStreamFeature.encode(feat.getValue());
 
-      this_buff.append(propTypeName + "=" + value); // attributes
-
-      // is the next line part of the same feature, if so merge
-      boolean rewind = false;
-      Feature featNext = null;
-    
-      if(i < feature_size - 1)
-        featNext = (Feature)featList.get(i + 1);
-
-      // merge next line if part of the same feature
-      while(featNext != null && featNext.getUniquename().equals(name))
+      // attributes
+      Hashtable qualifiers     = feat.getQualifiers();
+      if(qualifiers != null)
       {
-        prop_type_id = featNext.getProp_type_id();
-        propTypeName = getCvtermName(prop_type_id);
-        value = GFFStreamFeature.encode(featNext.getValue());
-        this_buff.append(";" + propTypeName + "=" + value);
-        i++;
-        if(i < feature_size - 1)
-          featNext = (Feature) featList.get(i + 1);
-        else
-          break;
-      }
+        Enumeration e_qualifiers = qualifiers.keys();
+        while(e_qualifiers.hasMoreElements())
+        {
+          Long qualifier_type_id = (Long)e_qualifiers.nextElement();
+          String qualifier_name = getCvtermName(qualifier_type_id.longValue());
+          if(qualifier_name == null)
+            continue;
+          Vector qualifier_value = (Vector)qualifiers.get(qualifier_type_id);
+        
+          for(int j=0; j<qualifier_value.size(); j++)
+          {
+            this_buff.append(qualifier_name+ "=" +
+                             GFFStreamFeature.encode((String)qualifier_value.get(j))+";");
+          }
+        }
+      } 
 
       this_buff.append("\n");
 

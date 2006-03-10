@@ -26,6 +26,7 @@ package uk.ac.sanger.ibatis;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
 import java.util.List;
+import java.util.Vector;
 import java.sql.*;
 import javax.swing.JPasswordField;
 
@@ -84,7 +85,11 @@ public class IBatisDAO implements ChadoDAO
     feature.setId(feature_id);
     if(schema != null)
       feature.setSchema(schema);
-    return sqlMap.queryForList("getGffLine", feature);
+
+    List feature_list = sqlMap.queryForList("getGffLine", feature);
+
+    // merge same features in the list
+    return JdbcDAO.mergeList(feature_list);
   }
 
   /**
