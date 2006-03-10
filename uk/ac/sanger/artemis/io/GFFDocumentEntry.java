@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.18 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.19 2006-03-10 13:46:55 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.util.Vector;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.18 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.19 2006-03-10 13:46:55 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -268,7 +268,9 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         final Location new_location = new Location(new_range_vector,
                     first_old_feature.getLocation().isComplement());
 
-        qualifier_vector = mergeQualifiers(qualifier_vector);
+        qualifier_vector = mergeQualifiers(qualifier_vector,
+                                           first_old_feature.getLocation().isComplement());
+
         final GFFStreamFeature new_feature = new GFFStreamFeature(first_old_feature.getKey(),
                                                              new_location, qualifier_vector);
         new_feature.setSegmentRangeStore(id_range_store);
@@ -315,14 +317,27 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     }
   }
 
-  private QualifierVector mergeQualifiers(QualifierVector qualifier_vector)
+  private QualifierVector mergeQualifiers(QualifierVector qualifier_vector,
+                                          boolean complement)
   {
     QualifierVector merge_qualifier_vector = new QualifierVector();
-    
+    boolean seen = false;
+
     for(int i = 0 ; i < qualifier_vector.size() ; ++i)
     {
       Qualifier qual = (Qualifier)qualifier_vector.elementAt(i);
-      if(!qual.getName().equals("ID"))
+ 
+      if(qual.getName().equals("codon_start"))
+      {
+        if(!complement && !seen)
+        {
+          merge_qualifier_vector.addElement(qual);
+          seen = true;
+        }
+        else if(complement)
+          merge_qualifier_vector.setQualifier(qual);
+      }
+      else if(!qual.getName().equals("ID"))
         merge_qualifier_vector.setQualifier(qual);
       else
       { 
