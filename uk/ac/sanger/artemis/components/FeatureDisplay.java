@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.41 2006-03-13 13:29:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.42 2006-03-13 13:37:51 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -64,7 +64,7 @@ import javax.swing.ImageIcon;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.41 2006-03-13 13:29:54 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.42 2006-03-13 13:37:51 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -2282,7 +2282,8 @@ public class FeatureDisplay extends EntryGroupPanel
 
   protected void setProteinKeys(Object[] protein_keys)
   {
-    this.protein_keys = protein_keys;
+    this.protein_keys = protein_keys; 
+    repaint();
   }
 
   private boolean isProteinFeature(Feature feature)
