@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.11 2006-03-13 13:29:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.12 2006-03-13 14:42:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,7 +38,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.11 2006-03-13 13:29:54 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.12 2006-03-13 14:42:49 tjc Exp $
  *
  **/
 
@@ -507,17 +507,17 @@ public class FeaturePopup extends JPopupMenu
       }
     });
 
-    final DefaultListModel listModel = new DefaultListModel();
-    final Object protein_keys[] = ((FeatureDisplay)owner).getProteinKeys();
-
-    for(int i=0; i<protein_keys.length; i++)
-      listModel.addElement(protein_keys[i]);
-
     feature_display_menus[19] = new JMenuItem("Frame Line Features ...");
     feature_display_menus[19].addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
+        final DefaultListModel listModel = new DefaultListModel();
+        final Object protein_keys[] = ((FeatureDisplay)owner).getProteinKeys();
+
+        for(int i=0; i<protein_keys.length; i++)
+          listModel.addElement(protein_keys[i]);
+
         JPanel frame_keys = new JPanel(new BorderLayout());
         
         final JLabel label = new JLabel("Features Displayed on the Frame Lines:");
