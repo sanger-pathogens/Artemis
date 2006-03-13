@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.10 2006-03-10 10:15:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.11 2006-03-13 13:29:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,7 +38,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.10 2006-03-10 10:15:32 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.11 2006-03-13 13:29:54 tjc Exp $
  *
  **/
 
@@ -270,7 +270,7 @@ public class FeaturePopup extends JPopupMenu
    **/
   private JMenuItem[] addFeatureDisplayItems() 
   {
-    final JMenuItem[] feature_display_menus = new JMenuItem[19];
+    final JMenuItem[] feature_display_menus = new JMenuItem[20];
 
     feature_display_menus[0] = new JCheckBoxMenuItem("Start Codons");
     ((JCheckBoxMenuItem)feature_display_menus[0]).setState(
@@ -507,23 +507,70 @@ public class FeaturePopup extends JPopupMenu
       }
     });
 
-/*
-    feature_display_menus[19] = new JMenuItem("Define Frame Line Features");
+    final DefaultListModel listModel = new DefaultListModel();
+    final Object protein_keys[] = ((FeatureDisplay)owner).getProteinKeys();
+
+    for(int i=0; i<protein_keys.length; i++)
+      listModel.addElement(protein_keys[i]);
+
+    feature_display_menus[19] = new JMenuItem("Frame Line Features ...");
     feature_display_menus[19].addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
         JPanel frame_keys = new JPanel(new BorderLayout());
+        
+        final JLabel label = new JLabel("Features Displayed on the Frame Lines:");
+        final JList protein_list = new JList(listModel);
+        final JScrollPane jsp    = new JScrollPane(protein_list);
+
+        JButton remove_butt = new JButton("REMOVE");
+        remove_butt.addActionListener(new ActionListener()
+        {
+          public void actionPerformed(ActionEvent e)
+          {
+            while(!protein_list.isSelectionEmpty())
+              listModel.remove(protein_list.getSelectedIndex());
+          }
+        });
+
+        Box bdown = Box.createVerticalBox();
+        bdown.add(label);
+        bdown.add(jsp);
+        bdown.add(remove_butt);
+        frame_keys.add(bdown, BorderLayout.CENTER);
+
+
+        final KeyChoice key_choice =
+           new KeyChoice(entry_group.elementAt(0).getEntryInformation(),
+                         new uk.ac.sanger.artemis.io.Key("CDS"));
+
+        JButton add_butt = new JButton("ADD");
+        add_butt.addActionListener(new ActionListener()
+        {
+          public void actionPerformed(ActionEvent e)
+          {
+            listModel.addElement(key_choice.getSelectedItem().toString());
+          }
+        });
+
+        bdown = Box.createVerticalBox();
+        bdown.add(Box.createVerticalGlue());
+        bdown.add(key_choice);
+        bdown.add(add_butt);
+        frame_keys.add(bdown, BorderLayout.EAST);
+
         int select = JOptionPane.showConfirmDialog(null, frame_keys,
-                                "Define Frame Line Features",
+                                "Frame Line Features ...",
                                  JOptionPane.OK_CANCEL_OPTION,
                                  JOptionPane.QUESTION_MESSAGE);
 
         if(select == JOptionPane.CANCEL_OPTION)
           return;
+        
+        ((FeatureDisplay)owner).setProteinKeys(listModel.toArray());
       }
     });
-*/
 
     return feature_display_menus;
   }

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.40 2006-01-03 13:15:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.41 2006-03-13 13:29:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -64,7 +64,7 @@ import javax.swing.ImageIcon;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.40 2006-01-03 13:15:09 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.41 2006-03-13 13:29:54 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -272,6 +272,8 @@ public class FeatureDisplay extends EntryGroupPanel
   private static Color dark_green = new Color(0, 150, 0);
 
   private final int scrollbar_style;
+
+  private Object[] protein_keys = { "CDS", "exon", "BLASTCDS", "polypeptide" };
 
   /**
    *  Create a new FeatureDisplay object with the horizontal scrollbar at the
@@ -2248,7 +2250,7 @@ public class FeatureDisplay extends EntryGroupPanel
     if(getOneLinePerEntryFlag()) 
     {
       final Feature feature = segment.getFeature();
-      if((feature.isProteinFeature() || frame_features_flag) &&
+      if((isProteinFeature(feature) || frame_features_flag) &&
           (show_forward_lines && (segment.isForwardSegment() ^
                                   isRevCompDisplay()) ||
            show_reverse_lines && (!segment.isForwardSegment() ^
@@ -2273,6 +2275,27 @@ public class FeatureDisplay extends EntryGroupPanel
     }
   }
 
+  protected Object[] getProteinKeys()
+  {
+    return protein_keys;
+  }
+
+  protected void setProteinKeys(Object[] protein_keys)
+  {
+    this.protein_keys = protein_keys;
+  }
+
+  private boolean isProteinFeature(Feature feature)
+  {
+    final String key = feature.getKey().toString();
+    for(int i=0; i<protein_keys.length; i++)
+    {
+      if(key.equals((String)protein_keys[i]))
+        return true;
+    }
+    return false;
+  }
+
   /**
    *  Return the frame ID of to use when drawing the given segment.
    **/
@@ -2281,7 +2304,7 @@ public class FeatureDisplay extends EntryGroupPanel
     final int frame_id = segment.getFrameID();
     final Feature feature = segment.getFeature();
 
-    if((feature.isProteinFeature() || frame_features_flag) &&
+    if((isProteinFeature(feature) || frame_features_flag) &&
        (show_forward_lines && (segment.isForwardSegment() ^
                                 isRevCompDisplay())||
          show_reverse_lines && (!segment.isForwardSegment() ^
