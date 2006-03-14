@@ -110,23 +110,18 @@ public class JdbcDAO
                                         ResultSet.CONCUR_UPDATABLE);
 
     String sql = "SELECT timelastmodified, f.feature_id, object_id, "
-        + "strand, fmin, fmax, uniquename, f.type_id, "
-        + schema + ".featureprop.type_id AS prop_type_id, featureprop.value"
+        + "fl.strand, fmin, fmax, uniquename, f.type_id, "
+        + "fp.type_id AS prop_type_id, fp.value, fl.phase"
         + " FROM  "
-        + schema + ".featureloc fl, "
         + schema + ".feature f"
-        + " LEFT JOIN "
-        + schema + ".feature_relationship fr ON "
-        + "fr.subject_id="
-        + "f.feature_id"
-        + " LEFT JOIN "
-        + schema + ".featureprop ON "
-        + schema + ".featureprop.feature_id="
-        + "f.feature_id"
+        + " LEFT JOIN " + schema + ".feature_relationship fr ON "
+                        + "fr.subject_id=" + "f.feature_id"
+        + " LEFT JOIN " + schema + ".featureprop fp ON "
+                        + "fp.feature_id=" + "f.feature_id"
+        + " LEFT JOIN " + schema + ".featureloc fl ON "
+                        + "f.feature_id=" + "fl.feature_id"
         + " WHERE srcfeature_id = "
-        + parentFeatureID + " AND "
-        + "fl.feature_id="
-        + "f.feature_id"
+        + parentFeatureID 
         + " AND ("
         + "fl.rank="
         + "fr.rank OR "
@@ -146,12 +141,19 @@ public class JdbcDAO
       feature.setType_id( rs.getLong("type_id") );
       feature.setProp_type_id( rs.getLong("prop_type_id") );
       feature.setStrand( rs.getInt("strand") );
+      
+      int phase = rs.getInt("phase");
+      if(rs.wasNull())
+        feature.setPhase(10);
+      else 
+        feature.setPhase( rs.getInt("phase") );
+
       feature.setUniquename( rs.getString("uniquename") );
       feature.setTimelastmodified( rs.getDate("timelastmodified") );
       feature.setId( rs.getInt("feature_id") );
       feature.setObject_id( rs.getString("object_id") );
       feature.setValue( rs.getString("value"));
-
+  
       list.add(feature);
     }
 

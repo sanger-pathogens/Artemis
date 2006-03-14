@@ -66,7 +66,9 @@ public class Feature
   private String abbreviation;
   /** hashtable of qualifiers */
   private Hashtable qualifiers;
- 
+  /** phase */
+  private int phase;
+
   public int getId()
   {
     return id;
@@ -225,6 +227,16 @@ public class Feature
   public void setSrcfeature_id(int srcfeature_id)
   {
     this.srcfeature_id = srcfeature_id;
+  }
+
+  public int getPhase()
+  {
+    return phase;  
+  }
+
+  public void setPhase(int phase)
+  {
+    this.phase = phase;
   }
 
   public void addQualifier(long prop_type_id, String value)

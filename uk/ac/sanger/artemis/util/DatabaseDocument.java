@@ -386,6 +386,7 @@ public class DatabaseDocument extends Document
       long type_id            = feat.getType_id();
       long prop_type_id       = feat.getProp_type_id();
       int strand              = feat.getStrand();
+      int phase               = feat.getPhase();
       String name             = feat.getUniquename();
       String typeName         = getCvtermName(type_id);
       String propTypeName     = getCvtermName(prop_type_id);
@@ -419,7 +420,11 @@ public class DatabaseDocument extends Document
       else
         this_buff.append(".\t");
 
-      this_buff.append(".\t");               // phase
+      if(phase > 3)
+        this_buff.append(".\t");               // phase
+      else
+        this_buff.append(phase+"\t"); 
+
       this_buff.append("ID=" + name + ";");
 
       if(parent_id != null)
