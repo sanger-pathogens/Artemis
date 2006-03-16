@@ -25,9 +25,8 @@
 package uk.ac.sanger.artemis.util;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
-import uk.ac.sanger.ibatis.*;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
-import uk.ac.sanger.artemis.chado.ChadoTransaction;
+import uk.ac.sanger.artemis.chado.*;
 
 import java.sql.*;
 import java.io.*;
