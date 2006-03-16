@@ -59,6 +59,15 @@
         FROM $schema$.feature WHERE feature_id=$id$
      </select> 
 
+     <!-- get feature id -->
+     <select id="getFeatureID" parameterClass="uk.ac.sanger.artemis.chado.ChadoTransaction"
+                               resultClass="java.lang.Integer">
+        SELECT feature_id FROM $schema$.feature WHERE
+          <iterate property="uniquename" conjunction="OR">
+            $schema$.feature.uniquename='$uniquename[]$'
+          </iterate>
+     </select>
+
      <select id="getGffLine" parameterClass="uk.ac.sanger.ibatis.Feature" 
                              resultMap="select-feature-properties-result">
         SELECT
@@ -142,7 +151,7 @@
 	 LEFT JOIN $schema$.featureloc
 	 	ON $schema$.feature.feature_id=$schema$.featureloc.feature_id
 	 WHERE
-	 	<dynamic>
+	 <dynamic>
              <isGreaterThan property="id" compareValue="0"> 
                $schema$.feature.feature_id=$id$ AND
              </isGreaterThan>
@@ -155,4 +164,54 @@
          </dynamic>
          $schema$.feature.feature_id > 0
     </select>
+
+    <!--  WRITE BACK METHODS -->
+    <update id="updateAttributes" parameterClass="uk.ac.sanger.artemis.chado.ChadoTransaction">
+      UPDATE $schema$.$chadoTable$
+      SET
+      <iterate property="properties" conjunction=",">
+         $properties[]$
+      </iterate>
+      FROM $schema$.feature
+      WHERE
+           $schema$.feature.feature_id=$schema$.$chadoTable$.feature_id AND (
+      <iterate property="uniquename" conjunction="OR">
+         $schema$.feature.uniquename='$uniquename[]$'
+      </iterate>
+      )
+      <dynamic>
+        <isNotNull property="constraint">
+           <iterate prepend="AND" property="constraint" conjunction="AND">
+             $constraint[]$
+           </iterate>
+        </isNotNull>
+      </dynamic>
+    </update>
+
+    <insert id="insertAttributes" parameterClass="uk.ac.sanger.artemis.chado.ChadoTransaction">
+      INSERT INTO  $schema$.$chadoTable$
+      ( 
+        feature_id 
+        <iterate prepend="," property="propertiesName" conjunction="," >
+          $propertiesName[]$
+        </iterate>
+      ) VALUES
+      (
+        $feature_id$
+        <iterate prepend="," property="propertiesValue" conjunction="," >
+          $propertiesValue[]$
+        </iterate>
+      )
+    </insert>
+
+    <delete id="deleteAttributes" parameterClass="uk.ac.sanger.artemis.chado.ChadoTransaction">
+      DELETE FROM $schema$.$chadoTable$
+      WHERE
+        <iterate property="constraint" conjunction="AND">
+          $constraint[]$
+        </iterate>
+        AND
+        feature_id=$feature_id$
+    </delete>
+
 </sqlMap> 
