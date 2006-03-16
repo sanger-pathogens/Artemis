@@ -685,9 +685,20 @@ public class DatabaseDocument extends Document
       Connection conn = getConnection();
       int row = 0;
 
+      ChadoDAO dao = getDAO();
+
       for(int i = 0; i < sql.size(); i++)
       {
         ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
+ 
+        if(tsn.getType() == ChadoTransaction.UPDATE)
+          dao.updateAttributes(schema, tsn); 
+        else if(tsn.getType() == ChadoTransaction.INSERT)
+          dao.insertAttributes(schema, tsn);
+        else if(tsn.getType() == ChadoTransaction.DELETE)
+          dao.deleteAttributes(schema, tsn);
+
+/*
         String[] sql_array = tsn.getSqlQuery(schema);
 
         for(int j = 0; j < sql_array.length; j++)
@@ -697,6 +708,7 @@ public class DatabaseDocument extends Document
           Statement st = conn.createStatement();
           row += st.executeUpdate(sql_array[j]);
         }
+*/
       }
 
       conn.close();

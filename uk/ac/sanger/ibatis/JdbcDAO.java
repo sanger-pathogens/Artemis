@@ -29,6 +29,9 @@ import java.sql.*;
 import java.io.*;
 import java.util.List;
 import java.util.Vector;
+import java.util.Hashtable;
+import java.util.Enumeration;
+import uk.ac.sanger.artemis.chado.ChadoTransaction;
 
 public class JdbcDAO 
              implements ChadoDAO
@@ -321,6 +324,156 @@ public class JdbcDAO
     }
 
     return cvterms;
+  }
+
+//
+// WRITE 
+//
+
+  /**
+   *
+   * @param schema schema to update.
+   *
+   */
+  public void updateAttributes
+                    (final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    StringBuffer sqlBuff = new StringBuffer();
+    String chadoTable    = tsn.getChadoTable();
+    sqlBuff.append("UPDATE "+schema+"."+chadoTable);
+    sqlBuff.append(" SET ");
+
+    List properties = tsn.getProperties();
+    for(int i=0; i<properties.size(); i++)
+    {
+      sqlBuff.append((String)properties.get(i));
+      if(i < properties.size()-1)
+        sqlBuff.append(" , ");
+    }
+
+    sqlBuff.append(" FROM "+schema+".feature");
+    sqlBuff.append(" WHERE "+schema+".feature.feature_id="+
+                             schema+"."+chadoTable+".feature_id AND (");
+
+    List uniquename = tsn.getUniquename();
+    for(int i=0; i<uniquename.size(); i++)
+    {
+      sqlBuff.append(" "+schema+"."+"feature.uniquename='" + 
+                     (String)uniquename.get(i) +"' ");
+      if(i < uniquename.size()-1)
+        sqlBuff.append("OR");
+    }
+
+    sqlBuff.append(")");
+
+    List constraints = tsn.getConstraint();
+    if(constraints != null)
+    {
+      for(int i=0; i<constraints.size(); i++)
+      {
+        sqlBuff.append(" AND ");
+        // looks like specifying table, so include schema
+        String constraint = (String)constraints.get(i);
+        int index;
+        if( (index = constraint.indexOf(".")) > -1 &&
+            constraint.indexOf("=") > index)
+         sqlBuff.append(schema+".");
+        sqlBuff.append(constraint);
+      }
+    }
+
+    Statement st = conn.createStatement();
+    st.executeUpdate(new String(sqlBuff));
+  }
+
+
+  /**
+   *
+   * @param schema schema to update.
+   *
+   */
+  public void insertAttributes
+                    (final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    StringBuffer sqlBuff;
+
+    List uniquename = tsn.getUniquename();
+    String chadoTable   = tsn.getChadoTable();
+    for(int i=0; i<uniquename.size(); i++)
+    {
+      sqlBuff = new StringBuffer();
+      sqlBuff.append("INSERT INTO "+schema+"."+chadoTable);
+      StringBuffer sqlKeys   = new StringBuffer();
+      StringBuffer sqlValues = new StringBuffer();
+
+      sqlKeys.append("feature_id , ");
+      sqlValues.append("(SELECT feature_id FROM "+schema+".feature WHERE uniquename='"+
+                         (String)uniquename.get(i)+"') , ");
+
+      String name;
+      String property;
+      List propertiesName  = tsn.getPropertiesName();
+      List propertiesValue = tsn.getPropertiesValue();
+      for(int j=0; j<propertiesName.size(); j++)
+      {
+        name = (String)propertiesName.get(j);
+        sqlKeys.append(name);
+        sqlValues.append((String)propertiesValue.get(j));
+        if(j < propertiesName.size()-1)
+        {
+          sqlKeys.append(" , ");
+          sqlValues.append(" , ");
+        }
+      }
+  
+      sqlBuff.append(" ( "+sqlKeys.toString()+" ) ");
+      sqlBuff.append(" values ");
+      sqlBuff.append(" ( "+sqlValues.toString()+" )");
+
+      appendToLogFile(new String(sqlBuff), sqlLog);
+
+      Statement st = conn.createStatement();
+      st.executeUpdate(new String(sqlBuff));
+    }
+  }
+
+  /**
+   *
+   * @param schema schema to update.
+   *
+   */
+  public void deleteAttributes
+                    (final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    StringBuffer sqlBuff;
+
+    List uniquename = tsn.getUniquename();
+    String chadoTable   = tsn.getChadoTable();
+    for(int i=0; i<uniquename.size(); i++)
+    {
+      sqlBuff = new StringBuffer();
+
+      sqlBuff.append("DELETE FROM "+schema+"."+chadoTable+" WHERE ");
+
+      String name;
+      String value;
+
+      List constraints = tsn.getConstraint();
+      for(int j=0; j<constraints.size(); j++)
+        sqlBuff.append((String)constraints.get(j)+" AND ");
+      
+      sqlBuff.append("feature_id=(SELECT feature_id FROM "+
+                     schema+".feature WHERE uniquename='"+
+                     (String)uniquename.get(i)+"')");
+
+      appendToLogFile(new String(sqlBuff), sqlLog);
+
+      Statement st = conn.createStatement();
+      st.executeUpdate(new String(sqlBuff));
+    }
   }
 
 

@@ -27,6 +27,7 @@ package uk.ac.sanger.ibatis;
 import java.sql.*;
 import java.io.*;
 import java.util.List;
+import uk.ac.sanger.artemis.chado.ChadoTransaction;
 
 public interface ChadoDAO
 {
@@ -106,4 +107,34 @@ public interface ChadoDAO
    */
   public List getCvterm()
               throws SQLException;
+
+//
+// WRITE BACK
+//
+  /**
+   *
+   * @param schema schema to update.
+   *
+   */
+  public void updateAttributes
+                    (final String schema, final ChadoTransaction tsn)
+                     throws SQLException;
+
+  /**
+   *
+   * @param schema schema to update.
+   *
+   */
+  public void insertAttributes
+                    (final String schema, final ChadoTransaction tsn)
+                     throws SQLException;
+
+  /**
+   *
+   * @param schema schema to update.
+   *
+   */
+  public void deleteAttributes
+                    (final String schema, final ChadoTransaction tsn)
+                     throws SQLException;
 }

@@ -25,8 +25,11 @@
 package uk.ac.sanger.ibatis;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
+import uk.ac.sanger.artemis.chado.ChadoTransaction;
+
 import java.util.List;
 import java.util.Vector;
+import java.util.Enumeration;
 import java.sql.*;
 import javax.swing.JPasswordField;
 
@@ -181,6 +184,67 @@ public class IBatisDAO implements ChadoDAO
     cvterm.setName(name);
     cvterm.setCv_name(cv_name);
     return (Cvterm)sqlMap.queryForObject("getCvterm", cvterm);
+  }
+
+//
+// WRITE BACK
+//
+  /**
+   *
+   * @param schema schema to update.
+   *
+   */
+  public void updateAttributes
+                    (final String schema, final ChadoTransaction tsn)
+                     throws SQLException 
+  {
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    tsn.setSchema(schema);
+    sqlMap.update("updateAttributes", tsn);
+  }
+
+  /**
+   *
+   * @param schema schema to update.
+   *
+   */
+  public void insertAttributes
+                    (final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    tsn.setSchema(schema);
+
+    // get the feature id's
+    List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
+
+    for(int i=0; i<feature_ids.size(); i++)
+    {
+      tsn.setFeature_id( ((Integer)feature_ids.get(i)).intValue() );
+      sqlMap.insert("insertAttributes", tsn);
+    }
+  }
+
+  /**
+   *
+   * @param schema schema to update.
+   *
+   */
+  public void deleteAttributes
+                    (final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    tsn.setSchema(schema);
+  
+    // get the feature id's
+    List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
+
+    for(int i=0; i<feature_ids.size(); i++)
+    {
+      tsn.setFeature_id( ((Integer)feature_ids.get(i)).intValue() );
+      sqlMap.delete("deleteAttributes", tsn);
+    }
   }
 
 }
