@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.15 2005-11-08 19:44:46 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.16 2006-03-16 15:44:28 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -201,10 +201,10 @@ NAMES:= \
 	uk/ac/sanger/artemis/io/QualifierInfo \
 	uk/ac/sanger/artemis/io/QualifierInfoVector \
 	uk/ac/sanger/artemis/io/QualifierInfoHash \
-	uk/ac/sanger/ibatis/Cvterm \
-	uk/ac/sanger/ibatis/DbSqlConfig \
-	uk/ac/sanger/ibatis/Feature \
-	uk/ac/sanger/ibatis/Organism \
+	uk/ac/sanger/artemis/chado/Cvterm \
+	uk/ac/sanger/artemis/chado/DbSqlConfig \
+	uk/ac/sanger/artemis/chado/Feature \
+	uk/ac/sanger/artemis/chado/Organism \
 
 CLASSES := $(NAMES:%=%.class)
 SOURCES := $(NAMES:%=%.java)
