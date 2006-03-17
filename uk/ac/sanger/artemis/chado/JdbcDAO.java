@@ -58,7 +58,7 @@ public class JdbcDAO
     return conn;
   }
 
-  public Feature getSequence(final int feature_id,
+  public ChadoFeature getSequence(final int feature_id,
                              final String schema)
                         throws SQLException
   {
@@ -71,7 +71,7 @@ public class JdbcDAO
     ResultSet rs = st.executeQuery(sql);
     rs.next();
 
-    Feature feature = new Feature();
+    ChadoFeature feature = new ChadoFeature();
     feature.setName(rs.getString("name"));
     feature.setResidues(rs.getBytes("residues"));
     return feature;
@@ -135,7 +135,7 @@ public class JdbcDAO
     List list = new Vector();
     while(rs.next())
     {
-      Feature feature = new Feature();
+      ChadoFeature feature = new ChadoFeature();
       feature.setFmin( rs.getInt("fmin") );
       feature.setFmax( rs.getInt("fmax") );
       feature.setType_id( rs.getLong("type_id") );
@@ -175,18 +175,18 @@ public class JdbcDAO
     // merge same features in the list
     int feature_size  = list.size();
     List flatten_list = new Vector();
-    Feature featNext  = null;
+    ChadoFeature featNext  = null;
 
     for(int i = 0; i < feature_size; i++)
     {
-      Feature feat = (Feature)list.get(i);
+      ChadoFeature feat = (ChadoFeature)list.get(i);
       String name  = feat.getUniquename();
 
       feat.addQualifier(feat.getProp_type_id(),
                         feat.getValue());
 
       if(i < feature_size - 1)
-        featNext = (Feature)list.get(i + 1);
+        featNext = (ChadoFeature)list.get(i + 1);
 
       // merge next line if part of the same feature
       while(featNext != null && featNext.getUniquename().equals(name))
@@ -195,7 +195,7 @@ public class JdbcDAO
                           featNext.getValue());
         i++;
         if(i < feature_size - 1)
-          featNext = (Feature)list.get(i + 1);
+          featNext = (ChadoFeature)list.get(i + 1);
         else
           break;
       }
@@ -240,7 +240,7 @@ public class JdbcDAO
     List list = new Vector();
     while(rs.next())
     {
-      Feature feature = new Feature();
+      ChadoFeature feature = new ChadoFeature();
       feature.setId( rs.getInt("feature_id") );
       feature.setAbbreviation( rs.getString("abbreviation") );
       feature.setName( rs.getString("name") );
@@ -279,7 +279,7 @@ public class JdbcDAO
   
   /**
    * 
-   * Get available schemas (as a List of Feature objects)
+   * Get available schemas (as a List of ChadoFeature objects)
    *
    */
   public List getSchema()

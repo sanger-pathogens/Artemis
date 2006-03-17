@@ -1,4 +1,4 @@
-/* Feature.java
+/* ChadoFeature.java
  *
  * created: 2005
  *
@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
 
-public class Feature
+public class ChadoFeature
 {
  
   /** schema */

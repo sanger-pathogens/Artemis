@@ -42,7 +42,7 @@ public class IBatisDAO implements ChadoDAO
    * Get feature name given the feature_id and schema
    *
    */
-  public String getFeatureName(final Feature feature)
+  public String getFeatureName(final ChadoFeature feature)
                 throws SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
@@ -60,7 +60,7 @@ public class IBatisDAO implements ChadoDAO
                                final String schema)
                        throws SQLException
   {
-    Feature feature = new Feature();
+    ChadoFeature feature = new ChadoFeature();
     feature.setId(feature_id);
     if(schema != null)
       feature.setSchema(schema);
@@ -81,7 +81,7 @@ public class IBatisDAO implements ChadoDAO
                      throws SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    Feature feature = new Feature();
+    ChadoFeature feature = new ChadoFeature();
     feature.setId(feature_id);
     if(schema != null)
       feature.setSchema(schema);
@@ -99,16 +99,16 @@ public class IBatisDAO implements ChadoDAO
    * @param schema      schema/organism name or null
    *
    */
-  public Feature getSequence(final int feature_id,
+  public ChadoFeature getSequence(final int feature_id,
                              final String schema)
                         throws SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    Feature feature = new Feature();
+    ChadoFeature feature = new ChadoFeature();
     feature.setId(feature_id);
     if(schema != null)
       feature.setSchema(schema);
-    return (Feature)sqlMap.queryForObject("getSequence",
+    return (ChadoFeature)sqlMap.queryForObject("getSequence",
                                            feature);
   }
 
@@ -150,7 +150,7 @@ public class IBatisDAO implements ChadoDAO
 
   /**
    *
-   * Get available schemas (as a List of Feature objects)
+   * Get available schemas (as a List of ChadoFeature objects)
    *
    */
   public List getSchema()

@@ -38,8 +38,8 @@ public interface ChadoDAO
    * @param schema      schema/organism name or null
    *
    */
-  public Feature getSequence(final int feature_id,
-                             final String schema)
+  public ChadoFeature getSequence(final int feature_id,
+                                  final String schema)
                         throws SQLException;
 
   /**
@@ -91,7 +91,7 @@ public interface ChadoDAO
 
   /**
    * 
-   * Get available schemas (as a List of Feature objects).
+   * Get available schemas (as a List of ChadoFeature objects).
    *
    */
   public List getSchema()

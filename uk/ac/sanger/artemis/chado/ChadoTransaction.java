@@ -35,12 +35,19 @@ import java.util.StringTokenizer;
 **/
 public class ChadoTransaction
 {
+  //
+  // ATTRIBUTE TRANSACTIONS
   /** update statement */
   public static final int UPDATE = 1;
   /** insert statement */
   public static final int INSERT = 2;
   /** delete statement */
   public static final int DELETE = 3;
+
+  // FEATURE TRANSACTIONS
+  /** insert feature statement */
+  public static final int INSERT_FEATURE = 4;
+
   /** properties store */
   private List properties;
   /** old properties store */
@@ -71,6 +78,17 @@ public class ChadoTransaction
     this.chadoTable = chadoTable;
   }
  
+  /**
+  *
+  * @param type         transaction type
+  * @param uniquename   uniquename of feature
+  *
+  */
+  public ChadoTransaction(int type, ChadoFeature new_feature)
+  {
+    this.type = type;
+  }
+
   /**
   *
   *
@@ -144,7 +162,7 @@ public class ChadoTransaction
   {
     if(constraint == null)
       constraint = new Vector();
-    constraint.add(name+"="+"\'"+value+"\'");
+    constraint.add(name+"="+value);
   }
 
 
@@ -183,7 +201,6 @@ public class ChadoTransaction
     return propertiesName;
   }
 
-
   /**
   *
   *  Get properties to this transaction that will be changed.
@@ -214,7 +231,6 @@ public class ChadoTransaction
     return constraint;
   }
 
-  
   /**
   *
   *  Get uniquenames of features.
@@ -230,21 +246,26 @@ public class ChadoTransaction
     }
 
     return names;
-//  String str_names[] = new String[names.size()];
-//  for(int i=0; i<str_names.length; i++)
-//    str_names[i] = (String)names.get(i);
-//  return str_names;
   }
 
+  /**
+  *
+  * Set the feature id
+  *
+  */
   public void setFeature_id(final int feature_id)
   {
     this.feature_id = feature_id;
   }
 
+  /**
+  *
+  * Get the feature id
+  *
+  */
   public int getFeature_id()
   {
     return feature_id;
   }
-
 
 }

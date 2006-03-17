@@ -146,7 +146,7 @@ public class ChadoTransactionManager
           {
             feature_uniquename = JOptionPane.showInputDialog(null,
                                  "Provide a systematic_id : ",
-                                 "systematic_id missing "+
+                                 "systematic_id missing in "+
                                  feature.getIDString(),
                                  JOptionPane.QUESTION_MESSAGE).trim();
           }
@@ -161,7 +161,11 @@ public class ChadoTransactionManager
       else
         System.out.println("HERE feature_uniquename != null "+feature_uniquename);
 
-//    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+/*
+
+      ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT_FEATURE,
+                                                  feature);
+*/
                                        
     }
 

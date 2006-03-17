@@ -370,7 +370,7 @@ public class DatabaseDocument extends Document
 // build feature name store
     for(int i = 0; i < feature_size; i++)
     {
-      Feature feat = (Feature)featList.get(i);
+      ChadoFeature feat = (ChadoFeature)featList.get(i);
       String name       = feat.getUniquename();
       String feature_id = Integer.toString(feat.getId());
 
@@ -379,7 +379,7 @@ public class DatabaseDocument extends Document
 
     for(int i = 0; i < feature_size; i++)
     {
-      Feature feat = (Feature)featList.get(i);
+      ChadoFeature feat = (ChadoFeature)featList.get(i);
       int fmin                = feat.getFmin() + 1;
       int fmax                = feat.getFmax();
       long type_id            = feat.getType_id();
@@ -536,7 +536,7 @@ public class DatabaseDocument extends Document
   private ByteBuffer getSequence(ChadoDAO dao, ByteBuffer buff)
                      throws java.sql.SQLException
   {
-    Feature feature = dao.getSequence(Integer.parseInt(feature_id),
+    ChadoFeature feature = dao.getSequence(Integer.parseInt(feature_id),
                                          schema);
 
     buff.append("##FASTA\n>");
@@ -582,7 +582,7 @@ public class DatabaseDocument extends Document
         Iterator it_residue_features = list_residue_features.iterator();
         while(it_residue_features.hasNext())
         {
-          Feature feature = (Feature)it_residue_features.next();
+          ChadoFeature feature = (ChadoFeature)it_residue_features.next();
           String org      = feature.getAbbreviation();
           String typeName = getCvtermName(feature.getType_id());
 
@@ -733,7 +733,7 @@ public class DatabaseDocument extends Document
       DbSqlConfig.init(new JPasswordField());
       SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
 
-      Feature feature = new Feature();
+      ChadoFeature feature = new ChadoFeature();
       feature.setId(Integer.parseInt(args[0]));
       feature.setSchema(args[1]);
 
@@ -741,7 +741,7 @@ public class DatabaseDocument extends Document
  
       for(int i = 0; i < featureList.size(); i++)
       {
-        feature = (Feature)featureList.get(i);
+        feature = (ChadoFeature)featureList.get(i);
         int fmin     = feature.getFmin() + 1;
         int fmax     = feature.getFmax();
 
