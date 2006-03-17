@@ -262,4 +262,5 @@ public class ChadoFeature
   {
     return qualifiers;
   }
+
 }

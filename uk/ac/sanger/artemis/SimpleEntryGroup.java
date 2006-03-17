@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleEntryGroup.java,v 1.2 2004-12-06 10:39:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleEntryGroup.java,v 1.3 2006-03-17 16:51:38 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -31,7 +31,7 @@ import uk.ac.sanger.artemis.io.StreamSequence;
 import uk.ac.sanger.artemis.io.SimpleDocumentEntry;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
-
+import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import java.util.Vector;
 import java.util.NoSuchElementException;
 
@@ -41,7 +41,7 @@ import java.util.NoSuchElementException;
  *  once.  Objects of this class act a bit like single Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: SimpleEntryGroup.java,v 1.2 2004-12-06 10:39:03 tjc Exp $
+ *  @version $Id: SimpleEntryGroup.java,v 1.3 2006-03-17 16:51:38 tjc Exp $
  **/
 
 public class SimpleEntryGroup extends EntryVector
@@ -835,6 +835,7 @@ public class SimpleEntryGroup extends EntryVector
       targets = (Vector)listeners.clone();
     }
 
+    boolean seen_chado_manager = false;
     final int targets_size = targets.size();
     for(int i = 0; i < targets_size; ++i) 
     {
@@ -855,7 +856,17 @@ public class SimpleEntryGroup extends EntryVector
           final EntryChangeListener entry_change_listener =
                                      (EntryChangeListener) target;
 
-          entry_change_listener.entryChanged((EntryChangeEvent) event);
+          if(entry_change_listener instanceof ChadoTransactionManager)
+          {
+            // just call this listener once
+            if(!seen_chado_manager)
+            {
+              entry_change_listener.entryChanged((EntryChangeEvent) event);
+              seen_chado_manager = true;
+            }
+          }
+          else  
+            entry_change_listener.entryChanged((EntryChangeEvent) event);
         } 
         else 
         {

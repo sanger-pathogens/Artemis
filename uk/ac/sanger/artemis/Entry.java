@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.4 2005-07-27 08:24:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.5 2006-03-17 16:51:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.io.Reader;
  *  possible events.)
  *
  *  @author Kim Rutherford
- *  @version $Id: Entry.java,v 1.4 2005-07-27 08:24:16 tjc Exp $
+ *  @version $Id: Entry.java,v 1.5 2006-03-17 16:51:38 tjc Exp $
  **/
 
 public class Entry implements FeatureChangeListener, Selectable 
@@ -1086,7 +1086,7 @@ public class Entry implements FeatureChangeListener, Selectable
 
     for(int i = 0 ; i < targets.size() ; ++i) 
     {
-      ChangeListener target =(ChangeListener) targets.elementAt(i);
+      ChangeListener target = (ChangeListener)targets.elementAt(i);
 
       if(event instanceof EntryChangeEvent) 
       {

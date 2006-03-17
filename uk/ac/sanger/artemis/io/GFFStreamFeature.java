@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.22 2006-03-10 13:46:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.23 2006-03-17 16:51:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.22 2006-03-10 13:46:37 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.23 2006-03-17 16:51:38 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -77,6 +77,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       
       if(getQualifierByName("gff_seqname") == null)
         setQualifier(new Qualifier("gff_seqname", "."));
+
+      if(getQualifierByName("ID") == null)
+        setQualifier(new Qualifier("ID", "to_be_set"));
       
     } 
     catch(EntryInformationException e) 

@@ -36,8 +36,10 @@ import uk.ac.sanger.artemis.io.StreamQualifier;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
+import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.EntryChangeListener;
@@ -139,32 +141,50 @@ public class ChadoTransactionManager
 
         if(qualifier_uniquename != null)
           feature_uniquename = (String)(qualifier_uniquename.getValues()).elementAt(0);
-        else
+        
+        while(feature_uniquename == null ||
+              feature_uniquename.equals("") ||
+              feature_uniquename.equals("to_be_set"))
         {
-          while(feature_uniquename == null ||
-                feature_uniquename.equals(""))
-          {
-            feature_uniquename = JOptionPane.showInputDialog(null,
-                                 "Provide a systematic_id : ",
-                                 "systematic_id missing in "+
-                                 feature.getIDString(),
-                                 JOptionPane.QUESTION_MESSAGE).trim();
-          }
-        }  
+          feature_uniquename = JOptionPane.showInputDialog(null,
+                               "Provide a systematic_id : ",
+                               "systematic_id missing in "+
+                               feature.getIDString(),
+                               JOptionPane.QUESTION_MESSAGE).trim();
+        }
+        feature.setQualifier(new Qualifier("ID", feature_uniquename));
       }
-      catch(InvalidRelationException ire)
+      catch(EntryInformationException eie)
       {
-        ire.printStackTrace();
+        eie.printStackTrace();
       }
-      if(feature_uniquename == null)
-        System.out.println("HERE feature_uniquename == null");
+      catch(ReadOnlyException roe)
+      {
+        roe.printStackTrace();
+      }
+
+      ChadoFeature chado_feature = new ChadoFeature();
+
+      if(feature.isForwardFeature())
+        chado_feature.setStrand(1);
       else
-        System.out.println("HERE feature_uniquename != null "+feature_uniquename);
+        chado_feature.setStrand(-1);
+
+      // codon_start attribute
+//    chado_feature.setPhase();
+
+      
+      chado_feature.setFmin(feature.getRawFirstBase()-1);
+      chado_feature.setFmax(feature.getRawLastBase());
+      chado_feature.setUniquename(feature_uniquename);
+      chado_feature.setName(feature_uniquename);
+
+      String key = feature.getKey().toString();
+      chado_feature.setType_id(DatabaseDocument.getCvtermID(key).longValue());
 
 /*
-
       ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT_FEATURE,
-                                                  feature);
+                                                  chado_feature);
 */
                                        
     }
@@ -316,7 +336,6 @@ public class ChadoTransactionManager
           tsn.setConstraint("featureprop.type_id", "'"+cvterm_id+"'");
           tsn.setConstraint("rank", Integer.toString(value_index));
           sql.add(tsn);
-
 //          String[] sql_array = tsn.getSqlQuery();
 //          for(int i=0; i<sql_array.length; i++)
 //            System.out.println(sql_array[i]);
@@ -335,9 +354,6 @@ public class ChadoTransactionManager
 
           tsn.setConstraint("type_id", cvterm_id);
           sql.add(tsn);
-//        String[] sql_array = tsn.getSqlQuery();
-//        for(int i=0; i<sql_array.length; i++)
-//          System.out.println(sql_array[i]);
         }
           
         //
@@ -357,9 +373,6 @@ public class ChadoTransactionManager
           tsn.addProperty("type_id", "'"+cvterm_id+"'");
           tsn.addProperty("rank", Integer.toString(value_index));
           sql.add(tsn);
-//        String[] sql_array = tsn.getSqlQuery();
-//        for(int i=0; i<sql_array.length; i++)
-//          System.out.println(sql_array[i]);
         }
 
 //      System.out.println("******** "+DatabaseDocument.getCvtermID(name));
