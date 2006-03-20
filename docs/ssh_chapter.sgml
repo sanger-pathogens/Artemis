@@ -38,7 +38,7 @@ is running &prog and run on the remote machine. To do this the software
    </SECT1>
 
    <SECT1 ID="SSH-LOGIN">
-    <TITLE>Loggin In</TITLE>
+    <TITLE>Login In</TITLE>
     <PARA>
 From the &prog launch window go to the 'File' menu and select
 'Open SSH File Manager'. A file manager window will then open with a
@@ -207,7 +207,7 @@ Click 'Add' to add this to the list of forwarded ports.
 Run Artemis and select the 'SSH File Manager' from the 'File'
 menu. At the bottom fill in login details and click on the
 'Connect' button.
-Logging in may take a minute (depending on the connection).
+Loging in may take a minute (depending on the connection).
     </PARA>
 
 <MEDIAOBJECT>
