@@ -199,6 +199,7 @@ public class JdbcDAO
         else
           break;
       }
+
       flatten_list.add(feat);
     }
 

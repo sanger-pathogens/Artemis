@@ -245,10 +245,11 @@ public class ChadoFeature
       qualifiers = new Hashtable();
      
     final Long type_id = new Long(prop_type_id);
-    if(qualifiers.contains(type_id))
+    if(qualifiers.containsKey(type_id))
     {
       Vector v = (Vector)qualifiers.get(type_id);
       v.add(value);
+      qualifiers.put(type_id, v);
     }
     else
     {
@@ -262,5 +263,6 @@ public class ChadoFeature
   {
     return qualifiers;
   }
+
 
 }
