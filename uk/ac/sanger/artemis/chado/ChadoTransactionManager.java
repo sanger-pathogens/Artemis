@@ -188,6 +188,23 @@ public class ChadoTransactionManager
 
       sql.add(tsn);
     }
+    else if(event.getType() == EntryChangeEvent.FEATURE_DELETED)
+    {
+      Feature feature = event.getFeature();
+      try
+      {
+        Qualifier qualifier_uniquename = feature.getQualifierByName("ID");
+        String feature_uniquename = (String)(qualifier_uniquename.getValues()).elementAt(0);
+        ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.DELETE_FEATURE,
+                                                    feature_uniquename, "feature");
+        sql.add(tsn); 
+      }
+      catch(InvalidRelationException ire)
+      {
+        ire.printStackTrace();
+      }
+      System.out.println("HERE FEATURE_DELETED");
+    }
 
 //  System.out.println(event.getEntry().getName());
   }

@@ -698,6 +698,8 @@ public class DatabaseDocument extends Document
           dao.deleteAttributes(schema, tsn);
         else if(tsn.getType() == ChadoTransaction.INSERT_FEATURE)
           dao.insertFeature(schema, tsn, feature_id);
+        else if(tsn.getType() == ChadoTransaction.DELETE_FEATURE)
+          dao.deleteFeature(schema, tsn);
       }
 
       conn.close();

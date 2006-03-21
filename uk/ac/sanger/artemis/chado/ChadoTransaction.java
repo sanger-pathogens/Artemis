@@ -47,6 +47,8 @@ public class ChadoTransaction
   // FEATURE TRANSACTIONS
   /** insert feature statement */
   public static final int INSERT_FEATURE = 4;
+  /** delete feature statement */
+  public static final int DELETE_FEATURE = 5;
 
   /** properties store */
   private List properties;

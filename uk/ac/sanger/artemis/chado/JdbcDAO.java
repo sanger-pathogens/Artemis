@@ -553,6 +553,23 @@ public class JdbcDAO
     System.out.println("SELECT currval('"+schema+".featureloc_featureloc_id_seq')");
   }
 
+  /**
+   *
+   * Delete a feature from the database.
+   * @param schema schema to update.
+   *
+   */
+  public void deleteFeature
+                    (final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    String sql = "DELETE FROM "+schema+".feature WHERE uniquename='"+
+                 tsn.getUniqueName()+"'";
+
+    Statement st = conn.createStatement();
+    int rowCount = st.executeUpdate(sql);
+    System.out.println(sql);
+  }
 
   /**
    *

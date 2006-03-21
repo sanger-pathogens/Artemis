@@ -258,5 +258,17 @@ public class IBatisDAO implements ChadoDAO
 
   }
 
+  /**
+   *
+   * Delete a feature from the database.
+   * @param schema schema to update.
+   *
+   */
+  public void deleteFeature
+                    (final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+  }
+
 }
 
