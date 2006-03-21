@@ -488,6 +488,8 @@ public class JdbcDAO
                      final String srcfeature_id)
                      throws SQLException
   {
+    //
+    // get the organism_id
     Statement st = conn.createStatement();
     String str_sql = "SELECT organism_id from " + schema +
                  ".feature where feature_id = '" + srcfeature_id + "'";
@@ -501,6 +503,8 @@ public class JdbcDAO
     ChadoFeature feature = new ChadoFeature();
     final int organism_id = rs.getInt("organism_id");
 
+    //
+    // insert feature into feature table
     ChadoFeature chadoFeature = tsn.getChadoFeature();
     // insert new feature into feature table
     StringBuffer sql_buff = new StringBuffer();
@@ -522,6 +526,8 @@ public class JdbcDAO
     st = conn.createStatement();
     int rowCount = st.executeUpdate(new String(sql_buff));
 
+    //
+    // get the current feature_id sequence value
     String sql = "SELECT currval('"+schema+".feature_feature_id_seq')";
     System.out.println(sql);
     
@@ -531,6 +537,8 @@ public class JdbcDAO
 
 //  System.out.println("SELECT currval('"+schema+".featureprop_featureprop_id_seq')");
 
+    //
+    // insert feature location into featureloc
     sql_buff = new StringBuffer();
     sql_buff.append("INSERT INTO "+schema+".featureloc (");
     sql_buff.append(" featureloc_id ,");
@@ -549,8 +557,6 @@ public class JdbcDAO
     System.out.println(new String(sql_buff));
     st = conn.createStatement();
     rowCount = st.executeUpdate(new String(sql_buff));
-
-    System.out.println("SELECT currval('"+schema+".featureloc_featureloc_id_seq')");
   }
 
   /**
