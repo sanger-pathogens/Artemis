@@ -62,6 +62,8 @@ public class ChadoTransaction
   private String schema;
   /** feature id */
   private int feature_id;
+  /** chado feature */
+  private ChadoFeature chadoFeature;
 
   /**
   *
@@ -80,13 +82,24 @@ public class ChadoTransaction
  
   /**
   *
-  * @param type         transaction type
-  * @param uniquename   uniquename of feature
+  * @param type          transaction type
+  * @param chado_feature ChadoFeature to be inserted
   *
   */
-  public ChadoTransaction(int type, ChadoFeature new_feature)
+  public ChadoTransaction(int type, ChadoFeature chadoFeature)
   {
+    this.chadoFeature = chadoFeature;
     this.type = type;
+  }
+
+
+  /**
+  *
+  *
+  */
+  public ChadoFeature getChadoFeature()
+  {
+    return chadoFeature;
   }
 
   /**

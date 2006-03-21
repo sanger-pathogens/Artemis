@@ -433,7 +433,8 @@ public class JdbcDAO
       appendToLogFile(new String(sqlBuff), sqlLog);
 
       Statement st = conn.createStatement();
-      st.executeUpdate(new String(sqlBuff));
+      int rowCount = st.executeUpdate(new String(sqlBuff));
+      System.out.println(rowCount+" row(s) inserted");
     }
   }
 
@@ -470,8 +471,86 @@ public class JdbcDAO
       appendToLogFile(new String(sqlBuff), sqlLog);
 
       Statement st = conn.createStatement();
-      st.executeUpdate(new String(sqlBuff));
+      int rowCount = st.executeUpdate(new String(sqlBuff));
+      System.out.println(rowCount+" row(s) deleted");
     }
+  }
+
+
+  /**
+   *
+   * Insert a feature into the database.
+   * @param schema schema to update.
+   *
+   */
+  public void insertFeature
+                    (final String schema, final ChadoTransaction tsn, 
+                     final String srcfeature_id)
+                     throws SQLException
+  {
+    Statement st = conn.createStatement();
+    String str_sql = "SELECT organism_id from " + schema +
+                 ".feature where feature_id = '" + srcfeature_id + "'";
+
+    System.out.println(str_sql);
+    appendToLogFile(str_sql, sqlLog);
+
+    ResultSet rs = st.executeQuery(str_sql);
+    rs.next();
+
+    ChadoFeature feature = new ChadoFeature();
+    final int organism_id = rs.getInt("organism_id");
+
+    ChadoFeature chadoFeature = tsn.getChadoFeature();
+    // insert new feature into feature table
+    StringBuffer sql_buff = new StringBuffer();
+    sql_buff.append("INSERT INTO "+schema+".feature (");
+    sql_buff.append(" feature_id ,");
+    sql_buff.append(" organism_id ,");
+    sql_buff.append(" name ,");
+    sql_buff.append(" uniquename ,");
+    sql_buff.append(" type_id");
+    sql_buff.append(" ) VALUES ( ");
+    sql_buff.append("nextval('"+schema+".feature_feature_id_seq') , ");
+    sql_buff.append(organism_id+" , ");
+    sql_buff.append("'"+chadoFeature.getUniquename()+"'"+" , ");
+    sql_buff.append("'"+chadoFeature.getUniquename()+"'"+" , ");
+    sql_buff.append(Long.toString(chadoFeature.getType_id()));
+    sql_buff.append(" )");
+
+    System.out.println(new String(sql_buff));
+    st = conn.createStatement();
+    int rowCount = st.executeUpdate(new String(sql_buff));
+
+    String sql = "SELECT currval('"+schema+".feature_feature_id_seq')";
+    System.out.println(sql);
+    
+    rs = st.executeQuery(sql);
+    rs.next();
+    final int feature_id = rs.getInt("currval");
+
+//  System.out.println("SELECT currval('"+schema+".featureprop_featureprop_id_seq')");
+
+    sql_buff = new StringBuffer();
+    sql_buff.append("INSERT INTO "+schema+".featureloc (");
+    sql_buff.append(" featureloc_id ,");
+    sql_buff.append(" feature_id ,");
+    sql_buff.append(" srcfeature_id ,");
+    sql_buff.append(" fmin ,");
+    sql_buff.append(" fmax ");
+    sql_buff.append(" ) VALUES ( ");
+    sql_buff.append("nextval('"+schema+".featureloc_featureloc_id_seq') , ");
+    sql_buff.append(feature_id+" , ");
+    sql_buff.append(srcfeature_id+" , ");
+    sql_buff.append(chadoFeature.getFmin()+" , ");
+    sql_buff.append(chadoFeature.getFmax());
+    sql_buff.append(" )");
+
+    System.out.println(new String(sql_buff));
+    st = conn.createStatement();
+    rowCount = st.executeUpdate(new String(sql_buff));
+
+    System.out.println("SELECT currval('"+schema+".featureloc_featureloc_id_seq')");
   }
 
 
@@ -517,6 +596,5 @@ public class JdbcDAO
         }
     }
   }
-
 
 }

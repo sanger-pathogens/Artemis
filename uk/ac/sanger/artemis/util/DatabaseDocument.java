@@ -696,18 +696,8 @@ public class DatabaseDocument extends Document
           dao.insertAttributes(schema, tsn);
         else if(tsn.getType() == ChadoTransaction.DELETE)
           dao.deleteAttributes(schema, tsn);
-
-/*
-        String[] sql_array = tsn.getSqlQuery(schema);
-
-        for(int j = 0; j < sql_array.length; j++)
-        {
-          System.out.println(sql_array[j]);
-
-          Statement st = conn.createStatement();
-          row += st.executeUpdate(sql_array[j]);
-        }
-*/
+        else if(tsn.getType() == ChadoTransaction.INSERT_FEATURE)
+          dao.insertFeature(schema, tsn, feature_id);
       }
 
       conn.close();

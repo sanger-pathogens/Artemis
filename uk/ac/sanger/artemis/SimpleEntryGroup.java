@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleEntryGroup.java,v 1.3 2006-03-17 16:51:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleEntryGroup.java,v 1.4 2006-03-21 16:05:48 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -41,7 +41,7 @@ import java.util.NoSuchElementException;
  *  once.  Objects of this class act a bit like single Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: SimpleEntryGroup.java,v 1.3 2006-03-17 16:51:38 tjc Exp $
+ *  @version $Id: SimpleEntryGroup.java,v 1.4 2006-03-21 16:05:48 tjc Exp $
  **/
 
 public class SimpleEntryGroup extends EntryVector
@@ -856,16 +856,16 @@ public class SimpleEntryGroup extends EntryVector
           final EntryChangeListener entry_change_listener =
                                      (EntryChangeListener) target;
 
-          if(entry_change_listener instanceof ChadoTransactionManager)
-          {
+//        if(entry_change_listener instanceof ChadoTransactionManager)
+//        {
             // just call this listener once
-            if(!seen_chado_manager)
-            {
-              entry_change_listener.entryChanged((EntryChangeEvent) event);
-              seen_chado_manager = true;
-            }
-          }
-          else  
+//          if(!seen_chado_manager)
+//          {
+//            entry_change_listener.entryChanged((EntryChangeEvent) event);
+//            seen_chado_manager = true;
+//          }
+//        }
+//        else  
             entry_change_listener.entryChanged((EntryChangeEvent) event);
         } 
         else 

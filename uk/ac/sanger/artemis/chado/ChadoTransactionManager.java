@@ -130,7 +130,6 @@ public class ChadoTransactionManager
   {
     if(event.getType() == EntryChangeEvent.FEATURE_ADDED)
     {
-      System.out.println("HERE FEATURE_ADDED");
       Feature feature = event.getFeature();
 
       String feature_uniquename = null;
@@ -173,7 +172,6 @@ public class ChadoTransactionManager
       // codon_start attribute
 //    chado_feature.setPhase();
 
-      
       chado_feature.setFmin(feature.getRawFirstBase()-1);
       chado_feature.setFmax(feature.getRawLastBase());
       chado_feature.setUniquename(feature_uniquename);
@@ -182,14 +180,44 @@ public class ChadoTransactionManager
       String key = feature.getKey().toString();
       chado_feature.setType_id(DatabaseDocument.getCvtermID(key).longValue());
 
-/*
+      addQualifiers(feature.getQualifiers(), chado_feature);
+      // create transaction object
       ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT_FEATURE,
                                                   chado_feature);
-*/
-                                       
+      System.out.println("---->HERE FEATURE_ADDED "+tsn.getChadoFeature().getUniquename());
+
+      sql.add(tsn);
     }
 
 //  System.out.println(event.getEntry().getName());
+  }
+
+  private void addQualifiers(final QualifierVector qualifiers,
+                             final ChadoFeature chado_feature)
+  {
+    // add qualifiers/attributes
+    for(int qualifier_index = 0; qualifier_index < qualifiers.size();
+      ++qualifier_index)
+    {
+      final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
+      final String name = this_qualifier.getName();
+
+      if(name.equals("ID") ||
+         name.equals("score") ||
+         name.equals("gff_source") ||
+         name.equals("gff_seqname") )
+        continue;
+
+      final StringVector qualifier_values = this_qualifier.getValues();
+     
+      long type_id = DatabaseDocument.getCvtermID( name ).longValue();
+      for(int value_index = 0; value_index < qualifier_values.size();
+        ++value_index)
+      {
+        chado_feature.addQualifier(type_id, 
+                                   (String)qualifier_values.elementAt(value_index));
+      }
+    } 
   }
 
   /**

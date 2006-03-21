@@ -136,4 +136,16 @@ public interface ChadoDAO
   public void deleteAttributes
                     (final String schema, final ChadoTransaction tsn)
                      throws SQLException;
+
+  /**
+   *
+   * Insert a feature into the database.
+   * @param schema schema to update.
+   *
+   */
+  public void insertFeature
+                    (final String schema, final ChadoTransaction tsn,
+                     final String srcfeature_id)
+                     throws SQLException;
+
 }
