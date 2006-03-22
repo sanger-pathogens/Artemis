@@ -158,4 +158,23 @@ public interface ChadoDAO
                     (final String schema, final ChadoTransaction tsn)
                      throws SQLException;
 
+  /**
+   * 
+   * Write the time a feature was last modified
+   * @param schema schema to update.
+   *
+   */
+  public void writeTimeLastModified
+                    (final String schema, final String uniquename)
+                     throws SQLException;
+
+  /**
+   *
+   * Write the time a feature was last accessed
+   * @param schema schema to update.
+   * 
+   */
+  public void writeTimeAccessioned
+                    (final String schema, final String uniquename)
+                     throws SQLException;
 }

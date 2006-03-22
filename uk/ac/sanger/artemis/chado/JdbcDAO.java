@@ -382,9 +382,14 @@ public class JdbcDAO
     }
 
     Statement st = conn.createStatement();
-    st.executeUpdate(new String(sqlBuff));
-  }
+    int rowCount = st.executeUpdate(new String(sqlBuff));
 
+    if(rowCount > 0)
+    {
+      for(int i=0; i<uniquename.size(); i++)
+        writeTimeLastModified(schema, (String)uniquename.get(i));
+    }
+  }
 
   /**
    *
@@ -575,6 +580,41 @@ public class JdbcDAO
     Statement st = conn.createStatement();
     int rowCount = st.executeUpdate(sql);
     System.out.println(sql);
+  }
+
+  
+  /**
+   *
+   * Write the time a feature was last modified 
+   * @param schema schema to update.
+   *
+   */
+  public void writeTimeLastModified
+                    (final String schema, final String uniquename)
+                     throws SQLException
+  {
+    String sql = "UPDATE "+schema+
+                 ".feature SET timelastmodified=CURRENT_TIMESTAMP WHERE uniquename='"+
+                 uniquename+"'";
+    Statement st = conn.createStatement();
+    int rowCount = st.executeUpdate(sql);
+  }
+
+  /**
+   *
+   * Write the time a feature was last accessed
+   * @param schema schema to update.
+   *
+   */
+  public void writeTimeAccessioned
+                    (final String schema, final String uniquename)
+                     throws SQLException
+  {
+    String sql = "UPDATE "+schema+
+                 ".feature SET timeaccessioned=CURRENT_TIMESTAMP WHERE uniquename='"+
+                 uniquename+"'";
+    Statement st = conn.createStatement();
+    int rowCount = st.executeUpdate(sql);
   }
 
   /**
