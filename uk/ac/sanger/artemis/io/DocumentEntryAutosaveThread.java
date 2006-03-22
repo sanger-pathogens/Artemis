@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntryAutosaveThread.java,v 1.3 2005-06-03 16:05:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntryAutosaveThread.java,v 1.4 2006-03-22 14:03:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import java.io.*;
  *  called #entry_name# every 120 seconds.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: DocumentEntryAutosaveThread.java,v 1.3 2005-06-03 16:05:36 tjc Exp $
+ *  @version $Id: DocumentEntryAutosaveThread.java,v 1.4 2006-03-22 14:03:35 tjc Exp $
  **/
 
 public class DocumentEntryAutosaveThread extends Thread {
@@ -75,7 +75,14 @@ public class DocumentEntryAutosaveThread extends Thread {
         continue;
       }
 
-      final File save_file = new File ("#" + entry_name + "#");
+      final File save_file;
+
+      if(document_entry.getDocument() instanceof RemoteFileDocument)
+        save_file = new File(System.getProperty("user.dir")+
+                             System.getProperty("file.separator")+
+                             "#" + entry_name + "#");
+      else
+        save_file = new File ("#" + entry_name + "#");
 
       final java.util.Date last_change_time =
         document_entry.getLastChangeTime ();
@@ -105,7 +112,14 @@ public class DocumentEntryAutosaveThread extends Thread {
       } else {
         if (have_saved) {
           // auto save file isn't needed now so turn it into a backup file
-          final File new_name = new File (entry_name + "~");
+          final File new_name;
+
+          if(document_entry.getDocument() instanceof RemoteFileDocument)
+            new_name = new File (System.getProperty("user.dir")+
+                                 System.getProperty("file.separator")+
+                                 entry_name + "~");
+          else
+            new_name = new File (entry_name + "~");
 
           save_file.renameTo (new_name);
         } else {
