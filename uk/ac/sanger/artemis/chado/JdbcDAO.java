@@ -45,6 +45,14 @@ public class JdbcDAO
                           "art_sql_debug.log";
   private Connection conn;
 
+  /**
+   *
+   * Define a JDBC data access object and establish a <code>Connection</code>.
+   * @param location	the database location <i>e.g.</i> 
+   *                    jdbc:postgresql://localhost:2997/chado?user=tjc
+   * @param pfield	the password for this connection
+   *
+   */
   public JdbcDAO(final String location, final JPasswordField pfield)
          throws java.sql.SQLException, java.net.ConnectException
   {

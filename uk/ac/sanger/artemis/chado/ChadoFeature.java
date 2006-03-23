@@ -89,7 +89,7 @@ public class ChadoFeature
   /**
    *
    * Set the feature_id.
-   * @param 	set the feature_id
+   * @param id	set the feature_id
    *
    */
   public void setId(int id)
@@ -111,7 +111,7 @@ public class ChadoFeature
   /**
    *
    * Set the postgres schema.
-   * @param	the postgres schema
+   * @param schema	the postgres schema
    *
    */
   public void setSchema(String schema)
@@ -133,7 +133,7 @@ public class ChadoFeature
   /**
    *
    * Set the parent feature_id.
-   * @param 	the parent feature_id
+   * @param object_id	the parent feature_id
    *
    */
   public void setObject_id(String object_id)
@@ -179,7 +179,7 @@ public class ChadoFeature
    *
    * Set the strand. The orientation/directionality of the location. 
    * Should be 0, -1 or +1.
-   * @param	the strand
+   * @param strand	the strand
    *
    */
   public void setStrand(int strand)
@@ -205,7 +205,7 @@ public class ChadoFeature
    * Set the fmin value. The leftmost/minimal boundary in the linear range 
    * represented by the featureloc. To convert this to the eftmost position 
    * in a base-oriented system (e.g. GFF) add 1 to fmin.
-   * @param	the fmin value
+   * @param fmin	the fmin value
    *
    */
   public void setFmin(int fmin)
@@ -233,7 +233,7 @@ public class ChadoFeature
    * represented by the featureloc. No conversion is required to go from fmax 
    * to the rightmost coordinate in a base-oriented system that counts from 1 
    * (eg GFF).
-   * @param	the fmax value
+   * @param fmax	the fmax value
    *
    */
   public void setFmax(int fmax)
@@ -255,7 +255,7 @@ public class ChadoFeature
   /**
    *
    * Set sequence length. The length of the residue feature.
-   * @param	the length of the residue feature
+   * @param length	the length of the residue feature
    *
    */
   public void setLength(int length)
@@ -281,7 +281,7 @@ public class ChadoFeature
    * Set the unique name for a feature; may not be necessarily be 
    * particularly human-readable, although this is prefered. This name 
    * must be unique for this type of feature within this organism.
-   * @param	the unique name for a feature.
+   * @param uniquename	the unique name for a feature.
    *
    */
   public void setUniquename(String uniquename)
@@ -305,7 +305,7 @@ public class ChadoFeature
    * 
    * Set the optional human-readable common name for a feature, for display 
    * purposes.
-   * @param	the name for a feature
+   * @param name	the name for a feature
    *
    */
   public void setName(String name)
@@ -329,7 +329,7 @@ public class ChadoFeature
    *
    * Set the sequence of alphabetic characters representing biological residues 
    * (nucleic acids, amino acids).
-   * @param	the feature residues
+   * @param residues	the feature residues
    *
    */
   public void setResidues(byte[] residues)
@@ -353,7 +353,7 @@ public class ChadoFeature
    *
    * A required reference to a table:cvterm giving the feature type. 
    * This will typically be a Sequence Ontology identifier.
-   * @param	the feature SO identifier
+   * @param type_id	the feature SO identifier
    *
    */
   public void setType_id(long type_id)
@@ -379,7 +379,7 @@ public class ChadoFeature
    * Set the name of the property/slot is a cvterm. The meaning of the property 
    * is defined in that cvterm. Certain properties will only apply to certain 
    * feature types; this will be handled by the Sequence Ontology
-   * @param	the type identifier for the name of the property
+   * @param prop_type_id	the type identifier for the name of the property
    *
    */
   public void setProp_type_id(long prop_type_id)
@@ -401,7 +401,7 @@ public class ChadoFeature
   /**
    *
    * Set the value of the property, represented as text. 
-   * @param the value of the property
+   * @param value	the value of the property
    *
    */
   public void setValue(String value)
@@ -423,7 +423,7 @@ public class ChadoFeature
   /**
    *
    * Organism abbreviation.
-   * @return	the organism abbreviation
+   * @return abbreviation	the organism abbreviation
    *
    */
   public void setAbbreviation(String abbreviation)
@@ -445,7 +445,7 @@ public class ChadoFeature
   /**
    *
    * The source feature which the location in featureloc is relative to.
-   * @param	the source feature
+   * @param srcfeature_id	the source feature
    *
    */
   public void setSrcfeature_id(int srcfeature_id)
@@ -467,7 +467,7 @@ public class ChadoFeature
   /**
    *
    * The phase of translation wrt srcfeature_id. Values are 0,1,2. 
-   * @param	the phase
+   * @param phase	the phase
    *
    */
   public void setPhase(int phase)
