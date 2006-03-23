@@ -28,6 +28,13 @@ import java.sql.*;
 import java.io.*;
 import java.util.List;
 
+/**
+ *
+ * Data access object
+ * @see		uk.ac.sanger.artemis.chado.JdbcDAO
+ * @see		uk.ac.sanger.artemis.chado.IBatisDAO
+ *
+ */
 public interface ChadoDAO
 {
 
@@ -36,6 +43,7 @@ public interface ChadoDAO
    * Get the residues of a feature.
    * @param feature_id  id of feature to query
    * @param schema      schema/organism name or null
+   * @return 	the <code>ChadoFeature</code> with the residues
    *
    */
   public ChadoFeature getSequence(final int feature_id,
@@ -44,10 +52,10 @@ public interface ChadoDAO
 
   /**
    *
-   * Get feature name given the feature_id and schema.
+   * Get the feature name given a feature_id and schema.
    * @param feature_id  id of feature to query
    * @param schema      schema/organism name or null
-   *
+   * @return	the feature name
    */
   public String getFeatureName(final int feature_id,
                                final String schema)
@@ -57,9 +65,9 @@ public interface ChadoDAO
    *
    * Get child feature properties for a given parent
    * feature to be able to construct a GFF like feature.
-   *
-   * @param parentFeatureID  id of parent feature to query
-   * @param schema           schema/organism name or null
+   * @param parentFeatureID  the id of parent feature to query
+   * @param schema           the schema/organism name or null
+   * @return	the <code>List</code> of <code>ChadoFeature</code> objects
    *
    */
   public List getGff(final int parentFeatureID,
@@ -69,10 +77,12 @@ public interface ChadoDAO
   /**
    *
    * Given a list of distict cvterm_id/type_id's of feature types
-   * that have residues in the given schema and the schema name
-   * return a list of features in the schema with residues.
+   * that have residues (from getResidueType()) in the given schema
+   * and the schema name return a list of features in the schema
+   * with residues.
    * @param cvterm_ids list of cvterm_id/type_id's
    * @param schema      schema/organism name or null
+   * @return	the <code>List</code> of <code>ChadoFeature</code> objects
    *
    */
   public List getResidueFeatures(List cvterm_ids,
@@ -99,9 +109,9 @@ public interface ChadoDAO
 
   /**
    * 
-   * Get a lst of the cvterm's.
-   * @param name cvterm name
-   * @param cv_name ontology name (e.g. gene, sequence)
+   * Get the full list of cvterm_id and name as a <code>List</code> of 
+   * <code>Cvterm</code> objects.
+   * @return	the full list of cvterm_id and name
    *
    */
   public List getCvterm()
@@ -112,7 +122,9 @@ public interface ChadoDAO
 //
   /**
    *
-   * @param schema schema to update.
+   * Update attributes defined by the <code>ChadoTransaction</code>.
+   * @param schema	schema/organism name or null
+   * @param tsn		the <code>ChadoTransaction</code>
    *
    */
   public void updateAttributes
@@ -121,7 +133,9 @@ public interface ChadoDAO
 
   /**
    *
-   * @param schema schema to update.
+   * Insert attributes defined by the <code>ChadoTransaction</code>.
+   * @param schema      schema/organism name or null
+   * @param tsn         the <code>ChadoTransaction</code>
    *
    */
   public void insertAttributes
@@ -130,7 +144,9 @@ public interface ChadoDAO
 
   /**
    *
-   * @param schema schema to update.
+   * Delete attributes defined by the <code>ChadoTransaction</code>.
+   * @param schema      schema/organism name or null
+   * @param tsn         the <code>ChadoTransaction</code>
    *
    */
   public void deleteAttributes
@@ -139,8 +155,10 @@ public interface ChadoDAO
 
   /**
    *
-   * Insert a feature into the database.
-   * @param schema schema to update.
+   * Insert a feature into the database defined by the <code>ChadoTransaction</code>.
+   * @param schema       	schema/organism name or null
+   * @param tsn         	the <code>ChadoTransaction</code>
+   * @parma srcfeature_id	the parent feature identifier
    *
    */
   public void insertFeature
@@ -150,8 +168,9 @@ public interface ChadoDAO
 
   /**
    *
-   * Delete a feature from the database.
-   * @param schema schema to update.
+   * Delete a feature from the database defined by the <code>ChadoTransaction</code>.
+   * @param schema 	schema/organism name or null
+   * @param tsn         the <code>ChadoTransaction</code>
    * 
    */
   public void deleteFeature
@@ -161,7 +180,8 @@ public interface ChadoDAO
   /**
    * 
    * Write the time a feature was last modified
-   * @param schema schema to update.
+   * @param schema	schema/organism name or null
+   * @param uniquename	the unique name of the feature
    *
    */
   public void writeTimeLastModified
@@ -171,7 +191,8 @@ public interface ChadoDAO
   /**
    *
    * Write the time a feature was last accessed
-   * @param schema schema to update.
+   * @param schema 	schema/organism name or null
+   * @param uniquename  the unique name of the feature
    * 
    */
   public void writeTimeAccessioned

@@ -30,6 +30,12 @@ import java.util.List;
 import java.sql.*;
 import javax.swing.JPasswordField;
 
+/**
+ *
+ * iBATIS implemetation of the <code>ChadoDAO</code> data
+ * access interface.
+ *
+ */
 public class IBatisDAO implements ChadoDAO
 {
   public IBatisDAO(final JPasswordField pfield)
@@ -39,8 +45,10 @@ public class IBatisDAO implements ChadoDAO
 
   /**
    *
-   * Get feature name given the feature_id and schema
-   *
+   * Get the feature name given a feature_id and schema.
+   * @param feature_id  id of feature to query
+   * @param schema      schema/organism name or null
+   * @return    the feature name
    */
   public String getFeatureName(final ChadoFeature feature)
                 throws SQLException
@@ -51,9 +59,10 @@ public class IBatisDAO implements ChadoDAO
 
   /**
    *
-   * Get feature name given the feature_id and schema.
+   * Get the residues of a feature.
    * @param feature_id  id of feature to query
    * @param schema      schema/organism name or null
+   * @return    the <code>ChadoFeature</code> with the residues
    *
    */
   public String getFeatureName(final int feature_id,
@@ -71,9 +80,9 @@ public class IBatisDAO implements ChadoDAO
    *
    * Get child feature properties for a given parent
    * feature to be able to construct a GFF like feature.
-   *
-   * @param feature_id  id of parent feature to query
-   * @param schema      schema/organism name or null
+   * @param parentFeatureID  the id of parent feature to query
+   * @param schema           the schema/organism name or null
+   * @return    the <code>List</code> of <code>ChadoFeature</code> objects
    *
    */
   public List getGff(final int feature_id,
@@ -115,10 +124,12 @@ public class IBatisDAO implements ChadoDAO
   /**
    *
    * Given a list of distict cvterm_id/type_id's of feature types
-   * that have residues in the given schema and the schema name
-   * return a list of features in the schema with residues.
+   * that have residues (from getResidueType()) in the given schema 
+   * and the schema name return a list of chado features in the schema
+   * with residues.
    * @param cvterm_ids list of cvterm_id/type_id's
    * @param schema      schema/organism name or null
+   * @return    the <code>List</code> of <code>ChadoFeature</code> objects
    *
    */
   public List getResidueFeatures(List cvterm_ids, 
@@ -136,9 +147,10 @@ public class IBatisDAO implements ChadoDAO
 
   /**
    *
-   * For a schema return the type_id's with residues
+   * For a schema return the type_id's with residues.
    * @param schema      schema/organism name or null
-   * @return list of type_id's
+   * @return    the <code>List</code> of type_id's as <code>String</code>
+   *            objects
    *
    */
   public List getResidueType(final String schema)
@@ -150,7 +162,9 @@ public class IBatisDAO implements ChadoDAO
 
   /**
    *
-   * Get available schemas (as a List of ChadoFeature objects)
+   * Get available schemas (as a <code>List</code> of <code>String</code>       
+   * objects).
+   * @return    the available schemas
    *
    */
   public List getSchema()
@@ -160,6 +174,13 @@ public class IBatisDAO implements ChadoDAO
     return sqlMap.queryForList("getSchema", null);
   }
 
+  /**
+   *
+   * Get the full list of cvterm_id and name as a <code>List</code> of 
+   * <code>Cvterm</code> objects.
+   * @return    the full list of cvterm_id and name
+   *
+   */
   public List getCvterm()
               throws SQLException
   {
@@ -188,7 +209,9 @@ public class IBatisDAO implements ChadoDAO
 //
   /**
    *
-   * @param schema schema to update.
+   * Update attributes defined by the <code>ChadoTransaction</code>.
+   * @param schema      schema/organism name or null
+   * @param tsn         the <code>ChadoTransaction</code>
    *
    */
   public void updateAttributes
@@ -202,7 +225,9 @@ public class IBatisDAO implements ChadoDAO
 
   /**
    *
-   * @param schema schema to update.
+   * Insert attributes defined by the <code>ChadoTransaction</code>.
+   * @param schema      schema/organism name or null
+   * @param tsn         the <code>ChadoTransaction</code>
    *
    */
   public void insertAttributes
@@ -224,7 +249,9 @@ public class IBatisDAO implements ChadoDAO
 
   /**
    *
-   * @param schema schema to update.
+   * Delete attributes defined by the <code>ChadoTransaction</code>.
+   * @param schema      schema/organism name or null
+   * @param tsn         the <code>ChadoTransaction</code>
    *
    */
   public void deleteAttributes
@@ -246,8 +273,10 @@ public class IBatisDAO implements ChadoDAO
 
   /**
    *
-   * Insert a feature into the database.
-   * @param schema schema to update.
+   * Insert a feature into the database defined by the <code>ChadoTransaction</code>.
+   * @param schema              schema/organism name or null
+   * @param tsn                 the <code>ChadoTransaction</code>
+   * @parma srcfeature_id       the parent feature identifier
    *
    */
   public void insertFeature
@@ -261,8 +290,9 @@ public class IBatisDAO implements ChadoDAO
 
   /**
    *
-   * Delete a feature from the database.
-   * @param schema schema to update.
+   * Delete a feature from the database defined by the <code>ChadoTransaction</code>.
+   * @param schema      schema/organism name or null
+   * @param tsn         the <code>ChadoTransaction</code>
    *
    */
   public void deleteFeature
@@ -274,7 +304,8 @@ public class IBatisDAO implements ChadoDAO
   /**
    *
    * Write the time a feature was last modified
-   * @param schema schema to update.
+   * @param schema      schema/organism name or null
+   * @param uniquename  the unique name of the feature
    *
    */
   public void writeTimeLastModified
@@ -286,7 +317,8 @@ public class IBatisDAO implements ChadoDAO
   /**
    *
    * Write the time a feature was last accessed
-   * @param schema schema to update.
+   * @param schema      schema/organism name or null
+   * @param uniquename  the unique name of the feature
    *
    */
   public void writeTimeAccessioned
