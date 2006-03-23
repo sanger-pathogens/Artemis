@@ -51,11 +51,12 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 /**
-*
-* Class responsible for tracking the feature insertions/deletions/changes
-* to be able to commit these back to the database.
-*
-**/
+ *
+ * Chado transaction manager listens for feature, entry and sequence changes.
+ * <code>ChadoTransactionManager</code> creates and tracks the feature insertions,
+ * deletions, and changes to commit back to the database.
+ *
+ **/
 public class ChadoTransactionManager
        implements FeatureChangeListener, EntryChangeListener, SequenceChangeListener 
 {
@@ -63,11 +64,11 @@ public class ChadoTransactionManager
   private Vector sql = new Vector();
 
   /**
-  *
-  *  Implementation of the FeatureChangeListener interface.  We listen for
-  *  changes in every feature of every entry in this group.
-  *
-  **/ 
+   *
+   *  Implementation of the FeatureChangeListener interface.  We listen for
+   *  changes in every feature of every entry in this group.
+   *
+   **/ 
   public void featureChanged(FeatureChangeEvent event)
   {
     if(event.featureHasChanged())
@@ -209,6 +210,13 @@ public class ChadoTransactionManager
 //  System.out.println(event.getEntry().getName());
   }
 
+  /**
+   *
+   * Add qualifiers in a <code>QualifierVector</code> to a <code>ChadoFeature</code>.
+   * @param qualifiers		the <code>QualifierVector</code>
+   * @param chado_feature	the <code>ChadoFeature</code>
+   *
+   */
   private void addQualifiers(final QualifierVector qualifiers,
                              final ChadoFeature chado_feature)
   {
@@ -238,16 +246,17 @@ public class ChadoTransactionManager
   }
 
   /**
-  *
-  *  Return a string containing one qualifier per line.  These are the
-  *  original qualifiers, not the qualifiers from the qualifier_text_area.
-  *
-  **/
+   *
+   *  Return a string containing one qualifier per line.  These are the
+   *  original qualifiers, not the qualifiers from the qualifier_text_area.
+   *  @param qualifiers	the <code>QualifierVector</code>
+   *  @return	the <code>String</code> representation of the qualifiers
+   *
+   **/
   private String getQualifierString(QualifierVector qualifiers)
   {
     final StringBuffer buffer = new StringBuffer();
 
-    ChadoTransaction tsn;
     for(int qualifier_index = 0; qualifier_index < qualifiers.size();
         ++qualifier_index)
     {
@@ -268,15 +277,15 @@ public class ChadoTransactionManager
   }
 
   /**
-  *
-  * Find the qualifiers that have changed or been added and UPDATE
-  * INSERT or DELETE accordingly.
-  *
-  * @param qualifiers_old	old qualifiers
-  * @param qualifiers_new	new qualifiers
-  * @param feature		GFF feature that has been changed
-  *
-  */
+   *
+   * Find the qualifiers that have changed or been added and UPDATE
+   * INSERT or DELETE accordingly.
+   *
+   * @param qualifiers_old	old qualifiers
+   * @param qualifiers_new	new qualifiers
+   * @param feature		GFF feature that has been changed
+   *
+   */
   private void editQualifiers(QualifierVector qualifiers_old, 
                               QualifierVector qualifiers_new, 
                               GFFStreamFeature feature)
@@ -427,10 +436,10 @@ public class ChadoTransactionManager
   }
 
   /**
-  *
-  * Strip out quotes around a string.
-  *
-  */
+   *
+   * Strip out quotes around a string.
+   *
+   */
   private String stripQuotes(String s)
   {
     if(s.startsWith("\"") && s.endsWith("\""))
@@ -441,20 +450,20 @@ public class ChadoTransactionManager
 
 
   /**
-  *
-  *  This method fixes up the location of this Feature when a sequence
-  *  changes.
-  *
-  **/ 
+   *
+   *  This method fixes up the location of this Feature when a sequence
+   *  changes.
+   *
+   **/ 
   public void sequenceChanged(final SequenceChangeEvent event)
   {
   }
 
   /**
-  *
-  * Commit the transactions back to the database.  
-  *
-  **/
+   *
+   * Commit the transactions back to the database.  
+   *
+   **/
   public void commit(DatabaseDocument dbDoc)
   {
     dbDoc.commit(sql);
