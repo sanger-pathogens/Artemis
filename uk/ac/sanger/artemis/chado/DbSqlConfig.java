@@ -47,8 +47,8 @@ public class DbSqlConfig
    *
    * Initialises iBatis configuration by reading the
    * artemis_sqlmap/chado_iBatis_config.xml file and the
-   * database location properties defined by -Dchado, <i>e.g.</i>
-   *  -Dchado=localhost:2997/chado?tjc
+   * database location properties defined by the system property, 
+   * <i>e.g.</i> -Dchado=localhost:2997/chado?tjc
    *
    */
   public static void init(JPasswordField fpasswd)

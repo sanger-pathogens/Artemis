@@ -38,6 +38,14 @@ import javax.swing.JPasswordField;
  */
 public class IBatisDAO implements ChadoDAO
 {
+  /**
+   *
+   * Define a iBatis data access object. This uses <code>DbSqlConfig</code>
+   * to read the configuration in. The system property <quote>chado</quote>
+   * can be used to define the database location <i>e.g.</i>
+   * -Dchado=localhost:2997/chado?tjc
+   *
+   */
   public IBatisDAO(final JPasswordField pfield)
   {
     DbSqlConfig.init(pfield);
