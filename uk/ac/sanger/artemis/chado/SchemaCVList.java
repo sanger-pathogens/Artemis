@@ -26,6 +26,12 @@ package uk.ac.sanger.artemis.chado;
 
 import java.util.List;
 
+/**
+ *
+ * Java Object used by iBatis to represent the cvterm_id's as
+ * a <code>List</code> for a schema.
+ *
+ */
 public class SchemaCVList
 {
 

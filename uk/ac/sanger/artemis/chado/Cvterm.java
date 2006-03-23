@@ -26,7 +26,7 @@ package uk.ac.sanger.artemis.chado;
 
 /**
  *
- * Java Object for cvterm_id and name
+ * Java Object used by iBatis for cvterm_id and name
  *
  */
 public class Cvterm
