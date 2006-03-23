@@ -78,6 +78,7 @@ public class ChadoFeature
   /**
    *
    * Get the feature_id.
+   * @return	the feature_id
    *
    */
   public int getId()
@@ -88,6 +89,7 @@ public class ChadoFeature
   /**
    *
    * Set the feature_id.
+   * @param 	set the feature_id
    *
    */
   public void setId(int id)
@@ -98,6 +100,7 @@ public class ChadoFeature
   /**
    *
    * Get the postgres schema.
+   * @return 	the postgres schema
    *
    */
   public String getSchema()
@@ -108,6 +111,7 @@ public class ChadoFeature
   /**
    *
    * Set the postgres schema.
+   * @param	the postgres schema
    *
    */
   public void setSchema(String schema)
@@ -118,6 +122,7 @@ public class ChadoFeature
   /**
    *
    * Get the parent feature_id.
+   * @return	the parent feature_id
    *
    */
   public String getObject_id()
@@ -128,6 +133,7 @@ public class ChadoFeature
   /**
    *
    * Set the parent feature_id.
+   * @param 	the parent feature_id
    *
    */
   public void setObject_id(String object_id)
@@ -138,6 +144,7 @@ public class ChadoFeature
   /**
    *
    * Get the last time feature was modified.
+   * @return	the last time feature was modified
    *
    */
   public Date getTimelastmodified()
@@ -148,6 +155,7 @@ public class ChadoFeature
   /**
    *
    * Set the last time feature was modified.
+   * @param	the last time the feature was modified
    *
    */
   public void setTimelastmodified(Date timelastmodified)
@@ -157,7 +165,9 @@ public class ChadoFeature
 
   /**
    *
-   * Get the strand.
+   * Get the strand. The orientation/directionality of the location. 
+   * Should be 0, -1 or +1.
+   * @return	the strand
    *
    */
   public int getStrand()
@@ -167,7 +177,9 @@ public class ChadoFeature
 
   /**
    *
-   * Set the strand.
+   * Set the strand. The orientation/directionality of the location. 
+   * Should be 0, -1 or +1.
+   * @param	the strand
    *
    */
   public void setStrand(int strand)
@@ -177,7 +189,10 @@ public class ChadoFeature
 
   /**
    *
-   * Get the fmin value.
+   * Get the fmin value. The leftmost/minimal boundary in the linear range 
+   * represented by the featureloc. To convert this to the eftmost position 
+   * in a base-oriented system (e.g. GFF) add 1 to fmin.
+   * @return	the fmin value
    *
    */
   public int getFmin()
@@ -187,7 +202,10 @@ public class ChadoFeature
 
   /**
    *
-   * Set the fmin value.
+   * Set the fmin value. The leftmost/minimal boundary in the linear range 
+   * represented by the featureloc. To convert this to the eftmost position 
+   * in a base-oriented system (e.g. GFF) add 1 to fmin.
+   * @param	the fmin value
    *
    */
   public void setFmin(int fmin)
@@ -197,7 +215,11 @@ public class ChadoFeature
 
   /**
    *
-   * Get the fmax value.
+   * Get the fmax value. The rightmost/maximal boundary in the linear range 
+   * represented by the featureloc. No conversion is required to go from fmax 
+   * to the rightmost coordinate in a base-oriented system that counts from 1 
+   * (eg GFF).
+   * @return	the fmax value
    *
    */
   public int getFmax()
@@ -207,7 +229,11 @@ public class ChadoFeature
 
   /**
    *
-   * Set the fmax value.
+   * Set the fmax value. The rightmost/maximal boundary in the linear range 
+   * represented by the featureloc. No conversion is required to go from fmax 
+   * to the rightmost coordinate in a base-oriented system that counts from 1 
+   * (eg GFF).
+   * @param	the fmax value
    *
    */
   public void setFmax(int fmax)
@@ -217,7 +243,8 @@ public class ChadoFeature
 
   /**
    *
-   * Get sequence length.
+   * Get sequence length. The length of the residue feature.
+   * @return	the length of the residue feature
    *
    */
   public int getLength()
@@ -227,7 +254,8 @@ public class ChadoFeature
 
   /**
    *
-   * Set sequence length.
+   * Set sequence length. The length of the residue feature.
+   * @param	the length of the residue feature
    *
    */
   public void setLength(int length)
@@ -235,96 +263,226 @@ public class ChadoFeature
     this.length = length;
   }
 
+  /**
+   *
+   * Get the unique name for a feature; may not be necessarily be 
+   * particularly human-readable, although this is prefered. This name 
+   * must be unique for this type of feature within this organism.
+   * @return	the unique name for a feature.
+   *
+   */
   public String getUniquename()
   {
     return uniquename;
   }
 
+  /**
+   *
+   * Set the unique name for a feature; may not be necessarily be 
+   * particularly human-readable, although this is prefered. This name 
+   * must be unique for this type of feature within this organism.
+   * @param	the unique name for a feature.
+   *
+   */
   public void setUniquename(String uniquename)
   {
     this.uniquename = uniquename;
   }
 
+  /**
+   * 
+   * The optional human-readable common name for a feature, for display
+   * purposes.
+   * @return 	the name for a feature
+   *
+   */
   public String getName()
   {
     return name;
   }
 
+  /**
+   * 
+   * Set the optional human-readable common name for a feature, for display 
+   * purposes.
+   * @param	the name for a feature
+   *
+   */
   public void setName(String name)
   {
     this.name = name;
   }
 
+  /**
+   *
+   * A sequence of alphabetic characters representing biological residues
+   * (nucleic acids, amino acids). 
+   * @return     the feature residues
+   *
+   */
   public byte[] getResidues()
   {
     return residues;
   } 
 
+  /**
+   *
+   * Set the sequence of alphabetic characters representing biological residues 
+   * (nucleic acids, amino acids).
+   * @param	the feature residues
+   *
+   */
   public void setResidues(byte[] residues)
   {
     this.residues = residues;
   }
 
+  /**
+   *
+   * A required reference to a table:cvterm giving the feature type. 
+   * This will typically be a Sequence Ontology identifier. 
+   * @return	the feature SO identifier
+   *
+   */
   public long getType_id()
   {
     return type_id;
   }
 
+  /**
+   *
+   * A required reference to a table:cvterm giving the feature type. 
+   * This will typically be a Sequence Ontology identifier.
+   * @param	the feature SO identifier
+   *
+   */
   public void setType_id(long type_id)
   {
     this.type_id = type_id;
   }
 
+  /**
+   *
+   * The name of the property/slot is a cvterm. The meaning of the property 
+   * is defined in that cvterm. Certain properties will only apply to certain 
+   * feature types; this will be handled by the Sequence Ontology
+   * @return	the type identifier for the name of the property 
+   *
+   */
   public long getProp_type_id()
   {
     return prop_type_id;
   }
 
+  /**
+   *
+   * Set the name of the property/slot is a cvterm. The meaning of the property 
+   * is defined in that cvterm. Certain properties will only apply to certain 
+   * feature types; this will be handled by the Sequence Ontology
+   * @param	the type identifier for the name of the property
+   *
+   */
   public void setProp_type_id(long prop_type_id)
   {
     this.prop_type_id = prop_type_id;
   }
 
+  /**
+   *
+   * Get the value of the property, represented as text.
+   * @return	the value of the property
+   *
+   */
   public String getValue()
   {
     return value;
   }
 
+  /**
+   *
+   * Set the value of the property, represented as text. 
+   * @param the value of the property
+   *
+   */
   public void setValue(String value)
   {
     this.value = value;
   }
 
+  /**
+   *
+   * Organism abbreviation.
+   * @param	the organism abbreviation	
+   *
+   */
   public String getAbbreviation()
   {
     return abbreviation;
   }
 
+  /**
+   *
+   * Organism abbreviation.
+   * @return	the organism abbreviation
+   *
+   */
   public void setAbbreviation(String abbreviation)
   {
     this.abbreviation = abbreviation;
   }
 
+  /**
+   *
+   * The source feature which the location in featureloc is relative to.
+   * @return    the source feature
+   *
+   */
   public int getSrcfeature_id()
   {
     return srcfeature_id;
   }
 
+  /**
+   *
+   * The source feature which the location in featureloc is relative to.
+   * @param	the source feature
+   *
+   */
   public void setSrcfeature_id(int srcfeature_id)
   {
     this.srcfeature_id = srcfeature_id;
   }
 
+  /**
+   *
+   * The phase of translation wrt srcfeature_id. Values are 0,1,2. 
+   * @return	the phase
+   *
+   */
   public int getPhase()
   {
     return phase;  
   }
 
+  /**
+   *
+   * The phase of translation wrt srcfeature_id. Values are 0,1,2. 
+   * @param	the phase
+   *
+   */
   public void setPhase(int phase)
   {
     this.phase = phase;
   }
 
+  /**
+   *
+   * Used in merging the qualiers to store them as a <code>Hashtable</code> of
+   * the cvterm type_id of the property name and the values as a <code>Vector</code>.
+   * @param	the cvterm type_id of the property name
+   * @param	the property value	
+   *
+   */
   public void addQualifier(long prop_type_id, String value)
   {
     if(qualifiers == null)
@@ -345,6 +503,13 @@ public class ChadoFeature
     }
   }
 
+  /**
+   *
+   * Used in merging the qualiers to store them as a <code>Hashtable</code> of
+   * the cvterm type_id of the property name and the values as a <code>Vector</code>.
+   * @return	the qualifiers as a <code>Hashtable</code>
+   *
+   */
   public Hashtable getQualifiers()
   {
     return qualifiers;
