@@ -24,6 +24,11 @@
 
 package uk.ac.sanger.artemis.chado;
 
+/**
+ *
+ * Java Object for cvterm_id and name
+ *
+ */
 public class Cvterm
 {
 

@@ -33,11 +33,24 @@ import javax.swing.JPasswordField;
 import java.util.Properties;
 import java.io.Reader;
 
+/**
+ *
+ * Initialises iBatis configuration.
+ *
+ */
 public class DbSqlConfig
 {
 
   private static SqlMapClient sqlMap;
 
+  /**
+   *
+   * Initialises iBatis configuration by reading the
+   * artemis_sqlmap/chado_iBatis_config.xml file and the
+   * database location properties defined by -Dchado, <i>e.g.</i>
+   *  -Dchado=localhost:2997/chado?tjc
+   *
+   */
   public static void init(JPasswordField fpasswd)
   {
     try

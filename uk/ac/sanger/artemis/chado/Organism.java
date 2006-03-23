@@ -24,9 +24,15 @@
 
 package uk.ac.sanger.artemis.chado;
 
+/**
+ *
+ * Java Object to represent the chado organism table.
+ *
+ */
 public class Organism
 {
 
+  /** organism identifier */
   private int id;
   private String abbreviation;
   private String genus;
