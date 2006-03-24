@@ -316,7 +316,6 @@ public class IBatisDAO implements ChadoDAO
     chadoFeature.setSrcfeature_id(Integer.parseInt(srcfeature_id));
     chadoFeature.setId(feature_id);
     sqlMap.insert("insertFeatureLoc", chadoFeature);
-
   }
 
 
@@ -331,6 +330,13 @@ public class IBatisDAO implements ChadoDAO
                     (final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    tsn.setSchema(schema);
+    ChadoFeature chadoFeature = new ChadoFeature();
+    chadoFeature.setSchema(schema);
+    chadoFeature.setUniquename(tsn.getUniqueName());
+
+    sqlMap.delete("deleteFeature", chadoFeature);
   }
 
   /**

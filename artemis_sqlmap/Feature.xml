@@ -248,4 +248,9 @@
           $fmax$ )
     </insert>
 
+   <delete id="deleteFeature" parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature">
+      DELETE FROM $schema$.feature
+      WHERE uniquename=#uniquename#
+    </delete>
+
 </sqlMap> 
