@@ -70,6 +70,8 @@ public class ChadoFeature
   private String value;
   /** feature organism abbreviation */
   private String abbreviation;
+  /** feature organism identifier */
+  private int organism_id;
   /** hashtable of qualifiers */
   private Hashtable qualifiers;
   /** phase */
@@ -412,7 +414,7 @@ public class ChadoFeature
   /**
    *
    * Organism abbreviation.
-   * @param	the organism abbreviation	
+   * @return	the organism abbreviation	
    *
    */
   public String getAbbreviation()
@@ -430,6 +432,29 @@ public class ChadoFeature
   {
     this.abbreviation = abbreviation;
   }
+
+  /**
+   *
+   * Organism identifier.
+   * @return     the organism id
+   *
+   */
+  public int getOrganism_id()
+  {
+    return organism_id;
+  }
+
+  /**
+   *
+   * Organism identifier.
+   * @param organism_id    the organism id
+   *
+   */
+  public void setOrganism_id(final int organism_id)
+  {
+    this.organism_id = organism_id;
+  }
+
 
   /**
    *

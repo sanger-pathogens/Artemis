@@ -67,10 +67,10 @@ public class JdbcDAO
   }
 
   
-  public Connection getConnection()
-  {
-    return conn;
-  }
+//public Connection getConnection()
+//{
+//  return conn;
+//}
 
   /**
    *

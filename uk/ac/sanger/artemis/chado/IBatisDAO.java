@@ -292,6 +292,30 @@ public class IBatisDAO implements ChadoDAO
                      final String srcfeature_id)
                      throws SQLException
   {
+    // get the organism id from the srcfeature_id 
+    ChadoFeature feature = new ChadoFeature();
+    feature.setSchema(schema);
+    feature.setSrcfeature_id(Integer.parseInt(srcfeature_id));
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    Integer organism_id = (Integer)sqlMap.queryForObject("getOrganismID", feature);
+
+    //
+    // insert feature into feature table
+    ChadoFeature chadoFeature = tsn.getChadoFeature();
+    chadoFeature.setSchema(schema);
+    chadoFeature.setOrganism_id(organism_id.intValue());  
+    sqlMap.insert("insertFeature", chadoFeature);
+
+    //
+    // get the current feature_id sequence value
+    int feature_id = ((Integer)sqlMap.queryForObject("currval", 
+                              schema+".feature_feature_id_seq")).intValue();
+
+    //
+    // insert feature location into featureloc
+    chadoFeature.setSrcfeature_id(Integer.parseInt(srcfeature_id));
+    chadoFeature.setId(feature_id);
+    sqlMap.insert("insertFeatureLoc", chadoFeature);
 
   }
 
