@@ -331,7 +331,6 @@ public class IBatisDAO implements ChadoDAO
                      throws SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    tsn.setSchema(schema);
     ChadoFeature chadoFeature = new ChadoFeature();
     chadoFeature.setSchema(schema);
     chadoFeature.setUniquename(tsn.getUniqueName());
