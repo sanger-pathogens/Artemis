@@ -341,16 +341,28 @@ public class ChadoTransactionManager
 
       Qualifier this_old_qualifier = null;
       StringVector old_qualifier_strings = null;
+      final StringVector new_qualifier_strings =
+                   StreamQualifier.toStringVector(null, this_qualifier);
+
       if(old_index> -1)  // update qualifier
       {
         this_old_qualifier = (Qualifier)qualifiers_old.elementAt(old_index);
 
         old_qualifier_strings =
                    StreamQualifier.toStringVector(null, this_old_qualifier);
-      }
 
-      final StringVector new_qualifier_strings =
-                   StreamQualifier.toStringVector(null, this_qualifier);
+        // check if anything has changed for this qualifier name
+        boolean need_to_update = false;
+        for(int value_index = 0; value_index < new_qualifier_strings.size();
+            ++value_index)
+        {
+          String qualifier_string = (String)new_qualifier_strings.elementAt(value_index);
+          if(!old_qualifier_strings.contains(qualifier_string))
+            need_to_update = true;
+        }
+        if(!need_to_update)
+          continue;
+      }
 
       // get the cvterm_id for this featureprop/qualifier
       Long lcvterm_id = DatabaseDocument.getCvtermID(name);
@@ -358,7 +370,8 @@ public class ChadoTransactionManager
       if(lcvterm_id == null)   // chado doesn't recognise this
       {
         JOptionPane.showMessageDialog(null, 
-                    name+" is not a valid qualifier!",
+                    name+" is not a valid qualifier!\n"+
+                    "There is no CV term set for this qualifier.",
                     "Invalid Qualifier",
                     JOptionPane.WARNING_MESSAGE);
         continue;
@@ -376,8 +389,8 @@ public class ChadoTransactionManager
             ++value_index)
         {
           String qualifier_string = (String)new_qualifier_strings.elementAt(value_index);
-          if(old_qualifier_strings.contains(qualifier_string))
-            continue;
+//        if(old_qualifier_strings.contains(qualifier_string))
+//          continue;
 
           tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                                      feature_id, "featureprop");
@@ -467,6 +480,7 @@ public class ChadoTransactionManager
   public void commit(DatabaseDocument dbDoc)
   {
     dbDoc.commit(sql);
+    sql = new Vector();
   }
 }
 
