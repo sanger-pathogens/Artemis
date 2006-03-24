@@ -74,7 +74,14 @@ public class DataViewInternalFrame extends JInternalFrame
     for(int i=0; i<dataFile.length; i++)
     {
       //ensure results file exists
-      File fdata = new File((String)dataFile[i]);
+      File fdata = new File(System.getProperty("user.dir")+
+                            (String)dataFile[i]);
+
+      if(!fdata.exists())
+        fdata = new File(System.getProperty("user.dir")+
+                         File.separatorChar +
+                         (String)dataFile[i]);
+
       if(!fdata.exists())
       {
         fdata = new File((String)dataFile[i]+".gz");
