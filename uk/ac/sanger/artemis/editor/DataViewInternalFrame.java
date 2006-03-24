@@ -81,7 +81,7 @@ public class DataViewInternalFrame extends JInternalFrame
         fdata = new File(System.getProperty("user.dir")+
                          File.separatorChar +
                          (String)dataFile[i]);
-
+     
       if(!fdata.exists())
       {
         fdata = new File((String)dataFile[i]+".gz");
@@ -108,7 +108,7 @@ public class DataViewInternalFrame extends JInternalFrame
       }
 
       // add fasta results internal frame
-      FastaTextPane fastaPane = new FastaTextPane((String)dataFile[i]);
+      FastaTextPane fastaPane = new FastaTextPane(fdata);
       fastaCollection.add(fastaPane);
 
       if(qualifier_txt.indexOf("/"+fastaPane.getFormat()+"_file=\"") == -1)

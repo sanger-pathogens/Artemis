@@ -52,12 +52,12 @@ public class FastaTextPane extends JScrollPane
   private JTextArea textArea;
   private Vector hitInfoCollection = null;
   private String format = null;
-  private String dataFile;
+  private File dataFile;
   private int qlen;
   private Vector listerners = new Vector();
   private Vector threads = new Vector();
 
-  public FastaTextPane(String dataFile)
+  public FastaTextPane(File dataFile)
   {
     super();
     //read fasta file
@@ -122,7 +122,7 @@ public class FastaTextPane extends JScrollPane
             throws IOException
   {
     FileInputStream inStream = new FileInputStream(dataFile);
-    if(dataFile.endsWith(".gz"))
+    if(dataFile.getName().endsWith(".gz"))
       return new WorkingGZIPInputStream(inStream);
     else
       return inStream;
@@ -136,13 +136,13 @@ public class FastaTextPane extends JScrollPane
   */
   protected String getResultsFormat()
   {
-    File fn = new File(dataFile);
+    File fn = dataFile;
 
-    if(!fn.exists())
-    {
-      dataFile = dataFile+".gz";
-      fn = new File(dataFile);
-    }
+//  if(!fn.exists())
+//  {
+//    dataFile = dataFile+".gz";
+//    fn = new File(dataFile);
+//  }
 
     InputStreamReader streamReader = null;
     BufferedReader buffReader = null;
@@ -180,7 +180,7 @@ public class FastaTextPane extends JScrollPane
 
   protected StringBuffer readBLASTPFile(String format)
   {
-    File fn = new File(dataFile);
+    File fn = dataFile;
     StringBuffer sbuff = new StringBuffer();
 
     InputStreamReader streamReader = null;
@@ -371,7 +371,7 @@ public class FastaTextPane extends JScrollPane
     }
     catch (IOException ioe)
     {
-      System.out.println("Cannot read file: " + dataFile);
+      System.out.println("Cannot read file: " + dataFile.getName());
     }
     return sbuff;
   }
@@ -379,7 +379,7 @@ public class FastaTextPane extends JScrollPane
 
   protected StringBuffer readFASTAFile(String format)
   {
-    File fn = new File(dataFile);
+    File fn = dataFile;
     StringBuffer sbuff = new StringBuffer();
 
     InputStreamReader streamReader = null;
@@ -517,7 +517,7 @@ public class FastaTextPane extends JScrollPane
     }
     catch (IOException ioe)
     {
-      System.out.println("Cannot read file: " + dataFile);
+      System.out.println("Cannot read file: " + dataFile.getName());
     }
     return sbuff;
   }
