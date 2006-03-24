@@ -16,7 +16,7 @@
         <result property="timelastmodified" column="timelastmodified"/>
    	<result property="id" column="id"/>
   	<result property="object_id" column="object_id"/>
-        <result property="strand" column="strand"/>
+        <result property="strand" column="strand" nullValue="0"/>
         <result property="fmin" column="fmin"/>
         <result property="fmax" column="fmax"/>
         <result property="uniquename" column="uniquename"/>
@@ -165,6 +165,18 @@
          $schema$.feature.feature_id > 0
     </select>
 
+
+    <select id="getOrganismID" resultClass="java.lang.Integer" 
+     parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature">
+      SELECT organism_id FROM $schema$.feature f WHERE
+             f.feature_id=$srcfeature_id$
+    </select>
+
+
+    <select id="currval" resultClass="java.lang.Integer" parameterClass="java.lang.String">
+      SELECT currval('$value$')
+    </select>
+
     <!--  WRITE BACK METHODS -->
     <update id="updateAttributes" parameterClass="uk.ac.sanger.artemis.chado.ChadoTransaction">
       UPDATE $schema$.$chadoTable$
@@ -213,5 +225,27 @@
         AND
         feature_id=$feature_id$
     </delete>
+
+    <insert id="insertFeature" parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature">
+      INSERT INTO  $schema$.feature 
+        ( feature_id, organism_id, name, uniquename, type_id )
+      VALUES
+        ( nextval('$schema$.feature_feature_id_seq'),
+          $organism_id$,
+          #uniquename#,
+          #uniquename#,
+          $type_id$ )
+    </insert>
+
+    <insert id="insertFeatureLoc" parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature">
+      INSERT INTO  $schema$.featureloc
+        ( featureloc_id, feature_id, srcfeature_id, fmin, fmax )
+      VALUES
+        ( nextval('$schema$.featureloc_featureloc_id_seq'),
+          $id$,
+          $srcfeature_id$,
+          $fmin$,
+          $fmax$ )
+    </insert>
 
 </sqlMap> 

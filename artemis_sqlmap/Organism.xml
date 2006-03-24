@@ -8,7 +8,7 @@
  
       <!-- Use primitive wrapper type (e.g. Integer) as parameter and allow results to 
             be auto-mapped results to Organism object (JavaBean) properties --> 
-      <select id="getOrganism" parameterClass="java.lang.String" resultClass="uk.ac.sanger.ibatis.Organism"> 
+      <select id="getOrganism" parameterClass="java.lang.String" resultClass="uk.ac.sanger.artemis.chado.Organism"> 
    	SELECT  
 	  ORGANISM_ID as id,
 	  ABBREVIATION, 
