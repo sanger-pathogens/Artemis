@@ -366,7 +366,10 @@ public class IBatisDAO implements ChadoDAO
                     (final String schema, final String uniquename)
                      throws SQLException
   {
-
+    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                                                uniquename, "feature");
+    tsn.addProperty("timeaccessioned", "CURRENT_TIMESTAMP");
+    updateAttributes(schema, tsn);
   }
 }
 

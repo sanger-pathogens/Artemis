@@ -422,12 +422,6 @@ public class JdbcDAO
 
     Statement st = conn.createStatement();
     int rowCount = st.executeUpdate(new String(sqlBuff));
-
-    if(rowCount > 0)
-    {
-      for(int i=0; i<uniquename.size(); i++)
-        writeTimeLastModified(schema, (String)uniquename.get(i));
-    }
   }
 
   /**
