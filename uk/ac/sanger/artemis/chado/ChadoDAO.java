@@ -125,9 +125,10 @@ public interface ChadoDAO
    * Update attributes defined by the <code>ChadoTransaction</code>.
    * @param schema	schema/organism name or null
    * @param tsn		the <code>ChadoTransaction</code>
+   * @return    number of rows changed
    *
    */
-  public void updateAttributes
+  public int updateAttributes
                     (final String schema, final ChadoTransaction tsn)
                      throws SQLException;
 
@@ -171,9 +172,10 @@ public interface ChadoDAO
    * Delete a feature from the database defined by the <code>ChadoTransaction</code>.
    * @param schema 	schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
-   * 
+   * @return    number of rows deleted
+   *
    */
-  public void deleteFeature
+  public int deleteFeature
                     (final String schema, final ChadoTransaction tsn)
                      throws SQLException;
 

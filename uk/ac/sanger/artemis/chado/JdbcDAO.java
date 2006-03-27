@@ -370,9 +370,10 @@ public class JdbcDAO
    * Update attributes defined by the <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
+   * @return    number of rows changed
    *
    */
-  public void updateAttributes
+  public int updateAttributes
                     (final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
@@ -421,7 +422,7 @@ public class JdbcDAO
     }
 
     Statement st = conn.createStatement();
-    int rowCount = st.executeUpdate(new String(sqlBuff));
+    return st.executeUpdate(new String(sqlBuff));
   }
 
   /**
@@ -608,9 +609,10 @@ public class JdbcDAO
    * Delete a feature from the database defined by the <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
+   * @return	number of rows deleted
    *
    */
-  public void deleteFeature
+  public int deleteFeature
                     (final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
@@ -618,8 +620,7 @@ public class JdbcDAO
                  tsn.getUniqueName()+"'";
 
     Statement st = conn.createStatement();
-    int rowCount = st.executeUpdate(sql);
-    System.out.println(sql);
+    return st.executeUpdate(sql);
   }
 
   

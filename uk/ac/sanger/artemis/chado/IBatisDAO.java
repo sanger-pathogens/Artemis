@@ -220,15 +220,16 @@ public class IBatisDAO implements ChadoDAO
    * Update attributes defined by the <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
+   * @return	number of rows changed
    *
    */
-  public void updateAttributes
+  public int updateAttributes
                     (final String schema, final ChadoTransaction tsn)
                      throws SQLException 
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     tsn.setSchema(schema);
-    int rowCount = sqlMap.update("updateAttributes", tsn);
+    return sqlMap.update("updateAttributes", tsn);
   }
 
   /**
@@ -324,9 +325,10 @@ public class IBatisDAO implements ChadoDAO
    * Delete a feature from the database defined by the <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
+   * @return    number of rows deleted
    *
    */
-  public void deleteFeature
+  public int deleteFeature
                     (final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
@@ -335,7 +337,7 @@ public class IBatisDAO implements ChadoDAO
     chadoFeature.setSchema(schema);
     chadoFeature.setUniquename(tsn.getUniqueName());
 
-    sqlMap.delete("deleteFeature", chadoFeature);
+    return sqlMap.delete("deleteFeature", chadoFeature);
   }
 
   /**
