@@ -93,7 +93,8 @@ public interface ChadoDAO
    *
    * For a schema return the type_id's with residues.
    * @param schema      schema/organism name or null
-   * @return list of type_id's
+   * @return 	the <code>List</code> of type_id's as <code>String</code>
+   *            objects
    * 
    */
   public List getResidueType(final String schema)
@@ -101,7 +102,9 @@ public interface ChadoDAO
 
   /**
    * 
-   * Get available schemas (as a List of ChadoFeature objects).
+   * Get available schemas (as a <code>List</code> of <code>String</code>       
+   * objects).
+   * @return    the available schemas
    *
    */
   public List getSchema()
