@@ -43,7 +43,7 @@ public class IBatisDAO implements ChadoDAO
    * Define a iBatis data access object. This uses <code>DbSqlConfig</code>
    * to read the configuration in. The system property <quote>chado</quote>
    * can be used to define the database location <i>e.g.</i>
-   * -Dchado=localhost:2997/chado?tjc
+   * -Dchado=jdbc:postgresql://host:port/database?user
    *
    */
   public IBatisDAO(final JPasswordField pfield)
@@ -90,7 +90,7 @@ public class IBatisDAO implements ChadoDAO
    * feature to be able to construct a GFF like feature.
    * @param parentFeatureID  the id of parent feature to query
    * @param schema           the schema/organism name or null
-   * @return    the <code>List</code> of <code>ChadoFeature</code> objects
+   * @return    the <code>List</code> of child <code>ChadoFeature</code> objects
    *
    */
   public List getGff(final int feature_id,
