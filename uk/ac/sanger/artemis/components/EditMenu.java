@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.15 2006-01-17 16:05:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.16 2006-03-27 13:40:31 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.15 2006-01-17 16:05:05 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.16 2006-03-27 13:40:31 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -2298,7 +2298,7 @@ public class EditMenu extends SelectionMenu
 
         final Key key = this_feature.getKey ();
 
-        if (key.equals ("CDS")) {
+//      if (key.equals ("CDS")) {
           final String number_string;
 
           if (current_number < 10) {
@@ -2339,7 +2339,7 @@ public class EditMenu extends SelectionMenu
           }
 
           current_number += increment;
-        }
+//      }
       }
     } finally {
       entry_group.getActionController ().endAction ();
