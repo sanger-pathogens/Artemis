@@ -197,11 +197,11 @@ public class JdbcDAO
    * @return list of flattened/merged feature objects
    * 
    */
-  protected static List mergeList(List list)
+  protected static List mergeList(final List list)
   {
     // merge same features in the list
     int feature_size  = list.size();
-    List flatten_list = new Vector();
+    final List flatten_list = new Vector();
     ChadoFeature featNext  = null;
 
     for(int i = 0; i < feature_size; i++)
@@ -221,6 +221,7 @@ public class JdbcDAO
         feat.addQualifier(featNext.getProp_type_id(),
                           featNext.getValue());
         i++;
+
         if(i < feature_size - 1)
           featNext = (ChadoFeature)list.get(i + 1);
         else

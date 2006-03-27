@@ -228,7 +228,7 @@ public class IBatisDAO implements ChadoDAO
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     tsn.setSchema(schema);
-    sqlMap.update("updateAttributes", tsn);
+    int rowCount = sqlMap.update("updateAttributes", tsn);
   }
 
   /**
@@ -349,6 +349,10 @@ public class IBatisDAO implements ChadoDAO
                     (final String schema, final String uniquename)
                      throws SQLException
   {
+    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                                                uniquename, "feature");
+    tsn.addProperty("timelastmodified", "CURRENT_TIMESTAMP");
+    updateAttributes(schema, tsn);
   }
 
   /**

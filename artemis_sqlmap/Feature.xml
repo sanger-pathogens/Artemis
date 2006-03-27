@@ -184,7 +184,11 @@
       <iterate property="properties" conjunction=",">
          $properties[]$
       </iterate>
-      FROM $schema$.feature
+
+      <isNotEqual property="chadoTable" compareValue="feature">
+        FROM $schema$.feature
+      </isNotEqual>
+
       WHERE
            $schema$.feature.feature_id=$schema$.$chadoTable$.feature_id AND (
       <iterate property="uniquename" conjunction="OR">

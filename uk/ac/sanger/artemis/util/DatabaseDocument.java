@@ -691,7 +691,13 @@ public class DatabaseDocument extends Document
         ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
  
         if(tsn.getType() == ChadoTransaction.UPDATE)
+        {
           dao.updateAttributes(schema, tsn); 
+          // update timelastmodified timestamp
+          final List uniquename = tsn.getUniquename();
+          for(int j=0; j<uniquename.size(); j++)
+            dao.writeTimeLastModified(schema, (String)uniquename.get(j));
+        }
         else if(tsn.getType() == ChadoTransaction.INSERT)
           dao.insertAttributes(schema, tsn);
         else if(tsn.getType() == ChadoTransaction.DELETE)
