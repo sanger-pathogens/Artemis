@@ -78,14 +78,21 @@ public class DataViewInternalFrame extends JInternalFrame
                             (String)dataFile[i]);
 
       if(!fdata.exists())
-        fdata = new File(System.getProperty("user.dir")+
-                         File.separatorChar +
-                         (String)dataFile[i]);
-     
-      if(!fdata.exists())
       {
         fdata = new File((String)dataFile[i]+".gz");
         
+        if(!fdata.exists())
+        {
+          fdata = new File(System.getProperty("user.dir")+
+                         File.separatorChar +
+                         (String)dataFile[i]);
+          if(!fdata.exists())
+            fdata = new File(System.getProperty("user.dir")+
+                         File.separatorChar +
+                         (String)dataFile[i]+".gz");
+
+        }
+
         if(!fdata.exists())
         {
           JOptionPane.showMessageDialog(desktop, "Results file: \n"+
