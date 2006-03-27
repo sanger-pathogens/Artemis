@@ -126,7 +126,7 @@ public class JdbcDAO
    * feature to be able to construct a GFF like feature.
    * @param parentFeatureID  the id of parent feature to query
    * @param schema           the schema/organism name or null
-   * @return    the <code>List</code> of <code>ChadoFeature</code> objects
+   * @return    the <code>List</code> of child <code>ChadoFeature</code> objects
    *
    */
   public List getGff(final int parentFeatureID,

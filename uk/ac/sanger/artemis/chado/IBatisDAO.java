@@ -43,7 +43,7 @@ public class IBatisDAO implements ChadoDAO
    * Define a iBatis data access object. This uses <code>DbSqlConfig</code>
    * to read the configuration in. The system property <quote>chado</quote>
    * can be used to define the database location <i>e.g.</i>
-   * -Dchado=jdbc:postgresql://host:port/database?user
+   * -Dchado=host:port/database?user
    *
    */
   public IBatisDAO(final JPasswordField pfield)
