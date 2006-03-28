@@ -502,8 +502,9 @@ public class ChadoFeature
 
   /**
    *
-   * Used in merging the qualfiers to store them as a <code>Hashtable</code> of
-   * the cvterm type_id of the property name and the values as a <code>Vector</code>.
+   * Used in merging the qualifiers to store them as a <code>Hashtable</code> of
+   * the cvterm type_id (of the property name) and the property values as a 
+   * <code>Vector</code>.
    * @param	the cvterm type_id of the property name
    * @param	the property value	
    *
@@ -530,8 +531,8 @@ public class ChadoFeature
 
   /**
    *
-   * Get the qualfiers to store them as a <code>Hashtable</code> of cvterm
-   * type_id (of the property name) and the values as a <code>Vector</code>.
+   * Get the qualifiers which are stored as a <code>Hashtable</code> of cvterm
+   * type_id (of the property name) and the property values as a <code>Vector</code>.
    * @return	the qualifiers as a <code>Hashtable</code>
    *
    */
