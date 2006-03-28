@@ -171,7 +171,27 @@ public class ChadoTransactionManager
         chado_feature.setStrand(-1);
 
       // codon_start attribute
-//    chado_feature.setPhase();
+      try
+      {
+        Qualifier qualifier_phase = feature.getQualifierByName("codon_start");
+        if(qualifier_phase != null)
+        {
+          String phase = (String)(qualifier_phase.getValues()).elementAt(0);
+
+          if(phase.equals ("1"))
+            chado_feature.setPhase(0);
+          else if(phase.equals("2"))
+            chado_feature.setPhase(1);
+          else if(phase.equals("3")) 
+            chado_feature.setPhase(2);
+        }
+      }
+      catch(InvalidRelationException ire){}
+
+      if(feature.isForwardFeature())
+        chado_feature.setStrand(1);
+      else
+        chado_feature.setStrand(-1);
 
       chado_feature.setFmin(feature.getRawFirstBase()-1);
       chado_feature.setFmax(feature.getRawLastBase());

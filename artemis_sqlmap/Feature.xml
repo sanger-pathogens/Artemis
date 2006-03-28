@@ -243,13 +243,15 @@
 
     <insert id="insertFeatureLoc" parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature">
       INSERT INTO  $schema$.featureloc
-        ( featureloc_id, feature_id, srcfeature_id, fmin, fmax )
+        ( featureloc_id, feature_id, srcfeature_id, fmin, fmax, strand, phase )
       VALUES
         ( nextval('$schema$.featureloc_featureloc_id_seq'),
           $id$,
           $srcfeature_id$,
           $fmin$,
-          $fmax$ )
+          $fmax$,
+          $strand$,
+          $phase$ )
     </insert>
 
    <delete id="deleteFeature" parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature">

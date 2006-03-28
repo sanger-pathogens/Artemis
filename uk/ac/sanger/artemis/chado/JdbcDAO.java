@@ -590,13 +590,17 @@ public class JdbcDAO
     sql_buff.append(" feature_id ,");
     sql_buff.append(" srcfeature_id ,");
     sql_buff.append(" fmin ,");
-    sql_buff.append(" fmax ");
+    sql_buff.append(" fmax ,");
+    sql_buff.append(" strand ,");
+    sql_buff.append(" phase ");
     sql_buff.append(" ) VALUES ( ");
     sql_buff.append("nextval('"+schema+".featureloc_featureloc_id_seq') , ");
     sql_buff.append(feature_id+" , ");
     sql_buff.append(srcfeature_id+" , ");
     sql_buff.append(chadoFeature.getFmin()+" , ");
-    sql_buff.append(chadoFeature.getFmax());
+    sql_buff.append(chadoFeature.getFmax()+" , ");
+    sql_buff.append(chadoFeature.getStrand()+" , ");
+    sql_buff.append(chadoFeature.getPhase());
     sql_buff.append(" )");
 
     System.out.println(new String(sql_buff));
