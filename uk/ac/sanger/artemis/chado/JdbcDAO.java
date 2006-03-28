@@ -562,7 +562,7 @@ public class JdbcDAO
     sql_buff.append(" ) VALUES ( ");
     sql_buff.append("nextval('"+schema+".feature_feature_id_seq') , ");
     sql_buff.append(organism_id+" , ");
-    sql_buff.append("'"+chadoFeature.getUniquename()+"'"+" , ");
+    sql_buff.append("'"+chadoFeature.getName()+"'"+" , ");
     sql_buff.append("'"+chadoFeature.getUniquename()+"'"+" , ");
     sql_buff.append(Long.toString(chadoFeature.getType_id()));
     sql_buff.append(" )");

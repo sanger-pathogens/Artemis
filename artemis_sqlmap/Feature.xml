@@ -236,7 +236,7 @@
       VALUES
         ( nextval('$schema$.feature_feature_id_seq'),
           $organism_id$,
-          #uniquename#,
+          #name#,
           #uniquename#,
           $type_id$ )
     </insert>

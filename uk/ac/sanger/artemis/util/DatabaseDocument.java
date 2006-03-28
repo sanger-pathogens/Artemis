@@ -712,6 +712,10 @@ public class DatabaseDocument extends Document
     }
     catch (java.sql.SQLException sqlExp)
     {
+      JOptionPane.showMessageDialog(null, "Problems Writing",
+                                    "Problems Writing to Database "+
+                                    sqlExp.getMessage(),
+                                    JOptionPane.ERROR_MESSAGE);
       sqlExp.printStackTrace();
     }
     catch (java.net.ConnectException conn)
