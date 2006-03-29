@@ -234,7 +234,7 @@ public class JdbcDAO
 
   /**
    * Takes a list and creates a <code>Hashtable</code> with the keys
-   * being the feature_id and the value a Vector of the dbxrefs.
+   * being the feature_id and the value a <code>Vector</code> of the dbxrefs.
    * @param list  a <code>List</code> of <code>Dbxref</code> objects.
    * @return a <code>Hashtable</code> of dbxrefs.
    */
