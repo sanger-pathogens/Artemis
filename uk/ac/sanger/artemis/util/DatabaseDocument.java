@@ -376,18 +376,21 @@ public class DatabaseDocument extends Document
       id_store.put(feature_id, name);
     }
 
+    // get all dbrefs
+    List dbxrefs = dao.getDbxref(schema, null);
+    
     for(int i = 0; i < feature_size; i++)
     {
       ChadoFeature feat = (ChadoFeature)featList.get(i);
       int fmin                = feat.getFmin() + 1;
       int fmax                = feat.getFmax();
       long type_id            = feat.getType_id();
-      long prop_type_id       = feat.getProp_type_id();
+//    long prop_type_id       = feat.getProp_type_id();
       int strand              = feat.getStrand();
       int phase               = feat.getPhase();
       String name             = feat.getUniquename();
       String typeName         = getCvtermName(type_id);
-      String propTypeName     = getCvtermName(prop_type_id);
+//    String propTypeName     = getCvtermName(prop_type_id);
       String timelastmodified = feat.getTimelastmodified().toString();
       String feature_id       = Integer.toString(feat.getId());
 
@@ -430,9 +433,9 @@ public class DatabaseDocument extends Document
 
       this_buff.append("timelastmodified=" + timelastmodified + ";");
 
-      String value = "";
-      if(feat.getValue() != null)
-        value = GFFStreamFeature.encode(feat.getValue());
+//    String value = "";
+//    if(feat.getValue() != null)
+//      value = GFFStreamFeature.encode(feat.getValue());
 
       // attributes
       Hashtable qualifiers     = feat.getQualifiers();
@@ -454,7 +457,7 @@ public class DatabaseDocument extends Document
           }
         }
       } 
-
+      appendDbxref(this_buff, feature_id);
       this_buff.append("\n");
 
       progress_listener.progressMade("Read from database: " + name);
@@ -464,6 +467,12 @@ public class DatabaseDocument extends Document
 
   }
 
+  private void appendDbxref(ByteBuffer this_buff, 
+                            String feature_id)
+  {
+      
+  }
+  
   public static Long getCvtermID(String name)
   {
     Enumeration enum_cvterm = cvterm.keys();

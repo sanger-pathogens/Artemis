@@ -33,7 +33,7 @@ public class Dbxref
 {
   private String name;
   private String accession;
-  
+  private int feature_id;
 
   public Dbxref()
   {
@@ -57,6 +57,16 @@ public class Dbxref
   public void setAccession(String accession)
   {
     this.accession = accession;
+  }
+
+  public int getFeature_id()
+  {
+    return feature_id;
+  }
+
+  public void setFeature_id(int feature_id)
+  {
+    this.feature_id = feature_id;
   }
 
 }

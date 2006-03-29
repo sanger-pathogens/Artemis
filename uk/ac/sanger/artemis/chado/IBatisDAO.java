@@ -28,6 +28,7 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 
 import java.util.List;
 import java.sql.*;
+
 import javax.swing.JPasswordField;
 
 /**
@@ -71,7 +72,7 @@ public class IBatisDAO implements ChadoDAO
    * @param feature_id  id of feature to query
    * @param schema      schema/organism name or null
    * @return    the <code>ChadoFeature</code> with the residues
-   *
+   * @throws SQLException
    */
   public String getFeatureName(final int feature_id,
                                final String schema)
@@ -91,7 +92,7 @@ public class IBatisDAO implements ChadoDAO
    * @param parentFeatureID  the id of parent feature to query
    * @param schema           the schema/organism name or null
    * @return    the <code>List</code> of child <code>ChadoFeature</code> objects
-   *
+   * @throws SQLException
    */
   public List getGff(final int feature_id,
                      final String schema)
@@ -114,7 +115,7 @@ public class IBatisDAO implements ChadoDAO
    * Get the residues of a feature.
    * @param feature_id  id of feature to query
    * @param schema      schema/organism name or null
-   *
+   * @throws SQLException
    */
   public ChadoFeature getSequence(final int feature_id,
                              final String schema)
@@ -138,7 +139,7 @@ public class IBatisDAO implements ChadoDAO
    * @param cvterm_ids list of cvterm_id/type_id's
    * @param schema      schema/organism name or null
    * @return    the <code>List</code> of <code>ChadoFeature</code> objects
-   *
+   * @throws SQLException
    */
   public List getResidueFeatures(List cvterm_ids, 
                                  final String schema)
@@ -159,7 +160,7 @@ public class IBatisDAO implements ChadoDAO
    * @param schema      schema/organism name or null
    * @return    the <code>List</code> of type_id's as <code>String</code>
    *            objects
-   *
+   * @throws SQLException
    */
   public List getResidueType(final String schema)
                      throws SQLException
@@ -173,7 +174,7 @@ public class IBatisDAO implements ChadoDAO
    * Get available schemas (as a <code>List</code> of <code>String</code>       
    * objects).
    * @return    the available schemas
-   *
+   * @throws SQLException
    */
   public List getSchema()
                 throws SQLException
@@ -187,7 +188,7 @@ public class IBatisDAO implements ChadoDAO
    * Get the full list of cvterm_id and name as a <code>List</code> of 
    * <code>Cvterm</code> objects.
    * @return    the full list of cvterm_id and name
-   *
+   * @throws SQLException
    */
   public List getCvterm()
               throws SQLException
@@ -197,10 +198,29 @@ public class IBatisDAO implements ChadoDAO
   }
 
   /**
+   * 
+   * Get dbxref for a feature.
+   * @param schema      the postgres schema name
+   * @param uniquename  the unique name for the feature. If set to NULL
+   *                    all <code>Dbxref</code> are returned.
+   * @return a <code>List</code> of <code>Dbxref</code>
+   * @throws SQLException
+   */
+  public List getDbxref(final String schema, final String uniquename)
+              throws SQLException
+  {
+    ChadoFeature feature = new ChadoFeature();
+    feature.setSchema(schema);
+    
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    return sqlMap.queryForList("getDbxref", feature);  
+  }
+  
+  /**
    *
    * @param name cvterm name
    * @param cv_name ontology name (e.g. gene, sequence)
-   *
+   * @throws SQLException
    */
   public static Cvterm getCvtermID(String name, String cv_name)
                 throws SQLException
@@ -221,7 +241,7 @@ public class IBatisDAO implements ChadoDAO
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @return	number of rows changed
-   *
+   * @throws SQLException
    */
   public int updateAttributes
                     (final String schema, final ChadoTransaction tsn)
@@ -237,7 +257,7 @@ public class IBatisDAO implements ChadoDAO
    * Insert attributes defined by the <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
-   *
+   * @throws SQLException
    */
   public void insertAttributes
                     (final String schema, final ChadoTransaction tsn)
@@ -261,7 +281,7 @@ public class IBatisDAO implements ChadoDAO
    * Delete attributes defined by the <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
-   *
+   * @throws SQLException
    */
   public void deleteAttributes
                     (final String schema, final ChadoTransaction tsn)
@@ -286,7 +306,7 @@ public class IBatisDAO implements ChadoDAO
    * @param schema              schema/organism name or null
    * @param tsn                 the <code>ChadoTransaction</code>
    * @parma srcfeature_id       the parent feature identifier
-   *
+   * @throws SQLException
    */
   public void insertFeature
                     (final String schema, final ChadoTransaction tsn,
@@ -326,7 +346,7 @@ public class IBatisDAO implements ChadoDAO
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @return    number of rows deleted
-   *
+   * @throws SQLException
    */
   public int deleteFeature
                     (final String schema, final ChadoTransaction tsn)
@@ -345,16 +365,17 @@ public class IBatisDAO implements ChadoDAO
    * Write the time a feature was last modified
    * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
-   *
+   * @return  number of rows changed
+   * @throws SQLException
    */
-  public void writeTimeLastModified
+  public int writeTimeLastModified
                     (final String schema, final String uniquename)
                      throws SQLException
   {
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                                                 uniquename, "feature");
     tsn.addProperty("timelastmodified", "CURRENT_TIMESTAMP");
-    updateAttributes(schema, tsn);
+    return updateAttributes(schema, tsn);
   }
 
   /**
@@ -362,16 +383,17 @@ public class IBatisDAO implements ChadoDAO
    * Write the time a feature was last accessed
    * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
-   *
+   * @return  number of rows changed
+   * @throws SQLException
    */
-  public void writeTimeAccessioned
+  public int writeTimeAccessioned
                     (final String schema, final String uniquename)
                      throws SQLException
   {
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                                                 uniquename, "feature");
     tsn.addProperty("timeaccessioned", "CURRENT_TIMESTAMP");
-    updateAttributes(schema, tsn);
+    return updateAttributes(schema, tsn);
   }
 }
 

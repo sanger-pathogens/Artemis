@@ -25,6 +25,7 @@
 package uk.ac.sanger.artemis.chado;
 
 import javax.swing.JPasswordField;
+
 import java.sql.*;
 import java.io.*;
 import java.util.List;
@@ -51,7 +52,7 @@ public class JdbcDAO
    * @param location	the database location <i>e.g.</i> 
    *                    jdbc:postgresql://localhost:2997/chado?user=tjc
    * @param pfield	the password for this connection
-   *
+   * @throws SQLException
    */
   public JdbcDAO(final String location, final JPasswordField pfield)
          throws java.sql.SQLException, java.net.ConnectException
@@ -66,11 +67,6 @@ public class JdbcDAO
                                        new String(pfield.getPassword()));
   }
 
-  
-//public Connection getConnection()
-//{
-//  return conn;
-//}
 
   /**
    *
@@ -78,7 +74,7 @@ public class JdbcDAO
    * @param feature_id  id of feature to query
    * @param schema      schema/organism name or null
    * @return    the <code>ChadoFeature</code> with the residues
-   *
+   * @throws SQLException
    */
   public ChadoFeature getSequence(final int feature_id,
                              final String schema)
@@ -105,6 +101,7 @@ public class JdbcDAO
    * @param feature_id  id of feature to query
    * @param schema      schema/organism name or null
    * @return    the feature name
+   * @throws SQLException
    */
   public String getFeatureName(final int feature_id,
                                final String schema)
@@ -127,7 +124,7 @@ public class JdbcDAO
    * @param parentFeatureID  the id of parent feature to query
    * @param schema           the schema/organism name or null
    * @return    the <code>List</code> of child <code>ChadoFeature</code> objects
-   *
+   * @throws SQLException
    */
   public List getGff(final int parentFeatureID,
                      final String schema)
@@ -243,7 +240,7 @@ public class JdbcDAO
    * @param cvterm_ids list of cvterm_id/type_id's
    * @param schema      schema/organism name or null
    * @return    the <code>List</code> of <code>ChadoFeature</code> objects
-   *
+   * @throws SQLException
    */
   public List getResidueFeatures(List cvterm_ids, 
                                  final String schema)
@@ -289,7 +286,7 @@ public class JdbcDAO
    * @param schema      schema/organism name or null
    * @return	the <code>List</code> of type_id's as <code>String</code>
    *            objects
-   * 
+   * @throws SQLException
    */
   public List getResidueType(final String schema)
                      throws SQLException
@@ -313,7 +310,7 @@ public class JdbcDAO
    * Get available schemas (as a <code>List</code> of <code>String</code>       
    * objects).
    * @return	the available schemas
-   *
+   * @throws SQLException
    */
   public List getSchema()
                 throws SQLException
@@ -338,7 +335,7 @@ public class JdbcDAO
    * Get the full list of cvterm_id and name as a <code>List</code> of 
    * <code>Cvterm</code> objects.
    * @return    the full list of cvterm_id and name
-   *
+   * @throws SQLException
    */
   public List getCvterm()
               throws SQLException
@@ -362,6 +359,43 @@ public class JdbcDAO
     return cvterms;
   }
 
+  /**
+   * 
+   * Get dbxref for a feature.
+   * @param schema      the postgres schema name
+   * @param uniquename  the unique name for the feature. If set to NULL
+   *                    all <code>Dbxref</code> are returned.
+   * @return a <code>List</code> of <code>Dbxref</code> objects
+   * @throws SQLException
+   */
+  public List getDbxref(final String schema, final String uniquename)
+              throws SQLException
+  {
+    String sql = "SELECT db.name, dbx.accession, f.feature_id FROM "+
+                 schema+".feature_dbxref dbx_f "+
+                 "LEFT JOIN dbxref dbx ON dbx.dbxref_id=dbx_f.dbxref_id "+
+                 "LEFT JOIN db ON db.db_id=dbx.db_id "+
+                 "LEFT JOIN "+schema+".feature f ON dbx_f.feature_id=f.feature_id ";
+    
+    if(uniquename != null)
+      sql = sql + "WHERE f.uniquename="+uniquename;
+    
+    appendToLogFile(sql, sqlLog);
+    Statement st = conn.createStatement();
+    ResultSet rs = st.executeQuery(sql);
+    List dbxrefs = new Vector();
+
+    while(rs.next())
+    {
+      Dbxref dbxref = new Dbxref();
+      dbxref.setName( rs.getString("name") );
+      dbxref.setAccession( rs.getString("accession") );
+      dbxrefs.add(dbxref);
+    }
+
+    return dbxrefs;
+  }
+  
 //
 // WRITE 
 //
@@ -371,7 +405,7 @@ public class JdbcDAO
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @return    number of rows changed
-   *
+   * @throws SQLException
    */
   public int updateAttributes
                     (final String schema, final ChadoTransaction tsn)
@@ -430,7 +464,7 @@ public class JdbcDAO
    * Insert attributes defined by the <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
-   *
+   * @throws SQLException
    */
   public void insertAttributes
                     (final String schema, final ChadoTransaction tsn)
@@ -452,7 +486,7 @@ public class JdbcDAO
                          (String)uniquename.get(i)+"') , ");
 
       String name;
-      String property;
+
       List propertiesName  = tsn.getPropertiesName();
       List propertiesValue = tsn.getPropertiesValue();
       for(int j=0; j<propertiesName.size(); j++)
@@ -484,7 +518,7 @@ public class JdbcDAO
    * Delete attributes defined by the <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
-   *
+   * @throws SQLException
    */
   public void deleteAttributes
                     (final String schema, final ChadoTransaction tsn)
@@ -499,9 +533,6 @@ public class JdbcDAO
       sqlBuff = new StringBuffer();
 
       sqlBuff.append("DELETE FROM "+schema+"."+chadoTable+" WHERE ");
-
-      String name;
-      String value;
 
       List constraints = tsn.getConstraint();
       for(int j=0; j<constraints.size(); j++)
@@ -526,7 +557,7 @@ public class JdbcDAO
    * @param schema              schema/organism name or null
    * @param tsn                 the <code>ChadoTransaction</code>
    * @parma srcfeature_id       the parent feature identifier
-   *
+   * @throws SQLException
    */
   public void insertFeature
                     (final String schema, final ChadoTransaction tsn, 
@@ -545,7 +576,6 @@ public class JdbcDAO
     ResultSet rs = st.executeQuery(str_sql);
     rs.next();
 
-    ChadoFeature feature = new ChadoFeature();
     final int organism_id = rs.getInt("organism_id");
 
     //
@@ -614,7 +644,7 @@ public class JdbcDAO
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @return	number of rows deleted
-   *
+   * @throws SQLException
    */
   public int deleteFeature
                     (final String schema, final ChadoTransaction tsn)
@@ -633,9 +663,10 @@ public class JdbcDAO
    * Write the time a feature was last modified
    * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
-   *
+   * @return  number of rows changed
+   * @throws SQLException
    */
-  public void writeTimeLastModified
+  public int writeTimeLastModified
                     (final String schema, final String uniquename)
                      throws SQLException
   {
@@ -644,6 +675,7 @@ public class JdbcDAO
                  uniquename+"'";
     Statement st = conn.createStatement();
     int rowCount = st.executeUpdate(sql);
+    return rowCount;
   }
 
   /**
@@ -651,9 +683,9 @@ public class JdbcDAO
    * Write the time a feature was last accessed
    * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
-   *
+   * @throws SQLException
    */
-  public void writeTimeAccessioned
+  public int writeTimeAccessioned
                     (final String schema, final String uniquename)
                      throws SQLException
   {
@@ -662,6 +694,7 @@ public class JdbcDAO
                  uniquename+"'";
     Statement st = conn.createStatement();
     int rowCount = st.executeUpdate(sql);
+    return rowCount;
   }
 
   /**
