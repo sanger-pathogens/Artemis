@@ -50,6 +50,7 @@
   <sqlMap resource="artemis_sqlmap/Organism.xml" /> 
   <sqlMap resource="artemis_sqlmap/Cvterm.xml" />
   <sqlMap resource="artemis_sqlmap/Feature.xml" />
-
+  <sqlMap resource="artemis_sqlmap/Dbxref.xml" />
+  
 </sqlMapConfig> 
 
