@@ -377,8 +377,8 @@ public class DatabaseDocument extends Document
     }
 
     // get all dbrefs
-    List dbxrefs = dao.getDbxref(schema, null);
-    
+    Hashtable dbxrefs = dao.getDbxref(schema, null);
+
     for(int i = 0; i < feature_size; i++)
     {
       ChadoFeature feat = (ChadoFeature)featList.get(i);
@@ -457,7 +457,21 @@ public class DatabaseDocument extends Document
           }
         }
       } 
-      appendDbxref(this_buff, feature_id);
+
+      // append dbxrefs
+      if(dbxrefs != null &&
+         dbxrefs.containsKey(new Integer(feature_id)))
+      {
+        this_buff.append("Dbxref=");
+        Vector dbxref = (Vector)dbxrefs.get(new Integer(feature_id));
+        for(int j=0; j<dbxref.size(); j++)
+        {
+          this_buff.append((String)dbxref.get(j));
+          if(j<dbxref.size()-1)
+            this_buff.append(",");
+        }
+      }
+      
       this_buff.append("\n");
 
       progress_listener.progressMade("Read from database: " + name);
@@ -467,12 +481,6 @@ public class DatabaseDocument extends Document
 
   }
 
-  private void appendDbxref(ByteBuffer this_buff, 
-                            String feature_id)
-  {
-      
-  }
-  
   public static Long getCvtermID(String name)
   {
     Enumeration enum_cvterm = cvterm.keys();

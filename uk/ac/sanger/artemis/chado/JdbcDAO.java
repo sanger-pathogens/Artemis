@@ -416,6 +416,7 @@ public class JdbcDAO
       Dbxref dbxref = new Dbxref();
       dbxref.setName( rs.getString("name") );
       dbxref.setAccession( rs.getString("accession") );
+      dbxref.setFeature_id( rs.getInt("feature_id") );
       dbxrefs.add(dbxref);
     }
 
