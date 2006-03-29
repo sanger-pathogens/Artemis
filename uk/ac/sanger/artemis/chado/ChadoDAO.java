@@ -26,6 +26,7 @@ package uk.ac.sanger.artemis.chado;
 
 import java.sql.*;
 import java.util.List;
+import java.util.Hashtable;
 
 /**
  *
@@ -129,7 +130,7 @@ public interface ChadoDAO
    * @return a <code>List</code> of <code>Dbxref</code> objects
    * @throws SQLException
    */
-  public List getDbxref(final String schema, final String uniquename)
+  public Hashtable getDbxref(final String schema, final String uniquename)
               throws SQLException;
   
 //

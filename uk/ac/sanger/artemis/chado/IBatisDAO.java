@@ -27,6 +27,7 @@ package uk.ac.sanger.artemis.chado;
 import com.ibatis.sqlmap.client.SqlMapClient;
 
 import java.util.List;
+import java.util.Hashtable;
 import java.sql.*;
 
 import javax.swing.JPasswordField;
@@ -206,14 +207,15 @@ public class IBatisDAO implements ChadoDAO
    * @return a <code>List</code> of <code>Dbxref</code>
    * @throws SQLException
    */
-  public List getDbxref(final String schema, final String uniquename)
+  public Hashtable getDbxref(final String schema, final String uniquename)
               throws SQLException
   {
     ChadoFeature feature = new ChadoFeature();
     feature.setSchema(schema);
     
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    return sqlMap.queryForList("getDbxref", feature);  
+    List list = sqlMap.queryForList("getDbxref", feature);  
+    return JdbcDAO.mergeDbxref(list);
   }
   
   /**

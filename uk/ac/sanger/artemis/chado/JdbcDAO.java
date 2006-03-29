@@ -30,6 +30,7 @@ import java.sql.*;
 import java.io.*;
 import java.util.List;
 import java.util.Vector;
+import java.util.Hashtable;
 
 /**
  *
@@ -231,6 +232,31 @@ public class JdbcDAO
     return flatten_list;
   }
 
+
+  protected static Hashtable mergeDbxref(final List list)
+  {
+    Hashtable dbxrefHash = new Hashtable();
+    for(int i = 0; i < list.size(); i++)
+    {
+      Dbxref dbxref = (Dbxref)list.get(i);
+      Integer feature_id = new Integer(dbxref.getFeature_id());
+      String value = dbxref.getName() + ":" + dbxref.getAccession();
+      if(dbxrefHash.containsKey(feature_id))
+      {
+        Vector v = (Vector)dbxrefHash.get(feature_id);
+        v.add(value);
+        dbxrefHash.put(feature_id, v);
+      }  
+      else
+      {
+        Vector v = new Vector();
+        v.add(value);
+        dbxrefHash.put(feature_id, v);
+      }
+    }
+    return dbxrefHash;
+  }
+
   /**
    *
    * Given a list of distict cvterm_id/type_id's of feature types
@@ -368,7 +394,7 @@ public class JdbcDAO
    * @return a <code>List</code> of <code>Dbxref</code> objects
    * @throws SQLException
    */
-  public List getDbxref(final String schema, final String uniquename)
+  public Hashtable getDbxref(final String schema, final String uniquename)
               throws SQLException
   {
     String sql = "SELECT db.name, dbx.accession, f.feature_id FROM "+
@@ -393,7 +419,7 @@ public class JdbcDAO
       dbxrefs.add(dbxref);
     }
 
-    return dbxrefs;
+    return mergeDbxref(dbxrefs);
   }
   
 //
