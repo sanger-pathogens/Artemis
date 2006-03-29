@@ -34,7 +34,6 @@ import java.net.ConnectException;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
-import java.util.Date;
 import java.util.List;
 import java.util.Iterator;
 import javax.swing.JOptionPane;
@@ -682,7 +681,6 @@ public class DatabaseDocument extends Document
     try
     {
       Connection conn = getConnection();
-      int row = 0;
 
       ChadoDAO dao = getDAO();
 
