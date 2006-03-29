@@ -232,7 +232,12 @@ public class JdbcDAO
     return flatten_list;
   }
 
-
+  /**
+   * Takes a list and creates a <code>Hashtable</code> with the keys
+   * being the feature_id and the value a Vector of the dbxrefs.
+   * @param list  a <code>List</code> of <code>Dbxref</code> objects.
+   * @return a <code>Hashtable</code> of dbxrefs.
+   */
   protected static Hashtable mergeDbxref(final List list)
   {
     Hashtable dbxrefHash = new Hashtable();
@@ -391,7 +396,7 @@ public class JdbcDAO
    * @param schema      the postgres schema name
    * @param uniquename  the unique name for the feature. If set to NULL
    *                    all <code>Dbxref</code> are returned.
-   * @return a <code>List</code> of <code>Dbxref</code> objects
+   * @return a <code>Hashtable</code> of dbxrefs.
    * @throws SQLException
    */
   public Hashtable getDbxref(final String schema, final String uniquename)

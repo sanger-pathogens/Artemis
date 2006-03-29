@@ -127,7 +127,7 @@ public interface ChadoDAO
    * @param schema      the postgres schema name
    * @param uniquename  the unique name for the feature. If set to NULL
    *                    all <code>Dbxref</code> are returned.
-   * @return a <code>List</code> of <code>Dbxref</code> objects
+   * @return a <code>Hashtable</code> of dbxrefs.
    * @throws SQLException
    */
   public Hashtable getDbxref(final String schema, final String uniquename)
