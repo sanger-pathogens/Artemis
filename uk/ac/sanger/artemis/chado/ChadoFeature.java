@@ -168,7 +168,7 @@ public class ChadoFeature
   /**
    *
    * Get the strand. The orientation/directionality of the location. 
-   * Should be 0, -1 or +1.
+   * Should be 0, -1 or +1. Use 0 if transpliced.
    * @return	the strand
    *
    */
@@ -180,7 +180,7 @@ public class ChadoFeature
   /**
    *
    * Set the strand. The orientation/directionality of the location. 
-   * Should be 0, -1 or +1.
+   * Should be 0, -1 or +1. Use 0 if transpliced.
    * @param strand	the strand
    *
    */
