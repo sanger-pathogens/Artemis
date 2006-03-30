@@ -93,6 +93,9 @@ public class ChadoDemo
     panel.add(jsp, BorderLayout.EAST);
 
     JTextField gene_text = new JTextField(20);
+    gene_text.setText("MAL8P1.204");
+    gene_text.selectAll();
+    
     panel.add(gene_text, BorderLayout.SOUTH);
 
     int select = JOptionPane.showOptionDialog(null, panel, "Find Gene",

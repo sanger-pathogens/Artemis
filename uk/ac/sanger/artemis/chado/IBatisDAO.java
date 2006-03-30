@@ -133,7 +133,7 @@ public class IBatisDAO implements ChadoDAO
       String schema = (String)schema_list.get(i);
       feature.setSchema(schema);
       List res_list = sqlMap.queryForList("getGffLine", feature);
-      list.addAll(res_list);
+      list.addAll( JdbcDAO.mergeList(res_list) );
     }
     
     return list;

@@ -201,17 +201,18 @@ public class JdbcDAO
     for(int i=0; i<schema_list.size(); i++)
     {
       String schema = (String)schema_list.get(i);
-      getFeatureQuery(uniquename, schema, list);
+      List feat_list = getFeatureQuery(uniquename, schema);
+      list.addAll(feat_list);
     }
      
     return list;
   }
   
-  private void getFeatureQuery(final String uniquename,
-                               final String schema,
-                               final List list)
+  private List getFeatureQuery(final String uniquename,
+                               final String schema)
                                throws SQLException
   {
+    List list = new Vector();
     Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                                         ResultSet.CONCUR_UPDATABLE);
 
@@ -262,6 +263,8 @@ public class JdbcDAO
   
       list.add(feature);
     }
+    // merge same features in the list
+    return mergeList(list);
   }
   
   /**
