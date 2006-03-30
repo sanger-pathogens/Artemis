@@ -59,9 +59,7 @@ public class DatabaseDocument extends Document
 
   private Hashtable db;
 
-  private Vector organism;
-
-  private Hashtable org2schema;
+//  private Vector organism;
 
   /** JDBC DAO */
   private JdbcDAO jdbcDAO = null;
@@ -83,6 +81,8 @@ public class DatabaseDocument extends Document
 
   private JPasswordField pfield;
 
+  private List schema_list;
+  
   /**
    * 
    * Create a new Document from a database.
@@ -562,12 +562,10 @@ public class DatabaseDocument extends Document
     return buff;
   }
 
-  public Hashtable getSchemaEntries()
-  {
-    return org2schema;
-  }
-
-  private List schema_list;
+  /**
+   * Get the <code>List</code> of available schemas.
+   * @return  the <code>List</code> of available schemas
+   */
   public List getSchema()
   {
     return schema_list;
@@ -575,14 +573,15 @@ public class DatabaseDocument extends Document
 
   /**
    *
-   * Create a hashtable of the available entries.
-   * 
+   * Create a hashtable of the available entries with residues.
+   * @return  a <code>Hashtable</code> of the <code>String</code>
+   *          representation (schema-type-feature_name) and the
+   *          corresponding feature_id
+   *  
    */ 
   public Hashtable getDatabaseEntries()
   {
     db = new Hashtable();
-    organism = new Vector(); 
-    org2schema = new Hashtable(); 
  
     try
     {
@@ -604,15 +603,10 @@ public class DatabaseDocument extends Document
         while(it_residue_features.hasNext())
         {
           ChadoFeature feature = (ChadoFeature)it_residue_features.next();
-          String org      = feature.getAbbreviation();
           String typeName = getCvtermName(feature.getType_id());
 
           db.put(schema + " - " + typeName + " - " + feature.getName(),
                  Integer.toString(feature.getId()));
-          if(!organism.contains(org))
-            organism.add(org);
-          if(!org2schema.containsKey(org))
-            org2schema.put(org, schema);
         }
       }
     }
@@ -622,18 +616,15 @@ public class DatabaseDocument extends Document
     }
     catch(java.sql.SQLException sqlExp)
     {
-      JOptionPane.showMessageDialog(null, "SQL Problems...", "SQL Error",
+      JOptionPane.showMessageDialog(null, "SQL Problems...\n"+
+                                    sqlExp.getMessage(), 
+                                    "SQL Error",
                                     JOptionPane.ERROR_MESSAGE);
       sqlExp.printStackTrace();
     }
     return db;
   }
 
-
-  public Vector getOrganism()
-  {
-    return organism;
-  }
 
   /**
    * 
@@ -644,11 +635,6 @@ public class DatabaseDocument extends Document
   public Connection getConnection() throws java.sql.SQLException,
       java.net.ConnectException
   {
-//  if(!iBatis)
-//    jdbcDAO = new JdbcDAO((String)getLocation(), pfield);
-//  else
-//    connIB = new IBatisDAO(pfield);
-
     String location = (String)getLocation();
     if(pfield == null || pfield.getPassword().length == 0)
       return DriverManager.getConnection(location);

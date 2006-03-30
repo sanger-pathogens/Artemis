@@ -30,7 +30,6 @@ import javax.swing.tree.TreeSelectionModel;
 import javax.swing.tree.TreePath;
 import java.awt.Container;
 import java.awt.GridLayout;
-import java.net.*;
 import java.io.*;
 import java.util.*;
 
@@ -38,8 +37,6 @@ import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
-import uk.ac.sanger.artemis.io.EntryInformation;
-import uk.ac.sanger.artemis.io.SimpleEntryInformation;
 import uk.ac.sanger.artemis.io.InvalidKeyException;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 
@@ -56,8 +53,6 @@ public class DatabaseEntrySource implements EntrySource
   private JPasswordField pfield;
 
   private Hashtable entries;
-
-  private Hashtable schemas;
 
   private boolean splitGFFEntry;
 
@@ -229,8 +224,6 @@ public class DatabaseEntrySource implements EntrySource
     DatabaseDocument doc = new DatabaseDocument(location, pfield);
 
     entries = doc.getDatabaseEntries();
-    Vector organism = doc.getOrganism();
-    schemas = doc.getSchemaEntries();
 
     DefaultMutableTreeNode top = new DefaultMutableTreeNode("PSU Organism List");
     createNodes(top, doc.getSchema(), entries);
@@ -258,18 +251,17 @@ public class DatabaseEntrySource implements EntrySource
                             (DefaultMutableTreeNode)path.getLastPathComponent();
     DefaultMutableTreeNode type_node =
                             (DefaultMutableTreeNode)seq_node.getParent();
-    DefaultMutableTreeNode org_node = 
+    DefaultMutableTreeNode schema_node = 
                             (DefaultMutableTreeNode)type_node.getParent();
 
-    return (String)org_node.getUserObject() + " - " +
+    return (String)schema_node.getUserObject() + " - " +
            (String)type_node.getUserObject() + " - " +
            (String)seq_node.getUserObject();
   }
 
   /**
    * 
-   * Get Organism of selected node
-   * 
+   * Get schema of the selected node
    * @return name of Organism that is top level of selected node
    * 
    */
@@ -283,47 +275,37 @@ public class DatabaseEntrySource implements EntrySource
                             (DefaultMutableTreeNode)path.getLastPathComponent();
     DefaultMutableTreeNode type_node = 
                             (DefaultMutableTreeNode)seq_node.getParent();
-    DefaultMutableTreeNode org_node = 
+    DefaultMutableTreeNode schema_node = 
                             (DefaultMutableTreeNode)type_node.getParent();
 
-    String org = (String)org_node.getUserObject();
-
-    System.out.println(org);
-    return org;
-//  if(schemas.containsKey(org))
-//    return (String) schemas.get(org);
-//  else
-//    return null;
+    return (String)schema_node.getUserObject();
   }
 
   /**
    * 
    * Create the nodes of the organism JTree
    * 
-   * @param top
-   *          root node
-   * @param org
-   *          organism collection
-   * @param organism
-   *          sequences collection
+   * @param top       root node
+   * @param schema    <code>List</code>
+   * @param organism  sequences collection
    * 
    */
-  private void createNodes(DefaultMutableTreeNode top, List org,
-                           Hashtable organism)
+  private void createNodes(DefaultMutableTreeNode top, List schema,
+                           Hashtable entries)
   {
-    DefaultMutableTreeNode org_node;
+    DefaultMutableTreeNode schema_node;
     DefaultMutableTreeNode seq_node;
     DefaultMutableTreeNode typ_node;
 
-    final Object v_organism[] = organism.keySet().toArray();
+    final Object v_organism[] = entries.keySet().toArray();
     final int v_organism_size = v_organism.length;
     Arrays.sort(v_organism);
 
-    for(int i=0; i<org.size(); i++)
+    for(int i=0; i<schema.size(); i++)
     {
-      String name = (String)org.get(i);
-      org_node = new DefaultMutableTreeNode(name);
-      top.add(org_node);
+      String name = (String)schema.get(i);
+      schema_node = new DefaultMutableTreeNode(name);
+      top.add(schema_node);
 
       Hashtable seq_type_node = new Hashtable();
 
@@ -342,7 +324,7 @@ public class DatabaseEntrySource implements EntrySource
           {
             typ_node = new DefaultMutableTreeNode(type);
             seq_type_node.put(type, typ_node);
-            org_node.add(typ_node);
+            schema_node.add(typ_node);
           }
           else
             typ_node = (DefaultMutableTreeNode) seq_type_node.get(type);
