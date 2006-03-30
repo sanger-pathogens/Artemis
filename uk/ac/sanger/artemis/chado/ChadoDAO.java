@@ -74,6 +74,17 @@ public interface ChadoDAO
   public List getGff(final int parentFeatureID,
                      final String schema)
                      throws SQLException;
+  
+  /**
+   * Get the properties of a feature.
+   * @param uniquename  the unique name of the feature
+   * @param schema_list the <code>List</code> of schemas to search
+   * @return  the <code>List</code> of <code>ChadoFeature</code>
+   * @throws SQLException
+   */
+  public List getFeature(final String uniquename,
+                         final List schema_list)
+                         throws SQLException;
 
   /**
    *

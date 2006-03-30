@@ -171,7 +171,7 @@ public class JdbcDAO
       if(rs.wasNull())
         feature.setPhase(10);
       else 
-        feature.setPhase( rs.getInt("phase") );
+        feature.setPhase(phase);
 
       feature.setUniquename( rs.getString("uniquename") );
       feature.setTimelastmodified( rs.getDate("timelastmodified") );
@@ -186,6 +186,84 @@ public class JdbcDAO
     return mergeList(list);
   }
 
+  /**
+   * Get the properties of a feature.
+   * @param uniquename  the unique name of the feature
+   * @param schema_list the <code>List</code> of schemas to search
+   * @return  the <code>List</code> of <code>ChadoFeature</code>
+   * @throws SQLException
+   */
+  public List getFeature(final String uniquename,
+                         List schema_list)
+                         throws SQLException
+  {
+    List list = new Vector();
+    for(int i=0; i<schema_list.size(); i++)
+    {
+      String schema = (String)schema_list.get(i);
+      getFeatureQuery(uniquename, schema, list);
+    }
+     
+    return list;
+  }
+  
+  private void getFeatureQuery(final String uniquename,
+                               final String schema,
+                               final List list)
+                               throws SQLException
+  {
+    Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                                        ResultSet.CONCUR_UPDATABLE);
+
+    String sql = "SELECT timelastmodified, f.feature_id, object_id, "
+                   + "fl.strand, fmin, fmax, uniquename, f.type_id, "
+                   + "fp.type_id AS prop_type_id, fp.value, fl.phase"
+                   + " FROM  "
+                   + schema + ".feature f"
+                   + " LEFT JOIN " + schema + ".feature_relationship fr ON "
+                   + "fr.subject_id=" + "f.feature_id"
+                   + " LEFT JOIN " + schema + ".featureprop fp ON "
+                   + "fp.feature_id=" + "f.feature_id"
+                   + " LEFT JOIN " + schema + ".featureloc fl ON "
+                   + "f.feature_id=" + "fl.feature_id"
+                   + " WHERE uniquename = '"
+                   + uniquename 
+                   + "' AND ("
+                   + "fl.rank="
+                   + "fr.rank OR "
+                   + "fr.rank IS NULL)"
+                   + " ORDER BY "
+                   + "f.type_id, uniquename";
+
+    appendToLogFile(sql, sqlLog);
+    ResultSet rs = st.executeQuery(sql);
+    
+    while(rs.next())
+    {
+      ChadoFeature feature = new ChadoFeature();
+      feature.setFmin( rs.getInt("fmin") );
+      feature.setFmax( rs.getInt("fmax") );
+      feature.setType_id( rs.getLong("type_id") );
+      feature.setProp_type_id( rs.getLong("prop_type_id") );
+      feature.setStrand( rs.getInt("strand") );
+      feature.setSchema(schema);
+      
+      int phase = rs.getInt("phase");
+      if(rs.wasNull())
+        feature.setPhase(10);
+      else 
+        feature.setPhase(phase);
+
+      feature.setUniquename( rs.getString("uniquename") );
+      feature.setTimelastmodified( rs.getDate("timelastmodified") );
+      feature.setId( rs.getInt("feature_id") );
+      feature.setObject_id( rs.getString("object_id") );
+      feature.setValue( rs.getString("value"));
+  
+      list.add(feature);
+    }
+  }
+  
   /**
    *
    * Takes a list and creates a new one merging all feature objects

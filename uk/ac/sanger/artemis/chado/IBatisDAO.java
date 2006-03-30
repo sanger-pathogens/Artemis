@@ -28,6 +28,7 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 
 import java.util.List;
 import java.util.Hashtable;
+import java.util.Vector;
 import java.sql.*;
 
 import javax.swing.JPasswordField;
@@ -111,6 +112,33 @@ public class IBatisDAO implements ChadoDAO
     return JdbcDAO.mergeList(feature_list);
   }
 
+  /**
+   * Get the properties of a feature.
+   * @param uniquename  the unique name of the feature
+   * @param schema_list the <code>List</code> of schemas to search
+   * @return  the <code>List</code> of <code>ChadoFeature</code>
+   * @throws SQLException
+   */
+  public List getFeature(final String uniquename,
+                         final List schema_list)
+                         throws SQLException
+  {
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    ChadoFeature feature = new ChadoFeature();
+    feature.setUniquename(uniquename);
+    
+    List list = new Vector();
+    for(int i=0; i<schema_list.size(); i++)
+    {  
+      String schema = (String)schema_list.get(i);
+      feature.setSchema(schema);
+      List res_list = sqlMap.queryForList("getGffLine", feature);
+      list.addAll(res_list);
+    }
+    
+    return list;
+  }
+  
   /**
    *
    * Get the residues of a feature.
