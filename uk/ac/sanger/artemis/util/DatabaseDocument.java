@@ -567,6 +567,11 @@ public class DatabaseDocument extends Document
     return org2schema;
   }
 
+  private List schema_list;
+  public List getSchema()
+  {
+    return schema_list;
+  }
 
   /**
    *
@@ -582,7 +587,7 @@ public class DatabaseDocument extends Document
     try
     {
       ChadoDAO dao = getDAO();
-      List schema_list = dao.getSchema();
+      schema_list = dao.getSchema();
       Iterator it      = schema_list.iterator();
 
       while(it.hasNext())
@@ -602,7 +607,7 @@ public class DatabaseDocument extends Document
           String org      = feature.getAbbreviation();
           String typeName = getCvtermName(feature.getType_id());
 
-          db.put(org + " - " + typeName + " - " + feature.getName(),
+          db.put(schema + " - " + typeName + " - " + feature.getName(),
                  Integer.toString(feature.getId()));
           if(!organism.contains(org))
             organism.add(org);

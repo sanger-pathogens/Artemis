@@ -233,7 +233,7 @@ public class DatabaseEntrySource implements EntrySource
     schemas = doc.getSchemaEntries();
 
     DefaultMutableTreeNode top = new DefaultMutableTreeNode("PSU Organism List");
-    createNodes(top, organism, entries);
+    createNodes(top, doc.getSchema(), entries);
     final JTree tree = new JTree(top);
     tree.getSelectionModel().setSelectionMode(
         TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -287,10 +287,13 @@ public class DatabaseEntrySource implements EntrySource
                             (DefaultMutableTreeNode)type_node.getParent();
 
     String org = (String)org_node.getUserObject();
-    if(schemas.containsKey(org))
-      return (String) schemas.get(org);
-    else
-      return null;
+
+    System.out.println(org);
+    return org;
+//  if(schemas.containsKey(org))
+//    return (String) schemas.get(org);
+//  else
+//    return null;
   }
 
   /**
@@ -305,10 +308,9 @@ public class DatabaseEntrySource implements EntrySource
    *          sequences collection
    * 
    */
-  private void createNodes(DefaultMutableTreeNode top, Vector org,
+  private void createNodes(DefaultMutableTreeNode top, List org,
                            Hashtable organism)
   {
-    Enumeration enum_org = org.elements();
     DefaultMutableTreeNode org_node;
     DefaultMutableTreeNode seq_node;
     DefaultMutableTreeNode typ_node;
@@ -317,17 +319,17 @@ public class DatabaseEntrySource implements EntrySource
     final int v_organism_size = v_organism.length;
     Arrays.sort(v_organism);
 
-    while(enum_org.hasMoreElements())
+    for(int i=0; i<org.size(); i++)
     {
-      String name = (String)enum_org.nextElement();
+      String name = (String)org.get(i);
       org_node = new DefaultMutableTreeNode(name);
       top.add(org_node);
 
       Hashtable seq_type_node = new Hashtable();
 
-      for(int i = 0; i < v_organism_size; i++)
+      for(int j = 0; j < v_organism_size; j++)
       {
-        String seq_name = (String)v_organism[i];
+        String seq_name = (String)v_organism[j];
         if(seq_name.startsWith(name))
         {
           int ind1 = seq_name.indexOf("- ");
