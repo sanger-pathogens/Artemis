@@ -163,7 +163,7 @@ public class ChadoDemo
       public void actionPerformed(ActionEvent event)
       {
         String search_gene = gene_text.getText();
-        String schema = (String) schema_list.getSelectedValue();
+        String schema = (String)schema_list.getSelectedValue();
         List schema_search;
         if(schema.equalsIgnoreCase("All"))
           schema_search = schemas;
@@ -326,7 +326,8 @@ public class ChadoDemo
   public String[][] search(final String search_gene, final List schema_search,
       final ChadoDAO dao) throws SQLException
   {
-    featureList = dao.getFeature(search_gene, schema_search);
+    featureList = dao.getFeature(search_gene.replaceAll("[*]","%"),
+                                 schema_search);
 
     String rowData[][] = new String[featureList.size()][7];
 
