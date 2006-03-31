@@ -144,16 +144,13 @@ public class ChadoDemo
     Box xbox = Box.createHorizontalBox();
     final JTextField gene_text = new JTextField(20);
     gene_text.setText("MAL8P1.204");
-    gene_text.selectAll();
     xbox.add(gene_text);
-
-    panel.add(xbox, BorderLayout.NORTH);
+    gene_text.selectAll();
 
     result_table = new JTable();
 
     final JScrollPane scrollpane = new JScrollPane(result_table);
-    scrollpane.setPreferredSize(new Dimension(600, 300));
-    result_table.setPreferredSize(new Dimension(600, 300));
+    scrollpane.setPreferredSize(new Dimension(600, 200));
 
     panel.add(scrollpane, BorderLayout.CENTER);
 
@@ -202,7 +199,9 @@ public class ChadoDemo
       }
     });
     xbox.add(findButt);
-
+    xbox.add(Box.createHorizontalGlue());
+    panel.add(xbox, BorderLayout.NORTH);
+    
     attr_text = new JTextArea();
     JScrollPane jsp_attr = new JScrollPane(attr_text);
     jsp_attr.setPreferredSize(new Dimension(600, 100));
