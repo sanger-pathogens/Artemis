@@ -26,7 +26,7 @@ package uk.ac.sanger.artemis.chado;
 
 /**
  *
- * Java Object used by iBatis to represent the chado dbxref table.
+ * Java Object used by ORM to represent the chado dbxref table.
  *
  */
 public class Dbxref
