@@ -243,7 +243,8 @@ public class IBatisDAO implements ChadoDAO
   {
     ChadoFeature feature = new ChadoFeature();
     feature.setSchema(schema);
-    
+    feature.setUniquename(uniquename);
+
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     List list = sqlMap.queryForList("getDbxref", feature);  
     return JdbcDAO.mergeDbxref(list);
