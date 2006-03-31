@@ -92,7 +92,7 @@
                srcfeature_id=$id$ AND
              </isGreaterThan>
              <isNotNull property="uniquename">                        
-               uniquename=#uniquename# AND
+               uniquename LIKE #uniquename# AND
              </isNotNull>
            </dynamic>
            (fl.rank=fr.rank OR fr.rank IS NULL)
