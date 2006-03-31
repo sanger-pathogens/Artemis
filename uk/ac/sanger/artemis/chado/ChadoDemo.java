@@ -263,8 +263,8 @@ public class ChadoDemo
       int row = result_table.getSelectedRow();
       StringBuffer attr_buff = new StringBuffer();
       ChadoFeature chado_feature = (ChadoFeature) featureList.get(row);
-      Hashtable dbxref = dao.getDbxref(chado_feature.getSchema(), chado_feature
-          .getUniquename());
+      Hashtable dbxref = dao.getDbxref(chado_feature.getSchema(),
+                                       chado_feature.getUniquename());
 
       if(dbxref.size() > 0)
       {
