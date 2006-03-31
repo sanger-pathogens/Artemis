@@ -490,7 +490,7 @@ public class JdbcDAO
                  "LEFT JOIN "+schema+".feature f ON dbx_f.feature_id=f.feature_id ";
     
     if(uniquename != null)
-      sql = sql + "WHERE f.uniquename="+uniquename;
+      sql = sql + "WHERE f.uniquename='"+uniquename+"'";
     
     appendToLogFile(sql, sqlLog);
     Statement st = conn.createStatement();
