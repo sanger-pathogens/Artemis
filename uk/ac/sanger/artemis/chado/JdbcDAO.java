@@ -227,7 +227,7 @@ public class JdbcDAO
                    + "fp.feature_id=" + "f.feature_id"
                    + " LEFT JOIN " + schema + ".featureloc fl ON "
                    + "f.feature_id=" + "fl.feature_id"
-                   + " WHERE uniquename = '"
+                   + " WHERE uniquename LIKE '"
                    + uniquename 
                    + "' AND ("
                    + "fl.rank="
