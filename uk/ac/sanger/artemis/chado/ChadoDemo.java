@@ -230,18 +230,6 @@ public class ChadoDemo
     JMenu file = new JMenu("File");
     mbar.add(file);
 
-    JMenuItem showAttributes = new JMenuItem("Show Attributes");
-    showAttributes.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent event)
-      {
-        showAttributes();
-      }
-    });
-    file.add(showAttributes);
-
-    file.add(new JSeparator());
-
     JMenuItem exit = new JMenuItem("Exit");
     exit.addActionListener(new ActionListener()
     {
