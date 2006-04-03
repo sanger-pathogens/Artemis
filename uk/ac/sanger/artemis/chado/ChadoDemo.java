@@ -56,7 +56,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.Box;
-
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 
 /**
@@ -138,6 +139,9 @@ public class ChadoDemo
     final JPanel panel = new JPanel(new BorderLayout());
     final JList schema_list = new JList(v_schemas);
     schema_list.setSelectedValue(schema, true);
+    if(schema_list.getSelectedIndex() == -1)
+      schema_list.setSelectedValue("All", true);
+
     JScrollPane jsp = new JScrollPane(schema_list);
     panel.add(jsp, BorderLayout.EAST);
 
@@ -157,8 +161,8 @@ public class ChadoDemo
     JButton findButt = new JButton("FIND");
     findButt.addActionListener(new ActionListener()
     {
-      private String columnNames[] = { "schema", "name", "feature ID",
-          "location", "type_id", "strand", "time modified" };
+      private String columnNames[] = { "schema", "name", "type",
+          "feature ID", "location", "strand", "time modified" };
 
       public void actionPerformed(ActionEvent event)
       {
@@ -178,6 +182,7 @@ public class ChadoDemo
           String rowData[][] = search(search_gene, schema_search, dao);
 
           result_table = new JTable(rowData, columnNames);
+          result_table.getSelectionModel().addListSelectionListener(new SelectionListener());
           result_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
           result_table.addMouseListener(new MouseAdapter()
@@ -339,9 +344,9 @@ public class ChadoDemo
 
       rowData[i][0] = feature.getSchema();
       rowData[i][1] = feature.getUniquename();
-      rowData[i][2] = Integer.toString(feature.getId());
-      rowData[i][3] = fmin + "..." + fmax;
-      rowData[i][4] = Long.toString(feature.getType_id());
+      rowData[i][2] = (String)cvterm.get(new Long(feature.getType_id()));
+      rowData[i][3] = Integer.toString(feature.getId());
+      rowData[i][4] = fmin + "..." + fmax;
       rowData[i][5] = Integer.toString(feature.getStrand());
       rowData[i][6] = feature.getTimelastmodified().toString();
     }
@@ -474,6 +479,14 @@ public class ChadoDemo
     }
 
     return cvterm;
+  }
+
+  public class SelectionListener implements ListSelectionListener
+  {
+    public void valueChanged(ListSelectionEvent e)
+    {
+      showAttributes();
+    }
   }
 
   public static void main(String args[])
