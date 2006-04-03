@@ -15,10 +15,10 @@
     <resultMap id="select-feature-properties-result" class="uk.ac.sanger.artemis.chado.ChadoFeature">
         <result property="timelastmodified" column="timelastmodified"/>
    	<result property="id" column="id"/>
-  	<result property="object_id" column="object_id"/>
+  	<result property="object_id" column="object_id" nullValue="-1"/>
         <result property="strand" column="strand" nullValue="0"/>
-        <result property="fmin" column="fmin"/>
-        <result property="fmax" column="fmax"/>
+        <result property="fmin" column="fmin" nullValue="-1"/>
+        <result property="fmax" column="fmax" nullValue="0"/>
         <result property="uniquename" column="uniquename"/>
         <result property="type_id" column="type_id"/>
         <result property="prop_type_id" column="prop_type_id" nullValue="0"/>
