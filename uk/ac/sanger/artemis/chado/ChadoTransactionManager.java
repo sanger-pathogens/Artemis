@@ -50,7 +50,7 @@ import javax.swing.JOptionPane;
  *
  * Chado transaction manager listens for feature, entry and sequence changes.
  * <code>ChadoTransactionManager</code> creates and tracks the feature insertions,
- * deletions, and changes to commit back to the database.
+ * deletions, and updates to commit back to the database.
  *
  **/
 public class ChadoTransactionManager
@@ -60,16 +60,19 @@ public class ChadoTransactionManager
   private Vector sql = new Vector();
   
   /** GFF3 predefined tags */
-  private String reserved_tags[] = { "ID",
-                                     "Name",
-                                     "Alias",
-                                     "Parent",
-                                     "Target",
-                                     "Gap",
-                                     "Derives_from",
-                                     "Dbxref",
-                                     "Ontology_term",
-                                     "score", "gff_source", "gff_seqname"};
+  private String reserved_tags[] = 
+          {   "ID",
+              "Name",
+              "Alias",
+              "Parent",
+              "Target",
+              "Gap",
+              "Derives_from",
+              "Dbxref",
+              "Ontology_term",
+              "score", 
+              "gff_source",    // program or database
+              "gff_seqname" }; // seqID of coord system
 
 
   /**
@@ -264,7 +267,7 @@ public class ChadoTransactionManager
         for(int value_index = 0; value_index < qualifier_values.size();
           ++value_index)
         {
-           chado_feature.addQualifier(type_id, 
+          chado_feature.addQualifier(type_id, 
                          (String)qualifier_values.elementAt(value_index));
         }
       }
@@ -343,11 +346,7 @@ public class ChadoTransactionManager
       final Qualifier this_qualifier = (Qualifier)qualifiers_new.elementAt(qualifier_index);
       String name = this_qualifier.getName();
 
-      if(name.equals("ID") ||
-         name.equals("Parent") ||
-         name.equals("gff_seqname") ||
-         name.equals("gff_source") ||
-         name.equals("timelastmodified"))
+      if(isReservedTag(name) || name.equals("timelastmodified"))
         continue;
 
       int old_index = qualifiers_old.indexOfQualifierWithName(name);
@@ -402,8 +401,6 @@ public class ChadoTransactionManager
             ++value_index)
         {
           String qualifier_string = (String)new_qualifier_strings.elementAt(value_index);
-//        if(old_qualifier_strings.contains(qualifier_string))
-//          continue;
 
           tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                                      feature_id, "featureprop");
