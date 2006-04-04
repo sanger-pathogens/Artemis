@@ -688,8 +688,6 @@ public class DatabaseDocument extends Document
   {
     try
     {
-      Connection conn = getConnection();
-
       ChadoDAO dao = getDAO();
 
       for(int i = 0; i < sql.size(); i++)
@@ -713,8 +711,6 @@ public class DatabaseDocument extends Document
         else if(tsn.getType() == ChadoTransaction.DELETE_FEATURE)
           dao.deleteFeature(schema, tsn);
       }
-
-      conn.close();
     }
     catch (java.sql.SQLException sqlExp)
     {
@@ -724,12 +720,13 @@ public class DatabaseDocument extends Document
                                     JOptionPane.ERROR_MESSAGE);
       sqlExp.printStackTrace();
     }
-    catch (java.net.ConnectException conn)
+    catch (java.net.ConnectException conn_ex)
     {
-      JOptionPane.showMessageDialog(null, "Problems connecting...",
+      JOptionPane.showMessageDialog(null, "Problems connecting..."+
+                                    conn_ex.getMessage(),
                                     "Database Connection Error - Check Server",
                                     JOptionPane.ERROR_MESSAGE);
-      conn.printStackTrace();
+      conn_ex.printStackTrace();
     }
 
   }
