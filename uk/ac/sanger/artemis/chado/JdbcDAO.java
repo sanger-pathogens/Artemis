@@ -156,6 +156,14 @@ public class JdbcDAO
     return list;
   }
   
+  /**
+   * Get the properties of a feature.
+   * @param uniquename  the unique name of the feature
+   * @param parentFeatureID  the id of parent feature to query
+   * @param schema_list the <code>List</code> of schemas to search
+   * @return  the <code>List</code> of <code>ChadoFeature</code>
+   * @throws SQLException
+   */
   private List getFeatureQuery(final String uniquename,
                                final int parentFeatureID,
                                final String schema)
@@ -164,18 +172,17 @@ public class JdbcDAO
     Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                                         ResultSet.CONCUR_UPDATABLE);
 
-    String sql = "SELECT timelastmodified, f.feature_id, object_id, "
-                   + "fl.strand, fmin, fmax, uniquename, f.type_id, "
-                   + "fp.type_id AS prop_type_id, fp.value, fl.phase"
-                   + " FROM  "
-                   + schema + ".feature f"
-                   + " LEFT JOIN " + schema + ".feature_relationship fr ON "
-                   + "fr.subject_id=" + "f.feature_id"
-                   + " LEFT JOIN " + schema + ".featureprop fp ON "
-                   + "fp.feature_id=" + "f.feature_id"
-                   + " LEFT JOIN " + schema + ".featureloc fl ON "
-                   + "f.feature_id=" + "fl.feature_id"
-                   + " WHERE ";
+    String sql = "SELECT timelastmodified, f.feature_id, object_id,"
+               + " fl.strand, fmin, fmax, uniquename, f.type_id,"
+               + " fp.type_id AS prop_type_id, fp.value, fl.phase"
+               + " FROM  "     + schema + ".feature f"
+               + " LEFT JOIN " + schema + ".feature_relationship fr ON "
+                                        + "fr.subject_id=" + "f.feature_id"
+               + " LEFT JOIN " + schema + ".featureprop fp ON "
+                                        + "fp.feature_id=" + "f.feature_id"
+               + " LEFT JOIN " + schema + ".featureloc fl ON "
+                                        + "f.feature_id=" + "fl.feature_id"
+               + " WHERE ";
     
     if(uniquename != null)
       sql = sql + "uniquename LIKE '" + uniquename +"'";
@@ -184,8 +191,7 @@ public class JdbcDAO
       sql = sql + "srcfeature_id = " + parentFeatureID;
     
     sql = sql  + " AND (fl.rank=fr.rank OR fr.rank IS NULL)"
-               + " ORDER BY "
-               + "f.type_id, uniquename";
+               + " ORDER BY f.type_id, uniquename";
     
     appendToLogFile(sql, sqlLog);
     ResultSet rs = st.executeQuery(sql);
@@ -296,7 +302,6 @@ public class JdbcDAO
   }
 
   /**
-   *
    * Given a list of distict cvterm_id/type_id's of feature types
    * that have residues (from getResidueType()) in the given schema 
    * and the schema name return a list of chado features in the schema
@@ -424,7 +429,6 @@ public class JdbcDAO
   }
 
   /**
-   * 
    * Get dbxref for a feature.
    * @param schema      the postgres schema name
    * @param uniquename  the unique name for the feature. If set to NULL
