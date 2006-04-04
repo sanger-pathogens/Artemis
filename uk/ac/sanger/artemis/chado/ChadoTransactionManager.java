@@ -25,12 +25,10 @@
 package uk.ac.sanger.artemis.chado;
 
 import uk.ac.sanger.artemis.Feature;
-import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Qualifier;
-import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.io.StreamQualifier;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
@@ -46,9 +44,7 @@ import uk.ac.sanger.artemis.EntryChangeListener;
 import uk.ac.sanger.artemis.EntryChangeEvent;
 import java.util.Vector;
 import javax.swing.JOptionPane;
-import javax.swing.Box;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+
 
 /**
  *
@@ -62,12 +58,23 @@ public class ChadoTransactionManager
 {
 
   private Vector sql = new Vector();
+  
+  /** GFF3 predefined tags */
+  private String reserved_tags[] = { "ID",
+                                     "Name",
+                                     "Alias",
+                                     "Parent",
+                                     "Target",
+                                     "Gap",
+                                     "Derives_from",
+                                     "Dbxref",
+                                     "Ontology_term",
+                                     "score", "gff_source", "gff_seqname"};
+
 
   /**
-   *
    *  Implementation of the FeatureChangeListener interface.  We listen for
    *  changes in every feature of every entry in this group.
-   *
    **/ 
   public void featureChanged(FeatureChangeEvent event)
   {
@@ -75,7 +82,7 @@ public class ChadoTransactionManager
     {
       final GFFStreamFeature feature = (GFFStreamFeature)event.getFeature().getEmblFeature();
 
-      if(event.getType() == event.LOCATION_CHANGED)
+      if(event.getType() == FeatureChangeEvent.LOCATION_CHANGED)
       {
         System.out.println("LOCATION_CHANGED ");
 
@@ -114,11 +121,11 @@ public class ChadoTransactionManager
           sql.add(tsn);
         }
       }
-      else if(event.getType() == event.QUALIFIER_CHANGED)
+      else if(event.getType() == FeatureChangeEvent.QUALIFIER_CHANGED)
       {
         System.out.println("QUALIFIER_CHANGED ");
       }
-      else if(event.getType() == event.ALL_CHANGED)
+      else if(event.getType() == FeatureChangeEvent.ALL_CHANGED)
       {
         System.out.println("ALL_CHANGED");
         
@@ -127,12 +134,14 @@ public class ChadoTransactionManager
     }
   }
  
+  /**
+   *  Invoked when an Entry is changed.
+   **/
   public void entryChanged(EntryChangeEvent event)
   {
     if(event.getType() == EntryChangeEvent.FEATURE_ADDED)
     {
       Feature feature = event.getFeature();
-
       String feature_uniquename = null;
 
       try
@@ -205,8 +214,6 @@ public class ChadoTransactionManager
       // create transaction object
       ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT_FEATURE,
                                                   chado_feature);
-      System.out.println("---->HERE FEATURE_ADDED "+tsn.getChadoFeature().getUniquename());
-
       sql.add(tsn);
     }
     else if(event.getType() == EntryChangeEvent.FEATURE_DELETED)
@@ -224,18 +231,16 @@ public class ChadoTransactionManager
       {
         ire.printStackTrace();
       }
-      System.out.println("HERE FEATURE_DELETED");
     }
 
 //  System.out.println(event.getEntry().getName());
   }
 
   /**
-   *
-   * Add qualifiers in a <code>QualifierVector</code> to a <code>ChadoFeature</code>.
+   * Add qualifiers that are in a <code>QualifierVector</code> to a 
+   * <code>ChadoFeature</code>.
    * @param qualifiers		the <code>QualifierVector</code>
    * @param chado_feature	the <code>ChadoFeature</code>
-   *
    */
   private void addQualifiers(final QualifierVector qualifiers,
                              final ChadoFeature chado_feature)
@@ -247,64 +252,52 @@ public class ChadoTransactionManager
       final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
       final String name = this_qualifier.getName();
 
-      if(name.equals("ID") ||
-         name.equals("score") ||
-         name.equals("gff_source") ||
-         name.equals("gff_seqname") )
+      // ignore reserved tags
+      if(isReservedTag(name))
         continue;
 
       final StringVector qualifier_values = this_qualifier.getValues();
-     
-      long type_id = DatabaseDocument.getCvtermID( name ).longValue();
-      for(int value_index = 0; value_index < qualifier_values.size();
-        ++value_index)
+      
+      try
       {
-        chado_feature.addQualifier(type_id, 
-                                   (String)qualifier_values.elementAt(value_index));
+        long type_id = DatabaseDocument.getCvtermID( name ).longValue();
+        for(int value_index = 0; value_index < qualifier_values.size();
+          ++value_index)
+        {
+           chado_feature.addQualifier(type_id, 
+                         (String)qualifier_values.elementAt(value_index));
+        }
+      }
+      catch(NullPointerException npe)
+      {
+        JOptionPane.showMessageDialog(null,
+            name+" is not a valid qualifier!",
+            "Invalid Qualifier",
+            JOptionPane.WARNING_MESSAGE);
       }
     } 
   }
 
   /**
-   *
-   *  Return a string containing one qualifier per line.  These are the
-   *  original qualifiers, not the qualifiers from the qualifier_text_area.
-   *  @param qualifiers	the <code>QualifierVector</code>
-   *  @return	the <code>String</code> representation of the qualifiers
-   *
-   **/
-  private String getQualifierString(QualifierVector qualifiers)
+   * Determine if this is a GFF3 predefined tag.
+   * @param tag
+   * @return  true if the tag is a GFF3 predefined tag
+   */
+  private boolean isReservedTag(final String tag)
   {
-    final StringBuffer buffer = new StringBuffer();
-
-    for(int qualifier_index = 0; qualifier_index < qualifiers.size();
-        ++qualifier_index)
-    {
-      final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
-
-      final StringVector qualifier_strings =
-                       StreamQualifier.toStringVector(null, this_qualifier);
-
-      for(int value_index = 0; value_index < qualifier_strings.size();
-          ++value_index)
-      {
-        final String qualifier_string = (String)qualifier_strings.elementAt(value_index);
-        buffer.append(qualifier_string + "\n");
-      }
-    }
-
-    return buffer.toString();
+    for(int i=0; i<reserved_tags.length; i++)
+      if(tag.equals(reserved_tags[i]))
+        return true;
+    return false;
   }
-
+  
   /**
-   *
    * Find the qualifiers that have changed or been added and UPDATE
    * INSERT or DELETE accordingly.
    *
    * @param qualifiers_old	old qualifiers
    * @param qualifiers_new	new qualifiers
    * @param feature		GFF feature that has been changed
-   *
    */
   private void editQualifiers(QualifierVector qualifiers_old, 
                               QualifierVector qualifiers_new, 
@@ -423,9 +416,6 @@ public class ChadoTransactionManager
           tsn.setConstraint("featureprop.type_id", "'"+cvterm_id+"'");
           tsn.setConstraint("rank", Integer.toString(value_index));
           sql.add(tsn);
-//          String[] sql_array = tsn.getSqlQuery();
-//          for(int i=0; i<sql_array.length; i++)
-//            System.out.println(sql_array[i]);
         }
 
       }
@@ -462,16 +452,15 @@ public class ChadoTransactionManager
           sql.add(tsn);
         }
 
-//      System.out.println("******** "+DatabaseDocument.getCvtermID(name));
       }
     }
 
   }
 
   /**
-   *
-   * Strip out quotes around a string.
-   *
+   * Strip out double quotes around a string.
+   * @param s a <code>String</code> to strip quotes
+   * @return the resulting <code>String</code>
    */
   private String stripQuotes(String s)
   {
@@ -483,17 +472,13 @@ public class ChadoTransactionManager
 
 
   /**
-   *
-   *  This method fixes up the location of this Feature when a sequence
-   *  changes.
-   *
-   **/ 
+   *  Invoked when a deletion or insertion occurs in a Bases object.
+   **/
   public void sequenceChanged(final SequenceChangeEvent event)
   {
   }
 
   /**
-   *
    * Commit the transactions back to the database.  
    *
    **/
