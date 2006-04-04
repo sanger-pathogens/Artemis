@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.24 2006-03-31 10:52:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.25 2006-04-04 14:26:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -30,13 +30,13 @@ import uk.ac.sanger.artemis.util.*;
 import java.io.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
-import java.util.StringTokenizer;
+
 
 /**
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.24 2006-03-31 10:52:06 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.25 2006-04-04 14:26:28 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -172,7 +172,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
         // parse the rest of the line as ACeDB format attributes
         final Hashtable attributes = parseAttributes(rest_of_line);
-        final String type = (String)line_bits.elementAt(2);
+//      final String type = (String)line_bits.elementAt(2);
 
         for(final java.util.Enumeration attribute_enum = attributes.keys();
             attribute_enum.hasMoreElements();)
@@ -520,7 +520,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     final StringBuffer buffer = new StringBuffer();
     final QualifierVector qualifiers = getQualifiers();
-    final QualifierVector qualifiers_to_write = new QualifierVector();
 
     final String names[] = { "ID", "Name", "Alias", "Parent",
                              "Target", "Gap", "Note", 
