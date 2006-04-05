@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.25 2006-04-04 14:26:28 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.26 2006-04-05 13:27:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -30,13 +30,14 @@ import uk.ac.sanger.artemis.util.*;
 import java.io.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.StringTokenizer;
 
 
 /**
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.25 2006-04-04 14:26:28 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.26 2006-04-05 13:27:35 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -180,11 +181,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
           String name = (String)attribute_enum.nextElement();
 
           final StringVector values = (StringVector)attributes.get(name);
-
-//        if(name.equals("ID"))
-//          name = "systematic_id";
-//        else if(name.equals("Name"))
-//          name = type;
 
           if(values.size() == 0)
             setQualifier(new Qualifier(name));
@@ -647,7 +643,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       int index_of_first_space = this_token.indexOf(" ");
        
       String att_name;
-      final StringVector att_values = new StringVector();
+      StringVector att_values = new StringVector();
 
       if( this_token.indexOf("=") > -1 &&
          (this_token.indexOf("=") < index_of_first_space ||
@@ -718,6 +714,17 @@ public class GFFStreamFeature extends SimpleDocumentFeature
           att_values.add(rest_of_token);
       }
 
+      if(att_name.equals("Dbxref")) // convert to multi-line
+      {
+        StringTokenizer stok = 
+            new StringTokenizer((String)att_values.get(0), ",");
+        StringVector str_values = new StringVector();
+        while(stok.hasMoreTokens())
+          str_values.add(stok.nextElement());
+
+        att_values = str_values;
+      }
+      
       if(attributes.get(att_name) != null) 
         ((StringVector)attributes.get(att_name)).add(att_values);
       else 
