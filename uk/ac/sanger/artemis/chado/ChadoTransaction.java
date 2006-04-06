@@ -50,7 +50,12 @@ public class ChadoTransaction
   public static final int INSERT_FEATURE = 4;
   /** delete feature statement */
   public static final int DELETE_FEATURE = 5;
-
+  
+  // DBXREF TRANSACTIONS
+  public static final int UPDATE_DBXREF = 6;
+  public static final int INSERT_DBXREF = 7;
+  public static final int DELETE_DBXREF = 8;
+  
   /** properties store <i>e.g.</i> value=<quote>product=hypothetical protein</quote> */
   private List properties;
   /** constriant store <i>e.g.</i> type_id=21078 */
@@ -68,8 +73,10 @@ public class ChadoTransaction
   /** chado feature */
   private ChadoFeature chadoFeature;
 
+  private Dbxref dbxref;
+ 
+
   /**
-   *
    * Used to construct a <code>ChadoTransaction</code> that can
    * be used to describe a SQL transaction.
    *
@@ -92,7 +99,6 @@ public class ChadoTransaction
    * @param uniquename	the unique name of feature
    * @param chadoTable	the chado table used in transaction <i>e.g.</i> 
    *                 	feature, featureloc....
-   *
    */
   public ChadoTransaction(int type, String uniquename, 
                           String chadoTable)
@@ -103,7 +109,6 @@ public class ChadoTransaction
   }
  
   /**
-   *
    * Used to construct a <code>ChadoTransaction</code> that can
    * be used to describe a SQL transaction.
    *
@@ -124,12 +129,32 @@ public class ChadoTransaction
     this.type = type;
   }
 
+  /**
+   * Used to construct a <code>ChadoTransaction</code> that can
+   * be used to describe a SQL transaction.
+   * @param type    the transaction type
+   * @param dbxref  a feature dbxref
+   */
+  public ChadoTransaction(final int type, final String uniquename,
+                          final Dbxref dbxref)
+  {
+    this.type = type;
+    this.dbxref = dbxref;
+    this.uniquename = uniquename;
+  }
 
   /**
-   *
+   * The <code>Dbxref</code> used in a transaction.
+   * @return  the feature dbxref
+   */
+  public Dbxref getFeatureDbxref()
+  {
+    return dbxref;
+  }
+  
+  /**
    * The <code>ChadoFeature</code> feature used in a transaction.
    * @return chado_feature the <code>ChadoFeature</code> 
-   *
    */
   public ChadoFeature getChadoFeature()
   {
@@ -137,10 +162,8 @@ public class ChadoTransaction
   }
 
   /**
-   *
    * Set the postgres schema.
    * @param     the postgres schema
-   *
    */
   public void setSchema(final String schema)
   {
@@ -148,10 +171,8 @@ public class ChadoTransaction
   }
 
   /**
-   *
    * Get the postgres schema.
    * @return    the postgres schema
-   *
    */
   public String getSchema()
   {
@@ -159,10 +180,8 @@ public class ChadoTransaction
   }
 
   /**
-   *
    * The type of SQL transaction
    * @return 	the transaction type
-   *
    */
   public int getType()
   {
@@ -170,10 +189,8 @@ public class ChadoTransaction
   } 
 
   /**
-   *
    * Get the unique name for a feature.
    * @return    the unique name for a feature.
-   *
    */
   public String getUniqueName()
   {
@@ -182,10 +199,8 @@ public class ChadoTransaction
 
 
   /**
-   *
    * Get the chado table that is involved in the SQL command
    * @return 	the chado table
-   *
    */
   public String getChadoTable()
   {
@@ -194,12 +209,10 @@ public class ChadoTransaction
 
 
   /**
-   * 
    * Add a property to this transaction that will be updated
    * or inserted.
    * @param name	the property name
    * @param value	the property value
-   *
    */
   public void addProperty(String name, String value) 
   {
@@ -211,11 +224,9 @@ public class ChadoTransaction
 
 
   /**
-   *
    * Set a constraint on this transaction.
    * @param name	the constraint name
    * @param value	the constraint value
-   *
    */
   public void setConstraint(String name, String value)
   {
@@ -226,10 +237,8 @@ public class ChadoTransaction
 
 
   /**
-   *
    * Get the properties for this transaction that will be changed.
    * @return	the transaction properties used to INSERT/UPDATE 
-   *
    */
   public List getProperties()
   {
@@ -237,10 +246,8 @@ public class ChadoTransaction
   }
  
   /**
-   *
    * Set the properties for this transaction that will be changed.
    * @param properties	the transaction properties used to INSERT/UPDATE
-   *
    */
   public void setProperties(List properties)
   {
@@ -248,11 +255,9 @@ public class ChadoTransaction
   }
 
   /**
-   *
    * Get the names of the properties for this transaction that will 
    * be changed.
    * @return	the names of the properties to INSERT/UPDATE
-   *
    */
   public List getPropertiesName()
   {
@@ -270,11 +275,9 @@ public class ChadoTransaction
   }
 
   /**
-   *
    * Get the values of the properties for this transaction that will  
    * be changed..
    * @return	the values of the properties to INSERT/UPDATE
-   *
    */
   public List getPropertiesValue()
   {
@@ -292,10 +295,8 @@ public class ChadoTransaction
   }
 
   /**
-   *
    * Get the constraints on this transaction.
    * @return 	the transaction constraints	
-   *
    */
   public List getConstraint()
   {
@@ -303,10 +304,7 @@ public class ChadoTransaction
   }
 
   /**
-   *
    * Get the unique names of features to change.
-   *   
-   *
    */
   public List getUniquename()
   {
@@ -321,10 +319,8 @@ public class ChadoTransaction
   }
 
   /**
-   *
    * Set the feature id
    * @param feature_id	the feature identifier
-   *
    */
   public void setFeature_id(final int feature_id)
   {
@@ -332,10 +328,8 @@ public class ChadoTransaction
   }
 
   /**
-   *
    * Get the feature id
    * @return	the feature identifier
-   *
    */
   public int getFeature_id()
   {

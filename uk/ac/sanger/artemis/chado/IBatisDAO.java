@@ -395,6 +395,30 @@ public class IBatisDAO implements ChadoDAO
   }
 
   /**
+   * Insert a dbxref for a feature.
+   * @param schema        schema/organism name or null
+   * @param tsn           the <code>ChadoTransaction</code>
+   * @throws SQLException
+   */
+  public void insertFeatureDbxref(final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    Dbxref dbxref = tsn.getFeatureDbxref();
+  }
+  
+  /**
+   * Delete a dbxref for a feature.
+   * @param schema        schema/organism name or null
+   * @param tsn           the <code>ChadoTransaction</code>
+   * @throws SQLException
+   */
+  public void deleteFeatureDbxref(final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    Dbxref dbxref = tsn.getFeatureDbxref();
+  }
+  
+  /**
    *
    * Write the time a feature was last modified
    * @param schema      schema/organism name or null

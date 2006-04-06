@@ -205,6 +205,24 @@ public interface ChadoDAO
   public int deleteFeature
                     (final String schema, final ChadoTransaction tsn)
                      throws SQLException;
+  
+  /**
+   * Insert a dbxref for a feature.
+   * @param schema        schema/organism name or null
+   * @param tsn           the <code>ChadoTransaction</code>
+   * @throws SQLException
+   */
+  public void insertFeatureDbxref(final String schema, final ChadoTransaction tsn)
+                     throws SQLException;
+  
+  /**
+   * Delete a dbxref for a feature.
+   * @param schema        schema/organism name or null
+   * @param tsn           the <code>ChadoTransaction</code>
+   * @throws SQLException
+   */
+  public void deleteFeatureDbxref(final String schema, final ChadoTransaction tsn)
+                     throws SQLException;
 
   /**
    * 

@@ -726,6 +726,40 @@ public class JdbcDAO
     return st.executeUpdate(sql);
   }
 
+  /**
+   * Insert a dbxref for a feature.
+   * @param schema        schema/organism name or null
+   * @param tsn           the <code>ChadoTransaction</code>
+   * @throws SQLException
+   */
+  public void insertFeatureDbxref(final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    Dbxref dbxref = tsn.getFeatureDbxref();
+  }
+  
+  /**
+   * Delete a dbxref for a feature.
+   * @param schema        schema/organism name or null
+   * @param tsn           the <code>ChadoTransaction</code>
+   * @throws SQLException
+   */
+  public void deleteFeatureDbxref(final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    Dbxref dbxref = tsn.getFeatureDbxref();
+    final String uniquename = tsn.getUniqueName();
+    
+    final String sql = 
+      "DELETE FROM "+schema+".feature_dbxref "+
+      "WHERE dbxref_id="+
+      "(SELECT dbxref_id FROM dbxref WHERE accession='"+dbxref.getAccession()+"' "+
+             "AND db_id=(SELECT db_id FROM db WHERE name='"+dbxref.getName()+"'))"+
+      "AND feature_id=(SELECT feature_id FROM "+schema+
+             ".feature WHERE  uniquename='"+uniquename+"')";
+
+     System.out.println(sql);
+  }
   
   /**
    *

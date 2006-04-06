@@ -295,9 +295,8 @@ public class ChadoTransactionManager
   }
   
   /**
-   * Find the qualifiers that have changed or been added and UPDATE
-   * INSERT or DELETE accordingly.
-   *
+   * Compare the old and new qualifiers and find the qualifiers 
+   * that have changed or been added and UPDATE, INSERT or DELETE accordingly.
    * @param qualifiers_old	old qualifiers
    * @param qualifiers_new	new qualifiers
    * @param feature		GFF feature that has been changed
@@ -306,8 +305,7 @@ public class ChadoTransactionManager
                               QualifierVector qualifiers_new, 
                               GFFStreamFeature feature)
   {
-  
-    String feature_id = (String)(feature.getQualifierByName("ID").getValues()).elementAt(0);
+    final String uniquename = (String)(feature.getQualifierByName("ID").getValues()).elementAt(0);
     ChadoTransaction tsn;
 
     // look for qualifiers to DELETE
@@ -316,7 +314,9 @@ public class ChadoTransactionManager
     {
       final Qualifier this_qualifier = (Qualifier)qualifiers_old.elementAt(qualifier_index);
       String name = this_qualifier.getName();
-
+      if(isReservedTag(name))
+        continue;
+      
       if(!qualifiers_new.contains(name))
       {
         // get the cvterm_id for this featureprop/qualifier
@@ -332,8 +332,7 @@ public class ChadoTransactionManager
 
         String cvterm_id = lcvterm_id.toString();
         tsn = new ChadoTransaction(ChadoTransaction.DELETE,
-                                   feature_id, "featureprop");
-
+                                   uniquename, "featureprop");
         tsn.setConstraint("type_id", cvterm_id);
         sql.add(tsn);
       }
@@ -344,11 +343,7 @@ public class ChadoTransactionManager
         ++qualifier_index)
     {
       final Qualifier this_qualifier = (Qualifier)qualifiers_new.elementAt(qualifier_index);
-      String name = this_qualifier.getName();
-
-      if(isReservedTag(name) || name.equals("timelastmodified"))
-        continue;
-
+      String name = this_qualifier.getName();          
       int old_index = qualifiers_old.indexOfQualifierWithName(name);
 
       Qualifier this_old_qualifier = null;
@@ -372,24 +367,36 @@ public class ChadoTransactionManager
           if(!old_qualifier_strings.contains(qualifier_string))
             need_to_update = true;
         }
-        if(!need_to_update)
+        if(!need_to_update &&
+            new_qualifier_strings.size() == old_qualifier_strings.size())
           continue;
       }
 
-      // get the cvterm_id for this featureprop/qualifier
-      Long lcvterm_id = DatabaseDocument.getCvtermID(name);
-
-      if(lcvterm_id == null)   // chado doesn't recognise this
+      if(isReservedTag(name))
       {
-        JOptionPane.showMessageDialog(null, 
+        handleReservedTags(uniquename, 
+                           this_qualifier,
+                           qualifiers_old.getQualifierByName(name));
+        continue;
+      }
+      
+      // get the cvterm_id for this featureprop/qualifier
+      String cvterm_id = null;
+      if(!name.equals("timelastmodified"))
+      {
+        Long lcvterm_id = DatabaseDocument.getCvtermID(name);
+
+        if(lcvterm_id == null)   // chado doesn't recognise this
+        {
+          JOptionPane.showMessageDialog(null, 
                     name+" is not a valid qualifier!\n"+
                     "There is no CV term set for this qualifier.",
                     "Invalid Qualifier",
                     JOptionPane.WARNING_MESSAGE);
-        continue;
+          continue;
+        }
+        cvterm_id = lcvterm_id.toString();
       }
-  
-      String cvterm_id = lcvterm_id.toString();
 
       if(old_index > -1 &&
          new_qualifier_strings.size() == old_qualifier_strings.size())
@@ -397,34 +404,34 @@ public class ChadoTransactionManager
         //  
         // UPDATE existing featureprop's
         //
-        for(int value_index = 0; value_index < new_qualifier_strings.size();
-            ++value_index)
+        for(int rank = 0; rank < new_qualifier_strings.size();
+            ++rank)
         {
-          String qualifier_string = (String)new_qualifier_strings.elementAt(value_index);
-
-          tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                                     feature_id, "featureprop");
+          String qualifier_string = (String)new_qualifier_strings.elementAt(rank);
           int index = qualifier_string.indexOf("=");
 
           if(index > -1)
             qualifier_string = qualifier_string.substring(index+1);
+          
+          tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                                     uniquename, "featureprop");
 
           tsn.addProperty("value", "'"+ stripQuotes(qualifier_string) +"'");
           tsn.setConstraint("featureprop.type_id", "'"+cvterm_id+"'");
-          tsn.setConstraint("rank", Integer.toString(value_index));
+          tsn.setConstraint("rank", Integer.toString(rank));
           sql.add(tsn);
         }
 
       }
       else
-      {
+      {       
         //
         // DELETE any existing featureprops
         //
         if(old_index > -1)
         {
           tsn = new ChadoTransaction(ChadoTransaction.DELETE,
-                                     feature_id, "featureprop");
+                                     uniquename, "featureprop");
 
           tsn.setConstraint("type_id", cvterm_id);
           sql.add(tsn);
@@ -433,27 +440,96 @@ public class ChadoTransactionManager
         //
         // INSERT new featureprops
         //
-        for(int value_index = 0; value_index < new_qualifier_strings.size();
-            ++value_index)
+        for(int rank = 0; rank < new_qualifier_strings.size();
+            ++rank)
         {
-          tsn = new ChadoTransaction(ChadoTransaction.INSERT,
-                                     feature_id, "featureprop");
-          String qualifier_string = (String)new_qualifier_strings.elementAt(value_index);
+          String qualifier_string = (String)new_qualifier_strings.elementAt(rank);
           int index = qualifier_string.indexOf("=");
           if(index > -1)
             qualifier_string = qualifier_string.substring(index+1);
+         
+          tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+                                     uniquename, "featureprop");
 
           tsn.addProperty("value", "'"+ stripQuotes(qualifier_string) +"'");
           tsn.addProperty("type_id", "'"+cvterm_id+"'");
-          tsn.addProperty("rank", Integer.toString(value_index));
-          sql.add(tsn);
+          tsn.addProperty("rank", Integer.toString(rank));
+
+          if(tsn !=null)
+            sql.add(tsn);
         }
 
       }
     }
 
   }
+  
+  
+  /**
+   * Handle database transactions involving the GFF3 reserved tags.
+   * @param type            the transaction type (INSERT/UPDATE/DELETE)
+   * @param new_qualifier   the new qualifier
+   * @param old_qualifier   the old qualifier
+   */
+  private void handleReservedTags(final String uniquename,
+                                  final Qualifier new_qualifier,
+                                  final Qualifier old_qualifier)
+  {  
+    final StringVector new_qualifier_strings =
+                 StreamQualifier.toStringVector(null, new_qualifier);
+    
+    final StringVector old_qualifier_strings =
+                 StreamQualifier.toStringVector(null, old_qualifier);
+    
+    ChadoTransaction tsn;
+    // find tags that have been deleted
+    for(int i = 0; i < old_qualifier_strings.size(); ++i)
+    {
+      String qualifier_string = (String)old_qualifier_strings.elementAt(i);
+      
+      if(!new_qualifier_strings.contains(qualifier_string))
+      {
+         int index = qualifier_string.indexOf("=");
+         qualifier_string = qualifier_string.substring(index+1);
+         index = qualifier_string.lastIndexOf(":");
+         
+         System.out.println(uniquename+"  in handleReservedTags() DELETE db="+
+             qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
+         Dbxref old_dbxref = new Dbxref();
+         old_dbxref.setName(qualifier_string.substring(0,index));
+         old_dbxref.setAccession(qualifier_string.substring(index+1));
 
+         tsn = new ChadoTransaction(ChadoTransaction.DELETE_DBXREF, 
+                                    uniquename, old_dbxref);
+         sql.add(tsn);
+      }
+    }
+    
+    // find tags that have been inserted
+    for(int i = 0; i < new_qualifier_strings.size(); ++i)
+    {
+      String qualifier_string = (String)new_qualifier_strings.elementAt(i);
+      if(!old_qualifier_strings.contains(qualifier_string))
+      {
+         int index = qualifier_string.indexOf("=");
+         qualifier_string = qualifier_string.substring(index+1);
+         index = qualifier_string.lastIndexOf(":");
+         
+         System.out.println(uniquename+"  in handleReservedTags() INSERT db="+
+             qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
+         Dbxref new_dbxref = new Dbxref();
+         new_dbxref.setName(qualifier_string.substring(0,index));
+         new_dbxref.setAccession(qualifier_string.substring(index+1));
+
+         tsn = new ChadoTransaction(ChadoTransaction.INSERT_DBXREF, 
+                                    uniquename, new_dbxref);
+         sql.add(tsn);
+      }
+    }  
+    
+  }
+  
+  
   /**
    * Strip out double quotes around a string.
    * @param s a <code>String</code> to strip quotes
