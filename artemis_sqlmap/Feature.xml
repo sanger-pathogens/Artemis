@@ -13,12 +13,6 @@
        <parameter property="cvlist" javaType="java.util.List"/>
     </parameterMap> 
 
-    <parameterMap id="feature-name" 
-                  class="uk.ac.sanger.artemis.chado.ChadoFeature">
-       <parameter property="id" javaType="int"/>
-       <parameter property="schema" javaType="java.lang.String"/>
-    </parameterMap>
- 
     <resultMap id="select-feature-properties-result" 
                class="uk.ac.sanger.artemis.chado.ChadoFeature">
         <result property="timelastmodified" column="timelastmodified"/>
@@ -63,7 +57,7 @@
 
 
      <!-- get feature name -->
-     <select id="getFeatureName" parameterMap="feature-name" 
+     <select id="getFeatureName" parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature" 
                                  resultClass="java.lang.String"> 
    	   SELECT name
        FROM $schema$.feature WHERE feature_id=$id$
