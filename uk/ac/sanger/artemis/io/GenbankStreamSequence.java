@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GenbankStreamSequence.java,v 1.4 2005-07-18 14:25:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GenbankStreamSequence.java,v 1.5 2006-04-07 17:32:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import java.io.Writer;
  *  This is a subclass of StreamSequence containing GENBANK format sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: GenbankStreamSequence.java,v 1.4 2005-07-18 14:25:15 tjc Exp $
+ *  @version $Id: GenbankStreamSequence.java,v 1.5 2006-04-07 17:32:54 tjc Exp $
  **/
 
 public class GenbankStreamSequence extends StreamSequence
@@ -62,7 +62,7 @@ public class GenbankStreamSequence extends StreamSequence
    **/
   public GenbankStreamSequence(final Sequence sequence) 
   {
-    setFromChar(((GenbankStreamSequence)sequence).getCharSequence());
+    setFromChar(((StreamSequence)sequence).getCharSequence());
   }
 
   /**
