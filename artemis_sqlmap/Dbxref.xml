@@ -8,7 +8,7 @@
 <sqlMap namespace="Dbxref"> 
  
   <select id="getDbxref" parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature"
-                             resultClass="uk.ac.sanger.artemis.chado.Dbxref">
+                         resultClass="uk.ac.sanger.artemis.chado.Dbxref">
    	SELECT  
 	  db.name,
 	  dbx.accession,
@@ -25,5 +25,37 @@
         </isGreaterThan>
         ORDER BY f.type_id,  uniquename
   </select> 
+  
+  <select id="getDbId" parameterClass="uk.ac.sanger.artemis.chado.Dbxref"
+                       resultClass="java.lang.Integer">
+    SELECT db_id FROM db WHERE name=#name#
+  </select>
+  
+  <select id="getDbxrefId" parameterClass="uk.ac.sanger.artemis.chado.Dbxref"
+                           resultClass="java.lang.Integer">
+    SELECT dbxref_id FROM dbxref WHERE accession=#accession#
+           AND db_id=db_id;
+  </select>
+  
+  <!-- WRITE BACK -->
+  <delete id="deleteFeatureDbxref" parameterClass="uk.ac.sanger.artemis.chado.Dbxref">
+     DELETE FROM $schema$.feature_dbxref 
+     WHERE dbxref_id=
+           (SELECT dbxref_id FROM dbxref WHERE accession=#accession#
+            AND db_id=(SELECT db_id FROM db WHERE name=#name#))
+     AND feature_id=$feature_id$
+  </delete>
+  
+  <insert id="insertFeatureDbxref" parameterClass="uk.ac.sanger.artemis.chado.Dbxref">
+    INSERT INTO $schema$.feature_dbxref 
+           (feature_id, dbxref_id, is_current)
+           VALUES
+           ($feature_id$, $dbxref_id$, $current$)
+  </insert>
+  
+  <insert id="insertDbxref" parameterClass="uk.ac.sanger.artemis.chado.Dbxref">
+    INSERT INTO dbxref ( db_id, accession ) 
+           VALUES ($db_id$, #accession#)
+  </insert>
 
 </sqlMap> 

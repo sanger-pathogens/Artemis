@@ -712,6 +712,8 @@ public class DatabaseDocument extends Document
           dao.deleteFeature(schema, tsn);
         else if(tsn.getType() == ChadoTransaction.DELETE_DBXREF)
           dao.deleteFeatureDbxref(schema, tsn);
+        else if(tsn.getType() == ChadoTransaction.INSERT_DBXREF)
+          dao.insertFeatureDbxref(schema, tsn);
       }
     }
     catch (java.sql.SQLException sqlExp)

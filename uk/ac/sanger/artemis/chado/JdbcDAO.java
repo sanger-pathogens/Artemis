@@ -730,24 +730,66 @@ public class JdbcDAO
    * Insert a dbxref for a feature.
    * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
+   * @return    number of rows changed
    * @throws SQLException
    */
-  public void insertFeatureDbxref(final String schema, final ChadoTransaction tsn)
+  public int insertFeatureDbxref(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    Dbxref dbxref = tsn.getFeatureDbxref();
+    final Dbxref dbxref = tsn.getFeatureDbxref();
+    final String uniquename = tsn.getUniqueName();
+    
+    // find database id
+    String sql = "SELECT db_id FROM db WHERE name='"+dbxref.getName()+"'";
+    
+    Statement st   = conn.createStatement();
+    ResultSet rs   = st.executeQuery(sql);
+    boolean exists = rs.next();
+
+    final int db_id = rs.getInt("db_id");
+    // find if accession exists already
+    String sqlDbxrefId = "SELECT dbxref_id FROM dbxref WHERE accession='"+
+                          dbxref.getAccession()+"' AND db_id="+db_id;
+    appendToLogFile(sqlDbxrefId, sqlLog);
+    rs     = st.executeQuery(sqlDbxrefId);
+    exists = rs.next();
+    
+    if(!exists)
+    {
+      // create a new accession entry in dbxref
+      sql = "INSERT INTO dbxref ( db_id, accession ) "+
+            "VALUES ("+db_id+", "+dbxref.getAccession()+" )";
+      appendToLogFile(sql, sqlLog);
+      int rowCount = st.executeUpdate(new String(sql));
+      
+      // now get the new dbxref_id
+      appendToLogFile(sqlDbxrefId, sqlLog);
+      rs = st.executeQuery(sqlDbxrefId);
+      rs.next();
+    }
+    
+    final int dbxref_id = rs.getInt("dbxref_id"); 
+    sql = "INSERT INTO "+schema+".feature_dbxref "+
+          "(feature_id, dbxref_id, is_current)"+
+          " VALUES "+
+          "( (SELECT feature_id FROM "+schema+
+             ".feature WHERE  uniquename='"+uniquename+"'), "+
+          dbxref_id+", "+ Boolean.toString(dbxref.isCurrent())+")";
+    appendToLogFile(sql, sqlLog);
+    return st.executeUpdate(new String(sql));
   }
   
   /**
    * Delete a dbxref for a feature.
    * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
+   * @return    number of rows changed
    * @throws SQLException
    */
-  public void deleteFeatureDbxref(final String schema, final ChadoTransaction tsn)
+  public int deleteFeatureDbxref(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    Dbxref dbxref = tsn.getFeatureDbxref();
+    final Dbxref dbxref = tsn.getFeatureDbxref();
     final String uniquename = tsn.getUniqueName();
     
     final String sql = 
@@ -757,8 +799,9 @@ public class JdbcDAO
              "AND db_id=(SELECT db_id FROM db WHERE name='"+dbxref.getName()+"'))"+
       "AND feature_id=(SELECT feature_id FROM "+schema+
              ".feature WHERE  uniquename='"+uniquename+"')";
-
-     System.out.println(sql);
+    
+    Statement st = conn.createStatement();
+    return st.executeUpdate(sql);
   }
   
   /**

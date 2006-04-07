@@ -26,7 +26,7 @@ package uk.ac.sanger.artemis.chado;
 
 /**
  *
- * Java Object used by ORM to represent the chado dbxref table.
+ * Java Object used by ORM to represent the chado feature_dbxref table.
  *
  */
 public class Dbxref
@@ -34,6 +34,12 @@ public class Dbxref
   private String name;
   private String accession;
   private int feature_id;
+  /** database id */ 
+  private int db_id;
+  /** database cross reference id */
+  private int dbxref_id;
+  private boolean current = true;
+  private String schema;
 
   public Dbxref()
   {
@@ -69,5 +75,46 @@ public class Dbxref
     this.feature_id = feature_id;
   }
 
+  public boolean isCurrent()
+  {
+    return current;
+  }
+
+  public void setCurrent(boolean current)
+  {
+    this.current = current;
+  }
+
+  public String getSchema()
+  {
+    return schema;
+  }
+
+  public void setSchema(String schema)
+  {
+    this.schema = schema;
+  }
+
+  public int getDb_id()
+  {
+    return db_id;
+  }
+
+  public void setDb_id(int db_id)
+  {
+    this.db_id = db_id;
+  }
+
+  public int getDbxref_id()
+  {
+    return dbxref_id;
+  }
+
+  public void setDbxref_id(int dbxref_id)
+  {
+    this.dbxref_id = dbxref_id;
+  }
+  
+  
 }
 
