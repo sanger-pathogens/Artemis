@@ -636,19 +636,15 @@ public class JdbcDAO
     //
     // get the organism_id
     Statement st = conn.createStatement();
-    String str_sql = "SELECT organism_id from " + schema +
+    String sql = "SELECT organism_id from " + schema +
                  ".feature where feature_id = '" + srcfeature_id + "'";
 
-    System.out.println(str_sql);
-    appendToLogFile(str_sql, sqlLog);
-
-    ResultSet rs = st.executeQuery(str_sql);
+    appendToLogFile(sql, sqlLog);
+    ResultSet rs = st.executeQuery(sql);
     rs.next();
 
     final int organism_id = rs.getInt("organism_id");
 
-    //
-    // insert feature into feature table
     ChadoFeature chadoFeature = tsn.getChadoFeature();
     // insert new feature into feature table
     StringBuffer sql_buff = new StringBuffer();
@@ -666,21 +662,20 @@ public class JdbcDAO
     sql_buff.append(Long.toString(chadoFeature.getType_id()));
     sql_buff.append(" )");
 
-    System.out.println(new String(sql_buff));
+    sql = new String(sql_buff);
+    appendToLogFile(sql, sqlLog);
     st = conn.createStatement();
-    int rowCount = st.executeUpdate(new String(sql_buff));
+    int rowCount = st.executeUpdate(sql);
 
     //
     // get the current feature_id sequence value
-    String sql = "SELECT currval('"+schema+".feature_feature_id_seq')";
-    System.out.println(sql);
+    sql = "SELECT currval('"+schema+".feature_feature_id_seq')";
+    appendToLogFile(sql, sqlLog);
     
     rs = st.executeQuery(sql);
     rs.next();
     final int feature_id = rs.getInt("currval");
-
-//  System.out.println("SELECT currval('"+schema+".featureprop_featureprop_id_seq')");
-
+    
     //
     // insert feature location into featureloc
     sql_buff = new StringBuffer();
@@ -702,14 +697,14 @@ public class JdbcDAO
     sql_buff.append(chadoFeature.getPhase());
     sql_buff.append(" )");
 
-    System.out.println(new String(sql_buff));
+    sql = new String(sql_buff);
+    appendToLogFile(sql, sqlLog);
     st = conn.createStatement();
-    rowCount = st.executeUpdate(new String(sql_buff));
+    rowCount = st.executeUpdate(sql);
   }
 
   /**
-   *
-   * Delete a feature from the database defined by the <code>ChadoTransaction</code>.
+    * Delete a feature from the database defined by the <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @return	number of rows deleted
@@ -721,7 +716,8 @@ public class JdbcDAO
   {
     String sql = "DELETE FROM "+schema+".feature WHERE uniquename='"+
                  tsn.getUniqueName()+"'";
-
+    appendToLogFile(sql, sqlLog);
+    
     Statement st = conn.createStatement();
     return st.executeUpdate(sql);
   }
@@ -745,6 +741,12 @@ public class JdbcDAO
     Statement st   = conn.createStatement();
     ResultSet rs   = st.executeQuery(sql);
     boolean exists = rs.next();
+    
+    if(!exists)
+      throw new SQLException("No database called "+
+                             dbxref.getName()+
+                             " found (for "+uniquename+
+                             ") check the spelling!");
 
     final int db_id = rs.getInt("db_id");
     // find if accession exists already

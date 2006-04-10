@@ -346,9 +346,12 @@ public class DatabaseDocument extends Document
   }
 
   /**
-   *
-   * Create an array of GFF-like lines
-   *
+   * Create an array of GFF lines.
+   * @param dao                 the data access object 
+   * @param parentFeatureID     the parent identifier for the features to 
+   *                            extract
+   * @return   the <code>ByteBuffer</code> array of GFF lines
+   * @throws java.sql.SQLException
    */
   private ByteBuffer[] getGff(ChadoDAO dao, String parentFeatureID)
                        throws java.sql.SQLException
@@ -433,9 +436,6 @@ public class DatabaseDocument extends Document
 
       this_buff.append("timelastmodified=" + timelastmodified + ";");
 
-//    String value = "";
-//    if(feat.getValue() != null)
-//      value = GFFStreamFeature.encode(feat.getValue());
 
       // attributes
       Hashtable qualifiers     = feat.getQualifiers();
@@ -481,6 +481,11 @@ public class DatabaseDocument extends Document
 
   }
 
+  /**
+   * Look up the cvterm_id for a controlled vocabulary name.
+   * @param name  
+   * @return
+   */
   public static Long getCvtermID(String name)
   {
     Enumeration enum_cvterm = cvterm.keys();
@@ -495,9 +500,9 @@ public class DatabaseDocument extends Document
   }
 
   /**
-   *
-   * Lookup a cvterm name from the collection of cvterms.
-   *
+   * Look up a cvterm name from the collection of cvterms.
+   * @param id  a cvterm_id  
+   * @return    the cvterm name
    */
   private String getCvtermName(long id)
   {
@@ -521,9 +526,9 @@ public class DatabaseDocument extends Document
   }
 
   /**
-   *
    * Look up cvterms names and id and return in a hashtable.
-   *
+   * @param dao the data access object
+   * @return    the cvterm <code>Hashtable</code>
    */
   private Hashtable getCvterm(ChadoDAO dao)
   {
@@ -549,6 +554,13 @@ public class DatabaseDocument extends Document
     return cvterm;
   }
 
+  /**
+   * Get the sequence for a feature.
+   * @param dao   the data access object
+   * @param buff  the buffer to add the sequence to
+   * @return      the resulting buffer
+   * @throws java.sql.SQLException
+   */
   private ByteBuffer getSequence(ChadoDAO dao, ByteBuffer buff)
                      throws java.sql.SQLException
   {
@@ -572,12 +584,10 @@ public class DatabaseDocument extends Document
   }
 
   /**
-   *
    * Create a hashtable of the available entries with residues.
    * @return  a <code>Hashtable</code> of the <code>String</code>
    *          representation (schema-type-feature_name) and the
    *          corresponding feature_id
-   *  
    */ 
   public Hashtable getDatabaseEntries()
   {
@@ -629,9 +639,10 @@ public class DatabaseDocument extends Document
   /**
    * 
    * Make a connetion with the jdbc
-   * jdbc:postgresql://localhost:13001/chadoCVS?user=es2
+   * jdbc:postgresql://host:port/database?user
    * 
    */
+  /**
   public Connection getConnection() throws java.sql.SQLException,
       java.net.ConnectException
   {
@@ -645,12 +656,11 @@ public class DatabaseDocument extends Document
                                        location.substring(index + 6),
                                        new String(pfield.getPassword()));
   }
-
+ */
+  
   /**
-   *
    * Get the data access object (DAO).
    * @return data access object
-   *
    */
   private ChadoDAO getDAO()
      throws java.net.ConnectException, SQLException
@@ -695,14 +705,20 @@ public class DatabaseDocument extends Document
       return file_output_stream;
   }
 
-
-  public void commit(Vector sql)
+  /**
+   * Commit the <code>ChadoTransaction</code> SQL back to the
+   * database.
+   * @param sql the collection of <code>ChadoTransaction</code> objects
+   * @return
+   */
+  public int commit(Vector sql)
   {
+    int i = 0;
     try
     {
       ChadoDAO dao = getDAO();
 
-      for(int i = 0; i < sql.size(); i++)
+      for(i = 0; i < sql.size(); i++)
       {
         ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
  
@@ -730,9 +746,9 @@ public class DatabaseDocument extends Document
     }
     catch (java.sql.SQLException sqlExp)
     {
-      JOptionPane.showMessageDialog(null, "Problems Writing",
-                                    "Problems Writing to Database "+
+      JOptionPane.showMessageDialog(null, "Problems Writing...\n" +
                                     sqlExp.getMessage(),
+                                    "Problems Writing to Database ",
                                     JOptionPane.ERROR_MESSAGE);
       sqlExp.printStackTrace();
     }
@@ -744,7 +760,7 @@ public class DatabaseDocument extends Document
                                     JOptionPane.ERROR_MESSAGE);
       conn_ex.printStackTrace();
     }
-
+    return i;
   }
 
   public static void main(String args[])

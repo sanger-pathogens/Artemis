@@ -557,8 +557,9 @@ public class ChadoTransactionManager
    **/
   public void commit(DatabaseDocument dbDoc)
   {
-    dbDoc.commit(sql);
-    sql = new Vector();
+    int retVal = dbDoc.commit(sql);
+    if(retVal == 0)
+      sql = new Vector();
   }
 }
 

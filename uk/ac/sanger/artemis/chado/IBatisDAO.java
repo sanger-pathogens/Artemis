@@ -42,12 +42,10 @@ import javax.swing.JPasswordField;
 public class IBatisDAO implements ChadoDAO
 {
   /**
-   *
    * Define a iBatis data access object. This uses <code>DbSqlConfig</code>
    * to read the configuration in. The system property <quote>chado</quote>
    * can be used to define the database location <i>e.g.</i>
    * -Dchado=host:port/database?user
-   *
    */
   public IBatisDAO(final JPasswordField pfield)
   {
@@ -372,7 +370,6 @@ public class IBatisDAO implements ChadoDAO
 
 
   /**
-   *
    * Delete a feature from the database defined by the <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
@@ -404,6 +401,11 @@ public class IBatisDAO implements ChadoDAO
     Dbxref dbxref = tsn.getFeatureDbxref();
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     Integer db_id = (Integer)sqlMap.queryForObject("getDbId", dbxref);
+    if(db_id == null)
+      throw new SQLException("No database called "+
+                             dbxref.getName()+" found (for "+
+                             tsn.getUniqueName()+
+                             ") check the spelling!");
     
     dbxref.setDb_id(db_id.intValue());
     
