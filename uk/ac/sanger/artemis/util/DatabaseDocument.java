@@ -679,8 +679,20 @@ public class DatabaseDocument extends Document
    */
   public OutputStream getOutputStream() throws IOException
   {
-    System.out.println("DatabaseDocument - ReadOnlyException");
-    throw new ReadOnlyException("this Database Document can not be written to");
+    final File write_file = new File(System.getProperty("user.dir")+
+                                     System.getProperty("file.separator")+
+                                     getName());
+
+    final FileOutputStream file_output_stream =
+      new FileOutputStream(write_file);
+
+    if(write_file.getName().endsWith(".gz")) 
+    {
+      // assume this file should be gzipped
+      return new java.util.zip.GZIPOutputStream (file_output_stream);
+    } 
+    else 
+      return file_output_stream;
   }
 
 
