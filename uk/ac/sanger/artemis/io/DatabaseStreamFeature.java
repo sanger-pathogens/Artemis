@@ -24,14 +24,13 @@
 
 package uk.ac.sanger.artemis.io;
 
-import uk.ac.sanger.artemis.util.*;
 import java.io.*;
 
 /**
  *  This is an implementation of Feature that can read and write itself to a
  *  CHADO stream.
  *
- *  @version $Id: DatabaseStreamFeature.java,v 1.4 2005-06-13 18:56:57 tjc Exp $
+ *  @version $Id: DatabaseStreamFeature.java,v 1.5 2006-04-10 12:03:29 tjc Exp $
  **/
 
 public class DatabaseStreamFeature
@@ -65,28 +64,6 @@ public class DatabaseStreamFeature
     return return_value;
   }
 
-  /**
-   *  Write this Feature to the given stream.
-   *  @param writer The stream to write to.
-   *  @exception IOException thrown if there is an io problem while writing
-   *    the Feature.
-   **/
-  public synchronized void writeToStream (final Writer writer)
-      throws IOException 
-  {
-    writeKey (writer);
-    writeLocation (writer);
-    writeQualifiers (writer);
-  }
-
-  /**
-   *  This is used by readFromStream() as temporary storage.  It is a class
-   *  member rather than a local variable so that we don't need to allocate a
-   *  object for each call.  The number we pick for the initial StringBuffer
-   *  size is not critical, but should cover most possibilities
-   **/
-  final static private StringBuffer qualifier_string_buffer =
-    new StringBuffer (1500);
 
   /**
    *  Read some embl feature qualifiers from a stream into a QualifierVector
@@ -153,43 +130,6 @@ public class DatabaseStreamFeature
     }
 
     return return_vector;
-  }
-
-  /**
-   *  Write the key of this Feature to the given stream.
-   **/
-  private void writeKey (Writer writer)
-      throws IOException 
-  {
-  }
-
-
-  /**
-   *  Write the location of this feature to a stream.  It is written in the
-   *  usual EMBL format.  Line that are more than 79 characters wide are
-   *  wrapped.  The wrapped lines start with "FT                   ", the
-   *  first line doesn't.
-   *  @param writer The stream to write to.
-   *  @exception IOException thrown if there is an io problem while writing
-   *    the Feature.
-   **/
-  private void writeLocation (final Writer writer)
-      throws IOException 
-  {
-  }
-
-  /**
-   *  Write the qualifiers of this feature to a stream.  The qualifiers are
-   *  written in EMBL format: ie. <p>
-   *  FT                   /codon_start=1
-   *  <p> etc.
-   *  @param writer The stream to write to.
-   *  @exception IOException thrown if there is an io problem while writing
-   *    the Feature.
-   **/
-  private void writeQualifiers (final Writer writer)
-      throws IOException 
-  {
   }
 
 }
