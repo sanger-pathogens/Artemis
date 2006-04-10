@@ -17,7 +17,7 @@
                class="uk.ac.sanger.artemis.chado.ChadoFeature">
         <result property="timelastmodified" column="timelastmodified"/>
    	    <result property="id" column="id"/>
-  	    <result property="object_id" column="object_id" nullValue="-1"/>
+  	    <result property="object_id" column="object_id"/>
         <result property="strand" column="strand" nullValue="0"/>
         <result property="fmin" column="fmin" nullValue="-1"/>
         <result property="fmax" column="fmax" nullValue="0"/>
