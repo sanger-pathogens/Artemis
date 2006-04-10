@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.26 2006-04-05 13:27:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.27 2006-04-10 11:35:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.26 2006-04-05 13:27:35 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.27 2006-04-10 11:35:01 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -440,6 +440,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       Qualifier score   = getQualifierByName("score");
       Qualifier group   = getQualifierByName("group");
 
+      // source becomes a Dbxref in chado
+      String source_str = getDbxrefGFFSource(getQualifierByName("Dbxref"));
+      
       if(seqname == null) 
         seqname = new Qualifier("gff_seqname", ".");
 
@@ -490,8 +493,11 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
       final String attribute_string = unParseAttributes();
 
+      if(source_str == null)
+        source_str = (String)source.getValues().elementAt(0);
+      
       writer.write(seqname.getValues().elementAt(0) + "\t" +
-                   source.getValues().elementAt(0) + "\t" +
+                   source_str + "\t" +
                    getKey() + "\t" +
                    start + "\t" +
                    end + "\t" +
@@ -505,6 +511,27 @@ public class GFFStreamFeature extends SimpleDocumentFeature
  //   writer.write(gff_lines.elementAt(i) + "\n");
   }
 
+  private String getDbxrefGFFSource(final Qualifier qualifier)
+  {
+    StringVector qualifier_strings =
+      StreamQualifier.toStringVector(null, qualifier);
+    
+    for(int i=0; i<qualifier_strings.size(); i++)
+    {
+      String qualifier_string = (String)qualifier_strings.elementAt(i);
+      
+      if(qualifier_string.indexOf("GFF_source:") >-1)
+      {
+        int index = qualifier_string.indexOf(":")+1;
+        int len = qualifier_string.length();
+        if(qualifier_string.endsWith("\""))
+          len--;
+        return qualifier_string.substring(index, len);
+      }
+    }
+    return null;
+  }
+  
   /**
    *  Return a String containing the qualifiers of this feature in a form
    *  suitable for using as the last field of a GFF line.  The codon_start
@@ -543,22 +570,23 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
     boolean lname;
     final int qualifiers_size = qualifiers.size();
-    for(int i = 0; i < qualifiers_size; ++i) 
+    for(int i = 0; i < qualifiers_size; i++) 
     {
       this_qualifier = (Qualifier)qualifiers.elementAt(i);
 
-      String this_qualifier_str = getQualifierString(this_qualifier);
-      if(this_qualifier_str == null)
-        continue;
-
       lname = false;
       for(int j=0; j<names_length; j++)
-        if(this_qualifier_str.startsWith(names[j]))
+        if(this_qualifier.getName().equals(names[j]))
           lname = true;
 
       if(lname)
         continue;
-
+      
+      String this_qualifier_str = getQualifierString(this_qualifier);
+      
+      if(this_qualifier_str == null)
+        continue;
+      
       if(count != 0)
         buffer.append(";");
       buffer.append(this_qualifier_str);
@@ -567,7 +595,11 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     return buffer.toString();
   }
 
-
+  /**
+   * Used to write out the GFF attributes.
+   * @param q the qualifier to represent as a <code>String</code>
+   * @return  the <code>String</code> representation
+   */
   private String getQualifierString(Qualifier q)
   {
     StringBuffer buffer = new StringBuffer();
@@ -582,11 +614,13 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
     if(values != null)
     {
+      buffer.append('=');
       for(int value_index = 0; value_index < values.size();
           ++value_index)
       {
-        final String this_value = (String)values.elementAt(value_index);
-        buffer.append('=');
+        final String this_value = encode((String)values.elementAt(value_index));
+        if(value_index>0)
+          buffer.append("%2C");
         try
         {
           buffer.append(Integer.valueOf(this_value));
@@ -601,7 +635,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
           catch (NumberFormatException __)
           {
             // not a double or integer so quote it
-            buffer.append(encode(this_value));
+            buffer.append(this_value);
           }
         }
       }
