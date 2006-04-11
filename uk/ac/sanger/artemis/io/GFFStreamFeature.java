@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.30 2006-04-11 14:15:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.31 2006-04-11 14:49:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -39,7 +39,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.30 2006-04-11 14:15:42 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.31 2006-04-11 14:49:16 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -56,6 +56,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   /** store for spliced features containing id and range of each segment */
   private Hashtable id_range_store;
 
+  /** store the Timestamp for the feature */
   private Timestamp timelastmodified;
   
   /**
