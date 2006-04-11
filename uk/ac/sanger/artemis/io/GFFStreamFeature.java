@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.28 2006-04-10 11:36:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.29 2006-04-11 07:24:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.util.StringTokenizer;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.28 2006-04-10 11:36:54 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.29 2006-04-11 07:24:14 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -441,7 +441,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       Qualifier group   = getQualifierByName("group");
 
       // source becomes a Dbxref in chado
-      String source_str = getDbxrefGFFSource(getQualifierByName("Dbxref"));
+      String source_str = null;
+      if(getQualifierByName("Dbxref") != null)
+        source_str = getDbxrefGFFSource(getQualifierByName("Dbxref"));
       
       if(seqname == null) 
         seqname = new Qualifier("gff_seqname", ".");
