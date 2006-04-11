@@ -32,6 +32,7 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.io.*;
 import java.util.*;
+import java.net.ConnectException;
 
 import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.*;
@@ -45,7 +46,6 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
  * This is an EntrySource that reads Entry objects from a relational database.
  * 
  */
-
 public class DatabaseEntrySource implements EntrySource
 {
   private String location;
@@ -126,7 +126,7 @@ public class DatabaseEntrySource implements EntrySource
   /**
    * 
    * Set the database location as:
-   * jdbc:postgresql://localhost:13001/chadoCVS?user=es2
+   * jdbc:postgresql://host:port/database?user=username
    * 
    */
   protected boolean setLocation(final boolean prompt_user)
@@ -205,9 +205,7 @@ public class DatabaseEntrySource implements EntrySource
   }
 
   /**
-   * 
    * Given the entry name get the seq feature_id
-   * 
    */
   protected String getEntryID(String name)
   {
@@ -215,16 +213,29 @@ public class DatabaseEntrySource implements EntrySource
   }
 
   /**
-   * 
    * Create database organism JTree.
-   * 
    */
   protected JTree getDatabaseTree()
   {
-    DatabaseDocument doc = new DatabaseDocument(location, pfield);
+    DatabaseDocument doc = null;
 
-    entries = doc.getDatabaseEntries();
-
+    while(entries == null)
+    {
+      try
+      {
+        doc = new DatabaseDocument(location, pfield);
+        entries = doc.getDatabaseEntries();
+      }
+      catch(java.sql.SQLException sqle)
+      {
+        setLocation(true);
+      }
+      catch(ConnectException ce)
+      {
+        setLocation(true);
+      }
+    }
+    
     DefaultMutableTreeNode top = new DefaultMutableTreeNode("PSU Organism List");
     createNodes(top, doc.getSchema(), entries);
     final JTree tree = new JTree(top);
@@ -235,11 +246,9 @@ public class DatabaseEntrySource implements EntrySource
   }
 
   /**
-   * 
-   * Get DefaultMutableTreeNode of selected node
-   * 
+   * Get DefaultMutableTreeNode of selected node.
+   * @param tree  the <code>Jtree</code> component
    * @return node that is currently selected
-   * 
    */
   protected String getSelectedNode(JTree tree)
   {
@@ -260,10 +269,9 @@ public class DatabaseEntrySource implements EntrySource
   }
 
   /**
-   * 
    * Get schema of the selected node
+   * @param tree  the <code>Jtree</code> component
    * @return name of Organism that is top level of selected node
-   * 
    */
   protected String getSchemaOfSelectedNode(JTree tree)
   {
@@ -282,13 +290,10 @@ public class DatabaseEntrySource implements EntrySource
   }
 
   /**
-   * 
    * Create the nodes of the organism JTree
-   * 
    * @param top       root node
    * @param schema    <code>List</code>
    * @param organism  sequences collection
-   * 
    */
   private void createNodes(DefaultMutableTreeNode top, List schema,
                            Hashtable entries)
@@ -336,16 +341,17 @@ public class DatabaseEntrySource implements EntrySource
     }
   }
 
+  /**
+   * Set whether to split into separate entries.
+   * @param splitGFFEntry
+   */
   protected void setSplitGFF(final boolean splitGFFEntry)
   {
     this.splitGFFEntry = splitGFFEntry;
   }
 
   /**
-   * 
-   * Given an accession number and the handle of an EMBL corba server, this
-   * method will ask the user (using a TextRequester) for the id of a entry in
-   * the server and will then attempt to get it.
+   * Given an database feature identifier, this makes an <code>Entry</code>.
    * 
    * @param bases
    *          If this is null a new Bases object will be created for the Entry

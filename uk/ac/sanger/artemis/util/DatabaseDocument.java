@@ -59,8 +59,6 @@ public class DatabaseDocument extends Document
 
   private Hashtable db;
 
-//  private Vector organism;
-
   /** JDBC DAO */
   private JdbcDAO jdbcDAO = null;
 
@@ -181,12 +179,8 @@ public class DatabaseDocument extends Document
   }
 
   /**
-   * 
    * Append a String to the Document location.
-   * 
-   * @param name
-   *          The name to append.
-   * 
+   * @param name  the name to append.
    */
   public Document append(String name) throws IOException
   {
@@ -194,10 +188,8 @@ public class DatabaseDocument extends Document
   }
 
   /**
-   * 
    * Return the name of this Document (the last element of the Document
    * location).
-   * 
    */
   public String getName()
   {
@@ -213,9 +205,7 @@ public class DatabaseDocument extends Document
 
 
   /**
-  *
   *  Set the name of this document.
-  *
   */
   public void setName(String name)
   {
@@ -223,9 +213,7 @@ public class DatabaseDocument extends Document
   }
 
   /**
-   * 
    * Return a Document with the last element stripped off.
-   * 
    */
   public Document getParent()
   {
@@ -233,10 +221,8 @@ public class DatabaseDocument extends Document
   }
 
   /**
-   * 
    * Return true if and only if the Document refered to by this object exists
    * and is readable. Always returns true.
-   * 
    */
   public boolean readable()
   {
@@ -244,10 +230,8 @@ public class DatabaseDocument extends Document
   }
 
   /**
-   * 
    * Return true if and only if the Document refered to by this object exists
    * and can be written to. Always returns false.
-   * 
    */
   public boolean writable()
   {
@@ -301,7 +285,11 @@ public class DatabaseDocument extends Document
     }
     catch(java.sql.SQLException sqlExp)
     {
-      System.out.println("Problems connecting...");
+      JOptionPane.showMessageDialog(null, "Problems Reading...\n" +
+          sqlExp.getMessage(),
+          "Problems Readinf From the Database ",
+          JOptionPane.ERROR_MESSAGE);
+      
       sqlExp.printStackTrace();
     }
 
@@ -417,7 +405,7 @@ public class DatabaseDocument extends Document
       this_buff.append(fmin + "\t");          // start
       this_buff.append(fmax + "\t");          // end
       this_buff.append(".\t");                // score
-      if(strand == -1)                       // strand
+      if(strand == -1)                        // strand
         this_buff.append("-\t");
       else if(strand == 1)
         this_buff.append("+\t");
@@ -478,7 +466,6 @@ public class DatabaseDocument extends Document
     }
 
     return buffers;
-
   }
 
   /**
@@ -496,7 +483,6 @@ public class DatabaseDocument extends Document
         return key;
     }
     return null;
-    // return new Long("-1.");
   }
 
   /**
@@ -518,6 +504,12 @@ public class DatabaseDocument extends Document
       }
       catch(SQLException sqle)
       {
+        JOptionPane.showMessageDialog(null,
+            "Problems Looking Up cvterm Name (cvterm_id="+
+            Long.toString(id)+") ...\n" +
+            sqle.getMessage(),
+            "Cvterm Name Look Up",
+            JOptionPane.ERROR_MESSAGE);
         sqle.printStackTrace();
       }
     }
@@ -585,17 +577,42 @@ public class DatabaseDocument extends Document
 
   /**
    * Create a hashtable of the available entries with residues.
-   * @return  a <code>Hashtable</code> of the <code>String</code>
+   * @return a <code>Hashtable</code> of the <code>String</code>
    *          representation (schema-type-feature_name) and the
    *          corresponding feature_id
-   */ 
+   * @throws ConnectException
+   * @throws java.sql.SQLException
+   */
   public Hashtable getDatabaseEntries()
+                   throws ConnectException, java.sql.SQLException
   {
     db = new Hashtable();
  
+    ChadoDAO dao = null;
+    
     try
     {
-      ChadoDAO dao = getDAO();
+      dao = getDAO();
+    }
+    catch(ConnectException exp)
+    {
+      JOptionPane.showMessageDialog(null, "Connection Problems...\n"+
+            exp.getMessage(), 
+            "Connection Error",
+            JOptionPane.ERROR_MESSAGE);
+      throw exp;
+    }
+    catch(java.sql.SQLException sqlExp)
+    {
+      JOptionPane.showMessageDialog(null, "SQL Problems...\n"+
+                                    sqlExp.getMessage(), 
+                                    "SQL Error",
+                                    JOptionPane.ERROR_MESSAGE);
+      throw sqlExp;
+    }
+      
+    try
+    {
       schema_list = dao.getSchema();
       Iterator it      = schema_list.iterator();
 
@@ -620,10 +637,6 @@ public class DatabaseDocument extends Document
         }
       }
     }
-    catch(ConnectException ce)
-    {
-      ce.printStackTrace();
-    }
     catch(java.sql.SQLException sqlExp)
     {
       JOptionPane.showMessageDialog(null, "SQL Problems...\n"+
@@ -634,29 +647,7 @@ public class DatabaseDocument extends Document
     }
     return db;
   }
-
-
-  /**
-   * 
-   * Make a connetion with the jdbc
-   * jdbc:postgresql://host:port/database?user
-   * 
-   */
-  /**
-  public Connection getConnection() throws java.sql.SQLException,
-      java.net.ConnectException
-  {
-    String location = (String)getLocation();
-    if(pfield == null || pfield.getPassword().length == 0)
-      return DriverManager.getConnection(location);
-
-    // assume we have a password
-    final int index = location.indexOf("?user=");
-    return DriverManager.getConnection(location.substring(0, index), 
-                                       location.substring(index + 6),
-                                       new String(pfield.getPassword()));
-  }
- */
+  
   
   /**
    * Get the data access object (DAO).

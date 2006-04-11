@@ -48,7 +48,6 @@ public class JdbcDAO
   private Connection conn;
 
   /**
-   *
    * Define a JDBC data access object and establish a <code>Connection</code>.
    * @param location	the database location <i>e.g.</i> 
    *                    jdbc:postgresql://localhost:2997/chado?user=tjc
@@ -70,7 +69,6 @@ public class JdbcDAO
 
 
   /**
-   *
    * Get the residues of a feature.
    * @param feature_id  id of feature to query
    * @param schema      schema/organism name or null
@@ -78,7 +76,7 @@ public class JdbcDAO
    * @throws SQLException
    */
   public ChadoFeature getSequence(final int feature_id,
-                             final String schema)
+                                  final String schema)
                         throws SQLException
   {
     Statement st = conn.createStatement();
@@ -97,7 +95,6 @@ public class JdbcDAO
   }
 
   /**
-   *
    * Get the feature name given a feature_id and schema.
    * @param feature_id  id of feature to query
    * @param schema      schema/organism name or null
@@ -110,8 +107,9 @@ public class JdbcDAO
   {
     Statement st = conn.createStatement();
 
-    String sql = "SELECT name FROM " + schema + ".feature WHERE feature_id= " +
-                  feature_id;
+    String sql = "SELECT name FROM " + schema + 
+                 ".feature WHERE feature_id= " +
+                 feature_id;
     appendToLogFile(sql, sqlLog);
     ResultSet rs = st.executeQuery(sql);
     rs.next();
@@ -119,7 +117,6 @@ public class JdbcDAO
   }
 
   /**
-   *
    * Get child feature properties for a given parent
    * feature to be able to construct a GFF like feature.
    * @param parentFeatureID  the id of parent feature to query
@@ -226,13 +223,11 @@ public class JdbcDAO
   }
   
   /**
-   *
    * Takes a list and creates a new one merging all feature objects
    * within it with the same feature and stores the qualifiers/attributes
    *  as a hash
    * @param list of feature objects
    * @return list of flattened/merged feature objects
-   * 
    */
   protected static List mergeList(final List list)
   {
@@ -350,7 +345,6 @@ public class JdbcDAO
  
 
   /**
-   *
    * For a schema return the type_id's with residues.
    * @param schema      schema/organism name or null
    * @return	the <code>List</code> of type_id's as <code>String</code>
@@ -361,7 +355,7 @@ public class JdbcDAO
                      throws SQLException
   {
     String sql = "SELECT DISTINCT type_id FROM " + schema +
-                     ".feature WHERE residues notnull";
+                 ".feature WHERE residues notnull";
     appendToLogFile(sql, sqlLog);
 
     List cvterm_ids = new Vector();
@@ -375,7 +369,6 @@ public class JdbcDAO
   }
 
   /**
-   *
    * Get available schemas (as a <code>List</code> of <code>String</code>       
    * objects).
    * @return	the available schemas
@@ -400,7 +393,6 @@ public class JdbcDAO
   } 
 
   /**
-   *
    * Get the full list of cvterm_id and name as a <code>List</code> of 
    * <code>Cvterm</code> objects.
    * @return    the full list of cvterm_id and name
@@ -469,7 +461,6 @@ public class JdbcDAO
 // WRITE 
 //
   /**
-   *
    * Update attributes defined by the <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
@@ -529,7 +520,6 @@ public class JdbcDAO
   }
 
   /**
-   *
    * Insert attributes defined by the <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
@@ -583,7 +573,6 @@ public class JdbcDAO
   }
 
   /**
-   *
    * Delete attributes defined by the <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
@@ -621,7 +610,6 @@ public class JdbcDAO
 
 
   /**
-   *
    * Insert a feature into the database defined by the <code>ChadoTransaction</code>.
    * @param schema              schema/organism name or null
    * @param tsn                 the <code>ChadoTransaction</code>
@@ -704,7 +692,8 @@ public class JdbcDAO
   }
 
   /**
-    * Delete a feature from the database defined by the <code>ChadoTransaction</code>.
+   * Delete a feature from the database defined by the 
+   * <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @return	number of rows deleted
@@ -807,7 +796,6 @@ public class JdbcDAO
   }
   
   /**
-   *
    * Write the time a feature was last modified
    * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
@@ -827,7 +815,6 @@ public class JdbcDAO
   }
 
   /**
-   *
    * Write the time a feature was last accessed
    * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
@@ -846,14 +833,9 @@ public class JdbcDAO
   }
 
   /**
-   *
    * Appends a log entry to the log file
-   *
-   * @param logEntry
-   *          entry to add to log file
-   * @param logFileName
-   *          log file name
-   *
+   * @param logEntry    entry to add to log file
+   * @param logFileName log file name
    */
   private void appendToLogFile(String logEntry, String logFileName)
   {
