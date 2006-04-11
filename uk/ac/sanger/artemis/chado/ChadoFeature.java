@@ -25,7 +25,7 @@
 
 package uk.ac.sanger.artemis.chado;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -47,7 +47,7 @@ public class ChadoFeature
   /** id of the parent feature */
   private String object_id;
   /** time last changed */
-  private Date timelastmodified;
+  private Timestamp timelastmodified;
   /** +1 or -1 depending if on the forward or reverse */
   private int strand;
   /** start position */
@@ -149,7 +149,7 @@ public class ChadoFeature
    * @return	the last time feature was modified
    *
    */
-  public Date getTimelastmodified()
+  public Timestamp getTimelastmodified()
   {
     return timelastmodified;
   }
@@ -160,7 +160,7 @@ public class ChadoFeature
    * @param	the last time the feature was modified
    *
    */
-  public void setTimelastmodified(Date timelastmodified)
+  public void setTimelastmodified(Timestamp timelastmodified)
   {
     this.timelastmodified = timelastmodified;
   }

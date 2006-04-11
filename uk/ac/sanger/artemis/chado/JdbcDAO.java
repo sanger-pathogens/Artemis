@@ -211,7 +211,7 @@ public class JdbcDAO
         feature.setPhase(phase);
 
       feature.setUniquename( rs.getString("uniquename") );
-      feature.setTimelastmodified( rs.getDate("timelastmodified") );
+      feature.setTimelastmodified( rs.getTimestamp("timelastmodified") );
       feature.setId( rs.getInt("feature_id") );
       feature.setObject_id( rs.getString("object_id") );
       feature.setValue( rs.getString("value"));

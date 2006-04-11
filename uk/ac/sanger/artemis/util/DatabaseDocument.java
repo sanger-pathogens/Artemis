@@ -376,13 +376,14 @@ public class DatabaseDocument extends Document
       int fmin                = feat.getFmin() + 1;
       int fmax                = feat.getFmax();
       long type_id            = feat.getType_id();
-//    long prop_type_id       = feat.getProp_type_id();
       int strand              = feat.getStrand();
       int phase               = feat.getPhase();
       String name             = feat.getUniquename();
       String typeName         = getCvtermName(type_id);
-//    String propTypeName     = getCvtermName(prop_type_id);
-      String timelastmodified = feat.getTimelastmodified().toString();
+
+//      SimpleDateFormat date_format = new SimpleDateFormat("MM.dd.yyyy hh:mm:ss z");
+//      String timelastmodified = date_format.format(feat.getTimelastmodified());
+      String timelastmodified = Long.toString(feat.getTimelastmodified().getTime());
       String feature_id       = Integer.toString(feat.getId());
 
       String parent_id = feat.getObject_id();

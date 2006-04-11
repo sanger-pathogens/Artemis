@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.29 2006-04-11 07:24:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.30 2006-04-11 14:15:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -31,13 +31,15 @@ import java.io.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 
 /**
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.29 2006-04-11 07:24:14 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.30 2006-04-11 14:15:42 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -54,6 +56,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   /** store for spliced features containing id and range of each segment */
   private Hashtable id_range_store;
 
+  private Timestamp timelastmodified;
+  
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
    *  to an Entry (with Entry.add()).
@@ -764,6 +768,15 @@ public class GFFStreamFeature extends SimpleDocumentFeature
           str_values.add(stok.nextElement());
 
         att_values = str_values;
+      }
+      
+      if(att_name.equals("timelastmodified"))
+      {
+        this.timelastmodified = 
+                  new Timestamp( Long.parseLong((String)att_values.get(0)) );
+        SimpleDateFormat date_format = 
+                  new SimpleDateFormat("dd.MM.yyyy hh:mm:ss z");
+        att_values.set(0,date_format.format(timelastmodified));
       }
       
       if(attributes.get(att_name) != null) 
