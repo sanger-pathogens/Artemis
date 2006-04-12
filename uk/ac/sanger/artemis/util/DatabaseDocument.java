@@ -721,6 +721,7 @@ public class DatabaseDocument extends Document
            tsn.getType() != ChadoTransaction.DELETE_FEATURE)
         {
           final List uniquename = tsn.getUniquename();
+          
           for(int j=0; j<uniquename.size(); j++)
             checkFeatureTimestamp(schema, (String)uniquename.get(j), 
                                   tsn.getLastModified(), dao);
@@ -760,6 +761,8 @@ public class DatabaseDocument extends Document
             dao.writeTimeLastModified(schema, (String)uniquename.get(k));
             Timestamp new_timestamp = 
                        dao.getTimeLastModified(schema, (String)uniquename.get(k));
+            if(new_timestamp == null)
+              continue;
             
             GFFStreamFeature gff_feature = (GFFStreamFeature)tsn.getFeatureObject();
             gff_feature.setLastModified(new_timestamp);

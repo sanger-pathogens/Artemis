@@ -323,6 +323,10 @@ public class ChadoTransaction
   public List getUniquename()
   {
     Vector names = new Vector();
+    
+    if(uniquename == null)
+      return names;
+    
     StringTokenizer tok = new StringTokenizer(uniquename,",");
     while(tok.hasMoreTokens())
     {
