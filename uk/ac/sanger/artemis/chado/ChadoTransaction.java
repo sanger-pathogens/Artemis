@@ -27,6 +27,7 @@ package uk.ac.sanger.artemis.chado;
 import java.util.List;
 import java.util.Vector;
 import java.util.StringTokenizer;
+import java.sql.Timestamp;
 
 /**
 *
@@ -58,7 +59,7 @@ public class ChadoTransaction
   
   /** properties store <i>e.g.</i> value=<quote>product=hypothetical protein</quote> */
   private List properties;
-  /** constriant store <i>e.g.</i> type_id=21078 */
+  /** constraint store <i>e.g.</i> type_id=21078 */
   protected List constraint;
   /** type of statement <i>e.g.</i> UPDATE, INSERT, DELETE, ... */
   protected int type;
@@ -72,8 +73,12 @@ public class ChadoTransaction
   private int feature_id;
   /** chado feature */
   private ChadoFeature chadoFeature;
-
+  /** feature dbxref */
   private Dbxref dbxref;
+  /** last time feature was modified */
+  private Timestamp lastmodified;
+  /** the feature object */
+  private Object feature_obj;
  
 
   /**
@@ -101,19 +106,23 @@ public class ChadoTransaction
    *                 	feature, featureloc....
    */
   public ChadoTransaction(int type, String uniquename, 
-                          String chadoTable)
+                          String chadoTable,
+                          final Timestamp lastmodified,
+                          final Object feature_obj)
   {
     this.type = type;
     this.uniquename = uniquename;
     this.chadoTable = chadoTable;
+    this.lastmodified = lastmodified;
+    this.feature_obj  = feature_obj;
   }
  
   /**
    * Used to construct a <code>ChadoTransaction</code> that can
    * be used to describe a SQL transaction.
    *
-   * <i>e.g.</i> to INSERT a feature and wher chado_feature is a 
-   *        <code>ChadoFeature</code>
+   * <i>e.g.</i> to INSERT a feature and where chado_feature is a 
+   *        <code>ChadoFeature</code>:
    * <blockquote><pre>
    * ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT_FEATURE,
    *                                             chado_feature);
@@ -135,12 +144,17 @@ public class ChadoTransaction
    * @param type    the transaction type
    * @param dbxref  a feature dbxref
    */
-  public ChadoTransaction(final int type, final String uniquename,
-                          final Dbxref dbxref)
+  public ChadoTransaction(final int type,
+                          final String uniquename,
+                          final Dbxref dbxref, 
+                          final Timestamp lastmodified,
+                          final Object feature_obj)
   {
     this.type = type;
     this.dbxref = dbxref;
     this.uniquename = uniquename;
+    this.lastmodified = lastmodified;
+    this.feature_obj = feature_obj;
   }
 
   /**
@@ -336,4 +350,17 @@ public class ChadoTransaction
     return feature_id;
   }
 
+  /**
+   * Get the last time modified time stamp.
+   * @return  the <code>Timestamp</code>
+   */
+  public Timestamp getLastModified()
+  {
+    return this.lastmodified;
+  }
+  
+  public Object getFeatureObject()
+  {
+    return feature_obj;
+  }
 }

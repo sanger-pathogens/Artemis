@@ -28,6 +28,7 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.chado.*;
 
+
 import java.sql.*;
 import java.io.*;
 import java.net.ConnectException;
@@ -714,14 +715,19 @@ public class DatabaseDocument extends Document
       {
         ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
  
-        if(tsn.getType() == ChadoTransaction.UPDATE)
+        //
+        // check feature timestamps have not changed
+        if(tsn.getType() != ChadoTransaction.INSERT_FEATURE ||
+           tsn.getType() != ChadoTransaction.DELETE_FEATURE)
         {
-          dao.updateAttributes(schema, tsn); 
-          // update timelastmodified timestamp
           final List uniquename = tsn.getUniquename();
           for(int j=0; j<uniquename.size(); j++)
-            dao.writeTimeLastModified(schema, (String)uniquename.get(j));
+            checkFeatureTimestamp(schema, (String)uniquename.get(j), 
+                                  tsn.getLastModified(), dao);
         }
+        
+        if(tsn.getType() == ChadoTransaction.UPDATE)
+          dao.updateAttributes(schema, tsn);
         else if(tsn.getType() == ChadoTransaction.INSERT)
           dao.insertAttributes(schema, tsn);
         else if(tsn.getType() == ChadoTransaction.DELETE)
@@ -735,6 +741,31 @@ public class DatabaseDocument extends Document
         else if(tsn.getType() == ChadoTransaction.INSERT_DBXREF)
           dao.insertFeatureDbxref(schema, tsn);
       }
+      
+      
+      //
+      // update timelastmodified timestamp
+      for(int j = 0; j < sql.size(); j++)
+      {
+        ChadoTransaction tsn = (ChadoTransaction) sql.get(j);
+
+        if(tsn.getType() != ChadoTransaction.INSERT_FEATURE ||
+           tsn.getType() != ChadoTransaction.DELETE_FEATURE)
+        {
+          final List uniquename = tsn.getUniquename();
+          
+          // update timelastmodified timestamp
+          for(int k=0; k<uniquename.size(); k++)
+          {
+            dao.writeTimeLastModified(schema, (String)uniquename.get(k));
+            Timestamp new_timestamp = 
+                       dao.getTimeLastModified(schema, (String)uniquename.get(k));
+            
+            GFFStreamFeature gff_feature = (GFFStreamFeature)tsn.getFeatureObject();
+            gff_feature.setLastModified(new_timestamp);
+          }
+        }
+      }  
     }
     catch (java.sql.SQLException sqlExp)
     {
@@ -752,7 +783,37 @@ public class DatabaseDocument extends Document
                                     JOptionPane.ERROR_MESSAGE);
       conn_ex.printStackTrace();
     }
+      
     return i;
+  }
+  
+  /**
+   * Check the <code>Timestamp</code> on a feature (for versioning).
+   * @param schema      the schema
+   * @param uniquename  the feature uniquename
+   * @param timestamp   the last read feature timestamp
+   * @throws SQLException
+   */
+  public void checkFeatureTimestamp(final String schema,
+                                    final String uniquename,
+                                    final Timestamp timestamp,
+                                    final ChadoDAO dao)
+               throws SQLException
+  {
+    Timestamp now = dao.getTimeLastModified(schema, uniquename);
+    
+    if(now != null)
+    {
+      now.setNanos(0);
+      timestamp.setNanos(0);
+      int comp = now.compareTo(timestamp);
+      
+      if(comp == 0)
+        System.out.print("No change in timelastmodified -- SAFE ");
+      else
+        System.out.print("Change in timelastmodified -- NOT SAFE ");
+      System.out.println(now.toString()+"   "+timestamp.toString()+"  "+uniquename);
+    }
   }
 
   public static void main(String args[])

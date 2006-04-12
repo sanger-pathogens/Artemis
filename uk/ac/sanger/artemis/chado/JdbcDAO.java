@@ -457,6 +457,39 @@ public class JdbcDAO
     return mergeDbxref(dbxrefs);
   }
   
+  /**
+   * Get the time a feature was last modified.
+   * @param schema      schema/organism name or null
+   * @param uniquename  the unique name of the feature
+   * @return  number of rows changed
+   * @throws SQLException
+   */
+  public Timestamp getTimeLastModified
+                   (final String schema, final String uniquename)
+                   throws SQLException
+  {
+    StringBuffer sqlBuff = new StringBuffer("SELECT timelastmodified FROM ");
+    
+    sqlBuff.append(schema);
+    sqlBuff.append(".feature WHERE ");
+    sqlBuff.append(schema);
+    sqlBuff.append(".feature.uniquename='");
+    sqlBuff.append(uniquename);
+    sqlBuff.append("'");
+    
+    String sql = sqlBuff.toString();
+    appendToLogFile(sql, sqlLog);
+    Statement st = conn.createStatement();
+    ResultSet rs = st.executeQuery(sql);
+    
+    boolean result = rs.next();
+    
+    if(result)
+      return rs.getTimestamp("timelastmodified");
+    return null;
+  }
+  
+  
 //
 // WRITE 
 //
@@ -471,6 +504,8 @@ public class JdbcDAO
                     (final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
+    List uniquename = tsn.getUniquename();
+    
     StringBuffer sqlBuff = new StringBuffer();
     String chadoTable    = tsn.getChadoTable();
     sqlBuff.append("UPDATE "+schema+"."+chadoTable);
@@ -488,10 +523,10 @@ public class JdbcDAO
     sqlBuff.append(" WHERE "+schema+".feature.feature_id="+
                              schema+"."+chadoTable+".feature_id AND (");
 
-    List uniquename = tsn.getUniquename();
+
     for(int i=0; i<uniquename.size(); i++)
     {
-      sqlBuff.append(" "+schema+"."+"feature.uniquename='" + 
+      sqlBuff.append(" "+schema+".feature.uniquename='" + 
                      (String)uniquename.get(i) +"' ");
       if(i < uniquename.size()-1)
         sqlBuff.append("OR");
@@ -515,8 +550,11 @@ public class JdbcDAO
       }
     }
 
+    String sql = sqlBuff.toString();
+    System.out.println(sql);
+    appendToLogFile(sql, sqlLog);
     Statement st = conn.createStatement();
-    return st.executeUpdate(new String(sqlBuff));
+    return st.executeUpdate(sql);
   }
 
   /**

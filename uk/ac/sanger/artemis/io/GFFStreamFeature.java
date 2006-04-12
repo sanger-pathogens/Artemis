@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.31 2006-04-11 14:49:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.32 2006-04-12 12:22:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -39,7 +39,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.31 2006-04-11 14:49:16 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.32 2006-04-12 12:22:13 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -789,4 +789,29 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     return attributes;
   }
 
+  /**
+   * Get the feature time last modified timestamp.
+   * @return
+   */
+  public Timestamp getLastModified()
+  {
+    return timelastmodified;
+  }
+  
+  /**
+   * Set the feature time last modified timestamp.
+   * @param timelastmodified
+   */
+  public void setLastModified(final Timestamp timelastmodified)
+  {
+    this.timelastmodified = timelastmodified;
+    
+    // now update the qualifier value itself
+    QualifierVector qualifiers = getQualifiers();
+    Qualifier qualifier = qualifiers.getQualifierByName("timelastmodified");
+    qualifier.removeValue((String)qualifier.getValues().get(0));
+    SimpleDateFormat date_format = 
+      new SimpleDateFormat("dd.MM.yyyy hh:mm:ss z");
+    qualifier.addValue(date_format.format(timelastmodified));
+  }
 }

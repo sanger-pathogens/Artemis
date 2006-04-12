@@ -114,7 +114,9 @@ public class ChadoTransactionManager
           String seg_id   = feature.getSegmentID(range_new);
  
           tsn = new ChadoTransaction(ChadoTransaction.UPDATE, 
-                                     seg_id, "featureloc");
+                                     seg_id, "featureloc", 
+                                     feature.getLastModified(),
+                                     feature);
 
           if(range_new.getStart() != range_old.getStart())
             tsn.addProperty("fmin", Integer.toString(range_new.getStart()-1));
@@ -222,12 +224,16 @@ public class ChadoTransactionManager
     else if(event.getType() == EntryChangeEvent.FEATURE_DELETED)
     {
       Feature feature = event.getFeature();
+      GFFStreamFeature feature_gff = (GFFStreamFeature)event.getFeature().getEmblFeature();
+      
       try
       {
         Qualifier qualifier_uniquename = feature.getQualifierByName("ID");
         String feature_uniquename = (String)(qualifier_uniquename.getValues()).elementAt(0);
         ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.DELETE_FEATURE,
-                                                    feature_uniquename, "feature");
+                                                    feature_uniquename, "feature",
+                                                    feature_gff.getLastModified(),
+                                                    feature_gff);
         sql.add(tsn); 
       }
       catch(InvalidRelationException ire)
@@ -332,7 +338,9 @@ public class ChadoTransactionManager
 
         String cvterm_id = lcvterm_id.toString();
         tsn = new ChadoTransaction(ChadoTransaction.DELETE,
-                                   uniquename, "featureprop");
+                                   uniquename, "featureprop",
+                                   feature.getLastModified(),
+                                   feature);
         tsn.setConstraint("type_id", cvterm_id);
         sql.add(tsn);
       }
@@ -374,7 +382,7 @@ public class ChadoTransactionManager
 
       if(isReservedTag(name))
       {
-        handleReservedTags(uniquename, 
+        handleReservedTags(feature, uniquename, 
                            this_qualifier,
                            qualifiers_old.getQualifierByName(name));
         continue;
@@ -414,7 +422,9 @@ public class ChadoTransactionManager
             qualifier_string = qualifier_string.substring(index+1);
           
           tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                                     uniquename, "featureprop");
+                                     uniquename, "featureprop",
+                                     feature.getLastModified(),
+                                     feature);
 
           tsn.addProperty("value", "'"+ stripQuotes(qualifier_string) +"'");
           tsn.setConstraint("featureprop.type_id", "'"+cvterm_id+"'");
@@ -431,7 +441,9 @@ public class ChadoTransactionManager
         if(old_index > -1)
         {
           tsn = new ChadoTransaction(ChadoTransaction.DELETE,
-                                     uniquename, "featureprop");
+                                     uniquename, "featureprop",
+                                     feature.getLastModified(),
+                                     feature);
 
           tsn.setConstraint("type_id", cvterm_id);
           sql.add(tsn);
@@ -449,7 +461,9 @@ public class ChadoTransactionManager
             qualifier_string = qualifier_string.substring(index+1);
          
           tsn = new ChadoTransaction(ChadoTransaction.INSERT,
-                                     uniquename, "featureprop");
+                                     uniquename, "featureprop",
+                                     feature.getLastModified(),
+                                     feature);
 
           tsn.addProperty("value", "'"+ stripQuotes(qualifier_string) +"'");
           tsn.addProperty("type_id", "'"+cvterm_id+"'");
@@ -467,11 +481,13 @@ public class ChadoTransactionManager
   
   /**
    * Handle database transactions involving the GFF3 reserved tags.
+   * @param feature         the <code>GFFStreamFeature</code>
    * @param type            the transaction type (INSERT/UPDATE/DELETE)
    * @param new_qualifier   the new qualifier
    * @param old_qualifier   the old qualifier
    */
-  private void handleReservedTags(final String uniquename,
+  private void handleReservedTags(final GFFStreamFeature feature,
+                                  final String uniquename,
                                   final Qualifier new_qualifier,
                                   final Qualifier old_qualifier)
   {  
@@ -500,7 +516,9 @@ public class ChadoTransactionManager
          old_dbxref.setAccession(qualifier_string.substring(index+1));
 
          tsn = new ChadoTransaction(ChadoTransaction.DELETE_DBXREF, 
-                                    uniquename, old_dbxref);
+                                    uniquename, old_dbxref,
+                                    feature.getLastModified(),
+                                    feature);
          sql.add(tsn);
       }
     }
@@ -522,7 +540,9 @@ public class ChadoTransactionManager
          new_dbxref.setAccession(qualifier_string.substring(index+1));
 
          tsn = new ChadoTransaction(ChadoTransaction.INSERT_DBXREF, 
-                                    uniquename, new_dbxref);
+                                    uniquename, new_dbxref, 
+                                    feature.getLastModified(),
+                                    feature);
          sql.add(tsn);
       }
     }  
@@ -558,7 +578,7 @@ public class ChadoTransactionManager
   public void commit(DatabaseDocument dbDoc)
   {
     int retVal = dbDoc.commit(sql);
-    if(retVal == 0)
+    if(retVal > 0)
       sql = new Vector();
   }
 }

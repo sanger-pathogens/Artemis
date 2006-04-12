@@ -133,6 +133,18 @@ public interface ChadoDAO
               throws SQLException;
 
   /**
+   * Get the time a feature was last modified.
+   * @param schema      schema/organism name or null
+   * @param uniquename  the unique name of the feature
+   * @return  number of rows changed
+   * @throws SQLException
+   */
+  public Timestamp getTimeLastModified
+                   (final String schema, final String uniquename)
+                   throws SQLException;
+  
+
+  /**
    * 
    * Get dbxref for a feature.
    * @param schema      the postgres schema name

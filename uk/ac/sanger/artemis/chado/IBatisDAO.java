@@ -226,7 +226,27 @@ public class IBatisDAO implements ChadoDAO
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     return sqlMap.queryForList("getCvterm", null);
   }
+  
+  /**
+   * Get the time a feature was last modified.
+   * @param schema      schema/organism name or null
+   * @param uniquename  the unique name of the feature
+   * @return  number of rows changed
+   * @throws SQLException
+   */
+  public Timestamp getTimeLastModified
+                   (final String schema, final String uniquename)
+                   throws SQLException
+  {
+    ChadoFeature feature = new ChadoFeature();
+    feature.setSchema(schema);
+    feature.setUniquename(uniquename);
 
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    return (Timestamp)sqlMap.queryForObject("getTimeLastModified", feature);
+  }
+
+  
   /**
    * 
    * Get dbxref for a feature.
@@ -465,7 +485,8 @@ public class IBatisDAO implements ChadoDAO
                      throws SQLException
   {
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                                                uniquename, "feature");
+                                                uniquename, "feature", 
+                                                null, null);
     tsn.addProperty("timelastmodified", "CURRENT_TIMESTAMP");
     return updateAttributes(schema, tsn);
   }
@@ -482,7 +503,8 @@ public class IBatisDAO implements ChadoDAO
                      throws SQLException
   {
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                                                uniquename, "feature");
+                                                uniquename, "feature", 
+                                                null, null);
     tsn.addProperty("timeaccessioned", "CURRENT_TIMESTAMP");
     return updateAttributes(schema, tsn);
   }
