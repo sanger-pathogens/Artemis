@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.chado.*;
 
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.io.*;
 import java.net.ConnectException;
 import java.util.Hashtable;
@@ -288,7 +289,7 @@ public class DatabaseDocument extends Document
     {
       JOptionPane.showMessageDialog(null, "Problems Reading...\n" +
           sqlExp.getMessage(),
-          "Problems Readinf From the Database ",
+          "Problems Reading From the Database ",
           JOptionPane.ERROR_MESSAGE);
       
       sqlExp.printStackTrace();
@@ -710,22 +711,36 @@ public class DatabaseDocument extends Document
     try
     {
       ChadoDAO dao = getDAO();
-
+      boolean unchanged;
+      
+      //
+      // check feature timestamps have not changed
       for(i = 0; i < sql.size(); i++)
       {
         ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
  
-        //
-        // check feature timestamps have not changed
         if(tsn.getType() != ChadoTransaction.INSERT_FEATURE ||
            tsn.getType() != ChadoTransaction.DELETE_FEATURE)
         {
           final List uniquename = tsn.getUniquename();
           
           for(int j=0; j<uniquename.size(); j++)
-            checkFeatureTimestamp(schema, (String)uniquename.get(j), 
-                                  tsn.getLastModified(), dao);
+          {  
+            System.out.println((String)uniquename.get(j)+" "+tsn.getLastModified());
+            unchanged = checkFeatureTimestamp(schema, 
+                           (String)uniquename.get(j), 
+                         tsn.getLastModified(), dao);
+            if(!unchanged)
+              return 0;
+          }
         }
+      }  
+       
+      //
+      // commit to database
+      for(i = 0; i < sql.size(); i++)
+      {
+        ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
         
         if(tsn.getType() == ChadoTransaction.UPDATE)
           dao.updateAttributes(schema, tsn);
@@ -797,11 +812,11 @@ public class DatabaseDocument extends Document
    * @param timestamp   the last read feature timestamp
    * @throws SQLException
    */
-  public void checkFeatureTimestamp(final String schema,
-                                    final String uniquename,
-                                    final Timestamp timestamp,
-                                    final ChadoDAO dao)
-               throws SQLException
+  public boolean checkFeatureTimestamp(final String schema,
+                                      final String uniquename,
+                                      final Timestamp timestamp,
+                                      final ChadoDAO dao)
+                                      throws SQLException
   {
     Timestamp now = dao.getTimeLastModified(schema, uniquename);
     
@@ -809,14 +824,21 @@ public class DatabaseDocument extends Document
     {
       now.setNanos(0);
       timestamp.setNanos(0);
-      int comp = now.compareTo(timestamp);
       
-      if(comp == 0)
-        System.out.print("No change in timelastmodified -- SAFE ");
-      else
-        System.out.print("Change in timelastmodified -- NOT SAFE ");
-      System.out.println(now.toString()+"   "+timestamp.toString()+"  "+uniquename);
+      if(now.compareTo(timestamp) != 0)
+      {
+        SimpleDateFormat date_format = 
+                   new SimpleDateFormat("dd.MM.yyyy hh:mm:ss z");
+        JOptionPane.showMessageDialog(null, 
+                                      uniquename +
+                                      " has been altered at :\n"+
+                                      date_format.format(now),
+                                      "Feature Changed",
+                                      JOptionPane.ERROR_MESSAGE);
+        return false;
+      }
     }
+    return true;
   }
 
   public static void main(String args[])

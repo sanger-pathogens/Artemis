@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.19 2006-03-10 13:46:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.20 2006-04-12 16:31:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -31,12 +31,13 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.sql.Timestamp;
 
 /**
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.19 2006-03-10 13:46:55 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.20 2006-04-12 16:31:17 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -229,12 +230,14 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         final RangeVector new_range_vector = new RangeVector();
         QualifierVector qualifier_vector = new QualifierVector();
         Hashtable id_range_store = new Hashtable();
-
+        Timestamp lasttimemodified = null;
+        
         for (int i = 0 ; i < feature_group.size() ; ++i) 
         {
           final GFFStreamFeature this_feature =
             (GFFStreamFeature)feature_group.elementAt(i);
-
+          lasttimemodified = this_feature.getLastModified();
+          
           final Location this_feature_location = this_feature.getLocation();
 
           if(this_feature_location.getRanges().size() > 1)
@@ -273,6 +276,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
 
         final GFFStreamFeature new_feature = new GFFStreamFeature(first_old_feature.getKey(),
                                                              new_location, qualifier_vector);
+        new_feature.setLastModified(lasttimemodified);
         new_feature.setSegmentRangeStore(id_range_store);
 
         try 

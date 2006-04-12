@@ -551,7 +551,7 @@ public class JdbcDAO
     }
 
     String sql = sqlBuff.toString();
-    System.out.println(sql);
+
     appendToLogFile(sql, sqlLog);
     Statement st = conn.createStatement();
     return st.executeUpdate(sql);
