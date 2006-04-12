@@ -171,13 +171,17 @@
          $schema$.feature.feature_id > 0
     </select>
 
-
     <select id="getOrganismID" resultClass="java.lang.Integer" 
             parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature">
       SELECT organism_id FROM $schema$.feature f WHERE
              f.feature_id=$srcfeature_id$
     </select>
 
+    <select id="getTimeLastModified" resultClass="java.sql.Timestamp"
+            parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature">
+      SELECT timelastmodified FROM $schema$.feature f WHERE
+             f.uniquename=#uniquename#
+    </select>
 
     <select id="currval" resultClass="java.lang.Integer" 
             parameterClass="java.lang.String">
