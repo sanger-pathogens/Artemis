@@ -837,18 +837,37 @@ public class JdbcDAO
    * Write the time a feature was last modified
    * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
+   * @poram timestamp   the time stamp to use, 
+   *                    if NULL use CURRENT_TIMESTAMP
    * @return  number of rows changed
    * @throws SQLException
    */
   public int writeTimeLastModified
-                    (final String schema, final String uniquename)
+                    (final String schema, final String uniquename,
+                     final Timestamp timestamp)
                      throws SQLException
   {
     String sql = "UPDATE "+schema+
-                 ".feature SET timelastmodified=CURRENT_TIMESTAMP WHERE uniquename='"+
-                 uniquename+"'";
-    Statement st = conn.createStatement();
-    int rowCount = st.executeUpdate(sql);
+                 ".feature SET timelastmodified=";
+    
+    if(timestamp == null)
+      sql = sql +"CURRENT_TIMESTAMP";
+    else
+      sql = sql +"?";
+      
+    sql = sql + " WHERE uniquename= ?";
+    
+    PreparedStatement pstmt = conn.prepareStatement(sql);
+
+    int param = 1;
+    if(timestamp != null)
+    {
+      pstmt.setTimestamp(param, timestamp);
+      param++;
+    }
+    pstmt.setString(param, uniquename);
+    
+    int rowCount = pstmt.executeUpdate();
     return rowCount;
   }
 
@@ -856,17 +875,36 @@ public class JdbcDAO
    * Write the time a feature was last accessed
    * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
+   * @poram timestamp   the time stamp to use, 
+   *                    if NULL use CURRENT_TIMESTAMP
    * @throws SQLException
    */
   public int writeTimeAccessioned
-                    (final String schema, final String uniquename)
+                    (final String schema, final String uniquename,
+                     final Timestamp timestamp)
                      throws SQLException
-  {
+  {   
     String sql = "UPDATE "+schema+
-                 ".feature SET timeaccessioned=CURRENT_TIMESTAMP WHERE uniquename='"+
-                 uniquename+"'";
-    Statement st = conn.createStatement();
-    int rowCount = st.executeUpdate(sql);
+                 ".feature SET timeaccessioned=";
+
+    if(timestamp == null)
+      sql = sql +"CURRENT_TIMESTAMP";
+    else
+      sql = sql +"?";
+
+    sql = sql + " WHERE uniquename= ?";
+
+    PreparedStatement pstmt = conn.prepareStatement(sql);
+
+    int param = 1;
+    if(timestamp != null)
+    {
+      pstmt.setTimestamp(param, timestamp);
+      param++;
+    }
+    pstmt.setString(param, uniquename);
+
+    int rowCount = pstmt.executeUpdate();
     return rowCount;
   }
 

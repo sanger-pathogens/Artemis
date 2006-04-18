@@ -477,17 +477,24 @@ public class IBatisDAO implements ChadoDAO
    * Write the time a feature was last modified
    * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
+   * @poram timestamp   the time stamp to use, 
+   *                    if NULL use CURRENT_TIMESTAMP
    * @return  number of rows changed
    * @throws SQLException
    */
   public int writeTimeLastModified
-                    (final String schema, final String uniquename)
+                    (final String schema, final String uniquename,
+                     final Timestamp timestamp)
                      throws SQLException
   {
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                                                 uniquename, "feature", 
                                                 null, null);
-    tsn.addProperty("timelastmodified", "CURRENT_TIMESTAMP");
+    if(timestamp == null)
+      tsn.addProperty("timelastmodified", "CURRENT_TIMESTAMP");
+    else
+      tsn.addProperty("timelastmodified", "'"+ timestamp.toString() + "'");
+    
     return updateAttributes(schema, tsn);
   }
 
@@ -495,17 +502,24 @@ public class IBatisDAO implements ChadoDAO
    * Write the time a feature was last accessed
    * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
+   * @poram timestamp   the time stamp to use, 
+   *                    if NULL use CURRENT_TIMESTAMP
    * @return  number of rows changed
    * @throws SQLException
    */
   public int writeTimeAccessioned
-                    (final String schema, final String uniquename)
+                    (final String schema, final String uniquename,
+                     final Timestamp timestamp)
                      throws SQLException
   {
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                                                 uniquename, "feature", 
                                                 null, null);
-    tsn.addProperty("timeaccessioned", "CURRENT_TIMESTAMP");
+    if(timestamp == null)
+      tsn.addProperty("timelastmodified", "CURRENT_TIMESTAMP");
+    else
+      tsn.addProperty("timelastmodified", "'"+ timestamp.toString() + "'");
+    
     return updateAttributes(schema, tsn);
   }
 }

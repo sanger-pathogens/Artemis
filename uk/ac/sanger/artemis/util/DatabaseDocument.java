@@ -761,6 +761,8 @@ public class DatabaseDocument extends Document
       
       //
       // update timelastmodified timestamp
+      Timestamp ts = null;
+      Timestamp ts2;
       for(int j = 0; j < sql.size(); j++)
       {
         ChadoTransaction tsn = (ChadoTransaction) sql.get(j);
@@ -773,14 +775,16 @@ public class DatabaseDocument extends Document
           // update timelastmodified timestamp
           for(int k=0; k<uniquename.size(); k++)
           {
-            dao.writeTimeLastModified(schema, (String)uniquename.get(k));
-            Timestamp new_timestamp = 
-                       dao.getTimeLastModified(schema, (String)uniquename.get(k));
-            if(new_timestamp == null)
+            dao.writeTimeLastModified(schema, (String)uniquename.get(k), ts);
+            ts2 = dao.getTimeLastModified(schema, (String)uniquename.get(k));
+            if(ts2 == null)
               continue;
             
+            if(ts == null)  
+              ts = ts2;
+            
             GFFStreamFeature gff_feature = (GFFStreamFeature)tsn.getFeatureObject();
-            gff_feature.setLastModified(new_timestamp);
+            gff_feature.setLastModified(ts);
           }
         }
       }  
@@ -829,6 +833,8 @@ public class DatabaseDocument extends Document
       {
         SimpleDateFormat date_format = 
                    new SimpleDateFormat("dd.MM.yyyy hh:mm:ss z");
+        
+        System.out.println(date_format.format(now)+"   "+date_format.format(timestamp));
         JOptionPane.showMessageDialog(null, 
                                       uniquename +
                                       " has been altered at :\n"+
