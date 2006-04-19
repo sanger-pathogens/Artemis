@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.42 2006-03-13 13:37:51 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.43 2006-04-19 09:52:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,6 +38,7 @@ import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.RawStreamSequence;
 import uk.ac.sanger.artemis.io.FastaStreamSequence;
 import uk.ac.sanger.artemis.io.Sequence;
+import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 
@@ -55,6 +56,7 @@ import javax.swing.border.BevelBorder;
 import java.awt.datatransfer.*;
 import java.awt.dnd.*;
 import javax.swing.Box;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
@@ -64,7 +66,7 @@ import javax.swing.ImageIcon;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.42 2006-03-13 13:37:51 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.43 2006-04-19 09:52:23 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -83,7 +85,6 @@ public class FeatureDisplay extends EntryGroupPanel
 
   final static public int SCROLLBAR_AT_TOP = 1;
   final static public int SCROLLBAR_AT_BOTTOM = 2;
-  final static private int NO_SCROLLBAR = 3;
 
   private final static int FORWARD = Bases.FORWARD;
   private final static int REVERSE = Bases.REVERSE;
@@ -4847,6 +4848,52 @@ public class FeatureDisplay extends EntryGroupPanel
           old_pos[i] = contig_features.elementAt(i).getMaxRawRange().getStart()-1;
       }
 
+      //
+      // Test that there are no features overlapping contig boundaries
+      //
+      final FeatureEnumeration test_enumerator = getEntryGroup().features();
+      FeaturePredicate predicate = new FeaturePredicate()
+      {
+        FeatureVector contig_features = getContigs();
+        public boolean testPredicate(final Feature feature)
+        {
+          final Location loc = feature.getLocation();
+
+          final int start = loc.getFirstBase();
+          final int end   = loc.getLastBase();
+
+          for(int i=0; i<contig_features.size(); i++)
+          {
+            Feature contig = contig_features.elementAt(i);
+            int this_start = contig.getLocation().getFirstBase();
+            int this_end   = contig.getLocation().getLastBase();
+            
+            if( (this_start > start && this_start < end) ||
+                (this_end > start && this_end < end) )
+              return false;
+          }
+         
+          return true;
+        }
+      };
+
+      while(test_enumerator.hasMoreFeatures())
+      {
+        final Feature this_feature = test_enumerator.nextFeature();
+        if(!predicate.testPredicate(this_feature))
+        {
+          JOptionPane.showMessageDialog(null,
+              "There is a feature ("+this_feature.getIDString()+
+              ") overlapping the contig boundary at:\n"+
+              this_feature.getLocation().getFirstBase()+".."+
+              this_feature.getLocation().getLastBase()+
+              "\nThis needs fixing before contigs can be reordered.",
+              "Warning",
+              JOptionPane.WARNING_MESSAGE);
+          return;
+        }
+      }
+      
       // rearrange contig order
       getEntryGroup().getBases().contigRearrange(selected_feature,
                                                  drop_base);
