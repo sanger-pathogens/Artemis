@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.18 2006-04-19 09:52:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.19 2006-04-19 09:57:50 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -60,7 +60,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.18 2006-04-19 09:52:23 tjc Exp $
+ *  @version $Id: Feature.java,v 1.19 2006-04-19 09:57:50 tjc Exp $
  **/
 
 public class Feature
@@ -3072,10 +3072,10 @@ CHANGED_END:
                                             seg_range.getEnd() + shift);
       location = location.changeRange(seg_range, seg_new_range);
    
-    System.out.println("DIFF "+ shift+" "+seg_new_range.getStart()+".."+
-                                         seg_new_range.getEnd()+"  was "+
-                                          seg_range.getStart()+".."+
-                                        seg_range.getEnd());
+//    System.out.println("DIFF "+ shift+" "+seg_new_range.getStart()+".."+
+//                                         seg_new_range.getEnd()+"  was "+
+//                                          seg_range.getStart()+".."+
+//                                        seg_range.getEnd());
     }
 
     return location;
