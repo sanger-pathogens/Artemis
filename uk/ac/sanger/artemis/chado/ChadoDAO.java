@@ -243,7 +243,7 @@ public interface ChadoDAO
    * Write the time a feature was last modified
    * @param schema	schema/organism name or null
    * @param uniquename	the unique name of the feature
-   * @poram timestamp   the time stamp to use, 
+   * @param timestamp   the time stamp to use, 
    *                    if NULL use CURRENT_TIMESTAMP
    * @return  number of rows changed
    * @throws SQLException
@@ -258,7 +258,7 @@ public interface ChadoDAO
    * Write the time a feature was last accessed
    * @param schema 	schema/organism name or null
    * @param uniquename  the unique name of the feature
-   * @poram timestamp   the time stamp to use, 
+   * @param timestamp   the time stamp to use, 
    *                    if NULL use CURRENT_TIMESTAMP
    * @return  number of rows changed
    * @throws SQLException
