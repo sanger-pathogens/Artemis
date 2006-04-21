@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Strand.java,v 1.3 2005-07-08 15:11:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Strand.java,v 1.4 2006-04-21 15:22:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -39,7 +39,7 @@ import org.biojava.bio.symbol.IllegalSymbolException;
  *  what direction the Strand represents.
  *
  *  @author Kim Rutherford
- *  @version $Id: Strand.java,v 1.3 2005-07-08 15:11:12 tjc Exp $
+ *  @version $Id: Strand.java,v 1.4 2006-04-21 15:22:56 tjc Exp $
  **/
 
 public class Strand {
@@ -116,16 +116,17 @@ public class Strand {
   }
 
   /**
-   *  Return an array containing the stop codons in a range.  Only those
-   *  stop codons that are in the same frame as the first codon of the range
-   *  are returned.
+   *  Return an 2D array containing the stop or start codons in a range for
+   *  all 3 frames of the strand.  
    *  @param range The inclusive range of bases to get the stop codons from.
+   *  @param query_codons if this is NULL then this assumes we are looking
+   *    for stop codons, otherwise this is used to look for start codons.
    **/
-  public int [][] getStopCodons2 (final Range range) {
-    return bases.getStopCodons2 (range, getDirection ());
+  public int [][] getStopOrStartCodons(final Range range, final StringVector query_codons) {
+    return bases.getStopOrStartCodons(range, getDirection (), query_codons);
   }
 
-  public int [] getStopCodons (final Range range) {
+  private int [] getStopCodons (final Range range) {
     return bases.getStopCodons (range, getDirection ());
   }
 

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.43 2006-04-19 09:52:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.44 2006-04-21 15:22:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -66,7 +66,7 @@ import javax.swing.ImageIcon;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.43 2006-04-19 09:52:23 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.44 2006-04-21 15:22:56 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -1896,7 +1896,8 @@ public class FeatureDisplay extends EntryGroupPanel
       if(fwd && start_base < 1)
         start_base = 1;
  
-      stop_codons = strand.getStopCodons2(newRange(start_base, end_base));
+      stop_codons = strand.getStopOrStartCodons(newRange(start_base, end_base), 
+                                                null);
 //    stop_codons = new int [][] 
 //    {
 //      strand.getStopCodons(newRange(start_base, end_base)),
@@ -1912,15 +1913,17 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       final StringVector starts = Options.getOptions().getStartCodons();
       
-      start_codons = new int [][] 
-      {
-        strand.getMatchingCodons(newRange(start_base, end_base),
-                                 starts),
-        strand.getMatchingCodons(newRange(start_base + 1, end_base),
-                                 starts),
-        strand.getMatchingCodons(newRange(start_base + 2, end_base),
-                                 starts)
-      };
+      start_codons = strand.getStopOrStartCodons(newRange(start_base, end_base), 
+                                                 starts);
+//      start_codons = new int [][] 
+//      {
+//        strand.getMatchingCodons(newRange(start_base, end_base),
+//                                 starts),
+//        strand.getMatchingCodons(newRange(start_base + 1, end_base),
+//                                 starts),
+//        strand.getMatchingCodons(newRange(start_base + 2, end_base),
+//                                 starts)
+//      };
     }
 
     for(int i = 0 ; i < 3 ; ++i) 
