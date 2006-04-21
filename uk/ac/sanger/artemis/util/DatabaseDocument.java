@@ -371,6 +371,9 @@ public class DatabaseDocument extends Document
 
     // get all dbrefs
     Hashtable dbxrefs = dao.getDbxref(schema, null);
+    
+    // get all synonyms
+    Hashtable synonym = dao.getAlias(schema, null);
 
     for(int i = 0; i < feature_size; i++)
     {
@@ -459,6 +462,19 @@ public class DatabaseDocument extends Document
         {
           this_buff.append((String)dbxref.get(j));
           if(j<dbxref.size()-1)
+            this_buff.append(",");
+        }
+      }
+      
+      if(synonym != null &&
+         synonym.containsKey(new Integer(feature_id)))
+      {
+        this_buff.append(";Alias=");
+        Vector v_synonyms = (Vector)synonym.get(new Integer(feature_id));
+        for(int j=0; j<v_synonyms.size(); j++)
+        {
+          this_buff.append((String)v_synonyms.get(j));
+          if(j<v_synonyms.size()-1)
             this_buff.append(",");
         }
       }

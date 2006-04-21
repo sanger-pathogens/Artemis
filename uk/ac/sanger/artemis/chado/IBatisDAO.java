@@ -269,6 +269,42 @@ public class IBatisDAO implements ChadoDAO
   }
   
   /**
+   * Get dbxref for a feature.
+   * @param schema      the postgres schema name
+   * @param uniquename  the unique name for the feature. If set to NULL
+   *                    all <code>Dbxref</code> are returned.
+   * @return a <code>Hashtable</code> of dbxrefs.
+   * @throws SQLException
+   */
+  public Hashtable getAlias(final String schema, final String uniquename)
+              throws SQLException
+  {
+    Alias alias = new Alias();
+    alias.setSchema(schema);
+    alias.setUniquename(uniquename);
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    List list = sqlMap.queryForList("getAlias", alias);  
+    
+    Hashtable synonym = new Hashtable();
+    Integer feature_id;
+    Vector value;
+    for(int i=0; i<list.size(); i++)
+    {
+      alias = (Alias)list.get(i);
+      feature_id = alias.getFeature_id();
+      if(synonym.containsKey(feature_id))
+        value = (Vector)synonym.get(feature_id);
+      else
+        value = new Vector();
+      
+      value.add(alias.getName());
+      synonym.put(feature_id, value);
+    }
+    
+    return synonym;
+  }
+  
+  /**
    *
    * @param name cvterm name
    * @param cv_name ontology name (e.g. gene, sequence)

@@ -458,6 +458,46 @@ public class JdbcDAO
   }
   
   /**
+   * Get dbxref for a feature.
+   * @param schema      the postgres schema name
+   * @param uniquename  the unique name for the feature. If set to NULL
+   *                    all synonyms are returned.
+   * @return a <code>Hashtable</code> of synonym values with the 
+   *         feature_id as the key.
+   * @throws SQLException
+   */
+  public Hashtable getAlias(final String schema, final String uniquename)
+              throws SQLException
+  {
+    String sql = "SELECT s.name, f.feature_id FROM "+schema+".feature_synonym fs "+
+                 "LEFT JOIN "+schema+".feature f ON f.feature_id=fs.feature_id "+
+                 "LEFT JOIN "+schema+".synonym s ON fs.synonym_id=s.synonym_id ";
+    
+    if(uniquename != null)
+      sql = sql + "WHERE uniquename='"+uniquename+"'";
+    
+    appendToLogFile(sql, sqlLog);
+    Statement st = conn.createStatement();
+    ResultSet rs = st.executeQuery(sql);
+    Hashtable synonym = new Hashtable();
+    Integer feature_id;
+    Vector value;
+    while(rs.next())
+    {
+      feature_id = new Integer(rs.getInt("feature_id"));
+      if(synonym.containsKey(feature_id))
+        value = (Vector)synonym.get(feature_id);
+      else
+        value = new Vector();
+      
+      value.add(rs.getString("name"));
+      synonym.put(feature_id, value);
+    }
+    
+    return synonym;
+  }
+  
+  /**
    * Get the time a feature was last modified.
    * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature

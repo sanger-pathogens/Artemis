@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.32 2006-04-12 12:22:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.33 2006-04-21 09:26:22 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -39,7 +39,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.32 2006-04-12 12:22:13 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.33 2006-04-21 09:26:22 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -760,7 +760,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
           att_values.add(rest_of_token);
       }
 
-      if(att_name.equals("Dbxref")) // convert to multi-line
+      if(att_name.equals("Dbxref") || att_name.equals("Alias")) // convert to multi-line
       {
         StringTokenizer stok = 
             new StringTokenizer((String)att_values.get(0), ",");

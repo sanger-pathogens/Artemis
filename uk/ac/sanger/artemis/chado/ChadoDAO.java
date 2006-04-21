@@ -145,7 +145,6 @@ public interface ChadoDAO
   
 
   /**
-   * 
    * Get dbxref for a feature.
    * @param schema      the postgres schema name
    * @param uniquename  the unique name for the feature. If set to NULL
@@ -156,11 +155,21 @@ public interface ChadoDAO
   public Hashtable getDbxref(final String schema, final String uniquename)
               throws SQLException;
   
+  /**
+   * Get dbxref for a feature.
+   * @param schema      the postgres schema name
+   * @param uniquename  the unique name for the feature. If set to NULL
+   *                    all <code>Dbxref</code> are returned.
+   * @return a <code>Hashtable</code> of dbxrefs.
+   * @throws SQLException
+   */
+  public Hashtable getAlias(final String schema, final String uniquename)
+              throws SQLException;
+  
 //
 // WRITE BACK
 //
   /**
-   *
    * Update attributes defined by the <code>ChadoTransaction</code>.
    * @param schema	schema/organism name or null
    * @param tsn		the <code>ChadoTransaction</code>
@@ -172,7 +181,6 @@ public interface ChadoDAO
                      throws SQLException;
 
   /**
-   *
    * Insert attributes defined by the <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
@@ -183,7 +191,6 @@ public interface ChadoDAO
                      throws SQLException;
 
   /**
-   *
    * Delete attributes defined by the <code>ChadoTransaction</code>.
    * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
@@ -194,7 +201,6 @@ public interface ChadoDAO
                      throws SQLException;
 
   /**
-   *
    * Insert a feature into the database defined by the <code>ChadoTransaction</code>.
    * @param schema       	schema/organism name or null
    * @param tsn         	the <code>ChadoTransaction</code>
@@ -207,7 +213,6 @@ public interface ChadoDAO
                      throws SQLException;
 
   /**
-   *
    * Delete a feature from the database defined by the <code>ChadoTransaction</code>.
    * @param schema 	schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
