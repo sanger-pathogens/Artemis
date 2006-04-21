@@ -183,10 +183,22 @@
              f.uniquename=#uniquename#
     </select>
 
+    <select id="getAlias" resultClass="uk.ac.sanger.artemis.chado.Alias"
+            parameterClass="uk.ac.sanger.artemis.chado.Alias">
+      SELECT s.name, f.feature_id FROM $schema$.feature_synonym fs 
+      LEFT JOIN $schema$.feature f ON f.feature_id=fs.feature_id 
+      LEFT JOIN $schema$.synonym s ON fs.synonym_id=s.synonym_id 
+      <isNotNull property="uniquename">                        
+          WHERE uniquename=#uniquename#
+      </isNotNull>
+    </select>
+    
     <select id="currval" resultClass="java.lang.Integer" 
             parameterClass="java.lang.String">
       SELECT currval('$value$')
     </select>
+
+
 
     <!--  WRITE BACK METHODS -->
     <update id="updateAttributes" 
