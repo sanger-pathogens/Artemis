@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.16 2006-03-27 13:40:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.17 2006-04-24 10:11:48 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.16 2006-03-27 13:40:31 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.17 2006-04-24 10:11:48 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -519,6 +519,17 @@ public class EditMenu extends SelectionMenu
       }
     });
 
+    final JMenuItem extend_to_next_stop_and_fix_item = new JMenuItem("Extend to Next Stop Codon and Fix");
+    extend_to_next_stop_and_fix_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        extendToORF(getParentFrame(), getSelection(),
+                    getEntryGroup(), true);
+        fixStopCodons();
+      }
+    });
+    
     final JMenuItem auto_gene_name_item = new JMenuItem("Automatically Create Gene Names");
     auto_gene_name_item.addActionListener(new ActionListener() 
     {
@@ -661,6 +672,7 @@ public class EditMenu extends SelectionMenu
     add(extend_to_prev_stop_item);
     add(extend_to_next_stop_item);
     add(fix_stop_codons_item);
+    add(extend_to_next_stop_and_fix_item);
     addSeparator();
     add(auto_gene_name_item);
     add(fix_gene_names_item);
