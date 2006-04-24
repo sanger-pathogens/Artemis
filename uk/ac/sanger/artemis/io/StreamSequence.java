@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.12 2005-12-07 16:42:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamSequence.java,v 1.13 2006-04-24 17:06:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.io.Writer;
  *  Sequence stored in 4 bit chunks.
  *
  *  @author Kim Rutherford
- *  @version $Id: StreamSequence.java,v 1.12 2005-12-07 16:42:47 tjc Exp $
+ *  @version $Id: StreamSequence.java,v 1.13 2006-04-24 17:06:01 tjc Exp $
  **/
 
 public abstract class StreamSequence
@@ -180,7 +180,7 @@ public abstract class StreamSequence
   public char[] getCharSequence()
   {
     char dst[] = new char[length()];
-    int packEnd = Math.round( (float)length()/2.f );
+    int packEnd = (int)Math.round( (double)length()/2.d );
     int count = 0;
     byte currStorageUnit = 0;
 
@@ -225,7 +225,8 @@ public abstract class StreamSequence
   public void setFromChar(final char dna[])
   { 
     sequence_length = dna.length;
-    int numBytes = Math.round( (float)sequence_length/2.f );
+    int numBytes = (int)Math.round( (double)sequence_length/2.d );
+
     sequencePacked = new byte[numBytes];
     setFromChar(dna, 0, 0, sequence_length);
     setCounts(dna);
@@ -243,7 +244,7 @@ public abstract class StreamSequence
     int offsetSize    = offset >> 1;
     int bytePointer   = offset >> 1;
     int symbolPointer = 0;
-    int numBytes      = Math.round( dna.length/2.f );
+    int numBytes      = (int)Math.round( (double)dna.length/2.d );
 
     // filled last unit if = 0
     int filledLastUnit = dna.length & 0x0001;
@@ -269,7 +270,7 @@ public abstract class StreamSequence
       for(int j=0; j < 2; j++) 
       {
         currByte = (byte)(currByte<<4 | Packing.pack(dna[symbolPointer]));
-//      System.out.print(dna[symbolPointer]);
+
         symbolPointer++;
 
         if(j == 0 && symbolPointer == dna.length) 
@@ -411,7 +412,7 @@ public abstract class StreamSequence
   protected void setCounts()
   {
     final int len = length();
-    final int packEnd = Math.round( len/2.f );
+    final int packEnd = (int)Math.round( (double)len/2.d );
     int count = 0;
     byte currStorageUnit;
     int index1;
