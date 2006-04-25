@@ -1,0 +1,16 @@
+
+Version 9
+
+	Fix for converting files from other file formats to
+	genbank format.
+
+	Fix rounding problem for long sequences when writting 
+	out all bases in FASTA or raw format.
+
+	Cache the start codons (as per stop codon caching),
+	to speed their display.
+
+	Combine the extend to next exon and the fix stop codons
+  	into one option.
+
+
