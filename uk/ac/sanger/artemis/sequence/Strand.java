@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Strand.java,v 1.4 2006-04-21 15:22:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Strand.java,v 1.5 2006-04-25 15:11:59 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -39,7 +39,7 @@ import org.biojava.bio.symbol.IllegalSymbolException;
  *  what direction the Strand represents.
  *
  *  @author Kim Rutherford
- *  @version $Id: Strand.java,v 1.4 2006-04-21 15:22:56 tjc Exp $
+ *  @version $Id: Strand.java,v 1.5 2006-04-25 15:11:59 tjc Exp $
  **/
 
 public class Strand {
@@ -608,6 +608,15 @@ public class Strand {
     return getBases ().getSubSequence (range, getDirection ());
   }
 
+  /**
+   *  Return a sub-sequence of bases from this Bases object that underlies
+   *  this Strand object.  
+   *  @param range The inclusive range of bases to return.
+   **/
+  public char[] getRawSubSequenceC (Range range) {
+    return getBases ().getSubSequenceC (range, FORWARD);
+  }
+  
   /**
    *  Return a sub-sequence of bases from this Bases object that underlies
    *  this Strand object.  This returns the same as getSubSequence () for
