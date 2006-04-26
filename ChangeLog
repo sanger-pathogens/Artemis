@@ -1,6 +1,14 @@
 
 Version 9
 
+	Feature selector can be used to look for features with introns 
+	that do no contain the GT/GC start or AG end.
+
+	Contig tool now checks for contigs that contain features that
+	span the boundaries of the contigs. These features have to be 
+	removed or restricted to the contig boundary before it can 
+	carry out contig reordering.
+
 	Fix for converting files from other file formats to
 	genbank format.
 
@@ -13,4 +21,7 @@ Version 9
 	Combine the extend to next exon and the fix stop codons
   	into one option.
 
+	The feature types that appear on the frame lines can be defined
+	by the user via an option ("Frame Line Features...") in the 
+	feature display popup menu.
 
