@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.20 2006-04-12 16:31:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.21 2006-04-26 12:53:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.20 2006-04-12 16:31:17 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.21 2006-04-26 12:53:01 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -341,11 +341,17 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         else if(complement)
           merge_qualifier_vector.setQualifier(qual);
       }
-      else if(!qual.getName().equals("ID"))
+      else if(!qual.getName().equals("ID") &&
+              !qual.getName().equals("Alias"))
         merge_qualifier_vector.setQualifier(qual);
       else
       { 
-        Qualifier id_qualifier = merge_qualifier_vector.getQualifierByName("ID");
+        final Qualifier id_qualifier; 
+        
+        if(qual.getName().equals("ID"))
+          id_qualifier = merge_qualifier_vector.getQualifierByName("ID");
+        else
+          id_qualifier = merge_qualifier_vector.getQualifierByName("Alias");
 
         if(id_qualifier == null)
           merge_qualifier_vector.addElement(qual);
