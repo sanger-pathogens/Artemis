@@ -469,11 +469,17 @@ public class DatabaseDocument extends Document
       if(synonym != null &&
          synonym.containsKey(new Integer(feature_id)))
       {
-        this_buff.append(";Alias=");
+        this_buff.append(";");
+        
+        Alias alias;
         Vector v_synonyms = (Vector)synonym.get(new Integer(feature_id));
         for(int j=0; j<v_synonyms.size(); j++)
         {
-          this_buff.append((String)v_synonyms.get(j));
+          alias = (Alias)v_synonyms.get(j);
+          this_buff.append(alias.getCvterm_name()+"=");
+          this_buff.append(alias.getName());
+          
+          //this_buff.append((String)v_synonyms.get(j));
           if(j<v_synonyms.size()-1)
             this_buff.append(",");
         }

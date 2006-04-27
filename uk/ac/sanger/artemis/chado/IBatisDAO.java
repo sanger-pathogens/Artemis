@@ -297,7 +297,7 @@ public class IBatisDAO implements ChadoDAO
       else
         value = new Vector();
       
-      value.add(alias.getName());
+      value.add(alias);
       synonym.put(feature_id, value);
     }
     

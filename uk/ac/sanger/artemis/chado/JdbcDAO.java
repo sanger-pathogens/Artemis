@@ -469,9 +469,11 @@ public class JdbcDAO
   public Hashtable getAlias(final String schema, final String uniquename)
               throws SQLException
   {
-    String sql = "SELECT s.name, f.feature_id FROM "+schema+".feature_synonym fs "+
+    String sql = "SELECT s.name, f.feature_id, cvterm.name AS cvterm_name FROM "+
+                                                   schema+".feature_synonym fs "+
                  "LEFT JOIN "+schema+".feature f ON f.feature_id=fs.feature_id "+
-                 "LEFT JOIN "+schema+".synonym s ON fs.synonym_id=s.synonym_id ";
+                 "LEFT JOIN "+schema+".synonym s ON fs.synonym_id=s.synonym_id "+
+                 "LEFT JOIN cvterm ON s.type_id=cvterm_id";
     
     if(uniquename != null)
       sql = sql + "WHERE uniquename='"+uniquename+"'";
@@ -482,6 +484,7 @@ public class JdbcDAO
     Hashtable synonym = new Hashtable();
     Integer feature_id;
     Vector value;
+    Alias alias;
     while(rs.next())
     {
       feature_id = new Integer(rs.getInt("feature_id"));
@@ -490,7 +493,10 @@ public class JdbcDAO
       else
         value = new Vector();
       
-      value.add(rs.getString("name"));
+      alias = new Alias();
+      alias.setName( rs.getString("name") );
+      alias.setCvterm_name( rs.getString("cvterm_name") );
+      value.add(alias);
       synonym.put(feature_id, value);
     }
     

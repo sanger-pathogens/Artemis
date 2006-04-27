@@ -34,6 +34,7 @@ public class Alias
   private String name;
   private String schema;
   private String uniquename;
+  private String cvterm_name;
   
   public String getSchema()
   {
@@ -73,6 +74,16 @@ public class Alias
   public void setName(String name)
   {
     this.name = name;
+  }
+
+  public String getCvterm_name()
+  {
+    return cvterm_name;
+  }
+
+  public void setCvterm_name(String cvterm_name)
+  {
+    this.cvterm_name = cvterm_name;
   }
 
 }
