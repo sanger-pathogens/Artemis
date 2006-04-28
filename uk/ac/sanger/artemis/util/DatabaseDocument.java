@@ -839,14 +839,14 @@ public class DatabaseDocument extends Document
    * @throws SQLException
    */
   public boolean checkFeatureTimestamp(final String schema,
-                                      final String uniquename,
-                                      final Timestamp timestamp,
-                                      final ChadoDAO dao)
-                                      throws SQLException
+                                       final String uniquename,
+                                       final Timestamp timestamp,
+                                       final ChadoDAO dao)
+                                       throws SQLException
   {
     Timestamp now = dao.getTimeLastModified(schema, uniquename);
     
-    if(now != null)
+    if(now != null && timestamp != null)
     {
       now.setNanos(0);
       timestamp.setNanos(0);
