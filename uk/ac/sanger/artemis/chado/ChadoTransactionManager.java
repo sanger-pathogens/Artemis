@@ -323,12 +323,23 @@ public class ChadoTransactionManager
     if(!new_key.equals(old_key))
     {
       Long lcvterm_id = DatabaseDocument.getCvtermID(new_key.getKeyString());
-      tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                                 uniquename, "feature",
-                                 feature.getLastModified(),
-                                 feature);
-      tsn.addProperty("type_id", "'"+ lcvterm_id.toString() +"'");
-      sql.add(tsn);
+      if(lcvterm_id == null)   // chado doesn't recognise this
+      {
+        JOptionPane.showMessageDialog(null, 
+                  new_key.getKeyString()+" is not a valid key!\n"+
+                  "There is no CV term set for this key.",
+                  "Invalid Feature Key",
+                  JOptionPane.WARNING_MESSAGE);
+      }
+      else
+      {
+        tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                                   uniquename, "feature",
+                                   feature.getLastModified(),
+                                   feature);
+        tsn.addProperty("type_id", "'"+ lcvterm_id.toString() +"'");
+        sql.add(tsn);
+      }
     }
     
     // look for qualifiers to DELETE
