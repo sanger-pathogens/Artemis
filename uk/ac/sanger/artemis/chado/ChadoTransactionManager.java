@@ -35,6 +35,7 @@ import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.EntryInformationException;
+import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
@@ -134,7 +135,9 @@ public class ChadoTransactionManager
       {
         System.out.println("ALL_CHANGED");
         
-        editQualifiers(event.getOldQualifiers(),event.getNewQualifiers(),feature);
+        editKeyAndQualifiers(event.getOldQualifiers(),event.getNewQualifiers(),
+                             event.getOldKey(), event.getNewKey(),
+                             feature);
       }
     }
   }
@@ -301,19 +304,33 @@ public class ChadoTransactionManager
   }
   
   /**
-   * Compare the old and new qualifiers and find the qualifiers 
+   * Compare the old and new keys and qualifiers and find the qualifiers 
    * that have changed or been added and UPDATE, INSERT or DELETE accordingly.
    * @param qualifiers_old	old qualifiers
    * @param qualifiers_new	new qualifiers
    * @param feature		GFF feature that has been changed
    */
-  private void editQualifiers(QualifierVector qualifiers_old, 
-                              QualifierVector qualifiers_new, 
-                              GFFStreamFeature feature)
+  private void editKeyAndQualifiers(final QualifierVector qualifiers_old, 
+                                    final QualifierVector qualifiers_new, 
+                                    final Key old_key, 
+                                    final Key new_key,
+                                    final GFFStreamFeature feature)
   {
     final String uniquename = (String)(feature.getQualifierByName("ID").getValues()).elementAt(0);
     ChadoTransaction tsn;
 
+    // updating the key
+    if(!new_key.equals(old_key))
+    {
+      Long lcvterm_id = DatabaseDocument.getCvtermID(new_key.getKeyString());
+      tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                                 uniquename, "feature",
+                                 feature.getLastModified(),
+                                 feature);
+      tsn.addProperty("type_id", "'"+ lcvterm_id.toString() +"'");
+      sql.add(tsn);
+    }
+    
     // look for qualifiers to DELETE
     for(int qualifier_index = 0; qualifier_index < qualifiers_old.size();
         ++qualifier_index)
