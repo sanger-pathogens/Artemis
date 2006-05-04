@@ -539,11 +539,18 @@ public class IBatisDAO implements ChadoDAO
     final Alias alias = tsn.getAlias();
     alias.setSchema(schema);
     
-    Dbxref dbxref = tsn.getFeatureDbxref();
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    Integer synonym_id = (Integer)sqlMap.queryForObject("getSynonymId", dbxref);
+    List synonym_id_list = sqlMap.queryForList("getSynonymId", alias);
     
-    return 0;  
+    final Integer synonym_id = (Integer)synonym_id_list.get(0); 
+    alias.setSynonym_id(synonym_id);
+    
+    // check this name is not used some where else, 
+    // i.e. in more than one row
+    if(synonym_id_list.size() > 1)
+      return sqlMap.delete("deleteFeatureAlias", alias);
+    else
+      return sqlMap.delete("deleteAlias", alias);
   }
   
   /**
