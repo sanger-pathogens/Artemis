@@ -56,6 +56,7 @@
   <sqlMap resource="artemis_sqlmap/Cvterm.xml" />
   <sqlMap resource="artemis_sqlmap/Feature.xml" />
   <sqlMap resource="artemis_sqlmap/Dbxref.xml" />
+  <sqlMap resource="artemis_sqlmap/Alias.xml" />
   
 </sqlMapConfig> 
 
