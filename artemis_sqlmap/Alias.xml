@@ -19,11 +19,11 @@
       </isNotNull>
     </select>
     
-    <select id="getSynonymId" resultClass="uk.ac.sanger.artemis.chado.Alias"
-            parameterClass="resultClass="java.lang.Integer"">
+    <select id="getSynonymId" resultClass="java.lang.Integer"
+            parameterClass="uk.ac.sanger.artemis.chado.Alias">
       SELECT synonym_id FROM $schema$.feature_synonym WHERE
              synonym_id=(SELECT synonym_id FROM $schema$.synonym WHERE 
-             synonym.name=#synonym_name#;
+             synonym.name=#name#
    </select>
     
   <!-- WRITE BACK -->
@@ -32,6 +32,10 @@
          synonym_id=$synonym_id$ AND 
          feature_id=(SELECT feature_id FROM $schema$.feature WHERE  
          uniquename=#uniquename#)
+  </delete>
+  
+  <delete id="deleteAlias" parameterClass="uk.ac.sanger.artemis.chado.Alias">
+    DELETE FROM $schema$.synonym WHERE synonym_id=$synonym_id$
   </delete>
   
 </sqlMap> 
