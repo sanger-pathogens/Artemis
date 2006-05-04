@@ -242,6 +242,26 @@ public interface ChadoDAO
    */
   public int deleteFeatureDbxref(final String schema, final ChadoTransaction tsn)
                      throws SQLException;
+  
+  /**
+   * Insert a synonym for a feature.
+   * @param schema        schema/organism name or null
+   * @param tsn           the <code>ChadoTransaction</code>
+   * @return    number of rows changed
+   * @throws SQLException
+   */
+  public int insertFeatureAlias(final String schema, final ChadoTransaction tsn)
+                     throws SQLException;
+
+  /**
+   * Delete a synonym for a feature.
+   * @param schema        schema/organism name or null
+   * @param tsn           the <code>ChadoTransaction</code>
+   * @return    number of rows changed
+   * @throws SQLException
+   */
+  public int deleteFeatureAlias(final String schema, final ChadoTransaction tsn)
+                     throws SQLException;
 
   /**
    * 

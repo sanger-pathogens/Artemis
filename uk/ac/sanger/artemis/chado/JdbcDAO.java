@@ -880,6 +880,102 @@ public class JdbcDAO
   }
   
   /**
+   * Insert a synonym for a feature.
+   * @param schema        schema/organism name or null
+   * @param tsn           the <code>ChadoTransaction</code>
+   * @return    number of rows changed
+   * @throws SQLException
+   */
+  public int insertFeatureAlias(final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    final String uniquename = tsn.getUniqueName();  
+    String sql;
+    
+    List constraints  = tsn.getConstraint();
+    String sqlAliasId = "SELECT synonym_id FROM "+schema+".synonym WHERE "+
+                        constraints.get(0);
+
+    appendToLogFile(sqlAliasId, sqlLog);
+    Statement st   = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+                                          ResultSet.CONCUR_UPDATABLE);
+    ResultSet rs   = st.executeQuery(sqlAliasId);
+    boolean exists = rs.next();
+    
+    if(!exists)
+    {
+      // create a new synonym name
+      String synonym_name = (String)constraints.get(0);
+      int index = synonym_name.indexOf("=");
+      synonym_name = synonym_name.substring(index+1);
+      
+      String type_id = (String)tsn.getPropertiesValue().get(0);
+      
+      sql = "INSERT INTO "+schema+
+            ".synonym (name, type_id, synonym_sgml) values ( "+
+            synonym_name+","+type_id+","+synonym_name+")" ;
+
+      st.executeUpdate(sql);
+      appendToLogFile(sql, sqlLog);
+      
+      rs = st.executeQuery(sqlAliasId);
+      rs.next();
+      appendToLogFile(sqlAliasId, sqlLog);
+    }
+    
+    final int synonym_id = rs.getInt("synonym_id"); 
+    sql = "INSERT INTO "+schema+
+           ".feature_synonym ( synonym_id, feature_id, pub_id )"+
+           " values ( "+synonym_id+" ,"+
+               "(SELECT feature_id FROM "+schema+
+               ".feature WHERE  uniquename='"+uniquename+"'), "+
+               " 1)";
+ 
+    appendToLogFile(sql, sqlLog);
+    return st.executeUpdate(sql);
+  }
+  
+  /**
+   * Delete a synonym for a feature.
+   * @param schema        schema/organism name or null
+   * @param tsn           the <code>ChadoTransaction</code>
+   * @return    number of rows changed
+   * @throws SQLException
+   */
+  public int deleteFeatureAlias(final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    final String uniquename = tsn.getUniqueName();
+    List constraints = tsn.getConstraint();
+    String sql = "SELECT synonym_id FROM "+schema+".feature_synonym WHERE "+ 
+                 "synonym_id=(SELECT synonym_id FROM "+schema+".synonym WHERE "+
+                 constraints.get(0)+")";
+    
+    appendToLogFile(sql, sqlLog);
+    Statement st   = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                                          ResultSet.CONCUR_READ_ONLY);
+    ResultSet rs   = st.executeQuery(sql);
+    rs.last();
+    int nrows = rs.getRow();
+    final int synonym_id = rs.getInt("synonym_id"); 
+    
+    // check this name is not used some where else, 
+    // i.e. in more than one row
+    if(nrows>1)
+    {
+      sql = "DELETE FROM "+schema+".feature_synonym WHERE "+
+            "synonym_id="+synonym_id+" AND "+
+            "feature_id=(SELECT feature_id FROM "+schema+
+                     ".feature WHERE  uniquename='"+uniquename+"')";
+    }
+    else
+      sql = "DELETE FROM "+schema+".synonym WHERE synonym_id="+synonym_id;
+    
+    st   = conn.createStatement();
+    return st.executeUpdate(sql);
+  }
+  
+  /**
    * Write the time a feature was last modified
    * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature

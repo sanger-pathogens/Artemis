@@ -386,8 +386,6 @@ public class DatabaseDocument extends Document
       String name             = feat.getUniquename();
       String typeName         = getCvtermName(type_id);
 
-//      SimpleDateFormat date_format = new SimpleDateFormat("MM.dd.yyyy hh:mm:ss z");
-//      String timelastmodified = date_format.format(feat.getTimelastmodified());
       String timelastmodified = Long.toString(feat.getTimelastmodified().getTime());
       String feature_id       = Integer.toString(feat.getId());
 
@@ -466,6 +464,7 @@ public class DatabaseDocument extends Document
         }
       }
       
+      // append synonyms
       if(synonym != null &&
          synonym.containsKey(new Integer(feature_id)))
       {
@@ -479,9 +478,8 @@ public class DatabaseDocument extends Document
           this_buff.append(alias.getCvterm_name()+"=");
           this_buff.append(alias.getName());
           
-          //this_buff.append((String)v_synonyms.get(j));
           if(j<v_synonyms.size()-1)
-            this_buff.append(",");
+            this_buff.append(";");
         }
       }
       
@@ -778,6 +776,10 @@ public class DatabaseDocument extends Document
           dao.deleteFeatureDbxref(schema, tsn);
         else if(tsn.getType() == ChadoTransaction.INSERT_DBXREF)
           dao.insertFeatureDbxref(schema, tsn);
+        else if(tsn.getType() == ChadoTransaction.DELETE_ALIAS)
+          dao.deleteFeatureAlias(schema, tsn);
+        else if(tsn.getType() == ChadoTransaction.INSERT_ALIAS)
+          dao.insertFeatureAlias(schema, tsn);
       }
       
       

@@ -57,6 +57,10 @@ public class ChadoTransaction
   public static final int INSERT_DBXREF = 7;
   public static final int DELETE_DBXREF = 8;
   
+  // SYNONYM TRANSACTIONS
+  public static final int INSERT_ALIAS = 9;
+  public static final int DELETE_ALIAS = 10;
+  
   /** properties store <i>e.g.</i> value=<quote>product=hypothetical protein</quote> */
   private List properties;
   /** constraint store <i>e.g.</i> type_id=21078 */
@@ -150,13 +154,22 @@ public class ChadoTransaction
                           final Timestamp lastmodified,
                           final Object feature_obj)
   {
-    this.type = type;
+    this.type   = type;
     this.dbxref = dbxref;
-    this.uniquename = uniquename;
+    this.uniquename   = uniquename;
     this.lastmodified = lastmodified;
-    this.feature_obj = feature_obj;
+    this.feature_obj  = feature_obj;
   }
 
+  public ChadoTransaction(final int type,
+                          final String uniquename,
+                          final Object feature_obj)
+  {
+    this.type = type;
+    this.uniquename  = uniquename;
+    this.feature_obj = feature_obj;
+  }
+  
   /**
    * The <code>Dbxref</code> used in a transaction.
    * @return  the feature dbxref

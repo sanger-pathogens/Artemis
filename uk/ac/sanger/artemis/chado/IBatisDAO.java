@@ -510,6 +510,32 @@ public class IBatisDAO implements ChadoDAO
   }
   
   /**
+   * Insert a synonym for a feature.
+   * @param schema        schema/organism name or null
+   * @param tsn           the <code>ChadoTransaction</code>
+   * @return    number of rows changed
+   * @throws SQLException
+   */
+  public int insertFeatureAlias(final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    return 0;  
+  }
+  
+  /**
+   * Delete a synonym for a feature.
+   * @param schema        schema/organism name or null
+   * @param tsn           the <code>ChadoTransaction</code>
+   * @return    number of rows changed
+   * @throws SQLException
+   */
+  public int deleteFeatureAlias(final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    return 0;  
+  }
+  
+  /**
    * Write the time a feature was last modified
    * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature

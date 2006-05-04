@@ -72,8 +72,15 @@ public class ChadoTransactionManager
               "Dbxref",
               "Ontology_term",
               "score", 
-              "gff_source",    // program or database
-              "gff_seqname" }; // seqID of coord system
+              "gff_source",      // program or database
+              "gff_seqname" };   // seqID of coord system
+           
+  private String synonym_tags[] =
+          {   "synonym",         // the rest are PSU synonyms
+              "gene",
+              "primary_name",
+              "reserved_name",
+              "obsolete_name" };
 
 
   /**
@@ -265,7 +272,7 @@ public class ChadoTransactionManager
       final String name = this_qualifier.getName();
 
       // ignore reserved tags
-      if(isReservedTag(name))
+      if(isReservedTag(name) || isSynonymTag(name))
         continue;
 
       final StringVector qualifier_values = this_qualifier.getValues();
@@ -299,6 +306,19 @@ public class ChadoTransactionManager
   {
     for(int i=0; i<reserved_tags.length; i++)
       if(tag.equals(reserved_tags[i]))
+        return true;
+    return false;
+  }
+  
+  /**
+   * Determine if this is a GFF3 predefined tag.
+   * @param tag
+   * @return  true if the tag is a GFF3 predefined tag
+   */
+  private boolean isSynonymTag(final String tag)
+  {
+    for(int i=0; i<synonym_tags.length; i++)
+      if(tag.equals(synonym_tags[i]))
         return true;
     return false;
   }
@@ -348,11 +368,17 @@ public class ChadoTransactionManager
     {
       final Qualifier this_qualifier = (Qualifier)qualifiers_old.elementAt(qualifier_index);
       String name = this_qualifier.getName();
-      if(isReservedTag(name))
-        continue;
       
       if(!qualifiers_new.contains(name))
       {
+        if(isReservedTag(name) || isSynonymTag(name))
+        {
+          handleReservedTags(feature, uniquename, 
+              null,
+              this_qualifier);
+          continue;
+        }
+        
         // get the cvterm_id for this featureprop/qualifier
         Long lcvterm_id = DatabaseDocument.getCvtermID(name);
         if(lcvterm_id == null)   // chado doesn't recognise this
@@ -408,7 +434,7 @@ public class ChadoTransactionManager
           continue;
       }
 
-      if(isReservedTag(name))
+      if(isReservedTag(name) || isSynonymTag(name))
       {
         handleReservedTags(feature, uniquename, 
                            this_qualifier,
@@ -519,37 +545,68 @@ public class ChadoTransactionManager
                                   final Qualifier new_qualifier,
                                   final Qualifier old_qualifier)
   {  
-    final StringVector new_qualifier_strings =
-                 StreamQualifier.toStringVector(null, new_qualifier);
+    StringVector new_qualifier_strings = null;
     
-    final StringVector old_qualifier_strings =
-                 StreamQualifier.toStringVector(null, old_qualifier);
+    if(new_qualifier != null)
+      new_qualifier_strings = StreamQualifier.toStringVector(null, new_qualifier);
     
-    ChadoTransaction tsn;
+    StringVector old_qualifier_strings;
+    
+    if(old_qualifier != null)
+      old_qualifier_strings = StreamQualifier.toStringVector(null, old_qualifier);
+    else
+      old_qualifier_strings = new StringVector();
+    
+    final String qualifier_name;
+    
+    if(old_qualifier != null)
+      qualifier_name = old_qualifier.getName();
+    else
+      qualifier_name = new_qualifier.getName();
+    
+    ChadoTransaction tsn = null;
     // find tags that have been deleted
     for(int i = 0; i < old_qualifier_strings.size(); ++i)
     {
       String qualifier_string = (String)old_qualifier_strings.elementAt(i);
       
-      if(!new_qualifier_strings.contains(qualifier_string))
+      if( new_qualifier_strings == null ||
+         !new_qualifier_strings.contains(qualifier_string) )
       {
          int index = qualifier_string.indexOf("=");
          qualifier_string = qualifier_string.substring(index+1);
-         index = qualifier_string.lastIndexOf(":");
          
-         System.out.println(uniquename+"  in handleReservedTags() DELETE db="+
-             qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
-         Dbxref old_dbxref = new Dbxref();
-         old_dbxref.setName(qualifier_string.substring(0,index));
-         old_dbxref.setAccession(qualifier_string.substring(index+1));
+         if(qualifier_name.equals("Dbxref"))
+         {
+           index = qualifier_string.lastIndexOf(":");
+         
+           System.out.println(uniquename+"  in handleReservedTags() DELETE db="+
+               qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
+         
+           Dbxref old_dbxref = new Dbxref();
+           old_dbxref.setName(qualifier_string.substring(0,index));
+           old_dbxref.setAccession(qualifier_string.substring(index+1));
 
-         tsn = new ChadoTransaction(ChadoTransaction.DELETE_DBXREF, 
-                                    uniquename, old_dbxref,
-                                    feature.getLastModified(),
-                                    feature);
+           tsn = new ChadoTransaction(ChadoTransaction.DELETE_DBXREF, 
+                                      uniquename, old_dbxref,
+                                      feature.getLastModified(),
+                                      feature);
+         }
+         else if(isSynonymTag(qualifier_name))
+         {
+           System.out.println(uniquename+"  in handleReservedTags() DELETE "+qualifier_name+" "+
+                              qualifier_string);
+           tsn = new ChadoTransaction(ChadoTransaction.DELETE_ALIAS, 
+                                      uniquename, 
+                                      feature);
+           tsn.setConstraint("synonym.name", "'"+qualifier_string+"'");      
+         }
          sql.add(tsn);
       }
     }
+    
+    if(new_qualifier_strings == null)
+      return;
     
     // find tags that have been inserted
     for(int i = 0; i < new_qualifier_strings.size(); ++i)
@@ -559,18 +616,33 @@ public class ChadoTransactionManager
       {
          int index = qualifier_string.indexOf("=");
          qualifier_string = qualifier_string.substring(index+1);
-         index = qualifier_string.lastIndexOf(":");
          
-         System.out.println(uniquename+"  in handleReservedTags() INSERT db="+
+         if(qualifier_name.equals("Dbxref"))
+         {
+           index = qualifier_string.lastIndexOf(":");
+         
+           System.out.println(uniquename+"  in handleReservedTags() INSERT db="+
              qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
-         Dbxref new_dbxref = new Dbxref();
-         new_dbxref.setName(qualifier_string.substring(0,index));
-         new_dbxref.setAccession(qualifier_string.substring(index+1));
+           Dbxref new_dbxref = new Dbxref();
+           new_dbxref.setName(qualifier_string.substring(0,index));
+           new_dbxref.setAccession(qualifier_string.substring(index+1));
 
-         tsn = new ChadoTransaction(ChadoTransaction.INSERT_DBXREF, 
-                                    uniquename, new_dbxref, 
-                                    feature.getLastModified(),
-                                    feature);
+           tsn = new ChadoTransaction(ChadoTransaction.INSERT_DBXREF, 
+                                      uniquename, new_dbxref, 
+                                      feature.getLastModified(),
+                                      feature);
+         }
+         else if(isSynonymTag(qualifier_name))
+         {
+           System.out.println(uniquename+"  in handleReservedTags() INSERT "+qualifier_name+" "+
+               qualifier_string);
+           tsn = new ChadoTransaction(ChadoTransaction.INSERT_ALIAS, 
+                                      uniquename, 
+                                      feature);
+           tsn.setConstraint("synonym.name", "'"+qualifier_string+"'");
+           Long lcvterm_id = DatabaseDocument.getCvtermID(qualifier_name);
+           tsn.addProperty("type_id", lcvterm_id.toString());
+         }
          sql.add(tsn);
       }
     }  
