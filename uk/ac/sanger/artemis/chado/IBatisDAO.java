@@ -519,6 +519,10 @@ public class IBatisDAO implements ChadoDAO
   public int insertFeatureAlias(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
+    final Alias alias = tsn.getAlias();
+    alias.setSchema(schema);
+    
+    
     return 0;  
   }
   
@@ -532,6 +536,13 @@ public class IBatisDAO implements ChadoDAO
   public int deleteFeatureAlias(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
+    final Alias alias = tsn.getAlias();
+    alias.setSchema(schema);
+    
+    Dbxref dbxref = tsn.getFeatureDbxref();
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    Integer synonym_id = (Integer)sqlMap.queryForObject("getSynonymId", dbxref);
+    
     return 0;  
   }
   

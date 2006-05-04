@@ -31,11 +31,14 @@ package uk.ac.sanger.artemis.chado;
 public class Alias
 {
   private Integer feature_id;
+  private Integer synonym_id;
   private String name;
   private String schema;
   private String uniquename;
   private String cvterm_name;
+  private Long type_id;
   
+
   public String getSchema()
   {
     return schema;
@@ -86,4 +89,23 @@ public class Alias
     this.cvterm_name = cvterm_name;
   }
 
+  public Long getType_id()
+  {
+    return type_id;
+  }
+
+  public void setType_id(Long type_id)
+  {
+    this.type_id = type_id;
+  }
+
+  public Integer getSynonym_id()
+  {
+    return synonym_id;
+  }
+
+  public void setSynonym_id(Integer synonym_id)
+  {
+    this.synonym_id = synonym_id;
+  }
 }

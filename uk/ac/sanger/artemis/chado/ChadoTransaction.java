@@ -79,6 +79,8 @@ public class ChadoTransaction
   private ChadoFeature chadoFeature;
   /** feature dbxref */
   private Dbxref dbxref;
+  /** feature synonym */
+  private Alias alias;
   /** last time feature was modified */
   private Timestamp lastmodified;
   /** the feature object */
@@ -162,11 +164,11 @@ public class ChadoTransaction
   }
 
   public ChadoTransaction(final int type,
-                          final String uniquename,
+                          final Alias alias,
                           final Object feature_obj)
   {
-    this.type = type;
-    this.uniquename  = uniquename;
+    this.type   = type;
+    this.alias  = alias;
     this.feature_obj = feature_obj;
   }
   
@@ -379,5 +381,15 @@ public class ChadoTransaction
   public Object getFeatureObject()
   {
     return feature_obj;
+  }
+
+  public Alias getAlias()
+  {
+    return alias;
+  }
+
+  public void setAlias(Alias alias)
+  {
+    this.alias = alias;
   }
 }

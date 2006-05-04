@@ -889,12 +889,14 @@ public class JdbcDAO
   public int insertFeatureAlias(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    final String uniquename = tsn.getUniqueName();  
+    final Alias alias = tsn.getAlias();
+    final String uniquename   = alias.getUniquename();
+    final String synonym_name = alias.getName();
+      
     String sql;
-    
-    List constraints  = tsn.getConstraint();
-    String sqlAliasId = "SELECT synonym_id FROM "+schema+".synonym WHERE "+
-                        constraints.get(0);
+     
+    String sqlAliasId = "SELECT synonym_id FROM "+
+                        schema+".synonym WHERE synonym.name='"+synonym_name+"'";
 
     appendToLogFile(sqlAliasId, sqlLog);
     Statement st   = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -904,16 +906,12 @@ public class JdbcDAO
     
     if(!exists)
     {
-      // create a new synonym name
-      String synonym_name = (String)constraints.get(0);
-      int index = synonym_name.indexOf("=");
-      synonym_name = synonym_name.substring(index+1);
-      
-      String type_id = (String)tsn.getPropertiesValue().get(0);
+      // create a new synonym name     
+      String type_id = alias.getType_id().toString();
       
       sql = "INSERT INTO "+schema+
-            ".synonym (name, type_id, synonym_sgml) values ( "+
-            synonym_name+","+type_id+","+synonym_name+")" ;
+            ".synonym (name, type_id, synonym_sgml) values ( '"+
+            synonym_name+"',"+type_id+",'"+synonym_name+"')" ;
 
       st.executeUpdate(sql);
       appendToLogFile(sql, sqlLog);
@@ -945,11 +943,12 @@ public class JdbcDAO
   public int deleteFeatureAlias(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    final String uniquename = tsn.getUniqueName();
-    List constraints = tsn.getConstraint();
+    final Alias alias = tsn.getAlias();
+    final String uniquename   = alias.getUniquename();
+    final String synonym_name = alias.getName();
     String sql = "SELECT synonym_id FROM "+schema+".feature_synonym WHERE "+ 
                  "synonym_id=(SELECT synonym_id FROM "+schema+".synonym WHERE "+
-                 constraints.get(0)+")";
+                 "synonym.name='"+synonym_name+"')";
     
     appendToLogFile(sql, sqlLog);
     Statement st   = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,

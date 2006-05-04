@@ -596,10 +596,14 @@ public class ChadoTransactionManager
          {
            System.out.println(uniquename+"  in handleReservedTags() DELETE "+qualifier_name+" "+
                               qualifier_string);
+           
+           Alias alias = new Alias();
+           alias.setUniquename(uniquename);
+           alias.setName(qualifier_string);
            tsn = new ChadoTransaction(ChadoTransaction.DELETE_ALIAS, 
-                                      uniquename, 
+                                      alias, 
                                       feature);
-           tsn.setConstraint("synonym.name", "'"+qualifier_string+"'");      
+           //tsn.setConstraint("synonym.name", "'"+qualifier_string+"'");      
          }
          sql.add(tsn);
       }
@@ -636,12 +640,17 @@ public class ChadoTransactionManager
          {
            System.out.println(uniquename+"  in handleReservedTags() INSERT "+qualifier_name+" "+
                qualifier_string);
-           tsn = new ChadoTransaction(ChadoTransaction.INSERT_ALIAS, 
-                                      uniquename, 
-                                      feature);
-           tsn.setConstraint("synonym.name", "'"+qualifier_string+"'");
            Long lcvterm_id = DatabaseDocument.getCvtermID(qualifier_name);
-           tsn.addProperty("type_id", lcvterm_id.toString());
+           Alias alias = new Alias();
+           alias.setUniquename(uniquename);
+           alias.setName(qualifier_string);
+           alias.setType_id(lcvterm_id);
+           
+           tsn = new ChadoTransaction(ChadoTransaction.INSERT_ALIAS, 
+                                      alias, 
+                                      feature);
+           //tsn.setConstraint("synonym.name", "'"+qualifier_string+"'");
+           //tsn.addProperty("type_id", lcvterm_id.toString());
          }
          sql.add(tsn);
       }
