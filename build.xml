@@ -122,6 +122,21 @@
     </javac>
   </target>
 
+  <!-- Creates the chado class package -->
+  <target name="chado-access" depends="init,compile">
+    <jar
+      jarfile="${build.dir}/chado-access.jar"
+      basedir="${build.dest.main}"
+      manifest="META-INF/MANIFEST.MF"
+      includes="uk/ac/sanger/artemis/chado/**"
+    />
+  	<jar
+  	  jarfile="${build.dir}/chado-access.jar"
+      update="yes"
+  	  basedir="${build.src.main}"
+  	  includes="artemis_sqlmap/**"
+  	/>
+  </target>
 
   <!-- Creates the class package -->
   <target name="package" depends="init,compile">
