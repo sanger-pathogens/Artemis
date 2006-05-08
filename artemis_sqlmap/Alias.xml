@@ -21,21 +21,38 @@
     
     <select id="getSynonymId" resultClass="java.lang.Integer"
             parameterClass="uk.ac.sanger.artemis.chado.Alias">
+      SELECT synonym_id FROM $schema$.synonym WHERE synonym.name=#name#
+    </select>
+   
+    <select id="getFeatureSynonymId" resultClass="java.lang.Integer"
+            parameterClass="uk.ac.sanger.artemis.chado.Alias">
       SELECT synonym_id FROM $schema$.feature_synonym WHERE
              synonym_id=(SELECT synonym_id FROM $schema$.synonym WHERE 
-             synonym.name=#name#
-   </select>
-    
+             synonym.name=#name#)
+    </select>
+   
   <!-- WRITE BACK -->
-  <delete id="deleteFeatureAlias" parameterClass="uk.ac.sanger.artemis.chado.Alias">
-     DELETE FROM $schema$.feature_synonym WHERE
+    <delete id="deleteFeatureAlias" parameterClass="uk.ac.sanger.artemis.chado.Alias">
+      DELETE FROM $schema$.feature_synonym WHERE
          synonym_id=$synonym_id$ AND 
          feature_id=(SELECT feature_id FROM $schema$.feature WHERE  
          uniquename=#uniquename#)
-  </delete>
+    </delete>
   
-  <delete id="deleteAlias" parameterClass="uk.ac.sanger.artemis.chado.Alias">
-    DELETE FROM $schema$.synonym WHERE synonym_id=$synonym_id$
-  </delete>
+    <insert id="insertFeatureAlias">
+      INSERT INTO $schema$.feature_synonym ( synonym_id, feature_id, pub_id )
+      VALUES ( $synonym_id$ , 
+              (SELECT feature_id FROM $schema$.feature WHERE uniquename=#uniquename#), 
+              1)
+    </insert>
+  
+    <delete id="deleteAlias" parameterClass="uk.ac.sanger.artemis.chado.Alias">
+      DELETE FROM $schema$.synonym WHERE synonym_id=$synonym_id$
+    </delete>
+  
+    <insert id="insertAlias" parameterClass="uk.ac.sanger.artemis.chado.Alias">
+      INSERT INTO $schema$.synonym ( name, type_id, synonym_sgml ) 
+      VALUES ( #name#, $type_id$, #name# )
+    </insert>
   
 </sqlMap> 

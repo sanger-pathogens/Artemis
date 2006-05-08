@@ -522,8 +522,22 @@ public class IBatisDAO implements ChadoDAO
     final Alias alias = tsn.getAlias();
     alias.setSchema(schema);
     
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    Object synonym_id  = sqlMap.queryForObject("getSynonymId", alias);
     
-    return 0;  
+    if(synonym_id == null)
+    {
+      // create a new synonym name     
+      Long type_id = alias.getType_id();
+      alias.setType_id(type_id);
+      sqlMap.insert("insertAlias", alias);
+      
+      synonym_id  = sqlMap.queryForObject("getSynonymId", alias);
+    }
+    
+    alias.setSynonym_id((Integer)synonym_id);
+    sqlMap.insert("insertFeatureAlias", alias);
+    return 1;
   }
   
   /**
@@ -540,7 +554,7 @@ public class IBatisDAO implements ChadoDAO
     alias.setSchema(schema);
     
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    List synonym_id_list = sqlMap.queryForList("getSynonymId", alias);
+    List synonym_id_list = sqlMap.queryForList("getFeatureSynonymId", alias);
     
     final Integer synonym_id = (Integer)synonym_id_list.get(0); 
     alias.setSynonym_id(synonym_id);
