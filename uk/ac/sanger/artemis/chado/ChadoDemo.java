@@ -257,6 +257,10 @@ public class ChadoDemo
       ChadoFeature chado_feature = (ChadoFeature) featureList.get(row);
       Hashtable dbxref = dao.getDbxref(chado_feature.getSchema(),
                                        chado_feature.getUniquename());
+      
+//    get all synonyms
+      Hashtable synonym = dao.getAlias(chado_feature.getSchema(),
+                                       chado_feature.getUniquename());
 
       if(dbxref.size() > 0)
       {
@@ -275,7 +279,31 @@ public class ChadoDemo
         }
         attr_buff.append("\n");
       }
+      
+//    append synonyms
+      if(synonym != null)
+      {    
+        Alias alias;
+        
+        Enumeration alias_enum = synonym.elements();
+        while(alias_enum.hasMoreElements())
+        {
+          Vector v_synonyms = (Vector)alias_enum.nextElement();
+          for(int j=0; j<v_synonyms.size(); j++)
+          {
+            alias = (Alias)v_synonyms.get(j);
+            attr_buff.append("/");
+            attr_buff.append(alias.getCvterm_name()+"=");
+            attr_buff.append(alias.getName());
+            
+            if(j<v_synonyms.size()-1)
+              attr_buff.append(";");
+            attr_buff.append("\n");
+          }
+        }
 
+      }
+      
       Hashtable attributes = chado_feature.getQualifiers();
       Enumeration enum_attr = attributes.keys();
 
