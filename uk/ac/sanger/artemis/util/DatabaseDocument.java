@@ -892,13 +892,15 @@ public class DatabaseDocument extends Document
         
         //System.out.println(date_format.format(now)+"   "+
         //                   date_format.format(timestamp));
-        JOptionPane.showMessageDialog(null, 
-                                      uniquename +
+        int select = JOptionPane.showConfirmDialog(null, uniquename +
                                       " has been altered at :\n"+
-                                      date_format.format(now),
-                                      "Feature Changed",
-                                      JOptionPane.ERROR_MESSAGE);
-        return false;
+                                      date_format.format(now)+"\nOverwite?", 
+                                      "Feature Changed", 
+                                      JOptionPane.OK_CANCEL_OPTION);
+        if(select == JOptionPane.OK_OPTION)
+          return true;
+        else
+          return false;
       }
     }
     return true;
