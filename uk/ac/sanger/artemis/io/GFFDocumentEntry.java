@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.21 2006-04-26 12:53:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.22 2006-05-10 10:31:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.21 2006-04-26 12:53:01 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.22 2006-05-10 10:31:18 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -276,7 +276,9 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
 
         final GFFStreamFeature new_feature = new GFFStreamFeature(first_old_feature.getKey(),
                                                              new_location, qualifier_vector);
-        new_feature.setLastModified(lasttimemodified);
+        
+        if(lasttimemodified != null)
+          new_feature.setLastModified(lasttimemodified);
         new_feature.setSegmentRangeStore(id_range_store);
 
         try 

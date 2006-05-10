@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.34 2006-04-28 15:50:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.35 2006-05-10 10:31:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -39,7 +39,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.34 2006-04-28 15:50:15 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.35 2006-05-10 10:31:18 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -446,9 +446,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       Qualifier group   = getQualifierByName("group");
 
       // source becomes a Dbxref in chado
-      String source_str = null;
-      if(getQualifierByName("Dbxref") != null)
-        source_str = getDbxrefGFFSource(getQualifierByName("Dbxref"));
+     // String source_str = null;
+     // if(getQualifierByName("Dbxref") != null)
+     //   source_str = getDbxrefGFFSource(getQualifierByName("Dbxref"));
       
       if(seqname == null) 
         seqname = new Qualifier("gff_seqname", ".");
@@ -500,8 +500,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
       final String attribute_string = unParseAttributes();
 
-      if(source_str == null)
-        source_str = (String)source.getValues().elementAt(0);
+      //if(source_str == null)
+      String source_str = (String)source.getValues().elementAt(0);
       
       writer.write(seqname.getValues().elementAt(0) + "\t" +
                    source_str + "\t" +
@@ -523,6 +523,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    * @param qualifier
    * @return  the gff_source value or NULL
    */
+  /*
   private String getDbxrefGFFSource(final Qualifier qualifier)
   {
     StringVector qualifier_strings =
@@ -543,6 +544,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     }
     return null;
   }
+  */
   
   /**
    *  Return a String containing the qualifiers of this feature in a form
