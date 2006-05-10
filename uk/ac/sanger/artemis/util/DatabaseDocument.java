@@ -369,6 +369,8 @@ public class DatabaseDocument extends Document
       id_store.put(feature_id, name);
     }
 
+    String gff_source;
+    StringBuffer feature_dbxref;
     // get all dbrefs
     Hashtable dbxrefs = dao.getDbxref(schema, null);
     
@@ -376,7 +378,9 @@ public class DatabaseDocument extends Document
     Hashtable synonym = dao.getAlias(schema, null);
 
     for(int i = 0; i < feature_size; i++)
-    {
+    { 
+      gff_source = null;
+      
       ChadoFeature feat = (ChadoFeature)featList.get(i);
       int fmin                = feat.getFmin() + 1;
       int fmax                = feat.getFmax();
@@ -402,9 +406,29 @@ public class DatabaseDocument extends Document
         if(types[j].equals(typeName))
           this_buff = buffers[j];
       }
+      
+      Vector dbxref = null;
+      // append dbxrefs
+      if(dbxrefs != null &&
+         dbxrefs.containsKey(new Integer(feature_id)))
+      {
+        dbxref = (Vector)dbxrefs.get(new Integer(feature_id));
+        for(int j=0; j<dbxref.size(); j++)
+        {
+          if(((String)dbxref.get(j)).startsWith("GFF_source:"))
+          {
+            gff_source = ((String)dbxref.get(j)).substring(11);
+            dbxref.removeElementAt(j);
+          }
+        }
+      }
 
       this_buff.append(parentFeature + "\t"); // seqid
-      this_buff.append("chado\t");            // source
+      
+      if(gff_source != null)
+        this_buff.append(gff_source+"\t");    // source
+      else
+        this_buff.append("chado\t");            
       this_buff.append(typeName + "\t");      // type
       this_buff.append(fmin + "\t");          // start
       this_buff.append(fmax + "\t");          // end
@@ -451,11 +475,9 @@ public class DatabaseDocument extends Document
       } 
 
       // append dbxrefs
-      if(dbxrefs != null &&
-         dbxrefs.containsKey(new Integer(feature_id)))
+      if(dbxref != null && dbxref.size() > 0)
       {
         this_buff.append("Dbxref=");
-        Vector dbxref = (Vector)dbxrefs.get(new Integer(feature_id));
         for(int j=0; j<dbxref.size(); j++)
         {
           this_buff.append((String)dbxref.get(j));
@@ -735,6 +757,7 @@ public class DatabaseDocument extends Document
       
       //
       // check feature timestamps have not changed
+      Vector names_checked = new Vector();
       for(i = 0; i < sql.size(); i++)
       {
         ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
@@ -745,8 +768,11 @@ public class DatabaseDocument extends Document
           final List uniquename = tsn.getUniquename();
           
           for(int j=0; j<uniquename.size(); j++)
-          {  
-            System.out.println((String)uniquename.get(j)+" "+tsn.getLastModified());
+          {
+            if(names_checked.contains((String)uniquename.get(j)))
+              continue;
+            
+            names_checked.add((String)uniquename.get(j));
             unchanged = checkFeatureTimestamp(schema, 
                            (String)uniquename.get(j), 
                          tsn.getLastModified(), dao);
@@ -787,6 +813,7 @@ public class DatabaseDocument extends Document
       // update timelastmodified timestamp
       Timestamp ts = null;
       Timestamp ts2;
+      names_checked = new Vector();
       for(int j = 0; j < sql.size(); j++)
       {
         ChadoTransaction tsn = (ChadoTransaction) sql.get(j);
@@ -799,6 +826,11 @@ public class DatabaseDocument extends Document
           // update timelastmodified timestamp
           for(int k=0; k<uniquename.size(); k++)
           {
+            if(names_checked.contains((String)uniquename.get(k)))
+              continue;
+            
+            names_checked.add((String)uniquename.get(k));
+            
             dao.writeTimeLastModified(schema, (String)uniquename.get(k), ts);
             ts2 = dao.getTimeLastModified(schema, (String)uniquename.get(k));
             if(ts2 == null)
@@ -858,7 +890,8 @@ public class DatabaseDocument extends Document
         SimpleDateFormat date_format = 
                    new SimpleDateFormat("dd.MM.yyyy hh:mm:ss z");
         
-        System.out.println(date_format.format(now)+"   "+date_format.format(timestamp));
+        //System.out.println(date_format.format(now)+"   "+
+        //                   date_format.format(timestamp));
         JOptionPane.showMessageDialog(null, 
                                       uniquename +
                                       " has been altered at :\n"+
