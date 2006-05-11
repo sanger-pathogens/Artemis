@@ -95,11 +95,15 @@ public class ChadoTransactionManager
 
       if(event.getType() == FeatureChangeEvent.LOCATION_CHANGED)
       {
-        System.out.println("LOCATION_CHANGED ");
-
         RangeVector rv_new = event.getNewLocation().getRanges();
         RangeVector rv_old = event.getOldLocation().getRanges();
 
+        System.out.println("LOCATION_CHANGED "+feature.getFirstBase()+".."+feature.getLastBase()+
+                           "   new="+rv_new.size()+" old="+rv_old.size());
+
+        if(rv_new.size() != rv_old.size())
+          return;
+        
         int ichanged;
         Vector changes = new Vector();
         for(ichanged=0; ichanged<rv_old.size(); ichanged++)
@@ -188,11 +192,13 @@ public class ChadoTransactionManager
       }
 
       ChadoFeature chado_feature = new ChadoFeature();
-
+      ChadoFeatureLoc featureloc = new ChadoFeatureLoc();
+      chado_feature.setFeatureloc(featureloc);
+      
       if(feature.isForwardFeature())
-        chado_feature.setStrand(1);
+        featureloc.setStrand(1);
       else
-        chado_feature.setStrand(-1);
+        featureloc.setStrand(-1);
 
       // codon_start attribute
       try
@@ -203,27 +209,30 @@ public class ChadoTransactionManager
           String phase = (String)(qualifier_phase.getValues()).elementAt(0);
 
           if(phase.equals ("1"))
-            chado_feature.setPhase(0);
+            featureloc.setPhase(0);
           else if(phase.equals("2"))
-            chado_feature.setPhase(1);
+            featureloc.setPhase(1);
           else if(phase.equals("3")) 
-            chado_feature.setPhase(2);
+            featureloc.setPhase(2);
         }
       }
       catch(InvalidRelationException ire){}
 
       if(feature.isForwardFeature())
-        chado_feature.setStrand(1);
+        featureloc.setStrand(1);
       else
-        chado_feature.setStrand(-1);
+        featureloc.setStrand(-1);
 
-      chado_feature.setFmin(feature.getRawFirstBase()-1);
-      chado_feature.setFmax(feature.getRawLastBase());
+      featureloc.setFmin(feature.getRawFirstBase()-1);
+      featureloc.setFmax(feature.getRawLastBase());
       chado_feature.setUniquename(feature_uniquename);
       chado_feature.setName(feature_uniquename);
 
       String key = feature.getKey().toString();
-      chado_feature.setType_id(DatabaseDocument.getCvtermID(key).longValue());
+      
+      Cvterm cvterm = new Cvterm();
+      cvterm.setId(DatabaseDocument.getCvtermID(key).longValue());
+      chado_feature.setCvterm(cvterm);
 
       addQualifiers(feature.getQualifiers(), chado_feature);
       // create transaction object

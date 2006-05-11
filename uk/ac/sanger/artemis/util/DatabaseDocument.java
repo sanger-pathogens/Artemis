@@ -382,21 +382,24 @@ public class DatabaseDocument extends Document
       gff_source = null;
       
       ChadoFeature feat = (ChadoFeature)featList.get(i);
-      int fmin                = feat.getFmin() + 1;
-      int fmax                = feat.getFmax();
-      long type_id            = feat.getType_id();
-      int strand              = feat.getStrand();
-      int phase               = feat.getPhase();
+      int fmin                = feat.getFeatureloc().getFmin() + 1;
+      int fmax                = feat.getFeatureloc().getFmax();
+      long type_id            = feat.getCvterm().getId(); //.getType_id();
+      int strand              = feat.getFeatureloc().getStrand();
+      int phase               = feat.getFeatureloc().getPhase();
       String name             = feat.getUniquename();
       String typeName         = getCvtermName(type_id);
 
       String timelastmodified = Long.toString(feat.getTimelastmodified().getTime());
       String feature_id       = Integer.toString(feat.getId());
 
-      String parent_id = feat.getObject_id();
+      String parent_id = null;
+      if(feat.getFeature_relationship() != null)
+        parent_id = Integer.toString(feat.getFeature_relationship().getObject_id());
+            
       if(parent_id != null && id_store.containsKey(parent_id))
         parent_id = (String)id_store.get(parent_id);
-
+      
       // make gff format
 
       // select buffer
@@ -675,7 +678,7 @@ public class DatabaseDocument extends Document
         while(it_residue_features.hasNext())
         {
           ChadoFeature feature = (ChadoFeature)it_residue_features.next();
-          String typeName = getCvtermName(feature.getType_id());
+          String typeName = getCvtermName(feature.getCvterm().getId()); //getCvtermName(feature.getType_id());
 
           db.put(schema + " - " + typeName + " - " + feature.getName(),
                  Integer.toString(feature.getId()));
@@ -922,13 +925,13 @@ public class DatabaseDocument extends Document
       for(int i = 0; i < featureList.size(); i++)
       {
         feature = (ChadoFeature)featureList.get(i);
-        int fmin     = feature.getFmin() + 1;
-        int fmax     = feature.getFmax();
+        int fmin     = feature.getFeatureloc().getFmin() + 1;
+        int fmax     = feature.getFeatureloc().getFmax();
 
         System.out.print(fmin+" "+fmax);
-        System.out.print(" "+feature.getType_id());
-        System.out.print(" "+feature.getProp_type_id());
-        System.out.print(" "+feature.getStrand());
+        //System.out.print(" "+feature.getCvterm().getId());
+        //System.out.print(" "+feature.getProp_cvterm().getId());
+        System.out.print(" "+feature.getFeatureloc().getStrand());
         System.out.print(" "+feature.getUniquename());
         System.out.print(" "+feature.getTimelastmodified().toString());
         System.out.println(" "+Integer.toString(feature.getId()));

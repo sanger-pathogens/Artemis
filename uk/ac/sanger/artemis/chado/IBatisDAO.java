@@ -130,7 +130,7 @@ public class IBatisDAO implements ChadoDAO
     {  
       String schema = (String)schema_list.get(i);
       feature.setSchema(schema);
-      List res_list = sqlMap.queryForList("getGffLine", feature);
+      List res_list = sqlMap.queryForList("getFeature", feature);
       
       for(int j=0; j<res_list.size(); j++)
         ((ChadoFeature)res_list.get(j)).setSchema(schema);
@@ -400,8 +400,11 @@ public class IBatisDAO implements ChadoDAO
   {
     // get the organism id from the srcfeature_id 
     ChadoFeature feature = new ChadoFeature();
+    ChadoFeatureLoc featureloc = new ChadoFeatureLoc();
+    feature.setFeatureloc(featureloc);
     feature.setSchema(schema);
-    feature.setSrcfeature_id(Integer.parseInt(srcfeature_id));
+    
+    featureloc.setSrcfeature_id(Integer.parseInt(srcfeature_id));
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     Integer organism_id = (Integer)sqlMap.queryForObject("getOrganismID", feature);
 
@@ -419,7 +422,7 @@ public class IBatisDAO implements ChadoDAO
 
     //
     // insert feature location into featureloc
-    chadoFeature.setSrcfeature_id(Integer.parseInt(srcfeature_id));
+    chadoFeature.getFeatureloc().setSrcfeature_id(Integer.parseInt(srcfeature_id));
     chadoFeature.setId(feature_id);
     sqlMap.insert("insertFeatureLoc", chadoFeature);
   }

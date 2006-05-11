@@ -7,6 +7,11 @@
 
 <sqlMap namespace="Feature"> 
  
+     <resultMap id="select-cvterm-names-result" class="uk.ac.sanger.artemis.chado.Cvterm">
+        <result property="id" column="cvterm_id"/>
+  	    <result property="name" column="name"/>
+     </resultMap>
+     
     <parameterMap id="schema-cvlist" 
                   class="uk.ac.sanger.artemis.chado.SchemaCVList">
        <parameter property="schema" javaType="java.lang.String"/>
@@ -17,28 +22,29 @@
                class="uk.ac.sanger.artemis.chado.ChadoFeature">
         <result property="timelastmodified" column="timelastmodified"/>
    	    <result property="id" column="id"/>
-  	    <result property="object_id" column="object_id"/>
-        <result property="strand" column="strand" nullValue="0"/>
-        <result property="fmin" column="fmin" nullValue="-1"/>
-        <result property="fmax" column="fmax" nullValue="0"/>
+  	    <result property="feature_relationship.object_id" column="object_id"/>
+        <result property="featureloc.strand" column="strand" nullValue="0"/>
+        <result property="featureloc.fmin" column="fmin" nullValue="-1"/>
+        <result property="featureloc.fmax" column="fmax" nullValue="0"/>
+        <result property="featureloc.phase" column="phase" nullValue="10"/>
         <result property="uniquename" column="uniquename"/>
-        <result property="type_id" column="type_id"/>
-        <result property="prop_type_id" column="prop_type_id" nullValue="0"/>
-        <result property="value" column="value"/>
-        <result property="phase" column="phase" nullValue="10"/>
+        <result property="cvterm.id" column="type_id"/>
+        <result property="featureprop.cvterm.id" column="prop_type_id" nullValue="0"/>
+        <result property="featureprop.value" column="value"/>
      </resultMap>
 
     <resultMap id="select-feature-result" 
-               class="uk.ac.sanger.artemis.chado.ChadoFeature">
+               class="uk.ac.sanger.artemis.chado.ChadoFeature">       
+        <result property="timelastmodified" column="timelastmodified"/>
    	    <result property="id" column="id"/>
         <result property="uniquename" column="uniquename"/>
         <result property="name" column="name"/>
-        <result property="type_id" column="type_id"/>
         <result property="length" column="length" nullValue="-999" />
-  	    <result property="srcfeature_id" column="srcfeature_id" nullValue="-999" />
-        <result property="fmin" column="fmin" nullValue="-999" />
-        <result property="fmax" column="fmax" nullValue="-999" />
-        <result property="strand" column="strand" nullValue="0" />
+  	    <result property="featureloc.srcfeature_id" column="srcfeature_id" nullValue="-999" />
+        <result property="featureloc.fmin" column="fmin" nullValue="-999" />
+        <result property="featureloc.fmax" column="fmax" nullValue="-999" />
+        <result property="featureloc.strand" column="strand" nullValue="0" />
+        <result property="cvterm" column="type_id" select="selectCvterm" />
      </resultMap>
 
      <resultMap id="select-feature-sequence-result" 
@@ -49,13 +55,20 @@
     
      <resultMap id="select-feature-with-residues-result" 
                 class="uk.ac.sanger.artemis.chado.ChadoFeature">
-        <result property="abbreviation" column="abbreviation"/>
+        <result property="organism.abbreviation" column="abbreviation"/>
         <result property="name" column="name"/>
         <result property="id" column="feature_id"/>
-        <result property="type_id" column="type_id"/>
+        <result property="cvterm.id" column="type_id"/>
      </resultMap>
 
 
+     <!-- look up cvterms names and id -->
+     <select id="selectCvterm" resultMap="select-cvterm-names-result"> 
+       SELECT cvterm_id, name 
+       FROM cvterm
+       WHERE cvterm_id=#value# 
+     </select> 
+     
      <!-- get feature name -->
      <select id="getFeatureName" parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature" 
                                  resultClass="java.lang.String"> 
@@ -144,6 +157,7 @@
     <select id="getFeature" resultMap ="select-feature-result" 
                             parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature">
 	 SELECT
+	    timelastmodified,
 	 	$schema$.feature.feature_id AS id,
 	 	uniquename,
 		name,
@@ -174,7 +188,7 @@
     <select id="getOrganismID" resultClass="java.lang.Integer" 
             parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature">
       SELECT organism_id FROM $schema$.feature f WHERE
-             f.feature_id=$srcfeature_id$
+             f.feature_id=$featureloc.srcfeature_id$
     </select>
 
     <select id="getTimeLastModified" resultClass="java.sql.Timestamp"
@@ -255,7 +269,7 @@
           $organism_id$,
           #name#,
           #uniquename#,
-          $type_id$ )
+          $cvterm.id$ )
     </insert>
 
     <insert id="insertFeatureLoc" 
@@ -265,11 +279,11 @@
       VALUES
         ( nextval('$schema$.featureloc_featureloc_id_seq'),
           $id$,
-          $srcfeature_id$,
-          $fmin$,
-          $fmax$,
-          $strand$,
-          $phase$ )
+          $featureloc.srcfeature_id$,
+          $featureloc.fmin$,
+          $featureloc.fmax$,
+          $featureloc.strand$,
+          $featureloc.phase$ )
     </insert>
 
    <delete id="deleteFeature" 

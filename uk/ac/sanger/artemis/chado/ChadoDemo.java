@@ -355,12 +355,15 @@ public class ChadoDemo
     for(int i = 0; i < featureList.size(); i++)
     {
       ChadoFeature feature = (ChadoFeature) featureList.get(i);
+      
+      System.out.println(feature.getCvterm());
       int fmin = feature.getFmin() + 1;
       int fmax = feature.getFmax();
 
       rowData[i][0] = feature.getSchema();
       rowData[i][1] = feature.getUniquename();
-      rowData[i][2] = (String)cvterm.get(new Long(feature.getType_id()));
+      rowData[i][2] = feature.getCvterm().getName();
+      //rowData[i][2] = (String)cvterm.get(new Long(feature.getType_id()));
       rowData[i][3] = Integer.toString(feature.getId());
       rowData[i][4] = fmin + "..." + fmax;
       rowData[i][5] = Integer.toString(feature.getStrand());

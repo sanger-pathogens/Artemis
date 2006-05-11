@@ -197,24 +197,38 @@ public class JdbcDAO
     while(rs.next())
     {
       ChadoFeature feature = new ChadoFeature();
-      feature.setFmin( rs.getInt("fmin") );
-      feature.setFmax( rs.getInt("fmax") );
-      feature.setType_id( rs.getLong("type_id") );
-      feature.setProp_type_id( rs.getLong("prop_type_id") );
-      feature.setStrand( rs.getInt("strand") );
-      feature.setSchema(schema);
+      
+      ChadoFeatureLoc featureloc = new ChadoFeatureLoc();
+      featureloc.setFmin( rs.getInt("fmin") );
+      featureloc.setFmax( rs.getInt("fmax") );
+      featureloc.setStrand( rs.getInt("strand") );
       
       int phase = rs.getInt("phase");
       if(rs.wasNull())
-        feature.setPhase(10);
+        featureloc.setPhase(10);
       else 
-        feature.setPhase(phase);
+        featureloc.setPhase(phase);
+
+      feature.setFeatureloc(featureloc);
+      feature.setCvterm(new Cvterm());
+      feature.getCvterm().setId( rs.getLong("type_id") );
+      
+      ChadoFeatureProp featureprop = new ChadoFeatureProp();
+      Cvterm cvterm = new Cvterm();
+      cvterm.setId(rs.getLong("prop_type_id"));
+      featureprop.setCvterm(cvterm);
+      featureprop.setValue(rs.getString("value"));
+      feature.setFeatureprop(featureprop);
+
+      feature.setSchema(schema);
 
       feature.setUniquename( rs.getString("uniquename") );
       feature.setTimelastmodified( rs.getTimestamp("timelastmodified") );
       feature.setId( rs.getInt("feature_id") );
-      feature.setObject_id( rs.getString("object_id") );
-      feature.setValue( rs.getString("value"));
+      
+      ChadoFeatureRelationship feature_relationship = new ChadoFeatureRelationship();
+      feature_relationship.setObject_id( rs.getInt("object_id") );
+      feature.setFeature_relationship(feature_relationship);
   
       list.add(feature);
     }
@@ -241,8 +255,8 @@ public class JdbcDAO
       ChadoFeature feat = (ChadoFeature)list.get(i);
       String name  = feat.getUniquename();
 
-      feat.addQualifier(feat.getProp_type_id(),
-                        feat.getValue());
+      feat.addQualifier(feat.getFeatureprop().getCvterm().getId(),
+                        feat.getFeatureprop().getValue());
 
       if(i < feature_size - 1)
         featNext = (ChadoFeature)list.get(i + 1);
@@ -250,8 +264,8 @@ public class JdbcDAO
       // merge next line if part of the same feature
       while(featNext != null && featNext.getUniquename().equals(name))
       {
-        feat.addQualifier(featNext.getProp_type_id(),
-                          featNext.getValue());
+        feat.addQualifier(featNext.getFeatureprop().getCvterm().getId(),
+                          featNext.getFeatureprop().getValue());
         i++;
 
         if(i < feature_size - 1)
@@ -333,10 +347,14 @@ public class JdbcDAO
     while(rs.next())
     {
       ChadoFeature feature = new ChadoFeature();
+      Organism organism = new Organism();
+      organism.setAbbreviation( rs.getString("abbreviation") );
+      
+      feature.setOrganism(organism);
       feature.setId( rs.getInt("feature_id") );
-      feature.setAbbreviation( rs.getString("abbreviation") );
       feature.setName( rs.getString("name") );
-      feature.setType_id( rs.getLong("type_id") );
+      feature.setCvterm(new Cvterm());
+      feature.getCvterm().setId( rs.getLong("type_id") );
       
       list.add(feature);
     }
@@ -731,7 +749,7 @@ public class JdbcDAO
     sql_buff.append(organism_id+" , ");
     sql_buff.append("'"+chadoFeature.getName()+"'"+" , ");
     sql_buff.append("'"+chadoFeature.getUniquename()+"'"+" , ");
-    sql_buff.append(Long.toString(chadoFeature.getType_id()));
+    sql_buff.append(Long.toString(chadoFeature.getCvterm().getId()));
     sql_buff.append(" )");
 
     sql = new String(sql_buff);
@@ -763,10 +781,10 @@ public class JdbcDAO
     sql_buff.append("nextval('"+schema+".featureloc_featureloc_id_seq') , ");
     sql_buff.append(feature_id+" , ");
     sql_buff.append(srcfeature_id+" , ");
-    sql_buff.append(chadoFeature.getFmin()+" , ");
-    sql_buff.append(chadoFeature.getFmax()+" , ");
-    sql_buff.append(chadoFeature.getStrand()+" , ");
-    sql_buff.append(chadoFeature.getPhase());
+    sql_buff.append(chadoFeature.getFeatureloc().getFmin()+" , ");
+    sql_buff.append(chadoFeature.getFeatureloc().getFmax()+" , ");
+    sql_buff.append(chadoFeature.getFeatureloc().getStrand()+" , ");
+    sql_buff.append(chadoFeature.getFeatureloc().getPhase());
     sql_buff.append(" )");
 
     sql = new String(sql_buff);

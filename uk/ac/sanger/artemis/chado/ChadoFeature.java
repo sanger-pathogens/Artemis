@@ -1,6 +1,6 @@
 /* ChadoFeature.java
  *
- * created: 2005
+ * created: 2006
  *
  * This file is part of Artemis
  *
@@ -42,18 +42,8 @@ public class ChadoFeature
   private String schema;
   /** feature id */
   private int id;
-  /** id of the parent feature */
-  private int srcfeature_id;
-  /** id of the parent feature */
-  private String object_id;
   /** time last changed */
   private Timestamp timelastmodified;
-  /** +1 or -1 depending if on the forward or reverse */
-  private int strand;
-  /** start position */
-  private int fmin;
-  /** end position */
-  private int fmax;
   /** sequence length */
   private int length;
   /** features unique name */
@@ -62,20 +52,19 @@ public class ChadoFeature
   private String name;
   /** features residues */
   private byte[] residues;
-  /** feature type id */
-  private long type_id;
-  /** feature property type id */
-  private long prop_type_id;
-  /** feature description value */
-  private String value;
-  /** feature organism abbreviation */
-  private String abbreviation;
-  /** feature organism identifier */
-  private int organism_id;
-  /** hashtable of qualifiers */
+  
+  /** feature cvterm */
+  private Cvterm cvterm;
+  /** feature property */
+  private ChadoFeatureProp featureprop;
+  /** feature location */
+  private ChadoFeatureLoc featureloc;
+  /** feature relationship */
+  private ChadoFeatureRelationship feature_relationship;
+  /** organism */
+  private Organism organism;
+  /** merged featureprops */
   private Hashtable qualifiers;
-  /** phase */
-  private int phase;
 
   /**
    *
@@ -123,28 +112,6 @@ public class ChadoFeature
 
   /**
    *
-   * Get the parent feature_id.
-   * @return	the parent feature_id
-   *
-   */
-  public String getObject_id()
-  {
-    return object_id;
-  }
-
-  /**
-   *
-   * Set the parent feature_id.
-   * @param object_id	the parent feature_id
-   *
-   */
-  public void setObject_id(String object_id)
-  {
-    this.object_id = object_id;
-  }
-
-  /**
-   *
    * Get the last time feature was modified.
    * @return	the last time feature was modified
    *
@@ -165,83 +132,6 @@ public class ChadoFeature
     this.timelastmodified = timelastmodified;
   }
 
-  /**
-   *
-   * Get the strand. The orientation/directionality of the location. 
-   * Should be 0, -1 or +1. Use 0 if transpliced.
-   * @return	the strand
-   *
-   */
-  public int getStrand()
-  {
-    return strand;
-  }
-
-  /**
-   *
-   * Set the strand. The orientation/directionality of the location. 
-   * Should be 0, -1 or +1. Use 0 if transpliced.
-   * @param strand	the strand
-   *
-   */
-  public void setStrand(int strand)
-  {
-    this.strand = strand;
-  }
-
-  /**
-   *
-   * Get the fmin value. The leftmost/minimal boundary in the linear range 
-   * represented by the featureloc. To convert this to the eftmost position 
-   * in a base-oriented system (e.g. GFF) add 1 to fmin.
-   * @return	the fmin value
-   *
-   */
-  public int getFmin()
-  {
-    return fmin;
-  }
-
-  /**
-   *
-   * Set the fmin value. The leftmost/minimal boundary in the linear range 
-   * represented by the featureloc. To convert this to the eftmost position 
-   * in a base-oriented system (e.g. GFF) add 1 to fmin.
-   * @param fmin	the fmin value
-   *
-   */
-  public void setFmin(int fmin)
-  {
-    this.fmin = fmin;
-  }
-
-  /**
-   *
-   * Get the fmax value. The rightmost/maximal boundary in the linear range 
-   * represented by the featureloc. No conversion is required to go from fmax 
-   * to the rightmost coordinate in a base-oriented system that counts from 1 
-   * (eg GFF).
-   * @return	the fmax value
-   *
-   */
-  public int getFmax()
-  {
-    return fmax;
-  }
-
-  /**
-   *
-   * Set the fmax value. The rightmost/maximal boundary in the linear range 
-   * represented by the featureloc. No conversion is required to go from fmax 
-   * to the rightmost coordinate in a base-oriented system that counts from 1 
-   * (eg GFF).
-   * @param fmax	the fmax value
-   *
-   */
-  public void setFmax(int fmax)
-  {
-    this.fmax = fmax;
-  }
 
   /**
    *
@@ -340,164 +230,72 @@ public class ChadoFeature
   }
 
   /**
-   *
-   * A required reference to a table:cvterm giving the feature type. 
-   * This will typically be a Sequence Ontology identifier. 
-   * @return	the feature SO identifier
-   *
-   */
-  public long getType_id()
+  * A reference to a table:cvterm giving the feature type. 
+  * This will typically be a Sequence Ontology identifier. 
+  * @return the feature SO cvterm
+  */
+  public Cvterm getCvterm()
   {
-    return type_id;
+    return cvterm;
   }
 
   /**
-   *
-   * A required reference to a table:cvterm giving the feature type. 
-   * This will typically be a Sequence Ontology identifier.
-   * @param type_id	the feature SO identifier
-   *
-   */
-  public void setType_id(long type_id)
+  * A reference to a table:cvterm giving the feature type. 
+  * This will typically be a Sequence Ontology identifier.
+  * @param cvterm  the feature SO cvterm
+  */
+  public void setCvterm(Cvterm cvterm)
   {
-    this.type_id = type_id;
+    this.cvterm = cvterm;
   }
-
+  
   /**
-   *
-   * The name of the property/slot is a cvterm. The meaning of the property 
-   * is defined in that cvterm. Certain properties will only apply to certain 
-   * feature types; this will be handled by the Sequence Ontology
-   * @return	the type identifier for the name of the property 
-   *
-   */
-  public long getProp_type_id()
-  {
-    return prop_type_id;
-  }
-
-  /**
-   *
-   * Set the name of the property/slot is a cvterm. The meaning of the property 
-   * is defined in that cvterm. Certain properties will only apply to certain 
-   * feature types; this will be handled by the Sequence Ontology
-   * @param prop_type_id	the type identifier for the name of the property
-   *
-   */
-  public void setProp_type_id(long prop_type_id)
-  {
-    this.prop_type_id = prop_type_id;
-  }
-
-  /**
-   *
    * Get the value of the property, represented as text.
-   * @return	the value of the property
-   *
+   * @return the value of the property
    */
-  public String getValue()
+  public ChadoFeatureProp getFeatureprop()
   {
-    return value;
+    return featureprop;
   }
 
   /**
-   *
-   * Set the value of the property, represented as text. 
-   * @param value	the value of the property
-   *
-   */
-  public void setValue(String value)
+  * Set the feature property. 
+  * @param value  the value of the property
+  */
+  public void setFeatureprop(ChadoFeatureProp featureprop)
   {
-    this.value = value;
+    this.featureprop = featureprop;
   }
 
-  /**
-   *
-   * Organism abbreviation.
-   * @return	the organism abbreviation	
-   *
-   */
-  public String getAbbreviation()
+  public ChadoFeatureLoc getFeatureloc()
   {
-    return abbreviation;
+    return featureloc;
   }
 
-  /**
-   *
-   * Organism abbreviation.
-   * @return abbreviation	the organism abbreviation
-   *
-   */
-  public void setAbbreviation(String abbreviation)
+  public void setFeatureloc(ChadoFeatureLoc featureloc)
   {
-    this.abbreviation = abbreviation;
+    this.featureloc = featureloc;
+  }
+  
+  public ChadoFeatureRelationship getFeature_relationship()
+  {
+    return feature_relationship;
   }
 
-  /**
-   *
-   * Organism identifier.
-   * @return     the organism id
-   *
-   */
-  public int getOrganism_id()
+  public void setFeature_relationship(
+      ChadoFeatureRelationship feature_relationship)
   {
-    return organism_id;
+    this.feature_relationship = feature_relationship;
   }
 
-  /**
-   *
-   * Organism identifier.
-   * @param organism_id    the organism id
-   *
-   */
-  public void setOrganism_id(final int organism_id)
+  public Organism getOrganism()
   {
-    this.organism_id = organism_id;
+    return organism;
   }
 
-
-  /**
-   *
-   * The source feature which the location in featureloc is relative to.
-   * @return    the source feature
-   *
-   */
-  public int getSrcfeature_id()
+  public void setOrganism(Organism organism)
   {
-    return srcfeature_id;
-  }
-
-  /**
-   *
-   * The source feature which the location in featureloc is relative to.
-   * @param srcfeature_id	the source feature
-   *
-   */
-  public void setSrcfeature_id(int srcfeature_id)
-  {
-    this.srcfeature_id = srcfeature_id;
-  }
-
-  /**
-   *
-   * The phase of translation wrt srcfeature_id. Values are 0,1,2. 
-   * @return	the phase
-   *
-   */
-  public int getPhase()
-  {
-    return phase;  
-  }
-
-  /**
-   *
-   * The phase of translation wrt srcfeature_id. Values are 0,1,2. 
-   * @param phase	the phase
-   *
-   */
-  public void setPhase(int phase)
-  {
-    this.phase = phase;
+    this.organism = organism;
   }
 
   /**
@@ -540,6 +338,5 @@ public class ChadoFeature
   {
     return qualifiers;
   }
-
 
 }
