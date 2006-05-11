@@ -266,7 +266,7 @@
         ( feature_id, organism_id, name, uniquename, type_id )
       VALUES
         ( nextval('$schema$.feature_feature_id_seq'),
-          $organism_id$,
+          $organism.id$,
           #name#,
           #uniquename#,
           $cvterm.id$ )
