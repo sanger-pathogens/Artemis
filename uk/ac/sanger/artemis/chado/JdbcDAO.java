@@ -347,7 +347,7 @@ public class JdbcDAO
     while(rs.next())
     {
       ChadoFeature feature = new ChadoFeature();
-      Organism organism = new Organism();
+      ChadoOrganism organism = new ChadoOrganism();
       organism.setAbbreviation( rs.getString("abbreviation") );
       
       feature.setOrganism(organism);

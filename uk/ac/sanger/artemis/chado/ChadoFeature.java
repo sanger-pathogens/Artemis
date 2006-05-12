@@ -62,7 +62,7 @@ public class ChadoFeature
   /** feature relationship */
   private ChadoFeatureRelationship feature_relationship;
   /** organism */
-  private Organism organism;
+  private ChadoOrganism organism;
   /** merged featureprops */
   private Hashtable qualifiers;
 
@@ -288,12 +288,12 @@ public class ChadoFeature
     this.feature_relationship = feature_relationship;
   }
 
-  public Organism getOrganism()
+  public ChadoOrganism getOrganism()
   {
     return organism;
   }
 
-  public void setOrganism(Organism organism)
+  public void setOrganism(ChadoOrganism organism)
   {
     this.organism = organism;
   }

@@ -411,7 +411,7 @@ public class IBatisDAO implements ChadoDAO
     //
     // insert feature into feature table
     ChadoFeature chadoFeature = tsn.getChadoFeature();
-    Organism organism = new Organism();
+    ChadoOrganism organism = new ChadoOrganism();
     organism.setId(organism_id.intValue());
     chadoFeature.setSchema(schema);
     chadoFeature.setOrganism(organism);  

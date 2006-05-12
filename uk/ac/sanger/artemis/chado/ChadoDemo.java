@@ -254,7 +254,7 @@ public class ChadoDemo
 
       int row = result_table.getSelectedRow();
       StringBuffer attr_buff = new StringBuffer();
-      ChadoFeature chado_feature = (ChadoFeature) featureList.get(row);
+      ChadoFeature chado_feature = (ChadoFeature)featureList.get(row);
       Hashtable dbxref = dao.getDbxref(chado_feature.getSchema(),
                                        chado_feature.getUniquename());
       
@@ -301,7 +301,6 @@ public class ChadoDemo
             attr_buff.append("\n");
           }
         }
-
       }
       
       Hashtable attributes = chado_feature.getQualifiers();
@@ -357,8 +356,8 @@ public class ChadoDemo
       ChadoFeature feature = (ChadoFeature) featureList.get(i);
       
       System.out.println(feature.getCvterm());
-      int fmin = feature.getFmin() + 1;
-      int fmax = feature.getFmax();
+      int fmin = feature.getFeatureloc().getFmin() + 1;
+      int fmax = feature.getFeatureloc().getFmax();
 
       rowData[i][0] = feature.getSchema();
       rowData[i][1] = feature.getUniquename();
@@ -366,7 +365,7 @@ public class ChadoDemo
       //rowData[i][2] = (String)cvterm.get(new Long(feature.getType_id()));
       rowData[i][3] = Integer.toString(feature.getId());
       rowData[i][4] = fmin + "..." + fmax;
-      rowData[i][5] = Integer.toString(feature.getStrand());
+      rowData[i][5] = Integer.toString(feature.getFeatureloc().getStrand());
       rowData[i][6] = feature.getTimelastmodified().toString();
     }
     return rowData;

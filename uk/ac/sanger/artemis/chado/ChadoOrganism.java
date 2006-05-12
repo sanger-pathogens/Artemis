@@ -1,4 +1,4 @@
-/* Organism.java
+/* ChadoOrganism.java
  *
  * created: 2005
  *
@@ -29,7 +29,7 @@ package uk.ac.sanger.artemis.chado;
  * Java Object used by iBatis to represent the chado organism table.
  *
  */
-public class Organism
+public class ChadoOrganism
 {
 
   /** organism identifier */
