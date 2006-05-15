@@ -8,3 +8,5 @@ http://ibatis.apache.org/
 Add log4j here for ibatis logging
 http://logging.apache.org/log4j/docs/
 
+Add cglib here for lazy loading
+http://cglib.sourceforge.net/
