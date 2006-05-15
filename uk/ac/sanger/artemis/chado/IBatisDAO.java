@@ -132,9 +132,10 @@ public class IBatisDAO implements ChadoDAO
       feature.setSchema(schema);
       List res_list = sqlMap.queryForList("getFeature", feature);
       
-      for(int j=0; j<res_list.size(); j++)
-        ((ChadoFeature)res_list.get(j)).setSchema(schema);
-      list.addAll( JdbcDAO.mergeList(res_list) );
+      //for(int j=0; j<res_list.size(); j++)
+      //  ((ChadoFeature)res_list.get(j)).setSchema(schema);
+      //list.addAll( JdbcDAO.mergeList(res_list) );
+      list.addAll( res_list );
     }
     
     return list;

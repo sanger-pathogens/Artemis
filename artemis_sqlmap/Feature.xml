@@ -40,7 +40,8 @@
      </resultMap>
 
     <resultMap id="select-feature-result" 
-               class="ChadoFeature">       
+               class="ChadoFeature">     
+        <result property="schema" column="schema" />  
         <result property="timelastmodified" column="timelastmodified"/>
    	    <result property="id" column="id"/>
         <result property="uniquename" column="uniquename"/>
@@ -51,9 +52,13 @@
         <result property="featureloc.fmax" column="fmax" nullValue="-999" />
         <result property="featureloc.strand" column="strand" nullValue="0" />
         <result property="cvterm" column="type_id" select="selectCvterm" />
+        <result property="featurepropList" column="{schema=schema, feature_id=id}" 
+                                           select="selectFeatureProp" />                            
+        <!-- 
         <result property="featureprop.cvterm" column="prop_type_id" select="selectCvterm" />
         <result property="featureprop.value" column="value" />
         <result property="featureprop.rank" column="rank" />
+        -->
         <result property="organism" column="organism_id" select="selectOrganism" />
      </resultMap>
      
@@ -71,7 +76,12 @@
         <result property="cvterm.id" column="type_id"/>
      </resultMap>
 
-                
+     <resultMap id="select-product-result" class="uk.ac.sanger.artemis.chado.ChadoFeatureProp">
+        <result property="value" column="value" />
+        <result property="rank" column="rank" />
+        <result property="cvterm" column="type_id" select="selectCvterm" />
+     </resultMap>
+     
      <!-- look up cvterms names and id -->
      <select id="selectCvterm" resultMap="select-cvterm-names-result"> 
        SELECT cvterm_id, name 
@@ -85,6 +95,11 @@
        WHERE organism_id=#value# 
      </select> 
      
+     <select id="selectFeatureProp" resultMap="select-product-result">
+       SELECT type_id, value, rank 
+       FROM $schema$.featureprop
+       WHERE feature_id=#feature_id#
+     </select>
      
      <!-- get feature name -->
      <select id="getFeatureName" parameterClass="ChadoFeature" 
@@ -185,13 +200,17 @@
 	 	srcfeature_id,
 	 	fmin,
 	 	fmax,
-	 	strand,
-	 	fp.type_id AS prop_type_id,
-	 	fp.value,
-	 	fp.rank
+	 	strand
+	 	<!-- 
+	 	,fp.type_id AS prop_type_id
+	 	,fp.value
+	 	,fp.rank
+	 	-->
 	 FROM $schema$.feature f
 	 LEFT JOIN $schema$.featureloc     ON f.feature_id=$schema$.featureloc.feature_id
+	 <!-- 
 	 LEFT JOIN $schema$.featureprop fp ON fp.feature_id = f.feature_id
+	 -->
 	 WHERE
 	 <dynamic>
              <isGreaterThan property="id" compareValue="0"> 

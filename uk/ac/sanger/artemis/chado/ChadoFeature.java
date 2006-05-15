@@ -28,6 +28,7 @@ package uk.ac.sanger.artemis.chado;
 import java.sql.Timestamp;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.List;
 
 /**
 *
@@ -52,7 +53,6 @@ public class ChadoFeature
   private String name;
   /** features residues */
   private byte[] residues;
-  
   /** feature cvterm */
   private Cvterm cvterm;
   /** feature property */
@@ -65,6 +65,8 @@ public class ChadoFeature
   private ChadoOrganism organism;
   /** merged featureprops */
   private Hashtable qualifiers;
+  /** list of ChadoFeatureProp */
+  private List featurepropList;
 
   /**
    *
@@ -298,6 +300,22 @@ public class ChadoFeature
     this.organism = organism;
   }
 
+  public List getFeaturepropList()
+  {
+    return featurepropList;
+  }
+
+  public void setFeaturepropList(List featurepropList)
+  {
+    this.featurepropList = featurepropList;
+    
+    for(int i=0; i<featurepropList.size(); i++)
+    {
+      ChadoFeatureProp featureprop = (ChadoFeatureProp)featurepropList.get(i);
+      addQualifier(featureprop.getCvterm().getId(), featureprop);
+    }
+  }
+  
   /**
    *
    * Used in merging the qualifiers to store them as a <code>Hashtable</code> of

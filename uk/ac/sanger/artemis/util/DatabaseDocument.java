@@ -928,16 +928,19 @@ public class DatabaseDocument extends Document
       for(int i = 0; i < featureList.size(); i++)
       {
         feature = (ChadoFeature)featureList.get(i);
+        
+        String abb = feature.getOrganism().getAbbreviation();
+        String type = feature.getCvterm().getName();
         int fmin     = feature.getFeatureloc().getFmin() + 1;
         int fmax     = feature.getFeatureloc().getFmax();
 
         System.out.print(fmin+".."+fmax);
-        //System.out.print(" "+feature.getCvterm().getId());
+        System.out.print(" "+type);
         //System.out.print(" "+feature.getProp_cvterm().getId());
         System.out.print(" "+feature.getFeatureloc().getStrand());
         System.out.print(" "+feature.getUniquename());
         System.out.print(" "+feature.getTimelastmodified().toString());
-        System.out.print(" "+feature.getOrganism().getAbbreviation());
+        System.out.print(" "+abb);
         System.out.println(" "+Integer.toString(feature.getId()));
       }
     }
