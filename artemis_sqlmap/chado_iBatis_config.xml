@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
  
-<!DOCTYPE sqlMapConfig 
-    PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN" 
-    "http://www.ibatis.com/dtd/sql-map-config-2.dtd"> 
- 
+ <!DOCTYPE sqlMapConfig      
+     PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"      
+     "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
 <!-- Always ensure to use the correct XML header as above! --> 
  
 <sqlMapConfig> 
  
   <!-- The properties (name=value) in the file specified here can be used placeholders in this config  
          file (e.g. ${driver}.  The file is usually relative to the classpath and is optional.  --> 
- 
-  <!--
+  <!--  
   <properties resource="artemis_sqlmap/chado_iBatis_config.properties" /> 
   -->
 
   <!-- These settings control SqlMap configuration details, primarily to do with transaction  
          management.  They are all optional (see the Developer Guide for more).  --> 
- 
-  <settings 
-    cacheModelsEnabled="true" 
-    enhancementEnabled="true" 
-    lazyLoadingEnabled="true" 
-    maxRequests="32" 
-    maxSessions="10" 
-    maxTransactions="5" 
-    useStatementNamespaces="false" 
+    <settings 
+      cacheModelsEnabled="true" 
+      enhancementEnabled="true" 
+      lazyLoadingEnabled="true" 
+      maxRequests="128" 
+      maxSessions="10" 
+      maxTransactions="5" 
+      useStatementNamespaces="false" 
   /> 
+  
  
   <!-- Type aliases allow you to use a shorter name for long fully qualified class names. --> 
  
