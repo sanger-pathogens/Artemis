@@ -293,7 +293,7 @@ public class ChadoTransactionManager
           ++value_index)
         {
           chado_feature.addQualifier(type_id, 
-                         (String)qualifier_values.elementAt(value_index));
+                         (ChadoFeatureProp)qualifier_values.elementAt(value_index));
         }
       }
       catch(NullPointerException npe)
