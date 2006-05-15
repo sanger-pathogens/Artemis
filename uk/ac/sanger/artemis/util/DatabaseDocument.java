@@ -467,12 +467,14 @@ public class DatabaseDocument extends Document
           String qualifier_name = getCvtermName(qualifier_type_id.longValue());
           if(qualifier_name == null)
             continue;
+          
           Vector qualifier_value = (Vector)qualifiers.get(qualifier_type_id);
         
           for(int j=0; j<qualifier_value.size(); j++)
           {
+            ChadoFeatureProp featprop = (ChadoFeatureProp)qualifier_value.get(j);
             this_buff.append(qualifier_name+ "=" +
-                             GFFStreamFeature.encode((String)qualifier_value.get(j))+";");
+                             GFFStreamFeature.encode(featprop.getValue())+";");
           }
         }
       } 
@@ -678,12 +680,13 @@ public class DatabaseDocument extends Document
         while(it_residue_features.hasNext())
         {
           ChadoFeature feature = (ChadoFeature)it_residue_features.next();
-          String typeName = getCvtermName(feature.getCvterm().getId()); //getCvtermName(feature.getType_id());
-
+          String typeName = getCvtermName(feature.getCvterm().getId()); 
+          
           db.put(schema + " - " + typeName + " - " + feature.getName(),
                  Integer.toString(feature.getId()));
         }
       }
+      
     }
     catch(java.sql.SQLException sqlExp)
     {
@@ -917,23 +920,24 @@ public class DatabaseDocument extends Document
       SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
 
       ChadoFeature feature = new ChadoFeature();
-      feature.setId(Integer.parseInt(args[0]));
+      feature.setUniquename(args[0]);
       feature.setSchema(args[1]);
 
-      List featureList = sqlMap.queryForList("getGffLine", feature);
- 
+      List featureList = sqlMap.queryForList("getFeature", feature);
+      System.out.println("FINISHED getFedature()");
       for(int i = 0; i < featureList.size(); i++)
       {
         feature = (ChadoFeature)featureList.get(i);
         int fmin     = feature.getFeatureloc().getFmin() + 1;
         int fmax     = feature.getFeatureloc().getFmax();
 
-        System.out.print(fmin+" "+fmax);
+        System.out.print(fmin+".."+fmax);
         //System.out.print(" "+feature.getCvterm().getId());
         //System.out.print(" "+feature.getProp_cvterm().getId());
         System.out.print(" "+feature.getFeatureloc().getStrand());
         System.out.print(" "+feature.getUniquename());
         System.out.print(" "+feature.getTimelastmodified().toString());
+        System.out.print(" "+feature.getOrganism().getAbbreviation());
         System.out.println(" "+Integer.toString(feature.getId()));
       }
     }

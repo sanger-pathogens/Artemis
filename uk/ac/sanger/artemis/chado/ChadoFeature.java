@@ -307,7 +307,7 @@ public class ChadoFeature
    * @param	the property value	
    *
    */
-  public void addQualifier(long prop_type_id, String value)
+  public void addQualifier(long prop_type_id, ChadoFeatureProp featprop)
   {
     if(qualifiers == null)
       qualifiers = new Hashtable();
@@ -316,13 +316,13 @@ public class ChadoFeature
     if(qualifiers.containsKey(type_id))
     {
       Vector v = (Vector)qualifiers.get(type_id);
-      v.add(value);
+      v.add(featprop);
       qualifiers.put(type_id, v);
     }
     else
     {
       Vector v = new Vector();
-      v.add(value);
+      v.add(featprop);
       qualifiers.put(type_id, v);
     }
   }

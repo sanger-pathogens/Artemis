@@ -90,9 +90,6 @@ public class ChadoDemo
   /** <code>List</code> of <code>ChadoFeature</code> objects */
   private List featureList;
 
-  /** <code>Hashtable</code> of all feature property cv terms */
-  private Hashtable cvterm;
-
   /**
    * 
    * 
@@ -104,7 +101,7 @@ public class ChadoDemo
       setLocation();
       final ChadoDAO dao = getDAO();
       showFeatureSearchPanel(dao);
-      getCvterm(dao);
+      //getCvterm(dao);
     }
     catch(java.net.ConnectException ce)
     {
@@ -304,18 +301,22 @@ public class ChadoDemo
       }
       
       Hashtable attributes = chado_feature.getQualifiers();
-      Enumeration enum_attr = attributes.keys();
+      Enumeration enum_attr = attributes.elements();
 
       while(enum_attr.hasMoreElements())
       {
-        Long type_id = (Long) enum_attr.nextElement();
-        String cv = (String) cvterm.get(type_id);
-
-        Vector v_attr = (Vector) attributes.get(type_id);
+       // Long type_id = (Long) enum_attr.nextElement();
+        Vector v_attr = (Vector)enum_attr.nextElement();
 
         for(int i = 0; i < v_attr.size(); i++)
-          attr_buff.append("/" + cv + "="
-              + GFFStreamFeature.decode((String) v_attr.get(i)) + "\n");
+        {
+          ChadoFeatureProp featprop = (ChadoFeatureProp)v_attr.get(i);
+     
+          attr_buff.append("/" 
+              + featprop.getCvterm().getName() 
+              + "="
+              + GFFStreamFeature.decode(featprop.getValue()) + "\n");
+        }
       }
       attr_text.setText(new String(attr_buff));
     }
@@ -355,11 +356,10 @@ public class ChadoDemo
     {
       ChadoFeature feature = (ChadoFeature) featureList.get(i);
       
-      System.out.println(feature.getCvterm());
       int fmin = feature.getFeatureloc().getFmin() + 1;
       int fmax = feature.getFeatureloc().getFmax();
 
-      rowData[i][0] = feature.getSchema();
+      rowData[i][0] = feature.getOrganism().getAbbreviation();
       rowData[i][1] = feature.getUniquename();
       rowData[i][2] = feature.getCvterm().getName();
       //rowData[i][2] = (String)cvterm.get(new Long(feature.getType_id()));
@@ -470,34 +470,6 @@ public class ChadoDemo
     return true;
   }
 
-  /**
-   * 
-   * Look up cvterms names and id and return in a hashtable.
-   * 
-   */
-  private Hashtable getCvterm(ChadoDAO dao)
-  {
-    cvterm = new Hashtable();
-
-    try
-    {
-      List cvtem_list = dao.getCvterm();
-      Iterator it = cvtem_list.iterator();
-
-      while(it.hasNext())
-      {
-        Cvterm cv = (Cvterm) it.next();
-        cvterm.put(new Long(cv.getId()), cv.getName());
-      }
-    }
-    catch(SQLException sqle)
-    {
-      System.err.println(this.getClass() + ": SQLException retrieving CvTerms");
-      System.err.println(sqle);
-    }
-
-    return cvterm;
-  }
 
   public class SelectionListener implements ListSelectionListener
   {

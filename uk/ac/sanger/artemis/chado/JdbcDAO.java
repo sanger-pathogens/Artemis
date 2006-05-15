@@ -256,7 +256,7 @@ public class JdbcDAO
       String name  = feat.getUniquename();
 
       feat.addQualifier(feat.getFeatureprop().getCvterm().getId(),
-                        feat.getFeatureprop().getValue());
+                        feat.getFeatureprop());
 
       if(i < feature_size - 1)
         featNext = (ChadoFeature)list.get(i + 1);
@@ -265,7 +265,7 @@ public class JdbcDAO
       while(featNext != null && featNext.getUniquename().equals(name))
       {
         feat.addQualifier(featNext.getFeatureprop().getCvterm().getId(),
-                          featNext.getFeatureprop().getValue());
+                          featNext.getFeatureprop());
         i++;
 
         if(i < feature_size - 1)

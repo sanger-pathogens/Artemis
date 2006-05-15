@@ -97,6 +97,22 @@ public class DbSqlConfig
     }
   }
 
+  
+  public static void init2(JPasswordField fpasswd)
+  {
+    try
+    {
+     String resource = "artemis_sqlmap/chado_iBatis_config.xml";
+     Reader reader = Resources.getResourceAsReader(resource);
+     sqlMap =  SqlMapClientBuilder.buildSqlMapClient(reader);
+    }
+    catch(Exception e)
+    {
+       e.printStackTrace();
+       throw new RuntimeException("Error initializing DbSqlConfig class.  Cause: "  + e);
+    }
+  }
+  
   public static SqlMapClient getSqlMapInstance()
   {
     return sqlMap;
