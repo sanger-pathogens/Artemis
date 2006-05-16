@@ -213,12 +213,12 @@ public class JdbcDAO
         featureloc.setPhase(phase);
 
       feature.setFeatureloc(featureloc);
-      feature.setCvterm(new Cvterm());
+      feature.setCvterm(new ChadoCvterm());
       feature.getCvterm().setId( rs.getLong("type_id") );
       
       // feature properties
       ChadoFeatureProp featureprop = new ChadoFeatureProp();
-      Cvterm cvterm = new Cvterm();
+      ChadoCvterm cvterm = new ChadoCvterm();
       cvterm.setId(rs.getLong("prop_type_id"));
       featureprop.setCvterm(cvterm);
       featureprop.setValue(rs.getString("value"));
@@ -306,7 +306,7 @@ public class JdbcDAO
     Hashtable dbxrefHash = new Hashtable();
     for(int i = 0; i < list.size(); i++)
     {
-      Dbxref dbxref = (Dbxref)list.get(i);
+      ChadoDbxref dbxref = (ChadoDbxref)list.get(i);
       Integer feature_id = new Integer(dbxref.getFeature_id());
       String value = dbxref.getName() + ":" + dbxref.getAccession();
       if(dbxrefHash.containsKey(feature_id))
@@ -368,7 +368,7 @@ public class JdbcDAO
       feature.setOrganism(organism);
       feature.setId( rs.getInt("feature_id") );
       feature.setName( rs.getString("name") );
-      feature.setCvterm(new Cvterm());
+      feature.setCvterm(new ChadoCvterm());
       feature.getCvterm().setId( rs.getLong("type_id") );
       
       list.add(feature);
@@ -444,7 +444,7 @@ public class JdbcDAO
 
     while(rs.next())
     {
-      Cvterm cvterm = new Cvterm();
+      ChadoCvterm cvterm = new ChadoCvterm();
       cvterm.setId( rs.getLong("cvterm_id") );
       cvterm.setName( rs.getString("name") );
       cvterms.add(cvterm);
@@ -480,7 +480,7 @@ public class JdbcDAO
 
     while(rs.next())
     {
-      Dbxref dbxref = new Dbxref();
+      ChadoDbxref dbxref = new ChadoDbxref();
       dbxref.setName( rs.getString("name") );
       dbxref.setAccession( rs.getString("accession") );
       dbxref.setFeature_id( rs.getInt("feature_id") );
@@ -838,8 +838,8 @@ public class JdbcDAO
   public int insertFeatureDbxref(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    final Dbxref dbxref = tsn.getFeatureDbxref();
-    final String uniquename = tsn.getUniqueName();
+    final ChadoDbxref dbxref = tsn.getFeatureDbxref();
+    final String uniquename  = tsn.getUniqueName();
     
     // find database id
     String sql = "SELECT db_id FROM db WHERE name='"+dbxref.getName()+"'";
@@ -897,7 +897,7 @@ public class JdbcDAO
   public int deleteFeatureDbxref(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    final Dbxref dbxref = tsn.getFeatureDbxref();
+    final ChadoDbxref dbxref = tsn.getFeatureDbxref();
     final String uniquename = tsn.getUniqueName();
     
     final String sql = 

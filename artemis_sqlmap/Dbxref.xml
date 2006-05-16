@@ -7,8 +7,11 @@
 
 <sqlMap namespace="Dbxref"> 
  
+  <typeAlias alias="ChadoDbxref"
+        type="uk.ac.sanger.artemis.chado.ChadoDbxref"/>
+        
   <select id="getDbxref" parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature"
-                         resultClass="uk.ac.sanger.artemis.chado.Dbxref">
+                         resultClass="ChadoDbxref">
    	SELECT  
 	  db.name,
 	  dbx.accession,
@@ -26,19 +29,19 @@
         ORDER BY f.type_id,  uniquename
   </select> 
   
-  <select id="getDbId" parameterClass="uk.ac.sanger.artemis.chado.Dbxref"
+  <select id="getDbId" parameterClass="ChadoDbxref"
                        resultClass="java.lang.Integer">
     SELECT db_id FROM db WHERE name=#name#
   </select>
   
-  <select id="getDbxrefId" parameterClass="uk.ac.sanger.artemis.chado.Dbxref"
+  <select id="getDbxrefId" parameterClass="ChadoDbxref"
                            resultClass="java.lang.Integer">
     SELECT dbxref_id FROM dbxref WHERE accession=#accession#
-           AND db_id=db_id;
+           AND db_id=$db_id$;
   </select>
   
   <!-- WRITE BACK -->
-  <delete id="deleteFeatureDbxref" parameterClass="uk.ac.sanger.artemis.chado.Dbxref">
+  <delete id="deleteFeatureDbxref" parameterClass="ChadoDbxref">
      DELETE FROM $schema$.feature_dbxref 
      WHERE dbxref_id=
            (SELECT dbxref_id FROM dbxref WHERE accession=#accession#
@@ -46,14 +49,14 @@
      AND feature_id=$feature_id$
   </delete>
   
-  <insert id="insertFeatureDbxref" parameterClass="uk.ac.sanger.artemis.chado.Dbxref">
+  <insert id="insertFeatureDbxref" parameterClass="ChadoDbxref">
     INSERT INTO $schema$.feature_dbxref 
            (feature_id, dbxref_id, is_current)
            VALUES
            ($feature_id$, $dbxref_id$, $current$)
   </insert>
   
-  <insert id="insertDbxref" parameterClass="uk.ac.sanger.artemis.chado.Dbxref">
+  <insert id="insertDbxref" parameterClass="ChadoDbxref">
     INSERT INTO dbxref ( db_id, accession ) 
            VALUES ($db_id$, #accession#)
   </insert>

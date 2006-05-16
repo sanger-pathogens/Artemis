@@ -584,7 +584,7 @@ public class DatabaseDocument extends Document
 
       while(it.hasNext())
       {
-        Cvterm cv = (Cvterm)it.next();
+        ChadoCvterm cv = (ChadoCvterm)it.next();
         cvterm.put(new Long(cv.getId()), cv.getName());
       }
     }

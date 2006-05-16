@@ -311,14 +311,14 @@ public class IBatisDAO implements ChadoDAO
    * @param cv_name ontology name (e.g. gene, sequence)
    * @throws SQLException
    */
-  public static Cvterm getCvtermID(String name, String cv_name)
+  public static ChadoCvterm getCvtermID(String name, String cv_name)
                 throws SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    Cvterm cvterm   = new Cvterm();
+    ChadoCvterm cvterm   = new ChadoCvterm();
     cvterm.setName(name);
     cvterm.setCv_name(cv_name);
-    return (Cvterm)sqlMap.queryForObject("getCvterm", cvterm);
+    return (ChadoCvterm)sqlMap.queryForObject("getCvterm", cvterm);
   }
 
 //

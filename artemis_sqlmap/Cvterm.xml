@@ -7,7 +7,7 @@
 
 <sqlMap namespace="Cvterm"> 
  
-    <resultMap id="select-cvterm-names-result" class="uk.ac.sanger.artemis.chado.Cvterm">
+    <resultMap id="select-cvterm-names-result" class="uk.ac.sanger.artemis.chado.ChadoCvterm">
    	<result property="id" column="cvterm_id"/>
   	<result property="name" column="cvterm_name"/>
         <result property="cv_name" column="cv_name"/>
