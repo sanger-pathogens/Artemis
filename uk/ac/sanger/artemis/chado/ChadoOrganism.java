@@ -25,9 +25,7 @@
 package uk.ac.sanger.artemis.chado;
 
 /**
- *
- * Java Object used by iBatis to represent the chado organism table.
- *
+ * Representation of the organism table.
  */
 public class ChadoOrganism
 {

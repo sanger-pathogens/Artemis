@@ -25,10 +25,7 @@
 package uk.ac.sanger.artemis.chado;
 
 /**
- *
- * Java Object used by ORM to represent the chado feature_dbxref,
- * dbxref and db tables.
- *
+ * Representation of the chado feature_dbxref, dbxref and db tables.
  */
 public class Dbxref
 {

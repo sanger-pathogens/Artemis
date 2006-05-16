@@ -30,12 +30,11 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.List;
 
+
 /**
-*
-* Chado feature representation of feature, featureloc, featureprop,
-* feature_relationship tables
-*
-**/
+ * Chado feature representation of the feature table and with references
+ * to the featureloc, featureprop, feature_relationship tables.
+ */
 public class ChadoFeature
 {
  
