@@ -24,6 +24,9 @@
 
 package uk.ac.sanger.artemis.chado;
 
+/**
+ * Representation of featureprop table.
+ */
 public class ChadoFeatureProp
 {
   
@@ -67,11 +70,25 @@ public class ChadoFeatureProp
     this.value = value;
   }
   
+  /**
+   * Any feature can have multiple values for any particular property type - 
+   * these are ordered in a list using rank, counting from zero. For 
+   * properties that are single-valued rather than multi-valued, the 
+   * default 0 value should be used.
+   * @return
+   */
   public int getRank()
   {
     return rank;
   }
 
+  /**
+   * Any feature can have multiple values for any particular property type - 
+   * these are ordered in a list using rank, counting from zero. For 
+   * properties that are single-valued rather than multi-valued, the 
+   * default 0 value should be used.
+   * @param rank
+   */
   public void setRank(int rank)
   {
     this.rank = rank;

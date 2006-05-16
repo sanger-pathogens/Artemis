@@ -24,11 +24,13 @@
 
 package uk.ac.sanger.artemis.chado;
 
+/**
+ * Representation of featureloc table.
+ */
 public class ChadoFeatureLoc
 {
   /** id of the parent feature */
   private int srcfeature_id;
-  
   /** start position */
   private int fmin;
   /** end position */

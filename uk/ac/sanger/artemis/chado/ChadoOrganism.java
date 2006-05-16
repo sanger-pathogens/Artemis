@@ -95,7 +95,7 @@ public class ChadoOrganism
     return comment;
   }
 
-  public void setComment()
+  public void setComment(String comment)
   {
     this.comment = comment;
   }

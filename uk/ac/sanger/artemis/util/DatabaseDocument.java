@@ -27,6 +27,7 @@ package uk.ac.sanger.artemis.util;
 import com.ibatis.sqlmap.client.SqlMapClient;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.chado.*;
+import uk.ac.sanger.artemis.components.DatabaseEntrySource;
 
 
 import java.sql.*;
@@ -916,14 +917,19 @@ public class DatabaseDocument extends Document
   {
     try
     {
-      DbSqlConfig.init(new JPasswordField());
-      SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-
-      ChadoFeature feature = new ChadoFeature();
-      feature.setUniquename(args[0]);
-      feature.setSchema(args[1]);
-
-      List featureList = sqlMap.queryForList("getFeature", feature);
+      ChadoDAO dao;
+      DatabaseEntrySource src = new DatabaseEntrySource();
+      src.setLocation(true);
+      
+      if(System.getProperty("ibatis") == null)
+        dao = new JdbcDAO(src.getLocation(), src.getPfield()); 
+      else
+        dao = new IBatisDAO(src.getPfield());
+      
+      ChadoFeature feature;
+      List schemas = new Vector();
+      schemas.add(args[1]);
+      List featureList = dao.getFeature(args[0], schemas); 
       System.out.println("FINISHED getFeature()");
       for(int i = 0; i < featureList.size(); i++)
       {
@@ -946,6 +952,11 @@ public class DatabaseDocument extends Document
     catch(SQLException sqle)
     {
       sqle.printStackTrace();
+    }
+    catch(ConnectException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
   }
 }

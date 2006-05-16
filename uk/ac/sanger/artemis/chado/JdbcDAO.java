@@ -171,7 +171,8 @@ public class JdbcDAO
 
     String sql = "SELECT timelastmodified, f.feature_id, object_id,"
                + " fl.strand, fmin, fmax, uniquename, f.type_id,"
-               + " fp.type_id AS prop_type_id, fp.value, fl.phase"
+               + " fp.type_id AS prop_type_id, fp.value, fl.phase,"
+               + " f.organism_id, abbreviation, genus, species, common_name, comment"
                + " FROM  "     + schema + ".feature f"
                + " LEFT JOIN " + schema + ".feature_relationship fr ON "
                                         + "fr.subject_id=" + "f.feature_id"
@@ -179,7 +180,9 @@ public class JdbcDAO
                                         + "fp.feature_id=" + "f.feature_id"
                + " LEFT JOIN " + schema + ".featureloc fl ON "
                                         + "f.feature_id=" + "fl.feature_id"
+               + " LEFT JOIN organism ON organism.organism_id=f.organism_id"                                
                + " WHERE ";
+    
     
     if(uniquename != null)
       sql = sql + "uniquename LIKE '" + uniquename +"'";
@@ -213,6 +216,7 @@ public class JdbcDAO
       feature.setCvterm(new Cvterm());
       feature.getCvterm().setId( rs.getLong("type_id") );
       
+      // feature properties
       ChadoFeatureProp featureprop = new ChadoFeatureProp();
       Cvterm cvterm = new Cvterm();
       cvterm.setId(rs.getLong("prop_type_id"));
@@ -226,10 +230,21 @@ public class JdbcDAO
       feature.setTimelastmodified( rs.getTimestamp("timelastmodified") );
       feature.setId( rs.getInt("feature_id") );
       
+      // feature relationship
       ChadoFeatureRelationship feature_relationship = new ChadoFeatureRelationship();
       feature_relationship.setObject_id( rs.getInt("object_id") );
       feature.setFeature_relationship(feature_relationship);
   
+      // feature organism
+      ChadoOrganism organism = new ChadoOrganism();
+      organism.setAbbreviation(rs.getString("abbreviation"));
+      organism.setComment(rs.getString("comment"));
+      organism.setCommon_name(rs.getString("common_name"));
+      organism.setGenus(rs.getString("genus"));
+      organism.setId(rs.getInt("organism_id"));
+      organism.setSpecies(rs.getString("species"));
+      feature.setOrganism(organism);
+      
       list.add(feature);
     }
     // merge same features in the list
@@ -494,7 +509,7 @@ public class JdbcDAO
                  "LEFT JOIN cvterm ON s.type_id=cvterm_id";
     
     if(uniquename != null)
-      sql = sql + "WHERE uniquename='"+uniquename+"'";
+      sql = sql + " WHERE uniquename='"+uniquename+"'";
     
     appendToLogFile(sql, sqlLog);
     Statement st = conn.createStatement();

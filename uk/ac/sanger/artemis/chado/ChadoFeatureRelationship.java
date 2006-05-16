@@ -24,6 +24,9 @@
 
 package uk.ac.sanger.artemis.chado;
 
+/**
+ * Representation of feature_relationship table.
+ */
 public class ChadoFeatureRelationship
 {
   
@@ -37,11 +40,21 @@ public class ChadoFeatureRelationship
   /** ordering of subject features */
   public int rank;
   
+  /**
+   * Get the cv term for the relationship type between 
+   * subject and object (e.g. part_of).
+   * @return cvterm
+   */
   public Cvterm getCvterm()
   {
     return cvterm;
   }
   
+  /**
+   * Set the cv term for the relationship type between 
+   * subject and object (e.g. part_of).
+   * @param cvterm
+   */
   public void setCvterm(Cvterm cvterm)
   {
     this.cvterm = cvterm;
@@ -65,11 +78,25 @@ public class ChadoFeatureRelationship
     this.object_id = object_id;
   }
   
+  /**
+   * The ordering of subject features with respect to the object
+   * feature may be important (for example, exon ordering on a transcript
+   *  - not always derivable if you take trans spliced genes into consideration). 
+   *  rank is used to order these; starts from zero.
+   * @return rank the rank
+   */
   public int getRank()
   {
     return rank;
   }
   
+  /**
+   * The ordering of subject features with respect to the object
+   * feature may be important (for example, exon ordering on a transcript
+   *  - not always derivable if you take trans spliced genes into consideration). 
+   *  rank is used to order these; starts from zero.
+   * @param rank
+   */
   public void setRank(int rank)
   {
     this.rank = rank;
@@ -85,11 +112,19 @@ public class ChadoFeatureRelationship
     this.subject_id = subject_id;
   }
   
+  /**
+   * Additional notes/comments
+   * @return
+   */
   public String getValue()
   {
     return value;
   }
   
+  /**
+   * Additional notes/comments
+   * @param value
+   */
   public void setValue(String value)
   {
     this.value = value;
