@@ -129,7 +129,7 @@ public class DatabaseEntrySource implements EntrySource
    * jdbc:postgresql://host:port/database?user=username
    * 
    */
-  protected boolean setLocation(final boolean prompt_user)
+  public boolean setLocation(final boolean prompt_user)
   {
     Container bacross = new Container();
     bacross.setLayout(new GridLayout(6, 2, 5, 5));
@@ -450,4 +450,13 @@ public class DatabaseEntrySource implements EntrySource
     return db_entry;
   }
 
+  public String getLocation()
+  {
+    return location;
+  }
+
+  public JPasswordField getPfield()
+  {
+    return pfield;
+  }
 }
