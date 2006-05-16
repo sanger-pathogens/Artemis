@@ -39,6 +39,12 @@ public class ChadoFeatureLoc
   private int strand;
   /** phase */
   private int phase;
+  /** Alternative residues, differing from feature.residues e.g. SNP.*/
+  private String residue_info;
+  /** used to manifest redundant, derivable extra locations for a feature*/
+  private int locgroup;
+  /** Used when a feature has >1 location */
+  private int rank;
 
   /**
    * Get the strand. The orientation/directionality of the location. 
@@ -141,6 +147,60 @@ public class ChadoFeatureLoc
   public void setPhase(int phase)
   {
     this.phase = phase;
+  }
+
+  /**
+   * This is used to manifest redundant, derivable extra locations for a feature. 
+   * The default locgroup=0 is used for the DIRECT location of a feature. 
+   * MOST CHADO USERS MAY NEVER USE featurelocs WITH logroup>0.
+   * For example, the position of an exon on a BAC and in global chromosome coordinates. 
+   * This column is used to differentiate these groupings of locations.
+   * @return
+   */
+  public int getLocgroup()
+  {
+    return locgroup;
+  }
+
+  /**
+   * Set the locgroup.
+   * @param locgroup
+   */
+  public void setLocgroup(int locgroup)
+  {
+    this.locgroup = locgroup;
+  }
+
+  /**
+   * Used when a feature has >1 location, otherwise the default rank 0 
+   * is used. Some features (eg blast hits and HSPs) have two locations - 
+   * one on the query and one on the subject.
+   * @return
+   */
+  public int getRank()
+  {
+    return rank;
+  }
+
+  /**
+   * Used when a feature has >1 location, otherwise the default rank 0 
+   * is used. Some features (eg blast hits and HSPs) have two locations - 
+   * one on the query and one on the subject.
+   * @param rank
+   */
+  public void setRank(int rank)
+  {
+    this.rank = rank;
+  }
+
+  public String getResidue_info()
+  {
+    return residue_info;
+  }
+
+  public void setResidue_info(String residue_info)
+  {
+    this.residue_info = residue_info;
   }
 
 }
