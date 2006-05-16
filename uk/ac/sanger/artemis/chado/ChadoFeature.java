@@ -53,7 +53,7 @@ public class ChadoFeature
   /** features residues */
   private byte[] residues;
   /** feature cvterm */
-  private Cvterm cvterm;
+  private ChadoCvterm cvterm;
   /** feature property */
   private ChadoFeatureProp featureprop;
   /** feature location */
@@ -206,7 +206,7 @@ public class ChadoFeature
   * This will typically be a Sequence Ontology identifier. 
   * @return the feature SO cvterm
   */
-  public Cvterm getCvterm()
+  public ChadoCvterm getCvterm()
   {
     return cvterm;
   }
@@ -216,7 +216,7 @@ public class ChadoFeature
   * This will typically be a Sequence Ontology identifier.
   * @param cvterm  the feature SO cvterm
   */
-  public void setCvterm(Cvterm cvterm)
+  public void setCvterm(ChadoCvterm cvterm)
   {
     this.cvterm = cvterm;
   }

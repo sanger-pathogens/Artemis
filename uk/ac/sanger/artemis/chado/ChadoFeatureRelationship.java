@@ -34,7 +34,7 @@ public class ChadoFeatureRelationship
   /** id of the parent feature */
   public int object_id;
   /** cv term of feature relationship (e.g. part_of) */
-  public Cvterm cvterm;
+  public ChadoCvterm cvterm;
   /** Additional notes/comments */
   public String value;
   /** ordering of subject features */
@@ -45,7 +45,7 @@ public class ChadoFeatureRelationship
    * subject and object (e.g. part_of).
    * @return cvterm
    */
-  public Cvterm getCvterm()
+  public ChadoCvterm getCvterm()
   {
     return cvterm;
   }
@@ -55,7 +55,7 @@ public class ChadoFeatureRelationship
    * subject and object (e.g. part_of).
    * @param cvterm
    */
-  public void setCvterm(Cvterm cvterm)
+  public void setCvterm(ChadoCvterm cvterm)
   {
     this.cvterm = cvterm;
   }

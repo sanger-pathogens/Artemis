@@ -27,7 +27,7 @@ package uk.ac.sanger.artemis.chado;
 /**
  * Representation of cvterm table.
  */
-public class Cvterm
+public class ChadoCvterm
 {
 
   private long id;

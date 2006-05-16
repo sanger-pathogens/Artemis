@@ -78,7 +78,7 @@ public class ChadoTransaction
   /** chado feature */
   private ChadoFeature chadoFeature;
   /** feature dbxref */
-  private Dbxref dbxref;
+  private ChadoDbxref dbxref;
   /** feature synonym */
   private Alias alias;
   /** last time feature was modified */
@@ -152,7 +152,7 @@ public class ChadoTransaction
    */
   public ChadoTransaction(final int type,
                           final String uniquename,
-                          final Dbxref dbxref, 
+                          final ChadoDbxref dbxref, 
                           final Timestamp lastmodified,
                           final Object feature_obj)
   {
@@ -176,7 +176,7 @@ public class ChadoTransaction
    * The <code>Dbxref</code> used in a transaction.
    * @return  the feature dbxref
    */
-  public Dbxref getFeatureDbxref()
+  public ChadoDbxref getFeatureDbxref()
   {
     return dbxref;
   }

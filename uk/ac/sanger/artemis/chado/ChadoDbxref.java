@@ -27,7 +27,7 @@ package uk.ac.sanger.artemis.chado;
 /**
  * Representation of the chado feature_dbxref, dbxref and db tables.
  */
-public class Dbxref
+public class ChadoDbxref
 {
   private String name;
   private String accession;
@@ -39,7 +39,7 @@ public class Dbxref
   private boolean current = true;
   private String schema;
 
-  public Dbxref()
+  public ChadoDbxref()
   {
   }
   

@@ -230,7 +230,7 @@ public class ChadoTransactionManager
 
       String key = feature.getKey().toString();
       
-      Cvterm cvterm = new Cvterm();
+      ChadoCvterm cvterm = new ChadoCvterm();
       cvterm.setId(DatabaseDocument.getCvtermID(key).longValue());
       chado_feature.setCvterm(cvterm);
 
@@ -592,7 +592,7 @@ public class ChadoTransactionManager
            System.out.println(uniquename+"  in handleReservedTags() DELETE db="+
                qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
          
-           Dbxref old_dbxref = new Dbxref();
+           ChadoDbxref old_dbxref = new ChadoDbxref();
            old_dbxref.setName(qualifier_string.substring(0,index));
            old_dbxref.setAccession(qualifier_string.substring(index+1));
 
@@ -636,7 +636,7 @@ public class ChadoTransactionManager
          
            System.out.println(uniquename+"  in handleReservedTags() INSERT db="+
              qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
-           Dbxref new_dbxref = new Dbxref();
+           ChadoDbxref new_dbxref = new ChadoDbxref();
            new_dbxref.setName(qualifier_string.substring(0,index));
            new_dbxref.setAccession(qualifier_string.substring(index+1));
 

@@ -30,7 +30,7 @@ package uk.ac.sanger.artemis.chado;
 public class ChadoFeatureProp
 {
   
-  public Cvterm cvterm;
+  public ChadoCvterm cvterm;
   public String value;
   public int rank;
 
@@ -38,7 +38,7 @@ public class ChadoFeatureProp
    * Get the cv term
    * @return cvterm
    */
-  public Cvterm getCvterm()
+  public ChadoCvterm getCvterm()
   {
     return cvterm;
   }
@@ -47,7 +47,7 @@ public class ChadoFeatureProp
    * Set the cv term
    * @param cvterm
    */
-  public void setCvterm(Cvterm cvterm)
+  public void setCvterm(ChadoCvterm cvterm)
   {
     this.cvterm = cvterm;
   }

@@ -460,7 +460,7 @@ public class IBatisDAO implements ChadoDAO
   public int insertFeatureDbxref(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    Dbxref dbxref = tsn.getFeatureDbxref();
+    ChadoDbxref dbxref = tsn.getFeatureDbxref();
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     Integer db_id = (Integer)sqlMap.queryForObject("getDbId", dbxref);
     if(db_id == null)
@@ -503,7 +503,7 @@ public class IBatisDAO implements ChadoDAO
   public int deleteFeatureDbxref(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    Dbxref dbxref = tsn.getFeatureDbxref();
+    ChadoDbxref dbxref = tsn.getFeatureDbxref();
     
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     tsn.setSchema(schema);
