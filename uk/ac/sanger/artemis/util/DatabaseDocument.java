@@ -939,10 +939,12 @@ public class DatabaseDocument extends Document
         String type = feature.getCvterm().getName();
         int fmin    = feature.getFeatureloc().getFmin() + 1;
         int fmax    = feature.getFeatureloc().getFmax();
-
+        String featprop = 
+          ((ChadoFeatureProp)feature.getFeaturepropList().get(0)).getCvterm().getName();
+        
         System.out.print(fmin+".."+fmax);
         System.out.print(" "+type);
-        //System.out.print(" "+feature.getProp_cvterm().getId());
+        System.out.print(" "+featprop);
         System.out.print(" "+feature.getFeatureloc().getStrand());
         System.out.print(" "+feature.getUniquename());
         System.out.print(" "+abb);
