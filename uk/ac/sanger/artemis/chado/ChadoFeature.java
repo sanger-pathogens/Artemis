@@ -61,7 +61,7 @@ public class ChadoFeature
   private ChadoFeatureLoc featureloc;
   /** feature relationship */
   private ChadoFeatureRelationship feature_relationship;
-  /** organism */
+  /** feature organism */
   private ChadoOrganism organism;
   /** merged featureprops */
   private Hashtable qualifiers;
@@ -69,10 +69,8 @@ public class ChadoFeature
   private List featurepropList;
 
   /**
-   *
    * Get the feature_id.
    * @return	the feature_id
-   *
    */
   public int getId()
   {
@@ -80,10 +78,8 @@ public class ChadoFeature
   } 
 
   /**
-   *
    * Set the feature_id.
    * @param id	set the feature_id
-   *
    */
   public void setId(int id)
   {
@@ -91,10 +87,8 @@ public class ChadoFeature
   }
 
   /**
-   *
    * Get the postgres schema.
    * @return 	the postgres schema
-   *
    */
   public String getSchema()
   {
@@ -102,10 +96,8 @@ public class ChadoFeature
   }
 
   /**
-   *
    * Set the postgres schema.
-   * @param schema	the postgres schema
-   *
+   * @param schema	the postgres schema*
    */
   public void setSchema(String schema)
   {
@@ -113,10 +105,8 @@ public class ChadoFeature
   }
 
   /**
-   *
    * Get the last time feature was modified.
    * @return	the last time feature was modified
-   *
    */
   public Timestamp getTimelastmodified()
   {
@@ -124,22 +114,17 @@ public class ChadoFeature
   }
 
   /**
-   *
    * Set the last time feature was modified.
    * @param	the last time the feature was modified
-   *
    */
   public void setTimelastmodified(Timestamp timelastmodified)
   {
     this.timelastmodified = timelastmodified;
   }
 
-
   /**
-   *
    * Get sequence length. The length of the residue feature.
    * @return	the length of the residue feature
-   *
    */
   public int getLength()
   {
@@ -147,10 +132,8 @@ public class ChadoFeature
   }
 
   /**
-   *
    * Set sequence length. The length of the residue feature.
    * @param length	the length of the residue feature
-   *
    */
   public void setLength(int length)
   {
@@ -158,12 +141,10 @@ public class ChadoFeature
   }
 
   /**
-   *
    * Get the unique name for a feature; may not be necessarily be 
    * particularly human-readable, although this is prefered. This name 
    * must be unique for this type of feature within this organism.
    * @return	the unique name for a feature.
-   *
    */
   public String getUniquename()
   {
@@ -171,12 +152,10 @@ public class ChadoFeature
   }
 
   /**
-   *
    * Set the unique name for a feature; may not be necessarily be 
    * particularly human-readable, although this is prefered. This name 
    * must be unique for this type of feature within this organism.
    * @param uniquename	the unique name for a feature.
-   *
    */
   public void setUniquename(String uniquename)
   {
@@ -184,23 +163,19 @@ public class ChadoFeature
   }
 
   /**
-   * 
    * The optional human-readable common name for a feature, for display
    * purposes.
    * @return 	the name for a feature
-   *
    */
   public String getName()
   {
     return name;
   }
 
-  /**
-   * 
+  /** 
    * Set the optional human-readable common name for a feature, for display 
    * purposes.
    * @param name	the name for a feature
-   *
    */
   public void setName(String name)
   {
@@ -208,11 +183,9 @@ public class ChadoFeature
   }
 
   /**
-   *
    * A sequence of alphabetic characters representing biological residues
    * (nucleic acids, amino acids). 
    * @return     the feature residues
-   *
    */
   public byte[] getResidues()
   {
@@ -220,11 +193,9 @@ public class ChadoFeature
   } 
 
   /**
-   *
    * Set the sequence of alphabetic characters representing biological residues 
    * (nucleic acids, amino acids).
    * @param residues	the feature residues
-   *
    */
   public void setResidues(byte[] residues)
   {
@@ -252,8 +223,8 @@ public class ChadoFeature
   }
   
   /**
-   * Get the value of the property, represented as text.
-   * @return the value of the property
+   * Get the the feature property.
+   * @return the <code>ChadoFeatureProp</code>
    */
   public ChadoFeatureProp getFeatureprop()
   {
@@ -261,50 +232,86 @@ public class ChadoFeature
   }
 
   /**
-  * Set the feature property. 
-  * @param value  the value of the property
-  */
+   * Set the feature property. 
+   * @param featureprop  the feature property
+   */
   public void setFeatureprop(ChadoFeatureProp featureprop)
   {
     this.featureprop = featureprop;
   }
 
+  /**
+   * Reference to the featureloc table. 
+   * @return featureloc the <code>ChadoFeatureLoc</code> object.
+   */
   public ChadoFeatureLoc getFeatureloc()
   {
     return featureloc;
   }
 
+  /**
+   * Reference to the featureloc table.
+   * @param featureloc  the feature location
+   */
   public void setFeatureloc(ChadoFeatureLoc featureloc)
   {
     this.featureloc = featureloc;
   }
   
+  /**
+   * Reference to the feature_relationship table.
+   * @return feature_relationship the <code>ChadoFeatureRelationship</code>
+   *         object.
+   */
   public ChadoFeatureRelationship getFeature_relationship()
   {
     return feature_relationship;
   }
 
+  /**
+   * Reference to the feature_relationship table.
+   * @param feature_relationship the <code>ChadoFeatureRelationship</code>
+   *        object.
+   */
   public void setFeature_relationship(
       ChadoFeatureRelationship feature_relationship)
   {
     this.feature_relationship = feature_relationship;
   }
 
+  /**
+   * Reference to the organism table for this feature.
+   * @return  the <code>ChadoOrganism</code> object
+   */
   public ChadoOrganism getOrganism()
   {
     return organism;
   }
 
+  /**
+   * Reference to the organism table for this feature.
+   * @param organism the <code>ChadoOrganism</code> object
+   */
   public void setOrganism(ChadoOrganism organism)
   {
     this.organism = organism;
   }
 
+  /**
+   * A list of feature properties.
+   * @return  featurepropList a <code>List</code> of featureprop's
+   *          for a feature.
+   */
   public List getFeaturepropList()
   {
     return featurepropList;
   }
 
+  /**
+   * A list of feature properties.
+   * @param featurepropList a <code>List</code> of featureprop's
+   *        for a feature.
+   */
   public void setFeaturepropList(List featurepropList)
   {
     this.featurepropList = featurepropList;
@@ -317,13 +324,11 @@ public class ChadoFeature
   }
   
   /**
-   *
    * Used in merging the qualifiers to store them as a <code>Hashtable</code> of
    * the cvterm type_id (of the property name) and the property values as a 
    * <code>Vector</code>.
    * @param	the cvterm type_id of the property name
    * @param	the property value	
-   *
    */
   public void addQualifier(long prop_type_id, ChadoFeatureProp featprop)
   {
@@ -346,11 +351,9 @@ public class ChadoFeature
   }
 
   /**
-   *
    * Get the qualifiers which are stored as a <code>Hashtable</code> of cvterm
    * type_id (of the property name) and the property values as a <code>Vector</code>.
    * @return	the qualifiers as a <code>Hashtable</code>
-   *
    */
   public Hashtable getQualifiers()
   {
