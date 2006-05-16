@@ -370,7 +370,7 @@ public class DatabaseDocument extends Document
     }
 
     String gff_source;
-    StringBuffer feature_dbxref;
+    
     // get all dbrefs
     Hashtable dbxrefs = dao.getDbxref(schema, null);
     
@@ -382,13 +382,13 @@ public class DatabaseDocument extends Document
       gff_source = null;
       
       ChadoFeature feat = (ChadoFeature)featList.get(i);
-      int fmin                = feat.getFeatureloc().getFmin() + 1;
-      int fmax                = feat.getFeatureloc().getFmax();
-      long type_id            = feat.getCvterm().getId(); //.getType_id();
-      int strand              = feat.getFeatureloc().getStrand();
-      int phase               = feat.getFeatureloc().getPhase();
-      String name             = feat.getUniquename();
-      String typeName         = getCvtermName(type_id);
+      int fmin          = feat.getFeatureloc().getFmin() + 1;
+      int fmax          = feat.getFeatureloc().getFmax();
+      long type_id      = feat.getCvterm().getId(); //.getType_id();
+      int strand        = feat.getFeatureloc().getStrand();
+      int phase         = feat.getFeatureloc().getPhase();
+      String name       = feat.getUniquename();
+      String typeName   = getCvtermName(type_id);
 
       String timelastmodified = Long.toString(feat.getTimelastmodified().getTime());
       String feature_id       = Integer.toString(feat.getId());
@@ -924,22 +924,21 @@ public class DatabaseDocument extends Document
       feature.setSchema(args[1]);
 
       List featureList = sqlMap.queryForList("getFeature", feature);
-      System.out.println("FINISHED getFedature()");
+      System.out.println("FINISHED getFeature()");
       for(int i = 0; i < featureList.size(); i++)
       {
         feature = (ChadoFeature)featureList.get(i);
         
-        String abb = feature.getOrganism().getAbbreviation();
+        String abb  = feature.getOrganism().getAbbreviation();
         String type = feature.getCvterm().getName();
-        int fmin     = feature.getFeatureloc().getFmin() + 1;
-        int fmax     = feature.getFeatureloc().getFmax();
+        int fmin    = feature.getFeatureloc().getFmin() + 1;
+        int fmax    = feature.getFeatureloc().getFmax();
 
         System.out.print(fmin+".."+fmax);
         System.out.print(" "+type);
         //System.out.print(" "+feature.getProp_cvterm().getId());
         System.out.print(" "+feature.getFeatureloc().getStrand());
         System.out.print(" "+feature.getUniquename());
-        System.out.print(" "+feature.getTimelastmodified().toString());
         System.out.print(" "+abb);
         System.out.println(" "+Integer.toString(feature.getId()));
       }
