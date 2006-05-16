@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.19 2006-05-12 10:16:23 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.20 2006-05-16 16:43:39 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -201,7 +201,7 @@ NAMES:= \
 	uk/ac/sanger/artemis/io/QualifierInfo \
 	uk/ac/sanger/artemis/io/QualifierInfoVector \
 	uk/ac/sanger/artemis/io/QualifierInfoHash \
-	uk/ac/sanger/artemis/chado/Cvterm \
+	uk/ac/sanger/artemis/chado/ChadoCvterm \
 	uk/ac/sanger/artemis/chado/DbSqlConfig \
 	uk/ac/sanger/artemis/chado/ChadoFeature \
 	uk/ac/sanger/artemis/chado/ChadoOrganism \
