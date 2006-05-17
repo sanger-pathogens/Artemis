@@ -12,11 +12,6 @@
         
      <typeAlias alias="ChadoTransaction"
         type="uk.ac.sanger.artemis.chado.ChadoTransaction"/>
-        
-     <resultMap id="select-cvterm-names-result" class="uk.ac.sanger.artemis.chado.ChadoCvterm">
-        <result property="id" column="cvterm_id"/>
-  	    <result property="name" column="name"/>
-     </resultMap>
      
     <parameterMap id="schema-cvlist" 
                   class="uk.ac.sanger.artemis.chado.SchemaCVList">
@@ -76,18 +71,12 @@
         <result property="cvterm.id" column="type_id"/>
      </resultMap>
 
-     <resultMap id="select-product-result" class="uk.ac.sanger.artemis.chado.ChadoFeatureProp">
+     <resultMap id="select-product-result" 
+                class="uk.ac.sanger.artemis.chado.ChadoFeatureProp">
         <result property="value" column="value" />
         <result property="rank" column="rank" />
         <result property="cvterm" column="type_id" select="selectCvterm" />
      </resultMap>
-     
-     <!-- look up cvterms names and id -->
-     <select id="selectCvterm" resultMap="select-cvterm-names-result"> 
-       SELECT cvterm_id, name 
-       FROM cvterm
-       WHERE cvterm_id=#value# 
-     </select> 
      
      <select id="selectOrganism" resultClass="uk.ac.sanger.artemis.chado.ChadoOrganism"> 
        SELECT organism_id AS id, abbreviation, genus, species, common_name, comment 

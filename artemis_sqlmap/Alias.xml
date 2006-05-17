@@ -6,10 +6,38 @@
  
 
 <sqlMap namespace="Alias"> 
-
-    <select id="getAlias" resultClass="uk.ac.sanger.artemis.chado.Alias"
-            parameterClass="uk.ac.sanger.artemis.chado.Alias">
-      SELECT s.name, f.feature_id, cvterm.name AS cvterm_name 
+  
+    <typeAlias alias="ChadoSynonym"
+        type="uk.ac.sanger.artemis.chado.ChadoSynonym"/>
+        
+    <resultMap id="select-alias" 
+               class="ChadoSynonym">
+        <result property="name" column="name"/>
+   	    <result property="feature_id" column="feature_id"/>
+   	    <result property="synonym_id" column="synonym_id"/>
+   	    <result property="pub_id" column="pub_id"/>
+   	    <result property="is_current" column="is_current"/>
+   	    <result property="is_internal" column="is_internal"/>
+   	    <result property="synonym_sgml" column="synonym_sgml"/>
+  	    <result property="cvterm.name" column="cvterm_name" />
+     </resultMap>
+     
+     <resultMap id="select-alias-lazy" 
+               class="ChadoSynonym">
+        <result property="name" column="name"/>
+   	    <result property="feature_id" column="feature_id"/>
+   	    <result property="synonym_id" column="synonym_id"/>
+   	    <result property="pub_id" column="pub_id"/>
+   	    <result property="is_current" column="is_current"/>
+   	    <result property="is_internal" column="is_internal"/>
+   	    <result property="synonym_sgml" column="synonym_sgml"/>
+  	    <result property="cvterm" column="type_id" select="getCvterm"/>
+     </resultMap>
+     
+     
+    <select id="getAlias" resultMap="select-alias"
+            parameterClass="ChadoSynonym">
+      SELECT fs.*, s.name, s.synonym_sgml, cvterm.name AS cvterm_name 
       FROM $schema$.feature_synonym fs 
       LEFT JOIN $schema$.feature f ON f.feature_id=fs.feature_id 
       LEFT JOIN $schema$.synonym s ON fs.synonym_id=s.synonym_id 
@@ -19,20 +47,31 @@
       </isNotNull>
     </select>
     
+    <select id="getLazyAlias" resultMap="select-alias-lazy"
+            parameterClass="ChadoSynonym">
+      SELECT fs.*, s.name, s.synonym_sgml, s.type_id 
+      FROM $schema$.feature_synonym fs 
+      LEFT JOIN $schema$.feature f ON f.feature_id=fs.feature_id 
+      LEFT JOIN $schema$.synonym s ON fs.synonym_id=s.synonym_id 
+      <isNotNull property="uniquename">                        
+          WHERE uniquename=#uniquename#
+      </isNotNull>
+    </select>
+    
     <select id="getSynonymId" resultClass="java.lang.Integer"
-            parameterClass="uk.ac.sanger.artemis.chado.Alias">
+            parameterClass="ChadoSynonym">
       SELECT synonym_id FROM $schema$.synonym WHERE synonym.name=#name#
     </select>
    
     <select id="getFeatureSynonymId" resultClass="java.lang.Integer"
-            parameterClass="uk.ac.sanger.artemis.chado.Alias">
+            parameterClass="ChadoSynonym">
       SELECT synonym_id FROM $schema$.feature_synonym WHERE
              synonym_id=(SELECT synonym_id FROM $schema$.synonym WHERE 
              synonym.name=#name#)
     </select>
    
   <!-- WRITE BACK -->
-    <delete id="deleteFeatureAlias" parameterClass="uk.ac.sanger.artemis.chado.Alias">
+    <delete id="deleteFeatureAlias" parameterClass="ChadoSynonym">
       DELETE FROM $schema$.feature_synonym WHERE
          synonym_id=$synonym_id$ AND 
          feature_id=(SELECT feature_id FROM $schema$.feature WHERE  
@@ -46,11 +85,11 @@
               1)
     </insert>
   
-    <delete id="deleteAlias" parameterClass="uk.ac.sanger.artemis.chado.Alias">
+    <delete id="deleteAlias" parameterClass="ChadoSynonym">
       DELETE FROM $schema$.synonym WHERE synonym_id=$synonym_id$
     </delete>
   
-    <insert id="insertAlias" parameterClass="uk.ac.sanger.artemis.chado.Alias">
+    <insert id="insertAlias" parameterClass="ChadoSynonym">
       INSERT INTO $schema$.synonym ( name, type_id, synonym_sgml ) 
       VALUES ( #name#, $type_id$, #name# )
     </insert>

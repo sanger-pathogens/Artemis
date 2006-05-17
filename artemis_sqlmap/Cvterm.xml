@@ -29,5 +29,12 @@
             </dynamic>
 	    cv.cv_id = cvterm.cv_id
      </select> 
- 
+     
+      <!-- look up cvterms names and id -->
+     <select id="selectCvterm" 
+             resultClass="uk.ac.sanger.artemis.chado.ChadoCvterm"> 
+       SELECT cvterm_id AS id, name 
+       FROM cvterm
+       WHERE cvterm_id=#value# 
+     </select> 
 </sqlMap> 
