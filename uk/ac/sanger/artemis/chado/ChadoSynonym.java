@@ -28,17 +28,23 @@ package uk.ac.sanger.artemis.chado;
  * Alias GFF tags - values are stored in the synonym table and
  * linked to feature via feature_synonym table.
  */
-public class Alias
+public class ChadoSynonym
 {
-  private Integer feature_id;
-  private Integer synonym_id;
-  private String name;
   private String schema;
   private String uniquename;
-  private String cvterm_name;
-  private Long type_id;
   
-
+  // feature_synonym
+  private Integer feature_id;
+  private Integer synonym_id;
+  private Integer pub_id;
+  private boolean is_current;
+  private boolean is_internal;
+ 
+  // synonym
+  private String name;
+  private ChadoCvterm cvterm;
+  private String synonym_sgml;
+  
   public String getSchema()
   {
     return schema;
@@ -79,26 +85,6 @@ public class Alias
     this.name = name;
   }
 
-  public String getCvterm_name()
-  {
-    return cvterm_name;
-  }
-
-  public void setCvterm_name(String cvterm_name)
-  {
-    this.cvterm_name = cvterm_name;
-  }
-
-  public Long getType_id()
-  {
-    return type_id;
-  }
-
-  public void setType_id(Long type_id)
-  {
-    this.type_id = type_id;
-  }
-
   public Integer getSynonym_id()
   {
     return synonym_id;
@@ -108,4 +94,55 @@ public class Alias
   {
     this.synonym_id = synonym_id;
   }
+  
+  public ChadoCvterm getCvterm()
+  {
+    return cvterm;
+  }
+
+  public void setCvterm(ChadoCvterm cvterm)
+  {
+    this.cvterm = cvterm;
+  }
+
+  public boolean isIs_current()
+  {
+    return is_current;
+  }
+
+  public void setIs_current(boolean is_current)
+  {
+    this.is_current = is_current;
+  }
+
+  public boolean isIs_internal()
+  {
+    return is_internal;
+  }
+
+  public void setIs_internal(boolean is_internal)
+  {
+    this.is_internal = is_internal;
+  }
+
+  public Integer getPub_id()
+  {
+    return pub_id;
+  }
+
+  public void setPub_id(Integer pub_id)
+  {
+    this.pub_id = pub_id;
+  }
+  
+  public String getSynonym_sgml()
+  {
+    return synonym_sgml;
+  }
+
+  public void setSynonym_sgml(String synonym_sgml)
+  {
+    this.synonym_sgml = synonym_sgml;
+  }
+
 }

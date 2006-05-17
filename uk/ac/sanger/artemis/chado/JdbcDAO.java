@@ -517,7 +517,7 @@ public class JdbcDAO
     Hashtable synonym = new Hashtable();
     Integer feature_id;
     Vector value;
-    Alias alias;
+    ChadoSynonym alias;
     while(rs.next())
     {
       feature_id = new Integer(rs.getInt("feature_id"));
@@ -526,9 +526,12 @@ public class JdbcDAO
       else
         value = new Vector();
       
-      alias = new Alias();
+      alias = new ChadoSynonym();
+      ChadoCvterm cvterm = new ChadoCvterm();
+      cvterm.setName(rs.getString("cvterm_name"));
+      
       alias.setName( rs.getString("name") );
-      alias.setCvterm_name( rs.getString("cvterm_name") );
+      alias.setCvterm(cvterm);
       value.add(alias);
       synonym.put(feature_id, value);
     }
@@ -922,7 +925,7 @@ public class JdbcDAO
   public int insertFeatureAlias(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    final Alias alias = tsn.getAlias();
+    final ChadoSynonym alias  = tsn.getAlias();
     final String uniquename   = alias.getUniquename();
     final String synonym_name = alias.getName();
       
@@ -940,7 +943,7 @@ public class JdbcDAO
     if(!exists)
     {
       // create a new synonym name     
-      String type_id = alias.getType_id().toString();
+      String type_id = Long.toString(alias.getCvterm().getId());
       
       sql = "INSERT INTO "+schema+
             ".synonym (name, type_id, synonym_sgml) values ( '"+
@@ -976,7 +979,7 @@ public class JdbcDAO
   public int deleteFeatureAlias(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    final Alias alias = tsn.getAlias();
+    final ChadoSynonym alias  = tsn.getAlias();
     final String uniquename   = alias.getUniquename();
     final String synonym_name = alias.getName();
     String sql = "SELECT synonym_id FROM "+schema+".feature_synonym WHERE "+ 

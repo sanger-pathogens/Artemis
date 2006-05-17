@@ -498,12 +498,12 @@ public class DatabaseDocument extends Document
       {
         this_buff.append(";");
         
-        Alias alias;
+        ChadoSynonym alias;
         Vector v_synonyms = (Vector)synonym.get(new Integer(feature_id));
         for(int j=0; j<v_synonyms.size(); j++)
         {
-          alias = (Alias)v_synonyms.get(j);
-          this_buff.append(alias.getCvterm_name()+"=");
+          alias = (ChadoSynonym)v_synonyms.get(j);
+          this_buff.append(alias.getCvterm().getName()+"=");
           this_buff.append(alias.getName());
           
           if(j<v_synonyms.size()-1)
@@ -949,6 +949,16 @@ public class DatabaseDocument extends Document
         System.out.print(" "+feature.getUniquename());
         System.out.print(" "+abb);
         System.out.println(" "+Integer.toString(feature.getId()));
+        
+        Hashtable synonyms   = dao.getAlias(args[1], feature.getUniquename());
+        Vector syns = (Vector)synonyms.get(new Integer(feature.getId()));
+        for(int j=0; j<syns.size(); j++)
+        {
+          ChadoSynonym alias = (ChadoSynonym)syns.get(j);
+          System.out.print(" "+alias.getCvterm().getName()+"="+alias.getName());
+        }
+        
+        System.out.println(" "); 
       }
     }
     catch(SQLException sqle)
@@ -957,7 +967,6 @@ public class DatabaseDocument extends Document
     }
     catch(ConnectException e)
     {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
