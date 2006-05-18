@@ -117,18 +117,21 @@ public class JdbcDAO
   }
 
   /**
-   * Get child feature properties for a given parent
-   * feature to be able to construct a GFF like feature.
-   * @param parentFeatureID  the id of parent feature to query
-   * @param schema           the schema/organism name or null
+   * This can be used to get individual features or children.
+   * If ChadoFeature.featureloc.srcfeature_id is set this is used
+   * to return the children of that srcfeature_id.
+   * @param feature  the feature to query
+   * @param schema   the schema/organism name or null
    * @return    the <code>List</code> of child <code>ChadoFeature</code> objects
    * @throws SQLException
    */
-  public List getGff(final int parentFeatureID,
-                     final String schema)
-                     throws SQLException
+  public List getFeature(final ChadoFeature feature,
+                         final String schema)
+                         throws SQLException
   {
-    return getFeatureQuery(null, parentFeatureID, schema);
+    
+    return getFeatureQuery(null, 
+                 feature.getFeatureloc().getSrcfeature_id(), schema);
   }
 
   /**
@@ -138,15 +141,15 @@ public class JdbcDAO
    * @return  the <code>List</code> of <code>ChadoFeature</code>
    * @throws SQLException
    */
-  public List getFeature(final String uniquename,
-                         List schema_list)
-                         throws SQLException
+  public List getLazyFeature(final ChadoFeature feature,
+                             List schema_list)
+                             throws SQLException
   {
     List list = new Vector();
     for(int i=0; i<schema_list.size(); i++)
     {
       String schema = (String)schema_list.get(i);
-      List feat_list = getFeatureQuery(uniquename, -1, schema);
+      List feat_list = getFeatureQuery(feature.getUniquename(), -1, schema);
       list.addAll(feat_list);
     }
      

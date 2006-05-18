@@ -30,7 +30,7 @@ package uk.ac.sanger.artemis.chado;
 public class ChadoFeatureLoc
 {
   /** id of the parent feature */
-  private int srcfeature_id;
+  private int srcfeature_id = 0;
   /** start position */
   private int fmin;
   /** end position */

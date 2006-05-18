@@ -86,25 +86,24 @@ public class IBatisDAO implements ChadoDAO
   }
 
   /**
-   *
-   * Get child feature properties for a given parent
-   * feature to be able to construct a GFF like feature.
-   * @param parentFeatureID  the id of parent feature to query
-   * @param schema           the schema/organism name or null
+   * This can be used to get individual features or children.
+   * If ChadoFeature.featureloc.srcfeature_id is set this is used
+   * to return the children of that srcfeature_id.
+   * @param feature  the feature to query
+   * @param schema   the schema/organism name or null
    * @return    the <code>List</code> of child <code>ChadoFeature</code> objects
    * @throws SQLException
    */
-  public List getGff(final int feature_id,
-                     final String schema)
-                     throws SQLException
+  public List getFeature(final ChadoFeature feature,
+                         final String schema)
+                         throws SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    ChadoFeature feature = new ChadoFeature();
-    feature.setId(feature_id);
+    
     if(schema != null)
       feature.setSchema(schema);
 
-    List feature_list = sqlMap.queryForList("getGffLine", feature);
+    List feature_list = sqlMap.queryForList("getFeature", feature);
 
     // merge same features in the list
     return JdbcDAO.mergeList(feature_list);
@@ -117,24 +116,23 @@ public class IBatisDAO implements ChadoDAO
    * @return  the <code>List</code> of <code>ChadoFeature</code>
    * @throws SQLException
    */
-  public List getFeature(final String uniquename,
-                         final List schema_list)
-                         throws SQLException
+  public List getLazyFeature(final ChadoFeature feature,
+                             final List schema_list)
+                             throws SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    /*
     ChadoFeature feature = new ChadoFeature();
     feature.setUniquename(uniquename);
+    */
     
     List list = new Vector();
     for(int i=0; i<schema_list.size(); i++)
     {  
       String schema = (String)schema_list.get(i);
       feature.setSchema(schema);
-      List res_list = sqlMap.queryForList("getFeature", feature);
-      
-      //for(int j=0; j<res_list.size(); j++)
-      //  ((ChadoFeature)res_list.get(j)).setSchema(schema);
-      //list.addAll( JdbcDAO.mergeList(res_list) );
+      List res_list = sqlMap.queryForList("getLazyFeature", feature);
+
       list.addAll( res_list );
     }
     

@@ -348,7 +348,14 @@ public class DatabaseDocument extends Document
                        throws java.sql.SQLException
   {
     final int srcfeature_id = Integer.parseInt(parentFeatureID);
-    List featList = dao.getGff(srcfeature_id, schema);
+    
+    // build srcfeature object
+    ChadoFeatureLoc featureloc = new ChadoFeatureLoc();
+    featureloc.setSrcfeature_id(srcfeature_id);
+    ChadoFeature feature = new ChadoFeature();
+    feature.setFeatureloc(featureloc);
+    
+    List featList = dao.getFeature(feature, schema);
 
     ByteBuffer[] buffers = new ByteBuffer[types.length + 1];
     for(int i = 0; i < buffers.length; i++)
@@ -385,7 +392,7 @@ public class DatabaseDocument extends Document
       ChadoFeature feat = (ChadoFeature)featList.get(i);
       int fmin          = feat.getFeatureloc().getFmin() + 1;
       int fmax          = feat.getFeatureloc().getFmax();
-      long type_id      = feat.getCvterm().getId(); //.getType_id();
+      long type_id      = feat.getCvterm().getId(); 
       int strand        = feat.getFeatureloc().getStrand();
       int phase         = feat.getFeatureloc().getPhase();
       String name       = feat.getUniquename();
@@ -926,10 +933,11 @@ public class DatabaseDocument extends Document
       else
         dao = new IBatisDAO(src.getPfield());
       
-      ChadoFeature feature;
+      ChadoFeature feature = new ChadoFeature();
+      feature.setUniquename(args[0]);
       List schemas = new Vector();
       schemas.add(args[1]);
-      List featureList = dao.getFeature(args[0], schemas); 
+      List featureList = dao.getLazyFeature(feature, schemas); 
       System.out.println("FINISHED getFeature()");
       for(int i = 0; i < featureList.size(); i++)
       {

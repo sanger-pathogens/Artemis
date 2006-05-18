@@ -280,7 +280,7 @@ public class ChadoDemo
 //    append synonyms
       if(synonym != null)
       {    
-        Alias alias;
+        ChadoFeatureSynonym alias;
         
         Enumeration alias_enum = synonym.elements();
         while(alias_enum.hasMoreElements())
@@ -288,10 +288,10 @@ public class ChadoDemo
           Vector v_synonyms = (Vector)alias_enum.nextElement();
           for(int j=0; j<v_synonyms.size(); j++)
           {
-            alias = (Alias)v_synonyms.get(j);
+            alias = (ChadoFeatureSynonym)v_synonyms.get(j);
             attr_buff.append("/");
-            attr_buff.append(alias.getCvterm_name()+"=");
-            attr_buff.append(alias.getName());
+            attr_buff.append(alias.getSynonym().getCvterm().getName()+"=");
+            attr_buff.append(alias.getSynonym().getName());
             
             if(j<v_synonyms.size()-1)
               attr_buff.append(";");
@@ -347,14 +347,16 @@ public class ChadoDemo
   public String[][] search(final String search_gene, final List schema_search,
       final ChadoDAO dao) throws SQLException
   {
-    featureList = dao.getFeature(search_gene.replaceAll("[*]","%"),
-                                 schema_search);
+    ChadoFeature feature = new ChadoFeature();
+    feature.setUniquename(search_gene.replaceAll("[*]","%"));
+    featureList = dao.getLazyFeature(feature,
+                                     schema_search);
 
     String rowData[][] = new String[featureList.size()][7];
 
     for(int i = 0; i < featureList.size(); i++)
     {
-      ChadoFeature feature = (ChadoFeature) featureList.get(i);
+      feature = (ChadoFeature) featureList.get(i);
       
       int fmin = feature.getFeatureloc().getFmin() + 1;
       int fmax = feature.getFeatureloc().getFmax();
