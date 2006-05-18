@@ -7,36 +7,41 @@
 
 <sqlMap namespace="Alias"> 
   
+    <typeAlias alias="ChadoFeatureSynonym"
+        type="uk.ac.sanger.artemis.chado.ChadoFeatureSynonym"/>
+        
     <typeAlias alias="ChadoSynonym"
         type="uk.ac.sanger.artemis.chado.ChadoSynonym"/>
         
     <resultMap id="select-alias" 
-               class="ChadoSynonym">
-        <result property="name" column="name"/>
+               class="ChadoFeatureSynonym">
    	    <result property="feature_id" column="feature_id"/>
    	    <result property="synonym_id" column="synonym_id"/>
    	    <result property="pub_id" column="pub_id"/>
-   	    <result property="is_current" column="is_current"/>
-   	    <result property="is_internal" column="is_internal"/>
-   	    <result property="synonym_sgml" column="synonym_sgml"/>
-  	    <result property="cvterm.name" column="cvterm_name" />
+   	    <result property="current" column="is_current"/>
+   	    <result property="internal" column="is_internal"/>
+   	    <result property="synonym.synonym_id" column="synonym_id"/>
+   	    <result property="synonym.name" column="name"/>
+   	    <result property="synonym.synonym_sgml" column="synonym_sgml"/>
+  	    <result property="synonym.cvterm.name" column="cvterm_name" />
      </resultMap>
      
      <resultMap id="select-alias-lazy" 
-               class="ChadoSynonym">
-        <result property="name" column="name"/>
+               class="ChadoFeatureSynonym">
    	    <result property="feature_id" column="feature_id"/>
    	    <result property="synonym_id" column="synonym_id"/>
    	    <result property="pub_id" column="pub_id"/>
-   	    <result property="is_current" column="is_current"/>
-   	    <result property="is_internal" column="is_internal"/>
-   	    <result property="synonym_sgml" column="synonym_sgml"/>
-  	    <result property="cvterm" column="type_id" select="getCvterm"/>
+   	    <result property="current" column="is_current"/>
+   	    <result property="internal" column="is_internal"/>
+   	    <result property="synonym.synonym_id" column="synonym_id"/>
+   	    <result property="synonym.name" column="name"/>
+   	    <result property="synonym.synonym_sgml" column="synonym_sgml"/>
+  	    <result property="synonym.cvterm" column="type_id" select="getCvterm"/>
      </resultMap>
      
      
     <select id="getAlias" resultMap="select-alias"
-            parameterClass="ChadoSynonym">
+            parameterClass="ChadoFeatureSynonym">
       SELECT fs.*, s.name, s.synonym_sgml, cvterm.name AS cvterm_name 
       FROM $schema$.feature_synonym fs 
       LEFT JOIN $schema$.feature f ON f.feature_id=fs.feature_id 
@@ -48,7 +53,7 @@
     </select>
     
     <select id="getLazyAlias" resultMap="select-alias-lazy"
-            parameterClass="ChadoSynonym">
+            parameterClass="ChadoFeatureSynonym">
       SELECT fs.*, s.name, s.synonym_sgml, s.type_id 
       FROM $schema$.feature_synonym fs 
       LEFT JOIN $schema$.feature f ON f.feature_id=fs.feature_id 
@@ -59,39 +64,39 @@
     </select>
     
     <select id="getSynonymId" resultClass="java.lang.Integer"
-            parameterClass="ChadoSynonym">
-      SELECT synonym_id FROM $schema$.synonym WHERE synonym.name=#name#
+            parameterClass="ChadoFeatureSynonym">
+      SELECT synonym_id FROM $schema$.synonym WHERE synonym.name=#synonym.name#
     </select>
    
     <select id="getFeatureSynonymId" resultClass="java.lang.Integer"
-            parameterClass="ChadoSynonym">
+            parameterClass="ChadoFeatureSynonym">
       SELECT synonym_id FROM $schema$.feature_synonym WHERE
              synonym_id=(SELECT synonym_id FROM $schema$.synonym WHERE 
-             synonym.name=#name#)
+             synonym.name=#synonym.name#)
     </select>
    
   <!-- WRITE BACK -->
-    <delete id="deleteFeatureAlias" parameterClass="ChadoSynonym">
+    <delete id="deleteFeatureAlias" parameterClass="ChadoFeatureSynonym">
       DELETE FROM $schema$.feature_synonym WHERE
          synonym_id=$synonym_id$ AND 
          feature_id=(SELECT feature_id FROM $schema$.feature WHERE  
          uniquename=#uniquename#)
     </delete>
   
-    <insert id="insertFeatureAlias">
+    <insert id="insertFeatureAlias" parameterClass="ChadoFeatureSynonym">
       INSERT INTO $schema$.feature_synonym ( synonym_id, feature_id, pub_id )
       VALUES ( $synonym_id$ , 
               (SELECT feature_id FROM $schema$.feature WHERE uniquename=#uniquename#), 
               1)
     </insert>
   
-    <delete id="deleteAlias" parameterClass="ChadoSynonym">
+    <delete id="deleteAlias" parameterClass="ChadoFeatureSynonym">
       DELETE FROM $schema$.synonym WHERE synonym_id=$synonym_id$
     </delete>
   
-    <insert id="insertAlias" parameterClass="ChadoSynonym">
+    <insert id="insertAlias" parameterClass="ChadoFeatureSynonym">
       INSERT INTO $schema$.synonym ( name, type_id, synonym_sgml ) 
-      VALUES ( #name#, $type_id$, #name# )
+      VALUES ( #synonym.name#, $synonym.cvterm.id$, #synonym.name# )
     </insert>
   
 </sqlMap> 
