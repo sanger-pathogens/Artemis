@@ -498,13 +498,13 @@ public class DatabaseDocument extends Document
       {
         this_buff.append(";");
         
-        ChadoSynonym alias;
+        ChadoFeatureSynonym alias;
         Vector v_synonyms = (Vector)synonym.get(new Integer(feature_id));
         for(int j=0; j<v_synonyms.size(); j++)
         {
-          alias = (ChadoSynonym)v_synonyms.get(j);
-          this_buff.append(alias.getCvterm().getName()+"=");
-          this_buff.append(alias.getName());
+          alias = (ChadoFeatureSynonym)v_synonyms.get(j);
+          this_buff.append(alias.getSynonym().getCvterm().getName()+"=");
+          this_buff.append(alias.getSynonym().getName());
           
           if(j<v_synonyms.size()-1)
             this_buff.append(";");
@@ -954,8 +954,9 @@ public class DatabaseDocument extends Document
         Vector syns = (Vector)synonyms.get(new Integer(feature.getId()));
         for(int j=0; j<syns.size(); j++)
         {
-          ChadoSynonym alias = (ChadoSynonym)syns.get(j);
-          System.out.print(" "+alias.getCvterm().getName()+"="+alias.getName());
+          ChadoFeatureSynonym alias = (ChadoFeatureSynonym)syns.get(j);
+          System.out.print(" "+alias.getSynonym().getCvterm().getName()+
+                           "="+alias.getSynonym().getName());
         }
         
         System.out.println(" "); 
