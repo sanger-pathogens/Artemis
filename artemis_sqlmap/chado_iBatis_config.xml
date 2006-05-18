@@ -48,9 +48,7 @@
   <!-- Identify all SQL Map XML files to be loaded by this SQL map.  Notice the paths  
          are relative to the classpath.  --> 
  
-  <!-- 
-    <sqlMap resource="artemis_sqlmap/Organism.xml" /> 
-  -->
+  <sqlMap resource="artemis_sqlmap/Organism.xml" /> 
   <sqlMap resource="artemis_sqlmap/Cvterm.xml" />
   <sqlMap resource="artemis_sqlmap/Feature.xml" />
   <sqlMap resource="artemis_sqlmap/Dbxref.xml" />

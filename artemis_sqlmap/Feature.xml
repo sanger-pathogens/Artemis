@@ -54,7 +54,7 @@
         <result property="featureprop.value" column="value" />
         <result property="featureprop.rank" column="rank" />
         -->
-        <result property="organism" column="organism_id" select="selectOrganism" />
+        <result property="organism" column="organism_id" select="getOrganism" />
      </resultMap>
      
      <resultMap id="select-feature-sequence-result" 
@@ -78,12 +78,6 @@
         <result property="cvterm" column="type_id" select="selectCvterm" />
      </resultMap>
      
-     <select id="selectOrganism" resultClass="uk.ac.sanger.artemis.chado.ChadoOrganism"> 
-       SELECT organism_id AS id, abbreviation, genus, species, common_name, comment 
-       FROM organism
-       WHERE organism_id=#value# 
-     </select> 
-     
      <select id="selectFeatureProp" resultMap="select-product-result">
        SELECT type_id, value, rank 
        FROM $schema$.featureprop
@@ -106,7 +100,7 @@
           </iterate>
      </select>
 
-     <select id="getGffLine" parameterClass="ChadoFeature" 
+     <select id="getFeature" parameterClass="ChadoFeature" 
                              resultMap="select-feature-properties-result">
         SELECT
           timelastmodified, 
@@ -126,8 +120,8 @@
         LEFT JOIN $schema$.featureloc fl           ON f.feature_id  = fl.feature_id
         WHERE
             <dynamic>
-             <isGreaterThan property="id" compareValue="0"> 
-               srcfeature_id=$id$ AND
+             <isGreaterThan property="featureloc.srcfeature_id" compareValue="0"> 
+               srcfeature_id=$featureloc.srcfeature_id$ AND
              </isGreaterThan>
              <isNotNull property="uniquename">                        
                uniquename LIKE #uniquename# AND
@@ -175,7 +169,7 @@
        ORDER BY abbreviation
     </select>
 
-    <select id="getFeature" resultMap ="select-feature-result" 
+    <select id="getLazyFeature" resultMap ="select-feature-result" 
                             parameterClass="ChadoFeature">
 	 SELECT
 	    #schema# AS schema,

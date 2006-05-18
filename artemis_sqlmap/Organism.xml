@@ -5,18 +5,11 @@
     "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
  
 <sqlMap namespace="Organism"> 
- 
-      <!-- Use primitive wrapper type (e.g. Integer) as parameter and allow results to 
-            be auto-mapped results to Organism object (JavaBean) properties --> 
-      <select id="getOrganism" parameterClass="java.lang.String" resultClass="uk.ac.sanger.artemis.chado.Organism"> 
-   	SELECT  
-	  ORGANISM_ID as id,
-	  ABBREVIATION, 
-	  GENUS,
-	  SPECIES,
-	  COMMON_NAME,
-	  COMMENT
- 	FROM Organism WHERE COMMON_NAME = #value# 
-      </select> 
+      
+    <select id="getOrganism" resultClass="uk.ac.sanger.artemis.chado.ChadoOrganism"> 
+      SELECT organism_id AS id, abbreviation, genus, species, common_name, comment 
+      FROM organism
+      WHERE organism_id=#value# 
+    </select> 
  
 </sqlMap> 
