@@ -280,7 +280,7 @@ public class IBatisDAO implements ChadoDAO
   public Hashtable getAlias(final String schema, final String uniquename)
               throws SQLException
   {
-    ChadoSynonym alias = new ChadoSynonym();
+    ChadoFeatureSynonym alias = new ChadoFeatureSynonym();
     alias.setSchema(schema);
     alias.setUniquename(uniquename);
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
@@ -291,7 +291,7 @@ public class IBatisDAO implements ChadoDAO
     Vector value;
     for(int i=0; i<list.size(); i++)
     {
-      alias = (ChadoSynonym)list.get(i);
+      alias = (ChadoFeatureSynonym)list.get(i);
       feature_id = alias.getFeature_id();
       if(synonym.containsKey(feature_id))
         value = (Vector)synonym.get(feature_id);
@@ -525,7 +525,7 @@ public class IBatisDAO implements ChadoDAO
   public int insertFeatureAlias(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    final ChadoSynonym alias = tsn.getAlias();
+    final ChadoFeatureSynonym alias = tsn.getAlias();
     alias.setSchema(schema);
     
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
@@ -556,7 +556,7 @@ public class IBatisDAO implements ChadoDAO
   public int deleteFeatureAlias(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    final ChadoSynonym alias = tsn.getAlias();
+    final ChadoFeatureSynonym alias = tsn.getAlias();
     alias.setSchema(schema);
     
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();

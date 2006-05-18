@@ -517,7 +517,7 @@ public class JdbcDAO
     Hashtable synonym = new Hashtable();
     Integer feature_id;
     Vector value;
-    ChadoSynonym alias;
+    ChadoFeatureSynonym alias;
     while(rs.next())
     {
       feature_id = new Integer(rs.getInt("feature_id"));
@@ -526,12 +526,15 @@ public class JdbcDAO
       else
         value = new Vector();
       
-      alias = new ChadoSynonym();
+      alias = new ChadoFeatureSynonym();
       ChadoCvterm cvterm = new ChadoCvterm();
       cvterm.setName(rs.getString("cvterm_name"));
       
-      alias.setName( rs.getString("name") );
-      alias.setCvterm(cvterm);
+      ChadoSynonym syn = new ChadoSynonym();
+      syn.setName( rs.getString("name") );
+      syn.setCvterm(cvterm);
+      
+      alias.setSynonym(syn);
       value.add(alias);
       synonym.put(feature_id, value);
     }
@@ -925,9 +928,9 @@ public class JdbcDAO
   public int insertFeatureAlias(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    final ChadoSynonym alias  = tsn.getAlias();
+    final ChadoFeatureSynonym alias  = tsn.getAlias();
     final String uniquename   = alias.getUniquename();
-    final String synonym_name = alias.getName();
+    final String synonym_name = alias.getSynonym().getName();
       
     String sql;
      
@@ -943,7 +946,7 @@ public class JdbcDAO
     if(!exists)
     {
       // create a new synonym name     
-      String type_id = Long.toString(alias.getCvterm().getId());
+      String type_id = Long.toString(alias.getSynonym().getCvterm().getId());
       
       sql = "INSERT INTO "+schema+
             ".synonym (name, type_id, synonym_sgml) values ( '"+
@@ -979,9 +982,9 @@ public class JdbcDAO
   public int deleteFeatureAlias(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    final ChadoSynonym alias  = tsn.getAlias();
+    final ChadoFeatureSynonym alias = tsn.getAlias();
     final String uniquename   = alias.getUniquename();
-    final String synonym_name = alias.getName();
+    final String synonym_name = alias.getSynonym().getName();
     String sql = "SELECT synonym_id FROM "+schema+".feature_synonym WHERE "+ 
                  "synonym_id=(SELECT synonym_id FROM "+schema+".synonym WHERE "+
                  "synonym.name='"+synonym_name+"')";

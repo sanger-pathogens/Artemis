@@ -80,7 +80,7 @@ public class ChadoTransaction
   /** feature dbxref */
   private ChadoDbxref dbxref;
   /** feature synonym */
-  private ChadoSynonym alias;
+  private ChadoFeatureSynonym alias;
   /** last time feature was modified */
   private Timestamp lastmodified;
   /** the feature object */
@@ -164,7 +164,7 @@ public class ChadoTransaction
   }
 
   public ChadoTransaction(final int type,
-                          final ChadoSynonym alias,
+                          final ChadoFeatureSynonym alias,
                           final Object feature_obj)
   {
     this.type   = type;
@@ -383,12 +383,12 @@ public class ChadoTransaction
     return feature_obj;
   }
 
-  public ChadoSynonym getAlias()
+  public ChadoFeatureSynonym getAlias()
   {
     return alias;
   }
 
-  public void setAlias(ChadoSynonym alias)
+  public void setAlias(ChadoFeatureSynonym alias)
   {
     this.alias = alias;
   }

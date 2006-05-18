@@ -606,9 +606,12 @@ public class ChadoTransactionManager
            System.out.println(uniquename+"  in handleReservedTags() DELETE "+qualifier_name+" "+
                               qualifier_string);
            
-           ChadoSynonym alias = new ChadoSynonym();
+           ChadoFeatureSynonym alias = new ChadoFeatureSynonym();
+           ChadoSynonym synonym = new ChadoSynonym();
+           synonym.setName(qualifier_string);
+           alias.setSynonym(synonym);
            alias.setUniquename(uniquename);
-           alias.setName(qualifier_string);
+          
            tsn = new ChadoTransaction(ChadoTransaction.DELETE_ALIAS, 
                                       alias, 
                                       feature);
@@ -650,12 +653,16 @@ public class ChadoTransactionManager
            System.out.println(uniquename+"  in handleReservedTags() INSERT "+qualifier_name+" "+
                qualifier_string);
            Long lcvterm_id = DatabaseDocument.getCvtermID(qualifier_name);
-           ChadoSynonym alias = new ChadoSynonym();
+           ChadoFeatureSynonym alias = new ChadoFeatureSynonym();
+           ChadoSynonym synonym = new ChadoSynonym();
            ChadoCvterm cvterm = new ChadoCvterm();
            cvterm.setId(lcvterm_id.longValue());
+           synonym.setName(qualifier_string);
+           synonym.setCvterm(cvterm);
+           
+           alias.setSynonym(synonym);
            alias.setUniquename(uniquename);
-           alias.setName(qualifier_string);
-           alias.setCvterm(cvterm);
+
            
            tsn = new ChadoTransaction(ChadoTransaction.INSERT_ALIAS, 
                                       alias, 
