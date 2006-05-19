@@ -5,7 +5,7 @@
     "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
  
 
-<sqlMap namespace="Alias"> 
+<sqlMap namespace="Synonym"> 
   
     <typeAlias alias="ChadoFeatureSynonym"
         type="uk.ac.sanger.artemis.chado.ChadoFeatureSynonym"/>

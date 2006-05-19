@@ -1,4 +1,4 @@
-/* ChadoDbxref.java
+/* ChadoDb.java
  *
  * created: 2006
  *
@@ -25,36 +25,26 @@
 package uk.ac.sanger.artemis.chado;
 
 /**
- * Representation of the chado dbxref table.
+ * Representation of the chado db table.
  */
-public class ChadoDbxref
+public class ChadoDb
 { 
   private int db_id;
-  private String accession;
-  private String version;
+  private String name;
   private String description;
-  private ChadoDb db;
+  private String urlprefix;
+  private String url;
   
-  public String getAccession()
+  public String getDescription()
   {
-    return accession;
+    return description;
   }
-
-  public void setAccession(String accession)
+  
+  public void setDescription(String description)
   {
-    this.accession = accession;
+    this.description = description;
   }
-
-  public ChadoDb getDb()
-  {
-    return db;
-  }
-
-  public void setDb(ChadoDb db)
-  {
-    this.db = db;
-  }
-
+  
   public int getDb_id()
   {
     return db_id;
@@ -64,24 +54,35 @@ public class ChadoDbxref
   {
     this.db_id = db_id;
   }
-
-  public String getDescription()
+  
+  public String getName()
   {
-    return description;
+    return name;
+  }
+  
+  public void setName(String name)
+  {
+    this.name = name;
+  }
+  
+  public String getUrl()
+  {
+    return url;
+  }
+  
+  public void setUrl(String url)
+  {
+    this.url = url;
+  }
+  
+  public String getUrlprefix()
+  {
+    return urlprefix;
+  }
+  
+  public void setUrlprefix(String urlprefix)
+  {
+    this.urlprefix = urlprefix;
   }
 
-  public void setDescription(String description)
-  {
-    this.description = description;
-  }
-
-  public String getVersion()
-  {
-    return version;
-  }
-
-  public void setVersion(String version)
-  {
-    this.version = version;
-  }  
 }

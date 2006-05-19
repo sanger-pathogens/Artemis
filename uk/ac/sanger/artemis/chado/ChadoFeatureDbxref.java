@@ -1,4 +1,4 @@
-/* ChadoDbxref.java
+/* Dbxref.java
  *
  * created: 2006
  *
@@ -25,63 +25,70 @@
 package uk.ac.sanger.artemis.chado;
 
 /**
- * Representation of the chado dbxref table.
+ * Representation of the chado feature_dbxref.
  */
-public class ChadoDbxref
-{ 
-  private int db_id;
-  private String accession;
-  private String version;
-  private String description;
-  private ChadoDb db;
+public class ChadoFeatureDbxref
+{
+  private String schema;
   
-  public String getAccession()
+  /** feature_dbxref */
+  private int feature_id;
+  private int dbxref_id;
+  private boolean current = true;
+  private ChadoDbxref dbxref;
+
+  public ChadoFeatureDbxref()
   {
-    return accession;
   }
 
-  public void setAccession(String accession)
+  public int getFeature_id()
   {
-    this.accession = accession;
+    return feature_id;
   }
 
-  public ChadoDb getDb()
+  public void setFeature_id(int feature_id)
   {
-    return db;
+    this.feature_id = feature_id;
   }
 
-  public void setDb(ChadoDb db)
+  public boolean isCurrent()
   {
-    this.db = db;
+    return current;
   }
 
-  public int getDb_id()
+  public void setCurrent(boolean current)
   {
-    return db_id;
+    this.current = current;
   }
 
-  public void setDb_id(int db_id)
+  public String getSchema()
   {
-    this.db_id = db_id;
+    return schema;
   }
 
-  public String getDescription()
+  public void setSchema(String schema)
   {
-    return description;
+    this.schema = schema;
   }
 
-  public void setDescription(String description)
+  public int getDbxref_id()
   {
-    this.description = description;
+    return dbxref_id;
   }
 
-  public String getVersion()
+  public void setDbxref_id(int dbxref_id)
   {
-    return version;
+    this.dbxref_id = dbxref_id;
+  }
+  
+  public ChadoDbxref getDbxref()
+  {
+    return dbxref;
   }
 
-  public void setVersion(String version)
+  public void setDbxref(ChadoDbxref dbxref)
   {
-    this.version = version;
-  }  
+    this.dbxref = dbxref;
+  }
 }
+

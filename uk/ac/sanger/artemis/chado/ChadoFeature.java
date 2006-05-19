@@ -62,6 +62,8 @@ public class ChadoFeature
   private ChadoFeatureRelationship feature_relationship;
   /** feature organism */
   private ChadoOrganism organism;
+  /** optional primary public stable identifier */
+  private ChadoFeatureDbxref feature_dbxref;
   /** merged featureprops */
   private Hashtable qualifiers;
   /** list of ChadoFeatureProp */
@@ -294,6 +296,27 @@ public class ChadoFeature
   public void setOrganism(ChadoOrganism organism)
   {
     this.organism = organism;
+  }
+
+  
+  /**
+   * An optional primary public stable identifier for this feature. 
+   * Secondary identifiers and external dbxrefs go in table:feature_dbxref
+   * @return
+   */
+  public ChadoFeatureDbxref getFeature_dbxref()
+  {
+    return feature_dbxref;
+  }
+
+  /**
+   * An optional primary public stable identifier for this feature. 
+   * Secondary identifiers and external dbxrefs go in table:feature_dbxref
+   * @param dbxref
+   */
+  public void setFeature_dbxref(ChadoFeatureDbxref feature_dbxref)
+  {
+    this.feature_dbxref = feature_dbxref;
   }
 
   /**

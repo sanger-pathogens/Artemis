@@ -458,24 +458,25 @@ public class IBatisDAO implements ChadoDAO
   public int insertFeatureDbxref(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    ChadoDbxref dbxref = tsn.getFeatureDbxref();
+    ChadoFeatureDbxref dbxref = tsn.getFeatureDbxref();
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    Integer db_id = (Integer)sqlMap.queryForObject("getDbId", dbxref);
+    Integer db_id = (Integer)sqlMap.queryForObject("getDbId", 
+                                 dbxref.getDbxref().getDb());
     if(db_id == null)
       throw new SQLException("No database called "+
-                             dbxref.getName()+" found (for "+
+                             dbxref.getDbxref().getDb().getName()+" found (for "+
                              tsn.getUniqueName()+
                              ") check the spelling!");
     
-    dbxref.setDb_id(db_id.intValue());
+    dbxref.getDbxref().setDb_id(db_id.intValue());
     
-    Integer dbxref_id = (Integer)sqlMap.queryForObject("getDbxrefId", dbxref);
+    Integer dbxref_id = (Integer)sqlMap.queryForObject("getDbxrefId", dbxref.getDbxref());
     if(dbxref_id == null)
     {
       // create a new accession entry in dbxref
-      sqlMap.insert("insertDbxref", dbxref);
+      sqlMap.insert("insertDbxref", dbxref.getDbxref());
       // now get the new dbxref_id
-      dbxref_id = (Integer)sqlMap.queryForObject("getDbxrefId", dbxref);
+      dbxref_id = (Integer)sqlMap.queryForObject("getDbxrefId", dbxref.getDbxref());
     }
     
     dbxref.setDbxref_id(dbxref_id.intValue());
@@ -501,7 +502,7 @@ public class IBatisDAO implements ChadoDAO
   public int deleteFeatureDbxref(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    ChadoDbxref dbxref = tsn.getFeatureDbxref();
+    ChadoFeatureDbxref dbxref = tsn.getFeatureDbxref();
     
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     tsn.setSchema(schema);

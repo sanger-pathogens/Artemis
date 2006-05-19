@@ -309,9 +309,10 @@ public class JdbcDAO
     Hashtable dbxrefHash = new Hashtable();
     for(int i = 0; i < list.size(); i++)
     {
-      ChadoDbxref dbxref = (ChadoDbxref)list.get(i);
+      ChadoFeatureDbxref dbxref = (ChadoFeatureDbxref)list.get(i);
       Integer feature_id = new Integer(dbxref.getFeature_id());
-      String value = dbxref.getName() + ":" + dbxref.getAccession();
+      String value = dbxref.getDbxref().getDb().getName() + ":" + 
+                     dbxref.getDbxref().getAccession();
       if(dbxrefHash.containsKey(feature_id))
       {
         Vector v = (Vector)dbxrefHash.get(feature_id);
@@ -483,11 +484,15 @@ public class JdbcDAO
 
     while(rs.next())
     {
+      ChadoFeatureDbxref feature_dbxref = new ChadoFeatureDbxref();
       ChadoDbxref dbxref = new ChadoDbxref();
-      dbxref.setName( rs.getString("name") );
+      ChadoDb db = new ChadoDb();
+      db.setName( rs.getString("name") );
       dbxref.setAccession( rs.getString("accession") );
-      dbxref.setFeature_id( rs.getInt("feature_id") );
-      dbxrefs.add(dbxref);
+      dbxref.setDb(db);
+      feature_dbxref.setDbxref(dbxref);
+      feature_dbxref.setFeature_id( rs.getInt("feature_id") );
+      dbxrefs.add(feature_dbxref);
     }
 
     return mergeDbxref(dbxrefs);
@@ -847,11 +852,12 @@ public class JdbcDAO
   public int insertFeatureDbxref(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    final ChadoDbxref dbxref = tsn.getFeatureDbxref();
+    final ChadoFeatureDbxref dbxref = tsn.getFeatureDbxref();
     final String uniquename  = tsn.getUniqueName();
     
     // find database id
-    String sql = "SELECT db_id FROM db WHERE name='"+dbxref.getName()+"'";
+    String sql = "SELECT db_id FROM db WHERE name='"+
+                 dbxref.getDbxref().getDb().getName()+"'";
     
     Statement st   = conn.createStatement();
     ResultSet rs   = st.executeQuery(sql);
@@ -859,14 +865,15 @@ public class JdbcDAO
     
     if(!exists)
       throw new SQLException("No database called "+
-                             dbxref.getName()+
+                             dbxref.getDbxref().getDb().getName()+
                              " found (for "+uniquename+
                              ") check the spelling!");
 
     final int db_id = rs.getInt("db_id");
     // find if accession exists already
     String sqlDbxrefId = "SELECT dbxref_id FROM dbxref WHERE accession='"+
-                          dbxref.getAccession()+"' AND db_id="+db_id;
+                          dbxref.getDbxref().getAccession()+"' AND db_id="+db_id;
+    
     appendToLogFile(sqlDbxrefId, sqlLog);
     rs     = st.executeQuery(sqlDbxrefId);
     exists = rs.next();
@@ -875,7 +882,8 @@ public class JdbcDAO
     {
       // create a new accession entry in dbxref
       sql = "INSERT INTO dbxref ( db_id, accession ) "+
-            "VALUES ("+db_id+", "+dbxref.getAccession()+" )";
+            "VALUES ("+db_id+", '"+dbxref.getDbxref().getAccession()+"' )";
+      
       appendToLogFile(sql, sqlLog);
       int rowCount = st.executeUpdate(new String(sql));
       
@@ -892,6 +900,7 @@ public class JdbcDAO
           "( (SELECT feature_id FROM "+schema+
              ".feature WHERE  uniquename='"+uniquename+"'), "+
           dbxref_id+", "+ Boolean.toString(dbxref.isCurrent())+")";
+    System.out.println(sql);
     appendToLogFile(sql, sqlLog);
     return st.executeUpdate(new String(sql));
   }
@@ -906,14 +915,14 @@ public class JdbcDAO
   public int deleteFeatureDbxref(final String schema, final ChadoTransaction tsn)
                      throws SQLException
   {
-    final ChadoDbxref dbxref = tsn.getFeatureDbxref();
+    final ChadoFeatureDbxref dbxref = tsn.getFeatureDbxref();
     final String uniquename = tsn.getUniqueName();
     
     final String sql = 
       "DELETE FROM "+schema+".feature_dbxref "+
       "WHERE dbxref_id="+
-      "(SELECT dbxref_id FROM dbxref WHERE accession='"+dbxref.getAccession()+"' "+
-             "AND db_id=(SELECT db_id FROM db WHERE name='"+dbxref.getName()+"'))"+
+      "(SELECT dbxref_id FROM dbxref WHERE accession='"+dbxref.getDbxref().getAccession()+"' "+
+             "AND db_id=(SELECT db_id FROM db WHERE name='"+dbxref.getDbxref().getDb().getName()+"'))"+
       "AND feature_id=(SELECT feature_id FROM "+schema+
              ".feature WHERE  uniquename='"+uniquename+"')";
     

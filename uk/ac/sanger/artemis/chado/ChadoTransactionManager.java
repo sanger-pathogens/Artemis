@@ -592,9 +592,13 @@ public class ChadoTransactionManager
            System.out.println(uniquename+"  in handleReservedTags() DELETE db="+
                qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
          
-           ChadoDbxref old_dbxref = new ChadoDbxref();
-           old_dbxref.setName(qualifier_string.substring(0,index));
-           old_dbxref.setAccession(qualifier_string.substring(index+1));
+           ChadoFeatureDbxref old_dbxref = new ChadoFeatureDbxref();
+           ChadoDbxref dbxref = new ChadoDbxref();
+           ChadoDb db = new ChadoDb();
+           db.setName(qualifier_string.substring(0,index));
+           dbxref.setAccession(qualifier_string.substring(index+1));
+           dbxref.setDb(db);
+           old_dbxref.setDbxref(dbxref);
 
            tsn = new ChadoTransaction(ChadoTransaction.DELETE_DBXREF, 
                                       uniquename, old_dbxref,
@@ -639,9 +643,13 @@ public class ChadoTransactionManager
          
            System.out.println(uniquename+"  in handleReservedTags() INSERT db="+
              qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
-           ChadoDbxref new_dbxref = new ChadoDbxref();
-           new_dbxref.setName(qualifier_string.substring(0,index));
-           new_dbxref.setAccession(qualifier_string.substring(index+1));
+           ChadoFeatureDbxref new_dbxref = new ChadoFeatureDbxref();
+           ChadoDbxref dbxref = new ChadoDbxref();
+           ChadoDb db = new ChadoDb();
+           db.setName(qualifier_string.substring(0,index));
+           dbxref.setDb(db);
+           dbxref.setAccession(qualifier_string.substring(index+1));
+           new_dbxref.setDbxref(dbxref);
 
            tsn = new ChadoTransaction(ChadoTransaction.INSERT_DBXREF, 
                                       uniquename, new_dbxref, 
