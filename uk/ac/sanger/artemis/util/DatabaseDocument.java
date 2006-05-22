@@ -618,7 +618,7 @@ public class DatabaseDocument extends Document
                                          schema);
 
     buff.append("##FASTA\n>");
-    buff.append(feature.getName());
+    buff.append(feature.getUniquename());
     buff.append("\n");
     buff.append(feature.getResidues());
     return buff;
@@ -690,7 +690,7 @@ public class DatabaseDocument extends Document
           ChadoFeature feature = (ChadoFeature)it_residue_features.next();
           String typeName = getCvtermName(feature.getCvterm().getId()); 
           
-          db.put(schema + " - " + typeName + " - " + feature.getName(),
+          db.put(schema + " - " + typeName + " - " + feature.getUniquename(),
                  Integer.toString(feature.getId()));
         }
       }
