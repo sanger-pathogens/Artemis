@@ -14,9 +14,9 @@
         type="uk.ac.sanger.artemis.chado.ChadoTransaction"/>
      
     <parameterMap id="schema-cvlist" 
-                  class="uk.ac.sanger.artemis.chado.SchemaCVList">
+                  class="ChadoFeature">
        <parameter property="schema" javaType="java.lang.String"/>
-       <parameter property="cvlist" javaType="java.util.List"/>
+       <parameter property="featureCvterms" javaType="java.util.List"/>
     </parameterMap> 
 
     <resultMap id="select-feature-properties-result" 
@@ -29,8 +29,8 @@
         <result property="featureloc.fmax" column="fmax" nullValue="0"/>
         <result property="featureloc.phase" column="phase" nullValue="10"/>
         <result property="uniquename" column="uniquename"/>
-        <result property="cvterm.id" column="type_id"/>
-        <result property="featureprop.cvterm.id" column="prop_type_id" nullValue="0"/>
+        <result property="cvterm.cvtermId" column="type_id"/>
+        <result property="featureprop.cvterm.cvtermId" column="prop_type_id" nullValue="0"/>
         <result property="featureprop.value" column="value"/>
      </resultMap>
 
@@ -67,8 +67,9 @@
                 class="ChadoFeature">
         <result property="organism.abbreviation" column="abbreviation"/>
         <result property="name" column="name"/>
+        <result property="uniquename" column="uniquename"/>
         <result property="id" column="feature_id"/>
-        <result property="cvterm.id" column="type_id"/>
+        <result property="cvterm.cvtermId" column="type_id"/>
      </resultMap>
 
      <resultMap id="select-product-result" 
@@ -132,10 +133,8 @@
      </select>
  
     <select id="getSequence" parameterClass="ChadoFeature" 
-                             resultMap="select-feature-sequence-result">
-       SELECT
-         name, 
-         residues 
+                             resultClass="ChadoFeature">
+       SELECT *
        FROM $schema$.feature 
        WHERE feature_id=$id$
     </select>
@@ -158,13 +157,14 @@
        SELECT
          abbreviation,
          name,
+         uniquename,
          feature_id,
          type_id
        FROM organism, $schema$.feature WHERE
          organism.organism_id=$schema$.feature.organism_id AND
          residues notnull
-         <iterate prepend="AND" property="cvlist" conjunction="OR" open="(" close=")">
-           type_id=#cvlist[]#
+         <iterate prepend="AND" property="featureCvterms" conjunction="OR" open="(" close=")">
+           type_id=#featureCvterms[]#
          </iterate>
        ORDER BY abbreviation
     </select>
@@ -202,8 +202,8 @@
              <isNotNull property="uniquename">                        
                uniquename LIKE #uniquename# AND
              </isNotNull>
-             <isGreaterThan property="cvterm.id" compareValue="0"> 
-               $schema$.feature.type_id=$cvterm.id$ AND
+             <isGreaterThan property="cvterm.cvtermId" compareValue="0"> 
+               $schema$.feature.type_id=$cvterm.cvtermId$ AND
              </isGreaterThan>
          </dynamic>
          f.feature_id > 0
@@ -293,7 +293,7 @@
           $organism.id$,
           #name#,
           #uniquename#,
-          $cvterm.id$ )
+          $cvterm.cvtermId$ )
     </insert>
 
     <insert id="insertFeatureLoc" 

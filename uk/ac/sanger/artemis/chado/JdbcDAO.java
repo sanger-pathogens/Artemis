@@ -217,12 +217,12 @@ public class JdbcDAO
 
       feature.setFeatureloc(featureloc);
       feature.setCvterm(new ChadoCvterm());
-      feature.getCvterm().setId( rs.getLong("type_id") );
+      feature.getCvterm().setCvtermId( rs.getLong("type_id") );
       
       // feature properties
       ChadoFeatureProp featureprop = new ChadoFeatureProp();
       ChadoCvterm cvterm = new ChadoCvterm();
-      cvterm.setId(rs.getLong("prop_type_id"));
+      cvterm.setCvtermId(rs.getLong("prop_type_id"));
       featureprop.setCvterm(cvterm);
       featureprop.setValue(rs.getString("value"));
       feature.setFeatureprop(featureprop);
@@ -273,7 +273,7 @@ public class JdbcDAO
       ChadoFeature feat = (ChadoFeature)list.get(i);
       String name  = feat.getUniquename();
 
-      feat.addQualifier(feat.getFeatureprop().getCvterm().getId(),
+      feat.addQualifier(feat.getFeatureprop().getCvterm().getCvtermId(),
                         feat.getFeatureprop());
 
       if(i < feature_size - 1)
@@ -282,7 +282,7 @@ public class JdbcDAO
       // merge next line if part of the same feature
       while(featNext != null && featNext.getUniquename().equals(name))
       {
-        feat.addQualifier(featNext.getFeatureprop().getCvterm().getId(),
+        feat.addQualifier(featNext.getFeatureprop().getCvterm().getCvtermId(),
                           featNext.getFeatureprop());
         i++;
 
@@ -373,7 +373,7 @@ public class JdbcDAO
       feature.setId( rs.getInt("feature_id") );
       feature.setName( rs.getString("name") );
       feature.setCvterm(new ChadoCvterm());
-      feature.getCvterm().setId( rs.getLong("type_id") );
+      feature.getCvterm().setCvtermId( rs.getLong("type_id") );
       
       list.add(feature);
     }
@@ -449,7 +449,7 @@ public class JdbcDAO
     while(rs.next())
     {
       ChadoCvterm cvterm = new ChadoCvterm();
-      cvterm.setId( rs.getLong("cvterm_id") );
+      cvterm.setCvtermId( rs.getLong("cvterm_id") );
       cvterm.setName( rs.getString("name") );
       cvterms.add(cvterm);
     }
@@ -778,7 +778,7 @@ public class JdbcDAO
     sql_buff.append(organism_id+" , ");
     sql_buff.append("'"+chadoFeature.getName()+"'"+" , ");
     sql_buff.append("'"+chadoFeature.getUniquename()+"'"+" , ");
-    sql_buff.append(Long.toString(chadoFeature.getCvterm().getId()));
+    sql_buff.append(Long.toString(chadoFeature.getCvterm().getCvtermId()));
     sql_buff.append(" )");
 
     sql = new String(sql_buff);
@@ -958,7 +958,7 @@ public class JdbcDAO
     if(!exists)
     {
       // create a new synonym name     
-      String type_id = Long.toString(alias.getSynonym().getCvterm().getId());
+      String type_id = Long.toString(alias.getSynonym().getCvterm().getCvtermId());
       
       sql = "INSERT INTO "+schema+
             ".synonym (name, type_id, synonym_sgml) values ( '"+

@@ -8,10 +8,10 @@
 <sqlMap namespace="Cvterm"> 
  
     <resultMap id="select-cvterm-names-result" class="uk.ac.sanger.artemis.chado.ChadoCvterm">
-   	<result property="id" column="cvterm_id"/>
-  	<result property="name" column="cvterm_name"/>
-        <result property="cv_name" column="cv_name"/>
-     </resultMap>
+   	  <result property="cvtermId" column="cvterm_id"/>
+  	  <result property="name" column="cvterm_name"/>
+      <result property="cv.name" column="cv_name"/>
+    </resultMap>
 
     <!-- look up cvterms names and id -->
      <select id="getCvterm" resultMap="select-cvterm-names-result"> 
@@ -33,7 +33,7 @@
       <!-- look up cvterms names and id -->
      <select id="selectCvterm" 
              resultClass="uk.ac.sanger.artemis.chado.ChadoCvterm"> 
-       SELECT cvterm_id AS id, name 
+       SELECT cvterm_id AS cvtermId, name 
        FROM cvterm
        WHERE cvterm_id=#value# 
      </select> 

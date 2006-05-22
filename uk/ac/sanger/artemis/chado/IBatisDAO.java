@@ -29,6 +29,7 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 import java.util.List;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.Set;
 import java.sql.*;
 
 import javax.swing.JPasswordField;
@@ -175,12 +176,13 @@ public class IBatisDAO implements ChadoDAO
                      throws SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    SchemaCVList schema_CVlist = new SchemaCVList();
-    schema_CVlist.setSchema(schema);
-    schema_CVlist.setCvlist(cvterm_ids);
+    
+    ChadoFeature feature = new ChadoFeature();
+    feature.setSchema(schema);
+    feature.setFeatureCvterms(cvterm_ids);
 
     return sqlMap.queryForList("getSchemaResidueFeatures",
-                                schema_CVlist);
+                                feature);
   }
 
   /**
@@ -314,8 +316,11 @@ public class IBatisDAO implements ChadoDAO
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     ChadoCvterm cvterm   = new ChadoCvterm();
+    ChadoCv cv = new ChadoCv();
+    cv.setName(cv_name);
+    cvterm.setCv(cv);
     cvterm.setName(name);
-    cvterm.setCv_name(cv_name);
+
     return (ChadoCvterm)sqlMap.queryForObject("getCvterm", cvterm);
   }
 

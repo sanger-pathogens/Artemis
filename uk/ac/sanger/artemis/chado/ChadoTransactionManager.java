@@ -231,7 +231,7 @@ public class ChadoTransactionManager
       String key = feature.getKey().toString();
       
       ChadoCvterm cvterm = new ChadoCvterm();
-      cvterm.setId(DatabaseDocument.getCvtermID(key).longValue());
+      cvterm.setCvtermId(DatabaseDocument.getCvtermID(key).longValue());
       chado_feature.setCvterm(cvterm);
 
       addQualifiers(feature.getQualifiers(), chado_feature);
@@ -664,7 +664,7 @@ public class ChadoTransactionManager
            ChadoFeatureSynonym alias = new ChadoFeatureSynonym();
            ChadoSynonym synonym = new ChadoSynonym();
            ChadoCvterm cvterm = new ChadoCvterm();
-           cvterm.setId(lcvterm_id.longValue());
+           cvterm.setCvtermId(lcvterm_id.longValue());
            synonym.setName(qualifier_string);
            synonym.setCvterm(cvterm);
            

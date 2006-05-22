@@ -68,6 +68,8 @@ public class ChadoFeature
   private Hashtable qualifiers;
   /** list of ChadoFeatureProp */
   private List featurepropList;
+  
+  private List featureCvterms = new Vector();
 
   /**
    * Get the feature_id.
@@ -319,6 +321,16 @@ public class ChadoFeature
     this.feature_dbxref = feature_dbxref;
   }
 
+  public List getFeatureCvterms()
+  {
+    return featureCvterms;
+  }
+
+  public void setFeatureCvterms(List featureCvterms)
+  {
+    this.featureCvterms = featureCvterms;
+  }
+
   /**
    * A list of feature properties.
    * @return  featurepropList a <code>List</code> of featureprop's
@@ -341,7 +353,7 @@ public class ChadoFeature
     for(int i=0; i<featurepropList.size(); i++)
     {
       ChadoFeatureProp featureprop = (ChadoFeatureProp)featurepropList.get(i);
-      addQualifier(featureprop.getCvterm().getId(), featureprop);
+      addQualifier(featureprop.getCvterm().getCvtermId(), featureprop);
     }
   }
   

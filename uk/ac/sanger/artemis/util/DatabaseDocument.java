@@ -392,7 +392,7 @@ public class DatabaseDocument extends Document
       ChadoFeature feat = (ChadoFeature)featList.get(i);
       int fmin          = feat.getFeatureloc().getFmin() + 1;
       int fmax          = feat.getFeatureloc().getFmax();
-      long type_id      = feat.getCvterm().getId(); 
+      long type_id      = feat.getCvterm().getCvtermId(); 
       int strand        = feat.getFeatureloc().getStrand();
       int phase         = feat.getFeatureloc().getPhase();
       String name       = feat.getUniquename();
@@ -592,7 +592,7 @@ public class DatabaseDocument extends Document
       while(it.hasNext())
       {
         ChadoCvterm cv = (ChadoCvterm)it.next();
-        cvterm.put(new Long(cv.getId()), cv.getName());
+        cvterm.put(new Long(cv.getCvtermId()), cv.getName());
       }
     }
     catch(SQLException sqle)
@@ -688,7 +688,7 @@ public class DatabaseDocument extends Document
         while(it_residue_features.hasNext())
         {
           ChadoFeature feature = (ChadoFeature)it_residue_features.next();
-          String typeName = getCvtermName(feature.getCvterm().getId()); 
+          String typeName = getCvtermName(feature.getCvterm().getCvtermId()); 
           
           db.put(schema + " - " + typeName + " - " + feature.getUniquename(),
                  Integer.toString(feature.getId()));

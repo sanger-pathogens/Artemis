@@ -1,4 +1,4 @@
-/* ShemaCVList.java
+/* ChadoCv.java
  *
  * created: 2005
  *
@@ -24,38 +24,58 @@
 
 package uk.ac.sanger.artemis.chado;
 
-import java.util.List;
-
 /**
- *
- * Java Object used by iBatis to represent the cvterm_id's as
- * a <code>List</code> for a schema.
- *
+ * Representation of cv table.
  */
-public class SchemaCVList
+public class ChadoCv
 {
-
-  private String schema;
-  private List cvlist;
-
-  public String getSchema()
+  private int cvId;
+  private String name;
+  private String definition;
+  
+  public int getCvId()
   {
-    return schema;
+    return cvId;
   }
-
-  public void setSchema(String schema)
+  
+  public void setCvId(int cvId)
   {
-    this.schema = schema;
+    this.cvId = cvId;
   }
-
-  public List getCvlist()
+  
+  /**
+   * A description of the criteria for membership of this ontology.
+   * @return
+   */
+  public String getDefinition()
   {
-    return cvlist;
+    return definition;
   }
-
-  public void setCvlist(List cvlist)
+  
+  /**
+   * A description of the criteria for membership of this ontology.
+   * @param definition
+   */
+  public void setDefinition(String definition)
   {
-    this.cvlist = cvlist;
+    this.definition = definition;
   }
-
+  
+  /**
+   * The name of the ontology. 
+   * @return
+   */
+  public String getName()
+  {
+    return name;
+  }
+  
+  /**
+   * The name of the ontology.
+   * @param name
+   */
+  public void setName(String name)
+  {
+    this.name = name;
+  }
 }

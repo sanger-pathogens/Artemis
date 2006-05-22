@@ -96,7 +96,7 @@
   
     <insert id="insertAlias" parameterClass="ChadoFeatureSynonym">
       INSERT INTO $schema$.synonym ( name, type_id, synonym_sgml ) 
-      VALUES ( #synonym.name#, $synonym.cvterm.id$, #synonym.name# )
+      VALUES ( #synonym.name#, $synonym.cvterm.cvtermId$, #synonym.name# )
     </insert>
   
 </sqlMap> 
