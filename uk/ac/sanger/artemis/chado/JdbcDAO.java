@@ -80,7 +80,7 @@ public class JdbcDAO
                         throws SQLException
   {
     Statement st = conn.createStatement();
-    String sql = "SELECT name, residues from " + schema +
+    String sql = "SELECT name, uniquename, residues from " + schema +
                  ".feature where feature_id = '" + feature_id + "'";
 
     appendToLogFile(sql, sqlLog);
@@ -90,6 +90,7 @@ public class JdbcDAO
 
     ChadoFeature feature = new ChadoFeature();
     feature.setName(rs.getString("name"));
+    feature.setUniquename(rs.getString("uniquename"));
     feature.setResidues(rs.getBytes("residues"));
     return feature;
   }
@@ -344,7 +345,7 @@ public class JdbcDAO
                      throws SQLException
   {
     String sql = new String(
-            "SELECT abbreviation, name, feature_id, type_id FROM organism, "+
+            "SELECT abbreviation, uniquename, name, feature_id, type_id FROM organism, "+
             schema + ".feature WHERE (");
 
     for(int j = 0; j < cvterm_ids.size(); j++)
@@ -372,6 +373,7 @@ public class JdbcDAO
       feature.setOrganism(organism);
       feature.setId( rs.getInt("feature_id") );
       feature.setName( rs.getString("name") );
+      feature.setUniquename( rs.getString("uniquename") );
       feature.setCvterm(new ChadoCvterm());
       feature.getCvterm().setCvtermId( rs.getLong("type_id") );
       
