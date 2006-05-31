@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.1 2006-05-31 09:49:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.2 2006-05-31 15:40:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -99,6 +99,10 @@ public class GeneViewerPanel extends JPanel
             (String)embl_transcript.getQualifierByName("ID").getValues().get(0));
         
         ypos += border;
+        
+        if(exons == null)
+          continue;
+        
         for(int j=0; j<exons.size(); j++)
         {
           Feature embl_exon = (Feature)exons.get(j);
@@ -108,7 +112,8 @@ public class GeneViewerPanel extends JPanel
           int ex_start = border+(int)((embl_exon.getFirstBase()-start)*fraction);
           int ex_end   = border+(int)((embl_exon.getLastBase()-start)*fraction);
           
-          g2d.setColor( exon.getColour() );
+          if(exon.getColour() != null)
+            g2d.setColor( exon.getColour() );
           RoundRectangle2D e = new RoundRectangle2D.Float(ex_start, ypos, ex_end-ex_start,
                                                           border, 0, ypos);
           GradientPaint gp = new GradientPaint(ex_start, ypos, exon.getColour(),

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.1 2006-05-31 10:38:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.2 2006-05-31 15:41:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -61,6 +61,13 @@ public class ChadoCanonicalGene
     transcripts.add(transcript);
   }
   
+  public void addExon(Feature transcript, Feature exon, boolean reset) 
+         throws InvalidRelationException
+  {
+    exons = new Hashtable();
+    addExon(transcript, exon);
+  }
+  
   public void addExon(Feature transcript, Feature exon) 
          throws InvalidRelationException
   {
@@ -68,7 +75,7 @@ public class ChadoCanonicalGene
          (String)transcript.getQualifierByName("ID").getValues().get(0);
     
     final Vector v_exons;
-    if(exons.contains(transcript_id))
+    if(exons.containsKey(transcript_id))
       v_exons = (Vector)exons.get(transcript_id);
     else
       v_exons = new Vector();
@@ -92,7 +99,8 @@ public class ChadoCanonicalGene
     {
       try
       {
-        Feature transcript = (Feature)transcripts.get(0);
+        Feature transcript = (Feature)transcripts.get(i);
+        
         if( ids.contains((String)transcript.getQualifierByName("ID").getValues().get(0)) )
           return transcript;
       }

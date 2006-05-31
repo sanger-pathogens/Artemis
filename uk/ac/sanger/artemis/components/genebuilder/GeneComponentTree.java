@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.1 2006-05-31 09:49:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.2 2006-05-31 15:40:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -116,7 +116,7 @@ public class GeneComponentTree extends JTree
 
       for(int j=0; j<exons.size(); j++)
       {
-        exon = (Feature)exons.get(i);
+        exon = (Feature)exons.get(j);
         exon_id = (String)exon.getQualifierByName("ID").getValues().get(0);
         exon_node = new DefaultMutableTreeNode(exon_id);
         transcript_node.add(exon_node);

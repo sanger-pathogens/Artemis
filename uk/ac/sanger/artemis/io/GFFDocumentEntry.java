@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.23 2006-05-31 10:38:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.24 2006-05-31 15:41:44 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.23 2006-05-31 10:38:48 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.24 2006-05-31 15:41:44 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -61,7 +61,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     super(new GFFEntryInformation(), document, listener);
 
     // join the separate exons into one feature (if appropriate)
-    combineFeatures();
+    //combineFeatures();
     combineGeneFeatures();
     finished_constructor = true;
   }
@@ -195,6 +195,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         if(parent_qualifier == null && derives_qualifier == null)
           continue;
         
+        
         // compare this features parent_id's to transcript id's in the 
         // chado gene hash to decide if it is part of it
         final StringVector parent_id;
@@ -217,7 +218,16 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
             else
               gene.addExon(transcript, this_feature);
           }
+          
         }
+      }
+      
+      
+      Enumeration enum_genes = chado_gene.elements();
+      while(enum_genes.hasMoreElements())
+      {
+        ChadoCanonicalGene gene = (ChadoCanonicalGene)enum_genes.nextElement();
+        combineChadoExons(gene);
       }
     }
     catch(InvalidRelationException e)
@@ -301,6 +311,118 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     combineFeaturesFromHash(reverse_feature_groups);
   }
 
+  /**
+   *  Combine the features (which are exons) and delete the orignals from this
+   *  Entry.  The key of this hash will be the group name and the value is a
+   *  FeatureVector containing the feature that are in that group.  Groups
+   *  that have more than one member will be combined.
+   **/
+  private void combineChadoExons(ChadoCanonicalGene gene) 
+  {
+    Hashtable exons = gene.getExons();
+    final Enumeration enum_exons = exons.keys();
+    final RangeVector new_range_vector = new RangeVector();
+    QualifierVector qualifier_vector = new QualifierVector();
+    Hashtable id_range_store = new Hashtable();
+    Timestamp lasttimemodified = null;
+    
+    while(enum_exons.hasMoreElements())
+    {
+      String transcript_id = (String)enum_exons.nextElement();
+      Vector v_exons = (Vector)exons.get(transcript_id);
+      
+      for(int i=0; i<v_exons.size(); i++)
+      {
+        final GFFStreamFeature this_feature =
+            (GFFStreamFeature)v_exons.get(i);
+      
+        lasttimemodified = this_feature.getLastModified(); 
+        final Location this_feature_location = this_feature.getLocation();
+
+        if(this_feature_location.getRanges().size() > 1)
+        {
+           throw new Error("internal error - new location should have " +
+                           "exactly one range");
+        }
+
+        final Range new_range =
+            (Range)this_feature_location.getRanges().elementAt(0);
+
+        Qualifier id_qualifier = this_feature.getQualifierByName("ID");
+        if(id_qualifier != null)
+        {
+          String id = (String)(id_qualifier.getValues()).elementAt(0);
+          id_range_store.put(new_range, id);
+        }
+
+
+        if(this_feature_location.isComplement()) 
+          new_range_vector.insertElementAt(new_range, 0);
+        else 
+          new_range_vector.add(new_range);
+
+        removeInternal(this_feature);
+        qualifier_vector.addAll(this_feature.getQualifiers());
+      }
+      
+      final Feature first_old_feature = (Feature)v_exons.get(0);
+
+      final Location new_location = new Location(new_range_vector,
+                    first_old_feature.getLocation().isComplement());
+
+      qualifier_vector = mergeQualifiers(qualifier_vector,
+                                         first_old_feature.getLocation().isComplement());
+
+      final GFFStreamFeature new_feature = 
+        new GFFStreamFeature(first_old_feature.getKey(),
+                             new_location, qualifier_vector);
+        
+      if(lasttimemodified != null)
+        new_feature.setLastModified(lasttimemodified);
+      new_feature.setSegmentRangeStore(id_range_store);
+
+      try 
+      {
+        new_feature.setLocation(new_location);
+
+        final Qualifier gene_qualifier =
+            new_feature.getQualifierByName("gene");
+
+        if(gene_qualifier != null &&
+           gene_qualifier.getValues().size() > 0 &&
+           ((String)(gene_qualifier.getValues()).elementAt(0)).startsWith("Phat"))
+        {
+          // special case to handle incorrect output of the Phat gene
+          // prediction tool
+          new_feature.removeQualifierByName("codon_start");
+        } 
+        else
+        {
+          final Qualifier old_codon_start_qualifier =
+              first_old_feature.getQualifierByName("codon_start");
+
+          if(old_codon_start_qualifier != null)
+            new_feature.setQualifier(old_codon_start_qualifier);
+        }
+        forcedAdd(new_feature);
+        
+        gene.addExon( gene.getFeatureFromId(transcript_id), new_feature, true );
+      } 
+      catch(ReadOnlyException e) 
+      {
+        throw new Error("internal error - unexpected exception: " + e);
+      }
+      catch(OutOfRangeException e) 
+      {
+        throw new Error("internal error - unexpected exception: " + e);
+      }
+      catch(EntryInformationException e) 
+      {
+        throw new Error("internal error - unexpected exception: " + e);
+      }
+    }
+  }
+  
   /**
    *  Combine the features (which are exons) and delete the orignals from this
    *  Entry.  The key of this hash will be the group name and the value is a
