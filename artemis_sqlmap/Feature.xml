@@ -24,6 +24,8 @@
         <result property="timelastmodified" column="timelastmodified"/>
    	    <result property="id" column="id"/>
   	    <result property="feature_relationship.object_id" column="object_id"/>
+  	    <result property="feature_relationship.cvterm.cvtermId" column="relation_type_id"/>
+  	    <result property="feature_relationship.rank" column="rank"/>
         <result property="featureloc.strand" column="strand" nullValue="0"/>
         <result property="featureloc.fmin" column="fmin" nullValue="-1"/>
         <result property="featureloc.fmax" column="fmax" nullValue="0"/>
@@ -106,7 +108,9 @@
         SELECT
           timelastmodified, 
           f.feature_id AS id, 
-          object_id, 
+          fr.object_id,
+          fr.type_id AS relation_type_id,
+          fr.rank, 
           fl.strand, 
           fmin, 
           fmax, 
