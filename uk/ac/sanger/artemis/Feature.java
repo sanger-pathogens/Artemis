@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.19 2006-04-19 09:57:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.20 2006-05-31 10:38:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -34,7 +34,6 @@ import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.io.Range;
-import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.DateStampFeature;
 import uk.ac.sanger.artemis.io.EntryInformation;
@@ -60,7 +59,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.19 2006-04-19 09:57:50 tjc Exp $
+ *  @version $Id: Feature.java,v 1.20 2006-05-31 10:38:48 tjc Exp $
  **/
 
 public class Feature
@@ -2625,7 +2624,7 @@ CHANGED_END:
 
     try 
     {
-      getEntry().add(return_feature, false);
+      getEntry().add(return_feature, true, false);
     } 
     catch(EntryInformationException e) 
     {

@@ -4,7 +4,7 @@
  *
  * This file is part of Artemis
  *
- * Copyright(C) 2000  Genome Research Limited
+ * Copyright(C) 2005,2006  Genome Research Limited
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DatabaseJFrame.java,v 1.8 2006-01-10 12:04:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DatabaseJFrame.java,v 1.9 2006-05-31 10:38:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -55,14 +55,11 @@ import java.awt.Toolkit;
 import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.io.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 
 public class DatabaseJFrame extends JFrame
 {
   private JLabel status_line = new JLabel("");
-
-  private boolean splitGFFEntry = true;
+  private boolean splitGFFEntry = false;
 
   public DatabaseJFrame(final DatabaseEntrySource entry_source,
       final ArtemisMain art_main)
@@ -118,9 +115,6 @@ public class DatabaseJFrame extends JFrame
   private void showSelected(final DatabaseEntrySource entry_source,
       final JTree tree, final ArtemisMain art_main)
   {
-    Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
-    Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
-
     String node_name = null;
 
     try

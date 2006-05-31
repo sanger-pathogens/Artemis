@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.44 2006-04-21 15:22:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.45 2006-05-31 10:38:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -35,12 +35,14 @@ import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.SimpleEntryInformation;
 import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.RawStreamSequence;
 import uk.ac.sanger.artemis.io.FastaStreamSequence;
 import uk.ac.sanger.artemis.io.Sequence;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
+import uk.ac.sanger.artemis.components.genebuilder.*;
 
 import java.io.IOException;
 import java.io.File;
@@ -66,7 +68,7 @@ import javax.swing.ImageIcon;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.44 2006-04-21 15:22:56 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.45 2006-05-31 10:38:48 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -3769,9 +3771,15 @@ public class FeatureDisplay extends EntryGroupPanel
         getSelection().set(clicked_feature);
 
         if(Options.readWritePossible()) 
-          new FeatureEdit(clicked_feature, getEntryGroup(),
-                           getSelection(),
-                           getGotoEventSource()).setVisible(true);
+        {        
+          if(clicked_feature.getEmblFeature() instanceof GFFStreamFeature &&
+             ((GFFStreamFeature)clicked_feature.getEmblFeature()).getChadoGene() != null)
+            new GeneBuilderFrame(clicked_feature);
+          else
+            new FeatureEdit(clicked_feature, getEntryGroup(),
+                            getSelection(),
+                            getGotoEventSource()).setVisible(true);
+        }
       }
     }
 

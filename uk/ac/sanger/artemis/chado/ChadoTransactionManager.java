@@ -100,10 +100,10 @@ public class ChadoTransactionManager
 
         System.out.println("LOCATION_CHANGED "+feature.getFirstBase()+".."+feature.getLastBase()+
                            "   new="+rv_new.size()+" old="+rv_old.size());
-
         if(rv_new.size() != rv_old.size())
           return;
         
+        ChadoTransaction tsn;
         int ichanged;
         Vector changes = new Vector();
         for(ichanged=0; ichanged<rv_old.size(); ichanged++)
@@ -116,7 +116,6 @@ public class ChadoTransactionManager
             changes.add(new Integer(ichanged));
         }
  
-        ChadoTransaction tsn;
         for(int i=0; i<changes.size();i++)
         {
           ichanged = ((Integer)changes.elementAt(i)).intValue();
@@ -160,6 +159,15 @@ public class ChadoTransactionManager
   {
     if(event.getType() == EntryChangeEvent.FEATURE_ADDED)
     {
+      System.out.println("FEATURE_ADDED");
+      
+      // if this is a duplicate feature then ignore
+      if(event.isDuplicate())
+      {
+        System.out.println("FEATURE_ADDED ------> DUPLICATE");
+        return;
+      }
+      
       Feature feature = event.getFeature();
       String feature_uniquename = null;
 
@@ -168,7 +176,10 @@ public class ChadoTransactionManager
         Qualifier qualifier_uniquename = feature.getQualifierByName("ID");
 
         if(qualifier_uniquename != null)
+        {
           feature_uniquename = (String)(qualifier_uniquename.getValues()).elementAt(0);
+          System.out.println("FEATURE_ADDED "+feature_uniquename);
+        }
         
         while(feature_uniquename == null ||
               feature_uniquename.equals("") ||
@@ -292,8 +303,19 @@ public class ChadoTransactionManager
         for(int value_index = 0; value_index < qualifier_values.size();
           ++value_index)
         {
-          chado_feature.addQualifier(type_id, 
-                         (ChadoFeatureProp)qualifier_values.elementAt(value_index));
+ //         if(qualifier_values.elementAt(value_index) instanceof ChadoFeatureProp)
+ //         {
+ //           System.out.println("HERE ChadoFeatureProp");
+ //           chado_feature.addQualifier(type_id, 
+ //                        (ChadoFeatureProp)qualifier_values.elementAt(value_index));
+ //         }
+ //         else
+ //         {
+            // happens when duplicating features 
+            ChadoFeatureProp featureprop = new ChadoFeatureProp();
+            featureprop.setValue((String)qualifier_values.elementAt(value_index));
+            chado_feature.addQualifier(type_id, featureprop);
+ //         }
         }
       }
       catch(NullPointerException npe)
@@ -716,5 +738,6 @@ public class ChadoTransactionManager
     if(retVal > 0)
       sql = new Vector();
   }
+  
 }
 

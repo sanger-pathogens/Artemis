@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.17 2006-04-24 10:11:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.18 2006-05-31 10:38:48 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -28,6 +28,7 @@ package uk.ac.sanger.artemis.components;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.util.*;
+import uk.ac.sanger.artemis.components.genebuilder.GeneBuilderFrame;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.io.Key;
@@ -42,6 +43,7 @@ import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.OutOfDateException;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -54,7 +56,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.17 2006-04-24 10:11:48 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.18 2006-05-31 10:38:48 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -753,8 +755,12 @@ public class EditMenu extends SelectionMenu
     {
       final Feature selection_feature = features_to_edit.elementAt(i);
 
-      new FeatureEdit(selection_feature, entry_group, selection,
-                      goto_event_source).setVisible(true);
+      if(selection_feature.getEmblFeature() instanceof GFFStreamFeature &&
+          ((GFFStreamFeature)selection_feature.getEmblFeature()).getChadoGene() != null)
+         new GeneBuilderFrame(selection_feature);
+       else
+         new FeatureEdit(selection_feature, entry_group, selection,
+                         goto_event_source).setVisible(true);
     }
 
     selection.set(features_to_edit);
@@ -1047,26 +1053,30 @@ public class EditMenu extends SelectionMenu
    *  @param entry_group Used to get the ActionController for calling
    *    startAction() and endAction().
    **/
-  private static void unmergeFeature (final JFrame frame,
+  private static void unmergeFeature(final JFrame frame,
                               final Selection selection,
-                              final EntryGroup entry_group) {
-    try {
+                              final EntryGroup entry_group) 
+  {
+    try 
+    {
       entry_group.getActionController ().startAction ();
 
       final FeatureSegmentVector selected_segments =
         selection.getSelectedSegments ();
 
-      if (selected_segments.size () != 2) {
+      if (selected_segments.size () != 2) 
+      {
         final String message =
           "you need to select exactly two exons use unmerge";
-        new MessageDialog (frame, message);
+        new MessageDialog(frame, message);
         return;
       }
 
       FeatureSegment first_segment = selected_segments.elementAt (0);
       FeatureSegment second_segment = selected_segments.elementAt (1);
 
-      if (first_segment.getFeature () != second_segment.getFeature ()) {
+      if(first_segment.getFeature () != second_segment.getFeature ()) 
+      {
         final String message =
           "you need to select two exons from the same feature to use unmerge";
         new MessageDialog (frame, message);
@@ -1083,15 +1093,17 @@ public class EditMenu extends SelectionMenu
       int index_of_second_segment =
         all_feature_segments.indexOf (second_segment);
 
-      if (index_of_first_segment - index_of_second_segment < -1 ||
-          index_of_first_segment - index_of_second_segment > 1) {
+      if(index_of_first_segment - index_of_second_segment < -1 ||
+         index_of_first_segment - index_of_second_segment > 1) 
+      {
         final String message =
           "you need to select two adjacent exons to use unmerge";
         new MessageDialog (frame, message);
         return;
       }
 
-      if (index_of_second_segment <  index_of_first_segment) {
+      if(index_of_second_segment <  index_of_first_segment) 
+      {
         // swap the segments for consistency
         final FeatureSegment temp_segment = first_segment;
         final int temp_segment_index = index_of_first_segment;
@@ -1103,8 +1115,9 @@ public class EditMenu extends SelectionMenu
         index_of_second_segment = temp_segment_index;
       }
 
-      try {
-        final Feature new_feature = segment_feature.duplicate ();
+      try 
+      {
+        final Feature new_feature = segment_feature.duplicate();;
 
         // we set the Selection later
         selection.clear ();
@@ -1113,29 +1126,41 @@ public class EditMenu extends SelectionMenu
         // segment_feature and delete the segments up to (and including)
         // index_of_first_segment from new_feature
 
-        for (int i = all_feature_segments.size () - 1 ;
-             i >= index_of_second_segment ;
-             --i) {
+        for(int i = all_feature_segments.size() - 1;
+            i >= index_of_second_segment; --i)
+        {
           segment_feature.getSegments ().elementAt (i).removeFromFeature ();
         }
 
         // remove the first segment of new_feature index_of_first_segment times
-        for (int i = 0 ; i <= index_of_first_segment ; ++i) {
+        for (int i = 0; i <= index_of_first_segment; ++i) 
           new_feature.getSegments ().elementAt (0).removeFromFeature ();
+        
+        // set GFF ID's
+        if(segment_feature.getEmblFeature() instanceof GFFStreamFeature)
+        {
+          setGffId(first_segment.getFeature(), new_feature);
+          setGffId(first_segment.getFeature(), segment_feature);
         }
 
         selection.set (segment_feature.getSegments ().lastElement ());
         selection.add (new_feature.getSegments ().elementAt (0));
-      } catch (ReadOnlyException e) {
+      } 
+      catch (ReadOnlyException e) 
+      {
         final String message =
           "the selected exons (in " +
           segment_feature.getIDString () +
           ") are in a read only entry - cannot continue";
         new MessageDialog (frame, message);
-      } catch (LastSegmentException e) {
+      } 
+      catch (LastSegmentException e) 
+      {
         throw new Error ("internal error - unexpected exception: " + e);
       }
-    } finally {
+    } 
+    finally 
+    {
       entry_group.getActionController ().endAction ();
     }
   }
@@ -1148,7 +1173,7 @@ public class EditMenu extends SelectionMenu
    *  @param entry_group Used to get the ActionController for calling
    *    startAction() and endAction().
    **/
-  private void unmergeAllFeature(final JFrame frame,
+  private static void unmergeAllFeature(final JFrame frame,
                                  final Selection selection,
                                  final EntryGroup entry_group) 
   {
@@ -1180,9 +1205,9 @@ public class EditMenu extends SelectionMenu
         
         for(int i=0; i<selected_segments.size()-1; i++)
         {
-          FeatureSegment segment = selected_segments_array[i];
+          FeatureSegment segment  = selected_segments_array[i];
           Feature segment_feature = segment.getFeature();
-          final Feature new_feature = segment_feature.duplicate ();
+          final Feature new_feature = segment_feature.duplicate();
           segment_to_remove.add(segment);
 
           FeatureSegmentVector new_segments = new_feature.getSegments();
@@ -1191,7 +1216,7 @@ public class EditMenu extends SelectionMenu
           for(int j = 0 ; j <new_segments.size(); j++)
           {
             if(i != j)
-             removals.add(new_segments.elementAt(j));
+              removals.add(new_segments.elementAt(j));
           }
 
           for(int j = 0; j < removals.size(); j++)
@@ -1200,13 +1225,28 @@ public class EditMenu extends SelectionMenu
           new_features.add(new_feature);
         }
 
-        for(int i=0; i<segment_to_remove.size(); i++)
+        final int size = segment_to_remove.size();
+        for(int i=0; i<size; i++)
         {
-          selected_segments_array[selected_segments.size()-1].getFeature().removeSegment( (FeatureSegment)segment_to_remove.get(i) );
+          selected_segments_array[size-1].getFeature().removeSegment(
+                           (FeatureSegment)segment_to_remove.get(i) );
         }
 
+        Feature feature;
         for(int i=0; i<new_features.size(); i++)
-          selection.add(((Feature)new_features.get(i)).getSegments().elementAt(0));
+        {
+          feature = (Feature)new_features.get(i);
+          selection.add(feature.getSegments().elementAt(0));
+          
+          // set GFF ID's
+          if(feature.getEmblFeature() instanceof GFFStreamFeature)
+            setGffId(selected_segments_array[0].getFeature(), feature);
+        }
+        
+        // set GFF ID's
+        feature = selected_segments_array[size-1].getFeature();
+        if(feature.getEmblFeature() instanceof GFFStreamFeature)
+          setGffId(selected_segments_array[0].getFeature(), feature);
       } 
       catch(ReadOnlyException e)
       {
@@ -1227,6 +1267,33 @@ public class EditMenu extends SelectionMenu
     }
   }
 
+  /**
+   * Sets the ID based on the new features ranges.
+   * @param feature_original
+   * @param feature_new
+   */
+  private static void setGffId(final Feature feature_original,
+                        final Feature feature_new)
+  {
+    RangeVector ranges = feature_new.getLocation().getRanges();
+    GFFStreamFeature gff_feature = 
+       (GFFStreamFeature)feature_original.getEmblFeature();
+    String id1 = gff_feature.getSegmentID(ranges);
+    
+    try
+    {
+      feature_new.getEmblFeature().setQualifier(new Qualifier("ID", id1));
+    }
+    catch(ReadOnlyException e)
+    {
+      e.printStackTrace();
+    }
+    catch(EntryInformationException e)
+    {
+      e.printStackTrace();
+    }
+    
+  }
 
   /**
    *  Create a QualifierEditor JFrame that acts on the selected features.

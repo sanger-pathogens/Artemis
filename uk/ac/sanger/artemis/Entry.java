@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.5 2006-03-17 16:51:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.6 2006-05-31 10:38:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.io.Reader;
  *  possible events.)
  *
  *  @author Kim Rutherford
- *  @version $Id: Entry.java,v 1.5 2006-03-17 16:51:38 tjc Exp $
+ *  @version $Id: Entry.java,v 1.6 2006-05-31 10:38:48 tjc Exp $
  **/
 
 public class Entry implements FeatureChangeListener, Selectable 
@@ -482,7 +482,32 @@ public class Entry implements FeatureChangeListener, Selectable
    *    cannot contain the Key, Qualifier or Key/Qualifier combination of the
    *    given Feature
    **/
-  public void add(final Feature new_feature, final boolean force)
+  public void add(final Feature new_feature,
+                  final boolean force)
+        throws EntryInformationException, OutOfRangeException,
+        ReadOnlyException 
+  {
+    add(new_feature, false, force);
+  }
+  
+  /**
+   *  Add a Feature to the Entry.  The new feature will be inserted in order
+   *  in the feature vector.  The features in the vector are ordered by the
+   *  first base of each feature.
+   *  @param new_feature The new feature to add.  It should not be a member
+   *    of the Entry object.
+   *  @param force If true then invalid qualifiers will be quietly thrown away
+   *    and a feature with invalid keys will not be added.  "Invalid" means
+   *    that the key/qualifier is non allowed to occur in an Entry of this type
+   *   (probably determined by the EntryInformation object of this Entry).
+   *    If false an EntryInformationException will be thrown for invalid keys
+   *    or qualifiers.
+   *  @exception EntryInformationException Thrown force is false if this Entry
+   *    cannot contain the Key, Qualifier or Key/Qualifier combination of the
+   *    given Feature
+   **/
+  public void add(final Feature new_feature, final boolean duplicate,
+                  final boolean force)
       throws EntryInformationException, OutOfRangeException,
              ReadOnlyException 
   {
@@ -520,8 +545,8 @@ public class Entry implements FeatureChangeListener, Selectable
 
       // now inform the listeners that a addition has occured
       final EntryChangeEvent event =
-        new EntryChangeEvent(this, new_feature,
-                              EntryChangeEvent.FEATURE_ADDED);
+        new EntryChangeEvent(this, new_feature, duplicate,
+                             EntryChangeEvent.FEATURE_ADDED);
 
       fireAction(entry_listener_list, event);
 

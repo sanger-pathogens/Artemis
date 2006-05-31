@@ -367,7 +367,7 @@ public class DatabaseDocument extends Document
     int feature_size = featList.size();
     Hashtable id_store = new Hashtable(feature_size);
 
-// build feature name store
+    // build feature name store
     for(int i = 0; i < feature_size; i++)
     {
       ChadoFeature feat = (ChadoFeature)featList.get(i);
@@ -392,7 +392,7 @@ public class DatabaseDocument extends Document
       ChadoFeature feat = (ChadoFeature)featList.get(i);
       int fmin          = feat.getFeatureloc().getFmin() + 1;
       int fmax          = feat.getFeatureloc().getFmax();
-      long type_id      = feat.getCvterm().getCvtermId(); 
+      long type_id      = feat.getCvterm().getCvtermId();
       int strand        = feat.getFeatureloc().getStrand();
       int phase         = feat.getFeatureloc().getPhase();
       String name       = feat.getUniquename();
@@ -402,8 +402,14 @@ public class DatabaseDocument extends Document
       String feature_id       = Integer.toString(feat.getId());
 
       String parent_id = null;
+      String parent_relationship = null;
       if(feat.getFeature_relationship() != null)
-        parent_id = Integer.toString(feat.getFeature_relationship().getObject_id());
+      {
+        ChadoFeatureRelationship feat_relationship = feat.getFeature_relationship();
+        parent_id = Integer.toString(feat_relationship.getObject_id());
+        long parent_type_id = feat_relationship.getCvterm().getCvtermId();
+        parent_relationship = getCvtermName(parent_type_id);
+      }
             
       if(parent_id != null && id_store.containsKey(parent_id))
         parent_id = (String)id_store.get(parent_id);
@@ -458,15 +464,21 @@ public class DatabaseDocument extends Document
 
       this_buff.append("ID=" + name + ";");
 
-      if(parent_id != null)
-        this_buff.append("Parent=" + parent_id + ";");
+     
+      if(parent_id != null && !parent_id.equals("0"))
+      {
+        if(parent_relationship.equals("derives_from"))
+          this_buff.append("Derives_from=" + parent_id + ";");
+        else
+          this_buff.append("Parent=" + parent_id + ";");
+      }
 
       this_buff.append("timelastmodified=" + timelastmodified + ";");
 
 
       // attributes
-      Hashtable qualifiers     = feat.getQualifiers();
-      if(qualifiers != null)
+      Hashtable qualifiers = feat.getQualifiers();
+      if(qualifiers != null && qualifiers.size() > 0)
       {
         Enumeration e_qualifiers = qualifiers.keys();
         while(e_qualifiers.hasMoreElements())
@@ -497,14 +509,13 @@ public class DatabaseDocument extends Document
           if(j<dbxref.size()-1)
             this_buff.append(",");
         }
+        this_buff.append(";");
       }
       
       // append synonyms
       if(synonym != null &&
          synonym.containsKey(new Integer(feature_id)))
-      {
-        this_buff.append(";");
-        
+      {   
         ChadoFeatureSynonym alias;
         Vector v_synonyms = (Vector)synonym.get(new Integer(feature_id));
         for(int j=0; j<v_synonyms.size(); j++)

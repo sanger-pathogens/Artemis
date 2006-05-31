@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.22 2006-05-10 10:31:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.23 2006-05-31 10:38:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.22 2006-05-10 10:31:18 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.23 2006-05-31 10:38:48 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -62,6 +62,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
 
     // join the separate exons into one feature (if appropriate)
     combineFeatures();
+    combineGeneFeatures();
     finished_constructor = true;
   }
 
@@ -130,6 +131,101 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     return new FastaStreamSequence(sequence);
   }
 
+  private void combineGeneFeatures()
+  {
+    final FeatureVector original_features = getAllFeatures();
+    
+    Feature this_feature;
+    Hashtable chado_gene = new Hashtable();
+    try
+    {
+      // find the genes
+      for(int i = 0 ; i < original_features.size() ; ++i) 
+      {
+        this_feature = original_features.featureAt(i);
+        String key = this_feature.getKey().getKeyString();
+        
+        if(key.equals("gene"))
+        {
+          String id = (String)this_feature.getQualifierByName("ID").getValues().get(0);
+          ChadoCanonicalGene gene = new ChadoCanonicalGene();
+          gene.setGene(this_feature);
+          chado_gene.put(id, gene);
+          ((GFFStreamFeature)this_feature).setChadoGene(gene);
+        }
+      }
+    
+      // find the transcripts
+      for(int i = 0 ; i < original_features.size() ; ++i) 
+      {
+        this_feature = original_features.featureAt(i);
+        
+        // transcript 
+        Qualifier parent_qualifier = this_feature.getQualifierByName("Parent");
+        
+        if(parent_qualifier == null)
+          continue;
+
+        StringVector parents = parent_qualifier.getValues();
+        for(int j=0; j<parents.size(); j++)
+        {
+          String parent = (String)parents.get(j);
+          
+          if(chado_gene.containsKey(parent))
+          {
+            // store transcript
+            ChadoCanonicalGene gene = (ChadoCanonicalGene)chado_gene.get(parent);
+            gene.addTranscript(this_feature);
+            continue;
+          }
+        }
+      }
+      
+      // find exons & protein
+      for(int i = 0 ; i < original_features.size() ; ++i) 
+      {
+        this_feature = original_features.featureAt(i);
+        // exons
+        String key = this_feature.getKey().getKeyString();
+        if(!key.equals("exon") && !key.equals("polypeptide"))
+          continue;
+        
+        Qualifier parent_qualifier = this_feature.getQualifierByName("Parent");
+        Qualifier derives_qualifier = this_feature.getQualifierByName("Derives_from");
+        if(parent_qualifier == null && derives_qualifier == null)
+          continue;
+        
+        // compare this features parent_id's to transcript id's in the 
+        // chado gene hash to decide if it is part of it
+        final StringVector parent_id;
+        
+        if(parent_qualifier != null)
+          parent_id = parent_qualifier.getValues();
+        else
+          parent_id = derives_qualifier.getValues();
+        
+        Enumeration enum_genes = chado_gene.elements();
+        while(enum_genes.hasMoreElements())
+        {
+          ChadoCanonicalGene gene = (ChadoCanonicalGene)enum_genes.nextElement();
+          Feature transcript = gene.containsTranscript(parent_id);
+          
+          if(transcript != null)
+          {
+            if(parent_qualifier == null)
+              gene.addProtein(transcript, this_feature);
+            else
+              gene.addExon(transcript, this_feature);
+          }
+        }
+      }
+    }
+    catch(InvalidRelationException e)
+    {
+      e.printStackTrace();
+    }
+  }
+  
   /**
    *  Join the separate exons into one feature (if appropriate).
    **/

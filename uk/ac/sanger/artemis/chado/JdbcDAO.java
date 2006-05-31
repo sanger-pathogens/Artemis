@@ -733,6 +733,7 @@ public class JdbcDAO
                      schema+".feature WHERE uniquename='"+
                      (String)uniquename.get(i)+"')");
 
+      System.out.println(sqlBuff.toString());
       appendToLogFile(new String(sqlBuff), sqlLog);
 
       Statement st = conn.createStatement();

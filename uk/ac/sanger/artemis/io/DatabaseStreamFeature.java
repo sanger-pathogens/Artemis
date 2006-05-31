@@ -30,7 +30,7 @@ import java.io.*;
  *  This is an implementation of Feature that can read and write itself to a
  *  CHADO stream.
  *
- *  @version $Id: DatabaseStreamFeature.java,v 1.5 2006-04-10 12:03:29 tjc Exp $
+ *  @version $Id: DatabaseStreamFeature.java,v 1.6 2006-05-31 10:38:48 tjc Exp $
  **/
 
 public class DatabaseStreamFeature
@@ -62,74 +62,6 @@ public class DatabaseStreamFeature
   {
     final Feature return_value = new DatabaseStreamFeature(this);
     return return_value;
-  }
-
-
-  /**
-   *  Read some embl feature qualifiers from a stream into a QualifierVector
-   *  object.  The stream should contain qualifiers in this form:
-   *  <PRE>  /name1=value1/name2="value2"/name3=[value3]  </PRE>
-   *  @param in_stream the qualifiers are read from this stream
-   *  @exception IOException thrown if there is a problem reading the
-   *    qualifiers, such as end of file.
-   *  @exception QualifierParseException Thrown if the format of the value
-   *    String is not appropriate for a Qualifier with the given name.  Each
-   *    qualifier has a specific format for the value part which depends on
-   *    the name, for example the value part of /codon_start qualifier must be
-   *    a number: 1, 2 or 3.
-   *  @return A Vector containing one Qualifier object for each name/value
-   *    pair read from the stream.
-   **/
-  public static QualifierVector
-    readQualifiers(final Reader in_stream,
-                   final EntryInformation entry_information)
-      throws QualifierParseException, IOException 
-  {
-
-    QualifierVector return_vector = new QualifierVector ();
-
-    BufferedReader buffered_reader = new BufferedReader (in_stream);
-
-    String name;
-    String value;
-
-    // loop until end of file
-    while( (name = StreamQualifier.readName (buffered_reader)) != null)
-    {
-      // save one character in case the next char is not a '='
-      buffered_reader.mark(1);
-
-      final int next_char = buffered_reader.read();
-
-      if(next_char == -1) 
-        value = null;
-      else
-      {
-        if (next_char == '=') 
-          value = StreamQualifier.readValue(buffered_reader);
-        else 
-        {
-          // this qualifier doesn't have a value
-          value = null;
-          buffered_reader.reset();
-        }
-      }
-
-      final Qualifier new_qualifier;
-
-      if(value == null)
-        new_qualifier = new Qualifier(name);
-      else
-      {
-        new_qualifier =
-          StreamQualifier.makeStreamQualifier(name, value,
-                                              entry_information);
-      }
-
-      return_vector.addQualifierValues(new_qualifier);
-    }
-
-    return return_vector;
   }
 
 }

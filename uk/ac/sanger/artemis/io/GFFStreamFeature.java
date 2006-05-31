@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.35 2006-05-10 10:31:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.36 2006-05-31 10:38:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -39,7 +39,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.35 2006-05-10 10:31:18 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.36 2006-05-31 10:38:48 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -59,6 +59,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   /** store the Timestamp for the feature */
   private Timestamp timelastmodified;
   
+  private ChadoCanonicalGene chadoGene;
+  
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
    *  to an Entry (with Entry.add()).
@@ -70,6 +72,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
                           final QualifierVector qualifiers) 
   {
     super(null);
+    
     try 
     {
       setKey(key);
@@ -114,9 +117,11 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   public GFFStreamFeature(final Feature feature) 
   {
     this(feature.getKey(), feature.getLocation(), feature.getQualifiers());
-
-//  if(feature instanceof GFFStreamFeature)
-//    gff_lines = new StringVector(((GFFStreamFeature)feature).gff_lines);
+    
+  //  if(feature instanceof GFFStreamFeature)
+  //  {
+  //    this.id_range_store = ((GFFStreamFeature)feature).id_range_store;
+  //  }
   }
 
   /**
@@ -284,10 +289,31 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       }
     }
 
-    return (String)(getQualifierByName("ID").getValues()).elementAt(0);
+    return null;
   }
 
-
+  public String getSegmentID(RangeVector rv)
+  {
+    String id = "";
+    if(id_range_store != null)
+    {
+      String id_new;
+      Range range;
+      for(int i=0; i<rv.size(); i++)
+      {
+        range  = (Range)rv.get(i);
+        id_new = getSegmentID(range);
+        if(id_new != null)
+        {
+          if(!id.equals(""))
+            id = id +",";
+          id = id+id_new;
+        }
+      }
+    }
+    return id;
+  }
+  
   /**
   *
   * For gff-version 3:
@@ -832,5 +858,15 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     }
     
     qualifier.addValue(date_format.format(timelastmodified));
+  }
+
+  public ChadoCanonicalGene getChadoGene()
+  {
+    return chadoGene;
+  }
+
+  public void setChadoGene(ChadoCanonicalGene chadoGene)
+  {
+    this.chadoGene = chadoGene;
   }
 }
