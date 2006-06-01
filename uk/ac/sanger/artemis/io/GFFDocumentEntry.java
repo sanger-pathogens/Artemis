@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.24 2006-05-31 15:41:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.25 2006-06-01 08:20:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.24 2006-05-31 15:41:44 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.25 2006-06-01 08:20:53 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -222,7 +222,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         }
       }
       
-      
+      // now join exons
       Enumeration enum_genes = chado_gene.elements();
       while(enum_genes.hasMoreElements())
       {
@@ -336,7 +336,12 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         final GFFStreamFeature this_feature =
             (GFFStreamFeature)v_exons.get(i);
       
-        lasttimemodified = this_feature.getLastModified(); 
+        // use the most current lastmodified datestamp
+        if(this_feature.getLastModified() != null &&
+           (lasttimemodified == null ||
+            this_feature.getLastModified().compareTo(lasttimemodified) > 0))
+          lasttimemodified = this_feature.getLastModified(); 
+        
         final Location this_feature_location = this_feature.getLocation();
 
         if(this_feature_location.getRanges().size() > 1)
