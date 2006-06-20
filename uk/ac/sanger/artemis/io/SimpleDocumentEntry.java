@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.18 2005-11-28 16:46:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.19 2006-06-20 11:28:37 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -32,12 +32,13 @@ import java.util.Date;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
+import javax.swing.JOptionPane;
 
 /**
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.18 2005-11-28 16:46:38 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.19 2006-06-20 11:28:37 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -327,16 +328,23 @@ abstract public class SimpleDocumentEntry
 
     final FeatureEnumeration feature_enum = new_entry.features();
 
+    final StringBuffer failed = new StringBuffer();
     while(feature_enum.hasMoreFeatures()) 
     {
       final Feature new_feature = feature_enum.nextFeature();
-
+      
       try
       {
         if(force) 
-          forcedAdd(makeNativeFeature(new_feature, true));
-        else 
+        {
+          if(forcedAdd(makeNativeFeature(new_feature, true)) == null)
+            failed.append(new_feature.getKey().getKeyString()+"\n"); 
+        }
+        else
+        {
+          
           add(makeNativeFeature(new_feature, true));
+        }
       } 
       catch(ReadOnlyException e) 
       {
@@ -344,6 +352,13 @@ abstract public class SimpleDocumentEntry
       }
     }
 
+    if(!failed.toString().equals(""))
+      JOptionPane.showMessageDialog(null, 
+          "Failed to use the following keys\n"+
+          failed.toString(),
+          "Warning - unknown keys",
+          JOptionPane.WARNING_MESSAGE);
+    
     final Sequence new_sequence = new_entry.getSequence();
 
     if(new_sequence != null) 
