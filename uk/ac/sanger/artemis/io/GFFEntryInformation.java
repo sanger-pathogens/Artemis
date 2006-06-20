@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFEntryInformation.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFEntryInformation.java,v 1.4 2006-06-20 11:25:22 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import uk.ac.sanger.artemis.Options;
  *  An EntryInformation object for GFFDocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: GFFEntryInformation.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: GFFEntryInformation.java,v 1.4 2006-06-20 11:25:22 tjc Exp $
  **/
 
 public class GFFEntryInformation extends SimpleEntryInformation 
@@ -72,13 +72,12 @@ public class GFFEntryInformation extends SimpleEntryInformation
    **/
   private void makeEntryInformation()
       throws IOException, QualifierInfoException
-  {
+  { 
     final InputStream feature_keys_stream =
       Options.class.getResourceAsStream("/etc/feature_keys_gff");
 
     final InputStream qualifier_types_stream =
       Options.class.getResourceAsStream("/etc/qualifier_types_gff");
-
 
     QualifierInfoVector qualifier_info_vector =
       readQualifierInfo(qualifier_types_stream, feature_keys_stream);
@@ -89,6 +88,26 @@ public class GFFEntryInformation extends SimpleEntryInformation
         qualifier_info_vector.elementAt(i);
 
       addQualifierInfo(qualifier_info);
+    }
+    
+    //
+    // include extra keys and qualifiers
+    final QualifierInfoVector extra_qualifiers =
+      Options.getOptions().getExtraQualifiers();
+    final StringVector extra_keys =
+      Options.getOptions().getOptionValues("extra_keys");
+    
+    for(int i = 0 ; i < extra_keys.size() ; ++i)
+    {
+      final Key new_key = new Key((String)extra_keys.elementAt(i));
+      addKey(new_key);
+    }
+
+    for(int i = 0 ; i < extra_qualifiers.size() ; ++i)
+    {
+      final QualifierInfo new_qualifier_info = extra_qualifiers.elementAt(i);
+      System.out.println(new_qualifier_info.getName());
+      addQualifierInfo(new_qualifier_info);
     }
 
 //  entry_information.setEMBLFormat(true);
