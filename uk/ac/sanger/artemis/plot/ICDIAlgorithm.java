@@ -22,6 +22,9 @@
 
 package uk.ac.sanger.artemis.plot;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.sequence.*;
@@ -50,6 +53,12 @@ public class ICDIAlgorithm extends BaseAlgorithm
     setScalingFlag(true);
   }
 
+  public void drawLegend(Graphics g, int font_height,
+      int font_width, Color[] frameColour)
+  {
+     
+  }
+  
   /**
    *  @param start The start base (included in the range).
    *  @param end The end base (included in the range).  If the start/end pair

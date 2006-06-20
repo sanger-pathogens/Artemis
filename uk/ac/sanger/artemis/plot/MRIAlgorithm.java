@@ -22,6 +22,9 @@
 
 package uk.ac.sanger.artemis.plot;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.sequence.*;
@@ -34,7 +37,7 @@ import uk.ac.sanger.artemis.sequence.*;
  * Biol Int 43:107-14
  *
  *  @author Derek Gatherer
- *  @version $Id: MRIAlgorithm.java,v 1.4 2004-12-02 16:54:08 tjc Exp $
+ *  @version $Id: MRIAlgorithm.java,v 1.5 2006-06-20 13:40:42 tjc Exp $
  *  original version 10-09-03
  *  revised 01-12-04
  **/
@@ -51,6 +54,12 @@ public class MRIAlgorithm extends BaseAlgorithm
     setScalingFlag(true);
   }
 
+  public void drawLegend(Graphics g, int font_height,
+      int font_width, Color[] frameColour)
+  {
+     
+  }
+  
   /**
    *  @param start The start base (included in the range).
    *  @param end The end base (included in the range).  If the start/end pair

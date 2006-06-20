@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCFrameAlgorithm.java,v 1.3 2004-12-02 16:52:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCFrameAlgorithm.java,v 1.4 2006-06-20 13:40:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -38,7 +38,7 @@ import java.awt.*;
  *  constructor.
  *
  *  @author Kim Rutherford
- *  @version $Id: GCFrameAlgorithm.java,v 1.3 2004-12-02 16:52:55 tjc Exp $
+ *  @version $Id: GCFrameAlgorithm.java,v 1.4 2006-06-20 13:40:42 tjc Exp $
  **/
 public class GCFrameAlgorithm extends BaseAlgorithm 
 {
@@ -167,20 +167,20 @@ public class GCFrameAlgorithm extends BaseAlgorithm
       BasicStroke stroke = (BasicStroke)g2d.getStroke();
       g2d.setStroke(new BasicStroke(3.f));
 
-      switch(frame)
-      {
-        case 0:
-          g2d.setColor(frameColour[0]);
+     // switch(frame)
+     // {
+     //   case 0:
+          g2d.setColor(frameColour[1]);
           g2d.drawLine(font_width*2, lineHgt, font_width*4, lineHgt);
  
-          g2d.setColor(frameColour[1]);
+          g2d.setColor(frameColour[0]);
           g2d.drawLine(font_width*7, lineHgt, font_width*9, lineHgt);
 
           g2d.setColor(frameColour[2]);
           g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
           g2d.setStroke(stroke);
           return;
-        case 1:
+     /*   case 1:
           g2d.setColor(frameColour[2]);
           g2d.drawLine(font_width*2, lineHgt, font_width*4, lineHgt);
 
@@ -202,7 +202,7 @@ public class GCFrameAlgorithm extends BaseAlgorithm
           g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
           g2d.setStroke(stroke);
           return;
-      } 
+      } */
     }
   }
 
