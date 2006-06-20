@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.9 2005-12-07 08:25:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.10 2006-06-20 12:47:19 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.9 2005-12-07 08:25:52 tjc Exp $
+ *  @version $Id: Plot.java,v 1.10 2006-06-20 12:47:19 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -760,12 +760,11 @@ public abstract class Plot extends JPanel
 
     int width = getWidth() - window_changer.getWidth() - (15*font_width);
 
-    /*
+    
     g.translate(width,0);
     ((BaseAlgorithm)getAlgorithm()).drawLegend(g,font_height,
                                                font_width,frameColour);
     g.translate(-width,0);
-    */
   }
 
   /**
