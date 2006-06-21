@@ -315,6 +315,7 @@ CC   gi:1806573 gi:215666 gi:506836 gi:508561 gi:1061043 gi:215669
 CC   gi:1769975 gi:494974 gi:215664 gi:15620 gi:393451 gi:1769977
 CC   gi:215681 gi:215675 gi:215676 gi:15141 gi:414530.
 XX
+XX
 FH   Key             Location/Qualifiers
 FH
 FT   source          1..33593
@@ -382,8 +383,8 @@ FT                   /evidence=EXPERIMENTAL
 FT                   /note="activator binding site; pO, pP promoters"
 FT   misc_feature    3127
 FT                   /evidence=EXPERIMENTAL
-FT                   /note="transcription start site for O operon; encodes O, N,
-FT                   M, L, X, Y, K, lysA, lysB, R, S"
+FT                   /note="transcription start site for O operon; encodes O,
+FT                   N, M, L, X, Y, K, lysA, lysB, R, S"
 FT   CDS             3167..4021
 FT                   /codon_start=1
 FT                   /db_xref="SWISS-PROT:P25478"
@@ -430,18 +431,18 @@ FT                   /note="Nam209 mutation"
 FT                   /replace="at"
 FT                   /gene="N"
 FT   variation       4630
-FT                   /note="sir3 mutation; defective for choice of small capsids
-FT                   by satellite phage P4"
+FT                   /note="sir3 mutation; defective for choice of small
+FT                   capsids by satellite phage P4"
 FT                   /replace="c"
 FT                   /gene="N"
 FT   variation       4695
-FT                   /note="sir5 mutation; defective for choice of small capsids
-FT                   by satellite phage P4"
+FT                   /note="sir5 mutation; defective for choice of small
+FT                   capsids by satellite phage P4"
 FT                   /replace="t"
 FT                   /gene="N"
 FT   variation       4695..4697
-FT                   /note="sir9 mutation; defective for choice of small capsids
-FT                   by satellite phage P4"
+FT                   /note="sir9 mutation; defective for choice of small
+FT                   capsids by satellite phage P4"
 FT                   /replace=""
 FT                   /gene="N"
 FT   variation       4699
@@ -450,13 +451,13 @@ FT                   of small capsids by satellite phage P4"
 FT                   /replace="t"
 FT                   /gene="N"
 FT   variation       4740
-FT                   /note="sir1 mutation; defective for choice of small capsids
-FT                   by satellite phage P4"
+FT                   /note="sir1 mutation; defective for choice of small
+FT                   capsids by satellite phage P4"
 FT                   /replace="g"
 FT                   /gene="N"
 FT   variation       4741
-FT                   /note="sir4 mutation; defective for choice of small capsids
-FT                   by satellite phage P4"
+FT                   /note="sir4 mutation; defective for choice of small
+FT                   capsids by satellite phage P4"
 FT                   /replace="a"
 FT                   /gene="N"
 FT   CDS             5157..5900
@@ -670,8 +671,8 @@ FT                   PDGAVIEYEPETSALTVSGIKTASVTASGSVTATVPVVMVKASTRVTLDTPEVVCTNRL
 FT                   ITGTLEVQKGGTMRGNIEHTGGELSSNGKVLHTHKHPGDSGGTTGSPL"
 FT   misc_feature    10308
 FT                   /evidence=EXPERIMENTAL
-FT                   /note="transcription start site for V operon; encodes V, W,
-FT                   J, I, H, G"
+FT                   /note="transcription start site for V operon; encodes V,
+FT                   W, J, I, H, G"
 FT                   /gene="V"
 FT   variation       10329
 FT                   /note="Vam42, Vam203 and Vam205 mutations"
@@ -871,6 +872,16 @@ FT                   /translation="MAMPRKLKLMNVFLNGYSYQGVAKSVTLPKLTRKLENYRGAGMNG
 FT                   SAPVDLGLDDDALSMEWSLGGFPDSVIWELYAATGVDAVPIRFAGSYQRDDTGETVAVE
 FT                   VVMRGRQKEIDTGEGKQGEDTESKISVVCTYFRLTMDGKELVEIDTINMIEKVNGVDRL
 FT                   EQHRRNIGL"
+FT   CDS             19430..19705
+FT                   /codon_start=1
+FT                   /db_xref="SPTREMBL:O64313"
+FT                   /transl_table=11
+FT                   /gene="E"
+FT                   /function="essential tail protein"
+FT                   /product="gpE"
+FT                   /protein_id="AAD03291.1"
+FT                   /translation="MNKENVITLDNPVKRGEQVIEQVTLMKPSAGTLRGVSLAAVANSE
+FT                   VDALIKVLPRMTAPMLTEQEVAALELPDLVALAGKVVGFLSPNSVQ"
 FT   CDS             join(19430..19684,19684..19857)
 FT                   /codon_start=1
 FT                   /db_xref="SPTREMBL:O64312"
@@ -883,16 +894,6 @@ FT                   /protein_id="AAD03292.1"
 FT                   /translation="MNKENVITLDNPVKRGEQVIEQVTLMKPSAGTLRGVSLAAVANSE
 FT                   VDALIKVLPRMTAPMLTEQEVAALELPDLVALAGKVVGFLVAELGAVTFPKNLSVDDLM
 FT                   ADVAVIFHWPPSELYPMSLTELITWREKALRRSGNTNE"
-FT   CDS             19430..19705
-FT                   /codon_start=1
-FT                   /db_xref="SPTREMBL:O64313"
-FT                   /transl_table=11
-FT                   /gene="E"
-FT                   /function="essential tail protein"
-FT                   /product="gpE"
-FT                   /protein_id="AAD03291.1"
-FT                   /translation="MNKENVITLDNPVKRGEQVIEQVTLMKPSAGTLRGVSLAAVANSE
-FT                   VDALIKVLPRMTAPMLTEQEVAALELPDLVALAGKVVGFLSPNSVQ"
 FT   variation       19473
 FT                   /note="Ets55 mutation"
 FT                   /replace="a"
@@ -1018,11 +1019,11 @@ FT                   /note="saf mutation; altered integration site specificity"
 FT                   /replace="g"
 FT   variation       24376
 FT                   /note="left end del3 deletion/insertion"
-FT   variation       24378..25927
-FT                   /note="vir22 deletion/insertion"
 FT   variation       24378..25065
 FT                   /note="del6 deletion"
 FT                   /replace=""
+FT   variation       24378..25927
+FT                   /note="vir22 deletion/insertion"
 FT   variation       24381..26340
 FT                   /note="vir94 deletion/insertion"
 FT   protein_bind    24399..24472
@@ -1141,9 +1142,9 @@ FT                   /codon_start=1
 FT                   /db_xref="SWISS-PROT:P07695"
 FT                   /transl_table=11
 FT                   /gene="cox"
-FT                   /function="repressor of Pc; required for prophage excision;
-FT                   inhibits integration; activates P11 promoter of satellite
-FT                   phage P4"
+FT                   /function="repressor of Pc; required for prophage
+FT                   excision; inhibits integration; activates P11 promoter of
+FT                   satellite phage P4"
 FT                   /product="Cox"
 FT                   /protein_id="AAD03299.1"
 FT                   /translation="MSKQVTLMTDAIPYQEFAKLIGKSTGAVRRMIDKGKLPVIDMTDP
@@ -1174,8 +1175,8 @@ FT                   /codon_start=1
 FT                   /db_xref="SWISS-PROT:P07696"
 FT                   /transl_table=11
 FT                   /gene="B"
-FT                   /function="essential protein; DNA replication; required for
-FT                   lagging strand synthesis"
+FT                   /function="essential protein; DNA replication; required
+FT                   for lagging strand synthesis"
 FT                   /product="gpB"
 FT                   /protein_id="AAD03301.1"
 FT                   /translation="MTVMTLNLVEKQPAAMRRIIGKHLAVPRWQDTCDYYNQMMERERL
@@ -1338,7 +1339,6 @@ FT   misc_feature    complement(33426)
 FT                   /note="transcript start 2; old-tin mRNA"
 FT   misc_feature    33575..33593
 FT                   /note="cosR; right cohesive end"
-XX
 SQ   Sequence 33593 BP; 8398 A; 7983 C; 8870 G; 8342 T; 0 other;
      ggcgaggcgg ggaaagcact gcgcgctgac ggtggtgctg attgtatttt ttcagcgtct        60
      cagcgcgtcg tgacggcact tagtctgccc gttgaggcgt tgtgtgtctg cggggtgttt       120

@@ -137,6 +137,7 @@ XX
 CC   On Jul 23, 1998 this sequence version replaced gi:14895 gi:15549
 CC   gi:1262241 gi:974436.
 XX
+XX
 FH   Key             Location/Qualifiers
 FH
 FT   source          1..30624
@@ -565,13 +566,13 @@ FT                   /evidence=EXPERIMENTAL
 FT                   /note="two CI binding sites for repression of pB"
 FT                   /gene="B"
 FT                   /bound_moiety="CI"
+FT   -35_signal      20549..20554
+FT                   /gene="B"
 FT   promoter        20549..20584
 FT                   /evidence=EXPERIMENTAL
 FT                   /note="pB; repressed by CI"
 FT                   /gene="B"
 FT                   /function="transcription of B gene"
-FT   -35_signal      20549..20554
-FT                   /gene="B"
 FT   -10_signal      20572..20577
 FT                   /gene="B"
 FT   CDS             20609..20827
@@ -611,8 +612,8 @@ FT   tRNA            20985..21030
 FT                   /note="truncated"
 FT                   /product="tRNA-Ile"
 FT   misc_feature    20995..21030
-FT                   /note="in common with attB in Escherichia coli, which is in
-FT                   the 3' end of ileY"
+FT                   /note="in common with attB in Escherichia coli, which is
+FT                   in the 3' end of ileY"
 FT   misc_feature    21023..21029
 FT                   /note="attP; predicted crossover region with attB"
 FT   variation       21030..22865
@@ -732,10 +733,6 @@ FT                   /note="FR"
 FT                   /bound_moiety="CI"
 FT                   /function="probably responsible for CI repression of pE
 FT                   promoter"
-FT   protein_bind    23435..23462
-FT                   /gene="cII"
-FT                   /bound_moiety="CII"
-FT                   /function="activate pE"
 FT   CDS             23435..23944
 FT                   /codon_start=1
 FT                   /db_xref="SWISS-PROT:P21678"
@@ -752,6 +749,10 @@ FT                   /translation="MFDFQVSKHPHYDEACRAFAQRHNMAKLAERAGMNVQTLRNKLNP
 FT                   EQPHQFTPPELWLLTDLTEDSTLVDGFLAQIHCLPCVPVNELAKDKLQSYVMRAMSELG
 FT                   ELASGAVSDERLTTARKHNMIESVNSGIRMLSLSALALHARLQTNPAMSSVVDTMSGIG
 FT                   ASFGLI"
+FT   protein_bind    23435..23462
+FT                   /gene="cII"
+FT                   /bound_moiety="CII"
+FT                   /function="activate pE"
 FT   variation       23440
 FT                   /note="prevents CII binding to pE; cIV476"
 FT                   /replace="a"
@@ -790,8 +791,8 @@ FT                   /note="CP78am; dhram"
 FT                   /replace="a"
 FT                   /gene="dhr"
 FT   terminator      24384..24412
-FT                   /note="tR1; one of a number of transcription terminators in
-FT                   this region that are anti-terminated during early lytic
+FT                   /note="tR1; one of a number of transcription terminators
+FT                   in this region that are anti-terminated during early lytic
 FT                   development by an unknown mechanism"
 FT   CDS             24433..24666
 FT                   /codon_start=1
@@ -996,7 +997,6 @@ FT                   /replace=""
 FT                   /gene="orf97"
 FT   terminator      30436..30463
 FT                   /note="t95b; p95 transcript terminator"
-XX
 SQ   Sequence 30624 BP; 7461 A; 7801 C; 8456 G; 6906 T; 0 other;
      ggcgtggcgg ggaaagcatt gcgcgccaga ggtggcgcgt gaatgataaa aattatcgtc        60
      tgagcgcctc gtaatggcgc tatcgtggtg ctgttggttc gttggtggtc gtgtgtgttt       120

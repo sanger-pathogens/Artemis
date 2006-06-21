@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.21 2005-07-11 08:52:08 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.22 2006-06-21 10:11:36 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -496,10 +496,13 @@ extra_qualifiers = \
     obsolete_product "text" \
     origid "text" \
     ortholog "text" \
+    other_transcript  "text" \
     paralog "text" \
     pepstats_file "text" \
     percent_id text \
     pfam_match "text" \
+    previous_other_transcript "text" \
+    previous_shared_id "text" \
     previous_systematic_id "text" \
     primary_name "text" \
     prosite_match "text" \
@@ -510,6 +513,7 @@ extra_qualifiers = \
     score text \
     sequence_source "text" \
     sequence_status "text" \
+    shared_id "text" \
     sigcleave_file "text" \
     signal "text" \
     similarity "text" \

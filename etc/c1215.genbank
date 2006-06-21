@@ -63,8 +63,6 @@ FEATURES             Location/Qualifiers
      rRNA            415..581
                      /note="SPRG5SD K00771 Yeast (s.pombe) 5s rrna gene and
                      flanks"
-     gene            join(1501..1760,1844..2456)
-                     /gene="SPBC1215.01"
      CDS             join(1501..1760,1844..2456)
                      /gene="SPBC1215.01"
                      /note="SPBC1215.01, len:290, SIMILARITY:Saccharomyces
@@ -82,17 +80,15 @@ FEATURES             Location/Qualifiers
                      PKGPVVIEGLLRQHTDKPRFMMKNEPEKNSFYFLNVREFAQLKGTLPILITELQPSLT
                      PLQEADHVKRGLPLGHPLKVEIFNSHTEYIITWYSLSVVSAIMLYVYFKRGSGTSSLN
                      SAYERSKILNNKRL"
+     gene            join(1501..1760,1844..2456)
+                     /gene="SPBC1215.01"
      misc_feature    1761..1766
                      /gene="SPBC1215.01"
                      /note="gtacgt, splice donor sequence"
      misc_feature    1827..1843
                      /gene="SPBC1215.01"
                      /note="ctaacataatcacttag, splice branch and acceptor"
-     gene            complement(join(2495..2602,2663..2881,2953..4071,
-                     4111..4372,4413..4849,4889..5007,5251..5389,5434..5466))
-                     /gene="SPBC1215.02c"
-     CDS             complement(join(2495..2602,2663..2881,2953..4071,
-                     4111..4372,4413..4849,4889..5007,5251..5389,5434..5466))
+     CDS             complement(join(2495..2602,2663..2881,2953..4071,4111..4372,4413..4849,4889..5007,5251..5389,5434..5466))
                      /gene="SPBC1215.02c"
                      /note="SPBC1215.02c, len:811, SIMILARITY:Saccharomyces
                      cerevisiae, DEC1_YEAST, dec1 protein, (796 aa), fasta
@@ -118,6 +114,8 @@ FEATURES             Location/Qualifiers
                      LIESFDYENSTPLSQLTKYTEIINDLITCLNSFLYHVSATKKKEFTRQYQLLKNISSN
                      KLGSISGITKHKKKAARKYVSELLSNSWLSNLSETQVPYDPKFAKQVGEGMIDSYIQT
                      TDAVSKLPKFVKF"
+     gene            complement(join(2495..2602,2663..2881,2953..4071,4111..4372,4413..4849,4889..5007,5251..5389,5434..5466))
+                     /gene="SPBC1215.02c"
      misc_feature    complement(2603..2612)
                      /gene="SPBC1215.02c"
                      /note="ctaataatag, splice branch and acceptor"
@@ -163,8 +161,8 @@ FEATURES             Location/Qualifiers
      misc_feature    6387..6490
                      /note="nominal overlap with cosmid SPBC83 S. pombe
                      chromosome 2"
-BASE COUNT     2097 a   1138 c   1138 g   2117 t
-ORIGIN      
+BASE COUNT        0 a      0 c      0 g      0 t
+ORIGIN
         1 tatatataat ttaataaata cattccgacg atactgcctc tatggcttag tggtacagca
        61 tcgcacttgt aatgcgaaga tccttggttc gattccgagt ggaggcatat acattatatt
       121 atattctttt tcatgcggaa aaaagatttc aaatttttgg gtatgatatt aatatgactg
@@ -273,5 +271,5 @@ ORIGIN
      6301 gattattgtt gaaaagcgca gacgaagttt agagaattac tagcgtattt taaatttaat
      6361 caacggacta ttttttattc ctttgagatc cgactttatc gctttgcttc taattttcca
      6421 aaattcagtc tatctacgcg atccagccct gtttgcgtaa atttcatatt atttttcttt
-     6481 aaacgtttgg 
+     6481 aaacgtttgg
 //
