@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCFrameAlgorithm.java,v 1.4 2006-06-20 13:40:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCFrameAlgorithm.java,v 1.5 2006-06-21 10:06:08 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -38,7 +38,7 @@ import java.awt.*;
  *  constructor.
  *
  *  @author Kim Rutherford
- *  @version $Id: GCFrameAlgorithm.java,v 1.4 2006-06-20 13:40:42 tjc Exp $
+ *  @version $Id: GCFrameAlgorithm.java,v 1.5 2006-06-21 10:06:08 tjc Exp $
  **/
 public class GCFrameAlgorithm extends BaseAlgorithm 
 {
@@ -136,7 +136,9 @@ public class GCFrameAlgorithm extends BaseAlgorithm
 
     // multiply by 3 because we are taking every third base
     for(int frame = 0 ; frame < 3 ; ++frame) 
+    {
       values[frame] = 1.0F * gc_counts[frame]/sub_sequence_length * 3 * 100;
+    }
   }
 
   /**
@@ -173,10 +175,10 @@ public class GCFrameAlgorithm extends BaseAlgorithm
           g2d.setColor(frameColour[1]);
           g2d.drawLine(font_width*2, lineHgt, font_width*4, lineHgt);
  
-          g2d.setColor(frameColour[0]);
+          g2d.setColor(frameColour[2]);
           g2d.drawLine(font_width*7, lineHgt, font_width*9, lineHgt);
 
-          g2d.setColor(frameColour[2]);
+          g2d.setColor(frameColour[0]);
           g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
           g2d.setStroke(stroke);
           return;
