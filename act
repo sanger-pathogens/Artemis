@@ -7,7 +7,7 @@
 # /usr/local/bin/ or elsewhere.
 
 
-# $Header: //tmp/pathsoft/artemis/act,v 1.8 2005-10-20 12:51:37 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/act,v 1.9 2006-06-22 12:40:25 tjc Exp $
 
 # resolve links - $0 may be a link
 PRG=$0
@@ -64,7 +64,7 @@ else
     if [ x$1 = x-h -o x$1 = x--help ]
     then
         cat <<EOF
-usage: $0 [EMBL/GENBANK/SEQUENCE file] [EMBL/GENBANK/SEQUENCE file] [crunch file]
+usage: $0 [EMBL/GENBANK/SEQUENCE file] [crunch file]  [EMBL/GENBANK/SEQUENCE file]
 EOF
         exit 0
     fi
