@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCFrameAlgorithm.java,v 1.6 2006-06-23 10:40:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCFrameAlgorithm.java,v 1.7 2006-06-23 14:56:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -38,7 +38,7 @@ import java.awt.*;
  *  constructor.
  *
  *  @author Kim Rutherford
- *  @version $Id: GCFrameAlgorithm.java,v 1.6 2006-06-23 10:40:14 tjc Exp $
+ *  @version $Id: GCFrameAlgorithm.java,v 1.7 2006-06-23 14:56:36 tjc Exp $
  **/
 public class GCFrameAlgorithm extends BaseAlgorithm 
 {
@@ -91,18 +91,18 @@ public class GCFrameAlgorithm extends BaseAlgorithm
     for(int i = 0; i < getValueCount(); ++i)
       gc_counts[i] = 0;
     
-    final String sub_sequence;
+    final char[] sub_sequence;
 
     try 
     {
-      sub_sequence = getStrand().getRawSubSequence(new Range(start, end));
+      sub_sequence = getStrand().getRawSubSequenceC(new Range(start, end));
     } 
     catch(OutOfRangeException e) 
     {
       throw new Error("internal error - unexpected exception: " + e);
     }
 
-    final int sub_sequence_length = sub_sequence.length();
+    final int sub_sequence_length = sub_sequence.length;
 
     if(getStrand().isForwardStrand()) 
     {
@@ -110,7 +110,7 @@ public class GCFrameAlgorithm extends BaseAlgorithm
       {
         for(int frame = 0 ; frame < 3 ; ++frame) 
         {
-          final char this_char = sub_sequence.charAt(i + frame);
+          final char this_char = sub_sequence[i + frame];
 
           if(this_char == 'g' || this_char == 'c') 
             ++gc_counts[(frame + start) % 3];
@@ -126,7 +126,7 @@ public class GCFrameAlgorithm extends BaseAlgorithm
       {
         for(int frame = 0; frame < 3; ++frame) 
         {
-          final char this_char = sub_sequence.charAt(i + frame);
+          final char this_char = sub_sequence[i + frame];
 
           if(this_char == 'g' || this_char == 'c') 
             ++gc_counts[(frame + start + 3 - whole_sequence_length_mod3) % 3];
