@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.22 2006-04-21 15:22:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.23 2006-06-23 10:39:19 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -49,7 +49,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.22 2006-04-21 15:22:56 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.23 2006-06-23 10:39:19 tjc Exp $ */
 
 public class Bases 
 {
@@ -1485,6 +1485,20 @@ public class Bases
     return return_buffer.toString ();
   }
 
+  /**
+   *  Return a char array containing the complement of the argument char[].  For
+   *  example an argument of "aatc" will result in "ttag".
+   **/
+  public static char[] complement (final char sequence[])
+  {
+    final char[] seq_comp = new char[sequence.length];
+
+    for (int i = 0 ; i < sequence.length; ++i)
+      seq_comp[i] = complement(sequence[i]);
+
+    return seq_comp;
+  }
+  
   /**
    *  Returns the complement base of it's argument - c for g, a for t etc.
    *  The argument may be upper or lower case, but the result is always lower
