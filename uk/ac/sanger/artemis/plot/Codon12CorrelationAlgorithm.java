@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/Codon12CorrelationAlgorithm.java,v 1.3 2004-12-02 16:52:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/Codon12CorrelationAlgorithm.java,v 1.4 2006-06-23 10:40:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -38,7 +38,7 @@ import java.awt.*;
  *  the given strand.  The Strand to use is set in the constructor.
  *
  *  @author Kim Rutherford
- *  @version $Id: Codon12CorrelationAlgorithm.java,v 1.3 2004-12-02 16:52:55 tjc Exp $
+ *  @version $Id: Codon12CorrelationAlgorithm.java,v 1.4 2006-06-23 10:40:14 tjc Exp $
  **/
 public class Codon12CorrelationAlgorithm extends BaseAlgorithm 
 {
@@ -101,24 +101,21 @@ public class Codon12CorrelationAlgorithm extends BaseAlgorithm
     else
       start += (end - start + 1) % 3;
 
-    final String sub_sequence;
+    final char[] sub_sequence_raw;
 
     try 
     {
-      sub_sequence = getStrand().getRawSubSequence(new Range(start, end));
+      sub_sequence_raw = getStrand().getRawSubSequenceC(new Range(start, end));
     } 
     catch(OutOfRangeException e) 
     {
       throw new Error("internal error - unexpected exception: " + e);
     }
 
-    final char[] sub_sequence_raw = sub_sequence.toCharArray();
-
     final float gc_counts[] = new float[3];
 
     // the first index is the position the second is the base (t,c,a,g)
     final int[][] positional_base_counts = new int[4][3];
-
     final int sub_sequence_length = sub_sequence_raw.length;
 
     if(getStrand().isForwardStrand())
@@ -132,10 +129,7 @@ public class Codon12CorrelationAlgorithm extends BaseAlgorithm
     } 
     else 
     {
-      final String complement_string = Bases.complement(sub_sequence);
-
-      final char [] complement_sub_sequence_raw =
-        complement_string.toCharArray();
+      final char[] complement_sub_sequence_raw = Bases.complement(sub_sequence_raw);
       
       for(int i = 0 ; i < sub_sequence_length ; ++i) 
       {
@@ -148,6 +142,9 @@ public class Codon12CorrelationAlgorithm extends BaseAlgorithm
         }
       }
     }
+    
+    final int whole_sequence_length = getStrand().getSequenceLength();
+    final int whole_sequence_length_mod3 = whole_sequence_length % 3;
     
     for(int frame = 0 ; frame < 3 ; ++frame) 
     {
@@ -181,10 +178,26 @@ public class Codon12CorrelationAlgorithm extends BaseAlgorithm
                correlation_score_factors_2[3]) +
         0.5;         // add 0.5 because that is what the old uk.ac.sanger.artemis did
       
-      values [(start + frame) % 3] = (float)cor1_2_score;
+      // add 2 brings the frame colouring in-line with codon usage
+      if(getStrand().isForwardStrand())
+        values [(start + frame + 2) % 3] = (float)cor1_2_score;
+      else
+        values [(start + frame + whole_sequence_length_mod3 + 2) % 3] = (float)cor1_2_score;
     }
+    
+    /*
+    for(int frame = 0 ; frame < 3 ; ++frame) 
+    {
+      if(getStrand().isForwardStrand())
+        System.out.println("FWD "+frame+"  "+((start + frame + 2) % 3));
+      else
+        System.out.println("BWD "+frame+"  "+((start + frame + whole_sequence_length_mod3 -1) % 3)+
+                                        "  "+whole_sequence_length_mod3);
+    }
+    */
   }
 
+   
   /**
    *  Return the number of values a call to getValues () will return - three
    *  in this case.

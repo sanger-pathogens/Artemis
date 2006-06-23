@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/KarlinSigAlgorithm.java,v 1.1 2004-06-09 09:51:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/KarlinSigAlgorithm.java,v 1.2 2006-06-23 10:40:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -42,7 +42,7 @@ import uk.ac.sanger.artemis.sequence.*;
  *  constructor.
  *
  *  @author Kim Rutherford
- *  @version $Id: KarlinSigAlgorithm.java,v 1.1 2004-06-09 09:51:36 tjc Exp $
+ *  @version $Id: KarlinSigAlgorithm.java,v 1.2 2006-06-23 10:40:14 tjc Exp $
  **/
 
 public class KarlinSigAlgorithm extends BaseAlgorithm {
@@ -69,10 +69,10 @@ public class KarlinSigAlgorithm extends BaseAlgorithm {
     // add 1 or 2 if necessary to make the range a multiple of 3
     end -= (end - start + 1) % 3;
 
-    final String sub_sequence;
+    final char[] sub_sequence;
 
     try {
-      sub_sequence = getStrand ().getSubSequence (new Range (start, end));
+      sub_sequence = getStrand().getRawSubSequenceC(new Range (start, end));
     } catch (OutOfRangeException e) {
       throw new Error ("internal error - unexpected exception: " + e);
     }
@@ -194,12 +194,11 @@ public class KarlinSigAlgorithm extends BaseAlgorithm {
    *  dinucleotide "TT" is stored in global_signature[0][0], "TC" is stored in
    *  [0][1], etc.
    **/
-  private float [][] getRelativeAbundance (final String sequence) {
+  private float [][] getRelativeAbundance (final char [] sequence_forward_raw) {
     final float [][] return_value = new float [4][4];
 
-    final char [] sequence_forward_raw = sequence.toCharArray ();
     final char [] sequence_reverse_raw =
-      Bases.reverseComplement (sequence).toCharArray ();
+      Bases.reverseComplement (sequence_forward_raw);
 
     final int [] base_counts = new int [4];
     final int [][] dinucleotide_base_counts = new int [4][4];
@@ -287,8 +286,8 @@ public class KarlinSigAlgorithm extends BaseAlgorithm {
       try {
         final Range whole_range =
           new Range (1, getStrand ().getSequenceLength ());
-        final String sequence =
-          getStrand ().getSubSequence (whole_range);
+        final char[] sequence =
+          getStrand().getRawSubSequenceC(whole_range);
         global_relative_abundance_values = getRelativeAbundance (sequence);
       } catch (OutOfRangeException e) {
         throw new Error ("internal error - unexpected exception: " + e);

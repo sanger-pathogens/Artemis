@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCFrameAlgorithm.java,v 1.5 2006-06-21 10:06:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCFrameAlgorithm.java,v 1.6 2006-06-23 10:40:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -38,7 +38,7 @@ import java.awt.*;
  *  constructor.
  *
  *  @author Kim Rutherford
- *  @version $Id: GCFrameAlgorithm.java,v 1.5 2006-06-21 10:06:08 tjc Exp $
+ *  @version $Id: GCFrameAlgorithm.java,v 1.6 2006-06-23 10:40:14 tjc Exp $
  **/
 public class GCFrameAlgorithm extends BaseAlgorithm 
 {
@@ -149,6 +149,8 @@ public class GCFrameAlgorithm extends BaseAlgorithm
   public void drawLegend(Graphics g, int font_height,
                          int font_width, Color[] frameColour)
   {
+    return;
+    /*
     final Strand strand = getStrand();
     if(strand.isForwardStrand())
       super.drawLegend(g,font_height,font_width,frameColour);
@@ -182,7 +184,7 @@ public class GCFrameAlgorithm extends BaseAlgorithm
           g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
           g2d.setStroke(stroke);
           return;
-     /*   case 1:
+        case 1:
           g2d.setColor(frameColour[2]);
           g2d.drawLine(font_width*2, lineHgt, font_width*4, lineHgt);
 
@@ -204,8 +206,8 @@ public class GCFrameAlgorithm extends BaseAlgorithm
           g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
           g2d.setStroke(stroke);
           return;
-      } */
-    }
+      } 
+    } */
   }
 
 
