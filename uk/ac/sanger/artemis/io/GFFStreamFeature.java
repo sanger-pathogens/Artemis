@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.36 2006-05-31 10:38:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.37 2006-06-26 16:46:55 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -39,7 +39,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.36 2006-05-31 10:38:48 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.37 2006-06-26 16:46:55 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -287,6 +287,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
            range.getEnd()   == r.getEnd())
         return (String)id_range_store.get(range);
       }
+    }
+    else if (getQualifierByName("ID") != null)
+    {
+      return (String)getQualifierByName("ID").getValues().get(0);
     }
 
     return null;
