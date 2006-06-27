@@ -1544,7 +1544,8 @@ page</ULINK>.
     <PARA>
 See <ULINK
 URL="http://www.ncbi.nlm.nih.gov/htbin-post/Entrez/query?uid=10339816&amp;form=6&amp;db=m&amp;Dopt=b">Ishikawa,
-J. and Hotta, K. FEMS Microbiol. Lett. 174:251-253 (1999)</ULINK> for more
+J. and Hotta, K. FEMS Microbiol. Lett. 174:251-253 (1999)</ULINK> and <ULINK
+URL="http://www.sanger.ac.uk/Software/Artemis/gc_plot/GC_frame.html">GC frame plot</ULINK> for more
 information on the algorithm.
     </PARA>
     <PARA>
