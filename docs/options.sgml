@@ -170,20 +170,6 @@ yes on startup.  (See <XREF LINKEND="VIEWS-POPUPMENU-TOGGLES-FRAMEFEATURES">)
       </PARA>
     </SECT2>
 
-    <SECT2 ID="OPTIONS-ORGANISMTYPE">
-      <TITLE><LITERAL>organism_type</LITERAL></TITLE>
-      <PARA>
-This is the default setting for the "Eukaryotic Mode" menu item (see <XREF
-LINKEND="LAUNCH-WINDOW-OPTIONS-EUK">).  If set to <LITERAL>eukaryote</LITERAL>
-&prog; will start in eukaryotic mode, otherwise it will start in prokaryotic
-mode.
-      </PARA>
-      <PARA>
-See <XREF LINKEND="OPTIONS-EUKSTARTCODONS"> and <XREF
-LINKEND="OPTIONS-PROKSTARTCODONS">.
-      </PARA>
-    </SECT2>
-
     <SECT2 ID="OPTIONS-GENETICCODES">
       <TITLE><LITERAL>genetic_codes</LITERAL></TITLE>
       <PARA>
