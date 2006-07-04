@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.25 2006-06-01 08:20:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.26 2006-07-04 11:05:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,14 +37,14 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.25 2006-06-01 08:20:53 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.26 2006-07-04 11:05:49 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
     implements DocumentEntry 
 {
   private boolean finished_constructor = false;
-
+  
   /**
    *  Create a new GFFDocumentEntry object associated with the given
    *  Document.
@@ -154,8 +154,9 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           ((GFFStreamFeature)this_feature).setChadoGene(gene);
         }
       }
-    
+
       // find the transcripts
+      Hashtable transcripts_lookup = new Hashtable();
       for(int i = 0 ; i < original_features.size() ; ++i) 
       {
         this_feature = original_features.featureAt(i);
@@ -176,10 +177,15 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
             // store transcript
             ChadoCanonicalGene gene = (ChadoCanonicalGene)chado_gene.get(parent);
             gene.addTranscript(this_feature);
+            
+            // store the transcript ID with its ChadoCanonicalGene object
+            transcripts_lookup.put((String)this_feature.getQualifierByName("ID").getValues().get(0),
+                                   gene);
             continue;
           }
         }
       }
+      
       
       // find exons & protein
       for(int i = 0 ; i < original_features.size() ; ++i) 
@@ -205,23 +211,41 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         else
           parent_id = derives_qualifier.getValues();
         
+        
+        for(int j=0; j<parent_id.size(); j++)
+        {
+          String parent = (String)parent_id.get(j);
+          if(transcripts_lookup.containsKey(parent))
+          {
+            ChadoCanonicalGene gene = (ChadoCanonicalGene)transcripts_lookup.get(parent);
+            if(parent_qualifier == null)
+              gene.addProtein(parent, this_feature);
+            else
+              gene.addExon(parent, this_feature);
+          }
+        } 
+          
+        /*
         Enumeration enum_genes = chado_gene.elements();
         while(enum_genes.hasMoreElements())
         {
           ChadoCanonicalGene gene = (ChadoCanonicalGene)enum_genes.nextElement();
-          Feature transcript = gene.containsTranscript(parent_id);
+          Feature transcript = (Feature)gene.containsTranscript(parent_id);
           
           if(transcript != null)
           {
             if(parent_qualifier == null)
-              gene.addProtein(transcript, this_feature);
+              gene.addProtein((String)transcript.getQualifierByName("ID").getValues().get(0), 
+                              this_feature);
             else
-              gene.addExon(transcript, this_feature);
+              gene.addExon((String)transcript.getQualifierByName("ID").getValues().get(0),
+                           this_feature);
           }
           
         }
+        */
       }
-      
+
       // now join exons
       Enumeration enum_genes = chado_gene.elements();
       while(enum_genes.hasMoreElements())
@@ -317,7 +341,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
    *  FeatureVector containing the feature that are in that group.  Groups
    *  that have more than one member will be combined.
    **/
-  private void combineChadoExons(ChadoCanonicalGene gene) 
+  public void combineChadoExons(ChadoCanonicalGene gene) 
   {
     Hashtable exons = gene.getExons();
     final Enumeration enum_exons = exons.keys();
@@ -410,8 +434,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
             new_feature.setQualifier(old_codon_start_qualifier);
         }
         forcedAdd(new_feature);
-        
-        gene.addExon( gene.getFeatureFromId(transcript_id), new_feature, true );
+        gene.addExon(transcript_id, new_feature, true );
       } 
       catch(ReadOnlyException e) 
       {
