@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.26 2006-07-04 11:05:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.27 2006-07-04 15:59:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.26 2006-07-04 11:05:49 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.27 2006-07-04 15:59:38 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -343,22 +343,35 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
    **/
   public void combineChadoExons(ChadoCanonicalGene gene) 
   {
-    Hashtable exons = gene.getExons();
-    final Enumeration enum_exons = exons.keys();
+    Vector transcripts = (Vector)gene.getTranscripts();
+
     final RangeVector new_range_vector = new RangeVector();
     QualifierVector qualifier_vector = new QualifierVector();
     Hashtable id_range_store = new Hashtable();
     Timestamp lasttimemodified = null;
     
-    while(enum_exons.hasMoreElements())
+
+    for(int i=0; i<transcripts.size(); i++)
     {
-      String transcript_id = (String)enum_exons.nextElement();
-      Vector v_exons = (Vector)exons.get(transcript_id);
+      Feature transcript = (Feature)transcripts.get(i);
+      String transcript_id = null;
+      try
+      {
+        transcript_id = (String)(transcript.getQualifierByName("ID").getValues().get(0));
+      }
+      catch(InvalidRelationException e1)
+      {
+        e1.printStackTrace();
+      }
+      Vector v_exons = (Vector)gene.getExonsOfTranscript(transcript_id);
       
-      for(int i=0; i<v_exons.size(); i++)
+      if(v_exons == null)
+        continue;
+      
+      for(int j=0; j<v_exons.size(); j++)
       {
         final GFFStreamFeature this_feature =
-            (GFFStreamFeature)v_exons.get(i);
+            (GFFStreamFeature)v_exons.get(j);
       
         // use the most current lastmodified datestamp
         if(this_feature.getLastModified() != null &&
