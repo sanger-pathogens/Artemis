@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.3 2006-07-04 11:06:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.4 2006-07-04 15:58:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,12 +33,12 @@ import java.util.Enumeration;
 import java.util.List;
 
 /**
- *  Used by GFFStreamFaeture to represent the chado canonical gene.
+ *  Used by GFFStreamFeature to represent the chado canonical gene.
+ *  Contains gene, transcript, exons and proteins.
  **/
 public class ChadoCanonicalGene  
 {
   private Object gene;
-  private String gene_id;
   
   // part_of gene
   private List transcripts = new Vector();
@@ -52,20 +52,20 @@ public class ChadoCanonicalGene
   // srcfeature length
   private int seqlen;
   
-  public void addObject(Object obj, String parent_id, String type)
-               throws InvalidRelationException
-  {
-    if(type.equalsIgnoreCase("polypeptide"))
-      addProtein(parent_id, obj);
-    else if(type.equalsIgnoreCase("exon"))
-      addExon(parent_id, obj);
-  }
   
+  /**
+   * Get the gene feaure object.
+   * @return
+   */
   public Object getGene()
   {
     return gene;
   }
 
+  /**
+   * Set the gene feature object.
+   * @param gene
+   */
   public void setGene(Object gene)
   {
     this.gene = gene;
@@ -76,33 +76,35 @@ public class ChadoCanonicalGene
     transcripts.add(transcript);
   }
   
-  public void addExon(String transcript_id, Object exon, boolean reset) 
+  public void addExon(String transcript_name, 
+                      Object exon, boolean reset) 
          throws InvalidRelationException
   {
-    exons = new Hashtable();
-    addExon(transcript_id, exon);
+    if(reset)
+      exons = new Hashtable();
+    addExon(transcript_name, exon);
   }
   
-  public void addExon(String transcript_id, Object exon) 
+  public void addExon(String transcript_name, Object exon) 
          throws InvalidRelationException
   {   
     final List v_exons;
-    if(exons.containsKey(transcript_id))
-      v_exons = (Vector)exons.get(transcript_id);
+    if(exons.containsKey(transcript_name))
+      v_exons = (Vector)exons.get(transcript_name);
     else
       v_exons = new Vector();
     
     v_exons.add(exon);
-    exons.put(transcript_id, v_exons);
+    exons.put(transcript_name, v_exons);
   }
   
-  public void addProtein(String transcript_id, Object protein) 
+  public void addProtein(String transcript_name, Object protein) 
          throws InvalidRelationException
   {   
-    proteins.put(transcript_id, protein);
+    proteins.put(transcript_name, protein);
   }
   
-  public Object containsTranscript(final StringVector ids)
+  public Object containsTranscript(final StringVector names)
   {
     for(int i=0; i<transcripts.size(); i++)
     {
@@ -110,7 +112,7 @@ public class ChadoCanonicalGene
       {
         Feature transcript = (Feature)transcripts.get(i);
         
-        if( ids.contains((String)transcript.getQualifierByName("ID").getValues().get(0)) )
+        if( names.contains(getIDQualifier(transcript)) )
           return transcript;
       }
       catch(InvalidRelationException e)
@@ -121,40 +123,51 @@ public class ChadoCanonicalGene
     return null;
   }
 
-  public List getExonsOfTranscript(final String transcript_id)
+  public List getExonsOfTranscript(final String transcript_name)
   {
-    if(exons.containsKey(transcript_id))
-      return (List)exons.get(transcript_id);;
+    if(exons.containsKey(transcript_name))
+      return (List)exons.get(transcript_name);
  
     return null;
   }
   
-  public Object getProteinOfTranscript(final String transcript_id)
+  public Object getProteinOfTranscript(final String transcript_name)
   {
-    if(proteins.containsKey(transcript_id))
-      return proteins.get(transcript_id);;
+    if(proteins.containsKey(transcript_name))
+      return proteins.get(transcript_name);;
  
     return null;
-  }
-  
-  public Hashtable getExons()
-  {
-    return exons;
   }
 
+  /**
+   * Get a list of trancripts.
+   * @return
+   */
   public List getTranscripts()
   {
     return transcripts;
   }
   
-  public Object getFeatureFromId(final String id)
+  /**
+   * Search for the feature with a particular uniquename
+   * @param name  uniquename
+   * @return
+   */
+  public Object getFeatureFromId(final String name)
   {
     Object feature = null;
     
     // check gene
     try
     {
-      if(((String)(((Feature)gene).getQualifierByName("ID").getValues().get(0))).equals(id))
+      final String uniquename;
+      
+      if(gene instanceof ChadoFeature)
+        uniquename = ((ChadoFeature)gene).getUniquename();
+      else
+        uniquename = getIDQualifier((Feature)gene);    
+      
+      if(uniquename.equals(name))
         return gene;
     }
     catch(InvalidRelationException e)
@@ -164,7 +177,7 @@ public class ChadoCanonicalGene
     
     // check transcript
     StringVector sv = new StringVector();
-    sv.add(id);
+    sv.add(name);
     
     feature = containsTranscript(sv);
     
@@ -172,15 +185,21 @@ public class ChadoCanonicalGene
       return feature;
 
     // check exons
-    feature = getExon(id);
+    feature = getExon(name);
     
     if(feature != null)
       return feature;
     
-    return getProtein(id);
+    return getProtein(name);
   }
   
-  private Object getExon(final String id)
+  /**
+   * Routine to look for a exon with a particular 
+   * uniquename
+   * @param name
+   * @return
+   */
+  private Object getExon(final String name)
   {
     Enumeration enum_exons = exons.elements();
     try
@@ -196,9 +215,9 @@ public class ChadoCanonicalGene
           if(exons.get(i) instanceof ChadoFeature)
             uniquename = ((ChadoFeature)exons.get(i)).getUniquename();
           else
-            uniquename = (String)((Feature)exons.get(i)).getQualifierByName("ID").getValues().get(0);
+            uniquename = getIDQualifier((Feature)exons.get(i));
           
-          if(uniquename.equals(id))
+          if(uniquename.equals(name))
             return exons.get(i);
         }
       }
@@ -210,7 +229,7 @@ public class ChadoCanonicalGene
     return null;
   }
   
-  private Feature getProtein(final String id)
+  private Object getProtein(final String id)
   {
     Enumeration enum_proteins = proteins.elements();
     try
@@ -218,7 +237,7 @@ public class ChadoCanonicalGene
       while(enum_proteins.hasMoreElements())
       {
         Feature protein = (Feature)enum_proteins.nextElement();
-        if(((String)(protein.getQualifierByName("ID").getValues().get(0))).equals(id))
+        if(getIDQualifier(protein).equals(id))
           return protein;
       }
     }
@@ -227,14 +246,28 @@ public class ChadoCanonicalGene
       e.printStackTrace();
     }
     return null;
-    
   }
-
+  
+   
+  private String getIDQualifier(Feature feature) 
+          throws InvalidRelationException
+  {
+    return (String)(feature.getQualifierByName("ID").getValues().get(0));
+  }
+  
+  /**
+   * Get the srcfeature residue length
+   * @return
+   */
   public int getSeqlen()
   {
     return seqlen;
   }
 
+  /**
+   * Set the srcfeature residue length
+   * @param seqlen
+   */
   public void setSeqlen(int seqlen)
   {
     this.seqlen = seqlen;
