@@ -68,7 +68,7 @@ public class ChadoFeatureLoc
 
   /**
    * Get the fmin value. The leftmost/minimal boundary in the linear range 
-   * represented by the featureloc. To convert this to the eftmost position 
+   * represented by the featureloc. To convert this to the leftmost position 
    * in a base-oriented system (e.g. GFF) add 1 to fmin.
    * @return the fmin value
    */
@@ -79,7 +79,7 @@ public class ChadoFeatureLoc
 
   /**
    * Set the fmin value. The leftmost/minimal boundary in the linear range 
-   * represented by the featureloc. To convert this to the eftmost position 
+   * represented by the featureloc. To convert this to the leftmost position 
    * in a base-oriented system (e.g. GFF) add 1 to fmin.
    * @param fmin the fmin value
    *
