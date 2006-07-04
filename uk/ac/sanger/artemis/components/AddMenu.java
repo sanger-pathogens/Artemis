@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.13 2006-01-17 16:05:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.14 2006-07-04 16:01:59 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -36,10 +36,6 @@ import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Qualifier;
-import uk.ac.sanger.artemis.io.QualifierParseException;
-import uk.ac.sanger.artemis.io.InvalidQualifierException;
-import uk.ac.sanger.artemis.io.InvalidRelationException;
-import uk.ac.sanger.artemis.io.InvalidKeyException;
 import uk.ac.sanger.artemis.io.LocationParseException;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 
@@ -54,7 +50,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.13 2006-01-17 16:05:05 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.14 2006-07-04 16:01:59 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -456,9 +452,31 @@ public class AddMenu extends SelectionMenu
 
           final Feature new_feature = entry_group.createFeature ();
 
-          final FeatureEdit feature_edit =
-            new FeatureEdit (new_feature, entry_group, getSelection (),
-                             getGotoEventSource ());
+          
+          final JFrame edit_frame = new JFrame("Artemis Feature Edit: " + 
+              new_feature.getIDString() +
+              (new_feature.isReadOnly() ?
+                  "  -  (read only)" :
+                  ""));
+          
+          final FeatureEdit feature_edit = new FeatureEdit(new_feature, entry_group,
+              getSelection(), getGotoEventSource(), edit_frame);
+          
+          edit_frame.addWindowListener(new WindowAdapter() 
+          {
+            public void windowClosing(WindowEvent event) 
+            {
+              feature_edit.stopListening();
+              edit_frame.dispose();
+            }
+          });
+          
+          edit_frame.getContentPane().add(feature_edit);
+          edit_frame.pack();
+
+          final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+          edit_frame.setLocation(new Point((screen.width - edit_frame.getSize().width)/2,
+                                      (screen.height - edit_frame.getSize().height)/2));
 
           final ActionListener cancel_listener =
             new ActionListener () {
@@ -482,7 +500,7 @@ public class AddMenu extends SelectionMenu
             }
           });
 
-          feature_edit.setVisible(true);
+          edit_frame.setVisible(true);
         } catch (ReadOnlyException e) {
           new MessageDialog (getParentFrame (), "feature not created: " +
                              "the default entry is read only");
@@ -557,10 +575,36 @@ public class AddMenu extends SelectionMenu
 
         selection.setMarkerRange (null);
         selection.set (new_feature);
+        
+        
+        
+        
+        final JFrame edit_frame = new JFrame("Artemis Feature Edit: " + 
+            new_feature.getIDString() +
+            (new_feature.isReadOnly() ?
+                "  -  (read only)" :
+                ""));
+        
+        final FeatureEdit feature_edit = new FeatureEdit(new_feature, entry_group,
+            selection, goto_event_source, edit_frame);
+        
+        edit_frame.addWindowListener(new WindowAdapter() 
+        {
+          public void windowClosing(WindowEvent event) 
+          {
+            feature_edit.stopListening();
+            edit_frame.dispose();
+          }
+        });
+        
+        edit_frame.getContentPane().add(feature_edit);
+        edit_frame.pack();
 
-        final FeatureEdit feature_edit =
-          new FeatureEdit (new_feature, entry_group,
-                           selection, goto_event_source);
+        final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        edit_frame.setLocation(new Point((screen.width - edit_frame.getSize().width)/2,
+                                    (screen.height - edit_frame.getSize().height)/2));
+        
+        
 
         final ActionListener cancel_listener =
           new ActionListener () {
@@ -585,7 +629,7 @@ public class AddMenu extends SelectionMenu
           }
         });
 
-        feature_edit.setVisible(true);
+        edit_frame.setVisible(true);
       } catch (ReadOnlyException e) {
         new MessageDialog (frame, "feature not created: " +
                            "the default entry is read only");

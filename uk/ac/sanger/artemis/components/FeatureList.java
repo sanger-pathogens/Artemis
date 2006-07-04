@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.22 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.23 2006-07-04 16:01:59 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -29,7 +29,6 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.plot.CodonUsageAlgorithm;
 
-import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.EntryInformation;
@@ -41,12 +40,17 @@ import uk.ac.sanger.artemis.util.StringVector;
 import java.awt.event.MouseEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.Container;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Graphics;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.text.NumberFormat;
+
+import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.JComponent;
@@ -56,7 +60,7 @@ import javax.swing.JComponent;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.22 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.23 2006-07-04 16:01:59 tjc Exp $
  *
  **/
 
@@ -469,9 +473,32 @@ public class FeatureList extends EntryGroupPanel
             event.isAltDown()) 
         {
           if(Options.readWritePossible()) 
-            new FeatureEdit(clicked_feature, getEntryGroup(),
-                            getSelection(),
-                            getGotoEventSource()).setVisible(true);
+          {
+            final JFrame frame = new JFrame("Artemis Feature Edit: " + 
+                clicked_feature.getIDString() +
+                (clicked_feature.isReadOnly() ?
+                    "  -  (read only)" :
+                    ""));
+            
+            final FeatureEdit fe = new FeatureEdit(clicked_feature, getEntryGroup(),
+                                       getSelection(), getGotoEventSource(), frame);
+            frame.addWindowListener(new WindowAdapter() 
+            {
+              public void windowClosing(WindowEvent event) 
+              {
+                fe.stopListening();
+                frame.dispose();
+              }
+            });
+            
+            frame.getContentPane().add(fe);
+            frame.pack();
+
+            final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+            frame.setLocation(new Point((screen.width - getSize().width)/2,
+                                        (screen.height - getSize().height)/2));
+            frame.setVisible(true);
+          }
         }
       }
 

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.18 2006-02-07 20:19:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.19 2006-07-04 16:01:59 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -61,10 +61,10 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.18 2006-02-07 20:19:26 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.19 2006-07-04 16:01:59 tjc Exp $
  **/
 
-public class FeatureEdit extends JFrame
+public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
 {
 
@@ -82,8 +82,6 @@ public class FeatureEdit extends JFrame
 
   /** The location text - set by updateLocation(). */
   private JTextField location_text = new JTextField(LOCATION_TEXT_WIDTH);
-
-  private JButton add_qualifier_button = new JButton("Add qualifier");
 
   /** When pressed - apply changes and dispose of the component. */
   private JButton ok_button = new JButton("OK");
@@ -128,6 +126,8 @@ public class FeatureEdit extends JFrame
    **/
   final String orig_qualifier_text;
 
+  final JFrame frame;
+  
   /**
    *  Create a new FeatureEdit object from the given Feature.
    *  @param entry_group The EntryGroup that contains this Feature.
@@ -138,19 +138,17 @@ public class FeatureEdit extends JFrame
   public FeatureEdit(final Feature edit_feature,
                      final EntryGroup entry_group,
                      final Selection selection,
-                     final GotoEventSource goto_event_source) 
+                     final GotoEventSource goto_event_source,
+                     final JFrame frame) 
   {
-    super("Artemis Feature Edit: " + edit_feature.getIDString() +
-          (edit_feature.isReadOnly() ?
-           "  -  (read only)" :
-           ""));
-
+    this.frame = frame;
     this.edit_feature = edit_feature;
     this.edit_entry   = edit_feature.getEntry();
     this.entry_group  = entry_group;
     this.selection    = selection;
     this.goto_event_source = goto_event_source;
 
+    setLayout(new BorderLayout());
     createComponents();
     updateFromFeature();
 
@@ -159,22 +157,23 @@ public class FeatureEdit extends JFrame
     edit_feature.getEntry().addEntryChangeListener(this);
     edit_feature.addFeatureChangeListener(this);
 
-    addWindowListener(new WindowAdapter() 
+    frame.addWindowListener(new WindowAdapter() 
     {
       public void windowClosing(WindowEvent event) 
       {
         stopListening();
-        dispose();
+        frame.dispose();
       }
     });
 
-    pack();
-
-    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    setLocation(new Point((screen.width - getSize().width)/2,
-                          (screen.height - getSize().height)/2));
-
     qualifier_text_area.requestFocus();
+  }
+  
+  public void setActiveFeature(final Feature edit_feature)
+  {
+    this.edit_feature = edit_feature;
+    this.edit_entry   = edit_feature.getEntry();
+    updateFromFeature();
   }
 
   /**
@@ -199,7 +198,7 @@ public class FeatureEdit extends JFrame
         if(event.getFeature() == edit_feature) 
         {
           stopListening();
-          dispose();
+          frame.dispose();
         }
         break;
       default:
@@ -268,7 +267,7 @@ public class FeatureEdit extends JFrame
             "view now?";
 
           final YesNoDialog yes_no_dialog =
-            new YesNoDialog(FeatureEdit.this, message);
+            new YesNoDialog(frame, message);
 
           if(yes_no_dialog.getResult()) 
             new FeatureViewer(getFeature());
@@ -481,7 +480,7 @@ public class FeatureEdit extends JFrame
           catch(QualifierParseException exception) 
           {
             final String error_string = exception.getMessage();
-            new MessageDialog(FeatureEdit.this,
+            new MessageDialog(frame,
                               "Cannot tidy - qualifier error: " +
                               error_string);
           }
@@ -533,7 +532,7 @@ public class FeatureEdit extends JFrame
             }
           } catch(InvalidRelationException _) {}
           
-          new MessageDialog(FeatureEdit.this,
+          new MessageDialog(frame,
                             "nothing to edit - no /fasta_file qualifier");
         }
       });
@@ -573,7 +572,7 @@ public class FeatureEdit extends JFrame
             }
           } catch(InvalidRelationException _) {}
           
-          new MessageDialog(FeatureEdit.this,
+          new MessageDialog(frame,
                             "nothing to edit - no /blastp_file qualifier");
         }
       });
@@ -613,7 +612,7 @@ public class FeatureEdit extends JFrame
             }
           } catch(InvalidRelationException _) {}
           
-          new MessageDialog(FeatureEdit.this,
+          new MessageDialog(frame,
                             "nothing to edit - no /blastp+go_file qualifier");
         }
       });
@@ -739,14 +738,14 @@ public class FeatureEdit extends JFrame
     }
 
     middle_panel.add(location_panel, "North");
-    getContentPane().add(key_and_qualifier_panel, "North");
+    add(key_and_qualifier_panel, "North");
 
     cancel_button.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e) 
       {
         stopListening();
-        dispose();
+        frame.dispose();
       }
     });
 
@@ -759,7 +758,7 @@ public class FeatureEdit extends JFrame
           if(setFeature()) 
           {
             stopListening();
-            dispose();
+            frame.dispose();
           }
         }
       });
@@ -786,12 +785,12 @@ public class FeatureEdit extends JFrame
     if(!getFeature().isReadOnly()) 
       ok_cancel_update_panel.add(apply_button);
 
-    getContentPane().add(ok_cancel_update_panel, "South");
+    add(ok_cancel_update_panel, "South");
 
     middle_panel.add(lower_panel, "Center");
     lower_panel.add(new JScrollPane (qualifier_text_area), "Center");
 
-    getContentPane().add(middle_panel, "Center");
+    add(middle_panel, "Center");
   }
 
 
@@ -866,7 +865,7 @@ public class FeatureEdit extends JFrame
       }
     } 
     else 
-      new MessageDialog(this, "complement failed - " +
+      new MessageDialog(frame, "complement failed - " +
                         "current location cannot be parsed");
   }
 
@@ -984,7 +983,7 @@ public class FeatureEdit extends JFrame
   {
     if(!rationalizeLocation ()) 
     {
-      new MessageDialog(this,
+      new MessageDialog(frame,
                         "grab failed - current location cannot be parsed");
       return;
     }
@@ -993,7 +992,7 @@ public class FeatureEdit extends JFrame
 
     if(selected_range == null) 
     {
-      new MessageDialog(this, "grab failed - nothing is selected");
+      new MessageDialog(frame, "grab failed - nothing is selected");
       return;
     }
 
@@ -1027,7 +1026,7 @@ public class FeatureEdit extends JFrame
     if(!rationalizeLocation())
     {
       location_text.setText (old_location_text);
-      new MessageDialog(this, "grab failed - location cannot be parsed after " +
+      new MessageDialog(frame, "grab failed - location cannot be parsed after " +
                         "grabbing");
     }
   }
@@ -1039,7 +1038,7 @@ public class FeatureEdit extends JFrame
   {
     if(!rationalizeLocation())
     {
-      new MessageDialog(this,
+      new MessageDialog(frame,
                         "grab failed - current location cannot be parsed");
       return;
     }
@@ -1049,7 +1048,7 @@ public class FeatureEdit extends JFrame
 
     if(selected_marker_range == null) 
     {
-      new MessageDialog(this, "remove range failed - no bases are selected");
+      new MessageDialog(frame, "remove range failed - no bases are selected");
       return;
     }
 
@@ -1057,7 +1056,7 @@ public class FeatureEdit extends JFrame
 
     if (selected_marker_range.getStrand() != getFeature().getStrand()) 
     {
-      new MessageDialog(this, "remove range failed - you need to select " +
+      new MessageDialog(frame, "remove range failed - you need to select " +
                          "some bases on the other strand");
       return;
     }
@@ -1078,14 +1077,14 @@ public class FeatureEdit extends JFrame
 
     if(!selected_range.overlaps(location_total_range))
     {
-      new MessageDialog(this, "remove range failed - the range you " +
+      new MessageDialog(frame, "remove range failed - the range you " +
                         "selected does not overlap the feature");
       return;
     }
 
     if(selected_range.contains(location_total_range)) 
     {
-      new MessageDialog(this, "remove range failed - the range you " +
+      new MessageDialog(frame, "remove range failed - the range you " +
                         "selected overlaps the whole feature");
       return;
     }
@@ -1283,7 +1282,7 @@ public class FeatureEdit extends JFrame
                   "external editor?";
 
               final YesNoDialog yes_no_dialog =
-                  new YesNoDialog(FeatureEdit.this, message);
+                  new YesNoDialog(frame, message);
 
               if(!yes_no_dialog.getResult())
                 return;
@@ -1297,7 +1296,7 @@ public class FeatureEdit extends JFrame
           }
           catch(IOException e) 
           {
-            new MessageDialog(FeatureEdit.this, "an error occured while " +
+            new MessageDialog(frame, "an error occured while " +
                               "reading from the editor: " + e);
           }
         }
@@ -1307,11 +1306,11 @@ public class FeatureEdit extends JFrame
     }
     catch(IOException e) 
     {
-      new MessageDialog(this, "error while starting editor: " + e);
+      new MessageDialog(frame, "error while starting editor: " + e);
     } 
     catch(ExternalProgramException e) 
     {
-      new MessageDialog(this, "error while starting editor: " + e);
+      new MessageDialog(frame, "error while starting editor: " + e);
     }
   }
 
@@ -1369,7 +1368,7 @@ public class FeatureEdit extends JFrame
     if(possible_keys != null && !possible_keys.contains(key)) 
     {
       final YesNoDialog dialog =
-        new YesNoDialog(this, "Add this new key: " + key + "?");
+        new YesNoDialog(frame, "Add this new key: " + key + "?");
 
       if(dialog.getResult()) // yes
         getEntryInformation ().addKey (key);
@@ -1386,7 +1385,7 @@ public class FeatureEdit extends JFrame
     {
       final String error_string = exception.getMessage ();
       System.out.println(error_string);
-      new MessageDialog(this, "Cannot apply changes because of location error: " +
+      new MessageDialog(frame, "Cannot apply changes because of location error: " +
                         error_string);
       return false;
     }
@@ -1403,7 +1402,7 @@ public class FeatureEdit extends JFrame
     {
       final String error_string = exception.getMessage();
       System.out.println(error_string);
-      new MessageDialog(this, "Cannot apply changes because of a qualifier " +
+      new MessageDialog(frame, "Cannot apply changes because of a qualifier " +
                         "error: " + error_string);
       return false;
     }
@@ -1419,7 +1418,7 @@ public class FeatureEdit extends JFrame
       catch(OutOfDateException e) 
       {
         final YesNoDialog dialog =
-          new YesNoDialog(this, "the feature has changed since the edit " +
+          new YesNoDialog(frame, "the feature has changed since the edit " +
                           "window was opened, continue?");
 
         if(dialog.getResult())  // yes - ignore the datestamp
@@ -1431,19 +1430,19 @@ public class FeatureEdit extends JFrame
     catch(EntryInformationException e) 
     {
       final String error_string = e.getMessage();
-      new MessageDialog(this, "Cannot apply changes: " + error_string);
+      new MessageDialog(frame, "Cannot apply changes: " + error_string);
 
       return false;
     } 
     catch(OutOfRangeException e) 
     {
-      new MessageDialog(this, "Cannot apply changes - the location is out of " +
+      new MessageDialog(frame, "Cannot apply changes - the location is out of " +
                         "range for this sequence");
       return false;
     } 
     catch(ReadOnlyException e) 
     {
-      new MessageDialog(this, "Cannot apply changes - the feature is " +
+      new MessageDialog(frame, "Cannot apply changes - the feature is " +
                         "read only");
       return false;
     } 

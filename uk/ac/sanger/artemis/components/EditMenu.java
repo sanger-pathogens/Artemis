@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.18 2006-05-31 10:38:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.19 2006-07-04 16:01:59 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -50,13 +50,14 @@ import java.awt.event.*;
 import java.io.IOException;
 
 import javax.swing.*;
+
 import java.util.Vector;
 
 /**
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.18 2006-05-31 10:38:48 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.19 2006-07-04 16:01:59 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -757,10 +758,40 @@ public class EditMenu extends SelectionMenu
 
       if(selection_feature.getEmblFeature() instanceof GFFStreamFeature &&
           ((GFFStreamFeature)selection_feature.getEmblFeature()).getChadoGene() != null)
-         new GeneBuilderFrame(selection_feature);
-       else
-         new FeatureEdit(selection_feature, entry_group, selection,
-                         goto_event_source).setVisible(true);
+      {
+        new GeneBuilderFrame(selection_feature, entry_group,
+                             selection, goto_event_source);
+      }
+      else
+      {
+        final JFrame edit_frame = new JFrame("Artemis Feature Edit: " + 
+             selection_feature.getIDString() +
+             (selection_feature.isReadOnly() ?
+                 "  -  (read only)" :
+                 ""));
+         
+         final FeatureEdit fe = new FeatureEdit(selection_feature, entry_group,
+                                     selection, goto_event_source, edit_frame);
+         
+         edit_frame.addWindowListener(new WindowAdapter() 
+         {
+           public void windowClosing(WindowEvent event) 
+           {
+             fe.stopListening();
+             edit_frame.dispose();
+           }
+         });
+         
+         edit_frame.getContentPane().add(fe);
+         edit_frame.pack();
+
+         final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+         edit_frame.setLocation(new Point((screen.width - edit_frame.getSize().width)/2,
+                                     (screen.height - edit_frame.getSize().height)/2));
+         edit_frame.setVisible(true);
+       }
+
+
     }
 
     selection.set(features_to_edit);

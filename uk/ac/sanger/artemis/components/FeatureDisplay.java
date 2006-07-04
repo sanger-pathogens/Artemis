@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.45 2006-05-31 10:38:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.46 2006-07-04 16:01:59 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -63,12 +63,13 @@ import javax.swing.JScrollBar;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 
 /**
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.45 2006-05-31 10:38:48 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.46 2006-07-04 16:01:59 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -2281,6 +2282,7 @@ public class FeatureDisplay extends EntryGroupPanel
     }
   }
 
+  
   protected Object[] getProteinKeys()
   {
     return protein_keys;
@@ -2634,7 +2636,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  The returned value will be the y-coordinate of the top of the lane that
    *  this feature should be draw into.
    **/
-  private int getSegmentVerticalOffset(FeatureSegment segment) 
+  public int getSegmentVerticalOffset(FeatureSegment segment) 
   {
     // one "line" is font_height pixels high,(the number of lines times the
     // font_height is the height of the height of canvas)
@@ -3774,11 +3776,36 @@ public class FeatureDisplay extends EntryGroupPanel
         {        
           if(clicked_feature.getEmblFeature() instanceof GFFStreamFeature &&
              ((GFFStreamFeature)clicked_feature.getEmblFeature()).getChadoGene() != null)
-            new GeneBuilderFrame(clicked_feature);
+            new GeneBuilderFrame(clicked_feature, getEntryGroup(),
+                            getSelection(), getGotoEventSource());
           else
-            new FeatureEdit(clicked_feature, getEntryGroup(),
-                            getSelection(),
-                            getGotoEventSource()).setVisible(true);
+          {
+            final JFrame frame = new JFrame("Artemis Feature Edit: " + 
+                clicked_feature.getIDString() +
+                (clicked_feature.isReadOnly() ?
+                    "  -  (read only)" :
+                    ""));
+            
+            final FeatureEdit fe = new FeatureEdit(clicked_feature, getEntryGroup(),
+                                       getSelection(), getGotoEventSource(), frame);
+            
+            frame.addWindowListener(new WindowAdapter() 
+            {
+              public void windowClosing(WindowEvent event) 
+              {
+                fe.stopListening();
+                frame.dispose();
+              }
+            });
+            
+            frame.getContentPane().add(fe);
+            frame.pack();
+
+            final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+            frame.setLocation(new Point((screen.width - getSize().width)/2,
+                                        (screen.height - getSize().height)/2));
+            frame.setVisible(true);
+          }
         }
       }
     }
