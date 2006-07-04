@@ -20,89 +20,171 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.1 2006-05-31 09:49:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.2 2006-07-04 15:57:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
 
 import javax.swing.*;
+
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import uk.ac.sanger.artemis.Entry;
+import uk.ac.sanger.artemis.EntryChangeEvent;
+import uk.ac.sanger.artemis.EntryChangeListener;
+import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
-import uk.ac.sanger.artemis.components.QualifierTextArea;
-import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
-import uk.ac.sanger.artemis.io.EntryInformation;
+import uk.ac.sanger.artemis.FeatureChangeEvent;
+import uk.ac.sanger.artemis.FeatureChangeListener;
+import uk.ac.sanger.artemis.GotoEventSource;
+import uk.ac.sanger.artemis.Selection;
+import uk.ac.sanger.artemis.components.FeatureEdit;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
-import uk.ac.sanger.artemis.io.Qualifier;
-import uk.ac.sanger.artemis.io.QualifierInfo;
-import uk.ac.sanger.artemis.io.QualifierVector;
-import uk.ac.sanger.artemis.io.StreamQualifier;
-import uk.ac.sanger.artemis.util.StringVector;
+
 
 public class GeneBuilderFrame extends JFrame
+       implements EntryChangeListener, FeatureChangeListener
 {
   
-  public GeneBuilderFrame(final Feature gene_feature)
+  private Feature active_feature; 
+  private FeatureEdit feature_editor;
+  
+  public GeneBuilderFrame(final Feature feature,
+                          final EntryGroup entry_group,
+                          final Selection selection,
+                          final GotoEventSource goto_event_source)
   {
-    super("Artemis Gene Builder: " + gene_feature.getIDString() +
-          (gene_feature.isReadOnly() ?
+    super("Artemis Gene Builder: " + feature.getIDString() +
+          (feature.isReadOnly() ?
           "  -  (read only)" :
           ""));
     
-    QualifierTextArea qualifier_text_area = new QualifierTextArea();
-    GFFStreamFeature gff_feature = (GFFStreamFeature)gene_feature.getEmblFeature();
+    this.active_feature = feature;
+
+    GFFStreamFeature gff_feature = (GFFStreamFeature)feature.getEmblFeature();
     GeneComponentTree tree = new GeneComponentTree(gff_feature.getChadoGene(),
-                                                   qualifier_text_area);
-    getContentPane().add(new JScrollPane(tree), BorderLayout.WEST);
+                                                   this);
+    
+    JScrollPane jsp_tree = new JScrollPane(tree);
+    jsp_tree.setPreferredSize( new Dimension(150, jsp_tree.getPreferredSize().height) );
+    getContentPane().add(jsp_tree, BorderLayout.WEST);
     
     GeneViewerPanel viewer = new GeneViewerPanel(gff_feature.getChadoGene());
     getContentPane().add(viewer, BorderLayout.CENTER);
 
-    qualifier_text_area.setWrapStyleWord(true);
-    qualifier_text_area.setText(getQualifierString(gene_feature));
+    if(entry_group != null)
+    {
+      JTabbedPane tabpane = new JTabbedPane();
     
-    getContentPane().add(new JScrollPane(qualifier_text_area), BorderLayout.SOUTH);
+      feature_editor = new FeatureEdit(feature, entry_group,
+                                       selection, goto_event_source, this);
+      tabpane.addTab("Annotation", feature_editor);
+
+      getContentPane().add(tabpane, BorderLayout.SOUTH);
+    }
+    
+    addWindowListener(new WindowAdapter() 
+    {
+      public void windowClosing(WindowEvent event) 
+      {
+        stopListening();
+        dispose();
+      }
+    });
     
     pack();
     setVisible(true);
   }
+  
+  protected void setActiveFeature(final Feature active_feature)
+  {
+    if(this.active_feature != null)
+      stopListening();
+    
+    this.active_feature = active_feature;
+    feature_editor.setActiveFeature(active_feature);
+  }
 
   /**
-   *  Return a string containing one qualifier per line.  These are the
-   *  original qualifiers, not the qualifiers from the qualifier_text_area.
+   *  Remove this object as a feature and entry change listener.
    **/
-  protected static String getQualifierString(final Feature feature) 
+  private void stopListening() 
   {
-    final StringBuffer buffer = new StringBuffer();
-    final QualifierVector qualifiers = feature.getQualifiers();
+    getEntry().removeEntryChangeListener(this);
+    active_feature.removeFeatureChangeListener(this);
+  }
 
-    for(int qualifier_index = 0; qualifier_index < qualifiers.size();
-        ++qualifier_index) 
+  /**
+   *  Implementation of the EntryChangeListener interface.  We listen to
+   *  EntryChange events so we can notify the user if of this component if the
+   *  feature gets deleted.
+   **/
+  public void entryChanged(EntryChangeEvent event) 
+  {
+    switch(event.getType())
     {
-      final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
-
-      final QualifierInfo qualifier_info =
-                       getEntryInformation(feature).getQualifierInfo(this_qualifier.getName());
-
-      final StringVector qualifier_strings =
-                       StreamQualifier.toStringVector(qualifier_info, this_qualifier);
-
-      for(int value_index = 0; value_index < qualifier_strings.size();
-          ++value_index)
-      {
-        final String qualifier_string = (String)qualifier_strings.elementAt(value_index);
-        buffer.append(qualifier_string + "\n");
-      }
+      case EntryChangeEvent.FEATURE_DELETED:
+        if(event.getFeature() == active_feature) 
+        {
+          stopListening();
+          dispose();
+        }
+        break;
+      default:
+        // do nothing;
+        break;
     }
-
-    return buffer.toString();
   }
   
   /**
-   *  Return the EntryInformation object of the entry containing the feature.
+   *  Implementation of the FeatureChangeListener interface.  We need to
+   *  listen to feature change events from the Features in this object so that
+   *  we can update the display.
+   *  @param event The change event.
    **/
-  protected static EntryInformation getEntryInformation(final Feature feature) 
+  public void featureChanged(FeatureChangeEvent event) 
   {
-    return feature.getEntry().getEntryInformation();
-  }
+    active_feature.resetColour();
+    /*
+    // re-read the information from the feature
+    switch(event.getType()) 
+    {
+      case FeatureChangeEvent.LOCATION_CHANGED:
+        updateLocation();
+        break;
+      case FeatureChangeEvent.KEY_CHANGED:
+        updateKey();
+        break;
+      case FeatureChangeEvent.QUALIFIER_CHANGED:
+        if(qualifier_text_area.getText().equals(orig_qualifier_text)) 
+          updateFromFeature();
+        else
+        {
+          final String message =
+            "warning: the qualifiers have changed outside the editor - " +
+            "view now?";
 
+          final YesNoDialog yes_no_dialog =
+            new YesNoDialog(FeatureEdit.this, message);
+
+          if(yes_no_dialog.getResult()) 
+            new FeatureViewer(gene_feature);
+        }
+        break;
+      default:
+        updateFromFeature();
+        break;
+    }
+    */
+  }
+  
+  
+  private Entry getEntry()
+  {
+    return active_feature.getEntry();
+  }
+  
+  
 }

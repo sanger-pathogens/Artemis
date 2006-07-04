@@ -20,21 +20,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.2 2006-05-31 15:40:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.3 2006-07-04 15:57:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
 
-import uk.ac.sanger.artemis.components.QualifierTextArea;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.Feature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
+import uk.ac.sanger.artemis.chado.ChadoFeature;
 
 import javax.swing.*;
 import javax.swing.event.*;
 
 import javax.swing.tree.*;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * Tree to display a gene hierarchy.
@@ -43,9 +43,9 @@ public class GeneComponentTree extends JTree
 {
   
   public GeneComponentTree(final ChadoCanonicalGene chado_gene,
-                           final QualifierTextArea qualifier_text_area)
+                           final GeneBuilderFrame gene_builder)
   {
-    final Feature gene = chado_gene.getGene();
+    final Feature gene = (Feature)chado_gene.getGene();
     final String gene_id;
     try
     {
@@ -72,9 +72,8 @@ public class GeneComponentTree extends JTree
         if(node == null)
           return;
        
-        Feature feature = chado_gene.getFeatureFromId((String)node.getUserObject());
-        qualifier_text_area.setText( GeneBuilderFrame.getQualifierString(
-             (uk.ac.sanger.artemis.Feature)feature.getUserData() ) );
+        Feature feature = (Feature)chado_gene.getFeatureFromId((String)node.getUserObject());
+        gene_builder.setActiveFeature((uk.ac.sanger.artemis.Feature)feature.getUserData());
       }
     });
     
@@ -91,8 +90,8 @@ public class GeneComponentTree extends JTree
                            final ChadoCanonicalGene chado_gene) 
           throws InvalidRelationException 
   {
-    Vector transcripts = chado_gene.getTranscripts();
-    Vector exons;
+    List transcripts = chado_gene.getTranscripts();
+    List exons;
     Feature transcript;
     Feature exon;
     Feature protein;
@@ -116,13 +115,19 @@ public class GeneComponentTree extends JTree
 
       for(int j=0; j<exons.size(); j++)
       {
-        exon = (Feature)exons.get(j);
-        exon_id = (String)exon.getQualifierByName("ID").getValues().get(0);
+        if(exons.get(j) instanceof Feature)
+        {
+          exon = (Feature)exons.get(j);
+          exon_id = (String)exon.getQualifierByName("ID").getValues().get(0);
+        }
+        else  // ChadoFeature
+          exon_id = ((ChadoFeature)exons.get(j)).getUniquename();
+        
         exon_node = new DefaultMutableTreeNode(exon_id);
         transcript_node.add(exon_node);
       }
       
-      protein = chado_gene.getProteinOfTranscript(transcript_id);
+      protein = (Feature)chado_gene.getProteinOfTranscript(transcript_id);
       if(protein == null)
         continue;
       
