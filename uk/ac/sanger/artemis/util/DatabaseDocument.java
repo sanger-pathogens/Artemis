@@ -24,7 +24,6 @@
 
 package uk.ac.sanger.artemis.util;
 
-import com.ibatis.sqlmap.client.SqlMapClient;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.chado.*;
 import uk.ac.sanger.artemis.components.DatabaseEntrySource;
@@ -361,7 +360,7 @@ public class DatabaseDocument extends Document
     for(int i = 0; i < buffers.length; i++)
       buffers[i] = new ByteBuffer();
 
-    String parentFeature = dao.getFeatureName(srcfeature_id, schema);
+    final String parentFeature = dao.getFeatureName(srcfeature_id, schema);
     ByteBuffer this_buff;
 
     int feature_size = featList.size();
@@ -376,47 +375,18 @@ public class DatabaseDocument extends Document
 
       id_store.put(feature_id, name);
     }
-
-    String gff_source;
     
-    // get all dbrefs
+    // get all dbrefs & synonyms
     Hashtable dbxrefs = dao.getDbxref(schema, null);
-    
-    // get all synonyms
     Hashtable synonym = dao.getAlias(schema, null);
 
+    // create gff byte stream
     for(int i = 0; i < feature_size; i++)
     { 
-      gff_source = null;
-      
+      // select buffer based on feature type
       ChadoFeature feat = (ChadoFeature)featList.get(i);
-      int fmin          = feat.getFeatureloc().getFmin() + 1;
-      int fmax          = feat.getFeatureloc().getFmax();
       long type_id      = feat.getCvterm().getCvtermId();
-      int strand        = feat.getFeatureloc().getStrand();
-      int phase         = feat.getFeatureloc().getPhase();
-      String name       = feat.getUniquename();
-      String typeName   = getCvtermName(type_id);
-
-      String timelastmodified = Long.toString(feat.getTimelastmodified().getTime());
-      String feature_id       = Integer.toString(feat.getId());
-
-      String parent_id = null;
-      String parent_relationship = null;
-      if(feat.getFeature_relationship() != null)
-      {
-        ChadoFeatureRelationship feat_relationship = feat.getFeature_relationship();
-        parent_id = Integer.toString(feat_relationship.getObject_id());
-        long parent_type_id = feat_relationship.getCvterm().getCvtermId();
-        parent_relationship = getCvtermName(parent_type_id);
-      }
-            
-      if(parent_id != null && id_store.containsKey(parent_id))
-        parent_id = (String)id_store.get(parent_id);
-      
-      // make gff format
-
-      // select buffer
+      String typeName   = getCvtermName(type_id, dao);
       this_buff = buffers[types.length];
       for(int j = 0; j < types.length; j++)
       {
@@ -424,119 +394,189 @@ public class DatabaseDocument extends Document
           this_buff = buffers[j];
       }
       
-      Vector dbxref = null;
-      // append dbxrefs
-      if(dbxrefs != null &&
-         dbxrefs.containsKey(new Integer(feature_id)))
-      {
-        dbxref = (Vector)dbxrefs.get(new Integer(feature_id));
-        for(int j=0; j<dbxref.size(); j++)
-        {
-          if(((String)dbxref.get(j)).startsWith("GFF_source:"))
-          {
-            gff_source = ((String)dbxref.get(j)).substring(11);
-            dbxref.removeElementAt(j);
-          }
-        }
-      }
+      chadoToGFF(feat, parentFeature,
+                 dbxrefs, synonym,
+                 id_store, dao, this_buff);
 
-      this_buff.append(parentFeature + "\t"); // seqid
-      
-      if(gff_source != null)
-        this_buff.append(gff_source+"\t");    // source
-      else
-        this_buff.append("chado\t");            
-      this_buff.append(typeName + "\t");      // type
-      this_buff.append(fmin + "\t");          // start
-      this_buff.append(fmax + "\t");          // end
-      this_buff.append(".\t");                // score
-      if(strand == -1)                        // strand
-        this_buff.append("-\t");
-      else if(strand == 1)
-        this_buff.append("+\t");
-      else
-        this_buff.append(".\t");
-
-      if(phase > 3)
-        this_buff.append(".\t");               // phase
-      else
-        this_buff.append(phase+"\t"); 
-
-      this_buff.append("ID=" + name + ";");
-
-     
-      if(parent_id != null && !parent_id.equals("0"))
-      {
-        if(parent_relationship.equals("derives_from"))
-          this_buff.append("Derives_from=" + parent_id + ";");
-        else
-          this_buff.append("Parent=" + parent_id + ";");
-      }
-
-      this_buff.append("timelastmodified=" + timelastmodified + ";");
-
-
-      // attributes
-      Hashtable qualifiers = feat.getQualifiers();
-      if(qualifiers != null && qualifiers.size() > 0)
-      {
-        Enumeration e_qualifiers = qualifiers.keys();
-        while(e_qualifiers.hasMoreElements())
-        {
-          Long qualifier_type_id = (Long)e_qualifiers.nextElement();
-          String qualifier_name = getCvtermName(qualifier_type_id.longValue());
-          if(qualifier_name == null)
-            continue;
-          
-          Vector qualifier_value = (Vector)qualifiers.get(qualifier_type_id);
-        
-          for(int j=0; j<qualifier_value.size(); j++)
-          {
-            ChadoFeatureProp featprop = (ChadoFeatureProp)qualifier_value.get(j);
-            this_buff.append(qualifier_name+ "=" +
-                             GFFStreamFeature.encode(featprop.getValue())+";");
-          }
-        }
-      } 
-
-      // append dbxrefs
-      if(dbxref != null && dbxref.size() > 0)
-      {
-        this_buff.append("Dbxref=");
-        for(int j=0; j<dbxref.size(); j++)
-        {
-          this_buff.append((String)dbxref.get(j));
-          if(j<dbxref.size()-1)
-            this_buff.append(",");
-        }
-        this_buff.append(";");
-      }
-      
-      // append synonyms
-      if(synonym != null &&
-         synonym.containsKey(new Integer(feature_id)))
-      {   
-        ChadoFeatureSynonym alias;
-        Vector v_synonyms = (Vector)synonym.get(new Integer(feature_id));
-        for(int j=0; j<v_synonyms.size(); j++)
-        {
-          alias = (ChadoFeatureSynonym)v_synonyms.get(j);
-          this_buff.append(alias.getSynonym().getCvterm().getName()+"=");
-          this_buff.append(alias.getSynonym().getName());
-          
-          if(j<v_synonyms.size()-1)
-            this_buff.append(";");
-        }
-      }
-      
-      this_buff.append("\n");
-
-      progress_listener.progressMade("Read from database: " + name);
+      progress_listener.progressMade("Read from database: " + 
+                                     feat.getUniquename());
     }
 
     return buffers;
   }
 
+  /**
+   * Convert the chado feature into a GFF line
+   * @param feat           Chado feature
+   * @param parentFeature  parent of this feature
+   * @param dbxrefs        hashtable containing dbxrefs
+   * @param synonym        hashtable containing synonynms
+   * @param id_store       id store for looking up parent names
+   * @param dao            chado data access
+   * @param this_buff      byte buffer of GFF line 
+   */
+  public static void chadoToGFF(final ChadoFeature feat,
+                                final String parentFeature,
+                                final Hashtable dbxrefs,
+                                final Hashtable synonym,
+                                final Hashtable id_store,
+                                final ChadoDAO dao,
+                                final ByteBuffer this_buff)
+  {
+    String gff_source = null;
+    
+    int fmin          = feat.getFeatureloc().getFmin() + 1;
+    int fmax          = feat.getFeatureloc().getFmax();
+    long type_id      = feat.getCvterm().getCvtermId();
+    int strand        = feat.getFeatureloc().getStrand();
+    int phase         = feat.getFeatureloc().getPhase();
+    String name       = feat.getUniquename();
+    String typeName   = getCvtermName(type_id, dao);
+
+    String timelastmodified = Long.toString(feat.getTimelastmodified().getTime());
+    String feature_id       = Integer.toString(feat.getId());
+
+    String parent_id = null;
+    String parent_relationship = null;
+    if(feat.getFeature_relationship() != null)
+    {
+      ChadoFeatureRelationship feat_relationship = feat.getFeature_relationship();
+      parent_id = Integer.toString(feat_relationship.getObject_id());
+      long parent_type_id = feat_relationship.getCvterm().getCvtermId();
+      
+      parent_relationship = feat_relationship.getCvterm().getName();
+      
+      if(parent_relationship == null)
+        parent_relationship = getCvtermName(parent_type_id, dao);
+    }
+    else if(feat.getFeatureRelationshipsForSubjectId() != null)
+    {
+      List relations = feat.getFeatureRelationshipsForSubjectId();
+      for(int i=0; i<relations.size(); i++)
+      {
+        ChadoFeatureRelationship feat_relationship = 
+                            (ChadoFeatureRelationship)relations.get(i);
+        parent_id = Integer.toString(feat_relationship.getObject_id());
+        System.out.println("HERE   "+i+" "+feat_relationship.getCvterm().getName()+ " "+
+            feat_relationship.getObject_id()+" "+feat_relationship.getSubject_id()+ " parent_id="+ parent_id);
+        parent_relationship = feat_relationship.getCvterm().getName();
+      }
+    }
+          
+    if(parent_id != null && id_store != null &&  id_store.containsKey(parent_id))
+      parent_id = (String)id_store.get(parent_id);
+ 
+    // make gff format
+    
+    Vector dbxref = null;
+    // append dbxrefs
+    if(dbxrefs != null &&
+       dbxrefs.containsKey(new Integer(feature_id)))
+    {
+      dbxref = (Vector)dbxrefs.get(new Integer(feature_id));
+      for(int j=0; j<dbxref.size(); j++)
+      {
+        if(((String)dbxref.get(j)).startsWith("GFF_source:"))
+        {
+          gff_source = ((String)dbxref.get(j)).substring(11);
+          dbxref.removeElementAt(j);
+        }
+      }
+    }
+
+    this_buff.append(parentFeature + "\t"); // seqid
+    
+    if(gff_source != null)
+      this_buff.append(gff_source+"\t");    // source
+    else
+      this_buff.append("chado\t");            
+    this_buff.append(typeName + "\t");      // type
+    this_buff.append(fmin + "\t");          // start
+    this_buff.append(fmax + "\t");          // end
+    this_buff.append(".\t");                // score
+    if(strand == -1)                        // strand
+      this_buff.append("-\t");
+    else if(strand == 1)
+      this_buff.append("+\t");
+    else
+      this_buff.append(".\t");
+
+    if(phase > 3)
+      this_buff.append(".\t");               // phase
+    else
+      this_buff.append(phase+"\t"); 
+
+    this_buff.append("ID=" + name + ";");
+
+   
+    if(parent_id != null && !parent_id.equals("0"))
+    {
+      if(parent_relationship.equals("derives_from"))
+        this_buff.append("Derives_from=" + parent_id + ";");
+      else
+        this_buff.append("Parent=" + parent_id + ";");
+    }
+
+    this_buff.append("timelastmodified=" + timelastmodified + ";");
+
+
+    // attributes
+    Hashtable qualifiers = feat.getQualifiers();
+    
+    if(qualifiers != null && qualifiers.size() > 0)
+    {
+      Enumeration e_qualifiers = qualifiers.keys();
+      while(e_qualifiers.hasMoreElements())
+      {
+        Long qualifier_type_id = (Long)e_qualifiers.nextElement();
+        String qualifier_name = getCvtermName(qualifier_type_id.longValue(), dao);
+        if(qualifier_name == null)
+          continue;
+        
+        Vector qualifier_value = (Vector)qualifiers.get(qualifier_type_id);
+        for(int j=0; j<qualifier_value.size(); j++)
+        {
+          ChadoFeatureProp featprop = (ChadoFeatureProp)qualifier_value.get(j);
+          this_buff.append(qualifier_name+ "=" +
+                           GFFStreamFeature.encode(featprop.getValue())+";");
+        }
+      }
+    } 
+
+    // append dbxrefs
+    if(dbxref != null && dbxref.size() > 0)
+    {
+      this_buff.append("Dbxref=");
+      for(int j=0; j<dbxref.size(); j++)
+      {
+        this_buff.append((String)dbxref.get(j));
+        if(j<dbxref.size()-1)
+          this_buff.append(",");
+      }
+      this_buff.append(";");
+    }
+    
+    // append synonyms
+    if(synonym != null &&
+       synonym.containsKey(new Integer(feature_id)))
+    {   
+      ChadoFeatureSynonym alias;
+      Vector v_synonyms = (Vector)synonym.get(new Integer(feature_id));
+      for(int j=0; j<v_synonyms.size(); j++)
+      {
+        alias = (ChadoFeatureSynonym)v_synonyms.get(j);
+        this_buff.append(alias.getSynonym().getCvterm().getName()+"=");
+        this_buff.append(alias.getSynonym().getName());
+        
+        if(j<v_synonyms.size()-1)
+          this_buff.append(";");
+      }
+    }
+    
+    this_buff.append("\n");
+  }
+  
+  
   /**
    * Look up the cvterm_id for a controlled vocabulary name.
    * @param name  
@@ -559,29 +599,10 @@ public class DatabaseDocument extends Document
    * @param id  a cvterm_id  
    * @return    the cvterm name
    */
-  private String getCvtermName(long id)
+  private static String getCvtermName(long id, ChadoDAO dao)
   {
     if(cvterm == null)
-    {
-      try
-      {
-        getCvterm(getDAO());
-      }
-      catch(ConnectException ce)
-      {
-        ce.printStackTrace();
-      }
-      catch(SQLException sqle)
-      {
-        JOptionPane.showMessageDialog(null,
-            "Problems Looking Up cvterm Name (cvterm_id="+
-            Long.toString(id)+") ...\n" +
-            sqle.getMessage(),
-            "Cvterm Name Look Up",
-            JOptionPane.ERROR_MESSAGE);
-        sqle.printStackTrace();
-      }
-    }
+      getCvterm(dao);
 
     return (String)cvterm.get(new Long(id));
   }
@@ -591,7 +612,7 @@ public class DatabaseDocument extends Document
    * @param dao the data access object
    * @return    the cvterm <code>Hashtable</code>
    */
-  private Hashtable getCvterm(ChadoDAO dao)
+  private static Hashtable getCvterm(ChadoDAO dao)
   {
     cvterm = new Hashtable();
 
@@ -608,7 +629,7 @@ public class DatabaseDocument extends Document
     }
     catch(SQLException sqle)
     {
-      System.err.println(this.getClass() + ": SQLException retrieving CvTerms");
+      System.err.println("SQLException retrieving CvTerms");
       System.err.println(sqle);
     }
 
@@ -699,7 +720,7 @@ public class DatabaseDocument extends Document
         while(it_residue_features.hasNext())
         {
           ChadoFeature feature = (ChadoFeature)it_residue_features.next();
-          String typeName = getCvtermName(feature.getCvterm().getCvtermId()); 
+          String typeName = getCvtermName(feature.getCvterm().getCvtermId(), getDAO()); 
           
           db.put(schema + " - " + typeName + " - " + feature.getUniquename(),
                  Integer.toString(feature.getId()));
