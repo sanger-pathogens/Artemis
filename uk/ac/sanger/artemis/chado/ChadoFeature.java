@@ -68,6 +68,10 @@ public class ChadoFeature
   private Hashtable qualifiers;
   /** list of ChadoFeatureProp */
   private List featurepropList;
+  /** list of ChadoFeatureRelationship children */
+  private List featureRelationshipsForObjectId;
+  /** list of ChadoFeatureRelationship parent */
+  private List featureRelationshipsForSubjectId;
   
   private List featureCvterms = new Vector();
 
@@ -357,6 +361,28 @@ public class ChadoFeature
     }
   }
   
+  public List getFeatureRelationshipsForObjectId()
+  {
+    return featureRelationshipsForObjectId;
+  }
+
+  public void setFeatureRelationshipsForObjectId(
+      List featureRelationshipsForObjectId)
+  {
+    this.featureRelationshipsForObjectId = featureRelationshipsForObjectId;
+  }
+
+  public List getFeatureRelationshipsForSubjectId()
+  {
+    return featureRelationshipsForSubjectId;
+  }
+
+  public void setFeatureRelationshipsForSubjectId(
+      List featureRelationshipsForSubjectId)
+  {
+    this.featureRelationshipsForSubjectId = featureRelationshipsForSubjectId;
+  }
+  
   /**
    * Used in merging the qualifiers to store them as a <code>Hashtable</code> of
    * the cvterm type_id (of the property name) and the property values as a 
@@ -393,5 +419,5 @@ public class ChadoFeature
   {
     return qualifiers;
   }
-
+ 
 }
