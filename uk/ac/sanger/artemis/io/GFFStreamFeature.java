@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.37 2006-06-26 16:46:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.38 2006-07-04 11:05:19 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -39,7 +39,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.37 2006-06-26 16:46:55 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.38 2006-07-04 11:05:19 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -128,7 +128,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    *  Create a new GFFStreamFeature from the given line.  The String should be
    *  in gene finder format.
    **/
-  private GFFStreamFeature(final String line)
+  public GFFStreamFeature(final String line)
       throws ReadFormatException 
   {
     super(null);
