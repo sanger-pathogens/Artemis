@@ -48,9 +48,14 @@
         <result property="featureloc.fmin" column="fmin" nullValue="-999" />
         <result property="featureloc.fmax" column="fmax" nullValue="-999" />
         <result property="featureloc.strand" column="strand" nullValue="0" />
+        <result property="featureloc.phase"  column="phase" nullValue="0" />
         <result property="cvterm" column="type_id" select="selectCvterm" />
         <result property="featurepropList" column="{schema=schema, feature_id=id}" 
-                                           select="selectFeatureProp" />                            
+                                           select="selectFeatureProp" />
+        <result property="featureRelationshipsForObjectId" column="{schema=schema, object_id=id}" 
+                                           select="getFeatureRelationship" />  
+        <result property="featureRelationshipsForSubjectId" column="{schema=schema, subject_id=id}" 
+                                           select="getFeatureRelationship" />                         
         <!-- 
         <result property="featureprop.cvterm" column="prop_type_id" select="selectCvterm" />
         <result property="featureprop.value" column="value" />
@@ -81,13 +86,38 @@
         <result property="cvterm" column="type_id" select="selectCvterm" />
      </resultMap>
      
+     <resultMap id="select-relationship" 
+                class="uk.ac.sanger.artemis.chado.ChadoFeatureRelationship">
+        <result property="subject_id" column="subject_id" />
+        <result property="object_id" column="object_id" />
+        <result property="value" column="value" />
+        <result property="rank" column="rank" />
+        <result property="cvterm" column="type_id" select="selectCvterm" />
+     </resultMap>
+     
+     
+     <!-- select featureprops e.g. for lazy loading -->
      <select id="selectFeatureProp" resultMap="select-product-result">
        SELECT type_id, value, rank 
        FROM $schema$.featureprop
        WHERE feature_id=#feature_id#
      </select>
      
-     <!-- get feature name -->
+     <!--  select feature_relationship -->
+     <select id="getFeatureRelationship" resultMap="select-relationship">
+       SELECT subject_id, object_id, type_id, value, rank 
+       FROM $schema$.feature_relationship
+       WHERE
+         <dynamic>
+             <isNotNull property="object_id">                        
+               object_id=#object_id#
+             </isNotNull>
+             <isNotNull property="subject_id">                        
+               subject_id=#subject_id#
+             </isNotNull>
+         </dynamic>
+     </select>
+     
      <select id="getFeatureName" parameterClass="ChadoFeature" 
                                  resultClass="java.lang.String"> 
    	   SELECT name
@@ -187,7 +217,8 @@
 	 	srcfeature_id,
 	 	fmin,
 	 	fmax,
-	 	strand
+	 	strand,
+	 	phase
 	 	<!-- 
 	 	,fp.type_id AS prop_type_id
 	 	,fp.value
