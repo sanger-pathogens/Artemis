@@ -358,8 +358,10 @@ public class ChadoDemo
     {
       feature = (ChadoFeature) featureList.get(i);
       
-      int fmin = feature.getFeatureloc().getFmin() + 1;
-      int fmax = feature.getFeatureloc().getFmax();
+      // assume only one featureloc
+      ChadoFeatureLoc loc = (ChadoFeatureLoc)feature.getFeaturelocsForFeatureId().get(0);
+      int fmin = loc.getFmin() + 1;
+      int fmax = loc.getFmax();
 
       rowData[i][0] = feature.getOrganism().getAbbreviation();
       rowData[i][1] = feature.getUniquename();
@@ -367,7 +369,7 @@ public class ChadoDemo
       //rowData[i][2] = (String)cvterm.get(new Long(feature.getType_id()));
       rowData[i][3] = Integer.toString(feature.getId());
       rowData[i][4] = fmin + "..." + fmax;
-      rowData[i][5] = Integer.toString(feature.getFeatureloc().getStrand());
+      rowData[i][5] = Integer.toString(loc.getStrand());
       rowData[i][6] = feature.getTimelastmodified().toString();
     }
     return rowData;

@@ -26,7 +26,9 @@
 package uk.ac.sanger.artemis.chado;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Set;
 import java.util.Vector;
 import java.util.List;
 
@@ -56,7 +58,7 @@ public class ChadoFeature
   private ChadoCvterm cvterm;
   /** feature property */
   private ChadoFeatureProp featureprop;
-  /** feature location */
+  /** feature location (for a given srcfeature) */
   private ChadoFeatureLoc featureloc;
   /** feature relationship */
   private ChadoFeatureRelationship feature_relationship;
@@ -72,8 +74,12 @@ public class ChadoFeature
   private List featureRelationshipsForObjectId;
   /** list of ChadoFeatureRelationship parent */
   private List featureRelationshipsForSubjectId;
-  
+  /** list of feature dbxrefs (ChadoFeatureDbxref) */
+  private List featureDbxrefs;
+  /** list of feature locations for a feature_id */
+  private List featurelocsForFeatureId;
   private List featureCvterms = new Vector();
+
 
   /**
    * Get the feature_id.
@@ -361,26 +367,78 @@ public class ChadoFeature
     }
   }
   
+  /**
+   * Get a list of <code>ChadoFeatureRelationship</code> children
+   * @return
+   */
   public List getFeatureRelationshipsForObjectId()
   {
     return featureRelationshipsForObjectId;
   }
 
+  /**
+   * Set a list of <code>ChadoFeatureRelationship</code> children
+   * @param featureRelationshipsForObjectId
+   */
   public void setFeatureRelationshipsForObjectId(
       List featureRelationshipsForObjectId)
   {
     this.featureRelationshipsForObjectId = featureRelationshipsForObjectId;
   }
 
+  /**
+   * Get a list of <code>ChadoFeatureRelationship</code> parent
+   * @return
+   */
   public List getFeatureRelationshipsForSubjectId()
   {
     return featureRelationshipsForSubjectId;
   }
 
+  /**
+   * Set a list of <code>ChadoFeatureRelationship</code> parent
+   * @param featureRelationshipsForSubjectId
+   */
   public void setFeatureRelationshipsForSubjectId(
       List featureRelationshipsForSubjectId)
   {
     this.featureRelationshipsForSubjectId = featureRelationshipsForSubjectId;
+  }
+  
+  /**
+   * Get a list of feature dbxrefs (<code>ChadoFeatureDbxref</code>)
+   * @return
+   */
+  public List getFeatureDbxrefs()
+  {
+    return featureDbxrefs;
+  }
+
+  /**
+   * Set a list of feature dbxrefs (<code>ChadoFeatureDbxref</code>)
+   * @param featureDbxrefs
+   */
+  public void setFeatureDbxrefs(List featureDbxrefs)
+  {
+    this.featureDbxrefs = featureDbxrefs;
+  }
+
+  /**
+   * Get list of feature locations for a feature_id
+   * @return
+   */
+  public List getFeaturelocsForFeatureId()
+  {
+    return featurelocsForFeatureId;
+  }
+
+  /**
+   * Set a list of feature locations for a feature_id
+   * @param featurelocsForFeatureId
+   */
+  public void setFeaturelocsForFeatureId(List featurelocsForFeatureId)
+  {
+    this.featurelocsForFeatureId = featurelocsForFeatureId;
   }
   
   /**
@@ -418,6 +476,24 @@ public class ChadoFeature
   public Hashtable getQualifiers()
   {
     return qualifiers;
+  }
+
+  /**
+   * Utility for finding a feature location from a List that corresponds
+   * to a particular srcfeature.
+   * @param locs            List of ChadoFeatureLoc
+   * @param srcfeature_id   srcfeature id
+   * @return
+   */
+  public static ChadoFeatureLoc getFeatureLoc(List locs, int srcfeature_id)
+  {
+    for(int i=0; i<locs.size(); i++)
+    {
+      ChadoFeatureLoc loc = (ChadoFeatureLoc)locs.get(i);
+      if(loc.getSrcfeature_id() == srcfeature_id)
+        return loc;
+    }
+    return null;
   }
  
 }

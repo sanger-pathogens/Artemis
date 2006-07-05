@@ -181,7 +181,7 @@ public class IBatisDAO implements ChadoDAO
     feature.setSchema(schema);
     feature.setFeatureCvterms(cvterm_ids);
 
-    return sqlMap.queryForList("getSchemaResidueFeatures",
+    return sqlMap.queryForList("getResidueFeatures",
                                 feature);
   }
 
