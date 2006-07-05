@@ -131,17 +131,13 @@ public class GeneEdit
     final JPanel panel = new JPanel(new BorderLayout());
     final JComboBox schema_list = new JComboBox(v_schemas);
     schema_list.setSelectedItem(schema);
-    
-
-    JScrollPane jsp = new JScrollPane(schema_list);
-    panel.add(jsp, BorderLayout.EAST);
 
     Box xbox = Box.createHorizontalBox();
     final JTextField gene_text = new JTextField(20);
     gene_text.setText("AfA24A6.005"); //"SPAC212.04c");
     xbox.add(gene_text);
+    xbox.add(schema_list);
     gene_text.selectAll();
-    
     
     JButton findButt = new JButton("RETRIEVE");
     findButt.addActionListener(new ActionListener()
@@ -162,7 +158,11 @@ public class GeneEdit
 
         try
         {
-          search(search_gene, schema_search, dao);
+          GFFStreamFeature gff_gene_feature = getGFFStreamFeature(search_gene, 
+                                                          schema_search, dao);
+           
+          new GeneBuilderFrame(new uk.ac.sanger.artemis.Feature(gff_gene_feature), 
+                               null, null, null);
         }
         catch(SQLException sqlExp)
         {
@@ -179,6 +179,7 @@ public class GeneEdit
     });
     xbox.add(findButt);
     xbox.add(Box.createHorizontalGlue());
+    
     panel.add(xbox, BorderLayout.NORTH);
     
     JFrame frame = new JFrame("Feature Search");
@@ -226,15 +227,18 @@ public class GeneEdit
    * @throws SQLException
    * @throws ReadFormatException 
    */
-  public void search(final String search_gene, final List schema_search,
-                     final ChadoDAO dao) throws SQLException, ReadFormatException
+  private GFFStreamFeature getGFFStreamFeature(
+                                    final String search_gene, 
+                                    final List schema_search,
+                                    final ChadoDAO dao) 
+         throws SQLException, ReadFormatException
   {
     Hashtable id_store = new Hashtable();
     
     ChadoFeature feature = new ChadoFeature();
     feature.setUniquename(search_gene);
     featureList = dao.getLazyFeature(feature,
-                                     schema_search);  
+                                     schema_search);
     
     ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();
     
@@ -244,17 +248,31 @@ public class GeneEdit
     feature = (ChadoFeature)featureList.get(0);
     id_store.put(Integer.toString(feature.getId()), feature.getUniquename());
     
-    int src = feature.getFeatureloc().getSrcfeature_id();
+    /*
+    List dbxrefs = feature.getFeatureDbxrefs();
+    for(int i=0; i<dbxrefs.size(); i++)
+    {
+      ChadoFeatureDbxref dbx = (ChadoFeatureDbxref)dbxrefs.get(i);
+      System.out.println( dbx.getDbxref().getDb().getName()+"="+
+                          dbx.getDbxref().getAccession() );
+    }
+    */
+    
+    List featurelocs = feature.getFeaturelocsForFeatureId();  
+    ChadoFeatureLoc featureloc = (ChadoFeatureLoc)featurelocs.get(0);
+    int src = featureloc.getSrcfeature_id();
     
     ChadoFeature parent = new ChadoFeature();
     parent.setId(src);
+    
     List parentList = dao.getLazyFeature(parent, schema_search);
     parent = (ChadoFeature)parentList.get(0);
     chado_gene.setSeqlen( parent.getLength() );
-       
+    chado_gene.setSrcfeature_id(src);
     
     ByteBuffer buff = new ByteBuffer();
-    DatabaseDocument.chadoToGFF(feature, null, null, null, null, dao, buff);
+    DatabaseDocument.chadoToGFF(feature, null, null, null, null, 
+                                dao, featureloc, buff);
     
     //System.out.println(new String(buff.getBytes())); 
     
@@ -274,8 +292,11 @@ public class GeneEdit
       transcript = (ChadoFeature)featureList.get(0);
       id_store.put(Integer.toString(transcript.getId()), transcript.getUniquename());
       buff = new ByteBuffer();
+      
+      ChadoFeatureLoc loc = ChadoFeature.getFeatureLoc(
+                                       transcript.getFeaturelocsForFeatureId(), src);
       DatabaseDocument.chadoToGFF(transcript, feature.getUniquename(), 
-                                  null, null, id_store, dao, buff);
+                                  null, null, id_store, dao, loc, buff);
       GFFStreamFeature gff_feature = new GFFStreamFeature(new String(buff.getBytes()));
       
       new uk.ac.sanger.artemis.Feature(gff_feature);
@@ -295,8 +316,10 @@ public class GeneEdit
         child = (ChadoFeature)featureList.get(0);
         id_store.put(Integer.toString(child.getId()), child.getUniquename());
         buff = new ByteBuffer();
+        
+        loc = ChadoFeature.getFeatureLoc(child.getFeaturelocsForFeatureId(), src);
         DatabaseDocument.chadoToGFF(child, transcript.getUniquename(), 
-                                    null, null, id_store, dao, buff);
+                                    null, null, id_store, dao, loc, buff);
         
         gff_feature = new GFFStreamFeature(new String(buff.getBytes()));
         new uk.ac.sanger.artemis.Feature(gff_feature);
@@ -318,11 +341,7 @@ public class GeneEdit
     }
     
     gff_gene_feature.setChadoGene(chado_gene);
-    
-    GeneBuilderFrame frame = 
-      new GeneBuilderFrame(new uk.ac.sanger.artemis.Feature(gff_gene_feature), 
-                           null, null, null);
-    
+    return gff_gene_feature;
   }
 
 

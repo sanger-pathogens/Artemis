@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.3 2006-07-04 15:57:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.4 2006-07-05 12:30:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -124,26 +124,34 @@ public class GeneViewerPanel extends JPanel
           int last_ypos     = 0;
           
           ChadoFeature start_exon = (ChadoFeature)exons.get(0);
-          if(start_exon.getFeatureloc().getStrand() == -1)
+          ChadoFeatureLoc loc = ChadoFeature.getFeatureLoc(
+               start_exon.getFeaturelocsForFeatureId(), chado_gene.getSrcfeature_id());
+          
+          if(loc.getStrand() == -1)
           {
-            if( start_exon.getFeatureloc().getFmin() < 
-                ((ChadoFeature)exons.get(exons.size()-1)).getFeatureloc().getFmin())
+            ChadoFeatureLoc loc_last = ChadoFeature.getFeatureLoc(
+                ((ChadoFeature)exons.get(exons.size()-1)).getFeaturelocsForFeatureId(),
+                chado_gene.getSrcfeature_id());
+                
+            if( loc.getFmin() < loc_last.getFmin())
               Collections.reverse(exons);
           }
           
           for(int j=0; j<exons.size(); j++)
           {           
             ChadoFeature exon = (ChadoFeature)exons.get(j);
+            loc = ChadoFeature.getFeatureLoc(
+                exon.getFeaturelocsForFeatureId(), chado_gene.getSrcfeature_id());
             
-            int ex_start = border+(int)((exon.getFeatureloc().getFmin()+1-start)*fraction);
-            int ex_end   = border+(int)((exon.getFeatureloc().getFmax()-start)*fraction);
+            int ex_start = border+(int)((loc.getFmin()+1-start)*fraction);
+            int ex_end   = border+(int)((loc.getFmax()-start)*fraction);
             
             Color exon_col = Color.CYAN;
             
-            offset = getFrameID(chado_gene, exon, j, exons) * getFontHeight() * 2;
+            offset = getFrameID(chado_gene, loc, j, exons) * getFontHeight() * 2;
             
             boolean isForward = false;
-            if(exon.getFeatureloc().getStrand() == 1)
+            if(loc.getStrand() == 1)
               isForward = true;
             
             drawExons(g2d, ex_start, ex_end, 
@@ -236,14 +244,14 @@ public class GeneViewerPanel extends JPanel
       {      
         g2d.drawLine(last_ex_end, last_ypos, 
                      last_ex_end+((ex_start-last_ex_end)/2), ymid-getFontHeight()/2);
-                     g2d.drawLine(last_ex_end+((ex_start-last_ex_end)/2), ymid-getFontHeight()/2, 
+        g2d.drawLine(last_ex_end+((ex_start-last_ex_end)/2), ymid-getFontHeight()/2, 
                      ex_start, ypos+offset); 
       }
       else
       {
         g2d.drawLine(last_ex_start, last_ypos, 
                      last_ex_start+((ex_end-last_ex_start)/2), ymid-getFontHeight()/2);
-                     g2d.drawLine(last_ex_start+((ex_end-last_ex_start)/2), ymid-getFontHeight()/2, 
+        g2d.drawLine(last_ex_start+((ex_end-last_ex_start)/2), ymid-getFontHeight()/2, 
                      ex_end, ypos+offset); 
       }
       g2d.setStroke(stroke);  
@@ -251,21 +259,30 @@ public class GeneViewerPanel extends JPanel
 
   }
   
-  private int getFrameID(ChadoCanonicalGene chado_gene, ChadoFeature feature, 
+  /**
+   * Get the frame id for a feature segment
+   * @param chado_gene  the chado representation of the gene model
+   * @param loc         feature location of the feature
+   * @param nexon       number of the exon
+   * @param exons       List of exons
+   * @return frame id
+   */
+  private int getFrameID(ChadoCanonicalGene chado_gene, 
+                         ChadoFeatureLoc loc, 
                          int nexon, List exons)
   {
     final int position_on_strand;
     
-    if(feature.getFeatureloc().getStrand() == -1)
-      position_on_strand = chado_gene.getSeqlen()-feature.getFeatureloc().getFmax();
+    if(loc.getStrand() == -1)
+      position_on_strand = chado_gene.getSeqlen()-loc.getFmax();
     else
-      position_on_strand = feature.getFeatureloc().getFmin();
+      position_on_strand = loc.getFmin();
     
     // this will be 0, 1 or 2 depending on which frame the segment is in
     final int start_base_modulo =
-      (position_on_strand + getFrameShift(nexon, exons)) % 3;
+      (position_on_strand + getFrameShift(nexon, exons, chado_gene, loc)) % 3;
 
-    if(feature.getFeatureloc().getStrand() == 1)
+    if(loc.getStrand() == 1)
     {
       switch (start_base_modulo)
       {
@@ -301,7 +318,9 @@ public class GeneViewerPanel extends JPanel
    *  translating one base ahead of the start position and 2 means start
    *  translating two bases ahead of the start position.
    **/
-  private int getFrameShift(int nexon, List exons) 
+  private int getFrameShift(int nexon, List exons, 
+                            ChadoCanonicalGene chado_gene,
+                            ChadoFeatureLoc loc) 
   {
     // find the number of bases in the segments before this one
     int base_count = 0;
@@ -310,8 +329,9 @@ public class GeneViewerPanel extends JPanel
     for(int i = 0; i < exons.size(); ++i) 
     {
       ChadoFeature this_feature = (ChadoFeature)exons.get(i);
-      ChadoFeatureLoc featureLoc = this_feature.getFeatureloc();
- 
+      ChadoFeatureLoc featureLoc = ChadoFeature.getFeatureLoc(
+          this_feature.getFeaturelocsForFeatureId(), chado_gene.getSrcfeature_id());
+      
       int this_direction;
       if(featureLoc.getStrand() == 1)
         this_direction = 1;
@@ -336,10 +356,9 @@ public class GeneViewerPanel extends JPanel
       }
     }
     
-    int codon_start = ((ChadoFeature)exons.get(nexon)).getFeatureloc().getPhase();
+    int codon_start = loc.getPhase();
     int mod_value   = (base_count + 3 - codon_start) % 3;
 
-    //System.out.println("GVP mod_value="+mod_value+"  base_count="+base_count + "  codon_start="+codon_start);
     if(mod_value == 1) 
       return 2;
     else if(mod_value == 2)
