@@ -396,7 +396,8 @@ public class DatabaseDocument extends Document
       
       chadoToGFF(feat, parentFeature,
                  dbxrefs, synonym,
-                 id_store, dao, this_buff);
+                 id_store, dao, 
+                 feat.getFeatureloc(), this_buff);
 
       progress_listener.progressMade("Read from database: " + 
                                      feat.getUniquename());
@@ -413,6 +414,7 @@ public class DatabaseDocument extends Document
    * @param synonym        hashtable containing synonynms
    * @param id_store       id store for looking up parent names
    * @param dao            chado data access
+   * @param featureloc     feature location for this chado feature
    * @param this_buff      byte buffer of GFF line 
    */
   public static void chadoToGFF(final ChadoFeature feat,
@@ -421,15 +423,16 @@ public class DatabaseDocument extends Document
                                 final Hashtable synonym,
                                 final Hashtable id_store,
                                 final ChadoDAO dao,
+                                final ChadoFeatureLoc featureloc,
                                 final ByteBuffer this_buff)
   {
     String gff_source = null;
     
-    int fmin          = feat.getFeatureloc().getFmin() + 1;
-    int fmax          = feat.getFeatureloc().getFmax();
+    int fmin          = featureloc.getFmin() + 1;
+    int fmax          = featureloc.getFmax();
     long type_id      = feat.getCvterm().getCvtermId();
-    int strand        = feat.getFeatureloc().getStrand();
-    int phase         = feat.getFeatureloc().getPhase();
+    int strand        = featureloc.getStrand();
+    int phase         = featureloc.getPhase();
     String name       = feat.getUniquename();
     String typeName   = getCvtermName(type_id, dao);
 
