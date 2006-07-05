@@ -36,6 +36,8 @@
         <result property="featureprop.value" column="value"/>
      </resultMap>
 
+    <!-- mapping for feature table and lazy loading of feature_dbxref, feature_relationship,
+         featureprop, organism tables -->
     <resultMap id="select-feature-result" 
                class="ChadoFeature">     
         <result property="schema" column="schema" />  
@@ -44,23 +46,17 @@
         <result property="uniquename" column="uniquename"/>
         <result property="name" column="name"/>
         <result property="length" column="length" nullValue="-999" />
-  	    <result property="featureloc.srcfeature_id" column="srcfeature_id" nullValue="-999" />
-        <result property="featureloc.fmin" column="fmin" nullValue="-999" />
-        <result property="featureloc.fmax" column="fmax" nullValue="-999" />
-        <result property="featureloc.strand" column="strand" nullValue="0" />
-        <result property="featureloc.phase"  column="phase" nullValue="0" />
         <result property="cvterm" column="type_id" select="selectCvterm" />
+        <result property="featurelocsForFeatureId" column="{schema=schema, id=id}" 
+                                                   select="getFeatureLoc" />
         <result property="featurepropList" column="{schema=schema, feature_id=id}" 
                                            select="selectFeatureProp" />
+        <result property="featureDbxrefs" column="{schema=schema, id=id}"
+                                          select="getDbxref" />
         <result property="featureRelationshipsForObjectId" column="{schema=schema, object_id=id}" 
                                            select="getFeatureRelationship" />  
         <result property="featureRelationshipsForSubjectId" column="{schema=schema, subject_id=id}" 
                                            select="getFeatureRelationship" />                         
-        <!-- 
-        <result property="featureprop.cvterm" column="prop_type_id" select="selectCvterm" />
-        <result property="featureprop.value" column="value" />
-        <result property="featureprop.rank" column="rank" />
-        -->
         <result property="organism" column="organism_id" select="getOrganism" />
      </resultMap>
      
@@ -95,7 +91,18 @@
         <result property="cvterm" column="type_id" select="selectCvterm" />
      </resultMap>
      
-     
+     <resultMap id="select-location"
+                class="uk.ac.sanger.artemis.chado.ChadoFeatureLoc">
+        <result property="srcfeature_id" column="srcfeature_id" nullValue="-999" />
+        <result property="fmin"   column="fmin"   nullValue="-999" />
+        <result property="fmax"   column="fmax"   nullValue="-999" />
+        <result property="strand" column="strand" nullValue="0" />
+        <result property="phase"  column="phase"  nullValue="0" />
+        <result property="residue_info"  column="residue_info"/>
+        <result property="locgroup"  column="locgroup"/>
+        <result property="rank"      column="rank"/>
+     </resultMap>
+        
      <!-- select featureprops e.g. for lazy loading -->
      <select id="selectFeatureProp" resultMap="select-product-result">
        SELECT type_id, value, rank 
@@ -116,6 +123,13 @@
                subject_id=#subject_id#
              </isNotNull>
          </dynamic>
+     </select>
+     
+     <!--  select featureloc -->
+     <select id="getFeatureLoc" resultMap="select-location">
+       SELECT srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank
+       FROM  $schema$.featureloc
+       WHERE $schema$.featureloc.feature_id=#id#
      </select>
      
      <select id="getFeatureName" parameterClass="ChadoFeature" 
@@ -186,7 +200,7 @@
     </select>
 
 
-    <select id="getSchemaResidueFeatures" parameterMap="schema-cvlist"
+    <select id="getResidueFeatures" parameterMap="schema-cvlist"
             resultMap="select-feature-with-residues-result">
        SELECT
          abbreviation,
@@ -213,34 +227,31 @@
 	 	organism_id,
 		name,
 	 	f.type_id,
-		seqlen AS length,
+		seqlen AS length
+		<!--
 	 	srcfeature_id,
 	 	fmin,
 	 	fmax,
 	 	strand,
 	 	phase
-	 	<!-- 
-	 	,fp.type_id AS prop_type_id
-	 	,fp.value
-	 	,fp.rank
 	 	-->
 	 FROM $schema$.feature f
+	 <!--
 	 LEFT JOIN $schema$.featureloc     ON f.feature_id=$schema$.featureloc.feature_id
-	 <!-- 
 	 LEFT JOIN $schema$.featureprop fp ON fp.feature_id = f.feature_id
 	 -->
 	 WHERE
-	 <dynamic>
-             <isGreaterThan property="id" compareValue="0"> 
-               f.feature_id=$id$ AND
-             </isGreaterThan>
-             <isNotNull property="uniquename">                        
-               uniquename LIKE #uniquename# AND
-             </isNotNull>
-             <isGreaterThan property="cvterm.cvtermId" compareValue="0"> 
-               $schema$.feature.type_id=$cvterm.cvtermId$ AND
-             </isGreaterThan>
-         </dynamic>
+	   <dynamic>
+          <isGreaterThan property="id" compareValue="0"> 
+            f.feature_id=$id$ AND
+          </isGreaterThan>
+          <isNotNull property="uniquename">                        
+            uniquename LIKE #uniquename# AND
+          </isNotNull>
+          <isGreaterThan property="cvterm.cvtermId" compareValue="0"> 
+            $schema$.feature.type_id=$cvterm.cvtermId$ AND
+          </isGreaterThan>
+       </dynamic>
          f.feature_id > 0
     </select>
 
