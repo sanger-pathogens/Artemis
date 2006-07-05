@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.4 2006-07-04 15:58:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.5 2006-07-05 12:30:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -49,6 +49,9 @@ public class ChadoCanonicalGene
   // derives_from transript
   private Hashtable proteins = new Hashtable();
 
+  // srcfeature
+  private int srcfeature_id;
+ 
   // srcfeature length
   private int seqlen;
   
@@ -271,5 +274,15 @@ public class ChadoCanonicalGene
   public void setSeqlen(int seqlen)
   {
     this.seqlen = seqlen;
+  }
+
+  public int getSrcfeature_id()
+  {
+    return srcfeature_id;
+  }
+
+  public void setSrcfeature_id(int srcfeature_id)
+  {
+    this.srcfeature_id = srcfeature_id;
   }
 }
