@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.27 2006-07-04 15:59:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.28 2006-07-06 15:08:58 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.util.*;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Set;
 import java.util.Vector;
 import java.sql.Timestamp;
 
@@ -37,7 +38,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.27 2006-07-04 15:59:38 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.28 2006-07-06 15:08:58 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -199,9 +200,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         Qualifier parent_qualifier = this_feature.getQualifierByName("Parent");
         Qualifier derives_qualifier = this_feature.getQualifierByName("Derives_from");
         if(parent_qualifier == null && derives_qualifier == null)
-          continue;
-        
-        
+          continue;    
+          
         // compare this features parent_id's to transcript id's in the 
         // chado gene hash to decide if it is part of it
         final StringVector parent_id;
@@ -215,9 +215,11 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         for(int j=0; j<parent_id.size(); j++)
         {
           String parent = (String)parent_id.get(j);
+         
           if(transcripts_lookup.containsKey(parent))
           {
             ChadoCanonicalGene gene = (ChadoCanonicalGene)transcripts_lookup.get(parent);
+             
             if(parent_qualifier == null)
               gene.addProtein(parent, this_feature);
             else
@@ -345,14 +347,17 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
   {
     Vector transcripts = (Vector)gene.getTranscripts();
 
-    final RangeVector new_range_vector = new RangeVector();
-    QualifierVector qualifier_vector = new QualifierVector();
+    RangeVector new_range_vector;
+    QualifierVector qualifier_vector;
     Hashtable id_range_store = new Hashtable();
     Timestamp lasttimemodified = null;
     
-
+    Hashtable new_exon_set = new Hashtable();
+    
     for(int i=0; i<transcripts.size(); i++)
     {
+      new_range_vector = new RangeVector();
+      qualifier_vector = new QualifierVector();
       Feature transcript = (Feature)transcripts.get(i);
       String transcript_id = null;
       try
@@ -364,10 +369,11 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         e1.printStackTrace();
       }
       Vector v_exons = (Vector)gene.getExonsOfTranscript(transcript_id);
-      
+           
       if(v_exons == null)
         continue;
       
+     
       for(int j=0; j<v_exons.size(); j++)
       {
         final GFFStreamFeature this_feature =
@@ -447,7 +453,9 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
             new_feature.setQualifier(old_codon_start_qualifier);
         }
         forcedAdd(new_feature);
-        gene.addExon(transcript_id, new_feature, true );
+        //gene.addExon(transcript_id, new_feature, true );
+        new_exon_set.put(transcript_id, new_feature);
+        
       } 
       catch(ReadOnlyException e) 
       {
@@ -460,6 +468,28 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       catch(EntryInformationException e) 
       {
         throw new Error("internal error - unexpected exception: " + e);
+      }
+    }
+    
+    
+    // now merge the exons in the ChadoCanonicalGene feature
+    Enumeration enum_exon_set = new_exon_set.keys();
+    int num = 0;
+    while(enum_exon_set.hasMoreElements())
+    {
+      String transcript_id = (String)enum_exon_set.nextElement();
+      try
+      {
+        if(num == 0)
+          gene.addExon(transcript_id, new_exon_set.get(transcript_id), true );
+        else
+          gene.addExon(transcript_id, new_exon_set.get(transcript_id));
+        num++;
+      }
+      catch(InvalidRelationException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
     }
   }
