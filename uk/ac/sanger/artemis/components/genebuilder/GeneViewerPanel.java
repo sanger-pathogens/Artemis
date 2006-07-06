@@ -20,13 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.4 2006-07-05 12:30:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.5 2006-07-06 15:10:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.List;
 import java.util.Collections;
 import java.awt.geom.RoundRectangle2D;
@@ -35,24 +36,49 @@ import uk.ac.sanger.artemis.FeatureSegment;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.chado.ChadoFeature;
 import uk.ac.sanger.artemis.chado.ChadoFeatureLoc;
+import uk.ac.sanger.artemis.chado.ChadoFeatureProp;
 import uk.ac.sanger.artemis.io.Feature;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.Options;
 
 public class GeneViewerPanel extends JPanel
 {
   
   private ChadoCanonicalGene chado_gene;
   private int border = 15;
-  
+  /** Used to colour the frames. */
+  private Color light_grey = new Color(240, 240, 240);
+  /** pop up menu */
+  private JPopupMenu popup;
+  /** overlay transcript features */
+  private boolean overlay_transcripts = false;
+
   public GeneViewerPanel(final ChadoCanonicalGene chado_gene)
   {
     this.chado_gene = chado_gene;
     
-    Dimension dim = new Dimension(300,300);
+    Dimension dim = new Dimension(400,400);
     setPreferredSize(dim);
     setBackground(Color.white);
+    
+//  Popup menu
+    addMouseListener(new PopupListener());
+    popup = new JPopupMenu();
+
+    JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem("Overlay transcripts");
+    menuItem.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)  
+      {
+        overlay_transcripts = !overlay_transcripts;
+        repaint();
+        revalidate();
+      }
+    });
+
+    popup.add(menuItem);
   }
 
   public void paintComponent(Graphics g)
@@ -64,24 +90,21 @@ public class GeneViewerPanel extends JPanel
       (uk.ac.sanger.artemis.Feature)embl_gene.getUserData();
     
     setFont(uk.ac.sanger.artemis.Options.getOptions().getFont());
-    final FontMetrics fm = this.getFontMetrics(getFont());
+    //final FontMetrics fm = this.getFontMetrics(getFont());
 
     int start = embl_gene.getFirstBase();
     int end   = embl_gene.getLastBase();
-    boolean complement = embl_gene.getLocation().isComplement();
     
-    BasicStroke stroke = new BasicStroke(2.f);
+    BasicStroke stroke = new BasicStroke(4.f);
     Stroke original_stroke = g2d.getStroke();
     g2d.setStroke(stroke);
     g2d.setColor( gene.getColour() );
     
     int ypos = border;
     
-    ypos += fm.getHeight();
+    // draw gene
     g2d.drawString(gene.getIDString(), border, ypos);
-    ypos += fm.getHeight();
-    
-    g2d.drawLine(border, ypos, getSize().width - border, ypos);
+    drawFeature(g2d, border, getSize().width - border, ypos, gene.getColour());
     
     List transcripts = chado_gene.getTranscripts();
     Feature embl_transcript;
@@ -89,28 +112,36 @@ public class GeneViewerPanel extends JPanel
     
     float fraction = (float)(getSize().width - (2*border))/
                      (float)(end-start);
+    
+    ypos += border*2;
+    
     for(int i=0; i<transcripts.size(); i++)
     {
-      ypos += border;
+      // draw frame lines
+      if(!overlay_transcripts || i == 0)
+        drawFrameLines(g2d, ypos, stroke,
+            start, end, fraction);
+
       embl_transcript  = (Feature)transcripts.get(i);
       transcript = (uk.ac.sanger.artemis.Feature)embl_transcript.getUserData();
       
       int t_start = border+(int)((embl_transcript.getFirstBase()-start)*fraction);
       int t_end   = border+(int)((embl_transcript.getLastBase()-start)*fraction);
       
-      ypos += fm.getHeight();
-      g2d.drawString(transcript.getIDString(), border, ypos);
-      ypos += fm.getHeight();
-      
       g2d.setColor( transcript.getColour() );
-      g2d.drawLine(t_start, ypos, t_end, ypos);
+      int nframe;
+      if(!embl_transcript.getLocation().isComplement())
+        nframe = (3 * getFontHeight() * 2) ;
+      else
+        nframe = (4 * getFontHeight() * 2) ;
+      
+      g2d.drawString(transcript.getIDString(), border, ypos+nframe);
+      drawFeature(g2d, t_start, t_end, ypos+nframe, transcript.getColour());
       
       try
       {
         List exons = chado_gene.getExonsOfTranscript(
             (String)embl_transcript.getQualifierByName("ID").getValues().get(0));
-        
-        ypos += border;
         
         if(exons == null)
           continue;
@@ -133,7 +164,7 @@ public class GeneViewerPanel extends JPanel
                 ((ChadoFeature)exons.get(exons.size()-1)).getFeaturelocsForFeatureId(),
                 chado_gene.getSrcfeature_id());
                 
-            if( loc.getFmin() < loc_last.getFmin())
+            if(loc.getFmin() < loc_last.getFmin())
               Collections.reverse(exons);
           }
           
@@ -145,9 +176,9 @@ public class GeneViewerPanel extends JPanel
             
             int ex_start = border+(int)((loc.getFmin()+1-start)*fraction);
             int ex_end   = border+(int)((loc.getFmax()-start)*fraction);
-            
-            Color exon_col = Color.CYAN;
-            
+               
+            Color exon_col = getColorFromAttributes(exon);
+         
             offset = getFrameID(chado_gene, loc, j, exons) * getFontHeight() * 2;
             
             boolean isForward = false;
@@ -163,6 +194,9 @@ public class GeneViewerPanel extends JPanel
             last_ex_start = ex_start;
             last_ypos   = ypos+offset;
           }
+          
+          if(!overlay_transcripts)
+            ypos += 9 * getFontHeight() * 2;
           continue;
         }
         
@@ -202,6 +236,8 @@ public class GeneViewerPanel extends JPanel
             last_ex_start = ex_start;
             last_ypos   = ypos+offset;
           }
+          
+          ypos += (8 * getFontHeight() * 2) + (getFontHeight()/2) + border;
         }
         
       }
@@ -210,14 +246,44 @@ public class GeneViewerPanel extends JPanel
         e.printStackTrace();
       }
     }
+    setPreferredSize(new Dimension(getSize().width, ypos+border));
   }
   
+  
+  /**
+   * Draw frame lines
+   * @param g2d
+   * @param ypos
+   * @param stroke
+   * @param start
+   * @param end
+   * @param fraction
+   */
+  private void drawFrameLines(Graphics2D g2d, int ypos,
+                              Stroke stroke,
+                              int start, int end, float fraction)
+  {
+    int offset;
+    g2d.setStroke(new BasicStroke(getFontHeight()));
+    for(int k=0; k<8; k++)
+    {
+      offset = (k * getFontHeight() * 2) + (getFontHeight()/2);
+      if(k == 3 || k == 4)
+        g2d.setColor( Color.LIGHT_GRAY );
+      else
+        g2d.setColor(light_grey);
+      g2d.drawLine(border, ypos+offset, 
+                   (int)((end-start)*fraction)+border, ypos+offset);
+    }
+    g2d.setStroke(stroke);
+  }
   
   private void drawExons(Graphics2D g2d, int ex_start, int ex_end, 
                          int last_ex_start, int last_ex_end, int last_ypos,
                          int offset, int ypos, Color exon_colour,
                          Stroke original_stroke, Stroke stroke, boolean isForward)
   {
+    /*
     RoundRectangle2D e = new RoundRectangle2D.Float(ex_start, ypos+offset, 
                                                     ex_end-ex_start,
                                                     getFontHeight(), 0, ypos+offset);
@@ -228,7 +294,10 @@ public class GeneViewerPanel extends JPanel
                                          Color.white, true);
     g2d.setPaint(gp); 
     g2d.fill(e);
-
+    */
+    
+    drawFeature(g2d, ex_start, ex_end, ypos+offset, exon_colour);
+    
     // draw connections
     if(last_ex_end != 0 ||
        last_ex_start != 0)
@@ -257,6 +326,43 @@ public class GeneViewerPanel extends JPanel
       g2d.setStroke(stroke);  
     }
 
+  }
+  
+  private void drawFeature(Graphics2D g2d, int start, int end, 
+                           int ypos, Color colour)
+  {
+    RoundRectangle2D e = new RoundRectangle2D.Float(start, ypos, 
+        end-start,
+        getFontHeight(), 0, ypos);
+
+    if(colour == null)
+      colour = Color.BLACK;
+    
+    GradientPaint gp = new GradientPaint(start, ypos, 
+        colour,
+        start, ypos+(getFontHeight()/2), 
+        Color.white, true);
+    g2d.setPaint(gp); 
+    g2d.fill(e);
+  }
+  
+  /**
+   * Get the <code>Color</code> for a feature from its colour attribute.
+   * @param feature
+   * @return
+   */
+  private Color getColorFromAttributes(ChadoFeature feature)
+  {
+    List properties = feature.getFeaturepropList();
+    for(int i=0; i<properties.size(); i++)
+    {
+      ChadoFeatureProp property = (ChadoFeatureProp)properties.get(i);
+      
+      if(property.getCvterm().getName().equals("colour") ||
+         property.getCvterm().getName().equals("color") )
+        return Options.getOptions().getColorFromColourNumber(Integer.parseInt(property.getValue()));
+    }  
+    return Color.CYAN;
   }
   
   /**
@@ -373,6 +479,29 @@ public class GeneViewerPanel extends JPanel
   {
     final FontMetrics fm = this.getFontMetrics(getFont());
     return fm.getHeight();  
+  }
+  
+  /**
+   * Popup listener
+   */
+  class PopupListener extends MouseAdapter
+  {
+    public void mousePressed(MouseEvent e)
+    {
+      maybeShowPopup(e);
+    }
+
+    public void mouseReleased(MouseEvent e)
+    {
+      maybeShowPopup(e);
+    }
+
+    private void maybeShowPopup(MouseEvent e)
+    {
+      if(e.isPopupTrigger())
+        popup.show(e.getComponent(),
+                e.getX(), e.getY());
+    }
   }
   
 }

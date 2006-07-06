@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.2 2006-07-04 15:57:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.3 2006-07-06 15:10:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -72,7 +72,9 @@ public class GeneBuilderFrame extends JFrame
     getContentPane().add(jsp_tree, BorderLayout.WEST);
     
     GeneViewerPanel viewer = new GeneViewerPanel(gff_feature.getChadoGene());
-    getContentPane().add(viewer, BorderLayout.CENTER);
+    JScrollPane jsp_viewer = new JScrollPane(viewer);
+    jsp_viewer.setPreferredSize( viewer.getPreferredSize() );
+    getContentPane().add(jsp_viewer, BorderLayout.CENTER);
 
     if(entry_group != null)
     {

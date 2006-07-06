@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.3 2006-07-04 15:57:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.4 2006-07-06 15:10:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -94,7 +94,7 @@ public class GeneComponentTree extends JTree
     List exons;
     Feature transcript;
     Feature exon;
-    Feature protein;
+    Object  protein;
     String transcript_id;
     String exon_id;
     String protein_id;
@@ -105,7 +105,8 @@ public class GeneComponentTree extends JTree
     for(int i=0; i<transcripts.size(); i++)
     {
       transcript = (Feature)transcripts.get(i);
-      transcript_id = (String)transcript.getQualifierByName("ID").getValues().get(0);
+      transcript_id = 
+        (String)transcript.getQualifierByName("ID").getValues().get(0);
       transcript_node = new DefaultMutableTreeNode(transcript_id);
       gene_node.add(transcript_node);
       
@@ -127,11 +128,16 @@ public class GeneComponentTree extends JTree
         transcript_node.add(exon_node);
       }
       
-      protein = (Feature)chado_gene.getProteinOfTranscript(transcript_id);
+      protein = chado_gene.getProteinOfTranscript(transcript_id);
       if(protein == null)
         continue;
       
-      protein_id = (String)protein.getQualifierByName("ID").getValues().get(0);
+      if(protein instanceof Feature)
+        protein_id = 
+          (String)((Feature)protein).getQualifierByName("ID").getValues().get(0);
+      else
+        protein_id = ((ChadoFeature)protein).getUniquename();
+      
       protein_node = new DefaultMutableTreeNode(protein_id);
       
       transcript_node.add(protein_node);
