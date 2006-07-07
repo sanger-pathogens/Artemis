@@ -49,6 +49,7 @@
         </fileset>
         <fileset dir="${build.src.main}/lib">
         	 <include name="**/*.jar" />
+             <exclude name="j2ssh/j2ssh-artemis-plugin.jar"/>
         </fileset>
     </path>
   </target>
