@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.38 2006-07-04 11:05:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.39 2006-07-07 15:16:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -39,7 +39,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.38 2006-07-04 11:05:19 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.39 2006-07-07 15:16:09 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -237,7 +237,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       if(start_base > end_base) 
         throw new ReadFormatException("start position is greater than end " +
                                       "position: " + start_base + " > " +
-                                      end_base);
+                                      end_base+"\n"+line);
 
       if(start_base < 0)
         throw new ReadFormatException("start position must be positive: " +
