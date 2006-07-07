@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.5 2006-07-06 15:10:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.6 2006-07-07 15:20:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -139,12 +139,16 @@ public class GeneViewerPanel extends JPanel
       drawFeature(g2d, t_start, t_end, ypos+nframe, transcript.getColour());
       
       try
-      {
+      {          
         List exons = chado_gene.getExonsOfTranscript(
             (String)embl_transcript.getQualifierByName("ID").getValues().get(0));
         
         if(exons == null)
+        {
+          if(!overlay_transcripts)
+            ypos += 9 * getFontHeight() * 2;
           continue;
+        }
         
         int offset = 0;
         
@@ -200,7 +204,6 @@ public class GeneViewerPanel extends JPanel
           continue;
         }
         
-        
         for(int j=0; j<exons.size(); j++)
         {
           int last_ex_start = 0;
@@ -235,9 +238,13 @@ public class GeneViewerPanel extends JPanel
             last_ex_end   = ex_end;
             last_ex_start = ex_start;
             last_ypos   = ypos+offset;
+            
+            
           }
           
-          ypos += (8 * getFontHeight() * 2) + (getFontHeight()/2) + border;
+          //ypos += (8 * getFontHeight() * 2) + (getFontHeight()/2) + border;
+          if(!overlay_transcripts)
+            ypos += 9 * getFontHeight() * 2;
         }
         
       }
@@ -282,20 +289,7 @@ public class GeneViewerPanel extends JPanel
                          int last_ex_start, int last_ex_end, int last_ypos,
                          int offset, int ypos, Color exon_colour,
                          Stroke original_stroke, Stroke stroke, boolean isForward)
-  {
-    /*
-    RoundRectangle2D e = new RoundRectangle2D.Float(ex_start, ypos+offset, 
-                                                    ex_end-ex_start,
-                                                    getFontHeight(), 0, ypos+offset);
-    
-    GradientPaint gp = new GradientPaint(ex_start, ypos+offset, 
-                                         exon_colour,
-                                         ex_start, ypos+offset+(getFontHeight()/2), 
-                                         Color.white, true);
-    g2d.setPaint(gp); 
-    g2d.fill(e);
-    */
-    
+  {   
     drawFeature(g2d, ex_start, ex_end, ypos+offset, exon_colour);
     
     // draw connections
