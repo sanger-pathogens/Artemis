@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.17 2006-03-07 12:31:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.18 2006-07-07 13:32:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import java.lang.reflect.Constructor;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.17 2006-03-07 12:31:11 tjc Exp $
+ *  @version $Id: Splash.java,v 1.18 2006-07-07 13:32:12 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -326,10 +326,11 @@ abstract public class Splash extends JFrame
           }
         }
 
-        for(int i=0; i*helix_height<=this.getSize().height; ++i) 
-          g.drawImage(helix,
-                      0,
-                      i * helix_height, this);
+        if(helix_height > 0)
+          for(int i=0; i*helix_height<=this.getSize().height; ++i) 
+            g.drawImage(helix,
+                        0,
+                        i * helix_height, this);
 
         final int font_height = textPaint(g);
 
