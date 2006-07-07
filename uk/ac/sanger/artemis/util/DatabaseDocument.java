@@ -540,8 +540,10 @@ public class DatabaseDocument extends Document
         for(int j=0; j<qualifier_value.size(); j++)
         {
           ChadoFeatureProp featprop = (ChadoFeatureProp)qualifier_value.get(j);
-          this_buff.append(qualifier_name+ "=" +
-                           GFFStreamFeature.encode(featprop.getValue())+";");
+         
+          if(featprop.getValue() != null)
+            this_buff.append(qualifier_name+ "=" +
+                             GFFStreamFeature.encode(featprop.getValue())+";");
         }
       }
     } 
