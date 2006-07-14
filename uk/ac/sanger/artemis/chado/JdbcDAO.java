@@ -173,10 +173,11 @@ public class JdbcDAO
     Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                                         ResultSet.CONCUR_UPDATABLE);
 
-    String sql = "SELECT timelastmodified, f.feature_id, object_id,"
+    String sql = "SELECT timelastmodified, f.feature_id,"
                + " fl.strand, fmin, fmax, uniquename, f.type_id,"
                + " fp.type_id AS prop_type_id, fp.value, fl.phase,"
-               + " f.organism_id, abbreviation, genus, species, common_name, comment"
+               + " f.organism_id, abbreviation, genus, species, common_name, comment,"
+               + " fr.object_id, fr.type_id AS relation_type_id, fr.rank"
                + " FROM  "     + schema + ".feature f"
                + " LEFT JOIN " + schema + ".feature_relationship fr ON "
                                         + "fr.subject_id=" + "f.feature_id"
@@ -236,6 +237,9 @@ public class JdbcDAO
       
       // feature relationship
       ChadoFeatureRelationship feature_relationship = new ChadoFeatureRelationship();
+      cvterm = new ChadoCvterm();
+      cvterm.setCvtermId(rs.getLong("relation_type_id"));
+      feature_relationship.setCvterm(cvterm);
       feature_relationship.setObject_id( rs.getInt("object_id") );
       feature.setFeature_relationship(feature_relationship);
   
