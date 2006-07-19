@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.7 2006-07-14 13:42:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.8 2006-07-19 16:05:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -32,8 +32,12 @@ import java.util.List;
 import java.util.Collections;
 import java.awt.geom.RoundRectangle2D;
 
+import uk.ac.sanger.artemis.EntryChangeListener;
+import uk.ac.sanger.artemis.FeatureChangeEvent;
+import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.FeatureSegment;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
+import uk.ac.sanger.artemis.LastSegmentException;
 import uk.ac.sanger.artemis.chado.ChadoFeature;
 import uk.ac.sanger.artemis.chado.ChadoFeatureLoc;
 import uk.ac.sanger.artemis.chado.ChadoFeatureProp;
@@ -41,9 +45,11 @@ import uk.ac.sanger.artemis.io.Feature;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.Options;
 
 public class GeneViewerPanel extends JPanel
+          implements FeatureChangeListener
 {
   
   private ChadoCanonicalGene chado_gene;
@@ -58,6 +64,16 @@ public class GeneViewerPanel extends JPanel
   public GeneViewerPanel(final ChadoCanonicalGene chado_gene)
   {
     this.chado_gene = chado_gene;
+    
+    try
+    {
+      addListeners();
+    }
+    catch(InvalidRelationException e)
+    {
+      e.printStackTrace();
+    } 
+    
     
     Dimension dim = new Dimension(400,400);
     setPreferredSize(dim);
@@ -81,6 +97,48 @@ public class GeneViewerPanel extends JPanel
     popup.add(menuItem);
   }
 
+  /**
+   * Add feature listeners for each artemis feature.
+   * @throws InvalidRelationException
+   */
+  private void addListeners() throws InvalidRelationException
+  {
+    // add feature listeners
+    Feature embl_gene = (Feature)chado_gene.getGene();
+    uk.ac.sanger.artemis.Feature gene =
+      (uk.ac.sanger.artemis.Feature)embl_gene.getUserData();
+    gene.addFeatureChangeListener(this);
+    
+    List transcripts = chado_gene.getTranscripts();
+    for(int i=0; i<transcripts.size(); i++)
+    {
+       Feature transcript = (Feature)transcripts.get(i);
+       uk.ac.sanger.artemis.Feature trans = 
+         (uk.ac.sanger.artemis.Feature)transcript.getUserData();
+       trans.addFeatureChangeListener(this);
+       List exons = chado_gene.getExonsOfTranscript(
+           (String)trans.getQualifierByName("ID").getValues().get(0));
+       
+       if(exons == null)
+         continue;
+       
+       if(exons.get(0) instanceof ChadoFeature)
+         return;
+       
+       for(int j=0; j<exons.size(); j++)
+       {
+         Feature embl_exon = (Feature)exons.get(j);
+
+         uk.ac.sanger.artemis.Feature exon = 
+           (uk.ac.sanger.artemis.Feature)embl_exon.getUserData();
+         exon.addFeatureChangeListener(this);
+       }
+    }
+  }
+  
+  /**
+   * 
+   */
   public void paintComponent(Graphics g)
   {
     super.paintComponent(g);
@@ -123,15 +181,57 @@ public class GeneViewerPanel extends JPanel
         ypos += 9 * getFontHeight() * 2;
       */
       
-      ypos += (2 * border) + (getFontHeight() * 4);
+      
       drawTranscriptOnLine(g2d, (Feature)transcripts.get(i), 
                            start, end, ypos, 
                            fraction);
+      
+      if(i != transcripts.size()-1)
+        ypos += getTranscriptSize();
     }
     setPreferredSize(new Dimension(getSize().width, ypos+border));
   }
   
+  /**
+   * Macro for getting the size of the transcipt and
+   * exon image.
+   * @return
+   */
+  protected int getTranscriptSize()
+  {
+    return (2 * border) + (getFontHeight() * 4);  
+  }
   
+  protected int getViewerBorder()
+  {
+    return border; 
+  }
+  
+  /**
+   * Return the closest transcript feature from a given point on the
+   * panel.
+   * @param p 
+   * @return
+   */
+  private Feature getTranscriptAt(Point p)
+  {
+    List transcripts = chado_gene.getTranscripts();
+    
+    int ntranscript = (p.y - (border*2))/getTranscriptSize();
+    if(ntranscript < transcripts.size())
+      return (Feature)transcripts.get(ntranscript);
+    return null;
+  }
+  
+  /**
+   * Draw the features on frame lines.
+   * @param g2d
+   * @param embl_transcript
+   * @param start
+   * @param end
+   * @param ypos
+   * @param fraction
+   */
   private void drawTranscriptOnFrameLine(Graphics2D g2d, Feature embl_transcript, 
                                          int start, int end, int ypos, 
                                          float fraction)
@@ -166,6 +266,7 @@ public class GeneViewerPanel extends JPanel
       }
       
       int offset = 0;
+      boolean last_segment = false;
       
       if(exons.get(0) instanceof ChadoFeature)
       {
@@ -204,10 +305,13 @@ public class GeneViewerPanel extends JPanel
           if(loc.getStrand() == 1)
             isForward = true;
           
+          if(j == exons.size()-1)
+            last_segment = true;
+          
           drawExons(g2d, ex_start, ex_end, 
                     last_ex_start, last_ex_end, last_ypos,
                     offset, ypos, exon_col,
-                    1, isForward);
+                    1, isForward, last_segment);
           
           last_ex_end   = ex_end;
           last_ex_start = ex_start;
@@ -244,20 +348,20 @@ public class GeneViewerPanel extends JPanel
 
           if(exon.getColour() != null)
             g2d.setColor( exon.getColour() );
-                     
+               
+
+          if(k == segments.size()-1)
+            last_segment = true;
+          
           drawExons(g2d, ex_start, ex_end, 
                    last_ex_start, last_ex_end, last_ypos,
                    offset, ypos, exon.getColour(),
-                   1, segment.isForwardSegment());
+                   1, segment.isForwardSegment(), last_segment);
           
           last_ex_end   = ex_end;
           last_ex_start = ex_start;
-          last_ypos   = ypos+offset;
-          
-          
+          last_ypos   = ypos+offset; 
         }
-        
-
       }
       
     }
@@ -268,10 +372,18 @@ public class GeneViewerPanel extends JPanel
   
   }
   
-  
+  /**
+   * 
+   * @param g2d
+   * @param embl_transcript
+   * @param start
+   * @param end
+   * @param ypos
+   * @param fraction
+   */
   private void drawTranscriptOnLine(Graphics2D g2d, Feature embl_transcript, 
-      int start, int end, int ypos, 
-      float fraction)
+                                    int start, int end, int ypos, 
+                                    float fraction)
   {
     BasicStroke stroke = new BasicStroke(48.f);
     g2d.setStroke(stroke);
@@ -296,6 +408,8 @@ public class GeneViewerPanel extends JPanel
         return; 
 
       ypos += border*2;
+      
+      boolean last_segment = false;
       
       if(exons.get(0) instanceof ChadoFeature)
       {
@@ -333,10 +447,13 @@ public class GeneViewerPanel extends JPanel
           if(loc.getStrand() == 1)
             isForward = true;
 
+          if(j == exons.size()-1)
+            last_segment = true;
+          
           drawExons(g2d, ex_start, ex_end, 
               last_ex_start, last_ex_end, last_ypos,
               0, ypos, exon_col,
-              2, isForward);
+              2, isForward, last_segment);
 
           last_ex_end   = ex_end;
           last_ex_start = ex_start;
@@ -372,10 +489,14 @@ public class GeneViewerPanel extends JPanel
           if(exon.getColour() != null)
             g2d.setColor( exon.getColour() );
 
+          if(k == segments.size()-1)
+            last_segment = true;
+          
           drawExons(g2d, ex_start, ex_end, 
               last_ex_start, last_ex_end, last_ypos,
               0, ypos, exon.getColour(),
-              2, segment.isForwardSegment());
+              2, segment.isForwardSegment(),
+              last_segment);
 
           last_ex_end   = ex_end;
           last_ex_start = ex_start;
@@ -418,7 +539,7 @@ public class GeneViewerPanel extends JPanel
                          int last_ex_start, int last_ex_end, int last_ypos,
                          int offset, int ypos, Color exon_colour,
                          int size,
-                         boolean isForward)
+                         boolean isForward, boolean last_segment)
   {   
     drawFeature(g2d, ex_start, ex_end, ypos+offset, exon_colour, size);
     
@@ -436,21 +557,40 @@ public class GeneViewerPanel extends JPanel
         ymid = ypos+offset; 
 
       if(isForward)
-      {      
+      {
         g2d.drawLine(last_ex_end, last_ypos, 
                      last_ex_end+((ex_start-last_ex_end)/2), ymid-getFontHeight()/2);
         g2d.drawLine(last_ex_end+((ex_start-last_ex_end)/2), ymid-getFontHeight()/2, 
                      ex_start, ypos+offset); 
       }
       else
-      {
+      { 
         g2d.drawLine(last_ex_start, last_ypos, 
                      last_ex_start+((ex_end-last_ex_start)/2), ymid-getFontHeight()/2);
         g2d.drawLine(last_ex_start+((ex_end-last_ex_start)/2), ymid-getFontHeight()/2, 
                      ex_end, ypos+offset); 
       }  
     }
+  
+    // draw arrow
+    if(last_segment)
+    {
+      if(isForward)
+      {      
 
+        g2d.drawLine(ex_end, ypos, 
+                     ex_end+getFontHeight()/2, ypos+(getFontHeight()*size)/2);
+        g2d.drawLine(ex_end+getFontHeight()/2, ypos+(getFontHeight()*size)/2,
+                     ex_end, ypos+(getFontHeight()*size));
+      }
+      else
+      {
+        g2d.drawLine(ex_start, ypos, 
+                     ex_start-getFontHeight()/2, ypos+(getFontHeight()*size)/2);
+        g2d.drawLine(ex_start-getFontHeight()/2, ypos+(getFontHeight()*size)/2,
+                     ex_start, ypos+(getFontHeight()*size));
+      }
+    }
   }
   
   /**
@@ -478,6 +618,11 @@ public class GeneViewerPanel extends JPanel
         Color.white, true);
     g2d.setPaint(gp); 
     g2d.fill(e);
+    g2d.setStroke(new BasicStroke(1.f));
+    
+    // draw boundary
+    g2d.setColor(Color.BLACK);
+    g2d.draw(e);
   }
   
   /**
@@ -616,10 +761,152 @@ public class GeneViewerPanel extends JPanel
   }
   
   /**
+   * Display a list of the exons for a transcript.
+   * @param embl_transcript
+   * @throws InvalidRelationException
+   */
+  private void showExonsList(final String uniquename)
+               throws InvalidRelationException
+  {
+    List exons = chado_gene.getExonsOfTranscript(uniquename);
+    if(exons == null)
+      return;
+    
+
+    Feature embl_exon = (Feature)exons.get(0);
+
+    final uk.ac.sanger.artemis.Feature exon = 
+          (uk.ac.sanger.artemis.Feature)embl_exon.getUserData();
+    
+    final FeatureSegmentVector segments = exon.getSegments();
+    final DefaultListModel listModel = new DefaultListModel();     
+    for(int k=0; k<segments.size(); k++)
+    {
+      FeatureSegment segment = segments.elementAt(k);
+      Range range = segment.getRawRange();
+      listModel.addElement(range.toString());
+    }
+    
+    final JList list = new JList(listModel);
+    JScrollPane listScrollPane = new JScrollPane(list);
+
+    JButton addButt    = new JButton("ADD");
+    addButt.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)  
+      {
+
+      }
+    });
+
+    JButton deleteButt = new JButton("DELETE");
+    deleteButt.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)  
+      {
+        Object selected[] = list.getSelectedValues();
+        final FeatureSegmentVector segments = exon.getSegments();
+        Range range = null;
+        FeatureSegment segment = null;
+        try
+        {
+          for(int i = 0; i < segments.size(); i++)
+          {
+            segment = segments.elementAt(i);
+            range   = segment.getRawRange();
+            for(int j = 0; j < selected.length; j++)
+            {
+              if(range.toString().equals((String) selected[j]))
+              {
+                segment.removeFromFeature();
+                listModel.removeElement(range.toString());
+              }
+            }
+          }
+        }
+        catch(ReadOnlyException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        catch(LastSegmentException e)
+        {
+          // delete entire feature here
+          Feature transcript = (Feature)chado_gene.getFeatureFromId(uniquename);
+          try
+          {
+            ((uk.ac.sanger.artemis.Feature)transcript.getUserData()).removeFromEntry();
+            listModel.removeElement(range.toString());
+            chado_gene.deleteTranscript(uniquename);
+          }
+          catch(ReadOnlyException e1)
+          {
+            e1.printStackTrace();
+          }
+        }
+        
+        
+      }
+    });
+    
+    JButton editButt   = new JButton("EDIT");
+    editButt.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)  
+      {
+
+      }
+    });
+    
+    //Create a panel that uses BoxLayout.
+    JPanel buttonPane = new JPanel();
+    buttonPane.setLayout(new BoxLayout(buttonPane,
+                                       BoxLayout.LINE_AXIS));
+    buttonPane.add(listScrollPane);
+    buttonPane.add(Box.createHorizontalStrut(5));
+    buttonPane.add(new JSeparator(SwingConstants.VERTICAL));
+    buttonPane.add(Box.createHorizontalStrut(5));
+    
+    Box bdown = Box.createVerticalBox();
+    bdown.add(addButt);
+    bdown.add(deleteButt);
+    bdown.add(editButt);
+    buttonPane.add(bdown);
+    buttonPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+    buttonPane.add(Box.createHorizontalGlue());
+    final JDialog dialog = new JDialog((Frame)null,
+                                       "Exon List", false);
+    
+    dialog.setContentPane(buttonPane);
+    dialog.pack();
+    dialog.setVisible(true);
+
+  }
+ 
+  public void featureChanged(FeatureChangeEvent event)
+  {
+    Feature feature = event.getFeature().getEmblFeature();
+    String uniquename = null;
+    try
+    {
+      uniquename = (String)(feature.getQualifierByName("ID").getValues().get(0));
+    }
+    catch(InvalidRelationException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    System.out.println("UPDATE ME "+uniquename);
+    
+  }
+  
+  /**
    * Popup listener
    */
   class PopupListener extends MouseAdapter
   {
+    private JMenuItem exonMenu = new JMenuItem();
+    private ActionListener exonListener;
     public void mousePressed(MouseEvent e)
     {
       maybeShowPopup(e);
@@ -633,9 +920,44 @@ public class GeneViewerPanel extends JPanel
     private void maybeShowPopup(MouseEvent e)
     {
       if(e.isPopupTrigger())
+      {
+        exonMenu.removeActionListener(exonListener);
+        final Feature embl_transcript = getTranscriptAt(e.getPoint());
+        if(embl_transcript == null)
+          return;
+        
+        try
+        {
+          final String uniquename = 
+            (String)(embl_transcript.getQualifierByName("ID").getValues().get(0));
+            
+          exonMenu.setText("Show exon list for "+uniquename);       
+          exonListener = new ActionListener()
+          {
+            public void actionPerformed(ActionEvent event)  
+            {
+              try
+              {
+                showExonsList(uniquename);
+              }
+              catch(InvalidRelationException e)
+              {
+                e.printStackTrace();
+              }
+            }
+          };
+          exonMenu.addActionListener(exonListener);
+          popup.add(exonMenu);
+        }
+        catch(InvalidRelationException e1)
+        {
+          e1.printStackTrace();
+        }
+        
         popup.show(e.getComponent(),
                 e.getX(), e.getY());
+      }
     }
   }
-  
+ 
 }

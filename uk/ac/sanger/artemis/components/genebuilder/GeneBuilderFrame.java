@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.3 2006-07-06 15:10:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.4 2006-07-19 16:05:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -28,8 +28,16 @@ package uk.ac.sanger.artemis.components.genebuilder;
 import javax.swing.*;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.ItemListener;
+import java.util.List;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryChangeEvent;
@@ -40,9 +48,11 @@ import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.GotoEventSource;
 import uk.ac.sanger.artemis.Selection;
+import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.FeatureEdit;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
-
+import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
+import uk.ac.sanger.artemis.FeatureVector;
 
 public class GeneBuilderFrame extends JFrame
        implements EntryChangeListener, FeatureChangeListener
@@ -63,8 +73,10 @@ public class GeneBuilderFrame extends JFrame
     
     this.active_feature = feature;
 
+
     GFFStreamFeature gff_feature = (GFFStreamFeature)feature.getEmblFeature();
-    GeneComponentTree tree = new GeneComponentTree(gff_feature.getChadoGene(),
+    final ChadoCanonicalGene chado_gene = gff_feature.getChadoGene();
+    GeneComponentTree tree = new GeneComponentTree(chado_gene,
                                                    this);
     
     JScrollPane jsp_tree = new JScrollPane(tree);
@@ -72,7 +84,12 @@ public class GeneBuilderFrame extends JFrame
     getContentPane().add(jsp_tree, BorderLayout.WEST);
     
     GeneViewerPanel viewer = new GeneViewerPanel(gff_feature.getChadoGene());
-    JScrollPane jsp_viewer = new JScrollPane(viewer);
+
+    Box xBox = Box.createHorizontalBox();
+    xBox.add(buildCheckBoxes(viewer, chado_gene, selection));
+    xBox.add(viewer);
+    
+    JScrollPane jsp_viewer = new JScrollPane(xBox);
     jsp_viewer.setPreferredSize( viewer.getPreferredSize() );
     getContentPane().add(jsp_viewer, BorderLayout.CENTER);
 
@@ -83,7 +100,6 @@ public class GeneBuilderFrame extends JFrame
       feature_editor = new FeatureEdit(feature, entry_group,
                                        selection, goto_event_source, this);
       tabpane.addTab("Annotation", feature_editor);
-
       getContentPane().add(tabpane, BorderLayout.SOUTH);
     }
     
@@ -98,6 +114,59 @@ public class GeneBuilderFrame extends JFrame
     
     pack();
     setVisible(true);
+  }
+  
+  /**
+   * Create a Box component with the checkboxes used to determine if
+   * a transcripts exons are visible in artemis.
+   * @param viewer
+   * @param chado_gene
+   * @return
+   */
+  private Box buildCheckBoxes(final GeneViewerPanel viewer,
+                              final ChadoCanonicalGene chado_gene,
+                              final Selection selection)
+  {
+    Box yBox = Box.createVerticalBox();
+    yBox.add(Box.createVerticalStrut(viewer.getViewerBorder()*3));
+    
+    java.util.List transcripts = chado_gene.getTranscripts();
+    
+    for(int i=0; i<transcripts.size(); i++)
+    {
+      final GFFStreamFeature transcript = 
+        (GFFStreamFeature)((uk.ac.sanger.artemis.io.Feature)transcripts.get(i));
+      
+      JCheckBox cb = new JCheckBox();
+      cb.setSelected(true);
+      cb.addItemListener(new ItemListener()
+      {
+        public void itemStateChanged(ItemEvent e)
+        {
+          List exons = chado_gene.getExonsOfTranscript(
+              (String)transcript.getQualifierByName("ID").getValues().get(0));
+          
+          boolean visible = true;
+          if(e.getStateChange() == ItemEvent.DESELECTED)
+            visible = false;        
+          
+          for(int j=0; j<exons.size(); j++)
+          {
+            GFFStreamFeature embl_exon = (GFFStreamFeature)exons.get(j);
+            embl_exon.setVisible(visible);
+          }
+          
+          FeatureVector fv = selection.getAllFeatures();
+          selection.clear();
+          selection.set(fv);
+        }
+      });
+      yBox.add(cb);
+      yBox.add(Box.createVerticalStrut(
+          viewer.getTranscriptSize() - cb.getPreferredSize().height)); 
+    }
+    yBox.add(Box.createVerticalGlue());
+    return yBox;
   }
   
   protected void setActiveFeature(final Feature active_feature)

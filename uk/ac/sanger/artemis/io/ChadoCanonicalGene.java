@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.5 2006-07-05 12:30:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.6 2006-07-19 16:06:55 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -38,7 +38,7 @@ import java.util.List;
  **/
 public class ChadoCanonicalGene  
 {
-  private Object gene;
+  private Feature gene;
   
   // part_of gene
   private List transcripts = new Vector();
@@ -60,7 +60,7 @@ public class ChadoCanonicalGene
    * Get the gene feaure object.
    * @return
    */
-  public Object getGene()
+  public Feature getGene()
   {
     return gene;
   }
@@ -69,7 +69,7 @@ public class ChadoCanonicalGene
    * Set the gene feature object.
    * @param gene
    */
-  public void setGene(Object gene)
+  public void setGene(Feature gene)
   {
     this.gene = gene;
   }
@@ -77,6 +77,27 @@ public class ChadoCanonicalGene
   public void addTranscript(Object transcript)
   {
     transcripts.add(transcript);
+  }
+  
+  public void deleteTranscript(String transcript_name)
+  {
+    for(int i=0; i<transcripts.size(); i++)
+    {
+      try
+      {
+        Feature transcript = (Feature)transcripts.get(i);
+        
+        if( transcript_name.equals(getIDQualifier(transcript)) )
+        {
+          transcripts.remove(transcript);
+          exons.remove(transcript_name); 
+        }
+      }
+      catch(InvalidRelationException e)
+      {
+        e.printStackTrace();
+      }
+    }  
   }
   
   public void addExon(String transcript_name, 
@@ -165,10 +186,12 @@ public class ChadoCanonicalGene
     {
       final String uniquename;
       
+      /*
       if(gene instanceof ChadoFeature)
         uniquename = ((ChadoFeature)gene).getUniquename();
       else
-        uniquename = getIDQualifier((Feature)gene);    
+      */
+      uniquename = getIDQualifier(gene);    
       
       if(uniquename.equals(name))
         return gene;
