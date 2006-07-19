@@ -1,4 +1,4 @@
-/* IBatisDAO
+/* IBatisDAO                                                                                                 /* IBatisDAO
  *
  * created: 2006
  *
@@ -29,7 +29,6 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 import java.util.List;
 import java.util.Hashtable;
 import java.util.Vector;
-import java.util.Set;
 import java.sql.*;
 
 import javax.swing.JPasswordField;
@@ -625,6 +624,24 @@ public class IBatisDAO implements ChadoDAO
       tsn.addProperty("timelastmodified", "'"+ timestamp.toString() + "'");
     
     return updateAttributes(schema, tsn);
+  }
+  
+  public void startTransaction() throws SQLException
+  {
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    sqlMap.startTransaction();
+  }
+  
+  public void endTransaction() throws SQLException
+  {
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    sqlMap.endTransaction();
+  }
+  
+  public void commitTransaction() throws SQLException
+  {
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    sqlMap.commitTransaction();
   }
 }
 
