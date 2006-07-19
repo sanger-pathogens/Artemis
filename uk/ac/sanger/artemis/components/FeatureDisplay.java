@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.46 2006-07-04 16:01:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.47 2006-07-19 16:06:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -69,7 +69,7 @@ import javax.swing.JFrame;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.46 2006-07-04 16:01:59 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.47 2006-07-19 16:06:00 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -1388,6 +1388,9 @@ public class FeatureDisplay extends EntryGroupPanel
    *  displayed.  source features are not returned unless show_source_features
    *  is true.  features with a score less than getMinimumScore() or higher
    *  than getMaximumScore() aren't returned.
+   *  
+   *  GFFStreamFeature features check whether they are set to be visible.
+   *  
    *  @param range Return features that overlap this range - ie the start of
    *    the feature is less than or equal to the end of the range and the end
    *    of the feature is greater than or equal to the start of the range.
@@ -1419,6 +1422,10 @@ public class FeatureDisplay extends EntryGroupPanel
             !getSelection().contains(this_feature)) 
           continue;
 
+        if(this_feature.getEmblFeature() instanceof GFFStreamFeature &&
+           !((GFFStreamFeature)this_feature.getEmblFeature()).isVisible())
+          continue;
+          
         if(min_score > 0 || max_score < 100) 
         {
           final int this_feature_score = this_feature.getScore();
