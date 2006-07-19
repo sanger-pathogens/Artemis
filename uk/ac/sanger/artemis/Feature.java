@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.20 2006-05-31 10:38:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.21 2006-07-19 16:10:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.20 2006-05-31 10:38:48 tjc Exp $
+ *  @version $Id: Feature.java,v 1.21 2006-07-19 16:10:31 tjc Exp $
  **/
 
 public class Feature
@@ -950,7 +950,8 @@ public class Feature
    *  calls resetCache(), because changing the location will change the
    *  translation and bases of the feature.
    **/
-  private void locationChanged(final Location old_location) 
+  private void locationChanged(final Location old_location,
+                               int type) 
   {
     resetCache();
 
@@ -961,13 +962,19 @@ public class Feature
                              null,
                              old_location,
                              null,
-                             FeatureChangeEvent.LOCATION_CHANGED);
+                             type);
 
     this.old_location = getLocation();
 
     fireAction(feature_listener_list, feature_change_event);
   }
 
+  private void locationChanged(final Location old_location) 
+  {
+    locationChanged(old_location,
+                    FeatureChangeEvent.LOCATION_CHANGED);  
+  }
+  
   /**
    *  Add the values from the given qualifier to the Qualifier object with the
    *  same name in this Feature or if there is no Qualifier with that name
@@ -3055,7 +3062,7 @@ CHANGED_END:
     }
 
     reexamineSegments();
-    locationChanged(old_location);
+    locationChanged(old_location, FeatureChangeEvent.SEGMENT_CHANGED);
   }
 
   private Location moveSegments(final int shift)
@@ -3109,7 +3116,7 @@ CHANGED_END:
 
       reexamineSegments();
 
-      locationChanged(old_location);
+      locationChanged(old_location, FeatureChangeEvent.SEGMENT_CHANGED);
     } 
     else 
       throw new LastSegmentException();
