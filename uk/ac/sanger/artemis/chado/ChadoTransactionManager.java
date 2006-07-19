@@ -93,7 +93,15 @@ public class ChadoTransactionManager
     {
       final GFFStreamFeature feature = (GFFStreamFeature)event.getFeature().getEmblFeature();
 
-      if(event.getType() == FeatureChangeEvent.LOCATION_CHANGED)
+      if(event.getType() == FeatureChangeEvent.SEGMENT_CHANGED)
+      {
+        RangeVector rv_new = event.getNewLocation().getRanges();
+        RangeVector rv_old = event.getOldLocation().getRanges();
+
+        System.out.println("SEGMENT_CHANGED "+feature.getFirstBase()+".."+feature.getLastBase()+
+                           "   new="+rv_new.size()+" old="+rv_old.size());
+      }
+      else if(event.getType() == FeatureChangeEvent.LOCATION_CHANGED)
       {
         RangeVector rv_new = event.getNewLocation().getRanges();
         RangeVector rv_old = event.getOldLocation().getRanges();
@@ -158,16 +166,28 @@ public class ChadoTransactionManager
   public void entryChanged(EntryChangeEvent event)
   {
     if(event.getType() == EntryChangeEvent.FEATURE_ADDED)
-    {
-      System.out.println("FEATURE_ADDED");
-      
+    { 
       // if this is a duplicate feature then ignore
       if(event.isDuplicate())
       {
-        System.out.println("FEATURE_ADDED ------> DUPLICATE");
+        Feature feature = event.getFeature();
+        Qualifier qualifier_uniquename;
+        try
+        {
+          qualifier_uniquename = feature.getQualifierByName("ID");
+          System.out.println("FEATURE_ADDED ------> DUPLICATE "+
+              (String)(qualifier_uniquename.getValues()).elementAt(0));
+        }
+        catch(InvalidRelationException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+
         return;
       }
-      
+     
+      System.out.println("FEATURE_ADDED");
       Feature feature = event.getFeature();
       String feature_uniquename = null;
 

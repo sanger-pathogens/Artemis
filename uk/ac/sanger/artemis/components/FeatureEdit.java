@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.19 2006-07-04 16:01:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.20 2006-07-19 16:06:29 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -61,7 +61,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.19 2006-07-04 16:01:59 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.20 2006-07-19 16:06:29 tjc Exp $
  **/
 
 public class FeatureEdit extends JPanel
@@ -252,6 +252,9 @@ public class FeatureEdit extends JPanel
     switch(event.getType()) 
     {
       case FeatureChangeEvent.LOCATION_CHANGED:
+        updateLocation();
+        break;
+      case FeatureChangeEvent.SEGMENT_CHANGED:
         updateLocation();
         break;
       case FeatureChangeEvent.KEY_CHANGED:
