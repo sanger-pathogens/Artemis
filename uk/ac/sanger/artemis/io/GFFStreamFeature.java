@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.39 2006-07-07 15:16:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.40 2006-07-19 16:07:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -39,7 +39,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.39 2006-07-07 15:16:09 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.40 2006-07-19 16:07:31 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -61,6 +61,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   
   private ChadoCanonicalGene chadoGene;
   
+  private boolean visible = true;
+
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
    *  to an Entry (with Entry.add()).
@@ -872,5 +874,15 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   public void setChadoGene(ChadoCanonicalGene chadoGene)
   {
     this.chadoGene = chadoGene;
+  }
+  
+  public boolean isVisible()
+  {
+    return visible;
+  }
+
+  public void setVisible(boolean visible)
+  {
+    this.visible = visible;
   }
 }
