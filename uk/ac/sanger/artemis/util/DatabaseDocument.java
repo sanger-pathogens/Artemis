@@ -801,8 +801,10 @@ public class DatabaseDocument extends Document
   public int commit(Vector sql)
   {
     int i = 0;
+
     try
     {
+      
       ChadoDAO dao = getDAO();
       boolean unchanged;
       
@@ -832,69 +834,84 @@ public class DatabaseDocument extends Document
           }
         }
       }  
-       
-      //
-      // commit to database
-      for(i = 0; i < sql.size(); i++)
-      {
-        ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
-        
-        if(tsn.getType() == ChadoTransaction.UPDATE)
-          dao.updateAttributes(schema, tsn);
-        else if(tsn.getType() == ChadoTransaction.INSERT)
-          dao.insertAttributes(schema, tsn);
-        else if(tsn.getType() == ChadoTransaction.DELETE)
-          dao.deleteAttributes(schema, tsn);
-        else if(tsn.getType() == ChadoTransaction.INSERT_FEATURE)
-          dao.insertFeature(schema, tsn, feature_id);
-        else if(tsn.getType() == ChadoTransaction.DELETE_FEATURE)
-          dao.deleteFeature(schema, tsn);
-        else if(tsn.getType() == ChadoTransaction.DELETE_DBXREF)
-          dao.deleteFeatureDbxref(schema, tsn);
-        else if(tsn.getType() == ChadoTransaction.INSERT_DBXREF)
-          dao.insertFeatureDbxref(schema, tsn);
-        else if(tsn.getType() == ChadoTransaction.DELETE_ALIAS)
-          dao.deleteFeatureAlias(schema, tsn);
-        else if(tsn.getType() == ChadoTransaction.INSERT_ALIAS)
-          dao.insertFeatureAlias(schema, tsn);
-      }
       
-      
-      //
-      // update timelastmodified timestamp
-      Timestamp ts = null;
-      Timestamp ts2;
-      names_checked = new Vector();
-      for(int j = 0; j < sql.size(); j++)
+      try
       {
-        ChadoTransaction tsn = (ChadoTransaction) sql.get(j);
+        if(dao instanceof IBatisDAO)
+          ((IBatisDAO) dao).startTransaction();
 
-        if(tsn.getType() != ChadoTransaction.INSERT_FEATURE ||
-           tsn.getType() != ChadoTransaction.DELETE_FEATURE)
+        //
+        // commit to database
+        for(i = 0; i < sql.size(); i++)
         {
-          final List uniquename = tsn.getUniquename();
-          
-          // update timelastmodified timestamp
-          for(int k=0; k<uniquename.size(); k++)
+          ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
+
+          if(tsn.getType() == ChadoTransaction.UPDATE)
+            dao.updateAttributes(schema, tsn);
+          else if(tsn.getType() == ChadoTransaction.INSERT)
+            dao.insertAttributes(schema, tsn);
+          else if(tsn.getType() == ChadoTransaction.DELETE)
+            dao.deleteAttributes(schema, tsn);
+          else if(tsn.getType() == ChadoTransaction.INSERT_FEATURE)
+            dao.insertFeature(schema, tsn, feature_id);
+          else if(tsn.getType() == ChadoTransaction.DELETE_FEATURE)
+            dao.deleteFeature(schema, tsn);
+          else if(tsn.getType() == ChadoTransaction.DELETE_DBXREF)
+            dao.deleteFeatureDbxref(schema, tsn);
+          else if(tsn.getType() == ChadoTransaction.INSERT_DBXREF)
+            dao.insertFeatureDbxref(schema, tsn);
+          else if(tsn.getType() == ChadoTransaction.DELETE_ALIAS)
+            dao.deleteFeatureAlias(schema, tsn);
+          else if(tsn.getType() == ChadoTransaction.INSERT_ALIAS)
+            dao.insertFeatureAlias(schema, tsn);
+        }
+
+        //
+        // update timelastmodified timestamp
+        Timestamp ts = null;
+        Timestamp ts2;
+        names_checked = new Vector();
+        for(int j = 0; j < sql.size(); j++)
+        {
+          ChadoTransaction tsn = (ChadoTransaction) sql.get(j);
+
+          if(tsn.getType() != ChadoTransaction.INSERT_FEATURE
+              || tsn.getType() != ChadoTransaction.DELETE_FEATURE)
           {
-            if(names_checked.contains((String)uniquename.get(k)))
-              continue;
-            
-            names_checked.add((String)uniquename.get(k));
-            
-            dao.writeTimeLastModified(schema, (String)uniquename.get(k), ts);
-            ts2 = dao.getTimeLastModified(schema, (String)uniquename.get(k));
-            if(ts2 == null)
-              continue;
-            
-            if(ts == null)  
-              ts = ts2;
-            
-            GFFStreamFeature gff_feature = (GFFStreamFeature)tsn.getFeatureObject();
-            gff_feature.setLastModified(ts);
+            final List uniquename = tsn.getUniquename();
+
+            // update timelastmodified timestamp
+            for(int k = 0; k < uniquename.size(); k++)
+            {
+              if(names_checked.contains((String) uniquename.get(k)))
+                continue;
+
+              names_checked.add((String) uniquename.get(k));
+
+              dao.writeTimeLastModified(schema, (String) uniquename.get(k), ts);
+              ts2 = dao.getTimeLastModified(schema, (String) uniquename.get(k));
+              if(ts2 == null)
+                continue;
+
+              if(ts == null)
+                ts = ts2;
+
+              GFFStreamFeature gff_feature = (GFFStreamFeature) tsn
+                  .getFeatureObject();
+              gff_feature.setLastModified(ts);
+            }
           }
         }
-      }  
+        
+        if(dao instanceof IBatisDAO && 
+           System.getProperty("nocommit") == null)
+           ((IBatisDAO) dao).commitTransaction();
+      }
+      finally
+      {
+        if(dao instanceof IBatisDAO)
+          ((IBatisDAO) dao).endTransaction();
+      }
     }
     catch (java.sql.SQLException sqlExp)
     {
@@ -912,6 +929,7 @@ public class DatabaseDocument extends Document
                                     JOptionPane.ERROR_MESSAGE);
       conn_ex.printStackTrace();
     }
+
       
     return i;
   }
