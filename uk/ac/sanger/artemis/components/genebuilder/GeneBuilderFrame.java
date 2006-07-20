@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.4 2006-07-19 16:05:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.5 2006-07-20 10:32:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -63,7 +63,7 @@ public class GeneBuilderFrame extends JFrame
   
   public GeneBuilderFrame(final Feature feature,
                           final EntryGroup entry_group,
-                          final Selection selection,
+                          Selection selection,
                           final GotoEventSource goto_event_source)
   {
     super("Artemis Gene Builder: " + feature.getIDString() +
@@ -83,7 +83,11 @@ public class GeneBuilderFrame extends JFrame
     jsp_tree.setPreferredSize( new Dimension(150, jsp_tree.getPreferredSize().height) );
     getContentPane().add(jsp_tree, BorderLayout.WEST);
     
-    GeneViewerPanel viewer = new GeneViewerPanel(gff_feature.getChadoGene());
+    if(selection == null)
+      selection = new Selection(null);
+    
+    GeneViewerPanel viewer = new GeneViewerPanel(
+                gff_feature.getChadoGene(), selection);
 
     Box xBox = Box.createHorizontalBox();
     xBox.add(buildCheckBoxes(viewer, chado_gene, selection));
@@ -145,6 +149,9 @@ public class GeneBuilderFrame extends JFrame
         {
           List exons = chado_gene.getExonsOfTranscript(
               (String)transcript.getQualifierByName("ID").getValues().get(0));
+          
+          if(exons == null)
+            return;
           
           boolean visible = true;
           if(e.getStateChange() == ItemEvent.DESELECTED)

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.8 2006-07-19 16:05:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.9 2006-07-20 10:32:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -32,12 +32,12 @@ import java.util.List;
 import java.util.Collections;
 import java.awt.geom.RoundRectangle2D;
 
-import uk.ac.sanger.artemis.EntryChangeListener;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.FeatureSegment;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.LastSegmentException;
+import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.chado.ChadoFeature;
 import uk.ac.sanger.artemis.chado.ChadoFeatureLoc;
 import uk.ac.sanger.artemis.chado.ChadoFeatureProp;
@@ -60,10 +60,14 @@ public class GeneViewerPanel extends JPanel
   private JPopupMenu popup;
   /** overlay transcript features */
   private boolean overlay_transcripts = false;
+  
+  private Selection selection;
 
-  public GeneViewerPanel(final ChadoCanonicalGene chado_gene)
+  public GeneViewerPanel(final ChadoCanonicalGene chado_gene,
+                         final Selection selection)
   {
     this.chado_gene = chado_gene;
+    this.selection  = selection;
     
     try
     {
@@ -156,7 +160,9 @@ public class GeneViewerPanel extends JPanel
     
     // draw gene
     g2d.drawString(gene.getIDString(), border, ypos);
-    drawFeature(g2d, border, getSize().width - border, ypos, gene.getColour(), 1);
+    drawFeature(g2d, border, 
+                getSize().width - border, 
+                ypos, gene.getColour(), 1, selection.contains(gene));
     
     List transcripts = chado_gene.getTranscripts();   
     float fraction = (float)(getSize().width - (2*border))/
@@ -251,7 +257,8 @@ public class GeneViewerPanel extends JPanel
       nframe = (4 * getFontHeight() * 2) ;
     
     g2d.drawString(transcript.getIDString(), border, ypos+nframe);
-    drawFeature(g2d, t_start, t_end, ypos+nframe, transcript.getColour(), 1);
+    drawFeature(g2d, t_start, t_end, 
+                ypos+nframe, transcript.getColour(), 1, selection.contains(transcript));
     
     try
     {          
@@ -397,7 +404,8 @@ public class GeneViewerPanel extends JPanel
     g2d.setColor( transcript.getColour() );
 
     g2d.drawString(transcript.getIDString(), border, ypos);
-    drawFeature(g2d, t_start, t_end, ypos, transcript.getColour(), 1);
+    drawFeature(g2d, t_start, t_end, 
+                ypos, transcript.getColour(), 1, selection.contains(transcript));
 
     try
     {          
@@ -541,7 +549,8 @@ public class GeneViewerPanel extends JPanel
                          int size,
                          boolean isForward, boolean last_segment)
   {   
-    drawFeature(g2d, ex_start, ex_end, ypos+offset, exon_colour, size);
+    drawFeature(g2d, ex_start, ex_end, 
+                ypos+offset, exon_colour, size, false);
     
     // draw connections
     if(last_ex_end != 0 ||
@@ -603,7 +612,8 @@ public class GeneViewerPanel extends JPanel
    * @param size    parameter to control the height of the feature
    */
   private void drawFeature(Graphics2D g2d, int start, int end, 
-                           int ypos, Color colour, int size)
+                           int ypos, Color colour, int size,
+                           boolean selected)
   {
     RoundRectangle2D e = new RoundRectangle2D.Float(start, ypos, 
         end-start,
@@ -618,7 +628,11 @@ public class GeneViewerPanel extends JPanel
         Color.white, true);
     g2d.setPaint(gp); 
     g2d.fill(e);
-    g2d.setStroke(new BasicStroke(1.f));
+    
+    if(selected)
+      g2d.setStroke(new BasicStroke(2.f));
+    else
+      g2d.setStroke(new BasicStroke(1.f));
     
     // draw boundary
     g2d.setColor(Color.BLACK);
@@ -896,8 +910,9 @@ public class GeneViewerPanel extends JPanel
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    System.out.println("UPDATE ME "+uniquename);
     
+    repaint();
+    //revalidate();
   }
   
   /**
