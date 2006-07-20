@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.9 2006-07-20 10:32:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.10 2006-07-20 13:14:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -45,6 +45,7 @@ import uk.ac.sanger.artemis.io.Feature;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.Options;
 
@@ -119,6 +120,10 @@ public class GeneViewerPanel extends JPanel
        Feature transcript = (Feature)transcripts.get(i);
        uk.ac.sanger.artemis.Feature trans = 
          (uk.ac.sanger.artemis.Feature)transcript.getUserData();
+       
+       if(trans == null)
+         trans = new uk.ac.sanger.artemis.Feature(transcript);
+       
        trans.addFeatureChangeListener(this);
        List exons = chado_gene.getExonsOfTranscript(
            (String)trans.getQualifierByName("ID").getValues().get(0));
@@ -135,6 +140,9 @@ public class GeneViewerPanel extends JPanel
 
          uk.ac.sanger.artemis.Feature exon = 
            (uk.ac.sanger.artemis.Feature)embl_exon.getUserData();
+         
+         if(exon == null)
+           exon = new uk.ac.sanger.artemis.Feature(embl_exon);
          exon.addFeatureChangeListener(this);
        }
     }
@@ -483,13 +491,14 @@ public class GeneViewerPanel extends JPanel
         uk.ac.sanger.artemis.Feature exon = 
           (uk.ac.sanger.artemis.Feature)embl_exon.getUserData();
 
-        FeatureSegmentVector segments = exon.getSegments();
+        RangeVector ranges = exon.getLocation().getRanges();
+        //FeatureSegmentVector segments = exon.getSegments();
 
-        for(int k=0; k<segments.size(); k++)
+        for(int k=0; k<ranges.size(); k++)
         {
-          FeatureSegment segment = segments.elementAt(k);
+          //FeatureSegment segment = segments.elementAt(k);
 
-          Range range = segment.getRawRange();
+          Range range = (Range)ranges.get(k);
 
           int ex_start = border+(int)((range.getStart()-start)*fraction);
           int ex_end   = border+(int)((range.getEnd()-start)*fraction);
@@ -497,13 +506,13 @@ public class GeneViewerPanel extends JPanel
           if(exon.getColour() != null)
             g2d.setColor( exon.getColour() );
 
-          if(k == segments.size()-1)
+          if(k == ranges.size()-1)
             last_segment = true;
           
           drawExons(g2d, ex_start, ex_end, 
               last_ex_start, last_ex_end, last_ypos,
               0, ypos, exon.getColour(),
-              2, segment.isForwardSegment(),
+              2, exon.isForwardFeature(),
               last_segment);
 
           last_ex_end   = ex_end;
@@ -792,12 +801,11 @@ public class GeneViewerPanel extends JPanel
     final uk.ac.sanger.artemis.Feature exon = 
           (uk.ac.sanger.artemis.Feature)embl_exon.getUserData();
     
-    final FeatureSegmentVector segments = exon.getSegments();
+    final RangeVector ranges = exon.getLocation().getRanges();
     final DefaultListModel listModel = new DefaultListModel();     
-    for(int k=0; k<segments.size(); k++)
+    for(int k=0; k<ranges.size(); k++)
     {
-      FeatureSegment segment = segments.elementAt(k);
-      Range range = segment.getRawRange();
+      Range range = (Range)ranges.get(k);
       listModel.addElement(range.toString());
     }
     
