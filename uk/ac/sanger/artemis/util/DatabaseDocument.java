@@ -447,7 +447,16 @@ public class DatabaseDocument extends Document
     return buffers;
   }
 
-  
+  /**
+   * Use by the gene editor to retrieve the gene and related
+   * features
+   * @param search_gene     gene uniquename
+   * @param schema_search   schema list to search
+   * @param dao             data access method
+   * @return  GFF byte buffer
+   * @throws SQLException
+   * @throws ReadFormatException
+   */
   private ByteBuffer getGeneFeature(final String search_gene, 
                                     final List schema_search,
                                     final ChadoDAO dao) 
