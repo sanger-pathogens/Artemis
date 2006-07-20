@@ -24,7 +24,10 @@
 
 package uk.ac.sanger.artemis.util;
 
+import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.InvalidRelationException;
+import uk.ac.sanger.artemis.io.ReadFormatException;
 import uk.ac.sanger.artemis.chado.*;
 import uk.ac.sanger.artemis.components.DatabaseEntrySource;
 
@@ -82,6 +85,8 @@ public class DatabaseDocument extends Document
   private JPasswordField pfield;
 
   private List schema_list;
+  
+  private boolean gene_builder;
   
   /**
    * 
@@ -163,6 +168,31 @@ public class DatabaseDocument extends Document
     }
   }
 
+  /**
+   * Used by the gene builder to read a database entry
+   * for a single gene.
+   * @param location
+   * @param pfield
+   * @param feature_id
+   * @param schema
+   * @param gene_builder
+   */
+  public DatabaseDocument(String location, JPasswordField pfield,
+          String feature_id, String schema, boolean gene_builder)
+  {
+    super(location);
+    this.pfield = pfield;
+    this.feature_id = feature_id;
+    this.schema = schema;
+    this.gene_builder = gene_builder;
+
+    if(System.getProperty("ibatis") != null)
+    {
+      iBatis = true;
+      System.setProperty("chado", location);
+    }
+  }
+  
   public DatabaseDocument(String location, JPasswordField pfield,
                           String feature_id, String schema,
                           ByteBuffer gff_buff, String name)
@@ -261,6 +291,17 @@ public class DatabaseDocument extends Document
     try
     {
       ChadoDAO dao = getDAO();
+      
+      
+      // if creating a gene builder
+      if(gene_builder)
+      {
+        List schemaList = new Vector();
+        schemaList.add(schema);
+        return new ByteArrayInputStream(
+            getGeneFeature(feature_id, schemaList, dao).getBytes());
+      }
+      
       gff_buffer = getGff(dao, feature_id);
 
       ByteBuffer entry = new ByteBuffer();
@@ -406,6 +447,84 @@ public class DatabaseDocument extends Document
     return buffers;
   }
 
+  
+  private ByteBuffer getGeneFeature(final String search_gene, 
+                                    final List schema_search,
+                                    final ChadoDAO dao) 
+          throws SQLException, ReadFormatException
+  {
+    Hashtable id_store = new Hashtable();
+
+    ChadoFeature feature = new ChadoFeature();
+    feature.setUniquename(search_gene);
+    List featureList = dao.getLazyFeature(feature, schema_search);
+
+    ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();
+
+    if(featureList.size() > 1)
+      System.err.println("More than one feature found!");
+
+    feature = (ChadoFeature) featureList.get(0);
+    id_store.put(Integer.toString(feature.getId()), feature.getUniquename());
+
+    List featurelocs = feature.getFeaturelocsForFeatureId();
+    ChadoFeatureLoc featureloc = (ChadoFeatureLoc) featurelocs.get(0);
+    int src = featureloc.getSrcfeature_id();
+
+    ChadoFeature parent = new ChadoFeature();
+    parent.setId(src);
+
+    List parentList = dao.getLazyFeature(parent, schema_search);
+    parent = (ChadoFeature) parentList.get(0);
+    chado_gene.setSeqlen(parent.getLength());
+    chado_gene.setSrcfeature_id(src);
+
+    ByteBuffer buff = new ByteBuffer();
+    
+    chadoToGFF(feature, null, null, null, null, dao,
+               featureloc, buff);
+
+    // get children of gene
+    List relations = feature.getFeatureRelationshipsForObjectId();
+
+    for(int i = 0; i < relations.size(); i++)
+    {
+      ChadoFeature transcript = new ChadoFeature();
+      transcript.setId(((ChadoFeatureRelationship) relations.get(i))
+          .getSubject_id());
+      featureList = dao.getLazyFeature(transcript, schema_search);
+
+      transcript = (ChadoFeature) featureList.get(0);
+      id_store.put(Integer.toString(transcript.getId()), transcript
+          .getUniquename());
+
+      ChadoFeatureLoc loc = ChadoFeature.getFeatureLoc(transcript
+          .getFeaturelocsForFeatureId(), src);
+      chadoToGFF(transcript, feature.getUniquename(), null,
+          null, id_store, dao, loc, buff);
+
+      // get children of transcript - exons and pp
+      List transcipt_relations = transcript.getFeatureRelationshipsForObjectId();
+
+      for(int j = 0; j < transcipt_relations.size(); j++)
+      {
+        ChadoFeature child = new ChadoFeature();
+        child.setId(((ChadoFeatureRelationship) transcipt_relations.get(j))
+            .getSubject_id());
+        featureList = dao.getLazyFeature(child, schema_search);
+
+        child = (ChadoFeature) featureList.get(0);
+        id_store.put(Integer.toString(child.getId()), child.getUniquename());
+
+        loc = ChadoFeature.getFeatureLoc(child.getFeaturelocsForFeatureId(),src);
+        chadoToGFF(child, transcript.getUniquename(), null,
+                   null, id_store, dao, loc, buff);
+      }
+    }
+
+    return buff;
+  }
+  
   /**
    * Convert the chado feature into a GFF line
    * @param feat           Chado feature
@@ -417,14 +536,14 @@ public class DatabaseDocument extends Document
    * @param featureloc     feature location for this chado feature
    * @param this_buff      byte buffer of GFF line 
    */
-  public static void chadoToGFF(final ChadoFeature feat,
-                                final String parentFeature,
-                                final Hashtable dbxrefs,
-                                final Hashtable synonym,
-                                final Hashtable id_store,
-                                final ChadoDAO dao,
-                                final ChadoFeatureLoc featureloc,
-                                final ByteBuffer this_buff)
+  private static void chadoToGFF(final ChadoFeature feat,
+                                 final String parentFeature,
+                                 final Hashtable dbxrefs,
+                                 final Hashtable synonym,
+                                 final Hashtable id_store,
+                                 final ChadoDAO dao,
+                                 final ChadoFeatureLoc featureloc,
+                                 final ByteBuffer this_buff)
   {
     String gff_source = null;
     
