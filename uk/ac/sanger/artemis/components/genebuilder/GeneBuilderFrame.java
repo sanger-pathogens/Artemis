@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.5 2006-07-20 10:32:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.6 2006-07-25 10:50:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -48,10 +48,13 @@ import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.GotoEventSource;
 import uk.ac.sanger.artemis.Selection;
+import uk.ac.sanger.artemis.chado.ChadoFeature;
 import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.FeatureEdit;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
+import uk.ac.sanger.artemis.io.InvalidRelationException;
+import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.FeatureVector;
 
 public class GeneBuilderFrame extends JFrame
@@ -60,6 +63,8 @@ public class GeneBuilderFrame extends JFrame
   
   private Feature active_feature; 
   private FeatureEdit feature_editor;
+  private GeneViewerPanel viewer;
+  private GeneComponentTree tree;
   
   public GeneBuilderFrame(final Feature feature,
                           final EntryGroup entry_group,
@@ -76,8 +81,19 @@ public class GeneBuilderFrame extends JFrame
 
     GFFStreamFeature gff_feature = (GFFStreamFeature)feature.getEmblFeature();
     final ChadoCanonicalGene chado_gene = gff_feature.getChadoGene();
-    GeneComponentTree tree = new GeneComponentTree(chado_gene,
-                                                   this);
+    
+   
+    try
+    {
+      addListeners(chado_gene);
+    }
+    catch(InvalidRelationException e)
+    {
+      e.printStackTrace();
+    }
+    
+    
+    tree = new GeneComponentTree(chado_gene, this);
     
     JScrollPane jsp_tree = new JScrollPane(tree);
     jsp_tree.setPreferredSize( new Dimension(150, jsp_tree.getPreferredSize().height) );
@@ -86,7 +102,7 @@ public class GeneBuilderFrame extends JFrame
     if(selection == null)
       selection = new Selection(null);
     
-    GeneViewerPanel viewer = new GeneViewerPanel(
+    viewer = new GeneViewerPanel(
                 gff_feature.getChadoGene(), selection);
 
     Box xBox = Box.createHorizontalBox();
@@ -115,6 +131,14 @@ public class GeneBuilderFrame extends JFrame
         dispose();
       }
     });
+    
+    // add menus
+    JMenuBar menuBar = new JMenuBar();
+    
+    JMenu editMenu = new JMenu("Edit");
+    menuBar.add(editMenu);
+    viewer.createMenus(editMenu);
+    setJMenuBar(menuBar);
     
     pack();
     setVisible(true);
@@ -204,11 +228,8 @@ public class GeneBuilderFrame extends JFrame
     switch(event.getType())
     {
       case EntryChangeEvent.FEATURE_DELETED:
-        if(event.getFeature() == active_feature) 
-        {
-          stopListening();
-          dispose();
-        }
+        QualifierVector qualifiers = event.getFeature().getQualifiers();
+        tree.deleteNode( (String)qualifiers.getQualifierByName("ID").getValues().get(0) );
         break;
       default:
         // do nothing;
@@ -225,37 +246,28 @@ public class GeneBuilderFrame extends JFrame
   public void featureChanged(FeatureChangeEvent event) 
   {
     active_feature.resetColour();
-    /*
+   
     // re-read the information from the feature
     switch(event.getType()) 
     {
       case FeatureChangeEvent.LOCATION_CHANGED:
-        updateLocation();
         break;
       case FeatureChangeEvent.KEY_CHANGED:
-        updateKey();
         break;
       case FeatureChangeEvent.QUALIFIER_CHANGED:
-        if(qualifier_text_area.getText().equals(orig_qualifier_text)) 
-          updateFromFeature();
-        else
-        {
-          final String message =
-            "warning: the qualifiers have changed outside the editor - " +
-            "view now?";
-
-          final YesNoDialog yes_no_dialog =
-            new YesNoDialog(FeatureEdit.this, message);
-
-          if(yes_no_dialog.getResult()) 
-            new FeatureViewer(gene_feature);
-        }
         break;
+      case FeatureChangeEvent.SEGMENT_CHANGED:
+        Feature feature = event.getFeature();    
+        QualifierVector old_qualifiers = event.getOldQualifiers();
+        QualifierVector new_qualifiers = feature.getQualifiers();
+      
+        tree.changeNode( 
+            (String)old_qualifiers.getQualifierByName("ID").getValues().get(0),
+            (String)new_qualifiers.getQualifierByName("ID").getValues().get(0));
       default:
-        updateFromFeature();
         break;
     }
-    */
+    viewer.repaint();
   }
   
   
@@ -264,5 +276,55 @@ public class GeneBuilderFrame extends JFrame
     return active_feature.getEntry();
   }
   
+  /**
+   * Add feature listeners for each artemis feature.
+   * @throws InvalidRelationException
+   */
+  private void addListeners(final ChadoCanonicalGene chado_gene) 
+               throws InvalidRelationException
+  {
+    // add feature listeners
+    uk.ac.sanger.artemis.io.Feature embl_gene = 
+      (uk.ac.sanger.artemis.io.Feature)chado_gene.getGene();
+    Feature gene = (Feature)embl_gene.getUserData();
+    gene.addFeatureChangeListener(this);
+    gene.getEntry().addEntryChangeListener(this);
+    
+    List transcripts = chado_gene.getTranscripts();
+    for(int i=0; i<transcripts.size(); i++)
+    {
+      uk.ac.sanger.artemis.io.Feature transcript =
+         (uk.ac.sanger.artemis.io.Feature)transcripts.get(i);
+      Feature trans = (Feature)transcript.getUserData();
+       
+       if(trans == null)
+         trans = new Feature(transcript);
+       
+       trans.addFeatureChangeListener(this);
+       trans.getEntry().addEntryChangeListener(this);
+       
+       List exons = chado_gene.getExonsOfTranscript(
+           (String)trans.getQualifierByName("ID").getValues().get(0));
+       
+       if(exons == null)
+         continue;
+       
+       if(exons.get(0) instanceof ChadoFeature)
+         return;
+       
+       for(int j=0; j<exons.size(); j++)
+       {
+         uk.ac.sanger.artemis.io.Feature embl_exon = 
+            (uk.ac.sanger.artemis.io.Feature)exons.get(j);
+
+         Feature exon = (Feature)embl_exon.getUserData();
+         
+         if(exon == null)
+           exon = new Feature(embl_exon);
+         exon.addFeatureChangeListener(this);
+         exon.getEntry().addEntryChangeListener(this);
+       }
+    }
+  }
   
 }

@@ -20,12 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.10 2006-07-20 13:14:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.11 2006-07-25 10:50:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
@@ -38,6 +39,7 @@ import uk.ac.sanger.artemis.FeatureSegment;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.LastSegmentException;
 import uk.ac.sanger.artemis.Selection;
+import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.chado.ChadoFeature;
 import uk.ac.sanger.artemis.chado.ChadoFeatureLoc;
 import uk.ac.sanger.artemis.chado.ChadoFeatureProp;
@@ -50,7 +52,6 @@ import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.Options;
 
 public class GeneViewerPanel extends JPanel
-          implements FeatureChangeListener
 {
   
   private ChadoCanonicalGene chado_gene;
@@ -64,21 +65,24 @@ public class GeneViewerPanel extends JPanel
   
   private Selection selection;
 
+  private float fraction;
+  
+  private int start;
+  private int end;
+  
+  /**
+   *  The shortcut for Delete Selected Features.
+   **/
+  final static KeyStroke DELETE_FEATURES_KEY =
+    KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,
+                           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); // InputEvent.CTRL_MASK);
+  final static public int DELETE_FEATURES_KEY_CODE = KeyEvent.VK_DELETE;
+  
   public GeneViewerPanel(final ChadoCanonicalGene chado_gene,
                          final Selection selection)
   {
     this.chado_gene = chado_gene;
     this.selection  = selection;
-    
-    try
-    {
-      addListeners();
-    }
-    catch(InvalidRelationException e)
-    {
-      e.printStackTrace();
-    } 
-    
     
     Dimension dim = new Dimension(400,400);
     setPreferredSize(dim);
@@ -87,65 +91,37 @@ public class GeneViewerPanel extends JPanel
 //  Popup menu
     addMouseListener(new PopupListener());
     popup = new JPopupMenu();
+    createMenus(popup);
+  }
 
-    JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem("Overlay transcripts");
-    menuItem.addActionListener(new ActionListener()
+  protected void createMenus(JComponent menu)
+  {
+    JMenuItem deleteMenu = new JMenuItem("Delete selected features");
+    deleteMenu.setAccelerator(DELETE_FEATURES_KEY);
+    deleteMenu.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)  
       {
-        overlay_transcripts = !overlay_transcripts;
-        repaint();
-        revalidate();
+        FeatureVector features = selection.getAllFeatures();
+        
+        try
+        {
+          for(int i = 0; i < features.size(); i++)
+          {
+            uk.ac.sanger.artemis.Feature feature = features.elementAt(i);
+            deleteFeature(feature);
+            chado_gene.deleteFeature(feature.getEmblFeature());
+          }
+          repaint();
+        }
+        catch(ReadOnlyException e)
+        {
+          e.printStackTrace();
+        }
       }
     });
 
-    popup.add(menuItem);
-  }
-
-  /**
-   * Add feature listeners for each artemis feature.
-   * @throws InvalidRelationException
-   */
-  private void addListeners() throws InvalidRelationException
-  {
-    // add feature listeners
-    Feature embl_gene = (Feature)chado_gene.getGene();
-    uk.ac.sanger.artemis.Feature gene =
-      (uk.ac.sanger.artemis.Feature)embl_gene.getUserData();
-    gene.addFeatureChangeListener(this);
-    
-    List transcripts = chado_gene.getTranscripts();
-    for(int i=0; i<transcripts.size(); i++)
-    {
-       Feature transcript = (Feature)transcripts.get(i);
-       uk.ac.sanger.artemis.Feature trans = 
-         (uk.ac.sanger.artemis.Feature)transcript.getUserData();
-       
-       if(trans == null)
-         trans = new uk.ac.sanger.artemis.Feature(transcript);
-       
-       trans.addFeatureChangeListener(this);
-       List exons = chado_gene.getExonsOfTranscript(
-           (String)trans.getQualifierByName("ID").getValues().get(0));
-       
-       if(exons == null)
-         continue;
-       
-       if(exons.get(0) instanceof ChadoFeature)
-         return;
-       
-       for(int j=0; j<exons.size(); j++)
-       {
-         Feature embl_exon = (Feature)exons.get(j);
-
-         uk.ac.sanger.artemis.Feature exon = 
-           (uk.ac.sanger.artemis.Feature)embl_exon.getUserData();
-         
-         if(exon == null)
-           exon = new uk.ac.sanger.artemis.Feature(embl_exon);
-         exon.addFeatureChangeListener(this);
-       }
-    }
+    menu.add(deleteMenu);
   }
   
   /**
@@ -161,8 +137,8 @@ public class GeneViewerPanel extends JPanel
     
     setFont(uk.ac.sanger.artemis.Options.getOptions().getFont());
 
-    int start = embl_gene.getFirstBase();
-    int end   = embl_gene.getLastBase();
+    start = embl_gene.getFirstBase();
+    end   = embl_gene.getLastBase();
     g2d.setColor( gene.getColour() );
     int ypos = border;
     
@@ -170,11 +146,12 @@ public class GeneViewerPanel extends JPanel
     g2d.drawString(gene.getIDString(), border, ypos);
     drawFeature(g2d, border, 
                 getSize().width - border, 
-                ypos, gene.getColour(), 1, selection.contains(gene));
+                ypos, gene.getColour(), 1, 
+                selection.contains(gene), 2.f);
     
     List transcripts = chado_gene.getTranscripts();   
-    float fraction = (float)(getSize().width - (2*border))/
-                     (float)(end-start);
+    fraction = (float)(getSize().width - (2*border))/
+               (float)(end-start);
     
     ypos += border*2;
     
@@ -231,9 +208,64 @@ public class GeneViewerPanel extends JPanel
   {
     List transcripts = chado_gene.getTranscripts();
     
-    int ntranscript = (p.y - (border*2))/getTranscriptSize();
+    int ntranscript = (p.y - (border*3))/getTranscriptSize();
     if(ntranscript < transcripts.size())
       return (Feature)transcripts.get(ntranscript);
+    return null;
+  }
+  
+  private Object getFeatureAt(Point p)
+  {
+    if(p.y <= border+getFontHeight())
+      return chado_gene.getGene();
+    
+    List transcripts = chado_gene.getTranscripts();
+    
+    for(int i=0; i<transcripts.size(); i++)
+    {
+      if(p.y >= (border*3)+(getTranscriptSize()*i) &&
+         p.y <= (border*3)+(getTranscriptSize()*i)+getFontHeight())
+      {
+        return (Feature)transcripts.get(i);
+      }
+      else if(p.y >= (border*3)+(getTranscriptSize()*i)+getFontHeight() &&
+              p.y <= (border*3)+(getTranscriptSize()*(i+1)))
+      {
+        Feature feature = (Feature)transcripts.get(i);
+
+        try
+        {
+          List exons = chado_gene.getExonsOfTranscript(
+              (String)(feature.getQualifierByName("ID").getValues().get(0)));
+          
+          if(exons == null)
+            return null;
+          
+          FeatureSegmentVector segments = 
+            ((uk.ac.sanger.artemis.Feature)((Feature)exons.get(0)).getUserData()).getSegments();
+
+          if(segments.size() == 0)
+            return (Feature)exons.get(0);
+          
+          for(int j=0; j<segments.size(); j++)
+          {
+            FeatureSegment segment    = segments.elementAt(j);
+            Range segment_range = segment.getRawRange();
+          
+            int segment_start = border+(int)((segment_range.getStart()-start)*fraction);
+            int segment_end   = border+(int)((segment_range.getEnd()-start)*fraction);
+            if(p.x >= segment_start && p.x <= segment_end)
+              return segment;
+          }
+ 
+        }
+        catch(InvalidRelationException e)
+        {
+          e.printStackTrace();
+        }
+      }
+    }
+         
     return null;
   }
   
@@ -266,7 +298,8 @@ public class GeneViewerPanel extends JPanel
     
     g2d.drawString(transcript.getIDString(), border, ypos+nframe);
     drawFeature(g2d, t_start, t_end, 
-                ypos+nframe, transcript.getColour(), 1, selection.contains(transcript));
+                ypos+nframe, transcript.getColour(), 1, 
+                selection.contains(transcript), 2.f);
     
     try
     {          
@@ -326,7 +359,7 @@ public class GeneViewerPanel extends JPanel
           drawExons(g2d, ex_start, ex_end, 
                     last_ex_start, last_ex_end, last_ypos,
                     offset, ypos, exon_col,
-                    1, isForward, last_segment);
+                    1, isForward, last_segment, false, 2.f);
           
           last_ex_end   = ex_end;
           last_ex_start = ex_start;
@@ -371,7 +404,8 @@ public class GeneViewerPanel extends JPanel
           drawExons(g2d, ex_start, ex_end, 
                    last_ex_start, last_ex_end, last_ypos,
                    offset, ypos, exon.getColour(),
-                   1, segment.isForwardSegment(), last_segment);
+                   1, segment.isForwardSegment(), last_segment,
+                   selection.contains(exon), 2.f);
           
           last_ex_end   = ex_end;
           last_ex_start = ex_start;
@@ -397,7 +431,7 @@ public class GeneViewerPanel extends JPanel
    * @param fraction
    */
   private void drawTranscriptOnLine(Graphics2D g2d, Feature embl_transcript, 
-                                    int start, int end, int ypos, 
+                                    final int start, final int end, int ypos, 
                                     float fraction)
   {
     BasicStroke stroke = new BasicStroke(48.f);
@@ -413,7 +447,8 @@ public class GeneViewerPanel extends JPanel
 
     g2d.drawString(transcript.getIDString(), border, ypos);
     drawFeature(g2d, t_start, t_end, 
-                ypos, transcript.getColour(), 1, selection.contains(transcript));
+                ypos, transcript.getColour(), 1, 
+                selection.contains(transcript), 2.f);
 
     try
     {          
@@ -427,78 +462,31 @@ public class GeneViewerPanel extends JPanel
       
       boolean last_segment = false;
       
-      if(exons.get(0) instanceof ChadoFeature)
-      {
-        int last_ex_start = 0;
-        int last_ex_end   = 0;
-        int last_ypos     = 0;
-
-        ChadoFeature start_exon = (ChadoFeature)exons.get(0);
-        ChadoFeatureLoc loc = ChadoFeature.getFeatureLoc(
-            start_exon.getFeaturelocsForFeatureId(), chado_gene.getSrcfeature_id());
-
-        if(loc.getStrand() == -1)
-        {
-          ChadoFeatureLoc loc_last = ChadoFeature.getFeatureLoc(
-              ((ChadoFeature)exons.get(exons.size()-1)).getFeaturelocsForFeatureId(),
-              chado_gene.getSrcfeature_id());
-
-          if(loc.getFmin() < loc_last.getFmin())
-            Collections.reverse(exons);
-        }
-
-
-        for(int j=0; j<exons.size(); j++)
-        {
-          ChadoFeature exon = (ChadoFeature)exons.get(j);
-          loc = ChadoFeature.getFeatureLoc(
-              exon.getFeaturelocsForFeatureId(), chado_gene.getSrcfeature_id());
-
-          int ex_start = border+(int)((loc.getFmin()+1-start)*fraction);
-          int ex_end   = border+(int)((loc.getFmax()-start)*fraction);
-
-          Color exon_col = getColorFromAttributes(exon);
-
-          boolean isForward = false;
-          if(loc.getStrand() == 1)
-            isForward = true;
-
-          if(j == exons.size()-1)
-            last_segment = true;
-          
-          drawExons(g2d, ex_start, ex_end, 
-              last_ex_start, last_ex_end, last_ypos,
-              0, ypos, exon_col,
-              2, isForward, last_segment);
-
-          last_ex_end   = ex_end;
-          last_ex_start = ex_start;
-          last_ypos   = ypos;
-        }
-
-        return;
-      }
-
       // build from artemis objects
-      for(int j=0; j<exons.size(); j++)
+      for(int i=0; i<exons.size(); i++)
       {
         int last_ex_start = 0;
         int last_ex_end   = 0;
         int last_ypos     = 0;
 
-        Feature embl_exon = (Feature)exons.get(j);
+        Feature embl_exon = (Feature)exons.get(i);
 
         uk.ac.sanger.artemis.Feature exon = 
           (uk.ac.sanger.artemis.Feature)embl_exon.getUserData();
 
         RangeVector ranges = exon.getLocation().getRanges();
-        //FeatureSegmentVector segments = exon.getSegments();
-
-        for(int k=0; k<ranges.size(); k++)
+        FeatureSegmentVector segments = null;
+        
+        try
         {
-          //FeatureSegment segment = segments.elementAt(k);
-
-          Range range = (Range)ranges.get(k);
+          segments = exon.getSegments();
+        }
+        catch(NullPointerException npe)
+        {}
+        float selected_size;
+        for(int j=0; j<ranges.size(); j++)
+        {
+          Range range = (Range)ranges.get(j);
 
           int ex_start = border+(int)((range.getStart()-start)*fraction);
           int ex_end   = border+(int)((range.getEnd()-start)*fraction);
@@ -506,14 +494,26 @@ public class GeneViewerPanel extends JPanel
           if(exon.getColour() != null)
             g2d.setColor( exon.getColour() );
 
-          if(k == ranges.size()-1)
+          if(j == ranges.size()-1)
             last_segment = true;
+          
+          selected_size = 2.f;
+          if(segments != null)
+          {
+            for(int k=0; k<segments.size(); k++)
+            {
+              FeatureSegment segment = segments.elementAt(k);
+              if(range.equals(segment.getRawRange()) &&
+                 selection.contains(segment))
+                selected_size = 4.f;
+            }
+          }
           
           drawExons(g2d, ex_start, ex_end, 
               last_ex_start, last_ex_end, last_ypos,
               0, ypos, exon.getColour(),
               2, exon.isForwardFeature(),
-              last_segment);
+              last_segment, selection.contains(exon), selected_size);
 
           last_ex_end   = ex_end;
           last_ex_start = ex_start;
@@ -556,10 +556,11 @@ public class GeneViewerPanel extends JPanel
                          int last_ex_start, int last_ex_end, int last_ypos,
                          int offset, int ypos, Color exon_colour,
                          int size,
-                         boolean isForward, boolean last_segment)
+                         boolean isForward, boolean last_segment,
+                         boolean selected, float selected_size)
   {   
     drawFeature(g2d, ex_start, ex_end, 
-                ypos+offset, exon_colour, size, false);
+                ypos+offset, exon_colour, size, selected, selected_size);
     
     // draw connections
     if(last_ex_end != 0 ||
@@ -622,7 +623,7 @@ public class GeneViewerPanel extends JPanel
    */
   private void drawFeature(Graphics2D g2d, int start, int end, 
                            int ypos, Color colour, int size,
-                           boolean selected)
+                           boolean selected, float selected_size)
   {
     RoundRectangle2D e = new RoundRectangle2D.Float(start, ypos, 
         end-start,
@@ -639,7 +640,7 @@ public class GeneViewerPanel extends JPanel
     g2d.fill(e);
     
     if(selected)
-      g2d.setStroke(new BasicStroke(2.f));
+      g2d.setStroke(new BasicStroke(selected_size));
     else
       g2d.setStroke(new BasicStroke(1.f));
     
@@ -827,47 +828,7 @@ public class GeneViewerPanel extends JPanel
       public void actionPerformed(ActionEvent event)  
       {
         Object selected[] = list.getSelectedValues();
-        final FeatureSegmentVector segments = exon.getSegments();
-        Range range = null;
-        FeatureSegment segment = null;
-        try
-        {
-          for(int i = 0; i < segments.size(); i++)
-          {
-            segment = segments.elementAt(i);
-            range   = segment.getRawRange();
-            for(int j = 0; j < selected.length; j++)
-            {
-              if(range.toString().equals((String) selected[j]))
-              {
-                segment.removeFromFeature();
-                listModel.removeElement(range.toString());
-              }
-            }
-          }
-        }
-        catch(ReadOnlyException e)
-        {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-        catch(LastSegmentException e)
-        {
-          // delete entire feature here
-          Feature transcript = (Feature)chado_gene.getFeatureFromId(uniquename);
-          try
-          {
-            ((uk.ac.sanger.artemis.Feature)transcript.getUserData()).removeFromEntry();
-            listModel.removeElement(range.toString());
-            chado_gene.deleteTranscript(uniquename);
-          }
-          catch(ReadOnlyException e1)
-          {
-            e1.printStackTrace();
-          }
-        }
-        
-        
+        deleteExonFeatures(exon, selected, listModel, uniquename);       
       }
     });
     
@@ -905,22 +866,63 @@ public class GeneViewerPanel extends JPanel
 
   }
  
-  public void featureChanged(FeatureChangeEvent event)
+  private void deleteExonFeatures(uk.ac.sanger.artemis.Feature feature,
+                                  Object selected[], 
+                                  final DefaultListModel listModel,
+                                  final String transcript_uniquename) 
   {
-    Feature feature = event.getFeature().getEmblFeature();
-    String uniquename = null;
+    FeatureSegmentVector segments = feature.getSegments();
+    Range range = null;
+    FeatureSegment segment = null;
+    selection.clear();
+    
     try
     {
-      uniquename = (String)(feature.getQualifierByName("ID").getValues().get(0));
+      for(int i = 0; i < segments.size(); i++)
+      {
+        segment = segments.elementAt(i);
+        range   = segment.getRawRange();
+
+        for(int j = 0; j < selected.length; j++)
+        {
+          if(range.toString().equals((String) selected[j]))
+          {
+            segment.removeFromFeature();
+            listModel.removeElement(range.toString());
+          }
+        }
+      }
     }
-    catch(InvalidRelationException e)
+    catch(ReadOnlyException e)
     {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    
-    repaint();
-    //revalidate();
+    catch(LastSegmentException e)
+    {
+      // delete entire feature here
+      Feature transcript = 
+         (Feature)chado_gene.getFeatureFromId(transcript_uniquename);
+      try
+      {
+        // delete exon feature and associated transcript
+        deleteFeature(segment.getFeature());
+        deleteFeature((uk.ac.sanger.artemis.Feature)transcript.getUserData());
+        
+        listModel.removeElement(range.toString());
+        chado_gene.deleteTranscript(transcript_uniquename);
+        repaint();
+      }
+      catch(ReadOnlyException e1)
+      {
+        e1.printStackTrace();
+      }
+    }
+  }
+  
+  private void deleteFeature(uk.ac.sanger.artemis.Feature feature) 
+          throws ReadOnlyException
+  {
+    feature.removeFromEntry();
   }
   
   /**
@@ -979,6 +981,19 @@ public class GeneViewerPanel extends JPanel
         
         popup.show(e.getComponent(),
                 e.getX(), e.getY());
+      }
+      else if(e.getClickCount() == 1)
+      {
+        Object feature = getFeatureAt(e.getPoint());
+        if(feature == null)
+          return;      
+        
+        if(feature instanceof Feature)
+          selection.set((uk.ac.sanger.artemis.Feature)((Feature)feature).getUserData());
+        else
+          selection.set((FeatureSegment)feature);
+       
+        repaint();
       }
     }
   }

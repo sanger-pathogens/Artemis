@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.4 2006-07-06 15:10:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.5 2006-07-25 10:50:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -35,6 +35,7 @@ import javax.swing.event.*;
 
 import javax.swing.tree.*;
 import java.util.List;
+import java.util.Enumeration;
 
 /**
  * Tree to display a gene hierarchy.
@@ -144,4 +145,69 @@ public class GeneComponentTree extends JTree
     }
   }
   
+  /**
+   * Change a node name.
+   * @param old_id  the old uniquename of the feature
+   * @param new_id  the new uniquename of the feature
+   */
+  protected void changeNode(String old_id, String new_id)
+  {
+    DefaultMutableTreeNode root = (DefaultMutableTreeNode)getModel().getRoot();
+    
+    DefaultMutableTreeNode change_node = searchChildren(root, old_id);
+    if(change_node != null)
+    {
+      change_node.setUserObject(new_id);
+      return;
+    }
+    
+    Enumeration root_children = root.children();
+    while(root_children.hasMoreElements())
+    {
+      DefaultMutableTreeNode child = 
+           (DefaultMutableTreeNode)root_children.nextElement();
+      
+      change_node = searchChildren(child, old_id);
+      if(change_node != null)
+      {
+        change_node.setUserObject(new_id);
+        repaint();
+        return;
+      }
+    }
+  }
+  
+  /**
+   * Delete a node and all its descendents from the tree.
+   * @param id  the uniquename of the feature being removed
+   */
+  protected void deleteNode(final String id)
+  {
+    DefaultMutableTreeNode root = (DefaultMutableTreeNode)getModel().getRoot();
+    Enumeration root_children = root.children();
+    while(root_children.hasMoreElements())
+    {
+      DefaultMutableTreeNode child = 
+           (DefaultMutableTreeNode)root_children.nextElement();
+      
+      if(id.equals((String)child.getUserObject()))
+        ((DefaultTreeModel)getModel()).removeNodeFromParent(child);
+    }
+  }
+  
+  private DefaultMutableTreeNode searchChildren(
+        final DefaultMutableTreeNode node,
+        final String id)
+  {
+    Enumeration root_children = node.children();
+    while(root_children.hasMoreElements())
+    {
+      DefaultMutableTreeNode child = 
+           (DefaultMutableTreeNode)root_children.nextElement();
+
+      if(id.equals((String)child.getUserObject()))
+        return child;
+    }
+    return null;
+  }
 }
