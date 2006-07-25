@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.21 2006-07-19 16:10:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.22 2006-07-25 10:48:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.21 2006-07-19 16:10:31 tjc Exp $
+ *  @version $Id: Feature.java,v 1.22 2006-07-25 10:48:04 tjc Exp $
  **/
 
 public class Feature
@@ -951,6 +951,7 @@ public class Feature
    *  translation and bases of the feature.
    **/
   private void locationChanged(final Location old_location,
+                               final QualifierVector qualifiers,
                                int type) 
   {
     resetCache();
@@ -961,7 +962,7 @@ public class Feature
                              this,
                              null,
                              old_location,
-                             null,
+                             qualifiers,
                              type);
 
     this.old_location = getLocation();
@@ -971,7 +972,7 @@ public class Feature
 
   private void locationChanged(final Location old_location) 
   {
-    locationChanged(old_location,
+    locationChanged(old_location, null,
                     FeatureChangeEvent.LOCATION_CHANGED);  
   }
   
@@ -3050,7 +3051,8 @@ CHANGED_END:
   {
     final Location old_location = getLocation();
     final Location new_location = old_location.addRange(range);
-
+    final QualifierVector qualifiers = getQualifiers().copy();
+    
     try
     {
       setLocationInternal(new_location);
@@ -3062,7 +3064,7 @@ CHANGED_END:
     }
 
     reexamineSegments();
-    locationChanged(old_location, FeatureChangeEvent.SEGMENT_CHANGED);
+    locationChanged(old_location, qualifiers, FeatureChangeEvent.SEGMENT_CHANGED);
   }
 
   private Location moveSegments(final int shift)
@@ -3099,6 +3101,7 @@ CHANGED_END:
   {
     if(getSegments().size() > 1) 
     {
+      QualifierVector qualifiers = getQualifiers().copy();
       final Location old_location = getLocation();
 
       final Location new_location =
@@ -3116,7 +3119,7 @@ CHANGED_END:
 
       reexamineSegments();
 
-      locationChanged(old_location, FeatureChangeEvent.SEGMENT_CHANGED);
+      locationChanged(old_location, qualifiers, FeatureChangeEvent.SEGMENT_CHANGED);
     } 
     else 
       throw new LastSegmentException();
