@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.6 2006-07-19 16:06:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.7 2006-07-25 10:44:50 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -49,6 +49,8 @@ public class ChadoCanonicalGene
   // derives_from transript
   private Hashtable proteins = new Hashtable();
 
+  private Hashtable three_prime_utr = new Hashtable();
+  private Hashtable five_prime_utr  = new Hashtable();
   // srcfeature
   private int srcfeature_id;
  
@@ -87,7 +89,7 @@ public class ChadoCanonicalGene
       {
         Feature transcript = (Feature)transcripts.get(i);
         
-        if( transcript_name.equals(getIDQualifier(transcript)) )
+        if( transcript_name.equals(getQualifier(transcript, "ID")) )
         {
           transcripts.remove(transcript);
           exons.remove(transcript_name); 
@@ -98,6 +100,28 @@ public class ChadoCanonicalGene
         e.printStackTrace();
       }
     }  
+  }
+  
+  public void deleteFeature(Feature embl_feature)
+  {
+    try
+    {
+      String name = getQualifier(embl_feature, "ID");
+      Object feature = getExon(name);
+
+      if(feature != null)
+      {
+        String trenascript_name = getQualifier((Feature) feature, "Parent");
+        exons.remove(trenascript_name);
+
+        return;
+      }
+      deleteTranscript(name);
+    }
+    catch(InvalidRelationException e1)
+    {
+      e1.printStackTrace();
+    }
   }
   
   public void addExon(String transcript_name, 
@@ -128,6 +152,18 @@ public class ChadoCanonicalGene
     proteins.put(transcript_name, protein);
   }
   
+  public void add3PrimeUtr(String transcript_name, Object protein) 
+         throws InvalidRelationException
+  {   
+    three_prime_utr.put(transcript_name, protein);
+  }
+  
+  public void add5PrimeUtr(String transcript_name, Object protein) 
+         throws InvalidRelationException
+  {
+    five_prime_utr.put(transcript_name, protein);
+  }
+  
   public Object containsTranscript(final StringVector names)
   {
     for(int i=0; i<transcripts.size(); i++)
@@ -136,7 +172,7 @@ public class ChadoCanonicalGene
       {
         Feature transcript = (Feature)transcripts.get(i);
         
-        if( names.contains(getIDQualifier(transcript)) )
+        if( names.contains(getQualifier(transcript, "ID")) )
           return transcript;
       }
       catch(InvalidRelationException e)
@@ -191,7 +227,7 @@ public class ChadoCanonicalGene
         uniquename = ((ChadoFeature)gene).getUniquename();
       else
       */
-      uniquename = getIDQualifier(gene);    
+      uniquename = getQualifier(gene, "ID");    
       
       if(uniquename.equals(name))
         return gene;
@@ -216,7 +252,25 @@ public class ChadoCanonicalGene
     if(feature != null)
       return feature;
     
-    return getProtein(name);
+    feature = getProtein(name);
+    
+    if(feature != null)
+      return feature;
+    
+    try
+    {
+      feature = getUTR(name, three_prime_utr);
+      if(feature != null)
+        return feature;
+      
+      feature = getUTR(name, five_prime_utr);
+    }
+    catch(InvalidRelationException e)
+    {
+      e.printStackTrace();
+    }
+   
+    return feature;
   }
   
   /**
@@ -241,7 +295,7 @@ public class ChadoCanonicalGene
           if(exons.get(i) instanceof ChadoFeature)
             uniquename = ((ChadoFeature)exons.get(i)).getUniquename();
           else
-            uniquename = getIDQualifier((Feature)exons.get(i));
+            uniquename = getQualifier((Feature)exons.get(i), "ID");
           
           if(uniquename.equals(name))
             return exons.get(i);
@@ -263,7 +317,7 @@ public class ChadoCanonicalGene
       while(enum_proteins.hasMoreElements())
       {
         Feature protein = (Feature)enum_proteins.nextElement();
-        if(getIDQualifier(protein).equals(id))
+        if(getQualifier(protein, "ID").equals(id))
           return protein;
       }
     }
@@ -273,12 +327,28 @@ public class ChadoCanonicalGene
     }
     return null;
   }
-  
-   
-  private String getIDQualifier(Feature feature) 
+
+  private Object getUTR(final String id,
+                        final Hashtable UTR) 
           throws InvalidRelationException
   {
-    return (String)(feature.getQualifierByName("ID").getValues().get(0));
+    Enumeration enum_utr = UTR.elements();
+
+    while(enum_utr.hasMoreElements())
+    {
+      Feature utr = (Feature)enum_utr.nextElement();
+      if(getQualifier(utr, "ID").equals(id))
+        return utr;
+    }
+
+    return null;
+  }
+  
+  
+  private String getQualifier(Feature feature, String name) 
+          throws InvalidRelationException
+  {
+    return (String)(feature.getQualifierByName(name).getValues().get(0));
   }
   
   /**
