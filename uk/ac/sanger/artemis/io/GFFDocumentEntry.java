@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.28 2006-07-06 15:08:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.29 2006-07-25 10:46:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -38,7 +38,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.28 2006-07-06 15:08:58 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.29 2006-07-25 10:46:09 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -189,15 +189,16 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       
       
       // find exons & protein
+      String key;
       for(int i = 0 ; i < original_features.size() ; ++i) 
       {
         this_feature = original_features.featureAt(i);
         // exons
-        String key = this_feature.getKey().getKeyString();
+        key = this_feature.getKey().getKeyString();
         if(!key.equals("exon") && !key.equals("polypeptide"))
           continue;
         
-        Qualifier parent_qualifier = this_feature.getQualifierByName("Parent");
+        Qualifier parent_qualifier  = this_feature.getQualifierByName("Parent");
         Qualifier derives_qualifier = this_feature.getQualifierByName("Derives_from");
         if(parent_qualifier == null && derives_qualifier == null)
           continue;    
