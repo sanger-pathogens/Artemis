@@ -91,15 +91,59 @@ public class ChadoTransactionManager
   {
     if(event.featureHasChanged())
     {
-      final GFFStreamFeature feature = (GFFStreamFeature)event.getFeature().getEmblFeature();
+      final GFFStreamFeature feature = 
+        (GFFStreamFeature)event.getFeature().getEmblFeature();
 
       if(event.getType() == FeatureChangeEvent.SEGMENT_CHANGED)
       {
         RangeVector rv_new = event.getNewLocation().getRanges();
         RangeVector rv_old = event.getOldLocation().getRanges();
 
-        System.out.println("SEGMENT_CHANGED "+feature.getFirstBase()+".."+feature.getLastBase()+
-                           "   new="+rv_new.size()+" old="+rv_old.size());
+        System.out.println("SEGMENT_CHANGED");
+        
+        if(rv_old.size() > rv_new.size())
+        {
+          // delete segment
+          int ideleted;
+          Vector deleted = new Vector();
+          boolean found;
+          for(ideleted=0; ideleted<rv_old.size(); ideleted++)
+          {   
+            Range range = (Range)rv_old.get(ideleted);
+            found = false;
+            for(int j=0; j<rv_new.size(); j++)
+            {
+              if( ((Range)rv_new.get(j)).equals(range) )
+                found = true;     
+            }
+            
+            if(!found)
+              deleted.add(new Integer(ideleted));
+          }
+   
+          for(int i=0; i<deleted.size();i++)
+          {
+            ideleted = ((Integer)deleted.elementAt(i)).intValue();
+            Range range_old = (Range)rv_old.elementAt(ideleted);
+            String seg_id   = feature.getSegmentID(range_old);
+            deleteFeature(seg_id);
+          }
+          
+          String new_id = feature.getSegmentID(rv_new);
+          Qualifier qualifier = new Qualifier("ID", new_id);
+          try
+          {
+            feature.setQualifier(qualifier);
+          }
+          catch(ReadOnlyException e)
+          {
+            e.printStackTrace();
+          }
+          catch(EntryInformationException e)
+          {
+            e.printStackTrace();
+          }
+        }
       }
       else if(event.getType() == FeatureChangeEvent.LOCATION_CHANGED)
       {
@@ -272,27 +316,34 @@ public class ChadoTransactionManager
       sql.add(tsn);
     }
     else if(event.getType() == EntryChangeEvent.FEATURE_DELETED)
-    {
-      Feature feature = event.getFeature();
-      GFFStreamFeature feature_gff = (GFFStreamFeature)event.getFeature().getEmblFeature();
-      
+    { 
       try
       {
-        Qualifier qualifier_uniquename = feature.getQualifierByName("ID");
-        String feature_uniquename = (String)(qualifier_uniquename.getValues()).elementAt(0);
-        ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.DELETE_FEATURE,
-                                                    feature_uniquename, "feature",
-                                                    feature_gff.getLastModified(),
-                                                    feature_gff);
-        sql.add(tsn); 
+        Qualifier qualifier_uniquename = event.getFeature().getQualifierByName("ID");
+        String feature_uniquename = 
+                             (String)(qualifier_uniquename.getValues()).elementAt(0);
+        System.out.println("FEATURE_DELETED "+feature_uniquename);
+        deleteFeature(feature_uniquename);
       }
-      catch(InvalidRelationException ire)
+      catch(InvalidRelationException e)
       {
-        ire.printStackTrace();
+        e.printStackTrace();
       }
     }
 
 //  System.out.println(event.getEntry().getName());
+  }
+  
+  /**
+   * Set the transaction for deleting a feature.
+   * @param feature
+   */
+  private void deleteFeature(final String feature_uniquename)
+  {
+    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.DELETE_FEATURE,
+                                                feature_uniquename, "feature",
+                                                null, null);
+    sql.add(tsn); 
   }
 
   /**
