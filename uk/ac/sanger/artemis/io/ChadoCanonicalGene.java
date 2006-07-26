@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.7 2006-07-25 10:44:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.8 2006-07-26 13:50:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -208,6 +208,25 @@ public class ChadoCanonicalGene
     return transcripts;
   }
   
+  public boolean isTranscript(final String name)
+  {
+    try
+    {
+      for(int i=0; i<transcripts.size(); i++)
+      {
+        if(name.equals(getQualifier((Feature)transcripts.get(i), "ID")))
+          return true;
+      }
+    }
+    catch(InvalidRelationException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
+    return false;
+  }
+  
   /**
    * Search for the feature with a particular uniquename
    * @param name  uniquename
@@ -220,14 +239,7 @@ public class ChadoCanonicalGene
     // check gene
     try
     {
-      final String uniquename;
-      
-      /*
-      if(gene instanceof ChadoFeature)
-        uniquename = ((ChadoFeature)gene).getUniquename();
-      else
-      */
-      uniquename = getQualifier(gene, "ID");    
+      final String uniquename = getQualifier(gene, "ID");    
       
       if(uniquename.equals(name))
         return gene;
