@@ -275,6 +275,9 @@ public class ChadoTransactionManager
       else
         featureloc.setStrand(-1);
 
+      Vector parent_features  = null;
+      Vector derives_features = null;
+      
       // codon_start attribute
       try
       {
@@ -289,6 +292,29 @@ public class ChadoTransactionManager
             featureloc.setPhase(1);
           else if(phase.equals("3")) 
             featureloc.setPhase(2);
+        }
+        
+        // relationship attributes
+        Qualifier qualifier_relation = feature.getQualifierByName("Parent");
+        if(qualifier_relation != null)
+        {
+          StringVector parents = qualifier_relation.getValues();
+          if(parents.size() > 0)
+            parent_features = new Vector();
+          
+          for(int i=0; i<parents.size(); i++)
+            parent_features.add((String)parents.get(i));
+        }
+        
+        qualifier_relation = feature.getQualifierByName("Derives_from");
+        if(qualifier_relation != null)
+        {
+          StringVector derives = qualifier_relation.getValues();
+          if(derives.size() > 0)
+            derives_features = new Vector();
+          
+          for(int i=0; i<derives.size(); i++)
+            derives_features.add((String)derives.get(i));
         }
       }
       catch(InvalidRelationException ire){}
@@ -312,7 +338,9 @@ public class ChadoTransactionManager
       addQualifiers(feature.getQualifiers(), chado_feature);
       // create transaction object
       ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT_FEATURE,
-                                                  chado_feature);
+                                                  chado_feature,
+                                                  parent_features, 
+                                                  derives_features);
       sql.add(tsn);
     }
     else if(event.getType() == EntryChangeEvent.FEATURE_DELETED)

@@ -85,8 +85,11 @@ public class ChadoTransaction
   private Timestamp lastmodified;
   /** the feature object */
   private Object feature_obj;
- 
-
+  /** parent uniquenames */
+  private List parents;
+  /** derives_from uniquenames */
+  private List derives_from;
+  
   /**
    * Used to construct a <code>ChadoTransaction</code> that can
    * be used to describe a SQL transaction.
@@ -136,12 +139,18 @@ public class ChadoTransaction
    *
    * @param type          the transaction type
    * @param chado_feature the <code>ChadoFeature</code> to be inserted
-   *
+   * @param parents       <code>Vector</code> of parent uniquenames
+   * @param derives_from  <code>Vector</code> of derives_from names
    */
-  public ChadoTransaction(int type, ChadoFeature chadoFeature)
+  public ChadoTransaction(final int type, 
+                          final ChadoFeature chadoFeature, 
+                          final Vector parents,
+                          final Vector derives_from)
   {
     this.chadoFeature = chadoFeature;
-    this.type = type;
+    this.type         = type;
+    this.parents      = parents;
+    this.derives_from = derives_from;
   }
 
   /**
@@ -391,5 +400,25 @@ public class ChadoTransaction
   public void setAlias(ChadoFeatureSynonym alias)
   {
     this.alias = alias;
+  }
+
+  public List getDerives_from()
+  {
+    return derives_from;
+  }
+
+  public void setDerives_from(Vector derives_from)
+  {
+    this.derives_from = derives_from;
+  }
+
+  public List getParents()
+  {
+    return parents;
+  }
+
+  public void setParents(Vector parents)
+  {
+    this.parents = parents;
   }
 }

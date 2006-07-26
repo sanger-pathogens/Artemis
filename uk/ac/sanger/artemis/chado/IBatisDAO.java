@@ -361,7 +361,7 @@ public class IBatisDAO implements ChadoDAO
 
     for(int i=0; i<feature_ids.size(); i++)
     {
-      tsn.setFeature_id( ((Integer)feature_ids.get(i)).intValue() );
+      tsn.setFeature_id( ((ChadoFeature)feature_ids.get(i)).getId() );
       sqlMap.insert("insertAttributes", tsn);
     }
   }
@@ -384,7 +384,7 @@ public class IBatisDAO implements ChadoDAO
 
     for(int i=0; i<feature_ids.size(); i++)
     {
-      tsn.setFeature_id( ((Integer)feature_ids.get(i)).intValue() );
+      tsn.setFeature_id( ((ChadoFeature)feature_ids.get(i)).getId() );
       sqlMap.delete("deleteAttributes", tsn);
     }
   }
@@ -430,6 +430,34 @@ public class IBatisDAO implements ChadoDAO
     chadoFeature.getFeatureloc().setSrcfeature_id(Integer.parseInt(srcfeature_id));
     chadoFeature.setId(feature_id);
     sqlMap.insert("insertFeatureLoc", chadoFeature);
+    
+    // insert feature relationship
+    if(tsn.getParents() != null || 
+       tsn.getDerives_from() != null)
+    {
+      tsn.setSchema(schema);
+      List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
+      
+      for(int i=0; i<feature_ids.size(); i++)
+      {
+        ChadoFeatureRelationship feature_relationship =
+              new ChadoFeatureRelationship();
+        feature_relationship.setObject_id( ((ChadoFeature)feature_ids.get(i)).getId() );
+        feature_relationship.setSubject_id(feature_id);
+        
+        ChadoCvterm cvterm = new ChadoCvterm();
+        if(tsn.getParents().contains( 
+            ((ChadoFeature)feature_ids.get(i)).getUniquename() ))
+          cvterm.setName("part_of");
+        else
+          cvterm.setName("derives_from");
+          
+        feature_relationship.setCvterm(cvterm);
+        chadoFeature.setFeature_relationship(feature_relationship);
+        sqlMap.insert("insertFeatureRelationship", chadoFeature);
+      }
+   
+    }
   }
 
 
@@ -488,7 +516,7 @@ public class IBatisDAO implements ChadoDAO
     //  get the feature id's
     tsn.setSchema(schema);
     List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
-    dbxref.setFeature_id( ((Integer)feature_ids.get(0)).intValue() );
+    dbxref.setFeature_id( ((ChadoFeature)feature_ids.get(0)).getId() );
     
     dbxref.setSchema(schema);
     sqlMap.insert("insertFeatureDbxref", dbxref);
@@ -514,7 +542,7 @@ public class IBatisDAO implements ChadoDAO
     // get the feature id's
     List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
     
-    dbxref.setFeature_id( ((Integer)feature_ids.get(0)).intValue() );
+    dbxref.setFeature_id( ((ChadoFeature)feature_ids.get(0)).getId() );
     return sqlMap.delete("deleteFeatureDbxref", dbxref);
   }
   
