@@ -140,11 +140,27 @@
 
      <!-- get feature id -->
      <select id="getFeatureID" parameterClass="ChadoTransaction"
-                               resultClass="java.lang.Integer">
-        SELECT feature_id FROM $schema$.feature WHERE
-          <iterate property="uniquename" conjunction="OR">
-            $schema$.feature.uniquename='$uniquename[]$'
-          </iterate>
+                               resultClass="ChadoFeature">
+        SELECT feature_id AS id, uniquename FROM $schema$.feature WHERE
+        <dynamic>
+          <isNotNull property="uniquename">
+            <iterate property="uniquename" conjunction="OR">
+               $schema$.feature.uniquename='$uniquename[]$'
+            </iterate>
+          </isNotNull>
+          
+          <isNotNull property="parents">
+            <iterate property="parents" conjunction="OR">
+               $schema$.feature.uniquename='$parents[]$'
+            </iterate>
+          </isNotNull>
+          
+          <isNotNull property="derives_from">
+            <iterate property="derives_from" conjunction="OR">
+               $schema$.feature.uniquename='$derives_from[]$'
+            </iterate>
+          </isNotNull>
+        </dynamic>
      </select>
 
      <select id="getFeature" parameterClass="ChadoFeature" 
@@ -360,6 +376,16 @@
            parameterClass="ChadoFeature">
       DELETE FROM $schema$.feature
       WHERE uniquename=#uniquename#
-    </delete>
+   </delete>
+   
+   <insert id="insertFeatureRelationship" 
+           parameterClass="ChadoFeature">
+      INSERT INTO  $schema$.feature_relationship
+        ( subject_id, object_id, type_id )
+      VALUES
+        ( $feature_relationship.subject_id$,
+          $feature_relationship.object_id$,
+          (SELECT cvterm_id FROM cvterm WHERE name=#feature_relationship.cvterm.name#) )
+   </insert>
 
 </sqlMap> 
