@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.6 2006-07-25 10:50:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.7 2006-07-26 13:52:03 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -35,9 +35,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import java.util.Hashtable;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryChangeEvent;
@@ -49,7 +47,6 @@ import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.GotoEventSource;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.chado.ChadoFeature;
-import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.FeatureEdit;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
@@ -65,6 +62,11 @@ public class GeneBuilderFrame extends JFrame
   private FeatureEdit feature_editor;
   private GeneViewerPanel viewer;
   private GeneComponentTree tree;
+  private Box yBox;
+  private Hashtable transcriptBoxes = new Hashtable();
+  private Component glue = Box.createVerticalGlue();
+  private Selection selection;
+  private ChadoCanonicalGene chado_gene;
   
   public GeneBuilderFrame(final Feature feature,
                           final EntryGroup entry_group,
@@ -77,12 +79,11 @@ public class GeneBuilderFrame extends JFrame
           ""));
     
     this.active_feature = feature;
-
-
-    GFFStreamFeature gff_feature = (GFFStreamFeature)feature.getEmblFeature();
-    final ChadoCanonicalGene chado_gene = gff_feature.getChadoGene();
+    this.selection = selection;
     
-   
+    GFFStreamFeature gff_feature = (GFFStreamFeature)feature.getEmblFeature();
+    chado_gene = gff_feature.getChadoGene();
+    
     try
     {
       addListeners(chado_gene);
@@ -91,7 +92,6 @@ public class GeneBuilderFrame extends JFrame
     {
       e.printStackTrace();
     }
-    
     
     tree = new GeneComponentTree(chado_gene, this);
     
@@ -103,10 +103,10 @@ public class GeneBuilderFrame extends JFrame
       selection = new Selection(null);
     
     viewer = new GeneViewerPanel(
-                gff_feature.getChadoGene(), selection);
+                gff_feature.getChadoGene(), selection, entry_group);
 
     Box xBox = Box.createHorizontalBox();
-    xBox.add(buildCheckBoxes(viewer, chado_gene, selection));
+    xBox.add(buildCheckBoxes(viewer, chado_gene));
     xBox.add(viewer);
     
     JScrollPane jsp_viewer = new JScrollPane(xBox);
@@ -127,7 +127,7 @@ public class GeneBuilderFrame extends JFrame
     {
       public void windowClosing(WindowEvent event) 
       {
-        stopListening();
+        //stopListening();
         dispose();
       }
     });
@@ -135,9 +135,21 @@ public class GeneBuilderFrame extends JFrame
     // add menus
     JMenuBar menuBar = new JMenuBar();
     
+    JMenu fileMenu = new JMenu("File");
+    menuBar.add(fileMenu);
+    JMenuItem close = new JMenuItem("Close");
+    close.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)  
+      {
+        dispose();
+      }
+    });
+    fileMenu.add(close);
+    
     JMenu editMenu = new JMenu("Edit");
     menuBar.add(editMenu);
-    viewer.createMenus(editMenu);
+    viewer.createMenus(editMenu, entry_group);
     setJMenuBar(menuBar);
     
     pack();
@@ -152,10 +164,9 @@ public class GeneBuilderFrame extends JFrame
    * @return
    */
   private Box buildCheckBoxes(final GeneViewerPanel viewer,
-                              final ChadoCanonicalGene chado_gene,
-                              final Selection selection)
+                              final ChadoCanonicalGene chado_gene)
   {
-    Box yBox = Box.createVerticalBox();
+    yBox = Box.createVerticalBox();
     yBox.add(Box.createVerticalStrut(viewer.getViewerBorder()*3));
     
     java.util.List transcripts = chado_gene.getTranscripts();
@@ -164,46 +175,59 @@ public class GeneBuilderFrame extends JFrame
     {
       final GFFStreamFeature transcript = 
         (GFFStreamFeature)((uk.ac.sanger.artemis.io.Feature)transcripts.get(i));
+      final String transcript_name =
+        (String)transcript.getQualifierByName("ID").getValues().get(0);
       
-      JCheckBox cb = new JCheckBox();
-      cb.setSelected(true);
-      cb.addItemListener(new ItemListener()
-      {
-        public void itemStateChanged(ItemEvent e)
-        {
-          List exons = chado_gene.getExonsOfTranscript(
-              (String)transcript.getQualifierByName("ID").getValues().get(0));
-          
-          if(exons == null)
-            return;
-          
-          boolean visible = true;
-          if(e.getStateChange() == ItemEvent.DESELECTED)
-            visible = false;        
-          
-          for(int j=0; j<exons.size(); j++)
-          {
-            GFFStreamFeature embl_exon = (GFFStreamFeature)exons.get(j);
-            embl_exon.setVisible(visible);
-          }
-          
-          FeatureVector fv = selection.getAllFeatures();
-          selection.clear();
-          selection.set(fv);
-        }
-      });
-      yBox.add(cb);
-      yBox.add(Box.createVerticalStrut(
-          viewer.getTranscriptSize() - cb.getPreferredSize().height)); 
+      Box transcriptBox =  createTranscriptBox(transcript, transcript_name);
+      yBox.add(transcriptBox);
     }
-    yBox.add(Box.createVerticalGlue());
+    yBox.add(glue);
     return yBox;
+  }
+  
+  private Box createTranscriptBox(final GFFStreamFeature transcript,
+                                  final String transcript_name)
+  {
+    JCheckBox cb = new JCheckBox();
+    cb.setSelected(transcript.isVisible());
+    cb.addItemListener(new ItemListener()
+    {
+      public void itemStateChanged(ItemEvent e)
+      {
+        List exons = chado_gene.getExonsOfTranscript(transcript_name);
+        
+        if(exons == null)
+          return;
+        
+        boolean visible = true;
+        if(e.getStateChange() == ItemEvent.DESELECTED)
+          visible = false;        
+        
+        for(int j=0; j<exons.size(); j++)
+        {
+          GFFStreamFeature embl_exon = (GFFStreamFeature)exons.get(j);
+          embl_exon.setVisible(visible);
+        }
+        
+        FeatureVector fv = selection.getAllFeatures();
+        selection.clear();
+        selection.set(fv);
+      }
+    });
+    
+    Box transcriptBox = Box.createVerticalBox();
+
+    transcriptBox.add(cb);
+    transcriptBox.add(Box.createVerticalStrut(
+        viewer.getTranscriptSize() - cb.getPreferredSize().height)); 
+    transcriptBoxes.put(transcript_name, transcriptBox);
+    return transcriptBox;
   }
   
   protected void setActiveFeature(final Feature active_feature)
   {
     if(this.active_feature != null)
-      stopListening();
+      stopListening(active_feature);
     
     this.active_feature = active_feature;
     feature_editor.setActiveFeature(active_feature);
@@ -212,10 +236,16 @@ public class GeneBuilderFrame extends JFrame
   /**
    *  Remove this object as a feature and entry change listener.
    **/
-  private void stopListening() 
+  private void stopListening(final Feature feature) 
   {
     getEntry().removeEntryChangeListener(this);
-    active_feature.removeFeatureChangeListener(this);
+    feature.removeFeatureChangeListener(this);
+  }
+  
+  private void startListening(final Feature feature) 
+  {
+    getEntry().addEntryChangeListener(this);
+    feature.addFeatureChangeListener(this);
   }
 
   /**
@@ -225,16 +255,58 @@ public class GeneBuilderFrame extends JFrame
    **/
   public void entryChanged(EntryChangeEvent event) 
   {
+    Feature feature = event.getFeature();
+    stopListening(feature);
+    
+    QualifierVector qualifiers = feature.getQualifiers();
+    String name = (String)qualifiers.getQualifierByName("ID").getValues().get(0);
     switch(event.getType())
     {
       case EntryChangeEvent.FEATURE_DELETED:
-        QualifierVector qualifiers = event.getFeature().getQualifiers();
-        tree.deleteNode( (String)qualifiers.getQualifierByName("ID").getValues().get(0) );
+        feature.removeFeatureChangeListener(this);
+        tree.deleteNode( name );
+        
+        if(chado_gene.isTranscript(name))
+        {
+          Box transBox = (Box)transcriptBoxes.get(name);
+          yBox.remove(transBox);
+          yBox.revalidate();
+        }
         break;
+      case EntryChangeEvent.FEATURE_ADDED:
+        tree.addNode(event.getFeature());
+        feature.addFeatureChangeListener(this);
+        
+        String parent = 
+          (String)qualifiers.getQualifierByName("Parent").getValues().get(0);
+        
+        String gene_name = null;
+        try
+        {
+          gene_name = (String)chado_gene.getGene().getQualifierByName("ID").getValues().get(0);
+        }
+        catch(InvalidRelationException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        
+        if(parent.equals(gene_name) &&
+           !transcriptBoxes.containsKey(name))
+        {
+          Box transcriptBox = createTranscriptBox(
+                   (GFFStreamFeature)feature.getEmblFeature(), name);
+          yBox.remove(glue);
+          yBox.add(transcriptBox);
+          yBox.add(glue);
+          yBox.revalidate();
+        }
       default:
         // do nothing;
         break;
     }
+    
+    startListening(feature);
   }
   
   /**

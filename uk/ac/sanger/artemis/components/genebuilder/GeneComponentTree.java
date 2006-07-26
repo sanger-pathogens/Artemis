@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.5 2006-07-25 10:50:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.6 2006-07-26 13:52:03 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -152,14 +152,30 @@ public class GeneComponentTree extends JTree
    */
   protected void changeNode(String old_id, String new_id)
   {
-    DefaultMutableTreeNode root = (DefaultMutableTreeNode)getModel().getRoot();
-    
-    DefaultMutableTreeNode change_node = searchChildren(root, old_id);
+    DefaultMutableTreeNode change_node = getNodeFromName(old_id);
     if(change_node != null)
     {
       change_node.setUserObject(new_id);
-      return;
+      repaint();
     }
+  }
+  
+  /**
+   * Get the node in the tree with a given name. If it is not part
+   * of the tree return null.
+   * @param name
+   * @return
+   */
+  private DefaultMutableTreeNode getNodeFromName(final String name)
+  {
+    DefaultMutableTreeNode root = (DefaultMutableTreeNode)getModel().getRoot();
+    
+    if(name.equals((String)root.getUserObject()))
+      return root;
+        
+    DefaultMutableTreeNode change_node = searchChildren(root, name);
+    if(change_node != null)
+      return change_node;
     
     Enumeration root_children = root.children();
     while(root_children.hasMoreElements())
@@ -167,14 +183,12 @@ public class GeneComponentTree extends JTree
       DefaultMutableTreeNode child = 
            (DefaultMutableTreeNode)root_children.nextElement();
       
-      change_node = searchChildren(child, old_id);
+      change_node = searchChildren(child, name);
       if(change_node != null)
-      {
-        change_node.setUserObject(new_id);
-        repaint();
-        return;
-      }
+        return change_node;
     }
+    
+    return null;
   }
   
   /**
@@ -192,6 +206,38 @@ public class GeneComponentTree extends JTree
       
       if(id.equals((String)child.getUserObject()))
         ((DefaultTreeModel)getModel()).removeNodeFromParent(child);
+    }
+  }
+  
+  /**
+   * Add a new node for the selected feature. It uses the Parent
+   * qualifier information to work out where it should be added.
+   * @param feature
+   */
+  protected void addNode(final uk.ac.sanger.artemis.Feature feature)
+  {
+    try
+    {
+      String parent =
+        (String)feature.getQualifierByName("Parent").getValues().get(0);
+      String name = 
+        (String)feature.getQualifierByName("ID").getValues().get(0);
+      
+      if(getNodeFromName(name) != null)
+        return;
+      
+      DefaultMutableTreeNode parentNode = getNodeFromName(parent);
+      
+      if(parentNode !=  null)
+      {
+        ((DefaultTreeModel)getModel()).insertNodeInto(
+            new DefaultMutableTreeNode(name), parentNode, 
+            parentNode.getChildCount());
+      }
+    }
+    catch(InvalidRelationException e)
+    {
+      e.printStackTrace();
     }
   }
   

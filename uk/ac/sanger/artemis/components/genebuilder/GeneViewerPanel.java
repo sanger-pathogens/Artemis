@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.11 2006-07-25 10:50:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.12 2006-07-26 13:52:03 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Collections;
 import java.awt.geom.RoundRectangle2D;
 
+import uk.ac.sanger.artemis.Entry;
+import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.FeatureSegment;
@@ -40,14 +42,21 @@ import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.LastSegmentException;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.FeatureVector;
+
 import uk.ac.sanger.artemis.chado.ChadoFeature;
 import uk.ac.sanger.artemis.chado.ChadoFeatureLoc;
 import uk.ac.sanger.artemis.chado.ChadoFeatureProp;
+import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Feature;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
+import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.io.Qualifier;
+import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.Options;
 
@@ -78,8 +87,15 @@ public class GeneViewerPanel extends JPanel
                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); // InputEvent.CTRL_MASK);
   final static public int DELETE_FEATURES_KEY_CODE = KeyEvent.VK_DELETE;
   
+  final static KeyStroke CREATE_FEATURES_KEY =
+    KeyStroke.getKeyStroke (KeyEvent.VK_C,
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
+
+  final static public int CREATE_FEATURES_KEY_CODE = KeyEvent.VK_C;
+  
   public GeneViewerPanel(final ChadoCanonicalGene chado_gene,
-                         final Selection selection)
+                         final Selection selection,
+                         final EntryGroup entry_group)
   {
     this.chado_gene = chado_gene;
     this.selection  = selection;
@@ -91,10 +107,11 @@ public class GeneViewerPanel extends JPanel
 //  Popup menu
     addMouseListener(new PopupListener());
     popup = new JPopupMenu();
-    createMenus(popup);
+    createMenus(popup, entry_group);
   }
 
-  protected void createMenus(JComponent menu)
+  protected void createMenus(JComponent menu,
+                            final EntryGroup entry_group)
   {
     JMenuItem deleteMenu = new JMenuItem("Delete selected features");
     deleteMenu.setAccelerator(DELETE_FEATURES_KEY);
@@ -122,6 +139,48 @@ public class GeneViewerPanel extends JPanel
     });
 
     menu.add(deleteMenu);
+    menu.add(new JSeparator());
+    JMenuItem createTranscript = new JMenuItem("Create transcript");
+    createTranscript.setAccelerator(CREATE_FEATURES_KEY);
+    createTranscript.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)  
+      {
+        final Entry default_entry = entry_group.getDefaultEntry();
+        final Location new_location = chado_gene.getGene().getLocation();
+
+        uk.ac.sanger.artemis.Feature new_feature;
+
+        try 
+        {
+          String gene_name = 
+            (String)chado_gene.getGene().getQualifierByName("ID").getValues().get(0);
+
+          QualifierVector qualifiers = new QualifierVector();
+          qualifiers.add(new Qualifier("Parent", gene_name));
+                 
+          new_feature = default_entry.createFeature(new Key("mRNA"), 
+                                          new_location, qualifiers);
+          selection.set(new_feature);
+          chado_gene.addTranscript(new_feature.getEmblFeature());
+        } 
+        catch (EntryInformationException e) 
+        {
+
+        }
+        catch(ReadOnlyException e)
+        {
+          e.printStackTrace();
+        }
+        catch(OutOfRangeException e)
+        {
+          e.printStackTrace();
+        }
+        
+        repaint();
+      }
+    });
+    menu.add(createTranscript);
   }
   
   /**
