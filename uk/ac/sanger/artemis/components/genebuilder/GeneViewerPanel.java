@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.12 2006-07-26 13:52:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.13 2006-07-28 08:34:59 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -35,8 +35,6 @@ import java.awt.geom.RoundRectangle2D;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
-import uk.ac.sanger.artemis.FeatureChangeEvent;
-import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.FeatureSegment;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.LastSegmentException;
@@ -56,6 +54,8 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
+import uk.ac.sanger.artemis.sequence.MarkerRange;
+import uk.ac.sanger.artemis.sequence.Strand;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.Options;
@@ -79,6 +79,10 @@ public class GeneViewerPanel extends JPanel
   private int start;
   private int end;
   
+  private MarkerRange click_range = null;
+  
+  private Point last_cursor_position;
+  
   /**
    *  The shortcut for Delete Selected Features.
    **/
@@ -92,6 +96,7 @@ public class GeneViewerPanel extends JPanel
                             Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
 
   final static public int CREATE_FEATURES_KEY_CODE = KeyEvent.VK_C;
+  
   
   public GeneViewerPanel(final ChadoCanonicalGene chado_gene,
                          final Selection selection,
@@ -108,6 +113,45 @@ public class GeneViewerPanel extends JPanel
     addMouseListener(new PopupListener());
     popup = new JPopupMenu();
     createMenus(popup, entry_group);
+    
+    // Listen for mouse motion events so that we can select ranges of bases.
+    addMouseMotionListener(new MouseMotionAdapter() 
+    {
+      public void mouseDragged(MouseEvent event) 
+      {
+        final MarkerRange selected_range = selection.getMarkerRange();
+        
+        int select_start = (int)((event.getX() - border)/fraction)+start;
+        Strand strand = 
+          ((uk.ac.sanger.artemis.Feature)(chado_gene.getGene().getUserData())).getStrand();
+          
+        if(!strand.isForwardStrand())
+          select_start = strand.getBases().getComplementPosition(select_start);
+        
+        try
+        {
+          MarkerRange drag_range = 
+            new MarkerRange(strand, select_start, select_start+1);
+          
+          //final MarkerRange new_marker_range;
+          if(selected_range == null || click_range == null) 
+            click_range = drag_range;
+          else 
+            click_range = selected_range.combineRanges(drag_range, true);
+          
+          System.out.println(click_range.getRawStart().getRawPosition()+".."+
+                             click_range.getRawEnd().getRawPosition());
+          
+          last_cursor_position = event.getPoint();
+          selection.setMarkerRange(click_range);
+          repaint();
+        }
+        catch(OutOfRangeException e)
+        {
+          e.printStackTrace();
+        }
+      }
+    });
   }
 
   protected void createMenus(JComponent menu,
@@ -121,6 +165,13 @@ public class GeneViewerPanel extends JPanel
       {
         FeatureVector features = selection.getAllFeatures();
         
+        int option = JOptionPane.showConfirmDialog(null, 
+            "Delete selected features", 
+            "Delete selected features", 
+            JOptionPane.OK_CANCEL_OPTION);
+        
+        if(option == JOptionPane.CANCEL_OPTION)
+          return;
         try
         {
           for(int i = 0; i < features.size(); i++)
@@ -230,14 +281,31 @@ public class GeneViewerPanel extends JPanel
       if(!overlay_transcripts)
         ypos += 9 * getFontHeight() * 2;
       */
-      
-      
+       
       drawTranscriptOnLine(g2d, (Feature)transcripts.get(i), 
                            start, end, ypos, 
                            fraction);
       
       if(i != transcripts.size()-1)
         ypos += getTranscriptSize();
+    }
+    
+    // draw mouse drag selection
+    if(selection.getMarkerRange() != null)
+    {
+      Range range = selection.getSelectionRange();
+      System.out.println("Draw selection range "+range.getStart()+".."+range.getEnd());
+      
+      int ntranscript = (last_cursor_position.y - (border*3))/getTranscriptSize();
+      if(ntranscript < transcripts.size())
+      {
+        int select_start = border+(int)((range.getStart()-start)*fraction);
+        int select_end   = border+(int)((range.getEnd()-start)*fraction);
+        ypos = (border*5)+(getTranscriptSize()*ntranscript);
+        drawFeature(g2d, select_start, select_end, 
+                    ypos, Color.YELLOW, 2,
+                    false, 2.f);
+      }
     }
     setPreferredSize(new Dimension(getSize().width, ypos+border));
   }
@@ -540,8 +608,8 @@ public class GeneViewerPanel extends JPanel
         {
           segments = exon.getSegments();
         }
-        catch(NullPointerException npe)
-        {}
+        catch(NullPointerException npe){}
+        
         float selected_size;
         for(int j=0; j<ranges.size(); j++)
         {
@@ -579,6 +647,7 @@ public class GeneViewerPanel extends JPanel
           last_ypos   = ypos;
         }
       }
+      
     }
     catch(InvalidRelationException e)
     {
@@ -851,23 +920,20 @@ public class GeneViewerPanel extends JPanel
   private void showExonsList(final String uniquename)
                throws InvalidRelationException
   {
-    List exons = chado_gene.getExonsOfTranscript(uniquename);
-    if(exons == null)
-      return;
+    final List exons = chado_gene.getExonsOfTranscript(uniquename);
+    final DefaultListModel listModel = new DefaultListModel();   
     
-
-    Feature embl_exon = (Feature)exons.get(0);
-
-    final uk.ac.sanger.artemis.Feature exon = 
-          (uk.ac.sanger.artemis.Feature)embl_exon.getUserData();
-    
-    final RangeVector ranges = exon.getLocation().getRanges();
-    final DefaultListModel listModel = new DefaultListModel();     
-    for(int k=0; k<ranges.size(); k++)
+    if(exons != null)
     {
-      Range range = (Range)ranges.get(k);
-      listModel.addElement(range.toString());
-    }
+      Feature embl_exon = (Feature)exons.get(0);
+      final RangeVector ranges = embl_exon.getLocation().getRanges();
+      
+      for(int k=0; k<ranges.size(); k++)
+      {
+        Range range = (Range)ranges.get(k);
+        listModel.addElement(range.toString());
+      }
+    } 
     
     final JList list = new JList(listModel);
     JScrollPane listScrollPane = new JScrollPane(list);
@@ -877,7 +943,9 @@ public class GeneViewerPanel extends JPanel
     {
       public void actionPerformed(ActionEvent event)  
       {
-
+        Feature embl_exon = (Feature)exons.get(0);
+        Range  range_selected = selection.getSelectionRange();
+        addExonFeature(embl_exon, range_selected);
       }
     });
 
@@ -887,6 +955,9 @@ public class GeneViewerPanel extends JPanel
       public void actionPerformed(ActionEvent event)  
       {
         Object selected[] = list.getSelectedValues();
+        Feature embl_exon = (Feature)exons.get(0);
+        uk.ac.sanger.artemis.Feature exon =
+          (uk.ac.sanger.artemis.Feature)embl_exon.getUserData();
         deleteExonFeatures(exon, selected, listModel, uniquename);       
       }
     });
@@ -925,6 +996,11 @@ public class GeneViewerPanel extends JPanel
 
   }
  
+  private void addExonFeature(Feature feature, Range range)
+  {
+    
+  }
+  
   private void deleteExonFeatures(uk.ac.sanger.artemis.Feature feature,
                                   Object selected[], 
                                   final DefaultListModel listModel,
@@ -937,6 +1013,14 @@ public class GeneViewerPanel extends JPanel
     
     try
     {
+      int option = JOptionPane.showConfirmDialog(null, 
+          "Delete selected feature exons", 
+          "Delete selected feature exons", 
+          JOptionPane.OK_CANCEL_OPTION);
+      
+      if(option == JOptionPane.CANCEL_OPTION)
+        return;
+      
       for(int i = 0; i < segments.size(); i++)
       {
         segment = segments.elementAt(i);
@@ -1043,6 +1127,12 @@ public class GeneViewerPanel extends JPanel
       }
       else if(e.getClickCount() == 1)
       {
+        if(selection.getMarkerRange() != null &&
+           e.isShiftDown())
+          return;
+        
+        click_range = null;
+        selection.clear();
         Object feature = getFeatureAt(e.getPoint());
         if(feature == null)
           return;      

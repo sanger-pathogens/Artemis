@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.7 2006-07-26 13:52:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.8 2006-07-28 08:34:59 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -185,6 +185,12 @@ public class GeneBuilderFrame extends JFrame
     return yBox;
   }
   
+  /**
+   * Create a Box containing the checkbox for a transcript
+   * @param transcript
+   * @param transcript_name
+   * @return
+   */
   private Box createTranscriptBox(final GFFStreamFeature transcript,
                                   final String transcript_name)
   {
@@ -358,9 +364,11 @@ public class GeneBuilderFrame extends JFrame
     // add feature listeners
     uk.ac.sanger.artemis.io.Feature embl_gene = 
       (uk.ac.sanger.artemis.io.Feature)chado_gene.getGene();
-    Feature gene = (Feature)embl_gene.getUserData();
+    Feature gene = (Feature)embl_gene.getUserData();   
     gene.addFeatureChangeListener(this);
-    gene.getEntry().addEntryChangeListener(this);
+    
+    if(gene.getEntry() != null)
+      gene.getEntry().addEntryChangeListener(this);
     
     List transcripts = chado_gene.getTranscripts();
     for(int i=0; i<transcripts.size(); i++)
@@ -373,7 +381,9 @@ public class GeneBuilderFrame extends JFrame
          trans = new Feature(transcript);
        
        trans.addFeatureChangeListener(this);
-       trans.getEntry().addEntryChangeListener(this);
+       
+       if(trans.getEntry() != null)
+         trans.getEntry().addEntryChangeListener(this);
        
        List exons = chado_gene.getExonsOfTranscript(
            (String)trans.getQualifierByName("ID").getValues().get(0));
@@ -394,7 +404,9 @@ public class GeneBuilderFrame extends JFrame
          if(exon == null)
            exon = new Feature(embl_exon);
          exon.addFeatureChangeListener(this);
-         exon.getEntry().addEntryChangeListener(this);
+         
+         if(exon.getEntry() != null)
+           exon.getEntry().addEntryChangeListener(this);
        }
     }
   }
