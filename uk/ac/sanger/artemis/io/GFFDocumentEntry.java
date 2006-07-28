@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.29 2006-07-25 10:46:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.30 2006-07-28 08:34:30 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -38,7 +38,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.29 2006-07-25 10:46:09 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.30 2006-07-28 08:34:30 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -195,7 +195,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         this_feature = original_features.featureAt(i);
         // exons
         key = this_feature.getKey().getKeyString();
-        if(!key.equals("exon") && !key.equals("polypeptide"))
+        if(!key.equals("exon") && !key.equals("polypeptide") &&
+           !key.endsWith("prime_UTR"))
           continue;
         
         Qualifier parent_qualifier  = this_feature.getQualifierByName("Parent");
@@ -212,7 +213,6 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         else
           parent_id = derives_qualifier.getValues();
         
-        
         for(int j=0; j<parent_id.size(); j++)
         {
           String parent = (String)parent_id.get(j);
@@ -223,8 +223,12 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
              
             if(parent_qualifier == null)
               gene.addProtein(parent, this_feature);
-            else
+            else if(key.equals("exon"))
               gene.addExon(parent, this_feature);
+            else if(key.equals("three_prime_UTR"))
+              gene.add3PrimeUtr(parent, this_feature);
+            else if(key.equals("five_prime_UTR"))
+              gene.add5PrimeUtr(parent, this_feature);
           }
         } 
           
