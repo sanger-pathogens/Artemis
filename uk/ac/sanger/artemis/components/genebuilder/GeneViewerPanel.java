@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.13 2006-07-28 08:34:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.14 2006-07-28 15:27:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -83,6 +83,8 @@ public class GeneViewerPanel extends JPanel
   
   private Point last_cursor_position;
   
+  private EntryGroup entry_group;
+  
   /**
    *  The shortcut for Delete Selected Features.
    **/
@@ -102,8 +104,9 @@ public class GeneViewerPanel extends JPanel
                          final Selection selection,
                          final EntryGroup entry_group)
   {
-    this.chado_gene = chado_gene;
-    this.selection  = selection;
+    this.chado_gene  = chado_gene;
+    this.selection   = selection;
+    this.entry_group = entry_group;
     
     Dimension dim = new Dimension(400,400);
     setPreferredSize(dim);
@@ -119,6 +122,9 @@ public class GeneViewerPanel extends JPanel
     {
       public void mouseDragged(MouseEvent event) 
       {
+        if(event.isPopupTrigger())
+          return;
+        
         final MarkerRange selected_range = selection.getMarkerRange();
         
         int select_start = (int)((event.getX() - border)/fraction)+start;
@@ -139,9 +145,6 @@ public class GeneViewerPanel extends JPanel
           else 
             click_range = selected_range.combineRanges(drag_range, true);
           
-          System.out.println(click_range.getRawStart().getRawPosition()+".."+
-                             click_range.getRawEnd().getRawPosition());
-          
           last_cursor_position = event.getPoint();
           selection.setMarkerRange(click_range);
           repaint();
@@ -157,7 +160,7 @@ public class GeneViewerPanel extends JPanel
   protected void createMenus(JComponent menu,
                             final EntryGroup entry_group)
   {
-    JMenuItem deleteMenu = new JMenuItem("Delete selected features");
+    JMenuItem deleteMenu = new JMenuItem("Delete Selected Features");
     deleteMenu.setAccelerator(DELETE_FEATURES_KEY);
     deleteMenu.addActionListener(new ActionListener()
     {
@@ -188,8 +191,45 @@ public class GeneViewerPanel extends JPanel
         }
       }
     });
-
     menu.add(deleteMenu);
+    
+    
+    JMenuItem deleteSegmentMenu = new JMenuItem("Delete Selected Exon");
+    deleteSegmentMenu.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)  
+      {
+        FeatureSegmentVector features = selection.getAllSegments();
+        
+        int option = JOptionPane.showConfirmDialog(null, 
+            "Delete Selected Exon", 
+            "Delete Selected Exon", 
+            JOptionPane.OK_CANCEL_OPTION);
+        
+        if(option == JOptionPane.CANCEL_OPTION)
+          return;
+        try
+        {
+          for(int i = 0; i < features.size(); i++)
+          {
+            uk.ac.sanger.artemis.FeatureSegment segment = 
+              features.elementAt(i);  
+            segment.removeFromFeature();
+          }
+          repaint();
+        }
+        catch(ReadOnlyException e)
+        {
+          e.printStackTrace();
+        }
+        catch(LastSegmentException e)
+        {
+          e.printStackTrace();
+        }
+      }
+    });
+    menu.add(deleteSegmentMenu);
+    
     menu.add(new JSeparator());
     JMenuItem createTranscript = new JMenuItem("Create transcript");
     createTranscript.setAccelerator(CREATE_FEATURES_KEY);
@@ -197,37 +237,25 @@ public class GeneViewerPanel extends JPanel
     {
       public void actionPerformed(ActionEvent event)  
       {
-        final Entry default_entry = entry_group.getDefaultEntry();
-        final Location new_location = chado_gene.getGene().getLocation();
-
-        uk.ac.sanger.artemis.Feature new_feature;
-
-        try 
+        try
         {
           String gene_name = 
             (String)chado_gene.getGene().getQualifierByName("ID").getValues().get(0);
-
           QualifierVector qualifiers = new QualifierVector();
           qualifiers.add(new Qualifier("Parent", gene_name));
-                 
-          new_feature = default_entry.createFeature(new Key("mRNA"), 
-                                          new_location, qualifiers);
-          selection.set(new_feature);
-          chado_gene.addTranscript(new_feature.getEmblFeature());
+          uk.ac.sanger.artemis.Feature feature = createFeature(
+                        chado_gene.getGene().getLocation(),
+                        entry_group, new Key("mRNA"),
+                        qualifiers);
+          
+          chado_gene.addTranscript(feature.getEmblFeature());
+        }
+        catch(InvalidRelationException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
         } 
-        catch (EntryInformationException e) 
-        {
 
-        }
-        catch(ReadOnlyException e)
-        {
-          e.printStackTrace();
-        }
-        catch(OutOfRangeException e)
-        {
-          e.printStackTrace();
-        }
-        
         repaint();
       }
     });
@@ -294,8 +322,7 @@ public class GeneViewerPanel extends JPanel
     if(selection.getMarkerRange() != null)
     {
       Range range = selection.getSelectionRange();
-      System.out.println("Draw selection range "+range.getStart()+".."+range.getEnd());
-      
+     
       int ntranscript = (last_cursor_position.y - (border*3))/getTranscriptSize();
       if(ntranscript < transcripts.size())
       {
@@ -308,6 +335,37 @@ public class GeneViewerPanel extends JPanel
       }
     }
     setPreferredSize(new Dimension(getSize().width, ypos+border));
+  }
+  
+  
+  private uk.ac.sanger.artemis.Feature createFeature(
+                             final Location new_location,
+                             final EntryGroup entry_group,
+                             final Key key,
+                             final QualifierVector qualifiers)
+  {
+    final Entry default_entry = entry_group.getDefaultEntry();
+    uk.ac.sanger.artemis.Feature new_feature = null;
+
+    try 
+    {          
+      new_feature = default_entry.createFeature(key, 
+                                      new_location, qualifiers);
+      selection.set(new_feature);
+      return new_feature;
+    } 
+    catch (EntryInformationException e) 
+    {
+    }
+    catch(ReadOnlyException e)
+    {
+      e.printStackTrace();
+    }
+    catch(OutOfRangeException e)
+    {
+      e.printStackTrace();
+    }
+    return new_feature;
   }
   
   /**
@@ -943,9 +1001,13 @@ public class GeneViewerPanel extends JPanel
     {
       public void actionPerformed(ActionEvent event)  
       {
-        Feature embl_exon = (Feature)exons.get(0);
-        Range  range_selected = selection.getSelectionRange();
-        addExonFeature(embl_exon, range_selected);
+        Feature embl_exon = null;
+        
+        if(exons != null)
+          embl_exon = (Feature)exons.get(0);
+        Range range_selected = selection.getSelectionRange();
+        
+        addExonFeature(embl_exon, range_selected, uniquename);
       }
     });
 
@@ -996,9 +1058,46 @@ public class GeneViewerPanel extends JPanel
 
   }
  
-  private void addExonFeature(Feature feature, Range range)
+  /**
+   * Create an exons feature
+   * @param feature
+   * @param range
+   * @param transcript_name
+   */
+  private void addExonFeature(Feature feature, Range range,
+                              final String transcript_name)
   {
-    
+    try
+    {
+      if(feature == null)
+      {
+        QualifierVector qualifiers = new QualifierVector();
+        qualifiers.add(new Qualifier("Parent", transcript_name));
+      
+        uk.ac.sanger.artemis.Feature exon = createFeature(
+            new Location(range),
+            entry_group, new Key("exon"),
+            qualifiers);
+      
+        chado_gene.addExon(transcript_name, exon.getEmblFeature());
+      }
+      else
+      {
+        ((uk.ac.sanger.artemis.Feature)feature.getUserData()).addSegment(range);
+      }
+    }
+    catch(OutOfRangeException e)
+    {
+      e.printStackTrace();
+    }
+    catch(InvalidRelationException e)
+    {
+      e.printStackTrace();
+    }
+    catch(ReadOnlyException e)
+    {
+      e.printStackTrace();
+    }
   }
   
   private void deleteExonFeatures(uk.ac.sanger.artemis.Feature feature,
@@ -1125,7 +1224,8 @@ public class GeneViewerPanel extends JPanel
         popup.show(e.getComponent(),
                 e.getX(), e.getY());
       }
-      else if(e.getClickCount() == 1)
+      else if(e.getButton() != e.BUTTON3 &&
+              e.getClickCount() == 1)
       {
         if(selection.getMarkerRange() != null &&
            e.isShiftDown())
