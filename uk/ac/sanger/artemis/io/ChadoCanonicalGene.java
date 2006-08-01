@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.8 2006-07-26 13:50:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.9 2006-08-01 15:35:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -225,6 +225,30 @@ public class ChadoCanonicalGene
     }
     
     return false;
+  }
+  
+  /**
+   * Method to automatically generate ID's for transcripts
+   * @param transcript_key
+   * @return
+   */
+  public String autoGenerateTanscriptName(String transcript_key)
+  {
+    try
+    {
+      String name = (String) getGene().getQualifierByName("ID").getValues().get(0);
+      int auto = 1;
+      while( isTranscript( name + ":" + transcript_key + ":" + auto ) &&
+             auto < 50)
+        auto++;
+      return name + ":" + transcript_key + ":" + auto;
+    }
+    catch(InvalidRelationException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
   }
   
   /**
