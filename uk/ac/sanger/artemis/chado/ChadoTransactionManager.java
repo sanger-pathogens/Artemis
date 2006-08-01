@@ -25,6 +25,8 @@
 package uk.ac.sanger.artemis.chado;
 
 import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.FeatureSegment;
+import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
 import uk.ac.sanger.artemis.io.QualifierVector;
@@ -44,6 +46,7 @@ import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.EntryChangeListener;
 import uk.ac.sanger.artemis.EntryChangeEvent;
 import java.util.Vector;
+import java.util.Hashtable;
 import javax.swing.JOptionPane;
 
 
@@ -101,6 +104,7 @@ public class ChadoTransactionManager
 
         System.out.println("SEGMENT_CHANGED");
         
+        // segment deleted
         if(rv_old.size() > rv_new.size())
         {
           // delete segment
@@ -127,6 +131,7 @@ public class ChadoTransactionManager
             Range range_old = (Range)rv_old.elementAt(ideleted);
             String seg_id   = feature.getSegmentID(range_old);
             deleteFeature(seg_id);
+            feature.getSegmentRangeStore().remove(seg_id);
           }
           
           String new_id = feature.getSegmentID(rv_new);
@@ -142,6 +147,63 @@ public class ChadoTransactionManager
           catch(EntryInformationException e)
           {
             e.printStackTrace();
+          }
+        }
+        else if(rv_old.size() < rv_new.size()) // feature segment added
+        {
+          boolean found;
+          FeatureSegmentVector segments =
+            ((uk.ac.sanger.artemis.Feature)feature.getUserData()).getSegments();
+          for(int iadd=0; iadd<segments.size(); iadd++)
+          {   
+            FeatureSegment segment = segments.elementAt(iadd);
+            Range range = segment.getRawRange();
+            found = false;
+            for(int j=0; j<rv_old.size(); j++)
+            {
+              if( ((Range)rv_old.get(j)).equals(range) )
+                found = true;     
+            }
+            
+            String transcript = 
+              (String)feature.getQualifierByName("Parent").getValues().get(0);
+            if(!found)
+            {
+              Hashtable id_store = feature.getSegmentRangeStore();
+              String id = (String)(id_store.keys().nextElement());
+              String prefix[] = feature.getPrefix(id, ':');
+              // USE PREFIX TO CREATE NEW ID
+              if(prefix[0] != null)
+              {
+                int auto_num = feature.getAutoNumber(prefix[0], ':');
+                feature.getSegmentRangeStore().put(prefix[0]+":"+auto_num, 
+                                                   range);
+              }
+              else
+              {
+                String key = feature.getKey().toString();
+                feature.getSegmentRangeStore().put(transcript+":"+ key +":1", 
+                                                   range);
+              }
+              
+              String new_id = feature.getSegmentID(rv_new);
+              Qualifier qualifier = new Qualifier("ID", new_id);
+              try
+              {
+                feature.setQualifier(qualifier);
+              }
+              catch(ReadOnlyException e)
+              {
+                e.printStackTrace();
+              }
+              catch(EntryInformationException e)
+              {
+                e.printStackTrace();
+              }
+              
+              String segment_uniquename = feature.getSegmentID(range);
+              insertFeatureSegment(segment,segment_uniquename);       
+            }
           }
         }
       }
@@ -171,7 +233,14 @@ public class ChadoTransactionManager
         for(int i=0; i<changes.size();i++)
         {
           ichanged = ((Integer)changes.elementAt(i)).intValue();
-
+          
+          Qualifier parent_qualifier = feature.getQualifierByName("Parent");
+          
+          String transcript = null;
+          if(parent_qualifier != null)
+            transcript = 
+               (String)parent_qualifier.getValues().get(0);
+          
           Range range_new = (Range)rv_new.elementAt(ichanged);
           Range range_old = (Range)rv_old.elementAt(ichanged);
           String seg_id   = feature.getSegmentID(range_new);
@@ -233,115 +302,7 @@ public class ChadoTransactionManager
      
       System.out.println("FEATURE_ADDED");
       Feature feature = event.getFeature();
-      String feature_uniquename = null;
-
-      try
-      {
-        Qualifier qualifier_uniquename = feature.getQualifierByName("ID");
-
-        if(qualifier_uniquename != null)
-        {
-          feature_uniquename = (String)(qualifier_uniquename.getValues()).elementAt(0);
-          System.out.println("FEATURE_ADDED "+feature_uniquename);
-        }
-        
-        while(feature_uniquename == null ||
-              feature_uniquename.equals("") ||
-              feature_uniquename.equals("to_be_set"))
-        {
-          feature_uniquename = JOptionPane.showInputDialog(null,
-                               "Provide a systematic_id : ",
-                               "systematic_id missing in "+
-                               feature.getIDString(),
-                               JOptionPane.QUESTION_MESSAGE).trim();
-        }
-        feature.setQualifier(new Qualifier("ID", feature_uniquename));
-      }
-      catch(EntryInformationException eie)
-      {
-        eie.printStackTrace();
-      }
-      catch(ReadOnlyException roe)
-      {
-        roe.printStackTrace();
-      }
-
-      ChadoFeature chado_feature = new ChadoFeature();
-      ChadoFeatureLoc featureloc = new ChadoFeatureLoc();
-      chado_feature.setFeatureloc(featureloc);
-      
-      if(feature.isForwardFeature())
-        featureloc.setStrand(1);
-      else
-        featureloc.setStrand(-1);
-
-      Vector parent_features  = null;
-      Vector derives_features = null;
-      
-      // codon_start attribute
-      try
-      {
-        Qualifier qualifier_phase = feature.getQualifierByName("codon_start");
-        if(qualifier_phase != null)
-        {
-          String phase = (String)(qualifier_phase.getValues()).elementAt(0);
-
-          if(phase.equals ("1"))
-            featureloc.setPhase(0);
-          else if(phase.equals("2"))
-            featureloc.setPhase(1);
-          else if(phase.equals("3")) 
-            featureloc.setPhase(2);
-        }
-        
-        // relationship attributes
-        Qualifier qualifier_relation = feature.getQualifierByName("Parent");
-        if(qualifier_relation != null)
-        {
-          StringVector parents = qualifier_relation.getValues();
-          if(parents.size() > 0)
-            parent_features = new Vector();
-          
-          for(int i=0; i<parents.size(); i++)
-            parent_features.add((String)parents.get(i));
-        }
-        
-        qualifier_relation = feature.getQualifierByName("Derives_from");
-        if(qualifier_relation != null)
-        {
-          StringVector derives = qualifier_relation.getValues();
-          if(derives.size() > 0)
-            derives_features = new Vector();
-          
-          for(int i=0; i<derives.size(); i++)
-            derives_features.add((String)derives.get(i));
-        }
-      }
-      catch(InvalidRelationException ire){}
-
-      if(feature.isForwardFeature())
-        featureloc.setStrand(1);
-      else
-        featureloc.setStrand(-1);
-
-      featureloc.setFmin(feature.getRawFirstBase()-1);
-      featureloc.setFmax(feature.getRawLastBase());
-      chado_feature.setUniquename(feature_uniquename);
-      chado_feature.setName(feature_uniquename);
-
-      String key = feature.getKey().toString();
-      
-      ChadoCvterm cvterm = new ChadoCvterm();
-      cvterm.setCvtermId(DatabaseDocument.getCvtermID(key).longValue());
-      chado_feature.setCvterm(cvterm);
-
-      addQualifiers(feature.getQualifiers(), chado_feature);
-      // create transaction object
-      ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT_FEATURE,
-                                                  chado_feature,
-                                                  parent_features, 
-                                                  derives_features);
-      sql.add(tsn);
+      insertFeature(feature);
     }
     else if(event.getType() == EntryChangeEvent.FEATURE_DELETED)
     { 
@@ -360,6 +321,203 @@ public class ChadoTransactionManager
     }
 
 //  System.out.println(event.getEntry().getName());
+  }
+  
+  /**
+   * Create transaction for inserting a feature.
+   * @param feature
+   */
+  private void insertFeature(final Feature feature)
+  {
+    String feature_uniquename = null;
+    try
+    {
+      Qualifier qualifier_uniquename = feature.getQualifierByName("ID");
+
+      if(qualifier_uniquename != null)
+      {
+        feature_uniquename = (String)(qualifier_uniquename.getValues()).elementAt(0);
+        System.out.println("FEATURE_ADDED "+feature_uniquename);
+      }
+      
+      while(feature_uniquename == null ||
+            feature_uniquename.equals("") ||
+            feature_uniquename.equals("to_be_set"))
+      {
+        feature_uniquename = JOptionPane.showInputDialog(null,
+                             "Provide a systematic_id : ",
+                             "systematic_id missing in "+
+                             feature.getIDString(),
+                             JOptionPane.QUESTION_MESSAGE).trim();
+      }
+      feature.setQualifier(new Qualifier("ID", feature_uniquename));
+    }
+    catch(EntryInformationException eie)
+    {
+      eie.printStackTrace();
+    }
+    catch(ReadOnlyException roe)
+    {
+      roe.printStackTrace();
+    }
+
+    ChadoFeature chado_feature = new ChadoFeature();
+    ChadoFeatureLoc featureloc = new ChadoFeatureLoc();
+    chado_feature.setFeatureloc(featureloc);
+    
+    if(feature.isForwardFeature())
+      featureloc.setStrand(1);
+    else
+      featureloc.setStrand(-1);
+
+    Vector parent_features  = null;
+    Vector derives_features = null;
+    
+    // codon_start attribute
+    try
+    {
+      Qualifier qualifier_phase = feature.getQualifierByName("codon_start");
+      if(qualifier_phase != null)
+      {
+        String phase = (String)(qualifier_phase.getValues()).elementAt(0);
+
+        if(phase.equals ("1"))
+          featureloc.setPhase(0);
+        else if(phase.equals("2"))
+          featureloc.setPhase(1);
+        else if(phase.equals("3")) 
+          featureloc.setPhase(2);
+      }
+      
+      // relationship attributes
+      Qualifier qualifier_relation = feature.getQualifierByName("Parent");
+      if(qualifier_relation != null)
+      {
+        StringVector parents = qualifier_relation.getValues();
+        if(parents.size() > 0)
+          parent_features = new Vector();
+        
+        for(int i=0; i<parents.size(); i++)
+          parent_features.add((String)parents.get(i));
+      }
+      
+      qualifier_relation = feature.getQualifierByName("Derives_from");
+      if(qualifier_relation != null)
+      {
+        StringVector derives = qualifier_relation.getValues();
+        if(derives.size() > 0)
+          derives_features = new Vector();
+        
+        for(int i=0; i<derives.size(); i++)
+          derives_features.add((String)derives.get(i));
+      }
+    }
+    catch(InvalidRelationException ire){}
+
+    if(feature.isForwardFeature())
+      featureloc.setStrand(1);
+    else
+      featureloc.setStrand(-1);
+
+    featureloc.setFmin(feature.getRawFirstBase()-1);
+    featureloc.setFmax(feature.getRawLastBase());
+    chado_feature.setUniquename(feature_uniquename);
+    chado_feature.setName(feature_uniquename);
+
+    String key = feature.getKey().toString();
+    
+    ChadoCvterm cvterm = new ChadoCvterm();
+    cvterm.setCvtermId(DatabaseDocument.getCvtermID(key).longValue());
+    chado_feature.setCvterm(cvterm);
+
+    addQualifiers(feature.getQualifiers(), chado_feature);
+    // create transaction object
+    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT_FEATURE,
+                                                chado_feature,
+                                                parent_features, 
+                                                derives_features);
+    sql.add(tsn);  
+  }
+  
+  /**
+   * Create transaction for inserting a feature.
+   * @param feature
+   */
+  private void insertFeatureSegment(final FeatureSegment segment,
+                                    final String segment_uniquename)
+  {
+    ChadoFeature chado_feature = new ChadoFeature();
+    ChadoFeatureLoc featureloc = new ChadoFeatureLoc();
+    chado_feature.setFeatureloc(featureloc);
+    
+    if(segment.isForwardSegment())
+      featureloc.setStrand(1);
+    else
+      featureloc.setStrand(-1);
+
+    Vector parent_features  = null;
+    Vector derives_features = null;
+    
+    // codon_start attribute
+    Feature feature = segment.getFeature();
+    try
+    {
+      Qualifier qualifier_phase = feature.getQualifierByName("codon_start");
+      if(qualifier_phase != null)
+      {
+        String phase = (String)(qualifier_phase.getValues()).elementAt(0);
+
+        if(phase.equals ("1"))
+          featureloc.setPhase(0);
+        else if(phase.equals("2"))
+          featureloc.setPhase(1);
+        else if(phase.equals("3")) 
+          featureloc.setPhase(2);
+      }
+      
+      // relationship attributes
+      Qualifier qualifier_relation = feature.getQualifierByName("Parent");
+      if(qualifier_relation != null)
+      {
+        StringVector parents = qualifier_relation.getValues();
+        if(parents.size() > 0)
+          parent_features = new Vector();
+        
+        for(int i=0; i<parents.size(); i++)
+          parent_features.add((String)parents.get(i));
+      }
+      
+      qualifier_relation = feature.getQualifierByName("Derives_from");
+      if(qualifier_relation != null)
+      {
+        StringVector derives = qualifier_relation.getValues();
+        if(derives.size() > 0)
+          derives_features = new Vector();
+        
+        for(int i=0; i<derives.size(); i++)
+          derives_features.add((String)derives.get(i));
+      }
+    }
+    catch(InvalidRelationException ire){}
+
+    featureloc.setFmin(segment.getRawRange().getStart()-1);
+    featureloc.setFmax(segment.getRawRange().getEnd());
+    chado_feature.setUniquename(segment_uniquename);
+    chado_feature.setName(segment_uniquename);
+
+    String key = feature.getKey().toString();
+    
+    ChadoCvterm cvterm = new ChadoCvterm();
+    cvterm.setCvtermId(DatabaseDocument.getCvtermID(key).longValue());
+    chado_feature.setCvterm(cvterm);
+
+    //addQualifiers(feature.getQualifiers(), chado_feature);
+    // create transaction object
+    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT_FEATURE,
+                                                chado_feature,
+                                                parent_features, 
+                                                derives_features);
+    sql.add(tsn);  
   }
   
   /**
