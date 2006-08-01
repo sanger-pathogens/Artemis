@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.30 2006-07-28 08:34:30 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.31 2006-08-01 15:34:22 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -38,7 +38,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.30 2006-07-28 08:34:30 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.31 2006-08-01 15:34:22 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -354,30 +354,24 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
 
     RangeVector new_range_vector;
     QualifierVector qualifier_vector;
-    Hashtable id_range_store = new Hashtable();
+    Hashtable id_range_store;
     Timestamp lasttimemodified = null;
     
     Hashtable new_exon_set = new Hashtable();
     
     for(int i=0; i<transcripts.size(); i++)
     {
+      id_range_store   = new Hashtable();
       new_range_vector = new RangeVector();
       qualifier_vector = new QualifierVector();
-      Feature transcript = (Feature)transcripts.get(i);
+      GFFStreamFeature transcript = (GFFStreamFeature)transcripts.get(i);
       String transcript_id = null;
-      try
-      {
-        transcript_id = (String)(transcript.getQualifierByName("ID").getValues().get(0));
-      }
-      catch(InvalidRelationException e1)
-      {
-        e1.printStackTrace();
-      }
+      transcript_id = (String)(transcript.getQualifierByName("ID").getValues().get(0));
+      
       Vector v_exons = (Vector)gene.getExonsOfTranscript(transcript_id);
            
       if(v_exons == null)
         continue;
-      
      
       for(int j=0; j<v_exons.size(); j++)
       {
@@ -405,7 +399,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         if(id_qualifier != null)
         {
           String id = (String)(id_qualifier.getValues()).elementAt(0);
-          id_range_store.put(new_range, id);
+          id_range_store.put(id, new_range);
         }
 
 
@@ -433,7 +427,14 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       if(lasttimemodified != null)
         new_feature.setLastModified(lasttimemodified);
       new_feature.setSegmentRangeStore(id_range_store);
+      
+      // set the ID
+      String ID = new_feature.getSegmentID(new_feature.getLocation().getRanges() );
 
+      Qualifier id_qualifier = new_feature.getQualifierByName("ID");
+      id_qualifier.removeValue( (String)(id_qualifier.getValues()).elementAt(0) );
+      id_qualifier.addValue(ID);
+      
       try 
       {
         new_feature.setLocation(new_location);
@@ -475,6 +476,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         throw new Error("internal error - unexpected exception: " + e);
       }
     }
+    
     
     
     // now merge the exons in the ChadoCanonicalGene feature
@@ -640,14 +642,10 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       else if(!qual.getName().equals("ID") &&
               !qual.getName().equals("Alias"))
         merge_qualifier_vector.setQualifier(qual);
-      else
+      else if(qual.getName().equals("Alias"))
       { 
-        final Qualifier id_qualifier; 
-        
-        if(qual.getName().equals("ID"))
-          id_qualifier = merge_qualifier_vector.getQualifierByName("ID");
-        else
-          id_qualifier = merge_qualifier_vector.getQualifierByName("Alias");
+        final Qualifier id_qualifier = 
+          merge_qualifier_vector.getQualifierByName("Alias");
 
         if(id_qualifier == null)
           merge_qualifier_vector.addElement(qual);
