@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.40 2006-07-19 16:07:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.41 2006-08-01 15:33:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.util.*;
 import java.io.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -39,7 +40,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.40 2006-07-19 16:07:31 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.41 2006-08-01 15:33:31 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -62,6 +63,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   private ChadoCanonicalGene chadoGene;
   
   private boolean visible = true;
+  
+  private int feature_relationship_rank;
 
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
@@ -276,18 +279,35 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     this.id_range_store = id_range_store;
   }
 
-
+  public Hashtable getSegmentRangeStore()
+  {
+    return id_range_store;
+  }
+  
+  /**
+   * 
+   */
+  
+  /**
+   * Get the chado uniquename 
+   * @param r
+   * @return
+   */
   public String getSegmentID(Range r)
   {
     if(id_range_store != null)
     {
+      
       Enumeration enum_ranges = id_range_store.keys();
+      //Iterator it = id_range_store.values().iterator();
       while(enum_ranges.hasMoreElements())
+      //while(it.hasNext())
       {
-        Range range = (Range)enum_ranges.nextElement();
+        String key  = (String)enum_ranges.nextElement();
+        Range range = (Range)id_range_store.get(key);
         if(range.getStart() == r.getStart() ||
            range.getEnd()   == r.getEnd())
-        return (String)id_range_store.get(range);
+          return key;
       }
     }
     else if (getQualifierByName("ID") != null)
@@ -298,6 +318,12 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     return null;
   }
 
+  /**
+   * Get the feature ID based on the segments chado 
+   * uniquename's.
+   * @param rv
+   * @return
+   */
   public String getSegmentID(RangeVector rv)
   {
     String id = "";
@@ -305,11 +331,29 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     {
       String id_new;
       Range range;
+      int index;
       for(int i=0; i<rv.size(); i++)
       {
         range  = (Range)rv.get(i);
         id_new = getSegmentID(range);
-        if(id_new != null)
+        
+        String prefix[] = getPrefix(id_new, ':');
+        if(prefix[0] != null)
+        {
+          index = id.indexOf(prefix[0]);
+          if(id.equals("") || index < 0)
+          {
+            if(!id.equals(""))
+              id = id +",";
+            id = id+prefix[0] + "{" + prefix[1] + "}";
+            continue;
+          }
+          
+          index = id.indexOf('}', index);
+          id = id.substring(0,index) + "," + 
+               prefix[1] + id.substring(index);
+        }
+        else if(id_new != null)
         {
           if(!id.equals(""))
             id = id +",";
@@ -317,7 +361,47 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         }
       }
     }
+    
     return id;
+  }
+  
+  /**
+   * Get the ID prefix, e.g. for SPAC1556.06.1:exon:2
+   * returns SPAC1556.06.1:exon as the prefix and 2 as the
+   * index.
+   * @param id
+   * @return
+   */
+  public String[] getPrefix(final String id,
+                            final char separator)
+  {
+    String prefix[] = new String[2];
+    int index = id.lastIndexOf(separator);
+
+    if(index > -1)
+    {
+      prefix[0] = id.substring(0,index);
+      prefix[1] = id.substring(index+1);
+    }
+    return prefix;
+  }
+ 
+  /**
+   * Used to automatically generate
+   * @param prefix
+   * @return
+   */
+  public int getAutoNumber(final String prefix,
+                           final char separator)
+  {
+    int auto   = 1;
+    String val = prefix + separator + auto;
+    while(id_range_store.containsKey(val))
+    {
+      auto++;
+      val = prefix + separator + auto;
+    }
+    return auto;
   }
   
   /**
@@ -719,6 +803,13 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
       final String this_token = decode(att_val_list.substring(ind_start, ind_end).trim());
       ind_start = ind_end+1;
+      
+      if(this_token.startsWith("feature_relationship_rank="))
+      {
+        setFeature_relationship_rank( 
+            Integer.parseInt(this_token.substring(26)) );
+        continue;
+      }
 
       int index_of_first_space = this_token.indexOf(" ");
        
@@ -884,5 +975,15 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   public void setVisible(boolean visible)
   {
     this.visible = visible;
+  }
+  
+  public int getFeature_relationship_rank()
+  {
+    return feature_relationship_rank;
+  }
+
+  public void setFeature_relationship_rank(int feature_relationship_rank)
+  {
+    this.feature_relationship_rank = feature_relationship_rank;
   }
 }
