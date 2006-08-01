@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.8 2006-07-28 08:34:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.9 2006-08-01 15:35:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -231,10 +231,7 @@ public class GeneBuilderFrame extends JFrame
   }
   
   protected void setActiveFeature(final Feature active_feature)
-  {
-    if(this.active_feature != null)
-      stopListening(active_feature);
-    
+  {  
     this.active_feature = active_feature;
     feature_editor.setActiveFeature(active_feature);
   }
@@ -323,8 +320,10 @@ public class GeneBuilderFrame extends JFrame
    **/
   public void featureChanged(FeatureChangeEvent event) 
   {
+    Feature feature = event.getFeature();
+    stopListening(feature);
     active_feature.resetColour();
-   
+    
     // re-read the information from the feature
     switch(event.getType()) 
     {
@@ -335,10 +334,8 @@ public class GeneBuilderFrame extends JFrame
       case FeatureChangeEvent.QUALIFIER_CHANGED:
         break;
       case FeatureChangeEvent.SEGMENT_CHANGED:
-        Feature feature = event.getFeature();    
         QualifierVector old_qualifiers = event.getOldQualifiers();
         QualifierVector new_qualifiers = feature.getQualifiers();
-      
         tree.changeNode( 
             (String)old_qualifiers.getQualifierByName("ID").getValues().get(0),
             (String)new_qualifiers.getQualifierByName("ID").getValues().get(0));
@@ -346,6 +343,7 @@ public class GeneBuilderFrame extends JFrame
         break;
     }
     viewer.repaint();
+    startListening(feature);
   }
   
   

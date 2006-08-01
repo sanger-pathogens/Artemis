@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.6 2006-07-26 13:52:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.7 2006-08-01 15:35:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -72,7 +72,7 @@ public class GeneComponentTree extends JTree
           (DefaultMutableTreeNode)GeneComponentTree.this.getLastSelectedPathComponent();
         if(node == null)
           return;
-       
+
         Feature feature = (Feature)chado_gene.getFeatureFromId((String)node.getUserObject());
         gene_builder.setActiveFeature((uk.ac.sanger.artemis.Feature)feature.getUserData());
       }
@@ -157,6 +157,7 @@ public class GeneComponentTree extends JTree
     {
       change_node.setUserObject(new_id);
       repaint();
+      revalidate();
     }
   }
   
