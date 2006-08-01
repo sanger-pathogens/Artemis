@@ -569,6 +569,7 @@ public class DatabaseDocument extends Document
 
     String parent_id = null;
     String parent_relationship = null;
+    int rank = -1;
     if(feat.getFeature_relationship() != null)
     {
       ChadoFeatureRelationship feat_relationship = feat.getFeature_relationship();
@@ -577,6 +578,7 @@ public class DatabaseDocument extends Document
       
       parent_relationship = feat_relationship.getCvterm().getName();
       
+      rank= feat_relationship.getRank();
       if(parent_relationship == null)
         parent_relationship = getCvtermName(parent_type_id, dao);
     }
@@ -649,7 +651,11 @@ public class DatabaseDocument extends Document
     }
 
     this_buff.append("timelastmodified=" + timelastmodified + ";");
-
+    
+    // this is the chado feature_relationship.rank used
+    // to order features e.g. exons
+    if(rank > -1)
+      this_buff.append("feature_relationship_rank="+rank+";");
 
     // attributes
     Hashtable qualifiers = feat.getQualifiers();
