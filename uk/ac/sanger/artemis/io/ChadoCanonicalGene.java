@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.9 2006-08-01 15:35:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.10 2006-08-02 15:47:27 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -152,16 +152,30 @@ public class ChadoCanonicalGene
     proteins.put(transcript_name, protein);
   }
   
-  public void add3PrimeUtr(String transcript_name, Object protein) 
+  public void add3PrimeUtr(String transcript_name, Object utr) 
          throws InvalidRelationException
-  {   
-    three_prime_utr.put(transcript_name, protein);
+  {  
+    final List utr_list;
+    if(three_prime_utr.containsKey(transcript_name))
+      utr_list = (Vector)three_prime_utr.get(transcript_name);
+    else
+      utr_list = new Vector();
+    
+    utr_list.add(utr);
+    three_prime_utr.put(transcript_name, utr_list);
   }
   
-  public void add5PrimeUtr(String transcript_name, Object protein) 
+  public void add5PrimeUtr(String transcript_name, Object utr) 
          throws InvalidRelationException
   {
-    five_prime_utr.put(transcript_name, protein);
+    final List utr_list;
+    if(five_prime_utr.containsKey(transcript_name))
+      utr_list = (Vector)five_prime_utr.get(transcript_name);
+    else
+      utr_list = new Vector();
+    
+    utr_list.add(utr);
+    five_prime_utr.put(transcript_name, utr_list);
   }
   
   public Object containsTranscript(final StringVector names)
@@ -199,6 +213,22 @@ public class ChadoCanonicalGene
     return null;
   }
 
+  public List get3UTRTranscript(final String transcript_name)
+  {
+    if(three_prime_utr.containsKey(transcript_name))
+      return (List)three_prime_utr.get(transcript_name);
+ 
+    return null;
+  }
+  
+  public List get5UTRTranscript(final String transcript_name)
+  {
+    if(five_prime_utr.containsKey(transcript_name))
+      return (List)five_prime_utr.get(transcript_name);
+ 
+    return null;
+  }
+  
   /**
    * Get a list of trancripts.
    * @return
@@ -227,6 +257,28 @@ public class ChadoCanonicalGene
     return false;
   }
   
+  private boolean isExon(final String name, 
+                         final String transcript_id)
+  {
+    List exons = getExonsOfTranscript(transcript_id);
+    if(exons == null)
+      return false;
+    try
+    {
+      for(int i=0; i<exons.size(); i++)
+      {
+        if(name.equals(getQualifier((Feature)exons.get(i), "ID")))
+          return true;
+      }
+    }
+    catch(InvalidRelationException e)
+    {
+      e.printStackTrace();
+    }
+    
+    return false;
+  }
+  
   /**
    * Method to automatically generate ID's for transcripts
    * @param transcript_key
@@ -246,6 +298,24 @@ public class ChadoCanonicalGene
     catch(InvalidRelationException e)
     {
       // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
+  }
+  
+  public String autoGenerateExonName(final String transcript_id)
+  {
+    try
+    {
+      List exons = getExonsOfTranscript(transcript_id);
+      String name = (String)getGene().getQualifierByName("ID").getValues().get(0);
+      int auto = 1;
+      while( isExon( name + ":exon:" + auto, transcript_id ) && auto < 50)
+        auto++;
+      return name + ":exon:" + auto;
+    }
+    catch(InvalidRelationException e)
+    {
       e.printStackTrace();
     }
     return null;
@@ -364,17 +434,29 @@ public class ChadoCanonicalGene
     return null;
   }
 
-  private Object getUTR(final String id,
-                        final Hashtable UTR) 
+  /**
+   * Search for a feature uniquename 
+   * @param id
+   * @param UTR
+   * @return
+   * @throws InvalidRelationException
+   */
+  private Feature getUTR(final String id,
+                         final Hashtable UTR) 
           throws InvalidRelationException
   {
     Enumeration enum_utr = UTR.elements();
 
     while(enum_utr.hasMoreElements())
     {
-      Feature utr = (Feature)enum_utr.nextElement();
-      if(getQualifier(utr, "ID").equals(id))
-        return utr;
+      List utrs = (List)enum_utr.nextElement();
+      
+      for(int i=0; i<utrs.size(); i++)
+      {
+        Feature utr = (Feature)utrs.get(i);
+        if(getQualifier(utr, "ID").equals(id))
+          return utr;
+      }
     }
 
     return null;
