@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.15 2006-08-01 15:35:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.16 2006-08-02 15:48:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -31,6 +31,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.awt.geom.RoundRectangle2D;
 
 import uk.ac.sanger.artemis.Entry;
@@ -46,6 +47,7 @@ import uk.ac.sanger.artemis.chado.ChadoFeatureLoc;
 import uk.ac.sanger.artemis.chado.ChadoFeatureProp;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Feature;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
@@ -276,12 +278,12 @@ public class GeneViewerPanel extends JPanel
         if(last_cursor_position == null)
           return;
         Feature transcript = getTranscriptAt(last_cursor_position);
-        String uniquename = getFeatureID(transcript);
+        String uniquename  = getFeatureID(transcript);
         
         List exons = chado_gene.getExonsOfTranscript(uniquename);
-        Feature embl_exon = null;
+        GFFStreamFeature embl_exon = null;
         if(exons != null)
-          embl_exon = (Feature)exons.get(0);
+          embl_exon = (GFFStreamFeature)exons.get(0);
         Range range_selected = selection.getSelectionRange();
     
         addExonFeature(embl_exon, range_selected, uniquename);
@@ -721,6 +723,49 @@ public class GeneViewerPanel extends JPanel
         last_ypos   = ypos;
       }
     }
+    
+    // draw utr's
+    List embl_utr = chado_gene.get3UTRTranscript(
+        getFeatureID( embl_transcript ));
+    
+    if(embl_utr != null)
+      drawUTR(g2d, embl_utr, ypos);
+    
+    embl_utr = chado_gene.get5UTRTranscript(
+        getFeatureID( embl_transcript ));
+    
+    if(embl_utr != null)
+      drawUTR(g2d, embl_utr, ypos);
+    
+  }
+  
+  /**
+   * Method to draw UTR features
+   * @param g2d
+   * @param embl_utr
+   * @param ypos
+   */
+  private void drawUTR(final Graphics2D g2d,
+                       final List utrs,
+                       final int ypos)
+  {
+    for(int i=0; i<utrs.size(); i++)
+    {
+      Feature embl_utr = (Feature)utrs.get(i);
+      uk.ac.sanger.artemis.Feature utr = 
+        (uk.ac.sanger.artemis.Feature)embl_utr.getUserData();
+      RangeVector ranges = utr.getLocation().getRanges();
+      for(int j = 0; j < ranges.size(); j++)
+      {
+        Range range = (Range) ranges.get(j);
+
+        int utr_start = border + (int) ((range.getStart() - start) * fraction);
+        int utr_end = border + (int) ((range.getEnd() - start) * fraction);
+
+        drawFeature(g2d, utr_start, utr_end, ypos, utr.getColour(), 2,
+            selection.contains(utr), 2.f);
+      }
+    }
   }
   
   /**
@@ -1011,10 +1056,10 @@ public class GeneViewerPanel extends JPanel
     {
       public void actionPerformed(ActionEvent event)  
       {
-        Feature embl_exon = null;
+        GFFStreamFeature embl_exon = null;
         
         if(exons != null)
-          embl_exon = (Feature)exons.get(0);
+          embl_exon = (GFFStreamFeature)exons.get(0);
         Range range_selected = selection.getSelectionRange();
         
         addExonFeature(embl_exon, range_selected, uniquename);
@@ -1074,7 +1119,7 @@ public class GeneViewerPanel extends JPanel
    * @param range
    * @param transcript_name
    */
-  private void addExonFeature(Feature feature, Range range,
+  private void addExonFeature(GFFStreamFeature feature, Range range,
                               final String transcript_name)
   {
     try
@@ -1084,17 +1129,28 @@ public class GeneViewerPanel extends JPanel
         QualifierVector qualifiers = new QualifierVector();
         qualifiers.add(new Qualifier("Parent", transcript_name));
       
+        String ID = chado_gene.autoGenerateExonName(transcript_name);
+        if(ID != null)
+          qualifiers.add(new Qualifier("ID", ID));
+        
         uk.ac.sanger.artemis.Feature exon = createFeature(
             new Location(range),
             entry_group, new Key("exon"),
             qualifiers);
       
-        chado_gene.addExon(transcript_name, exon.getEmblFeature());
+        GFFStreamFeature gff_exon = (GFFStreamFeature)exon.getEmblFeature();
+        chado_gene.addExon(transcript_name, gff_exon);
+        
+        if(ID != null)
+        {
+          Hashtable id_range_store = new Hashtable();
+          id_range_store.put(ID, range);
+          gff_exon.setSegmentRangeStore(id_range_store);
+        }
       }
       else
       {
         // add new ID
-        
         ((uk.ac.sanger.artemis.Feature)feature.getUserData()).addSegment(range);
       }
     }

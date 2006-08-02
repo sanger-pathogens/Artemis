@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.7 2006-08-01 15:35:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.8 2006-08-02 15:48:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -29,6 +29,8 @@ import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.Feature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.chado.ChadoFeature;
+import uk.ac.sanger.artemis.Selection;
+import uk.ac.sanger.artemis.FeatureVector;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -36,6 +38,7 @@ import javax.swing.event.*;
 import javax.swing.tree.*;
 import java.util.List;
 import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * Tree to display a gene hierarchy.
@@ -44,7 +47,8 @@ public class GeneComponentTree extends JTree
 {
   
   public GeneComponentTree(final ChadoCanonicalGene chado_gene,
-                           final GeneBuilderFrame gene_builder)
+                           final GeneBuilderFrame gene_builder,
+                           final Selection selection)
   {
     final Feature gene = (Feature)chado_gene.getGene();
     final String gene_id;
@@ -75,9 +79,42 @@ public class GeneComponentTree extends JTree
 
         Feature feature = (Feature)chado_gene.getFeatureFromId((String)node.getUserObject());
         gene_builder.setActiveFeature((uk.ac.sanger.artemis.Feature)feature.getUserData());
+        selection.set((uk.ac.sanger.artemis.Feature)feature.getUserData());
       }
     });
     
+    //setSelection(selection);
+  }
+  
+  /**
+   * Select the tree nodes based on the features selected.
+   * @param selection
+   */
+  protected void setSelection(Selection selection)
+  {
+    FeatureVector features = selection.getAllFeatures();
+    TreePath path[] = new TreePath[features.size()]; 
+    for(int i=0; i<features.size(); i++)
+    {
+      uk.ac.sanger.artemis.Feature feature = 
+        (uk.ac.sanger.artemis.Feature)features.elementAt(i);
+
+      try
+      {
+        String id = 
+          (String)feature.getQualifierByName("ID").getValues().get(0);
+        DefaultMutableTreeNode node = getNodeFromName(id);
+        if(node == null)
+          return;
+        
+        path[i] = new TreePath(node.getPath());
+      }
+      catch(InvalidRelationException e)
+      {
+        e.printStackTrace();
+      }
+    }
+    setSelectionPaths(path);
   }
   
   /**
@@ -92,7 +129,7 @@ public class GeneComponentTree extends JTree
           throws InvalidRelationException 
   {
     List transcripts = chado_gene.getTranscripts();
-    List exons;
+    
     Feature transcript;
     Feature exon;
     Object  protein;
@@ -111,24 +148,37 @@ public class GeneComponentTree extends JTree
       transcript_node = new DefaultMutableTreeNode(transcript_id);
       gene_node.add(transcript_node);
       
-      exons = chado_gene.getExonsOfTranscript(transcript_id);
+      // exons
+      List exons = chado_gene.getExonsOfTranscript(transcript_id);
       if(exons == null)
         continue;
 
       for(int j=0; j<exons.size(); j++)
       {
-        if(exons.get(j) instanceof Feature)
-        {
-          exon = (Feature)exons.get(j);
-          exon_id = (String)exon.getQualifierByName("ID").getValues().get(0);
-        }
-        else  // ChadoFeature
-          exon_id = ((ChadoFeature)exons.get(j)).getUniquename();
+        exon = (Feature)exons.get(j);
+        exon_id = (String)exon.getQualifierByName("ID").getValues().get(0);
         
         exon_node = new DefaultMutableTreeNode(exon_id);
         transcript_node.add(exon_node);
       }
       
+      // utr
+      List utrs3 = chado_gene.get3UTRTranscript(transcript_id);
+      List utrs5 = chado_gene.get5UTRTranscript(transcript_id);
+      List utrs  = new Vector();
+      if(utrs3 != null)
+        utrs.addAll(utrs3);
+      if(utrs5 != null)
+        utrs.addAll(utrs5);
+      
+      for(int j=0; j<utrs.size(); j++)
+      {
+        Feature utr = (Feature)utrs.get(j);
+        String utr_id = (String)utr.getQualifierByName("ID").getValues().get(0);
+        transcript_node.add(new DefaultMutableTreeNode(utr_id));
+      }    
+      
+      // protein
       protein = chado_gene.getProteinOfTranscript(transcript_id);
       if(protein == null)
         continue;

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.9 2006-08-01 15:35:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.10 2006-08-02 15:48:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -40,6 +40,8 @@ import java.util.Hashtable;
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryChangeEvent;
 import uk.ac.sanger.artemis.EntryChangeListener;
+import uk.ac.sanger.artemis.SelectionChangeEvent;
+import uk.ac.sanger.artemis.SelectionChangeListener;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
@@ -81,6 +83,16 @@ public class GeneBuilderFrame extends JFrame
     this.active_feature = feature;
     this.selection = selection;
     
+    
+    selection.addSelectionChangeListener(new SelectionChangeListener()
+    {
+      public void selectionChanged(SelectionChangeEvent event)
+      {
+        viewer.repaint();
+        tree.setSelection(GeneBuilderFrame.this.selection);
+      }
+    });
+    
     GFFStreamFeature gff_feature = (GFFStreamFeature)feature.getEmblFeature();
     chado_gene = gff_feature.getChadoGene();
     
@@ -93,7 +105,7 @@ public class GeneBuilderFrame extends JFrame
       e.printStackTrace();
     }
     
-    tree = new GeneComponentTree(chado_gene, this);
+    tree = new GeneComponentTree(chado_gene, this, selection);
     
     JScrollPane jsp_tree = new JScrollPane(tree);
     jsp_tree.setPreferredSize( new Dimension(150, jsp_tree.getPreferredSize().height) );
@@ -127,7 +139,16 @@ public class GeneBuilderFrame extends JFrame
     {
       public void windowClosing(WindowEvent event) 
       {
-        //stopListening();
+        try
+        {
+          stopListeningAll();
+         
+        }
+        catch(InvalidRelationException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
         dispose();
       }
     });
@@ -241,13 +262,15 @@ public class GeneBuilderFrame extends JFrame
    **/
   private void stopListening(final Feature feature) 
   {
-    getEntry().removeEntryChangeListener(this);
+    if(getEntry() != null)
+      getEntry().removeEntryChangeListener(this);
     feature.removeFeatureChangeListener(this);
   }
   
   private void startListening(final Feature feature) 
   {
-    getEntry().addEntryChangeListener(this);
+    if(getEntry() != null)
+      getEntry().addEntryChangeListener(this);
     feature.addFeatureChangeListener(this);
   }
 
@@ -409,4 +432,37 @@ public class GeneBuilderFrame extends JFrame
     }
   }
   
+  private void stopListeningAll() throws InvalidRelationException
+  {
+    uk.ac.sanger.artemis.io.Feature embl_gene = 
+      (uk.ac.sanger.artemis.io.Feature)chado_gene.getGene();
+    Feature gene = (Feature)embl_gene.getUserData();   
+    stopListening(gene);
+    
+    List transcripts = chado_gene.getTranscripts();
+    for(int i=0; i<transcripts.size(); i++)
+    {
+      uk.ac.sanger.artemis.io.Feature transcript =
+         (uk.ac.sanger.artemis.io.Feature)transcripts.get(i);
+      Feature trans = (Feature)transcript.getUserData();
+       
+      stopListening(trans);
+      
+      List exons = chado_gene.getExonsOfTranscript(
+          (String)trans.getQualifierByName("ID").getValues().get(0));
+      
+      if(exons == null)
+        continue;
+      
+      for(int j=0; j<exons.size(); j++)
+      {
+        uk.ac.sanger.artemis.io.Feature embl_exon = 
+           (uk.ac.sanger.artemis.io.Feature)exons.get(j);
+
+        Feature exon = (Feature)embl_exon.getUserData();
+        stopListening(exon);      
+      }
+    }
+  }
+
 }
