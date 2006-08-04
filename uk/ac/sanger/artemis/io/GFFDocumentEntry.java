@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.31 2006-08-01 15:34:22 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.32 2006-08-04 10:59:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -38,7 +38,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.31 2006-08-01 15:34:22 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.32 2006-08-04 10:59:42 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -355,12 +355,15 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     RangeVector new_range_vector;
     QualifierVector qualifier_vector;
     Hashtable id_range_store;
+    Hashtable feature_relationship_rank_store;
     Timestamp lasttimemodified = null;
     
     Hashtable new_exon_set = new Hashtable();
     
     for(int i=0; i<transcripts.size(); i++)
     {
+      feature_relationship_rank_store =
+                         new Hashtable();
       id_range_store   = new Hashtable();
       new_range_vector = new RangeVector();
       qualifier_vector = new QualifierVector();
@@ -378,6 +381,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         final GFFStreamFeature this_feature =
             (GFFStreamFeature)v_exons.get(j);
       
+        int rank = this_feature.getFeature_relationship_rank();
+        
         // use the most current lastmodified datestamp
         if(this_feature.getLastModified() != null &&
            (lasttimemodified == null ||
@@ -400,6 +405,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         {
           String id = (String)(id_qualifier.getValues()).elementAt(0);
           id_range_store.put(id, new_range);
+          feature_relationship_rank_store.put(id, new Integer(rank));
         }
 
 
@@ -427,6 +433,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       if(lasttimemodified != null)
         new_feature.setLastModified(lasttimemodified);
       new_feature.setSegmentRangeStore(id_range_store);
+      new_feature.setFeature_relationship_rank_store(
+          feature_relationship_rank_store);
       
       // set the ID
       String ID = new_feature.getSegmentID(new_feature.getLocation().getRanges() );

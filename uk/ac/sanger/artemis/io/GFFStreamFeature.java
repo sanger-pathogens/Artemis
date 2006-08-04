@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.41 2006-08-01 15:33:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.42 2006-08-04 11:00:30 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -40,7 +40,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.41 2006-08-01 15:33:31 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.42 2006-08-04 11:00:30 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -64,7 +64,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   
   private boolean visible = true;
   
+  /** feature_relationship.rank */
   private int feature_relationship_rank;
+  /** combined rank store for exons */
+  private Hashtable feature_relationship_rank_store;
 
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
@@ -285,9 +288,25 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   }
   
   /**
-   * 
+   * Store for ID's and CHADO feature_relationship.rank
+   * @param feature_relationship_rank_store
    */
+  public void setFeature_relationship_rank_store(
+      Hashtable feature_relationship_rank_store)
+  {
+    this.feature_relationship_rank_store = feature_relationship_rank_store;
+  }
   
+  /**
+   * Store for ID's and CHADO feature_relationship.rank
+   * @return
+   */
+  public Hashtable getFeature_relationship_rank_store()
+  {
+    return feature_relationship_rank_store;
+  }
+  
+ 
   /**
    * Get the chado uniquename 
    * @param r
