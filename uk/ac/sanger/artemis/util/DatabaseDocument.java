@@ -657,6 +657,8 @@ public class DatabaseDocument extends Document
     if(rank > -1)
       this_buff.append("feature_relationship_rank="+rank+";");
 
+    //this_buff.append("feature_id="+feature_id+";");
+    
     // attributes
     Hashtable qualifiers = feat.getQualifiers();
     
@@ -998,6 +1000,8 @@ public class DatabaseDocument extends Document
             dao.deleteFeatureAlias(schema, tsn);
           else if(tsn.getType() == ChadoTransaction.INSERT_ALIAS)
             dao.insertFeatureAlias(schema, tsn);
+          else if(tsn.getType() == ChadoTransaction.UPDATE_FEATURE_RELATIONSHIP)
+            dao.updateFeatureRelationshipsForSubjectId(schema, tsn);
         }
 
         //
@@ -1009,8 +1013,8 @@ public class DatabaseDocument extends Document
         {
           ChadoTransaction tsn = (ChadoTransaction) sql.get(j);
 
-          if(tsn.getType() != ChadoTransaction.INSERT_FEATURE
-              || tsn.getType() != ChadoTransaction.DELETE_FEATURE)
+          if(tsn.getType() != ChadoTransaction.INSERT_FEATURE &&
+             tsn.getType() != ChadoTransaction.DELETE_FEATURE)
           {
             final List uniquename = tsn.getUniquename();
 
@@ -1032,6 +1036,7 @@ public class DatabaseDocument extends Document
 
               GFFStreamFeature gff_feature = (GFFStreamFeature) tsn
                   .getFeatureObject();
+              
               gff_feature.setLastModified(ts);
             }
           }
