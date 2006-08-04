@@ -186,13 +186,12 @@
         WHERE
             <dynamic>
              <isGreaterThan property="featureloc.srcfeature_id" compareValue="0"> 
-               srcfeature_id=$featureloc.srcfeature_id$ AND
+               srcfeature_id=$featureloc.srcfeature_id$ 
              </isGreaterThan>
              <isNotNull property="uniquename">                        
-               uniquename LIKE #uniquename# AND
+               uniquename LIKE #uniquename# 
              </isNotNull>
-           </dynamic>
-           (fl.rank=fr.rank OR fr.rank IS NULL)
+           </dynamic>    
         ORDER BY f.type_id,  uniquename
      </select>
  
@@ -388,4 +387,16 @@
           (SELECT cvterm_id FROM cvterm WHERE name=#feature_relationship.cvterm.name#) )
    </insert>
 
+   <update id="updateFeatureRelationshipsForSubjectId" 
+           parameterClass="ChadoTransaction">
+      UPDATE $schema$.feature_relationship
+      SET
+      <iterate property="properties" conjunction=",">
+         $properties[]$
+      </iterate>
+      WHERE $schema$.feature_relationship.subject_id=
+           ( SELECT feature_id FROM $schema$.feature WHERE uniquename=#chadoFeature.uniquename# )
+      AND   $schema$.feature_relationship.object_id=
+           ( SELECT feature_id FROM $schema$.feature WHERE uniquename=#parent_uniquename# )
+   </update>
 </sqlMap> 
