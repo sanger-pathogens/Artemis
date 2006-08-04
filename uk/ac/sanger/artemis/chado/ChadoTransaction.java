@@ -61,6 +61,9 @@ public class ChadoTransaction
   public static final int INSERT_ALIAS = 9;
   public static final int DELETE_ALIAS = 10;
   
+  // FEATURE RELATIONSHIPS
+  public static final int UPDATE_FEATURE_RELATIONSHIP = 11;
+  
   /** properties store <i>e.g.</i> value=<quote>product=hypothetical protein</quote> */
   private List properties;
   /** constraint store <i>e.g.</i> type_id=21078 */
@@ -89,6 +92,8 @@ public class ChadoTransaction
   private List parents;
   /** derives_from uniquenames */
   private List derives_from;
+  /** uniquename of the parent feature */
+  private String parent_uniquename;
   
   /**
    * Used to construct a <code>ChadoTransaction</code> that can
@@ -179,6 +184,15 @@ public class ChadoTransaction
     this.type   = type;
     this.alias  = alias;
     this.feature_obj = feature_obj;
+  }
+  
+  public ChadoTransaction(final int type,
+                          final ChadoFeature chadoFeature,
+                          final String parent_uniquename)
+  {
+    this.type         = type;
+    this.chadoFeature = chadoFeature;
+    this.parent_uniquename = parent_uniquename;
   }
   
   /**
@@ -421,4 +435,15 @@ public class ChadoTransaction
   {
     this.parents = parents;
   }
+
+  public String getParent_uniquename()
+  {
+    return parent_uniquename;
+  }
+
+  public void setParent_uniquename(String parent_uniquename)
+  {
+    this.parent_uniquename = parent_uniquename;
+  }
+
 }
