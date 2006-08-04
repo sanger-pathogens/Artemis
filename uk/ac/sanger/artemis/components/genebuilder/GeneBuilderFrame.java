@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.10 2006-08-02 15:48:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.11 2006-08-04 11:05:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -92,6 +92,7 @@ public class GeneBuilderFrame extends JFrame
         tree.setSelection(GeneBuilderFrame.this.selection);
       }
     });
+    
     
     GFFStreamFeature gff_feature = (GFFStreamFeature)feature.getEmblFeature();
     chado_gene = gff_feature.getChadoGene();

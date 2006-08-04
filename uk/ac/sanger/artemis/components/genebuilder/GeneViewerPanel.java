@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.17 2006-08-03 08:39:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.18 2006-08-04 11:05:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -160,7 +160,7 @@ public class GeneViewerPanel extends JPanel
   }
 
   protected void createMenus(JComponent menu,
-                            final EntryGroup entry_group)
+                             final EntryGroup entry_group)
   {
     JMenuItem deleteMenu = new JMenuItem("Delete Selected Features");
     deleteMenu.setAccelerator(DELETE_FEATURES_KEY);
@@ -349,10 +349,11 @@ public class GeneViewerPanel extends JPanel
     }
     
     // draw mouse drag selection
-    if(selection.getMarkerRange() != null)
+    if(selection.getMarkerRange() != null &&
+       last_cursor_position != null)
     {
       Range range = selection.getSelectionRange();
-     
+      
       int ntranscript = (last_cursor_position.y - (border*3))/getTranscriptSize();
       if(ntranscript < transcripts.size())
       {
@@ -1323,7 +1324,7 @@ public class GeneViewerPanel extends JPanel
           selection.set((uk.ac.sanger.artemis.Feature)((Feature)feature).getUserData());
         else
           selection.set((FeatureSegment)feature);
-       
+
         repaint();
       }
     }

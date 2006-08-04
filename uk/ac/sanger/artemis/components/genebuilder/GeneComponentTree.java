@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.9 2006-08-03 08:39:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.10 2006-08-04 11:05:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -46,10 +46,19 @@ import java.util.Vector;
 public class GeneComponentTree extends JTree
 {
   
+  private ChadoCanonicalGene chado_gene;
+  private GeneBuilderFrame gene_builder;
+  private Selection selection;
+  private GeneTreeSelectionListener selection_listener;
+  
   public GeneComponentTree(final ChadoCanonicalGene chado_gene,
                            final GeneBuilderFrame gene_builder,
                            final Selection selection)
   {
+    this.chado_gene   = chado_gene;
+    this.gene_builder = gene_builder;
+    this.selection    = selection;
+    
     final Feature gene = (Feature)chado_gene.getGene();
     final String gene_id;
     try
@@ -68,20 +77,8 @@ public class GeneComponentTree extends JTree
     }
     
     //Listen for when a file is selected
-    addTreeSelectionListener(new TreeSelectionListener()
-    {
-      public void valueChanged(TreeSelectionEvent e)
-      {
-        DefaultMutableTreeNode node = 
-          (DefaultMutableTreeNode)GeneComponentTree.this.getLastSelectedPathComponent();
-        if(node == null)
-          return;
-
-        Feature feature = (Feature)chado_gene.getFeatureFromId((String)node.getUserObject());
-        gene_builder.setActiveFeature((uk.ac.sanger.artemis.Feature)feature.getUserData());
-        selection.set((uk.ac.sanger.artemis.Feature)feature.getUserData());
-      }
-    });
+    selection_listener = new GeneTreeSelectionListener();
+    addTreeSelectionListener(selection_listener);
     
   }
   
@@ -91,6 +88,7 @@ public class GeneComponentTree extends JTree
    */
   protected void setSelection(Selection selection)
   {
+    removeTreeSelectionListener(selection_listener);
     FeatureVector features = selection.getAllFeatures();
     TreePath path[] = new TreePath[features.size()]; 
     for(int i=0; i<features.size(); i++)
@@ -114,6 +112,7 @@ public class GeneComponentTree extends JTree
       }
     }
     setSelectionPaths(path);
+    addTreeSelectionListener(selection_listener);
   }
   
   /**
@@ -306,4 +305,20 @@ public class GeneComponentTree extends JTree
     }
     return null;
   }
+  
+  class GeneTreeSelectionListener implements TreeSelectionListener
+  {
+    public void valueChanged(TreeSelectionEvent e)
+    {
+      DefaultMutableTreeNode node = 
+        (DefaultMutableTreeNode)GeneComponentTree.this.getLastSelectedPathComponent();
+      if(node == null)
+        return;
+
+      Feature feature = (Feature)chado_gene.getFeatureFromId((String)node.getUserObject());
+      gene_builder.setActiveFeature((uk.ac.sanger.artemis.Feature)feature.getUserData());
+      selection.set((uk.ac.sanger.artemis.Feature)feature.getUserData());
+    }
+  }
+        
 }
