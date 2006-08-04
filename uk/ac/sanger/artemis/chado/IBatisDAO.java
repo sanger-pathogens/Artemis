@@ -605,6 +605,22 @@ public class IBatisDAO implements ChadoDAO
   }
   
   /**
+   * Update feature_relationship for a feature.
+   * @param schema        schema/organism name or null
+   * @param tsn           the <code>ChadoTransaction</code>
+   * @return    number of rows changed
+   * @throws SQLException
+   */
+  public void updateFeatureRelationshipsForSubjectId(
+      final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    tsn.setSchema(schema);
+    sqlMap.update("updateFeatureRelationshipsForSubjectId", tsn);
+  }
+  
+  /**
    * Write the time a feature was last modified
    * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature

@@ -263,6 +263,17 @@ public interface ChadoDAO
   public int deleteFeatureAlias(final String schema, final ChadoTransaction tsn)
                      throws SQLException;
 
+  
+  /**
+   * Update feature_relationship for a feature.
+   * @param schema        schema/organism name or null
+   * @param tsn           the <code>ChadoTransaction</code>
+   * @return    number of rows changed
+   * @throws SQLException
+   */
+  public void updateFeatureRelationshipsForSubjectId(
+      final String schema, final ChadoTransaction tsn)
+                     throws SQLException;
   /**
    * 
    * Write the time a feature was last modified

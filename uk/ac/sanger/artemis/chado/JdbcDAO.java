@@ -1033,6 +1033,48 @@ public class JdbcDAO
   }
   
   /**
+   * Update feature_relationship for a feature.
+   * @param schema        schema/organism name or null
+   * @param tsn           the <code>ChadoTransaction</code>
+   * @return    number of rows changed
+   * @throws SQLException
+   */
+  public void updateFeatureRelationshipsForSubjectId(
+      final String schema, final ChadoTransaction tsn)
+                     throws SQLException
+  {
+    final ChadoFeature chado_feature = tsn.getChadoFeature();
+    final String parent = tsn.getParent_uniquename();
+    
+      
+    StringBuffer sqlBuff = new StringBuffer();
+    sqlBuff.append("UPDATE "+schema+".feature_relationship ");
+    sqlBuff.append(" SET ");
+
+    List properties = tsn.getProperties();
+    for(int i=0; i<properties.size(); i++)
+    {
+      sqlBuff.append((String)properties.get(i));
+      if(i < properties.size()-1)
+        sqlBuff.append(" , ");
+    }
+
+    sqlBuff.append(" WHERE "+schema+".feature_relationship.subject_id="+
+        "(SELECT feature_id FROM "+schema+".feature WHERE uniquename='"+
+        chado_feature.getUniquename()+"') AND "+
+        schema+".feature_relationship.object_id="+
+        "(SELECT feature_id FROM "+schema+".feature WHERE uniquename='"+
+        parent+"')"); 
+ 
+    String sql = sqlBuff.toString();
+
+    System.out.println(sql);
+    appendToLogFile(sql, sqlLog);
+    Statement st = conn.createStatement();
+    st.executeUpdate(sql);
+  }
+  
+  /**
    * Write the time a feature was last modified
    * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
