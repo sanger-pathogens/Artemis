@@ -47,6 +47,8 @@ import uk.ac.sanger.artemis.EntryChangeListener;
 import uk.ac.sanger.artemis.EntryChangeEvent;
 import java.util.Vector;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Enumeration;
 import javax.swing.JOptionPane;
 
 
@@ -103,9 +105,8 @@ public class ChadoTransactionManager
         RangeVector rv_old = event.getOldLocation().getRanges();
 
         System.out.println("SEGMENT_CHANGED");
-        
-        // segment deleted
-        if(rv_old.size() > rv_new.size())
+         
+        if(rv_old.size() > rv_new.size()) // segment deleted
         {
           // delete segment
           int ideleted;
@@ -148,6 +149,9 @@ public class ChadoTransactionManager
           {
             e.printStackTrace();
           }
+          
+          // update feature_relationship.rank
+          updateFeatureRelationshipRank(feature, rv_new);
         }
         else if(rv_old.size() < rv_new.size()) // feature segment added
         {
@@ -169,9 +173,18 @@ public class ChadoTransactionManager
               (String)feature.getQualifierByName("Parent").getValues().get(0);
             if(!found)
             {
+              // find prefix fo ID
               Hashtable id_store = feature.getSegmentRangeStore();
-              String id = (String)(id_store.keys().nextElement());
-              String prefix[] = feature.getPrefix(id, ':');
+              String prefix[] = null;
+              Enumeration enum_ids = id_store.keys();
+              while(enum_ids.hasMoreElements())
+              {
+                String id = (String)enum_ids.nextElement();
+                prefix = feature.getPrefix(id, ':');
+                if(prefix[0] != null)
+                  break;
+              }
+              
               // USE PREFIX TO CREATE NEW ID
               if(prefix[0] != null)
               {
@@ -185,6 +198,7 @@ public class ChadoTransactionManager
                 feature.getSegmentRangeStore().put(transcript+":"+ key +":1", 
                                                    range);
               }
+       
               
               String new_id = feature.getSegmentID(rv_new);
               Qualifier qualifier = new Qualifier("ID", new_id);
@@ -202,7 +216,9 @@ public class ChadoTransactionManager
               }
               
               String segment_uniquename = feature.getSegmentID(range);
-              insertFeatureSegment(segment,segment_uniquename);       
+              insertFeatureSegment(segment,segment_uniquename);
+//            update feature_relationship.rank
+              updateFeatureRelationshipRank(feature, rv_new);
             }
           }
         }
@@ -234,17 +250,24 @@ public class ChadoTransactionManager
         {
           ichanged = ((Integer)changes.elementAt(i)).intValue();
           
+          /*
           Qualifier parent_qualifier = feature.getQualifierByName("Parent");
           
           String transcript = null;
           if(parent_qualifier != null)
             transcript = 
                (String)parent_qualifier.getValues().get(0);
+          */
           
           Range range_new = (Range)rv_new.elementAt(ichanged);
           Range range_old = (Range)rv_old.elementAt(ichanged);
           String seg_id   = feature.getSegmentID(range_new);
- 
+          
+          if(seg_id == null)
+            seg_id   = feature.getSegmentID(range_old);
+          
+          feature.getSegmentRangeStore().put(seg_id, range_new);
+          
           tsn = new ChadoTransaction(ChadoTransaction.UPDATE, 
                                      seg_id, "featureloc", 
                                      feature.getLastModified(),
@@ -321,6 +344,39 @@ public class ChadoTransactionManager
     }
 
 //  System.out.println(event.getEntry().getName());
+  }
+  
+  /**
+   * Update spliced features rank
+   * @param feature
+   * @param rv_new
+   */
+  private void updateFeatureRelationshipRank(final GFFStreamFeature feature,
+                                             final RangeVector rv_new)
+  {
+    // update feature_relationship.rank
+    ChadoTransaction tsn;
+    Hashtable feature_relationship_rank_store = new Hashtable();
+    String parent =
+      (String)feature.getQualifierByName("Parent").getValues().get(0);
+    
+    for(int i=0; i<rv_new.size(); i++)
+    {
+      Range range   = (Range)rv_new.elementAt(i);
+      String seq_id = feature.getSegmentID(range);
+      
+      ChadoFeature chado_feature = new ChadoFeature();
+      chado_feature.setUniquename(seq_id);
+      
+      tsn = new ChadoTransaction(
+              ChadoTransaction.UPDATE_FEATURE_RELATIONSHIP,
+              chado_feature,
+              parent);
+      tsn.addProperty("rank", "'"+ i +"'");
+      sql.add(tsn);
+      feature_relationship_rank_store.put(seq_id, new Integer(i));
+    }
+    feature.setFeature_relationship_rank_store(feature_relationship_rank_store);  
   }
   
   /**
