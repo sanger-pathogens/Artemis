@@ -197,7 +197,7 @@ public class GeneEdit
                                                 schema, true);
     try
     {
-      db_entry = new DatabaseDocumentEntry(doc);
+      db_entry = new DatabaseDocumentEntry(doc, null);
     }
     catch(EntryInformationException e)
     {
