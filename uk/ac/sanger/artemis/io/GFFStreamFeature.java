@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.42 2006-08-04 11:00:30 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.43 2006-08-07 14:57:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -40,7 +40,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.42 2006-08-04 11:00:30 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.43 2006-08-07 14:57:10 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -86,6 +86,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       setKey(key);
       setLocation(location);
       setQualifiers(qualifiers);
+      
+      /*
       if(getQualifierByName("score") == null)
         setQualifier(new Qualifier("score", "."));
       
@@ -94,7 +96,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       
       if(getQualifierByName("gff_seqname") == null)
         setQualifier(new Qualifier("gff_seqname", "."));
-
+      */
       if(getQualifierByName("ID") == null)
         setQualifier(new Qualifier("ID", "to_be_set"));
       
@@ -207,11 +209,14 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         }
       }
 
-      final Qualifier gff_seqname =
-        new Qualifier("gff_seqname", decode((String)line_bits.elementAt(0)));
+      if( !((String)line_bits.elementAt(0)).equals("null") )
+      {
+        final Qualifier gff_seqname =
+          new Qualifier("gff_seqname", decode((String)line_bits.elementAt(0)));
 
-      setQualifier(gff_seqname);
-
+        setQualifier(gff_seqname);
+      }
+      
       final Key key = new Key((String)line_bits.elementAt(2));
       setKey(key);
 
@@ -219,10 +224,13 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         new Qualifier("gff_source", (String)line_bits.elementAt(1));
       setQualifier(source_qualifier);
 
-      final Qualifier score_qualifier =
-        new Qualifier("score", (String)line_bits.elementAt(5));
-      setQualifier(score_qualifier);
-
+      if( !((String)line_bits.elementAt(5)).equals(".") )
+      {
+        final Qualifier score_qualifier =
+          new Qualifier("score", (String)line_bits.elementAt(5));
+        setQualifier(score_qualifier);
+      }
+      
       String frame = (String)line_bits.elementAt(7);
 
       if(frame.equals ("0"))

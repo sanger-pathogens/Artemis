@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.18 2006-08-04 11:05:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.19 2006-08-07 14:57:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -658,69 +658,69 @@ public class GeneViewerPanel extends JPanel
     List exons = chado_gene.getExonsOfTranscript(
         getFeatureID( embl_transcript ));
 
-    if(exons == null)
-      return; 
-
     ypos += border*2;
     
-    boolean last_segment = false;
-    
-    // build from artemis objects
-    for(int i=0; i<exons.size(); i++)
+    if(exons != null)
     {
-      int last_ex_start = 0;
-      int last_ex_end   = 0;
-      int last_ypos     = 0;
-
-      Feature embl_exon = (Feature)exons.get(i);
-
-      uk.ac.sanger.artemis.Feature exon = 
-        (uk.ac.sanger.artemis.Feature)embl_exon.getUserData();
-
-      RangeVector ranges = exon.getLocation().getRanges();
-      FeatureSegmentVector segments = null;
-      
-      try
+      boolean last_segment = false;
+    
+      // build from artemis objects
+      for(int i=0; i<exons.size(); i++)
       {
-        segments = exon.getSegments();
-      }
-      catch(NullPointerException npe){}
-      
-      float selected_size;
-      for(int j=0; j<ranges.size(); j++)
-      {
-        Range range = (Range)ranges.get(j);
+        int last_ex_start = 0;
+        int last_ex_end = 0;
+        int last_ypos = 0;
 
-        int ex_start = border+(int)((range.getStart()-start)*fraction);
-        int ex_end   = border+(int)((range.getEnd()-start)*fraction);
+        Feature embl_exon = (Feature) exons.get(i);
 
-        if(exon.getColour() != null)
-          g2d.setColor( exon.getColour() );
+        uk.ac.sanger.artemis.Feature exon = 
+          (uk.ac.sanger.artemis.Feature)embl_exon.getUserData();
 
-        if(j == ranges.size()-1)
-          last_segment = true;
-        
-        selected_size = 2.f;
-        if(segments != null)
+        RangeVector ranges = exon.getLocation().getRanges();
+        FeatureSegmentVector segments = null;
+
+        try
         {
-          for(int k=0; k<segments.size(); k++)
-          {
-            FeatureSegment segment = segments.elementAt(k);
-            if(range.equals(segment.getRawRange()) &&
-               selection.contains(segment))
-              selected_size = 4.f;
-          }
+          segments = exon.getSegments();
         }
-        
-        drawExons(g2d, ex_start, ex_end, 
-            last_ex_start, last_ex_end, last_ypos,
-            0, ypos, exon.getColour(),
-            2, exon.isForwardFeature(),
-            last_segment, selection.contains(exon), selected_size);
+        catch(NullPointerException npe)
+        {
+        }
 
-        last_ex_end   = ex_end;
-        last_ex_start = ex_start;
-        last_ypos   = ypos;
+        float selected_size;
+        for(int j = 0; j < ranges.size(); j++)
+        {
+          Range range = (Range) ranges.get(j);
+
+          int ex_start = border + (int)((range.getStart() - start) * fraction);
+          int ex_end   = border + (int)((range.getEnd() - start) * fraction);
+
+          if(exon.getColour() != null)
+            g2d.setColor(exon.getColour());
+
+          if(j == ranges.size() - 1)
+            last_segment = true;
+
+          selected_size = 2.f;
+          if(segments != null)
+          {
+            for(int k = 0; k < segments.size(); k++)
+            {
+              FeatureSegment segment = segments.elementAt(k);
+              if(range.equals(segment.getRawRange())
+                  && selection.contains(segment))
+                selected_size = 4.f;
+            }
+          }
+
+          drawExons(g2d, ex_start, ex_end, last_ex_start, last_ex_end,
+              last_ypos, 0, ypos, exon.getColour(), 2, exon.isForwardFeature(),
+              last_segment, selection.contains(exon), selected_size);
+
+          last_ex_end = ex_end;
+          last_ex_start = ex_start;
+          last_ypos = ypos;
+        }
       }
     }
     
@@ -1255,8 +1255,6 @@ public class GeneViewerPanel extends JPanel
    */
   class PopupListener extends MouseAdapter
   {
-    private JMenuItem exonMenu = new JMenuItem();
-    private ActionListener exonListener;
     public void mousePressed(MouseEvent e)
     {
       maybeShowPopup(e);
@@ -1271,38 +1269,9 @@ public class GeneViewerPanel extends JPanel
     {
       if(e.isPopupTrigger())
       {
-        exonMenu.removeActionListener(exonListener);
         final Feature embl_transcript = getTranscriptAt(e.getPoint());
         if(embl_transcript == null)
           return;
-        
-        try
-        {
-          final String uniquename = 
-            (String)(embl_transcript.getQualifierByName("ID").getValues().get(0));
-            
-          exonMenu.setText("Show exon list for "+uniquename);       
-          exonListener = new ActionListener()
-          {
-            public void actionPerformed(ActionEvent event)  
-            {
-              try
-              {
-                showExonsList(uniquename);
-              }
-              catch(InvalidRelationException e)
-              {
-                e.printStackTrace();
-              }
-            }
-          };
-          exonMenu.addActionListener(exonListener);
-          popup.add(exonMenu);
-        }
-        catch(InvalidRelationException e1)
-        {
-          e1.printStackTrace();
-        }
         
         popup.show(e.getComponent(),
                 e.getX(), e.getY());

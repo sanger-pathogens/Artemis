@@ -109,6 +109,7 @@ public class DatabaseDocument extends Document
     }
   }
 
+  
   /**
    * 
    * Create a new Document from a database.
@@ -244,14 +245,13 @@ public class DatabaseDocument extends Document
     this.name = name;
   }
 
-  /**
-   * Return a Document with the last element stripped off.
-   */
-  public Document getParent()
-  {
-    return null;
-  }
 
+  public DatabaseDocument createDatabaseDocument()
+  {
+    return new DatabaseDocument( (String)getLocation(), pfield,
+                                 feature_id, schema );
+  }
+  
   /**
    * Return true if and only if the Document refered to by this object exists
    * and is readable. Always returns true.
@@ -310,7 +310,7 @@ public class DatabaseDocument extends Document
         if(gff_buffer[0].size() > 0)
           entry.append(gff_buffer[0]);
 
-        getSequence(dao, entry);
+        getChadoSequence(dao, entry);
       }
       else
       {
@@ -320,7 +320,7 @@ public class DatabaseDocument extends Document
             entry.append(gff_buffer[i]);
         }
 
-        getSequence(dao, entry);
+        getChadoSequence(dao, entry);
       }
 
       instream = new ByteArrayInputStream(entry.getBytes());
@@ -784,7 +784,7 @@ public class DatabaseDocument extends Document
    * @return      the resulting buffer
    * @throws java.sql.SQLException
    */
-  private ByteBuffer getSequence(ChadoDAO dao, ByteBuffer buff)
+  private ByteBuffer getChadoSequence(ChadoDAO dao, ByteBuffer buff)
                      throws java.sql.SQLException
   {
     ChadoFeature feature = dao.getSequence(Integer.parseInt(feature_id),
@@ -1172,5 +1172,10 @@ public class DatabaseDocument extends Document
     {
       e.printStackTrace();
     }
+  }
+
+  public Document getParent()
+  {
+    return null;
   }
 }

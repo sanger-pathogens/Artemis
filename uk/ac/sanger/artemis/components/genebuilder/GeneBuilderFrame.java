@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.11 2006-08-04 11:05:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.12 2006-08-07 14:57:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -44,6 +44,7 @@ import uk.ac.sanger.artemis.SelectionChangeEvent;
 import uk.ac.sanger.artemis.SelectionChangeListener;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.GotoEventSource;
@@ -301,16 +302,20 @@ public class GeneBuilderFrame extends JFrame
         }
         break;
       case EntryChangeEvent.FEATURE_ADDED:
+        Qualifier parent_qualifier = 
+          qualifiers.getQualifierByName("Parent");
+        
+        if(parent_qualifier == null)
+          return;
         tree.addNode(event.getFeature());
         feature.addFeatureChangeListener(this);
         
-        String parent = 
-          (String)qualifiers.getQualifierByName("Parent").getValues().get(0);
-        
+        String parent = (String)parent_qualifier.getValues().get(0);
         String gene_name = null;
         try
         {
-          gene_name = (String)chado_gene.getGene().getQualifierByName("ID").getValues().get(0);
+          gene_name = 
+            (String)chado_gene.getGene().getQualifierByName("ID").getValues().get(0);
         }
         catch(InvalidRelationException e)
         {

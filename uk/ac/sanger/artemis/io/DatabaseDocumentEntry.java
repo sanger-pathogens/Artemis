@@ -38,12 +38,18 @@ public class DatabaseDocumentEntry extends GFFDocumentEntry
     implements DocumentEntry 
 {
 
-  public DatabaseDocumentEntry(final Document doc)
+  public DatabaseDocumentEntry(final Document doc, 
+                               final ReadListener listener)
          throws EntryInformationException, IOException
   {
-    super(doc,null);
+    super(doc,listener);
   }
 
+  public DatabaseDocumentEntry()
+  {
+    super(new GFFEntryInformation());
+  }
+  
   /**
    *  Returns true if and only if this entry is read only.  For now this
    *  always returns true - BlastDocumentEntry objects can't be changed.

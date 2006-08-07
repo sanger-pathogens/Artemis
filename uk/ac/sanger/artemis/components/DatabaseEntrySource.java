@@ -384,7 +384,7 @@ public class DatabaseEntrySource implements EntrySource
       {
         DatabaseDocument doc = new DatabaseDocument(location, pfield, id,
                                                     schema, splitGFFEntry, progress_listener);
-        db_entry = new DatabaseDocumentEntry(doc);
+        db_entry = new DatabaseDocumentEntry(doc, null);
       }
 
       final Bases real_bases;
@@ -437,7 +437,7 @@ public class DatabaseEntrySource implements EntrySource
       db_entry = new DatabaseDocumentEntry[new_docs.length];
 
       for(int i = 0; i < new_docs.length; i++)
-        db_entry[i] = new DatabaseDocumentEntry(new_docs[i]);
+        db_entry[i] = new DatabaseDocumentEntry(new_docs[i], null);
     }
     catch (EntryInformationException e)
     {

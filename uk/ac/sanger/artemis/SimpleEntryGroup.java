@@ -20,18 +20,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleEntryGroup.java,v 1.4 2006-03-21 16:05:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleEntryGroup.java,v 1.5 2006-08-07 14:57:10 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
 
 import uk.ac.sanger.artemis.sequence.*;
+import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.StreamSequence;
 import uk.ac.sanger.artemis.io.SimpleDocumentEntry;
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
+
+import java.io.IOException;
 import java.util.Vector;
 import java.util.NoSuchElementException;
 
@@ -41,7 +47,7 @@ import java.util.NoSuchElementException;
  *  once.  Objects of this class act a bit like single Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: SimpleEntryGroup.java,v 1.4 2006-03-21 16:05:48 tjc Exp $
+ *  @version $Id: SimpleEntryGroup.java,v 1.5 2006-08-07 14:57:10 tjc Exp $
  **/
 
 public class SimpleEntryGroup extends EntryVector
@@ -693,7 +699,32 @@ public class SimpleEntryGroup extends EntryVector
    **/
   public Entry createEntry() 
   {
-    final Entry new_entry = Entry.newEntry(getBases());
+    Entry new_entry = null;
+    uk.ac.sanger.artemis.io.Entry default_entry = 
+      getDefaultEntry().getEMBLEntry();
+    if(default_entry != null &&
+       default_entry instanceof DatabaseDocumentEntry)
+    {
+      DatabaseDocument doc =
+        (DatabaseDocument)((DocumentEntry)getDefaultEntry().getEMBLEntry()).getDocument();
+      DatabaseDocument new_doc = doc.createDatabaseDocument();
+      
+      try
+      {
+        DatabaseDocumentEntry new_doc_entry = 
+          new DatabaseDocumentEntry();
+        new_doc_entry.setDocument(new_doc);
+        new_entry = new Entry(getBases(), new_doc_entry);
+      }
+      catch(Exception e)
+      {
+        e.printStackTrace();
+      }
+      
+    }
+    else
+      new_entry = Entry.newEntry(getBases());
+    
     add(new_entry);
     return new_entry;
   }
