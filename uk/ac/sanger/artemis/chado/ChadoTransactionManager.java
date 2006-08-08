@@ -38,6 +38,7 @@ import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
@@ -287,11 +288,21 @@ public class ChadoTransactionManager
       }
       else if(event.getType() == FeatureChangeEvent.ALL_CHANGED)
       {
-        System.out.println("ALL_CHANGED");
+        System.out.println("ALL_CHANGED "+event.getOldKey().toString()+"  "+
+                                          event.getNewKey().toString());
         
         editKeyAndQualifiers(event.getOldQualifiers(),event.getNewQualifiers(),
                              event.getOldKey(), event.getNewKey(),
                              feature);
+        
+        if(event.getOldKey().compareTo( event.getNewKey() ) != 0 &&
+           event.getNewKey().toString().equals("gene") &&
+           feature.getChadoGene() == null)
+        {
+          ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();
+          chado_gene.setGene(feature);
+          feature.setChadoGene(chado_gene);
+        }
       }
     }
   }
@@ -335,7 +346,21 @@ public class ChadoTransactionManager
         String feature_uniquename = 
                              (String)(qualifier_uniquename.getValues()).elementAt(0);
         System.out.println("FEATURE_DELETED "+feature_uniquename);
-        deleteFeature(feature_uniquename);
+        
+        if(event.getFeature().getSegments().size() > 1)
+        {
+          GFFStreamFeature gff_feature =
+            (GFFStreamFeature)event.getFeature().getEmblFeature();
+          RangeVector ranges = gff_feature.getLocation().getRanges();
+          for(int i=0; i<ranges.size(); i++)
+          {
+            Range range = (Range)ranges.get(i);
+            feature_uniquename = gff_feature.getSegmentID(range);
+            deleteFeature(feature_uniquename);
+          }    
+        }
+        else
+          deleteFeature(feature_uniquename);
       }
       catch(InvalidRelationException e)
       {
@@ -350,7 +375,7 @@ public class ChadoTransactionManager
    * Update spliced features rank
    * @param feature
    * @param rv_new
-   */
+   */ 
   private void updateFeatureRelationshipRank(final GFFStreamFeature feature,
                                              final RangeVector rv_new)
   {
