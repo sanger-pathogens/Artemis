@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.11 2006-08-08 10:19:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.12 2006-08-08 10:53:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -153,6 +153,19 @@ public class ChadoCanonicalGene
     try
     {
       String name = getQualifier(embl_feature, "ID");
+      
+      String gene_name = getQualifier(getGene(), "ID");
+      if(name.equals(gene_name))
+      {
+        List transcripts = getTranscripts();
+        for(int i=0; i<transcripts.size(); i++)
+        {
+          Feature transcript = (Feature)transcripts.get(i);
+          children.add(transcript);
+          children.addAll( getChildren(transcript) );
+        }
+        return children;
+      }
       
       searchForChildren(exons, name, children);
       searchForChildren(three_prime_utr, name, children);
