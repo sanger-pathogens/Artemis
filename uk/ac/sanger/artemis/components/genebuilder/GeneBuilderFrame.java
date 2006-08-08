@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.12 2006-08-07 14:57:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.13 2006-08-08 10:20:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -84,15 +84,15 @@ public class GeneBuilderFrame extends JFrame
     this.active_feature = feature;
     this.selection = selection;
     
-    
-    selection.addSelectionChangeListener(new SelectionChangeListener()
-    {
-      public void selectionChanged(SelectionChangeEvent event)
+    if(selection != null)
+      selection.addSelectionChangeListener(new SelectionChangeListener()
       {
-        viewer.repaint();
-        tree.setSelection(GeneBuilderFrame.this.selection);
-      }
-    });
+        public void selectionChanged(SelectionChangeEvent event)
+        {
+          viewer.repaint();
+          tree.setSelection(GeneBuilderFrame.this.selection);
+        }
+      });
     
     
     GFFStreamFeature gff_feature = (GFFStreamFeature)feature.getEmblFeature();

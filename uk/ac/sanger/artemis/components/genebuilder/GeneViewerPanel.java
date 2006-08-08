@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.19 2006-08-07 14:57:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.20 2006-08-08 10:20:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -32,6 +32,7 @@ import java.awt.event.*;
 import java.util.List;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.Vector;
 import java.awt.geom.RoundRectangle2D;
 
 import uk.ac.sanger.artemis.Entry;
@@ -182,8 +183,17 @@ public class GeneViewerPanel extends JPanel
           for(int i = 0; i < features.size(); i++)
           {
             uk.ac.sanger.artemis.Feature feature = features.elementAt(i);
+            Vector children = chado_gene.getChildren(feature.getEmblFeature());
             deleteFeature(feature);
-            chado_gene.deleteFeature(feature.getEmblFeature());
+            chado_gene.deleteFeature(feature.getEmblFeature());    
+            
+            Feature embl_feature;
+            for(int j=0; j<children.size(); j++)
+            {  
+              embl_feature = (Feature)children.get(j);
+              deleteFeature((uk.ac.sanger.artemis.Feature)embl_feature.getUserData());
+              chado_gene.deleteFeature(embl_feature);
+            }       
           }
           repaint();
         }
@@ -191,6 +201,7 @@ public class GeneViewerPanel extends JPanel
         {
           e.printStackTrace();
         }
+        
       }
     });
     menu.add(deleteMenu);
@@ -215,7 +226,7 @@ public class GeneViewerPanel extends JPanel
           for(int i = 0; i < features.size(); i++)
           {
             uk.ac.sanger.artemis.FeatureSegment segment = 
-              features.elementAt(i);  
+              features.elementAt(i);
             segment.removeFromFeature();
           }
           repaint();
@@ -453,27 +464,57 @@ public class GeneViewerPanel extends JPanel
               p.y <= (border*3)+(getTranscriptSize()*(i+1)))
       {
         Feature feature = (Feature)transcripts.get(i);
-
-        List exons = chado_gene.getExonsOfTranscript( getFeatureID(feature) );
+        String transcript_name = getFeatureID(feature);
+        List exons = chado_gene.getExonsOfTranscript( transcript_name );
         
-        if(exons == null)
-          return null;
-        
-        FeatureSegmentVector segments = 
-          ((uk.ac.sanger.artemis.Feature)((Feature)exons.get(0)).getUserData()).getSegments();
-
-        if(segments.size() == 0)
-          return (Feature)exons.get(0);
-        
-        for(int j=0; j<segments.size(); j++)
+        if(exons != null)
         {
-          FeatureSegment segment    = segments.elementAt(j);
-          Range segment_range = segment.getRawRange();
+          FeatureSegmentVector segments = ((uk.ac.sanger.artemis.Feature) 
+              ((Feature) exons.get(0)).getUserData()).getSegments();
+
+          if(segments.size() == 0)
+            return (Feature) exons.get(0);
+
+          for(int j = 0; j < segments.size(); j++)
+          {
+            FeatureSegment segment = segments.elementAt(j);
+            Range segment_range = segment.getRawRange();
+
+            int segment_start = border
+                + (int) ((segment_range.getStart() - start) * fraction);
+            int segment_end = border
+                + (int) ((segment_range.getEnd() - start) * fraction);
+            if(p.x >= segment_start && p.x <= segment_end)
+              return segment;
+          }
+        }
         
-          int segment_start = border+(int)((segment_range.getStart()-start)*fraction);
-          int segment_end   = border+(int)((segment_range.getEnd()-start)*fraction);
-          if(p.x >= segment_start && p.x <= segment_end)
-            return segment;
+        List utr_3 = chado_gene.get3UTRTranscript(transcript_name);
+        List utr_5 = chado_gene.get5UTRTranscript(transcript_name);
+        List utrs = null;
+        if(utr_3 != null)
+          utrs = utr_3;
+        if(utr_5 != null)
+        {
+          if(utrs == null)
+            utrs = utr_5;
+          else
+            utrs.addAll(utr_5);
+        }
+        
+        if(utrs != null)
+        {
+          for(int j=0; j<utrs.size(); j++)
+          {
+            Feature utr = (Feature)utrs.get(j);
+            Range range = utr.getLocation().getTotalRange();
+            int utr_start = border
+                + (int) ((range.getStart() - start) * fraction);
+            int utr_end = border
+                + (int) ((range.getEnd() - start) * fraction);
+            if(p.x >= utr_start && p.x <= utr_end)
+              return utr;
+          }
         }
       }
     }
