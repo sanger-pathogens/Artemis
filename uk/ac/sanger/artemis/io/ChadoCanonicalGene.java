@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.12 2006-08-08 10:53:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.13 2006-08-08 13:29:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -403,12 +403,21 @@ public class ChadoCanonicalGene
   {
     try
     {
-      List exons = getExonsOfTranscript(transcript_id);
+      //List exons = getExonsOfTranscript(transcript_id);
+      int transcript_number = 1;
+      for(transcript_number=1; transcript_number<=transcripts.size(); 
+          transcript_number++)
+      {
+        Feature transcript = (Feature)transcripts.get(transcript_number-1);
+        if(transcript_id.equals( getQualifier(transcript, "ID") ))
+          break;
+      }
+      
       String name = (String)getGene().getQualifierByName("ID").getValues().get(0);
       int auto = 1;
-      while( isExon( name + ":exon:" + auto, transcript_id ) && auto < 50)
+      while( isExon( name + ":" + transcript_number + ":exon:" + auto, transcript_id ) && auto < 50)
         auto++;
-      return name + ":exon:" + auto;
+      return name + ":" + transcript_number + ":exon:" + auto;
     }
     catch(InvalidRelationException e)
     {
