@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.20 2006-08-08 10:20:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.21 2006-08-08 13:31:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -1310,10 +1310,6 @@ public class GeneViewerPanel extends JPanel
     {
       if(e.isPopupTrigger())
       {
-        final Feature embl_transcript = getTranscriptAt(e.getPoint());
-        if(embl_transcript == null)
-          return;
-        
         popup.show(e.getComponent(),
                 e.getX(), e.getY());
       }
