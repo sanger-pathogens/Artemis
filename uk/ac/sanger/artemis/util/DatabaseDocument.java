@@ -440,8 +440,9 @@ public class DatabaseDocument extends Document
                  id_store, dao, 
                  feat.getFeatureloc(), this_buff);
 
-      progress_listener.progressMade("Read from database: " + 
-                                     feat.getUniquename());
+      if( i%10 == 0 || i == feature_size-1)
+        progress_listener.progressMade("Read from database: " + 
+                                       feat.getUniquename());
     }
 
     return buffers;

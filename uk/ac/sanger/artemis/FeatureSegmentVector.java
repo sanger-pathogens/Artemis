@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FeatureSegmentVector.java,v 1.1 2004-06-09 09:44:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FeatureSegmentVector.java,v 1.2 2006-08-09 16:35:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -31,7 +31,7 @@ import uk.ac.sanger.artemis.util.FastVector;
  *  This class implements a Vector of FeatureSegment objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureSegmentVector.java,v 1.1 2004-06-09 09:44:48 tjc Exp $
+ *  @version $Id: FeatureSegmentVector.java,v 1.2 2006-08-09 16:35:31 tjc Exp $
  *
  **/
 
@@ -61,7 +61,7 @@ public class FeatureSegmentVector {
    *  Performs the same function as Vector.insertElementAt ()
    **/
   public void insertElementAt (FeatureSegment segment, int index) {
-    vector.insertElementAt (segment, index);
+    vector.add (index, segment);
   }
 
   /**
@@ -75,14 +75,14 @@ public class FeatureSegmentVector {
    *  Performs the same function as Vector.elementAt ()
    **/
   public FeatureSegment elementAt (int index) {
-    return (FeatureSegment) vector.elementAt (index);
+    return (FeatureSegment) vector.get(index);
   }
 
   /**
    *  Performs the same function as Vector.lastElement ()
    **/
   public FeatureSegment lastElement () {
-    return (FeatureSegment) vector.lastElement ();
+    return (FeatureSegment) vector.lastElement();
   }
 
   /**
@@ -114,14 +114,14 @@ public class FeatureSegmentVector {
    *  Performs the same function as Vector.removeAllElement ()
    **/
   public void removeAllElements () {
-    vector.removeAllElements ();
+    vector.clear ();
   }
 
   /**
    *  Performs the same function as Vector.removeElementAt ()
    **/
   public void removeElementAt (int index) {
-    vector.removeElementAt (index);
+    vector.remove (index);
   }
 
   /**
@@ -135,7 +135,7 @@ public class FeatureSegmentVector {
    *  Add a feature to the end of the Vector.
    **/
   public void addElementAtEnd (FeatureSegment segment) {
-    vector.insertElementAt (segment, size ());
+    vector.add (size(), segment);
   }
 
   /**

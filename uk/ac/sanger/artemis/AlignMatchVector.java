@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/AlignMatchVector.java,v 1.1 2004-06-09 09:44:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/AlignMatchVector.java,v 1.2 2006-08-09 16:35:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -34,7 +34,7 @@ import java.util.Collections;
  *  This class is a Vector of AlignMatch objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: AlignMatchVector.java,v 1.1 2004-06-09 09:44:07 tjc Exp $
+ *  @version $Id: AlignMatchVector.java,v 1.2 2006-08-09 16:35:31 tjc Exp $
  **/
 
 public class AlignMatchVector {
@@ -65,7 +65,7 @@ public class AlignMatchVector {
    *  Performs the same function as Vector.elementAt ()
    **/
   public AlignMatch elementAt (int index) {
-    return (AlignMatch) vector.elementAt (index);
+    return (AlignMatch) vector.get(index);
   }
 
   /**
@@ -90,7 +90,7 @@ public class AlignMatchVector {
    *  Performs the same function as Vector.removeAllElements ()
    **/
   public void removeAllElements () {
-    vector.removeAllElements ();
+    vector.clear ();
   }
 
   /**

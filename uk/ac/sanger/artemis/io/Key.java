@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Key.java,v 1.1 2004-06-09 09:49:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Key.java,v 1.2 2006-08-09 16:35:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -32,7 +32,7 @@ import uk.ac.sanger.artemis.util.*;
  *  with a limited number of possible values.
  *
  *  @author Kim Rutherford
- *  @version $Id: Key.java,v 1.1 2004-06-09 09:49:43 tjc Exp $
+ *  @version $Id: Key.java,v 1.2 2006-08-09 16:35:31 tjc Exp $
  **/
 
 public class Key 
@@ -88,14 +88,11 @@ public class Key
   public boolean equals (final Object test_object) 
   {
     if(test_object instanceof String) 
-      return getKeyString ().equals ((String) test_object);
+      return key_string.equals(test_object);
+    else if(test_object instanceof Key) 
+      return key_string.equals (((Key) test_object).getKeyString ());
     else 
-    {
-      if(test_object instanceof Key) 
-        return getKeyString ().equals (((Key) test_object).getKeyString ());
-      else 
-        return false;
-    }
+      return false;
   }
 
   /**

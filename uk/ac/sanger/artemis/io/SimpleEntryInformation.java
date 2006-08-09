@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleEntryInformation.java,v 1.2 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleEntryInformation.java,v 1.3 2006-08-09 16:35:31 tjc Exp $
  */
 
 
@@ -35,7 +35,7 @@ import java.util.*;
  *  qualifier.
  *
  *  @author Kim Rutherford
- *  @version $Id: SimpleEntryInformation.java,v 1.2 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: SimpleEntryInformation.java,v 1.3 2006-08-09 16:35:31 tjc Exp $
  **/
 
 public class SimpleEntryInformation
@@ -123,7 +123,7 @@ public class SimpleEntryInformation
 
     if (qualifier_valid_keys != null) {
       for (int i = 0 ; i < qualifier_valid_keys.size () ; ++i) {
-        final Key this_key = qualifier_valid_keys.elementAt (i);
+        final Key this_key = (Key)qualifier_valid_keys.get(i);
 
         if (valid_keys != null && valid_keys.contains (this_key)) {
           continue;
@@ -155,8 +155,8 @@ public class SimpleEntryInformation
 
       if (user_keys != null) {
         for (int i = 0 ; i < user_keys.size () ; ++i) {
-          if (!return_keys.contains (user_keys.elementAt (i))) {
-            return_keys.add (user_keys.elementAt (i));
+          if (!return_keys.contains ((Key)user_keys.get (i))) {
+            return_keys.add ((Key)user_keys.get (i));
           }
         }
       }
@@ -189,7 +189,7 @@ public class SimpleEntryInformation
     if (isValidKey (misc_feature_key)) {
       return misc_feature_key;
     } else {
-      return getValidKeys ().elementAt (0);
+      return (Key)getValidKeys ().get (0);
     }
   }
 
@@ -395,7 +395,7 @@ public class SimpleEntryInformation
       return getQualifierInfoHash ().copy ();
     }
   }
-
+    
   /**
    *  Fix this EntryInformation so that the given exception won't happen
    *  again.

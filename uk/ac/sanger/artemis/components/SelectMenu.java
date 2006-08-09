@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.9 2006-01-17 16:05:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.10 2006-08-09 16:35:31 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -50,7 +50,7 @@ import javax.swing.*;
  *  "Select by key".
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectMenu.java,v 1.9 2006-01-17 16:05:05 tjc Exp $
+ *  @version $Id: SelectMenu.java,v 1.10 2006-08-09 16:35:31 tjc Exp $
  **/
 
 public class SelectMenu extends SelectionMenu 
@@ -643,7 +643,7 @@ public class SelectMenu extends SelectionMenu
     clearSelection ();
 
     for (int i = 0 ; i < seen_keys.size () ; ++i) {
-      selectByKey (seen_keys.elementAt (i));
+      selectByKey ((Key)seen_keys.get(i));
     }
   }
 

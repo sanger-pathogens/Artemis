@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/FastVector.java,v 1.3 2004-12-21 09:55:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/FastVector.java,v 1.4 2006-08-09 16:35:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.util;
@@ -34,41 +34,23 @@ import java.util.Collections;
  *  contains().
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: FastVector.java,v 1.3 2004-12-21 09:55:33 tjc Exp $
+ *  @version $Id: FastVector.java,v 1.4 2006-08-09 16:35:31 tjc Exp $
  *
  **/
 
-public class FastVector 
+public class FastVector extends ArrayList
 {
-  /** Storage for objects. */
-  private ArrayList vector = new ArrayList();
-
-  /**
-   *  Create a new vector of objects.
-   **/
-  public FastVector() 
-  {
-  }
-
   /**
    *  Performs the same function as Vector.addElement()
    */
-  public void add(Object object) 
+  public boolean add(Object object) 
   {
     if(object == null) 
       throw new Error("internal error - adding a null object");
     else if(contains(object))
       throw new Error("internal error - object added a second time");
 
-    vector.add(object);
-  }
-
-  /**
-   *  Performs the same function as Vector.elementAt()
-   */
-  public Object elementAt(int index) 
-  {
-    return (Object)vector.get(index);
+    return super.add(object);
   }
 
   /**
@@ -76,74 +58,9 @@ public class FastVector
    **/
   public Object lastElement() 
   {
-    return (Object)vector.get(vector.size() - 1);
+    return (Object)get(size() - 1);
   }
-
-  /**
-   *  Performs the same function as Vector.removeElement()
-   **/
-  public boolean remove(Object object) 
-  {
-    if(contains(object)) 
-    {
-      vector.remove(object);
-      return true;
-    } 
-    else 
-      return false;
-  }
-
-  /**
-   *  Return true if this object contains the given Object.
-   **/
-  public boolean contains(Object object) 
-  {
-    return vector.contains(object);
-  }
-
-  /**
-   *  Performs the same function as Vector.removeElement()
-   **/
-  public int indexOf(Object object) 
-  {
-    if(!contains(object)) 
-      return -1;
-    else 
-      return vector.indexOf(object);
-  }
-
-  /**
-   *  Performs the same function as Vector.size()
-   */
-  public int size()
-  {
-    return vector.size();
-  }
-
-  /**
-   *  Performs the same function as Vector.removeAllElement()
-   **/
-  public void removeAllElements()
-  {
-    vector.clear();
-  }
-
-  /**
-   *  Performs the same function as Vector.removeElementAt()
-   **/
-  public void removeElementAt(int index) 
-  {
-    final Object object = (Object)vector.remove(index);
-  }
-
-  /**
-   *  Performs the same function as Vector.insertElementAt()
-   **/
-  public final void insertElementAt(Object object, int index) 
-  {
-    vector.add(index, object);
-  }
-
+  
   /**
    *  Insert an Object after another.
    *  @param old_object The new_object will be inserted after this object
@@ -155,9 +72,9 @@ public class FastVector
     final int old_object_index = indexOf(old_object);
 
     if(old_object_index == -1) 
-      insertElementAt(new_object, 0);
+      add(0, new_object);
     else 
-      insertElementAt(new_object, old_object_index + 1);
+      add(old_object_index + 1, new_object);
   }
 
   /**
@@ -166,19 +83,8 @@ public class FastVector
    **/
   public void setElementAt(final Object object, final int index) 
   {
-    removeElementAt(index);
-    insertElementAt(object, index);
-  }
-
-  /**
-   *  Create a new FastVector with the same contents as this one.  Note that
-   *  this does only a shallow copy.
-   **/
-  public Object clone() 
-  {
-    final FastVector return_vector = new FastVector();
-    return_vector.vector = (ArrayList)vector.clone();
-    return return_vector;
+    remove(index);
+    add(index, object);
   }
 
   /**
@@ -188,7 +94,7 @@ public class FastVector
   public FastVector sort(final Comparator cmp) 
   {
     final FastVector return_vector = (FastVector)clone();
-    Collections.sort(return_vector.vector, cmp);
+    Collections.sort(return_vector, cmp);
     return return_vector;
   }
 

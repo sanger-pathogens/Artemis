@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntryAutosaveThread.java,v 1.4 2006-03-22 14:03:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntryAutosaveThread.java,v 1.5 2006-08-09 16:35:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import java.io.*;
  *  called #entry_name# every 120 seconds.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: DocumentEntryAutosaveThread.java,v 1.4 2006-03-22 14:03:35 tjc Exp $
+ *  @version $Id: DocumentEntryAutosaveThread.java,v 1.5 2006-08-09 16:35:31 tjc Exp $
  **/
 
 public class DocumentEntryAutosaveThread extends Thread {
@@ -62,9 +62,9 @@ public class DocumentEntryAutosaveThread extends Thread {
     boolean have_saved = false;
 
     try {
-      // sleep for 15 seconds before starting - there is no point in attempting
+      // sleep for 120 seconds before starting - there is no point in attempting
       // to save straight away
-      Thread.sleep (15000);
+      Thread.sleep (120000);
     } catch (InterruptedException _) {
     }
 

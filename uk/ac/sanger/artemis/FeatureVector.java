@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FeatureVector.java,v 1.1 2004-06-09 09:44:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FeatureVector.java,v 1.2 2006-08-09 16:35:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -33,7 +33,7 @@ import java.util.*;
  *  This class implements a Vector of Feature objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureVector.java,v 1.1 2004-06-09 09:44:49 tjc Exp $
+ *  @version $Id: FeatureVector.java,v 1.2 2006-08-09 16:35:31 tjc Exp $
  *
  **/
 
@@ -63,7 +63,7 @@ public class FeatureVector {
    *  Performs the same function as Vector.elementAt ()
    */
   public Feature elementAt (int index) {
-    return (Feature) vector.elementAt (index);
+    return (Feature) vector.get(index);
   }
 
   /**
@@ -105,21 +105,21 @@ public class FeatureVector {
    *  Performs the same function as Vector.removeAllElement ()
    **/
   public void removeAllElements () {
-    vector.removeAllElements ();
+    vector.clear ();
   }
 
   /**
    *  Performs the same function as Vector.removeElementAt ()
    **/
   public void removeElementAt(int index) {
-    vector.removeElementAt (index);
+    vector.remove (index);
   }
 
   /**
    *  Performs the same function as Vector.insertElementAt ()
    **/
   public final void insertElementAt (Feature feature, int index) {
-    vector.insertElementAt (feature, index);
+    vector.add (index, feature);
   }
 
   /**
