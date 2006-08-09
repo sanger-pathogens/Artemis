@@ -267,7 +267,8 @@ public class ChadoTransactionManager
           if(seg_id == null)
             seg_id   = feature.getSegmentID(range_old);
           
-          feature.getSegmentRangeStore().put(seg_id, range_new);
+          if(feature.getSegmentRangeStore() != null)
+            feature.getSegmentRangeStore().put(seg_id, range_new);
           
           tsn = new ChadoTransaction(ChadoTransaction.UPDATE, 
                                      seg_id, "featureloc", 
@@ -910,7 +911,7 @@ public class ChadoTransactionManager
    * @param old_qualifier   the old qualifier
    */
   private void handleReservedTags(final GFFStreamFeature feature,
-                                  final String uniquename,
+                                  String uniquename,
                                   final Qualifier new_qualifier,
                                   final Qualifier old_qualifier)
   {  
@@ -932,6 +933,24 @@ public class ChadoTransactionManager
       qualifier_name = old_qualifier.getName();
     else
       qualifier_name = new_qualifier.getName();
+    
+    if(qualifier_name.equals("ID"))
+    { 
+      // this shouldn't be possible
+      if(new_qualifier.getValues() == null)
+        return;
+      
+      uniquename = (String) old_qualifier.getValues().get(0);
+      ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+          uniquename, "feature",
+          feature.getLastModified(),
+          feature);
+
+      tsn.addProperty("uniquename", "'" + 
+          stripQuotes((String) new_qualifier.getValues().get(0)) + "'");
+      sql.add(tsn);
+      return;
+    }
     
     ChadoTransaction tsn = null;
     // find tags that have been deleted
