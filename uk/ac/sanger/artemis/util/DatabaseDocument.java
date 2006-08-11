@@ -116,7 +116,7 @@ public class DatabaseDocument extends Document
    * 
    * @param location
    *          This should be a URL string giving:
-   *          jdbc:postgresql://host:port/datbase_name?user=username
+   *          jdbc:postgresql://host:port/database_name?user=username
    * @param feature_id
    *          ID of a feature to be extracted.
    * 
@@ -291,36 +291,50 @@ public class DatabaseDocument extends Document
     try
     {
       ChadoDAO dao = getDAO();
-      
-      
-      // if creating a gene builder
-      if(gene_builder)
-      {
-        List schemaList = new Vector();
-        schemaList.add(schema);
-        return new ByteArrayInputStream(
-            getGeneFeature(feature_id, schemaList, dao).getBytes());
-      }
-      
-      gff_buffer = getGff(dao, feature_id);
-
       ByteBuffer entry = new ByteBuffer();
-      if(splitGFFEntry)
+      
+      try
       {
-        if(gff_buffer[0].size() > 0)
-          entry.append(gff_buffer[0]);
+        if(dao instanceof IBatisDAO)
+          ((IBatisDAO) dao).startTransaction();
 
-        getChadoSequence(dao, entry);
-      }
-      else
-      {
-        for(int i = 0; i < gff_buffer.length; i++)
+        // if creating a gene builder
+        if(gene_builder)
         {
-          if(gff_buffer[i].size() > 0)
-            entry.append(gff_buffer[i]);
+          List schemaList = new Vector();
+          schemaList.add(schema);
+          return new ByteArrayInputStream(getGeneFeature(feature_id,
+              schemaList, dao).getBytes());
         }
 
-        getChadoSequence(dao, entry);
+        gff_buffer = getGff(dao, feature_id);
+
+        
+        if(splitGFFEntry)
+        {
+          if(gff_buffer[0].size() > 0)
+            entry.append(gff_buffer[0]);
+
+          getChadoSequence(dao, entry);
+        }
+        else
+        {
+          for(int i = 0; i < gff_buffer.length; i++)
+          {
+            if(gff_buffer[i].size() > 0)
+              entry.append(gff_buffer[i]);
+          }
+
+          getChadoSequence(dao, entry);
+        }
+
+        if(dao instanceof IBatisDAO)
+          ((IBatisDAO) dao).commitTransaction();
+      }
+      finally
+      {
+        if(dao instanceof IBatisDAO)
+          ((IBatisDAO) dao).endTransaction();
       }
 
       instream = new ByteArrayInputStream(entry.getBytes());
@@ -707,8 +721,13 @@ public class DatabaseDocument extends Document
       for(int j=0; j<v_synonyms.size(); j++)
       {
         alias = (ChadoFeatureSynonym)v_synonyms.get(j);
-        this_buff.append(alias.getSynonym().getCvterm().getName()+"=");
+        
+        this_buff.append( getCvtermName(alias.getSynonym().getCvterm().getCvtermId(), dao) + "=" );
+        //this_buff.append(alias.getSynonym().getCvterm().getName()+"=");
         this_buff.append(alias.getSynonym().getName());
+        
+        //System.out.println(getCvtermName(alias.getSynonym().getCvterm().getCvtermId(), dao)+" "+
+        //    alias.getSynonym().getCvterm().getName());
         
         if(j<v_synonyms.size()-1)
           this_buff.append(";");
@@ -845,6 +864,9 @@ public class DatabaseDocument extends Document
       
     try
     {
+      if(dao instanceof IBatisDAO)
+        ((IBatisDAO) dao).startTransaction();
+      
       schema_list = dao.getSchema();
       Iterator it      = schema_list.iterator();
 
@@ -869,6 +891,9 @@ public class DatabaseDocument extends Document
         }
       }
       
+      if(dao instanceof IBatisDAO)
+        ((IBatisDAO) dao).commitTransaction();
+      
     }
     catch(java.sql.SQLException sqlExp)
     {
@@ -878,6 +903,12 @@ public class DatabaseDocument extends Document
                                     JOptionPane.ERROR_MESSAGE);
       sqlExp.printStackTrace();
     }
+    finally
+    {
+      if(dao instanceof IBatisDAO)
+        ((IBatisDAO) dao).endTransaction();
+    }
+    
     return db;
   }
   
