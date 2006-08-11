@@ -19,7 +19,7 @@
        <parameter property="featureCvterms" javaType="java.util.List"/>
     </parameterMap> 
 
-    <resultMap id="select-feature-properties-result" 
+    <resultMap id="select-feature" 
                class="ChadoFeature">
         <result property="timelastmodified" column="timelastmodified"/>
    	    <result property="id" column="id"/>
@@ -38,7 +38,7 @@
 
     <!-- mapping for feature table and lazy loading of feature_dbxref, feature_relationship,
          featureprop, organism tables -->
-    <resultMap id="select-feature-result" 
+    <resultMap id="select-feature-lazy" 
                class="ChadoFeature">     
         <result property="schema" column="schema" />  
         <result property="timelastmodified" column="timelastmodified"/>
@@ -75,7 +75,7 @@
         <result property="cvterm.cvtermId" column="type_id"/>
      </resultMap>
 
-     <resultMap id="select-product-result" 
+     <resultMap id="select-featureprop" 
                 class="uk.ac.sanger.artemis.chado.ChadoFeatureProp">
         <result property="value" column="value" />
         <result property="rank" column="rank" />
@@ -104,7 +104,7 @@
      </resultMap>
         
      <!-- select featureprops e.g. for lazy loading -->
-     <select id="selectFeatureProp" resultMap="select-product-result">
+     <select id="selectFeatureProp" resultMap="select-featureprop">
        SELECT type_id, value, rank 
        FROM $schema$.featureprop
        WHERE feature_id=#feature_id#
@@ -164,7 +164,7 @@
      </select>
 
      <select id="getFeature" parameterClass="ChadoFeature" 
-                             resultMap="select-feature-properties-result">
+                             resultMap="select-feature">
         SELECT
           timelastmodified, 
           f.feature_id AS id, 
@@ -232,7 +232,7 @@
        ORDER BY abbreviation
     </select>
 
-    <select id="getLazyFeature" resultMap ="select-feature-result" 
+    <select id="getLazyFeature" resultMap ="select-feature-lazy" 
                             parameterClass="ChadoFeature">
 	 SELECT
 	    #schema# AS schema,
@@ -243,18 +243,7 @@
 		name,
 	 	f.type_id,
 		seqlen AS length
-		<!--
-	 	srcfeature_id,
-	 	fmin,
-	 	fmax,
-	 	strand,
-	 	phase
-	 	-->
 	 FROM $schema$.feature f
-	 <!--
-	 LEFT JOIN $schema$.featureloc     ON f.feature_id=$schema$.featureloc.feature_id
-	 LEFT JOIN $schema$.featureprop fp ON fp.feature_id = f.feature_id
-	 -->
 	 WHERE
 	   <dynamic>
           <isGreaterThan property="id" compareValue="0"> 
