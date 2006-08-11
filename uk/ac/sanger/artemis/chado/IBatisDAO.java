@@ -106,7 +106,7 @@ public class IBatisDAO implements ChadoDAO
     List feature_list = sqlMap.queryForList("getFeature", feature);
 
     // merge same features in the list
-    return JdbcDAO.mergeList(feature_list);
+    return mergeList(feature_list);
   }
 
   /**
@@ -265,7 +265,7 @@ public class IBatisDAO implements ChadoDAO
 
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     List list = sqlMap.queryForList("getDbxref", feature);  
-    return JdbcDAO.mergeDbxref(list);
+    return mergeDbxref(list);
   }
   
   /**
@@ -687,5 +687,81 @@ public class IBatisDAO implements ChadoDAO
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     sqlMap.commitTransaction();
   }
+  
+  /**
+   * Takes a list and creates a new one merging all feature objects
+   * within it with the same feature and stores the qualifiers/attributes
+   *  as a hash
+   * @param list of feature objects
+   * @return list of flattened/merged feature objects
+   */
+  protected static List mergeList(final List list)
+  {
+    // merge same features in the list
+    int feature_size  = list.size();
+    final List flatten_list = new Vector();
+    ChadoFeature featNext  = null;
+
+    for(int i = 0; i < feature_size; i++)
+    {
+      ChadoFeature feat = (ChadoFeature)list.get(i);
+      String name  = feat.getUniquename();
+
+      feat.addQualifier(feat.getFeatureprop().getCvterm().getCvtermId(),
+                        feat.getFeatureprop());
+
+      if(i < feature_size - 1)
+        featNext = (ChadoFeature)list.get(i + 1);
+
+      // merge next line if part of the same feature
+      while(featNext != null && featNext.getUniquename().equals(name))
+      {
+        feat.addQualifier(featNext.getFeatureprop().getCvterm().getCvtermId(),
+                          featNext.getFeatureprop());
+        i++;
+
+        if(i < feature_size - 1)
+          featNext = (ChadoFeature)list.get(i + 1);
+        else
+          break;
+      }
+
+      flatten_list.add(feat);
+    }
+
+    return flatten_list;
+  }
+
+  /**
+   * Takes a list and creates a <code>Hashtable</code> with the keys
+   * being the feature_id and the value a <code>Vector</code> of the dbxrefs.
+   * @param list  a <code>List</code> of <code>Dbxref</code> objects.
+   * @return a <code>Hashtable</code> of dbxrefs.
+   */
+  protected static Hashtable mergeDbxref(final List list)
+  {
+    Hashtable dbxrefHash = new Hashtable();
+    for(int i = 0; i < list.size(); i++)
+    {
+      ChadoFeatureDbxref dbxref = (ChadoFeatureDbxref)list.get(i);
+      Integer feature_id = new Integer(dbxref.getFeature_id());
+      String value = dbxref.getDbxref().getDb().getName() + ":" + 
+                     dbxref.getDbxref().getAccession();
+      if(dbxrefHash.containsKey(feature_id))
+      {
+        Vector v = (Vector)dbxrefHash.get(feature_id);
+        v.add(value);
+        dbxrefHash.put(feature_id, v);
+      }  
+      else
+      {
+        Vector v = new Vector();
+        v.add(value);
+        dbxrefHash.put(feature_id, v);
+      }
+    }
+    return dbxrefHash;
+  }
+
 }
 

@@ -195,7 +195,7 @@ public class JdbcDAO
     if(parentFeatureID > -1)
       sql = sql + "srcfeature_id = " + parentFeatureID;
     
-    sql = sql  + " AND (fl.rank=fr.rank OR fr.rank IS NULL)"
+    sql = sql  //+ " AND (fl.rank=fr.rank OR fr.rank IS NULL)"
                + " ORDER BY f.type_id, uniquename";
     
     appendToLogFile(sql, sqlLog);
@@ -256,83 +256,9 @@ public class JdbcDAO
       list.add(feature);
     }
     // merge same features in the list
-    return mergeList(list);
+    return IBatisDAO.mergeList(list);
   }
   
-  /**
-   * Takes a list and creates a new one merging all feature objects
-   * within it with the same feature and stores the qualifiers/attributes
-   *  as a hash
-   * @param list of feature objects
-   * @return list of flattened/merged feature objects
-   */
-  protected static List mergeList(final List list)
-  {
-    // merge same features in the list
-    int feature_size  = list.size();
-    final List flatten_list = new Vector();
-    ChadoFeature featNext  = null;
-
-    for(int i = 0; i < feature_size; i++)
-    {
-      ChadoFeature feat = (ChadoFeature)list.get(i);
-      String name  = feat.getUniquename();
-
-      feat.addQualifier(feat.getFeatureprop().getCvterm().getCvtermId(),
-                        feat.getFeatureprop());
-
-      if(i < feature_size - 1)
-        featNext = (ChadoFeature)list.get(i + 1);
-
-      // merge next line if part of the same feature
-      while(featNext != null && featNext.getUniquename().equals(name))
-      {
-        feat.addQualifier(featNext.getFeatureprop().getCvterm().getCvtermId(),
-                          featNext.getFeatureprop());
-        i++;
-
-        if(i < feature_size - 1)
-          featNext = (ChadoFeature)list.get(i + 1);
-        else
-          break;
-      }
-
-      flatten_list.add(feat);
-    }
-
-    return flatten_list;
-  }
-
-  /**
-   * Takes a list and creates a <code>Hashtable</code> with the keys
-   * being the feature_id and the value a <code>Vector</code> of the dbxrefs.
-   * @param list  a <code>List</code> of <code>Dbxref</code> objects.
-   * @return a <code>Hashtable</code> of dbxrefs.
-   */
-  protected static Hashtable mergeDbxref(final List list)
-  {
-    Hashtable dbxrefHash = new Hashtable();
-    for(int i = 0; i < list.size(); i++)
-    {
-      ChadoFeatureDbxref dbxref = (ChadoFeatureDbxref)list.get(i);
-      Integer feature_id = new Integer(dbxref.getFeature_id());
-      String value = dbxref.getDbxref().getDb().getName() + ":" + 
-                     dbxref.getDbxref().getAccession();
-      if(dbxrefHash.containsKey(feature_id))
-      {
-        Vector v = (Vector)dbxrefHash.get(feature_id);
-        v.add(value);
-        dbxrefHash.put(feature_id, v);
-      }  
-      else
-      {
-        Vector v = new Vector();
-        v.add(value);
-        dbxrefHash.put(feature_id, v);
-      }
-    }
-    return dbxrefHash;
-  }
 
   /**
    * Given a list of distict cvterm_id/type_id's of feature types
@@ -501,7 +427,7 @@ public class JdbcDAO
       dbxrefs.add(feature_dbxref);
     }
 
-    return mergeDbxref(dbxrefs);
+    return IBatisDAO.mergeDbxref(dbxrefs);
   }
   
   /**
@@ -516,11 +442,16 @@ public class JdbcDAO
   public Hashtable getAlias(final String schema, final String uniquename)
               throws SQLException
   {
-    String sql = "SELECT s.name, f.feature_id, cvterm.name AS cvterm_name FROM "+
+    String sql = "SELECT s.name, f.feature_id, s.type_id FROM "+
+      schema+".feature_synonym fs "+
+      "LEFT JOIN "+schema+".feature f ON f.feature_id=fs.feature_id "+
+      "LEFT JOIN "+schema+".synonym s ON fs.synonym_id=s.synonym_id ";
+      
+      /* "SELECT s.name, f.feature_id, cvterm.name AS cvterm_name FROM "+
                                                    schema+".feature_synonym fs "+
                  "LEFT JOIN "+schema+".feature f ON f.feature_id=fs.feature_id "+
                  "LEFT JOIN "+schema+".synonym s ON fs.synonym_id=s.synonym_id "+
-                 "LEFT JOIN cvterm ON s.type_id=cvterm_id";
+                 "LEFT JOIN cvterm ON s.type_id=cvterm_id"; */
     
     if(uniquename != null)
       sql = sql + " WHERE uniquename='"+uniquename+"'";
@@ -542,7 +473,8 @@ public class JdbcDAO
       
       alias = new ChadoFeatureSynonym();
       ChadoCvterm cvterm = new ChadoCvterm();
-      cvterm.setName(rs.getString("cvterm_name"));
+      cvterm.setCvtermId(rs.getLong("type_id"));
+      //cvterm.setName(rs.getString("cvterm_name"));
       
       ChadoSynonym syn = new ChadoSynonym();
       syn.setName( rs.getString("name") );
