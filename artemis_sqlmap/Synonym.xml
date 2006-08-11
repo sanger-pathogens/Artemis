@@ -23,7 +23,8 @@
    	    <result property="synonym.synonym_id" column="synonym_id"/>
    	    <result property="synonym.name" column="name"/>
    	    <result property="synonym.synonym_sgml" column="synonym_sgml"/>
-  	    <result property="synonym.cvterm.name" column="cvterm_name" />
+  	    <!-- <result property="synonym.cvterm.name" column="cvterm_name" /> -->
+  	    <result property="synonym.cvterm.cvtermId" column="type_id" />
      </resultMap>
      
      <resultMap id="select-alias-lazy" 
@@ -42,11 +43,11 @@
      
     <select id="getAlias" resultMap="select-alias"
             parameterClass="ChadoFeatureSynonym">
-      SELECT fs.*, s.name, s.synonym_sgml, cvterm.name AS cvterm_name 
+      SELECT fs.*, s.name, s.synonym_sgml, s.type_id <!--, cvterm.name AS cvterm_name -->
       FROM $schema$.feature_synonym fs 
       LEFT JOIN $schema$.feature f ON f.feature_id=fs.feature_id 
       LEFT JOIN $schema$.synonym s ON fs.synonym_id=s.synonym_id 
-      LEFT JOIN cvterm ON s.type_id=cvterm_id
+      <!-- LEFT JOIN cvterm ON s.type_id=cvterm_id -->
       <isNotNull property="uniquename">                        
           WHERE uniquename=#uniquename#
       </isNotNull>
