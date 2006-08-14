@@ -42,24 +42,20 @@ public interface ChadoDAO
    *
    * Get the residues of a feature.
    * @param feature_id  id of feature to query
-   * @param schema      schema/organism name or null
    * @return 	the <code>ChadoFeature</code> with the residues
    * @throws SQLException
    */
-  public ChadoFeature getSequence(final int feature_id,
-                                  final String schema)
+  public ChadoFeature getSequence(final int feature_id)
                         throws SQLException;
 
   /**
    *
-   * Get the feature name given a feature_id and schema.
+   * Get the feature name given a feature_id.
    * @param feature_id  id of feature to query
-   * @param schema      schema/organism name or null
    * @return	the feature name
    * @throws SQLException
    */
-  public String getFeatureName(final int feature_id,
-                               final String schema)
+  public String getFeatureName(final int feature_id)
                        throws SQLException;
 
   /**
@@ -67,27 +63,22 @@ public interface ChadoDAO
    * If ChadoFeature.featureloc.srcfeature_id is set this is used
    * to return the children of that srcfeature_id.
    * @param feature     the feature used to query
-   * @param schema      the schema/organism name or null
    * @return	the <code>List</code> of child <code>ChadoFeature</code> objects
    * @throws SQLException
    */
-  public List getFeature(final ChadoFeature feature,
-                         final String schema)
+  public List getFeature(final ChadoFeature feature)
                          throws SQLException;
   
   /**
    * Get the properties of a feature.
    * @param uniquename  the unique name of the feature
-   * @param schema_list the <code>List</code> of schemas to search
    * @return  the <code>List</code> of <code>ChadoFeature</code>
    * @throws SQLException
    */
-  public List getLazyFeature(final ChadoFeature feature,
-                             final List schema_list)
+  public List getLazyFeature(final ChadoFeature feature)
                              throws SQLException;
 
   /**
-   *
    * Given a list of distict cvterm_id/type_id's of feature types
    * that have residues (from getResidueType()) in the given schema
    * and the schema name return a list of features in the schema
@@ -102,14 +93,13 @@ public interface ChadoDAO
                      throws SQLException;
 
   /**
-   *
    * For a schema return the type_id's with residues.
    * @param schema      schema/organism name or null
    * @return 	the <code>List</code> of type_id's as <code>String</code>
    *            objects
    * @throws SQLException
    */
-  public List getResidueType(final String schema)
+  public List getResidueType(String schema)
                      throws SQLException;
 
   /**
@@ -134,36 +124,33 @@ public interface ChadoDAO
 
   /**
    * Get the time a feature was last modified.
-   * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
    * @return  number of rows changed
    * @throws SQLException
    */
   public Timestamp getTimeLastModified
-                   (final String schema, final String uniquename)
+                   (final String uniquename)
                    throws SQLException;
   
 
   /**
    * Get dbxref for a feature.
-   * @param schema      the postgres schema name
    * @param uniquename  the unique name for the feature. If set to NULL
    *                    all <code>Dbxref</code> are returned.
    * @return a <code>Hashtable</code> of dbxrefs.
    * @throws SQLException
    */
-  public Hashtable getDbxref(final String schema, final String uniquename)
+  public Hashtable getDbxref(final String uniquename)
               throws SQLException;
   
   /**
    * Get dbxref for a feature.
-   * @param schema      the postgres schema name
    * @param uniquename  the unique name for the feature. If set to NULL
    *                    all <code>Dbxref</code> are returned.
    * @return a <code>Hashtable</code> of dbxrefs.
    * @throws SQLException
    */
-  public Hashtable getAlias(final String schema, final String uniquename)
+  public Hashtable getAlias(final String uniquename)
               throws SQLException;
   
 //
@@ -171,113 +158,102 @@ public interface ChadoDAO
 //
   /**
    * Update attributes defined by the <code>ChadoTransaction</code>.
-   * @param schema	schema/organism name or null
    * @param tsn		the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
   public int updateAttributes
-                    (final String schema, final ChadoTransaction tsn)
+                    (final ChadoTransaction tsn)
                      throws SQLException;
 
   /**
    * Insert attributes defined by the <code>ChadoTransaction</code>.
-   * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @throws SQLException
    */
   public void insertAttributes
-                    (final String schema, final ChadoTransaction tsn)
+                    (final ChadoTransaction tsn)
                      throws SQLException;
 
   /**
    * Delete attributes defined by the <code>ChadoTransaction</code>.
-   * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @throws SQLException
    */
   public void deleteAttributes
-                    (final String schema, final ChadoTransaction tsn)
+                    (final ChadoTransaction tsn)
                      throws SQLException;
 
   /**
    * Insert a feature into the database defined by the <code>ChadoTransaction</code>.
-   * @param schema       	schema/organism name or null
    * @param tsn         	the <code>ChadoTransaction</code>
    * @parma srcfeature_id	the parent feature identifier
    * @throws SQLException
    */
   public void insertFeature
-                    (final String schema, final ChadoTransaction tsn,
+                    (final ChadoTransaction tsn,
                      final String srcfeature_id)
                      throws SQLException;
 
   /**
    * Delete a feature from the database defined by the <code>ChadoTransaction</code>.
-   * @param schema 	schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @return    number of rows deleted
    * @throws SQLException
    */
   public int deleteFeature
-                    (final String schema, final ChadoTransaction tsn)
+                    (final ChadoTransaction tsn)
                      throws SQLException;
   
   /**
    * Insert a dbxref for a feature.
-   * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
-  public int insertFeatureDbxref(final String schema, final ChadoTransaction tsn)
+  public int insertFeatureDbxref(final ChadoTransaction tsn)
                      throws SQLException;
   
   /**
    * Delete a dbxref for a feature.
-   * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
-  public int deleteFeatureDbxref(final String schema, final ChadoTransaction tsn)
+  public int deleteFeatureDbxref(final ChadoTransaction tsn)
                      throws SQLException;
   
   /**
    * Insert a synonym for a feature.
-   * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
-  public int insertFeatureAlias(final String schema, final ChadoTransaction tsn)
+  public int insertFeatureAlias(final ChadoTransaction tsn)
                      throws SQLException;
 
   /**
    * Delete a synonym for a feature.
-   * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
-  public int deleteFeatureAlias(final String schema, final ChadoTransaction tsn)
+  public int deleteFeatureAlias(final ChadoTransaction tsn)
                      throws SQLException;
 
   
   /**
    * Update feature_relationship for a feature.
-   * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
   public void updateFeatureRelationshipsForSubjectId(
-      final String schema, final ChadoTransaction tsn)
+      final ChadoTransaction tsn)
                      throws SQLException;
   /**
    * 
    * Write the time a feature was last modified
-   * @param schema	schema/organism name or null
    * @param uniquename	the unique name of the feature
    * @param timestamp   the time stamp to use, 
    *                    if NULL use CURRENT_TIMESTAMP
@@ -285,14 +261,13 @@ public interface ChadoDAO
    * @throws SQLException
    */
   public int writeTimeLastModified
-                    (final String schema, final String uniquename,
+                    (final String uniquename,
                      final Timestamp timestamp)
                      throws SQLException;
 
   /**
    *
    * Write the time a feature was last accessed
-   * @param schema 	schema/organism name or null
    * @param uniquename  the unique name of the feature
    * @param timestamp   the time stamp to use, 
    *                    if NULL use CURRENT_TIMESTAMP
@@ -300,7 +275,7 @@ public interface ChadoDAO
    * @throws SQLException
    */
   public int writeTimeAccessioned
-                    (final String schema, final String uniquename,
+                    (final String uniquename,
                      final Timestamp timestamp)
                      throws SQLException;
 }

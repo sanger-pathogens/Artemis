@@ -53,10 +53,8 @@ public class IBatisDAO implements ChadoDAO
   }
 
   /**
-   *
-   * Get the feature name given a feature_id and schema.
+   * Get the feature name given a feature_id.
    * @param feature_id  id of feature to query
-   * @param schema      schema/organism name or null
    * @return    the feature name
    */
   public String getFeatureName(final ChadoFeature feature)
@@ -70,18 +68,14 @@ public class IBatisDAO implements ChadoDAO
    *
    * Get the residues of a feature.
    * @param feature_id  id of feature to query
-   * @param schema      schema/organism name or null
    * @return    the <code>ChadoFeature</code> with the residues
    * @throws SQLException
    */
-  public String getFeatureName(final int feature_id,
-                               final String schema)
+  public String getFeatureName(final int feature_id)
                        throws SQLException
   {
     ChadoFeature feature = new ChadoFeature();
     feature.setId(feature_id);
-    if(schema != null)
-      feature.setSchema(schema);
     return getFeatureName(feature);
   }
 
@@ -90,19 +84,13 @@ public class IBatisDAO implements ChadoDAO
    * If ChadoFeature.featureloc.srcfeature_id is set this is used
    * to return the children of that srcfeature_id.
    * @param feature  the feature to query
-   * @param schema   the schema/organism name or null
    * @return    the <code>List</code> of child <code>ChadoFeature</code> objects
    * @throws SQLException
    */
-  public List getFeature(final ChadoFeature feature,
-                         final String schema)
+  public List getFeature(final ChadoFeature feature)
                          throws SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    
-    if(schema != null)
-      feature.setSchema(schema);
-
     List feature_list = sqlMap.queryForList("getFeature", feature);
 
     // merge same features in the list
@@ -112,55 +100,34 @@ public class IBatisDAO implements ChadoDAO
   /**
    * Get the properties of a feature.
    * @param uniquename  the unique name of the feature
-   * @param schema_list the <code>List</code> of schemas to search
    * @return  the <code>List</code> of <code>ChadoFeature</code>
    * @throws SQLException
    */
-  public List getLazyFeature(final ChadoFeature feature,
-                             final List schema_list)
+  public List getLazyFeature(final ChadoFeature feature)
                              throws SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    /*
-    ChadoFeature feature = new ChadoFeature();
-    feature.setUniquename(uniquename);
-    */
     
-    List list = new Vector();
-    for(int i=0; i<schema_list.size(); i++)
-    {  
-      String schema = (String)schema_list.get(i);
-      feature.setSchema(schema);
-      List res_list = sqlMap.queryForList("getLazyFeature", feature);
-
-      list.addAll( res_list );
-    }
-    
-    return list;
+    return sqlMap.queryForList("getLazyFeature", feature);
   }
   
   /**
-   *
    * Get the residues of a feature.
    * @param feature_id  id of feature to query
-   * @param schema      schema/organism name or null
    * @throws SQLException
    */
-  public ChadoFeature getSequence(final int feature_id,
-                             final String schema)
+  public ChadoFeature getSequence(final int feature_id)
                         throws SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     ChadoFeature feature = new ChadoFeature();
     feature.setId(feature_id);
-    if(schema != null)
-      feature.setSchema(schema);
+    
     return (ChadoFeature)sqlMap.queryForObject("getSequence",
                                            feature);
   }
 
   /**
-   *
    * Given a list of distict cvterm_id/type_id's of feature types
    * that have residues (from getResidueType()) in the given schema 
    * and the schema name return a list of chado features in the schema
@@ -229,17 +196,15 @@ public class IBatisDAO implements ChadoDAO
   
   /**
    * Get the time a feature was last modified.
-   * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
    * @return  number of rows changed
    * @throws SQLException
    */
   public Timestamp getTimeLastModified
-                   (final String schema, final String uniquename)
+                   (final String uniquename)
                    throws SQLException
   {
     ChadoFeature feature = new ChadoFeature();
-    feature.setSchema(schema);
     feature.setUniquename(uniquename);
 
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
@@ -250,17 +215,15 @@ public class IBatisDAO implements ChadoDAO
   /**
    * 
    * Get dbxref for a feature.
-   * @param schema      the postgres schema name
    * @param uniquename  the unique name for the feature. If set to NULL
    *                    all <code>Dbxref</code> are returned.
    * @return a <code>Hashtable</code> of dbxrefs.
    * @throws SQLException
    */
-  public Hashtable getDbxref(final String schema, final String uniquename)
+  public Hashtable getDbxref(final String uniquename)
               throws SQLException
   {
     ChadoFeature feature = new ChadoFeature();
-    feature.setSchema(schema);
     feature.setUniquename(uniquename);
 
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
@@ -270,17 +233,15 @@ public class IBatisDAO implements ChadoDAO
   
   /**
    * Get dbxref for a feature.
-   * @param schema      the postgres schema name
    * @param uniquename  the unique name for the feature. If set to NULL
    *                    all <code>Dbxref</code> are returned.
    * @return a <code>Hashtable</code> of dbxrefs.
    * @throws SQLException
    */
-  public Hashtable getAlias(final String schema, final String uniquename)
+  public Hashtable getAlias(final String uniquename)
               throws SQLException
   {
     ChadoFeatureSynonym alias = new ChadoFeatureSynonym();
-    alias.setSchema(schema);
     alias.setUniquename(uniquename);
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     List list = sqlMap.queryForList("getAlias", alias);  
@@ -329,32 +290,28 @@ public class IBatisDAO implements ChadoDAO
   /**
    *
    * Update attributes defined by the <code>ChadoTransaction</code>.
-   * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @return	number of rows changed
    * @throws SQLException
    */
   public int updateAttributes
-                    (final String schema, final ChadoTransaction tsn)
+                    (final ChadoTransaction tsn)
                      throws SQLException 
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    tsn.setSchema(schema);
     return sqlMap.update("updateAttributes", tsn);
   }
 
   /**
    * Insert attributes defined by the <code>ChadoTransaction</code>.
-   * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @throws SQLException
    */
   public void insertAttributes
-                    (final String schema, final ChadoTransaction tsn)
+                    (final ChadoTransaction tsn)
                      throws SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    tsn.setSchema(schema);
 
     // get the feature id's
     List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
@@ -368,16 +325,14 @@ public class IBatisDAO implements ChadoDAO
 
   /**
    * Delete attributes defined by the <code>ChadoTransaction</code>.
-   * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @throws SQLException
    */
   public void deleteAttributes
-                    (final String schema, final ChadoTransaction tsn)
+                    (final ChadoTransaction tsn)
                      throws SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    tsn.setSchema(schema);
   
     // get the feature id's
     List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
@@ -391,13 +346,12 @@ public class IBatisDAO implements ChadoDAO
 
   /**
    * Insert a feature into the database defined by the <code>ChadoTransaction</code>.
-   * @param schema              schema/organism name or null
    * @param tsn                 the <code>ChadoTransaction</code>
    * @parma srcfeature_id       the parent feature identifier
    * @throws SQLException
    */
   public void insertFeature
-                    (final String schema, final ChadoTransaction tsn,
+                    (final ChadoTransaction tsn,
                      final String srcfeature_id)
                      throws SQLException
   {
@@ -405,7 +359,6 @@ public class IBatisDAO implements ChadoDAO
     ChadoFeature feature = new ChadoFeature();
     ChadoFeatureLoc featureloc = new ChadoFeatureLoc();
     feature.setFeatureloc(featureloc);
-    feature.setSchema(schema);
     
     featureloc.setSrcfeature_id(Integer.parseInt(srcfeature_id));
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
@@ -416,14 +369,13 @@ public class IBatisDAO implements ChadoDAO
     ChadoFeature chadoFeature = tsn.getChadoFeature();
     ChadoOrganism organism = new ChadoOrganism();
     organism.setId(organism_id.intValue());
-    chadoFeature.setSchema(schema);
     chadoFeature.setOrganism(organism);  
     sqlMap.insert("insertFeature", chadoFeature);
 
     //
     // get the current feature_id sequence value
     int feature_id = ((Integer)sqlMap.queryForObject("currval", 
-                              schema+".feature_feature_id_seq")).intValue();
+                              "feature_feature_id_seq")).intValue();
 
     //
     // insert feature location into featureloc
@@ -435,7 +387,6 @@ public class IBatisDAO implements ChadoDAO
     if(tsn.getParents() != null || 
        tsn.getDerives_from() != null)
     {
-      tsn.setSchema(schema);
       List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
       
       for(int i=0; i<feature_ids.size(); i++)
@@ -463,18 +414,16 @@ public class IBatisDAO implements ChadoDAO
 
   /**
    * Delete a feature from the database defined by the <code>ChadoTransaction</code>.
-   * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @return    number of rows deleted
    * @throws SQLException
    */
   public int deleteFeature
-                    (final String schema, final ChadoTransaction tsn)
+                    (final ChadoTransaction tsn)
                      throws SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     ChadoFeature chadoFeature = new ChadoFeature();
-    chadoFeature.setSchema(schema);
     chadoFeature.setUniquename(tsn.getUniqueName());
 
     return sqlMap.delete("deleteFeature", chadoFeature);
@@ -482,12 +431,11 @@ public class IBatisDAO implements ChadoDAO
 
   /**
    * Insert a dbxref for a feature.
-   * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
-  public int insertFeatureDbxref(final String schema, final ChadoTransaction tsn)
+  public int insertFeatureDbxref(final ChadoTransaction tsn)
                      throws SQLException
   {
     ChadoFeatureDbxref dbxref = tsn.getFeatureDbxref();
@@ -514,11 +462,9 @@ public class IBatisDAO implements ChadoDAO
     dbxref.setDbxref_id(dbxref_id.intValue());
     
     //  get the feature id's
-    tsn.setSchema(schema);
     List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
     dbxref.setFeature_id( ((ChadoFeature)feature_ids.get(0)).getId() );
     
-    dbxref.setSchema(schema);
     sqlMap.insert("insertFeatureDbxref", dbxref);
 
     return 1;
@@ -526,19 +472,17 @@ public class IBatisDAO implements ChadoDAO
   
   /**
    * Delete a dbxref for a feature.
-   * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
-  public int deleteFeatureDbxref(final String schema, final ChadoTransaction tsn)
+  public int deleteFeatureDbxref(final ChadoTransaction tsn)
                      throws SQLException
   {
     ChadoFeatureDbxref dbxref = tsn.getFeatureDbxref();
     
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    tsn.setSchema(schema);
-    dbxref.setSchema(schema);
+
     // get the feature id's
     List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
     
@@ -548,16 +492,14 @@ public class IBatisDAO implements ChadoDAO
   
   /**
    * Insert a synonym for a feature.
-   * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
-  public int insertFeatureAlias(final String schema, final ChadoTransaction tsn)
+  public int insertFeatureAlias(final ChadoTransaction tsn)
                      throws SQLException
   {
     final ChadoFeatureSynonym alias = tsn.getAlias();
-    alias.setSchema(schema);
     
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     Object synonym_id  = sqlMap.queryForObject("getSynonymId", alias);
@@ -579,16 +521,14 @@ public class IBatisDAO implements ChadoDAO
   
   /**
    * Delete a synonym for a feature.
-   * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
-  public int deleteFeatureAlias(final String schema, final ChadoTransaction tsn)
+  public int deleteFeatureAlias(final ChadoTransaction tsn)
                      throws SQLException
   {
     final ChadoFeatureSynonym alias = tsn.getAlias();
-    alias.setSchema(schema);
     
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     List synonym_id_list = sqlMap.queryForList("getFeatureSynonymId", alias);
@@ -606,23 +546,20 @@ public class IBatisDAO implements ChadoDAO
   
   /**
    * Update feature_relationship for a feature.
-   * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
   public void updateFeatureRelationshipsForSubjectId(
-      final String schema, final ChadoTransaction tsn)
+      final ChadoTransaction tsn)
                      throws SQLException
   {
     SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    tsn.setSchema(schema);
     sqlMap.update("updateFeatureRelationshipsForSubjectId", tsn);
   }
   
   /**
    * Write the time a feature was last modified
-   * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
    * @param timestamp   the time stamp to use, 
    *                    if NULL use CURRENT_TIMESTAMP
@@ -630,7 +567,7 @@ public class IBatisDAO implements ChadoDAO
    * @throws SQLException
    */
   public int writeTimeLastModified
-                    (final String schema, final String uniquename,
+                    (final String uniquename,
                      final Timestamp timestamp)
                      throws SQLException
   {
@@ -642,12 +579,11 @@ public class IBatisDAO implements ChadoDAO
     else
       tsn.addProperty("timelastmodified", "'"+ timestamp.toString() + "'");
     
-    return updateAttributes(schema, tsn);
+    return updateAttributes(tsn);
   }
 
   /**
    * Write the time a feature was last accessed
-   * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
    * @param timestamp   the time stamp to use, 
    *                    if NULL use CURRENT_TIMESTAMP
@@ -655,7 +591,7 @@ public class IBatisDAO implements ChadoDAO
    * @throws SQLException
    */
   public int writeTimeAccessioned
-                    (final String schema, final String uniquename,
+                    (final String uniquename,
                      final Timestamp timestamp)
                      throws SQLException
   {
@@ -667,7 +603,7 @@ public class IBatisDAO implements ChadoDAO
     else
       tsn.addProperty("timelastmodified", "'"+ timestamp.toString() + "'");
     
-    return updateAttributes(schema, tsn);
+    return updateAttributes(tsn);
   }
   
   public void startTransaction() throws SQLException

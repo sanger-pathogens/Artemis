@@ -32,6 +32,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Dimension;
+import java.net.ConnectException;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
@@ -186,6 +187,7 @@ public class ChadoDemo
           {
             public void mouseClicked(MouseEvent e)
             {
+              int row = result_table.getSelectedRow();
               showAttributes();
             }
           });
@@ -197,6 +199,11 @@ public class ChadoDemo
           JOptionPane.showMessageDialog(null, "SQL Problems...\n"
               + sqlExp.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
           sqlExp.printStackTrace();
+        }
+        catch(ConnectException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
         }
       }
     });
@@ -245,91 +252,53 @@ public class ChadoDemo
    */
   private void showAttributes()
   {
-    try
+    int row = result_table.getSelectedRow();
+    StringBuffer attr_buff = new StringBuffer();
+    ChadoFeature chado_feature = (ChadoFeature)featureList.get(row);
+    List attributes = chado_feature.getFeaturepropList();
+    List dbxrefs    = chado_feature.getFeatureDbxrefs();
+
+    if(dbxrefs.size() > 0)
     {
-      ChadoDAO dao = getDAO();
-
-      int row = result_table.getSelectedRow();
-      StringBuffer attr_buff = new StringBuffer();
-      ChadoFeature chado_feature = (ChadoFeature)featureList.get(row);
-      Hashtable dbxref = dao.getDbxref(chado_feature.getSchema(),
-                                       chado_feature.getUniquename());
-      
-//    get all synonyms
-      Hashtable synonym = dao.getAlias(chado_feature.getSchema(),
-                                       chado_feature.getUniquename());
-
-      if(dbxref.size() > 0)
+      attr_buff.append("/Dbxref=");
+      for(int i = 0; i < dbxrefs.size(); i++)
       {
-        attr_buff.append("/Dbxref=");
+        ChadoFeatureDbxref dbxref = (ChadoFeatureDbxref) dbxrefs.get(i);
+        attr_buff.append(dbxref.getDbxref().getDb().getName() + ":"
+            + dbxref.getDbxref().getAccession() + "; ");
+      }
+      attr_buff.append("\n");
+    }
 
-        Enumeration dbxref_enum = dbxref.elements();
-        while(dbxref_enum.hasMoreElements())
-        {
-          Vector dbx = (Vector) dbxref_enum.nextElement();
-          for(int i = 0; i < dbx.size(); i++)
-          {
-            attr_buff.append((String) dbx.get(i));
-            if(i < dbx.size() - 1)
-              attr_buff.append(";");
-          }
-        }
+    List synonyms = chado_feature.getFeatureSynonymsForFeatureId();
+
+    // append synonyms
+    if(synonyms.size() > 0)
+    {
+      ChadoFeatureSynonym alias;
+
+      for(int i = 0; i < synonyms.size(); i++)
+      {
+        alias = (ChadoFeatureSynonym) synonyms.get(i);
+        attr_buff.append("/");
+        attr_buff.append(alias.getSynonym().getCvterm().getName() + "=");
+        attr_buff.append(alias.getSynonym().getName());
+
+        attr_buff.append(";");
         attr_buff.append("\n");
       }
-      
-//    append synonyms
-      if(synonym != null)
-      {    
-        ChadoFeatureSynonym alias;
-        
-        Enumeration alias_enum = synonym.elements();
-        while(alias_enum.hasMoreElements())
-        {
-          Vector v_synonyms = (Vector)alias_enum.nextElement();
-          for(int j=0; j<v_synonyms.size(); j++)
-          {
-            alias = (ChadoFeatureSynonym)v_synonyms.get(j);
-            attr_buff.append("/");
-            attr_buff.append(alias.getSynonym().getCvterm().getName()+"=");
-            attr_buff.append(alias.getSynonym().getName());
-            
-            if(j<v_synonyms.size()-1)
-              attr_buff.append(";");
-            attr_buff.append("\n");
-          }
-        }
-      }
-      
-      Hashtable attributes = chado_feature.getQualifiers();
-      Enumeration enum_attr = attributes.elements();
+    }
 
-      while(enum_attr.hasMoreElements())
+    if(attributes != null)
+      for(int i = 0; i < attributes.size(); i++)
       {
-       // Long type_id = (Long) enum_attr.nextElement();
-        Vector v_attr = (Vector)enum_attr.nextElement();
+        ChadoFeatureProp featprop = (ChadoFeatureProp) attributes.get(i);
 
-        for(int i = 0; i < v_attr.size(); i++)
-        {
-          ChadoFeatureProp featprop = (ChadoFeatureProp)v_attr.get(i);
-     
-          attr_buff.append("/" 
-              + featprop.getCvterm().getName() 
-              + "="
-              + GFFStreamFeature.decode(featprop.getValue()) + "\n");
-        }
+        attr_buff.append("/" + featprop.getCvterm().getName() + "="
+            + GFFStreamFeature.decode(featprop.getValue()) + "\n");
       }
-      attr_text.setText(new String(attr_buff));
-    }
-    catch(SQLException sqlExp)
-    {
-      JOptionPane.showMessageDialog(null, "SQL Problems...\n"
-          + sqlExp.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
-      sqlExp.printStackTrace();
-    }
-    catch(java.net.ConnectException ce)
-    {
-      ce.printStackTrace();
-    }
+
+    attr_text.setText(new String(attr_buff));
   }
 
   /**
@@ -343,15 +312,22 @@ public class ChadoDemo
    *          the data access object
    * @return string array of results
    * @throws SQLException
+   * @throws ConnectException
    */
   public String[][] search(final String search_gene, final List schema_search,
-      final ChadoDAO dao) throws SQLException
+      ChadoDAO dao) throws SQLException, ConnectException
   {
     ChadoFeature feature = new ChadoFeature();
     feature.setUniquename(search_gene.replaceAll("[*]","%"));
-    featureList = dao.getLazyFeature(feature,
-                                     schema_search);
-
+    featureList = new Vector();
+    
+    for(int i=0; i<schema_search.size(); i++)
+    {
+      reset(location, (String)schema_search.get(i));
+      dao = getDAO();
+      featureList.addAll(dao.getLazyFeature(feature));
+    }
+    
     String rowData[][] = new String[featureList.size()][7];
 
     for(int i = 0; i < featureList.size(); i++)
@@ -359,22 +335,51 @@ public class ChadoDemo
       feature = (ChadoFeature) featureList.get(i);
       
       // assume only one featureloc
-      ChadoFeatureLoc loc = (ChadoFeatureLoc)feature.getFeaturelocsForFeatureId().get(0);
-      int fmin = loc.getFmin() + 1;
-      int fmax = loc.getFmax();
-
-      rowData[i][0] = feature.getOrganism().getAbbreviation();
+      List locs = feature.getFeaturelocsForFeatureId();
+      
+      if(locs.size() > 0)
+      {
+        ChadoFeatureLoc loc = (ChadoFeatureLoc)locs.get(0);
+        int fmin = loc.getFmin() + 1;
+        int fmax = loc.getFmax();
+        rowData[i][4] = fmin + "..." + fmax;
+        rowData[i][5] = Integer.toString(loc.getStrand());
+      }
+      
+      String schema = feature.getOrganism().getAbbreviation().toLowerCase();
+      int ind = schema.indexOf('.');
+      if(ind > 0)
+        schema = schema.substring(0,ind)+schema.substring(ind+1);
+      
+      System.out.println("get featur type_id.......");
+      rowData[i][0] = schema;
       rowData[i][1] = feature.getUniquename();
       rowData[i][2] = feature.getCvterm().getName();
       //rowData[i][2] = (String)cvterm.get(new Long(feature.getType_id()));
       rowData[i][3] = Integer.toString(feature.getId());
-      rowData[i][4] = fmin + "..." + fmax;
-      rowData[i][5] = Integer.toString(loc.getStrand());
       rowData[i][6] = feature.getTimelastmodified().toString();
+    
     }
     return rowData;
   }
 
+  /**
+   * Reset the schema.
+   * @param location
+   * @param schema
+   */
+  private void reset(String location, String schema)
+  {
+    if(!location.endsWith("="+schema))
+    {
+      int index = location.lastIndexOf('=');
+      location = location.substring(0,index+1) + schema;
+      connIB  = null;
+      jdbcDAO = null;
+      System.setProperty("chado", location);
+    }
+  }
+  
   /**
    * Get the data access object (DAO).
    * 

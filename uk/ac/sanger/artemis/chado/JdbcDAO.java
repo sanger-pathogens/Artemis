@@ -71,17 +71,15 @@ public class JdbcDAO
   /**
    * Get the residues of a feature.
    * @param feature_id  id of feature to query
-   * @param schema      schema/organism name or null
    * @return    the <code>ChadoFeature</code> with the residues
    * @throws SQLException
    */
-  public ChadoFeature getSequence(final int feature_id,
-                                  final String schema)
+  public ChadoFeature getSequence(final int feature_id)
                         throws SQLException
   {
     Statement st = conn.createStatement();
-    String sql = "SELECT name, uniquename, residues from " + schema +
-                 ".feature where feature_id = '" + feature_id + "'";
+    String sql = "SELECT name, uniquename, residues from " + 
+                 "feature where feature_id = '" + feature_id + "'";
 
     appendToLogFile(sql, sqlLog);
 
@@ -96,20 +94,18 @@ public class JdbcDAO
   }
 
   /**
-   * Get the feature name given a feature_id and schema.
+   * Get the feature name given a feature_id.
    * @param feature_id  id of feature to query
-   * @param schema      schema/organism name or null
    * @return    the feature name
    * @throws SQLException
    */
-  public String getFeatureName(final int feature_id,
-                               final String schema)
+  public String getFeatureName(final int feature_id)
                        throws SQLException
   {
     Statement st = conn.createStatement();
 
-    String sql = "SELECT name FROM " + schema + 
-                 ".feature WHERE feature_id= " +
+    String sql = "SELECT name FROM " +  
+                 "feature WHERE feature_id= " +
                  feature_id;
     appendToLogFile(sql, sqlLog);
     ResultSet rs = st.executeQuery(sql);
@@ -122,52 +118,37 @@ public class JdbcDAO
    * If ChadoFeature.featureloc.srcfeature_id is set this is used
    * to return the children of that srcfeature_id.
    * @param feature  the feature to query
-   * @param schema   the schema/organism name or null
    * @return    the <code>List</code> of child <code>ChadoFeature</code> objects
    * @throws SQLException
    */
-  public List getFeature(final ChadoFeature feature,
-                         final String schema)
+  public List getFeature(final ChadoFeature feature)
                          throws SQLException
   {
-    
     return getFeatureQuery(null, 
-                 feature.getFeatureloc().getSrcfeature_id(), schema);
+                 feature.getFeatureloc().getSrcfeature_id());
   }
 
   /**
    * Get the properties of a feature.
    * @param uniquename  the unique name of the feature
-   * @param schema_list the <code>List</code> of schemas to search
    * @return  the <code>List</code> of <code>ChadoFeature</code>
    * @throws SQLException
    */
-  public List getLazyFeature(final ChadoFeature feature,
-                             List schema_list)
+  public List getLazyFeature(final ChadoFeature feature)
                              throws SQLException
   {
-    List list = new Vector();
-    for(int i=0; i<schema_list.size(); i++)
-    {
-      String schema = (String)schema_list.get(i);
-      List feat_list = getFeatureQuery(feature.getUniquename(), -1, schema);
-      list.addAll(feat_list);
-    }
-     
-    return list;
+    return getFeatureQuery(feature.getUniquename(), -1);
   }
   
   /**
    * Get the properties of a feature.
    * @param uniquename  the unique name of the feature
    * @param parentFeatureID  the id of parent feature to query
-   * @param schema_list the <code>List</code> of schemas to search
    * @return  the <code>List</code> of <code>ChadoFeature</code>
    * @throws SQLException
    */
   private List getFeatureQuery(final String uniquename,
-                               final int parentFeatureID,
-                               final String schema)
+                               final int parentFeatureID)
                                throws SQLException
   {
     Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
@@ -178,12 +159,12 @@ public class JdbcDAO
                + " fp.type_id AS prop_type_id, fp.value, fl.phase,"
                + " f.organism_id, abbreviation, genus, species, common_name, comment,"
                + " fr.object_id, fr.type_id AS relation_type_id, fr.rank"
-               + " FROM  "     + schema + ".feature f"
-               + " LEFT JOIN " + schema + ".feature_relationship fr ON "
+               + " FROM  feature f"
+               + " LEFT JOIN feature_relationship fr ON "
                                         + "fr.subject_id=" + "f.feature_id"
-               + " LEFT JOIN " + schema + ".featureprop fp ON "
+               + " LEFT JOIN featureprop fp ON "
                                         + "fp.feature_id=" + "f.feature_id"
-               + " LEFT JOIN " + schema + ".featureloc fl ON "
+               + " LEFT JOIN featureloc fl ON "
                                         + "f.feature_id=" + "fl.feature_id"
                + " LEFT JOIN organism ON organism.organism_id=f.organism_id"                                
                + " WHERE ";
@@ -228,8 +209,6 @@ public class JdbcDAO
       featureprop.setCvterm(cvterm);
       featureprop.setValue(rs.getString("value"));
       feature.setFeatureprop(featureprop);
-
-      feature.setSchema(schema);
 
       feature.setUniquename( rs.getString("uniquename") );
       feature.setTimelastmodified( rs.getTimestamp("timelastmodified") );
@@ -323,7 +302,7 @@ public class JdbcDAO
   public List getResidueType(final String schema)
                      throws SQLException
   {
-    String sql = "SELECT DISTINCT type_id FROM " + schema +
+    String sql = "SELECT DISTINCT type_id FROM " +schema+
                  ".feature WHERE residues notnull";
     appendToLogFile(sql, sqlLog);
 
@@ -391,20 +370,19 @@ public class JdbcDAO
 
   /**
    * Get dbxref for a feature.
-   * @param schema      the postgres schema name
    * @param uniquename  the unique name for the feature. If set to NULL
    *                    all <code>Dbxref</code> are returned.
    * @return a <code>Hashtable</code> of dbxrefs.
    * @throws SQLException
    */
-  public Hashtable getDbxref(final String schema, final String uniquename)
+  public Hashtable getDbxref(final String uniquename)
               throws SQLException
   {
     String sql = "SELECT db.name, dbx.accession, f.feature_id FROM "+
-                 schema+".feature_dbxref dbx_f "+
+                 "feature_dbxref dbx_f "+
                  "LEFT JOIN dbxref dbx ON dbx.dbxref_id=dbx_f.dbxref_id "+
                  "LEFT JOIN db ON db.db_id=dbx.db_id "+
-                 "LEFT JOIN "+schema+".feature f ON dbx_f.feature_id=f.feature_id ";
+                 "LEFT JOIN feature f ON dbx_f.feature_id=f.feature_id ";
     
     if(uniquename != null)
       sql = sql + "WHERE f.uniquename='"+uniquename+"'";
@@ -432,20 +410,19 @@ public class JdbcDAO
   
   /**
    * Get dbxref for a feature.
-   * @param schema      the postgres schema name
    * @param uniquename  the unique name for the feature. If set to NULL
    *                    all synonyms are returned.
    * @return a <code>Hashtable</code> of synonym values with the 
    *         feature_id as the key.
    * @throws SQLException
    */
-  public Hashtable getAlias(final String schema, final String uniquename)
+  public Hashtable getAlias(final String uniquename)
               throws SQLException
   {
     String sql = "SELECT s.name, f.feature_id, s.type_id FROM "+
-      schema+".feature_synonym fs "+
-      "LEFT JOIN "+schema+".feature f ON f.feature_id=fs.feature_id "+
-      "LEFT JOIN "+schema+".synonym s ON fs.synonym_id=s.synonym_id ";
+      "feature_synonym fs "+
+      "LEFT JOIN feature f ON f.feature_id=fs.feature_id "+
+      "LEFT JOIN synonym s ON fs.synonym_id=s.synonym_id ";
       
       /* "SELECT s.name, f.feature_id, cvterm.name AS cvterm_name FROM "+
                                                    schema+".feature_synonym fs "+
@@ -490,21 +467,18 @@ public class JdbcDAO
   
   /**
    * Get the time a feature was last modified.
-   * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
    * @return  number of rows changed
    * @throws SQLException
    */
   public Timestamp getTimeLastModified
-                   (final String schema, final String uniquename)
+                   (final String uniquename)
                    throws SQLException
   {
     StringBuffer sqlBuff = new StringBuffer("SELECT timelastmodified FROM ");
     
-    sqlBuff.append(schema);
-    sqlBuff.append(".feature WHERE ");
-    sqlBuff.append(schema);
-    sqlBuff.append(".feature.uniquename='");
+    sqlBuff.append("feature WHERE ");
+    sqlBuff.append("feature.uniquename='");
     sqlBuff.append(uniquename);
     sqlBuff.append("'");
     
@@ -526,20 +500,19 @@ public class JdbcDAO
 //
   /**
    * Update attributes defined by the <code>ChadoTransaction</code>.
-   * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
   public int updateAttributes
-                    (final String schema, final ChadoTransaction tsn)
+                    (final ChadoTransaction tsn)
                      throws SQLException
   {
     List uniquename = tsn.getUniquename();
     
     StringBuffer sqlBuff = new StringBuffer();
     String chadoTable    = tsn.getChadoTable();
-    sqlBuff.append("UPDATE "+schema+"."+chadoTable);
+    sqlBuff.append("UPDATE "+chadoTable);
     sqlBuff.append(" SET ");
 
     List properties = tsn.getProperties();
@@ -550,14 +523,14 @@ public class JdbcDAO
         sqlBuff.append(" , ");
     }
 
-    sqlBuff.append(" FROM "+schema+".feature");
-    sqlBuff.append(" WHERE "+schema+".feature.feature_id="+
-                             schema+"."+chadoTable+".feature_id AND (");
+    sqlBuff.append(" FROM feature");
+    sqlBuff.append(" WHERE feature.feature_id="+
+                           chadoTable+".feature_id AND (");
 
 
     for(int i=0; i<uniquename.size(); i++)
     {
-      sqlBuff.append(" "+schema+".feature.uniquename='" + 
+      sqlBuff.append(" feature.uniquename='" + 
                      (String)uniquename.get(i) +"' ");
       if(i < uniquename.size()-1)
         sqlBuff.append("OR");
@@ -573,10 +546,12 @@ public class JdbcDAO
         sqlBuff.append(" AND ");
         // looks like specifying table, so include schema
         String constraint = (String)constraints.get(i);
+        /*
         int index;
         if( (index = constraint.indexOf(".")) > -1 &&
             constraint.indexOf("=") > index)
          sqlBuff.append(schema+".");
+        */
         sqlBuff.append(constraint);
       }
     }
@@ -590,12 +565,11 @@ public class JdbcDAO
 
   /**
    * Insert attributes defined by the <code>ChadoTransaction</code>.
-   * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @throws SQLException
    */
   public void insertAttributes
-                    (final String schema, final ChadoTransaction tsn)
+                    (final ChadoTransaction tsn)
                      throws SQLException
   {
     StringBuffer sqlBuff;
@@ -605,12 +579,12 @@ public class JdbcDAO
     for(int i=0; i<uniquename.size(); i++)
     {
       sqlBuff = new StringBuffer();
-      sqlBuff.append("INSERT INTO "+schema+"."+chadoTable);
+      sqlBuff.append("INSERT INTO "+chadoTable);
       StringBuffer sqlKeys   = new StringBuffer();
       StringBuffer sqlValues = new StringBuffer();
 
       sqlKeys.append("feature_id , ");
-      sqlValues.append("(SELECT feature_id FROM "+schema+".feature WHERE uniquename='"+
+      sqlValues.append("(SELECT feature_id FROM feature WHERE uniquename='"+
                          (String)uniquename.get(i)+"') , ");
 
       String name;
@@ -643,12 +617,11 @@ public class JdbcDAO
 
   /**
    * Delete attributes defined by the <code>ChadoTransaction</code>.
-   * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @throws SQLException
    */
   public void deleteAttributes
-                    (final String schema, final ChadoTransaction tsn)
+                    (final ChadoTransaction tsn)
                      throws SQLException
   {
     StringBuffer sqlBuff;
@@ -659,14 +632,14 @@ public class JdbcDAO
     {
       sqlBuff = new StringBuffer();
 
-      sqlBuff.append("DELETE FROM "+schema+"."+chadoTable+" WHERE ");
+      sqlBuff.append("DELETE FROM "+chadoTable+" WHERE ");
 
       List constraints = tsn.getConstraint();
       for(int j=0; j<constraints.size(); j++)
         sqlBuff.append((String)constraints.get(j)+" AND ");
       
       sqlBuff.append("feature_id=(SELECT feature_id FROM "+
-                     schema+".feature WHERE uniquename='"+
+                     "feature WHERE uniquename='"+
                      (String)uniquename.get(i)+"')");
 
       System.out.println(sqlBuff.toString());
@@ -681,21 +654,20 @@ public class JdbcDAO
 
   /**
    * Insert a feature into the database defined by the <code>ChadoTransaction</code>.
-   * @param schema              schema/organism name or null
    * @param tsn                 the <code>ChadoTransaction</code>
    * @parma srcfeature_id       the parent feature identifier
    * @throws SQLException
    */
   public void insertFeature
-                    (final String schema, final ChadoTransaction tsn, 
+                    (final ChadoTransaction tsn, 
                      final String srcfeature_id)
                      throws SQLException
   {
     //
     // get the organism_id
     Statement st = conn.createStatement();
-    String sql = "SELECT organism_id from " + schema +
-                 ".feature where feature_id = '" + srcfeature_id + "'";
+    String sql = "SELECT organism_id from " +
+                 "feature where feature_id = '" + srcfeature_id + "'";
 
     appendToLogFile(sql, sqlLog);
     ResultSet rs = st.executeQuery(sql);
@@ -706,14 +678,14 @@ public class JdbcDAO
     ChadoFeature chadoFeature = tsn.getChadoFeature();
     // insert new feature into feature table
     StringBuffer sql_buff = new StringBuffer();
-    sql_buff.append("INSERT INTO "+schema+".feature (");
+    sql_buff.append("INSERT INTO feature (");
     sql_buff.append(" feature_id ,");
     sql_buff.append(" organism_id ,");
     sql_buff.append(" name ,");
     sql_buff.append(" uniquename ,");
     sql_buff.append(" type_id");
     sql_buff.append(" ) VALUES ( ");
-    sql_buff.append("nextval('"+schema+".feature_feature_id_seq') , ");
+    sql_buff.append("nextval('feature_feature_id_seq') , ");
     sql_buff.append(organism_id+" , ");
     sql_buff.append("'"+chadoFeature.getName()+"'"+" , ");
     sql_buff.append("'"+chadoFeature.getUniquename()+"'"+" , ");
@@ -727,7 +699,7 @@ public class JdbcDAO
 
     //
     // get the current feature_id sequence value
-    sql = "SELECT currval('"+schema+".feature_feature_id_seq')";
+    sql = "SELECT currval('feature_feature_id_seq')";
     appendToLogFile(sql, sqlLog);
     
     rs = st.executeQuery(sql);
@@ -737,7 +709,7 @@ public class JdbcDAO
     //
     // insert feature location into featureloc
     sql_buff = new StringBuffer();
-    sql_buff.append("INSERT INTO "+schema+".featureloc (");
+    sql_buff.append("INSERT INTO featureloc (");
     sql_buff.append(" featureloc_id ,");
     sql_buff.append(" feature_id ,");
     sql_buff.append(" srcfeature_id ,");
@@ -746,7 +718,7 @@ public class JdbcDAO
     sql_buff.append(" strand ,");
     sql_buff.append(" phase ");
     sql_buff.append(" ) VALUES ( ");
-    sql_buff.append("nextval('"+schema+".featureloc_featureloc_id_seq') , ");
+    sql_buff.append("nextval('featureloc_featureloc_id_seq') , ");
     sql_buff.append(feature_id+" , ");
     sql_buff.append(srcfeature_id+" , ");
     sql_buff.append(chadoFeature.getFeatureloc().getFmin()+" , ");
@@ -764,16 +736,15 @@ public class JdbcDAO
   /**
    * Delete a feature from the database defined by the 
    * <code>ChadoTransaction</code>.
-   * @param schema      schema/organism name or null
    * @param tsn         the <code>ChadoTransaction</code>
    * @return	number of rows deleted
    * @throws SQLException
    */
   public int deleteFeature
-                    (final String schema, final ChadoTransaction tsn)
+                    (final ChadoTransaction tsn)
                      throws SQLException
   {
-    String sql = "DELETE FROM "+schema+".feature WHERE uniquename='"+
+    String sql = "DELETE FROM feature WHERE uniquename='"+
                  tsn.getUniqueName()+"'";
     appendToLogFile(sql, sqlLog);
     
@@ -783,12 +754,11 @@ public class JdbcDAO
 
   /**
    * Insert a dbxref for a feature.
-   * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
-  public int insertFeatureDbxref(final String schema, final ChadoTransaction tsn)
+  public int insertFeatureDbxref(final ChadoTransaction tsn)
                      throws SQLException
   {
     final ChadoFeatureDbxref dbxref = tsn.getFeatureDbxref();
@@ -833,11 +803,11 @@ public class JdbcDAO
     }
     
     final int dbxref_id = rs.getInt("dbxref_id"); 
-    sql = "INSERT INTO "+schema+".feature_dbxref "+
+    sql = "INSERT INTO feature_dbxref "+
           "(feature_id, dbxref_id, is_current)"+
           " VALUES "+
-          "( (SELECT feature_id FROM "+schema+
-             ".feature WHERE  uniquename='"+uniquename+"'), "+
+          "( (SELECT feature_id FROM "+
+             "feature WHERE  uniquename='"+uniquename+"'), "+
           dbxref_id+", "+ Boolean.toString(dbxref.isCurrent())+")";
     System.out.println(sql);
     appendToLogFile(sql, sqlLog);
@@ -846,24 +816,23 @@ public class JdbcDAO
   
   /**
    * Delete a dbxref for a feature.
-   * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
-  public int deleteFeatureDbxref(final String schema, final ChadoTransaction tsn)
+  public int deleteFeatureDbxref(final ChadoTransaction tsn)
                      throws SQLException
   {
     final ChadoFeatureDbxref dbxref = tsn.getFeatureDbxref();
     final String uniquename = tsn.getUniqueName();
     
     final String sql = 
-      "DELETE FROM "+schema+".feature_dbxref "+
+      "DELETE FROM feature_dbxref "+
       "WHERE dbxref_id="+
       "(SELECT dbxref_id FROM dbxref WHERE accession='"+dbxref.getDbxref().getAccession()+"' "+
              "AND db_id=(SELECT db_id FROM db WHERE name='"+dbxref.getDbxref().getDb().getName()+"'))"+
-      "AND feature_id=(SELECT feature_id FROM "+schema+
-             ".feature WHERE  uniquename='"+uniquename+"')";
+      "AND feature_id=(SELECT feature_id FROM "+
+             "feature WHERE  uniquename='"+uniquename+"')";
     
     Statement st = conn.createStatement();
     return st.executeUpdate(sql);
@@ -871,12 +840,11 @@ public class JdbcDAO
   
   /**
    * Insert a synonym for a feature.
-   * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
-  public int insertFeatureAlias(final String schema, final ChadoTransaction tsn)
+  public int insertFeatureAlias(final ChadoTransaction tsn)
                      throws SQLException
   {
     final ChadoFeatureSynonym alias  = tsn.getAlias();
@@ -886,7 +854,7 @@ public class JdbcDAO
     String sql;
      
     String sqlAliasId = "SELECT synonym_id FROM "+
-                        schema+".synonym WHERE synonym.name='"+synonym_name+"'";
+                        "synonym WHERE synonym.name='"+synonym_name+"'";
 
     appendToLogFile(sqlAliasId, sqlLog);
     Statement st   = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -899,8 +867,8 @@ public class JdbcDAO
       // create a new synonym name     
       String type_id = Long.toString(alias.getSynonym().getCvterm().getCvtermId());
       
-      sql = "INSERT INTO "+schema+
-            ".synonym (name, type_id, synonym_sgml) values ( '"+
+      sql = "INSERT INTO "+
+            "synonym (name, type_id, synonym_sgml) values ( '"+
             synonym_name+"',"+type_id+",'"+synonym_name+"')" ;
 
       st.executeUpdate(sql);
@@ -912,11 +880,11 @@ public class JdbcDAO
     }
     
     final int synonym_id = rs.getInt("synonym_id"); 
-    sql = "INSERT INTO "+schema+
-           ".feature_synonym ( synonym_id, feature_id, pub_id )"+
+    sql = "INSERT INTO "+
+           "feature_synonym ( synonym_id, feature_id, pub_id )"+
            " values ( "+synonym_id+" ,"+
-               "(SELECT feature_id FROM "+schema+
-               ".feature WHERE  uniquename='"+uniquename+"'), "+
+               "(SELECT feature_id FROM "+
+               "feature WHERE  uniquename='"+uniquename+"'), "+
                " 1)";
  
     appendToLogFile(sql, sqlLog);
@@ -925,19 +893,18 @@ public class JdbcDAO
   
   /**
    * Delete a synonym for a feature.
-   * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
-  public int deleteFeatureAlias(final String schema, final ChadoTransaction tsn)
+  public int deleteFeatureAlias(final ChadoTransaction tsn)
                      throws SQLException
   {
     final ChadoFeatureSynonym alias = tsn.getAlias();
     final String uniquename   = alias.getUniquename();
     final String synonym_name = alias.getSynonym().getName();
-    String sql = "SELECT synonym_id FROM "+schema+".feature_synonym WHERE "+ 
-                 "synonym_id=(SELECT synonym_id FROM "+schema+".synonym WHERE "+
+    String sql = "SELECT synonym_id FROM feature_synonym WHERE "+ 
+                 "synonym_id=(SELECT synonym_id FROM synonym WHERE "+
                  "synonym.name='"+synonym_name+"')";
     
     appendToLogFile(sql, sqlLog);
@@ -952,13 +919,13 @@ public class JdbcDAO
     // i.e. in more than one row
     if(nrows>1)
     {
-      sql = "DELETE FROM "+schema+".feature_synonym WHERE "+
+      sql = "DELETE FROM feature_synonym WHERE "+
             "synonym_id="+synonym_id+" AND "+
-            "feature_id=(SELECT feature_id FROM "+schema+
-                     ".feature WHERE  uniquename='"+uniquename+"')";
+            "feature_id=(SELECT feature_id FROM "+
+                     "feature WHERE  uniquename='"+uniquename+"')";
     }
     else
-      sql = "DELETE FROM "+schema+".synonym WHERE synonym_id="+synonym_id;
+      sql = "DELETE FROM synonym WHERE synonym_id="+synonym_id;
     
     st   = conn.createStatement();
     return st.executeUpdate(sql);
@@ -966,13 +933,12 @@ public class JdbcDAO
   
   /**
    * Update feature_relationship for a feature.
-   * @param schema        schema/organism name or null
    * @param tsn           the <code>ChadoTransaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
   public void updateFeatureRelationshipsForSubjectId(
-      final String schema, final ChadoTransaction tsn)
+      final ChadoTransaction tsn)
                      throws SQLException
   {
     final ChadoFeature chado_feature = tsn.getChadoFeature();
@@ -980,7 +946,7 @@ public class JdbcDAO
     
       
     StringBuffer sqlBuff = new StringBuffer();
-    sqlBuff.append("UPDATE "+schema+".feature_relationship ");
+    sqlBuff.append("UPDATE feature_relationship ");
     sqlBuff.append(" SET ");
 
     List properties = tsn.getProperties();
@@ -991,11 +957,11 @@ public class JdbcDAO
         sqlBuff.append(" , ");
     }
 
-    sqlBuff.append(" WHERE "+schema+".feature_relationship.subject_id="+
-        "(SELECT feature_id FROM "+schema+".feature WHERE uniquename='"+
+    sqlBuff.append(" WHERE feature_relationship.subject_id="+
+        "(SELECT feature_id FROM feature WHERE uniquename='"+
         chado_feature.getUniquename()+"') AND "+
-        schema+".feature_relationship.object_id="+
-        "(SELECT feature_id FROM "+schema+".feature WHERE uniquename='"+
+        "feature_relationship.object_id="+
+        "(SELECT feature_id FROM feature WHERE uniquename='"+
         parent+"')"); 
  
     String sql = sqlBuff.toString();
@@ -1008,7 +974,6 @@ public class JdbcDAO
   
   /**
    * Write the time a feature was last modified
-   * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
    * @param timestamp   the time stamp to use, 
    *                    if NULL use CURRENT_TIMESTAMP
@@ -1016,12 +981,12 @@ public class JdbcDAO
    * @throws SQLException
    */
   public int writeTimeLastModified
-                    (final String schema, final String uniquename,
+                    (final String uniquename,
                      final Timestamp timestamp)
                      throws SQLException
   {
-    String sql = "UPDATE "+schema+
-                 ".feature SET timelastmodified=";
+    String sql = "UPDATE "+
+                 "feature SET timelastmodified=";
     
     if(timestamp == null)
       sql = sql +"CURRENT_TIMESTAMP";
@@ -1046,19 +1011,18 @@ public class JdbcDAO
 
   /**
    * Write the time a feature was last accessed
-   * @param schema      schema/organism name or null
    * @param uniquename  the unique name of the feature
    * @param timestamp   the time stamp to use, 
    *                    if NULL use CURRENT_TIMESTAMP
    * @throws SQLException
    */
   public int writeTimeAccessioned
-                    (final String schema, final String uniquename,
+                    (final String uniquename,
                      final Timestamp timestamp)
                      throws SQLException
   {   
-    String sql = "UPDATE "+schema+
-                 ".feature SET timeaccessioned=";
+    String sql = "UPDATE "+
+                 "feature SET timeaccessioned=";
 
     if(timestamp == null)
       sql = sql +"CURRENT_TIMESTAMP";

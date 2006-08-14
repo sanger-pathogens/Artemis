@@ -167,6 +167,19 @@ public class DatabaseDocument extends Document
       iBatis = true;
       System.setProperty("chado", location);
     }
+    
+    reset(location, schema);
+    
+    /*
+    if(!location.endsWith("="+schema))
+    {
+      int index = location.lastIndexOf('=');
+      setLocation(location.substring(0,index+1) + schema);
+      connIB  = null;
+      jdbcDAO = null;
+      System.setProperty("chado", (String)getLocation());
+    }
+    */
   }
 
   /**
@@ -208,6 +221,24 @@ public class DatabaseDocument extends Document
     {
       iBatis = true;
       System.setProperty("chado", location);
+    }
+  }
+  
+  /**
+   * Reset the schema.
+   * @param location
+   * @param schema
+   */
+  private void reset(String location, String schema)
+  {
+    this.schema = schema;
+    if(!location.endsWith("="+schema))
+    {
+      int index = location.lastIndexOf('=');
+      setLocation(location.substring(0,index+1) + schema);
+      connIB  = null;
+      jdbcDAO = null;
+      System.setProperty("chado", (String)getLocation());
     }
   }
 
@@ -409,13 +440,13 @@ public class DatabaseDocument extends Document
     ChadoFeature feature = new ChadoFeature();
     feature.setFeatureloc(featureloc);
     
-    List featList = dao.getFeature(feature, schema);
+    List featList = dao.getFeature(feature);
 
     ByteBuffer[] buffers = new ByteBuffer[types.length + 1];
     for(int i = 0; i < buffers.length; i++)
       buffers[i] = new ByteBuffer();
 
-    final String parentFeature = dao.getFeatureName(srcfeature_id, schema);
+    final String parentFeature = dao.getFeatureName(srcfeature_id);
     ByteBuffer this_buff;
 
     int feature_size = featList.size();
@@ -432,8 +463,8 @@ public class DatabaseDocument extends Document
     }
     
     // get all dbrefs & synonyms
-    Hashtable dbxrefs = dao.getDbxref(schema, null);
-    Hashtable synonym = dao.getAlias(schema, null);
+    Hashtable dbxrefs = dao.getDbxref(null);
+    Hashtable synonym = dao.getAlias(null);
 
     // create gff byte stream
     for(int i = 0; i < feature_size; i++)
@@ -471,18 +502,22 @@ public class DatabaseDocument extends Document
    * @return  GFF byte buffer
    * @throws SQLException
    * @throws ReadFormatException
+   * @throws ConnectException 
    */
   private ByteBuffer getGeneFeature(final String search_gene, 
                                     final List schema_search,
-                                    final ChadoDAO dao) 
-          throws SQLException, ReadFormatException
+                                    ChadoDAO dao) 
+          throws SQLException, ReadFormatException, ConnectException
   {
     Hashtable id_store = new Hashtable();
 
     ChadoFeature feature = new ChadoFeature();
     feature.setUniquename(search_gene);
-    List featureList = dao.getLazyFeature(feature, schema_search);
 
+    reset((String)getLocation(), (String)schema_search.get(0));
+    dao = getDAO();
+    List featureList = dao.getLazyFeature(feature);
+    
     ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();
 
     if(featureList.size() > 1)
@@ -498,7 +533,7 @@ public class DatabaseDocument extends Document
     ChadoFeature parent = new ChadoFeature();
     parent.setId(src);
 
-    List parentList = dao.getLazyFeature(parent, schema_search);
+    List parentList = dao.getLazyFeature(parent);
     parent = (ChadoFeature) parentList.get(0);
     chado_gene.setSeqlen(parent.getLength());
     chado_gene.setSrcfeature_id(src);
@@ -510,13 +545,13 @@ public class DatabaseDocument extends Document
 
     // get children of gene
     List relations = feature.getFeatureRelationshipsForObjectId();
-
+    
     for(int i = 0; i < relations.size(); i++)
     {
       ChadoFeature transcript = new ChadoFeature();
       transcript.setId(((ChadoFeatureRelationship) relations.get(i))
           .getSubject_id());
-      featureList = dao.getLazyFeature(transcript, schema_search);
+      featureList = dao.getLazyFeature(transcript);
 
       transcript = (ChadoFeature) featureList.get(0);
       id_store.put(Integer.toString(transcript.getId()), transcript
@@ -535,7 +570,7 @@ public class DatabaseDocument extends Document
         ChadoFeature child = new ChadoFeature();
         child.setId(((ChadoFeatureRelationship) transcipt_relations.get(j))
             .getSubject_id());
-        featureList = dao.getLazyFeature(child, schema_search);
+        featureList = dao.getLazyFeature(child);
 
         child = (ChadoFeature) featureList.get(0);
         id_store.put(Integer.toString(child.getId()), child.getUniquename());
@@ -580,7 +615,7 @@ public class DatabaseDocument extends Document
     String typeName   = getCvtermName(type_id, dao);
 
     String timelastmodified = Long.toString(feat.getTimelastmodified().getTime());
-    String feature_id       = Integer.toString(feat.getId());
+    Integer feature_id      = new Integer(feat.getId());
 
     String parent_id = null;
     String parent_relationship = null;
@@ -619,9 +654,9 @@ public class DatabaseDocument extends Document
     Vector dbxref = null;
     // append dbxrefs
     if(dbxrefs != null &&
-       dbxrefs.containsKey(new Integer(feature_id)))
+       dbxrefs.containsKey(feature_id))
     {
-      dbxref = (Vector)dbxrefs.get(new Integer(feature_id));
+      dbxref = (Vector)dbxrefs.get(feature_id);
       for(int j=0; j<dbxref.size(); j++)
       {
         if(((String)dbxref.get(j)).startsWith("GFF_source:"))
@@ -714,10 +749,10 @@ public class DatabaseDocument extends Document
     
     // append synonyms
     if(synonym != null &&
-       synonym.containsKey(new Integer(feature_id)))
+       synonym.containsKey(feature_id))
     {   
       ChadoFeatureSynonym alias;
-      Vector v_synonyms = (Vector)synonym.get(new Integer(feature_id));
+      Vector v_synonyms = (Vector)synonym.get(feature_id);
       for(int j=0; j<v_synonyms.size(); j++)
       {
         alias = (ChadoFeatureSynonym)v_synonyms.get(j);
@@ -725,9 +760,6 @@ public class DatabaseDocument extends Document
         this_buff.append( getCvtermName(alias.getSynonym().getCvterm().getCvtermId(), dao) + "=" );
         //this_buff.append(alias.getSynonym().getCvterm().getName()+"=");
         this_buff.append(alias.getSynonym().getName());
-        
-        //System.out.println(getCvtermName(alias.getSynonym().getCvterm().getCvtermId(), dao)+" "+
-        //    alias.getSynonym().getCvterm().getName());
         
         if(j<v_synonyms.size()-1)
           this_buff.append(";");
@@ -807,8 +839,7 @@ public class DatabaseDocument extends Document
   private ByteBuffer getChadoSequence(ChadoDAO dao, ByteBuffer buff)
                      throws java.sql.SQLException
   {
-    ChadoFeature feature = dao.getSequence(Integer.parseInt(feature_id),
-                                         schema);
+    ChadoFeature feature = dao.getSequence(Integer.parseInt(feature_id));
 
     buff.append("##FASTA\n>");
     buff.append(feature.getUniquename());
@@ -1015,25 +1046,25 @@ public class DatabaseDocument extends Document
           ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
 
           if(tsn.getType() == ChadoTransaction.UPDATE)
-            dao.updateAttributes(schema, tsn);
+            dao.updateAttributes(tsn);
           else if(tsn.getType() == ChadoTransaction.INSERT)
-            dao.insertAttributes(schema, tsn);
+            dao.insertAttributes(tsn);
           else if(tsn.getType() == ChadoTransaction.DELETE)
-            dao.deleteAttributes(schema, tsn);
+            dao.deleteAttributes(tsn);
           else if(tsn.getType() == ChadoTransaction.INSERT_FEATURE)
-            dao.insertFeature(schema, tsn, feature_id);
+            dao.insertFeature(tsn, feature_id);
           else if(tsn.getType() == ChadoTransaction.DELETE_FEATURE)
-            dao.deleteFeature(schema, tsn);
+            dao.deleteFeature(tsn);
           else if(tsn.getType() == ChadoTransaction.DELETE_DBXREF)
-            dao.deleteFeatureDbxref(schema, tsn);
+            dao.deleteFeatureDbxref(tsn);
           else if(tsn.getType() == ChadoTransaction.INSERT_DBXREF)
-            dao.insertFeatureDbxref(schema, tsn);
+            dao.insertFeatureDbxref(tsn);
           else if(tsn.getType() == ChadoTransaction.DELETE_ALIAS)
-            dao.deleteFeatureAlias(schema, tsn);
+            dao.deleteFeatureAlias(tsn);
           else if(tsn.getType() == ChadoTransaction.INSERT_ALIAS)
-            dao.insertFeatureAlias(schema, tsn);
+            dao.insertFeatureAlias(tsn);
           else if(tsn.getType() == ChadoTransaction.UPDATE_FEATURE_RELATIONSHIP)
-            dao.updateFeatureRelationshipsForSubjectId(schema, tsn);
+            dao.updateFeatureRelationshipsForSubjectId(tsn);
         }
 
         //
@@ -1058,8 +1089,8 @@ public class DatabaseDocument extends Document
 
               names_checked.add((String) uniquename.get(k));
 
-              dao.writeTimeLastModified(schema, (String) uniquename.get(k), ts);
-              ts2 = dao.getTimeLastModified(schema, (String) uniquename.get(k));
+              dao.writeTimeLastModified((String) uniquename.get(k), ts);
+              ts2 = dao.getTimeLastModified((String) uniquename.get(k));
               if(ts2 == null)
                 continue;
 
@@ -1118,7 +1149,7 @@ public class DatabaseDocument extends Document
                                        final ChadoDAO dao)
                                        throws SQLException
   {
-    Timestamp now = dao.getTimeLastModified(schema, uniquename);
+    Timestamp now = dao.getTimeLastModified(uniquename);
     
     if(now != null && timestamp != null)
     {
@@ -1163,7 +1194,7 @@ public class DatabaseDocument extends Document
       feature.setUniquename(args[0]);
       List schemas = new Vector();
       schemas.add(args[1]);
-      List featureList = dao.getLazyFeature(feature, schemas); 
+      List featureList = dao.getLazyFeature(feature); 
       System.out.println("FINISHED getFeature()");
       for(int i = 0; i < featureList.size(); i++)
       {
@@ -1184,7 +1215,7 @@ public class DatabaseDocument extends Document
         System.out.print(" "+abb);
         System.out.println(" "+Integer.toString(feature.getId()));
         
-        Hashtable synonyms   = dao.getAlias(args[1], feature.getUniquename());
+        Hashtable synonyms   = dao.getAlias(feature.getUniquename());
         Vector syns = (Vector)synonyms.get(new Integer(feature.getId()));
         for(int j=0; j<syns.size(); j++)
         {

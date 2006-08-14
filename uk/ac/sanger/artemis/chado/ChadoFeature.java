@@ -79,6 +79,8 @@ public class ChadoFeature
   /** list of feature locations for a feature_id */
   private List featurelocsForFeatureId;
   private List featureCvterms = new Vector();
+  private List featureSynonymsForFeatureId;
+
 
 
   /**
@@ -439,6 +441,16 @@ public class ChadoFeature
   public void setFeaturelocsForFeatureId(List featurelocsForFeatureId)
   {
     this.featurelocsForFeatureId = featurelocsForFeatureId;
+  }
+  
+  public List getFeatureSynonymsForFeatureId()
+  {
+    return featureSynonymsForFeatureId;
+  }
+
+  public void setFeatureSynonymsForFeatureId(List featureSynonymsForFeatureId)
+  {
+    this.featureSynonymsForFeatureId = featureSynonymsForFeatureId;
   }
   
   /**
