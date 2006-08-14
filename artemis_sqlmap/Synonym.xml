@@ -23,7 +23,6 @@
    	    <result property="synonym.synonym_id" column="synonym_id"/>
    	    <result property="synonym.name" column="name"/>
    	    <result property="synonym.synonym_sgml" column="synonym_sgml"/>
-  	    <!-- <result property="synonym.cvterm.name" column="cvterm_name" /> -->
   	    <result property="synonym.cvterm.cvtermId" column="type_id" />
      </resultMap>
      
@@ -37,17 +36,16 @@
    	    <result property="synonym.synonym_id" column="synonym_id"/>
    	    <result property="synonym.name" column="name"/>
    	    <result property="synonym.synonym_sgml" column="synonym_sgml"/>
-  	    <result property="synonym.cvterm" column="type_id" select="getCvterm"/>
+  	    <result property="synonym.cvterm" column="type_id" select="selectCvterm"/>
      </resultMap>
      
      
     <select id="getAlias" resultMap="select-alias"
             parameterClass="ChadoFeatureSynonym">
-      SELECT fs.*, s.name, s.synonym_sgml, s.type_id <!--, cvterm.name AS cvterm_name -->
-      FROM $schema$.feature_synonym fs 
-      LEFT JOIN $schema$.feature f ON f.feature_id=fs.feature_id 
-      LEFT JOIN $schema$.synonym s ON fs.synonym_id=s.synonym_id 
-      <!-- LEFT JOIN cvterm ON s.type_id=cvterm_id -->
+      SELECT fs.*, s.name, s.synonym_sgml, s.type_id
+      FROM feature_synonym fs 
+      LEFT JOIN feature f ON f.feature_id=fs.feature_id 
+      LEFT JOIN synonym s ON fs.synonym_id=s.synonym_id 
       <isNotNull property="uniquename">                        
           WHERE uniquename=#uniquename#
       </isNotNull>
@@ -56,9 +54,9 @@
     <select id="getLazyAlias" resultMap="select-alias-lazy"
             parameterClass="ChadoFeatureSynonym">
       SELECT fs.*, s.name, s.synonym_sgml, s.type_id 
-      FROM $schema$.feature_synonym fs 
-      LEFT JOIN $schema$.feature f ON f.feature_id=fs.feature_id 
-      LEFT JOIN $schema$.synonym s ON fs.synonym_id=s.synonym_id 
+      FROM feature_synonym fs 
+      LEFT JOIN feature f ON f.feature_id=fs.feature_id 
+      LEFT JOIN synonym s ON fs.synonym_id=s.synonym_id 
       <isNotNull property="uniquename">                        
           WHERE uniquename=#uniquename#
       </isNotNull>
@@ -66,37 +64,37 @@
     
     <select id="getSynonymId" resultClass="java.lang.Integer"
             parameterClass="ChadoFeatureSynonym">
-      SELECT synonym_id FROM $schema$.synonym WHERE synonym.name=#synonym.name#
+      SELECT synonym_id FROM synonym WHERE synonym.name=#synonym.name#
     </select>
    
     <select id="getFeatureSynonymId" resultClass="java.lang.Integer"
             parameterClass="ChadoFeatureSynonym">
-      SELECT synonym_id FROM $schema$.feature_synonym WHERE
-             synonym_id=(SELECT synonym_id FROM $schema$.synonym WHERE 
+      SELECT synonym_id FROM feature_synonym WHERE
+             synonym_id=(SELECT synonym_id FROM synonym WHERE 
              synonym.name=#synonym.name#)
     </select>
    
   <!-- WRITE BACK -->
     <delete id="deleteFeatureAlias" parameterClass="ChadoFeatureSynonym">
-      DELETE FROM $schema$.feature_synonym WHERE
+      DELETE FROM feature_synonym WHERE
          synonym_id=$synonym_id$ AND 
-         feature_id=(SELECT feature_id FROM $schema$.feature WHERE  
+         feature_id=(SELECT feature_id FROM feature WHERE  
          uniquename=#uniquename#)
     </delete>
   
     <insert id="insertFeatureAlias" parameterClass="ChadoFeatureSynonym">
-      INSERT INTO $schema$.feature_synonym ( synonym_id, feature_id, pub_id )
+      INSERT INTO feature_synonym ( synonym_id, feature_id, pub_id )
       VALUES ( $synonym_id$ , 
-              (SELECT feature_id FROM $schema$.feature WHERE uniquename=#uniquename#), 
+              (SELECT feature_id FROM feature WHERE uniquename=#uniquename#), 
               1)
     </insert>
   
     <delete id="deleteAlias" parameterClass="ChadoFeatureSynonym">
-      DELETE FROM $schema$.synonym WHERE synonym_id=$synonym_id$
+      DELETE FROM synonym WHERE synonym_id=$synonym_id$
     </delete>
   
     <insert id="insertAlias" parameterClass="ChadoFeatureSynonym">
-      INSERT INTO $schema$.synonym ( name, type_id, synonym_sgml ) 
+      INSERT INTO synonym ( name, type_id, synonym_sgml ) 
       VALUES ( #synonym.name#, $synonym.cvterm.cvtermId$, #synonym.name# )
     </insert>
   

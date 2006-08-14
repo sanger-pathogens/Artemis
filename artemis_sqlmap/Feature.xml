@@ -39,24 +39,25 @@
     <!-- mapping for feature table and lazy loading of feature_dbxref, feature_relationship,
          featureprop, organism tables -->
     <resultMap id="select-feature-lazy" 
-               class="ChadoFeature">     
-        <result property="schema" column="schema" />  
+               class="ChadoFeature">       
         <result property="timelastmodified" column="timelastmodified"/>
    	    <result property="id" column="id"/>
         <result property="uniquename" column="uniquename"/>
         <result property="name" column="name"/>
         <result property="length" column="length" nullValue="-999" />
         <result property="cvterm" column="type_id" select="selectCvterm" />
-        <result property="featurelocsForFeatureId" column="{schema=schema, id=id}" 
+        <result property="featurelocsForFeatureId" column="{id=id}" 
                                                    select="getFeatureLoc" />
-        <result property="featurepropList" column="{schema=schema, feature_id=id}" 
+        <result property="featurepropList" column="{feature_id=id}" 
                                            select="selectFeatureProp" />
-        <result property="featureDbxrefs" column="{schema=schema, id=id}"
+        <result property="featureDbxrefs" column="{id=id}"
                                           select="getDbxref" />
-        <result property="featureRelationshipsForObjectId" column="{schema=schema, object_id=id}" 
+        <result property="featureRelationshipsForObjectId" column="{object_id=id}" 
                                            select="getFeatureRelationship" />  
-        <result property="featureRelationshipsForSubjectId" column="{schema=schema, subject_id=id}" 
-                                           select="getFeatureRelationship" />                         
+        <result property="featureRelationshipsForSubjectId" column="{subject_id=id}" 
+                                           select="getFeatureRelationship" /> 
+        <result property="featureSynonymsForFeatureId" column="{uniquename=uniquename}" 
+                                           select="getLazyAlias" />                          
         <result property="organism" column="organism_id" select="getOrganism" />
      </resultMap>
      
@@ -106,14 +107,14 @@
      <!-- select featureprops e.g. for lazy loading -->
      <select id="selectFeatureProp" resultMap="select-featureprop">
        SELECT type_id, value, rank 
-       FROM $schema$.featureprop
+       FROM featureprop
        WHERE feature_id=#feature_id#
      </select>
      
      <!--  select feature_relationship -->
      <select id="getFeatureRelationship" resultMap="select-relationship">
        SELECT subject_id, object_id, type_id, value, rank 
-       FROM $schema$.feature_relationship
+       FROM feature_relationship
        WHERE
          <dynamic>
              <isNotNull property="object_id">                        
@@ -128,36 +129,36 @@
      <!--  select featureloc -->
      <select id="getFeatureLoc" resultMap="select-location">
        SELECT srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank
-       FROM  $schema$.featureloc
-       WHERE $schema$.featureloc.feature_id=#id#
+       FROM  featureloc
+       WHERE featureloc.feature_id=#id#
      </select>
      
      <select id="getFeatureName" parameterClass="ChadoFeature" 
                                  resultClass="java.lang.String"> 
    	   SELECT name
-       FROM $schema$.feature WHERE feature_id=$id$
+       FROM feature WHERE feature_id=$id$
      </select> 
 
      <!-- get feature id -->
      <select id="getFeatureID" parameterClass="ChadoTransaction"
                                resultClass="ChadoFeature">
-        SELECT feature_id AS id, uniquename FROM $schema$.feature WHERE
+        SELECT feature_id AS id, uniquename FROM feature WHERE
         <dynamic>
           <isNotNull property="uniquename">
             <iterate property="uniquename" conjunction="OR">
-               $schema$.feature.uniquename='$uniquename[]$'
+               feature.uniquename='$uniquename[]$'
             </iterate>
           </isNotNull>
           
           <isNotNull property="parents">
             <iterate property="parents" conjunction="OR">
-               $schema$.feature.uniquename='$parents[]$'
+               feature.uniquename='$parents[]$'
             </iterate>
           </isNotNull>
           
           <isNotNull property="derives_from">
             <iterate property="derives_from" conjunction="OR">
-               $schema$.feature.uniquename='$derives_from[]$'
+               feature.uniquename='$derives_from[]$'
             </iterate>
           </isNotNull>
         </dynamic>
@@ -179,10 +180,10 @@
           fp.type_id AS prop_type_id, 
           fp.value,
           fl.phase
-        FROM  $schema$.feature f
-        LEFT JOIN $schema$.feature_relationship fr ON fr.subject_id = f.feature_id
-        LEFT JOIN $schema$.featureprop fp          ON fp.feature_id = f.feature_id
-        LEFT JOIN $schema$.featureloc fl           ON f.feature_id  = fl.feature_id
+        FROM feature f
+        LEFT JOIN feature_relationship fr ON fr.subject_id = f.feature_id
+        LEFT JOIN featureprop fp          ON fp.feature_id = f.feature_id
+        LEFT JOIN featureloc fl           ON f.feature_id  = fl.feature_id
         WHERE
             <dynamic>
              <isGreaterThan property="featureloc.srcfeature_id" compareValue="0"> 
@@ -198,7 +199,7 @@
     <select id="getSequence" parameterClass="ChadoFeature" 
                              resultClass="ChadoFeature">
        SELECT *
-       FROM $schema$.feature 
+       FROM feature 
        WHERE feature_id=$id$
     </select>
 
@@ -235,7 +236,6 @@
     <select id="getLazyFeature" resultMap ="select-feature-lazy" 
                             parameterClass="ChadoFeature">
 	 SELECT
-	    #schema# AS schema,
 	    timelastmodified,
 	 	f.feature_id AS id,
 	 	uniquename,
@@ -243,7 +243,7 @@
 		name,
 	 	f.type_id,
 		seqlen AS length
-	 FROM $schema$.feature f
+	 FROM feature f
 	 WHERE
 	   <dynamic>
           <isGreaterThan property="id" compareValue="0"> 
@@ -253,7 +253,7 @@
             uniquename LIKE #uniquename# AND
           </isNotNull>
           <isGreaterThan property="cvterm.cvtermId" compareValue="0"> 
-            $schema$.feature.type_id=$cvterm.cvtermId$ AND
+            feature.type_id=$cvterm.cvtermId$ AND
           </isGreaterThan>
        </dynamic>
          f.feature_id > 0
@@ -261,13 +261,13 @@
 
     <select id="getOrganismID" resultClass="java.lang.Integer" 
             parameterClass="ChadoFeature">
-      SELECT organism_id FROM $schema$.feature f WHERE
+      SELECT organism_id FROM feature f WHERE
              f.feature_id=$featureloc.srcfeature_id$
     </select>
 
     <select id="getTimeLastModified" resultClass="java.sql.Timestamp"
             parameterClass="ChadoFeature">
-      SELECT timelastmodified FROM $schema$.feature f WHERE
+      SELECT timelastmodified FROM feature f WHERE
              f.uniquename=#uniquename#
     </select>
     
@@ -281,20 +281,20 @@
     <!--  WRITE BACK METHODS -->
     <update id="updateAttributes" 
             parameterClass="ChadoTransaction">
-      UPDATE $schema$.$chadoTable$
+      UPDATE $chadoTable$
       SET
       <iterate property="properties" conjunction=",">
          $properties[]$
       </iterate>
 
       <isNotEqual property="chadoTable" compareValue="feature">
-        FROM $schema$.feature
+        FROM feature
       </isNotEqual>
 
       WHERE
-           $schema$.feature.feature_id=$schema$.$chadoTable$.feature_id AND (
+           feature.feature_id=$chadoTable$.feature_id AND (
       <iterate property="uniquename" conjunction="OR">
-         $schema$.feature.uniquename='$uniquename[]$'
+           feature.uniquename='$uniquename[]$'
       </iterate>
       )
       <dynamic>
@@ -308,7 +308,7 @@
 
     <insert id="insertAttributes" 
             parameterClass="ChadoTransaction">
-      INSERT INTO  $schema$.$chadoTable$
+      INSERT INTO $chadoTable$
       ( 
         feature_id 
         <iterate prepend="," property="propertiesName" conjunction="," >
@@ -325,7 +325,7 @@
 
     <delete id="deleteAttributes" 
             parameterClass="ChadoTransaction">
-      DELETE FROM $schema$.$chadoTable$
+      DELETE FROM $chadoTable$
       WHERE
         <iterate property="constraint" conjunction="AND">
           $constraint[]$
@@ -336,10 +336,10 @@
 
     <insert id="insertFeature" 
             parameterClass="ChadoFeature">
-      INSERT INTO  $schema$.feature 
+      INSERT INTO feature 
         ( feature_id, organism_id, name, uniquename, type_id )
       VALUES
-        ( nextval('$schema$.feature_feature_id_seq'),
+        ( nextval('feature_feature_id_seq'),
           $organism.id$,
           #name#,
           #uniquename#,
@@ -348,10 +348,10 @@
 
     <insert id="insertFeatureLoc" 
             parameterClass="ChadoFeature">
-      INSERT INTO  $schema$.featureloc
+      INSERT INTO featureloc
         ( featureloc_id, feature_id, srcfeature_id, fmin, fmax, strand, phase )
       VALUES
-        ( nextval('$schema$.featureloc_featureloc_id_seq'),
+        ( nextval('featureloc_featureloc_id_seq'),
           $id$,
           $featureloc.srcfeature_id$,
           $featureloc.fmin$,
@@ -362,13 +362,13 @@
 
    <delete id="deleteFeature" 
            parameterClass="ChadoFeature">
-      DELETE FROM $schema$.feature
+      DELETE FROM feature
       WHERE uniquename=#uniquename#
    </delete>
    
    <insert id="insertFeatureRelationship" 
            parameterClass="ChadoFeature">
-      INSERT INTO  $schema$.feature_relationship
+      INSERT INTO feature_relationship
         ( subject_id, object_id, type_id )
       VALUES
         ( $feature_relationship.subject_id$,
@@ -378,14 +378,14 @@
 
    <update id="updateFeatureRelationshipsForSubjectId" 
            parameterClass="ChadoTransaction">
-      UPDATE $schema$.feature_relationship
+      UPDATE feature_relationship
       SET
       <iterate property="properties" conjunction=",">
          $properties[]$
       </iterate>
-      WHERE $schema$.feature_relationship.subject_id=
-           ( SELECT feature_id FROM $schema$.feature WHERE uniquename=#chadoFeature.uniquename# )
-      AND   $schema$.feature_relationship.object_id=
-           ( SELECT feature_id FROM $schema$.feature WHERE uniquename=#parent_uniquename# )
+      WHERE feature_relationship.subject_id=
+           ( SELECT feature_id FROM feature WHERE uniquename=#chadoFeature.uniquename# )
+      AND   feature_relationship.object_id=
+           ( SELECT feature_id FROM feature WHERE uniquename=#parent_uniquename# )
    </update>
 </sqlMap> 
