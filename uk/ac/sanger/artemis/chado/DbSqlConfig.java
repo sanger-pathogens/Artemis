@@ -41,7 +41,7 @@ import java.io.Reader;
 public class DbSqlConfig
 {
 
-  private static SqlMapClient sqlMap;
+  private SqlMapClient sqlMap;
 
   /**
    *
@@ -51,7 +51,7 @@ public class DbSqlConfig
    * <i>e.g.</i> -Dchado=localhost:2997/chado?tjc
    *
    */
-  public static void init(JPasswordField fpasswd)
+  public void init(JPasswordField fpasswd)
   {
     try
     {
@@ -98,7 +98,7 @@ public class DbSqlConfig
   }
 
   
-  public static void init2(JPasswordField fpasswd)
+  public void init2(JPasswordField fpasswd)
   {
     try
     {
@@ -113,7 +113,7 @@ public class DbSqlConfig
     }
   }
   
-  public static SqlMapClient getSqlMapInstance()
+  public SqlMapClient getSqlMapInstance()
   {
     return sqlMap;
   }
