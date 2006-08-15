@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.32 2006-08-04 10:59:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.33 2006-08-15 15:33:37 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -38,7 +38,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.32 2006-08-04 10:59:42 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.33 2006-08-15 15:33:37 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -195,9 +195,9 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         this_feature = original_features.featureAt(i);
         // exons
         key = this_feature.getKey().getKeyString();
-        if(!key.equals("exon") && !key.equals("polypeptide") &&
-           !key.endsWith("prime_UTR"))
-          continue;
+        //if(!key.equals("exon") && !key.equals("polypeptide") &&
+        //   !key.endsWith("prime_UTR"))
+        //  continue;
         
         Qualifier parent_qualifier  = this_feature.getQualifierByName("Parent");
         Qualifier derives_qualifier = this_feature.getQualifierByName("Derives_from");
@@ -229,6 +229,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
               gene.add3PrimeUtr(parent, this_feature);
             else if(key.equals("five_prime_UTR"))
               gene.add5PrimeUtr(parent, this_feature);
+            else
+              gene.addOtherFeatures(parent, this_feature);
           }
         } 
           
