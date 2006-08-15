@@ -41,6 +41,8 @@ import javax.swing.JPasswordField;
  */
 public class IBatisDAO implements ChadoDAO
 {
+  private SqlMapClient sqlMap;
+  
   /**
    * Define a iBatis data access object. This uses <code>DbSqlConfig</code>
    * to read the configuration in. The system property <quote>chado</quote>
@@ -49,7 +51,9 @@ public class IBatisDAO implements ChadoDAO
    */
   public IBatisDAO(final JPasswordField pfield)
   {
-    DbSqlConfig.init(pfield);
+    DbSqlConfig sql_config = new DbSqlConfig();
+    sql_config.init(pfield);
+    this.sqlMap = sql_config.getSqlMapInstance();
   }
 
   /**
@@ -59,8 +63,7 @@ public class IBatisDAO implements ChadoDAO
    */
   public String getFeatureName(final ChadoFeature feature)
                 throws SQLException
-  {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+  { 
     return (String)sqlMap.queryForObject("getFeatureName", feature);
   }
 
@@ -89,8 +92,7 @@ public class IBatisDAO implements ChadoDAO
    */
   public List getFeature(final ChadoFeature feature)
                          throws SQLException
-  {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+  { 
     List feature_list = sqlMap.queryForList("getFeature", feature);
 
     // merge same features in the list
@@ -105,9 +107,7 @@ public class IBatisDAO implements ChadoDAO
    */
   public List getLazyFeature(final ChadoFeature feature)
                              throws SQLException
-  {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    
+  { 
     return sqlMap.queryForList("getLazyFeature", feature);
   }
   
@@ -118,8 +118,7 @@ public class IBatisDAO implements ChadoDAO
    */
   public ChadoFeature getSequence(final int feature_id)
                         throws SQLException
-  {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+  { 
     ChadoFeature feature = new ChadoFeature();
     feature.setId(feature_id);
     
@@ -140,9 +139,7 @@ public class IBatisDAO implements ChadoDAO
   public List getResidueFeatures(List cvterm_ids, 
                                  final String schema)
                      throws SQLException
-  {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-    
+  { 
     ChadoFeature feature = new ChadoFeature();
     feature.setSchema(schema);
     feature.setFeatureCvterms(cvterm_ids);
@@ -161,8 +158,7 @@ public class IBatisDAO implements ChadoDAO
    */
   public List getResidueType(final String schema)
                      throws SQLException
-  {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+  { 
     return sqlMap.queryForList("getResidueType", schema);
   }
 
@@ -176,7 +172,6 @@ public class IBatisDAO implements ChadoDAO
   public List getSchema()
                 throws SQLException
   {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     return sqlMap.queryForList("getSchema", null);
   }
 
@@ -190,7 +185,6 @@ public class IBatisDAO implements ChadoDAO
   public List getCvterm()
               throws SQLException
   {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     return sqlMap.queryForList("getCvterm", null);
   }
   
@@ -206,8 +200,7 @@ public class IBatisDAO implements ChadoDAO
   {
     ChadoFeature feature = new ChadoFeature();
     feature.setUniquename(uniquename);
-
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    
     return (Timestamp)sqlMap.queryForObject("getTimeLastModified", feature);
   }
 
@@ -225,8 +218,7 @@ public class IBatisDAO implements ChadoDAO
   {
     ChadoFeature feature = new ChadoFeature();
     feature.setUniquename(uniquename);
-
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    
     List list = sqlMap.queryForList("getDbxref", feature);  
     return mergeDbxref(list);
   }
@@ -243,7 +235,7 @@ public class IBatisDAO implements ChadoDAO
   {
     ChadoFeatureSynonym alias = new ChadoFeatureSynonym();
     alias.setUniquename(uniquename);
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    
     List list = sqlMap.queryForList("getAlias", alias);  
     
     Hashtable synonym = new Hashtable();
@@ -271,10 +263,9 @@ public class IBatisDAO implements ChadoDAO
    * @param cv_name ontology name (e.g. gene, sequence)
    * @throws SQLException
    */
-  public static ChadoCvterm getCvtermID(String name, String cv_name)
+  public ChadoCvterm getCvtermID(String name, String cv_name)
                 throws SQLException
-  {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+  { 
     ChadoCvterm cvterm   = new ChadoCvterm();
     ChadoCv cv = new ChadoCv();
     cv.setName(cv_name);
@@ -297,8 +288,7 @@ public class IBatisDAO implements ChadoDAO
   public int updateAttributes
                     (final ChadoTransaction tsn)
                      throws SQLException 
-  {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+  { 
     return sqlMap.update("updateAttributes", tsn);
   }
 
@@ -311,8 +301,6 @@ public class IBatisDAO implements ChadoDAO
                     (final ChadoTransaction tsn)
                      throws SQLException
   {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-
     // get the feature id's
     List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
 
@@ -332,8 +320,6 @@ public class IBatisDAO implements ChadoDAO
                     (final ChadoTransaction tsn)
                      throws SQLException
   {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-  
     // get the feature id's
     List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
 
@@ -361,7 +347,7 @@ public class IBatisDAO implements ChadoDAO
     feature.setFeatureloc(featureloc);
     
     featureloc.setSrcfeature_id(Integer.parseInt(srcfeature_id));
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    
     Integer organism_id = (Integer)sqlMap.queryForObject("getOrganismID", feature);
 
     //
@@ -422,7 +408,6 @@ public class IBatisDAO implements ChadoDAO
                     (final ChadoTransaction tsn)
                      throws SQLException
   {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     ChadoFeature chadoFeature = new ChadoFeature();
     chadoFeature.setUniquename(tsn.getUniqueName());
 
@@ -439,7 +424,7 @@ public class IBatisDAO implements ChadoDAO
                      throws SQLException
   {
     ChadoFeatureDbxref dbxref = tsn.getFeatureDbxref();
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+    
     Integer db_id = (Integer)sqlMap.queryForObject("getDbId", 
                                  dbxref.getDbxref().getDb());
     if(db_id == null)
@@ -481,8 +466,6 @@ public class IBatisDAO implements ChadoDAO
   {
     ChadoFeatureDbxref dbxref = tsn.getFeatureDbxref();
     
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
-
     // get the feature id's
     List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
     
@@ -501,7 +484,6 @@ public class IBatisDAO implements ChadoDAO
   {
     final ChadoFeatureSynonym alias = tsn.getAlias();
     
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     Object synonym_id  = sqlMap.queryForObject("getSynonymId", alias);
     
     if(synonym_id == null)
@@ -529,8 +511,7 @@ public class IBatisDAO implements ChadoDAO
                      throws SQLException
   {
     final ChadoFeatureSynonym alias = tsn.getAlias();
-    
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+     
     List synonym_id_list = sqlMap.queryForList("getFeatureSynonymId", alias);
     
     final Integer synonym_id = (Integer)synonym_id_list.get(0); 
@@ -553,8 +534,7 @@ public class IBatisDAO implements ChadoDAO
   public void updateFeatureRelationshipsForSubjectId(
       final ChadoTransaction tsn)
                      throws SQLException
-  {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+  { 
     sqlMap.update("updateFeatureRelationshipsForSubjectId", tsn);
   }
   
@@ -607,20 +587,17 @@ public class IBatisDAO implements ChadoDAO
   }
   
   public void startTransaction() throws SQLException
-  {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+  { 
     sqlMap.startTransaction();
   }
   
   public void endTransaction() throws SQLException
-  {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
+  { 
     sqlMap.endTransaction();
   }
   
   public void commitTransaction() throws SQLException
   {
-    SqlMapClient sqlMap = DbSqlConfig.getSqlMapInstance();
     sqlMap.commitTransaction();
   }
   
