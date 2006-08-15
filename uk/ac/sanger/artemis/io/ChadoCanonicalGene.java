@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.14 2006-08-09 16:32:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.15 2006-08-15 15:32:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -49,8 +49,13 @@ public class ChadoCanonicalGene
   // derives_from transript
   private Hashtable proteins = new Hashtable();
 
+  // utr features
   private Hashtable three_prime_utr = new Hashtable();
   private Hashtable five_prime_utr  = new Hashtable();
+  
+  // other child features of transcript
+  private Hashtable other_features = new Hashtable();
+  
   // srcfeature
   private int srcfeature_id;
  
@@ -95,6 +100,7 @@ public class ChadoCanonicalGene
           exons.remove(transcript_name);
           three_prime_utr.remove(transcript_name);
           five_prime_utr.remove(transcript_name);
+          other_features.remove(transcript_name);
         }
       }
       catch(InvalidRelationException e)
@@ -118,19 +124,30 @@ public class ChadoCanonicalGene
         return;
       }
       
-      feature = getUTR(name, three_prime_utr);
+      feature = getFeatureFromHash(name, three_prime_utr);
       if(feature != null)
       {
         String transcript_name = getQualifier((Feature) feature, "Parent");
-        three_prime_utr.remove(transcript_name);
+        List utr = get3UtrOfTranscript(transcript_name);
+        utr.remove(feature);
         return;
       }
       
-      feature = getUTR(name, five_prime_utr);
+      feature = getFeatureFromHash(name, five_prime_utr);
       if(feature != null)
       {
         String transcript_name = getQualifier((Feature) feature, "Parent");
-        five_prime_utr.remove(transcript_name);
+        List utr = get5UtrOfTranscript(transcript_name);
+        utr.remove(feature);
+        return;
+      }
+      
+      feature = getFeatureFromHash(name, other_features);
+      if(feature != null)
+      {
+        String transcript_name = getQualifier((Feature) feature, "Parent");
+        List others = getOtherFeaturesOfTranscript(transcript_name);
+        others.remove(feature);
         return;
       }
       
@@ -170,6 +187,7 @@ public class ChadoCanonicalGene
       searchForChildren(exons, name, children);
       searchForChildren(three_prime_utr, name, children);
       searchForChildren(five_prime_utr, name, children);
+      searchForChildren(other_features, name, children);
       
       // protein
       Enumeration pep_enum = proteins.elements();
@@ -274,6 +292,17 @@ public class ChadoCanonicalGene
     five_prime_utr.put(transcript_name, utr_list);
   }
   
+  public void addOtherFeatures(String transcript_name, Object other_feature)
+  {
+    final List v_other_features;
+    if(other_features.containsKey(transcript_name))
+      v_other_features = (Vector)other_features.get(transcript_name);
+    else
+      v_other_features = new Vector();
+    v_other_features.add(other_feature);
+    other_features.put(transcript_name, v_other_features);
+  }
+  
   public Object containsTranscript(final StringVector names)
   {
     for(int i=0; i<transcripts.size(); i++)
@@ -309,7 +338,7 @@ public class ChadoCanonicalGene
     return null;
   }
 
-  public List get3UTRTranscript(final String transcript_name)
+  public List get3UtrOfTranscript(final String transcript_name)
   {
     if(three_prime_utr.containsKey(transcript_name))
       return (List)three_prime_utr.get(transcript_name);
@@ -317,13 +346,21 @@ public class ChadoCanonicalGene
     return null;
   }
   
-  public List get5UTRTranscript(final String transcript_name)
+  public List get5UtrOfTranscript(final String transcript_name)
   {
     if(five_prime_utr.containsKey(transcript_name))
       return (List)five_prime_utr.get(transcript_name);
  
     return null;
   }
+  
+  public List getOtherFeaturesOfTranscript(final String transcript_name)
+  {
+    if(other_features.containsKey(transcript_name))
+      return (List)other_features.get(transcript_name);
+    return null;
+  }
+  
   
   /**
    * Get a list of trancripts.
@@ -475,11 +512,15 @@ public class ChadoCanonicalGene
     
     try
     {
-      feature = getUTR(name, three_prime_utr);
+      feature = getFeatureFromHash(name, three_prime_utr);
       if(feature != null)
         return feature;
       
-      feature = getUTR(name, five_prime_utr);
+      feature = getFeatureFromHash(name, five_prime_utr);
+      if(feature != null)
+        return feature;
+      
+      feature = getFeatureFromHash(name, other_features);
     }
     catch(InvalidRelationException e)
     {
@@ -546,7 +587,8 @@ public class ChadoCanonicalGene
    * @return
    * @throws InvalidRelationException
    */
-  private Feature getUTR(final String id,
+  private Feature getFeatureFromHash
+                         (final String id,
                          final Hashtable UTR) 
           throws InvalidRelationException
   {
