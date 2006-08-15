@@ -102,6 +102,9 @@ public class DatabaseDocument extends Document
     super(location);
     this.pfield = pfield;
 
+    if(location.indexOf('=') > -1)
+      this.schema = location.substring( location.indexOf('=')+ 1);
+    
     if(System.getProperty("ibatis") != null)
     {
       iBatis = true;
@@ -431,7 +434,7 @@ public class DatabaseDocument extends Document
    */
   private ByteBuffer[] getGff(ChadoDAO dao, String parentFeatureID)
                        throws java.sql.SQLException
-  {
+  { 
     final int srcfeature_id = Integer.parseInt(parentFeatureID);
     
     // build srcfeature object
@@ -840,7 +843,7 @@ public class DatabaseDocument extends Document
                      throws java.sql.SQLException
   {
     ChadoFeature feature = dao.getSequence(Integer.parseInt(feature_id));
-
+ 
     buff.append("##FASTA\n>");
     buff.append(feature.getUniquename());
     buff.append("\n");
@@ -899,7 +902,7 @@ public class DatabaseDocument extends Document
         ((IBatisDAO) dao).startTransaction();
       
       schema_list = dao.getSchema();
-      Iterator it      = schema_list.iterator();
+      Iterator it = schema_list.iterator();
 
       while(it.hasNext())
       {
@@ -950,7 +953,7 @@ public class DatabaseDocument extends Document
    */
   private ChadoDAO getDAO()
      throws java.net.ConnectException, SQLException
-  {
+  { 
     if(!iBatis)
     {
       if(jdbcDAO == null)
@@ -958,7 +961,7 @@ public class DatabaseDocument extends Document
       return jdbcDAO;
     }
     else
-    {
+    {   
       if(connIB == null)
         connIB = new IBatisDAO(pfield);
       return connIB;
