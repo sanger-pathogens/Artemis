@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.10 2006-08-04 11:05:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.11 2006-08-15 15:32:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -160,14 +160,18 @@ public class GeneComponentTree extends JTree
         transcript_node.add(exon_node);
       }
       
-      // utr
-      List utrs3 = chado_gene.get3UTRTranscript(transcript_id);
-      List utrs5 = chado_gene.get5UTRTranscript(transcript_id);
+      // utr & other features
+      List utrs3  = chado_gene.get3UtrOfTranscript(transcript_id);
+      List utrs5  = chado_gene.get5UtrOfTranscript(transcript_id);
+      List others = chado_gene.getOtherFeaturesOfTranscript(transcript_id);
+      
       List utrs  = new Vector();
       if(utrs3 != null)
         utrs.addAll(utrs3);
       if(utrs5 != null)
         utrs.addAll(utrs5);
+      if(others != null)
+        utrs.addAll(others);
       
       for(int j=0; j<utrs.size(); j++)
       {
@@ -315,9 +319,17 @@ public class GeneComponentTree extends JTree
       if(node == null)
         return;
 
-      Feature feature = (Feature)chado_gene.getFeatureFromId((String)node.getUserObject());
-      gene_builder.setActiveFeature((uk.ac.sanger.artemis.Feature)feature.getUserData());
-      selection.set((uk.ac.sanger.artemis.Feature)feature.getUserData());
+      Feature embl_feature = 
+            (Feature)chado_gene.getFeatureFromId((String)node.getUserObject());
+      
+      uk.ac.sanger.artemis.Feature feature =
+            (uk.ac.sanger.artemis.Feature)embl_feature.getUserData();
+      
+      if(feature == null)
+        feature = new uk.ac.sanger.artemis.Feature(embl_feature);    
+      
+      gene_builder.setActiveFeature(feature);
+      selection.set(feature);
     }
   }
         

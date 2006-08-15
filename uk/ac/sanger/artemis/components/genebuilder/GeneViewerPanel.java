@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.21 2006-08-08 13:31:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.22 2006-08-15 15:32:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -93,12 +93,12 @@ public class GeneViewerPanel extends JPanel
    **/
   final static KeyStroke DELETE_FEATURES_KEY =
     KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,
-                           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); // InputEvent.CTRL_MASK);
+                           Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
   final static public int DELETE_FEATURES_KEY_CODE = KeyEvent.VK_DELETE;
   
   final static KeyStroke CREATE_FEATURES_KEY =
     KeyStroke.getKeyStroke (KeyEvent.VK_C,
-                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); //InputEvent.CTRL_MASK);
+                            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()); 
 
   final static public int CREATE_FEATURES_KEY_CODE = KeyEvent.VK_C;
   
@@ -301,6 +301,30 @@ public class GeneViewerPanel extends JPanel
       }
     });
     menu.add(createExon);
+    
+    JMenuItem createFeature = new JMenuItem("Add feature to transcript hierarchy");
+    createFeature.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)  
+      {
+        if(last_cursor_position == null)
+          return;
+        Feature transcript = getTranscriptAt(last_cursor_position);
+        String uniquename  = getFeatureID(transcript);
+        Range range_selected = selection.getSelectionRange();
+        
+        try
+        {
+          addFeature(range_selected, uniquename);
+        }
+        catch(OutOfRangeException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    });
+    menu.add(createFeature);
   }
   
   /**
@@ -489,8 +513,8 @@ public class GeneViewerPanel extends JPanel
           }
         }
         
-        List utr_3 = chado_gene.get3UTRTranscript(transcript_name);
-        List utr_5 = chado_gene.get5UTRTranscript(transcript_name);
+        List utr_3 = chado_gene.get3UtrOfTranscript(transcript_name);
+        List utr_5 = chado_gene.get5UtrOfTranscript(transcript_name);
         List utrs = null;
         if(utr_3 != null)
           utrs = utr_3;
@@ -514,6 +538,23 @@ public class GeneViewerPanel extends JPanel
                 + (int) ((range.getEnd() - start) * fraction);
             if(p.x >= utr_start && p.x <= utr_end)
               return utr;
+          }
+        }
+        
+        // anything else
+        List others = chado_gene.getOtherFeaturesOfTranscript(transcript_name);
+        if(others != null)
+        {
+          for(int j=0; j<others.size(); j++)
+          {
+            Feature other = (Feature)others.get(j);
+            Range range = other.getLocation().getTotalRange();
+            int r_start = border
+                + (int) ((range.getStart() - start) * fraction);
+            int r_end = border
+                + (int) ((range.getEnd() - start) * fraction);
+            if(p.x >= r_start && p.x <= r_end)
+              return other;
           }
         }
       }
@@ -766,18 +807,23 @@ public class GeneViewerPanel extends JPanel
     }
     
     // draw utr's
-    List embl_utr = chado_gene.get3UTRTranscript(
-        getFeatureID( embl_transcript ));
+    String transcript_id = getFeatureID( embl_transcript );
+    List embl_utr = chado_gene.get3UtrOfTranscript(
+        transcript_id);
     
     if(embl_utr != null)
-      drawUTR(g2d, embl_utr, ypos);
+      drawFeatureList(g2d, embl_utr, ypos);
     
-    embl_utr = chado_gene.get5UTRTranscript(
-        getFeatureID( embl_transcript ));
+    embl_utr = chado_gene.get5UtrOfTranscript(
+        transcript_id);
     
     if(embl_utr != null)
-      drawUTR(g2d, embl_utr, ypos);
+      drawFeatureList(g2d, embl_utr, ypos);
     
+    // draw other transcript child features
+    List embl_other = chado_gene.getOtherFeaturesOfTranscript(transcript_id);
+    if(embl_other != null)
+      drawFeatureList(g2d, embl_other, ypos);
   }
   
   /**
@@ -786,25 +832,25 @@ public class GeneViewerPanel extends JPanel
    * @param embl_utr
    * @param ypos
    */
-  private void drawUTR(final Graphics2D g2d,
-                       final List utrs,
+  private void drawFeatureList(final Graphics2D g2d,
+                       final List feature_list,
                        final int ypos)
   {
-    for(int i=0; i<utrs.size(); i++)
+    for(int i=0; i<feature_list.size(); i++)
     {
-      Feature embl_utr = (Feature)utrs.get(i);
-      uk.ac.sanger.artemis.Feature utr = 
-        (uk.ac.sanger.artemis.Feature)embl_utr.getUserData();
-      RangeVector ranges = utr.getLocation().getRanges();
+      Feature embl_feature = (Feature)feature_list.get(i);
+      uk.ac.sanger.artemis.Feature feature = 
+        (uk.ac.sanger.artemis.Feature)embl_feature.getUserData();
+      RangeVector ranges = feature.getLocation().getRanges();
       for(int j = 0; j < ranges.size(); j++)
       {
         Range range = (Range) ranges.get(j);
 
-        int utr_start = border + (int) ((range.getStart() - start) * fraction);
-        int utr_end = border + (int) ((range.getEnd() - start) * fraction);
+        int r_start = border + (int) ((range.getStart() - start) * fraction);
+        int r_end   = border + (int) ((range.getEnd() - start) * fraction);
 
-        drawFeature(g2d, utr_start, utr_end, ypos, utr.getColour(), 2,
-            selection.contains(utr), 2.f);
+        drawFeature(g2d, r_start, r_end, ypos, feature.getColour(), 2,
+                    selection.contains(feature), 2.f);
       }
     }
   }
@@ -1154,6 +1200,26 @@ public class GeneViewerPanel extends JPanel
 
   }
  
+  private void addFeature(Range range,
+                          final String transcript_name) 
+          throws OutOfRangeException
+  {
+    QualifierVector qualifiers = new QualifierVector();
+    qualifiers.add(new Qualifier("Parent", transcript_name));
+    
+    //final Entry default_entry = entry_group.getDefaultEntry();
+    //final Key default_key =
+    //  default_entry.getEntryInformation().getDefaultKey();
+    
+    uk.ac.sanger.artemis.Feature other = createFeature(
+        new Location(range),
+        entry_group, new Key("region"),
+        qualifiers);
+    
+    chado_gene.addOtherFeatures(transcript_name, 
+                        other.getEmblFeature());
+  }
+  
   /**
    * Create an exons feature
    * @param feature
