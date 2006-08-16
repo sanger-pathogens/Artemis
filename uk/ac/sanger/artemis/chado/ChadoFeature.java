@@ -26,9 +26,7 @@
 package uk.ac.sanger.artemis.chado;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Set;
 import java.util.Vector;
 import java.util.List;
 
@@ -78,7 +76,9 @@ public class ChadoFeature
   private List featureDbxrefs;
   /** list of feature locations for a feature_id */
   private List featurelocsForFeatureId;
-  private List featureCvterms = new Vector();
+  /** used by getResidueFeatures */
+  private List featureCvterms;
+  /** list of feature synonyms */
   private List featureSynonymsForFeatureId;
 
 
