@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.11 2006-08-15 15:32:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.12 2006-08-16 14:43:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -251,14 +251,33 @@ public class GeneComponentTree extends JTree
   protected void deleteNode(final String id)
   {
     DefaultMutableTreeNode root = (DefaultMutableTreeNode)getModel().getRoot();
-    Enumeration root_children = root.children();
+    deleteChildNode(id,root);
+  }
+  
+  /**
+   * Recursively check children of the parent node against the ID
+   * and delete the child that matches the ID.
+   * @param id
+   * @param parentNode
+   */
+  private void deleteChildNode(final String id,
+                               final DefaultMutableTreeNode parentNode)
+  {
+    Enumeration root_children = parentNode.children();
     while(root_children.hasMoreElements())
     {
       DefaultMutableTreeNode child = 
            (DefaultMutableTreeNode)root_children.nextElement();
       
+      // check children of this node!!
+      if(child.getSiblingCount() > 0)
+        deleteChildNode(id, child);
+      
       if(id.equals((String)child.getUserObject()))
+      {
         ((DefaultTreeModel)getModel()).removeNodeFromParent(child);
+        return;
+      }
     }
   }
   
