@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.23 2006-06-23 10:39:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.24 2006-08-16 09:23:07 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -49,7 +49,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.23 2006-06-23 10:39:19 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.24 2006-08-16 09:23:07 tjc Exp $ */
 
 public class Bases 
 {
@@ -532,10 +532,13 @@ public class Bases
   /**
    *  Clear stop codon cache (forward and reverse).
    **/
-  public void clearStopCodonCache()
+  public void clearCodonCache()
   {
     forward_stop_codon_cache = null;
     reverse_stop_codon_cache = null;
+    
+    forward_start_codon_cache = null;
+    reverse_start_codon_cache = null;
   }
  
 

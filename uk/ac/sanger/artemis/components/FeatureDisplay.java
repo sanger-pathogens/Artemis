@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.47 2006-07-19 16:06:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.48 2006-08-16 09:22:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -69,7 +69,7 @@ import javax.swing.JFrame;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.47 2006-07-19 16:06:00 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.48 2006-08-16 09:22:24 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -1038,7 +1038,7 @@ public class FeatureDisplay extends EntryGroupPanel
   public void optionChanged(OptionChangeEvent event) 
   {
     AminoAcidSequence.setGeneCode();
-    getBases().clearStopCodonCache();
+    getBases().clearCodonCache();
     repaint();
   }
 
