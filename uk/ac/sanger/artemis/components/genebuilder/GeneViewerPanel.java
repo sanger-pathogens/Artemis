@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.22 2006-08-15 15:32:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.23 2006-08-16 14:45:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -80,7 +80,6 @@ public class GeneViewerPanel extends JPanel
   private float fraction;
   
   private int start;
-  //private int end;
   
   private MarkerRange click_range = null;
   
@@ -160,6 +159,11 @@ public class GeneViewerPanel extends JPanel
     });
   }
 
+  /**
+   * Create menu for gene editor
+   * @param menu
+   * @param entry_group
+   */
   protected void createMenus(JComponent menu,
                              final EntryGroup entry_group)
   {
@@ -181,20 +185,8 @@ public class GeneViewerPanel extends JPanel
         try
         {
           for(int i = 0; i < features.size(); i++)
-          {
-            uk.ac.sanger.artemis.Feature feature = features.elementAt(i);
-            Vector children = chado_gene.getChildren(feature.getEmblFeature());
-            deleteFeature(feature);
-            chado_gene.deleteFeature(feature.getEmblFeature());    
-            
-            Feature embl_feature;
-            for(int j=0; j<children.size(); j++)
-            {  
-              embl_feature = (Feature)children.get(j);
-              deleteFeature((uk.ac.sanger.artemis.Feature)embl_feature.getUserData());
-              chado_gene.deleteFeature(embl_feature);
-            }       
-          }
+            deleteAllFeature(features.elementAt(i));
+           
           repaint();
         }
         catch(ReadOnlyException e)
@@ -212,6 +204,7 @@ public class GeneViewerPanel extends JPanel
     {
       public void actionPerformed(ActionEvent event)  
       {
+        uk.ac.sanger.artemis.FeatureSegment segment = null;
         FeatureSegmentVector features = selection.getAllSegments();
         
         int option = JOptionPane.showConfirmDialog(null, 
@@ -225,8 +218,7 @@ public class GeneViewerPanel extends JPanel
         {
           for(int i = 0; i < features.size(); i++)
           {
-            uk.ac.sanger.artemis.FeatureSegment segment = 
-              features.elementAt(i);
+            segment = features.elementAt(i);
             segment.removeFromFeature();
           }
           repaint();
@@ -237,7 +229,15 @@ public class GeneViewerPanel extends JPanel
         }
         catch(LastSegmentException e)
         {
-          e.printStackTrace();
+          try
+          {
+            deleteAllFeature(segment.getFeature());
+          }
+          catch(ReadOnlyException e1)
+          {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+          }
         }
       }
     });
@@ -289,7 +289,7 @@ public class GeneViewerPanel extends JPanel
         if(last_cursor_position == null)
           return;
         Feature transcript = getTranscriptAt(last_cursor_position);
-        String uniquename  = getFeatureID(transcript);
+        String uniquename  = getQualifier(transcript, "ID");
         
         List exons = chado_gene.getExonsOfTranscript(uniquename);
         GFFStreamFeature embl_exon = null;
@@ -310,12 +310,14 @@ public class GeneViewerPanel extends JPanel
         if(last_cursor_position == null)
           return;
         Feature transcript = getTranscriptAt(last_cursor_position);
-        String uniquename  = getFeatureID(transcript);
+        String uniquename  = getQualifier(transcript, "ID");
         Range range_selected = selection.getSelectionRange();
+        
         
         try
         {
-          addFeature(range_selected, uniquename);
+          addFeature(range_selected, uniquename,
+              transcript.getLocation().isComplement());
         }
         catch(OutOfRangeException e)
         {
@@ -403,7 +405,14 @@ public class GeneViewerPanel extends JPanel
     setPreferredSize(new Dimension(getSize().width, ypos+border));
   }
   
-  
+  /**
+   * Create and return a new Artemis feature.
+   * @param new_location  location of the feature
+   * @param entry_group   group to create feature in
+   * @param key           the new features key
+   * @param qualifiers    the new features qualifiers
+   * @return
+   */
   private uk.ac.sanger.artemis.Feature createFeature(
                              final Location new_location,
                              final EntryGroup entry_group,
@@ -488,7 +497,7 @@ public class GeneViewerPanel extends JPanel
               p.y <= (border*3)+(getTranscriptSize()*(i+1)))
       {
         Feature feature = (Feature)transcripts.get(i);
-        String transcript_name = getFeatureID(feature);
+        String transcript_name = getQualifier(feature, "ID");
         List exons = chado_gene.getExonsOfTranscript( transcript_name );
         
         if(exons != null)
@@ -596,7 +605,7 @@ public class GeneViewerPanel extends JPanel
                 selection.contains(transcript), 2.f);
     
     List exons = chado_gene.getExonsOfTranscript(
-        getFeatureID( embl_transcript ));
+          getQualifier( embl_transcript, "ID" ));
         //(String)embl_transcript.getQualifierByName("ID").getValues().get(0));
     
     if(exons == null)
@@ -705,11 +714,10 @@ public class GeneViewerPanel extends JPanel
         last_ypos   = ypos+offset; 
       }
     }
-  
   }
   
   /**
-   * 
+   * Draw the transcript and child features.
    * @param g2d
    * @param embl_transcript
    * @param start
@@ -738,7 +746,7 @@ public class GeneViewerPanel extends JPanel
                 selection.contains(transcript), 2.f);
 
     List exons = chado_gene.getExonsOfTranscript(
-        getFeatureID( embl_transcript ));
+        getQualifier( embl_transcript, "ID" ));
 
     ypos += border*2;
     
@@ -807,7 +815,7 @@ public class GeneViewerPanel extends JPanel
     }
     
     // draw utr's
-    String transcript_id = getFeatureID( embl_transcript );
+    String transcript_id = getQualifier( embl_transcript, "ID" );
     List embl_utr = chado_gene.get3UtrOfTranscript(
         transcript_id);
     
@@ -880,6 +888,23 @@ public class GeneViewerPanel extends JPanel
     }
   }
   
+  /**
+   * Draw exon features
+   * @param g2d
+   * @param ex_start
+   * @param ex_end
+   * @param last_ex_start
+   * @param last_ex_end
+   * @param last_ypos
+   * @param offset
+   * @param ypos
+   * @param exon_colour
+   * @param size
+   * @param isForward
+   * @param last_segment
+   * @param selected
+   * @param selected_size
+   */
   private void drawExons(Graphics2D g2d, int ex_start, int ex_end, 
                          int last_ex_start, int last_ex_end, int last_ypos,
                          int offset, int ypos, Color exon_colour,
@@ -1111,97 +1136,11 @@ public class GeneViewerPanel extends JPanel
     final FontMetrics fm = this.getFontMetrics(getFont());
     return fm.getHeight();  
   }
-  
-  /**
-   * Display a list of the exons for a transcript.
-   * @param embl_transcript
-   * @throws InvalidRelationException
-   */
-  private void showExonsList(final String uniquename)
-               throws InvalidRelationException
-  {
-    final List exons = chado_gene.getExonsOfTranscript(uniquename);
-    final DefaultListModel listModel = new DefaultListModel();   
-    
-    if(exons != null)
-    {
-      Feature embl_exon = (Feature)exons.get(0);
-      final RangeVector ranges = embl_exon.getLocation().getRanges();
-      
-      for(int k=0; k<ranges.size(); k++)
-      {
-        Range range = (Range)ranges.get(k);
-        listModel.addElement(range.toString());
-      }
-    } 
-    
-    final JList list = new JList(listModel);
-    JScrollPane listScrollPane = new JScrollPane(list);
 
-    JButton addButt    = new JButton("ADD");
-    addButt.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent event)  
-      {
-        GFFStreamFeature embl_exon = null;
-        
-        if(exons != null)
-          embl_exon = (GFFStreamFeature)exons.get(0);
-        Range range_selected = selection.getSelectionRange();
-        
-        addExonFeature(embl_exon, range_selected, uniquename);
-      }
-    });
-
-    JButton deleteButt = new JButton("DELETE");
-    deleteButt.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent event)  
-      {
-        Object selected[] = list.getSelectedValues();
-        Feature embl_exon = (Feature)exons.get(0);
-        uk.ac.sanger.artemis.Feature exon =
-          (uk.ac.sanger.artemis.Feature)embl_exon.getUserData();
-        deleteExonFeatures(exon, selected, listModel, uniquename);       
-      }
-    });
-    
-    JButton editButt   = new JButton("EDIT");
-    editButt.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent event)  
-      {
-
-      }
-    });
-    
-    //Create a panel that uses BoxLayout.
-    JPanel buttonPane = new JPanel();
-    buttonPane.setLayout(new BoxLayout(buttonPane,
-                                       BoxLayout.LINE_AXIS));
-    buttonPane.add(listScrollPane);
-    buttonPane.add(Box.createHorizontalStrut(5));
-    buttonPane.add(new JSeparator(SwingConstants.VERTICAL));
-    buttonPane.add(Box.createHorizontalStrut(5));
-    
-    Box bdown = Box.createVerticalBox();
-    bdown.add(addButt);
-    bdown.add(deleteButt);
-    bdown.add(editButt);
-    buttonPane.add(bdown);
-    buttonPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-    buttonPane.add(Box.createHorizontalGlue());
-    final JDialog dialog = new JDialog((Frame)null,
-                                       "Exon List", false);
-    
-    dialog.setContentPane(buttonPane);
-    dialog.pack();
-    dialog.setVisible(true);
-
-  }
  
   private void addFeature(Range range,
-                          final String transcript_name) 
+                          final String transcript_name,
+                          final boolean isComplement) 
           throws OutOfRangeException
   {
     QualifierVector qualifiers = new QualifierVector();
@@ -1212,7 +1151,7 @@ public class GeneViewerPanel extends JPanel
     //  default_entry.getEntryInformation().getDefaultKey();
     
     uk.ac.sanger.artemis.Feature other = createFeature(
-        new Location(range),
+        new Location(new RangeVector(range), isComplement),
         entry_group, new Key("region"),
         qualifiers);
     
@@ -1241,7 +1180,8 @@ public class GeneViewerPanel extends JPanel
           qualifiers.add(new Qualifier("ID", ID));
         
         uk.ac.sanger.artemis.Feature exon = createFeature(
-            new Location(range),
+            new Location(new RangeVector(range), 
+                chado_gene.getGene().getLocation().isComplement()),
             entry_group, new Key("exon"),
             qualifiers);
       
@@ -1261,10 +1201,6 @@ public class GeneViewerPanel extends JPanel
         ((uk.ac.sanger.artemis.Feature)feature.getUserData()).addSegment(range);
       }
     }
-    catch(OutOfRangeException e)
-    {
-      e.printStackTrace();
-    }
     catch(InvalidRelationException e)
     {
       e.printStackTrace();
@@ -1275,66 +1211,6 @@ public class GeneViewerPanel extends JPanel
     }
   }
   
-  private void deleteExonFeatures(uk.ac.sanger.artemis.Feature feature,
-                                  Object selected[], 
-                                  final DefaultListModel listModel,
-                                  final String transcript_uniquename) 
-  {
-    FeatureSegmentVector segments = feature.getSegments();
-    Range range = null;
-    FeatureSegment segment = null;
-    selection.clear();
-    
-    try
-    {
-      int option = JOptionPane.showConfirmDialog(null, 
-          "Delete selected feature exons", 
-          "Delete selected feature exons", 
-          JOptionPane.OK_CANCEL_OPTION);
-      
-      if(option == JOptionPane.CANCEL_OPTION)
-        return;
-      
-      for(int i = 0; i < segments.size(); i++)
-      {
-        segment = segments.elementAt(i);
-        range   = segment.getRawRange();
-
-        for(int j = 0; j < selected.length; j++)
-        {
-          if(range.toString().equals((String) selected[j]))
-          {
-            segment.removeFromFeature();
-            listModel.removeElement(range.toString());
-          }
-        }
-      }
-    }
-    catch(ReadOnlyException e)
-    {
-      e.printStackTrace();
-    }
-    catch(LastSegmentException e)
-    {
-      // delete entire feature here
-      Feature transcript = 
-         (Feature)chado_gene.getFeatureFromId(transcript_uniquename);
-      try
-      {
-        // delete exon feature and associated transcript
-        deleteFeature(segment.getFeature());
-        deleteFeature((uk.ac.sanger.artemis.Feature)transcript.getUserData());
-        
-        listModel.removeElement(range.toString());
-        chado_gene.deleteTranscript(transcript_uniquename);
-        repaint();
-      }
-      catch(ReadOnlyException e1)
-      {
-        e1.printStackTrace();
-      }
-    }
-  }
   
   private void deleteFeature(uk.ac.sanger.artemis.Feature feature) 
           throws ReadOnlyException
@@ -1342,19 +1218,37 @@ public class GeneViewerPanel extends JPanel
     feature.removeFromEntry();
   }
   
-  private String getFeatureID(final Feature feature)
+  private void deleteAllFeature(uk.ac.sanger.artemis.Feature feature)
+          throws ReadOnlyException
   {
-    String id = null;
+    Vector children = chado_gene.getChildren(feature.getEmblFeature());
+    deleteFeature(feature);
+    chado_gene.deleteFeature(feature.getEmblFeature());    
+    
+    Feature embl_feature;
+    for(int j=0; j<children.size(); j++)
+    {  
+      embl_feature = (Feature)children.get(j);
+      deleteFeature((uk.ac.sanger.artemis.Feature)embl_feature.getUserData());
+      chado_gene.deleteFeature(embl_feature);
+    }     
+  }
+  
+  private String getQualifier(Feature feature, String name) 
+  {
+    Qualifier qualifier = null;
     try
     {
-      id = (String)feature.getQualifierByName("ID").getValues().get(0);
+      qualifier = feature.getQualifierByName(name);
     }
     catch(InvalidRelationException e)
     {
-      // TODO Auto-generated catch block
       e.printStackTrace();
-    }  
-    return id;
+    }
+    if(qualifier == null)
+      return null;
+
+    return (String) (qualifier.getValues().get(0));
   }
   
   /**
