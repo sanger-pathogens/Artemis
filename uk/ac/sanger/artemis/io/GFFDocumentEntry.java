@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.33 2006-08-15 15:33:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.34 2006-08-17 13:20:25 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -38,7 +38,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.33 2006-08-15 15:33:37 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.34 2006-08-17 13:20:25 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -498,9 +498,11 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       try
       {
         if(num == 0)
-          gene.addExon(transcript_id, new_exon_set.get(transcript_id), true );
+          gene.addExon(transcript_id, 
+                       (Feature)new_exon_set.get(transcript_id), true );
         else
-          gene.addExon(transcript_id, new_exon_set.get(transcript_id));
+          gene.addExon(transcript_id, 
+                       (Feature)new_exon_set.get(transcript_id));
         num++;
       }
       catch(InvalidRelationException e)
