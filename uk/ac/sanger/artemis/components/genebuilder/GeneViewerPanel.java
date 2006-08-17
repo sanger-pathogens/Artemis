@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.23 2006-08-16 14:45:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.24 2006-08-17 13:21:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -32,7 +32,8 @@ import java.awt.event.*;
 import java.util.List;
 import java.util.Collections;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.Set;
+import java.util.Iterator;
 import java.awt.geom.RoundRectangle2D;
 
 import uk.ac.sanger.artemis.Entry;
@@ -1221,14 +1222,16 @@ public class GeneViewerPanel extends JPanel
   private void deleteAllFeature(uk.ac.sanger.artemis.Feature feature)
           throws ReadOnlyException
   {
-    Vector children = chado_gene.getChildren(feature.getEmblFeature());
+    Set children = chado_gene.getChildren(feature.getEmblFeature());
     deleteFeature(feature);
     chado_gene.deleteFeature(feature.getEmblFeature());    
     
     Feature embl_feature;
-    for(int j=0; j<children.size(); j++)
+    Iterator it = children.iterator();
+    
+    while(it.hasNext())
     {  
-      embl_feature = (Feature)children.get(j);
+      embl_feature = (Feature)it.next();
       deleteFeature((uk.ac.sanger.artemis.Feature)embl_feature.getUserData());
       chado_gene.deleteFeature(embl_feature);
     }     
