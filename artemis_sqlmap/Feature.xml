@@ -34,6 +34,7 @@
         <result property="cvterm.cvtermId" column="type_id"/>
         <result property="featureprop.cvterm.cvtermId" column="prop_type_id" nullValue="0"/>
         <result property="featureprop.value" column="value"/>
+        <result property="featureprop.rank" column="prop_rank" nullValue="0"/>
      </resultMap>
 
     <!-- mapping for feature table and lazy loading of feature_dbxref, feature_relationship,
@@ -177,7 +178,8 @@
           fmax, 
           uniquename,
           f.type_id,  
-          fp.type_id AS prop_type_id, 
+          fp.type_id AS prop_type_id,
+          fp.rank AS prop_rank,
           fp.value,
           fl.phase
         FROM feature f
