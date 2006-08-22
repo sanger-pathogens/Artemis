@@ -26,22 +26,38 @@
   	    <result property="synonym.cvterm.cvtermId" column="type_id" />
      </resultMap>
      
-     <resultMap id="select-alias-lazy" 
+     <resultMap id="select-alias-part-lazy" 
                class="ChadoFeatureSynonym">
    	    <result property="feature_id" column="feature_id"/>
    	    <result property="synonym_id" column="synonym_id"/>
    	    <result property="pub_id" column="pub_id"/>
    	    <result property="current" column="is_current"/>
    	    <result property="internal" column="is_internal"/>
-   	    <result property="synonym.synonym_id" column="synonym_id"/>
-   	    <result property="synonym.name" column="name"/>
-   	    <result property="synonym.synonym_sgml" column="synonym_sgml"/>
-  	    <result property="synonym.cvterm" column="type_id" select="selectCvterm"/>
+   	    <result property="synonym" column="synonym_id" select="selectSynonym"/>
+     </resultMap>
+     
+     <resultMap id="select-alias-lazy" 
+               class="ChadoFeatureSynonym">
+   	    <result property="feature_id" column="feature_id"/>
+   	    <result property="pub_id" column="pub_id"/>
+   	    <result property="current" column="is_current"/>
+   	    <result property="internal" column="is_internal"/>
+   	    <result property="synonym" column="synonym_id" select="selectSynonym"/>
+     </resultMap>
+     
+     <resultMap id="select-synonym-lazy"
+                class="ChadoSynonym">
+        <result property="synonym_id" column="synonym_id"/>
+   	    <result property="name" column="name"/>
+   	    <result property="synonym_sgml" column="synonym_sgml"/>
+  	    <result property="cvterm" column="type_id" select="selectCvterm"/>
      </resultMap>
      
      
-    <select id="getAlias" resultMap="select-alias"
-            parameterClass="ChadoFeatureSynonym">
+    <!-- SQL -->
+     
+    <select id="getFeatureSynonymsByUniquename" resultMap="select-alias"
+            parameterClass="ChadoFeature">
       SELECT fs.*, s.name, s.synonym_sgml, s.type_id
       FROM feature_synonym fs 
       LEFT JOIN feature f ON f.feature_id=fs.feature_id 
@@ -51,28 +67,41 @@
       </isNotNull>
     </select>
     
-    <select id="getLazyAlias" resultMap="select-alias-lazy"
+    <select id="getLazyFeatureSynonymsByUniquename" resultMap="select-alias-part-lazy"
             parameterClass="ChadoFeatureSynonym">
-      SELECT fs.*, s.name, s.synonym_sgml, s.type_id 
+      SELECT fs.* 
       FROM feature_synonym fs 
       LEFT JOIN feature f ON f.feature_id=fs.feature_id 
-      LEFT JOIN synonym s ON fs.synonym_id=s.synonym_id 
       <isNotNull property="uniquename">                        
           WHERE uniquename=#uniquename#
       </isNotNull>
     </select>
     
-    <select id="getSynonymId" resultClass="java.lang.Integer"
-            parameterClass="ChadoFeatureSynonym">
-      SELECT synonym_id FROM synonym WHERE synonym.name=#synonym.name#
+    <select id="getFeatureSynonymsByName" resultMap="select-alias-lazy"
+            parameterClass="ChadoSynonym">
+      SELECT * FROM feature_synonym 
+      WHERE
+        synonym_id=(SELECT synonym_id FROM synonym WHERE 
+        name=#name#) AND is_current
+    </select>
+    
+    <select id="getSynonymByNameAndType" resultClass="ChadoSynonym"
+            parameterClass="ChadoSynonym">
+      SELECT * FROM synonym WHERE 
+        <isNotNull property="name">
+          name=#name# AND
+        </isNotNull>
+        <isNotNull property="cvterm">
+          type_id=$cvterm.cvtermId$ AND
+        </isNotNull> 
+        synonym_id > 0
+    </select>
+    
+    <select id="selectSynonym" resultMap="select-synonym-lazy">
+      SELECT * FROM synonym WHERE synonym_id=#value#
     </select>
    
-    <select id="getFeatureSynonymId" resultClass="java.lang.Integer"
-            parameterClass="ChadoFeatureSynonym">
-      SELECT synonym_id FROM feature_synonym WHERE
-             synonym_id=(SELECT synonym_id FROM synonym WHERE 
-             synonym.name=#synonym.name#)
-    </select>
+
    
   <!-- WRITE BACK -->
     <delete id="deleteFeatureAlias" parameterClass="ChadoFeatureSynonym">

@@ -39,25 +39,23 @@ public interface ChadoDAO
 {
 
   /**
-   *
-   * Get the residues of a feature.
-   * @param feature_id  id of feature to query
-   * @return 	the <code>ChadoFeature</code> with the residues
-   * @throws SQLException
+   * Return the feature corresponding to this feature_id 
+   * 
+   * @param id the systematic id
+   * @return the Feature, or null
    */
-  public ChadoFeature getSequence(final int feature_id)
-                        throws SQLException;
+  public ChadoFeature getFeatureById(int id)
+                      throws SQLException;
 
   /**
-   *
-   * Get the feature name given a feature_id.
-   * @param feature_id  id of feature to query
-   * @return	the feature name
-   * @throws SQLException
+   * Return a features with this systematic id
+   *  
+   * @param name the systematic id
+   * @return the Feature, or null
    */
-  public String getFeatureName(final int feature_id)
-                       throws SQLException;
-
+  public ChadoFeature getFeatureByUniqueName(String name)
+                      throws SQLException;
+  
   /**
    * This can be used to get individual features or children.
    * If ChadoFeature.featureloc.srcfeature_id is set this is used
@@ -66,18 +64,26 @@ public interface ChadoDAO
    * @return	the <code>List</code> of child <code>ChadoFeature</code> objects
    * @throws SQLException
    */
-  public List getFeature(final ChadoFeature feature)
+   public List getFeaturesByLocatedOnFeature(ChadoFeature parent)
                          throws SQLException;
   
-  /**
-   * Get the properties of a feature.
-   * @param uniquename  the unique name of the feature
-   * @return  the <code>List</code> of <code>ChadoFeature</code>
-   * @throws SQLException
-   */
-  public List getLazyFeature(final ChadoFeature feature)
-                             throws SQLException;
-
+   /**
+    * Return a list of features with any current (ie non-obsolete) name or synonym
+    *  
+    * @param name the lookup name
+    * @return a (possibly empty) List<Feature> of children with this current name
+    */
+   public List getFeaturesByAnyCurrentName(String name)
+                 throws SQLException;
+   
+   /**
+    * Return a list of features with this name or synonym (including obsolete names)
+    *  
+    * @param name the lookup name
+    * @return a (possibly empty) List<Feature> of children with this name
+    */
+   public List getFeaturesByAnyName(String name, String featureType);
+   
   /**
    * Given a list of distict cvterm_id/type_id's of feature types
    * that have residues (from getResidueType()) in the given schema
@@ -103,7 +109,6 @@ public interface ChadoDAO
                      throws SQLException;
 
   /**
-   * 
    * Get available schemas (as a <code>List</code> of <code>String</code>       
    * objects).
    * @return    the available schemas
@@ -113,7 +118,6 @@ public interface ChadoDAO
               throws SQLException;
 
   /**
-   * 
    * Get the full list of cvterm_id and name as a <code>List</code> of 
    * <code>Cvterm</code> objects.
    * @return	the full list of cvterm_id and name
@@ -121,37 +125,50 @@ public interface ChadoDAO
    */
   public List getCvterm()
               throws SQLException;
-
-  /**
-   * Get the time a feature was last modified.
-   * @param uniquename  the unique name of the feature
-   * @return  number of rows changed
-   * @throws SQLException
-   */
-  public Timestamp getTimeLastModified
-                   (final String uniquename)
-                   throws SQLException;
   
 
   /**
    * Get dbxref for a feature.
    * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>Dbxref</code> are returned.
-   * @return a <code>Hashtable</code> of dbxrefs.
+   *                    all <code>ChadoFeatureDbxref</code> are returned.
+   * @return a <code>List</code> of feature_dbxrefs.
    * @throws SQLException
    */
-  public Hashtable getDbxref(final String uniquename)
+  public List getFeatureDbxrefByUniquename(final String uniquename)
               throws SQLException;
   
   /**
-   * Get dbxref for a feature.
+   * Return a list of ChadoFeatureSynonyms for a uniquename
    * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>Dbxref</code> are returned.
-   * @return a <code>Hashtable</code> of dbxrefs.
+   *                    all <code>ChadoFeatureSynonym</code> are returned.
+   * @return
    * @throws SQLException
    */
-  public Hashtable getAlias(final String uniquename)
-              throws SQLException;
+  public List getFeatureSynonymsByUniquename(final String uniquename)
+         throws SQLException;
+  
+  /**
+   * Return a synonym of the given name and type if it exists
+   * 
+   * @param name the name to lookup
+   * @param type the type of the Synonym
+   * @return a Synonym, or null  
+   */
+  public ChadoSynonym getSynonymByNameAndCvTerm(String name, ChadoCvterm type)
+         throws SQLException;
+  
+  
+  /**
+   * Return a list of ChadoFeatureSynonyms which link a given Feature and Synonym
+   * 
+   * @param feature the test Feature
+   * @param synonym the test Synonym
+   * @return a (possibly empty) List<FeatureSynonym>
+   */
+  public List getFeatureSynonymsByFeatureAndSynonym(
+         ChadoFeature feature, ChadoSynonym synonym)
+         throws SQLException;
+  
   
 //
 // WRITE BACK

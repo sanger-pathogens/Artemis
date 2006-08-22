@@ -52,6 +52,10 @@ public class ChadoFeature
   private String name;
   /** features residues */
   private byte[] residues;
+  /** anotated or result of automated analysis */
+  private boolean analysis;
+  /** whether this feature has been obsoleted */
+  private boolean obsolete;
   /** feature cvterm */
   private ChadoCvterm cvterm;
   /** feature property */
@@ -217,6 +221,42 @@ public class ChadoFeature
     this.residues = residues;
   }
 
+  /**
+   * Detemine if this is anotated or result of automated analysis.
+   * @return
+   */
+  public boolean isAnalysis()
+  {
+    return analysis;
+  }
+
+  /**
+   * Detemine if this is anotated or result of automated analysis.
+   * @param analysis
+   */
+  public void setAnalysis(boolean analysis)
+  {
+    this.analysis = analysis;
+  }
+
+  /**
+   * Determine if this feature has been made obsolete.
+   * @return
+   */
+  public boolean isObsolete()
+  {
+    return obsolete;
+  }
+
+  /**
+   * Determine if this feature has been made obsolete.
+   * @param obsolete
+   */
+  public void setObsolete(boolean obsolete)
+  {
+    this.obsolete = obsolete;
+  }
+  
   /**
   * A reference to a table:cvterm giving the feature type. 
   * This will typically be a Sequence Ontology identifier. 
@@ -452,6 +492,8 @@ public class ChadoFeature
   {
     this.featureSynonymsForFeatureId = featureSynonymsForFeatureId;
   }
+  
+  
   
   /**
    * Used in merging the qualifiers to store them as a <code>Hashtable</code> of

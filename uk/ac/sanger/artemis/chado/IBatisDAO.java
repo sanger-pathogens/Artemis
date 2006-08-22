@@ -56,31 +56,30 @@ public class IBatisDAO implements ChadoDAO
     this.sqlMap = sql_config.getSqlMapInstance();
   }
 
+  
   /**
-   * Get the feature name given a feature_id.
-   * @param feature_id  id of feature to query
-   * @return    the feature name
+   * Return the feature corresponding to this feature_id 
+   * 
+   * @param id the systematic id
+   * @return the Feature, or null
+   * @throws SQLException 
    */
-  public String getFeatureName(final ChadoFeature feature)
-                throws SQLException
-  { 
-    return (String)sqlMap.queryForObject("getFeatureName", feature);
-  }
-
-  /**
-   *
-   * Get the residues of a feature.
-   * @param feature_id  id of feature to query
-   * @return    the <code>ChadoFeature</code> with the residues
-   * @throws SQLException
-   */
-  public String getFeatureName(final int feature_id)
-                       throws SQLException
+  public ChadoFeature getFeatureById(int id) 
+                      throws SQLException
   {
     ChadoFeature feature = new ChadoFeature();
-    feature.setId(feature_id);
-    return getFeatureName(feature);
+    feature.setId(id);
+    return getLazyFeature(feature);
   }
+  
+  public ChadoFeature getFeatureByUniqueName(String uniquename) 
+                      throws SQLException
+  {
+    ChadoFeature feature = new ChadoFeature();
+    feature.setUniquename(uniquename);
+    return getLazyFeature(feature);
+  }
+   
 
   /**
    * This can be used to get individual features or children.
@@ -90,8 +89,8 @@ public class IBatisDAO implements ChadoDAO
    * @return    the <code>List</code> of child <code>ChadoFeature</code> objects
    * @throws SQLException
    */
-  public List getFeature(final ChadoFeature feature)
-                         throws SQLException
+  public List getFeaturesByLocatedOnFeature(final ChadoFeature feature)
+               throws SQLException
   { 
     List feature_list = sqlMap.queryForList("getFeature", feature);
 
@@ -100,30 +99,51 @@ public class IBatisDAO implements ChadoDAO
   }
 
   /**
+   * Return a list of features with any current (ie non-obsolete) name or synonym  
+   * @param name the lookup name
+   * @return a (possibly empty) List<Feature> of children with this current name
+   * @throws SQLException 
+   */
+  public List getFeaturesByAnyCurrentName(String name) 
+              throws SQLException
+  {
+    final ChadoSynonym alias = new ChadoSynonym();
+    alias.setName(name);
+    
+    List feature_synonym_list = 
+      sqlMap.queryForList("getFeatureSynonymsByName", alias);
+    
+    ChadoFeature feature = new ChadoFeature();
+    feature.setUniquename(name);
+    feature.setFeatureSynonymsForFeatureId(feature_synonym_list);
+
+    List features = sqlMap.queryForList("getLazyFeature", feature);
+    
+    return features;
+    
+  }
+  
+  /**
+   * Return a list of features with this name or synonym (including obsolete names)
+   *  
+   * @param name the lookup name
+   * @return a (possibly empty) List<Feature> of children with this name
+   */
+  public List getFeaturesByAnyName(String name, String featureType)
+  {
+    return null;
+  }
+  
+  /**
    * Get the properties of a feature.
    * @param uniquename  the unique name of the feature
    * @return  the <code>List</code> of <code>ChadoFeature</code>
    * @throws SQLException
    */
-  public List getLazyFeature(final ChadoFeature feature)
+  private ChadoFeature getLazyFeature(final ChadoFeature feature)
                              throws SQLException
   { 
-    return sqlMap.queryForList("getLazyFeature", feature);
-  }
-  
-  /**
-   * Get the residues of a feature.
-   * @param feature_id  id of feature to query
-   * @throws SQLException
-   */
-  public ChadoFeature getSequence(final int feature_id)
-                        throws SQLException
-  { 
-    ChadoFeature feature = new ChadoFeature();
-    feature.setId(feature_id);
-    
-    return (ChadoFeature)sqlMap.queryForObject("getSequence",
-                                           feature);
+    return (ChadoFeature)sqlMap.queryForObject("getLazyFeature", feature);
   }
 
   /**
@@ -176,7 +196,6 @@ public class IBatisDAO implements ChadoDAO
   }
 
   /**
-   *
    * Get the full list of cvterm_id and name as a <code>List</code> of 
    * <code>Cvterm</code> objects.
    * @return    the full list of cvterm_id and name
@@ -187,75 +206,74 @@ public class IBatisDAO implements ChadoDAO
   {
     return sqlMap.queryForList("getCvterm", null);
   }
-  
-  /**
-   * Get the time a feature was last modified.
-   * @param uniquename  the unique name of the feature
-   * @return  number of rows changed
-   * @throws SQLException
-   */
-  public Timestamp getTimeLastModified
-                   (final String uniquename)
-                   throws SQLException
-  {
-    ChadoFeature feature = new ChadoFeature();
-    feature.setUniquename(uniquename);
-    
-    return (Timestamp)sqlMap.queryForObject("getTimeLastModified", feature);
-  }
 
   
   /**
-   * 
    * Get dbxref for a feature.
    * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>Dbxref</code> are returned.
-   * @return a <code>Hashtable</code> of dbxrefs.
+   *                    all <code>ChadoFeatureDbxref</code> are returned.
+   * @return a <code>List</code> of feature_dbxrefs.
    * @throws SQLException
    */
-  public Hashtable getDbxref(final String uniquename)
+  public List getFeatureDbxrefByUniquename(final String uniquename)
               throws SQLException
   {
     ChadoFeature feature = new ChadoFeature();
     feature.setUniquename(uniquename);
     
-    List list = sqlMap.queryForList("getDbxref", feature);  
-    return mergeDbxref(list);
+    return sqlMap.queryForList("getFeatureDbxref", feature);  
+  }
+   
+  /**
+   * Return a list of ChadoFeatureSynonyms for a uniquename
+   * @param uniquename  the unique name for the feature. If set to NULL
+   *                    all <code>ChadoFeatureSynonym</code> are returned.
+   * @return
+   * @throws SQLException
+   */
+  public List getFeatureSynonymsByUniquename(final String uniquename)
+         throws SQLException
+  {
+    ChadoFeature feature = new ChadoFeature();
+    feature.setUniquename(uniquename);
+    
+    return sqlMap.queryForList("getFeatureSynonymsByUniquename", feature);  
   }
   
   /**
-   * Get dbxref for a feature.
-   * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>Dbxref</code> are returned.
-   * @return a <code>Hashtable</code> of dbxrefs.
-   * @throws SQLException
+   * Return a synonym of the given name and type if it exists
+   * @param name the name to lookup
+   * @param type the type of the Synonym
+   * @return a Synonym, or null  
    */
-  public Hashtable getAlias(final String uniquename)
-              throws SQLException
+  public ChadoSynonym getSynonymByNameAndCvTerm(
+      String name, ChadoCvterm type) 
+      throws SQLException
   {
-    ChadoFeatureSynonym alias = new ChadoFeatureSynonym();
-    alias.setUniquename(uniquename);
-    
-    List list = sqlMap.queryForList("getAlias", alias);  
-    
-    Hashtable synonym = new Hashtable();
-    Integer feature_id;
-    Vector value;
-    for(int i=0; i<list.size(); i++)
-    {
-      alias = (ChadoFeatureSynonym)list.get(i);
-      feature_id = alias.getFeature_id();
-      if(synonym.containsKey(feature_id))
-        value = (Vector)synonym.get(feature_id);
-      else
-        value = new Vector();
-      
-      value.add(alias);
-      synonym.put(feature_id, value);
-    }
-    
-    return synonym;
+    ChadoSynonym synonym = new ChadoSynonym();
+    synonym.setName(name);
+    synonym.setCvterm(type);
+
+    return (ChadoSynonym)sqlMap.queryForObject("getSynonymByNameAndType", 
+           synonym);
   }
+  
+  /**
+   * Return a list of ChadoFeatureSynonyms which link a given Feature
+   * and Synonym 
+   * @param feature the test Feature
+   * @param synonym the test Synonym
+   * @return a (possibly empty) List<FeatureSynonym>
+   */
+  public List getFeatureSynonymsByFeatureAndSynonym(
+      ChadoFeature feature, ChadoSynonym synonym)
+      throws SQLException
+  {
+    return
+      sqlMap.queryForList("getFeatureSynonymsByName", synonym);
+  }
+
+
   
   /**
    *
@@ -484,19 +502,21 @@ public class IBatisDAO implements ChadoDAO
   {
     final ChadoFeatureSynonym alias = tsn.getAlias();
     
-    Object synonym_id  = sqlMap.queryForObject("getSynonymId", alias);
+    ChadoSynonym synonym  = 
+      (ChadoSynonym)sqlMap.queryForObject("getSynonymByNameAndType", 
+          alias.getSynonym());
     
-    if(synonym_id == null)
+    if(synonym == null)
     {
       // create a new synonym name     
-      //Long type_id = alias.getType_id();
-      //alias.setType_id(type_id);
       sqlMap.insert("insertAlias", alias);
       
-      synonym_id  = sqlMap.queryForObject("getSynonymId", alias);
+      synonym  =
+        (ChadoSynonym)sqlMap.queryForObject("getSynonymByNameAndType", 
+            alias.getSynonym());
     }
     
-    alias.setSynonym_id((Integer)synonym_id);
+    alias.setSynonym_id(synonym.getSynonym_id());
     sqlMap.insert("insertFeatureAlias", alias);
     return 1;
   }
@@ -512,14 +532,16 @@ public class IBatisDAO implements ChadoDAO
   {
     final ChadoFeatureSynonym alias = tsn.getAlias();
      
-    List synonym_id_list = sqlMap.queryForList("getFeatureSynonymId", alias);
+    List feature_synonym_list = 
+      sqlMap.queryForList("getFeatureSynonymsByName", alias.getSynonym());
     
-    final Integer synonym_id = (Integer)synonym_id_list.get(0); 
-    alias.setSynonym_id(synonym_id);
+    final ChadoFeatureSynonym synonym = 
+      (ChadoFeatureSynonym)feature_synonym_list.get(0); 
+    alias.setSynonym_id(synonym.getSynonym().getSynonym_id());
     
     // check this name is not used some where else, 
     // i.e. in more than one row
-    if(synonym_id_list.size() > 1)
+    if(feature_synonym_list.size() > 1)
       return sqlMap.delete("deleteFeatureAlias", alias);
     else
       return sqlMap.delete("deleteAlias", alias);
@@ -651,7 +673,7 @@ public class IBatisDAO implements ChadoDAO
    * @param list  a <code>List</code> of <code>Dbxref</code> objects.
    * @return a <code>Hashtable</code> of dbxrefs.
    */
-  protected static Hashtable mergeDbxref(final List list)
+  public static Hashtable mergeDbxref(final List list)
   {
     Hashtable dbxrefHash = new Hashtable();
     for(int i = 0; i < list.size(); i++)
@@ -675,6 +697,8 @@ public class IBatisDAO implements ChadoDAO
     }
     return dbxrefHash;
   }
+
+
 
 }
 

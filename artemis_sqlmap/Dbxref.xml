@@ -24,8 +24,9 @@
     <result property="dbxref.version"   column="version"/>
   </resultMap>
         
-  <select id="getDbxref" parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature"
-                         resultMap="select-feature-dbxref">
+  <select id="getFeatureDbxref" 
+          parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature"
+          resultMap="select-feature-dbxref">
    	SELECT db.name, dbx.accession, dbx.version, dbx_f.feature_id
  	FROM feature_dbxref dbx_f 
         LEFT JOIN dbxref dbx ON dbx.dbxref_id=dbx_f.dbxref_id
@@ -50,6 +51,14 @@
     SELECT dbxref_id FROM dbxref WHERE accession=#accession#
            AND db_id=$db_id$;
   </select>
+  
+  
+  
+  <select id="selectDbxref" resultClass="ChadoDbxref">
+    SELECT * FROM dbxref WHERE dbxref_id=$dbxref_id$
+  </select>
+  
+  
   
   <!-- WRITE BACK -->
   <delete id="deleteFeatureDbxref" parameterClass="ChadoFeatureDbxref">

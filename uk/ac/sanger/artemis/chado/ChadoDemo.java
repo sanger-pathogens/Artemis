@@ -317,15 +317,16 @@ public class ChadoDemo
   public String[][] search(final String search_gene, final List schema_search,
       ChadoDAO dao) throws SQLException, ConnectException
   {
+    final String search_name = search_gene.replaceAll("[*]","%");
     ChadoFeature feature = new ChadoFeature();
-    feature.setUniquename(search_gene.replaceAll("[*]","%"));
+    //feature.setUniquename(search_gene.replaceAll("[*]","%"));
     featureList = new Vector();
     
     for(int i=0; i<schema_search.size(); i++)
     {
       reset(location, (String)schema_search.get(i));
       dao = getDAO();
-      featureList.addAll(dao.getLazyFeature(feature));
+      featureList.addAll(dao.getFeaturesByAnyCurrentName(search_name));
     }
     
     String rowData[][] = new String[featureList.size()][7];

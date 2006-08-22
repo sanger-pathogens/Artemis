@@ -84,6 +84,7 @@ public class ChadoTransactionManager
   private String synonym_tags[] =
           {   "synonym",         // the rest are PSU synonyms
               "gene",
+              "systematic_id", 
               "primary_name",
               "reserved_name",
               "obsolete_name" };

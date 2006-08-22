@@ -12,6 +12,16 @@
   	  <result property="name" column="cvterm_name"/>
       <result property="cv.name" column="cv_name"/>
     </resultMap>
+    
+    <resultMap id="lazy-cvterm" class="uk.ac.sanger.artemis.chado.ChadoCvterm">
+   	  <result property="cvtermId" column="cvterm_id"/>
+  	  <result property="name" column="name"/>
+      <result property="definition" column="definition"/>
+      <result property="dbxref" column="dbxref_id" select="selectDbxref"/>
+      <result property="isObsolete" column="is_obsolete"/>
+      <result property="isRelationshiptype" column="is_relationshiptype"/>
+    </resultMap>
+    
 
     <!-- look up cvterms names and id -->
      <select id="getCvterm" resultMap="select-cvterm-names-result"> 
@@ -26,14 +36,17 @@
              <isNotNull property="cv_name">
                cv.name=#cv_name# AND
              </isNotNull>
+             <isNotNull property="cvterm_id">
+               cvterm_id=#cvterm_id# AND
+             </isNotNull>
             </dynamic>
 	    cv.cv_id = cvterm.cv_id
      </select> 
      
       <!-- look up cvterms names and id -->
      <select id="selectCvterm" 
-             resultClass="uk.ac.sanger.artemis.chado.ChadoCvterm"> 
-       SELECT cvterm_id AS cvtermId, name 
+             resultMap="lazy-cvterm"> 
+       SELECT *
        FROM cvterm
        WHERE cvterm_id=#value# 
      </select> 

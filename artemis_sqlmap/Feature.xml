@@ -46,27 +46,23 @@
         <result property="uniquename" column="uniquename"/>
         <result property="name" column="name"/>
         <result property="length" column="length" nullValue="-999" />
+        <result property="residues" column="residues" />
         <result property="cvterm" column="type_id" select="selectCvterm" />
         <result property="featurelocsForFeatureId" column="{id=id}" 
                                                    select="getFeatureLoc" />
         <result property="featurepropList" column="{feature_id=id}" 
                                            select="selectFeatureProp" />
         <result property="featureDbxrefs" column="{id=id}"
-                                          select="getDbxref" />
+                                          select="getFeatureDbxref" />
         <result property="featureRelationshipsForObjectId" column="{object_id=id}" 
                                            select="getFeatureRelationship" />  
         <result property="featureRelationshipsForSubjectId" column="{subject_id=id}" 
                                            select="getFeatureRelationship" /> 
         <result property="featureSynonymsForFeatureId" column="{uniquename=uniquename}" 
-                                           select="getLazyAlias" />                          
+                                           select="getLazyFeatureSynonymsByUniquename" />                          
         <result property="organism" column="organism_id" select="getOrganism" />
      </resultMap>
      
-     <resultMap id="select-feature-sequence-result" 
-                class="ChadoFeature">
-        <result property="name" column="name"/>
-        <result property="residues" column="residues"/>
-     </resultMap>
     
      <resultMap id="select-feature-with-residues-result" 
                 class="ChadoFeature">
@@ -105,6 +101,9 @@
         <result property="rank"      column="rank"/>
      </resultMap>
         
+        
+     <!-- SQL -->
+        
      <!-- select featureprops e.g. for lazy loading -->
      <select id="selectFeatureProp" resultMap="select-featureprop">
        SELECT type_id, value, rank 
@@ -134,11 +133,6 @@
        WHERE featureloc.feature_id=#id#
      </select>
      
-     <select id="getFeatureName" parameterClass="ChadoFeature" 
-                                 resultClass="java.lang.String"> 
-   	   SELECT name
-       FROM feature WHERE feature_id=$id$
-     </select> 
 
      <!-- get feature id -->
      <select id="getFeatureID" parameterClass="ChadoTransaction"
@@ -198,11 +192,38 @@
         ORDER BY f.type_id,  uniquename
      </select>
  
-    <select id="getSequence" parameterClass="ChadoFeature" 
-                             resultClass="ChadoFeature">
-       SELECT *
-       FROM feature 
-       WHERE feature_id=$id$
+     <select id="getLazyFeature" resultMap ="select-feature-lazy" 
+                            parameterClass="ChadoFeature">
+	 SELECT
+	    timelastmodified,
+	 	f.feature_id AS id,
+	 	uniquename,
+	 	organism_id,
+		name,
+	 	f.type_id,
+		seqlen AS length,
+		residues
+	 FROM feature f
+	 WHERE
+	   <dynamic>
+          <isGreaterThan property="id" compareValue="0"> 
+            f.feature_id=$id$ AND
+          </isGreaterThan>
+          
+          <isNotNull property="uniquename">                                 
+            <isNotNull property="featureSynonymsForFeatureId">
+              <iterate property="featureSynonymsForFeatureId" conjunction="OR" open="(" close=" OR">
+               f.feature_id=#featureSynonymsForFeatureId[].feature_id#
+             </iterate>
+            </isNotNull>
+            uniquename LIKE #uniquename# OR name LIKE #uniquename# ) AND              
+          </isNotNull>
+          
+          <isGreaterThan property="cvterm.cvtermId" compareValue="0"> 
+            feature.type_id=$cvterm.cvtermId$ AND
+          </isGreaterThan>
+       </dynamic>
+         f.feature_id > 0
     </select>
 
     <select id="getSchema" resultClass="java.lang.String">
@@ -235,31 +256,6 @@
        ORDER BY abbreviation
     </select>
 
-    <select id="getLazyFeature" resultMap ="select-feature-lazy" 
-                            parameterClass="ChadoFeature">
-	 SELECT
-	    timelastmodified,
-	 	f.feature_id AS id,
-	 	uniquename,
-	 	organism_id,
-		name,
-	 	f.type_id,
-		seqlen AS length
-	 FROM feature f
-	 WHERE
-	   <dynamic>
-          <isGreaterThan property="id" compareValue="0"> 
-            f.feature_id=$id$ AND
-          </isGreaterThan>
-          <isNotNull property="uniquename">                        
-            uniquename LIKE #uniquename# AND
-          </isNotNull>
-          <isGreaterThan property="cvterm.cvtermId" compareValue="0"> 
-            feature.type_id=$cvterm.cvtermId$ AND
-          </isGreaterThan>
-       </dynamic>
-         f.feature_id > 0
-    </select>
 
     <select id="getOrganismID" resultClass="java.lang.Integer" 
             parameterClass="ChadoFeature">
@@ -267,17 +263,11 @@
              f.feature_id=$featureloc.srcfeature_id$
     </select>
 
-    <select id="getTimeLastModified" resultClass="java.sql.Timestamp"
-            parameterClass="ChadoFeature">
-      SELECT timelastmodified FROM feature f WHERE
-             f.uniquename=#uniquename#
-    </select>
     
     <select id="currval" resultClass="java.lang.Integer" 
             parameterClass="java.lang.String">
       SELECT currval('$value$')
     </select>
-
 
 
     <!--  WRITE BACK METHODS -->
