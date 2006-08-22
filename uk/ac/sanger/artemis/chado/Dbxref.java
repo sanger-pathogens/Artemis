@@ -27,13 +27,13 @@ package uk.ac.sanger.artemis.chado;
 /**
  * Representation of the chado dbxref table.
  */
-public class ChadoDbxref
+public class Dbxref
 { 
   private int db_id;
   private String accession;
   private String version;
   private String description;
-  private ChadoDb db;
+  private Db db;
   
   public String getAccession()
   {
@@ -45,12 +45,12 @@ public class ChadoDbxref
     this.accession = accession;
   }
 
-  public ChadoDb getDb()
+  public Db getDb()
   {
     return db;
   }
 
-  public void setDb(ChadoDb db)
+  public void setDb(Db db)
   {
     this.db = db;
   }

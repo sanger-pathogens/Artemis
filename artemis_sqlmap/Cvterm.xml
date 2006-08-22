@@ -7,13 +7,13 @@
 
 <sqlMap namespace="Cvterm"> 
  
-    <resultMap id="select-cvterm-names-result" class="uk.ac.sanger.artemis.chado.ChadoCvterm">
+    <resultMap id="select-cvterm-names-result" class="uk.ac.sanger.artemis.chado.Cvterm">
    	  <result property="cvtermId" column="cvterm_id"/>
   	  <result property="name" column="cvterm_name"/>
       <result property="cv.name" column="cv_name"/>
     </resultMap>
     
-    <resultMap id="lazy-cvterm" class="uk.ac.sanger.artemis.chado.ChadoCvterm">
+    <resultMap id="lazy-cvterm" class="uk.ac.sanger.artemis.chado.Cvterm">
    	  <result property="cvtermId" column="cvterm_id"/>
   	  <result property="name" column="name"/>
       <result property="definition" column="definition"/>

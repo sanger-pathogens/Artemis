@@ -7,20 +7,20 @@
 
 <sqlMap namespace="Feature"> 
  
-     <typeAlias alias="ChadoFeature"
-        type="uk.ac.sanger.artemis.chado.ChadoFeature"/>
+     <typeAlias alias="Feature"
+        type="uk.ac.sanger.artemis.chado.Feature"/>
         
      <typeAlias alias="ChadoTransaction"
         type="uk.ac.sanger.artemis.chado.ChadoTransaction"/>
      
     <parameterMap id="schema-cvlist" 
-                  class="ChadoFeature">
+                  class="Feature">
        <parameter property="schema" javaType="java.lang.String"/>
        <parameter property="featureCvterms" javaType="java.util.List"/>
     </parameterMap> 
 
     <resultMap id="select-feature" 
-               class="ChadoFeature">
+               class="Feature">
         <result property="timelastmodified" column="timelastmodified"/>
    	    <result property="id" column="id"/>
   	    <result property="feature_relationship.object_id" column="object_id"/>
@@ -40,7 +40,7 @@
     <!-- mapping for feature table and lazy loading of feature_dbxref, feature_relationship,
          featureprop, organism tables -->
     <resultMap id="select-feature-lazy" 
-               class="ChadoFeature">       
+               class="Feature">       
         <result property="timelastmodified" column="timelastmodified"/>
    	    <result property="id" column="id"/>
         <result property="uniquename" column="uniquename"/>
@@ -65,7 +65,7 @@
      
     
      <resultMap id="select-feature-with-residues-result" 
-                class="ChadoFeature">
+                class="Feature">
         <result property="organism.abbreviation" column="abbreviation"/>
         <result property="name" column="name"/>
         <result property="uniquename" column="uniquename"/>
@@ -74,14 +74,14 @@
      </resultMap>
 
      <resultMap id="select-featureprop" 
-                class="uk.ac.sanger.artemis.chado.ChadoFeatureProp">
+                class="uk.ac.sanger.artemis.chado.FeatureProp">
         <result property="value" column="value" />
         <result property="rank" column="rank" />
         <result property="cvterm" column="type_id" select="selectCvterm" />
      </resultMap>
      
      <resultMap id="select-relationship" 
-                class="uk.ac.sanger.artemis.chado.ChadoFeatureRelationship">
+                class="uk.ac.sanger.artemis.chado.FeatureRelationship">
         <result property="subject_id" column="subject_id" />
         <result property="object_id" column="object_id" />
         <result property="value" column="value" />
@@ -90,7 +90,7 @@
      </resultMap>
      
      <resultMap id="select-location"
-                class="uk.ac.sanger.artemis.chado.ChadoFeatureLoc">
+                class="uk.ac.sanger.artemis.chado.FeatureLoc">
         <result property="srcfeature_id" column="srcfeature_id" nullValue="-999" />
         <result property="fmin"   column="fmin"   nullValue="-999" />
         <result property="fmax"   column="fmax"   nullValue="-999" />
@@ -136,7 +136,7 @@
 
      <!-- get feature id -->
      <select id="getFeatureID" parameterClass="ChadoTransaction"
-                               resultClass="ChadoFeature">
+                               resultClass="Feature">
         SELECT feature_id AS id, uniquename FROM feature WHERE
         <dynamic>
           <isNotNull property="uniquename">
@@ -159,7 +159,7 @@
         </dynamic>
      </select>
 
-     <select id="getFeature" parameterClass="ChadoFeature" 
+     <select id="getFeature" parameterClass="Feature" 
                              resultMap="select-feature">
         SELECT
           timelastmodified, 
@@ -193,7 +193,7 @@
      </select>
  
      <select id="getLazyFeature" resultMap ="select-feature-lazy" 
-                            parameterClass="ChadoFeature">
+                            parameterClass="Feature">
 	 SELECT
 	    timelastmodified,
 	 	f.feature_id AS id,
@@ -258,7 +258,7 @@
 
 
     <select id="getOrganismID" resultClass="java.lang.Integer" 
-            parameterClass="ChadoFeature">
+            parameterClass="Feature">
       SELECT organism_id FROM feature f WHERE
              f.feature_id=$featureloc.srcfeature_id$
     </select>
@@ -327,7 +327,7 @@
     </delete>
 
     <insert id="insertFeature" 
-            parameterClass="ChadoFeature">
+            parameterClass="Feature">
       INSERT INTO feature 
         ( feature_id, organism_id, name, uniquename, type_id )
       VALUES
@@ -339,7 +339,7 @@
     </insert>
 
     <insert id="insertFeatureLoc" 
-            parameterClass="ChadoFeature">
+            parameterClass="Feature">
       INSERT INTO featureloc
         ( featureloc_id, feature_id, srcfeature_id, fmin, fmax, strand, phase )
       VALUES
@@ -353,13 +353,13 @@
     </insert>
 
    <delete id="deleteFeature" 
-           parameterClass="ChadoFeature">
+           parameterClass="Feature">
       DELETE FROM feature
       WHERE uniquename=#uniquename#
    </delete>
    
    <insert id="insertFeatureRelationship" 
-           parameterClass="ChadoFeature">
+           parameterClass="Feature">
       INSERT INTO feature_relationship
         ( subject_id, object_id, type_id )
       VALUES

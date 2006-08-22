@@ -1,4 +1,4 @@
-/* ChadoDb.java
+/* Dbxref.java
  *
  * created: 2006
  *
@@ -25,64 +25,66 @@
 package uk.ac.sanger.artemis.chado;
 
 /**
- * Representation of the chado db table.
+ * Representation of the chado feature_dbxref.
  */
-public class ChadoDb
-{ 
-  private int db_id;
-  private String name;
-  private String description;
-  private String urlprefix;
-  private String url;
+public class FeatureDbxref
+{
+  private String schema;
   
-  public String getDescription()
+  /** feature_dbxref */
+  private int feature_id;
+  private int dbxref_id;
+  private boolean current = true;
+  private Dbxref dbxref;
+
+  public int getFeature_id()
   {
-    return description;
-  }
-  
-  public void setDescription(String description)
-  {
-    this.description = description;
-  }
-  
-  public int getDb_id()
-  {
-    return db_id;
+    return feature_id;
   }
 
-  public void setDb_id(int db_id)
+  public void setFeature_id(int feature_id)
   {
-    this.db_id = db_id;
-  }
-  
-  public String getName()
-  {
-    return name;
-  }
-  
-  public void setName(String name)
-  {
-    this.name = name;
-  }
-  
-  public String getUrl()
-  {
-    return url;
-  }
-  
-  public void setUrl(String url)
-  {
-    this.url = url;
-  }
-  
-  public String getUrlprefix()
-  {
-    return urlprefix;
-  }
-  
-  public void setUrlprefix(String urlprefix)
-  {
-    this.urlprefix = urlprefix;
+    this.feature_id = feature_id;
   }
 
+  public boolean isCurrent()
+  {
+    return current;
+  }
+
+  public void setCurrent(boolean current)
+  {
+    this.current = current;
+  }
+
+  public String getSchema()
+  {
+    return schema;
+  }
+
+  public void setSchema(String schema)
+  {
+    this.schema = schema;
+  }
+
+  public int getDbxref_id()
+  {
+    return dbxref_id;
+  }
+
+  public void setDbxref_id(int dbxref_id)
+  {
+    this.dbxref_id = dbxref_id;
+  }
+  
+  public Dbxref getDbxref()
+  {
+    return dbxref;
+  }
+
+  public void setDbxref(Dbxref dbxref)
+  {
+    this.dbxref = dbxref;
+  }
 }
+

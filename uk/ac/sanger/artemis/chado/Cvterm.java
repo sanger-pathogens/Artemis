@@ -28,12 +28,12 @@ package uk.ac.sanger.artemis.chado;
 /**
  * Representation of cvterm table.
  */
-public class ChadoCvterm
+public class Cvterm
 {
   private long cvtermId;
   private String name;
-  private ChadoCv cv;
-  private ChadoDbxref dbxref;
+  private Cv cv;
+  private Dbxref dbxref;
   private String definition;
   private int isObsolete;
   private int isRelationshiptype;
@@ -53,7 +53,7 @@ public class ChadoCvterm
    * Note that a cvterm may have multiple secondary dbxrefs.
    * @return
    */
-  public ChadoDbxref getDbxref()
+  public Dbxref getDbxref()
   {
     return dbxref;
   }
@@ -63,17 +63,17 @@ public class ChadoCvterm
    * Note that a cvterm may have multiple secondary dbxrefs.
    * @param dbxref
    */
-  public void setDbxref(ChadoDbxref dbxref)
+  public void setDbxref(Dbxref dbxref)
   {
     this.dbxref = dbxref;
   }
 
-  public ChadoCv getCv()
+  public Cv getCv()
   {
     return cv;
   }
 
-  public void setCv(ChadoCv cv)
+  public void setCv(Cv cv)
   {
     this.cv = cv;
   }

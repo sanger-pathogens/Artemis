@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.13 2006-08-08 10:20:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.14 2006-08-22 13:00:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -49,7 +49,6 @@ import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.GotoEventSource;
 import uk.ac.sanger.artemis.Selection;
-import uk.ac.sanger.artemis.chado.ChadoFeature;
 import uk.ac.sanger.artemis.components.FeatureEdit;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
@@ -418,7 +417,7 @@ public class GeneBuilderFrame extends JFrame
        if(exons == null)
          continue;
        
-       if(exons.get(0) instanceof ChadoFeature)
+       if(exons.get(0) instanceof uk.ac.sanger.artemis.chado.Feature)
          return;
        
        for(int j=0; j<exons.size(); j++)

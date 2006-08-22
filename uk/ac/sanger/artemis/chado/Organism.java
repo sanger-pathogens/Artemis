@@ -27,7 +27,7 @@ package uk.ac.sanger.artemis.chado;
 /**
  * Representation of the organism table.
  */
-public class ChadoOrganism
+public class Organism
 {
 
   /** organism identifier */

@@ -6,7 +6,7 @@
  
 <sqlMap namespace="Organism"> 
       
-    <select id="getOrganism" resultClass="uk.ac.sanger.artemis.chado.ChadoOrganism"> 
+    <select id="getOrganism" resultClass="uk.ac.sanger.artemis.chado.Organism"> 
       SELECT organism_id AS id, abbreviation, genus, species, common_name, comment 
       FROM organism
       WHERE organism_id=#value# 

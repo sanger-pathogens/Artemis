@@ -88,7 +88,7 @@ public class ChadoDemo
   /** feature attributes */
   private JTextArea attr_text;
 
-  /** <code>List</code> of <code>ChadoFeature</code> objects */
+  /** <code>List</code> of <code>Feature</code> objects */
   private List featureList;
 
   /**
@@ -254,7 +254,7 @@ public class ChadoDemo
   {
     int row = result_table.getSelectedRow();
     StringBuffer attr_buff = new StringBuffer();
-    ChadoFeature chado_feature = (ChadoFeature)featureList.get(row);
+    Feature chado_feature = (Feature)featureList.get(row);
     List attributes = chado_feature.getFeaturepropList();
     List dbxrefs    = chado_feature.getFeatureDbxrefs();
 
@@ -263,7 +263,7 @@ public class ChadoDemo
       attr_buff.append("/Dbxref=");
       for(int i = 0; i < dbxrefs.size(); i++)
       {
-        ChadoFeatureDbxref dbxref = (ChadoFeatureDbxref) dbxrefs.get(i);
+        FeatureDbxref dbxref = (FeatureDbxref) dbxrefs.get(i);
         attr_buff.append(dbxref.getDbxref().getDb().getName() + ":"
             + dbxref.getDbxref().getAccession() + "; ");
       }
@@ -275,11 +275,11 @@ public class ChadoDemo
     // append synonyms
     if(synonyms.size() > 0)
     {
-      ChadoFeatureSynonym alias;
+      FeatureSynonym alias;
 
       for(int i = 0; i < synonyms.size(); i++)
       {
-        alias = (ChadoFeatureSynonym) synonyms.get(i);
+        alias = (FeatureSynonym) synonyms.get(i);
         attr_buff.append("/");
         attr_buff.append(alias.getSynonym().getCvterm().getName() + "=");
         attr_buff.append(alias.getSynonym().getName());
@@ -292,7 +292,7 @@ public class ChadoDemo
     if(attributes != null)
       for(int i = 0; i < attributes.size(); i++)
       {
-        ChadoFeatureProp featprop = (ChadoFeatureProp) attributes.get(i);
+        FeatureProp featprop = (FeatureProp) attributes.get(i);
 
         attr_buff.append("/" + featprop.getCvterm().getName() + "="
             + GFFStreamFeature.decode(featprop.getValue()) + "\n");
@@ -318,7 +318,7 @@ public class ChadoDemo
       ChadoDAO dao) throws SQLException, ConnectException
   {
     final String search_name = search_gene.replaceAll("[*]","%");
-    ChadoFeature feature = new ChadoFeature();
+    Feature feature = new Feature();
     //feature.setUniquename(search_gene.replaceAll("[*]","%"));
     featureList = new Vector();
     
@@ -333,14 +333,14 @@ public class ChadoDemo
 
     for(int i = 0; i < featureList.size(); i++)
     {
-      feature = (ChadoFeature) featureList.get(i);
+      feature = (Feature) featureList.get(i);
       
       // assume only one featureloc
       List locs = feature.getFeaturelocsForFeatureId();
       
       if(locs.size() > 0)
       {
-        ChadoFeatureLoc loc = (ChadoFeatureLoc)locs.get(0);
+        FeatureLoc loc = (FeatureLoc)locs.get(0);
         int fmin = loc.getFmin() + 1;
         int fmax = loc.getFmax();
         rowData[i][4] = fmin + "..." + fmax;

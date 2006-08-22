@@ -7,17 +7,17 @@
 
 <sqlMap namespace="Dbxref"> 
  
-  <typeAlias alias="ChadoFeatureDbxref"
-        type="uk.ac.sanger.artemis.chado.ChadoFeatureDbxref"/>
+  <typeAlias alias="FeatureDbxref"
+        type="uk.ac.sanger.artemis.chado.FeatureDbxref"/>
   
-  <typeAlias alias="ChadoDbxref"
-        type="uk.ac.sanger.artemis.chado.ChadoDbxref"/>
+  <typeAlias alias="Dbxref"
+        type="uk.ac.sanger.artemis.chado.Dbxref"/>
   
-    <typeAlias alias="ChadoDb"
-        type="uk.ac.sanger.artemis.chado.ChadoDb"/>
+    <typeAlias alias="Db"
+        type="uk.ac.sanger.artemis.chado.Db"/>
            
   <resultMap id="select-feature-dbxref" 
-               class="ChadoFeatureDbxref">
+               class="FeatureDbxref">
     <result property="feature_id"       column="feature_id"/>
     <result property="dbxref.db.name"   column="name"/>
     <result property="dbxref.accession" column="accession"/>
@@ -25,7 +25,7 @@
   </resultMap>
         
   <select id="getFeatureDbxref" 
-          parameterClass="uk.ac.sanger.artemis.chado.ChadoFeature"
+          parameterClass="uk.ac.sanger.artemis.chado.Feature"
           resultMap="select-feature-dbxref">
    	SELECT db.name, dbx.accession, dbx.version, dbx_f.feature_id
  	FROM feature_dbxref dbx_f 
@@ -41,12 +41,12 @@
         ORDER BY f.type_id,  uniquename
   </select> 
   
-  <select id="getDbId" parameterClass="ChadoDb"
+  <select id="getDbId" parameterClass="Db"
                        resultClass="java.lang.Integer">
     SELECT db_id FROM db WHERE name=#name#
   </select>
   
-  <select id="getDbxrefId" parameterClass="ChadoDbxref"
+  <select id="getDbxrefId" parameterClass="Dbxref"
                            resultClass="java.lang.Integer">
     SELECT dbxref_id FROM dbxref WHERE accession=#accession#
            AND db_id=$db_id$;
@@ -54,14 +54,14 @@
   
   
   
-  <select id="selectDbxref" resultClass="ChadoDbxref">
+  <select id="selectDbxref" resultClass="Dbxref">
     SELECT * FROM dbxref WHERE dbxref_id=$dbxref_id$
   </select>
   
   
   
   <!-- WRITE BACK -->
-  <delete id="deleteFeatureDbxref" parameterClass="ChadoFeatureDbxref">
+  <delete id="deleteFeatureDbxref" parameterClass="FeatureDbxref">
      DELETE FROM feature_dbxref 
      WHERE dbxref_id=
            (SELECT dbxref_id FROM dbxref WHERE accession=#dbxref.accession#
@@ -69,14 +69,14 @@
      AND feature_id=$feature_id$
   </delete>
   
-  <insert id="insertFeatureDbxref" parameterClass="ChadoFeatureDbxref">
+  <insert id="insertFeatureDbxref" parameterClass="FeatureDbxref">
     INSERT INTO feature_dbxref 
            (feature_id, dbxref_id, is_current)
            VALUES
            ($feature_id$, $dbxref_id$, $current$)
   </insert>
   
-  <insert id="insertDbxref" parameterClass="ChadoDbxref">
+  <insert id="insertDbxref" parameterClass="Dbxref">
     INSERT INTO dbxref ( db_id, accession ) 
            VALUES ($db_id$, #accession#)
   </insert>

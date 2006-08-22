@@ -28,50 +28,14 @@ package uk.ac.sanger.artemis.chado;
  * Alias GFF tags - values are stored in the synonym table and
  * linked to feature via feature_synonym table.
  */
-public class ChadoFeatureSynonym
+public class Synonym
 {
-  private String schema;
-  private String uniquename;
-  
-  // feature_synonym
-  private Integer feature_id;
+  // synonym
   private Integer synonym_id;
-  private Integer pub_id;
-  private boolean current;
-  private boolean internal;
+  private String name;
+  private Cvterm cvterm;
+  private String synonym_sgml;
   
-  private ChadoSynonym synonym;
-  
-  public String getSchema()
-  {
-    return schema;
-  }
-
-  public void setSchema(String schema)
-  {
-    this.schema = schema;
-  }
-
-  public String getUniquename()
-  {
-    return uniquename;
-  }
-
-  public void setUniquename(String uniquename)
-  {
-    this.uniquename = uniquename;
-  }
-
-  public Integer getFeature_id()
-  {
-    return feature_id;
-  }
-  
-  public void setFeature_id(Integer feature_id)
-  {
-    this.feature_id = feature_id;
-  }
-
   public Integer getSynonym_id()
   {
     return synonym_id;
@@ -82,44 +46,34 @@ public class ChadoFeatureSynonym
     this.synonym_id = synonym_id;
   }
 
-  public Integer getPub_id()
+  public String getName()
   {
-    return pub_id;
-  }
-
-  public void setPub_id(Integer pub_id)
-  {
-    this.pub_id = pub_id;
+    return name;
   }
   
-  public boolean isCurrent()
+  public void setName(String name)
   {
-    return current;
+    this.name = name;
+  }
+  
+  public Cvterm getCvterm()
+  {
+    return cvterm;
   }
 
-  public void setCurrent(boolean current)
+  public void setCvterm(Cvterm cvterm)
   {
-    this.current = current;
+    this.cvterm = cvterm;
   }
 
-  public boolean isInternal()
+  public String getSynonym_sgml()
   {
-    return internal;
+    return synonym_sgml;
   }
 
-  public void setInternal(boolean internal)
+  public void setSynonym_sgml(String synonym_sgml)
   {
-    this.internal = internal;
-  }
-
-  public ChadoSynonym getSynonym()
-  {
-    return synonym;
-  }
-
-  public void setSynonym(ChadoSynonym synonym)
-  {
-    this.synonym = synonym;
+    this.synonym_sgml = synonym_sgml;
   }
 
 }

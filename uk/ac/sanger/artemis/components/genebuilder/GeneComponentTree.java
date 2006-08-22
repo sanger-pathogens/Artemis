@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.12 2006-08-16 14:43:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.13 2006-08-22 13:00:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -28,7 +28,6 @@ package uk.ac.sanger.artemis.components.genebuilder;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.Feature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
-import uk.ac.sanger.artemis.chado.ChadoFeature;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.FeatureVector;
 
@@ -185,11 +184,9 @@ public class GeneComponentTree extends JTree
       if(protein == null)
         continue;
       
-      if(protein instanceof Feature)
-        protein_id = 
+      protein_id = 
           (String)((Feature)protein).getQualifierByName("ID").getValues().get(0);
-      else
-        protein_id = ((ChadoFeature)protein).getUniquename();
+
       
       protein_node = new DefaultMutableTreeNode(protein_id);
       

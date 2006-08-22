@@ -27,7 +27,7 @@ package uk.ac.sanger.artemis.chado;
 /**
  * Representation of cv table.
  */
-public class ChadoCv
+public class Cv
 {
   private int cvId;
   private String name;

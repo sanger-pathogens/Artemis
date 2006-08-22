@@ -427,9 +427,9 @@ public class DatabaseDocument extends Document
     final int srcfeature_id = Integer.parseInt(parentFeatureID);
     
     // build srcfeature object
-    ChadoFeatureLoc featureloc = new ChadoFeatureLoc();
+    FeatureLoc featureloc = new FeatureLoc();
     featureloc.setSrcfeature_id(srcfeature_id);
-    ChadoFeature parent = new ChadoFeature();
+    Feature parent = new Feature();
     parent.setFeatureloc(featureloc);
     
     List featList = dao.getFeaturesByLocatedOnFeature(parent);
@@ -438,7 +438,7 @@ public class DatabaseDocument extends Document
     for(int i = 0; i < buffers.length; i++)
       buffers[i] = new ByteBuffer();
 
-    final ChadoFeature parentFeature = dao.getFeatureById(srcfeature_id);
+    final Feature parentFeature = dao.getFeatureById(srcfeature_id);
     
     ByteBuffer this_buff;
 
@@ -448,7 +448,7 @@ public class DatabaseDocument extends Document
     // build feature name store
     for(int i = 0; i < feature_size; i++)
     {
-      ChadoFeature feat = (ChadoFeature)featList.get(i);
+      Feature feat = (Feature)featList.get(i);
       String name       = feat.getUniquename();
       String feature_id = Integer.toString(feat.getId());
 
@@ -464,7 +464,7 @@ public class DatabaseDocument extends Document
     for(int i = 0; i < feature_size; i++)
     { 
       // select buffer based on feature type
-      ChadoFeature feat = (ChadoFeature)featList.get(i);
+      Feature feat = (Feature)featList.get(i);
       long type_id      = feat.getCvterm().getCvtermId();
       String typeName   = getCvtermName(type_id, dao);
       this_buff = buffers[types.length];
@@ -491,7 +491,8 @@ public class DatabaseDocument extends Document
    * @throws SQLException 
    * 
    */
-  private Hashtable getAllFeatureSynonyms(final ChadoDAO dao, final String uniquename) 
+  private Hashtable getAllFeatureSynonyms(final ChadoDAO dao, 
+          final String uniquename) 
           throws SQLException
   {
     List list = dao.getFeatureSynonymsByUniquename(uniquename);  
@@ -499,11 +500,11 @@ public class DatabaseDocument extends Document
     Hashtable synonym = new Hashtable();
     Integer feature_id;
     Vector value;
-    ChadoFeatureSynonym alias;
+    FeatureSynonym alias;
     
     for(int i=0; i<list.size(); i++)
     {
-      alias = (ChadoFeatureSynonym)list.get(i);
+      alias = (FeatureSynonym)list.get(i);
       feature_id = alias.getFeature_id();
       if(synonym.containsKey(feature_id))
         value = (Vector)synonym.get(feature_id);
@@ -536,21 +537,21 @@ public class DatabaseDocument extends Document
   {
     Hashtable id_store = new Hashtable();
 
-    //ChadoFeature feature = new ChadoFeature();
+    //Feature feature = new Feature();
     //feature.setUniquename(search_gene);
 
     reset((String)getLocation(), (String)schema_search.get(0));
     dao = getDAO();
-    ChadoFeature feature = dao.getFeatureByUniqueName(search_gene);
+    Feature feature = dao.getFeatureByUniqueName(search_gene);
     
     ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();
     id_store.put(Integer.toString(feature.getId()), feature.getUniquename());
 
     List featurelocs = feature.getFeaturelocsForFeatureId();
-    ChadoFeatureLoc featureloc = (ChadoFeatureLoc) featurelocs.get(0);
+    FeatureLoc featureloc = (FeatureLoc) featurelocs.get(0);
     int src_id = featureloc.getSrcfeature_id();
 
-    ChadoFeature parent = new ChadoFeature();
+    Feature parent = new Feature();
     parent.setId(src_id);
 
     parent = dao.getFeatureById(src_id);  //.getLazyFeature(parent);
@@ -568,16 +569,16 @@ public class DatabaseDocument extends Document
     
     for(int i = 0; i < relations.size(); i++)
     {
-      //ChadoFeature transcript = new ChadoFeature();
+      //Feature transcript = new Feature();
       
-      int id = ((ChadoFeatureRelationship) relations.get(i)).getSubject_id();
+      int id = ((FeatureRelationship) relations.get(i)).getSubject_id();
       //transcript.setId(id);
-      ChadoFeature transcript = dao.getFeatureById(id); //.getLazyFeature(transcript);
+      Feature transcript = dao.getFeatureById(id); //.getLazyFeature(transcript);
 
       id_store.put(Integer.toString(transcript.getId()), transcript
           .getUniquename());
 
-      ChadoFeatureLoc loc = ChadoFeature.getFeatureLoc(transcript
+      FeatureLoc loc = Feature.getFeatureLoc(transcript
           .getFeaturelocsForFeatureId(), src_id);
       chadoToGFF(transcript, feature.getUniquename(), null,
           null, id_store, dao, loc, buff);
@@ -587,15 +588,15 @@ public class DatabaseDocument extends Document
 
       for(int j = 0; j < transcipt_relations.size(); j++)
       {
-        id = ((ChadoFeatureRelationship) transcipt_relations.get(j)).getSubject_id();
-        //ChadoFeature child = new ChadoFeature();
-        //child.setId(((ChadoFeatureRelationship) transcipt_relations.get(j))
+        id = ((FeatureRelationship) transcipt_relations.get(j)).getSubject_id();
+        //Feature child = new Feature();
+        //child.setId(((FeatureRelationship) transcipt_relations.get(j))
         //    .getSubject_id());
-        ChadoFeature child = dao.getFeatureById(id); //dao.getLazyFeature(child);
+        Feature child = dao.getFeatureById(id); //dao.getLazyFeature(child);
 
         id_store.put(Integer.toString(child.getId()), child.getUniquename());
 
-        loc = ChadoFeature.getFeatureLoc(child.getFeaturelocsForFeatureId(),src_id);
+        loc = Feature.getFeatureLoc(child.getFeaturelocsForFeatureId(),src_id);
         chadoToGFF(child, transcript.getUniquename(), null,
                    null, id_store, dao, loc, buff);
       }
@@ -615,13 +616,13 @@ public class DatabaseDocument extends Document
    * @param featureloc     feature location for this chado feature
    * @param this_buff      byte buffer of GFF line 
    */
-  private static void chadoToGFF(final ChadoFeature feat,
+  private static void chadoToGFF(final Feature feat,
                                  final String parentFeature,
                                  final Hashtable dbxrefs,
                                  final Hashtable synonym,
                                  final Hashtable id_store,
                                  final ChadoDAO dao,
-                                 final ChadoFeatureLoc featureloc,
+                                 final FeatureLoc featureloc,
                                  final ByteBuffer this_buff)
   {
     String gff_source = null;
@@ -642,7 +643,7 @@ public class DatabaseDocument extends Document
     int rank = -1;
     if(feat.getFeature_relationship() != null)
     {
-      ChadoFeatureRelationship feat_relationship = feat.getFeature_relationship();
+      FeatureRelationship feat_relationship = feat.getFeature_relationship();
       parent_id = Integer.toString(feat_relationship.getObject_id());
       long parent_type_id = feat_relationship.getCvterm().getCvtermId();
       
@@ -657,8 +658,8 @@ public class DatabaseDocument extends Document
       List relations = feat.getFeatureRelationshipsForSubjectId();
       for(int i=0; i<relations.size(); i++)
       {
-        ChadoFeatureRelationship feat_relationship = 
-                            (ChadoFeatureRelationship)relations.get(i);
+        FeatureRelationship feat_relationship = 
+                            (FeatureRelationship)relations.get(i);
         parent_id = Integer.toString(feat_relationship.getObject_id());
         System.out.println("HERE   "+i+" "+feat_relationship.getCvterm().getName()+ " "+
             feat_relationship.getObject_id()+" "+feat_relationship.getSubject_id()+ " parent_id="+ parent_id);
@@ -745,7 +746,7 @@ public class DatabaseDocument extends Document
         Vector qualifier_value = (Vector)qualifiers.get(qualifier_type_id);
         for(int j=0; j<qualifier_value.size(); j++)
         {
-          ChadoFeatureProp featprop = (ChadoFeatureProp)qualifier_value.get(j);
+          FeatureProp featprop = (FeatureProp)qualifier_value.get(j);
          
           if(featprop.getValue() != null)
             this_buff.append(qualifier_name+ "=" +
@@ -771,11 +772,11 @@ public class DatabaseDocument extends Document
     if(synonym != null &&
        synonym.containsKey(feature_id))
     {   
-      ChadoFeatureSynonym alias;
+      FeatureSynonym alias;
       Vector v_synonyms = (Vector)synonym.get(feature_id);
       for(int j=0; j<v_synonyms.size(); j++)
       {
-        alias = (ChadoFeatureSynonym)v_synonyms.get(j);
+        alias = (FeatureSynonym)v_synonyms.get(j);
         
         this_buff.append( getCvtermName(alias.getSynonym().getCvterm().getCvtermId(), dao) + "=" );
         //this_buff.append(alias.getSynonym().getCvterm().getName()+"=");
@@ -836,7 +837,7 @@ public class DatabaseDocument extends Document
 
       while(it.hasNext())
       {
-        ChadoCvterm cv = (ChadoCvterm)it.next();
+        Cvterm cv = (Cvterm)it.next();
         cvterm.put(new Long(cv.getCvtermId()), cv.getName());
       }
     }
@@ -859,7 +860,7 @@ public class DatabaseDocument extends Document
   private ByteBuffer getChadoSequence(ChadoDAO dao, ByteBuffer buff)
                      throws java.sql.SQLException
   {
-    ChadoFeature feature = dao.getFeatureById(Integer.parseInt(feature_id));
+    Feature feature = dao.getFeatureById(Integer.parseInt(feature_id));
  
     buff.append("##FASTA\n>");
     buff.append(feature.getUniquename());
@@ -934,7 +935,7 @@ public class DatabaseDocument extends Document
         Iterator it_residue_features = list_residue_features.iterator();
         while(it_residue_features.hasNext())
         {
-          ChadoFeature feature = (ChadoFeature)it_residue_features.next();
+          Feature feature = (Feature)it_residue_features.next();
           String typeName = getCvtermName(feature.getCvterm().getCvtermId(), getDAO()); 
           
           db.put(schema + " - " + typeName + " - " + feature.getUniquename(),
@@ -1111,7 +1112,7 @@ public class DatabaseDocument extends Document
 
               dao.writeTimeLastModified((String) uniquename.get(k), ts);
               
-              ChadoFeature feature = dao.getFeatureByUniqueName((String) uniquename.get(k));
+              Feature feature = dao.getFeatureByUniqueName((String) uniquename.get(k));
               ts2 = feature.getTimelastmodified();
               if(ts2 == null)
                 continue;
@@ -1171,7 +1172,7 @@ public class DatabaseDocument extends Document
                                        final ChadoDAO dao)
                                        throws SQLException
   {
-    ChadoFeature feature = dao.getFeatureByUniqueName(uniquename);
+    Feature feature = dao.getFeatureByUniqueName(uniquename);
     Timestamp now = feature.getTimelastmodified();
     
     if(now != null && timestamp != null)
@@ -1213,7 +1214,7 @@ public class DatabaseDocument extends Document
       else
         dao = new IBatisDAO(src.getPfield());
       
-      ChadoFeature feature = new ChadoFeature();
+      Feature feature = new Feature();
       feature.setUniquename(args[0]);
       List schemas = new Vector();
       schemas.add(args[1]);
@@ -1222,14 +1223,14 @@ public class DatabaseDocument extends Document
       System.out.println("FINISHED getFeature()");
       for(int i = 0; i < featureList.size(); i++)
       {
-        feature = (ChadoFeature)featureList.get(i);
+        feature = (Feature)featureList.get(i);
         
         String abb  = feature.getOrganism().getAbbreviation();
         String type = feature.getCvterm().getName();
         int fmin    = feature.getFeatureloc().getFmin() + 1;
         int fmax    = feature.getFeatureloc().getFmax();
         String featprop = 
-          ((ChadoFeatureProp)feature.getFeaturepropList().get(0)).getCvterm().getName();
+          ((FeatureProp)feature.getFeaturepropList().get(0)).getCvterm().getName();
         
         System.out.print(fmin+".."+fmax);
         System.out.print(" "+type);
@@ -1243,7 +1244,7 @@ public class DatabaseDocument extends Document
         Vector syns = (Vector)synonyms.get(new Integer(feature.getId()));
         for(int j=0; j<syns.size(); j++)
         {
-          ChadoFeatureSynonym alias = (ChadoFeatureSynonym)syns.get(j);
+          FeatureSynonym alias = (FeatureSynonym)syns.get(j);
           System.out.print(" "+alias.getSynonym().getCvterm().getName()+
                            "="+alias.getSynonym().getName());
         }*/

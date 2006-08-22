@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.24 2006-08-17 13:21:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.25 2006-08-22 13:00:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -44,9 +44,8 @@ import uk.ac.sanger.artemis.LastSegmentException;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.FeatureVector;
 
-import uk.ac.sanger.artemis.chado.ChadoFeature;
-import uk.ac.sanger.artemis.chado.ChadoFeatureLoc;
-import uk.ac.sanger.artemis.chado.ChadoFeatureProp;
+import uk.ac.sanger.artemis.chado.FeatureLoc;
+import uk.ac.sanger.artemis.chado.FeatureProp;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Feature;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
@@ -619,20 +618,21 @@ public class GeneViewerPanel extends JPanel
     int offset = 0;
     boolean last_segment = false;
     
-    if(exons.get(0) instanceof ChadoFeature)
+    if(exons.get(0) instanceof uk.ac.sanger.artemis.chado.Feature)
     {
       int last_ex_start = 0;
       int last_ex_end   = 0;
       int last_ypos     = 0;
       
-      ChadoFeature start_exon = (ChadoFeature)exons.get(0);
-      ChadoFeatureLoc loc = ChadoFeature.getFeatureLoc(
+      uk.ac.sanger.artemis.chado.Feature start_exon = 
+        (uk.ac.sanger.artemis.chado.Feature)exons.get(0);
+      FeatureLoc loc = uk.ac.sanger.artemis.chado.Feature.getFeatureLoc(
            start_exon.getFeaturelocsForFeatureId(), chado_gene.getSrcfeature_id());
       
       if(loc.getStrand() == -1)
       {
-        ChadoFeatureLoc loc_last = ChadoFeature.getFeatureLoc(
-            ((ChadoFeature)exons.get(exons.size()-1)).getFeaturelocsForFeatureId(),
+        FeatureLoc loc_last = uk.ac.sanger.artemis.chado.Feature.getFeatureLoc(
+            ((uk.ac.sanger.artemis.chado.Feature)exons.get(exons.size()-1)).getFeaturelocsForFeatureId(),
             chado_gene.getSrcfeature_id());
             
         if(loc.getFmin() < loc_last.getFmin())
@@ -641,8 +641,9 @@ public class GeneViewerPanel extends JPanel
       
       for(int j=0; j<exons.size(); j++)
       {           
-        ChadoFeature exon = (ChadoFeature)exons.get(j);
-        loc = ChadoFeature.getFeatureLoc(
+        uk.ac.sanger.artemis.chado.Feature exon = 
+          (uk.ac.sanger.artemis.chado.Feature)exons.get(j);
+        loc = uk.ac.sanger.artemis.chado.Feature.getFeatureLoc(
             exon.getFeaturelocsForFeatureId(), chado_gene.getSrcfeature_id());
         
         int ex_start = border+(int)((loc.getFmin()+1-start)*fraction);
@@ -1008,12 +1009,12 @@ public class GeneViewerPanel extends JPanel
    * @param feature
    * @return
    */
-  private Color getColorFromAttributes(ChadoFeature feature)
+  private Color getColorFromAttributes(uk.ac.sanger.artemis.chado.Feature feature)
   {
     List properties = feature.getFeaturepropList();
     for(int i=0; i<properties.size(); i++)
     {
-      ChadoFeatureProp property = (ChadoFeatureProp)properties.get(i);
+      FeatureProp property = (FeatureProp)properties.get(i);
       
       if(property.getCvterm().getName().equals("colour") ||
          property.getCvterm().getName().equals("color") )
@@ -1031,7 +1032,7 @@ public class GeneViewerPanel extends JPanel
    * @return frame id
    */
   private int getFrameID(ChadoCanonicalGene chado_gene, 
-                         ChadoFeatureLoc loc, 
+                         FeatureLoc loc, 
                          int nexon, List exons)
   {
     final int position_on_strand;
@@ -1083,7 +1084,7 @@ public class GeneViewerPanel extends JPanel
    **/
   private int getFrameShift(int nexon, List exons, 
                             ChadoCanonicalGene chado_gene,
-                            ChadoFeatureLoc loc) 
+                            FeatureLoc loc) 
   {
     // find the number of bases in the segments before this one
     int base_count = 0;
@@ -1091,8 +1092,9 @@ public class GeneViewerPanel extends JPanel
     
     for(int i = 0; i < exons.size(); ++i) 
     {
-      ChadoFeature this_feature = (ChadoFeature)exons.get(i);
-      ChadoFeatureLoc featureLoc = ChadoFeature.getFeatureLoc(
+      uk.ac.sanger.artemis.chado.Feature this_feature = 
+        (uk.ac.sanger.artemis.chado.Feature)exons.get(i);
+      FeatureLoc featureLoc = uk.ac.sanger.artemis.chado.Feature.getFeatureLoc(
           this_feature.getFeaturelocsForFeatureId(), chado_gene.getSrcfeature_id());
       
       int this_direction;

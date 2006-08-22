@@ -27,14 +27,14 @@ package uk.ac.sanger.artemis.chado;
 /**
  * Representation of feature_relationship table.
  */
-public class ChadoFeatureRelationship
+public class FeatureRelationship
 {
   
   public int subject_id;
   /** id of the parent feature */
   public int object_id;
   /** cv term of feature relationship (e.g. part_of) */
-  public ChadoCvterm cvterm;
+  public Cvterm cvterm;
   /** Additional notes/comments */
   public String value;
   /** ordering of subject features */
@@ -45,7 +45,7 @@ public class ChadoFeatureRelationship
    * subject and object (e.g. part_of).
    * @return cvterm
    */
-  public ChadoCvterm getCvterm()
+  public Cvterm getCvterm()
   {
     return cvterm;
   }
@@ -55,7 +55,7 @@ public class ChadoFeatureRelationship
    * subject and object (e.g. part_of).
    * @param cvterm
    */
-  public void setCvterm(ChadoCvterm cvterm)
+  public void setCvterm(Cvterm cvterm)
   {
     this.cvterm = cvterm;
   }

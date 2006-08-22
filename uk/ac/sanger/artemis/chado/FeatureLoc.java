@@ -27,7 +27,7 @@ package uk.ac.sanger.artemis.chado;
 /**
  * Representation of featureloc table.
  */
-public class ChadoFeatureLoc
+public class FeatureLoc
 {
   /** id of the parent feature */
   private int srcfeature_id = 0;

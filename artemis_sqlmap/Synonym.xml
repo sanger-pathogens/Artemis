@@ -7,14 +7,14 @@
 
 <sqlMap namespace="Synonym"> 
   
-    <typeAlias alias="ChadoFeatureSynonym"
-        type="uk.ac.sanger.artemis.chado.ChadoFeatureSynonym"/>
+    <typeAlias alias="FeatureSynonym"
+        type="uk.ac.sanger.artemis.chado.FeatureSynonym"/>
         
-    <typeAlias alias="ChadoSynonym"
-        type="uk.ac.sanger.artemis.chado.ChadoSynonym"/>
+    <typeAlias alias="Synonym"
+        type="uk.ac.sanger.artemis.chado.Synonym"/>
         
     <resultMap id="select-alias" 
-               class="ChadoFeatureSynonym">
+               class="FeatureSynonym">
    	    <result property="feature_id" column="feature_id"/>
    	    <result property="synonym_id" column="synonym_id"/>
    	    <result property="pub_id" column="pub_id"/>
@@ -27,7 +27,7 @@
      </resultMap>
      
      <resultMap id="select-alias-part-lazy" 
-               class="ChadoFeatureSynonym">
+               class="FeatureSynonym">
    	    <result property="feature_id" column="feature_id"/>
    	    <result property="synonym_id" column="synonym_id"/>
    	    <result property="pub_id" column="pub_id"/>
@@ -37,7 +37,7 @@
      </resultMap>
      
      <resultMap id="select-alias-lazy" 
-               class="ChadoFeatureSynonym">
+               class="FeatureSynonym">
    	    <result property="feature_id" column="feature_id"/>
    	    <result property="pub_id" column="pub_id"/>
    	    <result property="current" column="is_current"/>
@@ -46,7 +46,7 @@
      </resultMap>
      
      <resultMap id="select-synonym-lazy"
-                class="ChadoSynonym">
+                class="Synonym">
         <result property="synonym_id" column="synonym_id"/>
    	    <result property="name" column="name"/>
    	    <result property="synonym_sgml" column="synonym_sgml"/>
@@ -57,7 +57,7 @@
     <!-- SQL -->
      
     <select id="getFeatureSynonymsByUniquename" resultMap="select-alias"
-            parameterClass="ChadoFeature">
+            parameterClass="Feature">
       SELECT fs.*, s.name, s.synonym_sgml, s.type_id
       FROM feature_synonym fs 
       LEFT JOIN feature f ON f.feature_id=fs.feature_id 
@@ -68,7 +68,7 @@
     </select>
     
     <select id="getLazyFeatureSynonymsByUniquename" resultMap="select-alias-part-lazy"
-            parameterClass="ChadoFeatureSynonym">
+            parameterClass="FeatureSynonym">
       SELECT fs.* 
       FROM feature_synonym fs 
       LEFT JOIN feature f ON f.feature_id=fs.feature_id 
@@ -78,15 +78,15 @@
     </select>
     
     <select id="getFeatureSynonymsByName" resultMap="select-alias-lazy"
-            parameterClass="ChadoSynonym">
+            parameterClass="Synonym">
       SELECT * FROM feature_synonym 
       WHERE
         synonym_id=(SELECT synonym_id FROM synonym WHERE 
         name=#name#) AND is_current
     </select>
     
-    <select id="getSynonymByNameAndType" resultClass="ChadoSynonym"
-            parameterClass="ChadoSynonym">
+    <select id="getSynonymByNameAndType" resultClass="Synonym"
+            parameterClass="Synonym">
       SELECT * FROM synonym WHERE 
         <isNotNull property="name">
           name=#name# AND
@@ -104,25 +104,25 @@
 
    
   <!-- WRITE BACK -->
-    <delete id="deleteFeatureAlias" parameterClass="ChadoFeatureSynonym">
+    <delete id="deleteFeatureAlias" parameterClass="FeatureSynonym">
       DELETE FROM feature_synonym WHERE
          synonym_id=$synonym_id$ AND 
          feature_id=(SELECT feature_id FROM feature WHERE  
          uniquename=#uniquename#)
     </delete>
   
-    <insert id="insertFeatureAlias" parameterClass="ChadoFeatureSynonym">
+    <insert id="insertFeatureAlias" parameterClass="FeatureSynonym">
       INSERT INTO feature_synonym ( synonym_id, feature_id, pub_id )
       VALUES ( $synonym_id$ , 
               (SELECT feature_id FROM feature WHERE uniquename=#uniquename#), 
               1)
     </insert>
   
-    <delete id="deleteAlias" parameterClass="ChadoFeatureSynonym">
+    <delete id="deleteAlias" parameterClass="FeatureSynonym">
       DELETE FROM synonym WHERE synonym_id=$synonym_id$
     </delete>
   
-    <insert id="insertAlias" parameterClass="ChadoFeatureSynonym">
+    <insert id="insertAlias" parameterClass="FeatureSynonym">
       INSERT INTO synonym ( name, type_id, synonym_sgml ) 
       VALUES ( #synonym.name#, $synonym.cvterm.cvtermId$, #synonym.name# )
     </insert>

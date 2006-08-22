@@ -35,7 +35,7 @@ import javax.swing.JPasswordField;
 
 /**
  *
- * iBATIS implemetation of the <code>ChadoDAO</code> data
+ * iBATIS implemetation of the <code>DAO</code> data
  * access interface.
  *
  */
@@ -64,18 +64,18 @@ public class IBatisDAO implements ChadoDAO
    * @return the Feature, or null
    * @throws SQLException 
    */
-  public ChadoFeature getFeatureById(int id) 
+  public Feature getFeatureById(int id) 
                       throws SQLException
   {
-    ChadoFeature feature = new ChadoFeature();
+    Feature feature = new Feature();
     feature.setId(id);
     return getLazyFeature(feature);
   }
   
-  public ChadoFeature getFeatureByUniqueName(String uniquename) 
+  public Feature getFeatureByUniqueName(String uniquename) 
                       throws SQLException
   {
-    ChadoFeature feature = new ChadoFeature();
+    Feature feature = new Feature();
     feature.setUniquename(uniquename);
     return getLazyFeature(feature);
   }
@@ -83,13 +83,13 @@ public class IBatisDAO implements ChadoDAO
 
   /**
    * This can be used to get individual features or children.
-   * If ChadoFeature.featureloc.srcfeature_id is set this is used
+   * If Feature.featureloc.srcfeature_id is set this is used
    * to return the children of that srcfeature_id.
    * @param feature  the feature to query
-   * @return    the <code>List</code> of child <code>ChadoFeature</code> objects
+   * @return    the <code>List</code> of child <code>Feature</code> objects
    * @throws SQLException
    */
-  public List getFeaturesByLocatedOnFeature(final ChadoFeature feature)
+  public List getFeaturesByLocatedOnFeature(final Feature feature)
                throws SQLException
   { 
     List feature_list = sqlMap.queryForList("getFeature", feature);
@@ -107,13 +107,13 @@ public class IBatisDAO implements ChadoDAO
   public List getFeaturesByAnyCurrentName(String name) 
               throws SQLException
   {
-    final ChadoSynonym alias = new ChadoSynonym();
+    final Synonym alias = new Synonym();
     alias.setName(name);
     
     List feature_synonym_list = 
       sqlMap.queryForList("getFeatureSynonymsByName", alias);
     
-    ChadoFeature feature = new ChadoFeature();
+    Feature feature = new Feature();
     feature.setUniquename(name);
     feature.setFeatureSynonymsForFeatureId(feature_synonym_list);
 
@@ -137,13 +137,13 @@ public class IBatisDAO implements ChadoDAO
   /**
    * Get the properties of a feature.
    * @param uniquename  the unique name of the feature
-   * @return  the <code>List</code> of <code>ChadoFeature</code>
+   * @return  the <code>List</code> of <code>Feature</code>
    * @throws SQLException
    */
-  private ChadoFeature getLazyFeature(final ChadoFeature feature)
+  private Feature getLazyFeature(final Feature feature)
                              throws SQLException
   { 
-    return (ChadoFeature)sqlMap.queryForObject("getLazyFeature", feature);
+    return (Feature)sqlMap.queryForObject("getLazyFeature", feature);
   }
 
   /**
@@ -153,14 +153,14 @@ public class IBatisDAO implements ChadoDAO
    * with residues.
    * @param cvterm_ids list of cvterm_id/type_id's
    * @param schema      schema/organism name or null
-   * @return    the <code>List</code> of <code>ChadoFeature</code> objects
+   * @return    the <code>List</code> of <code>Feature</code> objects
    * @throws SQLException
    */
   public List getResidueFeatures(List cvterm_ids, 
                                  final String schema)
                      throws SQLException
   { 
-    ChadoFeature feature = new ChadoFeature();
+    Feature feature = new Feature();
     feature.setSchema(schema);
     feature.setFeatureCvterms(cvterm_ids);
 
@@ -211,30 +211,30 @@ public class IBatisDAO implements ChadoDAO
   /**
    * Get dbxref for a feature.
    * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>ChadoFeatureDbxref</code> are returned.
+   *                    all <code>FeatureDbxref</code> are returned.
    * @return a <code>List</code> of feature_dbxrefs.
    * @throws SQLException
    */
   public List getFeatureDbxrefByUniquename(final String uniquename)
               throws SQLException
   {
-    ChadoFeature feature = new ChadoFeature();
+    Feature feature = new Feature();
     feature.setUniquename(uniquename);
     
     return sqlMap.queryForList("getFeatureDbxref", feature);  
   }
    
   /**
-   * Return a list of ChadoFeatureSynonyms for a uniquename
+   * Return a list of FeatureSynonyms for a uniquename
    * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>ChadoFeatureSynonym</code> are returned.
+   *                    all <code>FeatureSynonym</code> are returned.
    * @return
    * @throws SQLException
    */
   public List getFeatureSynonymsByUniquename(final String uniquename)
          throws SQLException
   {
-    ChadoFeature feature = new ChadoFeature();
+    Feature feature = new Feature();
     feature.setUniquename(uniquename);
     
     return sqlMap.queryForList("getFeatureSynonymsByUniquename", feature);  
@@ -246,27 +246,27 @@ public class IBatisDAO implements ChadoDAO
    * @param type the type of the Synonym
    * @return a Synonym, or null  
    */
-  public ChadoSynonym getSynonymByNameAndCvTerm(
-      String name, ChadoCvterm type) 
+  public Synonym getSynonymByNameAndCvTerm(
+      String name, Cvterm type) 
       throws SQLException
   {
-    ChadoSynonym synonym = new ChadoSynonym();
+    Synonym synonym = new Synonym();
     synonym.setName(name);
     synonym.setCvterm(type);
 
-    return (ChadoSynonym)sqlMap.queryForObject("getSynonymByNameAndType", 
+    return (Synonym)sqlMap.queryForObject("getSynonymByNameAndType", 
            synonym);
   }
   
   /**
-   * Return a list of ChadoFeatureSynonyms which link a given Feature
+   * Return a list of FeatureSynonyms which link a given Feature
    * and Synonym 
    * @param feature the test Feature
    * @param synonym the test Synonym
    * @return a (possibly empty) List<FeatureSynonym>
    */
   public List getFeatureSynonymsByFeatureAndSynonym(
-      ChadoFeature feature, ChadoSynonym synonym)
+      Feature feature, Synonym synonym)
       throws SQLException
   {
     return
@@ -281,16 +281,16 @@ public class IBatisDAO implements ChadoDAO
    * @param cv_name ontology name (e.g. gene, sequence)
    * @throws SQLException
    */
-  public ChadoCvterm getCvtermID(String name, String cv_name)
+  public Cvterm getCvtermID(String name, String cv_name)
                 throws SQLException
   { 
-    ChadoCvterm cvterm   = new ChadoCvterm();
-    ChadoCv cv = new ChadoCv();
+    Cvterm cvterm   = new Cvterm();
+    Cv cv = new Cv();
     cv.setName(cv_name);
     cvterm.setCv(cv);
     cvterm.setName(name);
 
-    return (ChadoCvterm)sqlMap.queryForObject("getCvterm", cvterm);
+    return (Cvterm)sqlMap.queryForObject("getCvterm", cvterm);
   }
 
 //
@@ -298,8 +298,8 @@ public class IBatisDAO implements ChadoDAO
 //
   /**
    *
-   * Update attributes defined by the <code>ChadoTransaction</code>.
-   * @param tsn         the <code>ChadoTransaction</code>
+   * Update attributes defined by the <code>Transaction</code>.
+   * @param tsn         the <code>Transaction</code>
    * @return	number of rows changed
    * @throws SQLException
    */
@@ -311,8 +311,8 @@ public class IBatisDAO implements ChadoDAO
   }
 
   /**
-   * Insert attributes defined by the <code>ChadoTransaction</code>.
-   * @param tsn         the <code>ChadoTransaction</code>
+   * Insert attributes defined by the <code>Transaction</code>.
+   * @param tsn         the <code>Transaction</code>
    * @throws SQLException
    */
   public void insertAttributes
@@ -324,14 +324,14 @@ public class IBatisDAO implements ChadoDAO
 
     for(int i=0; i<feature_ids.size(); i++)
     {
-      tsn.setFeature_id( ((ChadoFeature)feature_ids.get(i)).getId() );
+      tsn.setFeature_id( ((Feature)feature_ids.get(i)).getId() );
       sqlMap.insert("insertAttributes", tsn);
     }
   }
 
   /**
-   * Delete attributes defined by the <code>ChadoTransaction</code>.
-   * @param tsn         the <code>ChadoTransaction</code>
+   * Delete attributes defined by the <code>Transaction</code>.
+   * @param tsn         the <code>Transaction</code>
    * @throws SQLException
    */
   public void deleteAttributes
@@ -343,14 +343,14 @@ public class IBatisDAO implements ChadoDAO
 
     for(int i=0; i<feature_ids.size(); i++)
     {
-      tsn.setFeature_id( ((ChadoFeature)feature_ids.get(i)).getId() );
+      tsn.setFeature_id( ((Feature)feature_ids.get(i)).getId() );
       sqlMap.delete("deleteAttributes", tsn);
     }
   }
 
   /**
-   * Insert a feature into the database defined by the <code>ChadoTransaction</code>.
-   * @param tsn                 the <code>ChadoTransaction</code>
+   * Insert a feature into the database defined by the <code>Transaction</code>.
+   * @param tsn                 the <code>Transaction</code>
    * @parma srcfeature_id       the parent feature identifier
    * @throws SQLException
    */
@@ -360,8 +360,8 @@ public class IBatisDAO implements ChadoDAO
                      throws SQLException
   {
     // get the organism id from the srcfeature_id 
-    ChadoFeature feature = new ChadoFeature();
-    ChadoFeatureLoc featureloc = new ChadoFeatureLoc();
+    Feature feature = new Feature();
+    FeatureLoc featureloc = new FeatureLoc();
     feature.setFeatureloc(featureloc);
     
     featureloc.setSrcfeature_id(Integer.parseInt(srcfeature_id));
@@ -370,8 +370,8 @@ public class IBatisDAO implements ChadoDAO
 
     //
     // insert feature into feature table
-    ChadoFeature chadoFeature = tsn.getChadoFeature();
-    ChadoOrganism organism = new ChadoOrganism();
+    Feature chadoFeature = tsn.getChadoFeature();
+    Organism organism = new Organism();
     organism.setId(organism_id.intValue());
     chadoFeature.setOrganism(organism);  
     sqlMap.insert("insertFeature", chadoFeature);
@@ -395,14 +395,14 @@ public class IBatisDAO implements ChadoDAO
       
       for(int i=0; i<feature_ids.size(); i++)
       {
-        ChadoFeatureRelationship feature_relationship =
-              new ChadoFeatureRelationship();
-        feature_relationship.setObject_id( ((ChadoFeature)feature_ids.get(i)).getId() );
+        FeatureRelationship feature_relationship =
+              new FeatureRelationship();
+        feature_relationship.setObject_id( ((Feature)feature_ids.get(i)).getId() );
         feature_relationship.setSubject_id(feature_id);
         
-        ChadoCvterm cvterm = new ChadoCvterm();
+        Cvterm cvterm = new Cvterm();
         if(tsn.getParents().contains( 
-            ((ChadoFeature)feature_ids.get(i)).getUniquename() ))
+            ((Feature)feature_ids.get(i)).getUniquename() ))
           cvterm.setName("part_of");
         else
           cvterm.setName("derives_from");
@@ -417,8 +417,8 @@ public class IBatisDAO implements ChadoDAO
 
 
   /**
-   * Delete a feature from the database defined by the <code>ChadoTransaction</code>.
-   * @param tsn         the <code>ChadoTransaction</code>
+   * Delete a feature from the database defined by the <code>Transaction</code>.
+   * @param tsn         the <code>Transaction</code>
    * @return    number of rows deleted
    * @throws SQLException
    */
@@ -426,7 +426,7 @@ public class IBatisDAO implements ChadoDAO
                     (final ChadoTransaction tsn)
                      throws SQLException
   {
-    ChadoFeature chadoFeature = new ChadoFeature();
+    Feature chadoFeature = new Feature();
     chadoFeature.setUniquename(tsn.getUniqueName());
 
     return sqlMap.delete("deleteFeature", chadoFeature);
@@ -434,14 +434,14 @@ public class IBatisDAO implements ChadoDAO
 
   /**
    * Insert a dbxref for a feature.
-   * @param tsn           the <code>ChadoTransaction</code>
+   * @param tsn           the <code>Transaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
   public int insertFeatureDbxref(final ChadoTransaction tsn)
                      throws SQLException
   {
-    ChadoFeatureDbxref dbxref = tsn.getFeatureDbxref();
+    FeatureDbxref dbxref = tsn.getFeatureDbxref();
     
     Integer db_id = (Integer)sqlMap.queryForObject("getDbId", 
                                  dbxref.getDbxref().getDb());
@@ -466,7 +466,7 @@ public class IBatisDAO implements ChadoDAO
     
     //  get the feature id's
     List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
-    dbxref.setFeature_id( ((ChadoFeature)feature_ids.get(0)).getId() );
+    dbxref.setFeature_id( ((Feature)feature_ids.get(0)).getId() );
     
     sqlMap.insert("insertFeatureDbxref", dbxref);
 
@@ -475,35 +475,35 @@ public class IBatisDAO implements ChadoDAO
   
   /**
    * Delete a dbxref for a feature.
-   * @param tsn           the <code>ChadoTransaction</code>
+   * @param tsn           the <code>Transaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
   public int deleteFeatureDbxref(final ChadoTransaction tsn)
                      throws SQLException
   {
-    ChadoFeatureDbxref dbxref = tsn.getFeatureDbxref();
+    FeatureDbxref dbxref = tsn.getFeatureDbxref();
     
     // get the feature id's
     List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
     
-    dbxref.setFeature_id( ((ChadoFeature)feature_ids.get(0)).getId() );
+    dbxref.setFeature_id( ((Feature)feature_ids.get(0)).getId() );
     return sqlMap.delete("deleteFeatureDbxref", dbxref);
   }
   
   /**
    * Insert a synonym for a feature.
-   * @param tsn           the <code>ChadoTransaction</code>
+   * @param tsn           the <code>Transaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
   public int insertFeatureAlias(final ChadoTransaction tsn)
                      throws SQLException
   {
-    final ChadoFeatureSynonym alias = tsn.getAlias();
+    final FeatureSynonym alias = tsn.getAlias();
     
-    ChadoSynonym synonym  = 
-      (ChadoSynonym)sqlMap.queryForObject("getSynonymByNameAndType", 
+    Synonym synonym  = 
+      (Synonym)sqlMap.queryForObject("getSynonymByNameAndType", 
           alias.getSynonym());
     
     if(synonym == null)
@@ -512,7 +512,7 @@ public class IBatisDAO implements ChadoDAO
       sqlMap.insert("insertAlias", alias);
       
       synonym  =
-        (ChadoSynonym)sqlMap.queryForObject("getSynonymByNameAndType", 
+        (Synonym)sqlMap.queryForObject("getSynonymByNameAndType", 
             alias.getSynonym());
     }
     
@@ -523,20 +523,20 @@ public class IBatisDAO implements ChadoDAO
   
   /**
    * Delete a synonym for a feature.
-   * @param tsn           the <code>ChadoTransaction</code>
+   * @param tsn           the <code>Transaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
   public int deleteFeatureAlias(final ChadoTransaction tsn)
                      throws SQLException
   {
-    final ChadoFeatureSynonym alias = tsn.getAlias();
+    final FeatureSynonym alias = tsn.getAlias();
      
     List feature_synonym_list = 
       sqlMap.queryForList("getFeatureSynonymsByName", alias.getSynonym());
     
-    final ChadoFeatureSynonym synonym = 
-      (ChadoFeatureSynonym)feature_synonym_list.get(0); 
+    final FeatureSynonym synonym = 
+      (FeatureSynonym)feature_synonym_list.get(0); 
     alias.setSynonym_id(synonym.getSynonym().getSynonym_id());
     
     // check this name is not used some where else, 
@@ -549,7 +549,7 @@ public class IBatisDAO implements ChadoDAO
   
   /**
    * Update feature_relationship for a feature.
-   * @param tsn           the <code>ChadoTransaction</code>
+   * @param tsn           the <code>Transaction</code>
    * @return    number of rows changed
    * @throws SQLException
    */
@@ -635,18 +635,18 @@ public class IBatisDAO implements ChadoDAO
     // merge same features in the list
     int feature_size  = list.size();
     final List flatten_list = new Vector();
-    ChadoFeature featNext  = null;
+    Feature featNext  = null;
 
     for(int i = 0; i < feature_size; i++)
     {
-      ChadoFeature feat = (ChadoFeature)list.get(i);
+      Feature feat = (Feature)list.get(i);
       String name  = feat.getUniquename();
 
       feat.addQualifier(feat.getFeatureprop().getCvterm().getCvtermId(),
                         feat.getFeatureprop());
 
       if(i < feature_size - 1)
-        featNext = (ChadoFeature)list.get(i + 1);
+        featNext = (Feature)list.get(i + 1);
 
       // merge next line if part of the same feature
       while(featNext != null && featNext.getUniquename().equals(name))
@@ -656,7 +656,7 @@ public class IBatisDAO implements ChadoDAO
         i++;
 
         if(i < feature_size - 1)
-          featNext = (ChadoFeature)list.get(i + 1);
+          featNext = (Feature)list.get(i + 1);
         else
           break;
       }
@@ -678,7 +678,7 @@ public class IBatisDAO implements ChadoDAO
     Hashtable dbxrefHash = new Hashtable();
     for(int i = 0; i < list.size(); i++)
     {
-      ChadoFeatureDbxref dbxref = (ChadoFeatureDbxref)list.get(i);
+      FeatureDbxref dbxref = (FeatureDbxref)list.get(i);
       Integer feature_id = new Integer(dbxref.getFeature_id());
       String value = dbxref.getDbxref().getDb().getName() + ":" + 
                      dbxref.getDbxref().getAccession();

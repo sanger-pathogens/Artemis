@@ -1,4 +1,4 @@
-/* ChadoFeature.java
+/* Feature.java
  *
  * created: 2006
  *
@@ -35,7 +35,7 @@ import java.util.List;
  * Chado feature representation of the feature table and with references
  * to the featureloc, featureprop, feature_relationship tables.
  */
-public class ChadoFeature
+public class Feature
 {
  
   /** schema */
@@ -57,26 +57,26 @@ public class ChadoFeature
   /** whether this feature has been obsoleted */
   private boolean obsolete;
   /** feature cvterm */
-  private ChadoCvterm cvterm;
+  private Cvterm cvterm;
   /** feature property */
-  private ChadoFeatureProp featureprop;
+  private FeatureProp featureprop;
   /** feature location (for a given srcfeature) */
-  private ChadoFeatureLoc featureloc;
+  private FeatureLoc featureloc;
   /** feature relationship */
-  private ChadoFeatureRelationship feature_relationship;
+  private FeatureRelationship feature_relationship;
   /** feature organism */
-  private ChadoOrganism organism;
+  private Organism organism;
   /** optional primary public stable identifier */
-  private ChadoFeatureDbxref feature_dbxref;
+  private FeatureDbxref feature_dbxref;
   /** merged featureprops */
   private Hashtable qualifiers;
-  /** list of ChadoFeatureProp */
+  /** list of FeatureProp */
   private List featurepropList;
-  /** list of ChadoFeatureRelationship children */
+  /** list of FeatureRelationship children */
   private List featureRelationshipsForObjectId;
-  /** list of ChadoFeatureRelationship parent */
+  /** list of FeatureRelationship parent */
   private List featureRelationshipsForSubjectId;
-  /** list of feature dbxrefs (ChadoFeatureDbxref) */
+  /** list of feature dbxrefs (FeatureDbxref) */
   private List featureDbxrefs;
   /** list of feature locations for a feature_id */
   private List featurelocsForFeatureId;
@@ -262,7 +262,7 @@ public class ChadoFeature
   * This will typically be a Sequence Ontology identifier. 
   * @return the feature SO cvterm
   */
-  public ChadoCvterm getCvterm()
+  public Cvterm getCvterm()
   {
     return cvterm;
   }
@@ -272,16 +272,16 @@ public class ChadoFeature
   * This will typically be a Sequence Ontology identifier.
   * @param cvterm  the feature SO cvterm
   */
-  public void setCvterm(ChadoCvterm cvterm)
+  public void setCvterm(Cvterm cvterm)
   {
     this.cvterm = cvterm;
   }
   
   /**
    * Get the the feature property.
-   * @return the <code>ChadoFeatureProp</code>
+   * @return the <code>FeatureProp</code>
    */
-  public ChadoFeatureProp getFeatureprop()
+  public FeatureProp getFeatureprop()
   {
     return featureprop;
   }
@@ -290,16 +290,16 @@ public class ChadoFeature
    * Set the feature property. 
    * @param featureprop  the feature property
    */
-  public void setFeatureprop(ChadoFeatureProp featureprop)
+  public void setFeatureprop(FeatureProp featureprop)
   {
     this.featureprop = featureprop;
   }
 
   /**
    * Reference to the featureloc table. 
-   * @return featureloc the <code>ChadoFeatureLoc</code> object.
+   * @return featureloc the <code>FeatureLoc</code> object.
    */
-  public ChadoFeatureLoc getFeatureloc()
+  public FeatureLoc getFeatureloc()
   {
     return featureloc;
   }
@@ -308,46 +308,46 @@ public class ChadoFeature
    * Reference to the featureloc table.
    * @param featureloc  the feature location
    */
-  public void setFeatureloc(ChadoFeatureLoc featureloc)
+  public void setFeatureloc(FeatureLoc featureloc)
   {
     this.featureloc = featureloc;
   }
   
   /**
    * Reference to the feature_relationship table.
-   * @return feature_relationship the <code>ChadoFeatureRelationship</code>
+   * @return feature_relationship the <code>FeatureRelationship</code>
    *         object.
    */
-  public ChadoFeatureRelationship getFeature_relationship()
+  public FeatureRelationship getFeature_relationship()
   {
     return feature_relationship;
   }
 
   /**
    * Reference to the feature_relationship table.
-   * @param feature_relationship the <code>ChadoFeatureRelationship</code>
+   * @param feature_relationship the <code>FeatureRelationship</code>
    *        object.
    */
   public void setFeature_relationship(
-      ChadoFeatureRelationship feature_relationship)
+      FeatureRelationship feature_relationship)
   {
     this.feature_relationship = feature_relationship;
   }
 
   /**
    * Reference to the organism table for this feature.
-   * @return  the <code>ChadoOrganism</code> object
+   * @return  the <code>Organism</code> object
    */
-  public ChadoOrganism getOrganism()
+  public Organism getOrganism()
   {
     return organism;
   }
 
   /**
    * Reference to the organism table for this feature.
-   * @param organism the <code>ChadoOrganism</code> object
+   * @param organism the <code>Organism</code> object
    */
-  public void setOrganism(ChadoOrganism organism)
+  public void setOrganism(Organism organism)
   {
     this.organism = organism;
   }
@@ -358,7 +358,7 @@ public class ChadoFeature
    * Secondary identifiers and external dbxrefs go in table:feature_dbxref
    * @return
    */
-  public ChadoFeatureDbxref getFeature_dbxref()
+  public FeatureDbxref getFeature_dbxref()
   {
     return feature_dbxref;
   }
@@ -368,7 +368,7 @@ public class ChadoFeature
    * Secondary identifiers and external dbxrefs go in table:feature_dbxref
    * @param dbxref
    */
-  public void setFeature_dbxref(ChadoFeatureDbxref feature_dbxref)
+  public void setFeature_dbxref(FeatureDbxref feature_dbxref)
   {
     this.feature_dbxref = feature_dbxref;
   }
@@ -404,13 +404,13 @@ public class ChadoFeature
     
     for(int i=0; i<featurepropList.size(); i++)
     {
-      ChadoFeatureProp featureprop = (ChadoFeatureProp)featurepropList.get(i);
+      FeatureProp featureprop = (FeatureProp)featurepropList.get(i);
       addQualifier(featureprop.getCvterm().getCvtermId(), featureprop);
     }
   }
   
   /**
-   * Get a list of <code>ChadoFeatureRelationship</code> children
+   * Get a list of <code>FeatureRelationship</code> children
    * @return
    */
   public List getFeatureRelationshipsForObjectId()
@@ -419,7 +419,7 @@ public class ChadoFeature
   }
 
   /**
-   * Set a list of <code>ChadoFeatureRelationship</code> children
+   * Set a list of <code>FeatureRelationship</code> children
    * @param featureRelationshipsForObjectId
    */
   public void setFeatureRelationshipsForObjectId(
@@ -429,7 +429,7 @@ public class ChadoFeature
   }
 
   /**
-   * Get a list of <code>ChadoFeatureRelationship</code> parent
+   * Get a list of <code>FeatureRelationship</code> parent
    * @return
    */
   public List getFeatureRelationshipsForSubjectId()
@@ -438,7 +438,7 @@ public class ChadoFeature
   }
 
   /**
-   * Set a list of <code>ChadoFeatureRelationship</code> parent
+   * Set a list of <code>FeatureRelationship</code> parent
    * @param featureRelationshipsForSubjectId
    */
   public void setFeatureRelationshipsForSubjectId(
@@ -448,7 +448,7 @@ public class ChadoFeature
   }
   
   /**
-   * Get a list of feature dbxrefs (<code>ChadoFeatureDbxref</code>)
+   * Get a list of feature dbxrefs (<code>FeatureDbxref</code>)
    * @return
    */
   public List getFeatureDbxrefs()
@@ -457,7 +457,7 @@ public class ChadoFeature
   }
 
   /**
-   * Set a list of feature dbxrefs (<code>ChadoFeatureDbxref</code>)
+   * Set a list of feature dbxrefs (<code>FeatureDbxref</code>)
    * @param featureDbxrefs
    */
   public void setFeatureDbxrefs(List featureDbxrefs)
@@ -502,7 +502,7 @@ public class ChadoFeature
    * @param	the cvterm type_id of the property name
    * @param	the property value	
    */
-  public void addQualifier(long prop_type_id, ChadoFeatureProp featprop)
+  public void addQualifier(long prop_type_id, FeatureProp featprop)
   {
     if(qualifiers == null)
       qualifiers = new Hashtable();
@@ -535,15 +535,15 @@ public class ChadoFeature
   /**
    * Utility for finding a feature location from a List that corresponds
    * to a particular srcfeature.
-   * @param locs            List of ChadoFeatureLoc
+   * @param locs            List of FeatureLoc
    * @param srcfeature_id   srcfeature id
    * @return
    */
-  public static ChadoFeatureLoc getFeatureLoc(List locs, int srcfeature_id)
+  public static FeatureLoc getFeatureLoc(List locs, int srcfeature_id)
   {
     for(int i=0; i<locs.size(); i++)
     {
-      ChadoFeatureLoc loc = (ChadoFeatureLoc)locs.get(i);
+      FeatureLoc loc = (FeatureLoc)locs.get(i);
       if(loc.getSrcfeature_id() == srcfeature_id)
         return loc;
     }

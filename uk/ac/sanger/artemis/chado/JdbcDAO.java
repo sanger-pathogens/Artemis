@@ -30,7 +30,6 @@ import java.sql.*;
 import java.io.*;
 import java.util.List;
 import java.util.Vector;
-import java.util.Hashtable;
 
 /**
  *
@@ -74,10 +73,10 @@ public class JdbcDAO
    * @return the Feature, or null
    * @throws SQLException 
    */
-  public ChadoFeature getFeatureById(int id) 
+  public Feature getFeatureById(int id) 
                       throws SQLException
   {
-    ChadoFeature feature = new ChadoFeature();
+    Feature feature = new Feature();
     feature.setId(id);
     return getLazyFeature(feature);
   }
@@ -89,24 +88,25 @@ public class JdbcDAO
    * @return the Feature, or null
    * @throws SQLException 
    */
-  public ChadoFeature getFeatureByUniqueName(String uniquename)
+  public Feature getFeatureByUniqueName(String uniquename)
                       throws SQLException
   {
-    ChadoFeature feature = new ChadoFeature();
+    Feature feature = new Feature();
     feature.setUniquename(uniquename);
+    feature.setId(-1);
     return getLazyFeature(feature);
   }
   
 
   /**
    * This can be used to get individual features or children.
-   * If ChadoFeature.featureloc.srcfeature_id is set this is used
+   * If Feature.featureloc.srcfeature_id is set this is used
    * to return the children of that srcfeature_id.
    * @param feature  the feature to query
-   * @return    the <code>List</code> of child <code>ChadoFeature</code> objects
+   * @return    the <code>List</code> of child <code>Feature</code> objects
    * @throws SQLException
    */
-  public List getFeaturesByLocatedOnFeature(final ChadoFeature feature)
+  public List getFeaturesByLocatedOnFeature(final Feature feature)
                           throws SQLException
   {
     return getFeatureQuery(null, 
@@ -123,7 +123,7 @@ public class JdbcDAO
   public List getFeaturesByAnyCurrentName(String name) 
               throws SQLException
   {
-    ChadoFeature feature = new ChadoFeature();
+    Feature feature = new Feature();
     feature.setUniquename(name);
     return getFeatureQuery(name, -1, -1);
   }
@@ -142,22 +142,22 @@ public class JdbcDAO
   /**
    * Get the properties of a feature.
    * @param uniquename  the unique name of the feature
-   * @return  the <code>List</code> of <code>ChadoFeature</code>
+   * @return  the <code>List</code> of <code>Feature</code>
    * @throws SQLException
    */
-  private ChadoFeature getLazyFeature(final ChadoFeature feature)
+  private Feature getLazyFeature(final Feature feature)
                        throws SQLException
   {
     List list = getFeatureQuery(feature.getUniquename(), 
                                 -1, feature.getId());
-    return (ChadoFeature)list.get(0);
+    return (Feature)list.get(0);
   }
   
   /**
    * Get the properties of a feature.
    * @param uniquename  the unique name of the feature
    * @param parentFeatureID  the id of parent feature to query
-   * @return  the <code>List</code> of <code>ChadoFeature</code>
+   * @return  the <code>List</code> of <code>Feature</code>
    * @throws SQLException
    */
   private List getFeatureQuery(final String uniquename,
@@ -202,9 +202,9 @@ public class JdbcDAO
     final List list = new Vector();
     while(rs.next())
     {
-      ChadoFeature feature = new ChadoFeature();
+      Feature feature = new Feature();
       
-      ChadoFeatureLoc featureloc = new ChadoFeatureLoc();
+      FeatureLoc featureloc = new FeatureLoc();
       featureloc.setFmin( rs.getInt("fmin") );
       featureloc.setFmax( rs.getInt("fmax") );
       featureloc.setStrand( rs.getInt("strand") );
@@ -218,12 +218,12 @@ public class JdbcDAO
       feature.setResidues( rs.getBytes("residues") );
 
       feature.setFeatureloc(featureloc);
-      feature.setCvterm(new ChadoCvterm());
+      feature.setCvterm(new Cvterm());
       feature.getCvterm().setCvtermId( rs.getLong("type_id") );
       
       // feature properties
-      ChadoFeatureProp featureprop = new ChadoFeatureProp();
-      ChadoCvterm cvterm = new ChadoCvterm();
+      FeatureProp featureprop = new FeatureProp();
+      Cvterm cvterm = new Cvterm();
       cvterm.setCvtermId(rs.getLong("prop_type_id"));
       featureprop.setCvterm(cvterm);
       featureprop.setValue(rs.getString("value"));
@@ -234,15 +234,15 @@ public class JdbcDAO
       feature.setId( rs.getInt("feature_id") );
       
       // feature relationship
-      ChadoFeatureRelationship feature_relationship = new ChadoFeatureRelationship();
-      cvterm = new ChadoCvterm();
+      FeatureRelationship feature_relationship = new FeatureRelationship();
+      cvterm = new Cvterm();
       cvterm.setCvtermId(rs.getLong("relation_type_id"));
       feature_relationship.setCvterm(cvterm);
       feature_relationship.setObject_id( rs.getInt("object_id") );
       feature.setFeature_relationship(feature_relationship);
   
       // feature organism
-      ChadoOrganism organism = new ChadoOrganism();
+      Organism organism = new Organism();
       organism.setAbbreviation(rs.getString("abbreviation"));
       organism.setComment(rs.getString("comment"));
       organism.setCommon_name(rs.getString("common_name"));
@@ -265,7 +265,7 @@ public class JdbcDAO
    * with residues.
    * @param cvterm_ids list of cvterm_id/type_id's
    * @param schema      schema/organism name or null
-   * @return    the <code>List</code> of <code>ChadoFeature</code> objects
+   * @return    the <code>List</code> of <code>Feature</code> objects
    * @throws SQLException
    */
   public List getResidueFeatures(List cvterm_ids, 
@@ -294,15 +294,15 @@ public class JdbcDAO
     List list = new Vector();
     while(rs.next())
     {
-      ChadoFeature feature = new ChadoFeature();
-      ChadoOrganism organism = new ChadoOrganism();
+      Feature feature = new Feature();
+      Organism organism = new Organism();
       organism.setAbbreviation( rs.getString("abbreviation") );
       
       feature.setOrganism(organism);
       feature.setId( rs.getInt("feature_id") );
       feature.setName( rs.getString("name") );
       feature.setUniquename( rs.getString("uniquename") );
-      feature.setCvterm(new ChadoCvterm());
+      feature.setCvterm(new Cvterm());
       feature.getCvterm().setCvtermId( rs.getLong("type_id") );
       
       list.add(feature);
@@ -378,7 +378,7 @@ public class JdbcDAO
 
     while(rs.next())
     {
-      ChadoCvterm cvterm = new ChadoCvterm();
+      Cvterm cvterm = new Cvterm();
       cvterm.setCvtermId( rs.getLong("cvterm_id") );
       cvterm.setName( rs.getString("name") );
       cvterms.add(cvterm);
@@ -390,7 +390,7 @@ public class JdbcDAO
   /**
    * Get dbxref for a feature.
    * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>ChadoFeatureDbxref</code> are returned.
+   *                    all <code>FeatureDbxref</code> are returned.
    * @return a <code>List</code> of feature_dbxrefs.
    * @throws SQLException
    */
@@ -413,9 +413,9 @@ public class JdbcDAO
 
     while(rs.next())
     {
-      ChadoFeatureDbxref feature_dbxref = new ChadoFeatureDbxref();
-      ChadoDbxref dbxref = new ChadoDbxref();
-      ChadoDb db = new ChadoDb();
+      FeatureDbxref feature_dbxref = new FeatureDbxref();
+      Dbxref dbxref = new Dbxref();
+      Db db = new Db();
       db.setName( rs.getString("name") );
       dbxref.setAccession( rs.getString("accession") );
       dbxref.setDb(db);
@@ -429,9 +429,9 @@ public class JdbcDAO
   
   
   /**
-   * Return a list of ChadoFeatureSynonyms for a uniquename
+   * Return a list of FeatureSynonyms for a uniquename
    * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>ChadoFeatureSynonym</code> are returned.
+   *                    all <code>FeatureSynonym</code> are returned.
    * @return
    * @throws SQLException
    */
@@ -450,13 +450,13 @@ public class JdbcDAO
     Statement st = conn.createStatement();
     ResultSet rs = st.executeQuery(sql);
     List synonym = new Vector();
-    ChadoFeatureSynonym alias;
+    FeatureSynonym alias;
     while(rs.next())
     {
-      alias = new ChadoFeatureSynonym();
-      ChadoCvterm cvterm = new ChadoCvterm();
+      alias = new FeatureSynonym();
+      Cvterm cvterm = new Cvterm();
       cvterm.setCvtermId(rs.getLong("type_id"));
-      ChadoSynonym syn = new ChadoSynonym();
+      Synonym syn = new Synonym();
       syn.setName(rs.getString("name"));
       syn.setCvterm(cvterm);
 
@@ -472,14 +472,14 @@ public class JdbcDAO
   }
   
   public List getFeatureSynonymsByFeatureAndSynonym(
-      ChadoFeature feature, ChadoSynonym synonym)
+      Feature feature, Synonym synonym)
   {
     return null;
   }
 
 
-  public ChadoSynonym getSynonymByNameAndCvTerm(
-      String name, ChadoCvterm type)
+  public Synonym getSynonymByNameAndCvTerm(
+      String name, Cvterm type)
   {
     return null;
   }
@@ -664,7 +664,7 @@ public class JdbcDAO
 
     final int organism_id = rs.getInt("organism_id");
 
-    ChadoFeature chadoFeature = tsn.getChadoFeature();
+    Feature chadoFeature = tsn.getChadoFeature();
     // insert new feature into feature table
     StringBuffer sql_buff = new StringBuffer();
     sql_buff.append("INSERT INTO feature (");
@@ -750,7 +750,7 @@ public class JdbcDAO
   public int insertFeatureDbxref(final ChadoTransaction tsn)
                      throws SQLException
   {
-    final ChadoFeatureDbxref dbxref = tsn.getFeatureDbxref();
+    final FeatureDbxref dbxref = tsn.getFeatureDbxref();
     final String uniquename  = tsn.getUniqueName();
     
     // find database id
@@ -812,7 +812,7 @@ public class JdbcDAO
   public int deleteFeatureDbxref(final ChadoTransaction tsn)
                      throws SQLException
   {
-    final ChadoFeatureDbxref dbxref = tsn.getFeatureDbxref();
+    final FeatureDbxref dbxref = tsn.getFeatureDbxref();
     final String uniquename = tsn.getUniqueName();
     
     final String sql = 
@@ -836,7 +836,7 @@ public class JdbcDAO
   public int insertFeatureAlias(final ChadoTransaction tsn)
                      throws SQLException
   {
-    final ChadoFeatureSynonym alias  = tsn.getAlias();
+    final FeatureSynonym alias  = tsn.getAlias();
     final String uniquename   = alias.getUniquename();
     final String synonym_name = alias.getSynonym().getName();
       
@@ -889,7 +889,7 @@ public class JdbcDAO
   public int deleteFeatureAlias(final ChadoTransaction tsn)
                      throws SQLException
   {
-    final ChadoFeatureSynonym alias = tsn.getAlias();
+    final FeatureSynonym alias = tsn.getAlias();
     final String uniquename   = alias.getUniquename();
     final String synonym_name = alias.getSynonym().getName();
     String sql = "SELECT synonym_id FROM synonym WHERE "+
@@ -929,7 +929,7 @@ public class JdbcDAO
       final ChadoTransaction tsn)
                      throws SQLException
   {
-    final ChadoFeature chado_feature = tsn.getChadoFeature();
+    final Feature chado_feature = tsn.getChadoFeature();
     final String parent = tsn.getParent_uniquename();
     
       

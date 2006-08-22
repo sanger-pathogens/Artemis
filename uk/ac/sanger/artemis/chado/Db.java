@@ -1,4 +1,4 @@
-/* Dbxref.java
+/* ChadoDb.java
  *
  * created: 2006
  *
@@ -25,70 +25,64 @@
 package uk.ac.sanger.artemis.chado;
 
 /**
- * Representation of the chado feature_dbxref.
+ * Representation of the chado db table.
  */
-public class ChadoFeatureDbxref
-{
-  private String schema;
+public class Db
+{ 
+  private int db_id;
+  private String name;
+  private String description;
+  private String urlprefix;
+  private String url;
   
-  /** feature_dbxref */
-  private int feature_id;
-  private int dbxref_id;
-  private boolean current = true;
-  private ChadoDbxref dbxref;
-
-  public ChadoFeatureDbxref()
+  public String getDescription()
   {
-  }
-
-  public int getFeature_id()
-  {
-    return feature_id;
-  }
-
-  public void setFeature_id(int feature_id)
-  {
-    this.feature_id = feature_id;
-  }
-
-  public boolean isCurrent()
-  {
-    return current;
-  }
-
-  public void setCurrent(boolean current)
-  {
-    this.current = current;
-  }
-
-  public String getSchema()
-  {
-    return schema;
-  }
-
-  public void setSchema(String schema)
-  {
-    this.schema = schema;
-  }
-
-  public int getDbxref_id()
-  {
-    return dbxref_id;
-  }
-
-  public void setDbxref_id(int dbxref_id)
-  {
-    this.dbxref_id = dbxref_id;
+    return description;
   }
   
-  public ChadoDbxref getDbxref()
+  public void setDescription(String description)
   {
-    return dbxref;
+    this.description = description;
+  }
+  
+  public int getDb_id()
+  {
+    return db_id;
   }
 
-  public void setDbxref(ChadoDbxref dbxref)
+  public void setDb_id(int db_id)
   {
-    this.dbxref = dbxref;
+    this.db_id = db_id;
   }
+  
+  public String getName()
+  {
+    return name;
+  }
+  
+  public void setName(String name)
+  {
+    this.name = name;
+  }
+  
+  public String getUrl()
+  {
+    return url;
+  }
+  
+  public void setUrl(String url)
+  {
+    this.url = url;
+  }
+  
+  public String getUrlprefix()
+  {
+    return urlprefix;
+  }
+  
+  public void setUrlprefix(String urlprefix)
+  {
+    this.urlprefix = urlprefix;
+  }
+
 }
-

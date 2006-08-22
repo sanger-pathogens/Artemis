@@ -26,7 +26,6 @@ package uk.ac.sanger.artemis.chado;
 
 import java.sql.*;
 import java.util.List;
-import java.util.Hashtable;
 
 /**
  *
@@ -44,7 +43,7 @@ public interface ChadoDAO
    * @param id the systematic id
    * @return the Feature, or null
    */
-  public ChadoFeature getFeatureById(int id)
+  public Feature getFeatureById(int id)
                       throws SQLException;
 
   /**
@@ -53,18 +52,18 @@ public interface ChadoDAO
    * @param name the systematic id
    * @return the Feature, or null
    */
-  public ChadoFeature getFeatureByUniqueName(String name)
+  public Feature getFeatureByUniqueName(String name)
                       throws SQLException;
   
   /**
    * This can be used to get individual features or children.
-   * If ChadoFeature.featureloc.srcfeature_id is set this is used
+   * If Feature.featureloc.srcfeature_id is set this is used
    * to return the children of that srcfeature_id.
    * @param feature     the feature used to query
-   * @return	the <code>List</code> of child <code>ChadoFeature</code> objects
+   * @return	the <code>List</code> of child <code>Feature</code> objects
    * @throws SQLException
    */
-   public List getFeaturesByLocatedOnFeature(ChadoFeature parent)
+   public List getFeaturesByLocatedOnFeature(Feature parent)
                          throws SQLException;
   
    /**
@@ -91,7 +90,7 @@ public interface ChadoDAO
    * with residues.
    * @param cvterm_ids list of cvterm_id/type_id's
    * @param schema      schema/organism name or null
-   * @return	the <code>List</code> of <code>ChadoFeature</code> objects
+   * @return	the <code>List</code> of <code>Feature</code> objects
    * @throws SQLException
    */
   public List getResidueFeatures(List cvterm_ids,
@@ -130,7 +129,7 @@ public interface ChadoDAO
   /**
    * Get dbxref for a feature.
    * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>ChadoFeatureDbxref</code> are returned.
+   *                    all <code>FeatureDbxref</code> are returned.
    * @return a <code>List</code> of feature_dbxrefs.
    * @throws SQLException
    */
@@ -138,9 +137,9 @@ public interface ChadoDAO
               throws SQLException;
   
   /**
-   * Return a list of ChadoFeatureSynonyms for a uniquename
+   * Return a list of FeatureSynonyms for a uniquename
    * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>ChadoFeatureSynonym</code> are returned.
+   *                    all <code>FeatureSynonym</code> are returned.
    * @return
    * @throws SQLException
    */
@@ -154,19 +153,19 @@ public interface ChadoDAO
    * @param type the type of the Synonym
    * @return a Synonym, or null  
    */
-  public ChadoSynonym getSynonymByNameAndCvTerm(String name, ChadoCvterm type)
+  public Synonym getSynonymByNameAndCvTerm(String name, Cvterm type)
          throws SQLException;
   
   
   /**
-   * Return a list of ChadoFeatureSynonyms which link a given Feature and Synonym
+   * Return a list of FeatureSynonyms which link a given Feature and Synonym
    * 
    * @param feature the test Feature
    * @param synonym the test Synonym
    * @return a (possibly empty) List<FeatureSynonym>
    */
   public List getFeatureSynonymsByFeatureAndSynonym(
-         ChadoFeature feature, ChadoSynonym synonym)
+         Feature feature, Synonym synonym)
          throws SQLException;
   
   

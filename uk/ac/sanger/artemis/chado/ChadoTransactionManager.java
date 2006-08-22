@@ -392,7 +392,8 @@ public class ChadoTransactionManager
       Range range   = (Range)rv_new.elementAt(i);
       String seq_id = feature.getSegmentID(range);
       
-      ChadoFeature chado_feature = new ChadoFeature();
+      uk.ac.sanger.artemis.chado.Feature chado_feature = 
+               new uk.ac.sanger.artemis.chado.Feature();
       chado_feature.setUniquename(seq_id);
       
       tsn = new ChadoTransaction(
@@ -444,8 +445,9 @@ public class ChadoTransactionManager
       roe.printStackTrace();
     }
 
-    ChadoFeature chado_feature = new ChadoFeature();
-    ChadoFeatureLoc featureloc = new ChadoFeatureLoc();
+    uk.ac.sanger.artemis.chado.Feature chado_feature = 
+              new uk.ac.sanger.artemis.chado.Feature();
+    FeatureLoc featureloc = new FeatureLoc();
     chado_feature.setFeatureloc(featureloc);
     
     if(feature.isForwardFeature())
@@ -509,7 +511,7 @@ public class ChadoTransactionManager
 
     String key = feature.getKey().toString();
     
-    ChadoCvterm cvterm = new ChadoCvterm();
+    Cvterm cvterm = new Cvterm();
     cvterm.setCvtermId(DatabaseDocument.getCvtermID(key).longValue());
     chado_feature.setCvterm(cvterm);
 
@@ -529,8 +531,9 @@ public class ChadoTransactionManager
   private void insertFeatureSegment(final FeatureSegment segment,
                                     final String segment_uniquename)
   {
-    ChadoFeature chado_feature = new ChadoFeature();
-    ChadoFeatureLoc featureloc = new ChadoFeatureLoc();
+    uk.ac.sanger.artemis.chado.Feature chado_feature = 
+      new uk.ac.sanger.artemis.chado.Feature();
+    FeatureLoc featureloc = new FeatureLoc();
     chado_feature.setFeatureloc(featureloc);
     
     if(segment.isForwardSegment())
@@ -590,7 +593,7 @@ public class ChadoTransactionManager
 
     String key = feature.getKey().toString();
     
-    ChadoCvterm cvterm = new ChadoCvterm();
+    Cvterm cvterm = new Cvterm();
     cvterm.setCvtermId(DatabaseDocument.getCvtermID(key).longValue());
     chado_feature.setCvterm(cvterm);
 
@@ -622,7 +625,7 @@ public class ChadoTransactionManager
    * @param chado_feature	the <code>ChadoFeature</code>
    */
   private void addQualifiers(final QualifierVector qualifiers,
-                             final ChadoFeature chado_feature)
+                             final uk.ac.sanger.artemis.chado.Feature chado_feature)
   {
     // add qualifiers/attributes
     for(int qualifier_index = 0; qualifier_index < qualifiers.size();
@@ -652,7 +655,7 @@ public class ChadoTransactionManager
  //         else
  //         {
             // happens when duplicating features 
-            ChadoFeatureProp featureprop = new ChadoFeatureProp();
+            FeatureProp featureprop = new FeatureProp();
             featureprop.setValue((String)qualifier_values.elementAt(value_index));
             chado_feature.addQualifier(type_id, featureprop);
  //         }
@@ -972,9 +975,9 @@ public class ChadoTransactionManager
            System.out.println(uniquename+"  in handleReservedTags() DELETE db="+
                qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
          
-           ChadoFeatureDbxref old_dbxref = new ChadoFeatureDbxref();
-           ChadoDbxref dbxref = new ChadoDbxref();
-           ChadoDb db = new ChadoDb();
+           FeatureDbxref old_dbxref = new FeatureDbxref();
+           Dbxref dbxref = new Dbxref();
+           Db db = new Db();
            db.setName(qualifier_string.substring(0,index));
            dbxref.setAccession(qualifier_string.substring(index+1));
            dbxref.setDb(db);
@@ -990,8 +993,8 @@ public class ChadoTransactionManager
            System.out.println(uniquename+"  in handleReservedTags() DELETE "+qualifier_name+" "+
                               qualifier_string);
            
-           ChadoFeatureSynonym alias = new ChadoFeatureSynonym();
-           ChadoSynonym synonym = new ChadoSynonym();
+           FeatureSynonym alias = new FeatureSynonym();
+           Synonym synonym = new Synonym();
            synonym.setName(qualifier_string);
            alias.setSynonym(synonym);
            alias.setUniquename(uniquename);
@@ -1023,9 +1026,9 @@ public class ChadoTransactionManager
          
            System.out.println(uniquename+"  in handleReservedTags() INSERT db="+
              qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
-           ChadoFeatureDbxref new_dbxref = new ChadoFeatureDbxref();
-           ChadoDbxref dbxref = new ChadoDbxref();
-           ChadoDb db = new ChadoDb();
+           FeatureDbxref new_dbxref = new FeatureDbxref();
+           Dbxref dbxref = new Dbxref();
+           Db db = new Db();
            db.setName(qualifier_string.substring(0,index));
            dbxref.setDb(db);
            dbxref.setAccession(qualifier_string.substring(index+1));
@@ -1041,9 +1044,9 @@ public class ChadoTransactionManager
            System.out.println(uniquename+"  in handleReservedTags() INSERT "+qualifier_name+" "+
                qualifier_string);
            Long lcvterm_id = DatabaseDocument.getCvtermID(qualifier_name);
-           ChadoFeatureSynonym alias = new ChadoFeatureSynonym();
-           ChadoSynonym synonym = new ChadoSynonym();
-           ChadoCvterm cvterm = new ChadoCvterm();
+           FeatureSynonym alias = new FeatureSynonym();
+           Synonym synonym = new Synonym();
+           Cvterm cvterm = new Cvterm();
            cvterm.setCvtermId(lcvterm_id.longValue());
            synonym.setName(qualifier_string);
            synonym.setCvterm(cvterm);

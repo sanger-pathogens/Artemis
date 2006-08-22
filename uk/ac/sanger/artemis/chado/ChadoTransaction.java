@@ -79,11 +79,11 @@ public class ChadoTransaction
   /** feature id */
   private int feature_id;
   /** chado feature */
-  private ChadoFeature chadoFeature;
+  private Feature chadoFeature;
   /** feature dbxref */
-  private ChadoFeatureDbxref dbxref;
+  private FeatureDbxref dbxref;
   /** feature synonym */
-  private ChadoFeatureSynonym alias;
+  private FeatureSynonym alias;
   /** last time feature was modified */
   private Timestamp lastmodified;
   /** the feature object */
@@ -136,19 +136,19 @@ public class ChadoTransaction
    * be used to describe a SQL transaction.
    *
    * <i>e.g.</i> to INSERT a feature and where chado_feature is a 
-   *        <code>ChadoFeature</code>:
+   *        <code>Feature</code>:
    * <blockquote><pre>
    * ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT_FEATURE,
    *                                             chado_feature);
    * </pre></blockquote>
    *
    * @param type          the transaction type
-   * @param chado_feature the <code>ChadoFeature</code> to be inserted
+   * @param chado_feature the <code>Feature</code> to be inserted
    * @param parents       <code>Vector</code> of parent uniquenames
    * @param derives_from  <code>Vector</code> of derives_from names
    */
   public ChadoTransaction(final int type, 
-                          final ChadoFeature chadoFeature, 
+                          final Feature chadoFeature, 
                           final Vector parents,
                           final Vector derives_from)
   {
@@ -166,7 +166,7 @@ public class ChadoTransaction
    */
   public ChadoTransaction(final int type,
                           final String uniquename,
-                          final ChadoFeatureDbxref dbxref, 
+                          final FeatureDbxref dbxref, 
                           final Timestamp lastmodified,
                           final Object feature_obj)
   {
@@ -178,7 +178,7 @@ public class ChadoTransaction
   }
 
   public ChadoTransaction(final int type,
-                          final ChadoFeatureSynonym alias,
+                          final FeatureSynonym alias,
                           final Object feature_obj)
   {
     this.type   = type;
@@ -187,7 +187,7 @@ public class ChadoTransaction
   }
   
   public ChadoTransaction(final int type,
-                          final ChadoFeature chadoFeature,
+                          final Feature chadoFeature,
                           final String parent_uniquename)
   {
     this.type         = type;
@@ -199,16 +199,16 @@ public class ChadoTransaction
    * The <code>Dbxref</code> used in a transaction.
    * @return  the feature dbxref
    */
-  public ChadoFeatureDbxref getFeatureDbxref()
+  public FeatureDbxref getFeatureDbxref()
   {
     return dbxref;
   }
   
   /**
-   * The <code>ChadoFeature</code> feature used in a transaction.
-   * @return chado_feature the <code>ChadoFeature</code> 
+   * The <code>Feature</code> feature used in a transaction.
+   * @return chado_feature the <code>Feature</code> 
    */
-  public ChadoFeature getChadoFeature()
+  public Feature getChadoFeature()
   {
     return chadoFeature;
   }
@@ -406,12 +406,12 @@ public class ChadoTransaction
     return feature_obj;
   }
 
-  public ChadoFeatureSynonym getAlias()
+  public FeatureSynonym getAlias()
   {
     return alias;
   }
 
-  public void setAlias(ChadoFeatureSynonym alias)
+  public void setAlias(FeatureSynonym alias)
   {
     this.alias = alias;
   }
