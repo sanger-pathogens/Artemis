@@ -29,6 +29,8 @@ package uk.ac.sanger.artemis.chado;
  */
 public class FeatureLoc
 {
+  /** CHADO feature */
+  private Feature feature;
   /** id of the parent feature */
   private int srcfeature_id = 0;
   /** start position */
@@ -45,6 +47,10 @@ public class FeatureLoc
   private int locgroup;
   /** Used when a feature has >1 location */
   private int rank;
+  
+  private boolean minPartial;
+
+  private boolean maxPartial;
 
   /**
    * Get the strand. The orientation/directionality of the location. 
@@ -201,6 +207,36 @@ public class FeatureLoc
   public void setResidue_info(String residue_info)
   {
     this.residue_info = residue_info;
+  }
+
+  public Feature getFeature()
+  {
+    return feature;
+  }
+
+  public void setFeature(Feature feature)
+  {
+    this.feature = feature;
+  }
+
+  public boolean isMaxPartial()
+  {
+    return maxPartial;
+  }
+
+  public void setMaxPartial(boolean maxPartial)
+  {
+    this.maxPartial = maxPartial;
+  }
+
+  public boolean isMinPartial()
+  {
+    return minPartial;
+  }
+
+  public void setMinPartial(boolean minPartial)
+  {
+    this.minPartial = minPartial;
   }
 
 }

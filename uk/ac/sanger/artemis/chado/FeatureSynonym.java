@@ -29,12 +29,9 @@ package uk.ac.sanger.artemis.chado;
  * linked to feature via feature_synonym table.
  */
 public class FeatureSynonym
-{
-  private String schema;
-  private String uniquename;
-  
+{ 
   // feature_synonym
-  private Integer feature_id;
+  private Feature feature;
   private Integer synonym_id;
   private Integer pub_id;
   private boolean current;
@@ -42,34 +39,15 @@ public class FeatureSynonym
   
   private Synonym synonym;
   
-  public String getSchema()
-  {
-    return schema;
-  }
 
-  public void setSchema(String schema)
+  public Feature getFeature()
   {
-    this.schema = schema;
-  }
-
-  public String getUniquename()
-  {
-    return uniquename;
-  }
-
-  public void setUniquename(String uniquename)
-  {
-    this.uniquename = uniquename;
-  }
-
-  public Integer getFeature_id()
-  {
-    return feature_id;
+    return feature;
   }
   
-  public void setFeature_id(Integer feature_id)
+  public void setFeature(Feature feature)
   {
-    this.feature_id = feature_id;
+    this.feature = feature;
   }
 
   public Integer getSynonym_id()

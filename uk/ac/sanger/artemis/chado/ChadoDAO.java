@@ -28,11 +28,9 @@ import java.sql.*;
 import java.util.List;
 
 /**
- *
  * Data access object
  * @see		uk.ac.sanger.artemis.chado.JdbcDAO
  * @see		uk.ac.sanger.artemis.chado.IBatisDAO
- *
  */
 public interface ChadoDAO
 {
@@ -172,126 +170,32 @@ public interface ChadoDAO
 //
 // WRITE BACK
 //
-  /**
-   * Update attributes defined by the <code>ChadoTransaction</code>.
-   * @param tsn		the <code>ChadoTransaction</code>
-   * @return    number of rows changed
-   * @throws SQLException
-   */
-  public int updateAttributes
-                    (final ChadoTransaction tsn)
-                     throws SQLException;
-
-  /**
-   * Insert attributes defined by the <code>ChadoTransaction</code>.
-   * @param tsn         the <code>ChadoTransaction</code>
-   * @throws SQLException
-   */
-  public void insertAttributes
-                    (final ChadoTransaction tsn)
-                     throws SQLException;
-
-  /**
-   * Delete attributes defined by the <code>ChadoTransaction</code>.
-   * @param tsn         the <code>ChadoTransaction</code>
-   * @throws SQLException
-   */
-  public void deleteAttributes
-                    (final ChadoTransaction tsn)
-                     throws SQLException;
-
-  /**
-   * Insert a feature into the database defined by the <code>ChadoTransaction</code>.
-   * @param tsn         	the <code>ChadoTransaction</code>
-   * @parma srcfeature_id	the parent feature identifier
-   * @throws SQLException
-   */
-  public void insertFeature
-                    (final ChadoTransaction tsn,
-                     final String srcfeature_id)
-                     throws SQLException;
-
-  /**
-   * Delete a feature from the database defined by the <code>ChadoTransaction</code>.
-   * @param tsn         the <code>ChadoTransaction</code>
-   * @return    number of rows deleted
-   * @throws SQLException
-   */
-  public int deleteFeature
-                    (final ChadoTransaction tsn)
-                     throws SQLException;
   
   /**
-   * Insert a dbxref for a feature.
-   * @param tsn           the <code>ChadoTransaction</code>
-   * @return    number of rows changed
-   * @throws SQLException
+   * Merge (update) an already persistent object back to the database 
+   * (at the end of the current transaction, or depending upon flush mode). 
+   * This method is defined in all the DAOs. It's recommended to call it 
+   * through an appropriate one eg SequenceDaoI for FeatureI 
+   * @param o The object to merge
    */
-  public int insertFeatureDbxref(final ChadoTransaction tsn)
-                     throws SQLException;
+  public void merge(Object o) throws SQLException;
   
   /**
-   * Delete a dbxref for a feature.
-   * @param tsn           the <code>ChadoTransaction</code>
-   * @return    number of rows changed
-   * @throws SQLException
+   * Save the object to the database (at the end of the current transaction, 
+   * or depending upon flush mode). This method is defined in all the DAOs. 
+   * It's recommended to call it through an appropriate one eg SequenceDaoI 
+   * for FeatureI 
+   * @param o The object to store
    */
-  public int deleteFeatureDbxref(final ChadoTransaction tsn)
-                     throws SQLException;
+  public void persist(Object o) throws SQLException;
   
   /**
-   * Insert a synonym for a feature.
-   * @param tsn           the <code>ChadoTransaction</code>
-   * @return    number of rows changed
-   * @throws SQLException
+   * Remove the object from the database (at the end of the current transaction, 
+   * or depending upon flush mode). This method is defined in all the DAOs. 
+   * It's recommended to call it through an appropriate one eg SequenceDaoI for 
+   * FeatureI 
+   * @param o The object to delete
    */
-  public int insertFeatureAlias(final ChadoTransaction tsn)
-                     throws SQLException;
-
-  /**
-   * Delete a synonym for a feature.
-   * @param tsn           the <code>ChadoTransaction</code>
-   * @return    number of rows changed
-   * @throws SQLException
-   */
-  public int deleteFeatureAlias(final ChadoTransaction tsn)
-                     throws SQLException;
-
+  public void delete(Object o) throws SQLException;
   
-  /**
-   * Update feature_relationship for a feature.
-   * @param tsn           the <code>ChadoTransaction</code>
-   * @return    number of rows changed
-   * @throws SQLException
-   */
-  public void updateFeatureRelationshipsForSubjectId(
-      final ChadoTransaction tsn)
-                     throws SQLException;
-  /**
-   * 
-   * Write the time a feature was last modified
-   * @param uniquename	the unique name of the feature
-   * @param timestamp   the time stamp to use, 
-   *                    if NULL use CURRENT_TIMESTAMP
-   * @return  number of rows changed
-   * @throws SQLException
-   */
-  public int writeTimeLastModified
-                    (final String uniquename,
-                     final Timestamp timestamp)
-                     throws SQLException;
-
-  /**
-   *
-   * Write the time a feature was last accessed
-   * @param uniquename  the unique name of the feature
-   * @param timestamp   the time stamp to use, 
-   *                    if NULL use CURRENT_TIMESTAMP
-   * @return  number of rows changed
-   * @throws SQLException
-   */
-  public int writeTimeAccessioned
-                    (final String uniquename,
-                     final Timestamp timestamp)
-                     throws SQLException;
 }

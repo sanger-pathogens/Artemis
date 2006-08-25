@@ -30,9 +30,9 @@ package uk.ac.sanger.artemis.chado;
 public class FeatureRelationship
 {
   
-  public int subject_id;
+  public Feature subject;
   /** id of the parent feature */
-  public int object_id;
+  public Feature object;
   /** cv term of feature relationship (e.g. part_of) */
   public Cvterm cvterm;
   /** Additional notes/comments */
@@ -64,18 +64,18 @@ public class FeatureRelationship
    * Get the parent feature_id.
    * @return the parent feature_id
    */
-  public int getObject_id()
+  public Feature getObject()
   {
-    return object_id;
+    return object;
   }
   
   /**
    * Set the parent feature_id.
    * @param object_id  the parent feature_id
    */
-  public void setObject_id(int object_id)
+  public void setObject(Feature object)
   {
-    this.object_id = object_id;
+    this.object = object;
   }
   
   /**
@@ -102,14 +102,14 @@ public class FeatureRelationship
     this.rank = rank;
   }
   
-  public int getSubject_id()
+  public Feature getSubject()
   {
-    return subject_id;
+    return subject;
   }
   
-  public void setSubject_id(int subject_id)
+  public void setSubject(Feature subject)
   {
-    this.subject_id = subject_id;
+    this.subject = subject;
   }
   
   /**

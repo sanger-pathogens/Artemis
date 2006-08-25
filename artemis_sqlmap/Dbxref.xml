@@ -18,7 +18,7 @@
            
   <resultMap id="select-feature-dbxref" 
                class="FeatureDbxref">
-    <result property="feature_id"       column="feature_id"/>
+    <result property="feature.id"       column="feature_id"/>
     <result property="dbxref.db.name"   column="name"/>
     <result property="dbxref.accession" column="accession"/>
     <result property="dbxref.version"   column="version"/>
@@ -66,14 +66,15 @@
      WHERE dbxref_id=
            (SELECT dbxref_id FROM dbxref WHERE accession=#dbxref.accession#
             AND db_id=(SELECT db_id FROM db WHERE name=#dbxref.db.name#))
-     AND feature_id=$feature_id$
+     AND feature_id=
+           (SELECT feature_id FROM feature WHERE uniquename=#feature.uniquename#)
   </delete>
   
   <insert id="insertFeatureDbxref" parameterClass="FeatureDbxref">
     INSERT INTO feature_dbxref 
            (feature_id, dbxref_id, is_current)
            VALUES
-           ($feature_id$, $dbxref_id$, $current$)
+           ($feature.id$, $dbxref_id$, $current$)
   </insert>
   
   <insert id="insertDbxref" parameterClass="Dbxref">

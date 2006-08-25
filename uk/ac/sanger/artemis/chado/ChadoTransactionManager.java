@@ -219,7 +219,7 @@ public class ChadoTransactionManager
               
               String segment_uniquename = feature.getSegmentID(range);
               insertFeatureSegment(segment,segment_uniquename);
-//            update feature_relationship.rank
+              // update feature_relationship.rank
               updateFeatureRelationshipRank(feature, rv_new);
             }
           }
@@ -252,15 +252,6 @@ public class ChadoTransactionManager
         {
           ichanged = ((Integer)changes.elementAt(i)).intValue();
           
-          /*
-          Qualifier parent_qualifier = feature.getQualifierByName("Parent");
-          
-          String transcript = null;
-          if(parent_qualifier != null)
-            transcript = 
-               (String)parent_qualifier.getValues().get(0);
-          */
-          
           Range range_new = (Range)rv_new.elementAt(ichanged);
           Range range_old = (Range)rv_old.elementAt(ichanged);
           String seg_id   = feature.getSegmentID(range_new);
@@ -271,15 +262,11 @@ public class ChadoTransactionManager
           if(feature.getSegmentRangeStore() != null)
             feature.getSegmentRangeStore().put(seg_id, range_new);
           
-          tsn = new ChadoTransaction(ChadoTransaction.UPDATE, 
-                                     seg_id, "featureloc", 
-                                     feature.getLastModified(),
-                                     feature);
-
-          if(range_new.getStart() != range_old.getStart())
-            tsn.addProperty("fmin", Integer.toString(range_new.getStart()-1));
-          if(range_new.getEnd() != range_old.getEnd())
-            tsn.addProperty("fmax", Integer.toString(range_new.getEnd()));
+          FeatureLoc featureloc = getFeatureLoc(feature, seg_id, range_new);
+          
+          tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                                     featureloc,
+                                     feature.getLastModified(), feature);
 
           sql.add(tsn);
         }
@@ -381,28 +368,53 @@ public class ChadoTransactionManager
   private void updateFeatureRelationshipRank(final GFFStreamFeature feature,
                                              final RangeVector rv_new)
   {
+       
+    
     // update feature_relationship.rank
     ChadoTransaction tsn;
     Hashtable feature_relationship_rank_store = new Hashtable();
-    String parent =
-      (String)feature.getQualifierByName("Parent").getValues().get(0);
+    Qualifier qualifier_relation = feature.getQualifierByName("Parent");
     
-    for(int i=0; i<rv_new.size(); i++)
+    for(int rank=0; rank<rv_new.size(); rank++)
     {
-      Range range   = (Range)rv_new.elementAt(i);
+      Range range   = (Range)rv_new.elementAt(rank);
       String seq_id = feature.getSegmentID(range);
       
       uk.ac.sanger.artemis.chado.Feature chado_feature = 
                new uk.ac.sanger.artemis.chado.Feature();
       chado_feature.setUniquename(seq_id);
-      
-      tsn = new ChadoTransaction(
-              ChadoTransaction.UPDATE_FEATURE_RELATIONSHIP,
-              chado_feature,
-              parent);
-      tsn.addProperty("rank", "'"+ i +"'");
-      sql.add(tsn);
-      feature_relationship_rank_store.put(seq_id, new Integer(i));
+
+      List featureRelationshipsForSubjectId = null;
+      if(qualifier_relation != null)
+      {
+        StringVector parents = qualifier_relation.getValues();
+        if(parents.size() > 0)
+          featureRelationshipsForSubjectId = new Vector();
+        
+        for(int i=0; i<parents.size(); i++)
+        {
+          uk.ac.sanger.artemis.chado.Feature parent =
+              new uk.ac.sanger.artemis.chado.Feature();
+          parent.setUniquename((String)parents.get(i));
+          FeatureRelationship feature_relationship =
+              new FeatureRelationship();
+          Cvterm cvterm = new Cvterm();
+          cvterm.setCvtermId(DatabaseDocument.getCvtermID("part_of").longValue());
+          
+          feature_relationship.setObject(parent);
+          feature_relationship.setSubject(chado_feature);
+          feature_relationship.setCvterm(cvterm);
+          feature_relationship.setRank(rank);
+          featureRelationshipsForSubjectId.add(feature_relationship);
+          
+          tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+              feature_relationship,
+              feature.getLastModified(), feature);
+          sql.add(tsn);
+        }
+      }
+
+      feature_relationship_rank_store.put(seq_id, new Integer(rank));
     }
     feature.setFeature_relationship_rank_store(feature_relationship_rank_store);  
   }
@@ -454,9 +466,6 @@ public class ChadoTransactionManager
       featureloc.setStrand(1);
     else
       featureloc.setStrand(-1);
-
-    Vector parent_features  = null;
-    Vector derives_features = null;
     
     // codon_start attribute
     try
@@ -476,29 +485,58 @@ public class ChadoTransactionManager
       
       // relationship attributes
       Qualifier qualifier_relation = feature.getQualifierByName("Parent");
+      List featureRelationshipsForSubjectId = null;
       if(qualifier_relation != null)
       {
         StringVector parents = qualifier_relation.getValues();
         if(parents.size() > 0)
-          parent_features = new Vector();
+          featureRelationshipsForSubjectId = new Vector();
         
         for(int i=0; i<parents.size(); i++)
-          parent_features.add((String)parents.get(i));
+        {
+          uk.ac.sanger.artemis.chado.Feature parent =
+              new uk.ac.sanger.artemis.chado.Feature();
+          parent.setUniquename((String)parents.get(i));
+          FeatureRelationship feature_relationship =
+              new FeatureRelationship();
+          Cvterm cvterm = new Cvterm();
+          cvterm.setCvtermId(DatabaseDocument.getCvtermID("part_of").longValue());
+          
+          feature_relationship.setObject(parent);
+          feature_relationship.setSubject(chado_feature);
+          feature_relationship.setCvterm(cvterm);
+          featureRelationshipsForSubjectId.add(feature_relationship);
+        }
       }
       
       qualifier_relation = feature.getQualifierByName("Derives_from");
       if(qualifier_relation != null)
       {
         StringVector derives = qualifier_relation.getValues();
-        if(derives.size() > 0)
-          derives_features = new Vector();
+        if(derives.size() > 0 && featureRelationshipsForSubjectId == null)
+          featureRelationshipsForSubjectId = new Vector();
         
         for(int i=0; i<derives.size(); i++)
-          derives_features.add((String)derives.get(i));
+        {
+          uk.ac.sanger.artemis.chado.Feature parent =
+                                      new uk.ac.sanger.artemis.chado.Feature();
+          parent.setUniquename((String) derives.get(i));
+          FeatureRelationship feature_relationship = new FeatureRelationship();
+          Cvterm cvterm = new Cvterm();
+          cvterm.setCvtermId(DatabaseDocument.getCvtermID("derives_from")
+              .longValue());
+
+          feature_relationship.setObject(parent);
+          feature_relationship.setSubject(chado_feature);
+          feature_relationship.setCvterm(cvterm);
+          featureRelationshipsForSubjectId.add(feature_relationship);
+        }
       }
+      chado_feature.setFeatureRelationshipsForSubjectId(
+                       featureRelationshipsForSubjectId);
     }
     catch(InvalidRelationException ire){}
-
+    
     if(feature.isForwardFeature())
       featureloc.setStrand(1);
     else
@@ -517,10 +555,10 @@ public class ChadoTransactionManager
 
     addQualifiers(feature.getQualifiers(), chado_feature);
     // create transaction object
-    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT_FEATURE,
-                                                chado_feature,
-                                                parent_features, 
-                                                derives_features);
+    
+    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+                               chado_feature,
+                               null, (GFFStreamFeature)null);
     sql.add(tsn);  
   }
   
@@ -540,9 +578,6 @@ public class ChadoTransactionManager
       featureloc.setStrand(1);
     else
       featureloc.setStrand(-1);
-
-    Vector parent_features  = null;
-    Vector derives_features = null;
     
     // codon_start attribute
     Feature feature = segment.getFeature();
@@ -563,26 +598,55 @@ public class ChadoTransactionManager
       
       // relationship attributes
       Qualifier qualifier_relation = feature.getQualifierByName("Parent");
+      List featureRelationshipsForSubjectId = null;
       if(qualifier_relation != null)
       {
         StringVector parents = qualifier_relation.getValues();
         if(parents.size() > 0)
-          parent_features = new Vector();
+          featureRelationshipsForSubjectId = new Vector();
         
         for(int i=0; i<parents.size(); i++)
-          parent_features.add((String)parents.get(i));
+        {
+          uk.ac.sanger.artemis.chado.Feature parent =
+              new uk.ac.sanger.artemis.chado.Feature();
+          parent.setUniquename((String)parents.get(i));
+          FeatureRelationship feature_relationship =
+              new FeatureRelationship();
+          Cvterm cvterm = new Cvterm();
+          cvterm.setCvtermId(DatabaseDocument.getCvtermID("part_of").longValue());
+          
+          feature_relationship.setObject(parent);
+          feature_relationship.setSubject(chado_feature);
+          feature_relationship.setCvterm(cvterm);
+          featureRelationshipsForSubjectId.add(feature_relationship);
+        }
       }
       
       qualifier_relation = feature.getQualifierByName("Derives_from");
       if(qualifier_relation != null)
       {
         StringVector derives = qualifier_relation.getValues();
-        if(derives.size() > 0)
-          derives_features = new Vector();
+        if(derives.size() > 0 && featureRelationshipsForSubjectId == null)
+          featureRelationshipsForSubjectId = new Vector();
         
         for(int i=0; i<derives.size(); i++)
-          derives_features.add((String)derives.get(i));
+        {
+          uk.ac.sanger.artemis.chado.Feature parent =
+                                      new uk.ac.sanger.artemis.chado.Feature();
+          parent.setUniquename((String) derives.get(i));
+          FeatureRelationship feature_relationship = new FeatureRelationship();
+          Cvterm cvterm = new Cvterm();
+          cvterm.setCvtermId(DatabaseDocument.getCvtermID("derives_from")
+              .longValue());
+
+          feature_relationship.setObject(parent);
+          feature_relationship.setSubject(chado_feature);
+          feature_relationship.setCvterm(cvterm);
+          featureRelationshipsForSubjectId.add(feature_relationship);
+        }
       }
+      chado_feature.setFeatureRelationshipsForSubjectId(
+                       featureRelationshipsForSubjectId);
     }
     catch(InvalidRelationException ire){}
 
@@ -599,22 +663,27 @@ public class ChadoTransactionManager
 
     //addQualifiers(feature.getQualifiers(), chado_feature);
     // create transaction object
-    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT_FEATURE,
-                                                chado_feature,
-                                                parent_features, 
-                                                derives_features);
+    
+    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+        chado_feature,
+        null, (GFFStreamFeature)null);
+   
     sql.add(tsn);  
   }
   
   /**
    * Set the transaction for deleting a feature.
-   * @param feature
    */
-  private void deleteFeature(final String feature_uniquename)
+  private void deleteFeature(final String uniquename)
   {
-    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.DELETE_FEATURE,
-                                                feature_uniquename, "feature",
-                                                null, null);
+    uk.ac.sanger.artemis.chado.Feature chado_feature = 
+      new uk.ac.sanger.artemis.chado.Feature();
+    chado_feature.setUniquename(uniquename);
+    
+    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+        chado_feature,
+        null, (GFFStreamFeature)null);
+
     sql.add(tsn); 
   }
 
@@ -710,7 +779,7 @@ public class ChadoTransactionManager
                                     final Key new_key,
                                     final GFFStreamFeature feature)
   {
-    final String uniquename = (String)(feature.getQualifierByName("ID").getValues()).elementAt(0);
+    String uniquename = (String)(feature.getQualifierByName("ID").getValues()).elementAt(0);
     ChadoTransaction tsn;
 
     // updating the key
@@ -726,12 +795,19 @@ public class ChadoTransactionManager
                   JOptionPane.WARNING_MESSAGE);
       }
       else
-      {
+      {  
+        uk.ac.sanger.artemis.chado.Feature chado_feature =
+           new uk.ac.sanger.artemis.chado.Feature();
+        Cvterm cvterm = new Cvterm();
+        cvterm.setCvtermId( lcvterm_id.longValue() );
+        
+        chado_feature.setCvterm(cvterm);
+        chado_feature.setUniquename(uniquename);
+        
         tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                                   uniquename, "feature",
-                                   feature.getLastModified(),
-                                   feature);
-        tsn.addProperty("type_id", "'"+ lcvterm_id.toString() +"'");
+            chado_feature,
+            feature.getLastModified(), feature);
+
         sql.add(tsn);
       }
     }
@@ -764,13 +840,32 @@ public class ChadoTransactionManager
           continue;
         }
 
-        String cvterm_id = lcvterm_id.toString();
-        tsn = new ChadoTransaction(ChadoTransaction.DELETE,
-                                   uniquename, "featureprop",
-                                   feature.getLastModified(),
-                                   feature);
-        tsn.setConstraint("type_id", cvterm_id);
-        sql.add(tsn);
+        
+        if(feature.getFeature_relationship_rank_store() != null)
+        {
+          Hashtable rank_hash = feature.getFeature_relationship_rank_store();
+          Enumeration id_keys= rank_hash.keys();
+          while(id_keys.hasMoreElements())
+          {
+            uniquename = (String)id_keys.nextElement();
+            FeatureProp featureprop = getFeatureProp(uniquename, null,
+                lcvterm_id, -1);
+            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+                featureprop,
+                feature.getLastModified(), feature);
+            sql.add(tsn);
+          }
+        }
+        else
+        {
+          FeatureProp featureprop = getFeatureProp(uniquename,
+                                        null, lcvterm_id, -1);
+        
+          tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+              featureprop,
+              feature.getLastModified(), feature);       
+          sql.add(tsn);
+        }
       }
     }
 
@@ -817,10 +912,10 @@ public class ChadoTransactionManager
       }
       
       // get the cvterm_id for this featureprop/qualifier
-      String cvterm_id = null;
+      Long lcvterm_id = null;
       if(!name.equals("timelastmodified"))
       {
-        Long lcvterm_id = DatabaseDocument.getCvtermID(name);
+        lcvterm_id = DatabaseDocument.getCvtermID(name);
 
         if(lcvterm_id == null)   // chado doesn't recognise this
         {
@@ -831,7 +926,6 @@ public class ChadoTransactionManager
                     JOptionPane.WARNING_MESSAGE);
           continue;
         }
-        cvterm_id = lcvterm_id.toString();
       }
 
       if(old_index > -1 &&
@@ -842,22 +936,40 @@ public class ChadoTransactionManager
         //
         for(int rank = 0; rank < new_qualifier_strings.size();
             ++rank)
-        {
+        {         
           String qualifier_string = (String)new_qualifier_strings.elementAt(rank);
           int index = qualifier_string.indexOf("=");
 
           if(index > -1)
             qualifier_string = qualifier_string.substring(index+1);
           
-          tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                                     uniquename, "featureprop",
-                                     feature.getLastModified(),
-                                     feature);
+          if(feature.getFeature_relationship_rank_store() != null)
+          {
+            Hashtable rank_hash = feature.getFeature_relationship_rank_store();
+            Enumeration id_keys= rank_hash.keys();
+            while(id_keys.hasMoreElements())
+            {
+              uniquename = (String)id_keys.nextElement();
+              FeatureProp featureprop = getFeatureProp(uniquename, 
+                  qualifier_string,
+                  lcvterm_id, rank);
+              tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                  featureprop,
+                  feature.getLastModified(), feature);
+              tsn.setGff_feature(feature);
+              sql.add(tsn);
+            }
+          }
+          else
+          {
+            FeatureProp featureprop = getFeatureProp(uniquename,
+                qualifier_string, lcvterm_id, rank);
 
-          tsn.addProperty("value", "'"+ stripQuotes(qualifier_string) +"'");
-          tsn.setConstraint("featureprop.type_id", "'"+cvterm_id+"'");
-          tsn.setConstraint("rank", Integer.toString(rank));
-          sql.add(tsn);
+            tsn = new ChadoTransaction(ChadoTransaction.UPDATE, featureprop,
+                feature.getLastModified(), feature);
+            tsn.setGff_feature(feature);
+            sql.add(tsn);
+          }
         }
 
       }
@@ -868,13 +980,34 @@ public class ChadoTransactionManager
         //
         if(old_index > -1)
         {
-          tsn = new ChadoTransaction(ChadoTransaction.DELETE,
-                                     uniquename, "featureprop",
-                                     feature.getLastModified(),
-                                     feature);
+          if(feature.getFeature_relationship_rank_store() != null)
+          {
+            Hashtable rank_hash = feature.getFeature_relationship_rank_store();
+            Enumeration id_keys= rank_hash.keys();
+            while(id_keys.hasMoreElements())
+            {
+              uniquename = (String)id_keys.nextElement();
+              FeatureProp featureprop = getFeatureProp(uniquename, null,
+                  lcvterm_id, -1);
+              tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+                  featureprop,
+                  feature.getLastModified(), feature);
+              tsn.setGff_feature(feature);
+              sql.add(tsn);
+            }
+          }
+          else
+          {
+            FeatureProp featureprop = getFeatureProp(uniquename, null,
+                lcvterm_id, -1);
+          
+            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+                featureprop,
+                feature.getLastModified(), feature);
 
-          tsn.setConstraint("type_id", cvterm_id);
-          sql.add(tsn);
+            tsn.setGff_feature(feature);
+            sql.add(tsn);
+          }
         }
           
         //
@@ -888,17 +1021,30 @@ public class ChadoTransactionManager
           if(index > -1)
             qualifier_string = qualifier_string.substring(index+1);
          
-          tsn = new ChadoTransaction(ChadoTransaction.INSERT,
-                                     uniquename, "featureprop",
-                                     feature.getLastModified(),
-                                     feature);
-
-          tsn.addProperty("value", "'"+ stripQuotes(qualifier_string) +"'");
-          tsn.addProperty("type_id", "'"+cvterm_id+"'");
-          tsn.addProperty("rank", Integer.toString(rank));
-
-          if(tsn !=null)
+          if(feature.getFeature_relationship_rank_store() != null)
+          {
+            Hashtable rank_hash = feature.getFeature_relationship_rank_store();
+            Enumeration id_keys= rank_hash.keys();
+            while(id_keys.hasMoreElements())
+            {
+              uniquename = (String)id_keys.nextElement();
+              FeatureProp featureprop = getFeatureProp(uniquename, qualifier_string,
+                  lcvterm_id, rank);
+              tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+                  featureprop,
+                  feature.getLastModified(), feature);
+              sql.add(tsn);
+            }
+          }
+          else
+          {
+            FeatureProp featureprop = getFeatureProp(uniquename, qualifier_string,
+                                                   lcvterm_id, rank);
+            tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+                featureprop,
+                feature.getLastModified(), feature);
             sql.add(tsn);
+          }
         }
 
       }
@@ -944,14 +1090,16 @@ public class ChadoTransactionManager
       if(new_qualifier.getValues() == null)
         return;
       
-      uniquename = (String) old_qualifier.getValues().get(0);
+      uk.ac.sanger.artemis.chado.Feature chado_feature =
+        new uk.ac.sanger.artemis.chado.Feature();
+     
+      chado_feature.setUniquename((String)new_qualifier.getValues().get(0));
+     
       ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-          uniquename, "feature",
-          feature.getLastModified(),
-          feature);
-
-      tsn.addProperty("uniquename", "'" + 
-          stripQuotes((String) new_qualifier.getValues().get(0)) + "'");
+                chado_feature,
+                feature.getLastModified(), feature);
+      tsn.setOldUniquename( (String)old_qualifier.getValues().get(0) );
+     
       sql.add(tsn);
       return;
     }
@@ -976,17 +1124,20 @@ public class ChadoTransactionManager
                qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
          
            FeatureDbxref old_dbxref = new FeatureDbxref();
+           uk.ac.sanger.artemis.chado.Feature chado_feature = 
+             new uk.ac.sanger.artemis.chado.Feature();
            Dbxref dbxref = new Dbxref();
            Db db = new Db();
            db.setName(qualifier_string.substring(0,index));
            dbxref.setAccession(qualifier_string.substring(index+1));
            dbxref.setDb(db);
+           chado_feature.setUniquename(uniquename);
            old_dbxref.setDbxref(dbxref);
-
-           tsn = new ChadoTransaction(ChadoTransaction.DELETE_DBXREF, 
-                                      uniquename, old_dbxref,
-                                      feature.getLastModified(),
-                                      feature);
+           old_dbxref.setFeature(chado_feature);
+           
+           tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+               old_dbxref,
+               feature.getLastModified(), feature);  
          }
          else if(isSynonymTag(qualifier_name))
          {
@@ -994,15 +1145,18 @@ public class ChadoTransactionManager
                               qualifier_string);
            
            FeatureSynonym alias = new FeatureSynonym();
+           uk.ac.sanger.artemis.chado.Feature chado_feature =
+             new uk.ac.sanger.artemis.chado.Feature();
+           chado_feature.setUniquename(uniquename);
+           
            Synonym synonym = new Synonym();
            synonym.setName(qualifier_string);
            alias.setSynonym(synonym);
-           alias.setUniquename(uniquename);
+           alias.setFeature(chado_feature);
           
-           tsn = new ChadoTransaction(ChadoTransaction.DELETE_ALIAS, 
-                                      alias, 
-                                      feature);
-           //tsn.setConstraint("synonym.name", "'"+qualifier_string+"'");      
+           tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+               alias,
+               feature.getLastModified(), feature);   
          }
          sql.add(tsn);
       }
@@ -1033,11 +1187,14 @@ public class ChadoTransactionManager
            dbxref.setDb(db);
            dbxref.setAccession(qualifier_string.substring(index+1));
            new_dbxref.setDbxref(dbxref);
-
-           tsn = new ChadoTransaction(ChadoTransaction.INSERT_DBXREF, 
-                                      uniquename, new_dbxref, 
-                                      feature.getLastModified(),
-                                      feature);
+           uk.ac.sanger.artemis.chado.Feature feat = 
+             new uk.ac.sanger.artemis.chado.Feature();
+           feat.setUniquename(uniquename);
+           new_dbxref.setFeature(feat);
+           
+           tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+               new_dbxref,
+               feature.getLastModified(), feature);
          }
          else if(isSynonymTag(qualifier_name))
          {
@@ -1045,6 +1202,10 @@ public class ChadoTransactionManager
                qualifier_string);
            Long lcvterm_id = DatabaseDocument.getCvtermID(qualifier_name);
            FeatureSynonym alias = new FeatureSynonym();
+           uk.ac.sanger.artemis.chado.Feature chado_feature = 
+             new uk.ac.sanger.artemis.chado.Feature();
+           chado_feature.setUniquename(uniquename);
+           
            Synonym synonym = new Synonym();
            Cvterm cvterm = new Cvterm();
            cvterm.setCvtermId(lcvterm_id.longValue());
@@ -1052,14 +1213,11 @@ public class ChadoTransactionManager
            synonym.setCvterm(cvterm);
            
            alias.setSynonym(synonym);
-           alias.setUniquename(uniquename);
+           alias.setFeature(chado_feature);
 
-           
-           tsn = new ChadoTransaction(ChadoTransaction.INSERT_ALIAS, 
-                                      alias, 
-                                      feature);
-           //tsn.setConstraint("synonym.name", "'"+qualifier_string+"'");
-           //tsn.addProperty("type_id", lcvterm_id.toString());
+           tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+               alias,
+               feature.getLastModified(), feature);
          }
          sql.add(tsn);
       }
@@ -1075,13 +1233,88 @@ public class ChadoTransactionManager
    */
   private String stripQuotes(String s)
   {
+    if(s == null)
+      return null;
+    
     if(s.startsWith("\"") && s.endsWith("\""))
       s = s.substring(1,s.length()-1);
     
     return s;
   }
 
+  /**
+   * Get the FeatureLoc object
+   * @param feature
+   * @param seg_id
+   * @param range_new
+   * @return
+   */
+  private FeatureLoc getFeatureLoc(GFFStreamFeature feature,
+                             String seg_id, Range range_new)
+  {
+    FeatureLoc featureloc = new FeatureLoc();
+    uk.ac.sanger.artemis.chado.Feature chado_feature = 
+      new uk.ac.sanger.artemis.chado.Feature();
+    chado_feature.setUniquename(seg_id);
+    
+    featureloc.setFeature(chado_feature);
+    featureloc.setFmax(range_new.getEnd());
+    featureloc.setFmin(range_new.getStart()-1);
+    
+    if(feature.getFeature_relationship_rank_store() != null)
+    {
+      Hashtable rank_hash = feature.getFeature_relationship_rank_store();
+      if(rank_hash.containsKey(seg_id))
+      {
+        Integer rank = (Integer)rank_hash.get(seg_id);
+        featureloc.setRank(rank.intValue());
+      }
+      else
+        featureloc.setRank(0);
+    }
+    else
+      featureloc.setRank(0);
+    
+    boolean is_complement = feature.getLocation().isComplement();
+    if(is_complement)
+      featureloc.setStrand(-1);
+    else
+      featureloc.setStrand(1);
+    
+    Qualifier qualifier_phase = feature.getQualifierByName("codon_start");
+    if(qualifier_phase != null)
+    {
+      String phase = (String)(qualifier_phase.getValues()).elementAt(0);
 
+      if(phase.equals ("1"))
+        featureloc.setPhase(0);
+      else if(phase.equals("2"))
+        featureloc.setPhase(1);
+      else if(phase.equals("3")) 
+        featureloc.setPhase(2);
+    }
+    
+    return featureloc;
+  }
+  
+  private FeatureProp getFeatureProp(final String uniquename,
+                                     final String qualifier_string,
+                                     final Long lcvterm_id, 
+                                     final int rank)
+  {
+    FeatureProp featureprop = new FeatureProp();
+    uk.ac.sanger.artemis.chado.Feature chado_feature   = 
+      new uk.ac.sanger.artemis.chado.Feature();
+    chado_feature.setUniquename(uniquename);
+    Cvterm cvterm = new Cvterm();
+    cvterm.setCvtermId(lcvterm_id.longValue());
+    featureprop.setValue(stripQuotes(qualifier_string));
+    featureprop.setRank(rank);
+    featureprop.setCvterm(cvterm);
+    featureprop.setFeature(chado_feature);
+    return featureprop;
+  }
+  
   /**
    *  Invoked when a deletion or insertion occurs in a Bases object.
    **/

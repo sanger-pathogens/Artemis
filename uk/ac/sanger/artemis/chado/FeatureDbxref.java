@@ -28,23 +28,21 @@ package uk.ac.sanger.artemis.chado;
  * Representation of the chado feature_dbxref.
  */
 public class FeatureDbxref
-{
-  private String schema;
-  
+{ 
   /** feature_dbxref */
-  private int feature_id;
+  private Feature feature;
   private int dbxref_id;
   private boolean current = true;
   private Dbxref dbxref;
 
-  public int getFeature_id()
+  public Feature getFeature()
   {
-    return feature_id;
+    return feature;
   }
 
-  public void setFeature_id(int feature_id)
+  public void setFeature(Feature feature)
   {
-    this.feature_id = feature_id;
+    this.feature = feature;
   }
 
   public boolean isCurrent()
@@ -57,15 +55,6 @@ public class FeatureDbxref
     this.current = current;
   }
 
-  public String getSchema()
-  {
-    return schema;
-  }
-
-  public void setSchema(String schema)
-  {
-    this.schema = schema;
-  }
 
   public int getDbxref_id()
   {

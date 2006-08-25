@@ -238,7 +238,10 @@ public class JdbcDAO
       cvterm = new Cvterm();
       cvterm.setCvtermId(rs.getLong("relation_type_id"));
       feature_relationship.setCvterm(cvterm);
-      feature_relationship.setObject_id( rs.getInt("object_id") );
+      
+      Feature object = new Feature();
+      object.setId( rs.getInt("object_id") );
+      feature_relationship.setObject( object  );
       feature.setFeature_relationship(feature_relationship);
   
       // feature organism
@@ -419,8 +422,10 @@ public class JdbcDAO
       db.setName( rs.getString("name") );
       dbxref.setAccession( rs.getString("accession") );
       dbxref.setDb(db);
+      Feature feat = new Feature();
+      feat.setId( rs.getInt("feature_id") );
       feature_dbxref.setDbxref(dbxref);
-      feature_dbxref.setFeature_id( rs.getInt("feature_id") );
+      feature_dbxref.setFeature(feat);
       dbxrefs.add(feature_dbxref);
     }
 
@@ -459,9 +464,11 @@ public class JdbcDAO
       Synonym syn = new Synonym();
       syn.setName(rs.getString("name"));
       syn.setCvterm(cvterm);
-
+      Feature feat = new Feature();
+      feat.setId(rs.getInt("feature_id"));
+      
       alias.setSynonym(syn);
-      alias.setFeature_id(new Integer(rs.getInt("feature_id")));
+      alias.setFeature(feat);
       alias.setPub_id(new Integer(rs.getInt("pub_id")));
       alias.setInternal(rs.getBoolean("is_internal"));
       alias.setCurrent(rs.getBoolean("is_current"));
@@ -487,176 +494,231 @@ public class JdbcDAO
 //
 // WRITE 
 //
-  /**
-   * Update attributes defined by the <code>ChadoTransaction</code>.
-   * @param tsn         the <code>ChadoTransaction</code>
-   * @return    number of rows changed
-   * @throws SQLException
-   */
-  public int updateAttributes
-                    (final ChadoTransaction tsn)
-                     throws SQLException
-  {
-    List uniquename = tsn.getUniquename();
-    
-    StringBuffer sqlBuff = new StringBuffer();
-    String chadoTable    = tsn.getChadoTable();
-    sqlBuff.append("UPDATE "+chadoTable);
-    sqlBuff.append(" SET ");
-
-    List properties = tsn.getProperties();
-    for(int i=0; i<properties.size(); i++)
-    {
-      sqlBuff.append((String)properties.get(i));
-      if(i < properties.size()-1)
-        sqlBuff.append(" , ");
-    }
-
-    sqlBuff.append(" FROM feature");
-    sqlBuff.append(" WHERE feature.feature_id="+
-                           chadoTable+".feature_id AND (");
-
-
-    for(int i=0; i<uniquename.size(); i++)
-    {
-      sqlBuff.append(" feature.uniquename='" + 
-                     (String)uniquename.get(i) +"' ");
-      if(i < uniquename.size()-1)
-        sqlBuff.append("OR");
-    }
-
-    sqlBuff.append(")");
-
-    List constraints = tsn.getConstraint();
-    if(constraints != null)
-    {
-      for(int i=0; i<constraints.size(); i++)
-      {
-        sqlBuff.append(" AND ");
-        // looks like specifying table, so include schema
-        String constraint = (String)constraints.get(i);
-        /*
-        int index;
-        if( (index = constraint.indexOf(".")) > -1 &&
-            constraint.indexOf("=") > index)
-         sqlBuff.append(schema+".");
-        */
-        sqlBuff.append(constraint);
-      }
-    }
-
-    String sql = sqlBuff.toString();
-
-    appendToLogFile(sql, sqlLog);
-    Statement st = conn.createStatement();
-    return st.executeUpdate(sql);
-  }
-
-  /**
-   * Insert attributes defined by the <code>ChadoTransaction</code>.
-   * @param tsn         the <code>ChadoTransaction</code>
-   * @throws SQLException
-   */
-  public void insertAttributes
-                    (final ChadoTransaction tsn)
-                     throws SQLException
-  {
-    StringBuffer sqlBuff;
-
-    List uniquename = tsn.getUniquename();
-    String chadoTable   = tsn.getChadoTable();
-    for(int i=0; i<uniquename.size(); i++)
-    {
-      sqlBuff = new StringBuffer();
-      sqlBuff.append("INSERT INTO "+chadoTable);
-      StringBuffer sqlKeys   = new StringBuffer();
-      StringBuffer sqlValues = new StringBuffer();
-
-      sqlKeys.append("feature_id , ");
-      sqlValues.append("(SELECT feature_id FROM feature WHERE uniquename='"+
-                         (String)uniquename.get(i)+"') , ");
-
-      String name;
-
-      List propertiesName  = tsn.getPropertiesName();
-      List propertiesValue = tsn.getPropertiesValue();
-      for(int j=0; j<propertiesName.size(); j++)
-      {
-        name = (String)propertiesName.get(j);
-        sqlKeys.append(name);
-        sqlValues.append((String)propertiesValue.get(j));
-        if(j < propertiesName.size()-1)
-        {
-          sqlKeys.append(" , ");
-          sqlValues.append(" , ");
-        }
-      }
   
-      sqlBuff.append(" ( "+sqlKeys.toString()+" ) ");
-      sqlBuff.append(" values ");
-      sqlBuff.append(" ( "+sqlValues.toString()+" )");
-
-      appendToLogFile(new String(sqlBuff), sqlLog);
-
-      Statement st = conn.createStatement();
-      int rowCount = st.executeUpdate(new String(sqlBuff));
-      System.out.println(rowCount+" row(s) inserted");
-    }
-  }
-
+  
   /**
-   * Delete attributes defined by the <code>ChadoTransaction</code>.
-   * @param tsn         the <code>ChadoTransaction</code>
+   * Merge (update) an already persistent object back to the database 
+   * (at the end of the current transaction, or depending upon flush mode). 
+   * This method is defined in all the DAOs. It's recommended to call it 
+   * through an appropriate one eg SequenceDaoI for FeatureI 
+   * @param o The object to merge
+   */
+  public void merge(Object o) throws SQLException
+  {
+    if(o instanceof FeatureLoc)
+      updateFeatureLoc((FeatureLoc)o);
+    else if(o instanceof Feature)
+      updateFeature((Feature)o);
+    else if(o instanceof FeatureProp)
+      updateFeatureProp((FeatureProp)o);
+    else if(o instanceof FeatureRelationship)
+      updateFeatureRelationship((FeatureRelationship)o);
+  }
+  
+  /**
+   * Save the object to the database (at the end of the current transaction, 
+   * or depending upon flush mode). This method is defined in all the DAOs. 
+   * It's recommended to call it through an appropriate one eg SequenceDaoI 
+   * for FeatureI 
+   * @param o The object to store
+   */
+  public void persist(Object o) throws SQLException
+  {
+    if(o instanceof FeatureProp)
+      insertFeatureProp((FeatureProp)o);
+    else if(o instanceof Feature)
+      insertFeature((Feature)o);
+    else if(o instanceof FeatureDbxref)
+      insertFeatureDbxref((FeatureDbxref)o);
+    else if(o instanceof FeatureSynonym)
+      insertFeatureAlias((FeatureSynonym)o);
+  }
+  
+  /**
+   * Remove the object from the database (at the end of the current transaction, 
+   * or depending upon flush mode). This method is defined in all the DAOs. 
+   * It's recommended to call it through an appropriate one eg SequenceDaoI for 
+   * FeatureI 
+   * @param o The object to delete
+   */
+  public void delete(Object o) throws SQLException
+  {
+    if(o instanceof Feature)
+      deleteFeature((Feature)o);
+    else if(o instanceof FeatureProp)
+      deleteFeatureProp((FeatureProp)o);
+    else if(o instanceof FeatureDbxref)
+      deleteFeatureDbxref((FeatureDbxref)o);
+    else if(o instanceof FeatureSynonym)
+      deleteFeatureSynonym((FeatureSynonym)o);
+  }
+  
+  
+  /**
+   * Update a feature location with the give <code>FeatureLoc</code>
+   * object.
+   * @param featureloc  the new <code>FeatureLoc</code> object.
    * @throws SQLException
    */
-  public void deleteAttributes
-                    (final ChadoTransaction tsn)
+  private void updateFeatureLoc(FeatureLoc featureloc) 
+          throws SQLException
+  {
+    final String sql = "UPDATE featureloc SET fmin=?, fmax=?, rank=?, strand=?, phase=? "+
+                       "WHERE feature_id=(SELECT feature_id FROM feature WHERE uniquename=?)";
+
+    PreparedStatement pstmt = conn.prepareStatement(sql);
+    pstmt.setInt(1, featureloc.getFmin());
+    pstmt.setInt(2, featureloc.getFmax());
+    pstmt.setInt(3, featureloc.getRank());
+    pstmt.setInt(4, featureloc.getStrand());
+    pstmt.setInt(5, featureloc.getPhase());
+    pstmt.setString(6, featureloc.getFeature().getUniquename());
+    appendToLogFile(sql, sqlLog);
+    
+    pstmt.executeUpdate();
+  }
+  
+  /**
+   * Update a feature with a given <code>Feature</code> object.
+   * @param feature the new <code>Feature</code> object.
+   * @throws SQLException
+   */
+  private void updateFeature(Feature feature) 
+          throws SQLException
+  {
+    String sql = "UPDATE feature SET uniquename=?";
+
+    if(feature.getCvterm() != null)
+      sql = sql+", type_id=?";
+    
+    if(feature.getTimelastmodified() != null)
+      sql = sql+", timelastmodified=?";
+
+    sql = sql+"WHERE feature_id=?";
+    
+    PreparedStatement pstmt = conn.prepareStatement(sql);
+    pstmt.setString(1, feature.getUniquename());
+    int param = 2;
+    if(feature.getCvterm() != null)
+    {
+      pstmt.setLong(param, feature.getCvterm().getCvtermId());
+      param++;
+    }
+    
+    if(feature.getTimelastmodified() != null)
+    {
+      pstmt.setTimestamp(param, 
+          feature.getTimelastmodified());
+      param++;
+    }
+    
+    pstmt.setInt(param, feature.getId());
+    appendToLogFile(sql, sqlLog);
+    pstmt.executeUpdate();
+  }
+  
+  /**
+   * Update a feature property with a given <code>FeatureProp</code>
+   * object.
+   * @param featureprop the new <code>FeatureProp</code> object.
+   * @throws SQLException
+   */
+  private void updateFeatureProp(FeatureProp featureprop) 
+          throws SQLException
+  { 
+    String sql = "UPDATE featureprop SET value=? "+
+                 "WHERE rank=? AND type_id=? AND "+
+                 "feature_id=(SELECT feature_id FROM feature WHERE uniquename=?)";
+
+    PreparedStatement pstmt = conn.prepareStatement(sql);
+    pstmt.setString(1,featureprop.getValue());
+    pstmt.setInt(2,featureprop.getRank());
+    pstmt.setLong(3, featureprop.getCvterm().getCvtermId());
+    pstmt.setString(4, featureprop.getFeature().getUniquename());
+    
+    appendToLogFile(sql, sqlLog);
+    pstmt.executeUpdate();
+  }
+  
+
+  /**
+   * Insert attributes defined by the <code>FeatureProp</code>.
+   * @param featureprop     the new <code>FeatureProp</code>
+   * @throws SQLException
+   */
+  private void insertFeatureProp
+                    (final FeatureProp featureprop)
                      throws SQLException
   {
-    StringBuffer sqlBuff;
+    StringBuffer sqlBuff = new StringBuffer();
 
-    List uniquename = tsn.getUniquename();
-    String chadoTable   = tsn.getChadoTable();
-    for(int i=0; i<uniquename.size(); i++)
-    {
-      sqlBuff = new StringBuffer();
+    sqlBuff.append("INSERT INTO featureprop");
+    sqlBuff.append(" ( feature_id, type_id, value, rank ) ");
+    sqlBuff.append("VALUES ");
+    
+    sqlBuff.append("((SELECT feature_id FROM feature WHERE uniquename=");
+    sqlBuff.append("'"+ featureprop.getFeature().getUniquename()+"')," );
+    sqlBuff.append(featureprop.getCvterm().getCvtermId()+", ");
+    sqlBuff.append(featureprop.getValue()+",");
+    sqlBuff.append(featureprop.getRank());
 
-      sqlBuff.append("DELETE FROM "+chadoTable+" WHERE ");
+    appendToLogFile(new String(sqlBuff), sqlLog);
 
-      List constraints = tsn.getConstraint();
-      for(int j=0; j<constraints.size(); j++)
-        sqlBuff.append((String)constraints.get(j)+" AND ");
+    Statement st = conn.createStatement();
+    int rowCount = st.executeUpdate(new String(sqlBuff));
+    System.out.println(rowCount + " row(s) inserted");
+  }
+
+  /**
+   * Delete attributes defined by the <code>FeatureProp</code>.
+   * @param featureprop      the new <code>FeatureProp</code>
+   * @throws SQLException
+   */
+  private void deleteFeatureProp
+                    (final FeatureProp featureprop)
+                     throws SQLException
+  {
+    StringBuffer sqlBuff = new StringBuffer();
+    String uniquename = featureprop.getFeature().getUniquename();
+
+    sqlBuff.append("DELETE FROM featureprop WHERE ");
+
+    if(uniquename != null)
+      sqlBuff.append("feature_id="+
+          "(SELECT feature_id FROM feature WHERE uniquename='"+
+          uniquename+"') AND ");
+    
+    if(featureprop.getRank() > -1)
+      sqlBuff.append("rank="+featureprop.getRank()+" AND ");
+    
+    if(featureprop.getValue() != null)
+      sqlBuff.append("value="+featureprop.getValue()+" AND ");
+    
+    sqlBuff.append("type_id="+featureprop.getCvterm().getCvtermId());
       
-      sqlBuff.append("feature_id=(SELECT feature_id FROM "+
-                     "feature WHERE uniquename='"+
-                     (String)uniquename.get(i)+"')");
+    appendToLogFile(new String(sqlBuff), sqlLog);
 
-      System.out.println(sqlBuff.toString());
-      appendToLogFile(new String(sqlBuff), sqlLog);
-
-      Statement st = conn.createStatement();
-      int rowCount = st.executeUpdate(new String(sqlBuff));
-      System.out.println(rowCount+" row(s) deleted");
-    }
+    Statement st = conn.createStatement();
+    int rowCount = st.executeUpdate(new String(sqlBuff));
+    System.out.println(rowCount+" row(s) deleted");
   }
 
 
   /**
-   * Insert a feature into the database defined by the <code>ChadoTransaction</code>.
-   * @param tsn                 the <code>ChadoTransaction</code>
-   * @parma srcfeature_id       the parent feature identifier
+   * Insert a feature into the database defined by the <code>Feature</code>.
+   * @param feature    the new <code>Feature</code>
    * @throws SQLException
    */
-  public void insertFeature
-                    (final ChadoTransaction tsn, 
-                     final String srcfeature_id)
+  private void insertFeature
+                    (final Feature feature)
                      throws SQLException
   {
     //
     // get the organism_id
     Statement st = conn.createStatement();
     String sql = "SELECT organism_id from " +
-                 "feature where feature_id = '" + srcfeature_id + "'";
+                 "feature where feature_id = '" + 
+                 feature.getFeatureloc().getSrcfeature_id() + "'";
 
     appendToLogFile(sql, sqlLog);
     ResultSet rs = st.executeQuery(sql);
@@ -664,7 +726,6 @@ public class JdbcDAO
 
     final int organism_id = rs.getInt("organism_id");
 
-    Feature chadoFeature = tsn.getChadoFeature();
     // insert new feature into feature table
     StringBuffer sql_buff = new StringBuffer();
     sql_buff.append("INSERT INTO feature (");
@@ -676,9 +737,9 @@ public class JdbcDAO
     sql_buff.append(" ) VALUES ( ");
     sql_buff.append("nextval('feature_feature_id_seq') , ");
     sql_buff.append(organism_id+" , ");
-    sql_buff.append("'"+chadoFeature.getName()+"'"+" , ");
-    sql_buff.append("'"+chadoFeature.getUniquename()+"'"+" , ");
-    sql_buff.append(Long.toString(chadoFeature.getCvterm().getCvtermId()));
+    sql_buff.append("'"+feature.getName()+"'"+" , ");
+    sql_buff.append("'"+feature.getUniquename()+"'"+" , ");
+    sql_buff.append(Long.toString(feature.getCvterm().getCvtermId()));
     sql_buff.append(" )");
 
     sql = new String(sql_buff);
@@ -709,32 +770,61 @@ public class JdbcDAO
     sql_buff.append(" ) VALUES ( ");
     sql_buff.append("nextval('featureloc_featureloc_id_seq') , ");
     sql_buff.append(feature_id+" , ");
-    sql_buff.append(srcfeature_id+" , ");
-    sql_buff.append(chadoFeature.getFeatureloc().getFmin()+" , ");
-    sql_buff.append(chadoFeature.getFeatureloc().getFmax()+" , ");
-    sql_buff.append(chadoFeature.getFeatureloc().getStrand()+" , ");
-    sql_buff.append(chadoFeature.getFeatureloc().getPhase());
+    sql_buff.append(feature.getFeatureloc().getSrcfeature_id()+" , ");
+    sql_buff.append(feature.getFeatureloc().getFmin()+" , ");
+    sql_buff.append(feature.getFeatureloc().getFmax()+" , ");
+    sql_buff.append(feature.getFeatureloc().getStrand()+" , ");
+    sql_buff.append(feature.getFeatureloc().getPhase());
     sql_buff.append(" )");
 
     sql = new String(sql_buff);
     appendToLogFile(sql, sqlLog);
     st = conn.createStatement();
     rowCount = st.executeUpdate(sql);
+    
+    
+//  insert feature relationships
+    if(feature.getFeatureRelationshipsForSubjectId() != null)
+    {
+      List parents = feature.getFeatureRelationshipsForSubjectId();
+      for(int i=0; i<parents.size(); i++)
+      {
+        // insert feature_relationship
+        FeatureRelationship feature_relationship =
+               (FeatureRelationship)parents.get(i);
+        
+        sql_buff = new StringBuffer();
+        sql_buff.append("INSERT INTO feature_relationship ");
+        sql_buff.append("( subject_id, object_id, type_id ) ");
+        sql_buff.append("VALUES ");
+        sql_buff.append("( (SELECT feature_id FROM feature WHERE uniquename='");
+        sql_buff.append(feature_relationship.getSubject().getUniquename()+"'), ");
+        sql_buff.append("(SELECT feature_id FROM feature WHERE uniquename='");
+        sql_buff.append(feature_relationship.getObject().getUniquename()+"'), ");
+        sql_buff.append(feature_relationship.getCvterm().getCvtermId()+")");
+        
+        sql = new String(sql_buff);
+        appendToLogFile(sql, sqlLog);
+        st = conn.createStatement();
+        rowCount = st.executeUpdate(sql);
+        
+      }
+    }
+
   }
 
   /**
    * Delete a feature from the database defined by the 
-   * <code>ChadoTransaction</code>.
-   * @param tsn         the <code>ChadoTransaction</code>
-   * @return	number of rows deleted
+   * <code>Feature</code>.
+   * @param feature  the new <code>Feature</code>
    * @throws SQLException
    */
-  public int deleteFeature
-                    (final ChadoTransaction tsn)
+  private int deleteFeature
+                    (final Feature feature)
                      throws SQLException
   {
     String sql = "DELETE FROM feature WHERE uniquename='"+
-                 tsn.getUniqueName()+"'";
+                 feature.getUniquename()+"'";
     appendToLogFile(sql, sqlLog);
     
     Statement st = conn.createStatement();
@@ -742,20 +832,16 @@ public class JdbcDAO
   }
 
   /**
-   * Insert a dbxref for a feature.
-   * @param tsn           the <code>ChadoTransaction</code>
-   * @return    number of rows changed
+   * Insert a feature_dbxref for a feature.
+   * @param feature_dbxref    the new <code>FeatureDbxref</code>
    * @throws SQLException
    */
-  public int insertFeatureDbxref(final ChadoTransaction tsn)
+  private void insertFeatureDbxref(final FeatureDbxref feature_dbxref)
                      throws SQLException
-  {
-    final FeatureDbxref dbxref = tsn.getFeatureDbxref();
-    final String uniquename  = tsn.getUniqueName();
-    
+  {   
     // find database id
     String sql = "SELECT db_id FROM db WHERE name='"+
-                 dbxref.getDbxref().getDb().getName()+"'";
+                 feature_dbxref.getDbxref().getDb().getName()+"'";
     
     Statement st   = conn.createStatement();
     ResultSet rs   = st.executeQuery(sql);
@@ -763,14 +849,14 @@ public class JdbcDAO
     
     if(!exists)
       throw new SQLException("No database called "+
-                             dbxref.getDbxref().getDb().getName()+
-                             " found (for "+uniquename+
-                             ") check the spelling!");
+          feature_dbxref.getDbxref().getDb().getName()+
+          " found (for "+feature_dbxref.getFeature().getUniquename()+
+          ") check the spelling!");
 
     final int db_id = rs.getInt("db_id");
     // find if accession exists already
     String sqlDbxrefId = "SELECT dbxref_id FROM dbxref WHERE accession='"+
-                          dbxref.getDbxref().getAccession()+"' AND db_id="+db_id;
+           feature_dbxref.getDbxref().getAccession()+"' AND db_id="+db_id;
     
     appendToLogFile(sqlDbxrefId, sqlLog);
     rs     = st.executeQuery(sqlDbxrefId);
@@ -780,7 +866,7 @@ public class JdbcDAO
     {
       // create a new accession entry in dbxref
       sql = "INSERT INTO dbxref ( db_id, accession ) "+
-            "VALUES ("+db_id+", '"+dbxref.getDbxref().getAccession()+"' )";
+            "VALUES ("+db_id+", '"+feature_dbxref.getDbxref().getAccession()+"' )";
       
       appendToLogFile(sql, sqlLog);
       int rowCount = st.executeUpdate(new String(sql));
@@ -796,49 +882,47 @@ public class JdbcDAO
           "(feature_id, dbxref_id, is_current)"+
           " VALUES "+
           "( (SELECT feature_id FROM "+
-             "feature WHERE  uniquename='"+uniquename+"'), "+
-          dbxref_id+", "+ Boolean.toString(dbxref.isCurrent())+")";
+             "feature WHERE  uniquename='"+feature_dbxref.getFeature().getUniquename()+"'), "+
+          dbxref_id+", "+ Boolean.toString(feature_dbxref.isCurrent())+")";
     System.out.println(sql);
     appendToLogFile(sql, sqlLog);
-    return st.executeUpdate(new String(sql));
+    st.executeUpdate(new String(sql));
   }
   
   /**
-   * Delete a dbxref for a feature.
-   * @param tsn           the <code>ChadoTransaction</code>
-   * @return    number of rows changed
+   * Delete a feature_dbxref for a feature.
+   * @param feature_dbxref  the  new <code>FeatureDbxref</code>
    * @throws SQLException
    */
-  public int deleteFeatureDbxref(final ChadoTransaction tsn)
+  private void deleteFeatureDbxref(final FeatureDbxref feature_dbxref)
                      throws SQLException
   {
-    final FeatureDbxref dbxref = tsn.getFeatureDbxref();
-    final String uniquename = tsn.getUniqueName();
+    final String uniquename = feature_dbxref.getFeature().getUniquename();
     
     final String sql = 
       "DELETE FROM feature_dbxref "+
       "WHERE dbxref_id="+
-      "(SELECT dbxref_id FROM dbxref WHERE accession='"+dbxref.getDbxref().getAccession()+"' "+
-             "AND db_id=(SELECT db_id FROM db WHERE name='"+dbxref.getDbxref().getDb().getName()+"'))"+
+      "(SELECT dbxref_id FROM dbxref WHERE accession='"+
+         feature_dbxref.getDbxref().getAccession()+"' "+
+      "AND db_id=(SELECT db_id FROM db WHERE name='"+
+         feature_dbxref.getDbxref().getDb().getName()+"'))"+
       "AND feature_id=(SELECT feature_id FROM "+
              "feature WHERE  uniquename='"+uniquename+"')";
     
     Statement st = conn.createStatement();
-    return st.executeUpdate(sql);
+    st.executeUpdate(sql);
   }
   
   /**
-   * Insert a synonym for a feature.
-   * @param tsn           the <code>ChadoTransaction</code>
-   * @return    number of rows changed
+   * Insert a feature_synonym for a feature.
+   * @param feature_synonym  the new <code>FeatureSynonym</code>
    * @throws SQLException
    */
-  public int insertFeatureAlias(final ChadoTransaction tsn)
+  private void insertFeatureAlias(final FeatureSynonym feature_synonym)
                      throws SQLException
   {
-    final FeatureSynonym alias  = tsn.getAlias();
-    final String uniquename   = alias.getUniquename();
-    final String synonym_name = alias.getSynonym().getName();
+    final String uniquename   = feature_synonym.getFeature().getUniquename();
+    final String synonym_name = feature_synonym.getSynonym().getName();
       
     String sql;
      
@@ -854,7 +938,8 @@ public class JdbcDAO
     if(!exists)
     {
       // create a new synonym name     
-      String type_id = Long.toString(alias.getSynonym().getCvterm().getCvtermId());
+      String type_id =
+        Long.toString(feature_synonym.getSynonym().getCvterm().getCvtermId());
       
       sql = "INSERT INTO "+
             "synonym (name, type_id, synonym_sgml) values ( '"+
@@ -877,21 +962,20 @@ public class JdbcDAO
                " 1)";
  
     appendToLogFile(sql, sqlLog);
-    return st.executeUpdate(sql);
+    st.executeUpdate(sql);
   }
   
   /**
-   * Delete a synonym for a feature.
-   * @param tsn           the <code>ChadoTransaction</code>
+   * Delete a feature_synonym for a feature.
+   * @param feature_synonym  the new <code>FeatureSynonym</code>
    * @return    number of rows changed
    * @throws SQLException
    */
-  public int deleteFeatureAlias(final ChadoTransaction tsn)
+  private void deleteFeatureSynonym(final FeatureSynonym feature_synonym)
                      throws SQLException
   {
-    final FeatureSynonym alias = tsn.getAlias();
-    final String uniquename   = alias.getUniquename();
-    final String synonym_name = alias.getSynonym().getName();
+    final String uniquename   = feature_synonym.getFeature().getUniquename();
+    final String synonym_name = feature_synonym.getSynonym().getName();
     String sql = "SELECT synonym_id FROM synonym WHERE "+
                  "synonym.name='"+synonym_name+"'";
     
@@ -916,41 +1000,31 @@ public class JdbcDAO
       sql = "DELETE FROM synonym WHERE synonym_id="+synonym_id;
     
     st   = conn.createStatement();
-    return st.executeUpdate(sql);
+    st.executeUpdate(sql);
   }
   
   /**
    * Update feature_relationship for a feature.
-   * @param tsn           the <code>ChadoTransaction</code>
-   * @return    number of rows changed
+   * @param feature_relationship  the <code>FeatureRelationship</code>
    * @throws SQLException
    */
-  public void updateFeatureRelationshipsForSubjectId(
-      final ChadoTransaction tsn)
+  private void updateFeatureRelationship(
+      final FeatureRelationship feature_relationship)
                      throws SQLException
-  {
-    final Feature chado_feature = tsn.getChadoFeature();
-    final String parent = tsn.getParent_uniquename();
-    
-      
+  {  
     StringBuffer sqlBuff = new StringBuffer();
     sqlBuff.append("UPDATE feature_relationship ");
     sqlBuff.append(" SET ");
-
-    List properties = tsn.getProperties();
-    for(int i=0; i<properties.size(); i++)
-    {
-      sqlBuff.append((String)properties.get(i));
-      if(i < properties.size()-1)
-        sqlBuff.append(" , ");
-    }
-
-    sqlBuff.append(" WHERE feature_relationship.subject_id="+
-        "(SELECT feature_id FROM feature WHERE uniquename='"+
-        chado_feature.getUniquename()+"') AND "+
-        "feature_relationship.object_id="+
-        "(SELECT feature_id FROM feature WHERE uniquename='"+
-        parent+"')"); 
+    sqlBuff.append(" rank="+feature_relationship.getRank()+", ");
+    sqlBuff.append(" type_id="+feature_relationship.getCvterm().getCvtermId());
+    sqlBuff.append(" WHERE ");
+    sqlBuff.append("subject_id=");
+    sqlBuff.append("( SELECT feature_id FROM feature WHERE uniquename='");
+    sqlBuff.append(feature_relationship.getSubject().getUniquename()+"' ) ");
+    sqlBuff.append("AND ");
+    sqlBuff.append("object_id=");
+    sqlBuff.append("( SELECT feature_id FROM feature WHERE uniquename='");
+    sqlBuff.append(feature_relationship.getObject().getUniquename()+"' ) ");
  
     String sql = sqlBuff.toString();
 
@@ -960,79 +1034,7 @@ public class JdbcDAO
     st.executeUpdate(sql);
   }
   
-  /**
-   * Write the time a feature was last modified
-   * @param uniquename  the unique name of the feature
-   * @param timestamp   the time stamp to use, 
-   *                    if NULL use CURRENT_TIMESTAMP
-   * @return  number of rows changed
-   * @throws SQLException
-   */
-  public int writeTimeLastModified
-                    (final String uniquename,
-                     final Timestamp timestamp)
-                     throws SQLException
-  {
-    String sql = "UPDATE "+
-                 "feature SET timelastmodified=";
-    
-    if(timestamp == null)
-      sql = sql +"CURRENT_TIMESTAMP";
-    else
-      sql = sql +"?";
-      
-    sql = sql + " WHERE uniquename= ?";
-    
-    PreparedStatement pstmt = conn.prepareStatement(sql);
-
-    int param = 1;
-    if(timestamp != null)
-    {
-      pstmt.setTimestamp(param, timestamp);
-      param++;
-    }
-    pstmt.setString(param, uniquename);
-    
-    int rowCount = pstmt.executeUpdate();
-    return rowCount;
-  }
-
-  /**
-   * Write the time a feature was last accessed
-   * @param uniquename  the unique name of the feature
-   * @param timestamp   the time stamp to use, 
-   *                    if NULL use CURRENT_TIMESTAMP
-   * @throws SQLException
-   */
-  public int writeTimeAccessioned
-                    (final String uniquename,
-                     final Timestamp timestamp)
-                     throws SQLException
-  {   
-    String sql = "UPDATE "+
-                 "feature SET timeaccessioned=";
-
-    if(timestamp == null)
-      sql = sql +"CURRENT_TIMESTAMP";
-    else
-      sql = sql +"?";
-
-    sql = sql + " WHERE uniquename= ?";
-
-    PreparedStatement pstmt = conn.prepareStatement(sql);
-
-    int param = 1;
-    if(timestamp != null)
-    {
-      pstmt.setTimestamp(param, timestamp);
-      param++;
-    }
-    pstmt.setString(param, uniquename);
-
-    int rowCount = pstmt.executeUpdate();
-    return rowCount;
-  }
-
+  
   /**
    * Appends a log entry to the log file
    * @param logEntry    entry to add to log file
@@ -1065,9 +1067,7 @@ public class JdbcDAO
         {
           bw.close();
         }
-        catch(IOException ioe2)
-        {
-        }
+        catch(IOException ioe2){}
     }
   }
 

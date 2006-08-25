@@ -9,9 +9,15 @@
  
      <typeAlias alias="Feature"
         type="uk.ac.sanger.artemis.chado.Feature"/>
+     
+     <typeAlias alias="FeatureLoc"
+        type="uk.ac.sanger.artemis.chado.FeatureLoc"/>
+     
+     <typeAlias alias="FeatureProp"
+        type="uk.ac.sanger.artemis.chado.FeatureProp"/>
         
-     <typeAlias alias="ChadoTransaction"
-        type="uk.ac.sanger.artemis.chado.ChadoTransaction"/>
+     <typeAlias alias="FeatureRelationship"
+        type="uk.ac.sanger.artemis.chado.FeatureRelationship"/>
      
     <parameterMap id="schema-cvlist" 
                   class="Feature">
@@ -23,7 +29,7 @@
                class="Feature">
         <result property="timelastmodified" column="timelastmodified"/>
    	    <result property="id" column="id"/>
-  	    <result property="feature_relationship.object_id" column="object_id"/>
+  	    <result property="feature_relationship.object.id" column="object_id"/>
   	    <result property="feature_relationship.cvterm.cvtermId" column="relation_type_id"/>
   	    <result property="feature_relationship.rank" column="rank"/>
         <result property="featureloc.strand" column="strand" nullValue="0"/>
@@ -58,7 +64,7 @@
                                            select="getFeatureRelationship" />  
         <result property="featureRelationshipsForSubjectId" column="{subject_id=id}" 
                                            select="getFeatureRelationship" /> 
-        <result property="featureSynonymsForFeatureId" column="{uniquename=uniquename}" 
+        <result property="featureSynonymsForFeatureId" column="{feature.uniquename=uniquename}" 
                                            select="getLazyFeatureSynonymsByUniquename" />                          
         <result property="organism" column="organism_id" select="getOrganism" />
      </resultMap>
@@ -74,23 +80,23 @@
      </resultMap>
 
      <resultMap id="select-featureprop" 
-                class="uk.ac.sanger.artemis.chado.FeatureProp">
+                class="FeatureProp">
         <result property="value" column="value" />
         <result property="rank" column="rank" />
         <result property="cvterm" column="type_id" select="selectCvterm" />
      </resultMap>
      
      <resultMap id="select-relationship" 
-                class="uk.ac.sanger.artemis.chado.FeatureRelationship">
-        <result property="subject_id" column="subject_id" />
-        <result property="object_id" column="object_id" />
+                class="FeatureRelationship">
+        <result property="subject.id" column="subject_id" />
+        <result property="object.id" column="object_id" />
         <result property="value" column="value" />
         <result property="rank" column="rank" />
         <result property="cvterm" column="type_id" select="selectCvterm" />
      </resultMap>
      
      <resultMap id="select-location"
-                class="uk.ac.sanger.artemis.chado.FeatureLoc">
+                class="FeatureLoc">
         <result property="srcfeature_id" column="srcfeature_id" nullValue="-999" />
         <result property="fmin"   column="fmin"   nullValue="-999" />
         <result property="fmax"   column="fmax"   nullValue="-999" />
@@ -134,30 +140,7 @@
      </select>
      
 
-     <!-- get feature id -->
-     <select id="getFeatureID" parameterClass="ChadoTransaction"
-                               resultClass="Feature">
-        SELECT feature_id AS id, uniquename FROM feature WHERE
-        <dynamic>
-          <isNotNull property="uniquename">
-            <iterate property="uniquename" conjunction="OR">
-               feature.uniquename='$uniquename[]$'
-            </iterate>
-          </isNotNull>
-          
-          <isNotNull property="parents">
-            <iterate property="parents" conjunction="OR">
-               feature.uniquename='$parents[]$'
-            </iterate>
-          </isNotNull>
-          
-          <isNotNull property="derives_from">
-            <iterate property="derives_from" conjunction="OR">
-               feature.uniquename='$derives_from[]$'
-            </iterate>
-          </isNotNull>
-        </dynamic>
-     </select>
+     <!-- get feature -->
 
      <select id="getFeature" parameterClass="Feature" 
                              resultMap="select-feature">
@@ -193,7 +176,7 @@
      </select>
  
      <select id="getLazyFeature" resultMap ="select-feature-lazy" 
-                            parameterClass="Feature">
+                                 parameterClass="Feature">
 	 SELECT
 	    timelastmodified,
 	 	f.feature_id AS id,
@@ -212,18 +195,18 @@
           
           <isNotNull property="uniquename">                                 
             <isNotNull property="featureSynonymsForFeatureId">
-              <iterate property="featureSynonymsForFeatureId" conjunction="OR" open="(" close=" OR">
+              <iterate property="featureSynonymsForFeatureId" conjunction="OR" open="(" close=") OR">
                f.feature_id=#featureSynonymsForFeatureId[].feature_id#
              </iterate>
             </isNotNull>
-            uniquename LIKE #uniquename# OR name LIKE #uniquename# ) AND              
+            uniquename LIKE #uniquename# OR name LIKE #uniquename# AND              
           </isNotNull>
           
           <isGreaterThan property="cvterm.cvtermId" compareValue="0"> 
             feature.type_id=$cvterm.cvtermId$ AND
           </isGreaterThan>
        </dynamic>
-         f.feature_id > 0
+         f.feature_id > 0 
     </select>
 
     <select id="getSchema" resultClass="java.lang.String">
@@ -270,61 +253,60 @@
     </select>
 
 
-    <!--  WRITE BACK METHODS -->
-    <update id="updateAttributes" 
-            parameterClass="ChadoTransaction">
-      UPDATE $chadoTable$
-      SET
-      <iterate property="properties" conjunction=",">
-         $properties[]$
-      </iterate>
-
-      <isNotEqual property="chadoTable" compareValue="feature">
-        FROM feature
-      </isNotEqual>
-
-      WHERE
-           feature.feature_id=$chadoTable$.feature_id AND (
-      <iterate property="uniquename" conjunction="OR">
-           feature.uniquename='$uniquename[]$'
-      </iterate>
-      )
-      <dynamic>
-        <isNotNull property="constraint">
-           <iterate prepend="AND" property="constraint" conjunction="AND">
-             $constraint[]$
-           </iterate>
-        </isNotNull>
-      </dynamic>
+    <!--  WRITE BACK METHODS  -->
+    
+    <!--  UPDATE  -->
+    <update id="updateFeatureLoc" 
+            parameterClass="FeatureLoc">
+      UPDATE featureloc
+      SET fmin=$fmin$, fmax=$fmax$, rank=$rank$, strand=$strand$, phase=$phase$
+      WHERE 
+      <isNotNull property="feature.uniquename">
+        feature_id=(SELECT feature_id FROM feature WHERE uniquename=#feature.uniquename#)
+      </isNotNull>
     </update>
-
-    <insert id="insertAttributes" 
-            parameterClass="ChadoTransaction">
-      INSERT INTO $chadoTable$
-      ( 
-        feature_id 
-        <iterate prepend="," property="propertiesName" conjunction="," >
-          $propertiesName[]$
-        </iterate>
-      ) VALUES
-      (
-        $feature_id$
-        <iterate prepend="," property="propertiesValue" conjunction="," >
-          $propertiesValue[]$
-        </iterate>
-      )
+    
+    <update id="updateFeature"
+            parameterClass="Feature">
+      UPDATE feature
+      SET uniquename=#uniquename#
+      <isNotNull property="cvterm.cvtermId">
+        , type_id=$cvterm.cvtermId$
+      </isNotNull>
+      <isNotNull property="timelastmodified">
+        , timelastmodified=#timelastmodified#
+      </isNotNull>
+      WHERE feature_id=$id$
+    </update>
+    
+    <update id="updateFeatureProp"
+            parameterClass="FeatureProp">
+      UPDATE featureprop
+      SET value=#value#   
+      WHERE rank=$rank$ AND type_id=$cvterm.cvtermId$ AND 
+            feature_id=(SELECT feature_id FROM feature WHERE uniquename=#feature.uniquename#)
+    </update>
+    
+    <update id="updateFeatureRelationshipsForSubjectId" 
+           parameterClass="FeatureRelationship">
+      UPDATE feature_relationship
+      SET
+        rank=$rank$, type_id=$cvterm.cvtermId$
+      WHERE subject_id=
+           ( SELECT feature_id FROM feature WHERE uniquename=#subject.uniquename# )
+      AND   object_id=
+           ( SELECT feature_id FROM feature WHERE uniquename=#object.uniquename# )
+   </update>
+    
+    <!--  INSERT  -->
+    <insert id="insertFeatureProp"
+            parameterClass="FeatureProp">
+      INSERT INTO featureprop
+      ( feature_id, type_id, value, rank )
+      VALUES
+      ( (SELECT feature_id FROM feature WHERE uniquename=#feature.uniquename#),
+        $cvterm.cvtermId$, #value#, $rank$ )
     </insert>
-
-    <delete id="deleteAttributes" 
-            parameterClass="ChadoTransaction">
-      DELETE FROM $chadoTable$
-      WHERE
-        <iterate property="constraint" conjunction="AND">
-          $constraint[]$
-        </iterate>
-        AND
-        feature_id=$feature_id$
-    </delete>
 
     <insert id="insertFeature" 
             parameterClass="Feature">
@@ -352,32 +334,42 @@
           $featureloc.phase$ )
     </insert>
 
+   <insert id="insertFeatureRelationship" 
+           parameterClass="FeatureRelationship">
+      INSERT INTO feature_relationship
+        ( subject_id, object_id, type_id )
+      VALUES
+        ( (SELECT feature_id FROM feature WHERE uniquename=#subject.uniquename#),
+          (SELECT feature_id FROM feature WHERE uniquename=#object.uniquename#),
+          $cvterm.cvtermId$ )
+   </insert>
+   
+
+   <!--  DELETE  -->
+   
+   <delete id="deleteFeatureProp"
+           parameterClass="FeatureProp">
+      DELETE FROM featureprop
+      WHERE
+        <isNotNull property="feature.uniquename">
+          feature_id=
+            (SELECT feature_id FROM feature WHERE uniquename=#feature.uniquename#)
+          AND
+        </isNotNull>
+        <isGreaterThan property="rank" compareValue="-1">
+           rank=$rank$ AND
+        </isGreaterThan>
+        <isNotNull property="value">
+          value=#value# AND
+        </isNotNull>
+        type_id=$cvterm.cvtermId$
+   </delete>
+   
    <delete id="deleteFeature" 
            parameterClass="Feature">
       DELETE FROM feature
       WHERE uniquename=#uniquename#
    </delete>
    
-   <insert id="insertFeatureRelationship" 
-           parameterClass="Feature">
-      INSERT INTO feature_relationship
-        ( subject_id, object_id, type_id )
-      VALUES
-        ( $feature_relationship.subject_id$,
-          $feature_relationship.object_id$,
-          (SELECT cvterm_id FROM cvterm WHERE name=#feature_relationship.cvterm.name#) )
-   </insert>
 
-   <update id="updateFeatureRelationshipsForSubjectId" 
-           parameterClass="ChadoTransaction">
-      UPDATE feature_relationship
-      SET
-      <iterate property="properties" conjunction=",">
-         $properties[]$
-      </iterate>
-      WHERE feature_relationship.subject_id=
-           ( SELECT feature_id FROM feature WHERE uniquename=#chadoFeature.uniquename# )
-      AND   feature_relationship.object_id=
-           ( SELECT feature_id FROM feature WHERE uniquename=#parent_uniquename# )
-   </update>
 </sqlMap> 

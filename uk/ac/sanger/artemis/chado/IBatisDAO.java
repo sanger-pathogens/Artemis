@@ -296,85 +296,87 @@ public class IBatisDAO implements ChadoDAO
 //
 // WRITE BACK
 //
+  
   /**
-   *
-   * Update attributes defined by the <code>Transaction</code>.
-   * @param tsn         the <code>Transaction</code>
-   * @return	number of rows changed
-   * @throws SQLException
+   * Merge (update) an already persistent object back to the database (at the end of 
+   * the current transaction, or depending upon flush mode). This method is defined in 
+   * all the DAOs. It's recommended to call it through an appropriate one eg SequenceDaoI
+   *  for FeatureI 
+   * 
+   * @param o The object to merge
+   * @throws SQLException 
    */
-  public int updateAttributes
-                    (final ChadoTransaction tsn)
-                     throws SQLException 
-  { 
-    return sqlMap.update("updateAttributes", tsn);
+  public void merge(Object o) throws SQLException
+  {
+    if(o instanceof FeatureLoc)
+      sqlMap.update("updateFeatureLoc", o);
+    else if(o instanceof Feature)
+      sqlMap.update("updateFeature", o);
+    else if(o instanceof FeatureProp)
+      sqlMap.update("updateFeatureProp", o);
+    else if(o instanceof FeatureRelationship)
+      sqlMap.update("updateFeatureRelationshipsForSubjectId", o);
+  }
+  
+  
+  /**
+   * Save the object to the database (at the end of the current transaction, 
+   * or depending upon flush mode). This method is defined in all the DAOs. 
+   * It's recommended to call it through an appropriate one eg SequenceDaoI 
+   * for FeatureI 
+   * @param o The object to store
+   * @throws SQLException 
+   */
+  public void persist(Object o) throws SQLException
+  {
+    if(o instanceof FeatureProp)
+      sqlMap.insert("insertFeatureProp", o);
+    else if(o instanceof Feature)
+      insertFeature((Feature)o);
+    else if(o instanceof FeatureDbxref)
+      insertFeatureDbxref((FeatureDbxref)o);
+    else if(o instanceof FeatureSynonym)
+      insertFeatureAlias((FeatureSynonym)o);
+  }
+  
+  
+  /**
+   * Remove the object from the database (at the end of the current transaction, 
+   * or depending upon flush mode). This method is defined in all the DAOs. 
+   * It's recommended to call it through an appropriate one eg SequenceDaoI for 
+   * FeatureI 
+   * @param o The object to delete
+   */
+  public void delete(Object o) throws SQLException
+  {
+    if(o instanceof Feature)
+      sqlMap.delete("deleteFeature", o);
+    else if(o instanceof FeatureProp)
+      sqlMap.delete("deleteFeatureProp", o);
+    else if(o instanceof FeatureDbxref)
+      sqlMap.delete("deleteFeatureDbxref", o);
+    else if(o instanceof FeatureSynonym)
+      deleteFeatureSynonym((FeatureSynonym)o);
   }
 
-  /**
-   * Insert attributes defined by the <code>Transaction</code>.
-   * @param tsn         the <code>Transaction</code>
-   * @throws SQLException
-   */
-  public void insertAttributes
-                    (final ChadoTransaction tsn)
-                     throws SQLException
-  {
-    // get the feature id's
-    List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
-
-    for(int i=0; i<feature_ids.size(); i++)
-    {
-      tsn.setFeature_id( ((Feature)feature_ids.get(i)).getId() );
-      sqlMap.insert("insertAttributes", tsn);
-    }
-  }
 
   /**
-   * Delete attributes defined by the <code>Transaction</code>.
-   * @param tsn         the <code>Transaction</code>
+   * Insert a feature into the database defined by the <code>Feature</code>.
+   * @param feature   the feature to insert
    * @throws SQLException
    */
-  public void deleteAttributes
-                    (final ChadoTransaction tsn)
+  private void insertFeature
+                    (final Feature feature)
                      throws SQLException
   {
-    // get the feature id's
-    List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
-
-    for(int i=0; i<feature_ids.size(); i++)
-    {
-      tsn.setFeature_id( ((Feature)feature_ids.get(i)).getId() );
-      sqlMap.delete("deleteAttributes", tsn);
-    }
-  }
-
-  /**
-   * Insert a feature into the database defined by the <code>Transaction</code>.
-   * @param tsn                 the <code>Transaction</code>
-   * @parma srcfeature_id       the parent feature identifier
-   * @throws SQLException
-   */
-  public void insertFeature
-                    (final ChadoTransaction tsn,
-                     final String srcfeature_id)
-                     throws SQLException
-  {
-    // get the organism id from the srcfeature_id 
-    Feature feature = new Feature();
-    FeatureLoc featureloc = new FeatureLoc();
-    feature.setFeatureloc(featureloc);
-    
-    featureloc.setSrcfeature_id(Integer.parseInt(srcfeature_id));
-    
     Integer organism_id = (Integer)sqlMap.queryForObject("getOrganismID", feature);
 
     //
     // insert feature into feature table
-    Feature chadoFeature = tsn.getChadoFeature();
     Organism organism = new Organism();
     organism.setId(organism_id.intValue());
-    chadoFeature.setOrganism(organism);  
-    sqlMap.insert("insertFeature", chadoFeature);
+    feature.setOrganism(organism);  
+    sqlMap.insert("insertFeature", feature);
 
     //
     // get the current feature_id sequence value
@@ -383,229 +385,114 @@ public class IBatisDAO implements ChadoDAO
 
     //
     // insert feature location into featureloc
-    chadoFeature.getFeatureloc().setSrcfeature_id(Integer.parseInt(srcfeature_id));
-    chadoFeature.setId(feature_id);
-    sqlMap.insert("insertFeatureLoc", chadoFeature);
+    feature.setId(feature_id);
+    sqlMap.insert("insertFeatureLoc", feature);
     
-    // insert feature relationship
-    if(tsn.getParents() != null || 
-       tsn.getDerives_from() != null)
+    // insert feature relationships
+    if(feature.getFeatureRelationshipsForSubjectId() != null)
     {
-      List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
+      List parents = feature.getFeatureRelationshipsForSubjectId();
       
-      for(int i=0; i<feature_ids.size(); i++)
+      for(int i=0; i<parents.size(); i++)
       {
         FeatureRelationship feature_relationship =
-              new FeatureRelationship();
-        feature_relationship.setObject_id( ((Feature)feature_ids.get(i)).getId() );
-        feature_relationship.setSubject_id(feature_id);
-        
-        Cvterm cvterm = new Cvterm();
-        if(tsn.getParents().contains( 
-            ((Feature)feature_ids.get(i)).getUniquename() ))
-          cvterm.setName("part_of");
-        else
-          cvterm.setName("derives_from");
-          
-        feature_relationship.setCvterm(cvterm);
-        chadoFeature.setFeature_relationship(feature_relationship);
-        sqlMap.insert("insertFeatureRelationship", chadoFeature);
+               (FeatureRelationship)parents.get(i);
+        sqlMap.insert("insertFeatureRelationship", feature_relationship);
       }
-   
     }
   }
 
-
   /**
-   * Delete a feature from the database defined by the <code>Transaction</code>.
-   * @param tsn         the <code>Transaction</code>
-   * @return    number of rows deleted
+   * Insert a feature_dbxref for a feature.
+   * @param feature_dbxref    the <code>FeatureDbxref</code>
    * @throws SQLException
    */
-  public int deleteFeature
-                    (final ChadoTransaction tsn)
+  private void insertFeatureDbxref(final FeatureDbxref feature_dbxref)
                      throws SQLException
   {
-    Feature chadoFeature = new Feature();
-    chadoFeature.setUniquename(tsn.getUniqueName());
-
-    return sqlMap.delete("deleteFeature", chadoFeature);
-  }
-
-  /**
-   * Insert a dbxref for a feature.
-   * @param tsn           the <code>Transaction</code>
-   * @return    number of rows changed
-   * @throws SQLException
-   */
-  public int insertFeatureDbxref(final ChadoTransaction tsn)
-                     throws SQLException
-  {
-    FeatureDbxref dbxref = tsn.getFeatureDbxref();
-    
     Integer db_id = (Integer)sqlMap.queryForObject("getDbId", 
-                                 dbxref.getDbxref().getDb());
+                         feature_dbxref.getDbxref().getDb());
+    
+    System.out.print(db_id.intValue());
+
+    
     if(db_id == null)
       throw new SQLException("No database called "+
-                             dbxref.getDbxref().getDb().getName()+" found (for "+
-                             tsn.getUniqueName()+
-                             ") check the spelling!");
+          feature_dbxref.getDbxref().getDb().getName()+" found (for "+
+          feature_dbxref.getFeature().getUniquename()+
+          ") check the spelling!");
     
-    dbxref.getDbxref().setDb_id(db_id.intValue());
+    feature_dbxref.getDbxref().setDb_id(db_id.intValue());
     
-    Integer dbxref_id = (Integer)sqlMap.queryForObject("getDbxrefId", dbxref.getDbxref());
+    Integer dbxref_id = 
+      (Integer)sqlMap.queryForObject("getDbxrefId", feature_dbxref.getDbxref());
     if(dbxref_id == null)
     {
       // create a new accession entry in dbxref
-      sqlMap.insert("insertDbxref", dbxref.getDbxref());
+      sqlMap.insert("insertDbxref", feature_dbxref.getDbxref());
       // now get the new dbxref_id
-      dbxref_id = (Integer)sqlMap.queryForObject("getDbxrefId", dbxref.getDbxref());
+      dbxref_id = (Integer)sqlMap.queryForObject("getDbxrefId", 
+          feature_dbxref.getDbxref());
     }
     
-    dbxref.setDbxref_id(dbxref_id.intValue());
+    feature_dbxref.setDbxref_id(dbxref_id.intValue());
     
-    //  get the feature id's
-    List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
-    dbxref.setFeature_id( ((Feature)feature_ids.get(0)).getId() );
-    
-    sqlMap.insert("insertFeatureDbxref", dbxref);
+    //  get the feature id's  
+    Feature feature = getFeatureByUniqueName(
+        feature_dbxref.getFeature().getUniquename());
+    feature_dbxref.getFeature().setId( feature.getId() );
 
-    return 1;
+    sqlMap.insert("insertFeatureDbxref", feature_dbxref);
   }
   
-  /**
-   * Delete a dbxref for a feature.
-   * @param tsn           the <code>Transaction</code>
-   * @return    number of rows changed
-   * @throws SQLException
-   */
-  public int deleteFeatureDbxref(final ChadoTransaction tsn)
-                     throws SQLException
-  {
-    FeatureDbxref dbxref = tsn.getFeatureDbxref();
-    
-    // get the feature id's
-    List feature_ids = sqlMap.queryForList("getFeatureID", tsn);
-    
-    dbxref.setFeature_id( ((Feature)feature_ids.get(0)).getId() );
-    return sqlMap.delete("deleteFeatureDbxref", dbxref);
-  }
   
   /**
-   * Insert a synonym for a feature.
-   * @param tsn           the <code>Transaction</code>
-   * @return    number of rows changed
+   * Insert a feature_synonym for a feature.
+   * @param feature_synonym    the <code>FeatureSynonym</code>
    * @throws SQLException
    */
-  public int insertFeatureAlias(final ChadoTransaction tsn)
+  private void insertFeatureAlias(final FeatureSynonym feature_synonym)
                      throws SQLException
   {
-    final FeatureSynonym alias = tsn.getAlias();
-    
     Synonym synonym  = 
       (Synonym)sqlMap.queryForObject("getSynonymByNameAndType", 
-          alias.getSynonym());
+          feature_synonym.getSynonym());
     
     if(synonym == null)
     {
       // create a new synonym name     
-      sqlMap.insert("insertAlias", alias);
+      sqlMap.insert("insertAlias", feature_synonym);
       
       synonym  =
         (Synonym)sqlMap.queryForObject("getSynonymByNameAndType", 
-            alias.getSynonym());
+            feature_synonym.getSynonym());
     }
     
-    alias.setSynonym_id(synonym.getSynonym_id());
-    sqlMap.insert("insertFeatureAlias", alias);
-    return 1;
+    feature_synonym.setSynonym_id(synonym.getSynonym_id());
+    sqlMap.insert("insertFeatureAlias", feature_synonym);
   }
   
   /**
-   * Delete a synonym for a feature.
-   * @param tsn           the <code>Transaction</code>
-   * @return    number of rows changed
+   * Delete a feature_synonym for a feature.
+   * @param feature_synonym     the <code>FeatureSynonym</code>
    * @throws SQLException
    */
-  public int deleteFeatureAlias(final ChadoTransaction tsn)
+  private int deleteFeatureSynonym(final FeatureSynonym feature_synonym)
                      throws SQLException
   {
-    final FeatureSynonym alias = tsn.getAlias();
-     
     List feature_synonym_list = 
-      sqlMap.queryForList("getFeatureSynonymsByName", alias.getSynonym());
+      sqlMap.queryForList("getFeatureSynonymsByName", feature_synonym.getSynonym());
     
     final FeatureSynonym synonym = 
       (FeatureSynonym)feature_synonym_list.get(0); 
-    alias.setSynonym_id(synonym.getSynonym().getSynonym_id());
+    feature_synonym.setSynonym_id(synonym.getSynonym().getSynonym_id());
     
     // check this name is not used some where else, 
     // i.e. in more than one row
     if(feature_synonym_list.size() > 1)
-      return sqlMap.delete("deleteFeatureAlias", alias);
+      return sqlMap.delete("deleteFeatureAlias", feature_synonym);
     else
-      return sqlMap.delete("deleteAlias", alias);
-  }
-  
-  /**
-   * Update feature_relationship for a feature.
-   * @param tsn           the <code>Transaction</code>
-   * @return    number of rows changed
-   * @throws SQLException
-   */
-  public void updateFeatureRelationshipsForSubjectId(
-      final ChadoTransaction tsn)
-                     throws SQLException
-  { 
-    sqlMap.update("updateFeatureRelationshipsForSubjectId", tsn);
-  }
-  
-  /**
-   * Write the time a feature was last modified
-   * @param uniquename  the unique name of the feature
-   * @param timestamp   the time stamp to use, 
-   *                    if NULL use CURRENT_TIMESTAMP
-   * @return  number of rows changed
-   * @throws SQLException
-   */
-  public int writeTimeLastModified
-                    (final String uniquename,
-                     final Timestamp timestamp)
-                     throws SQLException
-  {
-    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                                                uniquename, "feature", 
-                                                null, null);
-    if(timestamp == null)
-      tsn.addProperty("timelastmodified", "CURRENT_TIMESTAMP");
-    else
-      tsn.addProperty("timelastmodified", "'"+ timestamp.toString() + "'");
-    
-    return updateAttributes(tsn);
-  }
-
-  /**
-   * Write the time a feature was last accessed
-   * @param uniquename  the unique name of the feature
-   * @param timestamp   the time stamp to use, 
-   *                    if NULL use CURRENT_TIMESTAMP
-   * @return  number of rows changed
-   * @throws SQLException
-   */
-  public int writeTimeAccessioned
-                    (final String uniquename,
-                     final Timestamp timestamp)
-                     throws SQLException
-  {
-    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                                                uniquename, "feature", 
-                                                null, null);
-    if(timestamp == null)
-      tsn.addProperty("timelastmodified", "CURRENT_TIMESTAMP");
-    else
-      tsn.addProperty("timelastmodified", "'"+ timestamp.toString() + "'");
-    
-    return updateAttributes(tsn);
+      return sqlMap.delete("deleteAlias", feature_synonym);
   }
   
   public void startTransaction() throws SQLException
@@ -647,7 +534,9 @@ public class IBatisDAO implements ChadoDAO
 
       if(i < feature_size - 1)
         featNext = (Feature)list.get(i + 1);
-
+      else
+        featNext = null;
+      
       // merge next line if part of the same feature
       while(featNext != null && featNext.getUniquename().equals(name))
       {
@@ -679,7 +568,7 @@ public class IBatisDAO implements ChadoDAO
     for(int i = 0; i < list.size(); i++)
     {
       FeatureDbxref dbxref = (FeatureDbxref)list.get(i);
-      Integer feature_id = new Integer(dbxref.getFeature_id());
+      Integer feature_id = new Integer(dbxref.getFeature().getId());
       String value = dbxref.getDbxref().getDb().getName() + ":" + 
                      dbxref.getDbxref().getAccession();
       if(dbxrefHash.containsKey(feature_id))
@@ -698,7 +587,4 @@ public class IBatisDAO implements ChadoDAO
     return dbxrefHash;
   }
 
-
-
 }
-

@@ -29,7 +29,7 @@ package uk.ac.sanger.artemis.chado;
  */
 public class FeatureProp
 {
-  
+  public Feature feature;
   public Cvterm cvterm;
   public String value;
   public int rank;
@@ -92,5 +92,15 @@ public class FeatureProp
   public void setRank(int rank)
   {
     this.rank = rank;
+  }
+
+  public Feature getFeature()
+  {
+    return feature;
+  }
+
+  public void setFeature(Feature feature)
+  {
+    this.feature = feature;
   }
 }
