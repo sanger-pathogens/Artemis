@@ -196,7 +196,7 @@
           <isNotNull property="uniquename">                                 
             <isNotNull property="featureSynonymsForFeatureId">
               <iterate property="featureSynonymsForFeatureId" conjunction="OR" open="(" close=") OR">
-               f.feature_id=#featureSynonymsForFeatureId[].feature_id#
+               f.feature_id=#featureSynonymsForFeatureId[].feature.id#
              </iterate>
             </isNotNull>
             uniquename LIKE #uniquename# OR name LIKE #uniquename# AND              
