@@ -362,6 +362,15 @@ public class DatabaseDocument extends Document
       instream = new ByteArrayInputStream(entry.getBytes());
       return instream;
     }
+    catch(RuntimeException re)
+    {
+      JOptionPane.showMessageDialog(null, "Problems Reading...\n" +
+          re.getMessage(),
+          "Problems Reading From the Database ",
+          JOptionPane.ERROR_MESSAGE);
+      
+      re.printStackTrace();
+    }
     catch(java.sql.SQLException sqlExp)
     {
       JOptionPane.showMessageDialog(null, "Problems Reading...\n" +
@@ -418,10 +427,8 @@ public class DatabaseDocument extends Document
    * @param parentFeatureID     the parent identifier for the features to 
    *                            extract
    * @return   the <code>ByteBuffer</code> array of GFF lines
-   * @throws java.sql.SQLException
    */
   private ByteBuffer[] getGff(ChadoDAO dao, String parentFeatureID)
-                       throws java.sql.SQLException
   {
     final int srcfeature_id = Integer.parseInt(parentFeatureID);
     
@@ -493,7 +500,6 @@ public class DatabaseDocument extends Document
    */
   private Hashtable getAllFeatureSynonyms(final ChadoDAO dao, 
           final String uniquename) 
-          throws SQLException
   {
     List list = dao.getFeatureSynonymsByUniquename(uniquename);  
     
@@ -841,7 +847,7 @@ public class DatabaseDocument extends Document
         cvterm.put(new Long(cv.getCvtermId()), cv.getName());
       }
     }
-    catch(SQLException sqle)
+    catch(RuntimeException sqle)
     {
       System.err.println("SQLException retrieving CvTerms");
       System.err.println(sqle);
@@ -858,7 +864,6 @@ public class DatabaseDocument extends Document
    * @throws java.sql.SQLException
    */
   private ByteBuffer getChadoSequence(ChadoDAO dao, ByteBuffer buff)
-                     throws java.sql.SQLException
   {
     Feature feature = dao.getFeatureById(Integer.parseInt(feature_id));
  
@@ -947,7 +952,7 @@ public class DatabaseDocument extends Document
         ((IBatisDAO) dao).commitTransaction();
       
     }
-    catch(java.sql.SQLException sqlExp)
+    catch(RuntimeException sqlExp)
     {
       JOptionPane.showMessageDialog(null, "SQL Problems...\n"+
                                     sqlExp.getMessage(), 
@@ -1175,13 +1180,11 @@ public class DatabaseDocument extends Document
    * @param schema      the schema
    * @param uniquename  the feature uniquename
    * @param timestamp   the last read feature timestamp
-   * @throws SQLException
    */
   public boolean checkFeatureTimestamp(final String schema,
                                        final String uniquename,
                                        final Timestamp timestamp,
                                        final ChadoDAO dao)
-                                       throws SQLException
   {
     Feature feature = dao.getFeatureByUniqueName(uniquename);
     if(feature == null)
@@ -1268,6 +1271,10 @@ public class DatabaseDocument extends Document
     catch(SQLException sqle)
     {
       sqle.printStackTrace();
+    }
+    catch(RuntimeException re)
+    {
+      re.printStackTrace();
     }
     catch(ConnectException e)
     {

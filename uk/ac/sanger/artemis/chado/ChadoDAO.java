@@ -41,8 +41,7 @@ public interface ChadoDAO
    * @param id the systematic id
    * @return the Feature, or null
    */
-  public Feature getFeatureById(int id)
-                      throws SQLException;
+  public Feature getFeatureById(int id);
 
   /**
    * Return a features with this systematic id
@@ -50,8 +49,7 @@ public interface ChadoDAO
    * @param name the systematic id
    * @return the Feature, or null
    */
-  public Feature getFeatureByUniqueName(String name)
-                      throws SQLException;
+  public Feature getFeatureByUniqueName(String name);
   
   /**
    * This can be used to get individual features or children.
@@ -61,8 +59,7 @@ public interface ChadoDAO
    * @return	the <code>List</code> of child <code>Feature</code> objects
    * @throws SQLException
    */
-   public List getFeaturesByLocatedOnFeature(Feature parent)
-                         throws SQLException;
+   public List getFeaturesByLocatedOnFeature(Feature parent);
   
    /**
     * Return a list of features with any current (ie non-obsolete) name or synonym
@@ -70,8 +67,7 @@ public interface ChadoDAO
     * @param name the lookup name
     * @return a (possibly empty) List<Feature> of children with this current name
     */
-   public List getFeaturesByAnyCurrentName(String name)
-                 throws SQLException;
+   public List getFeaturesByAnyCurrentName(String name);
    
    /**
     * Return a list of features with this name or synonym (including obsolete names)
@@ -89,39 +85,30 @@ public interface ChadoDAO
    * @param cvterm_ids list of cvterm_id/type_id's
    * @param schema      schema/organism name or null
    * @return	the <code>List</code> of <code>Feature</code> objects
-   * @throws SQLException
    */
   public List getResidueFeatures(List cvterm_ids,
-                                 final String schema)
-                     throws SQLException;
+                                 final String schema);
 
   /**
    * For a schema return the type_id's with residues.
    * @param schema      schema/organism name or null
    * @return 	the <code>List</code> of type_id's as <code>String</code>
    *            objects
-   * @throws SQLException
    */
-  public List getResidueType(String schema)
-                     throws SQLException;
+  public List getResidueType(String schema);
 
   /**
    * Get available schemas (as a <code>List</code> of <code>String</code>       
    * objects).
    * @return    the available schemas
-   * @throws SQLException
    */
-  public List getSchema()
-              throws SQLException;
+  public List getSchema();
 
   /**
-   * Get the full list of cvterm_id and name as a <code>List</code> of 
-   * <code>Cvterm</code> objects.
+   * Get the all the <code>Cvterm</code> objects as a<code>List</code>.
    * @return	the full list of cvterm_id and name
-   * @throws SQLException
    */
-  public List getCvterm()
-              throws SQLException;
+  public List getCvterm();
   
 
   /**
@@ -129,20 +116,16 @@ public interface ChadoDAO
    * @param uniquename  the unique name for the feature. If set to NULL
    *                    all <code>FeatureDbxref</code> are returned.
    * @return a <code>List</code> of feature_dbxrefs.
-   * @throws SQLException
    */
-  public List getFeatureDbxrefByUniquename(final String uniquename)
-              throws SQLException;
+  public List getFeatureDbxrefByUniquename(final String uniquename);
   
   /**
    * Return a list of FeatureSynonyms for a uniquename
    * @param uniquename  the unique name for the feature. If set to NULL
    *                    all <code>FeatureSynonym</code> are returned.
    * @return
-   * @throws SQLException
    */
-  public List getFeatureSynonymsByUniquename(final String uniquename)
-         throws SQLException;
+  public List getFeatureSynonymsByUniquename(final String uniquename);
   
   /**
    * Return a synonym of the given name and type if it exists
@@ -151,8 +134,7 @@ public interface ChadoDAO
    * @param type the type of the Synonym
    * @return a Synonym, or null  
    */
-  public Synonym getSynonymByNameAndCvTerm(String name, Cvterm type)
-         throws SQLException;
+  public Synonym getSynonymByNameAndCvTerm(String name, Cvterm type);
   
   
   /**
@@ -163,8 +145,7 @@ public interface ChadoDAO
    * @return a (possibly empty) List<FeatureSynonym>
    */
   public List getFeatureSynonymsByFeatureAndSynonym(
-         Feature feature, Synonym synonym)
-         throws SQLException;
+         Feature feature, Synonym synonym);
   
   
 //
@@ -178,7 +159,7 @@ public interface ChadoDAO
    * through an appropriate one eg SequenceDaoI for FeatureI 
    * @param o The object to merge
    */
-  public void merge(Object o) throws SQLException;
+  public void merge(Object o);
   
   /**
    * Save the object to the database (at the end of the current transaction, 
@@ -187,7 +168,7 @@ public interface ChadoDAO
    * for FeatureI 
    * @param o The object to store
    */
-  public void persist(Object o) throws SQLException;
+  public void persist(Object o);
   
   /**
    * Remove the object from the database (at the end of the current transaction, 
@@ -196,6 +177,6 @@ public interface ChadoDAO
    * FeatureI 
    * @param o The object to delete
    */
-  public void delete(Object o) throws SQLException;
+  public void delete(Object o);
   
 }
