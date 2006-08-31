@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.26 2006-08-31 09:03:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.27 2006-08-31 12:36:15 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -327,6 +327,69 @@ public class GeneViewerPanel extends JPanel
       }
     });
     menu.add(createFeature);
+    
+    
+    
+    JMenuItem adjustCoords = new JMenuItem("Adjust selected transcripts coordinates boundary");
+    adjustCoords.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)  
+      {
+        FeatureVector features = selection.getAllFeatures();
+        if(features.size() != 1)
+          JOptionPane.showMessageDialog(null, 
+              "Select a single transcript and try again.", 
+              "Transcript Selection",
+              JOptionPane.ERROR_MESSAGE);
+        
+        List transcripts = chado_gene.getTranscripts();
+        uk.ac.sanger.artemis.Feature transcript = features.elementAt(0);
+        if(transcripts.contains(transcript.getEmblFeature()))
+        {
+          Set children = chado_gene.getChildren(transcript.getEmblFeature());
+          int transcript_start = Integer.MAX_VALUE;
+          int transcript_end = -1;
+          
+          Iterator it = children.iterator();
+          
+          while(it.hasNext())
+          {
+            Feature feature = (Feature)it.next();
+            Range range = feature.getLocation().getTotalRange();
+            if(range.getStart() < transcript_start)
+              transcript_start = range.getStart();
+            if(range.getEnd() > transcript_end)
+              transcript_end = range.getEnd();
+          }
+          
+          Location new_location;
+          try
+          {
+            new_location = new Location(
+                new Range(transcript_start, transcript_end));
+            transcript.setLocation(new_location);
+          }
+          catch(OutOfRangeException e)
+          {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+          catch(ReadOnlyException e)
+          {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+
+        }
+        else
+          JOptionPane.showMessageDialog(null, 
+              "Select a single transcript and try again.", 
+              "Transcript Selection",
+              JOptionPane.ERROR_MESSAGE);
+      }
+    });
+    menu.add(adjustCoords);
+    
   }
   
   /**
