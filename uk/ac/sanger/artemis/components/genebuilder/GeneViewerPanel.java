@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.25 2006-08-22 13:00:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.26 2006-08-31 09:03:15 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -1218,7 +1218,8 @@ public class GeneViewerPanel extends JPanel
   private void deleteFeature(uk.ac.sanger.artemis.Feature feature) 
           throws ReadOnlyException
   {
-    feature.removeFromEntry();
+    if(feature != null && feature.getEntry() != null)
+      feature.removeFromEntry();
   }
   
   private void deleteAllFeature(uk.ac.sanger.artemis.Feature feature)
@@ -1286,15 +1287,29 @@ public class GeneViewerPanel extends JPanel
           return;
         
         click_range = null;
-        selection.clear();
+        
+        if(!e.isShiftDown())
+          selection.clear();
         Object feature = getFeatureAt(e.getPoint());
         if(feature == null)
           return;      
         
-        if(feature instanceof Feature)
-          selection.set((uk.ac.sanger.artemis.Feature)((Feature)feature).getUserData());
+        if(e.isShiftDown())
+        {
+          if(feature instanceof Feature)
+            selection.add(
+                (uk.ac.sanger.artemis.Feature)((Feature)feature).getUserData());
+          else
+            selection.add((FeatureSegment)feature);
+        }
         else
-          selection.set((FeatureSegment)feature);
+        {
+          if(feature instanceof Feature)
+            selection.set(
+                (uk.ac.sanger.artemis.Feature)((Feature)feature).getUserData());
+          else
+            selection.set((FeatureSegment)feature);
+        }
 
         repaint();
       }
