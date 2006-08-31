@@ -30,6 +30,10 @@ import java.sql.SQLException;
 import java.util.List;
 import com.ibatis.sqlmap.client.SqlMapClient;
 
+/**
+ * Wrapper for com.ibatis.sqlmap.client.SqlMapClient, so that
+ * RuntimeExceptions are thrown rather than SQLExceptions.
+ */
 public class SqlMapClientWrapper 
 {
   
