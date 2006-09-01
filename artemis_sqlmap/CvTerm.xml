@@ -5,7 +5,7 @@
     "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
  
 
-<sqlMap namespace="Cvterm"> 
+<sqlMap namespace="CvTerm"> 
 
     <typeAlias alias="CvTerm"
         type="uk.ac.sanger.artemis.chado.CvTerm"/>

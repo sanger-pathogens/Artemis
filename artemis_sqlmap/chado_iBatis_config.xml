@@ -49,9 +49,9 @@
          are relative to the classpath.  --> 
  
   <sqlMap resource="artemis_sqlmap/Organism.xml" /> 
-  <sqlMap resource="artemis_sqlmap/Cvterm.xml" />
+  <sqlMap resource="artemis_sqlmap/CvTerm.xml" />
   <sqlMap resource="artemis_sqlmap/Feature.xml" />
-  <sqlMap resource="artemis_sqlmap/Dbxref.xml" />
+  <sqlMap resource="artemis_sqlmap/DbXRef.xml" />
   <sqlMap resource="artemis_sqlmap/Synonym.xml" />
   
 </sqlMapConfig> 
