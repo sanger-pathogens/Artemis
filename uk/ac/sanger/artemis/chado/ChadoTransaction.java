@@ -24,9 +24,6 @@
 
 package uk.ac.sanger.artemis.chado;
 
-import java.util.List;
-import java.util.Vector;
-import java.util.StringTokenizer;
 import java.sql.Timestamp;
 
 import uk.ac.sanger.artemis.io.GFFStreamFeature;

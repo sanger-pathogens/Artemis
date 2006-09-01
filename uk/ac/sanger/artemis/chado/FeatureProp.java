@@ -30,26 +30,26 @@ package uk.ac.sanger.artemis.chado;
 public class FeatureProp
 {
   public Feature feature;
-  public Cvterm cvterm;
+  public CvTerm cvTerm;
   public String value;
   public int rank;
 
   /**
    * Get the cv term
-   * @return cvterm
+   * @return cvTerm
    */
-  public Cvterm getCvterm()
+  public CvTerm getCvTerm()
   {
-    return cvterm;
+    return cvTerm;
   }
   
   /**
    * Set the cv term
-   * @param cvterm
+   * @param cvTerm
    */
-  public void setCvterm(Cvterm cvterm)
+  public void setCvTerm(CvTerm cvTerm)
   {
-    this.cvterm = cvterm;
+    this.cvTerm = cvTerm;
   }
   
   /**

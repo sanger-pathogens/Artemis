@@ -27,9 +27,9 @@ package uk.ac.sanger.artemis.chado;
 /**
  * Representation of the chado dbxref table.
  */
-public class Dbxref
+public class DbXRef
 { 
-  private int db_id;
+  private int dbXRefId;
   private String accession;
   private String version;
   private String description;
@@ -55,14 +55,14 @@ public class Dbxref
     this.db = db;
   }
 
-  public int getDb_id()
+  public int getDbXRefId()
   {
-    return db_id;
+    return dbXRefId;
   }
 
-  public void setDb_id(int db_id)
+  public void setDbXRefId(int dbXRefId)
   {
-    this.db_id = db_id;
+    this.dbXRefId = dbXRefId;
   }
 
   public String getDescription()

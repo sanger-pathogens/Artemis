@@ -29,6 +29,7 @@ import java.sql.Timestamp;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.List;
+import java.util.Collection;
 
 
 /**
@@ -47,7 +48,7 @@ public class Feature
   /** sequence length */
   private int length;
   /** features unique name */
-  private String uniquename = null;
+  private String uniqueName = null;
   /** features name */
   private String name;
   /** features residues */
@@ -56,8 +57,8 @@ public class Feature
   private boolean analysis;
   /** whether this feature has been obsoleted */
   private boolean obsolete;
-  /** feature cvterm */
-  private Cvterm cvterm;
+  /** feature cvTerm */
+  private CvTerm cvTerm;
   /** feature property */
   private FeatureProp featureprop;
   /** feature location (for a given srcfeature) */
@@ -67,23 +68,23 @@ public class Feature
   /** feature organism */
   private Organism organism;
   /** optional primary public stable identifier */
-  private FeatureDbxref feature_dbxref;
+  private FeatureDbXRef featureDbXRef;
   /** merged featureprops */
   private Hashtable qualifiers;
   /** list of FeatureProp */
-  private List featurepropList;
+  private Collection featurepropList;
   /** list of FeatureRelationship children */
-  private List featureRelationshipsForObjectId;
+  private Collection featureRelationshipsForObjectId;
   /** list of FeatureRelationship parent */
-  private List featureRelationshipsForSubjectId;
+  private Collection featureRelationshipsForSubjectId;
   /** list of feature dbxrefs (FeatureDbxref) */
-  private List featureDbxrefs;
+  private Collection featureDbXRefs;
   /** list of feature locations for a feature_id */
-  private List featurelocsForFeatureId;
+  private Collection featurelocsForFeatureId;
   /** used by getResidueFeatures */
-  private List featureCvterms;
+  private Collection featureCvTerms;
   /** list of feature synonyms */
-  private List featureSynonymsForFeatureId;
+  private Collection featureSynonymsForFeatureId;
 
 
 
@@ -165,9 +166,9 @@ public class Feature
    * must be unique for this type of feature within this organism.
    * @return	the unique name for a feature.
    */
-  public String getUniquename()
+  public String getUniqueName()
   {
-    return uniquename;
+    return uniqueName;
   }
 
   /**
@@ -176,9 +177,9 @@ public class Feature
    * must be unique for this type of feature within this organism.
    * @param uniquename	the unique name for a feature.
    */
-  public void setUniquename(String uniquename)
+  public void setUniqueName(String uniqueName)
   {
-    this.uniquename = uniquename;
+    this.uniqueName = uniqueName;
   }
 
   /**
@@ -258,23 +259,23 @@ public class Feature
   }
   
   /**
-  * A reference to a table:cvterm giving the feature type. 
+  * A reference to a table:cvTerm giving the feature type. 
   * This will typically be a Sequence Ontology identifier. 
-  * @return the feature SO cvterm
+  * @return the feature SO cvTerm
   */
-  public Cvterm getCvterm()
+  public CvTerm getCvTerm()
   {
-    return cvterm;
+    return cvTerm;
   }
 
   /**
-  * A reference to a table:cvterm giving the feature type. 
+  * A reference to a table:cvTerm giving the feature type. 
   * This will typically be a Sequence Ontology identifier.
-  * @param cvterm  the feature SO cvterm
+  * @param cvTerm  the feature SO cvTerm
   */
-  public void setCvterm(Cvterm cvterm)
+  public void setCvTerm(CvTerm cvTerm)
   {
-    this.cvterm = cvterm;
+    this.cvTerm = cvTerm;
   }
   
   /**
@@ -358,9 +359,9 @@ public class Feature
    * Secondary identifiers and external dbxrefs go in table:feature_dbxref
    * @return
    */
-  public FeatureDbxref getFeature_dbxref()
+  public FeatureDbXRef getFeatureDbXRef()
   {
-    return feature_dbxref;
+    return featureDbXRef;
   }
 
   /**
@@ -368,19 +369,19 @@ public class Feature
    * Secondary identifiers and external dbxrefs go in table:feature_dbxref
    * @param dbxref
    */
-  public void setFeature_dbxref(FeatureDbxref feature_dbxref)
+  public void setFeatureDbXRef(FeatureDbXRef featureDbXRef)
   {
-    this.feature_dbxref = feature_dbxref;
+    this.featureDbXRef = featureDbXRef;
   }
 
-  public List getFeatureCvterms()
+  public Collection getFeatureCvTerms()
   {
-    return featureCvterms;
+    return featureCvTerms;
   }
 
-  public void setFeatureCvterms(List featureCvterms)
+  public void setFeatureCvTerms(Collection featureCvTerms)
   {
-    this.featureCvterms = featureCvterms;
+    this.featureCvTerms = featureCvTerms;
   }
 
   /**
@@ -388,7 +389,7 @@ public class Feature
    * @return  featurepropList a <code>List</code> of featureprop's
    *          for a feature.
    */
-  public List getFeaturepropList()
+  public Collection getFeaturepropList()
   {
     return featurepropList;
   }
@@ -398,14 +399,14 @@ public class Feature
    * @param featurepropList a <code>List</code> of featureprop's
    *        for a feature.
    */
-  public void setFeaturepropList(List featurepropList)
+  public void setFeaturepropList(Collection featurepropList)
   {
     this.featurepropList = featurepropList;
     
     for(int i=0; i<featurepropList.size(); i++)
     {
-      FeatureProp featureprop = (FeatureProp)featurepropList.get(i);
-      addQualifier(featureprop.getCvterm().getCvtermId(), featureprop);
+      FeatureProp featureprop = (FeatureProp)(((List)featurepropList).get(i));
+      addQualifier(featureprop.getCvTerm().getCvTermId(), featureprop);
     }
   }
   
@@ -413,7 +414,7 @@ public class Feature
    * Get a list of <code>FeatureRelationship</code> children
    * @return
    */
-  public List getFeatureRelationshipsForObjectId()
+  public Collection getFeatureRelationshipsForObjectId()
   {
     return featureRelationshipsForObjectId;
   }
@@ -423,7 +424,7 @@ public class Feature
    * @param featureRelationshipsForObjectId
    */
   public void setFeatureRelationshipsForObjectId(
-      List featureRelationshipsForObjectId)
+      Collection featureRelationshipsForObjectId)
   {
     this.featureRelationshipsForObjectId = featureRelationshipsForObjectId;
   }
@@ -432,7 +433,7 @@ public class Feature
    * Get a list of <code>FeatureRelationship</code> parent
    * @return
    */
-  public List getFeatureRelationshipsForSubjectId()
+  public Collection getFeatureRelationshipsForSubjectId()
   {
     return featureRelationshipsForSubjectId;
   }
@@ -442,7 +443,7 @@ public class Feature
    * @param featureRelationshipsForSubjectId
    */
   public void setFeatureRelationshipsForSubjectId(
-      List featureRelationshipsForSubjectId)
+      Collection featureRelationshipsForSubjectId)
   {
     this.featureRelationshipsForSubjectId = featureRelationshipsForSubjectId;
   }
@@ -451,25 +452,25 @@ public class Feature
    * Get a list of feature dbxrefs (<code>FeatureDbxref</code>)
    * @return
    */
-  public List getFeatureDbxrefs()
+  public Collection getFeatureDbXRefs()
   {
-    return featureDbxrefs;
+    return featureDbXRefs;
   }
 
   /**
    * Set a list of feature dbxrefs (<code>FeatureDbxref</code>)
    * @param featureDbxrefs
    */
-  public void setFeatureDbxrefs(List featureDbxrefs)
+  public void setFeatureDbXRefs(Collection featureDbXRefs)
   {
-    this.featureDbxrefs = featureDbxrefs;
+    this.featureDbXRefs = featureDbXRefs;
   }
 
   /**
    * Get list of feature locations for a feature_id
    * @return
    */
-  public List getFeaturelocsForFeatureId()
+  public Collection getFeaturelocsForFeatureId()
   {
     return featurelocsForFeatureId;
   }
@@ -478,17 +479,17 @@ public class Feature
    * Set a list of feature locations for a feature_id
    * @param featurelocsForFeatureId
    */
-  public void setFeaturelocsForFeatureId(List featurelocsForFeatureId)
+  public void setFeaturelocsForFeatureId(Collection featurelocsForFeatureId)
   {
     this.featurelocsForFeatureId = featurelocsForFeatureId;
   }
   
-  public List getFeatureSynonymsForFeatureId()
+  public Collection getFeatureSynonymsForFeatureId()
   {
     return featureSynonymsForFeatureId;
   }
 
-  public void setFeatureSynonymsForFeatureId(List featureSynonymsForFeatureId)
+  public void setFeatureSynonymsForFeatureId(Collection featureSynonymsForFeatureId)
   {
     this.featureSynonymsForFeatureId = featureSynonymsForFeatureId;
   }
@@ -497,9 +498,9 @@ public class Feature
   
   /**
    * Used in merging the qualifiers to store them as a <code>Hashtable</code> of
-   * the cvterm type_id (of the property name) and the property values as a 
+   * the cvTerm type_id (of the property name) and the property values as a 
    * <code>Vector</code>.
-   * @param	the cvterm type_id of the property name
+   * @param	the cvTerm type_id of the property name
    * @param	the property value	
    */
   public void addQualifier(long prop_type_id, FeatureProp featprop)
@@ -523,7 +524,7 @@ public class Feature
   }
 
   /**
-   * Get the qualifiers which are stored as a <code>Hashtable</code> of cvterm
+   * Get the qualifiers which are stored as a <code>Hashtable</code> of cvTerm
    * type_id (of the property name) and the property values as a <code>Vector</code>.
    * @return	the qualifiers as a <code>Hashtable</code>
    */

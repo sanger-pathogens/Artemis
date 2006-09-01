@@ -1,4 +1,4 @@
-/* Cvterm.java
+/* CvTerm.java
  *
  * created: 2005
  *
@@ -28,24 +28,24 @@ package uk.ac.sanger.artemis.chado;
 /**
  * Representation of cvterm table.
  */
-public class Cvterm
+public class CvTerm
 {
-  private long cvtermId;
+  private long cvTermId;
   private String name;
   private Cv cv;
-  private Dbxref dbxref;
+  private DbXRef dbXRef;
   private String definition;
   private int isObsolete;
   private int isRelationshiptype;
   
-  public long getCvtermId()
+  public long getCvTermId()
   {
-    return cvtermId;
+    return cvTermId;
   }
 
-  public void setCvtermId(long cvtermId)
+  public void setCvTermId(long cvTermId)
   {
-    this.cvtermId = cvtermId;
+    this.cvTermId = cvTermId;
   }
 
   /**
@@ -53,9 +53,9 @@ public class Cvterm
    * Note that a cvterm may have multiple secondary dbxrefs.
    * @return
    */
-  public Dbxref getDbxref()
+  public DbXRef getDbXRef()
   {
-    return dbxref;
+    return dbXRef;
   }
 
   /**
@@ -63,9 +63,9 @@ public class Cvterm
    * Note that a cvterm may have multiple secondary dbxrefs.
    * @param dbxref
    */
-  public void setDbxref(Dbxref dbxref)
+  public void setDbXRef(DbXRef dbXRef)
   {
-    this.dbxref = dbxref;
+    this.dbXRef = dbXRef;
   }
 
   public Cv getCv()

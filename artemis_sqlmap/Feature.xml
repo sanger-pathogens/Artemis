@@ -22,7 +22,7 @@
     <parameterMap id="schema-cvlist" 
                   class="Feature">
        <parameter property="schema" javaType="java.lang.String"/>
-       <parameter property="featureCvterms" javaType="java.util.List"/>
+       <parameter property="featureCvTerms" javaType="java.util.List"/>
     </parameterMap> 
 
     <resultMap id="select-feature" 
@@ -30,15 +30,15 @@
         <result property="timelastmodified" column="timelastmodified"/>
    	    <result property="id" column="id"/>
   	    <result property="feature_relationship.object.id" column="object_id"/>
-  	    <result property="feature_relationship.cvterm.cvtermId" column="relation_type_id"/>
+  	    <result property="feature_relationship.cvTerm.cvTermId" column="relation_type_id"/>
   	    <result property="feature_relationship.rank" column="rank"/>
         <result property="featureloc.strand" column="strand" nullValue="0"/>
         <result property="featureloc.fmin" column="fmin" nullValue="-1"/>
         <result property="featureloc.fmax" column="fmax" nullValue="0"/>
         <result property="featureloc.phase" column="phase" nullValue="10"/>
-        <result property="uniquename" column="uniquename"/>
-        <result property="cvterm.cvtermId" column="type_id"/>
-        <result property="featureprop.cvterm.cvtermId" column="prop_type_id" nullValue="0"/>
+        <result property="uniqueName" column="uniquename"/>
+        <result property="cvTerm.cvTermId" column="type_id"/>
+        <result property="featureprop.cvTerm.cvTermId" column="prop_type_id" nullValue="0"/>
         <result property="featureprop.value" column="value"/>
         <result property="featureprop.rank" column="prop_rank" nullValue="0"/>
      </resultMap>
@@ -49,22 +49,22 @@
                class="Feature">       
         <result property="timelastmodified" column="timelastmodified"/>
    	    <result property="id" column="id"/>
-        <result property="uniquename" column="uniquename"/>
+        <result property="uniqueName" column="uniquename"/>
         <result property="name" column="name"/>
         <result property="length" column="length" nullValue="-999" />
         <result property="residues" column="residues" />
-        <result property="cvterm" column="type_id" select="selectCvterm" />
+        <result property="cvTerm" column="type_id" select="selectCvterm" />
         <result property="featurelocsForFeatureId" column="{id=id}" 
                                                    select="getFeatureLoc" />
         <result property="featurepropList" column="{feature_id=id}" 
                                            select="selectFeatureProp" />
-        <result property="featureDbxrefs" column="{id=id}"
-                                          select="getFeatureDbxref" />
+        <result property="featureDbXRefs" column="{id=id}"
+                                          select="getFeatureDbXRef" />
         <result property="featureRelationshipsForObjectId" column="{object_id=id}" 
                                            select="getFeatureRelationship" />  
         <result property="featureRelationshipsForSubjectId" column="{subject_id=id}" 
                                            select="getFeatureRelationship" /> 
-        <result property="featureSynonymsForFeatureId" column="{feature.uniquename=uniquename}" 
+        <result property="featureSynonymsForFeatureId" column="{feature.uniqueName=uniqueName}" 
                                            select="getLazyFeatureSynonymsByUniquename" />                          
         <result property="organism" column="organism_id" select="getOrganism" />
      </resultMap>
@@ -74,16 +74,16 @@
                 class="Feature">
         <result property="organism.abbreviation" column="abbreviation"/>
         <result property="name" column="name"/>
-        <result property="uniquename" column="uniquename"/>
+        <result property="uniqueName" column="uniquename"/>
         <result property="id" column="feature_id"/>
-        <result property="cvterm.cvtermId" column="type_id"/>
+        <result property="cvTerm.cvTermId" column="type_id"/>
      </resultMap>
 
      <resultMap id="select-featureprop" 
                 class="FeatureProp">
         <result property="value" column="value" />
         <result property="rank" column="rank" />
-        <result property="cvterm" column="type_id" select="selectCvterm" />
+        <result property="cvTerm" column="type_id" select="selectCvterm" />
      </resultMap>
      
      <resultMap id="select-relationship" 
@@ -92,7 +92,7 @@
         <result property="object.id" column="object_id" />
         <result property="value" column="value" />
         <result property="rank" column="rank" />
-        <result property="cvterm" column="type_id" select="selectCvterm" />
+        <result property="cvTerm" column="type_id" select="selectCvterm" />
      </resultMap>
      
      <resultMap id="select-location"
@@ -168,8 +168,8 @@
              <isGreaterThan property="featureloc.srcfeature_id" compareValue="0"> 
                srcfeature_id=$featureloc.srcfeature_id$ 
              </isGreaterThan>
-             <isNotNull property="uniquename">                        
-               uniquename LIKE #uniquename# 
+             <isNotNull property="uniqueName">                        
+               uniquename LIKE #uniqueName# 
              </isNotNull>
            </dynamic>    
         ORDER BY f.type_id,  uniquename
@@ -193,17 +193,17 @@
             f.feature_id=$id$ AND
           </isGreaterThan>
           
-          <isNotNull property="uniquename">                                 
+          <isNotNull property="uniqueName">                                 
             <isNotNull property="featureSynonymsForFeatureId">
               <iterate property="featureSynonymsForFeatureId" conjunction="OR" open="(" close=") OR">
                f.feature_id=#featureSynonymsForFeatureId[].feature.id#
              </iterate>
             </isNotNull>
-            uniquename LIKE #uniquename# OR name LIKE #uniquename# AND              
+            uniquename LIKE #uniqueName# OR name LIKE #uniqueName# AND              
           </isNotNull>
           
-          <isGreaterThan property="cvterm.cvtermId" compareValue="0"> 
-            feature.type_id=$cvterm.cvtermId$ AND
+          <isGreaterThan property="cvTerm.cvTermId" compareValue="0"> 
+            feature.type_id=$cvTerm.cvTermId$ AND
           </isGreaterThan>
        </dynamic>
          f.feature_id > 0 
@@ -233,8 +233,8 @@
        FROM organism, $schema$.feature WHERE
          organism.organism_id=$schema$.feature.organism_id AND
          residues notnull
-         <iterate prepend="AND" property="featureCvterms" conjunction="OR" open="(" close=")">
-           type_id=#featureCvterms[]#
+         <iterate prepend="AND" property="featureCvTerms" conjunction="OR" open="(" close=")">
+           type_id=#featureCvTerms[]#
          </iterate>
        ORDER BY abbreviation
     </select>
@@ -261,17 +261,17 @@
       UPDATE featureloc
       SET fmin=$fmin$, fmax=$fmax$, rank=$rank$, strand=$strand$, phase=$phase$
       WHERE 
-      <isNotNull property="feature.uniquename">
-        feature_id=(SELECT feature_id FROM feature WHERE uniquename=#feature.uniquename#)
+      <isNotNull property="feature.uniqueName">
+        feature_id=(SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#)
       </isNotNull>
     </update>
     
     <update id="updateFeature"
             parameterClass="Feature">
       UPDATE feature
-      SET uniquename=#uniquename#
-      <isNotNull property="cvterm.cvtermId">
-        , type_id=$cvterm.cvtermId$
+      SET uniquename=#uniqueName#
+      <isNotNull property="cvTerm.cvTermId">
+        , type_id=$cvTerm.cvTermId$
       </isNotNull>
       <isNotNull property="timelastmodified">
         , timelastmodified=#timelastmodified#
@@ -283,19 +283,19 @@
             parameterClass="FeatureProp">
       UPDATE featureprop
       SET value=#value#   
-      WHERE rank=$rank$ AND type_id=$cvterm.cvtermId$ AND 
-            feature_id=(SELECT feature_id FROM feature WHERE uniquename=#feature.uniquename#)
+      WHERE rank=$rank$ AND type_id=$cvTerm.cvTermId$ AND 
+            feature_id=(SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#)
     </update>
     
     <update id="updateFeatureRelationshipsForSubjectId" 
            parameterClass="FeatureRelationship">
       UPDATE feature_relationship
       SET
-        rank=$rank$, type_id=$cvterm.cvtermId$
+        rank=$rank$, type_id=$cvTerm.cvTermId$
       WHERE subject_id=
-           ( SELECT feature_id FROM feature WHERE uniquename=#subject.uniquename# )
+           ( SELECT feature_id FROM feature WHERE uniquename=#subject.uniqueName# )
       AND   object_id=
-           ( SELECT feature_id FROM feature WHERE uniquename=#object.uniquename# )
+           ( SELECT feature_id FROM feature WHERE uniquename=#object.uniqueName# )
    </update>
     
     <!--  INSERT  -->
@@ -304,8 +304,8 @@
       INSERT INTO featureprop
       ( feature_id, type_id, value, rank )
       VALUES
-      ( (SELECT feature_id FROM feature WHERE uniquename=#feature.uniquename#),
-        $cvterm.cvtermId$, #value#, $rank$ )
+      ( (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#),
+        $cvTerm.cvTermId$, #value#, $rank$ )
     </insert>
 
     <insert id="insertFeature" 
@@ -316,8 +316,8 @@
         ( nextval('feature_feature_id_seq'),
           $organism.id$,
           #name#,
-          #uniquename#,
-          $cvterm.cvtermId$ )
+          #uniqueName#,
+          $cvTerm.cvTermId$ )
     </insert>
 
     <insert id="insertFeatureLoc" 
@@ -339,9 +339,9 @@
       INSERT INTO feature_relationship
         ( subject_id, object_id, type_id )
       VALUES
-        ( (SELECT feature_id FROM feature WHERE uniquename=#subject.uniquename#),
-          (SELECT feature_id FROM feature WHERE uniquename=#object.uniquename#),
-          $cvterm.cvtermId$ )
+        ( (SELECT feature_id FROM feature WHERE uniquename=#subject.uniqueName#),
+          (SELECT feature_id FROM feature WHERE uniquename=#object.uniqueName#),
+          $cvTerm.cvTermId$ )
    </insert>
    
 
@@ -351,9 +351,9 @@
            parameterClass="FeatureProp">
       DELETE FROM featureprop
       WHERE
-        <isNotNull property="feature.uniquename">
+        <isNotNull property="feature.uniqueName">
           feature_id=
-            (SELECT feature_id FROM feature WHERE uniquename=#feature.uniquename#)
+            (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#)
           AND
         </isNotNull>
         <isGreaterThan property="rank" compareValue="-1">
@@ -362,13 +362,13 @@
         <isNotNull property="value">
           value=#value# AND
         </isNotNull>
-        type_id=$cvterm.cvtermId$
+        type_id=$cvTerm.cvTermId$
    </delete>
    
    <delete id="deleteFeature" 
            parameterClass="Feature">
       DELETE FROM feature
-      WHERE uniquename=#uniquename#
+      WHERE uniquename=#uniqueName#
    </delete>
    
 

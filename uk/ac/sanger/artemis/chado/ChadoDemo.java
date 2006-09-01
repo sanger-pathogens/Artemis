@@ -251,22 +251,22 @@ public class ChadoDemo
     int row = result_table.getSelectedRow();
     StringBuffer attr_buff = new StringBuffer();
     Feature chado_feature = (Feature)featureList.get(row);
-    List attributes = chado_feature.getFeaturepropList();
-    List dbxrefs    = chado_feature.getFeatureDbxrefs();
+    List attributes = (List)chado_feature.getFeaturepropList();
+    List dbxrefs    = (List)chado_feature.getFeatureDbXRefs();
 
     if(dbxrefs.size() > 0)
     {
       attr_buff.append("/Dbxref=");
       for(int i = 0; i < dbxrefs.size(); i++)
       {
-        FeatureDbxref dbxref = (FeatureDbxref) dbxrefs.get(i);
-        attr_buff.append(dbxref.getDbxref().getDb().getName() + ":"
-            + dbxref.getDbxref().getAccession() + "; ");
+        FeatureDbXRef dbxref = (FeatureDbXRef) dbxrefs.get(i);
+        attr_buff.append(dbxref.getDbXRef().getDb().getName() + ":"
+            + dbxref.getDbXRef().getAccession() + "; ");
       }
       attr_buff.append("\n");
     }
 
-    List synonyms = chado_feature.getFeatureSynonymsForFeatureId();
+    List synonyms = (List)chado_feature.getFeatureSynonymsForFeatureId();
 
     // append synonyms
     if(synonyms.size() > 0)
@@ -277,7 +277,7 @@ public class ChadoDemo
       {
         alias = (FeatureSynonym) synonyms.get(i);
         attr_buff.append("/");
-        attr_buff.append(alias.getSynonym().getCvterm().getName() + "=");
+        attr_buff.append(alias.getSynonym().getCvTerm().getName() + "=");
         attr_buff.append(alias.getSynonym().getName());
 
         attr_buff.append(";");
@@ -290,7 +290,7 @@ public class ChadoDemo
       {
         FeatureProp featprop = (FeatureProp) attributes.get(i);
 
-        attr_buff.append("/" + featprop.getCvterm().getName() + "="
+        attr_buff.append("/" + featprop.getCvTerm().getName() + "="
             + GFFStreamFeature.decode(featprop.getValue()) + "\n");
       }
 
@@ -332,7 +332,7 @@ public class ChadoDemo
       feature = (Feature) featureList.get(i);
       
       // assume only one featureloc
-      List locs = feature.getFeaturelocsForFeatureId();
+      List locs = (List)feature.getFeaturelocsForFeatureId();
       
       if(locs.size() > 0)
       {
@@ -348,10 +348,10 @@ public class ChadoDemo
       if(ind > 0)
         schema = schema.substring(0,ind)+schema.substring(ind+1);
       
-      System.out.println("get featur type_id.......");
+      System.out.println("get feature type_id.......");
       rowData[i][0] = schema;
-      rowData[i][1] = feature.getUniquename();
-      rowData[i][2] = feature.getCvterm().getName();
+      rowData[i][1] = feature.getUniqueName();
+      rowData[i][2] = feature.getCvTerm().getName();
       //rowData[i][2] = (String)cvterm.get(new Long(feature.getType_id()));
       rowData[i][3] = Integer.toString(feature.getId());
       rowData[i][6] = feature.getTimelastmodified().toString();

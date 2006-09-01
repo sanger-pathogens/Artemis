@@ -34,7 +34,7 @@ public class FeatureRelationship
   /** id of the parent feature */
   public Feature object;
   /** cv term of feature relationship (e.g. part_of) */
-  public Cvterm cvterm;
+  public CvTerm cvTerm;
   /** Additional notes/comments */
   public String value;
   /** ordering of subject features */
@@ -43,21 +43,21 @@ public class FeatureRelationship
   /**
    * Get the cv term for the relationship type between 
    * subject and object (e.g. part_of).
-   * @return cvterm
+   * @return cvTerm
    */
-  public Cvterm getCvterm()
+  public CvTerm getCvTerm()
   {
-    return cvterm;
+    return cvTerm;
   }
   
   /**
    * Set the cv term for the relationship type between 
    * subject and object (e.g. part_of).
-   * @param cvterm
+   * @param cvTerm
    */
-  public void setCvterm(Cvterm cvterm)
+  public void setCvTerm(CvTerm cvTerm)
   {
-    this.cvterm = cvterm;
+    this.cvTerm = cvTerm;
   }
   
   /**

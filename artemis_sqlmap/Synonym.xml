@@ -23,7 +23,7 @@
    	    <result property="synonym.synonym_id" column="synonym_id"/>
    	    <result property="synonym.name" column="name"/>
    	    <result property="synonym.synonym_sgml" column="synonym_sgml"/>
-  	    <result property="synonym.cvterm.cvtermId" column="type_id" />
+  	    <result property="synonym.cvTerm.cvTermId" column="type_id" />
      </resultMap>
      
      <resultMap id="select-alias-part-lazy" 
@@ -50,7 +50,7 @@
         <result property="synonym_id" column="synonym_id"/>
    	    <result property="name" column="name"/>
    	    <result property="synonym_sgml" column="synonym_sgml"/>
-  	    <result property="cvterm" column="type_id" select="selectCvterm"/>
+  	    <result property="cvTerm" column="type_id" select="selectCvterm"/>
      </resultMap>
      
      
@@ -62,7 +62,7 @@
       FROM feature_synonym fs 
       LEFT JOIN feature f ON f.feature_id=fs.feature_id 
       LEFT JOIN synonym s ON fs.synonym_id=s.synonym_id 
-      <isNotNull property="uniquename">                        
+      <isNotNull property="uniqueName">                        
           WHERE uniquename=#uniquename#
       </isNotNull>
     </select>
@@ -72,8 +72,8 @@
       SELECT fs.* 
       FROM feature_synonym fs 
       LEFT JOIN feature f ON f.feature_id=fs.feature_id 
-      <isNotNull property="feature.uniquename">                        
-          WHERE uniquename=#feature.uniquename#
+      <isNotNull property="feature.uniqueName">                        
+          WHERE uniquename=#feature.uniqueName#
       </isNotNull>
     </select>
     
@@ -91,8 +91,8 @@
         <isNotNull property="name">
           name=#name# AND
         </isNotNull>
-        <isNotNull property="cvterm">
-          type_id=$cvterm.cvtermId$ AND
+        <isNotNull property="cvTerm">
+          type_id=$cvTerm.cvTermId$ AND
         </isNotNull> 
         synonym_id > 0
     </select>
@@ -108,13 +108,13 @@
       DELETE FROM feature_synonym WHERE
          synonym_id=$synonym_id$ AND 
          feature_id=(SELECT feature_id FROM feature WHERE  
-         uniquename=#feature.uniquename#)
+         uniquename=#feature.uniqueName#)
     </delete>
   
     <insert id="insertFeatureAlias" parameterClass="FeatureSynonym">
       INSERT INTO feature_synonym ( synonym_id, feature_id, pub_id )
       VALUES ( $synonym_id$ , 
-              (SELECT feature_id FROM feature WHERE uniquename=#feature.uniquename#), 
+              (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#), 
               1)
     </insert>
   
@@ -124,7 +124,7 @@
   
     <insert id="insertAlias" parameterClass="FeatureSynonym">
       INSERT INTO synonym ( name, type_id, synonym_sgml ) 
-      VALUES ( #synonym.name#, $synonym.cvterm.cvtermId$, #synonym.name# )
+      VALUES ( #synonym.name#, $synonym.cvTerm.cvTermId$, #synonym.name# )
     </insert>
   
 </sqlMap> 

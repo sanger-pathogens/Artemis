@@ -105,10 +105,10 @@ public interface ChadoDAO
   public List getSchema();
 
   /**
-   * Get the all the <code>Cvterm</code> objects as a<code>List</code>.
+   * Get the all the <code>CvTerm</code> objects as a<code>List</code>.
    * @return	the full list of cvterm_id and name
    */
-  public List getCvterm();
+  public List getCvTerm();
   
 
   /**
@@ -117,7 +117,7 @@ public interface ChadoDAO
    *                    all <code>FeatureDbxref</code> are returned.
    * @return a <code>List</code> of feature_dbxrefs.
    */
-  public List getFeatureDbxrefByUniquename(final String uniquename);
+  public List getFeatureDbXRefByUniquename(final String uniquename);
   
   /**
    * Return a list of FeatureSynonyms for a uniquename
@@ -134,7 +134,7 @@ public interface ChadoDAO
    * @param type the type of the Synonym
    * @return a Synonym, or null  
    */
-  public Synonym getSynonymByNameAndCvTerm(String name, Cvterm type);
+  public Synonym getSynonymByNameAndCvTerm(String name, CvTerm type);
   
   
   /**

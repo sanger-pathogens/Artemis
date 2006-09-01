@@ -5,26 +5,26 @@
     "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
  
 
-<sqlMap namespace="Dbxref"> 
+<sqlMap namespace="DbXRef"> 
  
-  <typeAlias alias="FeatureDbxref"
-        type="uk.ac.sanger.artemis.chado.FeatureDbxref"/>
+  <typeAlias alias="FeatureDbXRef"
+        type="uk.ac.sanger.artemis.chado.FeatureDbXRef"/>
   
-  <typeAlias alias="Dbxref"
-        type="uk.ac.sanger.artemis.chado.Dbxref"/>
+  <typeAlias alias="DbXRef"
+        type="uk.ac.sanger.artemis.chado.DbXRef"/>
   
     <typeAlias alias="Db"
         type="uk.ac.sanger.artemis.chado.Db"/>
            
   <resultMap id="select-feature-dbxref" 
-               class="FeatureDbxref">
+               class="FeatureDbXRef">
     <result property="feature.id"       column="feature_id"/>
-    <result property="dbxref.db.name"   column="name"/>
-    <result property="dbxref.accession" column="accession"/>
-    <result property="dbxref.version"   column="version"/>
+    <result property="dbXRef.db.name"   column="name"/>
+    <result property="dbXRef.accession" column="accession"/>
+    <result property="dbXRef.version"   column="version"/>
   </resultMap>
         
-  <select id="getFeatureDbxref" 
+  <select id="getFeatureDbXRef" 
           parameterClass="uk.ac.sanger.artemis.chado.Feature"
           resultMap="select-feature-dbxref">
    	SELECT db.name, dbx.accession, dbx.version, dbx_f.feature_id
@@ -32,8 +32,8 @@
         LEFT JOIN dbxref dbx ON dbx.dbxref_id=dbx_f.dbxref_id
         LEFT JOIN db ON db.db_id=dbx.db_id 
         LEFT JOIN feature f ON dbx_f.feature_id=f.feature_id
-        <isNotNull property="uniquename"> 
-          WHERE f.uniquename=#uniquename#
+        <isNotNull property="uniqueName"> 
+          WHERE f.uniquename=#uniqueName#
         </isNotNull>
         <isGreaterThan property="id" compareValue="0">
           WHERE dbx_f.feature_id=$id$
@@ -46,40 +46,40 @@
     SELECT db_id FROM db WHERE name=#name#
   </select>
   
-  <select id="getDbxrefId" parameterClass="Dbxref"
+  <select id="getDbXRefId" parameterClass="DbXRef"
                            resultClass="java.lang.Integer">
     SELECT dbxref_id FROM dbxref WHERE accession=#accession#
-           AND db_id=$db_id$;
+           AND db_id=$dbXRefId$;
   </select>
   
   
   
-  <select id="selectDbxref" resultClass="Dbxref">
-    SELECT * FROM dbxref WHERE dbxref_id=$dbxref_id$
+  <select id="selectDbXRef" resultClass="DbXRef">
+    SELECT * FROM dbxref WHERE dbxref_id=$dbXRefId$
   </select>
   
   
   
   <!-- WRITE BACK -->
-  <delete id="deleteFeatureDbxref" parameterClass="FeatureDbxref">
+  <delete id="deleteFeatureDbXRef" parameterClass="FeatureDbXRef">
      DELETE FROM feature_dbxref 
      WHERE dbxref_id=
-           (SELECT dbxref_id FROM dbxref WHERE accession=#dbxref.accession#
-            AND db_id=(SELECT db_id FROM db WHERE name=#dbxref.db.name#))
+           (SELECT dbxref_id FROM dbxref WHERE accession=#dbXRef.accession#
+            AND db_id=(SELECT db_id FROM db WHERE name=#dbXRef.db.name#))
      AND feature_id=
-           (SELECT feature_id FROM feature WHERE uniquename=#feature.uniquename#)
+           (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#)
   </delete>
   
-  <insert id="insertFeatureDbxref" parameterClass="FeatureDbxref">
+  <insert id="insertFeatureDbXRef" parameterClass="FeatureDbXRef">
     INSERT INTO feature_dbxref 
            (feature_id, dbxref_id, is_current)
            VALUES
-           ($feature.id$, $dbxref_id$, $current$)
+           ($feature.id$, $dbXRef.dbXRefId$, $current$)
   </insert>
   
-  <insert id="insertDbxref" parameterClass="Dbxref">
+  <insert id="insertDbXRef" parameterClass="DbXRef">
     INSERT INTO dbxref ( db_id, accession ) 
-           VALUES ($db_id$, #accession#)
+           VALUES ($dbXRefId$, #accession#)
   </insert>
 
 </sqlMap> 

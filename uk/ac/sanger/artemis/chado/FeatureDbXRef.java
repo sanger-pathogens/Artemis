@@ -27,13 +27,13 @@ package uk.ac.sanger.artemis.chado;
 /**
  * Representation of the chado feature_dbxref.
  */
-public class FeatureDbxref
+public class FeatureDbXRef
 { 
   /** feature_dbxref */
   private Feature feature;
-  private int dbxref_id;
+  private int featureDbXRefId;
   private boolean current = true;
-  private Dbxref dbxref;
+  private DbXRef dbXRef;
 
   public Feature getFeature()
   {
@@ -54,26 +54,25 @@ public class FeatureDbxref
   {
     this.current = current;
   }
-
-
-  public int getDbxref_id()
-  {
-    return dbxref_id;
-  }
-
-  public void setDbxref_id(int dbxref_id)
-  {
-    this.dbxref_id = dbxref_id;
-  }
   
-  public Dbxref getDbxref()
+  public DbXRef getDbXRef()
   {
-    return dbxref;
+    return dbXRef;
   }
 
-  public void setDbxref(Dbxref dbxref)
+  public void setDbXRef(DbXRef dbXRef)
   {
-    this.dbxref = dbxref;
+    this.dbXRef = dbXRef;
+  }
+
+  public int getFeatureDbXRefId()
+  {
+    return featureDbXRefId;
+  }
+
+  public void setFeatureDbXRefId(int featureDbXRefId)
+  {
+    this.featureDbXRefId = featureDbXRefId;
   }
 }
 

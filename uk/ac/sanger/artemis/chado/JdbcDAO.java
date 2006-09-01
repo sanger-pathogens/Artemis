@@ -88,7 +88,7 @@ public class JdbcDAO
   public Feature getFeatureByUniqueName(String uniquename)
   {
     Feature feature = new Feature();
-    feature.setUniquename(uniquename);
+    feature.setUniqueName(uniquename);
     feature.setId(-1);
     return getLazyFeature(feature);
   }
@@ -116,7 +116,7 @@ public class JdbcDAO
   public List getFeaturesByAnyCurrentName(String name) 
   {
     Feature feature = new Feature();
-    feature.setUniquename(name);
+    feature.setUniqueName(name);
     return getFeatureQuery(name, -1, -1);
   }
   
@@ -138,7 +138,7 @@ public class JdbcDAO
    */
   private Feature getLazyFeature(final Feature feature)
   {
-    List list = getFeatureQuery(feature.getUniquename(), 
+    List list = getFeatureQuery(feature.getUniqueName(), 
                                 -1, feature.getId());
     return (Feature)list.get(0);
   }
@@ -204,26 +204,26 @@ public class JdbcDAO
         feature.setResidues(rs.getBytes("residues"));
 
         feature.setFeatureloc(featureloc);
-        feature.setCvterm(new Cvterm());
-        feature.getCvterm().setCvtermId(rs.getLong("type_id"));
+        feature.setCvTerm(new CvTerm());
+        feature.getCvTerm().setCvTermId(rs.getLong("type_id"));
 
         // feature properties
         FeatureProp featureprop = new FeatureProp();
-        Cvterm cvterm = new Cvterm();
-        cvterm.setCvtermId(rs.getLong("prop_type_id"));
-        featureprop.setCvterm(cvterm);
+        CvTerm cvterm = new CvTerm();
+        cvterm.setCvTermId(rs.getLong("prop_type_id"));
+        featureprop.setCvTerm(cvterm);
         featureprop.setValue(rs.getString("value"));
         feature.setFeatureprop(featureprop);
 
-        feature.setUniquename(rs.getString("uniquename"));
+        feature.setUniqueName(rs.getString("uniquename"));
         feature.setTimelastmodified(rs.getTimestamp("timelastmodified"));
         feature.setId(rs.getInt("feature_id"));
 
         // feature relationship
         FeatureRelationship feature_relationship = new FeatureRelationship();
-        cvterm = new Cvterm();
-        cvterm.setCvtermId(rs.getLong("relation_type_id"));
-        feature_relationship.setCvterm(cvterm);
+        cvterm = new CvTerm();
+        cvterm.setCvTermId(rs.getLong("relation_type_id"));
+        feature_relationship.setCvTerm(cvterm);
 
         Feature object = new Feature();
         object.setId(rs.getInt("object_id"));
@@ -297,9 +297,9 @@ public class JdbcDAO
         feature.setOrganism(organism);
         feature.setId(rs.getInt("feature_id"));
         feature.setName(rs.getString("name"));
-        feature.setUniquename(rs.getString("uniquename"));
-        feature.setCvterm(new Cvterm());
-        feature.getCvterm().setCvtermId(rs.getLong("type_id"));
+        feature.setUniqueName(rs.getString("uniquename"));
+        feature.setCvTerm(new CvTerm());
+        feature.getCvTerm().setCvTermId(rs.getLong("type_id"));
 
         list.add(feature);
       }
@@ -372,10 +372,10 @@ public class JdbcDAO
 
   /**
    * Get the full list of cvterm_id and name as a <code>List</code> of 
-   * <code>Cvterm</code> objects.
+   * <code>CvTerm</code> objects.
    * @return    the full list of cvterm_id and name
    */
-  public List getCvterm()
+  public List getCvTerm()
   {
     String sql = "SELECT cvterm.cvterm_id, cvterm.name " +
                  "FROM cvterm, cv WHERE cv.cv_id = cvterm.cv_id";
@@ -390,8 +390,8 @@ public class JdbcDAO
 
       while(rs.next())
       {
-        Cvterm cvterm = new Cvterm();
-        cvterm.setCvtermId(rs.getLong("cvterm_id"));
+        CvTerm cvterm = new CvTerm();
+        cvterm.setCvTermId(rs.getLong("cvterm_id"));
         cvterm.setName(rs.getString("name"));
         cvterms.add(cvterm);
       }
@@ -407,10 +407,10 @@ public class JdbcDAO
   /**
    * Get dbxref for a feature.
    * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>FeatureDbxref</code> are returned.
+   *                    all <code>FeatureDbXRef</code> are returned.
    * @return a <code>List</code> of feature_dbxrefs.
    */
-  public List getFeatureDbxrefByUniquename(final String uniquename)
+  public List getFeatureDbXRefByUniquename(final String uniquename)
   {
     String sql = "SELECT db.name, dbx.accession, f.feature_id FROM "+
                  "feature_dbxref dbx_f "+
@@ -431,15 +431,15 @@ public class JdbcDAO
 
       while(rs.next())
       {
-        FeatureDbxref feature_dbxref = new FeatureDbxref();
-        Dbxref dbxref = new Dbxref();
+        FeatureDbXRef feature_dbxref = new FeatureDbXRef();
+        DbXRef dbxref = new DbXRef();
         Db db = new Db();
         db.setName(rs.getString("name"));
         dbxref.setAccession(rs.getString("accession"));
         dbxref.setDb(db);
         Feature feat = new Feature();
         feat.setId(rs.getInt("feature_id"));
-        feature_dbxref.setDbxref(dbxref);
+        feature_dbxref.setDbXRef(dbxref);
         feature_dbxref.setFeature(feat);
         dbxrefs.add(feature_dbxref);
       }
@@ -480,11 +480,11 @@ public class JdbcDAO
       while(rs.next())
       {
         alias = new FeatureSynonym();
-        Cvterm cvterm = new Cvterm();
-        cvterm.setCvtermId(rs.getLong("type_id"));
+        CvTerm cvterm = new CvTerm();
+        cvterm.setCvTermId(rs.getLong("type_id"));
         Synonym syn = new Synonym();
         syn.setName(rs.getString("name"));
-        syn.setCvterm(cvterm);
+        syn.setCvTerm(cvterm);
         Feature feat = new Feature();
         feat.setId(rs.getInt("feature_id"));
 
@@ -512,7 +512,7 @@ public class JdbcDAO
 
 
   public Synonym getSynonymByNameAndCvTerm(
-      String name, Cvterm type)
+      String name, CvTerm type)
   {
     return null;
   }
@@ -554,8 +554,8 @@ public class JdbcDAO
       insertFeatureProp((FeatureProp)o);
     else if(o instanceof Feature)
       insertFeature((Feature)o);
-    else if(o instanceof FeatureDbxref)
-      insertFeatureDbxref((FeatureDbxref)o);
+    else if(o instanceof FeatureDbXRef)
+      insertFeatureDbXRef((FeatureDbXRef)o);
     else if(o instanceof FeatureSynonym)
       insertFeatureAlias((FeatureSynonym)o);
   }
@@ -573,8 +573,8 @@ public class JdbcDAO
       deleteFeature((Feature)o);
     else if(o instanceof FeatureProp)
       deleteFeatureProp((FeatureProp)o);
-    else if(o instanceof FeatureDbxref)
-      deleteFeatureDbxref((FeatureDbxref)o);
+    else if(o instanceof FeatureDbXRef)
+      deleteFeatureDbXRef((FeatureDbXRef)o);
     else if(o instanceof FeatureSynonym)
       deleteFeatureSynonym((FeatureSynonym)o);
   }
@@ -597,7 +597,7 @@ public class JdbcDAO
       pstmt.setInt(3, featureloc.getRank());
       pstmt.setInt(4, featureloc.getStrand());
       pstmt.setInt(5, featureloc.getPhase());
-      pstmt.setString(6, featureloc.getFeature().getUniquename());
+      pstmt.setString(6, featureloc.getFeature().getUniqueName());
       appendToLogFile(sql, sqlLog);
 
       pstmt.executeUpdate();
@@ -616,7 +616,7 @@ public class JdbcDAO
   {
     String sql = "UPDATE feature SET uniquename=?";
 
-    if(feature.getCvterm() != null)
+    if(feature.getCvTerm() != null)
       sql = sql+", type_id=?";
     
     if(feature.getTimelastmodified() != null)
@@ -627,11 +627,11 @@ public class JdbcDAO
     try
     {
       PreparedStatement pstmt = conn.prepareStatement(sql);
-      pstmt.setString(1, feature.getUniquename());
+      pstmt.setString(1, feature.getUniqueName());
       int param = 2;
-      if(feature.getCvterm() != null)
+      if(feature.getCvTerm() != null)
       {
-        pstmt.setLong(param, feature.getCvterm().getCvtermId());
+        pstmt.setLong(param, feature.getCvTerm().getCvTermId());
         param++;
       }
 
@@ -666,8 +666,8 @@ public class JdbcDAO
       PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setString(1, featureprop.getValue());
       pstmt.setInt(2, featureprop.getRank());
-      pstmt.setLong(3, featureprop.getCvterm().getCvtermId());
-      pstmt.setString(4, featureprop.getFeature().getUniquename());
+      pstmt.setLong(3, featureprop.getCvTerm().getCvTermId());
+      pstmt.setString(4, featureprop.getFeature().getUniqueName());
 
       appendToLogFile(sql, sqlLog);
       pstmt.executeUpdate();
@@ -693,8 +693,8 @@ public class JdbcDAO
     sqlBuff.append("VALUES ");
     
     sqlBuff.append("((SELECT feature_id FROM feature WHERE uniquename=");
-    sqlBuff.append("'"+ featureprop.getFeature().getUniquename()+"')," );
-    sqlBuff.append(featureprop.getCvterm().getCvtermId()+", ");
+    sqlBuff.append("'"+ featureprop.getFeature().getUniqueName()+"')," );
+    sqlBuff.append(featureprop.getCvTerm().getCvTermId()+", ");
     sqlBuff.append(featureprop.getValue()+",");
     sqlBuff.append(featureprop.getRank());
 
@@ -720,7 +720,7 @@ public class JdbcDAO
                     (final FeatureProp featureprop)
   {
     StringBuffer sqlBuff = new StringBuffer();
-    String uniquename = featureprop.getFeature().getUniquename();
+    String uniquename = featureprop.getFeature().getUniqueName();
 
     sqlBuff.append("DELETE FROM featureprop WHERE ");
 
@@ -735,7 +735,7 @@ public class JdbcDAO
     if(featureprop.getValue() != null)
       sqlBuff.append("value="+featureprop.getValue()+" AND ");
     
-    sqlBuff.append("type_id="+featureprop.getCvterm().getCvtermId());
+    sqlBuff.append("type_id="+featureprop.getCvTerm().getCvTermId());
       
     appendToLogFile(new String(sqlBuff), sqlLog);
 
@@ -785,8 +785,8 @@ public class JdbcDAO
       sql_buff.append("nextval('feature_feature_id_seq') , ");
       sql_buff.append(organism_id + " , ");
       sql_buff.append("'" + feature.getName() + "'" + " , ");
-      sql_buff.append("'" + feature.getUniquename() + "'" + " , ");
-      sql_buff.append(Long.toString(feature.getCvterm().getCvtermId()));
+      sql_buff.append("'" + feature.getUniqueName() + "'" + " , ");
+      sql_buff.append(Long.toString(feature.getCvTerm().getCvTermId()));
       sql_buff.append(" )");
 
       sql = new String(sql_buff);
@@ -832,7 +832,7 @@ public class JdbcDAO
       // insert feature relationships
       if(feature.getFeatureRelationshipsForSubjectId() != null)
       {
-        List parents = feature.getFeatureRelationshipsForSubjectId();
+        List parents = (List)feature.getFeatureRelationshipsForSubjectId();
         for(int i = 0; i < parents.size(); i++)
         {
           // insert feature_relationship
@@ -845,12 +845,12 @@ public class JdbcDAO
           sql_buff.append("VALUES ");
           sql_buff
               .append("( (SELECT feature_id FROM feature WHERE uniquename='");
-          sql_buff.append(feature_relationship.getSubject().getUniquename()
+          sql_buff.append(feature_relationship.getSubject().getUniqueName()
               + "'), ");
           sql_buff.append("(SELECT feature_id FROM feature WHERE uniquename='");
-          sql_buff.append(feature_relationship.getObject().getUniquename()
+          sql_buff.append(feature_relationship.getObject().getUniqueName()
               + "'), ");
-          sql_buff.append(feature_relationship.getCvterm().getCvtermId() + ")");
+          sql_buff.append(feature_relationship.getCvTerm().getCvTermId() + ")");
 
           sql = new String(sql_buff);
           appendToLogFile(sql, sqlLog);
@@ -878,7 +878,7 @@ public class JdbcDAO
     try
     {
       String sql = "DELETE FROM feature WHERE uniquename='"
-          + feature.getUniquename() + "'";
+          + feature.getUniqueName() + "'";
       appendToLogFile(sql, sqlLog);
 
       Statement st = conn.createStatement();
@@ -892,13 +892,13 @@ public class JdbcDAO
 
   /**
    * Insert a feature_dbxref for a feature.
-   * @param feature_dbxref    the new <code>FeatureDbxref</code>
+   * @param feature_dbxref    the new <code>FeatureDbXRef</code>
    */
-  private void insertFeatureDbxref(final FeatureDbxref feature_dbxref)
+  private void insertFeatureDbXRef(final FeatureDbXRef feature_dbxref)
   {   
     // find database id
     String sql = "SELECT db_id FROM db WHERE name='"+
-                 feature_dbxref.getDbxref().getDb().getName()+"'";
+                 feature_dbxref.getDbXRef().getDb().getName()+"'";
     
     try
     {
@@ -908,31 +908,31 @@ public class JdbcDAO
 
       if(!exists)
         throw new SQLException("No database called "
-            + feature_dbxref.getDbxref().getDb().getName() + " found (for "
-            + feature_dbxref.getFeature().getUniquename()
+            + feature_dbxref.getDbXRef().getDb().getName() + " found (for "
+            + feature_dbxref.getFeature().getUniqueName()
             + ") check the spelling!");
 
       final int db_id = rs.getInt("db_id");
       // find if accession exists already
-      String sqlDbxrefId = "SELECT dbxref_id FROM dbxref WHERE accession='"
-          + feature_dbxref.getDbxref().getAccession() + "' AND db_id=" + db_id;
+      String sqlDbXRefId = "SELECT dbxref_id FROM dbxref WHERE accession='"
+          + feature_dbxref.getDbXRef().getAccession() + "' AND db_id=" + db_id;
 
-      appendToLogFile(sqlDbxrefId, sqlLog);
-      rs = st.executeQuery(sqlDbxrefId);
+      appendToLogFile(sqlDbXRefId, sqlLog);
+      rs = st.executeQuery(sqlDbXRefId);
       exists = rs.next();
 
       if(!exists)
       {
         // create a new accession entry in dbxref
         sql = "INSERT INTO dbxref ( db_id, accession ) " + "VALUES (" + db_id
-            + ", '" + feature_dbxref.getDbxref().getAccession() + "' )";
+            + ", '" + feature_dbxref.getDbXRef().getAccession() + "' )";
 
         appendToLogFile(sql, sqlLog);
         int rowCount = st.executeUpdate(new String(sql));
 
         // now get the new dbxref_id
-        appendToLogFile(sqlDbxrefId, sqlLog);
-        rs = st.executeQuery(sqlDbxrefId);
+        appendToLogFile(sqlDbXRefId, sqlLog);
+        rs = st.executeQuery(sqlDbXRefId);
         rs.next();
       }
 
@@ -940,7 +940,7 @@ public class JdbcDAO
       sql = "INSERT INTO feature_dbxref "
           + "(feature_id, dbxref_id, is_current)" + " VALUES "
           + "( (SELECT feature_id FROM " + "feature WHERE  uniquename='"
-          + feature_dbxref.getFeature().getUniquename() + "'), " + dbxref_id
+          + feature_dbxref.getFeature().getUniqueName() + "'), " + dbxref_id
           + ", " + Boolean.toString(feature_dbxref.isCurrent()) + ")";
       System.out.println(sql);
       appendToLogFile(sql, sqlLog);
@@ -954,19 +954,19 @@ public class JdbcDAO
   
   /**
    * Delete a feature_dbxref for a feature.
-   * @param feature_dbxref  the  new <code>FeatureDbxref</code>
+   * @param feature_dbxref  the  new <code>FeatureDbXRef</code>
    */
-  private void deleteFeatureDbxref(final FeatureDbxref feature_dbxref)
+  private void deleteFeatureDbXRef(final FeatureDbXRef feature_dbxref)
   {
-    final String uniquename = feature_dbxref.getFeature().getUniquename();
+    final String uniquename = feature_dbxref.getFeature().getUniqueName();
     
     final String sql = 
       "DELETE FROM feature_dbxref "+
       "WHERE dbxref_id="+
       "(SELECT dbxref_id FROM dbxref WHERE accession='"+
-         feature_dbxref.getDbxref().getAccession()+"' "+
+         feature_dbxref.getDbXRef().getAccession()+"' "+
       "AND db_id=(SELECT db_id FROM db WHERE name='"+
-         feature_dbxref.getDbxref().getDb().getName()+"'))"+
+         feature_dbxref.getDbXRef().getDb().getName()+"'))"+
       "AND feature_id=(SELECT feature_id FROM "+
              "feature WHERE  uniquename='"+uniquename+"')";
     
@@ -987,7 +987,7 @@ public class JdbcDAO
    */
   private void insertFeatureAlias(final FeatureSynonym feature_synonym)
   {
-    final String uniquename   = feature_synonym.getFeature().getUniquename();
+    final String uniquename   = feature_synonym.getFeature().getUniqueName();
     final String synonym_name = feature_synonym.getSynonym().getName();
       
     String sql;
@@ -1007,8 +1007,8 @@ public class JdbcDAO
       if(!exists)
       {
         // create a new synonym name
-        String type_id = Long.toString(feature_synonym.getSynonym().getCvterm()
-            .getCvtermId());
+        String type_id = Long.toString(feature_synonym.getSynonym().getCvTerm()
+            .getCvTermId());
 
         sql = "INSERT INTO "
             + "synonym (name, type_id, synonym_sgml) values ( '" + synonym_name
@@ -1044,7 +1044,7 @@ public class JdbcDAO
    */
   private void deleteFeatureSynonym(final FeatureSynonym feature_synonym)
   {
-    final String uniquename   = feature_synonym.getFeature().getUniquename();
+    final String uniquename   = feature_synonym.getFeature().getUniqueName();
     final String synonym_name = feature_synonym.getSynonym().getName();
     String sql = "SELECT synonym_id FROM synonym WHERE "+
                  "synonym.name='"+synonym_name+"'";
@@ -1091,15 +1091,15 @@ public class JdbcDAO
     sqlBuff.append("UPDATE feature_relationship ");
     sqlBuff.append(" SET ");
     sqlBuff.append(" rank="+feature_relationship.getRank()+", ");
-    sqlBuff.append(" type_id="+feature_relationship.getCvterm().getCvtermId());
+    sqlBuff.append(" type_id="+feature_relationship.getCvTerm().getCvTermId());
     sqlBuff.append(" WHERE ");
     sqlBuff.append("subject_id=");
     sqlBuff.append("( SELECT feature_id FROM feature WHERE uniquename='");
-    sqlBuff.append(feature_relationship.getSubject().getUniquename()+"' ) ");
+    sqlBuff.append(feature_relationship.getSubject().getUniqueName()+"' ) ");
     sqlBuff.append("AND ");
     sqlBuff.append("object_id=");
     sqlBuff.append("( SELECT feature_id FROM feature WHERE uniquename='");
-    sqlBuff.append(feature_relationship.getObject().getUniquename()+"' ) ");
+    sqlBuff.append(feature_relationship.getObject().getUniqueName()+"' ) ");
  
     String sql = sqlBuff.toString();
 

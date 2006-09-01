@@ -6,18 +6,21 @@
  
 
 <sqlMap namespace="Cvterm"> 
+
+    <typeAlias alias="CvTerm"
+        type="uk.ac.sanger.artemis.chado.CvTerm"/>
  
-    <resultMap id="select-cvterm-names-result" class="uk.ac.sanger.artemis.chado.Cvterm">
-   	  <result property="cvtermId" column="cvterm_id"/>
+    <resultMap id="select-cvterm-names-result" class="CvTerm">
+   	  <result property="cvTermId" column="cvterm_id"/>
   	  <result property="name" column="cvterm_name"/>
       <result property="cv.name" column="cv_name"/>
     </resultMap>
     
-    <resultMap id="lazy-cvterm" class="uk.ac.sanger.artemis.chado.Cvterm">
-   	  <result property="cvtermId" column="cvterm_id"/>
+    <resultMap id="lazy-cvterm" class="CvTerm">
+   	  <result property="cvTermId" column="cvterm_id"/>
   	  <result property="name" column="name"/>
       <result property="definition" column="definition"/>
-      <result property="dbxref" column="dbxref_id" select="selectDbxref"/>
+      <result property="dbXRef" column="dbxref_id" select="selectDbXRef"/>
       <result property="isObsolete" column="is_obsolete"/>
       <result property="isRelationshiptype" column="is_relationshiptype"/>
     </resultMap>

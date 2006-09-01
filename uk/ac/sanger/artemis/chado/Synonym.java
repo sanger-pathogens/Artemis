@@ -33,7 +33,7 @@ public class Synonym
   // synonym
   private Integer synonym_id;
   private String name;
-  private Cvterm cvterm;
+  private CvTerm cvTerm;
   private String synonym_sgml;
   
   public Integer getSynonym_id()
@@ -56,14 +56,14 @@ public class Synonym
     this.name = name;
   }
   
-  public Cvterm getCvterm()
+  public CvTerm getCvTerm()
   {
-    return cvterm;
+    return cvTerm;
   }
 
-  public void setCvterm(Cvterm cvterm)
+  public void setCvTerm(CvTerm cvTerm)
   {
-    this.cvterm = cvterm;
+    this.cvTerm = cvTerm;
   }
 
   public String getSynonym_sgml()

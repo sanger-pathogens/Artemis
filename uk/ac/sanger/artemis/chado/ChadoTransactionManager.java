@@ -382,7 +382,7 @@ public class ChadoTransactionManager
       
       uk.ac.sanger.artemis.chado.Feature chado_feature = 
                new uk.ac.sanger.artemis.chado.Feature();
-      chado_feature.setUniquename(seq_id);
+      chado_feature.setUniqueName(seq_id);
 
       List featureRelationshipsForSubjectId = null;
       if(qualifier_relation != null)
@@ -395,15 +395,15 @@ public class ChadoTransactionManager
         {
           uk.ac.sanger.artemis.chado.Feature parent =
               new uk.ac.sanger.artemis.chado.Feature();
-          parent.setUniquename((String)parents.get(i));
+          parent.setUniqueName((String)parents.get(i));
           FeatureRelationship feature_relationship =
               new FeatureRelationship();
-          Cvterm cvterm = new Cvterm();
-          cvterm.setCvtermId(DatabaseDocument.getCvtermID("part_of").longValue());
+          CvTerm cvterm = new CvTerm();
+          cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").longValue());
           
           feature_relationship.setObject(parent);
           feature_relationship.setSubject(chado_feature);
-          feature_relationship.setCvterm(cvterm);
+          feature_relationship.setCvTerm(cvterm);
           feature_relationship.setRank(rank);
           featureRelationshipsForSubjectId.add(feature_relationship);
           
@@ -496,15 +496,15 @@ public class ChadoTransactionManager
         {
           uk.ac.sanger.artemis.chado.Feature parent =
               new uk.ac.sanger.artemis.chado.Feature();
-          parent.setUniquename((String)parents.get(i));
+          parent.setUniqueName((String)parents.get(i));
           FeatureRelationship feature_relationship =
               new FeatureRelationship();
-          Cvterm cvterm = new Cvterm();
-          cvterm.setCvtermId(DatabaseDocument.getCvtermID("part_of").longValue());
+          CvTerm cvterm = new CvTerm();
+          cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").longValue());
           
           feature_relationship.setObject(parent);
           feature_relationship.setSubject(chado_feature);
-          feature_relationship.setCvterm(cvterm);
+          feature_relationship.setCvTerm(cvterm);
           featureRelationshipsForSubjectId.add(feature_relationship);
         }
       }
@@ -520,15 +520,15 @@ public class ChadoTransactionManager
         {
           uk.ac.sanger.artemis.chado.Feature parent =
                                       new uk.ac.sanger.artemis.chado.Feature();
-          parent.setUniquename((String) derives.get(i));
+          parent.setUniqueName((String) derives.get(i));
           FeatureRelationship feature_relationship = new FeatureRelationship();
-          Cvterm cvterm = new Cvterm();
-          cvterm.setCvtermId(DatabaseDocument.getCvtermID("derives_from")
+          CvTerm cvterm = new CvTerm();
+          cvterm.setCvTermId(DatabaseDocument.getCvtermID("derives_from")
               .longValue());
 
           feature_relationship.setObject(parent);
           feature_relationship.setSubject(chado_feature);
-          feature_relationship.setCvterm(cvterm);
+          feature_relationship.setCvTerm(cvterm);
           featureRelationshipsForSubjectId.add(feature_relationship);
         }
       }
@@ -544,14 +544,14 @@ public class ChadoTransactionManager
 
     featureloc.setFmin(feature.getRawFirstBase()-1);
     featureloc.setFmax(feature.getRawLastBase());
-    chado_feature.setUniquename(feature_uniquename);
+    chado_feature.setUniqueName(feature_uniquename);
     chado_feature.setName(feature_uniquename);
 
     String key = feature.getKey().toString();
     
-    Cvterm cvterm = new Cvterm();
-    cvterm.setCvtermId(DatabaseDocument.getCvtermID(key).longValue());
-    chado_feature.setCvterm(cvterm);
+    CvTerm cvterm = new CvTerm();
+    cvterm.setCvTermId(DatabaseDocument.getCvtermID(key).longValue());
+    chado_feature.setCvTerm(cvterm);
 
     addQualifiers(feature.getQualifiers(), chado_feature);
     // create transaction object
@@ -609,15 +609,15 @@ public class ChadoTransactionManager
         {
           uk.ac.sanger.artemis.chado.Feature parent =
               new uk.ac.sanger.artemis.chado.Feature();
-          parent.setUniquename((String)parents.get(i));
+          parent.setUniqueName((String)parents.get(i));
           FeatureRelationship feature_relationship =
               new FeatureRelationship();
-          Cvterm cvterm = new Cvterm();
-          cvterm.setCvtermId(DatabaseDocument.getCvtermID("part_of").longValue());
+          CvTerm cvterm = new CvTerm();
+          cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").longValue());
           
           feature_relationship.setObject(parent);
           feature_relationship.setSubject(chado_feature);
-          feature_relationship.setCvterm(cvterm);
+          feature_relationship.setCvTerm(cvterm);
           featureRelationshipsForSubjectId.add(feature_relationship);
         }
       }
@@ -633,15 +633,15 @@ public class ChadoTransactionManager
         {
           uk.ac.sanger.artemis.chado.Feature parent =
                                       new uk.ac.sanger.artemis.chado.Feature();
-          parent.setUniquename((String) derives.get(i));
+          parent.setUniqueName((String) derives.get(i));
           FeatureRelationship feature_relationship = new FeatureRelationship();
-          Cvterm cvterm = new Cvterm();
-          cvterm.setCvtermId(DatabaseDocument.getCvtermID("derives_from")
+          CvTerm cvterm = new CvTerm();
+          cvterm.setCvTermId(DatabaseDocument.getCvtermID("derives_from")
               .longValue());
 
           feature_relationship.setObject(parent);
           feature_relationship.setSubject(chado_feature);
-          feature_relationship.setCvterm(cvterm);
+          feature_relationship.setCvTerm(cvterm);
           featureRelationshipsForSubjectId.add(feature_relationship);
         }
       }
@@ -652,14 +652,14 @@ public class ChadoTransactionManager
 
     featureloc.setFmin(segment.getRawRange().getStart()-1);
     featureloc.setFmax(segment.getRawRange().getEnd());
-    chado_feature.setUniquename(segment_uniquename);
+    chado_feature.setUniqueName(segment_uniquename);
     chado_feature.setName(segment_uniquename);
 
     String key = feature.getKey().toString();
     
-    Cvterm cvterm = new Cvterm();
-    cvterm.setCvtermId(DatabaseDocument.getCvtermID(key).longValue());
-    chado_feature.setCvterm(cvterm);
+    CvTerm cvterm = new CvTerm();
+    cvterm.setCvTermId(DatabaseDocument.getCvtermID(key).longValue());
+    chado_feature.setCvTerm(cvterm);
 
     //addQualifiers(feature.getQualifiers(), chado_feature);
     // create transaction object
@@ -678,7 +678,7 @@ public class ChadoTransactionManager
   {
     uk.ac.sanger.artemis.chado.Feature chado_feature = 
       new uk.ac.sanger.artemis.chado.Feature();
-    chado_feature.setUniquename(uniquename);
+    chado_feature.setUniqueName(uniquename);
     
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.DELETE,
         chado_feature,
@@ -798,11 +798,11 @@ public class ChadoTransactionManager
       {  
         uk.ac.sanger.artemis.chado.Feature chado_feature =
            new uk.ac.sanger.artemis.chado.Feature();
-        Cvterm cvterm = new Cvterm();
-        cvterm.setCvtermId( lcvterm_id.longValue() );
+        CvTerm cvterm = new CvTerm();
+        cvterm.setCvTermId( lcvterm_id.longValue() );
         
-        chado_feature.setCvterm(cvterm);
-        chado_feature.setUniquename(uniquename);
+        chado_feature.setCvTerm(cvterm);
+        chado_feature.setUniqueName(uniquename);
         
         tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
             chado_feature,
@@ -1093,7 +1093,7 @@ public class ChadoTransactionManager
       uk.ac.sanger.artemis.chado.Feature chado_feature =
         new uk.ac.sanger.artemis.chado.Feature();
      
-      chado_feature.setUniquename((String)new_qualifier.getValues().get(0));
+      chado_feature.setUniqueName((String)new_qualifier.getValues().get(0));
      
       ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                 chado_feature,
@@ -1123,16 +1123,16 @@ public class ChadoTransactionManager
            System.out.println(uniquename+"  in handleReservedTags() DELETE db="+
                qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
          
-           FeatureDbxref old_dbxref = new FeatureDbxref();
+           FeatureDbXRef old_dbxref = new FeatureDbXRef();
            uk.ac.sanger.artemis.chado.Feature chado_feature = 
              new uk.ac.sanger.artemis.chado.Feature();
-           Dbxref dbxref = new Dbxref();
+           DbXRef dbxref = new DbXRef();
            Db db = new Db();
            db.setName(qualifier_string.substring(0,index));
            dbxref.setAccession(qualifier_string.substring(index+1));
            dbxref.setDb(db);
-           chado_feature.setUniquename(uniquename);
-           old_dbxref.setDbxref(dbxref);
+           chado_feature.setUniqueName(uniquename);
+           old_dbxref.setDbXRef(dbxref);
            old_dbxref.setFeature(chado_feature);
            
            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
@@ -1147,7 +1147,7 @@ public class ChadoTransactionManager
            FeatureSynonym alias = new FeatureSynonym();
            uk.ac.sanger.artemis.chado.Feature chado_feature =
              new uk.ac.sanger.artemis.chado.Feature();
-           chado_feature.setUniquename(uniquename);
+           chado_feature.setUniqueName(uniquename);
            
            Synonym synonym = new Synonym();
            synonym.setName(qualifier_string);
@@ -1180,16 +1180,16 @@ public class ChadoTransactionManager
          
            System.out.println(uniquename+"  in handleReservedTags() INSERT db="+
              qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
-           FeatureDbxref new_dbxref = new FeatureDbxref();
-           Dbxref dbxref = new Dbxref();
+           FeatureDbXRef new_dbxref = new FeatureDbXRef();
+           DbXRef dbxref = new DbXRef();
            Db db = new Db();
            db.setName(qualifier_string.substring(0,index));
            dbxref.setDb(db);
            dbxref.setAccession(qualifier_string.substring(index+1));
-           new_dbxref.setDbxref(dbxref);
+           new_dbxref.setDbXRef(dbxref);
            uk.ac.sanger.artemis.chado.Feature feat = 
              new uk.ac.sanger.artemis.chado.Feature();
-           feat.setUniquename(uniquename);
+           feat.setUniqueName(uniquename);
            new_dbxref.setFeature(feat);
            
            tsn = new ChadoTransaction(ChadoTransaction.INSERT,
@@ -1204,13 +1204,13 @@ public class ChadoTransactionManager
            FeatureSynonym alias = new FeatureSynonym();
            uk.ac.sanger.artemis.chado.Feature chado_feature = 
              new uk.ac.sanger.artemis.chado.Feature();
-           chado_feature.setUniquename(uniquename);
+           chado_feature.setUniqueName(uniquename);
            
            Synonym synonym = new Synonym();
-           Cvterm cvterm = new Cvterm();
-           cvterm.setCvtermId(lcvterm_id.longValue());
+           CvTerm cvterm = new CvTerm();
+           cvterm.setCvTermId(lcvterm_id.longValue());
            synonym.setName(qualifier_string);
-           synonym.setCvterm(cvterm);
+           synonym.setCvTerm(cvterm);
            
            alias.setSynonym(synonym);
            alias.setFeature(chado_feature);
@@ -1255,7 +1255,7 @@ public class ChadoTransactionManager
     FeatureLoc featureloc = new FeatureLoc();
     uk.ac.sanger.artemis.chado.Feature chado_feature = 
       new uk.ac.sanger.artemis.chado.Feature();
-    chado_feature.setUniquename(seg_id);
+    chado_feature.setUniqueName(seg_id);
     
     featureloc.setFeature(chado_feature);
     featureloc.setFmax(range_new.getEnd());
@@ -1305,12 +1305,12 @@ public class ChadoTransactionManager
     FeatureProp featureprop = new FeatureProp();
     uk.ac.sanger.artemis.chado.Feature chado_feature   = 
       new uk.ac.sanger.artemis.chado.Feature();
-    chado_feature.setUniquename(uniquename);
-    Cvterm cvterm = new Cvterm();
-    cvterm.setCvtermId(lcvterm_id.longValue());
+    chado_feature.setUniqueName(uniquename);
+    CvTerm cvterm = new CvTerm();
+    cvterm.setCvTermId(lcvterm_id.longValue());
     featureprop.setValue(stripQuotes(qualifier_string));
     featureprop.setRank(rank);
-    featureprop.setCvterm(cvterm);
+    featureprop.setCvTerm(cvterm);
     featureprop.setFeature(chado_feature);
     return featureprop;
   }
