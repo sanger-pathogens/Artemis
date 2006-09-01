@@ -251,7 +251,7 @@ public class ChadoDemo
     int row = result_table.getSelectedRow();
     StringBuffer attr_buff = new StringBuffer();
     Feature chado_feature = (Feature)featureList.get(row);
-    List attributes = (List)chado_feature.getFeaturepropList();
+    List attributes = (List)chado_feature.getFeatureProps();
     List dbxrefs    = (List)chado_feature.getFeatureDbXRefs();
 
     if(dbxrefs.size() > 0)

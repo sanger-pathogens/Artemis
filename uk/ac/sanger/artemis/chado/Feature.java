@@ -72,7 +72,7 @@ public class Feature
   /** merged featureprops */
   private Hashtable qualifiers;
   /** list of FeatureProp */
-  private Collection featurepropList;
+  private Collection featureProps;
   /** list of FeatureRelationship children */
   private Collection featureRelationshipsForObjectId;
   /** list of FeatureRelationship parent */
@@ -389,9 +389,9 @@ public class Feature
    * @return  featurepropList a <code>List</code> of featureprop's
    *          for a feature.
    */
-  public Collection getFeaturepropList()
+  public Collection getFeatureProps()
   {
-    return featurepropList;
+    return featureProps;
   }
 
   /**
@@ -399,13 +399,13 @@ public class Feature
    * @param featurepropList a <code>List</code> of featureprop's
    *        for a feature.
    */
-  public void setFeaturepropList(Collection featurepropList)
+  public void setFeatureProps(Collection featureProps)
   {
-    this.featurepropList = featurepropList;
+    this.featureProps = featureProps;
     
-    for(int i=0; i<featurepropList.size(); i++)
+    for(int i=0; i<featureProps.size(); i++)
     {
-      FeatureProp featureprop = (FeatureProp)(((List)featurepropList).get(i));
+      FeatureProp featureprop = (FeatureProp)(((List)featureProps).get(i));
       addQualifier(featureprop.getCvTerm().getCvTermId(), featureprop);
     }
   }

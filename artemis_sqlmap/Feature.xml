@@ -56,7 +56,7 @@
         <result property="cvTerm" column="type_id" select="selectCvterm" />
         <result property="featurelocsForFeatureId" column="{id=id}" 
                                                    select="getFeatureLoc" />
-        <result property="featurepropList" column="{feature_id=id}" 
+        <result property="featureProps" column="{feature_id=id}" 
                                            select="selectFeatureProp" />
         <result property="featureDbXRefs" column="{id=id}"
                                           select="getFeatureDbXRef" />
