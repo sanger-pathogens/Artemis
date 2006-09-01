@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.29 2006-09-01 09:27:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.30 2006-09-01 13:33:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -1081,7 +1081,7 @@ public class GeneViewerPanel extends JPanel
    */
   private Color getColorFromAttributes(uk.ac.sanger.artemis.chado.Feature feature)
   {
-    List properties = new Vector(feature.getFeaturepropList());
+    List properties = new Vector(feature.getFeatureProps());
     for(int i=0; i<properties.size(); i++)
     {
       FeatureProp property = (FeatureProp)properties.get(i);

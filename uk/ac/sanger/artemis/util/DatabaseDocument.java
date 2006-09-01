@@ -1249,7 +1249,7 @@ public class DatabaseDocument extends Document
         int fmin    = feature.getFeatureloc().getFmin() + 1;
         int fmax    = feature.getFeatureloc().getFmax();
         String featprop = 
-          ((FeatureProp)(new Vector(feature.getFeaturepropList()).get(0))).getCvTerm().getName();
+          ((FeatureProp)(new Vector(feature.getFeatureProps()).get(0))).getCvTerm().getName();
         
         System.out.print(fmin+".."+fmax);
         System.out.print(" "+type);
