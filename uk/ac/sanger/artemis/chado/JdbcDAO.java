@@ -227,7 +227,7 @@ public class JdbcDAO
 
         Feature object = new Feature();
         object.setId(rs.getInt("object_id"));
-        feature_relationship.setObject(object);
+        feature_relationship.setFeatureByObjectId(object);
         feature.setFeature_relationship(feature_relationship);
 
         // feature organism
@@ -845,10 +845,10 @@ public class JdbcDAO
           sql_buff.append("VALUES ");
           sql_buff
               .append("( (SELECT feature_id FROM feature WHERE uniquename='");
-          sql_buff.append(feature_relationship.getSubject().getUniqueName()
+          sql_buff.append(feature_relationship.getFeatureBySubjectId().getUniqueName()
               + "'), ");
           sql_buff.append("(SELECT feature_id FROM feature WHERE uniquename='");
-          sql_buff.append(feature_relationship.getObject().getUniqueName()
+          sql_buff.append(feature_relationship.getFeatureByObjectId().getUniqueName()
               + "'), ");
           sql_buff.append(feature_relationship.getCvTerm().getCvTermId() + ")");
 
@@ -1095,11 +1095,11 @@ public class JdbcDAO
     sqlBuff.append(" WHERE ");
     sqlBuff.append("subject_id=");
     sqlBuff.append("( SELECT feature_id FROM feature WHERE uniquename='");
-    sqlBuff.append(feature_relationship.getSubject().getUniqueName()+"' ) ");
+    sqlBuff.append(feature_relationship.getFeatureBySubjectId().getUniqueName()+"' ) ");
     sqlBuff.append("AND ");
     sqlBuff.append("object_id=");
     sqlBuff.append("( SELECT feature_id FROM feature WHERE uniquename='");
-    sqlBuff.append(feature_relationship.getObject().getUniqueName()+"' ) ");
+    sqlBuff.append(feature_relationship.getFeatureByObjectId().getUniqueName()+"' ) ");
  
     String sql = sqlBuff.toString();
 

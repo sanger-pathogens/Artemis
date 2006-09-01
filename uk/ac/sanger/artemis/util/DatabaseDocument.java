@@ -578,7 +578,7 @@ public class DatabaseDocument extends Document
     {
       //Feature transcript = new Feature();
       
-      int id = ((FeatureRelationship) relations.get(i)).getSubject().getId();
+      int id = ((FeatureRelationship) relations.get(i)).getFeatureBySubjectId().getId();
       //transcript.setId(id);
       Feature transcript = dao.getFeatureById(id); //.getLazyFeature(transcript);
 
@@ -596,7 +596,7 @@ public class DatabaseDocument extends Document
 
       for(int j = 0; j < transcipt_relations.size(); j++)
       {
-        id = ((FeatureRelationship) transcipt_relations.get(j)).getSubject().getId();
+        id = ((FeatureRelationship) transcipt_relations.get(j)).getFeatureBySubjectId().getId();
         //Feature child = new Feature();
         //child.setId(((FeatureRelationship) transcipt_relations.get(j))
         //    .getSubject_id());
@@ -653,7 +653,7 @@ public class DatabaseDocument extends Document
     if(feat.getFeature_relationship() != null)
     {
       FeatureRelationship feat_relationship = feat.getFeature_relationship();
-      parent_id = Integer.toString(feat_relationship.getObject().getId());
+      parent_id = Integer.toString(feat_relationship.getFeatureByObjectId().getId());
       long parent_type_id = feat_relationship.getCvTerm().getCvTermId();
       
       parent_relationship = feat_relationship.getCvTerm().getName();
@@ -669,9 +669,9 @@ public class DatabaseDocument extends Document
       {
         FeatureRelationship feat_relationship = 
                             (FeatureRelationship)relations.get(i);
-        parent_id = Integer.toString(feat_relationship.getObject().getId());
+        parent_id = Integer.toString(feat_relationship.getFeatureByObjectId().getId());
         System.out.println("HERE   "+i+" "+feat_relationship.getCvTerm().getName()+ " "+
-            feat_relationship.getObject().getId()+" "+feat_relationship.getSubject().getId()+ " parent_id="+ parent_id);
+            feat_relationship.getFeatureByObjectId().getId()+" "+feat_relationship.getFeatureBySubjectId().getId()+ " parent_id="+ parent_id);
         parent_relationship = feat_relationship.getCvTerm().getName();
       }
     }

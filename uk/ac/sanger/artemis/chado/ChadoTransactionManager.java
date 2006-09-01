@@ -401,8 +401,8 @@ public class ChadoTransactionManager
           CvTerm cvterm = new CvTerm();
           cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").longValue());
           
-          feature_relationship.setObject(parent);
-          feature_relationship.setSubject(chado_feature);
+          feature_relationship.setFeatureByObjectId(parent);
+          feature_relationship.setFeatureBySubjectId(chado_feature);
           feature_relationship.setCvTerm(cvterm);
           feature_relationship.setRank(rank);
           featureRelationshipsForSubjectId.add(feature_relationship);
@@ -502,8 +502,8 @@ public class ChadoTransactionManager
           CvTerm cvterm = new CvTerm();
           cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").longValue());
           
-          feature_relationship.setObject(parent);
-          feature_relationship.setSubject(chado_feature);
+          feature_relationship.setFeatureByObjectId(parent);
+          feature_relationship.setFeatureBySubjectId(chado_feature);
           feature_relationship.setCvTerm(cvterm);
           featureRelationshipsForSubjectId.add(feature_relationship);
         }
@@ -526,8 +526,8 @@ public class ChadoTransactionManager
           cvterm.setCvTermId(DatabaseDocument.getCvtermID("derives_from")
               .longValue());
 
-          feature_relationship.setObject(parent);
-          feature_relationship.setSubject(chado_feature);
+          feature_relationship.setFeatureByObjectId(parent);
+          feature_relationship.setFeatureBySubjectId(chado_feature);
           feature_relationship.setCvTerm(cvterm);
           featureRelationshipsForSubjectId.add(feature_relationship);
         }
@@ -615,8 +615,8 @@ public class ChadoTransactionManager
           CvTerm cvterm = new CvTerm();
           cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").longValue());
           
-          feature_relationship.setObject(parent);
-          feature_relationship.setSubject(chado_feature);
+          feature_relationship.setFeatureByObjectId(parent);
+          feature_relationship.setFeatureBySubjectId(chado_feature);
           feature_relationship.setCvTerm(cvterm);
           featureRelationshipsForSubjectId.add(feature_relationship);
         }
@@ -639,8 +639,8 @@ public class ChadoTransactionManager
           cvterm.setCvTermId(DatabaseDocument.getCvtermID("derives_from")
               .longValue());
 
-          feature_relationship.setObject(parent);
-          feature_relationship.setSubject(chado_feature);
+          feature_relationship.setFeatureByObjectId(parent);
+          feature_relationship.setFeatureBySubjectId(chado_feature);
           feature_relationship.setCvTerm(cvterm);
           featureRelationshipsForSubjectId.add(feature_relationship);
         }

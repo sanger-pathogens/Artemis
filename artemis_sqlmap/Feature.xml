@@ -29,7 +29,7 @@
                class="Feature">
         <result property="timelastmodified" column="timelastmodified"/>
    	    <result property="id" column="id"/>
-  	    <result property="feature_relationship.object.id" column="object_id"/>
+  	    <result property="feature_relationship.featureByObjectId.id" column="object_id"/>
   	    <result property="feature_relationship.cvTerm.cvTermId" column="relation_type_id"/>
   	    <result property="feature_relationship.rank" column="rank"/>
         <result property="featureloc.strand" column="strand" nullValue="0"/>
@@ -88,8 +88,8 @@
      
      <resultMap id="select-relationship" 
                 class="FeatureRelationship">
-        <result property="subject.id" column="subject_id" />
-        <result property="object.id" column="object_id" />
+        <result property="featureBySubjectId.id" column="subject_id" />
+        <result property="featureByObjectId.id" column="object_id" />
         <result property="value" column="value" />
         <result property="rank" column="rank" />
         <result property="cvTerm" column="type_id" select="selectCvterm" />
@@ -293,9 +293,9 @@
       SET
         rank=$rank$, type_id=$cvTerm.cvTermId$
       WHERE subject_id=
-           ( SELECT feature_id FROM feature WHERE uniquename=#subject.uniqueName# )
+           ( SELECT feature_id FROM feature WHERE uniquename=#featureBySubjectId.uniqueName# )
       AND   object_id=
-           ( SELECT feature_id FROM feature WHERE uniquename=#object.uniqueName# )
+           ( SELECT feature_id FROM feature WHERE uniquename=#featureByObjectId.uniqueName# )
    </update>
     
     <!--  INSERT  -->
@@ -339,8 +339,8 @@
       INSERT INTO feature_relationship
         ( subject_id, object_id, type_id )
       VALUES
-        ( (SELECT feature_id FROM feature WHERE uniquename=#subject.uniqueName#),
-          (SELECT feature_id FROM feature WHERE uniquename=#object.uniqueName#),
+        ( (SELECT feature_id FROM feature WHERE uniquename=#featureBySubjectId.uniqueName#),
+          (SELECT feature_id FROM feature WHERE uniquename=#featureByObjectId.uniqueName#),
           $cvTerm.cvTermId$ )
    </insert>
    
