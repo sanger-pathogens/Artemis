@@ -20,19 +20,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Key.java,v 1.2 2006-08-09 16:35:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Key.java,v 1.3 2006-09-01 10:05:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
-import uk.ac.sanger.artemis.util.*;
 
 /**
  *  Each object in this class represents a feature key.  A key is a String
  *  with a limited number of possible values.
  *
  *  @author Kim Rutherford
- *  @version $Id: Key.java,v 1.2 2006-08-09 16:35:31 tjc Exp $
+ *  @version $Id: Key.java,v 1.3 2006-09-01 10:05:04 tjc Exp $
  **/
 
 public class Key 
