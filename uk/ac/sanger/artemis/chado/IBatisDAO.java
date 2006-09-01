@@ -68,7 +68,7 @@ public class IBatisDAO implements ChadoDAO
   public Feature getFeatureById(int id) 
   {
     Feature feature = new Feature();
-    feature.setId(id);
+    feature.setFeatureId(id);
     return getLazyFeature(feature);
   }
   
@@ -358,7 +358,7 @@ public class IBatisDAO implements ChadoDAO
 
     //
     // insert feature location into featureloc
-    feature.setId(feature_id);
+    feature.setFeatureId(feature_id);
     sqlMap.insert("insertFeatureLoc", feature);
     
     // insert feature relationships
@@ -414,7 +414,7 @@ public class IBatisDAO implements ChadoDAO
     //  get the feature id's  
     Feature feature = getFeatureByUniqueName(
         feature_dbxref.getFeature().getUniqueName());
-    feature_dbxref.getFeature().setId( feature.getId() );
+    feature_dbxref.getFeature().setFeatureId( feature.getFeatureId() );
 
     sqlMap.insert("insertFeatureDbXRef", feature_dbxref);
   }
@@ -538,7 +538,7 @@ public class IBatisDAO implements ChadoDAO
     for(int i = 0; i < list.size(); i++)
     {
       FeatureDbXRef dbxref = (FeatureDbXRef)list.get(i);
-      Integer feature_id = new Integer(dbxref.getFeature().getId());
+      Integer feature_id = new Integer(dbxref.getFeature().getFeatureId());
       String value = dbxref.getDbXRef().getDb().getName() + ":" + 
                      dbxref.getDbXRef().getAccession();
       if(dbxrefHash.containsKey(feature_id))

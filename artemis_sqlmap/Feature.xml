@@ -28,8 +28,8 @@
     <resultMap id="select-feature" 
                class="Feature">
         <result property="timelastmodified" column="timelastmodified"/>
-   	    <result property="id" column="id"/>
-  	    <result property="feature_relationship.featureByObjectId.id" column="object_id"/>
+   	    <result property="featureId" column="id"/>
+  	    <result property="feature_relationship.featureByObjectId.featureId" column="object_id"/>
   	    <result property="feature_relationship.cvTerm.cvTermId" column="relation_type_id"/>
   	    <result property="feature_relationship.rank" column="rank"/>
         <result property="featureloc.strand" column="strand" nullValue="0"/>
@@ -48,17 +48,17 @@
     <resultMap id="select-feature-lazy" 
                class="Feature">       
         <result property="timelastmodified" column="timelastmodified"/>
-   	    <result property="id" column="id"/>
+   	    <result property="featureId" column="id"/>
         <result property="uniqueName" column="uniquename"/>
         <result property="name" column="name"/>
-        <result property="length" column="length" nullValue="-999" />
+        <result property="seqLen" column="length" nullValue="-999" />
         <result property="residues" column="residues" />
         <result property="cvTerm" column="type_id" select="selectCvterm" />
         <result property="featurelocsForFeatureId" column="{id=id}" 
                                                    select="getFeatureLoc" />
         <result property="featureProps" column="{feature_id=id}" 
                                            select="selectFeatureProp" />
-        <result property="featureDbXRefs" column="{id=id}"
+        <result property="featureDbXRefs" column="{featureId=id}"
                                           select="getFeatureDbXRef" />
         <result property="featureRelationshipsForObjectId" column="{object_id=id}" 
                                            select="getFeatureRelationship" />  
@@ -75,7 +75,7 @@
         <result property="organism.abbreviation" column="abbreviation"/>
         <result property="name" column="name"/>
         <result property="uniqueName" column="uniquename"/>
-        <result property="id" column="feature_id"/>
+        <result property="featureId" column="feature_id"/>
         <result property="cvTerm.cvTermId" column="type_id"/>
      </resultMap>
 
@@ -88,8 +88,8 @@
      
      <resultMap id="select-relationship" 
                 class="FeatureRelationship">
-        <result property="featureBySubjectId.id" column="subject_id" />
-        <result property="featureByObjectId.id" column="object_id" />
+        <result property="featureBySubjectId.featureId" column="subject_id" />
+        <result property="featureByObjectId.featureId" column="object_id" />
         <result property="value" column="value" />
         <result property="rank" column="rank" />
         <result property="cvTerm" column="type_id" select="selectCvterm" />
@@ -189,14 +189,14 @@
 	 FROM feature f
 	 WHERE
 	   <dynamic>
-          <isGreaterThan property="id" compareValue="0"> 
-            f.feature_id=$id$ AND
+          <isGreaterThan property="featureId" compareValue="0"> 
+            f.feature_id=$featureId$ AND
           </isGreaterThan>
           
           <isNotNull property="uniqueName">                                 
             <isNotNull property="featureSynonymsForFeatureId">
               <iterate property="featureSynonymsForFeatureId" conjunction="OR" open="(" close=") OR">
-               f.feature_id=#featureSynonymsForFeatureId[].feature.id#
+               f.feature_id=#featureSynonymsForFeatureId[].feature.featureId#
              </iterate>
             </isNotNull>
             uniquename LIKE #uniqueName# OR name LIKE #uniqueName# AND              
@@ -276,7 +276,7 @@
       <isNotNull property="timelastmodified">
         , timelastmodified=#timelastmodified#
       </isNotNull>
-      WHERE feature_id=$id$
+      WHERE feature_id=$featureId$
     </update>
     
     <update id="updateFeatureProp"
@@ -326,7 +326,7 @@
         ( featureloc_id, feature_id, srcfeature_id, fmin, fmax, strand, phase )
       VALUES
         ( nextval('featureloc_featureloc_id_seq'),
-          $id$,
+          $featureId,
           $featureloc.srcfeature_id$,
           $featureloc.fmin$,
           $featureloc.fmax$,

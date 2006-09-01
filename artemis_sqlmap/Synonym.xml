@@ -15,7 +15,7 @@
         
     <resultMap id="select-alias" 
                class="FeatureSynonym">
-   	    <result property="feature.id" column="feature_id"/>
+   	    <result property="feature.featureId" column="feature_id"/>
    	    <result property="synonym_id" column="synonym_id"/>
    	    <result property="pub_id" column="pub_id"/>
    	    <result property="current" column="is_current"/>
@@ -28,7 +28,7 @@
      
      <resultMap id="select-alias-part-lazy" 
                class="FeatureSynonym">
-   	    <result property="feature.id" column="feature_id"/>
+   	    <result property="feature.featureId" column="feature_id"/>
    	    <result property="synonym_id" column="synonym_id"/>
    	    <result property="pub_id" column="pub_id"/>
    	    <result property="current" column="is_current"/>
@@ -38,7 +38,7 @@
      
      <resultMap id="select-alias-lazy" 
                class="FeatureSynonym">
-   	    <result property="feature.id" column="feature_id"/>
+   	    <result property="feature.featureId" column="feature_id"/>
    	    <result property="pub_id" column="pub_id"/>
    	    <result property="current" column="is_current"/>
    	    <result property="internal" column="is_internal"/>

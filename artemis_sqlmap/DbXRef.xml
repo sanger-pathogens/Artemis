@@ -18,10 +18,10 @@
            
   <resultMap id="select-feature-dbxref" 
                class="FeatureDbXRef">
-    <result property="feature.id"       column="feature_id"/>
-    <result property="dbXRef.db.name"   column="name"/>
-    <result property="dbXRef.accession" column="accession"/>
-    <result property="dbXRef.version"   column="version"/>
+    <result property="feature.featureId" column="feature_id"/>
+    <result property="dbXRef.db.name"    column="name"/>
+    <result property="dbXRef.accession"  column="accession"/>
+    <result property="dbXRef.version"    column="version"/>
   </resultMap>
         
   <select id="getFeatureDbXRef" 
@@ -35,8 +35,8 @@
         <isNotNull property="uniqueName"> 
           WHERE f.uniquename=#uniqueName#
         </isNotNull>
-        <isGreaterThan property="id" compareValue="0">
-          WHERE dbx_f.feature_id=$id$
+        <isGreaterThan property="featureId" compareValue="0">
+          WHERE dbx_f.feature_id=$featureId$
         </isGreaterThan>
         ORDER BY f.type_id,  uniquename
   </select> 

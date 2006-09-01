@@ -353,7 +353,7 @@ public class ChadoDemo
       rowData[i][1] = feature.getUniqueName();
       rowData[i][2] = feature.getCvTerm().getName();
       //rowData[i][2] = (String)cvterm.get(new Long(feature.getType_id()));
-      rowData[i][3] = Integer.toString(feature.getId());
+      rowData[i][3] = Integer.toString(feature.getFeatureId());
       rowData[i][6] = feature.getTimelastmodified().toString();
     
     }

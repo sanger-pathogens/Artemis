@@ -42,11 +42,11 @@ public class Feature
   /** schema */
   private String schema;
   /** feature id */
-  private int id;
+  private int featureId;
   /** time last changed */
   private Timestamp timelastmodified;
   /** sequence length */
-  private int length;
+  private int seqLen;
   /** features unique name */
   private String uniqueName = null;
   /** features name */
@@ -92,18 +92,18 @@ public class Feature
    * Get the feature_id.
    * @return	the feature_id
    */
-  public int getId()
+  public int getFeatureId()
   {
-    return id;
+    return featureId;
   } 
 
   /**
    * Set the feature_id.
    * @param id	set the feature_id
    */
-  public void setId(int id)
+  public void setFeatureId(int featureId)
   {
-    this.id = id;
+    this.featureId = featureId;
   }
 
   /**
@@ -146,18 +146,18 @@ public class Feature
    * Get sequence length. The length of the residue feature.
    * @return	the length of the residue feature
    */
-  public int getLength()
+  public int getSeqLen()
   {
-    return length;
+    return seqLen;
   }
 
   /**
    * Set sequence length. The length of the residue feature.
    * @param length	the length of the residue feature
    */
-  public void setLength(int length)
+  public void setSeqLen(int seqLen)
   {
-    this.length = length;
+    this.seqLen = seqLen;
   }
 
   /**

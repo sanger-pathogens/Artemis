@@ -75,7 +75,7 @@ public class JdbcDAO
   public Feature getFeatureById(int id)
   {
     Feature feature = new Feature();
-    feature.setId(id);
+    feature.setFeatureId(id);
     return getLazyFeature(feature);
   }
 
@@ -89,7 +89,7 @@ public class JdbcDAO
   {
     Feature feature = new Feature();
     feature.setUniqueName(uniquename);
-    feature.setId(-1);
+    feature.setFeatureId(-1);
     return getLazyFeature(feature);
   }
   
@@ -139,7 +139,7 @@ public class JdbcDAO
   private Feature getLazyFeature(final Feature feature)
   {
     List list = getFeatureQuery(feature.getUniqueName(), 
-                                -1, feature.getId());
+                                -1, feature.getFeatureId());
     return (Feature)list.get(0);
   }
   
@@ -217,7 +217,7 @@ public class JdbcDAO
 
         feature.setUniqueName(rs.getString("uniquename"));
         feature.setTimelastmodified(rs.getTimestamp("timelastmodified"));
-        feature.setId(rs.getInt("feature_id"));
+        feature.setFeatureId(rs.getInt("feature_id"));
 
         // feature relationship
         FeatureRelationship feature_relationship = new FeatureRelationship();
@@ -226,7 +226,7 @@ public class JdbcDAO
         feature_relationship.setCvTerm(cvterm);
 
         Feature object = new Feature();
-        object.setId(rs.getInt("object_id"));
+        object.setFeatureId(rs.getInt("object_id"));
         feature_relationship.setFeatureByObjectId(object);
         feature.setFeature_relationship(feature_relationship);
 
@@ -295,7 +295,7 @@ public class JdbcDAO
         organism.setAbbreviation(rs.getString("abbreviation"));
 
         feature.setOrganism(organism);
-        feature.setId(rs.getInt("feature_id"));
+        feature.setFeatureId(rs.getInt("feature_id"));
         feature.setName(rs.getString("name"));
         feature.setUniqueName(rs.getString("uniquename"));
         feature.setCvTerm(new CvTerm());
@@ -438,7 +438,7 @@ public class JdbcDAO
         dbxref.setAccession(rs.getString("accession"));
         dbxref.setDb(db);
         Feature feat = new Feature();
-        feat.setId(rs.getInt("feature_id"));
+        feat.setFeatureId(rs.getInt("feature_id"));
         feature_dbxref.setDbXRef(dbxref);
         feature_dbxref.setFeature(feat);
         dbxrefs.add(feature_dbxref);
@@ -486,7 +486,7 @@ public class JdbcDAO
         syn.setName(rs.getString("name"));
         syn.setCvTerm(cvterm);
         Feature feat = new Feature();
-        feat.setId(rs.getInt("feature_id"));
+        feat.setFeatureId(rs.getInt("feature_id"));
 
         alias.setSynonym(syn);
         alias.setFeature(feat);
@@ -641,7 +641,7 @@ public class JdbcDAO
         param++;
       }
 
-      pstmt.setInt(param, feature.getId());
+      pstmt.setInt(param, feature.getFeatureId());
       appendToLogFile(sql, sqlLog);
       pstmt.executeUpdate();
     }
