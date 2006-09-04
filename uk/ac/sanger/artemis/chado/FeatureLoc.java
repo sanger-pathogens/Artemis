@@ -38,9 +38,9 @@ public class FeatureLoc
   /** end position */
   private int fmax;
   /** +1 or -1 depending if on the forward or reverse */
-  private int strand;
+  private Short strand;
   /** phase */
-  private int phase;
+  private Integer phase;
   /** Alternative residues, differing from feature.residues e.g. SNP.*/
   private String residue_info;
   /** used to manifest redundant, derivable extra locations for a feature*/
@@ -57,7 +57,7 @@ public class FeatureLoc
    * Should be 0, -1 or +1. Use 0 if transpliced.
    * @return the strand
    */
-  public int getStrand()
+  public Short getStrand()
   {
     return strand;
   }
@@ -67,7 +67,7 @@ public class FeatureLoc
    * Should be 0, -1 or +1. Use 0 if transpliced.
    * @param strand the strand
    */
-  public void setStrand(int strand)
+  public void setStrand(Short strand)
   {
     this.strand = strand;
   }
@@ -141,7 +141,7 @@ public class FeatureLoc
    * The phase of translation wrt srcfeature_id. Values are 0,1,2. 
    * @return  the phase
    */
-  public int getPhase()
+  public Integer getPhase()
   {
     return phase;  
   }
@@ -150,7 +150,7 @@ public class FeatureLoc
    * The phase of translation wrt srcfeature_id. Values are 0,1,2. 
    * @param phase the phase
    */
-  public void setPhase(int phase)
+  public void setPhase(Integer phase)
   {
     this.phase = phase;
   }

@@ -639,8 +639,8 @@ public class DatabaseDocument extends Document
     int fmin          = featureloc.getFmin() + 1;
     int fmax          = featureloc.getFmax();
     long type_id      = feat.getCvTerm().getCvTermId();
-    int strand        = featureloc.getStrand();
-    int phase         = featureloc.getPhase();
+    Short strand      = featureloc.getStrand();
+    Integer phase     = featureloc.getPhase();
     String name       = feat.getUniqueName();
     String typeName   = getCvtermName(type_id, dao);
 
@@ -707,14 +707,14 @@ public class DatabaseDocument extends Document
     this_buff.append(fmin + "\t");          // start
     this_buff.append(fmax + "\t");          // end
     this_buff.append(".\t");                // score
-    if(strand == -1)                        // strand
+    if(strand.equals( new Short((short)-1)) )                        // strand
       this_buff.append("-\t");
-    else if(strand == 1)
+    else if(strand.equals( new Short((short)1)) )
       this_buff.append("+\t");
     else
       this_buff.append(".\t");
 
-    if(phase > 3)
+    if(phase == null)
       this_buff.append(".\t");               // phase
     else
       this_buff.append(phase+"\t"); 

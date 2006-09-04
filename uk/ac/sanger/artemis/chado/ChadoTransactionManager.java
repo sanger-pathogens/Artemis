@@ -77,7 +77,8 @@ public class ChadoTransactionManager
               "Derives_from",
               "Dbxref",
               "Ontology_term",
-              "score", 
+              "score",
+              "codon_start",
               "gff_source",      // program or database
               "gff_seqname" };   // seqID of coord system
            
@@ -457,32 +458,17 @@ public class ChadoTransactionManager
       roe.printStackTrace();
     }
 
+    
+    FeatureLoc featureloc = getFeatureLoc(
+                   (GFFStreamFeature)feature.getEmblFeature(),
+                   feature_uniquename, 
+                  feature.getLocation().getTotalRange());
     uk.ac.sanger.artemis.chado.Feature chado_feature = 
               new uk.ac.sanger.artemis.chado.Feature();
-    FeatureLoc featureloc = new FeatureLoc();
     chado_feature.setFeatureloc(featureloc);
     
-    if(feature.isForwardFeature())
-      featureloc.setStrand(1);
-    else
-      featureloc.setStrand(-1);
-    
-    // codon_start attribute
     try
-    {
-      Qualifier qualifier_phase = feature.getQualifierByName("codon_start");
-      if(qualifier_phase != null)
-      {
-        String phase = (String)(qualifier_phase.getValues()).elementAt(0);
-
-        if(phase.equals ("1"))
-          featureloc.setPhase(0);
-        else if(phase.equals("2"))
-          featureloc.setPhase(1);
-        else if(phase.equals("3")) 
-          featureloc.setPhase(2);
-      }
-      
+    { 
       // relationship attributes
       Qualifier qualifier_relation = feature.getQualifierByName("Parent");
       List featureRelationshipsForSubjectId = null;
@@ -537,13 +523,6 @@ public class ChadoTransactionManager
     }
     catch(InvalidRelationException ire){}
     
-    if(feature.isForwardFeature())
-      featureloc.setStrand(1);
-    else
-      featureloc.setStrand(-1);
-
-    featureloc.setFmin(feature.getRawFirstBase()-1);
-    featureloc.setFmax(feature.getRawLastBase());
     chado_feature.setUniqueName(feature_uniquename);
     chado_feature.setName(feature_uniquename);
 
@@ -575,9 +554,9 @@ public class ChadoTransactionManager
     chado_feature.setFeatureloc(featureloc);
     
     if(segment.isForwardSegment())
-      featureloc.setStrand(1);
+      featureloc.setStrand(new Short((short)1));
     else
-      featureloc.setStrand(-1);
+      featureloc.setStrand(new Short((short)-1));
     
     // codon_start attribute
     Feature feature = segment.getFeature();
@@ -589,12 +568,14 @@ public class ChadoTransactionManager
         String phase = (String)(qualifier_phase.getValues()).elementAt(0);
 
         if(phase.equals ("1"))
-          featureloc.setPhase(0);
+          featureloc.setPhase(new Integer(0));
         else if(phase.equals("2"))
-          featureloc.setPhase(1);
+          featureloc.setPhase(new Integer(1));
         else if(phase.equals("3")) 
-          featureloc.setPhase(2);
+          featureloc.setPhase(new Integer(2));
       }
+      else
+        featureloc.setPhase(null);
       
       // relationship attributes
       Qualifier qualifier_relation = feature.getQualifierByName("Parent");
@@ -1139,6 +1120,16 @@ public class ChadoTransactionManager
                old_dbxref,
                feature.getLastModified(), feature);  
          }
+         else if(qualifier_name.equals("codon_start"))
+         {
+           FeatureLoc featureloc = getFeatureLoc(feature, uniquename, 
+               feature.getLocation().getTotalRange());
+           
+           tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                                      featureloc,
+                                      feature.getLastModified(), feature);
+           sql.add(tsn);
+         }
          else if(isSynonymTag(qualifier_name))
          {
            System.out.println(uniquename+"  in handleReservedTags() DELETE "+qualifier_name+" "+
@@ -1195,6 +1186,16 @@ public class ChadoTransactionManager
            tsn = new ChadoTransaction(ChadoTransaction.INSERT,
                new_dbxref,
                feature.getLastModified(), feature);
+         }
+         else if(qualifier_name.equals("codon_start"))
+         {
+           FeatureLoc featureloc = getFeatureLoc(feature, uniquename, 
+               feature.getLocation().getTotalRange());
+           
+           tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                                      featureloc,
+                                      feature.getLastModified(), feature);
+           sql.add(tsn);
          }
          else if(isSynonymTag(qualifier_name))
          {
@@ -1277,9 +1278,9 @@ public class ChadoTransactionManager
     
     boolean is_complement = feature.getLocation().isComplement();
     if(is_complement)
-      featureloc.setStrand(-1);
+      featureloc.setStrand(new Short((short) -1));
     else
-      featureloc.setStrand(1);
+      featureloc.setStrand(new Short((short) 1));
     
     Qualifier qualifier_phase = feature.getQualifierByName("codon_start");
     if(qualifier_phase != null)
@@ -1287,12 +1288,14 @@ public class ChadoTransactionManager
       String phase = (String)(qualifier_phase.getValues()).elementAt(0);
 
       if(phase.equals ("1"))
-        featureloc.setPhase(0);
+        featureloc.setPhase(new Integer(0));
       else if(phase.equals("2"))
-        featureloc.setPhase(1);
+        featureloc.setPhase(new Integer(1));
       else if(phase.equals("3")) 
-        featureloc.setPhase(2);
+        featureloc.setPhase(new Integer(2));
     }
+    else
+      featureloc.setPhase(null);
     
     return featureloc;
   }

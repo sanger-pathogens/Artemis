@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.30 2006-09-01 13:33:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.31 2006-09-04 15:01:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -699,7 +699,7 @@ public class GeneViewerPanel extends JPanel
       FeatureLoc loc = uk.ac.sanger.artemis.chado.Feature.getFeatureLoc(
            new Vector(start_exon.getFeaturelocsForFeatureId()), chado_gene.getSrcfeature_id());
       
-      if(loc.getStrand() == -1)
+      if(loc.getStrand().shortValue() == -1)
       {
         FeatureLoc loc_last = uk.ac.sanger.artemis.chado.Feature.getFeatureLoc(
             new Vector(((uk.ac.sanger.artemis.chado.Feature)exons.get(exons.size()-1)).getFeaturelocsForFeatureId()),
@@ -724,7 +724,7 @@ public class GeneViewerPanel extends JPanel
         offset = getFrameID(chado_gene, loc, j, exons) * getFontHeight() * 2;
         
         boolean isForward = false;
-        if(loc.getStrand() == 1)
+        if(loc.getStrand().shortValue() == 1)
           isForward = true;
         
         if(j == exons.size()-1)
@@ -1107,7 +1107,7 @@ public class GeneViewerPanel extends JPanel
   {
     final int position_on_strand;
     
-    if(loc.getStrand() == -1)
+    if(loc.getStrand().shortValue() == -1)
       position_on_strand = chado_gene.getSeqlen()-loc.getFmax();
     else
       position_on_strand = loc.getFmin();
@@ -1116,7 +1116,7 @@ public class GeneViewerPanel extends JPanel
     final int start_base_modulo =
       (position_on_strand + getFrameShift(nexon, exons, chado_gene, loc)) % 3;
 
-    if(loc.getStrand() == 1)
+    if(loc.getStrand().shortValue() == 1)
     {
       switch (start_base_modulo)
       {
@@ -1168,7 +1168,7 @@ public class GeneViewerPanel extends JPanel
           new Vector(this_feature.getFeaturelocsForFeatureId()), chado_gene.getSrcfeature_id());
       
       int this_direction;
-      if(featureLoc.getStrand() == 1)
+      if(featureLoc.getStrand().shortValue() == 1)
         this_direction = 1;
       else
         this_direction = -1;
@@ -1191,7 +1191,7 @@ public class GeneViewerPanel extends JPanel
       }
     }
     
-    int codon_start = loc.getPhase();
+    int codon_start = loc.getPhase().shortValue();
     int mod_value   = (base_count + 3 - codon_start) % 3;
 
     if(mod_value == 1) 

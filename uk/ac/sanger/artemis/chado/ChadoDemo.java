@@ -340,7 +340,7 @@ public class ChadoDemo
         int fmin = loc.getFmin() + 1;
         int fmax = loc.getFmax();
         rowData[i][4] = fmin + "..." + fmax;
-        rowData[i][5] = Integer.toString(loc.getStrand());
+        rowData[i][5] = Integer.toString(loc.getStrand().shortValue());
       }
       
       String schema = feature.getOrganism().getAbbreviation().toLowerCase();

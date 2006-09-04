@@ -193,13 +193,13 @@ public class JdbcDAO
         FeatureLoc featureloc = new FeatureLoc();
         featureloc.setFmin(rs.getInt("fmin"));
         featureloc.setFmax(rs.getInt("fmax"));
-        featureloc.setStrand(rs.getInt("strand"));
+        featureloc.setStrand(new Short(rs.getShort("strand")));
 
         int phase = rs.getInt("phase");
         if(rs.wasNull())
-          featureloc.setPhase(10);
+          featureloc.setPhase(null);
         else
-          featureloc.setPhase(phase);
+          featureloc.setPhase(new Integer(phase));
 
         feature.setResidues(rs.getBytes("residues"));
 
@@ -595,8 +595,8 @@ public class JdbcDAO
       pstmt.setInt(1, featureloc.getFmin());
       pstmt.setInt(2, featureloc.getFmax());
       pstmt.setInt(3, featureloc.getRank());
-      pstmt.setInt(4, featureloc.getStrand());
-      pstmt.setInt(5, featureloc.getPhase());
+      pstmt.setShort(4, featureloc.getStrand().shortValue());
+      pstmt.setInt(5, featureloc.getPhase().intValue());
       pstmt.setString(6, featureloc.getFeature().getUniqueName());
       appendToLogFile(sql, sqlLog);
 
