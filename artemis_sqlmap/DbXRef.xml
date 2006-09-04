@@ -24,6 +24,15 @@
     <result property="dbXRef.version"    column="version"/>
   </resultMap>
         
+  <resultMap id="select-dbxref" 
+               class="DbXRef">
+    <result property="db"          column="db_id" select="selectDb"/>
+    <result property="accession"   column="accession"/>
+    <result property="version"     column="version"/>
+    <result property="description" column="description"/>
+  </resultMap>
+  
+  
   <select id="getFeatureDbXRef" 
           parameterClass="uk.ac.sanger.artemis.chado.Feature"
           resultMap="select-feature-dbxref">
@@ -52,13 +61,13 @@
            AND db_id=$dbXRefId$;
   </select>
   
-  
-  
-  <select id="selectDbXRef" resultClass="DbXRef">
+  <select id="selectDbXRef" resultMap="select-dbxref">
     SELECT * FROM dbxref WHERE dbxref_id=$dbXRefId$
   </select>
   
-  
+  <select id="selectDb" resultClass="Db">
+    SELECT * FROM db WHERE db_id=$db_id$
+  </select>
   
   <!-- WRITE BACK -->
   <delete id="deleteFeatureDbXRef" parameterClass="FeatureDbXRef">
