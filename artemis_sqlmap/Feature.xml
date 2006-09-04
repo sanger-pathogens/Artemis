@@ -19,6 +19,9 @@
      <typeAlias alias="FeatureRelationship"
         type="uk.ac.sanger.artemis.chado.FeatureRelationship"/>
      
+     <typeAlias alias="FeatureCvTerm"
+        type="uk.ac.sanger.artemis.chado.FeatureCvTerm"/>
+     
     <parameterMap id="schema-cvlist" 
                   class="Feature">
        <parameter property="schema" javaType="java.lang.String"/>
@@ -35,7 +38,7 @@
         <result property="featureloc.strand" column="strand" nullValue="0"/>
         <result property="featureloc.fmin" column="fmin" nullValue="-1"/>
         <result property="featureloc.fmax" column="fmax" nullValue="0"/>
-        <result property="featureloc.phase" column="phase" nullValue="10"/>
+        <result property="featureloc.phase" column="phase"/>
         <result property="uniqueName" column="uniquename"/>
         <result property="cvTerm.cvTermId" column="type_id"/>
         <result property="featureprop.cvTerm.cvTermId" column="prop_type_id" nullValue="0"/>
@@ -106,7 +109,13 @@
         <result property="locgroup"  column="locgroup"/>
         <result property="rank"      column="rank"/>
      </resultMap>
-        
+     
+     
+     <resultMap id="select-featurecvterms" class="FeatureCvTerm">
+        <result property="feature.featureId" column="feature_id" />
+        <result property="cvTerm" column="type_id" select="selectCvterm" />
+        <result property="not" column="is_not" />
+     </resultMap>
         
      <!-- SQL -->
         
@@ -139,6 +148,10 @@
        WHERE featureloc.feature_id=#id#
      </select>
      
+     <select id="getFeatureCvTermByFeature" resultMap="select-featurecvterms">
+        SELECT * FROM feature_cvterm
+        WHERE feature_id=(SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#)
+     </select>
 
      <!-- get feature -->
 
@@ -259,7 +272,13 @@
     <update id="updateFeatureLoc" 
             parameterClass="FeatureLoc">
       UPDATE featureloc
-      SET fmin=$fmin$, fmax=$fmax$, rank=$rank$, strand=$strand$, phase=$phase$
+      SET fmin=$fmin$, fmax=$fmax$, rank=$rank$, strand=$strand$
+      <isNotNull property="phase">
+        , phase=$phase$
+      </isNotNull>
+      <isNull property="phase">
+        , phase=NULL
+      </isNull>
       WHERE 
       <isNotNull property="feature.uniqueName">
         feature_id=(SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#)
@@ -323,15 +342,22 @@
     <insert id="insertFeatureLoc" 
             parameterClass="Feature">
       INSERT INTO featureloc
-        ( featureloc_id, feature_id, srcfeature_id, fmin, fmax, strand, phase )
+        ( featureloc_id, feature_id, srcfeature_id, fmin, fmax, strand
+          <isNotNull property="featureloc.phase">
+           , phase
+          </isNotNull> 
+        )
       VALUES
         ( nextval('featureloc_featureloc_id_seq'),
-          $featureId,
+          $featureId$,
           $featureloc.srcfeature_id$,
           $featureloc.fmin$,
           $featureloc.fmax$,
-          $featureloc.strand$,
-          $featureloc.phase$ )
+          $featureloc.strand$
+          <isNotNull property="featureloc.phase">
+            , $featureloc.phase$
+          </isNotNull>
+        )
     </insert>
 
    <insert id="insertFeatureRelationship" 
