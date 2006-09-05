@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="Pub"> 
+ 
+  <typeAlias alias="Pub"
+        type="uk.ac.sanger.artemis.chado.Pub"/>
+  
+  <resultMap id="select-pub"
+             class="Pub">
+     <result property="title"         column="title" />
+     <result property="volumeTitle"   column="volumetitle" />
+     <result property="volume"        column="volume" />
+     <result property="seriesName" column="series_name" />
+     <result property="issue"  column="issue" />
+     <result property="pyear"  column="pyear"/>
+     <result property="pages"  column="pages"/>
+     <result property="miniRef"      column="miniref"/>
+     <result property="uniqueName" column="uniquename" />
+     <result property="obsolete" column="obsolete" />
+     <result property="publisher" column="publisher" />
+     <result property="pubPlace" column="pubplace" />
+     <result property="cvTerm" column="type_id" select="selectCvterm" />
+  </resultMap>
+
+  <!-- SQL -->
+       
+  <select id="selectPub" resultMap="select-pub">
+    SELECT * FROM pub WHERE pub_id=$pub_id$
+  </select>
+  
+
+</sqlMap> 

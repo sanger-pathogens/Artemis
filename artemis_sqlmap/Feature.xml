@@ -111,10 +111,11 @@
      </resultMap>
      
      
-     <resultMap id="select-featurecvterms" class="FeatureCvTerm">
+     <resultMap id="select-featurecvterm" class="FeatureCvTerm">
         <result property="feature.featureId" column="feature_id" />
         <result property="cvTerm" column="type_id" select="selectCvterm" />
         <result property="not" column="is_not" />
+        <result property="pub" column="pub_id" select="selectPub" />
      </resultMap>
         
      <!-- SQL -->
@@ -148,7 +149,8 @@
        WHERE featureloc.feature_id=#id#
      </select>
      
-     <select id="getFeatureCvTermByFeature" resultMap="select-featurecvterms">
+     <!--  select feature_cvterm -->
+     <select id="getFeatureCvTermByFeature" resultMap="select-featurecvterm">
         SELECT * FROM feature_cvterm
         WHERE feature_id=(SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#)
      </select>
