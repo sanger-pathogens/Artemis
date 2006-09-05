@@ -616,7 +616,7 @@ public class FastaTextPane extends JScrollPane
     */
     private void getzCall(final Vector hits, final int nretrieve)
     {
-      final String env[] = { "PATH=/usr/local/pubseq/bin/" };
+      final String env[] = { "PATH=/usr/local/pubseq/bin/:/nfs/disk100/pubseq/bin/" };
 
       StringBuffer query = new StringBuffer();
 
