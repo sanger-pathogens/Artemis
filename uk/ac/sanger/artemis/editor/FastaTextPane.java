@@ -621,6 +621,7 @@ public class FastaTextPane extends JScrollPane
       StringBuffer query = new StringBuffer();
 
       int n = 0;
+      File fmfetch = new File("/nfs/disk100/pubseq/bin/mfetch");
 
       Enumeration ehits = hits.elements();
       while(ehits.hasMoreElements() && keepRunning)
@@ -629,7 +630,11 @@ public class FastaTextPane extends JScrollPane
           break;
         HitInfo hit = (HitInfo)ehits.nextElement();
         if(n > 0)
+        {
           query.append("|");
+          if(fmfetch.exists())
+            query.append("acc:");
+        }
 
         query.append(hit.getAcc());
         n++;
@@ -637,7 +642,24 @@ public class FastaTextPane extends JScrollPane
        
       BufferedReader strbuff = null;
       File fgetz = new File("/usr/local/pubseq/bin/getz");
-      if(!fgetz.exists())
+
+      if(fmfetch.exists())
+      {
+        String cmd[]   = { "mfetch", "-f", "acc org des gen",
+            "-d", "uniprot", "-i", "acc:"+query.toString() };
+       
+        ExternalApplication app = new ExternalApplication(cmd,
+                                    env,null);
+        String res = app.getProcessStdout();
+        //System.out.println(res);
+        //System.out.println( app.getProcessStderr() );
+        //for(int i=0; i<cmd.length; i++)
+        //  System.out.print(cmd[i]+" ");
+
+        StringReader strread   = new StringReader(res);
+        strbuff = new BufferedReader(strread);
+      }
+      else if(!fgetz.exists())
       {
         try
         {
@@ -744,7 +766,7 @@ public class FastaTextPane extends JScrollPane
       while(ehits.hasMoreElements() && keepRunning)
       {               
         hit = (HitInfo)ehits.nextElement();
-        res = getUniprotLinkToDatabase(fgetz, hit, env, "EMBL");
+        res = getUniprotLinkToDatabase(fgetz, fmfetch, hit, env, "embl");
               
         int ind1 = res.indexOf("ID ");
         if(ind1 > -1) 
@@ -760,7 +782,7 @@ public class FastaTextPane extends JScrollPane
         if(hit.getEC_number() != null)
           continue;   
 
-        res = getUniprotLinkToDatabase(fgetz, hit, env, "enzyme");
+        res = getUniprotLinkToDatabase(fgetz, fmfetch, hit, env, "enzyme");
 
         ind1 = res.indexOf("ID ");
         if(ind1 > -1) 
@@ -791,11 +813,27 @@ public class FastaTextPane extends JScrollPane
   * Link Uniprot to the another database (e.g. EMBL or ENZYME)
   *
   */
-  protected static String getUniprotLinkToDatabase(File fgetz, HitInfo hit,
+  protected static String getUniprotLinkToDatabase(File fgetz, File fmfetch, HitInfo hit,
                                                   String env[], String DB)
   {
     String res = null;
-    if(!fgetz.exists())
+
+    if(fmfetch.exists())
+    {
+      String cmd[]   = { "mfetch", "-f", "id",
+          "-d", "uniprot", "-i", "acc:"+hit.getID(), 
+          "-l", DB };
+
+      ExternalApplication app = new ExternalApplication(cmd,
+                                  env,null);
+      res = app.getProcessStdout();
+
+      //for(int i=0; i<cmd.length; i++)
+      //  System.out.print(cmd[i]+" ");
+      //System.out.println("\n"+ app.getProcessStderr() );
+      //System.out.println("\n"+res);
+    }
+    else if(!fgetz.exists())
     {
       try
       {
