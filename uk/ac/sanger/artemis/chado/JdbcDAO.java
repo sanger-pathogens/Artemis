@@ -591,12 +591,17 @@ public class JdbcDAO
                        "WHERE feature_id=(SELECT feature_id FROM feature WHERE uniquename=?)";
     try
     {
-    PreparedStatement pstmt = conn.prepareStatement(sql);
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, featureloc.getFmin());
       pstmt.setInt(2, featureloc.getFmax());
       pstmt.setInt(3, featureloc.getRank());
       pstmt.setShort(4, featureloc.getStrand().shortValue());
-      pstmt.setInt(5, featureloc.getPhase().intValue());
+      
+      if(featureloc.getPhase() != null)
+        pstmt.setInt(5, featureloc.getPhase().intValue());
+      else
+        pstmt.setNull(5, Types.INTEGER);
+      
       pstmt.setString(6, featureloc.getFeature().getUniqueName());
       appendToLogFile(sql, sqlLog);
 
@@ -812,16 +817,22 @@ public class JdbcDAO
       sql_buff.append(" srcfeature_id ,");
       sql_buff.append(" fmin ,");
       sql_buff.append(" fmax ,");
-      sql_buff.append(" strand ,");
-      sql_buff.append(" phase ");
+      sql_buff.append(" strand ");
+      
+      if(feature.getFeatureloc().getPhase() != null)
+        sql_buff.append(" , phase ");
+      
       sql_buff.append(" ) VALUES ( ");
       sql_buff.append("nextval('featureloc_featureloc_id_seq') , ");
       sql_buff.append(feature_id + " , ");
       sql_buff.append(feature.getFeatureloc().getSrcfeature_id() + " , ");
       sql_buff.append(feature.getFeatureloc().getFmin() + " , ");
       sql_buff.append(feature.getFeatureloc().getFmax() + " , ");
-      sql_buff.append(feature.getFeatureloc().getStrand() + " , ");
-      sql_buff.append(feature.getFeatureloc().getPhase());
+      sql_buff.append(feature.getFeatureloc().getStrand());
+      
+      if(feature.getFeatureloc().getPhase() != null)
+        sql_buff.append(" , "+feature.getFeatureloc().getPhase());
+      
       sql_buff.append(" )");
 
       sql = new String(sql_buff);
