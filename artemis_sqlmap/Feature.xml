@@ -113,7 +113,7 @@
      
      <resultMap id="select-featurecvterm" class="FeatureCvTerm">
         <result property="feature.featureId" column="feature_id" />
-        <result property="cvTerm" column="type_id" select="selectCvterm" />
+        <result property="cvTerm" column="cvterm_id" select="selectCvterm" />
         <result property="not" column="is_not" />
         <result property="pub" column="pub_id" select="selectPub" />
      </resultMap>
