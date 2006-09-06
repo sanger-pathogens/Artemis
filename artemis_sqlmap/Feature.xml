@@ -248,8 +248,8 @@
        FROM organism, $schema$.feature WHERE
          organism.organism_id=$schema$.feature.organism_id AND
          residues notnull
-         <iterate prepend="AND" property="featureCvTerms" conjunction="OR" open="(" close=")">
-           type_id=#featureCvTerms[]#
+         <iterate prepend="AND" property="cvTermIds" conjunction="OR" open="(" close=")">
+           type_id=#cvTermIds[]#
          </iterate>
        ORDER BY abbreviation
     </select>

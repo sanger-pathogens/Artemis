@@ -82,7 +82,7 @@ public class Feature
   /** list of feature locations for a feature_id */
   private Collection featurelocsForFeatureId;
   /** used by getResidueFeatures */
-  private Collection featureCvTerms;
+  private Collection cvTermIds;
   /** list of feature synonyms */
   private Collection featureSynonymsForFeatureId;
 
@@ -374,14 +374,14 @@ public class Feature
     this.featureDbXRef = featureDbXRef;
   }
 
-  public Collection getFeatureCvTerms()
+  public Collection getCvTermIds()
   {
-    return featureCvTerms;
+    return cvTermIds;
   }
 
-  public void setFeatureCvTerms(Collection featureCvTerms)
+  public void setCvTermIds(Collection cvTermIds)
   {
-    this.featureCvTerms = featureCvTerms;
+    this.cvTermIds = cvTermIds;
   }
 
   /**

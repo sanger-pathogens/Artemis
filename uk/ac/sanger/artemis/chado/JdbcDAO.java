@@ -257,23 +257,23 @@ public class JdbcDAO
    * residues (from getResidueType()) in the given schema and the schema name
    * return a list of chado features in the schema with residues.
    * 
-   * @param cvterm_ids
+   * @param cvTermIds
    *          list of cvterm_id/type_id's
    * @param schema
    *          schema/organism name or null
    * @return the <code>List</code> of <code>Feature</code> objects
    */
-  public List getResidueFeatures(List cvterm_ids, 
+  public List getResidueFeatures(List cvTermIds, 
                                  final String schema)
   {
     String sql = new String(
             "SELECT abbreviation, uniquename, name, feature_id, type_id FROM organism, "+
             schema + ".feature WHERE (");
 
-    for(int j = 0; j < cvterm_ids.size(); j++)
+    for(int j = 0; j < cvTermIds.size(); j++)
     {
-      sql = sql + " type_id = " + (String)cvterm_ids.get(j);
-      if(j < cvterm_ids.size() - 1)
+      sql = sql + " type_id = " + (String)cvTermIds.get(j);
+      if(j < cvTermIds.size() - 1)
         sql = sql + " OR ";
     }
 
@@ -516,6 +516,22 @@ public class JdbcDAO
   {
     return null;
   }
+  
+  /**
+   * Return the FeatureCvTerm that links a given Feature and CvTerm, 
+   * with a given value of 'not'
+   * 
+   * @param feature the Feature to test the link for
+   * @param cvTerm the CvTerm to test the link for
+   * @param not test for the not flag in the FeatureCvTerm 
+   * @return the Feature, or null
+   */
+  public FeatureCvTerm getFeatureCvTermByFeatureAndCvTerm(Feature feature,
+          CvTerm cvTerm, boolean not)
+  {
+    return null;
+  }
+  
   
 //
 // WRITE 

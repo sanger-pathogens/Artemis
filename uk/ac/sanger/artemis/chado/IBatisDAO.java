@@ -144,16 +144,16 @@ public class IBatisDAO implements ChadoDAO
    * that have residues (from getResidueType()) in the given schema 
    * and the schema name return a list of chado features in the schema
    * with residues.
-   * @param cvterm_ids list of cvterm_id/type_id's
+   * @param cvTermIds   list of cvterm_id/type_id's
    * @param schema      schema/organism name or null
    * @return    the <code>List</code> of <code>Feature</code> objects
    */
-  public List getResidueFeatures(List cvterm_ids, 
+  public List getResidueFeatures(List cvTermIds, 
                                  final String schema)
   { 
     Feature feature = new Feature();
     feature.setSchema(schema);
-    feature.setFeatureCvTerms(cvterm_ids);
+    feature.setCvTermIds(cvTermIds);
 
     return sqlMap.queryForList("getResidueFeatures",
                                 feature);
@@ -270,6 +270,21 @@ public class IBatisDAO implements ChadoDAO
     return (CvTerm)sqlMap.queryForObject("getCvterm", cvterm);
   }
 
+  /**
+   * Return the FeatureCvTerm that links a given Feature and CvTerm, 
+   * with a given value of 'not'
+   * 
+   * @param feature the Feature to test the link for
+   * @param cvTerm the CvTerm to test the link for
+   * @param not test for the not flag in the FeatureCvTerm 
+   * @return the Feature, or null
+   */
+  public FeatureCvTerm getFeatureCvTermByFeatureAndCvTerm(Feature feature,
+          CvTerm cvTerm, boolean not)
+  {
+    return null;
+  }
+  
 //
 // WRITE BACK
 //

@@ -148,6 +148,18 @@ public interface ChadoDAO
          Feature feature, Synonym synonym);
   
   
+  /**
+   * Return the FeatureCvTerm that links a given Feature and CvTerm, 
+   * with a given value of 'not'
+   * 
+   * @param feature the Feature to test the link for
+   * @param cvTerm the CvTerm to test the link for
+   * @param not test for the not flag in the FeatureCvTerm 
+   * @return the Feature, or null
+   */
+  public FeatureCvTerm getFeatureCvTermByFeatureAndCvTerm(Feature feature,
+          CvTerm cvTerm, boolean not);
+  
 //
 // WRITE BACK
 //
