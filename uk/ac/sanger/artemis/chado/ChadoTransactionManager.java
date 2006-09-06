@@ -274,7 +274,12 @@ public class ChadoTransactionManager
       }
       else if(event.getType() == FeatureChangeEvent.QUALIFIER_CHANGED)
       {
-        System.out.println("QUALIFIER_CHANGED ");
+        System.out.println("QUALIFIER_CHANGED "
+            +event.getOldQualifiers().getQualifierByName("ID").getValues().get(0));
+        
+        editKeyAndQualifiers(event.getOldQualifiers(),event.getNewQualifiers(),
+            event.getOldKey(), event.getNewKey(),
+            feature, FeatureChangeEvent.QUALIFIER_CHANGED);
       }
       else if(event.getType() == FeatureChangeEvent.ALL_CHANGED)
       {
@@ -283,7 +288,7 @@ public class ChadoTransactionManager
         
         editKeyAndQualifiers(event.getOldQualifiers(),event.getNewQualifiers(),
                              event.getOldKey(), event.getNewKey(),
-                             feature);
+                             feature, FeatureChangeEvent.ALL_CHANGED);
         
         if(event.getOldKey().compareTo( event.getNewKey() ) != 0 &&
            event.getNewKey().toString().equals("gene") &&
@@ -758,13 +763,15 @@ public class ChadoTransactionManager
                                     final QualifierVector qualifiers_new, 
                                     final Key old_key, 
                                     final Key new_key,
-                                    final GFFStreamFeature feature)
+                                    final GFFStreamFeature feature,
+                                    final int event_type)
   {
     String uniquename = (String)(feature.getQualifierByName("ID").getValues()).elementAt(0);
     ChadoTransaction tsn;
 
-    // updating the key
-    if(!new_key.equals(old_key))
+    // updating the key unless just a qualifier changed
+    if(event_type != FeatureChangeEvent.QUALIFIER_CHANGED && 
+       !new_key.equals(old_key))
     {
       Long lcvterm_id = DatabaseDocument.getCvtermID(new_key.getKeyString());
       if(lcvterm_id == null)   // chado doesn't recognise this
@@ -1076,6 +1083,9 @@ public class ChadoTransactionManager
      
       chado_feature.setUniqueName((String)new_qualifier.getValues().get(0));
      
+      System.out.println(uniquename+"  in handleReservedTags() NEW="+
+          (String)new_qualifier.getValues().get(0)+" OLD="+
+          (String)old_qualifier.getValues().get(0));
       ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                 chado_feature,
                 feature.getLastModified(), feature);
