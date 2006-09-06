@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.22 2006-07-25 10:48:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.23 2006-09-06 14:59:41 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.22 2006-07-25 10:48:04 tjc Exp $
+ *  @version $Id: Feature.java,v 1.23 2006-09-06 14:59:41 tjc Exp $
  **/
 
 public class Feature
@@ -1004,7 +1004,8 @@ public class Feature
     setQualifier(return_qualifier);
 
     // now inform the listeners that a change has occured
-    final FeatureChangeEvent event =
+    // THIS IS ALREADY DONE IN setQualifier()
+/*    final FeatureChangeEvent event =
       new FeatureChangeEvent(qualifier,
                              this,
                              null,
@@ -1013,7 +1014,7 @@ public class Feature
                              FeatureChangeEvent.QUALIFIER_CHANGED);
 
     fireAction(feature_listener_list, event);
-
+*/
     return return_qualifier;
   }
 
