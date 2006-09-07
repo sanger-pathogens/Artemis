@@ -69,8 +69,6 @@ public class Feature
   private Organism organism;
   /** optional primary public stable identifier */
   private FeatureDbXRef featureDbXRef;
-  /** merged featureprops */
-  private Hashtable qualifiers;
   /** list of FeatureProp */
   private Collection featureProps;
   /** list of FeatureRelationship children */
@@ -403,11 +401,11 @@ public class Feature
   {
     this.featureProps = featureProps;
     
-    for(int i=0; i<featureProps.size(); i++)
+/*    for(int i=0; i<featureProps.size(); i++)
     {
       FeatureProp featureprop = (FeatureProp)(((List)featureProps).get(i));
       addQualifier(featureprop.getCvTerm().getCvTermId(), featureprop);
-    }
+    }*/
   }
   
   /**
@@ -494,44 +492,19 @@ public class Feature
     this.featureSynonymsForFeatureId = featureSynonymsForFeatureId;
   }
   
-  
-  
   /**
-   * Used in merging the qualifiers to store them as a <code>Hashtable</code> of
-   * the cvTerm type_id (of the property name) and the property values as a 
-   * <code>Vector</code>.
-   * @param	the cvTerm type_id of the property name
-   * @param	the property value	
+   * Used in merging the qualifiers to store them as a <code>List</code> of
+   * <code>FeatureProp</code>.
+   * @param the FeatureProp 
    */
-  public void addQualifier(long prop_type_id, FeatureProp featprop)
+  public void addFeatureProp(final FeatureProp featureprop)
   {
-    if(qualifiers == null)
-      qualifiers = new Hashtable();
-     
-    final Long type_id = new Long(prop_type_id);
-    if(qualifiers.containsKey(type_id))
-    {
-      Vector v = (Vector)qualifiers.get(type_id);
-      v.add(featprop);
-      qualifiers.put(type_id, v);
-    }
-    else
-    {
-      Vector v = new Vector();
-      v.add(featprop);
-      qualifiers.put(type_id, v);
-    }
+    if(featureProps == null) 
+      featureProps = new Vector();
+    
+    featureProps.add(featureprop);
   }
-
-  /**
-   * Get the qualifiers which are stored as a <code>Hashtable</code> of cvTerm
-   * type_id (of the property name) and the property values as a <code>Vector</code>.
-   * @return	the qualifiers as a <code>Hashtable</code>
-   */
-  public Hashtable getQualifiers()
-  {
-    return qualifiers;
-  }
+  
 
   /**
    * Utility for finding a feature location from a List that corresponds

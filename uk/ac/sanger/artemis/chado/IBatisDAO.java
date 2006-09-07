@@ -92,7 +92,8 @@ public class IBatisDAO implements ChadoDAO
     List feature_list = sqlMap.queryForList("getFeature", feature);
 
     // merge same features in the list
-    return mergeList(feature_list);
+    //return mergeList(feature_list);
+    return feature_list;
   }
 
   /**
@@ -494,52 +495,7 @@ public class IBatisDAO implements ChadoDAO
   {
     sqlMap.commitTransaction();
   }
-  
-  /**
-   * Takes a list and creates a new one merging all feature objects
-   * within it with the same feature and stores the qualifiers/attributes
-   *  as a hash
-   * @param list of feature objects
-   * @return list of flattened/merged feature objects
-   */
-  protected static List mergeList(final List list)
-  {
-    // merge same features in the list
-    int feature_size  = list.size();
-    final List flatten_list = new Vector();
-    Feature featNext  = null;
 
-    for(int i = 0; i < feature_size; i++)
-    {
-      Feature feat = (Feature)list.get(i);
-      String name  = feat.getUniqueName();
-
-      feat.addQualifier(feat.getFeatureprop().getCvTerm().getCvTermId(),
-                        feat.getFeatureprop());
-
-      if(i < feature_size - 1)
-        featNext = (Feature)list.get(i + 1);
-      else
-        featNext = null;
-      
-      // merge next line if part of the same feature
-      while(featNext != null && featNext.getUniqueName().equals(name))
-      {
-        feat.addQualifier(featNext.getFeatureprop().getCvTerm().getCvTermId(),
-                          featNext.getFeatureprop());
-        i++;
-
-        if(i < feature_size - 1)
-          featNext = (Feature)list.get(i + 1);
-        else
-          break;
-      }
-
-      flatten_list.add(feat);
-    }
-
-    return flatten_list;
-  }
 
   /**
    * Takes a list and creates a <code>Hashtable</code> with the keys

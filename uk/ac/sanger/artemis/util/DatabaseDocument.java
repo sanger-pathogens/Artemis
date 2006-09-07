@@ -740,29 +740,20 @@ public class DatabaseDocument extends Document
     //this_buff.append("feature_id="+feature_id+";");
     
     // attributes
-    Hashtable qualifiers = feat.getQualifiers();
-    
-    if(qualifiers != null && qualifiers.size() > 0)
+    if(feat.getFeatureProps() != null)
     {
-      Enumeration e_qualifiers = qualifiers.keys();
-      while(e_qualifiers.hasMoreElements())
+      List featureprops = (List)feat.getFeatureProps();
+      for(int j=0; j<featureprops.size(); j++)
       {
-        Long qualifier_type_id = (Long)e_qualifiers.nextElement();
-        String qualifier_name = getCvtermName(qualifier_type_id.longValue(), dao);
+        FeatureProp featprop = (FeatureProp)featureprops.get(j);
+        String qualifier_name = getCvtermName(featprop.getCvTerm().getCvTermId(), dao);
         if(qualifier_name == null)
           continue;
-        
-        Vector qualifier_value = (Vector)qualifiers.get(qualifier_type_id);
-        for(int j=0; j<qualifier_value.size(); j++)
-        {
-          FeatureProp featprop = (FeatureProp)qualifier_value.get(j);
-         
-          if(featprop.getValue() != null)
-            this_buff.append(qualifier_name+ "=" +
-                             GFFStreamFeature.encode(featprop.getValue())+";");
-        }
+        if(featprop.getValue() != null)
+          this_buff.append(qualifier_name+ "=" +
+                           GFFStreamFeature.encode(featprop.getValue())+";");
       }
-    } 
+    }
 
     // append dbxrefs
     if(dbxref != null && dbxref.size() > 0)

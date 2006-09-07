@@ -712,7 +712,11 @@ public class ChadoTransactionManager
             // happens when duplicating features 
             FeatureProp featureprop = new FeatureProp();
             featureprop.setValue((String)qualifier_values.elementAt(value_index));
-            chado_feature.addQualifier(type_id, featureprop);
+            CvTerm cvTerm = new CvTerm();
+            cvTerm.setCvTermId(type_id);
+            featureprop.setCvTerm(cvTerm);
+            chado_feature.addFeatureProp(featureprop);
+ //           chado_feature.addQualifier(type_id, featureprop);
  //         }
         }
       }
