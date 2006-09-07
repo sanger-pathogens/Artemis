@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.14 2006-07-04 16:01:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.15 2006-09-07 15:50:33 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.plot.CodonUsageAlgorithm;
 
 import uk.ac.sanger.artemis.util.*;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -50,7 +51,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.14 2006-07-04 16:01:59 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.15 2006-09-07 15:50:33 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -554,19 +555,52 @@ public class AddMenu extends SelectionMenu
         final Location new_location = range.createLocation ();
 
         /*final*/ Feature temp_feature;
-
-        try {
-          temp_feature = default_entry.createFeature (Key.CDS, new_location);
-        } catch (EntryInformationException e) {
+        QualifierVector qualifiers = null;
+        
+        if(default_entry.getEMBLEntry() instanceof 
+           uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
+        {
+          String uniquename = null;
+          while(uniquename == null ||
+              uniquename.equals("") ||
+              uniquename.equals("to_be_set"))
+          {
+            uniquename = JOptionPane.showInputDialog(null,
+                               "Provide a systematic_id : ",
+                               "systematic_id missing ",
+                               JOptionPane.QUESTION_MESSAGE).trim();
+          }
+          Qualifier qualifier = new Qualifier("ID", uniquename);
+          qualifiers = new QualifierVector();
+          qualifiers.add(qualifier);
+        }
+          
+        
+        try 
+        {
+          if(qualifiers == null)
+            temp_feature = default_entry.createFeature (Key.CDS, new_location);
+          else
+            temp_feature = default_entry.createFeature (Key.CDS, new_location, qualifiers);
+        }
+        catch (EntryInformationException e) 
+        {
           // use the default key instead
 
           final Key default_key =
             default_entry.getEntryInformation ().getDefaultKey ();
 
-          try {
-            temp_feature =
-              default_entry.createFeature (default_key, new_location);
-          } catch (EntryInformationException ex) {
+          try 
+          {
+            if(qualifiers == null)
+              temp_feature =
+                default_entry.createFeature (default_key, new_location);
+            else
+              temp_feature =
+                default_entry.createFeature (default_key, new_location, qualifiers);
+          } 
+          catch (EntryInformationException ex) 
+          {
             throw new Error ("internal error - unexpected exception: " + ex);
           }
         }
