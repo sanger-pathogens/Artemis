@@ -140,6 +140,9 @@ public class JdbcDAO
   {
     List list = getFeatureQuery(feature.getUniqueName(), 
                                 -1, feature.getFeatureId());
+    if(list == null || list.size() < 1)
+      return null;
+    
     return (Feature)list.get(0);
   }
   
@@ -713,11 +716,11 @@ public class JdbcDAO
     sqlBuff.append(" ( feature_id, type_id, value, rank ) ");
     sqlBuff.append("VALUES ");
     
-    sqlBuff.append("((SELECT feature_id FROM feature WHERE uniquename=");
+    sqlBuff.append("( (SELECT feature_id FROM feature WHERE uniquename=");
     sqlBuff.append("'"+ featureprop.getFeature().getUniqueName()+"')," );
-    sqlBuff.append(featureprop.getCvTerm().getCvTermId()+", ");
-    sqlBuff.append(featureprop.getValue()+",");
-    sqlBuff.append(featureprop.getRank());
+    sqlBuff.append(featureprop.getCvTerm().getCvTermId()+", '");
+    sqlBuff.append(featureprop.getValue()+"',");
+    sqlBuff.append(featureprop.getRank()+" )");
 
     appendToLogFile(new String(sqlBuff), sqlLog);
 

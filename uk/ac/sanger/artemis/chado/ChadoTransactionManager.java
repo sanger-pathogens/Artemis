@@ -841,6 +841,8 @@ public class ChadoTransactionManager
             tsn = new ChadoTransaction(ChadoTransaction.DELETE,
                 featureprop,
                 feature.getLastModified(), feature);
+            
+            tsn.setUniquename(uniquename);
             sql.add(tsn);
           }
         }
@@ -981,6 +983,7 @@ public class ChadoTransactionManager
                   featureprop,
                   feature.getLastModified(), feature);
               tsn.setGff_feature(feature);
+              tsn.setUniquename(uniquename);
               sql.add(tsn);
             }
           }
@@ -1021,6 +1024,7 @@ public class ChadoTransactionManager
               tsn = new ChadoTransaction(ChadoTransaction.INSERT,
                   featureprop,
                   feature.getLastModified(), feature);
+              tsn.setUniquename(uniquename);
               sql.add(tsn);
             }
           }

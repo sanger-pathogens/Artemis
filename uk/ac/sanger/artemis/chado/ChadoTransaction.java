@@ -47,6 +47,7 @@ public class ChadoTransaction
   protected int type;
   /** feature unique name */
   protected String old_uniquename;
+  private String uniquename;
   /** chado feature */
   private Feature chadoFeature;
   /** last time feature was modified */
@@ -115,8 +116,16 @@ public class ChadoTransaction
     return old_uniquename;
   }
   
+  public void setUniquename(final String uniquename)
+  {
+    this.uniquename = uniquename;
+  }
+  
   public String getUniquename()
   {
+    if(uniquename != null)
+      return uniquename;
+    
     if(getGff_feature() == null)
       return null;
     
