@@ -29,7 +29,7 @@
     </parameterMap> 
 
     <resultMap id="select-feature" 
-               class="Feature">
+               class="Feature" groupBy="featureId">
         <result property="timelastmodified" column="timelastmodified"/>
    	    <result property="featureId" column="id"/>
   	    <result property="feature_relationship.featureByObjectId.featureId" column="object_id"/>
@@ -41,9 +41,12 @@
         <result property="featureloc.phase" column="phase"/>
         <result property="uniqueName" column="uniquename"/>
         <result property="cvTerm.cvTermId" column="type_id"/>
+        <result property="featureProps" resultMap="Feature.featureprop" />
+   <!--
         <result property="featureprop.cvTerm.cvTermId" column="prop_type_id" nullValue="0"/>
         <result property="featureprop.value" column="value"/>
-        <result property="featureprop.rank" column="prop_rank" nullValue="0"/>
+        <result property="featureprop.rank" column="prop_rank" nullValue="0"/> 
+    -->
      </resultMap>
 
     <!-- mapping for feature table and lazy loading of feature_dbxref, feature_relationship,
@@ -88,6 +91,14 @@
         <result property="rank" column="rank" />
         <result property="cvTerm" column="type_id" select="selectCvterm" />
      </resultMap>
+     
+    <resultMap id="featureprop" 
+               class="FeatureProp">
+        <result property="value" column="value" />
+        <result property="rank"  column="prop_rank" />
+        <result property="cvTerm.cvTermId" column="prop_type_id" />
+     </resultMap>
+     
      
      <resultMap id="select-relationship" 
                 class="FeatureRelationship">
