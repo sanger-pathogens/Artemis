@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="corba"/>
 	<classpathentry including="nsdb/|seqdb/|type/|uk/" excluding="uk/ac/sanger/artemis/ExternalProgramUtils.java" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/postgresql-8.0-310.jdbc2ee.jar"/>
+	<classpathentry kind="lib" path="lib/postgresql-8.1-407.jdbc2ee.jar"/>
 	<classpathentry kind="lib" path="lib/macos.jar"/>
 	<classpathentry kind="lib" path="lib/jemAlign.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-regexp-1.2.jar"/>
