@@ -8,13 +8,13 @@
 <sqlMap namespace="DbXRef"> 
  
   <typeAlias alias="FeatureDbXRef"
-        type="uk.ac.sanger.artemis.chado.FeatureDbXRef"/>
+        type="org.gmod.schema.sequence.FeatureDbXRef"/>
   
   <typeAlias alias="DbXRef"
-        type="uk.ac.sanger.artemis.chado.DbXRef"/>
+        type="org.gmod.schema.general.DbXRef"/>
   
     <typeAlias alias="Db"
-        type="uk.ac.sanger.artemis.chado.Db"/>
+        type="org.gmod.schema.general.Db"/>
            
   <resultMap id="select-feature-dbxref" 
                class="FeatureDbXRef">

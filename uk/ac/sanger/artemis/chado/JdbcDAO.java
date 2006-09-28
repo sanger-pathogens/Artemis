@@ -31,6 +31,19 @@ import java.io.*;
 import java.util.List;
 import java.util.Vector;
 
+import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.sequence.Synonym;
+import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.sequence.FeatureSynonym;
+import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.organism.Organism;
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.general.Db;
+import org.gmod.schema.pub.Pub;
+
 /**
  *
  * Java Database Connectivity (JDBC) implemetation of the
@@ -104,7 +117,7 @@ public class JdbcDAO
   public List getFeaturesByLocatedOnFeature(final Feature feature)
   {
     return getFeatureQuery(null, 
-                 feature.getFeatureloc().getSrcfeature_id(), -1);
+                 feature.getFeatureloc().getFeatureBySrcFeatureId().getFeatureId(), -1);
   }
 
   /**
@@ -194,8 +207,8 @@ public class JdbcDAO
         Feature feature = new Feature();
 
         FeatureLoc featureloc = new FeatureLoc();
-        featureloc.setFmin(rs.getInt("fmin"));
-        featureloc.setFmax(rs.getInt("fmax"));
+        featureloc.setFmin(new Integer(rs.getInt("fmin")));
+        featureloc.setFmax(new Integer(rs.getInt("fmax")));
         featureloc.setStrand(new Short(rs.getShort("strand")));
 
         int phase = rs.getInt("phase");
@@ -208,24 +221,24 @@ public class JdbcDAO
 
         feature.setFeatureloc(featureloc);
         feature.setCvTerm(new CvTerm());
-        feature.getCvTerm().setCvTermId(rs.getLong("type_id"));
+        feature.getCvTerm().setCvTermId(rs.getInt("type_id"));
 
         // feature properties
         FeatureProp featureprop = new FeatureProp();
         CvTerm cvterm = new CvTerm();
-        cvterm.setCvTermId(rs.getLong("prop_type_id"));
+        cvterm.setCvTermId(rs.getInt("prop_type_id"));
         featureprop.setCvTerm(cvterm);
         featureprop.setValue(rs.getString("value"));
         feature.setFeatureprop(featureprop);
 
         feature.setUniqueName(rs.getString("uniquename"));
-        feature.setTimelastmodified(rs.getTimestamp("timelastmodified"));
+        feature.setTimeLastModified(rs.getTimestamp("timelastmodified"));
         feature.setFeatureId(rs.getInt("feature_id"));
 
         // feature relationship
         FeatureRelationship feature_relationship = new FeatureRelationship();
         cvterm = new CvTerm();
-        cvterm.setCvTermId(rs.getLong("relation_type_id"));
+        cvterm.setCvTermId(rs.getInt("relation_type_id"));
         feature_relationship.setCvTerm(cvterm);
 
         Feature object = new Feature();
@@ -237,9 +250,9 @@ public class JdbcDAO
         Organism organism = new Organism();
         organism.setAbbreviation(rs.getString("abbreviation"));
         organism.setComment(rs.getString("comment"));
-        organism.setCommon_name(rs.getString("common_name"));
+        organism.setCommonName(rs.getString("common_name"));
         organism.setGenus(rs.getString("genus"));
-        organism.setId(rs.getInt("organism_id"));
+        organism.setOrganismId(rs.getInt("organism_id"));
         organism.setSpecies(rs.getString("species"));
         feature.setOrganism(organism);
 
@@ -302,7 +315,7 @@ public class JdbcDAO
         feature.setName(rs.getString("name"));
         feature.setUniqueName(rs.getString("uniquename"));
         feature.setCvTerm(new CvTerm());
-        feature.getCvTerm().setCvTermId(rs.getLong("type_id"));
+        feature.getCvTerm().setCvTermId(rs.getInt("type_id"));
 
         list.add(feature);
       }
@@ -394,7 +407,7 @@ public class JdbcDAO
       while(rs.next())
       {
         CvTerm cvterm = new CvTerm();
-        cvterm.setCvTermId(rs.getLong("cvterm_id"));
+        cvterm.setCvTermId(rs.getInt("cvterm_id"));
         cvterm.setName(rs.getString("name"));
         cvterms.add(cvterm);
       }
@@ -484,7 +497,7 @@ public class JdbcDAO
       {
         alias = new FeatureSynonym();
         CvTerm cvterm = new CvTerm();
-        cvterm.setCvTermId(rs.getLong("type_id"));
+        cvterm.setCvTermId(rs.getInt("type_id"));
         Synonym syn = new Synonym();
         syn.setName(rs.getString("name"));
         syn.setCvTerm(cvterm);
@@ -493,7 +506,10 @@ public class JdbcDAO
 
         alias.setSynonym(syn);
         alias.setFeature(feat);
-        alias.setPub_id(new Integer(rs.getInt("pub_id")));
+        
+        Pub pub = new Pub();
+        pub.setPubId(rs.getInt("pub_id"));
+        alias.setPub(pub);
         alias.setInternal(rs.getBoolean("is_internal"));
         alias.setCurrent(rs.getBoolean("is_current"));
         synonym.add(alias);
@@ -611,8 +627,8 @@ public class JdbcDAO
     try
     {
       PreparedStatement pstmt = conn.prepareStatement(sql);
-      pstmt.setInt(1, featureloc.getFmin());
-      pstmt.setInt(2, featureloc.getFmax());
+      pstmt.setInt(1, featureloc.getFmin().intValue());
+      pstmt.setInt(2, featureloc.getFmax().intValue());
       pstmt.setInt(3, featureloc.getRank());
       pstmt.setShort(4, featureloc.getStrand().shortValue());
       
@@ -621,7 +637,7 @@ public class JdbcDAO
       else
         pstmt.setNull(5, Types.INTEGER);
       
-      pstmt.setString(6, featureloc.getFeature().getUniqueName());
+      pstmt.setString(6, featureloc.getFeatureByFeatureId().getUniqueName());
       appendToLogFile(sql, sqlLog);
 
       pstmt.executeUpdate();
@@ -643,7 +659,7 @@ public class JdbcDAO
     if(feature.getCvTerm() != null)
       sql = sql+", type_id=?";
     
-    if(feature.getTimelastmodified() != null)
+    if(feature.getTimeLastModified() != null)
       sql = sql+", timelastmodified=?";
 
     sql = sql+"WHERE feature_id=?";
@@ -659,9 +675,9 @@ public class JdbcDAO
         param++;
       }
 
-      if(feature.getTimelastmodified() != null)
+      if(feature.getTimeLastModified() != null)
       {
-        pstmt.setTimestamp(param, feature.getTimelastmodified());
+        pstmt.setTimestamp(param, feature.getTimeLastModified());
         param++;
       }
 
@@ -789,7 +805,7 @@ public class JdbcDAO
       // get the organism_id
       Statement st = conn.createStatement();
       String sql = "SELECT organism_id from " + "feature where feature_id = '"
-          + feature.getFeatureloc().getSrcfeature_id() + "'";
+          + feature.getFeatureloc().getFeatureBySrcFeatureId().getFeatureId() + "'";
 
       appendToLogFile(sql, sqlLog);
       ResultSet rs = st.executeQuery(sql);
@@ -844,7 +860,7 @@ public class JdbcDAO
       sql_buff.append(" ) VALUES ( ");
       sql_buff.append("nextval('featureloc_featureloc_id_seq') , ");
       sql_buff.append(feature_id + " , ");
-      sql_buff.append(feature.getFeatureloc().getSrcfeature_id() + " , ");
+      sql_buff.append(feature.getFeatureloc().getFeatureBySrcFeatureId().getFeatureId() + " , ");
       sql_buff.append(feature.getFeatureloc().getFmin() + " , ");
       sql_buff.append(feature.getFeatureloc().getFmax() + " , ");
       sql_buff.append(feature.getFeatureloc().getStrand());
@@ -1203,8 +1219,6 @@ public class JdbcDAO
       String name  = feat.getUniqueName();
 
       feat.addFeatureProp(feat.getFeatureprop());
-      //feat.addQualifier(feat.getFeatureprop().getCvTerm().getCvTermId(),
-      //                  feat.getFeatureprop());
 
       if(i < feature_size - 1)
         featNext = (Feature)list.get(i + 1);
@@ -1214,8 +1228,6 @@ public class JdbcDAO
       // merge next line if part of the same feature
       while(featNext != null && featNext.getUniqueName().equals(name))
       {
-        //feat.addQualifier(featNext.getFeatureprop().getCvTerm().getCvTermId(),
-        //                  featNext.getFeatureprop());
         feat.addFeatureProp(featNext.getFeatureprop());
         i++;
 

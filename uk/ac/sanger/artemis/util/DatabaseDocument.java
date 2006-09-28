@@ -27,9 +27,18 @@ package uk.ac.sanger.artemis.util;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ReadFormatException;
-import uk.ac.sanger.artemis.chado.*;
+import uk.ac.sanger.artemis.chado.Feature;
+import uk.ac.sanger.artemis.chado.IBatisDAO;
+import uk.ac.sanger.artemis.chado.JdbcDAO;
+import uk.ac.sanger.artemis.chado.ChadoDAO;
+import uk.ac.sanger.artemis.chado.ChadoTransaction;
 import uk.ac.sanger.artemis.components.DatabaseEntrySource;
 
+import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.sequence.FeatureSynonym;
+import org.gmod.schema.cv.CvTerm;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -39,7 +48,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Collection;
 import java.util.Iterator;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
@@ -435,7 +443,11 @@ public class DatabaseDocument extends Document
     
     // build srcfeature object
     FeatureLoc featureloc = new FeatureLoc();
-    featureloc.setSrcfeature_id(srcfeature_id);
+    Feature srcFeature = new Feature();
+    srcFeature.setFeatureId(srcfeature_id);
+    featureloc.setFeatureBySrcFeatureId(srcFeature);
+    
+    //featureloc.setSrcfeature_id(srcfeature_id);
     Feature parent = new Feature();
     parent.setFeatureloc(featureloc);
     
@@ -554,16 +566,16 @@ public class DatabaseDocument extends Document
     ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();
     id_store.put(Integer.toString(feature.getFeatureId()), feature.getUniqueName());
 
-    List featurelocs = new Vector(feature.getFeaturelocsForFeatureId());
+    List featurelocs = new Vector(feature.getFeatureLocsForFeatureId());
     FeatureLoc featureloc = (FeatureLoc) featurelocs.get(0);
-    int src_id = featureloc.getSrcfeature_id();
+    int src_id = featureloc.getFeatureBySrcFeatureId().getFeatureId();
 
     Feature parent = new Feature();
     parent.setFeatureId(src_id);
 
     parent = dao.getFeatureById(src_id);  //.getLazyFeature(parent);
     
-    chado_gene.setSeqlen(parent.getSeqLen());
+    chado_gene.setSeqlen(parent.getSeqLen().intValue());
     chado_gene.setSrcfeature_id(src_id);
 
     ByteBuffer buff = new ByteBuffer();
@@ -586,7 +598,7 @@ public class DatabaseDocument extends Document
           transcript.getUniqueName());
 
       FeatureLoc loc = Feature.getFeatureLoc(new Vector(
-          transcript.getFeaturelocsForFeatureId()), src_id);
+          transcript.getFeatureLocsForFeatureId()), src_id);
       chadoToGFF(transcript, feature.getUniqueName(), null,
           null, id_store, dao, loc, buff);
 
@@ -605,7 +617,7 @@ public class DatabaseDocument extends Document
         id_store.put(Integer.toString(child.getFeatureId()), child.getUniqueName());
 
         loc = Feature.getFeatureLoc(
-            new Vector(child.getFeaturelocsForFeatureId()),src_id);
+            new Vector(child.getFeatureLocsForFeatureId()),src_id);
         chadoToGFF(child, transcript.getUniqueName(), null,
                    null, id_store, dao, loc, buff);
       }
@@ -636,15 +648,15 @@ public class DatabaseDocument extends Document
   {
     String gff_source = null;
     
-    int fmin          = featureloc.getFmin() + 1;
-    int fmax          = featureloc.getFmax();
+    int fmin          = featureloc.getFmin().intValue() + 1;
+    int fmax          = featureloc.getFmax().intValue();
     long type_id      = feat.getCvTerm().getCvTermId();
     Short strand      = featureloc.getStrand();
     Integer phase     = featureloc.getPhase();
     String name       = feat.getUniqueName();
     String typeName   = getCvtermName(type_id, dao);
 
-    String timelastmodified = Long.toString(feat.getTimelastmodified().getTime());
+    String timelastmodified = Long.toString(feat.getTimeLastModified().getTime());
     Integer feature_id      = new Integer(feat.getFeatureId());
 
     String parent_id = null;
@@ -1095,7 +1107,9 @@ public class DatabaseDocument extends Document
             if(tsn.getFeatureObject() instanceof Feature)
             {
               FeatureLoc featureloc = ((Feature)tsn.getFeatureObject()).getFeatureloc();
-              featureloc.setSrcfeature_id(Integer.parseInt(feature_id));
+              Feature featureBySrcFeatureId = new Feature();
+              featureBySrcFeatureId.setFeatureId(Integer.parseInt(feature_id));
+              featureloc.setFeatureBySrcFeatureId(featureBySrcFeatureId);
             }
             dao.persist(tsn.getFeatureObject());
             //dao.insertAttributes(tsn);
@@ -1129,7 +1143,7 @@ public class DatabaseDocument extends Document
           Feature feature = dao.getFeatureByUniqueName(uniquename);
           if(feature != null)
           {
-            feature.setTimelastmodified(ts);
+            feature.setTimeLastModified(ts);
             dao.merge(feature);
           }
 
@@ -1183,7 +1197,7 @@ public class DatabaseDocument extends Document
     Feature feature = dao.getFeatureByUniqueName(uniquename);
     if(feature == null)
       return true;
-    Timestamp now = feature.getTimelastmodified();
+    Timestamp now = feature.getTimeLastModified();
     
     if(now != null && timestamp != null)
     {
@@ -1237,8 +1251,8 @@ public class DatabaseDocument extends Document
         
         String abb  = feature.getOrganism().getAbbreviation();
         String type = feature.getCvTerm().getName();
-        int fmin    = feature.getFeatureloc().getFmin() + 1;
-        int fmax    = feature.getFeatureloc().getFmax();
+        int fmin    = feature.getFeatureloc().getFmin().intValue() + 1;
+        int fmax    = feature.getFeatureloc().getFmax().intValue();
         String featprop = 
           ((FeatureProp)(new Vector(feature.getFeatureProps()).get(0))).getCvTerm().getName();
         

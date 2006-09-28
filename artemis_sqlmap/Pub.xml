@@ -8,7 +8,7 @@
 <sqlMap namespace="Pub"> 
  
   <typeAlias alias="Pub"
-        type="uk.ac.sanger.artemis.chado.Pub"/>
+        type="org.gmod.schema.pub.Pub"/>
   
   <resultMap id="select-pub"
              class="Pub">

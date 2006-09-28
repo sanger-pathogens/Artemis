@@ -8,7 +8,7 @@
 <sqlMap namespace="CvTerm"> 
 
     <typeAlias alias="CvTerm"
-        type="uk.ac.sanger.artemis.chado.CvTerm"/>
+        type="org.gmod.schema.cv.CvTerm"/>
  
     <resultMap id="select-cvterm-names-result" class="CvTerm">
    	  <result property="cvTermId" column="cvterm_id"/>
@@ -22,7 +22,7 @@
       <result property="definition" column="definition"/>
       <result property="dbXRef" column="dbxref_id" select="selectDbXRef"/>
       <result property="isObsolete" column="is_obsolete"/>
-      <result property="isRelationshiptype" column="is_relationshiptype"/>
+      <result property="isRelationshipType" column="is_relationshiptype"/>
     </resultMap>
     
 

@@ -27,6 +27,10 @@ package uk.ac.sanger.artemis.chado;
 import java.sql.*;
 import java.util.List;
 
+import org.gmod.schema.sequence.Synonym;
+import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.cv.CvTerm;
+
 /**
  * Data access object
  * @see		uk.ac.sanger.artemis.chado.JdbcDAO

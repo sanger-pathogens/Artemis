@@ -29,6 +29,18 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.sql.*;
 
+import org.gmod.schema.cv.Cv;
+import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.sequence.Synonym;
+import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.sequence.FeatureSynonym;
+import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.organism.Organism;
+import org.gmod.schema.cv.CvTerm;
+
 import javax.swing.JPasswordField;
 
 /**
@@ -111,7 +123,7 @@ public class IBatisDAO implements ChadoDAO
     
     Feature feature = new Feature();
     feature.setUniqueName(name);
-    feature.setFeatureSynonymsForFeatureId(feature_synonym_list);
+    feature.setFeatureSynonyms(feature_synonym_list);
 
     List features = sqlMap.queryForList("getLazyFeature", feature);
     
@@ -363,7 +375,7 @@ public class IBatisDAO implements ChadoDAO
     //
     // insert feature into feature table
     Organism organism = new Organism();
-    organism.setId(organism_id.intValue());
+    organism.setOrganismId(organism_id.intValue());
     feature.setOrganism(organism);  
     sqlMap.insert("insertFeature", feature);
 
@@ -442,21 +454,26 @@ public class IBatisDAO implements ChadoDAO
    */
   private void insertFeatureAlias(final FeatureSynonym feature_synonym)
   {
-    Synonym synonym  = 
-      (Synonym)sqlMap.queryForObject("getSynonymByNameAndType", 
+    Object synonym  = 
+      sqlMap.queryForObject("getSynonymByNameAndType", 
           feature_synonym.getSynonym());
     
     if(synonym == null)
     {
+      System.out.println("HERE2");
       // create a new synonym name     
       sqlMap.insert("insertAlias", feature_synonym);
       
       synonym  =
-        (Synonym)sqlMap.queryForObject("getSynonymByNameAndType", 
+        sqlMap.queryForObject("getSynonymByNameAndType", 
             feature_synonym.getSynonym());
     }
     
-    feature_synonym.setSynonym_id(synonym.getSynonym_id());
+    System.out.println("HERE "+((Synonym)synonym).getSynonymId()+" "+((Synonym)synonym).getName());
+    feature_synonym.setSynonym((Synonym)synonym);
+    System.out.println("HERE "+((Synonym)synonym).getSynonymId());
+    System.out.println("\n----------------------------------> "+feature_synonym.getSynonym().getSynonymId()+"\n");
+    //feature_synonym.setFeatureSynonymId(synonym.getSynonymId());
     sqlMap.insert("insertFeatureAlias", feature_synonym);
   }
   
@@ -464,15 +481,14 @@ public class IBatisDAO implements ChadoDAO
    * Delete a feature_synonym for a feature.
    * @param feature_synonym     the <code>FeatureSynonym</code>
    */
-  private int deleteFeatureSynonym(final FeatureSynonym feature_synonym)
+  private int deleteFeatureSynonym(FeatureSynonym feature_synonym)
   {
     List feature_synonym_list = 
       sqlMap.queryForList("getFeatureSynonymsByName", feature_synonym.getSynonym());
     
-    final FeatureSynonym synonym = 
-      (FeatureSynonym)feature_synonym_list.get(0); 
-    feature_synonym.setSynonym_id(synonym.getSynonym().getSynonym_id());
-    
+    feature_synonym.setSynonym( 
+        ((FeatureSynonym)feature_synonym_list.get(0)).getSynonym() );
+     
     // check this name is not used some where else, 
     // i.e. in more than one row
     if(feature_synonym_list.size() > 1)

@@ -52,6 +52,16 @@ import java.util.List;
 import java.util.Enumeration;
 import javax.swing.JOptionPane;
 
+import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.FeatureRelationship;
+import org.gmod.schema.sequence.FeatureSynonym;
+import org.gmod.schema.sequence.Synonym;
+
+import org.gmod.schema.cv.*;
+import org.gmod.schema.general.Db;
+import org.gmod.schema.general.DbXRef;
 
 /**
  *
@@ -405,7 +415,7 @@ public class ChadoTransactionManager
           FeatureRelationship feature_relationship =
               new FeatureRelationship();
           CvTerm cvterm = new CvTerm();
-          cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").longValue());
+          cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").intValue());
           
           feature_relationship.setFeatureByObjectId(parent);
           feature_relationship.setFeatureBySubjectId(chado_feature);
@@ -491,7 +501,7 @@ public class ChadoTransactionManager
           FeatureRelationship feature_relationship =
               new FeatureRelationship();
           CvTerm cvterm = new CvTerm();
-          cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").longValue());
+          cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").intValue());
           
           feature_relationship.setFeatureByObjectId(parent);
           feature_relationship.setFeatureBySubjectId(chado_feature);
@@ -515,7 +525,7 @@ public class ChadoTransactionManager
           FeatureRelationship feature_relationship = new FeatureRelationship();
           CvTerm cvterm = new CvTerm();
           cvterm.setCvTermId(DatabaseDocument.getCvtermID("derives_from")
-              .longValue());
+              .intValue());
 
           feature_relationship.setFeatureByObjectId(parent);
           feature_relationship.setFeatureBySubjectId(chado_feature);
@@ -534,7 +544,7 @@ public class ChadoTransactionManager
     String key = feature.getKey().toString();
     
     CvTerm cvterm = new CvTerm();
-    cvterm.setCvTermId(DatabaseDocument.getCvtermID(key).longValue());
+    cvterm.setCvTermId(DatabaseDocument.getCvtermID(key).intValue());
     chado_feature.setCvTerm(cvterm);
 
     addQualifiers(feature.getQualifiers(), chado_feature);
@@ -599,7 +609,7 @@ public class ChadoTransactionManager
           FeatureRelationship feature_relationship =
               new FeatureRelationship();
           CvTerm cvterm = new CvTerm();
-          cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").longValue());
+          cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").intValue());
           
           feature_relationship.setFeatureByObjectId(parent);
           feature_relationship.setFeatureBySubjectId(chado_feature);
@@ -623,7 +633,7 @@ public class ChadoTransactionManager
           FeatureRelationship feature_relationship = new FeatureRelationship();
           CvTerm cvterm = new CvTerm();
           cvterm.setCvTermId(DatabaseDocument.getCvtermID("derives_from")
-              .longValue());
+              .intValue());
 
           feature_relationship.setFeatureByObjectId(parent);
           feature_relationship.setFeatureBySubjectId(chado_feature);
@@ -636,15 +646,15 @@ public class ChadoTransactionManager
     }
     catch(InvalidRelationException ire){}
 
-    featureloc.setFmin(segment.getRawRange().getStart()-1);
-    featureloc.setFmax(segment.getRawRange().getEnd());
+    featureloc.setFmin(new Integer(segment.getRawRange().getStart()-1));
+    featureloc.setFmax(new Integer(segment.getRawRange().getEnd()));
     chado_feature.setUniqueName(segment_uniquename);
     chado_feature.setName(segment_uniquename);
 
     String key = feature.getKey().toString();
     
     CvTerm cvterm = new CvTerm();
-    cvterm.setCvTermId(DatabaseDocument.getCvtermID(key).longValue());
+    cvterm.setCvTermId(DatabaseDocument.getCvtermID(key).intValue());
     chado_feature.setCvTerm(cvterm);
 
     //addQualifiers(feature.getQualifiers(), chado_feature);
@@ -697,7 +707,7 @@ public class ChadoTransactionManager
       
       try
       {
-        long type_id = DatabaseDocument.getCvtermID( name ).longValue();
+        int type_id = DatabaseDocument.getCvtermID( name ).intValue();
         for(int value_index = 0; value_index < qualifier_values.size();
           ++value_index)
         {
@@ -791,7 +801,7 @@ public class ChadoTransactionManager
         uk.ac.sanger.artemis.chado.Feature chado_feature =
            new uk.ac.sanger.artemis.chado.Feature();
         CvTerm cvterm = new CvTerm();
-        cvterm.setCvTermId( lcvterm_id.longValue() );
+        cvterm.setCvTermId( lcvterm_id.intValue() );
         
         chado_feature.setCvTerm(cvterm);
         chado_feature.setUniqueName(uniquename);
@@ -1227,7 +1237,7 @@ public class ChadoTransactionManager
            
            Synonym synonym = new Synonym();
            CvTerm cvterm = new CvTerm();
-           cvterm.setCvTermId(lcvterm_id.longValue());
+           cvterm.setCvTermId(lcvterm_id.intValue());
            synonym.setName(qualifier_string);
            synonym.setCvTerm(cvterm);
            
@@ -1276,9 +1286,9 @@ public class ChadoTransactionManager
       new uk.ac.sanger.artemis.chado.Feature();
     chado_feature.setUniqueName(seg_id);
     
-    featureloc.setFeature(chado_feature);
-    featureloc.setFmax(range_new.getEnd());
-    featureloc.setFmin(range_new.getStart()-1);
+    featureloc.setFeatureByFeatureId(chado_feature);
+    featureloc.setFmax(new Integer(range_new.getEnd()));
+    featureloc.setFmin(new Integer(range_new.getStart()-1));
     
     if(feature.getFeature_relationship_rank_store() != null)
     {
@@ -1328,7 +1338,7 @@ public class ChadoTransactionManager
       new uk.ac.sanger.artemis.chado.Feature();
     chado_feature.setUniqueName(uniquename);
     CvTerm cvterm = new CvTerm();
-    cvterm.setCvTermId(lcvterm_id.longValue());
+    cvterm.setCvTermId(lcvterm_id.intValue());
     featureprop.setValue(stripQuotes(qualifier_string));
     featureprop.setRank(rank);
     featureprop.setCvTerm(cvterm);

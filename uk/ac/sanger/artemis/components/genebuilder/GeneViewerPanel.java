@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.31 2006-09-04 15:01:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.32 2006-09-28 15:14:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -45,8 +45,8 @@ import uk.ac.sanger.artemis.LastSegmentException;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.FeatureVector;
 
-import uk.ac.sanger.artemis.chado.FeatureLoc;
-import uk.ac.sanger.artemis.chado.FeatureProp;
+import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeatureProp;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Feature;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
@@ -697,15 +697,15 @@ public class GeneViewerPanel extends JPanel
       uk.ac.sanger.artemis.chado.Feature start_exon = 
         (uk.ac.sanger.artemis.chado.Feature)exons.get(0);
       FeatureLoc loc = uk.ac.sanger.artemis.chado.Feature.getFeatureLoc(
-           new Vector(start_exon.getFeaturelocsForFeatureId()), chado_gene.getSrcfeature_id());
+           new Vector(start_exon.getFeatureLocsForFeatureId()), chado_gene.getSrcfeature_id());
       
       if(loc.getStrand().shortValue() == -1)
       {
         FeatureLoc loc_last = uk.ac.sanger.artemis.chado.Feature.getFeatureLoc(
-            new Vector(((uk.ac.sanger.artemis.chado.Feature)exons.get(exons.size()-1)).getFeaturelocsForFeatureId()),
+            new Vector(((uk.ac.sanger.artemis.chado.Feature)exons.get(exons.size()-1)).getFeatureLocsForFeatureId()),
             chado_gene.getSrcfeature_id());
             
-        if(loc.getFmin() < loc_last.getFmin())
+        if(loc.getFmin().intValue() < loc_last.getFmin().intValue())
           Collections.reverse(exons);
       }
       
@@ -714,10 +714,10 @@ public class GeneViewerPanel extends JPanel
         uk.ac.sanger.artemis.chado.Feature exon = 
           (uk.ac.sanger.artemis.chado.Feature)exons.get(j);
         loc = uk.ac.sanger.artemis.chado.Feature.getFeatureLoc(
-            new Vector(exon.getFeaturelocsForFeatureId()), chado_gene.getSrcfeature_id());
+            new Vector(exon.getFeatureLocsForFeatureId()), chado_gene.getSrcfeature_id());
         
-        int ex_start = border+(int)((loc.getFmin()+1-start)*fraction);
-        int ex_end   = border+(int)((loc.getFmax()-start)*fraction);
+        int ex_start = border+(int)((loc.getFmin().intValue()+1-start)*fraction);
+        int ex_end   = border+(int)((loc.getFmax().intValue()-start)*fraction);
            
         Color exon_col = getColorFromAttributes(exon);
      
@@ -921,7 +921,12 @@ public class GeneViewerPanel extends JPanel
       Feature embl_feature = (Feature)feature_list.get(i);
       uk.ac.sanger.artemis.Feature feature = 
         (uk.ac.sanger.artemis.Feature)embl_feature.getUserData();
-      RangeVector ranges = feature.getLocation().getRanges();
+      RangeVector ranges = embl_feature.getLocation().getRanges();
+  
+      if(feature == null)
+        feature = new uk.ac.sanger.artemis.Feature(embl_feature);
+      
+      
       for(int j = 0; j < ranges.size(); j++)
       {
         Range range = (Range) ranges.get(j);
@@ -1108,9 +1113,9 @@ public class GeneViewerPanel extends JPanel
     final int position_on_strand;
     
     if(loc.getStrand().shortValue() == -1)
-      position_on_strand = chado_gene.getSeqlen()-loc.getFmax();
+      position_on_strand = chado_gene.getSeqlen()-loc.getFmax().intValue();
     else
-      position_on_strand = loc.getFmin();
+      position_on_strand = loc.getFmin().intValue();
     
     // this will be 0, 1 or 2 depending on which frame the segment is in
     final int start_base_modulo =
@@ -1165,7 +1170,7 @@ public class GeneViewerPanel extends JPanel
       uk.ac.sanger.artemis.chado.Feature this_feature = 
         (uk.ac.sanger.artemis.chado.Feature)exons.get(i);
       FeatureLoc featureLoc = uk.ac.sanger.artemis.chado.Feature.getFeatureLoc(
-          new Vector(this_feature.getFeaturelocsForFeatureId()), chado_gene.getSrcfeature_id());
+          new Vector(this_feature.getFeatureLocsForFeatureId()), chado_gene.getSrcfeature_id());
       
       int this_direction;
       if(featureLoc.getStrand().shortValue() == 1)
@@ -1187,7 +1192,7 @@ public class GeneViewerPanel extends JPanel
         else if(this_direction != direction)
           base_count = 0;
 
-        base_count += featureLoc.getFmax()-featureLoc.getFmin();
+        base_count += featureLoc.getFmax().intValue()-featureLoc.getFmin().intValue();
       }
     }
     

@@ -24,6 +24,11 @@
 
 package uk.ac.sanger.artemis.chado;
 
+import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.FeatureSynonym;
+import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.sequence.FeatureLoc;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.GridLayout;
@@ -266,7 +271,7 @@ public class ChadoDemo
       attr_buff.append("\n");
     }
 
-    List synonyms = (List)chado_feature.getFeatureSynonymsForFeatureId();
+    List synonyms = (List)chado_feature.getFeatureSynonyms();
 
     // append synonyms
     if(synonyms.size() > 0)
@@ -332,13 +337,13 @@ public class ChadoDemo
       feature = (Feature) featureList.get(i);
       
       // assume only one featureloc
-      List locs = (List)feature.getFeaturelocsForFeatureId();
+      List locs = (List)feature.getFeatureLocsForFeatureId();
       
       if(locs.size() > 0)
       {
         FeatureLoc loc = (FeatureLoc)locs.get(0);
-        int fmin = loc.getFmin() + 1;
-        int fmax = loc.getFmax();
+        int fmin = loc.getFmin().intValue() + 1;
+        int fmax = loc.getFmax().intValue();
         rowData[i][4] = fmin + "..." + fmax;
         rowData[i][5] = Integer.toString(loc.getStrand().shortValue());
       }
@@ -354,7 +359,7 @@ public class ChadoDemo
       rowData[i][2] = feature.getCvTerm().getName();
       //rowData[i][2] = (String)cvterm.get(new Long(feature.getType_id()));
       rowData[i][3] = Integer.toString(feature.getFeatureId());
-      rowData[i][6] = feature.getTimelastmodified().toString();
+      rowData[i][6] = feature.getTimeLastModified().toString();
     
     }
     return rowData;

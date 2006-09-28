@@ -11,16 +11,16 @@
         type="uk.ac.sanger.artemis.chado.Feature"/>
      
      <typeAlias alias="FeatureLoc"
-        type="uk.ac.sanger.artemis.chado.FeatureLoc"/>
+        type="org.gmod.schema.sequence.FeatureLoc"/>
      
      <typeAlias alias="FeatureProp"
-        type="uk.ac.sanger.artemis.chado.FeatureProp"/>
+        type="org.gmod.schema.sequence.FeatureProp"/>
         
      <typeAlias alias="FeatureRelationship"
-        type="uk.ac.sanger.artemis.chado.FeatureRelationship"/>
+        type="org.gmod.schema.sequence.FeatureRelationship"/>
      
      <typeAlias alias="FeatureCvTerm"
-        type="uk.ac.sanger.artemis.chado.FeatureCvTerm"/>
+        type="org.gmod.schema.sequence.FeatureCvTerm"/>
      
     <parameterMap id="schema-cvlist" 
                   class="Feature">
@@ -30,7 +30,7 @@
 
     <resultMap id="select-feature" 
                class="Feature" groupBy="featureId">
-        <result property="timelastmodified" column="timelastmodified"/>
+        <result property="timeLastModified" column="timelastmodified"/>
    	    <result property="featureId" column="id"/>
   	    <result property="feature_relationship.featureByObjectId.featureId" column="object_id"/>
   	    <result property="feature_relationship.cvTerm.cvTermId" column="relation_type_id"/>
@@ -53,14 +53,14 @@
          featureprop, organism tables -->
     <resultMap id="select-feature-lazy" 
                class="Feature">       
-        <result property="timelastmodified" column="timelastmodified"/>
+        <result property="timeLastModified" column="timelastmodified"/>
    	    <result property="featureId" column="id"/>
         <result property="uniqueName" column="uniquename"/>
         <result property="name" column="name"/>
         <result property="seqLen" column="length" nullValue="-999" />
         <result property="residues" column="residues" />
         <result property="cvTerm" column="type_id" select="selectCvterm" />
-        <result property="featurelocsForFeatureId" column="{id=id}" 
+        <result property="featureLocsForFeatureId" column="{id=id}" 
                                                    select="getFeatureLoc" />
         <result property="featureProps" column="{feature_id=id}" 
                                            select="selectFeatureProp" />
@@ -70,7 +70,7 @@
                                            select="getFeatureRelationship" />  
         <result property="featureRelationshipsForSubjectId" column="{subject_id=id}" 
                                            select="getFeatureRelationship" /> 
-        <result property="featureSynonymsForFeatureId" column="{feature.uniqueName=uniqueName}" 
+        <result property="featureSynonyms" column="{feature.uniqueName=uniqueName}" 
                                            select="getLazyFeatureSynonymsByUniquename" />                          
         <result property="organism" column="organism_id" select="getOrganism" />
      </resultMap>
@@ -111,13 +111,13 @@
      
      <resultMap id="select-location"
                 class="FeatureLoc">
-        <result property="srcfeature_id" column="srcfeature_id" nullValue="-999" />
+        <result property="featureBySrcFeatureId.featureId" column="srcfeature_id" nullValue="-999" />
         <result property="fmin"   column="fmin"   nullValue="-999" />
         <result property="fmax"   column="fmax"   nullValue="-999" />
         <result property="strand" column="strand" nullValue="0" />
         <result property="phase"  column="phase"  nullValue="0" />
-        <result property="residue_info"  column="residue_info"/>
-        <result property="locgroup"  column="locgroup"/>
+        <result property="residueInfo"  column="residue_info"/>
+        <result property="locGroup"  column="locgroup"/>
         <result property="rank"      column="rank"/>
      </resultMap>
      
@@ -191,8 +191,8 @@
         LEFT JOIN featureloc fl           ON f.feature_id  = fl.feature_id
         WHERE
             <dynamic>
-             <isGreaterThan property="featureloc.srcfeature_id" compareValue="0"> 
-               srcfeature_id=$featureloc.srcfeature_id$ 
+             <isGreaterThan property="featureloc.featureBySrcFeatureId.featureId" compareValue="0"> 
+               srcfeature_id=$featureloc.featureBySrcFeatureId.featureId$ 
              </isGreaterThan>
              <isNotNull property="uniqueName">                        
                uniquename LIKE #uniqueName# 
@@ -220,9 +220,9 @@
           </isGreaterThan>
           
           <isNotNull property="uniqueName">                                 
-            <isNotNull property="featureSynonymsForFeatureId">
-              <iterate property="featureSynonymsForFeatureId" conjunction="OR" open="(" close=") OR">
-               f.feature_id=#featureSynonymsForFeatureId[].feature.featureId#
+            <isNotNull property="featureSynonyms">
+              <iterate property="featureSynonyms" conjunction="OR" open="(" close=") OR">
+               f.feature_id=#featureSynonyms[].feature.featureId#
              </iterate>
             </isNotNull>
             uniquename LIKE #uniqueName# OR name LIKE #uniqueName# AND              
@@ -268,8 +268,8 @@
 
     <select id="getOrganismID" resultClass="java.lang.Integer" 
             parameterClass="Feature">
-      SELECT organism_id FROM feature f WHERE
-             f.feature_id=$featureloc.srcfeature_id$
+      SELECT organism_id AS organismId FROM feature f WHERE
+             f.feature_id=$featureloc.featureBySrcFeatureId.featureId$
     </select>
 
     
@@ -293,8 +293,8 @@
         , phase=NULL
       </isNull>
       WHERE 
-      <isNotNull property="feature.uniqueName">
-        feature_id=(SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#)
+      <isNotNull property="featureByFeatureId.uniqueName">
+        feature_id=(SELECT feature_id FROM feature WHERE uniquename=#featureByFeatureId.uniqueName#)
       </isNotNull>
     </update>
     
@@ -305,8 +305,8 @@
       <isNotNull property="cvTerm.cvTermId">
         , type_id=$cvTerm.cvTermId$
       </isNotNull>
-      <isNotNull property="timelastmodified">
-        , timelastmodified=#timelastmodified#
+      <isNotNull property="timeLastModified">
+        , timelastmodified=#timeLastModified#
       </isNotNull>
       WHERE feature_id=$featureId$
     </update>
@@ -346,7 +346,7 @@
         ( feature_id, organism_id, name, uniquename, type_id )
       VALUES
         ( nextval('feature_feature_id_seq'),
-          $organism.id$,
+          $organism.organismId$,
           #name#,
           #uniqueName#,
           $cvTerm.cvTermId$ )
@@ -363,7 +363,7 @@
       VALUES
         ( nextval('featureloc_featureloc_id_seq'),
           $featureId$,
-          $featureloc.srcfeature_id$,
+          $featureloc.featureBySrcFeatureId.featureId$,
           $featureloc.fmin$,
           $featureloc.fmax$,
           $featureloc.strand$

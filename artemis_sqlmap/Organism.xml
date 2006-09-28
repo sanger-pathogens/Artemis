@@ -6,8 +6,8 @@
  
 <sqlMap namespace="Organism"> 
       
-    <select id="getOrganism" resultClass="uk.ac.sanger.artemis.chado.Organism"> 
-      SELECT organism_id AS id, abbreviation, genus, species, common_name, comment 
+    <select id="getOrganism" resultClass="org.gmod.schema.organism.Organism"> 
+      SELECT organism_id AS organismId, abbreviation, genus, species, common_name, comment 
       FROM organism
       WHERE organism_id=#value# 
     </select> 

@@ -8,29 +8,27 @@
 <sqlMap namespace="Synonym"> 
   
     <typeAlias alias="FeatureSynonym"
-        type="uk.ac.sanger.artemis.chado.FeatureSynonym"/>
+        type="org.gmod.schema.sequence.FeatureSynonym"/>
         
     <typeAlias alias="Synonym"
-        type="uk.ac.sanger.artemis.chado.Synonym"/>
+        type="org.gmod.schema.sequence.Synonym"/>
         
     <resultMap id="select-alias" 
                class="FeatureSynonym">
    	    <result property="feature.featureId" column="feature_id"/>
-   	    <result property="synonym_id" column="synonym_id"/>
-   	    <result property="pub_id" column="pub_id"/>
+   	    <result property="pub.pubId" column="pub_id"/>
    	    <result property="current" column="is_current"/>
    	    <result property="internal" column="is_internal"/>
-   	    <result property="synonym.synonym_id" column="synonym_id"/>
+   	    <result property="synonym.synonymId" column="synonym_id"/>
    	    <result property="synonym.name" column="name"/>
-   	    <result property="synonym.synonym_sgml" column="synonym_sgml"/>
+   	    <result property="synonym.synonymSgml" column="synonym_sgml"/>
   	    <result property="synonym.cvTerm.cvTermId" column="type_id" />
      </resultMap>
      
      <resultMap id="select-alias-part-lazy" 
                class="FeatureSynonym">
    	    <result property="feature.featureId" column="feature_id"/>
-   	    <result property="synonym_id" column="synonym_id"/>
-   	    <result property="pub_id" column="pub_id"/>
+   	    <result property="pub.pubId" column="pub_id"/>
    	    <result property="current" column="is_current"/>
    	    <result property="internal" column="is_internal"/>
    	    <result property="synonym" column="synonym_id" select="selectSynonym"/>
@@ -39,7 +37,7 @@
      <resultMap id="select-alias-lazy" 
                class="FeatureSynonym">
    	    <result property="feature.featureId" column="feature_id"/>
-   	    <result property="pub_id" column="pub_id"/>
+   	    <result property="pub.pubId" column="pub_id"/>
    	    <result property="current" column="is_current"/>
    	    <result property="internal" column="is_internal"/>
    	    <result property="synonym" column="synonym_id" select="selectSynonym"/>
@@ -47,9 +45,9 @@
      
      <resultMap id="select-synonym-lazy"
                 class="Synonym">
-        <result property="synonym_id" column="synonym_id"/>
+        <result property="synonymId" column="synonym_id"/>
    	    <result property="name" column="name"/>
-   	    <result property="synonym_sgml" column="synonym_sgml"/>
+   	    <result property="synonymSgml" column="synonym_sgml"/>
   	    <result property="cvTerm" column="type_id" select="selectCvterm"/>
      </resultMap>
      
@@ -85,7 +83,7 @@
         name=#name#) AND is_current
     </select>
     
-    <select id="getSynonymByNameAndType" resultClass="Synonym"
+    <select id="getSynonymByNameAndType" resultMap="select-synonym-lazy"
             parameterClass="Synonym">
       SELECT * FROM synonym WHERE 
         <isNotNull property="name">
@@ -106,20 +104,20 @@
   <!-- WRITE BACK -->
     <delete id="deleteFeatureAlias" parameterClass="FeatureSynonym">
       DELETE FROM feature_synonym WHERE
-         synonym_id=$synonym_id$ AND 
+         synonym_id=$synonym.synonymId$ AND 
          feature_id=(SELECT feature_id FROM feature WHERE  
          uniquename=#feature.uniqueName#)
     </delete>
   
     <insert id="insertFeatureAlias" parameterClass="FeatureSynonym">
       INSERT INTO feature_synonym ( synonym_id, feature_id, pub_id )
-      VALUES ( $synonym_id$ , 
+      VALUES ( $synonym.synonymId$ , 
               (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#), 
               1)
     </insert>
   
     <delete id="deleteAlias" parameterClass="FeatureSynonym">
-      DELETE FROM synonym WHERE synonym_id=$synonym_id$
+      DELETE FROM synonym WHERE synonym_id=$synonym.synonymId$
     </delete>
   
     <insert id="insertAlias" parameterClass="FeatureSynonym">
