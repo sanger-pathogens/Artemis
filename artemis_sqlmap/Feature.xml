@@ -72,7 +72,8 @@
                                            select="getFeatureRelationship" /> 
         <result property="featureSynonyms" column="{feature.uniqueName=uniqueName}" 
                                            select="getLazyFeatureSynonymsByUniquename" />                          
-        <result property="organism" column="organism_id" select="getOrganism" />
+        <result property="organism" column="{organismId=organismId}" 
+                                    select="getOrganism" />
      </resultMap>
      
     
@@ -207,7 +208,7 @@
 	    timelastmodified,
 	 	f.feature_id AS id,
 	 	uniquename,
-	 	organism_id,
+	 	organism_id AS organismId,
 		name,
 	 	f.type_id,
 		seqlen AS length,
@@ -243,7 +244,7 @@
     <select id="getResidueType" parameterClass="java.lang.String" 
             resultClass="java.lang.Long">
        SELECT DISTINCT type_id 
-       FROM $value$.feature 
+       FROM feature 
        WHERE residues notnull
     </select>
 
@@ -256,8 +257,8 @@
          uniquename,
          feature_id,
          type_id
-       FROM organism, $schema$.feature WHERE
-         organism.organism_id=$schema$.feature.organism_id AND
+       FROM organism, feature WHERE
+         organism.organism_id=feature.organism_id AND
          residues notnull
          <iterate prepend="AND" property="cvTermIds" conjunction="OR" open="(" close=")">
            type_id=#cvTermIds[]#

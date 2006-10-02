@@ -283,8 +283,12 @@ public class JdbcDAO
                                  final String schema)
   {
     String sql = new String(
-            "SELECT abbreviation, uniquename, name, feature_id, type_id FROM organism, "+
-            schema + ".feature WHERE (");
+            "SELECT abbreviation, uniquename, name, feature_id, type_id FROM organism, ");
+            
+    if(schema != null || !schema.equals(""))
+      sql = sql + schema +"." ;
+    
+    sql = sql + "feature WHERE (";
 
     for(int j = 0; j < cvTermIds.size(); j++)
     {
@@ -293,8 +297,12 @@ public class JdbcDAO
         sql = sql + " OR ";
     }
 
-    sql = sql + ") and organism.organism_id=" + schema
-            + ".feature.organism_id " + "and residues notnull "
+    sql = sql + ") and organism.organism_id=";
+    
+    if(schema != null || !schema.equals(""))
+      sql = sql + schema +"." ;
+    
+    sql = sql + "feature.organism_id " + "and residues notnull "
             + "ORDER BY abbreviation";
 
     appendToLogFile(sql, sqlLog);
@@ -336,8 +344,11 @@ public class JdbcDAO
    */
   public List getResidueType(final String schema)
   {
-    String sql = "SELECT DISTINCT type_id FROM " +schema+
-                 ".feature WHERE residues notnull";
+    String sql = "SELECT DISTINCT type_id FROM ";
+    
+    if(schema != null || !schema.equals(""))
+      sql = sql + schema +"." ;
+    sql = sql + "feature WHERE residues notnull";
     appendToLogFile(sql, sqlLog);
 
     List cvterm_ids = new Vector();
@@ -549,6 +560,40 @@ public class JdbcDAO
           CvTerm cvTerm, boolean not)
   {
     return null;
+  }
+  
+  
+  public List getOrganisms()
+  {
+    String sql = "SELECT organism_id AS organismId, abbreviation, "+
+      "genus, species, common_name AS commonName, comment "+ 
+      "FROM organism ORDER BY commonName";
+    
+    appendToLogFile(sql, sqlLog);
+    List organisms = new Vector();
+    
+    try
+    {
+      Statement st = conn.createStatement();
+      ResultSet rs = st.executeQuery(sql);
+
+      while(rs.next())
+      {
+        Organism organism = new Organism();
+        organism.setOrganismId(rs.getInt("organismId"));
+        organism.setAbbreviation(rs.getString("abbreviation"));
+        organism.setGenus(rs.getString("genus"));
+        organism.setSpecies(rs.getString("species"));
+        organism.setCommonName(rs.getString("commonName"));
+        organism.setComment(rs.getString("comment"));
+        organisms.add(organism);
+      }
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+    return organisms;
   }
   
   

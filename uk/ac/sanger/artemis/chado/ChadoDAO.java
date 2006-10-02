@@ -164,6 +164,8 @@ public interface ChadoDAO
   public FeatureCvTerm getFeatureCvTermByFeatureAndCvTerm(Feature feature,
           CvTerm cvTerm, boolean not);
   
+  public List getOrganisms();
+
 //
 // WRITE BACK
 //

@@ -298,6 +298,11 @@ public class IBatisDAO implements ChadoDAO
     return null;
   }
   
+  public List getOrganisms()
+  {
+    return sqlMap.queryForList("getOrganism", null);
+  }
+  
 //
 // WRITE BACK
 //

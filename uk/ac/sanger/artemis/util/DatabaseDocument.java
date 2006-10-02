@@ -39,6 +39,7 @@ import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.organism.Organism;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -232,6 +233,7 @@ public class DatabaseDocument extends Document
   private void reset(String location, String schema)
   {
     this.schema = schema;
+
     if(!location.endsWith("="+schema))
     {
       int index = location.lastIndexOf('=');
@@ -977,6 +979,91 @@ public class DatabaseDocument extends Document
   
   
   /**
+   * Create a hashtable of the available entries with residues.
+   * @return a <code>Hashtable</code> of the <code>String</code>
+   *          representation (schema-type-feature_name) and the
+   *          corresponding feature_id
+   * @throws ConnectException
+   * @throws java.sql.SQLException
+   */
+  public Hashtable getDatabaseEntries2()
+                   throws ConnectException, java.sql.SQLException
+  {
+    db = new Hashtable();
+    String schema = null;
+
+    try
+    { 
+      ChadoDAO dao = null;
+      dao = getDAO();
+      schema_list = dao.getOrganisms();
+      Iterator it = schema_list.iterator();
+
+      while(it.hasNext())
+      {
+        Organism organism = (Organism)it.next();
+        schema = organism.getCommonName();
+        
+        reset((String)getLocation(),  schema);
+        
+        try
+        {
+          dao = getDAO();
+          List list = dao.getResidueType(schema);
+         
+          if(list.size() == 0)  // no residues for this organism
+            continue;
+
+          List list_residue_features = dao.getResidueFeatures(list, schema);
+          Iterator it_residue_features = list_residue_features.iterator();
+          while(it_residue_features.hasNext())
+          {
+            Feature feature = (Feature)it_residue_features.next();
+            String typeName = getCvtermName(feature.getCvTerm().getCvTermId(), getDAO()); 
+          
+            db.put(schema + " - " + typeName + " - " + feature.getUniqueName(),
+                   Integer.toString(feature.getFeatureId()));
+          }
+        }
+        catch(RuntimeException e)
+        { 
+        }
+        catch(java.sql.SQLException sqlExp)
+        {
+        }
+      }
+      
+    }
+    catch(RuntimeException sqlExp)
+    {
+      JOptionPane.showMessageDialog(null, "SQL Problems...\n"+
+                                    sqlExp.getMessage(), 
+                                    "SQL Error",
+                                    JOptionPane.ERROR_MESSAGE);
+      sqlExp.printStackTrace();
+    }
+    catch(ConnectException exp)
+    {
+      JOptionPane.showMessageDialog(null, "Connection Problems...\n"+
+            exp.getMessage(), 
+            "Connection Error",
+            JOptionPane.ERROR_MESSAGE);
+      throw exp;
+    }
+    catch(java.sql.SQLException sqlExp)
+    {
+      JOptionPane.showMessageDialog(null, "SQL Problems....\n"+
+                                    sqlExp.getMessage(), 
+                                    "SQL Error",
+                                    JOptionPane.ERROR_MESSAGE);
+      throw sqlExp;
+    }
+    
+    return db;
+  }
+  
+  
+  /**
    * Get the data access object (DAO).
    * @return data access object
    */
@@ -992,7 +1079,10 @@ public class DatabaseDocument extends Document
     else
     {   
       if(connIB == null)
+      {
+        System.setProperty("chado", (String)getLocation());
         connIB = new IBatisDAO(pfield);
+      }
       return connIB;
     }
   }

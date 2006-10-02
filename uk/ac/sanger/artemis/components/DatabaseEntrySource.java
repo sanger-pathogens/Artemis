@@ -34,6 +34,8 @@ import java.io.*;
 import java.util.*;
 import java.net.ConnectException;
 
+import org.gmod.schema.organism.Organism;
+
 import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
@@ -304,14 +306,19 @@ public class DatabaseEntrySource implements EntrySource
 
     final Object v_organism[] = entries.keySet().toArray();
     final int v_organism_size = v_organism.length;
-    Arrays.sort(v_organism);
-
+    Arrays.sort(v_organism);  
+    
     for(int i=0; i<schema.size(); i++)
     {
-      String name = (String)schema.get(i);
+      int nchild = 0;
+      String name;
+      
+      if(schema.get(i) instanceof String)
+        name = (String)schema.get(i);
+      else
+        name = ((Organism)schema.get(i)).getCommonName();
+      
       schema_node = new DefaultMutableTreeNode(name);
-      top.add(schema_node);
-
       Hashtable seq_type_node = new Hashtable();
 
       for(int j = 0; j < v_organism_size; j++)
@@ -336,8 +343,11 @@ public class DatabaseEntrySource implements EntrySource
 
           seq_node = new DefaultMutableTreeNode(seq_name);
           typ_node.add(seq_node);
+          nchild++;
         }
       }
+      if(nchild > 0)
+        top.add(schema_node);
     }
   }
 

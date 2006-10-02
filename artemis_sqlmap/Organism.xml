@@ -6,10 +6,19 @@
  
 <sqlMap namespace="Organism"> 
       
-    <select id="getOrganism" resultClass="org.gmod.schema.organism.Organism"> 
-      SELECT organism_id AS organismId, abbreviation, genus, species, common_name, comment 
+    <select id="getOrganism"
+     resultClass="org.gmod.schema.organism.Organism"> 
+      SELECT organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment 
       FROM organism
-      WHERE organism_id=#value# 
+      <dynamic>
+        <isNotNull prepend="WHERE" property="organismId">
+           organism_id=#organismId#
+        </isNotNull>
+        
+        <isNull prepend="ORDER BY" property="organismId">
+           commonName
+        </isNull>
+      </dynamic>
     </select> 
  
 </sqlMap> 
