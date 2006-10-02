@@ -899,7 +899,7 @@ public class DatabaseDocument extends Document
    * @throws ConnectException
    * @throws java.sql.SQLException
    */
-  public Hashtable getDatabaseEntries()
+  public Hashtable getDatabaseEntries2()
                    throws ConnectException, java.sql.SQLException
   {
     db = new Hashtable();
@@ -986,7 +986,7 @@ public class DatabaseDocument extends Document
    * @throws ConnectException
    * @throws java.sql.SQLException
    */
-  public Hashtable getDatabaseEntries2()
+  public Hashtable getDatabaseEntries()
                    throws ConnectException, java.sql.SQLException
   {
     db = new Hashtable();
@@ -1005,7 +1005,7 @@ public class DatabaseDocument extends Document
         schema = organism.getCommonName();
         
         reset((String)getLocation(),  schema);
-        
+
         try
         {
           dao = getDAO();
