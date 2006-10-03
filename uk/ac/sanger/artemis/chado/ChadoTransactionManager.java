@@ -396,8 +396,8 @@ public class ChadoTransactionManager
       Range range   = (Range)rv_new.elementAt(rank);
       String seq_id = feature.getSegmentID(range);
       
-      uk.ac.sanger.artemis.chado.Feature chado_feature = 
-               new uk.ac.sanger.artemis.chado.Feature();
+      org.gmod.schema.sequence.Feature chado_feature = 
+               new org.gmod.schema.sequence.Feature();
       chado_feature.setUniqueName(seq_id);
 
       List featureRelationshipsForSubjectId = null;
@@ -409,8 +409,8 @@ public class ChadoTransactionManager
         
         for(int i=0; i<parents.size(); i++)
         {
-          uk.ac.sanger.artemis.chado.Feature parent =
-              new uk.ac.sanger.artemis.chado.Feature();
+          org.gmod.schema.sequence.Feature parent =
+              new org.gmod.schema.sequence.Feature();
           parent.setUniqueName((String)parents.get(i));
           FeatureRelationship feature_relationship =
               new FeatureRelationship();
@@ -478,9 +478,9 @@ public class ChadoTransactionManager
                    (GFFStreamFeature)feature.getEmblFeature(),
                    feature_uniquename, 
                   feature.getLocation().getTotalRange());
-    uk.ac.sanger.artemis.chado.Feature chado_feature = 
-              new uk.ac.sanger.artemis.chado.Feature();
-    chado_feature.setFeatureloc(featureloc);
+    org.gmod.schema.sequence.Feature chado_feature = 
+              new org.gmod.schema.sequence.Feature();
+    chado_feature.setFeatureLoc(featureloc);
     
     try
     { 
@@ -495,8 +495,8 @@ public class ChadoTransactionManager
         
         for(int i=0; i<parents.size(); i++)
         {
-          uk.ac.sanger.artemis.chado.Feature parent =
-              new uk.ac.sanger.artemis.chado.Feature();
+          org.gmod.schema.sequence.Feature parent =
+              new org.gmod.schema.sequence.Feature();
           parent.setUniqueName((String)parents.get(i));
           FeatureRelationship feature_relationship =
               new FeatureRelationship();
@@ -519,8 +519,8 @@ public class ChadoTransactionManager
         
         for(int i=0; i<derives.size(); i++)
         {
-          uk.ac.sanger.artemis.chado.Feature parent =
-                                      new uk.ac.sanger.artemis.chado.Feature();
+          org.gmod.schema.sequence.Feature parent =
+                                      new org.gmod.schema.sequence.Feature();
           parent.setUniqueName((String) derives.get(i));
           FeatureRelationship feature_relationship = new FeatureRelationship();
           CvTerm cvterm = new CvTerm();
@@ -563,10 +563,10 @@ public class ChadoTransactionManager
   private void insertFeatureSegment(final FeatureSegment segment,
                                     final String segment_uniquename)
   {
-    uk.ac.sanger.artemis.chado.Feature chado_feature = 
-      new uk.ac.sanger.artemis.chado.Feature();
+    org.gmod.schema.sequence.Feature chado_feature = 
+      new org.gmod.schema.sequence.Feature();
     FeatureLoc featureloc = new FeatureLoc();
-    chado_feature.setFeatureloc(featureloc);
+    chado_feature.setFeatureLoc(featureloc);
     
     if(segment.isForwardSegment())
       featureloc.setStrand(new Short((short)1));
@@ -603,8 +603,8 @@ public class ChadoTransactionManager
         
         for(int i=0; i<parents.size(); i++)
         {
-          uk.ac.sanger.artemis.chado.Feature parent =
-              new uk.ac.sanger.artemis.chado.Feature();
+          org.gmod.schema.sequence.Feature parent =
+              new org.gmod.schema.sequence.Feature();
           parent.setUniqueName((String)parents.get(i));
           FeatureRelationship feature_relationship =
               new FeatureRelationship();
@@ -627,8 +627,8 @@ public class ChadoTransactionManager
         
         for(int i=0; i<derives.size(); i++)
         {
-          uk.ac.sanger.artemis.chado.Feature parent =
-                                      new uk.ac.sanger.artemis.chado.Feature();
+          org.gmod.schema.sequence.Feature parent =
+                                      new org.gmod.schema.sequence.Feature();
           parent.setUniqueName((String) derives.get(i));
           FeatureRelationship feature_relationship = new FeatureRelationship();
           CvTerm cvterm = new CvTerm();
@@ -672,8 +672,8 @@ public class ChadoTransactionManager
    */
   private void deleteFeature(final String uniquename)
   {
-    uk.ac.sanger.artemis.chado.Feature chado_feature = 
-      new uk.ac.sanger.artemis.chado.Feature();
+    org.gmod.schema.sequence.Feature chado_feature = 
+      new org.gmod.schema.sequence.Feature();
     chado_feature.setUniqueName(uniquename);
     
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.DELETE,
@@ -690,7 +690,7 @@ public class ChadoTransactionManager
    * @param chado_feature	the <code>ChadoFeature</code>
    */
   private void addQualifiers(final QualifierVector qualifiers,
-                             final uk.ac.sanger.artemis.chado.Feature chado_feature)
+                             final org.gmod.schema.sequence.Feature chado_feature)
   {
     // add qualifiers/attributes
     for(int qualifier_index = 0; qualifier_index < qualifiers.size();
@@ -798,8 +798,8 @@ public class ChadoTransactionManager
       }
       else
       {  
-        uk.ac.sanger.artemis.chado.Feature chado_feature =
-           new uk.ac.sanger.artemis.chado.Feature();
+        org.gmod.schema.sequence.Feature chado_feature =
+           new org.gmod.schema.sequence.Feature();
         CvTerm cvterm = new CvTerm();
         cvterm.setCvTermId( lcvterm_id.intValue() );
         
@@ -1096,8 +1096,8 @@ public class ChadoTransactionManager
       if(new_qualifier.getValues() == null)
         return;
       
-      uk.ac.sanger.artemis.chado.Feature chado_feature =
-        new uk.ac.sanger.artemis.chado.Feature();
+      org.gmod.schema.sequence.Feature chado_feature =
+        new org.gmod.schema.sequence.Feature();
      
       chado_feature.setUniqueName((String)new_qualifier.getValues().get(0));
      
@@ -1133,8 +1133,8 @@ public class ChadoTransactionManager
                qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
          
            FeatureDbXRef old_dbxref = new FeatureDbXRef();
-           uk.ac.sanger.artemis.chado.Feature chado_feature = 
-             new uk.ac.sanger.artemis.chado.Feature();
+           org.gmod.schema.sequence.Feature chado_feature = 
+             new org.gmod.schema.sequence.Feature();
            DbXRef dbxref = new DbXRef();
            Db db = new Db();
            db.setName(qualifier_string.substring(0,index));
@@ -1164,8 +1164,8 @@ public class ChadoTransactionManager
                               qualifier_string);
            
            FeatureSynonym alias = new FeatureSynonym();
-           uk.ac.sanger.artemis.chado.Feature chado_feature =
-             new uk.ac.sanger.artemis.chado.Feature();
+           org.gmod.schema.sequence.Feature chado_feature =
+             new org.gmod.schema.sequence.Feature();
            chado_feature.setUniqueName(uniquename);
            
            Synonym synonym = new Synonym();
@@ -1206,8 +1206,8 @@ public class ChadoTransactionManager
            dbxref.setDb(db);
            dbxref.setAccession(qualifier_string.substring(index+1));
            new_dbxref.setDbXRef(dbxref);
-           uk.ac.sanger.artemis.chado.Feature feat = 
-             new uk.ac.sanger.artemis.chado.Feature();
+           org.gmod.schema.sequence.Feature feat = 
+             new org.gmod.schema.sequence.Feature();
            feat.setUniqueName(uniquename);
            new_dbxref.setFeature(feat);
            
@@ -1231,8 +1231,8 @@ public class ChadoTransactionManager
                qualifier_string);
            Long lcvterm_id = DatabaseDocument.getCvtermID(qualifier_name);
            FeatureSynonym alias = new FeatureSynonym();
-           uk.ac.sanger.artemis.chado.Feature chado_feature = 
-             new uk.ac.sanger.artemis.chado.Feature();
+           org.gmod.schema.sequence.Feature chado_feature = 
+             new org.gmod.schema.sequence.Feature();
            chado_feature.setUniqueName(uniquename);
            
            Synonym synonym = new Synonym();
@@ -1282,8 +1282,8 @@ public class ChadoTransactionManager
                              String seg_id, Range range_new)
   {
     FeatureLoc featureloc = new FeatureLoc();
-    uk.ac.sanger.artemis.chado.Feature chado_feature = 
-      new uk.ac.sanger.artemis.chado.Feature();
+    org.gmod.schema.sequence.Feature chado_feature = 
+      new org.gmod.schema.sequence.Feature();
     chado_feature.setUniqueName(seg_id);
     
     featureloc.setFeatureByFeatureId(chado_feature);
@@ -1334,8 +1334,8 @@ public class ChadoTransactionManager
                                      final int rank)
   {
     FeatureProp featureprop = new FeatureProp();
-    uk.ac.sanger.artemis.chado.Feature chado_feature   = 
-      new uk.ac.sanger.artemis.chado.Feature();
+    org.gmod.schema.sequence.Feature chado_feature   = 
+      new org.gmod.schema.sequence.Feature();
     chado_feature.setUniqueName(uniquename);
     CvTerm cvterm = new CvTerm();
     cvterm.setCvTermId(lcvterm_id.intValue());

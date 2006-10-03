@@ -27,6 +27,7 @@ package uk.ac.sanger.artemis.chado;
 import java.sql.Timestamp;
 
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import org.gmod.schema.sequence.Feature;
 
 /**
  * Store information about a SQL transaction <i>e.g</i> UPDATE, INSERT, DELETE

@@ -29,7 +29,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.sql.*;
 
-import org.gmod.schema.cv.Cv;
+import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureProp;
@@ -49,7 +49,7 @@ import javax.swing.JPasswordField;
  * access interface.
  *
  */
-public class IBatisDAO implements ChadoDAO
+public class IBatisDAO extends GmodDAO
 {
   private SqlMapClientWrapper sqlMap;
   
@@ -70,6 +70,12 @@ public class IBatisDAO implements ChadoDAO
     this.sqlMap = sql_config.getSqlMapInstance();*/
   }
 
+
+  //////
+  ////// SequenceDaoI
+  //////
+  //////
+
   
   /**
    * Return the feature corresponding to this feature_id 
@@ -79,35 +85,21 @@ public class IBatisDAO implements ChadoDAO
    */
   public Feature getFeatureById(int id) 
   {
-    Feature feature = new Feature();
+    org.gmod.schema.sequence.Feature feature = 
+      new org.gmod.schema.sequence.Feature();
     feature.setFeatureId(id);
     return getLazyFeature(feature);
   }
   
   public Feature getFeatureByUniqueName(String uniquename) 
   {
-    Feature feature = new Feature();
+    org.gmod.schema.sequence.Feature feature = 
+      new org.gmod.schema.sequence.Feature();
     feature.setUniqueName(uniquename);
     return getLazyFeature(feature);
   }
    
-
-  /**
-   * This can be used to get individual features or children.
-   * If Feature.featureloc.srcfeature_id is set this is used
-   * to return the children of that srcfeature_id.
-   * @param feature  the feature to query
-   * @return    the <code>List</code> of child <code>Feature</code> objects
-   */
-  public List getFeaturesByLocatedOnFeature(final Feature feature)
-  { 
-    List feature_list = sqlMap.queryForList("getFeature", feature);
-
-    // merge same features in the list
-    //return mergeList(feature_list);
-    return feature_list;
-  }
-
+  
   /**
    * Return a list of features with any current (ie non-obsolete) name or synonym  
    * @param name the lookup name
@@ -143,95 +135,51 @@ public class IBatisDAO implements ChadoDAO
   }
   
   /**
-   * Get the properties of a feature.
-   * @param uniquename  the unique name of the feature
-   * @return  the <code>List</code> of <code>Feature</code>
+   * Return a list of features located on a source Feature, within a given range
+   *  
+   * @param min the minimum (interbase) coordinate
+   * @param max the maximum (interbase) coordinate
+   * @param strand 
+   * @param parent the source feature
+   * @param type 
+   * @return a List<Feature> which ??? this range
    */
-  private Feature getLazyFeature(final Feature feature)
-  { 
-    return (Feature)sqlMap.queryForObject("getLazyFeature", feature);
-  }
-
-  /**
-   * Given a list of distict cvterm_id/type_id's of feature types
-   * that have residues (from getResidueType()) in the given schema 
-   * and the schema name return a list of chado features in the schema
-   * with residues.
-   * @param cvTermIds   list of cvterm_id/type_id's
-   * @param schema      schema/organism name or null
-   * @return    the <code>List</code> of <code>Feature</code> objects
-   */
-  public List getResidueFeatures(List cvTermIds, 
-                                 final String schema)
-  { 
-    Feature feature = new Feature();
-    feature.setSchema(schema);
-    feature.setCvTermIds(cvTermIds);
-
-    return sqlMap.queryForList("getResidueFeatures",
-                                feature);
-  }
-
-  /**
-   *
-   * For a schema return the type_id's with residues.
-   * @param schema      schema/organism name or null
-   * @return    the <code>List</code> of type_id's as <code>String</code>
-   *            objects
-   */
-  public List getResidueType(final String schema)
-  { 
-    return sqlMap.queryForList("getResidueType", schema);
-  }
-
-  /**
-   *
-   * Get available schemas (as a <code>List</code> of <code>String</code>       
-   * objects).
-   * @return    the available schemas
-   */
-  public List getSchema()
+  public List getFeaturesByRange(int min, int max, int strand,
+      Feature parent, String type)
   {
-    return sqlMap.queryForList("getSchema", null);
+    return null; 
   }
-
-  /**
-   * Get the full list of cvterm_id and name as a <code>List</code> of 
-   * <code>CvTerm</code> objects.
-   * @return    the full list of cvterm_id and name
-   */
-  public List getCvTerm()
-  {
-    return sqlMap.queryForList("getCvterm", null);
-  }
-
   
   /**
-   * Get dbxref for a feature.
-   * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>FeatureDbXRef</code> are returned.
-   * @return a <code>List</code> of feature_dbxrefs.
+   * This can be used to get individual features or children.
+   * If Feature.featureloc.srcfeature_id is set this is used
+   * to return the children of that srcfeature_id.
+   * @param feature  the feature to query
+   * @return    the <code>List</code> of child <code>Feature</code> objects
    */
-  public List getFeatureDbXRefByUniquename(final String uniquename)
-  {
-    Feature feature = new Feature();
-    feature.setUniqueName(uniquename);
-    
-    return sqlMap.queryForList("getFeatureDbXRef", feature);  
+  public List getFeaturesByLocatedOnFeature(final Feature feature)
+  { 
+    List feature_list = sqlMap.queryForList("getFeature", feature);
+
+    // merge same features in the list
+    //return mergeList(feature_list);
+    return feature_list;
   }
-   
+  
   /**
-   * Return a list of FeatureSynonyms for a uniquename
-   * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>FeatureSynonym</code> are returned.
-   * @return
+   * Return the FeatureCvTerm that links a given Feature and CvTerm, 
+   * with a given value of 'not'
+   * 
+   * @param feature the Feature to test the link for
+   * @param cvTerm the CvTerm to test the link for
+   * @param not test for the not flag in the FeatureCvTerm 
+   * @return the Feature, or null
    */
-  public List getFeatureSynonymsByUniquename(final String uniquename)
+  public FeatureCvTerm getFeatureCvTermByFeatureAndCvTerm(
+          Feature feature,
+          CvTerm cvTerm, boolean not)
   {
-    Feature feature = new Feature();
-    feature.setUniqueName(uniquename);
-    
-    return sqlMap.queryForList("getFeatureSynonymsByUniquename", feature);  
+    return null;
   }
   
   /**
@@ -264,39 +212,122 @@ public class IBatisDAO implements ChadoDAO
     return
       sqlMap.queryForList("getFeatureSynonymsByName", synonym);
   }
-
-
+  
   
   /**
-   *
-   * @param name cvterm name
-   * @param cv_name ontology name (e.g. gene, sequence)
+   * Return all the FeatureDbXRefs for a given feature, <b>specified by name</b>, or all if 
+   * <code>null</code> is passed
+   * 
+   * @param uniqueName the uniquename of a Feature, or null for all FeatureDbXRefs
+   * @return a (possibly empty) List<FeatureDbXRefI> 
    */
-  public CvTerm getCvtermID(String name, String cv_name)
-  { 
-    CvTerm cvterm   = new CvTerm();
-    Cv cv = new Cv();
-    cv.setName(cv_name);
-    cvterm.setCv(cv);
-    cvterm.setName(name);
+  public List getFeatureDbXRefsByFeatureUniquename(final String uniqueName)
+  {
+    Feature feature = new Feature();
+    feature.setUniqueName(uniqueName);
+      
+    return sqlMap.queryForList("getFeatureDbXRef", feature);  
+  }
+  
+  /**
+   * Return the list of FeatureSynonyms for a given Feature, <b>specified by name</b>, or all if 
+   * <code>null</code> is passed
+   * 
+   * @param uniqueName the uniquename of a Feature, or null for all
+   * @return a (possibly empty) List<FeatureSynonymI> of matching synonyms
+   */
+  public List getFeatureSynonymsByFeatureUniquename(final String uniqueName)
+  {
+    Feature feature = new Feature();
+    feature.setUniqueName(uniqueName);
+    
+    return sqlMap.queryForList("getFeatureSynonymsByUniquename", feature); 
+  }
 
-    return (CvTerm)sqlMap.queryForObject("getCvterm", cvterm);
+  //////
+  //////
+  
+  
+  /**
+   * Get the properties of a feature.
+   * @param uniquename  the unique name of the feature
+   * @return  the <code>List</code> of <code>Feature</code>
+   */
+  private Feature getLazyFeature(
+      final org.gmod.schema.sequence.Feature feature)
+  { 
+    return (Feature)sqlMap.queryForObject("getLazyFeature", feature);
+  }
+  
+  //////
+  ////// SchemaDaoI
+  //////
+  //////
+
+  /**
+   * Given a list of distict cvterm_id/type_id's of feature types
+   * that have residues (from getResidueType()) in the given schema 
+   * and the schema name return a list of chado features in the schema
+   * with residues.
+   * @param cvTermIds   list of cvterm_id/type_id's
+   * @param schema      schema/organism name or null
+   * @return    the <code>List</code> of <code>Feature</code> objects
+   */
+  public List getResidueFeatures(List cvTermIds, 
+                                 final String schema)
+  { 
+/*    Feature feature = new Feature();
+    feature.setSchema(schema);
+    feature.setCvTermIds(cvTermIds);*/
+  
+    java.util.Map map = new java.util.HashMap();
+    map.put("cvTermIds", cvTermIds);
+    return sqlMap.queryForList("getResidueFeatures",
+                               map);
   }
 
   /**
-   * Return the FeatureCvTerm that links a given Feature and CvTerm, 
-   * with a given value of 'not'
-   * 
-   * @param feature the Feature to test the link for
-   * @param cvTerm the CvTerm to test the link for
-   * @param not test for the not flag in the FeatureCvTerm 
-   * @return the Feature, or null
+   *
+   * For a schema return the type_id's with residues.
+   * @param schema      schema/organism name or null
+   * @return    the <code>List</code> of type_id's as <code>String</code>
+   *            objects
    */
-  public FeatureCvTerm getFeatureCvTermByFeatureAndCvTerm(Feature feature,
-          CvTerm cvTerm, boolean not)
-  {
-    return null;
+  public List getResidueType(final String schema)
+  { 
+    return sqlMap.queryForList("getResidueType", schema);
   }
+
+  /**
+   *
+   * Get available schemas (as a <code>List</code> of <code>String</code>       
+   * objects).
+   * @return    the available schemas
+   */
+  public List getSchema()
+  {
+    return sqlMap.queryForList("getSchema", null);
+  }
+
+  //////
+  ////// CvDaoI
+  //////
+  //////
+  
+  /**
+   * Get the full list of cvterm_id and name as a <code>List</code> of 
+   * <code>CvTerm</code> objects.
+   * @return    the full list of cvterm_id and name
+   */
+  public List getCvTerms()
+  {
+    return sqlMap.queryForList("getCvterm", null);
+  }
+
+  //////
+  ////// OrganismDaoI
+  //////
+  //////
   
   public List getOrganisms()
   {
@@ -445,7 +476,7 @@ public class IBatisDAO implements ChadoDAO
     feature_dbxref.setDbXRef(dbXRef);
     
     //  get the feature id's  
-    Feature feature = getFeatureByUniqueName(
+    Feature feature = (Feature)getFeatureByUniqueName(
         feature_dbxref.getFeature().getUniqueName());
     feature_dbxref.getFeature().setFeatureId( feature.getFeatureId() );
 

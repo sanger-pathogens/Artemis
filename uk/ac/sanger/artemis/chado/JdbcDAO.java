@@ -31,6 +31,7 @@ import java.io.*;
 import java.util.List;
 import java.util.Vector;
 
+import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureProp;
@@ -50,8 +51,7 @@ import org.gmod.schema.pub.Pub;
  * <code>ChadoDAO</code> data access interface.
  *
  */
-public class JdbcDAO 
-             implements ChadoDAO
+public class JdbcDAO extends GmodDAO
 {
 
   private String sqlLog = System.getProperty("user.home") +
@@ -79,6 +79,11 @@ public class JdbcDAO
                                        new String(pfield.getPassword()));
   }
 
+  //////
+  ////// SequenceDaoI
+  //////
+  //////
+  
   /**
    * Return the feature corresponding to this feature_id 
    * 
@@ -106,20 +111,6 @@ public class JdbcDAO
     return getLazyFeature(feature);
   }
   
-
-  /**
-   * This can be used to get individual features or children.
-   * If Feature.featureloc.srcfeature_id is set this is used
-   * to return the children of that srcfeature_id.
-   * @param feature  the feature to query
-   * @return    the <code>List</code> of child <code>Feature</code> objects
-   */
-  public List getFeaturesByLocatedOnFeature(final Feature feature)
-  {
-    return getFeatureQuery(null, 
-                 feature.getFeatureloc().getFeatureBySrcFeatureId().getFeatureId(), -1);
-  }
-
   /**
    * Return a list of features with any current (ie non-obsolete) name or synonym
    *  
@@ -143,6 +134,187 @@ public class JdbcDAO
   {
     return null;
   }
+  
+  /**
+   * Return a list of features located on a source Feature, within a given range
+   *  
+   * @param min the minimum (interbase) coordinate
+   * @param max the maximum (interbase) coordinate
+   * @param strand 
+   * @param parent the source feature
+   * @param type 
+   * @return a List<Feature> which ??? this range
+   */
+  public List getFeaturesByRange(int min, int max, int strand,
+      org.gmod.schema.sequence.Feature parent, String type)
+  {
+    return null; 
+  }
+  
+
+  /**
+   * This can be used to get individual features or children.
+   * If Feature.featureloc.srcfeature_id is set this is used
+   * to return the children of that srcfeature_id.
+   * @param feature  the feature to query
+   * @return    the <code>List</code> of child <code>Feature</code> objects
+   */
+  public List getFeaturesByLocatedOnFeature(final Feature feature)
+  {
+    return getFeatureQuery(null, 
+                 feature.getFeatureLoc().getFeatureBySrcFeatureId().getFeatureId(), -1);
+  }
+  
+  /**
+   * Return the FeatureCvTerm that links a given Feature and CvTerm, 
+   * with a given value of 'not'
+   * 
+   * @param feature the Feature to test the link for
+   * @param cvTerm the CvTerm to test the link for
+   * @param not test for the not flag in the FeatureCvTerm 
+   * @return the Feature, or null
+   */
+  public FeatureCvTerm getFeatureCvTermByFeatureAndCvTerm(
+          Feature feature,
+          CvTerm cvTerm, boolean not)
+  {
+    return null;
+  }
+  
+
+  public Synonym getSynonymByNameAndCvTerm(
+      String name, CvTerm type)
+  {
+    return null;
+  }
+  
+  
+  public List getFeatureSynonymsByFeatureAndSynonym(
+      Feature feature, Synonym synonym)
+  {
+    return null;
+  }
+  
+  /**
+   * Return a list of FeatureSynonyms which link a given Feature
+   * and Synonym 
+   * @param feature the test Feature
+   * @param synonym the test Synonym
+   * @return a (possibly empty) List<FeatureSynonym>
+   */
+  public List getFeatureSynonymsByFeatureUniquename(
+      Feature feature, Synonym synonym)
+  {
+    return null;
+  }
+  
+  /**
+   * Return all the FeatureDbXRefs for a given feature, <b>specified by name</b>, or all if 
+   * <code>null</code> is passed
+   * 
+   * @param uniqueName the uniquename of a Feature, or null for all FeatureDbXRefs
+   * @return a (possibly empty) List<FeatureDbXRefI> 
+   */
+  public List getFeatureDbXRefsByFeatureUniquename(final String uniqueName)
+  {
+    String sql = "SELECT db.name, dbx.accession, f.feature_id FROM "
+        + "feature_dbxref dbx_f "
+        + "LEFT JOIN dbxref dbx ON dbx.dbxref_id=dbx_f.dbxref_id "
+        + "LEFT JOIN db ON db.db_id=dbx.db_id "
+        + "LEFT JOIN feature f ON dbx_f.feature_id=f.feature_id ";
+
+    if(uniqueName != null)
+      sql = sql + "WHERE f.uniquename='" + uniqueName + "'";
+
+    appendToLogFile(sql, sqlLog);
+
+    try
+    {
+      Statement st = conn.createStatement();
+      ResultSet rs = st.executeQuery(sql);
+      List dbxrefs = new Vector();
+
+      while(rs.next())
+      {
+        FeatureDbXRef feature_dbxref = new FeatureDbXRef();
+        DbXRef dbxref = new DbXRef();
+        Db db = new Db();
+        db.setName(rs.getString("name"));
+        dbxref.setAccession(rs.getString("accession"));
+        dbxref.setDb(db);
+        Feature feat = new Feature();
+        feat.setFeatureId(rs.getInt("feature_id"));
+        feature_dbxref.setDbXRef(dbxref);
+        feature_dbxref.setFeature(feat);
+        dbxrefs.add(feature_dbxref);
+      }
+
+      return dbxrefs;
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+  }
+  
+  /**
+   * Return the list of FeatureSynonyms for a given Feature, <b>specified by name</b>, or all if 
+   * <code>null</code> is passed
+   * 
+   * @param uniqueName the uniquename of a Feature, or null for all
+   * @return a (possibly empty) List<FeatureSynonymI> of matching synonyms
+   */
+  public List getFeatureSynonymsByFeatureUniquename(final String uniqueName)
+  {
+    String sql = "SELECT fs.*, s.name, s.type_id FROM "+
+    "feature_synonym fs "+
+    "LEFT JOIN feature f ON f.feature_id=fs.feature_id "+
+    "LEFT JOIN synonym s ON fs.synonym_id=s.synonym_id ";
+  
+    if(uniqueName != null)
+      sql = sql + " WHERE uniquename='" + uniqueName + "'";
+
+    appendToLogFile(sql, sqlLog);
+    
+    try
+    {
+      Statement st = conn.createStatement();
+      ResultSet rs = st.executeQuery(sql);
+      List synonym = new Vector();
+      FeatureSynonym alias;
+      while(rs.next())
+      {
+        alias = new FeatureSynonym();
+        CvTerm cvterm = new CvTerm();
+        cvterm.setCvTermId(rs.getInt("type_id"));
+        Synonym syn = new Synonym();
+        syn.setName(rs.getString("name"));
+        syn.setCvTerm(cvterm);
+        Feature feat = new Feature();
+        feat.setFeatureId(rs.getInt("feature_id"));
+
+        alias.setSynonym(syn);
+        alias.setFeature(feat);
+        
+        Pub pub = new Pub();
+        pub.setPubId(rs.getInt("pub_id"));
+        alias.setPub(pub);
+        alias.setInternal(rs.getBoolean("is_internal"));
+        alias.setCurrent(rs.getBoolean("is_current"));
+        synonym.add(alias);
+      }
+
+      return synonym;
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+  }
+
+  //////
+  //////
+  
   
   /**
    * Get the properties of a feature.
@@ -219,7 +391,7 @@ public class JdbcDAO
 
         feature.setResidues(rs.getBytes("residues"));
 
-        feature.setFeatureloc(featureloc);
+        feature.setFeatureLoc(featureloc);
         feature.setCvTerm(new CvTerm());
         feature.getCvTerm().setCvTermId(rs.getInt("type_id"));
 
@@ -229,7 +401,7 @@ public class JdbcDAO
         cvterm.setCvTermId(rs.getInt("prop_type_id"));
         featureprop.setCvTerm(cvterm);
         featureprop.setValue(rs.getString("value"));
-        feature.setFeatureprop(featureprop);
+        feature.setFeatureProp(featureprop);
 
         feature.setUniqueName(rs.getString("uniquename"));
         feature.setTimeLastModified(rs.getTimestamp("timelastmodified"));
@@ -244,7 +416,7 @@ public class JdbcDAO
         Feature object = new Feature();
         object.setFeatureId(rs.getInt("object_id"));
         feature_relationship.setFeatureByObjectId(object);
-        feature.setFeature_relationship(feature_relationship);
+        feature.setFeatureRelationship(feature_relationship);
 
         // feature organism
         Organism organism = new Organism();
@@ -267,6 +439,10 @@ public class JdbcDAO
     return mergeList(list);
   }
   
+  //////
+  ////// SchemaDaoI
+  //////
+  //////
 
   /**
    * Given a list of distict cvterm_id/type_id's of feature types that have
@@ -397,12 +573,17 @@ public class JdbcDAO
     return schemas;
   } 
 
+  //////
+  ////// CvDaoI
+  //////
+  //////
+  
   /**
    * Get the full list of cvterm_id and name as a <code>List</code> of 
    * <code>CvTerm</code> objects.
    * @return    the full list of cvterm_id and name
    */
-  public List getCvTerm()
+  public List getCvTerms()
   {
     String sql = "SELECT cvterm.cvterm_id, cvterm.name " +
                  "FROM cvterm, cv WHERE cv.cv_id = cvterm.cv_id";
@@ -430,138 +611,11 @@ public class JdbcDAO
     }
 
   }
-
-  /**
-   * Get dbxref for a feature.
-   * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>FeatureDbXRef</code> are returned.
-   * @return a <code>List</code> of feature_dbxrefs.
-   */
-  public List getFeatureDbXRefByUniquename(final String uniquename)
-  {
-    String sql = "SELECT db.name, dbx.accession, f.feature_id FROM "+
-                 "feature_dbxref dbx_f "+
-                 "LEFT JOIN dbxref dbx ON dbx.dbxref_id=dbx_f.dbxref_id "+
-                 "LEFT JOIN db ON db.db_id=dbx.db_id "+
-                 "LEFT JOIN feature f ON dbx_f.feature_id=f.feature_id ";
-    
-    if(uniquename != null)
-      sql = sql + "WHERE f.uniquename='"+uniquename+"'";
-    
-    appendToLogFile(sql, sqlLog);
-    
-    try
-    {
-      Statement st = conn.createStatement();
-      ResultSet rs = st.executeQuery(sql);
-      List dbxrefs = new Vector();
-
-      while(rs.next())
-      {
-        FeatureDbXRef feature_dbxref = new FeatureDbXRef();
-        DbXRef dbxref = new DbXRef();
-        Db db = new Db();
-        db.setName(rs.getString("name"));
-        dbxref.setAccession(rs.getString("accession"));
-        dbxref.setDb(db);
-        Feature feat = new Feature();
-        feat.setFeatureId(rs.getInt("feature_id"));
-        feature_dbxref.setDbXRef(dbxref);
-        feature_dbxref.setFeature(feat);
-        dbxrefs.add(feature_dbxref);
-      }
-
-      return dbxrefs;
-    }
-    catch(SQLException sqle)
-    {
-      throw new RuntimeException(sqle);
-    }
-  }
   
-  
-  /**
-   * Return a list of FeatureSynonyms for a uniquename
-   * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>FeatureSynonym</code> are returned.
-   * @return
-   */
-  public List getFeatureSynonymsByUniquename(final String uniquename)
-  {
-    String sql = "SELECT fs.*, s.name, s.type_id FROM "+
-    "feature_synonym fs "+
-    "LEFT JOIN feature f ON f.feature_id=fs.feature_id "+
-    "LEFT JOIN synonym s ON fs.synonym_id=s.synonym_id ";
-  
-    if(uniquename != null)
-      sql = sql + " WHERE uniquename='" + uniquename + "'";
-
-    appendToLogFile(sql, sqlLog);
-    
-    try
-    {
-      Statement st = conn.createStatement();
-      ResultSet rs = st.executeQuery(sql);
-      List synonym = new Vector();
-      FeatureSynonym alias;
-      while(rs.next())
-      {
-        alias = new FeatureSynonym();
-        CvTerm cvterm = new CvTerm();
-        cvterm.setCvTermId(rs.getInt("type_id"));
-        Synonym syn = new Synonym();
-        syn.setName(rs.getString("name"));
-        syn.setCvTerm(cvterm);
-        Feature feat = new Feature();
-        feat.setFeatureId(rs.getInt("feature_id"));
-
-        alias.setSynonym(syn);
-        alias.setFeature(feat);
-        
-        Pub pub = new Pub();
-        pub.setPubId(rs.getInt("pub_id"));
-        alias.setPub(pub);
-        alias.setInternal(rs.getBoolean("is_internal"));
-        alias.setCurrent(rs.getBoolean("is_current"));
-        synonym.add(alias);
-      }
-
-      return synonym;
-    }
-    catch(SQLException sqle)
-    {
-      throw new RuntimeException(sqle);
-    }
-  }
-  
-  public List getFeatureSynonymsByFeatureAndSynonym(
-      Feature feature, Synonym synonym)
-  {
-    return null;
-  }
-
-
-  public Synonym getSynonymByNameAndCvTerm(
-      String name, CvTerm type)
-  {
-    return null;
-  }
-  
-  /**
-   * Return the FeatureCvTerm that links a given Feature and CvTerm, 
-   * with a given value of 'not'
-   * 
-   * @param feature the Feature to test the link for
-   * @param cvTerm the CvTerm to test the link for
-   * @param not test for the not flag in the FeatureCvTerm 
-   * @return the Feature, or null
-   */
-  public FeatureCvTerm getFeatureCvTermByFeatureAndCvTerm(Feature feature,
-          CvTerm cvTerm, boolean not)
-  {
-    return null;
-  }
-  
+  //////
+  ////// OrganismDaoI
+  //////
+  //////
   
   public List getOrganisms()
   {
@@ -850,7 +904,7 @@ public class JdbcDAO
       // get the organism_id
       Statement st = conn.createStatement();
       String sql = "SELECT organism_id from " + "feature where feature_id = '"
-          + feature.getFeatureloc().getFeatureBySrcFeatureId().getFeatureId() + "'";
+          + feature.getFeatureLoc().getFeatureBySrcFeatureId().getFeatureId() + "'";
 
       appendToLogFile(sql, sqlLog);
       ResultSet rs = st.executeQuery(sql);
@@ -899,19 +953,19 @@ public class JdbcDAO
       sql_buff.append(" fmax ,");
       sql_buff.append(" strand ");
       
-      if(feature.getFeatureloc().getPhase() != null)
+      if(feature.getFeatureLoc().getPhase() != null)
         sql_buff.append(" , phase ");
       
       sql_buff.append(" ) VALUES ( ");
       sql_buff.append("nextval('featureloc_featureloc_id_seq') , ");
       sql_buff.append(feature_id + " , ");
-      sql_buff.append(feature.getFeatureloc().getFeatureBySrcFeatureId().getFeatureId() + " , ");
-      sql_buff.append(feature.getFeatureloc().getFmin() + " , ");
-      sql_buff.append(feature.getFeatureloc().getFmax() + " , ");
-      sql_buff.append(feature.getFeatureloc().getStrand());
+      sql_buff.append(feature.getFeatureLoc().getFeatureBySrcFeatureId().getFeatureId() + " , ");
+      sql_buff.append(feature.getFeatureLoc().getFmin() + " , ");
+      sql_buff.append(feature.getFeatureLoc().getFmax() + " , ");
+      sql_buff.append(feature.getFeatureLoc().getStrand());
       
-      if(feature.getFeatureloc().getPhase() != null)
-        sql_buff.append(" , "+feature.getFeatureloc().getPhase());
+      if(feature.getFeatureLoc().getPhase() != null)
+        sql_buff.append(" , "+feature.getFeatureLoc().getPhase());
       
       sql_buff.append(" )");
 
@@ -1263,7 +1317,8 @@ public class JdbcDAO
       Feature feat = (Feature)list.get(i);
       String name  = feat.getUniqueName();
 
-      feat.addFeatureProp(feat.getFeatureprop());
+      feat.setFeatureProps(new Vector());
+      feat.addFeatureProp(feat.getFeatureProp());
 
       if(i < feature_size - 1)
         featNext = (Feature)list.get(i + 1);
@@ -1273,7 +1328,7 @@ public class JdbcDAO
       // merge next line if part of the same feature
       while(featNext != null && featNext.getUniqueName().equals(name))
       {
-        feat.addFeatureProp(featNext.getFeatureprop());
+        feat.addFeatureProp(featNext.getFeatureProp());
         i++;
 
         if(i < feature_size - 1)

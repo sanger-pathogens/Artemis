@@ -27,13 +27,14 @@ package uk.ac.sanger.artemis.util;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ReadFormatException;
-import uk.ac.sanger.artemis.chado.Feature;
+
 import uk.ac.sanger.artemis.chado.IBatisDAO;
 import uk.ac.sanger.artemis.chado.JdbcDAO;
-import uk.ac.sanger.artemis.chado.ChadoDAO;
+import uk.ac.sanger.artemis.chado.GmodDAO;
 import uk.ac.sanger.artemis.chado.ChadoTransaction;
 import uk.ac.sanger.artemis.components.DatabaseEntrySource;
 
+import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureRelationship;
@@ -323,7 +324,7 @@ public class DatabaseDocument extends Document
 
     try
     {
-      ChadoDAO dao = getDAO();
+      GmodDAO dao = getDAO();
       ByteBuffer entry = new ByteBuffer();
       
       try
@@ -439,7 +440,7 @@ public class DatabaseDocument extends Document
    *                            extract
    * @return   the <code>ByteBuffer</code> array of GFF lines
    */
-  private ByteBuffer[] getGff(ChadoDAO dao, String parentFeatureID)
+  private ByteBuffer[] getGff(GmodDAO dao, String parentFeatureID)
   {
     final int srcfeature_id = Integer.parseInt(parentFeatureID);
     
@@ -451,7 +452,7 @@ public class DatabaseDocument extends Document
     
     //featureloc.setSrcfeature_id(srcfeature_id);
     Feature parent = new Feature();
-    parent.setFeatureloc(featureloc);
+    parent.setFeatureLoc(featureloc);
     
     List featList = dao.getFeaturesByLocatedOnFeature(parent);
 
@@ -478,7 +479,7 @@ public class DatabaseDocument extends Document
     
     // get all dbrefs & synonyms
     Hashtable dbxrefs = IBatisDAO.mergeDbXRef(
-                 dao.getFeatureDbXRefByUniquename(null));
+                 dao.getFeatureDbXRefsByFeatureUniquename(null));
     Hashtable synonym = getAllFeatureSynonyms(dao, null);
 
     // create gff byte stream
@@ -486,8 +487,8 @@ public class DatabaseDocument extends Document
     { 
       // select buffer based on feature type
       Feature feat = (Feature)featList.get(i);
-      long type_id      = feat.getCvTerm().getCvTermId();
-      String typeName   = getCvtermName(type_id, dao);
+      long type_id = feat.getCvTerm().getCvTermId();
+      String typeName = getCvtermName(type_id, dao);
       this_buff = buffers[types.length];
       for(int j = 0; j < types.length; j++)
       {
@@ -499,7 +500,7 @@ public class DatabaseDocument extends Document
       chadoToGFF(feat, parentFeature.getUniqueName(),
                  dbxrefs, synonym,
                  id_store, dao, 
-                 feat.getFeatureloc(), this_buff);
+                 feat.getFeatureLoc(), this_buff);
        
       if( i%10 == 0 || i == feature_size-1)
         progress_listener.progressMade("Read from database: " + 
@@ -513,10 +514,10 @@ public class DatabaseDocument extends Document
    * @throws SQLException 
    * 
    */
-  private Hashtable getAllFeatureSynonyms(final ChadoDAO dao, 
+  private Hashtable getAllFeatureSynonyms(final GmodDAO dao, 
           final String uniquename) 
   {
-    List list = dao.getFeatureSynonymsByUniquename(uniquename);  
+    List list = dao.getFeatureSynonymsByFeatureUniquename(uniquename);  
     
     Hashtable synonym = new Hashtable();
     Integer feature_id;
@@ -553,7 +554,7 @@ public class DatabaseDocument extends Document
    */
   private ByteBuffer getGeneFeature(final String search_gene, 
                                     final List schema_search,
-                                    ChadoDAO dao) 
+                                    GmodDAO dao) 
           throws SQLException, ReadFormatException, ConnectException
   {
     Hashtable id_store = new Hashtable();
@@ -563,7 +564,8 @@ public class DatabaseDocument extends Document
 
     reset((String)getLocation(), (String)schema_search.get(0));
     dao = getDAO();
-    Feature feature = dao.getFeatureByUniqueName(search_gene);
+    Feature feature = 
+      (Feature)dao.getFeatureByUniqueName(search_gene);
     
     ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();
     id_store.put(Integer.toString(feature.getFeatureId()), feature.getUniqueName());
@@ -594,12 +596,13 @@ public class DatabaseDocument extends Document
       
       int id = ((FeatureRelationship) relations.get(i)).getFeatureBySubjectId().getFeatureId();
       //transcript.setId(id);
-      Feature transcript = dao.getFeatureById(id); //.getLazyFeature(transcript);
+      Feature transcript = 
+        (Feature)dao.getFeatureById(id); //.getLazyFeature(transcript);
 
       id_store.put(Integer.toString(transcript.getFeatureId()), 
           transcript.getUniqueName());
 
-      FeatureLoc loc = Feature.getFeatureLoc(new Vector(
+      FeatureLoc loc = getFeatureLoc(new Vector(
           transcript.getFeatureLocsForFeatureId()), src_id);
       chadoToGFF(transcript, feature.getUniqueName(), null,
           null, id_store, dao, loc, buff);
@@ -614,11 +617,12 @@ public class DatabaseDocument extends Document
         //Feature child = new Feature();
         //child.setId(((FeatureRelationship) transcipt_relations.get(j))
         //    .getSubject_id());
-        Feature child = dao.getFeatureById(id); //dao.getLazyFeature(child);
+        Feature child = 
+          (Feature)dao.getFeatureById(id); //dao.getLazyFeature(child);
 
         id_store.put(Integer.toString(child.getFeatureId()), child.getUniqueName());
 
-        loc = Feature.getFeatureLoc(
+        loc = getFeatureLoc(
             new Vector(child.getFeatureLocsForFeatureId()),src_id);
         chadoToGFF(child, transcript.getUniqueName(), null,
                    null, id_store, dao, loc, buff);
@@ -644,7 +648,7 @@ public class DatabaseDocument extends Document
                                  final Hashtable dbxrefs,
                                  final Hashtable synonym,
                                  final Hashtable id_store,
-                                 final ChadoDAO dao,
+                                 final GmodDAO dao,
                                  final FeatureLoc featureloc,
                                  final ByteBuffer this_buff)
   {
@@ -664,9 +668,9 @@ public class DatabaseDocument extends Document
     String parent_id = null;
     String parent_relationship = null;
     int rank = -1;
-    if(feat.getFeature_relationship() != null)
+    if(feat.getFeatureRelationship() != null)
     {
-      FeatureRelationship feat_relationship = feat.getFeature_relationship();
+      FeatureRelationship feat_relationship = feat.getFeatureRelationship();
       parent_id = Integer.toString(feat_relationship.getFeatureByObjectId().getFeatureId());
       long parent_type_id = feat_relationship.getCvTerm().getCvTermId();
       
@@ -827,7 +831,7 @@ public class DatabaseDocument extends Document
    * @param id  a cvterm_id  
    * @return    the cvterm name
    */
-  private static String getCvtermName(long id, ChadoDAO dao)
+  private static String getCvtermName(long id, GmodDAO dao)
   {
     if(cvterm == null)
       getCvterm(dao);
@@ -840,13 +844,13 @@ public class DatabaseDocument extends Document
    * @param dao the data access object
    * @return    the cvterm <code>Hashtable</code>
    */
-  private static Hashtable getCvterm(ChadoDAO dao)
+  private static Hashtable getCvterm(GmodDAO dao)
   {
     cvterm = new Hashtable();
 
     try
     {
-      List cvtem_list = dao.getCvTerm();
+      List cvtem_list = dao.getCvTerms();
       Iterator it = cvtem_list.iterator();
 
       while(it.hasNext())
@@ -871,7 +875,7 @@ public class DatabaseDocument extends Document
    * @return      the resulting buffer
    * @throws java.sql.SQLException
    */
-  private ByteBuffer getChadoSequence(ChadoDAO dao, ByteBuffer buff)
+  private ByteBuffer getChadoSequence(GmodDAO dao, ByteBuffer buff)
   {
     Feature feature = dao.getFeatureById(Integer.parseInt(feature_id));
  
@@ -904,7 +908,7 @@ public class DatabaseDocument extends Document
   {
     db = new Hashtable();
  
-    ChadoDAO dao = null;
+    GmodDAO dao = null;
     
     try
     {
@@ -994,7 +998,7 @@ public class DatabaseDocument extends Document
 
     try
     { 
-      ChadoDAO dao = null;
+      GmodDAO dao = null;
       dao = getDAO();
       schema_list = dao.getOrganisms();
       Iterator it = schema_list.iterator();
@@ -1010,7 +1014,7 @@ public class DatabaseDocument extends Document
         {
           dao = getDAO();
           List list = dao.getResidueType(schema);
-         
+          
           if(list.size() == 0)  // no residues for this organism
             continue;
 
@@ -1067,7 +1071,7 @@ public class DatabaseDocument extends Document
    * Get the data access object (DAO).
    * @return data access object
    */
-  private ChadoDAO getDAO()
+  private GmodDAO getDAO()
      throws java.net.ConnectException, SQLException
   { 
     if(!iBatis)
@@ -1126,7 +1130,7 @@ public class DatabaseDocument extends Document
     try
     {
       
-      ChadoDAO dao = getDAO();
+      GmodDAO dao = getDAO();
       boolean unchanged;
       
       //
@@ -1196,7 +1200,8 @@ public class DatabaseDocument extends Document
             // set srcfeature_id
             if(tsn.getFeatureObject() instanceof Feature)
             {
-              FeatureLoc featureloc = ((Feature)tsn.getFeatureObject()).getFeatureloc();
+              FeatureLoc featureloc = 
+                ((Feature)tsn.getFeatureObject()).getFeatureLoc();
               Feature featureBySrcFeatureId = new Feature();
               featureBySrcFeatureId.setFeatureId(Integer.parseInt(feature_id));
               featureloc.setFeatureBySrcFeatureId(featureBySrcFeatureId);
@@ -1282,7 +1287,7 @@ public class DatabaseDocument extends Document
   public boolean checkFeatureTimestamp(final String schema,
                                        final String uniquename,
                                        final Timestamp timestamp,
-                                       final ChadoDAO dao)
+                                       final GmodDAO dao)
   {
     Feature feature = dao.getFeatureByUniqueName(uniquename);
     if(feature == null)
@@ -1319,7 +1324,7 @@ public class DatabaseDocument extends Document
   {
     try
     {
-      ChadoDAO dao;
+      GmodDAO dao;
       DatabaseEntrySource src = new DatabaseEntrySource();
       src.setLocation(true);
       
@@ -1341,15 +1346,15 @@ public class DatabaseDocument extends Document
         
         String abb  = feature.getOrganism().getAbbreviation();
         String type = feature.getCvTerm().getName();
-        int fmin    = feature.getFeatureloc().getFmin().intValue() + 1;
-        int fmax    = feature.getFeatureloc().getFmax().intValue();
+        int fmin    = feature.getFeatureLoc().getFmin().intValue() + 1;
+        int fmax    = feature.getFeatureLoc().getFmax().intValue();
         String featprop = 
           ((FeatureProp)(new Vector(feature.getFeatureProps()).get(0))).getCvTerm().getName();
         
         System.out.print(fmin+".."+fmax);
         System.out.print(" "+type);
         System.out.print(" "+featprop);
-        System.out.print(" "+feature.getFeatureloc().getStrand());
+        System.out.print(" "+feature.getFeatureLoc().getStrand());
         System.out.print(" "+feature.getUniqueName());
         System.out.print(" "+abb);
         System.out.println(" "+Integer.toString(feature.getFeatureId()));
@@ -1382,6 +1387,17 @@ public class DatabaseDocument extends Document
 
   public Document getParent()
   {
+    return null;
+  }
+  
+  public static FeatureLoc getFeatureLoc(List locs, int srcfeature_id)
+  {
+    for(int i=0; i<locs.size(); i++)
+    {
+      FeatureLoc loc = (FeatureLoc)locs.get(i);
+      if(loc.getFeatureBySrcFeatureId().getFeatureId() == srcfeature_id)
+        return loc;
+    }
     return null;
   }
 }

@@ -34,7 +34,7 @@
   
   
   <select id="getFeatureDbXRef" 
-          parameterClass="uk.ac.sanger.artemis.chado.Feature"
+          parameterClass="org.gmod.schema.sequence.Feature"
           resultMap="select-feature-dbxref">
    	SELECT db.name, dbx.accession, dbx.version, dbx_f.feature_id
  	FROM feature_dbxref dbx_f 

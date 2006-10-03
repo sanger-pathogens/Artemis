@@ -45,7 +45,7 @@ public interface ChadoDAO
    * @param id the systematic id
    * @return the Feature, or null
    */
-  public Feature getFeatureById(int id);
+  public org.gmod.schema.sequence.Feature getFeatureById(int id);
 
   /**
    * Return a features with this systematic id
@@ -53,7 +53,7 @@ public interface ChadoDAO
    * @param name the systematic id
    * @return the Feature, or null
    */
-  public Feature getFeatureByUniqueName(String name);
+  public org.gmod.schema.sequence.Feature getFeatureByUniqueName(String name);
   
   /**
    * This can be used to get individual features or children.
@@ -63,7 +63,7 @@ public interface ChadoDAO
    * @return	the <code>List</code> of child <code>Feature</code> objects
    * @throws SQLException
    */
-   public List getFeaturesByLocatedOnFeature(Feature parent);
+   public List getFeaturesByLocatedOnFeature(org.gmod.schema.sequence.Feature parent);
   
    /**
     * Return a list of features with any current (ie non-obsolete) name or synonym
@@ -81,6 +81,24 @@ public interface ChadoDAO
     */
    public List getFeaturesByAnyName(String name, String featureType);
    
+   /**
+    * Return all the FeatureDbXRefs for a given feature, <b>specified by name</b>, or all if 
+    * <code>null</code> is passed
+    * 
+    * @param uniqueName the uniquename of a Feature, or null for all FeatureDbXRefs
+    * @return a (possibly empty) List<FeatureDbXRefI> 
+    */
+   public List getFeatureDbXRefsByFeatureUniquename(final String uniqueName);
+   
+   /**
+    * Return the list of FeatureSynonyms for a given Feature, <b>specified by name</b>, or all if 
+    * <code>null</code> is passed
+    * 
+    * @param uniqueName the uniquename of a Feature, or null for all
+    * @return a (possibly empty) List<FeatureSynonymI> of matching synonyms
+    */
+   public List getFeatureSynonymsByFeatureUniquename(final String uniqueName);
+
   /**
    * Given a list of distict cvterm_id/type_id's of feature types
    * that have residues (from getResidueType()) in the given schema
@@ -112,24 +130,7 @@ public interface ChadoDAO
    * Get the all the <code>CvTerm</code> objects as a<code>List</code>.
    * @return	the full list of cvterm_id and name
    */
-  public List getCvTerm();
-  
-
-  /**
-   * Get dbxref for a feature.
-   * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>FeatureDbxref</code> are returned.
-   * @return a <code>List</code> of feature_dbxrefs.
-   */
-  public List getFeatureDbXRefByUniquename(final String uniquename);
-  
-  /**
-   * Return a list of FeatureSynonyms for a uniquename
-   * @param uniquename  the unique name for the feature. If set to NULL
-   *                    all <code>FeatureSynonym</code> are returned.
-   * @return
-   */
-  public List getFeatureSynonymsByUniquename(final String uniquename);
+  public List getCvTerms();
   
   /**
    * Return a synonym of the given name and type if it exists
@@ -149,7 +150,7 @@ public interface ChadoDAO
    * @return a (possibly empty) List<FeatureSynonym>
    */
   public List getFeatureSynonymsByFeatureAndSynonym(
-         Feature feature, Synonym synonym);
+         org.gmod.schema.sequence.Feature feature, Synonym synonym);
   
   
   /**
@@ -161,7 +162,8 @@ public interface ChadoDAO
    * @param not test for the not flag in the FeatureCvTerm 
    * @return the Feature, or null
    */
-  public FeatureCvTerm getFeatureCvTermByFeatureAndCvTerm(Feature feature,
+  public FeatureCvTerm getFeatureCvTermByFeatureAndCvTerm(
+          org.gmod.schema.sequence.Feature feature,
           CvTerm cvTerm, boolean not);
   
   public List getOrganisms();

@@ -29,7 +29,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
@@ -89,7 +88,7 @@ public class GeneEdit
       entry_source.setLocation(true);
       final String location = entry_source.getLocation();
       
-      final ChadoDAO dao = getDAO(location);
+      final GmodDAO dao = getDAO(location);
       showFeatureSearchPanel(dao, location);
     }
     catch(java.net.ConnectException ce)
@@ -111,7 +110,7 @@ public class GeneEdit
    * @throws java.net.ConnectException
    * @throws SQLException
    */
-  private void showFeatureSearchPanel(final ChadoDAO dao,
+  private void showFeatureSearchPanel(final GmodDAO dao,
                                       final String location)
       throws java.net.ConnectException, SQLException
   {
@@ -212,7 +211,7 @@ public class GeneEdit
    * 
    * @return a <code>JMenuBar</code>
    */
-  public JMenuBar getJMenuBar(final ChadoDAO dao)
+  public JMenuBar getJMenuBar(final GmodDAO dao)
   {
     JMenuBar mbar = new JMenuBar();
     JMenu file = new JMenu("File");
@@ -237,7 +236,7 @@ public class GeneEdit
    * 
    * @return data access object
    */
-  private ChadoDAO getDAO(final String location) 
+  private GmodDAO getDAO(final String location) 
           throws java.net.ConnectException, SQLException
   {
     if(System.getProperty("ibatis") == null)

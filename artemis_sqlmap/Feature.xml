@@ -8,7 +8,7 @@
 <sqlMap namespace="Feature"> 
  
      <typeAlias alias="Feature"
-        type="uk.ac.sanger.artemis.chado.Feature"/>
+        type="org.gmod.schema.sequence.Feature"/>
      
      <typeAlias alias="FeatureLoc"
         type="org.gmod.schema.sequence.FeatureLoc"/>
@@ -32,13 +32,13 @@
                class="Feature" groupBy="featureId">
         <result property="timeLastModified" column="timelastmodified"/>
    	    <result property="featureId" column="id"/>
-  	    <result property="feature_relationship.featureByObjectId.featureId" column="object_id"/>
-  	    <result property="feature_relationship.cvTerm.cvTermId" column="relation_type_id"/>
-  	    <result property="feature_relationship.rank" column="rank"/>
-        <result property="featureloc.strand" column="strand" nullValue="0"/>
-        <result property="featureloc.fmin" column="fmin" nullValue="-1"/>
-        <result property="featureloc.fmax" column="fmax" nullValue="0"/>
-        <result property="featureloc.phase" column="phase"/>
+  	    <result property="featureRelationship.featureByObjectId.featureId" column="object_id"/>
+  	    <result property="featureRelationship.cvTerm.cvTermId" column="relation_type_id"/>
+  	    <result property="featureRelationship.rank" column="rank"/>
+        <result property="featureLoc.strand" column="strand" nullValue="0"/>
+        <result property="featureLoc.fmin" column="fmin" nullValue="-1"/>
+        <result property="featureLoc.fmax" column="fmax" nullValue="0"/>
+        <result property="featureLoc.phase" column="phase"/>
         <result property="uniqueName" column="uniquename"/>
         <result property="cvTerm.cvTermId" column="type_id"/>
         <result property="featureProps" resultMap="Feature.featureprop" />
@@ -192,8 +192,8 @@
         LEFT JOIN featureloc fl           ON f.feature_id  = fl.feature_id
         WHERE
             <dynamic>
-             <isGreaterThan property="featureloc.featureBySrcFeatureId.featureId" compareValue="0"> 
-               srcfeature_id=$featureloc.featureBySrcFeatureId.featureId$ 
+             <isGreaterThan property="featureLoc.featureBySrcFeatureId.featureId" compareValue="0"> 
+               srcfeature_id=$featureLoc.featureBySrcFeatureId.featureId$ 
              </isGreaterThan>
              <isNotNull property="uniqueName">                        
                uniquename LIKE #uniqueName# 
@@ -249,7 +249,7 @@
     </select>
 
 
-    <select id="getResidueFeatures" parameterMap="schema-cvlist"
+    <select id="getResidueFeatures" parameterClass="java.util.Map"
             resultMap="select-feature-with-residues-result">
        SELECT
          abbreviation,

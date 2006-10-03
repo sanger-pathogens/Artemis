@@ -24,6 +24,7 @@
 
 package uk.ac.sanger.artemis.chado;
 
+import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.FeatureProp;
@@ -61,6 +62,7 @@ import javax.swing.Box;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+
 
 /**
  * Chado data access example code. This searches for features by their
@@ -101,7 +103,7 @@ public class ChadoDemo
     try
     {
       setLocation();
-      final ChadoDAO dao = getDAO();
+      final GmodDAO dao = getDAO();
       showFeatureSearchPanel(dao);
       //getCvterm(dao);
     }
@@ -124,7 +126,7 @@ public class ChadoDemo
    * @throws java.net.ConnectException
    * @throws SQLException
    */
-  private void showFeatureSearchPanel(final ChadoDAO dao)
+  private void showFeatureSearchPanel(final GmodDAO dao)
       throws java.net.ConnectException, SQLException
   {
     int index = location.indexOf('=') + 1;
@@ -229,7 +231,7 @@ public class ChadoDemo
    * 
    * @return a <code>JMenuBar</code>
    */
-  public JMenuBar getJMenuBar(final ChadoDAO dao)
+  public JMenuBar getJMenuBar(final GmodDAO dao)
   {
     JMenuBar mbar = new JMenuBar();
     JMenu file = new JMenu("File");
@@ -316,7 +318,7 @@ public class ChadoDemo
    * @throws ConnectException
    */
   public String[][] search(final String search_gene, final List schema_search,
-      ChadoDAO dao) throws SQLException, ConnectException
+      GmodDAO dao) throws SQLException, ConnectException
   {
     final String search_name = search_gene.replaceAll("[*]","%");
     Feature feature = new Feature();
@@ -387,7 +389,7 @@ public class ChadoDemo
    * 
    * @return data access object
    */
-  private ChadoDAO getDAO() throws java.net.ConnectException, SQLException
+  private GmodDAO getDAO() throws java.net.ConnectException, SQLException
   {
     if(System.getProperty("ibatis") == null)
     {

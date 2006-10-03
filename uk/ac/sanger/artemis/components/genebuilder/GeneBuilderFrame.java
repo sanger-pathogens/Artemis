@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.14 2006-08-22 13:00:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.15 2006-10-03 14:42:50 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -417,7 +417,7 @@ public class GeneBuilderFrame extends JFrame
        if(exons == null)
          continue;
        
-       if(exons.get(0) instanceof uk.ac.sanger.artemis.chado.Feature)
+       if(exons.get(0) instanceof org.gmod.schema.sequence.Feature)
          return;
        
        for(int j=0; j<exons.size(); j++)
