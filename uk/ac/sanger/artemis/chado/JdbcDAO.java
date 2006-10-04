@@ -373,11 +373,13 @@ public class JdbcDAO extends GmodDAO
 
       appendToLogFile(sql, sqlLog);
       ResultSet rs = st.executeQuery(sql);
-
+ 
       while(rs.next())
       {
+        int feat_id = rs.getInt("feature_id");
+        
         Feature feature = new Feature();
-
+           
         FeatureLoc featureloc = new FeatureLoc();
         featureloc.setFmin(new Integer(rs.getInt("fmin")));
         featureloc.setFmax(new Integer(rs.getInt("fmax")));
@@ -394,29 +396,9 @@ public class JdbcDAO extends GmodDAO
         feature.setFeatureLoc(featureloc);
         feature.setCvTerm(new CvTerm());
         feature.getCvTerm().setCvTermId(rs.getInt("type_id"));
-
-        // feature properties
-        FeatureProp featureprop = new FeatureProp();
-        CvTerm cvterm = new CvTerm();
-        cvterm.setCvTermId(rs.getInt("prop_type_id"));
-        featureprop.setCvTerm(cvterm);
-        featureprop.setValue(rs.getString("value"));
-        feature.setFeatureProp(featureprop);
-
         feature.setUniqueName(rs.getString("uniquename"));
         feature.setTimeLastModified(rs.getTimestamp("timelastmodified"));
         feature.setFeatureId(rs.getInt("feature_id"));
-
-        // feature relationship
-        FeatureRelationship feature_relationship = new FeatureRelationship();
-        cvterm = new CvTerm();
-        cvterm.setCvTermId(rs.getInt("relation_type_id"));
-        feature_relationship.setCvTerm(cvterm);
-
-        Feature object = new Feature();
-        object.setFeatureId(rs.getInt("object_id"));
-        feature_relationship.setFeatureByObjectId(object);
-        feature.setFeatureRelationship(feature_relationship);
 
         // feature organism
         Organism organism = new Organism();
@@ -428,6 +410,53 @@ public class JdbcDAO extends GmodDAO
         organism.setSpecies(rs.getString("species"));
         feature.setOrganism(organism);
 
+        boolean next = false;
+        do
+        {
+          // feature properties
+          FeatureProp featureprop = new FeatureProp();
+          CvTerm cvterm = new CvTerm();
+          cvterm.setCvTermId(rs.getInt("prop_type_id"));
+          featureprop.setCvTerm(cvterm);
+          featureprop.setValue(rs.getString("value"));
+          
+          if(feature.getFeatureProps() == null ||
+             feature.getFeatureProps().size() == 0)
+            feature.setFeatureProps(new Vector());
+          feature.addFeatureProp(featureprop);
+
+          // feature relationship
+          FeatureRelationship feature_relationship = new FeatureRelationship();
+          cvterm = new CvTerm();
+          cvterm.setCvTermId(rs.getInt("relation_type_id"));
+          feature_relationship.setCvTerm(cvterm);
+
+          Feature object = new Feature();
+          object.setFeatureId(rs.getInt("object_id"));
+          feature_relationship.setFeatureByObjectId(object);
+          
+          if(feature.getFeatureRelationshipsForSubjectId() == null ||
+             feature.getFeatureRelationshipsForSubjectId().size() == 0)
+            feature.setFeatureRelationshipsForSubjectId(new Vector());
+          
+          feature.addFeatureRelationshipsForSubjectId(feature_relationship);
+        
+          if(!rs.isLast())
+          {
+            rs.next();
+            if(rs.getInt("feature_id") == feat_id)
+              next = true;
+            else
+            {
+              rs.previous();
+              next = false;
+            }
+          }
+          else
+            next = false;
+        }while(next);
+        
+        
         list.add(feature);
       }
     }
@@ -436,7 +465,8 @@ public class JdbcDAO extends GmodDAO
       throw new RuntimeException(sqle);
     }
     // merge same features in the list
-    return mergeList(list);
+    //return mergeList(list);
+    return list;
   }
   
   //////
@@ -1305,7 +1335,7 @@ public class JdbcDAO extends GmodDAO
    * @param list of feature objects
    * @return list of flattened/merged feature objects
    */
-  private static List mergeList(final List list)
+/*  private static List mergeList(final List list)
   {
     // merge same features in the list
     int feature_size  = list.size();
@@ -1341,5 +1371,5 @@ public class JdbcDAO extends GmodDAO
     }
 
     return flatten_list;
-  }
+  }*/
 }

@@ -668,7 +668,7 @@ public class DatabaseDocument extends Document
     String parent_id = null;
     String parent_relationship = null;
     int rank = -1;
-    if(feat.getFeatureRelationship() != null)
+/*    if(feat.getFeatureRelationship() != null)
     {
       FeatureRelationship feat_relationship = feat.getFeatureRelationship();
       parent_id = Integer.toString(feat_relationship.getFeatureByObjectId().getFeatureId());
@@ -680,7 +680,9 @@ public class DatabaseDocument extends Document
       if(parent_relationship == null)
         parent_relationship = getCvtermName(parent_type_id, dao);
     }
-    else if(feat.getFeatureRelationshipsForSubjectId() != null)
+    else */
+      
+    if(feat.getFeatureRelationshipsForSubjectId() != null)
     {
       List relations = new Vector(feat.getFeatureRelationshipsForSubjectId());
       for(int i=0; i<relations.size(); i++)
@@ -688,9 +690,14 @@ public class DatabaseDocument extends Document
         FeatureRelationship feat_relationship = 
                             (FeatureRelationship)relations.get(i);
         parent_id = Integer.toString(feat_relationship.getFeatureByObjectId().getFeatureId());
-        System.out.println("HERE   "+i+" "+feat_relationship.getCvTerm().getName()+ " "+
-            feat_relationship.getFeatureByObjectId().getFeatureId()+" "+feat_relationship.getFeatureBySubjectId().getFeatureId()+ " parent_id="+ parent_id);
-        parent_relationship = feat_relationship.getCvTerm().getName();
+        
+        if( feat_relationship.getCvTerm().getName() == null )
+        {
+          long parent_type_id = feat_relationship.getCvTerm().getCvTermId();
+          parent_relationship = getCvtermName(parent_type_id, dao);
+        }
+        else
+          parent_relationship = feat_relationship.getCvTerm().getName();
       }
     }
           
