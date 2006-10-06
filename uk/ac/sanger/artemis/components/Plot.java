@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.10 2006-06-20 12:47:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.11 2006-10-06 14:59:53 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -39,7 +39,6 @@ import javax.swing.JColorChooser;
 import javax.swing.Box;
 import javax.swing.JTextField;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollBar;
@@ -49,7 +48,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.10 2006-06-20 12:47:19 tjc Exp $
+ *  @version $Id: Plot.java,v 1.11 2006-10-06 14:59:53 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -193,6 +192,8 @@ public abstract class Plot extends JPanel
 
     addMouseListener(mouse_listener);
     addMouseMotionListener(mouse_motion_listener);
+    
+    setToolTipText("tool_tip");
   }
 
   final int SCROLL_NOB_SIZE = 10;
@@ -850,4 +851,44 @@ public abstract class Plot extends JPanel
     return font_height;
   }
 
+  /**
+   *  Used to get the X coordinate for the tooltip text.
+   *  @param total_unit_count The maximum number of residues/bases we can
+   *    show.  This is used to draw the scale line and to calculate the
+   *    distance (in pixels) between plot points.
+   *  @param start_position The distance from the edge of the canvas (measured
+   *    in residues/bases) to start drawing the plot.
+   *  @param xpos The mouse position on the canvas.
+   **/
+  protected int getXCoordinate(final int total_unit_count,
+                               final int start_position,
+                               final int xpos) 
+  {
+    return (xpos * total_unit_count)/getSize().width + start_position;
+  }
+  
+  /**
+   *  Used to get the Y coordinate for the tooltip text.
+   *  @param step_size The current step size for this algorithm.  This is
+   *    never greater than window_size.
+   *  @param window_size The window size used in calculating plot_values.
+   *  @param start_position The distance from the edge of the canvas (measured
+   *    in residues/bases) to start drawing the plot.
+   *  @param plot_values The values to plot.
+   *  @param base_pos    The base (from getXCoordinate) position.
+   **/
+  protected float getYCoordinate(
+      final int step_size, final int window_size,
+      final int start_position,
+      final float plot_values[], int base_pos)
+  {
+    int ypos = (int)((base_pos - start_position - (window_size/2))/step_size);
+    
+    if(ypos < 0)
+      ypos = 0;
+    else if(ypos > plot_values.length-1)
+      ypos = plot_values.length-1;
+    
+    return plot_values[ypos];
+  }
 }

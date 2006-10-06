@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.5 2004-11-29 14:09:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.6 2006-10-06 14:59:53 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -32,6 +32,8 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.text.NumberFormat;
+
 import javax.swing.*;
 
 /**
@@ -39,12 +41,106 @@ import javax.swing.*;
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.5 2004-11-29 14:09:54 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.6 2006-10-06 14:59:53 tjc Exp $
  **/
 
 public class BasePlot extends Plot
     implements DisplayAdjustmentListener, SelectionChangeListener 
 {
+  /**
+   *  The start base to plot, as obtained from the DisplayAdjustmentEvent.
+   **/
+  private int start_base;
+
+  /**
+   *  The end base to plot, as obtained from the DisplayAdjustmentEvent.
+   **/
+  private int end_base;
+
+  /**
+   *  The width in bases of the display, as obtained from the
+   *  DisplayAdjustmentEvent.
+   **/
+  private int width_in_bases;
+
+  /**
+   *  True if and only if the FeatureDisplay is drawing in reverse complement
+   *  mode.
+   **/
+  private boolean rev_comp_display;
+
+  /**
+   *  The Bases that this BasePlot is graphing.
+   **/
+  private Bases bases;
+
+  /**
+   *  The Marker of the start of the selection.  This is a cache used by
+   *  getSelectionStartMarker().
+   **/
+  private Marker selection_start_marker = null;
+
+  /**
+   *  The Marker of the end of the selection.  This is a cache used by
+   *  getSelectionEndMarker()
+   **/
+  private Marker selection_end_marker = null;
+
+  /**
+   *  The Selection that was passed to the constructor.
+   **/
+  private Selection selection;
+
+  /**
+   *  The GotoEventSource that was passed to the constructor.
+   **/
+  private GotoEventSource goto_event_source;
+  
+  /**
+   *  This array is used by drawMultiValueGraph().  It is reallocated when
+   *  the scale changes.
+   **/
+  private float[][] value_array_array = null;
+
+  /**
+   *  The number of bases to step before each evaluation of the algorithm.
+   *  (Set by recalculateValues()).
+   **/
+  private int step_size = 0;
+
+  /**
+   *  The maximum of the values in value_array_array.
+   **/
+  private float min_value = Float.MAX_VALUE;
+
+  /**
+   *  The minimum of the values in value_array_array.
+   **/
+  private float max_value = Float.MIN_VALUE;
+  
+  /**
+   *  Used by getPreferredSize() and getMinimumSize();
+   **/
+  private final static int HEIGHT;
+
+  static 
+  {
+    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+    final Integer base_plot_height = 
+      Options.getOptions().getIntegerProperty("base_plot_height");
+
+    if(base_plot_height == null) 
+    {
+      if(screen.height <= 600) 
+        HEIGHT = 100;
+      else 
+        HEIGHT = 150;
+    }
+    else
+      HEIGHT = base_plot_height.intValue();
+  }
+  
   /**
    *  Create a new FeatureDisplay object.
    *  @param algorithm The object that will generate the value we plot in
@@ -138,28 +234,6 @@ public class BasePlot extends Plot
     });
   }
 
-  /**
-   *  Used by getPreferredSize() and getMinimumSize();
-   **/
-  private final static int HEIGHT;
-
-  static 
-  {
-    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-
-    final Integer base_plot_height = 
-      Options.getOptions().getIntegerProperty("base_plot_height");
-
-    if(base_plot_height == null) 
-    {
-      if(screen.height <= 600) 
-        HEIGHT = 100;
-      else 
-        HEIGHT = 150;
-    }
-    else
-      HEIGHT = base_plot_height.intValue();
-  }
 
   /**
    *  Overridden to set the component height to 150.
@@ -242,27 +316,6 @@ public class BasePlot extends Plot
     return width_in_bases;
   }
 
-  /**
-   *  This array is used by drawMultiValueGraph().  It is reallocated when
-   *  the scale changes.
-   **/
-  private float[][] value_array_array = null;
-
-  /**
-   *  The number of bases to step before each evaluation of the algorithm.
-   *  (Set by recalculateValues()).
-   **/
-  private int step_size = 0;
-
-  /**
-   *  The maximum of the values in value_array_array.
-   **/
-  private float min_value = Float.MAX_VALUE;
-
-  /**
-   *  The minimum of the values in value_array_array.
-   **/
-  private float max_value = Float.MIN_VALUE;
 
   /**
    *  Recalculate the values in value_array_array, step_size, min_value and
@@ -629,53 +682,43 @@ public class BasePlot extends Plot
   {
     return goto_event_source;
   }
-
+  
   /**
-   *  The start base to plot, as obtained from the DisplayAdjustmentEvent.
-   **/
-  private int start_base;
+   * (non-Javadoc)
+   * @see javax.swing.JComponent#getToolTipText(java.awt.event.MouseEvent)
+   */
+  public String getToolTipText(MouseEvent event)
+  {
+    if(value_array_array == null) // nothing to plot
+      return null;
+    
+    int offset = getStart();
+    if(offset < 1) 
+      offset = 0;
 
-  /**
-   *  The end base to plot, as obtained from the DisplayAdjustmentEvent.
-   **/
-  private int end_base;
+    final int get_values_return_count =
+      getBaseAlgorithm().getValueCount();
+    
+    int xpos = getXCoordinate(getWidthInBases(),
+                              offset, event.getPoint().x);
+    
+    String tt = Integer.toString(xpos);
+    
+    NumberFormat df= NumberFormat.getNumberInstance();
+    df.setMaximumFractionDigits(2);
+    
+    float ypos;
+    for(int value_index = 0; value_index < get_values_return_count;
+        ++value_index)
+    {
+       ypos = getYCoordinate(step_size, getWindowSize(),
+                             offset, value_array_array[value_index], 
+                             xpos);
+       tt = tt + ", " + df.format(ypos);
+    }
+ 
+    return tt;
+  }
 
-  /**
-   *  The width in bases of the display, as obtained from the
-   *  DisplayAdjustmentEvent.
-   **/
-  private int width_in_bases;
-
-  /**
-   *  True if and only if the FeatureDisplay is drawing in reverse complement
-   *  mode.
-   **/
-  private boolean rev_comp_display;
-
-  /**
-   *  The Bases that this BasePlot is graphing.
-   **/
-  private Bases bases;
-
-  /**
-   *  The Marker of the start of the selection.  This is a cache used by
-   *  getSelectionStartMarker().
-   **/
-  private Marker selection_start_marker = null;
-
-  /**
-   *  The Marker of the end of the selection.  This is a cache used by
-   *  getSelectionEndMarker()
-   **/
-  private Marker selection_end_marker = null;
-
-  /**
-   *  The Selection that was passed to the constructor.
-   **/
-  private Selection selection;
-
-  /**
-   *  The GotoEventSource that was passed to the constructor.
-   **/
-  private GotoEventSource goto_event_source;
+ 
 }
