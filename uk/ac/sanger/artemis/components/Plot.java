@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.11 2006-10-06 14:59:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.12 2006-10-09 12:21:52 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.11 2006-10-06 14:59:53 tjc Exp $
+ *  @version $Id: Plot.java,v 1.12 2006-10-09 12:21:52 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -192,8 +192,7 @@ public abstract class Plot extends JPanel
 
     addMouseListener(mouse_listener);
     addMouseMotionListener(mouse_motion_listener);
-    
-    setToolTipText("tool_tip");
+
   }
 
   final int SCROLL_NOB_SIZE = 10;

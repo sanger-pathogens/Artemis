@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.6 2006-10-06 14:59:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.7 2006-10-09 12:21:52 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -41,7 +41,7 @@ import javax.swing.*;
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.6 2006-10-06 14:59:53 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.7 2006-10-09 12:21:52 tjc Exp $
  **/
 
 public class BasePlot extends Plot
@@ -163,6 +163,8 @@ public class BasePlot extends Plot
 
     getSelection().addSelectionChangeListener(this);
 
+    setToolTipText("tool_tip");
+    
     addPlotMouseListener(new PlotMouseListener() 
     {
       /**
