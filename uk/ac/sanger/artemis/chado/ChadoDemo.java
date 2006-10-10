@@ -280,6 +280,8 @@ public class ChadoDemo
     {
       FeatureSynonym alias;
 
+      System.out.println("\n\nNow get synonym & type_id.......\n\n");
+      
       for(int i = 0; i < synonyms.size(); i++)
       {
         alias = (FeatureSynonym) synonyms.get(i);
@@ -355,7 +357,7 @@ public class ChadoDemo
       if(ind > 0)
         schema = schema.substring(0,ind)+schema.substring(ind+1);
       
-      System.out.println("get feature type_id.......");
+      System.out.println("\n\nNow get feature type_id.......\n\n");
       rowData[i][0] = schema;
       rowData[i][1] = feature.getUniqueName();
       rowData[i][2] = feature.getCvTerm().getName();
