@@ -21,6 +21,10 @@
      
      <typeAlias alias="FeatureCvTerm"
         type="org.gmod.schema.sequence.FeatureCvTerm"/>
+          
+     <typeAlias alias="FeatureCvTermProp"
+        type="org.gmod.schema.sequence.FeatureCvTermProp"/>  
+  
      
     <parameterMap id="schema-cvlist" 
                   class="Feature">
@@ -133,12 +137,21 @@
         <result property="rank"      column="rank"/>
      </resultMap>
      
+     <resultMap id="feature_cvtermprop" class="FeatureCvTermProp">
+        <result property="cvTerm.cvTermId" column="type_id" />
+        <result property="value" column="value" />
+        <result property="rank" column="rank" />
+     </resultMap>
      
-     <resultMap id="select-featurecvterm" class="FeatureCvTerm">
+     <resultMap id="select-featurecvterm" class="FeatureCvTerm" 
+                groupBy="feature_cvterm_id">
         <result property="feature.featureId" column="feature_id" />
-        <result property="cvTerm" column="cvterm_id" select="selectCvterm" />
-        <result property="not" column="is_not" />
-        <result property="pub" column="pub_id" select="selectPub" />
+        <result property="cvTerm.cvTermId" column="cvterm_id" />
+        <result property="cvTerm.dbXRef.accession" column="accession" />
+        <result property="cvTerm.dbXRef.db.name" column="name" />
+        <result property="not" column="not" />
+        <result property="featureCvTermProps" resultMap="Feature.feature_cvtermprop"  />
+        <!-- <result property="pub" column="pub_id" select="selectPub" /> -->
      </resultMap>
         
      <!-- SQL -->
@@ -173,9 +186,29 @@
      </select>
      
      <!--  select feature_cvterm -->
-     <select id="getFeatureCvTermByFeature" resultMap="select-featurecvterm">
-        SELECT * FROM feature_cvterm
-        WHERE feature_id=(SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#)
+     <select id="getFeatureCvTermsByFeature" parameterClass="Feature"
+             resultMap="select-featurecvterm">
+        SELECT 
+             feature_id,
+             fc.feature_cvterm_id,
+             is_not AS not,
+             pub_id,
+             fc.cvterm_id,
+             fcp.type_id,
+             fcp.value,
+             fcp.rank,
+             db.name,
+             dbxref.accession
+        FROM feature_cvterm fc
+        LEFT JOIN feature_cvtermprop fcp ON fc.feature_cvterm_id=fcp.feature_cvterm_id
+        LEFT JOIN cvterm c ON fc.cvterm_id=c.cvterm_id 
+        LEFT JOIN dbxref ON c.dbxref_id=dbxref.dbxref_id 
+        LEFT JOIN db ON dbxref.db_id=db.db_id
+        <dynamic>
+          <isNotNull property="uniqueName" prepend="WHERE">
+            feature_id=(SELECT feature_id FROM feature WHERE uniquename=#uniqueName#)
+          </isNotNull>
+        </dynamic>
      </select>
 
      <!-- get feature -->
