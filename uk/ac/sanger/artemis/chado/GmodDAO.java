@@ -30,6 +30,7 @@ import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.*;
 import org.gmod.schema.organism.Organism;
+import org.gmod.schema.sequence.Feature;
 
 public abstract class GmodDAO implements SequenceDaoI, SchemaDaoI, OrganismDaoI, CvDaoI
 {
@@ -37,6 +38,15 @@ public abstract class GmodDAO implements SequenceDaoI, SchemaDaoI, OrganismDaoI,
   public abstract void merge(Object obj);
   public abstract void persist(Object obj);
   public abstract void delete(Object obj);
+  
+  public abstract List getFeatureCvTermsByFeature(Feature feature);
+
+  /**
+   * Return the list of all feature_synonyms as Feature.featureSynonyms 
+   * 
+   * @return a (possibly empty) List<Features> of matching synonyms
+   */
+  public abstract List getAllFeatureSynonymsAsFeature();
   
   //////
   ////// OrganismDaoI

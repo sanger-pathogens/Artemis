@@ -182,6 +182,12 @@ public class IBatisDAO extends GmodDAO
     return null;
   }
   
+  public List getFeatureCvTermsByFeature(Feature feature)
+  {
+    return
+      sqlMap.queryForList("getFeatureCvTermsByFeature", feature);
+  }
+  
   /**
    * Return a synonym of the given name and type if it exists
    * @param name the name to lookup
@@ -244,6 +250,11 @@ public class IBatisDAO extends GmodDAO
     return sqlMap.queryForList("getFeatureSynonymsByUniquename", feature); 
   }
 
+  public List getAllFeatureSynonymsAsFeature()
+  {
+    return sqlMap.queryForList("getAllFeatureSynonymsAsFeature", null);
+  }
+  
   //////
   //////
   
@@ -276,10 +287,6 @@ public class IBatisDAO extends GmodDAO
   public List getResidueFeatures(List cvTermIds, 
                                  final String schema)
   { 
-/*    Feature feature = new Feature();
-    feature.setSchema(schema);
-    feature.setCvTermIds(cvTermIds);*/
-  
     java.util.Map map = new java.util.HashMap();
     map.put("cvTermIds", cvTermIds);
     return sqlMap.queryForList("getResidueFeatures",
