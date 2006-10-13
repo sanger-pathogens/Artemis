@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.26 2006-03-16 14:11:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.27 2006-10-13 15:06:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -28,13 +28,8 @@ package uk.ac.sanger.artemis.components;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
-import uk.ac.sanger.artemis.components.filetree.FileNode;
 import uk.ac.sanger.artemis.sequence.Marker;
-import uk.ac.sanger.artemis.sequence.Bases;
-import uk.ac.sanger.artemis.components.filetree.RemoteFileNode;
 
-import uk.ac.sanger.artemis.util.RemoteFileDocument;
-import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
@@ -42,26 +37,19 @@ import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformationException;
-import uk.ac.sanger.artemis.io.EntryInformation;
-import uk.ac.sanger.artemis.io.SimpleEntryInformation;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.awt.dnd.*;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.datatransfer.DataFlavor;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.BevelBorder;
+
 
 /**
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.26 2006-03-16 14:11:49 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.27 2006-10-13 15:06:09 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -107,6 +95,8 @@ public class EntryEdit extends JFrame
  
   private JTabbedPane shortcut_pane = new JTabbedPane();
   
+  private ChadoTransactionManager ctm = new ChadoTransactionManager();
+  
   /**
    *  Create a new EntryEdit object and JFrame.
    *  @param entry_group The EntryGroup object that this component is editing.
@@ -130,6 +120,9 @@ public class EntryEdit extends JFrame
     getEntryGroup().addEntryGroupChangeListener(this);
     getEntryGroup().addEntryChangeListener(this);
 
+    getEntryGroup().addFeatureChangeListener(ctm);
+    getEntryGroup().addEntryChangeListener(ctm);
+    
     if(getEntryGroup().getDefaultEntry() != null) 
     {
       final String name = getEntryGroup().getDefaultEntry().getName();
@@ -354,7 +347,7 @@ public class EntryEdit extends JFrame
 
     if(icon != null) 
     {
-      Toolkit toolkit = Toolkit.getDefaultToolkit();
+      //oolkit toolkit = Toolkit.getDefaultToolkit();
       final Image icon_image = icon.getImage();
       MediaTracker tracker = new MediaTracker(this);
       tracker.addImage(icon_image, 0);
@@ -645,7 +638,7 @@ public class EntryEdit extends JFrame
   }
 
 
-  private boolean isHeaderEMBL(String header)
+/*  private boolean isHeaderEMBL(String header)
   {
     StringReader reader = new StringReader(header);
     BufferedReader buff_reader = new BufferedReader(reader);
@@ -657,7 +650,7 @@ public class EntryEdit extends JFrame
     }
     catch(IOException ioe){}
     return true;
-  }
+  }*/
 
   /**
    *  Save the changes to all the Entry objects in the entry_group back to
@@ -798,7 +791,7 @@ public class EntryEdit extends JFrame
    **/
   private void makeMenus() 
   {
-    final Font default_font = getDefaultFont();
+    //final Font default_font = getDefaultFont();
 
     setJMenuBar(menu_bar);
     makeFileMenu();
@@ -946,10 +939,6 @@ public class EntryEdit extends JFrame
 
       if(db)
       {
-        final ChadoTransactionManager ctm = new ChadoTransactionManager();
-        getEntryGroup().addFeatureChangeListener(ctm);
-        getEntryGroup().addEntryChangeListener(ctm);
-
         JMenuItem commit = new JMenuItem("Commit to Database");
         commit.addActionListener(new ActionListener()
         {
@@ -1188,7 +1177,7 @@ public class EntryEdit extends JFrame
                            shortcut_pane.getPreferredSize().width+50,
                            screen.height/2));
 
-        Object[] possibleValues = { "OK" };
+        //Object[] possibleValues = { "OK" };
         JOptionPane.showMessageDialog(null,
                                shortcut_pane,
                                "Set Short Cuts",
@@ -1280,7 +1269,7 @@ public class EntryEdit extends JFrame
   *  Read an entry from a remote file node (ssh)
   *
   **/ 
-  private void readAnEntryFromRemoteFileNode(final RemoteFileNode node)
+/*  private void readAnEntryFromRemoteFileNode(final RemoteFileNode node)
   {
     SwingWorker entryWorker = new SwingWorker()
     {
@@ -1310,7 +1299,7 @@ public class EntryEdit extends JFrame
       }
     };
     entryWorker.start();
-  }
+  }*/
 
 
   /**
