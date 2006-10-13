@@ -6,6 +6,11 @@
  
 <sqlMap namespace="Organism"> 
       
+    <cacheModel id="organism-cache" type ="LRU" readOnly="true"> 
+      <flushInterval hours="24"/>  
+      <property name="cache-size" value="100" /> 
+    </cacheModel> 
+
     <select id="getOrganism"
      resultClass="org.gmod.schema.organism.Organism"> 
       SELECT organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment 
@@ -20,5 +25,12 @@
         </isNull>
       </dynamic>
     </select> 
+    
+    
+    <select id="getOrganismID" resultClass="java.lang.Integer" 
+            parameterClass="org.gmod.schema.sequence.Feature" cacheModel="organism-cache">
+      SELECT organism_id AS organismId FROM feature f WHERE
+             f.feature_id=$featureLoc.featureBySrcFeatureId.featureId$
+    </select>
  
 </sqlMap> 
