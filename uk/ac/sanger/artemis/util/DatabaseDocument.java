@@ -482,6 +482,11 @@ public class DatabaseDocument extends Document
                  dao.getFeatureDbXRefsByFeatureUniquename(null));
     Hashtable synonym = getAllFeatureSynonyms(dao, null);
 
+    List featureCvTerms = dao.getFeatureCvTermsByFeature(null);
+    
+    if(featureCvTerms != null)
+      System.out.println("\n\n"+featureCvTerms.size()+"\n\n");
+    
     // create gff byte stream
     for(int i = 0; i < feature_size; i++)
     { 
@@ -511,7 +516,8 @@ public class DatabaseDocument extends Document
   }
 
   /**
-   * @throws SQLException 
+   * Get a <code>Hashtable</code> of feature_id keys and their corresponding 
+   * feature_synonym
    * 
    */
   private Hashtable getAllFeatureSynonyms(final GmodDAO dao, 
@@ -521,7 +527,7 @@ public class DatabaseDocument extends Document
     
     Hashtable synonym = new Hashtable();
     Integer feature_id;
-    Vector value;
+    List value;
     FeatureSynonym alias;
     
     for(int i=0; i<list.size(); i++)
