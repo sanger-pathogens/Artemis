@@ -311,13 +311,6 @@
        ORDER BY abbreviation
     </select>
 
-
-    <select id="getOrganismID" resultClass="java.lang.Integer" 
-            parameterClass="Feature">
-      SELECT organism_id AS organismId FROM feature f WHERE
-             f.feature_id=$featureLoc.featureBySrcFeatureId.featureId$
-    </select>
-
     
     <select id="currval" resultClass="java.lang.Integer" 
             parameterClass="java.lang.String">
