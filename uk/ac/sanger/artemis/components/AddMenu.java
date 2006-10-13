@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.15 2006-09-07 15:50:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.16 2006-10-13 15:07:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.15 2006-09-07 15:50:33 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.16 2006-10-13 15:07:17 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -560,21 +560,13 @@ public class AddMenu extends SelectionMenu
         if(default_entry.getEMBLEntry() instanceof 
            uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
         {
-          String uniquename = null;
-          while(uniquename == null ||
-              uniquename.equals("") ||
-              uniquename.equals("to_be_set"))
-          {
-            uniquename = JOptionPane.showInputDialog(null,
-                               "Provide a systematic_id : ",
-                               "systematic_id missing ",
-                               JOptionPane.QUESTION_MESSAGE).trim();
-          }
+          System.out.println("HERE2 "+default_entry.getEMBLEntry().toString());
+          String uniquename = promptForUniquename(entry_group, 
+                                     range.isForwardMarker());
           Qualifier qualifier = new Qualifier("ID", uniquename);
           qualifiers = new QualifierVector();
           qualifiers.add(qualifier);
         }
-          
         
         try 
         {
@@ -1077,27 +1069,41 @@ public class AddMenu extends SelectionMenu
     final MarkerRange [] forward_orf_ranges =
       Strand.getOpenReadingFrameRanges (search_range, minimum_orf_size);
 
-    for (int i = 0 ; i < forward_orf_ranges.length ; ++i) {
+    String uniquename = promptForUniquename(entry_group, search_range.isForwardMarker());
+    
+    for(int i = 0 ; i < forward_orf_ranges.length ; ++i) 
+    {
       final MarkerRange this_range = forward_orf_ranges[i];
-
       final Feature new_feature;
 
-      try {
-        new_feature = makeFeatureFromMarkerRange (entry, this_range, Key.CDS);
-      } catch (EntryInformationException e) {
+      try 
+      {
+        Qualifier qualifier = new Qualifier("ID", uniquename+Integer.toString(i+1));
+        QualifierVector qualifiers = new QualifierVector();
+        qualifiers.setQualifier(qualifier);
+        new_feature = makeFeatureFromMarkerRange (entry, this_range, Key.CDS, qualifiers);
+      } 
+      catch (EntryInformationException e) 
+      {
         new MessageDialog (getParentFrame (), "cannot continue: " +
                            "the default entry does not support CDS features");
         return;
-      } catch (ReadOnlyException e) {
+      } 
+      catch (ReadOnlyException e) 
+      {
         new MessageDialog (getParentFrame (), "cannot continue: " +
                            "the default entry is read only");
         return;
       }
 
-      if (empty_only && overlapsAnActiveSegment (new_feature)) {
-        try {
+      if(empty_only && overlapsAnActiveSegment (new_feature)) 
+      {
+        try 
+        {
           new_feature.removeFromEntry ();
-        } catch (ReadOnlyException exception) {
+        } 
+        catch (ReadOnlyException exception) 
+        {
           throw new Error ("internal error - unexpected exception: " +
                            exception);
         }
@@ -1166,14 +1172,19 @@ public class AddMenu extends SelectionMenu
    **/
   private Feature makeFeatureFromMarkerRange (final Entry entry,
                                               final MarkerRange range,
-                                              final Key key)
-      throws EntryInformationException, ReadOnlyException {
-    try {
+                                              final Key key,
+                                              QualifierVector qualifiers)
+      throws EntryInformationException, ReadOnlyException 
+  {
+    try 
+    {
       final Location new_location = range.createLocation ();
 
-      final QualifierVector qualifiers = new QualifierVector ();
-
-      qualifiers.setQualifier (new Qualifier ("note", "none"));
+      if(qualifiers == null)
+      {
+        qualifiers = new QualifierVector ();
+        qualifiers.setQualifier (new Qualifier ("note", "none"));
+      }
 
       final Feature new_feature =
         entry.createFeature (key, new_location, qualifiers);
@@ -1181,17 +1192,16 @@ public class AddMenu extends SelectionMenu
       final CodonUsageAlgorithm codon_usage_algorithm =
         base_plot_group.getCodonUsageAlgorithm ();
 
-      if (codon_usage_algorithm != null) {
+      if(codon_usage_algorithm != null) 
+      {
         int score =
           (int) (codon_usage_algorithm.getFeatureScore (new_feature) * 50);
 
-        if (score < 0) {
+        if(score < 0) 
           score = 0;
-        }
 
-        if (score > 100) {
+        if(score > 100) 
           score = 100;
-        }
 
         final String score_string = String.valueOf (score);
         new_feature.addQualifierValues (new Qualifier ("score",
@@ -1204,8 +1214,9 @@ public class AddMenu extends SelectionMenu
       }
 
       return new_feature;
-
-    } catch (OutOfRangeException e) {
+    } 
+    catch (OutOfRangeException e) 
+    {
       throw new Error ("internal error - unexpected exception: " + e);
     }
   }
@@ -1249,13 +1260,15 @@ public class AddMenu extends SelectionMenu
    *  each match.  The new features will created in an Entry called "matches:
    *  <pattern>".
    **/
-  private void makeFeaturesFromPattern (final BasePattern pattern) {
+  private void makeFeaturesFromPattern (final BasePattern pattern) 
+  {
     final MarkerRangeVector matches =
       pattern.findMatches (entry_group.getBases (),
                            null,        // search from start
                            entry_group.getSequenceLength ());
 
-    if (matches.size () == 0) {
+    if (matches.size () == 0) 
+    {
       new MessageDialog (getParentFrame (),
                          "no matches found for: " + pattern);
       return;
@@ -1263,7 +1276,8 @@ public class AddMenu extends SelectionMenu
 
     final int TOO_MANY_MATCHES = 100;
 
-    if (matches.size () > TOO_MANY_MATCHES) {
+    if (matches.size () > TOO_MANY_MATCHES) 
+    {
       final YesNoDialog dialog =
         new YesNoDialog (getParentFrame (),
                          matches.size () + " matches, continue?");
@@ -1277,19 +1291,39 @@ public class AddMenu extends SelectionMenu
     }
 
     final Entry new_entry = entry_group.createEntry ("matches: " + pattern);
-
     final Key key = new_entry.getEntryInformation ().getDefaultKey ();
 
-    for (int i = 0 ; i < matches.size () ; ++i) {
-      try {
+    String uniquename = null;
+    
+    if(entry_group.getDefaultEntry().getEMBLEntry() instanceof 
+        uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
+      uniquename = promptForUniquename(entry_group, true); 
+    
+    for (int i = 0 ; i < matches.size () ; ++i) 
+    {
+      try 
+      {
+        QualifierVector qualifiers = null;
+        
+        if(uniquename != null)
+        {
+          Qualifier qualifier = new Qualifier("ID", uniquename+Integer.toString(i+1));
+          qualifiers = new QualifierVector();
+          qualifiers.setQualifier(qualifier);
+        }
+        
         final Feature new_feature =
-          makeFeatureFromMarkerRange (new_entry, matches.elementAt (i), key);
+          makeFeatureFromMarkerRange (new_entry, matches.elementAt (i), key, qualifiers);
         new_feature.setQualifier (new Qualifier ("note", pattern.toString ()));
-      } catch (EntryInformationException e) {
+      } 
+      catch (EntryInformationException e) 
+      {
         new MessageDialog (getParentFrame (), "cannot continue: " +
                            e.getMessage ());
         return;
-      } catch (ReadOnlyException e) {
+      } 
+      catch (ReadOnlyException e) 
+      {
         new MessageDialog (getParentFrame (), "cannot continue: " +
                            "the default entry is read only");
         return;
@@ -1297,6 +1331,39 @@ public class AddMenu extends SelectionMenu
     }
   }
 
+  /**
+   * Prompt the user for an ID
+   * @return
+   */
+  private static String promptForUniquename(final EntryGroup entry_group,
+                                            final boolean is_forward)
+  {
+    final Entry default_entry = entry_group.getDefaultEntry ();
+    String id = null;
+    
+    if(default_entry.getEMBLEntry() instanceof 
+        uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
+    {  
+      while(id == null ||
+            id.equals("") ||
+            id.equals("to_be_set"))
+      {
+        String msg = "Provide a ID prefix ";
+        
+        if(!is_forward)
+          msg = msg + "for reverse strand : ";
+        else
+          msg = msg + ": ";
+        
+        id = JOptionPane.showInputDialog(null,
+                           msg,
+                           "ID missing ",
+                           JOptionPane.QUESTION_MESSAGE).trim();
+      }
+    }
+    return id;
+  }
+  
   /**
    *  Create a misc_feature for each block of ambiguous bases.  The new
    *  features will created in an Entry called "ambiguous bases".
