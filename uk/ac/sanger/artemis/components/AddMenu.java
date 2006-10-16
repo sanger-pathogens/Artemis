@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.16 2006-10-13 15:07:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.17 2006-10-16 14:35:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.plot.CodonUsageAlgorithm;
 
 import uk.ac.sanger.artemis.util.*;
+import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Range;
@@ -51,7 +52,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.16 2006-10-13 15:07:17 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.17 2006-10-16 14:35:54 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -560,7 +561,6 @@ public class AddMenu extends SelectionMenu
         if(default_entry.getEMBLEntry() instanceof 
            uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
         {
-          System.out.println("HERE2 "+default_entry.getEMBLEntry().toString());
           String uniquename = promptForUniquename(entry_group, 
                                      range.isForwardMarker());
           Qualifier qualifier = new Qualifier("ID", uniquename);
@@ -903,10 +903,32 @@ public class AddMenu extends SelectionMenu
           new Location (ranges, complement_flag);
         final QualifierVector qualifiers = new QualifierVector ();
 
-        try {
-          selection_feature.getEntry ().createFeature (gene_key,
+        try 
+        {
+          
+          if(selection_feature.getEmblFeature() instanceof GFFStreamFeature)
+          {
+            String uniquename = promptForUniquename(entry_group, 
+                                 selection_feature.isForwardFeature());
+          
+            Qualifier qualifier = new Qualifier("ID", uniquename);
+            qualifiers.setQualifier(qualifier);
+          }
+          
+          Feature feature = 
+            selection_feature.getEntry ().createFeature (gene_key,
                                                        gene_location,
                                                        qualifiers);
+          
+          
+          if(feature.getEmblFeature() instanceof GFFStreamFeature)
+          {
+            ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();
+            chado_gene.setGene(feature.getEmblFeature());
+            ((uk.ac.sanger.artemis.io.GFFStreamFeature)
+                (feature.getEmblFeature())).setChadoGene(chado_gene);
+          }
+          
         } catch (ReadOnlyException e) {
           throw new Error ("internal error - unexpected exception: " + e);
         } catch (EntryInformationException e) {
