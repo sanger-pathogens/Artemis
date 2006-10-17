@@ -238,7 +238,7 @@ public class DatabaseEntrySource implements EntrySource
       }
     }
     
-    DefaultMutableTreeNode top = new DefaultMutableTreeNode("PSU Organism List");
+    DefaultMutableTreeNode top = new DefaultMutableTreeNode("");
     createNodes(top, doc.getSchema(), entries);
     final JTree tree = new JTree(top);
     tree.getSelectionModel().setSelectionMode(
