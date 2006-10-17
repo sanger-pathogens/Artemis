@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DatabaseJFrame.java,v 1.9 2006-05-31 10:38:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DatabaseJFrame.java,v 1.10 2006-10-17 10:18:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -64,7 +64,7 @@ public class DatabaseJFrame extends JFrame
   public DatabaseJFrame(final DatabaseEntrySource entry_source,
       final ArtemisMain art_main)
   {
-    super("PSU Organism");
+    super("Organism List");
     final JTree tree = entry_source.getDatabaseTree();
 
     // Listen for when the selection changes.
