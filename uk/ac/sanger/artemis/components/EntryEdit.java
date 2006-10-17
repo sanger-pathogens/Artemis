@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.27 2006-10-13 15:06:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.28 2006-10-17 10:04:41 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import javax.swing.*;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.27 2006-10-13 15:06:09 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.28 2006-10-17 10:04:41 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -120,14 +120,18 @@ public class EntryEdit extends JFrame
     getEntryGroup().addEntryGroupChangeListener(this);
     getEntryGroup().addEntryChangeListener(this);
 
-    getEntryGroup().addFeatureChangeListener(ctm);
-    getEntryGroup().addEntryChangeListener(ctm);
-    
     if(getEntryGroup().getDefaultEntry() != null) 
     {
       final String name = getEntryGroup().getDefaultEntry().getName();
       if(name != null) 
         setTitle("Artemis Entry Edit: " + name);
+
+      if(getEntryGroup().getDefaultEntry().getEMBLEntry() instanceof DatabaseDocumentEntry)
+      {
+        getEntryGroup().addFeatureChangeListener(ctm);
+        getEntryGroup().addEntryChangeListener(ctm);
+
+      }
     }
 
     final int font_height;
