@@ -20,15 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ComparatorDialog.java,v 1.1 2004-06-09 09:46:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ComparatorDialog.java,v 1.2 2006-10-18 11:25:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 
-import uk.ac.sanger.artemis.util.OutOfRangeException;
-import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 
 import java.awt.*;
@@ -43,7 +41,7 @@ import javax.swing.*;
  *  compare with a Comparator component and a file containing comparison data.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ComparatorDialog.java,v 1.1 2004-06-09 09:46:09 tjc Exp $
+ *  @version $Id: ComparatorDialog.java,v 1.2 2006-10-18 11:25:12 tjc Exp $
  **/
 
 public class ComparatorDialog extends JFrame 
