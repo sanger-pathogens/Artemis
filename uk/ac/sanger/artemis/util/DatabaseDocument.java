@@ -32,7 +32,7 @@ import uk.ac.sanger.artemis.chado.IBatisDAO;
 import uk.ac.sanger.artemis.chado.JdbcDAO;
 import uk.ac.sanger.artemis.chado.GmodDAO;
 import uk.ac.sanger.artemis.chado.ChadoTransaction;
-import uk.ac.sanger.artemis.components.DatabaseEntrySource;
+import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureProp;

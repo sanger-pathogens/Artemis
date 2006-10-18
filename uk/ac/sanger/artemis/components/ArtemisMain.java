@@ -20,11 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.20 2006-01-04 14:25:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.21 2006-10-18 14:25:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
+import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
+import uk.ac.sanger.artemis.components.database.DatabaseJFrame;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
 import uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager;
 import uk.ac.sanger.artemis.*;
@@ -48,7 +50,7 @@ import java.awt.datatransfer.*;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.20 2006-01-04 14:25:09 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.21 2006-10-18 14:25:23 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -602,7 +604,7 @@ public class ArtemisMain extends Splash
   /**
    *  Make an EntryEdit component from the given Entry.
    **/
-  protected EntryEdit makeEntryEdit(final Entry entry) 
+  public static EntryEdit makeEntryEdit(final Entry entry) 
   {
     final Bases bases = entry.getBases();
     final EntryGroup entry_group = new SimpleEntryGroup(bases);

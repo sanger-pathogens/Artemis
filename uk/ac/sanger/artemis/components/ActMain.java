@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.9 2006-03-02 15:58:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.10 2006-10-18 14:25:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -29,9 +29,13 @@ import uk.ac.sanger.artemis.components.filetree.FileManager;
 import uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.Bases;
-import uk.ac.sanger.artemis.components.filetree.FileManager;
+import uk.ac.sanger.artemis.sequence.NoSequenceException;
+import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
+import uk.ac.sanger.artemis.components.database.DatabaseJFrame;
+import uk.ac.sanger.artemis.components.database.DatabaseTreeNode;
 
 import uk.ac.sanger.artemis.util.*;
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.SimpleEntryInformation;
 
@@ -44,7 +48,7 @@ import javax.swing.JFrame;
  *  The main window for the Artemis Comparison Tool.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ActMain.java,v 1.9 2006-03-02 15:58:46 tjc Exp $
+ *  @version $Id: ActMain.java,v 1.10 2006-10-18 14:25:23 tjc Exp $
  **/
 
 public class ActMain extends Splash 
@@ -94,6 +98,24 @@ public class ActMain extends Splash
     }; 
     makeMenuItem(file_menu, "Open SSH File Manager ...", menu_listener_ssh);
 
+    final boolean sanger_options =
+      Options.getOptions().getPropertyTruthValue("sanger_options");
+
+    if(sanger_options)
+    {
+      ActionListener menu_listener = new ActionListener()
+      {
+        public void actionPerformed(ActionEvent event)
+        {
+          launchDatabaseJFrame(true);
+        }
+      };
+      
+      makeMenuItem(file_menu, "Database Entry ...", menu_listener);
+      if(System.getProperty("chado") != null)
+        launchDatabaseJFrame(false);
+    }
+    
     makeMenuItem(file_menu, "Quit", quit_listener);
   }
 
@@ -110,7 +132,7 @@ public class ActMain extends Splash
    **/
   public static boolean makeMultiComparator(final JFrame frame,
                           final InputStreamProgressListener progress_listener,
-                          final String[] file_names) 
+                          final Object[] file_names) 
   {
 
     final ProgressThread progress_thread = new ProgressThread(null,
@@ -132,8 +154,8 @@ public class ActMain extends Splash
           final EntryInformation entry_information =
             new SimpleEntryInformation(Options.getArtemisEntryInformation());
 
-          final String this_file_name = file_names[i];
-          File this_file = new File(this_file_name);
+          final Object this_file_name = file_names[i];
+          //File this_file = new File(this_file_name);
  
           try 
           {
@@ -158,7 +180,7 @@ public class ActMain extends Splash
         {
           for(int i = 1 ; i < file_names.length ; i += 2) 
           {
-            final String comparison_data_file_name = file_names[i];
+            final String comparison_data_file_name = (String)file_names[i];
             final Document comparison_data_document =
               DocumentFactory.makeDocument(comparison_data_file_name);
 
@@ -213,21 +235,52 @@ public class ActMain extends Splash
           progress_thread.finished();
       }
 
-      private boolean openEntry(String this_file_name, EntryGroup[] entry_group_array,
+      private boolean openEntry(Object this_file_name, EntryGroup[] entry_group_array,
                                 final EntryInformation entry_information, int i)
                       throws OutOfRangeException
       {
-        final Document entry_document =
-              DocumentFactory.makeDocument(this_file_name);
+        uk.ac.sanger.artemis.io.Entry embl_entry = null;
+        
+        // test if this is a database entry rather than a file 
+        if(this_file_name instanceof DatabaseTreeNode)
+        {
+          DatabaseTreeNode dbNode = (DatabaseTreeNode)this_file_name;
+          DatabaseEntrySource entry_source = dbNode.getEntrySource();
+         
+          try
+          {
+            Entry entry = entry_source.getEntry(dbNode.getFeatureId(), 
+                                                dbNode.getSchema(),
+                                                progress_listener);
+            embl_entry = (DatabaseDocumentEntry)entry.getEMBLEntry();
+          }
+          catch(NoSequenceException e)
+          {
+            e.printStackTrace();
+          }
+          catch(IOException e)
+          {
+            e.printStackTrace();
+          }
+          
+          DatabaseDocument doc = 
+            (DatabaseDocument)((DatabaseDocumentEntry)embl_entry).getDocument();
+          doc.setName((String)dbNode.getUserObject());
+        }
+        else
+        {
+          final Document entry_document =
+              DocumentFactory.makeDocument((String)this_file_name);
 
-        if(progress_listener != null)
-          entry_document.addInputStreamProgressListener(progress_listener);
+          if(progress_listener != null)
+            entry_document.addInputStreamProgressListener(progress_listener);
 
-        final uk.ac.sanger.artemis.io.Entry embl_entry =
-            EntryFileDialog.getEntryFromFile(frame, entry_document,
+           embl_entry =
+              EntryFileDialog.getEntryFromFile(frame, entry_document,
                                          entry_information,
                                          false);
-
+        }
+        
         // getEntryFromFile() has alerted the user so we just need to quit
         if(embl_entry == null)
           return false;
@@ -238,7 +291,7 @@ public class ActMain extends Splash
         if(sequence == null)
         {
           new MessageDialog(frame, "This file contains no sequence: " +
-                             this_file_name);
+                             (String)this_file_name);
           return false;
         }
   
@@ -272,6 +325,32 @@ public class ActMain extends Splash
     new ComparatorDialog(this).setVisible(true);
   }
 
+  /**
+  *
+  * Launch database manager window
+  *
+  */
+  private void launchDatabaseJFrame(final boolean prompt_user)
+  {
+    SwingWorker entryWorker = new SwingWorker()
+    {
+      public Object construct()
+      {
+        getStatusLabel().setText("Connecting ...");
+        DatabaseEntrySource entry_source = new DatabaseEntrySource();
+        if(!entry_source.setLocation(prompt_user))
+          return null;
+
+        final DatabaseJFrame frame = new DatabaseJFrame(entry_source,
+                                               ActMain.this);
+        frame.setVisible(true);
+        getStatusLabel().setText("");
+        return null;
+      }
+    };
+    entryWorker.start();
+  }
+  
   /**
    *  Exit from ACT.
    **/

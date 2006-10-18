@@ -22,10 +22,13 @@
 package uk.ac.sanger.artemis.components;
 
 import java.awt.datatransfer.*;
+
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.event.*;
 import javax.swing.border.*;
+
+import uk.ac.sanger.artemis.components.database.DatabaseTreeNode;
+
 import java.awt.dnd.*;
 import java.awt.*;
 import java.io.*;
@@ -38,6 +41,7 @@ import java.io.*;
 */
 public class TextFieldSink extends JTextField implements DropTargetListener
 {
+  private DatabaseTreeNode dbNode = null;
 
   public TextFieldSink(String text, int columns)
   {
@@ -94,7 +98,8 @@ public class TextFieldSink extends JTextField implements DropTargetListener
 
   public void dragEnter(DropTargetDragEvent e)
   {
-    if(e.isDataFlavorSupported(DataFlavor.stringFlavor))
+    if(e.isDataFlavorSupported(DataFlavor.stringFlavor) ||
+       e.isDataFlavorSupported(DatabaseTreeNode.DATABASETREENODE))
     {
       e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
       this.setBorder(dropBorder);
@@ -110,7 +115,31 @@ public class TextFieldSink extends JTextField implements DropTargetListener
   {
     this.setBorder(endBorder);
     Transferable t = e.getTransferable();
-    if(t.isDataFlavorSupported(DataFlavor.stringFlavor))
+
+    if(t.isDataFlavorSupported(DatabaseTreeNode.DATABASETREENODE))
+    {
+      try
+      {
+        setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        dbNode = 
+          (DatabaseTreeNode)t.getTransferData(DatabaseTreeNode.DATABASETREENODE);
+        this.replaceSelection(dbNode.getSchema()+":featureId="+dbNode.getFeatureId());
+
+        e.dropComplete(true);
+        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      }
+      catch(UnsupportedFlavorException e1)
+      {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+      catch(IOException e1)
+      {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+    }
+    else if(t.isDataFlavorSupported(DataFlavor.stringFlavor))
     {
       e.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
       try
@@ -131,10 +160,16 @@ public class TextFieldSink extends JTextField implements DropTargetListener
 
   public void dragOver(DropTargetDragEvent e) 
   {
-    if(e.isDataFlavorSupported(DataFlavor.stringFlavor))
+    if(e.isDataFlavorSupported(DataFlavor.stringFlavor) ||
+       e.isDataFlavorSupported(DatabaseTreeNode.DATABASETREENODE))
       e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
   }
   public void dropActionChanged(DropTargetDragEvent e) {}
+
+  public DatabaseTreeNode getDbNode()
+  {
+    return dbNode;
+  }
 }
 
 

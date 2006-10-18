@@ -54,7 +54,7 @@ import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
-import uk.ac.sanger.artemis.components.DatabaseEntrySource;
+import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 
 
 /**

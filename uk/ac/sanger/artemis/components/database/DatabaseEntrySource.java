@@ -22,12 +22,9 @@
  *
  */
 
-package uk.ac.sanger.artemis.components;
+package uk.ac.sanger.artemis.components.database;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeSelectionModel;
-import javax.swing.tree.TreePath;
 import java.awt.Container;
 import java.awt.GridLayout;
 import java.io.*;
@@ -48,7 +45,7 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
  * This is an EntrySource that reads Entry objects from a relational database.
  * 
  */
-public class DatabaseEntrySource implements EntrySource
+public class DatabaseEntrySource implements EntrySource, Serializable
 {
   private String location;
 
@@ -206,13 +203,6 @@ public class DatabaseEntrySource implements EntrySource
     return true;
   }
 
-  /**
-   * Given the entry name get the seq feature_id
-   */
-  protected String getEntryID(String name)
-  {
-    return (String)entries.get(name);
-  }
 
   /**
    * Create database organism JTree.
@@ -238,58 +228,13 @@ public class DatabaseEntrySource implements EntrySource
       }
     }
     
-    DefaultMutableTreeNode top = new DefaultMutableTreeNode("");
+    DatabaseTreeNode top = new DatabaseTreeNode("", DatabaseEntrySource.this);
     createNodes(top, doc.getSchema(), entries);
-    final JTree tree = new JTree(top);
-    tree.getSelectionModel().setSelectionMode(
-        TreeSelectionModel.SINGLE_TREE_SELECTION);
-
+    final DatabaseJTree tree = new DatabaseJTree(top);
+ 
     return tree;
   }
 
-  /**
-   * Get DefaultMutableTreeNode of selected node.
-   * @param tree  the <code>Jtree</code> component
-   * @return node that is currently selected
-   */
-  protected String getSelectedNode(JTree tree)
-  {
-    TreePath path = tree.getLeadSelectionPath();
-    if (path == null)
-      return null;
-
-    DefaultMutableTreeNode seq_node = 
-                            (DefaultMutableTreeNode)path.getLastPathComponent();
-    DefaultMutableTreeNode type_node =
-                            (DefaultMutableTreeNode)seq_node.getParent();
-    DefaultMutableTreeNode schema_node = 
-                            (DefaultMutableTreeNode)type_node.getParent();
-
-    return (String)schema_node.getUserObject() + " - " +
-           (String)type_node.getUserObject() + " - " +
-           (String)seq_node.getUserObject();
-  }
-
-  /**
-   * Get schema of the selected node
-   * @param tree  the <code>Jtree</code> component
-   * @return name of Organism that is top level of selected node
-   */
-  protected String getSchemaOfSelectedNode(JTree tree)
-  {
-    TreePath path = tree.getLeadSelectionPath();
-    if(path == null)
-      return null;
-
-    DefaultMutableTreeNode seq_node = 
-                            (DefaultMutableTreeNode)path.getLastPathComponent();
-    DefaultMutableTreeNode type_node = 
-                            (DefaultMutableTreeNode)seq_node.getParent();
-    DefaultMutableTreeNode schema_node = 
-                            (DefaultMutableTreeNode)type_node.getParent();
-
-    return (String)schema_node.getUserObject();
-  }
 
   /**
    * Create the nodes of the organism JTree
@@ -297,12 +242,12 @@ public class DatabaseEntrySource implements EntrySource
    * @param schema    <code>List</code>
    * @param organism  sequences collection
    */
-  private void createNodes(DefaultMutableTreeNode top, List schema,
+  private void createNodes(DatabaseTreeNode top, List schema,
                            Hashtable entries)
   {
-    DefaultMutableTreeNode schema_node;
-    DefaultMutableTreeNode seq_node;
-    DefaultMutableTreeNode typ_node;
+    DatabaseTreeNode schema_node;
+    DatabaseTreeNode seq_node;
+    DatabaseTreeNode typ_node;
 
     final Object v_organism[] = entries.keySet().toArray();
     final int v_organism_size = v_organism.length;
@@ -318,12 +263,14 @@ public class DatabaseEntrySource implements EntrySource
       else
         name = ((Organism)schema.get(i)).getCommonName();
       
-      schema_node = new DefaultMutableTreeNode(name);
+      schema_node = new DatabaseTreeNode(name, DatabaseEntrySource.this);
       Hashtable seq_type_node = new Hashtable();
 
       for(int j = 0; j < v_organism_size; j++)
       {
-        String seq_name = (String)v_organism[j];
+        String seq_name  = (String)v_organism[j];
+        String featureId = (String)entries.get(seq_name);
+        
         if(seq_name.startsWith(name))
         {
           int ind1 = seq_name.indexOf("- ");
@@ -334,14 +281,16 @@ public class DatabaseEntrySource implements EntrySource
 
           if(!seq_type_node.containsKey(type))
           {
-            typ_node = new DefaultMutableTreeNode(type);
+            typ_node = new DatabaseTreeNode(type, DatabaseEntrySource.this);
             seq_type_node.put(type, typ_node);
             schema_node.add(typ_node);
           }
           else
-            typ_node = (DefaultMutableTreeNode) seq_type_node.get(type);
+            typ_node = (DatabaseTreeNode) seq_type_node.get(type);
 
-          seq_node = new DefaultMutableTreeNode(seq_name);
+          seq_node = new DatabaseTreeNode(seq_name, 
+                                          DatabaseEntrySource.this, 
+                                          featureId, name);
           typ_node.add(seq_node);
           nchild++;
         }

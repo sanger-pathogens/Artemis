@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ComparatorDialog.java,v 1.2 2006-10-18 11:25:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ComparatorDialog.java,v 1.3 2006-10-18 14:25:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -41,7 +41,7 @@ import javax.swing.*;
  *  compare with a Comparator component and a file containing comparison data.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ComparatorDialog.java,v 1.2 2006-10-18 11:25:12 tjc Exp $
+ *  @version $Id: ComparatorDialog.java,v 1.3 2006-10-18 14:25:23 tjc Exp $
  **/
 
 public class ComparatorDialog extends JFrame 
@@ -272,14 +272,18 @@ public class ComparatorDialog extends JFrame
       throw new Error("internal error - not enough file names given to " +
                        "ComparatorDialog.doApply()");
 
-    String [] file_names = new String [text_field_vector.size()];
+    Object[] file_names = new Object[text_field_vector.size()];
 
     for(int i = 0; i < text_field_vector.size(); ++i) 
     {
-      file_names[i] =
-       ((JTextField) text_field_vector.elementAt(i)).getText().trim();
+      TextFieldSink tfield = (TextFieldSink)text_field_vector.elementAt(i);
+      
+      if(tfield.getDbNode() != null)
+        file_names[i] = tfield.getDbNode();
+      else
+        file_names[i] = tfield.getText().trim();
 
-      if(file_names[i].length() == 0) 
+      if(file_names[i] instanceof String && ((String)file_names[i]).length() == 0) 
       {
         // ignore the problem if there are at least 3 files listed(ie. seq1
         // comp1v2 seq2) and the remaining files lengths are zero

@@ -20,10 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DatabaseJFrame.java,v 1.10 2006-10-17 10:18:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJFrame.java,v 1.1 2006-10-18 14:25:23 tjc Exp $
  */
 
-package uk.ac.sanger.artemis.components;
+package uk.ac.sanger.artemis.components.database;
+
+import uk.ac.sanger.artemis.components.*;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.sequence.*;
@@ -44,6 +46,8 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
+import javax.swing.tree.TreePath;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -62,7 +66,7 @@ public class DatabaseJFrame extends JFrame
   private boolean splitGFFEntry = false;
 
   public DatabaseJFrame(final DatabaseEntrySource entry_source,
-      final ArtemisMain art_main)
+      final Splash splash_main)
   {
     super("Organism List");
     final JTree tree = entry_source.getDatabaseTree();
@@ -73,7 +77,7 @@ public class DatabaseJFrame extends JFrame
       public void mouseClicked(MouseEvent e)
       {
         if(e.getClickCount() == 2 && !e.isPopupTrigger())
-          showSelected(entry_source, tree, art_main);
+          showSelected(entry_source, tree, splash_main);
       }
     };
     tree.addMouseListener(mouseListener);
@@ -85,7 +89,7 @@ public class DatabaseJFrame extends JFrame
                                         screen.height * 6 / 10);
     scroll.setPreferredSize(dim_frame);
 
-    setJMenuBar(makeMenuBar(entry_source, tree, art_main));
+    setJMenuBar(makeMenuBar(entry_source, tree, splash_main));
 
     JPanel pane = (JPanel)getContentPane();
     pane.add(scroll, BorderLayout.CENTER);
@@ -113,17 +117,23 @@ public class DatabaseJFrame extends JFrame
    * 
    */
   private void showSelected(final DatabaseEntrySource entry_source,
-      final JTree tree, final ArtemisMain art_main)
+      final JTree tree, final Splash splash_main)
   {
-    String node_name = null;
-
     try
     {
-      node_name = entry_source.getSelectedNode(tree);
-      String id = entry_source.getEntryID(node_name);
+      TreePath path = tree.getLeadSelectionPath();
+      if(path == null)
+        return;
+      DatabaseTreeNode seq_node = 
+        (DatabaseTreeNode)path.getLastPathComponent();
+      String node_name = (String)seq_node.getUserObject();
+      String schema = seq_node.getSchema();
+      
+      String id = seq_node.getFeatureId(); 
       if(id != null)
         getEntryEditFromDatabase(id, entry_source, tree,
-                                 art_main, node_name);
+                                 splash_main, node_name,
+                                 schema);
     }
     catch(NullPointerException npe)
     {
@@ -137,7 +147,8 @@ public class DatabaseJFrame extends JFrame
    */
   private void getEntryEditFromDatabase(final String id,
       final DatabaseEntrySource entry_source, final JTree tree,
-      final ArtemisMain art_main, final String node_name)
+      final Splash splash_main, final String node_name,
+      final String schema)
   {
     SwingWorker entryWorker = new SwingWorker()
     {
@@ -151,11 +162,9 @@ public class DatabaseJFrame extends JFrame
         try
         {
           final InputStreamProgressListener progress_listener = 
-                           art_main.getInputStreamProgressListener();
+                           splash_main.getInputStreamProgressListener();
 
           entry_source.setSplitGFF(splitGFFEntry);
-
-          String schema = entry_source.getSchemaOfSelectedNode(tree);
 
           final Entry entry = entry_source.getEntry(id, schema,
                                                     progress_listener);
@@ -163,13 +172,7 @@ public class DatabaseJFrame extends JFrame
 
           DatabaseDocumentEntry db_entry =
                          (DatabaseDocumentEntry)entry.getEMBLEntry();
-
-          int ind = 0;
-          String name = node_name;
-          if( (ind = name.lastIndexOf("-")) > -1)
-            name = name.substring(ind+1).trim();
-
-          ((DatabaseDocument)db_entry.getDocument()).setName(name);
+          ((DatabaseDocument)db_entry.getDocument()).setName(node_name);
 
           if(entry == null)
           {
@@ -178,7 +181,7 @@ public class DatabaseJFrame extends JFrame
             return null;
           }
 
-          final EntryEdit new_entry_edit = art_main.makeEntryEdit(entry);
+          final EntryEdit new_entry_edit = ArtemisMain.makeEntryEdit(entry);
 
           // add gff entries
           if(splitGFFEntry)
@@ -204,17 +207,17 @@ public class DatabaseJFrame extends JFrame
         }
         catch(OutOfRangeException e)
         {
-          new MessageDialog(art_main, "read failed: one of the features in "
+          new MessageDialog(splash_main, "read failed: one of the features in "
               + " the entry has an out of range " + "location: "
               + e.getMessage());
         }
         catch(NoSequenceException e)
         {
-          new MessageDialog(art_main, "read failed: entry contains no sequence");
+          new MessageDialog(splash_main, "read failed: entry contains no sequence");
         }
         catch(IOException e)
         {
-          new MessageDialog(art_main, "read failed due to IO error: " + e);
+          new MessageDialog(splash_main, "read failed due to IO error: " + e);
         }
         tree.setCursor(cdone);
         return null;
@@ -226,7 +229,7 @@ public class DatabaseJFrame extends JFrame
   }
 
   private JMenuBar makeMenuBar(final DatabaseEntrySource entry_source,
-                               final JTree tree, final ArtemisMain art_main)
+                               final JTree tree, final Splash splash_main)
   {
     JMenuBar mBar = new JMenuBar();
     JMenu fileMenu = new JMenu("File");
@@ -237,7 +240,7 @@ public class DatabaseJFrame extends JFrame
     {
       public void actionPerformed(ActionEvent e)
       {
-        showSelected(entry_source, tree, art_main);
+        showSelected(entry_source, tree, splash_main);
       }
     });
     fileMenu.add(fileShow);
