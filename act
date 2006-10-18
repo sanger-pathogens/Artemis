@@ -7,7 +7,7 @@
 # /usr/local/bin/ or elsewhere.
 
 
-# $Header: //tmp/pathsoft/artemis/act,v 1.9 2006-06-22 12:40:25 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/act,v 1.10 2006-10-18 14:42:06 tjc Exp $
 
 # resolve links - $0 may be a link
 PRG=$0
@@ -29,10 +29,13 @@ done
 ACT_HOME=`dirname "$PRG"`/.
 
 
-CLASSPATH=$ACT_HOME:$ACT_HOME/lib/JacORB.jar:$ACT_HOME/lib/jemAlign.jar:$ACT_HOME/lib/jakarta-regexp-1.2.jar:$ACT_HOME/lib/macos.jar:$CLASSPATH
+CLASSPATH=$ACT_HOME:$ACT_HOME/lib/JacORB.jar:$ACT_HOME/lib/jemAlign.jar:$ACT_HOME/lib/jakarta-regexp-1.2.jar:$ACT_HOME/lib/macos.jar:$ACT_HOME/lib/chado-14-interface.jar:$ACT_HOME/lib/postgresql-8.1-407.jdbc2ee.jar:$CLASSPATH
 
 # j2ssh jars
 CLASSPATH=$CLASSPATH:$ACT_HOME/lib/j2ssh/commons-logging.jar:$ACT_HOME/lib/j2ssh/j2ssh-core.jar:$ACT_HOME/lib/j2ssh/
+
+# iBatis jars
+CLASSPATH=$CLASSPATH:$ACT_HOME/lib/ibatis/ibatis-common-2.jar:$ACT_HOME/lib/ibatis/ibatis-sqlmap-2.jar:$ACT_HOME/lib/ibatis/:$ACT_HOME/lib/ibatis/log4j-1.2.13.jar
 
 export CLASSPATH
 
@@ -64,7 +67,7 @@ else
     if [ x$1 = x-h -o x$1 = x--help ]
     then
         cat <<EOF
-usage: $0 [EMBL/GENBANK/SEQUENCE file] [crunch file]  [EMBL/GENBANK/SEQUENCE file]
+usage: $0 [EMBL/GENBANK/SEQUENCE file] [crunch file] [EMBL/GENBANK/SEQUENCE file]
 EOF
         exit 0
     fi
@@ -108,5 +111,5 @@ then
     echo starting ACT with flags: $FLAGS 1>&2
 fi
 
-$JAVA $FLAGS $ACT_PROPERTIES uk.ac.sanger.artemis.components.ActMain $*
+$JAVA $FLAGS -Djdbc.drivers=org.postgresql.Driver $ACT_PROPERTIES uk.ac.sanger.artemis.components.ActMain $*
 
