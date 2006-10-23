@@ -20,13 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.21 2006-10-18 14:25:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.22 2006-10-23 13:34:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
-import uk.ac.sanger.artemis.components.database.DatabaseJFrame;
+import uk.ac.sanger.artemis.components.database.DatabaseJPanel;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
 import uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager;
 import uk.ac.sanger.artemis.*;
@@ -45,12 +45,13 @@ import java.awt.event.*;
 import java.awt.Toolkit;
 import java.io.*;
 import java.awt.datatransfer.*;
+import javax.swing.JFrame;
 
 /**
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.21 2006-10-18 14:25:23 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.22 2006-10-23 13:34:12 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -62,6 +63,9 @@ public class ArtemisMain extends Splash
   private EntryEditVector entry_edit_objects = new EntryEditVector();
 
   protected static FileManager filemanager = null;
+  
+  private LocalAndRemoteFileManager fm;
+  
   /**
    *  The constructor creates all the components for the main Artemis 
    *  window and sets up all the menu callbacks.
@@ -82,10 +86,8 @@ public class ArtemisMain extends Splash
     };
     makeMenuItem(file_menu, "Open File Manager ...", menu_listener);
 
-
     ActionListener menu_listener_ssh = new ActionListener()
     {
-      private LocalAndRemoteFileManager fm;
       public void actionPerformed(ActionEvent event)
       {
         if(fm == null)
@@ -94,7 +96,11 @@ public class ArtemisMain extends Splash
           fm.setVisible(true);
       }
     };
-    makeMenuItem(file_menu, "Open SSH File Manager ...", menu_listener_ssh);
+    
+    if(System.getProperty("chado") != null)
+      makeMenuItem(file_menu, "Open Database and SSH File Manager ...", menu_listener_ssh);
+    else 
+      makeMenuItem(file_menu, "Open SSH File Manager ...", menu_listener_ssh);
 
 
     final EntrySourceVector entry_sources = getEntrySources(this);
@@ -134,12 +140,12 @@ public class ArtemisMain extends Splash
     final boolean sanger_options =
       Options.getOptions().getPropertyTruthValue("sanger_options");
 
-    if(sanger_options)
+/*    if(sanger_options)
     {
       makeMenuItem(file_menu, "Database Entry ...", menu_listener);
       if(System.getProperty("chado") != null)
-        launchDatabaseJFrame(false);
-    }
+          fm = new LocalAndRemoteFileManager(ArtemisMain.this);
+    }*/
 
     menu_listener = new ActionListener() 
     {
@@ -259,9 +265,14 @@ public class ArtemisMain extends Splash
         if(!entry_source.setLocation(prompt_user))
           return null;
 
-        final DatabaseJFrame frame = new DatabaseJFrame(entry_source,
+        JFrame frame = new JFrame("Organism List");
+        final DatabaseJPanel pane = new DatabaseJPanel(entry_source,
                                                ArtemisMain.this);
+        frame.getContentPane().add(pane);
+        frame.pack();
+        Utilities.rightJustifyFrame(frame);
         frame.setVisible(true);
+        frame.setJMenuBar(pane.makeMenuBar(entry_source, ArtemisMain.this));
         getStatusLabel().setText("");
         return null;
       }

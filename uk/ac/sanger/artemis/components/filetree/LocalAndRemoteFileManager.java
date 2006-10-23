@@ -21,6 +21,8 @@
 
 package uk.ac.sanger.artemis.components.filetree;
 
+import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
+import uk.ac.sanger.artemis.components.database.DatabaseJPanel;
 import uk.ac.sanger.artemis.j2ssh.SshLogin;
 import uk.ac.sanger.artemis.j2ssh.SshFileManager;
 import uk.ac.sanger.artemis.util.StringVector;
@@ -28,6 +30,7 @@ import uk.ac.sanger.artemis.Options;
 
 import javax.swing.table.TableColumn;
 import javax.swing.*;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.awt.event.*;
@@ -59,7 +62,7 @@ public class LocalAndRemoteFileManager extends JFrame
   */
   public LocalAndRemoteFileManager(JFrame frame, FileFilter filter)
   {
-    super("File Manager");
+    super();
 
     final JPanel localPanel = new JPanel(new BorderLayout());
     
@@ -78,7 +81,7 @@ public class LocalAndRemoteFileManager extends JFrame
     //
     final Dimension screen    = Toolkit.getDefaultToolkit().getScreenSize();
     final Dimension panelSize = new Dimension((int)(screen.getWidth()/3),
-                                          (int)(screen.getHeight()/3));
+                                          (int)(screen.getHeight()/4));
     String remote_name = "";
     final JLabel remote_status_line = getStatusLabel("");
 
@@ -109,9 +112,11 @@ public class LocalAndRemoteFileManager extends JFrame
       });
 
       bdown.add(connect);
-      int ypos = panelSize.height-connect.getPreferredSize().height;
+      /*int ypos = panelSize.height-connect.getPreferredSize().height;
       if(ypos>0)
-        bdown.add(Box.createVerticalStrut(ypos/2));
+        bdown.add(Box.createVerticalStrut(ypos/2));*/
+      bdown.add(Box.createVerticalGlue());
+      
       remotePanel.add(bdown, BorderLayout.SOUTH);
       remotePanel.setPreferredSize(panelSize);
     }
@@ -127,13 +132,41 @@ public class LocalAndRemoteFileManager extends JFrame
 
     treePane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                  localPanel,remotePanel);
-
+    treePane.setOneTouchExpandable(true);
+    
     JPanel pane = (JPanel)getContentPane();
     pane.setLayout(new BorderLayout());
-    pane.add(treePane, BorderLayout.CENTER);
-
-    treePane.setDividerLocation((int)(screen.getHeight()/3));
-    setJMenuBar(makeMenuBar(pane,ftree,sshtree,localPanel,remotePanel,treePane,panelSize));
+    
+    if(System.getProperty("chado") != null)
+    { 
+      setTitle("Database and File Manager");
+      DatabaseEntrySource entry_source = new DatabaseEntrySource();
+      if(!entry_source.setLocation(true))
+        return;
+    
+      JLabel label = new JLabel(" Database Loading...");
+      JScrollPane dbScroll = new JScrollPane(label);
+      
+      DbConnectionThread dbthread =
+        new DbConnectionThread(dbScroll, panelSize, entry_source);
+      dbthread.start();
+      dbScroll.setPreferredSize(panelSize);
+      
+      JSplitPane mainSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+                                            dbScroll, treePane);
+      treePane.setDividerLocation((int)(screen.getHeight()/4));
+      mainSplit.setOneTouchExpandable(true);
+      mainSplit.setDividerLocation((int)(screen.getHeight()/4));
+      pane.add(mainSplit, BorderLayout.CENTER);
+    }
+    else
+    {
+      setTitle("File Manager");
+      pane.add(treePane, BorderLayout.CENTER);
+      treePane.setDividerLocation((int)(screen.getHeight()/4));
+    }
+    setJMenuBar(makeMenuBar(pane,ftree,sshtree,localPanel,
+                            remotePanel,treePane,panelSize));
     localPanel.add(getFileFileterComboBox(ftree), BorderLayout.SOUTH);
 
     localTree.setPreferredSize(panelSize);
@@ -534,61 +567,33 @@ public class LocalAndRemoteFileManager extends JFrame
     
     return path;
   }
-
-  class UpButton extends JButton
+  
+  
+  public class DbConnectionThread extends Thread
   {
-    public void paintComponent(Graphics g)
+    private JScrollPane dbScroll;
+    private Dimension panelSize;
+    private DatabaseEntrySource entry_source;
+    
+    public DbConnectionThread(final JScrollPane dbScroll,
+                              final Dimension panelSize,
+                              final DatabaseEntrySource entry_source)
     {
-      super.paintComponent(g);
-      Graphics2D g2 = (Graphics2D)g; 
+      this.dbScroll = dbScroll;
+      this.panelSize = panelSize;
+      this.entry_source = entry_source;
+    }
 
-      g2.setColor(new Color(0,128,0));
-      float loc1[][] = { {11,18}, {7,18}, {7,14},
-                         {3,14},  {11,4} };
-                
-      g2.fill(makeShape(loc1));
-      g2.setColor(Color.green);
-
-      float loc2[][] = { {11,18}, {15,18}, {15,14},
-                         {19,14},  {11,4} };
-      g2.fill(makeShape(loc2));
-
-      setSize(22,24);
+    public void run()
+    {
+      final DatabaseJPanel dbPane = new DatabaseJPanel(entry_source,
+          null);
+      dbPane.setPreferredSize(panelSize);
+      dbScroll.setViewportView(dbPane);
     }
   }
 
-  class TextButton extends JButton
-  {
-    private String s1;
-    private String s2;
-    private Color c;
 
-    public TextButton(String text)
-    {
-      this(text, Color.black);
-    }
-
-    public TextButton(String text, Color c)
-    {
-      super();
-      this.s1 = text.substring(0);
-      this.s2 = text.substring(1);
-    }
-
-    public void paintComponent(Graphics g)
-    {
-      super.paintComponent(g);
-      Graphics2D g2 = (Graphics2D)g;
-      Font font = new Font("Monospaced", Font.BOLD, 14);
-      g2.setFont(font);
-
-      g2.setColor(c);
-      g2.drawString(s1,4,18);
-      g2.setColor(Color.red);
-      g2.drawString(s2,10,15);
-      setSize(22,24);
-    }
-  }
 
 
   public static void main(String args[])
@@ -612,5 +617,6 @@ public class LocalAndRemoteFileManager extends JFrame
     frame.pack();
     frame.setVisible(true);
   }
+  
 }
 

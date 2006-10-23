@@ -1,4 +1,4 @@
-/* DatabaseJFrame.java
+/* DatabaseJPanel.java
  *
  * created: June 2005
  *
@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJFrame.java,v 1.1 2006-10-18 14:25:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.1 2006-10-23 13:34:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -29,12 +29,12 @@ import uk.ac.sanger.artemis.components.*;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.sequence.*;
+import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 
-import javax.swing.JFrame;
 import javax.swing.JTree;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -60,16 +60,17 @@ import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.io.*;
 
-public class DatabaseJFrame extends JFrame
+public class DatabaseJPanel extends JPanel
 {
   private JLabel status_line = new JLabel("");
   private boolean splitGFFEntry = false;
-
-  public DatabaseJFrame(final DatabaseEntrySource entry_source,
-      final Splash splash_main)
+  private JTree tree;
+  
+  public DatabaseJPanel(final DatabaseEntrySource entry_source,
+                        final Splash splash_main)
   {
-    super("Organism List");
-    final JTree tree = entry_source.getDatabaseTree();
+    setLayout(new BorderLayout());
+    tree = entry_source.getDatabaseTree();
 
     // Listen for when the selection changes.
     MouseListener mouseListener = new MouseAdapter()
@@ -89,10 +90,7 @@ public class DatabaseJFrame extends JFrame
                                         screen.height * 6 / 10);
     scroll.setPreferredSize(dim_frame);
 
-    setJMenuBar(makeMenuBar(entry_source, tree, splash_main));
-
-    JPanel pane = (JPanel)getContentPane();
-    pane.add(scroll, BorderLayout.CENTER);
+    add(scroll, BorderLayout.CENTER);
 
     final FontMetrics fm = this.getFontMetrics(status_line.getFont());
 
@@ -105,16 +103,20 @@ public class DatabaseJFrame extends JFrame
     Border compound = BorderFactory.createCompoundBorder(raisedbevel,
                                                          loweredbevel);
     status_line.setBorder(compound);
-    pane.add(status_line, BorderLayout.SOUTH);
-
-    pack();
-    Utilities.rightJustifyFrame(this);
+    add(status_line, BorderLayout.SOUTH);
+    
+    JLabel title_line = new JLabel("Database List");
+    title_line.setMinimumSize(new Dimension(100, font_height));
+    title_line.setPreferredSize(new Dimension(100, font_height));
+    title_line.setBorder(compound);
+    add(title_line, BorderLayout.NORTH);
   }
 
   /**
-   * 
    * Show the selected sequence in the tree
-   * 
+   * @param entry_source
+   * @param tree
+   * @param splash_main
    */
   private void showSelected(final DatabaseEntrySource entry_source,
       final JTree tree, final Splash splash_main)
@@ -141,9 +143,13 @@ public class DatabaseJFrame extends JFrame
   }
 
   /**
-   * 
    * Retrieve a database entry.
-   * 
+   * @param id
+   * @param entry_source
+   * @param tree
+   * @param splash_main
+   * @param node_name
+   * @param schema
    */
   private void getEntryEditFromDatabase(final String id,
       final DatabaseEntrySource entry_source, final JTree tree,
@@ -161,13 +167,10 @@ public class DatabaseJFrame extends JFrame
         tree.setCursor(cbusy);
         try
         {
-          final InputStreamProgressListener progress_listener = 
-                           splash_main.getInputStreamProgressListener();
-
           entry_source.setSplitGFF(splitGFFEntry);
 
           final Entry entry = entry_source.getEntry(id, schema,
-                                                    progress_listener);
+              stream_progress_listener);
 
 
           DatabaseDocumentEntry db_entry =
@@ -228,8 +231,14 @@ public class DatabaseJFrame extends JFrame
 
   }
 
-  private JMenuBar makeMenuBar(final DatabaseEntrySource entry_source,
-                               final JTree tree, final Splash splash_main)
+  /**
+   * Create a menu bar 
+   * @param entry_source
+   * @param splash_main
+   * @return
+   */
+  public JMenuBar makeMenuBar(final DatabaseEntrySource entry_source,
+                              final Splash splash_main)
   {
     JMenuBar mBar = new JMenuBar();
     JMenu fileMenu = new JMenu("File");
@@ -275,4 +284,26 @@ public class DatabaseJFrame extends JFrame
 
     return mBar;
   }
+  
+  /**
+   *  An InputStreamProgressListener used to update the error label with the
+   *  current number of chars read.
+   **/
+  private final InputStreamProgressListener stream_progress_listener =
+    new InputStreamProgressListener() 
+  {
+    public void progressMade(final InputStreamProgressEvent event) 
+    {
+      final int char_count = event.getCharCount();
+      if(char_count == -1) 
+        status_line.setText("");
+      else 
+        status_line.setText("chars read so far: " + char_count);
+    }
+
+    public void progressMade(String progress)
+    {
+      status_line.setText(progress);
+    }
+  };
 }
