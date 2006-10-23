@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.22 2006-10-23 13:34:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.23 2006-10-23 15:14:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.JFrame;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.22 2006-10-23 13:34:12 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.23 2006-10-23 15:14:13 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -137,15 +137,12 @@ public class ArtemisMain extends Splash
       }
     };
 
-    final boolean sanger_options =
-      Options.getOptions().getPropertyTruthValue("sanger_options");
+    //final boolean sanger_options =
+    //  Options.getOptions().getPropertyTruthValue("sanger_options");
 
-/*    if(sanger_options)
-    {
-      makeMenuItem(file_menu, "Database Entry ...", menu_listener);
-      if(System.getProperty("chado") != null)
-          fm = new LocalAndRemoteFileManager(ArtemisMain.this);
-    }*/
+    //makeMenuItem(file_menu, "Database Entry ...", menu_listener);
+    if(System.getProperty("chado") != null)
+      fm = new LocalAndRemoteFileManager(ArtemisMain.this);
 
     menu_listener = new ActionListener() 
     {

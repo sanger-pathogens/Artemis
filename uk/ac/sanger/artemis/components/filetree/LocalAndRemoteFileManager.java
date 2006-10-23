@@ -144,16 +144,18 @@ public class LocalAndRemoteFileManager extends JFrame
       if(!entry_source.setLocation(true))
         return;
     
-      JLabel label = new JLabel(" Database Loading...");
-      JScrollPane dbScroll = new JScrollPane(label);
-      
-      DbConnectionThread dbthread =
-        new DbConnectionThread(dbScroll, panelSize, entry_source);
-      dbthread.start();
-      dbScroll.setPreferredSize(panelSize);
+      JLabel label  = new JLabel(" Database Loading...");
+      JPanel dbPane = new JPanel();
+      dbPane.add(label);
+      dbPane.setPreferredSize(panelSize);
       
       JSplitPane mainSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-                                            dbScroll, treePane);
+                                            dbPane, treePane);
+      
+      DbConnectionThread dbthread =
+        new DbConnectionThread(mainSplit, panelSize, entry_source);
+      dbthread.start();
+
       treePane.setDividerLocation((int)(screen.getHeight()/4));
       mainSplit.setOneTouchExpandable(true);
       mainSplit.setDividerLocation((int)(screen.getHeight()/4));
@@ -569,17 +571,17 @@ public class LocalAndRemoteFileManager extends JFrame
   }
   
   
-  public class DbConnectionThread extends Thread
+  private class DbConnectionThread extends Thread
   {
-    private JScrollPane dbScroll;
+    private JSplitPane dbSplitPane;
     private Dimension panelSize;
     private DatabaseEntrySource entry_source;
     
-    public DbConnectionThread(final JScrollPane dbScroll,
+    public DbConnectionThread(final JSplitPane dbSplitPane,
                               final Dimension panelSize,
                               final DatabaseEntrySource entry_source)
     {
-      this.dbScroll = dbScroll;
+      this.dbSplitPane = dbSplitPane;
       this.panelSize = panelSize;
       this.entry_source = entry_source;
     }
@@ -589,7 +591,7 @@ public class LocalAndRemoteFileManager extends JFrame
       final DatabaseJPanel dbPane = new DatabaseJPanel(entry_source,
           null);
       dbPane.setPreferredSize(panelSize);
-      dbScroll.setViewportView(dbPane);
+      dbSplitPane.setTopComponent(dbPane);
     }
   }
 
