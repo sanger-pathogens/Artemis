@@ -147,13 +147,14 @@ public class LocalAndRemoteFileManager extends JFrame
       JLabel label  = new JLabel(" Database Loading...");
       JPanel dbPane = new JPanel();
       dbPane.add(label);
+      dbPane.setBackground(Color.white);
       dbPane.setPreferredSize(panelSize);
       
       JSplitPane mainSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                             dbPane, treePane);
       
-      DbConnectionThread dbthread =
-        new DbConnectionThread(mainSplit, panelSize, entry_source);
+      DbConnectionThread dbthread = new DbConnectionThread(mainSplit, 
+                                    panelSize, entry_source, dbPane);
       dbthread.start();
 
       treePane.setDividerLocation((int)(screen.getHeight()/4));
@@ -576,26 +577,29 @@ public class LocalAndRemoteFileManager extends JFrame
     private JSplitPane dbSplitPane;
     private Dimension panelSize;
     private DatabaseEntrySource entry_source;
+    private JPanel topPanel;
     
     public DbConnectionThread(final JSplitPane dbSplitPane,
                               final Dimension panelSize,
-                              final DatabaseEntrySource entry_source)
+                              final DatabaseEntrySource entry_source,
+                              final JPanel topPanel)
     {
       this.dbSplitPane = dbSplitPane;
       this.panelSize = panelSize;
       this.entry_source = entry_source;
+      this.topPanel = topPanel;
     }
 
     public void run()
     {
+      topPanel.setCursor(new Cursor(Cursor.WAIT_CURSOR));
       final DatabaseJPanel dbPane = new DatabaseJPanel(entry_source,
           null);
       dbPane.setPreferredSize(panelSize);
       dbSplitPane.setTopComponent(dbPane);
+      topPanel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
   }
-
-
 
 
   public static void main(String args[])
