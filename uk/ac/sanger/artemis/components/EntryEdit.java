@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.28 2006-10-17 10:04:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.29 2006-10-26 12:39:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,6 +38,7 @@ import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.io.InvalidRelationException;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -49,7 +50,7 @@ import javax.swing.*;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.28 2006-10-17 10:04:41 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.29 2006-10-26 12:39:39 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -949,7 +950,10 @@ public class EntryEdit extends JFrame
           public void actionPerformed(ActionEvent event)
           {
             try
-            {
+            {       
+              if(!isUniqueID(getEntryGroup()))
+                return;
+                     
               Document dbDoc =
                   ((DocumentEntry)getEntryGroup().getDefaultEntry().getEMBLEntry()).getDocument();
 
@@ -1231,6 +1235,62 @@ public class EntryEdit extends JFrame
 
   }
 
+  /**
+   * Test to ensure ID (chado uniquename) is unique.
+   * @param entry_group
+   * @return
+   */
+  private boolean isUniqueID(final EntryGroup entry_group)
+  {
+    FeatureVector features = entry_group.getAllFeatures();
+    FeatureVector duplicateIDs = new FeatureVector();
+    for(int i=0; i<features.size()-1; i++)
+    {
+      Feature ifeature = features.elementAt(i);
+      String id;
+      try
+      {
+        id = (String)ifeature.getQualifierByName("ID").getValues().get(0);
+      }
+      catch(InvalidRelationException e)
+      {
+        continue;
+      }
+      
+      FeaturePredicate predicate =
+        new FeatureKeyQualifierPredicate(null, "ID", id, 
+                                         false, true);
+      
+      for(int j=i+1; j<features.size(); j++)
+      {
+        Feature jfeature = features.elementAt(j);
+        if(predicate.testPredicate(jfeature))
+        {
+          duplicateIDs.add(ifeature);
+          duplicateIDs.add(jfeature);
+        }
+      }
+
+    }
+    
+    if(duplicateIDs.size() > 0)
+    {
+      String filtern_name = "Features with non-unique feature ID's";
+      getSelection().set(duplicateIDs);
+      final FilteredEntryGroup filtered_entry_group =
+        new FilteredEntryGroup(entry_group, duplicateIDs, 
+                               filtern_name);
+      
+      final FeatureListFrame feature_list_frame =
+        new FeatureListFrame(filtern_name, selection,
+                             getGotoEventSource(), filtered_entry_group,
+                             base_plot_group);
+
+      feature_list_frame.setVisible (true);
+      return false;
+    }
+    return true;
+  }
 
   /**
    *  Read an entry

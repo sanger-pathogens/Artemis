@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.17 2006-10-16 14:35:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.18 2006-10-26 12:39:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -52,7 +52,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.17 2006-10-16 14:35:54 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.18 2006-10-26 12:39:39 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -70,8 +70,8 @@ public class AddMenu extends SelectionMenu
   /** done cursor */
   private Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
 
-  private AlignmentViewer alignQueryViewer;
-  private AlignmentViewer alignSubjectViewer;
+  /*private AlignmentViewer alignQueryViewer;
+  private AlignmentViewer alignSubjectViewer;*/
 
   /**
    *  Create a new AddMenu object.
@@ -123,8 +123,8 @@ public class AddMenu extends SelectionMenu
   {
     super (frame, menu_name, selection);
 
-    this.alignQueryViewer   = alignQueryViewer;
-    this.alignSubjectViewer = alignSubjectViewer;
+    /*this.alignQueryViewer   = alignQueryViewer;
+    this.alignSubjectViewer = alignSubjectViewer;*/
     this.entry_group = entry_group;
     this.base_plot_group = base_plot_group;
 
@@ -1381,9 +1381,41 @@ public class AddMenu extends SelectionMenu
                            msg,
                            "ID missing ",
                            JOptionPane.QUESTION_MESSAGE).trim();
+        
+        if(!isUniqueID(entry_group, id))
+        {
+          JOptionPane.showMessageDialog(null, 
+              "ID "+id+" not unique.\nEnter a unique ID.", 
+              "ID Not Unique", 
+              JOptionPane.WARNING_MESSAGE);
+          id = null;
+        }
       }
     }
     return id;
+  }
+  
+  /**
+   * Test to ensure ID (chado uniquename) is unique.
+   * @param entry_group
+   * @param id
+   * @return
+   */
+  public static boolean isUniqueID(final EntryGroup entry_group,
+                                   final String id)
+  {
+    FeaturePredicate predicate =
+      new FeatureKeyQualifierPredicate(null, "ID", id, 
+                                       false, true);
+    FeatureVector features = entry_group.getAllFeatures();
+    for(int i=0; i<features.size(); i++)
+    {
+      Feature feature = features.elementAt(i);
+      if(predicate.testPredicate(feature))
+        return false;
+      
+    }
+    return true;
   }
   
   /**
