@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FilteredEntryGroup.java,v 1.2 2005-02-17 09:21:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/FilteredEntryGroup.java,v 1.3 2006-10-26 12:40:30 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -37,7 +37,7 @@ import java.util.NoSuchElementException;
  *  object.
  *
  *  @author Kim Rutherford
- *  @version $Id: FilteredEntryGroup.java,v 1.2 2005-02-17 09:21:10 tjc Exp $
+ *  @version $Id: FilteredEntryGroup.java,v 1.3 2006-10-26 12:40:30 tjc Exp $
  **/
 
 public class FilteredEntryGroup implements EntryGroup
@@ -115,6 +115,22 @@ public class FilteredEntryGroup implements EntryGroup
     getEntryGroup().addEntryGroupChangeListener(entry_group_listener);
   }
 
+  /**
+   *  Create a new FilteredEntryGroup.
+   *  @param entry_group This is the EntryGroup to filter.
+   *  @param filtered_features This filtered features.
+   *  @param filter_name a short description of the filter(used for menus and
+   *    title bars).  Can be null if there is no easy way to describe what
+   *    the filter does.
+   **/
+  public FilteredEntryGroup(final EntryGroup entry_group,
+                            final FeatureVector filtered_features,
+                            final String filter_name) 
+  {
+    this(entry_group, (FeaturePredicate)null, filter_name);
+    this.filtered_features = filtered_features;
+  }
+  
   /**
    *  Return the default Entry for this EntryGroup.  The "default" is the
    *  Entry where new features are created.
