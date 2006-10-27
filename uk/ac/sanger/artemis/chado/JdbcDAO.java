@@ -471,6 +471,18 @@ public class JdbcDAO extends GmodDAO
       throw new RuntimeException(sqle);
     }
   }
+  
+  /**
+   * Return the list of Features for a given GO number 
+   * 
+   * 
+   * @param go the GO number
+   * @return a (possibly empty) List<Feature> of matching genes
+   */
+  public List getFeatureByGO(final String go)
+  {
+    return null;
+  }
 
   //////
   //////
