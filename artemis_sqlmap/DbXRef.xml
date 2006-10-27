@@ -83,7 +83,7 @@
     INSERT INTO feature_dbxref 
            (feature_id, dbxref_id, is_current)
            VALUES
-           ($feature.id$, $dbXRef.dbXRefId$, $current$)
+           ($feature.featureId$, $dbXRef.dbXRefId$, $current$)
   </insert>
   
   <insert id="insertDbXRef" parameterClass="DbXRef">
