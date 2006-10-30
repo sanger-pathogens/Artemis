@@ -40,37 +40,28 @@ import java.io.IOException;
 public class DatabaseTreeNode extends DefaultMutableTreeNode 
                  implements Transferable, Serializable
 {
-  /** data flavour of a database node */
-  //public static DataFlavor DATABASETREENODE =
-  //       new DataFlavor(DatabaseTreeNode.class, "Database Node");
-  /** flavours database node and string */
-  //static DataFlavor flavors[] = { DATABASETREENODE, DataFlavor.stringFlavor };
   
   public static final DataFlavor DATABASETREENODE = 
           new DataFlavor(DatabaseTreeNode.class, "Work Package");
   public static final DataFlavor STRING_DATA_FLAVOUR = 
           new DataFlavor(String.class, "text/plain");
-  private static final DataFlavor flavors[] = { DATABASETREENODE};
+  private static final DataFlavor flavors[] = 
+         { DATABASETREENODE, DataFlavor.stringFlavor };
   
   
-  private DatabaseEntrySource entrySource;
   private String featureId;
   private String schema;
     
-  public DatabaseTreeNode(final String name, 
-                          final DatabaseEntrySource entrySource)
+  public DatabaseTreeNode(final String name)
   { 
     super(name);
-    this.entrySource = entrySource;
   }
 
-  public DatabaseTreeNode(final String name, 
-                          final DatabaseEntrySource entrySource,
+  public DatabaseTreeNode(final String name,
                           final String featureId,
                           final String schema)
   { 
     super(name);
-    this.entrySource = entrySource;
     this.featureId   = featureId;
     this.schema      = schema;
   }
@@ -92,15 +83,13 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
         throws UnsupportedFlavorException, IOException
   {
     if(d.equals(DATABASETREENODE))
-      return this;
+      return new DatabaseTreeNode((String)getUserObject(), 
+                                  getFeatureId(), getSchema());
+    else if(d.equals(DataFlavor.stringFlavor))
+      return getSchema()+":featureId="+getFeatureId();
     else throw new UnsupportedFlavorException(d);
   }
 
-
-  public DatabaseEntrySource getEntrySource()
-  {
-    return entrySource;
-  }
 
   public String getFeatureId()
   {

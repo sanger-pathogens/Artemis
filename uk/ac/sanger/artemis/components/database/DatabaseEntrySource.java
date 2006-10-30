@@ -28,10 +28,6 @@ import javax.swing.*;
 import java.awt.Container;
 import java.awt.GridLayout;
 import java.io.*;
-import java.util.*;
-import java.net.ConnectException;
-
-import org.gmod.schema.organism.Organism;
 
 import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.*;
@@ -50,8 +46,6 @@ public class DatabaseEntrySource implements EntrySource, Serializable
   private String location;
 
   private JPasswordField pfield;
-
-  private Hashtable entries;
 
   private boolean splitGFFEntry;
 
@@ -162,6 +156,10 @@ public class DatabaseEntrySource implements EntrySource, Serializable
     if(System.getProperty("chado") != null)
     {
       String db_url = System.getProperty("chado").trim();
+      
+      if(db_url.startsWith("jdbc:postgresql://"))
+        db_url = db_url.substring(18);
+      
       int index;
       if((index = db_url.indexOf(":")) > -1)
       {
@@ -174,7 +172,11 @@ public class DatabaseEntrySource implements EntrySource, Serializable
           if((index3 = db_url.indexOf("?")) > -1)
           {
             inDB.setText(db_url.substring(index2 + 1, index3));
-            inUser.setText(db_url.substring(index3 + 1));
+            
+            String user = db_url.substring(index3 + 1);
+            if(user.startsWith("user="))
+              user = user.substring(5);
+            inUser.setText(user);
 
             /*
              * if(!prompt_user) { location = "jdbc:postgresql://"
@@ -204,102 +206,12 @@ public class DatabaseEntrySource implements EntrySource, Serializable
   }
 
 
-  /**
-   * Create database organism JTree.
-   */
-  protected JTree getDatabaseTree()
+  protected DatabaseDocument getDatabaseDocument()
   {
-    DatabaseDocument doc = null;
-
-    while(entries == null)
-    {
-      try
-      {
-        doc = new DatabaseDocument(location, pfield);
-        entries = doc.getDatabaseEntries();
-      }
-      catch(java.sql.SQLException sqle)
-      {
-        setLocation(true);
-      }
-      catch(ConnectException ce)
-      {
-        setLocation(true);
-      }
-    }
-    
-    DatabaseTreeNode top = new DatabaseTreeNode("", DatabaseEntrySource.this);
-    createNodes(top, doc.getSchema(), entries);
-    final DatabaseJTree tree = new DatabaseJTree(top);
- 
-    return tree;
+    return new DatabaseDocument(location, pfield);
   }
 
-
-  /**
-   * Create the nodes of the organism JTree
-   * @param top       root node
-   * @param schema    <code>List</code>
-   * @param organism  sequences collection
-   */
-  private void createNodes(DatabaseTreeNode top, List schema,
-                           Hashtable entries)
-  {
-    DatabaseTreeNode schema_node;
-    DatabaseTreeNode seq_node;
-    DatabaseTreeNode typ_node;
-
-    final Object v_organism[] = entries.keySet().toArray();
-    final int v_organism_size = v_organism.length;
-    Arrays.sort(v_organism);  
-    
-    for(int i=0; i<schema.size(); i++)
-    {
-      int nchild = 0;
-      String name;
-      
-      if(schema.get(i) instanceof String)
-        name = (String)schema.get(i);
-      else
-        name = ((Organism)schema.get(i)).getCommonName();
-      
-      schema_node = new DatabaseTreeNode(name, DatabaseEntrySource.this);
-      Hashtable seq_type_node = new Hashtable();
-
-      for(int j = 0; j < v_organism_size; j++)
-      {
-        String seq_name  = (String)v_organism[j];
-        String featureId = (String)entries.get(seq_name);
-        
-        if(seq_name.startsWith(name))
-        {
-          int ind1 = seq_name.indexOf("- ");
-          int ind2 = seq_name.lastIndexOf("- ");
-
-          String type = seq_name.substring(ind1 + 2, ind2 - 1);
-          seq_name = seq_name.substring(ind2 + 2);
-
-          if(!seq_type_node.containsKey(type))
-          {
-            typ_node = new DatabaseTreeNode(type, DatabaseEntrySource.this);
-            seq_type_node.put(type, typ_node);
-            schema_node.add(typ_node);
-          }
-          else
-            typ_node = (DatabaseTreeNode) seq_type_node.get(type);
-
-          seq_node = new DatabaseTreeNode(seq_name, 
-                                          DatabaseEntrySource.this, 
-                                          featureId, name);
-          typ_node.add(seq_node);
-          nchild++;
-        }
-      }
-      if(nchild > 0)
-        top.add(schema_node);
-    }
-  }
-
+  
   /**
    * Set whether to split into separate entries.
    * @param splitGFFEntry

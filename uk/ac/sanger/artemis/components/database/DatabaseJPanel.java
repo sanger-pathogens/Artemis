@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.1 2006-10-23 13:34:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.2 2006-10-30 10:45:58 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -48,6 +48,8 @@ import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import javax.swing.tree.TreePath;
 
+import org.gmod.schema.organism.Organism;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -59,6 +61,11 @@ import java.awt.Toolkit;
 import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.io.*;
+import java.net.ConnectException;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.List;
 
 public class DatabaseJPanel extends JPanel
 {
@@ -70,7 +77,7 @@ public class DatabaseJPanel extends JPanel
                         final Splash splash_main)
   {
     setLayout(new BorderLayout());
-    tree = entry_source.getDatabaseTree();
+    tree = getDatabaseTree(entry_source);
 
     // Listen for when the selection changes.
     MouseListener mouseListener = new MouseAdapter()
@@ -283,6 +290,104 @@ public class DatabaseJPanel extends JPanel
     optionMenu.add(splitGFF);
 
     return mBar;
+  }
+  
+  /**
+   * Create database organism JTree.
+   */
+  private JTree getDatabaseTree(final DatabaseEntrySource entry_source)
+  {
+    Hashtable entries = null;
+    
+    while(entries == null)
+    {
+      try
+      {
+        DatabaseDocument doc = entry_source.getDatabaseDocument();
+        entries = doc.getDatabaseEntries();
+        final DatabaseTreeNode top = new DatabaseTreeNode("");
+        createNodes(top, doc.getSchema(), entries);
+        return new DatabaseJTree(top);
+      }
+      catch(ConnectException e)
+      {
+        entry_source.setLocation(true);
+      }
+      catch(SQLException e)
+      {
+        entry_source.setLocation(true);
+      }
+      catch(RuntimeException p)
+      {
+        entry_source.setLocation(true);
+      }
+    }
+    
+    return null;
+  }
+
+
+  /**
+   * Create the nodes of the organism JTree
+   * @param top       root node
+   * @param schema    <code>List</code>
+   * @param organism  sequences collection
+   */
+  private void createNodes(DatabaseTreeNode top, List schema,
+                           Hashtable entries)
+  {
+    DatabaseTreeNode schema_node;
+    DatabaseTreeNode seq_node;
+    DatabaseTreeNode typ_node;
+
+    final Object v_organism[] = entries.keySet().toArray();
+    final int v_organism_size = v_organism.length;
+    Arrays.sort(v_organism);  
+    
+    for(int i=0; i<schema.size(); i++)
+    {
+      int nchild = 0;
+      String name;
+      
+      if(schema.get(i) instanceof String)
+        name = (String)schema.get(i);
+      else
+        name = ((Organism)schema.get(i)).getCommonName();
+      
+      schema_node = new DatabaseTreeNode(name);
+      final Hashtable seq_type_node = new Hashtable();
+
+      for(int j = 0; j < v_organism_size; j++)
+      {
+        String seq_name  = (String)v_organism[j];
+        String featureId = (String)entries.get(seq_name);
+        
+        if(seq_name.startsWith(name))
+        {
+          int ind1 = seq_name.indexOf("- ");
+          int ind2 = seq_name.lastIndexOf("- ");
+
+          String type = seq_name.substring(ind1 + 2, ind2 - 1);
+          seq_name = seq_name.substring(ind2 + 2);
+
+          if(!seq_type_node.containsKey(type))
+          {
+            typ_node = new DatabaseTreeNode(type);
+            seq_type_node.put(type, typ_node);
+            schema_node.add(typ_node);
+          }
+          else
+            typ_node = (DatabaseTreeNode) seq_type_node.get(type);
+
+          seq_node = new DatabaseTreeNode(seq_name,
+                                          featureId, name);
+          typ_node.add(seq_node);
+          nchild++;
+        }
+      }
+      if(nchild > 0)
+        top.add(schema_node);
+    }
   }
   
   /**

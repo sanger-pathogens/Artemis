@@ -121,31 +121,21 @@ public class DatabaseJTree extends JTree
 
     public void dragDropEnd(DragSourceDropEvent dsde)
     {
-      // TODO Auto-generated method stub
-      
     }
 
     public void dragEnter(DragSourceDragEvent dsde)
     {
-      // TODO Auto-generated method stub
-      
     }
 
     public void dragExit(DragSourceEvent dse)
     {
-      // TODO Auto-generated method stub
-      
     }
 
     public void dragOver(DragSourceDragEvent dsde)
-    {
-      // TODO Auto-generated method stub
-      
+    {  
     }
 
     public void dropActionChanged(DragSourceDragEvent dsde)
-    {
-      // TODO Auto-generated method stub
-      
+    { 
     }
 }

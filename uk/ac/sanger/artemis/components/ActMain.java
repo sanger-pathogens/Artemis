@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.11 2006-10-23 13:34:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.12 2006-10-30 10:45:58 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,7 +47,7 @@ import javax.swing.JFrame;
  *  The main window for the Artemis Comparison Tool.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ActMain.java,v 1.11 2006-10-23 13:34:12 tjc Exp $
+ *  @version $Id: ActMain.java,v 1.12 2006-10-30 10:45:58 tjc Exp $
  **/
 
 public class ActMain extends Splash 
@@ -56,6 +56,7 @@ public class ActMain extends Splash
   public static final String version = "Release 5";
   /** File manager */
   protected static FileManager filemanager = null;
+  private static DatabaseEntrySource dbEntrySource;
 
   /**
    *  The constructor creates all the components for the main ACT window
@@ -92,6 +93,7 @@ public class ActMain extends Splash
           fm = new LocalAndRemoteFileManager(ActMain.this);
         else
           fm.setVisible(true);
+        dbEntrySource = fm.getDatabaseEntrySource();
         new ComparatorDialog(ActMain.this).setVisible(true);
       }
     }; 
@@ -248,11 +250,11 @@ public class ActMain extends Splash
         if(this_file_name instanceof DatabaseTreeNode)
         {
           DatabaseTreeNode dbNode = (DatabaseTreeNode)this_file_name;
-          DatabaseEntrySource entry_source = dbNode.getEntrySource();
+          //DatabaseEntrySource entry_source = dbNode.getEntrySource();
          
           try
           {
-            Entry entry = entry_source.getEntry(dbNode.getFeatureId(), 
+            Entry entry = dbEntrySource.getEntry(dbNode.getFeatureId(), 
                                                 dbNode.getSchema(),
                                                 progress_listener);
             embl_entry = (DatabaseDocumentEntry)entry.getEMBLEntry();

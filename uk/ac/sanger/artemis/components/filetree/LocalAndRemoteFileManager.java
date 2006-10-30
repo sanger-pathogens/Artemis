@@ -47,6 +47,7 @@ public class LocalAndRemoteFileManager extends JFrame
   private JScrollPane remoteTree;
   private SshJTreeTable sshtree;
   private JSplitPane treePane = null;
+  private DatabaseEntrySource entry_source;
 
   public LocalAndRemoteFileManager(JFrame frame)
   {
@@ -140,7 +141,7 @@ public class LocalAndRemoteFileManager extends JFrame
     if(System.getProperty("chado") != null)
     { 
       setTitle("Database and File Manager");
-      DatabaseEntrySource entry_source = new DatabaseEntrySource();
+      entry_source = new DatabaseEntrySource();
       if(!entry_source.setLocation(true))
         return;
     
@@ -624,5 +625,9 @@ public class LocalAndRemoteFileManager extends JFrame
     frame.setVisible(true);
   }
   
+  public DatabaseEntrySource getDatabaseEntrySource()
+  {
+    return entry_source;
+  }
 }
 
