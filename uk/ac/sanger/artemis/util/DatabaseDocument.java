@@ -1006,7 +1006,6 @@ public class DatabaseDocument extends Document
   public Hashtable getDatabaseEntries()
                    throws ConnectException, java.sql.SQLException
   {
-    db = new Hashtable();
     String schema = null;
 
     try
@@ -1015,7 +1014,8 @@ public class DatabaseDocument extends Document
       dao = getDAO();
       schema_list = dao.getOrganisms();
       Iterator it = schema_list.iterator();
-
+      db = new Hashtable();
+      
       while(it.hasNext())
       {
         Organism organism = (Organism)it.next();
@@ -1026,7 +1026,7 @@ public class DatabaseDocument extends Document
         try
         {
           dao = getDAO();
-          List list = dao.getResidueType(schema);
+          final List list = dao.getResidueType(schema);
           
           if(list.size() == 0)  // no residues for this organism
             continue;
