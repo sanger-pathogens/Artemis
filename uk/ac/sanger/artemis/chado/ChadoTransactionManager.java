@@ -92,15 +92,16 @@ public class ChadoTransactionManager
               "gff_source",      // program or database
               "gff_seqname" };   // seqID of coord system
            
-  private String synonym_tags[] =
-          {   "synonym",         // the rest are PSU synonyms
-              "gene",
-              "systematic_id", 
-              "primary_name",
-              "reserved_name",
-              "obsolete_name" };
+  //synonym tags from cv
+  private String synonym_tags[] = null;
+  private static String SYNONYM_TAG_CVNAME = "genedb_synonym_type";
 
 
+  public ChadoTransactionManager()
+  {
+    
+  }
+  
   /**
    *  Implementation of the FeatureChangeListener interface.  We listen for
    *  changes in every feature of every entry in this group.
@@ -760,6 +761,22 @@ public class ChadoTransactionManager
    */
   private boolean isSynonymTag(final String tag)
   {
+    if(synonym_tags == null)
+    {
+      synonym_tags = DatabaseDocument.getSynonymTypeNames(SYNONYM_TAG_CVNAME);
+      if(synonym_tags == null || synonym_tags.length < 1)
+      {
+        System.out.println("Using default synonym names");
+        synonym_tags = new String[6];
+        synonym_tags[0] = "synonym";
+        synonym_tags[1] = "gene";
+        synonym_tags[2] = "systematic_id";
+        synonym_tags[3] = "primary_name";
+        synonym_tags[4] = "reserved_name";
+        synonym_tags[5] = "obsolete_name";
+      }
+    }
+    
     for(int i=0; i<synonym_tags.length; i++)
       if(tag.equals(synonym_tags[i]))
         return true;
@@ -1353,6 +1370,30 @@ public class ChadoTransactionManager
   {
   }
 
+  public Vector getFeatureInsertUpdate()
+  {
+    Vector features = null;
+    
+    for(int i=0; i<sql.size(); i++)
+    {
+      ChadoTransaction transaction = (ChadoTransaction)sql.get(i);
+      if(transaction.getType() == ChadoTransaction.INSERT ||
+         transaction.getType() == ChadoTransaction.UPDATE)
+      {
+        if(transaction.getFeatureObject() instanceof 
+           org.gmod.schema.sequence.Feature)
+        {
+          if(features == null)
+            features = new Vector();
+          org.gmod.schema.sequence.Feature feature =
+            (org.gmod.schema.sequence.Feature)transaction.getFeatureObject();
+          features.add( feature.getUniqueName() );
+        }
+      }
+    }
+    return features;
+  }
+  
   /**
    * Commit the transactions back to the database.  
    *
@@ -1363,6 +1404,7 @@ public class ChadoTransactionManager
     if(retVal > 0)
       sql = new Vector();
   }
+  
   
 }
 

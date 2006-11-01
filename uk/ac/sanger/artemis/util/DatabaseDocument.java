@@ -39,7 +39,9 @@ import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
+import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 
 import java.sql.*;
@@ -68,7 +70,7 @@ public class DatabaseDocument extends Document
   /** database schema */
   private String schema = "public";
 
-  private static Hashtable cvterm;
+  private static Hashtable cvterms;
 
   private InputStreamProgressListener progress_listener;
 
@@ -482,7 +484,7 @@ public class DatabaseDocument extends Document
                  dao.getFeatureDbXRefsByFeatureUniquename(null));
     Hashtable synonym = getAllFeatureSynonyms(dao, null);
 
-    List featureCvTerms = dao.getFeatureCvTermsByFeature(null);
+    Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao);
     
     if(featureCvTerms != null)
       System.out.println("\n\n"+featureCvTerms.size()+"\n\n");
@@ -503,7 +505,7 @@ public class DatabaseDocument extends Document
       
       
       chadoToGFF(feat, parentFeature.getUniqueName(),
-                 dbxrefs, synonym,
+                 dbxrefs, synonym, featureCvTerms,
                  id_store, dao, 
                  feat.getFeatureLoc(), this_buff);
        
@@ -544,8 +546,32 @@ public class DatabaseDocument extends Document
     }
     
     return synonym;
-  }  
- 
+  }
+  
+  private Hashtable getFeatureCvTermsByFeature(final GmodDAO dao)
+  {
+    List list = dao.getFeatureCvTermsByFeature(null);
+    
+    Hashtable featureCvTerms = new Hashtable();
+    Integer feature_id;
+    List value;
+    FeatureCvTerm feature_cvterm;
+    
+    for(int i=0; i<list.size(); i++)
+    {
+      feature_cvterm = (FeatureCvTerm)list.get(i);
+      feature_id = new Integer(feature_cvterm.getFeature().getFeatureId());
+      if(featureCvTerms.containsKey(feature_id))
+        value = (Vector)featureCvTerms.get(feature_id);
+      else
+        value = new Vector();
+      
+      value.add(feature_cvterm);
+      featureCvTerms.put(feature_id, value);
+    }
+    
+    return featureCvTerms;
+  }
   
   /**
    * Use by the gene editor to retrieve the gene and related
@@ -590,7 +616,7 @@ public class DatabaseDocument extends Document
 
     ByteBuffer buff = new ByteBuffer();
     
-    chadoToGFF(feature, null, null, null, null, dao,
+    chadoToGFF(feature, null, null, null, null, null, dao,
                featureloc, buff);
 
     // get children of gene
@@ -611,7 +637,7 @@ public class DatabaseDocument extends Document
       FeatureLoc loc = getFeatureLoc(new Vector(
           transcript.getFeatureLocsForFeatureId()), src_id);
       chadoToGFF(transcript, feature.getUniqueName(), null,
-          null, id_store, dao, loc, buff);
+          null, null, id_store, dao, loc, buff);
 
       // get children of transcript - exons and pp
       List transcipt_relations = new Vector(
@@ -631,7 +657,7 @@ public class DatabaseDocument extends Document
         loc = getFeatureLoc(
             new Vector(child.getFeatureLocsForFeatureId()),src_id);
         chadoToGFF(child, transcript.getUniqueName(), null,
-                   null, id_store, dao, loc, buff);
+                   null, null, id_store, dao, loc, buff);
       }
     }
 
@@ -653,6 +679,7 @@ public class DatabaseDocument extends Document
                                  final String parentFeature,
                                  final Hashtable dbxrefs,
                                  final Hashtable synonym,
+                                 final Hashtable featureCvTerms,
                                  final Hashtable id_store,
                                  final GmodDAO dao,
                                  final FeatureLoc featureloc,
@@ -660,16 +687,15 @@ public class DatabaseDocument extends Document
   {
     String gff_source = null;
     
-    int fmin          = featureloc.getFmin().intValue() + 1;
-    int fmax          = featureloc.getFmax().intValue();
-    long type_id      = feat.getCvTerm().getCvTermId();
-    Short strand      = featureloc.getStrand();
-    Integer phase     = featureloc.getPhase();
-    String name       = feat.getUniqueName();
-    String typeName   = getCvtermName(type_id, dao);
-
-    String timelastmodified = Long.toString(feat.getTimeLastModified().getTime());
-    Integer feature_id      = new Integer(feat.getFeatureId());
+    final int fmin           = featureloc.getFmin().intValue() + 1;
+    final int fmax           = featureloc.getFmax().intValue();
+    final long type_id       = feat.getCvTerm().getCvTermId();
+    final Short strand       = featureloc.getStrand();
+    final Integer phase      = featureloc.getPhase();
+    final String name        = feat.getUniqueName();
+    final String typeName    = getCvtermName(type_id, dao);
+    final Integer feature_id = new Integer(feat.getFeatureId());
+    final String timelastmodified = Long.toString(feat.getTimeLastModified().getTime());
 
     String parent_id = null;
     String parent_relationship = null;
@@ -818,6 +844,25 @@ public class DatabaseDocument extends Document
       }
     }
     
+    if(featureCvTerms != null && 
+       featureCvTerms.containsKey(feature_id))
+    {
+      FeatureCvTerm feature_cvterm;
+      Vector v_feature_cvterms = (Vector)featureCvTerms.get(feature_id);
+      for(int j=0; j<v_feature_cvterms.size(); j++)
+      {
+        feature_cvterm = (FeatureCvTerm)v_feature_cvterms.get(j);
+        
+        DbXRef dbXRef = feature_cvterm.getCvTerm().getDbXRef();
+              
+        this_buff.append("GO=");
+        if(feature_cvterm.isNot())
+          this_buff.append("qualifier=NOT;");
+        this_buff.append(dbXRef.getDb().getName()+":"+dbXRef.getAccession()+";");       
+      }
+      //System.out.println(new String(this_buff.getBytes()));
+    }
+      
     this_buff.append("\n");
   }
   
@@ -829,11 +874,11 @@ public class DatabaseDocument extends Document
    */
   public static Long getCvtermID(String name)
   {
-    Enumeration enum_cvterm = cvterm.keys();
+    Enumeration enum_cvterm = cvterms.keys();
     while(enum_cvterm.hasMoreElements())
     {
       Long key = (Long)enum_cvterm.nextElement();
-      if(name.equals(cvterm.get(key)))
+      if(name.equals( ((CvTerm)cvterms.get(key)).getName() ))
         return key;
     }
     return null;
@@ -846,10 +891,10 @@ public class DatabaseDocument extends Document
    */
   private static String getCvtermName(long id, GmodDAO dao)
   {
-    if(cvterm == null)
+    if(cvterms == null)
       getCvterm(dao);
 
-    return (String)cvterm.get(new Long(id));
+    return ((CvTerm)cvterms.get(new Long(id))).getName();
   }
 
   /**
@@ -859,17 +904,17 @@ public class DatabaseDocument extends Document
    */
   private static Hashtable getCvterm(GmodDAO dao)
   {
-    cvterm = new Hashtable();
+    cvterms = new Hashtable();
 
     try
     {
-      List cvtem_list = dao.getCvTerms();
-      Iterator it = cvtem_list.iterator();
+      List cvterm_list = dao.getCvTerms();
+      Iterator it = cvterm_list.iterator();
 
       while(it.hasNext())
       {
-        CvTerm cv = (CvTerm)it.next();
-        cvterm.put(new Long(cv.getCvTermId()), cv.getName());
+        CvTerm cvterm = (CvTerm)it.next();
+        cvterms.put(new Long(cvterm.getCvTermId()), cvterm);
       }
     }
     catch(RuntimeException sqle)
@@ -878,9 +923,29 @@ public class DatabaseDocument extends Document
       System.err.println(sqle);
     }
 
-    return cvterm;
+    return cvterms;
   }
 
+  /**
+   * Look up synonym type names e.g. synonym, systematic_id.
+   * @return    the synonym tag names
+   */
+  public static String[] getSynonymTypeNames(String cv_name)
+  {
+    Vector synonym_names = new Vector();
+    Enumeration cvterm_enum = cvterms.elements();
+    while(cvterm_enum.hasMoreElements())
+    {
+      CvTerm cvterm = (CvTerm)cvterm_enum.nextElement();
+      if(cvterm.getCv().getName().equals(cv_name))
+        synonym_names.add(cvterm.getName());
+    }
+    
+    return (String[])synonym_names.toArray(
+                       new String[synonym_names.size()]);
+  }
+  
+  
   /**
    * Get the sequence for a feature.
    * @param dao   the data access object

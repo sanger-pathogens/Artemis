@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.29 2006-10-26 12:39:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.30 2006-11-01 16:34:07 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,13 +44,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
+import java.util.List;
 
 
 /**
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.29 2006-10-26 12:39:39 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.30 2006-11-01 16:34:07 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -129,6 +130,7 @@ public class EntryEdit extends JFrame
 
       if(getEntryGroup().getDefaultEntry().getEMBLEntry() instanceof DatabaseDocumentEntry)
       {
+        
         getEntryGroup().addFeatureChangeListener(ctm);
         getEntryGroup().addEntryChangeListener(ctm);
 
@@ -1242,6 +1244,11 @@ public class EntryEdit extends JFrame
    */
   private boolean isUniqueID(final EntryGroup entry_group)
   {
+    // only need to check if the Feature table has been changed
+    List changed_features = ctm.getFeatureInsertUpdate();
+    if(changed_features == null)
+      return true;
+    
     FeatureVector features = entry_group.getAllFeatures();
     FeatureVector duplicateIDs = new FeatureVector();
     for(int i=0; i<features.size()-1; i++)
@@ -1251,6 +1258,8 @@ public class EntryEdit extends JFrame
       try
       {
         id = (String)ifeature.getQualifierByName("ID").getValues().get(0);
+        if(!changed_features.contains(id))
+          continue;
       }
       catch(InvalidRelationException e)
       {

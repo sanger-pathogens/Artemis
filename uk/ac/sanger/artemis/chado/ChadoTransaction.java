@@ -117,6 +117,10 @@ public class ChadoTransaction
     return old_uniquename;
   }
   
+  /**
+   * Set a uniquename, e.g. to be used when changing a featureprop
+   * @param uniquename
+   */
   public void setUniquename(final String uniquename)
   {
     this.uniquename = uniquename;
