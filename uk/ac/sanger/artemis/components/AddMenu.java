@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.18 2006-10-26 12:39:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.19 2006-11-02 14:39:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -52,7 +52,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.18 2006-10-26 12:39:39 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.19 2006-11-02 14:39:32 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -1100,13 +1100,19 @@ public class AddMenu extends SelectionMenu
 
       try 
       {
-        Qualifier qualifier = new Qualifier("ID", uniquename+Integer.toString(i+1));
-        QualifierVector qualifiers = new QualifierVector();
-        qualifiers.setQualifier(qualifier);
+        QualifierVector qualifiers = null;
+        if(entry.getEMBLEntry() instanceof 
+            uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
+        {
+          Qualifier qualifier = new Qualifier("ID", uniquename+Integer.toString(i+1));
+          qualifiers = new QualifierVector();
+          qualifiers.setQualifier(qualifier);
+        }
         new_feature = makeFeatureFromMarkerRange (entry, this_range, Key.CDS, qualifiers);
       } 
       catch (EntryInformationException e) 
       {
+        e.printStackTrace();
         new MessageDialog (getParentFrame (), "cannot continue: " +
                            "the default entry does not support CDS features");
         return;
