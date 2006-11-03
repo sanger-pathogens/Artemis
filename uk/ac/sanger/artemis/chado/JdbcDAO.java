@@ -33,6 +33,7 @@ import java.util.Vector;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.Synonym;
@@ -42,6 +43,7 @@ import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.cv.Cv;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.pub.Pub;
 
@@ -186,7 +188,7 @@ public class JdbcDAO extends GmodDAO
     String sql = 
        "SELECT feature_id, fc.feature_cvterm_id, is_not AS not, "+
        "pub_id, fc.cvterm_id, fcp.type_id, fcp.value, fcp.rank, "+
-       "db.name, dbxref.accession "+
+       "c.name AS cvterm_name, db.name, dbxref.accession "+
        "FROM feature_cvterm fc "+
        "LEFT JOIN feature_cvtermprop fcp ON fc.feature_cvterm_id=fcp.feature_cvterm_id " +
        "LEFT JOIN cvterm c ON fc.cvterm_id=c.cvterm_id " +
@@ -196,6 +198,8 @@ public class JdbcDAO extends GmodDAO
     if(feature != null && feature.getUniqueName() != null)
       sql = sql + " WHERE "+
         "feature_id=(SELECT feature_id FROM feature WHERE uniquename=#uniqueName#)";
+    
+    sql = sql + " ORDER BY fcp.feature_cvterm_id, fcp.rank";
     
     appendToLogFile(sql, sqlLog);
 
@@ -220,6 +224,7 @@ public class JdbcDAO extends GmodDAO
         
         CvTerm cvterm = new CvTerm();
         cvterm.setCvTermId(rs.getInt("cvterm_id"));
+        cvterm.setName(rs.getString("cvterm_name"));
         
         DbXRef dbxref = new DbXRef();
         dbxref.setAccession(rs.getString("accession"));   
@@ -235,28 +240,34 @@ public class JdbcDAO extends GmodDAO
         List featureCvTermProps = new Vector();
         
         int next_feature_cvterm_id = -1;
+        int rank;
+        int next_rank = -1;
+        
         int feature_cvterm_id = rs.getInt("feature_cvterm_id");
         do
         {
-          FeatureProp featureProp = new FeatureProp();
+          rank = rs.getInt("rank");
+          FeatureCvTermProp featureProp = new FeatureCvTermProp();
           CvTerm featurePropCvTerm = new CvTerm();
           featurePropCvTerm.setCvTermId(rs.getInt("type_id"));
           featureProp.setCvTerm(featurePropCvTerm);
           featureProp.setValue(rs.getString("value"));
-          featureProp.setRank(rs.getInt("rank"));
+          featureProp.setRank(rank);
           
           featureCvTermProps.add(featureProp);
           
           if(rs.next())
           {
             next_feature_cvterm_id = rs.getInt("feature_cvterm_id");
-            if(feature_cvterm_id != next_feature_cvterm_id)
+            next_rank = rs.getInt("rank");
+            if(feature_cvterm_id != next_feature_cvterm_id ||
+               next_rank != rank)
               rs.previous();
           }
           else
             next_feature_cvterm_id = -1;
 
-        } while(feature_cvterm_id == next_feature_cvterm_id);
+        } while(feature_cvterm_id == next_feature_cvterm_id && rank == next_rank);
 
         feature_cvterm.setFeatureCvTermProps(featureCvTermProps);
         featureCvTerms.add(feature_cvterm);
@@ -305,7 +316,8 @@ public class JdbcDAO extends GmodDAO
    */
   public List getFeatureDbXRefsByFeatureUniquename(final String uniqueName)
   {
-    String sql = "SELECT db.name, dbx.accession, f.feature_id FROM "
+    String sql = "SELECT db.name, dbx.accession, dbx.version, dbx.description, "
+        + "dbx_f.feature_id, dbx_f.is_current FROM "
         + "feature_dbxref dbx_f "
         + "LEFT JOIN dbxref dbx ON dbx.dbxref_id=dbx_f.dbxref_id "
         + "LEFT JOIN db ON db.db_id=dbx.db_id "
@@ -314,6 +326,8 @@ public class JdbcDAO extends GmodDAO
     if(uniqueName != null)
       sql = sql + "WHERE f.uniquename='" + uniqueName + "'";
 
+    sql = sql + " ORDER BY f.type_id,  uniquename";
+    
     appendToLogFile(sql, sqlLog);
 
     try
@@ -329,11 +343,14 @@ public class JdbcDAO extends GmodDAO
         Db db = new Db();
         db.setName(rs.getString("name"));
         dbxref.setAccession(rs.getString("accession"));
+        dbxref.setVersion(rs.getString("version"));
+        dbxref.setDescription(rs.getString("description"));
         dbxref.setDb(db);
         Feature feat = new Feature();
         feat.setFeatureId(rs.getInt("feature_id"));
         feature_dbxref.setDbXRef(dbxref);
         feature_dbxref.setFeature(feat);
+        feature_dbxref.setCurrent(rs.getBoolean("is_current"));
         dbxrefs.add(feature_dbxref);
       }
 
@@ -586,33 +603,43 @@ public class JdbcDAO extends GmodDAO
         do
         {
           // feature properties
-          FeatureProp featureprop = new FeatureProp();
-          CvTerm cvterm = new CvTerm();
-          cvterm.setCvTermId(rs.getInt("prop_type_id"));
-          featureprop.setCvTerm(cvterm);
-          featureprop.setValue(rs.getString("value"));
+          int prop_type_id = rs.getInt("prop_type_id");
           
-          if(feature.getFeatureProps() == null ||
-             feature.getFeatureProps().size() == 0)
-            feature.setFeatureProps(new Vector());
-          feature.addFeatureProp(featureprop);
+          if(prop_type_id != 0)
+          {
+            FeatureProp featureprop = new FeatureProp();
+            CvTerm cvterm = new CvTerm();
+            cvterm.setCvTermId(prop_type_id);
+            featureprop.setCvTerm(cvterm);
+            featureprop.setValue(rs.getString("value"));
 
+            if(feature.getFeatureProps() == null
+                || feature.getFeatureProps().size() == 0)
+              feature.setFeatureProps(new Vector());
+            feature.addFeatureProp(featureprop);
+          }
+          
           // feature relationship
           FeatureRelationship feature_relationship = new FeatureRelationship();
-          cvterm = new CvTerm();
+          CvTerm cvterm = new CvTerm();
           cvterm.setCvTermId(rs.getInt("relation_type_id"));
           feature_relationship.setCvTerm(cvterm);
 
-          Feature object = new Feature();
-          object.setFeatureId(rs.getInt("object_id"));
-          feature_relationship.setFeatureByObjectId(object);
+          int obj_id = rs.getInt("object_id");
           
-          if(feature.getFeatureRelationshipsForSubjectId() == null ||
-             feature.getFeatureRelationshipsForSubjectId().size() == 0)
-            feature.setFeatureRelationshipsForSubjectId(new Vector());
+          if(obj_id != 0)
+          {
+            Feature object = new Feature();
+            object.setFeatureId(obj_id);
+            feature_relationship.setFeatureByObjectId(object);
+
+            if(feature.getFeatureRelationshipsForSubjectId() == null
+                || feature.getFeatureRelationshipsForSubjectId().size() == 0)
+              feature.setFeatureRelationshipsForSubjectId(new Vector());
+
+            feature.addFeatureRelationshipsForSubjectId(feature_relationship);
+          }
           
-          feature.addFeatureRelationshipsForSubjectId(feature_relationship);
-        
           if(!rs.isLast())
           {
             rs.next();
@@ -787,7 +814,7 @@ public class JdbcDAO extends GmodDAO
    */
   public List getCvTerms()
   {
-    String sql = "SELECT cvterm.cvterm_id, cvterm.name " +
+    String sql = "SELECT cvterm.cvterm_id, cvterm.name as cvterm_name, cv.NAME as cv_name " +
                  "FROM cvterm, cv WHERE cv.cv_id = cvterm.cv_id";
 
     appendToLogFile(sql, sqlLog);
@@ -802,7 +829,10 @@ public class JdbcDAO extends GmodDAO
       {
         CvTerm cvterm = new CvTerm();
         cvterm.setCvTermId(rs.getInt("cvterm_id"));
-        cvterm.setName(rs.getString("name"));
+        cvterm.setName(rs.getString("cvterm_name"));
+        Cv cv = new Cv();
+        cv.setName(rs.getString("cv_name"));
+        cvterm.setCv(cv);
         cvterms.add(cvterm);
       }
       return cvterms;

@@ -40,6 +40,7 @@ import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
@@ -797,7 +798,8 @@ public class DatabaseDocument extends Document
     //this_buff.append("feature_id="+feature_id+";");
     
     // attributes
-    if(feat.getFeatureProps() != null)
+    if(feat.getFeatureProps() != null &&
+       feat.getFeatureProps().size() > 0)
     {
       List featureprops = (List)feat.getFeatureProps();
       for(int j=0; j<featureprops.size(); j++)
@@ -853,12 +855,49 @@ public class DatabaseDocument extends Document
       {
         feature_cvterm = (FeatureCvTerm)v_feature_cvterms.get(j);
         
+        CvTerm cvterm =  getCvTerm( feature_cvterm.getCvTerm().getCvTermId(), dao);
         DbXRef dbXRef = feature_cvterm.getCvTerm().getDbXRef();
-              
-        this_buff.append("GO=");
-        if(feature_cvterm.isNot())
-          this_buff.append("qualifier=NOT;");
-        this_buff.append(dbXRef.getDb().getName()+":"+dbXRef.getAccession()+";");       
+          
+        if(cvterm.getCv().getName().equals("genedb_controlledcuration"))
+        {
+          int cvtermId  = feature_cvterm.getCvTerm().getCvTermId();
+          String cvName = getCvTerm(cvtermId, dao).getCv().getName();
+          
+          this_buff.append("controlled_curation=");
+          this_buff.append("cv="+cvName+"%3B");
+          this_buff.append("term="+feature_cvterm.getCvTerm().getName()+"%3B");
+          this_buff.append("db_xref="+dbXRef.getDb().getName() + ":"
+              + dbXRef.getAccession() + "%3B");
+          
+          List feature_cvtermprops = (List)feature_cvterm.getFeatureCvTermProps();
+          for(int i=0; i<feature_cvtermprops.size(); i++)
+          {
+            FeatureCvTermProp feature_cvtermprop = (FeatureCvTermProp)feature_cvtermprops.get(i);
+            this_buff.append(getCvtermName(feature_cvtermprop.getCvTerm().getCvTermId(), dao));
+            this_buff.append("=");
+            this_buff.append(feature_cvtermprop.getValue());
+            if(i<feature_cvtermprops.size())
+              this_buff.append("%3B");
+          }
+          this_buff.append(";");
+        }
+        else
+        {
+          this_buff.append("GO=");
+
+          if(cvterm.getCv().getName().equals("molecular_function"))
+            this_buff.append("aspect=F%3B");
+          else if(cvterm.getCv().getName().equals("cellular_component"))
+            this_buff.append("aspect=C%3B");
+          else if(cvterm.getCv().getName().equals("biological_process"))
+            this_buff.append("aspect=P%3B");
+
+          if(feature_cvterm.isNot())
+            this_buff.append("qualifier=NOT%3B");
+
+          this_buff.append("GOid="+dbXRef.getDb().getName() + ":"
+              + dbXRef.getAccession() + ";"); 
+        }
       }
       //System.out.println(new String(this_buff.getBytes()));
     }
@@ -891,10 +930,15 @@ public class DatabaseDocument extends Document
    */
   private static String getCvtermName(long id, GmodDAO dao)
   {
+    return getCvTerm(id, dao).getName();
+  }
+  
+  private static CvTerm getCvTerm(long id, GmodDAO dao)
+  {
     if(cvterms == null)
-      getCvterm(dao);
+      getCvterms(dao);
 
-    return ((CvTerm)cvterms.get(new Long(id))).getName();
+    return (CvTerm)cvterms.get(new Long(id));
   }
 
   /**
@@ -902,7 +946,7 @@ public class DatabaseDocument extends Document
    * @param dao the data access object
    * @return    the cvterm <code>Hashtable</code>
    */
-  private static Hashtable getCvterm(GmodDAO dao)
+  private static Hashtable getCvterms(GmodDAO dao)
   {
     cvterms = new Hashtable();
 
