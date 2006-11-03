@@ -7,6 +7,11 @@
 
 <sqlMap namespace="CvTerm"> 
 
+    <cacheModel id="cvterm-cache" type ="LRU" readOnly="true"> 
+      <flushInterval hours="24"/>  
+      <property name="cache-size" value="100" /> 
+    </cacheModel> 
+    
     <typeAlias alias="CvTerm"
         type="org.gmod.schema.cv.CvTerm"/>
  
@@ -48,7 +53,7 @@
      
       <!-- look up cvterms names and id -->
      <select id="selectCvterm" 
-             resultMap="lazy-cvterm"> 
+             resultMap="lazy-cvterm" cacheModel="cvterm-cache"> 
        SELECT *
        FROM cvterm
        WHERE cvterm_id=#value# 

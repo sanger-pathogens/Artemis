@@ -144,9 +144,11 @@
      </resultMap>
      
      <resultMap id="select-featurecvterm" class="FeatureCvTerm" 
-                groupBy="feature_cvterm_id">
+                groupBy="featureCvTermId">
+        <result property="featureCvTermId" column="feature_cvterm_id" />
         <result property="feature.featureId" column="feature_id" />
-        <result property="cvTerm.cvTermId" column="cvterm_id" />
+        <result property="cvTerm.cvTermId"   column="cvterm_id" />
+        <result property="cvTerm.name"       column="cvterm_name" />
         <result property="cvTerm.dbXRef.accession" column="accession" />
         <result property="cvTerm.dbXRef.db.name" column="name" />
         <result property="not" column="not" />
@@ -185,6 +187,7 @@
        WHERE featureloc.feature_id=#id#
      </select>
      
+
      <!--  select feature_cvterm -->
      <select id="getFeatureCvTermsByFeature" parameterClass="Feature"
              resultMap="select-featurecvterm">
@@ -197,6 +200,7 @@
              fcp.type_id,
              fcp.value,
              fcp.rank,
+             c.name AS cvterm_name,
              db.name,
              dbxref.accession
         FROM feature_cvterm fc
@@ -209,6 +213,7 @@
             feature_id=(SELECT feature_id FROM feature WHERE uniquename=#uniqueName#)
           </isNotNull>
         </dynamic>
+        ORDER BY fcp.feature_cvterm_id, fcp.rank
      </select>
 
      <!-- get feature -->
