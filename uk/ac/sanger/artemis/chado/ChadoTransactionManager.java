@@ -57,6 +57,7 @@ import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
+import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.Synonym;
 
 import org.gmod.schema.cv.*;
@@ -92,6 +93,12 @@ public class ChadoTransactionManager
               "gff_source",      // program or database
               "gff_seqname" };   // seqID of coord system
            
+  //controlled vocab tags
+  private String cv_tags[] =
+          {   "GO",
+              "controlled_curation",
+              "product" };
+  
   //synonym tags from cv
   private String synonym_tags[] = null;
   private static String SYNONYM_TAG_CVNAME = "genedb_synonym_type";
@@ -755,6 +762,19 @@ public class ChadoTransactionManager
   }
   
   /**
+   * Determine if this is a controlled vocabulary tag, e.g GO.
+   * @param tag
+   * @return  true if the tag is a CV tag
+   */
+  private boolean isCvTag(final String tag)
+  {
+    for(int i=0; i<cv_tags.length; i++)
+      if(tag.equals(cv_tags[i]))
+        return true;
+    return false;
+  }
+  
+  /**
    * Determine if this is a GFF3 predefined tag.
    * @param tag
    * @return  true if the tag is a GFF3 predefined tag
@@ -840,7 +860,7 @@ public class ChadoTransactionManager
       
       if(!qualifiers_new.contains(name))
       {
-        if(isReservedTag(name) || isSynonymTag(name))
+        if(isReservedTag(name) || isSynonymTag(name) || isCvTag(name))
         {
           handleReservedTags(feature, uniquename, 
               null,
@@ -924,7 +944,7 @@ public class ChadoTransactionManager
           continue;
       }
 
-      if(isReservedTag(name) || isSynonymTag(name))
+      if(isReservedTag(name) || isSynonymTag(name) || isCvTag(name))
       {
         handleReservedTags(feature, uniquename, 
                            this_qualifier,
@@ -1144,22 +1164,11 @@ public class ChadoTransactionManager
          
          if(qualifier_name.equals("Dbxref"))
          {
-           index = qualifier_string.lastIndexOf(":");
-         
            System.out.println(uniquename+"  in handleReservedTags() DELETE db="+
                qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
          
-           FeatureDbXRef old_dbxref = new FeatureDbXRef();
-           org.gmod.schema.sequence.Feature chado_feature = 
-             new org.gmod.schema.sequence.Feature();
-           DbXRef dbxref = new DbXRef();
-           Db db = new Db();
-           db.setName(qualifier_string.substring(0,index));
-           dbxref.setAccession(qualifier_string.substring(index+1));
-           dbxref.setDb(db);
-           chado_feature.setUniqueName(uniquename);
-           old_dbxref.setDbXRef(dbxref);
-           old_dbxref.setFeature(chado_feature);
+           FeatureDbXRef old_dbxref = getFeatureDbXRef(qualifier_string,
+                                                       uniquename);
            
            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
                old_dbxref,
@@ -1175,23 +1184,25 @@ public class ChadoTransactionManager
                                       feature.getLastModified(), feature);
            sql.add(tsn);
          }
+         else if(isCvTag(qualifier_name))
+         {
+           System.out.println(uniquename+"  in handleReservedTags() DELETE "+
+               qualifier_name+" "+qualifier_string);
+           FeatureCvTerm feature_cvterm = getFeatureCvTerm(qualifier_string, uniquename);
+           tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+                                      feature_cvterm,
+                                      feature.getLastModified(), feature);       
+         }
          else if(isSynonymTag(qualifier_name))
          {
            System.out.println(uniquename+"  in handleReservedTags() DELETE "+qualifier_name+" "+
                               qualifier_string);
            
-           FeatureSynonym alias = new FeatureSynonym();
-           org.gmod.schema.sequence.Feature chado_feature =
-             new org.gmod.schema.sequence.Feature();
-           chado_feature.setUniqueName(uniquename);
-           
-           Synonym synonym = new Synonym();
-           synonym.setName(qualifier_string);
-           alias.setSynonym(synonym);
-           alias.setFeature(chado_feature);
+           FeatureSynonym feature_synonym = getFeatureSynonym(qualifier_name,
+                                               qualifier_string, uniquename);
           
            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
-               alias,
+               feature_synonym,
                feature.getLastModified(), feature);   
          }
          sql.add(tsn);
@@ -1211,22 +1222,11 @@ public class ChadoTransactionManager
          qualifier_string = qualifier_string.substring(index+1);
          
          if(qualifier_name.equals("Dbxref"))
-         {
-           index = qualifier_string.lastIndexOf(":");
-         
+         {   
            System.out.println(uniquename+"  in handleReservedTags() INSERT db="+
              qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
-           FeatureDbXRef new_dbxref = new FeatureDbXRef();
-           DbXRef dbxref = new DbXRef();
-           Db db = new Db();
-           db.setName(qualifier_string.substring(0,index));
-           dbxref.setDb(db);
-           dbxref.setAccession(qualifier_string.substring(index+1));
-           new_dbxref.setDbXRef(dbxref);
-           org.gmod.schema.sequence.Feature feat = 
-             new org.gmod.schema.sequence.Feature();
-           feat.setUniqueName(uniquename);
-           new_dbxref.setFeature(feat);
+           FeatureDbXRef new_dbxref = getFeatureDbXRef(qualifier_string,
+                                                       uniquename);
            
            tsn = new ChadoTransaction(ChadoTransaction.INSERT,
                new_dbxref,
@@ -1242,27 +1242,21 @@ public class ChadoTransactionManager
                                       feature.getLastModified(), feature);
            sql.add(tsn);
          }
+         else if(isCvTag(qualifier_name))
+         {
+           System.out.println(uniquename+"  in handleReservedTags() INSERT "+qualifier_name+" "+
+               qualifier_string);
+         }
          else if(isSynonymTag(qualifier_name))
          {
            System.out.println(uniquename+"  in handleReservedTags() INSERT "+qualifier_name+" "+
                qualifier_string);
-           Long lcvterm_id = DatabaseDocument.getCvtermID(qualifier_name);
-           FeatureSynonym alias = new FeatureSynonym();
-           org.gmod.schema.sequence.Feature chado_feature = 
-             new org.gmod.schema.sequence.Feature();
-           chado_feature.setUniqueName(uniquename);
-           
-           Synonym synonym = new Synonym();
-           CvTerm cvterm = new CvTerm();
-           cvterm.setCvTermId(lcvterm_id.intValue());
-           synonym.setName(qualifier_string);
-           synonym.setCvTerm(cvterm);
-           
-           alias.setSynonym(synonym);
-           alias.setFeature(chado_feature);
+
+           FeatureSynonym feature_synonym = getFeatureSynonym(qualifier_name,
+                                               qualifier_string, uniquename);
 
            tsn = new ChadoTransaction(ChadoTransaction.INSERT,
-               alias,
+               feature_synonym,
                feature.getLastModified(), feature);
          }
          sql.add(tsn);
@@ -1345,6 +1339,14 @@ public class ChadoTransactionManager
     return featureloc;
   }
   
+  /**
+   * Create the <code>FeatureProp</code> object
+   * @param uniquename
+   * @param qualifier_string
+   * @param lcvterm_id
+   * @param rank
+   * @return
+   */
   private FeatureProp getFeatureProp(final String uniquename,
                                      final String qualifier_string,
                                      final Long lcvterm_id, 
@@ -1361,6 +1363,96 @@ public class ChadoTransactionManager
     featureprop.setCvTerm(cvterm);
     featureprop.setFeature(chado_feature);
     return featureprop;
+  }
+  
+  /**
+   * Create the <code>FeatureSynonym</code> object
+   * @param qualifier_name
+   * @param qualifier_string
+   * @param uniqueName
+   * @return
+   */
+  private FeatureSynonym getFeatureSynonym(final String qualifier_name,
+                                           final String qualifier_string,
+                                           final String uniqueName)
+  {
+    Long lcvterm_id = DatabaseDocument.getCvtermID(qualifier_name);
+    FeatureSynonym feature_synonym = new FeatureSynonym();
+    org.gmod.schema.sequence.Feature chado_feature = 
+      new org.gmod.schema.sequence.Feature();
+    chado_feature.setUniqueName(uniqueName);
+    
+    Synonym synonym = new Synonym();
+    CvTerm cvterm = new CvTerm();
+    cvterm.setCvTermId(lcvterm_id.intValue());
+    synonym.setName(qualifier_string);
+    synonym.setCvTerm(cvterm);
+    
+    feature_synonym.setSynonym(synonym);
+    feature_synonym.setFeature(chado_feature); 
+    return feature_synonym;
+  }
+  
+  /**
+   * Create the <code>FeatureDbXRef</code> object
+   * @param qualifier_string
+   * @param uniqueName
+   * @return
+   */
+  private FeatureDbXRef getFeatureDbXRef(final String qualifier_string,
+                                         final String uniqueName)
+  {
+    int index = qualifier_string.lastIndexOf(":");
+    FeatureDbXRef feature_dbxref = new FeatureDbXRef();
+    DbXRef dbxref = new DbXRef();
+    Db db = new Db();
+    db.setName(qualifier_string.substring(0,index));
+    dbxref.setDb(db);
+    dbxref.setAccession(qualifier_string.substring(index+1));
+    feature_dbxref.setDbXRef(dbxref);
+    org.gmod.schema.sequence.Feature feat = 
+      new org.gmod.schema.sequence.Feature();
+    feat.setUniqueName(uniqueName);
+    feature_dbxref.setFeature(feat);
+    return feature_dbxref;
+  }
+  
+  /**
+   * Create the <code>FeatureCvTerm</code> object
+   * @param qualifier_string
+   * @param uniqueName
+   * @return
+   */
+  private FeatureCvTerm getFeatureCvTerm(final String qualifier_string,
+                                         final String uniqueName)
+  {
+    FeatureCvTerm feature_cvterm = new FeatureCvTerm();
+    org.gmod.schema.sequence.Feature chado_feature =
+      new org.gmod.schema.sequence.Feature();
+    chado_feature.setUniqueName(uniqueName);
+    feature_cvterm.setFeature(chado_feature);
+    
+    if(qualifier_string.indexOf("term") > -1)
+    {
+      int ind1 = qualifier_string.indexOf("term=");
+      int ind2 = qualifier_string.indexOf(";", ind1);
+      if(ind2 < ind1)
+        ind2 = qualifier_string.length();
+            
+      CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(
+                    qualifier_string.substring(ind1+5, ind2));
+      if(cvTerm != null)
+      {
+        System.out.println("OLD CVTERM FOUND "+cvTerm.getCvTermId());
+        feature_cvterm.setCvTerm(cvTerm);
+      }
+      else
+      {
+        cvTerm = new CvTerm();
+        cvTerm.setName(qualifier_string.substring(ind1+5, ind2));
+      }
+    }
+    return feature_cvterm;
   }
   
   /**
