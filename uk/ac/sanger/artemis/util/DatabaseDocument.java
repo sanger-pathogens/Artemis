@@ -101,6 +101,12 @@ public class DatabaseDocument extends Document
   
   private boolean gene_builder;
   
+  // controlled vocabulary
+  /** controlled_curation controlled vocabulary */
+  private static String CONTROLLED_CURATION_TAG_CVNAME = "CC_genedb_controlledcuration";
+  /** product controlled vocabulary */
+  private static String PRODUCTS_TAG_CVNAME = "genedb_products";
+  
   /**
    * 
    * Create a new Document from a database.
@@ -846,6 +852,7 @@ public class DatabaseDocument extends Document
       }
     }
     
+    // GO, controlled_curation, product
     if(featureCvTerms != null && 
        featureCvTerms.containsKey(feature_id))
     {
@@ -858,14 +865,15 @@ public class DatabaseDocument extends Document
         CvTerm cvterm =  getCvTerm( feature_cvterm.getCvTerm().getCvTermId(), dao);
         DbXRef dbXRef = feature_cvterm.getCvTerm().getDbXRef();
           
-        if(cvterm.getCv().getName().equals("genedb_controlledcuration"))
+        if(cvterm.getCv().getName().equals(CONTROLLED_CURATION_TAG_CVNAME))
         {
           int cvtermId  = feature_cvterm.getCvTerm().getCvTermId();
           String cvName = getCvTerm(cvtermId, dao).getCv().getName();
           
           this_buff.append("controlled_curation=");
-          this_buff.append("cv="+cvName+"%3B");
           this_buff.append("term="+feature_cvterm.getCvTerm().getName()+"%3B");
+          this_buff.append("cv="+cvName+"%3B");
+          
           this_buff.append("db_xref="+dbXRef.getDb().getName() + ":"
               + dbXRef.getAccession() + "%3B");
           
@@ -880,6 +888,11 @@ public class DatabaseDocument extends Document
               this_buff.append("%3B");
           }
           this_buff.append(";");
+        }
+        else if(cvterm.getCv().getName().equals(PRODUCTS_TAG_CVNAME))
+        {
+          this_buff.append("product=");
+          this_buff.append(feature_cvterm.getCvTerm().getName()+";");
         }
         else
         {
@@ -896,7 +909,24 @@ public class DatabaseDocument extends Document
             this_buff.append("qualifier=NOT%3B");
 
           this_buff.append("GOid="+dbXRef.getDb().getName() + ":"
-              + dbXRef.getAccession() + ";"); 
+              + dbXRef.getAccession() + "%3B");
+          
+          this_buff.append("term="+feature_cvterm.getCvTerm().getName()+"%3B");
+          
+          this_buff.append("db_xref="+dbXRef.getDb().getName() + ":"
+              + dbXRef.getAccession() + "%3B");
+          
+          List feature_cvtermprops = (List)feature_cvterm.getFeatureCvTermProps();
+          for(int i=0; i<feature_cvtermprops.size(); i++)
+          {
+            FeatureCvTermProp feature_cvtermprop = (FeatureCvTermProp)feature_cvtermprops.get(i);
+            this_buff.append(getCvtermName(feature_cvtermprop.getCvTerm().getCvTermId(), dao));
+            this_buff.append("=");
+            this_buff.append(feature_cvtermprop.getValue());
+            if(i<feature_cvtermprops.size())
+              this_buff.append("%3B");
+          }
+          this_buff.append(";");
         }
       }
       //System.out.println(new String(this_buff.getBytes()));
@@ -939,6 +969,19 @@ public class DatabaseDocument extends Document
       getCvterms(dao);
 
     return (CvTerm)cvterms.get(new Long(id));
+  }
+  
+  public static CvTerm getCvTermByCvTermName(String cvterm_name)
+  {
+    Enumeration enum_cvterm = cvterms.elements();
+    while(enum_cvterm.hasMoreElements())
+    {
+      CvTerm cvterm = (CvTerm)enum_cvterm.nextElement();
+      if(cvterm_name.equals( cvterm.getName() ))
+        return cvterm;
+    }
+    
+    return null;
   }
 
   /**
