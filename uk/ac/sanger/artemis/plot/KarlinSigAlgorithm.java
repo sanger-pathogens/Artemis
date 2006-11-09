@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/KarlinSigAlgorithm.java,v 1.2 2006-06-23 10:40:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/KarlinSigAlgorithm.java,v 1.3 2006-11-09 15:08:08 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -42,7 +42,7 @@ import uk.ac.sanger.artemis.sequence.*;
  *  constructor.
  *
  *  @author Kim Rutherford
- *  @version $Id: KarlinSigAlgorithm.java,v 1.2 2006-06-23 10:40:14 tjc Exp $
+ *  @version $Id: KarlinSigAlgorithm.java,v 1.3 2006-11-09 15:08:08 tjc Exp $
  **/
 
 public class KarlinSigAlgorithm extends BaseAlgorithm {
@@ -72,6 +72,9 @@ public class KarlinSigAlgorithm extends BaseAlgorithm {
     final char[] sub_sequence;
 
     try {
+      // reset
+      if(end-start > 1000)
+        ((uk.ac.sanger.artemis.io.StreamSequence)(getStrand().getBases().getSequence())).forceReset();
       sub_sequence = getStrand().getRawSubSequenceC(new Range (start, end));
     } catch (OutOfRangeException e) {
       throw new Error ("internal error - unexpected exception: " + e);
