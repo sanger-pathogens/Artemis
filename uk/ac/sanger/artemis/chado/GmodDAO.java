@@ -41,6 +41,8 @@ public abstract class GmodDAO implements SequenceDaoI, SchemaDaoI, OrganismDaoI,
   
   public abstract List getFeatureCvTermsByFeature(Feature feature);
 
+  public abstract List getPubDbXRef();
+  
   /**
    * Return the list of all feature_synonyms as Feature.featureSynonyms 
    * 

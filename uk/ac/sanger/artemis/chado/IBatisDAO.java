@@ -267,6 +267,43 @@ public class IBatisDAO extends GmodDAO
     return null;
   }
   
+  /**
+   * Return a list of features contained in this organisms with this name or synonym (including obsolete names). The 
+   * name can contain an SQL wildcard (%) 
+   *  
+   * @param name the lookup name
+   * @param featureType the type of feature to return eg "gene"
+   * @param organisms the list of organisms
+   * @return a (possibly empty) List<Feature> of children with this name
+   */
+  public List getFeaturesByAnyNameAndOrganism(String nl,List ids,String featureType)
+  {
+    return null; 
+  }
+  
+  /**
+   * Return a list of features that have this particular cvterm 
+   * 
+   *  
+   * @param cvTermName the CvTerm name
+   * @return a (possibly empty) List<Feature> of children
+   */
+  public List getFeaturesByCvTermName(String cvTermName)
+  {
+    return null;
+  }
+  
+  /**
+   * Return a list of top-level features 
+   * 
+   *  
+   * @return a (possibly empty) List<Feature> of children
+   */
+  public List getTopLevelFeatures()
+  {
+    return null;
+  }
+  
   //////
   //////
   
@@ -342,6 +379,18 @@ public class IBatisDAO extends GmodDAO
   {
     return sqlMap.queryForList("getCvterm", null);
   }
+  
+  /**
+   * Retrieve a named CvTerm from a given Cv
+   * 
+   * @param cvTermName the name of the cvterm
+   * @param name the controlled vocabulary name this cvterm could be part of
+   * @return a (possibly empty) cvterm
+   */
+  public CvTerm getCvTermByNameAndCvName(String cvTermName, String name)
+  {
+    return null;
+  }
 
   //////
   ////// OrganismDaoI
@@ -351,6 +400,16 @@ public class IBatisDAO extends GmodDAO
   public List getOrganisms()
   {
     return sqlMap.queryForList("getOrganism", null);
+  }
+  
+  //////
+  ////// PubDaoI
+  //////
+  //////
+  
+  public List getPubDbXRef()
+  {
+    return sqlMap.queryForList("getPubDbXRef", null);
   }
   
 //
