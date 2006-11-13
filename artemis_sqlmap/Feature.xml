@@ -145,14 +145,18 @@
      
      <resultMap id="select-featurecvterm" class="FeatureCvTerm" 
                 groupBy="featureCvTermId">
-        <result property="featureCvTermId" column="feature_cvterm_id" />
+        <result property="featureCvTermId"   column="feature_cvterm_id" />
         <result property="feature.featureId" column="feature_id" />
         <result property="cvTerm.cvTermId"   column="cvterm_id" />
         <result property="cvTerm.name"       column="cvterm_name" />
-        <result property="cvTerm.dbXRef.accession" column="accession" />
-        <result property="cvTerm.dbXRef.db.name" column="name" />
-        <result property="not" column="not" />
+        <result property="cvTerm.cv.name"    column="cv_name" />
+        <result property="not"               column="is_not" />
+        <result property="rank"              column="fc_rank" />
         <result property="featureCvTermProps" resultMap="Feature.feature_cvtermprop"  />
+        <result property="pub.pubId"         column="pub_id" />
+        <result property="pub.uniqueName"    column="uniquename" />
+        <result property="cvTerm.dbXRef.accession" column="accession" />
+        <result property="cvTerm.dbXRef.db.name"   column="name" />
         <!-- <result property="pub" column="pub_id" select="selectPub" /> -->
      </resultMap>
         
@@ -191,29 +195,32 @@
      <!--  select feature_cvterm -->
      <select id="getFeatureCvTermsByFeature" parameterClass="Feature"
              resultMap="select-featurecvterm">
-        SELECT 
-             feature_id,
-             fc.feature_cvterm_id,
-             is_not AS not,
-             pub_id,
-             fc.cvterm_id,
-             fcp.type_id,
-             fcp.value,
-             fcp.rank,
-             c.name AS cvterm_name,
-             db.name,
-             dbxref.accession
-        FROM feature_cvterm fc
-        LEFT JOIN feature_cvtermprop fcp ON fc.feature_cvterm_id=fcp.feature_cvterm_id
-        LEFT JOIN cvterm c ON fc.cvterm_id=c.cvterm_id 
-        LEFT JOIN dbxref ON c.dbxref_id=dbxref.dbxref_id 
+        SELECT
+          fc.feature_id,
+          fc.feature_cvterm_id,
+          fc.cvterm_id, 
+          fc.rank AS fc_rank, 
+          fc.is_not, 
+          fcp.type_id, fcp.value, fcp.rank,
+          cvterm.name AS cvterm_name,
+          cv.name AS cv_name,
+          pub.pub_id, 
+          pub.uniquename,
+          db.name,
+          dbxref.accession
+        FROM feature_cvterm fc 
+        LEFT JOIN feature_cvtermprop fcp ON fc.feature_cvterm_id=fcp.feature_cvterm_id 
+        LEFT JOIN cvterm ON cvterm.cvterm_id=fc.cvterm_id 
+        LEFT JOIN cv ON cvterm.cv_id=cv.cv_id 
+        LEFT JOIN pub ON fc.pub_id=pub.pub_id
+        LEFT JOIN dbxref ON cvterm.dbxref_id=dbxref.dbxref_id 
         LEFT JOIN db ON dbxref.db_id=db.db_id
         <dynamic>
           <isNotNull property="uniqueName" prepend="WHERE">
             feature_id=(SELECT feature_id FROM feature WHERE uniquename=#uniqueName#)
           </isNotNull>
         </dynamic>
-        ORDER BY fcp.feature_cvterm_id, fcp.rank
+        ORDER BY fc.feature_cvterm_id, fc.rank, type_id, fcp.rank;
      </select>
 
      <!-- get feature -->
