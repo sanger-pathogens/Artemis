@@ -44,6 +44,8 @@ import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
+import org.gmod.schema.pub.PubDbXRef;
+import org.gmod.schema.pub.Pub;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -103,7 +105,8 @@ public class DatabaseDocument extends Document
   
   // controlled vocabulary
   /** controlled_curation controlled vocabulary */
-  private static String CONTROLLED_CURATION_TAG_CVNAME = "CC_genedb_controlledcuration";
+  private static String CONTROLLED_CURATION_TAG_CVNAME = 
+                                 "CC_genedb_controlledcuration";
   /** product controlled vocabulary */
   private static String PRODUCTS_TAG_CVNAME = "genedb_products";
   
@@ -492,9 +495,11 @@ public class DatabaseDocument extends Document
     Hashtable synonym = getAllFeatureSynonyms(dao, null);
 
     Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao);
+    List pubDbXRefs= dao.getPubDbXRef();
+
     
     if(featureCvTerms != null)
-      System.out.println("\n\n"+featureCvTerms.size()+"\n\n");
+      System.out.println("\n\n"+featureCvTerms.size()+"   "+pubDbXRefs.size()+"\n\n");
     
     // create gff byte stream
     for(int i = 0; i < feature_size; i++)
@@ -513,7 +518,7 @@ public class DatabaseDocument extends Document
       
       chadoToGFF(feat, parentFeature.getUniqueName(),
                  dbxrefs, synonym, featureCvTerms,
-                 id_store, dao, 
+                 pubDbXRefs, id_store, dao, 
                  feat.getFeatureLoc(), this_buff);
        
       if( i%10 == 0 || i == feature_size-1)
@@ -580,6 +585,20 @@ public class DatabaseDocument extends Document
     return featureCvTerms;
   }
   
+  private static PubDbXRef getPubDbXRef(final List pubDbXRefs,
+                                 final int pubId)
+  {
+    PubDbXRef pubDbXRef;
+    for(int i=0; i<pubDbXRefs.size(); i++)
+    {
+      pubDbXRef = (PubDbXRef)pubDbXRefs.get(i);
+      if(pubDbXRef.getPub().getPubId() == pubId)
+        return pubDbXRef;
+    }
+    
+    return null;
+  }
+  
   /**
    * Use by the gene editor to retrieve the gene and related
    * features
@@ -623,7 +642,7 @@ public class DatabaseDocument extends Document
 
     ByteBuffer buff = new ByteBuffer();
     
-    chadoToGFF(feature, null, null, null, null, null, dao,
+    chadoToGFF(feature, null, null, null, null, null, null, dao,
                featureloc, buff);
 
     // get children of gene
@@ -644,7 +663,7 @@ public class DatabaseDocument extends Document
       FeatureLoc loc = getFeatureLoc(new Vector(
           transcript.getFeatureLocsForFeatureId()), src_id);
       chadoToGFF(transcript, feature.getUniqueName(), null,
-          null, null, id_store, dao, loc, buff);
+          null, null, null, id_store, dao, loc, buff);
 
       // get children of transcript - exons and pp
       List transcipt_relations = new Vector(
@@ -664,7 +683,7 @@ public class DatabaseDocument extends Document
         loc = getFeatureLoc(
             new Vector(child.getFeatureLocsForFeatureId()),src_id);
         chadoToGFF(child, transcript.getUniqueName(), null,
-                   null, null, id_store, dao, loc, buff);
+                   null, null, null, id_store, dao, loc, buff);
       }
     }
 
@@ -687,6 +706,7 @@ public class DatabaseDocument extends Document
                                  final Hashtable dbxrefs,
                                  final Hashtable synonym,
                                  final Hashtable featureCvTerms,
+                                 final List pubDbXRefs,
                                  final Hashtable id_store,
                                  final GmodDAO dao,
                                  final FeatureLoc featureloc,
@@ -867,26 +887,49 @@ public class DatabaseDocument extends Document
           
         if(cvterm.getCv().getName().equals(CONTROLLED_CURATION_TAG_CVNAME))
         {
-          int cvtermId  = feature_cvterm.getCvTerm().getCvTermId();
-          String cvName = getCvTerm(cvtermId, dao).getCv().getName();
+          //int cvtermId  = feature_cvterm.getCvTerm().getCvTermId();
+          //String cvName = getCvTerm(cvtermId, dao).getCv().getName();
+          //this_buff.append("cv="+cvName+"%3B");
+          //this_buff.append("db_xref="+dbXRef.getDb().getName() + ":"
+          //    + dbXRef.getAccession() + "%3B");
           
           this_buff.append("controlled_curation=");
           this_buff.append("term="+feature_cvterm.getCvTerm().getName()+"%3B");
-          this_buff.append("cv="+cvName+"%3B");
           
-          this_buff.append("db_xref="+dbXRef.getDb().getName() + ":"
-              + dbXRef.getAccession() + "%3B");
-          
-          List feature_cvtermprops = (List)feature_cvterm.getFeatureCvTermProps();
-          for(int i=0; i<feature_cvtermprops.size(); i++)
+          // PMID
+          if(feature_cvterm.getPub().getUniqueName() != null &&
+             !feature_cvterm.getPub().getUniqueName().equals("NULL"))
           {
-            FeatureCvTermProp feature_cvtermprop = (FeatureCvTermProp)feature_cvtermprops.get(i);
-            this_buff.append(getCvtermName(feature_cvtermprop.getCvTerm().getCvTermId(), dao));
+            Pub pub = feature_cvterm.getPub();
+            PubDbXRef pubDbXRef = getPubDbXRef(pubDbXRefs, 
+                                               pub.getPubId());
+            
+            if(pubDbXRef == null || 
+               !pub.getUniqueName().endsWith(pubDbXRef.getDbXRef().getAccession()))
+            {
+              JOptionPane.showMessageDialog(null, "Cannot find pub_dbxref for:\n"+
+                  feature_cvterm.getPub().getUniqueName(), 
+                  "Database Error",
+                  JOptionPane.ERROR_MESSAGE);
+            }
+            
+            this_buff.append("db_xref="+
+                pub.getUniqueName()+ "%3B");
+          }
+          
+          List feature_cvtermprops = (List) feature_cvterm.getFeatureCvTermProps();
+          for(int i = 0; i < feature_cvtermprops.size(); i++)
+          {
+            FeatureCvTermProp feature_cvtermprop = 
+              (FeatureCvTermProp)feature_cvtermprops.get(i);
+            this_buff.append(getCvtermName(feature_cvtermprop.getCvTerm()
+                .getCvTermId(), dao));
             this_buff.append("=");
             this_buff.append(feature_cvtermprop.getValue());
-            if(i<feature_cvtermprops.size())
+            if(i < feature_cvtermprops.size())
               this_buff.append("%3B");
           }
+          
           this_buff.append(";");
         }
         else if(cvterm.getCv().getName().equals(PRODUCTS_TAG_CVNAME))
@@ -916,16 +959,21 @@ public class DatabaseDocument extends Document
           this_buff.append("db_xref="+dbXRef.getDb().getName() + ":"
               + dbXRef.getAccession() + "%3B");
           
-          List feature_cvtermprops = (List)feature_cvterm.getFeatureCvTermProps();
-          for(int i=0; i<feature_cvtermprops.size(); i++)
+          
+          List feature_cvtermprops = (List)feature_cvterm
+              .getFeatureCvTermProps();
+          for(int i = 0; i < feature_cvtermprops.size(); i++)
           {
-            FeatureCvTermProp feature_cvtermprop = (FeatureCvTermProp)feature_cvtermprops.get(i);
-            this_buff.append(getCvtermName(feature_cvtermprop.getCvTerm().getCvTermId(), dao));
+            FeatureCvTermProp feature_cvtermprop = 
+              (FeatureCvTermProp)feature_cvtermprops.get(i);
+            this_buff.append(getCvtermName(feature_cvtermprop.getCvTerm()
+                .getCvTermId(), dao));
             this_buff.append("=");
             this_buff.append(feature_cvtermprop.getValue());
-            if(i<feature_cvtermprops.size())
+            if(i < feature_cvtermprops.size())
               this_buff.append("%3B");
           }
+          
           this_buff.append(";");
         }
       }
@@ -1165,6 +1213,13 @@ public class DatabaseDocument extends Document
       GmodDAO dao = null;
       dao = getDAO();
       schema_list = dao.getOrganisms();
+      
+      
+/*      Organism o = new Organism();
+      o.setCommonName("web");
+      schema_list.add(o);*/
+      
+      
       Iterator it = schema_list.iterator();
       db = new Hashtable();
       
