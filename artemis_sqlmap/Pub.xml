@@ -10,6 +10,9 @@
   <typeAlias alias="Pub"
         type="org.gmod.schema.pub.Pub"/>
   
+    <typeAlias alias="PubDbXRef"
+        type="org.gmod.schema.pub.PubDbXRef"/>
+        
   <resultMap id="select-pub"
              class="Pub">
      <result property="title"       column="title" />
@@ -27,10 +30,28 @@
      <result property="cvTerm"      column="type_id" select="selectCvterm" />
   </resultMap>
 
+  <resultMap id="select-pubdbxref" class="PubDbXRef">
+    <result property="pub.pubId"   column="pub_id" />
+    <result property="dbXRef.accession"   column="accession" />
+    <result property="dbXRef.version"     column="version" />
+    <result property="dbXRef.description" column="dbx_description" />
+    <result property="dbXRef.db.name"     column="name" />
+    <result property="dbXRef.db.description" column="description" />
+    <result property="dbXRef.db.urlPrefix" column="urlprefix" />
+    <result property="dbXRef.db.url" column="url" />
+  </resultMap>
+  
   <!-- SQL -->
        
   <select id="selectPub" resultMap="select-pub">
     SELECT * FROM pub WHERE pub_id=$pub_id$
   </select>
 
+  <select id="getPubDbXRef" resultMap="select-pubdbxref">
+   select pub_id, pub_dbxref.dbxref_id, 
+       accession, version, dbx.description AS dbx_description, 
+       db.name, db.description, db.urlprefix, db.url FROM pub_dbxref 
+       LEFT JOIN dbxref dbx ON pub_dbxref.dbxref_id=dbx.dbxref_id 
+       LEFT JOIN db ON db.db_id=dbx.db_id 
+  </select>
 </sqlMap> 
