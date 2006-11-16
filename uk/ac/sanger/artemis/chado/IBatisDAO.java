@@ -304,6 +304,17 @@ public class IBatisDAO extends GmodDAO
     return null;
   }
   
+  
+  public List getFeatureCvTermDbXRef()
+  {
+    return sqlMap.queryForList("getFeatureCvTermDbXRef", null);
+  }
+  
+  public List getProducts()
+  {
+    return null;  
+  }
+  
   //////
   //////
   
@@ -657,5 +668,7 @@ public class IBatisDAO extends GmodDAO
     }
     return dbxrefHash;
   }
+
+
 
 }

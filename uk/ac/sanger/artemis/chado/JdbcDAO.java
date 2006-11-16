@@ -40,12 +40,15 @@ import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
+import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.pub.Pub;
+import org.gmod.schema.pub.PubDbXRef;
+
 
 /**
  *
@@ -185,21 +188,25 @@ public class JdbcDAO extends GmodDAO
   
   public List getFeatureCvTermsByFeature(Feature feature)
   { 
-    String sql = 
-       "SELECT feature_id, fc.feature_cvterm_id, is_not AS not, "+
-       "pub_id, fc.cvterm_id, fcp.type_id, fcp.value, fcp.rank, "+
-       "c.name AS cvterm_name, db.name, dbxref.accession "+
-       "FROM feature_cvterm fc "+
-       "LEFT JOIN feature_cvtermprop fcp ON fc.feature_cvterm_id=fcp.feature_cvterm_id " +
-       "LEFT JOIN cvterm c ON fc.cvterm_id=c.cvterm_id " +
-       "LEFT JOIN dbxref ON c.dbxref_id=dbxref.dbxref_id "+
-       "LEFT JOIN db ON dbxref.db_id=db.db_id ";
+    String sql = "SELECT fc.feature_id, fc.feature_cvterm_id, "+
+     "fc.cvterm_id, fc.rank AS fc_rank, fc.is_not, fcp.type_id, fcp.value, fcp.rank, "+
+     "cvterm.name AS cvterm_name, cv.name AS cv_name, "+
+     "pub.pub_id, pub.uniquename, "+
+     "db.name, dbxref.accession "+
+     "FROM feature_cvterm fc "+
+     "LEFT JOIN feature_cvtermprop fcp ON fc.feature_cvterm_id=fcp.feature_cvterm_id "+
+     "LEFT JOIN cvterm ON cvterm.cvterm_id=fc.cvterm_id "+
+     "LEFT JOIN cv ON cvterm.cv_id=cv.cv_id "+
+     "LEFT JOIN pub ON fc.pub_id=pub.pub_id "+
+     "LEFT JOIN dbxref ON cvterm.dbxref_id=dbxref.dbxref_id "+
+     "LEFT JOIN db ON dbxref.db_id=db.db_id ";
+
     
     if(feature != null && feature.getUniqueName() != null)
       sql = sql + " WHERE "+
         "feature_id=(SELECT feature_id FROM feature WHERE uniquename=#uniqueName#)";
     
-    sql = sql + " ORDER BY fcp.feature_cvterm_id, fcp.rank";
+    sql = sql + " ORDER BY fc.feature_cvterm_id, fc.rank, type_id, fcp.rank";
     
     appendToLogFile(sql, sqlLog);
 
@@ -213,15 +220,9 @@ public class JdbcDAO extends GmodDAO
       while(rs.next())
       {
         int feature_id = rs.getInt("feature_id");
-        FeatureCvTerm feature_cvterm = new FeatureCvTerm();
-        
-        feature_cvterm.setNot(rs.getBoolean("not"));
-        
         Feature this_feature = new Feature();
         this_feature.setFeatureId(feature_id);
-        
-        feature_cvterm.setFeature(this_feature);
-        
+  
         CvTerm cvterm = new CvTerm();
         cvterm.setCvTermId(rs.getInt("cvterm_id"));
         cvterm.setName(rs.getString("cvterm_name"));
@@ -232,44 +233,48 @@ public class JdbcDAO extends GmodDAO
         db.setName(rs.getString("name"));
         dbxref.setDb(db);
         
-        cvterm.setDbXRef(dbxref);
+        cvterm.setDbXRef(dbxref);      
         
-        feature_cvterm.setCvTerm(cvterm);
+        Pub pub = new Pub();
+        pub.setPubId(rs.getInt("pub_id"));
+        pub.setUniqueName(rs.getString("uniquename"));
+        
+        int fc_rank = rs.getInt("fc_rank");
+        
+        FeatureCvTerm feature_cvterm =
+           new FeatureCvTerm(cvterm, this_feature, pub, rs.getBoolean("not"), fc_rank);
         
         // feature_cvtermprop's group by feature_cvterm_id
         List featureCvTermProps = new Vector();
-        
-        int next_feature_cvterm_id = -1;
-        int rank;
-        int next_rank = -1;
-        
+        int next_fc_rank = -1;      
+        int next_feature_cvterm_id = -1;  
         int feature_cvterm_id = rs.getInt("feature_cvterm_id");
         do
         {
-          rank = rs.getInt("rank");
           FeatureCvTermProp featureProp = new FeatureCvTermProp();
           CvTerm featurePropCvTerm = new CvTerm();
           featurePropCvTerm.setCvTermId(rs.getInt("type_id"));
           featureProp.setCvTerm(featurePropCvTerm);
           featureProp.setValue(rs.getString("value"));
-          featureProp.setRank(rank);
+          featureProp.setRank(rs.getInt("rank"));
           
           featureCvTermProps.add(featureProp);
           
           if(rs.next())
           {
             next_feature_cvterm_id = rs.getInt("feature_cvterm_id");
-            next_rank = rs.getInt("rank");
+            next_fc_rank = rs.getInt("fc_rank");
             if(feature_cvterm_id != next_feature_cvterm_id ||
-               next_rank != rank)
+               fc_rank != next_fc_rank)
               rs.previous();
           }
           else
             next_feature_cvterm_id = -1;
-
-        } while(feature_cvterm_id == next_feature_cvterm_id && rank == next_rank);
+        } while(feature_cvterm_id == next_feature_cvterm_id &&
+                fc_rank == next_fc_rank);
 
         feature_cvterm.setFeatureCvTermProps(featureCvTermProps);
+
         featureCvTerms.add(feature_cvterm);
       }
 
@@ -282,9 +287,37 @@ public class JdbcDAO extends GmodDAO
   }
   
   public Synonym getSynonymByNameAndCvTerm(
-      String name, CvTerm type)
+      String name, CvTerm cvTerm)
   {
-    return null;
+    String sql = "SELECT * FROM synonym WHERE ";
+    
+    if(name != null)
+     sql = sql + "name="+name+" AND "; 
+    if(cvTerm != null)
+      sql = sql + "type_id="+cvTerm.getCvTermId()+" AND ";
+    
+    sql = sql + "synonym_id > 0";
+    
+    appendToLogFile(sql, sqlLog);
+
+    try
+    {
+      Statement st = conn.createStatement();
+      ResultSet rs = st.executeQuery(sql);
+      
+      CvTerm cvterm = new CvTerm();
+      cvterm.setCvTermId(rs.getInt("type_id"));
+      
+      Synonym synonym = new Synonym(cvterm, rs.getString("name"), 
+                                    rs.getString("synonym_sgml"));
+      synonym.setSynonymId(rs.getInt("synonym_id"));
+      return synonym;
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+    
   }
   
   
@@ -536,6 +569,55 @@ public class JdbcDAO extends GmodDAO
   public List getTopLevelFeatures()
   {
     return null;
+  }
+  
+  public List getFeatureCvTermDbXRef()
+  { 
+    String sql = "SELECT feature_cvterm_id, dbx.*, db.name "+
+      "FROM feature_cvterm_dbxref fcd "+
+      "LEFT JOIN dbxref dbx ON dbx.dbxref_id=fcd.dbxref_id "+
+      "LEFT JOIN db ON db.db_id=dbx.db_id";
+
+    appendToLogFile(sql, sqlLog);
+    
+    try
+    {
+      Statement st = conn.createStatement();
+      ResultSet rs = st.executeQuery(sql);
+      List featureCvTermDbXRefs = new Vector();
+      FeatureCvTermDbXRef featureCvTermDbXRef;
+      while(rs.next())
+      {
+        featureCvTermDbXRef = new FeatureCvTermDbXRef();
+        FeatureCvTerm featureCvTerm = new FeatureCvTerm();
+        featureCvTerm.setFeatureCvTermId( rs.getInt("feature_cvterm_id") );
+        featureCvTermDbXRef.setFeatureCvTerm(featureCvTerm);
+        
+        DbXRef dbXRef = new DbXRef();
+        dbXRef.setAccession( rs.getString("accession") );
+        dbXRef.setDescription( rs.getString("description") );
+        dbXRef.setVersion( rs.getString("version") );
+        
+        Db db = new Db();
+        db.setName( rs.getString("name") );
+        
+        dbXRef.setDb(db);
+        
+        featureCvTermDbXRef.setDbXRef(dbXRef);
+        featureCvTermDbXRefs.add(featureCvTermDbXRef);
+      }
+      
+      return featureCvTermDbXRefs;
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+  }
+  
+  public List getProducts()
+  {
+    return null;  
   }
   
   //////
@@ -938,7 +1020,49 @@ public class JdbcDAO extends GmodDAO
   
   public List getPubDbXRef()
   {
-    return null;
+    String sql = "SELECT pub_id, pub_dbxref.dbxref_id, "+
+       "accession, version, dbx.description AS dbx_description, "+ 
+       "db.name, db.description, db.urlprefix, db.url FROM pub_dbxref "+
+       "LEFT JOIN dbxref dbx ON pub_dbxref.dbxref_id=dbx.dbxref_id "+
+       "LEFT JOIN db ON db.db_id=dbx.db_id";
+    
+    appendToLogFile(sql, sqlLog);
+    List pubDbXRefs = new Vector();
+    
+    try
+    {
+      Statement st = conn.createStatement();
+      ResultSet rs = st.executeQuery(sql);
+      
+      PubDbXRef pubDbXRef;
+      while(rs.next())
+      {
+        pubDbXRef = new PubDbXRef();
+        Pub pub = new Pub();
+        pub.setPubId(rs.getInt("pub_id"));
+         
+        DbXRef dbXRef = new DbXRef();
+        dbXRef.setAccession(rs.getString("accession"));
+        dbXRef.setDescription(rs.getString("description"));
+        dbXRef.setVersion(rs.getString("version"));
+        
+        Db db = new Db();
+        db.setName(rs.getString("name"));
+        db.setDescription(rs.getString("description"));
+        db.setUrl(rs.getString("url"));
+        db.setUrlPrefix(rs.getString("urlPrefix"));
+        
+        dbXRef.setDb(db);
+        pubDbXRef.setDbXRef(dbXRef);
+        pubDbXRefs.add(pubDbXRef);
+      }
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+    
+    return pubDbXRefs;
   }
   
 //

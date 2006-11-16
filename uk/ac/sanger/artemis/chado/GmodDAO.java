@@ -29,8 +29,10 @@ import java.util.List;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.*;
+import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureDbXRef;
 
 public abstract class GmodDAO implements SequenceDaoI, SchemaDaoI, OrganismDaoI, CvDaoI
 {
@@ -42,6 +44,8 @@ public abstract class GmodDAO implements SequenceDaoI, SchemaDaoI, OrganismDaoI,
   public abstract List getFeatureCvTermsByFeature(Feature feature);
 
   public abstract List getPubDbXRef();
+  
+  public abstract List getFeatureCvTermDbXRef();
   
   /**
    * Return the list of all feature_synonyms as Feature.featureSynonyms 
@@ -164,5 +168,25 @@ public abstract class GmodDAO implements SequenceDaoI, SchemaDaoI, OrganismDaoI,
     return null;
   }
   
+
+  public List getFeatureCvTermsByFeatureAndCvTermAndNot(Feature arg0, CvTerm arg1, boolean arg2)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
+  public FeatureDbXRef getFeatureDbXRefByFeatureAndDbXRef(Feature arg0, DbXRef arg1)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
+  public boolean existsNameInOntology(String arg0, Cv arg1)
+  {
+    // TODO Auto-generated method stub
+    return false;
+  }
   
 }

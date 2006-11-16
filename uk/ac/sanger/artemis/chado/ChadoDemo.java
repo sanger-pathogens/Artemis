@@ -24,7 +24,12 @@
 
 package uk.ac.sanger.artemis.chado;
 
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.pub.Pub;
+import org.gmod.schema.pub.PubDbXRef;
 import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.FeatureProp;
@@ -40,6 +45,9 @@ import java.awt.event.MouseEvent;
 import java.awt.Dimension;
 import java.net.ConnectException;
 import java.sql.SQLException;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -62,6 +70,7 @@ import javax.swing.Box;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 
 
 /**
@@ -93,10 +102,14 @@ public class ChadoDemo
 
   /** <code>List</code> of <code>Feature</code> objects */
   private List featureList;
+  
+  /** row data containing results */
+  private String rowData[][];
 
-  /**
-   * 
-   * 
+  private static Hashtable cvterms;
+  
+  /** 
+   * Chado demo
    */
   public ChadoDemo()
   {
@@ -163,7 +176,7 @@ public class ChadoDemo
     findButt.addActionListener(new ActionListener()
     {
       private String columnNames[] = { "schema", "name", "type",
-          "feature ID", "location", "strand", "time modified" };
+          "feature ID", "loc", "strand", "time modified" };
 
       public void actionPerformed(ActionEvent event)
       {
@@ -180,10 +193,11 @@ public class ChadoDemo
 
         try
         {
-          String rowData[][] = search(search_gene, schema_search, dao);
+          rowData = search(search_gene, schema_search, dao);
 
           result_table = new JTable(rowData, columnNames);
-          result_table.getSelectionModel().addListSelectionListener(new SelectionListener());
+          result_table.getSelectionModel().addListSelectionListener(
+                                         new SelectionListener());
           result_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
           result_table.addMouseListener(new MouseAdapter()
@@ -191,7 +205,23 @@ public class ChadoDemo
             public void mouseClicked(MouseEvent e)
             {
               int row = result_table.getSelectedRow();
-              showAttributes();
+              reset(location, rowData[row][0]);
+
+              try
+              {
+                GmodDAO dao2 = getDAO();
+                showAttributes(dao2);
+              }
+              catch(ConnectException e1)
+              {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+              }
+              catch(SQLException e1)
+              {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+              }
             }
           });
 
@@ -253,14 +283,16 @@ public class ChadoDemo
   /**
    * Show the attributes of a selected feature.
    */
-  private void showAttributes()
+  private void showAttributes(final GmodDAO dao)
   {
     int row = result_table.getSelectedRow();
     StringBuffer attr_buff = new StringBuffer();
     Feature chado_feature = (Feature)featureList.get(row);
     List attributes = (List)chado_feature.getFeatureProps();
     List dbxrefs    = (List)chado_feature.getFeatureDbXRefs();
-
+    
+    List featureCvTerms = dao.getFeatureCvTermsByFeature(chado_feature);
+    
     if(dbxrefs.size() > 0)
     {
       attr_buff.append("/Dbxref=");
@@ -303,6 +335,44 @@ public class ChadoDemo
             + GFFStreamFeature.decode(featprop.getValue()) + "\n");
       }
 
+    if(featureCvTerms != null)
+    {
+      for(int j=0; j<featureCvTerms.size(); j++)
+      {
+        FeatureCvTerm feature_cvterm = (FeatureCvTerm)featureCvTerms.get(j);
+        
+        CvTerm cvterm =  getCvTerm( feature_cvterm.getCvTerm().getCvTermId(), dao);
+        DbXRef dbXRef = feature_cvterm.getCvTerm().getDbXRef();
+        
+        if(cvterm.getCv().getName().equals(DatabaseDocument.CONTROLLED_CURATION_TAG_CVNAME))
+        {
+          attr_buff.append("controlled_curation=");
+          attr_buff.append("term="+feature_cvterm.getCvTerm().getName()+"%3B");
+          
+          // PMID
+          if(feature_cvterm.getPub().getUniqueName() != null &&
+             !feature_cvterm.getPub().getUniqueName().equals("NULL"))
+          {
+            Pub pub = feature_cvterm.getPub();
+/*            PubDbXRef pubDbXRef = getPubDbXRef(pubDbXRefs, 
+                                               pub.getPubId());
+            
+            if(pubDbXRef == null || 
+               !pub.getUniqueName().endsWith(pubDbXRef.getDbXRef().getAccession()))
+            {
+              JOptionPane.showMessageDialog(null, "Cannot find pub_dbxref for:\n"+
+                  feature_cvterm.getPub().getUniqueName(), 
+                  "Database Error",
+                  JOptionPane.ERROR_MESSAGE);
+            }*/
+            
+            attr_buff.append("db_xref="+
+                pub.getUniqueName()+ "%3B");
+          }
+        }
+      }
+    }
+    
     attr_text.setText(new String(attr_buff));
   }
 
@@ -413,7 +483,7 @@ public class ChadoDemo
    * 
    * @return true if location chosen
    */
-  protected boolean setLocation()
+  private boolean setLocation()
   {
     Container bacross = new Container();
     bacross.setLayout(new GridLayout(6, 2, 5, 5));
@@ -485,14 +555,111 @@ public class ChadoDemo
     return true;
   }
 
+  /**
+   * Look up the cvterm_id for a controlled vocabulary name.
+   * @param name  
+   * @return
+   */
+  public static Long getCvtermID(String name)
+  {
+    Enumeration enum_cvterm = cvterms.keys();
+    while(enum_cvterm.hasMoreElements())
+    {
+      Long key = (Long)enum_cvterm.nextElement();
+      if(name.equals( ((CvTerm)cvterms.get(key)).getName() ))
+        return key;
+    }
+    return null;
+  }
 
+  /**
+   * Look up a cvterm name from the collection of cvterms.
+   * @param id  a cvterm_id  
+   * @return    the cvterm name
+   */
+  private static String getCvtermName(int id, GmodDAO dao)
+  {
+    return getCvTerm(id, dao).getName();
+  }
+  
+  private static CvTerm getCvTerm(int id, GmodDAO dao)
+  {
+    if(cvterms == null)
+      getCvterms(dao);
+
+    return (CvTerm)cvterms.get(new Integer(id));
+  }
+  
+  public static CvTerm getCvTermByCvTermName(String cvterm_name)
+  {
+    Enumeration enum_cvterm = cvterms.elements();
+    while(enum_cvterm.hasMoreElements())
+    {
+      CvTerm cvterm = (CvTerm)enum_cvterm.nextElement();
+      if(cvterm_name.equals( cvterm.getName() ))
+        return cvterm;
+    }
+    
+    return null;
+  }
+
+  /**
+   * Look up cvterms names and id and return in a hashtable.
+   * @param dao the data access object
+   * @return    the cvterm <code>Hashtable</code>
+   */
+  private static Hashtable getCvterms(GmodDAO dao)
+  {
+    cvterms = new Hashtable();
+
+    try
+    {
+      List cvterm_list = dao.getCvTerms();
+      Iterator it = cvterm_list.iterator();
+
+      while(it.hasNext())
+      {
+        CvTerm cvterm = (CvTerm)it.next();
+        cvterms.put(new Integer(cvterm.getCvTermId()), cvterm);
+      }
+    }
+    catch(RuntimeException sqle)
+    {
+      System.err.println("SQLException retrieving CvTerms");
+      System.err.println(sqle);
+    }
+
+    return cvterms;
+  }
+  
+  
   public class SelectionListener implements ListSelectionListener
   {
+    
     public void valueChanged(ListSelectionEvent e)
     {
-      showAttributes();
+      int row = result_table.getSelectedRow();
+      reset(location, rowData[row][0]);
+
+      try
+      {
+        GmodDAO dao2 = getDAO();
+        showAttributes(dao2);
+      }
+      catch(ConnectException e1)
+      {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+      catch(SQLException e1)
+      {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
     }
   }
+  
+  
 
   public static void main(String args[])
   {
