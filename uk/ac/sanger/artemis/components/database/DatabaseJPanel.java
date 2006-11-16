@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.2 2006-10-30 10:45:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.3 2006-11-16 13:21:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -64,7 +64,7 @@ import java.io.*;
 import java.net.ConnectException;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 public class DatabaseJPanel extends JPanel
@@ -297,7 +297,7 @@ public class DatabaseJPanel extends JPanel
    */
   private JTree getDatabaseTree(final DatabaseEntrySource entry_source)
   {
-    Hashtable entries = null;
+    HashMap entries = null;
     
     while(entries == null)
     {
@@ -334,20 +334,25 @@ public class DatabaseJPanel extends JPanel
    * @param organism  sequences collection
    */
   private void createNodes(DatabaseTreeNode top, List schema,
-                           Hashtable entries)
+                           HashMap entries)
   {
     DatabaseTreeNode schema_node;
     DatabaseTreeNode seq_node;
     DatabaseTreeNode typ_node;
 
     final Object v_organism[] = entries.keySet().toArray();
+    
     final int v_organism_size = v_organism.length;
-    Arrays.sort(v_organism);  
+    Arrays.sort(v_organism);
+    
+    int start = 0;
+    boolean seen;
     
     for(int i=0; i<schema.size(); i++)
     {
       int nchild = 0;
       String name;
+      seen = false;
       
       if(schema.get(i) instanceof String)
         name = (String)schema.get(i);
@@ -355,15 +360,15 @@ public class DatabaseJPanel extends JPanel
         name = ((Organism)schema.get(i)).getCommonName();
       
       schema_node = new DatabaseTreeNode(name);
-      final Hashtable seq_type_node = new Hashtable();
+      final HashMap seq_type_node = new HashMap();
 
-      for(int j = 0; j < v_organism_size; j++)
+      for(int j = start; j < v_organism_size; j++)
       {
         String seq_name  = (String)v_organism[j];
-        String featureId = (String)entries.get(seq_name);
         
         if(seq_name.startsWith(name))
         {
+          String featureId = (String)entries.get(seq_name);
           int ind1 = seq_name.indexOf("- ");
           int ind2 = seq_name.lastIndexOf("- ");
 
@@ -383,7 +388,11 @@ public class DatabaseJPanel extends JPanel
                                           featureId, name);
           typ_node.add(seq_node);
           nchild++;
+          start = j;
+          seen = true;
         }
+        else if(seen)
+          break;
       }
       if(nchild > 0)
         top.add(schema_node);
