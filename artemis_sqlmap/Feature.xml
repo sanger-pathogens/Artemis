@@ -234,11 +234,19 @@
         ORDER BY fc.feature_cvterm_id, fc.rank, type_id, fcp.rank;
      </select>
 
-     <select id="getFeatureCvTermDbXRef" resultMap="select-featurecvtermdbxref">
+     <select id="getFeatureCvTermDbXRef" parameterClass="Feature"
+             resultMap="select-featurecvtermdbxref">
        SELECT feature_cvterm_id, dbx.*, db.name 
        FROM feature_cvterm_dbxref fcd 
        LEFT JOIN dbxref dbx ON dbx.dbxref_id=fcd.dbxref_id 
        LEFT JOIN db ON db.db_id=dbx.db_id
+       <dynamic>
+          <isNotNull property="uniqueName">
+            LEFT JOIN feature_cvterm fc ON fcd.feature_cvterm_id=fc.feature_cvterm_id
+            WHERE
+            feature_id=(SELECT feature_id FROM feature WHERE uniquename=#uniqueName#)
+          </isNotNull>
+       </dynamic>
      </select>
      
      <!-- get feature -->
