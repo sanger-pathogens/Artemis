@@ -600,7 +600,7 @@ public class DatabaseDocument extends Document
   
   private Hashtable getFeatureCvTermDbXRef(final GmodDAO dao)
   {
-    List list = dao.getFeatureCvTermDbXRef();
+    List list = dao.getFeatureCvTermDbXRef(null);
     if(list == null || list.size() == 0)
       return null;
     
@@ -1027,12 +1027,12 @@ public class DatabaseDocument extends Document
    * @param name  
    * @return
    */
-  public static Long getCvtermID(String name)
+  public static Integer getCvtermID(String name)
   {
     Enumeration enum_cvterm = cvterms.keys();
     while(enum_cvterm.hasMoreElements())
     {
-      Long key = (Long)enum_cvterm.nextElement();
+      Integer key = (Integer)enum_cvterm.nextElement();
       if(name.equals( ((CvTerm)cvterms.get(key)).getName() ))
         return key;
     }

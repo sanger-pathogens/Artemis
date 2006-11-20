@@ -571,13 +571,19 @@ public class JdbcDAO extends GmodDAO
     return null;
   }
   
-  public List getFeatureCvTermDbXRef()
+  public List getFeatureCvTermDbXRef(Feature feature)
   { 
     String sql = "SELECT feature_cvterm_id, dbx.*, db.name "+
       "FROM feature_cvterm_dbxref fcd "+
       "LEFT JOIN dbxref dbx ON dbx.dbxref_id=fcd.dbxref_id "+
       "LEFT JOIN db ON db.db_id=dbx.db_id";
 
+    if(feature != null && feature.getUniqueName() != null)
+      sql = sql+ " " +
+          "LEFT JOIN feature_cvterm fc ON fcd.feature_cvterm_id=fc.feature_cvterm_id "+
+          "WHERE feature_id=(SELECT feature_id FROM feature WHERE uniquename="+
+          feature.getUniqueName()+")";
+    
     appendToLogFile(sql, sqlLog);
     
     try

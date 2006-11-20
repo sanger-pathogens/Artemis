@@ -824,7 +824,7 @@ public class ChadoTransactionManager
     if(event_type != FeatureChangeEvent.QUALIFIER_CHANGED && 
        !new_key.equals(old_key))
     {
-      Long lcvterm_id = DatabaseDocument.getCvtermID(new_key.getKeyString());
+      Integer lcvterm_id = DatabaseDocument.getCvtermID(new_key.getKeyString());
       if(lcvterm_id == null)   // chado doesn't recognise this
       {
         JOptionPane.showMessageDialog(null, 
@@ -869,7 +869,7 @@ public class ChadoTransactionManager
         }
         
         // get the cvterm_id for this featureprop/qualifier
-        Long lcvterm_id = DatabaseDocument.getCvtermID(name);
+        Integer lcvterm_id = DatabaseDocument.getCvtermID(name);
         if(lcvterm_id == null)   // chado doesn't recognise this
         {
           JOptionPane.showMessageDialog(null,
@@ -953,7 +953,7 @@ public class ChadoTransactionManager
       }
       
       // get the cvterm_id for this featureprop/qualifier
-      Long lcvterm_id = null;
+      Integer lcvterm_id = null;
       if(!name.equals("timelastmodified"))
       {
         lcvterm_id = DatabaseDocument.getCvtermID(name);
@@ -1349,7 +1349,7 @@ public class ChadoTransactionManager
    */
   private FeatureProp getFeatureProp(final String uniquename,
                                      final String qualifier_string,
-                                     final Long lcvterm_id, 
+                                     final Integer lcvterm_id, 
                                      final int rank)
   {
     FeatureProp featureprop = new FeatureProp();
@@ -1376,7 +1376,7 @@ public class ChadoTransactionManager
                                            final String qualifier_string,
                                            final String uniqueName)
   {
-    Long lcvterm_id = DatabaseDocument.getCvtermID(qualifier_name);
+    Integer lcvterm_id = DatabaseDocument.getCvtermID(qualifier_name);
     FeatureSynonym feature_synonym = new FeatureSynonym();
     org.gmod.schema.sequence.Feature chado_feature = 
       new org.gmod.schema.sequence.Feature();
