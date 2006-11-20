@@ -52,6 +52,12 @@
   <sqlMap resource="artemis_sqlmap/CvTerm.xml" />
   <sqlMap resource="artemis_sqlmap/Pub.xml" />
   <sqlMap resource="artemis_sqlmap/Feature.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureCvTerm.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureCvTermDbXRef.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureCvTermProp.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureLoc.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureProp.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureRelationship.xml" />
   <sqlMap resource="artemis_sqlmap/DbXRef.xml" />
   <sqlMap resource="artemis_sqlmap/Synonym.xml" />
   

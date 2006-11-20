@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="FeatureProp">
+
+     <typeAlias alias="FeatureProp"
+        type="org.gmod.schema.sequence.FeatureProp"/>
+        
+     <resultMap id="select-featureprop" 
+                class="FeatureProp">
+        <result property="value" column="value" />
+        <result property="rank" column="rank" />
+        <result property="cvTerm" column="type_id" select="selectCvterm" />
+     </resultMap>
+     
+    <resultMap id="featureprop" 
+               class="FeatureProp">
+        <result property="value" column="value" />
+        <result property="rank"  column="prop_rank" />
+        <result property="cvTerm.cvTermId" column="prop_type_id" />
+    </resultMap>
+     
+   <!-- select featureprops e.g. for lazy loading -->
+     <select id="selectFeatureProp" resultMap="select-featureprop">
+       SELECT type_id, value, rank 
+       FROM featureprop
+       WHERE feature_id=#feature_id#
+     </select>
+     
+    <update id="updateFeatureProp"
+            parameterClass="FeatureProp">
+      UPDATE featureprop
+      SET value=#value#   
+      WHERE rank=$rank$ AND type_id=$cvTerm.cvTermId$ AND 
+            feature_id=(SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#)
+    </update>
+    
+    <!--  INSERT  -->
+    <insert id="insertFeatureProp"
+            parameterClass="FeatureProp">
+      INSERT INTO featureprop
+      ( feature_id, type_id, value, rank )
+      VALUES
+      ( (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#),
+        $cvTerm.cvTermId$, #value#, $rank$ )
+    </insert>
+    
+    <!--  DELETE  -->
+   <delete id="deleteFeatureProp"
+           parameterClass="FeatureProp">
+      DELETE FROM featureprop
+      WHERE
+        <isNotNull property="feature.uniqueName">
+          feature_id=
+            (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#)
+          AND
+        </isNotNull>
+        <isGreaterThan property="rank" compareValue="-1">
+           rank=$rank$ AND
+        </isGreaterThan>
+        <isNotNull property="value">
+          value=#value# AND
+        </isNotNull>
+        type_id=$cvTerm.cvTermId$
+   </delete>
+    
+</sqlMap> 

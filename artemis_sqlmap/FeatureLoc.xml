@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="FeatureLoc"> 
+ 
+
+     
+     <typeAlias alias="FeatureLoc"
+        type="org.gmod.schema.sequence.FeatureLoc"/>
+        
+     <resultMap id="select-location"
+                class="FeatureLoc">
+        <result property="featureBySrcFeatureId.featureId" column="srcfeature_id" nullValue="-999" />
+        <result property="fmin"   column="fmin"   nullValue="-999" />
+        <result property="fmax"   column="fmax"   nullValue="-999" />
+        <result property="strand" column="strand" nullValue="0" />
+        <result property="phase"  column="phase"  nullValue="0" />
+        <result property="residueInfo"  column="residue_info"/>
+        <result property="locGroup"  column="locgroup"/>
+        <result property="rank"      column="rank"/>
+     </resultMap>
+        
+     <!--  select featureloc -->
+     <select id="getFeatureLoc" resultMap="select-location">
+       SELECT srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank
+       FROM  featureloc
+       WHERE featureloc.feature_id=#id#
+     </select>
+     
+    <!--  WRITE BACK METHODS  -->
+    
+    <!--  UPDATE  -->
+    <update id="updateFeatureLoc" 
+            parameterClass="FeatureLoc">
+      UPDATE featureloc
+      SET fmin=$fmin$, fmax=$fmax$, rank=$rank$, strand=$strand$
+      <isNotNull property="phase">
+        , phase=$phase$
+      </isNotNull>
+      <isNull property="phase">
+        , phase=NULL
+      </isNull>
+      WHERE 
+      <isNotNull property="featureByFeatureId.uniqueName">
+        feature_id=(SELECT feature_id FROM feature WHERE uniquename=#featureByFeatureId.uniqueName#)
+      </isNotNull>
+    </update>
+   
+    <insert id="insertFeatureLoc" 
+            parameterClass="Feature">
+      INSERT INTO featureloc
+        ( featureloc_id, feature_id, srcfeature_id, fmin, fmax, strand
+          <isNotNull property="featureLoc.phase">
+           , phase
+          </isNotNull> 
+        )
+      VALUES
+        ( nextval('featureloc_featureloc_id_seq'),
+          $featureId$,
+          $featureLoc.featureBySrcFeatureId.featureId$,
+          $featureLoc.fmin$,
+          $featureLoc.fmax$,
+          $featureLoc.strand$
+          <isNotNull property="featureLoc.phase">
+            , $featureLoc.phase$
+          </isNotNull>
+        )
+    </insert>
+         
+</sqlMap> 

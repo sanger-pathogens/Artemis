@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="FeatureRelationship">
+
+        
+     <typeAlias alias="FeatureRelationship"
+        type="org.gmod.schema.sequence.FeatureRelationship"/>
+        
+     <resultMap id="feature_relationship" 
+               class="FeatureRelationship">
+        <result property="featureByObjectId.featureId" column="object_id"/>
+  	    <result property="cvTerm.cvTermId" column="relation_type_id"/>
+  	    <result property="rank" column="rank"/>
+  	    <result property="value" column="relation_value" />
+     </resultMap>
+
+    <resultMap id="select-relationship" 
+                class="FeatureRelationship">
+        <result property="featureBySubjectId.featureId" column="subject_id" />
+        <result property="featureByObjectId.featureId" column="object_id" />
+        <result property="value" column="value" />
+        <result property="rank" column="rank" />
+        <result property="cvTerm" column="type_id" select="selectCvterm" />
+     </resultMap>
+     
+     <!--  select feature_relationship -->
+     <select id="getFeatureRelationship" resultMap="select-relationship">
+       SELECT subject_id, object_id, type_id, value, rank 
+       FROM feature_relationship
+       WHERE
+         <dynamic>
+             <isNotNull property="object_id">                        
+               object_id=#object_id#
+             </isNotNull>
+             <isNotNull property="subject_id">                        
+               subject_id=#subject_id#
+             </isNotNull>
+         </dynamic>
+     </select>
+
+
+    <update id="updateFeatureRelationshipsForSubjectId" 
+           parameterClass="FeatureRelationship">
+      UPDATE feature_relationship
+      SET
+        rank=$rank$, type_id=$cvTerm.cvTermId$
+      WHERE subject_id=
+           ( SELECT feature_id FROM feature WHERE uniquename=#featureBySubjectId.uniqueName# )
+      AND   object_id=
+           ( SELECT feature_id FROM feature WHERE uniquename=#featureByObjectId.uniqueName# )
+   </update>
+   
+   <insert id="insertFeatureRelationship" 
+           parameterClass="FeatureRelationship">
+      INSERT INTO feature_relationship
+        ( subject_id, object_id, type_id )
+      VALUES
+        ( (SELECT feature_id FROM feature WHERE uniquename=#featureBySubjectId.uniqueName#),
+          (SELECT feature_id FROM feature WHERE uniquename=#featureByObjectId.uniqueName#),
+          $cvTerm.cvTermId$ )
+   </insert>
+   
+</sqlMap> 
