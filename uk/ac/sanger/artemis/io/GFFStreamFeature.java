@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.43 2006-08-07 14:57:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.44 2006-11-21 16:34:51 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -40,7 +40,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.43 2006-08-07 14:57:10 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.44 2006-11-21 16:34:51 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -64,9 +64,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   
   private boolean visible = true;
   
-  /** feature_relationship.rank */
-  private int feature_relationship_rank;
-  /** combined rank store for exons */
+  /** combined feature_relationship.rank store for exons */
   private Hashtable feature_relationship_rank_store;
 
   /**
@@ -831,12 +829,12 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       final String this_token = decode(att_val_list.substring(ind_start, ind_end).trim());
       ind_start = ind_end+1;
       
-      if(this_token.startsWith("feature_relationship_rank="))
+      /*if(this_token.startsWith("feature_relationship_rank="))
       {
         setFeature_relationship_rank( 
             Integer.parseInt(this_token.substring(26)) );
         continue;
-      }
+      }*/
 
       int index_of_first_space = this_token.indexOf(" ");
        
@@ -1003,14 +1001,5 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     this.visible = visible;
   }
-  
-  public int getFeature_relationship_rank()
-  {
-    return feature_relationship_rank;
-  }
 
-  public void setFeature_relationship_rank(int feature_relationship_rank)
-  {
-    this.feature_relationship_rank = feature_relationship_rank;
-  }
 }
