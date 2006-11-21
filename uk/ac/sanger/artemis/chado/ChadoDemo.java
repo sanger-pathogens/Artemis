@@ -73,6 +73,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.ByteBuffer;
 
 
 /**
@@ -163,7 +164,7 @@ public class ChadoDemo
 
     Box xbox = Box.createHorizontalBox();
     final JTextField gene_text = new JTextField(20);
-    gene_text.setText("MAL8P1.204");
+    gene_text.setText("SPAC144.14:pep");
     xbox.add(gene_text);
     gene_text.selectAll();
 
@@ -288,11 +289,14 @@ public class ChadoDemo
   private void showAttributes(final GmodDAO dao)
   {
     int row = result_table.getSelectedRow();
-    StringBuffer attr_buff = new StringBuffer();
+    ByteBuffer attr_buff = new ByteBuffer();
     Feature chado_feature = (Feature)featureList.get(row);
-    List attributes = (List)chado_feature.getFeatureProps();
-    List dbxrefs    = (List)chado_feature.getFeatureDbXRefs();
     
+    String uniquename = chado_feature.getUniqueName();
+    
+    attr_buff.append("/ID="+uniquename+"\n");
+    List attributes = (List)chado_feature.getFeatureProps();
+    List dbxrefs = dao.getFeatureDbXRefsByFeatureUniquename(uniquename);
     List featureCvTerms       = dao.getFeatureCvTermsByFeature(chado_feature);
     List featureCvTermDbXRefs = dao.getFeatureCvTermDbXRef(chado_feature);
     
@@ -342,6 +346,7 @@ public class ChadoDemo
     {
       for(int j=0; j<featureCvTerms.size(); j++)
       {
+        attr_buff.append("/");
         FeatureCvTerm feature_cvterm = (FeatureCvTerm)featureCvTerms.get(j);
         FeatureCvTermDbXRef featureCvTermDbXRef = null;
         
@@ -350,10 +355,11 @@ public class ChadoDemo
                (FeatureCvTermDbXRef)featureCvTermDbXRefs.get(0);
         appendControlledVocabulary(attr_buff, dao, feature_cvterm,
                                    featureCvTermDbXRef);
+        attr_buff.append("\n");
       }
     }
     
-    attr_text.setText(new String(attr_buff));
+    attr_text.setText( GFFStreamFeature.decode((new String(attr_buff.getBytes()))) );
   }
 
   /**
@@ -363,7 +369,7 @@ public class ChadoDemo
    * @param feature_cvterm
    * @param featureCvTermDbXRef
    */
-  private void appendControlledVocabulary(final StringBuffer attr_buff,
+  private void appendControlledVocabulary(final ByteBuffer attr_buff,
                                           final GmodDAO dao,
                                           final FeatureCvTerm feature_cvterm,
                                           final FeatureCvTermDbXRef featureCvTermDbXRef)
@@ -443,9 +449,21 @@ public class ChadoDemo
       
       attr_buff.append("term="+feature_cvterm.getCvTerm().getName()+"%3B");
       
-      attr_buff.append("db_xref="+dbXRef.getDb().getName() + ":"
-          + dbXRef.getAccession() + "%3B");
-      
+      // PMID
+      if(feature_cvterm.getPub().getUniqueName() != null &&
+         !feature_cvterm.getPub().getUniqueName().equals("NULL"))
+      {
+        Pub pub = feature_cvterm.getPub();
+        attr_buff.append("db_xref="+
+            pub.getUniqueName()+ "%3B");
+      }
+      else if(featureCvTermDbXRef != null)
+      {
+        DbXRef fc_dbXRef = featureCvTermDbXRef.getDbXRef();
+        attr_buff.append("db_xref=");
+        attr_buff.append(fc_dbXRef.getDb().getName()+":");
+        attr_buff.append(fc_dbXRef.getAccession()+ "%3B");
+      }
       
       List feature_cvtermprops = (List)feature_cvterm
           .getFeatureCvTermProps();
@@ -457,7 +475,7 @@ public class ChadoDemo
             .getCvTermId(), dao));
         attr_buff.append("=");
         attr_buff.append(feature_cvtermprop.getValue());
-        if(i < feature_cvtermprops.size())
+        if(i < feature_cvtermprops.size()-1)
           attr_buff.append("%3B");
       }
       
