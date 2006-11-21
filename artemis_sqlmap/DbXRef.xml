@@ -9,9 +9,6 @@
 
   <typeAlias alias="DbXRef"
         type="org.gmod.schema.general.DbXRef"/>
-  
-    <typeAlias alias="Db"
-        type="org.gmod.schema.general.Db"/>
         
   <resultMap id="select-dbxref" 
                class="DbXRef">
@@ -20,12 +17,6 @@
     <result property="version"     column="version"/>
     <result property="description" column="description"/>
   </resultMap>
-
-  
-  <select id="getDbId" parameterClass="Db"
-                       resultClass="java.lang.Integer">
-    SELECT db_id FROM db WHERE name=#name#
-  </select>
   
   <select id="getDbXRefId" parameterClass="DbXRef"
                            resultClass="java.lang.Integer">
@@ -37,9 +28,6 @@
     SELECT * FROM dbxref WHERE dbxref_id=$dbXRefId$
   </select>
   
-  <select id="selectDb" resultClass="Db">
-    SELECT * FROM db WHERE db_id=$db_id$
-  </select>
   
   <!-- WRITE BACK -->
   <insert id="insertDbXRef" parameterClass="DbXRef">
