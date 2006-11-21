@@ -391,9 +391,7 @@ public class ChadoTransactionManager
    */ 
   private void updateFeatureRelationshipRank(final GFFStreamFeature feature,
                                              final RangeVector rv_new)
-  {
-       
-    
+  {   
     // update feature_relationship.rank
     ChadoTransaction tsn;
     Hashtable feature_relationship_rank_store = new Hashtable();
@@ -879,34 +877,8 @@ public class ChadoTransactionManager
           continue;
         }
 
-        
-        if(feature.getFeature_relationship_rank_store() != null)
-        {
-          Hashtable rank_hash = feature.getFeature_relationship_rank_store();
-          Enumeration id_keys= rank_hash.keys();
-          while(id_keys.hasMoreElements())
-          {
-            uniquename = (String)id_keys.nextElement();
-            FeatureProp featureprop = getFeatureProp(uniquename, null,
-                lcvterm_id, -1);
-            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
-                featureprop,
-                feature.getLastModified(), feature);
-            
-            tsn.setUniquename(uniquename);
-            sql.add(tsn);
-          }
-        }
-        else
-        {
-          FeatureProp featureprop = getFeatureProp(uniquename,
-                                        null, lcvterm_id, -1);
-        
-          tsn = new ChadoTransaction(ChadoTransaction.DELETE,
-              featureprop,
-              feature.getLastModified(), feature);       
-          sql.add(tsn);
-        }
+        processFeatureProp(feature, null, -1, ChadoTransaction.DELETE, 
+                           uniquename, lcvterm_id);
       }
     }
 
@@ -984,33 +956,8 @@ public class ChadoTransactionManager
           if(index > -1)
             qualifier_string = qualifier_string.substring(index+1);
           
-          if(feature.getFeature_relationship_rank_store() != null)
-          {
-            Hashtable rank_hash = feature.getFeature_relationship_rank_store();
-            Enumeration id_keys= rank_hash.keys();
-            while(id_keys.hasMoreElements())
-            {
-              uniquename = (String)id_keys.nextElement();
-              FeatureProp featureprop = getFeatureProp(uniquename, 
-                  qualifier_string,
-                  lcvterm_id, rank);
-              tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                  featureprop,
-                  feature.getLastModified(), feature);
-              tsn.setGff_feature(feature);
-              sql.add(tsn);
-            }
-          }
-          else
-          {
-            FeatureProp featureprop = getFeatureProp(uniquename,
-                qualifier_string, lcvterm_id, rank);
-
-            tsn = new ChadoTransaction(ChadoTransaction.UPDATE, featureprop,
-                feature.getLastModified(), feature);
-            tsn.setGff_feature(feature);
-            sql.add(tsn);
-          }
+          processFeatureProp(feature, qualifier_string, rank, ChadoTransaction.UPDATE, 
+                             uniquename, lcvterm_id);
         }
 
       }
@@ -1021,35 +968,8 @@ public class ChadoTransactionManager
         //
         if(old_index > -1)
         {
-          if(feature.getFeature_relationship_rank_store() != null)
-          {
-            Hashtable rank_hash = feature.getFeature_relationship_rank_store();
-            Enumeration id_keys= rank_hash.keys();
-            while(id_keys.hasMoreElements())
-            {
-              uniquename = (String)id_keys.nextElement();
-              FeatureProp featureprop = getFeatureProp(uniquename, null,
-                  lcvterm_id, -1);
-              tsn = new ChadoTransaction(ChadoTransaction.DELETE,
-                  featureprop,
-                  feature.getLastModified(), feature);
-              tsn.setGff_feature(feature);
-              tsn.setUniquename(uniquename);
-              sql.add(tsn);
-            }
-          }
-          else
-          {
-            FeatureProp featureprop = getFeatureProp(uniquename, null,
-                lcvterm_id, -1);
-          
-            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
-                featureprop,
-                feature.getLastModified(), feature);
-
-            tsn.setGff_feature(feature);
-            sql.add(tsn);
-          }
+          processFeatureProp(feature, null, -1, ChadoTransaction.DELETE, 
+                             uniquename, lcvterm_id);
         }
           
         //
@@ -1063,31 +983,8 @@ public class ChadoTransactionManager
           if(index > -1)
             qualifier_string = qualifier_string.substring(index+1);
          
-          if(feature.getFeature_relationship_rank_store() != null)
-          {
-            Hashtable rank_hash = feature.getFeature_relationship_rank_store();
-            Enumeration id_keys= rank_hash.keys();
-            while(id_keys.hasMoreElements())
-            {
-              uniquename = (String)id_keys.nextElement();
-              FeatureProp featureprop = getFeatureProp(uniquename, qualifier_string,
-                  lcvterm_id, rank);
-              tsn = new ChadoTransaction(ChadoTransaction.INSERT,
-                  featureprop,
-                  feature.getLastModified(), feature);
-              tsn.setUniquename(uniquename);
-              sql.add(tsn);
-            }
-          }
-          else
-          {
-            FeatureProp featureprop = getFeatureProp(uniquename, qualifier_string,
-                                                   lcvterm_id, rank);
-            tsn = new ChadoTransaction(ChadoTransaction.INSERT,
-                featureprop,
-                feature.getLastModified(), feature);
-            sql.add(tsn);
-          }
+          processFeatureProp(feature, qualifier_string, rank, ChadoTransaction.INSERT, 
+                             uniquename, lcvterm_id);
         }
 
       }
@@ -1095,6 +992,46 @@ public class ChadoTransactionManager
 
   }
   
+  /**
+   * 
+   * @param feature
+   * @param type        ChadoTransaction type DELETE/UPDATE/INSERT
+   * @param uniquename
+   * @param lcvterm_id
+   */
+  private void processFeatureProp(final GFFStreamFeature feature,
+      final String qualifier_string, final int rank,
+      final int type, String uniquename, Integer lcvterm_id)
+  {
+    ChadoTransaction tsn;
+    if(feature.getFeature_relationship_rank_store() != null)
+    {
+      Hashtable rank_hash = feature.getFeature_relationship_rank_store();
+      Enumeration id_keys= rank_hash.keys();
+      while(id_keys.hasMoreElements())
+      {
+        uniquename = (String)id_keys.nextElement();
+        FeatureProp featureprop = getFeatureProp(uniquename, qualifier_string,
+                                                 lcvterm_id, rank);
+        tsn = new ChadoTransaction(type,
+            featureprop,
+            feature.getLastModified(), feature);
+        
+        tsn.setUniquename(uniquename);
+        sql.add(tsn);
+      }
+    }
+    else
+    {
+      FeatureProp featureprop = getFeatureProp(uniquename,
+                         qualifier_string, lcvterm_id, rank);
+    
+      tsn = new ChadoTransaction(type,
+          featureprop,
+          feature.getLastModified(), feature);       
+      sql.add(tsn);
+    }
+  }
   
   /**
    * Handle database transactions involving the GFF3 reserved tags.
