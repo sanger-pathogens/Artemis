@@ -307,7 +307,7 @@ public class IBatisDAO extends GmodDAO
   
   public List getFeatureCvTermDbXRef(Feature feature)
   {
-    return sqlMap.queryForList("getFeatureCvTermDbXRef", null);
+    return sqlMap.queryForList("getFeatureCvTermDbXRef", feature);
   }
   
   public List getProducts()
