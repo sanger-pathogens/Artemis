@@ -126,6 +126,10 @@ public class JdbcDAO extends GmodDAO
   {
     Feature feature = new Feature();
     feature.setUniqueName(name);
+    
+    // getFeatureSynonymsByName() needs implementing
+    //List feature_synonym_list = getFeatureSynonymsByName();
+    
     return getFeatureQuery(name, -1, -1);
   }
   
@@ -189,7 +193,7 @@ public class JdbcDAO extends GmodDAO
   public List getFeatureCvTermsByFeature(Feature feature)
   { 
     String sql = "SELECT fc.feature_id, fc.feature_cvterm_id, "+
-     "fc.cvterm_id, fc.rank AS fc_rank, fc.is_not, fcp.type_id, fcp.value, fcp.rank, "+
+     "fc.cvterm_id, fc.rank AS fc_rank, fc.is_not AS not, fcp.type_id, fcp.value, fcp.rank, "+
      "cvterm.name AS cvterm_name, cv.name AS cv_name, "+
      "pub.pub_id, pub.uniquename, "+
      "db.name, dbxref.accession "+
@@ -204,7 +208,8 @@ public class JdbcDAO extends GmodDAO
     
     if(feature != null && feature.getUniqueName() != null)
       sql = sql + " WHERE "+
-        "feature_id=(SELECT feature_id FROM feature WHERE uniquename=#uniqueName#)";
+        "feature_id=(SELECT feature_id FROM feature WHERE uniquename='"+
+        feature.getUniqueName()+"')";
     
     sql = sql + " ORDER BY fc.feature_cvterm_id, fc.rank, type_id, fcp.rank";
     
@@ -573,7 +578,7 @@ public class JdbcDAO extends GmodDAO
   
   public List getFeatureCvTermDbXRef(Feature feature)
   { 
-    String sql = "SELECT feature_cvterm_id, dbx.*, db.name "+
+    String sql = "SELECT fcd.feature_cvterm_id, dbx.*, db.name "+
       "FROM feature_cvterm_dbxref fcd "+
       "LEFT JOIN dbxref dbx ON dbx.dbxref_id=fcd.dbxref_id "+
       "LEFT JOIN db ON db.db_id=dbx.db_id";
@@ -581,8 +586,8 @@ public class JdbcDAO extends GmodDAO
     if(feature != null && feature.getUniqueName() != null)
       sql = sql+ " " +
           "LEFT JOIN feature_cvterm fc ON fcd.feature_cvterm_id=fc.feature_cvterm_id "+
-          "WHERE feature_id=(SELECT feature_id FROM feature WHERE uniquename="+
-          feature.getUniqueName()+")";
+          "WHERE feature_id=(SELECT feature_id FROM feature WHERE uniquename='"+
+          feature.getUniqueName()+"')";
     
     appendToLogFile(sql, sqlLog);
     
