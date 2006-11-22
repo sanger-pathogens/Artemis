@@ -159,21 +159,21 @@ public class ChadoDemo
     if(schema_list.getSelectedIndex() == -1)
       schema_list.setSelectedValue("All", true);
 
+    Box xbox2 = Box.createHorizontalBox();
     JScrollPane jsp = new JScrollPane(schema_list);
-    panel.add(jsp, BorderLayout.EAST);
 
     Box xbox = Box.createHorizontalBox();
     final JTextField gene_text = new JTextField(20);
-    gene_text.setText("SPAC144.14:pep");
+    gene_text.setText("SPAC19G12.09:pep");
     xbox.add(gene_text);
     gene_text.selectAll();
 
     result_table = new JTable();
 
     final JScrollPane scrollpane = new JScrollPane(result_table);
-    scrollpane.setPreferredSize(new Dimension(600, 200));
+    scrollpane.setPreferredSize(new Dimension(600, 250));
 
-    panel.add(scrollpane, BorderLayout.CENTER);
+    //panel.add(scrollpane, BorderLayout.CENTER);
 
     JButton findButt = new JButton("FIND");
     findButt.addActionListener(new ActionListener()
@@ -245,12 +245,21 @@ public class ChadoDemo
     });
     xbox.add(findButt);
     xbox.add(Box.createHorizontalGlue());
-    panel.add(xbox, BorderLayout.NORTH);
+    
+    Box ybox = Box.createVerticalBox();
+    xbox2.add(scrollpane);
+    xbox2.add(jsp);
+    xbox2.add(Box.createHorizontalGlue());
+    
+    ybox.add(xbox);
+    ybox.add(xbox2);
+    
+    panel.add(ybox, BorderLayout.NORTH);
     
     attr_text = new JTextArea();
     JScrollPane jsp_attr = new JScrollPane(attr_text);
-    jsp_attr.setPreferredSize(new Dimension(600, 100));
-    panel.add(jsp_attr, BorderLayout.SOUTH);
+    jsp_attr.setPreferredSize(new Dimension(600, 150));
+    panel.add(jsp_attr, BorderLayout.CENTER);
 
     JFrame frame = new JFrame("Feature Search");
     frame.getContentPane().add(panel);
@@ -315,7 +324,7 @@ public class ChadoDemo
     List synonyms = (List)chado_feature.getFeatureSynonyms();
 
     // append synonyms
-    if(synonyms.size() > 0)
+    if(synonyms != null && synonyms.size() > 0)
     {
       FeatureSynonym alias;
 
@@ -350,7 +359,7 @@ public class ChadoDemo
         FeatureCvTerm feature_cvterm = (FeatureCvTerm)featureCvTerms.get(j);
         FeatureCvTermDbXRef featureCvTermDbXRef = null;
         
-        if(featureCvTermDbXRefs != null || featureCvTermDbXRefs.size() >0)
+        if(featureCvTermDbXRefs != null && featureCvTermDbXRefs.size() > 0)
           featureCvTermDbXRef = 
                (FeatureCvTermDbXRef)featureCvTermDbXRefs.get(0);
         appendControlledVocabulary(attr_buff, dao, feature_cvterm,
@@ -457,10 +466,11 @@ public class ChadoDemo
         attr_buff.append("db_xref="+
             pub.getUniqueName()+ "%3B");
       }
-      else if(featureCvTermDbXRef != null)
+      
+      if(featureCvTermDbXRef != null)
       {
         DbXRef fc_dbXRef = featureCvTermDbXRef.getDbXRef();
-        attr_buff.append("db_xref=");
+        attr_buff.append("WITH=");
         attr_buff.append(fc_dbXRef.getDb().getName()+":");
         attr_buff.append(fc_dbXRef.getAccession()+ "%3B");
       }
@@ -520,9 +530,17 @@ public class ChadoDemo
       // assume only one featureloc
       List locs = (List)feature.getFeatureLocsForFeatureId();
       
-      if(locs.size() > 0)
+      if(locs != null && locs.size() > 0)
       {
         FeatureLoc loc = (FeatureLoc)locs.get(0);
+        int fmin = loc.getFmin().intValue() + 1;
+        int fmax = loc.getFmax().intValue();
+        rowData[i][4] = fmin + "..." + fmax;
+        rowData[i][5] = Integer.toString(loc.getStrand().shortValue());
+      }
+      else if(feature.getFeatureLoc() != null)
+      {
+        FeatureLoc loc = feature.getFeatureLoc();
         int fmin = loc.getFmin().intValue() + 1;
         int fmax = loc.getFmax().intValue();
         rowData[i][4] = fmin + "..." + fmax;
