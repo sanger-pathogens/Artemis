@@ -111,6 +111,8 @@ public class ChadoDemo
 
   private static Hashtable cvterms;
   
+  private List pubDbXRefs[];
+  
   /** 
    * Chado demo
    */
@@ -174,13 +176,15 @@ public class ChadoDemo
     scrollpane.setPreferredSize(new Dimension(600, 250));
 
     //panel.add(scrollpane, BorderLayout.CENTER);
-
+    pubDbXRefs = new List[schemas.size()];
+    
     JButton findButt = new JButton("FIND");
     findButt.addActionListener(new ActionListener()
     {
       private String columnNames[] = { "schema", "name", "type",
           "feature ID", "loc", "strand", "time modified" };
 
+      
       public void actionPerformed(ActionEvent event)
       {
         String search_gene = gene_text.getText();
@@ -213,7 +217,10 @@ public class ChadoDemo
               try
               {
                 GmodDAO dao2 = getDAO();
-                showAttributes(dao2);
+
+                if(pubDbXRefs[row] == null)
+                  pubDbXRefs[row] = dao2.getPubDbXRef();
+                showAttributes(dao2, pubDbXRefs[row]);
               }
               catch(ConnectException e1)
               {
@@ -295,7 +302,8 @@ public class ChadoDemo
   /**
    * Show the attributes of a selected feature.
    */
-  private void showAttributes(final GmodDAO dao)
+  private void showAttributes(final GmodDAO dao,
+                              final List pubDbXRefs)
   {
     int row = result_table.getSelectedRow();
     ByteBuffer attr_buff = new ByteBuffer();
@@ -363,7 +371,7 @@ public class ChadoDemo
           featureCvTermDbXRef = 
                (FeatureCvTermDbXRef)featureCvTermDbXRefs.get(0);
         appendControlledVocabulary(attr_buff, dao, feature_cvterm,
-                                   featureCvTermDbXRef);
+                                   featureCvTermDbXRef, pubDbXRefs);
         attr_buff.append("\n");
       }
     }
@@ -378,35 +386,29 @@ public class ChadoDemo
    * @param feature_cvterm
    * @param featureCvTermDbXRef
    */
-  private void appendControlledVocabulary(final ByteBuffer attr_buff,
+  private static void appendControlledVocabulary(final ByteBuffer attr_buff,
                                           final GmodDAO dao,
                                           final FeatureCvTerm feature_cvterm,
-                                          final FeatureCvTermDbXRef featureCvTermDbXRef)
+                                          final FeatureCvTermDbXRef featureCvTermDbXRef,
+                                          final List pubDbXRefs)
   {
     CvTerm cvterm =  getCvTerm( feature_cvterm.getCvTerm().getCvTermId(), dao);
     DbXRef dbXRef = feature_cvterm.getCvTerm().getDbXRef();
     
-    if(cvterm.getCv().getName().equals(DatabaseDocument.CONTROLLED_CURATION_TAG_CVNAME))
+    if(cvterm.getCv().getName().startsWith(DatabaseDocument.CONTROLLED_CURATION_TAG_CVNAME))
     {
       attr_buff.append("controlled_curation=");
-      attr_buff.append("term="+feature_cvterm.getCvTerm().getName()+"%3B");
       
+      attr_buff.append("\"term="+feature_cvterm.getCvTerm().getName()+"%3B");
+      attr_buff.append("cv="+feature_cvterm.getCvTerm().getCv().getName()+"%3B");
       // PMID
       if(feature_cvterm.getPub().getUniqueName() != null &&
          !feature_cvterm.getPub().getUniqueName().equals("NULL"))
       {
         Pub pub = feature_cvterm.getPub();
-/*            PubDbXRef pubDbXRef = getPubDbXRef(pubDbXRefs, 
-                                           pub.getPubId());
         
-        if(pubDbXRef == null || 
-           !pub.getUniqueName().endsWith(pubDbXRef.getDbXRef().getAccession()))
-        {
-          JOptionPane.showMessageDialog(null, "Cannot find pub_dbxref for:\n"+
-              feature_cvterm.getPub().getUniqueName(), 
-              "Database Error",
-              JOptionPane.ERROR_MESSAGE);
-        }*/
+        // internal check
+        checkPubDbXRef(pubDbXRefs, pub.getPubId(), pub, feature_cvterm);
         
         attr_buff.append("db_xref="+
             pub.getUniqueName()+ "%3B");
@@ -428,20 +430,20 @@ public class ChadoDemo
             .getCvTermId(), dao));
         attr_buff.append("=");
         attr_buff.append(feature_cvtermprop.getValue());
-        if(i < feature_cvtermprops.size())
+        if(i < feature_cvtermprops.size()-1)
           attr_buff.append("%3B");
       }
       
-      attr_buff.append(";");
+      attr_buff.append("\";");
     }
     else if(cvterm.getCv().getName().equals(DatabaseDocument.PRODUCTS_TAG_CVNAME))
     {
-      attr_buff.append("product=");
-      attr_buff.append(feature_cvterm.getCvTerm().getName()+";");
+      attr_buff.append("product=\"");
+      attr_buff.append(feature_cvterm.getCvTerm().getName()+"\";");
     }
     else
     {
-      attr_buff.append("GO=");
+      attr_buff.append("GO=\"");
 
       if(cvterm.getCv().getName().equals("molecular_function"))
         attr_buff.append("aspect=F%3B");
@@ -470,7 +472,7 @@ public class ChadoDemo
       if(featureCvTermDbXRef != null)
       {
         DbXRef fc_dbXRef = featureCvTermDbXRef.getDbXRef();
-        attr_buff.append("WITH=");
+        attr_buff.append("with=");
         attr_buff.append(fc_dbXRef.getDb().getName()+":");
         attr_buff.append(fc_dbXRef.getAccession()+ "%3B");
       }
@@ -489,8 +491,42 @@ public class ChadoDemo
           attr_buff.append("%3B");
       }
       
-      attr_buff.append(";");
+      attr_buff.append("\";");
     }
+  }
+  
+  /**
+   * Check the PubDbXref contains the Pub in FeatureCvTerm
+   * @param pubDbXRefs
+   * @param pubId
+   * @param pub
+   * @param feature_cvterm
+   */
+  private static void checkPubDbXRef(final List pubDbXRefs, final int pubId,
+                                     final Pub pub, final FeatureCvTerm feature_cvterm)
+  {
+    System.out.println("Checking PubDbXRef....");
+    PubDbXRef pubDbXRef = null;
+    for(int i = 0; i < pubDbXRefs.size(); i++)
+    {
+      pubDbXRef = (PubDbXRef) pubDbXRefs.get(i);
+      if(pubDbXRef.getPub().getPubId() == pubId)
+      {
+        DbXRef dbxref = pubDbXRef.getDbXRef();
+        System.out.println("Found Pub "+dbxref.getDb().getName()+
+                                    ":"+dbxref.getAccession());
+        break;
+      }
+    }
+    
+    if(pubDbXRef == null || 
+        !pub.getUniqueName().endsWith(pubDbXRef.getDbXRef().getAccession()))
+     {
+       JOptionPane.showMessageDialog(null, "Cannot find pub_dbxref for:\n"+
+           feature_cvterm.getPub().getUniqueName(), 
+           "Database Error",
+           JOptionPane.ERROR_MESSAGE);
+     }
   }
   
   /**
@@ -769,7 +805,9 @@ public class ChadoDemo
       try
       {
         GmodDAO dao2 = getDAO();
-        showAttributes(dao2);
+        if(pubDbXRefs[row] == null)
+          pubDbXRefs[row] = dao2.getPubDbXRef();
+        showAttributes(dao2, pubDbXRefs[row]);
       }
       catch(ConnectException e1)
       {
