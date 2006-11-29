@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="lib/ibatis/ibatis-common-2.jar"/>
 	<classpathentry kind="lib" path="lib/jobcontrol.jar"/>
 	<classpathentry kind="lib" path="lib/chado-14-interface.jar"/>
+	<classpathentry kind="lib" path="lib/ibatis/log4j-1.2.13.jar"/>
 	<classpathentry kind="output" path="ant-build/classes/main"/>
 </classpath>
