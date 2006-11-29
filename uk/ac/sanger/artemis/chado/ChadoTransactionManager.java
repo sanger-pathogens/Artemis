@@ -63,6 +63,7 @@ import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.Synonym;
 
 import org.gmod.schema.cv.*;
+import org.gmod.schema.pub.Pub;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
@@ -1181,17 +1182,22 @@ public class ChadoTransactionManager
            tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                                       featureloc,
                                       feature.getLastModified(), feature);
-           sql.add(tsn);
+           //sql.add(tsn);
          }
          else if(isCvTag(qualifier_name))
          {
-           Splash.logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+qualifier_name+" "+
-               qualifier_string);
+           Splash.logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
+                                 qualifier_name+" "+qualifier_string);
+           FeatureCvTerm feature_cvterm = getFeatureCvTerm(qualifier_name,
+              qualifier_string, uniquename);
+           tsn = new ChadoTransaction(ChadoTransaction.INSERT, 
+                      feature_cvterm,
+                      feature.getLastModified(), feature);
          }
          else if(isSynonymTag(qualifier_name))
          {
-           Splash.logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+qualifier_name+" "+
-               qualifier_string);
+           Splash.logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
+                                 qualifier_name+" "+qualifier_string);
 
            FeatureSynonym feature_synonym = getFeatureSynonym(qualifier_name,
                                                qualifier_string, uniquename);
@@ -1360,6 +1366,7 @@ public class ChadoTransactionManager
   
   /**
    * Create the <code>FeatureCvTerm</code> object
+   * @param qualifier_name
    * @param qualifier_string
    * @param uniqueName
    * @return
@@ -1376,94 +1383,111 @@ public class ChadoTransactionManager
     chado_feature.setUniqueName(uniqueName);
     feature_cvterm.setFeature(chado_feature);
     
-    CvTerm cvTerm = null;
-    String cvTermName = null;
-    if(qualifier_string.toLowerCase().indexOf("term") > -1)
+    if(qualifier_name.toLowerCase().equals("product"))
     {
-      int ind1 = qualifier_string.indexOf("term=");
-      int ind2 = qualifier_string.indexOf(";", ind1);
-      if(ind2 < ind1)
-        ind2 = qualifier_string.length();
-            
-      cvTermName = qualifier_string.substring(ind1+5, ind2);
-      cvTerm = DatabaseDocument.getCvTermByCvTermName(cvTermName);
+      CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(qualifier_string);
 
       if(cvTerm != null)
       {
-        Splash.logger4j.debug("USE CvTerm from cache, CvTermId="+cvTerm.getCvTermId());
+        Splash.logger4j.debug("USE CvTerm from cache, CvTermId="
+            + cvTerm.getCvTermId());
         feature_cvterm.setCvTerm(cvTerm);
       }
- 
-    }
-    else if(qualifier_name.toLowerCase().equals("product"))
-    {
-      cvTermName = qualifier_string;
-      cvTerm = DatabaseDocument.getCvTermByCvTermName(cvTermName);
-      
-      if(cvTerm != null)
+      else
       {
-        Splash.logger4j.debug("USE CvTerm from cache, CvTermId="+cvTerm.getCvTermId());
-        feature_cvterm.setCvTerm(cvTerm);
+        Splash.logger4j.warn("CvTerm not found in cache ="+qualifier_string);
+        cvTerm = new CvTerm();
+        cvTerm.setName(qualifier_string);
       }
+      feature_cvterm.setCvTerm(cvTerm);
+      Splash.logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
+      return feature_cvterm;
     }
     
-    if(cvTerm == null)
-    {
-      cvTerm = new CvTerm();
-      cvTerm.setName(cvTermName);
-    }
-    feature_cvterm.setCvTerm(cvTerm);
+    StringVector strings = StringVector.getStrings(qualifier_string, ";");
+    for(int i=0; i<strings.size(); i++)
+    {    
+      String this_qualifier_part = (String) strings.get(i);
       
-    // the WITH column is associated with one or more FeatureCvTermDbXRef
-    if(qualifier_string.toLowerCase().indexOf("with") > -1)
-    {
-      int ind1 = qualifier_string.indexOf("with=");
-      int ind2 = qualifier_string.indexOf(";", ind1);
-      if(ind2 < ind1)
-        ind2 = qualifier_string.length();
+      if(this_qualifier_part.toLowerCase().startsWith("term="))
+      {
+        String cvTermName = this_qualifier_part.substring(5);
+        CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(cvTermName);
+
+        if(cvTerm != null)
+        {
+          Splash.logger4j.debug("USE CvTerm from cache, CvTermId="
+              + cvTerm.getCvTermId());
+          feature_cvterm.setCvTerm(cvTerm);
+        }
+        else
+        {
+          Splash.logger4j.warn("CvTerm not found in cache ="+cvTermName);
+          cvTerm = new CvTerm();
+          cvTerm.setName(cvTermName);
+        }
+        feature_cvterm.setCvTerm(cvTerm);
+        continue;
+      }
+
+      // the WITH column is associated with one or more FeatureCvTermDbXRef
+      if(this_qualifier_part.toLowerCase().startsWith("with="))
+      {
+        String withStr = this_qualifier_part.substring(5);
+        loadFeatureCvTermDbXRefs(withStr, feature_cvterm);
+        continue;
+      }
+
+      // N.B. the db_xref is a Pub in /GO, but may be
+      // a FeatureCvTermDbXRef or a Pub for /controlled_curation
+      if(this_qualifier_part.toLowerCase().startsWith("db_xref="))
+      {
+        String dbxrefStr = this_qualifier_part.substring(8);
+        loadFeatureCvTermDbXRefs(dbxrefStr, feature_cvterm);
+        continue;
+      }
       
-      String withStr = qualifier_string.substring(ind1+5, ind2);
-      loadFeatureCvTermDbXRefs(withStr, feature_cvterm);
-    }
-    
-    // N.B. the db_xref is a Pub in /GO, but may be
-    // a FeatureCvTermDbXRef or a Pub for /controlled_curation
-    if(qualifier_string.toLowerCase().indexOf("db_xref") > -1)
-    {
-      int ind1 = qualifier_string.toLowerCase().indexOf("db_xref=");
-      int ind2 = qualifier_string.indexOf(";", ind1);
-      if(ind2 < ind1)
-        ind2 = qualifier_string.length();
+      // feature_cvterm_prop's  
       
-      String dbxrefStr = qualifier_string.substring(ind1+8, ind2);
-      loadFeatureCvTermDbXRefs(dbxrefStr, feature_cvterm);
     }
     
     Splash.logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
     return feature_cvterm;
   }
   
+  
+  /**
+   * 
+   * @param searchStr
+   * @param feature_cvterm
+   */
   public void loadFeatureCvTermDbXRefs(final String searchStr,
                                        final FeatureCvTerm feature_cvterm)
   {
     List featureCvTermDbXRefs = null;
     
-    int ind1 = -1;
-    int ind2 = -1;
-    while( (ind1 = searchStr.indexOf(':', ind1+1)) > -1)
-    {
-      final String dbName = searchStr.substring(ind2+1, ind1);
-      final String accession;
-      
-      ind2 = searchStr.indexOf('|', ind1);
-      
-      if(ind2 > -1)
-        accession = searchStr.substring(ind1 + 1, ind2);
-      else
-        accession = searchStr.substring(ind1 + 1);
+    StringVector strings = StringVector.getStrings(searchStr, "|");
 
-      if(!dbName.equals("PMID"))
+    for(int i=0; i<strings.size(); i++)
+    {
+      String this_part = (String)strings.get(i);
+      int ind = this_part.indexOf(':');
+      
+      final String dbName = this_part.substring(0, ind);
+      final String accession = this_part.substring(ind+1);
+
+      if(dbName.equals("PMID"))
       {
+        // enter as Pub if primary
+        Splash.logger4j.debug("CREATE Pub for " + 
+            dbName + ":" + accession);
+        Pub pub = new Pub();
+        pub.setUniqueName(dbName + ":" + accession);
+        feature_cvterm.setPub(pub);
+      }
+      else  
+      {
+        // enter as feature_cvterm_dbxref
         Splash.logger4j.debug("CREATE FeatureCvTermDbXRef for " + 
             dbName + ":" + accession);
         
@@ -1479,12 +1503,6 @@ public class ChadoTransactionManager
         if(featureCvTermDbXRefs == null)
           featureCvTermDbXRefs = new Vector();
         featureCvTermDbXRefs.add(featureCvTermDbXRef);
-      }
-      else
-      {
-        // enter as Pub if primary
-        Splash.logger4j.debug("CREATE Pub for " + 
-            dbName + ":" + accession);
       }
     }
     
