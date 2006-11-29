@@ -54,6 +54,16 @@ public abstract class GmodDAO implements SequenceDaoI, SchemaDaoI, OrganismDaoI,
    */
   public abstract List getAllFeatureSynonymsAsFeature();
   
+  /**
+   * Return a list of features that have this particular cvterm 
+   * @param cvTermName the CvTerm name
+   * @return a (possibly empty) List<Feature> of children
+   */
+  public List getFeaturesByCvTermNameAndCvName(String cvTermName, String cvName)
+  {
+    return null;
+  }
+  
   //////
   ////// OrganismDaoI
   //////

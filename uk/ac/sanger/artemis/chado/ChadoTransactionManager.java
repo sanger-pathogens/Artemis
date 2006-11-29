@@ -46,6 +46,8 @@ import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.EntryChangeListener;
 import uk.ac.sanger.artemis.EntryChangeEvent;
+import uk.ac.sanger.artemis.components.Splash;
+
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.List;
@@ -63,6 +65,7 @@ import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.cv.*;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 
 /**
  *
@@ -125,7 +128,7 @@ public class ChadoTransactionManager
         RangeVector rv_new = event.getNewLocation().getRanges();
         RangeVector rv_old = event.getOldLocation().getRanges();
 
-        System.out.println("SEGMENT_CHANGED");
+        Splash.logger4j.debug("SEGMENT_CHANGED");
          
         if(rv_old.size() > rv_new.size()) // segment deleted
         {
@@ -249,8 +252,8 @@ public class ChadoTransactionManager
         RangeVector rv_new = event.getNewLocation().getRanges();
         RangeVector rv_old = event.getOldLocation().getRanges();
 
-        System.out.println("LOCATION_CHANGED "+feature.getFirstBase()+".."+feature.getLastBase()+
-                           "   new="+rv_new.size()+" old="+rv_old.size());
+        Splash.logger4j.debug("LOCATION_CHANGED "+feature.getFirstBase()+".."+feature.getLastBase()+
+                              "   new="+rv_new.size()+" old="+rv_old.size());
         if(rv_new.size() != rv_old.size())
           return;
         
@@ -292,7 +295,7 @@ public class ChadoTransactionManager
       }
       else if(event.getType() == FeatureChangeEvent.QUALIFIER_CHANGED)
       {
-        System.out.println("QUALIFIER_CHANGED "
+        Splash.logger4j.debug("QUALIFIER_CHANGED "
             +event.getOldQualifiers().getQualifierByName("ID").getValues().get(0));
         
         editKeyAndQualifiers(event.getOldQualifiers(),event.getNewQualifiers(),
@@ -301,7 +304,7 @@ public class ChadoTransactionManager
       }
       else if(event.getType() == FeatureChangeEvent.ALL_CHANGED)
       {
-        System.out.println("ALL_CHANGED "+event.getOldKey().toString()+"  "+
+        Splash.logger4j.debug("ALL_CHANGED "+event.getOldKey().toString()+"  "+
                                           event.getNewKey().toString());
         
         editKeyAndQualifiers(event.getOldQualifiers(),event.getNewQualifiers(),
@@ -335,7 +338,7 @@ public class ChadoTransactionManager
         try
         {
           qualifier_uniquename = feature.getQualifierByName("ID");
-          System.out.println("FEATURE_ADDED ------> DUPLICATE "+
+          Splash.logger4j.debug("FEATURE_ADDED ------> DUPLICATE "+
               (String)(qualifier_uniquename.getValues()).elementAt(0));
         }
         catch(InvalidRelationException e)
@@ -347,7 +350,7 @@ public class ChadoTransactionManager
         return;
       }
      
-      System.out.println("FEATURE_ADDED");
+      Splash.logger4j.debug("FEATURE_ADDED");
       Feature feature = event.getFeature();
       insertFeature(feature);
     }
@@ -358,7 +361,7 @@ public class ChadoTransactionManager
         Qualifier qualifier_uniquename = event.getFeature().getQualifierByName("ID");
         String feature_uniquename = 
                              (String)(qualifier_uniquename.getValues()).elementAt(0);
-        System.out.println("FEATURE_DELETED "+feature_uniquename);
+        Splash.logger4j.debug("FEATURE_DELETED "+feature_uniquename);
         
         if(event.getFeature().getSegments().size() > 1)
         {
@@ -455,7 +458,7 @@ public class ChadoTransactionManager
       if(qualifier_uniquename != null)
       {
         feature_uniquename = (String)(qualifier_uniquename.getValues()).elementAt(0);
-        System.out.println("FEATURE_ADDED "+feature_uniquename);
+        Splash.logger4j.debug("FEATURE_ADDED "+feature_uniquename);
       }
       
       while(feature_uniquename == null ||
@@ -784,7 +787,7 @@ public class ChadoTransactionManager
       synonym_tags = DatabaseDocument.getSynonymTypeNames(SYNONYM_TAG_CVNAME);
       if(synonym_tags == null || synonym_tags.length < 1)
       {
-        System.out.println("Using default synonym names");
+        Splash.logger4j.debug("Using default synonym names");
         synonym_tags = new String[6];
         synonym_tags[0] = "synonym";
         synonym_tags[1] = "gene";
@@ -1075,7 +1078,7 @@ public class ChadoTransactionManager
      
       chado_feature.setUniqueName((String)new_qualifier.getValues().get(0));
      
-      System.out.println(uniquename+"  in handleReservedTags() NEW="+
+      Splash.logger4j.debug(uniquename+"  in handleReservedTags() NEW="+
           (String)new_qualifier.getValues().get(0)+" OLD="+
           (String)old_qualifier.getValues().get(0));
       ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
@@ -1101,7 +1104,7 @@ public class ChadoTransactionManager
          
          if(qualifier_name.equals("Dbxref"))
          {
-           System.out.println(uniquename+"  in handleReservedTags() DELETE db="+
+           Splash.logger4j.debug(uniquename+"  in handleReservedTags() DELETE db="+
                qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
          
            FeatureDbXRef old_dbxref = getFeatureDbXRef(qualifier_string,
@@ -1123,16 +1126,17 @@ public class ChadoTransactionManager
          }
          else if(isCvTag(qualifier_name))
          {
-           System.out.println(uniquename+"  in handleReservedTags() DELETE "+
+           Splash.logger4j.debug(uniquename+"  in handleReservedTags() DELETE "+
                qualifier_name+" "+qualifier_string);
-           FeatureCvTerm feature_cvterm = getFeatureCvTerm(qualifier_string, uniquename);
+           FeatureCvTerm feature_cvterm = getFeatureCvTerm(qualifier_name, qualifier_string, 
+                                                           uniquename);
            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
                                       feature_cvterm,
                                       feature.getLastModified(), feature);       
          }
          else if(isSynonymTag(qualifier_name))
          {
-           System.out.println(uniquename+"  in handleReservedTags() DELETE "+qualifier_name+" "+
+           Splash.logger4j.debug(uniquename+"  in handleReservedTags() DELETE "+qualifier_name+" "+
                               qualifier_string);
            
            FeatureSynonym feature_synonym = getFeatureSynonym(qualifier_name,
@@ -1160,7 +1164,7 @@ public class ChadoTransactionManager
          
          if(qualifier_name.equals("Dbxref"))
          {   
-           System.out.println(uniquename+"  in handleReservedTags() INSERT db="+
+           Splash.logger4j.debug(uniquename+"  in handleReservedTags() INSERT db="+
              qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
            FeatureDbXRef new_dbxref = getFeatureDbXRef(qualifier_string,
                                                        uniquename);
@@ -1181,12 +1185,12 @@ public class ChadoTransactionManager
          }
          else if(isCvTag(qualifier_name))
          {
-           System.out.println(uniquename+"  in handleReservedTags() INSERT "+qualifier_name+" "+
+           Splash.logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+qualifier_name+" "+
                qualifier_string);
          }
          else if(isSynonymTag(qualifier_name))
          {
-           System.out.println(uniquename+"  in handleReservedTags() INSERT "+qualifier_name+" "+
+           Splash.logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+qualifier_name+" "+
                qualifier_string);
 
            FeatureSynonym feature_synonym = getFeatureSynonym(qualifier_name,
@@ -1360,36 +1364,132 @@ public class ChadoTransactionManager
    * @param uniqueName
    * @return
    */
-  private FeatureCvTerm getFeatureCvTerm(final String qualifier_string,
+  private FeatureCvTerm getFeatureCvTerm(final String qualifier_name,
+                                         final String qualifier_string,
                                          final String uniqueName)
   {
+    Splash.logger4j.debug("Build FeatureCvTerm for "+uniqueName);
+    
     FeatureCvTerm feature_cvterm = new FeatureCvTerm();
     org.gmod.schema.sequence.Feature chado_feature =
       new org.gmod.schema.sequence.Feature();
     chado_feature.setUniqueName(uniqueName);
     feature_cvterm.setFeature(chado_feature);
     
-    if(qualifier_string.indexOf("term") > -1)
+    CvTerm cvTerm = null;
+    String cvTermName = null;
+    if(qualifier_string.toLowerCase().indexOf("term") > -1)
     {
       int ind1 = qualifier_string.indexOf("term=");
       int ind2 = qualifier_string.indexOf(";", ind1);
       if(ind2 < ind1)
         ind2 = qualifier_string.length();
             
-      CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(
-                    qualifier_string.substring(ind1+5, ind2));
+      cvTermName = qualifier_string.substring(ind1+5, ind2);
+      cvTerm = DatabaseDocument.getCvTermByCvTermName(cvTermName);
+
       if(cvTerm != null)
       {
-        System.out.println("OLD CVTERM FOUND "+cvTerm.getCvTermId());
+        Splash.logger4j.debug("USE CvTerm from cache, CvTermId="+cvTerm.getCvTermId());
         feature_cvterm.setCvTerm(cvTerm);
+      }
+ 
+    }
+    else if(qualifier_name.toLowerCase().equals("product"))
+    {
+      cvTermName = qualifier_string;
+      cvTerm = DatabaseDocument.getCvTermByCvTermName(cvTermName);
+      
+      if(cvTerm != null)
+      {
+        Splash.logger4j.debug("USE CvTerm from cache, CvTermId="+cvTerm.getCvTermId());
+        feature_cvterm.setCvTerm(cvTerm);
+      }
+    }
+    
+    if(cvTerm == null)
+    {
+      cvTerm = new CvTerm();
+      cvTerm.setName(cvTermName);
+    }
+    feature_cvterm.setCvTerm(cvTerm);
+      
+    // the WITH column is associated with one or more FeatureCvTermDbXRef
+    if(qualifier_string.toLowerCase().indexOf("with") > -1)
+    {
+      int ind1 = qualifier_string.indexOf("with=");
+      int ind2 = qualifier_string.indexOf(";", ind1);
+      if(ind2 < ind1)
+        ind2 = qualifier_string.length();
+      
+      String withStr = qualifier_string.substring(ind1+5, ind2);
+      loadFeatureCvTermDbXRefs(withStr, feature_cvterm);
+    }
+    
+    // N.B. the db_xref is a Pub in /GO, but may be
+    // a FeatureCvTermDbXRef or a Pub for /controlled_curation
+    if(qualifier_string.toLowerCase().indexOf("db_xref") > -1)
+    {
+      int ind1 = qualifier_string.toLowerCase().indexOf("db_xref=");
+      int ind2 = qualifier_string.indexOf(";", ind1);
+      if(ind2 < ind1)
+        ind2 = qualifier_string.length();
+      
+      String dbxrefStr = qualifier_string.substring(ind1+8, ind2);
+      loadFeatureCvTermDbXRefs(dbxrefStr, feature_cvterm);
+    }
+    
+    Splash.logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
+    return feature_cvterm;
+  }
+  
+  public void loadFeatureCvTermDbXRefs(final String searchStr,
+                                       final FeatureCvTerm feature_cvterm)
+  {
+    List featureCvTermDbXRefs = null;
+    
+    int ind1 = -1;
+    int ind2 = -1;
+    while( (ind1 = searchStr.indexOf(':', ind1+1)) > -1)
+    {
+      final String dbName = searchStr.substring(ind2+1, ind1);
+      final String accession;
+      
+      ind2 = searchStr.indexOf('|', ind1);
+      
+      if(ind2 > -1)
+        accession = searchStr.substring(ind1 + 1, ind2);
+      else
+        accession = searchStr.substring(ind1 + 1);
+
+      if(!dbName.equals("PMID"))
+      {
+        Splash.logger4j.debug("CREATE FeatureCvTermDbXRef for " + 
+            dbName + ":" + accession);
+        
+        DbXRef dbxref = new DbXRef();
+        dbxref.setAccession(accession);
+        Db db = new Db();
+        db.setName(dbName);
+        dbxref.setDb(db);
+
+        FeatureCvTermDbXRef featureCvTermDbXRef = new FeatureCvTermDbXRef();
+        featureCvTermDbXRef.setDbXRef(dbxref);
+        
+        if(featureCvTermDbXRefs == null)
+          featureCvTermDbXRefs = new Vector();
+        featureCvTermDbXRefs.add(featureCvTermDbXRef);
       }
       else
       {
-        cvTerm = new CvTerm();
-        cvTerm.setName(qualifier_string.substring(ind1+5, ind2));
+        // enter as Pub if primary
+        Splash.logger4j.debug("CREATE Pub for " + 
+            dbName + ":" + accession);
       }
     }
-    return feature_cvterm;
+    
+    if(featureCvTermDbXRefs != null)
+      feature_cvterm.setFeatureCvTermDbXRefs(featureCvTermDbXRefs);
   }
   
   /**

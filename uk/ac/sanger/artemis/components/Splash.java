@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.18 2006-07-07 13:32:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.19 2006-11-29 10:21:40 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -40,12 +40,15 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.lang.reflect.Constructor;
+import java.util.Properties;
+
+
 
 /**
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.18 2006-07-07 13:32:12 tjc Exp $
+ *  @version $Id: Splash.java,v 1.19 2006-11-29 10:21:40 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -89,6 +92,9 @@ abstract public class Splash extends JFrame
 
   private static boolean save_properties = false;
 
+  public static org.apache.log4j.Logger logger4j = 
+         org.apache.log4j.Logger.getLogger(Splash.class);
+  
   /**
    *  Create a new JFrame for a Splash screen.
    *  @param program_name The full name of the program.
@@ -101,6 +107,24 @@ abstract public class Splash extends JFrame
   {
     super(program_title + " " + program_version);
 
+    final InputStream options_input_stream =
+      Splash.class.getResourceAsStream("/etc/log4j.properties");
+
+    Properties logProperties = new Properties();
+    try
+    {
+      logProperties.load(options_input_stream);
+      org.apache.log4j.PropertyConfigurator.configure(logProperties);
+    }
+    catch(FileNotFoundException e)
+    {
+    }
+    catch(IOException e)
+    {
+    }
+    
+    logger4j.debug("Starting application: "+program_name);
+    
     if(isMac()) 
     {
       setWorkingDirectory();
@@ -188,7 +212,7 @@ abstract public class Splash extends JFrame
         // ignore and continue
       }
     }
-
+    
     pack();
 
     final int x = 460;

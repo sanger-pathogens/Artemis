@@ -365,13 +365,10 @@ public class ChadoDemo
       {
         attr_buff.append("/");
         FeatureCvTerm feature_cvterm = (FeatureCvTerm)featureCvTerms.get(j);
-        FeatureCvTermDbXRef featureCvTermDbXRef = null;
+
+        DatabaseDocument.appendControlledVocabulary(attr_buff, dao, feature_cvterm,
+            featureCvTermDbXRefs, pubDbXRefs);
         
-        if(featureCvTermDbXRefs != null && featureCvTermDbXRefs.size() > 0)
-          featureCvTermDbXRef = 
-               (FeatureCvTermDbXRef)featureCvTermDbXRefs.get(0);
-        appendControlledVocabulary(attr_buff, dao, feature_cvterm,
-                                   featureCvTermDbXRef, pubDbXRefs);
         attr_buff.append("\n");
       }
     }
@@ -379,155 +376,6 @@ public class ChadoDemo
     attr_text.setText( GFFStreamFeature.decode((new String(attr_buff.getBytes()))) );
   }
 
-  /**
-   * Appends controlled vocabulary terms to the buffer
-   * @param attr_buff
-   * @param dao
-   * @param feature_cvterm
-   * @param featureCvTermDbXRef
-   */
-  private static void appendControlledVocabulary(final ByteBuffer attr_buff,
-                                          final GmodDAO dao,
-                                          final FeatureCvTerm feature_cvterm,
-                                          final FeatureCvTermDbXRef featureCvTermDbXRef,
-                                          final List pubDbXRefs)
-  {
-    CvTerm cvterm =  getCvTerm( feature_cvterm.getCvTerm().getCvTermId(), dao);
-    DbXRef dbXRef = feature_cvterm.getCvTerm().getDbXRef();
-    
-    if(cvterm.getCv().getName().startsWith(DatabaseDocument.CONTROLLED_CURATION_TAG_CVNAME))
-    {
-      attr_buff.append("controlled_curation=");
-      
-      attr_buff.append("\"term="+feature_cvterm.getCvTerm().getName()+"%3B");
-      attr_buff.append("cv="+feature_cvterm.getCvTerm().getCv().getName()+"%3B");
-      // PMID
-      if(feature_cvterm.getPub().getUniqueName() != null &&
-         !feature_cvterm.getPub().getUniqueName().equals("NULL"))
-      {
-        Pub pub = feature_cvterm.getPub();
-        
-        // internal check
-        checkPubDbXRef(pubDbXRefs, pub.getPubId(), pub, feature_cvterm);
-        
-        attr_buff.append("db_xref="+
-            pub.getUniqueName()+ "%3B");
-      }
-      else if(featureCvTermDbXRef != null)
-      {
-        DbXRef fc_dbXRef = featureCvTermDbXRef.getDbXRef();
-        attr_buff.append("db_xref=");
-        attr_buff.append(fc_dbXRef.getDb().getName()+":");
-        attr_buff.append(fc_dbXRef.getAccession()+ "%3B");
-      }
-      
-      List feature_cvtermprops = (List) feature_cvterm.getFeatureCvTermProps();
-      for(int i = 0; i < feature_cvtermprops.size(); i++)
-      {
-        FeatureCvTermProp feature_cvtermprop = 
-          (FeatureCvTermProp)feature_cvtermprops.get(i);
-        attr_buff.append(getCvtermName(feature_cvtermprop.getCvTerm()
-            .getCvTermId(), dao));
-        attr_buff.append("=");
-        attr_buff.append(feature_cvtermprop.getValue());
-        if(i < feature_cvtermprops.size()-1)
-          attr_buff.append("%3B");
-      }
-      
-      attr_buff.append("\";");
-    }
-    else if(cvterm.getCv().getName().equals(DatabaseDocument.PRODUCTS_TAG_CVNAME))
-    {
-      attr_buff.append("product=\"");
-      attr_buff.append(feature_cvterm.getCvTerm().getName()+"\";");
-    }
-    else
-    {
-      attr_buff.append("GO=\"");
-
-      if(cvterm.getCv().getName().equals("molecular_function"))
-        attr_buff.append("aspect=F%3B");
-      else if(cvterm.getCv().getName().equals("cellular_component"))
-        attr_buff.append("aspect=C%3B");
-      else if(cvterm.getCv().getName().equals("biological_process"))
-        attr_buff.append("aspect=P%3B");
-
-      if(feature_cvterm.isNot())
-        attr_buff.append("qualifier=NOT%3B");
-
-      attr_buff.append("GOid="+dbXRef.getDb().getName() + ":"
-          + dbXRef.getAccession() + "%3B");
-      
-      attr_buff.append("term="+feature_cvterm.getCvTerm().getName()+"%3B");
-      
-      // PMID
-      if(feature_cvterm.getPub().getUniqueName() != null &&
-         !feature_cvterm.getPub().getUniqueName().equals("NULL"))
-      {
-        Pub pub = feature_cvterm.getPub();
-        attr_buff.append("db_xref="+
-            pub.getUniqueName()+ "%3B");
-      }
-      
-      if(featureCvTermDbXRef != null)
-      {
-        DbXRef fc_dbXRef = featureCvTermDbXRef.getDbXRef();
-        attr_buff.append("with=");
-        attr_buff.append(fc_dbXRef.getDb().getName()+":");
-        attr_buff.append(fc_dbXRef.getAccession()+ "%3B");
-      }
-      
-      List feature_cvtermprops = (List)feature_cvterm
-          .getFeatureCvTermProps();
-      for(int i = 0; i < feature_cvtermprops.size(); i++)
-      {
-        FeatureCvTermProp feature_cvtermprop = 
-          (FeatureCvTermProp)feature_cvtermprops.get(i);
-        attr_buff.append(getCvtermName(feature_cvtermprop.getCvTerm()
-            .getCvTermId(), dao));
-        attr_buff.append("=");
-        attr_buff.append(feature_cvtermprop.getValue());
-        if(i < feature_cvtermprops.size()-1)
-          attr_buff.append("%3B");
-      }
-      
-      attr_buff.append("\";");
-    }
-  }
-  
-  /**
-   * Check the PubDbXref contains the Pub in FeatureCvTerm
-   * @param pubDbXRefs
-   * @param pubId
-   * @param pub
-   * @param feature_cvterm
-   */
-  private static void checkPubDbXRef(final List pubDbXRefs, final int pubId,
-                                     final Pub pub, final FeatureCvTerm feature_cvterm)
-  {
-    System.out.println("Checking PubDbXRef....");
-    PubDbXRef pubDbXRef = null;
-    for(int i = 0; i < pubDbXRefs.size(); i++)
-    {
-      pubDbXRef = (PubDbXRef) pubDbXRefs.get(i);
-      if(pubDbXRef.getPub().getPubId() == pubId)
-      {
-        DbXRef dbxref = pubDbXRef.getDbXRef();
-        System.out.println("Found Pub "+dbxref.getDb().getName()+
-                                    ":"+dbxref.getAccession());
-        break;
-      }
-    }
-    
-    if(pubDbXRef == null || 
-        !pub.getUniqueName().endsWith(pubDbXRef.getDbXRef().getAccession()))
-     {
-       JOptionPane.showMessageDialog(null, "Cannot find pub_dbxref for:\n"+
-           feature_cvterm.getPub().getUniqueName(), 
-           "Database Error",
-           JOptionPane.ERROR_MESSAGE);
-     }
-  }
   
   /**
    * Search for a feature/gene name from a <code>List</code> of schemas.

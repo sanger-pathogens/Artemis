@@ -669,6 +669,4 @@ public class IBatisDAO extends GmodDAO
     return dbxrefHash;
   }
 
-
-
 }
