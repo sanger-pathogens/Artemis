@@ -43,6 +43,7 @@ import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
+import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
@@ -503,6 +504,8 @@ public class DatabaseDocument extends Document
 
     Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao);
     Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao);
+    Hashtable featureCvTermPubs = getFeatureCvTermPub(dao);
+    
     List pubDbXRefs= dao.getPubDbXRef();
 
     // create gff byte stream
@@ -522,7 +525,8 @@ public class DatabaseDocument extends Document
       
       chadoToGFF(feat, parentFeature.getUniqueName(),
                  dbxrefs, synonym, featureCvTerms,
-                 pubDbXRefs, featureCvTermDbXRefs, id_store, dao, 
+                 pubDbXRefs, featureCvTermDbXRefs, featureCvTermPubs,
+                 id_store, dao, 
                  feat.getFeatureLoc(), this_buff);
        
       if( i%10 == 0 || i == feature_size-1)
@@ -592,7 +596,7 @@ public class DatabaseDocument extends Document
   
   private Hashtable getFeatureCvTermDbXRef(final GmodDAO dao)
   {
-    List list = dao.getFeatureCvTermDbXRef(null);
+    List list = dao.getFeatureCvTermDbXRefByFeature(null);
     if(list == null || list.size() == 0)
       return null;
     
@@ -618,6 +622,36 @@ public class DatabaseDocument extends Document
     }
      
     return featureCvTermDbXRefs;
+  }
+  
+  private Hashtable getFeatureCvTermPub(final GmodDAO dao)
+  {
+    List list = dao.getFeatureCvTermPubByFeature(null);
+    if(list == null || list.size() == 0)
+      return null;
+    
+    Integer featureCvTermId;
+    List value;
+    
+    Hashtable featureCvTermPubs = new Hashtable(list.size());
+    for(int i=0; i<list.size(); i++)
+    {
+      FeatureCvTermPub featureCvTermPub =
+        (FeatureCvTermPub)list.get(i);
+      
+      featureCvTermId = new Integer(
+          featureCvTermPub.getFeatureCvTerm().getFeatureCvTermId());
+      
+      if(featureCvTermPubs.containsKey(featureCvTermId))
+        value = (Vector)featureCvTermPubs.get(featureCvTermId);
+      else
+        value = new Vector();
+      
+      value.add(featureCvTermPub);
+      featureCvTermPubs.put(featureCvTermId, value);
+    }
+     
+    return featureCvTermPubs;
   }
   
   /**
@@ -663,7 +697,7 @@ public class DatabaseDocument extends Document
 
     ByteBuffer buff = new ByteBuffer();
     
-    chadoToGFF(feature, null, null, null, null, null, null, null, dao,
+    chadoToGFF(feature, null, null, null, null, null, null, null, null, dao,
                featureloc, buff);
 
     // get children of gene
@@ -683,7 +717,7 @@ public class DatabaseDocument extends Document
 
       FeatureLoc loc = getFeatureLoc(new Vector(
           transcript.getFeatureLocsForFeatureId()), src_id);
-      chadoToGFF(transcript, feature.getUniqueName(), null, null,
+      chadoToGFF(transcript, feature.getUniqueName(), null, null, null,
           null, null, null, id_store, dao, loc, buff);
 
       // get children of transcript - exons and pp
@@ -703,7 +737,7 @@ public class DatabaseDocument extends Document
 
         loc = getFeatureLoc(
             new Vector(child.getFeatureLocsForFeatureId()),src_id);
-        chadoToGFF(child, transcript.getUniqueName(), null,null,
+        chadoToGFF(child, transcript.getUniqueName(), null,null, null,
                    null, null, null, id_store, dao, loc, buff);
       }
     }
@@ -733,6 +767,7 @@ public class DatabaseDocument extends Document
                                  final Hashtable featureCvTerms,
                                  final List pubDbXRefs,
                                  final Hashtable featureCvTermDbXRefs,
+                                 final Hashtable featureCvTermPubs,
                                  final Hashtable id_store,
                                  final GmodDAO dao,
                                  final FeatureLoc featureloc,
@@ -914,9 +949,11 @@ public class DatabaseDocument extends Document
         
         List featureCvTermDbXRefList = 
             (List)featureCvTermDbXRefs.get(featureCvTermId);
+        
+        List featureCvTermPubList = (List)featureCvTermPubs.get(featureCvTermId);
           
         appendControlledVocabulary(this_buff, dao, feature_cvterm,
-                                   featureCvTermDbXRefList, pubDbXRefs);
+                                   featureCvTermDbXRefList,featureCvTermPubList, pubDbXRefs);
       }
       //System.out.println(new String(this_buff.getBytes()));
     }
@@ -935,6 +972,7 @@ public class DatabaseDocument extends Document
                                           final GmodDAO dao,
                                           final FeatureCvTerm feature_cvterm,
                                           final List featureCvTermDbXRefs,
+                                          final List featureCvTermPubs,
                                           final List pubDbXRefs)
   {
     CvTerm cvterm =  getCvTerm( feature_cvterm.getCvTerm().getCvTermId(), dao);
@@ -1029,13 +1067,40 @@ public class DatabaseDocument extends Document
       attr_buff.append("term="+feature_cvterm.getCvTerm().getName()+"%3B");
       
       // PMID
+      int nfound_pub = 0;
       if(feature_cvterm.getPub().getUniqueName() != null &&
          !feature_cvterm.getPub().getUniqueName().equals("NULL"))
       {
         Pub pub = feature_cvterm.getPub();
         attr_buff.append("db_xref="+
-            pub.getUniqueName()+ "%3B");
+            pub.getUniqueName());
+        nfound_pub++;
       }
+      
+      if(featureCvTermPubs != null &&
+          featureCvTermPubs.size() > 0)
+      {
+        for(int i=0; i<featureCvTermPubs.size(); i++)
+        {
+          FeatureCvTermPub featureCvTermPub =
+            (FeatureCvTermPub)featureCvTermPubs.get(i);
+          
+          if(feature_cvterm.getFeatureCvTermId() != 
+            featureCvTermPub.getFeatureCvTerm().getFeatureCvTermId())
+            continue;
+          
+          if(nfound_pub == 0)
+            attr_buff.append("db_xref=");
+          else if(nfound_pub > 1)
+            attr_buff.append("|");
+
+          attr_buff.append(featureCvTermPub.getPub().getUniqueName());
+          nfound_pub++;
+        }
+      }
+      
+      if(nfound_pub > 0)
+        attr_buff.append("%3B");
       
       if(featureCvTermDbXRefs != null &&
           featureCvTermDbXRefs.size() > 0 )
