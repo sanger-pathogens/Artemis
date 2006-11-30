@@ -41,6 +41,7 @@ import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
+import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.cv.CvTerm;
@@ -231,6 +232,9 @@ public class JdbcDAO extends GmodDAO
         CvTerm cvterm = new CvTerm();
         cvterm.setCvTermId(rs.getInt("cvterm_id"));
         cvterm.setName(rs.getString("cvterm_name"));
+        Cv cv = new Cv();
+        cv.setName(rs.getString("cv_name"));
+        cvterm.setCv(cv);
         
         DbXRef dbxref = new DbXRef();
         dbxref.setAccession(rs.getString("accession"));   
@@ -254,6 +258,8 @@ public class JdbcDAO extends GmodDAO
         int next_fc_rank = -1;      
         int next_feature_cvterm_id = -1;  
         int feature_cvterm_id = rs.getInt("feature_cvterm_id");
+        feature_cvterm.setFeatureCvTermId(feature_cvterm_id);
+        
         do
         {
           FeatureCvTermProp featureProp = new FeatureCvTermProp();
@@ -576,7 +582,7 @@ public class JdbcDAO extends GmodDAO
     return null;
   }
   
-  public List getFeatureCvTermDbXRef(Feature feature)
+  public List getFeatureCvTermDbXRefByFeature(Feature feature)
   { 
     String sql = "SELECT fcd.feature_cvterm_id, dbx.*, db.name "+
       "FROM feature_cvterm_dbxref fcd "+
@@ -619,6 +625,48 @@ public class JdbcDAO extends GmodDAO
       }
       
       return featureCvTermDbXRefs;
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+  }
+  
+  public List getFeatureCvTermPubByFeature(Feature feature)
+  {
+    String sql = "SELECT fcp.feature_cvterm_id, pub.* " +
+                 "FROM feature_cvterm_pub fcp " +
+                 "LEFT JOIN pub ON fcp.pub_id=pub.pub_id ";
+    
+    if(feature != null && feature.getUniqueName() != null)
+      sql = sql+ " " +
+          "LEFT JOIN feature_cvterm fc ON fcp.feature_cvterm_id=fc.feature_cvterm_id "+
+          "WHERE feature_id=(SELECT feature_id FROM feature WHERE uniquename='"+
+          feature.getUniqueName()+"')";
+    
+    appendToLogFile(sql, sqlLog);
+    
+    try
+    {
+      Statement st = conn.createStatement();
+      ResultSet rs = st.executeQuery(sql);
+      List featureCvTermPubs = new Vector();
+      FeatureCvTermPub featureCvTermPub;
+      while(rs.next())
+      {
+        featureCvTermPub = new FeatureCvTermPub();
+        FeatureCvTerm featureCvTerm = new FeatureCvTerm();
+        featureCvTerm.setFeatureCvTermId( rs.getInt("feature_cvterm_id") );
+        featureCvTermPub.setFeatureCvTerm(featureCvTerm);
+        
+        Pub pub = new Pub();
+        pub.setUniqueName(rs.getString("uniquename"));
+        
+        featureCvTermPub.setPub(pub);
+        featureCvTermPubs.add(featureCvTermPub);
+      }
+      
+      return featureCvTermPubs;
     }
     catch(SQLException sqle)
     {
@@ -748,6 +796,8 @@ public class JdbcDAO extends GmodDAO
               feature.setFeatureProps(new Vector());
             feature.addFeatureProp(featureprop);
           }
+          else 
+            feature.setFeatureProps(new Vector(0));
           
           // feature relationship
           FeatureRelationship feature_relationship = new FeatureRelationship();
@@ -769,6 +819,8 @@ public class JdbcDAO extends GmodDAO
 
             feature.addFeatureRelationshipsForSubjectId(feature_relationship);
           }
+          else
+            feature.setFeatureRelationshipsForSubjectId(new Vector(0));
           
           if(!rs.isLast())
           {
@@ -1051,7 +1103,8 @@ public class JdbcDAO extends GmodDAO
         pubDbXRef = new PubDbXRef();
         Pub pub = new Pub();
         pub.setPubId(rs.getInt("pub_id"));
-         
+        pubDbXRef.setPub(pub);
+        
         DbXRef dbXRef = new DbXRef();
         dbXRef.setAccession(rs.getString("accession"));
         dbXRef.setDescription(rs.getString("description"));

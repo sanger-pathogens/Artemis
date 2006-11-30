@@ -25,13 +25,8 @@
 package uk.ac.sanger.artemis.chado;
 
 import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.pub.Pub;
-import org.gmod.schema.pub.PubDbXRef;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureCvTermDbXRef;
-import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.FeatureProp;
@@ -51,6 +46,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Collection;
 import java.util.Vector;
 
 import javax.swing.JLabel;
@@ -118,6 +114,8 @@ public class ChadoDemo
    */
   public ChadoDemo()
   {
+    uk.ac.sanger.artemis.components.Splash.initLogger();
+    
     try
     {
       setLocation();
@@ -315,7 +313,8 @@ public class ChadoDemo
     List attributes = (List)chado_feature.getFeatureProps();
     List dbxrefs = dao.getFeatureDbXRefsByFeatureUniquename(uniquename);
     List featureCvTerms       = dao.getFeatureCvTermsByFeature(chado_feature);
-    List featureCvTermDbXRefs = dao.getFeatureCvTermDbXRef(chado_feature);
+    List featureCvTermDbXRefs = dao.getFeatureCvTermDbXRefByFeature(chado_feature);
+    List featureCvTermPubs    = dao.getFeatureCvTermPubByFeature(chado_feature);
     
     if(dbxrefs.size() > 0)
     {
@@ -329,7 +328,7 @@ public class ChadoDemo
       attr_buff.append("\n");
     }
 
-    List synonyms = (List)chado_feature.getFeatureSynonyms();
+    Collection synonyms = chado_feature.getFeatureSynonyms();
 
     // append synonyms
     if(synonyms != null && synonyms.size() > 0)
@@ -337,10 +336,10 @@ public class ChadoDemo
       FeatureSynonym alias;
 
       System.out.println("\n\nNow get synonym & type_id.......\n\n");
-      
-      for(int i = 0; i < synonyms.size(); i++)
+      Iterator it = synonyms.iterator();
+      while(it.hasNext())
       {
-        alias = (FeatureSynonym) synonyms.get(i);
+        alias = (FeatureSynonym)it.next();
         attr_buff.append("/");
         attr_buff.append(alias.getSynonym().getCvTerm().getName() + "=");
         attr_buff.append(alias.getSynonym().getName());
@@ -351,14 +350,17 @@ public class ChadoDemo
     }
 
     if(attributes != null)
-      for(int i = 0; i < attributes.size(); i++)
+    {
+      Iterator it = attributes.iterator();
+      while(it.hasNext())
       {
-        FeatureProp featprop = (FeatureProp) attributes.get(i);
+        FeatureProp featprop = (FeatureProp)it.next();
 
         attr_buff.append("/" + featprop.getCvTerm().getName() + "="
             + GFFStreamFeature.decode(featprop.getValue()) + "\n");
       }
-
+    }
+    
     if(featureCvTerms != null)
     {
       for(int j=0; j<featureCvTerms.size(); j++)
@@ -367,7 +369,7 @@ public class ChadoDemo
         FeatureCvTerm feature_cvterm = (FeatureCvTerm)featureCvTerms.get(j);
 
         DatabaseDocument.appendControlledVocabulary(attr_buff, dao, feature_cvterm,
-            featureCvTermDbXRefs, pubDbXRefs);
+            featureCvTermDbXRefs, featureCvTermPubs, pubDbXRefs);
         
         attr_buff.append("\n");
       }
@@ -412,11 +414,12 @@ public class ChadoDemo
       feature = (Feature) featureList.get(i);
       
       // assume only one featureloc
-      List locs = (List)feature.getFeatureLocsForFeatureId();
+      Collection locs = feature.getFeatureLocsForFeatureId();
       
       if(locs != null && locs.size() > 0)
       {
-        FeatureLoc loc = (FeatureLoc)locs.get(0);
+        Iterator it = locs.iterator();
+        FeatureLoc loc = (FeatureLoc)it.next();
         int fmin = loc.getFmin().intValue() + 1;
         int fmax = loc.getFmax().intValue();
         rowData[i][4] = fmin + "..." + fmax;
