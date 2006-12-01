@@ -98,7 +98,7 @@ public class ChadoTransactionManager
               "gff_seqname" };   // seqID of coord system
            
   //controlled vocab tags
-  private String cv_tags[] =
+  public static String cv_tags[] =
           {   "GO",
               "controlled_curation",
               "product" };
@@ -1438,8 +1438,11 @@ public class ChadoTransactionManager
         continue;
       }
 
-      // N.B. the db_xref is a Pub in /GO, but may be
-      // a FeatureCvTermDbXRef or a Pub for /controlled_curation
+      // N.B. 
+      // 1) for /GO the db_xref is a Pub (for primary pubs) 
+      //    or FeatureCvTermPub (for others) in /GO
+      // 2) for /controlled_curation the db_xref is a FeatureCvTermDbXRef 
+      //    or a Pub
       if(this_qualifier_part.toLowerCase().startsWith("db_xref="))
       {
         String dbxrefStr = this_qualifier_part.substring(8);
