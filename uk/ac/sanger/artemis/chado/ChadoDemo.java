@@ -52,6 +52,7 @@ import java.util.Vector;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JButton;
+import javax.swing.JTabbedPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.JTable;
 import javax.swing.JPasswordField;
@@ -67,7 +68,10 @@ import javax.swing.JMenuItem;
 import javax.swing.Box;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+
+import uk.ac.sanger.artemis.components.CVPanel;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.ReadFormatException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.ByteBuffer;
 
@@ -108,6 +112,8 @@ public class ChadoDemo
   private static Hashtable cvterms;
   
   private List pubDbXRefs[];
+  
+  private JTabbedPane tabbedPane;
   
   /** 
    * Chado demo
@@ -264,7 +270,12 @@ public class ChadoDemo
     attr_text = new JTextArea();
     JScrollPane jsp_attr = new JScrollPane(attr_text);
     jsp_attr.setPreferredSize(new Dimension(600, 150));
-    panel.add(jsp_attr, BorderLayout.CENTER);
+    
+    
+    tabbedPane = new JTabbedPane();
+    tabbedPane.add("Core", jsp_attr);
+    
+    panel.add(tabbedPane, BorderLayout.CENTER);
 
     JFrame frame = new JFrame("Feature Search");
     frame.getContentPane().add(panel);
@@ -305,7 +316,37 @@ public class ChadoDemo
   {
     int row = result_table.getSelectedRow();
     ByteBuffer attr_buff = new ByteBuffer();
+    ByteBuffer gff_buff = new ByteBuffer();
+    
     Feature chado_feature = (Feature)featureList.get(row);
+    
+    
+    Collection locs = chado_feature.getFeatureLocsForFeatureId();
+    
+    int fmin;
+    int fmax;
+    FeatureLoc loc;
+    
+    if(locs != null && locs.size() > 0)
+    {
+      Iterator it = locs.iterator();
+      loc = (FeatureLoc)it.next();
+    }
+    else
+      loc = chado_feature.getFeatureLoc();
+    
+    fmin = loc.getFmin().intValue() + 1;
+    fmax = loc.getFmax().intValue();
+    
+    gff_buff.append(chado_feature.getUniqueName()+"\t"+
+                    rowData[row][0]+"\t"+
+                    rowData[row][2]+"\t"+
+                    fmin+"\t"+
+                    fmax+"\t"+
+                    ".\t"+
+                    loc.getStrand()+"\t"+
+                    loc.getPhase()+"\t");
+    
     
     String uniquename = chado_feature.getUniqueName();
     
@@ -319,11 +360,15 @@ public class ChadoDemo
     if(dbxrefs.size() > 0)
     {
       attr_buff.append("/Dbxref=");
+      //gff_buff.append("Dbxref=");
       for(int i = 0; i < dbxrefs.size(); i++)
       {
         FeatureDbXRef dbxref = (FeatureDbXRef) dbxrefs.get(i);
         attr_buff.append(dbxref.getDbXRef().getDb().getName() + ":"
             + dbxref.getDbXRef().getAccession() + "; ");
+        
+        //gff_buff.append(dbxref.getDbXRef().getDb().getName() + ":"
+        //    + dbxref.getDbXRef().getAccession() + "; ");
       }
       attr_buff.append("\n");
     }
@@ -343,9 +388,11 @@ public class ChadoDemo
         attr_buff.append("/");
         attr_buff.append(alias.getSynonym().getCvTerm().getName() + "=");
         attr_buff.append(alias.getSynonym().getName());
-
         attr_buff.append(";");
         attr_buff.append("\n");
+        
+        //gff_buff.append(alias.getSynonym().getCvTerm().getName() + "=");
+        //gff_buff.append(alias.getSynonym().getName()+";");
       }
     }
 
@@ -358,6 +405,9 @@ public class ChadoDemo
 
         attr_buff.append("/" + featprop.getCvTerm().getName() + "="
             + GFFStreamFeature.decode(featprop.getValue()) + "\n");
+        
+        //gff_buff.append(featprop.getCvTerm().getName() + "="
+        //    + GFFStreamFeature.decode(featprop.getValue()));
       }
     }
     
@@ -371,11 +421,29 @@ public class ChadoDemo
         DatabaseDocument.appendControlledVocabulary(attr_buff, dao, feature_cvterm,
             featureCvTermDbXRefs, featureCvTermPubs, pubDbXRefs);
         
+        DatabaseDocument.appendControlledVocabulary(gff_buff, dao, feature_cvterm,
+            featureCvTermDbXRefs, featureCvTermPubs, pubDbXRefs);
         attr_buff.append("\n");
       }
     }
     
+    
     attr_text.setText( GFFStreamFeature.decode((new String(attr_buff.getBytes()))) );
+    
+    if(tabbedPane.getTabCount() == 1)
+      try
+      {
+        GFFStreamFeature gff_feature = new  GFFStreamFeature(new String(gff_buff.getBytes()));
+        CVPanel cvPanel = new CVPanel(new uk.ac.sanger.artemis.Feature(gff_feature));
+        JScrollPane jsp = new JScrollPane(cvPanel);
+        
+        tabbedPane.add("CV Terms", jsp);
+      }
+      catch(ReadFormatException e)
+      {
+      // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
   }
 
   
