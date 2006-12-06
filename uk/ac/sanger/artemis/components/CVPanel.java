@@ -28,11 +28,12 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
+
 import javax.swing.Box;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -41,13 +42,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
-import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.ListCellRenderer;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicComboPopup;
-import javax.swing.plaf.basic.ComboPopup;
 
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
@@ -59,6 +56,7 @@ import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.general.DbXRef;
 
 /**
  * Panel for display controlled vocabulary terms for Chado
@@ -66,29 +64,43 @@ import org.gmod.schema.cv.CvTerm;
 public class CVPanel extends JPanel
              implements FeatureChangeListener
 {
-  private Feature feature;
+
+  private QualifierVector cvQualifiers;
+  
   private String[][] evidenceCodes = 
   { 
-     {"IC",  "Inferred by Curator"},
-     {"IDA", "Inferred from Direct Assay "},
-     {"IEA", "Inferred from Electronic Annotation"},
-     {"IEP", "Inferred from Expression Pattern"},
-     {"IGI", "Inferred from Genetic Interaction"},
-     {"IMP", "Inferred from Mutant Phenotype"},
-     {"IPI", "Inferred from Physical Interaction"},
-     {"ISS", "Inferred from Sequence or Structural Similarity"},
-     {"NAS", "Non-traceable Author Statement"},
-     {"ND",  "No biological Data available"},
-     {"RCA", "inferred from Reviewed Computational Analysis"},
-     {"TAS", "Traceable Author Statement"},
-     {"NR",  "Not Recorded"}
+     {"IC", "IDA", "IEA", "IEP", "IGI", "IMP", "IPI", "ISS", 
+      "NAS", "ND", "RCA", "TAS", "NR" }, 
+     {"inferred by curator",
+      "inferred from direct assay",
+      "inferred from electronic annotation",
+      "inferred from expression pattern",
+      "inferred from genetic interaction",
+      "inferred from mutant phenotype",
+      "inferred from physical interaction",
+      "inferred from sequence or structural similarity",
+      "non-traceable author statement",
+      "no biological data available",
+      "inferred from reviewed computational analysis",
+      "traceable author statement",
+      "not recorded"}
   };
   
   public CVPanel(final Feature feature)
   {
     super(new BorderLayout());
-    this.feature = feature;
+
+    cvQualifiers = feature.getQualifiers().copy();
     
+    cvQualifiers = new QualifierVector();
+    final QualifierVector qualifiers = feature.getQualifiers();  
+    for(int i = 0 ; i < qualifiers.size(); ++i) 
+    {
+      Qualifier qualifier = (Qualifier)qualifiers.elementAt(i);
+      if(isCvTag(qualifier))
+        cvQualifiers.addElement(qualifier.copy());
+    }
+   
     add(createCVQualifiersComponent(),
         BorderLayout.CENTER);
     
@@ -96,12 +108,17 @@ public class CVPanel extends JPanel
   }
   
   /**
-   * Return the feature
+   * Return true if this is a CV qualifier
+   * @param qualifier
    * @return
    */
-  private Feature getFeature()
+  protected boolean isCvTag(final Qualifier qualifier)
   {
-    return feature; 
+    if(qualifier.getName().equals("product") ||
+       qualifier.getName().equals("controlled_curation") ||
+       qualifier.getName().equals("GO"))
+      return true;
+    return false;
   }
   
   /**
@@ -115,8 +132,7 @@ public class CVPanel extends JPanel
     cv_tags.add("controlled_curation");
     cv_tags.add("product");
 
-    Dimension dimension  = new Dimension(100, 30);
-    Dimension dimension2 = new Dimension(150, 30);
+    Dimension dimension = new Dimension(150, 30);
 
     Box cvBox = Box.createVerticalBox();
     
@@ -132,13 +148,11 @@ public class CVPanel extends JPanel
     xBox.add(addRemove);
     xBox.add(Box.createHorizontalGlue());
     cvBox.add(xBox);
-    
-    final QualifierVector qualifiers = getFeature().getQualifiers();
 
-    for(int qualifier_index = 0; qualifier_index < qualifiers.size();
+    for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
         ++qualifier_index) 
     {
-      final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
+      final Qualifier this_qualifier = (Qualifier)cvQualifiers.elementAt(qualifier_index);
 
       if(cv_tags.contains(this_qualifier.getName()))
       {
@@ -155,25 +169,52 @@ public class CVPanel extends JPanel
           {
             String goId = getField("GOid=", qualifierString);
             
-            JTextField goTextField = new JTextField(goId);
-            goTextField.setPreferredSize(dimension);
-            goTextField.setMaximumSize(dimension);
-            
+            JLabel goTextField = new JLabel(goId);
             xBox.add(goTextField);
             
             String term = getField("term=", qualifierString);
             JTextField termTextField = new JTextField(term);
-            termTextField.setPreferredSize(dimension2);
-            termTextField.setMaximumSize(dimension2);
+            termTextField.setPreferredSize(dimension);
+            termTextField.setMaximumSize(dimension);
             
             xBox.add(termTextField);
             
+            // the WITH column is associated with one or more FeatureCvTermDbXRef
             String with = getField("with=", qualifierString);
             JTextField withTextField = new JTextField(with);
-            withTextField.setPreferredSize(dimension2);
-            withTextField.setMaximumSize(dimension2);
+            withTextField.setPreferredSize(dimension);
+            withTextField.setMaximumSize(dimension);
             
             xBox.add(withTextField);
+         
+            
+            // N.B. for /GO the db_xref is a Pub (for primary pubs) 
+            //      or FeatureCvTermPub (for others) in /GO
+            String dbxref = getField("db_xref=", qualifierString);
+            JTextField dbxrefTextField = new JTextField(dbxref);
+            dbxrefTextField.setPreferredSize(dimension);
+            dbxrefTextField.setMaximumSize(dimension);
+            
+            xBox.add(dbxrefTextField);
+         
+            // feature_cvterm_prop's
+            String evidence = getField("evidence=", qualifierString);
+            
+            JExtendedComboBox evidenceList = new JExtendedComboBox(evidenceCodes[1]);
+            evidenceList.setSelectedItem(evidence);
+          
+            Dimension d = evidenceList.getPreferredSize();
+            d = new Dimension(150,(int)d.getHeight());
+            evidenceList.setPreferredSize(d);
+            
+            xBox.add(evidenceList);
+            
+            String qual = getField("qualifier=", qualifierString);
+            JTextField qualfTextField = new JTextField(qual);
+            qualfTextField.setPreferredSize(dimension);
+            qualfTextField.setMaximumSize(dimension);
+            
+            xBox.add(qualfTextField);
             
             xBox.add(Box.createHorizontalGlue());
             
@@ -186,6 +227,8 @@ public class CVPanel extends JPanel
             });
             cvBox.add(xBox);
           }
+          else
+            Splash.logger4j.debug(this_qualifier.getName());
         }
       }
     }
@@ -194,11 +237,14 @@ public class CVPanel extends JPanel
     return cvBox;
   }
   
-  private void addCvTerm()
+  /**
+   * Add a CV term to the feature
+   */
+  private void addCvTerm() 
   {
     Box xBox = Box.createHorizontalBox();
-    final JComboBox comboCV = 
-      new ComboBoxPopup(ChadoTransactionManager.cv_tags);
+    final JExtendedComboBox comboCV = 
+      new JExtendedComboBox(ChadoTransactionManager.cv_tags);
     Dimension d = comboCV.getPreferredSize();
     d = new Dimension(80,(int)d.getHeight());
     comboCV.setPreferredSize(d);
@@ -206,14 +252,16 @@ public class CVPanel extends JPanel
     
     int step = 0;
 
+    CvTerm cvterm  = null;
     String cv_name = null;
-    Vector terms = null;
+    String cv_type = null;
+    Vector terms   = null;
     while(step < 4)
     {  
       if(step == 0)
       {
-        cv_name = prompCv(xBox, comboCV);
-        if(cv_name == null)
+        cv_type = prompCv(xBox, comboCV);
+        if(cv_type == null)
           return;
         step = 1;
       }
@@ -251,7 +299,7 @@ public class CVPanel extends JPanel
       
       if(step == 3)
       {
-        CvTerm cvterm = promptCvTerms(xBox, terms);
+        cvterm = promptCvTerms(xBox, terms);
         if(cvterm == null)
           return;
         else if(cvterm.getName() == null)
@@ -262,8 +310,29 @@ public class CVPanel extends JPanel
         step = 4;
       }
     }
+
+    Qualifier qualifier = new Qualifier(cv_type, 
+        "GOid=GO:"+cvterm.getDbXRef().getAccession()+";"+
+        "aspect="+cv_name+";"+
+        "term="+cvterm.getName());
+    cvQualifiers.add(qualifier);
+    
+    removeAll();
+    add(createCVQualifiersComponent(),
+        BorderLayout.CENTER);
   }
   
+  protected QualifierVector getCvQualifiers()
+  {
+    return cvQualifiers;
+  }
+  
+  /**
+   * Prompt for the CV type
+   * @param xBox
+   * @param comboCV
+   * @return
+   */
   private String prompCv(final Box xBox, final JComboBox comboCV)
   {
     final Object[] options  = { "CANCEL", "NEXT>"};
@@ -278,6 +347,12 @@ public class CVPanel extends JPanel
     return ChadoTransactionManager.cv_tags[comboCV.getSelectedIndex()];
   }
   
+  /**
+   * Prompt for the name of the CV
+   * @param xBox
+   * @param comboCV
+   * @return
+   */
   private String promptCvName(final Box xBox, final JComboBox comboCV)
   {
     final String options[] = { "<PREV", "CANCEL", "NEXT>"};
@@ -323,6 +398,12 @@ public class CVPanel extends JPanel
     return cv_name;
   }
   
+  /**
+   * Keyword search of CV terms
+   * @param xBox
+   * @param cv_name
+   * @return
+   */
   private Vector promptKeyWord(final Box xBox, final String cv_name)
   {
     final String options[] = { "<PREV", "CANCEL", "NEXT>"};
@@ -353,10 +434,16 @@ public class CVPanel extends JPanel
     return DatabaseDocument.getCvterms(tfield.getText().trim(), cv_name);
   }
   
+  /**
+   * Prompt for CV term
+   * @param xBox
+   * @param terms
+   * @return
+   */
   private CvTerm promptCvTerms(final Box xBox, final Vector terms)
   {
     final String options[] = { "<PREV", "CANCEL", "NEXT>"};
-    JComboBox term_list = new ComboBoxPopup(terms);
+    JExtendedComboBox term_list = new JExtendedComboBox(terms);
     
     Dimension d = term_list.getPreferredSize();
     d = new Dimension(280,(int)d.getHeight());
@@ -440,12 +527,14 @@ public class CVPanel extends JPanel
     }
   }
   
-  
+  /**
+   * Cell renderer for CvTerm's
+   */
   class CVCellRenderer extends JLabel implements ListCellRenderer 
   {
     public CVCellRenderer() 
     {
-      setOpaque(true);
+      super();
     }
 
     public Component getListCellRendererComponent(JList list,
@@ -459,53 +548,54 @@ public class CVPanel extends JPanel
     }
   }
   
-  
-  class ComboBoxPopup extends JComboBox
-  {
+
+  /**
+   * JComboBox with horizontal scrollbar
+   */
+  class JExtendedComboBox extends JComboBox
+  { 
+    public JExtendedComboBox(String str[])
+    { 
+      super(str);
+      setHorizontalScrollBar();
+    } 
     
-    /**
-    *  Creates a JComboBox that contains the elements in 
-    *  the specified array.
-    *  @param items       array of objects to insert into the combo box
-    */
-    public ComboBoxPopup(Object[] items)
-    {
-      super(items);
-      setUI(new myComboUI());
-      setBorder(BorderFactory.createEtchedBorder());
-    }
+    public JExtendedComboBox(Vector vector)
+    { 
+      super(vector);
+      setHorizontalScrollBar();
+    } 
 
-    /**
-    *  Creates a JComboBox that contains the elements in
-    *  the vextor
-    *  @param items       vector of objects to insert into the combo box
-    */
-    public ComboBoxPopup(Vector items)
-    {
-      super(items);
-      setUI(new myComboUI());
-      setBorder(BorderFactory.createEtchedBorder());
+    private void setHorizontalScrollBar()
+    { 
+      FontMetrics fm = getFontMetrics(getFont()); 
+      BasicComboPopup popup = (BasicComboPopup)getUI().getAccessibleChild(this,0);//Popup 
+      if(popup==null)
+        return; 
+     
+      int size = (int)getPreferredSize().getWidth(); 
+      
+      for(int i=0; i<getItemCount(); i++)
+      { 
+        String str;
+        if(getItemAt(i) instanceof String)
+          str = (String)getItemAt(i); 
+        else
+          str = ((CvTerm)getItemAt(i)).getName();
+        
+        if(size<fm.stringWidth(str)) 
+          size = fm.stringWidth(str); 
+      } 
+      
+      Component comp = popup.getComponent(0); //JScrollPane 
+      JScrollPane scrollpane = null; 
+      if(comp instanceof JScrollPane) 
+      { 
+        scrollpane = (JScrollPane)comp; 
+        scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+      } 
     }
-            
-    /**
-    * Create scroller
-    */                             
-    public class myComboUI extends BasicComboBoxUI
-    {
-      protected ComboPopup createPopup()
-      {
-        BasicComboPopup popup = new BasicComboPopup(comboBox)
-        {
-          protected JScrollPane createScroller() 
-          {
-            return new JScrollPane( list, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED );
-          }
-        };
-        return popup;
-      }
-    }
+    
   }
-
   
 }
