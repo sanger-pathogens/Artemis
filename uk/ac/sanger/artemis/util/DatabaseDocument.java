@@ -1263,6 +1263,26 @@ public class DatabaseDocument extends Document
 
     return cvterms;
   }
+  
+  public static Vector getCvterms(final String search_str, final String cv_name)
+  {
+    final Vector cvterm_match = new Vector();
+    
+    Enumeration enum_cvterm = cvterms.keys();
+    while(enum_cvterm.hasMoreElements())
+    {
+      Integer key = (Integer)enum_cvterm.nextElement();
+      CvTerm cvterm = (CvTerm)cvterms.get(key);
+      
+      if(cvterm.getCv().getName().startsWith(cv_name))
+      {
+        if(cvterm.getName().indexOf(search_str) > -1)
+          cvterm_match.add(cvterm);
+      }
+    }
+    
+    return cvterm_match;
+  }
 
   /**
    * Look up synonym type names e.g. synonym, systematic_id.
