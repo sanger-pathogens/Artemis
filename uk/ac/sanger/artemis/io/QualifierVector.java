@@ -20,24 +20,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/QualifierVector.java,v 1.6 2005-01-06 11:35:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/QualifierVector.java,v 1.7 2006-12-06 17:27:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
-import uk.ac.sanger.artemis.util.*;
 import java.util.Vector;
-import java.io.Reader;
-import java.io.BufferedReader;
-import java.io.StringReader;
-import java.io.IOException;
 
 /**
  *  This class implements a vector of Qualifier objects.  It behaves
  *  differently to the Vector class (see addElement() and replaceElement()).
  *
  *  @author Kim Rutherford
- *  @version $Id: QualifierVector.java,v 1.6 2005-01-06 11:35:11 tjc Exp $
+ *  @version $Id: QualifierVector.java,v 1.7 2006-12-06 17:27:12 tjc Exp $
  *
  */
 
