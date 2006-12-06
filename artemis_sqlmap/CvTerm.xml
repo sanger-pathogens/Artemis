@@ -19,6 +19,7 @@
    	  <result property="cvTermId" column="cvterm_id"/>
   	  <result property="name" column="cvterm_name"/>
       <result property="cv.name" column="cv_name"/>
+      <result property="dbXRef" column="dbxref_id" select="selectDbXRef"/>
     </resultMap>
     
     <resultMap id="lazy-cvterm" class="CvTerm">
@@ -34,7 +35,7 @@
     <!-- look up cvterms names and id -->
      <select id="getCvterm" resultMap="select-cvterm-names-result"> 
    	SELECT  
-	  cvterm.CVTERM_ID, cvterm.NAME as cvterm_name, cv.NAME as cv_name
+	  cvterm.CVTERM_ID, cvterm.NAME as cvterm_name, cv.NAME as cv_name, dbxref_id
         FROM cvterm, cv
         WHERE 
             <dynamic>
