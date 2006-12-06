@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.20 2006-11-29 10:30:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.21 2006-12-06 17:28:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.20 2006-11-29 10:30:17 tjc Exp $
+ *  @version $Id: Splash.java,v 1.21 2006-12-06 17:28:48 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -107,24 +107,7 @@ abstract public class Splash extends JFrame
   {
     super(program_title + " " + program_version);
 
-    final InputStream options_input_stream =
-      Splash.class.getResourceAsStream("/etc/log4j.properties");
-
-    if(options_input_stream != null)
-    {
-      Properties logProperties = new Properties();
-      try
-      {
-        logProperties.load(options_input_stream);
-        org.apache.log4j.PropertyConfigurator.configure(logProperties);
-      }
-      catch(FileNotFoundException e)
-      {
-      }
-      catch(IOException e)
-      {
-      }
-    }
+    initLogger();
     
     logger4j.debug("Starting application: "+program_name);
     
@@ -228,6 +211,27 @@ abstract public class Splash extends JFrame
                           (screen.height - getSize().height) / 2));
   }
 
+  public static void initLogger()
+  {
+    final InputStream options_input_stream =
+      Splash.class.getResourceAsStream("/etc/log4j.properties");
+
+    if(options_input_stream != null)
+    {
+      Properties logProperties = new Properties();
+      try
+      {
+        logProperties.load(options_input_stream);
+        org.apache.log4j.PropertyConfigurator.configure(logProperties);
+      }
+      catch(FileNotFoundException e)
+      {
+      }
+      catch(IOException e)
+      {
+      }
+    }
+  }
   
   private boolean isMac() 
   {
