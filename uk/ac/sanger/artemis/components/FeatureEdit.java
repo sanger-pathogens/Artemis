@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.20 2006-07-19 16:06:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.21 2006-12-07 13:19:58 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -61,9 +61,8 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.20 2006-07-19 16:06:29 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.21 2006-12-07 13:19:58 tjc Exp $
  **/
-
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
 {
@@ -126,7 +125,9 @@ public class FeatureEdit extends JPanel
    **/
   final String orig_qualifier_text;
 
-  final JFrame frame;
+  private JFrame frame;
+  
+  private CVPanel cvForm;
   
   /**
    *  Create a new FeatureEdit object from the given Feature.
@@ -183,6 +184,8 @@ public class FeatureEdit extends JPanel
   {
     getEntry().removeEntryChangeListener(this);
     getFeature().removeFeatureChangeListener(this);
+    if(cvForm != null)
+      getFeature().removeFeatureChangeListener(cvForm);
   }
 
   /**
@@ -790,8 +793,21 @@ public class FeatureEdit extends JPanel
 
     add(ok_cancel_update_panel, "South");
 
+    if(((DocumentEntry)getFeature().getEntry().getEMBLEntry()).getDocument() 
+        instanceof DatabaseDocument)
+    {
+      cvForm = new CVPanel(getFeature());
+
+      // tabbed pane of core and cv annotaion
+      JTabbedPane tabbedPane = new JTabbedPane();
+      tabbedPane.add("Core", new JScrollPane(qualifier_text_area));
+      tabbedPane.add("CV", new JScrollPane(cvForm));
+      lower_panel.add(tabbedPane, "Center");
+    }
+    else
+      lower_panel.add(new JScrollPane(qualifier_text_area), "Center");
+    
     middle_panel.add(lower_panel, "Center");
-    lower_panel.add(new JScrollPane (qualifier_text_area), "Center");
 
     add(middle_panel, "Center");
   }
@@ -1332,13 +1348,19 @@ public class FeatureEdit extends JPanel
   private String getQualifierString() 
   {
     final StringBuffer buffer = new StringBuffer();
-    final QualifierVector qualifiers = getFeature().getQualifiers();
-
+    final QualifierVector qualifiers = getFeature().getQualifiers();       
+    
     for(int qualifier_index = 0; qualifier_index < qualifiers.size();
         ++qualifier_index) 
     {
       final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
 
+      //
+      // strip out CV qualifiers
+      //
+      if(cvForm != null && cvForm.isCvTag(this_qualifier))
+        continue;
+      
       final QualifierInfo qualifier_info =
                        getEntryInformation().getQualifierInfo(this_qualifier.getName());
 
@@ -1356,6 +1378,8 @@ public class FeatureEdit extends JPanel
     return buffer.toString();
   }
 
+
+  
   /**
    *  Set the key, location and qualifiers of the feature to be the same as
    *  what values currently shown in the components.
@@ -1400,6 +1424,14 @@ public class FeatureEdit extends JPanel
     {
       qualifiers =
         qualifier_text_area.getParsedQualifiers(getEntryInformation ());
+      
+      // if using controlled vocab form
+      if(cvForm != null)
+      {
+        QualifierVector cvQualifiers = cvForm.getCvQualifiers();
+        if(cvQualifiers != null && cvQualifiers.size() > 0)
+          qualifiers.addAll(cvQualifiers);
+      }
     }
     catch(QualifierParseException exception) 
     {
