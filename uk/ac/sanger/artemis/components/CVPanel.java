@@ -56,7 +56,6 @@ import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 
 import org.gmod.schema.cv.CvTerm;
-import org.gmod.schema.general.DbXRef;
 
 /**
  * Panel for display controlled vocabulary terms for Chado
@@ -66,6 +65,8 @@ public class CVPanel extends JPanel
 {
 
   private QualifierVector cvQualifiers;
+
+  private JExtendedComboBox evidenceList;
   
   private String[][] evidenceCodes = 
   { 
@@ -161,6 +162,8 @@ public class CVPanel extends JPanel
         for(int value_index = 0; value_index < qualifier_strings.size();
             ++value_index)
         {
+          final int v_index = value_index;
+          
           xBox = Box.createHorizontalBox();
           final String qualifierString = 
             (String)qualifier_strings.elementAt(value_index);
@@ -174,6 +177,8 @@ public class CVPanel extends JPanel
             
             String term = getField("term=", qualifierString);
             JTextField termTextField = new JTextField(term);
+            
+            termTextField.setToolTipText("term column");
             termTextField.setPreferredSize(dimension);
             termTextField.setMaximumSize(dimension);
             
@@ -182,6 +187,7 @@ public class CVPanel extends JPanel
             // the WITH column is associated with one or more FeatureCvTermDbXRef
             String with = getField("with=", qualifierString);
             JTextField withTextField = new JTextField(with);
+            withTextField.setToolTipText("with column");
             withTextField.setPreferredSize(dimension);
             withTextField.setMaximumSize(dimension);
             
@@ -192,6 +198,7 @@ public class CVPanel extends JPanel
             //      or FeatureCvTermPub (for others) in /GO
             String dbxref = getField("db_xref=", qualifierString);
             JTextField dbxrefTextField = new JTextField(dbxref);
+            dbxrefTextField.setToolTipText("dbxref column");
             dbxrefTextField.setPreferredSize(dimension);
             dbxrefTextField.setMaximumSize(dimension);
             
@@ -201,39 +208,46 @@ public class CVPanel extends JPanel
             String evidence = getField("evidence=", qualifierString);
             
             JExtendedComboBox evidenceList = new JExtendedComboBox(evidenceCodes[1]);
+            evidenceList.setToolTipText("evidence column");
             evidenceList.setSelectedItem(evidence);
           
             Dimension d = evidenceList.getPreferredSize();
             d = new Dimension(150,(int)d.getHeight());
             evidenceList.setPreferredSize(d);
-            
+            evidenceList.setMaximumSize(d);
             xBox.add(evidenceList);
             
             String qual = getField("qualifier=", qualifierString);
             JTextField qualfTextField = new JTextField(qual);
+            
+            qualfTextField.setToolTipText("qualifier column");
             qualfTextField.setPreferredSize(dimension);
             qualfTextField.setMaximumSize(dimension);
             
             xBox.add(qualfTextField);
             
-            xBox.add(Box.createHorizontalGlue());
             
             JButton buttRemove = new JButton("REMOVE");
             buttRemove.addActionListener(new ActionListener()
             {
               public void actionPerformed(ActionEvent e)
               { 
+                removeCvTerm(this_qualifier.getName(), v_index);
               }
             });
+            xBox.add(buttRemove);
+            
+            xBox.add(Box.createHorizontalGlue());
             cvBox.add(xBox);
           }
-          else
-            Splash.logger4j.debug(this_qualifier.getName());
+         
+          //Splash.logger4j.debug(this_qualifier.getName());
         }
       }
     }
     
     cvBox.add(Box.createVerticalGlue());
+    validate();
     return cvBox;
   }
   
@@ -245,6 +259,9 @@ public class CVPanel extends JPanel
     Box xBox = Box.createHorizontalBox();
     final JExtendedComboBox comboCV = 
       new JExtendedComboBox(ChadoTransactionManager.cv_tags);
+    
+    JExtendedComboBox term_list = null;
+    
     Dimension d = comboCV.getPreferredSize();
     d = new Dimension(80,(int)d.getHeight());
     comboCV.setPreferredSize(d);
@@ -256,7 +273,7 @@ public class CVPanel extends JPanel
     String cv_name = null;
     String cv_type = null;
     Vector terms   = null;
-    while(step < 4)
+    while(step < 5)
     {  
       if(step == 0)
       {
@@ -299,7 +316,7 @@ public class CVPanel extends JPanel
       
       if(step == 3)
       {
-        cvterm = promptCvTerms(xBox, terms);
+        cvterm = promptCvTerms(xBox, terms, term_list);
         if(cvterm == null)
           return;
         else if(cvterm.getName() == null)
@@ -309,17 +326,52 @@ public class CVPanel extends JPanel
         }
         step = 4;
       }
+      
+      if(step == 4)
+      {
+        int select = promptEvidence(xBox);
+        if(select == 0)
+        {
+          step = 3;
+          continue;
+        }
+        else if(select == 1)
+          return;
+        
+        step = 5;
+      }
+
     }
 
     Qualifier qualifier = new Qualifier(cv_type, 
         "GOid=GO:"+cvterm.getDbXRef().getAccession()+";"+
         "aspect="+cv_name+";"+
-        "term="+cvterm.getName());
+        "term="+cvterm.getName()+";"+
+        "evidence="+evidenceList.getSelectedItem());
     cvQualifiers.add(qualifier);
     
     removeAll();
     add(createCVQualifiersComponent(),
         BorderLayout.CENTER);
+  }
+  
+  private void removeCvTerm(final String qualifier_name, 
+                            final int value_index)
+  {
+    Qualifier qual = cvQualifiers.getQualifierByName(qualifier_name);
+    StringVector values = qual.getValues();
+    values.remove(value_index);
+    
+    cvQualifiers.removeQualifierByName(qualifier_name);
+    qual = new Qualifier(qualifier_name, values);
+
+    cvQualifiers.addQualifierValues(qual);
+    
+    removeAll();
+
+    add(createCVQualifiersComponent(),
+        BorderLayout.CENTER);
+    validate();
   }
   
   protected QualifierVector getCvQualifiers()
@@ -407,7 +459,7 @@ public class CVPanel extends JPanel
   private Vector promptKeyWord(final Box xBox, final String cv_name)
   {
     final String options[] = { "<PREV", "CANCEL", "NEXT>"};
-    final JTextField tfield = new JTextField(12);
+    final JTextField tfield = new JTextField(10);
     tfield.setSelectionStart(0);
     tfield.setSelectionEnd(tfield.getText().length());
     tfield.setSelectedTextColor(Color.blue);
@@ -440,16 +492,24 @@ public class CVPanel extends JPanel
    * @param terms
    * @return
    */
-  private CvTerm promptCvTerms(final Box xBox, final Vector terms)
+  private CvTerm promptCvTerms(final Box xBox, final Vector terms,
+                               JExtendedComboBox term_list)
   {
-    final String options[] = { "<PREV", "CANCEL", "NEXT>"};
-    JExtendedComboBox term_list = new JExtendedComboBox(terms);
+    final String options[] = { "<PREV", "CANCEL", "NEXT>"};   
     
-    Dimension d = term_list.getPreferredSize();
-    d = new Dimension(280,(int)d.getHeight());
-    term_list.setPreferredSize(d);
+    if(term_list == null)
+    {
+      term_list = new JExtendedComboBox(terms);
     
-    term_list.setRenderer(new CVCellRenderer());
+      Dimension d = term_list.getPreferredSize();
+      d = new Dimension(280,(int)d.getHeight());
+      term_list.setPreferredSize(d);
+    
+      term_list.setRenderer(new CVCellRenderer());
+    }
+    else
+      xBox.remove(term_list);
+    
     xBox.add(term_list);
     
     int select = JOptionPane.showOptionDialog(null, xBox,
@@ -463,12 +523,30 @@ public class CVPanel extends JPanel
     if(select == 1)
       return null;
     else if(select == 0)
-    {
-      xBox.remove(term_list);
       return new CvTerm();
-    }
     
     return (CvTerm)term_list.getSelectedItem();
+  }
+  
+  private int promptEvidence(final Box xBox)
+  {
+    final String options[] = { "<PREV", "CANCEL", "NEXT>"};
+    evidenceList = new JExtendedComboBox(evidenceCodes[1]);
+    evidenceList.setSelectedItem("not recorded");
+    xBox.add(evidenceList);
+    
+    int select = JOptionPane.showOptionDialog(null, xBox,
+        "CV term selection",
+         JOptionPane.YES_NO_CANCEL_OPTION,
+         JOptionPane.QUESTION_MESSAGE,
+         null,
+         options,
+         options[2]);
+    
+    if(select == 0)
+      xBox.remove(evidenceList);
+    
+    return select;
   }
   
   /**
