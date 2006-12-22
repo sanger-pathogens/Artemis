@@ -54,6 +54,7 @@ import java.util.List;
 import java.util.Enumeration;
 import javax.swing.JOptionPane;
 
+import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureDbXRef;
@@ -1113,7 +1114,8 @@ public class ChadoTransactionManager
            
            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
                old_dbxref,
-               feature.getLastModified(), feature);  
+               feature.getLastModified(), feature);
+           sql.add(tsn);
          }
          else if(qualifier_name.equals("codon_start"))
          {
@@ -1127,13 +1129,56 @@ public class ChadoTransactionManager
          }
          else if(isCvTag(qualifier_name))
          {
+           /*Qualifier qual = feature.getQualifierByName(qualifier_name);
+           StringVector values = qual.getValues();
+           int beginIndex = qualifier_string.indexOf("term=")+5;
+           int endIndex   = qualifier_string.indexOf(";",beginIndex);
+           final String thisTerm;
+           if(endIndex > -1)
+             thisTerm = qualifier_string.substring(beginIndex, endIndex);
+           else
+             thisTerm = qualifier_string.substring(beginIndex);*/
+           
            Splash.logger4j.debug(uniquename+"  in handleReservedTags() DELETE "+
                qualifier_name+" "+qualifier_string);
+           
            FeatureCvTerm feature_cvterm = getFeatureCvTerm(qualifier_name, qualifier_string, 
                                                            uniquename);
+           /*Vector rankables = null;
+           int rank = 0;
+           for(int j=0; j<values.size(); j++)
+           {
+             String val = (String)values.get(j);
+             if(val.indexOf(thisTerm) > -1 &&
+                !val.equals(qualifier_string))
+             {
+               if(rankables == null)
+                 rankables = new Vector();
+               
+               FeatureCvTerm fc = getFeatureCvTerm(qualifier_name, val, 
+                                                   uniquename);
+               fc.setRank(rank);
+               rankables.add(fc);
+               rank++;
+               System.out.println("UPDATE ------> "+values.get(j));
+             }
+           }*/
+           
            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
                                       feature_cvterm,
-                                      feature.getLastModified(), feature);       
+                                      feature.getLastModified(), feature);
+           sql.add(tsn);
+           
+           /*if(rankables != null)
+           {
+             for(int j=0; j<rankables.size(); j++)
+             {
+               feature_cvterm = (FeatureCvTerm)rankables.get(j);
+               tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                 feature_cvterm,
+                 feature.getLastModified(), feature);
+             }
+           }*/
          }
          else if(isSynonymTag(qualifier_name))
          {
@@ -1145,9 +1190,10 @@ public class ChadoTransactionManager
           
            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
                feature_synonym,
-               feature.getLastModified(), feature);   
+               feature.getLastModified(), feature);
+           sql.add(tsn);
          }
-         sql.add(tsn);
+         
       }
     }
     
@@ -1404,6 +1450,7 @@ public class ChadoTransactionManager
       return feature_cvterm;
     }
     
+    List featureCvTermProps = new Vector();
     StringVector strings = StringVector.getStrings(qualifier_string, ";");
     for(int i=0; i<strings.size(); i++)
     {    
@@ -1452,7 +1499,18 @@ public class ChadoTransactionManager
       
       // feature_cvterm_prop's  
       
+      if(this_qualifier_part.toLowerCase().startsWith("evidence="))
+      {
+        String evidence = this_qualifier_part.substring(9);
+        FeatureCvTermProp featureCvTermProp = new FeatureCvTermProp();
+        featureCvTermProp.setValue(evidence);
+        featureCvTermProps.add(featureCvTermProp);
+        
+        continue;
+      }
     }
+    
+    feature_cvterm.setFeatureCvTermProps(featureCvTermProps);
     
     Splash.logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
     return feature_cvterm;

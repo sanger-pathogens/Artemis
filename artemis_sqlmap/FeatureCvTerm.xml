@@ -22,6 +22,8 @@
         <result property="pub.uniqueName"    column="uniquename" />
         <result property="cvTerm.dbXRef.accession" column="accession" />
         <result property="cvTerm.dbXRef.db.name"   column="name" />
+        <result property="featureCvTermDbXRefs"    column="feature_cvterm_id"
+                                          select="getFeatureCvTermDbXRefByFeatureCvTerm" />
         <!-- <result property="pub" column="pub_id" select="selectPub" /> -->
      </resultMap>
  
@@ -55,5 +57,18 @@
         </dynamic>
         ORDER BY fc.feature_cvterm_id, fc.rank, type_id, fcp.rank;
      </select>
+     
+    <delete id="deleteFeatureCvTerm" parameterClass="FeatureCvTerm">
+      DELETE FROM feature_cvterm WHERE
+      feature_cvterm_id=$featureCvTermId$
+    </delete>
+    
+    <!--  UPDATE  -->
+    <update id="updateFeatureCvTerm" 
+            parameterClass="FeatureCvTerm">
+      UPDATE feature_cvterm
+      SET rank=$rank$
+      WHERE feature_cvterm_id=$featureCvTermId$
+    </update>
      
 </sqlMap>
