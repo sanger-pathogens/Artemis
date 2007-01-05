@@ -1641,17 +1641,21 @@ public class DatabaseDocument extends Document
           }
           else if(tsn.getType() == ChadoTransaction.INSERT)
           {
-            // set srcfeature_id
-            if(tsn.getFeatureObject() instanceof Feature)
+            if(tsn.getFeatureObject() instanceof FeatureCvTerm)
+              ArtemisUtils.inserFeatureCvTerm(dao, (FeatureCvTerm)tsn.getFeatureObject());
+            else
             {
-              FeatureLoc featureloc = 
-                ((Feature)tsn.getFeatureObject()).getFeatureLoc();
-              Feature featureBySrcFeatureId = new Feature();
-              featureBySrcFeatureId.setFeatureId(Integer.parseInt(feature_id));
-              featureloc.setFeatureBySrcFeatureId(featureBySrcFeatureId);
+              // set srcfeature_id
+              if(tsn.getFeatureObject() instanceof Feature)
+              {
+                FeatureLoc featureloc = ((Feature) tsn.getFeatureObject()).getFeatureLoc();
+                Feature featureBySrcFeatureId = new Feature();
+                featureBySrcFeatureId.setFeatureId(Integer.parseInt(feature_id));
+                featureloc.setFeatureBySrcFeatureId(featureBySrcFeatureId);
+              }
+              dao.persist(tsn.getFeatureObject());
             }
-            dao.persist(tsn.getFeatureObject());
-            //dao.insertAttributes(tsn);
+            
           }
           else if(tsn.getType() == ChadoTransaction.DELETE)
           {
