@@ -22,13 +22,12 @@
  *
  **/
 
-package uk.ac.sanger.artemis.components;
+package uk.ac.sanger.artemis.components.genebuilder.cv;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -39,12 +38,10 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.ListCellRenderer;
-import javax.swing.plaf.basic.BasicComboPopup;
 
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
@@ -54,6 +51,7 @@ import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
+import uk.ac.sanger.artemis.components.Splash;
 
 import org.gmod.schema.cv.CvTerm;
 
@@ -64,28 +62,15 @@ public class CVPanel extends JPanel
              implements FeatureChangeListener
 {
 
-  private QualifierVector cvQualifiers;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-  private JExtendedComboBox evidenceList;
+  private QualifierVector cvQualifiers;
+  private Vector editableComponents;
   
-  private String[][] evidenceCodes = 
-  { 
-     {"IC", "IDA", "IEA", "IEP", "IGI", "IMP", "IPI", "ISS", 
-      "NAS", "ND", "RCA", "TAS", "NR" }, 
-     {"inferred by curator",
-      "inferred from direct assay",
-      "inferred from electronic annotation",
-      "inferred from expression pattern",
-      "inferred from genetic interaction",
-      "inferred from mutant phenotype",
-      "inferred from physical interaction",
-      "inferred from sequence or structural similarity",
-      "non-traceable author statement",
-      "no biological data available",
-      "inferred from reviewed computational analysis",
-      "traceable author statement",
-      "not recorded"}
-  };
+  private JExtendedComboBox evidenceList;
   
   public CVPanel(final Feature feature)
   {
@@ -113,7 +98,7 @@ public class CVPanel extends JPanel
    * @param qualifier
    * @return
    */
-  protected boolean isCvTag(final Qualifier qualifier)
+  public boolean isCvTag(final Qualifier qualifier)
   {
     if(qualifier.getName().equals("product") ||
        qualifier.getName().equals("controlled_curation") ||
@@ -133,6 +118,8 @@ public class CVPanel extends JPanel
     cv_tags.add("controlled_curation");
     cv_tags.add("product");
 
+    editableComponents = new Vector();
+    
     Dimension dimension = new Dimension(150, 30);
 
     Box cvBox = Box.createVerticalBox();
@@ -150,12 +137,13 @@ public class CVPanel extends JPanel
     xBox.add(Box.createHorizontalGlue());
     cvBox.add(xBox);
 
+    Dimension go_dimension = null;
     for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
         ++qualifier_index) 
     {
       final Qualifier this_qualifier = (Qualifier)cvQualifiers.elementAt(qualifier_index);
 
-      if(cv_tags.contains(this_qualifier.getName()))
+      if(this_qualifier.getName().equals("GO"))
       {
         final StringVector qualifier_strings = this_qualifier.getValues();
         
@@ -164,83 +152,81 @@ public class CVPanel extends JPanel
         {
           final int v_index = value_index;
           
-          xBox = Box.createHorizontalBox();
           final String qualifierString = 
             (String)qualifier_strings.elementAt(value_index);
-               
-          if(this_qualifier.getName().equals("GO"))
+                      
+          GoBox go_box = new GoBox(this_qualifier, qualifierString, value_index, 
+                                   go_dimension, dimension);
+          go_dimension = go_box.getGoDimension();
+          editableComponents.add(go_box);
+          
+          xBox = go_box.getBox();
+          xBox.add(getRemoveButton(this_qualifier, v_index));
+          xBox.add(Box.createHorizontalGlue());
+          cvBox.add(xBox);
+        }
+      }
+    }
+      
+    for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
+        ++qualifier_index) 
+    {
+      final Qualifier this_qualifier = (Qualifier)cvQualifiers.elementAt(qualifier_index);
+      if(this_qualifier.getName().equals("controlled_curation"))
+      {
+        final StringVector qualifier_strings = this_qualifier.getValues();
+    
+        for(int value_index = 0; value_index < qualifier_strings.size();
+            ++value_index)
+        {
+          final int v_index = value_index;
+        
+          xBox = Box.createHorizontalBox();
+          final String qualifierString = 
+             (String)qualifier_strings.elementAt(value_index);
+          
+          ControlledCurationBox ccBox = new ControlledCurationBox(this_qualifier,
+                  qualifierString, value_index, 
+                  dimension);
+          editableComponents.add(ccBox);
+          
+          xBox = ccBox.getBox();
+          xBox.add(getRemoveButton(this_qualifier, v_index));         
+          xBox.add(Box.createHorizontalGlue());
+          cvBox.add(xBox);
+          
+        }
+      }
+    }
+    
+    for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
+        ++qualifier_index) 
+    {
+      final Qualifier this_qualifier = (Qualifier)cvQualifiers.elementAt(qualifier_index);
+      if(cv_tags.contains(this_qualifier.getName()))
+      {
+        final StringVector qualifier_strings = this_qualifier.getValues();
+
+        for(int value_index = 0; value_index < qualifier_strings.size(); ++value_index)
+        {
+          final int v_index = value_index;
+
+          xBox = Box.createHorizontalBox();
+          final String qualifierString = (String) qualifier_strings
+              .elementAt(value_index);
+          if(this_qualifier.getName().equals("product"))
           {
-            String goId = getField("GOid=", qualifierString);
-            
-            JLabel goTextField = new JLabel(goId);
-            xBox.add(goTextField);
-            
-            String term = getField("term=", qualifierString);
-            JTextField termTextField = new JTextField(term);
-            
+            JTextField termTextField = new JTextField(qualifierString);
+            termTextField.setEditable(false);
             termTextField.setToolTipText("term column");
             termTextField.setPreferredSize(dimension);
             termTextField.setMaximumSize(dimension);
             
-            xBox.add(termTextField);
-            
-            // the WITH column is associated with one or more FeatureCvTermDbXRef
-            String with = getField("with=", qualifierString);
-            JTextField withTextField = new JTextField(with);
-            withTextField.setToolTipText("with column");
-            withTextField.setPreferredSize(dimension);
-            withTextField.setMaximumSize(dimension);
-            
-            xBox.add(withTextField);
-         
-            
-            // N.B. for /GO the db_xref is a Pub (for primary pubs) 
-            //      or FeatureCvTermPub (for others) in /GO
-            String dbxref = getField("db_xref=", qualifierString);
-            JTextField dbxrefTextField = new JTextField(dbxref);
-            dbxrefTextField.setToolTipText("dbxref column");
-            dbxrefTextField.setPreferredSize(dimension);
-            dbxrefTextField.setMaximumSize(dimension);
-            
-            xBox.add(dbxrefTextField);
-         
-            // feature_cvterm_prop's
-            String evidence = getField("evidence=", qualifierString);
-            
-            JExtendedComboBox evidenceList = new JExtendedComboBox(evidenceCodes[1]);
-            evidenceList.setToolTipText("evidence column");
-            evidenceList.setSelectedItem(evidence);
-          
-            Dimension d = evidenceList.getPreferredSize();
-            d = new Dimension(150,(int)d.getHeight());
-            evidenceList.setPreferredSize(d);
-            evidenceList.setMaximumSize(d);
-            xBox.add(evidenceList);
-            
-            String qual = getField("qualifier=", qualifierString);
-            JTextField qualfTextField = new JTextField(qual);
-            
-            qualfTextField.setToolTipText("qualifier column");
-            qualfTextField.setPreferredSize(dimension);
-            qualfTextField.setMaximumSize(dimension);
-            
-            xBox.add(qualfTextField);
-            
-            
-            JButton buttRemove = new JButton("REMOVE");
-            buttRemove.addActionListener(new ActionListener()
-            {
-              public void actionPerformed(ActionEvent e)
-              { 
-                removeCvTerm(this_qualifier.getName(), v_index);
-              }
-            });
-            xBox.add(buttRemove);
-            
+            xBox.add(termTextField);          
+            xBox.add(getRemoveButton(this_qualifier, v_index));
             xBox.add(Box.createHorizontalGlue());
             cvBox.add(xBox);
           }
-         
           //Splash.logger4j.debug(this_qualifier.getName());
         }
       }
@@ -249,6 +235,21 @@ public class CVPanel extends JPanel
     cvBox.add(Box.createVerticalGlue());
     validate();
     return cvBox;
+  }
+
+  
+  private JButton getRemoveButton(final Qualifier this_qualifier, 
+                                  final int v_index)
+  {
+    JButton buttRemove = new JButton("REMOVE");
+    buttRemove.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      { 
+        removeCvTerm(this_qualifier.getName(), v_index);
+      }
+    }); 
+    return buttRemove;
   }
   
   /**
@@ -363,9 +364,12 @@ public class CVPanel extends JPanel
     values.remove(value_index);
     
     cvQualifiers.removeQualifierByName(qualifier_name);
-    qual = new Qualifier(qualifier_name, values);
-
-    cvQualifiers.addQualifierValues(qual);
+    
+    if(values.size() > 0)
+    {
+      qual = new Qualifier(qualifier_name, values);
+      cvQualifiers.addQualifierValues(qual);
+    }
     
     removeAll();
 
@@ -374,8 +378,28 @@ public class CVPanel extends JPanel
     validate();
   }
   
-  protected QualifierVector getCvQualifiers()
+  /**
+   * Get the latest (edited) controlled vocab qualifiers
+   * @return
+   */
+  public QualifierVector getCvQualifiers()
   {
+    // check editable components for changes
+    
+    if(editableComponents != null)
+    {
+      Splash.logger4j.debug("CV checking......");
+      for(int i=0; i<editableComponents.size(); i++)
+      {
+        CvBoxA cvBox = (CvBoxA)editableComponents.get(i);
+        if(cvBox.isQualifierChanged())
+        {
+          Splash.logger4j.debug("CV QUALIFIER CHANGED");
+          cvBox.updateQualifier(cvQualifiers);
+        }
+      }
+    }
+    
     return cvQualifiers;
   }
   
@@ -531,7 +555,7 @@ public class CVPanel extends JPanel
   private int promptEvidence(final Box xBox)
   {
     final String options[] = { "<PREV", "CANCEL", "NEXT>"};
-    evidenceList = new JExtendedComboBox(evidenceCodes[1]);
+    evidenceList = new JExtendedComboBox(GoBox.evidenceCodes[1]);
     evidenceList.setSelectedItem("not recorded");
     xBox.add(evidenceList);
     
@@ -622,58 +646,9 @@ public class CVPanel extends JPanel
                                                   boolean cellHasFocus) 
     {
       setText(((CvTerm)value).getName());
+      //setToolTipText(((CvTerm)value).getCv().getName());
       return this;
     }
-  }
-  
-
-  /**
-   * JComboBox with horizontal scrollbar
-   */
-  class JExtendedComboBox extends JComboBox
-  { 
-    public JExtendedComboBox(String str[])
-    { 
-      super(str);
-      setHorizontalScrollBar();
-    } 
-    
-    public JExtendedComboBox(Vector vector)
-    { 
-      super(vector);
-      setHorizontalScrollBar();
-    } 
-
-    private void setHorizontalScrollBar()
-    { 
-      FontMetrics fm = getFontMetrics(getFont()); 
-      BasicComboPopup popup = (BasicComboPopup)getUI().getAccessibleChild(this,0);//Popup 
-      if(popup==null)
-        return; 
-     
-      int size = (int)getPreferredSize().getWidth(); 
-      
-      for(int i=0; i<getItemCount(); i++)
-      { 
-        String str;
-        if(getItemAt(i) instanceof String)
-          str = (String)getItemAt(i); 
-        else
-          str = ((CvTerm)getItemAt(i)).getName();
-        
-        if(size<fm.stringWidth(str)) 
-          size = fm.stringWidth(str); 
-      } 
-      
-      Component comp = popup.getComponent(0); //JScrollPane 
-      JScrollPane scrollpane = null; 
-      if(comp instanceof JScrollPane) 
-      { 
-        scrollpane = (JScrollPane)comp; 
-        scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-      } 
-    }
-    
   }
   
 }

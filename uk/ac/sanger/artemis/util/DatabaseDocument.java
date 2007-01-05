@@ -28,6 +28,7 @@ import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ReadFormatException;
 
+import uk.ac.sanger.artemis.chado.ArtemisUtils;
 import uk.ac.sanger.artemis.chado.IBatisDAO;
 import uk.ac.sanger.artemis.chado.JdbcDAO;
 import uk.ac.sanger.artemis.chado.GmodDAO;
@@ -1653,7 +1654,12 @@ public class DatabaseDocument extends Document
             //dao.insertAttributes(tsn);
           }
           else if(tsn.getType() == ChadoTransaction.DELETE)
-            dao.delete(tsn.getFeatureObject());
+          {
+            if(tsn.getFeatureObject() instanceof FeatureCvTerm)
+              ArtemisUtils.deleteFeatureCvTerm(dao, (FeatureCvTerm)tsn.getFeatureObject());
+            else
+              dao.delete(tsn.getFeatureObject());
+          }
         }
 
         //

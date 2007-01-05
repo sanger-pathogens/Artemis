@@ -1189,6 +1189,8 @@ public class JdbcDAO extends GmodDAO
       deleteFeatureDbXRef((FeatureDbXRef)o);
     else if(o instanceof FeatureSynonym)
       deleteFeatureSynonym((FeatureSynonym)o);
+    else if(o instanceof FeatureCvTerm)
+      deleteFeatureCvTerm((FeatureCvTerm)o);
   }
   
   
@@ -1695,6 +1697,27 @@ public class JdbcDAO extends GmodDAO
         sql = "DELETE FROM synonym WHERE synonym_id=" + synonym_id;
 
       st = conn.createStatement();
+      st.executeUpdate(sql);
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+  }
+  
+  /**
+   * Delete featureCvTerm and update associated feature_cvterm.rank's 
+   * if appropriate
+   * @param featureCvTerm
+   */
+  private void deleteFeatureCvTerm(FeatureCvTerm feature_cvterm)
+  {
+    final String sql = "DELETE FROM feature_cvterm WHERE feature_cvterm_id="+
+          feature_cvterm.getFeatureCvTermId();
+      
+    try
+    {
+      Statement st = conn.createStatement();
       st.executeUpdate(sql);
     }
     catch(SQLException sqle)

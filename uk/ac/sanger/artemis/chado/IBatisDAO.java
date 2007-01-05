@@ -24,6 +24,8 @@
 
 package uk.ac.sanger.artemis.chado;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -31,7 +33,7 @@ import java.sql.*;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
-import org.gmod.schema.sequence.FeatureCvTermDbXRef;
+import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.Synonym;
@@ -474,6 +476,8 @@ public class IBatisDAO extends GmodDAO
       insertFeatureDbXRef((FeatureDbXRef)o);
     else if(o instanceof FeatureSynonym)
       insertFeatureAlias((FeatureSynonym)o);
+    else if(o instanceof FeatureCvTerm)
+      insertFeatureCvTerm((FeatureCvTerm)o);
   }
   
   
@@ -495,7 +499,7 @@ public class IBatisDAO extends GmodDAO
     else if(o instanceof FeatureSynonym)
       deleteFeatureSynonym((FeatureSynonym)o);
     else if(o instanceof FeatureCvTerm)
-      deleteFeatureCvTerm((FeatureCvTerm)o);
+      sqlMap.delete("deleteFeatureCvTerm", o);
   }
 
 
@@ -613,6 +617,31 @@ public class IBatisDAO extends GmodDAO
     sqlMap.insert("insertFeatureAlias", feature_synonym);
   }
   
+  
+  private void insertFeatureCvTerm(final FeatureCvTerm feature_cvterm)
+  { 
+    sqlMap.insert("insertFeatureCvTerm", feature_cvterm); 
+    
+    //
+    // get the current feature_id sequence value
+    int feature_cvterm_id = ((Integer)sqlMap.queryForObject("currval", 
+                              "feature_cvterm_feature_cvterm_id_seq")).intValue();
+    feature_cvterm.setFeatureCvTermId(feature_cvterm_id);
+    
+    if(feature_cvterm.getFeatureCvTermProps() != null)
+    {
+      Collection featureCvTermProps = feature_cvterm.getFeatureCvTermProps();
+      Iterator it = featureCvTermProps.iterator();
+      while(it.hasNext())
+      {
+        FeatureCvTermProp featureCvTermProp = (FeatureCvTermProp)it.next();
+        featureCvTermProp.setFeatureCvTerm(feature_cvterm);
+
+        sqlMap.insert("insertFeatureCvTermProp", featureCvTermProp);
+      }
+    }
+  }
+  
   /**
    * Delete a feature_synonym for a feature.
    * @param feature_synonym     the <code>FeatureSynonym</code>
@@ -633,96 +662,6 @@ public class IBatisDAO extends GmodDAO
       return sqlMap.delete("deleteAlias", feature_synonym);
   }
   
-  /**
-   * Delete featureCvTerm and update associated feature_cvterm.rank's 
-   * if appropriate
-   * @param featureCvTerm
-   */
-  private void deleteFeatureCvTerm(FeatureCvTerm featureCvTerm)
-  {
-    List featureCvTerms = getFeatureCvTermsByFeature(featureCvTerm.getFeature());
-       
-    List featureCvTermDbXRefs = new Vector();;
-    
-    if(featureCvTerm.getFeatureCvTermDbXRefs() != null &&
-       featureCvTerm.getFeatureCvTermDbXRefs().size() > 0)
-      featureCvTermDbXRefs = (List)featureCvTerm.getFeatureCvTermDbXRefs();
-    
-    // delete feature_cvterm and update ranks if asppropriate
-    FeatureCvTerm deleteme = null;
-    Vector rankable = null;
-    
-    for(int i=0; i<featureCvTerms.size(); i++)
-    {
-      FeatureCvTerm this_feature_cvterm = (FeatureCvTerm)featureCvTerms.get(i);
-      if(this_feature_cvterm.getCvTerm().getName().equals( 
-         featureCvTerm.getCvTerm().getName() ))
-      {     
-         List this_featureCvTermDbXRefs = (List)this_feature_cvterm.getFeatureCvTermDbXRefs();
-         
-         if(this_featureCvTermDbXRefs == null)
-           this_featureCvTermDbXRefs = new Vector();
-         
-         if(this_featureCvTermDbXRefs.size() != featureCvTermDbXRefs.size())
-         {
-           if(rankable == null)
-             rankable = new Vector();
-           
-           rankable.add(this_feature_cvterm);
-           continue;
-         }
-         
-         boolean found = true;
-         for(int j=0; j<this_featureCvTermDbXRefs.size(); j++)
-         {
-           FeatureCvTermDbXRef fcd = (FeatureCvTermDbXRef)this_featureCvTermDbXRefs.get(j);
-           if(!containsFeatureCvTermDbXRef(fcd, featureCvTermDbXRefs))
-           {
-             found = false;
-             break;
-           }
-         }
-         if(!found)
-         {
-           if(rankable == null)
-             rankable = new Vector();
-           
-           rankable.add(this_feature_cvterm);
-           continue;
-         }
-         deleteme = this_feature_cvterm;
-      }
-    }
-    sqlMap.delete("deleteFeatureCvTerm", deleteme);
-    
-    if(rankable != null)
-    {
-      
-      // feature_cvterm.rank needs updating for those stored here
-      System.out.println( "********> "+ deleteme.getCvTerm().getCv().getName() + "   rank = " +
-                          deleteme.getRank());
-      for(int i=0; i<rankable.size(); i++)
-      {
-        FeatureCvTerm fc = (FeatureCvTerm)rankable.get(i);
-        System.out.println( "********> "+ fc.getCvTerm().getCv().getName() + "   rank = " +
-                            fc.getRank());
-        fc.setRank(i);
-        sqlMap.delete("updateFeatureCvTerm", fc);
-      }
-    }
-  }
-  
-  private boolean containsFeatureCvTermDbXRef(FeatureCvTermDbXRef fcd, List featureCvTermDbXRefs)
-  {
-    for(int i=0; i<featureCvTermDbXRefs.size(); i++)
-    {
-      FeatureCvTermDbXRef this_fcd = (FeatureCvTermDbXRef)featureCvTermDbXRefs.get(i);
-      if( this_fcd.getDbXRef().getAccession().equals( fcd.getDbXRef().getAccession() ) &&
-          this_fcd.getDbXRef().getDb().getName().equals( fcd.getDbXRef().getDb().getName() ))
-        return true;
-    }
-    return false;
-  }
   
   public void startTransaction() throws SQLException
   { 

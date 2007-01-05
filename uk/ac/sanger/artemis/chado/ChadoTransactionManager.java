@@ -48,6 +48,7 @@ import uk.ac.sanger.artemis.EntryChangeListener;
 import uk.ac.sanger.artemis.EntryChangeEvent;
 import uk.ac.sanger.artemis.components.Splash;
 
+import java.util.Collection;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.List;
@@ -1418,10 +1419,13 @@ public class ChadoTransactionManager
    * @return
    */
   private FeatureCvTerm getFeatureCvTerm(final String qualifier_name,
-                                         final String qualifier_string,
+                                         String qualifier_string,
                                          final String uniqueName)
   {
     Splash.logger4j.debug("Build FeatureCvTerm for "+uniqueName);
+    
+    if(qualifier_string.startsWith("\""))
+      qualifier_string = qualifier_string.substring(1,qualifier_string.length()-1);
     
     FeatureCvTerm feature_cvterm = new FeatureCvTerm();
     org.gmod.schema.sequence.Feature chado_feature =
@@ -1431,20 +1435,8 @@ public class ChadoTransactionManager
     
     if(qualifier_name.toLowerCase().equals("product"))
     {
-      CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(qualifier_string);
+      CvTerm cvTerm = getCvTerm(qualifier_string);
 
-      if(cvTerm != null)
-      {
-        Splash.logger4j.debug("USE CvTerm from cache, CvTermId="
-            + cvTerm.getCvTermId());
-        feature_cvterm.setCvTerm(cvTerm);
-      }
-      else
-      {
-        Splash.logger4j.warn("CvTerm not found in cache ="+qualifier_string);
-        cvTerm = new CvTerm();
-        cvTerm.setName(qualifier_string);
-      }
       feature_cvterm.setCvTerm(cvTerm);
       Splash.logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
       return feature_cvterm;
@@ -1454,56 +1446,63 @@ public class ChadoTransactionManager
     StringVector strings = StringVector.getStrings(qualifier_string, ";");
     for(int i=0; i<strings.size(); i++)
     {    
-      String this_qualifier_part = (String) strings.get(i);
+      String this_qualifier_part = ((String)strings.get(i)).trim();
+      String this_qualifier_part_lowercase = this_qualifier_part.toLowerCase();
       
-      if(this_qualifier_part.toLowerCase().startsWith("term="))
+      if(this_qualifier_part_lowercase.startsWith("term="))
       {
         String cvTermName = this_qualifier_part.substring(5);
-        CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(cvTermName);
+        CvTerm cvTerm = getCvTerm(cvTermName);
 
-        if(cvTerm != null)
-        {
-          Splash.logger4j.debug("USE CvTerm from cache, CvTermId="
-              + cvTerm.getCvTermId());
-          feature_cvterm.setCvTerm(cvTerm);
-        }
-        else
-        {
-          Splash.logger4j.warn("CvTerm not found in cache ="+cvTermName);
-          cvTerm = new CvTerm();
-          cvTerm.setName(cvTermName);
-        }
         feature_cvterm.setCvTerm(cvTerm);
         continue;
       }
 
+      if(this_qualifier_part_lowercase.startsWith("cv="))
+        continue;
+        
       // the WITH column is associated with one or more FeatureCvTermDbXRef
-      if(this_qualifier_part.toLowerCase().startsWith("with="))
+      if(this_qualifier_part_lowercase.startsWith("with="))
       {
         String withStr = this_qualifier_part.substring(5);
-        loadFeatureCvTermDbXRefs(withStr, feature_cvterm);
+        loadDbXRefsAndPubs(withStr, feature_cvterm);
         continue;
       }
 
+      if(this_qualifier_part_lowercase.equals("qualifier=not"))
+      {
+        feature_cvterm.setNot(true);
+        continue;
+      }
+      
       // N.B. 
       // 1) for /GO the db_xref is a Pub (for primary pubs) 
       //    or FeatureCvTermPub (for others) in /GO
       // 2) for /controlled_curation the db_xref is a FeatureCvTermDbXRef 
       //    or a Pub
-      if(this_qualifier_part.toLowerCase().startsWith("db_xref="))
+      if(this_qualifier_part_lowercase.startsWith("db_xref="))
       {
         String dbxrefStr = this_qualifier_part.substring(8);
-        loadFeatureCvTermDbXRefs(dbxrefStr, feature_cvterm);
+        loadDbXRefsAndPubs(dbxrefStr, feature_cvterm);
         continue;
       }
       
       // feature_cvterm_prop's  
       
-      if(this_qualifier_part.toLowerCase().startsWith("evidence="))
+      if(!this_qualifier_part_lowercase.startsWith("goid=") &&
+         !this_qualifier_part_lowercase.startsWith("aspect="))
       {
-        String evidence = this_qualifier_part.substring(9);
+        int index = this_qualifier_part_lowercase.indexOf('=');
+        String prop = this_qualifier_part.substring(index+1);
+        
+        CvTerm cvTerm = getCvTerm(this_qualifier_part.substring(0,index));
+        
+        Splash.logger4j.debug("FeatureCvTermProp = "+this_qualifier_part_lowercase);
         FeatureCvTermProp featureCvTermProp = new FeatureCvTermProp();
-        featureCvTermProp.setValue(evidence);
+        featureCvTermProp.setValue(prop);
+        featureCvTermProp.setCvTerm(cvTerm);   
+        featureCvTermProp.setRank(featureCvTermProps.size());
+        
         featureCvTermProps.add(featureCvTermProp);
         
         continue;
@@ -1516,14 +1515,41 @@ public class ChadoTransactionManager
     return feature_cvterm;
   }
   
+  private CvTerm getCvTerm(String cvTermName)
+  {
+    if(cvTermName.startsWith("\""))
+      cvTermName = cvTermName.substring(1, cvTermName.length()-1);
+    
+    CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(cvTermName);
+
+    if(cvTerm != null)
+    {
+      Splash.logger4j.debug("USE CvTerm from cache, CvTermId="
+          + cvTermName + "  -> " + cvTerm.getCvTermId()+  " " +
+          cvTerm.getName()+":"+cvTerm.getCv().getName()); 
+    }
+    else
+    {
+      Splash.logger4j.warn("CvTerm not found in cache = " + cvTermName);
+      cvTerm = new CvTerm();
+      cvTerm.setName(cvTermName);
+    }
+    return cvTerm;
+  }
   
   /**
-   * 
+   * Use to load feature_cvterm_dbxref's and feature_cvterm_pub's into a
+   * feature_cvterm.
+   * Note:
+   * 1) for /GO the db_xref is a Pub (for primary pubs) 
+   *    or FeatureCvTermPub (for others) in /GO
+   * 2) for /controlled_curation the db_xref is a FeatureCvTermDbXRef 
+   *    or a Pub
    * @param searchStr
    * @param feature_cvterm
    */
-  public void loadFeatureCvTermDbXRefs(final String searchStr,
-                                       final FeatureCvTerm feature_cvterm)
+  private void loadDbXRefsAndPubs(final String searchStr,
+                                  final FeatureCvTerm feature_cvterm)
   {
     List featureCvTermDbXRefs = null;
     
@@ -1540,11 +1566,30 @@ public class ChadoTransactionManager
       if(dbName.equals("PMID"))
       {
         // enter as Pub if primary
-        Splash.logger4j.debug("CREATE Pub for " + 
-            dbName + ":" + accession);
+        
         Pub pub = new Pub();
         pub.setUniqueName(dbName + ":" + accession);
-        feature_cvterm.setPub(pub);
+        
+        if(feature_cvterm.getPub() == null)
+        {
+          Splash.logger4j.debug("Set primary Pub for " + 
+              dbName + ":" + accession);
+          feature_cvterm.setPub(pub);
+        }
+        else
+        {
+          // secondary pub
+          Splash.logger4j.debug("Set secondary Pub for " + 
+              dbName + ":" + accession);
+          Collection featureCvTermPubs = feature_cvterm.getFeatureCvTermPubs();
+          if(featureCvTermPubs == null ||
+             featureCvTermPubs.size() < 1)
+          {
+            featureCvTermPubs = new Vector();
+            feature_cvterm.setFeatureCvTermPubs(featureCvTermPubs);
+          }
+          featureCvTermPubs.add(pub);
+        }
       }
       else  
       {
