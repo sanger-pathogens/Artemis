@@ -1138,48 +1138,33 @@ public class ChadoTransactionManager
            if(endIndex > -1)
              thisTerm = qualifier_string.substring(beginIndex, endIndex);
            else
-             thisTerm = qualifier_string.substring(beginIndex);*/
+             thisTerm = qualifier_string.substring(beginIndex);
+           
+           
+           for(int j=0; j<new_qualifier_strings.size(); j++)
+           {
+             String new_qualifier_string = (String)old_qualifier_strings.elementAt(j);
+             if(new_qualifier_string.indexOf("term="+thisTerm) > -1)
+             {
+               // possible update
+             }
+           }*/
            
            Splash.logger4j.debug(uniquename+"  in handleReservedTags() DELETE "+
                qualifier_name+" "+qualifier_string);
            
-           FeatureCvTerm feature_cvterm = getFeatureCvTerm(qualifier_name, qualifier_string, 
-                                                           uniquename);
-           /*Vector rankables = null;
-           int rank = 0;
-           for(int j=0; j<values.size(); j++)
+           /*for(int j=0; j<new_qualifier_strings.size(); j++)
            {
-             String val = (String)values.get(j);
-             if(val.indexOf(thisTerm) > -1 &&
-                !val.equals(qualifier_string))
-             {
-               if(rankables == null)
-                 rankables = new Vector();
-               
-               FeatureCvTerm fc = getFeatureCvTerm(qualifier_name, val, 
-                                                   uniquename);
-               fc.setRank(rank);
-               rankables.add(fc);
-               rank++;
-               System.out.println("UPDATE ------> "+values.get(j));
-             }
+             String new_qualifier_string = (String)old_qualifier_strings.elementAt(j);
+             System.out.println(new_qualifier_string);
            }*/
            
+           FeatureCvTerm feature_cvterm = getFeatureCvTerm(qualifier_name, qualifier_string, 
+                                                           uniquename);
            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
                                       feature_cvterm,
                                       feature.getLastModified(), feature);
            sql.add(tsn);
-           
-           /*if(rankables != null)
-           {
-             for(int j=0; j<rankables.size(); j++)
-             {
-               feature_cvterm = (FeatureCvTerm)rankables.get(j);
-               tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                 feature_cvterm,
-                 feature.getLastModified(), feature);
-             }
-           }*/
          }
          else if(isSynonymTag(qualifier_name))
          {
@@ -1515,6 +1500,11 @@ public class ChadoTransactionManager
     return feature_cvterm;
   }
   
+  /**
+   * Get CvTerm that have been cached
+   * @param cvTermName
+   * @return
+   */
   private CvTerm getCvTerm(String cvTermName)
   {
     if(cvTermName.startsWith("\""))

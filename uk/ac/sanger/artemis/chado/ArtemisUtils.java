@@ -37,6 +37,33 @@ public class ArtemisUtils
 {
   
   /**
+   * Insert featureCvTerm with an appropriate rank
+   * @param dao
+   * @param featureCvTerm
+   */
+  public static void inserFeatureCvTerm(GmodDAO dao, FeatureCvTerm featureCvTerm)
+  {
+    List featureCvTerms = dao.getFeatureCvTermsByFeature(featureCvTerm.getFeature());
+    
+    int rank = 0;
+    for(int i=0; i<featureCvTerms.size(); i++)
+    {
+      FeatureCvTerm this_feature_cvterm = (FeatureCvTerm)featureCvTerms.get(i);
+      
+      if(this_feature_cvterm.getCvTerm().getName().equals( 
+         featureCvTerm.getCvTerm().getName() )  &&
+         this_feature_cvterm.getCvTerm().getCv().getName().equals( 
+             featureCvTerm.getCvTerm().getCv().getName() ))
+      {
+        rank++;
+      }
+    }
+    
+    featureCvTerm.setRank(rank);
+    dao.persist(featureCvTerm);
+  }
+  
+  /**
    * Delete featureCvTerm and update associated feature_cvterm.rank's 
    * if appropriate
    * @param dao
