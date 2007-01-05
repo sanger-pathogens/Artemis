@@ -26,6 +26,7 @@
                                           select="getFeatureCvTermDbXRefByFeatureCvTerm" />
         <!-- <result property="pub" column="pub_id" select="selectPub" /> -->
      </resultMap>
+
  
       <!--  select feature_cvterm -->
      <select id="getFeatureCvTermsByFeature" parameterClass="Feature"
@@ -70,5 +71,22 @@
       SET rank=$rank$
       WHERE feature_cvterm_id=$featureCvTermId$
     </update>
+    
+    <!-- INSERT -->
+    <insert id="insertFeatureCvTerm" 
+            parameterClass="FeatureCvTerm">
+      INSERT INTO feature_cvterm
+        ( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not )
+      VALUES
+        ( nextval('feature_cvterm_feature_cvterm_id_seq'),
+          (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#),
+          $cvTerm.cvTermId$,
+          <dynamic>
+            <isNotNull property="pub"> $pub.pubId$, </isNotNull>
+            <isNull property="pub"> 0, </isNull>     
+          </dynamic>
+          $rank$,
+          $not$ )
+    </insert>
      
 </sqlMap>
