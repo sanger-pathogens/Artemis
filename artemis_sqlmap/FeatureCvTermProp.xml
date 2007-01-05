@@ -13,4 +13,17 @@
         <result property="value" column="value" />
         <result property="rank" column="rank" />
      </resultMap>
+     
+    <!-- INSERT -->
+    <insert id="insertFeatureCvTermProp" 
+            parameterClass="FeatureCvTermProp">
+      INSERT INTO feature_cvtermprop
+        ( feature_cvtermprop_id, feature_cvterm_id, type_id, value, rank )
+      VALUES
+        ( nextval('feature_cvtermprop_feature_cvtermprop_id_seq'),
+          $featureCvTerm.featureCvTermId$,
+          $cvTerm.cvTermId$,
+          #value#,
+          $rank$ )
+    </insert>
 </sqlMap>
