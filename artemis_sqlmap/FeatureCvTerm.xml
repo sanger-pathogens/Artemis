@@ -82,7 +82,11 @@
           (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#),
           $cvTerm.cvTermId$,
           <dynamic>
-            <isNotNull property="pub"> $pub.pubId$, </isNotNull>
+            <isNotNull property="pub">
+              <isEqual property="pub.pubId" compareValue="0">
+               (SELECT pub_id FROM pub WHERE uniquename=#pub.uniqueName#), 
+              </isEqual>
+            </isNotNull>
             <isNull property="pub"> 0, </isNull>     
           </dynamic>
           $rank$,
