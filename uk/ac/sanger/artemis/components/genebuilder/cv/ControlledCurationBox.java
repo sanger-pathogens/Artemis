@@ -25,11 +25,17 @@
 package uk.ac.sanger.artemis.components.genebuilder.cv;
 
 import java.awt.Dimension;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.Box;
+import javax.swing.JFormattedTextField;
 import javax.swing.JTextField;
+import javax.swing.text.DateFormatter;
 
 import uk.ac.sanger.artemis.components.Splash;
+import uk.ac.sanger.artemis.components.genebuilder.cv.CvBoxA.DateVerifier;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.StringVector;
@@ -39,7 +45,7 @@ class ControlledCurationBox extends CvBoxA
   private Box xBox;
   private int value_index;
   private JTextField termTextField;
-  private JTextField dateField;
+  private JFormattedTextField dateField;
   private String origQualifierString;
   private Qualifier origQualifier;
   
@@ -59,16 +65,23 @@ class ControlledCurationBox extends CvBoxA
     termTextField.setToolTipText("term column");
     termTextField.setPreferredSize(dimension);
     termTextField.setMaximumSize(dimension);
+    termTextField.setCaretPosition(0);
     xBox.add(termTextField);
     
     String date = getField("date=", qualifierString);
-    dateField = new JTextField(date);      
+    
+    Date this_date = getDate(date);
+    dateField = new JFormattedTextField(new SimpleDateFormat("yyyyMMdd"));
+    dateField.setInputVerifier(new DateVerifier());
+    dateField.setValue(this_date);
     dateField.setToolTipText("date column");
     dateField.setPreferredSize(dimension);
     dateField.setMaximumSize(dimension);
     xBox.add(dateField);
   }
 
+
+  
   protected boolean isQualifierChanged()
   {
     String old = getField("date=", origQualifierString);

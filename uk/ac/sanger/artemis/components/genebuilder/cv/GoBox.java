@@ -25,9 +25,12 @@
 package uk.ac.sanger.artemis.components.genebuilder.cv;
 
 import java.awt.Dimension;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.Box;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
@@ -67,7 +70,7 @@ class GoBox extends CvBoxA
   private JTextField dbxrefTextField;
   private JExtendedComboBox evidenceList;
   private JTextField qualfTextField;
-  private JTextField dateField;
+  private JFormattedTextField dateField;
   private String origQualifierString;
   private Qualifier origQualifier;
   
@@ -150,7 +153,10 @@ class GoBox extends CvBoxA
     xBox.add(qualfTextField);
     
     String date = getField("date=", qualifierString);
-    dateField = new JTextField(date);      
+    Date this_date = getDate(date);
+    dateField = new JFormattedTextField(new SimpleDateFormat("yyyyMMdd"));
+    dateField.setInputVerifier(new DateVerifier());
+    dateField.setValue(this_date);     
     dateField.setToolTipText("date column");
     dateField.setPreferredSize(dimension);
     dateField.setMaximumSize(dimension);
@@ -229,7 +235,7 @@ class GoBox extends CvBoxA
     
     old = getField("db_xref=", origQualifierString);
     if(!old.equals(dbxrefTextField.getText().trim()))
-    {
+    {    
       newQualifierString = changeField("db_xref=", dbxrefTextField.getText().trim(), 
                                        newQualifierString);
     }

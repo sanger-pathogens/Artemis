@@ -24,6 +24,14 @@
 
 package uk.ac.sanger.artemis.components.genebuilder.cv;
 
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.swing.InputVerifier;
+import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
+import javax.swing.JOptionPane;
+
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 
@@ -76,20 +84,91 @@ abstract class CvBoxA
 
     if(ind2 > ind1 && ind1 > -1)
     {
-      newQualifierString =
-        newQualifierString.substring(0, ind1+len) +
-        newFieldStr +
-        newQualifierString.substring(ind2);
+      if(newFieldStr.equals(""))
+        newQualifierString =
+          newQualifierString.substring(0, ind1) +
+          newQualifierString.substring(ind2);
+      else
+        newQualifierString =
+          newQualifierString.substring(0, ind1+len) +
+          newFieldStr +
+          newQualifierString.substring(ind2);
     }
     else if(ind1 > -1)
     {
-      newQualifierString =
-        newQualifierString.substring(0, ind1+len) +
-        newFieldStr;
+      if(newFieldStr.equals(""))
+        newQualifierString =
+          newQualifierString.substring(0, ind1);
+      else
+        newQualifierString =
+          newQualifierString.substring(0, ind1+len) +
+          newFieldStr;
+    }
+    else
+    {
+      if(!newFieldStr.equals(""))
+        newQualifierString = newQualifierString + ";" + 
+                             fieldName + newFieldStr;
     }
     
     return newQualifierString;
   }
+  
+  /**
+   * Get a Date object from a date string in the format 20061129
+   * @param dateStr
+   * @return
+   */
+  protected Date getDate(String dateStr)
+  {
+    Calendar cal = Calendar.getInstance();
+    cal.clear();
+    if(dateStr == null ||
+       dateStr.equals("") ||
+       dateStr.length() != 8)
+      return null;
+    
+    int year  = Integer.parseInt(dateStr.substring(0,4));
+    int month = Integer.parseInt(dateStr.substring(4, 6))-1;
+    int day   = Integer.parseInt(dateStr.substring(6,8));
+    
+    cal.set(year,month,day);
+    return cal.getTime();
+  }
+  
+  class DateVerifier extends InputVerifier 
+  {
+    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
+            "yyyyMMdd");
+    java.util.Calendar cal = java.util.Calendar.getInstance();
+    public DateVerifier() 
+    {
+      sdf.setLenient(false);
+    }
+
+    public boolean verify(JComponent input) 
+    {
+      JFormattedTextField ftf = (JFormattedTextField) input;
+      // allow null entry which will include slashes because of the
+      // mask
+      if(ftf.getText().trim().equals(""))
+      {
+        ftf.setValue( null );
+        return true;
+      }
+        
+      try 
+      {
+        cal.setTime(sdf.parse(ftf.getText()));
+      }
+      catch (Exception pe) 
+      {
+        return false;
+      }
+      return true;
+    }
+  }
+
   
   protected abstract boolean isQualifierChanged();
   protected abstract void updateQualifier(final QualifierVector qv);
