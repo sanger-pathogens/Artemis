@@ -49,6 +49,7 @@ import uk.ac.sanger.artemis.EntryChangeEvent;
 import uk.ac.sanger.artemis.components.Splash;
 
 import java.util.Collection;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.List;
@@ -56,6 +57,7 @@ import java.util.Enumeration;
 import javax.swing.JOptionPane;
 
 import org.gmod.schema.sequence.FeatureCvTermProp;
+import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureDbXRef;
@@ -1407,7 +1409,7 @@ public class ChadoTransactionManager
                                          String qualifier_string,
                                          final String uniqueName)
   {
-    Splash.logger4j.debug("Build FeatureCvTerm for "+uniqueName);
+    Splash.logger4j.debug("Build FeatureCvTerm for "+qualifier_string);
     
     if(qualifier_string.startsWith("\""))
       qualifier_string = qualifier_string.substring(1,qualifier_string.length()-1);
@@ -1480,9 +1482,9 @@ public class ChadoTransactionManager
         int index = this_qualifier_part_lowercase.indexOf('=');
         String prop = this_qualifier_part.substring(index+1);
         
+        Splash.logger4j.debug("FeatureCvTermProp = "+this_qualifier_part_lowercase);
         CvTerm cvTerm = getCvTerm(this_qualifier_part.substring(0,index));
         
-        Splash.logger4j.debug("FeatureCvTermProp = "+this_qualifier_part_lowercase);
         FeatureCvTermProp featureCvTermProp = new FeatureCvTermProp();
         featureCvTermProp.setValue(prop);
         featureCvTermProp.setCvTerm(cvTerm);   
@@ -1543,11 +1545,15 @@ public class ChadoTransactionManager
   {
     List featureCvTermDbXRefs = null;
     
-    StringVector strings = StringVector.getStrings(searchStr, "|");
-
-    for(int i=0; i<strings.size(); i++)
+    //StringVector strings = StringVector.getStrings(searchStr, "|");
+    StringTokenizer tok = new StringTokenizer(searchStr, "|,");
+    
+    
+    //for(int i=0; i<strings.size(); i++)
+   //{
+    while(tok.hasMoreTokens())
     {
-      String this_part = (String)strings.get(i);
+      String this_part = tok.nextToken();  //(String)strings.get(i);
       int ind = this_part.indexOf(':');
       
       final String dbName = this_part.substring(0, ind);
@@ -1578,7 +1584,9 @@ public class ChadoTransactionManager
             featureCvTermPubs = new Vector();
             feature_cvterm.setFeatureCvTermPubs(featureCvTermPubs);
           }
-          featureCvTermPubs.add(pub);
+          FeatureCvTermPub featureCvTermPub = new FeatureCvTermPub();
+          featureCvTermPub.setPub(pub);
+          featureCvTermPubs.add(featureCvTermPub);
         }
       }
       else  
