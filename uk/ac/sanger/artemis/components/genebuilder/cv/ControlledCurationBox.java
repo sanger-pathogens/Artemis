@@ -26,16 +26,14 @@ package uk.ac.sanger.artemis.components.genebuilder.cv;
 
 import java.awt.Dimension;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.Box;
 import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.text.DateFormatter;
 
 import uk.ac.sanger.artemis.components.Splash;
-import uk.ac.sanger.artemis.components.genebuilder.cv.CvBoxA.DateVerifier;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.StringVector;
@@ -52,12 +50,19 @@ class ControlledCurationBox extends CvBoxA
   public ControlledCurationBox(final Qualifier qualifier,
                                final String qualifierString,
                                final int value_index,
-                               final Dimension dimension)
+                               final Dimension dimension,
+                               final Dimension go_dimension)
   {
     this.origQualifier = qualifier;
     this.origQualifierString = qualifierString;
     this.value_index  = value_index;
     this.xBox = Box.createHorizontalBox();
+    
+    JLabel cclabel = new JLabel("controlled_curation");
+    if(go_dimension != null)
+      cclabel.setPreferredSize(go_dimension);
+      
+    xBox.add(cclabel);
     
     String term = getField("term=", qualifierString);
     termTextField = new JTextField(term);

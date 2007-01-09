@@ -187,7 +187,7 @@ public class CVPanel extends JPanel
           
           ControlledCurationBox ccBox = new ControlledCurationBox(this_qualifier,
                   qualifierString, value_index, 
-                  dimension);
+                  dimension, go_dimension);
           editableComponents.add(ccBox);
           
           xBox = ccBox.getBox();
@@ -216,11 +216,17 @@ public class CVPanel extends JPanel
               .elementAt(value_index);
           if(this_qualifier.getName().equals("product"))
           {
+            JLabel label = new JLabel("product");
+            if(go_dimension != null)
+              label.setPreferredSize(go_dimension);
+            xBox.add(label);
+            
             JTextField termTextField = new JTextField(qualifierString);
             termTextField.setEditable(false);
             termTextField.setToolTipText("term column");
             termTextField.setPreferredSize(dimension);
             termTextField.setMaximumSize(dimension);
+            termTextField.setCaretPosition(0);
             
             xBox.add(termTextField);          
             xBox.add(getRemoveButton(this_qualifier, v_index));
@@ -325,7 +331,13 @@ public class CVPanel extends JPanel
           step = 2;
           continue;
         }
-        step = 4;
+        
+        if(cv_name.equals("molecular_function") ||
+            cv_name.equals("biological_process") ||
+            cv_name.equals("cellular_component"))
+          step = 4;
+        else
+          step = 5;
       }
       
       if(step == 4)
@@ -352,8 +364,10 @@ public class CVPanel extends JPanel
           "aspect="+cv_name+";"+
           "term="+cvterm.getName()+";"+
           "evidence="+evidenceList.getSelectedItem());
-    else
+    else if(cv_type.equals("controlled_curation"))
       cv_qualifier.addValue("term="+cvterm.getName());
+    else if(cv_type.equals("product"))
+      cv_qualifier.addValue(cvterm.getName());
     
     cvQualifiers.remove(index);
     cvQualifiers.add(index, cv_qualifier);
