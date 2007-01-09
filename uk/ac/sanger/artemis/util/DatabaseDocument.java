@@ -1015,7 +1015,7 @@ public class DatabaseDocument extends Document
       
           if(nfound_dbxref == 0)
             attr_buff.append("db_xref=");
-          else if(nfound_dbxref > 1)
+          else if(nfound_dbxref > 0)
             attr_buff.append("|");
           
           DbXRef fc_dbXRef = featureCvTermDbXRef.getDbXRef();
@@ -1092,7 +1092,7 @@ public class DatabaseDocument extends Document
           
           if(nfound_pub == 0)
             attr_buff.append("db_xref=");
-          else if(nfound_pub > 1)
+          else if(nfound_pub > 0)
             attr_buff.append("|");
 
           attr_buff.append(featureCvTermPub.getPub().getUniqueName());
