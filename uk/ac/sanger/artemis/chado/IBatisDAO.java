@@ -34,6 +34,7 @@ import java.sql.*;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermProp;
+import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.Synonym;
@@ -640,6 +641,22 @@ public class IBatisDAO extends GmodDAO
         sqlMap.insert("insertFeatureCvTermProp", featureCvTermProp);
       }
     }
+    
+    // feature_cvterm_pub's
+    if(feature_cvterm.getFeatureCvTermPubs() != null)
+    {
+      Collection featureCvTermPubs = feature_cvterm.getFeatureCvTermPubs();
+      Iterator it = featureCvTermPubs.iterator();
+      while(it.hasNext())
+      {
+        FeatureCvTermPub featureCvTermPub = (FeatureCvTermPub)it.next();
+        featureCvTermPub.setFeatureCvTerm(feature_cvterm);
+
+        sqlMap.insert("insertFeatureCvTermPub", featureCvTermPub);
+      }
+    
+    }
+    // feature_cvterm_dbxref's
   }
   
   /**
