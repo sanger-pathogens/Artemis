@@ -28,4 +28,14 @@
           </isNotNull>
        </dynamic>
     </select>
+    
+    <!-- INSERT -->
+    <insert id="insertFeatureCvTermPub" 
+            parameterClass="FeatureCvTermPub">
+      INSERT INTO feature_cvterm_pub
+        ( feature_cvterm_id, pub_id )
+      VALUES
+        ( $featureCvTerm.featureCvTermId$,
+          (SELECT pub_id FROM pub WHERE uniquename=#pub.uniqueName#) )
+    </insert>
 </sqlMap>
