@@ -86,6 +86,9 @@
               <isEqual property="pub.pubId" compareValue="0">
                (SELECT pub_id FROM pub WHERE uniquename=#pub.uniqueName#), 
               </isEqual>
+              <isGreaterThan property="pub.pubId" compareValue="0">
+               $pub.pubId$, 
+              </isGreaterThan>
             </isNotNull>
             <isNull property="pub"> 0, </isNull>     
           </dynamic>
