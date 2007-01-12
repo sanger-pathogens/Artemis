@@ -15,6 +15,7 @@
         
   <resultMap id="select-pub"
              class="Pub">
+     <result property="pubId"       column="pub_id" />
      <result property="title"       column="title" />
      <result property="volumeTitle" column="volumetitle" />
      <result property="volume"      column="volume" />
@@ -46,6 +47,10 @@
   <select id="selectPub" resultMap="select-pub">
     SELECT * FROM pub WHERE pub_id=$pub_id$
   </select>
+  
+  <select id="getPubByUniqueName" resultMap="select-pub">
+    SELECT * FROM pub WHERE uniquename=#uniqueName#
+  </select>
 
   <select id="getPubDbXRef" resultMap="select-pubdbxref">
    select pub_id, pub_dbxref.dbxref_id, 
@@ -54,4 +59,34 @@
        LEFT JOIN dbxref dbx ON pub_dbxref.dbxref_id=dbx.dbxref_id 
        LEFT JOIN db ON db.db_id=dbx.db_id 
   </select>
+  
+  <!-- WRITE BACK -->
+  <insert id="insertPub" parameterClass="Pub">
+    INSERT INTO pub ( 
+       <isNotNull property="title">  title, </isNotNull>
+       <isNotNull property="volumeTitle"> volumetitle, </isNotNull>
+       <isNotNull property="volume"> volume, </isNotNull>
+       <isNotNull property="seriesName"> series_name, </isNotNull>
+       <isNotNull property="issue"> issue, </isNotNull>
+       <isNotNull property="pyear"> pyear, </isNotNull>
+       <isNotNull property="pages"> pages, </isNotNull>
+       <isNotNull property="miniRef"> miniref, </isNotNull>
+       uniquename, type_id
+       <isNotNull property="obsolete"> , is_obsolete </isNotNull>
+       <isNotNull property="publisher"> , publisher </isNotNull>
+       <isNotNull property="pubPlace"> , pubplace </isNotNull> ) 
+    VALUES (
+       <isNotNull property="title"> #title#, </isNotNull>
+       <isNotNull property="volumeTitle"> #volumeTitle#, </isNotNull>
+       <isNotNull property="volume"> #volume#, </isNotNull>
+       <isNotNull property="seriesName"> #seriesName#, </isNotNull>
+       <isNotNull property="issue"> #issue#, </isNotNull>
+       <isNotNull property="pyear"> #pyear#, </isNotNull>
+       <isNotNull property="pages"> #pages#, </isNotNull>
+       <isNotNull property="miniRef"> #miniRef#, </isNotNull>
+       #uniqueName#, $cvTerm.cvTermId$
+       <isNotNull property="obsolete"> , $obsolete$ </isNotNull>
+       <isNotNull property="publisher"> , #publisher# </isNotNull>
+       <isNotNull property="pubPlace"> , #pubPlace# </isNotNull> )
+  </insert>    
 </sqlMap> 
