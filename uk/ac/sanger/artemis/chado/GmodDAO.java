@@ -42,51 +42,16 @@ import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureDbXRef;
 
-public abstract class GmodDAO implements SequenceDaoI, SchemaDaoI, OrganismDaoI, CvDaoI
+import uk.ac.sanger.artemis.util.DatabaseDocument;
+
+public abstract class GmodDAO 
+       implements SequenceDaoI, SchemaDaoI, OrganismDaoI, CvDaoI, PubDaoI
 {
 
   public abstract void merge(Object obj);
   public abstract void persist(Object obj);
   public abstract void delete(Object obj);
   
-  
-  /**
-   * Return a list of FeatureCvterm's for a Feature, or a list
-   * of all FeatureCvTerm's if Feature is null.
-   * @param feature the Feature to retrieve associated FeatureCvTerm's
-   * @return the FeatureCvTerm's
-   */
-  public abstract List getFeatureCvTermsByFeature(Feature feature);
-
-  
-  /**
-   * Get a list of all PubDbXRef's
-   * @return list of PubDbXRef's
-   */
-  public abstract List getPubDbXRef();
-  
-  /**
-   * Get a list of all FeatureCvTermDbXRef's for a Feature, or a list
-   * of all FeatureCvTermDbXRef's if Feature is null.
-   * @param feature the Feature to retrieve associated FeatureCvTermDbXRef's
-   * @return the FeatureCvTermDbXRef's
-   */
-  public abstract List getFeatureCvTermDbXRefByFeature(Feature feature);
-  
-  /**
-   * Get a list of all FeatureCvTermPub's for a Feature, or a list
-   * of all FeatureCvTermPub's if Feature is null.
-   * @param feature the Feature to retrieve associated FeatureCvTermPub's
-   * @return the FeatureCvTermPub's
-   */
-  public abstract List getFeatureCvTermPubByFeature(Feature feature);
-  
-  /**
-   * Return the list of all feature_synonyms as Feature.featureSynonyms 
-   * 
-   * @return a (possibly empty) List<Features> of matching synonyms
-   */
-  public abstract List getAllFeatureSynonymsAsFeature();
   
   /**
    * Return a list of features that have this particular cvterm 
@@ -255,7 +220,34 @@ public abstract class GmodDAO implements SequenceDaoI, SchemaDaoI, OrganismDaoI,
   
   
   
+  //
+  //
+  // PubDaoI
+  //
   
+  public Pub getPubByDbXRef(DbXRef arg0)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public Pub getPubById(int arg0)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public Pub getPubByUniqueName(String arg0)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public List getPubPropByPubAndCvTerm(Pub arg0, CvTerm arg1)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
   
   //
   //
@@ -306,8 +298,11 @@ public abstract class GmodDAO implements SequenceDaoI, SchemaDaoI, OrganismDaoI,
     
     if(pubResult == null)
     {
-      // define the pub.type_id !!!!!!! TODO !!!!!!!!!
+      // define the pub.type_id 
       //
+      CvTerm cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm("Journal", "genedb_literature");
+      pub.setCvTerm(cvTerm);
+      
       insertPub(pub);
       pubResult = getPubByUniqueName(pub);
     }
@@ -315,6 +310,11 @@ public abstract class GmodDAO implements SequenceDaoI, SchemaDaoI, OrganismDaoI,
     return pubResult;
   }
   
+  /**
+   * Insert a feature_cvterm and associated feature_cvtermprop's,
+   * feature_cvterm_dbxref's and feature_cvterm_pub.
+   * @param feature_cvterm
+   */
   protected void insertAllFeatureCvTerm(final FeatureCvTerm feature_cvterm)
   {
     // get the pub_id and create a new Pub if necessary

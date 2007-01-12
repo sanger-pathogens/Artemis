@@ -693,7 +693,7 @@ public class DatabaseDocument extends Document
 
     parent = dao.getFeatureById(src_id);  //.getLazyFeature(parent);
     
-    chado_gene.setSeqlen(parent.getSeqLen().intValue());
+    chado_gene.setSeqlen(parent.getSeqLen());
     chado_gene.setSrcfeature_id(src_id);
 
     ByteBuffer buff = new ByteBuffer();
@@ -1233,6 +1233,20 @@ public class DatabaseDocument extends Document
         return cvterm;
     }
     
+    return null;
+  }
+  
+  public static CvTerm getCvTermByCvAndCvTerm(final String cvterm_name,
+                                              final String cvName)
+  {
+    Enumeration enum_cvterm = cvterms.elements();
+    while(enum_cvterm.hasMoreElements())
+    {
+      CvTerm cvterm = (CvTerm)enum_cvterm.nextElement();
+      if(cvName.equals( cvterm.getCv().getName() ) &&
+         cvterm_name.equals( cvterm.getName() ))
+        return cvterm;
+    }
     return null;
   }
 
