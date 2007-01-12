@@ -15,7 +15,7 @@
         <result property="pub.uniqueName" column="uniquename"/>
      </resultMap>
      
-     <select id="getFeatureCvTermPub" parameterClass="Feature"
+     <select id="getFeatureCvTermPubByFeature" parameterClass="Feature"
              resultMap="feature_cvterm_pub">
        SELECT fcp.feature_cvterm_id, pub.* 
        FROM feature_cvterm_pub fcp 
@@ -35,7 +35,6 @@
       INSERT INTO feature_cvterm_pub
         ( feature_cvterm_id, pub_id )
       VALUES
-        ( $featureCvTerm.featureCvTermId$,
-          (SELECT pub_id FROM pub WHERE uniquename=#pub.uniqueName#) )
+        ( $featureCvTerm.featureCvTermId$, $pub.pubId$ )
     </insert>
 </sqlMap>
