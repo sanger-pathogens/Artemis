@@ -33,6 +33,7 @@ import java.sql.*;
 
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureDbXRef;
@@ -41,8 +42,10 @@ import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
+import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
+import org.gmod.schema.pub.Pub;
 import org.gmod.schema.cv.CvTerm;
 
 import javax.swing.JPasswordField;
@@ -186,6 +189,12 @@ public class IBatisDAO extends GmodDAO
     return null;
   }
   
+  /**
+   * Return a list of FeatureCvterm's for a Feature, or a list
+   * of all FeatureCvTerm's if Feature is null.
+   * @param feature the Feature to retrieve associated FeatureCvTerm's
+   * @return the FeatureCvTerm's
+   */
   public List getFeatureCvTermsByFeature(Feature feature)
   {
     return
@@ -309,14 +318,26 @@ public class IBatisDAO extends GmodDAO
   }
   
   
+  /**
+   * Get a list of all FeatureCvTermDbXRef's for a Feature, or a list
+   * of all FeatureCvTermDbXRef's if Feature is null.
+   * @param feature the Feature to retrieve associated FeatureCvTermDbXRef's
+   * @return the FeatureCvTermDbXRef's
+   */
   public List getFeatureCvTermDbXRefByFeature(Feature feature)
   {
-    return sqlMap.queryForList("getFeatureCvTermDbXRef", feature);
+    return sqlMap.queryForList("getFeatureCvTermDbXRefByFeature", feature);
   }
   
+  /**
+   * Get a list of all FeatureCvTermPub's for a Feature, or a list
+   * of all FeatureCvTermPub's if Feature is null.
+   * @param feature the Feature to retrieve associated FeatureCvTermPub's
+   * @return the FeatureCvTermPub's
+   */
   public List getFeatureCvTermPubByFeature(Feature feature)
   {
-    return sqlMap.queryForList("getFeatureCvTermPub", feature);
+    return sqlMap.queryForList("getFeatureCvTermPubByFeature", feature);
   }
   
   public List getProducts()
@@ -427,6 +448,10 @@ public class IBatisDAO extends GmodDAO
   //////
   //////
   
+  /**
+   * Get a list of all PubDbXRef's
+   * @return list of PubDbXRef's
+   */
   public List getPubDbXRef()
   {
     return sqlMap.queryForList("getPubDbXRef", null);
@@ -478,7 +503,7 @@ public class IBatisDAO extends GmodDAO
     else if(o instanceof FeatureSynonym)
       insertFeatureAlias((FeatureSynonym)o);
     else if(o instanceof FeatureCvTerm)
-      insertFeatureCvTerm((FeatureCvTerm)o);
+      insertAllFeatureCvTerm((FeatureCvTerm)o);
   }
   
   
@@ -545,39 +570,15 @@ public class IBatisDAO extends GmodDAO
     }
   }
 
+    
+  
   /**
    * Insert a feature_dbxref for a feature.
    * @param feature_dbxref    the <code>FeatureDbXRef</code>
    */
   private void insertFeatureDbXRef(final FeatureDbXRef feature_dbxref)
   {
-    Integer db_id = (Integer)sqlMap.queryForObject("getDbId", 
-                         feature_dbxref.getDbXRef().getDb());
-    
-    System.out.print(db_id.intValue());
-
-    
-    if(db_id == null)
-      throw new RuntimeException("No database called "+
-          feature_dbxref.getDbXRef().getDb().getName()+" found (for "+
-          feature_dbxref.getFeature().getUniqueName()+
-          ") check the spelling!");
-    
-    feature_dbxref.getDbXRef().setDbXRefId(db_id.intValue());
-    
-    Integer dbxref_id = 
-      (Integer)sqlMap.queryForObject("getDbXRefId", feature_dbxref.getDbXRef());
-    if(dbxref_id == null)
-    {
-      // create a new accession entry in dbxref
-      sqlMap.insert("insertDbXRef", feature_dbxref.getDbXRef());
-      // now get the new dbxref_id
-      dbxref_id = (Integer)sqlMap.queryForObject("getDbXRefId", 
-          feature_dbxref.getDbXRef());
-    }
-    
-    DbXRef dbXRef = new DbXRef();
-    dbXRef.setDbXRefId(dbxref_id.intValue());
+    DbXRef dbXRef = loadDbXRef(feature_dbxref.getDbXRef());
     feature_dbxref.setDbXRef(dbXRef);
     
     //  get the feature id's  
@@ -619,45 +620,33 @@ public class IBatisDAO extends GmodDAO
   }
   
   
-  private void insertFeatureCvTerm(final FeatureCvTerm feature_cvterm)
-  { 
-    sqlMap.insert("insertFeatureCvTerm", feature_cvterm); 
-    
-    //
-    // get the current feature_id sequence value
-    int feature_cvterm_id = ((Integer)sqlMap.queryForObject("currval", 
-                              "feature_cvterm_feature_cvterm_id_seq")).intValue();
-    feature_cvterm.setFeatureCvTermId(feature_cvterm_id);
-    
-    if(feature_cvterm.getFeatureCvTermProps() != null)
-    {
-      Collection featureCvTermProps = feature_cvterm.getFeatureCvTermProps();
-      Iterator it = featureCvTermProps.iterator();
-      while(it.hasNext())
-      {
-        FeatureCvTermProp featureCvTermProp = (FeatureCvTermProp)it.next();
-        featureCvTermProp.setFeatureCvTerm(feature_cvterm);
-
-        sqlMap.insert("insertFeatureCvTermProp", featureCvTermProp);
-      }
-    }
-    
-    // feature_cvterm_pub's
-    if(feature_cvterm.getFeatureCvTermPubs() != null)
-    {
-      Collection featureCvTermPubs = feature_cvterm.getFeatureCvTermPubs();
-      Iterator it = featureCvTermPubs.iterator();
-      while(it.hasNext())
-      {
-        FeatureCvTermPub featureCvTermPub = (FeatureCvTermPub)it.next();
-        featureCvTermPub.setFeatureCvTerm(feature_cvterm);
-
-        sqlMap.insert("insertFeatureCvTermPub", featureCvTermPub);
-      }
-    
-    }
-    // feature_cvterm_dbxref's
+  protected void insertFeatureCvTerm(final FeatureCvTerm feature_cvterm)
+  {
+    sqlMap.insert("insertFeatureCvTerm", feature_cvterm);
   }
+  
+  protected int getCurrval(String seq_id)
+  {
+    return ((Integer)sqlMap.queryForObject("currval", 
+                                           seq_id)).intValue();
+  }
+  
+  protected void insertFeatureCvTermProp(FeatureCvTermProp featureCvTermProp)
+  {
+    sqlMap.insert("insertFeatureCvTermProp", featureCvTermProp);
+  }
+  
+  protected void insertFeatureCvTermPub(FeatureCvTermPub featureCvTermPub)
+  {
+    sqlMap.insert("insertFeatureCvTermPub", featureCvTermPub);
+  }
+  
+  protected void insertFeatureCvTermDbXRef(FeatureCvTermDbXRef featureCvTermDbXRef)
+  {
+    sqlMap.insert("insertFeatureCvTermDbXRef", featureCvTermDbXRef);
+  }
+  
+  
   
   /**
    * Delete a feature_synonym for a feature.
@@ -677,6 +666,31 @@ public class IBatisDAO extends GmodDAO
       return sqlMap.delete("deleteFeatureAlias", feature_synonym);
     else
       return sqlMap.delete("deleteAlias", feature_synonym);
+  }
+  
+  protected Integer getDbId(Db db)
+  {
+    return (Integer)sqlMap.queryForObject("getDbId", db);
+  }
+  
+  protected Integer getDbXRefId(DbXRef dbXRef)
+  {
+    return (Integer)sqlMap.queryForObject("getDbXRefId", dbXRef);
+  }
+  
+  protected void insertDbXRef(DbXRef dbXRef)
+  {
+    sqlMap.insert("insertDbXRef", dbXRef);
+  }
+  
+  protected Pub getPubByUniqueName(Pub pub)
+  {
+    return (Pub)sqlMap.queryForObject("getPubByUniqueName", pub);
+  }
+  
+  protected void insertPub(Pub pub)
+  {
+    sqlMap.insert("insertPub", pub);
   }
   
   

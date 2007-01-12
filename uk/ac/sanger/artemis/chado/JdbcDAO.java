@@ -42,6 +42,7 @@ import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 import org.gmod.schema.sequence.FeatureCvTermPub;
+import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.cv.CvTerm;
@@ -996,8 +997,9 @@ public class JdbcDAO extends GmodDAO
    */
   public List getCvTerms()
   {
-    String sql = "SELECT cvterm.cvterm_id, cvterm.name as cvterm_name, cv.NAME as cv_name " +
-                 "FROM cvterm, cv WHERE cv.cv_id = cvterm.cv_id";
+    String sql = "SELECT cvterm.cvterm_id, cvterm.name as cvterm_name, cv.NAME as cv_name, accession " +
+                 "FROM cvterm " +
+                 "LEFT JOIN dbxref ON dbxref.dbxref_id=cvterm.dbxref_id LEFT JOIN cv ON cv.cv_id = cvterm.cv_id";
 
     appendToLogFile(sql, sqlLog);
     
@@ -1015,6 +1017,10 @@ public class JdbcDAO extends GmodDAO
         Cv cv = new Cv();
         cv.setName(rs.getString("cv_name"));
         cvterm.setCv(cv);
+        DbXRef dbXRef = new DbXRef();
+        dbXRef.setAccession(rs.getString("accession"));
+        cvterm.setDbXRef(dbXRef);
+        
         cvterms.add(cvterm);
       }
       return cvterms;
@@ -1170,6 +1176,8 @@ public class JdbcDAO extends GmodDAO
       insertFeatureDbXRef((FeatureDbXRef)o);
     else if(o instanceof FeatureSynonym)
       insertFeatureAlias((FeatureSynonym)o);
+    else if(o instanceof FeatureCvTerm)
+      insertAllFeatureCvTerm((FeatureCvTerm)o);
   }
   
   /**
@@ -1415,12 +1423,7 @@ public class JdbcDAO extends GmodDAO
 
       //
       // get the current feature_id sequence value
-      sql = "SELECT currval('feature_feature_id_seq')";
-      appendToLogFile(sql, sqlLog);
-
-      rs = st.executeQuery(sql);
-      rs.next();
-      final int feature_id = rs.getInt("currval");
+      final int feature_id = getCurrval("feature_feature_id_seq");
 
       //
       // insert feature location into featureloc
@@ -1796,6 +1799,264 @@ public class JdbcDAO extends GmodDAO
           bw.close();
         }
         catch(IOException ioe2){}
+    }
+  }
+
+  protected int getCurrval(String seq_id)
+  {
+    int currval;
+    try
+    {
+      //
+      // get the current feature_id sequence value
+      String sql = "SELECT currval('"+seq_id+"')";
+      appendToLogFile(sql, sqlLog);
+      Statement st = conn.createStatement();
+      ResultSet rs = st.executeQuery(sql);
+      rs.next();
+      currval = rs.getInt("currval");
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+    return currval;
+  }
+
+  protected Integer getDbId(Db db)
+  {
+    Integer db_id;
+    try
+    {
+      String sql = "SELECT db_id FROM db WHERE name='"+db.getName()+"'";
+      appendToLogFile(sql, sqlLog);
+      Statement st = conn.createStatement();
+      ResultSet rs = st.executeQuery(sql);
+      rs.next();
+      db_id = new Integer(rs.getInt("db_id"));
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+
+    return db_id;
+  }
+
+  protected Integer getDbXRefId(DbXRef dbXRef)
+  {
+    Integer dbxref_id;
+    try
+    {
+      String sql = "SELECT dbxref_id FROM dbxref WHERE accession='"+
+                    dbXRef.getAccession()+"' AND db_id="+dbXRef.getDb().getDbId();
+      appendToLogFile(sql, sqlLog);
+      Statement st = conn.createStatement();
+      ResultSet rs = st.executeQuery(sql);
+      rs.next();
+      dbxref_id = new Integer(rs.getInt("dbxref_id"));
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+
+    return dbxref_id;
+  }
+
+  protected Pub getPubByUniqueName(Pub pub)
+  {
+    try
+    {
+      String sql = "SELECT * FROM pub WHERE uniquename='"+pub.getUniqueName()+"'";
+      appendToLogFile(sql, sqlLog);
+      Statement st = conn.createStatement();
+      ResultSet rs = st.executeQuery(sql);
+      rs.next();
+      
+      pub.setPubId( rs.getInt("pub_id") );
+      //
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+
+    return pub;
+  }
+
+  protected void insertDbXRef(DbXRef dbXRef)
+  {
+    try
+    {
+      String sql = "INSERT INTO dbxref ( db_id, accession, version ) VALUES ("+
+                   dbXRef.getDb().getDbId() +", '"+ 
+                   dbXRef.getAccession()    +"', "+ 
+                   dbXRef.getVersion()+")";
+      Statement st = conn.createStatement();
+      appendToLogFile(sql, sqlLog);
+      st.executeUpdate(new String(sql));
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }   
+  }
+
+  protected void insertFeatureCvTerm(FeatureCvTerm feature_cvterm)
+  {
+    try
+    {
+      String uniqueName = feature_cvterm.getFeature().getUniqueName();
+      final String pubIdStr;
+      
+      if(feature_cvterm.getPub() != null)
+      {
+        if(feature_cvterm.getPub().getPubId() == 0)
+          pubIdStr = "(SELECT pub_id FROM pub WHERE uniquename="+
+                      feature_cvterm.getPub().getUniqueName()+")";
+        else
+          pubIdStr = Integer.toString(feature_cvterm.getPub().getPubId());
+      }
+      else
+        pubIdStr = "0";
+      
+      String sql = "INSERT INTO feature_cvterm "+
+        "( feature_cvterm_id, feature_id, cvterm_id, pub_id, rank, is_not ) "+
+        "VALUES "+
+        "( nextval('feature_cvterm_feature_cvterm_id_seq'), "+
+          "(SELECT feature_id FROM feature WHERE uniquename='"+ uniqueName + "'), "+
+          feature_cvterm.getCvTerm().getCvTermId() + " , "+
+          pubIdStr + " , "+
+          feature_cvterm.getRank() + " , "+
+          feature_cvterm.isNot() + " ) ";
+      appendToLogFile(sql, sqlLog);
+      Statement st = conn.createStatement();
+      st.executeUpdate(new String(sql));
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }   
+  }
+
+  protected void insertFeatureCvTermDbXRef(FeatureCvTermDbXRef featureCvTermDbXRef)
+  {
+    try
+    {
+      String sql = "INSERT INTO feature_cvterm_dbxref "+
+        "( feature_cvterm_id, dbxref_id ) "+
+        "VALUES ( "+
+        featureCvTermDbXRef.getFeatureCvTerm().getFeatureCvTermId() + ", " +
+        featureCvTermDbXRef.getDbXRef().getDbXRefId()+" )";
+      appendToLogFile(sql, sqlLog);
+      Statement st = conn.createStatement();
+      st.executeUpdate(new String(sql));
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }   
+  }
+
+  protected void insertFeatureCvTermProp(FeatureCvTermProp featureCvTermProp)
+  {
+    try
+    {
+      String sql = "INSERT INTO feature_cvtermprop "+
+        "( feature_cvtermprop_id, feature_cvterm_id, type_id, value, rank ) "+
+        "VALUES ( "+
+        "nextval('feature_cvtermprop_feature_cvtermprop_id_seq'), "+
+        featureCvTermProp.getFeatureCvTerm().getFeatureCvTermId() + ", "+
+        featureCvTermProp.getCvTerm().getCvTermId() + ", '"+
+        featureCvTermProp.getValue() +"', "+
+        featureCvTermProp.getRank() +")";
+      appendToLogFile(sql, sqlLog);
+      Statement st = conn.createStatement();
+      st.executeUpdate(new String(sql));
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+  }
+
+  protected void insertFeatureCvTermPub(FeatureCvTermPub featureCvTermPub)
+  {
+    try
+    {
+      String sql = "INSERT INTO feature_cvterm_pub "+
+        "( feature_cvterm_id, pub_id ) "+
+        "VALUES ( "+
+        featureCvTermPub.getFeatureCvTerm().getFeatureCvTermId() + ", "+
+        featureCvTermPub.getPub().getPubId() + ")";
+      appendToLogFile(sql, sqlLog);
+      Statement st = conn.createStatement();
+      st.executeUpdate(new String(sql));
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+  }
+
+  protected void insertPub(Pub pub)
+  {
+    try
+    {
+      String sql = "INSERT INTO pub ( ";
+      
+      if(pub.getTitle() != null)
+        sql = sql + "title, ";
+      
+      /*if(pub.getVolumeTitle() != null)
+        sql = sql + "volumetitle, ";
+      
+      if(pub.getVolume() != null)
+        sql = sql + "volume, ";
+      
+      if(pub.getSeriesName() != null)
+        sql = sql + "series_name, ";
+      
+      if(pub.getIssue() != null)
+        sql = sql + "issue, ";
+      
+      if(pub.getPyear() != null)
+        sql = sql + "pyear, ";
+      
+      if(pub.getPages() != null)
+        sql = sql + "pages, ";
+      
+      if(pub.getMiniRef() != null)
+        sql = sql + "miniref, ";
+
+       sql = sql + "uniquename, type_id ";
+       
+       if(pub.isObsolete() != null)
+         sql = sql + " , is_obsolete ";
+       
+       if(pub.getPublisher() != null)
+         sql = sql + " , publisher ";
+       
+       if(pub.getPubPlace() != null)
+         sql = sql + " , pubplace ";*/
+       
+       sql = sql + ") VALUES (";
+
+       if(pub.getTitle() != null)
+         sql = sql + pub.getTitle() + ", ";
+       
+       // FIX THIS
+       //sql = sql + "'" + pub.getUniqueName() + "'," + 
+       //                  pub.getCvTerm().getCvTermId()+ ")";
+       
+      appendToLogFile(sql, sqlLog);
+      Statement st = conn.createStatement();
+      st.executeUpdate(new String(sql));
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
     }
   }
 

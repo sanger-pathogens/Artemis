@@ -24,6 +24,8 @@
 
 package uk.ac.sanger.artemis.chado;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -98,8 +100,8 @@ public class ArtemisUtils
          this_feature_cvterm.getCvTerm().getCv().getName().equals( 
              featureCvTerm.getCvTerm().getCv().getName() ))
       {     
-         List this_featureCvTermDbXRefs = (List)this_feature_cvterm.getFeatureCvTermDbXRefs();
-         List this_featureCvTermProps   = (List)this_feature_cvterm.getFeatureCvTermProps();
+         Collection this_featureCvTermDbXRefs = this_feature_cvterm.getFeatureCvTermDbXRefs();
+         Collection this_featureCvTermProps   = this_feature_cvterm.getFeatureCvTermProps();
          
          if(this_featureCvTermDbXRefs == null)
            this_featureCvTermDbXRefs = new Vector();
@@ -116,12 +118,23 @@ public class ArtemisUtils
          }
          
          boolean found = true;
-         for(int j=0; j<this_featureCvTermDbXRefs.size(); j++)
+         Iterator it = this_featureCvTermDbXRefs.iterator();
+         while(it.hasNext())
          {
-           FeatureCvTermDbXRef fcd = (FeatureCvTermDbXRef)this_featureCvTermDbXRefs.get(j);
-           FeatureCvTermProp fcp   = (FeatureCvTermProp)this_featureCvTermProps.get(j);
-           if(!containsFeatureCvTermDbXRef(fcd, featureCvTermDbXRefs) ||
-              !containsFeatureCvTermProp(fcp, featureCvTermProps))
+           FeatureCvTermDbXRef fcd = (FeatureCvTermDbXRef)it.next();
+
+           if(!containsFeatureCvTermDbXRef(fcd, featureCvTermDbXRefs))
+           {
+             found = false;
+             break;
+           }
+         }
+         
+         it = this_featureCvTermProps.iterator();
+         while(it.hasNext())
+         {
+           FeatureCvTermProp fcp   = (FeatureCvTermProp)it.next();
+           if(!containsFeatureCvTermProp(fcp, featureCvTermProps))
            {
              Splash.logger4j.debug(fcp.getCvTerm().getName()+" "+fcp.getValue());
              
@@ -129,6 +142,7 @@ public class ArtemisUtils
              break;
            }
          }
+         
          if(!found)
          {
            if(rankable == null)

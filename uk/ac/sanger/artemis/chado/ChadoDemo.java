@@ -115,6 +115,8 @@ public class ChadoDemo
   
   private JTabbedPane tabbedPane;
   
+  private CVPanel cvPanel;
+  
   /** 
    * Chado demo
    */
@@ -428,22 +430,29 @@ public class ChadoDemo
     }
     
     
-    attr_text.setText( GFFStreamFeature.decode((new String(attr_buff.getBytes()))) );
-    
-    if(tabbedPane.getTabCount() == 1)
-      try
+    attr_text.setText(GFFStreamFeature
+        .decode((new String(attr_buff.getBytes()))));
+
+    try
+    {
+      GFFStreamFeature gff_feature = new GFFStreamFeature(new String(gff_buff
+          .getBytes()));
+
+      if(cvPanel == null)
       {
-        GFFStreamFeature gff_feature = new  GFFStreamFeature(new String(gff_buff.getBytes()));
-        CVPanel cvPanel = new CVPanel(new uk.ac.sanger.artemis.Feature(gff_feature));
+        cvPanel = new CVPanel(new uk.ac.sanger.artemis.Feature(gff_feature));
         JScrollPane jsp = new JScrollPane(cvPanel);
-        
         tabbedPane.add("CV Terms", jsp);
       }
-      catch(ReadFormatException e)
-      {
+      else
+        cvPanel
+            .updateFromFeature(new uk.ac.sanger.artemis.Feature(gff_feature));
+    }
+    catch(ReadFormatException e)
+    {
       // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+      e.printStackTrace();
+    }
   }
 
   

@@ -24,14 +24,22 @@
 
 package uk.ac.sanger.artemis.chado;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.*;
+import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
+import org.gmod.schema.pub.Pub;
 import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureCvTermDbXRef;
+import org.gmod.schema.sequence.FeatureCvTermProp;
+import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureDbXRef;
 
 public abstract class GmodDAO implements SequenceDaoI, SchemaDaoI, OrganismDaoI, CvDaoI
@@ -41,12 +49,36 @@ public abstract class GmodDAO implements SequenceDaoI, SchemaDaoI, OrganismDaoI,
   public abstract void persist(Object obj);
   public abstract void delete(Object obj);
   
+  
+  /**
+   * Return a list of FeatureCvterm's for a Feature, or a list
+   * of all FeatureCvTerm's if Feature is null.
+   * @param feature the Feature to retrieve associated FeatureCvTerm's
+   * @return the FeatureCvTerm's
+   */
   public abstract List getFeatureCvTermsByFeature(Feature feature);
 
+  
+  /**
+   * Get a list of all PubDbXRef's
+   * @return list of PubDbXRef's
+   */
   public abstract List getPubDbXRef();
   
+  /**
+   * Get a list of all FeatureCvTermDbXRef's for a Feature, or a list
+   * of all FeatureCvTermDbXRef's if Feature is null.
+   * @param feature the Feature to retrieve associated FeatureCvTermDbXRef's
+   * @return the FeatureCvTermDbXRef's
+   */
   public abstract List getFeatureCvTermDbXRefByFeature(Feature feature);
   
+  /**
+   * Get a list of all FeatureCvTermPub's for a Feature, or a list
+   * of all FeatureCvTermPub's if Feature is null.
+   * @param feature the Feature to retrieve associated FeatureCvTermPub's
+   * @return the FeatureCvTermPub's
+   */
   public abstract List getFeatureCvTermPubByFeature(Feature feature);
   
   /**
@@ -107,6 +139,26 @@ public abstract class GmodDAO implements SequenceDaoI, SchemaDaoI, OrganismDaoI,
   ////// CvDaoI
   //////
   //////
+  
+  public List getAllTermsInCvWithCount(Cv arg0)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
+  public CvTerm getCvTermByDbXRef(DbXRef arg0)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
+  public List getPossibleMatches(String arg0, Cv arg1, int arg2)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
   
   /**
    * Get a CV by id
@@ -201,4 +253,136 @@ public abstract class GmodDAO implements SequenceDaoI, SchemaDaoI, OrganismDaoI,
     return false;
   }
   
+  
+  
+  
+  
+  //
+  //
+  //
+  //
+  
+  
+  /**
+   * Find a dbxref in the database and retrieve the associated 
+   * dbxref_id and db_id
+   * @param dbXRef
+   * @return
+   */
+  protected DbXRef loadDbXRef(DbXRef dbXRef)
+  {
+    Integer db_id = getDbId(dbXRef.getDb());
+
+    if(db_id == null)
+      throw new RuntimeException("No database called " + 
+          dbXRef.getDb().getName() +
+          " found -check the spelling!");
+    
+    dbXRef.getDb().setDbId(db_id.intValue());
+     
+    Integer dbxref_id = getDbXRefId(dbXRef);
+    if(dbxref_id == null)
+    {
+      dbXRef.setVersion("1");
+      // create a new accession entry in dbxref
+      insertDbXRef(dbXRef);
+      // now get the new dbxref_id
+      dbxref_id = getDbXRefId(dbXRef);
+    }
+
+    dbXRef.setDbXRefId(dbxref_id.intValue());
+    return dbXRef;
+  }
+  
+  /**
+   * Find a Pub if it exists. If the Pub does not exist then create
+   * one.
+   * @param pub
+   * @return
+   */
+  protected Pub loadPub(Pub pub)
+  {
+    Pub pubResult = getPubByUniqueName(pub);
+    
+    if(pubResult == null)
+    {
+      // define the pub.type_id !!!!!!! TODO !!!!!!!!!
+      //
+      insertPub(pub);
+      pubResult = getPubByUniqueName(pub);
+    }
+    
+    return pubResult;
+  }
+  
+  protected void insertAllFeatureCvTerm(final FeatureCvTerm feature_cvterm)
+  {
+    // get the pub_id and create a new Pub if necessary
+    if(feature_cvterm.getPub() != null)
+      feature_cvterm.setPub( loadPub(feature_cvterm.getPub()) );
+    
+    insertFeatureCvTerm(feature_cvterm); 
+    
+    //
+    // get the current feature_id sequence value
+    int feature_cvterm_id = getCurrval("feature_cvterm_feature_cvterm_id_seq");
+    feature_cvterm.setFeatureCvTermId(feature_cvterm_id);
+    
+    if(feature_cvterm.getFeatureCvTermProps() != null)
+    {
+      Collection featureCvTermProps = feature_cvterm.getFeatureCvTermProps();
+      Iterator it = featureCvTermProps.iterator();
+      while(it.hasNext())
+      {
+        FeatureCvTermProp featureCvTermProp = (FeatureCvTermProp)it.next();
+        featureCvTermProp.setFeatureCvTerm(feature_cvterm);
+
+        insertFeatureCvTermProp(featureCvTermProp);
+      }
+    }
+    
+    // feature_cvterm_pub's
+    if(feature_cvterm.getFeatureCvTermPubs() != null)
+    {
+      Collection featureCvTermPubs = feature_cvterm.getFeatureCvTermPubs();
+      Iterator it = featureCvTermPubs.iterator();
+      while(it.hasNext())
+      {
+        FeatureCvTermPub featureCvTermPub = (FeatureCvTermPub)it.next();
+        featureCvTermPub.setFeatureCvTerm(feature_cvterm);
+
+        // get the pub_id and create a new Pub if necessary
+        featureCvTermPub.setPub( loadPub(featureCvTermPub.getPub()) );
+        
+        insertFeatureCvTermPub(featureCvTermPub);
+      }
+    
+    }
+    // feature_cvterm_dbxref's
+    if(feature_cvterm.getFeatureCvTermDbXRefs() != null)
+    {
+      Collection featureCvTermDbXRefs = feature_cvterm.getFeatureCvTermDbXRefs();
+      Iterator it = featureCvTermDbXRefs.iterator();
+      while(it.hasNext())
+      {
+        FeatureCvTermDbXRef featureCvTermDbXRef = (FeatureCvTermDbXRef)it.next();
+        featureCvTermDbXRef.setFeatureCvTerm(feature_cvterm);
+        
+        // look for dbxref in the database
+        DbXRef dbxref = loadDbXRef(featureCvTermDbXRef.getDbXRef());
+        insertFeatureCvTermDbXRef(featureCvTermDbXRef);
+      }
+    }
+  }
+  
+  protected abstract Integer getDbId(Db db);
+  protected abstract Integer getDbXRefId(DbXRef dbXRef);
+  protected abstract void insertDbXRef(DbXRef dbXRef);
+  protected abstract Pub getPubByUniqueName(Pub pub);
+  protected abstract void insertPub(Pub pub);
+  protected abstract void insertFeatureCvTerm(final FeatureCvTerm feature_cvterm);
+  protected abstract int getCurrval(String seq_id);
+  protected abstract void insertFeatureCvTermProp(FeatureCvTermProp featureCvTermProp);
+  protected abstract void insertFeatureCvTermPub(FeatureCvTermPub featureCvTermPub);
+  protected abstract void insertFeatureCvTermDbXRef(FeatureCvTermDbXRef featureCvTermDbXRef);
 }
