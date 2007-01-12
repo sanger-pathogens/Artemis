@@ -20,7 +20,7 @@
         <result property="dbXRef.db.name" column="name"/>
     </resultMap>
    
-    <select id="getFeatureCvTermDbXRef" parameterClass="Feature"
+    <select id="getFeatureCvTermDbXRefByFeature" parameterClass="Feature"
              resultMap="select-featurecvtermdbxref">
        SELECT fcd.feature_cvterm_id, dbx.*, db.name 
        FROM feature_cvterm_dbxref fcd 
@@ -43,4 +43,14 @@
        LEFT JOIN db ON db.db_id=dbx.db_id
        WHERE feature_cvterm_id=$feature_cvterm_id$
     </select>
+    
+    <!-- INSERT -->
+    <insert id="insertFeatureCvTermDbXRef" 
+            parameterClass="FeatureCvTermDbXRef">
+      INSERT INTO feature_cvterm_dbxref
+        ( feature_cvterm_id, dbxref_id )
+      VALUES
+        ( $featureCvTerm.featureCvTermId$, $dbXRef.dbXRefId$  )
+    </insert>
+    
 </sqlMap>
