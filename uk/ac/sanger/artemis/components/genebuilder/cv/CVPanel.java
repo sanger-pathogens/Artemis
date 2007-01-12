@@ -76,21 +76,7 @@ public class CVPanel extends JPanel
   {
     super(new BorderLayout());
 
-    cvQualifiers = feature.getQualifiers().copy();
-    
-    cvQualifiers = new QualifierVector();
-    final QualifierVector qualifiers = feature.getQualifiers();  
-    for(int i = 0 ; i < qualifiers.size(); ++i) 
-    {
-      Qualifier qualifier = (Qualifier)qualifiers.elementAt(i);
-      if(isCvTag(qualifier))
-        cvQualifiers.addElement(qualifier.copy());
-    }
-   
-    add(createCVQualifiersComponent(),
-        BorderLayout.CENTER);
-    
-    feature.addFeatureChangeListener(this);  
+    updateFromFeature(feature);
   }
   
   /**
@@ -256,6 +242,31 @@ public class CVPanel extends JPanel
       }
     }); 
     return buttRemove;
+  }
+  
+  public void updateFromFeature(final Feature feature)
+  {
+    if(cvQualifiers != null)
+      feature.removeFeatureChangeListener(this);
+    cvQualifiers = feature.getQualifiers().copy();
+    
+    cvQualifiers = new QualifierVector();
+    final QualifierVector qualifiers = feature.getQualifiers();  
+    for(int i = 0 ; i < qualifiers.size(); ++i) 
+    {
+      Qualifier qualifier = (Qualifier)qualifiers.elementAt(i);
+      if(isCvTag(qualifier))
+        cvQualifiers.addElement(qualifier.copy());
+    }
+   
+    add(createCVQualifiersComponent(),
+        BorderLayout.CENTER);
+    
+    feature.addFeatureChangeListener(this);  
+    
+    removeAll();
+    add(createCVQualifiersComponent(),
+        BorderLayout.CENTER);
   }
   
   /**
