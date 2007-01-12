@@ -12,6 +12,7 @@
         
   <resultMap id="select-dbxref" 
                class="DbXRef">
+    <result property="dbXRefId"    column="dbxref_id"/>           
     <result property="db"          column="db_id" select="selectDb"/>
     <result property="accession"   column="accession"/>
     <result property="version"     column="version"/>
@@ -21,18 +22,38 @@
   <select id="getDbXRefId" parameterClass="DbXRef"
                            resultClass="java.lang.Integer">
     SELECT dbxref_id FROM dbxref WHERE accession=#accession#
-           AND db_id=$dbXRefId$;
+           AND db_id=$db.dbId$
   </select>
   
   <select id="selectDbXRef" resultMap="select-dbxref">
     SELECT * FROM dbxref WHERE dbxref_id=$dbXRefId$
   </select>
   
+  <select id="getDbXRef" parameterClass="DbXRef"
+                         resultMap="select-dbxref">
+    SELECT * FROM dbxref 
+    <dynamic>
+      <isNotNull property="db">
+        LEFT JOIN db ON db.db_id=dbxref.db_id 
+      </isNotNull>
+      WHERE
+      <isGreaterThan property="dbXRefId" compareValue="0">
+        dbxref_id=$dbXRefId$
+      </isGreaterThan>
+      <isEqual property="dbXRefId" compareValue="0">
+        accession=#accession#
+      </isEqual>
+      <isNotNull property="db">
+        AND db.name=#db.name# 
+      </isNotNull>
+    </dynamic>
+  </select>
+  
   
   <!-- WRITE BACK -->
   <insert id="insertDbXRef" parameterClass="DbXRef">
-    INSERT INTO dbxref ( db_id, accession ) 
-           VALUES ($dbXRefId$, #accession#)
+    INSERT INTO dbxref ( db_id, accession, version ) 
+           VALUES ($db.dbId$, #accession#, #version#)
   </insert>    
 
 </sqlMap> 
