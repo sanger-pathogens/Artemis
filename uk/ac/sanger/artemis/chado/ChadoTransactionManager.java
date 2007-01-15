@@ -1487,8 +1487,9 @@ public class ChadoTransactionManager
         
         FeatureCvTermProp featureCvTermProp = new FeatureCvTermProp();
         featureCvTermProp.setValue(prop);
-        featureCvTermProp.setCvTerm(cvTerm);   
-        featureCvTermProp.setRank(featureCvTermProps.size());
+        featureCvTermProp.setCvTerm(cvTerm);
+        featureCvTermProp.setRank(
+            getFeatureCvTermPropRank(featureCvTermProps, cvTerm.getName()));
         
         featureCvTermProps.add(featureCvTermProp);
         
@@ -1500,6 +1501,27 @@ public class ChadoTransactionManager
     
     Splash.logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
     return feature_cvterm;
+  }
+  
+  /**
+   * Get the rank to give a FeatureCvTermProp
+   * @param featureCvTermProps - existing featureprop's
+   * @param cvTermName - new featureprop cvterm.name
+   * @return
+   */
+  private int getFeatureCvTermPropRank(List featureCvTermProps, final String cvTermName)
+  {
+    int rank = 0;
+    
+    for(int i=0; i<featureCvTermProps.size(); i++)
+    {
+      CvTerm this_cvterm =
+         ( (FeatureCvTermProp)featureCvTermProps.get(i) ).getCvTerm();
+      if(this_cvterm.getName().equals(cvTermName))
+        rank++;
+    }
+    
+    return rank;
   }
   
   /**
@@ -1619,6 +1641,7 @@ public class ChadoTransactionManager
    **/
   public void sequenceChanged(final SequenceChangeEvent event)
   {
+    
   }
 
   public Vector getFeatureInsertUpdate()
