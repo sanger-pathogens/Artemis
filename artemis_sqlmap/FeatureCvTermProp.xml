@@ -11,7 +11,7 @@
      <resultMap id="feature_cvtermprop" class="FeatureCvTermProp">
         <result property="cvTerm.cvTermId" column="type_id" />
         <result property="value" column="value" />
-        <result property="rank" column="rank" />
+        <result property="rank" column="fcp_rank" />
      </resultMap>
      
     <!-- INSERT -->
