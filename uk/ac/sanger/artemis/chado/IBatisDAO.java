@@ -24,8 +24,6 @@
 
 package uk.ac.sanger.artemis.chado;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -196,9 +194,35 @@ public class IBatisDAO extends GmodDAO
    * @return the FeatureCvTerm's
    */
   public List getFeatureCvTermsByFeature(Feature feature)
-  {
-    return
-      sqlMap.queryForList("getFeatureCvTermsByFeature", feature);
+  {  
+    // find whether current schema has a feature_cvterm.rank column
+    String schema = System.getProperty("chado");
+    int index  = schema.indexOf("?");
+    int index2 = schema.indexOf("user=");
+    if(index2 < 0)
+      schema = schema.substring(index+1);
+    else
+      schema = schema.substring(index2+5);
+    
+    // check column names
+    List list = sqlMap.queryForList("getFeatureCvTermColumnsForASchema", schema);
+    
+    boolean rank_exists = false;
+    for(int i=0; i<list.size(); i++)
+    {
+      if( ((String)list.get(i)).equals("rank") )
+      {  
+        rank_exists = true;
+        break;
+      }
+    }
+     
+    if(rank_exists)
+      return
+        sqlMap.queryForList("getFeatureCvTermsByFeature", feature);
+    else
+      return
+        sqlMap.queryForList("getFeatureCvTermsNoRankByFeature", feature);
   }
   
   /**
