@@ -948,10 +948,15 @@ public class DatabaseDocument extends Document
         
         Integer featureCvTermId = new Integer( feature_cvterm.getFeatureCvTermId() );
         
-        List featureCvTermDbXRefList = 
-            (List)featureCvTermDbXRefs.get(featureCvTermId);
+        List featureCvTermDbXRefList = null;
         
-        List featureCvTermPubList = (List)featureCvTermPubs.get(featureCvTermId);
+        if(featureCvTermDbXRefs != null)
+          featureCvTermDbXRefList = (List)featureCvTermDbXRefs.get(featureCvTermId);
+        
+        List featureCvTermPubList = null;
+        
+        if(featureCvTermPubs != null)
+          featureCvTermPubList = (List)featureCvTermPubs.get(featureCvTermId);
           
         appendControlledVocabulary(this_buff, dao, feature_cvterm,
                                    featureCvTermDbXRefList,featureCvTermPubList, pubDbXRefs);
@@ -1069,7 +1074,8 @@ public class DatabaseDocument extends Document
       
       // PMID
       int nfound_pub = 0;
-      if(feature_cvterm.getPub().getUniqueName() != null &&
+      if(feature_cvterm.getPub() != null &&
+         feature_cvterm.getPub().getUniqueName() != null &&
          !feature_cvterm.getPub().getUniqueName().equals("NULL"))
       {
         Pub pub = feature_cvterm.getPub();
