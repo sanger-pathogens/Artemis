@@ -249,9 +249,11 @@ public abstract class GmodDAO
     return null;
   }
   
+  
+  
   //
   //
-  //
+  //  Common functions
   //
   
   
@@ -300,7 +302,12 @@ public abstract class GmodDAO
     {
       // define the pub.type_id 
       //
-      CvTerm cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm("Journal", "genedb_literature");
+      CvTerm cvTerm;
+      
+      if(pub.getUniqueName().startsWith("PMID:"))
+        cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm("Journal", "genedb_literature");
+      else
+        cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm("Unknown", "genedb_literature");
       pub.setCvTerm(cvTerm);
       
       insertPub(pub);
