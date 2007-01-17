@@ -203,6 +203,10 @@
       WHERE feature_id=$featureId$
     </update>
    
+    <update id="updateFeatureResidues"
+            parameterClass="java.lang.String">
+      UPDATE feature SET residues=#value#
+    </update>
     
     <!--  INSERT  -->
     <insert id="insertFeature" 
