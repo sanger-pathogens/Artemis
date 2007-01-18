@@ -109,7 +109,7 @@ class GoBox extends CvBoxA
     // the WITH column is associated with one or more FeatureCvTermDbXRef
     String with = getField("with=", qualifierString);
     withTextField = new JTextField(with);
-    withTextField.setToolTipText("with column");
+    withTextField.setToolTipText("with/from column");
     withTextField.setPreferredSize(dimension);
     withTextField.setMaximumSize(dimension);
     withTextField.setActionCommand("with=");
