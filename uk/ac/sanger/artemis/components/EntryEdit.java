@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.30 2006-11-01 16:34:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.31 2007-01-18 16:18:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import java.util.List;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.30 2006-11-01 16:34:07 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.31 2007-01-18 16:18:09 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -129,11 +129,11 @@ public class EntryEdit extends JFrame
         setTitle("Artemis Entry Edit: " + name);
 
       if(getEntryGroup().getDefaultEntry().getEMBLEntry() instanceof DatabaseDocumentEntry)
-      {
-        
+      {       
         getEntryGroup().addFeatureChangeListener(ctm);
         getEntryGroup().addEntryChangeListener(ctm);
-
+        getEntryGroup().getBases().addSequenceChangeListener(ctm, 0);
+        ctm.setEntryGroup(getEntryGroup());
       }
     }
 

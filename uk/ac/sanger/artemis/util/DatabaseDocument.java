@@ -75,7 +75,8 @@ public class DatabaseDocument extends Document
 {
   private String name = null;
 
-  private String feature_id = "1";
+  /** source feature_id */
+  private String srcFeatureId = "1";
 
   /** database schema */
   private String schema = "public";
@@ -154,12 +155,12 @@ public class DatabaseDocument extends Document
    * 
    */
   public DatabaseDocument(String location, JPasswordField pfield,
-                          String feature_id, String schema)
+                          String srcFeatureId, String schema)
   {
     super(location);
     this.pfield = pfield;
 
-    this.feature_id = feature_id;
+    this.srcFeatureId = srcFeatureId;
     this.schema = schema;
 
     if(System.getProperty("ibatis") != null)
@@ -176,7 +177,7 @@ public class DatabaseDocument extends Document
    * @param location
    *          This should be a URL string giving:
    *          jdbc:postgresql://host:port/datbase_name?user=username
-   * @param feature_id
+   * @param srcFeatureId
    *          ID of a feature to be extracted.
    * @param splitGFFEntry
    *          split into separate entries based on feature types.
@@ -185,12 +186,12 @@ public class DatabaseDocument extends Document
    * 
    */
   public DatabaseDocument(String location, JPasswordField pfield,
-                          String feature_id, String schema, boolean splitGFFEntry,
+                          String srcFeatureId, String schema, boolean splitGFFEntry,
                           InputStreamProgressListener progress_listener)
   {
     super(location);
     this.pfield = pfield;
-    this.feature_id = feature_id;
+    this.srcFeatureId = srcFeatureId;
     this.schema = schema;
     this.splitGFFEntry = splitGFFEntry;
     this.progress_listener = progress_listener;
@@ -208,16 +209,16 @@ public class DatabaseDocument extends Document
    * for a single gene.
    * @param location
    * @param pfield
-   * @param feature_id
+   * @param srcFeatureId
    * @param schema
    * @param gene_builder
    */
   public DatabaseDocument(String location, JPasswordField pfield,
-          String feature_id, String schema, boolean gene_builder)
+          String srcFeatureId, String schema, boolean gene_builder)
   {
     super(location);
     this.pfield = pfield;
-    this.feature_id = feature_id;
+    this.srcFeatureId = srcFeatureId;
     this.schema = schema;
     this.gene_builder = gene_builder;
 
@@ -229,12 +230,12 @@ public class DatabaseDocument extends Document
   }
   
   public DatabaseDocument(String location, JPasswordField pfield,
-                          String feature_id, String schema,
+                          String srcFeatureId, String schema,
                           ByteBuffer gff_buff, String name)
   {
     super(location);
     this.pfield = pfield;
-    this.feature_id = feature_id;
+    this.srcFeatureId = srcFeatureId;
     this.schema = schema;
     this.gff_buff = gff_buff;
     this.name = name;
@@ -302,7 +303,7 @@ public class DatabaseDocument extends Document
   public DatabaseDocument createDatabaseDocument()
   {
     return new DatabaseDocument( (String)getLocation(), pfield,
-                                 feature_id, schema );
+                                  srcFeatureId, schema );
   }
   
   /**
@@ -356,11 +357,11 @@ public class DatabaseDocument extends Document
         {
           List schemaList = new Vector();
           schemaList.add(schema);
-          return new ByteArrayInputStream(getGeneFeature(feature_id,
+          return new ByteArrayInputStream(getGeneFeature(srcFeatureId,
               schemaList, dao).getBytes());
         }
 
-        gff_buffer = getGff(dao, feature_id);
+        gff_buffer = getGff(dao);
 
         
         if(splitGFFEntry)
@@ -459,9 +460,9 @@ public class DatabaseDocument extends Document
    *                            extract
    * @return   the <code>ByteBuffer</code> array of GFF lines
    */
-  private ByteBuffer[] getGff(GmodDAO dao, String parentFeatureID)
+  private ByteBuffer[] getGff(GmodDAO dao)
   {
-    final int srcfeature_id = Integer.parseInt(parentFeatureID);
+    final int srcfeature_id = Integer.parseInt(srcFeatureId);
     
     Splash.logger4j.debug("Build GFF");
     
@@ -493,9 +494,9 @@ public class DatabaseDocument extends Document
     {
       Feature feat = (Feature)featList.get(i);
       String name       = feat.getUniqueName();
-      String feature_id = Integer.toString(feat.getFeatureId());
+      String featureId = Integer.toString(feat.getFeatureId());
 
-      id_store.put(feature_id, name);
+      id_store.put(featureId, name);
     }
     
     // get all dbrefs & synonyms
@@ -549,21 +550,21 @@ public class DatabaseDocument extends Document
     List list = dao.getFeatureSynonymsByFeatureUniquename(uniquename);  
     
     Hashtable synonym = new Hashtable();
-    Integer feature_id;
+    Integer featureId;
     List value;
     FeatureSynonym alias;
     
     for(int i=0; i<list.size(); i++)
     {
       alias = (FeatureSynonym)list.get(i);
-      feature_id = new Integer(alias.getFeature().getFeatureId());
-      if(synonym.containsKey(feature_id))
-        value = (Vector)synonym.get(feature_id);
+      featureId = new Integer(alias.getFeature().getFeatureId());
+      if(synonym.containsKey(featureId))
+        value = (Vector)synonym.get(featureId);
       else
         value = new Vector();
       
       value.add(alias);
-      synonym.put(feature_id, value);
+      synonym.put(featureId, value);
     }
     
     return synonym;
@@ -574,21 +575,21 @@ public class DatabaseDocument extends Document
     List list = dao.getFeatureCvTermsByFeature(null);
     
     Hashtable featureCvTerms = new Hashtable();
-    Integer feature_id;
+    Integer featureId;
     List value;
     FeatureCvTerm feature_cvterm;
     
     for(int i=0; i<list.size(); i++)
     {
       feature_cvterm = (FeatureCvTerm)list.get(i);
-      feature_id = new Integer(feature_cvterm.getFeature().getFeatureId());
-      if(featureCvTerms.containsKey(feature_id))
-        value = (Vector)featureCvTerms.get(feature_id);
+      featureId = new Integer(feature_cvterm.getFeature().getFeatureId());
+      if(featureCvTerms.containsKey(featureId))
+        value = (Vector)featureCvTerms.get(featureId);
       else
         value = new Vector();
       
       value.add(feature_cvterm);
-      featureCvTerms.put(feature_id, value);
+      featureCvTerms.put(featureId, value);
     }
     
     return featureCvTerms;
@@ -776,14 +777,14 @@ public class DatabaseDocument extends Document
   {
     String gff_source = null;
     
-    final int fmin           = featureloc.getFmin().intValue() + 1;
-    final int fmax           = featureloc.getFmax().intValue();
-    final int type_id        = feat.getCvTerm().getCvTermId();
-    final Short strand       = featureloc.getStrand();
-    final Integer phase      = featureloc.getPhase();
-    final String name        = feat.getUniqueName();
-    final String typeName    = getCvtermName(type_id, dao);
-    final Integer feature_id = new Integer(feat.getFeatureId());
+    final int fmin          = featureloc.getFmin().intValue() + 1;
+    final int fmax          = featureloc.getFmax().intValue();
+    final int type_id       = feat.getCvTerm().getCvTermId();
+    final Short strand      = featureloc.getStrand();
+    final Integer phase     = featureloc.getPhase();
+    final String name       = feat.getUniqueName();
+    final String typeName   = getCvtermName(type_id, dao);
+    final Integer featureId = new Integer(feat.getFeatureId());
     final String timelastmodified = Long.toString(feat.getTimeLastModified().getTime());
 
     String parent_id = null;
@@ -830,9 +831,9 @@ public class DatabaseDocument extends Document
     Vector dbxref = null;
     // append dbxrefs
     if(dbxrefs != null &&
-       dbxrefs.containsKey(feature_id))
+       dbxrefs.containsKey(featureId))
     {
-      dbxref = (Vector)dbxrefs.get(feature_id);
+      dbxref = (Vector)dbxrefs.get(featureId);
       for(int j=0; j<dbxref.size(); j++)
       {
         if(((String)dbxref.get(j)).startsWith("GFF_source:"))
@@ -919,10 +920,10 @@ public class DatabaseDocument extends Document
     
     // append synonyms
     if(synonym != null &&
-       synonym.containsKey(feature_id))
+       synonym.containsKey(featureId))
     {   
       FeatureSynonym alias;
-      Vector v_synonyms = (Vector)synonym.get(feature_id);
+      Vector v_synonyms = (Vector)synonym.get(featureId);
       for(int j=0; j<v_synonyms.size(); j++)
       {
         alias = (FeatureSynonym)v_synonyms.get(j);
@@ -938,10 +939,10 @@ public class DatabaseDocument extends Document
     
     // GO, controlled_curation, product
     if(featureCvTerms != null && 
-       featureCvTerms.containsKey(feature_id))
+       featureCvTerms.containsKey(featureId))
     {
       FeatureCvTerm feature_cvterm;
-      Vector v_feature_cvterms = (Vector)featureCvTerms.get(feature_id);
+      Vector v_feature_cvterms = (Vector)featureCvTerms.get(featureId);
       for(int j=0; j<v_feature_cvterms.size(); j++)
       {
         feature_cvterm = (FeatureCvTerm)v_feature_cvterms.get(j);
@@ -1334,7 +1335,7 @@ public class DatabaseDocument extends Document
    */
   private ByteBuffer getChadoSequence(GmodDAO dao, ByteBuffer buff)
   {
-    Feature feature = dao.getFeatureById(Integer.parseInt(feature_id));
+    Feature feature = dao.getFeatureById(Integer.parseInt(srcFeatureId));
  
     buff.append("##FASTA\n>");
     buff.append(feature.getUniqueName());
@@ -1670,7 +1671,7 @@ public class DatabaseDocument extends Document
               {
                 FeatureLoc featureloc = ((Feature) tsn.getFeatureObject()).getFeatureLoc();
                 Feature featureBySrcFeatureId = new Feature();
-                featureBySrcFeatureId.setFeatureId(Integer.parseInt(feature_id));
+                featureBySrcFeatureId.setFeatureId(Integer.parseInt(srcFeatureId));
                 featureloc.setFeatureBySrcFeatureId(featureBySrcFeatureId);
               }
               dao.persist(tsn.getFeatureObject());
@@ -1872,5 +1873,11 @@ public class DatabaseDocument extends Document
         return loc;
     }
     return null;
+  }
+
+
+  public String getSrcFeatureId()
+  {
+    return srcFeatureId;
   }
 }

@@ -204,8 +204,17 @@
     </update>
    
     <update id="updateFeatureResidues"
-            parameterClass="java.lang.String">
-      UPDATE feature SET residues=#value#
+            parameterClass="uk.ac.sanger.artemis.chado.FeatureForUpdatingResidues">
+            UPDATE feature SET 
+            residues=substring(residues from 1 for $startBase$) || 
+                     <dynamic>
+                     <isNotNull property="newSubSequence">
+                       #newSubSequence# ||
+                     </isNotNull>
+                     </dynamic>
+                     substring(residues from $endBase$ for $seqLen$),
+            seqlen=$seqLen$
+            WHERE feature_id=$featureId$
     </update>
     
     <!--  INSERT  -->

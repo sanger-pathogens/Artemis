@@ -128,6 +128,19 @@ public class ChadoDemo
     {
       setLocation();
       final GmodDAO dao = getDAO();
+      
+      //
+      // TESTING - updating feature.residues
+      //
+      /*((IBatisDAO)dao).startTransaction();
+      FeatureForUpdatingResidues chadoFeature = new FeatureForUpdatingResidues();
+      chadoFeature.setStartBase(10);
+      chadoFeature.setEndBase(20);
+      dao.merge(chadoFeature);
+      ((IBatisDAO)dao).endTransaction();*/
+      //
+      //
+      
       showFeatureSearchPanel(dao);
       //getCvterm(dao);
     }

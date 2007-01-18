@@ -498,7 +498,12 @@ public class IBatisDAO extends GmodDAO
     if(o instanceof FeatureLoc)
       sqlMap.update("updateFeatureLoc", o);
     else if(o instanceof Feature)
-      sqlMap.update("updateFeature", o);
+    {
+      if(o instanceof FeatureForUpdatingResidues)
+        sqlMap.update("updateFeatureResidues", o);
+      else
+        sqlMap.update("updateFeature", o);
+    }
     else if(o instanceof FeatureProp)
       sqlMap.update("updateFeatureProp", o);
     else if(o instanceof FeatureRelationship)

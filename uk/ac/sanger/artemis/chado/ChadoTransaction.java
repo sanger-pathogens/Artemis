@@ -1,10 +1,10 @@
 /* ChadoTransaction
  *
- * created: July 2005
+ * created: July 2006
  *
  * This file is part of Artemis
  *
- * Copyright (C) 2005  Genome Research Limited
+ * Copyright (C) 2006  Genome Research Limited
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -58,7 +58,6 @@ public class ChadoTransaction
   
   private GFFStreamFeature gff_feature;
   
-  
   /**
    * Create a transaction to represent a single insert, delete or
    * update.
@@ -79,6 +78,7 @@ public class ChadoTransaction
     this.feature_obj  = feature_obj;
     this.gff_feature  = gff_feature;
   }
+
   
   /**
    * The <code>Feature</code> feature used in a transaction.

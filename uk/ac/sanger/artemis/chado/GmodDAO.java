@@ -47,11 +47,6 @@ import uk.ac.sanger.artemis.util.DatabaseDocument;
 public abstract class GmodDAO 
        implements SequenceDaoI, SchemaDaoI, OrganismDaoI, CvDaoI, PubDaoI
 {
-
-  public abstract void merge(Object obj);
-  public abstract void persist(Object obj);
-  public abstract void delete(Object obj);
-  
   
   /**
    * Return a list of features that have this particular cvterm 

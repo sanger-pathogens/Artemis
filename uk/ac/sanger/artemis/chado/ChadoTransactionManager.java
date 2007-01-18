@@ -29,6 +29,8 @@ import uk.ac.sanger.artemis.FeatureSegment;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
+import uk.ac.sanger.artemis.FeatureVector;
+import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -39,9 +41,12 @@ import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
+import uk.ac.sanger.artemis.io.StreamSequence;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
+import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.EntryChangeListener;
@@ -110,11 +115,101 @@ public class ChadoTransactionManager
   //synonym tags from cv
   private String synonym_tags[] = null;
   private static String SYNONYM_TAG_CVNAME = "genedb_synonym_type";
-
+  private EntryGroup entryGroup;
 
   public ChadoTransactionManager()
   {
     
+  }
+  
+  public void setEntryGroup(final EntryGroup entryGroup)
+  {
+    this.entryGroup = entryGroup;
+  }
+  
+  /**
+   *  Invoked when a deletion or insertion occurs in a Bases object.
+   **/
+  public void sequenceChanged(final SequenceChangeEvent event)
+  {
+    if(event.getType() == SequenceChangeEvent.DELETION ||
+       event.getType() == SequenceChangeEvent.INSERTION)
+    {
+      int start  = event.getPosition();
+      int length = event.getSubSequence().length();
+
+      FeatureVector features = entryGroup.getAllFeatures();
+      
+      for(int i=0; i<features.size(); i++)
+      {
+        Feature feature = features.elementAt(i);
+        
+        if(feature.getLocation().getFirstBase() >= start)
+        {
+          GFFStreamFeature gffFeature = (GFFStreamFeature)feature.getEmblFeature();
+          FeatureSegmentVector segments = feature.getSegments();
+          
+          for(int j=0; j<segments.size(); j++)
+          {
+            FeatureSegment segment = segments.elementAt(j);
+            String seg_id   = gffFeature.getSegmentID( segment.getRawRange() );
+            Range range_new;
+            try
+            {
+              if(event.getType() == SequenceChangeEvent.DELETION)
+                range_new = new Range(feature.getLocation().getFirstBase()-length,
+                                      feature.getLocation().getLastBase()-length);
+              else
+                range_new = new Range(feature.getLocation().getFirstBase()+length,
+                                      feature.getLocation().getLastBase()+length);
+              
+              // featureloc update
+              FeatureLoc featureloc = getFeatureLoc(gffFeature, seg_id, range_new);
+              ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                  featureloc,
+                  gffFeature.getLastModified(), gffFeature);
+
+              sql.add(tsn);
+              
+            }
+            catch(OutOfRangeException e)
+            {
+              e.printStackTrace();
+            }
+
+          }
+        }
+      }
+      
+      //
+      // update residues in srcfeature  
+      DatabaseDocument doc = (DatabaseDocument)
+         ((DocumentEntry)entryGroup.getSequenceEntry().getEMBLEntry()).getDocument();
+      
+      FeatureForUpdatingResidues chadoFeature = new FeatureForUpdatingResidues();
+      chadoFeature.setStartBase(start-1);
+      
+      
+      if(event.getType() == SequenceChangeEvent.INSERTION)
+      {
+        chadoFeature.setNewSubSequence(event.getSubSequence());
+        chadoFeature.setEndBase(start);
+      }
+      else
+        chadoFeature.setEndBase(start+length);
+      
+      chadoFeature.setFeatureId( Integer.parseInt(doc.getSrcFeatureId()) );
+      chadoFeature.setSeqLen(new Integer(
+          entryGroup.getSequenceEntry().getEMBLEntry().getSequence().length()));
+      
+      ChadoTransaction tsn = 
+        new ChadoTransaction(ChadoTransaction.UPDATE, chadoFeature, null, null);
+      sql.add(tsn);
+    }
+    else
+    {
+      
+    }
   }
   
   /**
@@ -1122,6 +1217,8 @@ public class ChadoTransactionManager
          }
          else if(qualifier_name.equals("codon_start"))
          {
+           Splash.logger4j.debug(uniquename+"  in handleReservedTags() update codon_start");
+           
            FeatureLoc featureloc = getFeatureLoc(feature, uniquename, 
                feature.getLocation().getTotalRange());
            
@@ -1210,6 +1307,7 @@ public class ChadoTransactionManager
          }
          else if(qualifier_name.equals("codon_start"))
          {
+           Splash.logger4j.debug(uniquename+"  in handleReservedTags() update codon_start");
            FeatureLoc featureloc = getFeatureLoc(feature, uniquename, 
                feature.getLocation().getTotalRange());
            
@@ -1270,21 +1368,21 @@ public class ChadoTransactionManager
    * @param range_new
    * @return
    */
-  private FeatureLoc getFeatureLoc(GFFStreamFeature feature,
-                             String seg_id, Range range_new)
+  private FeatureLoc getFeatureLoc(final GFFStreamFeature gffFeature,
+                             final String seg_id, final Range range_new)
   {
     FeatureLoc featureloc = new FeatureLoc();
     org.gmod.schema.sequence.Feature chado_feature = 
-      new org.gmod.schema.sequence.Feature();
+                       new org.gmod.schema.sequence.Feature();
     chado_feature.setUniqueName(seg_id);
     
     featureloc.setFeatureByFeatureId(chado_feature);
     featureloc.setFmax(new Integer(range_new.getEnd()));
     featureloc.setFmin(new Integer(range_new.getStart()-1));
     
-    if(feature.getFeature_relationship_rank_store() != null)
+    if(gffFeature.getFeature_relationship_rank_store() != null)
     {
-      Hashtable rank_hash = feature.getFeature_relationship_rank_store();
+      final Hashtable rank_hash = gffFeature.getFeature_relationship_rank_store();
       if(rank_hash.containsKey(seg_id))
       {
         Integer rank = (Integer)rank_hash.get(seg_id);
@@ -1296,13 +1394,13 @@ public class ChadoTransactionManager
     else
       featureloc.setRank(0);
     
-    boolean is_complement = feature.getLocation().isComplement();
+    boolean is_complement = gffFeature.getLocation().isComplement();
     if(is_complement)
       featureloc.setStrand(new Short((short) -1));
     else
       featureloc.setStrand(new Short((short) 1));
     
-    Qualifier qualifier_phase = feature.getQualifierByName("codon_start");
+    Qualifier qualifier_phase = gffFeature.getQualifierByName("codon_start");
     if(qualifier_phase != null)
     {
       String phase = (String)(qualifier_phase.getValues()).elementAt(0);
@@ -1636,13 +1734,7 @@ public class ChadoTransactionManager
       feature_cvterm.setFeatureCvTermDbXRefs(featureCvTermDbXRefs);
   }
   
-  /**
-   *  Invoked when a deletion or insertion occurs in a Bases object.
-   **/
-  public void sequenceChanged(final SequenceChangeEvent event)
-  {
-    
-  }
+
 
   public Vector getFeatureInsertUpdate()
   {
