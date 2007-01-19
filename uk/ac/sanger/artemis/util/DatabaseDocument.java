@@ -1478,12 +1478,8 @@ public class DatabaseDocument extends Document
         try
         {
           dao = getDAO();
-          final List list = dao.getResidueType(schema);
+          List list_residue_features = dao.getResidueFeatures(null, schema);
           
-          if(list.size() == 0)  // no residues for this organism
-            continue;
-
-          List list_residue_features = dao.getResidueFeatures(list, schema);
           Iterator it_residue_features = list_residue_features.iterator();
           while(it_residue_features.hasNext())
           {
