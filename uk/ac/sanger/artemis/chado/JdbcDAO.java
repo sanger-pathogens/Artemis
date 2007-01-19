@@ -870,27 +870,27 @@ public class JdbcDAO extends GmodDAO
                                  final String schema)
   {
     String sql = new String(
-            "SELECT abbreviation, uniquename, name, feature_id, type_id FROM organism, ");
+            "SELECT uniquename, name, feature_id, type_id FROM ");
             
     if(schema != null || !schema.equals(""))
       sql = sql + schema +"." ;
     
-    sql = sql + "feature WHERE (";
+    sql = sql + "feature WHERE residues notnull ";
 
-    for(int j = 0; j < cvTermIds.size(); j++)
+    /*for(int j = 0; j < cvTermIds.size(); j++)
     {
       sql = sql + " type_id = " + (String)cvTermIds.get(j);
       if(j < cvTermIds.size() - 1)
         sql = sql + " OR ";
     }
 
-    sql = sql + ") and organism.organism_id=";
+    sql = sql + ") and organism.organism_id=";*/
     
-    if(schema != null || !schema.equals(""))
-      sql = sql + schema +"." ;
+    //if(schema != null || !schema.equals(""))
+    //  sql = sql + schema +"." ;
     
-    sql = sql + "feature.organism_id " + "and residues notnull "
-            + "ORDER BY abbreviation";
+    //sql = sql + "feature.organism_id ";
+    
 
     appendToLogFile(sql, sqlLog);
 
@@ -902,10 +902,7 @@ public class JdbcDAO extends GmodDAO
       while(rs.next())
       {
         Feature feature = new Feature();
-        Organism organism = new Organism();
-        organism.setAbbreviation(rs.getString("abbreviation"));
-
-        feature.setOrganism(organism);
+        
         feature.setFeatureId(rs.getInt("feature_id"));
         feature.setName(rs.getString("name"));
         feature.setUniqueName(rs.getString("uniquename"));

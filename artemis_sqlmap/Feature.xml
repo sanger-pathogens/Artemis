@@ -71,7 +71,6 @@
     
      <resultMap id="select-feature-with-residues-result" 
                 class="Feature">
-        <result property="organism.abbreviation" column="abbreviation"/>
         <result property="name" column="name"/>
         <result property="uniqueName" column="uniquename"/>
         <result property="featureId" column="feature_id"/>
@@ -166,18 +165,17 @@
     <select id="getResidueFeatures" parameterClass="java.util.Map"
             resultMap="select-feature-with-residues-result">
        SELECT
-         abbreviation,
          name,
          uniquename,
          feature_id,
          type_id
-       FROM organism, feature WHERE
-         organism.organism_id=feature.organism_id AND
-         residues notnull
+       FROM feature WHERE residues notnull
+       <!--
          <iterate prepend="AND" property="cvTermIds" conjunction="OR" open="(" close=")">
            type_id=#cvTermIds[]#
          </iterate>
-       ORDER BY abbreviation
+       ORDER BY abbreviation, type_id 
+       -->
     </select>
 
     
