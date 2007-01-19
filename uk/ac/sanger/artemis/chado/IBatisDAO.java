@@ -196,13 +196,7 @@ public class IBatisDAO extends GmodDAO
   public List getFeatureCvTermsByFeature(Feature feature)
   {  
     // find whether current schema has a feature_cvterm.rank column
-    String schema = System.getProperty("chado");
-    int index  = schema.indexOf("?");
-    int index2 = schema.indexOf("user=");
-    if(index2 < 0)
-      schema = schema.substring(index+1);
-    else
-      schema = schema.substring(index2+5);
+    String schema = ArtemisUtils.getCurrentSchema();
     
     // check column names
     List list = sqlMap.queryForList("getFeatureCvTermColumnsForASchema", schema);

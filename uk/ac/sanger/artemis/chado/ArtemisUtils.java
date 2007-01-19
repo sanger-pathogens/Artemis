@@ -38,6 +38,18 @@ import uk.ac.sanger.artemis.components.Splash;
 public class ArtemisUtils
 {
   
+  protected static String getCurrentSchema()
+  {
+    String schema = System.getProperty("chado");
+    int index  = schema.indexOf("?");
+    int index2 = schema.indexOf("user=");
+    if(index2 < 0)
+      schema = schema.substring(index+1);
+    else
+      schema = schema.substring(index2+5);
+    return schema;
+  }
+  
   /**
    * Insert featureCvTerm with an appropriate rank
    * @param dao
