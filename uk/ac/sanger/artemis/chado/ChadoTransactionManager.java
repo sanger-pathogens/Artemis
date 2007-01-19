@@ -41,7 +41,6 @@ import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
-import uk.ac.sanger.artemis.io.StreamSequence;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
@@ -189,14 +188,19 @@ public class ChadoTransactionManager
       FeatureForUpdatingResidues chadoFeature = new FeatureForUpdatingResidues();
       chadoFeature.setStartBase(start-1);
       
-      
+      int newSequenceLength = entryGroup.getSequenceEntry().getEMBLEntry().getSequence().length();
+
       if(event.getType() == SequenceChangeEvent.INSERTION)
       {
         chadoFeature.setNewSubSequence(event.getSubSequence());
         chadoFeature.setEndBase(start);
+        chadoFeature.setBasesToEnd(newSequenceLength-event.getSubSequence().length()-start+1);
       }
       else
+      {
         chadoFeature.setEndBase(start+length);
+        chadoFeature.setBasesToEnd(newSequenceLength+event.getSubSequence().length()-start);
+      }
       
       chadoFeature.setFeatureId( Integer.parseInt(doc.getSrcFeatureId()) );
       chadoFeature.setSeqLen(new Integer(

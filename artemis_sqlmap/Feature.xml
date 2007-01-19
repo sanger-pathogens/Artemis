@@ -210,7 +210,7 @@
                        #newSubSequence# ||
                      </isNotNull>
                      </dynamic>
-                     substring(residues from $endBase$ for $seqLen$),
+                     substring(residues from $endBase$ for $basesToEnd$),
             seqlen=$seqLen$
             WHERE feature_id=$featureId$
     </update>
