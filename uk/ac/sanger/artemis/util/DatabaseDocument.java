@@ -1147,6 +1147,10 @@ public class DatabaseDocument extends Document
       {
         FeatureCvTermProp feature_cvtermprop = 
           (FeatureCvTermProp)feature_cvtermprops.get(i);
+        
+        if(feature_cvtermprop.getValue() == null)
+          continue;
+        
         attr_buff.append(getCvtermName(feature_cvtermprop.getCvTerm()
             .getCvTermId(), dao));
         attr_buff.append("=");

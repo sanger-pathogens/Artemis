@@ -192,9 +192,35 @@ public class JdbcDAO extends GmodDAO
   }
   
   public List getFeatureCvTermsByFeature(Feature feature)
-  { 
-    String sql = "SELECT fc.feature_id, fc.feature_cvterm_id, "+
-     "fc.cvterm_id, fc.rank AS fc_rank, fc.is_not AS not, fcp.type_id, fcp.value, fcp.rank, "+
+  {
+    String sqlTest = "SELECT pg_attribute.attname "+
+                     "FROM pg_attribute, pg_class, pg_namespace "+
+                     "WHERE pg_namespace.oid=pg_class.relnamespace AND "+
+                     "attrelid=pg_class.oid AND "+
+                     "relname='feature_cvterm' AND "+
+                     "attnum > 0 AND "+
+                     "nspname='"+ArtemisUtils.getCurrentSchema()+"'";
+    appendToLogFile(sqlTest, sqlLog);
+    
+    boolean fcRank = false;
+    try
+    {
+      Statement st = conn.createStatement();
+      ResultSet rs = st.executeQuery(sqlTest);
+      while(rs.next())
+      {
+        if(rs.getString("attname").equals("rank"))
+          fcRank = true;
+      }
+      
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+    
+    String sql = "SELECT fc.*, "+
+     "fcp.type_id, fcp.value, fcp.rank AS fcp_rank, "+
      "cvterm.name AS cvterm_name, cv.name AS cv_name, "+
      "pub.pub_id, pub.uniquename, "+
      "db.name, dbxref.accession "+
@@ -212,7 +238,10 @@ public class JdbcDAO extends GmodDAO
         "feature_id=(SELECT feature_id FROM feature WHERE uniquename='"+
         feature.getUniqueName()+"')";
     
-    sql = sql + " ORDER BY fc.feature_cvterm_id, fc.rank, type_id, fcp.rank";
+    if(fcRank)
+      sql = sql + " ORDER BY fc.feature_cvterm_id, fc.rank, type_id, fcp_rank";
+    else
+      sql = sql + " ORDER BY fc.feature_cvterm_id, type_id, fcp_rank";
     
     appendToLogFile(sql, sqlLog);
 
@@ -248,10 +277,14 @@ public class JdbcDAO extends GmodDAO
         pub.setPubId(rs.getInt("pub_id"));
         pub.setUniqueName(rs.getString("uniquename"));
         
-        int fc_rank = rs.getInt("fc_rank");
+        
+        int fc_rank = 0;
+        
+        if(fcRank)
+          fc_rank = rs.getInt("rank");
         
         FeatureCvTerm feature_cvterm =
-           new FeatureCvTerm(cvterm, this_feature, pub, rs.getBoolean("not"), fc_rank);
+           new FeatureCvTerm(cvterm, this_feature, pub, rs.getBoolean("is_not"), fc_rank);
         
         // feature_cvtermprop's group by feature_cvterm_id
         List featureCvTermProps = new Vector();
@@ -267,14 +300,17 @@ public class JdbcDAO extends GmodDAO
           featurePropCvTerm.setCvTermId(rs.getInt("type_id"));
           featureProp.setCvTerm(featurePropCvTerm);
           featureProp.setValue(rs.getString("value"));
-          featureProp.setRank(rs.getInt("rank"));
+          featureProp.setRank(rs.getInt("fcp_rank"));
           
           featureCvTermProps.add(featureProp);
           
           if(rs.next())
           {
             next_feature_cvterm_id = rs.getInt("feature_cvterm_id");
-            next_fc_rank = rs.getInt("fc_rank");
+            next_fc_rank = 0; 
+            
+            if(fcRank)
+              next_fc_rank = rs.getInt("rank");
             if(feature_cvterm_id != next_feature_cvterm_id ||
                fc_rank != next_fc_rank)
               rs.previous();
