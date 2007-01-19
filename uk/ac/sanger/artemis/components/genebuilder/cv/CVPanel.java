@@ -368,8 +368,16 @@ public class CVPanel extends JPanel
     }
 
     Qualifier cv_qualifier = cvQualifiers.getQualifierByName(cv_type);
-    int index = cvQualifiers.indexOf(cv_qualifier);
     
+    final int index;
+    if(cv_qualifier == null)
+    {
+      cv_qualifier = new Qualifier(cv_type);
+      index = -1;
+    }
+    else
+     index = cvQualifiers.indexOf(cv_qualifier);
+       
     if(cv_type.equals("GO"))
       cv_qualifier.addValue("GOid=GO:"+cvterm.getDbXRef().getAccession()+";"+
           "aspect="+cv_name+";"+
@@ -380,8 +388,13 @@ public class CVPanel extends JPanel
     else if(cv_type.equals("product"))
       cv_qualifier.addValue(cvterm.getName());
     
-    cvQualifiers.remove(index);
-    cvQualifiers.add(index, cv_qualifier);
+    if(index > -1)
+    {
+      cvQualifiers.remove(index);
+      cvQualifiers.add(index, cv_qualifier);
+    }
+    else
+      cvQualifiers.add(cv_qualifier);
     
     removeAll();
     add(createCVQualifiersComponent(),
