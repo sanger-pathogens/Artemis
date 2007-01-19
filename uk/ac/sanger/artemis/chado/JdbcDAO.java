@@ -1148,7 +1148,12 @@ public class JdbcDAO extends GmodDAO
     if(o instanceof FeatureLoc)
       updateFeatureLoc((FeatureLoc)o);
     else if(o instanceof Feature)
-      updateFeature((Feature)o);
+    {
+      if(o instanceof FeatureForUpdatingResidues)
+        updateFeatureResidues((FeatureForUpdatingResidues)o);
+      else
+        updateFeature((Feature)o);
+    }   
     else if(o instanceof FeatureProp)
       updateFeatureProp((FeatureProp)o);
     else if(o instanceof FeatureRelationship)
@@ -1267,6 +1272,37 @@ public class JdbcDAO extends GmodDAO
       pstmt.setInt(param, feature.getFeatureId());
       appendToLogFile(sql, sqlLog);
       pstmt.executeUpdate();
+    }
+    catch(SQLException sqle)
+    {
+      throw new RuntimeException(sqle);
+    }
+  }
+  
+  
+  /**
+   * Update feature residues (inserting or deleting a dna sequence).
+   * @param feature the new <code>FeatureForUpdatingResidues</code> object.
+   */
+  private void updateFeatureResidues(FeatureForUpdatingResidues feature)
+  {
+    String sql = " UPDATE feature SET "+
+            "residues=substring(residues from 1 for "+ feature.getStartBase() + " || ";
+    
+    if(feature.getNewSubSequence() != null)
+      sql = sql + feature.getNewSubSequence() + " || ";
+    
+    sql = sql + "substring(residues from "+ feature.getEndBase() + 
+                                   " for "+ feature.getSeqLen() + "), "+
+                                   "seqlen=" + feature.getSeqLen() +
+                                   " WHERE feature_id="+feature.getFeatureId();
+
+    appendToLogFile(sql, sqlLog);
+
+    try
+    {
+      Statement st = conn.createStatement();
+      st.executeUpdate(sql);
     }
     catch(SQLException sqle)
     {
