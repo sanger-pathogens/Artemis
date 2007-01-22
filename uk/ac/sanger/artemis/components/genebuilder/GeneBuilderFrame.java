@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.15 2006-10-03 14:42:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.16 2007-01-22 11:09:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -108,9 +108,11 @@ public class GeneBuilderFrame extends JFrame
     
     tree = new GeneComponentTree(chado_gene, this, selection);
     
+    
+    
+    
     JScrollPane jsp_tree = new JScrollPane(tree);
     jsp_tree.setPreferredSize( new Dimension(150, jsp_tree.getPreferredSize().height) );
-    getContentPane().add(jsp_tree, BorderLayout.WEST);
     
     if(selection == null)
       selection = new Selection(null);
@@ -124,8 +126,11 @@ public class GeneBuilderFrame extends JFrame
     
     JScrollPane jsp_viewer = new JScrollPane(xBox);
     jsp_viewer.setPreferredSize( viewer.getPreferredSize() );
-    getContentPane().add(jsp_viewer, BorderLayout.CENTER);
-
+    
+    JSplitPane top = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jsp_tree, jsp_viewer);
+    JSplitPane all = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+    all.setTopComponent(top);
+    
     if(entry_group != null)
     {
       JTabbedPane tabpane = new JTabbedPane();
@@ -133,8 +138,9 @@ public class GeneBuilderFrame extends JFrame
       feature_editor = new FeatureEdit(feature, entry_group,
                                        selection, goto_event_source, this);
       tabpane.addTab("Annotation", feature_editor);
-      getContentPane().add(tabpane, BorderLayout.SOUTH);
+      all.setBottomComponent(tabpane);
     }
+    getContentPane().add(all);
     
     addWindowListener(new WindowAdapter() 
     {
