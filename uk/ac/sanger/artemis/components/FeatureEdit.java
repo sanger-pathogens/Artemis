@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.23 2007-01-12 14:19:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.24 2007-01-22 11:08:12 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -62,11 +62,16 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.23 2007-01-12 14:19:32 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.24 2007-01-22 11:08:12 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
 {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
   /** Used to get current time/date in externalEdit(). */
   private static java.util.Calendar calendar =
@@ -801,8 +806,11 @@ public class FeatureEdit extends JPanel
 
       // tabbed pane of core and cv annotaion
       JTabbedPane tabbedPane = new JTabbedPane();
-      tabbedPane.add("Core", new JScrollPane(qualifier_text_area));
-      tabbedPane.add("CV", new JScrollPane(cvForm));
+      JScrollPane jspCore = new JScrollPane(qualifier_text_area);
+      tabbedPane.add("Core", jspCore);
+      JScrollPane jspCV   = new JScrollPane(cvForm);
+      jspCV.setPreferredSize(jspCore.getPreferredSize());
+      tabbedPane.add("CV", jspCV);
       lower_panel.add(tabbedPane, "Center");
     }
     else
