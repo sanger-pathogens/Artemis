@@ -382,7 +382,7 @@ public class CVPanel extends JPanel
       cv_qualifier.addValue("GOid=GO:"+cvterm.getDbXRef().getAccession()+";"+
           "aspect="+cv_name+";"+
           "term="+cvterm.getName()+";"+
-          "evidence="+evidenceList.getSelectedItem());
+          "evidence="+ GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]);
     else if(cv_type.equals("controlled_curation"))
       cv_qualifier.addValue("term="+cvterm.getName());
     else if(cv_type.equals("product"))
@@ -601,7 +601,7 @@ public class CVPanel extends JPanel
   {
     final String options[] = { "<PREV", "CANCEL", "NEXT>"};
     evidenceList = new JExtendedComboBox(GoBox.evidenceCodes[1]);
-    evidenceList.setSelectedItem("not recorded");
+    evidenceList.setSelectedItem("NR \t:: not recorded");
     xBox.add(evidenceList);
     
     int select = JOptionPane.showOptionDialog(null, xBox,

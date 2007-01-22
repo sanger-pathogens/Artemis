@@ -48,19 +48,32 @@ class GoBox extends CvBoxA
   { 
      {"IC", "IDA", "IEA", "IEP", "IGI", "IMP", "IPI", "ISS", 
       "NAS", "ND", "RCA", "TAS", "NR" }, 
-     {"inferred by curator",
-      "inferred from direct assay",
-      "inferred from electronic annotation",
-      "inferred from expression pattern",
-      "inferred from genetic interaction",
-      "inferred from mutant phenotype",
-      "inferred from physical interaction",
-      "inferred from sequence or structural similarity",
-      "non-traceable author statement",
-      "no biological data available",
-      "inferred from reviewed computational analysis",
-      "traceable author statement",
-      "not recorded"}
+     {"IC \t:: inferred by curator",
+      "IDA\t:: inferred from direct assay",
+      "IEA\t:: inferred from electronic annotation",
+      "IEP\t:: inferred from expression pattern",
+      "IGI\t:: inferred from genetic interaction",
+      "IMP\t:: inferred from mutant phenotype",
+      "IPI\t:: inferred from physical interaction",
+      "ISS\t:: inferred from sequence or structural similarity",
+      "NAS\t:: non-traceable author statement",
+      "ND \t:: no biological data available",
+      "RCA\t:: inferred from reviewed computational analysis",
+      "TAS\t:: traceable author statement",
+      "NR \t:: not recorded"},
+      {"inferred by curator",
+        "inferred from direct assay",
+        "inferred from electronic annotation",
+        "inferred from expression pattern",
+        "inferred from genetic interaction",
+        "inferred from mutant phenotype",
+        "inferred from physical interaction",
+        "inferred from sequence or structural similarity",
+        "non-traceable author statement",
+        "no biological data available",
+        "inferred from reviewed computational analysis",
+        "traceable author statement",
+        "not recorded"}
   };
   
   private Dimension go_dimension;
@@ -133,10 +146,10 @@ class GoBox extends CvBoxA
     
     evidenceList = new JExtendedComboBox(evidenceCodes[1]);
     evidenceList.setToolTipText("evidence column");
-    evidenceList.setSelectedItem(evidence);
+    evidenceList.setSelectedIndex( getEvidenceIndex(evidence) );
   
     Dimension d = evidenceList.getPreferredSize();
-    d = new Dimension(150,(int)d.getHeight());
+    d = new Dimension(80,(int)d.getHeight());
     evidenceList.setPreferredSize(d);
     evidenceList.setMaximumSize(d);
     evidenceList.setActionCommand("evidence=");
@@ -165,6 +178,16 @@ class GoBox extends CvBoxA
     xBox.add(dateField);
   }
   
+  private int getEvidenceIndex(String evidence)
+  {
+    for(int i=0; i<evidenceCodes[2].length; i++)
+    {
+      if(evidenceCodes[2][i].equals(evidence))
+        return i;
+    }
+    return -1;
+  }
+  
   protected Dimension getGoDimension()
   {
     return go_dimension;
@@ -186,7 +209,7 @@ class GoBox extends CvBoxA
       return true;
     
     old = getField("evidence=", origQualifierString);
-    if(!old.equals(evidenceList.getSelectedItem()))
+    if(!old.equals(evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
       return true;
     
     old = getField("qualifier=", origQualifierString);
@@ -241,9 +264,9 @@ class GoBox extends CvBoxA
     }
     
     old = getField("evidence=", origQualifierString);
-    if(!old.equals(evidenceList.getSelectedItem()))
+    if(!old.equals(evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
     {
-      newQualifierString = changeField("evidence=", (String)evidenceList.getSelectedItem(), 
+      newQualifierString = changeField("evidence=", evidenceCodes[2][ evidenceList.getSelectedIndex() ], 
                                        newQualifierString);
     }
     
