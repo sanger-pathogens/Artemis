@@ -167,11 +167,17 @@ class GoBox extends CvBoxA
     
     String date = getField("date=", qualifierString);
     Date this_date = getDate(date);
-    dateField = new JFormattedTextField(new SimpleDateFormat("yyyyMMdd"));
+    dateField = new JFormattedTextField(new SimpleDateFormat("yyyyMMdd"))
+    {
+      protected int getColumnWidth()
+      {
+        return dateField.getFontMetrics(getFont()).charWidth('0');
+      }
+    };
     dateField.setInputVerifier(new DateVerifier());
     dateField.setValue(this_date);     
     dateField.setToolTipText("date column");
-    dateField.setPreferredSize(dimension);
+    dateField.setColumns(8);
     dateField.setMaximumSize(dimension);
     dateField.setActionCommand("date=");
     editable.add(dateField);

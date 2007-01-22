@@ -38,6 +38,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
 import javax.swing.JButton;
@@ -124,6 +125,7 @@ public class CVPanel extends JPanel
     cvBox.add(xBox);
 
     Dimension go_dimension = null;
+    int n = 0;
     for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
         ++qualifier_index) 
     {
@@ -131,6 +133,7 @@ public class CVPanel extends JPanel
 
       if(this_qualifier.getName().equals("GO"))
       {
+        n++;
         final StringVector qualifier_strings = this_qualifier.getValues();
         
         for(int value_index = 0; value_index < qualifier_strings.size();
@@ -153,7 +156,17 @@ public class CVPanel extends JPanel
         }
       }
     }
-      
+    
+    if(n > 0)
+    {
+      JSeparator separator = new JSeparator();
+      separator.setPreferredSize(go_dimension);
+      separator.setMaximumSize(go_dimension);
+      cvBox.add(Box.createVerticalStrut(5));
+      cvBox.add(separator);
+    }
+    
+    n = 0;
     for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
         ++qualifier_index) 
     {
@@ -165,6 +178,7 @@ public class CVPanel extends JPanel
         for(int value_index = 0; value_index < qualifier_strings.size();
             ++value_index)
         {
+          n++;
           final int v_index = value_index;
         
           xBox = Box.createHorizontalBox();
@@ -179,10 +193,18 @@ public class CVPanel extends JPanel
           xBox = ccBox.getBox();
           xBox.add(getRemoveButton(this_qualifier, v_index));         
           xBox.add(Box.createHorizontalGlue());
-          cvBox.add(xBox);
-          
+          cvBox.add(xBox);         
         }
       }
+    }
+    
+    if(n > 0)
+    {
+      JSeparator separator = new JSeparator();
+      separator.setPreferredSize(go_dimension);
+      separator.setMaximumSize(go_dimension);
+      cvBox.add(Box.createVerticalStrut(5));
+      cvBox.add(separator);
     }
     
     for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
@@ -259,8 +281,8 @@ public class CVPanel extends JPanel
         cvQualifiers.addElement(qualifier.copy());
     }
    
-    add(createCVQualifiersComponent(),
-        BorderLayout.CENTER);
+    //add(createCVQualifiersComponent(),
+    //    BorderLayout.CENTER);
     
     feature.addFeatureChangeListener(this);  
     
