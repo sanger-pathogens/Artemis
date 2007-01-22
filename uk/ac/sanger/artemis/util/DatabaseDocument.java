@@ -1652,7 +1652,9 @@ public class DatabaseDocument extends Document
                 
                 Feature old_feature
                     = dao.getFeatureByUniqueName(uniquename);
-                feature.setFeatureId( old_feature.getFeatureId() );
+                
+                if(old_feature != null)
+                  feature.setFeatureId( old_feature.getFeatureId() );
                 
                 tsn.setOldUniquename(feature.getUniqueName());
               }
