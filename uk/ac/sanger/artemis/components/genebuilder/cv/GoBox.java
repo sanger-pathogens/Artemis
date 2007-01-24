@@ -46,12 +46,13 @@ class GoBox extends CvBoxA
 {
   protected static String[][] evidenceCodes = 
   { 
-     {"IC", "IDA", "IEA", "IEP", "IGI", "IMP", "IPI", "ISS", 
+     {"IC", "IDA", "IEA", "IEP", "IGC", "IGI", "IMP", "IPI", "ISS", 
       "NAS", "ND", "RCA", "TAS", "NR" }, 
      {"IC \t:: inferred by curator",
       "IDA\t:: inferred from direct assay",
       "IEA\t:: inferred from electronic annotation",
       "IEP\t:: inferred from expression pattern",
+      "IGC\t:: inferred from genomic context",
       "IGI\t:: inferred from genetic interaction",
       "IMP\t:: inferred from mutant phenotype",
       "IPI\t:: inferred from physical interaction",
@@ -65,6 +66,7 @@ class GoBox extends CvBoxA
         "inferred from direct assay",
         "inferred from electronic annotation",
         "inferred from expression pattern",
+        "inferred from genomic context",
         "inferred from genetic interaction",
         "inferred from mutant phenotype",
         "inferred from physical interaction",
