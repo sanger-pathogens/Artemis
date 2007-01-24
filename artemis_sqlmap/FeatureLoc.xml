@@ -44,10 +44,28 @@
       <isNull property="phase">
         , phase=NULL
       </isNull>
-      WHERE 
-      <isNotNull property="featureByFeatureId.uniqueName">
-        feature_id=(SELECT feature_id FROM feature WHERE uniquename=#featureByFeatureId.uniqueName#)
-      </isNotNull>
+      WHERE
+        <isGreaterThan property="featureByFeatureId.featureId" compareValue="0">
+          feature_id=$featureByFeatureId.featureId$
+        </isGreaterThan>
+        <isLessEqual property="featureByFeatureId.featureId" compareValue="0">
+           <isNotNull property="featureByFeatureId.uniqueName">
+             feature_id=(SELECT feature_id FROM feature WHERE uniquename=#featureByFeatureId.uniqueName#)
+           </isNotNull>
+        </isLessEqual>
+    </update>
+   
+   <update id="updateFeatureLocByChangingSequence" 
+            parameterClass="uk.ac.sanger.artemis.chado.FeatureForUpdatingResidues">
+      UPDATE featureloc
+      SET 
+       <isNotNull property="newSubSequence">
+         fmin=fmin+$length$, fmax=fmax+$length$
+       </isNotNull>
+       <isNull property="newSubSequence">
+         fmin=fmin-$length$, fmax=fmax-$length$
+       </isNull>
+      WHERE fmin >= $startBase$ AND srcfeature_id=$featureId$
     </update>
    
     <insert id="insertFeatureLoc" 
