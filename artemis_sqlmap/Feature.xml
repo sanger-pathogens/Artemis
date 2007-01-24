@@ -122,11 +122,16 @@
 	 	f.feature_id AS id,
 	 	uniquename,
 	 	organism_id AS organismId,
-		name,
+		f.name,
 	 	f.type_id,
 		seqlen AS length,
 		residues
 	 FROM feature f
+	 <dynamic>
+	   <isNotNull property="cvTerm.name">
+	     LEFT JOIN cvterm ON f.type_id=cvterm.cvterm_id
+	   </isNotNull>
+	 </dynamic>
 	 WHERE
 	   <dynamic>
           <isGreaterThan property="featureId" compareValue="0"> 
@@ -139,12 +144,16 @@
                f.feature_id=#featureSynonyms[].feature.featureId#
              </iterate>
             </isNotNull>
-            uniquename LIKE #uniqueName# OR name LIKE #uniqueName# AND              
+            ( uniquename LIKE #uniqueName# OR f.name LIKE #uniqueName# ) AND              
           </isNotNull>
           
           <isGreaterThan property="cvTerm.cvTermId" compareValue="0"> 
             feature.type_id=$cvTerm.cvTermId$ AND
           </isGreaterThan>
+          
+         <isNotNull property="cvTerm.name"> 
+            cvterm.name=#cvTerm.name# AND
+          </isNotNull>
        </dynamic>
          f.feature_id > 0 
     </select>
