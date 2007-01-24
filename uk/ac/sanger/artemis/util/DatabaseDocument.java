@@ -680,7 +680,7 @@ public class DatabaseDocument extends Document
     reset((String)getLocation(), (String)schema_search.get(0));
     dao = getDAO();
     Feature feature = 
-      (Feature)dao.getFeatureByUniqueName(search_gene);
+      (Feature)(dao.getFeaturesByUniqueName(search_gene).get(0));
     
     ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();
     id_store.put(Integer.toString(feature.getFeatureId()), feature.getUniqueName());
@@ -1596,6 +1596,8 @@ public class DatabaseDocument extends Document
     {
       
       GmodDAO dao = getDAO();
+      if(dao instanceof IBatisDAO)
+        ((IBatisDAO) dao).startTransaction();
       boolean unchanged;
       
       //
@@ -1613,23 +1615,23 @@ public class DatabaseDocument extends Document
         
         if(uniquename == null)
           continue;
+        
         if(names_checked.contains(uniquename))
           continue;
-            
+
         names_checked.add(uniquename);
         
+        String keyName = tsn.getFeatureKey();
         unchanged = checkFeatureTimestamp(schema, 
                          uniquename, 
-                         tsn.getLastModified(), dao);
+                         tsn.getLastModified(), dao, 
+                         keyName, tsn.getFeatureObject());
         if(!unchanged)
           return 0;
       }  
       
       try
       {
-        if(dao instanceof IBatisDAO)
-          ((IBatisDAO) dao).startTransaction();
-
         //
         // commit to database
         for(i = 0; i < sql.size(); i++)
@@ -1651,7 +1653,7 @@ public class DatabaseDocument extends Document
                   uniquename = feature.getUniqueName();
                 
                 Feature old_feature
-                    = dao.getFeatureByUniqueName(uniquename);
+                    = dao.getFeatureByUniqueName(uniquename, tsn.getFeatureKey());
                 
                 if(old_feature != null)
                   feature.setFeatureId( old_feature.getFeatureId() );
@@ -1711,7 +1713,7 @@ public class DatabaseDocument extends Document
 
           names_checked.add(uniquename);
 
-          Feature feature = dao.getFeatureByUniqueName(uniquename);
+          Feature feature = dao.getFeatureByUniqueName(uniquename, tsn.getFeatureKey());
           if(feature != null)
           {
             feature.setTimeLastModified(ts);
@@ -1763,11 +1765,19 @@ public class DatabaseDocument extends Document
   public boolean checkFeatureTimestamp(final String schema,
                                        final String uniquename,
                                        final Timestamp timestamp,
-                                       final GmodDAO dao)
+                                       final GmodDAO dao,
+                                       final String keyName,
+                                       final Object featureObject)
   {
-    Feature feature = dao.getFeatureByUniqueName(uniquename);
+    Feature feature = dao.getFeatureByUniqueName(uniquename, keyName);
     if(feature == null)
       return true;
+    
+    if(featureObject instanceof FeatureProp)
+      ((FeatureProp)featureObject).setFeature(feature);
+    else if(featureObject instanceof FeatureLoc)
+      ((FeatureLoc)featureObject).setFeatureByFeatureId(feature);
+      
     Timestamp now = feature.getTimeLastModified();
     
     if(now != null && timestamp != null)
@@ -1796,6 +1806,7 @@ public class DatabaseDocument extends Document
     return true;
   }
 
+  
   public static void main(String args[])
   {
     try
@@ -1814,7 +1825,7 @@ public class DatabaseDocument extends Document
       List schemas = new Vector();
       schemas.add(args[1]);
       List featureList = new Vector();
-      featureList.add(dao.getFeatureByUniqueName(args[0])); 
+      featureList.add(dao.getFeatureByUniqueName(args[0], "polypeptide")); 
       System.out.println("FINISHED getFeature()");
       for(int i = 0; i < featureList.size(); i++)
       {

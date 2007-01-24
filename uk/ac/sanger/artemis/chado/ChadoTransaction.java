@@ -55,6 +55,8 @@ public class ChadoTransaction
   private Timestamp lastmodified;
   /** the feature object */
   private Object feature_obj;
+  /** the feature key */
+  private String featureKey;
   
   private GFFStreamFeature gff_feature;
   
@@ -71,12 +73,14 @@ public class ChadoTransaction
   public ChadoTransaction(final int type, 
                           final Object feature_obj,
                           final Timestamp lastmodified,
-                          final GFFStreamFeature gff_feature)
+                          final GFFStreamFeature gff_feature,
+                          final String featureKey)
   {
     this.type = type;
     this.lastmodified = lastmodified;
     this.feature_obj  = feature_obj;
     this.gff_feature  = gff_feature;
+    this.featureKey   = featureKey;
   }
 
   
@@ -160,6 +164,12 @@ public class ChadoTransaction
   public void setGff_feature(GFFStreamFeature gff_feature)
   {
     this.gff_feature = gff_feature;
+  }
+
+
+  public String getFeatureKey()
+  {
+    return featureKey;
   }
 
 }

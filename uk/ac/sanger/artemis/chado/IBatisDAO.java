@@ -93,15 +93,28 @@ public class IBatisDAO extends GmodDAO
     org.gmod.schema.sequence.Feature feature = 
       new org.gmod.schema.sequence.Feature();
     feature.setFeatureId(id);
-    return getLazyFeature(feature);
+    return (Feature)sqlMap.queryForObject("getLazyFeature", feature);
   }
   
-  public Feature getFeatureByUniqueName(String uniquename) 
+  public List getFeaturesByUniqueName(String uniquename) 
   {
     org.gmod.schema.sequence.Feature feature = 
       new org.gmod.schema.sequence.Feature();
     feature.setUniqueName(uniquename);
-    return getLazyFeature(feature);
+    return sqlMap.queryForList("getLazyFeature", feature);
+  }
+  
+  public Feature getFeatureByUniqueName(String uniquename, String featureType) 
+  {
+    org.gmod.schema.sequence.Feature feature = 
+      new org.gmod.schema.sequence.Feature();
+    feature.setUniqueName(uniquename);
+    
+    CvTerm cvTerm = new CvTerm();
+    cvTerm.setName(featureType);
+    feature.setCvTerm(cvTerm);
+    
+    return (Feature)sqlMap.queryForObject("getLazyFeature", feature);
   }
    
   
@@ -362,21 +375,7 @@ public class IBatisDAO extends GmodDAO
   {
     return null;  
   }
-  
-  //////
-  //////
-  
-  
-  /**
-   * Get the properties of a feature.
-   * @param uniquename  the unique name of the feature
-   * @return  the <code>List</code> of <code>Feature</code>
-   */
-  private Feature getLazyFeature(
-      final org.gmod.schema.sequence.Feature feature)
-  { 
-    return (Feature)sqlMap.queryForObject("getLazyFeature", feature);
-  }
+
   
   //////
   ////// SchemaDaoI
@@ -494,7 +493,10 @@ public class IBatisDAO extends GmodDAO
     else if(o instanceof Feature)
     {
       if(o instanceof FeatureForUpdatingResidues)
+      {
+        sqlMap.update("updateFeatureLocByChangingSequence", o);
         sqlMap.update("updateFeatureResidues", o);
+      }
       else
         sqlMap.update("updateFeature", o);
     }
@@ -605,9 +607,11 @@ public class IBatisDAO extends GmodDAO
     feature_dbxref.setDbXRef(dbXRef);
     
     //  get the feature id's  
-    Feature feature = (Feature)getFeatureByUniqueName(
+    List features = getFeaturesByUniqueName(
         feature_dbxref.getFeature().getUniqueName());
-    feature_dbxref.getFeature().setFeatureId( feature.getFeatureId() );
+    
+    feature_dbxref.getFeature().setFeatureId( 
+        ((Feature)features.get(0)).getFeatureId() );
 
     sqlMap.insert("insertFeatureDbXRef", feature_dbxref);
   }
@@ -693,7 +697,16 @@ public class IBatisDAO extends GmodDAO
   
   protected Integer getDbId(Db db)
   {
-    return (Integer)sqlMap.queryForObject("getDbId", db);
+    Integer dbId = (Integer)sqlMap.queryForObject("getDbId", db);
+    
+    if(dbId == null)
+    {
+      List dbIds = sqlMap.queryForList("getDbIdIgnoreCase", db);
+      if(dbIds.size() > 0)
+        dbId = (Integer)dbIds.get(0);
+    }
+    
+    return dbId;
   }
   
   protected Integer getDbXRefId(DbXRef dbXRef)

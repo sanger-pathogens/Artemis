@@ -109,12 +109,28 @@ public class JdbcDAO extends GmodDAO
    * @param name the systematic id
    * @return the Feature, or null
    */
-  public Feature getFeatureByUniqueName(String uniquename)
+  public Feature getFeatureByUniqueName(final String uniquename, final String featureType)
   {
     Feature feature = new Feature();
     feature.setUniqueName(uniquename);
     feature.setFeatureId(-1);
+    
+    CvTerm cvTerm = new CvTerm();
+    cvTerm.setName(featureType);
+    feature.setCvTerm(cvTerm);
+    
     return getLazyFeature(feature);
+  }
+  
+  /**
+   * Return a features with this systematic id
+   *  
+   * @param name the systematic id
+   * @return the Feature, or null
+   */
+  public List getFeaturesByUniqueName(String uniquename)
+  {
+    return getFeatureQuery(uniquename, -1, -1, null);
   }
   
   /**
@@ -131,7 +147,7 @@ public class JdbcDAO extends GmodDAO
     // getFeatureSynonymsByName() needs implementing
     //List feature_synonym_list = getFeatureSynonymsByName();
     
-    return getFeatureQuery(name, -1, -1);
+    return getFeatureQuery(name, -1, -1, null);
   }
   
   /**
@@ -172,7 +188,7 @@ public class JdbcDAO extends GmodDAO
   public List getFeaturesByLocatedOnFeature(final Feature feature)
   {
     return getFeatureQuery(null, 
-                 feature.getFeatureLoc().getFeatureBySrcFeatureId().getFeatureId(), -1);
+                 feature.getFeatureLoc().getFeatureBySrcFeatureId().getFeatureId(), -1, null);
   }
   
   /**
@@ -727,7 +743,8 @@ public class JdbcDAO extends GmodDAO
   private Feature getLazyFeature(final Feature feature)
   {
     List list = getFeatureQuery(feature.getUniqueName(), 
-                                -1, feature.getFeatureId());
+                                -1, feature.getFeatureId(),
+                                feature.getCvTerm());
     if(list == null || list.size() < 1)
       return null;
     
@@ -742,7 +759,8 @@ public class JdbcDAO extends GmodDAO
    */
   private List getFeatureQuery(final String uniquename,
                                final int parentFeatureID, 
-                               final int feature_id)
+                               final int feature_id,
+                               final CvTerm cvTerm)
   {
     final List list = new Vector();
     try
@@ -759,8 +777,12 @@ public class JdbcDAO extends GmodDAO
           + "fr.subject_id=" + "f.feature_id" + " LEFT JOIN featureprop fp ON "
           + "fp.feature_id=" + "f.feature_id" + " LEFT JOIN featureloc fl ON "
           + "f.feature_id=" + "fl.feature_id"
-          + " LEFT JOIN organism ON organism.organism_id=f.organism_id"
-          + " WHERE ";
+          + " LEFT JOIN organism ON organism.organism_id=f.organism_id ";
+      
+      if(cvTerm != null && cvTerm.getName() != null)
+        sql = sql + "LEFT JOIN cvterm ON f.type_id=cvterm.cvterm_id ";
+      
+      sql = sql + " WHERE ";
 
       if(uniquename != null)
         sql = sql + "uniquename LIKE '" + uniquename + "'";
@@ -771,7 +793,10 @@ public class JdbcDAO extends GmodDAO
       if(feature_id > -1)
         sql = sql + "f.feature_id = " + feature_id;
 
-      sql = sql // + " AND (fl.rank=fr.rank OR fr.rank IS NULL)"
+      if(cvTerm != null && cvTerm.getName() != null)
+        sql = sql + " AND cvterm.name="+cvTerm.getName();
+      
+      sql = sql
           + " ORDER BY f.type_id, uniquename";
 
       appendToLogFile(sql, sqlLog);
@@ -1322,23 +1347,38 @@ public class JdbcDAO extends GmodDAO
    */
   private void updateFeatureResidues(FeatureForUpdatingResidues feature)
   {
-    String sql = " UPDATE feature SET "+
-            "residues=substring(residues from 1 for "+ feature.getStartBase() + " || ";
+    String sql1 =
+      "UPDATE featureloc SET ";
     
     if(feature.getNewSubSequence() != null)
-      sql = sql + feature.getNewSubSequence() + " || ";
+      sql1 = sql1 + "fmin=fmin+" + feature.getLength() + 
+                 " , fmax=fmax+" + feature.getLength();
+    else
+      sql1 = sql1 + "fmin=fmin-" + feature.getLength() + 
+                 " , fmax=fmax-" + feature.getLength();
+
+    sql1 = sql1 + " WHERE fmin >= " + feature.getStartBase() +
+                  " AND srcfeature_id="+feature.getFeatureId();
+    appendToLogFile(sql1, sqlLog);  
+      
+    String sql2 = " UPDATE feature SET "+
+            "residues=substring(residues from 1 for "+ feature.getStartBase() + ") || ";
     
-    sql = sql + "substring(residues from "+ feature.getEndBase() + 
+    if(feature.getNewSubSequence() != null)
+      sql2 = sql2 + "'" + feature.getNewSubSequence() + "' || ";
+    
+    sql2 = sql2 + "substring(residues from "+ feature.getEndBase() + 
                                    " for "+ feature.getSeqLen() + "), "+
                                    "seqlen=" + feature.getSeqLen() +
                                    " WHERE feature_id="+feature.getFeatureId();
 
-    appendToLogFile(sql, sqlLog);
+    appendToLogFile(sql2, sqlLog);
 
     try
     {
       Statement st = conn.createStatement();
-      st.executeUpdate(sql);
+      st.executeUpdate(sql1);
+      st.executeUpdate(sql2);
     }
     catch(SQLException sqle)
     {

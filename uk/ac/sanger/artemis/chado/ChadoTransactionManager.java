@@ -136,49 +136,6 @@ public class ChadoTransactionManager
     {
       int start  = event.getPosition();
       int length = event.getSubSequence().length();
-
-      FeatureVector features = entryGroup.getAllFeatures();
-      
-      for(int i=0; i<features.size(); i++)
-      {
-        Feature feature = features.elementAt(i);
-        
-        if(feature.getLocation().getFirstBase() >= start)
-        {
-          GFFStreamFeature gffFeature = (GFFStreamFeature)feature.getEmblFeature();
-          FeatureSegmentVector segments = feature.getSegments();
-          
-          for(int j=0; j<segments.size(); j++)
-          {
-            FeatureSegment segment = segments.elementAt(j);
-            String seg_id   = gffFeature.getSegmentID( segment.getRawRange() );
-            Range range_new;
-            try
-            {
-              if(event.getType() == SequenceChangeEvent.DELETION)
-                range_new = new Range(feature.getLocation().getFirstBase()-length,
-                                      feature.getLocation().getLastBase()-length);
-              else
-                range_new = new Range(feature.getLocation().getFirstBase()+length,
-                                      feature.getLocation().getLastBase()+length);
-              
-              // featureloc update
-              FeatureLoc featureloc = getFeatureLoc(gffFeature, seg_id, range_new);
-              ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                  featureloc,
-                  gffFeature.getLastModified(), gffFeature);
-
-              sql.add(tsn);
-              
-            }
-            catch(OutOfRangeException e)
-            {
-              e.printStackTrace();
-            }
-
-          }
-        }
-      }
       
       //
       // update residues in srcfeature  
@@ -187,6 +144,7 @@ public class ChadoTransactionManager
       
       FeatureForUpdatingResidues chadoFeature = new FeatureForUpdatingResidues();
       chadoFeature.setStartBase(start-1);
+      chadoFeature.setLength(length);
       
       int newSequenceLength = entryGroup.getSequenceEntry().getEMBLEntry().getSequence().length();
 
@@ -207,7 +165,7 @@ public class ChadoTransactionManager
           entryGroup.getSequenceEntry().getEMBLEntry().getSequence().length()));
       
       ChadoTransaction tsn = 
-        new ChadoTransaction(ChadoTransaction.UPDATE, chadoFeature, null, null);
+        new ChadoTransaction(ChadoTransaction.UPDATE, chadoFeature, null, null, null);
       sql.add(tsn);
     }
     else
@@ -259,7 +217,7 @@ public class ChadoTransactionManager
             ideleted = ((Integer)deleted.elementAt(i)).intValue();
             Range range_old = (Range)rv_old.elementAt(ideleted);
             String seg_id   = feature.getSegmentID(range_old);
-            deleteFeature(seg_id);
+            deleteFeature(seg_id, feature.getKey().getKeyString());
             feature.getSegmentRangeStore().remove(seg_id);
           }
           
@@ -392,7 +350,8 @@ public class ChadoTransactionManager
           
           tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                                      featureloc,
-                                     feature.getLastModified(), feature);
+                                     feature.getLastModified(), feature,
+                                     feature.getKey().getKeyString());
 
           sql.add(tsn);
         }
@@ -467,20 +426,20 @@ public class ChadoTransactionManager
                              (String)(qualifier_uniquename.getValues()).elementAt(0);
         Splash.logger4j.debug("FEATURE_DELETED "+feature_uniquename);
         
+        GFFStreamFeature gff_feature =
+          (GFFStreamFeature)event.getFeature().getEmblFeature();
         if(event.getFeature().getSegments().size() > 1)
         {
-          GFFStreamFeature gff_feature =
-            (GFFStreamFeature)event.getFeature().getEmblFeature();
           RangeVector ranges = gff_feature.getLocation().getRanges();
           for(int i=0; i<ranges.size(); i++)
           {
             Range range = (Range)ranges.get(i);
             feature_uniquename = gff_feature.getSegmentID(range);
-            deleteFeature(feature_uniquename);
+            deleteFeature(feature_uniquename, gff_feature.getKey().getKeyString());
           }    
         }
         else
-          deleteFeature(feature_uniquename);
+          deleteFeature(feature_uniquename, gff_feature.getKey().getKeyString());
       }
       catch(InvalidRelationException e)
       {
@@ -538,7 +497,8 @@ public class ChadoTransactionManager
           
           tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
               feature_relationship,
-              feature.getLastModified(), feature);
+              feature.getLastModified(), feature,
+              feature.getKey().getKeyString());
           sql.add(tsn);
         }
       }
@@ -665,7 +625,7 @@ public class ChadoTransactionManager
     
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT,
                                chado_feature,
-                               null, (GFFStreamFeature)null);
+                               null, (GFFStreamFeature)null, null);
     sql.add(tsn);  
   }
   
@@ -775,7 +735,7 @@ public class ChadoTransactionManager
     
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT,
         chado_feature,
-        null, (GFFStreamFeature)null);
+        null, (GFFStreamFeature)null, null);
    
     sql.add(tsn);  
   }
@@ -783,7 +743,7 @@ public class ChadoTransactionManager
   /**
    * Set the transaction for deleting a feature.
    */
-  private void deleteFeature(final String uniquename)
+  private void deleteFeature(final String uniquename, final String featureType)
   {
     org.gmod.schema.sequence.Feature chado_feature = 
       new org.gmod.schema.sequence.Feature();
@@ -791,7 +751,7 @@ public class ChadoTransactionManager
     
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.DELETE,
         chado_feature,
-        null, (GFFStreamFeature)null);
+        null, (GFFStreamFeature)null, featureType);
 
     sql.add(tsn); 
   }
@@ -950,7 +910,7 @@ public class ChadoTransactionManager
         
         tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
             chado_feature,
-            feature.getLastModified(), feature);
+            feature.getLastModified(), feature, null);
 
         sql.add(tsn);
       }
@@ -1122,7 +1082,7 @@ public class ChadoTransactionManager
                                                  lcvterm_id, rank);
         tsn = new ChadoTransaction(type,
             featureprop,
-            feature.getLastModified(), feature);
+            feature.getLastModified(), feature, feature.getKey().getKeyString());
         
         tsn.setUniquename(uniquename);
         sql.add(tsn);
@@ -1135,7 +1095,7 @@ public class ChadoTransactionManager
     
       tsn = new ChadoTransaction(type,
           featureprop,
-          feature.getLastModified(), feature);       
+          feature.getLastModified(), feature, feature.getKey().getKeyString());       
       sql.add(tsn);
     }
   }
@@ -1187,7 +1147,7 @@ public class ChadoTransactionManager
           (String)old_qualifier.getValues().get(0));
       ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                 chado_feature,
-                feature.getLastModified(), feature);
+                feature.getLastModified(), feature, feature.getKey().getKeyString());
       tsn.setOldUniquename( (String)old_qualifier.getValues().get(0) );
      
       sql.add(tsn);
@@ -1216,7 +1176,8 @@ public class ChadoTransactionManager
            
            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
                old_dbxref,
-               feature.getLastModified(), feature);
+               feature.getLastModified(), feature, 
+               feature.getKey().getKeyString());
            sql.add(tsn);
          }
          else if(qualifier_name.equals("codon_start"))
@@ -1228,7 +1189,8 @@ public class ChadoTransactionManager
            
            tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                                       featureloc,
-                                      feature.getLastModified(), feature);
+                                      feature.getLastModified(), feature,
+                                      feature.getKey().getKeyString());
            sql.add(tsn);
          }
          else if(isCvTag(qualifier_name))
@@ -1266,7 +1228,8 @@ public class ChadoTransactionManager
                                                            uniquename);
            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
                                       feature_cvterm,
-                                      feature.getLastModified(), feature);
+                                      feature.getLastModified(), feature,
+                                      feature.getKey().getKeyString());
            sql.add(tsn);
          }
          else if(isSynonymTag(qualifier_name))
@@ -1279,7 +1242,8 @@ public class ChadoTransactionManager
           
            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
                feature_synonym,
-               feature.getLastModified(), feature);
+               feature.getLastModified(), feature,
+               feature.getKey().getKeyString());
            sql.add(tsn);
          }
          
@@ -1307,7 +1271,8 @@ public class ChadoTransactionManager
            
            tsn = new ChadoTransaction(ChadoTransaction.INSERT,
                new_dbxref,
-               feature.getLastModified(), feature);
+               feature.getLastModified(), feature,
+               feature.getKey().getKeyString());
          }
          else if(qualifier_name.equals("codon_start"))
          {
@@ -1317,7 +1282,8 @@ public class ChadoTransactionManager
            
            tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                                       featureloc,
-                                      feature.getLastModified(), feature);
+                                      feature.getLastModified(), feature,
+                                      feature.getKey().getKeyString());
            //sql.add(tsn);
          }
          else if(isCvTag(qualifier_name))
@@ -1328,7 +1294,8 @@ public class ChadoTransactionManager
               qualifier_string, uniquename);
            tsn = new ChadoTransaction(ChadoTransaction.INSERT, 
                       feature_cvterm,
-                      feature.getLastModified(), feature);
+                      feature.getLastModified(), feature,
+                      feature.getKey().getKeyString());
          }
          else if(isSynonymTag(qualifier_name))
          {
@@ -1340,7 +1307,8 @@ public class ChadoTransactionManager
 
            tsn = new ChadoTransaction(ChadoTransaction.INSERT,
                feature_synonym,
-               feature.getLastModified(), feature);
+               feature.getLastModified(), feature,
+               feature.getKey().getKeyString());
          }
          sql.add(tsn);
       }
