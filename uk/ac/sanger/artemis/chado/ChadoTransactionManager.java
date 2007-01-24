@@ -346,6 +346,24 @@ public class ChadoTransactionManager
           if(feature.getSegmentRangeStore() != null)
             feature.getSegmentRangeStore().put(seg_id, range_new);
           
+          if(sql.size() > 0)
+          {
+            // collapse updating featureloc into one statement
+            ChadoTransaction lastTsn = (ChadoTransaction)sql.lastElement();
+            if(lastTsn.getGff_feature() != null &&
+               lastTsn.getType() == ChadoTransaction.UPDATE &&
+               lastTsn.getFeatureKey().equals( feature.getKey().getKeyString() ) &&
+               lastTsn.getFeatureObject() instanceof FeatureLoc)
+            {
+              FeatureLoc floc = (FeatureLoc)lastTsn.getFeatureObject();
+              if(floc.getFeatureByFeatureId().getUniqueName().equals(seg_id))
+              {
+                Splash.logger4j.debug("Removing last FeatureLoc ChadoTransaction");
+                sql.remove(sql.size()-1);
+              }
+            }
+          }
+          
           FeatureLoc featureloc = getFeatureLoc(feature, seg_id, range_new);
           
           tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
