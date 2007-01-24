@@ -5,10 +5,16 @@
 
 <sqlMap namespace="FeatureCvTerm"> 
  
-      <typeAlias alias="FeatureCvTerm"
+     <cacheModel id="featurecvterm-rank-cache" type ="LRU" readOnly="true"> 
+      <flushInterval hours="24"/>  
+      <property name="cache-size" value="15" /> 
+    </cacheModel> 
+    
+    <typeAlias alias="FeatureCvTerm"
         type="org.gmod.schema.sequence.FeatureCvTerm"/>
         
-     
+
+    
      <resultMap id="select-featurecvterm-no-rank" class="FeatureCvTerm" 
                 groupBy="featureCvTermId">
         <result property="featureCvTermId"   column="feature_cvterm_id" />
@@ -95,7 +101,7 @@
      
      
      <select id="getFeatureCvTermColumnsForASchema" parameterClass="java.lang.String"
-             resultClass="java.lang.String">
+             resultClass="java.lang.String" cacheModel="featurecvterm-rank-cache">
        SELECT pg_attribute.attname 
        FROM pg_attribute, pg_class, pg_namespace 
        WHERE pg_namespace.oid=pg_class.relnamespace AND 
