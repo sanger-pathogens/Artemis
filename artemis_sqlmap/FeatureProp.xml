@@ -45,7 +45,13 @@
       INSERT INTO featureprop
       ( feature_id, type_id, value, rank )
       VALUES
-      ( (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#),
+      ( 
+        <isGreaterThan property="feature.featureId" compareValue="0">
+          $feature.featureId$,
+        </isGreaterThan>
+        <isLessEqual property="feature.featureId" compareValue="0">
+          (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#),
+        </isLessEqual>
         $cvTerm.cvTermId$, #value#, $rank$ )
     </insert>
     
