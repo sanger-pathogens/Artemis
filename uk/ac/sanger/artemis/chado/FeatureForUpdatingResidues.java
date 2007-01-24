@@ -31,6 +31,7 @@ public class FeatureForUpdatingResidues extends Feature
   private int startBase;
   private int endBase;
   private int basesToEnd;
+  private int length;
   private String newSubSequence;
   
   public int getEndBase()
@@ -64,6 +65,14 @@ public class FeatureForUpdatingResidues extends Feature
   public void setBasesToEnd(int basesToEnd)
   {
     this.basesToEnd = basesToEnd;
+  }
+  public int getLength()
+  {
+    return length;
+  }
+  public void setLength(int length)
+  {
+    this.length = length;
   }
   
   
