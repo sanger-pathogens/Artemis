@@ -237,7 +237,19 @@
           $cvTerm.cvTermId$ )
     </insert>
    
-
+   <!--
+   <update id="updateRegionSequence"
+            parameterClass="Feature">
+            UPDATE feature SET 
+            residues=substring(residues from 1 for $featureLoc.fmin$) || 
+                     #residues,jdbcType=text# ||
+                     substring(residues from $featureLoc.fmin$ for 
+                               (seqLen + $seqLen$)),
+            seqlen=(seqLen+$seqLen$)
+            WHERE feature_id=$featureLoc.featureBySrcFeatureId.featureId$
+   </update>
+   -->
+   
    <!--  DELETE  -->
    <delete id="deleteFeature" 
            parameterClass="Feature">

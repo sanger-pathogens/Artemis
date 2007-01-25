@@ -139,12 +139,37 @@ public class ChadoTransactionManager
       // update residues in srcfeature  
       DatabaseDocument doc = (DatabaseDocument)
          ((DocumentEntry)entryGroup.getSequenceEntry().getEMBLEntry()).getDocument();
+      int newSequenceLength = entryGroup.getSequenceEntry().getEMBLEntry().getSequence().length();
+      
+      /*org.gmod.schema.sequence.Feature regionFeature = new org.gmod.schema.sequence.Feature();
+      CvTerm cvTerm = new CvTerm();
+      cvTerm.setName("region");
+      regionFeature.setCvTerm(cvTerm);
+      org.gmod.schema.sequence.Feature srcFeature = new org.gmod.schema.sequence.Feature();
+      srcFeature.setFeatureId( Integer.parseInt(doc.getSrcFeatureId()) );
+      srcFeature.setSeqLen(new Integer(
+          entryGroup.getSequenceEntry().getEMBLEntry().getSequence().length()));
+      FeatureLoc featureLoc = new FeatureLoc();
+      featureLoc.setFeatureBySrcFeatureId(srcFeature);
+      featureLoc.setFmin(new Integer(start-1));
+      regionFeature.setFeatureLoc(featureLoc);
+      regionFeature.setSeqLen(new Integer(length));
+      
+      if(event.getType() == SequenceChangeEvent.INSERTION)
+      {
+        regionFeature.setResidues(event.getSubSequence().getBytes());
+        featureLoc.setFmax(new Integer(start));
+      }
+      else
+      {
+        featureLoc.setFmax(new Integer(start+length));
+      }  
+      ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE, regionFeature, 
+          null, null, null);*/
       
       FeatureForUpdatingResidues chadoFeature = new FeatureForUpdatingResidues();
       chadoFeature.setStartBase(start-1);
-      chadoFeature.setLength(length);
-      
-      int newSequenceLength = entryGroup.getSequenceEntry().getEMBLEntry().getSequence().length();
+      chadoFeature.setLength(length);    
 
       if(event.getType() == SequenceChangeEvent.INSERTION)
       {

@@ -484,6 +484,14 @@ public class IBatisDAO extends GmodDAO
       sqlMap.update("updateFeatureLoc", o);
     else if(o instanceof Feature)
     {
+      /*Feature f = (Feature)o;
+      if(f.getSeqLen() > 0 &&
+          f.getCvTerm().getName().equals("region"))
+       {
+         // insert sequence region
+         sqlMap.insert("updateRegionSequence", o);
+       } */
+      
       if(o instanceof FeatureForUpdatingResidues)
       {
         sqlMap.update("updateFeatureLocByChangingSequence", o);

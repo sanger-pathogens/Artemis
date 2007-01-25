@@ -1356,92 +1356,6 @@ public class DatabaseDocument extends Document
   {
     return schema_list;
   }
-
-  /**
-   * Create a hashtable of the available entries with residues.
-   * @return a <code>Hashtable</code> of the <code>String</code>
-   *          representation (schema-type-feature_name) and the
-   *          corresponding feature_id
-   * @throws ConnectException
-   * @throws java.sql.SQLException
-   */
-  public HashMap getDatabaseEntries2()
-                   throws ConnectException, java.sql.SQLException
-  {
-    db = new HashMap();
- 
-    GmodDAO dao = null;
-    
-    try
-    {
-      dao = getDAO();
-    }
-    catch(ConnectException exp)
-    {
-      JOptionPane.showMessageDialog(null, "Connection Problems...\n"+
-            exp.getMessage(), 
-            "Connection Error",
-            JOptionPane.ERROR_MESSAGE);
-      throw exp;
-    }
-    catch(java.sql.SQLException sqlExp)
-    {
-      JOptionPane.showMessageDialog(null, "SQL Problems...\n"+
-                                    sqlExp.getMessage(), 
-                                    "SQL Error",
-                                    JOptionPane.ERROR_MESSAGE);
-      throw sqlExp;
-    }
-      
-    try
-    {
-      if(dao instanceof IBatisDAO)
-        ((IBatisDAO) dao).startTransaction();
-      
-      schema_list = dao.getSchema();
-      Iterator it = schema_list.iterator();
-
-      while(it.hasNext())
-      {
-        String schema = (String)it.next();
-  
-        List list = dao.getResidueType(schema);
-         
-        if(list.size() == 0)  // no residues for this organism
-          continue;
-
-        List list_residue_features = dao.getResidueFeatures(list, schema);
-        Iterator it_residue_features = list_residue_features.iterator();
-        while(it_residue_features.hasNext())
-        {
-          Feature feature = (Feature)it_residue_features.next();
-          String typeName = getCvtermName(feature.getCvTerm().getCvTermId(), getDAO()); 
-          
-          db.put(schema + " - " + typeName + " - " + feature.getUniqueName(),
-                 Integer.toString(feature.getFeatureId()));
-        }
-      }
-      
-      if(dao instanceof IBatisDAO)
-        ((IBatisDAO) dao).commitTransaction();
-      
-    }
-    catch(RuntimeException sqlExp)
-    {
-      JOptionPane.showMessageDialog(null, "SQL Problems...\n"+
-                                    sqlExp.getMessage(), 
-                                    "SQL Error",
-                                    JOptionPane.ERROR_MESSAGE);
-      sqlExp.printStackTrace();
-    }
-    finally
-    {
-      if(dao instanceof IBatisDAO)
-        ((IBatisDAO) dao).endTransaction();
-    }
-    
-    return db;
-  }
   
   
   /**
@@ -1482,7 +1396,7 @@ public class DatabaseDocument extends Document
         try
         {
           dao = getDAO();
-          List list_residue_features = dao.getResidueFeatures(null, schema);
+          List list_residue_features = dao.getResidueFeatures();
           
           Iterator it_residue_features = list_residue_features.iterator();
           while(it_residue_features.hasNext())
