@@ -7,7 +7,7 @@
 # /usr/local/bin/ or elsewhere.
 
 
-# $Header: //tmp/pathsoft/artemis/act,v 1.11 2006-12-07 13:26:27 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/act,v 1.12 2007-01-25 08:49:06 tjc Exp $
 
 # resolve links - $0 may be a link
 PRG=$0
@@ -35,7 +35,7 @@ CLASSPATH=$ACT_HOME:$ACT_HOME/lib/JacORB.jar:$ACT_HOME/lib/jemAlign.jar:$ACT_HOM
 CLASSPATH=$CLASSPATH:$ACT_HOME/lib/j2ssh/commons-logging.jar:$ACT_HOME/lib/j2ssh/j2ssh-core.jar:$ACT_HOME/lib/j2ssh/
 
 # iBatis jars
-CLASSPATH=$CLASSPATH:$ACT_HOME/lib/ibatis/ibatis-common-2.jar:$ACT_HOME/lib/ibatis/ibatis-sqlmap-2.jar:$ACT_HOME/lib/ibatis/:$ACT_HOME/lib/ibatis/log4j-1.2.13.jar:$ACT_HOME/lib/ibatis/cglib-nodep-2.2_beta1.jar
+CLASSPATH=$CLASSPATH:$ACT_HOME/lib/ibatis/ibatis-2.3.0.677.jar:$ACT_HOME/lib/ibatis/:$ACT_HOME/lib/ibatis/log4j-1.2.13.jar:$ACT_HOME/lib/ibatis/cglib-nodep-2.2_beta1.jar:$ACT_HOME/lib/retrotranslator-runtime-1.1.0.jar
 
 export CLASSPATH
 
