@@ -917,41 +917,15 @@ public class JdbcDAO extends GmodDAO
   //////
 
   /**
-   * Given a list of distict cvterm_id/type_id's of feature types that have
-   * residues (from getResidueType()) in the given schema and the schema name
-   * return a list of chado features in the schema with residues.
-   * 
-   * @param cvTermIds
-   *          list of cvterm_id/type_id's
-   * @param schema
-   *          schema/organism name or null
+   * Return a list of chado features with residues.
    * @return the <code>List</code> of <code>Feature</code> objects
    */
-  public List getResidueFeatures(List cvTermIds, 
-                                 final String schema)
+  public List getResidueFeatures()
   {
     String sql = new String(
             "SELECT uniquename, name, feature_id, type_id FROM ");
-            
-    if(schema != null || !schema.equals(""))
-      sql = sql + schema +"." ;
     
     sql = sql + "feature WHERE residues notnull ";
-
-    /*for(int j = 0; j < cvTermIds.size(); j++)
-    {
-      sql = sql + " type_id = " + (String)cvTermIds.get(j);
-      if(j < cvTermIds.size() - 1)
-        sql = sql + " OR ";
-    }
-
-    sql = sql + ") and organism.organism_id=";*/
-    
-    //if(schema != null || !schema.equals(""))
-    //  sql = sql + schema +"." ;
-    
-    //sql = sql + "feature.organism_id ";
-    
 
     appendToLogFile(sql, sqlLog);
 

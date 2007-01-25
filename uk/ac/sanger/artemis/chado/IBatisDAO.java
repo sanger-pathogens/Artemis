@@ -383,21 +383,13 @@ public class IBatisDAO extends GmodDAO
   //////
 
   /**
-   * Given a list of distict cvterm_id/type_id's of feature types
-   * that have residues (from getResidueType()) in the given schema 
-   * and the schema name return a list of chado features in the schema
+   * Return a list of chado features with residues
    * with residues.
-   * @param cvTermIds   list of cvterm_id/type_id's
-   * @param schema      schema/organism name or null
    * @return    the <code>List</code> of <code>Feature</code> objects
    */
-  public List getResidueFeatures(List cvTermIds, 
-                                 final String schema)
+  public List getResidueFeatures()
   { 
-    java.util.Map map = new java.util.HashMap();
-    map.put("cvTermIds", cvTermIds);
-    return sqlMap.queryForList("getResidueFeatures",
-                               map);
+    return sqlMap.queryForList("getResidueFeatures",null);
   }
 
   /**

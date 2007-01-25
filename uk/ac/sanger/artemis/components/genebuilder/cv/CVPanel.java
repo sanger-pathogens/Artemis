@@ -574,6 +574,7 @@ public class CVPanel extends JPanel
     
     xBox.remove(tfield);
     
+    Splash.logger4j.debug("CvTerm cache lookup: "+tfield.getText().trim()+" from "+cv_name);
     return DatabaseDocument.getCvterms(tfield.getText().trim(), cv_name);
   }
   
