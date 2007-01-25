@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.25 2006-11-29 10:18:52 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.26 2007-01-25 08:32:50 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -8,7 +8,7 @@ SHELL=/bin/sh
 
 JAVAC := javac -source 1.3 -target 1.3 $(OPT_FLAGS) $(EXTRA_FLAGS)
 
-REAL_CLASSPATH := CLASSPATH=lib/biojava.jar:lib/jobcontrol.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-common-2.jar:lib/ibatis/ibatis-sqlmap-2.jar:lib/ibatis/log4j-1.2.13.jar:lib/chado-14-interface.jar:.
+REAL_CLASSPATH := CLASSPATH=lib/biojava.jar:lib/jobcontrol.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.0.677.jar:lib/ibatis/log4j-1.2.13.jar:lib/chado-14-interface.jar:.
 
 NAMES:= \
 	uk/ac/sanger/artemis/OptionChangeListener \
