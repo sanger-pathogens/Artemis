@@ -141,7 +141,10 @@ sub hyperlink_id
       }
     }
 
-    $r = qq#<a href="http://$SRS_SERVER-id+1+\[\{$PROTEIN_DATABASES\}-ID:$id*]|[\{$PROTEIN_DATABASES\}-AccNumber:$id*]">$id</a>#;
+    # Text Entry
+    $r = qq#<a href="http://$SRS_SERVER-id+1+\[\{$PROTEIN_DATABASES\}-ID:$id*]|[\{$PROTEIN_DATABASES\}-AccNumber:$id*]+-vn+2">$id</a>#;
+
+    #$r = qq#<a href="http://$SRS_SERVER-id+1+\[\{$PROTEIN_DATABASES\}-ID:$id*]|[\{$PROTEIN_DATABASES\}-AccNumber:$id*]">$id</a>#;
   }
   return $r
 }
