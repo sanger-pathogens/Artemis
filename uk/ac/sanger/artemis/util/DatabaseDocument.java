@@ -812,6 +812,7 @@ public class DatabaseDocument extends Document
         FeatureRelationship feat_relationship = 
                             (FeatureRelationship)relations.get(i);
         parent_id = Integer.toString(feat_relationship.getFeatureByObjectId().getFeatureId());
+        rank      = feat_relationship.getRank();
         
         if( feat_relationship.getCvTerm().getName() == null )
         {
@@ -880,9 +881,9 @@ public class DatabaseDocument extends Document
     this_buff.append("timelastmodified=" + timelastmodified + ";");
     
     // this is the chado feature_relationship.rank used
-    // to order features e.g. exons
+    // to order joined features e.g. exons
     if(rank > -1)
-      this_buff.append("feature_relationship_rank="+rank+";");
+      this_buff.append("feature_relationship_rank="+rank+";"); 
 
     //this_buff.append("feature_id="+feature_id+";");
     
