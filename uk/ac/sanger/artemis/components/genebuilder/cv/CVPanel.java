@@ -281,9 +281,6 @@ public class CVPanel extends JPanel
         cvQualifiers.addElement(qualifier.copy());
     }
    
-    //add(createCVQualifiersComponent(),
-    //    BorderLayout.CENTER);
-    
     feature.addFeatureChangeListener(this);  
     
     removeAll();
