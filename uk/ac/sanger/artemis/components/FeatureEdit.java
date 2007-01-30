@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.24 2007-01-22 11:08:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.25 2007-01-30 17:23:41 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -48,6 +48,7 @@ import uk.ac.sanger.artemis.io.QualifierInfo;
 
 import uk.ac.sanger.artemis.components.ProgressThread;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
+import uk.ac.sanger.artemis.components.genebuilder.gff.GffPanel;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -62,7 +63,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.24 2007-01-22 11:08:12 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.25 2007-01-30 17:23:41 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -135,6 +136,8 @@ public class FeatureEdit extends JPanel
   
   private CVPanel cvForm;
   
+  private GffPanel gffPanel;
+  
   /**
    *  Create a new FeatureEdit object from the given Feature.
    *  @param entry_group The EntryGroup that contains this Feature.
@@ -192,6 +195,8 @@ public class FeatureEdit extends JPanel
     getFeature().removeFeatureChangeListener(this);
     if(cvForm != null)
       getFeature().removeFeatureChangeListener(cvForm);
+    if(gffPanel != null)
+      getFeature().removeFeatureChangeListener(gffPanel);
   }
 
   /**
@@ -811,6 +816,12 @@ public class FeatureEdit extends JPanel
       JScrollPane jspCV   = new JScrollPane(cvForm);
       jspCV.setPreferredSize(jspCore.getPreferredSize());
       tabbedPane.add("CV", jspCV);
+      
+      gffPanel = new GffPanel(getFeature());
+      JScrollPane jspGff = new JScrollPane(gffPanel);
+      jspGff.setPreferredSize(jspCore.getPreferredSize());
+      tabbedPane.add("GFF", jspGff);
+      
       lower_panel.add(tabbedPane, "Center");
     }
     else
@@ -1351,6 +1362,9 @@ public class FeatureEdit extends JPanel
     
     if(cvForm != null)
       cvForm.updateFromFeature(getFeature());
+    
+    if(gffPanel != null)
+      gffPanel.updateFromFeature(getFeature());
   }
 
   /**
@@ -1370,7 +1384,8 @@ public class FeatureEdit extends JPanel
       //
       // strip out CV qualifiers
       //
-      if(cvForm != null && cvForm.isCvTag(this_qualifier))
+      if( (cvForm != null && cvForm.isCvTag(this_qualifier)) ||
+          (gffPanel != null && gffPanel.isGffTag(this_qualifier)) )
         continue;
       
       final QualifierInfo qualifier_info =
@@ -1443,6 +1458,13 @@ public class FeatureEdit extends JPanel
         QualifierVector cvQualifiers = cvForm.getCvQualifiers();
         if(cvQualifiers != null && cvQualifiers.size() > 0)
           qualifiers.addAll(cvQualifiers);
+      }
+      
+      if(gffPanel != null)
+      {
+        QualifierVector gffQualifiers = gffPanel.getGffQualifiers();
+        if(gffQualifiers != null && gffQualifiers.size() > 0)
+          qualifiers.addAll(gffQualifiers);
       }
     }
     catch(QualifierParseException exception) 
