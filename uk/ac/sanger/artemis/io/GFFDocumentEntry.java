@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.35 2006-11-21 16:34:51 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.36 2007-01-30 17:25:22 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -30,6 +30,9 @@ import uk.ac.sanger.artemis.util.*;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import java.sql.Timestamp;
 
@@ -37,7 +40,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.35 2006-11-21 16:34:51 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.36 2007-01-30 17:25:22 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -203,6 +206,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         if(parent_qualifier == null && derives_qualifier == null)
           continue;    
           
+        Qualifier featureRelationship = 
+          this_feature.getQualifierByName("feature_relationship_rank");
         // compare this features parent_id's to transcript id's in the 
         // chado gene hash to decide if it is part of it
         final StringVector parent_id;
@@ -222,12 +227,12 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
              
             if(parent_qualifier == null)
               gene.addProtein(parent, this_feature);
-            else if(key.equals("exon"))
-              gene.addExon(parent, this_feature);
             else if(key.equals("three_prime_UTR"))
               gene.add3PrimeUtr(parent, this_feature);
             else if(key.equals("five_prime_UTR"))
               gene.add5PrimeUtr(parent, this_feature);
+            else if(key.equals("exon") || featureRelationship != null)
+              gene.addSplicedFeatures(parent, this_feature);
             else
               gene.addOtherFeatures(parent, this_feature);
           }
@@ -255,6 +260,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       }
 
       // now join exons
+      //combineFeatures();
       Enumeration enum_genes = chado_gene.elements();
       while(enum_genes.hasMoreElements())
       {
@@ -271,7 +277,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
   /**
    *  Join the separate exons into one feature (if appropriate).
    **/
-  private void combineFeatures()
+  /*private void combineFeatures()
   {
     final FeatureVector original_features = getAllFeatures();
 
@@ -341,7 +347,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
 
     combineFeaturesFromHash(forward_feature_groups);
     combineFeaturesFromHash(reverse_feature_groups);
-  }
+  }*/
 
   /**
    *  Combine the features (which are exons) and delete the orignals from this
@@ -352,150 +358,54 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
   public void combineChadoExons(ChadoCanonicalGene gene) 
   {
     Vector transcripts = (Vector)gene.getTranscripts();
-
-    RangeVector new_range_vector;
-    QualifierVector qualifier_vector;
-    Hashtable id_range_store;
-    Hashtable feature_relationship_rank_store;
-    Timestamp lasttimemodified = null;
-    
-    Hashtable new_exon_set = new Hashtable();
+    gene.correctSpliceSiteAssignments();
     
     for(int i=0; i<transcripts.size(); i++)
     {
-      feature_relationship_rank_store =
-                         new Hashtable();
-      id_range_store   = new Hashtable();
-      new_range_vector = new RangeVector();
-      qualifier_vector = new QualifierVector();
       GFFStreamFeature transcript = (GFFStreamFeature)transcripts.get(i);
       String transcript_id = null;
       transcript_id = (String)(transcript.getQualifierByName("ID").getValues().get(0));
       
-      Vector v_exons = (Vector)gene.getExonsOfTranscript(transcript_id);
-           
-      if(v_exons == null)
+      Set splicedSiteTypes = gene.getSpliceTypes(transcript_id);
+      if(splicedSiteTypes == null)
         continue;
-     
-      for(int j=0; j<v_exons.size(); j++)
+      
+      Iterator it = splicedSiteTypes.iterator();
+      Vector new_set = new Vector();
+      while(it.hasNext())
       {
-        final GFFStreamFeature this_feature =
-            (GFFStreamFeature)v_exons.get(j);
- 
-        Integer rank;
-        Qualifier rankQualifier =
-          this_feature.getQualifierByName("feature_relationship_rank");
-        if(rankQualifier == null)
-          rank = new Integer(0);
-        else
-          rank = new Integer((String)(rankQualifier.getValues().get(0)));
-        
-        // use the most current lastmodified datestamp
-        if(this_feature.getLastModified() != null &&
-           (lasttimemodified == null ||
-            this_feature.getLastModified().compareTo(lasttimemodified) > 0))
-          lasttimemodified = this_feature.getLastModified(); 
-        
-        final Location this_feature_location = this_feature.getLocation();
-
-        if(this_feature_location.getRanges().size() > 1)
-        {
-           throw new Error("internal error - new location should have " +
-                           "exactly one range");
-        }
-
-        final Range new_range =
-            (Range)this_feature_location.getRanges().elementAt(0);
-
-        Qualifier id_qualifier = this_feature.getQualifierByName("ID");
-        if(id_qualifier != null)
-        {
-          String id = (String)(id_qualifier.getValues()).elementAt(0);
-          id_range_store.put(id, new_range);
-          feature_relationship_rank_store.put(id, rank);
-        }
-
-
-        if(this_feature_location.isComplement()) 
-          new_range_vector.insertElementAt(new_range, 0);
-        else 
-          new_range_vector.add(new_range);
-
-        removeInternal(this_feature);
-        qualifier_vector.addAll(this_feature.getQualifiers());
+        String type = (String)it.next();
+        List splicedSites = gene.getSpliceSitesOfTranscript(transcript_id, type);
+           
+        if(splicedSites == null)
+          continue;
+      
+        mergeFeatures(splicedSites, new_set, 
+                      (String)(transcript.getQualifierByName("ID").getValues().get(0)));
       }
       
-      final Feature first_old_feature = (Feature)v_exons.get(0);
-
-      final Location new_location = new Location(new_range_vector,
-                    first_old_feature.getLocation().isComplement());
-
-      qualifier_vector = mergeQualifiers(qualifier_vector,
-                                         first_old_feature.getLocation().isComplement());
-
-      final GFFStreamFeature new_feature = 
-        new GFFStreamFeature(first_old_feature.getKey(),
-                             new_location, qualifier_vector);
-        
-      if(lasttimemodified != null)
-        new_feature.setLastModified(lasttimemodified);
-      new_feature.setSegmentRangeStore(id_range_store);
-      new_feature.setFeature_relationship_rank_store(
-          feature_relationship_rank_store);
-      
-      // set the ID
-      String ID = new_feature.getSegmentID(new_feature.getLocation().getRanges() );
-
-      Qualifier id_qualifier = new_feature.getQualifierByName("ID");
-      id_qualifier.removeValue( (String)(id_qualifier.getValues()).elementAt(0) );
-      id_qualifier.addValue(ID);
-      
-      try 
+      for(int j=0; j<new_set.size(); j++)
       {
-        new_feature.setLocation(new_location);
-
-        final Qualifier gene_qualifier =
-            new_feature.getQualifierByName("gene");
-
-        if(gene_qualifier != null &&
-           gene_qualifier.getValues().size() > 0 &&
-           ((String)(gene_qualifier.getValues()).elementAt(0)).startsWith("Phat"))
+        try
         {
-          // special case to handle incorrect output of the Phat gene
-          // prediction tool
-          new_feature.removeQualifierByName("codon_start");
-        } 
-        else
-        {
-          final Qualifier old_codon_start_qualifier =
-              first_old_feature.getQualifierByName("codon_start");
-
-          if(old_codon_start_qualifier != null)
-            new_feature.setQualifier(old_codon_start_qualifier);
+          if(j == 0)
+            gene.addSplicedFeatures(transcript_id, 
+                (Feature)new_set.get(j), true );
+          else
+            gene.addSplicedFeatures(transcript_id, 
+                (Feature)new_set.get(j));
         }
-        forcedAdd(new_feature);
-        //gene.addExon(transcript_id, new_feature, true );
-        new_exon_set.put(transcript_id, new_feature);
-        
-      } 
-      catch(ReadOnlyException e) 
-      {
-        throw new Error("internal error - unexpected exception: " + e);
+        catch(InvalidRelationException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
       }
-      catch(OutOfRangeException e) 
-      {
-        throw new Error("internal error - unexpected exception: " + e);
-      }
-      catch(EntryInformationException e) 
-      {
-        throw new Error("internal error - unexpected exception: " + e);
-      }
-    }
-    
-    
+      
+    }   
     
     // now merge the exons in the ChadoCanonicalGene feature
-    Enumeration enum_exon_set = new_exon_set.keys();
+    /*Enumeration enum_exon_set = new_exon_set.keys();
     int num = 0;
     while(enum_exon_set.hasMoreElements())
     {
@@ -503,10 +413,10 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       try
       {
         if(num == 0)
-          gene.addExon(transcript_id, 
+          gene.addSplicedFeatures(transcript_id, 
                        (Feature)new_exon_set.get(transcript_id), true );
         else
-          gene.addExon(transcript_id, 
+          gene.addSplicedFeatures(transcript_id, 
                        (Feature)new_exon_set.get(transcript_id));
         num++;
       }
@@ -515,6 +425,132 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
+    }*/
+  }
+  
+  
+  private void mergeFeatures(final List gffFeatures,
+                             final List new_set, 
+                             final String transcript_id)
+  {
+    Hashtable feature_relationship_rank_store = new Hashtable();
+    Hashtable id_range_store = new Hashtable();
+    RangeVector new_range_vector = new RangeVector();
+    QualifierVector qualifier_vector = new QualifierVector();
+    Timestamp lasttimemodified = null;
+
+    for(int j = 0; j < gffFeatures.size(); j++)
+    {
+      final GFFStreamFeature this_feature = (GFFStreamFeature)gffFeatures.get(j);
+      
+      Integer rank;
+      Qualifier rankQualifier = this_feature
+          .getQualifierByName("feature_relationship_rank");
+      if(rankQualifier == null)
+        rank = new Integer(0);
+      else
+      {
+        rank = new Integer((String) (rankQualifier.getValues().get(0)));
+        this_feature.getQualifiers().removeQualifierByName("feature_relationship_rank");
+      }
+      
+      // use the most current lastmodified datestamp
+      if(this_feature.getLastModified() != null
+          && (lasttimemodified == null || this_feature.getLastModified()
+              .compareTo(lasttimemodified) > 0))
+        lasttimemodified = this_feature.getLastModified();
+
+      final Location this_feature_location = this_feature.getLocation();
+
+      if(this_feature_location.getRanges().size() > 1)
+      {
+        throw new Error("internal error - new location should have "
+            + "exactly one range");
+      }
+
+      final Range new_range = (Range) this_feature_location.getRanges()
+          .elementAt(0);
+
+      Qualifier id_qualifier = this_feature.getQualifierByName("ID");
+      if(id_qualifier != null)
+      {
+        String id = (String) (id_qualifier.getValues()).elementAt(0);
+        id_range_store.put(id, new_range);
+        feature_relationship_rank_store.put(id, rank);
+      }
+
+      if(this_feature_location.isComplement())
+        new_range_vector.insertElementAt(new_range, 0);
+      else
+        new_range_vector.add(new_range);
+
+      removeInternal(this_feature);
+      qualifier_vector.addAll(this_feature.getQualifiers());
+    }
+
+    final Feature first_old_feature = (Feature)gffFeatures.get(0);
+
+    final Location new_location = new Location(new_range_vector,
+        first_old_feature.getLocation().isComplement());
+
+    qualifier_vector = mergeQualifiers(qualifier_vector, first_old_feature
+        .getLocation().isComplement());
+
+    final GFFStreamFeature new_feature = new GFFStreamFeature(first_old_feature
+        .getKey(), new_location, qualifier_vector);
+
+    if(lasttimemodified != null)
+      new_feature.setLastModified(lasttimemodified);
+    new_feature.setSegmentRangeStore(id_range_store);
+    new_feature
+        .setFeature_relationship_rank_store(feature_relationship_rank_store);
+
+    // set the ID
+    String ID = new_feature.getSegmentID(new_feature.getLocation().getRanges());
+
+    Qualifier id_qualifier = new_feature.getQualifierByName("ID");
+    id_qualifier.removeValue((String) (id_qualifier.getValues()).elementAt(0));
+    id_qualifier.addValue(ID);
+
+    try
+    {
+      new_feature.setLocation(new_location);
+
+      final Qualifier gene_qualifier = new_feature.getQualifierByName("gene");
+
+      if(gene_qualifier != null
+          && gene_qualifier.getValues().size() > 0
+          && ((String) (gene_qualifier.getValues()).elementAt(0))
+              .startsWith("Phat"))
+      {
+        // special case to handle incorrect output of the Phat gene
+        // prediction tool
+        new_feature.removeQualifierByName("codon_start");
+      }
+      else
+      {
+        final Qualifier old_codon_start_qualifier = first_old_feature
+            .getQualifierByName("codon_start");
+
+        if(old_codon_start_qualifier != null)
+          new_feature.setQualifier(old_codon_start_qualifier);
+      }
+      forcedAdd(new_feature);
+      //gene.addExon(transcript_id, new_feature, true );
+      new_set.add(new_feature);
+
+    }
+    catch(ReadOnlyException e)
+    {
+      throw new Error("internal error - unexpected exception: " + e);
+    }
+    catch(OutOfRangeException e)
+    {
+      throw new Error("internal error - unexpected exception: " + e);
+    }
+    catch(EntryInformationException e)
+    {
+      throw new Error("internal error - unexpected exception: " + e);
     }
   }
   
@@ -524,7 +560,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
    *  FeatureVector containing the feature that are in that group.  Groups
    *  that have more than one member will be combined.
    **/
-  private void combineFeaturesFromHash(final Hashtable feature_groups) 
+  /*private void combineFeaturesFromHash(final Hashtable feature_groups) 
   {
     final Enumeration enumFeat = feature_groups.keys();
     String name;
@@ -634,7 +670,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         }
       }
     }
-  }
+  }*/
 
   private QualifierVector mergeQualifiers(QualifierVector qualifier_vector,
                                           boolean complement)
