@@ -70,6 +70,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
+import uk.ac.sanger.artemis.components.genebuilder.gff.GffPanel;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ReadFormatException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
@@ -116,6 +117,7 @@ public class ChadoDemo
   private JTabbedPane tabbedPane;
   
   private CVPanel cvPanel;
+  private GffPanel gffPanel;
   
   /** 
    * Chado demo
@@ -360,7 +362,7 @@ public class ChadoDemo
                     fmax+"\t"+
                     ".\t"+
                     loc.getStrand()+"\t"+
-                    loc.getPhase()+"\t");
+                    loc.getPhase()+"\t"+"ID="+chado_feature.getUniqueName()+";");
     
     
     String uniquename = chado_feature.getUniqueName();
@@ -375,15 +377,15 @@ public class ChadoDemo
     if(dbxrefs.size() > 0)
     {
       attr_buff.append("/Dbxref=");
-      //gff_buff.append("Dbxref=");
+      gff_buff.append("Dbxref=");
       for(int i = 0; i < dbxrefs.size(); i++)
       {
         FeatureDbXRef dbxref = (FeatureDbXRef) dbxrefs.get(i);
         attr_buff.append(dbxref.getDbXRef().getDb().getName() + ":"
             + dbxref.getDbXRef().getAccession() + "; ");
         
-        //gff_buff.append(dbxref.getDbXRef().getDb().getName() + ":"
-        //    + dbxref.getDbXRef().getAccession() + "; ");
+        gff_buff.append(dbxref.getDbXRef().getDb().getName() + ":"
+            + dbxref.getDbXRef().getAccession() + "; ");
       }
       attr_buff.append("\n");
     }
@@ -406,8 +408,8 @@ public class ChadoDemo
         attr_buff.append(";");
         attr_buff.append("\n");
         
-        //gff_buff.append(alias.getSynonym().getCvTerm().getName() + "=");
-        //gff_buff.append(alias.getSynonym().getName()+";");
+        gff_buff.append(alias.getSynonym().getCvTerm().getName() + "=");
+        gff_buff.append(alias.getSynonym().getName()+";");
       }
     }
 
@@ -421,8 +423,8 @@ public class ChadoDemo
         attr_buff.append("/" + featprop.getCvTerm().getName() + "="
             + GFFStreamFeature.decode(featprop.getValue()) + "\n");
         
-        //gff_buff.append(featprop.getCvTerm().getName() + "="
-        //    + GFFStreamFeature.decode(featprop.getValue()));
+        gff_buff.append(featprop.getCvTerm().getName() + "="
+            + GFFStreamFeature.decode(featprop.getValue()));
       }
     }
     
@@ -453,13 +455,22 @@ public class ChadoDemo
 
       if(cvPanel == null)
       {
-        cvPanel = new CVPanel(new uk.ac.sanger.artemis.Feature(gff_feature));
+        uk.ac.sanger.artemis.Feature f = new uk.ac.sanger.artemis.Feature(gff_feature);
+        cvPanel = new CVPanel(f);
         JScrollPane jsp = new JScrollPane(cvPanel);
         tabbedPane.add("CV Terms", jsp);
+        
+        gffPanel = new GffPanel(f);
+        JScrollPane jspGffScroll = new JScrollPane(gffPanel);
+        tabbedPane.add("GFF", jspGffScroll);
       }
       else
-        cvPanel
-            .updateFromFeature(new uk.ac.sanger.artemis.Feature(gff_feature));
+      {
+        uk.ac.sanger.artemis.Feature f = new uk.ac.sanger.artemis.Feature(gff_feature);
+        cvPanel.updateFromFeature(f);
+        gffPanel.updateFromFeature(f);
+      }
+
     }
     catch(ReadFormatException e)
     {
