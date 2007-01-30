@@ -20,12 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.16 2006-08-17 13:20:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.17 2007-01-30 17:24:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
 import uk.ac.sanger.artemis.util.StringVector;
+
+import java.util.Iterator;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
@@ -45,7 +47,7 @@ public class ChadoCanonicalGene
   private List transcripts = new Vector();
   
   // part_of transcripts
-  private Hashtable exons = new Hashtable();
+  private Hashtable splicedFeatures = new Hashtable();
   
   // derives_from transript
   private Hashtable proteins = new Hashtable();
@@ -106,7 +108,7 @@ public class ChadoCanonicalGene
         if( transcript_name.equals(getQualifier(transcript, "ID")) )
         {
           transcripts.remove(transcript);
-          exons.remove(transcript_name);
+          splicedFeatures.remove(transcript_name);
           three_prime_utr.remove(transcript_name);
           five_prime_utr.remove(transcript_name);
           other_features.remove(transcript_name);
@@ -128,12 +130,12 @@ public class ChadoCanonicalGene
     try
     {
       String name = getQualifier(embl_feature, "ID");
-      Object feature = getExon(name);
+      Object feature = getSplicedFeatures(name);
 
       if(feature != null)
       {
         String transcript_name = getQualifier((Feature) feature, "Parent");
-        exons.remove(transcript_name);
+        splicedFeatures.remove(transcript_name);
         return;
       }
       
@@ -197,7 +199,7 @@ public class ChadoCanonicalGene
         return children;
       }
       
-      searchForChildren(exons, name, children);
+      searchForChildren(splicedFeatures, name, children);
       searchForChildren(three_prime_utr, name, children);
       searchForChildren(five_prime_utr, name, children);
       searchForChildren(other_features, name, children);
@@ -267,33 +269,59 @@ public class ChadoCanonicalGene
    * @param reset
    * @throws InvalidRelationException
    */
-  public void addExon(final String transcript_name, 
+  public void addSplicedFeatures(final String transcript_name, 
                       final Feature exon, boolean reset) 
          throws InvalidRelationException
   {
     if(reset)
-      exons = new Hashtable();
-    addExon(transcript_name, exon);
+      splicedFeatures = new Hashtable();
+    addSplicedFeatures(transcript_name, exon);
   }
   
   /**
    * Add exon feature to the chado gene model.
    * @param transcript_name
-   * @param exon
+   * @param v_spliced
    * @throws InvalidRelationException
    */
-  public void addExon(final String transcript_name, 
-                      final Feature exon) 
+  public void addSplicedFeatures(final String transcript_name, 
+                      final Feature spliced) 
          throws InvalidRelationException
   {   
-    final List v_exons;
-    if(exons.containsKey(transcript_name))
-      v_exons = (Vector)exons.get(transcript_name);
+    final List v_spliced;
+    if(splicedFeatures.containsKey(transcript_name))
+      v_spliced = (Vector)splicedFeatures.get(transcript_name);
     else
-      v_exons = new Vector();
+      v_spliced = new Vector();
     
-    v_exons.add(exon);
-    exons.put(transcript_name, v_exons);
+    v_spliced.add(spliced);
+    splicedFeatures.put(transcript_name, v_spliced);
+  }
+  
+  public void correctSpliceSiteAssignments()
+  {
+    Enumeration enumSplicedFeatures = splicedFeatures.keys();
+    while(enumSplicedFeatures.hasMoreElements())
+    {
+      String transcriptId = (String)enumSplicedFeatures.nextElement();
+      Vector v_spliced = (Vector)splicedFeatures.get(transcriptId);
+      Set splicedTypes = getSpliceTypes(transcriptId);
+      Iterator it = splicedTypes.iterator();
+      while(it.hasNext())
+      {
+        String type = (String)it.next();
+        if(!type.equals("exon"))
+        {
+          List splicedFeatures = getSpliceSitesOfTranscript(transcriptId, type);
+          if(splicedFeatures.size() == 1)
+          {
+            addOtherFeatures(transcriptId, (Feature)splicedFeatures.get(0));
+            v_spliced.remove( (Feature)splicedFeatures.get(0) );
+          }
+        }
+      }
+      splicedFeatures.put(transcriptId, v_spliced);
+    }
   }
   
   /**
@@ -392,16 +420,60 @@ public class ChadoCanonicalGene
     }
     return null;
   }
+ 
+  
+  public List getSpliceSitesOfTranscript(final String transcript_name,
+                                         final String type)
+  {
+    if(splicedFeatures.containsKey(transcript_name))
+    {
+      List splicedFeaturesOfTranscript = (List)splicedFeatures.get(transcript_name);
+      List results = new Vector();
+      for(int i=0; i<splicedFeaturesOfTranscript.size(); i++)
+      {
+        Feature feature = (Feature)splicedFeaturesOfTranscript.get(i);
+        if(feature.getKey().getKeyString().equals(type))
+          results.add(feature);
+      }
+      return results;
+    }
+ 
+    return null;   
+  }
+  
+  /**
+   * Get a list of the feature keys of the types that are splice sites
+   * @param transcript_name
+   * @return
+   */
+  public Set getSpliceTypes(final String transcript_name)
+  {
+    if(splicedFeatures.containsKey(transcript_name))
+    {
+      List splicedFeaturesOfTranscript = (List)splicedFeatures.get(transcript_name);
+      Set splicedTypes = new HashSet();
+      for(int i=0; i<splicedFeaturesOfTranscript.size(); i++)
+      {
+        Feature feature = (Feature)splicedFeaturesOfTranscript.get(i);
+        splicedTypes.add( feature.getKey().getKeyString() );
+      }
+      return splicedTypes;
+    }
+ 
+    return null; 
+  }
 
   /**
    * Return the exons of a given transcript as a <code>List</code>.
    * @param transcript_name
    * @return
    */
-  public List getExonsOfTranscript(final String transcript_name)
+  public List getSplicedFeaturesOfTranscript(final String transcript_name)
   {
-    if(exons.containsKey(transcript_name))
-      return (List)exons.get(transcript_name);
+    if(splicedFeatures.containsKey(transcript_name))
+    {
+      return (List)splicedFeatures.get(transcript_name);
+    }
  
     return null;
   }
@@ -496,17 +568,17 @@ public class ChadoCanonicalGene
    * @param transcript_id transcript feature
    * @return
    */
-  private boolean isExon(final String feature_id, 
+  private boolean isSplicedFeatures(final String feature_id, 
                          final String transcript_id)
   {
-    List exons = getExonsOfTranscript(transcript_id);
-    if(exons == null)
+    List splicedFeatures = getSplicedFeaturesOfTranscript(transcript_id);
+    if(splicedFeatures == null)
       return false;
     try
     {
-      for(int i=0; i<exons.size(); i++)
+      for(int i=0; i<splicedFeatures.size(); i++)
       {
-        if(feature_id.equals(getQualifier((Feature)exons.get(i), "ID")))
+        if(feature_id.equals(getQualifier((Feature)splicedFeatures.get(i), "ID")))
           return true;
       }
     }
@@ -547,7 +619,7 @@ public class ChadoCanonicalGene
    * @param transcript_id
    * @return
    */
-  public String autoGenerateExonName(final String transcript_id)
+  public String autoGenerateSplicedFeatureName(final String transcript_id)
   {
     try
     {
@@ -563,7 +635,8 @@ public class ChadoCanonicalGene
       
       String name = (String)getGene().getQualifierByName("ID").getValues().get(0);
       int auto = 1;
-      while( isExon( name + ":" + transcript_number + ":exon:" + auto, transcript_id ) && auto < 50)
+      while( isSplicedFeatures( 
+          name + ":" + transcript_number + ":exon:" + auto, transcript_id ) && auto < 50)
         auto++;
       return name + ":" + transcript_number + ":exon:" + auto;
     }
@@ -606,7 +679,7 @@ public class ChadoCanonicalGene
       return feature;
 
     // check exons
-    feature = getExon(name);
+    feature = getSplicedFeatures(name);
     
     if(feature != null)
       return feature;
@@ -642,9 +715,9 @@ public class ChadoCanonicalGene
    * @param name
    * @return
    */
-  private Feature getExon(final String name)
+  private Feature getSplicedFeatures(final String name)
   {
-    Enumeration enum_exons = exons.elements();
+    Enumeration enum_exons = splicedFeatures.elements();
     try
     {
       while(enum_exons.hasMoreElements())
@@ -759,5 +832,10 @@ public class ChadoCanonicalGene
   public void setSrcfeature_id(int srcfeature_id)
   {
     this.srcfeature_id = srcfeature_id;
+  }
+
+  public Hashtable getSplicedFeatures()
+  {
+    return splicedFeatures;
   }
 }
