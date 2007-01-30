@@ -20,12 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.16 2007-01-22 11:09:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.17 2007-01-30 17:22:46 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -40,6 +41,7 @@ import java.util.Hashtable;
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryChangeEvent;
 import uk.ac.sanger.artemis.EntryChangeListener;
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.SelectionChangeEvent;
 import uk.ac.sanger.artemis.SelectionChangeListener;
 import uk.ac.sanger.artemis.EntryGroup;
@@ -69,6 +71,7 @@ public class GeneBuilderFrame extends JFrame
   private Component glue = Box.createVerticalGlue();
   private Selection selection;
   private ChadoCanonicalGene chado_gene;
+  private JLabel status_line = new JLabel("");
   
   public GeneBuilderFrame(final Feature feature,
                           final EntryGroup entry_group,
@@ -108,9 +111,6 @@ public class GeneBuilderFrame extends JFrame
     
     tree = new GeneComponentTree(chado_gene, this, selection);
     
-    
-    
-    
     JScrollPane jsp_tree = new JScrollPane(tree);
     jsp_tree.setPreferredSize( new Dimension(150, jsp_tree.getPreferredSize().height) );
     
@@ -118,7 +118,7 @@ public class GeneBuilderFrame extends JFrame
       selection = new Selection(null);
     
     viewer = new GeneViewerPanel(
-                gff_feature.getChadoGene(), selection, entry_group);
+                gff_feature.getChadoGene(), selection, entry_group, this, status_line);
 
     Box xBox = Box.createHorizontalBox();
     xBox.add(buildCheckBoxes(viewer, chado_gene));
@@ -126,6 +126,23 @@ public class GeneBuilderFrame extends JFrame
     
     JScrollPane jsp_viewer = new JScrollPane(xBox);
     jsp_viewer.setPreferredSize( viewer.getPreferredSize() );
+    
+    ///
+    status_line.setFont(Options.getOptions().getFont());
+    final FontMetrics fm =
+      this.getFontMetrics(status_line.getFont());
+
+    final int font_height = fm.getHeight()+10;
+
+    status_line.setMinimumSize(new Dimension(100, font_height));
+    status_line.setPreferredSize(new Dimension(100, font_height));
+
+    Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+    Border raisedbevel = BorderFactory.createRaisedBevelBorder();
+    Border compound = BorderFactory.createCompoundBorder(raisedbevel,loweredbevel);
+    status_line.setBorder(compound);
+    jsp_viewer.setColumnHeaderView(status_line);
+    ///
     
     JSplitPane top = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jsp_tree, jsp_viewer);
     JSplitPane all = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -228,7 +245,7 @@ public class GeneBuilderFrame extends JFrame
     {
       public void itemStateChanged(ItemEvent e)
       {
-        List exons = chado_gene.getExonsOfTranscript(transcript_name);
+        List exons = chado_gene.getSpliceSitesOfTranscript(transcript_name, "exon");
         
         if(exons == null)
           return;
@@ -417,10 +434,10 @@ public class GeneBuilderFrame extends JFrame
        if(trans.getEntry() != null)
          trans.getEntry().addEntryChangeListener(this);
        
-       List exons = chado_gene.getExonsOfTranscript(
-           (String)trans.getQualifierByName("ID").getValues().get(0));
+       List exons = chado_gene.getSpliceSitesOfTranscript(
+           (String)trans.getQualifierByName("ID").getValues().get(0), "exon");
        
-       if(exons == null)
+       if(exons == null || exons.size() < 1)
          continue;
        
        if(exons.get(0) instanceof org.gmod.schema.sequence.Feature)
@@ -459,8 +476,8 @@ public class GeneBuilderFrame extends JFrame
        
       stopListening(trans);
       
-      List exons = chado_gene.getExonsOfTranscript(
-          (String)trans.getQualifierByName("ID").getValues().get(0));
+      List exons = chado_gene.getSpliceSitesOfTranscript(
+          (String)trans.getQualifierByName("ID").getValues().get(0), "exon");
       
       if(exons == null)
         continue;

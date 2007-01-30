@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.33 2006-10-03 14:42:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.34 2007-01-30 17:22:46 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -30,8 +30,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
-import java.util.Vector;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.Iterator;
@@ -45,8 +43,6 @@ import uk.ac.sanger.artemis.LastSegmentException;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.FeatureVector;
 
-import org.gmod.schema.sequence.FeatureLoc;
-import org.gmod.schema.sequence.FeatureProp;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Feature;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
@@ -62,19 +58,22 @@ import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.sequence.Strand;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
-import uk.ac.sanger.artemis.Options;
 
 public class GeneViewerPanel extends JPanel
 {
   
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
   private ChadoCanonicalGene chado_gene;
   private int border = 15;
   /** Used to colour the frames. */
-  private Color light_grey = new Color(240, 240, 240);
+  //private Color light_grey = new Color(240, 240, 240);
   /** pop up menu */
   private JPopupMenu popup;
   /** overlay transcript features */
-  private boolean overlay_transcripts = false;
+  //private boolean overlay_transcripts = false;
   
   private Selection selection;
 
@@ -102,14 +101,18 @@ public class GeneViewerPanel extends JPanel
 
   final static public int CREATE_FEATURES_KEY_CODE = KeyEvent.VK_C;
   
+  private GeneBuilderFrame gene_builder;
   
   public GeneViewerPanel(final ChadoCanonicalGene chado_gene,
                          final Selection selection,
-                         final EntryGroup entry_group)
+                         final EntryGroup entry_group,
+                         final GeneBuilderFrame gene_builder,
+                         final JLabel status_line)
   {
-    this.chado_gene  = chado_gene;
-    this.selection   = selection;
-    this.entry_group = entry_group;
+    this.chado_gene   = chado_gene;
+    this.selection    = selection;
+    this.entry_group  = entry_group;
+    this.gene_builder = gene_builder;
     
     Dimension dim = new Dimension(400,400);
     setPreferredSize(dim);
@@ -143,13 +146,21 @@ public class GeneViewerPanel extends JPanel
             new MarkerRange(strand, select_start, select_start+1);
           
           //final MarkerRange new_marker_range;
-          if(selected_range == null || click_range == null) 
+          if(selected_range == null || click_range == null)
+          {
             click_range = drag_range;
-          else 
+            status_line.setText("");
+          }
+          else
+          {
             click_range = selected_range.combineRanges(drag_range, true);
+            status_line.setText(selected_range.getRawRange().getStart() + ".." +
+                                selected_range.getRawRange().getEnd());
+          }
           
           last_cursor_position = event.getPoint();
           selection.setMarkerRange(click_range);
+          
           repaint();
         }
         catch(OutOfRangeException e)
@@ -217,11 +228,17 @@ public class GeneViewerPanel extends JPanel
           return;
         try
         {
+          uk.ac.sanger.artemis.Feature feature = features.elementAt(0).getFeature();
           for(int i = 0; i < features.size(); i++)
           {
             segment = features.elementAt(i);
             segment.removeFromFeature();
+            selection.remove(segment);
           }
+        
+          selection.add(feature);
+          gene_builder.setActiveFeature(feature);
+          
           repaint();
         }
         catch(ReadOnlyException e)
@@ -251,32 +268,7 @@ public class GeneViewerPanel extends JPanel
     {
       public void actionPerformed(ActionEvent event)  
       {
-        try
-        {
-          String gene_name = 
-            (String)chado_gene.getGene().getQualifierByName("ID").getValues().get(0);
-          
-          String ID = chado_gene.autoGenerateTanscriptName("mRNA");
-          
-          QualifierVector qualifiers = new QualifierVector();
-          qualifiers.add(new Qualifier("Parent", gene_name));
-          
-          if(ID != null)
-            qualifiers.add(new Qualifier("ID", ID));
-          
-          uk.ac.sanger.artemis.Feature feature = createFeature(
-                        chado_gene.getGene().getLocation(),
-                        entry_group, new Key("mRNA"),
-                        qualifiers);
-          
-          chado_gene.addTranscript(feature.getEmblFeature());
-        }
-        catch(InvalidRelationException e)
-        {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        } 
-
+        createTranscript(chado_gene, entry_group);
         repaint();
       }
     });
@@ -292,13 +284,13 @@ public class GeneViewerPanel extends JPanel
         Feature transcript = getTranscriptAt(last_cursor_position);
         String uniquename  = getQualifier(transcript, "ID");
         
-        List exons = chado_gene.getExonsOfTranscript(uniquename);
+        List exons = chado_gene.getSpliceSitesOfTranscript(uniquename, "exon");
         GFFStreamFeature embl_exon = null;
         if(exons != null)
           embl_exon = (GFFStreamFeature)exons.get(0);
         Range range_selected = selection.getSelectionRange();
     
-        addExonFeature(embl_exon, range_selected, uniquename);
+        addExonFeature(chado_gene, entry_group, embl_exon, range_selected, uniquename);
       }
     });
     menu.add(createExon);
@@ -351,6 +343,38 @@ public class GeneViewerPanel extends JPanel
     
   }
   
+  public static uk.ac.sanger.artemis.Feature 
+                     createTranscript(final ChadoCanonicalGene chadoGene,
+                                      final EntryGroup entry_group)
+  {
+    try
+    {
+      String gene_name = 
+        (String)chadoGene.getGene().getQualifierByName("ID").getValues().get(0);
+      
+      String ID = chadoGene.autoGenerateTanscriptName("mRNA");
+      
+      QualifierVector qualifiers = new QualifierVector();
+      qualifiers.add(new Qualifier("Parent", gene_name));
+      
+      if(ID != null)
+        qualifiers.add(new Qualifier("ID", ID));
+      
+      uk.ac.sanger.artemis.Feature feature = createFeature(
+                    chadoGene.getGene().getLocation(),
+                    entry_group, new Key("mRNA"),
+                    qualifiers);
+      
+      chadoGene.addTranscript(feature.getEmblFeature());
+      return feature;
+    }
+    catch(InvalidRelationException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
+  }
   
   private void checkTranscriptBoundary(uk.ac.sanger.artemis.Feature transcript)
   {
@@ -483,7 +507,7 @@ public class GeneViewerPanel extends JPanel
    * @param qualifiers    the new features qualifiers
    * @return
    */
-  private uk.ac.sanger.artemis.Feature createFeature(
+  private static uk.ac.sanger.artemis.Feature createFeature(
                              final Location new_location,
                              final EntryGroup entry_group,
                              final Key key,
@@ -568,7 +592,7 @@ public class GeneViewerPanel extends JPanel
       {
         Feature feature = (Feature)transcripts.get(i);
         String transcript_name = getQualifier(feature, "ID");
-        List exons = chado_gene.getExonsOfTranscript( transcript_name );
+        List exons = chado_gene.getSplicedFeaturesOfTranscript(transcript_name);
         
         if(exons != null)
         {
@@ -651,7 +675,7 @@ public class GeneViewerPanel extends JPanel
    * @param ypos
    * @param fraction
    */
-  private void drawTranscriptOnFrameLine(Graphics2D g2d, Feature embl_transcript, 
+  /*private void drawTranscriptOnFrameLine(Graphics2D g2d, Feature embl_transcript, 
                                          int start, int end, int ypos, 
                                          float fraction)
   {
@@ -674,8 +698,8 @@ public class GeneViewerPanel extends JPanel
                 ypos+nframe, transcript.getColour(), 1, 
                 selection.contains(transcript), 2.f);
     
-    List exons = chado_gene.getExonsOfTranscript(
-          getQualifier( embl_transcript, "ID" ));
+    List exons = chado_gene.getSpliceSitesOfTranscript(
+          getQualifier( embl_transcript, "ID" ), "exon");
         //(String)embl_transcript.getQualifierByName("ID").getValues().get(0));
     
     if(exons == null)
@@ -786,7 +810,7 @@ public class GeneViewerPanel extends JPanel
         last_ypos   = ypos+offset; 
       }
     }
-  }
+  }*/
   
   /**
    * Draw the transcript and child features.
@@ -817,71 +841,83 @@ public class GeneViewerPanel extends JPanel
                 ypos, transcript.getColour(), 1, 
                 selection.contains(transcript), 2.f);
 
-    List exons = chado_gene.getExonsOfTranscript(
-        getQualifier( embl_transcript, "ID" ));
+    //List exons = chado_gene.getSpliceSitesOfTranscript(
+    //    getQualifier( embl_transcript, "ID" ), "exon");
 
+    Set spliceSiteTypes = chado_gene.getSpliceTypes(getQualifier( embl_transcript, "ID" ));
     ypos += border*2;
     
-    if(exons != null)
+    if(spliceSiteTypes != null)
     {
-      boolean last_segment = false;
-    
-      // build from artemis objects
-      for(int i=0; i<exons.size(); i++)
+      Iterator it = spliceSiteTypes.iterator();
+      
+      while(it.hasNext())
       {
-        int last_ex_start = 0;
-        int last_ex_end = 0;
-        int last_ypos = 0;
+        final String type = (String)it.next();
+        List splicedFeatures = chado_gene.getSpliceSitesOfTranscript(
+            getQualifier( embl_transcript, "ID" ), type);
+        
+        boolean last_segment = false;
 
-        Feature embl_exon = (Feature) exons.get(i);
-
-        uk.ac.sanger.artemis.Feature exon = 
-          (uk.ac.sanger.artemis.Feature)embl_exon.getUserData();
-
-        RangeVector ranges = exon.getLocation().getRanges();
-        FeatureSegmentVector segments = null;
-
-        try
+        // build from artemis objects
+        for(int i = 0; i < splicedFeatures.size(); i++)
         {
-          segments = exon.getSegments();
-        }
-        catch(NullPointerException npe)
-        {
-        }
+          int last_ex_start = 0;
+          int last_ex_end = 0;
+          int last_ypos = 0;
 
-        float selected_size;
-        for(int j = 0; j < ranges.size(); j++)
-        {
-          Range range = (Range) ranges.get(j);
+          Feature embl_exon = (Feature) splicedFeatures.get(i);
 
-          int ex_start = border + (int)((range.getStart() - start) * fraction);
-          int ex_end   = border + (int)((range.getEnd() - start) * fraction);
+          uk.ac.sanger.artemis.Feature exon = (uk.ac.sanger.artemis.Feature) embl_exon
+              .getUserData();
 
-          if(exon.getColour() != null)
-            g2d.setColor(exon.getColour());
+          RangeVector ranges = exon.getLocation().getRanges();
+          FeatureSegmentVector segments = null;
 
-          if(j == ranges.size() - 1)
-            last_segment = true;
-
-          selected_size = 2.f;
-          if(segments != null)
+          try
           {
-            for(int k = 0; k < segments.size(); k++)
-            {
-              FeatureSegment segment = segments.elementAt(k);
-              if(range.equals(segment.getRawRange())
-                  && selection.contains(segment))
-                selected_size = 4.f;
-            }
+            segments = exon.getSegments();
+          }
+          catch(NullPointerException npe)
+          {
           }
 
-          drawExons(g2d, ex_start, ex_end, last_ex_start, last_ex_end,
-              last_ypos, 0, ypos, exon.getColour(), 2, exon.isForwardFeature(),
-              last_segment, selection.contains(exon), selected_size);
+          float selected_size;
+          for(int j = 0; j < ranges.size(); j++)
+          {
+            Range range = (Range) ranges.get(j);
 
-          last_ex_end = ex_end;
-          last_ex_start = ex_start;
-          last_ypos = ypos;
+            int ex_start = border
+                + (int) ((range.getStart() - start) * fraction);
+            int ex_end = border + (int) ((range.getEnd() - start) * fraction);
+
+            if(exon.getColour() != null)
+              g2d.setColor(exon.getColour());
+
+            if(j == ranges.size() - 1)
+              last_segment = true;
+
+            selected_size = 2.f;
+            if(segments != null)
+            {
+              for(int k = 0; k < segments.size(); k++)
+              {
+                FeatureSegment segment = segments.elementAt(k);
+                if(range.equals(segment.getRawRange())
+                    && selection.contains(segment))
+                  selected_size = 4.f;
+              }
+            }
+
+            drawExons(g2d, ex_start, ex_end, last_ex_start, last_ex_end,
+                last_ypos, 0, ypos, exon.getColour(), 2, exon
+                    .isForwardFeature(), last_segment,
+                selection.contains(exon), selected_size);
+
+            last_ex_end = ex_end;
+            last_ex_start = ex_start;
+            last_ypos = ypos;
+          }
         }
       }
     }
@@ -948,7 +984,7 @@ public class GeneViewerPanel extends JPanel
    * @param end
    * @param fraction
    */
-  private void drawFrameLines(Graphics2D g2d, int ypos,
+  /*private void drawFrameLines(Graphics2D g2d, int ypos,
                               int start, int end, float fraction)
   {
     int offset;
@@ -963,7 +999,7 @@ public class GeneViewerPanel extends JPanel
       g2d.drawLine(border, ypos+offset, 
                    (int)((end-start)*fraction)+border, ypos+offset);
     }
-  }
+  }*/
   
   /**
    * Draw exon features
@@ -1084,7 +1120,7 @@ public class GeneViewerPanel extends JPanel
    * @param feature
    * @return
    */
-  private Color getColorFromAttributes(org.gmod.schema.sequence.Feature feature)
+  /*private Color getColorFromAttributes(org.gmod.schema.sequence.Feature feature)
   {
     List properties = new Vector(feature.getFeatureProps());
     for(int i=0; i<properties.size(); i++)
@@ -1096,7 +1132,7 @@ public class GeneViewerPanel extends JPanel
         return Options.getOptions().getColorFromColourNumber(Integer.parseInt(property.getValue()));
     }  
     return Color.CYAN;
-  }
+  }*/
   
   /**
    * Get the frame id for a feature segment
@@ -1106,7 +1142,7 @@ public class GeneViewerPanel extends JPanel
    * @param exons       List of exons
    * @return frame id
    */
-  private int getFrameID(ChadoCanonicalGene chado_gene, 
+  /*private int getFrameID(ChadoCanonicalGene chado_gene, 
                          FeatureLoc loc, 
                          int nexon, List exons)
   {
@@ -1147,7 +1183,7 @@ public class GeneViewerPanel extends JPanel
     }
 
     return FeatureSegment.NO_FRAME;
-  }
+  }*/
   
   
   /**
@@ -1157,7 +1193,7 @@ public class GeneViewerPanel extends JPanel
    *  translating one base ahead of the start position and 2 means start
    *  translating two bases ahead of the start position.
    **/
-  private int getFrameShift(int nexon, List exons, 
+  /*private int getFrameShift(int nexon, List exons, 
                             ChadoCanonicalGene chado_gene,
                             FeatureLoc loc) 
   {
@@ -1205,7 +1241,7 @@ public class GeneViewerPanel extends JPanel
       return 1;
     else 
       return 0;
-  }
+  }*/
   
   
   
@@ -1243,7 +1279,10 @@ public class GeneViewerPanel extends JPanel
    * @param range
    * @param transcript_name
    */
-  private void addExonFeature(GFFStreamFeature feature, Range range,
+  private static void addExonFeature(
+                              final ChadoCanonicalGene chadoGene,
+                              final EntryGroup entry_group,
+                              final GFFStreamFeature feature, Range range,
                               final String transcript_name)
   {
     try
@@ -1253,18 +1292,18 @@ public class GeneViewerPanel extends JPanel
         QualifierVector qualifiers = new QualifierVector();
         qualifiers.add(new Qualifier("Parent", transcript_name));
       
-        String ID = chado_gene.autoGenerateExonName(transcript_name);
+        String ID = chadoGene.autoGenerateSplicedFeatureName(transcript_name);
         if(ID != null)
           qualifiers.add(new Qualifier("ID", ID));
         
         uk.ac.sanger.artemis.Feature exon = createFeature(
             new Location(new RangeVector(range), 
-                chado_gene.getGene().getLocation().isComplement()),
+                chadoGene.getGene().getLocation().isComplement()),
             entry_group, new Key("exon"),
             qualifiers);
       
         GFFStreamFeature gff_exon = (GFFStreamFeature)exon.getEmblFeature();
-        chado_gene.addExon(transcript_name, gff_exon);
+        chadoGene.addSplicedFeatures(transcript_name, gff_exon);
         
         if(ID != null)
         {
@@ -1354,7 +1393,7 @@ public class GeneViewerPanel extends JPanel
         popup.show(e.getComponent(),
                 e.getX(), e.getY());
       }
-      else if(e.getButton() != e.BUTTON3 &&
+      else if(e.getButton() != MouseEvent.BUTTON3 &&
               e.getClickCount() == 1)
       {
         if(selection.getMarkerRange() != null &&
@@ -1380,10 +1419,17 @@ public class GeneViewerPanel extends JPanel
         else
         {
           if(feature instanceof Feature)
+          {
             selection.set(
                 (uk.ac.sanger.artemis.Feature)((Feature)feature).getUserData());
+            gene_builder.setActiveFeature(
+                (uk.ac.sanger.artemis.Feature)((Feature)feature).getUserData());
+          }
           else
+          {
             selection.set((FeatureSegment)feature);
+            gene_builder.setActiveFeature(((FeatureSegment)feature).getFeature());
+          }
         }
 
         repaint();

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.13 2006-08-22 13:00:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.14 2007-01-30 17:22:46 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -146,7 +146,7 @@ public class GeneComponentTree extends JTree
       gene_node.add(transcript_node);
       
       // exons
-      List exons = chado_gene.getExonsOfTranscript(transcript_id);
+      List exons = chado_gene.getSplicedFeaturesOfTranscript(transcript_id);
       if(exons == null)
         continue;
 
