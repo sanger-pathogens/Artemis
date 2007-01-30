@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.19 2006-11-02 14:39:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.20 2007-01-30 17:30:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -52,10 +52,15 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.19 2006-11-02 14:39:32 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.20 2007-01-30 17:30:32 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+
   /**
    *  The shortcut for "Create From Base Range".
    **/
