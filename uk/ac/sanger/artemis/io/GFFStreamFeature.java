@@ -20,11 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.45 2007-01-30 17:26:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.46 2007-01-31 16:23:55 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
+import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.*;
@@ -40,7 +41,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.45 2007-01-30 17:26:13 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.46 2007-01-31 16:23:55 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -346,6 +347,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       return (String)getQualifierByName("ID").getValues().get(0);
     }
 
+    Splash.logger4j.warn("RANGE NOT FOUND "+r.toString());
+    
     return null;
   }
 
