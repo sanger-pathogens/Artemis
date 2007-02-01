@@ -20,11 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.17 2007-01-30 17:24:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.18 2007-02-01 16:43:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
+import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.StringVector;
 
 import java.util.Iterator;
@@ -315,8 +316,15 @@ public class ChadoCanonicalGene
           List splicedFeatures = getSpliceSitesOfTranscript(transcriptId, type);
           if(splicedFeatures.size() == 1)
           {
-            addOtherFeatures(transcriptId, (Feature)splicedFeatures.get(0));
-            v_spliced.remove( (Feature)splicedFeatures.get(0) );
+            Feature f = (Feature)splicedFeatures.get(0);
+            addOtherFeatures(transcriptId, f);
+            v_spliced.remove(f);
+            try
+            {
+              f.removeQualifierByName("feature_relationship_rank");
+            }
+            catch(ReadOnlyException e){}
+            catch(EntryInformationException e){}
           }
         }
       }
