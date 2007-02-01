@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.46 2007-01-31 16:23:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.47 2007-02-01 16:42:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -31,7 +31,6 @@ import uk.ac.sanger.artemis.util.*;
 import java.io.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -41,7 +40,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.46 2007-01-31 16:23:55 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.47 2007-02-01 16:42:53 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -208,20 +207,20 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         }
       }
 
-      if( !((String)line_bits.elementAt(0)).equals("null") )
+      /*if( !((String)line_bits.elementAt(0)).equals("null") )
       {
         final Qualifier gff_seqname =
           new Qualifier("gff_seqname", decode((String)line_bits.elementAt(0)));
 
         setQualifier(gff_seqname);
-      }
+      }*/
       
       final Key key = new Key((String)line_bits.elementAt(2));
       setKey(key);
 
-      final Qualifier source_qualifier =
+      /*final Qualifier source_qualifier =
         new Qualifier("gff_source", (String)line_bits.elementAt(1));
-      setQualifier(source_qualifier);
+      setQualifier(source_qualifier);*/
 
       if( !((String)line_bits.elementAt(5)).equals(".") )
       {
@@ -596,13 +595,18 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       Qualifier group   = getQualifierByName("group");
 
       // source becomes a Dbxref in chado
-     // String source_str = null;
-     // if(getQualifierByName("Dbxref") != null)
-     //   source_str = getDbxrefGFFSource(getQualifierByName("Dbxref"));
+      String source_str = null;
+      if(getQualifierByName("Dbxref") != null)
+      {
+        source_str = getDbxrefGFFSource(getQualifierByName("Dbxref"));
+      }
       
-      if(seqname == null) 
-        seqname = new Qualifier("gff_seqname", ".");
-
+      if(seqname == null && ((GFFDocumentEntry)getEntry()).getDocument() != null) 
+        seqname = new Qualifier("gff_seqname", 
+                                ((GFFDocumentEntry)getEntry()).getDocument().getName());
+      if(seqname == null)
+        seqname = new Qualifier("gff_seqname","gff_seqname");
+      
       if(source == null) 
         source = new Qualifier("source", "artemis");
 
@@ -650,9 +654,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
       final String attribute_string = unParseAttributes();
 
-      //if(source_str == null)
-      String source_str = (String)source.getValues().elementAt(0);
-      
+      if(source_str == null && source != null)
+       source_str = (String)source.getValues().elementAt(0);
+
       writer.write(seqname.getValues().elementAt(0) + "\t" +
                    source_str + "\t" +
                    getKey() + "\t" +
@@ -955,6 +959,32 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   public Timestamp getLastModified()
   {
     return timelastmodified;
+  }
+  
+  /**
+   * Get the GFF_source value of a Dbxref qualifier.
+   * @param qualifier
+   * @return  the gff_source value or NULL
+   */
+  private String getDbxrefGFFSource(final Qualifier qualifier)
+  {
+    StringVector qualifier_strings =
+      StreamQualifier.toStringVector(null, qualifier);
+    
+    for(int i=0; i<qualifier_strings.size(); i++)
+    {
+      String qualifier_string = (String)qualifier_strings.elementAt(i);
+      
+      if(qualifier_string.indexOf("GFF_source:") >-1)
+      {
+        int index = qualifier_string.indexOf(":")+1;
+        int len = qualifier_string.length();
+        if(qualifier_string.endsWith("\""))
+          len--;
+        return qualifier_string.substring(index, len);
+      }
+    }
+    return null;
   }
   
   /**
