@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.19 2006-07-04 16:01:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.20 2007-02-01 11:40:44 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -29,16 +29,14 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.components.genebuilder.GeneBuilderFrame;
+import uk.ac.sanger.artemis.components.genebuilder.GeneViewerPanel;
+import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.Qualifier;
-import uk.ac.sanger.artemis.io.QualifierInfo;
-import uk.ac.sanger.artemis.io.QualifierInfoVector;
 import uk.ac.sanger.artemis.io.QualifierVector;
-import uk.ac.sanger.artemis.io.QualifierParseException;
-import uk.ac.sanger.artemis.io.InvalidQualifierException;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
@@ -57,12 +55,17 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.19 2006-07-04 16:01:59 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.20 2007-02-01 11:40:44 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
     implements EntryGroupChangeListener, EntryChangeListener 
 {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
   /**
    *  The GotoEventSource object that was passed to the constructor.
@@ -900,9 +903,20 @@ public class EditMenu extends SelectionMenu
         if(!dialog.getResult())
           return;
       }
-
       final Feature new_feature;
 
+ 
+      //
+      //  GFF merge
+      if(merge_feature.getEmblFeature() instanceof GFFStreamFeature)
+      {
+        gffMergeFeatures(features_to_merge, merge_feature, 
+                         selection, entry_group);
+        return;
+      }
+      
+       
+        
       try 
       {
         new_feature = merge_feature.duplicate();
@@ -1071,6 +1085,128 @@ public class EditMenu extends SelectionMenu
     finally 
     {
       entry_group.getActionController().endAction();
+    }
+  }
+  
+  /**
+   * Merge features / gene model - creating gene model if not already present
+   * @param features_to_merge
+   * @param merge_feature
+   * @param selection
+   * @param entry_group
+   */
+  private static void gffMergeFeatures(final FeatureVector features_to_merge,
+                                final Feature merge_feature,
+                                final Selection selection,
+                                final EntryGroup entry_group)
+  {
+    try
+    {
+      Qualifier parentQualifier = merge_feature.getQualifierByName("Parent");
+      ChadoCanonicalGene chadoGene = null;
+      String transcriptId = null;
+      if(parentQualifier == null)
+      {
+        // create gene model
+        Location geneLocation = new Location(selection.getSelectionRange());
+       
+        String parentId = 
+          (String)merge_feature.getQualifierByName("ID").getValues().get(0)+":gene";
+        QualifierVector qualifiers = new QualifierVector();
+        qualifiers.setQualifier(new Qualifier("ID", parentId));
+        
+        // create gene
+        Feature parentGene =
+          merge_feature.getEntry().createFeature(new Key("gene"), 
+                                                 geneLocation, qualifiers);
+        
+        chadoGene = new ChadoCanonicalGene();
+        chadoGene.setGene(parentGene.getEmblFeature());
+        ((uk.ac.sanger.artemis.io.GFFStreamFeature)
+            (parentGene.getEmblFeature())).setChadoGene(chadoGene);
+        
+        // create transcript
+        Feature transcript = GeneViewerPanel.createTranscript(chadoGene, entry_group);
+        transcriptId = (String)transcript.getQualifierByName("ID").getValues().get(0);
+        
+        parentQualifier = new Qualifier("Parent", transcriptId);
+        merge_feature.setQualifier(parentQualifier);
+      }
+      else
+      {
+        transcriptId = (String)parentQualifier.getValues().get(0);
+        
+        /// todo - merging gene models ?
+        
+        JOptionPane.showMessageDialog(null,
+             "This option cannot be used to merge gene models");
+
+        return;
+      }
+      
+      final RangeVector ranges = new RangeVector();
+      java.util.Hashtable id_range_store = 
+             ((GFFStreamFeature)merge_feature.getEmblFeature()).getSegmentRangeStore();
+      
+      for(int i=1; i< features_to_merge.size(); i++)
+      {
+        final Feature this_feature = features_to_merge.elementAt(i);
+        final FeatureSegmentVector segments = this_feature.getSegments();
+
+        
+        id_range_store.put( (String)this_feature.getQualifierByName("ID").getValues().get(0),
+                            this_feature.getLocation().getTotalRange());
+        
+        this_feature.addQualifierValues(parentQualifier);
+        
+        for(int j = 0; j < segments.size(); ++j)
+        {
+          final FeatureSegment this_segment = segments.elementAt(j);
+          ranges.add(this_segment.getRawRange());
+        }         
+      }
+      
+      for(int i=0; i<features_to_merge.size(); i++)
+      {
+        final Feature this_feature = features_to_merge.elementAt(i);
+        ((GFFStreamFeature)this_feature.getEmblFeature()).setSegmentRangeStore(id_range_store);
+        
+        // remove the duplicate feature
+        if(i > 0)
+          this_feature.getEntry().remove(this_feature, true);
+      }
+
+      // add the segments
+      for(int i = 0; i < ranges.size(); i++)
+      {
+        final Range range = (Range)ranges.get(i);
+        merge_feature.addSegment(range);
+      }
+      
+      // set the new ID for the joined feature
+      String ID = ((GFFStreamFeature)merge_feature.getEmblFeature()).getSegmentID(
+                                         merge_feature.getLocation().getRanges());
+      Qualifier qualifier = new Qualifier("ID", ID);
+      merge_feature.getEmblFeature().setQualifier(qualifier);
+      chadoGene.addSplicedFeatures(transcriptId, merge_feature.getEmblFeature(), true);
+    }
+    catch(ReadOnlyException e)
+    {
+      final String message = "one or more of the features is read-only or is in a "
+          + "read-only entry - cannot continue";
+      new MessageDialog(null, message);
+      return;
+    }
+    catch(InvalidRelationException ire){ ire.printStackTrace(); }
+    catch(EntryInformationException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    catch(OutOfRangeException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
   }
 
