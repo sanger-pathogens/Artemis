@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.6 2006-05-31 10:38:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.7 2007-02-01 11:39:11 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.io.Reader;
  *  possible events.)
  *
  *  @author Kim Rutherford
- *  @version $Id: Entry.java,v 1.6 2006-05-31 10:38:48 tjc Exp $
+ *  @version $Id: Entry.java,v 1.7 2007-02-01 11:39:11 tjc Exp $
  **/
 
 public class Entry implements FeatureChangeListener, Selectable 
@@ -431,12 +431,19 @@ public class Entry implements FeatureChangeListener, Selectable
 
     return return_features;
   }
+  
+  public void remove(final Feature feature)
+      throws ReadOnlyException 
+  {
+    remove(feature, false);
+  }
 
   /**
    *  Delete a Feature from this object and the underlying embl.Entry object.
    *  @param feature The Feature to delete.
    **/
-  public void remove(final Feature feature)
+  public void remove(final Feature feature,
+                     final boolean duplicate)
       throws ReadOnlyException 
   {
     synchronized(getBases()) 
@@ -448,7 +455,7 @@ public class Entry implements FeatureChangeListener, Selectable
 
       // now inform the listeners that a deletion has occured
       final EntryChangeEvent event =
-        new EntryChangeEvent(this, feature, EntryChangeEvent.FEATURE_DELETED);
+        new EntryChangeEvent(this, feature, duplicate, EntryChangeEvent.FEATURE_DELETED);
 
       fireAction(entry_listener_list, event);
       feature.setEntry(null);
