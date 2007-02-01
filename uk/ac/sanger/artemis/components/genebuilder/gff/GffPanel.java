@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.1 2007-01-30 17:21:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.2 2007-02-01 11:44:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -123,7 +123,8 @@ public class GffPanel extends JPanel
         String parent = (String)parents.get(i);
         JTextField parentTextField = new JTextField(parent);
         
-        if(cellDimension == null)
+        if(cellDimension == null ||
+           cellDimension.width < parentTextField.getPreferredSize().width+10)
           cellDimension = new Dimension(parentTextField.getPreferredSize().width+10,
                                         parentField.getPreferredSize().height+10);
         parentTextField.setMaximumSize(cellDimension);
