@@ -529,6 +529,8 @@ public class IBatisDAO extends GmodDAO
       insertFeatureAlias((FeatureSynonym)o);
     else if(o instanceof FeatureCvTerm)
       insertAllFeatureCvTerm((FeatureCvTerm)o);
+    else if(o instanceof FeatureRelationship)
+      insertFeatureRelationship((FeatureRelationship)o);
   }
   
   
@@ -595,7 +597,10 @@ public class IBatisDAO extends GmodDAO
     }
   }
 
-    
+  private void insertFeatureRelationship(FeatureRelationship feature_relationship)
+  {
+    sqlMap.insert("insertFeatureRelationship", feature_relationship);
+  }
   
   /**
    * Insert a feature_dbxref for a feature.
