@@ -212,11 +212,10 @@ public class ChadoTransactionManager
       {
         RangeVector rv_new = event.getNewLocation().getRanges();
         RangeVector rv_old = event.getOldLocation().getRanges();
-
-        Splash.logger4j.debug("SEGMENT_CHANGED");
          
         if(rv_old.size() > rv_new.size()) // segment deleted
         {
+          Splash.logger4j.debug("SEGMENT_CHANGED DELETED");
           // delete segment
           int ideleted;
           Vector deleted = new Vector();
@@ -260,76 +259,13 @@ public class ChadoTransactionManager
           }
           
           // update feature_relationship.rank
-          updateFeatureRelationshipRank(feature, rv_new);
+          processFeatureRelationshipRank(feature, rv_new, ChadoTransaction.UPDATE);
         }
         else if(rv_old.size() < rv_new.size()) // feature segment added
         {
-          boolean found;
-          FeatureSegmentVector segments =
-            ((uk.ac.sanger.artemis.Feature)feature.getUserData()).getSegments();
-          for(int iadd=0; iadd<segments.size(); iadd++)
-          {   
-            FeatureSegment segment = segments.elementAt(iadd);
-            Range range = segment.getRawRange();
-            found = false;
-            for(int j=0; j<rv_old.size(); j++)
-            {
-              if( ((Range)rv_old.get(j)).equals(range) )
-                found = true;     
-            }
-            
-            String transcript = 
-              (String)feature.getQualifierByName("Parent").getValues().get(0);
-            if(!found)
-            {
-              // find prefix fo ID
-              Hashtable id_store = feature.getSegmentRangeStore();
-              String prefix[] = null;
-              Enumeration enum_ids = id_store.keys();
-              while(enum_ids.hasMoreElements())
-              {
-                String id = (String)enum_ids.nextElement();
-                prefix = feature.getPrefix(id, ':');
-                if(prefix[0] != null)
-                  break;
-              }
-              
-              // USE PREFIX TO CREATE NEW ID
-              if(prefix[0] != null)
-              {
-                int auto_num = feature.getAutoNumber(prefix[0], ':');
-                feature.getSegmentRangeStore().put(prefix[0]+":"+auto_num, 
-                                                   range);
-              }
-              else
-              {
-                String key = feature.getKey().toString();
-                feature.getSegmentRangeStore().put(transcript+":"+ key +":1", 
-                                                   range);
-              }
-       
-              
-              String new_id = feature.getSegmentID(rv_new);
-              Qualifier qualifier = new Qualifier("ID", new_id);
-              try
-              {
-                feature.setQualifier(qualifier);
-              }
-              catch(ReadOnlyException e)
-              {
-                e.printStackTrace();
-              }
-              catch(EntryInformationException e)
-              {
-                e.printStackTrace();
-              }
-              
-              String segment_uniquename = feature.getSegmentID(range);
-              insertFeatureSegment(segment,segment_uniquename);
-              // update feature_relationship.rank
-              updateFeatureRelationshipRank(feature, rv_new);
-            }
-          }
+          Splash.logger4j.debug("SEGMENT_CHANGED ADDED");
+
+          processFeatureRelationshipRank(feature, rv_new, ChadoTransaction.UPDATE);
         }
       }
       else if(event.getType() == FeatureChangeEvent.LOCATION_CHANGED)
@@ -399,7 +335,7 @@ public class ChadoTransactionManager
       }
       else if(event.getType() == FeatureChangeEvent.QUALIFIER_CHANGED)
       {
-        Splash.logger4j.debug("QUALIFIER_CHANGED "
+        Splash.logger4j.debug("QUALIFIER_CHANGED for "
             +event.getOldQualifiers().getQualifierByName("ID").getValues().get(0));
         
         editKeyAndQualifiers(event.getOldQualifiers(),event.getNewQualifiers(),
@@ -454,12 +390,17 @@ public class ChadoTransactionManager
         return;
       }
      
-      Splash.logger4j.debug("FEATURE_ADDED");
       Feature feature = event.getFeature();
       insertFeature(feature);
     }
     else if(event.getType() == EntryChangeEvent.FEATURE_DELETED)
     { 
+      if(event.isDuplicate())
+      {
+        Splash.logger4j.debug("FEATURE_DELETED looks like duplicate - ignore");
+        return;
+      }
+      
       try
       {
         Qualifier qualifier_uniquename = event.getFeature().getQualifierByName("ID");
@@ -496,8 +437,9 @@ public class ChadoTransactionManager
    * @param feature
    * @param rv_new
    */ 
-  private void updateFeatureRelationshipRank(final GFFStreamFeature feature,
-                                             final RangeVector rv_new)
+  private void processFeatureRelationshipRank(final GFFStreamFeature feature,
+                                             final RangeVector rv_new,
+                                             final int type)
   {   
     // update feature_relationship.rank
     ChadoTransaction tsn;
@@ -536,7 +478,7 @@ public class ChadoTransactionManager
           feature_relationship.setRank(rank);
           featureRelationshipsForSubjectId.add(feature_relationship);
           
-          tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+          tsn = new ChadoTransaction(type,
               feature_relationship,
               feature.getLastModified(), feature,
               feature.getKey().getKeyString());
@@ -941,19 +883,43 @@ public class ChadoTransactionManager
       }
       else
       {  
-        org.gmod.schema.sequence.Feature chado_feature =
-           new org.gmod.schema.sequence.Feature();
+        RangeVector rv = feature.getLocation().getRanges();
         CvTerm cvterm = new CvTerm();
         cvterm.setCvTermId( lcvterm_id.intValue() );
         
-        chado_feature.setCvTerm(cvterm);
-        chado_feature.setUniqueName(uniquename);
+        if(rv.size() > 0)
+        {
+          for(int i=0; i<rv.size(); i++)
+          {   
+            org.gmod.schema.sequence.Feature chado_feature =
+              new org.gmod.schema.sequence.Feature();
         
-        tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-            chado_feature,
-            feature.getLastModified(), feature, null);
+            chado_feature.setCvTerm(cvterm);
+            chado_feature.setUniqueName( feature.getSegmentID((Range)rv.elementAt(i)) );
+        
+            Splash.logger4j.debug("KEY CHANGE "+feature.getSegmentID((Range)rv.elementAt(i)));
+            tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                 chado_feature,
+                 feature.getLastModified(), feature, null);
 
-        sql.add(tsn);
+            sql.add(tsn);
+          }
+        }
+        else
+        {
+          org.gmod.schema.sequence.Feature chado_feature =
+            new org.gmod.schema.sequence.Feature();
+      
+          chado_feature.setCvTerm(cvterm);
+          chado_feature.setUniqueName(uniquename);
+      
+          Splash.logger4j.debug("KEY CHANGE "+new_key);
+          tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+               chado_feature,
+               feature.getLastModified(), feature, null);
+
+          sql.add(tsn);
+        }
       }
     }
     
@@ -1121,6 +1087,8 @@ public class ChadoTransactionManager
         uniquename = (String)id_keys.nextElement();
         FeatureProp featureprop = getFeatureProp(uniquename, qualifier_string,
                                                  lcvterm_id, rank);
+        
+        Splash.logger4j.debug("FEATUREPROP "+type+"\n"+qualifier_string);
         tsn = new ChadoTransaction(type,
             featureprop,
             feature.getLastModified(), feature, feature.getKey().getKeyString());
@@ -1134,6 +1102,7 @@ public class ChadoTransactionManager
       FeatureProp featureprop = getFeatureProp(uniquename,
                          qualifier_string, lcvterm_id, rank);
     
+      Splash.logger4j.debug("FEATUREPROP "+type+"\n"+qualifier_string);
       tsn = new ChadoTransaction(type,
           featureprop,
           feature.getLastModified(), feature, feature.getKey().getKeyString());       
@@ -1314,6 +1283,7 @@ public class ChadoTransactionManager
                new_dbxref,
                feature.getLastModified(), feature,
                feature.getKey().getKeyString());
+           sql.add(tsn);
          }
          else if(qualifier_name.equals("codon_start"))
          {
@@ -1325,7 +1295,12 @@ public class ChadoTransactionManager
                                       featureloc,
                                       feature.getLastModified(), feature,
                                       feature.getKey().getKeyString());
-           //sql.add(tsn);
+           sql.add(tsn);
+         }
+         else if(qualifier_name.equals("Parent"))
+         {
+           processFeatureRelationshipRank(feature, feature.getLocation().getRanges(),
+                                          ChadoTransaction.INSERT);
          }
          else if(isCvTag(qualifier_name))
          {
@@ -1337,6 +1312,7 @@ public class ChadoTransactionManager
                       feature_cvterm,
                       feature.getLastModified(), feature,
                       feature.getKey().getKeyString());
+           sql.add(tsn);
          }
          else if(isSynonymTag(qualifier_name))
          {
@@ -1350,8 +1326,9 @@ public class ChadoTransactionManager
                feature_synonym,
                feature.getLastModified(), feature,
                feature.getKey().getKeyString());
+           sql.add(tsn);
          }
-         sql.add(tsn);
+         
       }
     }  
     
