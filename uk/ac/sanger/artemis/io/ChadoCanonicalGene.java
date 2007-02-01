@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.18 2007-02-01 16:43:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.19 2007-02-01 18:13:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -275,7 +275,7 @@ public class ChadoCanonicalGene
          throws InvalidRelationException
   {
     if(reset)
-      splicedFeatures = new Hashtable();
+      splicedFeatures.remove(transcript_name);
     addSplicedFeatures(transcript_name, exon);
   }
   
