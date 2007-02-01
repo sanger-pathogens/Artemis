@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.2 2007-02-01 11:44:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.3 2007-02-01 16:44:33 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -27,7 +27,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 
 import javax.swing.Box;
 import javax.swing.JLabel;
@@ -47,6 +46,7 @@ public class GffPanel extends JPanel
   private static final long serialVersionUID = 1L;
   private QualifierVector gffQualifiers;
   private JTextField idTextField;
+  private JTextField timeTextField;
   
   public GffPanel(final Feature feature)
   {
@@ -62,7 +62,8 @@ public class GffPanel extends JPanel
   public boolean isGffTag(final Qualifier qualifier)
   {
     if(qualifier.getName().equals("ID") ||
-       qualifier.getName().equals("Parent"))
+       qualifier.getName().equals("Parent") ||
+       qualifier.getName().equals("timelastmodified"))
       return true;
     return false;
   }
@@ -79,6 +80,10 @@ public class GffPanel extends JPanel
     if(parentQualifier != null)
       nrows += parentQualifier.getValues().size();
       
+    Qualifier timeQualifier = gffQualifiers.getQualifierByName("timelastmodified");
+    if(timeQualifier != null)
+      nrows += timeQualifier.getValues().size();
+    
     Box gffBox = Box.createVerticalBox();
     gffBox.add(Box.createVerticalStrut(10));
     
@@ -87,15 +92,14 @@ public class GffPanel extends JPanel
     JPanel gridPanel = new JPanel(grid);
     
     Dimension cellDimension = null;
-    JLabel parentField = new JLabel("Parent");
-    int maxLabelWidth = parentField.getPreferredSize().width;;
+    
+    int maxLabelWidth = new JLabel("timelastmodified").getPreferredSize().width;
+    nrows = 0;
     if(idQualifier != null)
     {
       String featureId = (String)idQualifier.getValues().get(0);
       
       JLabel idField = new JLabel("ID");
-      idField.setPreferredSize(new Dimension(maxLabelWidth,
-                       idField.getPreferredSize().height));
       
       idTextField = new JTextField(featureId);
       cellDimension = new Dimension(idTextField.getPreferredSize().width+10,
@@ -112,12 +116,14 @@ public class GffPanel extends JPanel
       c.ipadx = 0;
       c.anchor = GridBagConstraints.WEST;
       gridPanel.add(idTextField, c);
+      nrows++;
     }
     
     
     if(parentQualifier != null)
     {
       StringVector parents = parentQualifier.getValues();
+      JLabel parentField = new JLabel("Parent");
       for(int i=0; i<parents.size(); i++)
       {
         String parent = (String)parents.get(i);
@@ -130,17 +136,48 @@ public class GffPanel extends JPanel
         parentTextField.setMaximumSize(cellDimension);
         
         c.gridx = 0;
-        c.gridy = i+1;
+        c.gridy = nrows;
         c.ipadx = 5;
         c.anchor = GridBagConstraints.EAST;
         gridPanel.add(parentField, c); 
         c.gridx = 1;
-        c.gridy = i+1;
+        c.gridy = nrows;
         c.ipadx = 0;
         c.anchor = GridBagConstraints.WEST;
         gridPanel.add(parentTextField, c); 
+        nrows++;
       }
     }
+      
+    
+    if(timeQualifier != null)
+    {
+      String time = (String)timeQualifier.getValues().get(0);
+      
+      JLabel timeField = new JLabel("timelastmodified");
+      timeField.setPreferredSize(new Dimension(maxLabelWidth,
+                       timeField.getPreferredSize().height));
+      
+      timeTextField = new JTextField(time);
+      if(cellDimension == null ||
+         cellDimension.width < timeTextField.getPreferredSize().width+10)
+         cellDimension = new Dimension(timeTextField.getPreferredSize().width+10,
+                                       timeField.getPreferredSize().height+10);
+      timeTextField.setMaximumSize(cellDimension);
+      
+      c.gridx = 0;
+      c.gridy = nrows;
+      c.ipadx = 5;
+      c.anchor = GridBagConstraints.EAST;
+      gridPanel.add(timeField, c);
+      c.gridx = 1;
+      c.gridy = nrows;
+      c.ipadx = 0;
+      c.anchor = GridBagConstraints.WEST;
+      gridPanel.add(timeTextField, c);
+      nrows++;
+    }  
+    
 
     if(cellDimension != null)
       gridPanel.setPreferredSize(new Dimension(maxLabelWidth+cellDimension.width,

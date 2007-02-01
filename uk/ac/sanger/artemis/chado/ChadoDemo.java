@@ -362,7 +362,8 @@ public class ChadoDemo
                     fmax+"\t"+
                     ".\t"+
                     loc.getStrand()+"\t"+
-                    loc.getPhase()+"\t"+"ID="+chado_feature.getUniqueName()+";");
+                    loc.getPhase()+"\t"+"ID="+chado_feature.getUniqueName()+";"+
+                    "timelastmodified="+Long.toString(chado_feature.getTimeLastModified().getTime())+";");
     
     
     String uniquename = chado_feature.getUniqueName();
@@ -690,7 +691,7 @@ public class ChadoDemo
    * @param id  a cvterm_id  
    * @return    the cvterm name
    */
-  private static String getCvtermName(int id, GmodDAO dao)
+  /*private static String getCvtermName(int id, GmodDAO dao)
   {
     return getCvTerm(id, dao).getName();
   }
@@ -701,7 +702,7 @@ public class ChadoDemo
       getCvterms(dao);
 
     return (CvTerm)cvterms.get(new Integer(id));
-  }
+  }*/
   
   public static CvTerm getCvTermByCvTermName(String cvterm_name)
   {
@@ -721,7 +722,7 @@ public class ChadoDemo
    * @param dao the data access object
    * @return    the cvterm <code>Hashtable</code>
    */
-  private static Hashtable getCvterms(GmodDAO dao)
+  /*private static Hashtable getCvterms(GmodDAO dao)
   {
     cvterms = new Hashtable();
 
@@ -743,7 +744,7 @@ public class ChadoDemo
     }
 
     return cvterms;
-  }
+  }*/
   
   
   public class SelectionListener implements ListSelectionListener
