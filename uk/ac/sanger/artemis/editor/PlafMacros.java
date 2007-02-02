@@ -26,9 +26,6 @@ package uk.ac.sanger.artemis.editor;
 
 import javax.swing.*;
 import java.util.*;
-import java.io.*;
-import java.lang.*;
-import java.awt.*;
 
 /**
 *

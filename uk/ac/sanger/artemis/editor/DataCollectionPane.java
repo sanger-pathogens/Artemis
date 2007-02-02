@@ -26,7 +26,6 @@ package uk.ac.sanger.artemis.editor;
 
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.util.StringVector;
-import uk.ac.sanger.artemis.components.SwingWorker;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -42,7 +41,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.net.URL;
 import java.net.MalformedURLException;
 
@@ -56,6 +54,8 @@ public class DataCollectionPane extends JScrollPane
                                 implements FastaListener
 {
 
+  /**  */
+  private static final long serialVersionUID = 1L;
   private FastaTextPane fastaTextPane;
   private Annotation ann;
   private JDesktopPane desktop;
@@ -427,6 +427,9 @@ public class DataCollectionPane extends JScrollPane
       if(hit.getAcc() != null)
         srscmd = srscmd.concat("|[{uniprot}-AccNumber:"+hit.getAcc()+"*]");
 
+      if(srs_url.indexOf("ebi.ac.uk") > -1)
+        srscmd = srscmd + "+-vn+2";
+      
       if(BigPane.srsBrowser.isSelected())
         BrowserControl.displayURL(srs_url+srscmd);
 
@@ -508,7 +511,7 @@ public class DataCollectionPane extends JScrollPane
   }
 
 
-  private HitInfo findHitInfo(String acc)
+  /*private HitInfo findHitInfo(String acc)
   {
     Enumeration hitEnum = fastaTextPane.getHitCollection().elements();
     while(hitEnum.hasMoreElements())
@@ -519,7 +522,7 @@ public class DataCollectionPane extends JScrollPane
     }
 
     return null;
-  }
+  }*/
 
 
 //private static HitInfo getHitInfo(String acc, Vector hits)
@@ -815,7 +818,7 @@ public class DataCollectionPane extends JScrollPane
     StringBuffer orthoText = new StringBuffer();
     if(ortholog)
     {
-      String geneName = hit.getGeneName();
+      //String geneName = hit.getGeneName();
 
       if(hit.getGeneName() != null &&
          !hit.getGeneName().equals(""))

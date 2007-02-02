@@ -42,7 +42,7 @@ public class ExternalApplication
   /** standard error */
   private StringBuffer stderr = new StringBuffer();
   /** running directory */
-  private File project;
+  //private File project;
   /** process status */
   private String status;
   private StdoutHandler stdouth;
@@ -58,7 +58,7 @@ public class ExternalApplication
   public ExternalApplication(String[] cmd, 
                        String[] envp, File project)
   {
-    this.project = project;
+    //this.project = project;
     status = "0";
 
     Runtime cmdRun = Runtime.getRuntime();
@@ -95,7 +95,6 @@ public class ExternalApplication
     BufferedReader stderrRead = null;
     try
     {
-      String line;
       stderrStream =
          new BufferedInputStream(p.getErrorStream());
       stderrRead =

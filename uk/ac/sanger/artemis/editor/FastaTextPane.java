@@ -25,17 +25,14 @@
 package uk.ac.sanger.artemis.editor;
 
 import java.awt.Point;
-import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Dimension;
 import java.io.InputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.File;
 import java.io.StringReader;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
@@ -49,6 +46,10 @@ import uk.ac.sanger.artemis.util.WorkingGZIPInputStream;
 
 public class FastaTextPane extends JScrollPane
 {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
   private JTextArea textArea;
   private Vector hitInfoCollection = null;
   private String format = null;
@@ -180,7 +181,7 @@ public class FastaTextPane extends JScrollPane
 
   protected StringBuffer readBLASTPFile(String format)
   {
-    File fn = dataFile;
+    //File fn = dataFile;
     StringBuffer sbuff = new StringBuffer();
 
     InputStreamReader streamReader = null;
@@ -197,7 +198,7 @@ public class FastaTextPane extends JScrollPane
       int len     = 0;
       HitInfo hit = null;
       int ind1 = 0;
-      int endQuery = 0;
+      //int endQuery = 0;
 
       while( (line = buffReader.readLine()) != null)
       {
@@ -379,7 +380,7 @@ public class FastaTextPane extends JScrollPane
 
   protected StringBuffer readFASTAFile(String format)
   {
-    File fn = dataFile;
+    //File fn = dataFile;
     StringBuffer sbuff = new StringBuffer();
 
     InputStreamReader streamReader = null;
@@ -880,7 +881,7 @@ public class FastaTextPane extends JScrollPane
       HitInfo hit = (HitInfo)obj;
 
       int start = hit.getStartPosition();
-      int end   = hit.getEndPosition();
+//    int end   = hit.getEndPosition();
 //    textArea.moveCaretPosition(end);
       textArea.moveCaretPosition(start);
 

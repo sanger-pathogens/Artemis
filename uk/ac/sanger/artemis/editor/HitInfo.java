@@ -52,8 +52,8 @@ public class HitInfo
   private String length = null;
 
   /** */
-  private String opt    = null;
-  private String zscore = null;
+  //private String opt    = null;
+  //private String zscore = null;
   private String evalue = null;
   private String header = null;
   /** EMBL ID from linking to EMBL in SRS */
@@ -232,8 +232,8 @@ public class HitInfo
     StringTokenizer tok = new StringTokenizer(header.substring(ind2+1));
     try
     {
-      opt    = tok.nextToken();
-      zscore = tok.nextToken();
+      tok.nextToken();  // opt
+      tok.nextToken();  // zscore
       setEValue(tok.nextToken());
     }
     catch(NoSuchElementException exp){}

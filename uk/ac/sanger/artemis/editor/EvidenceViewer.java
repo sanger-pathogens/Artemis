@@ -39,9 +39,11 @@ import uk.ac.sanger.artemis.sequence.Marker;
 public class EvidenceViewer extends JPanel
 {
 
-  private String evidenceType;
-  private int evidenceStart;
-  private int evidenceEnd;
+  /** */
+  private static final long serialVersionUID = 1L;
+  //private String evidenceType;
+  //private int evidenceStart;
+  //private int evidenceEnd;
   private int featStart;
   private int featEnd;
   /** viewer boundary */
@@ -63,8 +65,8 @@ public class EvidenceViewer extends JPanel
     featEnd   = this_loc.getLastBase();
 
     this.desktop = desktop;
-    this.evidenceStart = evidenceStart;
-    this.evidenceEnd   = evidenceEnd;
+    //this.evidenceStart = evidenceStart;
+    //this.evidenceEnd   = evidenceEnd;
 
     final int hgt = 100+(20*overlapFeature.size());
     final Dimension dim = new Dimension(500,hgt);

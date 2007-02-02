@@ -40,6 +40,8 @@ import java.io.IOException;
 
 public class DataViewInternalFrame extends JInternalFrame
 {
+  /** */
+  private static final long serialVersionUID = 1L;
   protected static int dataDividerLocation = 250;
   protected static int annotationDividerLocation = 150;
 
@@ -62,7 +64,7 @@ public class DataViewInternalFrame extends JInternalFrame
 // graphical evidence display
     JInternalFrame evidence = new JInternalFrame("Evidence", true,
                                                  true, true, true);
-    JPanel evidencePanel = (JPanel)evidence.getContentPane();
+    //JPanel evidencePanel = (JPanel)evidence.getContentPane();
     evidenceBox = Box.createVerticalBox();
 
 //
@@ -418,6 +420,8 @@ public class DataViewInternalFrame extends JInternalFrame
 
   public class ActiveJSplitPane extends JSplitPane
   {
+    /** */
+    private static final long serialVersionUID = 1L;
     private JLabel tabLabel;
     private Color bg;
 

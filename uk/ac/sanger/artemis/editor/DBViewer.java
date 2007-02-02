@@ -33,6 +33,8 @@ import java.util.Enumeration;
 public class DBViewer extends ScrollPanel
                       implements FastaListener
 {
+  /** */
+  private static final long serialVersionUID = 1L;
   /** collection of hits */
   private Vector hitInfoCollection = null;
   /** query length */
@@ -210,6 +212,9 @@ public class DBViewer extends ScrollPanel
   {
     ruler = new JPanel()
     {
+      /** */
+      private static final long serialVersionUID = 1L;
+
       public void paintComponent(Graphics g)
       {
         super.paintComponent(g);
@@ -229,8 +234,8 @@ public class DBViewer extends ScrollPanel
         g2.drawLine(bound,bound+hgtNumber,bound,bound+hgtNumber-6);
         g2.drawString("0",bound,hgtNumber+3);
 
-        Point viewPos    = jsp.getViewport().getViewPosition();
-        Dimension extent = jsp.getViewport().getExtentSize();
+        //Point viewPos    = jsp.getViewport().getViewPosition();
+        //Dimension extent = jsp.getViewport().getExtentSize();
 
         int npoints   = (int)(scale*10);
         int unit      = (int)(resultwidth/npoints);
@@ -272,7 +277,7 @@ public class DBViewer extends ScrollPanel
  
     Font font = new Font("monospaced",Font.PLAIN,10);
     g.setFont(font);
-    FontMetrics metrics = g.getFontMetrics();
+    //FontMetrics metrics = g.getFontMetrics();
 
     Graphics2D g2   = (Graphics2D)g;
     int resultwidth = (int)getPreferredSize().getWidth()-(2*bound);

@@ -30,21 +30,38 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Toolkit;
 
-import java.util.StringTokenizer;
-import java.util.Vector;
-import javax.swing.*;
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JDesktopPane;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JToolBar;
 
-import uk.ac.sanger.artemis.*;
-import uk.ac.sanger.artemis.io.Location;
+import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.FeatureVector;
+
 
 public class BigPane extends JFrame
 {
+  /** */
+  private static final long serialVersionUID = 1L;
   protected static Font font    = new Font("Monospaced",Font.PLAIN,11);
   protected static Font font_sm = new Font("Monospaced",Font.PLAIN,10);
   protected static JCheckBoxMenuItem srsBrowser;
@@ -55,7 +72,7 @@ public class BigPane extends JFrame
 
   private JTextArea qualifier;
   private DataViewInternalFrame dataView;
-  private FeatureVector overlapFeature;
+  //private FeatureVector overlapFeature;
   private Feature edit_feature;
   private JDesktopPane desktop = null;
 
@@ -76,7 +93,7 @@ public class BigPane extends JFrame
              FeatureVector overlapFeature,
              final Feature edit_feature)
   {
-    this.overlapFeature = overlapFeature;
+    //this.overlapFeature = overlapFeature;
     this.edit_feature   = edit_feature;
 
     addNote.setSelected(false);

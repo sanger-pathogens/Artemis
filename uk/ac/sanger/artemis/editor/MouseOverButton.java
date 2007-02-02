@@ -35,6 +35,8 @@ import java.awt.event.*;
 */
 public class MouseOverButton extends JButton       
 {
+  /** */
+  private static final long serialVersionUID = 1L;
   private boolean over = false;
   private HitInfo hit;
 

@@ -24,16 +24,11 @@
 
 package uk.ac.sanger.artemis.editor;
 
-import uk.ac.sanger.artemis.Options;
-import uk.ac.sanger.artemis.util.StringVector;
-
 import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.text.html.*;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.StyledDocument;
 import javax.swing.text.Document;
 import javax.swing.*;
 import java.awt.*;
@@ -47,8 +42,10 @@ import java.net.URL;
 public class Annotation extends JEditorPane
                         implements HyperlinkListener
 {
+  /** */
+  private static final long serialVersionUID = 1L;
   private int startRange;
-  private int endRange;
+  //private int endRange;
   /** busy cursor */
   private Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
   /** done cursor */
@@ -322,11 +319,14 @@ public class Annotation extends JEditorPane
       srscmd = srscmd.substring(0,ind2+7)+"-acc:"+
                srscmd.substring(ind2+8);
 
+    if(srscmd.indexOf("ebi.ac.uk") > -1)
+      srscmd = srscmd + "+-vn+2";
+    
     return  startStr + "<a href=\""+srscmd+"\">" +
             midStr   + "</a>" + endStr;
   }
 
-  private void replaceRange(String newStr,int start,int end)
+  /*private void replaceRange(String newStr,int start,int end)
   {
     HTMLDocument doc = (HTMLDocument)getDocument();
 
@@ -340,7 +340,7 @@ public class Annotation extends JEditorPane
       ble.printStackTrace();
     }
     setDocument(doc);
-  }
+  }*/
 
 
   /**

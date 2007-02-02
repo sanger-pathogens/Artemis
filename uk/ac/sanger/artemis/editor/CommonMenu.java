@@ -30,6 +30,9 @@ import java.awt.event.*;
 public class CommonMenu extends JMenu
 {
 
+  /** */
+  private static final long serialVersionUID = 1L;
+
   public CommonMenu(final JInternalFrame f)
   {
     super("File");
