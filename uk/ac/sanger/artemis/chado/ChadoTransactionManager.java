@@ -68,7 +68,10 @@ import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.Synonym;
 
+import org.gmod.schema.analysis.Analysis;
+import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.cv.*;
+import org.gmod.schema.organism.Organism;
 import org.gmod.schema.pub.Pub;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
@@ -85,6 +88,7 @@ public class ChadoTransactionManager
        implements FeatureChangeListener, EntryChangeListener, SequenceChangeListener 
 {
 
+  public static boolean addSegments = true;
   private Vector sql = new Vector();
   
   /** GFF3 predefined tags */
@@ -100,6 +104,7 @@ public class ChadoTransactionManager
               "Ontology_term",
               "score",
               "codon_start",
+              "similarity",
               "gff_source",      // program or database
               "gff_seqname" };   // seqID of coord system
            
@@ -213,6 +218,8 @@ public class ChadoTransactionManager
         RangeVector rv_new = event.getNewLocation().getRanges();
         RangeVector rv_old = event.getOldLocation().getRanges();
          
+        Splash.logger4j.debug("SEGMENT_CHANGED "+rv_new.size()+"  "+rv_old.size());
+        
         if(rv_old.size() > rv_new.size()) // segment deleted
         {
           Splash.logger4j.debug("SEGMENT_CHANGED DELETED");
@@ -265,6 +272,31 @@ public class ChadoTransactionManager
         {
           Splash.logger4j.debug("SEGMENT_CHANGED ADDED");
 
+          if(addSegments)
+          {
+            FeatureSegmentVector segments = ((uk.ac.sanger.artemis.Feature) feature
+                .getUserData()).getSegments();
+
+            FeatureSegment segment;
+            for(int iadd = 0; iadd < segments.size(); iadd++)
+            {
+              segment = segments.elementAt(iadd);
+              Range range = segment.getRawRange();
+              boolean found = false;
+              for(int j = 0; j < rv_old.size(); j++)
+              {
+                if(((Range) rv_old.get(j)).equals(range))
+                  found = true;
+              }
+
+              if(found)
+                continue;
+
+              String segment_uniquename = feature.getSegmentID(range);
+              insertFeatureSegment(segment, segment_uniquename);
+            }
+          }
+          
           processFeatureRelationshipRank(feature, rv_new, ChadoTransaction.UPDATE);
         }
       }
@@ -1256,6 +1288,19 @@ public class ChadoTransactionManager
                feature.getKey().getKeyString());
            sql.add(tsn);
          }
+         else if(qualifier_name.equals("similarity"))
+         {
+           AnalysisFeature analysisFeature = new AnalysisFeature();
+           Analysis analysis = new Analysis();
+           Organism organism = new Organism();
+           org.gmod.schema.sequence.Feature queryFeature = 
+             new org.gmod.schema.sequence.Feature();
+           org.gmod.schema.sequence.Feature subjectFeature = 
+             new org.gmod.schema.sequence.Feature();
+           
+         }
+         else
+           Splash.logger4j.warn("Ignoring reserved tag "+qualifier_name);
          
       }
     }
@@ -1328,7 +1373,8 @@ public class ChadoTransactionManager
                feature.getKey().getKeyString());
            sql.add(tsn);
          }
-         
+         else
+           Splash.logger4j.warn("Ignoring reserved tag "+qualifier_name);
       }
     }  
     
