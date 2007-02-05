@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.14 2007-01-30 17:22:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.15 2007-02-05 15:04:15 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -45,6 +45,8 @@ import java.util.Vector;
 public class GeneComponentTree extends JTree
 {
   
+  /** */
+  private static final long serialVersionUID = 1L;
   private ChadoCanonicalGene chado_gene;
   private GeneBuilderFrame gene_builder;
   private Selection selection;

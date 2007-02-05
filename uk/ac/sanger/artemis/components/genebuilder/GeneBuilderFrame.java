@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.17 2007-01-30 17:22:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.18 2007-02-05 15:03:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -62,6 +62,8 @@ public class GeneBuilderFrame extends JFrame
        implements EntryChangeListener, FeatureChangeListener
 {
   
+  /** */
+  private static final long serialVersionUID = 1L;
   private Feature active_feature; 
   private FeatureEdit feature_editor;
   private GeneViewerPanel viewer;
