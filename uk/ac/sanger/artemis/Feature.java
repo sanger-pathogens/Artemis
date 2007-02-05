@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.23 2006-09-06 14:59:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.24 2007-02-05 15:09:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.23 2006-09-06 14:59:41 tjc Exp $
+ *  @version $Id: Feature.java,v 1.24 2007-02-05 15:09:52 tjc Exp $
  **/
 
 public class Feature
@@ -3042,17 +3042,24 @@ CHANGED_END:
     setLocationInternal(new_location);
     locationChanged(old_location);
   }
+  
+  public void addSegment(final Range range)
+         throws ReadOnlyException 
+  {
+    final QualifierVector old_qualifiers = getQualifiers().copy();
+    addSegment(range, old_qualifiers);
+  }
 
   /**
    *  Add a FeatureSegment to this Feature.
    *  @param range Provides the start and end positions of the segment.
    **/
-  public void addSegment(final Range range)
-      throws ReadOnlyException 
+  public void addSegment(final Range range,
+                         final QualifierVector old_qualifiers)
+         throws ReadOnlyException 
   {
     final Location old_location = getLocation();
     final Location new_location = old_location.addRange(range);
-    final QualifierVector qualifiers = getQualifiers().copy();
     
     try
     {
@@ -3065,7 +3072,7 @@ CHANGED_END:
     }
 
     reexamineSegments();
-    locationChanged(old_location, qualifiers, FeatureChangeEvent.SEGMENT_CHANGED);
+    locationChanged(old_location, old_qualifiers, FeatureChangeEvent.SEGMENT_CHANGED);
   }
 
   private Location moveSegments(final int shift)
