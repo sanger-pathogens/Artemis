@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.34 2007-01-30 17:22:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.35 2007-02-05 15:05:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -29,6 +29,7 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Hashtable;
 import java.util.Set;
@@ -286,11 +287,12 @@ public class GeneViewerPanel extends JPanel
         
         List exons = chado_gene.getSpliceSitesOfTranscript(uniquename, "exon");
         GFFStreamFeature embl_exon = null;
-        if(exons != null)
+        if(exons != null && exons.size() > 0)
           embl_exon = (GFFStreamFeature)exons.get(0);
         Range range_selected = selection.getSelectionRange();
     
-        addExonFeature(chado_gene, entry_group, embl_exon, range_selected, uniquename);
+        addExonFeature(chado_gene, entry_group, embl_exon, 
+                       range_selected, uniquename, selection);
       }
     });
     menu.add(createExon);
@@ -1283,7 +1285,8 @@ public class GeneViewerPanel extends JPanel
                               final ChadoCanonicalGene chadoGene,
                               final EntryGroup entry_group,
                               final GFFStreamFeature feature, Range range,
-                              final String transcript_name)
+                              final String transcript_name,
+                              final Selection selection)
   {
     try
     {
@@ -1293,12 +1296,13 @@ public class GeneViewerPanel extends JPanel
         qualifiers.add(new Qualifier("Parent", transcript_name));
       
         String ID = chadoGene.autoGenerateSplicedFeatureName(transcript_name);
+
         if(ID != null)
           qualifiers.add(new Qualifier("ID", ID));
         
         uk.ac.sanger.artemis.Feature exon = createFeature(
             new Location(new RangeVector(range), 
-                chadoGene.getGene().getLocation().isComplement()),
+            chadoGene.getGene().getLocation().isComplement()),
             entry_group, new Key("exon"),
             qualifiers);
       
@@ -1315,7 +1319,39 @@ public class GeneViewerPanel extends JPanel
       else
       {
         // add new ID
-        ((uk.ac.sanger.artemis.Feature)feature.getUserData()).addSegment(range);
+        Hashtable id_store = feature.getSegmentRangeStore();
+        String prefix[] = null;
+        Enumeration enum_ids = id_store.keys();
+        while(enum_ids.hasMoreElements())
+        {
+          String id = (String) enum_ids.nextElement();
+          prefix = feature.getPrefix(id, ':');
+          if(prefix[0] != null)
+            break;
+        }
+
+        // USE PREFIX TO CREATE NEW ID
+        final String ID;
+        if(prefix[0] != null)
+        {
+          int auto_num = feature.getAutoNumber(prefix[0], ':');
+          ID = prefix[0] + ":" + auto_num;
+          feature.getSegmentRangeStore().put(ID, range);
+        }
+        else
+        {
+          String key = feature.getKey().toString();
+          ID = transcript_name + ":" + key + ":1";
+          feature.getSegmentRangeStore().put(ID, range);
+        }
+        
+        RangeVector rv = (RangeVector)feature.getLocation().getRanges().clone();
+        rv.add(range);
+
+        final QualifierVector old_qualifiers = feature.getQualifiers().copy();
+        feature.setQualifier(new Qualifier("ID", feature.getSegmentID( rv )));
+        
+        ((uk.ac.sanger.artemis.Feature)feature.getUserData()).addSegment(range, old_qualifiers);
       }
     }
     catch(InvalidRelationException e)
@@ -1324,6 +1360,11 @@ public class GeneViewerPanel extends JPanel
     }
     catch(ReadOnlyException e)
     {
+      e.printStackTrace();
+    }
+    catch(EntryInformationException e)
+    {
+      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
