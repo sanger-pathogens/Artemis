@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.20 2007-02-01 11:40:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.21 2007-02-05 15:07:52 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -55,7 +55,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.20 2007-02-01 11:40:44 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.21 2007-02-05 15:07:52 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -1095,7 +1095,7 @@ public class EditMenu extends SelectionMenu
    * @param selection
    * @param entry_group
    */
-  private static void gffMergeFeatures(final FeatureVector features_to_merge,
+  public static void gffMergeFeatures(final FeatureVector features_to_merge,
                                 final Feature merge_feature,
                                 final Selection selection,
                                 final EntryGroup entry_group)
@@ -1177,11 +1177,13 @@ public class EditMenu extends SelectionMenu
       }
 
       // add the segments
+      uk.ac.sanger.artemis.chado.ChadoTransactionManager.addSegments = false;
       for(int i = 0; i < ranges.size(); i++)
       {
         final Range range = (Range)ranges.get(i);
         merge_feature.addSegment(range);
       }
+      uk.ac.sanger.artemis.chado.ChadoTransactionManager.addSegments = true;
       
       // set the new ID for the joined feature
       String ID = ((GFFStreamFeature)merge_feature.getEmblFeature()).getSegmentID(
