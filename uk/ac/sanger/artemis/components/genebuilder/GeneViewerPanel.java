@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.35 2007-02-05 15:05:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.36 2007-02-06 10:16:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -594,27 +594,30 @@ public class GeneViewerPanel extends JPanel
       {
         Feature feature = (Feature)transcripts.get(i);
         String transcript_name = getQualifier(feature, "ID");
-        List exons = chado_gene.getSplicedFeaturesOfTranscript(transcript_name);
+        List splicedFeatures = chado_gene.getSplicedFeaturesOfTranscript(transcript_name);
         
-        if(exons != null)
+        if(splicedFeatures != null)
         {
-          FeatureSegmentVector segments = ((uk.ac.sanger.artemis.Feature) 
-              ((Feature) exons.get(0)).getUserData()).getSegments();
-
-          if(segments.size() == 0)
-            return (Feature) exons.get(0);
-
-          for(int j = 0; j < segments.size(); j++)
+          for(int j = 0; j < splicedFeatures.size(); j++)
           {
-            FeatureSegment segment = segments.elementAt(j);
-            Range segment_range = segment.getRawRange();
+            FeatureSegmentVector segments = ((uk.ac.sanger.artemis.Feature) ((Feature) 
+                splicedFeatures.get(j)).getUserData()).getSegments();
 
-            int segment_start = border
-                + (int) ((segment_range.getStart() - start) * fraction);
-            int segment_end = border
-                + (int) ((segment_range.getEnd() - start) * fraction);
-            if(p.x >= segment_start && p.x <= segment_end)
-              return segment;
+            if(segments.size() == 0)
+              return (Feature)splicedFeatures.get(j);
+
+            for(int k = 0; k < segments.size(); k++)
+            {
+              FeatureSegment segment = segments.elementAt(k);
+              Range segment_range = segment.getRawRange();
+
+              int segment_start = border
+                  + (int) ((segment_range.getStart() - start) * fraction);
+              int segment_end = border
+                  + (int) ((segment_range.getEnd() - start) * fraction);
+              if(p.x >= segment_start && p.x <= segment_end)
+                return segment;
+            }
           }
         }
         
