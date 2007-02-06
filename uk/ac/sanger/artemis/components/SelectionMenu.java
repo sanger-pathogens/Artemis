@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionMenu.java,v 1.4 2006-01-17 17:46:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionMenu.java,v 1.5 2007-02-06 08:50:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -39,11 +39,14 @@ import java.util.Vector;
  *  getParentFrame() to find the owning JFrame of the menu.
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectionMenu.java,v 1.4 2006-01-17 17:46:18 tjc Exp $
+ *  @version $Id: SelectionMenu.java,v 1.5 2007-02-06 08:50:10 tjc Exp $
  **/
 
 public class SelectionMenu extends JMenu 
 {
+
+  /** */
+  private static final long serialVersionUID = 1L;
 
   /** The Selection that was passed to the constructor. */
   /* final */ private Selection selection;
@@ -224,7 +227,7 @@ public class SelectionMenu extends JMenu
                                                      final String message) 
   {
     final FeatureSegmentVector segments_to_check =
-      getSelection().getSelectedSegments();
+      getSelection().getAllSegments();
 
     if(segments_to_check.size() == 0) 
     {
