@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.20 2007-01-30 17:30:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.21 2007-02-08 14:35:19 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -52,7 +52,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.20 2007-01-30 17:30:32 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.21 2007-02-08 14:35:19 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -1412,7 +1412,7 @@ public class AddMenu extends SelectionMenu
    * @param id
    * @return
    */
-  public static boolean isUniqueID(final EntryGroup entry_group,
+  private static boolean isUniqueID(final EntryGroup entry_group,
                                    final String id)
   {
     FeaturePredicate predicate =
