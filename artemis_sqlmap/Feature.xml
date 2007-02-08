@@ -52,6 +52,8 @@
         <result property="seqLen" column="length" nullValue="-999" />
         <result property="residues" column="residues" />
         <result property="cvTerm" column="type_id" select="selectCvterm" />
+        <result property="dbXRef" column="dbXRefId"
+                                  select="selectDbXRef" />
         <result property="featureLocsForFeatureId" column="{id=id}" 
                                                    select="getFeatureLoc" />
         <result property="featureProps" column="{feature_id=id}" 
@@ -140,6 +142,7 @@
 	 	organism_id AS organismId,
 		f.name,
 	 	f.type_id,
+	 	f.dbxref_id AS dbXRefId,
 		seqlen AS length,
 		residues
 	 FROM feature f
@@ -182,6 +185,7 @@
 	 	organism_id AS organismId,
 		f.name,
 	 	f.type_id,
+	 	f.dbxref_id AS dbXRefId,
 		seqlen AS length,
 		residues
 	 FROM feature f
