@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="AnalysisFeature"> 
+
+  <typeAlias alias="AnalysisFeature"
+        type="org.gmod.schema.analysis.AnalysisFeature"/>
+   
+    <resultMap id="select-analysisfeature" 
+                class="AnalysisFeature">
+        <result property="rawScore" column="rawscore" />
+        <result property="normScore" column="normscore" />
+        <result property="significance" column="significance" />
+        <result property="analysis" column="analysis_id" select="selectAnalysis" />
+     </resultMap>  
+        
+    <select id="selectAnalysisFeatures" resultMap="select-analysisfeature">
+       SELECT rawscore, normscore, significance, analysis_id
+       FROM analysisfeature
+       WHERE feature_id=#feature_id#
+    </select>
+     
+     
+    <!--  INSERT  -->
+    <insert id="insertAnalysisFeature" 
+            parameterClass="AnalysisFeature">
+      INSERT INTO feature 
+        ( feature_id, analysis_id, rawscore, normscore, significance, identity )
+      VALUES
+        ( (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#),
+          $analysis.analysisId$,
+          $rawscore$,
+          $normscore$,
+          $significance$,
+          $identity$ )
+    </insert>
+
+</sqlMap>

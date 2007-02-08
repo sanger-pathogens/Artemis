@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+
+<sqlMap namespace="Analysis"> 
+
+  <typeAlias alias="Analysis"
+        type="org.gmod.schema.analysis.Analysis"/>
+   
+    <select id="selectAnalysis" resultClass="Analysis">
+       SELECT name, description, program, programversion, algorithm, 
+              sourcename, sourceversion,sourceuri, timeexecuted
+       FROM analysis
+       WHERE analysis_id=#analysis_id#
+    </select>
+
+</sqlMap>

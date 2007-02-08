@@ -68,6 +68,22 @@
                                     select="getOrganism" />
      </resultMap>
      
+     
+     <resultMap id="select-similaritymatch" 
+               class="Feature" groupBy="featureId">       
+        <result property="timeLastModified" column="timelastmodified"/>
+   	    <result property="featureId" column="id"/>
+        <result property="uniqueName" column="uniquename"/>
+        <result property="name" column="name"/>
+        <result property="seqLen" column="length" nullValue="-999" />
+        <result property="residues" column="residues" />
+        <result property="cvTerm" column="type_id" select="selectCvterm" />
+        <result property="featureLocsForFeatureId" resultMap="FeatureLoc.select-location" />
+        <result property="featureProps" column="{feature_id=id}" 
+                                           select="selectFeatureProp" />
+        <result property="analysisFeatures" column="{feature_id=id}" 
+                                           select="selectAnalysisFeatures" />                                                
+     </resultMap>
     
      <resultMap id="select-feature-with-residues-result" 
                 class="Feature">
@@ -157,6 +173,40 @@
        </dynamic>
          f.feature_id > 0 
     </select>
+
+    <select id="getLazyFeatureById" resultMap ="select-feature-lazy" >
+	 SELECT
+	    timelastmodified,
+	 	f.feature_id AS id,
+	 	uniquename,
+	 	organism_id AS organismId,
+		f.name,
+	 	f.type_id,
+		seqlen AS length,
+		residues
+	 FROM feature f
+	 WHERE f.feature_id=$featureId$
+    </select>
+    
+     <select id="getLazySimilarityMatches" parameterClass="java.lang.Integer" 
+                             resultMap="select-similaritymatch">
+        SELECT 
+         timelastmodified, 
+         f.feature_id AS id, 
+         f.uniquename, 
+         f.type_id,
+         f.name,
+	 	 f.seqlen AS length,
+	 	 f.residues,
+         srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank
+       FROM feature f 
+       LEFT JOIN featureloc fl ON f.feature_id=fl.feature_id 
+       WHERE  f.feature_id IN 
+         (   SELECT feature_id FROM featureloc WHERE srcfeature_id IN 
+           ( SELECT feature_id  FROM featureloc WHERE srcfeature_id=$value$) ) 
+       ORDER BY f.feature_id
+     </select>
+
 
     <select id="getSchema" resultClass="java.lang.String">
        SELECT schema_name FROM information_schema.schemata WHERE schema_name=schema_owner

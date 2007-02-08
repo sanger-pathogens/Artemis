@@ -14,7 +14,9 @@
         
      <resultMap id="select-location"
                 class="FeatureLoc">
-        <result property="featureBySrcFeatureId.featureId" column="srcfeature_id" nullValue="-999" />
+        <result property="srcFeatureId" column="srcfeature_id" nullValue="-999" />
+        <result property="featureBySrcFeatureId" column="{featureId=srcfeature_id}" 
+                                                 select="getLazyFeatureById" />
         <result property="fmin"   column="fmin"   nullValue="-999" />
         <result property="fmax"   column="fmax"   nullValue="-999" />
         <result property="strand" column="strand" nullValue="0" />

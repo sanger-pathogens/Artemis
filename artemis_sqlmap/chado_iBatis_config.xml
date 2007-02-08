@@ -63,6 +63,8 @@
   <sqlMap resource="artemis_sqlmap/Db.xml" />
   <sqlMap resource="artemis_sqlmap/DbXRef.xml" />
   <sqlMap resource="artemis_sqlmap/Synonym.xml" />
+  <sqlMap resource="artemis_sqlmap/AnalysisFeature.xml" />
+  <sqlMap resource="artemis_sqlmap/Analysis.xml" />
   
 </sqlMapConfig> 
 
