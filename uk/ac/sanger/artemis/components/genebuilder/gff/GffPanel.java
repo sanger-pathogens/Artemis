@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.3 2007-02-01 16:44:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.4 2007-02-09 15:18:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -45,7 +45,7 @@ public class GffPanel extends JPanel
 {
   private static final long serialVersionUID = 1L;
   private QualifierVector gffQualifiers;
-  private JTextField idTextField;
+  private JTextField uniquenameTextField;
   private JTextField timeTextField;
   
   public GffPanel(final Feature feature)
@@ -62,7 +62,9 @@ public class GffPanel extends JPanel
   public boolean isGffTag(final Qualifier qualifier)
   {
     if(qualifier.getName().equals("ID") ||
+       qualifier.getName().equals("feature_id") ||
        qualifier.getName().equals("Parent") ||
+       qualifier.getName().equals("Derives_from") ||
        qualifier.getName().equals("timelastmodified"))
       return true;
     return false;
@@ -79,7 +81,11 @@ public class GffPanel extends JPanel
     Qualifier parentQualifier = gffQualifiers.getQualifierByName("Parent");
     if(parentQualifier != null)
       nrows += parentQualifier.getValues().size();
-      
+     
+    Qualifier derivesFromQualifier = gffQualifiers.getQualifierByName("Derives_from");
+    if(derivesFromQualifier != null)
+      nrows += derivesFromQualifier.getValues().size();
+    
     Qualifier timeQualifier = gffQualifiers.getQualifierByName("timelastmodified");
     if(timeQualifier != null)
       nrows += timeQualifier.getValues().size();
@@ -94,17 +100,18 @@ public class GffPanel extends JPanel
     Dimension cellDimension = null;
     
     int maxLabelWidth = new JLabel("timelastmodified").getPreferredSize().width;
+    int featIdWidth   = 0;
+    
     nrows = 0;
     if(idQualifier != null)
     {
-      String featureId = (String)idQualifier.getValues().get(0);
-      
+      final String uniquename = (String)idQualifier.getValues().get(0);
       JLabel idField = new JLabel("ID");
       
-      idTextField = new JTextField(featureId);
-      cellDimension = new Dimension(idTextField.getPreferredSize().width+10,
+      uniquenameTextField = new JTextField(uniquename);
+      cellDimension = new Dimension(uniquenameTextField.getPreferredSize().width+10,
                                     idField.getPreferredSize().height+10);
-      idTextField.setMaximumSize(cellDimension);
+      uniquenameTextField.setMaximumSize(cellDimension);
       
       c.gridx = 0;
       c.gridy = 0;
@@ -115,7 +122,19 @@ public class GffPanel extends JPanel
       c.gridy = 0;
       c.ipadx = 0;
       c.anchor = GridBagConstraints.WEST;
-      gridPanel.add(idTextField, c);
+      gridPanel.add(uniquenameTextField, c);
+      
+      Qualifier featIdQualifier = gffQualifiers.getQualifierByName("feature_id");
+      if(featIdQualifier != null)
+      {
+        JLabel featId = new JLabel("(feature_id="+(String)featIdQualifier.getValues().get(0)+")");
+        featIdWidth = featId.getPreferredSize().width;
+        c.gridx = 2;
+        c.gridy = 0;
+        c.ipadx = 0;
+        c.anchor = GridBagConstraints.WEST;
+        gridPanel.add(featId, c);
+      }
       nrows++;
     }
     
@@ -150,6 +169,36 @@ public class GffPanel extends JPanel
     }
       
     
+    if(derivesFromQualifier != null)
+    {
+      StringVector derivesFroms = derivesFromQualifier.getValues();
+      JLabel derivesFromsField = new JLabel("Derives_from");
+      for(int i=0; i<derivesFroms.size(); i++)
+      {
+        String derivesFrom = (String)derivesFroms.get(i);
+        JTextField derivesFromTextField = new JTextField(derivesFrom);
+        
+        if(cellDimension == null ||
+           cellDimension.width < derivesFromTextField.getPreferredSize().width+10)
+          cellDimension = new Dimension(derivesFromTextField.getPreferredSize().width+10,
+                                        derivesFromsField.getPreferredSize().height+10);
+        derivesFromTextField.setMaximumSize(cellDimension);
+        
+        c.gridx = 0;
+        c.gridy = nrows;
+        c.ipadx = 5;
+        c.anchor = GridBagConstraints.EAST;
+        gridPanel.add(derivesFromsField, c); 
+        c.gridx = 1;
+        c.gridy = nrows;
+        c.ipadx = 0;
+        c.anchor = GridBagConstraints.WEST;
+        gridPanel.add(derivesFromTextField, c); 
+        nrows++;
+      }
+    }
+    
+    
     if(timeQualifier != null)
     {
       String time = (String)timeQualifier.getValues().get(0);
@@ -180,7 +229,7 @@ public class GffPanel extends JPanel
     
 
     if(cellDimension != null)
-      gridPanel.setPreferredSize(new Dimension(maxLabelWidth+cellDimension.width,
+      gridPanel.setPreferredSize(new Dimension(maxLabelWidth+cellDimension.width+featIdWidth,
                                                cellDimension.height*nrows));
     gffBox.add(gridPanel);
     return gffBox;
@@ -217,12 +266,12 @@ public class GffPanel extends JPanel
     // check editable components for changes
     
     Qualifier idQualifier = gffQualifiers.getQualifierByName("ID");
-    if(!((String)(idQualifier.getValues().get(0))).equals(idTextField.getText()))
+    if(!((String)(idQualifier.getValues().get(0))).equals(uniquenameTextField.getText()))
     {
-      if(!idTextField.getText().equals(""))
+      if(!uniquenameTextField.getText().equals(""))
       {
         gffQualifiers.remove(idQualifier);
-        idQualifier = new Qualifier("ID", idTextField.getText());
+        idQualifier = new Qualifier("ID", uniquenameTextField.getText());
         gffQualifiers.addElement(idQualifier);
       }
     }
