@@ -48,6 +48,8 @@ public abstract class GmodDAO
        implements SequenceDaoI, SchemaDaoI, OrganismDaoI, CvDaoI, PubDaoI
 {
   
+  public abstract List getSimilarityMatches(final Integer srcFeatureId);
+  
   /**
    * Return a list of features that have this particular cvterm 
    * @param cvTermName the CvTerm name

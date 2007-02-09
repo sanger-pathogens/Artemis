@@ -44,6 +44,7 @@ import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.pub.Pub;
+import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.cv.CvTerm;
 
 import javax.swing.JPasswordField;
@@ -81,6 +82,10 @@ public class IBatisDAO extends GmodDAO
   //////
   //////
 
+  public List getSimilarityMatches(final Integer srcFeatureId)
+  {
+    return sqlMap.queryForList("getLazySimilarityMatches", srcFeatureId);
+  }
   
   /**
    * Return the feature corresponding to this feature_id 
@@ -506,7 +511,7 @@ public class IBatisDAO extends GmodDAO
       sqlMap.update("updateFeatureRelationshipsForSubjectId", o);
     else if(o instanceof FeatureCvTerm)
       sqlMap.update("updateFeatureCvTerm", o);
-      
+    
   }
   
   
@@ -531,6 +536,8 @@ public class IBatisDAO extends GmodDAO
       insertAllFeatureCvTerm((FeatureCvTerm)o);
     else if(o instanceof FeatureRelationship)
       insertFeatureRelationship((FeatureRelationship)o);
+    else if(o instanceof AnalysisFeature)
+      insertAnalysisFeature((AnalysisFeature)o);
   }
   
   
@@ -621,6 +628,10 @@ public class IBatisDAO extends GmodDAO
     sqlMap.insert("insertFeatureDbXRef", feature_dbxref);
   }
   
+  private void insertAnalysisFeature(AnalysisFeature analysisFeature)
+  {
+    // todo ---- what uniquename for the match feature?
+  }
   
   /**
    * Insert a feature_synonym for a feature.

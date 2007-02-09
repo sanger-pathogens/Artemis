@@ -90,6 +90,11 @@ public class JdbcDAO extends GmodDAO
   //////
   //////
   
+  public List getSimilarityMatches(final Integer srcFeatureId)
+  {
+    return null;
+  }
+  
   /**
    * Return the feature corresponding to this feature_id 
    * 
