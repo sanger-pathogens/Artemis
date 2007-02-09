@@ -117,6 +117,7 @@ public class DatabaseDocument extends Document
                                  "CC_";
   /** product controlled vocabulary */
   public static String PRODUCTS_TAG_CVNAME = "genedb_products";
+  public static String RILEY_TAG_CVNAME = "RILEY";
   
   /**
    * 
@@ -1056,6 +1057,11 @@ public class DatabaseDocument extends Document
       attr_buff.append("product=");
       attr_buff.append(feature_cvterm.getCvTerm().getName()+";");
     }
+    else if(cvterm.getCv().getName().equals(DatabaseDocument.RILEY_TAG_CVNAME))
+    {
+      attr_buff.append("class=");
+      attr_buff.append(dbXRef.getAccession()+"::"+feature_cvterm.getCvTerm().getCvTermId());
+    }
     else
     {
       attr_buff.append("GO=");
@@ -1243,6 +1249,19 @@ public class DatabaseDocument extends Document
     {
       CvTerm cvterm = (CvTerm)enum_cvterm.nextElement();
       if(cvterm_name.equals( cvterm.getName() ))
+        return cvterm;
+    }
+    
+    return null;
+  }
+  
+  public static CvTerm getCvTermByCvTermId(final int cvTermId)
+  {
+    Enumeration enum_cvterm = cvterms.elements();
+    while(enum_cvterm.hasMoreElements())
+    {
+      CvTerm cvterm = (CvTerm)enum_cvterm.nextElement();
+      if(cvterm.getCvTermId() == cvTermId)
         return cvterm;
     }
     
