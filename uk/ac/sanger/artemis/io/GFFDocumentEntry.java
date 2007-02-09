@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.36 2007-01-30 17:25:22 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.37 2007-02-09 15:15:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -40,7 +40,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.36 2007-01-30 17:25:22 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.37 2007-02-09 15:15:20 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -692,9 +692,6 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         else if(complement)
           merge_qualifier_vector.setQualifier(qual);
       }
-      else if(!qual.getName().equals("ID") &&
-              !qual.getName().equals("Alias"))
-        merge_qualifier_vector.setQualifier(qual);
       else if(qual.getName().equals("Alias"))
       { 
         final Qualifier id_qualifier = 
@@ -710,6 +707,9 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           id_qualifier.addValue(id1+","+id2);
         }
       }
+      else if(!qual.getName().equals("ID") &&
+              !qual.getName().equals("feature_id"))
+        merge_qualifier_vector.setQualifier(qual);
     }
     return merge_qualifier_vector;
   }
