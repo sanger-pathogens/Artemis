@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.36 2007-02-06 10:16:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.37 2007-02-09 15:17:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -63,9 +63,7 @@ import uk.ac.sanger.artemis.util.ReadOnlyException;
 public class GeneViewerPanel extends JPanel
 {
   
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 1L;
   private ChadoCanonicalGene chado_gene;
   private int border = 15;

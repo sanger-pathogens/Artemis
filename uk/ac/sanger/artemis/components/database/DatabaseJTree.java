@@ -52,6 +52,9 @@ public class DatabaseJTree extends JTree
                implements DragGestureListener,
                           DragSourceListener
 {
+   /** */
+  private static final long serialVersionUID = 1L;
+
     /**
     *
     * @param file file node file

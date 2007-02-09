@@ -43,6 +43,9 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
  */
 public class DatabaseEntrySource implements EntrySource, Serializable
 {
+  /** */
+  private static final long serialVersionUID = 1L;
+
   private String location;
 
   private JPasswordField pfield;
