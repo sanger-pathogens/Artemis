@@ -49,8 +49,8 @@
    	    <result property="featureId" column="id"/>
         <result property="uniqueName" column="uniquename"/>
         <result property="name" column="name"/>
-        <result property="seqLen" column="length" nullValue="-999" />
         <result property="residues" column="residues" />
+        <result property="seqLen" column="length" nullValue="-999" />
         <result property="cvTerm" column="type_id" select="selectCvterm" />
         <result property="dbXRef" column="dbXRefId"
                                   select="selectDbXRef" />
@@ -232,7 +232,7 @@
          uniquename,
          feature_id,
          type_id
-       FROM feature WHERE residues notnull
+       FROM feature WHERE residues notnull AND residues NOT LIKE ''
        <!--
          <iterate prepend="AND" property="cvTermIds" conjunction="OR" open="(" close=")">
            type_id=#cvTermIds[]#
