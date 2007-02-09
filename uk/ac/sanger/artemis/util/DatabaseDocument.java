@@ -868,6 +868,7 @@ public class DatabaseDocument extends Document
       this_buff.append(phase+"\t"); 
 
     this_buff.append("ID=" + name + ";");
+    this_buff.append("feature_id=" + featureId.toString() + ";");
 
    
     if(parent_id != null && !parent_id.equals("0"))
@@ -1358,6 +1359,36 @@ public class DatabaseDocument extends Document
     return schema_list;
   }
   
+  public List getSimilarityMatches()
+  {
+    try
+    {
+      GmodDAO dao = getDAO();
+      return dao.getSimilarityMatches(new Integer(srcFeatureId));
+    }
+    catch(RuntimeException sqlExp)
+    {
+      JOptionPane.showMessageDialog(null, "SQL Problems...\n"+
+                                    sqlExp.getMessage(), 
+                                    "SQL Error",
+                                    JOptionPane.ERROR_MESSAGE);
+    }
+    catch(ConnectException exp)
+    {
+      JOptionPane.showMessageDialog(null, "Connection Problems...\n"+
+            exp.getMessage(), 
+            "Connection Error",
+            JOptionPane.ERROR_MESSAGE);
+    }
+    catch(java.sql.SQLException sqlExp)
+    {
+      JOptionPane.showMessageDialog(null, "SQL Problems....\n"+
+                                    sqlExp.getMessage(), 
+                                    "SQL Error",
+                                    JOptionPane.ERROR_MESSAGE);
+    }
+    return null;
+  }
   
   /**
    * Create a hashtable of the available entries with residues.
@@ -1374,8 +1405,7 @@ public class DatabaseDocument extends Document
 
     try
     { 
-      GmodDAO dao = null;
-      dao = getDAO();
+      GmodDAO dao = getDAO();
       schema_list = dao.getOrganisms();
       
       
