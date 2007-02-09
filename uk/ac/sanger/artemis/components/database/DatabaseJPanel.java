@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.3 2006-11-16 13:21:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.4 2007-02-09 15:19:41 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -28,12 +28,18 @@ package uk.ac.sanger.artemis.components.database;
 import uk.ac.sanger.artemis.components.*;
 
 import uk.ac.sanger.artemis.Entry;
+import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.FeatureKeyQualifierPredicate;
+import uk.ac.sanger.artemis.FeaturePredicate;
+import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.InvalidRelationException;
 
 import javax.swing.JTree;
 import javax.swing.JScrollPane;
@@ -65,10 +71,13 @@ import java.net.ConnectException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 public class DatabaseJPanel extends JPanel
 {
+  /** */
+  private static final long serialVersionUID = 1L;
   private JLabel status_line = new JLabel("");
   private boolean splitGFFEntry = false;
   private JTree tree;
@@ -182,7 +191,8 @@ public class DatabaseJPanel extends JPanel
 
           DatabaseDocumentEntry db_entry =
                          (DatabaseDocumentEntry)entry.getEMBLEntry();
-          ((DatabaseDocument)db_entry.getDocument()).setName(node_name);
+          DatabaseDocument doc = (DatabaseDocument)db_entry.getDocument();
+          doc.setName(node_name);
 
           if(entry == null)
           {
@@ -193,6 +203,51 @@ public class DatabaseJPanel extends JPanel
 
           final EntryEdit new_entry_edit = ArtemisMain.makeEntryEdit(entry);
 
+          // retrieve match features
+          uk.ac.sanger.artemis.FeatureVector fv = entry.getAllFeatures();
+          List matches = doc.getSimilarityMatches();
+
+          Hashtable temp_lookup_hash = new Hashtable(matches.size()/2);
+          String f_id;
+          for(int i=0; i<fv.size(); i++)
+          {
+            Feature f = fv.elementAt(i);
+            f_id = f.getValueOfQualifier("feature_id");
+            if(f_id != null)
+            {
+              temp_lookup_hash.put(f_id, f);
+            }
+          }
+          
+          
+          for(int i=0; i<matches.size(); i++)
+          {
+            org.gmod.schema.sequence.Feature matchFeature =
+                 (org.gmod.schema.sequence.Feature)matches.get(i);
+            
+            java.util.Collection featureLocs = matchFeature.getFeatureLocsForFeatureId();
+            java.util.Iterator it = featureLocs.iterator();
+            while(it.hasNext())
+            {
+              org.gmod.schema.sequence.FeatureLoc featureLoc =
+                (org.gmod.schema.sequence.FeatureLoc)it.next();
+
+              //Feature queryFeature = getFeatureById(
+              //    Integer.toString(featureLoc.getSrcFeatureId()), fv);
+              
+              Feature queryFeature = 
+                (Feature)temp_lookup_hash.get(Integer.toString(featureLoc.getSrcFeatureId()));
+              
+              if(queryFeature != null)
+              {
+                ((GFFStreamFeature)queryFeature.getEmblFeature()).addSimilarityFeature(matchFeature);
+                break;
+              }
+
+            }
+          }
+          temp_lookup_hash.clear();
+          
           // add gff entries
           if(splitGFFEntry)
           {
@@ -229,6 +284,11 @@ public class DatabaseJPanel extends JPanel
         {
           new MessageDialog(splash_main, "read failed due to IO error: " + e);
         }
+        catch(InvalidRelationException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
         tree.setCursor(cdone);
         return null;
       }
@@ -238,6 +298,27 @@ public class DatabaseJPanel extends JPanel
 
   }
 
+  /**
+   * Test to ensure ID (chado uniquename) is unique.
+   * @param entry_group
+   * @param id
+   * @return
+   */
+  private Feature getFeatureById(final String id,
+                                 final FeatureVector features)
+  {
+    FeaturePredicate predicate =
+      new FeatureKeyQualifierPredicate(null, "feature_id", id, 
+                                       false, true);
+    for(int i=0; i<features.size(); i++)
+    {
+      Feature feature = features.elementAt(i);
+      if(predicate.testPredicate(feature))
+        return feature;
+    }
+    return null;
+  }
+  
   /**
    * Create a menu bar 
    * @param entry_source
