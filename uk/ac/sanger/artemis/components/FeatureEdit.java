@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.25 2007-01-30 17:23:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.26 2007-02-09 15:21:09 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -47,6 +47,7 @@ import uk.ac.sanger.artemis.io.StreamQualifier;
 import uk.ac.sanger.artemis.io.QualifierInfo;
 
 import uk.ac.sanger.artemis.components.ProgressThread;
+import uk.ac.sanger.artemis.components.genebuilder.SimilarityTextArea;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
 import uk.ac.sanger.artemis.components.genebuilder.gff.GffPanel;
 
@@ -63,7 +64,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.25 2007-01-30 17:23:41 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.26 2007-02-09 15:21:09 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -138,6 +139,8 @@ public class FeatureEdit extends JPanel
   
   private GffPanel gffPanel;
   
+  private SimilarityTextArea similarityTextArea;;
+  
   /**
    *  Create a new FeatureEdit object from the given Feature.
    *  @param entry_group The EntryGroup that contains this Feature.
@@ -197,6 +200,8 @@ public class FeatureEdit extends JPanel
       getFeature().removeFeatureChangeListener(cvForm);
     if(gffPanel != null)
       getFeature().removeFeatureChangeListener(gffPanel);
+    if(similarityTextArea != null)
+      getFeature().removeFeatureChangeListener(similarityTextArea);
   }
 
   /**
@@ -811,8 +816,16 @@ public class FeatureEdit extends JPanel
 
       // tabbed pane of core and cv annotaion
       JTabbedPane tabbedPane = new JTabbedPane();
+      
+      JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
       JScrollPane jspCore = new JScrollPane(qualifier_text_area);
-      tabbedPane.add("Core", jspCore);
+      splitPane.setTopComponent(jspCore);
+      
+      similarityTextArea = new SimilarityTextArea(getFeature(), splitPane);
+      JScrollPane jspSim  = new JScrollPane(similarityTextArea);
+      splitPane.setBottomComponent(jspSim);
+      
+      tabbedPane.add("Core", splitPane);
       JScrollPane jspCV   = new JScrollPane(cvForm);
       jspCV.setPreferredSize(jspCore.getPreferredSize());
       tabbedPane.add("CV", jspCV);
@@ -1365,6 +1378,9 @@ public class FeatureEdit extends JPanel
     
     if(gffPanel != null)
       gffPanel.updateFromFeature(getFeature());
+    
+    if(similarityTextArea != null)
+      similarityTextArea.updateFromFeature(getFeature());
   }
 
   /**
