@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.4 2007-02-09 15:18:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.5 2007-02-13 09:44:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -95,6 +95,7 @@ public class GffPanel extends JPanel
     
     GridBagLayout grid = new GridBagLayout();
     GridBagConstraints c = new GridBagConstraints();
+    c.ipady = 5;
     JPanel gridPanel = new JPanel(grid);
     
     Dimension cellDimension = null;
@@ -229,8 +230,9 @@ public class GffPanel extends JPanel
     
 
     if(cellDimension != null)
-      gridPanel.setPreferredSize(new Dimension(maxLabelWidth+cellDimension.width+featIdWidth,
-                                               cellDimension.height*nrows));
+      gridPanel.setPreferredSize(
+          new Dimension(maxLabelWidth+cellDimension.width+featIdWidth,
+                        (cellDimension.height+5)*nrows));
     gffBox.add(gridPanel);
     return gffBox;
   }
