@@ -20,11 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.37 2007-02-09 15:15:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.38 2007-02-13 09:38:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
+import uk.ac.sanger.artemis.chado.Similarity;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.IOException;
@@ -40,7 +41,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.37 2007-02-09 15:15:20 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.38 2007-02-13 09:38:28 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -238,26 +239,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           }
         } 
           
-        /*
-        Enumeration enum_genes = chado_gene.elements();
-        while(enum_genes.hasMoreElements())
-        {
-          ChadoCanonicalGene gene = (ChadoCanonicalGene)enum_genes.nextElement();
-          Feature transcript = (Feature)gene.containsTranscript(parent_id);
-          
-          if(transcript != null)
-          {
-            if(parent_qualifier == null)
-              gene.addProtein((String)transcript.getQualifierByName("ID").getValues().get(0), 
-                              this_feature);
-            else
-              gene.addExon((String)transcript.getQualifierByName("ID").getValues().get(0),
-                           this_feature);
-          }
-          
-        }
-        */
       }
+      
 
       // now join exons
       //combineFeatures();
@@ -267,11 +250,88 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         ChadoCanonicalGene gene = (ChadoCanonicalGene)enum_genes.nextElement();
         combineChadoExons(gene);
       }
+      
+      
+      //
+      // load /similarity - lazily
+      loadSimilarityLazyData(original_features);
     }
     catch(InvalidRelationException e)
     {
       e.printStackTrace();
     }
+  }
+  
+  /**
+   * Get 'similarity' qualifiers
+   * @param fv
+   * @throws InvalidRelationException
+   */
+  private void loadSimilarityLazyData(final FeatureVector fv)
+          throws InvalidRelationException
+  {
+    DatabaseDocument doc = (DatabaseDocument)getDocument();
+    
+    List matches = doc.getSimilarityMatches();
+
+    Hashtable temp_lookup_hash = new Hashtable(matches.size()/2);
+    String f_id;
+    for(int i=0; i<fv.size(); i++)
+    {
+      Feature f = (Feature)fv.elementAt(i);
+      Qualifier qualifier = ((Feature)f).getQualifierByName("feature_id");
+      
+      if(qualifier != null)
+      {
+        f_id = (String)qualifier.getValues().get(0);
+        temp_lookup_hash.put(f_id, f);
+      }
+    }
+    
+    for(int i=0; i<matches.size(); i++)
+    {
+      org.gmod.schema.sequence.Feature matchFeature =
+           (org.gmod.schema.sequence.Feature)matches.get(i);
+      
+      java.util.Collection featureLocs = matchFeature.getFeatureLocsForFeatureId();
+      java.util.Iterator it = featureLocs.iterator();
+      while(it.hasNext())
+      {
+        org.gmod.schema.sequence.FeatureLoc featureLoc =
+          (org.gmod.schema.sequence.FeatureLoc)it.next();
+
+        Feature queryFeature = 
+          (Feature)temp_lookup_hash.get(Integer.toString(featureLoc.getSrcFeatureId()));
+        
+        if(queryFeature != null)
+        {
+          Qualifier qualifier = queryFeature.getQualifierByName("similarity");
+          Similarity sim = new Similarity(matchFeature, featureLoc.getSrcFeatureId());
+          if(qualifier == null)
+            qualifier = new QualifierLazyLoading("similarity", sim);
+          else
+            ((QualifierLazyLoading)qualifier).addValue(sim);
+
+          try
+          {
+            queryFeature.setQualifier(qualifier);
+          }
+          catch(ReadOnlyException e)
+          {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+          catch(EntryInformationException e)
+          {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+          break;
+        }
+
+      }
+    }
+    temp_lookup_hash.clear(); 
   }
   
   /**
