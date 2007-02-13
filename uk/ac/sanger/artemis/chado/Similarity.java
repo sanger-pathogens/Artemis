@@ -25,8 +25,11 @@
 package uk.ac.sanger.artemis.chado;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.sequence.FeatureDbXRef;
@@ -80,6 +83,9 @@ public class Similarity implements LazyQualifierValue
     buff.append(analysisFeature.getAnalysis().getProgram()+";");
 
     org.gmod.schema.sequence.Feature subject = null;
+    org.gmod.schema.sequence.FeatureLoc queryLoc   = null;
+    org.gmod.schema.sequence.FeatureLoc subjectLoc   = null;
+    
     while(it2.hasNext())
     {
       org.gmod.schema.sequence.FeatureLoc featureLoc = 
@@ -89,7 +95,14 @@ public class Similarity implements LazyQualifierValue
           .getFeatureBySrcFeatureId();
 
       if(queryOrSubject.getFeatureId() != featureId)
+      {
         subject = queryOrSubject;
+        subjectLoc = featureLoc;
+      }
+      else 
+      {
+        queryLoc = featureLoc;
+      }
     }
 
     if(subject.getDbXRef() != null)
@@ -115,7 +128,8 @@ public class Similarity implements LazyQualifierValue
     }
     buff.append("; ");
 
-    List featureProps = (List)subject.getFeatureProps();
+    List featureProps = new Vector(subject.getFeatureProps());
+    Collections.sort(featureProps, new FeaturePropComparator());
     
     for(int i=0; i<featureProps.size(); i++)
     {
@@ -140,28 +154,47 @@ public class Similarity implements LazyQualifierValue
     if(analysisFeature.getRawScore() != null)
       buff.append("score="+analysisFeature.getRawScore()+"; ");
     
+    if(queryLoc != null)
+    {
+      int fmin = queryLoc.getFmin().intValue()+1;
+      buff.append("query "+fmin+"-"+queryLoc.getFmax());
+      if(matchFeature.getCvTerm().getName().equals("protein_match"))
+        buff.append(" aa; ");
+      else
+        buff.append("; ");
+    }
+    
+    if(subjectLoc != null)
+    {
+      int fmin = subjectLoc.getFmin().intValue()+1;
+      buff.append("subject "+fmin+"-"+subjectLoc.getFmax());
+      if(matchFeature.getCvTerm().getName().equals("protein_match"))
+        buff.append(" aa; ");
+      else
+        buff.append("; ");
+    }
+    
     if(matchFeature.getFeatureProps() != null)
     {
-      featureProps = (List)matchFeature.getFeatureProps();
+      featureProps = new Vector(matchFeature.getFeatureProps());
+      Collections.sort(featureProps, new FeaturePropComparator());
+      
       for(int i=0; i<featureProps.size(); i++)
       {
         FeatureProp featureProp = (FeatureProp)featureProps.get(i);
         buff.append(featureProp.getCvTerm().getName()+"="+featureProp.getValue());
-        if(i<featureProps.size()-1)
+        if(i < featureProps.size()-1)
           buff.append("; ");
       }
     }
+    
     return new String(buff);
   }
   
   
   public String getSoftString()
   {
-    Collection analysisFeatures = matchFeature.getAnalysisFeatures();
-    Iterator it3 = analysisFeatures.iterator();
-    AnalysisFeature analysisFeature = (AnalysisFeature) it3.next();
-
-    return new String(analysisFeature.getAnalysis().getProgram()+";LAZY LOADING...;");
+    return new String("LAZY LOADING...;");
   }
 
   public boolean isForceLoad()
@@ -174,5 +207,19 @@ public class Similarity implements LazyQualifierValue
     this.forceLoad = forceLoad;
   }
 
+
+  class FeaturePropComparator
+        implements Comparator
+  {
+
+    public int compare(Object o1, Object o2)
+    {
+      int rank1 = ((FeatureProp)o1).getRank();
+      int rank2 = ((FeatureProp)o2).getRank();
+      
+      return rank1-rank2;
+    }
+
+  }
 
 }
