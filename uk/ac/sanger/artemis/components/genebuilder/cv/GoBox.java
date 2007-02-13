@@ -171,6 +171,9 @@ class GoBox extends CvBoxA
     Date this_date = getDate(date);
     dateField = new JFormattedTextField(new SimpleDateFormat("yyyyMMdd"))
     {
+      /** */
+      private static final long serialVersionUID = 1L;
+
       protected int getColumnWidth()
       {
         return dateField.getFontMetrics(getFont()).charWidth('0');

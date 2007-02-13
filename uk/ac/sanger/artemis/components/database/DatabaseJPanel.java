@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.4 2007-02-09 15:19:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.5 2007-02-13 09:42:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -29,9 +29,6 @@ import uk.ac.sanger.artemis.components.*;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.Feature;
-import uk.ac.sanger.artemis.FeatureKeyQualifierPredicate;
-import uk.ac.sanger.artemis.FeaturePredicate;
-import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
@@ -204,7 +201,7 @@ public class DatabaseJPanel extends JPanel
           final EntryEdit new_entry_edit = ArtemisMain.makeEntryEdit(entry);
 
           // retrieve match features
-          uk.ac.sanger.artemis.FeatureVector fv = entry.getAllFeatures();
+          /*uk.ac.sanger.artemis.FeatureVector fv = entry.getAllFeatures();
           List matches = doc.getSimilarityMatches();
 
           Hashtable temp_lookup_hash = new Hashtable(matches.size()/2);
@@ -246,7 +243,7 @@ public class DatabaseJPanel extends JPanel
 
             }
           }
-          temp_lookup_hash.clear();
+          temp_lookup_hash.clear();*/
           
           // add gff entries
           if(splitGFFEntry)
@@ -284,11 +281,7 @@ public class DatabaseJPanel extends JPanel
         {
           new MessageDialog(splash_main, "read failed due to IO error: " + e);
         }
-        catch(InvalidRelationException e)
-        {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
+        
         tree.setCursor(cdone);
         return null;
       }
@@ -298,27 +291,7 @@ public class DatabaseJPanel extends JPanel
 
   }
 
-  /**
-   * Test to ensure ID (chado uniquename) is unique.
-   * @param entry_group
-   * @param id
-   * @return
-   */
-  private Feature getFeatureById(final String id,
-                                 final FeatureVector features)
-  {
-    FeaturePredicate predicate =
-      new FeatureKeyQualifierPredicate(null, "feature_id", id, 
-                                       false, true);
-    for(int i=0; i<features.size(); i++)
-    {
-      Feature feature = features.elementAt(i);
-      if(predicate.testPredicate(feature))
-        return feature;
-    }
-    return null;
-  }
-  
+
   /**
    * Create a menu bar 
    * @param entry_source

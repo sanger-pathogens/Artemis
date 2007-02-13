@@ -1059,8 +1059,10 @@ public class DatabaseDocument extends Document
     }
     else if(cvterm.getCv().getName().equals(DatabaseDocument.RILEY_TAG_CVNAME))
     {
+      // class include the cvTermId as a convenience for looking up the term
       attr_buff.append("class=");
-      attr_buff.append(dbXRef.getAccession()+"::"+feature_cvterm.getCvTerm().getCvTermId());
+      attr_buff.append(dbXRef.getAccession()+"::"+
+                      feature_cvterm.getCvTerm().getCvTermId()+";");
     }
     else
     {
