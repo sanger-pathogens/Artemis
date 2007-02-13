@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.26 2007-02-09 15:21:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.27 2007-02-13 09:46:31 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -33,6 +33,7 @@ import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.OutOfDateException;
 import uk.ac.sanger.artemis.io.LocationParseException;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
+import uk.ac.sanger.artemis.io.QualifierLazyLoading;
 import uk.ac.sanger.artemis.io.QualifierParseException;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -47,7 +48,6 @@ import uk.ac.sanger.artemis.io.StreamQualifier;
 import uk.ac.sanger.artemis.io.QualifierInfo;
 
 import uk.ac.sanger.artemis.components.ProgressThread;
-import uk.ac.sanger.artemis.components.genebuilder.SimilarityTextArea;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
 import uk.ac.sanger.artemis.components.genebuilder.gff.GffPanel;
 
@@ -64,7 +64,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.26 2007-02-09 15:21:09 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.27 2007-02-13 09:46:31 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -139,8 +139,6 @@ public class FeatureEdit extends JPanel
   
   private GffPanel gffPanel;
   
-  private SimilarityTextArea similarityTextArea;;
-  
   /**
    *  Create a new FeatureEdit object from the given Feature.
    *  @param entry_group The EntryGroup that contains this Feature.
@@ -200,8 +198,6 @@ public class FeatureEdit extends JPanel
       getFeature().removeFeatureChangeListener(cvForm);
     if(gffPanel != null)
       getFeature().removeFeatureChangeListener(gffPanel);
-    if(similarityTextArea != null)
-      getFeature().removeFeatureChangeListener(similarityTextArea);
   }
 
   /**
@@ -817,15 +813,9 @@ public class FeatureEdit extends JPanel
       // tabbed pane of core and cv annotaion
       JTabbedPane tabbedPane = new JTabbedPane();
       
-      JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
       JScrollPane jspCore = new JScrollPane(qualifier_text_area);
-      splitPane.setTopComponent(jspCore);
-      
-      similarityTextArea = new SimilarityTextArea(getFeature(), splitPane);
-      JScrollPane jspSim  = new JScrollPane(similarityTextArea);
-      splitPane.setBottomComponent(jspSim);
-      
-      tabbedPane.add("Core", splitPane);
+      tabbedPane.add("Core", jspCore);
+
       JScrollPane jspCV   = new JScrollPane(cvForm);
       jspCV.setPreferredSize(jspCore.getPreferredSize());
       tabbedPane.add("CV", jspCV);
@@ -1378,9 +1368,6 @@ public class FeatureEdit extends JPanel
     
     if(gffPanel != null)
       gffPanel.updateFromFeature(getFeature());
-    
-    if(similarityTextArea != null)
-      similarityTextArea.updateFromFeature(getFeature());
   }
 
   /**
@@ -1404,6 +1391,9 @@ public class FeatureEdit extends JPanel
           (gffPanel != null && gffPanel.isGffTag(this_qualifier)) )
         continue;
       
+      if(this_qualifier instanceof QualifierLazyLoading)
+        ((QualifierLazyLoading)this_qualifier).setForceLoad(true);
+
       final QualifierInfo qualifier_info =
                        getEntryInformation().getQualifierInfo(this_qualifier.getName());
 
@@ -1482,6 +1472,9 @@ public class FeatureEdit extends JPanel
         if(gffQualifiers != null && gffQualifiers.size() > 0)
           qualifiers.addAll(gffQualifiers);
       }
+      
+      //if(similarityTextArea != null)
+      //  similarityTextArea.checkForChanges();
     }
     catch(QualifierParseException exception) 
     {
