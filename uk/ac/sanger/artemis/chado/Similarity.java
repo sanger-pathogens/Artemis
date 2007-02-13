@@ -25,133 +25,154 @@
 package uk.ac.sanger.artemis.chado;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.sequence.Feature;
 
-import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.LazyQualifierValue;
 
-public class Similarity
+public class Similarity implements LazyQualifierValue
 {
-  public static String getSimilarityString(final GFFStreamFeature gffFeature)
+  /** match feature associated with the similarity */
+  private Feature matchFeature;
+  /** feature_id of the query feature */
+  private int featureId;
+  /** force complete loading of the data */
+  private boolean forceLoad = false;
+  
+  /**
+   * Qualifier object to handle lazy loading of similarity data
+   * @param matchFeature
+   * @param featureId
+   */
+  public Similarity(final Feature matchFeature, final int featureId)
   {
-    HashSet similarities = gffFeature.getSimilarityFeatures();
+    this.matchFeature = matchFeature;
+    this.featureId    = featureId;
+  }
+
+  /**
+   * Handle the loading of the data into a String 
+   */
+  public String getString()
+  {
+    if(forceLoad)
+      return getHardString();
+    else
+      return getSoftString();
+  }
+  
+  public String getHardString()
+  {
     StringBuffer buff = new StringBuffer();
     
-    if(similarities != null)
+    Collection featureLocs = matchFeature.getFeatureLocsForFeatureId();
+    Iterator it2 = featureLocs.iterator();
+
+    Collection analysisFeatures = matchFeature.getAnalysisFeatures();
+    Iterator it3 = analysisFeatures.iterator();
+    AnalysisFeature analysisFeature = (AnalysisFeature) it3.next();
+
+    buff.append(analysisFeature.getAnalysis().getProgram()+";");
+
+    org.gmod.schema.sequence.Feature subject = null;
+    while(it2.hasNext())
     {
-      int f_id = 0;
-      try
+      org.gmod.schema.sequence.FeatureLoc featureLoc = 
+        (org.gmod.schema.sequence.FeatureLoc)it2.next();
+
+      org.gmod.schema.sequence.Feature queryOrSubject = featureLoc
+          .getFeatureBySrcFeatureId();
+
+      if(queryOrSubject.getFeatureId() != featureId)
+        subject = queryOrSubject;
+    }
+
+    if(subject.getDbXRef() != null)
+    {
+      buff.append(subject.getDbXRef().getDb().getName() + ":");
+      buff.append(subject.getDbXRef().getAccession());
+    }
+
+    Collection dbXRefs = subject.getFeatureDbXRefs();
+    if(dbXRefs != null && dbXRefs.size() > 0)
+    {
+      buff.append(" (");
+      Iterator it4 = dbXRefs.iterator();
+      while(it4.hasNext())
       {
-        f_id = Integer.parseInt((String)gffFeature.getQualifierByName(
-            "feature_id").getValues().get(0));
+        FeatureDbXRef featureDbXRef = (FeatureDbXRef) it4.next();
+        buff.append(featureDbXRef.getDbXRef().getDb().getName() + ":");
+        buff.append(featureDbXRef.getDbXRef().getAccession());
+        if(it4.hasNext())
+          buff.append(",");
       }
-      catch(Exception e)
+      buff.append(")");
+    }
+    buff.append("; ");
+
+    List featureProps = (List)subject.getFeatureProps();
+    
+    for(int i=0; i<featureProps.size(); i++)
+    {
+      FeatureProp featureProp = (FeatureProp)featureProps.get(i);
+      
+      if(featureProp.getValue() != null)
+        buff.append(featureProp.getValue().trim());
+      buff.append("; ");
+    }
+
+    buff.append("length "+subject.getSeqLen());
+    
+    if(matchFeature.getCvTerm().getName().equals("protein_match"))
+      buff.append(" aa; ");
+    else
+      buff.append("; ");
+    
+    if(analysisFeature.getIdentity() != null)
+      buff.append("id="+analysisFeature.getIdentity()+"%; ");
+    if(analysisFeature.getSignificance() != null)
+      buff.append("E()="+analysisFeature.getSignificance()+"; ");
+    if(analysisFeature.getRawScore() != null)
+      buff.append("score="+analysisFeature.getRawScore()+"; ");
+    
+    if(matchFeature.getFeatureProps() != null)
+    {
+      featureProps = (List)matchFeature.getFeatureProps();
+      for(int i=0; i<featureProps.size(); i++)
       {
-        e.printStackTrace();
-      }
-
-      Iterator it = similarities.iterator();
-      while(it.hasNext())
-      {
-        org.gmod.schema.sequence.Feature matchFeature = 
-          (org.gmod.schema.sequence.Feature)it.next();
-
-        
-        Collection featureLocs = matchFeature.getFeatureLocsForFeatureId();
-        Iterator it2 = featureLocs.iterator();
-
-        Collection analysisFeatures = matchFeature.getAnalysisFeatures();
-        Iterator it3 = analysisFeatures.iterator();
-        AnalysisFeature analysisFeature = (AnalysisFeature) it3.next();
-
-        buff.append("/similarity=" + analysisFeature.getAnalysis().getProgram()
-            + "; ");
-
-        org.gmod.schema.sequence.Feature subject = null;
-        while(it2.hasNext())
-        {
-          org.gmod.schema.sequence.FeatureLoc featureLoc = 
-            (org.gmod.schema.sequence.FeatureLoc)it2.next();
-
-          org.gmod.schema.sequence.Feature queryOrSubject = featureLoc
-              .getFeatureBySrcFeatureId();
-
-          if(queryOrSubject.getFeatureId() != f_id)
-            subject = queryOrSubject;
-        }
-
-        if(subject.getDbXRef() != null)
-        {
-          buff.append(subject.getDbXRef().getDb().getName() + ":");
-          buff.append(subject.getDbXRef().getAccession());
-        }
-
-        Collection dbXRefs = subject.getFeatureDbXRefs();
-        if(dbXRefs != null && dbXRefs.size() > 0)
-        {
-          buff.append(" (");
-          Iterator it4 = dbXRefs.iterator();
-          while(it4.hasNext())
-          {
-            FeatureDbXRef featureDbXRef = (FeatureDbXRef) it4.next();
-            buff.append(featureDbXRef.getDbXRef().getDb().getName() + ":");
-            buff.append(featureDbXRef.getDbXRef().getAccession());
-            if(it4.hasNext())
-              buff.append(",");
-          }
-          buff.append(")");
-        }
-        buff.append("; ");
-
-        List featureProps = (List)subject.getFeatureProps();
-        
-        for(int i=0; i<featureProps.size(); i++)
-        {
-          FeatureProp featureProp = (FeatureProp)featureProps.get(i);
-          
-          if(featureProp.getValue() != null)
-            buff.append(featureProp.getValue().trim());
+        FeatureProp featureProp = (FeatureProp)featureProps.get(i);
+        buff.append(featureProp.getCvTerm().getName()+"="+featureProp.getValue());
+        if(i<featureProps.size()-1)
           buff.append("; ");
-        }
-
-        buff.append("length "+subject.getSeqLen());
-        
-        if(matchFeature.getCvTerm().getName().equals("protein_match"))
-          buff.append(" aa; ");
-        else
-          buff.append("; ");
-        
-        if(analysisFeature.getIdentity() != null)
-          buff.append("id="+analysisFeature.getIdentity()+"%; ");
-        if(analysisFeature.getSignificance() != null)
-          buff.append("E()="+analysisFeature.getSignificance()+"; ");
-        if(analysisFeature.getRawScore() != null)
-          buff.append("score="+analysisFeature.getRawScore()+"; ");
-        
-        if(matchFeature.getFeatureProps() != null)
-        {
-          featureProps = (List)matchFeature.getFeatureProps();
-          for(int i=0; i<featureProps.size(); i++)
-          {
-            FeatureProp featureProp = (FeatureProp)featureProps.get(i);
-            buff.append(featureProp.getCvTerm().getName()+"="+featureProp.getValue());
-            if(i<featureProps.size()-1)
-              buff.append("; ");
-          }
-        }
-        
-        if(it.hasNext())
-          buff.append("\n");
       }
     }
-    
-    //uk.ac.sanger.artemis.components.Splash.logger4j.debug(buff);
     return new String(buff);
   }
   
+  
+  public String getSoftString()
+  {
+    Collection analysisFeatures = matchFeature.getAnalysisFeatures();
+    Iterator it3 = analysisFeatures.iterator();
+    AnalysisFeature analysisFeature = (AnalysisFeature) it3.next();
+
+    return new String(analysisFeature.getAnalysis().getProgram()+";LAZY LOADING...;");
+  }
+
+  public boolean isForceLoad()
+  {
+    return forceLoad;
+  }
+
+  public void setForceLoad(boolean forceLoad)
+  {
+    this.forceLoad = forceLoad;
+  }
+
+
 }
