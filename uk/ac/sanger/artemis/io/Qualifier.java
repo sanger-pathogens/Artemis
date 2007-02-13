@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Qualifier.java,v 1.3 2005-10-11 14:58:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Qualifier.java,v 1.4 2007-02-13 09:40:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import uk.ac.sanger.artemis.util.*;
  *  one name and many values.
  *
  *  @author Kim Rutherford
- *  @version $Id: Qualifier.java,v 1.3 2005-10-11 14:58:53 tjc Exp $
+ *  @version $Id: Qualifier.java,v 1.4 2007-02-13 09:40:20 tjc Exp $
  * */
 
 public class Qualifier 
@@ -45,6 +45,11 @@ public class Qualifier
   /** The values that were passed to the constructor. */
   private StringVector values;
 
+  public Qualifier()
+  {
+    
+  }
+  
   /**
    *  Create a new Qualifier object.  This object consists of a name and
    *  possibly some values.  In the raw embl file we have /name=value.
