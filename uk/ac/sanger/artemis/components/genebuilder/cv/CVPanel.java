@@ -89,7 +89,8 @@ public class CVPanel extends JPanel
   {
     if(qualifier.getName().equals("product") ||
        qualifier.getName().equals("controlled_curation") ||
-       qualifier.getName().equals("GO"))
+       qualifier.getName().equals("GO") ||
+       qualifier.getName().equals("class"))
       return true;
     return false;
   }
@@ -104,7 +105,8 @@ public class CVPanel extends JPanel
     cv_tags.add("GO");
     cv_tags.add("controlled_curation");
     cv_tags.add("product");
-
+    cv_tags.add("class");
+    
     editableComponents = new Vector();
     
     Dimension dimension = new Dimension(150, 30);
@@ -157,11 +159,11 @@ public class CVPanel extends JPanel
       }
     }
     
+    JSeparator separator = new JSeparator();
+    separator.setPreferredSize(new Dimension(350,10));
+    separator.setMaximumSize(new Dimension(350,10));
     if(n > 0)
     {
-      JSeparator separator = new JSeparator();
-      separator.setPreferredSize(go_dimension);
-      separator.setMaximumSize(go_dimension);
       cvBox.add(Box.createVerticalStrut(5));
       cvBox.add(separator);
     }
@@ -200,9 +202,62 @@ public class CVPanel extends JPanel
     
     if(n > 0)
     {
-      JSeparator separator = new JSeparator();
-      separator.setPreferredSize(go_dimension);
-      separator.setMaximumSize(go_dimension);
+      cvBox.add(Box.createVerticalStrut(5));
+      cvBox.add(separator);
+    }
+    
+    //
+    // RILEY
+    //
+    
+    if(go_dimension == null)
+      go_dimension = new JLabel("product ").getPreferredSize();
+    
+    for(int qualifier_index = 0; qualifier_index < cvQualifiers.size(); ++qualifier_index)
+    {
+      final Qualifier this_qualifier = (Qualifier) cvQualifiers
+          .elementAt(qualifier_index);
+      if(this_qualifier.getName().equals("class"))
+      {
+        final StringVector qualifier_strings = this_qualifier.getValues();
+
+        for(int value_index = 0; value_index < qualifier_strings.size(); ++value_index)
+        {
+          final int v_index = value_index;
+          n++;
+          xBox = Box.createHorizontalBox();
+          final String qualifierString = (String) qualifier_strings.elementAt(value_index);
+
+          JLabel label = new JLabel("class");
+          if(go_dimension != null)
+            label.setPreferredSize(go_dimension);
+          xBox.add(label);
+
+          int index = qualifierString.indexOf("::");
+          String classStr = qualifierString.substring(0, index);
+          JTextField termTextField = new JTextField(classStr);
+          termTextField.setEditable(false);
+          termTextField
+              .setToolTipText(DatabaseDocument.getCvTermByCvTermId(
+                  Integer.parseInt(qualifierString.substring(index + 2)))
+                  .getName());
+          termTextField.setPreferredSize(dimension);
+          termTextField.setMaximumSize(dimension);
+          termTextField.setCaretPosition(0);
+
+          xBox.add(termTextField);
+          xBox.add(getRemoveButton(this_qualifier, v_index));
+          xBox.add(Box.createHorizontalGlue());
+          cvBox.add(xBox);
+
+          // Splash.logger4j.debug(this_qualifier.getName());
+        }
+      }
+    }
+    
+    
+    if(n > 0)
+    {
       cvBox.add(Box.createVerticalStrut(5));
       cvBox.add(separator);
     }
@@ -406,6 +461,9 @@ public class CVPanel extends JPanel
       cv_qualifier.addValue("term="+cvterm.getName());
     else if(cv_type.equals("product"))
       cv_qualifier.addValue(cvterm.getName());
+    else if(cv_type.equals("class"))
+      cv_qualifier.addValue(cvterm.getDbXRef().getAccession()+
+                            "::"+cvterm.getCvTermId());
     
     if(index > -1)
     {
@@ -534,6 +592,8 @@ public class CVPanel extends JPanel
       cv_name = DatabaseDocument.PRODUCTS_TAG_CVNAME;
     else if(cv_name.equals("controlled_curation"))
       cv_name = DatabaseDocument.CONTROLLED_CURATION_TAG_CVNAME;
+    else if(cv_name.equals("class"))
+      cv_name = DatabaseDocument.RILEY_TAG_CVNAME;
     
     return cv_name;
   }
@@ -638,29 +698,6 @@ public class CVPanel extends JPanel
     return select;
   }
   
-  /**
-   * Strip out the value of a field of interest from a qualifier string
-   * 
-   * @param fieldName
-   * @param qualifierString
-   * @return
-   */
-  private String getField(final String fieldName, final String qualifierString)
-  {
-    String field = null;
-    
-    int ind1 = qualifierString.toLowerCase().indexOf(fieldName.toLowerCase());
-    int ind2 = qualifierString.indexOf(";", ind1);
-    
-    int len = fieldName.length();
-
-    if(ind2 > ind1 && ind1 > -1)
-      field = qualifierString.substring(ind1+len,ind2);
-    else if(ind1 > -1)
-      field = qualifierString.substring(ind1+len);
-    
-    return field;
-  }
   
   /**
    *  Implementation of the FeatureChangeListener interface.  We need to
@@ -699,6 +736,9 @@ public class CVPanel extends JPanel
    */
   class CVCellRenderer extends JLabel implements ListCellRenderer 
   {
+    /** */
+    private static final long serialVersionUID = 1L;
+
     public CVCellRenderer() 
     {
       super();
