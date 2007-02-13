@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.48 2007-02-09 15:16:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.49 2007-02-13 09:37:59 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -29,7 +29,6 @@ import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.*;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
@@ -41,7 +40,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.48 2007-02-09 15:16:15 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.49 2007-02-13 09:37:59 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -68,8 +67,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   /** combined feature_relationship.rank store for exons */
   private Hashtable feature_relationship_rank_store;
   
-  private HashSet similarityFeatures;
-
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
    *  to an Entry (with Entry.add()).
@@ -1044,17 +1041,4 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     this.visible = visible;
   }
   
-  public void addSimilarityFeature(org.gmod.schema.sequence.Feature matchFeature)
-  {
-    if(similarityFeatures == null)
-      similarityFeatures = new HashSet();
-    similarityFeatures.add(matchFeature);
-  }
-
-  public HashSet getSimilarityFeatures()
-  {
-    return similarityFeatures;
-  }
-
-
 }
