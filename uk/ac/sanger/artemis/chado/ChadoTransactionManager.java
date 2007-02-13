@@ -57,6 +57,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Enumeration;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureCvTermPub;
@@ -71,7 +72,6 @@ import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.analysis.Analysis;
 import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.cv.*;
-import org.gmod.schema.organism.Organism;
 import org.gmod.schema.pub.Pub;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
@@ -112,7 +112,8 @@ public class ChadoTransactionManager
   public static String cv_tags[] =
           {   "GO",
               "controlled_curation",
-              "product" };
+              "product",
+              "class"};
   
   //synonym tags from cv
   private String synonym_tags[] = null;
@@ -1290,14 +1291,8 @@ public class ChadoTransactionManager
          }
          else if(qualifier_name.equals("similarity"))
          {
-           AnalysisFeature analysisFeature = new AnalysisFeature();
-           Analysis analysis = new Analysis();
-           Organism organism = new Organism();
-           org.gmod.schema.sequence.Feature queryFeature = 
-             new org.gmod.schema.sequence.Feature();
-           org.gmod.schema.sequence.Feature subjectFeature = 
-             new org.gmod.schema.sequence.Feature();
-           
+
+             // todo
          }
          else
            Splash.logger4j.warn("Ignoring reserved tag "+qualifier_name);
@@ -1370,6 +1365,194 @@ public class ChadoTransactionManager
            tsn = new ChadoTransaction(ChadoTransaction.INSERT,
                feature_synonym,
                feature.getLastModified(), feature,
+               feature.getKey().getKeyString());
+           sql.add(tsn);
+         }
+         else if(qualifier_name.equals("similarity"))
+         {
+           AnalysisFeature analysisFeature = new AnalysisFeature();
+           Analysis analysis = new Analysis();
+
+           org.gmod.schema.sequence.Feature queryFeature = 
+             new org.gmod.schema.sequence.Feature();
+           org.gmod.schema.sequence.Feature subjectFeature = 
+             new org.gmod.schema.sequence.Feature();
+           org.gmod.schema.sequence.Feature matchFeature = 
+             new org.gmod.schema.sequence.Feature();
+           FeatureDbXRef featureDbXRef = new FeatureDbXRef();
+          
+           queryFeature.setUniqueName(uniquename);
+           matchFeature.setUniqueName("MATCH_"+uniquename);
+           
+           analysisFeature.setAnalysis(analysis);
+           analysisFeature.setFeature(matchFeature);
+       
+           // algorithm
+           StringTokenizer tok = new StringTokenizer(qualifier_string, ";");
+           String method = tok.nextToken();
+           if(!method.equals(""))
+             analysis.setAlgorithm(method);
+           
+           // primary dbxref
+           DbXRef dbXRef_1 = new DbXRef();
+           Db db_1 = new Db();
+           dbXRef_1.setDb(db_1);
+           String value = tok.nextToken().trim();
+           String values[] = value.split(" ");
+           int ind = values[0].indexOf(':');
+           final String primary_name = values[0].substring(0, ind);
+           db_1.setName(primary_name);
+           dbXRef_1.setAccession(values[0].substring(ind+1));
+           Splash.logger4j.debug("Primary dbXRef  "+db_1.getName()+":"+dbXRef_1.getAccession());
+           subjectFeature.setDbXRef(dbXRef_1);
+           subjectFeature.setUniqueName(db_1.getName()+":"+dbXRef_1.getAccession());
+           
+           // secondary dbxref
+           DbXRef dbXRef_2 = new DbXRef();
+           Db db_2 = new Db();
+           dbXRef_2.setDb(db_2);
+           values[1] = values[1].replaceAll("^\\W", "");
+           values[1] = values[1].replaceAll("\\W$", "");
+           ind = values[0].indexOf(':');
+           db_2.setName(values[1].substring(0, ind-1));
+           dbXRef_2.setAccession(values[1].substring(ind));
+           Splash.logger4j.debug("Secondary dbXRef  "+db_2.getName()+" "+dbXRef_2.getAccession());
+           featureDbXRef.setDbXRef(dbXRef_2);
+           List featureDbXRefs = new Vector();
+           featureDbXRefs.add(featureDbXRef);
+           subjectFeature.setFeatureDbXRefs(featureDbXRefs);
+           
+           // organism
+           final String organismStr = tok.nextToken().trim();
+           if(!organismStr.equals(""))
+           {
+             FeatureProp featureProp = new FeatureProp();
+             featureProp.setCvTerm(getCvTerm("organism"));
+             featureProp.setValue(organismStr);
+             subjectFeature.addFeatureProp(featureProp);
+           }
+           
+           // product
+           final String product = tok.nextToken().trim();
+           if(!product.equals(""))
+           {
+             FeatureProp featureProp = new FeatureProp();
+             featureProp.setCvTerm(getCvTerm("product"));
+             featureProp.setValue(product);
+             subjectFeature.addFeatureProp(featureProp);
+           }
+           
+           // gene
+           final String gene = tok.nextToken().trim();
+           if(!gene.equals(""))
+           {
+             FeatureProp featureProp = new FeatureProp();
+             featureProp.setCvTerm(getCvTerm("gene"));
+             featureProp.setValue(gene);
+             subjectFeature.addFeatureProp(featureProp);
+           }
+           
+           // length
+           String length = tok.nextToken().trim();
+           if(!length.equals(""))
+           {
+             if(length.startsWith("length=") ||
+                 length.startsWith("length ") )
+               length = length.substring(7);
+             if(length.endsWith("aa"))
+               length = length.substring(0, length.length()-2).trim();
+             subjectFeature.setSeqLen(new Integer(length));
+           }
+           
+           // percentage identity 
+           String id = tok.nextToken().trim();
+           if(!id.equals(""))
+           {
+             if(id.startsWith("id="))
+               id = id.substring(3);
+             if(id.endsWith("%"))
+               id = id.substring(0, id.length()-1);
+             analysisFeature.setIdentity(new Double(id));
+           }
+           
+           // ungapped id
+           String ungappedId = tok.nextToken().trim();
+           if(!ungappedId.equals(""))
+           {
+             if(ungappedId.startsWith("ungapped id="))
+               ungappedId = ungappedId.substring(12);
+             if(ungappedId.endsWith("%"))
+               ungappedId = ungappedId.substring(0, ungappedId.length()-1);
+             FeatureProp featureProp = new FeatureProp();
+             featureProp.setCvTerm(getCvTerm("ungapped id"));
+             featureProp.setValue(ungappedId);
+             matchFeature.addFeatureProp(featureProp);
+           }
+           
+           // e-value
+           String evalue = tok.nextToken().trim();
+           if(!evalue.equals(""))
+           {
+             if(evalue.startsWith("E()="))
+               evalue = evalue.substring(4);
+             analysisFeature.setSignificance(new Double(evalue));
+           }
+           
+           // score
+           String score = tok.nextToken().trim();
+           if(!score.equals(""))
+           {
+             if(score.startsWith("score="))
+               score = score.substring(6);
+             analysisFeature.setRawScore(new Double(score));
+           }
+           
+           // overlap
+           String overlap = tok.nextToken().trim();
+           if(!overlap.equals(""))
+           {
+             String overlaps[] = overlap.split(" ");
+             FeatureProp featureProp = new FeatureProp();
+             featureProp.setCvTerm(getCvTerm("overlap"));
+             featureProp.setValue(overlaps[0]);
+             matchFeature.addFeatureProp(featureProp);
+           }
+           
+           // query location
+           String queryLoc = tok.nextToken().trim();
+           if(!queryLoc.equals(""))
+           {
+             FeatureLoc featureLoc = new FeatureLoc();
+             String locs[] = queryLoc.split(" ");
+             locs = locs[1].split("-");
+             int fmin = Integer.parseInt(locs[0])-1;
+             featureLoc.setFmin( new Integer(fmin) );
+             int fmax = Integer.parseInt(locs[1]);
+             featureLoc.setFmax( new Integer(fmax) );
+             featureLoc.setRank(1);
+             featureLoc.setFeatureBySrcFeatureId(queryFeature);
+             matchFeature.addFeatureLocsForFeatureId(featureLoc);
+           }
+           
+           // subject location
+           String subjectLoc = tok.nextToken().trim();
+           if(!subjectLoc.equals(""))
+           {
+             FeatureLoc featureLoc = new FeatureLoc();
+             String locs[] = subjectLoc.split(" ");
+             locs = locs[1].split("-");
+             int fmin = Integer.parseInt(locs[0])-1;
+             featureLoc.setFmin( new Integer(fmin) );
+             int fmax = Integer.parseInt(locs[1]);
+             featureLoc.setFmax( new Integer(fmax) );
+             featureLoc.setRank(0);
+             featureLoc.setFeatureBySrcFeatureId(subjectFeature);
+             matchFeature.addFeatureLocsForFeatureId(featureLoc);
+           }
+           
+           tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+               analysisFeature,
+               null, feature,
                feature.getKey().getKeyString());
            sql.add(tsn);
          }
@@ -1558,6 +1741,17 @@ public class ChadoTransactionManager
     {
       CvTerm cvTerm = getCvTerm(qualifier_string);
 
+      feature_cvterm.setCvTerm(cvTerm);
+      Splash.logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
+      return feature_cvterm;
+    }
+    else if(qualifier_name.toLowerCase().equals("class"))
+    {
+      int index = qualifier_string.indexOf("::");
+
+      CvTerm cvTerm = getCvTerm( DatabaseDocument.getCvTermByCvTermId( 
+          Integer.parseInt(qualifier_string.substring(index+2))).getName() );
+      
       feature_cvterm.setCvTerm(cvTerm);
       Splash.logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
       return feature_cvterm;
