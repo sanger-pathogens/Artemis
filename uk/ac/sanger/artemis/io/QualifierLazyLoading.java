@@ -36,7 +36,7 @@ import uk.ac.sanger.artemis.util.*;
  *  one name and many values.
  *
  *  @author Kim Rutherford
- *  @version $Id: QualifierLazyLoading.java,v 1.1 2007-02-13 09:38:57 tjc Exp $
+ *  @version $Id: QualifierLazyLoading.java,v 1.2 2007-02-13 09:57:57 tjc Exp $
  * */
 
 public class QualifierLazyLoading extends Qualifier
@@ -49,6 +49,22 @@ public class QualifierLazyLoading extends Qualifier
   private Set values;
   private boolean forceLoad = false;
   
+  /**
+   *  Create a new Qualifier object.  This object consists of a name and
+   *  possibly some values.  In the raw embl file we have /name=value.
+   *  @param name The name of this qualifier (ie. the text immediately after
+   *    the / in the qualifier)
+   * @param values The values of this qualifier (ie the text immediately after
+   *    the = in the qualifiers).  This argument should be null if the
+   *    qualifier has no values.  The values String objects should not include
+   *    the quote characters (),"" or [].  For example if the original
+   *    qualifier was /citation=[3] then the value String should be: 3.  This
+   *    argument is copied by the constructor.
+   **/
+  public QualifierLazyLoading (final String name, final Set set) 
+  {
+    initialiseLazy (name, set);
+  }
 
   /**
    *  Create a new Qualifier object.  This object consists of a name and
@@ -58,7 +74,7 @@ public class QualifierLazyLoading extends Qualifier
    *  @param value The value of this qualifier (see the other constructor for
    *    details).  Other values may be added later.
    **/
-  public QualifierLazyLoading (final String name, final Object value) 
+  public QualifierLazyLoading (final String name, final LazyQualifierValue value) 
   {
     HashSet set = new HashSet();
     set.add(value);
