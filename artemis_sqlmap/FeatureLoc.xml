@@ -71,22 +71,23 @@
     </update>
    
     <insert id="insertFeatureLoc" 
-            parameterClass="Feature">
+            parameterClass="FeatureLoc">
       INSERT INTO featureloc
-        ( featureloc_id, feature_id, srcfeature_id, fmin, fmax, strand
-          <isNotNull property="featureLoc.phase">
+        ( featureloc_id, feature_id, srcfeature_id, fmin, fmax, strand, rank
+          <isNotNull property="phase">
            , phase
           </isNotNull> 
         )
       VALUES
         ( nextval('featureloc_featureloc_id_seq'),
-          $featureId$,
-          $featureLoc.featureBySrcFeatureId.featureId$,
-          $featureLoc.fmin$,
-          $featureLoc.fmax$,
-          $featureLoc.strand$
-          <isNotNull property="featureLoc.phase">
-            , $featureLoc.phase$
+          $featureByFeatureId.featureId$,
+          $featureBySrcFeatureId.featureId$,
+          $fmin$,
+          $fmax$,
+          $strand$,
+          $rank$
+          <isNotNull property="phase">
+            , $phase$
           </isNotNull>
         )
     </insert>
