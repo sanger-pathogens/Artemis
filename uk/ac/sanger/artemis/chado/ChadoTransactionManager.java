@@ -30,6 +30,8 @@ import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
 import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.io.LazyQualifierValue;
+import uk.ac.sanger.artemis.io.QualifierLazyLoading;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -763,6 +765,8 @@ public class ChadoTransactionManager
     org.gmod.schema.sequence.Feature chado_feature = 
       new org.gmod.schema.sequence.Feature();
     chado_feature.setUniqueName(uniquename);
+    CvTerm cvTerm = getCvTerm(featureType);
+    chado_feature.setCvTerm(cvTerm);
     
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.DELETE,
         chado_feature,
@@ -1290,11 +1294,35 @@ public class ChadoTransactionManager
          }
          else if(qualifier_name.equals("similarity"))
          {
-
-             // todo
+           
+           if(old_qualifier instanceof QualifierLazyLoading)
+           {
+             LazyQualifierValue qual = 
+               ((QualifierLazyLoading)old_qualifier).getValue(i);
+             final org.gmod.schema.sequence.Feature matchFeature = 
+                              ((Similarity)qual).getMatchFeature();
+             
+             tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+                 matchFeature,
+                 feature.getLastModified(), feature,
+                 feature.getKey().getKeyString());
+             sql.add(tsn);
+           }
+           else
+           {
+             AnalysisFeature analysisFeature =
+                getAnalysisFeature(uniquename, qualifier_string, feature);
+             
+             tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+                 analysisFeature,
+                 feature.getLastModified(), feature,
+                 feature.getKey().getKeyString());
+             sql.add(tsn);
+           }
+           
          }
          else
-           Splash.logger4j.warn("Ignoring reserved tag "+qualifier_name);
+           Splash.logger4j.warn("Ignoring reserved tag missing : "+qualifier_name);
          
       }
     }
@@ -1691,6 +1719,8 @@ public class ChadoTransactionManager
       new org.gmod.schema.sequence.Feature();
     FeatureDbXRef featureDbXRef = new FeatureDbXRef();
    
+    subjectFeature.setCvTerm( getCvTerm("similarity_region") );
+    
     queryFeature.setUniqueName(uniquename);
     queryFeature.setFeatureId(queryFeatureId);
     matchFeature.setUniqueName("MATCH_"+uniquename);
@@ -1745,6 +1775,7 @@ public class ChadoTransactionManager
       Splash.logger4j.debug("Secondary dbXRef  " + db_2.getName() + " "
           + dbXRef_2.getAccession());
       featureDbXRef.setDbXRef(dbXRef_2);
+      featureDbXRef.setFeature(subjectFeature);
       List featureDbXRefs = new Vector();
       featureDbXRefs.add(featureDbXRef);
       subjectFeature.setFeatureDbXRefs(featureDbXRefs);
@@ -1851,7 +1882,13 @@ public class ChadoTransactionManager
       matchFeature.addFeatureProp(featureProp);
     }
     
-    // query location
+    Short strand;
+    if(feature.getLocation().isComplement())
+      strand = new Short("-1");
+    else
+      strand = new Short("1");
+    
+    // query location 
     String queryLoc = getString(qualifier_strings, "query");
     if(!queryLoc.equals(""))
     {
@@ -1863,6 +1900,7 @@ public class ChadoTransactionManager
       int fmax = Integer.parseInt(locs[1]);
       featureLoc.setFmax( new Integer(fmax) );
       featureLoc.setRank(1);
+      featureLoc.setStrand(strand);
       featureLoc.setFeatureBySrcFeatureId(queryFeature);
       matchFeature.addFeatureLocsForFeatureId(featureLoc);
     }
@@ -1879,6 +1917,7 @@ public class ChadoTransactionManager
       int fmax = Integer.parseInt(locs[1]);
       featureLoc.setFmax( new Integer(fmax) );
       featureLoc.setRank(0);
+      featureLoc.setStrand(strand);
       featureLoc.setFeatureBySrcFeatureId(subjectFeature);
       matchFeature.addFeatureLocsForFeatureId(featureLoc);
     }
