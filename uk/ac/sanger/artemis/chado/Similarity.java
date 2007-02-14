@@ -222,4 +222,10 @@ public class Similarity implements LazyQualifierValue
 
   }
 
+
+  public Feature getMatchFeature()
+  {
+    return matchFeature;
+  }
+
 }
