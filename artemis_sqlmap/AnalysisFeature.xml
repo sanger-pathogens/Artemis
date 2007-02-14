@@ -28,15 +28,19 @@
     <!--  INSERT  -->
     <insert id="insertAnalysisFeature" 
             parameterClass="AnalysisFeature">
-      INSERT INTO feature 
-        ( feature_id, analysis_id, rawscore, normscore, significance, identity )
+      INSERT INTO analysisfeature 
+        ( feature_id, analysis_id
+        <isNotNull property="rawScore">     ,rawscore </isNotNull>
+        <isNotNull property="normScore">    ,normscore </isNotNull>
+        <isNotNull property="significance"> ,significance </isNotNull>
+        <isNotNull property="identity">     ,identity </isNotNull>)
       VALUES
-        ( (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#),
-          $analysis.analysisId$,
-          $rawscore$,
-          $normscore$,
-          $significance$,
-          $identity$ )
+        ( $feature.featureId$,
+          (SELECT analysis_id FROM analysis WHERE program=#analysis.program#)
+          <isNotNull property="rawScore">     ,$rawScore$ </isNotNull>
+          <isNotNull property="normScore">    ,$normScore$ </isNotNull>
+          <isNotNull property="significance"> ,$significance$ </isNotNull>
+          <isNotNull property="identity">     ,$identity$ </isNotNull> )
     </insert>
 
 </sqlMap>
