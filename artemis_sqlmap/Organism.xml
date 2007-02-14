@@ -30,7 +30,12 @@
     <select id="getOrganismID" resultClass="java.lang.Integer" 
             parameterClass="org.gmod.schema.sequence.Feature" cacheModel="organism-cache">
       SELECT organism_id AS organismId FROM feature f WHERE
+        <isGreaterThan property="featureLoc.featureBySrcFeatureId.featureId" compareValue="0"> 
              f.feature_id=$featureLoc.featureBySrcFeatureId.featureId$
+        </isGreaterThan>
+        <isGreaterThan property="featureId" compareValue="0"> 
+             f.feature_id=$featureId$
+        </isGreaterThan>
     </select>
  
 </sqlMap> 
