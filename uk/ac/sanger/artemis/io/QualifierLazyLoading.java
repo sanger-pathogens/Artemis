@@ -24,9 +24,9 @@
 
 package uk.ac.sanger.artemis.io;
 
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
+import java.util.Vector;
 
 import uk.ac.sanger.artemis.util.*;
 
@@ -36,7 +36,7 @@ import uk.ac.sanger.artemis.util.*;
  *  one name and many values.
  *
  *  @author Kim Rutherford
- *  @version $Id: QualifierLazyLoading.java,v 1.2 2007-02-13 09:57:57 tjc Exp $
+ *  @version $Id: QualifierLazyLoading.java,v 1.3 2007-02-14 17:28:44 tjc Exp $
  * */
 
 public class QualifierLazyLoading extends Qualifier
@@ -46,7 +46,7 @@ public class QualifierLazyLoading extends Qualifier
   private String name;
 
   /** The values that were passed to the constructor. */
-  private Set values;
+  private List values;
   private boolean forceLoad = false;
   
   /**
@@ -61,7 +61,7 @@ public class QualifierLazyLoading extends Qualifier
    *    qualifier was /citation=[3] then the value String should be: 3.  This
    *    argument is copied by the constructor.
    **/
-  public QualifierLazyLoading (final String name, final Set set) 
+  public QualifierLazyLoading (final String name, final List set) 
   {
     initialiseLazy (name, set);
   }
@@ -76,7 +76,7 @@ public class QualifierLazyLoading extends Qualifier
    **/
   public QualifierLazyLoading (final String name, final LazyQualifierValue value) 
   {
-    HashSet set = new HashSet();
+    List set = new Vector();
     set.add(value);
     initialiseLazy (name, set);
   }
@@ -88,7 +88,7 @@ public class QualifierLazyLoading extends Qualifier
    *  @param values The values of this qualifier (see the other constructor for
    *    details).  Other values may be added later.
    **/
-  private void initialiseLazy(final String name, final Set values) 
+  private void initialiseLazy(final String name, final List values) 
   {
     this.name = name;
     if(values == null) 
@@ -115,27 +115,37 @@ public class QualifierLazyLoading extends Qualifier
     else
     {
       StringVector v = new StringVector();
-      Iterator it = values.iterator();
-      while(it.hasNext())
+      
+      for(int i=0; i<values.size(); i++)
       {
-        LazyQualifierValue lazy = (LazyQualifierValue)it.next();
+        LazyQualifierValue lazy = (LazyQualifierValue)values.get(i);
         if(forceLoad)
           lazy.setForceLoad(true);
-        v.add( lazy.getString() );
+        v.add(i, lazy.getString());
       }
       
       return v;
     }
   }
+  
+  /**
+   * 
+   * @param index
+   * @return
+   */
+  public LazyQualifierValue getValue(int index)
+  {
+    return (LazyQualifierValue)values.get(index);
+  }
 
   /**
    *  Add the given values to this object.
    **/
-  public void addValues(final Set new_values) 
+  public void addValues(final List new_values) 
   {
     if(values == null) 
     {
-      values = new HashSet();
+      values = new Vector();
       values.add ((String)null);
     }
     if(new_values == null) 
@@ -159,7 +169,7 @@ public class QualifierLazyLoading extends Qualifier
   public void addValue(final Object new_value)
   {
     if(values == null) 
-      values = new HashSet();
+      values = new Vector();
     
     values.add(new_value);
   }
