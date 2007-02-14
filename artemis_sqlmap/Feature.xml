@@ -163,7 +163,7 @@
                f.feature_id=#featureSynonyms[].feature.featureId#
              </iterate>
             </isNotNull>
-            ( uniquename LIKE #uniqueName# OR f.name LIKE #uniqueName# ) AND              
+            ( uniquename LIKE #uniqueName# ESCAPE '/' OR f.name LIKE #uniqueName# ESCAPE '/') AND              
           </isNotNull>
           
           <isGreaterThan property="cvTerm.cvTermId" compareValue="0"> 
@@ -282,13 +282,17 @@
     <insert id="insertFeature" 
             parameterClass="Feature">
       INSERT INTO feature 
-        ( feature_id, organism_id, name, uniquename, type_id )
+        ( feature_id, organism_id, name, uniquename, type_id
+          <isGreaterThan property="seqLen" compareValue="0"> , seqlen </isGreaterThan>
+          <isNotNull property="dbXRef.dbXRefId"> , dbxref_id </isNotNull> )
       VALUES
         ( nextval('feature_feature_id_seq'),
           $organism.organismId$,
           #name#,
           #uniqueName#,
-          $cvTerm.cvTermId$ )
+          $cvTerm.cvTermId$
+          <isGreaterThan property="seqLen" compareValue="0"> , $seqLen$ </isGreaterThan>
+          <isNotNull property="dbXRef.dbXRefId"> , $dbXRef.dbXRefId$ </isNotNull> )
     </insert>
    
    <!--
@@ -308,7 +312,7 @@
    <delete id="deleteFeature" 
            parameterClass="Feature">
       DELETE FROM feature
-      WHERE uniquename=#uniqueName#
+      WHERE uniquename=#uniqueName# AND type_id=$cvTerm.cvTermId$
    </delete>
    
 
