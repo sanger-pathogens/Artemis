@@ -24,6 +24,8 @@
 
 package uk.ac.sanger.artemis.chado;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -587,7 +589,10 @@ public class IBatisDAO extends GmodDAO
     //
     // insert feature location into featureloc
     feature.setFeatureId(feature_id);
-    sqlMap.insert("insertFeatureLoc", feature);
+    FeatureLoc featureLoc = feature.getFeatureLoc();
+    featureLoc.setFeatureByFeatureId(feature);
+    
+    sqlMap.insert("insertFeatureLoc", featureLoc);
     
     // insert feature relationships
     if(feature.getFeatureRelationshipsForSubjectId() != null)
@@ -628,9 +633,131 @@ public class IBatisDAO extends GmodDAO
     sqlMap.insert("insertFeatureDbXRef", feature_dbxref);
   }
   
+  /**
+   * Insert analysis_feature, match feature and associated query and subject features
+   * @param analysisFeature
+   */
   private void insertAnalysisFeature(AnalysisFeature analysisFeature)
   {
-    // todo ---- what uniquename for the match feature?
+    Feature matchFeature   = analysisFeature.getFeature();
+    Feature queryFeature   = null;
+    Feature subjectFeature = null;
+    FeatureLoc queryLoc    = null;
+    FeatureLoc subjectLoc  = null;
+    
+    Collection featureLocs = matchFeature.getFeatureLocsForFeatureId();
+    Iterator it = featureLocs.iterator();
+    while(it.hasNext())
+    {
+      FeatureLoc featureLoc = (FeatureLoc)it.next();
+
+      if(featureLoc.getFeatureBySrcFeatureId().getFeatureId() > 0)
+      {
+        queryFeature = featureLoc.getFeatureBySrcFeatureId();
+        queryLoc = featureLoc;
+      }
+      else
+      {
+        subjectFeature = featureLoc.getFeatureBySrcFeatureId();
+        subjectLoc = featureLoc;
+      }
+    }
+    
+    Integer organism_id = (Integer)sqlMap.queryForObject("getOrganismID", queryFeature);
+    Organism organism = new Organism();
+    organism.setOrganismId(organism_id.intValue());
+    matchFeature.setOrganism(organism);
+    subjectFeature.setOrganism(organism);
+    
+    // insert match feature
+    int value = 1;
+    List matches = getFeaturesByUniqueName(matchFeature.getUniqueName()+"/_%");
+    
+    for(int i=0; i<matches.size(); i++)
+    {
+      String name = ((Feature)matches.get(i)).getUniqueName();
+      int index = name.lastIndexOf('_');
+      name = name.substring(index+1);
+      if( Integer.parseInt(name) >= value )
+        value = Integer.parseInt(name)+1;
+    }
+    
+    matchFeature.setUniqueName( matchFeature.getUniqueName()+"_"+value);
+    sqlMap.insert("insertFeature", matchFeature);
+    int matchFeatureId = ((Integer)sqlMap.queryForObject("currval", 
+                               "feature_feature_id_seq")).intValue();
+    matchFeature.setFeatureId(matchFeatureId);
+    
+    // insert primary dbXRef
+    DbXRef primaryDbXRef = subjectFeature.getDbXRef();
+    primaryDbXRef = loadDbXRef(primaryDbXRef);
+    subjectFeature.setDbXRef(primaryDbXRef);
+    
+    // insert subject feature
+    Feature f = getFeatureByUniqueName(subjectFeature.getUniqueName(), 
+                                subjectFeature.getCvTerm().getName());
+    if(f != null)
+      subjectFeature.setFeatureId(f.getFeatureId());
+    else
+    {
+      sqlMap.insert("insertFeature", subjectFeature);
+      int subjectFeatureId = ((Integer)sqlMap.queryForObject("currval", 
+                                      "feature_feature_id_seq")).intValue();
+      subjectFeature.setFeatureId(subjectFeatureId);
+    }
+    
+    // insert match featureLocs
+    queryLoc.setFeatureBySrcFeatureId(queryFeature);
+    queryLoc.setFeatureByFeatureId(matchFeature);
+    sqlMap.insert("insertFeatureLoc", queryLoc);
+    
+    subjectLoc.setFeatureBySrcFeatureId(subjectFeature);
+    subjectLoc.setFeatureByFeatureId(matchFeature);
+    sqlMap.insert("insertFeatureLoc", subjectLoc);
+    
+    // insert analysis feature
+    matchFeature.setFeatureId(matchFeatureId);
+    analysisFeature.setFeature(matchFeature);
+    sqlMap.insert("insertAnalysisFeature", analysisFeature);
+    
+    // insert dbXRefs    
+    Collection featureCvTermDbXRefs = subjectFeature.getFeatureDbXRefs();
+    
+    if(featureCvTermDbXRefs != null)
+    {
+      it = featureCvTermDbXRefs.iterator();
+
+      while(it.hasNext())
+        insertFeatureDbXRef((FeatureDbXRef) it.next());
+    }
+    
+    // insert subject featureprops
+    Collection featureProps = subjectFeature.getFeatureProps();
+    if(featureProps != null)
+    {
+      it = featureProps.iterator();
+
+      while(it.hasNext())
+      {
+        FeatureProp featureProp = (FeatureProp) it.next();
+        featureProp.setFeature(subjectFeature);
+        sqlMap.insert("insertFeatureProp", featureProp);
+      }
+    }
+    
+    // insert match featureprops
+    featureProps = matchFeature.getFeatureProps();
+    if(featureProps != null)
+    {
+      it = featureProps.iterator();
+
+      while(it.hasNext())
+      {
+        FeatureProp featureProp = (FeatureProp) it.next();
+        featureProp.setFeature(matchFeature);
+        sqlMap.insert("insertFeatureProp", featureProp);
+      }
+    }
   }
   
   /**
