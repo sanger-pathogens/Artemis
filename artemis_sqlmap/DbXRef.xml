@@ -52,8 +52,8 @@
   
   <!-- WRITE BACK -->
   <insert id="insertDbXRef" parameterClass="DbXRef">
-    INSERT INTO dbxref ( db_id, accession, version ) 
-           VALUES ($db.dbId$, #accession#, #version#)
+    INSERT INTO dbxref ( db_id, accession <isNotNull property="version"> ,version   </isNotNull>) 
+           VALUES ($db.dbId$, #accession# <isNotNull property="version"> ,#version# </isNotNull>)
   </insert>    
 
 </sqlMap> 
