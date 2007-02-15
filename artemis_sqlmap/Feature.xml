@@ -167,7 +167,7 @@
           </isNotNull>
           
           <isGreaterThan property="cvTerm.cvTermId" compareValue="0"> 
-            feature.type_id=$cvTerm.cvTermId$ AND
+            f.type_id=$cvTerm.cvTermId$ AND
           </isGreaterThan>
           
          <isNotNull property="cvTerm.name"> 
