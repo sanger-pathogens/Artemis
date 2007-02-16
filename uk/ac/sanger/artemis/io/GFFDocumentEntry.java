@@ -20,12 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.38 2007-02-13 09:38:28 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.39 2007-02-16 09:36:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
 import uk.ac.sanger.artemis.chado.Similarity;
+import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.38 2007-02-13 09:38:28 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.39 2007-02-16 09:36:18 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -254,7 +255,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       
       //
       // load /similarity - lazily
-      loadSimilarityLazyData(original_features);
+      if(getDocument() instanceof DatabaseDocument)
+        loadSimilarityLazyData(original_features);
     }
     catch(InvalidRelationException e)
     {
@@ -538,7 +540,10 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         id_range_store.put(id, new_range);
         feature_relationship_rank_store.put(id, rank);
       }
-
+      else
+        Splash.logger4j.warn("NO ID FOUND FOR FEATURE AT: "+
+                     this_feature.getLocation().toString());
+      
       if(this_feature_location.isComplement())
         new_range_vector.insertElementAt(new_range, 0);
       else
