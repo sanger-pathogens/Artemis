@@ -562,6 +562,8 @@ public class IBatisDAO extends GmodDAO
       deleteFeatureSynonym((FeatureSynonym)o);
     else if(o instanceof FeatureCvTerm)
       sqlMap.delete("deleteFeatureCvTerm", o);
+    else if(o instanceof AnalysisFeature)
+      deleteAnalysisFeature((AnalysisFeature)o);
   }
 
 
@@ -720,33 +722,37 @@ public class IBatisDAO extends GmodDAO
     analysisFeature.setFeature(matchFeature);
     sqlMap.insert("insertAnalysisFeature", analysisFeature);
     
-    // insert dbXRefs    
-    Collection featureCvTermDbXRefs = subjectFeature.getFeatureDbXRefs();
-    
-    if(featureCvTermDbXRefs != null)
+    // if subject feature not inserted add dbXRefs and featureProps
+    if(f == null)
     {
-      it = featureCvTermDbXRefs.iterator();
+      // insert dbXRefs
+      Collection featureCvTermDbXRefs = subjectFeature.getFeatureDbXRefs();
 
-      while(it.hasNext())
-        insertFeatureDbXRef((FeatureDbXRef) it.next());
-    }
-    
-    // insert subject featureprops
-    Collection featureProps = subjectFeature.getFeatureProps();
-    if(featureProps != null)
-    {
-      it = featureProps.iterator();
-
-      while(it.hasNext())
+      if(featureCvTermDbXRefs != null)
       {
-        FeatureProp featureProp = (FeatureProp) it.next();
-        featureProp.setFeature(subjectFeature);
-        sqlMap.insert("insertFeatureProp", featureProp);
+        it = featureCvTermDbXRefs.iterator();
+
+        while(it.hasNext())
+          insertFeatureDbXRef((FeatureDbXRef) it.next());
+      }
+
+      // insert subject featureprops
+      Collection featureProps = subjectFeature.getFeatureProps();
+      if(featureProps != null)
+      {
+        it = featureProps.iterator();
+
+        while(it.hasNext())
+        {
+          FeatureProp featureProp = (FeatureProp) it.next();
+          featureProp.setFeature(subjectFeature);
+          sqlMap.insert("insertFeatureProp", featureProp);
+        }
       }
     }
     
     // insert match featureprops
-    featureProps = matchFeature.getFeatureProps();
+    Collection featureProps = matchFeature.getFeatureProps();
     if(featureProps != null)
     {
       it = featureProps.iterator();
@@ -816,7 +822,46 @@ public class IBatisDAO extends GmodDAO
     sqlMap.insert("insertFeatureCvTermDbXRef", featureCvTermDbXRef);
   }
   
-  
+  private void deleteAnalysisFeature(AnalysisFeature analysisFeature)
+  {
+    //
+    Feature matchFeature = analysisFeature.getFeature();
+    List featureLocs = new Vector(matchFeature.getFeatureLocsForFeatureId());
+    
+    Feature subjectFeature;
+    int nsubject;
+    if(((FeatureLoc)featureLocs.get(0)).getFeatureBySrcFeatureId().getDbXRef() != null)
+    {
+      subjectFeature = ((FeatureLoc)featureLocs.get(0)).getFeatureBySrcFeatureId();
+      nsubject = 0;
+    }
+    else
+    {
+      subjectFeature = ((FeatureLoc)featureLocs.get(1)).getFeatureBySrcFeatureId();
+      nsubject = 1;
+    }
+    
+    // look for SWALL: and UNIPROT:
+    subjectFeature.setUniqueName( "%"+subjectFeature.getDbXRef().getAccession() );
+    List subjectFeatures = sqlMap.queryForList("getLazyFeature", subjectFeature);
+    Integer matchFeatureId = null;
+    
+    for(int i=0; i<subjectFeatures.size(); i++)
+    {
+      ((FeatureLoc)featureLocs.get(nsubject)).setFeatureBySrcFeatureId(
+                                              (Feature)subjectFeatures.get(i));
+      matchFeature.setFeatureLocsForFeatureId(featureLocs);
+      Object result = sqlMap.queryForObject("getFeatureIdBySrcFeatureId", matchFeature);
+      if(result != null)
+      {
+        matchFeatureId = (Integer)result;
+        break;
+      }
+    }
+    
+    matchFeature.setFeatureId(matchFeatureId.intValue());
+    sqlMap.delete("deleteFeatureById", matchFeature);
+  }
   
   /**
    * Delete a feature_synonym for a feature.
