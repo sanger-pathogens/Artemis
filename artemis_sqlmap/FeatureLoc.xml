@@ -33,6 +33,13 @@
        WHERE featureloc.feature_id=#id#
      </select>
      
+     <!-- used to find match meature from the subject and query featureId -->
+     <select id="getFeatureIdBySrcFeatureId" parameterClass="Feature" resultClass="java.lang.Integer">
+        <iterate property="featureLocsForFeatureId" conjunction="INTERSECT" >
+           SELECT feature_id FROM featureloc WHERE srcfeature_id=#featureLocsForFeatureId[].featureBySrcFeatureId.featureId#  
+        </iterate>
+     </select>
+     
     <!--  WRITE BACK METHODS  -->
     
     <!--  UPDATE  -->
