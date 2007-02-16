@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.13 2007-02-16 15:48:30 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.14 2007-02-16 15:55:03 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,7 +38,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.13 2007-02-16 15:48:30 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.14 2007-02-16 15:55:03 tjc Exp $
  *
  **/
 
@@ -134,7 +134,7 @@ public class FeaturePopup extends JPopupMenu
     {
       feature_list = (FeatureList)owner;
       feature_list_menus = addFeatureListItems();
-      for(int i=0; i<feature_list_menus.length-1; i++)
+      for(int i=0; i<feature_list_menus.length; i++)
         if(!(feature_list_menus[i] instanceof JCheckBoxMenuItem))
           maybeAdd(feature_list_menus[i]);
     }
@@ -156,9 +156,7 @@ public class FeaturePopup extends JPopupMenu
         if((feature_list_menus[i] instanceof JCheckBoxMenuItem))
           maybeAdd(feature_list_menus[i]);
     }
-    
-    addSeparator();
-    maybeAdd(feature_list_menus[feature_list_menus.length-1]);
+
   }
 
   /**
