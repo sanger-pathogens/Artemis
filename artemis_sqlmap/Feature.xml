@@ -315,5 +315,9 @@
       WHERE uniquename=#uniqueName# AND type_id=$cvTerm.cvTermId$
    </delete>
    
-
+   <delete id="deleteFeatureById" 
+           parameterClass="Feature">
+      DELETE FROM feature
+      WHERE feature_id=$featureId$
+   </delete>
 </sqlMap> 
