@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.31 2007-01-18 16:18:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.32 2007-02-16 15:46:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,12 +51,15 @@ import java.util.List;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.31 2007-01-18 16:18:09 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.32 2007-02-16 15:46:38 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
     implements EntryGroupChangeListener, EntryChangeListener
 {
+
+  /** */
+  private static final long serialVersionUID = 1L;
 
   /** The shortcut for Delete Selected Features. */
   final static KeyStroke SAVE_DEFAULT_KEY =
@@ -137,11 +140,11 @@ public class EntryEdit extends JFrame
       }
     }
 
-    final int font_height;
-    final int font_base_line;
+    //final int font_height;
+    //final int font_base_line;
     final Font default_font = getDefaultFont();
 
-    if(default_font != null) 
+    /*if(default_font != null) 
     {
       FontMetrics fm = getFontMetrics(default_font);
       font_height    = fm.getHeight();
@@ -151,7 +154,7 @@ public class EntryEdit extends JFrame
     {
       font_height = -1;
       font_base_line = -1;
-    }
+    }*/
 
     addWindowListener(new WindowAdapter() 
     {
@@ -1180,19 +1183,41 @@ public class EntryEdit extends JFrame
     {
       public void actionPerformed(ActionEvent event)
       {
-//      JScrollPane jsp = new JScrollPane(shortcut_pane);
+        //JScrollPane jsp = new JScrollPane(shortcut_pane);
         final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
         shortcut_pane.setPreferredSize(new Dimension(
                            shortcut_pane.getPreferredSize().width+50,
                            screen.height/2));
 
-        //Object[] possibleValues = { "OK" };
+        JTabbedPane tabPane = new JTabbedPane();
+        
+        //
+        // Display names
+        //
+        final Object display_names[] =
+          Options.getOptions().getDisplayQualifierNames().toArray();
+
+        ListSelectionPanel displayListSelectionPanel =
+              new ListSelectionPanel(entry_group, display_names);
+     
+        //
+        //
+        //
+        tabPane.add("Feature Display Labels", displayListSelectionPanel);
+        tabPane.add("Short Cuts", shortcut_pane);
+
         JOptionPane.showMessageDialog(null,
-                               shortcut_pane,
+                               tabPane,
                                "Set Short Cuts",
                                JOptionPane.PLAIN_MESSAGE);
-      }
+        
+        Object names[] = displayListSelectionPanel.getResultArray();
+        String display_name_qualifiers = "";
+        for(int i=0; i<names.length; i++)
+          display_name_qualifiers = display_name_qualifiers + names[i] + " ";
+        Options.getOptions().setDisplayNameQualifiers(display_name_qualifiers);
+     }
     });
     file_menu.add(prefs);
 
@@ -1236,6 +1261,8 @@ public class EntryEdit extends JFrame
     });
 
   }
+  
+  
 
   /**
    * Test to ensure ID (chado uniquename) is unique.
