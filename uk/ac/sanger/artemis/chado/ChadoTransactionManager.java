@@ -30,8 +30,6 @@ import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
 import uk.ac.sanger.artemis.io.DocumentEntry;
-import uk.ac.sanger.artemis.io.LazyQualifierValue;
-import uk.ac.sanger.artemis.io.QualifierLazyLoading;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -70,7 +68,6 @@ import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.Synonym;
 
-import org.gmod.schema.analysis.Analysis;
 import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.cv.*;
 import org.gmod.schema.pub.Pub;
@@ -1294,32 +1291,14 @@ public class ChadoTransactionManager
          }
          else if(qualifier_name.equals("similarity"))
          {
-           
-           if(old_qualifier instanceof QualifierLazyLoading)
-           {
-             LazyQualifierValue qual = 
-               ((QualifierLazyLoading)old_qualifier).getValue(i);
-             final org.gmod.schema.sequence.Feature matchFeature = 
-                              ((Similarity)qual).getMatchFeature();
+           AnalysisFeature analysisFeature =
+                Similarity.getAnalysisFeature(uniquename, qualifier_string, feature);
              
-             tsn = new ChadoTransaction(ChadoTransaction.DELETE,
-                 matchFeature,
-                 feature.getLastModified(), feature,
-                 feature.getKey().getKeyString());
-             sql.add(tsn);
-           }
-           else
-           {
-             AnalysisFeature analysisFeature =
-                getAnalysisFeature(uniquename, qualifier_string, feature);
-             
-             tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+           tsn = new ChadoTransaction(ChadoTransaction.DELETE,
                  analysisFeature,
                  feature.getLastModified(), feature,
                  feature.getKey().getKeyString());
-             sql.add(tsn);
-           }
-           
+           sql.add(tsn);  
          }
          else
            Splash.logger4j.warn("Ignoring reserved tag missing : "+qualifier_name);
@@ -1397,7 +1376,7 @@ public class ChadoTransactionManager
          }
          else if(qualifier_name.equals("similarity"))
          {
-           AnalysisFeature analysisFeature = getAnalysisFeature(uniquename,
+           AnalysisFeature analysisFeature = Similarity.getAnalysisFeature(uniquename,
                                                 qualifier_string, feature);
            tsn = new ChadoTransaction(ChadoTransaction.INSERT,
                analysisFeature,
@@ -1699,243 +1678,6 @@ public class ChadoTransactionManager
     }
     
     return rank;
-  }
-  
-  private AnalysisFeature getAnalysisFeature(final String uniquename,
-                                             final String qualifier_string,
-                                             final GFFStreamFeature feature)
-  {
-    int queryFeatureId = 
-      Integer.parseInt((String)feature.getQualifierByName("feature_id").getValues().get(0));
-    
-    AnalysisFeature analysisFeature = new AnalysisFeature();
-    Analysis analysis = new Analysis();
-
-    org.gmod.schema.sequence.Feature queryFeature = 
-      new org.gmod.schema.sequence.Feature();
-    org.gmod.schema.sequence.Feature subjectFeature = 
-      new org.gmod.schema.sequence.Feature();
-    org.gmod.schema.sequence.Feature matchFeature = 
-      new org.gmod.schema.sequence.Feature();
-    FeatureDbXRef featureDbXRef = new FeatureDbXRef();
-   
-    subjectFeature.setCvTerm( getCvTerm("similarity_region") );
-    
-    queryFeature.setUniqueName(uniquename);
-    queryFeature.setFeatureId(queryFeatureId);
-    matchFeature.setUniqueName("MATCH_"+uniquename);
-    
-    analysisFeature.setAnalysis(analysis);
-    analysisFeature.setFeature(matchFeature);
-    
-    List analysisFeatures = new Vector();
-    analysisFeatures.add(analysisFeature);
-    matchFeature.setAnalysisFeatures(analysisFeatures);
-    
-    // algorithm
-    //StringTokenizer tok = new StringTokenizer(qualifier_string, ";");
-    StringVector qualifier_strings = 
-      StringVector.getStrings(qualifier_string, ";");
-    
-    //String method = tok.nextToken();
-    analysis.setProgram((String)qualifier_strings.get(0));
-    
-    // primary dbxref
-    DbXRef dbXRef_1 = new DbXRef();
-    Db db_1 = new Db();
-    dbXRef_1.setDb(db_1);
-    String value = (String)qualifier_strings.get(1);
-    String values[] = value.split(" ");
-    int ind = values[0].indexOf(':');
-    final String primary_name = values[0].substring(0, ind);
-    db_1.setName(primary_name);
-    dbXRef_1.setAccession(values[0].substring(ind+1));
-    Splash.logger4j.debug("Primary dbXRef  "+db_1.getName()+":"+dbXRef_1.getAccession());
-    subjectFeature.setDbXRef(dbXRef_1);
-    subjectFeature.setUniqueName(db_1.getName()+":"+dbXRef_1.getAccession());
-    
-    if(primary_name.equalsIgnoreCase("UniProt"))
-      matchFeature.setCvTerm( getCvTerm("protein_match") );
-    else
-      matchFeature.setCvTerm( getCvTerm("nucleotide_match") );
-      
-    // secondary dbxref
-    if(values.length > 1)
-    {
-      DbXRef dbXRef_2 = new DbXRef();
-      Db db_2 = new Db();
-      dbXRef_2.setDb(db_2);
-
-      values[1] = values[1].replaceAll("^\\W", "");
-      values[1] = values[1].replaceAll("\\W$", "");
-
-      ind = values[1].indexOf(':');
-      db_2.setName(values[1].substring(0, ind));
-      dbXRef_2.setAccession(values[1].substring(ind+1));
-      Splash.logger4j.debug("Secondary dbXRef  " + db_2.getName() + " "
-          + dbXRef_2.getAccession());
-      featureDbXRef.setDbXRef(dbXRef_2);
-      featureDbXRef.setFeature(subjectFeature);
-      List featureDbXRefs = new Vector();
-      featureDbXRefs.add(featureDbXRef);
-      subjectFeature.setFeatureDbXRefs(featureDbXRefs);
-    }
-    
-    // organism
-    final String organismStr = (String)qualifier_strings.get(2);
-    if(!organismStr.equals(""))
-    {
-      FeatureProp featureProp = new FeatureProp();
-      featureProp.setCvTerm(getCvTerm("organism"));
-      featureProp.setValue(organismStr);
-      featureProp.setRank(0);
-      subjectFeature.addFeatureProp(featureProp);
-    }
-    
-    // product
-    final String product = (String)qualifier_strings.get(3);
-    if(!product.equals(""))
-    {
-      FeatureProp featureProp = new FeatureProp();
-      featureProp.setCvTerm(getCvTerm("product"));
-      featureProp.setValue(product);
-      featureProp.setRank(1);
-      subjectFeature.addFeatureProp(featureProp);
-    }
-    
-    // gene
-    final String gene = (String)qualifier_strings.get(4);
-    if(!gene.equals(""))
-    {
-      FeatureProp featureProp = new FeatureProp();
-      featureProp.setCvTerm(getCvTerm("gene"));
-      featureProp.setValue(gene);
-      featureProp.setRank(2);
-      subjectFeature.addFeatureProp(featureProp);
-    }
-    
-    // length
-    String length = getString(qualifier_strings, "length");
-    if(!length.equals(""))
-    {
-      if(length.startsWith("length=") ||
-          length.startsWith("length ") )
-        length = length.substring(7);
-      if(length.endsWith("aa"))
-        length = length.substring(0, length.length()-2).trim();
-      subjectFeature.setSeqLen(new Integer(length));
-    }
-    
-    // percentage identity 
-    String id = getString(qualifier_strings, "id");
-    if(!id.equals(""))
-    {
-      if(id.startsWith("id="))
-        id = id.substring(3);
-      if(id.endsWith("%"))
-        id = id.substring(0, id.length()-1);
-      analysisFeature.setIdentity(new Double(id));
-    }
-    
-    // ungapped id
-    String ungappedId = getString(qualifier_strings, "ungapped id=");
-    if(!ungappedId.equals(""))
-    {
-      if(ungappedId.startsWith("ungapped id="))
-        ungappedId = ungappedId.substring(12);
-      if(ungappedId.endsWith("%"))
-        ungappedId = ungappedId.substring(0, ungappedId.length()-1);
-      FeatureProp featureProp = new FeatureProp();
-      featureProp.setCvTerm(getCvTerm("ungapped id"));
-      featureProp.setValue(ungappedId);
-      matchFeature.addFeatureProp(featureProp);
-    }
-    
-    // e-value
-    String evalue = getString(qualifier_strings, "E()=");
-    if(!evalue.equals(""))
-    {
-      if(evalue.startsWith("E()="))
-        evalue = evalue.substring(4);
-      analysisFeature.setSignificance(new Double(evalue));
-    }
-    
-    // score
-    String score = getString(qualifier_strings, "score=");
-    if(!score.equals(""))
-    {
-      if(score.startsWith("score="))
-        score = score.substring(6);
-      analysisFeature.setRawScore(new Double(score));
-    }
-    
-    // overlap
-    String overlap = getString(qualifier_strings, "overlap");
-    if(!overlap.equals(""))
-    {
-      if(overlap.startsWith("overlap="))
-        overlap = overlap.substring(8);
-      
-      FeatureProp featureProp = new FeatureProp();
-      featureProp.setCvTerm(getCvTerm("overlap"));
-      featureProp.setValue(overlap);
-      matchFeature.addFeatureProp(featureProp);
-    }
-    
-    Short strand;
-    if(feature.getLocation().isComplement())
-      strand = new Short("-1");
-    else
-      strand = new Short("1");
-    
-    // query location 
-    String queryLoc = getString(qualifier_strings, "query");
-    if(!queryLoc.equals(""))
-    {
-      FeatureLoc featureLoc = new FeatureLoc();
-      String locs[] = queryLoc.split(" ");
-      locs = locs[1].split("-");
-      int fmin = Integer.parseInt(locs[0])-1;
-      featureLoc.setFmin( new Integer(fmin) );
-      int fmax = Integer.parseInt(locs[1]);
-      featureLoc.setFmax( new Integer(fmax) );
-      featureLoc.setRank(1);
-      featureLoc.setStrand(strand);
-      featureLoc.setFeatureBySrcFeatureId(queryFeature);
-      matchFeature.addFeatureLocsForFeatureId(featureLoc);
-    }
-    
-    // subject location
-    String subjectLoc = getString(qualifier_strings, "subject");
-    if(!subjectLoc.equals(""))
-    {
-      FeatureLoc featureLoc = new FeatureLoc();
-      String locs[] = subjectLoc.split(" ");
-      locs = locs[1].split("-");
-      int fmin = Integer.parseInt(locs[0])-1;
-      featureLoc.setFmin( new Integer(fmin) );
-      int fmax = Integer.parseInt(locs[1]);
-      featureLoc.setFmax( new Integer(fmax) );
-      featureLoc.setRank(0);
-      featureLoc.setStrand(strand);
-      featureLoc.setFeatureBySrcFeatureId(subjectFeature);
-      matchFeature.addFeatureLocsForFeatureId(featureLoc);
-    }
-    
-    //Similarity sim = new Similarity(matchFeature, queryFeatureId);
-    //System.out.println(sim.getHardString());
-    return analysisFeature;
-  }
-  
-  private String getString(final StringVector sv, final String name)
-  {
-    for(int i=0; i<sv.size(); i++)
-    {
-      String value = (String)sv.get(i);
-      if(value.trim().startsWith(name))
-        return value.trim();
-    }
-    return "";
   }
   
   /**
