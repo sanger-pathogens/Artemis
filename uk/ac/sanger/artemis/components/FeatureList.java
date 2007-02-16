@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.23 2006-07-04 16:01:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.24 2007-02-16 15:47:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -60,7 +60,7 @@ import javax.swing.JComponent;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.23 2006-07-04 16:01:59 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.24 2007-02-16 15:47:32 tjc Exp $
  *
  **/
 
@@ -240,6 +240,13 @@ public class FeatureList extends EntryGroupPanel
   {
     this.user_defined_qualifier = user_defined_qualifier;
     repaint();
+  }
+  
+  protected StringVector getShowUserDefinedQualifier()
+  {
+    if(user_defined_qualifier == null)
+      return null;
+    return StringVector.getStrings(user_defined_qualifier);
   }
 
   /**
@@ -697,13 +704,18 @@ public class FeatureList extends EntryGroupPanel
 
     final StringBuffer description_string_buffer = new StringBuffer();
 
-    if(user_defined_qualifier != null)
+    if(user_defined_qualifier != null && !user_defined_qualifier.equals(""))
     {
       try
-      {
-        final String user_defined_qualifier_string = feature.getValueOfQualifier(user_defined_qualifier);
-        if(user_defined_qualifier_string != null)
-          description_string_buffer.append(user_defined_qualifier_string);
+      { 
+        StringVector sv = StringVector.getStrings(user_defined_qualifier);
+        for(int i=0; i<sv.size(); i++)
+        {
+          final String user_defined_qualifier_string = 
+            feature.getValueOfQualifier((String)sv.get(i));
+          if(user_defined_qualifier_string != null)
+            description_string_buffer.append("/"+sv.get(i)+"="+user_defined_qualifier_string+" ");
+        }
       }
       catch(InvalidRelationException ire){}
     }
