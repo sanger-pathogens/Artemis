@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.12 2006-03-13 14:42:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.13 2007-02-16 15:48:30 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,12 +38,15 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.12 2006-03-13 14:42:49 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.13 2007-02-16 15:48:30 tjc Exp $
  *
  **/
 
 public class FeaturePopup extends JPopupMenu 
 {
+  /** */
+  private static final long serialVersionUID = 1L;
+
   /**
    *  The reference of the EntryGroup object that was passed to the
    *  constructor.
@@ -131,7 +134,7 @@ public class FeaturePopup extends JPopupMenu
     {
       feature_list = (FeatureList)owner;
       feature_list_menus = addFeatureListItems();
-      for(int i=0; i<feature_list_menus.length; i++)
+      for(int i=0; i<feature_list_menus.length-1; i++)
         if(!(feature_list_menus[i] instanceof JCheckBoxMenuItem))
           maybeAdd(feature_list_menus[i]);
     }
@@ -153,6 +156,9 @@ public class FeaturePopup extends JPopupMenu
         if((feature_list_menus[i] instanceof JCheckBoxMenuItem))
           maybeAdd(feature_list_menus[i]);
     }
+    
+    addSeparator();
+    maybeAdd(feature_list_menus[feature_list_menus.length-1]);
   }
 
   /**
@@ -705,21 +711,35 @@ public class FeaturePopup extends JPopupMenu
     {
       public void actionPerformed(ActionEvent e)
       {
-        QualifierChoice qualifier_choice = new QualifierChoice(
-                           entry_group.elementAt(0).getEntryInformation(),
-                                                               null,null);
-
-        int select = JOptionPane.showConfirmDialog(null, qualifier_choice,
-                                "Select Qualifier to Display",
-                                 JOptionPane.OK_CANCEL_OPTION,
-                                 JOptionPane.QUESTION_MESSAGE);
-
+        final StringVector sv = feature_list.getShowUserDefinedQualifier();
+        final Object display_names[];
+        
+        if(sv != null && sv.size() > 0)
+          display_names = sv.toArray();
+        else
+        {
+          display_names = new Object[1];
+          display_names[0] = "note";
+        }
+        
+        ListSelectionPanel displayListSelectionPanel =
+          new ListSelectionPanel(entry_group, display_names);
+        int select = JOptionPane.showConfirmDialog(null, 
+            displayListSelectionPanel,
+            "Select Qualifier to Display",
+             JOptionPane.OK_CANCEL_OPTION,
+             JOptionPane.QUESTION_MESSAGE);
+        
         if(select == JOptionPane.CANCEL_OPTION)
           return;
 
-        ((JCheckBoxMenuItem)feature_list_menus[4]).setState(false);
-        ((JCheckBoxMenuItem)feature_list_menus[5]).setState(false);
-        feature_list.setShowUserDefinedQualifier((String)qualifier_choice.getSelectedItem());
+        Object names[] = displayListSelectionPanel.getResultArray();
+        String display_name_qualifiers = "";
+        for(int i=0; i<names.length; i++)
+          display_name_qualifiers = display_name_qualifiers + names[i] + " ";
+        
+        feature_list.setShowUserDefinedQualifier(
+            display_name_qualifiers);
       }
     });
 
