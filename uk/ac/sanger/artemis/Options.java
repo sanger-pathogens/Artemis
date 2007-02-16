@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.6 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.7 2007-02-16 13:54:22 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -44,7 +44,7 @@ import java.util.*;
  *  read in new options.
  *
  *  @author Kim Rutherford
- *  @version $Id: Options.java,v 1.6 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: Options.java,v 1.7 2007-02-16 13:54:22 tjc Exp $
  **/
 
 public class Options extends Properties 
@@ -1011,6 +1011,13 @@ public class Options extends Properties
     fireChangeEvent("translation_table");
   }
 
+  public void setDisplayNameQualifiers(String display_name_qualifiers)
+  {
+    display_gene_qualifier_names = null;
+    put("display_name_qualifiers", display_name_qualifiers);
+    fireChangeEvent("display_name_qualifiers");
+  }
+  
   /**
    *  Set the organism type to eukaryotic if and only if the argument is
    *  true.  The other alternative is prokaryotic.
