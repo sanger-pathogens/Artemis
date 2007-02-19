@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.7 2007-02-16 13:54:22 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.8 2007-02-19 10:51:13 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -44,7 +44,7 @@ import java.util.*;
  *  read in new options.
  *
  *  @author Kim Rutherford
- *  @version $Id: Options.java,v 1.7 2007-02-16 13:54:22 tjc Exp $
+ *  @version $Id: Options.java,v 1.8 2007-02-19 10:51:13 tjc Exp $
  **/
 
 public class Options extends Properties 
@@ -1011,11 +1011,22 @@ public class Options extends Properties
     fireChangeEvent("translation_table");
   }
 
-  public void setDisplayNameQualifiers(String display_name_qualifiers)
+  public void setDisplayNameQualifiers(final String display_name_qualifiers)
   {
     display_gene_qualifier_names = null;
     put("display_name_qualifiers", display_name_qualifiers);
     fireChangeEvent("display_name_qualifiers");
+  }
+  
+  /**
+   *  Names of qualifiers to search when attempting to find the systematic
+   *  name of a gene.
+   **/
+  public void setSystematicQualifierNames(final String systematic_name_qualifiers) 
+  {
+    systematic_gene_qualifier_names = null;
+    put("systematic_name_qualifiers", systematic_name_qualifiers);
+    fireChangeEvent("systematic_name_qualifiers");
   }
   
   /**
