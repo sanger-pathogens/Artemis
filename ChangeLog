@@ -24,4 +24,8 @@ Version 9
 	The feature types that appear on the frame lines can be defined
 	by the user via an option ("Frame Line Features...") in the 
 	feature display popup menu.
+	
+	Added to File -> Preferences a user defined selection for display names
+	and systematic names. Also extended popup menu option in feature lists 
+	to allow the user to be able to select multiple qualifiers to display.
 
