@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.14 2007-02-16 15:55:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.15 2007-02-19 10:48:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,7 +38,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.14 2007-02-16 15:55:03 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.15 2007-02-19 10:48:04 tjc Exp $
  *
  **/
 
@@ -720,8 +720,11 @@ public class FeaturePopup extends JPopupMenu
           display_names[0] = "note";
         }
         
+        final String[] description = { 
+        		"Qualifiers to display in feature list displays."};
         ListSelectionPanel displayListSelectionPanel =
-          new ListSelectionPanel(entry_group, display_names);
+          new ListSelectionPanel(entry_group, display_names,
+        		  description);
         int select = JOptionPane.showConfirmDialog(null, 
             displayListSelectionPanel,
             "Select Qualifier to Display",
@@ -731,13 +734,8 @@ public class FeaturePopup extends JPopupMenu
         if(select == JOptionPane.CANCEL_OPTION)
           return;
 
-        Object names[] = displayListSelectionPanel.getResultArray();
-        String display_name_qualifiers = "";
-        for(int i=0; i<names.length; i++)
-          display_name_qualifiers = display_name_qualifiers + names[i] + " ";
-        
         feature_list.setShowUserDefinedQualifier(
-            display_name_qualifiers);
+        		displayListSelectionPanel.getResultString());
       }
     });
 

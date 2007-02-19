@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ListSelectionPanel.java,v 1.1 2007-02-16 15:48:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ListSelectionPanel.java,v 1.2 2007-02-19 10:48:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -46,15 +46,22 @@ class ListSelectionPanel extends JPanel
   private static final long serialVersionUID = 1L;
   private DefaultListModel listModel;
 
+  /**
+   * Panel used to select from and order a list. 
+   * @param entry_group
+   * @param names
+   * @param description
+   */
   public ListSelectionPanel(final EntryGroup entry_group,
-                            final Object names[])
+                            final Object names[],
+                            final String[] description)
   {
     listModel = new DefaultListModel();
 
     for(int i = 0; i < names.length; i++)
       listModel.addElement(names[i]);
 
-    final JLabel label = new JLabel("Display Name:");
+    final JLabel label = new JLabel("Qualifier order :");
     final JList name_list = new JList(listModel);
     final JScrollPane jsp = new JScrollPane(name_list);
 
@@ -106,9 +113,13 @@ class ListSelectionPanel extends JPanel
     add(bdown, BorderLayout.WEST);
 
     bdown = Box.createVerticalBox();
+  
+    bdown.add(Box.createVerticalStrut(15));
+    for(int i=0; i<description.length; i++)
+    	bdown.add(new JLabel(description[i]));
     bdown.add(label);
     bdown.add(jsp);
-    bdown.add(remove_butt);
+    
     add(bdown, BorderLayout.CENTER);
 
     final KeyChoice key_choice = new KeyChoice(entry_group.elementAt(0)
@@ -128,6 +139,8 @@ class ListSelectionPanel extends JPanel
     bdown.add(Box.createVerticalGlue());
     bdown.add(key_choice);
     bdown.add(add_butt);
+    bdown.add(remove_butt);
+    
     add(bdown, BorderLayout.EAST);
   }
   
@@ -136,5 +149,13 @@ class ListSelectionPanel extends JPanel
     return listModel.toArray();
   }
   
+  public String getResultString()
+  {
+    Object listNames[] = listModel.toArray();
+    String listNamesString = "";
+    for(int i=0; i<listNames.length; i++)
+    	listNamesString = listNamesString + listNames[i] + " ";
+    return listNamesString;
+  }
         
 }

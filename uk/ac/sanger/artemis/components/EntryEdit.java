@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.32 2007-02-16 15:46:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.33 2007-02-19 10:48:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import java.util.List;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.32 2007-02-16 15:46:38 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.33 2007-02-19 10:48:04 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1198,13 +1198,36 @@ public class EntryEdit extends JFrame
         final Object display_names[] =
           Options.getOptions().getDisplayQualifierNames().toArray();
 
+        String[] description = 
+        { "Names of qualifiers to search when attempting to find",
+    	  "the display name. These qualifier names are searched in order." };
         ListSelectionPanel displayListSelectionPanel =
-              new ListSelectionPanel(entry_group, display_names);
+              new ListSelectionPanel(entry_group, display_names,
+            		  description);
      
         //
         //
         //
         tabPane.add("Feature Display Labels", displayListSelectionPanel);
+
+        //
+        // Display names
+        //
+        final Object systematic_names[] =
+          Options.getOptions().getSystematicQualifierNames().toArray();
+
+        String[] description2 = 
+            { "Names of qualifiers to search when attempting to find",
+        	  "the systematic name of a gene."	} ;
+        ListSelectionPanel systematicListSelectionPanel =
+              new ListSelectionPanel(entry_group, systematic_names,
+            		 description2 );
+     
+        //
+        //
+        //
+        tabPane.add("Systematic Name Labels", systematicListSelectionPanel);
+        
         tabPane.add("Short Cuts", shortcut_pane);
 
         JOptionPane.showMessageDialog(null,
@@ -1212,11 +1235,10 @@ public class EntryEdit extends JFrame
                                "Set Short Cuts",
                                JOptionPane.PLAIN_MESSAGE);
         
-        Object names[] = displayListSelectionPanel.getResultArray();
-        String display_name_qualifiers = "";
-        for(int i=0; i<names.length; i++)
-          display_name_qualifiers = display_name_qualifiers + names[i] + " ";
-        Options.getOptions().setDisplayNameQualifiers(display_name_qualifiers);
+        Options.getOptions().setDisplayNameQualifiers(
+        		displayListSelectionPanel.getResultString());
+        Options.getOptions().setSystematicQualifierNames(
+        		systematicListSelectionPanel.getResultString());
      }
     });
     file_menu.add(prefs);
