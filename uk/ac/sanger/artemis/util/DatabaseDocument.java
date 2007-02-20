@@ -992,8 +992,10 @@ public class DatabaseDocument extends Document
     {
       attr_buff.append("controlled_curation=");
       
-      attr_buff.append("term="+feature_cvterm.getCvTerm().getName()+"%3B");
-      attr_buff.append("cv="+feature_cvterm.getCvTerm().getCv().getName()+"%3B");   
+      attr_buff.append("term="+
+          GFFStreamFeature.encode(feature_cvterm.getCvTerm().getName())+"%3B");
+      attr_buff.append("cv="+
+          GFFStreamFeature.encode(feature_cvterm.getCvTerm().getCv().getName())+"%3B");   
       
       // N.B. the db_xref may be a FeatureCvTermDbXRef or a Pub for /controlled_curation
       int nfound_dbxref = 0;
@@ -1045,7 +1047,7 @@ public class DatabaseDocument extends Document
         attr_buff.append(getCvtermName(feature_cvtermprop.getCvTerm()
             .getCvTermId(), dao));
         attr_buff.append("=");
-        attr_buff.append(feature_cvtermprop.getValue());
+        attr_buff.append(GFFStreamFeature.encode(feature_cvtermprop.getValue()));
         if(i < feature_cvtermprops.size()-1)
           attr_buff.append("%3B");
       }
@@ -1055,7 +1057,7 @@ public class DatabaseDocument extends Document
     else if(cvterm.getCv().getName().equals(DatabaseDocument.PRODUCTS_TAG_CVNAME))
     {
       attr_buff.append("product=");
-      attr_buff.append(feature_cvterm.getCvTerm().getName()+";");
+      attr_buff.append(GFFStreamFeature.encode(feature_cvterm.getCvTerm().getName())+";");
     }
     else if(cvterm.getCv().getName().equals(DatabaseDocument.RILEY_TAG_CVNAME))
     {
@@ -1164,7 +1166,7 @@ public class DatabaseDocument extends Document
         attr_buff.append(getCvtermName(feature_cvtermprop.getCvTerm()
             .getCvTermId(), dao));
         attr_buff.append("=");
-        attr_buff.append(feature_cvtermprop.getValue());
+        attr_buff.append(GFFStreamFeature.encode(feature_cvtermprop.getValue()));
         if(i < feature_cvtermprops.size()-1)
           attr_buff.append("%3B");
       }
