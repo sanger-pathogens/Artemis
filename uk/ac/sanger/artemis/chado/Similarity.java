@@ -93,15 +93,18 @@ public class Similarity implements LazyQualifierValue
 
     org.gmod.schema.sequence.Feature subject = null;
     org.gmod.schema.sequence.FeatureLoc queryLoc   = null;
-    org.gmod.schema.sequence.FeatureLoc subjectLoc   = null;
+    org.gmod.schema.sequence.FeatureLoc subjectLoc = null;
     
     while(it2.hasNext())
     {
       org.gmod.schema.sequence.FeatureLoc featureLoc = 
         (org.gmod.schema.sequence.FeatureLoc)it2.next();
 
-      org.gmod.schema.sequence.Feature queryOrSubject = featureLoc
-          .getFeatureBySrcFeatureId();
+      if(featureLoc.getSrcFeatureId() <= 0)
+        continue;
+      
+      org.gmod.schema.sequence.Feature queryOrSubject = 
+        featureLoc.getFeatureBySrcFeatureId();
 
       if(queryOrSubject.getFeatureId() != featureId)
       {
@@ -114,42 +117,45 @@ public class Similarity implements LazyQualifierValue
       }
     }
 
-    if(subject.getDbXRef() != null)
+    if(subject != null)
     {
-      buff.append(subject.getDbXRef().getDb().getName() + ":");
-      buff.append(subject.getDbXRef().getAccession());
-    }
-
-    Collection dbXRefs = subject.getFeatureDbXRefs();
-    if(dbXRefs != null && dbXRefs.size() > 0)
-    {
-      buff.append(" (");
-      Iterator it4 = dbXRefs.iterator();
-      while(it4.hasNext())
+      if(subject.getDbXRef() != null)
       {
-        FeatureDbXRef featureDbXRef = (FeatureDbXRef) it4.next();
-        buff.append(featureDbXRef.getDbXRef().getDb().getName() + ":");
-        buff.append(featureDbXRef.getDbXRef().getAccession());
-        if(it4.hasNext())
-          buff.append(",");
+        buff.append(subject.getDbXRef().getDb().getName() + ":");
+        buff.append(subject.getDbXRef().getAccession());
       }
-      buff.append(")");
-    }
-    buff.append("; ");
 
-    List featureProps = new Vector(subject.getFeatureProps());
-    Collections.sort(featureProps, new FeaturePropComparator());
-    
-    for(int i=0; i<featureProps.size(); i++)
-    {
-      FeatureProp featureProp = (FeatureProp)featureProps.get(i);
-      
-      if(featureProp.getValue() != null)
-        buff.append(featureProp.getValue().trim());
+      Collection dbXRefs = subject.getFeatureDbXRefs();
+      if(dbXRefs != null && dbXRefs.size() > 0)
+      {
+        buff.append(" (");
+        Iterator it4 = dbXRefs.iterator();
+        while(it4.hasNext())
+        {
+          FeatureDbXRef featureDbXRef = (FeatureDbXRef) it4.next();
+          buff.append(featureDbXRef.getDbXRef().getDb().getName() + ":");
+          buff.append(featureDbXRef.getDbXRef().getAccession());
+          if(it4.hasNext())
+            buff.append(",");
+        }
+        buff.append(")");
+      }
       buff.append("; ");
-    }
 
-    buff.append("length "+subject.getSeqLen());
+      List featureProps = new Vector(subject.getFeatureProps());
+      Collections.sort(featureProps, new FeaturePropComparator());
+
+      for(int i = 0; i < featureProps.size(); i++)
+      {
+        FeatureProp featureProp = (FeatureProp) featureProps.get(i);
+
+        if(featureProp.getValue() != null)
+          buff.append(featureProp.getValue().trim());
+        buff.append("; ");
+      }
+
+      buff.append("length " + subject.getSeqLen());
+    }
     
     if(matchFeature.getCvTerm().getName().equals("protein_match"))
       buff.append(" aa; ");
@@ -185,7 +191,7 @@ public class Similarity implements LazyQualifierValue
     
     if(matchFeature.getFeatureProps() != null)
     {
-      featureProps = new Vector(matchFeature.getFeatureProps());
+      List featureProps = new Vector(matchFeature.getFeatureProps());
       Collections.sort(featureProps, new FeaturePropComparator());
       
       for(int i=0; i<featureProps.size(); i++)
