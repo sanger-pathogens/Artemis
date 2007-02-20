@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.49 2007-02-13 09:37:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.50 2007-02-20 14:41:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -40,7 +40,7 @@ import java.text.SimpleDateFormat;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.49 2007-02-13 09:37:59 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.50 2007-02-20 14:41:48 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -126,10 +126,16 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     this(feature.getKey(), feature.getLocation(), feature.getQualifiers());
     
-  //  if(feature instanceof GFFStreamFeature)
-  //  {
-  //    this.id_range_store = ((GFFStreamFeature)feature).id_range_store;
-  //  }
+    if(feature instanceof GFFStreamFeature)
+    {
+      if(((GFFStreamFeature)feature).id_range_store != null)
+        this.id_range_store = 
+          (Hashtable)(((GFFStreamFeature)feature).id_range_store).clone();
+      
+      if(((GFFStreamFeature)feature).feature_relationship_rank_store != null)
+        this.feature_relationship_rank_store = 
+          (Hashtable)(((GFFStreamFeature)feature).feature_relationship_rank_store).clone();
+    }
   }
 
   /**
@@ -328,7 +334,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     if(id_range_store != null)
     {
-      
       Enumeration enum_ranges = id_range_store.keys();
       //Iterator it = id_range_store.values().iterator();
       while(enum_ranges.hasMoreElements())
@@ -347,7 +352,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     }
 
     Splash.logger4j.warn("RANGE NOT FOUND "+r.toString());
-    
+
     return null;
   }
 
@@ -652,7 +657,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
           frame = ".";
       }
 
-      final String attribute_string = unParseAttributes();
+      final String myId = getSegmentID(this_range);
+      final String attribute_string = unParseAttributes(myId);
 
       if(source_str == null && source != null)
        source_str = (String)source.getValues().elementAt(0);
@@ -668,8 +674,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
                    attribute_string + "\n");
     }
 
- // for(int i = 0 ; i < gff_lines.size() ; ++i) 
- //   writer.write(gff_lines.elementAt(i) + "\n");
   }
 
   /**
@@ -707,19 +711,27 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    *  gff_source and score aren't included since they have corresponding
    *  fields.
    **/
-  private String unParseAttributes() 
+  private String unParseAttributes(final String myId) 
   {
     final StringBuffer buffer = new StringBuffer();
     final QualifierVector qualifiers = getQualifiers();
 
     final String names[] = { "ID", "Name", "Alias", "Parent",
+                             "Derives_from",
                              "Target", "Gap", "Note", 
                              "Dbxref", "Ontology_term" };
     int count = 0;
     Qualifier this_qualifier;
     final int names_length = names.length;
 
-    for(int i=0; i<names_length; i++)
+    if(myId != null)
+    {
+      buffer.append("ID=");
+      buffer.append(encode(myId));
+      count++;
+    }
+    
+    for(int i=1; i<names_length; i++)
     {
       this_qualifier = (Qualifier)qualifiers.getQualifierByName(names[i]);
  
@@ -786,7 +798,18 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       for(int value_index = 0; value_index < values.size();
           ++value_index)
       {
-        final String this_value = encode((String)values.elementAt(value_index));
+        final String this_value;
+        if(name.equals("class"))
+        {
+          int index = ((String)values.elementAt(value_index)).indexOf("::");
+          if(index > -1)
+            this_value = encode(((String)values.elementAt(value_index)).substring(0,index));
+          else
+            this_value = encode((String)values.elementAt(value_index));
+        }
+        else
+          this_value = encode((String)values.elementAt(value_index));
+        
         if(value_index>0)
           buffer.append("%2C");
         try
@@ -936,11 +959,18 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       
       if(att_name.equals("timelastmodified"))
       {
-        this.timelastmodified = 
+        try
+        {
+          this.timelastmodified = 
                   new Timestamp( Long.parseLong((String)att_values.get(0)) );
-        SimpleDateFormat date_format = 
+          SimpleDateFormat date_format = 
                   new SimpleDateFormat("dd.MM.yyyy hh:mm:ss z");
-        att_values.set(0,date_format.format(timelastmodified));
+          att_values.set(0,date_format.format(timelastmodified));
+        }
+        catch(NumberFormatException e)
+        {
+          att_values.set(0,(String)att_values.get(0));
+        }
       }
       
       if(attributes.get(att_name) != null) 
