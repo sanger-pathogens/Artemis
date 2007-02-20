@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.5 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.6 2007-02-20 14:39:21 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -41,12 +41,14 @@ import javax.swing.*;
  *  This class is a JFileChooser that can read EMBL Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryFileDialog.java,v 1.5 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: EntryFileDialog.java,v 1.6 2007-02-20 14:39:21 tjc Exp $
  **/
 
 public class EntryFileDialog extends StickyFileChooser 
 {
 
+  /** */
+  private static final long serialVersionUID = 1L;
   /** JFrame reference that was passed to the constructor. */
   private JFrame owner = null;
 
@@ -441,6 +443,7 @@ public class EntryFileDialog extends StickyFileChooser
           final YesNoDialog yes_no_dialog = new YesNoDialog(owner,
                              "destination format can't handle all " +
                              "keys/qualifiers - continue?");
+          
           if(yes_no_dialog.getResult()) 
           {
             try 
