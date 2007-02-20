@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.5 2007-02-13 09:44:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.6 2007-02-20 14:38:03 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -65,6 +65,7 @@ public class GffPanel extends JPanel
        qualifier.getName().equals("feature_id") ||
        qualifier.getName().equals("Parent") ||
        qualifier.getName().equals("Derives_from") ||
+       qualifier.getName().equals("feature_relationship_rank") ||
        qualifier.getName().equals("timelastmodified"))
       return true;
     return false;
