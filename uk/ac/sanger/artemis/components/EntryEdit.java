@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.33 2007-02-19 10:48:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.34 2007-02-20 14:38:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -39,6 +39,9 @@ import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
+import uk.ac.sanger.artemis.io.Qualifier;
+import uk.ac.sanger.artemis.io.QualifierLazyLoading;
+import uk.ac.sanger.artemis.io.QualifierVector;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -51,7 +54,7 @@ import java.util.List;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.33 2007-02-19 10:48:04 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.34 2007-02-20 14:38:54 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1606,6 +1609,30 @@ class SaveEntryAsGFFActionListener extends EntryActionListener
 
   public void actionPerformed(final ActionEvent event) 
   {
+    if(getEntry().getEMBLEntry() instanceof DatabaseDocumentEntry)
+    {       
+      int n = JOptionPane.showConfirmDialog(null,
+          "Load and write all qualifers from the database?"+
+          "\nThis may take a few minutes.",
+          "Load All Data",
+          JOptionPane.YES_NO_OPTION);
+      
+      if(n == JOptionPane.YES_OPTION)
+      {
+        FeatureVector features = getEntry().getAllFeatures();
+        for(int i=0; i<features.size(); i++)
+        {
+          QualifierVector qualifiers = features.elementAt(i).getQualifiers();
+          for(int j=0; j<qualifiers.size(); j++)
+          {
+            Qualifier qualifier = (Qualifier)qualifiers.get(j);
+            if(qualifier instanceof QualifierLazyLoading)
+              ((QualifierLazyLoading)qualifier).setForceLoad(true);
+          }
+        }
+      }
+
+    }
     getEntryEdit().saveEntry(getEntry(), true, true, false,
                              DocumentEntryFactory.GFF_FORMAT);
   }
