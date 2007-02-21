@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.21 2006-12-06 17:28:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.22 2007-02-21 10:56:51 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.21 2006-12-06 17:28:48 tjc Exp $
+ *  @version $Id: Splash.java,v 1.22 2007-02-21 10:56:51 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -90,7 +90,9 @@ abstract public class Splash extends JFrame
 
   private String geneticCode;
 
-  private static boolean save_properties = false;
+  private static boolean save_wd_properties = false;
+  public static boolean save_display_name = false;
+  public static boolean save_systematic_names = false;
 
   public static org.apache.log4j.Logger logger4j = 
          org.apache.log4j.Logger.getLogger(Splash.class);
@@ -115,17 +117,18 @@ abstract public class Splash extends JFrame
     {
       setWorkingDirectory();
 
-      try 
+      try
       {
-	Object[] args = { this, program_title };
-	Class[] arglist = { Splash.class, String.class };
-	Class mac_class = getClass().forName("uk.ac.sanger.artemis.components.MacHandler");
-	Constructor new_one = mac_class.getConstructor(arglist);
-	new_one.newInstance(args);
+        Object[] args = { this, program_title };
+        Class[] arglist = { Splash.class, String.class };
+        Class mac_class = getClass().forName(
+            "uk.ac.sanger.artemis.components.MacHandler");
+        Constructor new_one = mac_class.getConstructor(arglist);
+        new_one.newInstance(args);
       }
-      catch(Exception e) 
+      catch(Exception e)
       {
-	System.out.println(e);
+        System.out.println(e);
       }
     }
 
@@ -626,13 +629,13 @@ abstract public class Splash extends JFrame
     {
       System.setProperty("user.dir", wdir.getText().trim());
       if(saveDir.isSelected())
-        save_properties = true;
+        save_wd_properties = true;
     }
   }
 
   protected static void exitApp()
   {
-    if(save_properties)
+    if(save_wd_properties || save_display_name || save_systematic_names)
       saveProperties();
     System.exit(0);
   }
@@ -648,8 +651,8 @@ abstract public class Splash extends JFrame
     String fs = System.getProperty("file.separator");
     String prop = uhome+fs+".artemis_options";
 
-    String wdir = addEscapeChars("artemis.user.dir="+System.getProperty("user.dir"));
-    writeProperties(prop,wdir);
+    writeProperties(prop);
+    
   }
 
   /**
@@ -659,7 +662,7 @@ abstract public class Splash extends JFrame
   * @param uHome        user working directory
   *
   */
-  private static void writeProperties(String prop, String wdir)
+  private static void writeProperties(String prop)
   {
      File file_txt = new File(prop);
      File file_tmp = new File(prop + ".tmp");
@@ -672,22 +675,97 @@ abstract public class Splash extends JFrame
          String line;
          while ((line = bufferedreader.readLine()) != null)
          {
-           if(line.startsWith("artemis.user.dir"))
-             line = wdir;
+           if(line.startsWith("artemis.user.dir") && save_wd_properties)
+           {
+             line = addEscapeChars("artemis.user.dir="+System.getProperty("user.dir"));
+             save_wd_properties = false;
+           }
 
+           if(line.startsWith("display_name_qualifiers") && save_display_name)
+           {
+             String str = "display_name_qualifiers=";
+             StringVector strs = Options.getOptions().getDisplayQualifierNames();
+             for(int i=0; i<strs.size(); i++)
+               str = str.concat(" "+strs.get(i));
+             line = addEscapeChars(str);
+             save_display_name = false;
+           }
+           
+           if(line.startsWith("systematic_name_qualifiers") && save_systematic_names)
+           {
+             String str = "systematic_name_qualifiers=";
+             StringVector strs = Options.getOptions().getSystematicQualifierNames();
+             for(int i=0; i<strs.size(); i++)
+               str = str.concat(" "+strs.get(i));
+             line = addEscapeChars(str);
+             save_systematic_names = false;
+           }
            bufferedwriter.write(line);
            bufferedwriter.newLine();
          }
+         
+         if(save_wd_properties)
+         {
+           bufferedwriter.write(
+               addEscapeChars("artemis.user.dir="+System.getProperty("user.dir")));
+           bufferedwriter.newLine();
+         }
+         
+         if(save_display_name)
+         {
+           String str = "display_name_qualifiers=";
+           StringVector strs = Options.getOptions().getDisplayQualifierNames();
+           for(int i=0; i<strs.size(); i++)
+             str = str.concat(" "+strs.get(i));
+           bufferedwriter.write(addEscapeChars(str));
+           bufferedwriter.newLine();
+         }
+         
+         if(save_systematic_names)
+         {
+           String str = "systematic_name_qualifiers=";
+           StringVector strs = Options.getOptions().getSystematicQualifierNames();
+           for(int i=0; i<strs.size(); i++)
+             str = str.concat(" "+strs.get(i));
+           bufferedwriter.write(addEscapeChars(str));
+           bufferedwriter.newLine();
+         }
+         
          bufferedreader.close();
          bufferedwriter.close();
          file_txt.delete();
          file_tmp.renameTo(file_txt);
        }
-       else
+       else // no existing options file
        {
          BufferedWriter bufferedwriter = new BufferedWriter(new FileWriter(file_txt));
-         bufferedwriter.write(wdir);
-         bufferedwriter.newLine();
+         
+         if(save_wd_properties)
+         {
+           bufferedwriter.write(
+               addEscapeChars("artemis.user.dir="+System.getProperty("user.dir")));
+           bufferedwriter.newLine();
+         }
+         
+         if(save_display_name)
+         {
+           String str = "display_name_qualifiers=";
+           StringVector strs = Options.getOptions().getDisplayQualifierNames();
+           for(int i=0; i<strs.size(); i++)
+             str = str.concat(" "+strs.get(i));
+           bufferedwriter.write(addEscapeChars(str));
+           bufferedwriter.newLine();
+         }
+         
+         if(save_systematic_names)
+         {
+           String str = "systematic_name_qualifiers=";
+           StringVector strs = Options.getOptions().getSystematicQualifierNames();
+           for(int i=0; i<strs.size(); i++)
+             str = str.concat(" "+strs.get(i));
+           bufferedwriter.write(addEscapeChars(str));
+           bufferedwriter.newLine();
+         }
          bufferedwriter.close();
        }
      }
