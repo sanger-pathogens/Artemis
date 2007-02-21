@@ -112,6 +112,10 @@ public class BigPane extends JFrame
     //of the screen.
     final int inset = 80;
     final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    
+    if(screenSize.width > 1280)
+      screenSize.width = 1280;
+    
     setBounds(inset, inset,
               screenSize.width  - inset*2,
               screenSize.height - inset*2);
