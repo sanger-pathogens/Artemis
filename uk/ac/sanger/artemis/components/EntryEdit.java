@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.34 2007-02-20 14:38:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.35 2007-02-21 10:55:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import java.util.List;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.34 2007-02-20 14:38:54 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.35 2007-02-21 10:55:49 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1206,7 +1206,7 @@ public class EntryEdit extends JFrame
     	  "the display name. These qualifier names are searched in order." };
         ListSelectionPanel displayListSelectionPanel =
               new ListSelectionPanel(entry_group, display_names,
-            		  description);
+            		  description, true);
      
         //
         //
@@ -1224,7 +1224,7 @@ public class EntryEdit extends JFrame
         	  "the systematic name of a gene."	} ;
         ListSelectionPanel systematicListSelectionPanel =
               new ListSelectionPanel(entry_group, systematic_names,
-            		 description2 );
+            		 description2, true);
      
         //
         //
@@ -1240,8 +1240,15 @@ public class EntryEdit extends JFrame
         
         Options.getOptions().setDisplayNameQualifiers(
         		displayListSelectionPanel.getResultString());
+        
+        if(displayListSelectionPanel.isSaveOption())
+          Splash.save_display_name = true;
+        
         Options.getOptions().setSystematicQualifierNames(
         		systematicListSelectionPanel.getResultString());
+        
+        if(systematicListSelectionPanel.isSaveOption())
+          Splash.save_systematic_names = true;
      }
     });
     file_menu.add(prefs);
