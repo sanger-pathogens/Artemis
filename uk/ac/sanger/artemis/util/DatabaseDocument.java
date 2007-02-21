@@ -935,8 +935,8 @@ public class DatabaseDocument extends Document
         //this_buff.append(alias.getSynonym().getCvterm().getName()+"=");
         this_buff.append(alias.getSynonym().getName());
         
-        if(j<v_synonyms.size()-1)
-          this_buff.append(";");
+        //if(j<v_synonyms.size()-1)
+        this_buff.append(";");
       }
     }
     
