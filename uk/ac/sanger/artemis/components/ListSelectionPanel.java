@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ListSelectionPanel.java,v 1.2 2007-02-19 10:48:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ListSelectionPanel.java,v 1.3 2007-02-21 10:55:11 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -28,10 +28,13 @@ package uk.ac.sanger.artemis.components;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -45,7 +48,8 @@ class ListSelectionPanel extends JPanel
   /** */
   private static final long serialVersionUID = 1L;
   private DefaultListModel listModel;
-
+  private JCheckBox save;
+  
   /**
    * Panel used to select from and order a list. 
    * @param entry_group
@@ -54,7 +58,8 @@ class ListSelectionPanel extends JPanel
    */
   public ListSelectionPanel(final EntryGroup entry_group,
                             final Object names[],
-                            final String[] description)
+                            final String[] description,
+                            final boolean saveOption)
   {
     listModel = new DefaultListModel();
 
@@ -134,12 +139,17 @@ class ListSelectionPanel extends JPanel
         listModel.addElement(key_choice.getSelectedItem().toString());
       }
     });
+    
+    if(saveOption)
+      save = new JCheckBox("Save between sessions", false);
 
     bdown = Box.createVerticalBox();
     bdown.add(Box.createVerticalGlue());
     bdown.add(key_choice);
     bdown.add(add_butt);
     bdown.add(remove_butt);
+    if(saveOption)
+      bdown.add(save);
     
     add(bdown, BorderLayout.EAST);
   }
@@ -157,5 +167,9 @@ class ListSelectionPanel extends JPanel
     	listNamesString = listNamesString + listNames[i] + " ";
     return listNamesString;
   }
-        
+    
+  public boolean isSaveOption()
+  {
+    return save.isSelected();
+  }
 }
