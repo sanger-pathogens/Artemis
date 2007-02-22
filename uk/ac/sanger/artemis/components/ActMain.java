@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.12 2006-10-30 10:45:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.13 2007-02-22 19:37:44 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -31,7 +31,6 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
-import uk.ac.sanger.artemis.components.database.DatabaseJPanel;
 import uk.ac.sanger.artemis.components.database.DatabaseTreeNode;
 
 import uk.ac.sanger.artemis.util.*;
@@ -47,13 +46,15 @@ import javax.swing.JFrame;
  *  The main window for the Artemis Comparison Tool.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ActMain.java,v 1.12 2006-10-30 10:45:58 tjc Exp $
+ *  @version $Id: ActMain.java,v 1.13 2007-02-22 19:37:44 tjc Exp $
  **/
 
 public class ActMain extends Splash 
 {
+  /**  */
+  private static final long serialVersionUID = 1L;
   /** Version String use for banner messages and title bars. */
-  public static final String version = "Release 5";
+  public static final String version = "Release 6";
   /** File manager */
   protected static FileManager filemanager = null;
   private static DatabaseEntrySource dbEntrySource;
@@ -330,39 +331,6 @@ public class ActMain extends Splash
     new ComparatorDialog(this).setVisible(true);
   }
 
-  /**
-  *
-  * Launch database manager window
-  *
-  */
-  private void launchDatabaseJFrame(final boolean prompt_user)
-  {
-    SwingWorker entryWorker = new SwingWorker()
-    {
-      public Object construct()
-      {
-        getStatusLabel().setText("Connecting ...");
-        DatabaseEntrySource entry_source = new DatabaseEntrySource();
-        if(!entry_source.setLocation(prompt_user))
-          return null;
-        
-        JFrame frame = new JFrame("Organism List");
-        final DatabaseJPanel pane = new DatabaseJPanel(entry_source,
-                                               ActMain.this);
-        frame.getContentPane().add(pane);
-        frame.pack();
-        Utilities.rightJustifyFrame(frame);
-        frame.setVisible(true);
-        frame.setJMenuBar(pane.makeMenuBar(entry_source, ActMain.this));
-        
-        frame.setVisible(true);
-        getStatusLabel().setText("");
-        return null;
-      }
-    };
-    entryWorker.start();
-  }
-  
   /**
    *  Exit from ACT.
    **/
