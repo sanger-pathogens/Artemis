@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.22 2007-02-06 16:27:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.23 2007-02-22 19:34:16 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -55,7 +55,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.22 2007-02-06 16:27:36 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.23 2007-02-22 19:34:16 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -788,9 +788,7 @@ public class EditMenu extends SelectionMenu
          edit_frame.getContentPane().add(fe);
          edit_frame.pack();
 
-         final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-         edit_frame.setLocation(new Point((screen.width - edit_frame.getSize().width)/2,
-                                     (screen.height - edit_frame.getSize().height)/2));
+         Utilities.centreFrame(edit_frame);
          edit_frame.setVisible(true);
        }
 
