@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionMenu.java,v 1.6 2007-02-21 16:30:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionMenu.java,v 1.7 2007-02-22 17:06:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -31,7 +31,6 @@ import uk.ac.sanger.artemis.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.awt.*;
-import java.util.Hashtable;
 import java.util.Vector;
 
 /**
@@ -40,7 +39,7 @@ import java.util.Vector;
  *  getParentFrame() to find the owning JFrame of the menu.
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectionMenu.java,v 1.6 2007-02-21 16:30:06 tjc Exp $
+ *  @version $Id: SelectionMenu.java,v 1.7 2007-02-22 17:06:42 tjc Exp $
  **/
 
 public class SelectionMenu extends JMenu 
