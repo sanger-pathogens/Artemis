@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.19 2007-02-13 09:44:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.20 2007-02-22 19:39:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -52,6 +52,7 @@ import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.GotoEventSource;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.components.FeatureEdit;
+import uk.ac.sanger.artemis.components.Utilities;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
@@ -200,6 +201,8 @@ public class GeneBuilderFrame extends JFrame
     setJMenuBar(menuBar);
     
     pack();
+    
+    Utilities.centreFrame(this);
     setVisible(true);
     all.setDividerLocation(0.35);
   }

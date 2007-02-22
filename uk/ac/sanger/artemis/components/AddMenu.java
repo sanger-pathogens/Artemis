@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.21 2007-02-08 14:35:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.22 2007-02-22 19:35:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -52,7 +52,7 @@ import javax.swing.*;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.21 2007-02-08 14:35:19 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.22 2007-02-22 19:35:24 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -481,10 +481,11 @@ public class AddMenu extends SelectionMenu
           edit_frame.getContentPane().add(feature_edit);
           edit_frame.pack();
 
-          final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-          edit_frame.setLocation(new Point((screen.width - edit_frame.getSize().width)/2,
-                                      (screen.height - edit_frame.getSize().height)/2));
-
+          //final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+          //edit_frame.setLocation(new Point((screen.width - edit_frame.getSize().width)/2,
+          //                            (screen.height - edit_frame.getSize().height)/2));
+          Utilities.centreFrame(edit_frame);
+          
           final ActionListener cancel_listener =
             new ActionListener () {
               public void actionPerformed (ActionEvent e) {
@@ -631,11 +632,11 @@ public class AddMenu extends SelectionMenu
         edit_frame.getContentPane().add(feature_edit);
         edit_frame.pack();
 
-        final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-        edit_frame.setLocation(new Point((screen.width - edit_frame.getSize().width)/2,
-                                    (screen.height - edit_frame.getSize().height)/2));
+        //final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        //edit_frame.setLocation(new Point((screen.width - edit_frame.getSize().width)/2,
+        //                            (screen.height - edit_frame.getSize().height)/2));
         
-        
+        Utilities.centreFrame(edit_frame);
 
         final ActionListener cancel_listener =
           new ActionListener () {
