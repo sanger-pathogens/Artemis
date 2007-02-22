@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.22 2007-02-21 10:56:51 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.23 2007-02-22 19:31:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.22 2007-02-21 10:56:51 tjc Exp $
+ *  @version $Id: Splash.java,v 1.23 2007-02-22 19:31:49 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -121,7 +121,7 @@ abstract public class Splash extends JFrame
       {
         Object[] args = { this, program_title };
         Class[] arglist = { Splash.class, String.class };
-        Class mac_class = getClass().forName(
+        Class mac_class = Class.forName(
             "uk.ac.sanger.artemis.components.MacHandler");
         Constructor new_one = mac_class.getConstructor(arglist);
         new_one.newInstance(args);
@@ -143,8 +143,8 @@ abstract public class Splash extends JFrame
       }
     });
 
-    final javax.swing.LookAndFeel look_and_feel =
-      javax.swing.UIManager.getLookAndFeel();
+    //final javax.swing.LookAndFeel look_and_feel =
+    //  javax.swing.UIManager.getLookAndFeel();
 
     final javax.swing.plaf.FontUIResource font_ui_resource =
       Options.getOptions().getFontUIResource();
@@ -265,7 +265,11 @@ abstract public class Splash extends JFrame
    **/
   private JComponent makeHelixCanvas() 
   {
-    return new JPanel() {
+    return new JPanel() 
+    {
+      /** */
+      private static final long serialVersionUID = 1L;
+
       public void update(Graphics g) 
       {
         paint(g);
@@ -304,7 +308,7 @@ abstract public class Splash extends JFrame
         g.drawString(geneticCode,
                      helix_width + left_margin, font_height * 3);
 
-        g.drawString("Copyright 1998 - 2006",
+        g.drawString("Copyright 1998 - 2007",
                       helix_width + left_margin, font_height * 9 / 2);
         g.drawString("Genome Research Limited",
                       helix_width + left_margin, font_height * 11 / 2);
@@ -618,7 +622,7 @@ abstract public class Splash extends JFrame
     bdown.add(bacross);    
  
     Object[] possibleValues = { "OK" };
-    int select = JOptionPane.showOptionDialog(null,
+    JOptionPane.showOptionDialog(null,
                                bdown,
                                "Set Working Directory",
                                JOptionPane.DEFAULT_OPTION,
