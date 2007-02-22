@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Utilities.java,v 1.3 2005-12-12 13:40:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Utilities.java,v 1.4 2007-02-22 19:45:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -37,7 +37,7 @@ import javax.swing.*;
  *  Utilities methods used by the uk.ac.sanger.artemis.components package.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Utilities.java,v 1.3 2005-12-12 13:40:13 tjc Exp $
+ *  @version $Id: Utilities.java,v 1.4 2007-02-22 19:45:18 tjc Exp $
  **/
 
 public class Utilities 
@@ -105,6 +105,20 @@ public class Utilities
   {
     final JFrame frame = getComponentFrame(component);
     centreFrame(frame);
+  }
+  
+  /**
+   * Test to find if this is a multi-display/device environment
+   * @return true if multiple displays found
+   */
+  public static boolean isMultiDisplay()
+  {
+    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    
+    if(ge.getScreenDevices().length>1)
+      return true;
+    
+    return false;
   }
 
   /**
