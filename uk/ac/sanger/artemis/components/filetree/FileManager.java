@@ -38,10 +38,8 @@ import java.util.Enumeration;
 public class FileManager extends JFrame
 {
 
-  /** busy cursor */
-  private Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
-  /** done cursor */
-  private Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
+  /** */
+  private static final long serialVersionUID = 1L;
 
   public FileManager(JFrame frame)
   {
