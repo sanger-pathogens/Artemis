@@ -24,45 +24,18 @@
 
 package uk.ac.sanger.artemis.j2ssh;
 
-import uk.ac.sanger.artemis.components.SwingWorker;
-
 import javax.swing.JOptionPane;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.SwingConstants;
 
-import java.awt.GridLayout;
 import java.io.File;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import java.util.Date;
 import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Properties;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
-import com.sshtools.j2ssh.io.UnsignedInteger32;
 import com.sshtools.j2ssh.SshClient;
-import com.sshtools.j2ssh.authentication.AuthenticationProtocolState;
-import com.sshtools.j2ssh.authentication.PasswordAuthenticationClient;
-import com.sshtools.j2ssh.session.SessionChannelClient;
 import com.sshtools.j2ssh.sftp.FileAttributes;
 import com.sshtools.j2ssh.sftp.SftpFile;
-import com.sshtools.j2ssh.sftp.SftpFileOutputStream;
 import com.sshtools.j2ssh.SftpClient;
-import com.sshtools.j2ssh.configuration.ConfigurationLoader;
 import com.sshtools.j2ssh.SshException;
 
 /**
@@ -435,7 +408,6 @@ public class SshFileManager
     {
       this.file = file;
       this.monitor = monitor; 
-      this.os = os;
     }
   
     public void run()
