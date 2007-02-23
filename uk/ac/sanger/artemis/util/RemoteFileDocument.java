@@ -38,6 +38,7 @@ import uk.ac.sanger.artemis.j2ssh.FTProgress;
 
 public class RemoteFileDocument extends Document 
 {
+  private String str;
   /**
   *
   *  Create a new RemoteFileDocument from a File.
@@ -196,5 +197,15 @@ public class RemoteFileDocument extends Document
   {
     return (RemoteFileNode)getLocation();
   }
-
+  
+  
+  public String toString() 
+  {
+    return str;
+  }
+  
+  public void setString(final String str)
+  {
+    this.str = str;
+  }
 }
