@@ -20,20 +20,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.6 2006-02-03 09:33:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.7 2007-02-23 16:30:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
-import uk.ac.sanger.artemis.plot.*;
 
 import uk.ac.sanger.artemis.util.*;
+import uk.ac.sanger.artemis.components.filetree.FileList;
+import uk.ac.sanger.artemis.components.filetree.RemoteFileNode;
+import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
-import uk.ac.sanger.artemis.io.InvalidKeyException;
 import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.j2ssh.FTProgress;
+import uk.ac.sanger.artemis.j2ssh.FileTransferProgressMonitor;
 
 import java.io.*;
 import java.awt.*;
@@ -41,14 +44,37 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import com.sshtools.j2ssh.sftp.FileAttributes;
+
 /**
  *  A popup menu with viewing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: ViewMenu.java,v 1.6 2006-02-03 09:33:42 tjc Exp $
+ *  @version $Id: ViewMenu.java,v 1.7 2007-02-23 16:30:00 tjc Exp $
  **/
 
-public class ViewMenu extends SelectionMenu {
+public class ViewMenu extends SelectionMenu 
+{
+  /** */
+  private static final long serialVersionUID = 1L;
+
+  /**
+   *  The EntryGroup that was passed to the constructor.
+   **/
+  private EntryGroup entry_group = null;
+
+  /**
+   *  The Selection that was passed to the constructor.
+   **/
+  private Selection selection = null;
+
+  /**
+   *  The GotoEventSource that was passed to the constructor.
+   **/
+  //private GotoEventSource goto_event_source = null;
+
+  private BasePlotGroup base_plot_group;
+  
   /**
    *  Create a new ViewMenu object.
    *  @param frame The JFrame that owns this JMenu.
@@ -73,7 +99,6 @@ public class ViewMenu extends SelectionMenu {
 
     this.entry_group = entry_group;
     this.selection = selection;
-    this.goto_event_source = goto_event_source;
 
     this.base_plot_group = base_plot_group;
 
@@ -1232,7 +1257,8 @@ public class ViewMenu extends SelectionMenu {
         final File dir_name = new File (program_name);
 
         final Document [] possible_documents =
-          new Document [] {
+          new Document [] 
+         {
             root_document.append (program_name).append (file_name),
             root_document.append (file_name),
             new FileDocument (new File (file_name)),
@@ -1240,6 +1266,7 @@ public class ViewMenu extends SelectionMenu {
             new FileDocument ( new File(System.getProperty("user.dir")) ).append(program_name).append (file_name)
           };
 
+        
         for (int possible_document_index = 0 ;
              possible_document_index < possible_documents.length ;
              ++possible_document_index) {
@@ -1263,6 +1290,14 @@ public class ViewMenu extends SelectionMenu {
           }
         }
 
+        // if not found locally check remote side
+        if(document == null
+            && ((DocumentEntry) (this_feature.getEntry().getEMBLEntry()))
+                .getDocument() instanceof RemoteFileDocument)
+        {
+          document = checkRemoteNode(this_feature, program_name, file_name, dir_name);
+        }
+        
         if (document == null) {
           final String message_string =
             "No " + program_name + " results for " +
@@ -1431,21 +1466,69 @@ public class ViewMenu extends SelectionMenu {
   {
     return entry_group;
   }
+  
+  
+  private static Document checkRemoteNode(final Feature this_feature,
+                               final String program_name,
+                               final String file_name,
+                               final File dir_name)
+  {
+    RemoteFileDocument doc = (RemoteFileDocument) (((DocumentEntry) this_feature
+        .getEntry().getEMBLEntry()).getDocument());
 
-  /**
-   *  The EntryGroup that was passed to the constructor.
-   **/
-  private EntryGroup entry_group = null;
+    RemoteFileNode node = doc.getRemoteFileNode();
+    Document document = null;
+    FileList flist = new FileList();
+    String fileName = node.getPathName().concat(
+        "/" + program_name + "/" + file_name);
+    FileAttributes attr = flist.stat(fileName);
+    if(attr != null && attr.isFile())
+    {
+      FileTransferProgressMonitor monitor = new FileTransferProgressMonitor(
+          null);
+      FTProgress progress = monitor.add(node.getFile());
 
-  /**
-   *  The Selection that was passed to the constructor.
-   **/
-  private Selection selection = null;
+      RemoteFileNode fileNode = new RemoteFileNode("", file_name, null,
+          node.getPathName().concat("/" + program_name), false);
+      document = new RemoteFileDocument(fileNode);
+      byte contents[] = fileNode.getFileContents(progress);
+      File fn = new File(dir_name.getAbsoluteFile(), file_name);
+      
+      writeByteFile(contents, fn);
+      ((RemoteFileDocument)document).setString(fn.getAbsolutePath());
+      monitor.close();
+    }
+    return document;
+  }
+  
+  private static boolean writeByteFile(byte[] contents, File fn)
+  {
+    if(fn.exists())
+    {
+      int n = JOptionPane.showConfirmDialog(null,
+                                 "Overwrite \n"+fn.getName()+"?",
+                                 "Overwrite File",
+                                 JOptionPane.YES_NO_OPTION);
+      if(n == JOptionPane.NO_OPTION)
+        return false;
+    }
+    else if(!fn.getParentFile().canWrite())
+      JOptionPane.showMessageDialog(null,"Cannot write "+fn.getName()+" to "+
+                        fn.getParentFile().getAbsolutePath(),
+                        "Write Permission Denied",
+                        JOptionPane.WARNING_MESSAGE);
 
-  /**
-   *  The GotoEventSource that was passed to the constructor.
-   **/
-  private GotoEventSource goto_event_source = null;
+    try
+    {
+      FileOutputStream out = new FileOutputStream(fn);
+      out.write(contents);
+      out.close(); 
+    }
+    catch(FileNotFoundException fnfe) { return false;}
+    catch(IOException ioe) { return false;}
+  
+    return true;
+  }
 
-  private BasePlotGroup base_plot_group;
+
 }
