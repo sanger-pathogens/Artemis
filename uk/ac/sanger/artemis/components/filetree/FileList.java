@@ -23,10 +23,7 @@ package uk.ac.sanger.artemis.components.filetree;
 
 import uk.ac.sanger.artemis.j2ssh.FTProgress;
 import uk.ac.sanger.artemis.j2ssh.SshFileManager;
-import java.util.Vector;
-import java.util.Collections;
 import java.util.Hashtable;
-import java.util.Date;
 import java.io.IOException;
 import java.io.File;
 import com.sshtools.j2ssh.sftp.FileAttributes;
@@ -35,17 +32,17 @@ public class FileList
 {
   /** vector containing directories */
   private Hashtable vdir;
-  private Hashtable vfile;
   protected static SshFileManager ssh_client;
  
   public FileList()
   {
-    ssh_client = new SshFileManager();
+    if(ssh_client == null)
+      ssh_client = new SshFileManager();
   }
 
   public FileList(SshFileManager ssh_client)
   {
-    this.ssh_client = ssh_client;
+    FileList.ssh_client = ssh_client;
   }
 
   /**
@@ -63,7 +60,7 @@ public class FileList
     }
     catch(IOException ioe)
     {
-      ioe.printStackTrace();
+      return null;
     }
     vdir  = ssh_client.getDirList(); 
     return ssh_client.getFileList();
@@ -139,7 +136,7 @@ public class FileList
   * Get the file contents
   *
   */
-  protected byte[] getFileContents(String file, FTProgress monitor)
+  public byte[] getFileContents(String file, FTProgress monitor)
   {
     return ssh_client.getFileContents(file, monitor);
   }

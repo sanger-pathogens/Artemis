@@ -27,12 +27,9 @@ import javax.swing.*;
 import javax.swing.tree.*;
 import javax.swing.table.*;
 import javax.swing.filechooser.FileSystemView;
-import javax.swing.event.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -51,14 +48,12 @@ import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
-import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.SimpleEntryInformation;
 import uk.ac.sanger.artemis.components.EntryEdit;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.components.MessageDialog;
-import uk.ac.sanger.artemis.components.filetree.*;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 
 /**
@@ -76,14 +71,14 @@ public class SshJTreeTable extends JTable
                  DragSourceListener, DropTargetListener, ActionListener,
                  Autoscroll
 {
+  /**  */
+  private static final long serialVersionUID = 1L;
   /** popup menu */
   private JPopupMenu popup;
   /** busy cursor */
   private Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
   /** done cursor */
   private Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
-  /** file separator */
-  private String fs = new String(System.getProperty("file.separator"));
   /** line separator */
   private String ls = new String(System.getProperty("line.separator"));
   /** AutoScroll margin */
@@ -116,10 +111,13 @@ public class SshJTreeTable extends JTable
     // Force the JTable and JTree to share their row selection models. 
     tree.setSelectionModel(new DefaultTreeSelectionModel() 
     { 
+      /** */
+      private static final long serialVersionUID = 1L;
+
       // Extend the implementation of the constructor, as if: 
       /* public this() */
       {
-	setSelectionModel(listSelectionModel); 
+      	setSelectionModel(listSelectionModel); 
       } 
     }); 
     // Make the tree and table row heights the same. 
@@ -311,15 +309,9 @@ public class SshJTreeTable extends JTable
                           "Folder Name","Create New Folder in",
                           JOptionPane.QUESTION_MESSAGE);
 
-      String dropDest = null;
-
       if(node.isLeaf())
-      {
         pn = (RemoteFileNode)node.getParent();
-        dropDest = pn.getFullName() + "/" + inputValue; //assumes unix file sep.!
-      }
-      else
-        dropDest = node.getFullName() + "/" + inputValue;
+
 
       String newNode = pn.getServerName();
       if(!newNode.endsWith("/"))
@@ -331,7 +323,6 @@ public class SshJTreeTable extends JTable
 
       if(inputValue != null && !inputValue.equals("") )
       {
-        final RemoteFileNode pnn = pn;
         node.mkdir(newNode);
 
         Runnable addDirToTree = new Runnable()
@@ -576,6 +567,8 @@ public class SshJTreeTable extends JTable
   //
   public class TreeTableCellRenderer extends JTree implements TableCellRenderer 
   {
+    /** */
+    private static final long serialVersionUID = 1L;
     protected int visibleRow;
    
     public TreeTableCellRenderer(TreeModel model) 
@@ -666,12 +659,10 @@ public class SshJTreeTable extends JTable
         for(int i=0; i<vnode.size();i++)
         {
           final RemoteFileNode fn = (RemoteFileNode)vnode.get(i);
-          String dropDest = null;
-
+          
           String serverName = fdropPath.getServerName()+"/"+fn.getFile();
           if(!nodeExists(fdropPath,serverName))
           {
-            String root = fn.getRootDir();
             rename(fn, serverName);
 
             Runnable addDirToTree = new Runnable()
@@ -841,7 +832,7 @@ public class SshJTreeTable extends JTable
   * appropriate icon 
   *
   */
-  private BufferedImage getImage(File temp)
+  /*private BufferedImage getImage(File temp)
   {
     // get the right icon
     FileSystemView fsv = FileSystemView.getFileSystemView( );
@@ -854,7 +845,7 @@ public class SshJTreeTable extends JTable
 			 BufferedImage.TYPE_INT_ARGB);
     icn.paintIcon(this,buff.getGraphics( ),0,0);
     return buff;
-  }
+  }*/
 
   public void dragDropEnd(DragSourceDropEvent e) {}
   public void dragEnter(DragSourceDragEvent e) {}

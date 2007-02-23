@@ -36,6 +36,8 @@ import java.util.*;
 public class RemoteFileNode extends DefaultMutableTreeNode 
                     implements Transferable, Serializable
 {
+  /** */
+  private static final long serialVersionUID = 1L;
   /** true if node is explored */
   private boolean explored = false;
   /** true if node is a directory */
@@ -47,8 +49,6 @@ public class RemoteFileNode extends DefaultMutableTreeNode
   /** root directory */
   private String rootdir; 
 
-  /** parent directory listing */
-  private transient FileList parentList;        // make transient for
   /** remote server file roots */
   private transient String froots;
   /** file separator for server files */
@@ -105,7 +105,7 @@ public class RemoteFileNode extends DefaultMutableTreeNode
                         boolean ldir)
   { 
     this.froots = froots;
-    this.parentList = parentList;
+    
     isDir = ldir;
     rootdir = froots;
     serverPathToFile = froots;
@@ -206,6 +206,10 @@ public class RemoteFileNode extends DefaultMutableTreeNode
     dir = dir.trim();
 
     Hashtable children = flist.getDirList(dir);
+    
+    if(children == null)
+      return null;
+    
     Object files[] = children.keySet().toArray();
     Arrays.sort(files);
 
