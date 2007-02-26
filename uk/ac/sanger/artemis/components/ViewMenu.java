@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.8 2007-02-26 10:37:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.9 2007-02-26 15:14:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -50,7 +50,7 @@ import com.sshtools.j2ssh.sftp.FileAttributes;
  *  A popup menu with viewing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: ViewMenu.java,v 1.8 2007-02-26 10:37:36 tjc Exp $
+ *  @version $Id: ViewMenu.java,v 1.9 2007-02-26 15:14:12 tjc Exp $
  **/
 
 public class ViewMenu extends SelectionMenu 
@@ -1531,10 +1531,13 @@ public class ViewMenu extends SelectionMenu
         return false;
     }
     else if(!fn.getParentFile().canWrite())
-      JOptionPane.showMessageDialog(null,"Cannot write "+fn.getName()+" to "+
+    {
+      if(!fn.getParentFile().mkdir())
+        JOptionPane.showMessageDialog(null,"Cannot write "+fn.getName()+" to "+
                         fn.getParentFile().getAbsolutePath(),
                         "Write Permission Denied",
                         JOptionPane.WARNING_MESSAGE);
+    }
 
     try
     {
