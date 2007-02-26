@@ -36,6 +36,7 @@ Target           no         text
 Gap              no         text     
 Derives_from     no         text     
 Dbxref           no         "text"
+feature_id       no         number  1 99999999
 colour           no         text
 color            no         text
 mass             no         text
@@ -124,6 +125,7 @@ strain           no         "text"
 sub_clone        no         "text"
 sub_species      no         "text"
 sub_strain       no         "text"
+timelastmodified no          text
 tissue_lib       no         "text"  
 tissue_type      no         "text"
 transgenic       no         "text"
