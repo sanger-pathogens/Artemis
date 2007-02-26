@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.23 2007-02-22 19:34:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.24 2007-02-26 15:51:10 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -49,13 +49,15 @@ import java.io.IOException;
 
 import javax.swing.*;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Vector;
 
 /**
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.23 2007-02-22 19:34:16 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.24 2007-02-26 15:51:10 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -2533,21 +2535,27 @@ public class EditMenu extends SelectionMenu
                                    final int start_number,
                                    final int increment,
                                    final String qualifier_name,
-                                   final boolean tag_complement_names) {
+                                   final boolean tag_complement_names,
+                                   final int format_value) {
     try {
       entry_group.getActionController ().startAction ();
 
+      String fmt = "";
+      for(int i=0; i<format_value; i++)
+        fmt = fmt.concat("0");
+      
+      NumberFormat formatter = new DecimalFormat(fmt);
+      
       int current_number = start_number;
 
       for (int i = 0 ; i < features_to_name.size () ; ++i) {
         final Feature this_feature = features_to_name.elementAt (i);
 
-        final Key key = this_feature.getKey ();
+        //final Key key = this_feature.getKey ();
 
-//      if (key.equals ("CDS")) {
-          final String number_string;
-
-          if (current_number < 10) {
+          final String number_string = formatter.format(current_number);
+      
+          /*if (current_number < 10) {
             number_string = "000" + current_number;
           } else {
             if (current_number < 100) {
@@ -2559,7 +2567,7 @@ public class EditMenu extends SelectionMenu
                 number_string = String.valueOf (current_number);
               }
             }
-          }
+          }*/
 
           try {
             final Qualifier new_qualifier =
@@ -2704,10 +2712,29 @@ public class EditMenu extends SelectionMenu
       new YesNoDialog (getParentFrame (),
                        "append \"c\" to names of reverse strand features?");
 
+    final TextDialog format_dialog =
+      new TextDialog (getParentFrame (),
+                      "number of digits to use in the name, e.g. 5, will pad\n" +
+                      "the number with zeros, 00009, 00010 ....",
+                      18, "5");
+    
+    int format_value;
+
+    try {
+      format_value = Integer.valueOf (format_dialog.getText().trim()).intValue ();
+    } catch (NumberFormatException e) {
+      new MessageDialog (getParentFrame (),
+                         "this is not a number: " + format_dialog.getText());
+      return;
+    }
+    
+    if(format_value < 0)
+      format_value = -format_value;
+    
     autoGeneNameHelper(features_to_name,
                        prefix_string, start_value, increment_value,
                        qualifier_name_string,
-                       complement_tag_dialog.getResult());
+                       complement_tag_dialog.getResult(), format_value);
   }
 
   /**
