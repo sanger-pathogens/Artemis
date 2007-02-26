@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.24 2007-02-26 15:51:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.25 2007-02-26 15:55:11 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -57,7 +57,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.24 2007-02-26 15:51:10 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.25 2007-02-26 15:55:11 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -2714,8 +2714,8 @@ public class EditMenu extends SelectionMenu
 
     final TextDialog format_dialog =
       new TextDialog (getParentFrame (),
-                      "number of digits to use in the name, e.g. 5, will pad\n" +
-                      "the number with zeros, 00009, 00010 ....",
+                      "number of digits in the name, e.g. 5, pads with " +
+                      "zeros: 00009, 00010 ....",
                       18, "5");
     
     int format_value;
