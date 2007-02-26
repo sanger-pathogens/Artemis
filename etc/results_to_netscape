@@ -17,6 +17,9 @@ then
 elif [ -f "/usr/bin/mozilla" ]
 then
   NETSCAPE=/usr/bin/mozilla
+elif [ -f "/usr/bin/open" ]
+then
+  NETSCAPE=/usr/bin/open
 elif [ -f "/Applications/Safari.app/Contents/MacOS/Safari" ]
 then
   NETSCAPE=/Applications/Safari.app/Contents/MacOS/Safari
@@ -229,7 +232,11 @@ echo "rm -f $new_file > /dev/null 2>&1" | at now + 12 hours
 
 # MAC OS X => Safari browser
 # The command then is the following
-if [ -f "/Applications/Safari.app/Contents/MacOS/Safari" ]
+if [ -f "/usr/bin/open" ]
+then
+  /usr/bin/open $new_file
+  exit 0
+elif [ -f "/Applications/Safari.app/Contents/MacOS/Safari" ]
 then
   if $NETSCAPE $new_file
   then
