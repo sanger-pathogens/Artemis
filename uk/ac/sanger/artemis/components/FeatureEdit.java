@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.27 2007-02-13 09:46:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.28 2007-02-26 10:37:36 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -55,6 +55,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Collections;
 import java.util.Comparator;
@@ -64,7 +65,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.27 2007-02-13 09:46:31 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.28 2007-02-26 10:37:36 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -659,7 +660,7 @@ public class FeatureEdit extends JPanel
           StringReader strRead = new StringReader(qualifier_txt);
           BufferedReader buff = new BufferedReader(strRead);
           String line;
-          final Vector dataFile = new Vector();
+          final Hashtable dataFile = new Hashtable();
           try
           {
             while((line = buff.readLine()) != null)
@@ -668,19 +669,19 @@ public class FeatureEdit extends JPanel
               {
                 int ind = line.lastIndexOf("\"");
                 if(ind > -1)
-                  dataFile.add(baseDirStr+line.substring(13,ind));
+                  dataFile.put("fasta", baseDirStr+line.substring(13,ind));
               }
               else if(line.startsWith("/blastp_file="))
               {
                 int ind = line.lastIndexOf("\"");
                 if(ind > -1)
-                  dataFile.add(baseDirStr+line.substring(14,ind));
+                  dataFile.put("blastp", baseDirStr+line.substring(14,ind));
               }
               else if(line.startsWith("/blastp+go_file="))
               {
                 int ind = line.lastIndexOf("\"");
                 if(ind > -1)
-                  dataFile.add(baseDirStr+line.substring(17,ind));
+                  dataFile.put("blastp+go", baseDirStr+line.substring(17,ind));
               }   
             }
           }
@@ -735,7 +736,7 @@ public class FeatureEdit extends JPanel
               // show object editor
               try
               {
-               bp.set(dataFile.toArray(), qualifier_text_area, overlapFeatures,
+               bp.set(dataFile, qualifier_text_area, overlapFeatures,
                       edit_feature);
               }
               catch(ArrayIndexOutOfBoundsException e)

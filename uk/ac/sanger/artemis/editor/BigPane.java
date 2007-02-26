@@ -34,6 +34,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.util.Hashtable;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
@@ -81,7 +82,7 @@ public class BigPane extends JFrame
     super("Object Editor");
   }
 
-  public void set(Object dataFile[], JTextArea qualifier,
+  public void set(Hashtable dataFile, JTextArea qualifier,
              FeatureVector overlapFeature, 
              final Feature edit_feature) 
   {
@@ -89,7 +90,7 @@ public class BigPane extends JFrame
     this.qualifier      = qualifier;
   }
 
-  public void set(Object dataFile[], String qualifier_txt,
+  public void set(Hashtable dataFile, String qualifier_txt,
              FeatureVector overlapFeature,
              final Feature edit_feature)
   {
@@ -128,7 +129,7 @@ public class BigPane extends JFrame
     final int wid = getWidth()/2-10;
     
     dataView = new DataViewInternalFrame(dataFile,desktop, scrollEvidence,
-                                         wid,hgt,qualifier_txt);
+                                         wid,hgt,qualifier_txt,edit_feature);
     dataView.setLocation(5,0);
     dataView.setSize(wid,hgt);
     dataView.setVisible(true);
@@ -402,15 +403,4 @@ public class BigPane extends JFrame
      }
   }
 
-
-  public static void main(String args[])
-  {
-    if(args.length < 1)
-    {
-      System.out.println("Usage:: java BigPane data_file");
-      System.exit(0);
-    }
-    BigPane bp = new BigPane();
-    bp.set(args,"",null,null);
-  }
 }

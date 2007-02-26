@@ -28,8 +28,15 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+
+import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.components.ViewMenu;
+import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.util.RemoteFileDocument;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.Hashtable;
 import java.util.Vector;
 import java.util.StringTokenizer;
 import java.util.Enumeration;
@@ -51,11 +58,12 @@ public class DataViewInternalFrame extends JInternalFrame
   private Vector fastaCollection = new Vector();
   private JSplitPane split;
 
-  public DataViewInternalFrame(Object dataFile[], JDesktopPane desktop,
+  public DataViewInternalFrame(Hashtable dataFile, JDesktopPane desktop,
                                final JScrollPane scrollEvidence,
-                               int wid, int hgt, String qualifier_txt)
+                               int wid, int hgt, String qualifier_txt,
+                               final Feature edit_feature)
   {
-    super("Document " + dataFile[0], 
+    super("Document " , 
               true, //resizable
               true, //closable
               true, //maximizable
@@ -73,42 +81,62 @@ public class DataViewInternalFrame extends JInternalFrame
     StringBuffer annFormat = new StringBuffer();
     annFormat.append(htmlBreaks(qualifier_txt.trim()));
 
-    for(int i=0; i<dataFile.length; i++)
+    int icount = 0;
+    Enumeration enumPrograms = dataFile.keys();
+    while(enumPrograms.hasMoreElements())
     {
+      String programName = (String)enumPrograms.nextElement();
+      String fileName = (String)dataFile.get(programName);
       //ensure results file exists
       File fdata = new File(System.getProperty("user.dir")+
-                            (String)dataFile[i]);
+                            fileName);
       
       if(!fdata.exists())
       {
-        fdata = new File((String)dataFile[i]+".gz");
+        fdata = new File(fileName+".gz");
         
         if(!fdata.exists())
-          fdata = new File((String)dataFile[i]);
+          fdata = new File(fileName);
         
         if(!fdata.exists())
         {         
           fdata = new File(System.getProperty("user.dir")+
                          File.separatorChar +
-                         (String)dataFile[i]);
+                         fileName);
           if(!fdata.exists())
             fdata = new File(System.getProperty("user.dir")+
                          File.separatorChar +
-                         (String)dataFile[i]+".gz");
+                         fileName+".gz");
 
         }
+        
+        // if not found locally try SSH remote site
+        if(!fdata.exists() && 
+            ((DocumentEntry)(edit_feature.getEntry().getEMBLEntry())).getDocument() 
+                            instanceof RemoteFileDocument)
+        {
+          fdata = new File(System.getProperty("user.dir")+ 
+                           File.separatorChar + fileName);
+          // check on the remote side and scp the file over
+          ViewMenu.checkRemoteNode(edit_feature, programName, 
+                                   fdata.getName(), new File (programName));
 
+          if(!fdata.exists())
+            fdata = new File(System.getProperty("user.dir")+ 
+                             File.separatorChar + fileName+".gz");
+        }
+        
         if(!fdata.exists())
         {
           JOptionPane.showMessageDialog(desktop, "Results file: \n"+
-                                      dataFile[i] + "\ndoes not exist!",
+                                       fileName + "\ndoes not exist!",
                                       "File Not Found",
                                       JOptionPane.WARNING_MESSAGE);
           continue;
         }
       }
   
-      String tabName = (String)dataFile[i];
+      String tabName = (String)fileName;
       int ind = tabName.lastIndexOf("/");
       if(ind > -1)
       {
@@ -125,10 +153,10 @@ public class DataViewInternalFrame extends JInternalFrame
 
       if(qualifier_txt.indexOf("/"+fastaPane.getFormat()+"_file=\"") == -1)
       {
-        if(i > 0)
+        if(icount > 0)
           annFormat.append("\n<br>");
         annFormat.append("/"+fastaPane.getFormat()+"_file=\""+
-                                     dataFile[i]+"\"");
+            fileName+"\"");
       }
 
       // graphical view
@@ -203,10 +231,11 @@ public class DataViewInternalFrame extends JInternalFrame
       split.setLabel(tabLabel);
       split.setDividerLocation(DataViewInternalFrame.dataDividerLocation);
       split.setOneTouchExpandable(true);
-      if(i == 0)
+      if(icount == 0)
         split.setActive(true);
 
       tabPane.add(fastaPane.getFormat()+" "+tabName,split);
+      icount++;
     }
 
 //  evidenceBox.add(Box.createVerticalGlue());

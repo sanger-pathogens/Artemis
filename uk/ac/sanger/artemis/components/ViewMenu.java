@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.7 2007-02-23 16:30:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.8 2007-02-26 10:37:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -50,7 +50,7 @@ import com.sshtools.j2ssh.sftp.FileAttributes;
  *  A popup menu with viewing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: ViewMenu.java,v 1.7 2007-02-23 16:30:00 tjc Exp $
+ *  @version $Id: ViewMenu.java,v 1.8 2007-02-26 10:37:36 tjc Exp $
  **/
 
 public class ViewMenu extends SelectionMenu 
@@ -1468,9 +1468,18 @@ public class ViewMenu extends SelectionMenu
   }
   
   
-  private static Document checkRemoteNode(final Feature this_feature,
+  /**
+   * Look for the file on the remote side and copy and transfer is
+   * locally.
+   * @param this_feature
+   * @param program_name
+   * @param file_name
+   * @param dir_name
+   * @return
+   */
+  public static Document checkRemoteNode(final Feature this_feature,
                                final String program_name,
-                               final String file_name,
+                               String file_name,
                                final File dir_name)
   {
     RemoteFileDocument doc = (RemoteFileDocument) (((DocumentEntry) this_feature
@@ -1482,6 +1491,15 @@ public class ViewMenu extends SelectionMenu
     String fileName = node.getPathName().concat(
         "/" + program_name + "/" + file_name);
     FileAttributes attr = flist.stat(fileName);
+    
+    if(attr == null || !attr.isFile())
+    {
+      file_name = file_name + ".gz";
+      fileName = node.getPathName().concat(
+          "/" + program_name + "/" + file_name);
+      attr = flist.stat(fileName);
+    }
+    
     if(attr != null && attr.isFile())
     {
       FileTransferProgressMonitor monitor = new FileTransferProgressMonitor(
