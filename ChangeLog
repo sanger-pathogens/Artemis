@@ -30,7 +30,13 @@ Version 9
 	to allow the user to be able to select multiple qualifiers to display.
 
 	For entries opened from the remote side of an SSH connection will search
-	for results on the remote file system if they are not found locally. 
+	for results on the remote file system if they are not found locally. They
+	are transferred via SSH and then stored locally.
 
 	For Mac users, the option to send search results to the browser will
 	display the results in the default browser.
+
+	When automatically generating gene names (under the Edit menu), the user
+	can specify the number of zeros to pad the numbering with. e.g if 5 digits are
+	selected the format will look like : 00001, 00002 etc.
+
