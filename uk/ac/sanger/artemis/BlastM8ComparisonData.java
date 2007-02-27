@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/BlastM8ComparisonData.java,v 1.1 2004-06-09 09:44:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/BlastM8ComparisonData.java,v 1.2 2007-02-27 10:24:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -36,7 +36,7 @@ import java.util.Vector;
  *  output.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: BlastM8ComparisonData.java,v 1.1 2004-06-09 09:44:10 tjc Exp $
+ *  @version $Id: BlastM8ComparisonData.java,v 1.2 2007-02-27 10:24:32 tjc Exp $
  **/
 
 public class BlastM8ComparisonData extends SimpleComparisonData {
@@ -67,12 +67,18 @@ public class BlastM8ComparisonData extends SimpleComparisonData {
   /**
    *  Make an AlignMatch object from the given String.
    **/
-  private static AlignMatch makeMatchFromStringStatic (final String line)
+  private static AlignMatch makeMatchFromStringStatic (String line)
       throws IOException {
     if (line.trim ().length () == 0 ||
         line.startsWith ("#")) {
       return null;
     }
+
+    // allow empty columns
+    int index; 
+    while((index = line.indexOf("\t\t")) > -1)
+      line = line.substring(0, index) + "\t \t" +
+             line.substring(index+2);
 
     final StringTokenizer tokenizer = new StringTokenizer (line, "\t");
 
