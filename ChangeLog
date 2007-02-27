@@ -29,3 +29,8 @@ Version 9
 	and systematic names. Also extended popup menu option in feature lists 
 	to allow the user to be able to select multiple qualifiers to display.
 
+	For entries opened from the remote side of an SSH connection will search
+	for results on the remote file system if they are not found locally. 
+
+	For Mac users, the option to send search results to the browser will
+	display the results in the default browser.
