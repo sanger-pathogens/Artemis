@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.16 2007-02-21 10:54:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.17 2007-02-27 15:50:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,7 +38,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.16 2007-02-21 10:54:29 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.17 2007-02-27 15:50:39 tjc Exp $
  *
  **/
 
@@ -94,6 +94,8 @@ public class FeaturePopup extends JPopupMenu
   private FeatureSegmentVector selection_segments;
   private BasePlotGroup base_plot_group = null;
   private JMenuItem feature_display_menus[] = null;
+  private int SCORE_MINIMUM = Integer.MAX_VALUE;
+  private int SCORE_MAXIMUM = Integer.MIN_VALUE;
 
   /**
    *  Create a new FeaturePopup object.
@@ -457,10 +459,29 @@ public class FeaturePopup extends JPopupMenu
             }
           };
 
+        FeatureVector features = getEntryGroup().getAllFeatures();
+        int score;
+        for(int i=0; i<features.size(); i++)
+        {
+          score = features.elementAt(i).getScore();
+          if(score > -1)
+          {
+            if(score < SCORE_MINIMUM)
+              SCORE_MINIMUM = score;
+            else if(score > SCORE_MAXIMUM)
+              SCORE_MAXIMUM = score;
+          }
+        }
+        
+        if(SCORE_MINIMUM == Integer.MAX_VALUE)
+          SCORE_MINIMUM = 0;
+        if(SCORE_MAXIMUM == Integer.MIN_VALUE)
+          SCORE_MAXIMUM = 100;
+        
         final ScoreChanger score_changer =
           new ScoreChanger("Score Cutoffs",
                             minimum_listener, maximum_listener,
-                            0, 100);
+                            SCORE_MINIMUM, SCORE_MAXIMUM);
 
         score_changer.setVisible(true);
       }
