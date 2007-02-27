@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.13 2007-02-23 16:30:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.14 2007-02-27 16:04:15 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -29,21 +29,27 @@ import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.components.SwingWorker;
+import uk.ac.sanger.artemis.components.Utilities;
 import uk.ac.sanger.artemis.components.filetree.RemoteFileNode;
 import uk.ac.sanger.artemis.j2ssh.FileTransferProgressMonitor;
 import uk.ac.sanger.artemis.j2ssh.FTProgress;
 
+import java.awt.Color;
 import java.io.*;
 import java.text.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
+
+import javax.swing.JFrame;
+import javax.swing.JProgressBar;
 
 /**
  *  Each object of this class represents one external executable or script,
  *  and contains methods for invoking it.
  *
  *  @author Kim Rutherford
- *  @version $Id: ExternalProgram.java,v 1.13 2007-02-23 16:30:37 tjc Exp $
+ *  @version $Id: ExternalProgram.java,v 1.14 2007-02-27 16:04:15 tjc Exp $
  **/
 
 public class ExternalProgram 
@@ -194,7 +200,7 @@ public class ExternalProgram
           uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
                 new uk.ac.sanger.artemis.j2ssh.SshPSUClient(args);
           ssh.start();
-
+          nowSendingProgressBar();
           return null;
         }
 
@@ -224,6 +230,9 @@ public class ExternalProgram
         final Process process =
           startProgram("run_" + getRealName(), arguments);
 
+        //
+        //
+        nowSendingProgressBar();
         return new ProcessMonitor(process, getName(), logger);
       } 
       catch(SecurityException e) 
@@ -234,6 +243,40 @@ public class ExternalProgram
                                             e.getMessage());
       }
 //  }
+  }
+  
+  private void nowSendingProgressBar()
+  {
+    final JFrame fsend = new JFrame("");
+    final int max = 20;
+    final JProgressBar progressBar = new JProgressBar(0,max);
+    progressBar.setStringPainted(true);
+    progressBar.setString("Sending "+getName()+" process now!");
+    progressBar.setBackground(Color.white);
+
+    SwingWorker batchWorker = new SwingWorker()
+    {
+      public Object construct()
+      {
+        try
+        {
+          for(int i=0; i<max; i++)
+          {
+            Thread.sleep(200);
+            progressBar.setValue(i);
+          }
+          fsend.dispose();
+        }
+        catch(InterruptedException intr){}
+        return null;
+      }
+    };
+
+    fsend.getContentPane().add(progressBar);
+    fsend.pack();
+    Utilities.centreFrame(fsend);
+    fsend.setVisible(true);
+    batchWorker.start();
   }
 
   /**
