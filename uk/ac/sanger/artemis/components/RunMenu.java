@@ -20,22 +20,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.8 2005-08-11 16:12:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.9 2007-02-28 15:47:56 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
-import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.io.EntryInformationException;
-import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.InvalidKeyException;
-import uk.ac.sanger.artemis.io.InvalidRelationException;
 
 import java.io.IOException;
 import java.awt.event.*;
-import java.util.Vector;
 
 import javax.swing.*;
 
@@ -43,12 +39,14 @@ import javax.swing.*;
  *  A JMenu of external commands/functions.
  *
  *  @author Kim Rutherford
- *  @version $Id: RunMenu.java,v 1.8 2005-08-11 16:12:43 tjc Exp $
+ *  @version $Id: RunMenu.java,v 1.9 2007-02-28 15:47:56 tjc Exp $
  **/
 
 public class RunMenu extends SelectionMenu 
 {
  
+  /** */
+  private static final long serialVersionUID = 1L;
   private JMenu fastaMenu = null;
   private JMenu fastaMenuOptions = null;
   private JMenu blastpMenu = null;

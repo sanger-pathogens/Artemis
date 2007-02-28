@@ -20,32 +20,45 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.4 2005-10-05 08:57:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.5 2007-02-28 15:51:25 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
-import uk.ac.sanger.artemis.*;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.*;
 import java.io.Reader;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import uk.ac.sanger.artemis.Options;
+
 
 /**
  *  This class implements a simple file viewer.  In fact any Reader object can
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.4 2005-10-05 08:57:27 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.5 2007-02-28 15:51:25 tjc Exp $
  *
  **/
 
 public class FileViewer extends JFrame
 {
+  /** */
+  private static final long serialVersionUID = 1L;
+
   /** A JPanel to hold the close button. */
   private JPanel button_panel;
 
@@ -142,16 +155,7 @@ public class FileViewer extends JFrame
 
     if(saved_position == null) 
     {
-      int screen_height = screen.height;
-      int screen_width = screen.width;
-
-//    if(screen_width <= 800 || screen_height <= 700) 
-//      setSize(screen_width * 9 / 10, screen_height * 9 / 10);
-//    else 
-//      setSize(800, 700);
-
-      setLocation(new Point((screen.width - getSize().width) / 2,
-                            (screen.height - getSize().height) / 2));
+      Utilities.centreFrame(this);
     } 
     else
     {
