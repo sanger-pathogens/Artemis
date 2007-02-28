@@ -20,12 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/LogViewer.java,v 1.1 2004-06-09 09:47:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/LogViewer.java,v 1.2 2007-02-28 15:50:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.spi.LoggingEvent;
 
 import java.io.*;
 
@@ -33,12 +35,13 @@ import java.io.*;
  *  A class for viewing log messages in a FileViewer component.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: LogViewer.java,v 1.1 2004-06-09 09:47:03 tjc Exp $
+ *  @version $Id: LogViewer.java,v 1.2 2007-02-28 15:50:56 tjc Exp $
  **/
 
-public class LogViewer implements Logger
+public class LogViewer extends AppenderSkeleton implements Logger 
 {
 
+  public int maxLogLines = Integer.MAX_VALUE;
   /** The FileViewer that is used to show the messages. */
   private FileViewer file_viewer = null;
 
@@ -87,6 +90,9 @@ public class LogViewer implements Logger
     {
       file_viewer = new FileViewer("Log Viewer", false) 
       {
+        /** */
+        private static final long serialVersionUID = 1L;
+
         public void dispose()
         {
           // if the FileViewer is deleted we want to know
@@ -97,6 +103,43 @@ public class LogViewer implements Logger
 
       file_viewer.pack();
     }
+  }
+
+  protected void append(LoggingEvent e)
+  {
+    String message = this.layout.format(e);
+    
+    FileViewer fv = ((LogViewer)Splash.getLogger()).getFileViewer();
+    if(fv  != null &&
+       maxLogLines < fv.getTextArea().getLineCount())
+      fv.getTextArea().setText("");
+    
+    Splash.getLogger().log(message);
+  }
+
+  public void close()
+  {
+    
+  }
+
+  public boolean requiresLayout()
+  {
+    return true;
+  }
+
+  public int getMaxLogLines()
+  {
+    return maxLogLines;
+  }
+
+  public void setMaxLogLines(int maxLogLines)
+  {
+    this.maxLogLines = maxLogLines;
+  }
+  
+  public FileViewer getFileViewer()
+  {
+    return this.file_viewer;
   }
 
 }
