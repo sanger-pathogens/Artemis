@@ -20,12 +20,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/Document.java,v 1.2 2006-08-14 14:48:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/util/Document.java,v 1.3 2007-03-01 15:42:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.util;
-
-import uk.ac.sanger.artemis.util.*;
 
 import java.io.*;
 
@@ -36,7 +34,7 @@ import java.io.*;
  *  encapsulates a File or URL object.
  *
  *  @author Kim Rutherford
- *  @version $Id: Document.java,v 1.2 2006-08-14 14:48:07 tjc Exp $
+ *  @version $Id: Document.java,v 1.3 2007-03-01 15:42:00 tjc Exp $
  **/
 
 public abstract class Document 
@@ -182,7 +180,7 @@ public abstract class Document
   /**
    *  Return the raw location object from this Document - eg a File or a URL.
    **/
-  protected Object getLocation() 
+  public Object getLocation() 
   {
     return location;
   }
