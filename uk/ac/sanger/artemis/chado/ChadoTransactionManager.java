@@ -48,7 +48,6 @@ import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.EntryChangeListener;
 import uk.ac.sanger.artemis.EntryChangeEvent;
-import uk.ac.sanger.artemis.components.Splash;
 
 import java.util.Collection;
 import java.util.StringTokenizer;
@@ -85,7 +84,9 @@ import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 public class ChadoTransactionManager
        implements FeatureChangeListener, EntryChangeListener, SequenceChangeListener 
 {
-
+  public static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(ChadoTransactionManager.class);
+  
   public static boolean addSegments = true;
   private Vector sql = new Vector();
   
@@ -217,11 +218,11 @@ public class ChadoTransactionManager
         RangeVector rv_new = event.getNewLocation().getRanges();
         RangeVector rv_old = event.getOldLocation().getRanges();
          
-        Splash.logger4j.debug("SEGMENT_CHANGED "+rv_new.size()+"  "+rv_old.size());
+        logger4j.debug("SEGMENT_CHANGED "+rv_new.size()+"  "+rv_old.size());
         
         if(rv_old.size() > rv_new.size()) // segment deleted
         {
-          Splash.logger4j.debug("SEGMENT_CHANGED DELETED");
+          logger4j.debug("SEGMENT_CHANGED DELETED");
           // delete segment
           int ideleted;
           Vector deleted = new Vector();
@@ -269,7 +270,7 @@ public class ChadoTransactionManager
         }
         else if(rv_old.size() < rv_new.size()) // feature segment added
         {
-          Splash.logger4j.debug("SEGMENT_CHANGED ADDED");
+          logger4j.debug("SEGMENT_CHANGED ADDED");
 
           if(addSegments)
           {
@@ -304,7 +305,7 @@ public class ChadoTransactionManager
         RangeVector rv_new = event.getNewLocation().getRanges();
         RangeVector rv_old = event.getOldLocation().getRanges();
 
-        Splash.logger4j.debug("LOCATION_CHANGED "+feature.getFirstBase()+".."+feature.getLastBase()+
+        logger4j.debug("LOCATION_CHANGED "+feature.getFirstBase()+".."+feature.getLastBase()+
                               "   new="+rv_new.size()+" old="+rv_old.size());
         if(rv_new.size() != rv_old.size())
           return;
@@ -348,7 +349,7 @@ public class ChadoTransactionManager
               FeatureLoc floc = (FeatureLoc)lastTsn.getFeatureObject();
               if(floc.getFeatureByFeatureId().getUniqueName().equals(seg_id))
               {
-                Splash.logger4j.debug("Removing last FeatureLoc ChadoTransaction");
+                logger4j.debug("Removing last FeatureLoc ChadoTransaction");
                 sql.remove(sql.size()-1);
               }
             }
@@ -366,7 +367,7 @@ public class ChadoTransactionManager
       }
       else if(event.getType() == FeatureChangeEvent.QUALIFIER_CHANGED)
       {
-        Splash.logger4j.debug("QUALIFIER_CHANGED for "
+        logger4j.debug("QUALIFIER_CHANGED for "
             +event.getOldQualifiers().getQualifierByName("ID").getValues().get(0));
         
         editKeyAndQualifiers(event.getOldQualifiers(),event.getNewQualifiers(),
@@ -375,7 +376,7 @@ public class ChadoTransactionManager
       }
       else if(event.getType() == FeatureChangeEvent.ALL_CHANGED)
       {
-        Splash.logger4j.debug("ALL_CHANGED "+event.getOldKey().toString()+"  "+
+        logger4j.debug("ALL_CHANGED "+event.getOldKey().toString()+"  "+
                                           event.getNewKey().toString());
         
         editKeyAndQualifiers(event.getOldQualifiers(),event.getNewQualifiers(),
@@ -409,7 +410,7 @@ public class ChadoTransactionManager
         try
         {
           qualifier_uniquename = feature.getQualifierByName("ID");
-          Splash.logger4j.debug("FEATURE_ADDED ------> DUPLICATE "+
+          logger4j.debug("FEATURE_ADDED ------> DUPLICATE "+
               (String)(qualifier_uniquename.getValues()).elementAt(0));
         }
         catch(InvalidRelationException e)
@@ -428,7 +429,7 @@ public class ChadoTransactionManager
     { 
       if(event.isDuplicate())
       {
-        Splash.logger4j.debug("FEATURE_DELETED looks like duplicate - ignore");
+        logger4j.debug("FEATURE_DELETED looks like duplicate - ignore");
         return;
       }
       
@@ -437,7 +438,7 @@ public class ChadoTransactionManager
         Qualifier qualifier_uniquename = event.getFeature().getQualifierByName("ID");
         String feature_uniquename = 
                              (String)(qualifier_uniquename.getValues()).elementAt(0);
-        Splash.logger4j.debug("FEATURE_DELETED "+feature_uniquename);
+        logger4j.debug("FEATURE_DELETED "+feature_uniquename);
         
         GFFStreamFeature gff_feature =
           (GFFStreamFeature)event.getFeature().getEmblFeature();
@@ -536,7 +537,7 @@ public class ChadoTransactionManager
       if(qualifier_uniquename != null)
       {
         feature_uniquename = (String)(qualifier_uniquename.getValues()).elementAt(0);
-        Splash.logger4j.debug("FEATURE_ADDED "+feature_uniquename);
+        logger4j.debug("FEATURE_ADDED "+feature_uniquename);
       }
       
       while(feature_uniquename == null ||
@@ -867,7 +868,7 @@ public class ChadoTransactionManager
       synonym_tags = DatabaseDocument.getSynonymTypeNames(SYNONYM_TAG_CVNAME);
       if(synonym_tags == null || synonym_tags.length < 1)
       {
-        Splash.logger4j.debug("Using default synonym names");
+        logger4j.debug("Using default synonym names");
         synonym_tags = new String[6];
         synonym_tags[0] = "synonym";
         synonym_tags[1] = "gene";
@@ -930,7 +931,7 @@ public class ChadoTransactionManager
             chado_feature.setCvTerm(cvterm);
             chado_feature.setUniqueName( feature.getSegmentID((Range)rv.elementAt(i)) );
         
-            Splash.logger4j.debug("KEY CHANGE "+feature.getSegmentID((Range)rv.elementAt(i)));
+            logger4j.debug("KEY CHANGE "+feature.getSegmentID((Range)rv.elementAt(i)));
             tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                  chado_feature,
                  feature.getLastModified(), feature, null);
@@ -946,7 +947,7 @@ public class ChadoTransactionManager
           chado_feature.setCvTerm(cvterm);
           chado_feature.setUniqueName(uniquename);
       
-          Splash.logger4j.debug("KEY CHANGE "+new_key);
+          logger4j.debug("KEY CHANGE "+new_key);
           tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
                chado_feature,
                feature.getLastModified(), feature, null);
@@ -1121,7 +1122,7 @@ public class ChadoTransactionManager
         FeatureProp featureprop = getFeatureProp(uniquename, qualifier_string,
                                                  lcvterm_id, rank);
         
-        Splash.logger4j.debug("FEATUREPROP "+type+"\n"+qualifier_string);
+        logger4j.debug("FEATUREPROP "+type+"\n"+qualifier_string);
         tsn = new ChadoTransaction(type,
             featureprop,
             feature.getLastModified(), feature, feature.getKey().getKeyString());
@@ -1135,7 +1136,7 @@ public class ChadoTransactionManager
       FeatureProp featureprop = getFeatureProp(uniquename,
                          qualifier_string, lcvterm_id, rank);
     
-      Splash.logger4j.debug("FEATUREPROP "+type+"\n"+qualifier_string);
+      logger4j.debug("FEATUREPROP "+type+"\n"+qualifier_string);
       tsn = new ChadoTransaction(type,
           featureprop,
           feature.getLastModified(), feature, feature.getKey().getKeyString());       
@@ -1185,7 +1186,7 @@ public class ChadoTransactionManager
      
       chado_feature.setUniqueName((String)new_qualifier.getValues().get(0));
      
-      Splash.logger4j.debug(uniquename+"  in handleReservedTags() NEW="+
+      logger4j.debug(uniquename+"  in handleReservedTags() NEW="+
           (String)new_qualifier.getValues().get(0)+" OLD="+
           (String)old_qualifier.getValues().get(0));
       ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
@@ -1211,7 +1212,7 @@ public class ChadoTransactionManager
          
          if(qualifier_name.equals("Dbxref"))
          {
-           Splash.logger4j.debug(uniquename+"  in handleReservedTags() DELETE db="+
+           logger4j.debug(uniquename+"  in handleReservedTags() DELETE db="+
                qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
          
            FeatureDbXRef old_dbxref = getFeatureDbXRef(qualifier_string,
@@ -1225,7 +1226,7 @@ public class ChadoTransactionManager
          }
          else if(qualifier_name.equals("codon_start"))
          {
-           Splash.logger4j.debug(uniquename+"  in handleReservedTags() update codon_start");
+           logger4j.debug(uniquename+"  in handleReservedTags() update codon_start");
            
            FeatureLoc featureloc = getFeatureLoc(feature, uniquename, 
                feature.getLocation().getTotalRange());
@@ -1258,7 +1259,7 @@ public class ChadoTransactionManager
              }
            }*/
            
-           Splash.logger4j.debug(uniquename+"  in handleReservedTags() DELETE "+
+           logger4j.debug(uniquename+"  in handleReservedTags() DELETE "+
                qualifier_name+" "+qualifier_string);
            
            /*for(int j=0; j<new_qualifier_strings.size(); j++)
@@ -1277,7 +1278,7 @@ public class ChadoTransactionManager
          }
          else if(isSynonymTag(qualifier_name))
          {
-           Splash.logger4j.debug(uniquename+"  in handleReservedTags() DELETE "+qualifier_name+" "+
+           logger4j.debug(uniquename+"  in handleReservedTags() DELETE "+qualifier_name+" "+
                               qualifier_string);
            
            FeatureSynonym feature_synonym = getFeatureSynonym(qualifier_name,
@@ -1301,7 +1302,7 @@ public class ChadoTransactionManager
            sql.add(tsn);  
          }
          else
-           Splash.logger4j.warn("Ignoring reserved tag missing : "+qualifier_name);
+           logger4j.warn("Ignoring reserved tag missing : "+qualifier_name);
          
       }
     }
@@ -1320,7 +1321,7 @@ public class ChadoTransactionManager
          
          if(qualifier_name.equals("Dbxref"))
          {   
-           Splash.logger4j.debug(uniquename+"  in handleReservedTags() INSERT db="+
+           logger4j.debug(uniquename+"  in handleReservedTags() INSERT db="+
              qualifier_string.substring(0,index)+" acc="+qualifier_string.substring(index+1));
            FeatureDbXRef new_dbxref = getFeatureDbXRef(qualifier_string,
                                                        uniquename);
@@ -1333,7 +1334,7 @@ public class ChadoTransactionManager
          }
          else if(qualifier_name.equals("codon_start"))
          {
-           Splash.logger4j.debug(uniquename+"  in handleReservedTags() update codon_start");
+           logger4j.debug(uniquename+"  in handleReservedTags() update codon_start");
            FeatureLoc featureloc = getFeatureLoc(feature, uniquename, 
                feature.getLocation().getTotalRange());
            
@@ -1350,7 +1351,7 @@ public class ChadoTransactionManager
          }
          else if(isCvTag(qualifier_name))
          {
-           Splash.logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
+           logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
                                  qualifier_name+" "+qualifier_string);
            FeatureCvTerm feature_cvterm = getFeatureCvTerm(qualifier_name,
               qualifier_string, uniquename);
@@ -1362,7 +1363,7 @@ public class ChadoTransactionManager
          }
          else if(isSynonymTag(qualifier_name))
          {
-           Splash.logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
+           logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
                                  qualifier_name+" "+qualifier_string);
 
            FeatureSynonym feature_synonym = getFeatureSynonym(qualifier_name,
@@ -1385,7 +1386,7 @@ public class ChadoTransactionManager
            sql.add(tsn);
          }
          else
-           Splash.logger4j.warn("Ignoring reserved tag "+qualifier_name);
+           logger4j.warn("Ignoring reserved tag "+qualifier_name);
       }
     }  
     
@@ -1554,7 +1555,7 @@ public class ChadoTransactionManager
                                          String qualifier_string,
                                          final String uniqueName)
   {
-    Splash.logger4j.debug("Build FeatureCvTerm for "+qualifier_string);
+    logger4j.debug("Build FeatureCvTerm for "+qualifier_string);
     
     if(qualifier_string.startsWith("\""))
       qualifier_string = qualifier_string.substring(1,qualifier_string.length()-1);
@@ -1570,7 +1571,7 @@ public class ChadoTransactionManager
       CvTerm cvTerm = getCvTerm(qualifier_string);
 
       feature_cvterm.setCvTerm(cvTerm);
-      Splash.logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
+      logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
       return feature_cvterm;
     }
     else if(qualifier_name.toLowerCase().equals("class"))
@@ -1581,7 +1582,7 @@ public class ChadoTransactionManager
           Integer.parseInt(qualifier_string.substring(index+2))).getName() );
       
       feature_cvterm.setCvTerm(cvTerm);
-      Splash.logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
+      logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
       return feature_cvterm;
     }
     
@@ -1638,7 +1639,7 @@ public class ChadoTransactionManager
         int index = this_qualifier_part_lowercase.indexOf('=');
         String prop = this_qualifier_part.substring(index+1);
         
-        Splash.logger4j.debug("FeatureCvTermProp = "+this_qualifier_part_lowercase);
+        logger4j.debug("FeatureCvTermProp = "+this_qualifier_part_lowercase);
         CvTerm cvTerm = getCvTerm(this_qualifier_part.substring(0,index));
         
         FeatureCvTermProp featureCvTermProp = new FeatureCvTermProp();
@@ -1655,7 +1656,7 @@ public class ChadoTransactionManager
     
     feature_cvterm.setFeatureCvTermProps(featureCvTermProps);
     
-    Splash.logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
+    logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
     return feature_cvterm;
   }
   
@@ -1694,13 +1695,13 @@ public class ChadoTransactionManager
 
     if(cvTerm != null)
     {
-      Splash.logger4j.debug("USE CvTerm from cache, CvTermId="
+      logger4j.debug("USE CvTerm from cache, CvTermId="
           + cvTermName + "  -> " + cvTerm.getCvTermId()+  " " +
           cvTerm.getName()+":"+cvTerm.getCv().getName()); 
     }
     else
     {
-      Splash.logger4j.warn("CvTerm not found in cache = " + cvTermName);
+      logger4j.warn("CvTerm not found in cache = " + cvTermName);
       cvTerm = new CvTerm();
       cvTerm.setName(cvTermName);
     }
@@ -1746,14 +1747,14 @@ public class ChadoTransactionManager
         
         if(feature_cvterm.getPub() == null)
         {
-          Splash.logger4j.debug("Set primary Pub for " + 
+          logger4j.debug("Set primary Pub for " + 
               dbName + ":" + accession);
           feature_cvterm.setPub(pub);
         }
         else
         {
           // secondary pub
-          Splash.logger4j.debug("Set secondary Pub for " + 
+          logger4j.debug("Set secondary Pub for " + 
               dbName + ":" + accession);
           Collection featureCvTermPubs = feature_cvterm.getFeatureCvTermPubs();
           if(featureCvTermPubs == null ||
@@ -1770,7 +1771,7 @@ public class ChadoTransactionManager
       else  
       {
         // enter as feature_cvterm_dbxref
-        Splash.logger4j.debug("CREATE FeatureCvTermDbXRef for " + 
+        logger4j.debug("CREATE FeatureCvTermDbXRef for " + 
             dbName + ":" + accession);
         
         DbXRef dbxref = new DbXRef();

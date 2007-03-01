@@ -41,7 +41,6 @@ import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.Feature;
 
-import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.LazyQualifierValue;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
@@ -55,6 +54,9 @@ public class Similarity implements LazyQualifierValue
   private int featureId;
   /** force complete loading of the data */
   private boolean forceLoad = false;
+  
+  public static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(Similarity.class);
   
   /**
    * Qualifier object to handle lazy loading of similarity data
@@ -282,7 +284,7 @@ public class Similarity implements LazyQualifierValue
     final String primary_name = values[0].substring(0, ind);
     db_1.setName(primary_name);
     dbXRef_1.setAccession(values[0].substring(ind + 1));
-    Splash.logger4j.debug("Primary dbXRef  " + db_1.getName() + ":"
+    logger4j.debug("Primary dbXRef  " + db_1.getName() + ":"
         + dbXRef_1.getAccession());
     subjectFeature.setDbXRef(dbXRef_1);
     subjectFeature
@@ -306,7 +308,7 @@ public class Similarity implements LazyQualifierValue
       ind = values[1].indexOf(':');
       db_2.setName(values[1].substring(0, ind));
       dbXRef_2.setAccession(values[1].substring(ind + 1));
-      Splash.logger4j.debug("Secondary dbXRef  " + db_2.getName() + " "
+      logger4j.debug("Secondary dbXRef  " + db_2.getName() + " "
           + dbXRef_2.getAccession());
       featureDbXRef.setDbXRef(dbXRef_2);
       featureDbXRef.setFeature(subjectFeature);
@@ -485,13 +487,13 @@ public class Similarity implements LazyQualifierValue
 
     if(cvTerm != null)
     {
-      Splash.logger4j.debug("USE CvTerm from cache, CvTermId=" + cvTermName
+      logger4j.debug("USE CvTerm from cache, CvTermId=" + cvTermName
           + "  -> " + cvTerm.getCvTermId() + " " + cvTerm.getName() + ":"
           + cvTerm.getCv().getName());
     }
     else
     {
-      Splash.logger4j.warn("CvTerm not found in cache = " + cvTermName);
+      logger4j.warn("CvTerm not found in cache = " + cvTermName);
       cvTerm = new CvTerm();
       cvTerm.setName(cvTermName);
     }
