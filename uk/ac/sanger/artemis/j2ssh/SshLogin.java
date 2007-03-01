@@ -32,16 +32,10 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.SwingConstants;
 
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.io.IOException;
 import java.util.Properties;
 
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import com.sshtools.j2ssh.SshClient;
 import com.sshtools.j2ssh.authentication.AuthenticationProtocolState;
@@ -58,7 +52,7 @@ import com.sshtools.j2ssh.transport.IgnoreHostKeyVerification;
 public class SshLogin
 {
   // defaults
-  private String logfile  = null;
+  //private String logfile  = null;
 
   // login variables
   private String hostname = null;
@@ -73,7 +67,7 @@ public class SshLogin
 
   public SshLogin()
   {
-    try
+    /*try
     {
       logfile = System.getProperty("logfile");
       // Setup a logfile
@@ -88,7 +82,7 @@ public class SshLogin
       else
         Logger.getLogger("com.sshtools").setLevel(Level.OFF);
     }
-    catch(IOException ioe){}
+    catch(IOException ioe){}*/
 
    if(settings == null)
       settings = setProperties();
