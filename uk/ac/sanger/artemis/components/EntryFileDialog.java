@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.6 2007-02-20 14:39:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.7 2007-03-01 15:43:46 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -41,7 +41,7 @@ import javax.swing.*;
  *  This class is a JFileChooser that can read EMBL Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryFileDialog.java,v 1.6 2007-02-20 14:39:21 tjc Exp $
+ *  @version $Id: EntryFileDialog.java,v 1.7 2007-03-01 15:43:46 tjc Exp $
  **/
 
 public class EntryFileDialog extends StickyFileChooser 
@@ -513,7 +513,7 @@ public class EntryFileDialog extends StickyFileChooser
            (RemoteFileDocument)(((DocumentEntry)entry.getEMBLEntry()).getDocument());
 
        if(file == null)
-         file = new File( ((DocumentEntry)entry.getEMBLEntry()).getDocument().toString() );
+         file = new File( ((DocumentEntry)entry.getEMBLEntry()).getDocument().getLocation().toString() );
        node.saveEntry(file);
     }
 
