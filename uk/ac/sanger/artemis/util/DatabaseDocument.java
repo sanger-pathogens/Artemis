@@ -1429,21 +1429,16 @@ public class DatabaseDocument extends Document
     try
     { 
       GmodDAO dao = getDAO();
-      schema_list = dao.getOrganisms();
-      
-      
-/*      Organism o = new Organism();
-      o.setCommonName("web");
-      schema_list.add(o);*/
-      
+      schema_list = dao.getSchema();  //.getOrganisms();
       
       Iterator it = schema_list.iterator();
       db = new HashMap();
       
       while(it.hasNext())
       {
-        Organism organism = (Organism)it.next();
-        schema = organism.getCommonName();
+        //Organism organism = (Organism)it.next();
+        //schema = organism.getCommonName();
+        schema = (String)it.next();
         
         reset((String)getLocation(),  schema);
 
@@ -1462,12 +1457,8 @@ public class DatabaseDocument extends Document
                    Integer.toString(feature.getFeatureId()));
           }
         }
-        catch(RuntimeException e)
-        { 
-        }
-        catch(java.sql.SQLException sqlExp)
-        {
-        }
+        catch(RuntimeException e){}
+        catch(java.sql.SQLException sqlExp){}
       }
       
     }
