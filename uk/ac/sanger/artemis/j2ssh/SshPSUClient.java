@@ -1,4 +1,4 @@
-/* ExternalProgram.java
+/* SshPSUClient.java
  *
  * created: Aug 2005
  *
@@ -26,19 +26,11 @@ package uk.ac.sanger.artemis.j2ssh;
 
 import uk.ac.sanger.artemis.components.MessageDialog;
 
-import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.SwingConstants;
 
-import java.awt.GridLayout;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 
@@ -61,6 +53,8 @@ import com.sshtools.j2ssh.configuration.ConfigurationLoader;
 */
 public class SshPSUClient extends Thread
 {
+  public static org.apache.log4j.Logger logger4j = 
+      org.apache.log4j.Logger.getLogger(SshPSUClient.class);
   // defaults
   private String listfilepath = null;
   private String cmd      = null;
@@ -113,7 +107,7 @@ public class SshPSUClient extends Thread
     }
     catch(Exception exp)
     {
-      System.out.println("SshPSUClient.rescue()");
+      logger4j.warn("SshPSUClient.rescue()");
       exp.printStackTrace();
     }
     return ssh;
@@ -132,8 +126,7 @@ public class SshPSUClient extends Thread
       if(ssh == null)
         return;
 
-      if(System.getProperty("debug") != null)
-         System.out.println("RUN "+program);
+      logger4j.debug("RUN "+program);
 
       completed = runBlastOrFasta(program);
 
@@ -178,7 +171,7 @@ public class SshPSUClient extends Thread
     }
     catch (IOException e)
     {
-      System.out.println("Problem reading list file");
+      logger4j.warn("Problem reading list file");
     }
     return seqfiles;
   }
@@ -193,9 +186,8 @@ public class SshPSUClient extends Thread
   {
     for(int i=0; i < 500; i++)
     {
-      if(System.getProperty("debug") != null)
-        System.out.println("waitUntilFileAppears() "+file);
-      Thread.currentThread().sleep(1000);
+      logger4j.debug("waitUntilFileAppears() "+file);
+      Thread.sleep(1000);
       try
       {
         if(fileExists(getSftpClient() , file))
@@ -205,7 +197,7 @@ public class SshPSUClient extends Thread
       {
         if(System.getProperty("debug") != null)
         {
-          System.out.println("waitUntilFileAppears()");
+          logger4j.warn("waitUntilFileAppears()");
           sshe.printStackTrace();
         }
         try
@@ -337,9 +329,9 @@ public class SshPSUClient extends Thread
       }
       catch(SshException sshe)
       {
+        logger4j.debug("runBlastOrFasta()");
         if(System.getProperty("debug") != null)
         {
-          System.out.println("runBlastOrFasta()");
           sshe.printStackTrace();
         }
         rescue();
@@ -357,14 +349,13 @@ public class SshPSUClient extends Thread
       {
         sftp.put(filepath, wdir+filename);
 
-        if(System.getProperty("debug") != null)
-          System.out.println("PUT SUCCESS "+wdir+filename);
+        logger4j.debug("PUT SUCCESS "+wdir+filename);
       }
       catch(SshException ioe)
       {
+        logger4j.debug("runBlastOrFasta() - 2");
         if(System.getProperty("debug") != null)
         {
-          System.out.println("runBlastOrFasta() - 2");
           ioe.printStackTrace();
         }
         rescue();
@@ -372,8 +363,7 @@ public class SshPSUClient extends Thread
         sftp.put(filepath, wdir+filename);
       }
 
-      if(System.getProperty("debug") != null)
-        System.out.println("STARTING session");
+      logger4j.debug("STARTING session");
 
       SessionChannelClient session = null;
 
@@ -386,9 +376,9 @@ public class SshPSUClient extends Thread
       }
       catch(IOException exp)
       {
+        logger4j.debug("NOT STARTED runBlastOrFasta() ----- 3 "+filename);
         if(System.getProperty("debug") != null)
         {
-          System.out.println("NOT STARTED runBlastOrFasta() ----- 3 "+filename);
           exp.printStackTrace();
         }
         rescue();
@@ -427,8 +417,7 @@ public class SshPSUClient extends Thread
       }
 
       // run the application
-      if(System.getProperty("debug") != null)
-        System.out.println(actualCMD);
+      logger4j.debug(actualCMD);
 
       try
       {
@@ -436,15 +425,14 @@ public class SshPSUClient extends Thread
       }
       catch(IOException exp)
       {
+        logger4j.debug("runBlastOrFasta() - 3");
         if(System.getProperty("debug") != null)
         {
-          System.out.println("runBlastOrFasta() - 3");
           exp.printStackTrace();
         }
       }
 
-      if(System.getProperty("debug") != null)
-        System.out.println("STARTED session "+filename);
+      logger4j.debug("STARTED session "+filename);
 
       // Reading from the session InputStream
       StdoutStdErrHandler stdouth = new StdoutStdErrHandler(session, true);
@@ -458,7 +446,7 @@ public class SshPSUClient extends Thread
       {
         // make sure we hang around for stdout
         while(stdouth.isAlive() || stderrh.isAlive())
-          Thread.currentThread().sleep(10);
+          Thread.sleep(10);
 
         isFile = waitUntilFileAppears(filename+".out");
       }
@@ -467,12 +455,10 @@ public class SshPSUClient extends Thread
         ie.printStackTrace();
       }
        
-      if(System.getProperty("debug") != null)
-      {
-        // stdout & stderr
-        System.out.println("STDOUT "+filename+"\n"+stdouth.getOutput());
-        System.out.println("STDERR "+filename+"\n"+stderrh.getOutput());
-      }
+      // stdout & stderr
+      logger4j.debug("STDOUT "+filename+"\n"+stdouth.getOutput());
+      logger4j.debug("STDERR "+filename+"\n"+stderrh.getOutput());
+
 
       try
       {
@@ -481,9 +467,9 @@ public class SshPSUClient extends Thread
       }
       catch(Exception ioe)
       {
+        logger4j.debug("runBlastOrFasta() - 3");
         if(System.getProperty("debug") != null)
         {
-          System.out.println("runBlastOrFasta() - 3");
           ioe.printStackTrace();
         }
         rescue();
@@ -491,8 +477,7 @@ public class SshPSUClient extends Thread
         sftp.get(outputfile, filepath+".out");
       }
 
-      if(System.getProperty("debug") != null)
-        System.out.println("GET SUCCESS "+filepath+".out");
+      logger4j.debug("GET SUCCESS "+filepath+".out");
 
       if(!keep)
       {
@@ -534,9 +519,9 @@ public class SshPSUClient extends Thread
       }
       catch(IOException ioe)
       {
+        logger4j.debug("getSftpClient() -- 2");
         if(System.getProperty("debug") != null)
         {
-          System.out.println("getSftpClient() -- 2");
           ioe.printStackTrace();
         }
         rescue();
@@ -544,9 +529,9 @@ public class SshPSUClient extends Thread
     }
     catch(IOException ioe2)
     { 
+      logger4j.debug("getSftpClient()");
       if(System.getProperty("debug") != null)
       {
-        System.out.println("getSftpClient()");
         ioe2.printStackTrace();
       }
       rescue();

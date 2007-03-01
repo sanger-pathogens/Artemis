@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.15 2007-02-28 16:12:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.16 2007-03-01 16:27:24 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -49,12 +49,14 @@ import javax.swing.JProgressBar;
  *  and contains methods for invoking it.
  *
  *  @author Kim Rutherford
- *  @version $Id: ExternalProgram.java,v 1.15 2007-02-28 16:12:04 tjc Exp $
+ *  @version $Id: ExternalProgram.java,v 1.16 2007-03-01 16:27:24 tjc Exp $
  **/
 
 public class ExternalProgram 
 {
-
+  public static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(ExternalProgram.class);
+  
   final public static int AA_PROGRAM = 0;
   final public static int DNA_PROGRAM = 1;
   final public static int APPLICATION = 2;
@@ -159,8 +161,7 @@ public class ExternalProgram
             (getRealName().indexOf("blast") > -1 || getRealName().startsWith("fast")) )
         {
 
-          if(System.getProperty("debug") != null) 
-            System.out.println("GET READY TO CALL SSH CLIENT "+getRealName());
+          logger4j.debug("GET READY TO CALL SSH CLIENT "+getRealName());
 
           final Feature this_feature = features.elementAt(0);
           Entry entry = this_feature.getEntry();
@@ -194,8 +195,7 @@ public class ExternalProgram
             args[4] = "-d";    args[5] = getProgramOptions();
           }
 
-          if(System.getProperty("debug") != null)
-            System.out.println("CALL SSH CLIENT "+getRealName());
+          logger4j.debug("CALL SSH CLIENT "+getRealName());
 
           uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
                 new uk.ac.sanger.artemis.j2ssh.SshPSUClient(args);
@@ -493,8 +493,7 @@ public class ExternalProgram
     filenames_printwriter.close();
     filenames_writer.close();
 
-    if(System.getProperty("debug") != null)
-      System.out.println("WRITTEN "+file_of_filenames.getCanonicalPath());
+    logger4j.debug("WRITTEN "+file_of_filenames.getCanonicalPath());
 
 
     return file_of_filenames;
@@ -619,8 +618,7 @@ public class ExternalProgram
 
         if(contents == null)
         {
-          if(System.getProperty("debug") != null)
-            System.out.println("getFileNumber() creating "+dir+
+          logger4j.debug("getFileNumber() creating "+dir+
                                 fs+file_counter_filename);
 
           node.mkdir(dir);
@@ -629,8 +627,7 @@ public class ExternalProgram
 
         file_reader = new StringReader(new String(contents));
 
-        if(System.getProperty("debug") != null)
-          System.out.println("getFileNumber()\n"+new String(contents));
+        logger4j.debug("getFileNumber()\n"+new String(contents));
       }
 
       final BufferedReader reader = new BufferedReader(file_reader);
@@ -702,9 +699,8 @@ public class ExternalProgram
       dir = dir.substring(0,index) + fs +
                          getName() + fs;
 
-      if(System.getProperty("debug") != null)
-        System.out.println("setFileNumber() "+
-                           local_file.getCanonicalPath()+" --> "+dir);
+      logger4j.debug("setFileNumber() "+
+                     local_file.getCanonicalPath()+" --> "+dir);
 
       node.put(dir, local_file, null, true);     
     }
