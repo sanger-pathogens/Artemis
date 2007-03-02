@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.35 2007-02-21 10:55:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.36 2007-03-02 15:47:43 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import java.util.List;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.35 2007-02-21 10:55:49 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.36 2007-03-02 15:47:43 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -575,6 +575,11 @@ public class EntryEdit extends JFrame
   private void entryEditFinished() 
   {
     setVisible(false);
+   
+    // chado transaction manager
+    getEntryGroup().removeFeatureChangeListener(ctm);
+    getEntryGroup().removeEntryChangeListener(ctm);
+    
     getEntryGroup().removeFeatureChangeListener(selection);
     getEntryGroup().removeEntryChangeListener(selection);
 
