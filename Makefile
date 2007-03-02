@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.27 2007-03-01 14:37:57 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.28 2007-03-02 09:41:16 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -266,6 +266,10 @@ artemis.jar : $(CLASSES)
 	    rm -rf META-INF/MANIFEST.MF; \
 	  done; \
           for fileJar in ../lib/j2ssh/*.jar; do \
+            jar xvf $$fileJar; \
+            rm -rf META-INF/MANIFEST.MF; \
+          done; \
+          for fileJar in ../lib/ibatis/*.jar; do \
             jar xvf $$fileJar; \
             rm -rf META-INF/MANIFEST.MF; \
           done; \
