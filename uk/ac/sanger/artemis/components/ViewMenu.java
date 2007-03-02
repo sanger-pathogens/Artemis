@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.9 2007-02-26 15:14:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.10 2007-03-02 12:57:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -50,7 +50,7 @@ import com.sshtools.j2ssh.sftp.FileAttributes;
  *  A popup menu with viewing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: ViewMenu.java,v 1.9 2007-02-26 15:14:12 tjc Exp $
+ *  @version $Id: ViewMenu.java,v 1.10 2007-03-02 12:57:13 tjc Exp $
  **/
 
 public class ViewMenu extends SelectionMenu 
@@ -1239,7 +1239,9 @@ public class ViewMenu extends SelectionMenu
 
       // remove the program name string (if any) from the qualifier, so that
       // we can try to read the file with and without the prefix.
-      if (file_name.startsWith (program_name + File.separatorChar)) {
+      if(file_name.startsWith(program_name + File.separatorChar)||
+         file_name.startsWith(program_name + "/")) 
+      {
         file_name = file_name.substring (program_name.length () + 1);
       }
 
