@@ -47,7 +47,6 @@ import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.DbXRef;
-import org.gmod.schema.organism.Organism;
 import org.gmod.schema.pub.PubDbXRef;
 import org.gmod.schema.pub.Pub;
 
@@ -118,6 +117,9 @@ public class DatabaseDocument extends Document
   /** product controlled vocabulary */
   public static String PRODUCTS_TAG_CVNAME = "genedb_products";
   public static String RILEY_TAG_CVNAME = "RILEY";
+  
+  private static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(DatabaseDocument.class);
   
   /**
    * 
@@ -1468,7 +1470,9 @@ public class DatabaseDocument extends Document
                                     sqlExp.getMessage(), 
                                     "SQL Error",
                                     JOptionPane.ERROR_MESSAGE);
-      sqlExp.printStackTrace();
+      
+      logger4j.debug(sqlExp.getMessage());
+      //sqlExp.printStackTrace();
     }
     catch(ConnectException exp)
     {
@@ -1476,6 +1480,7 @@ public class DatabaseDocument extends Document
             exp.getMessage(), 
             "Connection Error",
             JOptionPane.ERROR_MESSAGE);
+      logger4j.debug(exp.getMessage());
       throw exp;
     }
     catch(java.sql.SQLException sqlExp)
@@ -1484,6 +1489,7 @@ public class DatabaseDocument extends Document
                                     sqlExp.getMessage(), 
                                     "SQL Error",
                                     JOptionPane.ERROR_MESSAGE);
+      logger4j.debug(sqlExp.getMessage());
       throw sqlExp;
     }
     
