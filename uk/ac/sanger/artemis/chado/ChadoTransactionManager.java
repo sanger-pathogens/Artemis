@@ -319,7 +319,9 @@ public class ChadoTransactionManager
           Range rold = (Range)rv_old.elementAt(ichanged);
    
           if(rnew.getStart() != rold.getStart() ||
-             rnew.getEnd()   != rold.getEnd())
+             rnew.getEnd()   != rold.getEnd() ||
+             (event.getOldLocation().isComplement(rold) !=
+              event.getNewLocation().isComplement(rnew)))
             changes.add(new Integer(ichanged));
         }
  
@@ -364,6 +366,7 @@ public class ChadoTransactionManager
 
           sql.add(tsn);
         }
+        
       }
       else if(event.getType() == FeatureChangeEvent.QUALIFIER_CHANGED)
       {
