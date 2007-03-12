@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.37 2007-02-09 15:17:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.38 2007-03-12 16:37:22 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -337,6 +337,7 @@ public class GeneViewerPanel extends JPanel
  
         uk.ac.sanger.artemis.Feature transcript = features.elementAt(0);
         checkTranscriptBoundary(transcript);
+        gene_builder.setActiveFeature(transcript);
       }
     });
     menu.add(adjustCoords);
@@ -401,8 +402,11 @@ public class GeneViewerPanel extends JPanel
       Location new_location;
       try
       {
+        RangeVector ranges = new RangeVector();
+        ranges.add(new Range(transcript_start, transcript_end));
+        
         new_location = new Location(
-            new Range(transcript_start, transcript_end));
+            ranges, transcript.getLocation().isComplement());
         transcript.setLocation(new_location);
       }
       catch(OutOfRangeException e)
