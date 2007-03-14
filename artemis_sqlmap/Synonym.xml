@@ -77,7 +77,7 @@
       LEFT JOIN feature f ON f.feature_id=fs.feature_id 
       LEFT JOIN synonym s ON fs.synonym_id=s.synonym_id 
       <isNotNull property="uniqueName">                        
-          WHERE uniquename=#uniquename#
+          WHERE uniquename=#uniqueName#
       </isNotNull>
     </select>
     
