@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.24 2007-02-05 15:09:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.25 2007-03-15 09:46:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.24 2007-02-05 15:09:52 tjc Exp $
+ *  @version $Id: Feature.java,v 1.25 2007-03-15 09:46:20 tjc Exp $
  **/
 
 public class Feature
@@ -824,7 +824,7 @@ public class Feature
   /**
    *  Set the Entry that owns this object.
    **/
-  void setEntry(final Entry entry) 
+  public void setEntry(final Entry entry) 
   {
     if(this.entry != null)
       stopListening();
