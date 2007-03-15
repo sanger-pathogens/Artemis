@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.20 2007-02-22 19:39:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.21 2007-03-15 11:39:07 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -53,6 +53,7 @@ import uk.ac.sanger.artemis.GotoEventSource;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.components.FeatureEdit;
 import uk.ac.sanger.artemis.components.Utilities;
+import uk.ac.sanger.artemis.io.GFFEntryInformation;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
@@ -152,14 +153,16 @@ public class GeneBuilderFrame extends JFrame
     all.setTopComponent(top);
     
     if(entry_group != null)
-    {
-      JTabbedPane tabpane = new JTabbedPane();
-    
       feature_editor = new FeatureEdit(feature, entry_group,
-                                       selection, goto_event_source, this);
-      tabpane.addTab("Annotation", feature_editor);
-      all.setBottomComponent(tabpane);
-    }
+                        selection, goto_event_source, this);
+    else
+      feature_editor = new FeatureEdit(feature, null,
+          null, null, this, new GFFEntryInformation());
+    
+    JTabbedPane tabpane = new JTabbedPane();
+    tabpane.addTab("Annotation", feature_editor);
+    all.setBottomComponent(tabpane);
+    
     getContentPane().add(all);
     
     addWindowListener(new WindowAdapter() 

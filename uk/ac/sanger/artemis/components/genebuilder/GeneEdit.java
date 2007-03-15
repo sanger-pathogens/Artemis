@@ -47,7 +47,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.Box;
+import javax.swing.UIManager;
 
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.chado.*;
 import uk.ac.sanger.artemis.io.FeatureVector;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
@@ -128,7 +130,7 @@ public class GeneEdit
 
     Box xbox = Box.createHorizontalBox();
     final JTextField gene_text = new JTextField(20);
-    gene_text.setText("SPAC212.04c"); //"SPAC212.04c");
+    gene_text.setText("BPSL3413"); //"SPAC212.04c");
     xbox.add(gene_text);
     xbox.add(schema_list);
     gene_text.selectAll();
@@ -165,9 +167,11 @@ public class GeneEdit
             break;
           }
         }
-          
-        new GeneBuilderFrame(new uk.ac.sanger.artemis.Feature(gff_gene_feature), 
-                             null, null, null);
+        
+        uk.ac.sanger.artemis.Feature feature =
+           new uk.ac.sanger.artemis.Feature(gff_gene_feature);
+
+        new GeneBuilderFrame(feature, null, null, null);
       }
     });
     xbox.add(findButt);
@@ -255,6 +259,17 @@ public class GeneEdit
 
   public static void main(String args[])
   {
+    final javax.swing.plaf.FontUIResource font_ui_resource =
+      Options.getOptions().getFontUIResource();
+
+    java.util.Enumeration keys = UIManager.getDefaults().keys();
+    while(keys.hasMoreElements()) 
+    {
+      Object key = keys.nextElement();
+      Object value = UIManager.get(key);
+      if(value instanceof javax.swing.plaf.FontUIResource) 
+        UIManager.put(key, font_ui_resource);
+    }
     new GeneEdit();
   }
 }

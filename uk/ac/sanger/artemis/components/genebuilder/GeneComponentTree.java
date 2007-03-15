@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.15 2007-02-05 15:04:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.16 2007-03-15 11:39:07 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -347,7 +347,8 @@ public class GeneComponentTree extends JTree
         feature = new uk.ac.sanger.artemis.Feature(embl_feature);    
       
       gene_builder.setActiveFeature(feature);
-      selection.set(feature);
+      if(selection != null)
+        selection.set(feature);
     }
   }
         
