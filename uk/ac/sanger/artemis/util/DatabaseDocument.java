@@ -265,6 +265,7 @@ public class DatabaseDocument extends Document
       connIB  = null;
       jdbcDAO = null;
       System.setProperty("chado", (String)getLocation());
+      logger4j.debug((String)getLocation());
     }
   }
 
@@ -360,6 +361,8 @@ public class DatabaseDocument extends Document
         {
           List schemaList = new Vector();
           schemaList.add(schema);
+          
+          
           return new ByteArrayInputStream(getGeneFeature(srcFeatureId,
               schemaList, dao).getBytes());
         }
@@ -507,9 +510,9 @@ public class DatabaseDocument extends Document
                  dao.getFeatureDbXRefsByFeatureUniquename(null));
     Hashtable synonym = getAllFeatureSynonyms(dao, null);
 
-    Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao);
-    Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao);
-    Hashtable featureCvTermPubs = getFeatureCvTermPub(dao);
+    Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, null);
+    Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, null);
+    Hashtable featureCvTermPubs = getFeatureCvTermPub(dao, null);
     
     List pubDbXRefs= dao.getPubDbXRef();
 
@@ -573,9 +576,16 @@ public class DatabaseDocument extends Document
     return synonym;
   }
   
-  private Hashtable getFeatureCvTermsByFeature(final GmodDAO dao)
+  /**
+   * 
+   * @param dao
+   * @param chadoFeature null if we want them all
+   * @return
+   */
+  private Hashtable getFeatureCvTermsByFeature(final GmodDAO dao, 
+                                               final Feature chadoFeature)
   {
-    List list = dao.getFeatureCvTermsByFeature(null);
+    List list = dao.getFeatureCvTermsByFeature(chadoFeature);
     
     Hashtable featureCvTerms = new Hashtable();
     Integer featureId;
@@ -598,10 +608,15 @@ public class DatabaseDocument extends Document
     return featureCvTerms;
   }
   
-  
-  private Hashtable getFeatureCvTermDbXRef(final GmodDAO dao)
+  /**
+   * 
+   * @param dao
+   * @param chadoFeature null if we want all
+   * @return
+   */
+  private Hashtable getFeatureCvTermDbXRef(final GmodDAO dao, final Feature chadoFeature)
   {
-    List list = dao.getFeatureCvTermDbXRefByFeature(null);
+    List list = dao.getFeatureCvTermDbXRefByFeature(chadoFeature);
     if(list == null || list.size() == 0)
       return null;
     
@@ -629,9 +644,10 @@ public class DatabaseDocument extends Document
     return featureCvTermDbXRefs;
   }
   
-  private Hashtable getFeatureCvTermPub(final GmodDAO dao)
+  private Hashtable getFeatureCvTermPub(final GmodDAO dao,
+                                        final Feature chadoFeature)
   {
-    List list = dao.getFeatureCvTermPubByFeature(null);
+    List list = dao.getFeatureCvTermPubByFeature(chadoFeature);
     if(list == null || list.size() == 0)
       return null;
     
@@ -677,53 +693,45 @@ public class DatabaseDocument extends Document
   {
     Hashtable id_store = new Hashtable();
 
-    //Feature feature = new Feature();
-    //feature.setUniquename(search_gene);
-
     reset((String)getLocation(), (String)schema_search.get(0));
     dao = getDAO();
-    Feature feature = 
+    Feature chadoFeature = 
       (Feature)(dao.getFeaturesByUniqueName(search_gene).get(0));
     
     ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();
-    id_store.put(Integer.toString(feature.getFeatureId()), feature.getUniqueName());
+    id_store.put(Integer.toString(chadoFeature.getFeatureId()), 
+                 chadoFeature.getUniqueName());
 
-    List featurelocs = new Vector(feature.getFeatureLocsForFeatureId());
+    List featurelocs = new Vector(chadoFeature.getFeatureLocsForFeatureId());
     FeatureLoc featureloc = (FeatureLoc) featurelocs.get(0);
-    int src_id = featureloc.getFeatureBySrcFeatureId().getFeatureId();
+    int src_id = featureloc.getSrcFeatureId();
+    srcFeatureId = Integer.toString(src_id);
 
     Feature parent = new Feature();
     parent.setFeatureId(src_id);
 
-    parent = dao.getFeatureById(src_id);  //.getLazyFeature(parent);
+    parent = dao.getFeatureById(src_id);
     
     chado_gene.setSeqlen(parent.getSeqLen());
     chado_gene.setSrcfeature_id(src_id);
 
     ByteBuffer buff = new ByteBuffer();
     
-    chadoToGFF(feature, null, null, null, null, null, null, null, null, dao,
-               featureloc, buff);
+    buildGffLineFromId(dao, chadoFeature.getFeatureId(), 
+        id_store, parent.getUniqueName(), src_id, buff, chadoFeature);
+    
 
     // get children of gene
-    List relations = new Vector(feature.getFeatureRelationshipsForObjectId());
+    List relations = new Vector(chadoFeature.getFeatureRelationshipsForObjectId());
     
     for(int i = 0; i < relations.size(); i++)
     {
       //Feature transcript = new Feature();
       
       int id = ((FeatureRelationship) relations.get(i)).getFeatureBySubjectId().getFeatureId();
-      //transcript.setId(id);
-      Feature transcript = 
-        (Feature)dao.getFeatureById(id); //.getLazyFeature(transcript);
-
-      id_store.put(Integer.toString(transcript.getFeatureId()), 
-          transcript.getUniqueName());
-
-      FeatureLoc loc = getFeatureLoc(new Vector(
-          transcript.getFeatureLocsForFeatureId()), src_id);
-      chadoToGFF(transcript, feature.getUniqueName(), null, null, null,
-          null, null, null, id_store, dao, loc, buff);
+      
+      Feature transcript = buildGffLineFromId(dao, id, id_store, parent.getUniqueName(), 
+                                              src_id, buff, null);
 
       // get children of transcript - exons and pp
       List transcipt_relations = new Vector(
@@ -732,25 +740,47 @@ public class DatabaseDocument extends Document
       for(int j = 0; j < transcipt_relations.size(); j++)
       {
         id = ((FeatureRelationship) transcipt_relations.get(j)).getFeatureBySubjectId().getFeatureId();
-        //Feature child = new Feature();
-        //child.setId(((FeatureRelationship) transcipt_relations.get(j))
-        //    .getSubject_id());
-        Feature child = 
-          (Feature)dao.getFeatureById(id); //dao.getLazyFeature(child);
+        
 
-        id_store.put(Integer.toString(child.getFeatureId()), child.getUniqueName());
-
-        loc = getFeatureLoc(
-            new Vector(child.getFeatureLocsForFeatureId()),src_id);
-        chadoToGFF(child, transcript.getUniqueName(), null,null, null,
-                   null, null, null, id_store, dao, loc, buff);
+        buildGffLineFromId(dao, id, id_store, parent.getUniqueName(), 
+                           src_id, buff, null);
       }
     }
 
+
+    System.out.println( new String(buff.getBytes()) );
     return buff;
   }
   
+  private Feature buildGffLineFromId(final GmodDAO dao, 
+                                  final int featureId, 
+                                  final Hashtable id_store,
+                                  final String parentName,
+                                  final int srcFeatureId,
+                                  final ByteBuffer this_buff,
+                                  Feature chadoFeature)
+  {
+    if(chadoFeature == null)
+      chadoFeature = (Feature)dao.getFeatureById(featureId); 
 
+    id_store.put(Integer.toString(chadoFeature.getFeatureId()), 
+                 chadoFeature.getUniqueName());
+
+    FeatureLoc loc = getFeatureLoc(new Vector(
+        chadoFeature.getFeatureLocsForFeatureId()), srcFeatureId);
+    Hashtable dbxrefs = IBatisDAO.mergeDbXRef(
+        dao.getFeatureDbXRefsByFeatureUniquename(chadoFeature.getUniqueName()));
+    Hashtable synonym = getAllFeatureSynonyms(dao, chadoFeature.getUniqueName());
+    
+    Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, chadoFeature);
+    Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, chadoFeature);
+    Hashtable featureCvTermPubs = getFeatureCvTermPub(dao, chadoFeature);
+    
+    chadoToGFF(chadoFeature, parentName, dbxrefs, synonym, featureCvTerms,
+        null, featureCvTermDbXRefs, featureCvTermPubs, id_store, dao, loc, this_buff);  
+    return chadoFeature;
+  }
+  
   /**
    * Convert the chado feature into a GFF line
    * @param feat           Chado feature
