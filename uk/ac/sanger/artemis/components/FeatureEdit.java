@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.28 2007-02-26 10:37:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.29 2007-03-15 11:40:47 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -50,6 +50,7 @@ import uk.ac.sanger.artemis.io.QualifierInfo;
 import uk.ac.sanger.artemis.components.ProgressThread;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
 import uk.ac.sanger.artemis.components.genebuilder.gff.GffPanel;
+import uk.ac.sanger.artemis.components.genebuilder.ortholog.OrthologPanel;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -65,7 +66,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.28 2007-02-26 10:37:36 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.29 2007-03-15 11:40:47 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -136,9 +137,16 @@ public class FeatureEdit extends JPanel
 
   private JFrame frame;
   
+  /** controlled vocabulary tab */
   private CVPanel cvForm;
   
+  /** GFF tab */
   private GffPanel gffPanel;
+  
+  /** ortholog/paralog tab */
+  private OrthologPanel orthologForm;
+  
+  private EntryInformation entry_information;
   
   /**
    *  Create a new FeatureEdit object from the given Feature.
@@ -153,6 +161,18 @@ public class FeatureEdit extends JPanel
                      final GotoEventSource goto_event_source,
                      final JFrame frame) 
   {
+    this(edit_feature, entry_group, selection, 
+         goto_event_source, frame, 
+         edit_feature.getEntry().getEntryInformation());
+  }
+  
+  public FeatureEdit(final Feature edit_feature,
+      final EntryGroup entry_group,
+      final Selection selection,
+      final GotoEventSource goto_event_source,
+      final JFrame frame, final EntryInformation entry_information) 
+  {
+    this.entry_information = entry_information;
     this.frame = frame;
     this.edit_feature = edit_feature;
     this.edit_entry   = edit_feature.getEntry();
@@ -166,18 +186,21 @@ public class FeatureEdit extends JPanel
 
     orig_qualifier_text = qualifier_text_area.getText();
   
-    edit_feature.getEntry().addEntryChangeListener(this);
-    edit_feature.addFeatureChangeListener(this);
-
-    frame.addWindowListener(new WindowAdapter() 
+    if(edit_feature.getEntry() != null)
     {
-      public void windowClosing(WindowEvent event) 
-      {
-        stopListening();
-        frame.dispose();
-      }
-    });
+      edit_feature.getEntry().addEntryChangeListener(this);
+      edit_feature.addFeatureChangeListener(this);
 
+      frame.addWindowListener(new WindowAdapter()
+      {
+        public void windowClosing(WindowEvent event)
+        {
+          stopListening();
+          frame.dispose();
+        }
+      });
+    }
+    
     qualifier_text_area.requestFocus();
   }
   
@@ -199,6 +222,8 @@ public class FeatureEdit extends JPanel
       getFeature().removeFeatureChangeListener(cvForm);
     if(gffPanel != null)
       getFeature().removeFeatureChangeListener(gffPanel);
+    if(orthologForm != null)
+      getFeature().removeFeatureChangeListener(orthologForm);
   }
 
   /**
@@ -806,7 +831,7 @@ public class FeatureEdit extends JPanel
 
     add(ok_cancel_update_panel, "South");
 
-    if(((DocumentEntry)getFeature().getEntry().getEMBLEntry()).getDocument() 
+    if(((DocumentEntry)getFeature().getEmblFeature().getEntry()).getDocument() 
         instanceof DatabaseDocument)
     {
       cvForm = new CVPanel(getFeature());
@@ -820,6 +845,11 @@ public class FeatureEdit extends JPanel
       JScrollPane jspCV   = new JScrollPane(cvForm);
       jspCV.setPreferredSize(jspCore.getPreferredSize());
       tabbedPane.add("CV", jspCV);
+      
+      orthologForm = new OrthologPanel(getFeature());
+      JScrollPane jspOrtholog   = new JScrollPane(orthologForm);
+      jspCV.setPreferredSize(jspOrtholog.getPreferredSize());
+      tabbedPane.add("Ortholog", jspOrtholog);
       
       gffPanel = new GffPanel(getFeature());
       JScrollPane jspGff = new JScrollPane(gffPanel);
@@ -1369,6 +1399,9 @@ public class FeatureEdit extends JPanel
     
     if(gffPanel != null)
       gffPanel.updateFromFeature(getFeature());
+    
+    if(orthologForm != null)
+      orthologForm.updateFromFeature(getFeature());
   }
 
   /**
@@ -1388,8 +1421,9 @@ public class FeatureEdit extends JPanel
       //
       // strip out CV qualifiers
       //
-      if( (cvForm != null && cvForm.isCvTag(this_qualifier)) ||
-          (gffPanel != null && gffPanel.isGffTag(this_qualifier)) )
+      if( (cvForm != null       && cvForm.isCvTag(this_qualifier)) ||
+          (gffPanel != null     && gffPanel.isGffTag(this_qualifier)) ||
+          (orthologForm != null && orthologForm.isOrthologTag(this_qualifier)) )
         continue;
       
       if(this_qualifier instanceof QualifierLazyLoading)
@@ -1472,6 +1506,13 @@ public class FeatureEdit extends JPanel
         QualifierVector gffQualifiers = gffPanel.getGffQualifiers();
         if(gffQualifiers != null && gffQualifiers.size() > 0)
           qualifiers.addAll(gffQualifiers);
+      }
+      
+      if(orthologForm != null)
+      {
+        QualifierVector orthologQualifiers = orthologForm.getOrthologQualifiers();
+        if(orthologQualifiers != null && orthologQualifiers.size() > 0)
+          qualifiers.addAll(orthologQualifiers);
       }
       
       //if(similarityTextArea != null)
@@ -1595,7 +1636,9 @@ public class FeatureEdit extends JPanel
    **/
   public EntryInformation getEntryInformation() 
   {
-    return getEntry().getEntryInformation();
+    if(entry_information == null)
+      entry_information = getEntry().getEntryInformation();
+    return entry_information;
   }
 
   /**
