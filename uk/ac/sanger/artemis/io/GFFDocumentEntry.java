@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.39 2007-02-16 09:36:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.40 2007-03-19 10:14:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -42,13 +42,14 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.39 2007-02-16 09:36:18 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.40 2007-03-19 10:14:05 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
     implements DocumentEntry 
 {
   private boolean finished_constructor = false;
+  private boolean isReadOnly = false;
   
   /**
    *  Create a new GFFDocumentEntry object associated with the given
@@ -106,10 +107,18 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
    *  Returns true if and only if this entry is read only.  For now this
    *  always returns true - GFFDocumentEntry objects can't be changed.
    **/
+  /**
+   *  Returns true if and only if this entry is read only.  For now this
+   *  always returns true - BlastDocumentEntry objects can't be changed.
+   **/
   public boolean isReadOnly() 
   {
-//  return finished_constructor;
-    return false;
+    return isReadOnly;
+  }
+  
+  public void setReadOnly(final boolean isReadOnly)
+  {
+    this.isReadOnly = isReadOnly;
   }
 
   /**
