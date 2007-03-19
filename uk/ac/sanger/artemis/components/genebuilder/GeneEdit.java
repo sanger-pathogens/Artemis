@@ -252,7 +252,11 @@ public class GeneEdit
     else
     {
       if(connIB == null)
+      {
+        System.setProperty("chado", location);
         connIB = new IBatisDAO(pfield);
+      }
+
       return connIB;
     }
   }
