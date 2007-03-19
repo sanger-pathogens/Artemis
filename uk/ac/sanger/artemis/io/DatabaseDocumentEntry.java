@@ -24,7 +24,6 @@
 
 package uk.ac.sanger.artemis.io;
 
-import java.sql.*;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.*;
@@ -37,7 +36,7 @@ import java.io.*;
 public class DatabaseDocumentEntry extends GFFDocumentEntry 
     implements DocumentEntry 
 {
-
+  
   public DatabaseDocumentEntry(final Document doc, 
                                final ReadListener listener)
          throws EntryInformationException, IOException
@@ -50,14 +49,7 @@ public class DatabaseDocumentEntry extends GFFDocumentEntry
     super(new GFFEntryInformation());
   }
   
-  /**
-   *  Returns true if and only if this entry is read only.  For now this
-   *  always returns true - BlastDocumentEntry objects can't be changed.
-   **/
-  public boolean isReadOnly() 
-  {
-    return false;
-  }
+
 
   /**
    *  If the given Sequence can be added directly to this Entry, then return a
