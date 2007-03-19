@@ -84,8 +84,6 @@ public class DatabaseDocument extends Document
 
   private InputStreamProgressListener progress_listener;
 
-  private HashMap db;
-
   /** JDBC DAO */
   private JdbcDAO jdbcDAO = null;
 
@@ -1457,15 +1455,14 @@ public class DatabaseDocument extends Document
                    throws ConnectException, java.sql.SQLException
   {
     String schema = null;
-
+    HashMap db = new HashMap();
     try
     { 
       GmodDAO dao = getDAO();
       schema_list = dao.getSchema();  //.getOrganisms();
       
       Iterator it = schema_list.iterator();
-      db = new HashMap();
-      
+        
       while(it.hasNext())
       {
         //Organism organism = (Organism)it.next();
