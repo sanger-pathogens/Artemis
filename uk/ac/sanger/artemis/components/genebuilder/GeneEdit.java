@@ -153,6 +153,7 @@ public class GeneEdit
         }
 
         DatabaseDocumentEntry entry = makeEntry(schema, search_gene, location);
+        entry.setReadOnly(true);
         FeatureVector features = entry.getAllFeatures();
         GFFStreamFeature gff_gene_feature = null;
           
@@ -168,9 +169,11 @@ public class GeneEdit
           }
         }
         
+        
         uk.ac.sanger.artemis.Feature feature =
            new uk.ac.sanger.artemis.Feature(gff_gene_feature);
 
+        
         new GeneBuilderFrame(feature, null, null, null);
       }
     });
