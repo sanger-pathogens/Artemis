@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.36 2007-03-02 15:47:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.37 2007-03-20 15:54:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,6 +47,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
+
 import java.util.List;
 
 
@@ -54,7 +55,7 @@ import java.util.List;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.36 2007-03-02 15:47:43 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.37 2007-03-20 15:54:20 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1191,6 +1192,7 @@ public class EntryEdit extends JFrame
     {
       public void actionPerformed(ActionEvent event)
       {
+        
         //JScrollPane jsp = new JScrollPane(shortcut_pane);
         final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -1238,9 +1240,24 @@ public class EntryEdit extends JFrame
         
         tabPane.add("Short Cuts", shortcut_pane);
 
+        
+        //
+        //
+        
+        /*String urlString = (String)Options.getOptions().getOptionValues("srs_url").elementAt(0);
+        Box yBox = Box.createVerticalBox();
+        JTextField srsField = new JTextField(urlString);
+        yBox.add(srsField);
+        yBox.add(Box.createVerticalGlue());
+        
+        srsField.setSelectionStart(0);
+        srsField.setSelectionEnd(urlString.length());
+        
+        tabPane.add("SRS Site", yBox);*/
+        
         JOptionPane.showMessageDialog(null,
                                tabPane,
-                               "Set Short Cuts",
+                               "Preferences",
                                JOptionPane.PLAIN_MESSAGE);
         
         Options.getOptions().setDisplayNameQualifiers(
@@ -1254,6 +1271,10 @@ public class EntryEdit extends JFrame
         
         if(systematicListSelectionPanel.isSaveOption())
           Splash.save_systematic_names = true;
+        
+        //if(!srsField.getText().equals(urlString))
+        //  Options.getOptions().setProperty("srs_url", srsField.getText().trim());
+
      }
     });
     file_menu.add(prefs);
