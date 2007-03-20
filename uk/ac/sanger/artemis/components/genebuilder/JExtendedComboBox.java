@@ -1,4 +1,4 @@
-/* GoBox.java
+/* JExtendedComboBox.java
  *
  * created: 2007
  *
@@ -22,7 +22,7 @@
  *
  **/
 
-package uk.ac.sanger.artemis.components.genebuilder.cv;
+package uk.ac.sanger.artemis.components.genebuilder;
 
 import java.awt.Component;
 import java.awt.FontMetrics;
@@ -37,8 +37,11 @@ import org.gmod.schema.cv.CvTerm;
 /**
  * JComboBox with horizontal scrollbar
  */
-class JExtendedComboBox extends JComboBox
+public class JExtendedComboBox extends JComboBox
 { 
+  /** */
+  private static final long serialVersionUID = 1L;
+
   public JExtendedComboBox(String str[])
   { 
     super(str);

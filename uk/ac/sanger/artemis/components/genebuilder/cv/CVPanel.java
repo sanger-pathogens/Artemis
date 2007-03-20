@@ -53,6 +53,7 @@ import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.components.Splash;
+import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 
 import org.gmod.schema.cv.CvTerm;
 

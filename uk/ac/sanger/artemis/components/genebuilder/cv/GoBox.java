@@ -36,6 +36,7 @@ import javax.swing.JTextField;
 
 import org.gmod.schema.cv.CvTerm;
 
+import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
