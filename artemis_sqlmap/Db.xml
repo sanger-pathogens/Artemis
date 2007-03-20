@@ -24,5 +24,8 @@
     SELECT * FROM db WHERE db_id=$db_id$
   </select>
 
+  <select id="selectAllDb" resultClass="Db">
+    SELECT * FROM db 
+  </select>
 </sqlMap>
   
