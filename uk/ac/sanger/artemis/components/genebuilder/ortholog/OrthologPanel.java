@@ -17,31 +17,38 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/OrthologPanel.java,v 1.1 2007-03-15 11:39:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/OrthologPanel.java,v 1.2 2007-03-20 13:48:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Vector;
 
 import javax.swing.Box;
-import javax.swing.JLabel;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.StringVector;
+import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 
 public class OrthologPanel extends JPanel
                       implements FeatureChangeListener
 {
   private static final long serialVersionUID = 1L;
-  private QualifierVector orthologQualifiers;
+  private QualifierVector ortho_para_logQualifiers;
   
   public OrthologPanel(final Feature feature)
   {
@@ -61,80 +68,160 @@ public class OrthologPanel extends JPanel
     return false;
   }
   
-  private Component createOrthologQualifiersComponent()
+  private Component createOrthoParaLogQualifiersComponent(final Feature feature)
   {
-    int nrows = 0;
+    Qualifier orthoQualifier = ortho_para_logQualifiers.getQualifierByName("ortholog");
+    Qualifier paraQualifier  = ortho_para_logQualifiers.getQualifierByName("paralog");
     
-    Qualifier idQualifier = orthologQualifiers.getQualifierByName("ID");
+    DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
+    DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
+    final Vector databases = (Vector)doc.getDatabaseNames();
     
-    Box gffBox = Box.createVerticalBox();
-    gffBox.add(Box.createVerticalStrut(10));
-    
-    GridBagLayout grid = new GridBagLayout();
-    GridBagConstraints c = new GridBagConstraints();
-    c.ipady = 5;
-    JPanel gridPanel = new JPanel(grid);
-    
-
-    if(idQualifier != null)
+    //
+    // ortholog
+    Box xBox = Box.createVerticalBox();
+    JButton addOrthoButton = new JButton("ADD ORTHOLOG");
+    addOrthoButton.addActionListener(new ActionListener()
     {
-      final String uniquename = (String)idQualifier.getValues().get(0);
-      JLabel idField = new JLabel("ID");
-      
-      
-      c.gridx = 0;
-      c.gridy = 0;
-      c.ipadx = 5;
-      c.anchor = GridBagConstraints.EAST;
-      gridPanel.add(idField, c);
-      c.gridx = 1;
-      c.gridy = 0;
-      c.ipadx = 0;
-      c.anchor = GridBagConstraints.WEST;
-      //gridPanel.add(uniquenameTextField, c);
-      
+      public void actionPerformed(ActionEvent e)
+      { 
+        JExtendedComboBox dbs = new JExtendedComboBox(databases);
+        
+        JTextField accession = new JTextField(15);
+        
+        Box yBox = Box.createHorizontalBox();
+        yBox.add(dbs);
+        yBox.add(accession);
 
+        int select = JOptionPane.showConfirmDialog(null, 
+              yBox, "Add Ortholog",
+              JOptionPane.OK_CANCEL_OPTION);
+        if(select == JOptionPane.CANCEL_OPTION)
+          return;
+        
+        add("ortholog", ((String)dbs.getSelectedItem())+":"+
+                        accession.getText().trim(), feature);
+      }
+    });
+    xBox.add(addOrthoButton);
+    
+    if(orthoQualifier != null)
+    {
+      StringVector orthologs = orthoQualifier.getValues();
+      for(int i=0; i<orthologs.size(); i++)
+      {
+        JTextField ortholog = new JTextField( (String)orthologs.get(i) );
+        xBox.add(ortholog);
+      }
     }
     
-    
+    //
+    // paralog
+    JButton addParaButton = new JButton("ADD PARALOG");
+    addParaButton.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      { 
+        JExtendedComboBox dbs = new JExtendedComboBox(databases);
+        JTextField accession = new JTextField(15);
+        
+        Box yBox = Box.createHorizontalBox();
+        yBox.add(dbs);
+        yBox.add(accession);
 
-    gffBox.add(gridPanel);
-    return gffBox;
+        int select = JOptionPane.showConfirmDialog(null, 
+              yBox, "Add Paralog",
+              JOptionPane.OK_CANCEL_OPTION);
+        if(select == JOptionPane.CANCEL_OPTION)
+          return;
+        
+        add("paralog", ((String)dbs.getSelectedItem())+":"+
+                        accession.getText().trim(), feature);
+      }
+    });
+    xBox.add(addParaButton);
+    
+    if(paraQualifier != null)
+    {
+      StringVector paralogs = paraQualifier.getValues();
+      for(int i=0; i<paralogs.size(); i++)
+      {
+        JTextField paralog = new JTextField( (String)paralogs.get(i) );
+        xBox.add(paralog);
+      }
+    }
+
+    return xBox;
   }
   
+  /**
+   * Update ortho/paralogs for a feature
+   * @param feature
+   */
   public void updateFromFeature(final Feature feature)
   {
     removeAll();
-    if(orthologQualifiers != null)
+    if(ortho_para_logQualifiers != null)
       feature.removeFeatureChangeListener(this);
-    orthologQualifiers = feature.getQualifiers().copy();
+    ortho_para_logQualifiers = feature.getQualifiers().copy();
     
-    orthologQualifiers = new QualifierVector();
+    ortho_para_logQualifiers = new QualifierVector();
     final QualifierVector qualifiers = feature.getQualifiers();  
     for(int i = 0 ; i < qualifiers.size(); ++i) 
     {
       Qualifier qualifier = (Qualifier)qualifiers.elementAt(i);
       if(isOrthologTag(qualifier))
-        orthologQualifiers.addElement(qualifier.copy());
+        ortho_para_logQualifiers.addElement(qualifier.copy());
     }
    
     feature.addFeatureChangeListener(this);  
-    add(createOrthologQualifiersComponent());
+    add(createOrthoParaLogQualifiersComponent(feature));
     repaint();
     revalidate();
   }
 
+  /**
+   * Add ortholog/paralog
+   * @param name  ortholog or paralog
+   * @param value
+   */
+  public void add(final String name, final String value, final Feature feature)
+  {
+    final int index;
+    
+    Qualifier qualifier = ortho_para_logQualifiers.getQualifierByName(name);
+    
+    if(qualifier == null)
+    {
+      qualifier = new Qualifier(name);
+      index = -1;
+    }
+    else
+     index = ortho_para_logQualifiers.indexOf(qualifier);
+       
+    qualifier.addValue(value);
+
+    if(index > -1)
+    {
+      ortho_para_logQualifiers.remove(index);
+      ortho_para_logQualifiers.add(index, qualifier);
+    }
+    else
+      ortho_para_logQualifiers.add(qualifier);
+    
+    removeAll();
+    add(createOrthoParaLogQualifiersComponent(feature));
+    repaint();
+    revalidate();
+  }
+  
   /**
    * Get the latest (edited) controlled vocab qualifiers
    * @return
    */
   public QualifierVector getOrthologQualifiers()
   {
-    // check editable components for changes
-    
-    // 
-    
-    return orthologQualifiers;
+    return ortho_para_logQualifiers;
   }
   
   public void featureChanged(FeatureChangeEvent event)
