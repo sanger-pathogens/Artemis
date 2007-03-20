@@ -1,0 +1,31 @@
+#log4j.rootLogger=debug, R
+log4j.rootLogger=R
+
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+
+# SqlMap logging configuration...
+log4j.logger.com.ibatis=DEBUG, stdout, R
+log4j.logger.uk.ac.sanger.artemis.components.Splash=DEBUG, stdout, R
+log4j.logger.uk.ac.sanger.artemis.chado.ChadoTransactionManager=DEBUG, stdout, R
+log4j.logger.uk.ac.sanger.artemis.chado.Similarity=DEBUG, stdout, R
+log4j.logger.uk.ac.sanger.artemis.util.DatabaseDocument=DEBUG, stdout, R
+
+#log4j.logger.com.ibatis.common.jdbc.SimpleDataSource=DEBUG, stdout, R
+#log4j.logger.com.ibatis.common.jdbc.ScriptRunner=DEBUG, stdout, R
+#log4j.logger.com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate=DEBUG, stdout, R
+#log4j.logger.java.sql.Connection=DEBUG, stdout, R
+log4j.logger.java.sql.Statement=DEBUG, stdout, R
+log4j.logger.java.sql.PreparedStatement=DEBUG, stdout, R
+#log4j.logger.java.sql.ResultSet=DEBUG, stdout, R
+
+# Pattern to output the caller's file name and line number.
+log4j.appender.stdout.layout.ConversionPattern=%5p [%t] (%F:%L) - %m%n
+
+
+log4j.appender.R=org.apache.log4j.RollingFileAppender
+log4j.appender.R.File=artemis.log
+log4j.appender.R.MaxFileSize=100KB
+log4j.appender.R.layout=org.apache.log4j.PatternLayout
+log4j.appender.R.layout.ConversionPattern=%5p [%t] %c - %m%n
+
