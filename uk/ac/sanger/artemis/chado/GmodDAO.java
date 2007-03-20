@@ -45,7 +45,7 @@ import org.gmod.schema.sequence.FeatureDbXRef;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 
 public abstract class GmodDAO 
-       implements SequenceDaoI, SchemaDaoI, OrganismDaoI, CvDaoI, PubDaoI
+       implements SequenceDaoI, SchemaDaoI, OrganismDaoI, CvDaoI, PubDaoI, GeneralDaoI
 {
   
   public abstract List getSimilarityMatches(final Integer srcFeatureId);
@@ -59,6 +59,35 @@ public abstract class GmodDAO
   {
     return null;
   }
+  
+  //////
+  ////// GeneralDaoI
+  //////
+  //////
+  /**
+   * Retrieve a database by name
+   * 
+   * @param name the name to lookup
+   * @return the corresponding db, or null
+   */
+  public Db getDbByName(String name)
+  {
+    return null;
+  }
+
+  /**
+   * Retrieve the db xref corresponding to a given DB and accession number
+   * 
+   * @param db the db the dbxref refers to
+   * @param accession the accession "number" the dbxref refers to
+   * @return the dbxref, or null
+   */
+  public DbXRef getDbXRefByDbAndAcc(Db db, String accession)
+  {
+    return null;
+  }
+  
+  public abstract List getDbs();
   
   //////
   ////// OrganismDaoI
