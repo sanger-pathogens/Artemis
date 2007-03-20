@@ -86,6 +86,15 @@ public class JdbcDAO extends GmodDAO
   }
 
   //////
+  ////// GeneralDaoI
+  //////
+  //////
+  public List getDbs()
+  {
+    return null;
+  }
+  
+  //////
   ////// SequenceDaoI
   //////
   //////

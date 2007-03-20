@@ -78,7 +78,15 @@ public class IBatisDAO extends GmodDAO
     this.sqlMap = sql_config.getSqlMapInstance();*/
   }
 
-
+  //////
+  ////// GeneralDaoI
+  //////
+  //////
+  public List getDbs()
+  {
+    return sqlMap.queryForList("selectAllDb", null);
+  }
+  
   //////
   ////// SequenceDaoI
   //////
