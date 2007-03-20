@@ -46,6 +46,7 @@ import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.pub.PubDbXRef;
 import org.gmod.schema.pub.Pub;
@@ -81,7 +82,7 @@ public class DatabaseDocument extends Document
   private String schema = "public";
 
   private static Hashtable cvterms;
-
+  
   private InputStreamProgressListener progress_listener;
 
   /** JDBC DAO */
@@ -1343,6 +1344,34 @@ public class DatabaseDocument extends Document
     }
 
     return cvterms;
+  }
+  
+  public List getDatabaseNames()
+  {
+    try
+    {
+      GmodDAO dao = getDAO();
+      List dbs = dao.getDbs();
+      List names = new Vector();
+      Iterator it = dbs.iterator();
+      while(it.hasNext())
+      {
+        Db db = (Db)it.next();
+        names.add(db.getName());
+      }
+      return names;
+    }
+    catch(ConnectException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    catch(SQLException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
   }
   
   public static Vector getCvterms(final String search_str, final String cv_name)
