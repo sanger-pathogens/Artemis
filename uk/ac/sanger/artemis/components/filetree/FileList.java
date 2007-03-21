@@ -153,8 +153,10 @@ public class FileList
     return vdir.containsKey(d);
   }
 
-  protected boolean isConnected()
+  public static boolean isConnected()
   {
+    if(ssh_client == null)
+      return false;
     return ssh_client.isConnected();
   }
 }
