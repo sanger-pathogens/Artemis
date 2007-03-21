@@ -27,6 +27,9 @@ package uk.ac.sanger.artemis.editor;
 import java.awt.Point;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
+
+import com.sshtools.j2ssh.sftp.FileAttributes;
+
 import java.awt.Font;
 import java.awt.Dimension;
 import java.io.InputStream;
@@ -42,6 +45,7 @@ import java.util.StringTokenizer;
 import java.net.URL;
 import java.net.MalformedURLException;
 
+import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.util.WorkingGZIPInputStream;
 
 public class FastaTextPane extends JScrollPane
@@ -57,7 +61,12 @@ public class FastaTextPane extends JScrollPane
   private int qlen;
   private Vector listerners = new Vector();
   private Vector threads = new Vector();
-
+  private static boolean remoteMfetch = false;
+  public static HitInfo[] cacheHits = new HitInfo[100];
+  public static int nCacheHits = 0;
+  private static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(FastaTextPane.class);
+  
   public FastaTextPane(File dataFile)
   {
     super();
@@ -619,54 +628,113 @@ public class FastaTextPane extends JScrollPane
     {
       final String env[] = { "PATH=/usr/local/pubseq/bin/:/nfs/disk100/pubseq/bin/" };
 
-      StringBuffer query = new StringBuffer();
-
+      int nhits = hits.size()/70 + 1;
+      StringBuffer querySRS = new StringBuffer();
+      StringBuffer queryMfetch[] = new StringBuffer[nhits];
+      
       int n = 0;
+      int this_nhit = 0;
+      nhits = 0;
       File fmfetch = new File("/nfs/disk100/pubseq/bin/mfetch");
-
+ 
+      
+      if(!fmfetch.exists() && !remoteMfetch &&
+          System.getProperty("j2ssh") != null &&
+          FileList.isConnected())
+      {
+         FileList fileList = new FileList();
+         FileAttributes attr = fileList.stat("/nfs/disk100/pubseq/bin/mfetch");
+         remoteMfetch = attr.isFile();
+      }
+        
       Enumeration ehits = hits.elements();
       while(ehits.hasMoreElements() && keepRunning)
       {
         if(n>nretrieve)
           break;
         HitInfo hit = (HitInfo)ehits.nextElement();
+        
+        HitInfo cacheHit = checkCache(hit);
+        if(cacheHit != null)
+        {
+          logger4j.debug("Retrieved early from cache "+cacheHit.getID());
+          hit.setOrganism(cacheHit.getOrganism());
+          hit.setDescription(cacheHit.getDescription());
+          hit.setGeneName(hit.getGeneName());
+          continue;
+        }
+        
         if(n > 0)
         {
-          query.append("|");
-          if(fmfetch.exists())
-            query.append("acc:");
+          querySRS.append("|");
+          
+          if(nhits > 0)
+            queryMfetch[this_nhit].append("|acc:");
         }
 
-        query.append(hit.getAcc());
+        querySRS.append(hit.getAcc());
+        
+        if(queryMfetch[this_nhit] == null)
+          queryMfetch[this_nhit] = new StringBuffer();
+        
+        queryMfetch[this_nhit].append(hit.getAcc());
         n++;
+        nhits++;
+        if(nhits > 70)
+        {
+          nhits = 0;
+          this_nhit++;
+        }
       }
-       
+      
+      if(!keepRunning)
+        return;
+      
       BufferedReader strbuff = null;
       File fgetz = new File("/usr/local/pubseq/bin/getz");
-
-      if(fmfetch.exists())
+      
+      if(fmfetch.exists() || remoteMfetch)
       {
-        String cmd[]   = { "mfetch", "-f", "acc org des gen",
-            "-d", "uniprot", "-i", "acc:"+query.toString() };
+        StringBuffer buff = new StringBuffer();
+        for(int i=0; i<queryMfetch.length; i++)
+        {
+          String mfetch = queryMfetch[i].toString();
+          if(mfetch.length() == 0)
+            continue;
+          
+          if(fmfetch.exists())  // local
+          {
+            String cmd[]   = { "mfetch", "-f", "acc org des gen",
+              "-d", "uniprot", "-i", "acc:"+mfetch };
        
-        ExternalApplication app = new ExternalApplication(cmd,
-                                    env,null);
-        String res = app.getProcessStdout();
-        //System.out.println(res);
-        //System.out.println( app.getProcessStderr() );
-        //for(int i=0; i<cmd.length; i++)
-        //  System.out.print(cmd[i]+" ");
-
-        StringReader strread   = new StringReader(res);
+            ExternalApplication app = new ExternalApplication(cmd,
+                                      env,null);
+            buff.append(app.getProcessStdout());
+          }
+          else                 // remote
+          {
+            String cmd   = 
+              "mfetch -f \"acc org des gen\" -d uniprot -i \"acc:"+mfetch+"\"" ;
+            uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
+              new uk.ac.sanger.artemis.j2ssh.SshPSUClient(cmd);
+            ssh.run();
+            buff.append(ssh.getStdOut());
+          }
+        }
+        
+        StringReader strread   = new StringReader(buff.toString());
         strbuff = new BufferedReader(strread);
       }
       else if(!fgetz.exists())
       {
         try
         {
-          URL wgetz = new URL(DataCollectionPane.srs_url+
-                             "/wgetz?-f+acc%20org%20description%20gen+[uniprot-acc:"+
-                             query.toString()+"]+-lv+500");
+          String queryURL = DataCollectionPane.srs_url+
+                            "/wgetz?-f+acc%20org%20description%20gen+[uniprot-acc:"+
+                            querySRS.toString()+"]+-lv+500";
+          URL wgetz = new URL(queryURL);
+          logger4j.debug(queryURL);
+          
           InputStream in = wgetz.openStream();
 
           strbuff = new BufferedReader(new InputStreamReader(in));
@@ -698,7 +766,7 @@ public class FastaTextPane extends JScrollPane
       else
       {
         String cmd[]   = { "getz", "-f", "acc org description gen",
-                           "[uniprot-acc:"+query.toString()+"]" };
+                           "[uniprot-acc:"+querySRS.toString()+"]" };
                       
         ExternalApplication app = new ExternalApplication(cmd,
                                                    env,null);
@@ -729,7 +797,7 @@ public class FastaTextPane extends JScrollPane
                       
             if(hit == null)
             {         
-              System.out.println("HIT NOT FOUND "+line);
+              logger4j.debug("HIT NOT FOUND "+line);
               continue;
             }         
                       
@@ -767,6 +835,17 @@ public class FastaTextPane extends JScrollPane
       while(ehits.hasMoreElements() && keepRunning)
       {               
         hit = (HitInfo)ehits.nextElement();
+        
+        HitInfo cacheHit = checkCache(hit);
+        
+        if(cacheHit != null && cacheHit.getEMBL() != null)
+        {
+          logger4j.debug("Retrieved from cache "+cacheHit.getID());
+          hit.setEMBL(cacheHit.getEMBL());
+          hit.setEC_number(cacheHit.getEC_number());
+          continue;
+        }
+        
         res = getUniprotLinkToDatabase(fgetz, fmfetch, hit, env, "embl");
               
         int ind1 = res.indexOf("ID ");
@@ -791,12 +870,32 @@ public class FastaTextPane extends JScrollPane
           StringTokenizer tok = new StringTokenizer(res);
           tok.nextToken();
           hit.setEC_number(tok.nextToken());
-        }             
+        }
+        
+        if(nCacheHits >= cacheHits.length)
+          nCacheHits = 0;
+        cacheHits[nCacheHits] = hit;
+        nCacheHits++;
       }               
     }              
-
   }
 
+  /**
+   * 
+   * @param hit
+   * @return
+   */
+  private HitInfo checkCache(final HitInfo hit)
+  {
+    for(int i=0; i<cacheHits.length; i++)
+    {
+      if(cacheHits[i] != null &&
+         cacheHits[i].getID().equals(hit.getID()))
+        return cacheHits[i];
+    }
+    return null;
+  }
+  
   protected static String insertNewline(String s1, String s2)
   {
     int index = 0;
@@ -829,18 +928,25 @@ public class FastaTextPane extends JScrollPane
                                   env,null);
       res = app.getProcessStdout();
 
-      //for(int i=0; i<cmd.length; i++)
-      //  System.out.print(cmd[i]+" ");
-      //System.out.println("\n"+ app.getProcessStderr() );
-      //System.out.println("\n"+res);
+    }
+    else if(remoteMfetch)
+    {
+      String cmd   = 
+        "mfetch -f id -d uniprot -i \"acc:"+hit.getID()+"\" -l "+DB ;
+      uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
+        new uk.ac.sanger.artemis.j2ssh.SshPSUClient(cmd);
+      ssh.run();
+      res = ssh.getStdOut();
     }
     else if(!fgetz.exists())
     {
       try
       {
-        URL wgetz = new URL(DataCollectionPane.srs_url+
-                         "/wgetz?-f+id+[uniprot-acc:"+hit.getAcc()+"]%3E"+DB);
-
+        final String queryURL = DataCollectionPane.srs_url+
+                                "/wgetz?-f+id+[uniprot-acc:"+hit.getAcc()+"]%3E"+DB;
+        URL wgetz = new URL(queryURL);
+        logger4j.debug(queryURL);
+        
         InputStream in = wgetz.openStream();
         BufferedReader strbuff = new BufferedReader(new InputStreamReader(in));
         StringBuffer resBuff = new StringBuffer();
