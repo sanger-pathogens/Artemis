@@ -62,11 +62,16 @@ public class SshPSUClient extends Thread
   private String logfile  = null;
   private String db       = null;
   private String wdir     = null;
-
+  private boolean justProg = false;
+  
   //
   private SshClient ssh;
   private String user;
   private boolean keep = false;
+  
+  //
+  StdoutStdErrHandler stdouth;
+  StdoutStdErrHandler stderrh;
 
   public SshPSUClient(String args[])
   {
@@ -95,6 +100,14 @@ public class SshPSUClient extends Thread
     SshLogin sshLogin = new SshLogin();
     ssh = sshLogin.getSshClient();
     user = sshLogin.getUser();
+  }
+  
+  public SshPSUClient(final String cmd)
+  {
+    this.cmd = cmd;
+    SshLogin sshLogin = new SshLogin();
+    ssh = sshLogin.getSshClient();
+    justProg = true;
   }
 
   private SshClient rescue()
@@ -128,7 +141,10 @@ public class SshPSUClient extends Thread
 
       logger4j.debug("RUN "+program);
 
-      completed = runBlastOrFasta(program);
+      if(justProg)
+        runProgram();
+      else
+        completed = runBlastOrFasta(program);
 
       // Quit
       //ssh.disconnect();
@@ -492,6 +508,89 @@ public class SshPSUClient extends Thread
     return true;
   }
 
+  
+  
+  /**
+  *
+  * Run fasta or blast on the server ssh'ed into
+  *
+  */
+  private boolean runProgram()
+                    throws IOException
+  {
+    SessionChannelClient session = null;
+
+    try 
+    {
+      if(!ssh.isConnected())
+        rescue();
+
+      session = ssh.openSessionChannel();
+    }
+    catch(IOException exp)
+    {
+      logger4j.debug("NOT STARTED runProgram()");
+      if(System.getProperty("debug") != null)
+      {
+        exp.printStackTrace();
+      }
+      rescue();
+    }
+    
+    // run the application
+    logger4j.debug(cmd);
+
+    try
+    {
+      session.executeCommand(cmd);
+    }
+    catch(IOException exp)
+    {
+      logger4j.debug("runProgram()");
+      if(System.getProperty("debug") != null)
+      {
+        exp.printStackTrace();
+      }
+    }
+
+    logger4j.debug("STARTED session "+cmd);
+
+    // Reading from the session InputStream
+    stdouth = new StdoutStdErrHandler(session, true);
+    stderrh = new StdoutStdErrHandler(session, false);
+    
+    stdouth.start();
+    stderrh.start();
+
+    try
+    {
+      // make sure we hang around for stdout
+      while(stdouth.isAlive() || stderrh.isAlive())
+        Thread.sleep(5);
+    }
+    catch(InterruptedException ie)
+    {
+      ie.printStackTrace();
+    }
+       
+    // stdout & stderr
+    //logger4j.debug("STDOUT \n"+stdouth.getOutput());
+    logger4j.debug("STDERR :"+stderrh.getOutput());
+
+    session.close();
+    return true;
+  }
+  
+  public String getStdOut()
+  {
+    return stdouth.getOutput();
+  }
+
+  public String getStdErr()
+  {
+    return stderrh.getOutput();
+  }
+  
   /**
   *
   * Return an active SftpClient object
