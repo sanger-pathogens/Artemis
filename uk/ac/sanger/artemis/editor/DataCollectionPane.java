@@ -936,7 +936,7 @@ public class DataCollectionPane extends JScrollPane
           goHash.put(ID,desc);
       }
     }
-    catch(FileNotFoundException fnf) { System.err.println(filename+" not found"); }
+    catch(FileNotFoundException fnf) { }
     catch(IOException ioe) { ioe.printStackTrace(); }
   }
   
