@@ -438,7 +438,8 @@ public class DataViewInternalFrame extends JInternalFrame
   protected void setDataDividerLocation()
   {
     ActiveJSplitPane lastSelected = (ActiveJSplitPane)tabPane.getSelectedComponent();
-    dataDividerLocation = lastSelected.getDividerLocation();
+    if(lastSelected != null)
+      dataDividerLocation = lastSelected.getDividerLocation();
   }
 
   protected void setAnnotationDividerLocation()
