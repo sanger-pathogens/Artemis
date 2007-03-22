@@ -50,9 +50,7 @@ import uk.ac.sanger.artemis.util.WorkingGZIPInputStream;
 
 public class FastaTextPane extends JScrollPane
 {
-  /**
-   * 
-   */
+  /***/
   private static final long serialVersionUID = 1L;
   private JTextArea textArea;
   private Vector hitInfoCollection = null;
@@ -643,10 +641,10 @@ public class FastaTextPane extends JScrollPane
           System.getProperty("j2ssh") != null &&
           FileList.isConnected())
       {
-         FileList fileList = new FileList();
-         FileAttributes attr = fileList.stat("/nfs/disk100/pubseq/bin/mfetch");
-         if(attr != null)
-           remoteMfetch = attr.isFile();
+        FileList fileList = new FileList();
+        FileAttributes attr = fileList.stat("/nfs/disk100/pubseq/bin/mfetch");
+        if(attr != null)
+          remoteMfetch = attr.isFile();
       }
         
       Enumeration ehits = hits.elements();
@@ -1003,6 +1001,11 @@ public class FastaTextPane extends JScrollPane
       pos.setLocation(pos.getX(),hgt);
       getViewport().setViewPosition(pos);
     }
+  }
+
+  public static boolean isRemoteMfetch()
+  {
+    return remoteMfetch;
   }
  
 
