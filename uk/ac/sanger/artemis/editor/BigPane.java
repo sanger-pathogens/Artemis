@@ -70,7 +70,8 @@ public class BigPane extends JFrame
   protected static JCheckBoxMenuItem srsWin;
   protected static JInternalFrame srsFrame;
   protected static JCheckBox addNote = new JCheckBox("Add Note");
-
+ 
+  protected static int CACHE_SIZE = 100;
   private JTextArea qualifier;
   private DataViewInternalFrame dataView;
   //private FeatureVector overlapFeature;
@@ -307,6 +308,33 @@ public class BigPane extends JFrame
     buttGroup.add(liveDrag);
     buttGroup.add(outlineDrag);
 
+    // cache size
+    /*final JMenuItem cacheMenu = new JMenuItem("Cache Size");
+    cacheMenu.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        JTextField cacheSize = new JTextField(Integer.toString(CACHE_SIZE));
+        int select = JOptionPane.showConfirmDialog(BigPane.this, 
+                                 cacheSize, "Cache Size", 
+                                 JOptionPane.OK_CANCEL_OPTION);
+        if(select == JOptionPane.CANCEL_OPTION)
+          return;
+        
+        CACHE_SIZE = Integer.parseInt(cacheSize.getText());
+        
+        HitInfo[] cacheHits = FastaTextPane.cacheHits;
+        
+        FastaTextPane.cacheHits = new HitInfo[CACHE_SIZE];
+        for(int i=0; i<cacheHits.length; i++)
+        {
+          if(i >= FastaTextPane.cacheHits.length)
+            break;
+          FastaTextPane.cacheHits[i] = cacheHits[i];
+        }
+      }
+    });
+    optionMenu.add(cacheMenu);*/
     return menuBar;
   }
 
