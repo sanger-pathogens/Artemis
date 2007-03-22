@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.7 2007-03-22 14:18:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.8 2007-03-22 17:29:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import uk.ac.sanger.artemis.Options;
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.7 2007-03-22 14:18:09 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.8 2007-03-22 17:29:24 tjc Exp $
  *
  **/
 
@@ -89,7 +89,8 @@ public class FileViewer extends JFrame
    *  variable.  This is updated when any FileViewer frame is moved.
    **/
   private static Point saved_position = null;
-
+  private int lineHeight;
+  
   /**
    *  Create a new FileViewer component and make it visible.
    *  @param label The name to attach to the new JFrame.
@@ -109,6 +110,7 @@ public class FileViewer extends JFrame
   {
     super(label);
 
+    lineHeight = textPane.getFontMetrics( textPane.getFont() ).getHeight();
     getContentPane().setLayout(new BorderLayout());
     final Font font = Options.getOptions().getFont();
     setFont(font);
@@ -366,18 +368,17 @@ public class FileViewer extends JFrame
    */
   protected int getLineCount()
   {
-    int offset = textPane.getDocument().getLength();
-    Rectangle r;
     try
     {
-      r = textPane.modelToView( offset );
+      int offset     = textPane.getDocument().getLength();
+      Rectangle r    = textPane.modelToView( offset );
+      
+      return (int) r.y/lineHeight;
     }
     catch(Exception e)
     {
       return 0;
     }
-    int lineHeight = textPane.getFontMetrics( textPane.getFont() ).getHeight();
 
-    return (int) r.y/lineHeight;
   }
 }
