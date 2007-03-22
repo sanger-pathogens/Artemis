@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/LogViewer.java,v 1.2 2007-02-28 15:50:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/LogViewer.java,v 1.3 2007-03-22 13:41:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -35,13 +35,13 @@ import java.io.*;
  *  A class for viewing log messages in a FileViewer component.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: LogViewer.java,v 1.2 2007-02-28 15:50:56 tjc Exp $
+ *  @version $Id: LogViewer.java,v 1.3 2007-03-22 13:41:31 tjc Exp $
  **/
 
 public class LogViewer extends AppenderSkeleton implements Logger 
 {
 
-  public int maxLogLines = Integer.MAX_VALUE;
+  public int maxLogLines;
   /** The FileViewer that is used to show the messages. */
   private FileViewer file_viewer = null;
 
@@ -108,12 +108,11 @@ public class LogViewer extends AppenderSkeleton implements Logger
   protected void append(LoggingEvent e)
   {
     String message = this.layout.format(e);
-    
     FileViewer fv = ((LogViewer)Splash.getLogger()).getFileViewer();
     if(fv  != null &&
-       maxLogLines < fv.getTextArea().getLineCount())
-      fv.getTextArea().setText("");
-    
+       maxLogLines < fv.getLineCount())
+      fv.setText("");
+
     Splash.getLogger().log(message);
   }
 
@@ -132,6 +131,10 @@ public class LogViewer extends AppenderSkeleton implements Logger
     return maxLogLines;
   }
 
+  /**
+   * Set in log4j.properties by log4j.appender.R.MaxLogLines
+   * @param maxLogLines
+   */
   public void setMaxLogLines(int maxLogLines)
   {
     this.maxLogLines = maxLogLines;
@@ -141,5 +144,6 @@ public class LogViewer extends AppenderSkeleton implements Logger
   {
     return this.file_viewer;
   }
+ 
 
 }

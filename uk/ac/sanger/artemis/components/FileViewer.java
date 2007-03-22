@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.5 2007-02-28 15:51:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.6 2007-03-22 13:41:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -30,17 +30,26 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.*;
 import java.io.Reader;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Hashtable;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+
+import org.apache.log4j.Level;
 
 import uk.ac.sanger.artemis.Options;
 
@@ -50,7 +59,7 @@ import uk.ac.sanger.artemis.Options;
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.5 2007-02-28 15:51:25 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.6 2007-03-22 13:41:31 tjc Exp $
  *
  **/
 
@@ -63,7 +72,9 @@ public class FileViewer extends JFrame
   private JPanel button_panel;
 
   /** The main component we use for displaying the file. */
-  private JTextArea text_area = null;
+  private JTextPane textPane = null;
+
+  private Hashtable fontAttributes;
 
   /**
    *  The size of the last FileViewer JFrame to be resized.  When a new
@@ -102,16 +113,34 @@ public class FileViewer extends JFrame
     final Font font = Options.getOptions().getFont();
     setFont(font);
 
-    text_area = new JTextArea();
+    // ensure wrapping is turned off
+    textPane = new JTextPane()
+    {
+      /** */
+      private static final long serialVersionUID = 1L;
+
+      public void setSize(Dimension d)
+      {
+        if (d.width < getParent().getSize().width)
+          d.width = getParent().getSize().width;
+ 
+        super.setSize(d);
+      }
+ 
+      public boolean getScrollableTracksViewportWidth()
+      {
+        return false;
+      }
+    };
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     
-    JScrollPane scroller = new JScrollPane(text_area);
+    JScrollPane scroller = new JScrollPane(textPane);
     scroller.setPreferredSize(new Dimension((int)screen.getWidth()/2,
                                             (int)screen.getHeight()/2));
-    text_area.setEditable(false);
-    text_area.setFont(font);
-    text_area.setBackground(Color.white);
-
+    textPane.setEditable(false);
+    textPane.setFont(font);
+    textPane.setBackground(Color.white);
+    
     getContentPane().add(scroller, "Center");
 
     button_panel = new JPanel();
@@ -122,7 +151,7 @@ public class FileViewer extends JFrame
     {
       public void actionPerformed(ActionEvent e) 
       {
-        dispose();
+        setVisible(false);
       }
     });
     button_panel.add(close_button);
@@ -131,7 +160,7 @@ public class FileViewer extends JFrame
     {
       public void windowClosing(WindowEvent event) 
       {
-        dispose();
+        setVisible(false);
       }
     });
 
@@ -176,14 +205,16 @@ public class FileViewer extends JFrame
     }
     
     setVisible(visible);
+    createDefaultFontAttributes();
   }
 
+  
   /**
    *  Clear the viewer window.
    **/
   protected void clear()  
   {
-    text_area.setText("");
+    textPane.setText("");
   }
 
   /**
@@ -224,8 +255,8 @@ public class FileViewer extends JFrame
     buffered_reader.close();
 
     final String new_text = line_buffer.toString();
-    text_area.setText(new_text);
-    text_area.setCaretPosition(0);
+    textPane.setText(new_text);
+    textPane.setCaretPosition(0);
   }
 
   /**
@@ -234,10 +265,10 @@ public class FileViewer extends JFrame
    **/
   protected void setText(String read_string) 
   {
-    if(!read_string.equals(text_area.getText())) 
+    if(!read_string.equals(textPane.getText())) 
     {
-      text_area.setText(read_string);
-      text_area.setCaretPosition(0);
+      textPane.setText(read_string);
+      textPane.setCaretPosition(0);
     }
   }
 
@@ -248,16 +279,63 @@ public class FileViewer extends JFrame
    **/
   protected void appendString(String read_string) 
   {
-    text_area.append(read_string);
-    text_area.getCaret().setDot(0);
+    Document doc = textPane.getStyledDocument();
+    
+    final Level level;
+    if(read_string.indexOf("FATAL") > -1)
+      level = Level.FATAL;
+    else if(read_string.indexOf("ERROR") > -1)
+      level = Level.ERROR;
+    else if(read_string.indexOf("WARN") > -1)
+      level = Level.WARN;
+    else if(read_string.indexOf("INFO") > -1)
+      level = Level.INFO;
+    else
+      level = Level.DEBUG;
+    
+    try
+    {
+      doc.insertString(doc.getLength(), read_string, 
+          (MutableAttributeSet)fontAttributes.get(level));
+      textPane.setCaretPosition(doc.getLength());
+    }
+    catch(BadLocationException e)
+    {
+      e.printStackTrace();
+    }
   }
 
+  private void createDefaultFontAttributes() 
+  {
+    Level[] prio = { Level.FATAL, Level.ERROR, 
+           Level.WARN, Level.INFO, Level.DEBUG };
+
+    fontAttributes = new Hashtable();
+    for (int i=0; i<prio.length;i++) 
+    {
+      MutableAttributeSet att = new SimpleAttributeSet();
+      fontAttributes.put(prio[i], att);
+    }
+
+    setTextColor(Level.FATAL, Color.red);
+    setTextColor(Level.ERROR, Color.magenta);
+    setTextColor(Level.WARN, Color.orange);
+    setTextColor(Level.INFO, Color.blue);
+    setTextColor(Level.DEBUG, Color.blue);
+  }
+  
+  void setTextColor(Level p, Color c) 
+  {
+    StyleConstants.setForeground(
+          (MutableAttributeSet)fontAttributes.get(p),c);
+  }
+  
   /**
    *  Return a String containing the text that this component is displaying.
    **/
   protected String getText() 
   {
-    return getTextArea().getText();
+    return textPane.getText();
   }
 
   /**
@@ -273,13 +351,6 @@ public class FileViewer extends JFrame
     super.dispose();
   }
 
-  /**
-   *  return the TextArea component from this FileViewer.
-   **/
-  protected JTextArea getTextArea() 
-  {
-    return text_area;
-  }
 
   /**
    *  Return the JPanel containing the close button of this FileViewer.
@@ -289,4 +360,24 @@ public class FileViewer extends JFrame
     return button_panel;
   }
 
+  /**
+   * 
+   * @return
+   */
+  protected int getLineCount()
+  {
+    int offset = textPane.getDocument().getLength();
+    Rectangle r;
+    try
+    {
+      r = textPane.modelToView( offset );
+    }
+    catch(Exception e)
+    {
+      return 0;
+    }
+    int lineHeight = textPane.getFontMetrics( textPane.getFont() ).getHeight();
+
+    return (int) r.y/lineHeight;
+  }
 }
