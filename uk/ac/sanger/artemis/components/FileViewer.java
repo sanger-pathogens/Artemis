@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.6 2007-03-22 13:41:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.7 2007-03-22 14:18:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import uk.ac.sanger.artemis.Options;
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.6 2007-03-22 13:41:31 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.7 2007-03-22 14:18:09 tjc Exp $
  *
  **/
 
@@ -320,7 +320,7 @@ public class FileViewer extends JFrame
     setTextColor(Level.FATAL, Color.red);
     setTextColor(Level.ERROR, Color.magenta);
     setTextColor(Level.WARN, Color.orange);
-    setTextColor(Level.INFO, Color.blue);
+    setTextColor(Level.INFO, Color.black);
     setTextColor(Level.DEBUG, Color.blue);
   }
   
