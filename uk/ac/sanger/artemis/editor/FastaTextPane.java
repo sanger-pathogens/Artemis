@@ -701,9 +701,11 @@ public class FastaTextPane extends JScrollPane
         StringBuffer buff = new StringBuffer();
         for(int i=0; i<queryMfetch.length; i++)
         {
-          String mfetch = queryMfetch[i].toString();
-          if(mfetch.length() == 0)
+          if(queryMfetch[i] == null ||
+             queryMfetch[i].toString().length() == 0 )
             continue;
+          
+          String mfetch = queryMfetch[i].toString();
           
           if(fmfetch.exists())  // local
           {
