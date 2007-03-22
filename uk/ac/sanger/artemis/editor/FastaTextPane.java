@@ -62,7 +62,7 @@ public class FastaTextPane extends JScrollPane
   private Vector listerners = new Vector();
   private Vector threads = new Vector();
   private static boolean remoteMfetch = false;
-  public static HitInfo[] cacheHits = new HitInfo[100];
+  public static HitInfo[] cacheHits = new HitInfo[BigPane.CACHE_SIZE];
   public static int nCacheHits = 0;
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(FastaTextPane.class);
@@ -628,6 +628,7 @@ public class FastaTextPane extends JScrollPane
     {
       final String env[] = { "PATH=/usr/local/pubseq/bin/:/nfs/disk100/pubseq/bin/" };
 
+      // split mfetch query up - max 70 hits per query
       int nhits = hits.size()/70 + 1;
       StringBuffer querySRS = new StringBuffer();
       StringBuffer queryMfetch[] = new StringBuffer[nhits];
@@ -644,7 +645,8 @@ public class FastaTextPane extends JScrollPane
       {
          FileList fileList = new FileList();
          FileAttributes attr = fileList.stat("/nfs/disk100/pubseq/bin/mfetch");
-         remoteMfetch = attr.isFile();
+         if(attr != null)
+           remoteMfetch = attr.isFile();
       }
         
       Enumeration ehits = hits.elements();
@@ -657,7 +659,8 @@ public class FastaTextPane extends JScrollPane
         HitInfo cacheHit = checkCache(hit);
         if(cacheHit != null)
         {
-          logger4j.debug("Retrieved early from cache "+cacheHit.getID());
+          logger4j.debug("Retrieved early from cache "+cacheHit.getID()+
+                         " cache size="+cacheHits.length);
           hit.setOrganism(cacheHit.getOrganism());
           hit.setDescription(cacheHit.getDescription());
           hit.setGeneName(hit.getGeneName());
@@ -840,7 +843,8 @@ public class FastaTextPane extends JScrollPane
         
         if(cacheHit != null && cacheHit.getEMBL() != null)
         {
-          logger4j.debug("Retrieved from cache "+cacheHit.getID());
+          logger4j.debug("Retrieved from cache "+cacheHit.getID()+
+                         " cache size="+cacheHits.length);
           hit.setEMBL(cacheHit.getEMBL());
           hit.setEC_number(cacheHit.getEC_number());
           continue;
