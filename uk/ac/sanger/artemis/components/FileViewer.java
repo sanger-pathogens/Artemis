@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.8 2007-03-22 17:29:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.9 2007-03-22 17:36:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import uk.ac.sanger.artemis.Options;
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.8 2007-03-22 17:29:24 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.9 2007-03-22 17:36:00 tjc Exp $
  *
  **/
 
@@ -110,7 +110,6 @@ public class FileViewer extends JFrame
   {
     super(label);
 
-    lineHeight = textPane.getFontMetrics( textPane.getFont() ).getHeight();
     getContentPane().setLayout(new BorderLayout());
     final Font font = Options.getOptions().getFont();
     setFont(font);
@@ -134,6 +133,7 @@ public class FileViewer extends JFrame
         return false;
       }
     };
+    lineHeight = textPane.getFontMetrics( textPane.getFont() ).getHeight();
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     
     JScrollPane scroller = new JScrollPane(textPane);
