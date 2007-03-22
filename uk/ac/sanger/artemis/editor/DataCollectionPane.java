@@ -61,7 +61,9 @@ public class DataCollectionPane extends JScrollPane
   private JDesktopPane desktop;
   private DataViewInternalFrame dataView;
   protected static String srs_url = getSrsSite();
-
+  private static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(FastaTextPane.class);
+  
   /**
   *
   * @param fastaTextPane   fasta/blast display.
@@ -555,18 +557,31 @@ public class DataCollectionPane extends JScrollPane
   {
     String env[] = { "PATH=/usr/local/pubseq/bin/" };
 
-    File fgetz = new File("/usr/local/pubseq/bin/getz");
+    File fmfetch = new File("/nfs/disk100/pubseq/bin/mfetch");
     if(hit.getOrganism() == null ||
        hit.getDescription() == null)
     {
       String res = null;
-      if(!fgetz.exists())
+      
+      if(FastaTextPane.isRemoteMfetch())
+      {
+        String cmd   = 
+          "mfetch -f \"org des gen\" -d uniprot -i \"acc:"+hit.getID()+"\"" ;
+        uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
+          new uk.ac.sanger.artemis.j2ssh.SshPSUClient(cmd);
+        ssh.run();
+        res = ssh.getStdOut();
+      }
+      else if(!fmfetch.exists())
       {
         try
         {
-          URL wgetz = new URL(DataCollectionPane.srs_url+
-                            "/wgetz?-f+acc%20org%20description%20gen+"+
-                            "[uniprot:"+hit.getAcc()+"]|[uniprot:"+hit.getID()+"]");
+          final String queryURL = DataCollectionPane.srs_url+
+                                  "/wgetz?-f+acc%20org%20description%20gen+"+
+                                  "[uniprot:"+hit.getAcc()+"]|[uniprot:"+hit.getID()+"]";
+          logger4j.debug(queryURL);
+          URL wgetz = new URL(queryURL);
+          
           InputStream in = wgetz.openStream();
 
           BufferedReader strbuff = new BufferedReader(new InputStreamReader(in));
@@ -588,8 +603,8 @@ public class DataCollectionPane extends JScrollPane
       }
       else
       {
-        String cmd[]   = { "getz", "-f", "org description gen",
-                           "[uniprot:"+hit.getAcc()+"]|[uniprot:"+hit.getID()+"]" };
+        String cmd[]   = { "mfetch", "-f", "org des gen",
+            "-d", "uniprot", "-i", "acc:"+hit.getID() };
 
         ExternalApplication app = new ExternalApplication(cmd,
                                                     env,null);
@@ -625,7 +640,7 @@ public class DataCollectionPane extends JScrollPane
 
     if(hit.getEMBL() == null)
     {
-      File fmfetch = new File("/nfs/disk100/pubseq/bin/mfetch");
+      File fgetz = new File("/usr/local/pubseq/bin/getz");
       String res = FastaTextPane.getUniprotLinkToDatabase(fgetz, 
                                      fmfetch, hit, env, "EMBL");
   
