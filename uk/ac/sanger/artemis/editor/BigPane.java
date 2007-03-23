@@ -71,7 +71,8 @@ public class BigPane extends JFrame
   protected static JInternalFrame srsFrame;
   protected static JCheckBox addNote = new JCheckBox("Add Note");
  
-  protected static int CACHE_SIZE = 100;
+  public static int CACHE_SIZE = 100;
+  public static int MAX_CACHE_SIZE = 1000;
   private JTextArea qualifier;
   private DataViewInternalFrame dataView;
   //private FeatureVector overlapFeature;
