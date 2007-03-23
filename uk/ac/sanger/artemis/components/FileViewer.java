@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.9 2007-03-22 17:36:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.10 2007-03-23 13:59:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -30,7 +30,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.*;
 import java.io.Reader;
@@ -45,6 +44,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -59,7 +59,7 @@ import uk.ac.sanger.artemis.Options;
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.9 2007-03-22 17:36:00 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.10 2007-03-23 13:59:10 tjc Exp $
  *
  **/
 
@@ -89,7 +89,6 @@ public class FileViewer extends JFrame
    *  variable.  This is updated when any FileViewer frame is moved.
    **/
   private static Point saved_position = null;
-  private int lineHeight;
   
   /**
    *  Create a new FileViewer component and make it visible.
@@ -133,7 +132,7 @@ public class FileViewer extends JFrame
         return false;
       }
     };
-    lineHeight = textPane.getFontMetrics( textPane.getFont() ).getHeight();
+    //lineHeight = textPane.getFontMetrics( textPane.getFont() ).getHeight();
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     
     JScrollPane scroller = new JScrollPane(textPane);
@@ -267,11 +266,7 @@ public class FileViewer extends JFrame
    **/
   protected void setText(String read_string) 
   {
-    if(!read_string.equals(textPane.getText())) 
-    {
-      textPane.setText(read_string);
-      textPane.setCaretPosition(0);
-    }
+    textPane.setText(read_string);
   }
 
 
@@ -368,7 +363,12 @@ public class FileViewer extends JFrame
    */
   protected int getLineCount()
   {
-    try
+    int caretPosition = textPane.getCaretPosition();
+    Element root = textPane.getDocument().getDefaultRootElement();
+ 
+    return root.getElementIndex( caretPosition ) + 1;
+    
+    /*try
     {
       int offset     = textPane.getDocument().getLength();
       Rectangle r    = textPane.modelToView( offset );
@@ -378,7 +378,7 @@ public class FileViewer extends JFrame
     catch(Exception e)
     {
       return 0;
-    }
+    }*/
 
   }
 }
