@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.10 2007-03-23 13:59:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.11 2007-03-23 14:16:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import uk.ac.sanger.artemis.Options;
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.10 2007-03-23 13:59:10 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.11 2007-03-23 14:16:14 tjc Exp $
  *
  **/
 
@@ -380,5 +380,10 @@ public class FileViewer extends JFrame
       return 0;
     }*/
 
+  }
+
+  public JTextPane getTextPane()
+  {
+    return textPane;
   }
 }
