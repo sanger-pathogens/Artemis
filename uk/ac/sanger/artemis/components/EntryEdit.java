@@ -20,14 +20,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.37 2007-03-20 15:54:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.38 2007-03-23 13:57:02 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
+import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
+import uk.ac.sanger.artemis.editor.BigPane;
+import uk.ac.sanger.artemis.editor.FastaTextPane;
+import uk.ac.sanger.artemis.editor.HitInfo;
 import uk.ac.sanger.artemis.sequence.Marker;
 
 import uk.ac.sanger.artemis.util.OutOfRangeException;
@@ -48,6 +52,9 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
+import com.sshtools.j2ssh.sftp.FileAttributes;
+
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -55,7 +62,7 @@ import java.util.List;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.37 2007-03-20 15:54:20 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.38 2007-03-23 13:57:02 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1242,7 +1249,79 @@ public class EntryEdit extends JFrame
 
         
         //
+        // Object Editor - accessing entries via SRS or mfetch
         //
+        JTextField cacheSize = null;
+        if(System.getProperty("j2ssh") != null)
+        {
+          boolean remoteMfetch = false;
+          if(FileList.isConnected() && !FastaTextPane.isForceUrl())
+          {
+            FileList fileList = new FileList();
+            FileAttributes attr = fileList.stat("/nfs/disk100/pubseq/bin/mfetch");
+            if(attr != null)
+              remoteMfetch = attr.isFile();
+          }
+          
+          Box yBox = Box.createVerticalBox();
+          final String srsUrl = (String)Options.getOptions().getOptionValues("srs_url").elementAt(0);
+          final JCheckBox useMfetch = 
+            new JCheckBox("Use Sanger Server (Sanger Users Only)", remoteMfetch);
+          
+          useMfetch.addItemListener(new ItemListener()
+          {
+            public void itemStateChanged(ItemEvent e)
+            {
+              if(useMfetch.isSelected())
+              {
+                FileList fileList = new FileList();
+                FileAttributes attr = fileList.stat("/nfs/disk100/pubseq/bin/mfetch");
+                if(attr != null)
+                {
+                  FastaTextPane.setForceUrl(false);
+                  FastaTextPane.setRemoteMfetch(useMfetch.isSelected());
+                }
+              }
+              else
+              {
+                FastaTextPane.setForceUrl(true);
+                FastaTextPane.setRemoteMfetch(useMfetch.isSelected());
+              }
+            }
+          });
+          final JCheckBox useSrs = new JCheckBox("Use SRS "+srsUrl, !remoteMfetch);
+          
+          ButtonGroup group = new ButtonGroup();
+          group.add(useMfetch);
+          group.add(useSrs);
+          yBox.add(new JLabel("Select the method for retrieving entry information "+
+                              "in the object editor:"));
+          yBox.add(useMfetch);
+          yBox.add(useSrs);
+          yBox.add(Box.createVerticalStrut(5));
+          
+          // cache
+          cacheSize = new JTextField(Integer.toString(BigPane.CACHE_SIZE), 6);
+          cacheSize.setMaximumSize(new Dimension(cacheSize.getMaximumSize().width,
+                                                 cacheSize.getPreferredSize().height));
+          yBox.add(Box.createVerticalStrut(5));
+          yBox.add(new JLabel("Size of cache for retrieved entried (max "+
+              BigPane.MAX_CACHE_SIZE+"):"));
+          yBox.add(cacheSize);
+          
+          JButton buttClear = new JButton("Empty Cache");
+          buttClear.addActionListener(new ActionListener()
+          {
+            public void actionPerformed(ActionEvent e)
+            {
+              Arrays.fill(FastaTextPane.cacheHits, null);
+            }
+          });
+          yBox.add(buttClear);
+          
+          yBox.add(Box.createVerticalGlue());
+          tabPane.add("Object Editor", yBox);
+        }
         
         /*String urlString = (String)Options.getOptions().getOptionValues("srs_url").elementAt(0);
         Box yBox = Box.createVerticalBox();
@@ -1274,6 +1353,28 @@ public class EntryEdit extends JFrame
         
         //if(!srsField.getText().equals(urlString))
         //  Options.getOptions().setProperty("srs_url", srsField.getText().trim());
+        
+        if(cacheSize != null && 
+           Integer.parseInt(cacheSize.getText()) != BigPane.CACHE_SIZE)
+        {
+          int cacheSizeValue = Integer.parseInt(cacheSize.getText());
+          
+          if(cacheSizeValue <= 0)
+            return;
+          if(cacheSizeValue > BigPane.MAX_CACHE_SIZE)
+            BigPane.CACHE_SIZE = BigPane.MAX_CACHE_SIZE;
+          else
+            BigPane.CACHE_SIZE = Integer.parseInt(cacheSize.getText());
+          HitInfo[] cacheHits = FastaTextPane.cacheHits;
+        
+          FastaTextPane.cacheHits = new HitInfo[BigPane.CACHE_SIZE];
+          for(int i = 0; i < cacheHits.length; i++)
+          {
+            if(i >= FastaTextPane.cacheHits.length)
+              break;
+            FastaTextPane.cacheHits[i] = cacheHits[i];
+          }
+        }
 
      }
     });
