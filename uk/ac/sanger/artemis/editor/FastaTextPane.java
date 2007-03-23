@@ -60,8 +60,10 @@ public class FastaTextPane extends JScrollPane
   private Vector listerners = new Vector();
   private Vector threads = new Vector();
   private static boolean remoteMfetch = false;
+  private static boolean forceUrl = false;
   public static HitInfo[] cacheHits = new HitInfo[BigPane.CACHE_SIZE];
   public static int nCacheHits = 0;
+  private static File mfetchExecutable = new File("/nfs/disk100/pubseq/bin/mfetch");
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(FastaTextPane.class);
   
@@ -634,15 +636,14 @@ public class FastaTextPane extends JScrollPane
       int n = 0;
       int this_nhit = 0;
       nhits = 0;
-      File fmfetch = new File("/nfs/disk100/pubseq/bin/mfetch");
- 
       
-      if(!fmfetch.exists() && !remoteMfetch &&
+      
+      if(!getMfetchExecutable().exists() && !isRemoteMfetch() && !isForceUrl() &&
           System.getProperty("j2ssh") != null &&
           FileList.isConnected())
       {
         FileList fileList = new FileList();
-        FileAttributes attr = fileList.stat("/nfs/disk100/pubseq/bin/mfetch");
+        FileAttributes attr = fileList.stat(getMfetchExecutable().getAbsolutePath());
         if(attr != null)
           remoteMfetch = attr.isFile();
       }
@@ -694,7 +695,7 @@ public class FastaTextPane extends JScrollPane
       BufferedReader strbuff = null;
       File fgetz = new File("/usr/local/pubseq/bin/getz");
       
-      if(fmfetch.exists() || remoteMfetch)
+      if(getMfetchExecutable().exists() || remoteMfetch)
       {
         StringBuffer buff = new StringBuffer();
         for(int i=0; i<queryMfetch.length; i++)
@@ -705,9 +706,9 @@ public class FastaTextPane extends JScrollPane
           
           String mfetch = queryMfetch[i].toString();
           
-          if(fmfetch.exists())  // local
+          if(getMfetchExecutable().exists())  // local
           {
-            String cmd[]   = { "mfetch", "-f", "acc org des gen",
+            String cmd[]   = { "mfetch", "-p", "22140", "-f", "acc org des gen",
               "-d", "uniprot", "-i", "acc:"+mfetch };
        
             ExternalApplication app = new ExternalApplication(cmd,
@@ -717,7 +718,7 @@ public class FastaTextPane extends JScrollPane
           else                 // remote
           {
             String cmd   = 
-              "mfetch -f \"acc org des gen\" -d uniprot -i \"acc:"+mfetch+"\"" ;
+              "mfetch -p 22140 -f \"acc org des gen\" -d uniprot -i \"acc:"+mfetch+"\"" ;
             uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
               new uk.ac.sanger.artemis.j2ssh.SshPSUClient(cmd);
             ssh.run();
@@ -768,7 +769,7 @@ public class FastaTextPane extends JScrollPane
       }
       else
       {
-        String cmd[]   = { "getz", "-f", "acc org description gen",
+        String cmd[]   = { "getz", "-p", "22140", "-f", "acc org description gen",
                            "[uniprot-acc:"+querySRS.toString()+"]" };
                       
         ExternalApplication app = new ExternalApplication(cmd,
@@ -847,10 +848,11 @@ public class FastaTextPane extends JScrollPane
                          " cache size="+cacheHits.length);
           hit.setEMBL(cacheHit.getEMBL());
           hit.setEC_number(cacheHit.getEC_number());
+          hit.setGeneName(cacheHit.getGeneName());
           continue;
         }
         
-        res = getUniprotLinkToDatabase(fgetz, fmfetch, hit, env, "embl");
+        res = getUniprotLinkToDatabase(fgetz, getMfetchExecutable(), hit, env, "embl");
               
         int ind1 = res.indexOf("ID ");
         if(ind1 > -1) 
@@ -866,7 +868,7 @@ public class FastaTextPane extends JScrollPane
         if(hit.getEC_number() != null)
           continue;   
 
-        res = getUniprotLinkToDatabase(fgetz, fmfetch, hit, env, "enzyme");
+        res = getUniprotLinkToDatabase(fgetz, getMfetchExecutable(), hit, env, "enzyme");
 
         ind1 = res.indexOf("ID ");
         if(ind1 > -1) 
@@ -889,7 +891,7 @@ public class FastaTextPane extends JScrollPane
    * @param hit
    * @return
    */
-  private HitInfo checkCache(final HitInfo hit)
+  protected static HitInfo checkCache(final HitInfo hit)
   {
     for(int i=0; i<cacheHits.length; i++)
     {
@@ -924,7 +926,7 @@ public class FastaTextPane extends JScrollPane
 
     if(fmfetch.exists())
     {
-      String cmd[]   = { "mfetch", "-f", "id",
+      String cmd[]   = { "mfetch", "-p", "22140", "-f", "id",
           "-d", "uniprot", "-i", "acc:"+hit.getID(), 
           "-l", DB };
 
@@ -936,7 +938,7 @@ public class FastaTextPane extends JScrollPane
     else if(remoteMfetch)
     {
       String cmd   = 
-        "mfetch -f id -d uniprot -i \"acc:"+hit.getID()+"\" -l "+DB ;
+        "mfetch -p 22140 -f id -d uniprot -i \"acc:"+hit.getID()+"\" -l "+DB ;
       uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
         new uk.ac.sanger.artemis.j2ssh.SshPSUClient(cmd);
       ssh.run();
@@ -1006,6 +1008,26 @@ public class FastaTextPane extends JScrollPane
   public static boolean isRemoteMfetch()
   {
     return remoteMfetch;
+  }
+
+  public static void setRemoteMfetch(boolean remoteMfetch)
+  {
+    FastaTextPane.remoteMfetch = remoteMfetch;
+  }
+
+  public static boolean isForceUrl()
+  {
+    return forceUrl;
+  }
+
+  public static void setForceUrl(boolean forceUrl)
+  {
+    FastaTextPane.forceUrl = forceUrl;
+  }
+
+  public static File getMfetchExecutable()
+  {
+    return mfetchExecutable;
   }
  
 
