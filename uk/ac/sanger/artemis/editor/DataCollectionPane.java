@@ -553,11 +553,10 @@ public class DataCollectionPane extends JScrollPane
   * @param ortholog	true if ortholog is selected.
   *
   */
-  protected static void getzCall(HitInfo hit, boolean ortholog)
+  private static void getzCall(HitInfo hit, boolean ortholog)
   {
-    String env[] = { "PATH=/usr/local/pubseq/bin/" };
+    final String env[] = { "PATH=/usr/local/pubseq/bin/" };
 
-    File fmfetch = new File("/nfs/disk100/pubseq/bin/mfetch");
     if(hit.getOrganism() == null ||
        hit.getDescription() == null)
     {
@@ -566,13 +565,13 @@ public class DataCollectionPane extends JScrollPane
       if(FastaTextPane.isRemoteMfetch())
       {
         String cmd   = 
-          "mfetch -f \"org des gen\" -d uniprot -i \"acc:"+hit.getID()+"\"" ;
+          "mfetch -p 22140 -f \"org des gen\" -d uniprot -i \"acc:"+hit.getID()+"\"" ;
         uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
           new uk.ac.sanger.artemis.j2ssh.SshPSUClient(cmd);
         ssh.run();
         res = ssh.getStdOut();
       }
-      else if(!fmfetch.exists())
+      else if(!FastaTextPane.getMfetchExecutable().exists())
       {
         try
         {
@@ -603,7 +602,7 @@ public class DataCollectionPane extends JScrollPane
       }
       else
       {
-        String cmd[]   = { "mfetch", "-f", "org des gen",
+        String cmd[]   = { "mfetch", "-p", "22140", "-f", "org des gen",
             "-d", "uniprot", "-i", "acc:"+hit.getID() };
 
         ExternalApplication app = new ExternalApplication(cmd,
@@ -642,7 +641,7 @@ public class DataCollectionPane extends JScrollPane
     {
       File fgetz = new File("/usr/local/pubseq/bin/getz");
       String res = FastaTextPane.getUniprotLinkToDatabase(fgetz, 
-                                     fmfetch, hit, env, "EMBL");
+                   FastaTextPane.getMfetchExecutable(), hit, env, "EMBL");
   
       int ind1 = res.indexOf("ID ");
       if(ind1 > -1)
