@@ -139,7 +139,7 @@ public class SshPSUClient extends Thread
       if(ssh == null)
         return;
 
-      logger4j.debug("RUN "+program);
+      logger4j.info("RUN "+program);
 
       if(justProg)
         runProgram();
@@ -529,7 +529,7 @@ public class SshPSUClient extends Thread
     }
     catch(IOException exp)
     {
-      logger4j.debug("NOT STARTED runProgram()");
+      logger4j.warn("NOT STARTED runProgram()");
       if(System.getProperty("debug") != null)
       {
         exp.printStackTrace();
