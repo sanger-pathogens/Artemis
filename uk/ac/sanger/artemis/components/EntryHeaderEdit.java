@@ -20,26 +20,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryHeaderEdit.java,v 1.1 2004-06-09 09:46:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryHeaderEdit.java,v 1.2 2007-03-23 14:15:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 
-import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.text.*;
-
-import java.io.*;
 
 /**
  *  Objects of this class are used to edit the header of an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryHeaderEdit.java,v 1.1 2004-06-09 09:46:33 tjc Exp $
+ *  @version $Id: EntryHeaderEdit.java,v 1.2 2007-03-23 14:15:54 tjc Exp $
  **/
 
 public class EntryHeaderEdit
@@ -62,8 +58,8 @@ public class EntryHeaderEdit
 
     readHeader ();
 
-    file_viewer.getTextArea ().setEditable (true);
-    file_viewer.getTextArea ().getDocument ().addDocumentListener (this);
+    file_viewer.getTextPane().setEditable (true);
+    file_viewer.getTextPane().getDocument ().addDocumentListener (this);
 
     getEntry ().addEntryChangeListener (this);
     entry_group.addEntryGroupChangeListener (this);
