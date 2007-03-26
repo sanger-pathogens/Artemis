@@ -261,7 +261,19 @@ public class DatabaseDocument extends Document
     {
       int index = location.lastIndexOf('=');
       setLocation(location.substring(0,index+1) + schema);
-      connIB  = null;
+      if(iBatis && connIB != null)
+      {
+        try
+        {
+          connIB.close();
+        }
+        catch(SQLException e)
+        {
+          logger4j.warn(e.getMessage());
+        }
+        connIB  = null;
+      }
+      
       jdbcDAO = null;
       System.setProperty("chado", (String)getLocation());
       logger4j.debug((String)getLocation());
