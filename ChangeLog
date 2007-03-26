@@ -1,3 +1,9 @@
+Version ??
+
+	Added cache to store the entries retrieved for the object editor.
+	
+	Implement log4j logging to be displayed in log viewer. Using colour
+	coding depending on level of logging.
 
 Version 9
 
