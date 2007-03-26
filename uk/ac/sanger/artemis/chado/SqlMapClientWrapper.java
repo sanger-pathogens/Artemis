@@ -46,8 +46,23 @@ public class SqlMapClientWrapper
     this.sqlMap = sql_config.getSqlMapInstance();
   }
   
+  /**
+   * Close the current connection and return it to the pool
+   * @throws SQLException
+   */
+  protected void close() throws SQLException
+  {
+    if(sqlMap != null)
+    {
+      if(sqlMap.getCurrentConnection() != null)
+        if(!sqlMap.getCurrentConnection().isClosed())
+          sqlMap.getCurrentConnection().close();
+
+      sqlMap = null;
+    }
+  }
   
-  public List queryForList(final String method, final Object arg)
+  protected List queryForList(final String method, final Object arg)
   {
     try
     {
@@ -59,7 +74,7 @@ public class SqlMapClientWrapper
     }
   }
   
-  public Object queryForObject(final String method, final Object arg)
+  protected Object queryForObject(final String method, final Object arg)
   {
     try
     {
@@ -71,7 +86,7 @@ public class SqlMapClientWrapper
     }
   }
   
-  public Object insert(final String method, final Object arg)
+  protected Object insert(final String method, final Object arg)
   {
     try
     {
@@ -83,7 +98,7 @@ public class SqlMapClientWrapper
     }
   }
   
-  public int delete(final String method, final Object arg)
+  protected int delete(final String method, final Object arg)
   {
     try
     {
@@ -95,7 +110,7 @@ public class SqlMapClientWrapper
     }
   }
   
-  public int update(final String method, final Object arg)
+  protected int update(final String method, final Object arg)
   {
     try
     {
@@ -107,22 +122,22 @@ public class SqlMapClientWrapper
     }
   }
 
-  public void startTransaction() throws SQLException
+  protected void startTransaction() throws SQLException
   { 
     sqlMap.startTransaction();
   }
   
-  public void endTransaction() throws SQLException
+  protected void endTransaction() throws SQLException
   { 
     sqlMap.endTransaction();
   }
   
-  public void commitTransaction() throws SQLException
+  protected void commitTransaction() throws SQLException
   {
     sqlMap.commitTransaction();
   }
 
-  public SqlMapClient getSqlMap()
+  protected SqlMapClient getSqlMap()
   {
     return sqlMap;
   }
