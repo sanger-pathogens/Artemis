@@ -77,6 +77,11 @@ public class IBatisDAO extends GmodDAO
     sql_config.init(pfield);
     this.sqlMap = sql_config.getSqlMapInstance();*/
   }
+  
+  public void close() throws SQLException
+  {
+    sqlMap.close();
+  }
 
   //////
   ////// GeneralDaoI
