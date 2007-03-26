@@ -101,7 +101,7 @@ public class DataCollectionPane extends JScrollPane
     if(srs != null)
       srs_url = (String)srs.elementAt(0);
     else
-      srs_url = "http://srs.sanger.ac.uk/srsbin/cgi-bin/";
+      srs_url = "http://srs.ebi.ac.uk/srsbin/cgi-bin/";
     return srs_url;
   }
 
