@@ -82,6 +82,9 @@ public class BigPane extends JFrame
   public BigPane()
   {
     super("Object Editor");
+    addWindowListener(new winExit());
+    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    MultiLineToolTipUI.initialize();
   }
 
   public void set(Hashtable dataFile, JTextArea qualifier,
@@ -98,10 +101,8 @@ public class BigPane extends JFrame
   {
     //this.overlapFeature = overlapFeature;
     this.edit_feature   = edit_feature;
-
     addNote.setSelected(false);
-    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-    MultiLineToolTipUI.initialize();
+    
     setFont(font);
 
     if(desktop == null)
@@ -122,8 +123,6 @@ public class BigPane extends JFrame
     setBounds(inset, inset,
               screenSize.width  - inset*2,
               screenSize.height - inset*2);
-
-    addWindowListener(new winExit());
 
     final JScrollPane scrollEvidence = new JScrollPane();
     // data set
@@ -378,6 +377,7 @@ public class BigPane extends JFrame
     dataView.stopGetz();
     dataView.dispose();
     BigPane.srsFrame = null;
+    dispose();
   }
 
 
