@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.30 2007-03-19 10:15:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.31 2007-03-26 12:48:27 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -66,7 +66,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.30 2007-03-19 10:15:03 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.31 2007-03-26 12:48:27 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -761,8 +761,13 @@ public class FeatureEdit extends JPanel
               // show object editor
               try
               {
-               bp.set(dataFile, qualifier_text_area, overlapFeatures,
-                      edit_feature);
+                if(dataFile.size() > 0)
+                  bp.set(dataFile, qualifier_text_area, overlapFeatures,
+                         edit_feature);
+                else
+                  JOptionPane.showMessageDialog(null,"No results files.",
+                      "Warning",
+                      JOptionPane.WARNING_MESSAGE); 
               }
               catch(ArrayIndexOutOfBoundsException e)
               {
