@@ -360,23 +360,24 @@ public class DatabaseDocument extends Document
     try
     {
       GmodDAO dao = getDAO();
+
+      // if creating a gene builder
+      if(gene_builder)
+      {
+        List schemaList = new Vector();
+        schemaList.add(schema);
+          
+        ByteBuffer bb = getGeneFeature(srcFeatureId,
+                                       schemaList, dao);          
+        return new ByteArrayInputStream(bb.getBytes());
+      }
+
       ByteBuffer entry = new ByteBuffer();
-      
       try
       {
         if(dao instanceof IBatisDAO)
           ((IBatisDAO) dao).startTransaction();
 
-        // if creating a gene builder
-        if(gene_builder)
-        {
-          List schemaList = new Vector();
-          schemaList.add(schema);
-          
-          ByteBuffer bb = getGeneFeature(srcFeatureId,
-                                         schemaList, dao);          
-          return new ByteArrayInputStream(bb.getBytes());
-        }
         gff_buffer = getGff(dao);
         
         if(splitGFFEntry)
