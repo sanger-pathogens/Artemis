@@ -129,7 +129,8 @@ public class SqlMapClientWrapper
   
   protected void endTransaction() throws SQLException
   { 
-    sqlMap.endTransaction();
+    if(sqlMap != null)
+      sqlMap.endTransaction();
   }
   
   protected void commitTransaction() throws SQLException
