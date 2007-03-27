@@ -373,13 +373,11 @@ public class DatabaseDocument extends Document
           List schemaList = new Vector();
           schemaList.add(schema);
           
-          
-          return new ByteArrayInputStream(getGeneFeature(srcFeatureId,
-              schemaList, dao).getBytes());
+          ByteBuffer bb = getGeneFeature(srcFeatureId,
+                                         schemaList, dao);          
+          return new ByteArrayInputStream(bb.getBytes());
         }
-
         gff_buffer = getGff(dao);
-
         
         if(splitGFFEntry)
         {
@@ -751,15 +749,13 @@ public class DatabaseDocument extends Document
       for(int j = 0; j < transcipt_relations.size(); j++)
       {
         id = ((FeatureRelationship) transcipt_relations.get(j)).getFeatureBySubjectId().getFeatureId();
-        
 
         buildGffLineFromId(dao, id, id_store, parent.getUniqueName(), 
                            src_id, buff, null);
       }
     }
 
-
-    System.out.println( new String(buff.getBytes()) );
+    logger4j.debug( new String(buff.getBytes()) );
     return buff;
   }
   
