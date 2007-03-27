@@ -38,6 +38,8 @@ public class SqlMapClientWrapper
 {
   
   private SqlMapClient sqlMap;
+  private static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(SqlMapClientWrapper.class);
   
   public SqlMapClientWrapper(final JPasswordField pfield)
   {
@@ -70,6 +72,7 @@ public class SqlMapClientWrapper
     }
     catch(SQLException e)
     {
+      logger4j.error(e.getMessage());
       throw new RuntimeException(e);
     }
   }
@@ -82,6 +85,7 @@ public class SqlMapClientWrapper
     }
     catch(SQLException e)
     {
+      logger4j.error(e.getMessage());
       throw new RuntimeException(e);
     }
   }
@@ -94,6 +98,7 @@ public class SqlMapClientWrapper
     }
     catch(SQLException e)
     {
+      logger4j.error(e.getMessage());
       throw new RuntimeException(e);
     }
   }
@@ -106,6 +111,7 @@ public class SqlMapClientWrapper
     }
     catch(SQLException e)
     {
+      logger4j.error(e.getMessage());
       throw new RuntimeException(e);
     }
   }
@@ -118,6 +124,7 @@ public class SqlMapClientWrapper
     }
     catch(SQLException e)
     {
+      logger4j.error(e.getMessage());
       throw new RuntimeException(e);
     }
   }
