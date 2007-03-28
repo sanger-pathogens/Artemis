@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.19 2007-02-01 18:13:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.20 2007-03-28 09:15:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -272,7 +272,6 @@ public class ChadoCanonicalGene
    */
   public void addSplicedFeatures(final String transcript_name, 
                       final Feature exon, boolean reset) 
-         throws InvalidRelationException
   {
     if(reset)
       splicedFeatures.remove(transcript_name);
@@ -286,8 +285,7 @@ public class ChadoCanonicalGene
    * @throws InvalidRelationException
    */
   public void addSplicedFeatures(final String transcript_name, 
-                      final Feature spliced) 
-         throws InvalidRelationException
+                      final Feature spliced)
   {   
     final List v_spliced;
     if(splicedFeatures.containsKey(transcript_name))
@@ -340,7 +338,6 @@ public class ChadoCanonicalGene
    */
   public void addProtein(final String transcript_name,
                          final Feature protein) 
-         throws InvalidRelationException
   {   
     proteins.put(transcript_name, protein);
   }
@@ -353,7 +350,6 @@ public class ChadoCanonicalGene
    */
   public void add3PrimeUtr(final String transcript_name, 
                            final Feature utr) 
-         throws InvalidRelationException
   {  
     final List utr_list;
     if(three_prime_utr.containsKey(transcript_name))
@@ -372,8 +368,7 @@ public class ChadoCanonicalGene
    * @throws InvalidRelationException
    */
   public void add5PrimeUtr(final String transcript_name, 
-                           final Feature utr) 
-         throws InvalidRelationException
+                           final Feature utr)
   {
     final List utr_list;
     if(five_prime_utr.containsKey(transcript_name))
@@ -576,18 +571,35 @@ public class ChadoCanonicalGene
    * @param transcript_id transcript feature
    * @return
    */
-  private boolean isSplicedFeatures(final String feature_id, 
-                         final String transcript_id)
+  private boolean isSplicedFeatures(final String feature_id)
   {
-    List splicedFeatures = getSplicedFeaturesOfTranscript(transcript_id);
-    if(splicedFeatures == null)
-      return false;
+    List splicedFeatures = new Vector();
+    List transcripts = getTranscripts();
+    
     try
     {
+      for(int i = 0; i < transcripts.size(); i++)
+      {
+        Feature transcript = (Feature) transcripts.get(i);
+        String transcript_id = getQualifier(transcript, "ID");
+        List splicedSites = getSplicedFeaturesOfTranscript(transcript_id);
+        if(splicedSites != null)
+          splicedFeatures.addAll(splicedSites);
+      }
+
+      if(splicedFeatures == null)
+        return false;
+
       for(int i=0; i<splicedFeatures.size(); i++)
       {
-        if(feature_id.equals(getQualifier((Feature)splicedFeatures.get(i), "ID")))
-          return true;
+        GFFStreamFeature feature = (GFFStreamFeature)splicedFeatures.get(i);
+        RangeVector rv = feature.getLocation().getRanges();
+        for(int j=0; j<rv.size(); j++)
+        {
+          String this_feature_id = feature.getSegmentID((Range)rv.get(j));
+          if(feature_id.equals(this_feature_id))
+            return true;
+        }
       }
     }
     catch(InvalidRelationException e)
@@ -631,20 +643,36 @@ public class ChadoCanonicalGene
   {
     try
     {
-      //List exons = getExonsOfTranscript(transcript_id);
-      int transcript_number = 1;
-      for(transcript_number=1; transcript_number<=transcripts.size(); 
-          transcript_number++)
+      int index = transcript_id.lastIndexOf(':');
+      int transcript_number = -1;
+      
+      if(index > -1)
       {
-        Feature transcript = (Feature)transcripts.get(transcript_number-1);
-        if(transcript_id.equals( getQualifier(transcript, "ID") ))
-          break;
+        try
+        {
+          transcript_number = Integer.parseInt(transcript_id.substring(index+1));
+        }
+        catch(NumberFormatException nfe)
+        {
+          transcript_number = -1;
+        }
+      }
+      
+      if(transcript_number < 1)
+      {
+        for(transcript_number = 1; transcript_number <= transcripts.size(); 
+            transcript_number++)
+        {
+          Feature transcript = (Feature) transcripts.get(transcript_number - 1);
+          if(transcript_id.equals(getQualifier(transcript, "ID")))
+            break;
+        }
       }
       
       String name = (String)getGene().getQualifierByName("ID").getValues().get(0);
       int auto = 1;
       while( isSplicedFeatures( 
-          name + ":" + transcript_number + ":exon:" + auto, transcript_id ) && auto < 50)
+          name + ":" + transcript_number + ":exon:" + auto) && auto < 50)
         auto++;
       return name + ":" + transcript_number + ":exon:" + auto;
     }
