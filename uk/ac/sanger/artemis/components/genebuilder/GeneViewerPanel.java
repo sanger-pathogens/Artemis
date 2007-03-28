@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.38 2007-03-12 16:37:22 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.39 2007-03-28 09:17:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -310,7 +310,7 @@ public class GeneViewerPanel extends JPanel
         try
         {
           addFeature(range_selected, uniquename,
-              transcript.getLocation().isComplement());
+              transcript.getLocation().isComplement(), true);
         }
         catch(OutOfRangeException e)
         {
@@ -321,7 +321,30 @@ public class GeneViewerPanel extends JPanel
     });
     menu.add(createFeature);
     
-    
+    JMenuItem createFeatureProtein = new JMenuItem("Add protein feature to transcript hierarchy");
+    createFeatureProtein.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)  
+      {
+        if(last_cursor_position == null)
+          return;
+        Feature transcript = getTranscriptAt(last_cursor_position);
+        String uniquename  = getQualifier(transcript, "ID");
+        Range range_selected = selection.getSelectionRange();
+        
+        try
+        {
+          addFeature(range_selected, uniquename,
+              transcript.getLocation().isComplement(), false);
+        }
+        catch(OutOfRangeException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    });
+    menu.add(createFeatureProtein);
     
     JMenuItem adjustCoords = new JMenuItem("Adjust selected transcripts coordinates boundary");
     adjustCoords.addActionListener(new ActionListener()
@@ -330,10 +353,13 @@ public class GeneViewerPanel extends JPanel
       {
         FeatureVector features = selection.getAllFeatures();
         if(features.size() != 1)
+        {
           JOptionPane.showMessageDialog(null, 
               "Select a single transcript and try again.", 
               "Transcript Selection",
               JOptionPane.ERROR_MESSAGE);
+          return;
+        }
  
         uk.ac.sanger.artemis.Feature transcript = features.elementAt(0);
         checkTranscriptBoundary(transcript);
@@ -1261,23 +1287,57 @@ public class GeneViewerPanel extends JPanel
  
   private void addFeature(Range range,
                           final String transcript_name,
-                          final boolean isComplement) 
+                          final boolean isComplement,
+                          final boolean isParent) 
           throws OutOfRangeException
   {
+    if(range == null)
+    {
+      JOptionPane.showMessageDialog(null, 
+          "Select a range and try again.", 
+          "Range Selection",
+          JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+    
+    String uniqueName = JOptionPane.showInputDialog(null,
+        "Provide a feature unique name : ",
+        "Provide a feature unique name ",
+        JOptionPane.QUESTION_MESSAGE);
+    
+    if(uniqueName == null)
+      return;
+    
     QualifierVector qualifiers = new QualifierVector();
-    qualifiers.add(new Qualifier("Parent", transcript_name));
+    
+    qualifiers.add(new Qualifier("ID", uniqueName.trim()));
+    final Key key;
+    if(isParent)
+    {
+      key = new Key("region");
+      qualifiers.add(new Qualifier("Parent", transcript_name));
+    }
+    else
+    {
+      key = new Key("polypeptide");
+      qualifiers.add(new Qualifier("Derives_from", transcript_name));
+    }
     
     //final Entry default_entry = entry_group.getDefaultEntry();
     //final Key default_key =
     //  default_entry.getEntryInformation().getDefaultKey();
     
-    uk.ac.sanger.artemis.Feature other = createFeature(
+    uk.ac.sanger.artemis.Feature newFeature = createFeature(
         new Location(new RangeVector(range), isComplement),
-        entry_group, new Key("region"),
+        entry_group, key,
         qualifiers);
     
-    chado_gene.addOtherFeatures(transcript_name, 
-                        other.getEmblFeature());
+    if(isParent)
+      chado_gene.addOtherFeatures(transcript_name, 
+          newFeature.getEmblFeature());
+    else
+      chado_gene.addProtein(transcript_name, 
+          newFeature.getEmblFeature());
   }
   
   /**
