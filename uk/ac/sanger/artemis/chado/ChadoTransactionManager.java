@@ -441,11 +441,10 @@ public class ChadoTransactionManager
         Qualifier qualifier_uniquename = event.getFeature().getQualifierByName("ID");
         String feature_uniquename = 
                              (String)(qualifier_uniquename.getValues()).elementAt(0);
-        logger4j.debug("FEATURE_DELETED "+feature_uniquename);
         
         GFFStreamFeature gff_feature =
           (GFFStreamFeature)event.getFeature().getEmblFeature();
-        if(event.getFeature().getSegments().size() > 1)
+        if(event.getFeature().getSegments().size() > 0)
         {
           RangeVector ranges = gff_feature.getLocation().getRanges();
           for(int i=0; i<ranges.size(); i++)
@@ -551,9 +550,12 @@ public class ChadoTransactionManager
                              "Provide a systematic_id : ",
                              "systematic_id missing in "+
                              feature.getIDString(),
-                             JOptionPane.QUESTION_MESSAGE).trim();
+                             JOptionPane.QUESTION_MESSAGE);
+        
+        if(feature_uniquename == null)
+          return;
       }
-      feature.setQualifier(new Qualifier("ID", feature_uniquename));
+      feature.setQualifier(new Qualifier("ID", feature_uniquename.trim()));
     }
     catch(EntryInformationException eie)
     {
@@ -763,6 +765,8 @@ public class ChadoTransactionManager
    */
   private void deleteFeature(final String uniquename, final String featureType)
   {
+    logger4j.debug("FEATURE_DELETED "+uniquename);
+    
     org.gmod.schema.sequence.Feature chado_feature = 
       new org.gmod.schema.sequence.Feature();
     chado_feature.setUniqueName(uniquename);
