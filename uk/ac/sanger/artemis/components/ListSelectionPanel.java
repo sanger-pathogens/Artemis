@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ListSelectionPanel.java,v 1.3 2007-02-21 10:55:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ListSelectionPanel.java,v 1.4 2007-03-28 11:56:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -28,8 +28,6 @@ package uk.ac.sanger.artemis.components;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
@@ -127,16 +125,15 @@ class ListSelectionPanel extends JPanel
     
     add(bdown, BorderLayout.CENTER);
 
-    final KeyChoice key_choice = new KeyChoice(entry_group.elementAt(0)
-        .getEntryInformation(),
-        new uk.ac.sanger.artemis.io.Key("systematic_id"));
-
+    final QualifierChoice qualifier_choice = new QualifierChoice(
+        entry_group.elementAt(0).getEntryInformation(), null, null);
+    
     JButton add_butt = new JButton("ADD");
     add_butt.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
-        listModel.addElement(key_choice.getSelectedItem().toString());
+        listModel.addElement(qualifier_choice.getSelectedItem().toString());
       }
     });
     
@@ -145,7 +142,7 @@ class ListSelectionPanel extends JPanel
 
     bdown = Box.createVerticalBox();
     bdown.add(Box.createVerticalGlue());
-    bdown.add(key_choice);
+    bdown.add(qualifier_choice);
     bdown.add(add_butt);
     bdown.add(remove_butt);
     if(saveOption)
