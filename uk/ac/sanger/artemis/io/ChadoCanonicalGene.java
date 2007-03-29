@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.20 2007-03-28 09:15:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.21 2007-03-29 08:35:59 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -675,6 +675,53 @@ public class ChadoCanonicalGene
           name + ":" + transcript_number + ":exon:" + auto) && auto < 50)
         auto++;
       return name + ":" + transcript_number + ":exon:" + auto;
+    }
+    catch(InvalidRelationException e)
+    {
+      e.printStackTrace();
+    }
+    return null;
+  }
+  
+  
+  /**
+   * Generate new names for peptide features for this gene model
+   * @param transcript_id
+   * @return
+   */
+  public String autoGeneratePepName(final String transcript_id)
+  {
+    try
+    {
+      int index = transcript_id.lastIndexOf(':');
+      int transcript_number = -1;
+      
+      if(index > -1)
+      {
+        try
+        {
+          transcript_number = Integer.parseInt(transcript_id.substring(index+1));
+        }
+        catch(NumberFormatException nfe)
+        {
+          transcript_number = -1;
+        }
+      }
+      
+      if(transcript_number < 1)
+      {
+        for(transcript_number = 1; transcript_number <= transcripts.size(); 
+            transcript_number++)
+        {
+          Feature transcript = (Feature) transcripts.get(transcript_number - 1);
+          if(transcript_id.equals(getQualifier(transcript, "ID")))
+            break;
+        }
+      }
+      
+      String name = (String)getGene().getQualifierByName("ID").getValues().get(0);
+
+      return name + ":" + transcript_number + ":pep";
     }
     catch(InvalidRelationException e)
     {
