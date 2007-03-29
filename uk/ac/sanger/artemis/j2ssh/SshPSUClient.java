@@ -139,8 +139,6 @@ public class SshPSUClient extends Thread
       if(ssh == null)
         return;
 
-      logger4j.info("RUN "+program);
-
       if(justProg)
         runProgram();
       else
@@ -538,7 +536,6 @@ public class SshPSUClient extends Thread
     }
     
     // run the application
-    logger4j.debug(cmd);
 
     try
     {
@@ -546,7 +543,8 @@ public class SshPSUClient extends Thread
     }
     catch(IOException exp)
     {
-      logger4j.debug("runProgram()");
+      logger4j.warn("session   : "+cmd);
+      logger4j.warn("runProgram: "+exp.getMessage());
       if(System.getProperty("debug") != null)
       {
         exp.printStackTrace();
@@ -575,7 +573,8 @@ public class SshPSUClient extends Thread
        
     // stdout & stderr
     //logger4j.debug("STDOUT \n"+stdouth.getOutput());
-    logger4j.debug("STDERR :"+stderrh.getOutput());
+    if(!stderrh.getOutput().equals(""))
+      logger4j.debug("STDERR :"+stderrh.getOutput());
 
     session.close();
     return true;
