@@ -262,7 +262,7 @@ public class FastaTextPane extends JScrollPane
 
           if(hit != null)
             hit.setEndPosition(textPosition);
-
+          
           hit = getHitInfo(currentID,hitInfoCollection);
           hit.setStartPosition(textPosition);
 
@@ -549,11 +549,11 @@ public class FastaTextPane extends JScrollPane
   }
 
 
-  private static HitInfo getHitInfo(String acc, Vector hits)
+  private HitInfo getHitInfo(String acc, final Vector hits)
   {
     int ind = 0;
     acc     = acc.trim();
-
+    
     if((ind = acc.indexOf(";")) > -1)
       acc = acc.substring(0,ind);
 
@@ -564,7 +564,9 @@ public class FastaTextPane extends JScrollPane
       hit = (HitInfo)ehits.nextElement();
       if(hit.getAcc().equals(acc) ||
          hit.getID().equals(acc))
+      {
         return hit;
+      }
     }
 
     return null;
@@ -779,7 +781,8 @@ public class FastaTextPane extends JScrollPane
         strbuff = new BufferedReader(strread);
       }             
 
-      HitInfo hit = null;
+      HitInfo hit[] = new HitInfo[2];
+      HitInfo this_hit = null;
       String line = null;
       String lineStrip = null;
 
@@ -796,38 +799,64 @@ public class FastaTextPane extends JScrollPane
         
           lineStrip = line.substring(3).trim();
           if(line.startsWith("AC "))
-          {           
-            hit = getHitInfo(lineStrip,hits);
-                      
-            if(hit == null)
+          {
+            String acc1;
+            String acc2 = null;
+            
+            if(lineStrip.endsWith(";"))
+              lineStrip = lineStrip.substring(0, lineStrip.length()-1);
+              
+            int ind = lineStrip.indexOf(";");
+            
+            if(ind > -1)
+            {
+              acc1 = lineStrip.substring(0,ind);
+              acc2 = lineStrip.substring(ind+1);
+            }
+            else 
+              acc1 = lineStrip;
+            
+            hit[0] = getHitInfo(acc1,hits);
+            if(acc2 != null)
+              hit[1] = getHitInfo(acc2,hits);
+            else
+              hit[1] = null;
+            
+            if(hit[0] == null)
             {         
-              logger4j.debug("HIT NOT FOUND "+line);
+              logger4j.warn("HIT NOT FOUND "+lineStrip);
               continue;
             }         
                       
-            hit.setOrganism("");
-            hit.setGeneName("");
+            hit[0].setGeneName("");
+            
+            if(hit[1] != null)
+              hit[1].setGeneName("");
           }           
-                      
-          if(hit == null)
-            continue; 
-                      
-          if(line.startsWith("OS "))
-            hit.setOrganism(lineStrip);
-          else if(line.startsWith("DE "))
-            hit.appendDescription(lineStrip);
-          else if(line.startsWith("GN "))
-          {           
-            StringTokenizer tokGN = new StringTokenizer(lineStrip,";");
-            while(tokGN.hasMoreTokens())
-            {         
-              line = tokGN.nextToken();
-              if(line.startsWith("Name="))
-                hit.setGeneName(line.substring(5));
-//            else    
-//              hit.appendDescription(line);
-            }         
-          }           
+                
+          for(int i = 0; i < hit.length; i++)
+          {
+            this_hit = hit[i];
+            if(this_hit == null)
+              continue;
+
+            if(line.startsWith("OS "))
+              this_hit.setOrganism(lineStrip);
+            else if(line.startsWith("DE "))
+              this_hit.appendDescription(lineStrip);
+            else if(line.startsWith("GN "))
+            {
+              StringTokenizer tokGN = new StringTokenizer(lineStrip, ";");
+              while(tokGN.hasMoreTokens())
+              {
+                line = tokGN.nextToken();
+                if(line.startsWith("Name="))
+                  this_hit.setGeneName(line.substring(5));
+                // else
+                // hit.appendDescription(line);
+              }
+            }
+          }
         }
 
         strbuff.close();   
@@ -838,49 +867,49 @@ public class FastaTextPane extends JScrollPane
       ehits = hits.elements();
       while(ehits.hasMoreElements() && keepRunning)
       {               
-        hit = (HitInfo)ehits.nextElement();
+        this_hit = (HitInfo)ehits.nextElement();
         
-        HitInfo cacheHit = checkCache(hit);
+        HitInfo cacheHit = checkCache(this_hit);
         
         if(cacheHit != null && cacheHit.getEMBL() != null)
         {
           logger4j.debug("Retrieved from cache "+cacheHit.getID()+
                          " cache size="+cacheHits.length);
-          hit.setEMBL(cacheHit.getEMBL());
-          hit.setEC_number(cacheHit.getEC_number());
-          hit.setGeneName(cacheHit.getGeneName());
+          this_hit.setEMBL(cacheHit.getEMBL());
+          this_hit.setEC_number(cacheHit.getEC_number());
+          this_hit.setGeneName(cacheHit.getGeneName());
           continue;
         }
         
-        res = getUniprotLinkToDatabase(fgetz, getMfetchExecutable(), hit, env, "embl");
+        res = getUniprotLinkToDatabase(fgetz, getMfetchExecutable(), this_hit, env, "embl");
               
         int ind1 = res.indexOf("ID ");
         if(ind1 > -1) 
         {             
           StringTokenizer tok = new StringTokenizer(res);
           tok.nextToken();
-          hit.setEMBL(tok.nextToken());
+          this_hit.setEMBL(tok.nextToken());
         }             
         else          
-          hit.setEMBL("");
+          this_hit.setEMBL("");
                       
         // EC_number  
-        if(hit.getEC_number() != null)
+        if(this_hit.getEC_number() != null)
           continue;   
 
-        res = getUniprotLinkToDatabase(fgetz, getMfetchExecutable(), hit, env, "enzyme");
+        res = getUniprotLinkToDatabase(fgetz, getMfetchExecutable(), this_hit, env, "enzyme");
 
         ind1 = res.indexOf("ID ");
         if(ind1 > -1) 
         {             
           StringTokenizer tok = new StringTokenizer(res);
           tok.nextToken();
-          hit.setEC_number(tok.nextToken());
+          this_hit.setEC_number(tok.nextToken());
         }
         
         if(nCacheHits >= cacheHits.length)
           nCacheHits = 0;
-        cacheHits[nCacheHits] = hit;
+        cacheHits[nCacheHits] = this_hit;
         nCacheHits++;
       }               
     }              
