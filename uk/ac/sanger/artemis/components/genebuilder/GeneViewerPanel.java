@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.39 2007-03-28 09:17:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.40 2007-03-29 08:34:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -303,13 +303,13 @@ public class GeneViewerPanel extends JPanel
         if(last_cursor_position == null)
           return;
         Feature transcript = getTranscriptAt(last_cursor_position);
-        String uniquename  = getQualifier(transcript, "ID");
+        String transcriptName  = getQualifier(transcript, "ID");
         Range range_selected = selection.getSelectionRange();
         
         
         try
         {
-          addFeature(range_selected, uniquename,
+          addFeature(range_selected, transcriptName, null,
               transcript.getLocation().isComplement(), true);
         }
         catch(OutOfRangeException e)
@@ -329,12 +329,13 @@ public class GeneViewerPanel extends JPanel
         if(last_cursor_position == null)
           return;
         Feature transcript = getTranscriptAt(last_cursor_position);
-        String uniquename  = getQualifier(transcript, "ID");
+        String transcriptName  = getQualifier(transcript, "ID");
         Range range_selected = selection.getSelectionRange();
+        String pepName = chado_gene.autoGeneratePepName(transcriptName);
         
         try
         {
-          addFeature(range_selected, uniquename,
+          addFeature(range_selected, transcriptName, pepName,
               transcript.getLocation().isComplement(), false);
         }
         catch(OutOfRangeException e)
@@ -1286,7 +1287,8 @@ public class GeneViewerPanel extends JPanel
 
  
   private void addFeature(Range range,
-                          final String transcript_name,
+                          final String transcriptName,
+                          String featureName,
                           final boolean isComplement,
                           final boolean isParent) 
           throws OutOfRangeException
@@ -1300,27 +1302,30 @@ public class GeneViewerPanel extends JPanel
       return;
     }
     
-    String uniqueName = JOptionPane.showInputDialog(null,
+    if(featureName == null)
+    {
+      featureName = JOptionPane.showInputDialog(null,
         "Provide a feature unique name : ",
         "Provide a feature unique name ",
         JOptionPane.QUESTION_MESSAGE);
     
-    if(uniqueName == null)
-      return;
+      if(featureName == null)
+        return;
+    }
     
     QualifierVector qualifiers = new QualifierVector();
     
-    qualifiers.add(new Qualifier("ID", uniqueName.trim()));
+    qualifiers.add(new Qualifier("ID", featureName.trim()));
     final Key key;
     if(isParent)
     {
       key = new Key("region");
-      qualifiers.add(new Qualifier("Parent", transcript_name));
+      qualifiers.add(new Qualifier("Parent", transcriptName));
     }
     else
     {
       key = new Key("polypeptide");
-      qualifiers.add(new Qualifier("Derives_from", transcript_name));
+      qualifiers.add(new Qualifier("Derives_from", transcriptName));
     }
     
     //final Entry default_entry = entry_group.getDefaultEntry();
@@ -1333,10 +1338,10 @@ public class GeneViewerPanel extends JPanel
         qualifiers);
     
     if(isParent)
-      chado_gene.addOtherFeatures(transcript_name, 
+      chado_gene.addOtherFeatures(transcriptName, 
           newFeature.getEmblFeature());
     else
-      chado_gene.addProtein(transcript_name, 
+      chado_gene.addProtein(transcriptName, 
           newFeature.getEmblFeature());
   }
   
