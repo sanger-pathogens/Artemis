@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.38 2007-03-23 13:57:02 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.39 2007-03-29 08:35:08 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -62,7 +62,7 @@ import java.util.List;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.38 2007-03-23 13:57:02 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.39 2007-03-29 08:35:08 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1199,8 +1199,6 @@ public class EntryEdit extends JFrame
     {
       public void actionPerformed(ActionEvent event)
       {
-        
-        //JScrollPane jsp = new JScrollPane(shortcut_pane);
         final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
         shortcut_pane.setPreferredSize(new Dimension(
@@ -1244,10 +1242,7 @@ public class EntryEdit extends JFrame
         //
         //
         tabPane.add("Systematic Name Labels", systematicListSelectionPanel);
-        
-        tabPane.add("Short Cuts", shortcut_pane);
 
-        
         //
         // Object Editor - accessing entries via SRS or mfetch
         //
@@ -1323,6 +1318,8 @@ public class EntryEdit extends JFrame
           tabPane.add("Object Editor", yBox);
         }
         
+        tabPane.add("Short Cuts", shortcut_pane);
+        
         /*String urlString = (String)Options.getOptions().getOptionValues("srs_url").elementAt(0);
         Box yBox = Box.createVerticalBox();
         JTextField srsField = new JTextField(urlString);
@@ -1338,6 +1335,7 @@ public class EntryEdit extends JFrame
                                tabPane,
                                "Preferences",
                                JOptionPane.PLAIN_MESSAGE);
+        tabPane.removeAll();
         
         Options.getOptions().setDisplayNameQualifiers(
         		displayListSelectionPanel.getResultString());
