@@ -641,7 +641,7 @@ public class DataCollectionPane extends JScrollPane
     {
       File fgetz = new File("/usr/local/pubseq/bin/getz");
       String res = FastaTextPane.getUniprotLinkToDatabase(fgetz, 
-                   FastaTextPane.getMfetchExecutable(), hit, env, "EMBL");
+                   FastaTextPane.getMfetchExecutable(), hit, env, "embl");
   
       int ind1 = res.indexOf("ID ");
       if(ind1 > -1)
