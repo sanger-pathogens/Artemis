@@ -948,14 +948,15 @@ public class FastaTextPane extends JScrollPane
   * Link Uniprot to the another database (e.g. EMBL or ENZYME)
   *
   */
-  protected static String getUniprotLinkToDatabase(File fgetz, File fmfetch, HitInfo hit,
-                                                  String env[], String DB)
+  protected static String getUniprotLinkToDatabase(final File fgetz, final File fmfetch, 
+                                                   final HitInfo hit,
+                                                   final String env[], final String DB)
   {
     String res = null;
 
     if(fmfetch.exists())
     {
-      String cmd[]   = { "mfetch", "-p", "22140", "-f", "id",
+      final String cmd[]   = { "mfetch", "-p", "22140", "-f", "id",
           "-d", "uniprot", "-i", "acc:"+hit.getID(), 
           "-l", DB };
 
@@ -966,7 +967,7 @@ public class FastaTextPane extends JScrollPane
     }
     else if(remoteMfetch)
     {
-      String cmd   = 
+      final String cmd   = 
         "mfetch -p 22140 -f id -d uniprot -i \"acc:"+hit.getID()+"\" -l "+DB ;
       uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
         new uk.ac.sanger.artemis.j2ssh.SshPSUClient(cmd);
