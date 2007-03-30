@@ -931,7 +931,7 @@ public class DataCollectionPane extends JScrollPane
   * @param goHash	Hashtable of GO id's and description.
   *
   */
-  public void getGoHash(String filename, Hashtable goHash)
+  protected void getGoHash(String filename, Hashtable goHash)
   {
     try
     {

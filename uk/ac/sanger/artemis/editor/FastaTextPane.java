@@ -123,12 +123,12 @@ public class FastaTextPane extends JScrollPane
     return format;
   }
 
-  protected void setTextAreaFont(Font f)
+  private void setTextAreaFont(Font f)
   {
     textArea.setFont(f);
   }
   
-  protected InputStream getInputStream()
+  private InputStream getInputStream()
             throws IOException
   {
     FileInputStream inStream = new FileInputStream(dataFile);
@@ -144,7 +144,7 @@ public class FastaTextPane extends JScrollPane
   * BLASTP are supported.
   *
   */
-  protected String getResultsFormat()
+  private String getResultsFormat()
   {
     File fn = dataFile;
 
@@ -188,7 +188,7 @@ public class FastaTextPane extends JScrollPane
   }
 
 
-  protected StringBuffer readBLASTPFile(String format)
+  private StringBuffer readBLASTPFile(final String format)
   {
     //File fn = dataFile;
     StringBuffer sbuff = new StringBuffer();
@@ -387,7 +387,7 @@ public class FastaTextPane extends JScrollPane
   }
 
 
-  protected StringBuffer readFASTAFile(String format)
+  private StringBuffer readFASTAFile(final String format)
   {
     //File fn = dataFile;
     StringBuffer sbuff = new StringBuffer();
@@ -931,7 +931,7 @@ public class FastaTextPane extends JScrollPane
     return null;
   }
   
-  protected static String insertNewline(String s1, String s2)
+  protected static String insertNewline(String s1, final String s2)
   {
     int index = 0;
     while((index = s1.indexOf(s2, index)) > -1)
@@ -1016,7 +1016,7 @@ public class FastaTextPane extends JScrollPane
     return res;
   }
 
-  public void show(Object obj)
+  protected void show(Object obj)
   {
     if(obj instanceof HitInfo)
     {
