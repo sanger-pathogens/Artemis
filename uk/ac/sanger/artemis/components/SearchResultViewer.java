@@ -20,31 +20,37 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SearchResultViewer.java,v 1.3 2005-12-20 14:11:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SearchResultViewer.java,v 1.4 2007-04-02 13:34:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
-import uk.ac.sanger.artemis.*;
+import uk.ac.sanger.artemis.ExternalProgram;
+import uk.ac.sanger.artemis.ExternalProgramException;
+import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.util.Document;
 
-import uk.ac.sanger.artemis.util.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.JButton;
 
-import javax.swing.*;
+
 
 /**
  *  A component that displays the results of external searches, with the
  *  ability to send the results to a netscape process.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SearchResultViewer.java,v 1.3 2005-12-20 14:11:10 tjc Exp $
+ *  @version $Id: SearchResultViewer.java,v 1.4 2007-04-02 13:34:23 tjc Exp $
  **/
 
 public class SearchResultViewer extends FileViewer 
 {
+  /** */
+  private static final long serialVersionUID = 1L;
+
   /**
    *  Create a new SearchResultViewer component.
    *  @param title The name to attach to the new JFrame.
@@ -54,7 +60,7 @@ public class SearchResultViewer extends FileViewer
                             final Document document)
       throws IOException 
   {
-    super (label);
+    super (label, false);
 
     try 
     {
@@ -66,7 +72,7 @@ public class SearchResultViewer extends FileViewer
       dispose();
       throw e;
     }
-
+    setVisible(true);
     if(!Options.getOptions().getPropertyTruthValue("sanger_options")) 
       return;
 
