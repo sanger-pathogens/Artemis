@@ -62,6 +62,7 @@ import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.FeaturePub;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.FeatureCvTerm;
@@ -90,7 +91,7 @@ public class ChadoTransactionManager
   public static boolean addSegments = true;
   private Vector sql = new Vector();
   
-  /** GFF3 predefined tags */
+  /** GFF3 predefined tags, i.e. not feature_prop's */
   private String reserved_tags[] = 
           {   "ID",
               "Name",
@@ -104,6 +105,7 @@ public class ChadoTransactionManager
               "score",
               "codon_start",
               "similarity",
+              "literature",
               "gff_source",      // program or database
               "gff_seqname" };   // seqID of coord system
            
@@ -1244,36 +1246,21 @@ public class ChadoTransactionManager
                                       feature.getKey().getKeyString());
            sql.add(tsn);
          }
+         else if(qualifier_name.equals("literature"))
+         {
+           logger4j.debug(uniquename+"  in handleReservedTags() DELETE literature");
+           FeaturePub featurePub = getFeaturePub(qualifier_string, uniquename);
+           
+           tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+               featurePub,
+               feature.getLastModified(), feature, 
+               feature.getKey().getKeyString());
+           sql.add(tsn);
+         }
          else if(isCvTag(qualifier_name))
          {
-           /*Qualifier qual = feature.getQualifierByName(qualifier_name);
-           StringVector values = qual.getValues();
-           int beginIndex = qualifier_string.indexOf("term=")+5;
-           int endIndex   = qualifier_string.indexOf(";",beginIndex);
-           final String thisTerm;
-           if(endIndex > -1)
-             thisTerm = qualifier_string.substring(beginIndex, endIndex);
-           else
-             thisTerm = qualifier_string.substring(beginIndex);
-           
-           
-           for(int j=0; j<new_qualifier_strings.size(); j++)
-           {
-             String new_qualifier_string = (String)old_qualifier_strings.elementAt(j);
-             if(new_qualifier_string.indexOf("term="+thisTerm) > -1)
-             {
-               // possible update
-             }
-           }*/
-           
            logger4j.debug(uniquename+"  in handleReservedTags() DELETE "+
                qualifier_name+" "+qualifier_string);
-           
-           /*for(int j=0; j<new_qualifier_strings.size(); j++)
-           {
-             String new_qualifier_string = (String)old_qualifier_strings.elementAt(j);
-             System.out.println(new_qualifier_string);
-           }*/
            
            FeatureCvTerm feature_cvterm = getFeatureCvTerm(qualifier_name, qualifier_string, 
                                                            uniquename);
@@ -1349,6 +1336,17 @@ public class ChadoTransactionManager
                                       featureloc,
                                       feature.getLastModified(), feature,
                                       feature.getKey().getKeyString());
+           sql.add(tsn);
+         }
+         else if(qualifier_name.equals("literature"))
+         {
+           logger4j.debug(uniquename+"  in handleReservedTags() INSERT literature");
+           FeaturePub featurePub = getFeaturePub(qualifier_string, uniquename);
+           
+           tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+               featurePub,
+               feature.getLastModified(), feature,
+               feature.getKey().getKeyString());
            sql.add(tsn);
          }
          else if(qualifier_name.equals("Parent"))
@@ -1551,6 +1549,28 @@ public class ChadoTransactionManager
     return feature_dbxref;
   }
   
+  
+  /**
+   * Create the <code>FeaturePub</code> object for /literature 
+   * qualifiers
+   * @param qualifier_string
+   * @param uniqueName
+   * @return
+   */
+  private FeaturePub getFeaturePub(final String qualifier_string,
+                                   final String uniqueName)
+  {
+    FeaturePub featurePub = new FeaturePub();
+    Pub pub = new Pub();
+    pub.setUniqueName(qualifier_string);
+    org.gmod.schema.sequence.Feature feat = 
+      new org.gmod.schema.sequence.Feature();
+    feat.setUniqueName(uniqueName);
+    
+    featurePub.setPub(pub);
+    featurePub.setFeature(feat);
+    return featurePub;
+  }
   /**
    * Create the <code>FeatureCvTerm</code> object
    * @param qualifier_name
