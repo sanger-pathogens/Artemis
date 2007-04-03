@@ -27,7 +27,6 @@ package uk.ac.sanger.artemis.util;
 import java.io.*;
 import javax.swing.JOptionPane;
 import uk.ac.sanger.artemis.components.filetree.*;
-import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.j2ssh.FileTransferProgressMonitor;
 import uk.ac.sanger.artemis.j2ssh.FTProgress;
 
@@ -167,27 +166,21 @@ public class RemoteFileDocument extends Document
   */
   public void saveEntry(final File local_file)
   {
-    SwingWorker putWorker = new SwingWorker()
+    FileTransferProgressMonitor monitor = null;
+    try
     {
-      FileTransferProgressMonitor monitor;
-      public Object construct()
-      {
-        monitor = new FileTransferProgressMonitor(null);
-        FTProgress progress = monitor.add(local_file.getName());
+      monitor = new FileTransferProgressMonitor(null);
+      FTProgress progress = monitor.add(local_file.getName());
 
-        getRemoteFileNode().put(local_file, progress);
-        getRemoteFileNode().stat();
+      getRemoteFileNode().put(local_file, progress);
+      getRemoteFileNode().stat();
+      monitor.close();
+    }
+    finally
+    {
+      if(monitor != null)
         monitor.close();
-        return null;
-      }
-
-      public void finished()
-      {
-        if(monitor != null)
-          monitor.close();
-      }
-    };
-    putWorker.start();
+    }
   }
 
   /**
