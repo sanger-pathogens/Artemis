@@ -38,6 +38,7 @@ import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.sequence.FeaturePub;
 import org.gmod.schema.sequence.Synonym;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureRelationship;
@@ -96,6 +97,12 @@ public class IBatisDAO extends GmodDAO
   ////// SequenceDaoI
   //////
   //////
+  
+  public List getFeaturePubsBySrcFeatureId(final int srcFeatureId)
+  {
+    return sqlMap.queryForList("getFeaturePubsBySrcFeatureId",
+                               new Integer(srcFeatureId));
+  }
 
   public List getSimilarityMatches(final Integer srcFeatureId)
   {
@@ -549,6 +556,8 @@ public class IBatisDAO extends GmodDAO
       insertFeatureAlias((FeatureSynonym)o);
     else if(o instanceof FeatureCvTerm)
       insertAllFeatureCvTerm((FeatureCvTerm)o);
+    else if(o instanceof FeaturePub)
+      insertFeaturePub((FeaturePub)o);
     else if(o instanceof FeatureRelationship)
       insertFeatureRelationship((FeatureRelationship)o);
     else if(o instanceof AnalysisFeature)
@@ -575,6 +584,8 @@ public class IBatisDAO extends GmodDAO
       deleteFeatureSynonym((FeatureSynonym)o);
     else if(o instanceof FeatureCvTerm)
       sqlMap.delete("deleteFeatureCvTerm", o);
+    else if(o instanceof FeaturePub)
+      sqlMap.delete("deleteFeaturePub", o);
     else if(o instanceof AnalysisFeature)
       deleteAnalysisFeature((AnalysisFeature)o);
   }
@@ -627,6 +638,20 @@ public class IBatisDAO extends GmodDAO
   private void insertFeatureRelationship(FeatureRelationship feature_relationship)
   {
     sqlMap.insert("insertFeatureRelationship", feature_relationship);
+  }
+  
+  /**
+   * Insert a feature_cvterm and associated feature_cvtermprop's,
+   * feature_cvterm_dbxref's and feature_cvterm_pub.
+   * @param feature_cvterm
+   */
+  private void insertFeaturePub(final FeaturePub featurePub)
+  {
+    // get the pub_id and create a new Pub if necessary
+    if(featurePub.getPub() != null)
+      featurePub.setPub( loadPub(featurePub.getPub()) );
+    
+    sqlMap.insert("insertFeaturePub", featurePub);
   }
   
   /**

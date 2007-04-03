@@ -99,6 +99,12 @@ public class JdbcDAO extends GmodDAO
   //////
   //////
   
+  public List getFeaturePubsBySrcFeatureId(int srcFeatureId)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
   public List getSimilarityMatches(final Integer srcFeatureId)
   {
     return null;
@@ -2155,6 +2161,7 @@ public class JdbcDAO extends GmodDAO
       throw new RuntimeException(sqle);
     }
   }
+
 
   /**
    * Takes a list and creates a new one merging all feature objects

@@ -39,6 +39,7 @@ import uk.ac.sanger.artemis.components.Splash;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureProp;
 import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeaturePub;
 import org.gmod.schema.sequence.FeatureRelationship;
 import org.gmod.schema.sequence.FeatureSynonym;
 import org.gmod.schema.sequence.FeatureCvTerm;
@@ -476,7 +477,7 @@ public class DatabaseDocument extends Document
    *                            extract
    * @return   the <code>ByteBuffer</code> array of GFF lines
    */
-  private ByteBuffer[] getGff(GmodDAO dao)
+  private ByteBuffer[] getGff(final GmodDAO dao)
   {
     final int srcfeature_id = Integer.parseInt(srcFeatureId);
     
@@ -524,6 +525,8 @@ public class DatabaseDocument extends Document
     Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, null);
     Hashtable featureCvTermPubs = getFeatureCvTermPub(dao, null);
     
+    Hashtable featurePubs = getFeaturePubsBySrcFeatureId(dao,srcfeature_id);
+    
     List pubDbXRefs= dao.getPubDbXRef();
 
     // create gff byte stream
@@ -544,6 +547,7 @@ public class DatabaseDocument extends Document
       chadoToGFF(feat, parentFeature.getUniqueName(),
                  dbxrefs, synonym, featureCvTerms,
                  pubDbXRefs, featureCvTermDbXRefs, featureCvTermPubs,
+                 featurePubs,
                  id_store, dao, 
                  feat.getFeatureLoc(), this_buff);
        
@@ -584,6 +588,38 @@ public class DatabaseDocument extends Document
     }
     
     return synonym;
+  }
+  
+  /**
+   * Get FeaturePub's (i.e. /literature qualifiers).
+   * @param dao
+   * @param srcfeature_id
+   * @return
+   */
+  private Hashtable getFeaturePubsBySrcFeatureId(final GmodDAO dao,
+                                                 final int srcfeature_id)
+  {
+    List list = dao.getFeaturePubsBySrcFeatureId(srcfeature_id);
+    
+    Hashtable featurePubs = new Hashtable();
+    Integer featureId;
+    List value;
+    FeaturePub featurePub;
+    
+    for(int i=0; i<list.size(); i++)
+    {
+      featurePub = (FeaturePub)list.get(i);
+      featureId = new Integer(featurePub.getFeature().getFeatureId());
+      if(featurePubs.containsKey(featureId))
+        value = (Vector)featurePubs.get(featureId);
+      else
+        value = new Vector();
+      
+      value.add(featurePub);
+      featurePubs.put(featureId, value);
+    }
+    
+    return featurePubs;
   }
   
   /**
@@ -783,9 +819,9 @@ public class DatabaseDocument extends Document
     Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, chadoFeature);
     Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, chadoFeature);
     Hashtable featureCvTermPubs = getFeatureCvTermPub(dao, chadoFeature);
-    
+    Hashtable featurePubs = getFeaturePubsBySrcFeatureId(dao,srcFeatureId);
     chadoToGFF(chadoFeature, parentName, dbxrefs, synonym, featureCvTerms,
-        null, featureCvTermDbXRefs, featureCvTermPubs, id_store, dao, loc, this_buff);  
+        null, featureCvTermDbXRefs, featureCvTermPubs, featurePubs, id_store, dao, loc, this_buff);  
     return chadoFeature;
   }
   
@@ -811,6 +847,7 @@ public class DatabaseDocument extends Document
                                  final List pubDbXRefs,
                                  final Hashtable featureCvTermDbXRefs,
                                  final Hashtable featureCvTermPubs,
+                                 final Hashtable featurePubs,
                                  final Hashtable id_store,
                                  final GmodDAO dao,
                                  final FeatureLoc featureloc,
@@ -976,6 +1013,21 @@ public class DatabaseDocument extends Document
         this_buff.append(alias.getSynonym().getName());
         
         //if(j<v_synonyms.size()-1)
+        this_buff.append(";");
+      }
+    }
+    
+    // /literature
+    if(featurePubs != null &&
+       featurePubs.containsKey(featureId))
+    {
+      FeaturePub featurePub;
+      Vector v_featurePubs = (Vector)featurePubs.get(featureId);
+      for(int j=0; j<v_featurePubs.size(); j++)
+      {
+        featurePub = (FeaturePub)v_featurePubs.get(j);
+        this_buff.append( "literature=" );
+        this_buff.append(featurePub.getPub().getUniqueName());
         this_buff.append(";");
       }
     }
@@ -1312,6 +1364,12 @@ public class DatabaseDocument extends Document
     return null;
   }
   
+  /**
+   * 
+   * @param cvterm_name
+   * @param cvName
+   * @return
+   */
   public static CvTerm getCvTermByCvAndCvTerm(final String cvterm_name,
                                               final String cvName)
   {

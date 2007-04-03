@@ -59,6 +59,13 @@ public abstract class GmodDAO
   {
     return null;
   }
+ 
+  
+  //////
+  ////// SchemaDaoI
+  //////
+  //////
+  public abstract List getFeaturePubsBySrcFeatureId(int srcFeatureId);
   
   //////
   ////// GeneralDaoI
@@ -330,10 +337,11 @@ public abstract class GmodDAO
       //
       CvTerm cvTerm;
       
-      if(pub.getUniqueName().startsWith("PMID:"))
-        cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm("Journal", "genedb_literature");
+      if(pub.getUniqueName().startsWith("PMID:") ||
+         pub.getUniqueName().startsWith("PubMed:"))
+        cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm("unfetched", "genedb_literature");
       else
-        cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm("Unknown", "genedb_literature");
+        cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm("unknown", "genedb_literature");
       pub.setCvTerm(cvTerm);
       
       insertPub(pub);
