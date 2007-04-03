@@ -1,12 +1,12 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.28 2007-03-02 09:41:16 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.29 2007-04-03 13:16:08 tjc Exp $
 
 SHELL=/bin/sh
 
 #OPT_FLAGS = -g -deprecation
 
-JAVAC := javac -source 1.3 -target 1.3 $(OPT_FLAGS) $(EXTRA_FLAGS)
+JAVAC := javac -source 1.4 -target 1.4 $(OPT_FLAGS) $(EXTRA_FLAGS)
 
 REAL_CLASSPATH := CLASSPATH=lib/biojava.jar:lib/jobcontrol.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.0.677.jar:lib/ibatis/log4j-1.2.14.jar:lib/chado-14-interface.jar:.
 
@@ -284,7 +284,10 @@ artemis.jar : $(CLASSES)
 	                     org uk com nsdb type seqdb LICENSE.Apache j2ssh.properties; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ActMain" > manifest-act; \
 	jar cmf manifest-act act.jar images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
-	                     org uk com nsdb type seqdb LICENSE.Apache j2ssh.properties
+	                     org uk com nsdb type seqdb LICENSE.Apache j2ssh.properties; \
+	rm -f etc/log4j.properties; \
+	jar cmf manifest-art artemis_mac.jar images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
+	        uk nsdb type seqdb LICENSE.Apache j2ssh.properties
 
 clean :
 	-rm -rf *.html artemis.jar seqdb nsdb type org resources uk/ac/sanger/jcon/ jar_build
