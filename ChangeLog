@@ -4,6 +4,8 @@ Version ??
 	
 	Implement log4j logging to be displayed in log viewer. Using colour
 	coding depending on level of logging.
+	
+	Added -Doffset so that Artemis can be opened at a given base.
 
 Version 9
 
