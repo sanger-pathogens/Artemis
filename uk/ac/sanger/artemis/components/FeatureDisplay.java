@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.49 2007-02-16 13:55:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.50 2007-04-04 12:11:08 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -69,7 +69,7 @@ import javax.swing.JFrame;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.49 2007-02-16 13:55:29 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.50 2007-04-04 12:11:08 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -2108,10 +2108,10 @@ public class FeatureDisplay extends EntryGroupPanel
                                  final int height_percent) 
   {
 
-    final int first_visible_forward_base = getForwardBaseAtLeftEdge();
-    final int first_visible_reverse_base = getFirstVisibleReverseBase();
-    final int last_visible_forward_base = getLastVisibleForwardBase();
-    final double scale_value = getScaleValue();
+    //final int first_visible_forward_base = getForwardBaseAtLeftEdge();
+    //final int first_visible_reverse_base = getFirstVisibleReverseBase();
+    //final int last_visible_forward_base = getLastVisibleForwardBase();
+    //final double scale_value = getScaleValue();
 
     final int line_height = getFontHeight();
 
@@ -2658,7 +2658,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Given a line return the vertical offset(in pixels) from the top of the
    *  canvas.
    **/
-  private int getLineOffset(int line) 
+  private int getLineOffset(final int line) 
   {
     return line * getFontHeight();
   }
@@ -2671,7 +2671,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  the two methods will return the same thing.
    *  @param base_number The(forward) base to calculate the position of.
    **/
-  private int getLowXPositionOfBase(int base_number) 
+  private int getLowXPositionOfBase(final int base_number) 
   {
     return (int)((base_number - getForwardBaseAtLeftEdge()) *
                   getScaleValue());
@@ -2682,7 +2682,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  coordinate of a base.  See comment on getLowXPositionOfBase().
    *  @param base_number The(forward) base to calculate the position of.
    **/
-  private int getHighXPositionOfBase(int base_number) 
+  private int getHighXPositionOfBase(final int base_number) 
   {
     if(getScaleFactor() == 0) 
       return getLowXPositionOfBase(base_number) + getFontWidth() - 1;
@@ -3314,18 +3314,19 @@ public class FeatureDisplay extends EntryGroupPanel
   }
 
   /**
-   *  Return if and only if the segment is(partly) within the range of bases
+   *  Return if and only if the segment is (partly) within the range of bases
    *  we are currently displaying.
    *  @param segment The FeatureSegment to check.
    **/
   private boolean segmentVisible(FeatureSegment segment) 
   {
-    int segment_start_coord = getSegmentStartCoord(segment);
-    int segment_end_coord = getSegmentEndCoord(segment);
-
+    final int segment_start_coord = getSegmentStartCoord(segment);
+    final int segment_end_coord = getSegmentEndCoord(segment);
+    final int width = getSize().width;
+    
     if(segment_end_coord < 0 && segment_start_coord < 0 ||
-        segment_start_coord >= getSize().width &&
-        segment_end_coord >= getSize().width) 
+        segment_start_coord >= width &&
+        segment_end_coord >= width) 
       return false;
     else 
       return true;
@@ -3412,17 +3413,6 @@ public class FeatureDisplay extends EntryGroupPanel
       }
     }
 
-    final int[] x_points = 
-    {
-      segment_start_coord, segment_end_coord,
-      segment_end_coord, segment_start_coord
-    };
-
-    final int[] y_points = 
-    {
-      vertical_offset, vertical_offset,
-      vertical_offset + segment_height, vertical_offset + segment_height
-    };
 
     final Color feature_colour = segment_feature.getColour();
 
@@ -4538,7 +4528,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  direction, ie the base on the forward strand that is on the left
    *  each of the canvas.  See comments on getFirstVisibleForwardBase().
    **/
-  private Marker getFirstVisibleForwardBaseMarker() 
+  /*private Marker getFirstVisibleForwardBaseMarker() 
   {
     try 
     {
@@ -4554,7 +4544,7 @@ public class FeatureDisplay extends EntryGroupPanel
     {
       throw new Error("internal error - unexpected OutOfRangeException");
     }
-  }
+  }*/
 
   /**
    *  Return the base number of the last visible base in the forward
@@ -5092,7 +5082,7 @@ public class FeatureDisplay extends EntryGroupPanel
       ImageIcon icon = new ImageIcon(cl.getResource("images/icon.gif"));
       final Image icon_image = icon.getImage();
 
-      TransferableContig tcontig = new TransferableContig(selected_features.elementAt(0)); 
+      //TransferableContig tcontig = new TransferableContig(selected_features.elementAt(0)); 
       StringSelection name = new StringSelection(selected_features.elementAt(0).getGeneName());
 
       e.startDrag(DragSource.DefaultCopyDrop,     // cursor
