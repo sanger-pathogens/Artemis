@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.16 2007-03-01 16:27:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.17 2007-04-05 14:47:05 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -49,7 +49,7 @@ import javax.swing.JProgressBar;
  *  and contains methods for invoking it.
  *
  *  @author Kim Rutherford
- *  @version $Id: ExternalProgram.java,v 1.16 2007-03-01 16:27:24 tjc Exp $
+ *  @version $Id: ExternalProgram.java,v 1.17 2007-04-05 14:47:05 tjc Exp $
  **/
 
 public class ExternalProgram 
@@ -266,7 +266,7 @@ public class ExternalProgram
         {
           for(int i=0; i<max; i++)
           {
-            Thread.sleep(200);
+            Thread.sleep(150);
             progressBar.setValue(i);
           }
           fsend.dispose();
@@ -467,9 +467,41 @@ public class ExternalProgram
 
       if(program_type != APPLICATION) 
       {
-        final uk.ac.sanger.artemis.io.Qualifier new_qualifier =
-          new uk.ac.sanger.artemis.io.Qualifier(new_qualifier_name,
-                                                     new_file_name + ".out");
+        uk.ac.sanger.artemis.io.Qualifier new_qualifier;
+        
+        if(getName().startsWith("fast") || getName().startsWith("blast"))
+        {
+          new_qualifier = this_feature.getQualifierByName(new_qualifier_name);
+          String db = getProgramOptions().trim();
+
+          int ind;
+          if((ind = db.indexOf(' ')) > -1)
+            db.substring(0, ind);
+
+          if(new_qualifier == null)
+            new_qualifier = new uk.ac.sanger.artemis.io.Qualifier(
+                new_qualifier_name, db + ":" + new_file_name + ".out");
+          else
+          {
+            // search for existing 'db:' values
+            final StringVector values = new_qualifier.getValues();
+            for(int j = 0; j < values.size(); j++)
+            {
+              String value = (String) values.get(j);
+              if(value.startsWith(db + ":"))
+                values.remove(value);
+            }
+
+            new_qualifier.addValues(values);
+            values.add(db + ":" + new_file_name + ".out");
+            new_qualifier = new uk.ac.sanger.artemis.io.Qualifier(
+                new_qualifier_name, values);
+          }
+        }
+        else
+          new_qualifier = new uk.ac.sanger.artemis.io.Qualifier(
+              new_qualifier_name, new_file_name + ".out");
+        
         this_feature.setQualifier(new_qualifier);
       }
     }

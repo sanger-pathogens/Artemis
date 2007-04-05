@@ -85,160 +85,160 @@ public class DataViewInternalFrame extends JInternalFrame
     Enumeration enumPrograms = dataFile.keys();
     while(enumPrograms.hasMoreElements())
     {
-      String programName = (String)enumPrograms.nextElement();
-      String fileName = (String)dataFile.get(programName);
-      //ensure results file exists
-      File fdata = new File(System.getProperty("user.dir")+
-                            fileName);
-      
-      if(!fdata.exists())
-      {
-        fdata = new File(fileName+".gz");
-        
-        if(!fdata.exists())
-          fdata = new File(fileName);
-        
-        if(!fdata.exists())
-        {         
-          fdata = new File(System.getProperty("user.dir")+
-                         File.separatorChar +
-                         fileName);
-          if(!fdata.exists())
-            fdata = new File(System.getProperty("user.dir")+
-                         File.separatorChar +
-                         fileName+".gz");
+      String programName = (String) enumPrograms.nextElement();
+      Vector files = (Vector) dataFile.get(programName);
 
-        }
-        
-        // if not found locally try SSH remote site
-        if(!fdata.exists() && 
-            ((DocumentEntry)(edit_feature.getEntry().getEMBLEntry())).getDocument() 
-                            instanceof RemoteFileDocument)
+      for(int i = 0; i < files.size(); i++)
+      {
+        String fileName = (String) files.get(i);
+        // ensure results file exists
+        File fdata = new File(System.getProperty("user.dir") + fileName);
+
+        if(!fdata.exists())
         {
-          fdata = new File(System.getProperty("user.dir")+ 
-                           File.separatorChar + fileName);
-          // check on the remote side and scp the file over
-          ViewMenu.checkRemoteNode(edit_feature, programName, 
-                                   fdata.getName(), new File (programName));
+          fdata = new File(fileName + ".gz");
 
           if(!fdata.exists())
-            fdata = new File(System.getProperty("user.dir")+ 
-                             File.separatorChar + fileName+".gz");
-        }
-        
-        if(!fdata.exists())
-        {
-          JOptionPane.showMessageDialog(desktop, "Results file: \n"+
-                                       fileName + "\ndoes not exist!",
-                                      "File Not Found",
-                                      JOptionPane.WARNING_MESSAGE);
-          continue;
-        }
-      }
-  
-      String tabName = (String)fileName;
-      int ind = tabName.lastIndexOf("/");
-      if(ind > -1)
-      {
-        String go = "";
+            fdata = new File(fileName);
 
-        if(tabName.indexOf("blastp+go") > -1)
-          go = ":: GO :: ";
-        tabName = go + tabName.substring(ind+1);
-      }
-
-      // add fasta results internal frame
-      FastaTextPane fastaPane = new FastaTextPane(fdata);
-      fastaCollection.add(fastaPane);
-
-      if(qualifier_txt.indexOf("/"+fastaPane.getFormat()+"_file=\"") == -1)
-      {
-        if(icount > 0)
-          annFormat.append("\n<br>");
-        annFormat.append("/"+fastaPane.getFormat()+"_file=\""+
-            fileName+"\"");
-      }
-
-      // graphical view
-      final JScrollPane dbviewScroll = new JScrollPane();
-      final DBViewer dbview = new DBViewer(fastaPane,dbviewScroll);
-      dbviewScroll.setViewportView(dbview);
-
-      final Dimension d = new Dimension((int)dbviewScroll.getPreferredSize().getWidth(), 
-                                       hgt/3);
-
-      final Box yBox = Box.createVerticalBox();
-      final Box xBox = Box.createHorizontalBox();
-      final MouseOverButton hide = new MouseOverButton("X");
-      hide.setForeground(Color.blue);
-      hide.setBackground(Color.white);
-      hide.setFont(BigPane.font);
-      hide.setMargin(new Insets(0,0,0,0));
-      hide.setBorderPainted(false);
-      hide.setActionCommand("HIDE");
-
-      final Box bacross = Box.createHorizontalBox();
-      bacross.add(dbviewScroll);
-
-      hide.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent event)
-        {
-          if(hide.getActionCommand().equals("HIDE"))
+          if(!fdata.exists())
           {
-            bacross.remove(dbviewScroll);
-            bacross.add(yBox);
-            hide.setText("+");
-            scrollEvidence.setViewportView(evidenceBox);
-            hide.setActionCommand("SHOW");
+            fdata = new File(System.getProperty("user.dir")
+                + File.separatorChar + fileName);
+            if(!fdata.exists())
+              fdata = new File(System.getProperty("user.dir")
+                  + File.separatorChar + fileName + ".gz");
           }
-          else
+
+          // if not found locally try SSH remote site
+          if(!fdata.exists()
+              && ((DocumentEntry) (edit_feature.getEntry().getEMBLEntry()))
+                  .getDocument() instanceof RemoteFileDocument)
           {
-            bacross.remove(yBox);
-            dbviewScroll.setColumnHeaderView(yBox);
-            bacross.add(dbviewScroll);
-            hide.setText("X");
-            scrollEvidence.setViewportView(evidenceBox);
-            hide.setActionCommand("HIDE");
+            fdata = new File(System.getProperty("user.dir")
+                + File.separatorChar + fileName);
+            // check on the remote side and scp the file over
+            ViewMenu.checkRemoteNode(edit_feature, programName,
+                fdata.getName(), new File(programName));
+
+            if(!fdata.exists())
+              fdata = new File(System.getProperty("user.dir")
+                  + File.separatorChar + fileName + ".gz");
+          }
+
+          if(!fdata.exists())
+          {
+            JOptionPane.showMessageDialog(desktop, "Results file: \n"
+                + fileName + "\ndoes not exist!", "File Not Found",
+                JOptionPane.WARNING_MESSAGE);
+            continue;
           }
         }
-      });
 
-      xBox.add(hide);
-      JLabel tabLabel = new JLabel(fastaPane.getFormat()+" "+tabName);
-      tabLabel.setFont(BigPane.font);
+        String tabName = (String) fileName;
+        int ind = tabName.lastIndexOf("/");
+        if(ind > -1)
+        {
+          String go = "";
 
-      tabLabel.setOpaque(true);
-      xBox.add(tabLabel);
-      xBox.add(Box.createHorizontalGlue());
+          if(tabName.indexOf("blastp+go") > -1)
+            go = ":: GO :: ";
+          tabName = go + tabName.substring(ind + 1);
+        }
 
-      yBox.add(xBox);
-      yBox.add(dbview.getRuler());
+        // add fasta results internal frame
+        FastaTextPane fastaPane = new FastaTextPane(fdata);
+        fastaCollection.add(fastaPane);
 
-      dbviewScroll.setPreferredSize(d);
-      dbviewScroll.setColumnHeaderView(yBox);
-      fastaPane.addFastaListener(dbview);
+        if(qualifier_txt.indexOf("/" + fastaPane.getFormat() + "_file=\"") == -1)
+        {
+          if(icount > 0)
+            annFormat.append("\n<br>");
+          annFormat.append("/" + fastaPane.getFormat() + "_file=\"" + fileName
+              + "\"");
+        }
 
-      evidenceBox.add(bacross);
-    
-      // add data pane
-      DataCollectionPane dataPane =
-         new DataCollectionPane(fastaPane,ann,desktop,this);
-      fastaPane.addFastaListener(dataPane);
+        // graphical view
+        final JScrollPane dbviewScroll = new JScrollPane();
+        final DBViewer dbview = new DBViewer(fastaPane, dbviewScroll);
+        dbviewScroll.setViewportView(dbview);
 
-      ActiveJSplitPane split = new ActiveJSplitPane(JSplitPane.VERTICAL_SPLIT,
-                                                    fastaPane,dataPane);
-      split.setLabel(tabLabel);
-      split.setDividerLocation(DataViewInternalFrame.dataDividerLocation);
-      split.setOneTouchExpandable(true);
-      if(icount == 0)
-        split.setActive(true);
+        final Dimension d = new Dimension((int) dbviewScroll.getPreferredSize()
+            .getWidth(), hgt / 3);
 
-      tabPane.add(fastaPane.getFormat()+" "+tabName,split);
-      icount++;
+        final Box yBox = Box.createVerticalBox();
+        final Box xBox = Box.createHorizontalBox();
+        final MouseOverButton hide = new MouseOverButton("X");
+        hide.setForeground(Color.blue);
+        hide.setBackground(Color.white);
+        hide.setFont(BigPane.font);
+        hide.setMargin(new Insets(0, 0, 0, 0));
+        hide.setBorderPainted(false);
+        hide.setActionCommand("HIDE");
+
+        final Box bacross = Box.createHorizontalBox();
+        bacross.add(dbviewScroll);
+
+        hide.addActionListener(new ActionListener()
+        {
+          public void actionPerformed(ActionEvent event)
+          {
+            if(hide.getActionCommand().equals("HIDE"))
+            {
+              bacross.remove(dbviewScroll);
+              bacross.add(yBox);
+              hide.setText("+");
+              scrollEvidence.setViewportView(evidenceBox);
+              hide.setActionCommand("SHOW");
+            }
+            else
+            {
+              bacross.remove(yBox);
+              dbviewScroll.setColumnHeaderView(yBox);
+              bacross.add(dbviewScroll);
+              hide.setText("X");
+              scrollEvidence.setViewportView(evidenceBox);
+              hide.setActionCommand("HIDE");
+            }
+          }
+        });
+
+        xBox.add(hide);
+        JLabel tabLabel = new JLabel(fastaPane.getFormat() + " " + tabName);
+        tabLabel.setFont(BigPane.font);
+
+        tabLabel.setOpaque(true);
+        xBox.add(tabLabel);
+        xBox.add(Box.createHorizontalGlue());
+
+        yBox.add(xBox);
+        yBox.add(dbview.getRuler());
+
+        dbviewScroll.setPreferredSize(d);
+        dbviewScroll.setColumnHeaderView(yBox);
+        fastaPane.addFastaListener(dbview);
+
+        evidenceBox.add(bacross);
+
+        // add data pane
+        DataCollectionPane dataPane = new DataCollectionPane(fastaPane, ann,
+            desktop, this);
+        fastaPane.addFastaListener(dataPane);
+
+        ActiveJSplitPane split = new ActiveJSplitPane(
+            JSplitPane.VERTICAL_SPLIT, fastaPane, dataPane);
+        split.setLabel(tabLabel);
+        split.setDividerLocation(DataViewInternalFrame.dataDividerLocation);
+        split.setOneTouchExpandable(true);
+        if(icount == 0)
+          split.setActive(true);
+
+        tabPane.add(fastaPane.getFormat() + " " + tabName, split);
+        icount++;
+      }
     }
 
-//  evidenceBox.add(Box.createVerticalGlue());
+// evidenceBox.add(Box.createVerticalGlue());
   
     // add tab pane listener
     tabPane.addChangeListener(new TabChangeListener());

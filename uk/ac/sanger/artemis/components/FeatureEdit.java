@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.31 2007-03-26 12:48:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.32 2007-04-05 14:48:49 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -32,7 +32,6 @@ import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.OutOfDateException;
 import uk.ac.sanger.artemis.io.LocationParseException;
-import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.QualifierLazyLoading;
 import uk.ac.sanger.artemis.io.QualifierParseException;
 import uk.ac.sanger.artemis.io.Range;
@@ -66,7 +65,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.31 2007-03-26 12:48:27 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.32 2007-04-05 14:48:49 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -532,7 +531,7 @@ public class FeatureEdit extends JPanel
       });
     }
 
-    if(Options.getOptions().getProperty("external_editor") != null)
+    /*if(Options.getOptions().getProperty("external_editor") != null)
     {
       final JButton external_fasta_edit_button = new JButton("MESS/FASTA");
       location_button_panel.add(external_fasta_edit_button);
@@ -660,7 +659,7 @@ public class FeatureEdit extends JPanel
                             "nothing to edit - no /blastp+go_file qualifier");
         }
       });
-    }
+    }*/
 
     if(Options.isUnixHost())
     {
@@ -688,25 +687,64 @@ public class FeatureEdit extends JPanel
           final Hashtable dataFile = new Hashtable();
           try
           {
+            int ind;
             while((line = buff.readLine()) != null)
             {
               if(line.startsWith("/fasta_file="))
               {
-                int ind = line.lastIndexOf("\"");
+                if((ind = line.indexOf(':'))>-1)
+                  line = baseDirStr+line.substring(ind+1);
+                else
+                  line = baseDirStr+line.substring(13);
+                
+                ind = line.lastIndexOf("\"");
                 if(ind > -1)
-                  dataFile.put("fasta", baseDirStr+line.substring(13,ind));
+                  line = line.substring(0, ind);
+                
+                Vector v;
+                if(dataFile.containsKey("fasta"))
+                  v = (Vector)dataFile.get("fasta");
+                else
+                  v = new Vector();
+                v.add(line);
+                dataFile.put("fasta",v);
               }
               else if(line.startsWith("/blastp_file="))
               {
-                int ind = line.lastIndexOf("\"");
+                if((ind = line.indexOf(':'))>-1)
+                  line = baseDirStr+line.substring(ind+1);
+                else
+                  line = baseDirStr+line.substring(14);
+                
+                ind = line.lastIndexOf("\"");
                 if(ind > -1)
-                  dataFile.put("blastp", baseDirStr+line.substring(14,ind));
+                  line = line.substring(0, ind);
+                
+                Vector v;
+                if(dataFile.containsKey("blastp"))
+                  v = (Vector)dataFile.get("blastp");
+                else
+                  v = new Vector();
+                v.add(line);
+                dataFile.put("blastp",v);
               }
               else if(line.startsWith("/blastp+go_file="))
               {
-                int ind = line.lastIndexOf("\"");
+                if((ind = line.indexOf(':'))>-1)
+                  line = line.substring(ind+1);
+                else
+                  line = baseDirStr+line.substring(17);
+                ind = line.lastIndexOf("\"");
                 if(ind > -1)
-                  dataFile.put("blastp+go", baseDirStr+line.substring(17,ind));
+                  line = line.substring(0, ind);
+                
+                Vector v;
+                if(dataFile.containsKey("blastp+go"))
+                  v = (Vector)dataFile.get("blastp+go");
+                else
+                  v = new Vector();
+                v.add(line);
+                dataFile.put("blastp+go",v);
               }   
             }
           }
