@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.10 2007-03-02 12:57:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.11 2007-04-05 15:06:11 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -34,6 +34,7 @@ import uk.ac.sanger.artemis.components.filetree.RemoteFileNode;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.j2ssh.FTProgress;
 import uk.ac.sanger.artemis.j2ssh.FileTransferProgressMonitor;
@@ -50,7 +51,7 @@ import com.sshtools.j2ssh.sftp.FileAttributes;
  *  A popup menu with viewing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: ViewMenu.java,v 1.10 2007-03-02 12:57:13 tjc Exp $
+ *  @version $Id: ViewMenu.java,v 1.11 2007-04-05 15:06:11 tjc Exp $
  **/
 
 public class ViewMenu extends SelectionMenu 
@@ -1217,114 +1218,127 @@ public class ViewMenu extends SelectionMenu
          ++i) {
       final Feature this_feature = features_to_view.elementAt (i);
 
-      String qualifier_value;
-
-      try {
-        qualifier_value =
-          this_feature.getValueOfQualifier (program_name + "_file");
-      } catch (InvalidRelationException e) {
-        qualifier_value = null;
+      Qualifier qualifier = null;
+      try
+      {
+        qualifier = this_feature.getQualifierByName(program_name + "_file");
       }
-
-      String file_name = qualifier_value;
-
-      if (file_name == null || file_name.length () == 0) {
+      catch(InvalidRelationException e1)
+      {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+      StringVector qualifier_values = qualifier.getValues();
+      String qualifier_value;
+      if(qualifier_values == null || qualifier_values.size() == 0) {
         new MessageDialog (frame,
                            "Message",
                            "No " + program_name + " results for " +
                            this_feature.getIDString ());
-
         continue;
       }
-
-      // remove the program name string (if any) from the qualifier, so that
-      // we can try to read the file with and without the prefix.
-      if(file_name.startsWith(program_name + File.separatorChar)||
-         file_name.startsWith(program_name + "/")) 
+      
+      for(int j=0; j<qualifier_values.size(); j++)
       {
-        file_name = file_name.substring (program_name.length () + 1);
-      }
+        qualifier_value = (String) qualifier_values.get(j);
 
-      Document root_document = this_feature.getEntry ().getRootDocument ();
+        // strip off database name
+        int ind;
+        if((ind = qualifier_value.indexOf(':')) > -1)
+          qualifier_value = qualifier_value.substring(ind + 1);
 
-      if (root_document == null) {
-        root_document = new FileDocument (new File ("."));
-      }
+        String file_name = qualifier_value;
 
-      try {
-        Document document = null;
+        // remove the program name string (if any) from the qualifier, so that
+        // we can try to read the file with and without the prefix.
+        if(file_name.startsWith(program_name + File.separatorChar)||
+           file_name.startsWith(program_name + "/")) 
+        {
+          file_name = file_name.substring (program_name.length () + 1);
+        }
 
-        // try the current directory with the program name added:
-        // ./fasta/abc.seq.00001.out
-        final File dir_name = new File (program_name);
+        Document root_document = this_feature.getEntry().getRootDocument();
 
-        final Document [] possible_documents =
-          new Document [] 
-         {
-            root_document.append (program_name).append (file_name),
-            root_document.append (file_name),
-            new FileDocument (new File (file_name)),
-            new FileDocument (dir_name).append (file_name),
-            new FileDocument ( new File(System.getProperty("user.dir")) ).append(program_name).append (file_name)
-          };
-
+        if(root_document == null)
+          root_document = new FileDocument(new File("."));
         
-        for (int possible_document_index = 0 ;
-             possible_document_index < possible_documents.length ;
-             ++possible_document_index) {
+        try
+        {
+          Document document = null;
 
-          final Document this_document =
-            possible_documents[possible_document_index];
+          // try the current directory with the program name added:
+          // ./fasta/abc.seq.00001.out
+          final File dir_name = new File(program_name);
 
-          if (this_document.readable ()) {
-            document = this_document;
-            break;
-          } else {
-            final File gzip_file =
-              new File (this_document.toString () + ".gz");
-            final Document gzip_document =
-              new FileDocument (gzip_file);
+          final Document[] possible_documents = new Document[] {
+              root_document.append(program_name).append(file_name),
+              root_document.append(file_name),
+              new FileDocument(new File(file_name)),
+              new FileDocument(dir_name).append(file_name),
+              new FileDocument(new File(System.getProperty("user.dir")))
+                  .append(program_name).append(file_name) };
 
-            if (gzip_document.readable ()) {
-              document = gzip_document;
+          for(int possible_document_index = 0; possible_document_index < possible_documents.length; ++possible_document_index)
+          {
+
+            final Document this_document = possible_documents[possible_document_index];
+
+            if(this_document.readable())
+            {
+              document = this_document;
               break;
             }
+            else
+            {
+              final File gzip_file = new File(this_document.toString() + ".gz");
+              final Document gzip_document = new FileDocument(gzip_file);
+
+              if(gzip_document.readable())
+              {
+                document = gzip_document;
+                break;
+              }
+            }
+          }
+
+          // if not found locally check remote side
+          if(document == null
+              && ((DocumentEntry) (this_feature.getEntry().getEMBLEntry()))
+                  .getDocument() instanceof RemoteFileDocument)
+          {
+            document = checkRemoteNode(this_feature, program_name, file_name,
+                dir_name);
+          }
+
+          if(document == null)
+          {
+            final String message_string = "No " + program_name
+                + " results for " + this_feature.getIDString()
+                + " (file not found: " + qualifier_value + ")";
+
+            new MessageDialog(frame, message_string);
+
+            continue;
+          }
+
+          if(send_to_browser)
+          {
+            SearchResultViewer.sendToBrowser(document.toString());
+          }
+          else
+          {
+            new SearchResultViewer(program_name + " results for "
+                + this_feature.getIDString() + " from " + document, document);
           }
         }
-
-        // if not found locally check remote side
-        if(document == null
-            && ((DocumentEntry) (this_feature.getEntry().getEMBLEntry()))
-                .getDocument() instanceof RemoteFileDocument)
+        catch(ExternalProgramException e)
         {
-          document = checkRemoteNode(this_feature, program_name, file_name, dir_name);
+          new MessageDialog(frame, "error while open results file: " + e);
         }
-        
-        if (document == null) {
-          final String message_string =
-            "No " + program_name + " results for " +
-            this_feature.getIDString () + " (file not found: " +
-            qualifier_value + ")";
-
-          new MessageDialog (frame, message_string);
-
-          continue;
+        catch(IOException e)
+        {
+          new MessageDialog(frame, "error while open results file: " + e);
         }
-
-        if (send_to_browser) {
-          SearchResultViewer.sendToBrowser (document.toString ());
-        } else {
-          new SearchResultViewer (program_name + " results for " +
-                                  this_feature.getIDString () + " from " +
-                                  document,
-                                  document);
-        }
-      } catch (ExternalProgramException e) {
-        new MessageDialog (frame,
-                           "error while open results file: " + e);
-      } catch (IOException e) {
-        new MessageDialog (frame,
-                           "error while open results file: " + e);
       }
     }
   }
