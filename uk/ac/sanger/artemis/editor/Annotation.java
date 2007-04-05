@@ -284,7 +284,7 @@ public class Annotation extends JEditorPane
 
     db = db.toLowerCase();
     ind = 0;
-    while((ind = s.indexOf(db, ind)) > -1)
+    while((ind = s.indexOf(db+":", ind)) > -1)
     {
       s = setHyperLinks(s,ind);
       ind = s.lastIndexOf("</a>");
