@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.12 2007-04-10 12:19:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.13 2007-04-10 13:39:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import uk.ac.sanger.artemis.Options;
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.12 2007-04-10 12:19:27 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.13 2007-04-10 13:39:38 tjc Exp $
  *
  **/
 
@@ -89,6 +89,8 @@ public class FileViewer extends JFrame
    *  variable.  This is updated when any FileViewer frame is moved.
    **/
   private static Point saved_position = null;
+  
+  private boolean isHideOnClose = false;
   
   /**
    *  Create a new FileViewer component and make it visible.
@@ -152,9 +154,10 @@ public class FileViewer extends JFrame
     {
       public void actionPerformed(ActionEvent e) 
       {
-        saved_size     = getSize();
-        saved_position = getLocation();
-        dispose();
+        if(isHideOnClose())
+          setVisible(false);
+        else
+          dispose();
       }
     });
     button_panel.add(close_button);
@@ -163,9 +166,10 @@ public class FileViewer extends JFrame
     {
       public void windowClosing(WindowEvent event) 
       {
-        saved_size     = getSize();
-        saved_position = getLocation();
-        dispose();
+        if(isHideOnClose())
+          setVisible(false);
+        else
+          dispose();
       }
     });
 
@@ -376,5 +380,15 @@ public class FileViewer extends JFrame
   public JTextPane getTextPane()
   {
     return textPane;
+  }
+
+  public boolean isHideOnClose()
+  {
+    return isHideOnClose;
+  }
+
+  public void setHideOnClose(boolean isHideOnClose)
+  {
+    this.isHideOnClose = isHideOnClose;
   }
 }
