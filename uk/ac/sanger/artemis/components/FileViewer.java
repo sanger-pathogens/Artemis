@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.11 2007-03-23 14:16:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.12 2007-04-10 12:19:27 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import uk.ac.sanger.artemis.Options;
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.11 2007-03-23 14:16:14 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.12 2007-04-10 12:19:27 tjc Exp $
  *
  **/
 
@@ -152,7 +152,9 @@ public class FileViewer extends JFrame
     {
       public void actionPerformed(ActionEvent e) 
       {
-        setVisible(false);
+        saved_size     = getSize();
+        saved_position = getLocation();
+        dispose();
       }
     });
     button_panel.add(close_button);
@@ -161,7 +163,9 @@ public class FileViewer extends JFrame
     {
       public void windowClosing(WindowEvent event) 
       {
-        setVisible(false);
+        saved_size     = getSize();
+        saved_position = getLocation();
+        dispose();
       }
     });
 
@@ -333,19 +337,6 @@ public class FileViewer extends JFrame
   protected String getText() 
   {
     return textPane.getText();
-  }
-
-  /**
-   *  Destroy this component.
-   **/
-  public void dispose() 
-  {
-    setVisible(false);
-    
-    saved_size     = getSize();
-    saved_position = getLocation();
-
-    super.dispose();
   }
 
 
