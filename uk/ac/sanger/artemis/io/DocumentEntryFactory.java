@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntryFactory.java,v 1.2 2004-12-03 17:47:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntryFactory.java,v 1.3 2007-04-11 13:47:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -29,14 +29,13 @@ import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.LinePushBackReader;
 import java.io.IOException;
 
-import org.biojava.bio.seq.io.GAMEFormat;
 
 /**
  *  This class contains the method makeDocumentEntry (), which creates a
  *  DocumentEntry object of the appropriate class from a Document object.
  *
  *  @author Kim Rutherford
- *  @version $Id: DocumentEntryFactory.java,v 1.2 2004-12-03 17:47:04 tjc Exp $
+ *  @version $Id: DocumentEntryFactory.java,v 1.3 2007-04-11 13:47:09 tjc Exp $
  **/
 
 abstract public class DocumentEntryFactory 
