@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBStreamFeature.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBStreamFeature.java,v 1.4 2007-04-12 10:26:40 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import java.io.*;
  *  EMBL or GENBANK stream.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBStreamFeature.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: PublicDBStreamFeature.java,v 1.4 2007-04-12 10:26:40 tjc Exp $
  **/
 
 abstract public class PublicDBStreamFeature
@@ -200,7 +200,7 @@ abstract public class PublicDBStreamFeature
 
     // the line of the input where the qualifiers start - used for error
     // reporting
-    int qualifier_start_line = -1;
+    //int qualifier_start_line = -1;
 
     // the line of the input where this feature starts - used for error
     // reporting
@@ -262,7 +262,7 @@ abstract public class PublicDBStreamFeature
 
               qualifier_string_buffer.append (rest_of_line);
 
-              qualifier_start_line = in_stream.getLineNumber ();
+              //qualifier_start_line = in_stream.getLineNumber ();
 
             } else {
               location_string = location_string + rest_of_line;
@@ -585,7 +585,7 @@ abstract public class PublicDBStreamFeature
     for (int i = 0 ; i < getQualifiers ().size () ; ++i) {
       final Qualifier current_qualifier = (Qualifier)getQualifiers ().elementAt (i);
 
-      final String qualifier_name = current_qualifier.getName ();
+      //final String qualifier_name = current_qualifier.getName ();
 
       final EntryInformation entry_information = getEntryInformation ();
       
@@ -669,7 +669,7 @@ abstract public class PublicDBStreamFeature
   private int getWrapPosition (String string_to_wrap,
                                char wrap_character,
                                int line_length) {
-    final int return_index;
+    //final int return_index;
 
     if (string_to_wrap.length () < line_length) {
       return -1;                // no need to wrap
