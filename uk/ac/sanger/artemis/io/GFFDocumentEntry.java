@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.41 2007-03-28 09:16:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.42 2007-04-13 07:50:15 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -42,7 +42,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.41 2007-03-28 09:16:10 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.42 2007-04-13 07:50:15 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -159,7 +159,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         this_feature = original_features.featureAt(i);
         String key = this_feature.getKey().getKeyString();
         
-        if(key.equals("gene"))
+        if(key.equals("gene") || key.equals("pseudogene"))
         {
           String id = (String)this_feature.getQualifierByName("ID").getValues().get(0);
           ChadoCanonicalGene gene = new ChadoCanonicalGene();
@@ -242,7 +242,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
               gene.add3PrimeUtr(parent, this_feature);
             else if(key.equals("five_prime_UTR"))
               gene.add5PrimeUtr(parent, this_feature);
-            else if(key.equals("exon") || featureRelationship != null)
+            else if(key.equals("exon") || featureRelationship != null ||
+                    key.equals("pseudogenic_exon"))
               gene.addSplicedFeatures(parent, this_feature);
             else
               gene.addOtherFeatures(parent, this_feature);
