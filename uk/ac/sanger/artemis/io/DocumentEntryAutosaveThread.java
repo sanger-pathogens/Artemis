@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntryAutosaveThread.java,v 1.5 2006-08-09 16:35:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntryAutosaveThread.java,v 1.6 2007-04-13 14:48:21 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import java.io.*;
  *  called #entry_name# every 120 seconds.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: DocumentEntryAutosaveThread.java,v 1.5 2006-08-09 16:35:31 tjc Exp $
+ *  @version $Id: DocumentEntryAutosaveThread.java,v 1.6 2007-04-13 14:48:21 tjc Exp $
  **/
 
 public class DocumentEntryAutosaveThread extends Thread {
@@ -77,7 +77,8 @@ public class DocumentEntryAutosaveThread extends Thread {
 
       final File save_file;
 
-      if(document_entry.getDocument() instanceof RemoteFileDocument)
+      if(document_entry.getDocument() instanceof RemoteFileDocument ||
+          isMac())
         save_file = new File(System.getProperty("user.dir")+
                              System.getProperty("file.separator")+
                              "#" + entry_name + "#");
@@ -114,7 +115,8 @@ public class DocumentEntryAutosaveThread extends Thread {
           // auto save file isn't needed now so turn it into a backup file
           final File new_name;
 
-          if(document_entry.getDocument() instanceof RemoteFileDocument)
+          if(document_entry.getDocument() instanceof RemoteFileDocument ||
+             isMac())
             new_name = new File (System.getProperty("user.dir")+
                                  System.getProperty("file.separator")+
                                  entry_name + "~");
@@ -136,6 +138,11 @@ public class DocumentEntryAutosaveThread extends Thread {
     }
   }
 
+  private boolean isMac() 
+  {
+    return System.getProperty("mrj.version") != null;
+  }
+  
   /**
    *  The DocumentEntry we will save.
    **/
