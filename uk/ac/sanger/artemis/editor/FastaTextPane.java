@@ -63,7 +63,8 @@ public class FastaTextPane extends JScrollPane
   private static boolean forceUrl = false;
   public static HitInfo[] cacheHits = new HitInfo[BigPane.CACHE_SIZE];
   public static int nCacheHits = 0;
-  private static File mfetchExecutable = new File("/nfs/disk100/pubseq/bin/mfetch");
+  private static String mfetchExecutablePath = "/nfs/disk100/pubseq/bin/mfetch";
+  private static File mfetchExecutable = new File(mfetchExecutablePath);
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(FastaTextPane.class);
   
@@ -639,13 +640,12 @@ public class FastaTextPane extends JScrollPane
       int this_nhit = 0;
       nhits = 0;
       
-      
       if(!getMfetchExecutable().exists() && !isRemoteMfetch() && !isForceUrl() &&
           System.getProperty("j2ssh") != null &&
           FileList.isConnected())
       {
         FileList fileList = new FileList();
-        FileAttributes attr = fileList.stat(getMfetchExecutable().getAbsolutePath());
+        FileAttributes attr = fileList.stat(mfetchExecutablePath);
         if(attr != null)
           remoteMfetch = attr.isFile();
       }
