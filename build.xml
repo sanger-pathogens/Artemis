@@ -14,8 +14,8 @@
     <property name="version" value="live" />
     <property name="build.compiler" value="modern" />
     <property name="classpath" value="" />
-    <property name="src.dir" value="./" />
-    <property name="docs.dir" value="./docs" />
+    <property name="src.dir" value="" />
+    <property name="docs.dir" value="docs" />
 
     <property name="packages" value="uk.*" />
 
