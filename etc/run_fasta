@@ -6,7 +6,7 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.16 2007-02-27 11:02:01 tjc Exp $"
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.17 2007-04-16 15:35:45 tjc Exp $"
 
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
@@ -27,6 +27,26 @@ else
     fi
 fi
 
+#
+# Exchange DB name for fasta reference
+#
+if [ "$DATABASE" = "%uniprot" ]; then
+  DATABASE="%U";
+elif [ "$DATABASE" = "%uniprot_archaea" ]; then
+  DATABASE="%A";
+elif [ "$DATABASE" = "%uniprot_bacteria" ]; then
+  DATABASE="%B";
+elif [ "$DATABASE" = "%uniprot_eukaryota" ]; then
+  DATABASE="%E";
+elif [ "$DATABASE" = "%uniprot_viruses" ]; then
+  DATABASE="%V";
+elif [ "$DATABASE" = "%uniprot_rest" ]; then
+  DATABASE="%R";
+elif [ "$DATABASE" = "%malaria" ]; then
+  DATABASE="%M";
+elif [ "$DATABASE" = "%kineto_aa" ]; then
+  DATABASE="%K";
+fi
 
 # expand any ~ or environment variables
 EXPANDED_DATABASE=`echo "echo $DATABASE" | /bin/csh -f`
