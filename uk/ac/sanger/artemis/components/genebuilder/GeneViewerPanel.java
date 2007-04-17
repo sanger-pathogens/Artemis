@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.40 2007-03-29 08:34:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.41 2007-04-17 15:19:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -283,14 +283,26 @@ public class GeneViewerPanel extends JPanel
         Feature transcript = getTranscriptAt(last_cursor_position);
         String uniquename  = getQualifier(transcript, "ID");
         
-        List exons = chado_gene.getSpliceSitesOfTranscript(uniquename, "exon");
+        final List exons;
+        final Key exonKey;
+        if(chado_gene.getGene().getKey().getKeyString().equals("pseudogene"))
+        {
+          exons = chado_gene.getSpliceSitesOfTranscript(uniquename, "pseudogenic_exon");
+          exonKey = new Key("pseudogenic_exon");
+        }
+        else
+        {
+          exons = chado_gene.getSpliceSitesOfTranscript(uniquename, "exon");
+          exonKey = new Key("exon");
+        }
+        
         GFFStreamFeature embl_exon = null;
         if(exons != null && exons.size() > 0)
           embl_exon = (GFFStreamFeature)exons.get(0);
         Range range_selected = selection.getSelectionRange();
     
         addExonFeature(chado_gene, entry_group, embl_exon, 
-                       range_selected, uniquename, selection);
+                       range_selected, uniquename, selection, exonKey);
       }
     });
     menu.add(createExon);
@@ -1356,7 +1368,8 @@ public class GeneViewerPanel extends JPanel
                               final EntryGroup entry_group,
                               final GFFStreamFeature feature, Range range,
                               final String transcript_name,
-                              final Selection selection)
+                              final Selection selection,
+                              final Key exonKey)
   {
     try
     {
@@ -1373,7 +1386,7 @@ public class GeneViewerPanel extends JPanel
         uk.ac.sanger.artemis.Feature exon = createFeature(
             new Location(new RangeVector(range), 
             chadoGene.getGene().getLocation().isComplement()),
-            entry_group, new Key("exon"),
+            entry_group, exonKey,
             qualifiers);
       
         GFFStreamFeature gff_exon = (GFFStreamFeature)exon.getEmblFeature();
