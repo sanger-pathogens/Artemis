@@ -20,12 +20,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.24 2006-08-16 09:23:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.25 2007-04-17 12:55:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
-
-//import uk.ac.sanger.artemis.FeatureVector;
 
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.util.*;
@@ -36,9 +34,7 @@ import uk.ac.sanger.artemis.io.StreamSequence;
 
 import org.biojava.bio.symbol.IllegalSymbolException;
 
-import java.util.Vector;
 import java.util.WeakHashMap;
-import java.util.Enumeration;
 import java.util.Iterator;
 
 /**
@@ -49,7 +45,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.24 2006-08-16 09:23:07 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.25 2007-04-17 12:55:01 tjc Exp $ */
 
 public class Bases 
 {
@@ -604,7 +600,7 @@ public class Bases
     // 2 bit chuncks (i.e. 4 per byte)
     int ncurrent_byte;
     int bit_position;
-    int nframe;
+    //int nframe;
     byte bitty;
 
     if(direction == FORWARD)
@@ -615,7 +611,7 @@ public class Bases
         if(i < 0 || i >= sequence_length - 2)
           continue;
 
-        nframe = (i-range_start_index) % 3;
+        //nframe = (i-range_start_index) % 3;
         ncurrent_byte = i >> 1 >> 1;
         bit_position  = i % 4;
 
@@ -670,7 +666,7 @@ public class Bases
         if(i < 2 || i >= sequence_length)
           continue;
 
-        nframe = (range_end_index-i) % 3;
+        //nframe = (range_end_index-i) % 3;
         ncurrent_byte = i >> 1 >> 1;
         bit_position  = i % 4;
         bitty = (byte) ((reverse_stop_codon_flags[ncurrent_byte]
@@ -1592,7 +1588,7 @@ public class Bases
    *  Check a three character substring and return true if and only if the
    *  three bases are legal (see isLegalBase ()).
    **/
-  private static boolean isLegalCodon (final String sequence_string,
+  /*private static boolean isLegalCodon (final String sequence_string,
                                        final int start_index,
                                        final int direction) {
     if (direction == FORWARD) {
@@ -1612,7 +1608,7 @@ public class Bases
     // this isn't a stop codon
     return false;
 
-  }
+  }*/
 
   /**
    *  Return true if and only if the given base character is one of 'a', 't',
