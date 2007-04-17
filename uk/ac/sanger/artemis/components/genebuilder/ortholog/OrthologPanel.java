@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/OrthologPanel.java,v 1.2 2007-03-20 13:48:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/OrthologPanel.java,v 1.3 2007-04-17 15:19:41 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -49,6 +49,7 @@ public class OrthologPanel extends JPanel
 {
   private static final long serialVersionUID = 1L;
   private QualifierVector ortho_para_logQualifiers;
+  private static Vector databases;
   
   public OrthologPanel(final Feature feature)
   {
@@ -73,9 +74,12 @@ public class OrthologPanel extends JPanel
     Qualifier orthoQualifier = ortho_para_logQualifiers.getQualifierByName("ortholog");
     Qualifier paraQualifier  = ortho_para_logQualifiers.getQualifierByName("paralog");
     
-    DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
-    DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
-    final Vector databases = (Vector)doc.getDatabaseNames();
+    if(databases == null)
+    {
+      DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
+      DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
+      databases = (Vector)doc.getDatabaseNames();
+    }
     
     //
     // ortholog
