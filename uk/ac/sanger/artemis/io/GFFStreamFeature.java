@@ -20,33 +20,40 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.50 2007-02-20 14:41:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.51 2007-04-17 12:49:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
-import uk.ac.sanger.artemis.components.Splash;
-import uk.ac.sanger.artemis.util.*;
 
-import java.io.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
+import java.io.IOException;
+import java.io.Writer;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+
+import uk.ac.sanger.artemis.util.LinePushBackReader;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
+import uk.ac.sanger.artemis.util.StringVector;
 
 
 /**
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.50 2007-02-20 14:41:48 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.51 2007-04-17 12:49:17 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
                        implements DocumentFeature, StreamFeature, ComparableFeature 
 {
 
+  public static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(GFFStreamFeature.class);
+  
   /**
    *  This is the line of GFF input that was read to get this
    *  GFFStreamFeature.  A GFFStreamFeature that was created from multiple GFF
@@ -330,7 +337,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
    * @param r
    * @return
    */
-  public String getSegmentID(Range r)
+  public String getSegmentID(final Range r)
   {
     if(id_range_store != null)
     {
@@ -351,7 +358,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       return (String)getQualifierByName("ID").getValues().get(0);
     }
 
-    Splash.logger4j.warn("RANGE NOT FOUND "+r.toString());
+    logger4j.warn("RANGE NOT FOUND "+r.toString());
 
     return null;
   }

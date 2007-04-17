@@ -24,14 +24,23 @@
 
 package uk.ac.sanger.artemis.components.database;
 
-import javax.swing.*;
 import java.awt.Container;
 import java.awt.GridLayout;
-import java.io.*;
+import java.io.IOException;
+import java.io.Serializable;
 
-import uk.ac.sanger.artemis.util.*;
-import uk.ac.sanger.artemis.*;
-import uk.ac.sanger.artemis.sequence.*;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
+import uk.ac.sanger.artemis.Entry;
+import uk.ac.sanger.artemis.EntrySource;
+import uk.ac.sanger.artemis.sequence.Bases;
+import uk.ac.sanger.artemis.sequence.NoSequenceException;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.InputStreamProgressListener;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.InvalidKeyException;
 import uk.ac.sanger.artemis.io.EntryInformationException;
