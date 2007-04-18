@@ -389,7 +389,8 @@ public class ChadoTransactionManager
                              feature, FeatureChangeEvent.ALL_CHANGED);
         
         if(event.getOldKey().compareTo( event.getNewKey() ) != 0 &&
-           event.getNewKey().toString().equals("gene") &&
+           (event.getNewKey().toString().equals("gene") ||
+            event.getNewKey().toString().equals("pseudogene")) &&
            feature.getChadoGene() == null)
         {
           ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();

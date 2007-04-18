@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.41 2007-04-17 15:19:28 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.42 2007-04-18 12:33:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -400,9 +400,15 @@ public class GeneViewerPanel extends JPanel
       if(ID != null)
         qualifiers.add(new Qualifier("ID", ID));
       
+      final Key transcriptKey;
+      if(chadoGene.getGene().getKey().getKeyString().equals("pseudogene"))
+        transcriptKey = new Key("pseudogenic_transcript");
+      else
+        transcriptKey = new Key("mRNA");
+      
       uk.ac.sanger.artemis.Feature feature = createFeature(
                     chadoGene.getGene().getLocation(),
-                    entry_group, new Key("mRNA"),
+                    entry_group, transcriptKey,
                     qualifiers);
       
       chadoGene.addTranscript(feature.getEmblFeature());
