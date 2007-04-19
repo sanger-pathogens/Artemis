@@ -1755,13 +1755,14 @@ public class ChadoTransactionManager
     //StringVector strings = StringVector.getStrings(searchStr, "|");
     StringTokenizer tok = new StringTokenizer(searchStr, "|,");
     
-    
-    //for(int i=0; i<strings.size(); i++)
-   //{
+
     while(tok.hasMoreTokens())
     {
       String this_part = tok.nextToken();  //(String)strings.get(i);
       int ind = this_part.indexOf(':');
+      
+      if(this_part.equals("null"))
+        continue;
       
       final String dbName = this_part.substring(0, ind);
       final String accession = this_part.substring(ind+1);
