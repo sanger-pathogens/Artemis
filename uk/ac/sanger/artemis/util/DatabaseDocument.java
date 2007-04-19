@@ -1092,7 +1092,7 @@ public class DatabaseDocument extends Document
       // N.B. the db_xref may be a FeatureCvTermDbXRef or a Pub for /controlled_curation
       int nfound_dbxref = 0;
       if(feature_cvterm.getPub().getUniqueName() != null &&
-         !feature_cvterm.getPub().getUniqueName().equals("NULL"))
+         !feature_cvterm.getPub().getUniqueName().equalsIgnoreCase("NULL"))
       {
         // PMID
         Pub pub = feature_cvterm.getPub();
@@ -1181,7 +1181,7 @@ public class DatabaseDocument extends Document
       int nfound_pub = 0;
       if(feature_cvterm.getPub() != null &&
          feature_cvterm.getPub().getUniqueName() != null &&
-         !feature_cvterm.getPub().getUniqueName().equals("NULL"))
+         !feature_cvterm.getPub().getUniqueName().equalsIgnoreCase("NULL"))
       {
         Pub pub = feature_cvterm.getPub();
         attr_buff.append("db_xref="+
