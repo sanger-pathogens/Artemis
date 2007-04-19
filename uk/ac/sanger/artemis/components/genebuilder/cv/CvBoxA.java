@@ -27,12 +27,6 @@ package uk.ac.sanger.artemis.components.genebuilder.cv;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.InputVerifier;
-import javax.swing.JComponent;
-import javax.swing.JFormattedTextField;
-import javax.swing.JOptionPane;
-
-import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 
 /**
@@ -136,38 +130,7 @@ abstract class CvBoxA
     return cal.getTime();
   }
   
-  class DateVerifier extends InputVerifier 
-  {
-    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
-            "yyyyMMdd");
-    java.util.Calendar cal = java.util.Calendar.getInstance();
-    public DateVerifier() 
-    {
-      sdf.setLenient(false);
-    }
 
-    public boolean verify(JComponent input) 
-    {
-      JFormattedTextField ftf = (JFormattedTextField) input;
-      // allow null entry which will include slashes because of the
-      // mask
-      if(ftf.getText().trim().equals(""))
-      {
-        ftf.setValue( null );
-        return true;
-      }
-        
-      try 
-      {
-        cal.setTime(sdf.parse(ftf.getText()));
-      }
-      catch (Exception pe) 
-      {
-        return false;
-      }
-      return true;
-    }
-  }
 
   
   protected abstract boolean isQualifierChanged();

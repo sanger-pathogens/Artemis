@@ -25,11 +25,8 @@
 package uk.ac.sanger.artemis.components.genebuilder.cv;
 
 import java.awt.Dimension;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.swing.Box;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
@@ -43,7 +40,7 @@ class ControlledCurationBox extends CvBoxA
   private Box xBox;
   private int value_index;
   private JTextField termTextField;
-  private JFormattedTextField dateField;
+  private DatePanel dateField;
   private String origQualifierString;
   private Qualifier origQualifier;
   
@@ -73,22 +70,11 @@ class ControlledCurationBox extends CvBoxA
     termTextField.setCaretPosition(0);
     xBox.add(termTextField);
     
-    String date = getField("date=", qualifierString);
-    
-    Date this_date = getDate(date);
-    dateField = new JFormattedTextField(new SimpleDateFormat("yyyyMMdd"))
-    {
-      protected int getColumnWidth()
-      {
-        return dateField.getFontMetrics(getFont()).charWidth('0');
-      }
-    };
-    dateField.setInputVerifier(new DateVerifier());
-    dateField.setValue(this_date);
-    dateField.setToolTipText("date column");
-    dateField.setColumns(8);
-    dateField.setMaximumSize(dimension);
-    xBox.add(dateField);
+
+    dateField = new DatePanel(getField("date=", qualifierString),
+                              dimension.height);
+
+    xBox.add(dateField.getDateSpinner());
   }
 
 

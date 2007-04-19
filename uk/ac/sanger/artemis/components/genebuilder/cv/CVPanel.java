@@ -28,6 +28,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -110,12 +111,14 @@ public class CVPanel extends JPanel
     
     editableComponents = new Vector();
     
-    Dimension dimension = new Dimension(150, 30);
+    final Dimension dimension  = new Dimension(100, 30);
+    final Dimension dimension4 = new Dimension(dimension.width*4, 30);
 
     Box cvBox = Box.createVerticalBox();
     
     Box xBox = Box.createHorizontalBox();
     JButton addRemove = new JButton("ADD");
+    addRemove.setOpaque(false);
     addRemove.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -160,14 +163,9 @@ public class CVPanel extends JPanel
       }
     }
     
-    JSeparator separator = new JSeparator();
-    separator.setPreferredSize(new Dimension(350,10));
-    separator.setMaximumSize(new Dimension(350,10));
+    
     if(n > 0)
-    {
-      cvBox.add(Box.createVerticalStrut(5));
-      cvBox.add(separator);
-    }
+      addSeparator(cvBox);
     
     n = 0;
     for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
@@ -190,7 +188,7 @@ public class CVPanel extends JPanel
           
           ControlledCurationBox ccBox = new ControlledCurationBox(this_qualifier,
                   qualifierString, value_index, 
-                  dimension, go_dimension);
+                  dimension4, go_dimension);
           editableComponents.add(ccBox);
           
           xBox = ccBox.getBox();
@@ -202,10 +200,7 @@ public class CVPanel extends JPanel
     }
     
     if(n > 0)
-    {
-      cvBox.add(Box.createVerticalStrut(5));
-      cvBox.add(separator);
-    }
+      addSeparator(cvBox);
     
     //
     // RILEY
@@ -213,7 +208,7 @@ public class CVPanel extends JPanel
     
     if(go_dimension == null)
       go_dimension = new JLabel("product ").getPreferredSize();
-    
+    n = 0;
     for(int qualifier_index = 0; qualifier_index < cvQualifiers.size(); ++qualifier_index)
     {
       final Qualifier this_qualifier = (Qualifier) cvQualifiers
@@ -258,10 +253,7 @@ public class CVPanel extends JPanel
     
     
     if(n > 0)
-    {
-      cvBox.add(Box.createVerticalStrut(5));
-      cvBox.add(separator);
-    }
+      addSeparator(cvBox);
     
     for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
         ++qualifier_index) 
@@ -288,8 +280,8 @@ public class CVPanel extends JPanel
             JTextField termTextField = new JTextField(qualifierString);
             termTextField.setEditable(false);
             termTextField.setToolTipText("term column");
-            termTextField.setPreferredSize(dimension);
-            termTextField.setMaximumSize(dimension);
+            termTextField.setPreferredSize(dimension4);
+            termTextField.setMaximumSize(dimension4);
             termTextField.setCaretPosition(0);
             
             xBox.add(termTextField);          
@@ -307,11 +299,25 @@ public class CVPanel extends JPanel
     return cvBox;
   }
 
+  private void addSeparator(final Box cvBox)
+  {
+    JSeparator separator = new JSeparator();
+    separator.setPreferredSize(new Dimension(getSize().width,10));
+    separator.setMaximumSize(new Dimension(getSize().width,10));
+    cvBox.add(Box.createVerticalStrut(5));
+    cvBox.add(separator);
+  }
   
   private JButton getRemoveButton(final Qualifier this_qualifier, 
                                   final int v_index)
   {
-    JButton buttRemove = new JButton("REMOVE");
+    JButton buttRemove = new JButton("X");
+    buttRemove.setOpaque(false);
+    Font font = buttRemove.getFont().deriveFont(Font.BOLD);
+    buttRemove.setFont(font);
+    buttRemove.setToolTipText("REMOVE");
+    buttRemove.setForeground(new Color(139,35,35));
+
     buttRemove.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)

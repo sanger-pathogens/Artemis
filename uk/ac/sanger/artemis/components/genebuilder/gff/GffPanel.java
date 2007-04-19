@@ -17,11 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.6 2007-02-20 14:38:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.7 2007-04-19 15:22:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -98,6 +99,7 @@ public class GffPanel extends JPanel
     GridBagConstraints c = new GridBagConstraints();
     c.ipady = 5;
     JPanel gridPanel = new JPanel(grid);
+    gridPanel.setBackground(Color.WHITE);
     
     Dimension cellDimension = null;
     

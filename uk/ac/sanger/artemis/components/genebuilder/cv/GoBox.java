@@ -24,13 +24,12 @@
 
 package uk.ac.sanger.artemis.components.genebuilder.cv;
 
+import java.awt.Color;
 import java.awt.Dimension;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.awt.Font;
 import java.util.Vector;
 
 import javax.swing.Box;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
@@ -86,7 +85,7 @@ class GoBox extends CvBoxA
   private JTextField dbxrefTextField;
   private JExtendedComboBox evidenceList;
   private JTextField qualfTextField;
-  private JFormattedTextField dateField;
+  private DatePanel dateField;
   private String origQualifierString;
   private Qualifier origQualifier;
   
@@ -107,20 +106,37 @@ class GoBox extends CvBoxA
     final String term = getField("term=", qualifierString);
     CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(term);
 
-    if(cvTerm.getCv().getName().equals("molecular_function"))
-      goId = goId+"  aspect=F ";
-    else if(cvTerm.getCv().getName().equals("biological_process"))
-      goId = goId+"  aspect=P ";
-    else if(cvTerm.getCv().getName().equals("cellular_component"))
-      goId = goId+"  aspect=C ";
-    
     JLabel goTermField = new JLabel(goId);
+    JLabel goAspect = null;
+    
+    Font font = goTermField.getFont().deriveFont(Font.BOLD);
+    
+    if(cvTerm.getCv().getName().equals("molecular_function"))
+    {
+      goAspect = new JLabel(" [F] ");
+      goAspect.setForeground(Color.RED);
+      goAspect.setFont(font);
+    }
+    else if(cvTerm.getCv().getName().equals("biological_process"))
+    {
+      goAspect = new JLabel(" [P] ");
+      goAspect.setForeground(Color.GREEN);
+      goAspect.setFont(font);
+    }
+    else if(cvTerm.getCv().getName().equals("cellular_component"))
+    {
+      goAspect = new JLabel(" [C] ");
+      goAspect.setForeground(Color.BLUE);
+      goAspect.setFont(font);
+    }
+    
     if(go_dimension == null)
-      this.go_dimension = new Dimension(goTermField.getPreferredSize().width+10,
+      this.go_dimension = new Dimension(goTermField.getPreferredSize().width+
+                                        goAspect.getPreferredSize().width,
                                         goTermField.getPreferredSize().height);
-    goTermField.setPreferredSize(this.go_dimension);
     goTermField.setToolTipText(term);
     xBox.add(goTermField);
+    xBox.add(goAspect);
     
     // the WITH column is associated with one or more FeatureCvTermDbXRef
     String with = getField("with=", qualifierString);
@@ -148,6 +164,7 @@ class GoBox extends CvBoxA
     String evidence = getField("evidence=", qualifierString);
     
     evidenceList = new JExtendedComboBox(evidenceCodes[1]);
+    evidenceList.setOpaque(false);
     evidenceList.setToolTipText("evidence column");
     evidenceList.setSelectedIndex( getEvidenceIndex(evidence) );
   
@@ -168,26 +185,11 @@ class GoBox extends CvBoxA
     editable.add(qualfTextField);
     xBox.add(qualfTextField);
     
-    String date = getField("date=", qualifierString);
-    Date this_date = getDate(date);
-    dateField = new JFormattedTextField(new SimpleDateFormat("yyyyMMdd"))
-    {
-      /** */
-      private static final long serialVersionUID = 1L;
-
-      protected int getColumnWidth()
-      {
-        return dateField.getFontMetrics(getFont()).charWidth('0');
-      }
-    };
-    dateField.setInputVerifier(new DateVerifier());
-    dateField.setValue(this_date);     
-    dateField.setToolTipText("date column");
-    dateField.setColumns(8);
-    dateField.setMaximumSize(dimension);
-    dateField.setActionCommand("date=");
+    dateField = new DatePanel( getField("date=", qualifierString), 
+                               d.height); 
+    
     editable.add(dateField);
-    xBox.add(dateField);
+    xBox.add(dateField.getDateSpinner());
   }
   
   private int getEvidenceIndex(String evidence)
