@@ -42,7 +42,7 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
-class GoBox extends CvBoxA
+class GoBox extends AbstractCvBox
 {
   protected static String[][] evidenceCodes = 
   { 
@@ -111,22 +111,28 @@ class GoBox extends CvBoxA
     
     Font font = goTermField.getFont().deriveFont(Font.BOLD);
     
-    if(cvTerm.getCv().getName().equals("molecular_function"))
+    if(cvTerm.getCv().getName().indexOf("molecular_function")>-1)
     {
       goAspect = new JLabel(" [F] ");
       goAspect.setForeground(Color.RED);
       goAspect.setFont(font);
     }
-    else if(cvTerm.getCv().getName().equals("biological_process"))
+    else if(cvTerm.getCv().getName().indexOf("biological_process")>-1)
     {
       goAspect = new JLabel(" [P] ");
       goAspect.setForeground(Color.GREEN);
       goAspect.setFont(font);
     }
-    else if(cvTerm.getCv().getName().equals("cellular_component"))
+    else if(cvTerm.getCv().getName().indexOf("cellular_component")>-1)
     {
       goAspect = new JLabel(" [C] ");
       goAspect.setForeground(Color.BLUE);
+      goAspect.setFont(font);
+    }
+    else
+    {
+      goAspect = new JLabel(" [?] ");
+      goAspect.setForeground(Color.BLACK);
       goAspect.setFont(font);
     }
     
@@ -244,15 +250,33 @@ class GoBox extends CvBoxA
   
   protected void updateQualifier(final QualifierVector qv)
   {
-    StringVector values = origQualifier.getValues();
-    values.remove(value_index);
+    int index = qv.indexOfQualifierWithName(origQualifier.getName());
+    Qualifier newQualifier = qv.getQualifierByName(origQualifier.getName());
+    
+    final String goId = getField("GOid=", origQualifierString);
+    
+    StringVector values = newQualifier.getValues();
+    
+    int value_index = -10;
+    
+    for(int i=0; i<values.size(); i++)
+    {
+      String newGoId = getField("GOid=", (String)values.get(i));
+      if(newGoId.equals(goId))
+      {
+        value_index = i;
+        break;
+      }
+    }
+    
+    if(value_index > -1)
+      values.remove(value_index);
+    
     String updatedQualifierString = updateQualifierString();
     
     Splash.logger4j.debug(origQualifierString);
     Splash.logger4j.debug(updatedQualifierString);
     values.add(value_index, updatedQualifierString);
-    
-    int index = qv.indexOfQualifierWithName(origQualifier.getName());
     
     origQualifier = new Qualifier(origQualifier.getName(), values);
     qv.remove(index);
