@@ -143,7 +143,9 @@
                $pub.pubId$, 
               </isGreaterThan>
             </isNotNull>
-            <isNull property="pub"> (SELECT pub_id FROM pub WHERE uniquename='null'), </isNull>     
+            <isNull property="pub"> 
+              (SELECT pub_id FROM pub WHERE uniquename='null' OR uniquename='NULL'), 
+            </isNull>     
           </dynamic>
           $rank$,
           $not$ )
