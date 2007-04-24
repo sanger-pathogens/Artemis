@@ -30,6 +30,9 @@ import java.util.Date;
 
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerListModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 
 /**
@@ -52,18 +55,40 @@ public class DatePanel
     Date initDate = getDate(date);
     Calendar calendar = Calendar.getInstance();
     
-    if(initDate == null)
-      initDate = calendar.getTime();
+    //if(initDate == null)
+    //  initDate = calendar.getTime();
     calendar.add(Calendar.YEAR, -100);
     Date earliestDate = calendar.getTime();
     calendar.add(Calendar.YEAR, 200);
     Date latestDate = calendar.getTime();
-    SpinnerDateModel model = new SpinnerDateModel(initDate,
+    
+    if(initDate != null)
+    {
+      SpinnerDateModel model = new SpinnerDateModel(initDate,
                                  earliestDate,
                                  latestDate,
                                  Calendar.YEAR);
-    spinner = new JSpinner(model);
-    spinner.setEditor(new JSpinner.DateEditor(spinner, "yyyy/MM/dd"));
+      spinner = new JSpinner(model);
+      spinner.setEditor(new JSpinner.DateEditor(spinner, "yyyy/MM/dd"));
+    }
+    else
+    {
+      SpinnerListModel model = new SpinnerListModel( new String[] { "", "----/--/--", "" } );
+      spinner = new JSpinner(model);
+      spinner.setValue("----/--/--");
+      model.addChangeListener(new ChangeListener()
+      {
+        public void stateChanged(ChangeEvent e)
+        {
+          if(spinner.getModel() instanceof SpinnerListModel)
+          {
+            spinner.setModel(new SpinnerDateModel());
+            spinner.setEditor(new JSpinner.DateEditor(spinner, "yyyy/MM/dd"));
+          }
+        }  
+      });
+    } 
+
   }
   
   /**
@@ -127,12 +152,17 @@ public class DatePanel
   }
   
   public String getText()
-  {
-    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
-                                         "yyyyMMdd");
-    
-    Date date = ((SpinnerDateModel)spinner.getModel()).getDate();
-    return sdf.format(date);
+  { 
+    if(spinner.getModel() instanceof SpinnerDateModel)
+    {
+      java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
+      "yyyyMMdd");
+      Date date = ((SpinnerDateModel)spinner.getModel()).getDate();
+      return sdf.format(date);
+    }
+    return "";
   }
+  
+
   
 }
