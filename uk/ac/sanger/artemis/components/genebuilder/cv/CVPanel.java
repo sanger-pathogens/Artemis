@@ -53,7 +53,7 @@ import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
-import uk.ac.sanger.artemis.components.Splash;
+//import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 
 import org.gmod.schema.cv.CvTerm;
@@ -65,13 +65,13 @@ public class CVPanel extends JPanel
              implements FeatureChangeListener
 {
 
-  /**
-   * 
-   */
+  /** */
   private static final long serialVersionUID = 1L;
 
   private QualifierVector cvQualifiers;
   private Vector editableComponents;
+  public static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(CVPanel.class);
   
   private JExtendedComboBox evidenceList;
   
@@ -167,6 +167,7 @@ public class CVPanel extends JPanel
     if(n > 0)
       addSeparator(cvBox);
     
+    
     n = 0;
     for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
         ++qualifier_index) 
@@ -216,11 +217,12 @@ public class CVPanel extends JPanel
       if(this_qualifier.getName().equals("class"))
       {
         final StringVector qualifier_strings = this_qualifier.getValues();
-
+        n++;
+        
         for(int value_index = 0; value_index < qualifier_strings.size(); ++value_index)
         {
           final int v_index = value_index;
-          n++;
+          
           xBox = Box.createHorizontalBox();
           final String qualifierString = (String) qualifier_strings.elementAt(value_index);
 
@@ -302,8 +304,13 @@ public class CVPanel extends JPanel
   private void addSeparator(final Box cvBox)
   {
     JSeparator separator = new JSeparator();
-    separator.setPreferredSize(new Dimension(getSize().width,10));
-    separator.setMaximumSize(new Dimension(getSize().width,10));
+    
+    int width = getSize().width;
+    if(width <= 0)
+      width = 700;
+
+    separator.setPreferredSize(new Dimension(width,10));
+    separator.setMaximumSize(new Dimension(width,10));
     cvBox.add(Box.createVerticalStrut(5));
     cvBox.add(separator);
   }
@@ -397,36 +404,44 @@ public class CVPanel extends JPanel
           
       if(step == 2)
       {
-        terms = promptKeyWord(xBox, cv_name);
-        if(terms == null)
+        Object obj = promptKeyWord(xBox, cv_name);
+        
+        if(obj == null)                   // CANCEL
           return;
-        else if(terms.size() < 1)
+        else if(!(obj instanceof Vector)) // PREV
         {
-          if(cv_name.equals("molecular_function") ||
-             cv_name.equals("biological_process") ||
-             cv_name.equals("cellular_component"))
-            step = 1;
-          else
-            step = 0;
+          step = 1;
           continue;
         }
+
+        terms = (Vector)obj;
+        if(terms.size() < 1)
+        {
+          JOptionPane.showMessageDialog(this, 
+              "No terms found for in the \""+cv_name+"\" controlled vocabulary", 
+              "Terms Not Found", JOptionPane.INFORMATION_MESSAGE);
+          logger4j.warn("No CV terms found for "+cv_name+
+                        " (these may not have been loaded into chado)");
+          return;
+        }
+        
         step = 3;
       }
       
       if(step == 3)
       {
         cvterm = promptCvTerms(xBox, terms, term_list);
-        if(cvterm == null)
+        if(cvterm == null)                // CANCEL
           return;
-        else if(cvterm.getName() == null)
+        else if(cvterm.getName() == null) // PREV
         {
           step = 2;
           continue;
         }
         
         if(cv_name.equals("molecular_function") ||
-            cv_name.equals("biological_process") ||
-            cv_name.equals("cellular_component"))
+           cv_name.equals("biological_process") ||
+           cv_name.equals("cellular_component"))
           step = 4;
         else
           step = 5;
@@ -435,12 +450,12 @@ public class CVPanel extends JPanel
       if(step == 4)
       {
         int select = promptEvidence(xBox);
-        if(select == 0)
+        if(select == 0)       // PREV
         {
           step = 3;
           continue;
         }
-        else if(select == 1)
+        else if(select == 1)  // CANCEL
           return;
         
         step = 5;
@@ -517,13 +532,13 @@ public class CVPanel extends JPanel
     
     if(editableComponents != null)
     {
-      Splash.logger4j.debug("CV checking......");
+      logger4j.debug("CV checking......");
       for(int i=0; i<editableComponents.size(); i++)
       {
-        CvBoxA cvBox = (CvBoxA)editableComponents.get(i);
+        AbstractCvBox cvBox = (AbstractCvBox)editableComponents.get(i);
         if(cvBox.isQualifierChanged())
         {
-          Splash.logger4j.debug("CV QUALIFIER CHANGED");
+          logger4j.debug("CV QUALIFIER CHANGED");
           cvBox.updateQualifier(cvQualifiers);
         }
       }
@@ -564,7 +579,7 @@ public class CVPanel extends JPanel
      
     String cv_name = ChadoTransactionManager.cv_tags[comboCV
           .getSelectedIndex()];
-    Splash.logger4j.debug("Selected CV is " + cv_name);
+    logger4j.debug("Selected CV is " + cv_name);
 
     if(cv_name.equals("GO"))
     {
@@ -611,7 +626,7 @@ public class CVPanel extends JPanel
    * @param cv_name
    * @return
    */
-  private Vector promptKeyWord(final Box xBox, final String cv_name)
+  private Object promptKeyWord(final Box xBox, final String cv_name)
   {
     final String options[] = { "<PREV", "CANCEL", "NEXT>"};
     final JTextField tfield = new JTextField(10);
@@ -633,12 +648,12 @@ public class CVPanel extends JPanel
     else if(select == 0)
     {
       xBox.remove(tfield);
-      return new Vector(0);
+      return new Object();
     }
     
     xBox.remove(tfield);
     
-    Splash.logger4j.debug("CvTerm cache lookup: "+tfield.getText().trim()+" from "+cv_name);
+    logger4j.debug("CvTerm cache lookup: "+tfield.getText().trim()+" from "+cv_name);
     return DatabaseDocument.getCvterms(tfield.getText().trim(), cv_name);
   }
   
@@ -679,7 +694,10 @@ public class CVPanel extends JPanel
     if(select == 1)
       return null;
     else if(select == 0)
+    {
+      xBox.remove(term_list);
       return new CvTerm();
+    }
     
     return (CvTerm)term_list.getSelectedItem();
   }

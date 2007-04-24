@@ -35,7 +35,7 @@ import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.StringVector;
 
-class ControlledCurationBox extends CvBoxA
+class ControlledCurationBox extends AbstractCvBox
 {
   private Box xBox;
   private int value_index;

@@ -1,4 +1,4 @@
-/* GoBox.java
+/* AbstractCvBox.java
  *
  * created: 2007
  *
@@ -33,7 +33,7 @@ import uk.ac.sanger.artemis.io.QualifierVector;
  * Component for controlled vocabulary qualifier, e.g
  * GO, controlled_curation, product
  */
-abstract class CvBoxA
+abstract class AbstractCvBox
 {
 
   /**
