@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.51 2007-04-17 12:49:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.52 2007-04-25 09:10:22 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -44,7 +44,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.51 2007-04-17 12:49:17 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.52 2007-04-25 09:10:22 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -466,8 +466,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
                              { "=",  "%3D" },  // equals
                              { "\t", "%09" },  // tab
                              { " ",  "+"   },  // white space
+                             { "+",  "%2B" },
                              { "(",  "%28" },  // left bracket
-                             { ")",  "%29" }   // right bracket )
+                             { ")",  "%29" }   // right bracket
                            };
 
     int ind;
@@ -501,9 +502,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
                              { ";",  "%3B" },  // semi-colon
                              { "=",  "%3D" },  // equals
                              { "\t", "%09" },  // tab
+                             { "+",  "%2B" },
                              { " ",  "+"   },  // white space
                              { "(",  "%28" },  // left bracket
-                             { ")",  "%29" }   // right bracket )
+                             { ")",  "%29" }   // right bracket
                            };
 
     int ind;
