@@ -31,6 +31,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Vector;
 
 
@@ -135,7 +137,7 @@ public class CVPanel extends JPanel
     for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
         ++qualifier_index) 
     {
-      final Qualifier this_qualifier = (Qualifier)cvQualifiers.elementAt(qualifier_index);
+      Qualifier this_qualifier = (Qualifier)cvQualifiers.elementAt(qualifier_index);
 
       if(this_qualifier.getName().equals("GO"))
       {
@@ -156,8 +158,9 @@ public class CVPanel extends JPanel
           editableComponents.add(go_box);
           
           xBox = go_box.getBox();
-          xBox.add(getRemoveButton(this_qualifier, v_index));
           xBox.add(Box.createHorizontalGlue());
+          xBox.add(getRemoveButton(this_qualifier, v_index));
+          
           cvBox.add(xBox);
         }
       }
@@ -193,8 +196,8 @@ public class CVPanel extends JPanel
           editableComponents.add(ccBox);
           
           xBox = ccBox.getBox();
-          xBox.add(getRemoveButton(this_qualifier, v_index));         
           xBox.add(Box.createHorizontalGlue());
+          xBox.add(getRemoveButton(this_qualifier, v_index));         
           cvBox.add(xBox);         
         }
       }
@@ -244,8 +247,8 @@ public class CVPanel extends JPanel
           termTextField.setCaretPosition(0);
 
           xBox.add(termTextField);
-          xBox.add(getRemoveButton(this_qualifier, v_index));
           xBox.add(Box.createHorizontalGlue());
+          xBox.add(getRemoveButton(this_qualifier, v_index));
           cvBox.add(xBox);
 
           // Splash.logger4j.debug(this_qualifier.getName());
@@ -286,9 +289,9 @@ public class CVPanel extends JPanel
             termTextField.setMaximumSize(dimension4);
             termTextField.setCaretPosition(0);
             
-            xBox.add(termTextField);          
-            xBox.add(getRemoveButton(this_qualifier, v_index));
+            xBox.add(termTextField);
             xBox.add(Box.createHorizontalGlue());
+            xBox.add(getRemoveButton(this_qualifier, v_index));
             cvBox.add(xBox);
           }
           //Splash.logger4j.debug(this_qualifier.getName());
@@ -309,6 +312,7 @@ public class CVPanel extends JPanel
     if(width <= 0)
       width = 700;
 
+    separator.setForeground(Color.LIGHT_GRAY);
     separator.setPreferredSize(new Dimension(width,10));
     separator.setMaximumSize(new Dimension(width,10));
     cvBox.add(Box.createVerticalStrut(5));
@@ -345,9 +349,18 @@ public class CVPanel extends JPanel
     final QualifierVector qualifiers = feature.getQualifiers();  
     for(int i = 0 ; i < qualifiers.size(); ++i) 
     {
-      Qualifier qualifier = (Qualifier)qualifiers.elementAt(i);
-      if(isCvTag(qualifier))
-        cvQualifiers.addElement(qualifier.copy());
+      Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(i);
+      
+      if(this_qualifier.getName().equals("GO"))
+      {
+        final StringVector qualifier_strings = this_qualifier.getValues();
+        // sort by aspect (molecular_function, biological_process, cellular_component)
+        Collections.sort(qualifier_strings, new StringVectorComparator());
+        this_qualifier = new Qualifier("GO", qualifier_strings);
+      }
+      
+      if(isCvTag(this_qualifier))
+        cvQualifiers.addElement(this_qualifier.copy());
     }
    
     feature.addFeatureChangeListener(this);  
@@ -778,6 +791,48 @@ public class CVPanel extends JPanel
       setText(((CvTerm)value).getName());
       //setToolTipText(((CvTerm)value).getCv().getName());
       return this;
+    }
+  }
+  
+  class StringVectorComparator implements Comparator
+  {
+    public StringVectorComparator()
+    {
+    }
+
+    public final int compare(Object a, Object b)
+    {
+      int result;
+
+      String strA = getField("aspect", (String)a);
+      String strB = getField("aspect", (String)b);
+      result = strA.compareTo(strB);
+
+      return result;
+    }
+    
+    /**
+     * Strip out the value of a field of interest from a qualifier string
+     * 
+     * @param fieldName
+     * @param qualifierString
+     * @return
+     */
+    private String getField(final String fieldName, final String qualifierString)
+    {
+      String field = "";
+      
+      int ind1 = qualifierString.toLowerCase().indexOf(fieldName.toLowerCase());
+      int ind2 = qualifierString.indexOf(";", ind1);
+      
+      int len = fieldName.length();
+
+      if(ind2 > ind1 && ind1 > -1)
+        field = qualifierString.substring(ind1+len,ind2);
+      else if(ind1 > -1)
+        field = qualifierString.substring(ind1+len);
+      
+      return field;
     }
   }
   
