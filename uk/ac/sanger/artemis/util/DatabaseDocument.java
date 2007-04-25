@@ -1175,7 +1175,8 @@ public class DatabaseDocument extends Document
       attr_buff.append("GOid="+dbXRef.getDb().getName() + ":"
           + dbXRef.getAccession() + "%3B");
       
-      attr_buff.append("term="+feature_cvterm.getCvTerm().getName()+"%3B");
+      attr_buff.append("term="+
+          GFFStreamFeature.encode(feature_cvterm.getCvTerm().getName())+"%3B");
       
       // PMID
       int nfound_pub = 0;
