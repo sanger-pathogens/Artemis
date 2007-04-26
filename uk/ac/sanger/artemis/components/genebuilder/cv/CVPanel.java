@@ -511,6 +511,7 @@ public class CVPanel extends JPanel
     removeAll();
     add(createCVQualifiersComponent(),
         BorderLayout.CENTER);
+    repaint();
   }
   
   private void removeCvTerm(final String qualifier_name, 
