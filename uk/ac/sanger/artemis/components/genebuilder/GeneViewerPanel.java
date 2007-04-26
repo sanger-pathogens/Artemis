@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.42 2007-04-18 12:33:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.43 2007-04-26 08:20:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -573,6 +573,7 @@ public class GeneViewerPanel extends JPanel
     } 
     catch (EntryInformationException e) 
     {
+      e.printStackTrace();
     }
     catch(ReadOnlyException e)
     {
