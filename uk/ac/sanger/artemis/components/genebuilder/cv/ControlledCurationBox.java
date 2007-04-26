@@ -63,6 +63,7 @@ class ControlledCurationBox extends AbstractCvBox
     
     String term = getField("term=", qualifierString);
     termTextField = new JTextField(term);
+    termTextField.setOpaque(false);
     termTextField.setEditable(false);
     termTextField.setToolTipText("term column");
     termTextField.setPreferredSize(dimension);

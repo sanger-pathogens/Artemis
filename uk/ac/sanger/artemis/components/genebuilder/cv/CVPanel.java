@@ -237,6 +237,7 @@ public class CVPanel extends JPanel
           int index = qualifierString.indexOf("::");
           String classStr = qualifierString.substring(0, index);
           JTextField termTextField = new JTextField(classStr);
+          termTextField.setOpaque(false);
           termTextField.setEditable(false);
           termTextField
               .setToolTipText(DatabaseDocument.getCvTermByCvTermId(
@@ -283,6 +284,7 @@ public class CVPanel extends JPanel
             xBox.add(label);
             
             JTextField termTextField = new JTextField(qualifierString);
+            termTextField.setOpaque(false);
             termTextField.setEditable(false);
             termTextField.setToolTipText("term column");
             termTextField.setPreferredSize(dimension4);
@@ -511,6 +513,7 @@ public class CVPanel extends JPanel
     removeAll();
     add(createCVQualifiersComponent(),
         BorderLayout.CENTER);
+    revalidate();
     repaint();
   }
   
