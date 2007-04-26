@@ -1,5 +1,9 @@
 Version ??
 
+	Implemented the ability to run and store fasta anad blast search 
+	results for multiple databases... E.g. fasta searches on uniprot 
+	and on user's own database, stored in multiple fasta_file qualifiers.
+
  	"Set Score Cutoffs" in Artemis popup menu uses existing /scores as
  	the initial min and max values (rather than just 0 and 100).
 
