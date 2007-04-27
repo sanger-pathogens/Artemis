@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.23 2007-04-26 08:46:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.24 2007-04-27 13:57:19 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -286,10 +286,11 @@ public class GeneBuilderFrame extends JFrame
     return transcriptBox;
   }
   
-  protected void setActiveFeature(final Feature active_feature)
+  protected void setActiveFeature(final Feature active_feature,
+                                  final boolean isSet)
   {  
     this.active_feature = active_feature;
-    feature_editor.setActiveFeature(active_feature);
+    feature_editor.setActiveFeature(active_feature, isSet);
   }
 
   /**

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.43 2007-04-26 08:20:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.44 2007-04-27 13:57:19 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -234,10 +234,8 @@ public class GeneViewerPanel extends JPanel
             segment.removeFromFeature();
             selection.remove(segment);
           }
-        
           selection.add(feature);
-          gene_builder.setActiveFeature(feature);
-          
+          gene_builder.setActiveFeature(feature, false);
           repaint();
         }
         catch(ReadOnlyException e)
@@ -376,7 +374,7 @@ public class GeneViewerPanel extends JPanel
  
         uk.ac.sanger.artemis.Feature transcript = features.elementAt(0);
         checkTranscriptBoundary(transcript);
-        gene_builder.setActiveFeature(transcript);
+        gene_builder.setActiveFeature(transcript, false);
       }
     });
     menu.add(adjustCoords);
@@ -1554,12 +1552,12 @@ public class GeneViewerPanel extends JPanel
             selection.set(
                 (uk.ac.sanger.artemis.Feature)((Feature)feature).getUserData());
             gene_builder.setActiveFeature(
-                (uk.ac.sanger.artemis.Feature)((Feature)feature).getUserData());
+                (uk.ac.sanger.artemis.Feature)((Feature)feature).getUserData(), true);
           }
           else
           {
             selection.set((FeatureSegment)feature);
-            gene_builder.setActiveFeature(((FeatureSegment)feature).getFeature());
+            gene_builder.setActiveFeature(((FeatureSegment)feature).getFeature(), true);
           }
         }
 
