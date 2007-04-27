@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.34 2007-04-26 15:04:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.35 2007-04-27 13:55:16 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -65,7 +65,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.34 2007-04-26 15:04:37 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.35 2007-04-27 13:55:16 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -203,9 +203,16 @@ public class FeatureEdit extends JPanel
     qualifier_text_area.requestFocus();
   }
   
-  public void setActiveFeature(final Feature edit_feature)
+  /**
+   * Set the feature to edit
+   * @param edit_feature
+   * @param isSet
+   */
+  public void setActiveFeature(final Feature edit_feature,
+                               final boolean isSet)
   {
-    setFeature();
+    if(isSet)
+      setFeature();
     this.edit_feature = edit_feature;
     this.edit_entry   = edit_feature.getEntry();
     updateFromFeature();
