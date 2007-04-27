@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.44 2007-04-27 13:57:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.45 2007-04-27 16:25:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -227,14 +227,15 @@ public class GeneViewerPanel extends JPanel
           return;
         try
         {
-          uk.ac.sanger.artemis.Feature feature = features.elementAt(0).getFeature();
+          uk.ac.sanger.artemis.Feature feature = selection.getAllFeatures().elementAt(0);
           for(int i = 0; i < features.size(); i++)
           {
             segment = features.elementAt(i);
             segment.removeFromFeature();
             selection.remove(segment);
           }
-          selection.add(feature);
+          
+          //selection.add(feature);
           gene_builder.setActiveFeature(feature, false);
           repaint();
         }
@@ -300,7 +301,7 @@ public class GeneViewerPanel extends JPanel
         Range range_selected = selection.getSelectionRange();
     
         addExonFeature(chado_gene, entry_group, embl_exon, 
-                       range_selected, uniquename, selection, exonKey);
+                       range_selected, uniquename, selection, exonKey, gene_builder);
       }
     });
     menu.add(createExon);
@@ -1374,7 +1375,8 @@ public class GeneViewerPanel extends JPanel
                               final GFFStreamFeature feature, Range range,
                               final String transcript_name,
                               final Selection selection,
-                              final Key exonKey)
+                              final Key exonKey, 
+                              final GeneBuilderFrame gene_builder)
   {
     try
     {
@@ -1440,6 +1442,7 @@ public class GeneViewerPanel extends JPanel
         feature.setQualifier(new Qualifier("ID", feature.getSegmentID( rv )));
         
         ((uk.ac.sanger.artemis.Feature)feature.getUserData()).addSegment(range, old_qualifiers);
+        gene_builder.setActiveFeature((uk.ac.sanger.artemis.Feature)feature.getUserData(), false);
       }
     }
     catch(InvalidRelationException e)
