@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.45 2007-04-27 16:25:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.46 2007-04-30 10:01:07 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -341,9 +341,20 @@ public class GeneViewerPanel extends JPanel
           return;
         Feature transcript = getTranscriptAt(last_cursor_position);
         String transcriptName  = getQualifier(transcript, "ID");
-        Range range_selected = selection.getSelectionRange();
-        String pepName = chado_gene.autoGeneratePepName(transcriptName);
         
+        final List exons;
+        if(chado_gene.getGene().getKey().getKeyString().equals("pseudogene"))
+          exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, "pseudogenic_exon");
+        else
+          exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, "exon");
+       
+        final Range range_selected;
+        if(exons != null && exons.size() > 0)
+          range_selected = ((GFFStreamFeature)exons.get(0)).getLocation().getTotalRange();
+        else
+          range_selected = transcript.getLocation().getTotalRange();
+        
+        final String pepName = chado_gene.autoGeneratePepName(transcriptName);
         try
         {
           addFeature(range_selected, transcriptName, pepName,
