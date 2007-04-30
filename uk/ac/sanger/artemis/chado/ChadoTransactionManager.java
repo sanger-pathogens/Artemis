@@ -506,6 +506,9 @@ public class ChadoTransactionManager
           parent.setUniqueName((String)parents.get(i));
           FeatureRelationship feature_relationship =
               new FeatureRelationship();
+          
+          //
+          // should be retrieved from relationship ontology !!
           CvTerm cvterm = new CvTerm();
           cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").intValue());
           
@@ -596,6 +599,9 @@ public class ChadoTransactionManager
           parent.setUniqueName((String)parents.get(i));
           FeatureRelationship feature_relationship =
               new FeatureRelationship();
+          
+          //
+          // should be retrieved from relationship ontology !!
           CvTerm cvterm = new CvTerm();
           cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").intValue());
           
@@ -619,6 +625,9 @@ public class ChadoTransactionManager
                                       new org.gmod.schema.sequence.Feature();
           parent.setUniqueName((String) derives.get(i));
           FeatureRelationship feature_relationship = new FeatureRelationship();
+          
+          //
+          // should be retrieved from relationship ontology !!
           CvTerm cvterm = new CvTerm();
           cvterm.setCvTermId(DatabaseDocument.getCvtermID("derives_from")
               .intValue());
@@ -639,8 +648,7 @@ public class ChadoTransactionManager
 
     String key = feature.getKey().toString();
     
-    CvTerm cvterm = new CvTerm();
-    cvterm.setCvTermId(DatabaseDocument.getCvtermID(key).intValue());
+    CvTerm cvterm = DatabaseDocument.getCvTermByCvAndCvTerm(key, "sequence");
     chado_feature.setCvTerm(cvterm);
 
     addQualifiers(feature.getQualifiers(), chado_feature);
@@ -704,6 +712,9 @@ public class ChadoTransactionManager
           parent.setUniqueName((String)parents.get(i));
           FeatureRelationship feature_relationship =
               new FeatureRelationship();
+          
+          //
+          // should be retrieved from relationship ontology !!
           CvTerm cvterm = new CvTerm();
           cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").intValue());
           
@@ -727,6 +738,9 @@ public class ChadoTransactionManager
                                       new org.gmod.schema.sequence.Feature();
           parent.setUniqueName((String) derives.get(i));
           FeatureRelationship feature_relationship = new FeatureRelationship();
+          
+          //
+          // should be retrieved from relationship ontology !!
           CvTerm cvterm = new CvTerm();
           cvterm.setCvTermId(DatabaseDocument.getCvtermID("derives_from")
               .intValue());
@@ -747,10 +761,9 @@ public class ChadoTransactionManager
     chado_feature.setUniqueName(segment_uniquename);
     chado_feature.setName(segment_uniquename);
 
-    String key = feature.getKey().toString();
+    final String key = feature.getKey().toString();
     
-    CvTerm cvterm = new CvTerm();
-    cvterm.setCvTermId(DatabaseDocument.getCvtermID(key).intValue());
+    CvTerm cvterm = getCvTerm(key, "sequence");
     chado_feature.setCvTerm(cvterm);
 
     //addQualifiers(feature.getQualifiers(), chado_feature);
@@ -767,14 +780,14 @@ public class ChadoTransactionManager
    * Set the transaction for deleting a feature.
    */
   private void deleteFeature(final String uniquename, final String featureType)
-  {
-    logger4j.debug("FEATURE_DELETED "+uniquename);
-    
+  { 
     org.gmod.schema.sequence.Feature chado_feature = 
       new org.gmod.schema.sequence.Feature();
     chado_feature.setUniqueName(uniquename);
-    CvTerm cvTerm = getCvTerm(featureType);
+    CvTerm cvTerm = getCvTerm(featureType, "sequence");
     chado_feature.setCvTerm(cvTerm);
+    logger4j.debug("FEATURE_DELETED "+uniquename+" cv name="+
+         cvTerm.getCv().getName()+" term="+cvTerm.getName());
     
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.DELETE,
         chado_feature,
@@ -916,8 +929,8 @@ public class ChadoTransactionManager
     if(event_type != FeatureChangeEvent.QUALIFIER_CHANGED && 
        !new_key.equals(old_key))
     {
-      Integer lcvterm_id = DatabaseDocument.getCvtermID(new_key.getKeyString());
-      if(lcvterm_id == null)   // chado doesn't recognise this
+      CvTerm cvTerm = getCvTerm(new_key.getKeyString(), "sequence");
+      if(cvTerm == null)   // chado doesn't recognise this
       {
         JOptionPane.showMessageDialog(null, 
                   new_key.getKeyString()+" is not a valid key!\n"+
@@ -928,8 +941,6 @@ public class ChadoTransactionManager
       else
       {  
         RangeVector rv = feature.getLocation().getRanges();
-        CvTerm cvterm = new CvTerm();
-        cvterm.setCvTermId( lcvterm_id.intValue() );
         
         if(rv.size() > 0)
         {
@@ -938,7 +949,7 @@ public class ChadoTransactionManager
             org.gmod.schema.sequence.Feature chado_feature =
               new org.gmod.schema.sequence.Feature();
         
-            chado_feature.setCvTerm(cvterm);
+            chado_feature.setCvTerm(cvTerm);
             chado_feature.setUniqueName( feature.getSegmentID((Range)rv.elementAt(i)) );
         
             logger4j.debug("KEY CHANGE "+feature.getSegmentID((Range)rv.elementAt(i)));
@@ -954,7 +965,7 @@ public class ChadoTransactionManager
           org.gmod.schema.sequence.Feature chado_feature =
             new org.gmod.schema.sequence.Feature();
       
-          chado_feature.setCvTerm(cvterm);
+          chado_feature.setCvTerm(cvTerm);
           chado_feature.setUniqueName(uniquename);
       
           logger4j.debug("KEY CHANGE "+new_key);
@@ -1596,7 +1607,7 @@ public class ChadoTransactionManager
     
     if(qualifier_name.toLowerCase().equals("product"))
     {
-      CvTerm cvTerm = getCvTerm(qualifier_string);
+      CvTerm cvTerm = getCvTerm(qualifier_string, null);
 
       feature_cvterm.setCvTerm(cvTerm);
       logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
@@ -1607,7 +1618,7 @@ public class ChadoTransactionManager
       int index = qualifier_string.indexOf("::");
 
       CvTerm cvTerm = getCvTerm( DatabaseDocument.getCvTermByCvTermId( 
-          Integer.parseInt(qualifier_string.substring(index+2))).getName() );
+          Integer.parseInt(qualifier_string.substring(index+2))).getName(), "RILEY" );
       
       feature_cvterm.setCvTerm(cvTerm);
       logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
@@ -1624,7 +1635,7 @@ public class ChadoTransactionManager
       if(this_qualifier_part_lowercase.startsWith("term="))
       {
         String cvTermName = this_qualifier_part.substring(5);
-        CvTerm cvTerm = getCvTerm(cvTermName);
+        CvTerm cvTerm = getCvTerm(cvTermName, null);
 
         feature_cvterm.setCvTerm(cvTerm);
         continue;
@@ -1668,7 +1679,7 @@ public class ChadoTransactionManager
         String prop = this_qualifier_part.substring(index+1);
         
         logger4j.debug("FeatureCvTermProp = "+this_qualifier_part_lowercase);
-        CvTerm cvTerm = getCvTerm(this_qualifier_part.substring(0,index));
+        CvTerm cvTerm = getCvTerm(this_qualifier_part.substring(0,index), null);
         
         FeatureCvTermProp featureCvTermProp = new FeatureCvTermProp();
         featureCvTermProp.setValue(prop);
@@ -1711,21 +1722,27 @@ public class ChadoTransactionManager
   
   /**
    * Get CvTerm that have been cached
-   * @param cvTermName
+   * @param cvTermName  term name
+   * @param cvName      name of controlled vocabulary
    * @return
    */
-  private CvTerm getCvTerm(String cvTermName)
+  private CvTerm getCvTerm(String cvTermName, final String cvName)
   {
     if(cvTermName.startsWith("\""))
       cvTermName = cvTermName.substring(1, cvTermName.length()-1);
     
-    CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(cvTermName);
+    CvTerm cvTerm;
+    
+    if(cvName != null)
+      cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm(cvTermName, cvName);
+    else
+      cvTerm = DatabaseDocument.getCvTermByCvTermName(cvTermName);
 
     if(cvTerm != null)
     {
       logger4j.debug("USE CvTerm from cache, CvTermId="
           + cvTermName + "  -> " + cvTerm.getCvTermId()+  " " +
-          cvTerm.getName()+":"+cvTerm.getCv().getName()); 
+          cvTerm.getName()+" -> "+cvTerm.getCv().getName()); 
     }
     else
     {
