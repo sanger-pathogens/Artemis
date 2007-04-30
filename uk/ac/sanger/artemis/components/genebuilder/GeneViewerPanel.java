@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.46 2007-04-30 10:01:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.47 2007-04-30 15:32:27 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -41,6 +41,7 @@ import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.FeatureSegment;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.LastSegmentException;
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.FeatureVector;
 
@@ -55,6 +56,7 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
+import uk.ac.sanger.artemis.sequence.Marker;
 import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.sequence.Strand;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
@@ -81,6 +83,29 @@ public class GeneViewerPanel extends JPanel
   private int start;
   
   private MarkerRange click_range = null;
+  
+  /**
+   *  The last(FeatureSegment) Marker that the user clicked on.  This is used
+   *  for dragging the ends of segments.
+   **/
+  private Marker click_segment_marker = null;
+
+  /**
+   *  This is true if click_segment_marker is the Marker at the start of
+   *  segment false otherwise.  The value is only useful if
+   *  click_segment_marker is set.
+   **/
+  private boolean click_segment_marker_is_start_marker = false;
+
+  /**
+   *  When a FeatureSegment Marker drag starts, this is set to the Marker at
+   *  the other end of the segment.  This is used to check that the drag has
+   *  not move the Marker too far(past the end of the segment).
+   **/
+  private Marker other_end_of_segment_marker = null;
+  
+  /** This is a record of the feature last clicked */
+  private uk.ac.sanger.artemis.Feature clicked_feature;
   
   private Point last_cursor_position;
   
@@ -130,14 +155,59 @@ public class GeneViewerPanel extends JPanel
         if(event.isPopupTrigger())
           return;
         
-        final MarkerRange selected_range = selection.getMarkerRange();
-        
         int select_start = (int)((event.getX() - border)/fraction)+start;
         Strand strand = 
           ((uk.ac.sanger.artemis.Feature)(chado_gene.getGene().getUserData())).getStrand();
           
         if(!strand.isForwardStrand())
           select_start = strand.getBases().getComplementPosition(select_start);
+        
+        
+        if(click_segment_marker != null)
+        {
+          final int new_position;
+          MarkerRange drag_range;
+          try
+          {
+            drag_range = new MarkerRange(strand, select_start, select_start + 1);
+          }
+          catch(OutOfRangeException e1)
+          {
+            e1.printStackTrace();
+            return;
+          }
+          
+          if(click_segment_marker_is_start_marker)
+          {
+            // the Marker is at the start of the segment
+            new_position = drag_range.getStart().getPosition();
+
+            // don't go past the other end of the segment
+            if(new_position > other_end_of_segment_marker.getPosition())
+              return;
+          }
+          else
+          {
+            new_position = drag_range.getEnd().getPosition();
+
+            // don't go past the other end of the segment
+            if(new_position < other_end_of_segment_marker.getPosition())
+              return;
+          }
+
+          try
+          {
+            click_segment_marker.setPosition(new_position);
+            gene_builder.setActiveFeature(clicked_feature, false);
+            return;
+          }
+          catch(OutOfRangeException e)
+          {
+            throw new Error("internal error - unexpected OutOfRangeException");
+          }
+        }
+        
+        final MarkerRange selected_range = selection.getMarkerRange();
         
         try
         {
@@ -1521,12 +1591,14 @@ public class GeneViewerPanel extends JPanel
   {
     public void mousePressed(MouseEvent e)
     {
+      click_segment_marker = null;
       maybeShowPopup(e);
     }
 
     public void mouseReleased(MouseEvent e)
     {
       maybeShowPopup(e);
+      click_segment_marker = null;
     }
 
     private void maybeShowPopup(MouseEvent e)
@@ -1575,6 +1647,53 @@ public class GeneViewerPanel extends JPanel
           }
         }
 
+        
+        // the following is used by mouseDragged() to edit feature locations
+        if(feature instanceof Feature)
+          clicked_feature = (uk.ac.sanger.artemis.Feature)((Feature)feature).getUserData();
+        else
+          clicked_feature = ((FeatureSegment)feature).getFeature();
+        click_segment_marker = null;
+        
+        if(Options.getOptions().canDirectEdit() &&
+           !clicked_feature.isReadOnly())
+         {
+           // search the feature to find if the start Marker of any of the
+           // segments matches the start Marker of new_click_range or if an end
+           // Marker matches the end Marker of new_click_range
+
+          final FeatureSegmentVector segments = clicked_feature.getSegments();
+
+          for(int k = 0; k < segments.size(); k++)
+          {
+            FeatureSegment this_segment = segments.elementAt(k);
+            Range segment_range = this_segment.getRawRange();
+
+            int segment_start = border
+                + (int) ((segment_range.getStart() - start) * fraction);
+            int segment_end = border
+                + (int) ((segment_range.getEnd() - start) * fraction);
+            if(e.getPoint().x >= segment_start &&
+               e.getPoint().x <= segment_end)
+            {
+              int segment_mid = (segment_start+segment_end)/2;
+              
+              if(e.getPoint().x < segment_mid)
+              {
+                click_segment_marker = this_segment.getStart();  
+                click_segment_marker_is_start_marker = true;
+                other_end_of_segment_marker = this_segment.getEnd();
+              }
+              else
+              {
+                click_segment_marker = this_segment.getEnd();
+                click_segment_marker_is_start_marker = false;
+                other_end_of_segment_marker = this_segment.getStart();
+              }
+            }
+          }
+          
+        }
         repaint();
       }
     }
