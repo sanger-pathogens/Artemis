@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.24 2007-04-27 13:57:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.25 2007-05-01 09:35:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -339,12 +339,21 @@ public class GeneBuilderFrame extends JFrame
         Qualifier parent_qualifier = 
           qualifiers.getQualifierByName("Parent");
         
-        if(parent_qualifier == null)
+        Qualifier derives_from_qualifier = 
+          qualifiers.getQualifierByName("Derives_from");
+        
+        if(parent_qualifier == null && derives_from_qualifier == null)
           return;
+
         tree.addNode(event.getFeature());
         feature.addFeatureChangeListener(this);
         
-        String parent = (String)parent_qualifier.getValues().get(0);
+        // if polypeptide added then we are done
+        if(derives_from_qualifier != null)
+          return;
+           
+        final String parent = (String)parent_qualifier.getValues().get(0);
+
         String gene_name = null;
         try
         {
