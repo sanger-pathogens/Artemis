@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.47 2007-04-30 15:32:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.48 2007-05-01 09:38:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -402,15 +402,22 @@ public class GeneViewerPanel extends JPanel
     });
     menu.add(createFeature);
     
-    JMenuItem createFeatureProtein = new JMenuItem("Add protein feature to transcript hierarchy");
+    JMenuItem createFeatureProtein = new JMenuItem("Add polypeptide feature to selected transcript hierarchy");
     createFeatureProtein.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)  
       {
-        if(last_cursor_position == null)
+        uk.ac.sanger.artemis.Feature transcript = selection.getAllFeatures().elementAt(0);
+        final String transcriptName;
+        try
+        {
+          transcriptName = (String)transcript.getQualifierByName("ID").getValues().get(0);
+        }
+        catch(InvalidRelationException e1)
+        {
+          e1.printStackTrace();
           return;
-        Feature transcript = getTranscriptAt(last_cursor_position);
-        String transcriptName  = getQualifier(transcript, "ID");
+        }
         
         final List exons;
         if(chado_gene.getGene().getKey().getKeyString().equals("pseudogene"))
@@ -425,6 +432,7 @@ public class GeneViewerPanel extends JPanel
           range_selected = transcript.getLocation().getTotalRange();
         
         final String pepName = chado_gene.autoGeneratePepName(transcriptName);
+        
         try
         {
           addFeature(range_selected, transcriptName, pepName,
