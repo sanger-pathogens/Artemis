@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.49 2007-05-01 09:53:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.50 2007-05-01 15:02:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -1695,9 +1695,10 @@ public class GeneViewerPanel extends JPanel
             {
               int segment_mid = (segment_start+segment_end)/2;
               
-              if(e.getPoint().x < segment_mid)
+              if((e.getPoint().x < segment_mid &&  this_segment.isForwardSegment()) ||
+                 (e.getPoint().x > segment_mid && !this_segment.isForwardSegment()))
               {
-                click_segment_marker = this_segment.getStart();  
+                click_segment_marker = this_segment.getStart(); 
                 click_segment_marker_is_start_marker = true;
                 other_end_of_segment_marker = this_segment.getEnd();
               }
