@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.48 2007-05-01 09:38:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.49 2007-05-01 09:53:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -419,6 +419,15 @@ public class GeneViewerPanel extends JPanel
           return;
         }
         
+        if(!chado_gene.isTranscript(transcriptName))
+        {
+          JOptionPane.showMessageDialog(null, 
+              "Select a single transcript and try again.", 
+              "Transcript Selection",
+              JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+          
         final List exons;
         if(chado_gene.getGene().getKey().getKeyString().equals("pseudogene"))
           exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, "pseudogenic_exon");
