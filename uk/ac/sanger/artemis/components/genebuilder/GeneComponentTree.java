@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.17 2007-04-27 13:57:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.18 2007-05-01 09:36:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -289,8 +289,13 @@ public class GeneComponentTree extends JTree
   {
     try
     {
-      String parent =
-        (String)feature.getQualifierByName("Parent").getValues().get(0);
+      final String parent;
+      
+      if(feature.getQualifierByName("Parent") != null)
+        parent = (String)feature.getQualifierByName("Parent").getValues().get(0);
+      else
+        parent = (String)feature.getQualifierByName("Derives_from").getValues().get(0);
+      
       String name = 
         (String)feature.getQualifierByName("ID").getValues().get(0);
       
