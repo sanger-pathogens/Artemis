@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.42 2007-04-13 07:50:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.43 2007-05-03 18:45:46 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -42,7 +42,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.42 2007-04-13 07:50:15 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.43 2007-05-03 18:45:46 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -572,13 +572,26 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     new_feature
         .setFeature_relationship_rank_store(feature_relationship_rank_store);
 
-    // set the ID
-    String ID = new_feature.getSegmentID(new_feature.getLocation().getRanges());
-
-    Qualifier id_qualifier = new_feature.getQualifierByName("ID");
-    id_qualifier.removeValue((String) (id_qualifier.getValues()).elementAt(0));
+    
+//  set the ID
+    String ID;
+    try
+    {
+      ID = new_feature.getSegmentID(new_feature.getLocation().getRanges());
+    }
+    catch(NullPointerException npe)
+    {
+      if(new_feature.getQualifierByName("Parent") != null)
+        ID = ((String)new_feature.getQualifierByName("Parent").getValues().get(0)) +
+            ":"+new_feature.getKey().getKeyString();
+      else
+        ID = new_feature.getKey().getKeyString();
+    }
+    final Qualifier id_qualifier = new_feature.getQualifierByName("ID");
+    id_qualifier.removeValue((String)(id_qualifier.getValues()).elementAt(0));
     id_qualifier.addValue(ID);
-
+    
+    
     try
     {
       new_feature.setLocation(new_location);
