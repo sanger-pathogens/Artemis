@@ -79,6 +79,8 @@ class GoBox extends AbstractCvBox
   };
   
   private Dimension go_dimension;
+  private static Dimension evidenceListDimension;
+  
   private Box xBox;
   private int value_index;
   private JTextField withTextField;
@@ -174,10 +176,10 @@ class GoBox extends AbstractCvBox
     evidenceList.setToolTipText("evidence column");
     evidenceList.setSelectedIndex( getEvidenceIndex(evidence) );
   
-    Dimension d = evidenceList.getPreferredSize();
-    d = new Dimension(80,(int)d.getHeight());
-    evidenceList.setPreferredSize(d);
-    evidenceList.setMaximumSize(d);
+    evidenceListDimension = evidenceList.getPreferredSize();
+    evidenceListDimension = new Dimension(80,(int)evidenceListDimension.getHeight());
+    evidenceList.setPreferredSize(evidenceListDimension);
+    evidenceList.setMaximumSize(evidenceListDimension);
     evidenceList.setActionCommand("evidence=");
     editable.add(evidenceList);
     xBox.add(evidenceList);
@@ -192,7 +194,7 @@ class GoBox extends AbstractCvBox
     xBox.add(qualfTextField);
     
     dateField = new DatePanel( getField("date=", qualifierString), 
-                               d.height); 
+                                        evidenceListDimension.height); 
     
     editable.add(dateField);
     xBox.add(dateField.getDateSpinner());
@@ -331,6 +333,11 @@ class GoBox extends AbstractCvBox
     }
     
     return newQualifierString;
+  }
+
+  public static Dimension getEvidenceListDimension()
+  {
+    return evidenceListDimension;
   }
   
 }
