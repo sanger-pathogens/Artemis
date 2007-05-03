@@ -77,6 +77,10 @@ public class CVPanel extends JPanel
   
   private JExtendedComboBox evidenceList;
   
+  private JButton hide_show_CC;
+  private JButton hide_show_GO;
+  
+  
   public CVPanel(final Feature feature)
   {
     super(new BorderLayout());
@@ -141,6 +145,21 @@ public class CVPanel extends JPanel
 
       if(this_qualifier.getName().equals("GO"))
       {
+        final Box yBox = Box.createVerticalBox();
+        if(hide_show_GO == null)
+          hide_show_GO = new JButton("-");
+        
+        addHideShowButton(yBox, hide_show_GO);
+        
+        Box xLabel = Box.createHorizontalBox();
+        JLabel lab = new JLabel("GO terms");
+        lab.setFont(lab.getFont().deriveFont(Font.BOLD));
+        xLabel.add(lab);
+        xLabel.add(Box.createHorizontalGlue());
+        xLabel.add(hide_show_GO);
+
+        cvBox.add(xLabel);
+        
         n++;
         final StringVector qualifier_strings = this_qualifier.getValues();
         
@@ -161,8 +180,11 @@ public class CVPanel extends JPanel
           xBox.add(Box.createHorizontalGlue());
           xBox.add(getRemoveButton(this_qualifier, v_index));
           
-          cvBox.add(xBox);
+          yBox.add(xBox);
         }
+        cvBox.add(yBox);
+        if(hide_show_GO.getText().equals("+"))
+          yBox.setVisible(false);
       }
     }
     
@@ -179,7 +201,21 @@ public class CVPanel extends JPanel
       if(this_qualifier.getName().equals("controlled_curation"))
       {
         final StringVector qualifier_strings = this_qualifier.getValues();
-    
+        
+        final Box yBox = Box.createVerticalBox();
+        if(hide_show_CC == null)
+          hide_show_CC = new JButton("-");
+        
+        addHideShowButton(yBox, hide_show_CC);
+        
+        Box xLabel = Box.createHorizontalBox();
+        JLabel lab = new JLabel("Controlled Curation");
+        lab.setFont(lab.getFont().deriveFont(Font.BOLD));
+        xLabel.add(lab);
+        xLabel.add(Box.createHorizontalGlue());
+        xLabel.add(hide_show_CC);
+        cvBox.add(xLabel);
+        
         for(int value_index = 0; value_index < qualifier_strings.size();
             ++value_index)
         {
@@ -192,14 +228,17 @@ public class CVPanel extends JPanel
           
           ControlledCurationBox ccBox = new ControlledCurationBox(this_qualifier,
                   qualifierString, value_index, 
-                  dimension4, go_dimension);
+                  dimension, go_dimension);
           editableComponents.add(ccBox);
           
           xBox = ccBox.getBox();
           xBox.add(Box.createHorizontalGlue());
           xBox.add(getRemoveButton(this_qualifier, v_index));         
-          cvBox.add(xBox);         
+          yBox.add(xBox);
         }
+        cvBox.add(yBox); 
+        if(hide_show_CC.getText().equals("+"))
+          yBox.setVisible(false);
       }
     }
     
@@ -306,6 +345,42 @@ public class CVPanel extends JPanel
     return cvBox;
   }
 
+  /**
+   * Add hide/show button to CV section
+   * @param box
+   */
+  private void addHideShowButton(final Box box, final JButton hide_show)
+  {
+    hide_show.setOpaque(false);
+    
+    // remove any old listeners
+    ActionListener l[] = hide_show.getActionListeners();
+    if(l != null)
+      for(int i=0;i<l.length;i++)
+        hide_show.removeActionListener(l[i]);
+    
+    hide_show.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if(hide_show.getText().equals("-"))
+        {
+          hide_show.setText("+");
+          box.setVisible(false);
+        }
+        else
+        {
+          hide_show.setText("-");
+          box.setVisible(true);
+        }
+      }
+    });
+  }
+  
+  /**
+   * Separator between CV's
+   * @param cvBox
+   */
   private void addSeparator(final Box cvBox)
   {
     JSeparator separator = new JSeparator();

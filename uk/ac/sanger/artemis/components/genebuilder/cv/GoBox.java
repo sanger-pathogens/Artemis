@@ -198,13 +198,21 @@ class GoBox extends AbstractCvBox
     xBox.add(dateField.getDateSpinner());
   }
   
-  private int getEvidenceIndex(String evidence)
+  protected static int getEvidenceIndex(String evidence)
   {
     for(int i=0; i<evidenceCodes[2].length; i++)
     {
-      if(evidenceCodes[2][i].equals(evidence))
+      if(evidenceCodes[2][i].equalsIgnoreCase(evidence))
         return i;
     }
+    
+    // this is mainly to catch RCA
+    // - reviewed computational analysis (inferred from missing)
+    /*for(int i=0; i<evidenceCodes[2].length; i++)
+    {
+      if(evidenceCodes[2][i].indexOf(evidence) > -1)
+        return i;
+    }*/
     return -1;
   }
   
@@ -229,7 +237,7 @@ class GoBox extends AbstractCvBox
       return true;
     
     old = getField("evidence=", origQualifierString);
-    if(!old.equals(evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
+    if(!old.equalsIgnoreCase(evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
       return true;
     
     old = getField("qualifier=", origQualifierString);

@@ -27,10 +27,10 @@ package uk.ac.sanger.artemis.components.genebuilder.cv;
 import java.awt.Dimension;
 
 import javax.swing.Box;
-import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import uk.ac.sanger.artemis.components.Splash;
+import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.StringVector;
@@ -40,6 +40,9 @@ class ControlledCurationBox extends AbstractCvBox
   private Box xBox;
   private int value_index;
   private JTextField termTextField;
+  private JTextField dbxrefTextField;
+  private JExtendedComboBox evidenceList;
+  private JTextField qualfTextField;
   private DatePanel dateField;
   private String origQualifierString;
   private Qualifier origQualifier;
@@ -55,21 +58,64 @@ class ControlledCurationBox extends AbstractCvBox
     this.value_index  = value_index;
     this.xBox = Box.createHorizontalBox();
     
-    JLabel cclabel = new JLabel("controlled_curation");
-    if(go_dimension != null)
-      cclabel.setPreferredSize(go_dimension);
+    //JLabel cclabel = new JLabel("controlled_curation");
+    //if(go_dimension != null)
+    //  cclabel.setPreferredSize(go_dimension);
       
-    xBox.add(cclabel);
+    //xBox.add(cclabel);
     
     String term = getField("term=", qualifierString);
     termTextField = new JTextField(term);
     termTextField.setOpaque(false);
     termTextField.setEditable(false);
     termTextField.setToolTipText("term column");
-    termTextField.setPreferredSize(dimension);
-    termTextField.setMaximumSize(dimension);
+    
+    if(go_dimension != null)
+    {
+      final Dimension d = new Dimension(go_dimension.width+dimension.width,
+                                        dimension.height);
+      termTextField.setPreferredSize(d);
+      termTextField.setMaximumSize(d);
+    }
+    else
+    {
+      termTextField.setPreferredSize(dimension);
+      termTextField.setMaximumSize(dimension);
+    }
     termTextField.setCaretPosition(0);
     xBox.add(termTextField);
+    
+
+    String dbxref = getField("db_xref=", qualifierString);
+    dbxrefTextField = new JTextField(dbxref);
+    dbxrefTextField.setToolTipText("dbxref column");
+    dbxrefTextField.setPreferredSize(dimension);
+    dbxrefTextField.setMaximumSize(dimension);
+    dbxrefTextField.setActionCommand("db_xref=");
+    xBox.add(dbxrefTextField);
+ 
+    // feature_cvterm_prop's
+    String evidence = getField("evidence=", qualifierString);
+    
+    evidenceList = new JExtendedComboBox(GoBox.evidenceCodes[1]);
+    evidenceList.setOpaque(false);
+    evidenceList.setToolTipText("evidence column");
+    evidenceList.setSelectedIndex( GoBox.getEvidenceIndex(evidence) );
+  
+    Dimension d = evidenceList.getPreferredSize();
+    d = new Dimension(80,(int)d.getHeight());
+    evidenceList.setPreferredSize(d);
+    evidenceList.setMaximumSize(d);
+    evidenceList.setActionCommand("evidence=");
+    xBox.add(evidenceList);
+    
+    String qual = getField("qualifier=", qualifierString);
+    qualfTextField = new JTextField(qual);      
+    qualfTextField.setToolTipText("qualifier column");
+    qualfTextField.setPreferredSize(dimension);
+    qualfTextField.setMaximumSize(dimension);
+    qualfTextField.setActionCommand("qualifier=");
+    xBox.add(qualfTextField);
     
 
     dateField = new DatePanel(getField("date=", qualifierString),
@@ -82,9 +128,23 @@ class ControlledCurationBox extends AbstractCvBox
   
   protected boolean isQualifierChanged()
   {
-    String old = getField("date=", origQualifierString);
+    String old = getField("db_xref=", origQualifierString);
+    if(!old.equals(dbxrefTextField.getText().trim()))
+      return true;
+    
+    old = getField("evidence=", origQualifierString);
+    if(!(old.equals("") && evidenceList.getSelectedIndex() == -1) )
+      if(!old.equals(GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
+        return true;
+    
+    old = getField("qualifier=", origQualifierString);
+    if(!old.equals(qualfTextField.getText()))
+      return true;
+    
+    old = getField("date=", origQualifierString);
     if(!old.equals(dateField.getText()))
       return true;
+    
     return false;
   }
 
@@ -113,6 +173,28 @@ class ControlledCurationBox extends AbstractCvBox
     if(!old.equals(dateField.getText()))
     {
       newQualifierString = changeField("date=", dateField.getText().trim(), 
+                                       newQualifierString);
+    }
+    
+    old = getField("db_xref=", origQualifierString);
+    if(!old.equals(dbxrefTextField.getText().trim()))
+    {    
+      newQualifierString = changeField("db_xref=", dbxrefTextField.getText().trim(), 
+                                       newQualifierString);
+    }
+    
+    old = getField("evidence=", origQualifierString);
+    if(evidenceList.getSelectedIndex() > -1 &&
+       !old.equals(GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
+    {
+      newQualifierString = changeField("evidence=", GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ], 
+                                       newQualifierString);
+    }
+    
+    old = getField("qualifier=", origQualifierString);
+    if(!old.equals(qualfTextField.getText()))
+    {
+      newQualifierString = changeField("qualifier=", qualfTextField.getText().trim(), 
                                        newQualifierString);
     }
     
