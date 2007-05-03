@@ -33,10 +33,11 @@ import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 import org.gmod.schema.sequence.FeatureCvTermProp;
 
-import uk.ac.sanger.artemis.components.Splash;
 
 public class ArtemisUtils
 {
+  private static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(ArtemisUtils.class);
   
   protected static String getCurrentSchema()
   {
@@ -58,7 +59,7 @@ public class ArtemisUtils
   public static void inserFeatureCvTerm(GmodDAO dao, FeatureCvTerm featureCvTerm)
   {
     List featureCvTerms = dao.getFeatureCvTermsByFeature(featureCvTerm.getFeature());
-    
+    logger4j.debug("In inserFeatureCvTerm() inserting");
     int rank = 0;
     for(int i=0; i<featureCvTerms.size(); i++)
     {
@@ -86,7 +87,9 @@ public class ArtemisUtils
   public static void deleteFeatureCvTerm(GmodDAO dao, FeatureCvTerm featureCvTerm)
   {
     List featureCvTerms = dao.getFeatureCvTermsByFeature(featureCvTerm.getFeature());
-       
+   
+    logger4j.debug("In deleteFeatureCvTerm() deleting one of "+featureCvTerms.size());
+    
     List featureCvTermDbXRefs = new Vector();
     
     if(featureCvTerm.getFeatureCvTermDbXRefs() != null &&
@@ -103,6 +106,7 @@ public class ArtemisUtils
     FeatureCvTerm deleteme = null;
     Vector rankable = null;
     
+    logger4j.debug("In deleteFeatureCvTerm() looking to delete ");
     for(int i=0; i<featureCvTerms.size(); i++)
     {
       FeatureCvTerm this_feature_cvterm = (FeatureCvTerm)featureCvTerms.get(i);
@@ -111,7 +115,8 @@ public class ArtemisUtils
          featureCvTerm.getCvTerm().getName() )  &&
          this_feature_cvterm.getCvTerm().getCv().getName().equals( 
              featureCvTerm.getCvTerm().getCv().getName() ))
-      {     
+      {
+         logger4j.debug("Found CvTerm.name "+featureCvTerm.getCvTerm().getName());
          Collection this_featureCvTermDbXRefs = this_feature_cvterm.getFeatureCvTermDbXRefs();
          Collection this_featureCvTermProps   = this_feature_cvterm.getFeatureCvTermProps();
          
@@ -126,6 +131,10 @@ public class ArtemisUtils
              rankable = new Vector();
            
            rankable.add(this_feature_cvterm);
+           
+           logger4j.debug("FeatureCvTermDbXRefs not the same - ignore "+
+               this_featureCvTermDbXRefs.size()+" != "+featureCvTermDbXRefs.size() + " || "+
+               featureCvTermProps.size()+" != "+this_featureCvTermProps.size());
            continue;
          }
          
@@ -148,7 +157,7 @@ public class ArtemisUtils
            FeatureCvTermProp fcp   = (FeatureCvTermProp)it.next();
            if(!containsFeatureCvTermProp(fcp, featureCvTermProps))
            {
-             Splash.logger4j.debug(fcp.getCvTerm().getName()+" "+fcp.getValue());
+             logger4j.debug(fcp.getCvTerm().getName()+" "+fcp.getValue());
              
              found = false;
              break;
@@ -167,7 +176,10 @@ public class ArtemisUtils
          deleteme = this_feature_cvterm;
       }
     }
-    dao.delete(deleteme);
+    if(deleteme != null)
+      dao.delete(deleteme);
+    else
+      logger4j.debug("FeatureCvTerm not found");
     
     if(rankable != null)
     {
@@ -179,7 +191,7 @@ public class ArtemisUtils
         if(fc.getRank() == i)
           continue;
         
-        Splash.logger4j.debug("UPDATE rank for "+ fc.getCvTerm().getCv().getName() + "   rank = " +
+        logger4j.debug("UPDATE rank for "+ fc.getCvTerm().getCv().getName() + "   rank = " +
                               fc.getRank()+" -> "+i);
         fc.setRank(i);
         dao.merge(fc);
