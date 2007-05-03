@@ -130,7 +130,7 @@ public class GeneEdit
 
     Box xbox = Box.createHorizontalBox();
     final JTextField gene_text = new JTextField(20);
-    gene_text.setText("BPSL3413"); //"SPAC212.04c");
+    gene_text.setText("SPBC646.13"); //"SPAC212.04c");
     xbox.add(gene_text);
     xbox.add(schema_list);
     gene_text.selectAll();
