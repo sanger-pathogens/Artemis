@@ -820,8 +820,9 @@ public class DatabaseDocument extends Document
     Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, chadoFeature);
     Hashtable featureCvTermPubs = getFeatureCvTermPub(dao, chadoFeature);
     Hashtable featurePubs = getFeaturePubsBySrcFeatureId(dao,srcFeatureId);
+    List pubDbXRefs= dao.getPubDbXRef();
     chadoToGFF(chadoFeature, parentName, dbxrefs, synonym, featureCvTerms,
-        null, featureCvTermDbXRefs, featureCvTermPubs, featurePubs, id_store, dao, loc, this_buff);  
+        pubDbXRefs, featureCvTermDbXRefs, featureCvTermPubs, featurePubs, id_store, dao, loc, this_buff);  
     return chadoFeature;
   }
   
