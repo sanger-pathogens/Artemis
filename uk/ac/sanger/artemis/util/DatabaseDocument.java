@@ -1340,6 +1340,11 @@ public class DatabaseDocument extends Document
     return (CvTerm)cvterms.get(new Integer(id));
   }
   
+  /**
+   * Use the CvTerm name to return a CvTerm.
+   * @param cvTermId
+   * @return
+   */
   public static CvTerm getCvTermByCvTermName(String cvterm_name)
   {
     Enumeration enum_cvterm = cvterms.elements();
@@ -1353,6 +1358,11 @@ public class DatabaseDocument extends Document
     return null;
   }
   
+  /**
+   * Use the CvTermId to return a CvTerm.
+   * @param cvTermId
+   * @return
+   */
   public static CvTerm getCvTermByCvTermId(final int cvTermId)
   {
     Enumeration enum_cvterm = cvterms.elements();
@@ -1367,7 +1377,7 @@ public class DatabaseDocument extends Document
   }
   
   /**
-   * 
+   * Use the Cv name and CvTerm name to return a CvTerm.
    * @param cvterm_name
    * @param cvName
    * @return
@@ -1386,6 +1396,27 @@ public class DatabaseDocument extends Document
     return null;
   }
 
+  /**
+   * This is different from getCvTermByCvAndCvTerm as it makes sure
+   * the Cv name part matches the name supplied to the function, i.e.
+   * by matching just the start.
+   * @param cvterm_name
+   * @param cvName
+   * @return
+   */
+  public static CvTerm getCvTermByCvPartAndCvTerm(final String cvterm_name,
+                                              final String cvName)
+  {
+    Enumeration enum_cvterm = cvterms.elements();
+    while(enum_cvterm.hasMoreElements())
+    {
+      CvTerm cvterm = (CvTerm)enum_cvterm.nextElement();
+      if(cvterm.getCv().getName().startsWith( cvName ) &&
+         cvterm_name.equals( cvterm.getName() ))
+        return cvterm;
+    }
+    return null;
+  }
   /**
    * Look up cvterms names and id and return in a hashtable.
    * @param dao the data access object
