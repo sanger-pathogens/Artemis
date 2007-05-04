@@ -29,10 +29,13 @@ import java.awt.Dimension;
 import javax.swing.Box;
 import javax.swing.JTextField;
 
+import org.gmod.schema.cv.CvTerm;
+
 import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
 class ControlledCurationBox extends AbstractCvBox
@@ -64,11 +67,13 @@ class ControlledCurationBox extends AbstractCvBox
       
     //xBox.add(cclabel);
     
-    String term = getField("term=", qualifierString);
+    final String term = getField("term=", qualifierString);
+    final CvTerm cvTerm = DatabaseDocument.getCvTermByCvPartAndCvTerm(term,"CC");
+
     termTextField = new JTextField(term);
     termTextField.setOpaque(false);
     termTextField.setEditable(false);
-    termTextField.setToolTipText("term column");
+    termTextField.setToolTipText(cvTerm.getCv().getName());
     
     if(go_dimension != null)
     {
