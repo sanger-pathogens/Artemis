@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.17 2007-04-05 14:47:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.18 2007-05-16 16:11:51 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -49,7 +49,7 @@ import javax.swing.JProgressBar;
  *  and contains methods for invoking it.
  *
  *  @author Kim Rutherford
- *  @version $Id: ExternalProgram.java,v 1.17 2007-04-05 14:47:05 tjc Exp $
+ *  @version $Id: ExternalProgram.java,v 1.18 2007-05-16 16:11:51 tjc Exp $
  **/
 
 public class ExternalProgram 
@@ -869,7 +869,9 @@ public class ExternalProgram
       }
     }
     if(((DocumentEntry)entry.getEMBLEntry()).getDocument()
-       instanceof RemoteFileDocument)
+       instanceof RemoteFileDocument ||
+       ((DocumentEntry)entry.getEMBLEntry()).getDocument()
+       instanceof DatabaseDocument)
       return new File(System.getProperty("user.dir"));
 
     return null;
