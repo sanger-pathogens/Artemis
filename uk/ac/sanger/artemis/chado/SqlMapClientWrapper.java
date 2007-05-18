@@ -72,7 +72,8 @@ public class SqlMapClientWrapper
     }
     catch(SQLException e)
     {
-      logger4j.error(e.getMessage());
+      logger4j.error("queryForList() "+method+" \n"+
+          System.getProperty("chado")+"\n"+e.getMessage());
       throw new RuntimeException(e);
     }
   }
@@ -85,7 +86,8 @@ public class SqlMapClientWrapper
     }
     catch(SQLException e)
     {
-      logger4j.error(e.getMessage());
+      logger4j.error("queryForObject() "+method+"\n"+
+          System.getProperty("chado")+"\n"+e.getMessage());
       throw new RuntimeException(e);
     }
   }
