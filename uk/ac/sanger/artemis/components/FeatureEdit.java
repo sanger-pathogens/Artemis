@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.35 2007-04-27 13:55:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.36 2007-05-18 12:28:21 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import uk.ac.sanger.artemis.io.QualifierInfo;
 import uk.ac.sanger.artemis.components.ProgressThread;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
 import uk.ac.sanger.artemis.components.genebuilder.gff.GffPanel;
-import uk.ac.sanger.artemis.components.genebuilder.ortholog.OrthologPanel;
+import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -65,7 +65,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.35 2007-04-27 13:55:16 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.36 2007-05-18 12:28:21 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -77,8 +77,8 @@ public class FeatureEdit extends JPanel
   private static final long serialVersionUID = 1L;
 
   /** Used to get current time/date in externalEdit(). */
-  private static java.util.Calendar calendar =
-                               java.util.Calendar.getInstance();
+  //private static java.util.Calendar calendar =
+  //                             java.util.Calendar.getInstance();
 
   /** The choice of feature keys - created in createComponents(). */
   private KeyChoice key_choice;
@@ -142,8 +142,8 @@ public class FeatureEdit extends JPanel
   /** GFF tab */
   private GffPanel gffPanel;
   
-  /** ortholog/paralog tab */
-  private OrthologPanel orthologForm;
+  /** similarity/ortholog/paralog tab */
+  private MatchPanel matchForm;
   
   private EntryInformation entry_information;
   
@@ -229,8 +229,8 @@ public class FeatureEdit extends JPanel
       getFeature().removeFeatureChangeListener(cvForm);
     if(gffPanel != null)
       getFeature().removeFeatureChangeListener(gffPanel);
-    if(orthologForm != null)
-      getFeature().removeFeatureChangeListener(orthologForm);
+    if(matchForm != null)
+      getFeature().removeFeatureChangeListener(matchForm);
   }
 
   /**
@@ -899,8 +899,10 @@ public class FeatureEdit extends JPanel
       jspCV.setPreferredSize(jspCore.getPreferredSize());
       tabbedPane.add("CV", jspCV);
       
-      orthologForm = new OrthologPanel(getFeature());
-      JScrollPane jspOrtholog   = new JScrollPane(orthologForm);
+      matchForm = new MatchPanel(getFeature());
+      matchForm.setBackground(Color.WHITE);
+      
+      JScrollPane jspOrtholog   = new JScrollPane(matchForm);
       jspCV.setPreferredSize(jspOrtholog.getPreferredSize());
       tabbedPane.add("Ortholog", jspOrtholog);
       
@@ -1322,7 +1324,7 @@ public class FeatureEdit extends JPanel
    *  @param editor_extra_args Extra arguments to pass to the editor.  null
    *    means there are no extra args.
    **/
-  private void externalEdit(final String[] editor_extra_args) 
+  /*private void externalEdit(final String[] editor_extra_args) 
   {
     try 
     {
@@ -1439,7 +1441,7 @@ public class FeatureEdit extends JPanel
     {
       new MessageDialog(frame, "error while starting editor: " + e);
     }
-  }
+  }*/
 
   /**
    *  Read the qualifiers from the feature and update the qualifier JTextArea.
@@ -1454,8 +1456,8 @@ public class FeatureEdit extends JPanel
     if(gffPanel != null)
       gffPanel.updateFromFeature(getFeature());
     
-    if(orthologForm != null)
-      orthologForm.updateFromFeature(getFeature());
+    if(matchForm != null)
+      matchForm.updateFromFeature(getFeature());
   }
 
   /**
@@ -1477,7 +1479,7 @@ public class FeatureEdit extends JPanel
       //
       if( (cvForm != null       && cvForm.isCvTag(this_qualifier)) ||
           (gffPanel != null     && gffPanel.isGffTag(this_qualifier)) ||
-          (orthologForm != null && orthologForm.isOrthologTag(this_qualifier)) )
+          (matchForm != null && matchForm.isMatchTag(this_qualifier)) )
         continue;
       
       if(this_qualifier instanceof QualifierLazyLoading)
@@ -1562,9 +1564,9 @@ public class FeatureEdit extends JPanel
           qualifiers.addAll(gffQualifiers);
       }
       
-      if(orthologForm != null)
+      if(matchForm != null)
       {
-        QualifierVector orthologQualifiers = orthologForm.getOrthologQualifiers();
+        QualifierVector orthologQualifiers = matchForm.getMatchQualifiers();
         if(orthologQualifiers != null && orthologQualifiers.size() > 0)
           qualifiers.addAll(orthologQualifiers);
       }
