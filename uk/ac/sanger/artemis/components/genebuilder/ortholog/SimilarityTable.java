@@ -25,6 +25,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -37,9 +38,13 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SizeRequirements;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn; 
 import javax.swing.table.TableModel;
 
@@ -98,22 +103,17 @@ public class SimilarityTable extends AbstractMatchTable
     tableData.setElementAt(METHOD_COL,10);
     tableData.setElementAt(REMOVE_BUTTON_COL,11);
     
-    
     // add rows of similarity
     StringVector sims = simQualifier.getValues();
     for(int i=0; i<sims.size(); i++)
       rowData.add(getRowData((String)sims.get(i), tableData));
     
-    
     similarityTable = new JTable(rowData, tableData);
     
-    TableColumn col = similarityTable.getColumn(LENGTH_COL);
-    col.setPreferredWidth(30);
-    col = similarityTable.getColumn(EVALUE_COL);
-    col.setPreferredWidth(40);
-    col = similarityTable.getColumn(ID_COL);
-    col.setPreferredWidth(25);
-    
+    packColumn(similarityTable, getColumnIndex(LENGTH_COL), 4);
+    packColumn(similarityTable, getColumnIndex(EVALUE_COL), 4);
+    packColumn(similarityTable, getColumnIndex(ID_COL), 4);
+
     final TableColumn[] hideColumns = new TableColumn[5];
     hideColumns[0] = similarityTable.getColumn(QUERY_COL);
     hideColumns[1] = similarityTable.getColumn(SUBJECT_COL);
@@ -125,31 +125,26 @@ public class SimilarityTable extends AbstractMatchTable
     {
       hideColumns[i].setMinWidth(0);
       hideColumns[i].setMaxWidth(0);
-      hideColumns[i].setPreferredWidth(0);
     }
     
     infoLevelButton.addActionListener(new ActionListener()
     {
-      private SizeRequirements size = new SizeRequirements(
-          20, 40, 180, 0.f);
+      private boolean show = true;
       public void actionPerformed(ActionEvent e)
       {
-        // get the current size of the column
-        SizeRequirements temp = new SizeRequirements();
-        
-        temp.preferred = hideColumns[0].getPreferredWidth();
-        temp.minimum = hideColumns[0].getMinWidth();
-        temp.maximum = hideColumns[0].getMaxWidth();
-        
-        // change the column size to the old size 
+        // change the column size 
         for(int i=0; i<hideColumns.length; i++)
         {
-          hideColumns[i].setMinWidth(size.minimum);
-          hideColumns[i].setMaxWidth(size.maximum);
-          hideColumns[i].setPreferredWidth(size.preferred);
+          if(show)
+            packColumn(similarityTable, getColumnIndex(
+               (String) hideColumns[i].getHeaderValue()), 2);
+          else
+          {
+            hideColumns[i].setMinWidth(0);
+            hideColumns[i].setMaxWidth(0);
+          }
         }
-        // save the old size
-        size = temp;
+        show = !show;
         
         if(infoLevelButton.getText().equals("Verbose"))
           infoLevelButton.setText("Brief");
@@ -160,8 +155,8 @@ public class SimilarityTable extends AbstractMatchTable
     
     TableModel tableModel = similarityTable.getModel();
     // remove button column
-    col = similarityTable.getColumn(REMOVE_BUTTON_COL);
-    col.setMinWidth(8);
+    TableColumn col = similarityTable.getColumn(REMOVE_BUTTON_COL);
+    col.setMinWidth(35);
     col.setMaxWidth(40);
     col.setPreferredWidth(40);
 
@@ -369,6 +364,61 @@ public class SimilarityTable extends AbstractMatchTable
   }
   
   /**
+   * Sets the preferred, min & max width of the column specified by columnIndex. 
+   * The column will be just wide enough to show the column head and the widest 
+   * cell in the column. margin pixels are added to the left and right
+   * @param table
+   * @param columnIndex
+   * @param margin
+   */
+  public void packColumn(JTable table, int columnIndex, int margin) 
+  {
+    DefaultTableColumnModel colModel = (DefaultTableColumnModel)table.getColumnModel();
+    TableColumn col = colModel.getColumn(columnIndex);
+    int width = 0;
+    int maxWidth;
+    
+    // Get width of column header
+    TableCellRenderer renderer = col.getHeaderRenderer();
+    if(renderer == null)
+      renderer = table.getTableHeader().getDefaultRenderer();
+      
+    Component comp = renderer.getTableCellRendererComponent(
+          table, col.getHeaderValue(), false, false, 0, 0);
+    //width = comp.getPreferredSize().width;
+  
+    String text = ((JLabel)comp).getText();
+    Font font = comp.getFont();
+    FontMetrics fontMetrics = comp.getFontMetrics ( font );
+
+    width = SwingUtilities.computeStringWidth ( fontMetrics, text );
+    
+    // Get maximum width of column data
+    for(int r=0; r<table.getRowCount(); r++) 
+    {
+      renderer = table.getCellRenderer(r, columnIndex);
+      comp = renderer.getTableCellRendererComponent(
+              table, table.getValueAt(r, columnIndex), false, false, r, columnIndex);
+      
+      text = ((JLabel)comp).getText();
+      font = comp.getFont();
+      fontMetrics = comp.getFontMetrics ( font );
+
+      maxWidth = SwingUtilities.computeStringWidth ( fontMetrics, text );
+      //  maxWidth = comp.getPreferredSize().width;
+      width = Math.max(width, maxWidth);
+    }
+  
+    // Add margin
+    width += 2*margin;
+  
+    // Set the width
+    col.setPreferredWidth(width);
+    col.setMaxWidth(width);
+    col.setMinWidth(width);
+  }
+  
+  /**
    * Renderer for the Similarity cells
    */
   public class SimilarityRenderer extends DefaultTableCellRenderer
@@ -393,6 +443,15 @@ public class SimilarityTable extends AbstractMatchTable
     
     public SimilarityRenderer() 
     {
+      evalue.setHorizontalAlignment(SwingConstants.RIGHT);
+      length.setHorizontalAlignment(SwingConstants.RIGHT);
+      ungappedId.setHorizontalAlignment(SwingConstants.RIGHT);
+      queryCoord.setHorizontalAlignment(SwingConstants.RIGHT);
+      subjCoord.setHorizontalAlignment(SwingConstants.RIGHT);
+      score.setHorizontalAlignment(SwingConstants.RIGHT);
+      overlap.setHorizontalAlignment(SwingConstants.RIGHT);
+      method.setHorizontalAlignment(SwingConstants.RIGHT);
+      
       organismTextArea.setLineWrap(true);
       organismTextArea.setWrapStyleWord(true);
       
@@ -413,6 +472,7 @@ public class SimilarityTable extends AbstractMatchTable
             20,20));
       buttRemove.setMaximumSize(buttRemove.getPreferredSize());
     }
+    
 
     public Component getTableCellRendererComponent(
         JTable table,
