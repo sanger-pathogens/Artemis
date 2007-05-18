@@ -337,6 +337,13 @@ class GoBox extends AbstractCvBox
 
   public static Dimension getEvidenceListDimension()
   {
+    if(evidenceListDimension == null)
+    {
+      JExtendedComboBox evidenceList = new JExtendedComboBox(evidenceCodes[1]);
+      evidenceListDimension = evidenceList.getPreferredSize();
+      evidenceListDimension = new Dimension(80,(int)evidenceListDimension.getHeight());
+    }
+    
     return evidenceListDimension;
   }
   

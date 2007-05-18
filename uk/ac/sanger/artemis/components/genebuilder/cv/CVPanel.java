@@ -242,6 +242,7 @@ public class CVPanel extends JPanel
         Box xHeadings = Box.createHorizontalBox();
         cvBox.add(xHeadings);
         
+        
         for(int value_index = 0; value_index < qualifier_strings.size();
             ++value_index)
         {
@@ -265,9 +266,15 @@ public class CVPanel extends JPanel
         
         // add column headings
         final JLabel termLabel = new JLabel("Term");
-        termLabel.setPreferredSize(
+        
+        if(go_dimension != null)
+          termLabel.setPreferredSize(
             new Dimension(go_dimension.width+dimension.width,
                           dimension.height));
+        else
+          termLabel.setPreferredSize(
+              new Dimension(dimension.width,
+                            dimension.height));
         xHeadings.add(termLabel);
         
         final JLabel dbxrefLabel = new JLabel("Dbxref");
