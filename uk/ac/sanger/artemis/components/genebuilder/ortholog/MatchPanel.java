@@ -17,13 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/OrthologPanel.java,v 1.3 2007-04-17 15:19:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.1 2007-05-18 12:27:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -39,21 +39,27 @@ import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.Qualifier;
+import uk.ac.sanger.artemis.io.QualifierLazyLoading;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 
-public class OrthologPanel extends JPanel
+/**
+ * For similarity, orthologue, paralogue qualifiers
+ */
+public class MatchPanel extends JPanel
                       implements FeatureChangeListener
 {
   private static final long serialVersionUID = 1L;
-  private QualifierVector ortho_para_logQualifiers;
+  private QualifierVector matchQualifiers;
   private static Vector databases;
+  private SimilarityTable similarityTable;
+  private Vector editableComponents;
   
-  public OrthologPanel(final Feature feature)
+  public MatchPanel(final Feature feature)
   {
-    super(new FlowLayout(FlowLayout.LEFT));
+    super(new BorderLayout());
     updateFromFeature(feature);
   }
   
@@ -62,17 +68,20 @@ public class OrthologPanel extends JPanel
    * @param qualifier
    * @return
    */
-  public boolean isOrthologTag(final Qualifier qualifier)
+  public boolean isMatchTag(final Qualifier qualifier)
   {
-    if(qualifier.getName().equals("ortholog"))
+    if(qualifier.getName().equals("ortholog") ||
+       qualifier.getName().equals("similarity"))
       return true;
     return false;
   }
   
-  private Component createOrthoParaLogQualifiersComponent(final Feature feature)
+  private Component createMatchQualifiersComponent(final Feature feature)
   {
-    Qualifier orthoQualifier = ortho_para_logQualifiers.getQualifierByName("ortholog");
-    Qualifier paraQualifier  = ortho_para_logQualifiers.getQualifierByName("paralog");
+    editableComponents = new Vector();
+    Qualifier orthoQualifier = matchQualifiers.getQualifierByName("ortholog");
+    Qualifier paraQualifier  = matchQualifiers.getQualifierByName("paralog");
+    Qualifier simQualifier   = matchQualifiers.getQualifierByName("similarity");
     
     if(databases == null)
     {
@@ -85,6 +94,7 @@ public class OrthologPanel extends JPanel
     // ortholog
     Box xBox = Box.createVerticalBox();
     JButton addOrthoButton = new JButton("ADD ORTHOLOG");
+    addOrthoButton.setOpaque(false);
     addOrthoButton.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -107,7 +117,10 @@ public class OrthologPanel extends JPanel
                         accession.getText().trim(), feature);
       }
     });
-    xBox.add(addOrthoButton);
+    Box yBox = Box.createHorizontalBox();
+    yBox.add(addOrthoButton);
+    yBox.add(Box.createHorizontalGlue());
+    xBox.add(yBox);
     
     if(orthoQualifier != null)
     {
@@ -122,6 +135,7 @@ public class OrthologPanel extends JPanel
     //
     // paralog
     JButton addParaButton = new JButton("ADD PARALOG");
+    addParaButton.setOpaque(false);
     addParaButton.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -143,7 +157,10 @@ public class OrthologPanel extends JPanel
                         accession.getText().trim(), feature);
       }
     });
-    xBox.add(addParaButton);
+    yBox = Box.createHorizontalBox();
+    yBox.add(addParaButton);
+    yBox.add(Box.createHorizontalGlue());
+    xBox.add(yBox);
     
     if(paraQualifier != null)
     {
@@ -154,9 +171,50 @@ public class OrthologPanel extends JPanel
         xBox.add(paralog);
       }
     }
+    
+    
+    //
+    // similarity
+    JButton addSimButton = new JButton("ADD SIMILARITY");
+    addSimButton.setOpaque(false);
+    addSimButton.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      { 
+        JTextField accession = new JTextField(15);
+        
+        Box yBox = Box.createHorizontalBox();
+        yBox.add(accession);
+
+        int select = JOptionPane.showConfirmDialog(null, 
+              yBox, "Add Similarity",
+              JOptionPane.OK_CANCEL_OPTION);
+        if(select == JOptionPane.CANCEL_OPTION)
+          return;
+        
+        add("similarity", accession.getText().trim(), feature);
+      }
+    });
+    yBox = Box.createHorizontalBox();
+    yBox.add(addSimButton);
+    yBox.add(Box.createHorizontalGlue());
+    xBox.add(yBox);
+    
+    if(simQualifier != null)
+    {
+      if(simQualifier instanceof QualifierLazyLoading)
+        ((QualifierLazyLoading)simQualifier).setForceLoad(true);
+      
+      similarityTable = new SimilarityTable(simQualifier);
+      editableComponents.add(similarityTable);
+      xBox.add(similarityTable.getInfoLevelButton());
+      xBox.add(similarityTable.getSimilarityTable().getTableHeader());
+      xBox.add(similarityTable.getSimilarityTable());
+    }
 
     return xBox;
   }
+  
   
   /**
    * Update ortho/paralogs for a feature
@@ -165,21 +223,21 @@ public class OrthologPanel extends JPanel
   public void updateFromFeature(final Feature feature)
   {
     removeAll();
-    if(ortho_para_logQualifiers != null)
+    if(matchQualifiers != null)
       feature.removeFeatureChangeListener(this);
-    ortho_para_logQualifiers = feature.getQualifiers().copy();
+    matchQualifiers = feature.getQualifiers().copy();
     
-    ortho_para_logQualifiers = new QualifierVector();
+    matchQualifiers = new QualifierVector();
     final QualifierVector qualifiers = feature.getQualifiers();  
     for(int i = 0 ; i < qualifiers.size(); ++i) 
     {
       Qualifier qualifier = (Qualifier)qualifiers.elementAt(i);
-      if(isOrthologTag(qualifier))
-        ortho_para_logQualifiers.addElement(qualifier.copy());
+      if(isMatchTag(qualifier))
+        matchQualifiers.addElement(qualifier.copy());
     }
    
     feature.addFeatureChangeListener(this);  
-    add(createOrthoParaLogQualifiersComponent(feature));
+    add(createMatchQualifiersComponent(feature));
     repaint();
     revalidate();
   }
@@ -193,7 +251,7 @@ public class OrthologPanel extends JPanel
   {
     final int index;
     
-    Qualifier qualifier = ortho_para_logQualifiers.getQualifierByName(name);
+    Qualifier qualifier = matchQualifiers.getQualifierByName(name);
     
     if(qualifier == null)
     {
@@ -201,35 +259,49 @@ public class OrthologPanel extends JPanel
       index = -1;
     }
     else
-     index = ortho_para_logQualifiers.indexOf(qualifier);
+     index = matchQualifiers.indexOf(qualifier);
        
     qualifier.addValue(value);
 
     if(index > -1)
     {
-      ortho_para_logQualifiers.remove(index);
-      ortho_para_logQualifiers.add(index, qualifier);
+      matchQualifiers.remove(index);
+      matchQualifiers.add(index, qualifier);
     }
     else
-      ortho_para_logQualifiers.add(qualifier);
+      matchQualifiers.add(qualifier);
     
     removeAll();
-    add(createOrthoParaLogQualifiersComponent(feature));
+    add(createMatchQualifiersComponent(feature));
     repaint();
     revalidate();
   }
+  
   
   /**
    * Get the latest (edited) controlled vocab qualifiers
    * @return
    */
-  public QualifierVector getOrthologQualifiers()
+  public QualifierVector getMatchQualifiers()
   {
-    return ortho_para_logQualifiers;
+    if(editableComponents != null)
+    {
+      for(int i=0; i<editableComponents.size(); i++)
+      {
+        AbstractMatchTable matchTable = (AbstractMatchTable)editableComponents.get(i);
+        System.out.println("CHECKING MATCHES "+i);
+        if(matchTable.isQualifierChanged())
+        {
+          matchTable.updateQualifier(matchQualifiers);
+        }
+      }
+    }
+    return matchQualifiers;
   }
   
   public void featureChanged(FeatureChangeEvent event)
   {
     updateFromFeature(event.getFeature());
   }
+  
 }
