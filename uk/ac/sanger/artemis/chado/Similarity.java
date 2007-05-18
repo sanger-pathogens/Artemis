@@ -240,7 +240,7 @@ public class Similarity implements LazyQualifierValue
   }
 
   public static AnalysisFeature getAnalysisFeature(final String uniquename,
-      final String qualifier_string, final GFFStreamFeature feature)
+      String qualifier_string, final GFFStreamFeature feature)
   {
     int queryFeatureId = Integer.parseInt((String) feature.getQualifierByName(
         "feature_id").getValues().get(0));
@@ -253,7 +253,7 @@ public class Similarity implements LazyQualifierValue
     org.gmod.schema.sequence.Feature matchFeature = new org.gmod.schema.sequence.Feature();
     FeatureDbXRef featureDbXRef = new FeatureDbXRef();
 
-    subjectFeature.setCvTerm(getCvTerm("similarity_region"));
+    subjectFeature.setCvTerm(getCvTerm("region"));  // similarity_region
 
     queryFeature.setUniqueName(uniquename);
     queryFeature.setFeatureId(queryFeatureId);
@@ -268,7 +268,12 @@ public class Similarity implements LazyQualifierValue
 
     // algorithm
     // StringTokenizer tok = new StringTokenizer(qualifier_string, ";");
-    StringVector qualifier_strings = StringVector.getStrings(qualifier_string,
+    if(qualifier_string.startsWith("\""))
+      qualifier_string = qualifier_string.substring(1);
+    if(qualifier_string.endsWith("\""))
+      qualifier_string = qualifier_string.substring(0,qualifier_string.length()-1);
+ 
+    final StringVector qualifier_strings = StringVector.getStrings(qualifier_string,
         ";");
 
     // String method = tok.nextToken();
