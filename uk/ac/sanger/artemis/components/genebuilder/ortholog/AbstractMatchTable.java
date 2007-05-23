@@ -264,7 +264,7 @@ abstract class AbstractMatchTable
  }
 
   //
-  //
+  //http://java.sun.com/docs/books/tutorial/uiswing/dnd/intro.html
   //
   protected abstract class StringTransferHandler extends TransferHandler
   {
@@ -295,7 +295,6 @@ abstract class AbstractMatchTable
         catch(UnsupportedFlavorException ufe){}
         catch(IOException ioe){}
       }
-
       return false;
     }
 
@@ -309,9 +308,7 @@ abstract class AbstractMatchTable
       for(int i = 0; i < flavors.length; i++)
       {
         if(DataFlavor.stringFlavor.equals(flavors[i]))
-        {
           return true;
-        }
       }
       return false;
     }
@@ -340,16 +337,11 @@ abstract class AbstractMatchTable
           Object val = table.getValueAt(rows[i], j);
           buff.append(val == null ? "" : val.toString());
           if(j != colCount - 1)
-          {
             buff.append(",");
-          }
         }
         if(i != rows.length - 1)
-        {
           buff.append("\n");
-        }
       }
-
       return buff.toString();
     }
 
@@ -372,25 +364,19 @@ abstract class AbstractMatchTable
 
       int max = model.getRowCount();
       if(index < 0)
-      {
         index = max;
-      }
       else
       {
         index++;
         if(index > max)
-        {
           index = max;
-        }
       }
       addIndex = index;
       String[] values = str.split("\n");
       addCount = values.length;
       int colCount = target.getColumnCount();
       for(int i = 0; i < values.length && i < colCount; i++)
-      {
         model.insertRow(index++, values[i].split(","));
-      }
     }
 
     protected void cleanup(JComponent c, boolean remove)
@@ -408,15 +394,11 @@ abstract class AbstractMatchTable
           for(int i = 0; i < rows.length; i++)
           {
             if(rows[i] > addIndex)
-            {
               rows[i] += addCount;
-            }
           }
         }
         for(int i = rows.length - 1; i >= 0; i--)
-        {
           model.removeRow(rows[i]);
-        }
       }
       rows = null;
       addCount = 0;
