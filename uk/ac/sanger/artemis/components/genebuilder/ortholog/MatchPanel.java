@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.2 2007-05-23 08:17:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.3 2007-05-23 09:05:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -132,7 +132,6 @@ public class MatchPanel extends JPanel
     ///
     orthologTable = new OrthologTable(orthoQualifier);
     editableComponents.add(orthologTable);
-    //xBox.add(orthologTable.getInfoLevelButton());
     matchVerticalBox.add(orthologTable.getTable().getTableHeader());
     matchVerticalBox.add(orthologTable.getTable());
     ///

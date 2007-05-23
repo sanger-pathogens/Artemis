@@ -24,17 +24,16 @@ package uk.ac.sanger.artemis.components.genebuilder.ortholog;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -90,11 +89,19 @@ public class OrthologTable extends AbstractMatchTable
     thisRowData2.add("blah2");
     thisRowData2.add("blah blah2");
     rowData.add(thisRowData2);
+    Vector thisRowData3 = new Vector();
+    thisRowData3.add("organism3");
+    thisRowData3.add("blah3");
+    thisRowData3.add("blah blah3");
+    rowData.add(thisRowData3);
     
     orthologTable = new JTable(rowData, tableData);
     setTable(orthologTable);
     orthologTable.setColumnSelectionAllowed(false);
     orthologTable.setRowSelectionAllowed(true);
+    orthologTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+    table.setDragEnabled(true);
+    orthologTable.setTransferHandler(new TableTransferHandler());
     
     TableModel tableModel = orthologTable.getModel();
     // remove button column
