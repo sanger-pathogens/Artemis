@@ -17,13 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.1 2007-05-18 12:27:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.2 2007-05-23 08:17:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -32,6 +34,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
 import uk.ac.sanger.artemis.FeatureChangeEvent;
@@ -55,6 +58,7 @@ public class MatchPanel extends JPanel
   private QualifierVector matchQualifiers;
   private static Vector databases;
   private SimilarityTable similarityTable;
+  private OrthologTable orthologTable;
   private Vector editableComponents;
   
   public MatchPanel(final Feature feature)
@@ -92,7 +96,7 @@ public class MatchPanel extends JPanel
     
     //
     // ortholog
-    Box xBox = Box.createVerticalBox();
+    Box matchVerticalBox = Box.createVerticalBox();
     JButton addOrthoButton = new JButton("ADD ORTHOLOG");
     addOrthoButton.setOpaque(false);
     addOrthoButton.addActionListener(new ActionListener()
@@ -117,10 +121,23 @@ public class MatchPanel extends JPanel
                         accession.getText().trim(), feature);
       }
     });
-    Box yBox = Box.createHorizontalBox();
-    yBox.add(addOrthoButton);
-    yBox.add(Box.createHorizontalGlue());
-    xBox.add(yBox);
+    Box xBox = Box.createHorizontalBox();
+    xBox.add(addOrthoButton);
+    xBox.add(Box.createHorizontalGlue());
+    matchVerticalBox.add(xBox);
+    
+    
+    ///
+    /// temp
+    ///
+    orthologTable = new OrthologTable(orthoQualifier);
+    editableComponents.add(orthologTable);
+    //xBox.add(orthologTable.getInfoLevelButton());
+    matchVerticalBox.add(orthologTable.getTable().getTableHeader());
+    matchVerticalBox.add(orthologTable.getTable());
+    ///
+    ///
+    ///
     
     if(orthoQualifier != null)
     {
@@ -128,12 +145,13 @@ public class MatchPanel extends JPanel
       for(int i=0; i<orthologs.size(); i++)
       {
         JTextField ortholog = new JTextField( (String)orthologs.get(i) );
-        xBox.add(ortholog);
+        matchVerticalBox.add(ortholog);
       }
     }
     
     //
     // paralog
+    addSeparator(matchVerticalBox);
     JButton addParaButton = new JButton("ADD PARALOG");
     addParaButton.setOpaque(false);
     addParaButton.addActionListener(new ActionListener()
@@ -157,10 +175,10 @@ public class MatchPanel extends JPanel
                         accession.getText().trim(), feature);
       }
     });
-    yBox = Box.createHorizontalBox();
-    yBox.add(addParaButton);
-    yBox.add(Box.createHorizontalGlue());
-    xBox.add(yBox);
+    xBox = Box.createHorizontalBox();
+    xBox.add(addParaButton);
+    xBox.add(Box.createHorizontalGlue());
+    matchVerticalBox.add(xBox);
     
     if(paraQualifier != null)
     {
@@ -168,13 +186,14 @@ public class MatchPanel extends JPanel
       for(int i=0; i<paralogs.size(); i++)
       {
         JTextField paralog = new JTextField( (String)paralogs.get(i) );
-        xBox.add(paralog);
+        matchVerticalBox.add(paralog);
       }
     }
     
     
     //
     // similarity
+    addSeparator(matchVerticalBox);
     JButton addSimButton = new JButton("ADD SIMILARITY");
     addSimButton.setOpaque(false);
     addSimButton.addActionListener(new ActionListener()
@@ -195,10 +214,10 @@ public class MatchPanel extends JPanel
         add("similarity", accession.getText().trim(), feature);
       }
     });
-    yBox = Box.createHorizontalBox();
-    yBox.add(addSimButton);
-    yBox.add(Box.createHorizontalGlue());
-    xBox.add(yBox);
+    xBox = Box.createHorizontalBox();
+    xBox.add(addSimButton);
+    xBox.add(Box.createHorizontalGlue());
+    matchVerticalBox.add(xBox);
     
     if(simQualifier != null)
     {
@@ -207,12 +226,14 @@ public class MatchPanel extends JPanel
       
       similarityTable = new SimilarityTable(simQualifier);
       editableComponents.add(similarityTable);
+      
       xBox.add(similarityTable.getInfoLevelButton());
-      xBox.add(similarityTable.getSimilarityTable().getTableHeader());
-      xBox.add(similarityTable.getSimilarityTable());
+      matchVerticalBox.add(xBox);
+      matchVerticalBox.add(similarityTable.getTable().getTableHeader());
+      matchVerticalBox.add(similarityTable.getTable());
     }
 
-    return xBox;
+    return matchVerticalBox;
   }
   
   
@@ -277,6 +298,24 @@ public class MatchPanel extends JPanel
     revalidate();
   }
   
+  /**
+   * Separator between matches
+   * @param matchVerticalBox
+   */
+  private void addSeparator(final Box matchVerticalBox)
+  {
+    JSeparator separator = new JSeparator();
+    
+    int width = getSize().width;
+    if(width <= 0)
+      width = 700;
+
+    separator.setForeground(Color.LIGHT_GRAY);
+    separator.setPreferredSize(new Dimension(width,10));
+    separator.setMaximumSize(new Dimension(width,10));
+    matchVerticalBox.add(Box.createVerticalStrut(5));
+    matchVerticalBox.add(separator);
+  }
   
   /**
    * Get the latest (edited) controlled vocab qualifiers

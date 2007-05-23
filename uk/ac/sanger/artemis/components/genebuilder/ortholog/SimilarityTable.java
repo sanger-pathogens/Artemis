@@ -25,12 +25,10 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 
-import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -38,12 +36,9 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn; 
 import javax.swing.table.TableModel;
 
@@ -56,10 +51,9 @@ public class SimilarityTable extends AbstractMatchTable
   private int NUMBER_COLUMNS = 12;
   private Vector rowData   = new Vector();
   private Vector tableData = new Vector(NUMBER_COLUMNS);
-  private JTable similarityTable;
-  private JButton infoLevelButton = new JButton("Verbose");
+  
+  private JButton infoLevelButton = new JButton("Details");
   private Qualifier origQualifier;
-  private boolean isChanged = false;
   
   //
   // column headings
@@ -87,6 +81,7 @@ public class SimilarityTable extends AbstractMatchTable
     this.origQualifier = simQualifier;
     
     infoLevelButton.setOpaque(false);
+    infoLevelButton.setHorizontalAlignment(SwingConstants.LEFT);
     tableData.setSize(NUMBER_COLUMNS);
     
     tableData.setElementAt(ORGANISM_COL,0);
@@ -107,7 +102,10 @@ public class SimilarityTable extends AbstractMatchTable
     for(int i=0; i<sims.size(); i++)
       rowData.add(getRowData((String)sims.get(i), tableData));
     
-    similarityTable = new JTable(rowData, tableData);
+    JTable similarityTable = new JTable(rowData, tableData);
+    setTable(similarityTable);
+    similarityTable.setColumnSelectionAllowed(false);
+    similarityTable.setRowSelectionAllowed(true);
     
     packColumn(similarityTable, getColumnIndex(LENGTH_COL), 4);
     packColumn(similarityTable, getColumnIndex(EVALUE_COL), 4);
@@ -135,7 +133,7 @@ public class SimilarityTable extends AbstractMatchTable
         for(int i=0; i<hideColumns.length; i++)
         {
           if(show)
-            packColumn(similarityTable, getColumnIndex(
+            packColumn(getTable(), getColumnIndex(
                (String) hideColumns[i].getHeaderValue()), 2);
           else
           {
@@ -145,35 +143,34 @@ public class SimilarityTable extends AbstractMatchTable
         }
         show = !show;
         
-        if(infoLevelButton.getText().equals("Verbose"))
-          infoLevelButton.setText("Brief");
+        if(infoLevelButton.getText().equals("Details"))
+          infoLevelButton.setText("Hide Details");
         else
-          infoLevelButton.setText("Verbose");
+          infoLevelButton.setText("Details");
       } 
     });
     
-    TableModel tableModel = similarityTable.getModel();
+    TableModel tableModel = getTable().getModel();
     // remove button column
-    TableColumn col = similarityTable.getColumn(REMOVE_BUTTON_COL);
+    TableColumn col = getTable().getColumn(REMOVE_BUTTON_COL);
     col.setMinWidth(35);
     col.setMaxWidth(40);
     col.setPreferredWidth(40);
 
     final SimilarityRenderer renderer = new SimilarityRenderer();
-    TableColumn tc;
 
     for(int columnIndex = 0; columnIndex <tableModel.getColumnCount();
         columnIndex++) 
     {
-      tc = similarityTable.getColumnModel().getColumn(columnIndex);
-      tc.setCellRenderer(renderer);
-      tc.setCellEditor(new CellEditing(new JTextField()));
+      col = getTable().getColumnModel().getColumn(columnIndex);
+      col.setCellRenderer(renderer);
+      col.setCellEditor(new CellEditing(new JTextField()));
     }
     
     // remove JButton column
-    tc = similarityTable.getColumn(REMOVE_BUTTON_COL);
-    tc.setCellEditor(new ButtonEditor(new JCheckBox(),
-        (DefaultTableModel)similarityTable.getModel()));
+    col = getTable().getColumn(REMOVE_BUTTON_COL);
+    col.setCellEditor(new ButtonEditor(new JCheckBox(),
+        (DefaultTableModel)getTable().getModel()));
   }
   
   /**
@@ -265,28 +262,8 @@ public class SimilarityTable extends AbstractMatchTable
     row.setElementAt(((String)sim.get(0)).trim(), columnIndex);
     return row;
   }
-  
-  /**
-   * Get the column index from the column name
-   * @param columnName
-   * @return
-   */
-  private int getColumnIndex(final String columnName)
-  {
-    int modelColumnIndex = getSimilarityTable().getColumn(columnName).getModelIndex();
-    return getSimilarityTable().convertColumnIndexToView(modelColumnIndex);
-  }
 
 
-  /**
-   * Get the JTable of similarity data
-   * @return
-   */
-  protected JTable getSimilarityTable()
-  {
-    return similarityTable;
-  }
-  
   /**
    * Button to show/hide columns
    * @return
@@ -306,11 +283,11 @@ public class SimilarityTable extends AbstractMatchTable
     StringVector values = origQualifier.getValues();
     values.removeAllElements();
     
-    if(similarityTable.getRowCount() < 1)
+    if(getTable().getRowCount() < 1)
       return;
     
     System.out.println("\nHERE:\n");
-    for(int i=0; i<similarityTable.getRowCount(); i++)
+    for(int i=0; i<getTable().getRowCount(); i++)
     {
       String updatedQualifierString = updateQualifierString(i);
       values.add(updatedQualifierString);
@@ -327,100 +304,45 @@ public class SimilarityTable extends AbstractMatchTable
   private String updateQualifierString(final int row)
   {
     StringBuffer similarityStr = new StringBuffer(
-             (String)similarityTable.getValueAt(row, getColumnIndex(METHOD_COL)) );   // method
+             (String)getTable().getValueAt(row, getColumnIndex(METHOD_COL)) );   // method
     similarityStr.append(";");
     similarityStr.append(
-             (String)similarityTable.getValueAt(row, getColumnIndex(HIT_COL)) );      // hit
+             (String)getTable().getValueAt(row, getColumnIndex(HIT_COL)) );      // hit
     similarityStr.append(";");
     similarityStr.append(
-             (String)similarityTable.getValueAt(row, getColumnIndex(ORGANISM_COL)) ); // organism
+             (String)getTable().getValueAt(row, getColumnIndex(ORGANISM_COL)) ); // organism
     similarityStr.append(";");
     similarityStr.append(
-             (String)similarityTable.getValueAt(row, getColumnIndex(DESCRIPTION_COL)) ); // description
+             (String)getTable().getValueAt(row, getColumnIndex(DESCRIPTION_COL)) ); // description
     similarityStr.append(";");
     similarityStr.append("length "+
-             (String)similarityTable.getValueAt(row, getColumnIndex(LENGTH_COL)) ); // length
+             (String)getTable().getValueAt(row, getColumnIndex(LENGTH_COL)) ); // length
     similarityStr.append(";");
     similarityStr.append("E()="+
-             (String)similarityTable.getValueAt(row, getColumnIndex(EVALUE_COL)) ); // evalue
+             (String)getTable().getValueAt(row, getColumnIndex(EVALUE_COL)) ); // evalue
     similarityStr.append(";");
     similarityStr.append("score="+
-             (String)similarityTable.getValueAt(row, getColumnIndex(SCORE_COL)) );  // score
+             (String)getTable().getValueAt(row, getColumnIndex(SCORE_COL)) );  // score
     similarityStr.append(";");
     similarityStr.append("query "+
-             (String)similarityTable.getValueAt(row, getColumnIndex(QUERY_COL)) );  // query
+             (String)getTable().getValueAt(row, getColumnIndex(QUERY_COL)) );  // query
     similarityStr.append(";");
     similarityStr.append("subject "+
-             (String)similarityTable.getValueAt(row, getColumnIndex(SUBJECT_COL)) ); // subject
+             (String)getTable().getValueAt(row, getColumnIndex(SUBJECT_COL)) ); // subject
     similarityStr.append(";");
     similarityStr.append("ungapped id="+
-             (String)similarityTable.getValueAt(row, getColumnIndex(ID_COL)) ); // ungapped id
+             (String)getTable().getValueAt(row, getColumnIndex(ID_COL)) ); // ungapped id
     similarityStr.append(";");
     similarityStr.append("overlap="+
-             (String)similarityTable.getValueAt(row, getColumnIndex(OVERLAP_COL)) ); // overlap
+             (String)getTable().getValueAt(row, getColumnIndex(OVERLAP_COL)) ); // overlap
     
     return similarityStr.toString();
   }
   
   /**
-   * Sets the preferred, min & max width of the column specified by columnIndex. 
-   * The column will be just wide enough to show the column head and the widest 
-   * cell in the column. margin pixels are added to the left and right
-   * @param table
-   * @param columnIndex
-   * @param margin
-   */
-  public void packColumn(JTable table, int columnIndex, int margin) 
-  {
-    DefaultTableColumnModel colModel = (DefaultTableColumnModel)table.getColumnModel();
-    TableColumn col = colModel.getColumn(columnIndex);
-    int width = 0;
-    int maxWidth;
-    
-    // Get width of column header
-    TableCellRenderer renderer = col.getHeaderRenderer();
-    if(renderer == null)
-      renderer = table.getTableHeader().getDefaultRenderer();
-      
-    Component comp = renderer.getTableCellRendererComponent(
-          table, col.getHeaderValue(), false, false, 0, 0);
-    //width = comp.getPreferredSize().width;
-  
-    String text = ((JLabel)comp).getText();
-    Font font = comp.getFont();
-    FontMetrics fontMetrics = comp.getFontMetrics ( font );
-
-    width = SwingUtilities.computeStringWidth ( fontMetrics, text );
-    
-    // Get maximum width of column data
-    for(int r=0; r<table.getRowCount(); r++) 
-    {
-      renderer = table.getCellRenderer(r, columnIndex);
-      comp = renderer.getTableCellRendererComponent(
-              table, table.getValueAt(r, columnIndex), false, false, r, columnIndex);
-      
-      text = ((JLabel)comp).getText();
-      font = comp.getFont();
-      fontMetrics = comp.getFontMetrics ( font );
-
-      maxWidth = SwingUtilities.computeStringWidth ( fontMetrics, text );
-      //  maxWidth = comp.getPreferredSize().width;
-      width = Math.max(width, maxWidth);
-    }
-  
-    // Add margin
-    width += 2*margin;
-  
-    // Set the width
-    col.setPreferredWidth(width);
-    col.setMaxWidth(width);
-    col.setMinWidth(width);
-  }
-  
-  /**
    * Renderer for the Similarity cells
    */
-  public class SimilarityRenderer extends DefaultTableCellRenderer
+  private class SimilarityRenderer extends DefaultTableCellRenderer
   {  
     /** */
     private static final long serialVersionUID = 1L;
@@ -437,19 +359,27 @@ public class SimilarityTable extends AbstractMatchTable
     private final JLabel score      = new JLabel();
     private final JLabel overlap    = new JLabel();
     private final JLabel method     = new JLabel();
-    private final JButton buttRemove = new JButton("X");
+    private final JLabel buttRemove = new JLabel("X");
     private Color fgColor = new Color(139,35,35);
     
     public SimilarityRenderer() 
     {
       evalue.setHorizontalAlignment(SwingConstants.RIGHT);
+      evalue.setOpaque(true);
       length.setHorizontalAlignment(SwingConstants.RIGHT);
+      length.setOpaque(true);
       ungappedId.setHorizontalAlignment(SwingConstants.RIGHT);
+      ungappedId.setOpaque(true);
       queryCoord.setHorizontalAlignment(SwingConstants.RIGHT);
+      queryCoord.setOpaque(true);
       subjCoord.setHorizontalAlignment(SwingConstants.RIGHT);
+      subjCoord.setOpaque(true);
       score.setHorizontalAlignment(SwingConstants.RIGHT);
+      score.setOpaque(true);
       overlap.setHorizontalAlignment(SwingConstants.RIGHT);
+      overlap.setOpaque(true);
       method.setHorizontalAlignment(SwingConstants.RIGHT);
+      method.setOpaque(true);
       
       organismTextArea.setLineWrap(true);
       organismTextArea.setWrapStyleWord(true);
@@ -460,16 +390,13 @@ public class SimilarityTable extends AbstractMatchTable
       descriptionTextArea.setLineWrap(true);
       descriptionTextArea.setWrapStyleWord(true);
       
-      buttRemove.setOpaque(false);
+      buttRemove.setOpaque(true);
       buttRemove.setText("X");
       
       Font font = getFont().deriveFont(Font.BOLD);
       buttRemove.setFont(font);
       buttRemove.setToolTipText("REMOVE");
-      
-      buttRemove.setPreferredSize(new Dimension(
-            20,20));
-      buttRemove.setMaximumSize(buttRemove.getPreferredSize());
+      buttRemove.setHorizontalAlignment(SwingConstants.CENTER);
     }
     
 
@@ -527,6 +454,10 @@ public class SimilarityTable extends AbstractMatchTable
       else if(column == getColumnIndex(EVALUE_COL))
       {
         evalue.setText(text);
+        if(isSelected) 
+          evalue.setBackground(table.getSelectionBackground()); 
+        else
+          evalue.setBackground(Color.white);
         c = evalue;
       }
       else if(column == getColumnIndex(LENGTH_COL))
@@ -594,110 +525,14 @@ public class SimilarityTable extends AbstractMatchTable
         minHeight = -1;
       }
       
+      // highlight on selection
+      if(isSelected) 
+        c.setBackground(table.getSelectionBackground()); 
+      else
+        c.setBackground(Color.white);
+      
       return c;
     }
   }
-
- 
-  public class CellEditing extends DefaultCellEditor
-  {
-    /** */
-    private static final long serialVersionUID = 1L;
-    public CellEditing(JTextField textField)
-    {
-      super(textField);
-    }    
-
-    public boolean stopCellEditing()
-    {
-      isChanged = true;
-      return super.stopCellEditing();
-    }
-  }
   
-  /**
-   *
-   */
-  public class ButtonEditor extends DefaultCellEditor 
-  {
-    /** */
-    private static final long serialVersionUID = 1L;
-    protected JButton buttRemove;
-    private boolean   isPushed;
-    private int selectedRow;
-    private Color fgColor = new Color(139,35,35);
-    private DefaultTableModel tableModel;
-    
-    public ButtonEditor(JCheckBox checkBox, final DefaultTableModel tableModel) 
-    {
-      super(checkBox);
-      this.tableModel = tableModel;
-      
-      buttRemove = new JButton("X");
-
-      buttRemove.setOpaque(false);
-      Font font = buttRemove.getFont().deriveFont(Font.BOLD);
-      buttRemove.setFont(font);
-      buttRemove.setToolTipText("REMOVE");
-      buttRemove.setForeground(fgColor);
-      buttRemove.setPreferredSize(new Dimension(
-          20,20));
-      buttRemove.setMaximumSize(buttRemove.getPreferredSize());
-      
-      buttRemove.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e) 
-        {
-          fireEditingStopped();
-          
-        }
-      });
-    }
-   
-    public Component getTableCellEditorComponent(JTable table, Object value,
-                     boolean isSelected, int row, int column)
-    {
-      if (isSelected) 
-      {
-        buttRemove.setForeground(fgColor);
-        buttRemove.setBackground(table.getSelectionBackground()); 
-      }
-      else
-      {
-        buttRemove.setForeground(fgColor);
-        buttRemove.setBackground(table.getBackground());
-      }
-      
-      selectedRow = row;
-      isPushed = true;
-      return buttRemove;
-    }
-   
-    public Object getCellEditorValue() 
-    {
-      if(isPushed)  
-      {
-        tableModel.removeRow(selectedRow);
-        isChanged = true;
-        return null;
-      }
-      isPushed = false;
-      return new String("X") ;
-    }
-     
-    public boolean stopCellEditing() 
-    {
-      isPushed = false;
-      return super.stopCellEditing();
-    }
-   
-    protected void fireEditingStopped() 
-    {
-      try
-      {
-        super.fireEditingStopped();
-      }
-      catch(ArrayIndexOutOfBoundsException e){}
-    }
-  }
 }
