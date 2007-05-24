@@ -24,6 +24,7 @@
     
     <resultMap id="lazy-cvterm" class="CvTerm">
    	  <result property="cvTermId" column="cvterm_id"/>
+   	  <result property="cv" column="cv_id" select="selectCv"/>
   	  <result property="name" column="name"/>
       <result property="definition" column="definition"/>
       <result property="dbXRef" column="dbxref_id" select="selectDbXRef"/>
@@ -59,4 +60,5 @@
        FROM cvterm
        WHERE cvterm_id=#value# 
      </select> 
+
 </sqlMap> 
