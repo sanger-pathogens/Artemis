@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.3 2007-05-23 09:05:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.4 2007-05-24 08:57:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -35,6 +35,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import uk.ac.sanger.artemis.FeatureChangeEvent;
@@ -60,6 +61,8 @@ public class MatchPanel extends JPanel
   private SimilarityTable similarityTable;
   private OrthologTable orthologTable;
   private Vector editableComponents;
+  private JButton hide_show_ortho;
+  private JButton hide_show_sim;
   
   public MatchPanel(final Feature feature)
   {
@@ -130,23 +133,18 @@ public class MatchPanel extends JPanel
     ///
     /// temp
     ///
-    orthologTable = new OrthologTable(orthoQualifier);
-    editableComponents.add(orthologTable);
-    matchVerticalBox.add(orthologTable.getTable().getTableHeader());
-    matchVerticalBox.add(orthologTable.getTable());
-    ///
-    ///
-    ///
-    
-    if(orthoQualifier != null)
-    {
-      StringVector orthologs = orthoQualifier.getValues();
-      for(int i=0; i<orthologs.size(); i++)
-      {
-        JTextField ortholog = new JTextField( (String)orthologs.get(i) );
-        matchVerticalBox.add(ortholog);
-      }
-    }
+    //if(orthoQualifier != null)
+    //{
+      if(hide_show_ortho == null)
+        hide_show_ortho = new JButton("-");
+      orthologTable = new OrthologTable(orthoQualifier);
+      addHideShowButton(orthologTable.getTable(), hide_show_ortho);
+      xBox.add(hide_show_ortho);
+      editableComponents.add(orthologTable);
+      matchVerticalBox.add(orthologTable.getTable().getTableHeader());
+      matchVerticalBox.add(orthologTable.getTable());
+    //}
+
     
     //
     // paralog
@@ -224,9 +222,13 @@ public class MatchPanel extends JPanel
         ((QualifierLazyLoading)simQualifier).setForceLoad(true);
       
       similarityTable = new SimilarityTable(simQualifier);
+      if(hide_show_sim == null)
+        hide_show_sim = new JButton("-");
+      addHideShowButton(similarityTable.getTable(), hide_show_sim);
       editableComponents.add(similarityTable);
       
       xBox.add(similarityTable.getInfoLevelButton());
+      xBox.add(hide_show_sim);
       matchVerticalBox.add(xBox);
       matchVerticalBox.add(similarityTable.getTable().getTableHeader());
       matchVerticalBox.add(similarityTable.getTable());
@@ -235,6 +237,39 @@ public class MatchPanel extends JPanel
     return matchVerticalBox;
   }
   
+  /**
+   * Add hide/show button 
+   * @param box
+   */
+  private void addHideShowButton(final JTable table, final JButton hide_show)
+  {
+    hide_show.setOpaque(false);
+    
+    // remove any old listeners
+    ActionListener l[] = hide_show.getActionListeners();
+    if(l != null)
+      for(int i=0;i<l.length;i++)
+        hide_show.removeActionListener(l[i]);
+    
+    hide_show.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if(hide_show.getText().equals("-"))
+        {
+          hide_show.setText("+");
+          table.setVisible(false);
+          table.getTableHeader().setVisible(false);
+        }
+        else
+        {
+          hide_show.setText("-");
+          table.setVisible(true);
+          table.getTableHeader().setVisible(true);
+        }
+      }
+    });
+  }
   
   /**
    * Update ortho/paralogs for a feature
