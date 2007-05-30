@@ -42,7 +42,6 @@ import javax.swing.JTextField;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -56,6 +55,8 @@ import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.components.Splash;
+import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 
 
@@ -141,8 +142,8 @@ public class GeneEdit
 
       public void actionPerformed(ActionEvent event)
       {
-        String search_gene = gene_text.getText();
-        String schema = (String)schema_list.getSelectedItem();
+        final String search_gene = gene_text.getText();
+        final String schema = (String)schema_list.getSelectedItem();
         List schema_search;
         if(schema.equalsIgnoreCase("All"))
           schema_search = schemas;
@@ -152,29 +153,38 @@ public class GeneEdit
           schema_search.add(schema);
         }
 
-        DatabaseDocumentEntry entry = makeEntry(schema, search_gene, location);
-        entry.setReadOnly(true);
-        FeatureVector features = entry.getAllFeatures();
-        GFFStreamFeature gff_gene_feature = null;
-          
-        for(int i=0; i<features.size(); i++)
+        SwingWorker entryWorker = new SwingWorker()
         {
-          GFFStreamFeature feature = (GFFStreamFeature)features.get(i);
-          String uniquename = (String)feature.getQualifierByName("ID").getValues().get(0);
-
-          if(search_gene.equals(uniquename))
+          public Object construct()
           {
-            gff_gene_feature = feature;
-            break;
-          }
-        }
-        
-        
-        uk.ac.sanger.artemis.Feature feature =
-           new uk.ac.sanger.artemis.Feature(gff_gene_feature);
+            DatabaseDocumentEntry entry = makeEntry(schema, search_gene,
+                location);
+            entry.setReadOnly(true);
+            FeatureVector features = entry.getAllFeatures();
+            GFFStreamFeature gff_gene_feature = null;
 
+            for(int i = 0; i < features.size(); i++)
+            {
+              GFFStreamFeature feature = (GFFStreamFeature) features.get(i);
+              String uniquename = (String) feature.getQualifierByName("ID")
+                  .getValues().get(0);
+
+              if(search_gene.equals(uniquename))
+              {
+                gff_gene_feature = feature;
+                break;
+              }
+            }
+
+            uk.ac.sanger.artemis.Feature feature = new uk.ac.sanger.artemis.Feature(
+                gff_gene_feature);
+            new GeneBuilderFrame(feature, null, null, null);
+            return null;
+          }
+        };
+        entryWorker.start();
         
-        new GeneBuilderFrame(feature, null, null, null);
+        
       }
     });
     xbox.add(findButt);
@@ -182,7 +192,7 @@ public class GeneEdit
     
     panel.add(xbox, BorderLayout.NORTH);
     
-    JFrame frame = new JFrame("Feature Search");
+    GeneSplash frame = new GeneSplash();
     frame.getContentPane().add(panel);
     frame.setJMenuBar(getJMenuBar(dao));
     frame.pack();
@@ -224,6 +234,16 @@ public class GeneEdit
     JMenu file = new JMenu("File");
     mbar.add(file);
 
+    JMenuItem showLog = new JMenuItem("Show Log Window");
+    showLog.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        GeneSplash.showLog();
+      }
+    });
+    file.add(showLog);
+    
     JMenuItem exit = new JMenuItem("Exit");
     exit.addActionListener(new ActionListener()
     {
@@ -264,6 +284,22 @@ public class GeneEdit
     }
   }
 
+  class GeneSplash extends Splash
+  {
+    /** */
+    private static final long serialVersionUID = 1L;
+
+    public GeneSplash()
+    {
+      super("Feature Search", "Gene Editor");  
+    }
+    
+    protected void exit()
+    {   
+    }
+    
+  }
+  
   public static void main(String args[])
   {
     final javax.swing.plaf.FontUIResource font_ui_resource =
