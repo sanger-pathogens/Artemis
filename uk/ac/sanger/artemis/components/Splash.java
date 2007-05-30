@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.27 2007-04-10 13:39:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.28 2007-05-30 07:55:19 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.27 2007-04-10 13:39:38 tjc Exp $
+ *  @version $Id: Splash.java,v 1.28 2007-05-30 07:55:19 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -99,6 +99,17 @@ abstract public class Splash extends JFrame
   public static org.apache.log4j.Logger logger4j = 
          org.apache.log4j.Logger.getLogger(Splash.class);
   
+  public Splash(final String program_title,
+                final String program_name)
+  {
+    super(program_title);
+    initLogger();
+    
+    logger4j.info(System.getProperty("java.version"));
+    logger4j.info(System.getProperty("os.name"));
+    logger4j.info("Starting application: "+program_name);
+  }
+  
   /**
    *  Create a new JFrame for a Splash screen.
    *  @param program_name The full name of the program.
@@ -109,13 +120,7 @@ abstract public class Splash extends JFrame
                 final String program_title,
                 final String program_version) 
   {
-    super(program_title + " " + program_version);
-
-    initLogger();
-    
-    logger4j.info(System.getProperty("java.version"));
-    logger4j.info(System.getProperty("os.name"));
-    logger4j.info("Starting application: "+program_name);
+    this(program_title+" "+program_version, program_name);
     
     if(isMac()) 
     {
