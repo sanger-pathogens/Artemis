@@ -25,6 +25,7 @@
 package uk.ac.sanger.artemis.util;
 
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
+import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ReadFormatException;
 
@@ -535,7 +536,7 @@ public class DatabaseDocument extends Document
       // select buffer based on feature type
       Feature feat = (Feature)featList.get(i);
       int type_id = feat.getCvTerm().getCvTermId();
-      String typeName = getCvtermName(type_id, dao);
+      String typeName = getCvtermName(type_id, dao, gene_builder);
       this_buff = buffers[types.length];
       for(int j = 0; j < types.length; j++)
       {
@@ -549,7 +550,7 @@ public class DatabaseDocument extends Document
                  pubDbXRefs, featureCvTermDbXRefs, featureCvTermPubs,
                  featurePubs,
                  id_store, dao, 
-                 feat.getFeatureLoc(), this_buff);
+                 feat.getFeatureLoc(), this_buff, gene_builder);
        
       if( i%10 == 0 || i == feature_size-1)
         progress_listener.progressMade("Read from database: " + 
@@ -822,7 +823,7 @@ public class DatabaseDocument extends Document
     Hashtable featurePubs = getFeaturePubsBySrcFeatureId(dao,srcFeatureId);
     List pubDbXRefs= dao.getPubDbXRef();
     chadoToGFF(chadoFeature, parentName, dbxrefs, synonym, featureCvTerms,
-        pubDbXRefs, featureCvTermDbXRefs, featureCvTermPubs, featurePubs, id_store, dao, loc, this_buff);  
+        pubDbXRefs, featureCvTermDbXRefs, featureCvTermPubs, featurePubs, id_store, dao, loc, this_buff, gene_builder);  
     return chadoFeature;
   }
   
@@ -852,7 +853,8 @@ public class DatabaseDocument extends Document
                                  final Hashtable id_store,
                                  final GmodDAO dao,
                                  final FeatureLoc featureloc,
-                                 final ByteBuffer this_buff)
+                                 final ByteBuffer this_buff,
+                                 final boolean gene_builder)
   {
     String gff_source = null;
     
@@ -862,7 +864,7 @@ public class DatabaseDocument extends Document
     final Short strand      = featureloc.getStrand();
     final Integer phase     = featureloc.getPhase();
     final String name       = feat.getUniqueName();
-    final String typeName   = getCvtermName(type_id, dao);
+    final String typeName   = getCvtermName(type_id, dao, gene_builder);
     final Integer featureId = new Integer(feat.getFeatureId());
     final String timelastmodified = Long.toString(feat.getTimeLastModified().getTime());
 
@@ -896,7 +898,7 @@ public class DatabaseDocument extends Document
         if( feat_relationship.getCvTerm().getName() == null )
         {
           int parent_type_id = feat_relationship.getCvTerm().getCvTermId();
-          parent_relationship = getCvtermName(parent_type_id, dao);
+          parent_relationship = getCvtermName(parent_type_id, dao, gene_builder);
         }
         else
           parent_relationship = feat_relationship.getCvTerm().getName();
@@ -977,7 +979,7 @@ public class DatabaseDocument extends Document
       while(it.hasNext())
       {
         FeatureProp featprop = (FeatureProp)it.next();
-        String qualifier_name = getCvtermName(featprop.getCvTerm().getCvTermId(), dao);
+        String qualifier_name = getCvtermName(featprop.getCvTerm().getCvTermId(), dao, gene_builder);
         if(qualifier_name == null)
           continue;
         if(featprop.getValue() != null)
@@ -1009,7 +1011,7 @@ public class DatabaseDocument extends Document
       {
         alias = (FeatureSynonym)v_synonyms.get(j);
         
-        this_buff.append( getCvtermName(alias.getSynonym().getCvTerm().getCvTermId(), dao) + "=" );
+        this_buff.append( getCvtermName(alias.getSynonym().getCvTerm().getCvTermId(), dao, gene_builder) + "=" );
         //this_buff.append(alias.getSynonym().getCvterm().getName()+"=");
         this_buff.append(alias.getSynonym().getName());
         
@@ -1056,7 +1058,7 @@ public class DatabaseDocument extends Document
           featureCvTermPubList = (List)featureCvTermPubs.get(featureCvTermId);
           
         appendControlledVocabulary(this_buff, dao, feature_cvterm,
-                                   featureCvTermDbXRefList,featureCvTermPubList, pubDbXRefs);
+                                   featureCvTermDbXRefList,featureCvTermPubList, pubDbXRefs, gene_builder);
       }
       //System.out.println(new String(this_buff.getBytes()));
     }
@@ -1076,9 +1078,10 @@ public class DatabaseDocument extends Document
                                           final FeatureCvTerm feature_cvterm,
                                           final List featureCvTermDbXRefs,
                                           final List featureCvTermPubs,
-                                          final List pubDbXRefs)
+                                          final List pubDbXRefs,
+                                          final boolean gene_builder)
   {
-    CvTerm cvterm =  getCvTerm( feature_cvterm.getCvTerm().getCvTermId(), dao);
+    CvTerm cvterm =  getCvTerm( feature_cvterm.getCvTerm().getCvTermId(), dao, gene_builder);
     DbXRef dbXRef = feature_cvterm.getCvTerm().getDbXRef();
     
     if(cvterm.getCv().getName().startsWith(DatabaseDocument.CONTROLLED_CURATION_TAG_CVNAME))
@@ -1138,7 +1141,7 @@ public class DatabaseDocument extends Document
         FeatureCvTermProp feature_cvtermprop = 
           (FeatureCvTermProp)feature_cvtermprops.get(i);
         attr_buff.append(getCvtermName(feature_cvtermprop.getCvTerm()
-            .getCvTermId(), dao));
+            .getCvTermId(), dao, gene_builder));
         attr_buff.append("=");
         attr_buff.append(GFFStreamFeature.encode(feature_cvtermprop.getValue()));
         if(i < feature_cvtermprops.size()-1)
@@ -1258,7 +1261,7 @@ public class DatabaseDocument extends Document
           continue;
         
         attr_buff.append(getCvtermName(feature_cvtermprop.getCvTerm()
-            .getCvTermId(), dao));
+            .getCvTermId(), dao, gene_builder));
         attr_buff.append("=");
         attr_buff.append(GFFStreamFeature.encode(feature_cvtermprop.getValue()));
         if(i < feature_cvtermprops.size()-1)
@@ -1327,13 +1330,22 @@ public class DatabaseDocument extends Document
    * @param id  a cvterm_id  
    * @return    the cvterm name
    */
-  private static String getCvtermName(int id, GmodDAO dao)
+  private static String getCvtermName(final int id, 
+                                      final GmodDAO dao,
+                                      final boolean gene_builder)
   {
-    return getCvTerm(id, dao).getName();
+    if(gene_builder)
+      return dao.getCvTermById(id).getName();
+    
+    return getCvTerm(id, dao, gene_builder).getName();
   }
   
-  private static CvTerm getCvTerm(int id, GmodDAO dao)
+  private static CvTerm getCvTerm(final int id, 
+                                  final GmodDAO dao,
+                                  final boolean gene_builder)
   {
+    if(gene_builder)
+      return dao.getCvTermById(id);
     if(cvterms == null)
       getCvterms(dao);
 
@@ -1345,7 +1357,7 @@ public class DatabaseDocument extends Document
    * @param cvTermId
    * @return
    */
-  public static CvTerm getCvTermByCvTermName(String cvterm_name)
+  public static CvTerm getCvTermByCvTermName(final String cvterm_name)
   {
     Enumeration enum_cvterm = cvterms.elements();
     while(enum_cvterm.hasMoreElements())
@@ -1363,8 +1375,27 @@ public class DatabaseDocument extends Document
    * @param cvTermId
    * @return
    */
-  public static CvTerm getCvTermByCvTermId(final int cvTermId)
+  public static CvTerm getCvTermByCvTermId(final int cvTermId,
+                                           final uk.ac.sanger.artemis.io.Feature feature)
   {
+    if(cvterms == null)
+    {
+      try
+      {
+        DatabaseDocument doc =
+          (DatabaseDocument) ((DocumentEntry)feature.getEntry()).getDocument();
+        return doc.getDAO().getCvTermById(cvTermId);
+      }
+      catch(ConnectException e)
+      { 
+        logger4j.warn(e.getMessage()); 
+      }
+      catch(SQLException e) 
+      { 
+        logger4j.warn(e.getMessage()); 
+      }
+    }
+    
     Enumeration enum_cvterm = cvterms.elements();
     while(enum_cvterm.hasMoreElements())
     {
@@ -1609,7 +1640,7 @@ public class DatabaseDocument extends Document
           while(it_residue_features.hasNext())
           {
             Feature feature = (Feature)it_residue_features.next();
-            String typeName = getCvtermName(feature.getCvTerm().getCvTermId(), getDAO()); 
+            String typeName = getCvtermName(feature.getCvTerm().getCvTermId(), getDAO(), gene_builder); 
           
             db.put(schema + " - " + typeName + " - " + feature.getUniqueName(),
                    Integer.toString(feature.getFeatureId()));

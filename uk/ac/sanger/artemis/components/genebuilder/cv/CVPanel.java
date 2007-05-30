@@ -79,7 +79,7 @@ public class CVPanel extends JPanel
   
   private JButton hide_show_CC;
   private JButton hide_show_GO;
-  
+  private Feature feature;
   
   public CVPanel(final Feature feature)
   {
@@ -337,9 +337,10 @@ public class CVPanel extends JPanel
           JTextField termTextField = new JTextField(classStr);
           termTextField.setOpaque(false);
           termTextField.setEditable(false);
+          
           termTextField
               .setToolTipText(DatabaseDocument.getCvTermByCvTermId(
-                  Integer.parseInt(qualifierString.substring(index + 2)))
+                  Integer.parseInt(qualifierString.substring(index + 2)), feature.getEmblFeature())
                   .getName());
           termTextField.setPreferredSize(dimension);
           termTextField.setMaximumSize(dimension);
@@ -477,6 +478,7 @@ public class CVPanel extends JPanel
   
   public void updateFromFeature(final Feature feature)
   {
+    this.feature = feature;
     if(cvQualifiers != null)
       feature.removeFeatureChangeListener(this);
     cvQualifiers = feature.getQualifiers().copy();

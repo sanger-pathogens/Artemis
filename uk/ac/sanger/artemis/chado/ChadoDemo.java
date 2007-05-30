@@ -437,10 +437,10 @@ public class ChadoDemo
         FeatureCvTerm feature_cvterm = (FeatureCvTerm)featureCvTerms.get(j);
 
         DatabaseDocument.appendControlledVocabulary(attr_buff, dao, feature_cvterm,
-            featureCvTermDbXRefs, featureCvTermPubs, pubDbXRefs);
+            featureCvTermDbXRefs, featureCvTermPubs, pubDbXRefs, false);
         
         DatabaseDocument.appendControlledVocabulary(gff_buff, dao, feature_cvterm,
-            featureCvTermDbXRefs, featureCvTermPubs, pubDbXRefs);
+            featureCvTermDbXRefs, featureCvTermPubs, pubDbXRefs, false);
         attr_buff.append("\n");
       }
     }

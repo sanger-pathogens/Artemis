@@ -1275,7 +1275,7 @@ public class ChadoTransactionManager
                qualifier_name+" "+qualifier_string);
            
            FeatureCvTerm feature_cvterm = getFeatureCvTerm(qualifier_name, qualifier_string, 
-                                                           uniquename);
+                                                           uniquename, feature);
            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
                                       feature_cvterm,
                                       feature.getLastModified(), feature,
@@ -1371,7 +1371,7 @@ public class ChadoTransactionManager
            logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
                                  qualifier_name+" "+qualifier_string);
            FeatureCvTerm feature_cvterm = getFeatureCvTerm(qualifier_name,
-              qualifier_string, uniquename);
+              qualifier_string, uniquename, feature);
            tsn = new ChadoTransaction(ChadoTransaction.INSERT, 
                       feature_cvterm,
                       feature.getLastModified(), feature,
@@ -1592,7 +1592,8 @@ public class ChadoTransactionManager
    */
   private FeatureCvTerm getFeatureCvTerm(final String qualifier_name,
                                          String qualifier_string,
-                                         final String uniqueName)
+                                         final String uniqueName,
+                                         final GFFStreamFeature feature)
   {
     logger4j.debug("Build FeatureCvTerm for "+qualifier_string);
     
@@ -1618,7 +1619,7 @@ public class ChadoTransactionManager
       int index = qualifier_string.indexOf("::");
 
       CvTerm cvTerm = getCvTerm( DatabaseDocument.getCvTermByCvTermId( 
-          Integer.parseInt(qualifier_string.substring(index+2))).getName(), "RILEY" );
+          Integer.parseInt(qualifier_string.substring(index+2)), feature).getName(), "RILEY" );
       
       feature_cvterm.setCvTerm(cvTerm);
       logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
