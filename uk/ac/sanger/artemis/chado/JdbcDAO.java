@@ -1095,6 +1095,12 @@ public class JdbcDAO extends GmodDAO
     return null;
   }
   
+  public CvTerm getCvTermById(final int cvTermId)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
   //////
   ////// OrganismDaoI
   //////
@@ -2161,6 +2167,8 @@ public class JdbcDAO extends GmodDAO
       throw new RuntimeException(sqle);
     }
   }
+
+
 
 
   /**

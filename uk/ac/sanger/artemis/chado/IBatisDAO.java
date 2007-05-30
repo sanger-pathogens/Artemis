@@ -48,6 +48,7 @@ import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.pub.Pub;
 import org.gmod.schema.analysis.AnalysisFeature;
+import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 
 import javax.swing.JPasswordField;
@@ -466,7 +467,19 @@ public class IBatisDAO extends GmodDAO
    */
   public CvTerm getCvTermByNameAndCvName(String cvTermName, String name)
   {
-    return null;
+    Cv cv = new Cv();
+    cv.setName(name);
+    CvTerm cvTerm = new CvTerm();
+    cvTerm.setName(cvTermName);
+    cvTerm.setCv(cv);
+    
+    return (CvTerm)sqlMap.queryForObject("getCvterm", cvTerm);
+  }
+  
+  
+  public CvTerm getCvTermById(final int cvTermId)
+  {
+    return (CvTerm)sqlMap.queryForObject("selectCvterm", new Integer(cvTermId));
   }
 
   //////

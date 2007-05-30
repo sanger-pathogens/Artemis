@@ -150,8 +150,7 @@ public abstract class GmodDAO
     // TODO Auto-generated method stub
     return null;
   }
-
-
+  
   public List getPossibleMatches(String arg0, Cv arg1, int arg2)
   {
     // TODO Auto-generated method stub
@@ -181,16 +180,6 @@ public abstract class GmodDAO
     return null;
   }
 
-  /**
-   * Retrieve a CvTerm by id
-   * 
-   * @param id then cvterm id (primary key)
-   * @return the corresponding CvTerm, or null
-   */
-  public CvTerm getCvTermById(int id)
-  {
-    return null;
-  }
 
 
   // TODO Should this return a list or just one?
