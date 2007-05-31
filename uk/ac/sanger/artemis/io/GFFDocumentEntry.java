@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.43 2007-05-03 18:45:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.44 2007-05-31 15:32:46 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -42,7 +42,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.43 2007-05-03 18:45:46 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.44 2007-05-31 15:32:46 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -284,8 +284,21 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
   {
     DatabaseDocument doc = (DatabaseDocument)getDocument();
     
-    List matches = doc.getSimilarityMatches();
-
+    List matches;
+    
+    if(fv.size() < 30)  // if just a few features to look up e.g. for gene editorr
+    {
+      List featureIds = new Vector(fv.size());
+      for(int i=0;i<fv.size(); i++)
+      {
+        Qualifier featureIdQualifier = fv.featureAt(i).getQualifierByName("feature_id");
+        featureIds.add( (String)featureIdQualifier.getValues().get(0) );
+      }
+      matches = doc.getSimilarityMatches(featureIds);
+    }
+    else
+      matches = doc.getSimilarityMatches(null);
+    
     Hashtable temp_lookup_hash = new Hashtable(matches.size()/2);
     String f_id;
     for(int i=0; i<fv.size(); i++)

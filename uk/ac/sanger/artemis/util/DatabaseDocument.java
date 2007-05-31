@@ -1572,12 +1572,15 @@ public class DatabaseDocument extends Document
     return schema_list;
   }
   
-  public List getSimilarityMatches()
+  public List getSimilarityMatches(List featureIds)
   {
     try
     {
       GmodDAO dao = getDAO();
-      return dao.getSimilarityMatches(new Integer(srcFeatureId));
+      if(featureIds == null)
+        return dao.getSimilarityMatches(new Integer(srcFeatureId));
+      else
+        return dao.getSimilarityMatchesByFeatureIds(featureIds);
     }
     catch(RuntimeException sqlExp)
     {
