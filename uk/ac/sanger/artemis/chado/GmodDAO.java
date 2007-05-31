@@ -48,6 +48,7 @@ public abstract class GmodDAO
        implements SequenceDaoI, SchemaDaoI, OrganismDaoI, CvDaoI, PubDaoI, GeneralDaoI
 {
   
+  public abstract List getSimilarityMatchesByFeatureIds(final List featureIds);
   public abstract List getSimilarityMatches(final Integer srcFeatureId);
   
   /**

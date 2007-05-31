@@ -110,6 +110,11 @@ public class JdbcDAO extends GmodDAO
     return null;
   }
   
+  public List getSimilarityMatchesByFeatureIds(List featureIds)
+  {
+    return null;
+  }
+  
   /**
    * Return the feature corresponding to this feature_id 
    * 
@@ -2167,6 +2172,7 @@ public class JdbcDAO extends GmodDAO
       throw new RuntimeException(sqle);
     }
   }
+
 
 
 

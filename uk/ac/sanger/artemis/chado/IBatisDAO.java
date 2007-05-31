@@ -105,9 +105,20 @@ public class IBatisDAO extends GmodDAO
                                new Integer(srcFeatureId));
   }
 
+  /**
+   * Returns matches for all features on a given srcfeature
+   */
   public List getSimilarityMatches(final Integer srcFeatureId)
   {
     return sqlMap.queryForList("getLazySimilarityMatches", srcFeatureId);
+  }
+  
+  /**
+   * Returns matches for a list of feature_id's
+   */
+  public List getSimilarityMatchesByFeatureIds(final List featureIds)
+  {
+    return sqlMap.queryForList("getLazySimilarityMatchesByFeatureIds", featureIds);
   }
   
   /**
