@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.51 2007-05-03 12:57:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.52 2007-05-31 15:30:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -152,7 +152,7 @@ public class GeneViewerPanel extends JPanel
     {
       public void mouseDragged(MouseEvent event) 
       {
-        if(event.isPopupTrigger())
+        if(event.isPopupTrigger() || entry_group == null)
           return;
         
         int select_start = (int)((event.getX() - border)/fraction)+start;
