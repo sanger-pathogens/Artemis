@@ -1319,7 +1319,7 @@ public class DatabaseDocument extends Document
     while(enum_cvterm.hasMoreElements())
     {
       Integer key = (Integer)enum_cvterm.nextElement();
-      if(name.equals( ((CvTerm)cvterms.get(key)).getName() ))
+      if(name.equalsIgnoreCase( ((CvTerm)cvterms.get(key)).getName() ))
         return key;
     }
     return null;
@@ -1363,7 +1363,7 @@ public class DatabaseDocument extends Document
     while(enum_cvterm.hasMoreElements())
     {
       CvTerm cvterm = (CvTerm)enum_cvterm.nextElement();
-      if(cvterm_name.equals( cvterm.getName() ))
+      if(cvterm_name.equalsIgnoreCase( cvterm.getName() ))
         return cvterm;
     }
     
