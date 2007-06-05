@@ -74,8 +74,18 @@ public class DatabaseDocumentEntry extends GFFDocumentEntry
     {
       if(feature instanceof DatabaseStreamFeature)
         return (DatabaseStreamFeature)feature;
-      else
+      else if(feature instanceof GFFStreamFeature)
         return (GFFStreamFeature)feature;
+      else
+      {
+        QualifierVector qualifiers = feature.getQualifiers().copy();
+        if(qualifiers.getQualifierByName("ID") == null)
+          qualifiers.add(new Qualifier("ID", feature.getKey().getKeyString()+":"+
+                                             feature.getLocation().toString()));
+        
+        return new DatabaseStreamFeature(feature.getKey(), 
+                   feature.getLocation(), qualifiers);
+      }
     }
     else
       return new DatabaseStreamFeature(feature);      
