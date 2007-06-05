@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.25 2007-05-01 09:35:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.26 2007-06-05 09:31:08 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -76,6 +76,7 @@ public class GeneBuilderFrame extends JFrame
   private Selection selection;
   private ChadoCanonicalGene chado_gene;
   private JLabel status_line = new JLabel("");
+  private GeneBuilderSelectionChangeListener geneBuilderSelectionChangeListener;
   
   public GeneBuilderFrame(final Feature feature,
                           final EntryGroup entry_group,
@@ -91,15 +92,10 @@ public class GeneBuilderFrame extends JFrame
     this.selection = selection;
     
     if(selection != null)
-      selection.addSelectionChangeListener(new SelectionChangeListener()
-      {
-        public void selectionChanged(SelectionChangeEvent event)
-        {
-          viewer.repaint();
-          tree.setSelection(GeneBuilderFrame.this.selection);
-        }
-      });
-    
+    {
+      geneBuilderSelectionChangeListener = new GeneBuilderSelectionChangeListener();
+      selection.addSelectionChangeListener(geneBuilderSelectionChangeListener);
+    }
     
     GFFStreamFeature gff_feature = (GFFStreamFeature)feature.getEmblFeature();
     chado_gene = gff_feature.getChadoGene();
@@ -170,16 +166,6 @@ public class GeneBuilderFrame extends JFrame
     {
       public void windowClosing(WindowEvent event) 
       {
-        try
-        {
-          stopListeningAll();
-         
-        }
-        catch(InvalidRelationException e)
-        {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
         dispose();
       }
     });
@@ -209,6 +195,23 @@ public class GeneBuilderFrame extends JFrame
     Utilities.centreFrame(this);
     setVisible(true);
     all.setDividerLocation(0.35);
+  }
+  
+  /**
+   * Override to ensure the GeneBuilderFrame removes all listeners
+   */
+  public void dispose()
+  {
+    try
+    {
+      stopListeningAll();
+    }
+    catch(InvalidRelationException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    super.dispose();
   }
   
   /**
@@ -301,6 +304,9 @@ public class GeneBuilderFrame extends JFrame
     if(getEntry() != null)
       getEntry().removeEntryChangeListener(this);
     feature.removeFeatureChangeListener(this);
+    
+    if(selection != null && geneBuilderSelectionChangeListener != null)
+      selection.removeSelectionChangeListener(geneBuilderSelectionChangeListener);
   }
   
   private void startListening(final Feature feature) 
@@ -308,6 +314,12 @@ public class GeneBuilderFrame extends JFrame
     if(getEntry() != null)
       getEntry().addEntryChangeListener(this);
     feature.addFeatureChangeListener(this);
+    
+    if(selection != null)
+    {
+      geneBuilderSelectionChangeListener = new GeneBuilderSelectionChangeListener();
+      selection.addSelectionChangeListener(geneBuilderSelectionChangeListener);
+    }
   }
 
   /**
@@ -514,4 +526,13 @@ public class GeneBuilderFrame extends JFrame
     }
   }
 
+  class GeneBuilderSelectionChangeListener implements SelectionChangeListener
+  {
+    public void selectionChanged(SelectionChangeEvent event)
+    {
+      viewer.repaint();
+      tree.setSelection(GeneBuilderFrame.this.selection);
+    }
+    
+  }
 }
