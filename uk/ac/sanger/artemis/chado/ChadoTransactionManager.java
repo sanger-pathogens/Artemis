@@ -29,6 +29,7 @@ import uk.ac.sanger.artemis.FeatureSegment;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Qualifier;
@@ -212,6 +213,9 @@ public class ChadoTransactionManager
   {
     if(event.featureHasChanged())
     {
+      if(!(event.getFeature().getEmblFeature() instanceof GFFStreamFeature))
+        return;
+      
       final GFFStreamFeature feature = 
         (GFFStreamFeature)event.getFeature().getEmblFeature();
 
@@ -428,6 +432,9 @@ public class ChadoTransactionManager
         return;
       }
      
+      if(!(event.getFeature().getEmblFeature() instanceof GFFStreamFeature))
+        return;
+      
       Feature feature = event.getFeature();
       insertFeature(feature);
     }
@@ -439,9 +446,18 @@ public class ChadoTransactionManager
         return;
       }
       
+      if(!(event.getFeature().getEntry().getEMBLEntry() instanceof DatabaseDocumentEntry) )
+      {
+        logger4j.debug("FEATURE_DELETED not a Database deletion");
+        return;
+      }
+      
       try
       {
         Qualifier qualifier_uniquename = event.getFeature().getQualifierByName("ID");
+        
+        
+        
         String feature_uniquename = 
                              (String)(qualifier_uniquename.getValues()).elementAt(0);
         
@@ -648,9 +664,18 @@ public class ChadoTransactionManager
 
     String key = feature.getKey().toString();
     
-    CvTerm cvterm = DatabaseDocument.getCvTermByCvAndCvTerm(key, "sequence");
-    chado_feature.setCvTerm(cvterm);
+    CvTerm cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm(key, "sequence");
+    if(cvTerm == null)
+    {
+      final String msg = 
+        key+" is not a valid/known database key (check the sequence ontology)!";
 
+      logger4j.error(msg);
+      System.out.println(msg);
+      return;
+    }
+    
+    chado_feature.setCvTerm(cvTerm);
     addQualifiers(feature.getQualifiers(), chado_feature);
     // create transaction object
     
@@ -779,19 +804,31 @@ public class ChadoTransactionManager
   /**
    * Set the transaction for deleting a feature.
    */
-  private void deleteFeature(final String uniquename, final String featureType)
+  private void deleteFeature(final String uniquename, final String featureKey)
   { 
     org.gmod.schema.sequence.Feature chado_feature = 
       new org.gmod.schema.sequence.Feature();
     chado_feature.setUniqueName(uniquename);
-    CvTerm cvTerm = getCvTerm(featureType, "sequence");
+    //CvTerm cvTerm = getCvTerm(featureType, "sequence");
+    
+    CvTerm cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm(featureKey, "sequence");
+    if(cvTerm == null)
+    {
+      final String msg = 
+        featureKey+" is not a valid/known database key (check the sequence ontology)!";
+
+      logger4j.error(msg);
+      System.out.println(msg);
+      return;
+    }
+    
     chado_feature.setCvTerm(cvTerm);
     logger4j.debug("FEATURE_DELETED "+uniquename+" cv name="+
          cvTerm.getCv().getName()+" term="+cvTerm.getName());
     
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.DELETE,
         chado_feature,
-        null, (GFFStreamFeature)null, featureType);
+        null, (GFFStreamFeature)null, featureKey);
 
     sql.add(tsn); 
   }
@@ -820,7 +857,8 @@ public class ChadoTransactionManager
       
       try
       {
-        int type_id = DatabaseDocument.getCvtermID( name ).intValue();
+        //int type_id = DatabaseDocument.getCvtermID( name ).intValue();
+        CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(name);
         for(int value_index = 0; value_index < qualifier_values.size();
           ++value_index)
         {
@@ -835,8 +873,9 @@ public class ChadoTransactionManager
             // happens when duplicating features 
             FeatureProp featureprop = new FeatureProp();
             featureprop.setValue((String)qualifier_values.elementAt(value_index));
-            CvTerm cvTerm = new CvTerm();
-            cvTerm.setCvTermId(type_id);
+            featureprop.setRank(value_index);
+            //CvTerm cvTerm = new CvTerm();
+            //cvTerm.setCvTermId(type_id);
             featureprop.setCvTerm(cvTerm);
             chado_feature.addFeatureProp(featureprop);
  //           chado_feature.addQualifier(type_id, featureprop);
@@ -845,10 +884,13 @@ public class ChadoTransactionManager
       }
       catch(NullPointerException npe)
       {
-        JOptionPane.showMessageDialog(null,
-            name+" is not a valid qualifier!",
-            "Invalid Qualifier",
-            JOptionPane.WARNING_MESSAGE);
+        final String msg = name+" is not a valid/known database qualifier!";
+
+        logger4j.error(msg);
+        System.out.println(msg);
+        /*JOptionPane.showMessageDialog(null,
+            msg,"Invalid Qualifier",
+            JOptionPane.WARNING_MESSAGE);*/
       }
     } 
   }
