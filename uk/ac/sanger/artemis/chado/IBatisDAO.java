@@ -657,6 +657,14 @@ public class IBatisDAO extends GmodDAO
         sqlMap.insert("insertFeatureRelationship", feature_relationship);
       }
     }
+    
+    if(feature.getFeatureProps() != null)
+    {
+      List featureProps = new Vector(feature.getFeatureProps());
+      
+      for(int i=0; i<featureProps.size(); i++)
+        sqlMap.insert("insertFeatureProp", (FeatureProp)featureProps.get(i));
+    }
   }
 
   private void insertFeatureRelationship(FeatureRelationship feature_relationship)
