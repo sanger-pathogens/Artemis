@@ -24,13 +24,11 @@
 
 package uk.ac.sanger.artemis.io;
 
-import java.io.*;
-
 /**
  *  This is an implementation of Feature that can read and write itself to a
  *  CHADO stream.
  *
- *  @version $Id: DatabaseStreamFeature.java,v 1.6 2006-05-31 10:38:48 tjc Exp $
+ *  @version $Id: DatabaseStreamFeature.java,v 1.7 2007-06-05 09:33:41 tjc Exp $
  **/
 
 public class DatabaseStreamFeature
