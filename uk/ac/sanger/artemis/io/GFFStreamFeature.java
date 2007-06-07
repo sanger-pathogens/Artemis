@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.53 2007-06-05 09:32:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.54 2007-06-07 10:26:03 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,6 +34,7 @@ import java.io.Writer;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.util.LinePushBackReader;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
@@ -44,7 +45,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.53 2007-06-05 09:32:10 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.54 2007-06-07 10:26:03 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -103,7 +104,23 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         setQualifier(new Qualifier("gff_seqname", "."));
       */
       if(getQualifierByName("ID") == null)
-        setQualifier(new Qualifier("ID", key.getKeyString()+":"+location.toString()));
+      {
+        String idStr = null;
+        StringVector v = Options.getOptions().getSystematicQualifierNames();
+        for(int i=0; i<v.size(); i++)
+        {
+          final String sysName = (String)v.get(i);
+          if(getQualifierByName(sysName) != null)
+          {
+            idStr = (String)getQualifierByName(sysName).getValues().get(0);
+            break;
+          }
+        }
+        // autogenerate ID
+        if(idStr == null)
+          idStr = key.getKeyString()+":"+location.toString();
+        setQualifier(new Qualifier("ID", idStr));
+      }
       
     } 
     catch(EntryInformationException e) 
