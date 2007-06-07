@@ -24,6 +24,7 @@
 
 package uk.ac.sanger.artemis.io;
 
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.*;
@@ -80,8 +81,23 @@ public class DatabaseDocumentEntry extends GFFDocumentEntry
       {
         QualifierVector qualifiers = feature.getQualifiers().copy();
         if(qualifiers.getQualifierByName("ID") == null)
-          qualifiers.add(new Qualifier("ID", feature.getKey().getKeyString()+":"+
-                                             feature.getLocation().toString()));
+        {
+          String idStr = null;
+          StringVector v = Options.getOptions().getSystematicQualifierNames();
+          for(int i=0; i<v.size(); i++)
+          {
+            final String sysName = (String)v.get(i);
+            if(qualifiers.getQualifierByName(sysName) != null)
+            {
+              idStr = (String)qualifiers.getQualifierByName(sysName).getValues().get(0);
+              break;
+            }
+          }
+          // autogenerate ID
+          if(idStr == null)
+            idStr = feature.getKey().getKeyString()+":"+feature.getLocation().toString();
+          qualifiers.add(new Qualifier("ID", idStr));
+        }
         
         return new DatabaseStreamFeature(feature.getKey(), 
                    feature.getLocation(), qualifiers);
