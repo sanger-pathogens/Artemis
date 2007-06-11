@@ -29,6 +29,7 @@ import uk.ac.sanger.artemis.FeatureSegment;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
+import uk.ac.sanger.artemis.components.genebuilder.ortholog.SimilarityTable;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.QualifierVector;
@@ -1340,6 +1341,13 @@ public class ChadoTransactionManager
          }
          else if(qualifier_name.equals("similarity"))
          {
+           if(SimilarityTable.containsStringInStringVector(
+               (String)old_qualifier_strings.elementAt(i), new_qualifier_strings))
+             continue;
+           
+           logger4j.debug(uniquename+"  in handleReservedTags() DELETE "+qualifier_name+" "+
+               qualifier_string);
+           
            AnalysisFeature analysisFeature =
                 Similarity.getAnalysisFeature(uniquename, qualifier_string, feature);
              
@@ -1436,6 +1444,13 @@ public class ChadoTransactionManager
          }
          else if(qualifier_name.equals("similarity"))
          {
+           if(SimilarityTable.containsStringInStringVector(
+               (String)new_qualifier_strings.elementAt(i), old_qualifier_strings))
+             continue;
+           
+           logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
+               qualifier_name+" "+qualifier_string);
+           
            AnalysisFeature analysisFeature = Similarity.getAnalysisFeature(uniquename,
                                                 qualifier_string, feature);
            tsn = new ChadoTransaction(ChadoTransaction.INSERT,
