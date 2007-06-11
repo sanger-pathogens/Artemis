@@ -88,7 +88,7 @@ abstract class AbstractMatchTable
    * @param qualifierString
    * @return
    */
-  protected String getField(final String fieldName, final String qualifierString)
+  protected static String getField(final String fieldName, final String qualifierString)
   {
     String field = "";
     
@@ -141,11 +141,13 @@ abstract class AbstractMatchTable
       renderer = table.getCellRenderer(r, columnIndex);
       comp = renderer.getTableCellRendererComponent(
               table, table.getValueAt(r, columnIndex), false, false, r, columnIndex);
-      
+
       text = ((JLabel)comp).getText();
       font = comp.getFont();
       fontMetrics = comp.getFontMetrics ( font );
 
+      if(text == null)
+        continue;
       maxWidth = SwingUtilities.computeStringWidth ( fontMetrics, text );
       //  maxWidth = comp.getPreferredSize().width;
       width = Math.max(width, maxWidth);
