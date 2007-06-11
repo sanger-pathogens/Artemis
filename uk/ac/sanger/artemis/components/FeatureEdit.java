@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.37 2007-05-23 09:04:45 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.38 2007-06-11 16:03:41 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -65,7 +65,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.37 2007-05-23 09:04:45 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.38 2007-06-11 16:03:41 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -674,7 +674,7 @@ public class FeatureEdit extends JPanel
       JButton oo_edit_button = new JButton("ObjectEdit");
       location_button_panel.add(oo_edit_button);
       final uk.ac.sanger.artemis.editor.BigPane bp =
-                             new uk.ac.sanger.artemis.editor.BigPane();
+                   new uk.ac.sanger.artemis.editor.BigPane(getEntryInformation());
 
       oo_edit_button.addActionListener(new ActionListener ()
       {
@@ -809,7 +809,7 @@ public class FeatureEdit extends JPanel
               {
                 if(dataFile.size() > 0)
                   bp.set(dataFile, qualifier_text_area, overlapFeatures,
-                         edit_feature);
+                         edit_feature, matchForm);
                 else
                   JOptionPane.showMessageDialog(null,"No results files.",
                       "Warning",
