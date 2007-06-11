@@ -142,7 +142,7 @@ public class Similarity implements LazyQualifierValue
         }
         buff.append(")");
       }
-      buff.append("; ");
+      buff.append(";");
 
       List featureProps = new Vector(subject.getFeatureProps());
       Collections.sort(featureProps, new FeaturePropComparator());
@@ -153,7 +153,7 @@ public class Similarity implements LazyQualifierValue
 
         if(featureProp.getValue() != null)
           buff.append(featureProp.getValue().trim());
-        buff.append("; ");
+        buff.append(";");
       }
 
       buff.append("length " + subject.getSeqLen());
@@ -162,33 +162,33 @@ public class Similarity implements LazyQualifierValue
     if(matchFeature.getCvTerm().getName().equals("protein_match"))
       buff.append(" aa; ");
     else
-      buff.append("; ");
+      buff.append(";");
     
     if(analysisFeature.getIdentity() != null)
-      buff.append("id="+analysisFeature.getIdentity()+"%; ");
+      buff.append("id="+analysisFeature.getIdentity()+"%;");
     if(analysisFeature.getSignificance() != null)
-      buff.append("E()="+analysisFeature.getSignificance()+"; ");
+      buff.append("E()="+analysisFeature.getSignificance()+";");
     if(analysisFeature.getRawScore() != null)
-      buff.append("score="+analysisFeature.getRawScore()+"; ");
+      buff.append("score="+analysisFeature.getRawScore()+";");
     
-    if(queryLoc != null)
+    if(queryLoc != null && queryLoc.getFmin().intValue() > -1)
     {
       int fmin = queryLoc.getFmin().intValue()+1;
       buff.append("query "+fmin+"-"+queryLoc.getFmax());
       if(matchFeature.getCvTerm().getName().equals("protein_match"))
-        buff.append(" aa; ");
+        buff.append(" aa;");
       else
-        buff.append("; ");
+        buff.append(";");
     }
     
-    if(subjectLoc != null)
+    if(subjectLoc != null && subjectLoc.getFmin().intValue() > -1)
     {
       int fmin = subjectLoc.getFmin().intValue()+1;
       buff.append("subject "+fmin+"-"+subjectLoc.getFmax());
       if(matchFeature.getCvTerm().getName().equals("protein_match"))
-        buff.append(" aa; ");
+        buff.append(" aa;");
       else
-        buff.append("; ");
+        buff.append(";");
     }
     
     if(matchFeature.getFeatureProps() != null)
@@ -201,7 +201,7 @@ public class Similarity implements LazyQualifierValue
         FeatureProp featureProp = (FeatureProp)featureProps.get(i);
         buff.append(featureProp.getCvTerm().getName()+"="+featureProp.getValue());
         if(i < featureProps.size()-1)
-          buff.append("; ");
+          buff.append(";");
       }
     }
     
@@ -268,23 +268,26 @@ public class Similarity implements LazyQualifierValue
 
     // algorithm
     // StringTokenizer tok = new StringTokenizer(qualifier_string, ";");
-    if(qualifier_string.startsWith("\""))
+    while(qualifier_string.startsWith("\""))
       qualifier_string = qualifier_string.substring(1);
-    if(qualifier_string.endsWith("\""))
+    while(qualifier_string.endsWith("\""))
       qualifier_string = qualifier_string.substring(0,qualifier_string.length()-1);
  
     final StringVector qualifier_strings = StringVector.getStrings(qualifier_string,
         ";");
 
-    // String method = tok.nextToken();
     analysis.setProgram((String) qualifier_strings.get(0));
 
     // primary dbxref
     DbXRef dbXRef_1 = new DbXRef();
     Db db_1 = new Db();
     dbXRef_1.setDb(db_1);
-    String value = (String) qualifier_strings.get(1);
+    String value = ((String) qualifier_strings.get(1)).trim();
+    
+    if(value.startsWith("with="))
+      value = value.substring(5);
     String values[] = value.split(" ");
+
     int ind = values[0].indexOf(':');
     final String primary_name = values[0].substring(0, ind);
     db_1.setName(primary_name);
@@ -430,37 +433,50 @@ public class Similarity implements LazyQualifierValue
 
     // query location
     String queryLoc = getString(qualifier_strings, "query");
+    FeatureLoc featureLoc = new FeatureLoc();
+      
     if(!queryLoc.equals(""))
     {
-      FeatureLoc featureLoc = new FeatureLoc();
       String locs[] = queryLoc.split(" ");
       locs = locs[1].split("-");
+      
       int fmin = Integer.parseInt(locs[0]) - 1;
       featureLoc.setFmin(new Integer(fmin));
       int fmax = Integer.parseInt(locs[1]);
       featureLoc.setFmax(new Integer(fmax));
-      featureLoc.setRank(1);
-      featureLoc.setStrand(strand);
-      featureLoc.setFeatureBySrcFeatureId(queryFeature);
-      matchFeature.addFeatureLocsForFeatureId(featureLoc);
     }
+    else
+    {
+      featureLoc.setFmin(new Integer(-1));
+      featureLoc.setFmax(new Integer(-1));
+    }
+    featureLoc.setRank(1);
+    featureLoc.setStrand(strand);
+    featureLoc.setFeatureBySrcFeatureId(queryFeature);
+    matchFeature.addFeatureLocsForFeatureId(featureLoc);
 
     // subject location
     String subjectLoc = getString(qualifier_strings, "subject");
+    FeatureLoc subjectFeatureLoc = new FeatureLoc();
+      
     if(!subjectLoc.equals(""))
-    {
-      FeatureLoc featureLoc = new FeatureLoc();
+    {  
       String locs[] = subjectLoc.split(" ");
       locs = locs[1].split("-");
       int fmin = Integer.parseInt(locs[0]) - 1;
-      featureLoc.setFmin(new Integer(fmin));
+      subjectFeatureLoc.setFmin(new Integer(fmin));
       int fmax = Integer.parseInt(locs[1]);
-      featureLoc.setFmax(new Integer(fmax));
-      featureLoc.setRank(0);
-      featureLoc.setStrand(strand);
-      featureLoc.setFeatureBySrcFeatureId(subjectFeature);
-      matchFeature.addFeatureLocsForFeatureId(featureLoc);
+      subjectFeatureLoc.setFmax(new Integer(fmax));
     }
+    else
+    {
+      subjectFeatureLoc.setFmin(new Integer(-1));
+      subjectFeatureLoc.setFmax(new Integer(-1));
+    }
+    subjectFeatureLoc.setRank(0);
+    subjectFeatureLoc.setStrand(strand);
+    subjectFeatureLoc.setFeatureBySrcFeatureId(subjectFeature);
+    matchFeature.addFeatureLocsForFeatureId(subjectFeatureLoc);
 
     //Similarity sim = new Similarity(matchFeature, queryFeatureId);
     //System.out.println(sim.getHardString());
@@ -509,5 +525,6 @@ public class Similarity implements LazyQualifierValue
   {
     return matchFeature;
   }
+  
 
 }
