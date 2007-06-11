@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.4 2007-05-24 08:57:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.5 2007-06-11 16:02:55 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -83,12 +83,26 @@ public class MatchPanel extends JPanel
     return false;
   }
   
+  
+  /**
+   * Return true if this is a Ortholog qualifier
+   * @param qualifier
+   * @return
+   */
+  public boolean isMatchTag(final String qualifierStr)
+  {
+    if(qualifierStr.startsWith("/ortholog") ||
+       qualifierStr.startsWith("/similarity"))
+      return true;
+    return false;
+  }
+  
   private Component createMatchQualifiersComponent(final Feature feature)
   {
     editableComponents = new Vector();
-    Qualifier orthoQualifier = matchQualifiers.getQualifierByName("ortholog");
-    Qualifier paraQualifier  = matchQualifiers.getQualifierByName("paralog");
-    Qualifier simQualifier   = matchQualifiers.getQualifierByName("similarity");
+    final Qualifier orthoQualifier = matchQualifiers.getQualifierByName("ortholog");
+    final Qualifier paraQualifier  = matchQualifiers.getQualifierByName("paralog");
+    final Qualifier simQualifier   = matchQualifiers.getQualifierByName("similarity");
     
     if(databases == null)
     {
@@ -296,11 +310,22 @@ public class MatchPanel extends JPanel
     repaint();
     revalidate();
   }
+  
+  public void updateFromQualifiers(final QualifierVector qualfiers,
+                                   final Feature feature)
+  {
+    removeAll();
+    matchQualifiers = qualfiers;
+    add(createMatchQualifiersComponent(feature));
+    repaint();
+    revalidate();
+  }
 
   /**
    * Add ortholog/paralog
    * @param name  ortholog or paralog
    * @param value
+   * @param feature
    */
   public void add(final String name, final String value, final Feature feature)
   {
@@ -316,8 +341,10 @@ public class MatchPanel extends JPanel
     else
      index = matchQualifiers.indexOf(qualifier);
        
-    qualifier.addValue(value);
-
+    StringVector sv = qualifier.getValues();
+    sv.add(value);
+    
+    qualifier = new Qualifier(name, sv);
     if(index > -1)
     {
       matchQualifiers.remove(index);

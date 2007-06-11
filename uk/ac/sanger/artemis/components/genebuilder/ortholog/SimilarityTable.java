@@ -178,12 +178,17 @@ public class SimilarityTable extends AbstractMatchTable
    * @param similarityString
    * @return
    */
-  private Vector getRowData(final String similarityString,
+  private Vector getRowData(String similarityString,
                             final Vector tableData)
   {
     Vector row = new Vector(NUMBER_COLUMNS);
     row.setSize(NUMBER_COLUMNS);
-    System.out.println(similarityString);
+    
+    if(similarityString.startsWith("\""))
+      similarityString = similarityString.substring(1);
+    if(similarityString.endsWith("\""))
+      similarityString = similarityString.substring(0,similarityString.length()-1);
+      
     StringVector sim = StringVector.getStrings(similarityString, ";");
     
     // organism
@@ -337,6 +342,47 @@ public class SimilarityTable extends AbstractMatchTable
              (String)getTable().getValueAt(row, getColumnIndex(OVERLAP_COL)) ); // overlap
     
     return similarityStr.toString();
+  }
+  
+  /**
+   * Check whether s qualifier string exists in a StringVector for that qualifier.
+   * If the StringVector contains the hit, organism, description & e-value then
+   * return true.
+   * @param qualStr
+   * @param qualStringVector
+   * @return
+   */
+  public static boolean containsStringInStringVector(final String qualStr, 
+                                                     final StringVector qualStringVector)
+  {
+    StringVector sim1 = StringVector.getStrings(qualStr, ";");
+    for(int i=0; i<qualStringVector.size(); i++)
+    {
+      String thisStr = (String)qualStringVector.get(i);
+      
+      StringVector sim2 = StringVector.getStrings(thisStr, ";");
+      
+      // hit
+      if( !((String)sim1.get(1)).equals((String)sim2.get(1)) )
+        continue;      
+      
+      // organism
+      if( !((String)sim1.get(2)).equals((String)sim2.get(2)) )
+        continue;
+
+      // description
+      if( !((String)sim1.get(3)).equals((String)sim2.get(3)) )
+        continue;
+      
+      // e-value
+      final String evalueString1 = getField("E()=", qualStr);
+      final String evalueString2 = getField("E()=", thisStr);
+      if( !(evalueString1.equals(evalueString2)) )
+        continue;
+      
+      return true; 
+    }
+    return false;
   }
   
   /**
