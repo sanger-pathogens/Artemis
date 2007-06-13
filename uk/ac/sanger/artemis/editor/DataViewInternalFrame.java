@@ -150,6 +150,7 @@ public class DataViewInternalFrame extends JInternalFrame
         FastaTextPane fastaPane = new FastaTextPane(fdata);
         fastaCollection.add(fastaPane);
 
+        /*
         if(qualifier_txt.indexOf("/" + fastaPane.getFormat() + "_file=\"") == -1)
         {
           if(icount > 0)
@@ -157,6 +158,7 @@ public class DataViewInternalFrame extends JInternalFrame
           annFormat.append("/" + fastaPane.getFormat() + "_file=\"" + fileName
               + "\"");
         }
+        */
 
         // graphical view
         final JScrollPane dbviewScroll = new JScrollPane();
