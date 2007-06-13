@@ -95,10 +95,23 @@ public class CVPanel extends JPanel
    */
   public boolean isCvTag(final Qualifier qualifier)
   {
-    if(qualifier.getName().equals("product") ||
-       qualifier.getName().equals("controlled_curation") ||
-       qualifier.getName().equals("GO") ||
-       qualifier.getName().equals("class"))
+    return isCvTag(qualifier.getName());
+  }
+  
+  /**
+   * Return true if this is a CV qualifier
+   * @param qualifierName
+   * @return
+   */
+  public boolean isCvTag(String qualifierName)
+  {
+    if(qualifierName.startsWith("/"))
+      qualifierName = qualifierName.substring(1);
+    
+    if(qualifierName.equals("product") ||
+       qualifierName.equals("controlled_curation") ||
+       qualifierName.equals("GO") ||
+       qualifierName.equals("class"))
       return true;
     return false;
   }
@@ -481,7 +494,7 @@ public class CVPanel extends JPanel
     this.feature = feature;
     if(cvQualifiers != null)
       feature.removeFeatureChangeListener(this);
-    cvQualifiers = feature.getQualifiers().copy();
+    //cvQualifiers = feature.getQualifiers().copy();
     
     cvQualifiers = new QualifierVector();
     final QualifierVector qualifiers = feature.getQualifiers();  
@@ -502,6 +515,31 @@ public class CVPanel extends JPanel
     }
    
     feature.addFeatureChangeListener(this);  
+    
+    removeAll();
+    add(createCVQualifiersComponent(),
+        BorderLayout.CENTER);
+  }
+  
+  public void updateFromQualifiers(final QualifierVector qualifiers)
+  {
+    cvQualifiers = new QualifierVector();
+   
+    for(int i = 0 ; i < qualifiers.size(); ++i) 
+    {
+      Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(i);
+      
+      if(this_qualifier.getName().equals("GO"))
+      {
+        final StringVector qualifier_strings = this_qualifier.getValues();
+        // sort by aspect (molecular_function, biological_process, cellular_component)
+        Collections.sort(qualifier_strings, new StringVectorComparator());
+        this_qualifier = new Qualifier("GO", qualifier_strings);
+      }
+      
+      if(isCvTag(this_qualifier))
+        cvQualifiers.addElement(this_qualifier.copy());
+    }
     
     removeAll();
     add(createCVQualifiersComponent(),
