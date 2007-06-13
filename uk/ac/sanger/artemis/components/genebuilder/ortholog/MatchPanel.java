@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.5 2007-06-11 16:02:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.6 2007-06-13 14:17:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -77,22 +77,22 @@ public class MatchPanel extends JPanel
    */
   public boolean isMatchTag(final Qualifier qualifier)
   {
-    if(qualifier.getName().equals("ortholog") ||
-       qualifier.getName().equals("similarity"))
-      return true;
-    return false;
+    return isMatchTag(qualifier.getName());
   }
   
   
   /**
    * Return true if this is a Ortholog qualifier
-   * @param qualifier
+   * @param qualifierName
    * @return
    */
-  public boolean isMatchTag(final String qualifierStr)
+  public boolean isMatchTag(String qualifierName)
   {
-    if(qualifierStr.startsWith("/ortholog") ||
-       qualifierStr.startsWith("/similarity"))
+    if(qualifierName.startsWith("/"))
+      qualifierName = qualifierName.substring(1);
+    
+    if(qualifierName.startsWith("ortholog") ||
+       qualifierName.startsWith("similarity"))
       return true;
     return false;
   }
@@ -294,7 +294,7 @@ public class MatchPanel extends JPanel
     removeAll();
     if(matchQualifiers != null)
       feature.removeFeatureChangeListener(this);
-    matchQualifiers = feature.getQualifiers().copy();
+    //matchQualifiers = feature.getQualifiers().copy();
     
     matchQualifiers = new QualifierVector();
     final QualifierVector qualifiers = feature.getQualifiers();  
@@ -389,7 +389,7 @@ public class MatchPanel extends JPanel
       for(int i=0; i<editableComponents.size(); i++)
       {
         AbstractMatchTable matchTable = (AbstractMatchTable)editableComponents.get(i);
-        System.out.println("CHECKING MATCHES "+i);
+        //System.out.println("CHECKING MATCHES "+i);
         if(matchTable.isQualifierChanged())
         {
           matchTable.updateQualifier(matchQualifiers);
