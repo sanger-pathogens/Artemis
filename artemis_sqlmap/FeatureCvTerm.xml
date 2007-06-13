@@ -133,7 +133,13 @@
       VALUES
         ( nextval('feature_cvterm_feature_cvterm_id_seq'),
           (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#),
-          $cvTerm.cvTermId$,
+		  <isGreaterThan property="cvTerm.cvTermId" compareValue="0">
+            $cvTerm.cvTermId$,
+	      </isGreaterThan>
+		  <isEqual property="cvTerm.cvTermId" compareValue="0">
+			(SELECT cvterm_id FROM cvterm WHERE name=#cvTerm.name# AND 
+			  cv_id = (SELECT cv_id FROM cv WHERE name=#cvTerm.cv.name#)), 
+	      </isEqual>
           <dynamic>
             <isNotNull property="pub">
               <isEqual property="pub.pubId" compareValue="0">
