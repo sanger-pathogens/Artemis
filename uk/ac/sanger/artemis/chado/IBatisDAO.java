@@ -586,6 +586,8 @@ public class IBatisDAO extends GmodDAO
       insertFeatureRelationship((FeatureRelationship)o);
     else if(o instanceof AnalysisFeature)
       insertAnalysisFeature((AnalysisFeature)o);
+    else if(o instanceof CvTerm)
+      insertCvTerm((CvTerm)o);
   }
   
   
@@ -834,6 +836,26 @@ public class IBatisDAO extends GmodDAO
         sqlMap.insert("insertFeatureProp", featureProp);
       }
     }
+  }
+  
+  /**
+   * Insert a cvterm
+   */
+  private void insertCvTerm(final CvTerm cvTerm)
+  {
+    Cv cv = (Cv)sqlMap.queryForObject("getCvByName", cvTerm.getCv().getName());
+    cvTerm.setCv(cv);
+    
+    DbXRef dbXRef = cvTerm.getDbXRef();
+    Db db = dbXRef.getDb();
+    db.setDbId(getDbId(db).intValue());
+    dbXRef.setDb(db);
+    
+    insertDbXRef(dbXRef);
+    dbXRef.setDbXRefId( getDbXRefId(cvTerm.getDbXRef()).intValue() );
+    cvTerm.setDbXRef(dbXRef);
+    
+    sqlMap.insert("insertCvTerm", cvTerm);
   }
   
   /**
