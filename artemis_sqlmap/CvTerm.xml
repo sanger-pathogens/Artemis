@@ -61,4 +61,9 @@
        WHERE cvterm_id=#value# 
      </select> 
 
+	  <!-- WRITE BACK -->
+  <insert id="insertCvTerm" parameterClass="CvTerm">
+    INSERT INTO cvterm ( cv_id, name <isNotNull property="definition">, definition</isNotNull>, dbxref_id ) 
+           VALUES ($cv.cvId$, #name# <isNotNull property="definition"> ,#definition# </isNotNull>, $dbXRef.dbXRefId$)
+  </insert> 
 </sqlMap> 
