@@ -377,6 +377,11 @@ public class Similarity implements LazyQualifierValue
         id = id.substring(3);
       if(id.endsWith("%"))
         id = id.substring(0, id.length() - 1);
+      
+      int index = id.indexOf(" ");
+      if(index > -1)
+        id = id.substring(index);
+      
       analysisFeature.setIdentity(new Double(id));
     }
 
