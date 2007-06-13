@@ -481,6 +481,8 @@ public class HitInfo
   */
   protected void setEMBL(String emblID)
   {
+    if(emblID.endsWith(";"))
+      emblID = emblID.substring(0, emblID.length()-1);
     this.emblID = emblID;
   }
 
