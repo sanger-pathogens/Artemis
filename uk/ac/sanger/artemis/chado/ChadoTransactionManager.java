@@ -1665,8 +1665,12 @@ public class ChadoTransactionManager
     
     if(qualifier_name.toLowerCase().equals("product"))
     {
-      CvTerm cvTerm = getCvTerm(qualifier_string, null);
+      CvTerm cvTerm = getCvTerm(qualifier_string, "genedb_products");
 
+      if(cvTerm == null)
+        cvTerm = createCvTerm(qualifier_string, 
+                   "genedb_products", "PRODUCT");
+      
       feature_cvterm.setCvTerm(cvTerm);
       logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
       return feature_cvterm;
@@ -1758,6 +1762,37 @@ public class ChadoTransactionManager
   }
   
   /**
+   * Make a new cvterm.
+   * @param cvTermName
+   * @param cvName
+   * @param dbName
+   * @return
+   */
+  private CvTerm createCvTerm(final String cvTermName, final String cvName,
+                              final String dbName)
+  {
+    CvTerm cvTerm = new CvTerm();
+    cvTerm.setName(cvTermName);
+    Cv cv = new Cv();
+    cv.setName(cvName);
+    cvTerm.setCv(cv);
+    
+    // need to create a unique dbxref for the cvterm
+    DbXRef dbXRef = new DbXRef();
+    Db db = new Db();
+    db.setName(dbName);
+    dbXRef.setDb(db);
+    dbXRef.setAccession(cvTermName); // use cvterm.name as the accession
+    cvTerm.setDbXRef(dbXRef);
+    
+    logger4j.debug("INSERT cvTerm "+cvTermName);
+    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+        cvTerm, null, null, null);
+    sql.add(tsn);
+    return cvTerm;
+  }
+  
+  /**
    * Get the rank to give a FeatureCvTermProp
    * @param featureCvTermProps - existing featureprop's
    * @param cvTermName - new featureprop cvterm.name
@@ -1789,7 +1824,7 @@ public class ChadoTransactionManager
     if(cvTermName.startsWith("\""))
       cvTermName = cvTermName.substring(1, cvTermName.length()-1);
     
-    CvTerm cvTerm;
+    CvTerm cvTerm = null;
     
     if(cvName != null)
       cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm(cvTermName, cvName);
@@ -1805,8 +1840,8 @@ public class ChadoTransactionManager
     else
     {
       logger4j.warn("CvTerm not found in cache = " + cvTermName);
-      cvTerm = new CvTerm();
-      cvTerm.setName(cvTermName);
+      //cvTerm = new CvTerm();
+      //cvTerm.setName(cvTermName);
     }
     return cvTerm;
   }
