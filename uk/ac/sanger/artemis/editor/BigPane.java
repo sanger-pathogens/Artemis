@@ -57,6 +57,14 @@ import javax.swing.JToolBar;
 
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureVector;
+import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
+import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
+import uk.ac.sanger.artemis.io.EntryInformation;
+import uk.ac.sanger.artemis.io.Qualifier;
+import uk.ac.sanger.artemis.io.QualifierInfo;
+import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.io.StreamQualifier;
+import uk.ac.sanger.artemis.util.StringVector;
 
 
 public class BigPane extends JFrame
@@ -73,32 +81,56 @@ public class BigPane extends JFrame
  
   public static int CACHE_SIZE = 100;
   public static int MAX_CACHE_SIZE = 1000;
-  private JTextArea qualifier;
+  private JTextArea qualifierTextArea;
   private DataViewInternalFrame dataView;
   //private FeatureVector overlapFeature;
   private Feature edit_feature;
   private JDesktopPane desktop = null;
-
-  public BigPane()
+  private MatchPanel matchForm;
+  private CVPanel cvForm;
+  private EntryInformation entryInformation;
+  
+  public BigPane(EntryInformation entryInformation)
   {
     super("Object Editor");
     addWindowListener(new winExit());
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     MultiLineToolTipUI.initialize();
+    this.entryInformation = entryInformation;
   }
 
-  public void set(Hashtable dataFile, JTextArea qualifier,
+  public void set(Hashtable dataFile, JTextArea qualifierTextArea,
              FeatureVector overlapFeature, 
-             final Feature edit_feature) 
+             final Feature edit_feature,
+             final MatchPanel matchForm,
+             final CVPanel cvForm) 
   {
-    set(dataFile,qualifier.getText(),overlapFeature,edit_feature);
-    this.qualifier      = qualifier;
+    this.matchForm = matchForm; 
+    this.cvForm    = cvForm;
+    set(dataFile,qualifierTextArea.getText(),overlapFeature,edit_feature);
+    
+    this.qualifierTextArea = qualifierTextArea;
   }
 
   public void set(Hashtable dataFile, String qualifier_txt,
              FeatureVector overlapFeature,
              final Feature edit_feature)
   {
+    if(matchForm != null || cvForm != null)
+    {
+      QualifierVector matchQualifiers = matchForm.getMatchQualifiers();
+      qualifier_txt = getQualifierString(matchQualifiers);
+      Qualifier productQualifier = cvForm.getCvQualifiers().getQualifierByName("product");
+      
+      if(productQualifier != null)
+      {
+        QualifierVector qv = new QualifierVector();
+        qv.addQualifierValues(productQualifier);
+        qualifier_txt = qualifier_txt + getQualifierString(qv) + "\n";
+      }
+    }
+    
+    
     //this.overlapFeature = overlapFeature;
     this.edit_feature   = edit_feature;
     addNote.setSelected(false);
@@ -164,6 +196,36 @@ public class BigPane extends JFrame
     setVisible(true);
   }
 
+  /**
+   *  Return a string containing one qualifier per line.  These are the
+   *  original qualifiers, not the qualifiers from the qualifier_text_area.
+   **/
+  private String getQualifierString(QualifierVector qualifiers) 
+  {
+    final StringBuffer buffer = new StringBuffer();
+    
+    for(int qualifier_index = 0; qualifier_index < qualifiers.size();
+        ++qualifier_index) 
+    {
+      final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
+
+
+      final QualifierInfo qualifier_info =
+          entryInformation.getQualifierInfo(this_qualifier.getName());
+
+      final StringVector qualifier_strings =
+                       StreamQualifier.toStringVector(qualifier_info, this_qualifier);
+
+      for(int value_index = 0; value_index < qualifier_strings.size();
+          ++value_index)
+      {
+        final String qualifier_string = (String)qualifier_strings.elementAt(value_index);
+        buffer.append(qualifier_string + "\n");
+      }
+    }
+
+    return buffer.toString();
+  }
 
   /**
   *
@@ -194,7 +256,7 @@ public class BigPane extends JFrame
     {
       public void actionPerformed(ActionEvent e)
       {
-        qualifier.setText(dataView.getFeatureText());
+        transferAnnotation(false);
       }
     });
     applyButt.setBackground(new Color(0,0,81));
@@ -219,6 +281,123 @@ public class BigPane extends JFrame
     return toolBar;
   }
 
+  /**
+   * Transfer annotation data back to the feature editor
+   */
+  private void transferAnnotation(final boolean askToUpdate)
+  {
+    final String dataViewStringOriginal = dataView.getFeatureText().trim();
+    
+    ////////
+    ////////  standard text area feature editor
+    
+    if(matchForm == null && cvForm == null)
+    {
+      final String oldTxt = qualifierTextArea.getText().trim();
+
+      // changes have been made to feature annotation
+      if(!oldTxt.equals(dataViewStringOriginal))
+      {
+        if(askToUpdate)
+        {
+          if(askToUpdate())
+            qualifierTextArea.setText(dataViewStringOriginal);
+        }
+        else
+          qualifierTextArea.setText(dataViewStringOriginal);
+      }
+      return;
+    }
+    
+    ////////
+    ////////  tabbed feature editor
+    
+    if(askToUpdate && !askToUpdate())
+      return;
+    QualifierVector matchQualifiers= new QualifierVector();
+    Qualifier productQualifier = null;
+    
+    String otherString = null;
+    
+    final StringVector v = StringVector.getStrings(dataViewStringOriginal, "\n");
+    for(int i=0; i<v.size(); i++)
+    {
+      String value = (String)v.get(i);
+      if(matchForm.isMatchTag(value) ||
+         value.startsWith("/product"))
+      {
+        int index = value.indexOf('=');
+        String key;
+        if(index > -1)
+        {
+          key   = value.substring(1, index);
+          value = value.substring(index+1);
+        }
+        else
+        {
+          key   = value;
+          value = null;
+        }
+
+        if(value.startsWith("\""))
+          value = value.substring(1);
+        if(value.endsWith("\""))
+          value = value.substring(0, value.length()-1);
+        //System.out.println(key+" = "+value);
+
+        if(matchForm.isMatchTag(key))
+        {
+          Qualifier qualifier = matchQualifiers.getQualifierByName(key);
+          if(qualifier == null)
+            qualifier = new Qualifier(key);
+          qualifier.addValue(value);
+          matchQualifiers.setQualifier(qualifier);
+        }
+        else
+        {
+          if(productQualifier == null)
+            productQualifier = new Qualifier("product");
+          productQualifier.addValue(value);
+        }
+      }
+      else
+      {
+        if(otherString == null)
+          otherString = new String();
+        otherString = otherString+value+"\n";
+      }
+    }
+    matchForm.updateFromQualifiers(matchQualifiers,edit_feature);
+    
+    if(productQualifier != null)
+    {
+      QualifierVector cvQualifiers = cvForm.getCvQualifiers().copy();
+      int productIndex = cvQualifiers.indexOfQualifierWithName("product");
+      cvQualifiers.remove(productIndex);
+      cvQualifiers.add(productIndex, productQualifier);
+      cvForm.updateFromQualifiers(cvQualifiers);
+    }
+    
+    if(otherString != null)
+    {
+      otherString = qualifierTextArea.getText() + "\n" +
+                    otherString;
+      qualifierTextArea.setText(otherString);
+    } 
+  }
+  
+  private boolean askToUpdate()
+  {
+    int ok = JOptionPane.showConfirmDialog(BigPane.this,
+                        "Apply changes now?",
+                        "Apply Changes",
+                        JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+    if(ok == JOptionPane.OK_OPTION)
+      return true;
+    return false;
+  }
+  
   /**
   *
   * Create a menu bar. 
@@ -248,7 +427,7 @@ public class BigPane extends JFrame
     {
       public void actionPerformed(ActionEvent e)
       {
-        qualifier.setText(dataView.getFeatureText());
+        transferAnnotation(false);
       }
     });
     fileMenu.add(applyMenu);
@@ -345,33 +524,38 @@ public class BigPane extends JFrame
   */
   private void onClose()
   {
-    if(qualifier == null)
-      System.exit(0);
+    //if(qualifierTextArea == null)
+    //  System.exit(0);
 
     // remember the splitpane divider locations
     dataView.setDataDividerLocation();
     dataView.setAnnotationDividerLocation();
 
     // update feature text
-    final String oldTxt = qualifier.getText().trim();
-    final String newTxt = dataView.getFeatureText().trim();
-
-    // changes have been made to feature annotation
-    if(!oldTxt.equals(newTxt))
+    /*
+    if(qualifierTextArea != null)
     {
-      int ok = JOptionPane.showConfirmDialog(BigPane.this,
+      final String oldTxt = qualifierTextArea.getText().trim();
+      final String newTxt = dataView.getFeatureText().trim();
+
+      // changes have been made to feature annotation
+      if(!oldTxt.equals(newTxt))
+      {
+        int ok = JOptionPane.showConfirmDialog(BigPane.this,
                           "Apply changes now?",
                           "Apply Changes",
                           JOptionPane.YES_NO_CANCEL_OPTION,
                           JOptionPane.QUESTION_MESSAGE);
 
-      if(ok == JOptionPane.CANCEL_OPTION)
-        return;
+        if(ok == JOptionPane.CANCEL_OPTION)
+          return;
 
-      if(ok == JOptionPane.OK_OPTION)
-        qualifier.setText(newTxt);
-    }
-
+        if(ok == JOptionPane.OK_OPTION)
+          qualifierTextArea.setText(newTxt);
+      }
+    }*/
+    
+    transferAnnotation(true);
     // stop getz processes
     setVisible(false);
     dataView.stopGetz();
@@ -379,7 +563,6 @@ public class BigPane extends JFrame
     BigPane.srsFrame = null;
     dispose();
   }
-
 
   /**
   *
