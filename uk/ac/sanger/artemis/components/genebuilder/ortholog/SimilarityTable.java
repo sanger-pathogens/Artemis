@@ -222,7 +222,12 @@ public class SimilarityTable extends AbstractMatchTable
     
     // length
     String lenString;
-    if( !(lenString=getField("length", similarityString).trim()).equals("") )
+    if( !(lenString=getField("length=", similarityString).trim()).equals("") )
+    {
+      int columnIndex = tableData.indexOf(LENGTH_COL);
+      row.setElementAt(lenString, columnIndex);
+    }
+    else if( !(lenString=getField("length", similarityString).trim()).equals("") )
     {
       int columnIndex = tableData.indexOf(LENGTH_COL);
       row.setElementAt(lenString, columnIndex);
