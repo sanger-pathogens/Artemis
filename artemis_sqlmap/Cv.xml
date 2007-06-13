@@ -21,4 +21,7 @@
     SELECT * FROM cv WHERE cv_id=$cvId$
   </select>
   
+   <select id="getCvByName" resultMap="select-cv">
+    SELECT * FROM cv WHERE name=#value#
+  </select>
 </sqlMap>
