@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.23 2006-09-05 14:42:06 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.24 2007-06-14 16:03:38 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -400,6 +400,9 @@ extra_keys = \
     CRUNCH_D CRUNCH_X fasta_record allele mutation splicesite \
     TMM signalP
 
+# this list is added to the keys from the feature_keys_gff file
+extra_keys_gff =
+
 # Names of qualifiers to search when attempting to find the primary or display
 # name of a gene.  These qualifiers names are searched in order when looking
 # for gene names.
@@ -540,6 +543,9 @@ extra_qualifiers = \
     transferred_synonym "text" \
     transferred_systematic_id "text" \
     type "text"
+
+# this list is added to the qualifiers from the qualifier_types_gff file
+extra_qualifiers_gff =
 
 # this is a list of extra qualifiers that are legal but are not displayed in
 # popup menus (such as the one in the feature editor window).  this hack is
