@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFEntryInformation.java,v 1.5 2006-07-04 10:58:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFEntryInformation.java,v 1.6 2007-06-14 16:01:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import uk.ac.sanger.artemis.Options;
  *  An EntryInformation object for GFFDocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: GFFEntryInformation.java,v 1.5 2006-07-04 10:58:58 tjc Exp $
+ *  @version $Id: GFFEntryInformation.java,v 1.6 2007-06-14 16:01:38 tjc Exp $
  **/
 
 public class GFFEntryInformation extends SimpleEntryInformation 
@@ -93,13 +93,14 @@ public class GFFEntryInformation extends SimpleEntryInformation
     //
     // include extra keys and qualifiers
     final QualifierInfoVector extra_qualifiers =
-      Options.getOptions().getExtraQualifiers();
+      Options.getOptions().getExtraGffQualifiers();
     final StringVector extra_keys =
-      Options.getOptions().getOptionValues("extra_keys");
+      Options.getOptions().getOptionValues("extra_keys_gff");
     
     for(int i = 0 ; i < extra_keys.size() ; ++i)
     {
       final Key new_key = new Key((String)extra_keys.elementAt(i));
+      //System.out.println(new_key.toString());
       addKey(new_key);
     }
 
