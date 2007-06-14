@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.8 2007-02-19 10:51:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.9 2007-06-14 16:02:45 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -44,7 +44,7 @@ import java.util.*;
  *  read in new options.
  *
  *  @author Kim Rutherford
- *  @version $Id: Options.java,v 1.8 2007-02-19 10:51:13 tjc Exp $
+ *  @version $Id: Options.java,v 1.9 2007-06-14 16:02:45 tjc Exp $
  **/
 
 public class Options extends Properties 
@@ -451,11 +451,29 @@ public class Options extends Properties
    **/
   public QualifierInfoVector getExtraQualifiers() 
   {
+    return getExtraQualifiers("extra_qualifiers");
+  }
+  
+  /**
+   *  Return a QualifierInfoVector object containing one object for each
+   *  qualifier given in extra_qualifiers option.
+   **/
+  public QualifierInfoVector getExtraGffQualifiers() 
+  {
+    return getExtraQualifiers("extra_qualifiers_gff");
+  }
+  
+  /**
+   *  Return a QualifierInfoVector object containing one object for each
+   *  qualifier given in extra_qualifiers option.
+   **/
+  private QualifierInfoVector getExtraQualifiers(final String qualifier_options_flag) 
+  {
     final QualifierInfoVector return_vector =
       new QualifierInfoVector();
 
     final StringVector extra_qualifiers_strings =
-      getOptionValues("extra_qualifiers");
+      getOptionValues(qualifier_options_flag);
 
     for(int i = 0 ; i < extra_qualifiers_strings.size() / 2 ; ++i) 
     {
