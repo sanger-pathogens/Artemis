@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.54 2007-06-07 10:26:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.55 2007-06-15 12:56:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -45,7 +45,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.54 2007-06-07 10:26:03 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.55 2007-06-15 12:56:28 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -74,6 +74,11 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   
   /** combined feature_relationship.rank store for exons */
   private Hashtable feature_relationship_rank_store;
+  
+  /** first tabbed parameter  */
+  private String gffSeqName;
+  /** second tabbed parameter */
+  private String gffSource;
   
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
@@ -159,6 +164,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       if(((GFFStreamFeature)feature).feature_relationship_rank_store != null)
         this.feature_relationship_rank_store = 
           (Hashtable)(((GFFStreamFeature)feature).feature_relationship_rank_store).clone();
+      
+      this.setGffSeqName(((GFFStreamFeature)feature).getGffSeqName());
+      this.setGffSource(((GFFStreamFeature)feature).getGffSource());
     }
   }
 
@@ -244,6 +252,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
         setQualifier(gff_seqname);
       }*/
+      if( !((String)line_bits.elementAt(0)).equals("null") )
+        setGffSeqName( decode((String)line_bits.elementAt(0)) );
       
       final Key key = new Key((String)line_bits.elementAt(2));
       setKey(key);
@@ -251,7 +261,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       /*final Qualifier source_qualifier =
         new Qualifier("gff_source", (String)line_bits.elementAt(1));
       setQualifier(source_qualifier);*/
-
+      this.setGffSource((String)line_bits.elementAt(1));
+      
       if( !((String)line_bits.elementAt(5)).equals(".") )
       {
         final Qualifier score_qualifier =
@@ -620,8 +631,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     {
       Range this_range = (Range)ranges.elementAt(i);
 
-      Qualifier seqname = getQualifierByName("gff_seqname");
-      Qualifier source  = getQualifierByName("gff_source");
+      String seqname = getGffSeqName();
+      String source  = getGffSource();
       Qualifier score   = getQualifierByName("score");
       Qualifier group   = getQualifierByName("group");
 
@@ -633,13 +644,12 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       }
       
       if(seqname == null && ((GFFDocumentEntry)getEntry()).getDocument() != null) 
-        seqname = new Qualifier("gff_seqname", 
-                                ((GFFDocumentEntry)getEntry()).getDocument().getName());
+        seqname = ((GFFDocumentEntry)getEntry()).getDocument().getName();
       if(seqname == null)
-        seqname = new Qualifier("gff_seqname","gff_seqname");
+        seqname = "gff_seqname";
       
       if(source == null) 
-        source = new Qualifier("source", "artemis");
+        source = "artemis";
 
       if(score == null) 
         score = new Qualifier("score", ".");
@@ -647,9 +657,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       int start = this_range.getStart();
       int end   = this_range.getEnd();
       if(seqname != null && contig_ranges != null &&
-         contig_ranges.containsKey(seqname.getValues().elementAt(0)))
+         contig_ranges.containsKey(seqname))
       {
-        Range offset_range = (Range)contig_ranges.get(seqname.getValues().elementAt(0));
+        Range offset_range = (Range)contig_ranges.get(seqname);
         start = start-offset_range.getStart()+1;
         end   = end-offset_range.getStart()+1;
       }
@@ -687,9 +697,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       final String attribute_string = unParseAttributes(myId);
 
       if(source_str == null && source != null)
-       source_str = (String)source.getValues().elementAt(0);
+       source_str = source;
 
-      writer.write(seqname.getValues().elementAt(0) + "\t" +
+      writer.write(seqname + "\t" +
                    source_str + "\t" +
                    getKey() + "\t" +
                    start + "\t" +
@@ -1095,6 +1105,26 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   public void setVisible(boolean visible)
   {
     this.visible = visible;
+  }
+
+  public String getGffSeqName()
+  {
+    return gffSeqName;
+  }
+
+  public void setGffSeqName(String gffSeqName)
+  {
+    this.gffSeqName = gffSeqName;
+  }
+
+  public String getGffSource()
+  {
+    return gffSource;
+  }
+
+  public void setGffSource(String gffSource)
+  {
+    this.gffSource = gffSource;
   }
   
 }
