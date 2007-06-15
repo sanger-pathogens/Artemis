@@ -44,6 +44,8 @@ import javax.swing.border.Border;
 public class LocalAndRemoteFileManager extends JFrame
 {
 
+  /***/
+  private static final long serialVersionUID = 1L;
   private JScrollPane remoteTree;
   private SshJTreeTable sshtree;
   private JSplitPane treePane = null;

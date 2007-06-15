@@ -55,7 +55,6 @@ import uk.ac.sanger.artemis.components.EntryEdit;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.components.MessageDialog;
-import uk.ac.sanger.artemis.components.filetree.*;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 
 /**
@@ -73,6 +72,8 @@ public class JTreeTable extends JTable
                  DragSourceListener, DropTargetListener, ActionListener,
                  Autoscroll
 {
+  /** */
+  private static final long serialVersionUID = 1L;
   /** popup menu */
   private JPopupMenu popup;
   /** busy cursor */
@@ -110,6 +111,9 @@ public class JTreeTable extends JTable
     // Force the JTable and JTree to share their row selection models. 
     tree.setSelectionModel(new DefaultTreeSelectionModel() 
     { 
+      /***/
+      private static final long serialVersionUID = 1L;
+
       // Extend the implementation of the constructor, as if: 
       /* public this() */
       {
@@ -518,7 +522,10 @@ public class JTreeTable extends JTable
                      "location: " + e.getMessage());
 
         }
-        catch(NullPointerException npe){}
+        catch(NullPointerException npe)
+        {
+          npe.printStackTrace();
+        }
 
         return null;
       }
@@ -556,6 +563,8 @@ public class JTreeTable extends JTable
   //
   public class TreeTableCellRenderer extends JTree implements TableCellRenderer 
   {
+    /** */
+    private static final long serialVersionUID = 1L;
     protected int visibleRow;
    
     public TreeTableCellRenderer(TreeModel model) 
@@ -714,7 +723,7 @@ public class JTreeTable extends JTable
               FTProgress progress = monitor.add(fn.getFile());
 
               final byte[] contents = fn.getFileContents(progress);
-              final String ndropDir = dropDir;
+              //final String ndropDir = dropDir;
 
               Runnable updateTheTree = new Runnable()
               {
