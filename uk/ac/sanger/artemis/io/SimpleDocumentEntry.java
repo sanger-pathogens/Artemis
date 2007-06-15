@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.19 2006-06-20 11:28:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.20 2007-06-15 12:57:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -38,7 +38,7 @@ import javax.swing.JOptionPane;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.19 2006-06-20 11:28:37 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.20 2007-06-15 12:57:32 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -247,13 +247,16 @@ abstract public class SimpleDocumentEntry
         // adjust feature coordinates
         if(isGFF && contig_ranges != null)
         {
-          FeatureVector gff_regions = getAllFeatures();
+          final FeatureVector gff_regions = getAllFeatures();
           Enumeration gff_features  = gff_regions.elements();
           while(gff_features.hasMoreElements())
           {
-            GFFStreamFeature feature = (GFFStreamFeature)gff_features.nextElement();
-            Qualifier seqname = feature.getQualifierByName("gff_seqname");
-            String name = (String)(seqname.getValues()).elementAt(0);
+            final GFFStreamFeature feature = (GFFStreamFeature)gff_features.nextElement();
+            //Qualifier seqname = feature.getQualifierByName("gff_seqname");
+            //String name = (String)(seqname.getValues()).elementAt(0);
+            final String name = feature.getGffSeqName();
+            if(name == null)
+              continue;
             if(contig_ranges.containsKey(name))
             {
               try
