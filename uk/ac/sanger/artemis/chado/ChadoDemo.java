@@ -170,7 +170,7 @@ public class ChadoDemo
   {
     int index = location.indexOf('=') + 1;
     String schema = location.substring(index);
-
+    
     final List schemas = dao.getSchema();
 
     Vector v_schemas = new Vector(schemas);
@@ -536,7 +536,7 @@ public class ChadoDemo
         rowData[i][5] = Integer.toString(loc.getStrand().shortValue());
       }
       
-      String schema = feature.getOrganism().getAbbreviation().toLowerCase();
+      String schema = feature.getOrganism().getAbbreviation();
       int ind = schema.indexOf('.');
       if(ind > 0)
         schema = schema.substring(0,ind)+schema.substring(ind+1);
@@ -564,7 +564,19 @@ public class ChadoDemo
     {
       int index = location.lastIndexOf('=');
       location = location.substring(0,index+1) + schema;
-      connIB  = null;
+      if(connIB != null)
+      {
+        try
+        {
+          connIB.close();
+        }
+        catch(SQLException e)
+        {
+          e.printStackTrace();
+        }
+        connIB  = null;
+      }
+      
       jdbcDAO = null;
       System.setProperty("chado", location);
     }
@@ -666,6 +678,7 @@ public class ChadoDemo
         + inPort.getText().trim() + "/" + inDB.getText().trim() + "?user="
         + inUser.getText().trim();
 
+    System.setProperty("chado", location);
     return true;
   }
 
