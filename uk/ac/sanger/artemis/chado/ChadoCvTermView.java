@@ -72,8 +72,11 @@ import javax.swing.table.TableColumn;
  * @author tjc
  * 
  */
-public class ChadoCvTermView
+public class ChadoCvTermView extends JFrame
 {
+  /** */
+  private static final long serialVersionUID = 1L;
+
   /** database URL */
   private String location;
 
@@ -87,6 +90,9 @@ public class ChadoCvTermView
    */
   public ChadoCvTermView(GmodDAO dao)
   { 
+    super("Controlled Vocabulary");
+    super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    
     try
     {
       if(dao == null)
@@ -131,10 +137,7 @@ public class ChadoCvTermView
       searchPanel.add(new JLabel("Term:"));
       searchPanel.add(searchTerm);
       
-      final JFrame frame = new JFrame("Controlled Vocabulary");
       final JButton searchButt = new JButton("GO");
-      
-      
       
       searchButt.addActionListener(new ActionListener()
       {
@@ -165,21 +168,21 @@ public class ChadoCvTermView
             {
               detailTable = showCvTable(dao, searchTerm, 
                   cvTermsList, cvList, searchBox, panel, 
-                  searchPanel, detailTable, frame);
+                  searchPanel, detailTable);
             }
           });
           
           cvTermsList.setRenderer(new CvRenderer());
           searchBox.add(cvTermsList);
           panel.revalidate();
-          frame.pack();
+          pack();
         } 
       });
       searchPanel.add(searchButt);
 
-      frame.getContentPane().add(panel);
-      frame.pack();
-      frame.setVisible(true);
+      getContentPane().add(panel);
+      pack();
+      setVisible(true);
       
       searchTerm.requestFocus();
       searchTerm.selectAll();
@@ -214,7 +217,7 @@ public class ChadoCvTermView
   private JTable showCvTable(final GmodDAO dao, final JTextField searchTerm,
         final JExtendedComboBox cvTermsList, final JComboBox cvList,
         final Box searchBox, final JPanel panel, final JPanel searchPanel,
-        JTable detailTable, final JFrame frame)
+        JTable detailTable)
   {
     CvTerm cvTerm = (CvTerm) cvTermsList.getSelectedItem();
 
@@ -245,7 +248,7 @@ public class ChadoCvTermView
 
     panel.add(detailTable, BorderLayout.CENTER);
     panel.revalidate();
-    frame.pack();
+    pack();
 
     int rowHeight = 0;
     for(int i = 0; i < detailTable.getRowCount(); i++)
@@ -259,7 +262,7 @@ public class ChadoCvTermView
     detailTable.setPreferredSize(new Dimension(
         detailTable.getPreferredSize().width, rowHeight));
     panel.revalidate();
-    frame.pack();
+    pack();
     return detailTable;
   }
     
