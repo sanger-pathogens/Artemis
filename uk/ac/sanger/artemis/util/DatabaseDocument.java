@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ReadFormatException;
 
 import uk.ac.sanger.artemis.chado.ArtemisUtils;
+import uk.ac.sanger.artemis.chado.ChadoCvTermView;
 import uk.ac.sanger.artemis.chado.IBatisDAO;
 import uk.ac.sanger.artemis.chado.JdbcDAO;
 import uk.ac.sanger.artemis.chado.GmodDAO;
@@ -1686,6 +1687,26 @@ public class DatabaseDocument extends Document
     return db;
   }
   
+  /**
+   * 
+   */
+  public void showCvTermLookUp()
+  {
+    try
+    {
+      new ChadoCvTermView( getDAO() );
+    }
+    catch(ConnectException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    catch(SQLException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
   
   /**
    * Get the data access object (DAO).
