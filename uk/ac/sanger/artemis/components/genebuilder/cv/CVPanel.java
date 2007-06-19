@@ -47,6 +47,7 @@ import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.ListCellRenderer;
 
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.StringVector;
@@ -146,6 +147,20 @@ public class CVPanel extends JPanel
       }
     });
     xBox.add(addRemove);
+    JButton lookUp = new JButton("LOOK UP");
+    lookUp.setOpaque(false);
+    lookUp.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      { 
+        DatabaseDocumentEntry entry =
+           (DatabaseDocumentEntry)feature.getEntry().getEMBLEntry();
+        DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
+        
+        doc.showCvTermLookUp();
+      }
+    });
+    xBox.add(lookUp);
     xBox.add(Box.createHorizontalGlue());
     cvBox.add(xBox);
 
