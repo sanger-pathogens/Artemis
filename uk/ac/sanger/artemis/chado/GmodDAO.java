@@ -139,6 +139,8 @@ public abstract class GmodDAO
   //////
   //////
   
+  public abstract List getAllCvs();
+  
   public List getAllTermsInCvWithCount(Cv arg0)
   {
     // TODO Auto-generated method stub
@@ -182,19 +184,6 @@ public abstract class GmodDAO
   }
 
 
-
-  // TODO Should this return a list or just one?
-  /**
-   * Retrieve a named CvTerm from a given Cv
-   * 
-   * @param cvTermName the name of the cvterm
-   * @param cv the controlled vocabulary this cvterm is part of
-   * @return a (possibly empty) list of matching cvterms
-   */
-  public List getCvTermByNameInCv(String cvTermName, Cv cv)
-  {
-    return null;
-  }
 
 
   /**

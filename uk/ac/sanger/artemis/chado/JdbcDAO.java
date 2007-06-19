@@ -1046,6 +1046,16 @@ public class JdbcDAO extends GmodDAO
   //////
   //////
   
+  public List getCvTermByNameInCv(String cvTermName, Cv cv)
+  {
+    return null;
+  }
+  
+  public List getAllCvs()
+  {
+    return null;
+  }
+  
   /**
    * Get the full list of cvterm_id and name as a <code>List</code> of 
    * <code>CvTerm</code> objects.

@@ -458,6 +458,26 @@ public class IBatisDAO extends GmodDAO
   ////// CvDaoI
   //////
   //////
+  public List getAllCvs()
+  {
+    return sqlMap.queryForList("getAllCvs", null);
+  }
+  
+  /**
+   * Retrieve a named CvTerm from a given Cv
+   * 
+   * @param cvTermName the name of the cvterm
+   * @param cv the controlled vocabulary this cvterm is part of
+   * @return a (possibly empty) list of matching cvterms
+   */
+  public List getCvTermByNameInCv(String cvTermName, Cv cv)
+  {
+    CvTerm cvTerm = new CvTerm();
+    cvTerm.setName(cvTermName);
+    cvTerm.setCv(cv);
+    
+    return sqlMap.queryForList("getCvterm", cvTerm);
+  }
   
   /**
    * Get the full list of cvterm_id and name as a <code>List</code> of 
