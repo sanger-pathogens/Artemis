@@ -17,11 +17,16 @@
     <result property="definition" column="definition"/>
   </resultMap>
   
-   <select id="selectCv" resultMap="select-cv">
+  <select id="selectCv" resultMap="select-cv">
     SELECT * FROM cv WHERE cv_id=$cvId$
   </select>
   
-   <select id="getCvByName" resultMap="select-cv">
+  <select id="getCvByName" resultMap="select-cv">
     SELECT * FROM cv WHERE name=#value#
   </select>
+	
+  <select id="getAllCvs" resultMap="select-cv">
+    SELECT * FROM cv
+  </select>
+  
 </sqlMap>
