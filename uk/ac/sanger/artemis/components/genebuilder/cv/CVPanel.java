@@ -861,6 +861,7 @@ public class CVPanel extends JPanel
     
     if(term_list == null)
     {
+      Collections.sort(terms, new CvTermsComparator());
       term_list = new JExtendedComboBox(terms);
     
       Dimension d = term_list.getPreferredSize();
