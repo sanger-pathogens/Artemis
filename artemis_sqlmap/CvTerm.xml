@@ -17,9 +17,13 @@
  
     <resultMap id="select-cvterm-names-result" class="CvTerm">
    	  <result property="cvTermId" column="cvterm_id"/>
-  	  <result property="name" column="cvterm_name"/>
-      <result property="cv.name" column="cv_name"/>
+      <result property="cv.cvId" column="cv_id"/>
+   	  <result property="cv.name" column="cv_name"/>
+  	  <result property="name" column="name"/>
+      <result property="definition" column="definition"/>
       <result property="dbXRef" column="dbxref_id" select="selectDbXRef"/>
+      <result property="isObsolete" column="is_obsolete"/>
+      <result property="isRelationshipType" column="is_relationshiptype"/>
     </resultMap>
     
     <resultMap id="lazy-cvterm" class="CvTerm">
@@ -36,20 +40,22 @@
     <!-- look up cvterms names and id -->
      <select id="getCvterm" resultMap="select-cvterm-names-result"> 
    	SELECT  
-	  cvterm.CVTERM_ID, cvterm.NAME as cvterm_name, cv.NAME as cv_name, dbxref_id
+	  cvterm.*, cv.name as cv_name
         FROM cvterm, cv
         WHERE 
             <dynamic>
              <isNotNull property="name">
-               cvterm.name=#name# AND
+               cvterm.name LIKE #name# AND
              </isNotNull>
-             <isNotNull property="cv_name">
-               cv.name=#cv_name# AND
+             <isNotNull property="cv.name">
+               cv.name=#cv.name# AND
              </isNotNull>
-             <isNotNull property="cvterm_id">
-               cvterm_id=#cvterm_id# AND
-             </isNotNull>
-            </dynamic>
+			 <isNotNull property="cvTermId">
+               <isGreaterThan property="cvTermId" compareValue="0">
+                 cvterm_id=$cvTermId$ AND
+               </isGreaterThan>
+			</isNotNull>
+            </dynamic>	
 	    cv.cv_id = cvterm.cv_id
      </select> 
      
