@@ -147,7 +147,11 @@ public class ChadoCvTermView extends JFrame
         public void actionPerformed(ActionEvent e)
         {
           final GmodDAO dao = ChadoCvTermView.this.dao;
-          List cvTerms = dao.getCvTermByNameInCv(searchTerm.getText().trim(),
+          
+          String search = searchTerm.getText().trim();
+          search = search.replaceAll("\\*", "%");
+
+          List cvTerms = dao.getCvTermByNameInCv(search,
                                                (Cv)cvList.getSelectedItem());
           
           Collections.sort(cvTerms, new CvTermsComparator());
@@ -163,7 +167,6 @@ public class ChadoCvTermView extends JFrame
               searchPanel.getPreferredSize().width,cvTermsList.getPreferredSize().height));
           cvTermsList.addActionListener(new ActionListener()
           {
-            
             public void actionPerformed(ActionEvent e)
             {
               detailTable = showCvTable(dao, searchTerm, 
