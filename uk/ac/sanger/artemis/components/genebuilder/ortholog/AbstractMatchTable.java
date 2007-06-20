@@ -48,7 +48,11 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import uk.ac.sanger.artemis.components.genebuilder.GeneEdit;
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 
 abstract class AbstractMatchTable
 {
@@ -212,12 +216,11 @@ abstract class AbstractMatchTable
      {
        public void actionPerformed(ActionEvent e) 
        {
-         fireEditingStopped();
-         
+         fireEditingStopped(); 
        }
      });
    }
-  
+   
    public Component getTableCellEditorComponent(JTable table, Object value,
                     boolean isSelected, int row, int column)
    {
@@ -247,6 +250,119 @@ abstract class AbstractMatchTable
      }
      isPushed = false;
      return new String("X") ;
+   }
+    
+   public boolean stopCellEditing() 
+   {
+     isPushed = false;
+     return super.stopCellEditing();
+   }
+  
+   protected void fireEditingStopped() 
+   {
+     try
+     {
+       super.fireEditingStopped();
+     }
+     catch(ArrayIndexOutOfBoundsException e){}
+   }
+ }
+  
+  
+  
+  
+  
+  
+  
+  /**
+  *
+  */
+  protected class LinkEditor extends DefaultCellEditor 
+  {
+   /** */
+   private static final long serialVersionUID = 1L;
+   protected JButton linkButton = new JButton();
+   private boolean   isPushed;
+   private Color fgLinkColor = Color.BLUE;
+   private DatabaseDocument doc;
+   
+   public LinkEditor(JCheckBox checkBox, final DefaultTableModel tableModel,
+                     DatabaseDocument doc) 
+   {
+     super(checkBox);
+     this.doc = doc;
+     
+     linkButton.setBorderPainted(false);
+     linkButton.setOpaque(false);
+     
+     
+     linkButton.addActionListener(new ActionListener()
+     {
+       public void actionPerformed(ActionEvent e) 
+       {
+         fireEditingStopped(); 
+       }
+     });
+   }
+   
+   private DatabaseDocumentEntry makeEntry(final String schema, 
+       final String uniquename)
+   {
+     DatabaseDocumentEntry db_entry = null;
+     DatabaseDocument newdoc = new DatabaseDocument(doc, 
+             uniquename, schema, true);
+     
+     try
+     {
+       db_entry = new DatabaseDocumentEntry(newdoc, null);
+     }
+     catch(EntryInformationException e)
+     {
+       e.printStackTrace();
+     }
+     catch(IOException e)
+     {
+       e.printStackTrace();
+     }
+     return db_entry;
+   }
+   
+   public Component getTableCellEditorComponent(JTable table, Object value,
+                    boolean isSelected, int row, int column)
+   {
+     linkButton.setText((String)value);
+     if (isSelected) 
+     {
+       linkButton.setForeground(fgLinkColor);
+       linkButton.setBackground(table.getSelectionBackground()); 
+     }
+     else
+     {
+       linkButton.setForeground(fgLinkColor);
+       linkButton.setBackground(table.getBackground());
+     }
+     
+     isPushed = true;
+     return linkButton;
+   }
+  
+   public Object getCellEditorValue() 
+   {
+     String link = linkButton.getText();
+     if(isPushed)  
+     {
+       // open gene editor for this link
+       
+       String reference[] = link.split(":");
+       DatabaseDocumentEntry entry = makeEntry(reference[0], reference[1]);
+       entry.setReadOnly(true);
+       GeneEdit.showGeneEditor(reference[0], reference[1], entry);
+
+       isChanged = true;
+       return link;
+     }
+     isPushed = false;
+     return link;
    }
     
    public boolean stopCellEditing() 

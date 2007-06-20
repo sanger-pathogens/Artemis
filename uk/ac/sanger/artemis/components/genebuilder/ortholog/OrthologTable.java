@@ -43,17 +43,18 @@ import javax.swing.table.TableModel;
 
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 
 public class OrthologTable extends AbstractMatchTable
 {
-  private int NUMBER_COLUMNS = 4;
+  private int NUMBER_COLUMNS = 3;
   private Vector rowData   = new Vector();
   private Vector tableData = new Vector(NUMBER_COLUMNS);
   private JTable orthologTable;
   private JButton infoLevelButton = new JButton("Details");
   private Qualifier origQualifier;
   private boolean isChanged = false;
-  
+
   //
   // column headings
   final static String ORGANISM_COL = "Organism";
@@ -66,32 +67,29 @@ public class OrthologTable extends AbstractMatchTable
    * @param similarity
    * @param similarityString
    */
-  protected OrthologTable(final Qualifier origQualifier)
+  protected OrthologTable(final DatabaseDocument doc,
+                          final Qualifier origQualifier)
   {
     this.origQualifier = origQualifier;
     
     infoLevelButton.setOpaque(false);
     tableData.setSize(NUMBER_COLUMNS);
     
-    tableData.setElementAt(ORGANISM_COL,0);
-    tableData.setElementAt(ORTHO_COL,1);
-    tableData.setElementAt(DESCRIPTION_COL,2);
-    tableData.setElementAt(REMOVE_BUTTON_COL,3);
+    tableData.setElementAt(ORTHO_COL,0);
+    tableData.setElementAt(DESCRIPTION_COL,1);
+    tableData.setElementAt(REMOVE_BUTTON_COL,2);
     
     // add row data
     Vector thisRowData = new Vector();
-    thisRowData.add("organism");
-    thisRowData.add("blah");
+    thisRowData.add("Bpseudomallei:BPSL0003");
     thisRowData.add("blah blah");
     rowData.add(thisRowData);
     Vector thisRowData2 = new Vector();
-    thisRowData2.add("organism2");
-    thisRowData2.add("blah2");
+    thisRowData2.add("Bpseudomallei:BPSL2915");
     thisRowData2.add("blah blah2");
     rowData.add(thisRowData2);
     Vector thisRowData3 = new Vector();
-    thisRowData3.add("organism3");
-    thisRowData3.add("blah3");
+    thisRowData3.add("schema:id");
     thisRowData3.add("blah blah3");
     rowData.add(thisRowData3);
     
@@ -124,6 +122,11 @@ public class OrthologTable extends AbstractMatchTable
     col = orthologTable.getColumn(REMOVE_BUTTON_COL);
     col.setCellEditor(new ButtonEditor(new JCheckBox(),
         (DefaultTableModel)orthologTable.getModel()));
+    
+    // orthologue link
+    col = orthologTable.getColumn(ORTHO_COL);
+    col.setCellEditor(new LinkEditor(new JCheckBox(),
+        (DefaultTableModel)orthologTable.getModel(), doc));
   }
   
   protected boolean isQualifierChanged()
@@ -148,20 +151,15 @@ public class OrthologTable extends AbstractMatchTable
     private static final long serialVersionUID = 1L;
     private int minHeight = -1;
     
-    private final JTextArea orthologTextArea = new JTextArea();
-    private final JTextArea organismTextArea = new JTextArea();
+    private final JLabel orthologLabel = new JLabel();
     private final JTextArea descriptionTextArea = new JTextArea();
     private final JLabel buttRemove = new JLabel("X");
     private Color fgColor = new Color(139,35,35);
+    private Color fgLinkColor = Color.BLUE;
     
     public OrthologRenderer() 
     {
-      
-      organismTextArea.setLineWrap(true);
-      organismTextArea.setWrapStyleWord(true);
-      
-      orthologTextArea.setLineWrap(true);
-      orthologTextArea.setWrapStyleWord(true);
+      orthologLabel.setForeground(Color.BLUE);
       
       descriptionTextArea.setLineWrap(true);
       descriptionTextArea.setWrapStyleWord(true);
@@ -191,29 +189,21 @@ public class OrthologTable extends AbstractMatchTable
       Dimension dim;
 
       TableColumn tableCol;
-      if(column == getColumnIndex(ORGANISM_COL))
+      if(column == getColumnIndex(ORTHO_COL))
       {
-        organismTextArea.setText(text);
-
-        tableCol = table.getColumnModel().getColumn(column);
-        organismTextArea.setSize(tableCol.getWidth(), table.getRowHeight(row));
-
-        dim = organismTextArea.getPreferredSize();
-        minHeight = Math.max(minHeight, dim.height);
+        orthologLabel.setText(text);
+        if(isSelected) 
+        {
+          orthologLabel.setForeground(fgLinkColor);
+          orthologLabel.setBackground(table.getSelectionBackground());
+        } 
+        else
+        {
+          orthologLabel.setForeground(fgLinkColor);
+          orthologLabel.setBackground(UIManager.getColor("Button.background"));
+        }
         
-        c = organismTextArea;
-      }
-      else if(column == getColumnIndex(ORTHO_COL))
-      {
-        orthologTextArea.setText(text);
-        
-        tableCol = table.getColumnModel().getColumn(column);
-        orthologTextArea.setSize(tableCol.getWidth(), table.getRowHeight(row));
-
-        dim = orthologTextArea.getPreferredSize();
-        minHeight = Math.max(minHeight, dim.height);
-        
-        c = orthologTextArea;
+        c = orthologLabel;
       }
       else if(column == getColumnIndex(DESCRIPTION_COL))
       {
