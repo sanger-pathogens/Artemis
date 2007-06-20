@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.7 2006-10-09 12:21:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.8 2007-06-20 15:49:32 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -34,14 +34,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.NumberFormat;
 
-import javax.swing.*;
 
 /**
  *  A component for plotting functions over the base sequence.  Scrolling and
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.7 2006-10-09 12:21:52 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.8 2007-06-20 15:49:32 tjc Exp $
  **/
 
 public class BasePlot extends Plot
@@ -701,8 +700,10 @@ public class BasePlot extends Plot
     final int get_values_return_count =
       getBaseAlgorithm().getValueCount();
     
-    int xpos = getXCoordinate(getWidthInBases(),
-                              offset, event.getPoint().x);
+    int xpos = getPointPosition(event.getPoint().x);
+    
+    //getXCoordinate(getWidthInBases(),
+    //                          offset, event.getPoint().x);
     
     String tt = Integer.toString(xpos);
     
