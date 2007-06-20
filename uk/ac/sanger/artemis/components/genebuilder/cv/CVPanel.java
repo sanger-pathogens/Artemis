@@ -154,7 +154,7 @@ public class CVPanel extends JPanel
       public void actionPerformed(ActionEvent e)
       { 
         DatabaseDocumentEntry entry =
-           (DatabaseDocumentEntry)feature.getEntry().getEMBLEntry();
+           (DatabaseDocumentEntry)feature.getEmblFeature().getEntry();
         DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
         
         doc.showCvTermLookUp();
