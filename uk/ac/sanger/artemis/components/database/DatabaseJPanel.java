@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.5 2007-02-13 09:42:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.6 2007-06-20 08:56:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -28,15 +28,12 @@ package uk.ac.sanger.artemis.components.database;
 import uk.ac.sanger.artemis.components.*;
 
 import uk.ac.sanger.artemis.Entry;
-import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
-import uk.ac.sanger.artemis.io.GFFStreamFeature;
-import uk.ac.sanger.artemis.io.InvalidRelationException;
 
 import javax.swing.JTree;
 import javax.swing.JScrollPane;
@@ -68,7 +65,6 @@ import java.net.ConnectException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 
 public class DatabaseJPanel extends JPanel
@@ -374,9 +370,10 @@ public class DatabaseJPanel extends JPanel
       catch(RuntimeException p)
       {
         entry_source.setLocation(true);
+        entries = null;
       }
     }
-    
+
     return null;
   }
 
