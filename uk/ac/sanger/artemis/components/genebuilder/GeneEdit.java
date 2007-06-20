@@ -158,27 +158,9 @@ public class GeneEdit
           public Object construct()
           {
             DatabaseDocumentEntry entry = makeEntry(schema, search_gene,
-                location);
+                                                    location, pfield);
             entry.setReadOnly(true);
-            FeatureVector features = entry.getAllFeatures();
-            GFFStreamFeature gff_gene_feature = null;
-
-            for(int i = 0; i < features.size(); i++)
-            {
-              GFFStreamFeature feature = (GFFStreamFeature) features.get(i);
-              String uniquename = (String) feature.getQualifierByName("ID")
-                  .getValues().get(0);
-
-              if(search_gene.equals(uniquename))
-              {
-                gff_gene_feature = feature;
-                break;
-              }
-            }
-
-            uk.ac.sanger.artemis.Feature feature = new uk.ac.sanger.artemis.Feature(
-                gff_gene_feature);
-            new GeneBuilderFrame(feature, null, null, null);
+            showGeneEditor(schema, search_gene, entry);
             return null;
           }
         };
@@ -199,9 +181,10 @@ public class GeneEdit
     frame.setVisible(true);
   }
 
-  public DatabaseDocumentEntry makeEntry(final String schema, 
-                                         final String uniquename,
-                                         final String location)
+  private DatabaseDocumentEntry makeEntry(final String schema, 
+                                          final String uniquename,
+                                          final String location,
+                                          final JPasswordField pfield)
   {
     DatabaseDocumentEntry db_entry = null;
     DatabaseDocument doc = new DatabaseDocument(location, pfield, 
@@ -257,6 +240,30 @@ public class GeneEdit
     return mbar;
   }
 
+  public static void showGeneEditor(final String schema,
+                                    final String search_gene,
+                                    final DatabaseDocumentEntry entry)
+  {
+    FeatureVector features = entry.getAllFeatures();
+    GFFStreamFeature gff_gene_feature = null;
+
+    for(int i = 0; i < features.size(); i++)
+    {
+      GFFStreamFeature feature = (GFFStreamFeature) features.get(i);
+      String uniquename = (String) feature.getQualifierByName("ID")
+          .getValues().get(0);
+
+      if(search_gene.equals(uniquename))
+      {
+        gff_gene_feature = feature;
+        break;
+      }
+    }
+
+    uk.ac.sanger.artemis.Feature feature = new uk.ac.sanger.artemis.Feature(
+        gff_gene_feature);
+    new GeneBuilderFrame(feature, null, null, null); 
+  }
   
   /**
    * Get the data access object (DAO).
