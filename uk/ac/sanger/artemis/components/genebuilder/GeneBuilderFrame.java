@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.26 2007-06-05 09:31:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.27 2007-06-20 15:22:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -77,6 +77,7 @@ public class GeneBuilderFrame extends JFrame
   private ChadoCanonicalGene chado_gene;
   private JLabel status_line = new JLabel("");
   private GeneBuilderSelectionChangeListener geneBuilderSelectionChangeListener;
+  private JTabbedPane tabpane;
   
   public GeneBuilderFrame(final Feature feature,
                           final EntryGroup entry_group,
@@ -156,8 +157,9 @@ public class GeneBuilderFrame extends JFrame
       feature_editor = new FeatureEdit(feature, null,
           null, null, this, new GFFEntryInformation());
     
-    JTabbedPane tabpane = new JTabbedPane();
+    tabpane = new JTabbedPane();
     tabpane.addTab("Annotation", feature_editor);
+    setTabTitle();
     all.setBottomComponent(tabpane);
     
     getContentPane().add(all);
@@ -294,6 +296,17 @@ public class GeneBuilderFrame extends JFrame
   {  
     this.active_feature = active_feature;
     feature_editor.setActiveFeature(active_feature, isSet);
+    setTabTitle();
+  }
+  
+  private void setTabTitle()
+  {
+    try
+    {
+      tabpane.setTitleAt(0, "Annotation :: "+
+          (String)active_feature.getQualifierByName("ID").getValues().get(0));
+    }
+    catch(InvalidRelationException e){}
   }
 
   /**
