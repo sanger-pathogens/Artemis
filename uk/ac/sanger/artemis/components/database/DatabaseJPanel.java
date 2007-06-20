@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.6 2007-06-20 08:56:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.7 2007-06-20 10:03:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -370,7 +370,6 @@ public class DatabaseJPanel extends JPanel
       catch(RuntimeException p)
       {
         entry_source.setLocation(true);
-        entries = null;
       }
     }
 

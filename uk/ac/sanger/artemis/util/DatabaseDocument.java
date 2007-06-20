@@ -1619,7 +1619,7 @@ public class DatabaseDocument extends Document
                    throws ConnectException, java.sql.SQLException
   {
     String schema = null;
-    HashMap db = new HashMap();
+    HashMap db    = null;
     try
     { 
       GmodDAO dao = getDAO();
@@ -1646,6 +1646,8 @@ public class DatabaseDocument extends Document
             Feature feature = (Feature)it_residue_features.next();
             String typeName = getCvtermName(feature.getCvTerm().getCvTermId(), getDAO(), gene_builder); 
           
+            if(db == null)
+              db = new HashMap();
             db.put(schema + " - " + typeName + " - " + feature.getUniqueName(),
                    Integer.toString(feature.getFeatureId()));
           }
