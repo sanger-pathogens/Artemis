@@ -252,6 +252,22 @@ public class DatabaseDocument extends Document
   }
   
   /**
+   * Use another DatabaseDocument to make a new document.
+   * @param originalDocument
+   * @param srcFeatureId
+   * @param schema
+   * @param gene_builder
+   * @return
+   */
+  public DatabaseDocument (DatabaseDocument originalDocument,
+             String srcFeatureId, String schema, boolean gene_builder)
+  {
+    this((String)originalDocument.getLocation(), 
+         originalDocument.getPfield(),
+         srcFeatureId, schema, gene_builder);
+  }
+  
+  /**
    * Reset the schema.
    * @param location
    * @param schema
@@ -2070,5 +2086,11 @@ public class DatabaseDocument extends Document
   public String getSrcFeatureId()
   {
     return srcFeatureId;
+  }
+
+
+  private JPasswordField getPfield()
+  {
+    return pfield;
   }
 }
