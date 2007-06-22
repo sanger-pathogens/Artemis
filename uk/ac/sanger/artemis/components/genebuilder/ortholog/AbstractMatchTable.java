@@ -297,7 +297,7 @@ abstract class AbstractMatchTable
      linkButton.setOpaque(true);
 
      linkButton.setHorizontalAlignment(SwingConstants.LEFT);
-     linkButton.setHorizontalAlignment(SwingConstants.TOP);
+     linkButton.setVerticalAlignment(SwingConstants.TOP);
      linkButton.setMargin(new Insets(0,1,0,1));
      
      linkButton.addActionListener(new ActionListener()
