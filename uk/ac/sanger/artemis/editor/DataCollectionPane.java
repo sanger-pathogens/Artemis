@@ -95,7 +95,7 @@ public class DataCollectionPane extends JScrollPane
     setPreferredSize(new Dimension(500,300));
   }
 
-  private static String getSrsSite()
+  public static String getSrsSite()
   {
     StringVector srs = Options.getOptions().getOptionValues("srs_url");
     if(srs != null)
