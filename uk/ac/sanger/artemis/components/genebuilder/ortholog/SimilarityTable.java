@@ -240,6 +240,10 @@ public class SimilarityTable extends AbstractMatchTable
       int columnIndex = tableData.indexOf(HIT_COL);
       
       String hit = ((String)sim.get(1)).trim();
+      
+      if(hit.startsWith("with="))
+        hit = hit.substring(5);
+      
       final String hits[] = hit.split(" ");
       
       row.setElementAt(hits[0], columnIndex);
