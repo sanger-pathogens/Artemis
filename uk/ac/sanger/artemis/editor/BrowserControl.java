@@ -49,6 +49,8 @@ public class BrowserControl
   private static final String UNIX_PATH = "netscape";
   // The flag to display a url.
   private static final String UNIX_FLAG = "-remote openURL";
+  
+  private static final String MAC_PATH = "/usr/bin/open";
 
   /**
    * Display a file in the system browser.  If you want to display a
@@ -59,14 +61,18 @@ public class BrowserControl
    */
   public static void displayURL(String url)
   {
-    boolean windows = isWindowsPlatform();
     String cmd = null;
     try
     {
-      if(windows)
+      if(isWindowsPlatform())
       {
         // cmd = 'rundll32 url.dll,FileProtocolHandler http://...'
         cmd = WIN_PATH + " " + WIN_FLAG + " " + url;
+        Runtime.getRuntime().exec(cmd);
+      }
+      else if(isMac())
+      {
+        cmd = MAC_PATH + " " + url;
         Runtime.getRuntime().exec(cmd);
       }
       else
@@ -115,8 +121,13 @@ public class BrowserControl
       return true;
     else
       return false;
-
   }
+  
+  private static boolean isMac() 
+  {
+    return System.getProperty("mrj.version") != null;
+  }
+  
   /**
    * Simple example.
    */
