@@ -23,10 +23,13 @@ package uk.ac.sanger.artemis.components.genebuilder.ortholog;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -48,7 +51,7 @@ import uk.ac.sanger.artemis.util.StringVector;
 
 public class SimilarityTable extends AbstractMatchTable
 { 
-  private int NUMBER_COLUMNS = 12;
+  private int NUMBER_COLUMNS = 13;
   private Vector rowData   = new Vector();
   private Vector tableData = new Vector(NUMBER_COLUMNS);
   
@@ -59,6 +62,7 @@ public class SimilarityTable extends AbstractMatchTable
   // column headings
   final static String ORGANISM_COL = "Organism";
   final static String HIT_COL = "Hit";
+  final static String HIT_DBXREF_COL = "DbXRef";
   final static String DESCRIPTION_COL = "Description";
   final static String EVALUE_COL = "E-value";
   final static String LENGTH_COL = "Length";
@@ -86,16 +90,17 @@ public class SimilarityTable extends AbstractMatchTable
     
     tableData.setElementAt(ORGANISM_COL,0);
     tableData.setElementAt(HIT_COL,1);
-    tableData.setElementAt(DESCRIPTION_COL,2);
-    tableData.setElementAt(EVALUE_COL,3);
-    tableData.setElementAt(LENGTH_COL,4);
-    tableData.setElementAt(ID_COL,5);
-    tableData.setElementAt(QUERY_COL,6);
-    tableData.setElementAt(SUBJECT_COL,7);
-    tableData.setElementAt(SCORE_COL,8);
-    tableData.setElementAt(OVERLAP_COL,9);
-    tableData.setElementAt(METHOD_COL,10);
-    tableData.setElementAt(REMOVE_BUTTON_COL,11);
+    tableData.setElementAt(HIT_DBXREF_COL,2);
+    tableData.setElementAt(DESCRIPTION_COL,3);
+    tableData.setElementAt(EVALUE_COL,4);
+    tableData.setElementAt(LENGTH_COL,5);
+    tableData.setElementAt(ID_COL,6);
+    tableData.setElementAt(QUERY_COL,7);
+    tableData.setElementAt(SUBJECT_COL,8);
+    tableData.setElementAt(SCORE_COL,9);
+    tableData.setElementAt(OVERLAP_COL,10);
+    tableData.setElementAt(METHOD_COL,11);
+    tableData.setElementAt(REMOVE_BUTTON_COL,12);
     
     // add rows of similarity
     StringVector sims = simQualifier.getValues();
@@ -104,12 +109,34 @@ public class SimilarityTable extends AbstractMatchTable
     
     JTable similarityTable = new JTable(rowData, tableData);
     setTable(similarityTable);
+    
+    // set hand cursor
+    similarityTable.addMouseMotionListener( new MouseMotionAdapter() 
+    {
+      private Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+      public void mouseMoved(MouseEvent e) 
+      {
+        int col = table.columnAtPoint(e.getPoint());
+        
+        String colName = table.getColumnName(col);
+     
+        if(colName.equals(HIT_COL) || colName.equals(HIT_DBXREF_COL) ||
+           colName.equals(REMOVE_BUTTON_COL)) 
+          table.setCursor(handCursor);
+        else 
+          table.setCursor(Cursor.getDefaultCursor());  
+      }
+    });
+    
+    
     similarityTable.setColumnSelectionAllowed(false);
     similarityTable.setRowSelectionAllowed(true);
     
     packColumn(similarityTable, getColumnIndex(LENGTH_COL), 4);
     packColumn(similarityTable, getColumnIndex(EVALUE_COL), 4);
     packColumn(similarityTable, getColumnIndex(ID_COL), 4);
+    packColumn(similarityTable, getColumnIndex(HIT_COL), 6);
+    packColumn(similarityTable, getColumnIndex(HIT_DBXREF_COL), 6);
 
     final TableColumn[] hideColumns = new TableColumn[5];
     hideColumns[0] = similarityTable.getColumn(QUERY_COL);
@@ -167,6 +194,15 @@ public class SimilarityTable extends AbstractMatchTable
       col.setCellEditor(new CellEditing(new JTextField()));
     }
     
+    
+    col = getTable().getColumn(HIT_COL);
+    col.setCellEditor(new LinkEditor(new JCheckBox(),
+        (DefaultTableModel)getTable().getModel(), null));
+    
+    col = getTable().getColumn(HIT_DBXREF_COL);
+    col.setCellEditor(new LinkEditor(new JCheckBox(),
+        (DefaultTableModel)getTable().getModel(), null));
+    
     // remove JButton column
     col = getTable().getColumn(REMOVE_BUTTON_COL);
     col.setCellEditor(new ButtonEditor(new JCheckBox(),
@@ -202,7 +238,22 @@ public class SimilarityTable extends AbstractMatchTable
     if(sim.size() >=2)
     {
       int columnIndex = tableData.indexOf(HIT_COL);
-      row.setElementAt(((String)sim.get(1)).trim(), columnIndex);
+      
+      String hit = ((String)sim.get(1)).trim();
+      final String hits[] = hit.split(" ");
+      
+      row.setElementAt(hits[0], columnIndex);
+      
+      if(hits.length > 1)
+      {
+        // dbxref 
+        columnIndex = tableData.indexOf(HIT_DBXREF_COL);
+        
+        if(hits[1].startsWith("(") && hits[1].endsWith(")"))
+          hits[1] = hits[1].substring(1,hits[1].length()-1);
+        
+        row.setElementAt(hits[1], columnIndex);
+      }
     }
     
     // description
@@ -318,6 +369,12 @@ public class SimilarityTable extends AbstractMatchTable
     similarityStr.append(";");
     similarityStr.append(
              (String)getTable().getValueAt(row, getColumnIndex(HIT_COL)) );      // hit
+    
+                                                                                 // dbxref
+    String dbxref = (String)getTable().getValueAt(row, getColumnIndex(HIT_DBXREF_COL));
+    if(!dbxref.equals(""))
+      similarityStr.append(" ("+dbxref+")");
+    
     similarityStr.append(";");
     similarityStr.append(
              (String)getTable().getValueAt(row, getColumnIndex(ORGANISM_COL)) ); // organism
@@ -399,7 +456,8 @@ public class SimilarityTable extends AbstractMatchTable
     private static final long serialVersionUID = 1L;
     private int minHeight = -1;
     
-    private final JTextArea hitTextArea = new JTextArea();
+    private final JLabel hit = new JLabel();
+    private final JLabel hit_dbxref = new JLabel();
     private final JLabel evalue = new JLabel();
     private final JLabel length = new JLabel();
     private final JTextArea organismTextArea = new JTextArea();
@@ -412,31 +470,44 @@ public class SimilarityTable extends AbstractMatchTable
     private final JLabel method     = new JLabel();
     private final JLabel buttRemove = new JLabel("X");
     private Color fgColor = new Color(139,35,35);
+    private Color fgLinkColor = Color.BLUE;
     
     public SimilarityRenderer() 
     {
       evalue.setHorizontalAlignment(SwingConstants.RIGHT);
+      evalue.setVerticalAlignment(SwingConstants.TOP);
       evalue.setOpaque(true);
       length.setHorizontalAlignment(SwingConstants.RIGHT);
+      length.setVerticalAlignment(SwingConstants.TOP);
       length.setOpaque(true);
       ungappedId.setHorizontalAlignment(SwingConstants.RIGHT);
+      ungappedId.setVerticalAlignment(SwingConstants.TOP);
       ungappedId.setOpaque(true);
       queryCoord.setHorizontalAlignment(SwingConstants.RIGHT);
+      queryCoord.setVerticalAlignment(SwingConstants.TOP);
       queryCoord.setOpaque(true);
       subjCoord.setHorizontalAlignment(SwingConstants.RIGHT);
+      subjCoord.setVerticalAlignment(SwingConstants.TOP);
       subjCoord.setOpaque(true);
       score.setHorizontalAlignment(SwingConstants.RIGHT);
+      score.setVerticalAlignment(SwingConstants.TOP);
       score.setOpaque(true);
       overlap.setHorizontalAlignment(SwingConstants.RIGHT);
+      overlap.setVerticalAlignment(SwingConstants.TOP);
       overlap.setOpaque(true);
       method.setHorizontalAlignment(SwingConstants.RIGHT);
+      method.setVerticalAlignment(SwingConstants.TOP);
       method.setOpaque(true);
       
       organismTextArea.setLineWrap(true);
       organismTextArea.setWrapStyleWord(true);
       
-      hitTextArea.setLineWrap(true);
-      hitTextArea.setWrapStyleWord(true);
+      hit.setHorizontalAlignment(SwingConstants.CENTER);
+      hit.setVerticalAlignment(SwingConstants.TOP);
+      hit.setOpaque(true);
+      hit_dbxref.setHorizontalAlignment(SwingConstants.CENTER);
+      hit_dbxref.setVerticalAlignment(SwingConstants.TOP);
+      hit_dbxref.setOpaque(true);
       
       descriptionTextArea.setLineWrap(true);
       descriptionTextArea.setWrapStyleWord(true);
@@ -448,6 +519,7 @@ public class SimilarityTable extends AbstractMatchTable
       buttRemove.setFont(font);
       buttRemove.setToolTipText("REMOVE");
       buttRemove.setHorizontalAlignment(SwingConstants.CENTER);
+      buttRemove.setVerticalAlignment(SwingConstants.TOP);
     }
     
 
@@ -480,15 +552,17 @@ public class SimilarityTable extends AbstractMatchTable
       }
       else if(column == getColumnIndex(HIT_COL))
       {
-        hitTextArea.setText(text);
-        
-        tableCol = table.getColumnModel().getColumn(column);
-        hitTextArea.setSize(tableCol.getWidth(), table.getRowHeight(row));
+        hit.setText(text);
+        hit.setForeground(fgLinkColor);
 
-        dim = hitTextArea.getPreferredSize();
-        minHeight = Math.max(minHeight, dim.height);
+        c = hit;
+      }
+      else if(column == getColumnIndex(HIT_DBXREF_COL))
+      {
+        hit_dbxref.setText(text);
+        hit_dbxref.setForeground(fgLinkColor);
         
-        c = hitTextArea;
+        c = hit_dbxref;
       }
       else if(column == getColumnIndex(DESCRIPTION_COL))
       {
@@ -505,10 +579,6 @@ public class SimilarityTable extends AbstractMatchTable
       else if(column == getColumnIndex(EVALUE_COL))
       {
         evalue.setText(text);
-        if(isSelected) 
-          evalue.setBackground(table.getSelectionBackground()); 
-        else
-          evalue.setBackground(Color.white);
         c = evalue;
       }
       else if(column == getColumnIndex(LENGTH_COL))
@@ -568,7 +638,7 @@ public class SimilarityTable extends AbstractMatchTable
       }
 
       // adjust row height for columns with multiple lines
-      if(column < 3)
+      if(column < 4)
       {
         if(table.getRowHeight(row) < minHeight)
           table.setRowHeight(row, minHeight);

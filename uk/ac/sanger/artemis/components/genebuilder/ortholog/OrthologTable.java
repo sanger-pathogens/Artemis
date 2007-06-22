@@ -23,8 +23,12 @@ package uk.ac.sanger.artemis.components.genebuilder.ortholog;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -95,6 +99,25 @@ public class OrthologTable extends AbstractMatchTable
     
     orthologTable = new JTable(rowData, tableData);
     setTable(orthologTable);
+    
+    // set hand cursor
+    orthologTable.addMouseMotionListener( new MouseMotionAdapter() 
+    {
+      private Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+      public void mouseMoved(MouseEvent e) 
+      {
+        int col = table.columnAtPoint(e.getPoint());
+        
+        String colName = table.getColumnName(col);
+     
+        if(colName.equals(ORTHO_COL) || colName.equals(REMOVE_BUTTON_COL)) 
+          table.setCursor(handCursor);
+        else 
+          table.setCursor(Cursor.getDefaultCursor());  
+      }
+    });
+    
+    
     orthologTable.setColumnSelectionAllowed(false);
     orthologTable.setRowSelectionAllowed(true);
     orthologTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -160,6 +183,7 @@ public class OrthologTable extends AbstractMatchTable
     public OrthologRenderer() 
     {
       orthologLabel.setForeground(Color.BLUE);
+      orthologLabel.setOpaque(true);
       
       descriptionTextArea.setLineWrap(true);
       descriptionTextArea.setWrapStyleWord(true);

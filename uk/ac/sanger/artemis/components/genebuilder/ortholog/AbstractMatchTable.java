@@ -23,9 +23,11 @@ package uk.ac.sanger.artemis.components.genebuilder.ortholog;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Insets;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -39,8 +41,10 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.table.DefaultTableColumnModel;
@@ -49,6 +53,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import uk.ac.sanger.artemis.components.genebuilder.GeneEdit;
+import uk.ac.sanger.artemis.editor.BrowserControl;
+import uk.ac.sanger.artemis.editor.DataCollectionPane;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.QualifierVector;
@@ -269,11 +275,6 @@ abstract class AbstractMatchTable
  }
   
   
-  
-  
-  
-  
-  
   /**
   *
   */
@@ -293,8 +294,11 @@ abstract class AbstractMatchTable
      this.doc = doc;
      
      linkButton.setBorderPainted(false);
-     linkButton.setOpaque(false);
-     
+     linkButton.setOpaque(true);
+
+     linkButton.setHorizontalAlignment(SwingConstants.LEFT);
+     linkButton.setHorizontalAlignment(SwingConstants.TOP);
+     linkButton.setMargin(new Insets(0,1,0,1));
      
      linkButton.addActionListener(new ActionListener()
      {
@@ -305,6 +309,12 @@ abstract class AbstractMatchTable
      });
    }
    
+   /**
+    * 
+    * @param schema
+    * @param uniquename
+    * @return
+    */
    private DatabaseDocumentEntry makeEntry(final String schema, 
        final String uniquename)
    {
@@ -324,6 +334,12 @@ abstract class AbstractMatchTable
      {
        e.printStackTrace();
      }
+     catch(NullPointerException npe)
+     {
+       JOptionPane.showMessageDialog(null, schema+":"+uniquename+
+           " not found!", "Warning", JOptionPane.WARNING_MESSAGE);
+     }
+
      return db_entry;
    }
    
@@ -351,14 +367,39 @@ abstract class AbstractMatchTable
      String link = linkButton.getText();
      if(isPushed)  
      {
-       // open gene editor for this link
-       
-       String reference[] = link.split(":");
-       DatabaseDocumentEntry entry = makeEntry(reference[0], reference[1]);
-       entry.setReadOnly(true);
-       GeneEdit.showGeneEditor(reference[0], reference[1], entry);
+       if(doc == null)
+       {
+         // open in default browser
+         String srscmd = DataCollectionPane.getSrsSite()+"/wgetz?-e+["+link+"]";
 
+         // link to uniprot accession
+         int ind;
+         if( (ind = srscmd.indexOf("UniProt:")) > -1)
+           srscmd = srscmd.substring(0,ind+7)+"-acc:"+
+                    srscmd.substring(ind+8);
+
+         if(srscmd.indexOf("ebi.ac.uk") > -1)
+           srscmd = srscmd + "+-vn+2";
+         
+         
+         System.out.println(srscmd);
+         BrowserControl.displayURL(srscmd);
+       }
+       else
+       {  
+          // open gene editor for this gene link
+          linkButton.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          String reference[] = link.split(":");
+          DatabaseDocumentEntry entry = makeEntry(reference[0], reference[1]);
+
+          if(entry != null)
+          {
+            entry.setReadOnly(true);
+            GeneEdit.showGeneEditor(reference[0], reference[1], entry);
+          }
+        }
        isChanged = true;
+       linkButton.setCursor(Cursor.getDefaultCursor());
        return link;
      }
      isPushed = false;
