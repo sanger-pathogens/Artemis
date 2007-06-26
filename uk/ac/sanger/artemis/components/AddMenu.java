@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.23 2007-06-26 08:24:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.24 2007-06-26 14:48:46 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -72,7 +72,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.23 2007-06-26 08:24:38 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.24 2007-06-26 14:48:46 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -982,7 +982,7 @@ public class AddMenu extends SelectionMenu
     inputBox.add(new JLabel("Minimum open reading frame size:"));
     JTextField minSize = new JTextField(String.valueOf (default_minimum_orf_size));
     inputBox.add(minSize);
-    JCheckBox useFastaBoundary = new JCheckBox("If multiple fasta use boundaries", false);
+    JCheckBox useFastaBoundary = new JCheckBox("break at contig boundaries (multiple fasta only)", false);
     inputBox.add(useFastaBoundary);
     
     int select = JOptionPane.showConfirmDialog(getParentFrame(), 
