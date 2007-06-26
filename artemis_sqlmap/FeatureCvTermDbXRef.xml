@@ -34,6 +34,16 @@
           </isNotNull>
        </dynamic>
     </select>
+	
+	<select id="getFeatureCvTermDbXRefBySrcFeatureId" parameterClass="java.lang.Integer"
+             resultMap="select-featurecvtermdbxref">
+       SELECT fcd.feature_cvterm_id, dbx.*, db.name 
+       FROM feature_cvterm_dbxref fcd 
+       LEFT JOIN dbxref dbx ON dbx.dbxref_id=fcd.dbxref_id 
+       LEFT JOIN db ON db.db_id=dbx.db_id
+	   LEFT JOIN feature_cvterm fc ON fcd.feature_cvterm_id=fc.feature_cvterm_id
+	   WHERE feature_id IN (SELECT feature_id FROM featureloc WHERE srcfeature_id=$value$)
+    </select>
      
     <select id="getFeatureCvTermDbXRefByFeatureCvTerm" parameterClass="java.lang.Integer"
              resultMap="select-featurecvtermdbxref">
