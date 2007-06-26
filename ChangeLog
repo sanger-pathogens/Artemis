@@ -1,5 +1,8 @@
 Version ??
 
+	Implemented option for ORF creation to take into account boundaries
+	of multiple fasta sequences, so that they do not cross them.
+
 	Implemented the ability to run and store fasta anad blast search 
 	results for multiple databases... E.g. fasta searches on uniprot 
 	and on user's own database, stored in multiple fasta_file qualifiers.
