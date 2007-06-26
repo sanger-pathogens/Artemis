@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Strand.java,v 1.5 2006-04-25 15:11:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Strand.java,v 1.6 2007-06-26 08:23:19 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -39,7 +39,7 @@ import org.biojava.bio.symbol.IllegalSymbolException;
  *  what direction the Strand represents.
  *
  *  @author Kim Rutherford
- *  @version $Id: Strand.java,v 1.5 2006-04-25 15:11:59 tjc Exp $
+ *  @version $Id: Strand.java,v 1.6 2007-06-26 08:23:19 tjc Exp $
  **/
 
 public class Strand {
@@ -169,10 +169,10 @@ public class Strand {
    *  @param minimum_size All the returned MarkerRanges must be at least
    *    this many residues long.
    **/
-  public static MarkerRange [] getOpenReadingFrameRanges (final MarkerRange
-                                                            search_range,
-                                                          final int
-                                                            minimum_size) {
+  public static MarkerRange [] getOpenReadingFrameRanges (final MarkerRange search_range,
+                                                          final int minimum_size,
+                                                          final int sequence_end,
+                                                          final int sequence_start) {
     final Strand search_strand = search_range.getStrand ();
 
     final MarkerRange [] [] frame_ranges = new MarkerRange [3] [];
@@ -196,7 +196,9 @@ public class Strand {
         search_strand.getORFsFromStopCodons (frame_stop_codons,
                                              minimum_size,
                                              frame_offset,
-                                             search_range);
+                                             search_range,
+                                             sequence_end, 
+                                             sequence_start);
     }
 
     // now copy the MarkerRange objects into a single array to return
@@ -423,7 +425,9 @@ public class Strand {
   private MarkerRange [] getORFsFromStopCodons (final int [] stop_codons,
                                                 final int minimum_size,
                                                 final int frame_offset,
-                                                final MarkerRange test_range) {
+                                                final MarkerRange test_range,
+                                                final int sequence_end,
+                                                final int sequence_start) {
     // this array is the maximum possible size - the last elements of the
     // array will almost certainly be empty when we return
     final MarkerRange [] return_array =
@@ -448,7 +452,8 @@ public class Strand {
         first_base_of_range = stop_codons[i] + 3;
       }
 
-      if (first_base_of_range >= getSequenceLength ()) {
+      if (first_base_of_range >= sequence_end ||
+          first_base_of_range <= sequence_start) {
         continue;
       }
 
@@ -457,16 +462,16 @@ public class Strand {
       // the last base in the range is the last base of the next stop codon or
       // the end of sequence (if there are no more stop codons).
       if (i + 1 == stop_codons.length || stop_codons[i + 1] == 0) {
-        last_base_of_range = getSequenceLength ();
+        last_base_of_range = sequence_end;
       } else {
         // use the last base of the next stop codon as the end of the range
         last_base_of_range = stop_codons[i + 1] + 2;
       }
 
-      if (last_base_of_range >= getSequenceLength ()) {
-        last_base_of_range = getSequenceLength ();
+      if (last_base_of_range >= sequence_end) {
+        last_base_of_range = sequence_end;
       }
-
+      
       final int aa_count = (last_base_of_range - first_base_of_range) / 3;
 
       if (aa_count >= minimum_size &&
