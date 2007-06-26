@@ -20,6 +20,7 @@
              class="Feature" groupBy="featureId">
     <result property="timeLastModified" column="timelastmodified"/>
    	<result property="featureId" column="id"/>
+	<result property="organism.organismId" column="organism_id"/>
    	<result property="featureRelationshipsForSubjectId" 
    	            resultMap="FeatureRelationship.feature_relationship"  /> 
    <!--	    
@@ -103,6 +104,7 @@
         SELECT
           timelastmodified, 
           f.feature_id AS id, 
+		  f.organism_id,
           fr.object_id,
           fr.type_id AS relation_type_id,
           fr.rank,
@@ -248,14 +250,18 @@
     </select>
 
 
-    <select id="getResidueFeatures" parameterClass="java.util.Map"
+    <select id="getResidueFeatures" parameterClass="java.lang.Integer"
             resultMap="select-feature-with-residues-result">
        SELECT
          name,
          uniquename,
          feature_id,
          type_id
-       FROM feature WHERE residues notnull AND residues NOT LIKE ''
+       FROM feature WHERE 
+		<isNotNull>
+			organism_id=$value$ AND 
+	    </isNotNull>
+		residues notnull AND residues NOT LIKE ''
        <!--
          <iterate prepend="AND" property="cvTermIds" conjunction="OR" open="(" close=")">
            type_id=#cvTermIds[]#
