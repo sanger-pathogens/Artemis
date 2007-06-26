@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.44 2007-05-31 15:32:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.45 2007-06-26 14:00:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -42,7 +42,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.44 2007-05-31 15:32:46 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.45 2007-06-26 14:00:00 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -286,7 +286,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     
     List matches;
     
-    if(fv.size() < 30)  // if just a few features to look up e.g. for gene editorr
+    if(fv.size() < 30 && fv.size() > 0)  // if just a few features to look up e.g. for gene editorr
     {
       List featureIds = new Vector(fv.size());
       for(int i=0;i<fv.size(); i++)
