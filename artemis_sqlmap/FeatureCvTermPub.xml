@@ -28,6 +28,17 @@
           </isNotNull>
        </dynamic>
     </select>
+	
+	
+	<select id="getFeatureCvTermPubBySrcFeatureId" parameterClass="java.lang.Integer"
+             resultMap="feature_cvterm_pub">
+       SELECT fcp.feature_cvterm_id, pub.* 
+       FROM feature_cvterm_pub fcp 
+       LEFT JOIN pub ON fcp.pub_id=pub.pub_id
+       LEFT JOIN feature_cvterm fc ON fcp.feature_cvterm_id=fc.feature_cvterm_id
+       WHERE feature_id IN (SELECT feature_id FROM featureloc WHERE srcfeature_id=$value$)
+    </select>
+	
     
     <!-- INSERT -->
     <insert id="insertFeatureCvTermPub" 
