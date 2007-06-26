@@ -20,15 +20,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.22 2007-02-22 19:35:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.23 2007-06-26 08:24:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
-import uk.ac.sanger.artemis.sequence.*;
+
 import uk.ac.sanger.artemis.plot.CodonUsageAlgorithm;
 
+import uk.ac.sanger.artemis.sequence.BasePattern;
+import uk.ac.sanger.artemis.sequence.BasePatternFormatException;
+import uk.ac.sanger.artemis.sequence.Bases;
+import uk.ac.sanger.artemis.sequence.MarkerRange;
+import uk.ac.sanger.artemis.sequence.MarkerRangeVector;
+import uk.ac.sanger.artemis.sequence.Strand;
 import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
@@ -41,18 +47,32 @@ import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.LocationParseException;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Cursor;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Vector;
 import java.util.Enumeration;
-import javax.swing.*;
+
+import javax.swing.Box;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+
 
 /**
  *  A Menu with commands that add new features/entries to an EntryGroup.  This
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.22 2007-02-22 19:35:24 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.23 2007-06-26 08:24:38 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -958,35 +978,39 @@ public class AddMenu extends SelectionMenu
     final int default_minimum_orf_size =
       Options.getOptions ().getMinimumORFSize ();
 
-    final TextRequester text_requester =
-      new TextRequester ("minimum open reading frame size?",
-                         18, String.valueOf (default_minimum_orf_size));
+    Box inputBox = Box.createVerticalBox();
+    inputBox.add(new JLabel("Minimum open reading frame size:"));
+    JTextField minSize = new JTextField(String.valueOf (default_minimum_orf_size));
+    inputBox.add(minSize);
+    JCheckBox useFastaBoundary = new JCheckBox("If multiple fasta use boundaries", false);
+    inputBox.add(useFastaBoundary);
+    
+    int select = JOptionPane.showConfirmDialog(getParentFrame(), 
+                                inputBox, "ORF options", 
+                                JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
+    
+    if(select == JOptionPane.CANCEL_OPTION)
+      return;
+    
+    final String requester_text = minSize.getText().trim();
 
-    text_requester.addTextRequesterListener (new TextRequesterListener () {
-      public void actionPerformed (final TextRequesterEvent event) {
-        if (event.getType () == TextRequesterEvent.CANCEL) {
-          return;
-        }
-
-        final String requester_text = event.getRequesterText ().trim ();
-
-        if (requester_text.length () == 0) {
-          return;
-        }
-
-        try {
-          final int minimum_orf_size =
+    if (requester_text.length () == 0) 
+      return;
+   
+    try
+    {
+      final int minimum_orf_size =
             Integer.valueOf (requester_text).intValue ();
 
-          markOpenReadingFrames (minimum_orf_size, empty_only);
-        } catch (NumberFormatException e) {
-          new MessageDialog (getParentFrame (),
-                             "this is not a number: " + requester_text);
-        }
-      }
-    });
-
-    text_requester.setVisible (true);
+      markOpenReadingFrames(minimum_orf_size, empty_only, 
+                            useFastaBoundary.isSelected());
+    } 
+    catch (NumberFormatException e) 
+    {
+      new MessageDialog(getParentFrame(),
+                        "this is not a number: " + requester_text);
+    }
   }
 
   /**
@@ -997,30 +1021,68 @@ public class AddMenu extends SelectionMenu
    *    segment will be marked.
    **/
   private void markOpenReadingFrames (final int minimum_orf_size,
-                                      final boolean empty_only) {
+                                      final boolean empty_only,
+                                      final boolean isMultiFasta) {
     try {
       final Entry new_entry =
         entry_group.createEntry ("ORFS_" + minimum_orf_size + '+');
 
-      final int sequence_length = entry_group.getSequenceLength ();
+      if(isMultiFasta)   // ensure ORF's do not cross fasta boundaries
+      {
+        final FeatureKeyPredicate predicate =
+          new FeatureKeyPredicate(new Key("fasta_record"));
+        final FeatureVector fasta_features = new FeatureVector ();
 
-      final Strand forward_strand =
-        entry_group.getBases ().getForwardStrand ();
+        final FeatureEnumeration feature_enum = entry_group.features ();
 
-      final MarkerRange forward_range =
-        forward_strand.makeMarkerRangeFromPositions (1, sequence_length);
+        while (feature_enum.hasMoreFeatures ()) 
+        {
+          final Feature current_feature = feature_enum.nextFeature ();
+          if (predicate.testPredicate (current_feature))
+            fasta_features.add (current_feature);
+        }
+        
+        for(int i=0;i<fasta_features.size();i++)
+        {
+          final int start = fasta_features.elementAt(i).getFirstBase();
+          final int last  = fasta_features.elementAt(i).getLastBase();
+          
+          final MarkerRange forward_range = 
+            entry_group.getBases().getForwardStrand().
+            makeMarkerRangeFromPositions(start, last);
 
-      markOpenReadingFrames (new_entry, forward_range, minimum_orf_size,
-                             empty_only);
+          markOpenReadingFrames(new_entry, forward_range, minimum_orf_size,
+                                empty_only, last, start);
 
-      final Strand backward_strand =
-        entry_group.getBases ().getReverseStrand ();
+          final MarkerRange backward_range = 
+            entry_group.getBases().getReverseStrand().
+            makeMarkerRangeFromPositions(start, last);
+          
+          markOpenReadingFrames(new_entry, backward_range, minimum_orf_size,
+                                empty_only, last, start);
+        }
+      }
+      else
+      {
+        final int sequence_length = entry_group.getSequenceLength();
 
-      final MarkerRange backward_range =
-        backward_strand.makeMarkerRangeFromPositions (1, sequence_length);
+        final Strand forward_strand = entry_group.getBases().getForwardStrand();
 
-      markOpenReadingFrames (new_entry, backward_range, minimum_orf_size,
-                             empty_only);
+        final MarkerRange forward_range = forward_strand
+            .makeMarkerRangeFromPositions(1, sequence_length);
+
+        markOpenReadingFrames(new_entry, forward_range, minimum_orf_size,
+            empty_only, sequence_length, 1);
+
+        final Strand backward_strand = entry_group.getBases()
+            .getReverseStrand();
+
+        final MarkerRange backward_range = backward_strand
+            .makeMarkerRangeFromPositions(1, sequence_length);
+
+        markOpenReadingFrames(new_entry, backward_range, minimum_orf_size,
+            empty_only, sequence_length, 1);
+      }
     } catch (OutOfRangeException e) {
       throw new Error ("internal error - unexpected OutOfRangeException");
     }
@@ -1065,7 +1127,7 @@ public class AddMenu extends SelectionMenu
             getSelection ().getMarkerRange ();
 
           markOpenReadingFrames (new_entry, selection_range, minimum_orf_size,
-                                 false);
+                                 false, entry_group.getSequenceLength(), 1);
 
 
         } catch (NumberFormatException e) {
@@ -1093,9 +1155,12 @@ public class AddMenu extends SelectionMenu
   private void markOpenReadingFrames (final Entry entry,
                                       final MarkerRange search_range,
                                       final int minimum_orf_size,
-                                      final boolean empty_only) {
+                                      final boolean empty_only,
+                                      final int sequence_end,
+                                      final int sequence_start) {
     final MarkerRange [] forward_orf_ranges =
-      Strand.getOpenReadingFrameRanges (search_range, minimum_orf_size);
+      Strand.getOpenReadingFrameRanges (search_range, minimum_orf_size, sequence_end,
+          sequence_start);
 
     String uniquename = promptForUniquename(entry_group, search_range.isForwardMarker());
     
