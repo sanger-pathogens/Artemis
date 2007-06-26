@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Strand.java,v 1.6 2007-06-26 08:23:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Strand.java,v 1.7 2007-06-26 13:59:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -39,7 +39,7 @@ import org.biojava.bio.symbol.IllegalSymbolException;
  *  what direction the Strand represents.
  *
  *  @author Kim Rutherford
- *  @version $Id: Strand.java,v 1.6 2007-06-26 08:23:19 tjc Exp $
+ *  @version $Id: Strand.java,v 1.7 2007-06-26 13:59:04 tjc Exp $
  **/
 
 public class Strand {
@@ -184,7 +184,7 @@ public class Strand {
 
       try {
         sequence_range =
-          new Range (1 + frame_offset, search_strand.getSequenceLength ());
+          new Range (sequence_start + frame_offset, search_strand.getSequenceLength ());
       } catch (OutOfRangeException e) {
         throw new Error ("internal error - unexpected exception: " + e);
       }
@@ -446,14 +446,14 @@ public class Strand {
       // an index of -1 indicates that the start of this ORF is the first base
       // of the sequence (offset to be in the correct frame).
       if (i == -1) {
-        first_base_of_range = 1 + frame_offset;
+        first_base_of_range = sequence_start + frame_offset;
       } else {
         // use the next base after the stop codon as the start of the range
         first_base_of_range = stop_codons[i] + 3;
       }
 
       if (first_base_of_range >= sequence_end ||
-          first_base_of_range <= sequence_start) {
+          first_base_of_range < sequence_start) {
         continue;
       }
 
