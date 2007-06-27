@@ -115,6 +115,30 @@ public class JdbcDAO extends GmodDAO
     return null;
   }
   
+  public List getFeatureCvTermDbXRefBySrcFeatureId(int srcFeatureId)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public List getFeatureCvTermPubBySrcFeatureId(int srcfeature_id)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public List getFeatureCvTermsBySrcFeatureId(int srcFeatureId)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public List getResidueFeatures(Integer organismId)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
   /**
    * Return the feature corresponding to this feature_id 
    * 
@@ -2182,10 +2206,6 @@ public class JdbcDAO extends GmodDAO
       throw new RuntimeException(sqle);
     }
   }
-
-
-
-
 
   /**
    * Takes a list and creates a new one merging all feature objects

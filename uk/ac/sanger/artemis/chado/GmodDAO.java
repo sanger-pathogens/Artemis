@@ -66,6 +66,10 @@ public abstract class GmodDAO
   ////// SchemaDaoI
   //////
   //////
+  public abstract List getResidueFeatures(final Integer organismId);
+  public abstract List getFeatureCvTermsBySrcFeatureId(int srcFeatureId);
+  public abstract List getFeatureCvTermDbXRefBySrcFeatureId(int srcFeatureId);
+  public abstract List getFeatureCvTermPubBySrcFeatureId(int srcfeature_id);
   public abstract List getFeaturePubsBySrcFeatureId(int srcFeatureId);
   
   //////

@@ -98,6 +98,16 @@ public class IBatisDAO extends GmodDAO
   ////// SequenceDaoI
   //////
   //////
+  public List getResidueFeatures(final Integer organismId)
+  {
+    return sqlMap.queryForList("getResidueFeatures",organismId);
+  }
+  
+  public List getFeatureCvTermsBySrcFeatureId(int srcFeatureId)
+  {
+    return sqlMap.queryForList("getFeatureCvTermsBySrcFeatureId",
+                               new Integer(srcFeatureId));
+  }
   
   public List getFeaturePubsBySrcFeatureId(final int srcFeatureId)
   {
@@ -318,6 +328,7 @@ public class IBatisDAO extends GmodDAO
     return sqlMap.queryForList("getFeatureDbXRef", feature);  
   }
   
+  
   /**
    * Return the list of FeatureSynonyms for a given Feature, <b>specified by name</b>, or all if 
    * <code>null</code> is passed
@@ -400,6 +411,20 @@ public class IBatisDAO extends GmodDAO
   }
   
   /**
+   * Get a list of all FeatureCvTermDbXRef's for a Feature, or a list
+   * of all FeatureCvTermDbXRef's if Feature is null.
+   * @param feature the Feature to retrieve associated FeatureCvTermDbXRef's
+   * @return the FeatureCvTermDbXRef's
+   */
+  public List getFeatureCvTermDbXRefBySrcFeatureId(int srcFeatureId)
+  {
+    return sqlMap.queryForList("getFeatureCvTermDbXRefBySrcFeatureId",
+        new Integer(srcFeatureId));
+  }
+  
+  
+  
+  /**
    * Get a list of all FeatureCvTermPub's for a Feature, or a list
    * of all FeatureCvTermPub's if Feature is null.
    * @param feature the Feature to retrieve associated FeatureCvTermPub's
@@ -409,6 +434,20 @@ public class IBatisDAO extends GmodDAO
   {
     return sqlMap.queryForList("getFeatureCvTermPubByFeature", feature);
   }
+  
+  
+  /**
+   * Get a list of all FeatureCvTermPub's for a Feature, or a list
+   * of all FeatureCvTermPub's if Feature is null.
+   * @param feature the Feature to retrieve associated FeatureCvTermPub's
+   * @return the FeatureCvTermPub's
+   */
+  public List getFeatureCvTermPubBySrcFeatureId(final int srcfeature_id)
+  {
+    return sqlMap.queryForList("getFeatureCvTermPubBySrcFeatureId", 
+                               new Integer(srcfeature_id));
+  }
+  
   
   public List getProducts()
   {
