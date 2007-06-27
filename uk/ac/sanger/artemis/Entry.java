@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.7 2007-02-01 11:39:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.8 2007-06-27 13:09:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -37,8 +37,6 @@ import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.LocationParseException;
 import uk.ac.sanger.artemis.io.QualifierVector;
-import uk.ac.sanger.artemis.io.InvalidKeyException;
-import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
@@ -47,7 +45,7 @@ import java.util.NoSuchElementException;
 import java.util.Vector;
 import java.io.IOException;
 import java.io.File;
-import java.io.Reader;
+
 
 /**
  *  This class is a wrapper for the io.Entry class which contains the state
@@ -59,7 +57,7 @@ import java.io.Reader;
  *  possible events.)
  *
  *  @author Kim Rutherford
- *  @version $Id: Entry.java,v 1.7 2007-02-01 11:39:11 tjc Exp $
+ *  @version $Id: Entry.java,v 1.8 2007-06-27 13:09:14 tjc Exp $
  **/
 
 public class Entry implements FeatureChangeListener, Selectable 
@@ -129,6 +127,20 @@ public class Entry implements FeatureChangeListener, Selectable
     createDianaFeatures();
   }
 
+  
+
+  /**
+   *  Create a new Entry object from a uk.ac.sanger.artemis.io.Entry
+   *  object.  A new Bases object will be created for the new Entry.
+   *  @param embl_entry a reference to an embl.Entry object containing the
+   *    underlying data for new object
+   **/
+  public Entry(final uk.ac.sanger.artemis.io.DatabaseDocumentEntry embl_entry)
+  {
+    this.embl_entry = embl_entry;
+  }
+  
+  
   /**
    *  Returns true if and only if this entry is read only.
    **/
