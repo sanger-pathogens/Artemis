@@ -381,8 +381,6 @@ abstract class AbstractMatchTable
          if(srscmd.indexOf("ebi.ac.uk") > -1)
            srscmd = srscmd + "+-vn+2";
          
-         
-         System.out.println(srscmd);
          BrowserControl.displayURL(srscmd);
        }
        else
@@ -394,7 +392,7 @@ abstract class AbstractMatchTable
 
           if(entry != null)
           {
-            entry.setReadOnly(true);
+            //entry.setReadOnly(true);
             GeneEdit.showGeneEditor(reference[0], reference[1], entry);
           }
         }
