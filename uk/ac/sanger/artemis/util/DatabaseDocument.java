@@ -51,6 +51,7 @@ import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.organism.Organism;
 import org.gmod.schema.pub.PubDbXRef;
 import org.gmod.schema.pub.Pub;
 
@@ -539,9 +540,15 @@ public class DatabaseDocument extends Document
                  dao.getFeatureDbXRefsByFeatureUniquename(null));
     Hashtable synonym = getAllFeatureSynonyms(dao, null);
 
-    Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, null);
-    Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, null);
-    Hashtable featureCvTermPubs = getFeatureCvTermPub(dao, null);
+    Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, 
+        dao.getFeatureCvTermsBySrcFeatureId(srcfeature_id));
+    
+    
+    Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, 
+        dao.getFeatureCvTermDbXRefBySrcFeatureId(srcfeature_id));
+    
+    Hashtable featureCvTermPubs = getFeatureCvTermPub(dao, 
+        dao.getFeatureCvTermPubBySrcFeatureId(srcfeature_id));
     
     Hashtable featurePubs = getFeaturePubsBySrcFeatureId(dao,srcfeature_id);
     
@@ -647,10 +654,8 @@ public class DatabaseDocument extends Document
    * @return
    */
   private Hashtable getFeatureCvTermsByFeature(final GmodDAO dao, 
-                                               final Feature chadoFeature)
+                                               final List list)
   {
-    List list = dao.getFeatureCvTermsByFeature(chadoFeature);
-    
     Hashtable featureCvTerms = new Hashtable();
     Integer featureId;
     List value;
@@ -678,9 +683,8 @@ public class DatabaseDocument extends Document
    * @param chadoFeature null if we want all
    * @return
    */
-  private Hashtable getFeatureCvTermDbXRef(final GmodDAO dao, final Feature chadoFeature)
+  private Hashtable getFeatureCvTermDbXRef(final GmodDAO dao, final List list)
   {
-    List list = dao.getFeatureCvTermDbXRefByFeature(chadoFeature);
     if(list == null || list.size() == 0)
       return null;
     
@@ -709,9 +713,8 @@ public class DatabaseDocument extends Document
   }
   
   private Hashtable getFeatureCvTermPub(final GmodDAO dao,
-                                        final Feature chadoFeature)
+                                        final List list)
   {
-    List list = dao.getFeatureCvTermPubByFeature(chadoFeature);
     if(list == null || list.size() == 0)
       return null;
     
@@ -834,9 +837,15 @@ public class DatabaseDocument extends Document
         dao.getFeatureDbXRefsByFeatureUniquename(chadoFeature.getUniqueName()));
     Hashtable synonym = getAllFeatureSynonyms(dao, chadoFeature.getUniqueName());
     
-    Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, chadoFeature);
-    Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, chadoFeature);
-    Hashtable featureCvTermPubs = getFeatureCvTermPub(dao, chadoFeature);
+    Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, 
+                                  dao.getFeatureCvTermsByFeature(chadoFeature));
+    
+    Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, 
+                             dao.getFeatureCvTermDbXRefByFeature(chadoFeature));
+    
+    Hashtable featureCvTermPubs = getFeatureCvTermPub(dao,
+                             dao.getFeatureCvTermPubByFeature(chadoFeature));
+    
     Hashtable featurePubs = getFeaturePubsBySrcFeatureId(dao,srcFeatureId);
     List pubDbXRefs= dao.getPubDbXRef();
     chadoToGFF(chadoFeature, parentName, dbxrefs, synonym, featureCvTerms,
@@ -1639,14 +1648,12 @@ public class DatabaseDocument extends Document
     try
     { 
       GmodDAO dao = getDAO();
-      schema_list = dao.getSchema();  //.getOrganisms();
+      schema_list = dao.getSchema(); 
       
       Iterator it = schema_list.iterator();
         
       while(it.hasNext())
       {
-        //Organism organism = (Organism)it.next();
-        //schema = organism.getCommonName();
         schema = (String)it.next();
         
         reset((String)getLocation(),  schema);
@@ -1670,6 +1677,89 @@ public class DatabaseDocument extends Document
         }
         catch(RuntimeException e){}
         catch(java.sql.SQLException sqlExp){}
+      }
+      
+    }
+    catch(RuntimeException sqlExp)
+    {
+      JOptionPane.showMessageDialog(null, "SQL Problems...\n"+
+                                    sqlExp.getMessage(), 
+                                    "SQL Error",
+                                    JOptionPane.ERROR_MESSAGE);
+      
+      logger4j.debug(sqlExp.getMessage());
+      //sqlExp.printStackTrace();
+    }
+    catch(ConnectException exp)
+    {
+      JOptionPane.showMessageDialog(null, "Connection Problems...\n"+
+            exp.getMessage(), 
+            "Connection Error",
+            JOptionPane.ERROR_MESSAGE);
+      logger4j.debug(exp.getMessage());
+      throw exp;
+    }
+    catch(java.sql.SQLException sqlExp)
+    {
+      JOptionPane.showMessageDialog(null, "SQL Problems....\n"+
+                                    sqlExp.getMessage(), 
+                                    "SQL Error",
+                                    JOptionPane.ERROR_MESSAGE);
+      logger4j.debug(sqlExp.getMessage());
+      throw sqlExp;
+    }
+    
+    return db;
+  }
+  
+  
+  /**
+   * Create a hashtable of the available entries with residues.
+   * @return a <code>Hashtable</code> of the <code>String</code>
+   *          representation (schema-type-feature_name) and the
+   *          corresponding feature_id
+   * @throws ConnectException
+   * @throws java.sql.SQLException
+   */
+  public HashMap getDatabaseEntriesSingleSchemas()
+                   throws ConnectException, java.sql.SQLException
+  {
+    HashMap db    = null;
+    try
+    { 
+      GmodDAO dao = getDAO();
+      schema_list = dao.getOrganisms();
+      Iterator it = schema_list.iterator();
+      
+      while(it.hasNext())
+      {
+        Organism organism = (Organism)it.next();
+        
+        try
+        {
+          List list_residue_features = dao.getResidueFeatures(
+              new Integer(organism.getOrganismId()));
+          
+          Iterator it_residue_features = list_residue_features.iterator();
+          while(it_residue_features.hasNext())
+          {
+            Feature feature = (Feature)it_residue_features.next();
+            String typeName = getCvtermName(feature.getCvTerm().getCvTermId(), getDAO(), gene_builder); 
+                  
+            if(db == null)
+              db = new HashMap();
+            db.put(organism.getCommonName() + " - " + typeName + " - " + feature.getUniqueName(),
+                   Integer.toString(feature.getFeatureId()));         
+          }
+        }
+        catch(RuntimeException e)
+        {
+          e.printStackTrace();
+        }
+        catch(java.sql.SQLException sqlExp)
+        {
+          sqlExp.printStackTrace();
+        }
       }
       
     }
