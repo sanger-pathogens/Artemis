@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.24 2007-06-26 14:48:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.25 2007-06-27 10:05:37 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -72,7 +72,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.24 2007-06-26 14:48:46 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.25 2007-06-27 10:05:37 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -1046,20 +1046,21 @@ public class AddMenu extends SelectionMenu
         {
           final int start = fasta_features.elementAt(i).getFirstBase();
           final int last  = fasta_features.elementAt(i).getLastBase();
-          
+
           final MarkerRange forward_range = 
             entry_group.getBases().getForwardStrand().
             makeMarkerRangeFromPositions(start, last);
 
           markOpenReadingFrames(new_entry, forward_range, minimum_orf_size,
                                 empty_only, last, start);
-
+          
+          int length = entry_group.getBases().getLength();
           final MarkerRange backward_range = 
             entry_group.getBases().getReverseStrand().
-            makeMarkerRangeFromPositions(start, last);
-          
+            makeMarkerRangeFromPositions((length-last+1), (length-start+1));
+
           markOpenReadingFrames(new_entry, backward_range, minimum_orf_size,
-                                empty_only, last, start);
+                                empty_only, length-start+1, length-last+1);
         }
       }
       else
