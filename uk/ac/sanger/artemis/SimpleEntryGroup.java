@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleEntryGroup.java,v 1.5 2006-08-07 14:57:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleEntryGroup.java,v 1.6 2007-06-27 13:12:34 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -47,7 +47,7 @@ import java.util.NoSuchElementException;
  *  once.  Objects of this class act a bit like single Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: SimpleEntryGroup.java,v 1.5 2006-08-07 14:57:10 tjc Exp $
+ *  @version $Id: SimpleEntryGroup.java,v 1.6 2007-06-27 13:12:34 tjc Exp $
  **/
 
 public class SimpleEntryGroup extends EntryVector
@@ -95,6 +95,12 @@ public class SimpleEntryGroup extends EntryVector
     addEntryGroupChangeListener(getActionController());
   }
 
+  public SimpleEntryGroup() 
+  {
+    addFeatureChangeListener(getActionController());
+    addEntryGroupChangeListener(getActionController());
+  }
+  
   /**
    *  Returns true if and only if there are any unsaved changes in any of the
    *  Entry objects in this EntryGroup.
