@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.25 2007-03-15 09:46:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.26 2007-06-27 13:11:47 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.25 2007-03-15 09:46:20 tjc Exp $
+ *  @version $Id: Feature.java,v 1.26 2007-06-27 13:11:47 tjc Exp $
  **/
 
 public class Feature
@@ -901,19 +901,23 @@ public class Feature
     old_location = getLocation();
     final QualifierVector old_qualifiers = getQualifiers().copy();
 
-    final int sequence_length = getEntry().getBases().getLength();
-
-    if(new_location != null) 
+    final int sequence_length;
+    
+    if(getEntry().getBases() !=  null)
     {
-      final Range span = new_location.getTotalRange();
+      sequence_length = getEntry().getBases().getLength();
 
-      if(span.getEnd() > sequence_length ||
-         span.getStart() < 1) 
+      if(new_location != null)
       {
-        throw new OutOfRangeException(new_location.toString());
+        final Range span = new_location.getTotalRange();
+
+        if(span.getEnd() > sequence_length || span.getStart() < 1)
+        {
+          throw new OutOfRangeException(new_location.toString());
+        }
       }
     }
-
+  
     if(datestamp == null ||
        !(getEmblFeature() instanceof DateStampFeature)) 
     {
@@ -929,7 +933,7 @@ public class Feature
 
     resetCache();
 
-    if(new_location != old_location) 
+    if(new_location != old_location && segments != null) 
       reexamineSegments();
 
     // now inform the listeners that a change has occured
