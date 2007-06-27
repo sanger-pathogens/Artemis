@@ -48,7 +48,11 @@ import javax.swing.JMenuItem;
 import javax.swing.Box;
 import javax.swing.UIManager;
 
+import uk.ac.sanger.artemis.Entry;
+import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.Selection;
+import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.chado.*;
 import uk.ac.sanger.artemis.io.FeatureVector;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
@@ -131,7 +135,7 @@ public class GeneEdit
 
     Box xbox = Box.createHorizontalBox();
     final JTextField gene_text = new JTextField(20);
-    gene_text.setText("SPBC646.13"); //"SPAC212.04c");
+    gene_text.setText("BPSS0002"); //"SPAC212.04c");
     xbox.add(gene_text);
     xbox.add(schema_list);
     gene_text.selectAll();
@@ -159,7 +163,7 @@ public class GeneEdit
           {
             DatabaseDocumentEntry entry = makeEntry(schema, search_gene,
                                                     location, pfield);
-            entry.setReadOnly(true);
+            //entry.setReadOnly(true);
             showGeneEditor(schema, search_gene, entry);
             return null;
           }
@@ -242,27 +246,41 @@ public class GeneEdit
 
   public static void showGeneEditor(final String schema,
                                     final String search_gene,
-                                    final DatabaseDocumentEntry entry)
+                                    final DatabaseDocumentEntry dbentry)
   {
-    FeatureVector features = entry.getAllFeatures();
-    GFFStreamFeature gff_gene_feature = null;
+    FeatureVector features = dbentry.getAllFeatures();
+    Feature gff_gene_feature = null;
 
+    SimpleEntryGroup entry_group = new SimpleEntryGroup();
+    Entry entry = new Entry(dbentry);
+    
     for(int i = 0; i < features.size(); i++)
     {
-      GFFStreamFeature feature = (GFFStreamFeature) features.get(i);
-      String uniquename = (String) feature.getQualifierByName("ID")
+      GFFStreamFeature this_embl_feature = (GFFStreamFeature) features.get(i);
+      String uniquename = (String) this_embl_feature.getQualifierByName("ID")
           .getValues().get(0);
 
+      Feature this_feature;
+      
+      if(this_embl_feature.getUserData() == null)
+        this_feature = new Feature(this_embl_feature);
+      else
+        this_feature = (Feature)this_embl_feature.getUserData();
+      this_feature.setEntry(entry);
+      
       if(search_gene.equals(uniquename))
-      {
-        gff_gene_feature = feature;
-        break;
-      }
+        gff_gene_feature = this_feature;
     }
 
-    uk.ac.sanger.artemis.Feature feature = new uk.ac.sanger.artemis.Feature(
-        gff_gene_feature);
-    new GeneBuilderFrame(feature, null, null, null); 
+    Selection selection = new Selection(null);
+    selection.add(gff_gene_feature);
+    
+    entry_group.addElement(gff_gene_feature.getEntry());
+    
+    ChadoTransactionManager ctm = new ChadoTransactionManager();
+    entry_group.addFeatureChangeListener(ctm);
+    
+    new GeneBuilderFrame(gff_gene_feature, entry_group, selection, null); 
   }
   
   /**

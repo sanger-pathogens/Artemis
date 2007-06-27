@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.27 2007-06-20 15:22:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.28 2007-06-27 12:57:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -53,7 +53,6 @@ import uk.ac.sanger.artemis.GotoEventSource;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.components.FeatureEdit;
 import uk.ac.sanger.artemis.components.Utilities;
-import uk.ac.sanger.artemis.io.GFFEntryInformation;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
@@ -81,7 +80,7 @@ public class GeneBuilderFrame extends JFrame
   
   public GeneBuilderFrame(final Feature feature,
                           final EntryGroup entry_group,
-                          Selection selection,
+                          final Selection selection,
                           final GotoEventSource goto_event_source)
   {
     super("Artemis Gene Builder: " + feature.getIDString() +
@@ -115,9 +114,6 @@ public class GeneBuilderFrame extends JFrame
     JScrollPane jsp_tree = new JScrollPane(tree);
     jsp_tree.setPreferredSize( new Dimension(150, jsp_tree.getPreferredSize().height) );
     
-    if(selection == null)
-      selection = new Selection(null);
-    
     viewer = new GeneViewerPanel(
                 gff_feature.getChadoGene(), selection, entry_group, this, status_line);
 
@@ -150,13 +146,10 @@ public class GeneBuilderFrame extends JFrame
     JSplitPane all = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
     all.setTopComponent(top);
     
-    if(entry_group != null)
-      feature_editor = new FeatureEdit(feature, entry_group,
+    feature_editor = new FeatureEdit(feature, entry_group,
                         selection, goto_event_source, this);
-    else
-      feature_editor = new FeatureEdit(feature, null,
-          null, null, this, new GFFEntryInformation());
-    
+   
+      
     tabpane = new JTabbedPane();
     tabpane.addTab("Annotation", feature_editor);
     setTabTitle();

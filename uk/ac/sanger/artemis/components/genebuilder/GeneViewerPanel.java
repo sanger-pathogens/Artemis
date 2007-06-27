@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.52 2007-05-31 15:30:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.53 2007-06-27 12:57:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -1678,7 +1678,8 @@ public class GeneViewerPanel extends JPanel
         click_segment_marker = null;
         
         if(Options.getOptions().canDirectEdit() &&
-           !clicked_feature.isReadOnly())
+           !clicked_feature.isReadOnly() &&
+           clicked_feature.getEntry().getBases() != null)
          {
            // search the feature to find if the start Marker of any of the
            // segments matches the start Marker of new_click_range or if an end
