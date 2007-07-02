@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.7 2007-06-20 10:03:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.8 2007-07-02 14:57:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -64,6 +64,7 @@ import java.io.*;
 import java.net.ConnectException;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -383,7 +384,7 @@ public class DatabaseJPanel extends JPanel
    * @param schema    <code>List</code>
    * @param organism  sequences collection
    */
-  private void createNodes(DatabaseTreeNode top, List schema,
+  private void createNodes(DatabaseTreeNode top, List schemas,
                            HashMap entries)
   {
     DatabaseTreeNode schema_node;
@@ -393,35 +394,42 @@ public class DatabaseJPanel extends JPanel
     final Object v_organism[] = entries.keySet().toArray();
     
     final int v_organism_size = v_organism.length;
-    Arrays.sort(v_organism);
+    Arrays.sort(v_organism, new Comparator()
+    {
+      public int compare(Object o1, Object o2)
+      {
+        return ((String)o1).compareToIgnoreCase( (String)o2 );
+      } 
+    });
     
     int start = 0;
     boolean seen;
     
-    for(int i=0; i<schema.size(); i++)
+    for(int i=0; i<schemas.size(); i++)
     {
       int nchild = 0;
       String name;
       seen = false;
       
-      if(schema.get(i) instanceof String)
-        name = (String)schema.get(i);
+      if(schemas.get(i) instanceof String)
+        name = (String)schemas.get(i);
       else
-        name = ((Organism)schema.get(i)).getCommonName();
-      
+        name = ((Organism)schemas.get(i)).getCommonName();
+       
       schema_node = new DatabaseTreeNode(name);
       final HashMap seq_type_node = new HashMap();
 
       for(int j = start; j < v_organism_size; j++)
       {
         String seq_name  = (String)v_organism[j];
-        
-        if(seq_name.startsWith(name))
+
+        if(seq_name.toLowerCase().startsWith(name.toLowerCase()))
         {
-          String featureId = (String)entries.get(seq_name);
+          final String featureId = (String)entries.get(seq_name);
           int ind1 = seq_name.indexOf("- ");
           int ind2 = seq_name.lastIndexOf("- ");
 
+          final String schema = seq_name.substring(0, ind1).trim();
           String type = seq_name.substring(ind1 + 2, ind2 - 1);
           seq_name = seq_name.substring(ind2 + 2);
 
@@ -435,9 +443,10 @@ public class DatabaseJPanel extends JPanel
             typ_node = (DatabaseTreeNode) seq_type_node.get(type);
 
           seq_node = new DatabaseTreeNode(seq_name,
-                                          featureId, name);
+                                          featureId, schema);
           typ_node.add(seq_node);
           nchild++;
+          
           start = j;
           seen = true;
         }

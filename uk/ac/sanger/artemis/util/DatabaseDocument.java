@@ -1640,7 +1640,7 @@ public class DatabaseDocument extends Document
    * @throws ConnectException
    * @throws java.sql.SQLException
    */
-  public HashMap getDatabaseEntries()
+  public HashMap getDatabaseEntriesMultiSchema()
                    throws ConnectException, java.sql.SQLException
   {
     String schema = null;
@@ -1715,13 +1715,14 @@ public class DatabaseDocument extends Document
   
   /**
    * Create a hashtable of the available entries with residues.
+   * 
    * @return a <code>Hashtable</code> of the <code>String</code>
    *          representation (schema-type-feature_name) and the
    *          corresponding feature_id
    * @throws ConnectException
    * @throws java.sql.SQLException
    */
-  public HashMap getDatabaseEntriesSingleSchemas()
+  public HashMap getDatabaseEntries()
                    throws ConnectException, java.sql.SQLException
   {
     HashMap db    = null;
@@ -1730,10 +1731,29 @@ public class DatabaseDocument extends Document
       GmodDAO dao = getDAO();
       schema_list = dao.getOrganisms();
       Iterator it = schema_list.iterator();
+      final List pg_schemas = dao.getSchema(); 
+      
       
       while(it.hasNext())
       {
-        Organism organism = (Organism)it.next();
+        final Organism organism = (Organism)it.next();
+        String orgName = organism.getCommonName();
+        
+        // search to see if this is in its own schema
+        Iterator schemasIt = pg_schemas.iterator();
+        while(schemasIt.hasNext())
+        {
+          schema = (String)schemasIt.next();
+          
+          if( schema.equalsIgnoreCase(organism.getCommonName()) )
+          {
+            reset((String)getLocation(),  schema);
+            dao = getDAO();
+            orgName = schema;
+
+            break;
+          }
+        }
         
         try
         {
@@ -1744,21 +1764,18 @@ public class DatabaseDocument extends Document
           while(it_residue_features.hasNext())
           {
             Feature feature = (Feature)it_residue_features.next();
-            String typeName = getCvtermName(feature.getCvTerm().getCvTermId(), getDAO(), gene_builder); 
+            String typeName = getCvtermName(feature.getCvTerm().getCvTermId(),
+                                            dao, gene_builder); 
                   
             if(db == null)
               db = new HashMap();
-            db.put(organism.getCommonName() + " - " + typeName + " - " + feature.getUniqueName(),
-                   Integer.toString(feature.getFeatureId()));         
+            db.put(orgName + " - " + typeName + " - " + feature.getUniqueName(),
+                   Integer.toString(feature.getFeatureId())); 
           }
         }
         catch(RuntimeException e)
         {
           e.printStackTrace();
-        }
-        catch(java.sql.SQLException sqlExp)
-        {
-          sqlExp.printStackTrace();
         }
       }
       
