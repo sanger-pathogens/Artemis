@@ -33,9 +33,11 @@
         <isGreaterThan property="featureLoc.featureBySrcFeatureId.featureId" compareValue="0"> 
              f.feature_id=$featureLoc.featureBySrcFeatureId.featureId$
         </isGreaterThan>
-        <isGreaterThan property="featureId" compareValue="0"> 
-             f.feature_id=$featureId$
-        </isGreaterThan>
+		<isEqual property="featureLoc.featureBySrcFeatureId.featureId" compareValue="0">
+			<isGreaterThan property="featureId" compareValue="0"> 
+				f.feature_id=$featureId$
+			</isGreaterThan>
+		</isEqual>
     </select>
  
 </sqlMap> 
