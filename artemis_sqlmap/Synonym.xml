@@ -81,6 +81,15 @@
       </isNotNull>
     </select>
     
+	<select id="getFeatureSynonymsBySrcFeatureId" resultMap="select-alias"
+            parameterClass="java.lang.Integer">
+      SELECT fs.*, s.name, s.synonym_sgml, s.type_id
+      FROM feature_synonym fs 
+      LEFT JOIN feature f ON f.feature_id=fs.feature_id 
+      LEFT JOIN synonym s ON fs.synonym_id=s.synonym_id
+      WHERE f.feature_id IN (SELECT feature_id FROM featureloc WHERE srcfeature_id=$value$)
+    </select>
+	
     <select id="getLazyFeatureSynonymsByUniquename" resultMap="select-alias-part-lazy"
             parameterClass="FeatureSynonym">
       SELECT fs.* 
@@ -90,6 +99,7 @@
           WHERE uniquename=#feature.uniqueName#
       </isNotNull>
     </select>
+	
     
     <select id="getFeatureSynonymsByName" resultMap="select-alias-lazy"
             parameterClass="Synonym">
