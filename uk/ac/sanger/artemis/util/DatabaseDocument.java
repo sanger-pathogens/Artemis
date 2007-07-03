@@ -537,8 +537,9 @@ public class DatabaseDocument extends Document
     
     // get all dbrefs & synonyms
     Hashtable dbxrefs = IBatisDAO.mergeDbXRef(
-                 dao.getFeatureDbXRefsByFeatureUniquename(null));
-    Hashtable synonym = getAllFeatureSynonyms(dao, null);
+                 dao.getFeatureDbXRefsBySrcFeatureId(srcfeature_id));
+    Hashtable synonym = getAllFeatureSynonyms(
+             dao.getFeatureSynonymsBySrcFeatureId(srcfeature_id));
 
     Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, 
         dao.getFeatureCvTermsBySrcFeatureId(srcfeature_id));
@@ -589,11 +590,8 @@ public class DatabaseDocument extends Document
    * feature_synonym
    * 
    */
-  private Hashtable getAllFeatureSynonyms(final GmodDAO dao, 
-          final String uniquename) 
-  {
-    List list = dao.getFeatureSynonymsByFeatureUniquename(uniquename);  
-    
+  private Hashtable getAllFeatureSynonyms(final List list) 
+  {   
     Hashtable synonym = new Hashtable();
     Integer featureId;
     List value;
@@ -835,7 +833,9 @@ public class DatabaseDocument extends Document
         chadoFeature.getFeatureLocsForFeatureId()), srcFeatureId);
     Hashtable dbxrefs = IBatisDAO.mergeDbXRef(
         dao.getFeatureDbXRefsByFeatureUniquename(chadoFeature.getUniqueName()));
-    Hashtable synonym = getAllFeatureSynonyms(dao, chadoFeature.getUniqueName());
+    
+    Hashtable synonym = getAllFeatureSynonyms( 
+        dao.getFeatureSynonymsByFeatureUniquename(chadoFeature.getUniqueName()));
     
     Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, 
                                   dao.getFeatureCvTermsByFeature(chadoFeature));
