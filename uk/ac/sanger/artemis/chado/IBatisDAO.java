@@ -312,6 +312,11 @@ public class IBatisDAO extends GmodDAO
       sqlMap.queryForList("getFeatureSynonymsByName", synonym);
   }
   
+  public List getFeatureSynonymsBySrcFeatureId(final int srcFeatureId)
+  {
+    return
+      sqlMap.queryForList("getFeatureSynonymsBySrcFeatureId", new Integer(srcFeatureId));
+  }
   
   /**
    * Return all the FeatureDbXRefs for a given feature, <b>specified by name</b>, or all if 
@@ -326,6 +331,11 @@ public class IBatisDAO extends GmodDAO
     feature.setUniqueName(uniqueName);
       
     return sqlMap.queryForList("getFeatureDbXRef", feature);  
+  }
+  
+  public List getFeatureDbXRefsBySrcFeatureId(final int srcFeatureId)
+  {
+    return sqlMap.queryForList("getFeatureDbXRefsBySrcFeatureId", new Integer(srcFeatureId));
   }
   
   

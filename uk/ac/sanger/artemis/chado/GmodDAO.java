@@ -71,6 +71,8 @@ public abstract class GmodDAO
   public abstract List getFeatureCvTermDbXRefBySrcFeatureId(int srcFeatureId);
   public abstract List getFeatureCvTermPubBySrcFeatureId(int srcfeature_id);
   public abstract List getFeaturePubsBySrcFeatureId(int srcFeatureId);
+  public abstract List getFeatureSynonymsBySrcFeatureId(int srcFeatureId);
+  public abstract List getFeatureDbXRefsBySrcFeatureId(int srcFeatureId);
   
   //////
   ////// GeneralDaoI
