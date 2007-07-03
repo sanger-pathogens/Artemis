@@ -537,9 +537,9 @@ public class DatabaseDocument extends Document
     
     // get all dbrefs & synonyms
     Hashtable dbxrefs = IBatisDAO.mergeDbXRef(
-                 dao.getFeatureDbXRefsBySrcFeatureId(srcfeature_id));
+        dao.getFeatureDbXRefsBySrcFeatureId(srcfeature_id));
     Hashtable synonym = getAllFeatureSynonyms(
-             dao.getFeatureSynonymsBySrcFeatureId(srcfeature_id));
+        dao.getFeatureSynonymsBySrcFeatureId(srcfeature_id));
 
     Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, 
         dao.getFeatureCvTermsBySrcFeatureId(srcfeature_id));
