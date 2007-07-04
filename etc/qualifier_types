@@ -43,7 +43,7 @@ direction        yes        list    LEFT RIGHT BOTH
 ecotype          no         "text"
 EC_number        no         "text"
 environmental_sample   no   none
-estimated_length no         "text"
+estimated_length no         text
 evidence         yes        list    EXPERIMENTAL NOT_EXPERIMENTAL
 exception        no         "text"
 focus            no         none
