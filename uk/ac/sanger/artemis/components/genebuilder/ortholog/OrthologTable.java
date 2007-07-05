@@ -27,6 +27,9 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.Vector;
@@ -34,6 +37,8 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -45,6 +50,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
+import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
@@ -58,6 +64,7 @@ public class OrthologTable extends AbstractMatchTable
   private JButton infoLevelButton = new JButton("Details");
   private Qualifier origQualifier;
   private boolean isChanged = false;
+  private JPopupMenu popupMenu = new JPopupMenu();
 
   //
   // column headings
@@ -75,6 +82,8 @@ public class OrthologTable extends AbstractMatchTable
                           final Qualifier origQualifier)
   {
     this.origQualifier = origQualifier;
+    
+    createPopupMenu(doc);
     
     infoLevelButton.setOpaque(false);
     tableData.setSize(NUMBER_COLUMNS);
@@ -117,7 +126,25 @@ public class OrthologTable extends AbstractMatchTable
       }
     });
     
-    
+    orthologTable.addMouseListener(new MouseAdapter() 
+    {
+      public void mousePressed(MouseEvent e) 
+      {
+        showPopup(e);
+      }
+
+      public void mouseReleased(MouseEvent e) 
+      {
+        showPopup(e);
+      }
+
+      private void showPopup(MouseEvent e)
+      {
+        if(e.isPopupTrigger()) 
+          popupMenu.show(e.getComponent(), e.getX(), e.getY());
+      }
+    });
+
     orthologTable.setColumnSelectionAllowed(false);
     orthologTable.setRowSelectionAllowed(true);
     orthologTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -150,6 +177,41 @@ public class OrthologTable extends AbstractMatchTable
     col = orthologTable.getColumn(ORTHO_COL);
     col.setCellEditor(new LinkEditor(new JCheckBox(),
         (DefaultTableModel)orthologTable.getModel(), doc));
+  }
+  
+  /**
+   * Create the popup menu for the table
+   *
+   */
+  private void createPopupMenu(final DatabaseDocument doc)
+  {
+    JMenuItem showSequenceMenu = new JMenuItem("Show selected sequences");
+    popupMenu.add(showSequenceMenu);
+    showSequenceMenu.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        int[] rows = orthologTable.getSelectedRows();
+        int column = getColumnIndex(ORTHO_COL);
+        Vector seqs = new Vector();
+        for(int row=0; row<rows.length; row++)
+        {
+          String ortho = (String)orthologTable.getValueAt(row, column);
+          final String reference[] = ortho.split(":");
+          DatabaseDocument newdoc = new DatabaseDocument(doc, 
+              reference[0], reference[1], true);
+          PartialSequence sequence = newdoc.getChadoSequence(reference[1]);
+
+          seqs.add(new org.emboss.jemboss.editor.Sequence(
+              ortho, new String(sequence.getSequence())));
+        }
+        
+        org.emboss.jemboss.editor.AlignJFrame ajFrame =
+              new org.emboss.jemboss.editor.AlignJFrame(seqs);
+        ajFrame.pack();
+        ajFrame.setVisible(true);
+      }
+    });
   }
   
   protected boolean isQualifierChanged()

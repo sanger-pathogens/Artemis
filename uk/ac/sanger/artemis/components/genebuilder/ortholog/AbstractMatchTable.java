@@ -387,7 +387,7 @@ abstract class AbstractMatchTable
        {  
           // open gene editor for this gene link
           linkButton.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          String reference[] = link.split(":");
+          final String reference[] = link.split(":");
           DatabaseDocumentEntry entry = makeEntry(reference[0], reference[1]);
 
           if(entry != null)
