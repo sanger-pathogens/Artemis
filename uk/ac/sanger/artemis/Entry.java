@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.8 2007-06-27 13:09:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.9 2007-07-05 16:08:45 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -31,6 +31,7 @@ import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.io.EmblStreamFeature;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.EmblDocumentEntry;
+import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.io.Key;
@@ -57,7 +58,7 @@ import java.io.File;
  *  possible events.)
  *
  *  @author Kim Rutherford
- *  @version $Id: Entry.java,v 1.8 2007-06-27 13:09:14 tjc Exp $
+ *  @version $Id: Entry.java,v 1.9 2007-07-05 16:08:45 tjc Exp $
  **/
 
 public class Entry implements FeatureChangeListener, Selectable 
@@ -125,19 +126,6 @@ public class Entry implements FeatureChangeListener, Selectable
 
     checkLocations();
     createDianaFeatures();
-  }
-
-  
-
-  /**
-   *  Create a new Entry object from a uk.ac.sanger.artemis.io.Entry
-   *  object.  A new Bases object will be created for the new Entry.
-   *  @param embl_entry a reference to an embl.Entry object containing the
-   *    underlying data for new object
-   **/
-  public Entry(final uk.ac.sanger.artemis.io.DatabaseDocumentEntry embl_entry)
-  {
-    this.embl_entry = embl_entry;
   }
   
   
@@ -1188,8 +1176,11 @@ public class Entry implements FeatureChangeListener, Selectable
 
       for(int i = 0 ; i < ranges.size() ; ++i) 
       {
-        if(((Range)ranges.elementAt(i)).getEnd() > getBases().getLength()) 
-          throw new OutOfRangeException(location.toString());
+        if(((Range)ranges.elementAt(i)).getEnd() > getBases().getLength())
+        {
+          if(!(getBases().getSequence() instanceof PartialSequence))
+            throw new OutOfRangeException(location.toString());
+        }
       }
     }
   }
