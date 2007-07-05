@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.24 2007-06-14 16:03:38 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.25 2007-07-05 13:45:29 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -545,7 +545,8 @@ extra_qualifiers = \
     type "text"
 
 # this list is added to the qualifiers from the qualifier_types_gff file
-extra_qualifiers_gff =
+extra_qualifiers_gff = \
+    controlled_curation "text"
 
 # this is a list of extra qualifiers that are legal but are not displayed in
 # popup menus (such as the one in the feature editor window).  this hack is
