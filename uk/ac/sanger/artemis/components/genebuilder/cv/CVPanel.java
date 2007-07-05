@@ -131,8 +131,9 @@ public class CVPanel extends JPanel
     
     editableComponents = new Vector();
     
-    final Dimension dimension  = new Dimension(100, 30);
-    final Dimension dimension4 = new Dimension(dimension.width*4, 30);
+    final Dimension dimension  = new Dimension(100, 
+        (new JTextField()).getPreferredSize().height);
+    final Dimension dimension4 = new Dimension(dimension.width*4, dimension.height);
 
     Box cvBox = Box.createVerticalBox();
     

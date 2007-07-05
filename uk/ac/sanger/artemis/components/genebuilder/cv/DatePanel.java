@@ -24,6 +24,7 @@
 
 package uk.ac.sanger.artemis.components.genebuilder.cv;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Calendar;
 import java.util.Date;
@@ -69,12 +70,14 @@ public class DatePanel
                                  latestDate,
                                  Calendar.YEAR);
       spinner = new JSpinner(model);
+      spinner.setBackground(Color.white);
       spinner.setEditor(new JSpinner.DateEditor(spinner, "yyyy/MM/dd"));
     }
     else
     {
       SpinnerListModel model = new SpinnerListModel( new String[] { "", "----/--/--", "" } );
       spinner = new JSpinner(model);
+      spinner.setBackground(Color.white);
       spinner.setValue("----/--/--");
       model.addChangeListener(new ChangeListener()
       {

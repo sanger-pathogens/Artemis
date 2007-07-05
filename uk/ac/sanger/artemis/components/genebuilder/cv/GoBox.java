@@ -194,7 +194,7 @@ class GoBox extends AbstractCvBox
     xBox.add(qualfTextField);
     
     dateField = new DatePanel( getField("date=", qualifierString), 
-                                        evidenceListDimension.height); 
+                                        dimension.height); 
     
     editable.add(dateField);
     xBox.add(dateField.getDateSpinner());
