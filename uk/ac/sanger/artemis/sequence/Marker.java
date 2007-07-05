@@ -20,11 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Marker.java,v 1.3 2005-11-28 16:46:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Marker.java,v 1.4 2007-07-05 11:58:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
 
+import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.util.*;
 import java.util.Vector;
 
@@ -32,7 +33,7 @@ import java.util.Vector;
  *  Objects of this class mark postions on one strand of DNA.
  *
  *  @author Kim Rutherford
- *  @version $Id: Marker.java,v 1.3 2005-11-28 16:46:38 tjc Exp $
+ *  @version $Id: Marker.java,v 1.4 2007-07-05 11:58:16 tjc Exp $
  *
  **/
 
@@ -224,7 +225,7 @@ public class Marker {
  *  alive by having a reference on the sequence change listener list.
  *
  *  @author Kim Rutherford
- *  @version $Id: Marker.java,v 1.3 2005-11-28 16:46:38 tjc Exp $
+ *  @version $Id: Marker.java,v 1.4 2007-07-05 11:58:16 tjc Exp $
  *
  **/
 class MarkerInternal
@@ -335,8 +336,10 @@ class MarkerInternal
    **/
   private void checkPosition (final int position)
       throws OutOfRangeException {
-    if (position < 1 || position > strand.getSequenceLength ()) {
-      throw new OutOfRangeException ("position: " + position);
+    if (position < 1 || position > strand.getSequenceLength ()) 
+    {
+      if(!(strand.getBases().getSequence() instanceof PartialSequence))
+        throw new OutOfRangeException ("position: " + position);
     }
   }
 
