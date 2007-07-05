@@ -37,6 +37,7 @@ import java.io.*;
 public class DatabaseDocumentEntry extends GFFDocumentEntry 
     implements DocumentEntry 
 {
+  private PartialSequence sequence;
   
   public DatabaseDocumentEntry(final Document doc, 
                                final ReadListener listener)
@@ -106,5 +107,17 @@ public class DatabaseDocumentEntry extends GFFDocumentEntry
     else
       return new DatabaseStreamFeature(feature);      
   }
-
+  
+  public void setPartialSequence(final PartialSequence sequence)
+  {
+    this.sequence = sequence;
+  }
+  
+  public Sequence getSequence() 
+  {
+    if(sequence == null)
+      return super.getSequence();
+    return sequence;
+  }
+  
 }
