@@ -99,6 +99,24 @@ public class JdbcDAO extends GmodDAO
   //////
   //////
   
+  public List getFeatureDbXRefsBySrcFeatureId(int srcFeatureId)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public List getFeatureSynonymsBySrcFeatureId(int srcFeatureId)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public Feature getResiduesByUniqueName(String uniqueName)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
   public List getFeaturePubsBySrcFeatureId(int srcFeatureId)
   {
     // TODO Auto-generated method stub
@@ -2207,48 +2225,7 @@ public class JdbcDAO extends GmodDAO
     }
   }
 
-  /**
-   * Takes a list and creates a new one merging all feature objects
-   * within it with the same feature and stores the qualifiers/attributes
-   *  as a hash
-   * @param list of feature objects
-   * @return list of flattened/merged feature objects
-   */
-/*  private static List mergeList(final List list)
-  {
-    // merge same features in the list
-    int feature_size  = list.size();
-    final List flatten_list = new Vector();
-    Feature featNext  = null;
 
-    for(int i = 0; i < feature_size; i++)
-    {
-      Feature feat = (Feature)list.get(i);
-      String name  = feat.getUniqueName();
 
-      feat.setFeatureProps(new Vector());
-      feat.addFeatureProp(feat.getFeatureProp());
 
-      if(i < feature_size - 1)
-        featNext = (Feature)list.get(i + 1);
-      else
-        featNext = null;
-      
-      // merge next line if part of the same feature
-      while(featNext != null && featNext.getUniqueName().equals(name))
-      {
-        feat.addFeatureProp(featNext.getFeatureProp());
-        i++;
-
-        if(i < feature_size - 1)
-          featNext = (Feature)list.get(i + 1);
-        else
-          break;
-      }
-
-      flatten_list.add(feat);
-    }
-
-    return flatten_list;
-  }*/
 }
