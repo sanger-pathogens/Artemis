@@ -27,6 +27,7 @@ package uk.ac.sanger.artemis.util;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.ReadFormatException;
 
 import uk.ac.sanger.artemis.chado.ArtemisUtils;
@@ -812,6 +813,10 @@ public class DatabaseDocument extends Document
     }
 
     logger4j.debug( new String(buff.getBytes()) );
+    
+    if(DatabaseDocument.cvterms == null)
+      getCvterms(dao);
+    
     return buff;
   }
   
@@ -1339,7 +1344,7 @@ public class DatabaseDocument extends Document
    * @param name  
    * @return
    */
-  public static Integer getCvtermID(String name)
+  public static Integer getCvtermID(final String name)
   {
     Enumeration enum_cvterm = cvterms.keys();
     while(enum_cvterm.hasMoreElements())
@@ -1479,7 +1484,7 @@ public class DatabaseDocument extends Document
    * @param dao the data access object
    * @return    the cvterm <code>Hashtable</code>
    */
-  private static Hashtable getCvterms(GmodDAO dao)
+  private static Hashtable getCvterms(final GmodDAO dao)
   {
     cvterms = new Hashtable();
 
@@ -1555,8 +1560,20 @@ public class DatabaseDocument extends Document
    * Look up synonym type names e.g. synonym, systematic_id.
    * @return    the synonym tag names
    */
-  public static String[] getSynonymTypeNames(String cv_name)
+  public static String[] getSynonymTypeNames(final String cv_name, 
+                                             final GFFStreamFeature feature)
   {
+    if(cvterms == null)
+    {
+      DatabaseDocument doc = (DatabaseDocument)feature.getDocumentEntry().getDocument();
+      try
+      {
+        cvterms = getCvterms(doc.getDAO());
+      }
+      catch(ConnectException e){}
+      catch(SQLException e){}   
+    }
+    
     Vector synonym_names = new Vector();
     Enumeration cvterm_enum = cvterms.elements();
     while(cvterm_enum.hasMoreElements())
@@ -1589,6 +1606,39 @@ public class DatabaseDocument extends Document
     return buff;
   }
 
+  
+  /**
+   * Get the sequence for a feature.
+   * @param dao   the data access object
+   * @param buff  the buffer to add the sequence to
+   * @return      the resulting buffer
+   * @throws java.sql.SQLException
+   */
+  public PartialSequence getChadoSequence(final String uniqueName)
+  {
+    Feature feature = null;
+    try
+    {
+      feature = getDAO().getResiduesByUniqueName(uniqueName);
+    }
+    catch(ConnectException e)
+    {
+      e.printStackTrace();
+    }
+    catch(SQLException e)
+    {
+      e.printStackTrace();
+    }
+    byte[] b = feature.getResidues();
+    char[] c = new char[b.length];
+
+    for(int i = 0; i < b.length; i++)
+      c[i] = (char)b[i];
+    
+    PartialSequence ps = new PartialSequence(c);
+    return ps;
+  }
+  
   /**
    * Get the <code>List</code> of available schemas.
    * @return  the <code>List</code> of available schemas
