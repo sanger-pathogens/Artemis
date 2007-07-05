@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.53 2007-06-27 12:57:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.54 2007-07-05 11:54:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -148,21 +148,21 @@ public class GeneViewerPanel extends JPanel
     createMenus(popup, entry_group);
     
     // Listen for mouse motion events so that we can select ranges of bases.
-    addMouseMotionListener(new MouseMotionAdapter() 
+    addMouseMotionListener(new MouseMotionAdapter()
     {
-      public void mouseDragged(MouseEvent event) 
+      public void mouseDragged(MouseEvent event)
       {
         if(event.isPopupTrigger() || entry_group == null)
           return;
+
+        int select_start = (int) ((event.getX() - border) / fraction) + start;
         
-        int select_start = (int)((event.getX() - border)/fraction)+start;
-        Strand strand = 
-          ((uk.ac.sanger.artemis.Feature)(chado_gene.getGene().getUserData())).getStrand();
-          
+        final Strand strand = ((uk.ac.sanger.artemis.Feature) (chado_gene.getGene()
+            .getUserData())).getStrand();
+
         if(!strand.isForwardStrand())
           select_start = strand.getBases().getComplementPosition(select_start);
-        
-        
+
         if(click_segment_marker != null)
         {
           final int new_position;
@@ -176,7 +176,7 @@ public class GeneViewerPanel extends JPanel
             e1.printStackTrace();
             return;
           }
-          
+
           if(click_segment_marker_is_start_marker)
           {
             // the Marker is at the start of the segment
@@ -206,15 +206,15 @@ public class GeneViewerPanel extends JPanel
             throw new Error("internal error - unexpected OutOfRangeException");
           }
         }
-        
+
         final MarkerRange selected_range = selection.getMarkerRange();
-        
+
         try
         {
-          MarkerRange drag_range = 
-            new MarkerRange(strand, select_start, select_start+1);
-          
-          //final MarkerRange new_marker_range;
+          MarkerRange drag_range = new MarkerRange(strand, select_start,
+              select_start + 1);
+
+          // final MarkerRange new_marker_range;
           if(selected_range == null || click_range == null)
           {
             click_range = drag_range;
@@ -223,13 +223,13 @@ public class GeneViewerPanel extends JPanel
           else
           {
             click_range = selected_range.combineRanges(drag_range, true);
-            status_line.setText(selected_range.getRawRange().getStart() + ".." +
-                                selected_range.getRawRange().getEnd());
+            status_line.setText(selected_range.getRawRange().getStart() + ".."
+                + selected_range.getRawRange().getEnd());
           }
-          
+
           last_cursor_position = event.getPoint();
           selection.setMarkerRange(click_range);
-          
+
           repaint();
         }
         catch(OutOfRangeException e)
@@ -238,10 +238,12 @@ public class GeneViewerPanel extends JPanel
         }
       }
     });
+    
   }
 
   /**
    * Create menu for gene editor
+   * 
    * @param menu
    * @param entry_group
    */

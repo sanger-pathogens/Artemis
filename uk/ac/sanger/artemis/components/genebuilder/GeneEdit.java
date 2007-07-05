@@ -58,7 +58,10 @@ import uk.ac.sanger.artemis.io.FeatureVector;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.PartialSequence;
+import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
@@ -84,8 +87,7 @@ public class GeneEdit
 
 
   /**
-   * 
-   * 
+   * Standalone gene editing (i.e. outside of Artemis)
    */
   public GeneEdit()
   {
@@ -186,13 +188,13 @@ public class GeneEdit
   }
 
   private DatabaseDocumentEntry makeEntry(final String schema, 
-                                          final String uniquename,
+                                          final String uniqueName,
                                           final String location,
                                           final JPasswordField pfield)
   {
     DatabaseDocumentEntry db_entry = null;
     DatabaseDocument doc = new DatabaseDocument(location, pfield, 
-                                                uniquename,
+                                                uniqueName,
                                                 schema, true);
     try
     {
@@ -245,19 +247,35 @@ public class GeneEdit
   }
 
   public static void showGeneEditor(final String schema,
-                                    final String search_gene,
+                                    final String uniqueName,
                                     final DatabaseDocumentEntry dbentry)
   {
+    DatabaseDocument doc = (DatabaseDocument)dbentry.getDocument();
+    PartialSequence sequence = doc.getChadoSequence(uniqueName);
+    dbentry.setPartialSequence(sequence);
+    
     FeatureVector features = dbentry.getAllFeatures();
     Feature gff_gene_feature = null;
 
     SimpleEntryGroup entry_group = new SimpleEntryGroup();
-    Entry entry = new Entry(dbentry);
+    try
+    {
+      // create Entry
+      Entry entry = new Entry(dbentry);
+    }
+    catch(OutOfRangeException e)
+    {
+      e.printStackTrace();
+    }
+    catch(NoSequenceException e)
+    {
+      e.printStackTrace();
+    }
     
     for(int i = 0; i < features.size(); i++)
     {
       GFFStreamFeature this_embl_feature = (GFFStreamFeature) features.get(i);
-      String uniquename = (String) this_embl_feature.getQualifierByName("ID")
+      String this_uniquename = (String) this_embl_feature.getQualifierByName("ID")
           .getValues().get(0);
 
       Feature this_feature;
@@ -266,9 +284,8 @@ public class GeneEdit
         this_feature = new Feature(this_embl_feature);
       else
         this_feature = (Feature)this_embl_feature.getUserData();
-      this_feature.setEntry(entry);
       
-      if(search_gene.equals(uniquename))
+      if(uniqueName.equals(this_uniquename))
         gff_gene_feature = this_feature;
     }
 
@@ -279,8 +296,10 @@ public class GeneEdit
     
     ChadoTransactionManager ctm = new ChadoTransactionManager();
     entry_group.addFeatureChangeListener(ctm);
+    entry_group.addEntryChangeListener(ctm);
+    ctm.setEntryGroup(entry_group);
     
-    new GeneBuilderFrame(gff_gene_feature, entry_group, selection, null); 
+    new GeneBuilderFrame(gff_gene_feature, entry_group, selection, null, ctm); 
   }
   
   /**

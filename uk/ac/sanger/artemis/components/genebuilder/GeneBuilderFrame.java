@@ -20,15 +20,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.28 2007-06-27 12:57:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.29 2007-07-05 11:54:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
 
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.border.Border;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -51,12 +66,14 @@ import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.GotoEventSource;
 import uk.ac.sanger.artemis.Selection;
+import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.components.FeatureEdit;
 import uk.ac.sanger.artemis.components.Utilities;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.FeatureVector;
 
 public class GeneBuilderFrame extends JFrame
@@ -77,11 +94,21 @@ public class GeneBuilderFrame extends JFrame
   private JLabel status_line = new JLabel("");
   private GeneBuilderSelectionChangeListener geneBuilderSelectionChangeListener;
   private JTabbedPane tabpane;
+  private ChadoTransactionManager chadoTransactionManager;
   
   public GeneBuilderFrame(final Feature feature,
                           final EntryGroup entry_group,
                           final Selection selection,
                           final GotoEventSource goto_event_source)
+  {
+    this(feature, entry_group, selection, goto_event_source, null);
+  }
+  
+  public GeneBuilderFrame(final Feature feature,
+      final EntryGroup entry_group,
+      final Selection selection,
+      final GotoEventSource goto_event_source,
+      final ChadoTransactionManager chadoTransactionManager)
   {
     super("Artemis Gene Builder: " + feature.getIDString() +
           (feature.isReadOnly() ?
@@ -90,6 +117,8 @@ public class GeneBuilderFrame extends JFrame
     
     this.active_feature = feature;
     this.selection = selection;
+    this.chadoTransactionManager = chadoTransactionManager;
+
     
     if(selection != null)
     {
@@ -97,7 +126,7 @@ public class GeneBuilderFrame extends JFrame
       selection.addSelectionChangeListener(geneBuilderSelectionChangeListener);
     }
     
-    GFFStreamFeature gff_feature = (GFFStreamFeature)feature.getEmblFeature();
+    final GFFStreamFeature gff_feature = (GFFStreamFeature)feature.getEmblFeature();
     chado_gene = gff_feature.getChadoGene();
     
     try
@@ -115,7 +144,8 @@ public class GeneBuilderFrame extends JFrame
     jsp_tree.setPreferredSize( new Dimension(150, jsp_tree.getPreferredSize().height) );
     
     viewer = new GeneViewerPanel(
-                gff_feature.getChadoGene(), selection, entry_group, this, status_line);
+                gff_feature.getChadoGene(), selection, 
+                entry_group, this, status_line);
 
     Box xBox = Box.createHorizontalBox();
     xBox.add(buildCheckBoxes(viewer, chado_gene));
@@ -206,6 +236,22 @@ public class GeneBuilderFrame extends JFrame
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+    
+    if(chadoTransactionManager != null)
+    { 
+      int select = JOptionPane.showConfirmDialog(this, 
+          "Commit changes back to the database?", 
+          "Commit", JOptionPane.YES_NO_OPTION);
+      
+      if(select == JOptionPane.YES_OPTION)
+      {
+        DatabaseDocument dbDoc =
+          (DatabaseDocument)(
+            (GFFStreamFeature)active_feature.getEmblFeature()).getDocumentEntry().getDocument();
+        chadoTransactionManager.commit(dbDoc);
+      }
+    }
+    
     super.dispose();
   }
   
