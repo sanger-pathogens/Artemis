@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.26 2007-06-27 13:11:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.27 2007-07-05 16:07:45 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.io.OutOfDateException;
 import uk.ac.sanger.artemis.io.LocationParseException;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -59,7 +60,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.26 2007-06-27 13:11:47 tjc Exp $
+ *  @version $Id: Feature.java,v 1.27 2007-07-05 16:07:45 tjc Exp $
  **/
 
 public class Feature
@@ -903,7 +904,7 @@ public class Feature
 
     final int sequence_length;
     
-    if(getEntry().getBases() !=  null)
+    if(!(getEntry().getBases().getSequence() instanceof PartialSequence))
     {
       sequence_length = getEntry().getBases().getLength();
 
