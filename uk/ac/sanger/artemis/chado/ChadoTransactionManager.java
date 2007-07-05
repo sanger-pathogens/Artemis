@@ -677,7 +677,8 @@ public class ChadoTransactionManager
     }
     
     chado_feature.setCvTerm(cvTerm);
-    addQualifiers(feature.getQualifiers(), chado_feature);
+    addQualifiers(feature.getQualifiers(), chado_feature, 
+        (GFFStreamFeature)feature.getEmblFeature());
     // create transaction object
     
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT,
@@ -841,7 +842,8 @@ public class ChadoTransactionManager
    * @param chado_feature	the <code>ChadoFeature</code>
    */
   private void addQualifiers(final QualifierVector qualifiers,
-                             final org.gmod.schema.sequence.Feature chado_feature)
+                             final org.gmod.schema.sequence.Feature chado_feature,
+                             final GFFStreamFeature feature)
   {
     // add qualifiers/attributes
     for(int qualifier_index = 0; qualifier_index < qualifiers.size();
@@ -851,7 +853,7 @@ public class ChadoTransactionManager
       final String name = this_qualifier.getName();
 
       // ignore reserved tags
-      if(isReservedTag(name) || isSynonymTag(name))
+      if(isReservedTag(name) || isSynonymTag(name, feature))
         continue;
 
       final StringVector qualifier_values = this_qualifier.getValues();
@@ -927,11 +929,13 @@ public class ChadoTransactionManager
    * @param tag
    * @return  true if the tag is a GFF3 predefined tag
    */
-  private boolean isSynonymTag(final String tag)
+  private boolean isSynonymTag(final String tag,
+                               final GFFStreamFeature feature)
   {
     if(synonym_tags == null)
     {
-      synonym_tags = DatabaseDocument.getSynonymTypeNames(SYNONYM_TAG_CVNAME);
+      synonym_tags = DatabaseDocument.getSynonymTypeNames(
+                              SYNONYM_TAG_CVNAME, feature);
       if(synonym_tags == null || synonym_tags.length < 1)
       {
         logger4j.debug("Using default synonym names");
@@ -1030,7 +1034,7 @@ public class ChadoTransactionManager
       
       if(!qualifiers_new.contains(name))
       {
-        if(isReservedTag(name) || isSynonymTag(name) || isCvTag(name))
+        if(isReservedTag(name) || isSynonymTag(name, feature) || isCvTag(name))
         {
           handleReservedTags(feature, uniquename, 
               null,
@@ -1088,7 +1092,7 @@ public class ChadoTransactionManager
           continue;
       }
 
-      if(isReservedTag(name) || isSynonymTag(name) || isCvTag(name))
+      if(isReservedTag(name) || isSynonymTag(name, feature) || isCvTag(name))
       {
         handleReservedTags(feature, uniquename, 
                            this_qualifier,
@@ -1325,7 +1329,7 @@ public class ChadoTransactionManager
                                       feature.getKey().getKeyString());
            sql.add(tsn);
          }
-         else if(isSynonymTag(qualifier_name))
+         else if(isSynonymTag(qualifier_name, feature))
          {
            logger4j.debug(uniquename+"  in handleReservedTags() DELETE "+qualifier_name+" "+
                               qualifier_string);
@@ -1428,7 +1432,7 @@ public class ChadoTransactionManager
                       feature.getKey().getKeyString());
            sql.add(tsn);
          }
-         else if(isSynonymTag(qualifier_name))
+         else if(isSynonymTag(qualifier_name, feature))
          {
            logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
                                  qualifier_name+" "+qualifier_string);
