@@ -269,6 +269,17 @@
        ORDER BY abbreviation, type_id 
        -->
     </select>
+	
+	
+	
+	<select id="getResiduesByUniqueName" parameterClass="java.lang.String"
+            resultClass="Feature">
+	   SELECT substr(residues, fl.fmin+1, fl.fmax-fl.fmin) AS residues 
+	   FROM featureloc fl 
+	   LEFT JOIN feature f ON fl.srcfeature_id=f.feature_id 
+	   WHERE fl.feature_id=(SELECT feature_id FROM feature WHERE uniquename=#value#);
+    </select>
+
 
     
     <select id="currval" resultClass="java.lang.Integer" 
