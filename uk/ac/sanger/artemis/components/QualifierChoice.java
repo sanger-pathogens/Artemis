@@ -20,33 +20,45 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierChoice.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierChoice.java,v 1.4 2007-07-06 13:03:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
-import uk.ac.sanger.artemis.*;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.io.Key;
-import uk.ac.sanger.artemis.io.InvalidKeyException;
 import uk.ac.sanger.artemis.io.EntryInformation;
 
-import java.awt.*;
-import java.awt.event.*;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JComboBox;
+
 
 /**
  *  This is a Choice component that shows only the qualifier names for a given
  *  key.
  *
  *  @author Kim Rutherford
- *  @version $Id: QualifierChoice.java,v 1.3 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: QualifierChoice.java,v 1.4 2007-07-06 13:03:39 tjc Exp $
  **/
 
-public class QualifierChoice extends JComboBox {
+public class QualifierChoice extends JComboBox 
+{
+  /** */
+  private static final long serialVersionUID = 1L;
+
+  /** The Key that was passed to the constructor. */
+  private Key key = null;
+
+  /** The qualifier name that was passed to the constructor. */
+  private String default_qualifier = null;
+
+  /** The EntryInformation object that was passed to the constructor. */
+  private EntryInformation entry_information;
+
   /**
    *  Create a new QualifierChoice component for the given Key with the given
    *  qualifier as the default.
@@ -56,16 +68,16 @@ public class QualifierChoice extends JComboBox {
    *    initially.  If null the first (alphabetically) is selected.
    **/
   public QualifierChoice (final EntryInformation entry_information,
-                          final Key key, final String default_qualifier) {
+                          final Key key, final String default_qualifier) 
+  {
     this.entry_information = entry_information;
     this.key = key;
 
     if (default_qualifier != null &&
-        entry_information.isValidQualifier (key, default_qualifier)) {
+        entry_information.isValidQualifier (key, default_qualifier))
       this.default_qualifier = default_qualifier;
-    } else {
+    else
       this.default_qualifier = null;
-    }
 
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     int screen_height = screen.height;
@@ -77,9 +89,7 @@ public class QualifierChoice extends JComboBox {
       MAX_VISIBLE_ROWS = 30;
     
     setMaximumRowCount (MAX_VISIBLE_ROWS);
-
     setEditable(true);
-
     update ();
   }
 
@@ -87,10 +97,11 @@ public class QualifierChoice extends JComboBox {
    *  Change the qualifiers shown in this component to be those of the given
    *  Key.
    **/
-  public void setKey (final Key key) {
-    if (this.key != key) {
+  public void setKey (final Key key) 
+  {
+    if (this.key != key) 
+    {
       this.key = key;
-
       update ();
     }
   }
@@ -98,26 +109,29 @@ public class QualifierChoice extends JComboBox {
   /**
    *  Select the given qualifier_name.
    **/
-  private void setSelectedQualifierByName (final String qualifier_name) {
+  private void setSelectedQualifierByName (final String qualifier_name) 
+  {
     final int index = indexOf (qualifier_name);
 
-    if (index == -1) {
+    if (index == -1) 
+    {
       // add the key
       addItem (qualifier_name);
       setSelectedItem (qualifier_name);
-    } else {
+    } 
+    else 
       setSelectedIndex (index);
-    }
   }
 
   /**
    *  Return the index in the Choice component of the given qualifier_name.
    **/
-  private int indexOf (final String qualifier_name) {
-    for (int i = 0 ; i < getItemCount () ; ++i) {
-      if (getItemAt (i).equals (qualifier_name)) {
+  private int indexOf (final String qualifier_name) 
+  {
+    for (int i = 0 ; i < getItemCount () ; ++i) 
+    {
+      if (getItemAt (i).equals (qualifier_name))
         return i;
-      }
     }
     return -1;
   }
@@ -125,64 +139,48 @@ public class QualifierChoice extends JComboBox {
   /**
    *  Update the Choice to refect the current Key.
    **/
-  private void update () {
+  private void update () 
+  {
     removeAllItems ();
-
-//    final StringVector common_qualifiers = new StringVector ();
-//    final StringVector uncommon_qualifiers = new StringVector ();
-    
     StringVector qualifier_names =
       entry_information.getValidQualifierNames (key);
 
-    if (qualifier_names == null) {
+    if (qualifier_names == null) 
       qualifier_names = new StringVector ("note");
-    }
 
     if (default_qualifier != null &&
-        !qualifier_names.contains (default_qualifier)) {
+        !qualifier_names.contains (default_qualifier)) 
+    {
       qualifier_names.add (default_qualifier);
     }
 
     qualifier_names.sort ();
 
-//    final StringVector invisible_qualifiers =
-//      Options.getOptions ().getInvisibleQualifiers ();
+    final StringVector invisible_qualifiers =
+      Options.getOptions ().getInvisibleQualifiers ();
 
-    for (int i = 0 ; i < qualifier_names.size () ; ++i) {
+    for (int i = 0 ; i < qualifier_names.size () ; ++i) 
+    {
       final String qualifier_name = (String)qualifier_names.elementAt (i);
-//      if (!invisible_qualifiers.contains (qualifier_name)) {
+      if (!invisible_qualifiers.contains (qualifier_name)) 
         addItem (qualifier_name);
-//      }
     }
 
-    if (default_qualifier == null) {
-      if (indexOf ("note") != -1) {
+    if (default_qualifier == null) 
+    {
+      if (indexOf ("note") != -1) 
         setSelectedQualifierByName ("note");
-      } else {
-        if (indexOf ("locus_tag") != -1) {
+      else 
+      {
+        if (indexOf ("locus_tag") != -1) 
           setSelectedQualifierByName ("locus_tag");
-        } else {
+        else 
           setSelectedIndex (0);
-        }
       }
-    } else {
+    } 
+    else 
       setSelectedQualifierByName (default_qualifier);
-    }
   }
 
-  /**
-   *  The Key that was passed to the constructor.
-   **/
-  private Key key = null;
-
-  /**
-   *  The qualifier name that was passed to the constructor.
-   **/
-  private String default_qualifier = null;
-
-  /**
-   *  The EntryInformation object that was passed to the constructor.
-   **/
-  private EntryInformation entry_information;
 }
 
