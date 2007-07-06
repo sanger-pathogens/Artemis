@@ -43,7 +43,7 @@ mass             no         text
 isoelectric      no         text
 charge           no         text
 source           no         text
-go               no         text
+GO               no         text
 ortholog         no         "text"
 similarity       no         "text"
 partial          no         "text"
@@ -130,9 +130,4 @@ tissue_lib       no         "text"
 tissue_type      no         "text"
 transgenic       no         "text"
 translation      no         "text"
-transl_except    no         (::)    pos aa
-transl_table     no         number  1 11
-transposon       no         "text"
-usedin           no         feature
-variety          no         "text"
-virion           no         none
+DNA_transposon   no         "text"
