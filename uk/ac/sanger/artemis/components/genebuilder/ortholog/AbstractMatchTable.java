@@ -57,17 +57,52 @@ import uk.ac.sanger.artemis.editor.BrowserControl;
 import uk.ac.sanger.artemis.editor.DataCollectionPane;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
+import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.StringVector;
 
 abstract class AbstractMatchTable
 {
   protected boolean isChanged = false;
   protected JTable table;
+  protected Qualifier origQualifier;
+  protected abstract String updateQualifierString(int row);
   
+  /**
+   * Determine if qualifiers have changed
+   */
+  protected boolean isQualifierChanged()
+  {
+    return isChanged; 
+  }
   
-  protected abstract boolean isQualifierChanged();
-  protected abstract void updateQualifier(final QualifierVector qv);
+  /**
+   * Update the qualifiers from the entries in the table
+   * @param qv
+   */
+  protected void updateQualifier(final QualifierVector qv)
+  {
+    StringVector values = origQualifier.getValues();
+    values.removeAllElements();
+    
+    if(getTable().getRowCount() < 1)
+      return;
+    
+    System.out.println("\nHERE:\n");
+    for(int i=0; i<getTable().getRowCount(); i++)
+    {
+      String updatedQualifierString = updateQualifierString(i);
+      values.add(updatedQualifierString);
+      System.out.println(updatedQualifierString);
+    }
+    System.out.println("\n\n");
+    
+    int index = qv.indexOfQualifierWithName(origQualifier.getName());
+    origQualifier = new Qualifier(origQualifier.getName(), values);
+    qv.remove(index);
+    qv.add(index, origQualifier);
+  }
   
   public void setTable(JTable table)
   {

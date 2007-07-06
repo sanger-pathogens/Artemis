@@ -46,7 +46,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import uk.ac.sanger.artemis.io.Qualifier;
-import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.StringVector;
 
 public class SimilarityTable extends AbstractMatchTable
@@ -56,7 +55,7 @@ public class SimilarityTable extends AbstractMatchTable
   private Vector tableData = new Vector(NUMBER_COLUMNS);
   
   private JButton infoLevelButton = new JButton("Details");
-  private Qualifier origQualifier;
+  
   
   //
   // column headings
@@ -337,36 +336,12 @@ public class SimilarityTable extends AbstractMatchTable
   {
     return infoLevelButton;
   }
- 
-  protected boolean isQualifierChanged()
-  {
-    return isChanged;
-  }
 
-  protected void updateQualifier(QualifierVector qv)
-  {
-    StringVector values = origQualifier.getValues();
-    values.removeAllElements();
-    
-    if(getTable().getRowCount() < 1)
-      return;
-    
-    System.out.println("\nHERE:\n");
-    for(int i=0; i<getTable().getRowCount(); i++)
-    {
-      String updatedQualifierString = updateQualifierString(i);
-      values.add(updatedQualifierString);
-      System.out.println(updatedQualifierString);
-    }
-    System.out.println("\n\n");
-    
-    int index = qv.indexOfQualifierWithName(origQualifier.getName());
-    origQualifier = new Qualifier(origQualifier.getName(), values);
-    qv.remove(index);
-    qv.add(index, origQualifier);
-  }
   
-  private String updateQualifierString(final int row)
+  /**
+   * Called by AbstractMatchTable.updateQualifier()
+   */
+  protected String updateQualifierString(final int row)
   {
     StringBuffer similarityStr = new StringBuffer(
              (String)getTable().getValueAt(row, getColumnIndex(METHOD_COL)) );   // method

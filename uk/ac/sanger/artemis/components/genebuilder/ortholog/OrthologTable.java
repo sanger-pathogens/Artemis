@@ -26,7 +26,6 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -38,6 +37,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -62,8 +62,6 @@ public class OrthologTable extends AbstractMatchTable
   private Vector tableData = new Vector(NUMBER_COLUMNS);
   private JTable orthologTable;
   private JButton infoLevelButton = new JButton("Details");
-  private Qualifier origQualifier;
-  private boolean isChanged = false;
   private JPopupMenu popupMenu = new JPopupMenu();
 
   //
@@ -191,40 +189,48 @@ public class OrthologTable extends AbstractMatchTable
     {
       public void actionPerformed(ActionEvent e)
       {
-        int[] rows = orthologTable.getSelectedRows();
-        int column = getColumnIndex(ORTHO_COL);
-        Vector seqs = new Vector();
+        final int[] rows = orthologTable.getSelectedRows();
+        final int column = getColumnIndex(ORTHO_COL);
+        final Vector seqs = new Vector();
+        
         for(int row=0; row<rows.length; row++)
         {
           String ortho = (String)orthologTable.getValueAt(row, column);
           final String reference[] = ortho.split(":");
           DatabaseDocument newdoc = new DatabaseDocument(doc, 
               reference[0], reference[1], true);
-          PartialSequence sequence = newdoc.getChadoSequence(reference[1]);
+          
+          try
+          {
+            PartialSequence sequence = newdoc.getChadoSequence(reference[1]);
 
-          seqs.add(new org.emboss.jemboss.editor.Sequence(
-              ortho, new String(sequence.getSequence())));
+            seqs.add(new org.emboss.jemboss.editor.Sequence(ortho, new String(
+                sequence.getSequence())));
+          }
+          catch(NullPointerException npe)
+          {
+            JOptionPane.showMessageDialog(null, 
+                "Cannot get the sequence for "+ortho,
+                "Warning", JOptionPane.WARNING_MESSAGE);
+          }
         }
         
         org.emboss.jemboss.editor.AlignJFrame ajFrame =
               new org.emboss.jemboss.editor.AlignJFrame(seqs);
-        ajFrame.pack();
         ajFrame.setVisible(true);
       }
     });
   }
   
-  protected boolean isQualifierChanged()
-  {
-    // TODO Auto-generated method stub
-    return false;
-  }
 
-  protected void updateQualifier(QualifierVector qv)
+  /**
+   * Called by AbstractMatchTable.updateQualifier()
+   */
+  protected String updateQualifierString(int row)
   {
     // TODO Auto-generated method stub
-  } 
-  
+    return null;
+  }
   
 
   /**
