@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierChoice.java,v 1.4 2007-07-06 13:03:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierChoice.java,v 1.5 2007-07-09 12:17:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -30,6 +30,7 @@ import java.awt.Toolkit;
 
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.util.StringVector;
+import uk.ac.sanger.artemis.io.GFFEntryInformation;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.EntryInformation;
 
@@ -42,7 +43,7 @@ import javax.swing.JComboBox;
  *  key.
  *
  *  @author Kim Rutherford
- *  @version $Id: QualifierChoice.java,v 1.4 2007-07-06 13:03:39 tjc Exp $
+ *  @version $Id: QualifierChoice.java,v 1.5 2007-07-09 12:17:23 tjc Exp $
  **/
 
 public class QualifierChoice extends JComboBox 
@@ -58,6 +59,8 @@ public class QualifierChoice extends JComboBox
 
   /** The EntryInformation object that was passed to the constructor. */
   private EntryInformation entry_information;
+  
+  private boolean isGFF;
 
   /**
    *  Create a new QualifierChoice component for the given Key with the given
@@ -68,10 +71,12 @@ public class QualifierChoice extends JComboBox
    *    initially.  If null the first (alphabetically) is selected.
    **/
   public QualifierChoice (final EntryInformation entry_information,
-                          final Key key, final String default_qualifier) 
+                          final Key key, final String default_qualifier,
+                          final boolean isGFF) 
   {
     this.entry_information = entry_information;
     this.key = key;
+    this.isGFF = isGFF;
 
     if (default_qualifier != null &&
         entry_information.isValidQualifier (key, default_qualifier))
@@ -155,9 +160,9 @@ public class QualifierChoice extends JComboBox
     }
 
     qualifier_names.sort ();
-
+    
     final StringVector invisible_qualifiers =
-      Options.getOptions ().getInvisibleQualifiers ();
+      Options.getOptions ().getInvisibleQualifiers (isGFF);
 
     for (int i = 0 ; i < qualifier_names.size () ; ++i) 
     {

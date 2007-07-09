@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.25 2007-07-05 13:45:29 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.26 2007-07-09 12:20:27 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -546,7 +546,16 @@ extra_qualifiers = \
 
 # this list is added to the qualifiers from the qualifier_types_gff file
 extra_qualifiers_gff = \
-    controlled_curation "text"
+    blast_score text \
+    blast_file "text" \
+    blastn_file "text" \
+    blastp_file "text" \
+    blastp+go_file "text" \
+    blastp_match "text" \
+    blastx_file "text" \
+    controlled_curation "text" \
+    fasta_file "text" \
+    similarity "text"
 
 # this is a list of extra qualifiers that are legal but are not displayed in
 # popup menus (such as the one in the feature editor window).  this hack is
@@ -586,10 +595,6 @@ invisible_qualifiers = \
     fasta_file     \
     fasta_match    \
     gene_id        \
-    gff_feature    \
-    gff_group      \
-    gff_seqname    \
-    gff_source     \
     go_from_interpro \
     hp_match       \
     hth_file       \
@@ -617,6 +622,32 @@ invisible_qualifiers = \
     translation    \
     type           \
     usedin
+
+invisible_qualifiers_gff= \
+    blast_file     \
+    blast_score    \
+    blastn_file    \
+    blastp+go_file \
+    blastp_file    \
+    blastx_file    \
+    class          \
+    controlled_curation \
+    Derives_from   \
+    fasta_file     \
+    feature_id     \
+    feature_relationship_rank \
+    gff_feature    \
+    gff_group      \
+    gff_seqname    \
+    gff_source     \
+    GO             \
+    ID             \
+    Ontology_term  \
+    Parent         \
+    product        \
+    similarity     \
+    Target         \
+    timelastmodified  
 
 
 # These pairs consist of a program name and a parameter string.
