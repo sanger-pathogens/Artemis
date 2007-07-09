@@ -367,19 +367,30 @@ public class SimilarityTable extends AbstractMatchTable
     similarityStr.append("E()="+
              (String)getTable().getValueAt(row, getColumnIndex(EVALUE_COL)) ); // evalue
     similarityStr.append(";");
-    similarityStr.append("score="+
+    
+    if(getTable().getValueAt(row, getColumnIndex(SCORE_COL)) != null)
+    {
+      similarityStr.append("score="+
              (String)getTable().getValueAt(row, getColumnIndex(SCORE_COL)) );  // score
-    similarityStr.append(";");
+      similarityStr.append(";");
+    }
+    
     similarityStr.append("query "+
              (String)getTable().getValueAt(row, getColumnIndex(QUERY_COL)) );  // query
     similarityStr.append(";");
     similarityStr.append("subject "+
              (String)getTable().getValueAt(row, getColumnIndex(SUBJECT_COL)) ); // subject
     similarityStr.append(";");
-    similarityStr.append("ungapped id="+
+    
+    if(getTable().getValueAt(row, getColumnIndex(ID_COL)) != null)
+    {
+      similarityStr.append("ungapped id="+
              (String)getTable().getValueAt(row, getColumnIndex(ID_COL)) ); // ungapped id
-    similarityStr.append(";");
-    similarityStr.append("overlap="+
+      similarityStr.append(";");
+    }
+    
+    if(getTable().getValueAt(row, getColumnIndex(OVERLAP_COL)) != null)
+      similarityStr.append("overlap="+
              (String)getTable().getValueAt(row, getColumnIndex(OVERLAP_COL)) ); // overlap
     
     return similarityStr.toString();
