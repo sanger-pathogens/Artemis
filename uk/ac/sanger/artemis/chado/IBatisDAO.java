@@ -1017,10 +1017,10 @@ public class IBatisDAO extends GmodDAO
       ((FeatureLoc)featureLocs.get(nsubject)).setFeatureBySrcFeatureId(
                                               (Feature)subjectFeatures.get(i));
       matchFeature.setFeatureLocsForFeatureId(featureLocs);
-      Object result = sqlMap.queryForObject("getFeatureIdBySrcFeatureId", matchFeature);
+      List result = sqlMap.queryForList("getFeatureIdBySrcFeatureId", matchFeature);
       if(result != null)
       {
-        matchFeatureId = (Integer)result;
+        matchFeatureId = (Integer)result.get(0);
         break;
       }
     }
