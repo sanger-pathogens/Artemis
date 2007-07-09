@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Selector.java,v 1.7 2006-04-25 15:12:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Selector.java,v 1.8 2007-07-09 12:17:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 import uk.ac.sanger.artemis.sequence.Strand;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.io.EntryInformation;
+import uk.ac.sanger.artemis.io.GFFDocumentEntry;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -46,7 +47,7 @@ import javax.swing.*;
  *  features in an EntryGroup on key and contents.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Selector.java,v 1.7 2006-04-25 15:12:57 tjc Exp $
+ *  @version $Id: Selector.java,v 1.8 2007-07-09 12:17:52 tjc Exp $
  **/
 
 public class Selector extends JFrame
@@ -178,9 +179,13 @@ public class Selector extends JFrame
     gridbag.setConstraints(by_qualifier_panel, c);
     getContentPane().add(by_qualifier_panel);
 
+    boolean isGFF = false;
+    if(getEntryGroup().getDefaultEntry().getEMBLEntry() instanceof GFFDocumentEntry)
+      isGFF = true;
     qualifier_selector = new QualifierChoice(default_entry_information,
                                               key_selector.getSelectedItem(),
-                                              null);
+                                              null, isGFF);
+    
     c.gridwidth = GridBagConstraints.REMAINDER;
     gridbag.setConstraints(qualifier_selector, c);
     getContentPane().add(qualifier_selector);
