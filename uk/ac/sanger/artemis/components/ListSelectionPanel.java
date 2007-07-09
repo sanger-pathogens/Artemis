@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ListSelectionPanel.java,v 1.4 2007-03-28 11:56:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ListSelectionPanel.java,v 1.5 2007-07-09 13:03:45 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -39,6 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import uk.ac.sanger.artemis.EntryGroup;
+import uk.ac.sanger.artemis.io.GFFDocumentEntry;
 
 class ListSelectionPanel extends JPanel
 {
@@ -125,8 +126,11 @@ class ListSelectionPanel extends JPanel
     
     add(bdown, BorderLayout.CENTER);
 
+    boolean isGFF = false;
+    if(entry_group.getDefaultEntry().getEMBLEntry() instanceof GFFDocumentEntry)
+      isGFF = true;
     final QualifierChoice qualifier_choice = new QualifierChoice(
-        entry_group.elementAt(0).getEntryInformation(), null, null);
+        entry_group.elementAt(0).getEntryInformation(), null, null, isGFF);
     
     JButton add_butt = new JButton("ADD");
     add_butt.addActionListener(new ActionListener()

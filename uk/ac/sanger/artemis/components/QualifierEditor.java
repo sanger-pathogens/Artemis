@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierEditor.java,v 1.4 2005-02-17 10:36:28 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierEditor.java,v 1.5 2007-07-09 13:07:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -28,6 +28,7 @@ package uk.ac.sanger.artemis.components;
 import uk.ac.sanger.artemis.*;
 
 import uk.ac.sanger.artemis.util.ReadOnlyException;
+import uk.ac.sanger.artemis.io.GFFDocumentEntry;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierInfo;
 import uk.ac.sanger.artemis.io.QualifierVector;
@@ -46,7 +47,7 @@ import javax.swing.*;
  *  features at once.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: QualifierEditor.java,v 1.4 2005-02-17 10:36:28 tjc Exp $
+ *  @version $Id: QualifierEditor.java,v 1.5 2007-07-09 13:07:38 tjc Exp $
  **/
 
 public class QualifierEditor extends JFrame {
@@ -69,8 +70,11 @@ public class QualifierEditor extends JFrame {
 
     setFont (font);
 
+    boolean isGFF = false;
+    if(entry_group.getDefaultEntry().getEMBLEntry() instanceof GFFDocumentEntry)
+      isGFF = true;
     final QualifierChoice qualifier_choice =
-      new QualifierChoice (entry_information, first_feature.getKey (), null);
+      new QualifierChoice (entry_information, first_feature.getKey (), null, isGFF);
 
     final JPanel outer_qualifier_choice_panel = new JPanel ();
     final JPanel qualifier_choice_panel = new JPanel ();
