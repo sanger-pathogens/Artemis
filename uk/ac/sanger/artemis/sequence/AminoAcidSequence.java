@@ -20,19 +20,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/AminoAcidSequence.java,v 1.10 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/AminoAcidSequence.java,v 1.11 2007-07-09 12:38:51 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
 
 import uk.ac.sanger.artemis.Options;
-import uk.ac.sanger.artemis.util.*;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.util.StringVector;
 
 /**
  *  Objects of this class represent a string of amino acids.
  *
  *  @author Kim Rutherford
- *  @version $Id: AminoAcidSequence.java,v 1.10 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: AminoAcidSequence.java,v 1.11 2007-07-09 12:38:51 tjc Exp $
  **/
 
 public class AminoAcidSequence 
@@ -312,7 +313,7 @@ public class AminoAcidSequence
          ++subject_index)
     {
       int query_index = 0;
-      boolean is_matching = true;
+      //boolean is_matching = true;
       for(; query_index < toString().length(); 
            ++query_index)
       {
@@ -552,7 +553,7 @@ public class AminoAcidSequence
         final char search_aa = amino_acid_string.charAt(offset);
 
         // X matches any AA
-        if(search_aa == 'x') 
+        if(search_aa == 'x' || search_aa == 'X') 
           continue;
 
         final char base1 = bases_string.charAt(base_index + offset * 3 + 0);
@@ -598,7 +599,7 @@ public class AminoAcidSequence
         final char search_aa = amino_acid_string.charAt(offset);
 
         // X matches any AA
-        if(search_aa == 'x') 
+        if(search_aa == 'x' || search_aa == 'X') 
           continue;
 
         final char base1 = bases_string.charAt(base_index + offset * 3 + 0);
@@ -1031,7 +1032,7 @@ public class AminoAcidSequence
   /**
    *  The average molecular weight of all amino acids.
    **/
-  private final static float average_molecular_weight = 136.90F;
+  //private final static float average_molecular_weight = 136.90F;
 
   /**
    *  The molecular weight of water.
