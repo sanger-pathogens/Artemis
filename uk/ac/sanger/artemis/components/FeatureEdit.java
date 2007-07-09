@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.41 2007-07-05 11:55:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.42 2007-07-09 12:16:07 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.MarkerRange;
 
 import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.io.GFFDocumentEntry;
 import uk.ac.sanger.artemis.io.OutOfDateException;
 import uk.ac.sanger.artemis.io.LocationParseException;
 import uk.ac.sanger.artemis.io.PartialSequence;
@@ -66,7 +67,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.41 2007-07-05 11:55:05 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.42 2007-07-09 12:16:07 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -355,8 +356,13 @@ public class FeatureEdit extends JPanel
     key_and_qualifier_panel.setLayout(new BorderLayout());
     key_and_qualifier_panel.add(key_panel, "West");
 
+    boolean isGFF = false;
+    if(edit_feature.getEmblFeature().getEntry() instanceof GFFDocumentEntry)
+      isGFF = true;
+    
     qualifier_choice = new QualifierChoice(getEntryInformation(),
-                                  key_choice.getSelectedItem(),null);
+                                  key_choice.getSelectedItem(),null,
+                                  isGFF);
 
     final JPanel qualifier_panel = new JPanel();
     final JButton qualifier_add_button = new JButton("Add Qualifier:");
