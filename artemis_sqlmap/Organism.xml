@@ -38,6 +38,9 @@
 				f.feature_id=$featureId$
 			</isGreaterThan>
 		</isEqual>
+		<isNull property="featureLoc.featureBySrcFeatureId">
+			f.feature_id=$featureId$
+		</isNull>
     </select>
  
 </sqlMap> 
