@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.9 2007-06-14 16:02:45 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.10 2007-07-09 12:18:37 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -44,7 +44,7 @@ import java.util.*;
  *  read in new options.
  *
  *  @author Kim Rutherford
- *  @version $Id: Options.java,v 1.9 2007-06-14 16:02:45 tjc Exp $
+ *  @version $Id: Options.java,v 1.10 2007-07-09 12:18:37 tjc Exp $
  **/
 
 public class Options extends Properties 
@@ -492,12 +492,15 @@ public class Options extends Properties
    *  Return a Vector of the names of those qualifiers that shouldn't be shown
    *  by the QualifierChoice popup.
    **/
-  public StringVector getInvisibleQualifiers() 
+  public StringVector getInvisibleQualifiers(boolean isGFF) 
   {
     if(invisible_qualifiers == null) 
-    {
+    { 
       invisible_qualifiers = getOptionValues("invisible_qualifiers");
 
+      if(isGFF)
+        invisible_qualifiers.add( getOptionValues("invisible_qualifiers_gff") );
+      
       if(invisible_qualifiers == null) 
         invisible_qualifiers = new StringVector();
     }
