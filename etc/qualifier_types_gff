@@ -43,9 +43,7 @@ mass             no         text
 isoelectric      no         text
 charge           no         text
 source           no         text
-GO               no         text
 ortholog         no         "text"
-similarity       no         "text"
 partial          no         "text"
 private          no         "text"
 curation         no         "text"
