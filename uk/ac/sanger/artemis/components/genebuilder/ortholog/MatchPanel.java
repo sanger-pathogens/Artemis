@@ -17,15 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.7 2007-06-20 15:23:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.8 2007-07-11 08:50:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -34,7 +32,6 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
@@ -47,6 +44,7 @@ import uk.ac.sanger.artemis.io.QualifierLazyLoading;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
+import uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 
 /**
@@ -63,6 +61,7 @@ public class MatchPanel extends JPanel
   private Vector editableComponents;
   private JButton hide_show_ortho;
   private JButton hide_show_sim;
+
   
   public MatchPanel(final Feature feature)
   {
@@ -166,7 +165,7 @@ public class MatchPanel extends JPanel
     
     //
     // paralog
-    addSeparator(matchVerticalBox);
+    GeneEditorPanel.addLightSeparator(matchVerticalBox);
     JButton addParaButton = new JButton("ADD PARALOG");
     addParaButton.setOpaque(false);
     addParaButton.addActionListener(new ActionListener()
@@ -208,7 +207,7 @@ public class MatchPanel extends JPanel
     
     //
     // similarity
-    addSeparator(matchVerticalBox);
+    GeneEditorPanel.addLightSeparator(matchVerticalBox);
     JButton addSimButton = new JButton("ADD SIMILARITY");
     addSimButton.setOpaque(false);
     addSimButton.addActionListener(new ActionListener()
@@ -362,25 +361,7 @@ public class MatchPanel extends JPanel
     repaint();
     revalidate();
   }
-  
-  /**
-   * Separator between matches
-   * @param matchVerticalBox
-   */
-  private void addSeparator(final Box matchVerticalBox)
-  {
-    JSeparator separator = new JSeparator();
-    
-    int width = getSize().width;
-    if(width <= 0)
-      width = 700;
 
-    separator.setForeground(Color.LIGHT_GRAY);
-    separator.setPreferredSize(new Dimension(width,10));
-    separator.setMaximumSize(new Dimension(width,10));
-    matchVerticalBox.add(Box.createVerticalStrut(5));
-    matchVerticalBox.add(separator);
-  }
   
   /**
    * Get the latest (edited) controlled vocab qualifiers

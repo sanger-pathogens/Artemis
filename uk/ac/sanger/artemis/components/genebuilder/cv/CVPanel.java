@@ -41,7 +41,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
 import javax.swing.JButton;
@@ -57,6 +56,7 @@ import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 //import uk.ac.sanger.artemis.components.Splash;
+import uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 
 import org.gmod.schema.cv.CvTerm;
@@ -242,7 +242,7 @@ public class CVPanel extends JPanel
     
     
     if(n > 0)
-      addSeparator(cvBox);
+      GeneEditorPanel.addLightSeparator(cvBox);
     
     
     n = 0;
@@ -331,7 +331,7 @@ public class CVPanel extends JPanel
     }
     
     if(n > 0)
-      addSeparator(cvBox);
+      GeneEditorPanel.addLightSeparator(cvBox);
     
     //
     // RILEY
@@ -387,7 +387,7 @@ public class CVPanel extends JPanel
     
     
     if(n > 0)
-      addSeparator(cvBox);
+      GeneEditorPanel.addLightSeparator(cvBox);
     
     for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
         ++qualifier_index) 
@@ -466,24 +466,7 @@ public class CVPanel extends JPanel
     });
   }
   
-  /**
-   * Separator between CV's
-   * @param cvBox
-   */
-  private void addSeparator(final Box cvBox)
-  {
-    JSeparator separator = new JSeparator();
-    
-    int width = getSize().width;
-    if(width <= 0)
-      width = 700;
 
-    separator.setForeground(Color.LIGHT_GRAY);
-    separator.setPreferredSize(new Dimension(width,10));
-    separator.setMaximumSize(new Dimension(width,10));
-    cvBox.add(Box.createVerticalStrut(5));
-    cvBox.add(separator);
-  }
   
   private JButton getRemoveButton(final Qualifier this_qualifier, 
                                   final int v_index)
