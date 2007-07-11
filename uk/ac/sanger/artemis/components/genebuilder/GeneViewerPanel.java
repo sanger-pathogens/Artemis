@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.54 2007-07-05 11:54:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.55 2007-07-11 12:50:46 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -138,7 +138,7 @@ public class GeneViewerPanel extends JPanel
     this.entry_group  = entry_group;
     this.gene_builder = gene_builder;
     
-    Dimension dim = new Dimension(400,400);
+    Dimension dim = new Dimension(400,350);
     setPreferredSize(dim);
     setBackground(Color.white);
     
@@ -640,7 +640,7 @@ public class GeneViewerPanel extends JPanel
         int select_end   = border+(int)((range.getEnd()-start)*fraction);
         ypos = (border*5)+(getTranscriptSize()*ntranscript);
         drawFeature(g2d, select_start, select_end, 
-                    ypos, Color.YELLOW, 2,
+                    ypos, Color.YELLOW, 1.5f,
                     false, 2.f);
       }
     }
@@ -692,7 +692,7 @@ public class GeneViewerPanel extends JPanel
    */
   protected int getTranscriptSize()
   {
-    return (2 * border) + (getFontHeight() * 4);  
+    return (2 * border) + (getFontHeight() * 3);  
   }
   
   protected int getViewerBorder()
@@ -1062,7 +1062,7 @@ public class GeneViewerPanel extends JPanel
             }
 
             drawExons(g2d, ex_start, ex_end, last_ex_start, last_ex_end,
-                last_ypos, 0, ypos, exon.getColour(), 2, exon
+                last_ypos, 0, ypos, exon.getColour(), 1.5f, exon
                     .isForwardFeature(), last_segment,
                 selection.contains(exon), selected_size);
 
@@ -1122,7 +1122,7 @@ public class GeneViewerPanel extends JPanel
         int r_start = border + (int) ((range.getStart() - start) * fraction);
         int r_end   = border + (int) ((range.getEnd() - start) * fraction);
 
-        drawFeature(g2d, r_start, r_end, ypos, feature.getColour(), 2,
+        drawFeature(g2d, r_start, r_end, ypos, feature.getColour(), 1.5f,
                     selection.contains(feature), 2.f);
       }
     }
@@ -1173,7 +1173,7 @@ public class GeneViewerPanel extends JPanel
   private void drawExons(Graphics2D g2d, int ex_start, int ex_end, 
                          int last_ex_start, int last_ex_end, int last_ypos,
                          int offset, int ypos, Color exon_colour,
-                         int size,
+                         float size,
                          boolean isForward, boolean last_segment,
                          boolean selected, float selected_size)
   {   
@@ -1212,20 +1212,23 @@ public class GeneViewerPanel extends JPanel
     // draw arrow
     if(last_segment)
     {
+      BasicStroke stroke = new BasicStroke(1.f);
+      g2d.setStroke(stroke);
+      
       if(isForward)
       {      
 
         g2d.drawLine(ex_end, ypos, 
-                     ex_end+getFontHeight()/2, ypos+(getFontHeight()*size)/2);
-        g2d.drawLine(ex_end+getFontHeight()/2, ypos+(getFontHeight()*size)/2,
-                     ex_end, ypos+(getFontHeight()*size));
+                     ex_end+getFontHeight()/2, ypos+(int)((getFontHeight()*size)/2));
+        g2d.drawLine(ex_end+getFontHeight()/2, ypos+(int)((getFontHeight()*size)/2),
+                     ex_end, ypos+(int)((getFontHeight()*size)));
       }
       else
       {
         g2d.drawLine(ex_start, ypos, 
-                     ex_start-getFontHeight()/2, ypos+(getFontHeight()*size)/2);
-        g2d.drawLine(ex_start-getFontHeight()/2, ypos+(getFontHeight()*size)/2,
-                     ex_start, ypos+(getFontHeight()*size));
+                     ex_start-getFontHeight()/2, ypos+(int)((getFontHeight()*size)/2));
+        g2d.drawLine(ex_start-getFontHeight()/2, ypos+(int)((getFontHeight()*size)/2),
+                     ex_start, ypos+(int)((getFontHeight()*size)));
       }
     }
   }
@@ -1240,7 +1243,7 @@ public class GeneViewerPanel extends JPanel
    * @param size    parameter to control the height of the feature
    */
   private void drawFeature(Graphics2D g2d, int start, int end, 
-                           int ypos, Color colour, int size,
+                           int ypos, Color colour, float size,
                            boolean selected, float selected_size)
   {
     RoundRectangle2D e = new RoundRectangle2D.Float(start, ypos, 
