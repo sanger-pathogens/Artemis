@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.29 2007-07-05 11:54:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.30 2007-07-11 12:50:03 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -219,7 +219,7 @@ public class GeneBuilderFrame extends JFrame
     
     Utilities.centreFrame(this);
     setVisible(true);
-    all.setDividerLocation(0.35);
+    all.setDividerLocation(0.30);
   }
   
   /**
@@ -237,7 +237,8 @@ public class GeneBuilderFrame extends JFrame
       e.printStackTrace();
     }
     
-    if(chadoTransactionManager != null)
+    if(chadoTransactionManager != null &&
+       chadoTransactionManager.hasTransactions())
     { 
       int select = JOptionPane.showConfirmDialog(this, 
           "Commit changes back to the database?", 

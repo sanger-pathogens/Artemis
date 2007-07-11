@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.27 2007-07-09 13:29:13 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.28 2007-07-11 12:48:31 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -634,6 +634,7 @@ invisible_qualifiers_gff= \
     gff_source     \
     GO             \
     ID             \
+    Name           \
     Ontology_term  \
     Parent         \
     product        \
