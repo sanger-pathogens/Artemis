@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.42 2007-07-09 12:16:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.43 2007-07-11 08:51:36 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -49,6 +49,7 @@ import uk.ac.sanger.artemis.io.StreamQualifier;
 import uk.ac.sanger.artemis.io.QualifierInfo;
 
 import uk.ac.sanger.artemis.components.ProgressThread;
+import uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
 import uk.ac.sanger.artemis.components.genebuilder.gff.GffPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
@@ -67,7 +68,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.42 2007-07-09 12:16:07 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.43 2007-07-11 08:51:36 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -145,6 +146,8 @@ public class FeatureEdit extends JPanel
   private MatchPanel matchForm;
   
   private EntryInformation entry_information;
+  
+  private static boolean isTabbedView = true;
   
   /**
    *  Create a new FeatureEdit object from the given Feature.
@@ -898,30 +901,26 @@ public class FeatureEdit extends JPanel
       cvForm = new CVPanel(getFeature());
       cvForm.setBackground(Color.WHITE);
 
-      // tabbed pane of core and cv annotaion
-      JTabbedPane tabbedPane = new JTabbedPane();
-      
-      JScrollPane jspCore = new JScrollPane(qualifier_text_area);
-      tabbedPane.add("Core", jspCore);
-
-      JScrollPane jspCV   = new JScrollPane(cvForm);
-      jspCV.setPreferredSize(jspCore.getPreferredSize());
-      tabbedPane.add("CV", jspCV);
-      
       matchForm = new MatchPanel(getFeature());
       matchForm.setBackground(Color.WHITE);
       
-      JScrollPane jspOrtholog   = new JScrollPane(matchForm);
-      jspCV.setPreferredSize(jspOrtholog.getPreferredSize());
-      tabbedPane.add("Match", jspOrtholog);
-      
       gffPanel = new GffPanel(getFeature());
       gffPanel.setBackground(Color.WHITE);
-      JScrollPane jspGff = new JScrollPane(gffPanel);
-      jspGff.setPreferredSize(jspCore.getPreferredSize());
-      tabbedPane.add("GFF", jspGff);
+
+      addGffAnnotationView(lower_panel);
       
-      lower_panel.add(tabbedPane, "Center");
+      final JCheckBox tabbedView = new JCheckBox("Tabbed View", isTabbedView);
+      tabbedView.addItemListener(new ItemListener()
+      {
+        public void itemStateChanged(ItemEvent e)
+        {
+          isTabbedView = tabbedView.isSelected();
+          addGffAnnotationView(lower_panel);
+          lower_panel.revalidate();
+          lower_panel.repaint();
+        }
+      });
+      lower_panel.add(tabbedView, "South");
     }
     else
       lower_panel.add(new JScrollPane(qualifier_text_area), "Center");
@@ -932,6 +931,49 @@ public class FeatureEdit extends JPanel
   }
 
 
+  /**
+   * Add the annotation view as tabbed or in a single pane
+   * @param lower_panel
+   */
+  private void addGffAnnotationView(final JPanel lower_panel)
+  {
+    Component c[] = lower_panel.getComponents();
+    
+    if(isTabbedView)
+    {
+      for(int i=0; i<c.length; i++)
+      {
+        if(c[i] instanceof JScrollPane)
+          lower_panel.remove(c[i]);
+      }
+      // tabbed pane of core and cv annotaion
+      JTabbedPane tabbedPane = new JTabbedPane();
+      JScrollPane jspCore = new JScrollPane(qualifier_text_area);
+      tabbedPane.add("Core", jspCore);
+      JScrollPane jspCV = new JScrollPane(cvForm);
+      jspCV.setPreferredSize(jspCore.getPreferredSize());
+      tabbedPane.add("CV", jspCV);
+      JScrollPane jspOrtholog = new JScrollPane(matchForm);
+      tabbedPane.add("Match", jspOrtholog);
+      JScrollPane jspGff = new JScrollPane(gffPanel);
+      jspGff.setPreferredSize(jspCore.getPreferredSize());
+      tabbedPane.add("GFF", jspGff);
+      lower_panel.add(tabbedPane, "Center");
+    }
+    else
+    {
+      for(int i=0; i<c.length; i++)
+      {
+        if(c[i] instanceof JTabbedPane)
+          lower_panel.remove(c[i]);
+      }
+      // single panel containing annotation forms
+      lower_panel.add(new JScrollPane(
+          new GeneEditorPanel(qualifier_text_area, cvForm, matchForm, gffPanel)), 
+          "Center");
+    }
+  }
+  
   /**
    *  Return the dirtectory that the given entry was read from.
    **/
@@ -1712,6 +1754,16 @@ public class FeatureEdit extends JPanel
   private Selection getSelection()
   {
     return selection;
+  }
+
+  public static boolean isTabbedView()
+  {
+    return isTabbedView;
+  }
+
+  public static void setTabbedView(boolean isTabbedView)
+  {
+    FeatureEdit.isTabbedView = isTabbedView;
   }
 
 }
