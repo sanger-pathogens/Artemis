@@ -1965,12 +1965,23 @@ public class ChadoTransactionManager
   /**
    * Commit the transactions back to the database.  
    *
-   **/
+   */
   public void commit(DatabaseDocument dbDoc)
   {
     int retVal = dbDoc.commit(sql);
     if(retVal > 0)
       sql = new Vector();
+  }
+  
+  /**
+   * Determines if there are transactions registered.
+   * @return
+   */
+  public boolean hasTransactions()
+  {
+    if(sql.size() > 0)
+      return true;
+    return false;
   }
   
   
