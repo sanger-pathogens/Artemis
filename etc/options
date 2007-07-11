@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.28 2007-07-11 12:48:31 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.29 2007-07-11 15:14:38 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -554,6 +554,7 @@ extra_qualifiers_gff = \
     blastx_file "text" \
     controlled_curation "text" \
     fasta_file "text" \
+    note "text" \
     similarity "text"
 
 # this is a list of extra qualifiers that are legal but are not displayed in
@@ -635,6 +636,7 @@ invisible_qualifiers_gff= \
     GO             \
     ID             \
     Name           \
+    note           \
     Ontology_term  \
     Parent         \
     product        \
