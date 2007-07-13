@@ -1635,7 +1635,8 @@ public class DatabaseDocument extends Document
     for(int i = 0; i < b.length; i++)
       c[i] = (char)b[i];
     
-    PartialSequence ps = new PartialSequence(c);
+    PartialSequence ps = new PartialSequence(c, feature.getSeqLen(),
+                                feature.getFeatureLoc().getFmin().intValue()+1);
     return ps;
   }
   

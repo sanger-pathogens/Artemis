@@ -42,12 +42,28 @@ public class PartialSequence implements Sequence
 
   /** Count of the t bases in the sequence. */
   private int t_count = 0;
+  
+  /** full sequence length */
+  private int sequenceLength;
 
-  public PartialSequence(char[] sequence)
+  /** start of this part of the sequence*/
+  private int start;
+  
+  /**
+   * Holds ony part of the sequence
+   * @param sequence        part of the sequence to store
+   * @param sequenceLength  full sequence length
+   * @param start           start position of sequence
+   */
+  public PartialSequence(final char[] sequence, 
+                         final int sequenceLength,
+                         final int start)
   {
     try
     {
       setFromChar(sequence);
+      this.sequenceLength = sequenceLength;
+      this.start = start;
     }
     catch(IllegalSymbolException e)
     {
@@ -74,14 +90,21 @@ public class PartialSequence implements Sequence
     return c_count;
   }
 
-  public char[] getCharSubSequence(int start, int end)
+  public char[] getCharSubSequence(int this_start, int this_end)
   {
-    int subSeqLength = end-start+1;
+    int subSeqLength = this_end-this_start+1;
     char subSequence[] = new char[subSeqLength];
     int count = 0;
-    for(int i=start;i<=end;i++)
-      subSequence[count] = sequence[i];
     
+    this_start -= start;
+    this_end   -= start;
+    
+    for(int i=this_start;i<=this_end;i++)
+    {
+      subSequence[count] = sequence[i];
+      count++;
+    }
+
     return subSequence;
   }
 
@@ -93,7 +116,7 @@ public class PartialSequence implements Sequence
   public int getOtherCount()
   {
     return
-      length() - (getCCount() + getACount() + getTCount() + getGCount());
+      sequence.length - (getCCount() + getACount() + getTCount() + getGCount());
   }
 
   public String getSubSequence(int start, int end)
@@ -113,7 +136,7 @@ public class PartialSequence implements Sequence
 
   public int length()
   {
-    return sequence.length;
+    return sequenceLength;
   }
 
   public void setFromChar(char[] sequence) throws ReadOnlyException, IllegalSymbolException
