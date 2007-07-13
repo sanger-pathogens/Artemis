@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.44 2007-07-11 15:13:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.45 2007-07-13 15:52:41 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -68,7 +68,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.44 2007-07-11 15:13:27 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.45 2007-07-13 15:52:41 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -951,11 +951,14 @@ public class FeatureEdit extends JPanel
       JScrollPane jspCore = new JScrollPane(qualifier_text_area);
       tabbedPane.add("Core", jspCore);
       JScrollPane jspCV = new JScrollPane(cvForm);
+      cvForm.setVisible(true);      // ensure visible
       jspCV.setPreferredSize(jspCore.getPreferredSize());
       tabbedPane.add("CV", jspCV);
       JScrollPane jspOrtholog = new JScrollPane(matchForm);
+      matchForm.setVisible(true);   // ensure visible
       tabbedPane.add("Match", jspOrtholog);
       JScrollPane jspGff = new JScrollPane(gffPanel);
+      gffPanel.setVisible(true);    // ensure visible
       jspGff.setPreferredSize(jspCore.getPreferredSize());
       tabbedPane.add("GFF", jspGff);
       lower_panel.add(tabbedPane, "Center");
