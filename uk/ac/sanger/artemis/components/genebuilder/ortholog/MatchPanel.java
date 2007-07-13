@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.8 2007-07-11 08:50:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.9 2007-07-13 09:15:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -154,7 +154,7 @@ public class MatchPanel extends JPanel
       DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
       DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
       
-      orthologTable = new OrthologTable(doc, orthoQualifier);
+      orthologTable = new OrthologTable(doc, orthoQualifier, feature);
       addHideShowButton(orthologTable.getTable(), hide_show_ortho);
       xBox.add(hide_show_ortho);
       editableComponents.add(orthologTable);

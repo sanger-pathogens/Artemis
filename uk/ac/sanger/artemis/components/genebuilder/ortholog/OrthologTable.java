@@ -50,9 +50,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
+import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
-import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 
 public class OrthologTable extends AbstractMatchTable
@@ -77,11 +77,12 @@ public class OrthologTable extends AbstractMatchTable
    * @param similarityString
    */
   protected OrthologTable(final DatabaseDocument doc,
-                          final Qualifier origQualifier)
+                          final Qualifier origQualifier,
+                          final Feature feature)
   {
     this.origQualifier = origQualifier;
     
-    createPopupMenu(doc);
+    createPopupMenu(doc, feature);
     
     infoLevelButton.setOpaque(false);
     tableData.setSize(NUMBER_COLUMNS);
@@ -181,7 +182,8 @@ public class OrthologTable extends AbstractMatchTable
    * Create the popup menu for the table
    *
    */
-  private void createPopupMenu(final DatabaseDocument doc)
+  private void createPopupMenu(final DatabaseDocument doc,
+                               final Feature feature)
   {
     JMenuItem showSequenceMenu = new JMenuItem("Show selected sequences");
     popupMenu.add(showSequenceMenu);
@@ -192,6 +194,12 @@ public class OrthologTable extends AbstractMatchTable
         final int[] rows = orthologTable.getSelectedRows();
         final int column = getColumnIndex(ORTHO_COL);
         final Vector seqs = new Vector();
+        
+        
+        final String bases = feature.getTranslationBases();
+        //final String bases = feature.getBases();
+        final String sysName = feature.getSystematicName();
+        seqs.add(new org.emboss.jemboss.editor.Sequence(sysName, bases));
         
         for(int row=0; row<rows.length; row++)
         {
