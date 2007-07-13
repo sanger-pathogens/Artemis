@@ -34,6 +34,8 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 
 import javax.swing.DefaultCellEditor;
@@ -335,6 +337,33 @@ abstract class AbstractMatchTable
      linkButton.setVerticalAlignment(SwingConstants.TOP);
      linkButton.setMargin(new Insets(0,1,0,1));
      
+     linkButton.addMouseListener(new MouseListener()
+     {
+
+      public void mouseClicked(MouseEvent e)
+      {
+        if(e.getClickCount() == 2)
+          fireEditingStopped(); 
+      }
+
+      public void mouseEntered(MouseEvent e)
+      { 
+      }
+
+      public void mouseExited(MouseEvent e)
+      {
+      }
+
+      public void mousePressed(MouseEvent e)
+      {
+      }
+
+      public void mouseReleased(MouseEvent e)
+      {
+      }     
+     });
+     
+     /*
      linkButton.addActionListener(new ActionListener()
      {
        public void actionPerformed(ActionEvent e) 
@@ -342,6 +371,7 @@ abstract class AbstractMatchTable
          fireEditingStopped(); 
        }
      });
+     */
    }
    
    /**
