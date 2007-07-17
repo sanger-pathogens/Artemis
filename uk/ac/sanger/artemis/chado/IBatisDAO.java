@@ -61,6 +61,8 @@ import javax.swing.JPasswordField;
  */
 public class IBatisDAO extends GmodDAO
 {
+  private static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(IBatisDAO.class);
   private SqlMapClientWrapper sqlMap;
   
   /**
@@ -944,7 +946,7 @@ public class IBatisDAO extends GmodDAO
     
     if(synonym == null)
     {
-      System.out.println("HERE2");
+      logger4j.debug("synonym "+feature_synonym.getSynonym()+" needs inserting");
       // create a new synonym name     
       sqlMap.insert("insertAlias", feature_synonym);
       
@@ -953,11 +955,7 @@ public class IBatisDAO extends GmodDAO
             feature_synonym.getSynonym());
     }
     
-    System.out.println("HERE "+((Synonym)synonym).getSynonymId()+" "+((Synonym)synonym).getName());
     feature_synonym.setSynonym((Synonym)synonym);
-    System.out.println("HERE "+((Synonym)synonym).getSynonymId());
-    System.out.println("\n----------------------------------> "+feature_synonym.getSynonym().getSynonymId()+"\n");
-    //feature_synonym.setFeatureSynonymId(synonym.getSynonymId());
     sqlMap.insert("insertFeatureAlias", feature_synonym);
   }
   
