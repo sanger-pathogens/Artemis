@@ -91,7 +91,7 @@ public class IBatisDAO extends GmodDAO
   //////
   public List getDbs()
   {
-    return sqlMap.queryForList("selectAllDb", null);
+    return sqlMap.queryForList("getDbs", null);
   }
   
   //////
@@ -564,7 +564,7 @@ public class IBatisDAO extends GmodDAO
   
   public CvTerm getCvTermById(final int cvTermId)
   {
-    return (CvTerm)sqlMap.queryForObject("selectCvterm", new Integer(cvTermId));
+    return (CvTerm)sqlMap.queryForObject("getCvtermByCvTermId", new Integer(cvTermId));
   }
 
   //////

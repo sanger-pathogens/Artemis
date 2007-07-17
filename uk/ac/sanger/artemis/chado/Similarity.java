@@ -199,7 +199,16 @@ public class Similarity implements LazyQualifierValue
       for(int i=0; i<featureProps.size(); i++)
       {
         FeatureProp featureProp = (FeatureProp)featureProps.get(i);
-        buff.append(featureProp.getCvTerm().getName()+"="+featureProp.getValue());
+        
+        final String cvTermName;
+        if(featureProp.getCvTerm().getName() == null ||
+           featureProp.getCvTerm().getName().equals("null"))
+          cvTermName = DatabaseDocument.getCvTermByCvTermId(
+              featureProp.getCvTerm().getCvTermId(), null).getName();
+        else
+          cvTermName = featureProp.getCvTerm().getName();
+
+        buff.append(cvTermName+"="+featureProp.getValue());
         if(i < featureProps.size()-1)
           buff.append(";");
       }

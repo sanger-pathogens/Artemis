@@ -28,7 +28,7 @@
      <result property="obsolete"    column="is_obsolete" />
      <result property="publisher"   column="publisher" />
      <result property="pubPlace"    column="pubplace" />
-     <result property="cvTerm"      column="type_id" select="selectCvterm" />
+     <result property="cvTerm"      column="type_id" select="getCvtermByCvTermId" />
   </resultMap>
 
   <resultMap id="select-pubdbxref" class="PubDbXRef">

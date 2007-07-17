@@ -10,7 +10,7 @@
   <typeAlias alias="Analysis"
         type="org.gmod.schema.analysis.Analysis"/>
    
-    <select id="selectAnalysis" resultClass="Analysis">
+    <select id="getAnalysisByAnalysisId" resultClass="Analysis">
        SELECT name, description, program, programversion, algorithm, 
               sourcename, sourceversion,sourceuri, timeexecuted
        FROM analysis

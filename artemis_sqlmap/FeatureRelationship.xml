@@ -25,7 +25,7 @@
         <result property="featureByObjectId.featureId" column="object_id" />
         <result property="value" column="value" />
         <result property="rank" column="rank" />
-        <result property="cvTerm" column="type_id" select="selectCvterm" />
+        <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
      </resultMap>
      
      <!--  select feature_relationship -->

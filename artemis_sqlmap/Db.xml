@@ -5,11 +5,20 @@
     "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
  
 
-<sqlMap namespace="DbXRef"> 
+<sqlMap namespace="Db"> 
 
   <typeAlias alias="Db"
         type="org.gmod.schema.general.Db"/>
-        
+   
+  <resultMap id="select-db" 
+               class="Db">
+    <result property="dbId"   column="db_id"/>    
+    <result property="name"   column="name"/>
+    <result property="description" column="description"/>
+	<result property="urlPrefix"   column="urlPrefix"/>
+	<result property="url"   column="url"/>
+  </resultMap>
+	     
   <select id="getDbId" parameterClass="Db"
                        resultClass="java.lang.Integer">
     SELECT db_id FROM db WHERE name=#name#
@@ -20,11 +29,11 @@
     SELECT db_id FROM db WHERE lower(name)=lower(#name#)
   </select>
   
-  <select id="selectDb" resultClass="Db">
+  <select id="getDbByDbId" resultClass="Db">
     SELECT * FROM db WHERE db_id=$db_id$
   </select>
 
-  <select id="selectAllDb" resultClass="Db">
+  <select id="getDbs" resultClass="Db">
     SELECT * FROM db 
   </select>
 </sqlMap>

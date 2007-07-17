@@ -40,7 +40,7 @@
    	    <result property="pub.pubId" column="pub_id"/>
    	    <result property="current" column="is_current"/>
    	    <result property="internal" column="is_internal"/>
-   	    <result property="synonym" column="synonym_id" select="selectSynonym"/>
+   	    <result property="synonym" column="synonym_id" select="getSynonymBySynonymId"/>
      </resultMap>
      
      <resultMap id="select-alias-lazy" 
@@ -49,7 +49,7 @@
    	    <result property="pub.pubId" column="pub_id"/>
    	    <result property="current" column="is_current"/>
    	    <result property="internal" column="is_internal"/>
-   	    <result property="synonym" column="synonym_id" select="selectSynonym"/>
+   	    <result property="synonym" column="synonym_id" select="getSynonymBySynonymId"/>
      </resultMap>
      
      <resultMap id="select-synonym-lazy"
@@ -57,7 +57,7 @@
         <result property="synonymId" column="synonym_id"/>
    	    <result property="name" column="name"/>
    	    <result property="synonymSgml" column="synonym_sgml"/>
-  	    <result property="cvTerm" column="type_id" select="selectCvterm"/>
+  	    <result property="cvTerm" column="type_id" select="getCvtermByCvTermId"/>
      </resultMap>
      
      
@@ -121,7 +121,7 @@
         synonym_id > 0
     </select>
     
-    <select id="selectSynonym" resultMap="select-synonym-lazy">
+    <select id="getSynonymBySynonymId" resultMap="select-synonym-lazy">
       SELECT * FROM synonym WHERE synonym_id=#value#
     </select>
    

@@ -12,7 +12,7 @@
      <typeAlias alias="FeatureLoc"
         type="org.gmod.schema.sequence.FeatureLoc"/>
         
-     <resultMap id="select-location"
+     <resultMap id="select-location-lazy"
                 class="FeatureLoc">
         <result property="srcFeatureId" column="srcfeature_id" nullValue="-999" />
         <result property="featureBySrcFeatureId" column="{featureId=srcfeature_id}" 
@@ -25,9 +25,23 @@
         <result property="locGroup"  column="locgroup"/>
         <result property="rank"      column="rank"/>
      </resultMap>
-        
+     
+	 <resultMap id="select-location"
+                class="FeatureLoc">
+        <result property="srcFeatureId" column="srcfeature_id" nullValue="-999" />
+        <result property="featureBySrcFeatureId" column="{featureId=srcfeature_id}" 
+                                                 select="getFeatureById" />
+        <result property="fmin"   column="fmin"   nullValue="-999" />
+        <result property="fmax"   column="fmax"   nullValue="-999" />
+        <result property="strand" column="strand" nullValue="0" />
+        <result property="phase"  column="phase"  nullValue="0" />
+        <result property="residueInfo"  column="residue_info"/>
+        <result property="locGroup"  column="locgroup"/>
+        <result property="rank"      column="rank"/>
+     </resultMap>
+	  
      <!--  select featureloc -->
-     <select id="getFeatureLoc" resultMap="select-location">
+     <select id="getFeatureLoc" resultMap="select-location-lazy">
        SELECT srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank
        FROM  featureloc
        WHERE featureloc.feature_id=#id#

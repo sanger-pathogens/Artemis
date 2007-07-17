@@ -9,12 +9,19 @@
 
      <typeAlias alias="FeatureProp"
         type="org.gmod.schema.sequence.FeatureProp"/>
-        
+	 
+     <resultMap id="select-featureprop-lazy" 
+                class="FeatureProp">
+        <result property="value" column="value" />
+        <result property="rank" column="rank" />
+        <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
+     </resultMap>
+	 
      <resultMap id="select-featureprop" 
                 class="FeatureProp">
         <result property="value" column="value" />
         <result property="rank" column="rank" />
-        <result property="cvTerm" column="type_id" select="selectCvterm" />
+        <result property="cvTerm" resultMap="CvTerm.lazy-cvterm" />
      </resultMap>
      
     <resultMap id="featureprop" 
@@ -25,12 +32,19 @@
     </resultMap>
      
    <!-- select featureprops e.g. for lazy loading -->
-     <select id="selectFeatureProp" resultMap="select-featureprop">
+     <select id="getFeaturePropByFeatureIdLazy" resultMap="select-featureprop-lazy">
        SELECT type_id, value, rank 
        FROM featureprop
        WHERE feature_id=#feature_id#
      </select>
      
+	<select id="getFeaturePropByFeatureId" resultMap="select-featureprop">
+       SELECT value, rank, cvterm.* 
+       FROM featureprop
+	   LEFY JOIN cvterm ON type_id=cvterm_id
+       WHERE feature_id=#feature_id#
+     </select>
+	
     <update id="updateFeatureProp"
             parameterClass="FeatureProp">
       UPDATE featureprop
