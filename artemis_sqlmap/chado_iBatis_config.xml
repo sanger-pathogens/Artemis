@@ -62,6 +62,7 @@
   <sqlMap resource="artemis_sqlmap/FeatureProp.xml" />
   <sqlMap resource="artemis_sqlmap/FeatureRelationship.xml" />
   <sqlMap resource="artemis_sqlmap/FeaturePub.xml" />
+  <sqlMap resource="artemis_sqlmap/FeatureSynonym.xml" />
   <sqlMap resource="artemis_sqlmap/Db.xml" />
   <sqlMap resource="artemis_sqlmap/DbXRef.xml" />
   <sqlMap resource="artemis_sqlmap/Synonym.xml" />

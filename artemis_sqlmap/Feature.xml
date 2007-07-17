@@ -21,7 +21,7 @@
     <parameter property="featureCvTerms" javaType="java.util.List"/>
   </parameterMap> 
 
-  <resultMap id="select-feature" 
+  <resultMap id="map-feature" 
              class="Feature" groupBy="featureId">
     <result property="timeLastModified" column="timelastmodified"/>
    	<result property="featureId" column="id"/>
@@ -49,7 +49,7 @@
 
   <!-- mapping for feature table and lazy loading of feature_dbxref, feature_relationship,
        featureprop, organism tables -->
-  <resultMap id="select-feature-lazy" 
+  <resultMap id="map-feature-lazy" 
              class="Feature">       
     <result property="timeLastModified" column="timelastmodified"/>
    	<result property="featureId" column="id"/>
@@ -76,7 +76,7 @@
                                 select="getOrganism" />
   </resultMap>
 	
-  <resultMap id="select-feature-withprop"
+  <resultMap id="map-feature-withprop"
 	         class="Feature" groupBy="featureId">
 	<result property="timeLastModified" column="timelastmodified"/>
    	<result property="featureId" column="feature_id"/>
@@ -91,7 +91,7 @@
                               select="getDbXRefByDbXRefId" />
   </resultMap>
 	
-  <resultMap id="select-feature-residues" 
+  <resultMap id="map-feature-residues" 
              class="Feature">
     <result property="residues" column="residues"/>
    	<result property="seqLen" column="seqLen"/>
@@ -107,13 +107,13 @@
     <result property="name" column="feature_name"/>
     <result property="seqLen" column="length" nullValue="-999" />
     <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
-    <result property="featureLocsForFeatureId" resultMap="FeatureLoc.select-location" />
+    <result property="featureLocsForFeatureId" resultMap="FeatureLoc.map-location" />
 	<result property="featureProps" column="{feature_id=id}" 
                                        select="getFeaturePropByFeatureId" />
     <result property="analysisFeatures" resultMap="AnalysisFeature.map-analysisfeature" />                                                
   </resultMap>
     
-  <resultMap id="select-feature-with-residues-result" 
+  <resultMap id="map-feature-with-residues-result" 
              class="Feature">
     <result property="name" column="name"/>
     <result property="uniqueName" column="uniquename"/>
@@ -125,7 +125,7 @@
   <!-- get feature -->
 
   <select id="getFeature" parameterClass="Feature" 
-                          resultMap="select-feature">
+                          resultMap="map-feature">
     SELECT
       timelastmodified, 
       f.feature_id AS id, 
@@ -159,7 +159,7 @@
     ORDER BY f.type_id,  uniquename
   </select>
  
-  <select id="getLazyFeature" resultMap ="select-feature-lazy" 
+  <select id="getLazyFeature" resultMap ="map-feature-lazy" 
                               parameterClass="Feature">
 	SELECT
 	  timelastmodified,
@@ -203,7 +203,7 @@
      f.feature_id > 0 
   </select>
 
-  <select id="getLazyFeatureById" resultMap ="select-feature-lazy" >
+  <select id="getLazyFeatureById" resultMap ="map-feature-lazy" >
 	SELECT
 	  timelastmodified,
 	  f.feature_id AS id,
@@ -218,7 +218,7 @@
     WHERE f.feature_id=$featureId$
   </select>
 	
-  <select id="getFeatureById" resultMap ="select-feature-withprop" 
+  <select id="getFeatureById" resultMap ="map-feature-withprop" 
 		cacheModel="feature-cache">
 	SELECT
 	  timelastmodified,
@@ -296,7 +296,7 @@
 
 
   <select id="getResidueFeatures" parameterClass="java.lang.Integer"
-            resultMap="select-feature-with-residues-result">
+            resultMap="map-feature-with-residues-result">
     SELECT name, uniquename, feature_id, type_id
     FROM feature WHERE 
 	  <isNotNull> organism_id=$value$ AND </isNotNull>
@@ -311,7 +311,7 @@
 	
 		
   <select id="getResiduesByUniqueName" parameterClass="java.lang.String"
-            resultMap="select-feature-residues">
+            resultMap="map-feature-residues">
 	SELECT substr(residues, fl.fmin+1, fl.fmax-fl.fmin) AS residues, 
 	       seqlen AS seqLen, fl.fmin, fl.fmax
 	FROM featureloc fl 
