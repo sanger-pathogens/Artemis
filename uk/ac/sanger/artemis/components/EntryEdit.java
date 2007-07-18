@@ -20,13 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.39 2007-03-29 08:35:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.40 2007-07-18 15:44:07 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
+import uk.ac.sanger.artemis.chado.Similarity;
 import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
 import uk.ac.sanger.artemis.editor.BigPane;
@@ -56,13 +57,14 @@ import com.sshtools.j2ssh.sftp.FileAttributes;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 
 
 /**
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.39 2007-03-29 08:35:08 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.40 2007-07-18 15:44:07 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -632,8 +634,7 @@ public class EntryEdit extends JFrame
                  final boolean include_diana_extensions,
                  final boolean ask_for_name, final boolean keep_new_name,
                  final int destination_type) 
-  {
-
+  { 
     if(!include_diana_extensions) 
     {
       if(displaySaveWarnings(entry)) 
@@ -650,11 +651,55 @@ public class EntryEdit extends JFrame
         return;
     }
 
+    if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
+    {
+      int n = JOptionPane.showConfirmDialog(null,
+          "Load and write all qualifers from the database?"+
+          "\nThis may take a few minutes.",
+          "Load All Data",
+          JOptionPane.YES_NO_OPTION);
+      
+      if(n == JOptionPane.YES_OPTION)
+      {
+        List lazyValues = new Vector();
+        FeatureVector features = entry.getAllFeatures();
+        for(int i=0; i<features.size(); i++)
+        {
+          QualifierVector qualifiers = features.elementAt(i).getQualifiers();
+          for(int j=0; j<qualifiers.size(); j++)
+          {
+            Qualifier qualifier = (Qualifier)qualifiers.get(j);
+            if(qualifier instanceof QualifierLazyLoading)
+              lazyValues.addAll( ((QualifierLazyLoading)qualifier).getLazyValues() );
+          }
+        }
+        
+        if(lazyValues.size() > 0)
+        {
+          Similarity.bulkRetrieve(lazyValues,
+            (DatabaseDocument) ((DatabaseDocumentEntry)entry.getEMBLEntry()).getDocument());
+          
+          for(int i=0; i<features.size(); i++)
+          {
+            QualifierVector qualifiers = features.elementAt(i).getQualifiers();
+            for(int j=0; j<qualifiers.size(); j++)
+            {
+              Qualifier qualifier = (Qualifier)qualifiers.get(j);
+              if(qualifier instanceof QualifierLazyLoading)
+                ((QualifierLazyLoading)qualifier).setForceLoad(true);
+            }
+          }
+          
+        }
+        
+      }
+    }
+    
 //  if(!System.getProperty("os.arch").equals("alpha"))
 //  {
       final EntryFileDialog file_dialog = new EntryFileDialog(this,
                                                               false);
-
+      
       file_dialog.saveEntry(entry, include_diana_extensions, ask_for_name,
                           keep_new_name, destination_type);
 //  }
@@ -1741,30 +1786,6 @@ class SaveEntryAsGFFActionListener extends EntryActionListener
 
   public void actionPerformed(final ActionEvent event) 
   {
-    if(getEntry().getEMBLEntry() instanceof DatabaseDocumentEntry)
-    {       
-      int n = JOptionPane.showConfirmDialog(null,
-          "Load and write all qualifers from the database?"+
-          "\nThis may take a few minutes.",
-          "Load All Data",
-          JOptionPane.YES_NO_OPTION);
-      
-      if(n == JOptionPane.YES_OPTION)
-      {
-        FeatureVector features = getEntry().getAllFeatures();
-        for(int i=0; i<features.size(); i++)
-        {
-          QualifierVector qualifiers = features.elementAt(i).getQualifiers();
-          for(int j=0; j<qualifiers.size(); j++)
-          {
-            Qualifier qualifier = (Qualifier)qualifiers.get(j);
-            if(qualifier instanceof QualifierLazyLoading)
-              ((QualifierLazyLoading)qualifier).setForceLoad(true);
-          }
-        }
-      }
-
-    }
     getEntryEdit().saveEntry(getEntry(), true, true, false,
                              DocumentEntryFactory.GFF_FORMAT);
   }

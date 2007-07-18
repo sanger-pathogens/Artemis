@@ -98,6 +98,17 @@ public class JdbcDAO extends GmodDAO
   ////// SequenceDaoI
   //////
   //////
+  public List getFeaturePropByFeatureIds(List featureIds)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public List getFeaturesByListOfIds(List featureIds)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
   
   public List getFeatureDbXRefsBySrcFeatureId(int srcFeatureId)
   {
@@ -2224,8 +2235,6 @@ public class JdbcDAO extends GmodDAO
       throw new RuntimeException(sqle);
     }
   }
-
-
 
 
 }

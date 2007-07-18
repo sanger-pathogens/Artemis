@@ -138,6 +138,11 @@ public class IBatisDAO extends GmodDAO
     return sqlMap.queryForList("getLazySimilarityMatchesByFeatureIds", featureIds);
   }
   
+  public List getFeaturePropByFeatureIds(final List featureIds)
+  {
+    return sqlMap.queryForList("getFeaturePropByFeatureIds", featureIds);
+  }
+  
   /**
    * Return the feature corresponding to this feature_id 
    * 
@@ -150,6 +155,11 @@ public class IBatisDAO extends GmodDAO
       new org.gmod.schema.sequence.Feature();
     feature.setFeatureId(id);
     return (Feature)sqlMap.queryForObject("getLazyFeature", feature);
+  }
+  
+  public List getFeaturesByListOfIds(final List featureIds)
+  {
+    return sqlMap.queryForList("getFeaturesByListOfIds", featureIds);
   }
   
   public List getFeaturesByUniqueName(String uniquename) 

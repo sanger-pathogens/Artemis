@@ -27,6 +27,7 @@ package uk.ac.sanger.artemis.chado;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -70,6 +71,83 @@ public class Similarity implements LazyQualifierValue
   }
 
   /**
+   * Bulk retrieval of lazy properties (used to speed up writing to files)
+   * @param similarity  a <code>List</code> of Similarity qualifier values
+   * @param doc         the Document to which these features belong
+   */
+  public static void bulkRetrieve(final List similarity,
+                                  final DatabaseDocument doc)
+  {
+    final Iterator it = similarity.iterator();
+    final Hashtable featureLocHash = new Hashtable(similarity.size()*2);
+    final Hashtable matchFeatures = new Hashtable(similarity.size());
+    
+    while(it.hasNext())
+    {
+      Similarity thisSimilarity = (Similarity)it.next();
+      Feature thisMatchFeature = thisSimilarity.getMatchFeature();
+      Collection featureLocs = thisMatchFeature.getFeatureLocsForFeatureId();
+      Iterator it2 = featureLocs.iterator();
+      
+      while(it2.hasNext())
+      {
+        org.gmod.schema.sequence.FeatureLoc featureLoc = 
+          (org.gmod.schema.sequence.FeatureLoc)it2.next();
+
+        if(featureLoc.getSrcFeatureId() <= 0)
+          continue;
+        
+        final Integer srcFeatureId = new Integer(featureLoc.getSrcFeatureId());
+        List locs;
+        if(featureLocHash.containsKey(srcFeatureId))
+          locs = (Vector)featureLocHash.get(srcFeatureId);
+        else
+          locs = new Vector();
+        
+        locs.add(featureLoc);
+        featureLocHash.put(srcFeatureId, locs);
+      }
+     
+      matchFeatures.put(new Integer(thisMatchFeature.getFeatureId()), thisMatchFeature);
+    }
+    
+    // bulk load the subject and query features
+    final List sims = doc.getFeaturesByListOfIds(new Vector(featureLocHash.keySet()));
+    
+    for(int i=0; i<sims.size();i++)
+    {
+      Feature srcFeature = (Feature)sims.get(i);
+      Integer srcFeatureId = new Integer(srcFeature.getFeatureId());
+      if(featureLocHash.containsKey(srcFeatureId))
+      {
+        Vector locs = (Vector)featureLocHash.get(srcFeatureId);
+        for(int j=0;j<locs.size();j++)
+        {
+          FeatureLoc featureLoc = (FeatureLoc)locs.get(j);
+          featureLoc.setFeatureBySrcFeatureId(srcFeature);
+        }
+      }
+    }
+    
+    // bulk load the match feature properties
+    final List matchFeaturesWithProps = doc.getFeaturePropByFeatureIds(
+                                        new Vector(matchFeatures.keySet()) );
+    
+    for(int i=0; i<matchFeaturesWithProps.size(); i++)
+    {
+      Feature thisMatch = (Feature)matchFeaturesWithProps.get(i);
+      Integer featureId = new Integer(thisMatch.getFeatureId());
+      if(matchFeatures.containsKey(featureId))
+      {
+        Feature storedMatch = ((Feature)matchFeatures.get(featureId));
+        storedMatch.setFeatureProps(thisMatch.getFeatureProps());
+        storedMatch.setDbXRef(thisMatch.getDbXRef());
+      }
+    }
+    
+  }
+  
+  /**
    * Handle the loading of the data into a String 
    */
   public String getString()
@@ -80,9 +158,13 @@ public class Similarity implements LazyQualifierValue
       return getSoftString();
   }
   
+  /**
+   * This returns the completed value, loading any lazy properties
+   * @return
+   */
   public String getHardString()
   {
-    StringBuffer buff = new StringBuffer();
+    final StringBuffer buff = new StringBuffer();
     
     Collection featureLocs = matchFeature.getFeatureLocsForFeatureId();
     Iterator it2 = featureLocs.iterator();
