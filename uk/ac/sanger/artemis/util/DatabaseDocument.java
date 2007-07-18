@@ -1649,38 +1649,30 @@ public class DatabaseDocument extends Document
     return schema_list;
   }
   
+  /**
+   * Used by Similarity.bulkRetrieve() to get the match features
+   * @param featureIds the <code>List</code> of feature_id's
+   * @return  the corresponding features
+   */
+  public List getFeaturesByListOfIds(final List featureIds)
+  {
+    GmodDAO dao = getDAOOnly();
+    return dao.getFeaturesByListOfIds(featureIds);
+  }
+  
+  public List getFeaturePropByFeatureIds(final List featureIds)
+  {
+    GmodDAO dao = getDAOOnly();
+    return dao.getFeaturePropByFeatureIds(featureIds);
+  }
+  
   public List getSimilarityMatches(List featureIds)
   {
-    try
-    {
-      GmodDAO dao = getDAO();
-      if(featureIds == null)
-        return dao.getSimilarityMatches(new Integer(srcFeatureId));
-      else
-        return dao.getSimilarityMatchesByFeatureIds(featureIds);
-    }
-    catch(RuntimeException sqlExp)
-    {
-      JOptionPane.showMessageDialog(null, "SQL Problems...\n"+
-                                    sqlExp.getMessage(), 
-                                    "SQL Error",
-                                    JOptionPane.ERROR_MESSAGE);
-    }
-    catch(ConnectException exp)
-    {
-      JOptionPane.showMessageDialog(null, "Connection Problems...\n"+
-            exp.getMessage(), 
-            "Connection Error",
-            JOptionPane.ERROR_MESSAGE);
-    }
-    catch(java.sql.SQLException sqlExp)
-    {
-      JOptionPane.showMessageDialog(null, "SQL Problems....\n"+
-                                    sqlExp.getMessage(), 
-                                    "SQL Error",
-                                    JOptionPane.ERROR_MESSAGE);
-    }
-    return null;
+    GmodDAO dao = getDAOOnly();
+    if(featureIds == null)
+      return dao.getSimilarityMatches(new Integer(srcFeatureId));
+    else
+      return dao.getSimilarityMatchesByFeatureIds(featureIds);
   }
   
   /**
@@ -1906,6 +1898,37 @@ public class DatabaseDocument extends Document
       }
       return connIB;
     }
+  }
+  
+  private GmodDAO getDAOOnly()
+  {
+    GmodDAO dao = null;
+    try
+    {
+      dao = getDAO();
+    }
+    catch(RuntimeException sqlExp)
+    {
+      JOptionPane.showMessageDialog(null, "SQL Problems...\n"+
+                                    sqlExp.getMessage(), 
+                                    "SQL Error",
+                                    JOptionPane.ERROR_MESSAGE);
+    }
+    catch(ConnectException exp)
+    {
+      JOptionPane.showMessageDialog(null, "Connection Problems...\n"+
+            exp.getMessage(), 
+            "Connection Error",
+            JOptionPane.ERROR_MESSAGE);
+    }
+    catch(java.sql.SQLException sqlExp)
+    {
+      JOptionPane.showMessageDialog(null, "SQL Problems....\n"+
+                                    sqlExp.getMessage(), 
+                                    "SQL Error",
+                                    JOptionPane.ERROR_MESSAGE);
+    }
+    return dao;
   }
 
 
