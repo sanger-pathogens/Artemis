@@ -36,7 +36,7 @@ import uk.ac.sanger.artemis.util.*;
  *  one name and many values.
  *
  *  @author Kim Rutherford
- *  @version $Id: QualifierLazyLoading.java,v 1.3 2007-02-14 17:28:44 tjc Exp $
+ *  @version $Id: QualifierLazyLoading.java,v 1.4 2007-07-18 15:46:30 tjc Exp $
  * */
 
 public class QualifierLazyLoading extends Qualifier
@@ -138,6 +138,16 @@ public class QualifierLazyLoading extends Qualifier
     return (LazyQualifierValue)values.get(index);
   }
 
+  /**
+   * 
+   * @param index
+   * @return
+   */
+  public List getLazyValues()
+  {
+    return values;
+  }
+  
   /**
    *  Add the given values to this object.
    **/
