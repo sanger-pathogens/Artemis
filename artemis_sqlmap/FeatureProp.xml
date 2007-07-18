@@ -10,39 +10,53 @@
      <typeAlias alias="FeatureProp"
         type="org.gmod.schema.sequence.FeatureProp"/>
 	 
-     <resultMap id="select-featureprop-lazy" 
+     <resultMap id="map-featureprop-with-cvterm-lazy" 
                 class="FeatureProp">
         <result property="value" column="value" />
         <result property="rank" column="rank" />
         <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
      </resultMap>
 	 
-     <resultMap id="select-featureprop" 
+     <resultMap id="map-featureprop-with-cvterm" 
                 class="FeatureProp">
         <result property="value" column="value" />
         <result property="rank" column="rank" />
-        <result property="cvTerm" resultMap="CvTerm.lazy-cvterm" />
+		<result property="cvTerm" resultMap="CvTerm.lazy-cvterm" />
      </resultMap>
      
-    <resultMap id="featureprop" 
+    <resultMap id="map-featureprop" 
                class="FeatureProp">
         <result property="value" column="value" />
         <result property="rank"  column="prop_rank" />
         <result property="cvTerm.cvTermId" column="prop_type_id" />
     </resultMap>
+	
+	<resultMap id="map-feature-with-featureprops" 
+                class="org.gmod.schema.sequence.Feature" groupBy="featureId">
+        <result property="featureId" column="feature_id" />
+        <result property="featureProps" resultMap="FeatureProp.map-featureprop-with-cvterm" />
+    </resultMap>
      
    <!-- select featureprops e.g. for lazy loading -->
-     <select id="getFeaturePropByFeatureIdLazy" resultMap="select-featureprop-lazy">
+     <select id="getFeaturePropByFeatureIdLazy" resultMap="map-featureprop-with-cvterm-lazy">
        SELECT type_id, value, rank 
        FROM featureprop
        WHERE feature_id=#feature_id#
      </select>
      
-	<select id="getFeaturePropByFeatureId" resultMap="select-featureprop">
+	<select id="getFeaturePropByFeatureId" resultMap="map-featureprop-with-cvterm">
        SELECT value, rank, cvterm.* 
        FROM featureprop
 	   LEFY JOIN cvterm ON type_id=cvterm_id
        WHERE feature_id=#feature_id#
+     </select>
+	
+	 <select id="getFeaturePropByFeatureIds" resultMap="map-feature-with-featureprops">
+       SELECT f.feature_id, value, rank, cvterm.* 
+       FROM feature f
+	   LEFT JOIN featureprop fp ON f.feature_id=fp.feature_id
+       LEFT JOIN cvterm ON fp.type_id=cvterm_id
+	   WHERE f.feature_id IN <iterate open="(" close=")" conjunction=","> $[]$ </iterate>
      </select>
 	
     <update id="updateFeatureProp"
