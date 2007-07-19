@@ -100,6 +100,11 @@ public class IBatisDAO extends GmodDAO
   ////// SequenceDaoI
   //////
   //////
+  public List getFeatureDbXRefsByFeatureId(final List featureIds)
+  {
+    return sqlMap.queryForList("getFeatureDbXRefsByFeatureId",featureIds);
+  }
+  
   public Feature getResiduesByUniqueName(final String uniqueName)
   {
     return (Feature)sqlMap.queryForObject("getResiduesByUniqueName",uniqueName);

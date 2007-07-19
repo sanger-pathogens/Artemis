@@ -66,6 +66,7 @@ public abstract class GmodDAO
   ////// SchemaDaoI
   //////
   //////
+  public abstract List getFeatureDbXRefsByFeatureId(final List featureIds);
   public abstract List getFeaturesByListOfIds(final List featureIds);
   public abstract List getResidueFeatures(final Integer organismId);
   public abstract Feature getResiduesByUniqueName(final String uniqueName);

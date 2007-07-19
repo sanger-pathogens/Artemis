@@ -1649,6 +1649,13 @@ public class DatabaseDocument extends Document
     return schema_list;
   }
   
+  
+  public List getFeatureDbXRefsByFeatureId(final List featureIds)
+  {
+    GmodDAO dao = getDAOOnly();
+    return dao.getFeatureDbXRefsByFeatureId(featureIds);
+  }
+  
   /**
    * Used by Similarity.bulkRetrieve() to get the match features
    * @param featureIds the <code>List</code> of feature_id's
