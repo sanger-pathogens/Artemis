@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.40 2007-07-18 15:44:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.41 2007-07-19 09:54:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -64,7 +64,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.40 2007-07-18 15:44:07 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.41 2007-07-19 09:54:57 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -652,31 +652,36 @@ public class EntryEdit extends JFrame
     }
 
     if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
-    {
-      int n = JOptionPane.showConfirmDialog(null,
-          "Load and write all qualifers from the database?"+
+    {    
+      List lazySimilarityValues = new Vector();
+      FeatureVector features = entry.getAllFeatures();
+      // find any lazy values to be loaded
+      for(int i=0; i<features.size(); i++)
+      {
+        QualifierVector qualifiers = features.elementAt(i).getQualifiers();
+        for(int j=0; j<qualifiers.size(); j++)
+        {
+          Qualifier qualifier = (Qualifier)qualifiers.get(j);
+          if(qualifier instanceof QualifierLazyLoading)
+          {
+            if(  ((QualifierLazyLoading)qualifier).getValue(0) instanceof Similarity &&
+               ! ((QualifierLazyLoading)qualifier).isAllLazyValuesLoaded() )
+              lazySimilarityValues.addAll( ((QualifierLazyLoading)qualifier).getLazyValues() );
+          }
+        }
+      }
+      
+      if(lazySimilarityValues.size() > 0)
+      {
+        int n = JOptionPane.showConfirmDialog(null,
+          "Load and write to file all qualifers from the database?"+
           "\nThis may take a few minutes.",
           "Load All Data",
           JOptionPane.YES_NO_OPTION);
-      
-      if(n == JOptionPane.YES_OPTION)
-      {
-        List lazyValues = new Vector();
-        FeatureVector features = entry.getAllFeatures();
-        for(int i=0; i<features.size(); i++)
-        {
-          QualifierVector qualifiers = features.elementAt(i).getQualifiers();
-          for(int j=0; j<qualifiers.size(); j++)
-          {
-            Qualifier qualifier = (Qualifier)qualifiers.get(j);
-            if(qualifier instanceof QualifierLazyLoading)
-              lazyValues.addAll( ((QualifierLazyLoading)qualifier).getLazyValues() );
-          }
-        }
         
-        if(lazyValues.size() > 0)
-        {
-          Similarity.bulkRetrieve(lazyValues,
+        if(n == JOptionPane.YES_OPTION)
+        {      
+          Similarity.bulkRetrieve(lazySimilarityValues,
             (DatabaseDocument) ((DatabaseDocumentEntry)entry.getEMBLEntry()).getDocument());
           
           for(int i=0; i<features.size(); i++)
@@ -688,10 +693,8 @@ public class EntryEdit extends JFrame
               if(qualifier instanceof QualifierLazyLoading)
                 ((QualifierLazyLoading)qualifier).setForceLoad(true);
             }
-          }
-          
+          } 
         }
-        
       }
     }
     
