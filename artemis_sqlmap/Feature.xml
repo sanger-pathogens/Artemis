@@ -237,8 +237,7 @@
     WHERE f.feature_id=$featureId$
   </select>
     
-  <select id="getFeaturesByListOfIds" resultMap ="map-feature-withprop" 
-		cacheModel="feature-cache">
+  <select id="getFeaturesByListOfIds" resultMap ="map-feature-withprop">
 	SELECT
 	  timelastmodified,
 	  f.feature_id,
