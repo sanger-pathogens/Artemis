@@ -55,6 +55,8 @@ public class Similarity implements LazyQualifierValue
   private int featureId;
   /** force complete loading of the data */
   private boolean forceLoad = false;
+  /** data loaded */
+  private boolean lazyLoaded = false;
   
   public static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(Similarity.class);
@@ -296,6 +298,7 @@ public class Similarity implements LazyQualifierValue
       }
     }
     
+    lazyLoaded = true;
     return new String(buff);
   }
   
@@ -620,6 +623,11 @@ public class Similarity implements LazyQualifierValue
   public Feature getMatchFeature()
   {
     return matchFeature;
+  }
+
+  public boolean isLazyLoaded()
+  {
+    return lazyLoaded;
   }
   
 
