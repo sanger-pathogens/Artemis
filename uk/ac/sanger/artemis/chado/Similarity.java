@@ -113,9 +113,12 @@ public class Similarity implements LazyQualifierValue
       matchFeatures.put(new Integer(thisMatchFeature.getFeatureId()), thisMatchFeature);
     }
     
+    final List queryAndSubjectFeatureIds = new Vector(featureLocHash.keySet());
+    //
     // bulk load the subject and query features
-    final List sims = doc.getFeaturesByListOfIds(new Vector(featureLocHash.keySet()));
-    
+    //
+    final List sims = doc.getFeaturesByListOfIds(queryAndSubjectFeatureIds);
+
     for(int i=0; i<sims.size();i++)
     {
       Feature srcFeature = (Feature)sims.get(i);
@@ -130,8 +133,33 @@ public class Similarity implements LazyQualifierValue
         }
       }
     }
+    sims.clear();
     
+    //
+    // bulk load subject / query feature_dbxref's
+    //
+    final List featureDbXRefs = doc.getFeatureDbXRefsByFeatureId(queryAndSubjectFeatureIds);
+    
+    for(int i=0;i<featureDbXRefs.size();i++)
+    {
+      Feature srcFeature = (Feature)featureDbXRefs.get(i);
+      Integer srcFeatureId = new Integer(srcFeature.getFeatureId());
+      if(featureLocHash.containsKey(srcFeatureId))
+      {
+        Vector locs = (Vector)featureLocHash.get(srcFeatureId);
+        for(int j=0;j<locs.size();j++)
+        {
+          FeatureLoc featureLoc = (FeatureLoc)locs.get(j);
+          featureLoc.getFeatureBySrcFeatureId().setFeatureDbXRefs(
+              srcFeature.getFeatureDbXRefs());
+        }
+      }
+    }
+    featureDbXRefs.clear();
+    
+    //
     // bulk load the match feature properties
+    //
     final List matchFeaturesWithProps = doc.getFeaturePropByFeatureIds(
                                         new Vector(matchFeatures.keySet()) );
     
@@ -146,7 +174,7 @@ public class Similarity implements LazyQualifierValue
         storedMatch.setDbXRef(thisMatch.getDbXRef());
       }
     }
-    
+    matchFeaturesWithProps.clear();
   }
   
   /**
@@ -164,7 +192,7 @@ public class Similarity implements LazyQualifierValue
    * This returns the completed value, loading any lazy properties
    * @return
    */
-  public String getHardString()
+  private String getHardString()
   {
     final StringBuffer buff = new StringBuffer();
     
@@ -212,19 +240,31 @@ public class Similarity implements LazyQualifierValue
       }
 
       Collection dbXRefs = subject.getFeatureDbXRefs();
+      
       if(dbXRefs != null && dbXRefs.size() > 0)
       {
-        buff.append(" (");
+        final StringBuffer buffDbXRefs = new StringBuffer();
         Iterator it4 = dbXRefs.iterator();
         while(it4.hasNext())
         {
           FeatureDbXRef featureDbXRef = (FeatureDbXRef) it4.next();
-          buff.append(featureDbXRef.getDbXRef().getDb().getName() + ":");
-          buff.append(featureDbXRef.getDbXRef().getAccession());
-          if(it4.hasNext())
-            buff.append(",");
+          featureDbXRef.getDbXRef();
+          try
+          {
+            buffDbXRefs.append(featureDbXRef.getDbXRef().getDb().getName() + ":");
+            buffDbXRefs.append(featureDbXRef.getDbXRef().getAccession());
+            if(it4.hasNext())
+              buffDbXRefs.append(",");
+          }
+          catch(NullPointerException npe){}
         }
-        buff.append(")");
+        
+        if(buffDbXRefs.length() > 0)
+        {
+          buff.append(" (");
+          buff.append(buffDbXRefs);
+          buff.append(")");
+        }
       }
       buff.append(";");
 
@@ -303,7 +343,7 @@ public class Similarity implements LazyQualifierValue
   }
   
   
-  public String getSoftString()
+  private String getSoftString()
   {
     return new String("LAZY LOADING...;");
   }
