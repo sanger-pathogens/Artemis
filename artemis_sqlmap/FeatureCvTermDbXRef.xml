@@ -7,11 +7,8 @@
 
      <typeAlias alias="FeatureCvTermDbXRef"
         type="org.gmod.schema.sequence.FeatureCvTermDbXRef"/>
-     
-     <typeAlias alias="FeatureCvTerm"
-        type="org.gmod.schema.sequence.FeatureCvTerm"/>
         
-     <resultMap id="select-featurecvtermdbxref" class="FeatureCvTermDbXRef"
+     <resultMap id="map-featurecvtermdbxref" class="FeatureCvTermDbXRef"
                 groupBy="featureCvTermId">
         <result property="featureCvTerm.featureCvTermId"   column="feature_cvterm_id" />
         <result property="dbXRef.accession"   column="accession"/>
@@ -21,7 +18,7 @@
     </resultMap>
    
     <select id="getFeatureCvTermDbXRefByFeature" parameterClass="Feature"
-             resultMap="select-featurecvtermdbxref">
+             resultMap="map-featurecvtermdbxref">
        SELECT fcd.feature_cvterm_id, dbx.*, db.name 
        FROM feature_cvterm_dbxref fcd 
        LEFT JOIN dbxref dbx ON dbx.dbxref_id=fcd.dbxref_id 
@@ -36,7 +33,7 @@
     </select>
 	
 	<select id="getFeatureCvTermDbXRefBySrcFeatureId" parameterClass="java.lang.Integer"
-             resultMap="select-featurecvtermdbxref">
+             resultMap="map-featurecvtermdbxref">
        SELECT fcd.feature_cvterm_id, dbx.*, db.name 
        FROM feature_cvterm_dbxref fcd 
        LEFT JOIN dbxref dbx ON dbx.dbxref_id=fcd.dbxref_id 
@@ -46,7 +43,7 @@
     </select>
      
     <select id="getFeatureCvTermDbXRefByFeatureCvTerm" parameterClass="java.lang.Integer"
-             resultMap="select-featurecvtermdbxref">
+             resultMap="map-featurecvtermdbxref">
        SELECT fcd.feature_cvterm_id, dbx.*, db.name 
        FROM feature_cvterm_dbxref fcd 
        LEFT JOIN dbxref dbx ON dbx.dbxref_id=fcd.dbxref_id 

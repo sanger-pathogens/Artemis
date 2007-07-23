@@ -9,12 +9,9 @@
 
      <typeAlias alias="FeaturePub"
         type="org.gmod.schema.sequence.FeaturePub"/>
-
-     <typeAlias alias="Feature"
-        type="org.gmod.schema.sequence.Feature"/>
      
      
-     <resultMap id="getfeaturePubs" 
+     <resultMap id="map-featurepubs" 
                 class="FeaturePub" >
        <result property="feature.featureId" column="id"/>        
        <result property="pub.pubId"       column="pub_id"/>
@@ -34,7 +31,7 @@
      </resultMap>
     
      <select id="getFeaturePubsBySrcFeatureId" parameterClass="java.lang.Integer" 
-             resultMap="getfeaturePubs">
+             resultMap="map-featurepubs">
         SELECT
           f.feature_id AS id, pub.*
         FROM feature f
