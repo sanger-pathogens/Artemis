@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.dao.*;
@@ -52,6 +53,83 @@ public abstract class GmodDAO
   public abstract List getSimilarityMatches(final Integer srcFeatureId);
   
   /**
+   * Return all the Feature.featureDbXRefs for a <code>List</code> of feature_id's. 
+   * These are grouped by their feature_id and returned in a <code>List</code>
+   * of Feature's.
+   * @param featureIds the list of featureIds to search
+   * @return a (possibly empty) List<Feature> 
+   */
+  public abstract List getFeatureDbXRefsByFeatureId(final List featureIds);
+  
+  /**
+   * Return a <code>List</code> of feature's corresponding for a
+   * <code>List</code> of feature_id's.
+   * @param featureIds the list of featureIds to search
+   * @return a (possibly empty) List<Feature>
+   */
+  public abstract List getFeaturesByListOfIds(final List featureIds);
+  
+  /**
+   * Return a list of chado features with residues
+   * with residues.
+   * @return    the <code>List</code> of <code>Feature</code> objects
+   */
+  public abstract List getResidueFeatures(final Integer organismId);
+  
+  /**
+   * Get the residues (sub-sequence) for a feature given it's 
+   * uniquename
+   * @param uniqueName
+   * @return
+   */
+  public abstract Feature getResiduesByUniqueName(final String uniqueName);
+  
+  /**
+   * Return all the Feature.featureProps for a <code>List</code> of feature_id's. 
+   * These are grouped by their feature_id and returned in a <code>List</code>
+   * of Feature's.
+   * @param featureIds
+   * @return a (possibly empty) List<Feature> 
+   */
+  public abstract List getFeaturePropByFeatureIds(final List featureIds);
+  
+  /**
+   * Return a <code>List</code> of FeatureCvTerm's for all Feature's on
+   * the given srcFeatureId
+   * @param srcFeatureId  srcfeature_id
+   * @return
+   */
+  public abstract List getFeatureCvTermsBySrcFeatureId(int srcFeatureId);
+  
+  /**
+   * Return the FeatureCvTremDbXRef's for all Feature's given their srcfeature_id
+   * @param srcFeatureId
+   * @return
+   */
+  public abstract List getFeatureCvTermDbXRefBySrcFeatureId(int srcFeatureId);
+  
+  /**
+   * Return the FeatureCvTermPub's for all Feature's given their srcfeature_id
+   * @param srcfeature_id
+   * @return
+   */
+  public abstract List getFeatureCvTermPubBySrcFeatureId(int srcfeature_id);
+  
+  /**
+   * Return the FeaturePub's for all Feature's given their srcfeature_id
+   * @param srcFeatureId
+   * @return
+   */
+  public abstract List getFeaturePubsBySrcFeatureId(int srcFeatureId);
+  
+  /**
+   * Return the FeatureSynonym's for all Feature's given their srcfeature_id
+   * @param srcFeatureId
+   * @return
+   */
+  public abstract List getFeatureSynonymsBySrcFeatureId(int srcFeatureId);
+  
+  /**
    * Return a list of features that have this particular cvterm 
    * @param cvTermName the CvTerm name
    * @return a (possibly empty) List<Feature> of children
@@ -66,17 +144,32 @@ public abstract class GmodDAO
   ////// SchemaDaoI
   //////
   //////
-  public abstract List getFeatureDbXRefsByFeatureId(final List featureIds);
-  public abstract List getFeaturesByListOfIds(final List featureIds);
-  public abstract List getResidueFeatures(final Integer organismId);
-  public abstract Feature getResiduesByUniqueName(final String uniqueName);
-  public abstract List getFeaturePropByFeatureIds(final List featureIds);
-  public abstract List getFeatureCvTermsBySrcFeatureId(int srcFeatureId);
-  public abstract List getFeatureCvTermDbXRefBySrcFeatureId(int srcFeatureId);
-  public abstract List getFeatureCvTermPubBySrcFeatureId(int srcfeature_id);
-  public abstract List getFeaturePubsBySrcFeatureId(int srcFeatureId);
-  public abstract List getFeatureSynonymsBySrcFeatureId(int srcFeatureId);
+  
+  
+  /**
+   * Return the FeatureDbXRef's for all Feature's given their srcfeature_id
+   * @param srcFeatureId
+   * @return
+   */
   public abstract List getFeatureDbXRefsBySrcFeatureId(int srcFeatureId);
+  
+  public List getFeaturesByAnyNameAndOrganism(String arg0, String arg1, String arg2)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public List getPossibleMatches(String arg0, CvTerm arg1, int arg2)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public AnalysisFeature getAnalysisFeatureFromFeature(Feature arg0)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
   
   //////
   ////// GeneralDaoI
