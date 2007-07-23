@@ -20,12 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.45 2007-06-26 14:00:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.46 2007-07-23 10:34:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
-import uk.ac.sanger.artemis.chado.Similarity;
+import uk.ac.sanger.artemis.chado.SimilarityLazyQualifierValue;
 import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.util.*;
 
@@ -42,7 +42,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.45 2007-06-26 14:00:00 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.46 2007-07-23 10:34:35 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -331,7 +331,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         if(queryFeature != null)
         {
           Qualifier qualifier = queryFeature.getQualifierByName("similarity");
-          Similarity sim = new Similarity(matchFeature, featureLoc.getSrcFeatureId());
+          SimilarityLazyQualifierValue sim = new SimilarityLazyQualifierValue(matchFeature, featureLoc.getSrcFeatureId());
           if(qualifier == null)
             qualifier = new QualifierLazyLoading("similarity", sim);
           else

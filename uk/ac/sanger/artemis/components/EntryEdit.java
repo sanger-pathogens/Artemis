@@ -20,14 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.41 2007-07-19 09:54:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.42 2007-07-23 10:34:03 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
-import uk.ac.sanger.artemis.chado.Similarity;
+import uk.ac.sanger.artemis.chado.SimilarityLazyQualifierValue;
 import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
 import uk.ac.sanger.artemis.editor.BigPane;
@@ -64,7 +64,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.41 2007-07-19 09:54:57 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.42 2007-07-23 10:34:03 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -664,7 +664,7 @@ public class EntryEdit extends JFrame
           Qualifier qualifier = (Qualifier)qualifiers.get(j);
           if(qualifier instanceof QualifierLazyLoading)
           {
-            if(  ((QualifierLazyLoading)qualifier).getValue(0) instanceof Similarity &&
+            if(  ((QualifierLazyLoading)qualifier).getValue(0) instanceof SimilarityLazyQualifierValue &&
                ! ((QualifierLazyLoading)qualifier).isAllLazyValuesLoaded() )
               lazySimilarityValues.addAll( ((QualifierLazyLoading)qualifier).getLazyValues() );
           }
@@ -681,7 +681,7 @@ public class EntryEdit extends JFrame
         
         if(n == JOptionPane.YES_OPTION)
         {      
-          Similarity.bulkRetrieve(lazySimilarityValues,
+          SimilarityLazyQualifierValue.bulkRetrieve(lazySimilarityValues,
             (DatabaseDocument) ((DatabaseDocumentEntry)entry.getEMBLEntry()).getDocument());
           
           for(int i=0; i<features.size(); i++)
