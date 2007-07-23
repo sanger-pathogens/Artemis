@@ -1657,7 +1657,7 @@ public class DatabaseDocument extends Document
   }
   
   /**
-   * Used by Similarity.bulkRetrieve() to get the match features
+   * Used by SimilarityLazyQualifierValue.bulkRetrieve() to get the match features
    * @param featureIds the <code>List</code> of feature_id's
    * @return  the corresponding features
    */
