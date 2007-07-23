@@ -1353,7 +1353,7 @@ public class ChadoTransactionManager
                qualifier_string);
            
            AnalysisFeature analysisFeature =
-                Similarity.getAnalysisFeature(uniquename, qualifier_string, feature);
+             ArtemisUtils.getAnalysisFeature(uniquename, qualifier_string, feature);
              
            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
                  analysisFeature,
@@ -1455,7 +1455,7 @@ public class ChadoTransactionManager
            logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
                qualifier_name+" "+qualifier_string);
            
-           AnalysisFeature analysisFeature = Similarity.getAnalysisFeature(uniquename,
+           AnalysisFeature analysisFeature = ArtemisUtils.getAnalysisFeature(uniquename,
                                                 qualifier_string, feature);
            tsn = new ChadoTransaction(ChadoTransaction.INSERT,
                analysisFeature,

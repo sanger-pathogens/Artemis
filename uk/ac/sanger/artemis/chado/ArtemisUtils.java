@@ -29,9 +29,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.gmod.schema.analysis.Analysis;
+import org.gmod.schema.analysis.AnalysisFeature;
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.general.Db;
+import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 import org.gmod.schema.sequence.FeatureCvTermProp;
+import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.FeatureLoc;
+import org.gmod.schema.sequence.FeatureProp;
+
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.StringVector;
 
 
 public class ArtemisUtils
@@ -234,5 +246,304 @@ public class ArtemisUtils
         return true;
     }
     return false;
+  }
+  
+  //
+  //
+  //
+  
+  
+  /**
+   * Build an AnalysisFeature object for a /similarity qualifier
+   * @param uniqueName
+   * @param qualifier_string
+   * @param feature
+   * @return
+   */
+  protected static AnalysisFeature getAnalysisFeature(final String uniqueName,
+      String qualifier_string, final GFFStreamFeature feature)
+  {
+    int queryFeatureId = Integer.parseInt((String) feature.getQualifierByName(
+        "feature_id").getValues().get(0));
+
+    AnalysisFeature analysisFeature = new AnalysisFeature();
+    Analysis analysis = new Analysis();
+
+    org.gmod.schema.sequence.Feature queryFeature = new org.gmod.schema.sequence.Feature();
+    org.gmod.schema.sequence.Feature subjectFeature = new org.gmod.schema.sequence.Feature();
+    org.gmod.schema.sequence.Feature matchFeature = new org.gmod.schema.sequence.Feature();
+    FeatureDbXRef featureDbXRef = new FeatureDbXRef();
+
+    subjectFeature.setCvTerm(getCvTerm("region"));  // similarity_region
+
+    queryFeature.setUniqueName(uniqueName);
+    queryFeature.setFeatureId(queryFeatureId);
+    matchFeature.setUniqueName("MATCH_" + uniqueName);
+
+    analysisFeature.setAnalysis(analysis);
+    analysisFeature.setFeature(matchFeature);
+
+    List analysisFeatures = new Vector();
+    analysisFeatures.add(analysisFeature);
+    matchFeature.setAnalysisFeatures(analysisFeatures);
+
+    // algorithm
+    // StringTokenizer tok = new StringTokenizer(qualifier_string, ";");
+    while(qualifier_string.startsWith("\""))
+      qualifier_string = qualifier_string.substring(1);
+    while(qualifier_string.endsWith("\""))
+      qualifier_string = qualifier_string.substring(0,qualifier_string.length()-1);
+ 
+    final StringVector qualifier_strings = StringVector.getStrings(qualifier_string,
+        ";");
+
+    analysis.setProgram((String) qualifier_strings.get(0));
+
+    // primary dbxref
+    DbXRef dbXRef_1 = new DbXRef();
+    Db db_1 = new Db();
+    dbXRef_1.setDb(db_1);
+    String value = ((String) qualifier_strings.get(1)).trim();
+    
+    if(value.startsWith("with="))
+      value = value.substring(5);
+    String values[] = value.split(" ");
+
+    int ind = values[0].indexOf(':');
+    final String primary_name = values[0].substring(0, ind);
+    db_1.setName(primary_name);
+    dbXRef_1.setAccession(values[0].substring(ind + 1));
+    logger4j.debug("Primary dbXRef  " + db_1.getName() + ":"
+        + dbXRef_1.getAccession());
+    subjectFeature.setDbXRef(dbXRef_1);
+    subjectFeature
+        .setUniqueName(db_1.getName() + ":" + dbXRef_1.getAccession());
+
+    if(primary_name.equalsIgnoreCase("UniProt"))
+      matchFeature.setCvTerm(getCvTerm("protein_match"));
+    else
+      matchFeature.setCvTerm(getCvTerm("nucleotide_match"));
+
+    // secondary dbxref
+    if(values.length > 1)
+    {
+      DbXRef dbXRef_2 = new DbXRef();
+      Db db_2 = new Db();
+      dbXRef_2.setDb(db_2);
+
+      values[1] = values[1].replaceAll("^\\W", "");
+      values[1] = values[1].replaceAll("\\W$", "");
+
+      ind = values[1].indexOf(':');
+      db_2.setName(values[1].substring(0, ind));
+      dbXRef_2.setAccession(values[1].substring(ind + 1));
+      logger4j.debug("Secondary dbXRef  " + db_2.getName() + " "
+          + dbXRef_2.getAccession());
+      featureDbXRef.setDbXRef(dbXRef_2);
+      featureDbXRef.setFeature(subjectFeature);
+      List featureDbXRefs = new Vector();
+      featureDbXRefs.add(featureDbXRef);
+      subjectFeature.setFeatureDbXRefs(featureDbXRefs);
+    }
+
+    // organism
+    final String organismStr = (String) qualifier_strings.get(2);
+    if(!organismStr.equals(""))
+    {
+      FeatureProp featureProp = new FeatureProp();
+      featureProp.setCvTerm(getCvTerm("organism"));
+      featureProp.setValue(organismStr);
+      featureProp.setRank(0);
+      subjectFeature.addFeatureProp(featureProp);
+    }
+
+    // product
+    final String product = (String) qualifier_strings.get(3);
+    if(!product.equals(""))
+    {
+      FeatureProp featureProp = new FeatureProp();
+      featureProp.setCvTerm(getCvTerm("product"));
+      featureProp.setValue(product);
+      featureProp.setRank(1);
+      subjectFeature.addFeatureProp(featureProp);
+    }
+
+    // gene
+    final String gene = (String) qualifier_strings.get(4);
+    if(!gene.equals(""))
+    {
+      FeatureProp featureProp = new FeatureProp();
+      featureProp.setCvTerm(getCvTerm("gene"));
+      featureProp.setValue(gene);
+      featureProp.setRank(2);
+      subjectFeature.addFeatureProp(featureProp);
+    }
+
+    // length
+    String length = getString(qualifier_strings, "length");
+    if(!length.equals(""))
+    {
+      if(length.startsWith("length=") || length.startsWith("length "))
+        length = length.substring(7);
+      if(length.endsWith("aa"))
+        length = length.substring(0, length.length() - 2).trim();
+      subjectFeature.setSeqLen(new Integer(length));
+    }
+
+    // percentage identity
+    String id = getString(qualifier_strings, "id");
+    if(!id.equals(""))
+    {
+      if(id.startsWith("id="))
+        id = id.substring(3);
+      if(id.endsWith("%"))
+        id = id.substring(0, id.length() - 1);
+      
+      int index = id.indexOf(" ");
+      if(index > -1)
+        id = id.substring(index);
+      
+      analysisFeature.setIdentity(new Double(id));
+    }
+
+    // ungapped id
+    String ungappedId = getString(qualifier_strings, "ungapped id=");
+    if(!ungappedId.equals(""))
+    {
+      if(ungappedId.startsWith("ungapped id="))
+        ungappedId = ungappedId.substring(12);
+      if(ungappedId.endsWith("%"))
+        ungappedId = ungappedId.substring(0, ungappedId.length() - 1);
+      FeatureProp featureProp = new FeatureProp();
+      featureProp.setCvTerm(getCvTerm("ungapped id"));
+      featureProp.setValue(ungappedId);
+      matchFeature.addFeatureProp(featureProp);
+    }
+
+    // e-value
+    String evalue = getString(qualifier_strings, "E()=");
+    if(!evalue.equals(""))
+    {
+      if(evalue.startsWith("E()="))
+        evalue = evalue.substring(4);
+      analysisFeature.setSignificance(new Double(evalue));
+    }
+
+    // score
+    String score = getString(qualifier_strings, "score=");
+    if(!score.equals(""))
+    {
+      if(score.startsWith("score="))
+        score = score.substring(6);
+      analysisFeature.setRawScore(new Double(score));
+    }
+
+    // overlap
+    String overlap = getString(qualifier_strings, "overlap");
+    if(!overlap.equals(""))
+    {
+      if(overlap.startsWith("overlap="))
+        overlap = overlap.substring(8);
+
+      FeatureProp featureProp = new FeatureProp();
+      featureProp.setCvTerm(getCvTerm("overlap"));
+      featureProp.setValue(overlap);
+      matchFeature.addFeatureProp(featureProp);
+    }
+
+    Short strand;
+    if(feature.getLocation().isComplement())
+      strand = new Short("-1");
+    else
+      strand = new Short("1");
+
+    // query location
+    String queryLoc = getString(qualifier_strings, "query");
+    FeatureLoc featureLoc = new FeatureLoc();
+      
+    if(!queryLoc.equals(""))
+    {
+      String locs[] = queryLoc.split(" ");
+      locs = locs[1].split("-");
+      
+      int fmin = Integer.parseInt(locs[0]) - 1;
+      featureLoc.setFmin(new Integer(fmin));
+      int fmax = Integer.parseInt(locs[1]);
+      featureLoc.setFmax(new Integer(fmax));
+    }
+    else
+    {
+      featureLoc.setFmin(new Integer(-1));
+      featureLoc.setFmax(new Integer(-1));
+    }
+    featureLoc.setRank(1);
+    featureLoc.setStrand(strand);
+    featureLoc.setFeatureBySrcFeatureId(queryFeature);
+    matchFeature.addFeatureLocsForFeatureId(featureLoc);
+
+    // subject location
+    String subjectLoc = getString(qualifier_strings, "subject");
+    FeatureLoc subjectFeatureLoc = new FeatureLoc();
+      
+    if(!subjectLoc.equals(""))
+    {  
+      String locs[] = subjectLoc.split(" ");
+      locs = locs[1].split("-");
+      int fmin = Integer.parseInt(locs[0]) - 1;
+      subjectFeatureLoc.setFmin(new Integer(fmin));
+      int fmax = Integer.parseInt(locs[1]);
+      subjectFeatureLoc.setFmax(new Integer(fmax));
+    }
+    else
+    {
+      subjectFeatureLoc.setFmin(new Integer(-1));
+      subjectFeatureLoc.setFmax(new Integer(-1));
+    }
+    subjectFeatureLoc.setRank(0);
+    subjectFeatureLoc.setStrand(strand);
+    subjectFeatureLoc.setFeatureBySrcFeatureId(subjectFeature);
+    matchFeature.addFeatureLocsForFeatureId(subjectFeatureLoc);
+
+    //Similarity sim = new Similarity(matchFeature, queryFeatureId);
+    //System.out.println(sim.getHardString());
+    return analysisFeature;
+  }
+
+  private static String getString(final StringVector sv, final String name)
+  {
+    for(int i = 0; i < sv.size(); i++)
+    {
+      String value = (String) sv.get(i);
+      if(value.trim().startsWith(name))
+        return value.trim();
+    }
+    return "";
+  }
+
+  /**
+   * Get CvTerm that have been cached
+   * @param cvTermName
+   * @return
+   */
+  private static CvTerm getCvTerm(String cvTermName)
+  {
+    if(cvTermName.startsWith("\""))
+      cvTermName = cvTermName.substring(1, cvTermName.length() - 1);
+
+    CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(cvTermName);
+
+    if(cvTerm != null)
+    {
+      logger4j.debug("USE CvTerm from cache, CvTermId=" + cvTermName
+          + "  -> " + cvTerm.getCvTermId() + " " + cvTerm.getName() + ":"
+          + cvTerm.getCv().getName());
+    }
+    else
+    {
+      logger4j.warn("CvTerm not found in cache = " + cvTermName);
+      cvTerm = new CvTerm();
+      cvTerm.setName(cvTermName);
+    }
+    return cvTerm;
   }
 }
