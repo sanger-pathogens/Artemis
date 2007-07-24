@@ -119,7 +119,9 @@ public class BigPane extends JFrame
     if(matchForm != null || cvForm != null)
     {
       QualifierVector matchQualifiers = matchForm.getMatchQualifiers();
-      qualifier_txt = getQualifierString(matchQualifiers);
+      
+      if(matchQualifiers != null)
+        qualifier_txt = getQualifierString(matchQualifiers);
       Qualifier productQualifier = cvForm.getCvQualifiers().getQualifierByName("product");
       
       if(productQualifier != null)

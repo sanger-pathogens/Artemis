@@ -149,6 +149,8 @@ abstract class AbstractMatchTable
     else if(ind1 > -1)
       field = qualifierString.substring(ind1+len);
     
+    if(field.startsWith("="))
+      field = field.substring(1);
     return field;
   }
   

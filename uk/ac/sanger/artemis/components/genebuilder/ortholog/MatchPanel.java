@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.9 2007-07-13 09:15:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.10 2007-07-24 08:41:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -377,6 +377,8 @@ public class MatchPanel extends JPanel
         //System.out.println("CHECKING MATCHES "+i);
         if(matchTable.isQualifierChanged())
         {
+          if(matchTable.getTable().getRowCount() < 1)
+            return null;
           matchTable.updateQualifier(matchQualifiers);
         }
       }

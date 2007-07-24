@@ -288,7 +288,7 @@ public class SimilarityTable extends AbstractMatchTable
     }
     
     String ungappedId;
-    if( !(ungappedId=getField("ungapped id=", similarityString)).equals("") )
+    if( !(ungappedId=getField("ungapped id", similarityString)).equals("") )
     {
       int columnIndex = tableData.indexOf(ID_COL);
       row.setElementAt(ungappedId, columnIndex);
@@ -320,6 +320,24 @@ public class SimilarityTable extends AbstractMatchTable
     {
       int columnIndex = tableData.indexOf(OVERLAP_COL);
       row.setElementAt(overlap, columnIndex);
+    }
+    else if(similarityString.indexOf("overlap;") > -1)
+    {
+      overlap = null;
+      for(int i=0;i<sim.size(); i++)
+      {
+        String val = (String)sim.get(i); 
+        if( val.endsWith("overlap") )
+        {
+          overlap = val;
+          break;
+        }
+      }
+      if(overlap != null)
+      {
+        int columnIndex = tableData.indexOf(OVERLAP_COL);
+        row.setElementAt(overlap, columnIndex);
+      }
     }
     
     int columnIndex = tableData.indexOf(METHOD_COL);
