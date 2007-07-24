@@ -268,7 +268,7 @@
       f.name AS feature_name,
 	  f.seqlen AS length,
       srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, fl.rank,
-	  rawscore, normscore, significance, a.analysis_id,
+	  rawscore, normscore, significance, identity, a.analysis_id,
 	  a.name, description, program, programversion, algorithm, sourcename, sourceversion,sourceuri, timeexecuted
     FROM feature f 
     LEFT JOIN featureloc fl ON f.feature_id=fl.feature_id
@@ -292,7 +292,7 @@
 	  f.seqlen AS length,
 	  f.residues,
       srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, fl.rank,
-	  rawscore, normscore, significance, a.analysis_id,
+	  rawscore, normscore, significance, identity, a.analysis_id,
 	  a.name, description, program, programversion, algorithm, sourcename, sourceversion,sourceuri, timeexecuted
     FROM feature f 
     LEFT JOIN featureloc fl ON f.feature_id=fl.feature_id
