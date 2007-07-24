@@ -1345,8 +1345,9 @@ public class ChadoTransactionManager
          }
          else if(qualifier_name.equals("similarity"))
          {
-           if(SimilarityTable.containsStringInStringVector(
-               (String)old_qualifier_strings.elementAt(i), new_qualifier_strings))
+           if(new_qualifier_strings != null &&
+               SimilarityTable.containsStringInStringVector(
+                  (String)old_qualifier_strings.elementAt(i), new_qualifier_strings))
              continue;
            
            logger4j.debug(uniquename+"  in handleReservedTags() DELETE "+qualifier_name+" "+
