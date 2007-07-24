@@ -13,6 +13,7 @@
 	<resultMap id="map-analysisfeature" 
                 class="AnalysisFeature">
         <result property="rawScore" column="rawscore" />
+	    <result property="identity" column="identity" />
         <result property="normScore" column="normscore" />
         <result property="significance" column="significance" />
         <result property="analysis.description" column="description" />
