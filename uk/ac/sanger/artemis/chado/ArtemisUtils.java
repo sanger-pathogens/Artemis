@@ -407,11 +407,14 @@ public class ArtemisUtils
     }
 
     // ungapped id
-    String ungappedId = getString(qualifier_strings, "ungapped id=");
+    String ungappedId = getString(qualifier_strings, "ungapped id");
     if(!ungappedId.equals(""))
     {
-      if(ungappedId.startsWith("ungapped id="))
-        ungappedId = ungappedId.substring(12);
+      if(ungappedId.startsWith("ungapped id"))
+        ungappedId = ungappedId.substring(11);
+      if(ungappedId.startsWith("="))
+        ungappedId = ungappedId.substring(1);
+
       if(ungappedId.endsWith("%"))
         ungappedId = ungappedId.substring(0, ungappedId.length() - 1);
       FeatureProp featureProp = new FeatureProp();
@@ -440,6 +443,9 @@ public class ArtemisUtils
 
     // overlap
     String overlap = getString(qualifier_strings, "overlap");
+    if(overlap.equals(""))
+      overlap = getStringEndsWith(qualifier_strings, "overlap");
+    
     if(!overlap.equals(""))
     {
       if(overlap.startsWith("overlap="))
@@ -451,7 +457,7 @@ public class ArtemisUtils
       matchFeature.addFeatureProp(featureProp);
     }
 
-    Short strand;
+    final Short strand;
     if(feature.getLocation().isComplement())
       strand = new Short("-1");
     else
@@ -459,13 +465,37 @@ public class ArtemisUtils
 
     // query location
     String queryLoc = getString(qualifier_strings, "query");
-    FeatureLoc featureLoc = new FeatureLoc();
-      
-    if(!queryLoc.equals(""))
-    {
-      String locs[] = queryLoc.split(" ");
+    final FeatureLoc featureLoc = getFeatureLoc(queryLoc, queryFeature, strand, 1);
+    matchFeature.addFeatureLocsForFeatureId(featureLoc);
+
+    // subject location
+    String subjectLoc = getString(qualifier_strings, "subject");
+    final FeatureLoc subjectFeatureLoc = getFeatureLoc(subjectLoc, subjectFeature, strand, 0);
+    matchFeature.addFeatureLocsForFeatureId(subjectFeatureLoc);
+
+    return analysisFeature;
+  }
+  
+  /**
+   * Return a FeatureLoc for a Feature
+   * @param location
+   * @param feature
+   * @param strand
+   * @param rank
+   * @return
+   */
+  private static FeatureLoc getFeatureLoc(
+      final String location,
+      final org.gmod.schema.sequence.Feature feature,
+      final Short strand,
+      final int rank)
+  {
+    final FeatureLoc featureLoc = new FeatureLoc();
+    
+    if(!location.equals(""))
+    {  
+      String locs[] = location.split(" ");
       locs = locs[1].split("-");
-      
       int fmin = Integer.parseInt(locs[0]) - 1;
       featureLoc.setFmin(new Integer(fmin));
       int fmax = Integer.parseInt(locs[1]);
@@ -476,37 +506,10 @@ public class ArtemisUtils
       featureLoc.setFmin(new Integer(-1));
       featureLoc.setFmax(new Integer(-1));
     }
-    featureLoc.setRank(1);
+    featureLoc.setRank(rank);
     featureLoc.setStrand(strand);
-    featureLoc.setFeatureBySrcFeatureId(queryFeature);
-    matchFeature.addFeatureLocsForFeatureId(featureLoc);
-
-    // subject location
-    String subjectLoc = getString(qualifier_strings, "subject");
-    FeatureLoc subjectFeatureLoc = new FeatureLoc();
-      
-    if(!subjectLoc.equals(""))
-    {  
-      String locs[] = subjectLoc.split(" ");
-      locs = locs[1].split("-");
-      int fmin = Integer.parseInt(locs[0]) - 1;
-      subjectFeatureLoc.setFmin(new Integer(fmin));
-      int fmax = Integer.parseInt(locs[1]);
-      subjectFeatureLoc.setFmax(new Integer(fmax));
-    }
-    else
-    {
-      subjectFeatureLoc.setFmin(new Integer(-1));
-      subjectFeatureLoc.setFmax(new Integer(-1));
-    }
-    subjectFeatureLoc.setRank(0);
-    subjectFeatureLoc.setStrand(strand);
-    subjectFeatureLoc.setFeatureBySrcFeatureId(subjectFeature);
-    matchFeature.addFeatureLocsForFeatureId(subjectFeatureLoc);
-
-    //Similarity sim = new Similarity(matchFeature, queryFeatureId);
-    //System.out.println(sim.getHardString());
-    return analysisFeature;
+    featureLoc.setFeatureBySrcFeatureId(feature);
+    return featureLoc;
   }
 
   private static String getString(final StringVector sv, final String name)
@@ -515,6 +518,17 @@ public class ArtemisUtils
     {
       String value = (String) sv.get(i);
       if(value.trim().startsWith(name))
+        return value.trim();
+    }
+    return "";
+  }
+  
+  private static String getStringEndsWith(final StringVector sv, final String name)
+  {
+    for(int i = 0; i < sv.size(); i++)
+    {
+      String value = (String) sv.get(i);
+      if(value.trim().endsWith(name))
         return value.trim();
     }
     return "";
