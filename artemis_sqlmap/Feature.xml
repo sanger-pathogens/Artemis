@@ -234,11 +234,11 @@
 	  f.feature_id AS id,
 	  uniquename,
 	  organism_id AS organismId,
-	  f.name,
+	  f.name AS feature_name,
 	  f.type_id,
 	  f.dbxref_id AS dbXRefId,
 	  f.seqlen,
-	  fp.type_id AS prop_type_id, fp.rank AS prop_rank, fp.value,
+	  fp.type_id AS prop_type_id, fp.rank AS prop_rank, fp.value, fp.featureprop_id,
 	  dbxref.*, db.*
     FROM feature f
     LEFT JOIN featureprop fp ON fp.feature_id=f.feature_id
