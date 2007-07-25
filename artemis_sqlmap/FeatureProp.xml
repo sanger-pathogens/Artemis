@@ -25,7 +25,8 @@
      </resultMap>
      
     <resultMap id="map-featureprop" 
-               class="FeatureProp">
+               class="FeatureProp" groupBy="featurePropId">
+		<result property="featurePropId" column="featureprop_id" />
         <result property="value" column="value" />
         <result property="rank"  column="prop_rank" />
         <result property="cvTerm.cvTermId" column="prop_type_id" />
