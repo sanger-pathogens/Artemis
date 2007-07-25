@@ -21,42 +21,32 @@
     <parameter property="featureCvTerms" javaType="java.util.List"/>
   </parameterMap> 
 
-  <resultMap id="map-feature" 
-             class="Feature" groupBy="featureId">
+  <resultMap id="map-basicfeature" class="Feature">       
     <result property="timeLastModified" column="timelastmodified"/>
    	<result property="featureId" column="id"/>
+    <result property="uniqueName" column="uniquename"/>
+    <result property="name" column="feature_name"/>
+    <result property="seqLen" column="seqlen" nullValue="-1" />                                             
+  </resultMap>
+	
+  <resultMap id="map-feature" class="Feature" 
+	         groupBy="featureId" extends="map-basicfeature">
 	<result property="organism.organismId" column="organism_id"/>
    	<result property="featureRelationshipsForSubjectId" 
    	            resultMap="FeatureRelationship.feature_relationship"  /> 
-   <!--	    
-  	<result property="featureRelationship.featureByObjectId.featureId" column="object_id"/>
-  	<result property="featureRelationship.cvTerm.cvTermId" column="relation_type_id"/>
-  	<result property="featureRelationship.rank" column="rank"/>
-  	-->
     <result property="featureLoc.strand" column="strand" nullValue="0"/>
     <result property="featureLoc.fmin" column="fmin" nullValue="-1"/>
     <result property="featureLoc.fmax" column="fmax" nullValue="0"/>
     <result property="featureLoc.phase" column="phase"/>
-    <result property="uniqueName" column="uniquename"/>
     <result property="cvTerm.cvTermId" column="type_id"/>
     <result property="featureProps" resultMap="FeatureProp.map-featureprop" />
-   <!--
-    <result property="featureprop.cvTerm.cvTermId" column="prop_type_id" nullValue="0"/>
-    <result property="featureprop.value" column="value"/>
-    <result property="featureprop.rank" column="prop_rank" nullValue="0"/> 
-    -->
   </resultMap>
 
   <!-- mapping for feature table and lazy loading of feature_dbxref, feature_relationship,
        featureprop, organism tables -->
-  <resultMap id="map-feature-lazy" 
-             class="Feature">       
-    <result property="timeLastModified" column="timelastmodified"/>
-   	<result property="featureId" column="id"/>
-    <result property="uniqueName" column="uniquename"/>
-    <result property="name" column="name"/>
+  <resultMap id="map-feature-lazy" class="Feature" 
+	         extends="map-basicfeature">
     <result property="residues" column="residues" />
-    <result property="seqLen" column="length" nullValue="-999" />
     <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
     <result property="dbXRef" column="dbXRefId"
                               select="getDbXRefByDbXRefId" />
@@ -76,44 +66,42 @@
                                 select="getOrganism" />
   </resultMap>
 	
-  <resultMap id="map-feature-withprop"
-	         class="Feature" groupBy="featureId">
-	<result property="timeLastModified" column="timelastmodified"/>
-   	<result property="featureId" column="feature_id"/>
-    <result property="uniqueName" column="uniquename"/>
-    <result property="name" column="name"/>
-    <result property="seqLen" column="length" />
+  <resultMap id="map-feature-withprop" class="Feature" 
+	         groupBy="featureId" extends="map-basicfeature">
     <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
     <result property="featureProps" resultMap="FeatureProp.map-featureprop" />
-    <result property="featureDbXRefs" column="{featureId=feature_id}"
+    <result property="featureDbXRefs" column="{featureId=id}"
                                       select="getFeatureDbXRef" />
 	<result property="dbXRef" resultMap="DbXRef.select-dbxref" />
   </resultMap>
 	
-  <resultMap id="map-feature-residues" 
-             class="Feature">
+  <resultMap id="map-feature-residues" class="Feature">
     <result property="residues" column="residues"/>
    	<result property="seqLen" column="seqLen"/>
     <result property="featureLoc.fmin" column="fmin" nullValue="-1"/>
     <result property="featureLoc.fmax" column="fmax" nullValue="0"/>
   </resultMap>
 	   
-  <resultMap id="select-similaritymatch" 
-             class="Feature" groupBy="featureId">       
-    <result property="timeLastModified" column="timelastmodified"/>
-   	<result property="featureId" column="id"/>
-    <result property="uniqueName" column="uniquename"/>
-    <result property="name" column="feature_name"/>
-    <result property="seqLen" column="length" nullValue="-999" />
+  <resultMap id="map-similaritymatch" class="Feature" 
+	         groupBy="featureId" extends="map-basicfeature">       
     <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
     <result property="featureLocsForFeatureId" resultMap="FeatureLoc.map-location" />
 	<result property="featureProps" column="{feature_id=id}" 
                                        select="getFeaturePropByFeatureId" />
     <result property="analysisFeatures" resultMap="AnalysisFeature.map-analysisfeature" />                                                
   </resultMap>
-    
-  <resultMap id="map-feature-with-residues-result" 
-             class="Feature">
+	
+
+  <resultMap id="map-clusterfeature" class="Feature" 
+	         groupBy="featureId" extends="map-basicfeature">       
+    <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
+    <result property="featureLocsForFeatureId" resultMap="FeatureLoc.map-location" />
+	<result property="featureProps" column="{feature_id=id}" 
+                                       select="getFeaturePropByFeatureId" />
+    <result property="analysisFeatures" resultMap="AnalysisFeature.map-analysisfeature" />                                                
+  </resultMap>
+	
+  <resultMap id="map-feature-with-residues-result" class="Feature">
     <result property="name" column="name"/>
     <result property="uniqueName" column="uniquename"/>
     <result property="featureId" column="feature_id"/>
@@ -135,9 +123,12 @@
       fr.value AS relation_value,
       fl.strand, 
       fmin, 
-      fmax, 
+      fmax,
+	  f.name AS feature_name,
       uniquename,
-      f.type_id,  
+      f.type_id,
+	  f.seqlen,
+	  fp.featureprop_id,
       fp.type_id AS prop_type_id,
       fp.rank AS prop_rank,
       fp.value,
@@ -154,7 +145,7 @@
          <isNotNull property="uniqueName">                        
            uniquename LIKE #uniqueName# 
          </isNotNull>
-       </dynamic>    
+       </dynamic>
     ORDER BY f.type_id,  uniquename
   </select>
  
@@ -165,10 +156,10 @@
 	  f.feature_id AS id,
 	  uniquename,
 	  organism_id AS organismId,
-	  f.name,
+	  f.name AS feature_name,
 	  f.type_id,
 	  f.dbxref_id AS dbXRefId,
-	  seqlen AS length,
+	  f.seqlen,
 	  residues
 	FROM feature f
 	 <dynamic>
@@ -208,10 +199,10 @@
 	  f.feature_id AS id,
 	  uniquename,
 	  organism_id AS organismId,
-	  f.name,
+	  f.name AS feature_name,
 	  f.type_id,
 	  f.dbxref_id AS dbXRefId,
-	  seqlen AS length,
+	  f.seqlen,
 	  residues
 	FROM feature f
     WHERE f.feature_id=$featureId$
@@ -221,14 +212,14 @@
 		cacheModel="feature-cache">
 	SELECT
 	  timelastmodified,
-	  f.feature_id,
+	  f.feature_id AS id,
 	  uniquename,
 	  organism_id AS organismId,
-	  f.name,
+	  f.name AS feature_name,
 	  f.type_id,
 	  f.dbxref_id,
-	  seqlen AS length,
-	  fp.type_id AS prop_type_id, fp.rank AS prop_rank, fp.value,
+	  f.seqlen,
+	  fp.type_id AS prop_type_id, fp.rank AS prop_rank, fp.value, fp.featureprop_id,
 	  dbxref.*, db.*
     FROM feature f
     LEFT JOIN featureprop fp ON fp.feature_id=f.feature_id
@@ -240,13 +231,13 @@
   <select id="getFeaturesByListOfIds" resultMap ="map-feature-withprop">
 	SELECT
 	  timelastmodified,
-	  f.feature_id,
+	  f.feature_id AS id,
 	  uniquename,
 	  organism_id AS organismId,
 	  f.name,
 	  f.type_id,
 	  f.dbxref_id AS dbXRefId,
-	  seqlen AS length,
+	  f.seqlen,
 	  fp.type_id AS prop_type_id, fp.rank AS prop_rank, fp.value,
 	  dbxref.*, db.*
     FROM feature f
@@ -259,14 +250,14 @@
 	
   <!-- Returns matches for all features on a given srcfeature -->
   <select id="getLazySimilarityMatches" parameterClass="java.lang.Integer" 
-                             resultMap="select-similaritymatch">
+                             resultMap="map-similaritymatch">
     SELECT 
       timelastmodified, 
       f.feature_id AS id, 
       f.uniquename, 
       f.type_id,
       f.name AS feature_name,
-	  f.seqlen AS length,
+	  f.seqlen,
       srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, fl.rank,
 	  rawscore, normscore, significance, identity, a.analysis_id,
 	  a.name, description, program, programversion, algorithm, sourcename, sourceversion,sourceuri, timeexecuted
@@ -282,14 +273,14 @@
 
   <!-- Returns matches for a list of feature_id's -->
   <select id="getLazySimilarityMatchesByFeatureIds" parameterClass="java.util.List" 
-                             resultMap="select-similaritymatch">
+                             resultMap="map-similaritymatch">
     SELECT 
       timelastmodified, 
       f.feature_id AS id, 
       f.uniquename, 
       f.type_id,
       f.name AS feature_name,
-	  f.seqlen AS length,
+	  f.seqlen,
 	  f.residues,
       srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, fl.rank,
 	  rawscore, normscore, significance, identity, a.analysis_id,
@@ -305,6 +296,28 @@
     ORDER BY f.feature_id
   </select>
 
+  <!-- Returns cluster/ortholog/paralog for a list of feature_id's -->
+  <select id="getLazyClustersByFeatureIds" parameterClass="java.util.List" 
+                             resultMap="map-clusterfeature">
+	SELECT 
+	  timelastmodified, 
+	  f.feature_id AS id, 
+	  fr.subject_id,
+	  fr.type_id,
+	  fr.rank,
+	  f.uniquename, 
+	  f.type_id, 
+	  f.name AS feature_name,    
+	  f.seqlen,
+	  rawscore, normscore, significance, identity, a.analysis_id,
+	  a.name, description, program, programversion, algorithm, sourcename, sourceversion,sourceuri, timeexecuted     
+	FROM feature f
+	LEFT JOIN feature_relationship fr ON  f.feature_id=fr.object_id 
+	LEFT JOIN analysisfeature af ON f.feature_id=af.feature_id
+	LEFT JOIN analysis a ON af.analysis_id=a.analysis_id 
+	WHERE f.type_id=( SELECT cvterm_id FROM cvterm WHERE name='orthologous_to' ) 
+	  AND fr.subject_id IN ( SELECT feature_id  FROM featureloc WHERE srcfeature_id=$value$ )
+  </select>
 
   <select id="getSchema" resultClass="java.lang.String">
     SELECT schema_name FROM information_schema.schemata WHERE schema_name=schema_owner
