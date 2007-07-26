@@ -32,14 +32,14 @@
   <resultMap id="map-feature" class="Feature" 
 	         groupBy="featureId" extends="map-basicfeature">
 	<result property="organism.organismId" column="organism_id"/>
+	<result property="featureProps" resultMap="FeatureProp.map-featureprop" />
    	<result property="featureRelationshipsForSubjectId" 
-   	            resultMap="FeatureRelationship.feature_relationship"  /> 
+   	            resultMap="FeatureRelationship.map-feature-relationship"  /> 
     <result property="featureLoc.strand" column="strand" nullValue="0"/>
     <result property="featureLoc.fmin" column="fmin" nullValue="-1"/>
     <result property="featureLoc.fmax" column="fmax" nullValue="0"/>
     <result property="featureLoc.phase" column="phase"/>
     <result property="cvTerm.cvTermId" column="type_id"/>
-    <result property="featureProps" resultMap="FeatureProp.map-featureprop" />
   </resultMap>
 
   <!-- mapping for feature table and lazy loading of feature_dbxref, feature_relationship,
@@ -117,6 +117,7 @@
       timelastmodified, 
       f.feature_id AS id, 
 	  f.organism_id,
+	  fr.feature_relationship_id,
       fr.object_id,
       fr.type_id AS relation_type_id,
       fr.rank,

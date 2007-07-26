@@ -11,16 +11,15 @@
      <typeAlias alias="FeatureRelationship"
         type="org.gmod.schema.sequence.FeatureRelationship"/>
         
-     <resultMap id="feature_relationship" 
-               class="FeatureRelationship">
+     <resultMap id="map-feature-relationship" class="FeatureRelationship">
+		<result property="featureRelationshipId" column="feature_relationship_id"/>
         <result property="featureByObjectId.featureId" column="object_id"/>
   	    <result property="cvTerm.cvTermId" column="relation_type_id"/>
   	    <result property="rank" column="rank"/>
   	    <result property="value" column="relation_value" />
      </resultMap>
 
-    <resultMap id="select-relationship" 
-                class="FeatureRelationship">
+    <resultMap id="select-relationship" class="FeatureRelationship">
         <result property="featureBySubjectId.featureId" column="subject_id" />
         <result property="featureByObjectId.featureId" column="object_id" />
         <result property="value" column="value" />
