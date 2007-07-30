@@ -20,7 +20,7 @@
         <result property="fmin"   column="fmin"   nullValue="-999" />
         <result property="fmax"   column="fmax"   nullValue="-999" />
         <result property="strand" column="strand" nullValue="0" />
-        <result property="phase"  column="phase"  nullValue="0" />
+        <result property="phase"  column="phase" />
         <result property="residueInfo"  column="residue_info"/>
         <result property="locGroup"  column="locgroup"/>
         <result property="rank"      column="rank"/>

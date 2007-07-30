@@ -10,16 +10,27 @@
         
      <typeAlias alias="FeatureRelationship"
         type="org.gmod.schema.sequence.FeatureRelationship"/>
-        
-     <resultMap id="map-feature-relationship" class="FeatureRelationship">
+     
+	 <resultMap id="map-basic-feature-relationship" class="FeatureRelationship">
 		<result property="featureRelationshipId" column="feature_relationship_id"/>
-        <result property="featureByObjectId.featureId" column="object_id"/>
   	    <result property="cvTerm.cvTermId" column="relation_type_id"/>
   	    <result property="rank" column="rank"/>
   	    <result property="value" column="relation_value" />
      </resultMap>
+	   
+     <resultMap id="map-feature-relationship-for-objectId" class="FeatureRelationship" 
+		        extends="map-basic-feature-relationship">
+		<result property="featureByObjectId.featureId" column="object_id"/>
+     </resultMap>
 
+	 <resultMap id="map-feature-relationship-for-subjectId" class="FeatureRelationship"
+		        extends="map-basic-feature-relationship">
+		<result property="featureBySubjectId" column="subject_id" 
+			                                  select="getLazyFeatureById"/>
+     </resultMap>
+	
     <resultMap id="select-relationship" class="FeatureRelationship">
+		<result property="featureRelationshipId" column="feature_relationship_id"/>
         <result property="featureBySubjectId.featureId" column="subject_id" />
         <result property="featureByObjectId.featureId" column="object_id" />
         <result property="value" column="value" />
@@ -29,7 +40,7 @@
      
      <!--  select feature_relationship -->
      <select id="getFeatureRelationship" resultMap="select-relationship">
-       SELECT subject_id, object_id, type_id, value, rank 
+       SELECT feature_relationship_id, subject_id, object_id, type_id, value, rank 
        FROM feature_relationship
        WHERE
          <dynamic>

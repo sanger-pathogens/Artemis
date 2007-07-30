@@ -34,7 +34,7 @@
 	<result property="organism.organismId" column="organism_id"/>
 	<result property="featureProps" resultMap="FeatureProp.map-featureprop" />
    	<result property="featureRelationshipsForSubjectId" 
-   	            resultMap="FeatureRelationship.map-feature-relationship"  /> 
+   	            resultMap="FeatureRelationship.map-feature-relationship-for-objectId"  /> 
     <result property="featureLoc.strand" column="strand" nullValue="0"/>
     <result property="featureLoc.fmin" column="fmin" nullValue="-1"/>
     <result property="featureLoc.fmax" column="fmax" nullValue="0"/>
@@ -95,9 +95,10 @@
   <resultMap id="map-clusterfeature" class="Feature" 
 	         groupBy="featureId" extends="map-basicfeature">       
     <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
-    <result property="featureLocsForFeatureId" resultMap="FeatureLoc.map-location" />
 	<result property="featureProps" column="{feature_id=id}" 
                                        select="getFeaturePropByFeatureId" />
+	<result property="featureRelationshipsForSubjectId" 
+   	            resultMap="FeatureRelationship.map-feature-relationship-for-subjectId"  /> 
     <result property="analysisFeatures" resultMap="AnalysisFeature.map-analysisfeature" />                                                
   </resultMap>
 	
@@ -302,9 +303,11 @@
                              resultMap="map-clusterfeature">
 	SELECT 
 	  timelastmodified, 
-	  f.feature_id AS id, 
+	  f.feature_id AS id,
+	  fr.feature_relationship_id, 
 	  fr.subject_id,
-	  fr.type_id,
+	  fr.type_id AS relation_type_id,
+	  fr.value AS relation_value,
 	  fr.rank,
 	  f.uniquename, 
 	  f.type_id, 
@@ -316,8 +319,7 @@
 	LEFT JOIN feature_relationship fr ON  f.feature_id=fr.object_id 
 	LEFT JOIN analysisfeature af ON f.feature_id=af.feature_id
 	LEFT JOIN analysis a ON af.analysis_id=a.analysis_id 
-	WHERE f.type_id=( SELECT cvterm_id FROM cvterm WHERE name='orthologous_to' ) 
-	  AND fr.subject_id IN ( SELECT feature_id  FROM featureloc WHERE srcfeature_id=$value$ )
+	WHERE f.feature_id IN <iterate open="(" close=")" conjunction=","> #[]# </iterate>
   </select>
 
   <select id="getSchema" resultClass="java.lang.String">
