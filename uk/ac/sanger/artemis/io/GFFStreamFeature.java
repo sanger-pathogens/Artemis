@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.55 2007-06-15 12:56:28 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.56 2007-07-30 09:57:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -28,13 +28,17 @@ package uk.ac.sanger.artemis.io;
 
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.StringTokenizer;
+import java.util.Vector;
 import java.io.IOException;
 import java.io.Writer;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
 import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.chado.ClusterLazyQualifierValue;
+import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
 import uk.ac.sanger.artemis.util.LinePushBackReader;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
@@ -45,7 +49,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.55 2007-06-15 12:56:28 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.56 2007-07-30 09:57:16 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -238,10 +242,23 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
           final StringVector values = (StringVector)attributes.get(name);
 
-          if(values.size() == 0)
-            setQualifier(new Qualifier(name));
+          if(MatchPanel.isClusterTag(name))
+          {
+            List lazyValues = new Vector();
+            for(int i=0; i<values.size(); i++)
+              lazyValues.add(
+                  new ClusterLazyQualifierValue( (String)values.get(i), 
+                                         this ));
+            
+            setQualifier(new QualifierLazyLoading(name, lazyValues));
+          }
           else
-            setQualifier(new Qualifier(name, values));
+          {
+            if(values.size() == 0)
+              setQualifier(new Qualifier(name));
+            else
+              setQualifier(new Qualifier(name, values));
+          }
         }
       }
 
