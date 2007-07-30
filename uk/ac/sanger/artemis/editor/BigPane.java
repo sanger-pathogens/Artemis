@@ -316,16 +316,16 @@ public class BigPane extends JFrame
     
     if(askToUpdate && !askToUpdate())
       return;
+
     QualifierVector matchQualifiers= new QualifierVector();
     Qualifier productQualifier = null;
-    
     String otherString = null;
     
     final StringVector v = StringVector.getStrings(dataViewStringOriginal, "\n");
     for(int i=0; i<v.size(); i++)
     {
       String value = (String)v.get(i);
-      if(matchForm.isMatchTag(value) ||
+      if(MatchPanel.isMatchTag(value) ||
          value.startsWith("/product"))
       {
         int index = value.indexOf('=');
@@ -347,7 +347,7 @@ public class BigPane extends JFrame
           value = value.substring(0, value.length()-1);
         //System.out.println(key+" = "+value);
 
-        if(matchForm.isMatchTag(key))
+        if(MatchPanel.isMatchTag(key))
         {
           Qualifier qualifier = matchQualifiers.getQualifierByName(key);
           if(qualifier == null)
