@@ -54,10 +54,11 @@ import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.StringVector;
 
 public class OrthologTable extends AbstractMatchTable
 {
-  private int NUMBER_COLUMNS = 3;
+  private static int NUMBER_COLUMNS = 3;
   private Vector rowData   = new Vector();
   private Vector tableData = new Vector(NUMBER_COLUMNS);
   private JTable orthologTable;
@@ -66,7 +67,6 @@ public class OrthologTable extends AbstractMatchTable
 
   //
   // column headings
-  final static String ORGANISM_COL = "Organism";
   final static String ORTHO_COL = "Ortholog";
   final static String DESCRIPTION_COL = "Description";
   final static String REMOVE_BUTTON_COL = "";
@@ -92,6 +92,23 @@ public class OrthologTable extends AbstractMatchTable
     tableData.setElementAt(REMOVE_BUTTON_COL,2);
     
     // add row data
+    if(origQualifier != null)
+    {
+      int columnIndex;
+      StringVector values = origQualifier.getValues();
+      for(int i=0; i<values.size(); i++)
+      {
+        StringVector rowStr = StringVector.getStrings((String)values.get(i), ";");
+        Vector thisRowData = new Vector(NUMBER_COLUMNS);
+        thisRowData.setSize(NUMBER_COLUMNS);
+        
+        columnIndex = tableData.indexOf(ORTHO_COL);
+        thisRowData.setElementAt((String)rowStr.get(0), columnIndex);
+        columnIndex = tableData.indexOf(DESCRIPTION_COL);
+        thisRowData.setElementAt("blah", columnIndex);
+        rowData.add(thisRowData);
+      }
+    }
     Vector thisRowData = new Vector();
     thisRowData.add("Bpseudomallei:BPSL0003");
     thisRowData.add("blah blah");
@@ -236,8 +253,12 @@ public class OrthologTable extends AbstractMatchTable
    */
   protected String updateQualifierString(int row)
   {
-    // TODO Auto-generated method stub
-    return null;
+    StringBuffer orthologStr = new StringBuffer(
+        (String)getTable().getValueAt(row, getColumnIndex(ORTHO_COL)) );            // ortholog link
+    orthologStr.append(";");
+    orthologStr.append(
+             (String)getTable().getValueAt(row, getColumnIndex(DESCRIPTION_COL)) ); // description
+    return orthologStr.toString();
   }
   
 

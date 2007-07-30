@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.10 2007-07-24 08:41:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.11 2007-07-30 08:54:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -61,7 +61,11 @@ public class MatchPanel extends JPanel
   private Vector editableComponents;
   private JButton hide_show_ortho;
   private JButton hide_show_sim;
-
+  private static String ORTHOLOG = "orthologous_to";
+  private static String PARALOG  = "paralogous_to";
+  private static String SIMILARITY = "similarity";
+  private static String[] SO_CLUSTER_NAMES =  
+            { ORTHOLOG, PARALOG, SIMILARITY };
   
   public MatchPanel(final Feature feature)
   {
@@ -85,23 +89,21 @@ public class MatchPanel extends JPanel
    * @param qualifierName
    * @return
    */
-  public boolean isMatchTag(String qualifierName)
+  public static boolean isMatchTag(final String qualifierName)
   {
-    if(qualifierName.startsWith("/"))
-      qualifierName = qualifierName.substring(1);
-    
-    if(qualifierName.startsWith("ortholog") ||
-       qualifierName.startsWith("similarity"))
-      return true;
+    for(int i=0; i<SO_CLUSTER_NAMES.length;i++)
+      if(qualifierName.equals(SO_CLUSTER_NAMES[i]) || 
+         qualifierName.equals(SO_CLUSTER_NAMES[i]+"="))
+        return true;
     return false;
   }
   
   private Component createMatchQualifiersComponent(final Feature feature)
   {
     editableComponents = new Vector();
-    final Qualifier orthoQualifier = matchQualifiers.getQualifierByName("ortholog");
-    final Qualifier paraQualifier  = matchQualifiers.getQualifierByName("paralog");
-    final Qualifier simQualifier   = matchQualifiers.getQualifierByName("similarity");
+    final Qualifier orthoQualifier = matchQualifiers.getQualifierByName(ORTHOLOG);
+    final Qualifier paraQualifier  = matchQualifiers.getQualifierByName(PARALOG);
+    final Qualifier simQualifier   = matchQualifiers.getQualifierByName(SIMILARITY);
     
     if(databases == null)
     {
@@ -133,7 +135,7 @@ public class MatchPanel extends JPanel
         if(select == JOptionPane.CANCEL_OPTION)
           return;
         
-        add("ortholog", ((String)dbs.getSelectedItem())+":"+
+        add(ORTHOLOG, ((String)dbs.getSelectedItem())+":"+
                         accession.getText().trim(), feature);
       }
     });
@@ -146,8 +148,11 @@ public class MatchPanel extends JPanel
     ///
     /// temp
     ///
-    //if(orthoQualifier != null)
-    //{
+    if(orthoQualifier != null)
+    {
+      if(orthoQualifier instanceof QualifierLazyLoading)
+        ((QualifierLazyLoading)orthoQualifier).setForceLoad(true);
+    }
       if(hide_show_ortho == null)
         hide_show_ortho = new JButton("-");
       
@@ -185,7 +190,7 @@ public class MatchPanel extends JPanel
         if(select == JOptionPane.CANCEL_OPTION)
           return;
         
-        add("paralog", ((String)dbs.getSelectedItem())+":"+
+        add(PARALOG, ((String)dbs.getSelectedItem())+":"+
                         accession.getText().trim(), feature);
       }
     });
@@ -225,7 +230,7 @@ public class MatchPanel extends JPanel
         if(select == JOptionPane.CANCEL_OPTION)
           return;
         
-        add("similarity", accession.getText().trim(), feature);
+        add(SIMILARITY, accession.getText().trim(), feature);
       }
     });
     xBox = Box.createHorizontalBox();
