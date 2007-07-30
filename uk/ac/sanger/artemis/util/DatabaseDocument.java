@@ -60,8 +60,10 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.io.*;
 import java.net.ConnectException;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.List;
@@ -757,6 +759,9 @@ public class DatabaseDocument extends Document
                                     GmodDAO dao) 
           throws SQLException, ReadFormatException, ConnectException
   {
+    if(DatabaseDocument.cvterms == null)
+      getCvterms(dao);
+    
     Hashtable id_store = new Hashtable();
 
     reset((String)getLocation(), (String)schema_search.get(0));
@@ -814,8 +819,7 @@ public class DatabaseDocument extends Document
 
     logger4j.debug( new String(buff.getBytes()) );
     
-    if(DatabaseDocument.cvterms == null)
-      getCvterms(dao);
+
     
     return buff;
   }
@@ -915,27 +919,54 @@ public class DatabaseDocument extends Document
         parent_relationship = getCvtermName(parent_type_id, dao);
     }
     else */
-      
+    
+    ByteBuffer clusterOrthoParalog = null;
     if(feat.getFeatureRelationshipsForSubjectId() != null)
     {
-      List relations = new Vector(feat.getFeatureRelationshipsForSubjectId());
-      for(int i=0; i<relations.size(); i++)
+      Collection relations = feat.getFeatureRelationshipsForSubjectId();
+      Iterator it = relations.iterator();
+      Set featureRelationshipIds = new HashSet();
+      //Set duplicates = new HashSet();
+      
+      while(it.hasNext())
       {
-        FeatureRelationship feat_relationship = 
-                            (FeatureRelationship)relations.get(i);
-        parent_id = Integer.toString(feat_relationship.getFeatureByObjectId().getFeatureId());
-        rank      = feat_relationship.getRank();
+        final FeatureRelationship fr = 
+                            (FeatureRelationship)it.next();
+        final Integer featureRelationShipId = new Integer( fr.getFeatureRelationshipId() );
+
+        if(featureRelationshipIds.contains( featureRelationShipId ))
+          continue;
         
-        if( feat_relationship.getCvTerm().getName() == null )
+        featureRelationshipIds.add(featureRelationShipId);
+        final String cvTermName;
+        if( fr.getCvTerm().getName() == null )
         {
-          int parent_type_id = feat_relationship.getCvTerm().getCvTermId();
-          parent_relationship = getCvtermName(parent_type_id, dao, gene_builder);
+          int parent_type_id = fr.getCvTerm().getCvTermId();
+          cvTermName = getCvtermName(parent_type_id, dao, gene_builder);
         }
         else
-          parent_relationship = feat_relationship.getCvTerm().getName();
+          cvTermName = fr.getCvTerm().getName();
+      
+        if(cvTermName.equals("derives_from") || cvTermName.equals("part_of") ||
+           cvTermName.equals("proper_part_of"))
+        {
+          parent_relationship = cvTermName;
+          parent_id = Integer.toString(fr.getFeatureByObjectId().getFeatureId());
+          rank      = fr.getRank();
+        }
+        else
+        {
+          if(clusterOrthoParalog == null)
+            clusterOrthoParalog = new ByteBuffer();
+          // ortholog/paralog/cluster data
+          int orthologueFeature = fr.getFeatureByObjectId().getFeatureId();
+          clusterOrthoParalog.append(cvTermName+"="+
+              GFFStreamFeature.encode("object_id="+orthologueFeature+"; rank="+fr.getRank())+";");
+        }
       }
     }
-          
+
+    // look up parent name
     if(parent_id != null && id_store != null &&  id_store.containsKey(parent_id))
       parent_id = (String)id_store.get(parent_id);
  
@@ -1019,6 +1050,9 @@ public class DatabaseDocument extends Document
       }
     }
 
+    if(clusterOrthoParalog != null)
+      this_buff.append(clusterOrthoParalog);
+    
     // append dbxrefs
     if(dbxref != null && dbxref.size() > 0)
     {
@@ -1649,6 +1683,11 @@ public class DatabaseDocument extends Document
     return schema_list;
   }
   
+  public List getClustersByFeatureIds(final List featureIds)
+  {
+    GmodDAO dao = getDAOOnly();
+    return dao.getClustersByFeatureIds(featureIds);
+  }
   
   public List getFeatureDbXRefsByFeatureId(final List featureIds)
   {
@@ -1780,10 +1819,14 @@ public class DatabaseDocument extends Document
     { 
       GmodDAO dao = getDAO();
       schema_list = dao.getOrganisms();
-      Iterator it = schema_list.iterator();
+      
+      Organism org = new Organism();
+      org.setCommonName("web");
+      schema_list.add(org);
+      
       final List pg_schemas = dao.getSchema(); 
-      
-      
+
+      Iterator it = schema_list.iterator();
       while(it.hasNext())
       {
         final Organism organism = (Organism)it.next();
@@ -1807,8 +1850,13 @@ public class DatabaseDocument extends Document
         
         try
         {
-          List list_residue_features = dao.getResidueFeatures(
+          List list_residue_features;
+          
+          if(organism.getOrganismId() > 0)
+            list_residue_features = dao.getResidueFeatures(
               new Integer(organism.getOrganismId()));
+          else
+            list_residue_features = dao.getResidueFeatures();
           
           Iterator it_residue_features = list_residue_features.iterator();
           while(it_residue_features.hasNext())
