@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.11 2007-07-30 08:54:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.12 2007-07-30 09:55:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -85,7 +85,7 @@ public class MatchPanel extends JPanel
   
   
   /**
-   * Return true if this is a Ortholog qualifier
+   * Return true if this is a match qualifier
    * @param qualifierName
    * @return
    */
@@ -93,8 +93,35 @@ public class MatchPanel extends JPanel
   {
     for(int i=0; i<SO_CLUSTER_NAMES.length;i++)
       if(qualifierName.equals(SO_CLUSTER_NAMES[i]) || 
-         qualifierName.equals(SO_CLUSTER_NAMES[i]+"="))
+         qualifierName.startsWith("/"+SO_CLUSTER_NAMES[i]+"="))
         return true;
+    return false;
+  }
+  
+  /**
+   * Return true if this is a cluster, ortholog, paralog qualifier
+   * @param qualifierName
+   * @return
+   */
+  public static boolean isClusterTag(final String qualifierName)
+  {
+    for(int i=0; i<SO_CLUSTER_NAMES.length-1;i++)
+      if(qualifierName.equals(SO_CLUSTER_NAMES[i]) || 
+         qualifierName.startsWith("/"+SO_CLUSTER_NAMES[i]+"="))
+        return true;
+    return false;
+  }
+  
+  /**
+   * Return true if this is a similarity qualifier
+   * @param qualifierName
+   * @return
+   */
+  public static boolean isSimilarityTag(final String qualifierName)
+  {
+    if(qualifierName.equals(SIMILARITY) || 
+       qualifierName.startsWith("/"+SIMILARITY+"="))
+      return true;
     return false;
   }
   
