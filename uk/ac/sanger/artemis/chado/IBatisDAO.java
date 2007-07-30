@@ -127,6 +127,11 @@ public class IBatisDAO extends GmodDAO
                                new Integer(srcFeatureId));
   }
 
+  public List getClustersByFeatureIds(final List featureIds)
+  {
+    return sqlMap.queryForList("getLazyClustersByFeatureIds", featureIds);
+  }
+  
   /**
    * Returns matches for all features on a given srcfeature
    */

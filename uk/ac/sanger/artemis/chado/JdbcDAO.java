@@ -98,6 +98,13 @@ public class JdbcDAO extends GmodDAO
   ////// SequenceDaoI
   //////
   //////
+  
+  public List getClustersByFeatureIds(List featureIds)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
   public List getFeatureDbXRefsByFeatureId(List featureIds)
   {
     // TODO Auto-generated method stub
@@ -2241,6 +2248,8 @@ public class JdbcDAO extends GmodDAO
       throw new RuntimeException(sqle);
     }
   }
+
+
 
 
 }
