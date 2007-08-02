@@ -1544,30 +1544,30 @@ public class DatabaseDocument extends Document
   
   public List getDatabaseNames()
   {
-    try
+    GmodDAO dao = getDAOOnly();
+    List dbs = dao.getDbs();
+    List names = new Vector();
+    Iterator it = dbs.iterator();
+    while(it.hasNext())
     {
-      GmodDAO dao = getDAO();
-      List dbs = dao.getDbs();
-      List names = new Vector();
-      Iterator it = dbs.iterator();
-      while(it.hasNext())
-      {
-        Db db = (Db)it.next();
-        names.add(db.getName());
-      }
-      return names;
+      Db db = (Db)it.next();
+      names.add(db.getName());
     }
-    catch(ConnectException e)
+    return names;
+  }
+  
+  public List getOrganismNames()
+  {
+    GmodDAO dao = getDAOOnly();
+    List organisms = dao.getOrganisms();
+    List organismNames = new Vector();
+    Iterator it = organisms.iterator();
+    while(it.hasNext())
     {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      Organism organism = (Organism)it.next();
+      organismNames.add(organism.getCommonName());
     }
-    catch(SQLException e)
-    {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return null;
+    return organismNames;
   }
   
   public static Vector getCvterms(final String search_str, final String cv_name)
@@ -2101,7 +2101,8 @@ public class DatabaseDocument extends Document
             else
             {
               // set srcfeature_id
-              if(tsn.getFeatureObject() instanceof Feature)
+              if(tsn.getFeatureObject() instanceof Feature &&
+                  ((Feature) tsn.getFeatureObject()).getFeatureLoc() != null)
               {
                 FeatureLoc featureloc = ((Feature) tsn.getFeatureObject()).getFeatureLoc();
                 Feature featureBySrcFeatureId = new Feature();

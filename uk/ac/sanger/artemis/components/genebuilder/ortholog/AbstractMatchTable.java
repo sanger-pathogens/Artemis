@@ -89,7 +89,10 @@ abstract class AbstractMatchTable
     values.removeAllElements();
     
     if(getTable().getRowCount() < 1)
+    {
+      qv.remove(origQualifier);
       return;
+    }
     
     System.out.println("\nHERE:\n");
     for(int i=0; i<getTable().getRowCount(); i++)
@@ -503,7 +506,7 @@ abstract class AbstractMatchTable
 
     public int getSourceActions(JComponent c)
     {
-      return COPY_OR_MOVE;
+      return MOVE;
     }
 
     public boolean importData(JComponent c, Transferable t)

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.12 2007-07-30 09:55:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.13 2007-08-02 08:54:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -57,13 +57,14 @@ public class MatchPanel extends JPanel
   private QualifierVector matchQualifiers;
   private static Vector databases;
   private SimilarityTable similarityTable;
-  private OrthologTable orthologTable;
+  private OrthoParalogTable orthologTable;
+  private OrthoParalogTable paralogTable;
   private Vector editableComponents;
   private JButton hide_show_ortho;
   private JButton hide_show_sim;
-  private static String ORTHOLOG = "orthologous_to";
-  private static String PARALOG  = "paralogous_to";
-  private static String SIMILARITY = "similarity";
+  public static String ORTHOLOG = "orthologous_to";
+  public static String PARALOG  = "paralogous_to";
+  public static String SIMILARITY = "similarity";
   private static String[] SO_CLUSTER_NAMES =  
             { ORTHOLOG, PARALOG, SIMILARITY };
   
@@ -136,7 +137,7 @@ public class MatchPanel extends JPanel
     {
       DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
       DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
-      databases = (Vector)doc.getDatabaseNames();
+      databases = (Vector) doc.getOrganismNames();
     }
     
     //
@@ -163,7 +164,8 @@ public class MatchPanel extends JPanel
           return;
         
         add(ORTHOLOG, ((String)dbs.getSelectedItem())+":"+
-                        accession.getText().trim(), feature);
+                        accession.getText().trim()+"; rank="+
+                        orthologTable.getTable().getRowCount(), feature);
       }
     });
     Box xBox = Box.createHorizontalBox();
@@ -179,20 +181,20 @@ public class MatchPanel extends JPanel
     {
       if(orthoQualifier instanceof QualifierLazyLoading)
         ((QualifierLazyLoading)orthoQualifier).setForceLoad(true);
-    }
+    //}
       if(hide_show_ortho == null)
         hide_show_ortho = new JButton("-");
       
       DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
       DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
       
-      orthologTable = new OrthologTable(doc, orthoQualifier, feature);
+      orthologTable = new OrthoParalogTable(doc, orthoQualifier, feature);
       addHideShowButton(orthologTable.getTable(), hide_show_ortho);
       xBox.add(hide_show_ortho);
       editableComponents.add(orthologTable);
       matchVerticalBox.add(orthologTable.getTable().getTableHeader());
       matchVerticalBox.add(orthologTable.getTable());
-    //}
+    }
 
     
     //
@@ -228,12 +230,21 @@ public class MatchPanel extends JPanel
     
     if(paraQualifier != null)
     {
-      StringVector paralogs = paraQualifier.getValues();
-      for(int i=0; i<paralogs.size(); i++)
-      {
-        JTextField paralog = new JTextField( (String)paralogs.get(i) );
-        matchVerticalBox.add(paralog);
-      }
+      if(paraQualifier instanceof QualifierLazyLoading)
+        ((QualifierLazyLoading)paraQualifier).setForceLoad(true);
+
+      if(hide_show_ortho == null)
+        hide_show_ortho = new JButton("-");
+      
+      DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
+      DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
+      
+      paralogTable = new OrthoParalogTable(doc, paraQualifier, feature);
+      addHideShowButton(paralogTable.getTable(), hide_show_ortho);
+      xBox.add(hide_show_ortho);
+      editableComponents.add(paralogTable);
+      matchVerticalBox.add(paralogTable.getTable().getTableHeader());
+      matchVerticalBox.add(paralogTable.getTable());
     }
     
     
@@ -377,6 +388,8 @@ public class MatchPanel extends JPanel
      index = matchQualifiers.indexOf(qualifier);
        
     StringVector sv = qualifier.getValues();
+    if(sv == null)
+      sv = new StringVector();
     sv.add(value);
     
     qualifier = new Qualifier(name, sv);
@@ -409,8 +422,7 @@ public class MatchPanel extends JPanel
         //System.out.println("CHECKING MATCHES "+i);
         if(matchTable.isQualifierChanged())
         {
-          if(matchTable.getTable().getRowCount() < 1)
-            return null;
+          //System.out.println("UPDATING MATCHES "+i);
           matchTable.updateQualifier(matchQualifiers);
         }
       }
