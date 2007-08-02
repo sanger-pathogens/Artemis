@@ -1,4 +1,4 @@
-/* OrthologTable.java
+/* OrthoParalogTable.java
  * This file is part of Artemis
  *
  * Copyright (C) 2007  Genome Research Limited
@@ -31,6 +31,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -51,32 +53,34 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.chado.ArtemisUtils;
 import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
-public class OrthologTable extends AbstractMatchTable
+public class OrthoParalogTable extends AbstractMatchTable
 {
   private static int NUMBER_COLUMNS = 3;
   private Vector rowData   = new Vector();
   private Vector tableData = new Vector(NUMBER_COLUMNS);
-  private JTable orthologTable;
+  private JTable table;
   private JButton infoLevelButton = new JButton("Details");
   private JPopupMenu popupMenu = new JPopupMenu();
 
   //
   // column headings
-  final static String ORTHO_COL = "Ortholog";
+  final static String ORTHO_COL = "Gene";
   final static String DESCRIPTION_COL = "Description";
   final static String REMOVE_BUTTON_COL = "";
   
   /**
-   * Contruct a component for a similarity line
-   * @param similarity
-   * @param similarityString
+   * Contruct a component for an ortholog or paralog line
+   * @param doc
+   * @param origQualifier
+   * @param feature
    */
-  protected OrthologTable(final DatabaseDocument doc,
+  protected OrthoParalogTable(final DatabaseDocument doc,
                           final Qualifier origQualifier,
                           final Feature feature)
   {
@@ -91,11 +95,16 @@ public class OrthologTable extends AbstractMatchTable
     tableData.setElementAt(DESCRIPTION_COL,1);
     tableData.setElementAt(REMOVE_BUTTON_COL,2);
     
+    
     // add row data
-    if(origQualifier != null)
-    {
+    //if(origQualifier != null)
+    //{
       int columnIndex;
       StringVector values = origQualifier.getValues();
+      
+      // sort by their rank value
+      Collections.sort(values, new OrthoParalogValueComparator());
+      
       for(int i=0; i<values.size(); i++)
       {
         StringVector rowStr = StringVector.getStrings((String)values.get(i), ";");
@@ -104,29 +113,37 @@ public class OrthologTable extends AbstractMatchTable
         
         columnIndex = tableData.indexOf(ORTHO_COL);
         thisRowData.setElementAt((String)rowStr.get(0), columnIndex);
-        columnIndex = tableData.indexOf(DESCRIPTION_COL);
-        thisRowData.setElementAt("blah", columnIndex);
+        
+        if(rowStr.size() > 1)
+        {
+          columnIndex = tableData.indexOf(DESCRIPTION_COL);
+          thisRowData.setElementAt((String)rowStr.get(1), columnIndex);
+        }
         rowData.add(thisRowData);
       }
+    /*}
+    else
+    {
+      Vector thisRowData = new Vector();
+      thisRowData.add("Bpseudomallei:BPSL0003");
+      thisRowData.add("blah blah");
+      rowData.add(thisRowData);
+      Vector thisRowData2 = new Vector();
+      thisRowData2.add("Bpseudomallei:BPSL2915");
+      thisRowData2.add("blah blah2");
+      rowData.add(thisRowData2);
+      Vector thisRowData3 = new Vector();
+      thisRowData3.add("schema:id");
+      thisRowData3.add("blah blah3");
+      rowData.add(thisRowData3);
     }
-    Vector thisRowData = new Vector();
-    thisRowData.add("Bpseudomallei:BPSL0003");
-    thisRowData.add("blah blah");
-    rowData.add(thisRowData);
-    Vector thisRowData2 = new Vector();
-    thisRowData2.add("Bpseudomallei:BPSL2915");
-    thisRowData2.add("blah blah2");
-    rowData.add(thisRowData2);
-    Vector thisRowData3 = new Vector();
-    thisRowData3.add("schema:id");
-    thisRowData3.add("blah blah3");
-    rowData.add(thisRowData3);
+    */
     
-    orthologTable = new JTable(rowData, tableData);
-    setTable(orthologTable);
+    table = new JTable(rowData, tableData);
+    setTable(table);
     
     // set hand cursor
-    orthologTable.addMouseMotionListener( new MouseMotionAdapter() 
+    table.addMouseMotionListener( new MouseMotionAdapter() 
     {
       private Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
       public void mouseMoved(MouseEvent e) 
@@ -142,7 +159,7 @@ public class OrthologTable extends AbstractMatchTable
       }
     });
     
-    orthologTable.addMouseListener(new MouseAdapter() 
+    table.addMouseListener(new MouseAdapter() 
     {
       public void mousePressed(MouseEvent e) 
       {
@@ -161,38 +178,38 @@ public class OrthologTable extends AbstractMatchTable
       }
     });
 
-    orthologTable.setColumnSelectionAllowed(false);
-    orthologTable.setRowSelectionAllowed(true);
-    orthologTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+    table.setColumnSelectionAllowed(false);
+    table.setRowSelectionAllowed(true);
+    table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
     table.setDragEnabled(true);
-    orthologTable.setTransferHandler(new TableTransferHandler());
+    table.setTransferHandler(new TableTransferHandler());
     
-    TableModel tableModel = orthologTable.getModel();
+    TableModel tableModel = table.getModel();
     // remove button column
-    TableColumn col = orthologTable.getColumn(REMOVE_BUTTON_COL);
+    TableColumn col = table.getColumn(REMOVE_BUTTON_COL);
     col.setMinWidth(35);
     col.setMaxWidth(40);
     col.setPreferredWidth(40);
 
     final OrthologRenderer renderer = new OrthologRenderer();
 
-    for(int columnIndex = 0; columnIndex <tableModel.getColumnCount();
+    for(columnIndex = 0; columnIndex <tableModel.getColumnCount();
         columnIndex++) 
     {
-      col = orthologTable.getColumnModel().getColumn(columnIndex);
+      col = table.getColumnModel().getColumn(columnIndex);
       col.setCellRenderer(renderer);
       col.setCellEditor(new CellEditing(new JTextField()));
     }
     
     // remove JButton column
-    col = orthologTable.getColumn(REMOVE_BUTTON_COL);
+    col = table.getColumn(REMOVE_BUTTON_COL);
     col.setCellEditor(new ButtonEditor(new JCheckBox(),
-        (DefaultTableModel)orthologTable.getModel()));
+        (DefaultTableModel)table.getModel()));
     
     // orthologue link
-    col = orthologTable.getColumn(ORTHO_COL);
+    col = table.getColumn(ORTHO_COL);
     col.setCellEditor(new LinkEditor(new JCheckBox(),
-        (DefaultTableModel)orthologTable.getModel(), doc));
+        (DefaultTableModel)table.getModel(), doc));
   }
   
   /**
@@ -208,7 +225,7 @@ public class OrthologTable extends AbstractMatchTable
     {
       public void actionPerformed(ActionEvent e)
       {
-        final int[] rows = orthologTable.getSelectedRows();
+        final int[] rows = table.getSelectedRows();
         final int column = getColumnIndex(ORTHO_COL);
         final Vector seqs = new Vector();
         
@@ -220,7 +237,7 @@ public class OrthologTable extends AbstractMatchTable
         
         for(int row=0; row<rows.length; row++)
         {
-          String ortho = (String)orthologTable.getValueAt(row, column);
+          String ortho = (String)table.getValueAt(row, column);
           final String reference[] = ortho.split(":");
           DatabaseDocument newdoc = new DatabaseDocument(doc, 
               reference[0], reference[1], true);
@@ -251,17 +268,55 @@ public class OrthologTable extends AbstractMatchTable
   /**
    * Called by AbstractMatchTable.updateQualifier()
    */
-  protected String updateQualifierString(int row)
+  protected String updateQualifierString(final int row)
   {
     StringBuffer orthologStr = new StringBuffer(
         (String)getTable().getValueAt(row, getColumnIndex(ORTHO_COL)) );            // ortholog link
     orthologStr.append(";");
-    orthologStr.append(
-             (String)getTable().getValueAt(row, getColumnIndex(DESCRIPTION_COL)) ); // description
+    
+    if(getTable().getValueAt(row, getColumnIndex(DESCRIPTION_COL)) != null)
+      orthologStr.append(
+             (String)getTable().getValueAt(row, getColumnIndex(DESCRIPTION_COL)) + ";" ); // description
+    
+    orthologStr.append("rank="+row);
     return orthologStr.toString();
   }
   
 
+  /**
+   * Check whether s qualifier string exists in a StringVector for that qualifier.
+   * If the StringVector contains the hit, description return true.
+   * @param qualStr
+   * @param qualStringVector
+   * @return
+   */
+  public static boolean containsStringInStringVector(final String qualStr, 
+                                                     final StringVector qualStringVector)
+  {
+    StringVector orth1 = StringVector.getStrings(qualStr, ";");
+    for(int i=0; i<qualStringVector.size(); i++)
+    {
+      String thisStr = (String)qualStringVector.get(i);
+      
+      StringVector orth2 = StringVector.getStrings(thisStr, ";");
+      
+      if(orth1.size() != orth2.size())
+        continue;
+      
+      // hit
+      if( !((String)orth1.get(0)).equals((String)orth2.get(0)) )
+        continue;      
+
+      // description
+      if( orth1.size() > 1 && orth2.size() > 1 &&
+          !((String)orth1.get(1)).equals((String)orth2.get(1)) )
+        continue;
+      
+      return true; 
+    }
+    return false;
+  }
+  
   /**
    * Renderer for the Ortholog cells
    */
@@ -377,5 +432,35 @@ public class OrthologTable extends AbstractMatchTable
     }
   }
 
- 
+  public class OrthoParalogValueComparator implements Comparator
+  {
+    public int compare(Object o1, Object o2)
+    {
+      final String value1 = (String)o1;
+      final String value2 = (String)o2;
+      
+      StringVector values1 = StringVector.getStrings((String)value1, ";");
+      String rank1 = ArtemisUtils.getString(values1, "rank");
+      if(!rank1.equals(""))
+      {
+        if(rank1.startsWith("rank=") || rank1.startsWith("rank "))
+          rank1 = rank1.substring(5);
+      }
+      else
+        rank1 = "0";
+      
+      StringVector values2 = StringVector.getStrings((String)value2, ";");
+      String rank2 = ArtemisUtils.getString(values2, "rank");
+      if(!rank2.equals(""))
+      {
+        if(rank2.startsWith("rank=") || rank2.startsWith("rank "))
+          rank2 = rank2.substring(5);
+      }
+      else
+        rank2 = "0";
+      
+      
+      return (new Integer(rank1)).compareTo(new Integer(rank2));
+    }   
+  }
 }
