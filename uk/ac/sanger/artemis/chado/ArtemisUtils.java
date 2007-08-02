@@ -34,12 +34,15 @@ import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
+import org.gmod.schema.organism.Organism;
+import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
+import org.gmod.schema.sequence.FeatureRelationship;
 
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
@@ -476,6 +479,82 @@ public class ArtemisUtils
     return analysisFeature;
   }
   
+  
+  
+  
+  
+  
+  /**
+   * Build an AnalysisFeature object for a orthologous_to/paralogous_to qualifier
+   * @param uniqueName
+   * @param qualifier_string
+   * @param feature
+   * @return
+   */
+  protected static Feature getMatchFeatureWithFeatureRelations(final String uniqueName,
+      final String qualifierName, String qualifierString, final GFFStreamFeature feature)
+  {
+    int queryFeatureId = Integer.parseInt((String) feature.getQualifierByName(
+        "feature_id").getValues().get(0));
+
+    Feature thisFeature     = new Feature();
+    Feature orthologFeature = new Feature();
+    Feature matchFeature    = new Feature();
+
+    thisFeature.setUniqueName(uniqueName);
+    thisFeature.setFeatureId(queryFeatureId);  
+
+    while(qualifierString.startsWith("\""))
+      qualifierString = qualifierString.substring(1);
+    while(qualifierString.endsWith("\""))
+      qualifierString = qualifierString.substring(0,qualifierString.length()-1);
+ 
+    final StringVector qualifierStrings = StringVector.getStrings(qualifierString,
+        ";");
+
+    String ortholog = (String)qualifierStrings.get(0);
+    String orthologStr[] = ortholog.split(":", 2);
+    
+    final Organism organism = new Organism();
+    organism.setCommonName(orthologStr[0]);
+    orthologFeature.setUniqueName(orthologStr[1]);
+    orthologFeature.setOrganism(organism);
+    
+    matchFeature.setUniqueName("CLUSTER_" + uniqueName + "_" + orthologStr[1]);
+    matchFeature.setCvTerm(getCvTerm("protein_match"));
+    matchFeature.setOrganism(organism);
+    
+    // rank
+    String rank = getString(qualifierStrings, "rank");
+    if(!rank.equals(""))
+    {
+      if(rank.startsWith("rank=") || rank.startsWith("rank "))
+        rank = rank.substring(5);
+    }
+    
+    FeatureRelationship thisFeatureRelationship = new FeatureRelationship();
+    thisFeatureRelationship.setFeatureByObjectId(matchFeature);
+    thisFeatureRelationship.setFeatureBySubjectId(thisFeature);
+    thisFeatureRelationship.setCvTerm(getCvTerm(qualifierName));
+    if(!rank.equals(""))
+      thisFeatureRelationship.setRank(Integer.parseInt(rank));
+    
+    List featureRelationshipsForSubjectId = new Vector();
+    featureRelationshipsForSubjectId.add(thisFeatureRelationship);
+    
+    FeatureRelationship thisOrthologRelationship = new FeatureRelationship();
+    thisOrthologRelationship.setFeatureByObjectId(matchFeature);
+    thisOrthologRelationship.setFeatureBySubjectId(orthologFeature);
+    thisOrthologRelationship.setCvTerm(getCvTerm(qualifierName));
+    featureRelationshipsForSubjectId.add(thisOrthologRelationship);
+    matchFeature.setFeatureRelationshipsForSubjectId(featureRelationshipsForSubjectId);
+    
+    return matchFeature;
+  }
+  
+  
+  
+  
   /**
    * Return a FeatureLoc for a Feature
    * @param location
@@ -512,7 +591,7 @@ public class ArtemisUtils
     return featureLoc;
   }
 
-  private static String getString(final StringVector sv, final String name)
+  public static String getString(final StringVector sv, final String name)
   {
     for(int i = 0; i < sv.size(); i++)
     {
