@@ -29,7 +29,6 @@ package uk.ac.sanger.artemis.chado;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.gmod.schema.sequence.Feature;
@@ -40,6 +39,7 @@ import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.LazyQualifierValue;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.Document;
+import uk.ac.sanger.artemis.util.StringVector;
 
 
 public class ClusterLazyQualifierValue implements LazyQualifierValue
@@ -86,19 +86,13 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
     lazyLoaded = true;
     
     final String featureId = (String) feature.getQualifierByName("feature_id").getValues().get(0);
-    final StringTokenizer tok = new StringTokenizer(value, ";");
     final List featureIds = new Vector();
-    while(tok.hasMoreTokens())
-    {
-      final String token = tok.nextToken().trim();
-      if(token.startsWith("object_id="))
-      {
-        final String tokenParts[] = token.split("=");
-        final Integer f_id = Integer.valueOf(tokenParts[1]);
-        if(!featureIds.contains(f_id))
-          featureIds.add( f_id );
-      }
-    }
+    
+    StringVector strings = StringVector.getStrings(value, ";");
+    String f_id[] = ArtemisUtils.getString(strings, "object_id=").split("=");
+    featureIds.add( Integer.valueOf(f_id[1]) );
+    
+    String rank = ArtemisUtils.getString(strings, "rank");
     
     final Document document = ((DocumentEntry)feature.getEntry()).getDocument();
     List clusters = ((DatabaseDocument)document).getClustersByFeatureIds(featureIds);
@@ -116,7 +110,7 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
         if(subjectFeature.getFeatureId() != Integer.parseInt(featureId))
         {
           value = subjectFeature.getOrganism().getCommonName()+":"+
-                  subjectFeature.getUniqueName();
+                  subjectFeature.getUniqueName()+"; "+rank;
         }
       }
     }
