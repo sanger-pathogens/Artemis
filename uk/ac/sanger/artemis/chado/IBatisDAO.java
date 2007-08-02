@@ -720,13 +720,22 @@ public class IBatisDAO extends GmodDAO
   private void insertFeature
                     (final Feature feature)
   {
-    Integer organism_id = (Integer)sqlMap.queryForObject("getOrganismID", feature);
-
+    final Organism organism;
+    if(feature.getFeatureId() > 0 || feature.getFeatureLoc() != null)
+    {
+      Integer organism_id = (Integer)sqlMap.queryForObject(
+              "getOrganismIdBySrcFeatureIdOrFeatureId", feature);
+      organism = new Organism();
+      organism.setOrganismId(organism_id.intValue()); 
+    }
+    else
+      organism = (Organism)sqlMap.queryForObject("getOrganism", feature.getOrganism());
+    
+    feature.setOrganism(organism);
+    
     //
     // insert feature into feature table
-    Organism organism = new Organism();
-    organism.setOrganismId(organism_id.intValue());
-    feature.setOrganism(organism);  
+ 
     sqlMap.insert("insertFeature", feature);
 
     //
@@ -736,11 +745,13 @@ public class IBatisDAO extends GmodDAO
 
     //
     // insert feature location into featureloc
-    feature.setFeatureId(feature_id);
-    FeatureLoc featureLoc = feature.getFeatureLoc();
-    featureLoc.setFeatureByFeatureId(feature);
-    
-    sqlMap.insert("insertFeatureLoc", featureLoc);
+    if(feature.getFeatureLoc() != null)
+    {
+      feature.setFeatureId(feature_id);
+      FeatureLoc featureLoc = feature.getFeatureLoc();
+      featureLoc.setFeatureByFeatureId(feature);
+      sqlMap.insert("insertFeatureLoc", featureLoc);
+    }
     
     // insert feature relationships
     if(feature.getFeatureRelationshipsForSubjectId() != null)
@@ -833,7 +844,7 @@ public class IBatisDAO extends GmodDAO
       }
     }
     
-    Integer organism_id = (Integer)sqlMap.queryForObject("getOrganismID", queryFeature);
+    Integer organism_id = (Integer)sqlMap.queryForObject("getOrganismIdBySrcFeatureIdOrFeatureId", queryFeature);
     Organism organism = new Organism();
     organism.setOrganismId(organism_id.intValue());
     matchFeature.setOrganism(organism);
