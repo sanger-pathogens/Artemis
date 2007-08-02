@@ -68,11 +68,11 @@
    <insert id="insertFeatureRelationship" 
            parameterClass="FeatureRelationship">
       INSERT INTO feature_relationship
-        ( subject_id, object_id, type_id )
+        ( subject_id, object_id, type_id, rank )
       VALUES
         ( (SELECT feature_id FROM feature WHERE uniquename=#featureBySubjectId.uniqueName#),
           (SELECT feature_id FROM feature WHERE uniquename=#featureByObjectId.uniqueName#),
-          $cvTerm.cvTermId$ )
+          $cvTerm.cvTermId$, $rank$ )
    </insert>
    
 </sqlMap> 
