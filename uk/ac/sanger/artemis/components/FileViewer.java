@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.13 2007-04-10 13:39:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.14 2007-08-02 13:34:07 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -28,6 +28,7 @@ package uk.ac.sanger.artemis.components;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -59,7 +60,7 @@ import uk.ac.sanger.artemis.Options;
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.13 2007-04-10 13:39:38 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.14 2007-08-02 13:34:07 tjc Exp $
  *
  **/
 
@@ -146,7 +147,7 @@ public class FileViewer extends JFrame
     
     getContentPane().add(scroller, "Center");
 
-    button_panel = new JPanel();
+    button_panel = new JPanel(new FlowLayout());
     getContentPane().add(button_panel, "South");
 
     final JButton close_button = new JButton("Close");
@@ -161,6 +162,16 @@ public class FileViewer extends JFrame
       }
     });
     button_panel.add(close_button);
+    
+    final JButton clearbutton = new JButton("Clear");
+    clearbutton.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent e) 
+      {
+        clear();
+      }
+    });
+    button_panel.add(clearbutton);
 
     addWindowListener(new WindowAdapter() 
     {
