@@ -16,10 +16,16 @@
       SELECT organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment 
       FROM organism
       <dynamic>
-        <isNotNull prepend="WHERE" property="organismId">
-           organism_id=#organismId#
+        <isNotNull property="organismId">
+			<isGreaterThan property="organismId" compareValue="0"> 
+				WHERE organism_id=#organismId#
+			</isGreaterThan>
         </isNotNull>
         
+		<isNotNull prepend="WHERE" property="commonName">
+           common_name=#commonName#
+        </isNotNull>
+		  
         <isNull prepend="ORDER BY" property="organismId">
            commonName
         </isNull>
@@ -27,7 +33,7 @@
     </select> 
     
     
-    <select id="getOrganismID" resultClass="java.lang.Integer" 
+    <select id="getOrganismIdBySrcFeatureIdOrFeatureId" resultClass="java.lang.Integer" 
             parameterClass="org.gmod.schema.sequence.Feature" cacheModel="organism-cache">
       SELECT organism_id AS organismId FROM feature f WHERE
         <isGreaterThan property="featureLoc.featureBySrcFeatureId.featureId" compareValue="0"> 
