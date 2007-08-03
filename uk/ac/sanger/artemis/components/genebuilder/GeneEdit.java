@@ -48,6 +48,8 @@ import javax.swing.JMenuItem;
 import javax.swing.Box;
 import javax.swing.UIManager;
 
+import org.gmod.schema.organism.Organism;
+
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.Options;
@@ -126,9 +128,12 @@ public class GeneEdit
     int index = location.indexOf('=') + 1;
     String schema = location.substring(index);
 
-    final List schemas = dao.getSchema();
+    final List schemas = dao.getOrganisms(); //dao.getSchema();
 
-    Vector v_schemas = new Vector(schemas);
+    Vector v_schemas = new Vector(schemas.size());
+    for(int i=0; i<schemas.size(); i++)
+      v_schemas.add( ((Organism)schemas.get(i)).getCommonName() );
+    
     v_schemas.add(0, "All");
 
     final JPanel panel = new JPanel(new BorderLayout());

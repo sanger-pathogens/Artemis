@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.13 2007-08-02 08:54:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.14 2007-08-03 10:34:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -61,6 +61,7 @@ public class MatchPanel extends JPanel
   private OrthoParalogTable paralogTable;
   private Vector editableComponents;
   private JButton hide_show_ortho;
+  private JButton hide_show_para;
   private JButton hide_show_sim;
   public static String ORTHOLOG = "orthologous_to";
   public static String PARALOG  = "paralogous_to";
@@ -233,15 +234,15 @@ public class MatchPanel extends JPanel
       if(paraQualifier instanceof QualifierLazyLoading)
         ((QualifierLazyLoading)paraQualifier).setForceLoad(true);
 
-      if(hide_show_ortho == null)
-        hide_show_ortho = new JButton("-");
+      if(hide_show_para == null)
+        hide_show_para = new JButton("-");
       
       DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
       DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
       
       paralogTable = new OrthoParalogTable(doc, paraQualifier, feature);
-      addHideShowButton(paralogTable.getTable(), hide_show_ortho);
-      xBox.add(hide_show_ortho);
+      addHideShowButton(paralogTable.getTable(), hide_show_para);
+      xBox.add(hide_show_para);
       editableComponents.add(paralogTable);
       matchVerticalBox.add(paralogTable.getTable().getTableHeader());
       matchVerticalBox.add(paralogTable.getTable());

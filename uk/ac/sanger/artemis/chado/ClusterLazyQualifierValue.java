@@ -97,11 +97,12 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
     final Document document = ((DocumentEntry)feature.getEntry()).getDocument();
     List clusters = ((DatabaseDocument)document).getClustersByFeatureIds(featureIds);
     
+    value = "";
     for(int i=0;i<clusters.size(); i++)
     {
-      Feature clusterFeature = (Feature)clusters.get(i);
-      Collection subjects = clusterFeature.getFeatureRelationshipsForSubjectId();
-      Iterator it = subjects.iterator();
+      final Feature clusterFeature = (Feature)clusters.get(i);
+      final Collection subjects = clusterFeature.getFeatureRelationshipsForSubjectId();
+      final Iterator it = subjects.iterator();
       while(it.hasNext())
       {
         FeatureRelationship fr = (FeatureRelationship)it.next();
@@ -109,12 +110,17 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
         
         if(subjectFeature.getFeatureId() != Integer.parseInt(featureId))
         {
-          value = subjectFeature.getOrganism().getCommonName()+":"+
-                  subjectFeature.getUniqueName()+"; "+rank;
+          if(!value.equals(""))
+            value = value.concat("");
+          
+          value = value.concat(subjectFeature.getOrganism().getCommonName()+":"+
+                  subjectFeature.getUniqueName());
         }
       }
+      value = value.concat("; cluster="+clusterFeature.getUniqueName());
     }
-    
+    value = value.concat("; "+rank);
+
     return value;
   }
   

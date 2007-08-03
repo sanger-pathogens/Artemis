@@ -61,7 +61,7 @@ import uk.ac.sanger.artemis.util.StringVector;
 
 public class OrthoParalogTable extends AbstractMatchTable
 {
-  private static int NUMBER_COLUMNS = 3;
+  private static int NUMBER_COLUMNS = 4;
   private Vector rowData   = new Vector();
   private Vector tableData = new Vector(NUMBER_COLUMNS);
   private JTable table;
@@ -70,6 +70,7 @@ public class OrthoParalogTable extends AbstractMatchTable
 
   //
   // column headings
+  final static String CLUSTER_NAME_COL = "Cluster";
   final static String ORTHO_COL = "Gene";
   final static String DESCRIPTION_COL = "Description";
   final static String REMOVE_BUTTON_COL = "";
@@ -91,10 +92,11 @@ public class OrthoParalogTable extends AbstractMatchTable
     infoLevelButton.setOpaque(false);
     tableData.setSize(NUMBER_COLUMNS);
     
-    tableData.setElementAt(ORTHO_COL,0);
-    tableData.setElementAt(DESCRIPTION_COL,1);
-    tableData.setElementAt(REMOVE_BUTTON_COL,2);
-    
+    tableData.setElementAt(CLUSTER_NAME_COL,0);
+    tableData.setElementAt(ORTHO_COL,1);
+    tableData.setElementAt(DESCRIPTION_COL,2);
+    tableData.setElementAt(REMOVE_BUTTON_COL,3);
+
     
     // add row data
     //if(origQualifier != null)
@@ -108,18 +110,39 @@ public class OrthoParalogTable extends AbstractMatchTable
       for(int i=0; i<values.size(); i++)
       {
         StringVector rowStr = StringVector.getStrings((String)values.get(i), ";");
-        Vector thisRowData = new Vector(NUMBER_COLUMNS);
-        thisRowData.setSize(NUMBER_COLUMNS);
         
-        columnIndex = tableData.indexOf(ORTHO_COL);
-        thisRowData.setElementAt((String)rowStr.get(0), columnIndex);
-        
+        final String orthoparalogs[] = ((String)rowStr.get(0)).split(",");
+        String description = "";
         if(rowStr.size() > 1)
         {
-          columnIndex = tableData.indexOf(DESCRIPTION_COL);
-          thisRowData.setElementAt((String)rowStr.get(1), columnIndex);
+          description = ArtemisUtils.getString(rowStr, "description=");
+          if(!description.equals(""))
+            description = description.substring(12); 
         }
-        rowData.add(thisRowData);
+        
+        String clusterName = "";
+        if(rowStr.size() > 1)
+        {
+          clusterName = ArtemisUtils.getString(rowStr, "cluster=");
+          if(!clusterName.equals(""))
+            clusterName = clusterName.substring(8); 
+        }
+        
+        for(int j=0; j<orthoparalogs.length; j++)
+        {
+          Vector thisRowData = new Vector(NUMBER_COLUMNS);
+          thisRowData.setSize(NUMBER_COLUMNS);
+          columnIndex = tableData.indexOf(ORTHO_COL);
+          thisRowData.setElementAt(orthoparalogs[j].trim(), columnIndex);
+        
+          columnIndex = tableData.indexOf(CLUSTER_NAME_COL);
+          thisRowData.setElementAt(clusterName, columnIndex);
+          
+          columnIndex = tableData.indexOf(DESCRIPTION_COL);
+          thisRowData.setElementAt(description, columnIndex);
+          rowData.add(thisRowData);
+        }
+        
       }
     /*}
     else
@@ -279,12 +302,14 @@ public class OrthoParalogTable extends AbstractMatchTable
              (String)getTable().getValueAt(row, getColumnIndex(DESCRIPTION_COL)) + ";" ); // description
     
     orthologStr.append("rank="+row);
+    
+    System.out.println(orthologStr.toString());
     return orthologStr.toString();
   }
   
 
   /**
-   * Check whether s qualifier string exists in a StringVector for that qualifier.
+   * Check whether ortholog/paralog qualifier string exists in a StringVector for that qualifier.
    * If the StringVector contains the hit, description return true.
    * @param qualStr
    * @param qualStringVector
@@ -293,7 +318,10 @@ public class OrthoParalogTable extends AbstractMatchTable
   public static boolean containsStringInStringVector(final String qualStr, 
                                                      final StringVector qualStringVector)
   {
-    StringVector orth1 = StringVector.getStrings(qualStr, ";");
+    final StringVector orth1 = StringVector.getStrings(qualStr, ";");
+    final String clusterName1 = ArtemisUtils.getString(orth1, "cluster");
+    final String rank1 = ArtemisUtils.getString(orth1, "rank");
+    
     for(int i=0; i<qualStringVector.size(); i++)
     {
       String thisStr = (String)qualStringVector.get(i);
@@ -303,10 +331,20 @@ public class OrthoParalogTable extends AbstractMatchTable
       if(orth1.size() != orth2.size())
         continue;
       
-      // hit
+      // ortholog/paralog
       if( !((String)orth1.get(0)).equals((String)orth2.get(0)) )
         continue;      
 
+      // cluster name
+      final String clusterName2 = ArtemisUtils.getString(orth2, "cluster");
+      if(!clusterName1.equals(clusterName2))
+        continue;
+      
+      // rank
+      final String rank2 = ArtemisUtils.getString(orth2, "rank");
+      if(!rank1.equals(rank2))
+        continue;
+      
       // description
       if( orth1.size() > 1 && orth2.size() > 1 &&
           !((String)orth1.get(1)).equals((String)orth2.get(1)) )
@@ -328,6 +366,7 @@ public class OrthoParalogTable extends AbstractMatchTable
     
     private final JLabel orthologLabel = new JLabel();
     private final JTextArea descriptionTextArea = new JTextArea();
+    private final JTextField clusterName = new JTextField();
     private final JLabel buttRemove = new JLabel("X");
     private Color fgColor = new Color(139,35,35);
     private Color fgLinkColor = Color.BLUE;
@@ -392,6 +431,18 @@ public class OrthoParalogTable extends AbstractMatchTable
         dim = descriptionTextArea.getPreferredSize();
         minHeight = Math.max(minHeight, dim.height);
         c = descriptionTextArea;
+      }
+      else if(column == getColumnIndex(CLUSTER_NAME_COL))
+      {
+        clusterName.setText(text);
+
+        tableCol = table.getColumnModel().getColumn(column);
+        clusterName.setSize(tableCol.getWidth(), table
+            .getRowHeight(row));
+
+        dim = clusterName.getPreferredSize();
+        minHeight = Math.max(minHeight, dim.height);
+        c = clusterName;
       }
       else if(column == getColumnIndex(REMOVE_BUTTON_COL))
       {

@@ -1233,7 +1233,7 @@ public class ChadoTransactionManager
     if(new_qualifier != null)
       new_qualifier_strings = StreamQualifier.toStringVector(null, new_qualifier);
     
-    StringVector old_qualifier_strings;
+    final StringVector old_qualifier_strings;
     
     if(old_qualifier != null)
       old_qualifier_strings = StreamQualifier.toStringVector(null, old_qualifier);
