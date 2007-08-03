@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.29 2007-07-11 15:14:38 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.30 2007-08-03 08:32:32 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -555,6 +555,8 @@ extra_qualifiers_gff = \
     controlled_curation "text" \
     fasta_file "text" \
     note "text" \
+    orthologous_to "text" \
+    paralogous_to "text" \
     similarity "text"
 
 # this is a list of extra qualifiers that are legal but are not displayed in
@@ -638,6 +640,8 @@ invisible_qualifiers_gff= \
     Name           \
     note           \
     Ontology_term  \
+    orthologous_to \
+    paralogous_to  \
     Parent         \
     product        \
     similarity     \
