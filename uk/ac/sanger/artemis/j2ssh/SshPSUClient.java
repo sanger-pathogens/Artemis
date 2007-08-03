@@ -331,31 +331,35 @@ public class SshPSUClient extends Thread
       if(index > -1)
         filename = filename.substring(index+1);
 
-      try
+      if(i == 0)
       {
-        if(!keep)
-          wdir = wdir+"/"+user;
-        sftp.mkdir(wdir);
-        wdir = wdir+"/"+program+"/";
-
-        sftp.mkdir(wdir);
-//      sftp.put(filepath, wdir+filename);
-      }
-      catch(SshException sshe)
-      {
-        logger4j.debug("runBlastOrFasta()");
-        if(System.getProperty("debug") != null)
+        try
         {
-          sshe.printStackTrace();
+          if(!keep)
+            wdir = wdir + "/" + user;
+          sftp.mkdir(wdir);
+          wdir = wdir + "/" + program + "/";
+
+          sftp.mkdir(wdir);
+          logger4j.debug("mkdir() " + wdir);
+          // sftp.put(filepath, wdir+filename);
         }
-        rescue();
-        sftp = getSftpClient();
-        if(!wdir.endsWith(program+"/"))
-          wdir = wdir+"/"+program+"/";
-      }
-      catch(IOException ioe)
-      {
-        // directory already created
+        catch(SshException sshe)
+        {
+          logger4j.debug("runBlastOrFasta()");
+          if(System.getProperty("debug") != null)
+          {
+            sshe.printStackTrace();
+          }
+          rescue();
+          sftp = getSftpClient();
+          if(!wdir.endsWith(program + "/"))
+            wdir = wdir + "/" + program + "/";
+        }
+        catch(IOException ioe)
+        {
+          // directory already created
+        }
       }
  
 
