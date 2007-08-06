@@ -736,7 +736,7 @@ public class FastaTextPane extends JScrollPane
         try
         {
           String queryURL = DataCollectionPane.srs_url+
-                            "/wgetz?-f+acc%20org%20description%20gen+[uniprot-acc:"+
+                            "/wgetz?-noSession+-ascii+-f+acc%20org%20description%20gen+[uniprot-acc:"+
                             querySRS.toString()+"]+-lv+500";
           URL wgetz = new URL(queryURL);
           logger4j.debug(queryURL);
@@ -979,7 +979,7 @@ public class FastaTextPane extends JScrollPane
       try
       {
         final String queryURL = DataCollectionPane.srs_url+
-                                "/wgetz?-f+id+[uniprot-acc:"+hit.getAcc()+"]%3E"+DB;
+                                "/wgetz?-noSession+-ascii+-f+id+[uniprot-acc:"+hit.getAcc()+"]%3E"+DB;
         URL wgetz = new URL(queryURL);
         logger4j.debug(queryURL);
         
