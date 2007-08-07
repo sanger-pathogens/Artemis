@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LineGroup.java,v 1.10 2007-04-12 10:25:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LineGroup.java,v 1.11 2007-08-07 03:00:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import uk.ac.sanger.artemis.util.LinePushBackReader;
  *  that start with FT.
  *
  *  @author Kim Rutherford
- *  @version $Id: LineGroup.java,v 1.10 2007-04-12 10:25:58 tjc Exp $
+ *  @version $Id: LineGroup.java,v 1.11 2007-08-07 03:00:39 tjc Exp $
  *
  */
 
@@ -154,6 +154,7 @@ abstract class LineGroup
     genbank_hash.put ("COMMENT","COMMENT");
     genbank_hash.put ("FEATURES","FEATURES");
     genbank_hash.put ("SEGMENT","SEGMENT");
+    genbank_hash.put ("PRIMARY","PRIMARY");
   }
 
   /**
