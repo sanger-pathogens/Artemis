@@ -68,7 +68,7 @@ abstract class AbstractMatchTable
 {
   protected boolean isChanged = false;
   protected JTable table;
-  protected Qualifier origQualifier;
+  protected QualifierVector origQualifiers;
   protected abstract String updateQualifierString(int row);
   
   /**
@@ -80,33 +80,52 @@ abstract class AbstractMatchTable
   }
   
   /**
+   * Override this if there are multiple qualifier types in the table
+   * e.g. for ortholog, paralog
+   * @param qualifierName
+   * @param row
+   * @return
+   */
+  protected boolean isRowOfType(final String qualifierName, final int row)
+  {
+    return true;
+  }
+  
+  /**
    * Update the qualifiers from the entries in the table
    * @param qv
    */
   protected void updateQualifier(final QualifierVector qv)
   {
-    StringVector values = origQualifier.getValues();
-    values.removeAllElements();
-    
-    if(getTable().getRowCount() < 1)
+    for(int i=0; i<origQualifiers.size(); i++)
     {
-      qv.remove(origQualifier);
-      return;
+      Qualifier origQualifier = (Qualifier) origQualifiers.elementAt(i);
+      StringVector values = origQualifier.getValues();
+      values.removeAllElements();
+
+      if(getTable().getRowCount() < 1)
+      {
+        qv.remove(origQualifier);
+        return;
+      }
+
+      System.out.println("\nHERE:\n");
+      for(int j = 0; j < getTable().getRowCount(); j++)
+      {
+        if(isRowOfType(origQualifier.getName(), j))
+        {
+          String updatedQualifierString = updateQualifierString(j);
+          values.add(updatedQualifierString);
+          System.out.println(updatedQualifierString);
+        }
+      }
+      System.out.println("\n\n");
+
+      int index = qv.indexOfQualifierWithName(origQualifier.getName());
+      origQualifier = new Qualifier(origQualifier.getName(), values);
+      qv.remove(index);
+      qv.add(index, origQualifier);
     }
-    
-    System.out.println("\nHERE:\n");
-    for(int i=0; i<getTable().getRowCount(); i++)
-    {
-      String updatedQualifierString = updateQualifierString(i);
-      values.add(updatedQualifierString);
-      System.out.println(updatedQualifierString);
-    }
-    System.out.println("\n\n");
-    
-    int index = qv.indexOfQualifierWithName(origQualifier.getName());
-    origQualifier = new Qualifier(origQualifier.getName(), values);
-    qv.remove(index);
-    qv.add(index, origQualifier);
   }
   
   public void setTable(JTable table)
@@ -334,7 +353,7 @@ abstract class AbstractMatchTable
    {
      super(checkBox);
      this.doc = doc;
-     
+         
      linkButton.setBorderPainted(false);
      linkButton.setOpaque(true);
 
@@ -416,7 +435,13 @@ abstract class AbstractMatchTable
    public Component getTableCellEditorComponent(JTable table, Object value,
                     boolean isSelected, int row, int column)
    {
-     linkButton.setText((String)value);
+     linkButton.setActionCommand((String)value);
+     String gene[] = ((String)value).split(":");
+     if(doc == null)
+       linkButton.setText((String)value);
+     else
+       linkButton.setText(gene[1]);
+     
      if (isSelected) 
      {
        linkButton.setForeground(fgLinkColor);
@@ -457,7 +482,7 @@ abstract class AbstractMatchTable
        {  
           // open gene editor for this gene link
           linkButton.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          final String reference[] = link.split(":");
+          final String reference[] = linkButton.getActionCommand().split(":");
           DatabaseDocumentEntry entry = makeEntry(reference[0], reference[1]);
 
           if(entry != null)
@@ -468,7 +493,7 @@ abstract class AbstractMatchTable
         }
        isChanged = true;
        linkButton.setCursor(Cursor.getDefaultCursor());
-       return link;
+       return linkButton.getActionCommand();
      }
      isPushed = false;
      return link;

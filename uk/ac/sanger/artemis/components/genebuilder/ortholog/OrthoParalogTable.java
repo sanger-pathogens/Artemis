@@ -56,12 +56,13 @@ import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.chado.ArtemisUtils;
 import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
+import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
 public class OrthoParalogTable extends AbstractMatchTable
 {
-  private static int NUMBER_COLUMNS = 4;
+  private static int NUMBER_COLUMNS = 9;
   private Vector rowData   = new Vector();
   private Vector tableData = new Vector(NUMBER_COLUMNS);
   private JTable table;
@@ -71,7 +72,12 @@ public class OrthoParalogTable extends AbstractMatchTable
   //
   // column headings
   final static String CLUSTER_NAME_COL = "Cluster";
+  final static String MATCH_NAME_COL = "Match";
+  final static String ROW_TYPE_HIDE_COL = "Term";
+  final static String ROW_TYPE_COL = "Type";
+  final static String ORGANISM_COL = "Organism";
   final static String ORTHO_COL = "Gene";
+  final static String LINK_COL = "Link";
   final static String DESCRIPTION_COL = "Description";
   final static String REMOVE_BUTTON_COL = "";
   
@@ -82,10 +88,16 @@ public class OrthoParalogTable extends AbstractMatchTable
    * @param feature
    */
   protected OrthoParalogTable(final DatabaseDocument doc,
-                          final Qualifier origQualifier,
+                          final Qualifier orthologQualifier,
+                          final Qualifier paralogQualifier,
                           final Feature feature)
   {
-    this.origQualifier = origQualifier;
+    this.origQualifiers = new QualifierVector();
+    
+    if(orthologQualifier != null)
+      this.origQualifiers.add(orthologQualifier);
+    if(paralogQualifier != null)
+      this.origQualifiers.add(paralogQualifier);
     
     createPopupMenu(doc, feature);
     
@@ -93,74 +105,100 @@ public class OrthoParalogTable extends AbstractMatchTable
     tableData.setSize(NUMBER_COLUMNS);
     
     tableData.setElementAt(CLUSTER_NAME_COL,0);
-    tableData.setElementAt(ORTHO_COL,1);
-    tableData.setElementAt(DESCRIPTION_COL,2);
-    tableData.setElementAt(REMOVE_BUTTON_COL,3);
+    tableData.setElementAt(MATCH_NAME_COL,1);
+    tableData.setElementAt(ROW_TYPE_HIDE_COL,2);
+    tableData.setElementAt(ROW_TYPE_COL,3);
+    tableData.setElementAt(ORGANISM_COL,4);
+    tableData.setElementAt(ORTHO_COL,5);
+    tableData.setElementAt(LINK_COL,6);
+    tableData.setElementAt(DESCRIPTION_COL,7);
+    tableData.setElementAt(REMOVE_BUTTON_COL,8);
 
     
     // add row data
-    //if(origQualifier != null)
-    //{
-      int columnIndex;
-      StringVector values = origQualifier.getValues();
+    int columnIndex;
       
+    for(int i=0; i<origQualifiers.size(); i++)
+    {
+      Qualifier origQualifier = (Qualifier) origQualifiers.elementAt(i);
+      StringVector values = origQualifier.getValues();
+
       // sort by their rank value
       Collections.sort(values, new OrthoParalogValueComparator());
-      
-      for(int i=0; i<values.size(); i++)
+
+      for(int j = 0; j < values.size(); j++)
       {
-        StringVector rowStr = StringVector.getStrings((String)values.get(i), ";");
-        
-        final String orthoparalogs[] = ((String)rowStr.get(0)).split(",");
+        StringVector rowStr = StringVector.getStrings((String) values.get(j),
+            ";");
+
+        final String orthoparalogs[] = ((String) rowStr.get(0)).split(",");
         String description = "";
         if(rowStr.size() > 1)
         {
           description = ArtemisUtils.getString(rowStr, "description=");
           if(!description.equals(""))
-            description = description.substring(12); 
+            description = description.substring(12);
         }
-        
+
         String clusterName = "";
         if(rowStr.size() > 1)
         {
-          clusterName = ArtemisUtils.getString(rowStr, "cluster=");
+          clusterName = ArtemisUtils.getString(rowStr, "cluster_name=");
           if(!clusterName.equals(""))
-            clusterName = clusterName.substring(8); 
+            clusterName = clusterName.substring(13);
         }
         
-        for(int j=0; j<orthoparalogs.length; j++)
+        String matchName = "";
+        if(rowStr.size() > 1)
+        {
+          matchName = ArtemisUtils.getString(rowStr, "match_name=");
+          if(!matchName.equals(""))
+            matchName = matchName.substring(11);
+        }
+        
+        for(int k = 0; k < orthoparalogs.length; k++)
         {
           Vector thisRowData = new Vector(NUMBER_COLUMNS);
+          
+          String geneNameAndLink[] = orthoparalogs[k].split("link=");
+          String gene[] = geneNameAndLink[0].trim().split(":");
+          
           thisRowData.setSize(NUMBER_COLUMNS);
+          
+          columnIndex = tableData.indexOf(ORGANISM_COL);
+          thisRowData.setElementAt(gene[0], columnIndex);
+          
           columnIndex = tableData.indexOf(ORTHO_COL);
-          thisRowData.setElementAt(orthoparalogs[j].trim(), columnIndex);
-        
+          thisRowData.setElementAt(geneNameAndLink[0].trim(), columnIndex);
+          
+          columnIndex = tableData.indexOf(LINK_COL);
+          thisRowData.setElementAt(geneNameAndLink[1].trim(), columnIndex);
+          
           columnIndex = tableData.indexOf(CLUSTER_NAME_COL);
           thisRowData.setElementAt(clusterName, columnIndex);
+
+          columnIndex = tableData.indexOf(MATCH_NAME_COL);
+          thisRowData.setElementAt(matchName, columnIndex);
           
           columnIndex = tableData.indexOf(DESCRIPTION_COL);
           thisRowData.setElementAt(description, columnIndex);
+          
+          columnIndex = tableData.indexOf(ROW_TYPE_HIDE_COL);
+          thisRowData.setElementAt(origQualifier.getName(), columnIndex);
+          
+          columnIndex = tableData.indexOf(ROW_TYPE_COL);
+          
+          final String symbol;
+          if(origQualifier.getName().equals(MatchPanel.ORTHOLOG))
+            symbol = "O";
+          else
+            symbol = "P";
+          
+          thisRowData.setElementAt(symbol, columnIndex);
           rowData.add(thisRowData);
         }
-        
       }
-    /*}
-    else
-    {
-      Vector thisRowData = new Vector();
-      thisRowData.add("Bpseudomallei:BPSL0003");
-      thisRowData.add("blah blah");
-      rowData.add(thisRowData);
-      Vector thisRowData2 = new Vector();
-      thisRowData2.add("Bpseudomallei:BPSL2915");
-      thisRowData2.add("blah blah2");
-      rowData.add(thisRowData2);
-      Vector thisRowData3 = new Vector();
-      thisRowData3.add("schema:id");
-      thisRowData3.add("blah blah3");
-      rowData.add(thisRowData3);
     }
-    */
     
     table = new JTable(rowData, tableData);
     setTable(table);
@@ -200,6 +238,21 @@ public class OrthoParalogTable extends AbstractMatchTable
           popupMenu.show(e.getComponent(), e.getX(), e.getY());
       }
     });
+    
+    packColumn(table, getColumnIndex(DESCRIPTION_COL), 4);
+    packColumn(table, getColumnIndex(ROW_TYPE_COL), 4);
+    packColumn(table, getColumnIndex(CLUSTER_NAME_COL), 4);
+    packColumn(table, getColumnIndex(ORTHO_COL), 4);
+    
+    final TableColumn[] hideColumns = new TableColumn[2];
+    hideColumns[0] = table.getColumn(ROW_TYPE_HIDE_COL);
+    hideColumns[1] = table.getColumn(MATCH_NAME_COL);
+    
+    for(int i=0; i<hideColumns.length; i++)
+    {
+      hideColumns[i].setMinWidth(0);
+      hideColumns[i].setMaxWidth(0);
+    }
 
     table.setColumnSelectionAllowed(false);
     table.setRowSelectionAllowed(true);
@@ -294,19 +347,43 @@ public class OrthoParalogTable extends AbstractMatchTable
   protected String updateQualifierString(final int row)
   {
     StringBuffer orthologStr = new StringBuffer(
-        (String)getTable().getValueAt(row, getColumnIndex(ORTHO_COL)) );            // ortholog link
+        (String)getTable().getValueAt(row, getColumnIndex(ORTHO_COL))+
+        " link="+
+        (String)getTable().getValueAt(row, getColumnIndex(LINK_COL)) );            // ortholog link
     orthologStr.append(";");
     
-    if(getTable().getValueAt(row, getColumnIndex(DESCRIPTION_COL)) != null)
-      orthologStr.append(
-             (String)getTable().getValueAt(row, getColumnIndex(DESCRIPTION_COL)) + ";" ); // description
+    String description = (String)getTable().getValueAt(row, getColumnIndex(DESCRIPTION_COL));
+    if(description != null && !description.equals(""))
+      orthologStr.append(description+ ";" ); // description
+    
+    String clusterName = (String)getTable().getValueAt(row, getColumnIndex(CLUSTER_NAME_COL));
+    if(clusterName != null && !clusterName.equals(""))
+      orthologStr.append("cluster_name="+clusterName+ ";" ); // cluster name
+    
+    String matchName = (String)getTable().getValueAt(row, getColumnIndex(MATCH_NAME_COL));
+    if(matchName != null && !matchName.equals(""))
+      orthologStr.append("match_name="+matchName+ ";" ); // match name
     
     orthologStr.append("rank="+row);
     
-    System.out.println(orthologStr.toString());
     return orthologStr.toString();
   }
   
+  /**
+   * Returns true if the qualifier name matches the row type, e.g.
+   * orthologous_to / paralogous_to
+   * @param qualifierName
+   * @param row
+   * @return
+   */
+  protected boolean isRowOfType(String qualifierName, int row)
+  {
+    String rowType = (String)getTable().getValueAt(row, getColumnIndex(ROW_TYPE_HIDE_COL));
+    
+    if(rowType.equals(qualifierName))
+      return true;
+    return false;
+  }
 
   /**
    * Check whether ortholog/paralog qualifier string exists in a StringVector for that qualifier.
@@ -320,7 +397,11 @@ public class OrthoParalogTable extends AbstractMatchTable
   {
     final StringVector orth1 = StringVector.getStrings(qualStr, ";");
     final String clusterName1 = ArtemisUtils.getString(orth1, "cluster");
-    final String rank1 = ArtemisUtils.getString(orth1, "rank");
+    //final String rank1 = ArtemisUtils.getString(orth1, "rank");
+    String value1 = (String)orth1.get(0);
+    int index = value1.indexOf('=');
+    if(index > -1)
+      value1 = value1.substring(index+1);
     
     for(int i=0; i<qualStringVector.size(); i++)
     {
@@ -331,24 +412,35 @@ public class OrthoParalogTable extends AbstractMatchTable
       if(orth1.size() != orth2.size())
         continue;
       
-      // ortholog/paralog
-      if( !((String)orth1.get(0)).equals((String)orth2.get(0)) )
-        continue;      
-
+      String value2 = (String)orth2.get(0);
+      if((index = value2.indexOf('=')) > -1)
+        value2 = value2.substring(index+1);
+      
+      if(!clusterName1.equals("") && !ArtemisUtils.getString(orth2, "cluster_name").equals(""))
+        System.out.println(value1+"  ==>  "+value2);
+      // ortholog/paralog/cluster
+      if(value1.indexOf(value2) < 0 &&
+         value2.indexOf(value1) < 0 )
+        continue;
+      
       // cluster name
-      final String clusterName2 = ArtemisUtils.getString(orth2, "cluster");
+      final String clusterName2 = ArtemisUtils.getString(orth2, "cluster_name");
       if(!clusterName1.equals(clusterName2))
         continue;
       
       // rank
+      /*
       final String rank2 = ArtemisUtils.getString(orth2, "rank");
       if(!rank1.equals(rank2))
         continue;
+      */
       
       // description
+      /*
       if( orth1.size() > 1 && orth2.size() > 1 &&
           !((String)orth1.get(1)).equals((String)orth2.get(1)) )
         continue;
+      */
       
       return true; 
     }
@@ -365,8 +457,13 @@ public class OrthoParalogTable extends AbstractMatchTable
     private int minHeight = -1;
     
     private final JLabel orthologLabel = new JLabel();
+    private final JLabel link = new JLabel();
+    private final JLabel type = new JLabel();
+    private final JLabel symbol = new JLabel();
+    private final JLabel organism = new JLabel();
     private final JTextArea descriptionTextArea = new JTextArea();
-    private final JTextField clusterName = new JTextField();
+    private final JLabel clusterName = new JLabel();
+    private final JLabel matchName = new JLabel();
     private final JLabel buttRemove = new JLabel("X");
     private Color fgColor = new Color(139,35,35);
     private Color fgLinkColor = Color.BLUE;
@@ -375,6 +472,13 @@ public class OrthoParalogTable extends AbstractMatchTable
     {
       orthologLabel.setForeground(Color.BLUE);
       orthologLabel.setOpaque(true);
+      
+      symbol.setOpaque(true);
+      symbol.setHorizontalAlignment(SwingConstants.CENTER);
+
+      clusterName.setOpaque(true);
+      organism.setOpaque(true);
+      link.setOpaque(true);
       
       descriptionTextArea.setLineWrap(true);
       descriptionTextArea.setWrapStyleWord(true);
@@ -406,7 +510,9 @@ public class OrthoParalogTable extends AbstractMatchTable
       TableColumn tableCol;
       if(column == getColumnIndex(ORTHO_COL))
       {
-        orthologLabel.setText(text);
+        String gene[] = text.split(":");
+        orthologLabel.setText(gene[1]);
+        
         if(isSelected) 
         {
           orthologLabel.setForeground(fgLinkColor);
@@ -419,6 +525,16 @@ public class OrthoParalogTable extends AbstractMatchTable
         }
         
         c = orthologLabel;
+      }
+      else if(column == getColumnIndex(ORGANISM_COL))
+      {
+        organism.setText(text);
+        c = organism;
+      }
+      else if(column == getColumnIndex(LINK_COL))
+      {
+        link.setText(text);
+        c = link;
       }
       else if(column == getColumnIndex(DESCRIPTION_COL))
       {
@@ -443,6 +559,27 @@ public class OrthoParalogTable extends AbstractMatchTable
         dim = clusterName.getPreferredSize();
         minHeight = Math.max(minHeight, dim.height);
         c = clusterName;
+      }
+      else if(column == getColumnIndex(MATCH_NAME_COL))
+      {
+        matchName.setText(text);
+        c = matchName;
+      }
+      else if(column == getColumnIndex(ROW_TYPE_HIDE_COL))
+      {
+        type.setText(text);
+        c = type;
+      }
+      else if(column == getColumnIndex(ROW_TYPE_COL))
+      {
+        symbol.setText(text);
+        tableCol = table.getColumnModel().getColumn(column);
+        symbol.setSize(tableCol.getWidth(), table
+            .getRowHeight(row));
+
+        dim = symbol.getPreferredSize();
+        minHeight = Math.max(minHeight, dim.height);
+        c = symbol;
       }
       else if(column == getColumnIndex(REMOVE_BUTTON_COL))
       {

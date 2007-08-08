@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.14 2007-08-03 10:34:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.15 2007-08-08 16:00:11 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -30,6 +30,7 @@ import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -57,17 +58,21 @@ public class MatchPanel extends JPanel
   private QualifierVector matchQualifiers;
   private static Vector databases;
   private SimilarityTable similarityTable;
-  private OrthoParalogTable orthologTable;
-  private OrthoParalogTable paralogTable;
+  private OrthoParalogTable orthoparaLogTable;
+
   private Vector editableComponents;
   private JButton hide_show_ortho;
-  private JButton hide_show_para;
+
   private JButton hide_show_sim;
   public static String ORTHOLOG = "orthologous_to";
   public static String PARALOG  = "paralogous_to";
+  //public static String CLUSTER  = "cluster";
   public static String SIMILARITY = "similarity";
-  private static String[] SO_CLUSTER_NAMES =  
-            { ORTHOLOG, PARALOG, SIMILARITY };
+  private static String[] SO_CLUSTER_NAMES = { 
+          ORTHOLOG, 
+          PARALOG, 
+    //    CLUSTER, 
+          SIMILARITY };
   
   public MatchPanel(final Feature feature)
   {
@@ -130,9 +135,49 @@ public class MatchPanel extends JPanel
   private Component createMatchQualifiersComponent(final Feature feature)
   {
     editableComponents = new Vector();
-    final Qualifier orthoQualifier = matchQualifiers.getQualifierByName(ORTHOLOG);
-    final Qualifier paraQualifier  = matchQualifiers.getQualifierByName(PARALOG);
-    final Qualifier simQualifier   = matchQualifiers.getQualifierByName(SIMILARITY);
+    final Qualifier orthoQualifier   = matchQualifiers.getQualifierByName(ORTHOLOG);
+    final Qualifier paraQualifier    = matchQualifiers.getQualifierByName(PARALOG);
+    //Qualifier clusterQualifier = matchQualifiers.getQualifierByName(CLUSTER);
+    final Qualifier simQualifier     = matchQualifiers.getQualifierByName(SIMILARITY);
+    
+    /*
+    if(orthoQualifier != null || paraQualifier != null)
+    {
+      if(orthoQualifier != null && orthoQualifier instanceof QualifierLazyLoading)
+      {
+        ((QualifierLazyLoading)orthoQualifier).setForceLoad(true);
+        final StringVector values = orthoQualifier.getValues();
+        StringVector clusterValues = null; 
+        for(int i=0; i<values.size(); i++)
+        {
+          StringVector rowStr = StringVector.getStrings((String)values.get(i), ";");
+          String cluster = ArtemisUtils.getString(rowStr, "cluster_name");
+          if(!cluster.equals(""))
+          {
+            if(clusterValues == null)
+              clusterValues = new StringVector();
+            clusterValues.add((String)values.get(i));
+          }
+        }
+        
+        if(clusterValues != null)
+        {
+          ((QualifierLazyLoading)orthoQualifier).removeValues(clusterValues);
+          if(clusterQualifier == null)
+            clusterQualifier = new Qualifier(ORTHOLOG, clusterValues);
+          else
+            clusterQualifier.getValues().addAll(clusterValues);
+        }
+      }
+
+      if(clusterQualifier != null)
+      {
+        StringVector values = clusterQualifier.getValues();
+        for(int i=0; i<values.size(); i++)
+          System.out.println(i+" CLUSTER   ===> "+values.get(i));
+      }
+    }
+    */
     
     if(databases == null)
     {
@@ -142,21 +187,21 @@ public class MatchPanel extends JPanel
     }
     
     //
-    // ortholog
+    // ortholog / paralog / cluster
     Box matchVerticalBox = Box.createVerticalBox();
-    JButton addOrthoButton = new JButton("ADD ORTHOLOG");
+    JButton addOrthoButton = new JButton("ADD ORTHOLOG/PARALOG");
     addOrthoButton.setOpaque(false);
     addOrthoButton.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       { 
         JExtendedComboBox dbs = new JExtendedComboBox(databases);
-        
         JTextField accession = new JTextField(15);
-        
+        JCheckBox orthoOrPara = new JCheckBox(ORTHOLOG, true);
         Box yBox = Box.createHorizontalBox();
         yBox.add(dbs);
         yBox.add(accession);
+        yBox.add(orthoOrPara);
 
         int select = JOptionPane.showConfirmDialog(null, 
               yBox, "Add Ortholog",
@@ -164,9 +209,14 @@ public class MatchPanel extends JPanel
         if(select == JOptionPane.CANCEL_OPTION)
           return;
         
-        add(ORTHOLOG, ((String)dbs.getSelectedItem())+":"+
-                        accession.getText().trim()+"; rank="+
-                        orthologTable.getTable().getRowCount(), feature);
+        final String qualifierStr = ((String)dbs.getSelectedItem())+":"+
+                                    accession.getText().trim()+" link="+
+                                    accession.getText().trim()+"; rank="+
+                                    orthoparaLogTable.getTable().getRowCount();
+        if(orthoOrPara.isSelected())
+          add(ORTHOLOG, qualifierStr, feature);
+        else
+          add(PARALOG, qualifierStr, feature);
       }
     });
     Box xBox = Box.createHorizontalBox();
@@ -178,10 +228,13 @@ public class MatchPanel extends JPanel
     ///
     /// temp
     ///
-    if(orthoQualifier != null)
+    if(orthoQualifier != null || paraQualifier != null)
     {
-      if(orthoQualifier instanceof QualifierLazyLoading)
+      if(orthoQualifier != null && orthoQualifier instanceof QualifierLazyLoading)
         ((QualifierLazyLoading)orthoQualifier).setForceLoad(true);
+      
+      if(paraQualifier != null && paraQualifier instanceof QualifierLazyLoading)
+        ((QualifierLazyLoading)paraQualifier).setForceLoad(true);
     //}
       if(hide_show_ortho == null)
         hide_show_ortho = new JButton("-");
@@ -189,17 +242,18 @@ public class MatchPanel extends JPanel
       DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
       DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
       
-      orthologTable = new OrthoParalogTable(doc, orthoQualifier, feature);
-      addHideShowButton(orthologTable.getTable(), hide_show_ortho);
+      orthoparaLogTable = new OrthoParalogTable(doc, orthoQualifier, paraQualifier, feature);
+      addHideShowButton(orthoparaLogTable.getTable(), hide_show_ortho);
       xBox.add(hide_show_ortho);
-      editableComponents.add(orthologTable);
-      matchVerticalBox.add(orthologTable.getTable().getTableHeader());
-      matchVerticalBox.add(orthologTable.getTable());
+      editableComponents.add(orthoparaLogTable);
+      matchVerticalBox.add(orthoparaLogTable.getTable().getTableHeader());
+      matchVerticalBox.add(orthoparaLogTable.getTable());
     }
 
     
     //
     // paralog
+    /*
     GeneEditorPanel.addLightSeparator(matchVerticalBox);
     JButton addParaButton = new JButton("ADD PARALOG");
     addParaButton.setOpaque(false);
@@ -247,7 +301,7 @@ public class MatchPanel extends JPanel
       matchVerticalBox.add(paralogTable.getTable().getTableHeader());
       matchVerticalBox.add(paralogTable.getTable());
     }
-    
+    */
     
     //
     // similarity

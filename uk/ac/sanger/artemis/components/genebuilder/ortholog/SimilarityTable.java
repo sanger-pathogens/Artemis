@@ -46,6 +46,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import uk.ac.sanger.artemis.io.Qualifier;
+import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.StringVector;
 
 public class SimilarityTable extends AbstractMatchTable
@@ -81,7 +82,8 @@ public class SimilarityTable extends AbstractMatchTable
    */
   protected SimilarityTable(final Qualifier simQualifier)
   {
-    this.origQualifier = simQualifier;
+    this.origQualifiers = new QualifierVector();
+    this.origQualifiers.add(simQualifier);
     
     infoLevelButton.setOpaque(false);
     infoLevelButton.setHorizontalAlignment(SwingConstants.LEFT);
