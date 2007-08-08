@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
 
@@ -103,6 +104,7 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
       final Feature clusterFeature = (Feature)clusters.get(i);
       final Collection subjects = clusterFeature.getFeatureRelationshipsForSubjectId();
       final Iterator it = subjects.iterator();
+      int cnt = 0;
       while(it.hasNext())
       {
         FeatureRelationship fr = (FeatureRelationship)it.next();
@@ -111,17 +113,60 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
         if(subjectFeature.getFeatureId() != Integer.parseInt(featureId))
         {
           if(!value.equals(""))
-            value = value.concat("");
+            value = value.concat(", ");
           
-          value = value.concat(subjectFeature.getOrganism().getCommonName()+":"+
-                  subjectFeature.getUniqueName());
+          value = value.concat(subjectFeature.getOrganism().getCommonName()+":");
+          
+          String geneName = subjectFeature.getUniqueName();
+          if(!subjectFeature.getCvTerm().getName().equals("gene"))
+          {
+            Feature parent = getParentFeature(subjectFeature);
+            if(parent.getCvTerm().getName().equals("gene"))
+              geneName = parent.getUniqueName();
+            else if(parent != null)
+            {
+              parent = getParentFeature(parent);
+              if(parent.getCvTerm().getName().equals("gene"))
+                geneName = parent.getUniqueName();
+            }
+          }
+          
+          value = value.concat(geneName+" link="+
+              subjectFeature.getUniqueName());
+          
+          cnt++;
         }
       }
-      value = value.concat("; cluster="+clusterFeature.getUniqueName());
+      if(cnt > 1)
+        value = value.concat("; cluster_name="+clusterFeature.getUniqueName());
+      else
+        value = value.concat("; match_name="+clusterFeature.getUniqueName());
     }
     value = value.concat("; "+rank);
 
     return value;
+  }
+  
+  /**
+   * Given a chado Feature find the parent from its feature_relationship
+   * @param childFeature
+   * @return
+   */
+  private Feature getParentFeature(final Feature childFeature)
+  {
+    Collection featureRelationships = childFeature.getFeatureRelationshipsForSubjectId();
+    Iterator it = featureRelationships.iterator();
+    while(it.hasNext())
+    {
+      FeatureRelationship frSubject = (FeatureRelationship)it.next();
+      CvTerm cvTerm = frSubject.getCvTerm();
+      
+      if(cvTerm.getName().equals("derives_from") ||
+         cvTerm.getName().indexOf("part_of")>-1)
+        return frSubject.getFeatureByObjectId();
+     
+    }
+    return null;
   }
   
 

@@ -1370,7 +1370,7 @@ public class ChadoTransactionManager
          {
            if(new_qualifier_strings != null &&
                OrthoParalogTable.containsStringInStringVector(
-                   (String)old_qualifier_strings.elementAt(i), new_qualifier_strings))
+                   qualifierString, new_qualifier_strings))
              continue;
            
            logger4j.debug(uniquename+"  in handleReservedTags() DELETE "+qualifierName+" "+
