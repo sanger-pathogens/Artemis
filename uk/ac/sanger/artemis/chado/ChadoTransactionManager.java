@@ -1490,7 +1490,7 @@ public class ChadoTransactionManager
          else if(MatchPanel.isClusterTag(qualifierName))
          {
            if(OrthoParalogTable.containsStringInStringVector(
-               (String)new_qualifier_strings.elementAt(i), old_qualifier_strings))
+               qualifierString, old_qualifier_strings))
              continue;
            
            logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+qualifierName+" "+
