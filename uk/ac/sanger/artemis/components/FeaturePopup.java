@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.17 2007-02-27 15:50:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.18 2007-08-10 13:22:15 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,7 +38,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.17 2007-02-27 15:50:39 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.18 2007-08-10 13:22:15 tjc Exp $
  *
  **/
 
@@ -773,7 +773,7 @@ public class FeaturePopup extends JPopupMenu
 
     file_dialog.setDialogTitle("Choose save file ...");
     file_dialog.setDialogType(JFileChooser.SAVE_DIALOG);
-    final int status = file_dialog.showOpenDialog(frame);
+    final int status = file_dialog.showSaveDialog(frame);
 
     if(status != JFileChooser.APPROVE_OPTION ||
        file_dialog.getSelectedFile() == null) 
