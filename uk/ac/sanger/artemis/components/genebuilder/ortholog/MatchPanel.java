@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.15 2007-08-08 16:00:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.16 2007-08-10 13:10:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -29,10 +29,11 @@ import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
@@ -195,28 +196,7 @@ public class MatchPanel extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       { 
-        JExtendedComboBox dbs = new JExtendedComboBox(databases);
-        JTextField accession = new JTextField(15);
-        JCheckBox orthoOrPara = new JCheckBox(ORTHOLOG, true);
-        Box yBox = Box.createHorizontalBox();
-        yBox.add(dbs);
-        yBox.add(accession);
-        yBox.add(orthoOrPara);
-
-        int select = JOptionPane.showConfirmDialog(null, 
-              yBox, "Add Ortholog",
-              JOptionPane.OK_CANCEL_OPTION);
-        if(select == JOptionPane.CANCEL_OPTION)
-          return;
-        
-        final String qualifierStr = ((String)dbs.getSelectedItem())+":"+
-                                    accession.getText().trim()+" link="+
-                                    accession.getText().trim()+"; rank="+
-                                    orthoparaLogTable.getTable().getRowCount();
-        if(orthoOrPara.isSelected())
-          add(ORTHOLOG, qualifierStr, feature);
-        else
-          add(PARALOG, qualifierStr, feature);
+        addOrthoParalog(feature);
       }
     });
     Box xBox = Box.createHorizontalBox();
@@ -226,8 +206,6 @@ public class MatchPanel extends JPanel
     
     
     ///
-    /// temp
-    ///
     if(orthoQualifier != null || paraQualifier != null)
     {
       if(orthoQualifier != null && orthoQualifier instanceof QualifierLazyLoading)
@@ -235,7 +213,7 @@ public class MatchPanel extends JPanel
       
       if(paraQualifier != null && paraQualifier instanceof QualifierLazyLoading)
         ((QualifierLazyLoading)paraQualifier).setForceLoad(true);
-    //}
+    
       if(hide_show_ortho == null)
         hide_show_ortho = new JButton("-");
       
@@ -350,6 +328,49 @@ public class MatchPanel extends JPanel
     }
 
     return matchVerticalBox;
+  }
+  
+  /**
+   * Add an ortholog or paralog to the table
+   * @param feature
+   */
+  private void addOrthoParalog(final Feature feature)
+  {
+    JExtendedComboBox dbs = new JExtendedComboBox(databases);
+    JTextField accession = new JTextField(15);
+    JRadioButton ortho = new JRadioButton(ORTHOLOG, true);
+    JRadioButton para  = new JRadioButton(PARALOG, false);
+    ButtonGroup group = new ButtonGroup();
+    group.add(ortho);
+    group.add(para);
+    
+    Box xBox = Box.createVerticalBox();
+    Box yBoxRef = Box.createHorizontalBox();
+    yBoxRef.add(dbs);
+    yBoxRef.add(accession);
+    yBoxRef.add(Box.createHorizontalGlue());
+    xBox.add(yBoxRef);
+    
+    Box yBoxType = Box.createHorizontalBox();
+    yBoxType.add(ortho);
+    yBoxType.add(para);
+    yBoxType.add(Box.createHorizontalGlue());
+    xBox.add(yBoxType);
+
+    int select = JOptionPane.showConfirmDialog(null, 
+          xBox, "Add Ortholog/Paralog",
+          JOptionPane.OK_CANCEL_OPTION);
+    if(select == JOptionPane.CANCEL_OPTION)
+      return;
+    
+    final String qualifierStr = ((String)dbs.getSelectedItem())+":"+
+                                accession.getText().trim()+" link="+
+                                accession.getText().trim()+"; rank="+
+                                orthoparaLogTable.getTable().getRowCount();
+    if(ortho.isSelected())
+      add(ORTHOLOG, qualifierStr, feature);
+    else
+      add(PARALOG, qualifierStr, feature);
   }
   
   /**

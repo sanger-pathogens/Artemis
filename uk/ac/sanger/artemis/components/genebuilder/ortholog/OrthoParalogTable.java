@@ -31,8 +31,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -53,7 +55,9 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.FeaturePredicate;
 import uk.ac.sanger.artemis.chado.ArtemisUtils;
+import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
@@ -239,11 +243,6 @@ public class OrthoParalogTable extends AbstractMatchTable
       }
     });
     
-    packColumn(table, getColumnIndex(DESCRIPTION_COL), 4);
-    packColumn(table, getColumnIndex(ROW_TYPE_COL), 4);
-    packColumn(table, getColumnIndex(CLUSTER_NAME_COL), 4);
-    packColumn(table, getColumnIndex(ORTHO_COL), 4);
-    
     final TableColumn[] hideColumns = new TableColumn[2];
     hideColumns[0] = table.getColumn(ROW_TYPE_HIDE_COL);
     hideColumns[1] = table.getColumn(MATCH_NAME_COL);
@@ -277,6 +276,11 @@ public class OrthoParalogTable extends AbstractMatchTable
       col.setCellEditor(new CellEditing(new JTextField()));
     }
     
+    packColumn(table, getColumnIndex(DESCRIPTION_COL), 4);
+    packColumn(table, getColumnIndex(ROW_TYPE_COL), 4);
+    packColumn(table, getColumnIndex(CLUSTER_NAME_COL), 4);
+    packColumn(table, getColumnIndex(ORTHO_COL), 4);
+    
     // remove JButton column
     col = table.getColumn(REMOVE_BUTTON_COL);
     col.setCellEditor(new ButtonEditor(new JCheckBox(),
@@ -287,6 +291,35 @@ public class OrthoParalogTable extends AbstractMatchTable
     col.setCellEditor(new LinkEditor(new JCheckBox(),
         (DefaultTableModel)table.getModel(), doc));
   }
+  
+  
+  private Feature getParentFeature(final Feature feature)
+  {
+    final QualifierVector qualifiers = feature.getQualifiers();
+    
+ 
+    String featureId = null;
+    for(int i=0; i<qualifiers.size(); i++)
+    {
+      Qualifier qualifier = (Qualifier)qualifiers.elementAt(i);
+      if(qualifier.getName().equalsIgnoreCase("Derives_from") ||
+         qualifier.getName().equalsIgnoreCase("Parent"))
+      {
+        featureId = (String) qualifier.getValues().get(0);
+        break;
+      }
+    }
+    FeatureNamePredicate predicate = new FeatureNamePredicate(featureId);
+    final uk.ac.sanger.artemis.FeatureVector features = feature.getEntry().getAllFeatures();
+    for(int i=0; i<features.size(); i++)
+    {
+      Feature thisFeature = features.elementAt(i);
+      if(predicate.testPredicate(thisFeature))
+        return thisFeature;
+    }
+    return null;
+  }
+  
   
   /**
    * Create the popup menu for the table
@@ -301,19 +334,30 @@ public class OrthoParalogTable extends AbstractMatchTable
     {
       public void actionPerformed(ActionEvent e)
       {
+        Cursor orginalCursor = table.getCursor();
+        table.setCursor(new Cursor(Cursor.WAIT_CURSOR)); 
         final int[] rows = table.getSelectedRows();
         final int column = getColumnIndex(ORTHO_COL);
         final Vector seqs = new Vector();
-        
-        
-        final String bases = feature.getTranslationBases();
-        //final String bases = feature.getBases();
-        final String sysName = feature.getSystematicName();
-        seqs.add(new org.emboss.jemboss.editor.Sequence(sysName, bases));
-        
-        for(int row=0; row<rows.length; row++)
+
+        Feature gene = feature;
+        if(!feature.getKey().equals("gene"))
         {
-          String ortho = (String)table.getValueAt(row, column);
+          gene = getParentFeature(feature);
+          if(!gene.getKey().equals("gene"))
+            gene = getParentFeature(gene);
+        }
+        
+        if(gene != null)
+        {
+          final String bases = gene.getTranslationBases();
+          final String sysName = gene.getSystematicName();
+          seqs.add(new org.emboss.jemboss.editor.Sequence(sysName, bases));
+        }
+        
+        for(int i=0; i<rows.length; i++)
+        {
+          String ortho = (String)table.getValueAt(rows[i], column);
           final String reference[] = ortho.split(":");
           DatabaseDocument newdoc = new DatabaseDocument(doc, 
               reference[0], reference[1], true);
@@ -336,6 +380,7 @@ public class OrthoParalogTable extends AbstractMatchTable
         org.emboss.jemboss.editor.AlignJFrame ajFrame =
               new org.emboss.jemboss.editor.AlignJFrame(seqs);
         ajFrame.setVisible(true);
+        table.setCursor(orginalCursor); 
       }
     });
   }
@@ -399,9 +444,40 @@ public class OrthoParalogTable extends AbstractMatchTable
     final String clusterName1 = ArtemisUtils.getString(orth1, "cluster");
     //final String rank1 = ArtemisUtils.getString(orth1, "rank");
     String value1 = (String)orth1.get(0);
-    int index = value1.indexOf('=');
-    if(index > -1)
-      value1 = value1.substring(index+1);
+    int index;
+
+    if(!clusterName1.equals("")) // if a part of a cluster
+    {
+      final String clusterElements1[] = value1.split(", ");
+      final List findAll = Arrays.asList(clusterElements1);
+      
+      for(int i=0; i<findAll.size(); i++)
+      {
+        final String findMe = (String)findAll.get(i);
+        boolean found = false;
+        for(int j=0; j<qualStringVector.size(); j++)
+        {
+          String thisStr = (String)qualStringVector.get(j);
+          StringVector orth2 = StringVector.getStrings(thisStr, ";");
+          final String clusterName2 = ArtemisUtils.getString(orth2, "cluster_name");
+          if(!clusterName1.equals(clusterName2))
+            continue;
+        
+          String value2 = (String)orth2.get(0);
+          if((index = value2.indexOf('=')) > -1)
+            value2 = value2.substring(index+1);
+          String clusterElements2[] = value2.split(", ");
+        
+          final List searchList = Arrays.asList(clusterElements2);
+
+          if(searchList.contains(findMe))
+            found = true;
+        }
+        if(!found)
+          return false;
+      }
+      return true;
+    }
     
     for(int i=0; i<qualStringVector.size(); i++)
     {
@@ -456,7 +532,7 @@ public class OrthoParalogTable extends AbstractMatchTable
     private static final long serialVersionUID = 1L;
     private int minHeight = -1;
     
-    private final JLabel orthologLabel = new JLabel();
+    private final JLabel gene = new JLabel();
     private final JLabel link = new JLabel();
     private final JLabel type = new JLabel();
     private final JLabel symbol = new JLabel();
@@ -470,8 +546,8 @@ public class OrthoParalogTable extends AbstractMatchTable
     
     public OrthologRenderer() 
     {
-      orthologLabel.setForeground(Color.BLUE);
-      orthologLabel.setOpaque(true);
+      gene.setForeground(Color.BLUE);
+      gene.setOpaque(true);
       
       symbol.setOpaque(true);
       symbol.setHorizontalAlignment(SwingConstants.CENTER);
@@ -510,21 +586,21 @@ public class OrthoParalogTable extends AbstractMatchTable
       TableColumn tableCol;
       if(column == getColumnIndex(ORTHO_COL))
       {
-        String gene[] = text.split(":");
-        orthologLabel.setText(gene[1]);
+        String geneStr[] = text.split(":");
+        gene.setText(geneStr[1]);
         
         if(isSelected) 
         {
-          orthologLabel.setForeground(fgLinkColor);
-          orthologLabel.setBackground(table.getSelectionBackground());
+          gene.setForeground(fgLinkColor);
+          gene.setBackground(table.getSelectionBackground());
         } 
         else
         {
-          orthologLabel.setForeground(fgLinkColor);
-          orthologLabel.setBackground(UIManager.getColor("Button.background"));
+          gene.setForeground(fgLinkColor);
+          gene.setBackground(UIManager.getColor("Button.background"));
         }
         
-        c = orthologLabel;
+        c = gene;
       }
       else if(column == getColumnIndex(ORGANISM_COL))
       {
@@ -650,5 +726,29 @@ public class OrthoParalogTable extends AbstractMatchTable
       
       return (new Integer(rank1)).compareTo(new Integer(rank2));
     }   
+  }
+  
+  public class FeatureNamePredicate implements FeaturePredicate
+  {
+    private String uniqueName;
+    
+    public FeatureNamePredicate(final String uniqueName)
+    {
+      this.uniqueName = uniqueName;
+    }
+    
+    public boolean testPredicate(Feature feature)
+    {
+      try
+      {
+        String featureId = (String)feature.getQualifierByName("ID").getValues().get(0);
+        if(featureId.equals(uniqueName))
+          return true;
+      }
+      catch(InvalidRelationException e){}
+      
+      return false;
+    }
+    
   }
 }

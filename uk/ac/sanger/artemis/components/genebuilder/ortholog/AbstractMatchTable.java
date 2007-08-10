@@ -53,6 +53,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.text.JTextComponent;
 
 import uk.ac.sanger.artemis.components.genebuilder.GeneEdit;
 import uk.ac.sanger.artemis.editor.BrowserControl;
@@ -199,8 +200,10 @@ abstract class AbstractMatchTable
     Component comp = renderer.getTableCellRendererComponent(
           table, col.getHeaderValue(), false, false, 0, 0);
     //width = comp.getPreferredSize().width;
-  
+
+    
     String text = ((JLabel)comp).getText();
+      
     Font font = comp.getFont();
     FontMetrics fontMetrics = comp.getFontMetrics ( font );
 
@@ -213,7 +216,11 @@ abstract class AbstractMatchTable
       comp = renderer.getTableCellRendererComponent(
               table, table.getValueAt(r, columnIndex), false, false, r, columnIndex);
 
-      text = ((JLabel)comp).getText();
+      if(comp instanceof JLabel)
+        text = ((JLabel)comp).getText();
+      else
+        text = ((JTextComponent)comp).getText();
+      
       font = comp.getFont();
       fontMetrics = comp.getFontMetrics ( font );
 
@@ -366,7 +373,8 @@ abstract class AbstractMatchTable
 
       public void mouseClicked(MouseEvent e)
       {
-        if(e.getClickCount() == 2)
+        if(e.getClickCount() == 2 &&
+           !e.isShiftDown() && !e.isPopupTrigger())
           fireEditingStopped(); 
       }
 
@@ -496,7 +504,11 @@ abstract class AbstractMatchTable
        return linkButton.getActionCommand();
      }
      isPushed = false;
-     return link;
+     
+     if(doc == null)
+       return link;
+     else
+       return linkButton.getActionCommand();
    }
     
    public boolean stopCellEditing() 
