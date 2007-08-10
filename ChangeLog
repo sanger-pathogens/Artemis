@@ -1,5 +1,7 @@
 Version ??
 
+	Now using new release of j2ssh (0.2.9). This requires Jav1.5+.
+
 	Implemented option for ORF creation to take into account boundaries
 	of multiple fasta sequences, so that they do not cross them.
 
