@@ -134,6 +134,11 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
           value = value.concat(geneName+" link="+
               subjectFeature.getUniqueName());
           
+          CvTerm cvTerm = 
+            DatabaseDocument.getCvTermByCvTermId(fr.getCvTerm().getCvTermId(), feature);
+          
+          value = value.concat(" type="+cvTerm.getName());
+          
           cnt++;
         }
       }

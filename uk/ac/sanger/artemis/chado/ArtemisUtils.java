@@ -518,8 +518,11 @@ public class ArtemisUtils
     final Organism organism = new Organism();
     organism.setCommonName(orthologStr[0]);
     
-    String link[] = orthologStr[1].split("link=");
-    orthologFeature.setUniqueName(link[1]);
+    int index1 = orthologStr[1].indexOf("link=")+5;
+    int index2 = orthologStr[1].indexOf("type=");
+    String link = orthologStr[1].substring(index1, index2).trim();
+
+    orthologFeature.setUniqueName(link);
     orthologFeature.setOrganism(organism);
     
     String matchName   = getString(qualifierStrings, "match_name");
@@ -529,7 +532,7 @@ public class ArtemisUtils
     else if(!clusterName.equals(""))
       matchFeature.setUniqueName(clusterName.substring(13));
     else
-      matchFeature.setUniqueName("CLUSTER_" + uniqueName + "_" + link[1].trim());
+      matchFeature.setUniqueName("CLUSTER_" + uniqueName + "_" + link);
     matchFeature.setCvTerm(getCvTerm("protein_match"));
     matchFeature.setOrganism(organism);
     

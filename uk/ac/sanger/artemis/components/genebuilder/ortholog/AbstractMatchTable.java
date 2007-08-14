@@ -93,6 +93,19 @@ abstract class AbstractMatchTable
   }
   
   /**
+   * Override this method if there are multiple qualifier types in the table
+   * e.g. for ortholog, paralog. See OrthoParalogTable.getOtherValues().
+   * @param origQualifier
+   * @return
+   */
+  protected StringVector getOtherValues(final Qualifier origQualifier)
+  {
+    StringVector values = origQualifier.getValues();
+    values.removeAllElements();
+    return values;
+  }
+  
+  /**
    * Update the qualifiers from the entries in the table
    * @param qv
    */
@@ -101,14 +114,7 @@ abstract class AbstractMatchTable
     for(int i=0; i<origQualifiers.size(); i++)
     {
       Qualifier origQualifier = (Qualifier) origQualifiers.elementAt(i);
-      StringVector values = origQualifier.getValues();
-      values.removeAllElements();
-
-      if(getTable().getRowCount() < 1)
-      {
-        qv.remove(origQualifier);
-        return;
-      }
+      StringVector values = getOtherValues(origQualifier);
 
       System.out.println("\nHERE:\n");
       for(int j = 0; j < getTable().getRowCount(); j++)
@@ -122,10 +128,15 @@ abstract class AbstractMatchTable
       }
       System.out.println("\n\n");
 
-      int index = qv.indexOfQualifierWithName(origQualifier.getName());
-      origQualifier = new Qualifier(origQualifier.getName(), values);
-      qv.remove(index);
-      qv.add(index, origQualifier);
+      if(values.size() < 1)
+        qv.remove(origQualifier);
+      else
+      {
+        int index = qv.indexOfQualifierWithName(origQualifier.getName());
+        origQualifier = new Qualifier(origQualifier.getName(), values);
+        qv.remove(index);
+        qv.add(index, origQualifier);
+      }
     }
   }
   
