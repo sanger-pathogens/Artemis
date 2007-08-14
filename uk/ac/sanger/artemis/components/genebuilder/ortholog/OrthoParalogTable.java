@@ -246,7 +246,7 @@ public class OrthoParalogTable extends AbstractMatchTable
   }
   
   /**
-   * 
+   * Parse the qualifier string into row data
    * @param rowStr
    * @param rowData
    * @param qualifierName
