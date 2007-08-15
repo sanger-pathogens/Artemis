@@ -1683,6 +1683,73 @@ public class DatabaseDocument extends Document
     return schema_list;
   }
   
+  public Feature getFeatureByUniquename(final String uniqueName) 
+  {
+    GmodDAO dao = getDAOOnly();
+    List features = dao.getFeaturesByUniqueName(uniqueName);
+    if(features == null || features.size() < 1)
+      return null;
+      
+    return (Feature)(dao.getFeaturesByUniqueName(uniqueName).get(0));
+  }
+  
+  /**
+   * Given a gene unique name return the poplypeptide chado features that belong
+   * to that gene
+   * @param geneName
+   * @return
+   */
+  public Vector getPolypeptideFeatures(final String geneName)
+  {
+    Feature geneFeature =  getFeatureByUniquename(geneName);
+    if(geneFeature == null)
+      return null;
+    
+    Collection frs = geneFeature.getFeatureRelationshipsForObjectId();
+    Iterator it = frs.iterator();
+    List transcripts = new Vector(frs.size());
+    while(it.hasNext())
+    {
+      FeatureRelationship fr = (FeatureRelationship)it.next();
+      transcripts.add(fr.getFeatureBySubjectId());
+    }
+    
+    Vector polypep = new Vector();
+    for(int i=0; i<transcripts.size(); i++)
+    {
+      org.gmod.schema.sequence.Feature transcript = 
+        (org.gmod.schema.sequence.Feature) transcripts.get(i);
+      frs = transcript.getFeatureRelationshipsForObjectId();
+      it = frs.iterator();
+      while(it.hasNext())
+      {
+        FeatureRelationship fr = (FeatureRelationship)it.next();
+        if(fr.getCvTerm().getName().equalsIgnoreCase("derives_from"))
+          if(fr.getFeatureBySubjectId().getCvTerm().getName().equalsIgnoreCase("polypeptide"))
+            polypep.add(fr.getFeatureBySubjectId());
+      }
+    }
+    return polypep;
+  }
+  
+  /**
+   * Given a gene unique name return the poplypeptides that belong
+   * to that gene
+   * @param geneName
+   * @return
+   */
+  public Vector getPolypeptideNames(final String geneName)
+  {
+    Vector polypeptides = getPolypeptideFeatures(geneName);
+    Vector polypeptideNames = new Vector(polypeptides.size());
+    for(int i=0; i<polypeptides.size(); i++)
+    {
+      Feature feature = (Feature)polypeptides.get(i);
+      polypeptideNames.add(feature.getUniqueName());
+    }
+    return polypeptideNames;
+  }
+  
   public List getClustersByFeatureIds(final List featureIds)
   {
     GmodDAO dao = getDAOOnly();
