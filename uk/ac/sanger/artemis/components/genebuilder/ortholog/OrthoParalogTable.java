@@ -61,6 +61,7 @@ import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
@@ -418,56 +419,96 @@ public class OrthoParalogTable extends AbstractMatchTable
       {
         Cursor orginalCursor = table.getCursor();
         table.setCursor(new Cursor(Cursor.WAIT_CURSOR)); 
-        final int[] rows = table.getSelectedRows();
-        final int column = getColumnIndex(ORTHO_COL);
-        final Vector seqs = new Vector();
+        showAlignmentEditor(feature, doc, false);
+        table.setCursor(orginalCursor); 
+      }
+    });
 
-        Feature gene = feature;
-        if(!feature.getKey().equals("gene"))
-        {
-          gene = getParentFeature(feature);
-          if(!gene.getKey().equals("gene"))
-            gene = getParentFeature(gene);
-        }
-        
-        if(gene != null)
-        {
-          final String bases = gene.getTranslationBases();
-          final String sysName = gene.getSystematicName();
-          seqs.add(new org.emboss.jemboss.editor.Sequence(sysName, bases));
-        }
-        
-        for(int i=0; i<rows.length; i++)
-        {
-          String ortho = (String)table.getValueAt(rows[i], column);
-          final String reference[] = ortho.split(":");
-          DatabaseDocument newdoc = new DatabaseDocument(doc, 
-              reference[0], reference[1], true);
-          
-          try
-          {
-            PartialSequence sequence = newdoc.getChadoSequence(reference[1]);
 
-            seqs.add(new org.emboss.jemboss.editor.Sequence(ortho, new String(
-                sequence.getSequence())));
-          }
-          catch(NullPointerException npe)
-          {
-            JOptionPane.showMessageDialog(null, 
-                "Cannot get the sequence for "+ortho,
-                "Warning", JOptionPane.WARNING_MESSAGE);
-          }
-        }
-        
-        org.emboss.jemboss.editor.AlignJFrame ajFrame =
-              new org.emboss.jemboss.editor.AlignJFrame(seqs);
-        ajFrame.setVisible(true);
+    JMenuItem showAASequenceMenu = new JMenuItem("Show selected amino acid sequences");
+    popupMenu.add(showAASequenceMenu);
+    showAASequenceMenu.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        Cursor orginalCursor = table.getCursor();
+        table.setCursor(new Cursor(Cursor.WAIT_CURSOR)); 
+        showAlignmentEditor(feature, doc, true);
         table.setCursor(orginalCursor); 
       }
     });
   }
   
+  /**
+   * Display this feature and selected features in the table in 
+   * Jemboss alignment editor.
+   * @param feature
+   * @param doc
+   * @param showPeptideSequence
+   */
+  private void showAlignmentEditor(final Feature feature, 
+                                   final DatabaseDocument doc, 
+                                   final boolean showPeptideSequence)
+  {
+    final int[] rows = table.getSelectedRows();
+    final int column = getColumnIndex(ORTHO_COL);
+    final Vector seqs = new Vector();
 
+    Feature gene = feature;
+    if(!feature.getKey().equals("gene"))
+    {
+      gene = getParentFeature(feature);
+      if(!gene.getKey().equals("gene"))
+        gene = getParentFeature(gene);
+    }
+    
+    if(gene != null)
+    {
+      final String bases = gene.getTranslationBases();
+      
+      final String seqStr;
+      if(showPeptideSequence)
+        seqStr = AminoAcidSequence.getTranslation (bases, true).toString();
+      else
+        seqStr = bases;
+      
+      final String sysName = gene.getSystematicName();
+      seqs.add(new org.emboss.jemboss.editor.Sequence(sysName, seqStr));
+    }
+    
+    for(int i=0; i<rows.length; i++)
+    {
+      String ortho = (String)table.getValueAt(rows[i], column);
+      final String reference[] = ortho.split(":");
+      DatabaseDocument newdoc = new DatabaseDocument(doc, 
+          reference[0], reference[1], true);
+      
+      try
+      {
+        PartialSequence sequence = newdoc.getChadoSequence(reference[1]);
+        
+        final String seqStr;
+        if(showPeptideSequence)
+          seqStr = AminoAcidSequence.getTranslation (new String(
+              sequence.getSequence()), true).toString();
+        else
+          seqStr = new String(sequence.getSequence());
+        
+        seqs.add(new org.emboss.jemboss.editor.Sequence(ortho, seqStr));
+      }
+      catch(NullPointerException npe)
+      {
+        JOptionPane.showMessageDialog(null, 
+            "Cannot get the sequence for "+ortho,
+            "Warning", JOptionPane.WARNING_MESSAGE);
+      }
+    }
+    
+    org.emboss.jemboss.editor.AlignJFrame ajFrame =
+          new org.emboss.jemboss.editor.AlignJFrame(seqs);
+    ajFrame.setVisible(true);
+  }
+  
   /**
    * Called by AbstractMatchTable.updateQualifier()
    */

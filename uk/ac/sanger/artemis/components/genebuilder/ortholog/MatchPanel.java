@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.17 2007-08-14 13:14:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.18 2007-08-15 15:50:41 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -31,6 +31,8 @@ import java.util.Vector;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -64,7 +66,7 @@ public class MatchPanel extends JPanel
 
   private Vector editableComponents;
   private JButton hide_show_ortho;
-
+  private JButton hide_show_cluster;
   private JButton hide_show_sim;
   public static String ORTHOLOG = "orthologous_to";
   public static String PARALOG  = "paralogous_to";
@@ -181,10 +183,10 @@ public class MatchPanel extends JPanel
     }
     */
     
+    DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
+    final DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
     if(databases == null)
     {
-      DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
-      DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
       databases = (Vector) doc.getOrganismNames();
     }
     
@@ -197,7 +199,7 @@ public class MatchPanel extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       { 
-        addOrthoParalog(feature);
+        addOrthoParalog(feature, doc);
       }
     });
     Box xBox = Box.createHorizontalBox();
@@ -214,15 +216,12 @@ public class MatchPanel extends JPanel
       
       if(paraQualifier != null && paraQualifier instanceof QualifierLazyLoading)
         ((QualifierLazyLoading)paraQualifier).setForceLoad(true);
-    
-      if(hide_show_ortho == null)
-        hide_show_ortho = new JButton("-");
-      
-      DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
-      DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
       
       if(OrthoParalogTable.hasOrthoParlaog(orthoQualifier, paraQualifier))
       {
+        if(hide_show_ortho == null)
+          hide_show_ortho = new JButton("-");
+        
         orthoparaLogTable = new OrthoParalogTable(doc, orthoQualifier,
             paraQualifier, feature, false);
         addHideShowButton(orthoparaLogTable.getTable(), hide_show_ortho);
@@ -241,13 +240,27 @@ public class MatchPanel extends JPanel
         matchVerticalBox.add(horizontalBox);
       }
       
+      //
+      // clusters
+      //
       if(OrthoParalogTable.hasCluster(orthoQualifier, paraQualifier))
       {
+        if(OrthoParalogTable.hasOrthoParlaog(orthoQualifier, paraQualifier))
+          GeneEditorPanel.addLightSeparator(matchVerticalBox);
+       
+        if(hide_show_cluster == null)
+          hide_show_cluster = new JButton("-");
+        
         clusterTable = new OrthoParalogTable(doc, orthoQualifier,
             paraQualifier, feature, true);
+        addHideShowButton(clusterTable.getTable(), hide_show_cluster);
+        Box horizontalBox = Box.createHorizontalBox();
+        horizontalBox.add(Box.createHorizontalGlue());
+        horizontalBox.add(hide_show_cluster);
+        matchVerticalBox.add(horizontalBox);
         editableComponents.add(clusterTable);
 
-        Box horizontalBox = Box.createHorizontalBox();
+        horizontalBox = Box.createHorizontalBox();
         horizontalBox.add(clusterTable.getTable().getTableHeader());
         horizontalBox.add(Box.createHorizontalGlue());
         matchVerticalBox.add(horizontalBox);
@@ -365,10 +378,11 @@ public class MatchPanel extends JPanel
    * Add an ortholog or paralog to the table
    * @param feature
    */
-  private void addOrthoParalog(final Feature feature)
+  private void addOrthoParalog(final Feature feature,
+                               final DatabaseDocument doc)
   {
     JExtendedComboBox dbs = new JExtendedComboBox(databases);
-    JTextField accession = new JTextField(15);
+    JTextField geneField = new JTextField(15);
     JRadioButton ortho = new JRadioButton(ORTHOLOG, true);
     JRadioButton para  = new JRadioButton(PARALOG, false);
     ButtonGroup group = new ButtonGroup();
@@ -378,7 +392,7 @@ public class MatchPanel extends JPanel
     Box xBox = Box.createVerticalBox();
     Box yBoxRef = Box.createHorizontalBox();
     yBoxRef.add(dbs);
-    yBoxRef.add(accession);
+    yBoxRef.add(geneField);
     yBoxRef.add(Box.createHorizontalGlue());
     xBox.add(yBoxRef);
     
@@ -388,9 +402,40 @@ public class MatchPanel extends JPanel
     yBoxType.add(Box.createHorizontalGlue());
     xBox.add(yBoxType);
 
-    int select = JOptionPane.showConfirmDialog(null, 
-          xBox, "Add Ortholog/Paralog",
-          JOptionPane.OK_CANCEL_OPTION);
+    boolean found = false;
+    JComboBox polypepList = null;
+    String uniqueName = null;
+    String label = "Add Ortholog/Paralog";
+    int select;
+    while(!found)
+    {
+      select = JOptionPane.showConfirmDialog(null, xBox,
+          label, JOptionPane.OK_CANCEL_OPTION);
+      if(select == JOptionPane.CANCEL_OPTION)
+        return;
+
+      try
+      {
+        uniqueName = geneField.getText().trim();
+        final Vector polypep = doc.getPolypeptideNames(uniqueName);
+        polypepList = new JComboBox(polypep);
+        found = true;
+      }
+      catch(NullPointerException npe)
+      {
+        found = false;
+        label = "Gene : "+uniqueName+"  not found! Try again!";
+      }
+    }
+    
+    Box yBoxPeptide = Box.createHorizontalBox();
+    yBoxPeptide.add(polypepList);
+    yBoxPeptide.add(new JLabel("Add annotation to selected feature"));
+    yBoxPeptide.add(Box.createHorizontalGlue());
+    xBox.add(yBoxPeptide);
+    select = JOptionPane.showConfirmDialog(null, 
+        xBox, "Add Ortholog/Paralog",
+        JOptionPane.OK_CANCEL_OPTION);
     if(select == JOptionPane.CANCEL_OPTION)
       return;
     
@@ -406,8 +451,8 @@ public class MatchPanel extends JPanel
     
     
     final String qualifierStr = ((String)dbs.getSelectedItem())+":"+
-                                accession.getText().trim()+" link="+
-                                accession.getText().trim()+" type="+
+                                uniqueName+" link="+
+                                polypepList.getSelectedItem()+" type="+
                                 type+"; rank="+rank;
     if(ortho.isSelected())
       add(ORTHOLOG, qualifierStr, feature);
