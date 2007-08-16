@@ -664,7 +664,9 @@ public class FastaTextPane extends JScrollPane
                          " cache size="+cacheHits.length);
           hit.setOrganism(cacheHit.getOrganism());
           hit.setDescription(cacheHit.getDescription());
-          hit.setGeneName(hit.getGeneName());
+          hit.setGeneName(cacheHit.getGeneName());
+          if(cacheHit.getEMBL() != null)
+            hit.setEMBL(cacheHit.getEMBL());
           continue;
         }
         
