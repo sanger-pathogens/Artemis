@@ -128,9 +128,7 @@ public class SshPSUClient extends Thread
 
   public void run()
   {
-    
     String program = cmd;
-
     boolean completed = false;
     try
     {
@@ -568,20 +566,25 @@ public class SshPSUClient extends Thread
     {
       // make sure we hang around for stdout
       while(stdouth.isAlive() || stderrh.isAlive())
-        Thread.sleep(5);
+        Thread.sleep(2);
     }
     catch(InterruptedException ie)
     {
       ie.printStackTrace();
     }
-       
+    
     // stdout & stderr
-    //logger4j.debug("STDOUT \n"+stdouth.getOutput());
-    if(!stderrh.getOutput().equals(""))
+    if(stderrh.getBufferSize() > 0)
       logger4j.debug("STDERR :"+stderrh.getOutput());
 
     session.close();
     return true;
+  }
+
+  
+  public StringBuffer getStdOutBuffer()
+  {
+    return stdouth.getStdOutBuffer();
   }
   
   public String getStdOut()
@@ -652,8 +655,8 @@ public class SshPSUClient extends Thread
     private boolean isStdout;
     private StringBuffer buff = new StringBuffer();
 
-    protected StdoutStdErrHandler(SessionChannelClient session, 
-                                  boolean isStdout)
+    protected StdoutStdErrHandler(final SessionChannelClient session, 
+                                  final boolean isStdout)
     {
       this.session  = session;
       this.isStdout = isStdout;
@@ -669,7 +672,7 @@ public class SshPSUClient extends Thread
         else
           in = session.getStderrInputStream();
 
-        byte buffer[] = new byte[100];
+        final byte buffer[] = new byte[400];
         int read;
         while((read = in.read(buffer)) > 0)
           buff.append(new String(buffer, 0, read));
@@ -681,12 +684,21 @@ public class SshPSUClient extends Thread
         ioe.printStackTrace();
       }
     }
+    
+    public synchronized StringBuffer getStdOutBuffer()
+    {
+      return buff;
+    }
 
     public synchronized String getOutput()
     {
       return buff.toString();
     }
-
+    
+    public int getBufferSize()
+    {
+      return buff.length();
+    }
   }
 
 
