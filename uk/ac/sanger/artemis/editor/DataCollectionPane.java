@@ -527,26 +527,6 @@ public class DataCollectionPane extends JScrollPane
   }*/
 
 
-//private static HitInfo getHitInfo(String acc, Vector hits)
-//{
-//  int ind = 0;
-//  acc     = acc.trim(); 
-//  
-//  if((ind = acc.indexOf(";")) > -1)
-//    acc = acc.substring(0,ind);
-
-//  Enumeration ehits = hits.elements();
-//  HitInfo hit = null;
-//  while(ehits.hasMoreElements())
-//  {
-//    hit = (HitInfo)ehits.nextElement();
-//    if(hit.getAcc().equals(acc))
-//      return hit;
- // }
-
-//  return null;
-//}
-
   /**
   *
   * @param hit		HitInfo for a single hit.
@@ -641,7 +621,7 @@ public class DataCollectionPane extends JScrollPane
     {
       File fgetz = new File("/usr/local/pubseq/bin/getz");
       String res = FastaTextPane.getUniprotLinkToDatabase(fgetz, 
-                   FastaTextPane.getMfetchExecutable(), hit, env, "embl");
+                   FastaTextPane.getMfetchExecutable().exists(), hit, env, "embl");
   
       int ind1 = res.indexOf("ID ");
       if(ind1 > -1)
