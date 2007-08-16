@@ -59,6 +59,7 @@ public class FastaTextPane extends JScrollPane
   private int qlen;
   private Vector listerners = new Vector();
   private Vector threads = new Vector();
+  protected static int MAX_HITS = 70;
   private static boolean remoteMfetch = false;
   private static boolean forceUrl = false;
   public static HitInfo[] cacheHits = new HitInfo[BigPane.CACHE_SIZE];
@@ -558,11 +559,10 @@ public class FastaTextPane extends JScrollPane
     if((ind = acc.indexOf(";")) > -1)
       acc = acc.substring(0,ind);
 
-    Enumeration ehits = hits.elements();
     HitInfo hit = null;
-    while(ehits.hasMoreElements())
+    for(int i=0;i<hits.size(); i++)
     {
-      hit = (HitInfo)ehits.nextElement();
+      hit = (HitInfo)hits.get(i);
       if(hit.getAcc().equals(acc) ||
          hit.getID().equals(acc))
       {
@@ -632,7 +632,7 @@ public class FastaTextPane extends JScrollPane
       final String env[] = { "PATH=/usr/local/pubseq/bin/:/nfs/disk100/pubseq/bin/" };
 
       // split mfetch query up - max 70 hits per query
-      int nhits = hits.size()/70 + 1;
+      int nhits = hits.size()/MAX_HITS + 1;
       StringBuffer querySRS = new StringBuffer();
       StringBuffer queryMfetch[] = new StringBuffer[nhits];
       
@@ -694,10 +694,11 @@ public class FastaTextPane extends JScrollPane
       if(!keepRunning)
         return;
       
+      final boolean isLocalMfetchExists = getMfetchExecutable().exists();
       BufferedReader strbuff = null;
-      File fgetz = new File("/usr/local/pubseq/bin/getz");
+      final File fgetz = new File("/usr/local/pubseq/bin/getz");
       
-      if(getMfetchExecutable().exists() || remoteMfetch)
+      if(isLocalMfetchExists || remoteMfetch)
       {
         StringBuffer buff = new StringBuffer();
         for(int i=0; i<queryMfetch.length; i++)
@@ -708,7 +709,7 @@ public class FastaTextPane extends JScrollPane
           
           String mfetch = queryMfetch[i].toString();
           
-          if(getMfetchExecutable().exists())  // local
+          if(isLocalMfetchExists)  // local
           {
             String cmd[]   = { "mfetch", "-p", "22140", "-f", "acc org des gen",
               "-d", "uniprot", "-i", "acc:"+mfetch };
@@ -724,11 +725,11 @@ public class FastaTextPane extends JScrollPane
             uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
               new uk.ac.sanger.artemis.j2ssh.SshPSUClient(cmd);
             ssh.run();
-            buff.append(ssh.getStdOut());
+            buff.append(ssh.getStdOutBuffer());
           }
         }
         
-        StringReader strread   = new StringReader(buff.toString());
+        final StringReader strread   = new StringReader(buff.toString());
         strbuff = new BufferedReader(strread);
       }
       else if(!fgetz.exists())
@@ -862,8 +863,21 @@ public class FastaTextPane extends JScrollPane
         strbuff.close();   
       }   
       catch(IOException ioe){}
-
-      String res = null;
+      
+      
+      //
+      //
+      // mfetch
+      if(isLocalMfetchExists || remoteMfetch)
+      {
+        getDbXRefWithMfetch(isLocalMfetchExists, queryMfetch, env, hits);
+        return;
+      }
+      
+      //
+      //
+      // SRS methods
+      String res;
       ehits = hits.elements();
       while(ehits.hasMoreElements() && keepRunning)
       {               
@@ -881,7 +895,7 @@ public class FastaTextPane extends JScrollPane
           continue;
         }
         
-        res = getUniprotLinkToDatabase(fgetz, getMfetchExecutable(), this_hit, env, "embl");
+        res = getUniprotLinkToDatabase(fgetz, isLocalMfetchExists, this_hit, env, "embl");
               
         int ind1 = res.indexOf("ID ");
         if(ind1 > -1) 
@@ -897,7 +911,7 @@ public class FastaTextPane extends JScrollPane
         if(this_hit.getEC_number() != null)
           continue;   
 
-        res = getUniprotLinkToDatabase(fgetz, getMfetchExecutable(), this_hit, env, "enzyme");
+        res = getUniprotLinkToDatabase(fgetz, isLocalMfetchExists, this_hit, env, "enzyme");
 
         ind1 = res.indexOf("ID ");
         if(ind1 > -1) 
@@ -907,12 +921,163 @@ public class FastaTextPane extends JScrollPane
           this_hit.setEC_number(tok.nextToken());
         }
         
-        if(nCacheHits >= cacheHits.length)
-          nCacheHits = 0;
-        cacheHits[nCacheHits] = this_hit;
-        nCacheHits++;
+        addHitToCache(this_hit);
       }               
     }              
+  }
+  
+  /**
+   * Add a hit to the cache
+   * @param thisHit
+   */
+  private void addHitToCache(final HitInfo thisHit)
+  {
+    if(nCacheHits >= cacheHits.length)
+      nCacheHits = 0;
+    cacheHits[nCacheHits] = thisHit;
+    nCacheHits++;
+  }
+  
+  /**
+   * 
+   * @param isLocalMfetchExists
+   * @param queryMfetch
+   * @param env
+   * @param hits
+   */
+  private void getDbXRefWithMfetch(final boolean isLocalMfetchExists,
+                                   final StringBuffer queryMfetch[],
+                                   final String env[], 
+                                   final Vector hits)
+  {
+    String res = null;
+    String line = null;
+
+    for(int i = 0; i < queryMfetch.length; i++)
+    {
+      if(queryMfetch[i] == null || queryMfetch[i].toString().length() == 0)
+        continue;
+
+      final String mfetch = queryMfetch[i].toString();
+      
+      //
+      // link to EMBL
+      res = getUniprotLinkToDatabaseByMFetch(isLocalMfetchExists, mfetch, env,
+          "embl");
+
+      StringReader strread = new StringReader(res);
+      BufferedReader strbuff = new BufferedReader(strread);
+
+      try
+      {
+        while((line = strbuff.readLine()) != null)
+        {
+          String acc;
+          if(line.startsWith("linked from:"))
+          {
+            acc = line.substring(12).trim();
+            int ind = acc.indexOf('.');
+            if(ind > -1)
+              acc = acc.substring(0, ind);
+
+            HitInfo thisHit = getHitInfo(acc, hits);            
+            if(thisHit == null)
+            {
+              logger4j.warn(acc+" NOT FOUND");
+              continue;
+            }
+            
+            line = strbuff.readLine();
+
+            int ind1 = line.indexOf("ID ");
+            if(ind1 > -1)
+            {
+              int ind2 = line.indexOf(';');
+              thisHit.setEMBL(line.substring(3, ind2).trim());
+            }
+            else
+              thisHit.setEMBL("");
+            addHitToCache(thisHit);
+          }
+        }
+      }
+      catch(IOException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      
+      final String accessions[] = mfetch.split("\\|");
+      
+      for(int j=0;j<accessions.length; j++)
+      {
+        String acc;
+        if(accessions[j].startsWith("acc:"))
+          acc = accessions[j].substring(4);
+        else
+          acc = accessions[j];
+        HitInfo thisHit = getHitInfo(acc, hits);
+        if(thisHit != null && thisHit.getEMBL() == null)
+          thisHit.setEMBL("");
+      }
+      
+      //
+      // link to enzyme
+      res = getUniprotLinkToDatabaseByMFetch(isLocalMfetchExists, mfetch, env, "enzyme");
+
+      strread = new StringReader(res);
+      strbuff = new BufferedReader(strread);
+
+      try
+      {
+        while((line = strbuff.readLine()) != null)
+        {
+          String acc;
+          if(line.startsWith("linked from:"))
+          {
+            acc = line.substring(12).trim();
+            int ind = acc.indexOf('.');
+            if(ind > -1)
+              acc = acc.substring(0, ind);
+
+            HitInfo thisHit = getHitInfo(acc, hits);
+            if(thisHit == null)
+            {
+              logger4j.warn(acc + " NOT FOUND");
+              continue;
+            }
+
+            line = strbuff.readLine();
+
+            int ind1 = line.indexOf("ID ");
+            if(ind1 > -1)
+            {
+              int ind2 = line.indexOf(';');
+              thisHit.setEC_number(line.substring(3, ind2).trim());
+            }
+          }
+        }
+        
+        for(int j=0;j<accessions.length; j++)
+        {
+          String acc;
+          if(accessions[j].startsWith("acc:"))
+            acc = accessions[j].substring(4);
+          else
+            acc = accessions[j];
+          HitInfo thisHit = getHitInfo(acc, hits);
+          if(thisHit != null && thisHit.getEMBL() == null)
+            thisHit.setEC_number("");
+        }
+      }
+      catch(IOException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+    
+    return;
   }
 
   /**
@@ -948,13 +1113,14 @@ public class FastaTextPane extends JScrollPane
   * Link Uniprot to the another database (e.g. EMBL or ENZYME)
   *
   */
-  protected static String getUniprotLinkToDatabase(final File fgetz, final File fmfetch, 
+  protected static String getUniprotLinkToDatabase(final File fgetz, 
+                                                   final boolean isLocalMfetchExists, 
                                                    final HitInfo hit,
                                                    final String env[], final String DB)
   {
     String res = null;
 
-    if(fmfetch.exists())
+    if(isLocalMfetchExists)
     {
       final String cmd[]   = { "mfetch", "-p", "22140", "-f", "id",
           "-d", "uniprot", "-i", "acc:"+hit.getID(), 
@@ -1016,6 +1182,49 @@ public class FastaTextPane extends JScrollPane
     return res;
   }
 
+  
+  
+  
+  
+  
+  /**
+  *
+  * Link Uniprot to the another database (e.g. EMBL or ENZYME)
+  *
+  */
+  protected static String getUniprotLinkToDatabaseByMFetch( 
+                                                   final boolean isLocalMfetchExists, 
+                                                   final String mfetchList,
+                                                   final String env[], final String DB)
+  {
+    String res = null;
+
+    if(isLocalMfetchExists)
+    {
+      final String cmd[]   = { "mfetch", "-p", "22140", "-f", "id",
+          "-d", "uniprot", "-i", "acc:"+mfetchList, 
+          "-L", DB };
+
+      ExternalApplication app = new ExternalApplication(cmd,
+                                  env,null);
+      res = app.getProcessStdout();
+
+    }
+    else if(remoteMfetch)
+    {
+      final String cmd   = 
+        "mfetch -p 22140 -f id -d uniprot -i \"acc:"+mfetchList+"\" -L "+DB ;
+      uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
+        new uk.ac.sanger.artemis.j2ssh.SshPSUClient(cmd);
+      ssh.run();
+      res = ssh.getStdOut();
+    }
+
+
+    return res;
+  }
+  
+  
   protected void show(Object obj)
   {
     if(obj instanceof HitInfo)
