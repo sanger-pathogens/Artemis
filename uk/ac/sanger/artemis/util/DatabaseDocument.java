@@ -1640,6 +1640,53 @@ public class DatabaseDocument extends Document
     return buff;
   }
 
+  public void getCdsByPeptideName(final String peptideName)
+  {
+    Feature peptideFeature = getFeatureByUniquename(peptideName);
+    
+  }
+  
+  public void getCdsByTranscriptName(final String transcriptName)
+  {
+    Feature transcriptFeature = getFeatureByUniquename(transcriptName);
+    if(transcriptFeature == null)
+      return;
+    
+    Collection frs = transcriptFeature.getFeatureRelationshipsForObjectId();
+    Iterator it = frs.iterator();
+    List childrenOfTranscript = new Vector(frs.size());
+    while(it.hasNext())
+    {
+      FeatureRelationship fr = (FeatureRelationship)it.next();
+      childrenOfTranscript.add(fr.getFeatureBySubjectId());
+    }
+    
+    for(int i=0; i<childrenOfTranscript.size(); i++)
+    {
+      org.gmod.schema.sequence.Feature child = 
+        (org.gmod.schema.sequence.Feature) childrenOfTranscript.get(i);
+      Collection featureLocs = child.getFeatureLocsForFeatureId();
+      System.out.println(child.getUniqueName());
+      it = featureLocs.iterator();
+      while(it.hasNext())
+      {
+        FeatureLoc featureLoc = (FeatureLoc)it.next();
+        System.out.println(child.getUniqueName()+" "+featureLoc.getFmin()+".."+featureLoc.getFmax());
+      }
+      /*
+      frs = transcript.getFeatureRelationshipsForObjectId();
+      it = frs.iterator();
+      while(it.hasNext())
+      {
+        FeatureRelationship fr = (FeatureRelationship)it.next();
+        if(fr.getCvTerm().getName().equalsIgnoreCase("derives_from"))
+          if(fr.getFeatureBySubjectId().getCvTerm().getName().equalsIgnoreCase("polypeptide"))
+            polypep.add(fr.getFeatureBySubjectId());
+      }
+      */
+    }
+    
+  }
   
   /**
    * Get the sequence for a feature.
