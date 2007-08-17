@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.42 2007-07-23 10:34:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.43 2007-08-17 15:11:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -64,7 +64,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.42 2007-07-23 10:34:03 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.43 2007-08-17 15:11:35 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -635,6 +635,16 @@ public class EntryEdit extends JFrame
                  final boolean ask_for_name, final boolean keep_new_name,
                  final int destination_type) 
   { 
+    saveEntry(entry, include_diana_extensions,
+         ask_for_name, keep_new_name,
+         destination_type, true); 
+  }
+  
+  void saveEntry(final Entry entry,
+      final boolean include_diana_extensions,
+      final boolean ask_for_name, final boolean keep_new_name,
+      final int destination_type, final boolean useSwingWorker) 
+  {
     if(!include_diana_extensions) 
     {
       if(displaySaveWarnings(entry)) 
@@ -700,11 +710,31 @@ public class EntryEdit extends JFrame
     
 //  if(!System.getProperty("os.arch").equals("alpha"))
 //  {
+    
+    if(useSwingWorker)
+    {
+      SwingWorker worker = new SwingWorker()
+      {
+
+        public Object construct()
+        {
+          final EntryFileDialog file_dialog = new EntryFileDialog(
+                                                      EntryEdit.this, false);
+          file_dialog.saveEntry(entry, include_diana_extensions, ask_for_name,
+                                keep_new_name, destination_type);
+          return null;
+        }
+      };
+      worker.start();
+    }
+    else
+    {
       final EntryFileDialog file_dialog = new EntryFileDialog(this,
                                                               false);
       
       file_dialog.saveEntry(entry, include_diana_extensions, ask_for_name,
                           keep_new_name, destination_type);
+    }
 //  }
 //  else
 //    alphaBug(entry, include_diana_extensions, ask_for_name,
@@ -732,11 +762,20 @@ public class EntryEdit extends JFrame
    **/
   public void saveAllEntries() 
   {
-    final int entry_group_size = entry_group.size();
-    for(int entry_index = 0; entry_index < entry_group_size;
-        ++entry_index) 
-      saveEntry(entry_group.elementAt(entry_index), true, false, true,
-                DocumentEntryFactory.ANY_FORMAT);
+    SwingWorker worker = new SwingWorker()
+    {
+
+      public Object construct()
+      {
+        final int entry_group_size = entry_group.size();
+        for(int entry_index = 0; entry_index < entry_group_size;
+            ++entry_index) 
+          saveEntry(entry_group.elementAt(entry_index), true, false, true,
+                    DocumentEntryFactory.ANY_FORMAT, false);
+        return null;
+      }
+    };
+    worker.start();
   }
 
   /**
