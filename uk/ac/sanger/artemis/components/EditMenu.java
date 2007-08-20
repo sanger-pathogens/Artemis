@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.25 2007-02-26 15:55:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.26 2007-08-20 14:30:01 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -57,7 +57,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.25 2007-02-26 15:55:11 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.26 2007-08-20 14:30:01 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -329,6 +329,14 @@ public class EditMenu extends SelectionMenu
       }
     });
 
+    final JMenuItem convert_qualifier_item = new JMenuItem("Convert Qualifier Of Selected ...");
+    convert_qualifier_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        convertQualifier(getParentFrame(), getSelection());
+      }
+    });
 
     final JMenuItem merge_features_item = new JMenuItem("Merge Selected Features");
     merge_features_item.setAccelerator(MERGE_FEATURES_KEY);
@@ -662,6 +670,7 @@ public class EditMenu extends SelectionMenu
 
     add(add_qualifiers_item);
     add(remove_qualifier_item);
+    add(convert_qualifier_item);
     add(duplicate_item);
     add(merge_features_item);
     add(unmerge_feature_item);
@@ -1533,6 +1542,81 @@ public class EditMenu extends SelectionMenu
     });
 
     choice_frame.setVisible (true);
+  }
+  
+  
+  /**
+   * Offer the user a choice of qualifier to convert the name of
+   * from the selected features
+   * @param frame
+   * @param selection
+   */
+  private void convertQualifier (final JFrame frame, 
+                                 final Selection selection) 
+  {
+    if (!checkForSelectionFeatures (frame, selection)) 
+      return;
+
+    final FeatureVector selected_features = selection.getAllFeatures ();
+    final StringVector qualifier_names =
+      Feature.getAllQualifierNames (selected_features);
+
+    if(qualifier_names.size () == 0) 
+    {
+      new MessageDialog (getParentFrame (), "feature has no qualifiers");
+      return;
+    }
+
+    Box yBox = Box.createVerticalBox();
+    final JComboBox convertFrom = new JComboBox(qualifier_names);
+    final QualifierChoice convertTo = new QualifierChoice(
+        getEntryGroup().getDefaultEntry().getEntryInformation(),
+        selected_features.elementAt(0).getKey(),null,
+        false);
+    
+    Box xBox = Box.createHorizontalBox();
+    xBox.add(new JLabel("Convert all qualifiers of type:"));
+    xBox.add(Box.createHorizontalGlue());
+    yBox.add(xBox);
+    yBox.add(convertFrom);
+    xBox = Box.createHorizontalBox();
+    xBox.add(new JLabel("To:"));
+    xBox.add(Box.createHorizontalGlue());
+    yBox.add(xBox);
+    yBox.add(convertTo);
+    
+    int select = JOptionPane.showConfirmDialog(frame, yBox, 
+        "Convert Qualifiers", 
+        JOptionPane.OK_CANCEL_OPTION, 
+        JOptionPane.QUESTION_MESSAGE);
+    
+    String oldQualifierName = (String)convertFrom.getSelectedItem();
+    String newQualifierName = (String)convertTo.getSelectedItem();
+    
+    if(select == JOptionPane.CANCEL_OPTION ||
+        oldQualifierName.equals(newQualifierName))
+      return;
+    
+    try
+    {
+      for(int i=0; i<selected_features.size(); i++)
+      {
+        Feature feature = selected_features.elementAt(i);
+        QualifierVector qualifiers = feature.getQualifiers();
+        int index = qualifiers.indexOfQualifierWithName(oldQualifierName);
+        if(index == -1)
+          continue;
+        StringVector values = feature.getValuesOfQualifier(oldQualifierName);
+        Qualifier newQualifier = new Qualifier(newQualifierName, values);
+        qualifiers.add(index, newQualifier);
+        qualifiers.removeQualifierByName(oldQualifierName);
+      }
+    }
+    catch(EntryInformationException e)
+    {
+      e.printStackTrace();
+    }
+
   }
 
   /**
