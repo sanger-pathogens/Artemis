@@ -1640,85 +1640,96 @@ public class DatabaseDocument extends Document
     return buff;
   }
 
-  public void getCdsByPeptideName(final String peptideName)
+  /**
+   * Get the CDS FeatureLoc's associated with a give protein
+   * @param peptideName
+   * @return
+   */
+  public List getCdsFeatureLocsByPeptideName(final String peptideName)
   {
     Feature peptideFeature = getFeatureByUniquename(peptideName);
-    
-  }
-  
-  public void getCdsByTranscriptName(final String transcriptName)
-  {
-    Feature transcriptFeature = getFeatureByUniquename(transcriptName);
-    if(transcriptFeature == null)
-      return;
-    
-    Collection frs = transcriptFeature.getFeatureRelationshipsForObjectId();
+    Collection frs = peptideFeature.getFeatureRelationshipsForSubjectId();
     Iterator it = frs.iterator();
-    List childrenOfTranscript = new Vector(frs.size());
+    Feature transcriptFeature = null;
     while(it.hasNext())
     {
       FeatureRelationship fr = (FeatureRelationship)it.next();
-      childrenOfTranscript.add(fr.getFeatureBySubjectId());
+      if(fr.getCvTerm().getName().equalsIgnoreCase("derives_from"))
+      {
+        transcriptFeature = fr.getFeatureByObjectId();
+        logger4j.debug("TRANSCRIPT :: "+transcriptFeature.getUniqueName());
+        break;
+      }
     }
     
-    for(int i=0; i<childrenOfTranscript.size(); i++)
+    if(transcriptFeature == null)
+      return null;
+    return getCdsFeatureLocsByTranscriptName(transcriptFeature.getUniqueName());
+  }
+  
+  /**
+   * Get the CDS FeatureLoc's associated with a give transcript
+   * @param transcriptName
+   * @return
+   */
+  public List getCdsFeatureLocsByTranscriptName(final String transcriptName)
+  {
+    Feature transcriptFeature = getFeatureByUniquename(transcriptName);
+    if(transcriptFeature == null)
+      return null;
+    
+    Collection frs = transcriptFeature.getFeatureRelationshipsForObjectId();
+    Iterator it = frs.iterator();
+    List cdsFeatureLocs = new Vector();
+    while(it.hasNext())
     {
-      org.gmod.schema.sequence.Feature child = 
-        (org.gmod.schema.sequence.Feature) childrenOfTranscript.get(i);
-      Collection featureLocs = child.getFeatureLocsForFeatureId();
-      System.out.println(child.getUniqueName());
-      it = featureLocs.iterator();
-      while(it.hasNext())
+      FeatureRelationship fr = (FeatureRelationship)it.next();
+      org.gmod.schema.sequence.Feature child = fr.getFeatureBySubjectId();
+      if(child.getCvTerm().getName().equals("exon") || 
+         child.getCvTerm().getName().equals("pseudogenic_exon"))
       {
-        FeatureLoc featureLoc = (FeatureLoc)it.next();
-        System.out.println(child.getUniqueName()+" "+featureLoc.getFmin()+".."+featureLoc.getFmax());
+        Collection featureLocs = child.getFeatureLocsForFeatureId();
+
+        Iterator it2 = featureLocs.iterator();
+        while(it2.hasNext())
+        {
+          FeatureLoc featureLoc = (FeatureLoc) it2.next();
+          cdsFeatureLocs.add(featureLoc);
+        }
       }
-      /*
-      frs = transcript.getFeatureRelationshipsForObjectId();
-      it = frs.iterator();
-      while(it.hasNext())
-      {
-        FeatureRelationship fr = (FeatureRelationship)it.next();
-        if(fr.getCvTerm().getName().equalsIgnoreCase("derives_from"))
-          if(fr.getFeatureBySubjectId().getCvTerm().getName().equalsIgnoreCase("polypeptide"))
-            polypep.add(fr.getFeatureBySubjectId());
-      }
-      */
     }
-    
+
+    return cdsFeatureLocs;
   }
   
   /**
    * Get the sequence for a feature.
-   * @param dao   the data access object
-   * @param buff  the buffer to add the sequence to
+   * @param uniqueName   the feature
    * @return      the resulting buffer
-   * @throws java.sql.SQLException
    */
   public PartialSequence getChadoSequence(final String uniqueName)
   {
-    Feature feature = null;
-    try
-    {
-      feature = getDAO().getResiduesByUniqueName(uniqueName);
-    }
-    catch(ConnectException e)
-    {
-      e.printStackTrace();
-    }
-    catch(SQLException e)
-    {
-      e.printStackTrace();
-    }
-    byte[] b = feature.getResidues();
+    Feature feature = getDAOOnly().getResiduesByUniqueName(uniqueName);
+    char[] c = getChars(feature.getResidues());
+    
+    PartialSequence ps = new PartialSequence(c, feature.getSeqLen(),
+                                feature.getFeatureLoc().getFmin().intValue()+1,
+                                feature.getFeatureLoc().getStrand());
+    return ps;
+  }
+  
+  /**
+   * Convert byte array to char array
+   * @param b byte array
+   * @return  char array
+   */
+  private char[] getChars(final byte b[])
+  {
     char[] c = new char[b.length];
 
     for(int i = 0; i < b.length; i++)
       c[i] = (char)b[i];
-    
-    PartialSequence ps = new PartialSequence(c, feature.getSeqLen(),
-                                feature.getFeatureLoc().getFmin().intValue()+1);
-    return ps;
+    return c;
   }
   
   /**
