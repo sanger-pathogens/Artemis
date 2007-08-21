@@ -54,6 +54,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
+import org.gmod.schema.sequence.FeatureLoc;
+
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeaturePredicate;
 import uk.ac.sanger.artemis.chado.ArtemisUtils;
@@ -62,6 +64,7 @@ import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
+import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
@@ -451,7 +454,7 @@ public class OrthoParalogTable extends AbstractMatchTable
                                    final boolean showPeptideSequence)
   {
     final int[] rows = table.getSelectedRows();
-    final int column = getColumnIndex(ORTHO_COL);
+    final int orthoColumn = getColumnIndex(ORTHO_COL);
     final Vector seqs = new Vector();
 
     Feature gene = feature;
@@ -478,21 +481,45 @@ public class OrthoParalogTable extends AbstractMatchTable
     
     for(int i=0; i<rows.length; i++)
     {
-      String ortho = (String)table.getValueAt(rows[i], column);
+      String ortho = (String)table.getValueAt(rows[i], orthoColumn);
       final String reference[] = ortho.split(":");
       DatabaseDocument newdoc = new DatabaseDocument(doc, 
           reference[0], reference[1], true);
       
       try
       {
+        // gene sequence
         PartialSequence sequence = newdoc.getChadoSequence(reference[1]);
+        
+        // cds featureloc's
+        List featureLocs = 
+          newdoc.getCdsFeatureLocsByPeptideName(
+              (String)table.getValueAt(rows[i], getColumnIndex(LINK_COL)));
+        
+        //
+        final StringBuffer sequenceBuffer = new StringBuffer();
+        if(featureLocs != null)
+        {
+          for(int j = 0; j < featureLocs.size(); j++)
+          {
+            FeatureLoc featureLoc = (FeatureLoc) featureLocs.get(j);
+            char[] subSeq = sequence.getCharSubSequence(
+                (featureLoc.getFmin().intValue() + 1), 
+                 featureLoc.getFmax().intValue());
+            sequenceBuffer.append(subSeq);
+          }
+        }
+        else
+        {
+          char[] subSeq = sequence.getSequence();
+          sequenceBuffer.append(subSeq);
+        }
         
         final String seqStr;
         if(showPeptideSequence)
-          seqStr = AminoAcidSequence.getTranslation (new String(
-              sequence.getSequence()), true).toString();
+          seqStr = AminoAcidSequence.getTranslation(sequenceBuffer.toString(), true).toString();
         else
-          seqStr = new String(sequence.getSequence());
+          seqStr = new String(sequenceBuffer.toString());
         
         seqs.add(new org.emboss.jemboss.editor.Sequence(ortho, seqStr));
       }
