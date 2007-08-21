@@ -22,6 +22,8 @@
 package uk.ac.sanger.artemis.io;
 
 import org.biojava.bio.symbol.IllegalSymbolException;
+
+import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 
 /**
@@ -49,6 +51,9 @@ public class PartialSequence implements Sequence
   /** start of this part of the sequence*/
   private int start;
   
+  /** orientation/directionality of the location. Should be 0,-1 or +1 */
+  private Short strand;
+  
   /**
    * Holds ony part of the sequence
    * @param sequence        part of the sequence to store
@@ -57,13 +62,15 @@ public class PartialSequence implements Sequence
    */
   public PartialSequence(final char[] sequence, 
                          final int sequenceLength,
-                         final int start)
+                         final int start,
+                         final Short strand)
   {
     try
     {
       setFromChar(sequence);
       this.sequenceLength = sequenceLength;
       this.start = start;
+      this.strand = strand;
     }
     catch(IllegalSymbolException e)
     {
@@ -105,9 +112,13 @@ public class PartialSequence implements Sequence
       count++;
     }
 
+    if(isComplement())
+      return Bases.reverseComplement(subSequence);
+    
     return subSequence;
   }
 
+  
   public int getGCount()
   {
     return g_count;
@@ -175,5 +186,17 @@ public class PartialSequence implements Sequence
       default:
         break;
     }
+  }
+
+  public Short getStrand()
+  {
+    return strand;
+  }
+  
+  public boolean isComplement()
+  {
+    if(strand.intValue() == -1)
+      return true;
+    return false;
   }
 }
