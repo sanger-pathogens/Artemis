@@ -1299,15 +1299,7 @@ public class ChadoTransactionManager
          else if(qualifierName.equals("codon_start"))
          {
            logger4j.debug(uniquename+"  in handleReservedTags() update codon_start");
-           
-           FeatureLoc featureloc = getFeatureLoc(feature, uniquename, 
-               feature.getLocation().getTotalRange());
-           
-           tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                                      featureloc,
-                                      feature.getLastModified(), feature,
-                                      feature.getKey().getKeyString());
-           sql.add(tsn);
+           updateFeatureLoc(feature, uniquename);
          }
          else if(qualifierName.equals("literature"))
          {
@@ -1419,14 +1411,7 @@ public class ChadoTransactionManager
          else if(qualifierName.equals("codon_start"))
          {
            logger4j.debug(uniquename+"  in handleReservedTags() update codon_start");
-           FeatureLoc featureloc = getFeatureLoc(feature, uniquename, 
-               feature.getLocation().getTotalRange());
-           
-           tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                                      featureloc,
-                                      feature.getLastModified(), feature,
-                                      feature.getKey().getKeyString());
-           sql.add(tsn);
+           updateFeatureLoc(feature, uniquename);
          }
          else if(qualifierName.equals("literature"))
          {
@@ -1512,6 +1497,45 @@ public class ChadoTransactionManager
     
   }
   
+  /**
+   * Used to update a gff feature location
+   * @param feature
+   * @param uniquename
+   */
+  private void updateFeatureLoc(final GFFStreamFeature feature,
+                                final String uniquename)
+  {
+    final Hashtable rangeHash = feature.getSegmentRangeStore();
+    ChadoTransaction tsn;
+    if(rangeHash != null)
+    {
+      Enumeration id_keys= rangeHash.keys();
+      while(id_keys.hasMoreElements())
+      {
+        String seqId = (String)id_keys.nextElement();
+        Range range = (Range)rangeHash.get(seqId);
+        FeatureLoc featureloc = getFeatureLoc(feature, seqId, 
+                                              range);
+        
+        tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                                   featureloc,
+                                   feature.getLastModified(), feature,
+                                   feature.getKey().getKeyString());
+        sql.add(tsn);
+      }
+    }
+    else
+    {
+      FeatureLoc featureloc = getFeatureLoc(feature, uniquename, 
+        feature.getLocation().getTotalRange());
+    
+      tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+                               featureloc,
+                               feature.getLastModified(), feature,
+                               feature.getKey().getKeyString());
+      sql.add(tsn);
+    }
+  }
   
   /**
    * Strip out double quotes around a string.
