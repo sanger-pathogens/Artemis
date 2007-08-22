@@ -54,16 +54,22 @@ public class PartialSequence implements Sequence
   /** orientation/directionality of the location. Should be 0,-1 or +1 */
   private Short strand;
   
+  /** values are 0,1,2 */
+  private Integer phase;
+  
   /**
    * Holds ony part of the sequence
    * @param sequence        part of the sequence to store
    * @param sequenceLength  full sequence length
    * @param start           start position of sequence
+   * @param strand
+   * @param phase
    */
   public PartialSequence(final char[] sequence, 
                          final int sequenceLength,
                          final int start,
-                         final Short strand)
+                         final Short strand,
+                         final Integer phase)
   {
     try
     {
@@ -71,6 +77,7 @@ public class PartialSequence implements Sequence
       this.sequenceLength = sequenceLength;
       this.start = start;
       this.strand = strand;
+      this.phase = phase;
     }
     catch(IllegalSymbolException e)
     {
@@ -198,5 +205,10 @@ public class PartialSequence implements Sequence
     if(strand.intValue() == -1)
       return true;
     return false;
+  }
+
+  public Integer getPhase()
+  {
+    return phase;
   }
 }
