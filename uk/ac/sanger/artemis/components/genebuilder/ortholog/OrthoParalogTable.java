@@ -64,7 +64,6 @@ import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
-import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
@@ -497,12 +496,14 @@ public class OrthoParalogTable extends AbstractMatchTable
               (String)table.getValueAt(rows[i], getColumnIndex(LINK_COL)));
         
         //
+        int phase = 0;
         final StringBuffer sequenceBuffer = new StringBuffer();
         if(featureLocs != null)
         {
           for(int j = 0; j < featureLocs.size(); j++)
           {
             FeatureLoc featureLoc = (FeatureLoc) featureLocs.get(j);
+            phase = featureLoc.getPhase().intValue();
             char[] subSeq = sequence.getCharSubSequence(
                 (featureLoc.getFmin().intValue() + 1), 
                  featureLoc.getFmax().intValue());
@@ -513,11 +514,13 @@ public class OrthoParalogTable extends AbstractMatchTable
         {
           char[] subSeq = sequence.getSequence();
           sequenceBuffer.append(subSeq);
+          phase = sequence.getPhase().intValue();
         }
         
         final String seqStr;
         if(showPeptideSequence)
-          seqStr = AminoAcidSequence.getTranslation(sequenceBuffer.toString(), true).toString();
+          seqStr = AminoAcidSequence.getTranslation(
+              sequenceBuffer.toString().substring(phase), true).toString();
         else
           seqStr = new String(sequenceBuffer.toString());
         
