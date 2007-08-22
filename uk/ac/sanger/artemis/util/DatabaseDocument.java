@@ -1714,7 +1714,8 @@ public class DatabaseDocument extends Document
     
     PartialSequence ps = new PartialSequence(c, feature.getSeqLen(),
                                 feature.getFeatureLoc().getFmin().intValue()+1,
-                                feature.getFeatureLoc().getStrand());
+                                feature.getFeatureLoc().getStrand(),
+                                feature.getFeatureLoc().getPhase());
     return ps;
   }
   
