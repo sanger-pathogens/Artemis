@@ -264,11 +264,13 @@ public class DatabaseDocument extends Document
    * @return
    */
   public DatabaseDocument (DatabaseDocument originalDocument,
-             String srcFeatureId, String schema, boolean gene_builder)
+             String srcFeatureId, String schema, boolean gene_builder, 
+             final InputStreamProgressListener progress_listener)
   {
     this((String)originalDocument.getLocation(), 
          originalDocument.getPfield(),
          srcFeatureId, schema, gene_builder);
+    this.progress_listener = progress_listener;
   }
   
   /**
