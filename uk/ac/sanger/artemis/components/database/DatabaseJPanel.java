@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.8 2007-07-02 14:57:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.9 2007-08-23 12:10:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -35,6 +35,7 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 
+import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -143,9 +144,10 @@ public class DatabaseJPanel extends JPanel
       
       String id = seq_node.getFeatureId(); 
       if(id != null)
-        getEntryEditFromDatabase(id, entry_source, tree,
-                                 splash_main, node_name,
-                                 schema);
+        getEntryEditFromDatabase(id, entry_source, tree, 
+            status_line, stream_progress_listener, 
+            splitGFFEntry, splash_main, 
+            node_name, schema);
     }
     catch(NullPointerException npe)
     {
@@ -154,16 +156,25 @@ public class DatabaseJPanel extends JPanel
 
   /**
    * Retrieve a database entry.
-   * @param id
+   * @param srcfeatureId
    * @param entry_source
-   * @param tree
+   * @param srcComponent
+   * @param status_line
+   * @param stream_progress_listener
+   * @param splitGFFEntry
    * @param splash_main
-   * @param node_name
+   * @param dbDocumentName
    * @param schema
    */
-  private void getEntryEditFromDatabase(final String id,
-      final DatabaseEntrySource entry_source, final JTree tree,
-      final Splash splash_main, final String node_name,
+  private static void getEntryEditFromDatabase(
+      final String srcfeatureId,
+      final DatabaseEntrySource entry_source, 
+      final JComponent srcComponent,
+      final JLabel status_line,
+      final InputStreamProgressListener stream_progress_listener,
+      final boolean splitGFFEntry,
+      final Splash splash_main, 
+      final String dbDocumentName,
       final String schema)
   {
     SwingWorker entryWorker = new SwingWorker()
@@ -174,82 +185,34 @@ public class DatabaseJPanel extends JPanel
         Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
 
         status_line.setText("Retrieving sequence....");
-        tree.setCursor(cbusy);
+        srcComponent.setCursor(cbusy);
         try
         {
           entry_source.setSplitGFF(splitGFFEntry);
 
-          final Entry entry = entry_source.getEntry(id, schema,
+          final Entry entry = entry_source.getEntry(srcfeatureId, schema,
               stream_progress_listener);
 
 
           DatabaseDocumentEntry db_entry =
                          (DatabaseDocumentEntry)entry.getEMBLEntry();
           DatabaseDocument doc = (DatabaseDocument)db_entry.getDocument();
-          doc.setName(node_name);
+          doc.setName(dbDocumentName);
 
           if(entry == null)
           {
-            tree.setCursor(cdone);
+            srcComponent.setCursor(cdone);
             status_line.setText("No entry.");
             return null;
           }
 
           final EntryEdit new_entry_edit = ArtemisMain.makeEntryEdit(entry);
-
-          // retrieve match features
-          /*uk.ac.sanger.artemis.FeatureVector fv = entry.getAllFeatures();
-          List matches = doc.getSimilarityMatches();
-
-          Hashtable temp_lookup_hash = new Hashtable(matches.size()/2);
-          String f_id;
-          for(int i=0; i<fv.size(); i++)
-          {
-            Feature f = fv.elementAt(i);
-            f_id = f.getValueOfQualifier("feature_id");
-            if(f_id != null)
-            {
-              temp_lookup_hash.put(f_id, f);
-            }
-          }
-          
-          
-          for(int i=0; i<matches.size(); i++)
-          {
-            org.gmod.schema.sequence.Feature matchFeature =
-                 (org.gmod.schema.sequence.Feature)matches.get(i);
-            
-            java.util.Collection featureLocs = matchFeature.getFeatureLocsForFeatureId();
-            java.util.Iterator it = featureLocs.iterator();
-            while(it.hasNext())
-            {
-              org.gmod.schema.sequence.FeatureLoc featureLoc =
-                (org.gmod.schema.sequence.FeatureLoc)it.next();
-
-              //Feature queryFeature = getFeatureById(
-              //    Integer.toString(featureLoc.getSrcFeatureId()), fv);
-              
-              Feature queryFeature = 
-                (Feature)temp_lookup_hash.get(Integer.toString(featureLoc.getSrcFeatureId()));
-              
-              if(queryFeature != null)
-              {
-                ((GFFStreamFeature)queryFeature.getEmblFeature()).addSimilarityFeature(matchFeature);
-                break;
-              }
-
-            }
-          }
-          temp_lookup_hash.clear();*/
           
           // add gff entries
           if(splitGFFEntry)
           {
-//          DatabaseDocumentEntry db_entry = 
-//                       (DatabaseDocumentEntry)entry.getEMBLEntry();
-
             final DatabaseDocumentEntry[] entries = entry_source.makeFromGff(
-                        (DatabaseDocument)db_entry.getDocument(), id, schema);
+                        (DatabaseDocument)db_entry.getDocument(), srcfeatureId, schema);
             for(int i = 0; i < entries.length; i++)
             {
               if(entries[i] == null)
@@ -279,7 +242,7 @@ public class DatabaseJPanel extends JPanel
           new MessageDialog(splash_main, "read failed due to IO error: " + e);
         }
         
-        tree.setCursor(cdone);
+        srcComponent.setCursor(cdone);
         return null;
       }
 
