@@ -81,6 +81,7 @@
     <result property="featureLoc.fmin" column="fmin" nullValue="-1"/>
     <result property="featureLoc.fmax" column="fmax" nullValue="0"/>
 	<result property="featureLoc.strand" column="strand" nullValue="0" />
+	<result property="featureLoc.phase"  column="phase"  nullValue="0" />
   </resultMap>
 	   
   <resultMap id="map-similaritymatch" class="Feature" 
@@ -352,7 +353,7 @@
   <select id="getResiduesByUniqueName" parameterClass="java.lang.String"
             resultMap="map-feature-residues">
 	SELECT substr(residues, fl.fmin+1, fl.fmax-fl.fmin) AS residues, 
-	       seqlen AS seqLen, fl.fmin, fl.fmax, fl.strand
+	       seqlen AS seqLen, fl.fmin, fl.fmax, fl.strand, fl.phase
 	FROM featureloc fl 
 	LEFT JOIN feature f ON fl.srcfeature_id=f.feature_id 
 	WHERE fl.feature_id=(SELECT feature_id FROM feature WHERE uniquename=#value#);
