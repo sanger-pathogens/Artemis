@@ -37,11 +37,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -55,6 +58,13 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.text.JTextComponent;
 
+import org.gmod.schema.sequence.FeatureLoc;
+
+import uk.ac.sanger.artemis.Entry;
+import uk.ac.sanger.artemis.components.ArtemisMain;
+import uk.ac.sanger.artemis.components.EntryEdit;
+import uk.ac.sanger.artemis.components.SwingWorker;
+import uk.ac.sanger.artemis.components.Utilities;
 import uk.ac.sanger.artemis.components.genebuilder.GeneEdit;
 import uk.ac.sanger.artemis.editor.BrowserControl;
 import uk.ac.sanger.artemis.editor.DataCollectionPane;
@@ -62,7 +72,11 @@ import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
+import uk.ac.sanger.artemis.util.InputStreamProgressListener;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
 
 abstract class AbstractMatchTable
@@ -70,6 +84,7 @@ abstract class AbstractMatchTable
   protected boolean isChanged = false;
   protected JTable table;
   protected QualifierVector origQualifiers;
+  private JLabel status_line;
   protected abstract String updateQualifierString(int row);
   
   /**
@@ -189,6 +204,42 @@ abstract class AbstractMatchTable
   }
   
   /**
+   * 
+   * @param schema
+   * @param uniquename
+   * @return
+   */
+  private DatabaseDocumentEntry makeEntry(final String schema, 
+                                          final String uniquename,
+                                          final DatabaseDocument doc,
+                                          final boolean isGeneEditor)
+  {
+    DatabaseDocumentEntry db_entry = null;
+    DatabaseDocument newdoc = new DatabaseDocument(doc, 
+            uniquename, schema, isGeneEditor, stream_progress_listener);
+    
+    try
+    {
+      db_entry = new DatabaseDocumentEntry(newdoc, null);
+    }
+    catch(EntryInformationException e)
+    {
+      e.printStackTrace();
+    }
+    catch(IOException e)
+    {
+      e.printStackTrace();
+    }
+    catch(NullPointerException npe)
+    {
+      JOptionPane.showMessageDialog(null, schema+":"+uniquename+
+          " not found!", "Warning", JOptionPane.WARNING_MESSAGE);
+    }
+
+    return db_entry;
+  }
+  
+  /**
    * Sets the preferred, min & max width of the column specified by columnIndex. 
    * The column will be just wide enough to show the column head and the widest 
    * cell in the column. margin pixels are added to the left and right
@@ -279,18 +330,22 @@ abstract class AbstractMatchTable
    private int selectedRow;
    private Color fgColor = new Color(139,35,35);
    private DefaultTableModel tableModel;
+   private String text;
+   private DatabaseDocument doc;
    
-   public ButtonEditor(JCheckBox checkBox, final DefaultTableModel tableModel) 
+   public ButtonEditor(JCheckBox checkBox, final DefaultTableModel tableModel,
+       final String text, final DatabaseDocument doc) 
    {
      super(checkBox);
      this.tableModel = tableModel;
+     this.text = text;
+     this.doc = doc;
      
-     buttRemove = new JButton("X");
+     buttRemove = new JButton(text);
      buttRemove.setBorderPainted(false);
      buttRemove.setOpaque(false);
      Font font = buttRemove.getFont().deriveFont(Font.BOLD);
      buttRemove.setFont(font);
-     buttRemove.setToolTipText("REMOVE");
      buttRemove.setForeground(fgColor);
      
      Dimension size = new Dimension(20,20);
@@ -329,12 +384,76 @@ abstract class AbstractMatchTable
    {
      if(isPushed)  
      {
-       tableModel.removeRow(selectedRow);
-       isChanged = true;
+       if(text.equals("X"))
+       {
+         tableModel.removeRow(selectedRow);
+         isChanged = true;
+       }
+       else
+       {
+         int columnIndex = 0;
+         for(int i=0;i<tableModel.getColumnCount(); i++)
+         {
+           if(tableModel.getColumnName(i).equals(OrthoParalogTable.ORTHO_COL))
+             columnIndex = i;
+         }
+         String geneRef = (String)tableModel.getValueAt(selectedRow, columnIndex);
+         final String gene[] = geneRef.split(":");
+         org.gmod.schema.sequence.Feature feature = doc.getFeatureByUniquename(gene[1]);
+         
+         Collection featureLocs = feature.getFeatureLocsForFeatureId();
+         Iterator it = featureLocs.iterator();
+         final FeatureLoc featureLoc = (FeatureLoc)it.next();
+
+         final JFrame progressFrame = progressReading();
+         final String srcFeatureId = Integer.toString(featureLoc.getFeatureBySrcFeatureId().getFeatureId());
+
+         SwingWorker readWorker = new SwingWorker()
+         {
+           public Object construct()
+           {
+             final DatabaseDocument newDoc = new DatabaseDocument(
+                 doc, srcFeatureId, 
+                 gene[0], false, 
+                 stream_progress_listener);
+             newDoc.setName(featureLoc.getFeatureBySrcFeatureId().getUniqueName());
+             try
+             {
+               DatabaseDocumentEntry db_entry = new DatabaseDocumentEntry(newDoc, null);
+               Bases bases = new Bases(db_entry.getSequence());
+               Entry entry = new Entry(bases, db_entry);
+
+               final EntryEdit new_entry_edit = ArtemisMain.makeEntryEdit(entry);
+               new_entry_edit.getGotoEventSource().gotoBase(featureLoc.getFmin().intValue());
+               new_entry_edit.setVisible(true);
+             }
+             catch(EntryInformationException e)
+             {
+               e.printStackTrace();
+             }
+             catch(IOException e)
+             {
+               e.printStackTrace();
+             }
+             catch(OutOfRangeException e)
+             {
+               e.printStackTrace();
+             }
+             return null;
+           }
+           
+           public void finished()
+           {
+             progressFrame.dispose();
+           }
+         };
+         readWorker.start();
+
+       }
        return null;
      }
      isPushed = false;
-     return new String("X") ;
+     return text;
    }
     
    public boolean stopCellEditing() 
@@ -353,10 +472,27 @@ abstract class AbstractMatchTable
    }
  }
   
+  /**
+   * Let the user know the progress of reading from the database
+   */
+  private JFrame progressReading()
+  {
+    final JFrame fread = new JFrame();
+    fread.setUndecorated(true);
+    status_line = new JLabel("Loading ...                         ");
+    status_line.setBackground(Color.white);
+    status_line.setOpaque(true);
+    fread.getContentPane().add(status_line);
+    
+    fread.pack();
+    Utilities.centreFrame(fread);
+    fread.setVisible(true);
+    return fread;
+  }
   
   /**
-  *
-  */
+   * 
+   */
   protected class LinkEditor extends DefaultCellEditor 
   {
    /** */
@@ -405,50 +541,6 @@ abstract class AbstractMatchTable
       {
       }     
      });
-     
-     /*
-     linkButton.addActionListener(new ActionListener()
-     {
-       public void actionPerformed(ActionEvent e) 
-       {
-         fireEditingStopped(); 
-       }
-     });
-     */
-   }
-   
-   /**
-    * 
-    * @param schema
-    * @param uniquename
-    * @return
-    */
-   private DatabaseDocumentEntry makeEntry(final String schema, 
-       final String uniquename)
-   {
-     DatabaseDocumentEntry db_entry = null;
-     DatabaseDocument newdoc = new DatabaseDocument(doc, 
-             uniquename, schema, true);
-     
-     try
-     {
-       db_entry = new DatabaseDocumentEntry(newdoc, null);
-     }
-     catch(EntryInformationException e)
-     {
-       e.printStackTrace();
-     }
-     catch(IOException e)
-     {
-       e.printStackTrace();
-     }
-     catch(NullPointerException npe)
-     {
-       JOptionPane.showMessageDialog(null, schema+":"+uniquename+
-           " not found!", "Warning", JOptionPane.WARNING_MESSAGE);
-     }
-
-     return db_entry;
    }
    
    public Component getTableCellEditorComponent(JTable table, Object value,
@@ -502,7 +594,7 @@ abstract class AbstractMatchTable
           // open gene editor for this gene link
           linkButton.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
           final String reference[] = linkButton.getActionCommand().split(":");
-          DatabaseDocumentEntry entry = makeEntry(reference[0], reference[1]);
+          DatabaseDocumentEntry entry = makeEntry(reference[0], reference[1], doc, true);
 
           if(entry != null)
           {
@@ -681,5 +773,26 @@ abstract class AbstractMatchTable
     }
   }
 
+  /**
+   *  An InputStreamProgressListener used to update the error label with the
+   *  current number of chars read.
+   **/
+  protected final InputStreamProgressListener stream_progress_listener =
+    new InputStreamProgressListener() 
+  {
+    public void progressMade(final InputStreamProgressEvent event) 
+    {
+      final int char_count = event.getCharCount();
+      if(char_count == -1) 
+        status_line.setText("");
+      else 
+        status_line.setText("chars read so far: " + char_count);
+    }
+
+    public void progressMade(String progress)
+    {
+      status_line.setText(progress);
+    }
+  };
 
 }

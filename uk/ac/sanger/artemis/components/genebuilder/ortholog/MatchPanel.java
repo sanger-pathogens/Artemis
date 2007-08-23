@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.18 2007-08-15 15:50:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.19 2007-08-23 12:13:46 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -358,7 +358,7 @@ public class MatchPanel extends JPanel
       if(simQualifier instanceof QualifierLazyLoading)
         ((QualifierLazyLoading)simQualifier).setForceLoad(true);
       
-      similarityTable = new SimilarityTable(simQualifier);
+      similarityTable = new SimilarityTable(simQualifier,doc);
       if(hide_show_sim == null)
         hide_show_sim = new JButton("-");
       addHideShowButton(similarityTable.getTable(), hide_show_sim);

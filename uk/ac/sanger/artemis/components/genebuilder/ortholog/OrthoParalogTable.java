@@ -69,7 +69,7 @@ import uk.ac.sanger.artemis.util.StringVector;
 
 public class OrthoParalogTable extends AbstractMatchTable
 {
-  private static int NUMBER_COLUMNS = 9;
+  private static int NUMBER_COLUMNS = 10;
   private Vector rowData   = new Vector();
   private Vector tableData = new Vector(NUMBER_COLUMNS);
   private JTable table;
@@ -79,15 +79,16 @@ public class OrthoParalogTable extends AbstractMatchTable
   
   //
   // column headings
-  final static String CLUSTER_NAME_COL = "Cluster";
-  final static String MATCH_NAME_COL = "Match";
-  final static String ROW_TYPE_HIDE_COL = "Term";
-  final static String ROW_TYPE_COL = "Type";
-  final static String ORGANISM_COL = "Organism";
-  final static String ORTHO_COL = "Gene";
-  final static String LINK_COL = "Link";
-  final static String DESCRIPTION_COL = "Description";
-  final static String REMOVE_BUTTON_COL = "";
+  protected final static String CLUSTER_NAME_COL = "Cluster";
+  protected final static String MATCH_NAME_COL = "Match";
+  protected final static String ROW_TYPE_HIDE_COL = "Term";
+  protected final static String ROW_TYPE_COL = "Type";
+  protected final static String ORGANISM_COL = "Organism";
+  protected final static String ORTHO_COL = "Gene";
+  protected final static String LINK_COL = "Link";
+  protected final static String DESCRIPTION_COL = "Description";
+  protected final static String VIEW_BUTTON_COL = "View";
+  protected final static String REMOVE_BUTTON_COL = "";
   
 
   /**
@@ -125,7 +126,8 @@ public class OrthoParalogTable extends AbstractMatchTable
     tableData.setElementAt(ORTHO_COL,5);
     tableData.setElementAt(LINK_COL,6);
     tableData.setElementAt(DESCRIPTION_COL,7);
-    tableData.setElementAt(REMOVE_BUTTON_COL,8);
+    tableData.setElementAt(VIEW_BUTTON_COL,8);
+    tableData.setElementAt(REMOVE_BUTTON_COL,9);
 
     
     // add row data
@@ -234,13 +236,19 @@ public class OrthoParalogTable extends AbstractMatchTable
     packColumn(table, getColumnIndex(ORTHO_COL), 4);
     packColumn(table, getColumnIndex(LINK_COL), 4);
     packColumn(table, getColumnIndex(ORGANISM_COL), 4);
+    packColumn(table, getColumnIndex(VIEW_BUTTON_COL), 4);
     if(showCluster)
       packColumn(table, getColumnIndex(CLUSTER_NAME_COL), 4);
     
     // remove JButton column
     col = table.getColumn(REMOVE_BUTTON_COL);
     col.setCellEditor(new ButtonEditor(new JCheckBox(),
-        (DefaultTableModel)table.getModel()));
+        (DefaultTableModel)table.getModel(), "X", doc));
+    
+    // remove JButton column
+    col = table.getColumn(VIEW_BUTTON_COL);
+    col.setCellEditor(new ButtonEditor(new JCheckBox(),
+        (DefaultTableModel)table.getModel(), "VIEW", doc));
     
     // orthologue link
     col = table.getColumn(ORTHO_COL);
@@ -483,7 +491,7 @@ public class OrthoParalogTable extends AbstractMatchTable
       String ortho = (String)table.getValueAt(rows[i], orthoColumn);
       final String reference[] = ortho.split(":");
       DatabaseDocument newdoc = new DatabaseDocument(doc, 
-          reference[0], reference[1], true);
+          reference[0], reference[1], true, stream_progress_listener);
       
       try
       {
@@ -725,6 +733,7 @@ public class OrthoParalogTable extends AbstractMatchTable
     private final JLabel clusterName = new JLabel();
     private final JLabel matchName = new JLabel();
     private final JLabel buttRemove = new JLabel("X");
+    private final JLabel buttView = new JLabel("VIEW");
     private Color fgColor = new Color(139,35,35);
     private Color fgLinkColor = Color.BLUE;
     
@@ -747,6 +756,10 @@ public class OrthoParalogTable extends AbstractMatchTable
       buttRemove.setFont(font);
       buttRemove.setToolTipText("REMOVE");
       buttRemove.setHorizontalAlignment(SwingConstants.CENTER);
+      
+      buttView.setOpaque(true);
+      buttView.setFont(font);
+      buttView.setHorizontalAlignment(SwingConstants.CENTER);
       
       symbol.setOpaque(true);
       symbol.setFont(font);
@@ -846,6 +859,20 @@ public class OrthoParalogTable extends AbstractMatchTable
         dim = symbol.getPreferredSize();
         minHeight = Math.max(minHeight, dim.height);
         c = symbol;
+      }
+      else if(column == getColumnIndex(VIEW_BUTTON_COL))
+      {
+        if(isSelected) 
+        {
+          buttView.setForeground(fgColor);
+          buttView.setBackground(table.getSelectionBackground());
+        } 
+        else
+        {
+          buttView.setForeground(fgColor);
+          buttView.setBackground(UIManager.getColor("Button.background"));
+        }
+        c = buttView;
       }
       else if(column == getColumnIndex(REMOVE_BUTTON_COL))
       {

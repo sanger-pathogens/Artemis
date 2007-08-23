@@ -47,6 +47,7 @@ import javax.swing.table.TableModel;
 
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
 public class SimilarityTable extends AbstractMatchTable
@@ -80,7 +81,8 @@ public class SimilarityTable extends AbstractMatchTable
    * @param similarity
    * @param similarityString
    */
-  protected SimilarityTable(final Qualifier simQualifier)
+  protected SimilarityTable(final Qualifier simQualifier,
+       final DatabaseDocument doc)
   {
     this.origQualifiers = new QualifierVector();
     this.origQualifiers.add(simQualifier);
@@ -207,7 +209,7 @@ public class SimilarityTable extends AbstractMatchTable
     // remove JButton column
     col = getTable().getColumn(REMOVE_BUTTON_COL);
     col.setCellEditor(new ButtonEditor(new JCheckBox(),
-        (DefaultTableModel)getTable().getModel()));
+        (DefaultTableModel)getTable().getModel(), "X", doc));
   }
   
   /**
