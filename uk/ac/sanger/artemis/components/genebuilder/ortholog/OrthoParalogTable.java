@@ -447,6 +447,30 @@ public class OrthoParalogTable extends AbstractMatchTable
         table.setCursor(orginalCursor); 
       }
     });
+    
+    JMenuItem openMenu = new JMenuItem("Open selected in Artemis");
+    popupMenu.add(openMenu);
+    openMenu.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        Cursor orginalCursor = table.getCursor();
+        table.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        int selectedRows[] = getTable().getSelectedRows();
+        
+        if(selectedRows.length > 1)
+        {
+          int select = JOptionPane.showConfirmDialog(null, 
+              "Open all selected sequences in seperate Artemis windows?", 
+              "Open Artemis x"+selectedRows.length, JOptionPane.OK_CANCEL_OPTION);
+          if(select == JOptionPane.CANCEL_OPTION)
+            return;
+        }
+        for(int i=0; i<selectedRows.length; i++)
+          openArtemis(doc,selectedRows[i]);
+        table.setCursor(orginalCursor); 
+      }
+    });
   }
   
   /**

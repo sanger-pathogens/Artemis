@@ -240,6 +240,66 @@ abstract class AbstractMatchTable
     return db_entry;
   }
   
+  protected void openArtemis(final DatabaseDocument doc, final int selectedRow)
+  {
+    int columnIndex = getColumnIndex(OrthoParalogTable.ORTHO_COL);
+    
+    String geneRef = (String)getTable().getValueAt(selectedRow, columnIndex);
+    final String gene[] = geneRef.split(":");
+    
+    final org.gmod.schema.sequence.Feature geneFeature = doc.getFeatureByUniquename(gene[1]);
+
+    Collection featureLocs = geneFeature.getFeatureLocsForFeatureId();
+    Iterator it = featureLocs.iterator();
+    final FeatureLoc featureLoc = (FeatureLoc)it.next();
+
+    final JFrame progressFrame = progressReading();
+
+    SwingWorker readWorker = new SwingWorker()
+    {
+      public Object construct()
+      {
+        try
+        {
+          int start = featureLoc.getFmin().intValue()-10000;
+          if(start <= 1)
+            start = 2;
+          Range range = new Range(start,featureLoc.getFmax().intValue()+10000);
+          final DatabaseDocument newDoc = new DatabaseDocument(
+              doc, gene[0], geneFeature, range,
+              stream_progress_listener);
+          
+          DatabaseDocumentEntry db_entry = new DatabaseDocumentEntry(newDoc, null);
+          Bases bases = new Bases(db_entry.getSequence());
+          Entry entry = new Entry(bases, db_entry);
+
+          final EntryEdit new_entry_edit = ArtemisMain.makeEntryEdit(entry);
+          new_entry_edit.getGotoEventSource().gotoBase(featureLoc.getFmin().intValue());
+          new_entry_edit.setVisible(true);
+        }
+        catch(EntryInformationException e)
+        {
+          e.printStackTrace();
+        }
+        catch(IOException e)
+        {
+          e.printStackTrace();
+        }
+        catch(OutOfRangeException e)
+        {
+          e.printStackTrace();
+        }
+        return null;
+      }
+      
+      public void finished()
+      {
+        progressFrame.dispose();
+      }
+    };
+    readWorker.start();
+  }
+  
   /**
    * Sets the preferred, min & max width of the column specified by columnIndex. 
    * The column will be just wide enough to show the column head and the widest 
@@ -391,70 +451,8 @@ abstract class AbstractMatchTable
          isChanged = true;
        }
        else
-       {
-         int columnIndex = 0;
-         for(int i=0;i<tableModel.getColumnCount(); i++)
-         {
-           if(tableModel.getColumnName(i).equals(OrthoParalogTable.ORTHO_COL))
-             columnIndex = i;
-         }
-         String geneRef = (String)tableModel.getValueAt(selectedRow, columnIndex);
-         final String gene[] = geneRef.split(":");
-         
-         final org.gmod.schema.sequence.Feature geneFeature = doc.getFeatureByUniquename(gene[1]);
-
-         Collection featureLocs = geneFeature.getFeatureLocsForFeatureId();
-         Iterator it = featureLocs.iterator();
-         final FeatureLoc featureLoc = (FeatureLoc)it.next();
-
-         final JFrame progressFrame = progressReading();
-
-         SwingWorker readWorker = new SwingWorker()
-         {
-           public Object construct()
-           {
-             try
-             {
-               int start = featureLoc.getFmin().intValue()-10000;
-               if(start <= 1)
-                 start = 2;
-               Range range = new Range(start,featureLoc.getFmax().intValue()+10000);
-               final DatabaseDocument newDoc = new DatabaseDocument(
-                   doc, gene[0], geneFeature, range,
-                   stream_progress_listener);
-               
-               DatabaseDocumentEntry db_entry = new DatabaseDocumentEntry(newDoc, null);
-               Bases bases = new Bases(db_entry.getSequence());
-               Entry entry = new Entry(bases, db_entry);
-
-               final EntryEdit new_entry_edit = ArtemisMain.makeEntryEdit(entry);
-               new_entry_edit.getGotoEventSource().gotoBase(featureLoc.getFmin().intValue());
-               new_entry_edit.setVisible(true);
-             }
-             catch(EntryInformationException e)
-             {
-               e.printStackTrace();
-             }
-             catch(IOException e)
-             {
-               e.printStackTrace();
-             }
-             catch(OutOfRangeException e)
-             {
-               e.printStackTrace();
-             }
-             return null;
-           }
-           
-           public void finished()
-           {
-             progressFrame.dispose();
-           }
-         };
-         readWorker.start();
-
-       }
-       return null;
+         openArtemis(doc, selectedRow);
+       //return null;
      }
      isPushed = false;
      return text;
