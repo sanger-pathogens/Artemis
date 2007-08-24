@@ -52,6 +52,7 @@ public abstract class GmodDAO
   public abstract List getSimilarityMatchesByFeatureIds(final List featureIds);
   public abstract List getSimilarityMatches(final Integer srcFeatureId);
   public abstract List getClustersByFeatureIds(final List featureIds);
+  
   /**
    * Return all the Feature.featureDbXRefs for a <code>List</code> of feature_id's. 
    * These are grouped by their feature_id and returned in a <code>List</code>
@@ -99,35 +100,35 @@ public abstract class GmodDAO
    * @param srcFeatureId  srcfeature_id
    * @return
    */
-  public abstract List getFeatureCvTermsBySrcFeatureId(int srcFeatureId);
+  public abstract List getFeatureCvTermsBySrcFeature(Feature srcFeature);
   
   /**
    * Return the FeatureCvTremDbXRef's for all Feature's given their srcfeature_id
    * @param srcFeatureId
    * @return
    */
-  public abstract List getFeatureCvTermDbXRefBySrcFeatureId(int srcFeatureId);
+  public abstract List getFeatureCvTermDbXRefBySrcFeature(Feature srcFeature);
   
   /**
    * Return the FeatureCvTermPub's for all Feature's given their srcfeature_id
    * @param srcfeature_id
    * @return
    */
-  public abstract List getFeatureCvTermPubBySrcFeatureId(int srcfeature_id);
+  public abstract List getFeatureCvTermPubBySrcFeature(Feature srcFeature);
   
   /**
    * Return the FeaturePub's for all Feature's given their srcfeature_id
    * @param srcFeatureId
    * @return
    */
-  public abstract List getFeaturePubsBySrcFeatureId(int srcFeatureId);
+  public abstract List getFeaturePubsBySrcFeature(Feature srcFeature);
   
   /**
    * Return the FeatureSynonym's for all Feature's given their srcfeature_id
    * @param srcFeatureId
    * @return
    */
-  public abstract List getFeatureSynonymsBySrcFeatureId(int srcFeatureId);
+  public abstract List getFeatureSynonymsBySrcFeature(Feature srcFeature);
   
   /**
    * Return a list of features that have this particular cvterm 
@@ -151,7 +152,7 @@ public abstract class GmodDAO
    * @param srcFeatureId
    * @return
    */
-  public abstract List getFeatureDbXRefsBySrcFeatureId(int srcFeatureId);
+  public abstract List getFeatureDbXRefsBySrcFeature(Feature srcFeature);
   
   public List getFeaturesByAnyNameAndOrganism(String arg0, String arg1, String arg2)
   {

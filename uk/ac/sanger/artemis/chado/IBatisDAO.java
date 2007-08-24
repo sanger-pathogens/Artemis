@@ -115,16 +115,16 @@ public class IBatisDAO extends GmodDAO
     return sqlMap.queryForList("getResidueFeatures",organismId);
   }
   
-  public List getFeatureCvTermsBySrcFeatureId(int srcFeatureId)
+  public List getFeatureCvTermsBySrcFeature(Feature srcFeature)
   {
-    return sqlMap.queryForList("getFeatureCvTermsBySrcFeatureId",
-                               new Integer(srcFeatureId));
+    return sqlMap.queryForList("getFeatureCvTermsBySrcFeature",
+                               srcFeature);
   }
   
-  public List getFeaturePubsBySrcFeatureId(final int srcFeatureId)
+  public List getFeaturePubsBySrcFeature(final Feature srcFeature)
   {
-    return sqlMap.queryForList("getFeaturePubsBySrcFeatureId",
-                               new Integer(srcFeatureId));
+    return sqlMap.queryForList("getFeaturePubsBySrcFeature",
+                               srcFeature);
   }
 
   public List getClustersByFeatureIds(final List featureIds)
@@ -241,7 +241,13 @@ public class IBatisDAO extends GmodDAO
   public List getFeaturesByRange(int min, int max, int strand,
       Feature parent, String type)
   {
-    return null; 
+    Feature feature = new Feature();
+    FeatureLoc featureLoc = new FeatureLoc();
+    featureLoc.setFmin(new Integer(min));
+    featureLoc.setFmax(new Integer(max));
+    feature.setFeatureLoc(featureLoc);
+    featureLoc.setFeatureBySrcFeatureId(parent);
+    return sqlMap.queryForList("getFeature", feature); 
   }
   
   /**
@@ -339,10 +345,10 @@ public class IBatisDAO extends GmodDAO
       sqlMap.queryForList("getFeatureSynonymsByName", synonym);
   }
   
-  public List getFeatureSynonymsBySrcFeatureId(final int srcFeatureId)
+  public List getFeatureSynonymsBySrcFeature(final Feature srcFeature)
   {
     return
-      sqlMap.queryForList("getFeatureSynonymsBySrcFeatureId", new Integer(srcFeatureId));
+      sqlMap.queryForList("getFeatureSynonymsBySrcFeature", srcFeature);
   }
   
   /**
@@ -360,9 +366,9 @@ public class IBatisDAO extends GmodDAO
     return sqlMap.queryForList("getFeatureDbXRef", feature);  
   }
   
-  public List getFeatureDbXRefsBySrcFeatureId(final int srcFeatureId)
+  public List getFeatureDbXRefsBySrcFeature(final Feature srcFeature)
   {
-    return sqlMap.queryForList("getFeatureDbXRefsBySrcFeatureId", new Integer(srcFeatureId));
+    return sqlMap.queryForList("getFeatureDbXRefsBySrcFeature", srcFeature);
   }
   
   
@@ -453,10 +459,10 @@ public class IBatisDAO extends GmodDAO
    * @param feature the Feature to retrieve associated FeatureCvTermDbXRef's
    * @return the FeatureCvTermDbXRef's
    */
-  public List getFeatureCvTermDbXRefBySrcFeatureId(int srcFeatureId)
+  public List getFeatureCvTermDbXRefBySrcFeature(final Feature srcFeature)
   {
-    return sqlMap.queryForList("getFeatureCvTermDbXRefBySrcFeatureId",
-        new Integer(srcFeatureId));
+    return sqlMap.queryForList("getFeatureCvTermDbXRefBySrcFeature",
+        srcFeature);
   }
   
   
@@ -479,10 +485,10 @@ public class IBatisDAO extends GmodDAO
    * @param feature the Feature to retrieve associated FeatureCvTermPub's
    * @return the FeatureCvTermPub's
    */
-  public List getFeatureCvTermPubBySrcFeatureId(final int srcfeature_id)
+  public List getFeatureCvTermPubBySrcFeature(final Feature srcFeature)
   {
-    return sqlMap.queryForList("getFeatureCvTermPubBySrcFeatureId", 
-                               new Integer(srcfeature_id));
+    return sqlMap.queryForList("getFeatureCvTermPubBySrcFeature", 
+                               srcFeature);
   }
   
   

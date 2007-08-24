@@ -51,6 +51,7 @@ import org.gmod.schema.pub.Pub;
 import org.gmod.schema.pub.PubDbXRef;
 
 
+
 /**
  *
  * Java Database Connectivity (JDBC) implemetation of the
@@ -123,13 +124,13 @@ public class JdbcDAO extends GmodDAO
     return null;
   }
   
-  public List getFeatureDbXRefsBySrcFeatureId(int srcFeatureId)
+  public List getFeatureDbXRefsBySrcFeature(Feature srcFeature)
   {
     // TODO Auto-generated method stub
     return null;
   }
 
-  public List getFeatureSynonymsBySrcFeatureId(int srcFeatureId)
+  public List getFeatureSynonymsBySrcFeature(Feature srcFeature)
   {
     // TODO Auto-generated method stub
     return null;
@@ -141,7 +142,7 @@ public class JdbcDAO extends GmodDAO
     return null;
   }
   
-  public List getFeaturePubsBySrcFeatureId(int srcFeatureId)
+  public List getFeaturePubsBySrcFeature(Feature srcFeature)
   {
     // TODO Auto-generated method stub
     return null;
@@ -157,19 +158,19 @@ public class JdbcDAO extends GmodDAO
     return null;
   }
   
-  public List getFeatureCvTermDbXRefBySrcFeatureId(int srcFeatureId)
+  public List getFeatureCvTermDbXRefBySrcFeature(Feature srcFeature)
   {
     // TODO Auto-generated method stub
     return null;
   }
 
-  public List getFeatureCvTermPubBySrcFeatureId(int srcfeature_id)
+  public List getFeatureCvTermPubBySrcFeature(Feature srcFeature)
   {
     // TODO Auto-generated method stub
     return null;
   }
 
-  public List getFeatureCvTermsBySrcFeatureId(int srcFeatureId)
+  public List getFeatureCvTermsBySrcFeature(Feature srcFeature)
   {
     // TODO Auto-generated method stub
     return null;
