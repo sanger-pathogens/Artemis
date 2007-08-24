@@ -72,6 +72,7 @@ import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
@@ -399,26 +400,29 @@ abstract class AbstractMatchTable
          }
          String geneRef = (String)tableModel.getValueAt(selectedRow, columnIndex);
          final String gene[] = geneRef.split(":");
-         org.gmod.schema.sequence.Feature feature = doc.getFeatureByUniquename(gene[1]);
          
-         Collection featureLocs = feature.getFeatureLocsForFeatureId();
+         final org.gmod.schema.sequence.Feature geneFeature = doc.getFeatureByUniquename(gene[1]);
+
+         Collection featureLocs = geneFeature.getFeatureLocsForFeatureId();
          Iterator it = featureLocs.iterator();
          final FeatureLoc featureLoc = (FeatureLoc)it.next();
 
          final JFrame progressFrame = progressReading();
-         final String srcFeatureId = Integer.toString(featureLoc.getFeatureBySrcFeatureId().getFeatureId());
 
          SwingWorker readWorker = new SwingWorker()
          {
            public Object construct()
            {
-             final DatabaseDocument newDoc = new DatabaseDocument(
-                 doc, srcFeatureId, 
-                 gene[0], false, 
-                 stream_progress_listener);
-             newDoc.setName(featureLoc.getFeatureBySrcFeatureId().getUniqueName());
              try
              {
+               int start = featureLoc.getFmin().intValue()-10000;
+               if(start <= 1)
+                 start = 2;
+               Range range = new Range(start,featureLoc.getFmax().intValue()+10000);
+               final DatabaseDocument newDoc = new DatabaseDocument(
+                   doc, gene[0], geneFeature, range,
+                   stream_progress_listener);
+               
                DatabaseDocumentEntry db_entry = new DatabaseDocumentEntry(newDoc, null);
                Bases bases = new Bases(db_entry.getSequence());
                Entry entry = new Entry(bases, db_entry);
