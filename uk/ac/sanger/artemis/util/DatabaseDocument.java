@@ -28,6 +28,7 @@ import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.PartialSequence;
+import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.ReadFormatException;
 
 import uk.ac.sanger.artemis.chado.ArtemisUtils;
@@ -115,6 +116,10 @@ public class DatabaseDocument extends Document
   private List schema_list;
   
   private boolean gene_builder;
+  
+  private Range range;
+  
+  private Feature geneFeature;
   
   // controlled vocabulary
   /** controlled_curation controlled vocabulary */
@@ -261,10 +266,35 @@ public class DatabaseDocument extends Document
    * @param srcFeatureId
    * @param schema
    * @param gene_builder
-   * @return
+   * @param region_grab
+   * @param progress_listener
    */
-  public DatabaseDocument (DatabaseDocument originalDocument,
-             String srcFeatureId, String schema, boolean gene_builder, 
+  public DatabaseDocument (final DatabaseDocument originalDocument,
+             final String schema, final Feature geneFeature,
+             final Range range,
+             final InputStreamProgressListener progress_listener)
+  {
+    this((String)originalDocument.getLocation(), 
+         originalDocument.getPfield(),
+         "-1", schema, false);
+    this.progress_listener = progress_listener;
+    this.range = range;
+    this.geneFeature = geneFeature;
+  }
+  
+  /**
+   * Use another DatabaseDocument to make a new document.
+   * @param originalDocument
+   * @param srcFeatureId
+   * @param schema
+   * @param gene_builder
+   * @param region_grab
+   * @param progress_listener
+   */
+  public DatabaseDocument (final DatabaseDocument originalDocument,
+             final String srcFeatureId, 
+             final String schema, 
+             final boolean gene_builder,
              final InputStreamProgressListener progress_listener)
   {
     this((String)originalDocument.getLocation(), 
@@ -386,9 +416,9 @@ public class DatabaseDocument extends Document
     {
       GmodDAO dao = getDAO();
 
-      // if creating a gene builder
       if(gene_builder)
       {
+        // creating a gene builder
         List schemaList = new Vector();
         schemaList.add(schema);
           
@@ -396,35 +426,55 @@ public class DatabaseDocument extends Document
                                        schemaList, dao);          
         return new ByteArrayInputStream(bb.getBytes());
       }
+      else if(range != null)
+      {
+        //
+        // Retrieve all features within a range
+        List schemaList = new Vector();
+        schemaList.add(schema);
+        
+        Collection featureLocs = geneFeature.getFeatureLocsForFeatureId();
+        Iterator it = featureLocs.iterator();
+        final FeatureLoc featureLoc = (FeatureLoc)it.next();
 
-      ByteBuffer entry = new ByteBuffer();
+        final Feature srcFeature = featureLoc.getFeatureBySrcFeatureId();
+        setName(srcFeature.getUniqueName());
+        this.srcFeatureId = Integer.toString(srcFeature.getFeatureId());
+        
+        ByteBuffer entryBuffer = getFeaturesInRange(srcFeature, range, dao);
+        getChadoSequence(srcFeature, entryBuffer);
+
+        return new ByteArrayInputStream(entryBuffer.getBytes());
+      }
+      
+      ByteBuffer entryBuffer = new ByteBuffer();
       try
       {
+        ByteBuffer sequenceBuffer = new ByteBuffer();
         if(dao instanceof IBatisDAO)
           ((IBatisDAO) dao).startTransaction();
 
-        gff_buffer = getGff(dao);
+        logger4j.debug("RETRIEVE SOURCE FEATURE");
+        Feature srcFeature = getChadoSequence(dao, sequenceBuffer);
+        gff_buffer = getGff(dao, srcFeature);
         
         if(splitGFFEntry)
         {
           if(gff_buffer[0].size() > 0)
-            entry.append(gff_buffer[0]);
-
-          getChadoSequence(dao, entry);
+            entryBuffer.append(gff_buffer[0]);
         }
         else
         {
           for(int i = 0; i < gff_buffer.length; i++)
           {
             if(gff_buffer[i].size() > 0)
-              entry.append(gff_buffer[i]);
+              entryBuffer.append(gff_buffer[i]);
           }
-
-          getChadoSequence(dao, entry);
         }
 
         if(dao instanceof IBatisDAO)
           ((IBatisDAO) dao).commitTransaction();
+        entryBuffer.append(sequenceBuffer);
       }
       finally
       {
@@ -432,7 +482,7 @@ public class DatabaseDocument extends Document
           ((IBatisDAO) dao).endTransaction();
       }
 
-      instream = new ByteArrayInputStream(entry.getBytes());
+      instream = new ByteArrayInputStream(entryBuffer.getBytes());
       return instream;
     }
     catch(RuntimeException re)
@@ -501,29 +551,22 @@ public class DatabaseDocument extends Document
    *                            extract
    * @return   the <code>ByteBuffer</code> array of GFF lines
    */
-  private ByteBuffer[] getGff(final GmodDAO dao)
+  private ByteBuffer[] getGff(final GmodDAO dao, final Feature srcFeature)
   {
-    final int srcfeature_id = Integer.parseInt(srcFeatureId);
+    //final int srcfeature_id = Integer.parseInt(srcFeatureId);
     
-    Splash.logger4j.debug("Build GFF");
+    logger4j.debug("BUILD GFF FEATURES");
     
     // build srcfeature object
     FeatureLoc featureloc = new FeatureLoc();
-    Feature srcFeature = new Feature();
-    srcFeature.setFeatureId(srcfeature_id);
     featureloc.setFeatureBySrcFeatureId(srcFeature);
+    Feature child = new Feature();
+    child.setFeatureLoc(featureloc);
     
-    //featureloc.setSrcfeature_id(srcfeature_id);
-    Feature parent = new Feature();
-    parent.setFeatureLoc(featureloc);
-    
-    List featList = dao.getFeaturesByLocatedOnFeature(parent);
-
+    List featList = dao.getFeaturesByLocatedOnFeature(child);
     ByteBuffer[] buffers = new ByteBuffer[types.length + 1];
     for(int i = 0; i < buffers.length; i++)
       buffers[i] = new ByteBuffer();
-
-    final Feature parentFeature = dao.getFeatureById(srcfeature_id);
     
     ByteBuffer this_buff;
 
@@ -540,23 +583,18 @@ public class DatabaseDocument extends Document
       id_store.put(featureId, name);
     }
     
-    // get all dbrefs & synonyms
+    // get all dbrefs & synonyms etc
     Hashtable dbxrefs = IBatisDAO.mergeDbXRef(
-        dao.getFeatureDbXRefsBySrcFeatureId(srcfeature_id));
+        dao.getFeatureDbXRefsBySrcFeature(srcFeature));
     Hashtable synonym = getAllFeatureSynonyms(
-        dao.getFeatureSynonymsBySrcFeatureId(srcfeature_id));
-
+        dao.getFeatureSynonymsBySrcFeature(srcFeature));
     Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, 
-        dao.getFeatureCvTermsBySrcFeatureId(srcfeature_id));
-    
-    
+        dao.getFeatureCvTermsBySrcFeature(srcFeature));
     Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, 
-        dao.getFeatureCvTermDbXRefBySrcFeatureId(srcfeature_id));
-    
+        dao.getFeatureCvTermDbXRefBySrcFeature(srcFeature));
     Hashtable featureCvTermPubs = getFeatureCvTermPub(dao, 
-        dao.getFeatureCvTermPubBySrcFeatureId(srcfeature_id));
-    
-    Hashtable featurePubs = getFeaturePubsBySrcFeatureId(dao,srcfeature_id);
+        dao.getFeatureCvTermPubBySrcFeature(srcFeature));
+    Hashtable featurePubs = getFeaturePubsBySrcFeature(dao,srcFeature);
     
     List pubDbXRefs= dao.getPubDbXRef();
 
@@ -573,9 +611,9 @@ public class DatabaseDocument extends Document
         if(types[j].equals(typeName))
           this_buff = buffers[j];
       }
+
       
-      
-      chadoToGFF(feat, parentFeature.getUniqueName(),
+      chadoToGFF(feat, srcFeature.getUniqueName(),
                  dbxrefs, synonym, featureCvTerms,
                  pubDbXRefs, featureCvTermDbXRefs, featureCvTermPubs,
                  featurePubs,
@@ -624,10 +662,10 @@ public class DatabaseDocument extends Document
    * @param srcfeature_id
    * @return
    */
-  private Hashtable getFeaturePubsBySrcFeatureId(final GmodDAO dao,
-                                                 final int srcfeature_id)
+  private Hashtable getFeaturePubsBySrcFeature(final GmodDAO dao,
+                                               final Feature srcFeature)
   {
-    List list = dao.getFeaturePubsBySrcFeatureId(srcfeature_id);
+    List list = dao.getFeaturePubsBySrcFeature(srcFeature);
     
     Hashtable featurePubs = new Hashtable();
     Integer featureId;
@@ -746,6 +784,76 @@ public class DatabaseDocument extends Document
   }
   
   /**
+   * Retrieve the features in a given range
+   * @param srcFeature
+   * @param range
+   * @param dao
+   * @return
+   */
+  private ByteBuffer getFeaturesInRange(final Feature srcFeature,
+                                        final Range range, 
+                                        final GmodDAO dao)
+  { 
+    ByteBuffer buff = new ByteBuffer();
+
+    logger4j.debug("GET FEATURES IN RANGE::");
+    List featuresInRange = dao.getFeaturesByRange(range.getStart()-1, 
+                                range.getEnd(), 0, srcFeature, null);
+    
+    List featureIds = new Vector(featuresInRange.size());
+    for(int i=0; i<featuresInRange.size(); i++)
+    {
+      Feature thisFeature = (Feature)featuresInRange.get(i);
+      featureIds.add(new Integer(thisFeature.getFeatureId()));
+    }
+    
+    FeatureLoc featureLoc = new FeatureLoc();
+    featureLoc.setFmin(new Integer(range.getStart()));
+    featureLoc.setFmax(new Integer(range.getEnd()));
+    srcFeature.setFeatureLoc(featureLoc);
+    
+    Hashtable dbxrefs = IBatisDAO.mergeDbXRef(
+        dao.getFeatureDbXRefsBySrcFeature(srcFeature));
+    Hashtable synonym = getAllFeatureSynonyms(
+        dao.getFeatureSynonymsBySrcFeature(srcFeature));
+    Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, 
+        dao.getFeatureCvTermsBySrcFeature(srcFeature));
+    Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, 
+        dao.getFeatureCvTermDbXRefBySrcFeature(srcFeature));
+    Hashtable featureCvTermPubs = getFeatureCvTermPub(dao, 
+        dao.getFeatureCvTermPubBySrcFeature(srcFeature));
+    Hashtable featurePubs = getFeaturePubsBySrcFeature(dao,srcFeature);
+
+    List pubDbXRefs = dao.getPubDbXRef();
+    
+    Hashtable id_store = new Hashtable(featuresInRange.size());
+
+    // build feature name store
+    for(int i = 0; i < featuresInRange.size(); i++)
+    {
+      Feature chadoFeature = (Feature)featuresInRange.get(i);
+      String name       = chadoFeature.getUniqueName();
+      String featureId = Integer.toString(chadoFeature.getFeatureId());
+      id_store.put(featureId, name);
+    }
+    
+    for(int i=0; i<featuresInRange.size(); i++)
+    {
+      Feature chadoFeature = (Feature)featuresInRange.get(i);
+      id_store.put(Integer.toString(chadoFeature.getFeatureId()), chadoFeature
+          .getUniqueName());
+
+      chadoToGFF(chadoFeature, srcFeature.getUniqueName(), dbxrefs, synonym, featureCvTerms,
+          pubDbXRefs, featureCvTermDbXRefs, featureCvTermPubs, featurePubs,
+          id_store, dao, chadoFeature.getFeatureLoc(), buff, gene_builder);
+      if( i%10 == 0 || i == featuresInRange.size()-1)
+        progress_listener.progressMade("Read from database: " + 
+                                       chadoFeature.getUniqueName());
+    }
+    return buff;
+  }
+  
+  /**
    * Use by the gene editor to retrieve the gene and related
    * features
    * @param search_gene     gene uniquename
@@ -826,6 +934,18 @@ public class DatabaseDocument extends Document
     return buff;
   }
   
+  
+  /**
+   * 
+   * @param dao
+   * @param featureId
+   * @param id_store
+   * @param parentName
+   * @param srcFeatureId
+   * @param this_buff
+   * @param chadoFeature
+   * @return
+   */
   private Feature buildGffLineFromId(final GmodDAO dao, 
                                   final int featureId, 
                                   final Hashtable id_store,
@@ -857,10 +977,13 @@ public class DatabaseDocument extends Document
     Hashtable featureCvTermPubs = getFeatureCvTermPub(dao,
                              dao.getFeatureCvTermPubByFeature(chadoFeature));
     
-    Hashtable featurePubs = getFeaturePubsBySrcFeatureId(dao,srcFeatureId);
+    Feature srcFeature = new Feature();
+    srcFeature.setFeatureId(srcFeatureId);
+    Hashtable featurePubs = getFeaturePubsBySrcFeature(dao,srcFeature);
     List pubDbXRefs= dao.getPubDbXRef();
     chadoToGFF(chadoFeature, parentName, dbxrefs, synonym, featureCvTerms,
-        pubDbXRefs, featureCvTermDbXRefs, featureCvTermPubs, featurePubs, id_store, dao, loc, this_buff, gene_builder);  
+        pubDbXRefs, featureCvTermDbXRefs, featureCvTermPubs, featurePubs, 
+        id_store, dao, loc, this_buff, gene_builder);  
     return chadoFeature;
   }
   
@@ -1631,15 +1754,27 @@ public class DatabaseDocument extends Document
    * @return      the resulting buffer
    * @throws java.sql.SQLException
    */
-  private ByteBuffer getChadoSequence(GmodDAO dao, ByteBuffer buff)
+  private Feature getChadoSequence(GmodDAO dao, ByteBuffer buff)
   {
     Feature feature = dao.getFeatureById(Integer.parseInt(srcFeatureId));
- 
+    getChadoSequence(feature, buff);
+    return feature;
+  }
+  
+  
+  /**
+   * Get the sequence for a feature.
+   * @param dao   the data access object
+   * @param buff  the buffer to add the sequence to
+   * @return      the resulting buffer
+   * @throws java.sql.SQLException
+   */
+  private void getChadoSequence(final Feature feature, ByteBuffer buff)
+  {
     buff.append("##FASTA\n>");
     buff.append(feature.getUniqueName());
     buff.append("\n");
     buff.append(feature.getResidues());
-    return buff;
   }
 
   /**
