@@ -70,13 +70,17 @@
       </isNotNull>
     </select>
     
-	<select id="getFeatureSynonymsBySrcFeatureId" resultMap="map-alias"
-            parameterClass="java.lang.Integer">
+	<select id="getFeatureSynonymsBySrcFeature" resultMap="map-alias"
+            parameterClass="Feature">
       SELECT fs.*, s.name, s.synonym_sgml, s.type_id
       FROM feature_synonym fs 
       LEFT JOIN feature f ON f.feature_id=fs.feature_id 
       LEFT JOIN synonym s ON fs.synonym_id=s.synonym_id
-      WHERE f.feature_id IN (SELECT feature_id FROM featureloc WHERE srcfeature_id=$value$)
+      WHERE f.feature_id IN 
+        (SELECT feature_id FROM featureloc fl WHERE srcfeature_id=$featureId$
+	  <isGreaterThan property="featureLoc.fmin" compareValue="0" prepend="AND"> 
+           <![CDATA[ fl.fmin > $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
+      </isGreaterThan>)
     </select>
 	
     <select id="getLazyFeatureSynonymsByUniquename" resultMap="map-alias-part-lazy"

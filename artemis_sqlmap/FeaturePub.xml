@@ -30,16 +30,18 @@
        <result property="pub.cvTerm.cvTermId" column="type_id" />   
      </resultMap>
     
-     <select id="getFeaturePubsBySrcFeatureId" parameterClass="java.lang.Integer" 
+     <select id="getFeaturePubsBySrcFeature" parameterClass="org.gmod.schema.sequence.Feature" 
              resultMap="map-featurepubs">
         SELECT
           f.feature_id AS id, pub.*
         FROM feature f
-        LEFT JOIN featureloc fl     ON f.feature_id  = fl.feature_id
         INNER JOIN feature_pub fpub ON fpub.feature_id = f.feature_id 
         LEFT JOIN pub               ON fpub.pub_id=pub.pub_id  
-        WHERE
-            srcfeature_id=$featureId$ 
+        WHERE f.feature_id IN
+        (SELECT feature_id FROM featureloc fl WHERE srcfeature_id=$featureId$
+	    <isGreaterThan property="featureLoc.fmin" compareValue="0" prepend="AND"> 
+           <![CDATA[ fl.fmin > $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
+        </isGreaterThan>)
         ORDER BY f.uniquename
      </select>
      

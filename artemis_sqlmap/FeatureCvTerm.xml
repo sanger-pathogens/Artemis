@@ -42,7 +42,7 @@
  
       <!--  select feature_cvterm -->
 	
-	<select id="getFeatureCvTermsBySrcFeatureId" parameterClass="java.lang.Integer"
+	<select id="getFeatureCvTermsBySrcFeature" parameterClass="org.gmod.schema.sequence.Feature"
              resultMap="select-featurecvterm">
         SELECT
           fc.*, 
@@ -60,7 +60,11 @@
         LEFT JOIN pub ON fc.pub_id=pub.pub_id
         LEFT JOIN dbxref ON cvterm.dbxref_id=dbxref.dbxref_id 
         LEFT JOIN db ON dbxref.db_id=db.db_id
-        WHERE feature_id IN (SELECT feature_id FROM featureloc WHERE srcfeature_id=$value$)
+        WHERE feature_id IN 
+		(SELECT feature_id FROM featureloc fl WHERE srcfeature_id=$featureId$
+	    <isGreaterThan property="featureLoc.fmin" compareValue="0" prepend="AND"> 
+           <![CDATA[ fl.fmin > $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
+        </isGreaterThan>)
         ORDER BY fc.feature_cvterm_id, fc.rank, type_id, fcp.rank;
      </select>
 	

@@ -146,6 +146,9 @@
          <isGreaterThan property="featureLoc.featureBySrcFeatureId.featureId" compareValue="0"> 
            srcfeature_id=$featureLoc.featureBySrcFeatureId.featureId$ 
          </isGreaterThan>
+		 <isGreaterThan property="featureLoc.fmin" compareValue="0" prepend="AND"> 
+           <![CDATA[ fl.fmin > $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
+         </isGreaterThan>
          <isNotNull property="uniqueName">                        
            uniquename LIKE #uniqueName# 
          </isNotNull>
@@ -196,6 +199,7 @@
      </dynamic>
      f.feature_id > 0 
   </select>
+	
 
   <select id="getLazyFeatureById" resultMap ="map-feature-lazy" >
 	SELECT

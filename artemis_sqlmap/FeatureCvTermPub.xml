@@ -30,13 +30,17 @@
     </select>
 	
 	
-	<select id="getFeatureCvTermPubBySrcFeatureId" parameterClass="java.lang.Integer"
+	<select id="getFeatureCvTermPubBySrcFeature" parameterClass="org.gmod.schema.sequence.Feature"
              resultMap="feature_cvterm_pub">
        SELECT fcp.feature_cvterm_id, pub.* 
        FROM feature_cvterm_pub fcp 
        LEFT JOIN pub ON fcp.pub_id=pub.pub_id
        LEFT JOIN feature_cvterm fc ON fcp.feature_cvterm_id=fc.feature_cvterm_id
-       WHERE feature_id IN (SELECT feature_id FROM featureloc WHERE srcfeature_id=$value$)
+       WHERE feature_id IN 
+       (SELECT feature_id FROM featureloc fl WHERE srcfeature_id=$featureId$
+	    <isGreaterThan property="featureLoc.fmin" compareValue="0" prepend="AND"> 
+           <![CDATA[ fl.fmin > $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
+        </isGreaterThan>)
     </select>
 	
     
