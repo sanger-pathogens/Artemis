@@ -69,6 +69,33 @@
      </select>
 	
 	
+	<select id="getFeatureCvTermsNoRankBySrcFeature" parameterClass="org.gmod.schema.sequence.Feature"
+             resultMap="select-featurecvterm-no-rank">
+        SELECT
+          fc.*, 
+          fcp.type_id, fcp.value, fcp.rank AS fcp_rank,
+          cvterm.name AS cvterm_name,
+          cv.name AS cv_name,
+          pub.pub_id, 
+          pub.uniquename,
+          db.name,
+          dbxref.accession
+        FROM feature_cvterm fc 
+        LEFT JOIN feature_cvtermprop fcp ON fc.feature_cvterm_id=fcp.feature_cvterm_id 
+        LEFT JOIN cvterm ON cvterm.cvterm_id=fc.cvterm_id 
+        LEFT JOIN cv ON cvterm.cv_id=cv.cv_id 
+        LEFT JOIN pub ON fc.pub_id=pub.pub_id
+        LEFT JOIN dbxref ON cvterm.dbxref_id=dbxref.dbxref_id 
+        LEFT JOIN db ON dbxref.db_id=db.db_id
+        WHERE feature_id IN 
+		(SELECT feature_id FROM featureloc fl WHERE srcfeature_id=$featureId$
+	    <isGreaterThan property="featureLoc.fmin" compareValue="0" prepend="AND"> 
+           <![CDATA[ fl.fmin > $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
+        </isGreaterThan>)
+        ORDER BY fc.feature_cvterm_id, type_id, fcp.rank;
+     </select>
+	
+	
      <select id="getFeatureCvTermsByFeature" parameterClass="Feature"
              resultMap="select-featurecvterm">
         SELECT
@@ -135,8 +162,8 @@
        WHERE pg_namespace.oid=pg_class.relnamespace AND 
              attrelid=pg_class.oid AND 
              relname='feature_cvterm' AND 
-             attnum > 0 AND 
-             nspname=#value#
+             attnum > 0
+             <!--AND nspname=#value#-->
      </select>
      
      
