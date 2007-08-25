@@ -117,8 +117,34 @@ public class IBatisDAO extends GmodDAO
   
   public List getFeatureCvTermsBySrcFeature(Feature srcFeature)
   {
-    return sqlMap.queryForList("getFeatureCvTermsBySrcFeature",
-                               srcFeature);
+//  find whether current schema has a feature_cvterm.rank column
+    String schema = ArtemisUtils.getCurrentSchema();
+    
+    // check column names
+    List list = sqlMap.queryForList("getFeatureCvTermColumnsForASchema", schema);
+    
+    boolean rank_exists = false;
+    for(int i=0; i<list.size(); i++)
+    {
+      if( ((String)list.get(i)).equals("rank") )
+      {  
+        rank_exists = true;
+        break;
+      }
+    }
+     
+    if(rank_exists)
+    {
+      logger4j.debug("USE getFeatureCvTermsBySrcFeature()");
+      return sqlMap.queryForList("getFeatureCvTermsBySrcFeature",
+          srcFeature);
+    }
+    else
+    {
+      logger4j.debug("USE getFeatureCvTermsNoRankBySrcFeature()");
+      return sqlMap.queryForList("getFeatureCvTermsNoRankBySrcFeature",
+          srcFeature);
+    }
   }
   
   public List getFeaturePubsBySrcFeature(final Feature srcFeature)
