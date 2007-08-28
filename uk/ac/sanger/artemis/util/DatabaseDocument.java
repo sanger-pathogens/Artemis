@@ -112,6 +112,8 @@ public class DatabaseDocument extends Document
   private boolean iBatis = false;
 
   private JPasswordField pfield;
+  
+  private boolean singleSchema = true;
 
   private List schema_list;
   
@@ -430,8 +432,8 @@ public class DatabaseDocument extends Document
       {
         //
         // Retrieve all features within a range
-        List schemaList = new Vector();
-        schemaList.add(schema);
+       // List schemaList = new Vector();
+       // schemaList.add(schema);
         
         Collection featureLocs = geneFeature.getFeatureLocsForFeatureId();
         Iterator it = featureLocs.iterator();
@@ -2107,6 +2109,7 @@ public class DatabaseDocument extends Document
             dao = getDAO();
             orgName = schema;
 
+            singleSchema = false;
             break;
           }
         }
@@ -2216,6 +2219,24 @@ public class DatabaseDocument extends Document
       }
       return connIB;
     }
+  }
+  
+  /**
+   * Get the username for this connection
+   * @return
+   */
+  public String getUserName()
+  {
+    // "localhost:10001/backup?chado"
+    
+    String url = (String)getLocation();
+    int index  = url.indexOf("?");
+    
+    String userName = url.substring(index+1).trim();
+    if(userName.startsWith("user="))
+      userName = userName.substring(5);
+    
+    return userName;
   }
   
   private GmodDAO getDAOOnly()
@@ -2592,5 +2613,16 @@ public class DatabaseDocument extends Document
   private JPasswordField getPfield()
   {
     return pfield;
+  }
+
+
+  /**
+   * Return true if this looks like a single schema postgres
+   * database
+   * @return
+   */
+  public boolean isSingleSchema()
+  {
+    return singleSchema;
   }
 }

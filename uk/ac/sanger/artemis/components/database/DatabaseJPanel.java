@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.9 2007-08-23 12:10:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.10 2007-08-28 09:57:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -76,6 +76,7 @@ public class DatabaseJPanel extends JPanel
   private JLabel status_line = new JLabel("");
   private boolean splitGFFEntry = false;
   private JTree tree;
+  private DatabaseDocument doc;
   
   public DatabaseJPanel(final DatabaseEntrySource entry_source,
                         final Splash splash_main)
@@ -140,14 +141,18 @@ public class DatabaseJPanel extends JPanel
       DatabaseTreeNode seq_node = 
         (DatabaseTreeNode)path.getLastPathComponent();
       String node_name = (String)seq_node.getUserObject();
-      String schema = seq_node.getSchema();
-      
+      String userName;
+      if(!doc.isSingleSchema())
+        userName = seq_node.getSchema();
+      else
+        userName = doc.getUserName();
+
       String id = seq_node.getFeatureId(); 
       if(id != null)
         getEntryEditFromDatabase(id, entry_source, tree, 
             status_line, stream_progress_listener, 
             splitGFFEntry, splash_main, 
-            node_name, schema);
+            node_name, userName);
     }
     catch(NullPointerException npe)
     {
@@ -164,7 +169,7 @@ public class DatabaseJPanel extends JPanel
    * @param splitGFFEntry
    * @param splash_main
    * @param dbDocumentName
-   * @param schema
+   * @param userName
    */
   private static void getEntryEditFromDatabase(
       final String srcfeatureId,
@@ -175,7 +180,7 @@ public class DatabaseJPanel extends JPanel
       final boolean splitGFFEntry,
       final Splash splash_main, 
       final String dbDocumentName,
-      final String schema)
+      final String userName)
   {
     SwingWorker entryWorker = new SwingWorker()
     {
@@ -188,60 +193,24 @@ public class DatabaseJPanel extends JPanel
         srcComponent.setCursor(cbusy);
         try
         {
-          entry_source.setSplitGFF(splitGFFEntry);
-
-          final Entry entry = entry_source.getEntry(srcfeatureId, schema,
-              stream_progress_listener);
-
-
-          DatabaseDocumentEntry db_entry =
-                         (DatabaseDocumentEntry)entry.getEMBLEntry();
-          DatabaseDocument doc = (DatabaseDocument)db_entry.getDocument();
-          doc.setName(dbDocumentName);
-
-          if(entry == null)
-          {
-            srcComponent.setCursor(cdone);
-            status_line.setText("No entry.");
-            return null;
-          }
-
-          final EntryEdit new_entry_edit = ArtemisMain.makeEntryEdit(entry);
-          
-          // add gff entries
-          if(splitGFFEntry)
-          {
-            final DatabaseDocumentEntry[] entries = entry_source.makeFromGff(
-                        (DatabaseDocument)db_entry.getDocument(), srcfeatureId, schema);
-            for(int i = 0; i < entries.length; i++)
-            {
-              if(entries[i] == null)
-                continue;
-
-              final Entry new_entry = new Entry(new_entry_edit.getEntryGroup().getBases(),
-                                                entries[i]);
-              new_entry_edit.getEntryGroup().add(new_entry);
-            }
-          }
-
-          new_entry_edit.setVisible(true);
-          status_line.setText("Sequence loaded.");
+          openEntry(srcfeatureId, entry_source, srcComponent, status_line, stream_progress_listener,
+              splitGFFEntry, splash_main, dbDocumentName, userName);
         }
-        catch(OutOfRangeException e)
+        catch(RuntimeException re)
         {
-          new MessageDialog(splash_main, "read failed: one of the features in "
-              + " the entry has an out of range " + "location: "
-              + e.getMessage());
+          DatabaseEntrySource entry_source = new DatabaseEntrySource();
+          entry_source.setLocation(true);
+
+          String url = entry_source.getLocation();
+          int index  = url.indexOf("?");
+            
+          String userName = url.substring(index+1).trim();
+          if(userName.startsWith("user="))
+            userName = userName.substring(5);
+            
+          openEntry(srcfeatureId, entry_source, srcComponent, status_line, stream_progress_listener,
+              splitGFFEntry, splash_main, dbDocumentName, userName);
         }
-        catch(NoSequenceException e)
-        {
-          new MessageDialog(splash_main, "read failed: entry contains no sequence");
-        }
-        catch(IOException e)
-        {
-          new MessageDialog(splash_main, "read failed due to IO error: " + e);
-        }
-        
         srcComponent.setCursor(cdone);
         return null;
       }
@@ -250,6 +219,76 @@ public class DatabaseJPanel extends JPanel
     entryWorker.start();
 
   }
+
+  
+  private static void openEntry(
+      final String srcfeatureId,
+      final DatabaseEntrySource entry_source, 
+      final JComponent srcComponent,
+      final JLabel status_line,
+      final InputStreamProgressListener stream_progress_listener,
+      final boolean splitGFFEntry,
+      final Splash splash_main, 
+      final String dbDocumentName,
+      final String userName) 
+  {
+    Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
+    try
+    {
+      entry_source.setSplitGFF(splitGFFEntry);
+
+      final Entry entry = entry_source.getEntry(srcfeatureId, userName,
+          stream_progress_listener);
+
+      DatabaseDocumentEntry db_entry = (DatabaseDocumentEntry) entry
+          .getEMBLEntry();
+      DatabaseDocument doc = (DatabaseDocument) db_entry.getDocument();
+      doc.setName(dbDocumentName);
+
+      if(entry == null)
+      {
+        srcComponent.setCursor(cdone);
+        status_line.setText("No entry.");
+        return;
+      }
+
+      final EntryEdit new_entry_edit = ArtemisMain.makeEntryEdit(entry);
+
+      // add gff entries
+      if(splitGFFEntry)
+      {
+        final DatabaseDocumentEntry[] entries = entry_source.makeFromGff(
+            (DatabaseDocument) db_entry.getDocument(), srcfeatureId, userName);
+        for(int i = 0; i < entries.length; i++)
+        {
+          if(entries[i] == null)
+            continue;
+
+          final Entry new_entry = new Entry(new_entry_edit.getEntryGroup()
+              .getBases(), entries[i]);
+          new_entry_edit.getEntryGroup().add(new_entry);
+        }
+      }
+
+      new_entry_edit.setVisible(true);
+      status_line.setText("Sequence loaded.");
+    }
+    catch(OutOfRangeException e)
+    {
+      new MessageDialog(splash_main, "read failed: one of the features in "
+          + " the entry has an out of range " + "location: "
+          + e.getMessage());
+    }
+    catch(NoSequenceException e)
+    {
+      new MessageDialog(splash_main, "read failed: entry contains no sequence");
+    }
+    catch(IOException e)
+    {
+      new MessageDialog(splash_main, "read failed due to IO error: " + e);
+    }
+  }
+
 
 
   /**
@@ -317,8 +356,9 @@ public class DatabaseJPanel extends JPanel
     {
       try
       {
-        DatabaseDocument doc = entry_source.getDatabaseDocument();
+        doc = entry_source.getDatabaseDocument();
         entries = doc.getDatabaseEntries();
+        
         final DatabaseTreeNode top = new DatabaseTreeNode("");
         createNodes(top, doc.getSchema(), entries);
         return new DatabaseJTree(top);
@@ -407,6 +447,7 @@ public class DatabaseJPanel extends JPanel
 
           seq_node = new DatabaseTreeNode(seq_name,
                                           featureId, schema);
+          
           typ_node.add(seq_node);
           nchild++;
           
