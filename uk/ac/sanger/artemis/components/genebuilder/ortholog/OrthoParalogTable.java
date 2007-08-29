@@ -59,6 +59,8 @@ import org.gmod.schema.sequence.FeatureLoc;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeaturePredicate;
 import uk.ac.sanger.artemis.chado.ArtemisUtils;
+import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
@@ -488,6 +490,7 @@ public class OrthoParalogTable extends AbstractMatchTable
     final int orthoColumn = getColumnIndex(ORTHO_COL);
     final Vector seqs = new Vector();
 
+    // find the gene feature
     Feature gene = feature;
     if(!feature.getKey().equals("gene"))
     {
@@ -496,18 +499,38 @@ public class OrthoParalogTable extends AbstractMatchTable
         gene = getParentFeature(gene);
     }
     
+    // find the exons for the gene
     if(gene != null)
     {
-      final String bases = gene.getTranslationBases();
-      
-      final String seqStr;
-      if(showPeptideSequence)
-        seqStr = AminoAcidSequence.getTranslation (bases, true).toString();
-      else
-        seqStr = bases;
-      
-      final String sysName = gene.getSystematicName();
-      seqs.add(new org.emboss.jemboss.editor.Sequence(sysName, seqStr));
+      ChadoCanonicalGene chadoGene = ((GFFStreamFeature)gene.getEmblFeature()).getChadoGene();
+      StringBuffer buffer = new StringBuffer();
+      try
+      {
+        String transcriptName =
+          chadoGene.getTranscriptFromName((String) feature.getQualifierByName("ID").getValues().get(0));
+        
+        List exons = chadoGene.getSplicedFeaturesOfTranscript(transcriptName);
+        
+        for (int i = 0 ; i < exons.size () ; ++i) 
+        {
+          final uk.ac.sanger.artemis.io.Feature this_feature =
+            (uk.ac.sanger.artemis.io.Feature)exons.get(i);
+          buffer.append (((Feature)this_feature.getUserData()).getBases ());
+        }
+        
+        final String seqStr;
+        if(showPeptideSequence)
+          seqStr = AminoAcidSequence.getTranslation (buffer.toString(), true).toString();
+        else
+          seqStr = buffer.toString();
+        
+        final String sysName = gene.getSystematicName();
+        seqs.add(new org.emboss.jemboss.editor.Sequence(sysName, seqStr));
+      }
+      catch(InvalidRelationException e)
+      {
+        e.printStackTrace();
+      }
     }
     
     for(int i=0; i<rows.length; i++)
@@ -535,7 +558,8 @@ public class OrthoParalogTable extends AbstractMatchTable
           for(int j = 0; j < featureLocs.size(); j++)
           {
             FeatureLoc featureLoc = (FeatureLoc) featureLocs.get(j);
-            phase = featureLoc.getPhase().intValue();
+            if(featureLoc.getPhase() != null)
+              phase = featureLoc.getPhase().intValue();
             char[] subSeq = sequence.getCharSubSequence(
                 (featureLoc.getFmin().intValue() + 1), 
                  featureLoc.getFmax().intValue());
@@ -546,7 +570,8 @@ public class OrthoParalogTable extends AbstractMatchTable
         {
           char[] subSeq = sequence.getSequence();
           sequenceBuffer.append(subSeq);
-          phase = sequence.getPhase().intValue();
+          if(sequence.getPhase() != null)
+            phase = sequence.getPhase().intValue();
         }
         
         final String seqStr;
@@ -563,6 +588,7 @@ public class OrthoParalogTable extends AbstractMatchTable
         JOptionPane.showMessageDialog(null, 
             "Cannot get the sequence for "+ortho,
             "Warning", JOptionPane.WARNING_MESSAGE);
+        npe.printStackTrace();
       }
     }
     
