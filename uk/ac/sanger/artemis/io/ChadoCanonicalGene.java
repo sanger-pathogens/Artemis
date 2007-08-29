@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.21 2007-03-29 08:35:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.22 2007-08-29 08:45:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -481,6 +481,75 @@ public class ChadoCanonicalGene
     return null;
   }
   
+  
+  /**
+   * Return the transcript from the name of a constituent feature
+   * @param constituent feature name
+   * @return transcript name
+   */
+  public String getTranscriptFromName(final String name)
+  {
+    //  check transcript
+    StringVector sv = new StringVector();
+    sv.add(name);    
+    Feature feature = containsTranscript(sv);
+    
+    if(feature != null)
+      return name;
+
+    // check exons
+    List transcriptNames = getTranscriptNames();
+    feature = getSplicedFeatures(name);
+    
+    if(feature != null)
+    {
+      for(int i=0; i<transcriptNames.size(); i++)
+      {
+        String transcriptName = (String)transcriptNames.get(i);
+        List splicedSegments = getSplicedFeaturesOfTranscript(transcriptName);
+        for(int j=0; j<splicedSegments.size(); j++)
+        {
+          Feature segment = (Feature)splicedSegments.get(j);
+          try
+          {
+            String segmentName = (String)segment.getQualifierByName("ID").getValues().get(0);
+            if(name.equals(segmentName))
+              return transcriptName;
+          }
+          catch(InvalidRelationException e)
+          {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+        }
+      }
+    }
+    
+    feature = getProtein(name);
+    
+    if(feature != null)
+    {
+      for(int i=0; i<transcriptNames.size(); i++)
+      {
+        String transcriptName = (String)transcriptNames.get(i);
+        Feature protein = getProteinOfTranscript(transcriptName);
+        try
+        {
+          String proteinsName = (String)protein.getQualifierByName("ID").getValues().get(0);
+          if(name.equals(proteinsName))
+            return transcriptName;
+        }
+        catch(InvalidRelationException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }
+ 
+    return null;
+  }
+  
   /**
    * Return the protein feature of a transcipt.
    * @param transcript_name
@@ -539,6 +608,32 @@ public class ChadoCanonicalGene
   public List getTranscripts()
   {
     return transcripts;
+  }
+  
+  
+  /**
+   * Get a list of trancripts.
+   * @return
+   */
+  private List getTranscriptNames()
+  {
+    List names = new Vector();
+    for(int i=0; i<transcripts.size(); i++)
+    {
+      Feature f = (Feature)transcripts.get(i);
+      try
+      {
+        names.add( (String)f.getQualifierByName("ID").getValues().get(0) );
+      }
+      catch(InvalidRelationException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      
+    }
+    
+    return names;
   }
   
   /**
