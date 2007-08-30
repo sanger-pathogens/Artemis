@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.19 2007-08-23 12:13:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.20 2007-08-30 09:53:03 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -136,52 +136,17 @@ public class MatchPanel extends JPanel
     return false;
   }
   
+  /**
+   * Create components for ortholog, paralog, cluster and similarity
+   * @param feature
+   * @return
+   */
   private Component createMatchQualifiersComponent(final Feature feature)
   {
     editableComponents = new Vector();
     final Qualifier orthoQualifier   = matchQualifiers.getQualifierByName(ORTHOLOG);
     final Qualifier paraQualifier    = matchQualifiers.getQualifierByName(PARALOG);
-    //Qualifier clusterQualifier = matchQualifiers.getQualifierByName(CLUSTER);
     final Qualifier simQualifier     = matchQualifiers.getQualifierByName(SIMILARITY);
-    
-    /*
-    if(orthoQualifier != null || paraQualifier != null)
-    {
-      if(orthoQualifier != null && orthoQualifier instanceof QualifierLazyLoading)
-      {
-        ((QualifierLazyLoading)orthoQualifier).setForceLoad(true);
-        final StringVector values = orthoQualifier.getValues();
-        StringVector clusterValues = null; 
-        for(int i=0; i<values.size(); i++)
-        {
-          StringVector rowStr = StringVector.getStrings((String)values.get(i), ";");
-          String cluster = ArtemisUtils.getString(rowStr, "cluster_name");
-          if(!cluster.equals(""))
-          {
-            if(clusterValues == null)
-              clusterValues = new StringVector();
-            clusterValues.add((String)values.get(i));
-          }
-        }
-        
-        if(clusterValues != null)
-        {
-          ((QualifierLazyLoading)orthoQualifier).removeValues(clusterValues);
-          if(clusterQualifier == null)
-            clusterQualifier = new Qualifier(ORTHOLOG, clusterValues);
-          else
-            clusterQualifier.getValues().addAll(clusterValues);
-        }
-      }
-
-      if(clusterQualifier != null)
-      {
-        StringVector values = clusterQualifier.getValues();
-        for(int i=0; i<values.size(); i++)
-          System.out.println(i+" CLUSTER   ===> "+values.get(i));
-      }
-    }
-    */
     
     DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
     final DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
@@ -272,58 +237,6 @@ public class MatchPanel extends JPanel
       }
     }
 
-    
-    //
-    // paralog
-    /*
-    GeneEditorPanel.addLightSeparator(matchVerticalBox);
-    JButton addParaButton = new JButton("ADD PARALOG");
-    addParaButton.setOpaque(false);
-    addParaButton.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      { 
-        JExtendedComboBox dbs = new JExtendedComboBox(databases);
-        JTextField accession = new JTextField(15);
-        
-        Box yBox = Box.createHorizontalBox();
-        yBox.add(dbs);
-        yBox.add(accession);
-
-        int select = JOptionPane.showConfirmDialog(null, 
-              yBox, "Add Paralog",
-              JOptionPane.OK_CANCEL_OPTION);
-        if(select == JOptionPane.CANCEL_OPTION)
-          return;
-        
-        add(PARALOG, ((String)dbs.getSelectedItem())+":"+
-                        accession.getText().trim(), feature);
-      }
-    });
-    xBox = Box.createHorizontalBox();
-    xBox.add(addParaButton);
-    xBox.add(Box.createHorizontalGlue());
-    matchVerticalBox.add(xBox);
-    
-    if(paraQualifier != null)
-    {
-      if(paraQualifier instanceof QualifierLazyLoading)
-        ((QualifierLazyLoading)paraQualifier).setForceLoad(true);
-
-      if(hide_show_para == null)
-        hide_show_para = new JButton("-");
-      
-      DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
-      DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
-      
-      paralogTable = new OrthoParalogTable(doc, paraQualifier, feature);
-      addHideShowButton(paralogTable.getTable(), hide_show_para);
-      xBox.add(hide_show_para);
-      editableComponents.add(paralogTable);
-      matchVerticalBox.add(paralogTable.getTable().getTableHeader());
-      matchVerticalBox.add(paralogTable.getTable());
-    }
-    */
     
     //
     // similarity
