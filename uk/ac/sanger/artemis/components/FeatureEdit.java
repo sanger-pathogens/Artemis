@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.45 2007-07-13 15:52:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.46 2007-08-30 16:21:26 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -68,7 +68,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.45 2007-07-13 15:52:41 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.46 2007-08-30 16:21:26 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -346,14 +346,21 @@ public class FeatureEdit extends JPanel
     qualifier_text_area = new QualifierTextArea();
     qualifier_text_area.setWrapStyleWord(true);
 
+    FlowLayout flowLayoutZeroHgap = new FlowLayout(FlowLayout.LEADING);
+    flowLayoutZeroHgap.setHgap(0);
     key_choice =
       new KeyChoice(getEntryInformation(),getFeature().getKey());
-
+    key_choice.setLayout(flowLayoutZeroHgap);
     final JPanel key_and_qualifier_panel = new JPanel();
     location_text.setBackground(Color.white);
 
-    final JPanel key_panel = new JPanel();
-    key_panel.add(new JLabel("Key:"));
+    final JPanel key_panel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+    final JLabel locLabel = new JLabel("Location: ");
+    final JLabel keyLabel = new JLabel("Key: ");
+    keyLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+    keyLabel.setPreferredSize(locLabel.getPreferredSize());
+    
+    key_panel.add(keyLabel);
     key_panel.add(key_choice);
 
     key_and_qualifier_panel.setLayout(new BorderLayout());
@@ -366,8 +373,8 @@ public class FeatureEdit extends JPanel
     qualifier_choice = new QualifierChoice(getEntryInformation(),
                                   key_choice.getSelectedItem(),null,
                                   isGFF);
-
-    final JPanel qualifier_panel = new JPanel();
+    
+    final JPanel qualifier_panel = new JPanel(new FlowLayout(FlowLayout.TRAILING,0,0));
     final JButton qualifier_add_button = new JButton("Add Qualifier:");
 
     qualifier_panel.add(qualifier_add_button);
@@ -459,21 +466,20 @@ public class FeatureEdit extends JPanel
     });
 
     final JPanel middle_panel = new JPanel();
-    middle_panel.setLayout(new BorderLayout());
+    middle_panel.setLayout(new BorderLayout(0,0));
 
     final JPanel lower_panel = new JPanel();
-    lower_panel.setLayout(new BorderLayout());
+    lower_panel.setLayout(new BorderLayout(0,0));
 
-    final JPanel outer_location_button_panel = new JPanel();
-    lower_panel.add(outer_location_button_panel, "North");
-    outer_location_button_panel.setLayout(new BorderLayout());
+    //final JPanel outer_location_button_panel = new JPanel(flowLayoutZeroHgap);
+    //outer_location_button_panel.setLayout(new BorderLayout(0,0));
 
-    final JPanel location_button_panel = new JPanel();
-    outer_location_button_panel.add(location_button_panel, "West");
-
-    final JPanel location_panel = new JPanel();
-    location_panel.setLayout(new BorderLayout());
-    location_panel.add(new JLabel("location: "), "West");
+    final JPanel location_button_panel = new JPanel(flowLayoutZeroHgap);
+    //outer_location_button_panel.add(location_button_panel, "West");
+    lower_panel.add(location_button_panel, "North");
+    
+    final JPanel location_panel = new JPanel(new BorderLayout(0,0));
+    location_panel.add(locLabel, "West");
     location_panel.add(location_text, "Center");
 
     final JButton complement_button = new JButton("Complement");
@@ -881,20 +887,10 @@ public class FeatureEdit extends JPanel
     }
 
     final FlowLayout flow_layout =
-                 new FlowLayout(FlowLayout.CENTER, 18, 5);
+                 new FlowLayout(FlowLayout.CENTER, 18, 1);
 
     final JPanel ok_cancel_update_panel = new JPanel(flow_layout);
-
-    if(!getFeature().isReadOnly()) 
-      ok_cancel_update_panel.add(ok_button);
-
-    ok_cancel_update_panel.add(cancel_button);
-
-    if(!getFeature().isReadOnly()) 
-      ok_cancel_update_panel.add(apply_button);
-
-    add(ok_cancel_update_panel, "South");
-
+    Box fillerBox = Box.createHorizontalBox();
     if(((DocumentEntry)getFeature().getEmblFeature().getEntry()).getDocument() 
         instanceof DatabaseDocument)
     {
@@ -920,10 +916,24 @@ public class FeatureEdit extends JPanel
           lower_panel.repaint();
         }
       });
-      lower_panel.add(tabbedView, "South");
+
+      ok_cancel_update_panel.add(tabbedView);
+      fillerBox.add(Box.createHorizontalStrut( 
+          tabbedView.getPreferredSize().width ));
     }
     else
       lower_panel.add(new JScrollPane(qualifier_text_area), "Center");
+    
+    if(!getFeature().isReadOnly()) 
+      ok_cancel_update_panel.add(ok_button);
+
+    ok_cancel_update_panel.add(cancel_button);
+
+    if(!getFeature().isReadOnly()) 
+      ok_cancel_update_panel.add(apply_button);
+    ok_cancel_update_panel.add(fillerBox);
+    
+    add(ok_cancel_update_panel, "South");
     
     middle_panel.add(lower_panel, "Center");
 
