@@ -456,7 +456,7 @@ public class DatabaseDocument extends Document
         if(dao instanceof IBatisDAO)
           ((IBatisDAO) dao).startTransaction();
 
-        logger4j.debug("RETRIEVE SOURCE FEATURE");
+        logger4j.debug("RETRIEVE SOURCE FEATURE FROM: "+getLocation());
         Feature srcFeature = getChadoSequence(dao, sequenceBuffer);
         gff_buffer = getGff(dao, srcFeature);
         
@@ -876,7 +876,23 @@ public class DatabaseDocument extends Document
     
     Hashtable id_store = new Hashtable();
 
-    reset((String)getLocation(), (String)schema_search.get(0));
+    boolean singleSchema = true;
+    final List pg_schemas = dao.getSchema(); 
+    Iterator schemasIt = pg_schemas.iterator();
+    while(schemasIt.hasNext())
+    {
+      String thisSchema = (String)schemasIt.next();
+      
+      if( thisSchema.equalsIgnoreCase(schema) )
+      {
+        singleSchema = false;
+        break;
+      }
+    }
+    if(singleSchema)
+      logger4j.debug("SINGLE SCHEMA");
+    else
+      reset((String)getLocation(), (String)schema_search.get(0));
     dao = getDAO();
     Feature chadoFeature = 
       (Feature)(dao.getFeaturesByUniqueName(search_gene).get(0));
