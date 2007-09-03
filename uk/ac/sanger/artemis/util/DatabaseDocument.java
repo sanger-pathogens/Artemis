@@ -61,6 +61,8 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.io.*;
 import java.net.ConnectException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.HashMap;
@@ -1854,6 +1856,7 @@ public class DatabaseDocument extends Document
       }
     }
 
+    Collections.sort(cdsFeatureLocs, new LocationComarator());
     return cdsFeatureLocs;
   }
   
@@ -2640,5 +2643,38 @@ public class DatabaseDocument extends Document
   public boolean isSingleSchema()
   {
     return singleSchema;
+  }
+  
+  /**
+   * Ensure exon featurelocs are in the correct order
+   */
+  class LocationComarator implements Comparator
+  {
+
+    public int compare(Object o1, Object o2)
+    {
+      int loc1 = ((FeatureLoc)o1).getFmin().intValue();
+      int loc2 = ((FeatureLoc)o2).getFmin().intValue();
+      
+      if(loc2 == loc1)
+        return 0;
+      int strand = ((FeatureLoc)o1).getStrand().intValue();
+      
+      if(strand < 0)
+      {
+        if(loc2 > loc1)
+          return 1;
+        else
+          return -1;
+      }
+      else
+      {
+        if(loc2 > loc1)
+          return -1;
+        else
+          return 1;
+      }
+    }
+    
   }
 }
