@@ -23,11 +23,16 @@
 		<result property="featureByObjectId.featureId" column="object_id"/>
      </resultMap>
 
-	 <resultMap id="map-feature-relationship-for-subjectId" class="FeatureRelationship"
-		        extends="map-basic-feature-relationship">
-		<result property="featureBySubjectId" column="subject_id" 
-			                                  select="getLazyFeatureById"/>
-     </resultMap>
+	<resultMap id="map-feature-relationship-for-subjectId" class="FeatureRelationship">
+		<result property="cvTerm.name" column="fr_name"/>
+		<result property="featureBySubjectId.featureId" column="subject_id"/>
+		<result property="featureBySubjectId.uniqueName" column="subject_name"/>
+		<result property="featureBySubjectId.organism.commonName" column="subject_common_name"/>
+		<result property="featureBySubjectId.cvTerm.name" column="subject_cvterm" />
+		<result property="featureBySubjectId.featureRelationshipsForSubjectId" 
+			                           column="{{subject_id=subject_id}}" 
+                                       select="getParentFeatureRelationship" /> 
+    </resultMap>
 	
     <resultMap id="select-relationship" class="FeatureRelationship">
 		<result property="featureRelationshipId" column="feature_relationship_id"/>
@@ -39,7 +44,18 @@
         <result property="rank" column="rank" />
         <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
      </resultMap>
-     
+
+    <resultMap id="map-parent-relationship" class="FeatureRelationship">
+		<result property="featureRelationshipId" column="feature_relationship_id"/>
+        <result property="featureBySubjectId" column="subject_id" 
+			                                  select="getLazyFeatureById" />
+        <result property="featureByObjectId"  column="object_id"
+			                                  select="getLazyFeatureNameAndTypeById" />
+        <result property="value" column="value" />
+        <result property="rank" column="rank" />
+        <result property="cvTerm.name" column="name" />
+     </resultMap>	
+	     
      <!--  select feature_relationship -->
      <select id="getFeatureRelationship" resultMap="select-relationship">
        SELECT feature_relationship_id, subject_id, object_id, type_id, value, rank 
@@ -55,7 +71,14 @@
          </dynamic>
      </select>
 
-
+	<select id="getParentFeatureRelationship" resultMap="map-parent-relationship">
+       SELECT feature_relationship_id, subject_id, object_id, type_id, value, rank, cvterm.name
+       FROM feature_relationship
+	   LEFT JOIN cvterm ON cvterm_id=type_id
+       WHERE subject_id=#subject_id# AND 
+		( cvterm.name='derives_from' OR cvterm.name='part_of' OR cvterm.name='proper_part_of' )
+     </select>
+	
     <update id="updateFeatureRelationshipsForSubjectId" 
            parameterClass="FeatureRelationship">
       UPDATE feature_relationship

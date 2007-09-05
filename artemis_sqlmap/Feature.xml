@@ -66,6 +66,15 @@
                                 select="getOrganism" />
   </resultMap>
 	
+	
+  <resultMap id="map-feature-name-lazy" class="Feature">
+	 <result property="uniqueName" column="uniquename"/>
+	 <result property="cvTerm.name" column="name" />
+	 <result property="featureRelationshipsForSubjectId" column="{subject_id=id}" 
+                                       select="getParentFeatureRelationship" /> 
+  </resultMap>
+	  	
+	
   <resultMap id="map-feature-withprop" class="Feature" 
 	         groupBy="featureId" extends="map-basicfeature">
     <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
@@ -95,12 +104,15 @@
 	
 
   <resultMap id="map-clusterfeature" class="Feature" 
-	         groupBy="featureId" extends="map-basicfeature">       
-    <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
+	         groupBy="featureId">
+	<result property="featureId" column="id"/>
+    <result property="uniqueName" column="cluster_name"/>       
+    <result property="cvTerm.name" column="cluster_cvterm"/>
 	<result property="featureProps" column="{feature_id=id}" 
                                        select="getFeaturePropByFeatureId" />
+	  
 	<result property="featureRelationshipsForSubjectId" 
-   	            resultMap="FeatureRelationship.map-feature-relationship-for-subjectId"  /> 
+   	            resultMap="FeatureRelationship.map-feature-relationship-for-subjectId"  />  
     <result property="analysisFeatures" resultMap="AnalysisFeature.map-analysisfeature" />                                                
   </resultMap>
 	
@@ -216,6 +228,15 @@
     WHERE f.feature_id=$featureId$
   </select>
 	
+  <select id="getLazyFeatureNameAndTypeById" resultMap ="map-feature-name-lazy" >
+	SELECT
+	  uniquename, cvTerm.name, feature_id AS id
+	FROM feature f
+	LEFT JOIN cvterm ON cvterm.cvterm_id=type_id
+    WHERE f.feature_id=$featureId$
+  </select>
+	
+	
   <select id="getFeatureById" resultMap ="map-feature-withprop" 
 		cacheModel="feature-cache">
 	SELECT
@@ -307,24 +328,26 @@
   <!-- Returns cluster/ortholog/paralog for a list of feature_id's -->
   <select id="getLazyClustersByFeatureIds" parameterClass="java.util.List" 
                              resultMap="map-clusterfeature">
-	SELECT 
-	  timelastmodified, 
+	SELECT
 	  f.feature_id AS id,
-	  fr.feature_relationship_id, 
+	  f.uniquename AS cluster_name,
+	  cv_f.name AS cluster_cvterm,
+	  f1.uniquename AS subject_name,
 	  fr.subject_id,
-	  fr.type_id AS relation_type_id,
-	  fr.value AS relation_value,
-	  fr.rank,
-	  f.uniquename, 
-	  f.type_id, 
-	  f.name AS feature_name,    
-	  f.seqlen,
+	  cv_fr.name AS fr_name,
+	  common_name AS subject_common_name,
+	  cv_f1.name AS subject_cvterm,
 	  rawscore, normscore, significance, identity, a.analysis_id,
 	  a.name, description, program, programversion, algorithm, sourcename, sourceversion,sourceuri, timeexecuted     
 	FROM feature f
 	LEFT JOIN feature_relationship fr ON  f.feature_id=fr.object_id 
 	LEFT JOIN analysisfeature af ON f.feature_id=af.feature_id
-	LEFT JOIN analysis a ON af.analysis_id=a.analysis_id 
+	LEFT JOIN analysis a ON af.analysis_id=a.analysis_id
+	LEFT JOIN feature f1 ON f1.feature_id=subject_id 
+	LEFT JOIN organism ON f1.organism_id=organism.organism_id
+    LEFT JOIN cvterm AS cv_f1 ON cv_f1.cvterm_id=f1.type_id
+	LEFT JOIN cvterm AS cv_fr ON cv_fr.cvterm_id=fr.type_id
+	LEFT JOIN cvterm AS cv_f  ON cv_f.cvterm_id=f.type_id
 	WHERE f.feature_id IN <iterate open="(" close=")" conjunction=","> #[]# </iterate>
   </select>
 
