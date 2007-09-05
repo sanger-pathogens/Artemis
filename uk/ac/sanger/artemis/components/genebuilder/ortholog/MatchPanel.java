@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.20 2007-08-30 09:53:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.21 2007-09-05 09:28:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -43,6 +43,7 @@ import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierLazyLoading;
 import uk.ac.sanger.artemis.io.QualifierVector;
@@ -182,7 +183,8 @@ public class MatchPanel extends JPanel
       if(paraQualifier != null && paraQualifier instanceof QualifierLazyLoading)
         ((QualifierLazyLoading)paraQualifier).setForceLoad(true);
       
-      if(OrthoParalogTable.hasOrthoParlaog(orthoQualifier, paraQualifier))
+      if(OrthoParalogTable.hasOrthoParlaog(orthoQualifier, paraQualifier, 
+                                          (GFFStreamFeature)feature.getEmblFeature()))
       {
         if(hide_show_ortho == null)
           hide_show_ortho = new JButton("-");
@@ -208,9 +210,11 @@ public class MatchPanel extends JPanel
       //
       // clusters
       //
-      if(OrthoParalogTable.hasCluster(orthoQualifier, paraQualifier))
+      if(OrthoParalogTable.hasCluster(orthoQualifier, paraQualifier,
+          (GFFStreamFeature)feature.getEmblFeature()))
       {
-        if(OrthoParalogTable.hasOrthoParlaog(orthoQualifier, paraQualifier))
+        if(OrthoParalogTable.hasOrthoParlaog(orthoQualifier, paraQualifier,
+            (GFFStreamFeature)feature.getEmblFeature()))
           GeneEditorPanel.addLightSeparator(matchVerticalBox);
        
         if(hide_show_cluster == null)

@@ -59,11 +59,13 @@ import org.gmod.schema.sequence.FeatureLoc;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeaturePredicate;
 import uk.ac.sanger.artemis.chado.ArtemisUtils;
+import uk.ac.sanger.artemis.chado.ClusterLazyQualifierValue;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
+import uk.ac.sanger.artemis.io.QualifierLazyLoading;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
@@ -148,6 +150,8 @@ public class OrthoParalogTable extends AbstractMatchTable
         StringVector rowStr = StringVector.getStrings((String) values.get(j),
             ";");
 
+        if(rowStr.size() < 1)
+          continue;
         if( (ArtemisUtils.getString(rowStr, "cluster_name=").equals("") && !showCluster) ||
             (!ArtemisUtils.getString(rowStr, "cluster_name=").equals("") && showCluster) )
           processRowData(rowStr, rowData, origQualifier.getName());
@@ -343,11 +347,12 @@ public class OrthoParalogTable extends AbstractMatchTable
    * @return
    */
   protected static boolean hasCluster(final Qualifier orthoQualifier,
-                                      final Qualifier paraQualifier)
+                                      final Qualifier paraQualifier,
+                                      final GFFStreamFeature feature)
   {
-    if(hasClusterOrOrthoParalog(true, orthoQualifier))
+    if(hasClusterOrOrthoParalog(true, orthoQualifier, feature))
       return true;
-    return hasClusterOrOrthoParalog(true, paraQualifier);
+    return hasClusterOrOrthoParalog(true, paraQualifier, feature);
   }
   
   /**
@@ -355,18 +360,26 @@ public class OrthoParalogTable extends AbstractMatchTable
    * @return
    */
   protected static boolean hasOrthoParlaog(final Qualifier orthoQualifier,
-                                           final Qualifier paraQualifier)
+                                           final Qualifier paraQualifier,
+                                           final GFFStreamFeature feature)
   {
-    if(hasClusterOrOrthoParalog(false, orthoQualifier))
+    if(hasClusterOrOrthoParalog(false, orthoQualifier, feature))
+    {
+      forceBulkLoad(paraQualifier, feature);
       return true;
-    return hasClusterOrOrthoParalog(false, paraQualifier);
+    }
+    return hasClusterOrOrthoParalog(false, paraQualifier, feature);
   }
   
   private static boolean hasClusterOrOrthoParalog(final boolean lookForCluster, 
-                                                  final Qualifier qualifier)
+                                                  final Qualifier qualifier,
+                                                  final GFFStreamFeature feature)
   {
     if(qualifier == null)
       return false;
+    
+    forceBulkLoad(qualifier, feature);
+    
     StringVector values = qualifier.getValues();
 
     for(int j = 0; j < values.size(); j++)
@@ -382,6 +395,21 @@ public class OrthoParalogTable extends AbstractMatchTable
     return false;
   }
   
+  /**
+   * For long lists of ortho/paralogs this speeds-up their loading
+   * @param qualifier
+   * @param feature
+   */
+  private static void forceBulkLoad(final Qualifier qualifier,
+                             final GFFStreamFeature feature)
+  {
+    if(qualifier instanceof QualifierLazyLoading && 
+        !((QualifierLazyLoading)qualifier).isAllLazyValuesLoaded())
+    {
+      List values = ((QualifierLazyLoading)qualifier).getLazyValues();
+      ClusterLazyQualifierValue.setClusterFromValueList(values, feature);
+    }    
+  }
   
   /**
    * Find the parent feature
