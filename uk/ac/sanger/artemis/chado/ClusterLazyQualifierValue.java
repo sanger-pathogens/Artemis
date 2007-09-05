@@ -27,6 +27,7 @@ package uk.ac.sanger.artemis.chado;
 
 
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -51,7 +52,7 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
   private boolean lazyLoaded = false;
   private String value;
   private GFFStreamFeature feature;
-
+  private List clusters;
   
   /**
    * Qualifier object to handle lazy loading of cluster/ortholog/paralog data
@@ -82,26 +83,74 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
     this.forceLoad = forceLoad;
   }
 
+  /**
+   * This speeds up loading for a list of ortho/paralogs
+   * @param values List of ClusterLazyQualifierValue
+   * @param feature
+   */
+  public static void setClusterFromValueList(final List values, final GFFStreamFeature feature)
+  {
+    final List clusterFeatureIds = new Vector();
+    final Hashtable hash = new Hashtable(values.size());
+    for(int i=0; i<values.size(); i++)
+    {
+      ClusterLazyQualifierValue  lazyValue = (ClusterLazyQualifierValue)values.get(i);
+      StringVector strings = StringVector.getStrings(lazyValue.getValue(), ";");
+      String f_id[] = ArtemisUtils.getString(strings, "object_id=").split("=");
+      Integer clusterFeatureId = Integer.valueOf(f_id[1]);
+      clusterFeatureIds.add(clusterFeatureId);
+      hash.put(clusterFeatureId, lazyValue);
+    }
+    
+    final Document document = ((DocumentEntry)feature.getEntry()).getDocument();
+    List allClusters = ((DatabaseDocument)document).getClustersByFeatureIds(clusterFeatureIds);
+    for(int i=0;i<allClusters.size(); i++)
+    {
+      final Feature clusterFeature = (Feature)allClusters.get(i);
+      ClusterLazyQualifierValue lazyValue = 
+        (ClusterLazyQualifierValue)hash.get(new Integer(clusterFeature.getFeatureId()));
+      lazyValue.addToCluster(clusterFeature);
+    }
+  }
+  
+  private void addToCluster(final Feature clusterFeature)
+  {
+    if(clusters == null)
+      clusters = new Vector();
+    clusters.add(clusterFeature);
+  }
+  
   private String getHardString()
   {
     lazyLoaded = true;
     
     final String featureId = (String) feature.getQualifierByName("feature_id").getValues().get(0);
-    final List featureIds = new Vector();
-    
-    StringVector strings = StringVector.getStrings(value, ";");
-    String f_id[] = ArtemisUtils.getString(strings, "object_id=").split("=");
-    featureIds.add( Integer.valueOf(f_id[1]) );
-    
+     
+    StringVector strings = StringVector.getStrings(value, ";");   
     String rank = ArtemisUtils.getString(strings, "rank");
     
-    final Document document = ((DocumentEntry)feature.getEntry()).getDocument();
-    List clusters = ((DatabaseDocument)document).getClustersByFeatureIds(featureIds);
-    
+    //
+    // should already have the clusters loaded by calling setClusterFromValueList()
+    if(clusters == null)
+    {
+      final List featureIds = new Vector();
+      String f_id[] = ArtemisUtils.getString(strings, "object_id=").split("=");
+      featureIds.add( Integer.valueOf(f_id[1]) );
+      final Document document = ((DocumentEntry)feature.getEntry()).getDocument();
+      clusters = ((DatabaseDocument)document).getClustersByFeatureIds(featureIds);
+      for(int i=0;i<clusters.size(); i++)
+        System.out.println("*********NOT PRELOADED "+
+            ((Feature)clusters.get(i)).getUniqueName() );
+    }
+
     value = "";
     for(int i=0;i<clusters.size(); i++)
     {
       final Feature clusterFeature = (Feature)clusters.get(i);
+      
+      if(clusterFeature.getCvTerm().getName().indexOf("match") < 0)
+        continue;
+
       final Collection subjects = clusterFeature.getFeatureRelationshipsForSubjectId();
       final Iterator it = subjects.iterator();
       int cnt = 0;
@@ -134,10 +183,7 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
           value = value.concat(geneName+" link="+
               subjectFeature.getUniqueName());
           
-          CvTerm cvTerm = 
-            DatabaseDocument.getCvTermByCvTermId(fr.getCvTerm().getCvTermId(), feature);
-          
-          value = value.concat(" type="+cvTerm.getName());
+          value = value.concat(" type="+fr.getCvTerm().getName());
           
           cnt++;
         }
@@ -147,6 +193,9 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
       else
         value = value.concat("; match_name="+clusterFeature.getUniqueName());
     }
+    if(value.equals(""))
+      return value;
+    
     value = value.concat("; "+rank);
 
     return value;
@@ -172,6 +221,12 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
      
     }
     return null;
+  }
+
+
+  public String getValue()
+  {
+    return value;
   }
   
 
