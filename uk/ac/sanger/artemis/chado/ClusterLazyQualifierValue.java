@@ -99,11 +99,13 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
       String f_id[] = ArtemisUtils.getString(strings, "object_id=").split("=");
       Integer clusterFeatureId = Integer.valueOf(f_id[1]);
       clusterFeatureIds.add(clusterFeatureId);
+      lazyValue.initCluster();
       hash.put(clusterFeatureId, lazyValue);
     }
     
     final Document document = ((DocumentEntry)feature.getEntry()).getDocument();
     List allClusters = ((DatabaseDocument)document).getClustersByFeatureIds(clusterFeatureIds);
+    
     for(int i=0;i<allClusters.size(); i++)
     {
       final Feature clusterFeature = (Feature)allClusters.get(i);
@@ -118,6 +120,11 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
     if(clusters == null)
       clusters = new Vector();
     clusters.add(clusterFeature);
+  }
+  
+  private void initCluster()
+  {
+    clusters = new Vector();
   }
   
   private String getHardString()
