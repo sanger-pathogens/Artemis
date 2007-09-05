@@ -1360,9 +1360,10 @@ public class ChadoTransactionManager
          }
          else if(MatchPanel.isClusterTag(qualifierName))
          {
-           if(new_qualifier_strings != null &&
+           if(qualifierString.equals("") ||
+               (new_qualifier_strings != null &&
                OrthoParalogTable.containsStringInStringVector(
-                   qualifierString, new_qualifier_strings))
+                   qualifierString, new_qualifier_strings)))
              continue;
            
            logger4j.debug(uniquename+"  in handleReservedTags() DELETE "+qualifierName+" "+
