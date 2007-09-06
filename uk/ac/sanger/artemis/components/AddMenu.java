@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.25 2007-06-27 10:05:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.26 2007-09-06 10:07:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -72,7 +72,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.25 2007-06-27 10:05:37 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.26 2007-09-06 10:07:24 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -274,7 +274,7 @@ public class AddMenu extends SelectionMenu
 
     mark_orfs_with_size_item.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent event) {
-        markORFSWithSize (false);
+        markORFSWithSize (false, frame);
       }
     });
 
@@ -285,7 +285,7 @@ public class AddMenu extends SelectionMenu
 
     mark_empty_orfs_with_size_item.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent event) {
-        markORFSWithSize (true);
+        markORFSWithSize (true, frame);
       }
     });
 
@@ -974,7 +974,7 @@ public class AddMenu extends SelectionMenu
    *  @param empty_only If true only those ORFS that don't already contain a
    *    segment will be marked.
    **/
-  private void markORFSWithSize (final boolean empty_only) {
+  private void markORFSWithSize (final boolean empty_only, final JFrame frame) {
     final int default_minimum_orf_size =
       Options.getOptions ().getMinimumORFSize ();
 
@@ -1004,7 +1004,7 @@ public class AddMenu extends SelectionMenu
             Integer.valueOf (requester_text).intValue ();
 
       markOpenReadingFrames(minimum_orf_size, empty_only, 
-                            useFastaBoundary.isSelected());
+                            useFastaBoundary.isSelected(), frame);
     } 
     catch (NumberFormatException e) 
     {
@@ -1022,7 +1022,9 @@ public class AddMenu extends SelectionMenu
    **/
   private void markOpenReadingFrames (final int minimum_orf_size,
                                       final boolean empty_only,
-                                      final boolean isMultiFasta) {
+                                      final boolean isMultiFasta,
+                                      final JFrame frame) {
+    frame.setCursor(cbusy);
     try {
       final Entry new_entry =
         entry_group.createEntry ("ORFS_" + minimum_orf_size + '+');
@@ -1085,8 +1087,10 @@ public class AddMenu extends SelectionMenu
             empty_only, sequence_length, 1);
       }
     } catch (OutOfRangeException e) {
+      frame.setCursor(cdone);
       throw new Error ("internal error - unexpected OutOfRangeException");
     }
+    frame.setCursor(cdone);
   }
 
   /**
