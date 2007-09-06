@@ -532,7 +532,7 @@ public class ArtemisUtils
     else if(!clusterName.equals(""))
       matchFeature.setUniqueName(clusterName.substring(13));
     else
-      matchFeature.setUniqueName("CLUSTER_" + uniqueName + "_" + link);
+      matchFeature.setUniqueName("ORTHO_PARA_" + uniqueName + "_" + link);
     matchFeature.setCvTerm(getCvTerm("protein_match"));
     matchFeature.setOrganism(organism);
     
