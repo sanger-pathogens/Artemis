@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.26 2007-09-06 10:07:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.27 2007-09-07 14:07:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -72,7 +72,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.26 2007-09-06 10:07:24 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.27 2007-09-07 14:07:24 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -232,8 +232,11 @@ public class AddMenu extends SelectionMenu
                               entry_group);
       }
     });
-
+    
     add (create_intron_features_item);
+    if(entry_group.getDefaultEntry().getEMBLEntry() instanceof 
+        uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
+      create_intron_features_item.setEnabled(false);
 
     create_exon_features_item =
       new JMenuItem ("Create Exon Features");
@@ -245,6 +248,9 @@ public class AddMenu extends SelectionMenu
     });
 
     add (create_exon_features_item);
+    if(entry_group.getDefaultEntry().getEMBLEntry() instanceof 
+        uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
+      create_exon_features_item.setEnabled(false);
 
     create_gene_features_item =
       new JMenuItem ("Create Gene Features");
@@ -256,6 +262,9 @@ public class AddMenu extends SelectionMenu
     });
 
     add (create_gene_features_item);
+    if(entry_group.getDefaultEntry().getEMBLEntry() instanceof 
+        uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
+      create_gene_features_item.setEnabled(false);
 
     addSeparator ();
 
