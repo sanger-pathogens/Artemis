@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.10 2007-08-28 09:57:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.11 2007-09-07 14:05:41 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -360,7 +360,7 @@ public class DatabaseJPanel extends JPanel
         entries = doc.getDatabaseEntries();
         
         final DatabaseTreeNode top = new DatabaseTreeNode("");
-        createNodes(top, doc.getSchema(), entries);
+        createNodes(top, doc.getSchema(), doc, entries);
         return new DatabaseJTree(top);
       }
       catch(ConnectException e)
@@ -385,9 +385,11 @@ public class DatabaseJPanel extends JPanel
    * Create the nodes of the organism JTree
    * @param top       root node
    * @param schema    <code>List</code>
+   * @param doc       DatabaseDocument
    * @param organism  sequences collection
    */
   private void createNodes(DatabaseTreeNode top, List schemas,
+                           DatabaseDocument doc,
                            HashMap entries)
   {
     DatabaseTreeNode schema_node;
@@ -446,7 +448,9 @@ public class DatabaseJPanel extends JPanel
             typ_node = (DatabaseTreeNode) seq_type_node.get(type);
 
           seq_node = new DatabaseTreeNode(seq_name,
-                                          featureId, schema);
+                                          featureId, schema, 
+                                          doc.getUserName(),
+                                          doc.isSingleSchema());
           
           typ_node.add(seq_node);
           nchild++;

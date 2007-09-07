@@ -51,6 +51,8 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
   
   private String featureId;
   private String schema;
+  private String userName;
+  private boolean singleSchema;
     
   public DatabaseTreeNode(final String name)
   { 
@@ -59,11 +61,15 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
 
   public DatabaseTreeNode(final String name,
                           final String featureId,
-                          final String schema)
+                          final String schema,
+                          final String userName,
+                          final boolean singleSchema)
   { 
     super(name);
-    this.featureId   = featureId;
-    this.schema      = schema;
+    this.featureId    = featureId;
+    this.schema       = schema;
+    this.userName     = userName;
+    this.singleSchema = singleSchema;
   }
     
 // Transferable
@@ -84,7 +90,8 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
   {
     if(d.equals(DATABASETREENODE))
       return new DatabaseTreeNode((String)getUserObject(), 
-                                  getFeatureId(), getSchema());
+                                  getFeatureId(), getSchema(),
+                                  getUserName(), isSingleSchema());
     else if(d.equals(DataFlavor.stringFlavor))
       return getSchema()+":featureId="+getFeatureId();
     else throw new UnsupportedFlavorException(d);
@@ -101,6 +108,11 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     return schema;
   }
   
+  public boolean isSingleSchema()
+  {
+    return singleSchema;
+  }
+  
 //Serializable
   private void writeObject(java.io.ObjectOutputStream out) throws IOException
   {
@@ -112,5 +124,12 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
   {
     in.defaultReadObject();
   }
+
+  public String getUserName()
+  {
+    return userName;
+  }
+
+
 
 }
