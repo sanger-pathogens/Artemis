@@ -125,6 +125,8 @@ public class DatabaseDocument extends Document
   
   private Feature geneFeature;
   
+  public static String EXONMODEL = "exon-model";
+  
   // controlled vocabulary
   /** controlled_curation controlled vocabulary */
   public static String CONTROLLED_CURATION_TAG_CVNAME = 
@@ -1138,8 +1140,12 @@ public class DatabaseDocument extends Document
     if(gff_source != null)
       this_buff.append(gff_source+"\t");    // source
     else
-      this_buff.append("chado\t");            
-    this_buff.append(typeName + "\t");      // type
+      this_buff.append("chado\t");
+    
+    if(typeName.equals("exon"))
+      this_buff.append(EXONMODEL + "\t");   // type
+    else
+      this_buff.append(typeName + "\t");    // type
     this_buff.append(fmin + "\t");          // start
     this_buff.append(fmax + "\t");          // end
     this_buff.append(".\t");                // score
@@ -1825,7 +1831,7 @@ public class DatabaseDocument extends Document
   }
   
   /**
-   * Get the CDS FeatureLoc's associated with a give transcript
+   * Get the CDS FeatureLoc's associated with a given transcript
    * @param transcriptName
    * @return
    */
@@ -2500,7 +2506,7 @@ public class DatabaseDocument extends Document
                                        final String uniquename,
                                        final Timestamp timestamp,
                                        final GmodDAO dao,
-                                       final String keyName,
+                                       String keyName,
                                        final Object featureObject)
   {
     Feature feature = dao.getFeatureByUniqueName(uniquename, keyName);

@@ -20,12 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.50 2007-04-04 12:11:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.51 2007-09-07 14:10:40 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.components.filetree.*;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.RemoteFileDocument;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.FileDocument;
@@ -69,7 +70,7 @@ import javax.swing.JFrame;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.50 2007-04-04 12:11:08 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.51 2007-09-07 14:10:40 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -280,7 +281,11 @@ public class FeatureDisplay extends EntryGroupPanel
 
   private final int scrollbar_style;
 
-  private Object[] protein_keys = { "CDS", "exon", "BLASTCDS", "polypeptide" };
+  private Object[] protein_keys = { "CDS", 
+                                    "exon", 
+                                    "BLASTCDS",
+                                    "polypeptide", 
+                                    DatabaseDocument.EXONMODEL };
 
   /**
    *  Create a new FeatureDisplay object with the horizontal scrollbar at the

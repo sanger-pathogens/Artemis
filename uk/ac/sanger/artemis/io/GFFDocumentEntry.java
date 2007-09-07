@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.46 2007-07-23 10:34:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.47 2007-09-07 14:10:40 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -42,7 +42,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.46 2007-07-23 10:34:35 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.47 2007-09-07 14:10:40 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -242,7 +242,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
               gene.add3PrimeUtr(parent, this_feature);
             else if(key.equals("five_prime_UTR"))
               gene.add5PrimeUtr(parent, this_feature);
-            else if(key.equals("exon") || featureRelationship != null ||
+            else if(key.equals(DatabaseDocument.EXONMODEL) || key.equals("exon") || 
+                    featureRelationship != null ||
                     key.equals("pseudogenic_exon"))
               gene.addSplicedFeatures(parent, this_feature);
             else

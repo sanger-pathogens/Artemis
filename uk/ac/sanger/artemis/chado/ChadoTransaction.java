@@ -27,6 +27,8 @@ package uk.ac.sanger.artemis.chado;
 import java.sql.Timestamp;
 
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
+
 import org.gmod.schema.sequence.Feature;
 
 /**
@@ -80,7 +82,12 @@ public class ChadoTransaction
     this.lastmodified = lastmodified;
     this.feature_obj  = feature_obj;
     this.gff_feature  = gff_feature;
-    this.featureKey   = featureKey;
+    
+    if(featureKey != null &&
+       featureKey.equals(DatabaseDocument.EXONMODEL))
+      this.featureKey = "exon";
+    else
+      this.featureKey   = featureKey;
   }
 
   

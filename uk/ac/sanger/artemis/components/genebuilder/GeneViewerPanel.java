@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.55 2007-07-11 12:50:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.56 2007-09-07 14:10:40 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -59,6 +59,7 @@ import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.sequence.Marker;
 import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.sequence.Strand;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 
@@ -361,15 +362,20 @@ public class GeneViewerPanel extends JPanel
           exons = chado_gene.getSpliceSitesOfTranscript(uniquename, "pseudogenic_exon");
           exonKey = new Key("pseudogenic_exon");
         }
-        else
+        else 
         {
+          exons = chado_gene.getSpliceSitesOfTranscript(uniquename, DatabaseDocument.EXONMODEL);
+          exonKey = new Key(DatabaseDocument.EXONMODEL);
+          /*
           exons = chado_gene.getSpliceSitesOfTranscript(uniquename, "exon");
           exonKey = new Key("exon");
+          */
         }
         
         GFFStreamFeature embl_exon = null;
         if(exons != null && exons.size() > 0)
           embl_exon = (GFFStreamFeature)exons.get(0);
+        
         Range range_selected = selection.getSelectionRange();
     
         addExonFeature(chado_gene, entry_group, embl_exon, 
@@ -433,8 +439,9 @@ public class GeneViewerPanel extends JPanel
         final List exons;
         if(chado_gene.getGene().getKey().getKeyString().equals("pseudogene"))
           exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, "pseudogenic_exon");
-        else
-          exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, "exon");
+        else 
+          exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, DatabaseDocument.EXONMODEL);
+       // exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, "exon");
        
         final Range range_selected;
         if(exons != null && exons.size() > 0)

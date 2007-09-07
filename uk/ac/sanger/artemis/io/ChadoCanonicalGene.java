@@ -20,11 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.22 2007-08-29 08:45:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.23 2007-09-07 14:10:40 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.StringVector;
 
@@ -309,7 +310,7 @@ public class ChadoCanonicalGene
       while(it.hasNext())
       {
         String type = (String)it.next();
-        if(!type.equals("exon"))
+        if(!type.equals(DatabaseDocument.EXONMODEL))
         {
           List splicedFeatures = getSpliceSitesOfTranscript(transcriptId, type);
           if(splicedFeatures.size() == 1)

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.30 2007-07-11 12:50:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.31 2007-09-07 14:10:40 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -521,7 +521,8 @@ public class GeneBuilderFrame extends JFrame
          trans.getEntry().addEntryChangeListener(this);
        
        List exons = chado_gene.getSpliceSitesOfTranscript(
-           (String)trans.getQualifierByName("ID").getValues().get(0), "exon");
+           (String)trans.getQualifierByName("ID").getValues().get(0), 
+           DatabaseDocument.EXONMODEL);
        
        if(exons == null || exons.size() < 1)
          continue;
@@ -563,7 +564,8 @@ public class GeneBuilderFrame extends JFrame
       stopListening(trans);
       
       List exons = chado_gene.getSpliceSitesOfTranscript(
-          (String)trans.getQualifierByName("ID").getValues().get(0), "exon");
+          (String)trans.getQualifierByName("ID").getValues().get(0), 
+          DatabaseDocument.EXONMODEL);
       
       if(exons == null)
         continue;

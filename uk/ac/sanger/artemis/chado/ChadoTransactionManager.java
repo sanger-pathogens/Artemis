@@ -354,9 +354,12 @@ public class ChadoTransactionManager
           {
             // collapse updating featureloc into one statement
             ChadoTransaction lastTsn = (ChadoTransaction)sql.lastElement();
+            String thisKey = feature.getKey().getKeyString();
+            if(thisKey.equals(DatabaseDocument.EXONMODEL))
+              thisKey = "exon";
             if(lastTsn.getGff_feature() != null &&
                lastTsn.getType() == ChadoTransaction.UPDATE &&
-               lastTsn.getFeatureKey().equals( feature.getKey().getKeyString() ) &&
+               lastTsn.getFeatureKey().equals( thisKey ) &&
                lastTsn.getFeatureObject() instanceof FeatureLoc)
             {
               FeatureLoc floc = (FeatureLoc)lastTsn.getFeatureObject();
@@ -668,7 +671,8 @@ public class ChadoTransactionManager
     chado_feature.setName(feature_uniquename);
 
     String key = feature.getKey().toString();
-    
+    if(key.equals(DatabaseDocument.EXONMODEL))
+      key = "exon";
     CvTerm cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm(key, "sequence");
     if(cvTerm == null)
     {
@@ -792,8 +796,9 @@ public class ChadoTransactionManager
     chado_feature.setUniqueName(segment_uniquename);
     chado_feature.setName(segment_uniquename);
 
-    final String key = feature.getKey().toString();
-    
+    String key = feature.getKey().toString();
+    if(key.equals(DatabaseDocument.EXONMODEL))
+      key = "exon";
     CvTerm cvterm = getCvTerm(key, "sequence");
     chado_feature.setCvTerm(cvterm);
 
@@ -810,13 +815,15 @@ public class ChadoTransactionManager
   /**
    * Set the transaction for deleting a feature.
    */
-  private void deleteFeature(final String uniquename, final String featureKey)
+  private void deleteFeature(final String uniquename, String featureKey)
   { 
     org.gmod.schema.sequence.Feature chado_feature = 
       new org.gmod.schema.sequence.Feature();
     chado_feature.setUniqueName(uniquename);
     //CvTerm cvTerm = getCvTerm(featureType, "sequence");
     
+    if(featureKey.equals(DatabaseDocument.EXONMODEL))
+      featureKey = "exon";
     CvTerm cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm(featureKey, "sequence");
     if(cvTerm == null)
     {
