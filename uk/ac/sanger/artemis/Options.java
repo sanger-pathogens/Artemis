@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.10 2007-07-09 12:18:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.11 2007-09-07 14:12:08 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -44,7 +44,7 @@ import java.util.*;
  *  read in new options.
  *
  *  @author Kim Rutherford
- *  @version $Id: Options.java,v 1.10 2007-07-09 12:18:37 tjc Exp $
+ *  @version $Id: Options.java,v 1.11 2007-09-07 14:12:08 tjc Exp $
  **/
 
 public class Options extends Properties 
@@ -878,6 +878,7 @@ public class Options extends Properties
       "promoter", "3",
       "intron", "1",
       "exon", "7",
+      DatabaseDocument.EXONMODEL, "7",
       "mRNA", "1",
       "tRNA", "8",
       "TATA", "3",
