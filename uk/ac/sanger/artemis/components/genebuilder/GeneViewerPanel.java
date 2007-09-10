@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.56 2007-09-07 14:10:40 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.57 2007-09-10 09:41:50 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -353,6 +353,16 @@ public class GeneViewerPanel extends JPanel
         if(last_cursor_position == null)
           return;
         Feature transcript = getTranscriptAt(last_cursor_position);
+        
+        if(transcript == null)
+        {
+          JOptionPane.showMessageDialog(null, 
+              "Select a single transcript to add an exon to and try again.", 
+              "Transcript Not Found",
+              JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+        
         String uniquename  = getQualifier(transcript, "ID");
         
         final List exons;
@@ -415,6 +425,14 @@ public class GeneViewerPanel extends JPanel
     {
       public void actionPerformed(ActionEvent event)  
       {
+        if(selection.getAllFeatures().size() < 1)
+        {
+          JOptionPane.showMessageDialog(null, 
+              "Select a single transcript and try again.", 
+              "Transcript Selection",
+              JOptionPane.ERROR_MESSAGE);
+          return;
+        }
         uk.ac.sanger.artemis.Feature transcript = selection.getAllFeatures().elementAt(0);
         final String transcriptName;
         try
