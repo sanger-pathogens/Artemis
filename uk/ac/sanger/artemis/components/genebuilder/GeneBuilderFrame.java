@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.31 2007-09-07 14:10:40 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.32 2007-09-10 08:31:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -42,6 +42,7 @@ import javax.swing.border.Border;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
@@ -334,9 +335,11 @@ public class GeneBuilderFrame extends JFrame
   protected void setActiveFeature(final Feature active_feature,
                                   final boolean isSet)
   {  
+    setCursor(new Cursor(Cursor.WAIT_CURSOR));
     this.active_feature = active_feature;
     feature_editor.setActiveFeature(active_feature, isSet);
     setTabTitle();
+    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
   }
   
   private void setTabTitle()
