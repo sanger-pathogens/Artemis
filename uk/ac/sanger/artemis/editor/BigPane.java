@@ -52,11 +52,11 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureVector;
+import uk.ac.sanger.artemis.components.QualifierTextArea;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
 import uk.ac.sanger.artemis.io.EntryInformation;
@@ -81,7 +81,7 @@ public class BigPane extends JFrame
  
   public static int CACHE_SIZE = 300;
   public static int MAX_CACHE_SIZE = 1000;
-  private JTextArea qualifierTextArea;
+  private QualifierTextArea qualifierTextArea;
   private DataViewInternalFrame dataView;
   //private FeatureVector overlapFeature;
   private Feature edit_feature;
@@ -99,7 +99,7 @@ public class BigPane extends JFrame
     this.entryInformation = entryInformation;
   }
 
-  public void set(Hashtable dataFile, JTextArea qualifierTextArea,
+  public void set(Hashtable dataFile, QualifierTextArea qualifierTextArea,
              FeatureVector overlapFeature, 
              final Feature edit_feature,
              final MatchPanel matchForm,

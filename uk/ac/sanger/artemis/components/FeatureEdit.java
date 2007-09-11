@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.46 2007-08-30 16:21:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.47 2007-09-11 11:03:20 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -68,7 +68,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.46 2007-08-30 16:21:26 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.47 2007-09-11 11:03:20 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -344,7 +344,7 @@ public class FeatureEdit extends JPanel
   private void createComponents()
   {
     qualifier_text_area = new QualifierTextArea();
-    qualifier_text_area.setWrapStyleWord(true);
+    //qualifier_text_area.setWrapStyleWord(true);
 
     FlowLayout flowLayoutZeroHgap = new FlowLayout(FlowLayout.LEADING);
     flowLayoutZeroHgap.setHgap(0);
