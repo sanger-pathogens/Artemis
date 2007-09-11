@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.31 2007-08-29 10:52:47 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.32 2007-09-11 10:59:05 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -706,4 +706,5 @@ common_keys = \
     BLASTN_HIT BLASTCDS 3'UTR 5'UTR
 
 #srs_url = http://srs.sanger.ac.uk/srsbin/cgi-bin/ 
-srs_url = http://srs.ebi.ac.uk/srsbin/cgi-bin/ 
+srs_url = http://srs.ebi.ac.uk/srsbin/cgi-bin/
+pubmed_url = http://www.ncbi.nlm.nih.gov/sites/entrez?Db=pubmed&Cmd=ShowDetailView&TermToSearch= 
