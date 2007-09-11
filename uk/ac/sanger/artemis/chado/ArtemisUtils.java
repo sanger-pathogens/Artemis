@@ -266,6 +266,7 @@ public class ArtemisUtils
   protected static AnalysisFeature getAnalysisFeature(final String uniqueName,
       String qualifier_string, final GFFStreamFeature feature)
   {
+    // FIXME - allow for case with no featureId!
     int queryFeatureId = Integer.parseInt((String) feature.getQualifierByName(
         "feature_id").getValues().get(0));
 
