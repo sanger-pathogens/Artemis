@@ -1292,7 +1292,7 @@ public class ChadoTransactionManager
          if(qualifierName.equals("Dbxref"))
          {
            logger4j.debug(uniquename+"  in handleReservedTags() DELETE db="+
-               qualifierString.substring(0,index)+" acc="+qualifierString.substring(index+1));
+               qualifierString);
          
            FeatureDbXRef old_dbxref = getFeatureDbXRef(qualifierString,
                                                        uniquename);
@@ -1406,7 +1406,7 @@ public class ChadoTransactionManager
          if(qualifierName.equals("Dbxref"))
          {   
            logger4j.debug(uniquename+"  in handleReservedTags() INSERT db="+
-               qualifierString.substring(0,index)+" acc="+qualifierString.substring(index+1));
+               qualifierString);
            FeatureDbXRef new_dbxref = getFeatureDbXRef(qualifierString,
                                                        uniquename);
            
