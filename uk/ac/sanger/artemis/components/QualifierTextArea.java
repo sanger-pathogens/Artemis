@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.3 2007-09-11 11:03:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.4 2007-09-11 15:09:08 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -51,13 +51,14 @@ import javax.swing.text.StyledDocument;
 
 /**
  *  This component is a JTextPane that understands qualifiers.
- *  It provides hyperlinks to databases.
+ *  It provides hyperlinks to databases using a StyledDocument
+ *  (rather than using HyperlinkListener) so it can remain editable.
  **/
-
 public class QualifierTextArea extends JTextPane
 {
   private static String[] DATABASES = 
-          { "SWALL", "EMBL", "UniProt", "PMID" };
+          { "SWALL", "EMBL", "UniProt", "PMID", "PubMed" };
+
   /**
    *  Create a new QualifierTextArea containing no text.
    **/
@@ -85,11 +86,12 @@ public class QualifierTextArea extends JTextPane
       public void mouseClicked(MouseEvent e)
       {
         if(e.getClickCount() == 2) 
-          handleMouseClick(e);
+          handleMouseDoubleClick(e);
       }
     });
   }
 
+  
   public void append(final String s)
   {
     StyledDocument doc = super.getStyledDocument();
@@ -106,6 +108,9 @@ public class QualifierTextArea extends JTextPane
     } 
   }
   
+  /**
+   * Add hyperlink style
+   */
   private void initStyles()
   {
     // Makes text Blue
@@ -117,6 +122,9 @@ public class QualifierTextArea extends JTextPane
     StyleConstants.setUnderline(style, true);
   }
   
+  /**
+   * Override to ensure hyperlinks are set
+   */
   public void setText(String text)
   {
     super.setText(text);
@@ -162,12 +170,20 @@ public class QualifierTextArea extends JTextPane
     }
   }
   
+  /**
+   * Analogous to JTextArea column
+   * @return
+   */
   private int getColumnWidth() 
   {
     FontMetrics metrics = getFontMetrics(getFont());
     return metrics.charWidth('m');
   }
   
+  /**
+   * Analogous to JTextArea row
+   * @return
+   */
   private int getRowHeight() 
   {
     FontMetrics metrics = getFontMetrics(getFont());
@@ -233,7 +249,11 @@ public class QualifierTextArea extends JTextPane
     return "http://www.ncbi.nlm.nih.gov/sites/entrez?Db=pubmed&Cmd=ShowDetailView&TermToSearch=";
   }
   
-  private void handleMouseClick(final MouseEvent e)
+  /**
+   * Process double click event.
+   * @param e
+   */
+  private void handleMouseDoubleClick(final MouseEvent e)
   {
     Point pt = new Point(e.getX(), e.getY());
     int pos = viewToModel(pt);
@@ -262,7 +282,8 @@ public class QualifierTextArea extends JTextPane
       textAtPosition = textAtPosition.substring(intStart);
       
       String cmd;
-      if(textAtPosition.indexOf("PMID")>-1)
+      if(textAtPosition.indexOf("PMID")   > -1 ||
+         textAtPosition.indexOf("PubMed") > -1)
       {
         String id[] = textAtPosition.split(":");
         if(id.length < 2)
