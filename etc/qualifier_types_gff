@@ -59,6 +59,7 @@ clone            no         "text"
 clone_lib        no         "text"
 codon            no         (::)    seq aa
 codon_start      yes        number  1 3
+comment          no         "text"
 cons_splice      yes        (::)    5'site 3'site
 country          no         "text"
 cultivar         no         "text"
