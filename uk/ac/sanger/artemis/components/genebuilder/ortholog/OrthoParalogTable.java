@@ -197,17 +197,14 @@ public class OrthoParalogTable extends AbstractMatchTable
       }
     });
     
-    final TableColumn[] hideColumns;
-    if(showCluster)
-      hideColumns = new TableColumn[2];
-    else
-    {
-      hideColumns = new TableColumn[3];
-      hideColumns[2] = table.getColumn(CLUSTER_NAME_COL);
-    }
+    final TableColumn[] hideColumns = new TableColumn[3];
     hideColumns[0] = table.getColumn(ROW_TYPE_HIDE_COL);
     hideColumns[1] = table.getColumn(MATCH_NAME_COL);
-    
+    if(showCluster)
+      hideColumns[2] = table.getColumn(REMOVE_BUTTON_COL);
+    else
+      hideColumns[2] = table.getColumn(CLUSTER_NAME_COL);
+
     for(int i=0; i<hideColumns.length; i++)
     {
       hideColumns[i].setMinWidth(0);
@@ -222,10 +219,14 @@ public class OrthoParalogTable extends AbstractMatchTable
     
     TableModel tableModel = table.getModel();
     // remove button column
-    TableColumn col = table.getColumn(REMOVE_BUTTON_COL);
-    col.setMinWidth(35);
-    col.setMaxWidth(40);
-    col.setPreferredWidth(40);
+    TableColumn col;
+    if(!showCluster)
+    {
+      col = table.getColumn(REMOVE_BUTTON_COL);
+      col.setMinWidth(35);
+      col.setMaxWidth(40);
+      col.setPreferredWidth(40);
+    }
 
     final OrthologRenderer renderer = new OrthologRenderer();
 
