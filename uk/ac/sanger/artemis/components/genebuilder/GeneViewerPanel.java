@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.57 2007-09-10 09:41:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.58 2007-09-12 14:52:08 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -1726,8 +1726,10 @@ public class GeneViewerPanel extends JPanel
                 + (int) ((segment_range.getStart() - start) * fraction);
             int segment_end = border
                 + (int) ((segment_range.getEnd() - start) * fraction);
-            if(e.getPoint().x >= segment_start &&
-               e.getPoint().x <= segment_end)
+            
+            // allow very ends of features to be dragable
+            if( (e.getPoint().x >= segment_start && e.getPoint().x < segment_start+15 && e.getPoint().x <= segment_end) ||
+                (e.getPoint().x <= segment_end   && e.getPoint().x > segment_end-15   && e.getPoint().x >= segment_start) )
             {
               int segment_mid = (segment_start+segment_end)/2;
               
