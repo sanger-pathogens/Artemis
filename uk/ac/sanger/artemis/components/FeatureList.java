@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.24 2007-02-16 15:47:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.25 2007-09-12 10:14:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -29,6 +29,7 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.plot.CodonUsageAlgorithm;
 
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.EntryInformation;
@@ -60,7 +61,7 @@ import javax.swing.JComponent;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.24 2007-02-16 15:47:32 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.25 2007-09-12 10:14:54 tjc Exp $
  *
  **/
 
@@ -112,6 +113,8 @@ public class FeatureList extends EntryGroupPanel
   /** JScrollPane viewport that this panel is the view of */
   private JViewport viewport = null;
 
+  private boolean isDatabaseGroup = false;
+  
   /**
    *  Create a new FeatureList with the default number of rows.
    *  @param entry_group The EntryGroup that this component will display.
@@ -127,6 +130,12 @@ public class FeatureList extends EntryGroupPanel
   {
     super(entry_group, selection, goto_event_source, base_plot_group);
 
+    for(int i=0; i<getEntryGroup().size(); i++)
+    {
+      if(getEntryGroup().elementAt(i).getEMBLEntry() instanceof DatabaseDocumentEntry)
+        isDatabaseGroup = true;
+    }
+    
     addMouseListener(new MouseAdapter() 
     {
       private FeaturePopup popup = null;
@@ -734,14 +743,25 @@ public class FeatureList extends EntryGroupPanel
     }
     else 
     {
-      final String note = feature.getNote();
+      String note = null;
+      if(isDatabaseGroup)
+      {
+        try
+        {
+          note = feature.getValueOfQualifier("comment");
+        }
+        catch(InvalidRelationException e){}
+      }
+      
+      if(note == null)
+        note = feature.getNote();
 
       if(note != null && note.length() != 0) 
       {
         final int QUALIFIER_COLUMN = 10;
 
         final String note_string =
-          padRightWithSpaces(feature.getNote(), QUALIFIER_COLUMN);
+          padRightWithSpaces(note, QUALIFIER_COLUMN);
 
         description_string_buffer.append(note_string);
         description_string_buffer.append("   ");
