@@ -20,12 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.18 2007-08-10 13:22:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.19 2007-09-12 10:14:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
+import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.util.StringVector;
 
 import java.io.*;
@@ -38,7 +39,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.18 2007-08-10 13:22:15 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.19 2007-09-12 10:14:01 tjc Exp $
  *
  **/
 
@@ -745,7 +746,7 @@ public class FeaturePopup extends JPopupMenu
         		"Qualifiers to display in feature list displays."};
         ListSelectionPanel displayListSelectionPanel =
           new ListSelectionPanel(entry_group, display_names,
-        		  description, false);
+        		  description, false, new Key("gene"), null);
         int select = JOptionPane.showConfirmDialog(null, 
             displayListSelectionPanel,
             "Select Qualifier to Display",

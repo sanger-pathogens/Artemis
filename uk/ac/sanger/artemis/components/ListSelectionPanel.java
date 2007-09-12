@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ListSelectionPanel.java,v 1.5 2007-07-09 13:03:45 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ListSelectionPanel.java,v 1.6 2007-09-12 10:14:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -40,6 +40,7 @@ import javax.swing.JScrollPane;
 
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.io.GFFDocumentEntry;
+import uk.ac.sanger.artemis.io.Key;
 
 class ListSelectionPanel extends JPanel
 {
@@ -48,6 +49,14 @@ class ListSelectionPanel extends JPanel
   private static final long serialVersionUID = 1L;
   private DefaultListModel listModel;
   private JCheckBox save;
+  
+  public ListSelectionPanel(final EntryGroup entry_group,
+                            final Object names[],
+                            final String[] description,
+                            final boolean saveOption)
+  {
+    this(entry_group, names, description, saveOption, null, null);
+  }
   
   /**
    * Panel used to select from and order a list. 
@@ -58,7 +67,9 @@ class ListSelectionPanel extends JPanel
   public ListSelectionPanel(final EntryGroup entry_group,
                             final Object names[],
                             final String[] description,
-                            final boolean saveOption)
+                            final boolean saveOption,
+                            final Key key,
+                            final String default_qualifier)
   {
     listModel = new DefaultListModel();
 
@@ -129,8 +140,9 @@ class ListSelectionPanel extends JPanel
     boolean isGFF = false;
     if(entry_group.getDefaultEntry().getEMBLEntry() instanceof GFFDocumentEntry)
       isGFF = true;
+    
     final QualifierChoice qualifier_choice = new QualifierChoice(
-        entry_group.elementAt(0).getEntryInformation(), null, null, isGFF);
+        entry_group.elementAt(0).getEntryInformation(), key, default_qualifier, isGFF);
     
     JButton add_butt = new JButton("ADD");
     add_butt.addActionListener(new ActionListener()
