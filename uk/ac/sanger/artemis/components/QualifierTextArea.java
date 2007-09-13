@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.4 2007-09-11 15:09:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.5 2007-09-13 10:15:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -57,7 +57,7 @@ import javax.swing.text.StyledDocument;
 public class QualifierTextArea extends JTextPane
 {
   private static String[] DATABASES = 
-          { "SWALL", "EMBL", "UniProt", "PMID", "PubMed" };
+          { "SWALL", "EMBL", "UniProt", "PMID", "PubMed", "InterPro" };
 
   /**
    *  Create a new QualifierTextArea containing no text.
@@ -249,6 +249,11 @@ public class QualifierTextArea extends JTextPane
     return "http://www.ncbi.nlm.nih.gov/sites/entrez?Db=pubmed&Cmd=ShowDetailView&TermToSearch=";
   }
   
+  public static String getInterProSite()
+  {
+	return "http://www.ebi.ac.uk/interpro/ISearch?query=";
+  }
+  
   /**
    * Process double click event.
    * @param e
@@ -289,6 +294,13 @@ public class QualifierTextArea extends JTextPane
         if(id.length < 2)
           return;
         cmd = getPubMedSite()+id[1];
+      }
+      else if(textAtPosition.indexOf("InterPro") > -1)
+      {
+        String id[] = textAtPosition.split(":");
+        if(id.length < 2)
+          return;
+        cmd = getInterProSite()+id[1];
       }
       else
       {
