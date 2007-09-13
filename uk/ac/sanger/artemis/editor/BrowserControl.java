@@ -99,8 +99,8 @@ public class BrowserControl
           System.err.println("Could not find web browser");
         else
         {
-          if(browser.equals("netscape"))
-        	handleNetscape(url);
+          if(browser.equals("netscape") || browser.equals("mozilla"))
+        	handleNetscapeAndMozilla(url);
           else
             Runtime.getRuntime().exec(new String[] {browser, url});
         }
@@ -115,7 +115,7 @@ public class BrowserControl
   }
 
   
-  private static void handleNetscape(final String url)
+  private static void handleNetscapeAndMozilla(final String url)
 			throws IOException
   {
 	String cmd = UNIX_PATH + " " + UNIX_FLAG + "(" + url + ")";
