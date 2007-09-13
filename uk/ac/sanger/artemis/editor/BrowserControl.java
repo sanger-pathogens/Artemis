@@ -77,52 +77,33 @@ public class BrowserControl
       }
       else
       {
-    	try
-    	{
-      	  String[] browsers = 
-          {
-            "firefox", "opera", "konqueror", 
-            "epiphany", "mozilla", "netscape" 
-          };
-          String browser = null;
-          for(int count = 0; count < browsers.length && browser == null; count++)
-            if(Runtime.getRuntime().exec(
-               new String[] {"which", browsers[count]}).waitFor() == 0)
-                browser = browsers[count];
-          if(browser == null)
-            System.err.println("Could not find web browser");
+
+      	String[] browsers = 
+        {
+          "firefox", "opera", "konqueror", 
+          "epiphany", "mozilla", "netscape" 
+        };
+        String browser = null;
+        for(int count = 0; count < browsers.length && browser == null; count++)
+        {
+          ExternalApplication exApp = new ExternalApplication(
+                   new String[] {"which", browsers[count]}, null, null);
+
+          //String stderr = exApp.getProcessStderr();
+          String stdout = exApp.getProcessStdout();
+          if(stdout != null && stdout.startsWith("/"))
+            browser = browsers[count];
+        }
+
+        if(browser == null)
+          System.err.println("Could not find web browser");
+        else
+        {
+          if(browser.equals("netscape"))
+        	handleNetscape(url);
           else
-          {
-        	if(browser.equals("netscape"))
-        	  browser = browser+" -remote ";
             Runtime.getRuntime().exec(new String[] {browser, url});
-          }
-    	}  
-    	 
-        // Netscape has to be running for the "-remote" command to work
-        /*
-        cmd = UNIX_PATH + " " + UNIX_FLAG + "(" + url + ")";
-        Process p = Runtime.getRuntime().exec(cmd);
-        try
-        {
-          // wait for exit code -- if it's 0, command worked,
-          // otherwise we need to start the browser up.
-          int exitCode = p.waitFor();
-          if(exitCode != 0)
-          {
-            // Command failed, start up the browser
-            cmd = UNIX_PATH + " "  + url;
-            p = Runtime.getRuntime().exec(cmd);
-          }
         }
-        */
-        catch(InterruptedException x)
-        {
-          System.err.println("Error bringing up browser, cmd='" +
-                             cmd + "'");
-          System.err.println("Caught: " + x);
-        }
-        
       }
     }
     catch(IOException x)
@@ -133,6 +114,31 @@ public class BrowserControl
     }
   }
 
+  
+  private static void handleNetscape(final String url)
+			throws IOException
+  {
+	String cmd = UNIX_PATH + " " + UNIX_FLAG + "(" + url + ")";
+	Process p = Runtime.getRuntime().exec(cmd);
+	try 
+	{
+	  // wait for exit code -- if it's 0, command worked,
+	  // otherwise we need to start the browser up.
+	  int exitCode = p.waitFor();
+   	  if (exitCode != 0) 
+   	  {
+		// Command failed, start up the browser
+		cmd = UNIX_PATH + " " + url;
+		p = Runtime.getRuntime().exec(cmd);
+	  }
+	} 
+	catch (InterruptedException x) 
+	{
+	  System.err.println("Error bringing up browser, cmd='" + cmd + "'");
+	  System.err.println("Caught: " + x);
+	}
+  }
+  
   /**
    * Try to determine whether this application is running under Windows
    * or some other platform by examing the "os.name" property.
@@ -158,6 +164,6 @@ public class BrowserControl
    */
   public static void main(String[] args)
   {
-    displayURL("http://www.sanger.ac.uk");
+    displayURL("http://www.google.co.uk");
   }
 }
