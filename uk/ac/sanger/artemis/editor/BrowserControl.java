@@ -100,7 +100,7 @@ public class BrowserControl
         else
         {
           if(browser.equals("netscape") || browser.equals("mozilla"))
-        	handleNetscapeAndMozilla(url);
+        	  handleNetscapeAndMozilla(url, browser);
           else
             Runtime.getRuntime().exec(new String[] {browser, url});
         }
@@ -115,28 +115,28 @@ public class BrowserControl
   }
 
   
-  private static void handleNetscapeAndMozilla(final String url)
+  private static void handleNetscapeAndMozilla(final String url, final String browser)
 			throws IOException
   {
-	String cmd = UNIX_PATH + " " + UNIX_FLAG + "(" + url + ")";
-	Process p = Runtime.getRuntime().exec(cmd);
-	try 
-	{
-	  // wait for exit code -- if it's 0, command worked,
-	  // otherwise we need to start the browser up.
-	  int exitCode = p.waitFor();
+	  String cmd = browser + " " + UNIX_FLAG + "(" + url + ")";
+	  Process p = Runtime.getRuntime().exec(cmd);
+	  try 
+	  {
+	    // wait for exit code -- if it's 0, command worked,
+	    // otherwise we need to start the browser up.
+	    int exitCode = p.waitFor();
    	  if (exitCode != 0) 
    	  {
-		// Command failed, start up the browser
-		cmd = UNIX_PATH + " " + url;
-		p = Runtime.getRuntime().exec(cmd);
+    		// Command failed, start up the browser
+		    cmd = browser + " " + url;
+		    p = Runtime.getRuntime().exec(cmd);
+	    }
+	  } 
+	  catch (InterruptedException x) 
+	  {
+	    System.err.println("Error bringing up browser, cmd='" + cmd + "'");
+	    System.err.println("Caught: " + x);
 	  }
-	} 
-	catch (InterruptedException x) 
-	{
-	  System.err.println("Error bringing up browser, cmd='" + cmd + "'");
-	  System.err.println("Caught: " + x);
-	}
   }
   
   /**
