@@ -76,8 +76,9 @@ public class ExternalApplication
     catch(IOException ioe)
     {
       ioe.printStackTrace();
-      System.out.println("ExternalApplication Error executing: "+
-                          cmd);
+      System.out.println("ExternalApplication Error executing:");
+      for(int i=0;i<cmd.length;i++)
+    	System.out.println(cmd[i]);
       status = "1";
     }
   }
