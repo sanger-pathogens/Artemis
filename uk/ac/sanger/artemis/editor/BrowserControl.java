@@ -77,7 +77,30 @@ public class BrowserControl
       }
       else
       {
+    	try
+    	{
+      	  String[] browsers = 
+          {
+            "firefox", "opera", "konqueror", 
+            "epiphany", "mozilla", "netscape" 
+          };
+          String browser = null;
+          for(int count = 0; count < browsers.length && browser == null; count++)
+            if(Runtime.getRuntime().exec(
+               new String[] {"which", browsers[count]}).waitFor() == 0)
+                browser = browsers[count];
+          if(browser == null)
+            System.err.println("Could not find web browser");
+          else
+          {
+        	if(browser.equals("netscape"))
+        	  browser = browser+" -remote ";
+            Runtime.getRuntime().exec(new String[] {browser, url});
+          }
+    	}  
+    	 
         // Netscape has to be running for the "-remote" command to work
+        /*
         cmd = UNIX_PATH + " " + UNIX_FLAG + "(" + url + ")";
         Process p = Runtime.getRuntime().exec(cmd);
         try
@@ -92,12 +115,14 @@ public class BrowserControl
             p = Runtime.getRuntime().exec(cmd);
           }
         }
+        */
         catch(InterruptedException x)
         {
           System.err.println("Error bringing up browser, cmd='" +
                              cmd + "'");
           System.err.println("Caught: " + x);
         }
+        
       }
     }
     catch(IOException x)
