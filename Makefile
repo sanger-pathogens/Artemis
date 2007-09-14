@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.30 2007-07-04 08:28:03 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.31 2007-09-14 13:47:39 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -275,16 +275,16 @@ artemis.jar : $(CLASSES)
           done; \
         fi; \
 	cp -R ../lib/LICENSE.Apache ../uk ../nsdb ../type ../seqdb ../etc ../images ../lib/j2ssh/j2ssh.properties \
-	      ../images/icon.gif ../images/helix.gif ../images/sanger-centre.gif ../README .
+	      ../images/icon.gif ../images/helix.gif ../images/sanger-centre.gif ../README ../artemis_sqlmap .
 	find jar_build -name '*.java' -print | xargs rm -f
 	cd jar_build; \
 	rm -rf META-INF/MANIFEST.MF; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ArtemisMain" > manifest-art; \
 	jar cmf manifest-art artemis.jar images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
-	                     org uk com nsdb type seqdb LICENSE.Apache j2ssh.properties; \
+	                     artemis_sqlmap org uk com net nsdb type seqdb LICENSE.Apache j2ssh.properties; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ActMain" > manifest-act; \
 	jar cmf manifest-act act.jar images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
-	                     org uk com nsdb type seqdb LICENSE.Apache j2ssh.properties; \
+	                     artemis_sqlmap org uk com net nsdb type seqdb LICENSE.Apache j2ssh.properties; \
 	rm -f etc/log4j.properties; \
 	jar cmf manifest-art artemis_mac.jar images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
 	        uk nsdb type seqdb LICENSE.Apache j2ssh.properties
