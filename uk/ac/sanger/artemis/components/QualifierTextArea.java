@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.6 2007-09-14 10:13:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.7 2007-09-18 09:36:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -49,6 +49,7 @@ import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 /**
@@ -64,6 +65,8 @@ public class QualifierTextArea extends JTextPane
   private static Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
   private static Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
   private static Cursor chand = new Cursor(Cursor.HAND_CURSOR);
+  private static Style DEFAULT_STYLE = 
+    StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
   
   /**
    *  Create a new QualifierTextArea containing no text.
@@ -136,6 +139,9 @@ public class QualifierTextArea extends JTextPane
   public void setText(String text)
   {
     super.setText(text);
+    // ensure we have the default style set
+    getStyledDocument().setCharacterAttributes(0, text.length(), 
+                 DEFAULT_STYLE, true);
     for(int i=0; i<DATABASES.length; i++)
       setStyleForHyperLinks(text, DATABASES[i]);
   }
