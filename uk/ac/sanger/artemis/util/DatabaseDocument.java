@@ -1979,6 +1979,12 @@ public class DatabaseDocument extends Document
     return dao.getClustersByFeatureIds(featureIds);
   }
   
+  public List getParentFeaturesByChildFeatureIds(final List subjectIds)
+  {
+    GmodDAO dao = getDAOOnly();
+    return dao.getParentFeaturesByChildFeatureIds(subjectIds);
+  }
+  
   public List getFeatureDbXRefsByFeatureId(final List featureIds)
   {
     GmodDAO dao = getDAOOnly();
