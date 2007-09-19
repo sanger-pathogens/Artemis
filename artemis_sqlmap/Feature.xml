@@ -68,6 +68,7 @@
 	
 	
   <resultMap id="map-feature-name-lazy" class="Feature">
+	 <result property="featureId" column="id"/>
 	 <result property="uniqueName" column="uniquename"/>
 	 <result property="cvTerm.name" column="name" />
 	 <result property="featureRelationshipsForSubjectId" column="{subject_id=id}" 
