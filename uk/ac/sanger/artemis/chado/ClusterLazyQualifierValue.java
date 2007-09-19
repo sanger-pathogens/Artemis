@@ -106,6 +106,35 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
     final Document document = ((DocumentEntry)feature.getEntry()).getDocument();
     List allClusters = ((DatabaseDocument)document).getClustersByFeatureIds(clusterFeatureIds);
     
+    /*
+    // 
+    // get parent gene
+    final List subjectIds = new Vector();
+    for(int i=0;i<allClusters.size(); i++)
+    {
+      final Feature clusterFeature = (Feature)allClusters.get(i);
+      final Collection subjects = clusterFeature.getFeatureRelationshipsForSubjectId();
+      final Iterator it = subjects.iterator();
+      while(it.hasNext())
+      {
+        FeatureRelationship fr = (FeatureRelationship)it.next();
+        Feature subjectFeature = fr.getFeatureBySubjectId();
+        subjectIds.add(new Integer(subjectFeature.getFeatureId()));
+      }
+    }
+    
+    final List geneFeatures = 
+      ((DatabaseDocument)document).getParentFeaturesByChildFeatureIds(subjectIds);
+
+    for(int i=0; i<geneFeatures.size(); i++)
+    {
+      FeatureRelationship gene = (FeatureRelationship)geneFeatures.get(i);
+      System.out.println(i+" "+gene.getFeatureByObjectId().getUniqueName()+" "+
+                               gene.getFeatureByObjectId().getCvTerm().getName()+" "+
+                               gene.getFeatureByObjectId().getFeatureId());
+    }
+    */
+    
     for(int i=0;i<allClusters.size(); i++)
     {
       final Feature clusterFeature = (Feature)allClusters.get(i);
@@ -174,15 +203,19 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
           value = value.concat(subjectFeature.getOrganism().getCommonName()+":");
           
           String geneName = subjectFeature.getUniqueName();
-          if(!subjectFeature.getCvTerm().getName().equals("gene"))
+          if(!subjectFeature.getCvTerm().getName().equals("gene") ||
+             !subjectFeature.getCvTerm().getName().equals("pseudogene"))
           {
             Feature parent = getParentFeature(subjectFeature);
-            if(parent.getCvTerm().getName().equals("gene"))
+
+            if(parent.getCvTerm().getName().equals("gene") ||
+               parent.getCvTerm().getName().equals("pseudogene"))
               geneName = parent.getUniqueName();
             else if(parent != null)
             {
               parent = getParentFeature(parent);
-              if(parent.getCvTerm().getName().equals("gene"))
+              if(parent.getCvTerm().getName().equals("gene") ||
+                 parent.getCvTerm().getName().equals("pseudogene"))
                 geneName = parent.getUniqueName();
             }
           }
