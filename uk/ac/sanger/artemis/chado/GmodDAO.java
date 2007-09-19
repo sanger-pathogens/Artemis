@@ -52,6 +52,7 @@ public abstract class GmodDAO
   public abstract List getSimilarityMatchesByFeatureIds(final List featureIds);
   public abstract List getSimilarityMatches(final Integer srcFeatureId);
   public abstract List getClustersByFeatureIds(final List featureIds);
+  public abstract List getParentFeaturesByChildFeatureIds(final List subjectIds);
   
   /**
    * Return all the Feature.featureDbXRefs for a <code>List</code> of feature_id's. 

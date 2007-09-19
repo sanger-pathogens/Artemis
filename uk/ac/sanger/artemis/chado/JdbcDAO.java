@@ -182,6 +182,11 @@ public class JdbcDAO extends GmodDAO
     return null;
   }
   
+  public List getParentFeaturesByChildFeatureIds(final List featureIds)
+  {
+    return null;
+  }
+  
   /**
    * Return the feature corresponding to this feature_id 
    * 

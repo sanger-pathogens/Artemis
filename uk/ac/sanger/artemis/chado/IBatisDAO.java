@@ -115,6 +115,11 @@ public class IBatisDAO extends GmodDAO
     return sqlMap.queryForList("getResidueFeatures",organismId);
   }
   
+  public List getParentFeaturesByChildFeatureIds(final List featureIds)
+  {
+    return sqlMap.queryForList("getParentFeaturesByChildFeatureIds",featureIds);
+  }
+  
   public List getFeatureCvTermsBySrcFeature(Feature srcFeature)
   {
 //  find whether current schema has a feature_cvterm.rank column
