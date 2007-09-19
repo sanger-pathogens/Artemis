@@ -106,10 +106,11 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
     final Document document = ((DocumentEntry)feature.getEntry()).getDocument();
     List allClusters = ((DatabaseDocument)document).getClustersByFeatureIds(clusterFeatureIds);
     
-    /*
+   
     // 
     // get parent gene
-    final List subjectIds = new Vector();
+    /*
+    List subjectIds = new Vector();
     for(int i=0;i<allClusters.size(); i++)
     {
       final Feature clusterFeature = (Feature)allClusters.get(i);
@@ -123,15 +124,62 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
       }
     }
     
-    final List geneFeatures = 
+    List geneFeatures = 
       ((DatabaseDocument)document).getParentFeaturesByChildFeatureIds(subjectIds);
-
+    final Hashtable genes = new Hashtable(geneFeatures.size());
+    subjectIds = new Vector();
     for(int i=0; i<geneFeatures.size(); i++)
     {
       FeatureRelationship gene = (FeatureRelationship)geneFeatures.get(i);
-      System.out.println(i+" "+gene.getFeatureByObjectId().getUniqueName()+" "+
-                               gene.getFeatureByObjectId().getCvTerm().getName()+" "+
-                               gene.getFeatureByObjectId().getFeatureId());
+
+      if(gene.getFeatureByObjectId().getCvTerm().getName().equals("gene") ||
+         gene.getFeatureByObjectId().getCvTerm().getName().equals("pseudogene"))
+      {
+        genes.put(new Integer(gene.getFeatureBySubjectId().getFeatureId()), 
+                              gene.getFeatureByObjectId().getUniqueName());
+      }
+      else
+      {
+        Integer objectId = new Integer(gene.getFeatureByObjectId().getFeatureId());
+        subjectIds.add(objectId);
+        genes.put(new Integer(gene.getFeatureBySubjectId().getFeatureId()), objectId);
+      }
+    }
+    
+    geneFeatures = 
+      ((DatabaseDocument)document).getParentFeaturesByChildFeatureIds(subjectIds);
+    for(int i=0; i<geneFeatures.size(); i++)
+    {
+      FeatureRelationship gene = (FeatureRelationship)geneFeatures.get(i);
+
+      if(gene.getFeatureByObjectId().getCvTerm().getName().equals("gene") ||
+         gene.getFeatureByObjectId().getCvTerm().getName().equals("pseudogene"))
+      {
+        Integer subjectId = new Integer(gene.getFeatureBySubjectId().getFeatureId());
+        
+        if(genes.containsValue(subjectId))
+        {
+          Enumeration keys = genes.keys();
+          while(keys.hasMoreElements())
+          {
+            Integer key = (Integer)keys.nextElement();
+            Object val = genes.get(key);
+            if(val instanceof Integer && subjectId.equals(val))
+              genes.put(key, gene.getFeatureByObjectId().getUniqueName());
+          }
+        }
+      }
+    }
+    
+    Enumeration keys = genes.keys();
+    while(keys.hasMoreElements())
+    {
+      Integer key = (Integer)keys.nextElement();
+      Object val = genes.get(key);
+      if(val instanceof String)
+      {
+        System.out.println(key.intValue()+"  "+val);
+      }
     }
     */
     

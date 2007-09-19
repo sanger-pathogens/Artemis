@@ -47,8 +47,7 @@
 
     <resultMap id="map-parent-relationship" class="FeatureRelationship">
 		<result property="featureRelationshipId" column="feature_relationship_id"/>
-        <result property="featureBySubjectId" column="subject_id" 
-			                                  select="getLazyFeatureById" />
+        <result property="featureBySubjectId.featureId" column="subject_id" />
         <!--<result property="featureByObjectId"  column="object_id"
 			                                  select="getLazyFeatureNameAndTypeById" />-->
 		<result property="featureByObjectId" resultMap="Feature.map-feature-name-lazy" />
