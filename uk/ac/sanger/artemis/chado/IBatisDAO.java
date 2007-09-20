@@ -115,6 +115,11 @@ public class IBatisDAO extends GmodDAO
     return sqlMap.queryForList("getResidueFeatures",organismId);
   }
   
+  public List getResidueFeaturesByOrganismCommonName(final String commonName)
+  {
+    return sqlMap.queryForList("getResidueFeaturesByOrganismCommonName",commonName);
+  }
+  
   public List getParentFeaturesByChildFeatureIds(final List featureIds)
   {
     return sqlMap.queryForList("getParentFeaturesByChildFeatureIds",featureIds);

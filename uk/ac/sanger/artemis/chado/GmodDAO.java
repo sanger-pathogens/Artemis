@@ -79,6 +79,14 @@ public abstract class GmodDAO
   public abstract List getResidueFeatures(final Integer organismId);
   
   /**
+   * Return a list of chado features with residues
+   * with residues.
+   * @param commonName - organism common name
+   * @return    the <code>List</code> of <code>Feature</code> objects
+   */
+  public abstract List getResidueFeaturesByOrganismCommonName(final String commonName);
+  
+  /**
    * Get the residues (sub-sequence) for a feature given it's 
    * uniquename
    * @param uniqueName
