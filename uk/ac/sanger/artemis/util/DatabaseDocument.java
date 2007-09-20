@@ -2110,10 +2110,14 @@ public class DatabaseDocument extends Document
   public HashMap getDatabaseEntries()
                    throws ConnectException, java.sql.SQLException
   {
+
     HashMap db = null;
     try
     { 
       GmodDAO dao = getDAO();
+      CvTermThread cvThread = new CvTermThread(dao);
+      cvThread.start();
+      
       schema_list = dao.getOrganisms();
       
       Organism org = new Organism();
@@ -2183,9 +2187,8 @@ public class DatabaseDocument extends Document
           Iterator it_residue_features = list_residue_features.iterator();
           while(it_residue_features.hasNext())
           {
-            Feature feature = (Feature)it_residue_features.next();
-            String typeName = getCvtermName(feature.getCvTerm().getCvTermId(),
-                                            dao, gene_builder); 
+            final Feature feature = (Feature)it_residue_features.next();
+            final String typeName = feature.getCvTerm().getName();
                   
             if(db == null)
               db = new HashMap();
@@ -2201,6 +2204,10 @@ public class DatabaseDocument extends Document
       
       residueFeaturesLookup.clear();
       list_residue_features.clear();
+      
+      // now wait for cvterm to be loaded
+      while(cvThread.isAlive())
+        Thread.sleep(10);
     }
     catch(RuntimeException sqlExp)
     {
@@ -2229,6 +2236,11 @@ public class DatabaseDocument extends Document
                                     JOptionPane.ERROR_MESSAGE);
       logger4j.debug(sqlExp.getMessage());
       throw sqlExp;
+    }
+    catch(InterruptedException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
     
     return db;
@@ -2713,7 +2725,21 @@ public class DatabaseDocument extends Document
         else
           return 1;
       }
+    } 
+  }
+  
+  class CvTermThread extends Thread 
+  {
+    private GmodDAO dao;
+    CvTermThread(final GmodDAO dao) 
+    {
+      this.dao = dao;
     }
-    
+
+    public void run() 
+    {
+      getCvterms(dao);
+      logger4j.debug("LOADED CvTerms");
+    }
   }
 }
