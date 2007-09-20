@@ -122,6 +122,11 @@
     <result property="uniqueName" column="uniquename"/>
     <result property="featureId" column="feature_id"/>
     <result property="cvTerm.cvTermId" column="type_id"/>
+	<result property="organism.organismId" column="organism_id"/>
+	<result property="organism.abbreviation" column="abbreviation"/>
+	<result property="organism.genus" column="genus"/>
+	<result property="organism.species" column="species"/>
+    <result property="organism.commonName" column="common_name"/>
   </resultMap>
      
   <!-- SQL --> 
@@ -366,16 +371,28 @@
 
   <select id="getResidueFeatures" parameterClass="java.lang.Integer"
             resultMap="map-feature-with-residues-result">
-    SELECT name, uniquename, feature_id, type_id
-    FROM feature WHERE 
-	  <isNotNull> organism_id=$value$ AND </isNotNull>
-	  residues notnull AND residues NOT LIKE ''
+    SELECT name, uniquename, feature_id, type_id, 
+	       feature.organism_id, abbreviation, genus, species, common_name
+    FROM feature 
+	LEFT JOIN organism ON organism.organism_id=feature.organism_id
+	WHERE  <isNotNull> feature.organism_id=$value$ AND </isNotNull>
+	  residues notnull AND residues NOT LIKE '' ORDER BY common_name
        <!--
          <iterate prepend="AND" property="cvTermIds" conjunction="OR" open="(" close=")">
            type_id=#cvTermIds[]#
          </iterate>
        ORDER BY abbreviation, type_id 
        -->
+  </select>
+	
+  <select id="getResidueFeaturesByOrganismCommonName" parameterClass="java.lang.String"
+            resultMap="map-feature-with-residues-result">
+    SELECT name, uniquename, feature_id, type_id, 
+	       feature.organism_id, abbreviation, genus, species, common_name
+    FROM feature 
+	LEFT JOIN organism ON organism.organism_id=feature.organism_id
+	WHERE  <isNotNull> organism.common_name=#value# AND </isNotNull>
+	  residues notnull AND residues NOT LIKE '' ORDER BY common_name
   </select>
 	
 		
