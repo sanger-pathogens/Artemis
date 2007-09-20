@@ -2110,7 +2110,7 @@ public class DatabaseDocument extends Document
   public HashMap getDatabaseEntries()
                    throws ConnectException, java.sql.SQLException
   {
-    HashMap db    = null;
+    HashMap db = null;
     try
     { 
       GmodDAO dao = getDAO();
@@ -2120,8 +2120,27 @@ public class DatabaseDocument extends Document
       org.setCommonName("web");
       schema_list.add(org);
       
-      final List pg_schemas = dao.getSchema(); 
-
+      final List pg_schemas = dao.getSchema();
+      
+      // build a lookup hash of residue features in the
+      // main schema
+      Hashtable residueFeaturesLookup = new Hashtable();
+      List list_residue_features = dao.getResidueFeatures();
+      for(int i=0; i<list_residue_features.size(); i++)
+      {
+        Feature feature = (Feature)list_residue_features.get(i);
+        Integer organismId = new Integer(feature.getOrganism().getOrganismId());
+        List features;
+        if(residueFeaturesLookup.containsKey(organismId))
+          features= (List)residueFeaturesLookup.get(organismId);
+        else
+          features = new Vector();
+        features.add(feature);
+        residueFeaturesLookup.put(organismId, features);
+      }
+      
+      // loop over organisms to identify those with features 
+      // containing residues
       Iterator it = schema_list.iterator();
       while(it.hasNext())
       {
@@ -2132,8 +2151,7 @@ public class DatabaseDocument extends Document
         Iterator schemasIt = pg_schemas.iterator();
         while(schemasIt.hasNext())
         {
-          schema = (String)schemasIt.next();
-          
+          schema = (String)schemasIt.next();         
           if( schema.equalsIgnoreCase(organism.getCommonName()) )
           {
             reset((String)getLocation(),  schema);
@@ -2147,13 +2165,20 @@ public class DatabaseDocument extends Document
         
         try
         {
-          List list_residue_features;
-          
           if(organism.getOrganismId() > 0)
-            list_residue_features = dao.getResidueFeatures(
-              new Integer(organism.getOrganismId()));
+          {
+            Integer organismId = new Integer(organism.getOrganismId());
+            
+            if(residueFeaturesLookup.containsKey(organismId))
+              list_residue_features = (List)residueFeaturesLookup.get(organismId);
+            else if(singleSchema && residueFeaturesLookup.size()>0)
+              continue;
+            else
+              list_residue_features = dao.getResidueFeatures(organismId);
+          }
           else
-            list_residue_features = dao.getResidueFeatures();
+            list_residue_features = 
+              dao.getResidueFeaturesByOrganismCommonName(organism.getCommonName());
           
           Iterator it_residue_features = list_residue_features.iterator();
           while(it_residue_features.hasNext())
@@ -2174,6 +2199,8 @@ public class DatabaseDocument extends Document
         }
       }
       
+      residueFeaturesLookup.clear();
+      list_residue_features.clear();
     }
     catch(RuntimeException sqlExp)
     {
