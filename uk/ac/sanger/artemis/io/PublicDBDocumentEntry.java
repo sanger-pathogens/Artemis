@@ -20,18 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.2 2005-07-08 15:11:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.3 2007-09-21 15:26:22 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
 import uk.ac.sanger.artemis.util.*;
 
-import java.util.Vector;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -40,7 +35,7 @@ import java.io.IOException;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.2 2005-07-08 15:11:12 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.3 2007-09-21 15:26:22 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -122,15 +117,88 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     {
       final PublicDBStreamFeature feature_copy;
 
-      if (this instanceof EmblDocumentEntry) 
+      if(feature instanceof GFFStreamFeature)
+        feature_copy = mapGffToNativeFeature(feature);
+      else if (this instanceof EmblDocumentEntry)
         feature_copy = new EmblStreamFeature (feature);
-      else 
+      else
         feature_copy = new GenbankStreamFeature (feature);
       
       return feature_copy;
     }
   }
 
+  /**
+   * Map GFF features to EMBL/Genbank
+   * @param feature
+   * @return
+   */
+  private PublicDBStreamFeature mapGffToNativeFeature(final Feature feature)
+  {
+    final String[] QUALIFIERS_TO_REMOVE = 
+        { 
+          "timelastmodified", "ID", "feature_id", "Parent", "Derives_from", "feature_relationship_rank"
+        };
+    
+    Key key = feature.getKey();
+    QualifierVector qualifiers = feature.getQualifiers().copy();
+    try
+    {
+      int index;
+      
+      for(int i=0; i<QUALIFIERS_TO_REMOVE.length; i++)
+      {
+        index = qualifiers.indexOfQualifierWithName(QUALIFIERS_TO_REMOVE[i]);
+        if(index > -1)
+          qualifiers.removeElementAt(index);
+      }
+      
+      if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
+        key = new Key("exon");
+      else if(key.getKeyString().startsWith("pseudo"))
+      {
+        if(key.getKeyString().equals("pseudogenic_transcript"))
+          key = new Key("mRNA");
+        else if(key.getKeyString().equals("pseudogenic_exon"))
+          key = new Key("exon");
+        else if(key.getKeyString().equals("pseudogene"))
+          key = new Key("gene");
+        
+        qualifiers.setQualifier(new Qualifier("pseudo"));
+        
+        if(!getEntryInformation().isValidQualifier(key, "pseudo"))
+        {
+          try
+          {
+            getEntryInformation().addQualifierInfo(
+                 new QualifierInfo("pseudo", QualifierInfo.NO_VALUE,
+                          null, null, true));
+          }
+          catch(QualifierInfoException e){}
+        }
+      }
+      
+      if(this instanceof EmblDocumentEntry)
+        return new EmblStreamFeature (
+            key, 
+            feature.getLocation(), 
+            qualifiers);
+      else
+        return new GenbankStreamFeature (
+            key, 
+            feature.getLocation(), 
+            qualifiers);
+    }
+    catch(InvalidRelationException e)
+    {
+      e.printStackTrace();
+      if(feature instanceof DatabaseStreamFeature)
+        return new EmblStreamFeature ();
+      else
+        return new GenbankStreamFeature ();
+    }
+  }
+  
   /**
    *  If the given Sequence can be added directly to this Entry, then return a
    *  copy of it, otherwise create and return a new feature of the appropriate
