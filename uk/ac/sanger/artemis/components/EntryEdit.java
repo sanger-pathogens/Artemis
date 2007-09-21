@@ -20,13 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.43 2007-08-17 15:11:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.44 2007-09-21 15:30:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
+import uk.ac.sanger.artemis.chado.ClusterLazyQualifierValue;
 import uk.ac.sanger.artemis.chado.SimilarityLazyQualifierValue;
 import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
@@ -43,6 +44,7 @@ import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierLazyLoading;
@@ -56,6 +58,8 @@ import javax.swing.*;
 import com.sshtools.j2ssh.sftp.FileAttributes;
 
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
@@ -64,7 +68,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.43 2007-08-17 15:11:35 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.44 2007-09-21 15:30:16 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -410,6 +414,7 @@ public class EntryEdit extends JFrame
     butt.setPreferredSize(new Dimension( butt.getPreferredSize().width,9));
     butt.setBorderPainted(false);
     butt.setFont(new Font("SansSerif", Font.BOLD, 9));
+    
     final Box box_across = Box.createHorizontalBox();
     box_across.add(butt);
     box_across.add(Box.createHorizontalGlue());
@@ -661,9 +666,11 @@ public class EntryEdit extends JFrame
         return;
     }
 
+    
     if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
     {    
       List lazySimilarityValues = new Vector();
+      Hashtable lazyClusterValues = new Hashtable();
       FeatureVector features = entry.getAllFeatures();
       // find any lazy values to be loaded
       for(int i=0; i<features.size(); i++)
@@ -672,16 +679,24 @@ public class EntryEdit extends JFrame
         for(int j=0; j<qualifiers.size(); j++)
         {
           Qualifier qualifier = (Qualifier)qualifiers.get(j);
-          if(qualifier instanceof QualifierLazyLoading)
+          if(qualifier instanceof QualifierLazyLoading &&
+             !((QualifierLazyLoading)qualifier).isAllLazyValuesLoaded())
           {
-            if(  ((QualifierLazyLoading)qualifier).getValue(0) instanceof SimilarityLazyQualifierValue &&
-               ! ((QualifierLazyLoading)qualifier).isAllLazyValuesLoaded() )
+            if( ((QualifierLazyLoading)qualifier).getValue(0) instanceof SimilarityLazyQualifierValue )
               lazySimilarityValues.addAll( ((QualifierLazyLoading)qualifier).getLazyValues() );
+            else if( ((QualifierLazyLoading)qualifier).getValue(0) instanceof ClusterLazyQualifierValue )
+            {
+              lazyClusterValues.put( 
+                  (GFFStreamFeature)features.elementAt(i).getEmblFeature(), 
+                  ((QualifierLazyLoading)qualifier).getLazyValues() );
+            }
+            else
+              ((QualifierLazyLoading)qualifier).setForceLoad(true);
           }
         }
       }
       
-      if(lazySimilarityValues.size() > 0)
+      if(lazySimilarityValues.size() > 0 || lazyClusterValues.size() > 0)
       {
         int n = JOptionPane.showConfirmDialog(null,
           "Load and write to file all qualifers from the database?"+
@@ -691,8 +706,22 @@ public class EntryEdit extends JFrame
         
         if(n == JOptionPane.YES_OPTION)
         {      
-          SimilarityLazyQualifierValue.bulkRetrieve(lazySimilarityValues,
-            (DatabaseDocument) ((DatabaseDocumentEntry)entry.getEMBLEntry()).getDocument());
+          if(lazySimilarityValues.size() > 0)
+          {
+            SimilarityLazyQualifierValue.bulkRetrieve(lazySimilarityValues,
+              (DatabaseDocument) ((DatabaseDocumentEntry)entry.getEMBLEntry()).getDocument());
+          }
+          if(lazyClusterValues.size() > 0)
+          {
+            Enumeration keys = lazyClusterValues.keys();
+            while(keys.hasMoreElements())
+            {
+              GFFStreamFeature gffFeature = (GFFStreamFeature)keys.nextElement();
+              List lazyValues = (List)lazyClusterValues.get(gffFeature);
+              ClusterLazyQualifierValue.setClusterFromValueList(
+                  lazyValues, gffFeature);
+            }
+          }
           
           for(int i=0; i<features.size(); i++)
           {
