@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureRelationship;
@@ -277,7 +278,19 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
         }
       }
       if(cnt > 1)
+      {
         value = value.concat("; cluster_name="+clusterFeature.getUniqueName());
+        
+        Collection analysisFeatures = clusterFeature.getAnalysisFeatures();
+        Iterator itAnalysis = analysisFeatures.iterator();
+        if(itAnalysis.hasNext())
+        {
+          AnalysisFeature analysisFeature = (AnalysisFeature) itAnalysis.next();
+          value = value.concat("; program="+analysisFeature.getAnalysis().getProgram());
+        }
+        //else
+        //  value = value.concat("; program=unknown");
+      }
       else
         value = value.concat("; match_name="+clusterFeature.getUniqueName());
     }
@@ -316,6 +329,4 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
   {
     return value;
   }
-  
-
 }

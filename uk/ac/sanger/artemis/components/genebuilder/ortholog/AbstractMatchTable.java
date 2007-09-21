@@ -173,8 +173,15 @@ abstract class AbstractMatchTable
    */
   protected int getColumnIndex(final String columnName)
   {
-    int modelColumnIndex = getTable().getColumn(columnName).getModelIndex();
-    return getTable().convertColumnIndexToView(modelColumnIndex);
+    try
+    {
+      int modelColumnIndex = getTable().getColumn(columnName).getModelIndex();
+      return getTable().convertColumnIndexToView(modelColumnIndex);
+    }
+    catch(IllegalArgumentException e)
+    {
+      return -1;
+    }
   }
   
   

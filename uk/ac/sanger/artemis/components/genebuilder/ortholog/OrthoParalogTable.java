@@ -87,6 +87,7 @@ public class OrthoParalogTable extends AbstractMatchTable
   protected final static String MATCH_NAME_COL = "Match";
   protected final static String ROW_TYPE_HIDE_COL = "Term";
   protected final static String ROW_TYPE_COL = "Type";
+  protected final static String PROGRAM_COL = "Program";
   protected final static String ORGANISM_COL = "Organism";
   protected final static String ORTHO_COL = "Gene";
   protected final static String LINK_COL = "Link";
@@ -125,7 +126,10 @@ public class OrthoParalogTable extends AbstractMatchTable
     tableData.setElementAt(CLUSTER_NAME_COL,0);
     tableData.setElementAt(MATCH_NAME_COL,1);
     tableData.setElementAt(ROW_TYPE_HIDE_COL,2);
-    tableData.setElementAt(ROW_TYPE_COL,3);
+    if(showCluster)
+      tableData.setElementAt(PROGRAM_COL,3);
+    else
+      tableData.setElementAt(ROW_TYPE_COL,3);
     tableData.setElementAt(ORGANISM_COL,4);
     tableData.setElementAt(ORTHO_COL,5);
     tableData.setElementAt(LINK_COL,6);
@@ -198,6 +202,7 @@ public class OrthoParalogTable extends AbstractMatchTable
     });
     
     final TableColumn[] hideColumns = new TableColumn[3];
+    
     hideColumns[0] = table.getColumn(ROW_TYPE_HIDE_COL);
     hideColumns[1] = table.getColumn(MATCH_NAME_COL);
     if(showCluster)
@@ -239,13 +244,17 @@ public class OrthoParalogTable extends AbstractMatchTable
     }
     
     packColumn(table, getColumnIndex(DESCRIPTION_COL), 4);
-    packColumn(table, getColumnIndex(ROW_TYPE_COL), 4);
     packColumn(table, getColumnIndex(ORTHO_COL), 4);
     packColumn(table, getColumnIndex(LINK_COL), 4);
     packColumn(table, getColumnIndex(ORGANISM_COL), 4);
     packColumn(table, getColumnIndex(VIEW_BUTTON_COL), 4);
     if(showCluster)
+    {
       packColumn(table, getColumnIndex(CLUSTER_NAME_COL), 4);
+      packColumn(table, getColumnIndex(PROGRAM_COL), 4);
+    }
+    else
+      packColumn(table, getColumnIndex(ROW_TYPE_COL), 4);
     
     // remove JButton column
     col = table.getColumn(REMOVE_BUTTON_COL);
@@ -298,6 +307,14 @@ public class OrthoParalogTable extends AbstractMatchTable
         matchName = matchName.substring(11);
     }
     
+    String program = "";
+    if(rowStr.size() > 1)
+    {
+      program = ArtemisUtils.getString(rowStr, "program=");
+      if(!program.equals(""))
+        program = program.substring(8);
+    }
+    
     int columnIndex;
     for(int k = 0; k < orthoparalogs.length; k++)
     {
@@ -332,13 +349,20 @@ public class OrthoParalogTable extends AbstractMatchTable
       
       columnIndex = tableData.indexOf(ROW_TYPE_COL);
       
-      final String symbol;
-      if(linkAndType[1].trim().equals(MatchPanel.ORTHOLOG))
-        symbol = "O";
-      else
-        symbol = "P";
+      if(columnIndex > -1)
+      {
+        final String symbol;
+        if(linkAndType[1].trim().equals(MatchPanel.ORTHOLOG))
+          symbol = "O";
+        else
+         symbol = "P";
+        thisRowData.setElementAt(symbol, columnIndex);
+      }
       
-      thisRowData.setElementAt(symbol, columnIndex);
+      columnIndex = tableData.indexOf(PROGRAM_COL);
+      if(columnIndex > -1)
+        thisRowData.setElementAt(program, columnIndex);
+      
       rowData.add(thisRowData);
     }  
   }
@@ -806,6 +830,7 @@ public class OrthoParalogTable extends AbstractMatchTable
     private final JLabel gene = new JLabel();
     private final JLabel link = new JLabel();
     private final JLabel type = new JLabel();
+    private final JLabel program = new JLabel();
     private final JLabel symbol = new JLabel();
     private final JLabel organism = new JLabel();
     private final JTextArea descriptionTextArea = new JTextArea();
@@ -922,6 +947,11 @@ public class OrthoParalogTable extends AbstractMatchTable
       {
         type.setText(text);
         c = type;
+      }
+      else if(column == getColumnIndex(PROGRAM_COL))
+      {
+        program.setText(text);
+        c = program;
       }
       else if(column == getColumnIndex(ROW_TYPE_COL))
       {
