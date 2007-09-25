@@ -69,8 +69,8 @@ public class DatabaseDocumentEntry extends GFFDocumentEntry
    *  it, otherwise create and return a new feature of the appropriate type.
    *  @param copy if true then always new a new copy of the Feature.
    **/
-  protected SimpleDocumentFeature makeNativeFeature(final Feature feature,
-                                                    final boolean copy)
+  protected Object makeNativeFeature(final Feature feature,
+                                     final boolean copy)
   {
     if (!copy)
     {

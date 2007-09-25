@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.48 2007-09-11 11:00:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.49 2007-09-25 09:59:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -42,7 +42,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.48 2007-09-11 11:00:37 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.49 2007-09-25 09:59:57 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -126,8 +126,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
    *  it, otherwise create and return a new feature of the appropriate type.
    *  @param copy if true then always new a new copy of the Feature.
    **/
-  protected SimpleDocumentFeature makeNativeFeature(final Feature feature,
-                                                    final boolean copy) 
+  protected Object makeNativeFeature(final Feature feature,
+                                     final boolean copy) 
   {
     if(!copy && feature instanceof GFFStreamFeature) 
       return (GFFStreamFeature)feature;

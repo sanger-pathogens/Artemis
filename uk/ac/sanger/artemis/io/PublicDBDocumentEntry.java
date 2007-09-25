@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.3 2007-09-21 15:26:22 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.4 2007-09-25 09:59:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.io.IOException;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.3 2007-09-21 15:26:22 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.4 2007-09-25 09:59:57 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -103,7 +103,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
    *  it, otherwise create and return a new feature of the appropriate type.
    *  @param copy if true then always new a new copy of the Feature.
    **/
-  protected SimpleDocumentFeature makeNativeFeature(final Feature feature,
+  protected Object makeNativeFeature(final Feature feature,
                                                     final boolean copy) 
   {
     if (!copy && (feature instanceof EmblStreamFeature &&
@@ -115,16 +115,12 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     } 
     else 
     {
-      final PublicDBStreamFeature feature_copy;
-
       if(feature instanceof GFFStreamFeature)
-        feature_copy = mapGffToNativeFeature(feature);
+        return mapGffToNativeFeature(feature);
       else if (this instanceof EmblDocumentEntry)
-        feature_copy = new EmblStreamFeature (feature);
+        return new EmblStreamFeature(feature);
       else
-        feature_copy = new GenbankStreamFeature (feature);
-      
-      return feature_copy;
+        return new GenbankStreamFeature(feature);
     }
   }
 
@@ -133,18 +129,31 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
    * @param feature
    * @return
    */
-  private PublicDBStreamFeature mapGffToNativeFeature(final Feature feature)
+  private Object mapGffToNativeFeature(final Feature feature)
   {
     final String[] QUALIFIERS_TO_REMOVE = 
         { 
-          "timelastmodified", "ID", "feature_id", "Parent", "Derives_from", "feature_relationship_rank"
+          "timelastmodified", 
+          "ID", 
+          "comment",   // convert to note
+          "feature_id", 
+          "Parent", 
+          "Derives_from",
+          "feature_relationship_rank"
         };
     
     Key key = feature.getKey();
     QualifierVector qualifiers = feature.getQualifiers().copy();
     try
     {
-      int index;
+      int index = qualifiers.indexOfQualifierWithName("comment");
+      
+      if(index > -1)
+      {
+        StringVector comments = ((Qualifier)qualifiers.get(index)).getValues();
+        Qualifier noteQualifier = new Qualifier("note", comments);
+        qualifiers.setQualifier(noteQualifier);
+      }
       
       for(int i=0; i<QUALIFIERS_TO_REMOVE.length; i++)
       {
@@ -152,9 +161,10 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         if(index > -1)
           qualifiers.removeElementAt(index);
       }
+
       
       if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
-        key = new Key("exon");
+        key = new Key("CDS");
       else if(key.getKeyString().startsWith("pseudo"))
       {
         if(key.getKeyString().equals("pseudogenic_transcript"))
@@ -177,6 +187,35 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
           catch(QualifierInfoException e){}
         }
       }
+      
+      
+      //
+      // create separate exon features for each range in a CDS
+      // (returns an array of SimpleDocumentFeature)
+      if(key.getKeyString().equals("CDS"))
+      {
+        RangeVector ranges = feature.getLocation().getRanges();
+        SimpleDocumentFeature[] features = 
+          new SimpleDocumentFeature[ranges.size() + 1];
+        features[0] = new EmblStreamFeature(key, feature.getLocation(),
+            qualifiers);
+
+        for(int i = 0; i < ranges.size(); i++)
+        {
+          try
+          {
+            features[i + 1] = new EmblStreamFeature(new Key("exon"),
+                new Location((Range) ranges.get(i)), qualifiers);
+          }
+          catch(OutOfRangeException e)
+          {
+            e.printStackTrace();
+          }
+        }
+        return features;
+      }
+      
+      
       
       if(this instanceof EmblDocumentEntry)
         return new EmblStreamFeature (

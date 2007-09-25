@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.20 2007-06-15 12:57:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.21 2007-09-25 09:59:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -38,7 +38,7 @@ import javax.swing.JOptionPane;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.20 2007-06-15 12:57:32 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.21 2007-09-25 09:59:57 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -340,13 +340,20 @@ abstract public class SimpleDocumentEntry
       {
         if(force) 
         {
-          if(forcedAdd(makeNativeFeature(new_feature, true)) == null)
+          if(forcedAdd((SimpleDocumentFeature)makeNativeFeature(new_feature, true)) == null)
             failed.append(new_feature.getKey().getKeyString()+"\n"); 
         }
         else
         {
-          
-          add(makeNativeFeature(new_feature, true));
+          final Object docFeature = makeNativeFeature(new_feature, true);
+          if(docFeature instanceof SimpleDocumentFeature[])
+          {
+            SimpleDocumentFeature[] docFeatures = (SimpleDocumentFeature[])docFeature;
+            for(int i=0; i<docFeatures.length; i++)
+              add((SimpleDocumentFeature)docFeatures[i]);
+          }
+          else
+            add((SimpleDocumentFeature)docFeature);
         }
       } 
       catch(ReadOnlyException e) 
@@ -583,7 +590,7 @@ abstract public class SimpleDocumentEntry
     }
 
     final SimpleDocumentFeature native_feature =
-      makeNativeFeature(feature, false);
+      (SimpleDocumentFeature)makeNativeFeature(feature, false);
 
     final FeatureTable feature_table = getFeatureTable();
     feature_table.add(native_feature);
@@ -679,7 +686,7 @@ abstract public class SimpleDocumentEntry
     }
 
     final SimpleDocumentFeature native_feature =
-      makeNativeFeature(feature, false);
+      (SimpleDocumentFeature)makeNativeFeature(feature, false);
 
     if(qualifiers_fixed) 
     {
@@ -1230,7 +1237,7 @@ abstract public class SimpleDocumentEntry
    *  The feature should not be in an Entry when this method is called.
    *  @param copy if true then always make a new copy of the Feature.
    **/
-  protected abstract SimpleDocumentFeature
+  protected abstract Object
     makeNativeFeature(final Feature feature,
                        final boolean copy);
 
