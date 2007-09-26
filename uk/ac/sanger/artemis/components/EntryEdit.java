@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.44 2007-09-21 15:30:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.45 2007-09-26 10:30:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,7 +44,6 @@ import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
-import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierLazyLoading;
@@ -58,8 +57,6 @@ import javax.swing.*;
 import com.sshtools.j2ssh.sftp.FileAttributes;
 
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
@@ -68,7 +65,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.44 2007-09-21 15:30:16 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.45 2007-09-26 10:30:23 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -669,9 +666,9 @@ public class EntryEdit extends JFrame
     
     if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
     {    
-      List lazySimilarityValues = new Vector();
-      Hashtable lazyClusterValues = new Hashtable();
-      FeatureVector features = entry.getAllFeatures();
+      final List lazySimilarityValues = new Vector();
+      final List lazyClusterValues = new Vector();
+      final FeatureVector features = entry.getAllFeatures();
       // find any lazy values to be loaded
       for(int i=0; i<features.size(); i++)
       {
@@ -686,9 +683,7 @@ public class EntryEdit extends JFrame
               lazySimilarityValues.addAll( ((QualifierLazyLoading)qualifier).getLazyValues() );
             else if( ((QualifierLazyLoading)qualifier).getValue(0) instanceof ClusterLazyQualifierValue )
             {
-              lazyClusterValues.put( 
-                  (GFFStreamFeature)features.elementAt(i).getEmblFeature(), 
-                  ((QualifierLazyLoading)qualifier).getLazyValues() );
+              lazyClusterValues.addAll( ((QualifierLazyLoading)qualifier).getLazyValues() );
             }
             else
               ((QualifierLazyLoading)qualifier).setForceLoad(true);
@@ -706,21 +701,17 @@ public class EntryEdit extends JFrame
         
         if(n == JOptionPane.YES_OPTION)
         {      
+          final DatabaseDocument document = 
+            (DatabaseDocument)((DocumentEntry)entry.getEMBLEntry()).getDocument();
+          
           if(lazySimilarityValues.size() > 0)
-          {
-            SimilarityLazyQualifierValue.bulkRetrieve(lazySimilarityValues,
-              (DatabaseDocument) ((DatabaseDocumentEntry)entry.getEMBLEntry()).getDocument());
-          }
+            SimilarityLazyQualifierValue.bulkRetrieve(lazySimilarityValues,document);
+          
           if(lazyClusterValues.size() > 0)
           {
-            Enumeration keys = lazyClusterValues.keys();
-            while(keys.hasMoreElements())
-            {
-              GFFStreamFeature gffFeature = (GFFStreamFeature)keys.nextElement();
-              List lazyValues = (List)lazyClusterValues.get(gffFeature);
-              ClusterLazyQualifierValue.setClusterFromValueList(
-                  lazyValues, gffFeature);
-            }
+            for(int i=0; i<lazyClusterValues.size(); i++)
+              ((ClusterLazyQualifierValue)lazyClusterValues.get(i)).setLoadGeneName(false);
+            ClusterLazyQualifierValue.setClusterFromValueList(lazyClusterValues, document);
           }
           
           for(int i=0; i<features.size(); i++)
@@ -736,6 +727,7 @@ public class EntryEdit extends JFrame
         }
       }
     }
+
     
 //  if(!System.getProperty("os.arch").equals("alpha"))
 //  {
@@ -751,6 +743,7 @@ public class EntryEdit extends JFrame
                                                       EntryEdit.this, false);
           file_dialog.saveEntry(entry, include_diana_extensions, ask_for_name,
                                 keep_new_name, destination_type);
+
           return null;
         }
       };
