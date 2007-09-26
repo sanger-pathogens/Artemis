@@ -51,6 +51,9 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
   private boolean forceLoad = false;
   /** data loaded */
   private boolean lazyLoaded = false;
+  /** include gene name */
+  private boolean loadGeneName = true;
+  
   private String value;
   private GFFStreamFeature feature;
   private List clusters;
@@ -89,7 +92,7 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
    * @param values List of ClusterLazyQualifierValue
    * @param feature
    */
-  public static void setClusterFromValueList(final List values, final GFFStreamFeature feature)
+  public static void setClusterFromValueList(final List values, final DatabaseDocument document)
   {
     final List clusterFeatureIds = new Vector();
     final Hashtable hash = new Hashtable(values.size());
@@ -104,7 +107,7 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
       hash.put(clusterFeatureId, lazyValue);
     }
     
-    final Document document = ((DocumentEntry)feature.getEntry()).getDocument();
+    //final Document document = ((DocumentEntry)feature.getEntry()).getDocument();
     List allClusters = ((DatabaseDocument)document).getClustersByFeatureIds(clusterFeatureIds);
     
    
@@ -251,25 +254,13 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
           
           value = value.concat(subjectFeature.getOrganism().getCommonName()+":");
           
-          String geneName = subjectFeature.getUniqueName();
-          if(!subjectFeature.getCvTerm().getName().equals("gene") ||
-             !subjectFeature.getCvTerm().getName().equals("pseudogene"))
+          if(loadGeneName)
           {
-            Feature parent = getParentFeature(subjectFeature);
-
-            if(parent.getCvTerm().getName().equals("gene") ||
-               parent.getCvTerm().getName().equals("pseudogene"))
-              geneName = parent.getUniqueName();
-            else if(parent != null)
-            {
-              parent = getParentFeature(parent);
-              if(parent.getCvTerm().getName().equals("gene") ||
-                 parent.getCvTerm().getName().equals("pseudogene"))
-                geneName = parent.getUniqueName();
-            }
+            String geneName = getGeneName(subjectFeature);
+            value = value.concat(geneName+" ");
           }
           
-          value = value.concat(geneName+" link="+
+          value = value.concat("link="+
               subjectFeature.getUniqueName());
           
           value = value.concat(" type="+fr.getCvTerm().getName());
@@ -299,7 +290,34 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
     
     value = value.concat("; "+rank);
 
+    if(!loadGeneName)
+    {
+      loadGeneName = true;
+      lazyLoaded = false;
+    }
     return value;
+  }
+  
+  public String getGeneName(final Feature subjectFeature)
+  {
+    String geneName = subjectFeature.getUniqueName();
+    if(!subjectFeature.getCvTerm().getName().equals("gene") ||
+       !subjectFeature.getCvTerm().getName().equals("pseudogene"))
+    {
+      Feature parent = getParentFeature(subjectFeature);
+
+      if(parent.getCvTerm().getName().equals("gene") ||
+         parent.getCvTerm().getName().equals("pseudogene"))
+        geneName = parent.getUniqueName();
+      else if(parent != null)
+      {
+        parent = getParentFeature(parent);
+        if(parent.getCvTerm().getName().equals("gene") ||
+           parent.getCvTerm().getName().equals("pseudogene"))
+          geneName = parent.getUniqueName();
+      }
+    }
+    return geneName;
   }
   
   /**
@@ -328,5 +346,10 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
   public String getValue()
   {
     return value;
+  }
+
+  public void setLoadGeneName(boolean loadGeneName)
+  {
+    this.loadGeneName = loadGeneName;
   }
 }

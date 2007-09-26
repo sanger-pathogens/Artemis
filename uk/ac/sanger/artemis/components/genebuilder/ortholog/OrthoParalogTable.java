@@ -61,6 +61,7 @@ import uk.ac.sanger.artemis.FeaturePredicate;
 import uk.ac.sanger.artemis.chado.ArtemisUtils;
 import uk.ac.sanger.artemis.chado.ClusterLazyQualifierValue;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
+import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.PartialSequence;
@@ -89,7 +90,7 @@ public class OrthoParalogTable extends AbstractMatchTable
   protected final static String ROW_TYPE_COL = "Type";
   protected final static String PROGRAM_COL = "Program";
   protected final static String ORGANISM_COL = "Organism";
-  protected final static String ORTHO_COL = "Gene";
+  protected final static String GENE_COL = "Gene";
   protected final static String LINK_COL = "Link";
   protected final static String DESCRIPTION_COL = "Description";
   protected final static String VIEW_BUTTON_COL = "View";
@@ -131,7 +132,7 @@ public class OrthoParalogTable extends AbstractMatchTable
     else
       tableData.setElementAt(ROW_TYPE_COL,3);
     tableData.setElementAt(ORGANISM_COL,4);
-    tableData.setElementAt(ORTHO_COL,5);
+    tableData.setElementAt(GENE_COL,5);
     tableData.setElementAt(LINK_COL,6);
     tableData.setElementAt(DESCRIPTION_COL,7);
     tableData.setElementAt(VIEW_BUTTON_COL,8);
@@ -175,7 +176,7 @@ public class OrthoParalogTable extends AbstractMatchTable
         
         String colName = table.getColumnName(col);
      
-        if(colName.equals(ORTHO_COL) || colName.equals(REMOVE_BUTTON_COL)) 
+        if(colName.equals(GENE_COL) || colName.equals(REMOVE_BUTTON_COL)) 
           table.setCursor(handCursor);
         else 
           table.setCursor(Cursor.getDefaultCursor());  
@@ -244,7 +245,7 @@ public class OrthoParalogTable extends AbstractMatchTable
     }
     
     packColumn(table, getColumnIndex(DESCRIPTION_COL), 4);
-    packColumn(table, getColumnIndex(ORTHO_COL), 4);
+    packColumn(table, getColumnIndex(GENE_COL), 4);
     packColumn(table, getColumnIndex(LINK_COL), 4);
     packColumn(table, getColumnIndex(ORGANISM_COL), 4);
     packColumn(table, getColumnIndex(VIEW_BUTTON_COL), 4);
@@ -267,7 +268,7 @@ public class OrthoParalogTable extends AbstractMatchTable
         (DefaultTableModel)table.getModel(), "VIEW", doc));
     
     // orthologue link
-    col = table.getColumn(ORTHO_COL);
+    col = table.getColumn(GENE_COL);
     col.setCellEditor(new LinkEditor(new JCheckBox(),
         (DefaultTableModel)table.getModel(), doc));
   }
@@ -329,7 +330,7 @@ public class OrthoParalogTable extends AbstractMatchTable
       columnIndex = tableData.indexOf(ORGANISM_COL);
       thisRowData.setElementAt(gene[0], columnIndex);
       
-      columnIndex = tableData.indexOf(ORTHO_COL);
+      columnIndex = tableData.indexOf(GENE_COL);
       thisRowData.setElementAt(geneNameAndLinkAndType[0].trim(), columnIndex);
       
       columnIndex = tableData.indexOf(LINK_COL);
@@ -432,7 +433,9 @@ public class OrthoParalogTable extends AbstractMatchTable
         !((QualifierLazyLoading)qualifier).isAllLazyValuesLoaded())
     {
       List values = ((QualifierLazyLoading)qualifier).getLazyValues();
-      ClusterLazyQualifierValue.setClusterFromValueList(values, feature);
+      final DatabaseDocument document =
+        (DatabaseDocument)((DocumentEntry)feature.getEntry()).getDocument();
+      ClusterLazyQualifierValue.setClusterFromValueList(values, document);
     }    
   }
   
@@ -540,7 +543,7 @@ public class OrthoParalogTable extends AbstractMatchTable
                                    final boolean showPeptideSequence)
   {
     final int[] rows = table.getSelectedRows();
-    final int orthoColumn = getColumnIndex(ORTHO_COL);
+    final int orthoColumn = getColumnIndex(GENE_COL);
     final Vector seqs = new Vector();
 
     // find the gene feature
@@ -662,7 +665,7 @@ public class OrthoParalogTable extends AbstractMatchTable
       type = MatchPanel.PARALOG;
     
     StringBuffer orthologStr = new StringBuffer(
-        (String)getTable().getValueAt(row, getColumnIndex(ORTHO_COL))+
+        (String)getTable().getValueAt(row, getColumnIndex(GENE_COL))+
         " link="+
         (String)getTable().getValueAt(row, getColumnIndex(LINK_COL))+
         " type="+type);            // ortholog link
@@ -886,7 +889,7 @@ public class OrthoParalogTable extends AbstractMatchTable
       Dimension dim;
 
       TableColumn tableCol;
-      if(column == getColumnIndex(ORTHO_COL))
+      if(column == getColumnIndex(GENE_COL))
       {
         String geneStr[] = text.split(":");
         gene.setText(geneStr[1]);

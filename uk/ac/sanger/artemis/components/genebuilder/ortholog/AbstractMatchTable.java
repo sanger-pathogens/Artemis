@@ -249,7 +249,7 @@ abstract class AbstractMatchTable
   
   protected void openArtemis(final DatabaseDocument doc, final int selectedRow)
   {
-    int columnIndex = getColumnIndex(OrthoParalogTable.ORTHO_COL);
+    int columnIndex = getColumnIndex(OrthoParalogTable.GENE_COL);
     
     String geneRef = (String)getTable().getValueAt(selectedRow, columnIndex);
     final String gene[] = geneRef.split(":");
