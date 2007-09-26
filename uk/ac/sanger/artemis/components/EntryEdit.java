@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.45 2007-09-26 10:30:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.46 2007-09-26 14:39:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -65,7 +65,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.45 2007-09-26 10:30:23 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.46 2007-09-26 14:39:13 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -670,6 +670,8 @@ public class EntryEdit extends JFrame
       final List lazyClusterValues = new Vector();
       final FeatureVector features = entry.getAllFeatures();
       // find any lazy values to be loaded
+      
+      
       for(int i=0; i<features.size(); i++)
       {
         QualifierVector qualifiers = features.elementAt(i).getQualifiers();
@@ -700,7 +702,8 @@ public class EntryEdit extends JFrame
           JOptionPane.YES_NO_OPTION);
         
         if(n == JOptionPane.YES_OPTION)
-        {      
+        {     
+          setCursor(new Cursor(Cursor.WAIT_CURSOR));
           final DatabaseDocument document = 
             (DatabaseDocument)((DocumentEntry)entry.getEMBLEntry()).getDocument();
           
@@ -708,11 +711,7 @@ public class EntryEdit extends JFrame
             SimilarityLazyQualifierValue.bulkRetrieve(lazySimilarityValues,document);
           
           if(lazyClusterValues.size() > 0)
-          {
-            for(int i=0; i<lazyClusterValues.size(); i++)
-              ((ClusterLazyQualifierValue)lazyClusterValues.get(i)).setLoadGeneName(false);
             ClusterLazyQualifierValue.setClusterFromValueList(lazyClusterValues, document);
-          }
           
           for(int i=0; i<features.size(); i++)
           {
@@ -723,7 +722,8 @@ public class EntryEdit extends JFrame
               if(qualifier instanceof QualifierLazyLoading)
                 ((QualifierLazyLoading)qualifier).setForceLoad(true);
             }
-          } 
+          }
+          setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
       }
     }
