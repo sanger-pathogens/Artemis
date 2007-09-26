@@ -52,7 +52,7 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
   /** data loaded */
   private boolean lazyLoaded = false;
   /** include gene name */
-  private boolean loadGeneName = true;
+  private boolean loadGeneName = false;
   
   private String value;
   private GFFStreamFeature feature;
@@ -71,7 +71,7 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
 
   public String getString()
   {
-    if(forceLoad && !lazyLoaded)
+    if(forceLoad && (!lazyLoaded || loadGeneName))
       return getHardString();
     else
       return value;
@@ -209,9 +209,8 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
   }
   
   private String getHardString()
-  {
+  { 
     lazyLoaded = true;
-    
     final String featureId = (String) feature.getQualifierByName("feature_id").getValues().get(0);
      
     StringVector strings = StringVector.getStrings(value, ";");   
@@ -290,15 +289,15 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
     
     value = value.concat("; "+rank);
 
-    if(!loadGeneName)
-    {
-      loadGeneName = true;
-      lazyLoaded = false;
-    }
+    
+    //
+    //
+    loadGeneName = false;
+
     return value;
   }
   
-  public String getGeneName(final Feature subjectFeature)
+  private String getGeneName(final Feature subjectFeature)
   {
     String geneName = subjectFeature.getUniqueName();
     if(!subjectFeature.getCvTerm().getName().equals("gene") ||

@@ -74,7 +74,7 @@ import uk.ac.sanger.artemis.util.StringVector;
 
 public class OrthoParalogTable extends AbstractMatchTable
 {
-  private static int NUMBER_COLUMNS = 10;
+  private static int NUMBER_COLUMNS = 9;
   private Vector rowData   = new Vector();
   private Vector tableData = new Vector(NUMBER_COLUMNS);
   private JTable table;
@@ -92,7 +92,6 @@ public class OrthoParalogTable extends AbstractMatchTable
   protected final static String ORGANISM_COL = "Organism";
   protected final static String GENE_COL = "Gene";
   protected final static String LINK_COL = "Link";
-  protected final static String DESCRIPTION_COL = "Description";
   protected final static String VIEW_BUTTON_COL = "View";
   protected final static String REMOVE_BUTTON_COL = "";
   
@@ -134,18 +133,28 @@ public class OrthoParalogTable extends AbstractMatchTable
     tableData.setElementAt(ORGANISM_COL,4);
     tableData.setElementAt(GENE_COL,5);
     tableData.setElementAt(LINK_COL,6);
-    tableData.setElementAt(DESCRIPTION_COL,7);
-    tableData.setElementAt(VIEW_BUTTON_COL,8);
-    tableData.setElementAt(REMOVE_BUTTON_COL,9);
+    tableData.setElementAt(VIEW_BUTTON_COL,7);
+    tableData.setElementAt(REMOVE_BUTTON_COL,8);
 
     
     // add row data
     int columnIndex;
       
+    
     for(int i=0; i<origQualifiers.size(); i++)
     {
-      Qualifier origQualifier = (Qualifier) origQualifiers.elementAt(i);
-      StringVector values = origQualifier.getValues();
+      final Vector qualifierValuesToDelete = new Vector();
+      final QualifierLazyLoading origQualifier = 
+            (QualifierLazyLoading) origQualifiers.elementAt(i);
+      
+      List lazyValues = origQualifier.getLazyValues();
+      for(int j=0; j<lazyValues.size(); j++)
+      {
+        ClusterLazyQualifierValue lazyValue = (ClusterLazyQualifierValue)lazyValues.get(j);
+        lazyValue.setLoadGeneName(true);
+      }
+      
+      final StringVector values = origQualifier.getValues();
 
       // sort by their rank value
       Collections.sort(values, new OrthoParalogValueComparator());
@@ -156,11 +165,18 @@ public class OrthoParalogTable extends AbstractMatchTable
             ";");
 
         if(rowStr.size() < 1)
+        {
+          qualifierValuesToDelete.add(values.get(j));
           continue;
+        }
         if( (ArtemisUtils.getString(rowStr, "cluster_name=").equals("") && !showCluster) ||
             (!ArtemisUtils.getString(rowStr, "cluster_name=").equals("") && showCluster) )
           processRowData(rowStr, rowData, origQualifier.getName());
       }
+      
+      
+      values.removeAll(qualifierValuesToDelete);
+
     }
     
     table = new JTable(rowData, tableData);
@@ -243,8 +259,7 @@ public class OrthoParalogTable extends AbstractMatchTable
       col.setCellRenderer(renderer);
       col.setCellEditor(new CellEditing(new JTextField()));
     }
-    
-    packColumn(table, getColumnIndex(DESCRIPTION_COL), 4);
+
     packColumn(table, getColumnIndex(GENE_COL), 4);
     packColumn(table, getColumnIndex(LINK_COL), 4);
     packColumn(table, getColumnIndex(ORGANISM_COL), 4);
@@ -284,13 +299,6 @@ public class OrthoParalogTable extends AbstractMatchTable
                               final String qualifierName)
   {
     final String orthoparalogs[] = ((String) rowStr.get(0)).split(",");
-    String description = "";
-    if(rowStr.size() > 1)
-    {
-      description = ArtemisUtils.getString(rowStr, "description=");
-      if(!description.equals(""))
-        description = description.substring(12);
-    }
 
     String clusterName = "";
     if(rowStr.size() > 1)
@@ -341,9 +349,6 @@ public class OrthoParalogTable extends AbstractMatchTable
 
       columnIndex = tableData.indexOf(MATCH_NAME_COL);
       thisRowData.setElementAt(matchName, columnIndex);
-      
-      columnIndex = tableData.indexOf(DESCRIPTION_COL);
-      thisRowData.setElementAt(description, columnIndex);
       
       columnIndex = tableData.indexOf(ROW_TYPE_HIDE_COL);
       thisRowData.setElementAt(qualifierName, columnIndex);
@@ -671,10 +676,6 @@ public class OrthoParalogTable extends AbstractMatchTable
         " type="+type);            // ortholog link
     orthologStr.append(";");
     
-    String description = (String)getTable().getValueAt(row, getColumnIndex(DESCRIPTION_COL));
-    if(description != null && !description.equals(""))
-      orthologStr.append(description+ ";" ); // description
-    
     String clusterName = (String)getTable().getValueAt(row, getColumnIndex(CLUSTER_NAME_COL));
     if(clusterName != null && !clusterName.equals(""))
       orthologStr.append("cluster_name="+clusterName+ ";" ); // cluster name
@@ -916,18 +917,6 @@ public class OrthoParalogTable extends AbstractMatchTable
       {
         link.setText(text);
         c = link;
-      }
-      else if(column == getColumnIndex(DESCRIPTION_COL))
-      {
-        descriptionTextArea.setText(text);
-
-        tableCol = table.getColumnModel().getColumn(column);
-        descriptionTextArea.setSize(tableCol.getWidth(), table
-            .getRowHeight(row));
-
-        dim = descriptionTextArea.getPreferredSize();
-        minHeight = Math.max(minHeight, dim.height);
-        c = descriptionTextArea;
       }
       else if(column == getColumnIndex(CLUSTER_NAME_COL))
       {
