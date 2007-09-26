@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/BlastDocumentEntry.java,v 1.1 2004-06-09 09:48:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/BlastDocumentEntry.java,v 1.2 2007-09-26 10:39:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import java.io.*;
  *  blastall -m 8  (ie. tabular blast output).
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: BlastDocumentEntry.java,v 1.1 2004-06-09 09:48:54 tjc Exp $
+ *  @version $Id: BlastDocumentEntry.java,v 1.2 2007-09-26 10:39:10 tjc Exp $
  **/
 
 public class BlastDocumentEntry extends SimpleDocumentEntry
@@ -96,7 +96,7 @@ public class BlastDocumentEntry extends SimpleDocumentEntry
    *  it, otherwise create and return a new feature of the appropriate type.
    *  @param copy if true then always new a new copy of the Feature.
    **/
-  protected SimpleDocumentFeature makeNativeFeature (final Feature feature,
+  protected Object makeNativeFeature (final Feature feature,
                                                      final boolean copy) {
     if (!copy && feature instanceof BlastStreamFeature) {
       return (BlastStreamFeature) feature;
