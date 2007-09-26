@@ -235,7 +235,7 @@ public class OrthoParalogTable extends AbstractMatchTable
 
     table.setColumnSelectionAllowed(false);
     table.setRowSelectionAllowed(true);
-    table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+    table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     table.setDragEnabled(true);
     table.setTransferHandler(new TableTransferHandler());
     
