@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.49 2007-09-25 09:59:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.50 2007-09-26 10:27:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -42,7 +42,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.49 2007-09-25 09:59:57 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.50 2007-09-26 10:27:48 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -161,11 +161,15 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         
         if(key.equals("gene") || key.equals("pseudogene"))
         {
-          String id = (String)this_feature.getQualifierByName("ID").getValues().get(0);
-          ChadoCanonicalGene gene = new ChadoCanonicalGene();
-          gene.setGene(this_feature);
-          chado_gene.put(id, gene);
-          ((GFFStreamFeature)this_feature).setChadoGene(gene);
+          final Qualifier idQualifier = this_feature.getQualifierByName("ID");
+          if(idQualifier != null)
+          {
+            String id = (String)this_feature.getQualifierByName("ID").getValues().get(0);
+            ChadoCanonicalGene gene = new ChadoCanonicalGene();
+            gene.setGene(this_feature);
+            chado_gene.put(id, gene);
+            ((GFFStreamFeature)this_feature).setChadoGene(gene);
+          }
         }
       }
 
