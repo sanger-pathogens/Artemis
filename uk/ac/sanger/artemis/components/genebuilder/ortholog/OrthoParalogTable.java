@@ -142,15 +142,18 @@ public class OrthoParalogTable extends AbstractMatchTable
     for(int i=0; i<origQualifiers.size(); i++)
     {
       final Vector qualifierValuesToDelete = new Vector();
-      final QualifierLazyLoading origQualifier = 
-            (QualifierLazyLoading) origQualifiers.elementAt(i);
+      
+      final Qualifier origQualifier = (Qualifier) origQualifiers.elementAt(i);
       
       // ensure the gene name is loaded as well
-      List lazyValues = origQualifier.getLazyValues();
-      for(int j=0; j<lazyValues.size(); j++)
+      if(origQualifier instanceof QualifierLazyLoading)
       {
-        ClusterLazyQualifierValue lazyValue = (ClusterLazyQualifierValue)lazyValues.get(j);
-        lazyValue.setLoadGeneName(true);
+        List lazyValues = ((QualifierLazyLoading)origQualifier).getLazyValues();
+        for(int j=0; j<lazyValues.size(); j++)
+        {
+          ClusterLazyQualifierValue lazyValue = (ClusterLazyQualifierValue)lazyValues.get(j);
+          lazyValue.setLoadGeneName(true);
+        }
       }
       
       final StringVector values = origQualifier.getValues();
