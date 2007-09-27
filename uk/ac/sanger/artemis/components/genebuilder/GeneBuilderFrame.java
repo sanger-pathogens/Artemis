@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.32 2007-09-10 08:31:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.33 2007-09-27 16:34:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -295,15 +295,22 @@ public class GeneBuilderFrame extends JFrame
   private Box createTranscriptBox(final GFFStreamFeature transcript,
                                   final String transcript_name)
   {
-    JCheckBox cb = new JCheckBox();
+    final JCheckBox cb = new JCheckBox();
+
+    List exons = chado_gene.getSpliceSitesOfTranscript(transcript_name, 
+        DatabaseDocument.EXONMODEL);
+    if(exons != null && exons.size() > 0)
+      cb.setSelected(((GFFStreamFeature)exons.get(0)).isVisible());
+    else
+      cb.setSelected(transcript.isVisible());
+    
     cb.setOpaque(false);
-    cb.setSelected(transcript.isVisible());
     cb.addItemListener(new ItemListener()
     {
       public void itemStateChanged(ItemEvent e)
-      {
-        List exons = chado_gene.getSpliceSitesOfTranscript(transcript_name, "exon");
-        
+      { 
+        final List exons = chado_gene.getSpliceSitesOfTranscript(transcript_name, 
+            DatabaseDocument.EXONMODEL);
         if(exons == null)
           return;
         

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.58 2007-09-12 14:52:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.59 2007-09-27 16:34:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -1483,6 +1483,9 @@ public class GeneViewerPanel extends JPanel
         entry_group, key,
         qualifiers);
     
+    if(key.getKeyString().equals("polypeptide"))
+      ((GFFStreamFeature)(newFeature.getEmblFeature())).setVisible(false);
+      
     if(isParent)
       chado_gene.addOtherFeatures(transcriptName, 
           newFeature.getEmblFeature());
