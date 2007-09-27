@@ -86,6 +86,8 @@ abstract class AbstractMatchTable
   protected JTable table;
   protected QualifierVector origQualifiers;
   private JLabel status_line;
+  private static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(AbstractMatchTable.class);
   protected abstract String updateQualifierString(int row);
   
   /**
@@ -132,17 +134,17 @@ abstract class AbstractMatchTable
       Qualifier origQualifier = (Qualifier) origQualifiers.elementAt(i);
       StringVector values = getOtherValues(origQualifier);
 
-      System.out.println("\nHERE:\n");
+      logger4j.debug("AbstractMatchTable.updateQualifier() new value:\n");
       for(int j = 0; j < getTable().getRowCount(); j++)
       {
         if(isRowOfType(origQualifier.getName(), j))
         {
           String updatedQualifierString = updateQualifierString(j);
           values.add(updatedQualifierString);
-          System.out.println(updatedQualifierString);
+          logger4j.debug(updatedQualifierString);
         }
       }
-      System.out.println("\n\n");
+      logger4j.debug("\n");
 
       if(values.size() < 1)
         qv.remove(origQualifier);
