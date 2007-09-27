@@ -267,7 +267,8 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
           cnt++;
         }
       }
-      if(cnt > 1)
+      if(cnt > 1 || 
+         (clusterFeature.getUniqueName().startsWith("CLUSTER_") && cnt > 0))
       {
         value = value.concat("; cluster_name="+clusterFeature.getUniqueName());
         
@@ -281,9 +282,10 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
         //else
         //  value = value.concat("; program=unknown");
       }
-      else
+      else if(cnt > 0)
         value = value.concat("; match_name="+clusterFeature.getUniqueName());
     }
+    
     if(value.equals(""))
       return value;
     
