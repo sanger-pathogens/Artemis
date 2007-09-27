@@ -135,18 +135,17 @@ public class OrthoParalogTable extends AbstractMatchTable
     tableData.setElementAt(LINK_COL,6);
     tableData.setElementAt(VIEW_BUTTON_COL,7);
     tableData.setElementAt(REMOVE_BUTTON_COL,8);
-
     
     // add row data
     int columnIndex;
-      
-    
+  
     for(int i=0; i<origQualifiers.size(); i++)
     {
       final Vector qualifierValuesToDelete = new Vector();
       final QualifierLazyLoading origQualifier = 
             (QualifierLazyLoading) origQualifiers.elementAt(i);
       
+      // ensure the gene name is loaded as well
       List lazyValues = origQualifier.getLazyValues();
       for(int j=0; j<lazyValues.size(); j++)
       {
@@ -173,10 +172,8 @@ public class OrthoParalogTable extends AbstractMatchTable
             (!ArtemisUtils.getString(rowStr, "cluster_name=").equals("") && showCluster) )
           processRowData(rowStr, rowData, origQualifier.getName());
       }
-      
-      
-      values.removeAll(qualifierValuesToDelete);
 
+      values.removeAll(qualifierValuesToDelete);
     }
     
     table = new JTable(rowData, tableData);
@@ -189,8 +186,7 @@ public class OrthoParalogTable extends AbstractMatchTable
       public void mouseMoved(MouseEvent e) 
       {
         int col = table.columnAtPoint(e.getPoint());
-        
-        String colName = table.getColumnName(col);
+        final String colName = table.getColumnName(col);
      
         if(colName.equals(GENE_COL) || colName.equals(REMOVE_BUTTON_COL)) 
           table.setCursor(handCursor);
