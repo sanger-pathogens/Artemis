@@ -20,13 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.50 2007-09-26 10:27:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.51 2007-10-01 14:46:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
 import uk.ac.sanger.artemis.chado.SimilarityLazyQualifierValue;
 import uk.ac.sanger.artemis.components.Splash;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.IOException;
@@ -42,7 +43,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.50 2007-09-26 10:27:48 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.51 2007-10-01 14:46:39 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -157,7 +158,9 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       for(int i = 0 ; i < original_features.size() ; ++i) 
       {
         this_feature = original_features.featureAt(i);
-        String key = this_feature.getKey().getKeyString();
+        final String key = this_feature.getKey().getKeyString();
+        if(GeneUtils.isHiddenFeature(key))
+          ((GFFStreamFeature)this_feature).setVisible(false);
         
         if(key.equals("gene") || key.equals("pseudogene"))
         {
@@ -195,6 +198,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
             // store transcript
             ChadoCanonicalGene gene = (ChadoCanonicalGene)chado_gene.get(parent);
             gene.addTranscript(this_feature);
+            ((GFFStreamFeature)this_feature).setChadoGene(gene);
             
             // store the transcript ID with its ChadoCanonicalGene object
             transcripts_lookup.put((String)this_feature.getQualifierByName("ID").getValues().get(0),
@@ -216,12 +220,12 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         //   !key.endsWith("prime_UTR"))
         //  continue;
         
-        Qualifier parent_qualifier  = this_feature.getQualifierByName("Parent");
-        Qualifier derives_qualifier = this_feature.getQualifierByName("Derives_from");
+        final Qualifier parent_qualifier  = this_feature.getQualifierByName("Parent");
+        final Qualifier derives_qualifier = this_feature.getQualifierByName("Derives_from");
         if(parent_qualifier == null && derives_qualifier == null)
           continue;    
           
-        Qualifier featureRelationship = 
+        final Qualifier featureRelationship = 
           this_feature.getQualifierByName("feature_relationship_rank");
         // compare this features parent_id's to transcript id's in the 
         // chado gene hash to decide if it is part of it
@@ -234,15 +238,16 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         
         for(int j=0; j<parent_id.size(); j++)
         {
-          String parent = (String)parent_id.get(j);
+          final String parent = (String)parent_id.get(j);
          
           if(transcripts_lookup.containsKey(parent))
           {
-            ChadoCanonicalGene gene = (ChadoCanonicalGene)transcripts_lookup.get(parent);
-             
+            final ChadoCanonicalGene gene = (ChadoCanonicalGene)transcripts_lookup.get(parent);
+            ((GFFStreamFeature)this_feature).setChadoGene(gene);
+            
             if(parent_qualifier == null)
             {
-              ((GFFStreamFeature)this_feature).setVisible(false);
+              //((GFFStreamFeature)this_feature).setVisible(false);
               gene.addProtein(parent, this_feature);
             }
             else if(key.equals("three_prime_UTR"))
@@ -290,10 +295,9 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
   private void loadSimilarityLazyData(final FeatureVector fv)
           throws InvalidRelationException
   {
-    DatabaseDocument doc = (DatabaseDocument)getDocument();
-    
+    final DatabaseDocument doc = (DatabaseDocument)getDocument();
     List matches;
-    
+ 
     if(fv.size() < 30 && fv.size() > 0)  // if just a few features to look up e.g. for gene editorr
     {
       List featureIds = new Vector(fv.size());
@@ -330,16 +334,17 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       java.util.Iterator it = featureLocs.iterator();
       while(it.hasNext())
       {
-        org.gmod.schema.sequence.FeatureLoc featureLoc =
+        final org.gmod.schema.sequence.FeatureLoc featureLoc =
           (org.gmod.schema.sequence.FeatureLoc)it.next();
 
-        Feature queryFeature = 
+        final Feature queryFeature = 
           (Feature)temp_lookup_hash.get(Integer.toString(featureLoc.getSrcFeatureId()));
         
         if(queryFeature != null)
         {
           Qualifier qualifier = queryFeature.getQualifierByName("similarity");
-          SimilarityLazyQualifierValue sim = new SimilarityLazyQualifierValue(matchFeature, featureLoc.getSrcFeatureId());
+          final SimilarityLazyQualifierValue sim = 
+            new SimilarityLazyQualifierValue(matchFeature, featureLoc.getSrcFeatureId());
           if(qualifier == null)
             qualifier = new QualifierLazyLoading("similarity", sim);
           else
@@ -450,7 +455,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
    **/
   public void combineChadoExons(ChadoCanonicalGene gene) 
   {
-    Vector transcripts = (Vector)gene.getTranscripts();
+    final Vector transcripts = (Vector)gene.getTranscripts();
     gene.correctSpliceSiteAssignments();
     
     for(int i=0; i<transcripts.size(); i++)
@@ -518,9 +523,9 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
                              final List new_set, 
                              final String transcript_id)
   {
-    Hashtable feature_relationship_rank_store = new Hashtable();
-    Hashtable id_range_store = new Hashtable();
-    RangeVector new_range_vector = new RangeVector();
+    final Hashtable feature_relationship_rank_store = new Hashtable();
+    final Hashtable id_range_store = new Hashtable();
+    final RangeVector new_range_vector = new RangeVector();
     QualifierVector qualifier_vector = new QualifierVector();
     Timestamp lasttimemodified = null;
 
@@ -576,7 +581,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       qualifier_vector.addAll(this_feature.getQualifiers());
     }
 
-    final Feature first_old_feature = (Feature)gffFeatures.get(0);
+    final GFFStreamFeature first_old_feature = (GFFStreamFeature)gffFeatures.get(0);
 
     final Location new_location = new Location(new_range_vector,
         first_old_feature.getLocation().isComplement());
@@ -589,6 +594,10 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
 
     if(lasttimemodified != null)
       new_feature.setLastModified(lasttimemodified);
+    
+    if(first_old_feature.getChadoGene() != null)
+      new_feature.setChadoGene(first_old_feature.getChadoGene());
+    
     new_feature.setSegmentRangeStore(id_range_store);
     new_feature
         .setFeature_relationship_rank_store(feature_relationship_rank_store);
@@ -639,7 +648,6 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       forcedAdd(new_feature);
       //gene.addExon(transcript_id, new_feature, true );
       new_set.add(new_feature);
-
     }
     catch(ReadOnlyException e)
     {
