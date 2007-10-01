@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.59 2007-09-27 16:34:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.60 2007-10-01 14:55:47 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -535,6 +535,7 @@ public class GeneViewerPanel extends JPanel
                     entry_group, transcriptKey,
                     qualifiers);
       
+      ((GFFStreamFeature)(feature.getEmblFeature())).setChadoGene(chadoGene);
       chadoGene.addTranscript(feature.getEmblFeature());
       return feature;
     }
@@ -1483,9 +1484,11 @@ public class GeneViewerPanel extends JPanel
         entry_group, key,
         qualifiers);
     
-    if(key.getKeyString().equals("polypeptide"))
+    if(GeneUtils.isHiddenFeature(key.getKeyString()))
       ((GFFStreamFeature)(newFeature.getEmblFeature())).setVisible(false);
       
+    ((GFFStreamFeature)(newFeature.getEmblFeature())).setChadoGene(chado_gene);
+    
     if(isParent)
       chado_gene.addOtherFeatures(transcriptName, 
           newFeature.getEmblFeature());
@@ -1529,6 +1532,7 @@ public class GeneViewerPanel extends JPanel
       
         GFFStreamFeature gff_exon = (GFFStreamFeature)exon.getEmblFeature();
         chadoGene.addSplicedFeatures(transcript_name, gff_exon);
+        ((GFFStreamFeature)(exon.getEmblFeature())).setChadoGene(chadoGene);
         
         if(ID != null)
         {
