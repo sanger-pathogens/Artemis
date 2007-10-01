@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.19 2007-05-03 12:57:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.20 2007-10-01 14:56:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -80,7 +80,7 @@ public class GeneComponentTree extends JTree
     //Listen for when a file is selected
     selection_listener = new GeneTreeSelectionListener();
     addTreeSelectionListener(selection_listener);
-    
+    setSelection(selection);
   }
   
   /**
