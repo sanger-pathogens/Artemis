@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.47 2007-09-11 11:03:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.48 2007-10-01 08:14:42 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -68,7 +68,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.47 2007-09-11 11:03:20 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.48 2007-10-01 08:14:42 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -966,6 +966,7 @@ public class FeatureEdit extends JPanel
       tabbedPane.add("CV", jspCV);
       JScrollPane jspOrtholog = new JScrollPane(matchForm);
       matchForm.setVisible(true);   // ensure visible
+      jspOrtholog.setPreferredSize(getPreferredSize());
       tabbedPane.add("Match", jspOrtholog);
       JScrollPane jspGff = new JScrollPane(gffPanel);
       gffPanel.setVisible(true);    // ensure visible
