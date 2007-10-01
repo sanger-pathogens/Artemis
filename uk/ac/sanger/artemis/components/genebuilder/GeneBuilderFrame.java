@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.33 2007-09-27 16:34:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.34 2007-10-01 14:57:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -97,7 +97,7 @@ public class GeneBuilderFrame extends JFrame
   private JTabbedPane tabpane;
   private ChadoTransactionManager chadoTransactionManager;
   
-  public GeneBuilderFrame(final Feature feature,
+  public GeneBuilderFrame(Feature feature,
                           final EntryGroup entry_group,
                           final Selection selection,
                           final GotoEventSource goto_event_source)
@@ -105,22 +105,33 @@ public class GeneBuilderFrame extends JFrame
     this(feature, entry_group, selection, goto_event_source, null);
   }
   
-  public GeneBuilderFrame(final Feature feature,
+  public GeneBuilderFrame(Feature feature,
       final EntryGroup entry_group,
       final Selection selection,
       final GotoEventSource goto_event_source,
       final ChadoTransactionManager chadoTransactionManager)
   {
-    super("Artemis Gene Builder: " + feature.getIDString() +
-          (feature.isReadOnly() ?
-          "  -  (read only)" :
-          ""));
+    super();
+    
+    // set title
+    final String title = "Artemis Gene Builder: " + 
+          ((Feature)((GFFStreamFeature)feature.getEmblFeature()).getChadoGene().getGene().getUserData()).getIDString() +
+           (feature.isReadOnly() ?
+          "  -  (read only)" : "");
+
+    setTitle(title);
+    
+    this.selection = selection;
+    if(feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
+    {
+      Feature proteinFeature = getProteinFeature(feature, selection);
+      if(proteinFeature != null)
+        feature = proteinFeature;
+    }
     
     this.active_feature = feature;
-    this.selection = selection;
     this.chadoTransactionManager = chadoTransactionManager;
-
-    
+ 
     if(selection != null)
     {
       geneBuilderSelectionChangeListener = new GeneBuilderSelectionChangeListener();
@@ -140,8 +151,7 @@ public class GeneBuilderFrame extends JFrame
     }
     
     tree = new GeneComponentTree(chado_gene, this, selection);
-    
-    JScrollPane jsp_tree = new JScrollPane(tree);
+    final JScrollPane jsp_tree = new JScrollPane(tree);
     jsp_tree.setPreferredSize( new Dimension(150, jsp_tree.getPreferredSize().height) );
     
     viewer = new GeneViewerPanel(
@@ -221,6 +231,27 @@ public class GeneBuilderFrame extends JFrame
     Utilities.centreFrame(this);
     setVisible(true);
     all.setDividerLocation(0.30);
+  }
+  
+  
+  private Feature getProteinFeature(final Feature feature, final Selection selection)
+  {
+    Feature proteinFeature = null;
+    try
+    {
+      Qualifier idQualifier = feature.getQualifierByName("ID");
+      if(idQualifier != null)
+      {
+        final ChadoCanonicalGene chadoGene = ((GFFStreamFeature)feature.getEmblFeature()).getChadoGene();
+        final String ID = (String)idQualifier.getValues().get(0);
+        final String transcriptName = chadoGene.getTranscriptFromName(ID);
+        proteinFeature = (Feature)chadoGene.getProteinOfTranscript(transcriptName).getUserData();
+        selection.clear();
+        selection.add(proteinFeature);
+      }
+    }
+    catch(Exception e){}
+    return proteinFeature;
   }
   
   /**
