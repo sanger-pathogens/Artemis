@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.10 2006-08-09 16:35:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.11 2007-10-01 14:54:45 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -28,33 +28,45 @@ package uk.ac.sanger.artemis.components;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.KeyVector;
 import uk.ac.sanger.artemis.io.Qualifier;
-import uk.ac.sanger.artemis.io.InvalidKeyException;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Location;
 
-import java.awt.*;
+
+import java.awt.Cursor;
+import java.awt.Toolkit;
 import java.awt.event.*;
 import java.util.Vector;
 import java.util.Enumeration;
-import javax.swing.*;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+
 
 /**
  *  This menu has contains items such a "Select all", "Select none" and
  *  "Select by key".
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectMenu.java,v 1.10 2006-08-09 16:35:31 tjc Exp $
+ *  @version $Id: SelectMenu.java,v 1.11 2007-10-01 14:54:45 tjc Exp $
  **/
 
 public class SelectMenu extends SelectionMenu 
 {
+
+  private static final long serialVersionUID = 1L;
 
   /**
    *  The EntryGroup object that was passed to the constructor.
@@ -284,13 +296,25 @@ public class SelectMenu extends SelectionMenu
 
     add(select_non_pseudo_cds_item);
 
-    select_all_cds_item = new JMenuItem("All CDS Features");
+    
+    final boolean isDatabaseGroup = GeneUtils.isDatabaseEntry( getEntryGroup() );
+    
+    if(isDatabaseGroup)
+    {
+      select_non_pseudo_cds_item.setEnabled(false);
+      select_all_cds_item = new JMenuItem("All Exon Model Features");
+    }
+    else
+      select_all_cds_item = new JMenuItem("All CDS Features");
     select_all_cds_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event) 
       {
-        final FeatureKeyPredicate predicate =
-          new FeatureKeyPredicate(Key.CDS);
+        final FeatureKeyPredicate predicate;
+        if(isDatabaseGroup)
+          predicate = new FeatureKeyPredicate(new Key(DatabaseDocument.EXONMODEL));
+        else
+          predicate = new FeatureKeyPredicate(Key.CDS);
 
         clearSelection();
 
