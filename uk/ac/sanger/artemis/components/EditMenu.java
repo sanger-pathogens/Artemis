@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.27 2007-09-06 10:22:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.28 2007-10-01 14:51:33 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -57,7 +57,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.27 2007-09-06 10:22:21 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.28 2007-10-01 14:51:33 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -761,7 +761,8 @@ public class EditMenu extends SelectionMenu
     frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
     final int MAX_SELECTED_FEATURES = 25;
     final FeatureVector features_to_edit = selection.getAllFeatures();
-
+    boolean featureEdit = true;
+    
     if(features_to_edit.size() > MAX_SELECTED_FEATURES)
       new MessageDialog(frame, "warning: only editing the first " +
                         MAX_SELECTED_FEATURES + " selected features");
@@ -776,6 +777,7 @@ public class EditMenu extends SelectionMenu
       {
         new GeneBuilderFrame(selection_feature, entry_group,
                              selection, goto_event_source);
+        featureEdit = false;
       }
       else
       {
@@ -807,7 +809,8 @@ public class EditMenu extends SelectionMenu
 
     }
 
-    selection.set(features_to_edit);
+    if(featureEdit)
+      selection.set(features_to_edit);
     frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
   }
 
