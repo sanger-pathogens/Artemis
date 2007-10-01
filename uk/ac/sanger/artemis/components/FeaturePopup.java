@@ -20,12 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.19 2007-09-12 10:14:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.20 2007-10-01 14:49:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.util.StringVector;
 
@@ -39,7 +41,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.19 2007-09-12 10:14:01 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.20 2007-10-01 14:49:39 tjc Exp $
  *
  **/
 
@@ -277,8 +279,14 @@ public class FeaturePopup extends JPopupMenu
    **/
   private JMenuItem[] addFeatureDisplayItems() 
   {
-    final JMenuItem[] feature_display_menus = new JMenuItem[20];
-
+    final JMenuItem[] feature_display_menus;
+    
+    final boolean isDatabaseGroup = GeneUtils.isDatabaseEntry( getEntryGroup() );
+    if(isDatabaseGroup)
+      feature_display_menus = new JMenuItem[21];
+    else
+      feature_display_menus = new JMenuItem[20];
+    
     feature_display_menus[0] = new JCheckBoxMenuItem("Start Codons");
     ((JCheckBoxMenuItem)feature_display_menus[0]).setState(
                                feature_display.getShowStartCodons());
@@ -598,6 +606,20 @@ public class FeaturePopup extends JPopupMenu
       }
     });
 
+    
+    if(isDatabaseGroup)
+    {
+      feature_display_menus[20] = new JMenuItem("Gene Model Display Features ...");
+      feature_display_menus[20].addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          GeneUtils.defineShowHideGeneFeatures(feature_display.getEntryGroup()
+              .getAllFeatures());
+        }
+      });
+    }
+    
     return feature_display_menus;
   }
 
