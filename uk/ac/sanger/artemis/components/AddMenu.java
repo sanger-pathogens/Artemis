@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.27 2007-09-07 14:07:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.28 2007-10-01 14:43:43 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -72,7 +72,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.27 2007-09-07 14:07:24 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.28 2007-10-01 14:43:43 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -1461,7 +1461,7 @@ public class AddMenu extends SelectionMenu
             id.equals("") ||
             id.equals("to_be_set"))
       {
-        String msg = "Provide a ID prefix ";
+        String msg = "Provide a unique ID ";
         
         if(!is_forward)
           msg = msg + "for reverse strand : ";
