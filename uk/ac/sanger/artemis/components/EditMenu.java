@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.28 2007-10-01 14:51:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.29 2007-10-02 14:14:20 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -57,7 +57,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.28 2007-10-01 14:51:33 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.29 2007-10-02 14:14:20 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -772,41 +772,8 @@ public class EditMenu extends SelectionMenu
     {
       final Feature selection_feature = features_to_edit.elementAt(i);
 
-      if(selection_feature.getEmblFeature() instanceof GFFStreamFeature &&
-          ((GFFStreamFeature)selection_feature.getEmblFeature()).getChadoGene() != null)
-      {
-        new GeneBuilderFrame(selection_feature, entry_group,
-                             selection, goto_event_source);
-        featureEdit = false;
-      }
-      else
-      {
-        final JFrame edit_frame = new JFrame("Artemis Feature Edit: " + 
-             selection_feature.getIDString() +
-             (selection_feature.isReadOnly() ?
-                 "  -  (read only)" :
-                 ""));
-         
-         final FeatureEdit fe = new FeatureEdit(selection_feature, entry_group,
-                                     selection, goto_event_source, edit_frame);
-         
-         edit_frame.addWindowListener(new WindowAdapter() 
-         {
-           public void windowClosing(WindowEvent event) 
-           {
-             fe.stopListening();
-             edit_frame.dispose();
-           }
-         });
-         
-         edit_frame.getContentPane().add(fe);
-         edit_frame.pack();
-
-         Utilities.centreFrame(edit_frame);
-         edit_frame.setVisible(true);
-       }
-
-
+      featureEdit = editSelectedFeatures(entry_group, selection, goto_event_source,
+          selection_feature, null, null);
     }
 
     if(featureEdit)
@@ -814,6 +781,54 @@ public class EditMenu extends SelectionMenu
     frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
   }
 
+  public static boolean editSelectedFeatures(
+      final EntryGroup entry_group,
+      final Selection selection,
+      final GotoEventSource goto_event_source,
+      final Feature selection_feature,
+      final ActionListener cancel_listener,
+      final ActionListener apply_listener) 
+  {
+    if(selection_feature.getEmblFeature() instanceof GFFStreamFeature &&
+        ((GFFStreamFeature)selection_feature.getEmblFeature()).getChadoGene() != null)
+    {
+      new GeneBuilderFrame(selection_feature, entry_group,
+                           selection, goto_event_source);
+      return false;
+    }
+    else
+    {
+      final JFrame edit_frame = new JFrame("Artemis Feature Edit: " + 
+           selection_feature.getIDString() +
+           (selection_feature.isReadOnly() ?
+               "  -  (read only)" :
+               ""));
+       
+       final FeatureEdit fe = new FeatureEdit(selection_feature, entry_group,
+                                   selection, goto_event_source, edit_frame);
+       
+       edit_frame.addWindowListener(new WindowAdapter() 
+       {
+         public void windowClosing(WindowEvent event) 
+         {
+           fe.stopListening();
+           edit_frame.dispose();
+         }
+       });
+       
+       if(cancel_listener != null)
+         fe.addCancelActionListener(cancel_listener);
+       if(apply_listener != null)
+         fe.addApplyActionListener(apply_listener);
+       edit_frame.getContentPane().add(fe);
+       edit_frame.pack();
+
+       Utilities.centreFrame(edit_frame);
+       edit_frame.setVisible(true);
+       return true;
+     } 
+  }
+  
   /**
    *  Create a new EntryEdit component that contains only the selected
    *  sequence and the features in the selected range.
@@ -1141,6 +1156,8 @@ public class EditMenu extends SelectionMenu
         
         // create transcript
         Feature transcript = GeneViewerPanel.createTranscript(chadoGene, entry_group);
+        ((uk.ac.sanger.artemis.io.GFFStreamFeature)
+            (transcript.getEmblFeature())).setChadoGene(chadoGene);
         transcriptId = (String)transcript.getQualifierByName("ID").getValues().get(0);
         
         parentQualifier = new Qualifier("Parent", transcriptId);
