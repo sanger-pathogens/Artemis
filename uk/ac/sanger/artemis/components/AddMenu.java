@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.29 2007-10-02 14:13:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.30 2007-10-02 15:22:55 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -73,7 +73,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.29 2007-10-02 14:13:21 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.30 2007-10-02 15:22:55 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -635,7 +635,7 @@ public class AddMenu extends SelectionMenu
         {
           final Key key;
           if(isDatabaseEntry)
-            key = new Key("gene");
+            key = new Key("region");
           else
             key = Key.CDS;
           
@@ -644,13 +644,13 @@ public class AddMenu extends SelectionMenu
           else
             temp_feature = default_entry.createFeature (key, new_location, qualifiers);
           
-          if(isDatabaseEntry)
+        /*if(isDatabaseEntry)
           {
             final ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();
             chado_gene.setGene(temp_feature.getEmblFeature());
             ((uk.ac.sanger.artemis.io.GFFStreamFeature)
               (temp_feature.getEmblFeature())).setChadoGene(chado_gene);
-          }
+          }*/
         }
         catch (EntryInformationException e) 
         {
