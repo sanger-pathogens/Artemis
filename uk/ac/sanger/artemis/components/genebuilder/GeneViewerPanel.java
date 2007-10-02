@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.60 2007-10-01 14:55:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.61 2007-10-02 14:11:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -110,8 +110,6 @@ public class GeneViewerPanel extends JPanel
   
   private Point last_cursor_position;
   
-  private EntryGroup entry_group;
-  
   /**
    *  The shortcut for Delete Selected Features.
    **/
@@ -136,7 +134,6 @@ public class GeneViewerPanel extends JPanel
   {
     this.chado_gene   = chado_gene;
     this.selection    = selection;
-    this.entry_group  = entry_group;
     this.gene_builder = gene_builder;
     
     Dimension dim = new Dimension(400,350);
@@ -409,7 +406,7 @@ public class GeneViewerPanel extends JPanel
         try
         {
           addFeature(range_selected, transcriptName, null,
-              transcript.getLocation().isComplement(), true);
+              transcript.getLocation().isComplement(), true, chado_gene, entry_group);
         }
         catch(OutOfRangeException e)
         {
@@ -420,7 +417,8 @@ public class GeneViewerPanel extends JPanel
     });
     menu.add(createFeature);
     
-    JMenuItem createFeatureProtein = new JMenuItem("Add polypeptide feature to selected transcript hierarchy");
+    JMenuItem createFeatureProtein = new JMenuItem(
+        "Add polypeptide feature to selected transcript hierarchy");
     createFeatureProtein.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)  
@@ -454,31 +452,7 @@ public class GeneViewerPanel extends JPanel
           return;
         }
           
-        final List exons;
-        if(chado_gene.getGene().getKey().getKeyString().equals("pseudogene"))
-          exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, "pseudogenic_exon");
-        else 
-          exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, DatabaseDocument.EXONMODEL);
-       // exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, "exon");
-       
-        final Range range_selected;
-        if(exons != null && exons.size() > 0)
-          range_selected = ((GFFStreamFeature)exons.get(0)).getLocation().getTotalRange();
-        else
-          range_selected = transcript.getLocation().getTotalRange();
-        
-        final String pepName = chado_gene.autoGeneratePepName(transcriptName);
-        
-        try
-        {
-          addFeature(range_selected, transcriptName, pepName,
-              transcript.getLocation().isComplement(), false);
-        }
-        catch(OutOfRangeException e)
-        {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
+        addProteinFeature(chado_gene, entry_group, transcriptName, transcript);
       }
     });
     menu.add(createFeatureProtein);
@@ -1433,11 +1407,14 @@ public class GeneViewerPanel extends JPanel
   }
 
  
-  private void addFeature(Range range,
+  private static uk.ac.sanger.artemis.Feature addFeature(
+                          final Range range,
                           final String transcriptName,
                           String featureName,
                           final boolean isComplement,
-                          final boolean isParent) 
+                          final boolean isParent,
+                          final ChadoCanonicalGene chado_gene,
+                          final EntryGroup entry_group) 
           throws OutOfRangeException
   {
     if(range == null)
@@ -1446,7 +1423,7 @@ public class GeneViewerPanel extends JPanel
           "Select a range and try again.", 
           "Range Selection",
           JOptionPane.ERROR_MESSAGE);
-      return;
+      return null;
     }
     
     if(featureName == null)
@@ -1457,7 +1434,7 @@ public class GeneViewerPanel extends JPanel
         JOptionPane.QUESTION_MESSAGE);
     
       if(featureName == null)
-        return;
+        return null;
     }
     
     QualifierVector qualifiers = new QualifierVector();
@@ -1495,6 +1472,41 @@ public class GeneViewerPanel extends JPanel
     else
       chado_gene.addProtein(transcriptName, 
           newFeature.getEmblFeature());
+    return newFeature;
+  }
+  
+  
+  public static uk.ac.sanger.artemis.Feature 
+                     addProteinFeature(final ChadoCanonicalGene chadoGene,
+                                       final EntryGroup entry_group,
+                                       final String transcriptName,
+                                       final uk.ac.sanger.artemis.Feature transcript)
+  {
+    final List exons;
+    if(chadoGene.getGene().getKey().getKeyString().equals("pseudogene"))
+      exons = chadoGene.getSpliceSitesOfTranscript(transcriptName, "pseudogenic_exon");
+    else 
+      exons = chadoGene.getSpliceSitesOfTranscript(transcriptName, DatabaseDocument.EXONMODEL);
+   
+    final Range range_selected;
+    if(exons != null && exons.size() > 0)
+      range_selected = ((GFFStreamFeature)exons.get(0)).getLocation().getTotalRange();
+    else
+      range_selected = transcript.getLocation().getTotalRange();
+    
+    final String pepName = chadoGene.autoGeneratePepName(transcriptName);
+    
+    try
+    {
+      return addFeature(range_selected, transcriptName, pepName,
+          transcript.getLocation().isComplement(), false, chadoGene, entry_group);
+    }
+    catch(OutOfRangeException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }  
+    return null;
   }
   
   /**
@@ -1503,7 +1515,7 @@ public class GeneViewerPanel extends JPanel
    * @param range
    * @param transcript_name
    */
-  private static void addExonFeature(
+  public static void addExonFeature(
                               final ChadoCanonicalGene chadoGene,
                               final EntryGroup entry_group,
                               final GFFStreamFeature feature, Range range,
