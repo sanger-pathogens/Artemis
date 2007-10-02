@@ -227,11 +227,13 @@ public class GeneUtils
     
     try
     {
+      final FeatureVector newFeatures = new FeatureVector();
       final Location new_location = range.createLocation ();
       final Key key = new Key("gene");
       final uk.ac.sanger.artemis.Feature geneFeature = 
           default_entry.createFeature(key, new_location, qualifiers);
-
+      newFeatures.add(geneFeature);
+      
       final ChadoCanonicalGene chadoGene = new ChadoCanonicalGene();
       chadoGene.setGene(geneFeature.getEmblFeature());
       ((uk.ac.sanger.artemis.io.GFFStreamFeature) 
@@ -240,6 +242,7 @@ public class GeneUtils
       // create transcript
       uk.ac.sanger.artemis.Feature transcript = 
         GeneViewerPanel.createTranscript(chadoGene, entry_group);
+      newFeatures.add(transcript);
       ((uk.ac.sanger.artemis.io.GFFStreamFeature)
           (transcript.getEmblFeature())).setChadoGene(chadoGene);
       final String transcriptId = 
@@ -253,7 +256,9 @@ public class GeneUtils
       // add protein
       uk.ac.sanger.artemis.Feature polypep =
         GeneViewerPanel.addProteinFeature(chadoGene, entry_group, transcriptId, transcript);
+      newFeatures.add(polypep);
       
+      showHideGeneFeatures(newFeatures);
       selection.clear();
       selection.add(polypep);
       
