@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionMenu.java,v 1.7 2007-02-22 17:06:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionMenu.java,v 1.8 2007-10-02 14:16:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -39,7 +39,7 @@ import java.util.Vector;
  *  getParentFrame() to find the owning JFrame of the menu.
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectionMenu.java,v 1.7 2007-02-22 17:06:42 tjc Exp $
+ *  @version $Id: SelectionMenu.java,v 1.8 2007-10-02 14:16:13 tjc Exp $
  **/
 
 public class SelectionMenu extends JMenu 
@@ -265,7 +265,7 @@ public class SelectionMenu extends JMenu
    *  @param frame The JFrame to use for MessageDialog components.
    *  @param selection The selected features to check.
    **/
-  static boolean checkForSelectionRange(final JFrame frame,
+  public static boolean checkForSelectionRange(final JFrame frame,
                                         final Selection selection) 
   {
     final MarkerRange marker_range = selection.getMarkerRange();
