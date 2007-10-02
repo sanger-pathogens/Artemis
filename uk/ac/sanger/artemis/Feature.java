@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.28 2007-09-07 14:11:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.29 2007-10-02 14:17:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -60,7 +60,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.28 2007-09-07 14:11:41 tjc Exp $
+ *  @version $Id: Feature.java,v 1.29 2007-10-02 14:17:39 tjc Exp $
  **/
 
 public class Feature
@@ -1162,12 +1162,17 @@ public class Feature
     return false;
   }
 
+  public boolean hasValidStartCodon() 
+  {
+    return hasValidStartCodon(false);
+  }
+  
   /**
    *  Return true if and only if this feature ends in a valid stop codon.
    **/
-  public boolean hasValidStartCodon() 
+  public boolean hasValidStartCodon(final boolean force) 
   {
-    if(!isCDS())
+    if(!isCDS() && !force)
       return true;
 
     try 
@@ -1201,13 +1206,18 @@ public class Feature
     else 
       return false;
   }
+  
+  public boolean hasValidStopCodon() 
+  {
+    return hasValidStartCodon(false);
+  }
 
   /**
    *  Return true if and only if this feature ends in a valid stop codon.
    **/
-  public boolean hasValidStopCodon() 
+  public boolean hasValidStopCodon(final boolean force) 
   {
-    if(!isCDS())
+    if(!isCDS() && !force)
       return true;
 
     if(isPartialCDS() &&
