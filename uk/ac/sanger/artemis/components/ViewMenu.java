@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.11 2007-04-05 15:06:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.12 2007-10-02 14:15:21 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -31,6 +31,7 @@ import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.RemoteFileNode;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
@@ -51,7 +52,7 @@ import com.sshtools.j2ssh.sftp.FileAttributes;
  *  A popup menu with viewing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: ViewMenu.java,v 1.11 2007-04-05 15:06:11 tjc Exp $
+ *  @version $Id: ViewMenu.java,v 1.12 2007-10-02 14:15:21 tjc Exp $
  **/
 
 public class ViewMenu extends SelectionMenu 
@@ -208,6 +209,8 @@ public class ViewMenu extends SelectionMenu
     });
 
     final JMenuItem view_cds_item = new JMenuItem("Show CDS Genes And Products");
+    if(GeneUtils.isDatabaseEntry(entry_group))
+      view_cds_item.setEnabled(false);
     view_cds_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -352,8 +355,14 @@ public class ViewMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem overlapping_cds_features_item =
-      new JMenuItem("Overlapping CDS Features ...");
+    final JMenuItem overlapping_cds_features_item;
+    
+    if(GeneUtils.isDatabaseEntry(entry_group))
+      overlapping_cds_features_item =
+        new JMenuItem("Overlapping "+DatabaseDocument.EXONMODEL+" Features ...");
+    else
+      overlapping_cds_features_item =   
+        new JMenuItem("Overlapping CDS Features ...");
     overlapping_cds_features_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -365,8 +374,12 @@ public class ViewMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem same_stop_cds_features_item =
-      new JMenuItem("CDSs Sharing Stop Codons ...");
+    final JMenuItem same_stop_cds_features_item;
+    if(GeneUtils.isDatabaseEntry(entry_group))
+      same_stop_cds_features_item = new JMenuItem(
+          DatabaseDocument.EXONMODEL+"s Sharing Stop Codons ...");
+    else
+      same_stop_cds_features_item = new JMenuItem("CDSs Sharing Stop Codons ...");
     same_stop_cds_features_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -609,29 +622,40 @@ public class ViewMenu extends SelectionMenu
                                          final Selection selection,
                                          final EntryGroup entry_group,
                                          final GotoEventSource goto_source,
-                                         final BasePlotGroup
-                                           base_plot_group) {
-    final FeatureKeyQualifierPredicate cds_predicate =
-      new FeatureKeyQualifierPredicate (Key.CDS, "pseudo", false);
+                                         final BasePlotGroup base_plot_group) 
+  {
+    final FeaturePredicate cds_predicate;
+    
+    if(GeneUtils.isDatabaseEntry(entry_group))
+      cds_predicate = new FeatureKeyPredicate(new Key(DatabaseDocument.EXONMODEL));
+    else
+      cds_predicate =
+        new FeatureKeyQualifierPredicate (Key.CDS, "pseudo", false);
 
-    final FeaturePredicate feature_predicate =
-      new FeaturePredicate () {
-        public boolean testPredicate (final Feature feature) {
-          if (!cds_predicate.testPredicate (feature)) {
-            return false;
-          }
+    final FeaturePredicate feature_predicate = new FeaturePredicate ()
+    {
+      public boolean testPredicate (final Feature feature) 
+      {
+        if(!cds_predicate.testPredicate (feature))
+          return false;
 
-          if (feature.hasValidStartCodon ()) {
-            return false;
-          } else {
-            return true;
-          }
-        }
-      };
+        if(feature.hasValidStartCodon (true)) 
+          return false;
+        else 
+          return true;
+      }
+    };
 
-    final String filter_name =
-      "CDS features with suspicious start codons (filtered from: " +
-      parent_frame.getTitle () + ")";
+    final String filter_name;
+    
+    if(GeneUtils.isDatabaseEntry(entry_group))
+      filter_name =
+        DatabaseDocument.EXONMODEL+" features with suspicious start codons (filtered from: " +
+        parent_frame.getTitle () + ")";
+    else
+      filter_name =
+        "CDS features with suspicious start codons (filtered from: " +
+        parent_frame.getTitle () + ")";
 
     final FilteredEntryGroup filtered_entry_group =
       new FilteredEntryGroup (entry_group, feature_predicate, filter_name);
@@ -659,28 +683,40 @@ public class ViewMenu extends SelectionMenu
                                         final EntryGroup entry_group,
                                         final GotoEventSource goto_source,
                                         final BasePlotGroup
-                                          base_plot_group) {
-    final FeatureKeyQualifierPredicate cds_predicate =
-      new FeatureKeyQualifierPredicate (Key.CDS, "pseudo", false);
+                                          base_plot_group) 
+  {
+    final FeaturePredicate cds_predicate;
 
-    final FeaturePredicate feature_predicate =
-      new FeaturePredicate () {
-        public boolean testPredicate (final Feature feature) {
-          if (!cds_predicate.testPredicate (feature)) {
-            return false;
-          }
+    if(GeneUtils.isDatabaseEntry(entry_group))
+      cds_predicate = new FeatureKeyPredicate(new Key(DatabaseDocument.EXONMODEL));
+    else
+      cds_predicate =
+        new FeatureKeyQualifierPredicate (Key.CDS, "pseudo", false);
 
-          if (feature.hasValidStopCodon ()) {
-            return false;
-          } else {
-            return true;
-          }
-        }
-      };
+    final FeaturePredicate feature_predicate =  new FeaturePredicate () 
+    {
+      public boolean testPredicate (final Feature feature) 
+      {
+        if(!cds_predicate.testPredicate (feature)) 
+          return false;
 
-    final String filter_name =
-      "CDS features with suspicious stop codons (filtered from: " +
-      parent_frame.getTitle () + ")";
+        if(feature.hasValidStopCodon (true)) 
+          return false;
+        else 
+          return true;
+      }
+    };
+
+    final String filter_name;
+    
+    if(GeneUtils.isDatabaseEntry(entry_group))
+      filter_name=
+        DatabaseDocument.EXONMODEL+" features with suspicious stop codons (filtered from: " +
+        parent_frame.getTitle () + ")";
+    else
+      filter_name =
+        "CDS features with suspicious stop codons (filtered from: " +
+        parent_frame.getTitle () + ")";
 
     final FilteredEntryGroup filtered_entry_group =
       new FilteredEntryGroup (entry_group, feature_predicate, filter_name);
@@ -703,35 +739,45 @@ public class ViewMenu extends SelectionMenu
    *  @param base_plot_group The BasePlotGroup associated with this Menu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  private static void showStopsInTranslation (final Frame parent_frame,
+  private static void showStopsInTranslation(final Frame parent_frame,
                                              final Selection selection,
                                              final EntryGroup entry_group,
                                              final GotoEventSource goto_source,
                                              final BasePlotGroup
-                                               base_plot_group) {
-    final FeatureKeyQualifierPredicate cds_predicate =
-      new FeatureKeyQualifierPredicate (Key.CDS, "pseudo", false);
+                                               base_plot_group) 
+  {
+    final FeaturePredicate cds_predicate;
 
-    final FeaturePredicate feature_predicate =
-      new FeaturePredicate () {
-        public boolean testPredicate (final Feature feature) {
-          if (!cds_predicate.testPredicate (feature)) {
-            return false;
-          }
+    if(GeneUtils.isDatabaseEntry(entry_group))
+      cds_predicate = new FeatureKeyPredicate(new Key(DatabaseDocument.EXONMODEL));
+    else
+      cds_predicate =
+        new FeatureKeyQualifierPredicate(Key.CDS, "pseudo", false);
 
-          final AminoAcidSequence amino_acids = feature.getTranslation ();
+    final FeaturePredicate feature_predicate = new FeaturePredicate () 
+    {
+      public boolean testPredicate (final Feature feature) 
+      {
+        if(!cds_predicate.testPredicate (feature)) 
+          return false;
 
-          if (amino_acids.containsStopCodon ()) {
-            return true;
-          } else {
-            return false;
-          }
-        }
-      };
+        final AminoAcidSequence amino_acids = feature.getTranslation ();
+        if(amino_acids.containsStopCodon ())
+          return true;
+        else
+          return false;
+      }
+    };
 
-    final String filter_name =
-      "CDS features with stop codon(s) in translation (filtered from: " +
-      parent_frame.getTitle () + ")";
+    final String filter_name;
+    if(GeneUtils.isDatabaseEntry(entry_group))
+      filter_name =
+        DatabaseDocument.EXONMODEL+" features with stop codon(s) in translation (filtered from: " +
+        parent_frame.getTitle () + ")";
+    else
+      filter_name =
+        "CDS features with stop codon(s) in translation (filtered from: " +
+        parent_frame.getTitle () + ")";
 
     final FilteredEntryGroup filtered_entry_group =
       new FilteredEntryGroup (entry_group, feature_predicate, filter_name);
@@ -753,12 +799,13 @@ public class ViewMenu extends SelectionMenu
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  protected static void showNonEMBLKeys (final JFrame parent_frame,
-                                      final Selection selection,
-                                      final EntryGroup entry_group,
-                                      final GotoEventSource goto_source,
-                                      final BasePlotGroup
-                                        base_plot_group) {
+  protected static void showNonEMBLKeys(final JFrame parent_frame,
+                                        final Selection selection,
+                                        final EntryGroup entry_group,
+                                        final GotoEventSource goto_source,
+                                        final BasePlotGroup
+                                        base_plot_group) 
+  {
     final FeaturePredicate feature_predicate =
       new FeaturePredicate () {
         public boolean testPredicate (final Feature feature) {
@@ -801,7 +848,8 @@ public class ViewMenu extends SelectionMenu
                                              final EntryGroup entry_group,
                                              final GotoEventSource goto_source,
                                              final BasePlotGroup
-                                               base_plot_group) {
+                                               base_plot_group)
+  {
     final FeaturePredicate feature_predicate =
       new FeaturePredicate () {
         public boolean testPredicate (final Feature feature) {
@@ -851,14 +899,19 @@ public class ViewMenu extends SelectionMenu
    *  @param base_plot_group The BasePlotGroup associated with this JMenu -
    *    needed to call getCodonUsageAlgorithm()
    **/
-  protected static void showOverlappingCDSs (final JFrame parent_frame,
-                                          final Selection selection,
-                                          final EntryGroup entry_group,
-                                          final GotoEventSource goto_source,
-                                          final BasePlotGroup
-                                            base_plot_group) {
-    final FeatureKeyPredicate cds_predicate =
-      new FeatureKeyPredicate (Key.CDS);
+  protected static void showOverlappingCDSs(final JFrame parent_frame,
+                                            final Selection selection,
+                                            final EntryGroup entry_group,
+                                            final GotoEventSource goto_source,
+                                            final BasePlotGroup base_plot_group) 
+  {
+    final Key key;
+    if(GeneUtils.isDatabaseEntry(entry_group))
+      key = new Key(DatabaseDocument.EXONMODEL);
+    else
+      key = Key.CDS;
+    
+    final FeatureKeyPredicate cds_predicate = new FeatureKeyPredicate (key);
 
     final FeaturePredicate feature_predicate =
       new FeaturePredicate () {
@@ -892,7 +945,7 @@ public class ViewMenu extends SelectionMenu
       };
 
     final String filter_name =
-      "overlapping CDS features (filtered from: " +
+      "overlapping "+key.getKeyString()+" features (filtered from: " +
       parent_frame.getTitle () + ")";
 
     final FilteredEntryGroup filtered_entry_group =
@@ -917,13 +970,18 @@ public class ViewMenu extends SelectionMenu
    *    needed to call getCodonUsageAlgorithm()
    **/
   private static void
-    showFeaturesWithSameStopCodons (final JFrame parent_frame,
-                                    final Selection selection,
-                                    final EntryGroup entry_group,
-                                    final GotoEventSource goto_source,
-                                    final BasePlotGroup base_plot_group) {
-    final FeatureKeyPredicate cds_predicate =
-      new FeatureKeyPredicate (Key.CDS);
+    showFeaturesWithSameStopCodons(final JFrame parent_frame,
+                                   final Selection selection,
+                                   final EntryGroup entry_group,
+                                   final GotoEventSource goto_source,
+                                   final BasePlotGroup base_plot_group) 
+  {
+    final Key key;
+    if(GeneUtils.isDatabaseEntry(entry_group))
+      key = new Key(DatabaseDocument.EXONMODEL);
+    else
+      key = Key.CDS;
+    final FeatureKeyPredicate cds_predicate = new FeatureKeyPredicate (key);
 
     final FeaturePredicate feature_predicate =
       new FeaturePredicate () {
@@ -959,13 +1017,12 @@ public class ViewMenu extends SelectionMenu
               return true;
             }
           }
-
           return false;
         }
       };
 
     final String filter_name =
-      "CDS features with the same stop codon as another (filtered from: " +
+      key.getKeyString()+" features with the same stop codon as another (filtered from: " +
       parent_frame.getTitle () + ")";
 
     final FilteredEntryGroup filtered_entry_group =
@@ -1035,10 +1092,10 @@ public class ViewMenu extends SelectionMenu
                                       final Selection selection,
                                       final EntryGroup entry_group,
                                       final GotoEventSource goto_source,
-                                      final BasePlotGroup base_plot_group) {
-    final KeyChooser key_chooser;
-
-    key_chooser = new KeyChooser (Options.getArtemisEntryInformation (),
+                                      final BasePlotGroup base_plot_group) 
+  {
+    final KeyChooser key_chooser = 
+      new KeyChooser (Options.getArtemisEntryInformation (),
                                   new Key ("misc_feature"));
 
     key_chooser.getKeyChoice ().addItemListener (new ItemListener () {
@@ -1182,9 +1239,10 @@ public class ViewMenu extends SelectionMenu
                          MAXIMUM_SELECTED_FEATURES + " selected features");
     }
 
-    for (int i = 0 ;
-         i < features_to_plot.size () && i < MAXIMUM_SELECTED_FEATURES ;
-         ++i) {
+    for(int i = 0;
+        i < features_to_plot.size () && i < MAXIMUM_SELECTED_FEATURES;
+        ++i) 
+    {
       final Feature selection_feature = features_to_plot.elementAt (i);
 
       new FeaturePlotGroup (selection_feature);

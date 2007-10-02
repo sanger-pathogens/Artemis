@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.28 2007-10-01 14:43:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.29 2007-10-02 14:13:21 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -36,6 +36,7 @@ import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.sequence.MarkerRangeVector;
 import uk.ac.sanger.artemis.sequence.Strand;
 import uk.ac.sanger.artemis.util.*;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Key;
@@ -72,15 +73,21 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.28 2007-10-01 14:43:43 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.29 2007-10-02 14:13:21 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
-  /**
-   * 
-   */
+
   private static final long serialVersionUID = 1L;
 
+  /** The GotoEventSource object that was passed to the constructor. */
+  private GotoEventSource goto_event_source = null;
+
+  /** The EntryGroup object that was passed to the constructor. */
+  private EntryGroup entry_group;
+
+  private BasePlotGroup base_plot_group;
+  
   /**
    *  The shortcut for "Create From Base Range".
    **/
@@ -153,7 +160,7 @@ public class AddMenu extends SelectionMenu
     this.entry_group = entry_group;
     this.base_plot_group = base_plot_group;
 
-    new_feature_item = new JMenuItem ("New Feature");
+    final JMenuItem new_feature_item = new JMenuItem ("New Feature");
     new_feature_item.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         makeNewFeature ();
@@ -162,7 +169,7 @@ public class AddMenu extends SelectionMenu
 
     add (new_feature_item);
 
-    create_feature_from_range_item =
+    final JMenuItem create_feature_from_range_item =
       new JMenuItem ("Create Feature From Base Range");
     create_feature_from_range_item.setAccelerator (CREATE_FROM_BASE_RANGE_KEY);
     create_feature_from_range_item.addActionListener(new ActionListener () {
@@ -173,6 +180,27 @@ public class AddMenu extends SelectionMenu
     });
 
     add (create_feature_from_range_item);
+    
+    
+    if(GeneUtils.isDatabaseEntry(entry_group))
+    {
+      final JMenuItem create_gene_model_from_range_item = new JMenuItem(
+          "Create Gene Model From Base Range");
+      // create_gene_model_from_range_item.setAccelerator
+      // (CREATE_FROM_BASE_RANGE_KEY);
+      create_gene_model_from_range_item.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent event)
+        {
+          GeneUtils.createGeneModel(getParentFrame(), getSelection(),
+              entry_group, getGotoEventSource());
+        }
+      });
+      add (create_gene_model_from_range_item);
+    }
+
+    add (create_feature_from_range_item);
+    
 
     if(alignQueryViewer != null || alignSubjectViewer != null)
     {
@@ -224,7 +252,7 @@ public class AddMenu extends SelectionMenu
       add (create_difference_feature);
     }
 
-    create_intron_features_item =
+    final JMenuItem create_intron_features_item =
       new JMenuItem ("Create Intron Features");
     create_intron_features_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
@@ -238,7 +266,7 @@ public class AddMenu extends SelectionMenu
         uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
       create_intron_features_item.setEnabled(false);
 
-    create_exon_features_item =
+    final JMenuItem create_exon_features_item =
       new JMenuItem ("Create Exon Features");
     create_exon_features_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
@@ -252,7 +280,7 @@ public class AddMenu extends SelectionMenu
         uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
       create_exon_features_item.setEnabled(false);
 
-    create_gene_features_item =
+    final JMenuItem create_gene_features_item =
       new JMenuItem ("Create Gene Features");
     create_gene_features_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
@@ -268,7 +296,7 @@ public class AddMenu extends SelectionMenu
 
     addSeparator ();
 
-    new_entry_item = new JMenuItem ("New Entry");
+    final JMenuItem new_entry_item = new JMenuItem ("New Entry");
     new_entry_item.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         makeNewEntry ();
@@ -279,7 +307,7 @@ public class AddMenu extends SelectionMenu
 
     addSeparator ();
 
-    mark_orfs_with_size_item = new JMenuItem ("Mark Open Reading Frames ...");
+    final JMenuItem mark_orfs_with_size_item = new JMenuItem ("Mark Open Reading Frames ...");
 
     mark_orfs_with_size_item.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent event) {
@@ -290,7 +318,7 @@ public class AddMenu extends SelectionMenu
     add (mark_orfs_with_size_item);
 
 
-    mark_empty_orfs_with_size_item = new JMenuItem ("Mark Empty ORFs ...");
+    final JMenuItem mark_empty_orfs_with_size_item = new JMenuItem ("Mark Empty ORFs ...");
 
     mark_empty_orfs_with_size_item.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent event) {
@@ -301,7 +329,7 @@ public class AddMenu extends SelectionMenu
     add (mark_empty_orfs_with_size_item);
 
 
-    mark_orfs_range_item = new JMenuItem ("Mark ORFs In Range ...");
+    final JMenuItem mark_orfs_range_item = new JMenuItem ("Mark ORFs In Range ...");
     mark_orfs_range_item.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         markOpenReadingFramesInRange ();
@@ -311,7 +339,7 @@ public class AddMenu extends SelectionMenu
     add (mark_orfs_range_item);
 
 
-    mark_pattern_item = new JMenuItem ("Mark From Pattern ...");
+    final JMenuItem mark_pattern_item = new JMenuItem ("Mark From Pattern ...");
     mark_pattern_item.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         makeFeaturesFromPattern ();
@@ -320,7 +348,7 @@ public class AddMenu extends SelectionMenu
 
     add (mark_pattern_item);
 
-    mark_ambiguities_item = new JMenuItem ("Mark Ambiguities");
+    final JMenuItem mark_ambiguities_item = new JMenuItem ("Mark Ambiguities");
     mark_ambiguities_item.addActionListener (new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         markAmbiguities ();
@@ -592,11 +620,11 @@ public class AddMenu extends SelectionMenu
 
         /*final*/ Feature temp_feature;
         QualifierVector qualifiers = null;
+        final boolean isDatabaseEntry = GeneUtils.isDatabaseEntry(entry_group);
         
-        if(default_entry.getEMBLEntry() instanceof 
-           uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
+        if(isDatabaseEntry)
         {
-          String uniquename = promptForUniquename(entry_group, 
+          String uniquename = GeneUtils.promptForUniquename(entry_group, 
                                      range.isForwardMarker());
           Qualifier qualifier = new Qualifier("ID", uniquename);
           qualifiers = new QualifierVector();
@@ -605,10 +633,24 @@ public class AddMenu extends SelectionMenu
         
         try 
         {
-          if(qualifiers == null)
-            temp_feature = default_entry.createFeature (Key.CDS, new_location);
+          final Key key;
+          if(isDatabaseEntry)
+            key = new Key("gene");
           else
-            temp_feature = default_entry.createFeature (Key.CDS, new_location, qualifiers);
+            key = Key.CDS;
+          
+          if(qualifiers == null)
+            temp_feature = default_entry.createFeature (key, new_location);
+          else
+            temp_feature = default_entry.createFeature (key, new_location, qualifiers);
+          
+          if(isDatabaseEntry)
+          {
+            final ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();
+            chado_gene.setGene(temp_feature.getEmblFeature());
+            ((uk.ac.sanger.artemis.io.GFFStreamFeature)
+              (temp_feature.getEmblFeature())).setChadoGene(chado_gene);
+          }
         }
         catch (EntryInformationException e) 
         {
@@ -637,60 +679,26 @@ public class AddMenu extends SelectionMenu
         selection.setMarkerRange (null);
         selection.set (new_feature);
         
-        
-        
-        
-        final JFrame edit_frame = new JFrame("Artemis Feature Edit: " + 
-            new_feature.getIDString() +
-            (new_feature.isReadOnly() ?
-                "  -  (read only)" :
-                ""));
-        
-        final FeatureEdit feature_edit = new FeatureEdit(new_feature, entry_group,
-            selection, goto_event_source, edit_frame);
-        
-        edit_frame.addWindowListener(new WindowAdapter() 
+        final ActionListener cancel_listener = new ActionListener() 
         {
-          public void windowClosing(WindowEvent event) 
+          public void actionPerformed(ActionEvent e)
           {
-            feature_edit.stopListening();
-            edit_frame.dispose();
-          }
-        });
-        
-        edit_frame.getContentPane().add(feature_edit);
-        edit_frame.pack();
-
-        //final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-        //edit_frame.setLocation(new Point((screen.width - edit_frame.getSize().width)/2,
-        //                            (screen.height - edit_frame.getSize().height)/2));
-        
-        Utilities.centreFrame(edit_frame);
-
-        final ActionListener cancel_listener =
-          new ActionListener () {
-            public void actionPerformed (ActionEvent e) {
-              try {
-                new_feature.removeFromEntry ();
-                selection.setMarkerRange (range);
-              } catch (ReadOnlyException exception) {
-                throw new Error ("internal error - unexpected exception: " +
-                                 exception);
-              }
+            try 
+            {
+              new_feature.removeFromEntry ();
+              selection.setMarkerRange(range);
             }
-          };
-
-        feature_edit.addCancelActionListener (cancel_listener);
-
-        feature_edit.addApplyActionListener (new ActionListener () {
-          public void actionPerformed (ActionEvent e) {
-            // after apply is pressed cancel should not remove the new
-            // feature
-            feature_edit.removeCancelActionListener (cancel_listener);
+            catch (ReadOnlyException exception) 
+            {
+              throw new Error("internal error - unexpected exception: " +
+                              exception);
+            }
           }
-        });
+        };
+          
+        EditMenu.editSelectedFeatures(entry_group, selection, goto_event_source,
+            new_feature, cancel_listener, null);
 
-        edit_frame.setVisible(true);
       } catch (ReadOnlyException e) {
         new MessageDialog (frame, "feature not created: " +
                            "the default entry is read only");
@@ -943,7 +951,7 @@ public class AddMenu extends SelectionMenu
           
           if(selection_feature.getEmblFeature() instanceof GFFStreamFeature)
           {
-            String uniquename = promptForUniquename(entry_group, 
+            String uniquename = GeneUtils.promptForUniquename(entry_group, 
                                  selection_feature.isForwardFeature());
           
             Qualifier qualifier = new Qualifier("ID", uniquename);
@@ -1176,7 +1184,7 @@ public class AddMenu extends SelectionMenu
       Strand.getOpenReadingFrameRanges (search_range, minimum_orf_size, sequence_end,
           sequence_start);
 
-    String uniquename = promptForUniquename(entry_group, search_range.isForwardMarker());
+    String uniquename = GeneUtils.promptForUniquename(entry_group, search_range.isForwardMarker());
     
     for(int i = 0 ; i < forward_orf_ranges.length ; ++i) 
     {
@@ -1410,7 +1418,7 @@ public class AddMenu extends SelectionMenu
     
     if(entry_group.getDefaultEntry().getEMBLEntry() instanceof 
         uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
-      uniquename = promptForUniquename(entry_group, true); 
+      uniquename = GeneUtils.promptForUniquename(entry_group, true); 
     
     for (int i = 0 ; i < matches.size () ; ++i) 
     {
@@ -1442,71 +1450,6 @@ public class AddMenu extends SelectionMenu
         return;
       }
     }
-  }
-
-  /**
-   * Prompt the user for an ID
-   * @return
-   */
-  private static String promptForUniquename(final EntryGroup entry_group,
-                                            final boolean is_forward)
-  {
-    final Entry default_entry = entry_group.getDefaultEntry ();
-    String id = null;
-    
-    if(default_entry.getEMBLEntry() instanceof 
-        uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
-    {  
-      while(id == null ||
-            id.equals("") ||
-            id.equals("to_be_set"))
-      {
-        String msg = "Provide a unique ID ";
-        
-        if(!is_forward)
-          msg = msg + "for reverse strand : ";
-        else
-          msg = msg + ": ";
-        
-        id = JOptionPane.showInputDialog(null,
-                           msg,
-                           "ID missing ",
-                           JOptionPane.QUESTION_MESSAGE).trim();
-        
-        if(!isUniqueID(entry_group, id))
-        {
-          JOptionPane.showMessageDialog(null, 
-              "ID "+id+" not unique.\nEnter a unique ID.", 
-              "ID Not Unique", 
-              JOptionPane.WARNING_MESSAGE);
-          id = null;
-        }
-      }
-    }
-    return id;
-  }
-  
-  /**
-   * Test to ensure ID (chado uniquename) is unique.
-   * @param entry_group
-   * @param id
-   * @return
-   */
-  private static boolean isUniqueID(final EntryGroup entry_group,
-                                   final String id)
-  {
-    FeaturePredicate predicate =
-      new FeatureKeyQualifierPredicate(null, "ID", id, 
-                                       false, true);
-    FeatureVector features = entry_group.getAllFeatures();
-    for(int i=0; i<features.size(); i++)
-    {
-      Feature feature = features.elementAt(i);
-      if(predicate.testPredicate(feature))
-        return false;
-      
-    }
-    return true;
   }
   
   /**
@@ -1578,27 +1521,4 @@ public class AddMenu extends SelectionMenu
     return goto_event_source;
   }
 
-  /**
-   *  The GotoEventSource object that was passed to the constructor.
-   **/
-  private GotoEventSource goto_event_source = null;
-
-  /**
-   *  The EntryGroup object that was passed to the constructor.
-   **/
-  private EntryGroup entry_group;
-
-  private JMenuItem new_feature_item = null;
-  private JMenuItem new_entry_item = null;
-  private JMenuItem create_feature_from_range_item = null;
-  private JMenuItem create_intron_features_item = null;
-  private JMenuItem create_exon_features_item = null;
-  private JMenuItem create_gene_features_item = null;
-  private JMenuItem mark_orfs_with_size_item = null;
-  private JMenuItem mark_empty_orfs_with_size_item = null;
-  private JMenuItem mark_orfs_range_item = null;
-  private JMenuItem mark_pattern_item = null;
-  private JMenuItem mark_ambiguities_item = null;
-
-  private BasePlotGroup base_plot_group;
 }
