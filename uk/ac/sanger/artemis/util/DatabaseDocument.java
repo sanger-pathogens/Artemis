@@ -2372,14 +2372,12 @@ public class DatabaseDocument extends Document
    * @param sql the collection of <code>ChadoTransaction</code> objects
    * @return
    */
-  public int commit(Vector sql)
+  public int commit(final Vector sql)
   {
     int i = 0;
-
     try
     {
-      
-      GmodDAO dao = getDAO();
+      final GmodDAO dao = getDAO();
       if(dao instanceof IBatisDAO)
         ((IBatisDAO) dao).startTransaction();
       boolean unchanged;
@@ -2387,9 +2385,10 @@ public class DatabaseDocument extends Document
       //
       // check feature timestamps have not changed
       Vector names_checked = new Vector();
+      Hashtable featureIdStore = null;
       for(i = 0; i < sql.size(); i++)
       {
-        ChadoTransaction tsn = (ChadoTransaction)sql.get(i);
+        final ChadoTransaction tsn = (ChadoTransaction)sql.get(i);
         if( (tsn.getType() == ChadoTransaction.INSERT ||
              tsn.getType() == ChadoTransaction.DELETE) && 
              tsn.getFeatureObject() instanceof Feature )
@@ -2397,19 +2396,17 @@ public class DatabaseDocument extends Document
             
         final String uniquename = tsn.getUniquename();
         
-        if(uniquename == null)
-          continue;
-        
-        if(names_checked.contains(uniquename))
+        if(uniquename == null  || names_checked.contains(uniquename))
           continue;
 
         names_checked.add(uniquename);
-        
-        String keyName = tsn.getFeatureKey();
+        final String keyName = tsn.getFeatureKey();
+        if(featureIdStore == null)
+          featureIdStore = new Hashtable();
         unchanged = checkFeatureTimestamp(schema, 
-                         uniquename, 
-                         tsn.getLastModified(), dao, 
-                         keyName, tsn.getFeatureObject());
+                         uniquename, tsn.getLastModified(), dao, 
+                         keyName, tsn.getFeatureObject(),
+                         featureIdStore);
         if(!unchanged)
           return 0;
       }  
@@ -2478,11 +2475,11 @@ public class DatabaseDocument extends Document
 
         //
         // update timelastmodified timestamp
-        Timestamp ts = new Timestamp(new java.util.Date().getTime());
+        final Timestamp ts = new Timestamp(new java.util.Date().getTime());
         names_checked = new Vector();
         for(int j = 0; j < sql.size(); j++)
         {
-          ChadoTransaction tsn = (ChadoTransaction)sql.get(j);
+          final ChadoTransaction tsn = (ChadoTransaction)sql.get(j);
           
           if( (tsn.getType() == ChadoTransaction.INSERT ||
               tsn.getType() == ChadoTransaction.DELETE) && 
@@ -2490,15 +2487,24 @@ public class DatabaseDocument extends Document
            continue;
           
           final String uniquename = tsn.getUniquename();
-          if(uniquename == null)
-            continue;
-            
-          if(names_checked.contains(uniquename))
+          if(uniquename == null || names_checked.contains(uniquename))
             continue;
 
           names_checked.add(uniquename);
 
-          Feature feature = dao.getFeatureByUniqueName(uniquename, tsn.getFeatureKey());
+          final Feature feature;
+          
+          // retieve from featureId store
+          if(featureIdStore != null && featureIdStore.containsKey(uniquename))
+          {
+            int featureId = ((Integer)featureIdStore.get(uniquename)).intValue();
+            feature = new Feature();
+            feature.setFeatureId(featureId);
+            feature.setUniqueName(uniquename);
+          }
+          else
+            feature = dao.getFeatureByUniqueName(uniquename, tsn.getFeatureKey());
+          
           if(feature != null)
           {
             feature.setTimeLastModified(ts);
@@ -2518,6 +2524,9 @@ public class DatabaseDocument extends Document
       {
         if(dao instanceof IBatisDAO)
           ((IBatisDAO) dao).endTransaction();
+        
+        if(featureIdStore != null)
+          featureIdStore.clear();
       }
     }
     catch (java.sql.SQLException sqlExp)
@@ -2537,7 +2546,6 @@ public class DatabaseDocument extends Document
       conn_ex.printStackTrace();
     }
 
-      
     return i;
   }
   
@@ -2551,19 +2559,22 @@ public class DatabaseDocument extends Document
                                        final String uniquename,
                                        final Timestamp timestamp,
                                        final GmodDAO dao,
-                                       String keyName,
-                                       final Object featureObject)
+                                       final String keyName,
+                                       final Object featureObject,
+                                       final Hashtable featureIdStore)
   {
-    Feature feature = dao.getFeatureByUniqueName(uniquename, keyName);
+    final Feature feature = dao.getFeatureByUniqueName(uniquename, keyName);
     if(feature == null)
       return true;
+    
+    featureIdStore.put(uniquename, new Integer(feature.getFeatureId()));
     
     if(featureObject instanceof FeatureProp)
       ((FeatureProp)featureObject).setFeature(feature);
     else if(featureObject instanceof FeatureLoc)
       ((FeatureLoc)featureObject).setFeatureByFeatureId(feature);
       
-    Timestamp now = feature.getTimeLastModified();
+    final Timestamp now = feature.getTimeLastModified();
     
     if(now != null && timestamp != null)
     {
@@ -2572,7 +2583,7 @@ public class DatabaseDocument extends Document
       
       if(now.compareTo(timestamp) != 0)
       {
-        SimpleDateFormat date_format = 
+        final SimpleDateFormat date_format = 
                    new SimpleDateFormat("dd.MM.yyyy hh:mm:ss z");
         
         //System.out.println(date_format.format(now)+"   "+
