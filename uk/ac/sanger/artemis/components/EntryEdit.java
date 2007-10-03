@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.46 2007-09-26 14:39:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.47 2007-10-03 11:45:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -65,7 +65,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.46 2007-09-26 14:39:13 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.47 2007-10-03 11:45:38 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1074,7 +1074,7 @@ public class EntryEdit extends JFrame
 
       if(db)
       {
-        JMenuItem commit = new JMenuItem("Commit to Database");
+        final JMenuItem commit = new JMenuItem("Commit to Database");
         commit.addActionListener(new ActionListener()
         {
           public void actionPerformed(ActionEvent event)
@@ -1084,17 +1084,22 @@ public class EntryEdit extends JFrame
               if(!isUniqueID(getEntryGroup()))
                 return;
                      
-              Document dbDoc =
+              final Document dbDoc =
                   ((DocumentEntry)getEntryGroup().getDefaultEntry().getEMBLEntry()).getDocument();
 
               if(dbDoc instanceof DatabaseDocument)
+              {
+                setCursor(new Cursor(Cursor.WAIT_CURSOR));
                 ctm.commit((DatabaseDocument)dbDoc);
+                setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+              }
               else
                 new MessageDialog(EntryEdit.this,
                          "No database associated with the default entry");
             }
             catch(NullPointerException npe)
             {
+              setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
               new MessageDialog(EntryEdit.this,
                          "No default entry to write to");
               npe.printStackTrace();
