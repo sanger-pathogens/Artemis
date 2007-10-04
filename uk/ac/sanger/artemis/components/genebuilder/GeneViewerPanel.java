@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.62 2007-10-04 10:23:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.63 2007-10-04 10:52:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -405,8 +405,15 @@ public class GeneViewerPanel extends JPanel
         
         try
         {
-          addFeature(range_selected, transcriptName, null,
-              transcript.getLocation().isComplement(), true, chado_gene, entry_group);
+          uk.ac.sanger.artemis.Feature newFeature = 
+              addFeature(range_selected, transcriptName, null,
+                         transcript.getLocation().isComplement(), 
+                         true, chado_gene, entry_group);
+          if(newFeature != null)
+          {
+            selection.clear();
+            selection.add(newFeature);
+          }
         }
         catch(OutOfRangeException e)
         {
