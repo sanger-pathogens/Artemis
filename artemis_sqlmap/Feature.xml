@@ -381,6 +381,7 @@
 	LEFT JOIN cvterm ON cvterm.cvterm_id=feature.type_id
 	WHERE  <isNotNull> feature.organism_id=$value$ AND </isNotNull>
 	  cvterm.name!='mRNA' AND cvterm.name!='pseudogenic_transcript' AND 
+	  cvterm.name!='polypeptide' AND
 	  residues notnull AND residues NOT LIKE '' ORDER BY common_name
        <!--
          <iterate prepend="AND" property="cvTermIds" conjunction="OR" open="(" close=")">
@@ -399,7 +400,8 @@
 	LEFT JOIN organism ON organism.organism_id=feature.organism_id
 	LEFT JOIN cvterm ON cvterm.cvterm_id=feature.type_id
 	WHERE  <isNotNull> organism.common_name=#value# AND </isNotNull>
-	  cvterm.name!='mRNA' AND cvterm.name!='pseudogenic_transcript' AND 
+	  cvterm.name!='mRNA' AND cvterm.name!='pseudogenic_transcript' AND
+	  cvterm.name!='polypeptide' AND
 	  residues notnull AND residues NOT LIKE '' ORDER BY common_name
   </select>
 	
