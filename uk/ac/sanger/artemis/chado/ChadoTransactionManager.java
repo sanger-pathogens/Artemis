@@ -359,6 +359,7 @@ public class ChadoTransactionManager
               thisKey = "exon";
             if(lastTsn.getGff_feature() != null &&
                lastTsn.getType() == ChadoTransaction.UPDATE &&
+               lastTsn.getFeatureKey() != null &&
                lastTsn.getFeatureKey().equals( thisKey ) &&
                lastTsn.getFeatureObject() instanceof FeatureLoc)
             {
