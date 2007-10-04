@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.25 2007-09-12 10:14:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.26 2007-10-04 10:26:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -30,12 +30,14 @@ import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.plot.CodonUsageAlgorithm;
 
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.QualifierInfo;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.StreamQualifier;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
 import java.awt.event.MouseEvent;
@@ -61,7 +63,7 @@ import javax.swing.JComponent;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.25 2007-09-12 10:14:54 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.26 2007-10-04 10:26:24 tjc Exp $
  *
  **/
 
@@ -671,8 +673,27 @@ public class FeatureList extends EntryGroupPanel
                  getLineHeight());
       g.setColor(background_colour);
     } 
-
-    g.drawString(feature_string,
+    
+    if( feature.getEmblFeature() instanceof GFFStreamFeature &&
+        !getSelection().contains(feature) &&
+        !((GFFStreamFeature)feature.getEmblFeature()).isVisible() )
+    {
+      //
+      // use gray for the key if the feature is NOT visible
+      g.setColor(Color.gray);
+      int ind = feature_string.indexOf(' ');
+      final String keyString = feature_string.substring(0, ind);
+      g.drawString(keyString,
+          BOX_WIDTH + 5,
+          y_pos + getFontAscent());
+      
+      g.setColor(Color.black);
+      g.drawString(feature_string.substring(ind),
+          BOX_WIDTH + 5 + getFontMetrics(getFont()).stringWidth(keyString),
+          y_pos + getFontAscent());
+    }
+    else
+      g.drawString(feature_string,
                  BOX_WIDTH + 5,
                  y_pos + getFontAscent());
   }
@@ -810,7 +831,8 @@ public class FeatureList extends EntryGroupPanel
 
     if(show_correlation_scores)
     {
-      if(feature.isCDS()) 
+      if(feature.isCDS() || 
+         feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL)) 
       {
         new_list_line.append(getScoresString(feature));
         new_list_line.append("  ");
