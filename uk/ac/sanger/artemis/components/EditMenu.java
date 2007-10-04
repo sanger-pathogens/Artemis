@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.29 2007-10-02 14:14:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.30 2007-10-04 13:39:33 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -57,7 +57,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.29 2007-10-02 14:14:20 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.30 2007-10-04 13:39:33 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -932,19 +932,25 @@ public class EditMenu extends SelectionMenu
         if(!dialog.getResult())
           return;
       }
-      final Feature new_feature;
 
- 
+      final Feature new_feature;
       //
       //  GFF merge
       if(merge_feature.getEmblFeature() instanceof GFFStreamFeature)
       {
+        if(!merge_feature.getKey().equals(DatabaseDocument.EXONMODEL) &&
+           !merge_feature.getKey().equals("pseudogenic_exon")) 
+        {
+          new MessageDialog(frame,"The features in a merge should be "+
+                            DatabaseDocument.EXONMODEL+
+                            " or pseudogenic_exon features");
+          return;
+        }
+        
         gffMergeFeatures(features_to_merge, merge_feature, 
                          selection, entry_group);
         return;
-      }
-      
-       
+      }    
         
       try 
       {
@@ -1139,14 +1145,20 @@ public class EditMenu extends SelectionMenu
         // create gene model
         Location geneLocation = new Location(selection.getSelectionRange());
        
-        String parentId = 
+        final String parentId = 
           (String)merge_feature.getQualifierByName("ID").getValues().get(0)+":gene";
         QualifierVector qualifiers = new QualifierVector();
         qualifiers.setQualifier(new Qualifier("ID", parentId));
         
         // create gene
+        final Key key;
+        if(merge_feature.getKey().getKeyString().equals("pseudogenic_exon"))
+          key = new Key("pseudogene");
+        else
+          key = new Key("gene");
+        
         Feature parentGene =
-          merge_feature.getEntry().createFeature(new Key("gene"), 
+          merge_feature.getEntry().createFeature(key, 
                                                  geneLocation, qualifiers);
         
         chadoGene = new ChadoCanonicalGene();
@@ -1168,7 +1180,6 @@ public class EditMenu extends SelectionMenu
         transcriptId = (String)parentQualifier.getValues().get(0);
         
         /// todo - merging gene models ?
-        
         JOptionPane.showMessageDialog(null,
              "This option cannot be used to merge gene models");
 
@@ -1217,11 +1228,12 @@ public class EditMenu extends SelectionMenu
       uk.ac.sanger.artemis.chado.ChadoTransactionManager.addSegments = true;
       
       // set the new ID for the joined feature
-      String ID = ((GFFStreamFeature)merge_feature.getEmblFeature()).getSegmentID(
+      final String ID = ((GFFStreamFeature)merge_feature.getEmblFeature()).getSegmentID(
                                          merge_feature.getLocation().getRanges());
-      Qualifier qualifier = new Qualifier("ID", ID);
+      final Qualifier qualifier = new Qualifier("ID", ID);
       merge_feature.getEmblFeature().setQualifier(qualifier);
       chadoGene.addSplicedFeatures(transcriptId, merge_feature.getEmblFeature(), true);
+      ((GFFStreamFeature)merge_feature.getEmblFeature()).setChadoGene(chadoGene);
     }
     catch(ReadOnlyException e)
     {
