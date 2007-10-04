@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.61 2007-10-02 14:11:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.62 2007-10-04 10:23:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -713,7 +713,8 @@ public class GeneViewerPanel extends JPanel
     int ntranscript = (p.y - (border*3))/getTranscriptSize();
     if(ntranscript < transcripts.size())
       return (Feature)transcripts.get(ntranscript);
-    return null;
+    
+    return (Feature)transcripts.get(transcripts.size()-1);
   }
   
   /**
@@ -1428,12 +1429,11 @@ public class GeneViewerPanel extends JPanel
     
     if(featureName == null)
     {
+      final String autoId = chado_gene.autoGenerateFeatureName(transcriptName);
       featureName = JOptionPane.showInputDialog(null,
-        "Provide a feature unique name : ",
-        "Provide a feature unique name ",
-        JOptionPane.QUESTION_MESSAGE);
+          "Provide a feature unique name : ", autoId);
     
-      if(featureName == null)
+      if(featureName == null || featureName.equals(""))
         return null;
     }
     
