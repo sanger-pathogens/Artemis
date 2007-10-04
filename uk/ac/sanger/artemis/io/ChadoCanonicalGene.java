@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.23 2007-09-07 14:10:40 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.24 2007-10-04 10:24:33 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,6 +36,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *  Used by GFFStreamFeature to represent the chado canonical gene.
@@ -638,6 +640,46 @@ public class ChadoCanonicalGene
   }
   
   /**
+   * Test if a name is already used in this gene model
+   * @param name
+   * @return
+   */
+  private boolean isUniqueName(final String name)
+  {
+    if(isTranscript(name))
+      return false;
+    if(isSplicedFeatures(name))
+      return false;
+
+    try
+    {
+      if(getFeatureFromHash(name, three_prime_utr) != null)
+        return false;
+      if(getFeatureFromHash(name, five_prime_utr) != null)
+        return false;
+      if(getFeatureFromHash(name, other_features) != null)
+        return false;
+      
+      final Enumeration enum_pp = proteins.elements();
+      while(enum_pp.hasMoreElements())
+      {
+        final Feature pp = (Feature)enum_pp.nextElement();
+        if( getQualifier(pp, "ID").equals(name) )
+          return false;
+      }  
+      
+      if( getQualifier(getGene(), "ID").equals(name) )
+        return false;
+    }
+    catch(InvalidRelationException e)
+    {
+      e.printStackTrace();
+    }
+    
+    return true;
+  }
+  
+  /**
    * Test if the name is a transcript in this gene model.
    * @param feature_id
    * @return true if a transcript
@@ -824,6 +866,39 @@ public class ChadoCanonicalGene
       e.printStackTrace();
     }
     return null;
+  }
+  
+  /**
+   * Generate new names for generic region features for this gene model
+   * @param transcript_id
+   * @return
+   */
+  public String autoGenerateFeatureName(final String transcript_id)
+  {
+    String featureName = "";
+    try
+    {
+      featureName = 
+        (String)getGene().getQualifierByName("ID").getValues().get(0);
+    }
+    catch(InvalidRelationException e){}
+    
+    final Pattern pattern = Pattern.compile("\\d+$");
+    final Matcher matcher = pattern.matcher(transcript_id);
+    if(matcher.find())
+      featureName = featureName+":"+matcher.group()+":region";
+    else
+      featureName = featureName+":region";
+    
+    if(!isUniqueName(featureName))
+    {
+      int num = 1;
+      while(!isUniqueName(featureName + ":" + num) && num < 100)
+        num++;
+      featureName = featureName + ":" + num;
+    }
+    
+    return featureName;
   }
   
   /**
