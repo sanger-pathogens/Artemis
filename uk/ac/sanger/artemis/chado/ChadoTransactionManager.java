@@ -988,7 +988,10 @@ public class ChadoTransactionManager
     if(event_type != FeatureChangeEvent.QUALIFIER_CHANGED && 
        !new_key.equals(old_key))
     {
-      CvTerm cvTerm = getCvTerm(new_key.getKeyString(), "sequence");
+      String key = new_key.getKeyString();
+      if(key.equals(DatabaseDocument.EXONMODEL))
+        key = "exon";
+      CvTerm cvTerm = getCvTerm(key, "sequence");
       if(cvTerm == null)   // chado doesn't recognise this
       {
         JOptionPane.showMessageDialog(null, 
