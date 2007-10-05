@@ -2408,7 +2408,11 @@ public class DatabaseDocument extends Document
                          keyName, tsn.getFeatureObject(),
                          featureIdStore);
         if(!unchanged)
+        {
+          if(dao instanceof IBatisDAO)
+            ((IBatisDAO) dao).endTransaction();
           return 0;
+        }
       }  
       
       try
@@ -2504,7 +2508,7 @@ public class DatabaseDocument extends Document
           }
           else
             feature = dao.getFeatureByUniqueName(uniquename, tsn.getFeatureKey());
-          
+
           if(feature != null)
           {
             feature.setTimeLastModified(ts);
@@ -2515,7 +2519,7 @@ public class DatabaseDocument extends Document
               .getGff_feature();
           gff_feature.setLastModified(ts);
         }
-        
+
         if(dao instanceof IBatisDAO && 
            System.getProperty("nocommit") == null)
            ((IBatisDAO) dao).commitTransaction();
