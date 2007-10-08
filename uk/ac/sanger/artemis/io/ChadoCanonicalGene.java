@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.24 2007-10-04 10:24:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.25 2007-10-08 14:13:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -77,8 +77,8 @@ public class ChadoCanonicalGene
   public Feature getGene()
   {
     return gene;
-  }
-
+  } 
+ 
   /**
    * Set the gene feature object.
    * @param gene
@@ -86,6 +86,18 @@ public class ChadoCanonicalGene
   public void setGene(Feature gene)
   {
     this.gene = gene;
+  }
+ 
+  public String getGeneUniqueName()
+  {
+    try
+    {
+      return getQualifier(getGene(), "ID");
+    }
+    catch(InvalidRelationException e)
+    {
+      return null;
+    } 
   }
   
   /**
