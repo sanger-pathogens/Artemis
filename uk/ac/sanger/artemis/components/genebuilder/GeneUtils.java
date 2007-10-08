@@ -203,12 +203,9 @@ public class GeneUtils
    * 
    */
   public static void duplicateGeneModel(final JFrame frame,
-      final Selection selection,
+      final FeatureVector features_to_duplicate,
       final EntryGroup entry_group)
   {
-    final FeatureVector features_to_duplicate =
-      selection.getAllFeatures ();
-
     final Vector duplicatedGenes = new Vector();
     for (int i = 0 ; i < features_to_duplicate.size () ; ++i) 
     {
