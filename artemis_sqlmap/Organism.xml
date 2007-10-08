@@ -19,12 +19,23 @@
         <isNotNull property="organismId">
 			<isGreaterThan property="organismId" compareValue="0"> 
 				WHERE organism_id=#organismId#
+			    <isNotNull prepend="AND" property="commonName">
+                    common_name=#commonName#
+                </isNotNull>
 			</isGreaterThan>
+			
+			<isLessEqual property="organismId" compareValue="0">
+				<isNotNull prepend="WHERE" property="commonName">
+                  common_name=#commonName#
+                </isNotNull>
+			</isLessEqual>
         </isNotNull>
-        
-		<isNotNull prepend="WHERE" property="commonName">
-           common_name=#commonName#
-        </isNotNull>
+		
+		<isNull property="organismId">
+	  	   <isNotNull prepend="WHERE" property="commonName">
+             common_name=#commonName#
+           </isNotNull>
+		</isNull>
 		  
         <isNull prepend="ORDER BY" property="organismId">
            commonName
