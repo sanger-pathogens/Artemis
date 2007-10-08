@@ -328,7 +328,7 @@
 	LEFT JOIN analysis a ON af.analysis_id=a.analysis_id
     WHERE  f.feature_id IN 
       (  SELECT feature_id FROM featureloc WHERE srcfeature_id IN
-        <iterate open="(" close=")" conjunction=","> #[]# </iterate>
+        <iterate open="(" close=")" conjunction=","> $[]$ </iterate>
       ) 
     ORDER BY f.feature_id
   </select>
