@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.57 2007-10-08 09:43:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.58 2007-10-08 14:13:47 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -49,7 +49,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.57 2007-10-08 09:43:12 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.58 2007-10-08 14:13:47 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -218,6 +218,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
           removeQualifierByName("feature_id");
           removeQualifierByName("timelastmodified");
           removeQualifierByName("feature_relationship_rank");
+          //removeQualifierByName(MatchPanel.ORTHOLOG);
+          //removeQualifierByName(MatchPanel.PARALOG);
         }
         catch(ReadOnlyException e){}
         catch(EntryInformationException e){}
