@@ -34,6 +34,7 @@ import uk.ac.sanger.artemis.components.genebuilder.ortholog.OrthoParalogTable;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.SimilarityTable;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.io.QualifierLazyLoading;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -89,7 +90,7 @@ import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 public class ChadoTransactionManager
        implements FeatureChangeListener, EntryChangeListener, SequenceChangeListener 
 {
-  public static org.apache.log4j.Logger logger4j = 
+  private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(ChadoTransactionManager.class);
   
   public static boolean addSegments = true;
@@ -690,13 +691,14 @@ public class ChadoTransactionManager
     if(key.equals(DatabaseDocument.EXONMODEL))
       key = "exon";
     CvTerm cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm(key, "sequence");
+    
     if(cvTerm == null)
     {
       final String msg = 
         key+" is not a valid/known database key (check the sequence ontology)!";
 
       logger4j.error(msg);
-      System.out.println(msg);
+      JOptionPane.showMessageDialog(null,msg);
       return;
     }
     
@@ -880,9 +882,11 @@ public class ChadoTransactionManager
       ++qualifier_index)
     {
       final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
+      if(this_qualifier instanceof QualifierLazyLoading)
+        ((QualifierLazyLoading)this_qualifier).setForceLoad(true);
       final String name = this_qualifier.getName();
       final StringVector qualifier_values = this_qualifier.getValues();
-      
+
       try
       {
         for(int value_index = 0; value_index < qualifier_values.size();
@@ -893,13 +897,14 @@ public class ChadoTransactionManager
           if(isReservedTag(name) || isSynonymTag(name, feature) || isCvTag(name))
           {
             if(!name.equals("Parent") && !name.equals("Derives_from"))
-              addReservedTag(name+"="+qualifierStr, name, uniqueName, feature, null, null);
+              addReservedTag(name+"="+qualifierStr, name, 
+                             uniqueName, feature, null, null, true);
             continue;
           }
 
           // happens when duplicating features 
-          CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(name);
-          FeatureProp featureprop = new FeatureProp();
+          final CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(name);
+          final FeatureProp featureprop = new FeatureProp();
           featureprop.setValue((String)qualifier_values.elementAt(value_index));
           featureprop.setRank(value_index);
           featureprop.setCvTerm(cvTerm);
@@ -910,10 +915,8 @@ public class ChadoTransactionManager
       }
       catch(NullPointerException npe)
       {
-        final String msg = name+" is not a valid/known database qualifier!";
+        npe.printStackTrace();
 
-        logger4j.error(msg);
-        System.out.println(msg);
         /*JOptionPane.showMessageDialog(null,
             msg,"Invalid Qualifier",
             JOptionPane.WARNING_MESSAGE);*/
@@ -1423,7 +1426,7 @@ public class ChadoTransactionManager
       if(!old_qualifier_strings.contains(qualifierString))
       {
         addReservedTag(qualifierString, qualifierName, uniquename,
-            feature, old_qualifier_strings, new_qualifier_strings);
+            feature, old_qualifier_strings, new_qualifier_strings, false);
       }
     }  
     
@@ -1443,7 +1446,8 @@ public class ChadoTransactionManager
                               final String uniquename,
                               final GFFStreamFeature feature,
                               final StringVector old_qualifier_strings,
-                              final StringVector new_qualifier_strings)
+                              final StringVector new_qualifier_strings,
+                              final boolean isDuplicate)
   {
     ChadoTransaction tsn = null;
     int index = qualifierStr.indexOf("=");
@@ -1540,6 +1544,9 @@ public class ChadoTransactionManager
       org.gmod.schema.sequence.Feature matchFeature =
         ArtemisUtils.getMatchFeatureWithFeatureRelations(uniquename, qualifierName, 
             qualifierString, feature);
+      
+      if(isDuplicate)
+        matchFeature.setUniqueName( matchFeature.getUniqueName()+":DUPLICATE" );
       
       tsn = new ChadoTransaction(ChadoTransaction.INSERT,
           matchFeature,
