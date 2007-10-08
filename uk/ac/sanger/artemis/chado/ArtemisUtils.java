@@ -495,8 +495,13 @@ public class ArtemisUtils
   protected static Feature getMatchFeatureWithFeatureRelations(final String uniqueName,
       final String qualifierName, String qualifierString, final GFFStreamFeature feature)
   {
-    int queryFeatureId = Integer.parseInt((String) feature.getQualifierByName(
-        "feature_id").getValues().get(0));
+    final int queryFeatureId;
+    
+    if(feature.getQualifierByName("feature_id") != null)
+      queryFeatureId = Integer.parseInt((String) feature.getQualifierByName(
+                                        "feature_id").getValues().get(0));
+    else
+      queryFeatureId = 0;
 
     Feature thisFeature     = new Feature();
     Feature orthologFeature = new Feature();
