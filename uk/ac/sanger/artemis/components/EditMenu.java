@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.30 2007-10-04 13:39:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.31 2007-10-08 09:42:23 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -29,6 +29,7 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.components.genebuilder.GeneBuilderFrame;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.genebuilder.GeneViewerPanel;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.Range;
@@ -57,7 +58,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.30 2007-10-04 13:39:33 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.31 2007-10-08 09:42:23 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -366,17 +367,37 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem duplicate_item = new JMenuItem("Duplicate Selected Features");
-    duplicate_item.setAccelerator(DUPLICATE_KEY);
-    duplicate_item.addActionListener(new ActionListener() 
+    final JMenuItem duplicate_item;
+    final JMenuItem duplicate_genes;
+    if(GeneUtils.isDatabaseEntry(entry_group))
     {
-      public void actionPerformed(ActionEvent event) 
+      duplicate_item  = null;
+      duplicate_genes = new JMenuItem("Duplicate Selected Gene Models");
+      duplicate_genes.setAccelerator(DUPLICATE_KEY);
+      duplicate_genes.addActionListener(new ActionListener() 
       {
-        duplicateFeatures(getParentFrame(), getSelection(),
-                          getEntryGroup());
-      }
-    });
-
+        public void actionPerformed(ActionEvent event) 
+        {
+          duplicateGeneFeatures(getParentFrame(), getSelection(),
+                                getEntryGroup());
+        }
+      });
+    }
+    else
+    {
+      duplicate_genes = null;
+      duplicate_item  = new JMenuItem("Duplicate Selected Features");
+      duplicate_item.setAccelerator(DUPLICATE_KEY);
+      duplicate_item.addActionListener(new ActionListener() 
+      {
+        public void actionPerformed(ActionEvent event) 
+        {
+          duplicateFeatures(getParentFrame(), getSelection(),
+                            getEntryGroup());
+        }
+      });
+    }
+    
     final JMenuItem delete_features_item = new JMenuItem("Delete Selected Features");
     delete_features_item.setAccelerator(DELETE_FEATURES_KEY);
     delete_features_item.addActionListener(new ActionListener() 
@@ -671,7 +692,10 @@ public class EditMenu extends SelectionMenu
     add(add_qualifiers_item);
     add(remove_qualifier_item);
     add(convert_qualifier_item);
-    add(duplicate_item);
+    if(duplicate_genes == null)
+      add(duplicate_item);
+    else
+      add(duplicate_genes);
     add(merge_features_item);
     add(unmerge_feature_item);
     add(unmerge_all_feature_item);
@@ -1687,6 +1711,47 @@ public class EditMenu extends SelectionMenu
       entry_group.getActionController ().endAction ();
     }
   }
+  
+  protected static void duplicateGeneFeatures(final JFrame frame,
+      final Selection selection,
+      final EntryGroup entry_group) 
+  {
+    try 
+    {
+      entry_group.getActionController ().startAction ();
+
+      if (getReadOnlyFeatures (selection.getAllFeatures ()).size () > 0)
+      {
+        new MessageDialog (frame,
+                           "one or more of the selected features is read-only " +
+                           "- cannot continue");
+        return;
+      }
+
+      if (Options.getOptions ().isNoddyMode ()) 
+      {
+        final YesNoDialog dialog =
+          new YesNoDialog (frame,
+                           "Are you sure you want to duplicate the selected " +
+                           "features?");
+        if (!dialog.getResult ()) 
+          return;
+      }
+      else 
+      {
+        if (!checkForSelectionFeatures (frame, selection,
+                                        100, "really duplicate all (>100) " +
+                                        "selected features?")) 
+          return;
+      }
+
+      GeneUtils.duplicateGeneModel(frame, selection, entry_group);
+    } 
+    finally 
+    {
+      entry_group.getActionController ().endAction ();
+    }
+  }
 
   /**
    *  Duplicate the selected Feature objects.  If there are selected segments
@@ -1733,7 +1798,7 @@ public class EditMenu extends SelectionMenu
         final Feature this_feature = features_to_duplicate.elementAt (i);
 
         try {
-          this_feature.duplicate ();
+          this_feature.duplicate (true);
         } catch (ReadOnlyException e) {
           final String message =
             "one of the selected features (" + this_feature.getIDString () +

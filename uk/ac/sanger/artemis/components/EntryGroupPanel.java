@@ -20,12 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupPanel.java,v 1.5 2006-07-19 16:02:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupPanel.java,v 1.6 2007-10-08 09:42:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.sequence.*;
 
 import java.awt.*;
@@ -36,7 +37,7 @@ import javax.swing.*;
  *  A JPanel that can show an EntryGroup(in some way).
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: EntryGroupPanel.java,v 1.5 2006-07-19 16:02:46 tjc Exp $
+ *  @version $Id: EntryGroupPanel.java,v 1.6 2007-10-08 09:42:23 tjc Exp $
  **/
 
 abstract public class EntryGroupPanel extends CanvasPanel 
@@ -300,8 +301,12 @@ abstract public class EntryGroupPanel extends CanvasPanel
                                   getEntryGroup());
           break;
         case EditMenu.DUPLICATE_KEY_CODE:
-          EditMenu.duplicateFeatures(getParentFrame(), getSelection(),
-                                      getEntryGroup());
+          if(GeneUtils.isDatabaseEntry(entry_group))
+            EditMenu.duplicateGeneFeatures(getParentFrame(), getSelection(),
+                                           getEntryGroup());
+          else
+            EditMenu.duplicateFeatures(getParentFrame(), getSelection(),
+                                       getEntryGroup());
           break;
         case EditMenu.DELETE_FEATURES_KEY_CODE:
           EditMenu.deleteSelectedFeatures(getParentFrame(), getSelection(),
