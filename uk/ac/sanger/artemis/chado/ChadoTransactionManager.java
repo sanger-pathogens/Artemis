@@ -96,7 +96,7 @@ public class ChadoTransactionManager
   private Vector sql = new Vector();
   
   /** GFF3 predefined tags, i.e. not feature_prop's */
-  private String reserved_tags[] = 
+  private static String reserved_tags[] = 
           {   "ID",
               "Name",
               "Alias",
@@ -123,7 +123,7 @@ public class ChadoTransactionManager
               "class"};
   
   //synonym tags from cv
-  private String synonym_tags[] = null;
+  private static String synonym_tags[] = null;
   private static String SYNONYM_TAG_CVNAME = "genedb_synonym_type";
   private EntryGroup entryGroup;
 
@@ -444,8 +444,23 @@ public class ChadoTransactionManager
       if(!(event.getFeature().getEmblFeature() instanceof GFFStreamFeature))
         return;
       
-      Feature feature = event.getFeature();
-      insertFeature(feature);
+      final Feature feature = event.getFeature();
+      
+      final FeatureSegmentVector segments = feature.getSegments();
+      
+      if(segments != null && segments.size() > 1)
+      {
+        for(int iadd = 0; iadd < segments.size(); iadd++)
+        {
+          FeatureSegment segment = segments.elementAt(iadd);
+          Range range = segment.getRawRange();
+          final String segment_uniquename = 
+            ((GFFStreamFeature)feature.getEmblFeature()).getSegmentID(range);
+          insertFeatureSegment(segment, segment_uniquename);
+        }
+      }
+      else
+        insertFeature(feature);
     }
     else if(event.getType() == EntryChangeEvent.FEATURE_DELETED)
     { 
@@ -565,7 +580,7 @@ public class ChadoTransactionManager
     String feature_uniquename = null;
     try
     {
-      Qualifier qualifier_uniquename = feature.getQualifierByName("ID");
+      final Qualifier qualifier_uniquename = feature.getQualifierByName("ID");
 
       if(qualifier_uniquename != null)
       {
@@ -686,14 +701,16 @@ public class ChadoTransactionManager
     }
     
     chado_feature.setCvTerm(cvTerm);
-    addQualifiers(feature.getQualifiers(), chado_feature, 
-        (GFFStreamFeature)feature.getEmblFeature());
+
     // create transaction object
     
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT,
                                chado_feature,
                                null, (GFFStreamFeature)null, null);
-    sql.add(tsn);  
+    sql.add(tsn); 
+    
+    addQualifiers(feature.getQualifiers(), chado_feature, 
+        (GFFStreamFeature)feature.getEmblFeature(), feature_uniquename);
   }
   
   /**
@@ -855,7 +872,8 @@ public class ChadoTransactionManager
    */
   private void addQualifiers(final QualifierVector qualifiers,
                              final org.gmod.schema.sequence.Feature chado_feature,
-                             final GFFStreamFeature feature)
+                             final GFFStreamFeature feature,
+                             final String uniqueName)
   {
     // add qualifiers/attributes
     for(int qualifier_index = 0; qualifier_index < qualifiers.size();
@@ -863,38 +881,31 @@ public class ChadoTransactionManager
     {
       final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(qualifier_index);
       final String name = this_qualifier.getName();
-
-      // ignore reserved tags
-      if(isReservedTag(name) || isSynonymTag(name, feature))
-        continue;
-
       final StringVector qualifier_values = this_qualifier.getValues();
       
       try
       {
-        //int type_id = DatabaseDocument.getCvtermID( name ).intValue();
-        CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(name);
         for(int value_index = 0; value_index < qualifier_values.size();
           ++value_index)
         {
- //         if(qualifier_values.elementAt(value_index) instanceof ChadoFeatureProp)
- //         {
- //           System.out.println("HERE ChadoFeatureProp");
- //           chado_feature.addQualifier(type_id, 
- //                        (ChadoFeatureProp)qualifier_values.elementAt(value_index));
- //         }
- //         else
- //         {
-            // happens when duplicating features 
-            FeatureProp featureprop = new FeatureProp();
-            featureprop.setValue((String)qualifier_values.elementAt(value_index));
-            featureprop.setRank(value_index);
-            //CvTerm cvTerm = new CvTerm();
-            //cvTerm.setCvTermId(type_id);
-            featureprop.setCvTerm(cvTerm);
-            chado_feature.addFeatureProp(featureprop);
- //           chado_feature.addQualifier(type_id, featureprop);
- //         }
+          final String qualifierStr = (String)qualifier_values.elementAt(value_index);
+          // ignore reserved tags
+          if(isReservedTag(name) || isSynonymTag(name, feature) || isCvTag(name))
+          {
+            if(!name.equals("Parent") && !name.equals("Derives_from"))
+              addReservedTag(name+"="+qualifierStr, name, uniqueName, feature, null, null);
+            continue;
+          }
+
+          // happens when duplicating features 
+          CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(name);
+          FeatureProp featureprop = new FeatureProp();
+          featureprop.setValue((String)qualifier_values.elementAt(value_index));
+          featureprop.setRank(value_index);
+          featureprop.setCvTerm(cvTerm);
+          chado_feature.addFeatureProp(featureprop);
+  
+          logger4j.debug("ADD FEATUREPROP="+(String)qualifier_values.elementAt(value_index));
         }
       }
       catch(NullPointerException npe)
@@ -910,12 +921,19 @@ public class ChadoTransactionManager
     } 
   }
 
+  public static  boolean isSpecialTag(final String tag)
+  {
+    if(isReservedTag(tag) || isSynonymTag(tag, null) || isCvTag(tag))
+      return true;
+    return false;
+  }
+  
   /**
    * Determine if this is a GFF3 predefined tag.
    * @param tag
    * @return  true if the tag is a GFF3 predefined tag
    */
-  private boolean isReservedTag(final String tag)
+  private static boolean isReservedTag(final String tag)
   {
     for(int i=0; i<reserved_tags.length; i++)
       if(tag.equals(reserved_tags[i]))
@@ -928,7 +946,7 @@ public class ChadoTransactionManager
    * @param tag
    * @return  true if the tag is a CV tag
    */
-  private boolean isCvTag(final String tag)
+  private static boolean isCvTag(final String tag)
   {
     for(int i=0; i<cv_tags.length; i++)
       if(tag.equals(cv_tags[i]))
@@ -941,7 +959,7 @@ public class ChadoTransactionManager
    * @param tag
    * @return  true if the tag is a GFF3 predefined tag
    */
-  private boolean isSynonymTag(final String tag,
+  private static boolean isSynonymTag(final String tag,
                                final GFFStreamFeature feature)
   {
     if(synonym_tags == null)
@@ -1202,10 +1220,10 @@ public class ChadoTransactionManager
       while(id_keys.hasMoreElements())
       {
         uniquename = (String)id_keys.nextElement();
-        FeatureProp featureprop = getFeatureProp(uniquename, qualifier_string,
+        final FeatureProp featureprop = getFeatureProp(uniquename, qualifier_string,
                                                  lcvterm_id, rank);
         
-        logger4j.debug("FEATUREPROP "+type+"\n"+qualifier_string);
+        logger4j.debug("FEATUREPROP "+type+" "+qualifier_string);
         tsn = new ChadoTransaction(type,
             featureprop,
             feature.getLastModified(), feature, feature.getKey().getKeyString());
@@ -1219,7 +1237,7 @@ public class ChadoTransactionManager
       FeatureProp featureprop = getFeatureProp(uniquename,
                          qualifier_string, lcvterm_id, rank);
     
-      logger4j.debug("FEATUREPROP "+type+"\n"+qualifier_string);
+      logger4j.debug("FEATUREPROP transaction type="+type+" "+qualifier_string);
       tsn = new ChadoTransaction(type,
           featureprop,
           feature.getLastModified(), feature, feature.getKey().getKeyString());       
@@ -1404,109 +1422,132 @@ public class ChadoTransactionManager
       String qualifierString = (String)new_qualifier_strings.elementAt(i);
       if(!old_qualifier_strings.contains(qualifierString))
       {
-         int index = qualifierString.indexOf("=");
-         qualifierString = qualifierString.substring(index+1);
-         
-         if(qualifierName.equals("Dbxref"))
-         {   
-           logger4j.debug(uniquename+"  in handleReservedTags() INSERT db="+
-               qualifierString);
-           FeatureDbXRef new_dbxref = getFeatureDbXRef(qualifierString,
-                                                       uniquename);
-           
-           tsn = new ChadoTransaction(ChadoTransaction.INSERT,
-               new_dbxref,
-               feature.getLastModified(), feature,
-               feature.getKey().getKeyString());
-           sql.add(tsn);
-         }
-         else if(qualifierName.equals("codon_start"))
-         {
-           logger4j.debug(uniquename+"  in handleReservedTags() update codon_start");
-           updateFeatureLoc(feature, uniquename);
-         }
-         else if(qualifierName.equals("literature"))
-         {
-           logger4j.debug(uniquename+"  in handleReservedTags() INSERT literature");
-           FeaturePub featurePub = getFeaturePub(qualifierString, uniquename);
-           
-           tsn = new ChadoTransaction(ChadoTransaction.INSERT,
-               featurePub,
-               feature.getLastModified(), feature,
-               feature.getKey().getKeyString());
-           sql.add(tsn);
-         }
-         else if(qualifierName.equals("Parent"))
-         {
-           processFeatureRelationshipRank(feature, feature.getLocation().getRanges(),
-                                          ChadoTransaction.INSERT);
-         }
-         else if(isCvTag(qualifierName))
-         {
-           logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
-               qualifierName+" "+qualifierString);
-           FeatureCvTerm feature_cvterm = getFeatureCvTerm(qualifierName,
-               qualifierString, uniquename, feature);
-           tsn = new ChadoTransaction(ChadoTransaction.INSERT, 
-                      feature_cvterm,
-                      feature.getLastModified(), feature,
-                      feature.getKey().getKeyString());
-           sql.add(tsn);
-         }
-         else if(isSynonymTag(qualifierName, feature))
-         {
-           logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
-               qualifierName+" "+qualifierString);
-
-           FeatureSynonym feature_synonym = getFeatureSynonym(qualifierName,
-               qualifierString, uniquename);
-
-           tsn = new ChadoTransaction(ChadoTransaction.INSERT,
-               feature_synonym,
-               feature.getLastModified(), feature,
-               feature.getKey().getKeyString());
-           sql.add(tsn);
-         }
-         else if(qualifierName.equals("similarity"))
-         {
-           if(SimilarityTable.containsStringInStringVector(
-               (String)new_qualifier_strings.elementAt(i), old_qualifier_strings))
-             continue;
-           
-           logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
-               qualifierName+" "+qualifierString);
-           
-           AnalysisFeature analysisFeature = ArtemisUtils.getAnalysisFeature(uniquename,
-               qualifierString, feature);
-           tsn = new ChadoTransaction(ChadoTransaction.INSERT,
-               analysisFeature,
-               null, feature,
-               feature.getKey().getKeyString());
-           sql.add(tsn);
-         }
-         else if(MatchPanel.isClusterTag(qualifierName))
-         {
-           if(OrthoParalogTable.containsStringInStringVector(
-               qualifierString, old_qualifier_strings))
-             continue;
-           
-           logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+qualifierName+" "+
-               qualifierString);
-           
-           org.gmod.schema.sequence.Feature matchFeature =
-             ArtemisUtils.getMatchFeatureWithFeatureRelations(uniquename, qualifierName, 
-                 qualifierString, feature);
-           
-           tsn = new ChadoTransaction(ChadoTransaction.INSERT,
-               matchFeature,
-               null, (GFFStreamFeature)null, feature.getKey().getKeyString());
-           sql.add(tsn);  
-         }
-         else
-           logger4j.warn("Ignoring reserved tag "+qualifierName);
+        addReservedTag(qualifierString, qualifierName, uniquename,
+            feature, old_qualifier_strings, new_qualifier_strings);
       }
     }  
     
+  }
+  
+  /**
+   * Add reserved tag
+   * @param qualifierStr
+   * @param qualifierName
+   * @param uniquename
+   * @param feature
+   * @param old_qualifier_strings
+   * @param new_qualifier_strings
+   */
+  private void addReservedTag(final String qualifierStr, 
+                              final String qualifierName,
+                              final String uniquename,
+                              final GFFStreamFeature feature,
+                              final StringVector old_qualifier_strings,
+                              final StringVector new_qualifier_strings)
+  {
+    ChadoTransaction tsn = null;
+    int index = qualifierStr.indexOf("=");
+    final String qualifierString = qualifierStr.substring(index+1);
+    
+    if(qualifierName.equals("Dbxref"))
+    {   
+      logger4j.debug(uniquename+"  in handleReservedTags() INSERT db="+
+          qualifierString);
+      FeatureDbXRef new_dbxref = getFeatureDbXRef(qualifierString,
+                                                  uniquename);
+      
+      tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+          new_dbxref,
+          feature.getLastModified(), feature,
+          feature.getKey().getKeyString());
+      sql.add(tsn);
+    }
+    else if(qualifierName.equals("codon_start"))
+    {
+      logger4j.debug(uniquename+"  in handleReservedTags() update codon_start");
+      updateFeatureLoc(feature, uniquename);
+    }
+    else if(qualifierName.equals("literature"))
+    {
+      logger4j.debug(uniquename+"  in handleReservedTags() INSERT literature");
+      FeaturePub featurePub = getFeaturePub(qualifierString, uniquename);
+      
+      tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+          featurePub,
+          feature.getLastModified(), feature,
+          feature.getKey().getKeyString());
+      sql.add(tsn);
+    }
+    else if(qualifierName.equals("Parent"))
+    {
+      processFeatureRelationshipRank(feature, feature.getLocation().getRanges(),
+                                     ChadoTransaction.INSERT);
+    }
+    else if(isCvTag(qualifierName))
+    {
+      logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
+          qualifierName+" "+qualifierString);
+      FeatureCvTerm feature_cvterm = getFeatureCvTerm(qualifierName,
+          qualifierString, uniquename, feature);
+      tsn = new ChadoTransaction(ChadoTransaction.INSERT, 
+                 feature_cvterm,
+                 feature.getLastModified(), feature,
+                 feature.getKey().getKeyString());
+      sql.add(tsn);
+    }
+    else if(isSynonymTag(qualifierName, feature))
+    {
+      logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
+          qualifierName+" "+qualifierString);
+
+      FeatureSynonym feature_synonym = getFeatureSynonym(qualifierName,
+          qualifierString, uniquename);
+
+      tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+          feature_synonym,
+          feature.getLastModified(), feature,
+          feature.getKey().getKeyString());
+      sql.add(tsn);
+    }
+    else if(qualifierName.equals("similarity"))
+    {
+      if(old_qualifier_strings != null &&
+          SimilarityTable.containsStringInStringVector(
+          qualifierStr, old_qualifier_strings))
+        return;
+      
+      logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+
+          qualifierName+" "+qualifierString);
+      
+      AnalysisFeature analysisFeature = ArtemisUtils.getAnalysisFeature(uniquename,
+          qualifierString, feature);
+      tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+          analysisFeature,
+          null, feature,
+          feature.getKey().getKeyString());
+      sql.add(tsn);
+    }
+    else if(MatchPanel.isClusterTag(qualifierName))
+    {
+      if(old_qualifier_strings != null &&
+          OrthoParalogTable.containsStringInStringVector(
+          qualifierString, old_qualifier_strings))
+        return;
+      
+      logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+qualifierName+" "+
+          qualifierString);
+      
+      org.gmod.schema.sequence.Feature matchFeature =
+        ArtemisUtils.getMatchFeatureWithFeatureRelations(uniquename, qualifierName, 
+            qualifierString, feature);
+      
+      tsn = new ChadoTransaction(ChadoTransaction.INSERT,
+          matchFeature,
+          null, (GFFStreamFeature)null, feature.getKey().getKeyString());
+      sql.add(tsn);  
+    }
+    else
+      logger4j.warn("Ignoring reserved tag "+qualifierName); 
   }
   
   /**
