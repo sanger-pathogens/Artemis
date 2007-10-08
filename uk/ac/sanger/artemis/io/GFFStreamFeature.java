@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.56 2007-07-30 09:57:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.57 2007-10-08 09:43:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -49,7 +49,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.56 2007-07-30 09:57:16 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.57 2007-10-08 09:43:12 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -149,13 +149,18 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     }
   }
 
+  public GFFStreamFeature(final Feature feature)
+  {
+    this(feature, false);
+  }
+  
   /**
    *  Create a new GFFStreamFeature with the same key, location and
    *  qualifiers as the given feature.  The feature should be added to an
    *  Entry (with Entry.add()).
    *  @param feature The feature to copy.
    **/
-  public GFFStreamFeature(final Feature feature) 
+  public GFFStreamFeature(final Feature feature, final boolean isDuplicatedInChado) 
   {
     this(feature.getKey(), feature.getLocation(), feature.getQualifiers());
     
@@ -171,6 +176,52 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       
       this.setGffSeqName(((GFFStreamFeature)feature).getGffSeqName());
       this.setGffSource(((GFFStreamFeature)feature).getGffSource());
+      
+      
+      if(isDuplicatedInChado)
+      {
+        try
+        {
+          final String uniquename;
+          if(id_range_store != null)
+          {
+            final Hashtable new_id_range_store = new Hashtable(id_range_store.size());
+            final Enumeration enumIdRangeStore = id_range_store.keys();
+            while(enumIdRangeStore.hasMoreElements())
+            {
+              final String keyId = (String)enumIdRangeStore.nextElement();
+              final Range range  = (Range)id_range_store.get(keyId);
+              new_id_range_store.put(keyId+":DUP", range);
+            }
+            id_range_store.clear();
+            this.id_range_store = (Hashtable) new_id_range_store.clone();
+            
+            uniquename = getSegmentID(getLocation().getRanges());
+          }
+          else
+            uniquename = (String) getQualifierByName("ID").getValues().get(0)+":DUP";
+          setQualifier(new Qualifier("ID", uniquename));
+          
+          if(getQualifierByName("Parent") != null)
+          {
+            final String parent =
+              (String) getQualifierByName("Parent").getValues().get(0);
+            setQualifier(new Qualifier("Parent", parent+":DUP"));
+          }
+          
+          if(getQualifierByName("Derives_from") != null)
+          {
+            final String derives_from =
+              (String) getQualifierByName("Derives_from").getValues().get(0);
+            setQualifier(new Qualifier("Derives_from", derives_from+":DUP"));
+          }
+          removeQualifierByName("feature_id");
+          removeQualifierByName("timelastmodified");
+          removeQualifierByName("feature_relationship_rank");
+        }
+        catch(ReadOnlyException e){}
+        catch(EntryInformationException e){}
+      }
     }
   }
 

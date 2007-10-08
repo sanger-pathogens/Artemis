@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.29 2007-10-02 14:17:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.30 2007-10-08 09:44:29 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -60,7 +60,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.29 2007-10-02 14:17:39 tjc Exp $
+ *  @version $Id: Feature.java,v 1.30 2007-10-08 09:44:29 tjc Exp $
  **/
 
 public class Feature
@@ -2628,7 +2628,7 @@ CHANGED_END:
     else
       return entry.getBases().getReverseStrand();
   }
-
+  
   /**
    *  Return the reference of a new copy of this Feature.  This method will
    *  update the underlying embl.Entry and the new Feature will be installed
@@ -2636,12 +2636,26 @@ CHANGED_END:
    *  @return The reference of the new feature.
    **/
   public Feature duplicate()
+                 throws ReadOnlyException
+  {
+    return duplicate(false);
+  }
+
+  /**
+   * Return the reference of a new copy of this Feature.  This method will
+   *  update the underlying embl.Entry and the new Feature will be installed
+   *  in the same Entry object as this one.
+   * @param isDuplicatedInChado  if true then create new ID and update in chado
+   * @return
+   * @throws ReadOnlyException
+   */
+  public Feature duplicate(final boolean isDuplicatedInChado)
       throws ReadOnlyException
   {
     uk.ac.sanger.artemis.io.Feature new_embl_feature;
 
     if(getEmblFeature() instanceof GFFStreamFeature)
-      new_embl_feature = new GFFStreamFeature(getEmblFeature());
+      new_embl_feature = new GFFStreamFeature(getEmblFeature(), isDuplicatedInChado);
     else
       new_embl_feature = new EmblStreamFeature(getEmblFeature());
 
@@ -2649,7 +2663,7 @@ CHANGED_END:
 
     try 
     {
-      getEntry().add(return_feature, true, false);
+      getEntry().add(return_feature, !isDuplicatedInChado, false);
     } 
     catch(EntryInformationException e) 
     {
