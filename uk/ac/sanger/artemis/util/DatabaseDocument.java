@@ -1632,10 +1632,10 @@ public class DatabaseDocument extends Document
   public static CvTerm getCvTermByCvAndCvTerm(final String cvterm_name,
                                               final String cvName)
   {
-    Enumeration enum_cvterm = cvterms.elements();
+    final Enumeration enum_cvterm = cvterms.elements();
     while(enum_cvterm.hasMoreElements())
     {
-      CvTerm cvterm = (CvTerm)enum_cvterm.nextElement();
+      final CvTerm cvterm = (CvTerm)enum_cvterm.nextElement();
       if(cvName.equals( cvterm.getCv().getName() ) &&
          cvterm_name.equals( cvterm.getName() ))
         return cvterm;
@@ -1671,16 +1671,15 @@ public class DatabaseDocument extends Document
    */
   private static Hashtable getCvterms(final GmodDAO dao)
   {
-    cvterms = new Hashtable();
-
     try
     {
-      List cvterm_list = dao.getCvTerms();
-      Iterator it = cvterm_list.iterator();
+      final List cvterm_list = dao.getCvTerms();
+      final Iterator it = cvterm_list.iterator();
+      cvterms = new Hashtable(cvterm_list.size());
 
       while(it.hasNext())
       {
-        CvTerm cvterm = (CvTerm)it.next();
+        final CvTerm cvterm = (CvTerm)it.next();
         cvterms.put(new Integer(cvterm.getCvTermId()), cvterm);
       }
     }
@@ -1689,7 +1688,8 @@ public class DatabaseDocument extends Document
       System.err.println("SQLException retrieving CvTerms");
       System.err.println(sqle);
     }
-
+    logger4j.debug("LOADED CvTerms");
+    
     return cvterms;
   }
   
@@ -2754,7 +2754,6 @@ public class DatabaseDocument extends Document
     public void run() 
     {
       getCvterms(dao);
-      logger4j.debug("LOADED CvTerms");
     }
   }
 }
