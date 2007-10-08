@@ -23,6 +23,7 @@ package uk.ac.sanger.artemis.components.genebuilder;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -43,6 +44,7 @@ import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Feature;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.Qualifier;
@@ -196,8 +198,149 @@ public class GeneUtils
     return hideFeatures.contains(key);
   }
   
+  
   /**
    * 
+   */
+  public static void duplicateGeneModel(final JFrame frame,
+      final Selection selection,
+      final EntryGroup entry_group)
+  {
+    final FeatureVector features_to_duplicate =
+      selection.getAllFeatures ();
+
+    final Vector duplicatedGenes = new Vector();
+    for (int i = 0 ; i < features_to_duplicate.size () ; ++i) 
+    {
+      final uk.ac.sanger.artemis.Feature this_feature = 
+                           features_to_duplicate.elementAt(i);
+      final GFFStreamFeature gffFeature = (GFFStreamFeature)this_feature.getEmblFeature();
+      if(duplicatedGenes.contains(gffFeature.getChadoGene()))
+        continue;
+      
+      duplicatedGenes.add(gffFeature.getChadoGene());
+      
+      try 
+      {
+        GFFStreamFeature gene = (GFFStreamFeature)gffFeature.getChadoGene().getGene();
+        uk.ac.sanger.artemis.Feature newGeneFeature = ((uk.ac.sanger.artemis.Feature)
+            gene.getUserData()).duplicate (true);
+        
+        final ChadoCanonicalGene chadoGene = gffFeature.getChadoGene();
+        final ChadoCanonicalGene newchadoGene = new ChadoCanonicalGene();
+        ((GFFStreamFeature)newGeneFeature.getEmblFeature()).setChadoGene(newchadoGene);
+        newchadoGene.setGene(newGeneFeature.getEmblFeature());
+        
+        final List transcripts = chadoGene.getTranscripts();
+        for(int j=0; j<transcripts.size(); j++)
+        {
+          final GFFStreamFeature transcript = (GFFStreamFeature)transcripts.get(j);
+          final String transcriptName =
+            (String)transcript.getQualifierByName("ID").getValues().get(0);
+          
+          uk.ac.sanger.artemis.Feature newTranscriptFeature = 
+            duplicateFeature(transcript, newchadoGene);
+          newchadoGene.addTranscript(newTranscriptFeature.getEmblFeature());
+          final String newTranscriptName =
+            (String)newTranscriptFeature.getQualifierByName("ID").getValues().get(0);
+          
+          List newFeatures;
+          
+          newFeatures= duplicateFeatures(chadoGene.get3UtrOfTranscript(transcriptName), newchadoGene);
+          for(int k=0; k<newFeatures.size(); k++)
+            newchadoGene.add3PrimeUtr(newTranscriptName, (Feature)newFeatures.get(k));
+          
+          newFeatures = duplicateFeatures(chadoGene.get5UtrOfTranscript(transcriptName), newchadoGene);
+          for(int k=0; k<newFeatures.size(); k++)
+            newchadoGene.add5PrimeUtr(newTranscriptName, (Feature)newFeatures.get(k));
+          
+          newFeatures = duplicateFeatures(chadoGene.getOtherFeaturesOfTranscript(transcriptName), newchadoGene);
+          for(int k=0; k<newFeatures.size(); k++)
+            newchadoGene.addOtherFeatures(newTranscriptName, (Feature)newFeatures.get(k));
+
+          newFeatures = duplicateFeatures(chadoGene.getSplicedFeaturesOfTranscript(transcriptName), newchadoGene);
+          for(int k=0; k<newFeatures.size(); k++)
+          {
+            uk.ac.sanger.artemis.Feature splicedFeature = 
+              (uk.ac.sanger.artemis.Feature)newFeatures.get(k);
+            newchadoGene.addSplicedFeatures(newTranscriptName, splicedFeature.getEmblFeature());
+          }
+          
+          uk.ac.sanger.artemis.Feature newProtein = 
+            duplicateFeature(chadoGene.getProteinOfTranscript(transcriptName), newchadoGene);
+          if(newProtein != null)
+            newchadoGene.addProtein(newTranscriptName, newProtein.getEmblFeature());
+          
+        }
+      } 
+      catch (ReadOnlyException e) {}
+      catch(InvalidRelationException e) {}
+    }
+    
+    duplicatedGenes.clear();
+  }
+  
+  
+  private static List duplicateFeatures(final List featuresOfTranscript,
+                                 final ChadoCanonicalGene chadoGene) 
+          throws ReadOnlyException
+  {
+    final List newFeatures = new Vector();
+    
+    if(featuresOfTranscript == null)
+      return newFeatures;
+    
+    for(int i=0; i<featuresOfTranscript.size(); i++)
+      newFeatures.add(duplicateFeature(
+          (GFFStreamFeature)featuresOfTranscript.get(i), chadoGene));
+  
+    return newFeatures;
+  }
+  
+  private static uk.ac.sanger.artemis.Feature duplicateFeature(
+          final Feature feature, final ChadoCanonicalGene chadoGene) 
+          throws ReadOnlyException
+  {
+    if(feature == null)
+      return null;
+    uk.ac.sanger.artemis.Feature newFeature = 
+      ((uk.ac.sanger.artemis.Feature)feature.getUserData()).duplicate(true);
+    ((GFFStreamFeature)newFeature.getEmblFeature()).setChadoGene(chadoGene);
+    if(isHiddenFeature(newFeature.getKey().getKeyString()))
+      ((GFFStreamFeature)newFeature.getEmblFeature()).setVisible(false);
+    /*
+    try
+    {
+      final QualifierVector qv = newFeature.getQualifiers().copy();
+      
+      for(int i=0; i<qv.size(); i++)
+      {
+        final Qualifier qualifier = (Qualifier)qv.elementAt(i);
+        if(!qualifier.getName().equals("ID") &&
+           !qualifier.getName().equals("Parent") &&
+           !qualifier.getName().equals("Derives_from") &&
+           ChadoTransactionManager.isSpecialTag(qualifier.getName()))
+          newFeature.getQualifiers().removeQualifierByName(qualifier.getName());
+      }
+
+      newFeature.set(newFeature.getKey(), newFeature.getLocation(), qv);
+    }
+    catch(EntryInformationException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    catch(OutOfRangeException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    */
+    return newFeature;
+  }
+  
+  /**
+   * Create gene model from base selection
    * @param frame
    * @param selection
    * @param entry_group
