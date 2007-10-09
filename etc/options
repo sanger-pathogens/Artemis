@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.32 2007-09-11 10:59:05 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.33 2007-10-09 14:23:09 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -559,7 +559,8 @@ extra_qualifiers_gff = \
     note "text" \
     orthologous_to "text" \
     paralogous_to "text" \
-    similarity "text"
+    similarity "text" \
+    systematic_id "text"
 
 # this is a list of extra qualifiers that are legal but are not displayed in
 # popup menus (such as the one in the feature editor window).  this hack is
