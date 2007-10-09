@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.64 2007-10-09 07:48:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.65 2007-10-09 16:07:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -479,9 +479,10 @@ public class GeneViewerPanel extends JPanel
           return;
         }
  
-        uk.ac.sanger.artemis.Feature transcript = features.elementAt(0);
+        final uk.ac.sanger.artemis.Feature transcript = features.elementAt(0);
         GeneUtils.checkTranscriptBoundary(transcript, chado_gene);
         gene_builder.setActiveFeature(transcript, false);
+        repaint();
       }
     });
     menu.add(adjustCoords);
@@ -1489,7 +1490,7 @@ public class GeneViewerPanel extends JPanel
         QualifierVector qualifiers = new QualifierVector();
         qualifiers.add(new Qualifier("Parent", transcript_name));
       
-        String ID = chadoGene.autoGenerateSplicedFeatureName(transcript_name);
+        final String ID = chadoGene.autoGenerateSplicedFeatureName(transcript_name);
 
         if(ID != null)
           qualifiers.add(new Qualifier("ID", ID));
@@ -1506,7 +1507,7 @@ public class GeneViewerPanel extends JPanel
         
         if(ID != null)
         {
-          Hashtable id_range_store = new Hashtable();
+          final Hashtable id_range_store = new Hashtable();
           id_range_store.put(ID, range);
           gff_exon.setSegmentRangeStore(id_range_store);
         }
@@ -1514,7 +1515,7 @@ public class GeneViewerPanel extends JPanel
       else
       {
         // add new ID
-        Hashtable id_store = feature.getSegmentRangeStore();
+        final Hashtable id_store = feature.getSegmentRangeStore();
         String prefix[] = null;
         Enumeration enum_ids = id_store.keys();
         while(enum_ids.hasMoreElements())

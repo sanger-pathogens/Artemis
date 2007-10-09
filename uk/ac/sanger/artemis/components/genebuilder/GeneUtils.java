@@ -394,7 +394,7 @@ public class GeneUtils
       
       // add exon
       GeneViewerPanel.addExonFeature(chadoGene, entry_group, 
-          null, range.getRange(), transcriptId, selection, 
+          null, new_location.getTotalRange(), transcriptId, selection, 
           new Key(DatabaseDocument.EXONMODEL), null);
       
       // add protein
@@ -556,27 +556,16 @@ public class GeneUtils
       final Feature transcript = (Feature)transcripts.get(i);
       range = checkTranscriptBoundary(
           (uk.ac.sanger.artemis.Feature)transcript.getUserData(), chado_gene);
-      if(range.getStart() < gene_start)
+      if(range != null && range.getStart() < gene_start)
         gene_start = range.getStart();
-      if(range.getEnd() > gene_end)
+      if(range != null && range.getEnd() > gene_end)
         gene_end = range.getEnd();
     }
     
-    try
-    {
-      range = new Range(gene_start, gene_end);
-      Location new_location = new Location(new RangeVector(range), 
-          chado_gene.getGene().getLocation().isComplement());
-      chado_gene.getGene().setLocation(new_location);
-    }
-    catch(OutOfRangeException e)
-    {
-      e.printStackTrace();
-    }
-    catch(ReadOnlyException e)
-    {
-      e.printStackTrace();
-    }
+    if(gene_end == -1 && gene_start == Integer.MAX_VALUE)
+      return;
+    
+    setLocation(chado_gene.getGene(), gene_start, gene_end);
   }
   
   /**
@@ -592,49 +581,110 @@ public class GeneUtils
 
     if(transcripts.contains(transcript.getEmblFeature()))
     {
+      checkProteinBoundary(transcript.getEmblFeature(), chado_gene);
+      
       final Set children = chado_gene.getChildren(transcript.getEmblFeature());
       int transcript_start = Integer.MAX_VALUE;
       int transcript_end = -1;
 
-      Iterator it = children.iterator();
-
+      final Iterator it = children.iterator();
       while(it.hasNext())
       {
-        Feature feature = (Feature) it.next();
-        Range range = feature.getLocation().getTotalRange();
+        final Feature feature = (Feature) it.next();
+        final Range range = feature.getLocation().getTotalRange();
         if(range.getStart() < transcript_start)
           transcript_start = range.getStart();
         if(range.getEnd() > transcript_end)
           transcript_end = range.getEnd();
       }
 
-      Location new_location;
-      try
-      {
-        final RangeVector ranges = new RangeVector();
-        final Range range = new Range(transcript_start, transcript_end);
-        ranges.add(range);
-
-        new_location = new Location(ranges, transcript.getLocation()
-            .isComplement());
-        transcript.setLocation(new_location);
-        return range;
-      }
-      catch(OutOfRangeException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-      catch(ReadOnlyException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+      if(transcript_start == Integer.MAX_VALUE ||
+         transcript_end == -1)
+        return null;
+      
+      return setLocation(transcript.getEmblFeature(), 
+                   transcript_start, transcript_end);
     }
     else
       JOptionPane.showMessageDialog(null,
           "Select a single transcript and try again.", "Transcript Selection",
           JOptionPane.ERROR_MESSAGE);
+    return null;
+  }
+  
+  public static void checkProteinBoundary(final Feature transcript,
+                                          final ChadoCanonicalGene chado_gene)
+  {
+    final String transcriptName = getUniqueName(transcript);
+    final Feature protein = chado_gene.getProteinOfTranscript(transcriptName);
+    if(protein == null)
+      return;
+    
+    int pp_start = Integer.MAX_VALUE;
+    int pp_end = -1;
+    
+    final List dnaFeatures = new Vector();
+    if(chado_gene.get3UtrOfTranscript(transcriptName) != null)
+      dnaFeatures.addAll(chado_gene.get3UtrOfTranscript(transcriptName));
+    if(chado_gene.get5UtrOfTranscript(transcriptName) != null)
+      dnaFeatures.addAll(chado_gene.get5UtrOfTranscript(transcriptName)); 
+    
+    List exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, DatabaseDocument.EXONMODEL);
+    if(exons != null)
+      dnaFeatures.addAll(exons);
+    
+    for(int i=0; i<dnaFeatures.size(); i++)
+    {
+      Feature dnaFeature = (Feature)dnaFeatures.get(i);
+      final Range range = dnaFeature.getLocation().getTotalRange();
+      if(range.getStart() < pp_start)
+        pp_start = range.getStart();
+      if(range.getEnd() > pp_end)
+        pp_end = range.getEnd();
+    }
+    
+    if(pp_start == Integer.MAX_VALUE || pp_end == -1)
+       return;
+    setLocation(protein, pp_start, pp_end);
+  }
+  
+  private static Range setLocation(final Feature f, 
+                                   final int start, final int end)
+  {
+    try
+    {
+      final RangeVector ranges = new RangeVector();
+      final Range range = new Range(start, end);
+      ranges.add(range);
+
+      final Location new_location = new Location(ranges, 
+                        f.getLocation().isComplement());
+      f.setLocation(new_location);
+      return range;
+    }
+    catch(OutOfRangeException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    catch(ReadOnlyException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
+  }
+  
+  public static String getUniqueName(final Feature feature)
+  {
+    try
+    {
+      return (String)feature.getQualifierByName("ID").getValues().get(0);
+    }
+    catch(InvalidRelationException e)
+    {
+      e.printStackTrace();
+    }
     return null;
   }
   
