@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.36 2007-10-09 17:18:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.37 2007-10-09 17:30:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -235,7 +235,6 @@ public class GeneBuilderFrame extends JFrame
     if(height > (screen.height*0.9))
     {    
       setSize(getPreferredSize().width, (int)(screen.height*0.9));
-      pack();
     }
 
     Utilities.centreFrame(this);
