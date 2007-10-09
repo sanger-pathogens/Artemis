@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.20 2007-10-01 14:56:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.21 2007-10-09 09:42:55 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -345,12 +345,13 @@ public class GeneComponentTree extends JTree
       Feature embl_feature = 
             (Feature)chado_gene.getFeatureFromId((String)node.getUserObject());
       
-      uk.ac.sanger.artemis.Feature feature =
-            (uk.ac.sanger.artemis.Feature)embl_feature.getUserData();
+      final uk.ac.sanger.artemis.Feature feature;
       
-      if(feature == null)
+      if(embl_feature.getUserData() == null)
         feature = new uk.ac.sanger.artemis.Feature(embl_feature);    
-      
+      else
+        feature =
+          (uk.ac.sanger.artemis.Feature)embl_feature.getUserData();
       boolean isSet = true;
       if(feature.isReadOnly())
         isSet = false;
