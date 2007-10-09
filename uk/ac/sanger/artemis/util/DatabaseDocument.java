@@ -2391,7 +2391,8 @@ public class DatabaseDocument extends Document
         final ChadoTransaction tsn = (ChadoTransaction)sql.get(i);
         if( (tsn.getType() == ChadoTransaction.INSERT ||
              tsn.getType() == ChadoTransaction.DELETE) && 
-             tsn.getFeatureObject() instanceof Feature )
+            (tsn.getFeatureObject() instanceof Feature ||
+             tsn.getFeatureObject() instanceof FeatureLoc) )
           continue;
             
         final String uniquename = tsn.getUniquename();
@@ -2486,8 +2487,9 @@ public class DatabaseDocument extends Document
           final ChadoTransaction tsn = (ChadoTransaction)sql.get(j);
           
           if( (tsn.getType() == ChadoTransaction.INSERT ||
-              tsn.getType() == ChadoTransaction.DELETE) && 
-              tsn.getFeatureObject() instanceof Feature )
+               tsn.getType() == ChadoTransaction.DELETE) && 
+              (tsn.getFeatureObject() instanceof Feature ||
+               tsn.getFeatureObject() instanceof FeatureLoc) )
            continue;
           
           final String uniquename = tsn.getUniquename();
