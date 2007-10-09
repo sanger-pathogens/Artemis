@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.32 2007-10-08 14:11:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.33 2007-10-09 16:10:38 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -58,7 +58,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.32 2007-10-08 14:11:56 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.33 2007-10-09 16:10:38 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -88,6 +88,9 @@ public class EditMenu extends SelectionMenu
   /** FeatureDisplay */
   private DisplayComponent owner;
 
+
+  public static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(EditMenu.class);
   /**
    *  Create a new EditMenu object.
    *  @param frame The JFrame that owns this JMenu.
@@ -1139,17 +1142,20 @@ public class EditMenu extends SelectionMenu
   {
     try
     {
-      Qualifier parentQualifier = merge_feature.getQualifierByName("Parent");
+      Qualifier parentQualifier;
       ChadoCanonicalGene chadoGene = null;
+      ChadoCanonicalGene chadoGene2 = null;
       String transcriptId = null;
-      if(parentQualifier == null)
+      java.util.List geneModels = getGeneModels(features_to_merge);
+      
+      if(geneModels.size() == 0)
       {
         // create gene model
-        Location geneLocation = new Location(selection.getSelectionRange());
+        final Location geneLocation = new Location(selection.getSelectionRange());
        
-        final String parentId = 
-          (String)merge_feature.getQualifierByName("ID").getValues().get(0)+":gene";
-        QualifierVector qualifiers = new QualifierVector();
+        final String parentId = GeneUtils.getUniqueName(
+                 merge_feature.getEmblFeature())+":gene";
+        final QualifierVector qualifiers = new QualifierVector();
         qualifiers.setQualifier(new Qualifier("ID", parentId));
         
         // create gene
@@ -1159,8 +1165,7 @@ public class EditMenu extends SelectionMenu
         else
           key = new Key("gene");
         
-        Feature parentGene =
-          merge_feature.getEntry().createFeature(key, 
+        Feature parentGene = merge_feature.getEntry().createFeature(key, 
                                                  geneLocation, qualifiers);
         
         chadoGene = new ChadoCanonicalGene();
@@ -1172,20 +1177,57 @@ public class EditMenu extends SelectionMenu
         Feature transcript = GeneViewerPanel.createTranscript(chadoGene, entry_group);
         ((uk.ac.sanger.artemis.io.GFFStreamFeature)
             (transcript.getEmblFeature())).setChadoGene(chadoGene);
-        transcriptId = (String)transcript.getQualifierByName("ID").getValues().get(0);
+        transcriptId = GeneUtils.getUniqueName(transcript.getEmblFeature());
         
         parentQualifier = new Qualifier("Parent", transcriptId);
         merge_feature.setQualifier(parentQualifier);
       }
       else
-      {
-        transcriptId = (String)parentQualifier.getValues().get(0);
+      { 
+        boolean isMultipleTranscript = false;
+        for(int i=0; i<geneModels.size(); i++)
+        {
+          if(((ChadoCanonicalGene)geneModels.get(i)).getTranscripts().size() != 1)
+            isMultipleTranscript = true;
+        }
         
-        /// todo - merging gene models ?
-        JOptionPane.showMessageDialog(null,
-             "This option cannot be used to merge gene models");
-
-        return;
+        if(features_to_merge.size() > 2 || 
+           geneModels.size() > 2 ||
+           isMultipleTranscript)
+        {
+          JOptionPane.showMessageDialog(null,
+              "This option cannot be used to merge more than 2 gene models.\n"+
+              "Select two exons in two gene models to be merged.\n"+
+              "The gene models must have just one transcript.");
+          return;
+        }
+        
+        logger4j.debug("Found "+geneModels.size()+" gene models for merging");
+        
+        if(geneModels.size() == 2)
+        {
+          parentQualifier = merge_feature.getQualifierByName("Parent");
+          transcriptId = (String)parentQualifier.getValues().get(0);
+          chadoGene = ((GFFStreamFeature)merge_feature.getEmblFeature()).getChadoGene();
+          
+          final String chadoGeneName = chadoGene.getGeneUniqueName();
+          for(int i=0; i<geneModels.size(); i++)
+          {
+            final ChadoCanonicalGene thisChadoGene = (ChadoCanonicalGene)geneModels.get(i);
+            if(!thisChadoGene.equals(chadoGeneName))
+              chadoGene2 = thisChadoGene;
+          }
+        }
+        else
+        {
+          chadoGene = (ChadoCanonicalGene)geneModels.get(0);
+          transcriptId = GeneUtils.getUniqueName(
+              (uk.ac.sanger.artemis.io.Feature)chadoGene.getTranscripts().get(0));
+          parentQualifier = new Qualifier("Parent", transcriptId);
+          merge_feature.setQualifier(parentQualifier);
+        }
+        
+        // TODO - merge transcript / peptide qualifiers into chadoGene ??
       }
       
       final RangeVector ranges = new RangeVector();
@@ -1196,17 +1238,17 @@ public class EditMenu extends SelectionMenu
       {
         final Feature this_feature = features_to_merge.elementAt(i);
         final FeatureSegmentVector segments = this_feature.getSegments();
-
         
-        id_range_store.put( (String)this_feature.getQualifierByName("ID").getValues().get(0),
-                            this_feature.getLocation().getTotalRange());
-        
-        this_feature.addQualifierValues(parentQualifier);
+        this_feature.setQualifier(parentQualifier);
         
         for(int j = 0; j < segments.size(); ++j)
         {
           final FeatureSegment this_segment = segments.elementAt(j);
           ranges.add(this_segment.getRawRange());
+          
+          final String segId = 
+            ((GFFStreamFeature)this_feature.getEmblFeature()).getSegmentID(this_segment.getRawRange());
+          id_range_store.put(segId,this_segment.getRawRange());
         }         
       }
       
@@ -1236,6 +1278,17 @@ public class EditMenu extends SelectionMenu
       merge_feature.getEmblFeature().setQualifier(qualifier);
       chadoGene.addSplicedFeatures(transcriptId, merge_feature.getEmblFeature(), true);
       ((GFFStreamFeature)merge_feature.getEmblFeature()).setChadoGene(chadoGene);
+      
+      if(chadoGene2 != null)
+      {
+        logger4j.debug("Now DELETE "+chadoGene2.getGeneUniqueName());
+        GeneUtils.deleteAllFeature((Feature)chadoGene2.getGene().getUserData(), chadoGene2);
+      }
+      if(chadoGene != null)
+      {
+        logger4j.debug("Check gene boundaries of: "+chadoGene.getGeneUniqueName());
+        GeneUtils.checkGeneBoundary(chadoGene);
+      }
     }
     catch(ReadOnlyException e)
     {
@@ -1257,6 +1310,37 @@ public class EditMenu extends SelectionMenu
     }
   }
 
+  /**
+   * Get the chado gene models for a list of features
+   * @param features
+   * @return
+   */
+  private static java.util.List getGeneModels(final FeatureVector features)
+  {
+    final java.util.List geneModels = new Vector();
+    final java.util.List geneModelNames = new Vector();
+    for(int i=0; i< features.size(); i++)
+    {
+      if(features.elementAt(i).getEmblFeature() instanceof GFFStreamFeature)
+      {
+        final GFFStreamFeature this_feature = 
+           (GFFStreamFeature)features.elementAt(i).getEmblFeature();
+      
+        if(this_feature.getChadoGene() != null)
+        {
+          final String this_name = 
+            this_feature.getChadoGene().getGeneUniqueName();
+          if(!geneModelNames.contains(this_name))
+          {
+            geneModels.add(this_feature.getChadoGene());
+            geneModelNames.add(this_name);
+          }
+        }
+      }
+    }
+    return geneModels;
+  }
+  
   /**
    *  If the selection contains exactly two segments and those segments are
    *  adjacent in the same feature, split the feature into two pieces.  The
