@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.63 2007-10-04 10:52:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.64 2007-10-09 07:48:08 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -266,7 +266,7 @@ public class GeneViewerPanel extends JPanel
         try
         {
           for(int i = 0; i < features.size(); i++)
-            deleteAllFeature(features.elementAt(i));
+            GeneUtils.deleteAllFeature(features.elementAt(i), chado_gene);
            
           repaint();
         }
@@ -317,7 +317,7 @@ public class GeneViewerPanel extends JPanel
         {
           try
           {
-            deleteAllFeature(segment.getFeature());
+            GeneUtils.deleteAllFeature(segment.getFeature(), chado_gene);
           }
           catch(ReadOnlyException e1)
           {
@@ -480,7 +480,7 @@ public class GeneViewerPanel extends JPanel
         }
  
         uk.ac.sanger.artemis.Feature transcript = features.elementAt(0);
-        checkTranscriptBoundary(transcript);
+        GeneUtils.checkTranscriptBoundary(transcript, chado_gene);
         gene_builder.setActiveFeature(transcript, false);
       }
     });
@@ -528,55 +528,6 @@ public class GeneViewerPanel extends JPanel
     return null;
   }
   
-  private void checkTranscriptBoundary(uk.ac.sanger.artemis.Feature transcript)
-  {
-    List transcripts = chado_gene.getTranscripts();
-
-    if(transcripts.contains(transcript.getEmblFeature()))
-    {
-      Set children = chado_gene.getChildren(transcript.getEmblFeature());
-      int transcript_start = Integer.MAX_VALUE;
-      int transcript_end = -1;
-      
-      Iterator it = children.iterator();
-      
-      while(it.hasNext())
-      {
-        Feature feature = (Feature)it.next();
-        Range range = feature.getLocation().getTotalRange();
-        if(range.getStart() < transcript_start)
-          transcript_start = range.getStart();
-        if(range.getEnd() > transcript_end)
-          transcript_end = range.getEnd();
-      }
-      
-      Location new_location;
-      try
-      {
-        RangeVector ranges = new RangeVector();
-        ranges.add(new Range(transcript_start, transcript_end));
-        
-        new_location = new Location(
-            ranges, transcript.getLocation().isComplement());
-        transcript.setLocation(new_location);
-      }
-      catch(OutOfRangeException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-      catch(ReadOnlyException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-    }
-    else
-      JOptionPane.showMessageDialog(null, 
-          "Select a single transcript and try again.", 
-          "Transcript Selection",
-          JOptionPane.ERROR_MESSAGE);
-  }
   
   /**
    * 
@@ -1615,30 +1566,7 @@ public class GeneViewerPanel extends JPanel
   }
   
   
-  private void deleteFeature(uk.ac.sanger.artemis.Feature feature) 
-          throws ReadOnlyException
-  {
-    if(feature != null && feature.getEntry() != null)
-      feature.removeFromEntry();
-  }
-  
-  private void deleteAllFeature(uk.ac.sanger.artemis.Feature feature)
-          throws ReadOnlyException
-  {
-    Set children = chado_gene.getChildren(feature.getEmblFeature());
-    deleteFeature(feature);
-    chado_gene.deleteFeature(feature.getEmblFeature());    
-    
-    Feature embl_feature;
-    Iterator it = children.iterator();
-    
-    while(it.hasNext())
-    {  
-      embl_feature = (Feature)it.next();
-      deleteFeature((uk.ac.sanger.artemis.Feature)embl_feature.getUserData());
-      chado_gene.deleteFeature(embl_feature);
-    }     
-  }
+
   
   private String getQualifier(Feature feature, String name) 
   {

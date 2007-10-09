@@ -23,7 +23,9 @@ package uk.ac.sanger.artemis.components.genebuilder;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -49,6 +51,8 @@ import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.io.Range;
+import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
@@ -502,6 +506,136 @@ public class GeneUtils
         return true;
     }
     return false;
+  }
+  
+
+  private static void deleteFeature(uk.ac.sanger.artemis.Feature feature)
+      throws ReadOnlyException
+  {
+    if(feature != null && feature.getEntry() != null)
+      feature.removeFromEntry();
+  }
+
+  /**
+   * Delete feature and children in a chado gene model
+   * @param feature
+   * @param chado_gene
+   * @throws ReadOnlyException
+   */
+  public static void deleteAllFeature(uk.ac.sanger.artemis.Feature feature,
+      final ChadoCanonicalGene chado_gene) throws ReadOnlyException
+  {
+    Set children = chado_gene.getChildren(feature.getEmblFeature());
+    deleteFeature(feature);
+    chado_gene.deleteFeature(feature.getEmblFeature());
+
+    Feature embl_feature;
+    Iterator it = children.iterator();
+
+    while(it.hasNext())
+    {
+      embl_feature = (Feature) it.next();
+      deleteFeature((uk.ac.sanger.artemis.Feature) embl_feature.getUserData());
+      chado_gene.deleteFeature(embl_feature);
+    }
+  }
+  
+  /**
+   * Adjust transcript and gene boundaries
+   * @param chado_gene
+   */
+  public static void checkGeneBoundary(final ChadoCanonicalGene chado_gene)
+  {
+    final List transcripts = chado_gene.getTranscripts();
+    int gene_start = Integer.MAX_VALUE;
+    int gene_end = -1;
+    
+    Range range;
+    for(int i=0; i<transcripts.size(); i++)
+    {
+      final Feature transcript = (Feature)transcripts.get(i);
+      range = checkTranscriptBoundary(
+          (uk.ac.sanger.artemis.Feature)transcript.getUserData(), chado_gene);
+      if(range.getStart() < gene_start)
+        gene_start = range.getStart();
+      if(range.getEnd() > gene_end)
+        gene_end = range.getEnd();
+    }
+    
+    try
+    {
+      range = new Range(gene_start, gene_end);
+      Location new_location = new Location(new RangeVector(range), 
+          chado_gene.getGene().getLocation().isComplement());
+      chado_gene.getGene().setLocation(new_location);
+    }
+    catch(OutOfRangeException e)
+    {
+      e.printStackTrace();
+    }
+    catch(ReadOnlyException e)
+    {
+      e.printStackTrace();
+    }
+  }
+  
+  /**
+   * Check and adjust transcript boundary
+   * @param transcript
+   * @param chado_gene
+   */
+  public static Range checkTranscriptBoundary(
+      final uk.ac.sanger.artemis.Feature transcript,
+      final ChadoCanonicalGene chado_gene)
+  {
+    final List transcripts = chado_gene.getTranscripts();
+
+    if(transcripts.contains(transcript.getEmblFeature()))
+    {
+      final Set children = chado_gene.getChildren(transcript.getEmblFeature());
+      int transcript_start = Integer.MAX_VALUE;
+      int transcript_end = -1;
+
+      Iterator it = children.iterator();
+
+      while(it.hasNext())
+      {
+        Feature feature = (Feature) it.next();
+        Range range = feature.getLocation().getTotalRange();
+        if(range.getStart() < transcript_start)
+          transcript_start = range.getStart();
+        if(range.getEnd() > transcript_end)
+          transcript_end = range.getEnd();
+      }
+
+      Location new_location;
+      try
+      {
+        final RangeVector ranges = new RangeVector();
+        final Range range = new Range(transcript_start, transcript_end);
+        ranges.add(range);
+
+        new_location = new Location(ranges, transcript.getLocation()
+            .isComplement());
+        transcript.setLocation(new_location);
+        return range;
+      }
+      catch(OutOfRangeException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      catch(ReadOnlyException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+    else
+      JOptionPane.showMessageDialog(null,
+          "Select a single transcript and try again.", "Transcript Selection",
+          JOptionPane.ERROR_MESSAGE);
+    return null;
   }
   
   public static void main(String args[])
