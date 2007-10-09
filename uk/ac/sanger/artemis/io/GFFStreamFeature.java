@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.58 2007-10-08 14:13:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.59 2007-10-09 16:12:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -49,14 +49,14 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.58 2007-10-08 14:13:47 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.59 2007-10-09 16:12:13 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
                        implements DocumentFeature, StreamFeature, ComparableFeature 
 {
 
-  public static org.apache.log4j.Logger logger4j = 
+  private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(GFFStreamFeature.class);
   
   /**
