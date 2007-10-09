@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.34 2007-10-01 14:57:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.35 2007-10-09 17:12:43 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -45,6 +45,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -228,6 +229,16 @@ public class GeneBuilderFrame extends JFrame
     
     pack();
     
+    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+    int height = getPreferredSize().height;
+    if(height > (screen.height*0.9))
+    {
+      setPreferredSize(new Dimension(
+    		  getPreferredSize().width, (int)(screen.height*0.9)));
+      pack();
+    }
+
     Utilities.centreFrame(this);
     setVisible(true);
     all.setDividerLocation(0.30);
