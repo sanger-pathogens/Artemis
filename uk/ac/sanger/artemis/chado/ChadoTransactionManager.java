@@ -118,10 +118,10 @@ public class ChadoTransactionManager
            
   //controlled vocab tags
   public static String cv_tags[] =
-          {   "GO",
+            { "GO",
               "controlled_curation",
               "product",
-              "class"};
+              "class" };
   
   //synonym tags from cv
   private static String synonym_tags[] = null;
@@ -1827,17 +1827,23 @@ public class ChadoTransactionManager
     
     List featureCvTermProps = new Vector();
     StringVector strings = StringVector.getStrings(qualifier_string, ";");
+    
+    String cvName = null;
+    
+    if(qualifier_name.equals("controlled_curation"))
+      cvName = "CC_";
+    
     for(int i=0; i<strings.size(); i++)
     {    
-      String this_qualifier_part = ((String)strings.get(i)).trim();
-      String this_qualifier_part_lowercase = this_qualifier_part.toLowerCase();
+      final String this_qualifier_part = ((String)strings.get(i)).trim();
+      final String this_qualifier_part_lowercase = this_qualifier_part.toLowerCase();
       
       if(this_qualifier_part_lowercase.startsWith("term="))
       {
-        String cvTermName = this_qualifier_part.substring(5);
-        CvTerm cvTerm = getCvTerm(cvTermName, null);
-
+        final String cvTermName = this_qualifier_part.substring(5);
+        final CvTerm cvTerm = getCvTerm(cvTermName, cvName);
         feature_cvterm.setCvTerm(cvTerm);
+        logger4j.debug("CV name "+cvName);
         continue;
       }
 
@@ -1965,7 +1971,7 @@ public class ChadoTransactionManager
     CvTerm cvTerm = null;
     
     if(cvName != null)
-      cvTerm = DatabaseDocument.getCvTermByCvAndCvTerm(cvTermName, cvName);
+      cvTerm = DatabaseDocument.getCvTermByCvPartAndCvTerm(cvTermName, cvName);
     else
       cvTerm = DatabaseDocument.getCvTermByCvTermName(cvTermName);
 
