@@ -260,69 +260,70 @@ public class CVPanel extends JPanel
         
         addHideShowButton(yBox, hide_show_CC);
         
-        Box xLabel = Box.createHorizontalBox();
-        JLabel lab = new JLabel("Controlled Curation");
-        lab.setFont(lab.getFont().deriveFont(Font.BOLD));
-        xLabel.add(lab);
-        xLabel.add(Box.createHorizontalGlue());
-        xLabel.add(hide_show_CC);
-        cvBox.add(xLabel);
+        if(n == 0)
+        {
+          final Box xLabel = Box.createHorizontalBox();
+          JLabel lab = new JLabel("Controlled Curation");
+          lab.setFont(lab.getFont().deriveFont(Font.BOLD));
+          xLabel.add(lab);
+          xLabel.add(Box.createHorizontalGlue());
+          xLabel.add(hide_show_CC);
+          cvBox.add(xLabel);
         
-        Box xHeadings = Box.createHorizontalBox();
-        cvBox.add(xHeadings);
         
+          final Box xHeadings = Box.createHorizontalBox();
+          yBox.add(xHeadings);
+//        add column headings
+          final JLabel termLabel = new JLabel("Term");
+          
+          if(go_dimension != null)
+            termLabel.setPreferredSize(
+              new Dimension(go_dimension.width+dimension.width,
+                            dimension.height));
+          else
+            termLabel.setPreferredSize(
+                new Dimension(dimension.width,
+                              dimension.height));
+          xHeadings.add(termLabel);
+          
+          final JLabel dbxrefLabel = new JLabel("Dbxref");
+          dbxrefLabel.setPreferredSize(dimension);
+          xHeadings.add(dbxrefLabel);
+          
+          final JLabel evidenceLabel = new JLabel("Evidence");
+          evidenceLabel.setPreferredSize(GoBox.getEvidenceListDimension());
+          xHeadings.add(evidenceLabel);
+          
+          final JLabel qualLabel = new JLabel("Qualifier");
+          qualLabel.setPreferredSize(dimension);
+          xHeadings.add(qualLabel);
+          
+          final JLabel dateLabel = new JLabel("Date");
+          xHeadings.add(dateLabel);
+          
+          xHeadings.add(Box.createHorizontalGlue());
+        }
         
         for(int value_index = 0; value_index < qualifier_strings.size();
             ++value_index)
         {
           n++;
-          final int v_index = value_index;
-        
           xBox = Box.createHorizontalBox();
           final String qualifierString = 
              (String)qualifier_strings.elementAt(value_index);
           
-          ControlledCurationBox ccBox = new ControlledCurationBox(this_qualifier,
+          final ControlledCurationBox ccBox = new ControlledCurationBox(
+                  this_qualifier,
                   qualifierString, value_index, 
                   dimension, go_dimension);
           editableComponents.add(ccBox);
           
           xBox = ccBox.getBox();
           xBox.add(Box.createHorizontalGlue());
-          xBox.add(getRemoveButton(this_qualifier, v_index));         
+          xBox.add(getRemoveButton(this_qualifier, value_index));         
           yBox.add(xBox);
         }
-        
-        // add column headings
-        final JLabel termLabel = new JLabel("Term");
-        
-        if(go_dimension != null)
-          termLabel.setPreferredSize(
-            new Dimension(go_dimension.width+dimension.width,
-                          dimension.height));
-        else
-          termLabel.setPreferredSize(
-              new Dimension(dimension.width,
-                            dimension.height));
-        xHeadings.add(termLabel);
-        
-        final JLabel dbxrefLabel = new JLabel("Dbxref");
-        dbxrefLabel.setPreferredSize(dimension);
-        xHeadings.add(dbxrefLabel);
-        
-        final JLabel evidenceLabel = new JLabel("Evidence");
-        evidenceLabel.setPreferredSize(GoBox.getEvidenceListDimension());
-        xHeadings.add(evidenceLabel);
-        
-        final JLabel qualLabel = new JLabel("Qualifier");
-        qualLabel.setPreferredSize(dimension);
-        xHeadings.add(qualLabel);
-        
-        final JLabel dateLabel = new JLabel("Date");
-        xHeadings.add(dateLabel);
-        
-        xHeadings.add(Box.createHorizontalGlue());
-        
+  
         // add CC rows
         cvBox.add(yBox); 
         if(hide_show_CC.getText().equals("+"))
@@ -550,9 +551,15 @@ public class CVPanel extends JPanel
    */
   private void addCvTerm() 
   {
-    Box xBox = Box.createHorizontalBox();
+    final Box xBox = Box.createHorizontalBox();
     final JExtendedComboBox comboCV = 
       new JExtendedComboBox(ChadoTransactionManager.cv_tags);
+ 
+    final java.util.List cvNames = 
+      DatabaseDocument.getCvControledCurationNames();
+    comboCV.addItem(JExtendedComboBox.SEPARATOR);
+    for(int i=0; i<cvNames.size(); i++)
+      comboCV.addItem(cvNames.get(i));
     
     JExtendedComboBox term_list = null;
     
@@ -592,7 +599,7 @@ public class CVPanel extends JPanel
           
       if(step == 2)
       {
-        Object obj = promptKeyWord(xBox, cv_name);
+        final Object obj = promptKeyWord(xBox, cv_name);
         
         if(obj == null)                   // CANCEL
           return;
@@ -651,6 +658,12 @@ public class CVPanel extends JPanel
 
     }
 
+    if(!cv_type.equals("GO") &&
+       !cv_type.equals("controlled_curation") && 
+       !cv_type.equals("product") &&
+       !cv_type.equals("class"))
+      cv_type = "controlled_curation";
+    
     Qualifier cv_qualifier = cvQualifiers.getQualifierByName(cv_type);
     
     final int index;
@@ -754,7 +767,7 @@ public class CVPanel extends JPanel
           options, options[1]);
     if(select == 0)
       return null;
-    return ChadoTransactionManager.cv_tags[comboCV.getSelectedIndex()];
+    return (String)comboCV.getSelectedItem(); // ChadoTransactionManager.cv_tags[comboCV.getSelectedIndex()];
   }
   
   /**
@@ -767,8 +780,8 @@ public class CVPanel extends JPanel
   {
     final String options[] = { "<PREV", "CANCEL", "NEXT>"};
      
-    String cv_name = ChadoTransactionManager.cv_tags[comboCV
-          .getSelectedIndex()];
+    String cv_name = (String)comboCV.getSelectedItem();
+       //ChadoTransactionManager.cv_tags[comboCV.getSelectedIndex()];
     logger4j.debug("Selected CV is " + cv_name);
 
     if(cv_name.equals("GO"))
