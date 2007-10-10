@@ -29,7 +29,12 @@ import java.awt.FontMetrics;
 import java.util.Vector;
 
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.ListCellRenderer;
+import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicComboPopup;
 
 import org.gmod.schema.cv.CvTerm;
@@ -41,10 +46,12 @@ public class JExtendedComboBox extends JComboBox
 { 
   /** */
   private static final long serialVersionUID = 1L;
-
+  public static String SEPARATOR = "SEPARATOR";
+  
   public JExtendedComboBox(String str[])
   { 
     super(str);
+    setRenderer(new ComboBoxRenderer());
     setHorizontalScrollBar();
   } 
   
@@ -82,6 +89,44 @@ public class JExtendedComboBox extends JComboBox
       scrollpane = (JScrollPane)comp; 
       scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
     } 
+  }
+  
+  class ComboBoxRenderer extends JLabel implements ListCellRenderer 
+  {
+
+    private static final long serialVersionUID = 1L;
+    private JSeparator separator;
+
+    public ComboBoxRenderer() 
+    {
+      setOpaque(true);
+      setBorder(new EmptyBorder(1, 1, 1, 1));
+      separator = new JSeparator(JSeparator.HORIZONTAL);
+    }
+
+    public Component getListCellRendererComponent(
+        final JList list, final Object value,
+        final int index,  final boolean isSelected,
+        final boolean cellHasFocus) 
+    {
+      String str = (value == null) ? "" : value.toString();
+      if (SEPARATOR.equals(str))
+        return separator;
+ 
+      if (isSelected) 
+      {
+        setBackground(list.getSelectionBackground());
+        setForeground(list.getSelectionForeground());
+      } 
+      else 
+      {
+        setBackground(list.getBackground());
+        setForeground(list.getForeground());
+      }
+      setFont(list.getFont());
+      setText(str);
+      return this;
+    }
   }
   
 }
