@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.59 2007-10-09 16:12:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.60 2007-10-10 08:08:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -49,7 +49,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.59 2007-10-09 16:12:13 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.60 2007-10-10 08:08:57 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -83,6 +83,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   private String gffSeqName;
   /** second tabbed parameter */
   private String gffSource;
+  /** duplication count */
+  private short duplicate = 0;
   
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
@@ -183,6 +185,15 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         try
         {
           final String uniquename;
+          final String duplicatePrefix;
+          
+          if(feature instanceof GFFStreamFeature)
+          {
+            ((GFFStreamFeature)feature).duplicate++;
+            duplicatePrefix = "DUP"+Short.toString(((GFFStreamFeature)feature).duplicate)+"-";
+          }
+          else
+            duplicatePrefix = "DUP";
           if(id_range_store != null)
           {
             final Hashtable new_id_range_store = new Hashtable(id_range_store.size());
@@ -191,7 +202,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
             {
               final String keyId = (String)enumIdRangeStore.nextElement();
               final Range range  = (Range)id_range_store.get(keyId);
-              new_id_range_store.put(keyId+":DUP", range);
+              new_id_range_store.put(duplicatePrefix+keyId, range);
             }
             id_range_store.clear();
             this.id_range_store = (Hashtable) new_id_range_store.clone();
@@ -199,21 +210,21 @@ public class GFFStreamFeature extends SimpleDocumentFeature
             uniquename = getSegmentID(getLocation().getRanges());
           }
           else
-            uniquename = (String) getQualifierByName("ID").getValues().get(0)+":DUP";
+            uniquename = duplicatePrefix+ (String)getQualifierByName("ID").getValues().get(0);
           setQualifier(new Qualifier("ID", uniquename));
           
           if(getQualifierByName("Parent") != null)
           {
             final String parent =
               (String) getQualifierByName("Parent").getValues().get(0);
-            setQualifier(new Qualifier("Parent", parent+":DUP"));
+            setQualifier(new Qualifier("Parent", duplicatePrefix+parent));
           }
           
           if(getQualifierByName("Derives_from") != null)
           {
             final String derives_from =
               (String) getQualifierByName("Derives_from").getValues().get(0);
-            setQualifier(new Qualifier("Derives_from", derives_from+":DUP"));
+            setQualifier(new Qualifier("Derives_from", duplicatePrefix+derives_from));
           }
           removeQualifierByName("feature_id");
           removeQualifierByName("timelastmodified");
