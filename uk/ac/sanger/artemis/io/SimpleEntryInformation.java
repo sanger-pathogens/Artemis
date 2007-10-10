@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleEntryInformation.java,v 1.3 2006-08-09 16:35:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleEntryInformation.java,v 1.4 2007-10-10 14:32:50 tjc Exp $
  */
 
 
@@ -35,7 +35,7 @@ import java.util.*;
  *  qualifier.
  *
  *  @author Kim Rutherford
- *  @version $Id: SimpleEntryInformation.java,v 1.3 2006-08-09 16:35:31 tjc Exp $
+ *  @version $Id: SimpleEntryInformation.java,v 1.4 2007-10-10 14:32:50 tjc Exp $
  **/
 
 public class SimpleEntryInformation
@@ -184,13 +184,16 @@ public class SimpleEntryInformation
    *  Return the Key that should be used when a new (empty) feature is created.
    **/
   public Key getDefaultKey () {
-    final Key misc_feature_key = new Key ("misc_feature");
+    Key misc_feature_key = new Key ("misc_feature");
 
-    if (isValidKey (misc_feature_key)) {
+    if (isValidKey (misc_feature_key))
       return misc_feature_key;
-    } else {
-      return (Key)getValidKeys ().get (0);
-    }
+    
+    misc_feature_key = new Key ("region");
+    if (isValidKey (misc_feature_key))
+      return misc_feature_key;
+   
+    return (Key)getValidKeys ().get (0);
   }
 
   /**
