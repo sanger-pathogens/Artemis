@@ -1546,7 +1546,15 @@ public class ChadoTransactionManager
             qualifierString, feature);
       
       if(isDuplicate)
-        matchFeature.setUniqueName( matchFeature.getUniqueName()+":DUPLICATE" );
+      {
+        int ind;
+        if(uniquename.startsWith("DUP") && (ind=uniquename.indexOf("-"))>1)
+          matchFeature.setUniqueName( matchFeature.getUniqueName() + 
+                                      ":"+uniquename.substring(0,ind) );
+        else
+          matchFeature.setUniqueName( matchFeature.getUniqueName() +
+                                      ":DUPLICATE" );
+      }
       
       tsn = new ChadoTransaction(ChadoTransaction.INSERT,
           matchFeature,
