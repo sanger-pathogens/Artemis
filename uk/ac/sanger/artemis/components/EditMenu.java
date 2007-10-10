@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.33 2007-10-09 16:10:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.34 2007-10-10 14:34:07 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -58,7 +58,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.33 2007-10-09 16:10:38 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.34 2007-10-10 14:34:07 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -2177,7 +2177,8 @@ public class EditMenu extends SelectionMenu
       for (int i = 0 ; i < features_to_fix.size () ; ++i) {
         final Feature selection_feature = features_to_fix.elementAt (i);
 
-        if (!selection_feature.isCDS ()) {
+        if (!selection_feature.isCDS() &&
+            !(selection_feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))) {
           final String message =
             "Warning: some of the selected features are not coding features. " +
             "Continue?";
@@ -2363,8 +2364,16 @@ public class EditMenu extends SelectionMenu
         final Strand strand = selection_feature.getStrand ();
 
         if (extend_to_next_stop) {
-          if (selection_feature.hasValidStopCodon ()) {
-            continue;
+          
+          if(!(selection_feature.getEmblFeature() instanceof GFFStreamFeature))
+          {
+            if(selection_feature.hasValidStopCodon()) 
+              continue;
+          }
+          else
+          {
+            if(selection_feature.hasValidStopCodon(true)) 
+              continue;
           }
 
           final Marker feature_end_marker =
