@@ -127,6 +127,9 @@ public class DatabaseDocument extends Document
   
   public static String EXONMODEL = "exon-model";
   
+  /** list of controlled_curation CV names */
+  private static Vector cvControledCuratioNames;
+  
   // controlled vocabulary
   /** controlled_curation controlled vocabulary */
   public static String CONTROLLED_CURATION_TAG_CVNAME = 
@@ -1739,6 +1742,29 @@ public class DatabaseDocument extends Document
     }
     
     return cvterm_match;
+  }
+  
+  /**
+   * Get a list of the CV names
+   * @return
+   */
+  public static List getCvControledCurationNames()
+  {
+    if(cvControledCuratioNames != null)
+      return cvControledCuratioNames;
+    cvControledCuratioNames = new Vector();
+    final Enumeration enum_cvterm = cvterms.elements();
+    while(enum_cvterm.hasMoreElements())
+    {
+      final CvTerm cvTerm = (CvTerm)enum_cvterm.nextElement();
+      final String cvNameStr = cvTerm.getCv().getName();
+      
+      if(cvNameStr.startsWith(DatabaseDocument.CONTROLLED_CURATION_TAG_CVNAME) && 
+         !cvControledCuratioNames.contains(cvNameStr))
+        cvControledCuratioNames.add(cvNameStr);
+    }
+    
+    return cvControledCuratioNames;
   }
 
   /**
