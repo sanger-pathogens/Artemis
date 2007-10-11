@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupDisplay.java,v 1.3 2005-08-05 12:26:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupDisplay.java,v 1.4 2007-10-11 10:17:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -37,13 +37,13 @@ import javax.swing.*;
  *  objects in an EntryGroup.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryGroupDisplay.java,v 1.3 2005-08-05 12:26:25 tjc Exp $
+ *  @version $Id: EntryGroupDisplay.java,v 1.4 2007-10-11 10:17:06 tjc Exp $
  **/
 
 public class EntryGroupDisplay extends JPanel
     implements EntryGroupChangeListener, EntryChangeListener 
 {
-  final private static Color background_colour = new Color(200, 200, 200);
+  final protected static Color background_colour = new Color(200, 200, 200);
 
   /**
    *  This is a reference to the EntryEdit component that created this
