@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.51 2007-10-11 14:59:45 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.52 2007-10-11 16:12:26 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.51 2007-10-11 14:59:45 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.52 2007-10-11 16:12:26 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1532,6 +1532,14 @@ public class EntryEdit extends JFrame
   {
     try
     {
+      if(entry_group.getDefaultEntry() == null)
+      {
+        JOptionPane.showMessageDialog(frame, 
+            "No default entry selected.\n"+
+            "Select the default from the entry bar at the top.");
+        return false; 
+      }
+      
       int select = JOptionPane.showConfirmDialog(frame, 
           "Commit "+ctm.numberTransaction()+" change(s) to the database?", 
           "Commit", JOptionPane.OK_CANCEL_OPTION);
@@ -1541,7 +1549,7 @@ public class EntryEdit extends JFrame
       if(!isUniqueID(entry_group, ctm, selection, 
             getGotoEventSource, base_plot_group))
         return false;
-             
+      
       final Document dbDoc =
           ((DocumentEntry)entry_group.getDefaultEntry().getEMBLEntry()).getDocument();
 
