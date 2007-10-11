@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.50 2007-10-11 13:50:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.51 2007-10-11 14:59:45 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.50 2007-10-11 13:50:21 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.51 2007-10-11 14:59:45 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1523,7 +1523,7 @@ public class EntryEdit extends JFrame
 
   }
   
-  protected static void commitToDatabase(final EntryGroup entry_group,
+  protected boolean commitToDatabase(final EntryGroup entry_group,
                                          final ChadoTransactionManager ctm,
                                          final JFrame frame,
                                          final Selection selection,
@@ -1536,11 +1536,11 @@ public class EntryEdit extends JFrame
           "Commit "+ctm.numberTransaction()+" change(s) to the database?", 
           "Commit", JOptionPane.OK_CANCEL_OPTION);
       if(select == JOptionPane.CANCEL_OPTION)
-        return;
+        return false;
       
       if(!isUniqueID(entry_group, ctm, selection, 
             getGotoEventSource, base_plot_group))
-        return;
+        return false;
              
       final Document dbDoc =
           ((DocumentEntry)entry_group.getDefaultEntry().getEMBLEntry()).getDocument();
@@ -1562,6 +1562,7 @@ public class EntryEdit extends JFrame
                  "No default entry to write to");
       npe.printStackTrace();
     }
+    return true;
   }
   
 
@@ -1729,9 +1730,12 @@ public class EntryEdit extends JFrame
       {
         public void actionPerformed(ActionEvent e)
         {
-          commitToDatabase(entry_group, ctm, EntryEdit.this, 
-              selection, goto_event_source, base_plot_group);
-          setForeground(DEFAULT_FOREGROUND);
+          if(commitToDatabase(entry_group, ctm, EntryEdit.this, 
+                selection, goto_event_source, base_plot_group))
+          {
+            setForeground(DEFAULT_FOREGROUND);
+            setFont(getFont().deriveFont(Font.PLAIN));
+          }
         }    
       });
       
@@ -1752,13 +1756,19 @@ public class EntryEdit extends JFrame
     public void featureChanged(FeatureChangeEvent event)
     {
       if(ctm.hasTransactions())
+      {
+        setFont(getFont().deriveFont(Font.BOLD));
         setForeground(Color.red);
+      }
     }
 
     public void sequenceChanged(SequenceChangeEvent event)
     {
       if(ctm.hasTransactions())
+      {
         setForeground(Color.red);
+        setFont(getFont().deriveFont(Font.BOLD)); 
+      }
     }    
   }
 
