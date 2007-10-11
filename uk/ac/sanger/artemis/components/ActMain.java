@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.14 2007-09-07 14:06:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.15 2007-10-11 13:34:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -46,7 +46,7 @@ import javax.swing.JFrame;
  *  The main window for the Artemis Comparison Tool.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ActMain.java,v 1.14 2007-09-07 14:06:42 tjc Exp $
+ *  @version $Id: ActMain.java,v 1.15 2007-10-11 13:34:34 tjc Exp $
  **/
 
 public class ActMain extends Splash 
@@ -246,7 +246,7 @@ public class ActMain extends Splash
                       throws OutOfRangeException
       {
         uk.ac.sanger.artemis.io.Entry embl_entry = null;
-        
+        Entry entry = null;
         // test if this is a database entry rather than a file 
         if(this_file_name instanceof DatabaseTreeNode)
         {
@@ -261,7 +261,7 @@ public class ActMain extends Splash
             else
               userName = dbNode.getUserName();
             
-            Entry entry = dbEntrySource.getEntry(dbNode.getFeatureId(), 
+            entry = dbEntrySource.getEntry(dbNode.getFeatureId(), 
                                                 userName,
                                                 progress_listener);
             embl_entry = (DatabaseDocumentEntry)entry.getEMBLEntry();
@@ -309,8 +309,10 @@ public class ActMain extends Splash
   
         final Bases embl_bases = new Bases(sequence);
         EntryGroup entry_group = new SimpleEntryGroup(embl_bases);
-        Entry entry = new Entry(entry_group.getBases(), embl_entry);
-
+        
+        if(entry == null)
+          entry = new Entry(entry_group.getBases(), embl_entry);
+        
         entry_group.add(entry);
         entry_group_array[i / 2] = entry_group;
         return true;
