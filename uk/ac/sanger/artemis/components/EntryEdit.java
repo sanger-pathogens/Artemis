@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.48 2007-10-11 10:20:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.49 2007-10-11 13:33:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.48 2007-10-11 10:20:08 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.49 2007-10-11 13:33:39 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1092,7 +1092,8 @@ public class EntryEdit extends JFrame
         {
           public void actionPerformed(ActionEvent event)
           {
-            commitToDatabase();
+            commitToDatabase(entry_group, ctm, EntryEdit.this, 
+                selection, goto_event_source, base_plot_group);
           }
         });
         file_menu.add(commit);
@@ -1522,30 +1523,35 @@ public class EntryEdit extends JFrame
 
   }
   
-  private void commitToDatabase()
+  protected static void commitToDatabase(final EntryGroup entry_group,
+                                         final ChadoTransactionManager ctm,
+                                         final JFrame frame,
+                                         final Selection selection,
+                                         final GotoEventSource getGotoEventSource,
+                                         final BasePlotGroup  base_plot_group)
   {
     try
     {       
-      if(!isUniqueID(getEntryGroup()))
+      if(!isUniqueID(entry_group, ctm, selection, getGotoEventSource, base_plot_group))
         return;
              
       final Document dbDoc =
-          ((DocumentEntry)getEntryGroup().getDefaultEntry().getEMBLEntry()).getDocument();
+          ((DocumentEntry)entry_group.getDefaultEntry().getEMBLEntry()).getDocument();
 
       if(dbDoc instanceof DatabaseDocument)
       {
-        setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         ctm.commit((DatabaseDocument)dbDoc);
-        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
       else
-        new MessageDialog(EntryEdit.this,
+        new MessageDialog(frame,
                  "No database associated with the default entry");
     }
     catch(NullPointerException npe)
     {
-      setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-      new MessageDialog(EntryEdit.this,
+      frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      new MessageDialog(frame,
                  "No default entry to write to");
       npe.printStackTrace();
     }
@@ -1557,7 +1563,11 @@ public class EntryEdit extends JFrame
    * @param entry_group
    * @return
    */
-  private boolean isUniqueID(final EntryGroup entry_group)
+  private static boolean isUniqueID(final EntryGroup entry_group,
+                                    final ChadoTransactionManager ctm, 
+                                    final Selection selection,
+                                    final GotoEventSource getGotoEventSource,
+                                    final BasePlotGroup  base_plot_group)
   {
     // only need to check if the Feature table has been changed
     List changed_features = ctm.getFeatureInsertUpdate();
@@ -1600,14 +1610,14 @@ public class EntryEdit extends JFrame
     if(duplicateIDs.size() > 0)
     {
       String filtern_name = "Features with non-unique feature ID's";
-      getSelection().set(duplicateIDs);
+      selection.set(duplicateIDs);
       final FilteredEntryGroup filtered_entry_group =
         new FilteredEntryGroup(entry_group, duplicateIDs, 
                                filtern_name);
       
       final FeatureListFrame feature_list_frame =
         new FeatureListFrame(filtern_name, selection,
-                             getGotoEventSource(), filtered_entry_group,
+            getGotoEventSource, filtered_entry_group,
                              base_plot_group);
 
       feature_list_frame.setVisible (true);
@@ -1712,7 +1722,8 @@ public class EntryEdit extends JFrame
       {
         public void actionPerformed(ActionEvent e)
         {
-          commitToDatabase();
+          commitToDatabase(entry_group, ctm, EntryEdit.this, 
+              selection, goto_event_source, base_plot_group);
           setForeground(DEFAULT_FOREGROUND);
         }    
       });
