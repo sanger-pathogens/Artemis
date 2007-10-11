@@ -1322,6 +1322,8 @@ public class ChadoTransactionManager
            FeatureDbXRef old_dbxref = getFeatureDbXRef(qualifierString,
                                                        uniquename);
            
+           if(old_dbxref == null)
+             continue;
            tsn = new ChadoTransaction(ChadoTransaction.DELETE,
                old_dbxref,
                feature.getLastModified(), feature, 
@@ -1459,6 +1461,9 @@ public class ChadoTransactionManager
           qualifierString);
       FeatureDbXRef new_dbxref = getFeatureDbXRef(qualifierString,
                                                   uniquename);
+      
+      if(new_dbxref == null)
+        return;
       
       tsn = new ChadoTransaction(ChadoTransaction.INSERT,
           new_dbxref,
@@ -1742,6 +1747,15 @@ public class ChadoTransactionManager
                                          final String uniqueName)
   {
     int index = qualifier_string.lastIndexOf(":");
+    if(index == -1)
+    {
+      final String msg = 
+        "Wrong format for Dbxref:\n"+qualifier_string+"\n(expecting DB:XXXX).";
+      logger4j.warn(msg);
+      JOptionPane.showMessageDialog(null, msg, 
+          "Format Error", JOptionPane.WARNING_MESSAGE);
+      return null;
+    }
     FeatureDbXRef feature_dbxref = new FeatureDbXRef();
     DbXRef dbxref = new DbXRef();
     Db db = new Db();
@@ -2122,6 +2136,11 @@ public class ChadoTransactionManager
     if(sql.size() > 0)
       return true;
     return false;
+  }
+  
+  public int numberTransaction()
+  {
+    return sql.size();
   }
   
   
