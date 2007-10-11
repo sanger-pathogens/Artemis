@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.33 2007-10-09 14:23:09 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.34 2007-10-11 08:24:39 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -629,12 +629,14 @@ invisible_qualifiers = \
     usedin
 
 invisible_qualifiers_gff= \
+	Alias          \
     class          \
     cluster        \
     controlled_curation \
     Derives_from   \
     feature_id     \
     feature_relationship_rank \
+    Gap            \
     gff_feature    \
     gff_group      \
     gff_seqname    \
