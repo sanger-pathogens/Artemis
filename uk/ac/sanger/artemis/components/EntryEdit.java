@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.49 2007-10-11 13:33:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.50 2007-10-11 13:50:21 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.49 2007-10-11 13:33:39 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.50 2007-10-11 13:50:21 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1531,8 +1531,15 @@ public class EntryEdit extends JFrame
                                          final BasePlotGroup  base_plot_group)
   {
     try
-    {       
-      if(!isUniqueID(entry_group, ctm, selection, getGotoEventSource, base_plot_group))
+    {
+      int select = JOptionPane.showConfirmDialog(frame, 
+          "Commit "+ctm.numberTransaction()+" change(s) to the database?", 
+          "Commit", JOptionPane.OK_CANCEL_OPTION);
+      if(select == JOptionPane.CANCEL_OPTION)
+        return;
+      
+      if(!isUniqueID(entry_group, ctm, selection, 
+            getGotoEventSource, base_plot_group))
         return;
              
       final Document dbDoc =
