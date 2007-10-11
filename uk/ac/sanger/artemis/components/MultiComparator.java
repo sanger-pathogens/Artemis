@@ -20,39 +20,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.16 2005-12-09 16:17:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.17 2007-10-11 13:49:44 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
+import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
-import uk.ac.sanger.artemis.components.filetree.FileNode;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.util.RemoteFileDocument;
-import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
-import uk.ac.sanger.artemis.io.EntryInformation;
-import uk.ac.sanger.artemis.io.SimpleEntryInformation;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.io.File;
-import java.util.Vector;
 import java.net.URL;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import java.awt.dnd.*;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import javax.swing.border.Border;
-import javax.swing.border.BevelBorder;
+
 
 /**
  *  This JFrame component contains an arbitrary number of AlignmentViewer
@@ -60,11 +53,13 @@ import javax.swing.border.BevelBorder;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.16 2005-12-09 16:17:13 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.17 2007-10-11 13:49:44 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
 {
+
+  private static final long serialVersionUID = 1L;
 
   /**
    *  An array of EntryGroup objects to display(set by the constructor).  The
@@ -866,6 +861,30 @@ public class MultiComparator extends JFrame
 
         entry_group_menu.add(save_entry_menu);
 
+        if(GeneUtils.isDatabaseEntry(entry_group))
+        {   
+          final ChadoTransactionManager ctm = new ChadoTransactionManager();
+          entry_group.addFeatureChangeListener(ctm);
+          entry_group.addEntryChangeListener(ctm);
+          entry_group.getBases().addSequenceChangeListener(ctm, 0);
+          ctm.setEntryGroup(entry_group);
+
+          final Selection selection = getSelectionArray()[i];
+          final GotoEventSource goto_event_source = getGotoEventSourceArray()[i];
+          final BasePlotGroup base_plot_group = getBasePlotGroupArray()[i];
+            
+          final JMenuItem commit_entry_item = new JMenuItem("Commit ...");
+          commit_entry_item.addActionListener(new ActionListener() 
+          {
+            public void actionPerformed(final ActionEvent event) 
+            {
+              EntryEdit.commitToDatabase(entry_group, ctm, MultiComparator.this, 
+                  selection, goto_event_source,base_plot_group);
+            }
+          });
+          entry_group_menu.add(commit_entry_item);
+        }
+        
         final JMenuItem save_all_menu = new JMenuItem("Save All");
 
         save_all_menu.addActionListener(new ActionListener() 
