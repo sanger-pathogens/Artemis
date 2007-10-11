@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.47 2007-10-03 11:45:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.48 2007-10-11 10:20:08 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -35,6 +35,8 @@ import uk.ac.sanger.artemis.editor.BigPane;
 import uk.ac.sanger.artemis.editor.FastaTextPane;
 import uk.ac.sanger.artemis.editor.HitInfo;
 import uk.ac.sanger.artemis.sequence.Marker;
+import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
+import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
@@ -65,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.47 2007-10-03 11:45:38 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.48 2007-10-11 10:20:08 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -115,6 +117,7 @@ public class EntryEdit extends JFrame
   private JTabbedPane shortcut_pane = new JTabbedPane();
   
   private ChadoTransactionManager ctm = new ChadoTransactionManager();
+  private CommitButton commitButton;
   
   /**
    *  Create a new EntryEdit object and JFrame.
@@ -139,6 +142,12 @@ public class EntryEdit extends JFrame
     getEntryGroup().addEntryGroupChangeListener(this);
     getEntryGroup().addEntryChangeListener(this);
 
+    final Box box_panel = Box.createVerticalBox();
+    final Box xBox = Box.createHorizontalBox();
+    group_display = new EntryGroupDisplay(this);
+    xBox.add(group_display);
+    box_panel.add(xBox);
+    
     if(getEntryGroup().getDefaultEntry() != null) 
     {
       final String name = getEntryGroup().getDefaultEntry().getName();
@@ -151,6 +160,11 @@ public class EntryEdit extends JFrame
         getEntryGroup().addEntryChangeListener(ctm);
         getEntryGroup().getBases().addSequenceChangeListener(ctm, 0);
         ctm.setEntryGroup(getEntryGroup());
+        
+        commitButton = new CommitButton();
+        getEntryGroup().addFeatureChangeListener(commitButton);
+        getEntryGroup().getBases().addSequenceChangeListener(commitButton, 0);
+        xBox.add(commitButton);
       }
     }
 
@@ -178,8 +192,6 @@ public class EntryEdit extends JFrame
       }
     });
 
-    Box box_panel = Box.createVerticalBox();
-
     getContentPane().setLayout(new BorderLayout());
     getContentPane().add(box_panel, "North");
     
@@ -189,8 +201,6 @@ public class EntryEdit extends JFrame
       new SelectionInfoDisplay(getEntryGroup(), getSelection());
     box_panel.add(selection_info);
 
-    group_display = new EntryGroupDisplay(this);
-    box_panel.add(group_display);
 
     final boolean entry_buttons_option =
       Options.getOptions().getPropertyTruthValue("show_entry_buttons");
@@ -591,6 +601,9 @@ public class EntryEdit extends JFrame
     // chado transaction manager
     getEntryGroup().removeFeatureChangeListener(ctm);
     getEntryGroup().removeEntryChangeListener(ctm);
+    
+    if(commitButton != null)
+      getEntryGroup().removeFeatureChangeListener(commitButton);
     
     getEntryGroup().removeFeatureChangeListener(selection);
     getEntryGroup().removeEntryChangeListener(selection);
@@ -1079,31 +1092,7 @@ public class EntryEdit extends JFrame
         {
           public void actionPerformed(ActionEvent event)
           {
-            try
-            {       
-              if(!isUniqueID(getEntryGroup()))
-                return;
-                     
-              final Document dbDoc =
-                  ((DocumentEntry)getEntryGroup().getDefaultEntry().getEMBLEntry()).getDocument();
-
-              if(dbDoc instanceof DatabaseDocument)
-              {
-                setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                ctm.commit((DatabaseDocument)dbDoc);
-                setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-              }
-              else
-                new MessageDialog(EntryEdit.this,
-                         "No database associated with the default entry");
-            }
-            catch(NullPointerException npe)
-            {
-              setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-              new MessageDialog(EntryEdit.this,
-                         "No default entry to write to");
-              npe.printStackTrace();
-            }
+            commitToDatabase();
           }
         });
         file_menu.add(commit);
@@ -1533,6 +1522,34 @@ public class EntryEdit extends JFrame
 
   }
   
+  private void commitToDatabase()
+  {
+    try
+    {       
+      if(!isUniqueID(getEntryGroup()))
+        return;
+             
+      final Document dbDoc =
+          ((DocumentEntry)getEntryGroup().getDefaultEntry().getEMBLEntry()).getDocument();
+
+      if(dbDoc instanceof DatabaseDocument)
+      {
+        setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        ctm.commit((DatabaseDocument)dbDoc);
+        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      }
+      else
+        new MessageDialog(EntryEdit.this,
+                 "No database associated with the default entry");
+    }
+    catch(NullPointerException npe)
+    {
+      setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      new MessageDialog(EntryEdit.this,
+                 "No default entry to write to");
+      npe.printStackTrace();
+    }
+  }
   
 
   /**
@@ -1679,6 +1696,52 @@ public class EntryEdit extends JFrame
   private Font getDefaultFont() 
   {
     return Options.getOptions().getFont();
+  }
+  
+  class CommitButton extends JButton
+        implements FeatureChangeListener, SequenceChangeListener
+  {
+    private static final long serialVersionUID = 1L;
+    private Color DEFAULT_FOREGROUND;
+    public CommitButton()
+    {
+      super("Commit");
+      
+      setBackground(EntryGroupDisplay.background_colour);
+      addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          commitToDatabase();
+          setForeground(DEFAULT_FOREGROUND);
+        }    
+      });
+      
+      setMargin(new Insets(0,2,0,2));
+      setToolTipText("commit to database");
+      
+      DEFAULT_FOREGROUND = super.getForeground();
+    }
+    
+    public String getToolTipText()
+    {
+      if(ctm.hasTransactions())
+        return Integer.toString(ctm.numberTransaction());
+      else
+        return "no transaction to commit";
+    }
+
+    public void featureChanged(FeatureChangeEvent event)
+    {
+      if(ctm.hasTransactions())
+        setForeground(Color.red);
+    }
+
+    public void sequenceChanged(SequenceChangeEvent event)
+    {
+      if(ctm.hasTransactions())
+        setForeground(Color.red);
+    }    
   }
 
 }
@@ -1878,3 +1941,4 @@ class SaveEntryAsSubmissionActionListener extends EntryActionListener
                              DocumentEntryFactory.ANY_FORMAT);
   }
 }
+
