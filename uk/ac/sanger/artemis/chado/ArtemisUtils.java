@@ -267,6 +267,8 @@ public class ArtemisUtils
       String qualifier_string, final GFFStreamFeature feature)
   {
     // FIXME - allow for case with no featureId!
+    if(feature.getQualifierByName("feature_id") == null)
+      return null;
     int queryFeatureId = Integer.parseInt((String) feature.getQualifierByName(
         "feature_id").getValues().get(0));
 
