@@ -887,6 +887,9 @@ public class ChadoTransactionManager
       final String name = this_qualifier.getName();
       final StringVector qualifier_values = this_qualifier.getValues();
 
+      if(qualifier_values == null)
+        continue;
+      
       try
       {
         for(int value_index = 0; value_index < qualifier_values.size();
@@ -1463,7 +1466,10 @@ public class ChadoTransactionManager
                                                   uniquename);
       
       if(new_dbxref == null)
+      {
+        logger4j.warn("Cannot create FeatureDbXRef");
         return;
+      }
       
       tsn = new ChadoTransaction(ChadoTransaction.INSERT,
           new_dbxref,
@@ -1530,6 +1536,13 @@ public class ChadoTransactionManager
       
       AnalysisFeature analysisFeature = ArtemisUtils.getAnalysisFeature(uniquename,
           qualifierString, feature);
+      
+      if(analysisFeature == null)
+      {
+        logger4j.warn("Cannot create AnalysisFeature!!");
+        return;
+      }
+      
       tsn = new ChadoTransaction(ChadoTransaction.INSERT,
           analysisFeature,
           null, feature,
