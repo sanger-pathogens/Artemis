@@ -29,7 +29,6 @@ import java.sql.Timestamp;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 
-import org.gmod.schema.sequence.Feature;
 
 /**
  * Store information about a SQL transaction <i>e.g</i> UPDATE, INSERT, DELETE
@@ -51,8 +50,7 @@ public class ChadoTransaction
   /** feature unique name */
   protected String old_uniquename;
   private String uniquename;
-  /** chado feature */
-  private Feature chadoFeature;
+
   /** last time feature was modified */
   private Timestamp lastmodified;
   /** the feature object */
@@ -88,16 +86,6 @@ public class ChadoTransaction
       this.featureKey = "exon";
     else
       this.featureKey   = featureKey;
-  }
-
-  
-  /**
-   * The <code>Feature</code> feature used in a transaction.
-   * @return chado_feature the <code>Feature</code> 
-   */
-  public Feature getChadoFeature()
-  {
-    return chadoFeature;
   }
 
 
