@@ -2133,11 +2133,20 @@ public class ChadoTransactionManager
    * Commit the transactions back to the database.  
    *
    */
-  public void commit(DatabaseDocument dbDoc)
+  public void commit(final DatabaseDocument dbDoc,
+                     final boolean force)
   {
-    int retVal = dbDoc.commit(sql);
-    if(retVal > 0)
+    int retVal = dbDoc.commit(sql, force);
+    if(retVal == sql.size())
       sql = new Vector();
+    else if(retVal > 0)
+    {
+      logger4j.debug("\n\nREMOVE SQL ALREADY COMMITTED\n\n");
+      final Vector new_sql = new Vector();
+      for(int i=retVal; i<sql.size(); i++)
+        new_sql.add(sql.get(i));
+      sql = new_sql;
+    }
   }
   
   /**

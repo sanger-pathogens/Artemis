@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.54 2007-10-12 08:39:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.55 2007-10-12 15:16:19 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.54 2007-10-12 08:39:48 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.55 2007-10-12 15:16:19 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1543,6 +1543,12 @@ public class EntryEdit extends JFrame
             "Select the default from the entry bar at the top.");
         return false; 
       }
+      else if(!ctm.hasTransactions())
+      {
+        JOptionPane.showMessageDialog(frame, 
+            "No changes to commit to the database.");
+        return false;
+      }
       
       int select = JOptionPane.showConfirmDialog(frame, 
           "Commit "+ctm.numberTransaction()+" change(s) to the database?", 
@@ -1560,7 +1566,18 @@ public class EntryEdit extends JFrame
       if(dbDoc instanceof DatabaseDocument)
       {
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        ctm.commit((DatabaseDocument)dbDoc);
+        ctm.commit((DatabaseDocument)dbDoc, false);
+        
+        if(ctm.hasTransactions())
+        {
+          int forceCommit = JOptionPane.showConfirmDialog(frame, 
+              "Force commit (saving any changes that can be\n"+ 
+              "committed to the database and ignoring those that fail)?", 
+              "Force Database Commit", JOptionPane.OK_CANCEL_OPTION);
+          
+          if(forceCommit == JOptionPane.OK_OPTION)
+            ctm.commit((DatabaseDocument)dbDoc, true);
+        }
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
       else
@@ -1574,6 +1591,9 @@ public class EntryEdit extends JFrame
                  "No default entry to write to");
       npe.printStackTrace();
     }
+    
+    if(ctm.hasTransactions())
+      return false;
     return true;
   }
   

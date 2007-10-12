@@ -2398,16 +2398,20 @@ public class DatabaseDocument extends Document
    * @param sql the collection of <code>ChadoTransaction</code> objects
    * @return
    */
-  public int commit(final Vector sql)
+  public int commit(final Vector sql, final boolean force)
   {
     GmodDAO dao = null;
-    int ncommit = 0;
+    int ncommit = -1;
     Hashtable featureIdStore = null;
+    
+    boolean useTransactions = false;
+    if(!force && dao instanceof IBatisDAO)
+      useTransactions = true;
     
     try
     {
       dao = getDAO();
-      if(dao instanceof IBatisDAO)
+      if(useTransactions)
         ((IBatisDAO) dao).startTransaction();
       boolean unchanged;
       
@@ -2439,7 +2443,7 @@ public class DatabaseDocument extends Document
                          featureIdStore);
         if(!unchanged)
         {
-          if(dao instanceof IBatisDAO)
+          if(useTransactions)
             ((IBatisDAO) dao).endTransaction();
           return 0;
         }
@@ -2450,8 +2454,18 @@ public class DatabaseDocument extends Document
       // commit to database
       for(ncommit = 0; ncommit < sql.size(); ncommit++)
       {
-        ChadoTransaction tsn = (ChadoTransaction) sql.get(ncommit);
-        commitChadoTransaction(tsn, dao);
+        try
+        {
+          ChadoTransaction tsn = (ChadoTransaction) sql.get(ncommit);
+          commitChadoTransaction(tsn, dao);
+        }
+        catch (RuntimeException re)
+        {
+          if(!force)
+            throw re;
+          logger4j.warn(constructExceptionMessage(re, sql, ncommit));
+          logger4j.warn("NOW TRYING TO CONTINUE TO COMMIT");
+        }
       }
 
       //
@@ -2497,11 +2511,11 @@ public class DatabaseDocument extends Document
         gff_feature.setLastModified(ts);
       }
 
-      if(dao instanceof IBatisDAO && System.getProperty("nocommit") == null)
+      if(useTransactions && System.getProperty("nocommit") == null)
+      {
         ((IBatisDAO) dao).commitTransaction();
-      
-      if(dao instanceof IBatisDAO)
-        ((IBatisDAO) dao).endTransaction();
+        logger4j.debug("COMMIT COMPLETE");
+      }
     }
     catch (java.sql.SQLException sqlExp)
     {
@@ -2519,11 +2533,67 @@ public class DatabaseDocument extends Document
                                     JOptionPane.ERROR_MESSAGE);
       conn_ex.printStackTrace();
     }
+    catch (RuntimeException re)
+    {
+      final String msg = constructExceptionMessage(re, sql, ncommit);
+      JOptionPane.showMessageDialog(null, msg,
+          "Problems Writing to Database ",
+          JOptionPane.ERROR_MESSAGE);
+      logger4j.error(msg);
+    }
+    finally
+    {
+      if(useTransactions)
+        try
+        {
+          ((IBatisDAO) dao).endTransaction();
+        }
+        catch(SQLException e){}
+    }
     
     if(featureIdStore != null)
       featureIdStore.clear();
         
     return ncommit;
+  }
+  
+  /**
+   * Construct an exeption message from the ChadoTransaction
+   * @param re
+   * @param sql
+   * @param ncommit
+   * @return
+   */
+  private String constructExceptionMessage(final RuntimeException re,
+                                           final Vector sql,
+                                           final int ncommit)
+  {
+    String msg = "";
+    if(ncommit > -1 && ncommit < sql.size())
+    {
+      final ChadoTransaction t_failed = (ChadoTransaction)sql.get(ncommit);
+      
+      if(t_failed.getType() == ChadoTransaction.DELETE)
+        msg = "DELETE failed ";
+      else if(t_failed.getType() == ChadoTransaction.INSERT)
+        msg = "INSERT failed ";
+      else if(t_failed.getType() == ChadoTransaction.UPDATE)
+        msg = "UPDATE failed ";
+        
+      if(t_failed.getUniquename() != null)
+        msg = msg + "for " + t_failed.getUniquename()+":";
+      else if(t_failed.getFeatureObject() != null &&
+              t_failed.getFeatureObject() instanceof Feature)
+      {
+        final Feature chadoFeature = (Feature)t_failed.getFeatureObject();
+        if(chadoFeature.getUniqueName() != null)
+          msg = msg + "for " + chadoFeature.getUniqueName() +":";
+      }
+        
+      msg = msg+"\n";
+    }
+    
+    return msg + re.getMessage();  
   }
   
   /**

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.37 2007-10-09 17:30:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.38 2007-10-12 15:16:19 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -290,7 +290,7 @@ public class GeneBuilderFrame extends JFrame
         DatabaseDocument dbDoc =
           (DatabaseDocument)(
             (GFFStreamFeature)active_feature.getEmblFeature()).getDocumentEntry().getDocument();
-        chadoTransactionManager.commit(dbDoc);
+        chadoTransactionManager.commit(dbDoc, false);
       }
     }
     
