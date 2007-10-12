@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.53 2007-10-11 16:21:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.54 2007-10-12 08:39:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.53 2007-10-11 16:21:07 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.54 2007-10-12 08:39:48 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -163,6 +163,7 @@ public class EntryEdit extends JFrame
         
         commitButton = new CommitButton();
         getEntryGroup().addFeatureChangeListener(commitButton);
+        getEntryGroup().addEntryChangeListener(commitButton);
         getEntryGroup().getBases().addSequenceChangeListener(commitButton, 0);
         xBox.add(commitButton);
       }
@@ -603,7 +604,10 @@ public class EntryEdit extends JFrame
     getEntryGroup().removeEntryChangeListener(ctm);
     
     if(commitButton != null)
+    {
       getEntryGroup().removeFeatureChangeListener(commitButton);
+      getEntryGroup().removeEntryChangeListener(commitButton);
+    }
     
     getEntryGroup().removeFeatureChangeListener(selection);
     getEntryGroup().removeEntryChangeListener(selection);
@@ -1725,7 +1729,7 @@ public class EntryEdit extends JFrame
   }
   
   class CommitButton extends JButton
-        implements FeatureChangeListener, SequenceChangeListener
+        implements FeatureChangeListener, SequenceChangeListener, EntryChangeListener
   {
     private static final long serialVersionUID = 1L;
     private Color DEFAULT_FOREGROUND;
@@ -1771,6 +1775,15 @@ public class EntryEdit extends JFrame
     }
 
     public void sequenceChanged(SequenceChangeEvent event)
+    {
+      if(ctm.hasTransactions())
+      {
+        setForeground(Color.red);
+        setFont(getFont().deriveFont(Font.BOLD)); 
+      }
+    }
+
+    public void entryChanged(EntryChangeEvent event)
     {
       if(ctm.hasTransactions())
       {
