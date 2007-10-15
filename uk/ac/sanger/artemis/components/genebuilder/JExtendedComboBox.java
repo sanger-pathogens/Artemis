@@ -58,6 +58,7 @@ public class JExtendedComboBox extends JComboBox
   public JExtendedComboBox(Vector vector)
   { 
     super(vector);
+    setRenderer(new ComboBoxRenderer());
     setHorizontalScrollBar();
   } 
 
