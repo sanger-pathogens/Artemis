@@ -25,6 +25,8 @@
 package uk.ac.sanger.artemis.chado;
 
 import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -263,22 +265,39 @@ public class ArtemisUtils
    * @param feature
    * @return
    */
-  protected static AnalysisFeature getAnalysisFeature(final String uniqueName,
-      String qualifier_string, final GFFStreamFeature feature)
+  protected static AnalysisFeature getAnalysisFeature(String uniqueName,
+               String qualifier_string, final GFFStreamFeature feature)
   {
-    // FIXME - allow for case with no featureId!
+    // - allow for case with no featureId!
+    int queryFeatureId;
     if(feature.getQualifierByName("feature_id") == null)
-      return null;
-    int queryFeatureId = Integer.parseInt((String) feature.getQualifierByName(
-        "feature_id").getValues().get(0));
-
-    AnalysisFeature analysisFeature = new AnalysisFeature();
-    Analysis analysis = new Analysis();
+      queryFeatureId = -1;
+    else
+      queryFeatureId = Integer.parseInt((String) feature.getQualifierByName(
+                                          "feature_id").getValues().get(0));
 
     org.gmod.schema.sequence.Feature queryFeature = new org.gmod.schema.sequence.Feature();
     org.gmod.schema.sequence.Feature subjectFeature = new org.gmod.schema.sequence.Feature();
     org.gmod.schema.sequence.Feature matchFeature = new org.gmod.schema.sequence.Feature();
     FeatureDbXRef featureDbXRef = new FeatureDbXRef();
+    
+    final Hashtable rangeHash = feature.getSegmentRangeStore();
+    if(rangeHash != null)
+    {
+      final Enumeration id_keys= rangeHash.keys();
+      uniqueName = (String)id_keys.nextElement();
+      
+      DatabaseDocument doc = (DatabaseDocument)feature.getDocumentEntry().getDocument();
+      FeatureLoc loc = new FeatureLoc();
+      Feature srcFeature = new Feature();
+      srcFeature.setFeatureId(Integer.parseInt(doc.getSrcFeatureId()));
+      loc.setFeatureBySrcFeatureId(srcFeature);
+      queryFeature.setFeatureLoc(loc);
+      logger4j.debug(uniqueName);
+    }
+    
+    AnalysisFeature analysisFeature = new AnalysisFeature();
+    Analysis analysis = new Analysis();
 
     subjectFeature.setCvTerm(getCvTerm("region"));  // similarity_region
 
@@ -375,14 +394,17 @@ public class ArtemisUtils
     }
 
     // gene
-    final String gene = (String) qualifier_strings.get(4);
-    if(!gene.equals(""))
+    if(qualifier_strings.size() > 4)
     {
-      FeatureProp featureProp = new FeatureProp();
-      featureProp.setCvTerm(getCvTerm("gene"));
-      featureProp.setValue(gene);
-      featureProp.setRank(2);
-      subjectFeature.addFeatureProp(featureProp);
+      final String gene = (String) qualifier_strings.get(4);
+      if(!gene.equals(""))
+      {
+        FeatureProp featureProp = new FeatureProp();
+        featureProp.setCvTerm(getCvTerm("gene"));
+        featureProp.setValue(gene);
+        featureProp.setRank(2);
+        subjectFeature.addFeatureProp(featureProp);
+      }
     }
 
     // length

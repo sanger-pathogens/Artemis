@@ -874,7 +874,8 @@ public class IBatisDAO extends GmodDAO
     {
       FeatureLoc featureLoc = (FeatureLoc)it.next();
 
-      if(featureLoc.getFeatureBySrcFeatureId().getFeatureId() > 0)
+      if(featureLoc.getFeatureBySrcFeatureId().getFeatureId() > 0 ||
+         featureLoc.getFeatureBySrcFeatureId().getFeatureId() == -1)
       {
         queryFeature = featureLoc.getFeatureBySrcFeatureId();
         queryLoc = featureLoc;
@@ -886,7 +887,11 @@ public class IBatisDAO extends GmodDAO
       }
     }
     
-    Integer organism_id = (Integer)sqlMap.queryForObject("getOrganismIdBySrcFeatureIdOrFeatureId", queryFeature);
+    if(queryFeature.getFeatureId() == -1)
+      queryFeature = (Feature)getFeaturesByUniqueName(queryFeature.getUniqueName()).get(0);
+    
+    Integer organism_id = (Integer)sqlMap.queryForObject(
+        "getOrganismIdBySrcFeatureIdOrFeatureId", queryFeature);
     Organism organism = new Organism();
     organism.setOrganismId(organism_id.intValue());
     matchFeature.setOrganism(organism);
@@ -1065,8 +1070,37 @@ public class IBatisDAO extends GmodDAO
     Feature matchFeature = analysisFeature.getFeature();
     List featureLocs = new Vector(matchFeature.getFeatureLocsForFeatureId());
     
-    Feature subjectFeature;
-    int nsubject;
+    Feature subjectFeature = null;
+    Feature queryFeature   = null;
+    int nsubject = 0;
+    int nquery   = 0;
+    
+    for(int i=0; i<featureLocs.size(); i++)
+    {
+      FeatureLoc featureLoc = (FeatureLoc)featureLocs.get(i);
+
+      if(featureLoc.getFeatureBySrcFeatureId().getFeatureId() > 0 ||
+         featureLoc.getFeatureBySrcFeatureId().getFeatureId() == -1)
+      {
+        queryFeature = featureLoc.getFeatureBySrcFeatureId();
+        nquery = i;
+      }
+      else
+      {
+        subjectFeature = featureLoc.getFeatureBySrcFeatureId();
+        nsubject = i;
+      }
+    }
+    
+    if(queryFeature.getFeatureId() == -1)
+    {
+      Feature feat = 
+        (Feature)getFeaturesByUniqueName(queryFeature.getUniqueName()).get(0);
+      queryFeature.setFeatureId(feat.getFeatureId());
+      ((FeatureLoc)featureLocs.get(nquery)).setFeatureBySrcFeatureId(queryFeature);
+    }
+    
+    /*
     if(((FeatureLoc)featureLocs.get(0)).getFeatureBySrcFeatureId().getDbXRef() != null)
     {
       subjectFeature = ((FeatureLoc)featureLocs.get(0)).getFeatureBySrcFeatureId();
@@ -1077,6 +1111,7 @@ public class IBatisDAO extends GmodDAO
       subjectFeature = ((FeatureLoc)featureLocs.get(1)).getFeatureBySrcFeatureId();
       nsubject = 1;
     }
+    */
     
     // look for SWALL: and UNIPROT:
     subjectFeature.setUniqueName( "%"+subjectFeature.getDbXRef().getAccession() );
