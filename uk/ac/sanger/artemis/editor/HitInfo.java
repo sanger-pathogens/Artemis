@@ -418,9 +418,12 @@ public class HitInfo
   * @param org 	organism source.
   *
   */
-  protected void setOrganism(String org)
+  protected void setOrganism(final String orgStr)
   {
-    this.org = org;
+    if(org == null || org.equals(""))
+      this.org = orgStr;
+    else 
+      this.org = this.org + " " + orgStr; 
   }
 
   /**
