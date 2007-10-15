@@ -47,6 +47,7 @@ import javax.swing.JButton;
 import javax.swing.ListCellRenderer;
 
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.StringVector;
@@ -81,12 +82,15 @@ public class CVPanel extends JPanel
   private JButton hide_show_CC;
   private JButton hide_show_GO;
   private Feature feature;
+  private DatabaseDocument doc;
   
   public CVPanel(final Feature feature)
   {
     super(new BorderLayout());
 
     updateFromFeature(feature);
+    doc = (DatabaseDocument)
+          ((GFFStreamFeature)feature.getEmblFeature()).getDocumentEntry().getDocument();
   }
   
   /**
@@ -561,6 +565,12 @@ public class CVPanel extends JPanel
     for(int i=0; i<cvNames.size(); i++)
       comboCV.addItem(cvNames.get(i));
     
+    comboCV.addItem(JExtendedComboBox.SEPARATOR);
+    comboCV.addItem(JExtendedComboBox.SEPARATOR);
+    
+    final String ADD_TERM = "Add term ...";
+    comboCV.addItem(ADD_TERM);
+    
     JExtendedComboBox term_list = null;
     
     Dimension d = comboCV.getPreferredSize();
@@ -579,8 +589,15 @@ public class CVPanel extends JPanel
       if(step == 0)
       {
         cv_type = prompCv(xBox, comboCV);
+            
         if(cv_type == null)
           return;
+        
+        if(cv_type.equals(ADD_TERM))
+        {
+          addCvTermToDB(cvNames);
+          return;
+        }
         step = 1;
       }
       
@@ -703,6 +720,47 @@ public class CVPanel extends JPanel
     repaint();
   }
   
+  private void addCvTermToDB(final java.util.List cvNames)
+  {
+    final Box xBox = Box.createHorizontalBox();
+    final JExtendedComboBox comboCV = 
+      new JExtendedComboBox(new Vector(cvNames));
+    comboCV.addItem(JExtendedComboBox.SEPARATOR);
+    comboCV.addItem(ChadoTransactionManager.PRODUCT_CV);
+    xBox.add(new JLabel("CV:"));
+    xBox.add(comboCV);
+    final JTextField term = new JTextField(25);
+    xBox.add(new JLabel("  term:"));
+    xBox.add(term);
+    
+    int select = JOptionPane.showConfirmDialog(null, 
+        xBox, "Add a new term to the database", JOptionPane.OK_CANCEL_OPTION);
+    
+    if(select == JOptionPane.CANCEL_OPTION)
+      return;
+    
+    final String db;
+    if(cvNames.contains((String)comboCV.getSelectedItem()))
+      db = ChadoTransactionManager.CONTROLLED_CURATION_DB;
+    else
+      db = ChadoTransactionManager.PRODUCT_DB;
+    
+    final CvTerm cvTerm = ChadoTransactionManager.getCvTerm(
+        term.getText().trim(), 
+        (String)comboCV.getSelectedItem(), db);
+    
+    try
+    {
+      doc.insertCvTerm(cvTerm);
+    }
+    catch(RuntimeException re)
+    {
+      JOptionPane.showMessageDialog(null, re.getMessage(),
+          "Problems Writing to Database ",
+          JOptionPane.ERROR_MESSAGE);
+    }
+  }
+  
   private void removeCvTerm(final String qualifier_name, 
                             final int value_index)
   {
@@ -724,6 +782,7 @@ public class CVPanel extends JPanel
         BorderLayout.CENTER);
     validate();
   }
+  
   
   /**
    * Get the latest (edited) controlled vocab qualifiers
