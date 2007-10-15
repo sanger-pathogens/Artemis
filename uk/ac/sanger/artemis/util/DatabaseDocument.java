@@ -1798,6 +1798,13 @@ public class DatabaseDocument extends Document
                        new String[synonym_names.size()]);
   }
   
+  public void insertCvTerm(CvTerm cvTerm)
+  {
+    final GmodDAO dao = getDAOOnly();
+    dao.persist(cvTerm);
+    cvTerm = dao.getCvTermByNameAndCvName(cvTerm.getName(), cvTerm.getCv().getName());
+    cvterms.put(new Integer(cvTerm.getCvTermId()), cvTerm);
+  }
   
   /**
    * Get the sequence for a feature.
