@@ -375,7 +375,10 @@ public class BigPane extends JFrame
     {
       QualifierVector cvQualifiers = cvForm.getCvQualifiers().copy();
       int productIndex = cvQualifiers.indexOfQualifierWithName("product");
-      cvQualifiers.remove(productIndex);
+      if(productIndex > -1)
+        cvQualifiers.remove(productIndex);
+      else
+        productIndex = 0;
       cvQualifiers.add(productIndex, productQualifier);
       cvForm.updateFromQualifiers(cvQualifiers);
     }
