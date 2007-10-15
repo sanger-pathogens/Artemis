@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.51 2007-10-01 14:46:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.52 2007-10-15 08:39:29 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -43,7 +43,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.51 2007-10-01 14:46:39 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.52 2007-10-15 08:39:29 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -264,7 +264,11 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         } 
           
       }
-      
+  
+      //
+      // load /similarity - lazily
+      if(getDocument() instanceof DatabaseDocument)
+        loadSimilarityLazyData(original_features);
 
       // now join exons
       //combineFeatures();
@@ -276,10 +280,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       }
       
       
-      //
-      // load /similarity - lazily
-      if(getDocument() instanceof DatabaseDocument)
-        loadSimilarityLazyData(original_features);
+
     }
     catch(InvalidRelationException e)
     {
@@ -298,7 +299,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     final DatabaseDocument doc = (DatabaseDocument)getDocument();
     List matches;
  
-    if(fv.size() < 30 && fv.size() > 0)  // if just a few features to look up e.g. for gene editorr
+    if(fv.size() < 30 && fv.size() > 0)  // if just a few features to look up e.g. for gene editor
     {
       List featureIds = new Vector(fv.size());
       for(int i=0;i<fv.size(); i++)
