@@ -127,6 +127,10 @@ public class ChadoTransactionManager
   private static String synonym_tags[] = null;
   private static String SYNONYM_TAG_CVNAME = "genedb_synonym_type";
   private EntryGroup entryGroup;
+  // Db where db entries  are stored corresponding to controlled curation CV terms
+  public static String CONTROLLED_CURATION_DB = "CCGEN";
+  public static String PRODUCT_DB = "PRODUCT";
+  public static String PRODUCT_CV = "genedb_products";
 
   public ChadoTransactionManager()
   {
@@ -1834,7 +1838,7 @@ public class ChadoTransactionManager
 
       if(cvTerm == null)
         cvTerm = createCvTerm(qualifier_string, 
-                   "genedb_products", "PRODUCT");
+            PRODUCT_CV, PRODUCT_DB);
       
       feature_cvterm.setCvTerm(cvTerm);
       logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
@@ -1932,6 +1936,25 @@ public class ChadoTransactionManager
     return feature_cvterm;
   }
   
+  public static CvTerm getCvTerm(final String cvTermName, final String cvName,
+                                  final String dbName)
+  {
+    CvTerm cvTerm = new CvTerm();
+    cvTerm.setName(cvTermName);
+    Cv cv = new Cv();
+    cv.setName(cvName);
+    cvTerm.setCv(cv);
+
+    // need to create a unique dbxref for the cvterm
+    DbXRef dbXRef = new DbXRef();
+    Db db = new Db();
+    db.setName(dbName);
+    dbXRef.setDb(db);
+    dbXRef.setAccession(cvTermName); // use cvterm.name as the accession
+    cvTerm.setDbXRef(dbXRef);
+    return cvTerm;
+  }
+  
   /**
    * Make a new cvterm.
    * @param cvTermName
@@ -1942,19 +1965,7 @@ public class ChadoTransactionManager
   private CvTerm createCvTerm(final String cvTermName, final String cvName,
                               final String dbName)
   {
-    CvTerm cvTerm = new CvTerm();
-    cvTerm.setName(cvTermName);
-    Cv cv = new Cv();
-    cv.setName(cvName);
-    cvTerm.setCv(cv);
-    
-    // need to create a unique dbxref for the cvterm
-    DbXRef dbXRef = new DbXRef();
-    Db db = new Db();
-    db.setName(dbName);
-    dbXRef.setDb(db);
-    dbXRef.setAccession(cvTermName); // use cvterm.name as the accession
-    cvTerm.setDbXRef(dbXRef);
+    final CvTerm cvTerm = getCvTerm(cvTermName, cvName, dbName);
     
     logger4j.debug("INSERT cvTerm "+cvTermName);
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT,
