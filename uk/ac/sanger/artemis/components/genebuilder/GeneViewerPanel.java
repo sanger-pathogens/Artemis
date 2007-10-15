@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.66 2007-10-09 17:00:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.67 2007-10-15 11:22:59 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -464,7 +464,8 @@ public class GeneViewerPanel extends JPanel
     });
     menu.add(createFeatureProtein);
     
-    JMenuItem adjustCoords = new JMenuItem("Adjust selected transcripts coordinates boundary");
+    menu.add(new JSeparator());
+    JMenuItem adjustCoords = new JMenuItem("Adjust selected transcripts coordinates");
     adjustCoords.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)  
@@ -487,6 +488,17 @@ public class GeneViewerPanel extends JPanel
     });
     menu.add(adjustCoords);
     
+    
+    JMenuItem adjustGeneCoords = new JMenuItem("Adjust gene model coordinates");
+    adjustGeneCoords.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)  
+      {
+        GeneUtils.checkGeneBoundary(chado_gene);
+        gene_builder.dispose();
+      }
+    });
+    menu.add(adjustGeneCoords);
   }
   
   public static uk.ac.sanger.artemis.Feature 
