@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.38 2007-10-12 15:16:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.39 2007-10-15 11:49:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -97,6 +97,8 @@ public class GeneBuilderFrame extends JFrame
   private GeneBuilderSelectionChangeListener geneBuilderSelectionChangeListener;
   private JTabbedPane tabpane;
   private ChadoTransactionManager chadoTransactionManager;
+  private EntryGroup entry_group;
+  private GotoEventSource goto_event_source;
   
   public GeneBuilderFrame(Feature feature,
                           final EntryGroup entry_group,
@@ -113,6 +115,9 @@ public class GeneBuilderFrame extends JFrame
       final ChadoTransactionManager chadoTransactionManager)
   {
     super();
+    
+    this.entry_group = entry_group;
+    this.goto_event_source = goto_event_source;
     
     // set title
     final String title = "Artemis Gene Builder: " + 
@@ -263,10 +268,15 @@ public class GeneBuilderFrame extends JFrame
     return proteinFeature;
   }
   
+  public void dispose()
+  {
+    dispose(false);
+  }
+  
   /**
    * Override to ensure the GeneBuilderFrame removes all listeners
    */
-  public void dispose()
+  public void dispose(final boolean reopen)
   {
     try
     {
@@ -293,6 +303,11 @@ public class GeneBuilderFrame extends JFrame
         chadoTransactionManager.commit(dbDoc, false);
       }
     }
+    
+    if(reopen)
+      new GeneBuilderFrame(active_feature, entry_group, 
+                           selection, goto_event_source, 
+                           chadoTransactionManager);
     
     super.dispose();
   }

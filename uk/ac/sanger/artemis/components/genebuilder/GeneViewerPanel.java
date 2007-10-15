@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.67 2007-10-15 11:22:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.68 2007-10-15 11:49:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -495,7 +495,7 @@ public class GeneViewerPanel extends JPanel
       public void actionPerformed(ActionEvent event)  
       {
         GeneUtils.checkGeneBoundary(chado_gene);
-        gene_builder.dispose();
+        gene_builder.dispose(true);
       }
     });
     menu.add(adjustGeneCoords);
