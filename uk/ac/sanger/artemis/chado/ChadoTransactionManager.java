@@ -262,7 +262,7 @@ public class ChadoTransactionManager
             ideleted = ((Integer)deleted.elementAt(i)).intValue();
             Range range_old = (Range)rv_old.elementAt(ideleted);
             String seg_id   = feature.getSegmentID(range_old);
-            deleteFeature(seg_id, feature.getKey().getKeyString());
+            deleteFeature(seg_id, feature.getKey().getKeyString(), feature);
             feature.getSegmentRangeStore().remove(seg_id);
           }
           
@@ -484,13 +484,10 @@ public class ChadoTransactionManager
       try
       {
         Qualifier qualifier_uniquename = event.getFeature().getQualifierByName("ID");
-        
-        
-        
         String feature_uniquename = 
                              (String)(qualifier_uniquename.getValues()).elementAt(0);
         
-        GFFStreamFeature gff_feature =
+        final GFFStreamFeature gff_feature =
           (GFFStreamFeature)event.getFeature().getEmblFeature();
         if(event.getFeature().getSegments().size() > 0)
         {
@@ -499,11 +496,11 @@ public class ChadoTransactionManager
           {
             Range range = (Range)ranges.get(i);
             feature_uniquename = gff_feature.getSegmentID(range);
-            deleteFeature(feature_uniquename, gff_feature.getKey().getKeyString());
+            deleteFeature(feature_uniquename, gff_feature.getKey().getKeyString(), null);
           }    
         }
         else
-          deleteFeature(feature_uniquename, gff_feature.getKey().getKeyString());
+          deleteFeature(feature_uniquename, gff_feature.getKey().getKeyString(), null);
       }
       catch(InvalidRelationException e)
       {
@@ -712,7 +709,7 @@ public class ChadoTransactionManager
     
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT,
                                chado_feature,
-                               null, (GFFStreamFeature)null, null);
+                               null, (GFFStreamFeature)feature.getEmblFeature(), null);
     sql.add(tsn); 
     
     addQualifiers(feature.getQualifiers(), chado_feature, 
@@ -831,7 +828,7 @@ public class ChadoTransactionManager
     
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT,
         chado_feature,
-        null, (GFFStreamFeature)null, null);
+        null, (GFFStreamFeature)segment.getFeature().getEmblFeature(), null);
    
     sql.add(tsn);  
   }
@@ -839,7 +836,8 @@ public class ChadoTransactionManager
   /**
    * Set the transaction for deleting a feature.
    */
-  private void deleteFeature(final String uniquename, String featureKey)
+  private void deleteFeature(final String uniquename, String featureKey, 
+                             final GFFStreamFeature feature)
   { 
     org.gmod.schema.sequence.Feature chado_feature = 
       new org.gmod.schema.sequence.Feature();
@@ -865,7 +863,7 @@ public class ChadoTransactionManager
     
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.DELETE,
         chado_feature,
-        null, (GFFStreamFeature)null, featureKey);
+        null, feature, featureKey);
 
     sql.add(tsn); 
   }
