@@ -17,13 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.21 2007-09-05 09:28:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.22 2007-10-16 16:02:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -78,10 +79,12 @@ public class MatchPanel extends JPanel
           PARALOG, 
     //    CLUSTER, 
           SIMILARITY };
+  private DocumentEntry entry;
   
-  public MatchPanel(final Feature feature)
+  public MatchPanel(final Feature feature, final DocumentEntry entry)
   {
     super(new BorderLayout());
+    this.entry = entry;
     updateFromFeature(feature);
   }
   
@@ -149,7 +152,7 @@ public class MatchPanel extends JPanel
     final Qualifier paraQualifier    = matchQualifiers.getQualifierByName(PARALOG);
     final Qualifier simQualifier     = matchQualifiers.getQualifierByName(SIMILARITY);
     
-    DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
+    //DocumentEntry entry = (DocumentEntry)feature.getEmblFeature().getEntry();
     final DatabaseDocument doc = (DatabaseDocument)entry.getDocument();
     if(databases == null)
     {
@@ -245,6 +248,8 @@ public class MatchPanel extends JPanel
     //
     // similarity
     GeneEditorPanel.addLightSeparator(matchVerticalBox);
+    
+    /*
     JButton addSimButton = new JButton("ADD SIMILARITY");
     addSimButton.setOpaque(false);
     addSimButton.addActionListener(new ActionListener()
@@ -265,8 +270,12 @@ public class MatchPanel extends JPanel
         add(SIMILARITY, accession.getText().trim(), feature);
       }
     });
+    */
     xBox = Box.createHorizontalBox();
-    xBox.add(addSimButton);
+    //xBox.add(addSimButton);
+    final JLabel simLabel = new JLabel("Similarity:");
+    simLabel.setFont( simLabel.getFont().deriveFont(Font.BOLD ));
+    xBox.add(simLabel);
     xBox.add(Box.createHorizontalGlue());
     matchVerticalBox.add(xBox);
     
