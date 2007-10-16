@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.35 2007-10-10 14:42:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.36 2007-10-16 19:36:53 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -58,7 +58,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.35 2007-10-10 14:42:58 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.36 2007-10-16 19:36:53 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -960,6 +960,8 @@ public class EditMenu extends SelectionMenu
         
         gffMergeFeatures(features_to_merge, merge_feature, 
                          selection, entry_group);
+        
+        entry_group.getActionController().endAction();
         return;
       }    
         
