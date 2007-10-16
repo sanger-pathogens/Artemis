@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.7 2007-09-18 09:36:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.8 2007-10-16 17:43:50 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -60,8 +60,9 @@ import javax.swing.text.StyledDocument;
 public class QualifierTextArea extends JTextPane
     implements MouseMotionListener
 {
+  private static final long serialVersionUID = 1L;
   private static String[] DATABASES = 
-          { "SWALL", "EMBL", "UniProt", "PMID", "PubMed", "InterPro" };
+          { "SWALL", "EMBL", "UniProt", "PMID", "PubMed", "InterPro", "OrthoMCLDB" };
   private static Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
   private static Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
   private static Cursor chand = new Cursor(Cursor.HAND_CURSOR);
@@ -265,7 +266,12 @@ public class QualifierTextArea extends JTextPane
   
   public static String getInterProSite()
   {
-	return "http://www.ebi.ac.uk/interpro/ISearch?query=";
+	  return "http://www.ebi.ac.uk/interpro/ISearch?query=";
+  }
+  
+  public static String getOrthoMCLSite()
+  {
+    return "http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=";
   }
   
   /**
@@ -293,6 +299,13 @@ public class QualifierTextArea extends JTextPane
       if(id.length < 2)
         return;
       cmd = getInterProSite()+id[1];
+    }
+    else if(hyperlinkText.indexOf("OrthoMCLDB") > -1)
+    {
+      String id[] = hyperlinkText.split(":");
+      if(id.length < 2)
+        return;
+      cmd = getOrthoMCLSite()+id[1];
     }
     else
     {
