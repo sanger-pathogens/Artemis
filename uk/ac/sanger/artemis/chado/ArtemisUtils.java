@@ -670,8 +670,8 @@ public class ArtemisUtils
     if(cvTerm != null)
     {
       logger4j.debug("USE CvTerm from cache, CvTermId=" + cvTermName
-          + "  -> " + cvTerm.getCvTermId() + " " + cvTerm.getName() + ":"
-          + cvTerm.getCv().getName());
+          + "  -> " + cvTerm.getCvTermId() + " " +  
+          cvTerm.getCv().getName() + ":" + cvTerm.getName());
     }
     else
     {
