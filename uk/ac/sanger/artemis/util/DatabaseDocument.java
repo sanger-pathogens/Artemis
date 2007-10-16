@@ -2409,7 +2409,7 @@ public class DatabaseDocument extends Document
   {
     GmodDAO dao = null;
     int ncommit = -1;
-    Hashtable featureIdStore = null;
+    Hashtable featureIdStore = new Hashtable();
     
     boolean useTransactions = false;
     if(!force && dao instanceof IBatisDAO)
@@ -2429,30 +2429,30 @@ public class DatabaseDocument extends Document
       for(int i = 0; i < sql.size(); i++)
       {
         final ChadoTransaction tsn = (ChadoTransaction)sql.get(i);
-        if( (tsn.getType() == ChadoTransaction.INSERT ||
-             tsn.getType() == ChadoTransaction.DELETE) && 
-            (tsn.getFeatureObject() instanceof Feature ||
-             tsn.getFeatureObject() instanceof FeatureLoc) )
-          continue;
-            
-        final String uniquename = tsn.getUniquename();
+        final Object uniquenames[] = getUniqueNames(tsn);
         
-        if(uniquename == null  || names_checked.contains(uniquename))
+        if(uniquenames == null)
           continue;
-
-        names_checked.add(uniquename);
-        final String keyName = tsn.getFeatureKey();
-        if(featureIdStore == null)
-          featureIdStore = new Hashtable();
-        unchanged = checkFeatureTimestamp(schema, 
-                         uniquename, tsn.getLastModified(), dao, 
-                         keyName, tsn.getFeatureObject(),
-                         featureIdStore);
-        if(!unchanged)
+        
+        for(int j=0; j<uniquenames.length; j++)
         {
-          if(useTransactions)
-            ((IBatisDAO) dao).endTransaction();
-          return 0;
+          final String uniquename = (String) uniquenames[j];
+          
+          if(uniquename == null || names_checked.contains(uniquename))
+            continue;
+
+          names_checked.add(uniquename);
+          final String keyName = tsn.getFeatureKey();
+          unchanged = checkFeatureTimestamp(schema, uniquename, 
+              tsn.getLastModified(), dao, keyName,
+              tsn.getFeatureObject(),
+              featureIdStore);
+          if(!unchanged)
+          {
+            if(useTransactions)
+              ((IBatisDAO) dao).endTransaction();
+            return 0;
+          }
         }
       }  
       
@@ -2479,39 +2479,42 @@ public class DatabaseDocument extends Document
       // update timelastmodified timestamp
       final Timestamp ts = new Timestamp(new java.util.Date().getTime());
       names_checked = new Vector();
-      for(int j = 0; j < sql.size(); j++)
+      for(int i = 0; i < sql.size(); i++)
       {
-        final ChadoTransaction tsn = (ChadoTransaction) sql.get(j);
-
-        if( (tsn.getType() == ChadoTransaction.INSERT || 
-             tsn.getType() == ChadoTransaction.DELETE) && 
-            (tsn.getFeatureObject() instanceof Feature || 
-             tsn.getFeatureObject() instanceof FeatureLoc) )
+        final ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
+        final Object uniquenames[] = getUniqueNames(tsn);
+             
+        if(uniquenames == null)
           continue;
-
-        final String uniquename = tsn.getUniquename();
-        if(uniquename == null || names_checked.contains(uniquename))
-          continue;
-
-        names_checked.add(uniquename);
-
-        final Feature feature;
-
-        // retieve from featureId store
-        if(featureIdStore != null && featureIdStore.containsKey(uniquename))
+        
+        for(int j=0; j<uniquenames.length; j++)
         {
-          int featureId = ((Integer) featureIdStore.get(uniquename)).intValue();
-          feature = new Feature();
-          feature.setFeatureId(featureId);
-          feature.setUniqueName(uniquename);
-        }
-        else
-          feature = dao.getFeatureByUniqueName(uniquename, tsn.getFeatureKey());
+          final String uniquename = (String) uniquenames[j];
+          if(uniquename == null || names_checked.contains(uniquename))
+            continue;
 
-        if(feature != null)
-        {
-          feature.setTimeLastModified(ts);
-          dao.merge(feature);
+          names_checked.add(uniquename);
+
+          final Feature feature;
+
+          // retieve from featureId store
+          if(featureIdStore != null && featureIdStore.containsKey(uniquename))
+          {
+            int featureId = ((Integer) featureIdStore.get(uniquename))
+                .intValue();
+            feature = new Feature();
+            feature.setFeatureId(featureId);
+            feature.setUniqueName(uniquename);
+          }
+          else
+            feature = dao.getFeatureByUniqueName(uniquename, 
+                                       tsn.getFeatureKey());
+
+          if(feature != null)
+          {
+            feature.setTimeLastModified(ts);
+            dao.merge(feature);
+          }
         }
 
         GFFStreamFeature gff_feature = (GFFStreamFeature) tsn.getGff_feature();
@@ -2547,6 +2550,7 @@ public class DatabaseDocument extends Document
           "Problems Writing to Database ",
           JOptionPane.ERROR_MESSAGE);
       logger4j.error(msg);
+      re.printStackTrace();
     }
     finally
     {
@@ -2562,6 +2566,22 @@ public class DatabaseDocument extends Document
       featureIdStore.clear();
         
     return ncommit;
+  }
+  
+  /**
+   * Get the uniquenames involved in a transaction
+   * @param tsn
+   * @return
+   */
+  private Object[] getUniqueNames(final ChadoTransaction tsn)
+  {
+    if(tsn.getGff_feature() == null)
+      return null;
+    if(tsn.getGff_feature().getSegmentRangeStore() == null ||
+       tsn.getGff_feature().getSegmentRangeStore().size() < 2)
+      return new Object[]{ tsn.getUniquename() };
+    else 
+      return tsn.getGff_feature().getSegmentRangeStore().keySet().toArray();
   }
   
   /**
