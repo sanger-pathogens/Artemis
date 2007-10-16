@@ -501,6 +501,8 @@ public class ChadoTransactionManager
         }
         else
           deleteFeature(feature_uniquename, gff_feature.getKey().getKeyString(), null);
+        
+        deleteSimilarity(feature_uniquename, gff_feature);
       }
       catch(InvalidRelationException e)
       {
@@ -834,6 +836,46 @@ public class ChadoTransactionManager
   }
   
   /**
+   * Delete similarity qualifiers
+   * @param uniquename
+   * @param feature
+   */
+  private void deleteSimilarity(final String uniquename, 
+                                final GFFStreamFeature feature)
+  {
+    if(feature.getQualifierByName("similarity") != null)
+    {
+      try
+      {
+        StringVector old_qualifier_strings = 
+            StreamQualifier.toStringVector(null, feature.getQualifierByName("similarity"));
+      
+        ChadoTransaction tsn = null;
+        for(int i = 0; i < old_qualifier_strings.size(); ++i)
+        {
+          String qualifierString = (String)old_qualifier_strings.elementAt(i);
+          int index = qualifierString.indexOf("=");
+          qualifierString = qualifierString.substring(index+1);
+          AnalysisFeature analysisFeature =
+               ArtemisUtils.getAnalysisFeature(uniquename, qualifierString, feature);
+        
+          tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+              analysisFeature,
+              feature.getLastModified(), feature,
+              feature.getKey().getKeyString());
+          sql.add(tsn);
+          logger4j.debug(i+" DELETE FEATURE SIMILARITY");
+        }  
+      }
+      catch(Exception e)
+      {  
+        logger4j.warn("DELETE FEATURE SIMILARITY\n"+e.getMessage());
+      }
+    }
+  }
+  
+  /**
+   * 
    * Set the transaction for deleting a feature.
    */
   private void deleteFeature(final String uniquename, String featureKey, 
