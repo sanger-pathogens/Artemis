@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.25 2007-10-08 14:13:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.26 2007-10-16 17:42:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -885,7 +885,8 @@ public class ChadoCanonicalGene
    * @param transcript_id
    * @return
    */
-  public String autoGenerateFeatureName(final String transcript_id)
+  public String autoGenerateFeatureName(final String transcript_id, 
+                                        final String keyName)
   {
     String featureName = "";
     try
@@ -898,9 +899,9 @@ public class ChadoCanonicalGene
     final Pattern pattern = Pattern.compile("\\d+$");
     final Matcher matcher = pattern.matcher(transcript_id);
     if(matcher.find())
-      featureName = featureName+":"+matcher.group()+":region";
+      featureName = featureName+":"+matcher.group()+":"+keyName;
     else
-      featureName = featureName+":region";
+      featureName = featureName+":"+keyName;
     
     if(!isUniqueName(featureName))
     {

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.69 2007-10-15 15:21:02 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.70 2007-10-16 17:42:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -342,7 +342,9 @@ public class GeneViewerPanel extends JPanel
     });
     menu.add(createTranscript);
     
-    JMenuItem createExon = new JMenuItem("Add exon from selected range");
+    final JMenu createFeature = new JMenu("Add feature to transcript from selected range");
+    
+    JMenuItem createExon = new JMenuItem("Exon");
     createExon.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)  
@@ -389,43 +391,45 @@ public class GeneViewerPanel extends JPanel
                        range_selected, uniquename, selection, exonKey, gene_builder);
       }
     });
-    menu.add(createExon);
+    createFeature.add(createExon);
     
-    JMenuItem createFeature = new JMenuItem("Add feature to transcript hierarchy");
-    createFeature.addActionListener(new ActionListener()
+    
+    
+    JMenuItem createFeature5Utr = new JMenuItem("5' UTR");
+    createFeature5Utr.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)  
       {
-        if(last_cursor_position == null)
-          return;
-        Feature transcript = getTranscriptAt(last_cursor_position);
-        String transcriptName  = getQualifier(transcript, "ID");
-        Range range_selected = selection.getSelectionRange();
-        
-        
-        try
-        {
-          uk.ac.sanger.artemis.Feature newFeature = 
-              addFeature(range_selected, transcriptName, null,
-                         transcript.getLocation().isComplement(), 
-                         true, chado_gene, entry_group);
-          if(newFeature != null)
-          {
-            selection.clear();
-            selection.add(newFeature);
-          }
-        }
-        catch(OutOfRangeException e)
-        {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
+        addDnaFeature(last_cursor_position, selection, 
+                      entry_group, new Key("five_prime_UTR"), "5UTR");
       }
     });
-    menu.add(createFeature);
     
-    JMenuItem createFeatureProtein = new JMenuItem(
-        "Add polypeptide feature to selected transcript hierarchy");
+    
+    JMenuItem createFeature3Utr = new JMenuItem("3' UTR");
+    createFeature3Utr.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)  
+      {
+        addDnaFeature(last_cursor_position, selection, 
+                      entry_group, new Key("three_prime_UTR"), "3UTR");
+      }
+    });
+    
+    
+    JMenuItem createFeatureDna = new JMenuItem("region");
+    createFeatureDna.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)  
+      {
+        addDnaFeature(last_cursor_position, selection, 
+                      entry_group, new Key("region"), "region");
+      }
+    });
+    
+    
+    
+    JMenuItem createFeatureProtein = new JMenuItem("Polypeptide");
     createFeatureProtein.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)  
@@ -462,7 +466,12 @@ public class GeneViewerPanel extends JPanel
         addProteinFeature(chado_gene, entry_group, transcriptName, transcript);
       }
     });
-    menu.add(createFeatureProtein);
+    createFeature.add(createFeatureProtein);
+    createFeature.add(createFeature5Utr);
+    createFeature.add(createFeature3Utr);
+    createFeature.add(createFeatureDna);
+    
+    menu.add(createFeature);
     
     menu.add(new JSeparator());
     JMenuItem adjustCoords = new JMenuItem("Adjust selected transcripts coordinates");
@@ -1385,7 +1394,8 @@ public class GeneViewerPanel extends JPanel
                           final boolean isComplement,
                           final boolean isParent,
                           final ChadoCanonicalGene chado_gene,
-                          final EntryGroup entry_group) 
+                          final EntryGroup entry_group,
+                          final Key key, final String keyName) 
           throws OutOfRangeException
   {
     if(range == null)
@@ -1399,7 +1409,8 @@ public class GeneViewerPanel extends JPanel
     
     if(featureName == null)
     {
-      final String autoId = chado_gene.autoGenerateFeatureName(transcriptName);
+      final String autoId = 
+        chado_gene.autoGenerateFeatureName(transcriptName, keyName);
       featureName = JOptionPane.showInputDialog(null,
           "Provide a feature unique name : ", autoId);
     
@@ -1410,15 +1421,15 @@ public class GeneViewerPanel extends JPanel
     QualifierVector qualifiers = new QualifierVector();
     
     qualifiers.add(new Qualifier("ID", featureName.trim()));
-    final Key key;
+
     if(isParent)
     {
-      key = new Key("region");
+      //key = new Key("region");
       qualifiers.add(new Qualifier("Parent", transcriptName));
     }
     else
     {
-      key = new Key("polypeptide");
+      //key = new Key("polypeptide");
       qualifiers.add(new Qualifier("Derives_from", transcriptName));
     }
     
@@ -1446,6 +1457,39 @@ public class GeneViewerPanel extends JPanel
   }
   
   
+  private void addDnaFeature(final Point last_cursor_position,
+                             final Selection selection,
+                             final EntryGroup entry_group,
+                             final Key key,
+                             final String name)
+  {
+    if(last_cursor_position == null)
+      return;
+    Feature transcript = getTranscriptAt(last_cursor_position);
+    String transcriptName  = getQualifier(transcript, "ID");
+    Range range_selected = selection.getSelectionRange();
+    
+    
+    try
+    {
+      uk.ac.sanger.artemis.Feature newFeature = 
+          addFeature(range_selected, transcriptName, null,
+                     transcript.getLocation().isComplement(), 
+                     true, chado_gene, entry_group, key, name);
+      if(newFeature != null)
+      {
+        selection.clear();
+        selection.add(newFeature);
+        gene_builder.setActiveFeature(newFeature, false);
+      }
+    }
+    catch(OutOfRangeException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }  
+  }
+  
   public static uk.ac.sanger.artemis.Feature 
                      addProteinFeature(final ChadoCanonicalGene chadoGene,
                                        final EntryGroup entry_group,
@@ -1469,7 +1513,8 @@ public class GeneViewerPanel extends JPanel
     try
     {
       return addFeature(range_selected, transcriptName, pepName,
-          transcript.getLocation().isComplement(), false, chadoGene, entry_group);
+          transcript.getLocation().isComplement(), false, chadoGene, entry_group,
+          new Key("polypeptide"), "pep");
     }
     catch(OutOfRangeException e)
     {
