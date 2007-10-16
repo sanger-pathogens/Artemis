@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.51 2007-09-07 14:10:40 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.52 2007-10-16 19:36:02 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -70,7 +70,7 @@ import javax.swing.JFrame;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.51 2007-09-07 14:10:40 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.52 2007-10-16 19:36:02 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -4008,7 +4008,7 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private Feature getFeatureOf(final Object object) 
   {
-    if(object instanceof Feature) 
+    if(object instanceof Feature)
       return (Feature)object;
     else 
       // object must be a FeatureSegment
@@ -4172,8 +4172,14 @@ public class FeatureDisplay extends EntryGroupPanel
 
             // special case - if there is only one segment then select the
             // whole feature
-            if(segment_feature.getSegments().size() == 1) 
+            if(segment_feature.getSegments().size() == 1)
+            {
+              //
+              // exon-model returns the segment - this is a fix for merging chado 
+              if(segment_feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
+                return current_segment;
               return segment_feature;
+            }
             else
               return current_segment;
           }
