@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.36 2007-10-17 13:38:34 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.37 2007-10-17 14:32:02 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -695,7 +695,7 @@ invisible_qualifiers_gff= \
     sex            \
     similarity     \
     source         \
-    specific_host  \ 
+    specific_host  \
     specimen_voucher \
     standard_name  \
     strain         \
