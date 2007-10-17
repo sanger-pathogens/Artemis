@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.70 2007-10-16 17:42:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.71 2007-10-17 09:21:26 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -280,14 +280,39 @@ public class GeneViewerPanel extends JPanel
     menu.add(deleteMenu);
     
     
-    JMenuItem deleteSegmentMenu = new JMenuItem("Delete Selected Exon");
+    final JMenuItem deleteSegmentMenu = new JMenuItem("Delete Selected Exon");
     deleteSegmentMenu.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)  
       {
-        uk.ac.sanger.artemis.FeatureSegment segment = null;
-        FeatureSegmentVector features = selection.getAllSegments();
+        final FeatureSegmentVector features = selection.getAllSegments();
+
+        if(features == null || features.size() < 1)
+        {
+          JOptionPane.showMessageDialog(null, 
+              "Select an exon and try again.", 
+              "Exon to delete not found!",
+              JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+        else
+        {
+          for(int i=0; i<features.size(); i++)
+          {
+            final uk.ac.sanger.artemis.Feature f = features.elementAt(i).getFeature();
+            if(!f.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL) &&
+               !f.getKey().getKeyString().equals("pseudogenic_exon") )
+            {
+              JOptionPane.showMessageDialog(null, 
+                  "Other feature types are selected.\nSelect an exon and try again.", 
+                  "Select exon to delete!",
+                  JOptionPane.ERROR_MESSAGE);
+              return; 
+            }
+          }
+        }
         
+        uk.ac.sanger.artemis.FeatureSegment segment = null;
         int option = JOptionPane.showConfirmDialog(null, 
             "Delete Selected Exon", 
             "Delete Selected Exon", 
@@ -330,7 +355,7 @@ public class GeneViewerPanel extends JPanel
     menu.add(deleteSegmentMenu);
     
     menu.add(new JSeparator());
-    JMenuItem createTranscript = new JMenuItem("Create transcript");
+    final JMenuItem createTranscript = new JMenuItem("Create transcript");
     createTranscript.setAccelerator(CREATE_FEATURES_KEY);
     createTranscript.addActionListener(new ActionListener()
     {
@@ -344,7 +369,7 @@ public class GeneViewerPanel extends JPanel
     
     final JMenu createFeature = new JMenu("Add feature to transcript from selected range");
     
-    JMenuItem createExon = new JMenuItem("Exon");
+    final JMenuItem createExon = new JMenuItem("exon");
     createExon.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)  
@@ -395,7 +420,7 @@ public class GeneViewerPanel extends JPanel
     
     
     
-    JMenuItem createFeature5Utr = new JMenuItem("5' UTR");
+    JMenuItem createFeature5Utr = new JMenuItem("5'UTR");
     createFeature5Utr.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)  
@@ -406,7 +431,7 @@ public class GeneViewerPanel extends JPanel
     });
     
     
-    JMenuItem createFeature3Utr = new JMenuItem("3' UTR");
+    JMenuItem createFeature3Utr = new JMenuItem("3'UTR");
     createFeature3Utr.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)  
@@ -429,7 +454,7 @@ public class GeneViewerPanel extends JPanel
     
     
     
-    JMenuItem createFeatureProtein = new JMenuItem("Polypeptide");
+    JMenuItem createFeatureProtein = new JMenuItem("polypeptide");
     createFeatureProtein.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)  
