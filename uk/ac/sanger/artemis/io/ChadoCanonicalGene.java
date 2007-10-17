@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.26 2007-10-16 17:42:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.27 2007-10-17 15:29:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -141,11 +141,11 @@ public class ChadoCanonicalGene
    * Delete features.
    * @param embl_feature
    */
-  public void deleteFeature(Feature embl_feature)
+  public void deleteFeature(final Feature embl_feature)
   {
     try
     {
-      String name = getQualifier(embl_feature, "ID");
+      final String name = getQualifier(embl_feature, "ID");
       Object feature = getSplicedFeatures(name);
 
       if(feature != null)
@@ -153,6 +153,18 @@ public class ChadoCanonicalGene
         String transcript_name = getQualifier((Feature) feature, "Parent");
         splicedFeatures.remove(transcript_name);
         return;
+      }
+      
+      final Enumeration enum_protein = proteins.keys();
+      while(enum_protein.hasMoreElements())
+      {
+        final String transcriptName = (String)enum_protein.nextElement();
+        Feature protein = (Feature)proteins.get(transcriptName);
+        if(getQualifier(protein, "ID").equals(name))
+        {
+          proteins.remove(transcriptName);
+          return;
+        }
       }
       
       feature = getFeatureFromHash(name, three_prime_utr);
