@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.1 2004-06-09 09:46:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.2 2007-10-17 09:45:15 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -29,11 +29,12 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.plot.*;
 import uk.ac.sanger.artemis.sequence.*;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.File;
-import java.io.FileReader;
 import java.util.Vector;
 
 import javax.swing.*;
@@ -42,7 +43,7 @@ import javax.swing.*;
  *  This menu controls one particular BasePlotGroup.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: GraphMenu.java,v 1.1 2004-06-09 09:46:57 tjc Exp $
+ *  @version $Id: GraphMenu.java,v 1.2 2007-10-17 09:45:15 tjc Exp $
  **/
 
 public class GraphMenu extends JMenu {
@@ -118,11 +119,16 @@ public class GraphMenu extends JMenu {
       addSeparator ();
     }
 
+    boolean useSubMenu = false;
     for (int i = 0 ; i < orig_algorithms.length ; ++i) {
       final BaseAlgorithm this_algorithm = orig_algorithms[i];
 
-      addAlgorithm (this_algorithm, false);
+      if(this_algorithm.getAlgorithmName().startsWith("AT Deviation"))
+        useSubMenu = true;
+      addAlgorithm (this_algorithm, false, useSubMenu);
     }
+    if(useSubMenu)
+      add(menuSubMenu);
 
     if (Options.getOptions ().getProperty ("codon_usage_file") != null) {
       final String codon_usage_file_name =
@@ -165,7 +171,8 @@ public class GraphMenu extends JMenu {
    *  @return The new JCheckBoxMenuItem
    **/
   public JCheckBoxMenuItem addAlgorithm (final BaseAlgorithm algorithm,
-                                        final boolean is_visible) {
+                                        final boolean is_visible,
+                                        final boolean useSubMenu) {
 
     final JCheckBoxMenuItem new_item =
       new JCheckBoxMenuItem (algorithm.getAlgorithmName ());
@@ -179,7 +186,10 @@ public class GraphMenu extends JMenu {
       }
     });
 
-    add (new_item);
+    if(useSubMenu)
+      menuSubMenu.add(new_item);
+    else
+      add (new_item);
 
     algorithm_menu_items.addElement (new_item);
 
@@ -264,7 +274,7 @@ public class GraphMenu extends JMenu {
         new CodonUsageAlgorithm (backward_strand, usage_weights);
     }
 
-    addAlgorithm (codon_usage_algorithm, is_visible);
+    addAlgorithm (codon_usage_algorithm, is_visible, false);
 
     final BasePlot new_plot =
       base_plot_group.addAlgorithm (codon_usage_algorithm);
@@ -325,7 +335,7 @@ public class GraphMenu extends JMenu {
 
         base_plot_group.setVisibleByAlgorithm (new_algorithm, true);
 
-        addAlgorithm (new_algorithm, true);
+        addAlgorithm (new_algorithm, true, false);
 
         // XXX hack to force the BasePlot to initialise
         final DisplayAdjustmentEvent event =
@@ -394,6 +404,8 @@ public class GraphMenu extends JMenu {
    *  The FeatureDisplay that was passed to the constructor.
    **/
   private FeatureDisplay feature_display;
+  
+  private JMenu menuSubMenu = new JMenu("Other Graphs");
 
   /**
    *  This list of the CheckboxMenuItems for the graphs is stored so that we
