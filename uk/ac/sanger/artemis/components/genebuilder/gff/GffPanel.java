@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.7 2007-04-19 15:22:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.8 2007-10-17 14:18:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -72,7 +72,7 @@ public class GffPanel extends JPanel
     return false;
   }
   
-  private Component createGffQualifiersComponent()
+  private Component createGffQualifiersComponent(final Feature feature)
   {
     int nrows = 0;
     
@@ -115,6 +115,9 @@ public class GffPanel extends JPanel
       uniquenameTextField = new JTextField(uniquename);
       cellDimension = new Dimension(uniquenameTextField.getPreferredSize().width+10,
                                     idField.getPreferredSize().height+10);
+      
+      if(feature.getKey().getKeyString().indexOf("exon") > -1)
+        uniquenameTextField.setEditable(false);
       uniquenameTextField.setMaximumSize(cellDimension);
       
       c.gridx = 0;
@@ -157,6 +160,7 @@ public class GffPanel extends JPanel
           cellDimension = new Dimension(parentTextField.getPreferredSize().width+10,
                                         parentField.getPreferredSize().height+10);
         parentTextField.setMaximumSize(cellDimension);
+        parentTextField.setEditable(false);
         
         c.gridx = 0;
         c.gridy = nrows;
@@ -187,6 +191,7 @@ public class GffPanel extends JPanel
           cellDimension = new Dimension(derivesFromTextField.getPreferredSize().width+10,
                                         derivesFromsField.getPreferredSize().height+10);
         derivesFromTextField.setMaximumSize(cellDimension);
+        derivesFromTextField.setEditable(false);
         
         c.gridx = 0;
         c.gridy = nrows;
@@ -217,6 +222,7 @@ public class GffPanel extends JPanel
          cellDimension = new Dimension(timeTextField.getPreferredSize().width+10,
                                        timeField.getPreferredSize().height+10);
       timeTextField.setMaximumSize(cellDimension);
+      timeTextField.setEditable(false);
       
       c.gridx = 0;
       c.gridy = nrows;
@@ -257,7 +263,7 @@ public class GffPanel extends JPanel
     }
    
     feature.addFeatureChangeListener(this);  
-    add(createGffQualifiersComponent());
+    add(createGffQualifiersComponent(feature));
     repaint();
     revalidate();
   }
