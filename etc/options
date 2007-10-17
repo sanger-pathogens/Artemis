@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.35 2007-10-16 19:38:40 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.36 2007-10-17 13:38:34 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -630,12 +630,29 @@ invisible_qualifiers = \
 
 invisible_qualifiers_gff= \
 	Alias          \
+	allele         \
+	bound_moiety   \
+	cell_line      \
+	cell_type      \
+	charge         \
+	chromosome     \
     class          \
+    clone          \
+    clone_lib      \
     cluster        \
     controlled_curation \
+    country        \
+    cultivar       \
+    DNA_transposon \
     Derives_from   \
+    dev_stage      \
+    ecotype        \
+    environmental_sample \
+    estimated_length     \
+    exception      \
     feature_id     \
     feature_relationship_rank \
+    focus          \
     Gap            \
     gff_feature    \
     gff_group      \
@@ -643,17 +660,54 @@ invisible_qualifiers_gff= \
     gff_source     \
     GO             \
     ID             \
+    insertion_seq  \
+    isoelectric    \
+    isolation_source \
+    isolate        \
+    kinetoplast    \
+    lab_host       \
+    locus_tag      \
+    macronuclear   \
+    map            \
+    mass           \
+    mod_base       \
+    mol_type       \
     Name           \
     Note           \
     note           \
     Ontology_term  \
+    operon         \
+    organell       \
     orthologous_to \
     paralogous_to  \
     Parent         \
+    PCR_conditions \
+    plasmid        \
+    pop_variant    \
     product        \
+    protein_id     \
+    replace        \
+    results        \
+    segment        \
+    sequenced_mol  \
+    serotype       \
+    serovar        \
+    sex            \
     similarity     \
+    source         \
+    specific_host  \ 
+    specimen_voucher \
+    standard_name  \
+    strain         \
+    sub_clone      \
+    sub_species    \
+    sub_strain     \
     Target         \
-    timelastmodified  
+    timelastmodified  \
+    tissue_lib     \
+    tissue_type    \
+    transgenic     \
+    translation
 
 
 # These pairs consist of a program name and a parameter string.
