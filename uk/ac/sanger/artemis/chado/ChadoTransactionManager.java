@@ -2232,8 +2232,11 @@ public class ChadoTransactionManager
       for(int i=0; i<sql.size() && i<retVal; i++)
       {
         ChadoTransaction tsn = (ChadoTransaction)sql.get(i);
+        String key = "";
+        if(tsn.getFeatureKey() != null)
+          key = "KEY="+tsn.getFeatureKey()+" ";
         logger4j.debug("COMMIT DONE ["+
-                       tsn.getTypeAsString()+"] "+tsn.getLogComment()); 
+                       tsn.getTypeAsString()+"] "+key+tsn.getLogComment()); 
       }
     }
     
