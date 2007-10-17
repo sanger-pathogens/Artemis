@@ -17,16 +17,16 @@ pseudogenic_exon    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ont
 pseudogenic_transcript ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain topology localization gff_source gff_seqname score 
 intron              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain topology localization gff_source gff_seqname score 
 exon                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified codon_start description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain topology localization gff_source gff_seqname score 
-three_prime_UTR     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified systematic_id db_xref note comment 
-five_prime_UTR      ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified systematic_id db_xref note comment 
+three_prime_UTR     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified systematic_id note comment 
+five_prime_UTR      ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified systematic_id note comment 
 transcript          ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified 
-primary_transcript  ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified db_xref product note comment controlled_curation 
-tRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified db_xref product note comment controlled_curation 
-rRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified db_xref product note comment controlled_curation 
-mRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified db_xref product note comment controlled_curation 
-snRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified db_xref product note comment controlled_curation 
-scRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified db_xref product note comment controlled_curation 
-snoRNA              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified db_xref product note comment controlled_curation 
+primary_transcript  ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
+tRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
+rRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
+mRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
+snRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
+scRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
+snoRNA              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
 polypeptide_domain  ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified 
 signal_peptide      ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified 
 match               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified 
@@ -41,37 +41,37 @@ repeat_family       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ont
 transposable_element  ID Name Alias Parent Target Gap Derives_from Note Dbxref Ontology_term feature_id timelastmodified
 binding_site        ID Name Alias Parent Target Gap Derives_from Note Dbxref Ontology_term feature_id timelastmodified
 
-minus_10_signal     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence function gene label locus_tag map note comment operon partial standard_name 
-minus_35_signal     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence function gene label locus_tag map note comment operon partial standard_name 
-three_prime_clip    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence function gene label locus_tag map note comment partial standard_name 
-five_prime_clip     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence function gene label locus_tag map note comment partial standard_name 
-CAAT_signal         ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence gene label locus_tag map note comment partial 
-D_loop              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence gene label locus_tag map note comment partial 
-GC_signal           ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence gene label locus_tag map note comment partial 
-three_prime_LTR     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence function gene label locus_tag map note comment partial standard_name 
-five_prime_LTR      ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence function gene label locus_tag map note comment partial standard_name 
-N_region        	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation codon codon_start db_xref evidence gene label locus_tag map note comment partial product pseudo standard_name 
-STS             	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence gene label locus_tag map note comment partial standard_name 
-TATA_box        	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence gene label locus_tag map note comment partial 
-attenuator      	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence gene label locus_tag map note comment operon partial phenotype 
-enhancer        	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence gene label locus_tag map note comment partial standard_name 
+minus_10_signal     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence function gene label locus_tag map note comment operon partial standard_name 
+minus_35_signal     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence function gene label locus_tag map note comment operon partial standard_name 
+three_prime_clip    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence function gene label locus_tag map note comment partial standard_name 
+five_prime_clip     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence function gene label locus_tag map note comment partial standard_name 
+CAAT_signal         ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence gene label locus_tag map note comment partial 
+D_loop              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence gene label locus_tag map note comment partial 
+GC_signal           ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence gene label locus_tag map note comment partial 
+three_prime_LTR     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence function gene label locus_tag map note comment partial standard_name 
+five_prime_LTR      ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence function gene label locus_tag map note comment partial standard_name 
+N_region        	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation codon codon_start evidence gene label locus_tag map note comment partial product pseudo standard_name 
+STS             	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence gene label locus_tag map note comment partial standard_name 
+TATA_box        	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence gene label locus_tag map note comment partial 
+attenuator      	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence gene label locus_tag map note comment operon partial phenotype 
+enhancer        	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence gene label locus_tag map note comment partial standard_name 
 gap             	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified @estimated_length
-iDNA            	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence function gene label locus_tag map note comment number partial standard_name 
-mature_peptide  	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified EC_number allele citation codon codon_start db_xref evidence function gene label locus_tag map note comment partial product pseudo standard_name 
-modified_base_site  ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified @mod_base allele citation db_xref evidence frequency gene label locus_tag map note comment 
-operon          	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified @operon allele citation db_xref evidence function label map note comment phenotype pseudo standard_name 
-polyA_signal_sequence  	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence gene label locus_tag map note comment partial 
-polyA_site      		ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence gene label locus_tag map note comment 
-precursor_RNA   		ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence function gene label locus_tag map note comment operon partial product standard_name 
-primary_transcript 		ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence function gene label locus_tag map note comment operon partial standard_name 
-primer_binding_site     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified PCR_conditions allele citation db_xref evidence gene label locus_tag map note comment partial standard_name 
-promoter        		ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence function gene label locus_tag map note comment operon partial phenotype pseudo standard_name 
-protein_binding_site    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified @bound_moiety allele citation db_xref evidence function gene label locus_tag map note comment partial standard_name 
-origin_of_replication	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref direction evidence gene label locus_tag map note comment partial standard_name 
-repeat_region   	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence function gene insertion_seq label locus_tag map note comment partial rpt_family rpt_type rpt_unit standard_name DNA_transposon 
-repeat_unit     	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence function gene label locus_tag map note comment partial rpt_family rpt_type rpt_unit 
-satellite_DNA       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence gene label locus_tag map note comment partial rpt_family rpt_type rpt_unit standard_name 
-stem_loop       	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence function gene label locus_tag map note comment operon partial standard_name 
-terminator      	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation db_xref evidence gene label locus_tag map note comment operon partial standard_name 
-transit_peptide 	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation codon codon_start db_xref evidence function gene label locus_tag map note comment partial product pseudo standard_name
+iDNA            	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence function gene label locus_tag map note comment number partial standard_name 
+mature_peptide  	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified EC_number allele citation codon codon_start evidence function gene label locus_tag map note comment partial product pseudo standard_name 
+modified_base_site  ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified @mod_base allele citation evidence frequency gene label locus_tag map note comment 
+operon          	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified @operon allele citation evidence function label map note comment phenotype pseudo standard_name 
+polyA_signal_sequence  	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence gene label locus_tag map note comment partial 
+polyA_site      		ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence gene label locus_tag map note comment 
+precursor_RNA   		ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence function gene label locus_tag map note comment operon partial product standard_name 
+primary_transcript 		ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence function gene label locus_tag map note comment operon partial standard_name 
+primer_binding_site     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified PCR_conditions allele citation evidence gene label locus_tag map note comment partial standard_name 
+promoter        		ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence function gene label locus_tag map note comment operon partial phenotype pseudo standard_name 
+protein_binding_site    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified @bound_moiety allele citation evidence function gene label locus_tag map note comment partial standard_name 
+origin_of_replication	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation direction evidence gene label locus_tag map note comment partial standard_name 
+repeat_region   	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence function gene insertion_seq label locus_tag map note comment partial rpt_family rpt_type rpt_unit standard_name DNA_transposon 
+repeat_unit     	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence function gene label locus_tag map note comment partial rpt_family rpt_type rpt_unit 
+satellite_DNA       ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence gene label locus_tag map note comment partial rpt_family rpt_type rpt_unit standard_name 
+stem_loop       	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence function gene label locus_tag map note comment operon partial standard_name 
+terminator      	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation evidence gene label locus_tag map note comment operon partial standard_name 
+transit_peptide 	ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified allele citation codon codon_start evidence function gene label locus_tag map note comment partial product pseudo standard_name
 
