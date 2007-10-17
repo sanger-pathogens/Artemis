@@ -60,6 +60,8 @@ public class ChadoTransaction
   
   private GFFStreamFeature gff_feature;
   
+  private String logComment;
+  
   /**
    * Create a transaction to represent a single insert, delete or
    * update.
@@ -74,12 +76,14 @@ public class ChadoTransaction
                           final Object feature_obj,
                           final Timestamp lastmodified,
                           final GFFStreamFeature gff_feature,
-                          final String featureKey)
+                          final String featureKey, 
+                          final String logComment)
   {
     this.type = type;
     this.lastmodified = lastmodified;
     this.feature_obj  = feature_obj;
     this.gff_feature  = gff_feature;
+    this.logComment   = logComment;
     
     if(featureKey != null &&
        featureKey.equals(DatabaseDocument.EXONMODEL))
@@ -98,6 +102,16 @@ public class ChadoTransaction
     return type;
   } 
 
+  public String getTypeAsString()
+  {
+    if(type == UPDATE)
+      return "UPDATE";
+    else if(type == INSERT)
+      return "INSERT";
+    else if(type == DELETE)
+      return "DELETE";
+    return "";
+  }
 
   /**
    * Set the old uniquename, used when updating the uniquename
@@ -165,6 +179,12 @@ public class ChadoTransaction
   public String getFeatureKey()
   {
     return featureKey;
+  }
+
+
+  public String getLogComment()
+  {
+    return logComment;
   }
 
 }
