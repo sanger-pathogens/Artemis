@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.27 2007-10-17 15:29:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.28 2007-10-17 15:31:08 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -128,6 +128,7 @@ public class ChadoCanonicalGene
           three_prime_utr.remove(transcript_name);
           five_prime_utr.remove(transcript_name);
           other_features.remove(transcript_name);
+          proteins.remove(transcript_name);
         }
       }
       catch(InvalidRelationException e)
