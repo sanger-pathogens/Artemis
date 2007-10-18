@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.28 2007-10-17 15:31:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.29 2007-10-18 19:25:07 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -808,6 +808,7 @@ public class ChadoCanonicalGene
     {
       int index = transcript_id.lastIndexOf(':');
       int transcript_number = -1;
+      String name = (String)getGene().getQualifierByName("ID").getValues().get(0);
       
       if(index > -1)
       {
@@ -823,21 +824,23 @@ public class ChadoCanonicalGene
       
       if(transcript_number < 1)
       {
-        for(transcript_number = 1; transcript_number <= transcripts.size(); 
+        for(transcript_number = 0; transcript_number <= transcripts.size(); 
             transcript_number++)
         {
-          Feature transcript = (Feature) transcripts.get(transcript_number - 1);
+          Feature transcript = (Feature) transcripts.get(transcript_number);
           if(transcript_id.equals(getQualifier(transcript, "ID")))
             break;
         }
       }
+      if(transcript_number == 0)
+        name = name + ":exon:";
+      else
+        name = name + ":" + transcript_number + ":exon:";
       
-      String name = (String)getGene().getQualifierByName("ID").getValues().get(0);
       int auto = 1;
-      while( isSplicedFeatures( 
-          name + ":" + transcript_number + ":exon:" + auto) && auto < 50)
+      while( isSplicedFeatures(name + auto) && auto < 50)
         auto++;
-      return name + ":" + transcript_number + ":exon:" + auto;
+      return name + auto;
     }
     catch(InvalidRelationException e)
     {
