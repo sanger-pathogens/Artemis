@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.30 2007-10-02 15:22:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.31 2007-10-18 15:05:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -73,7 +73,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.30 2007-10-02 15:22:55 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.31 2007-10-18 15:05:52 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -1186,6 +1186,12 @@ public class AddMenu extends SelectionMenu
 
     String uniquename = GeneUtils.promptForUniquename(entry_group, search_range.isForwardMarker());
     
+    final Key key;
+    if(GeneUtils.isDatabaseEntry(entry_group))
+      key = new Key("region");
+    else
+      key = Key.CDS;
+    
     for(int i = 0 ; i < forward_orf_ranges.length ; ++i) 
     {
       final MarkerRange this_range = forward_orf_ranges[i];
@@ -1201,7 +1207,7 @@ public class AddMenu extends SelectionMenu
           qualifiers = new QualifierVector();
           qualifiers.setQualifier(qualifier);
         }
-        new_feature = makeFeatureFromMarkerRange (entry, this_range, Key.CDS, qualifiers);
+        new_feature = makeFeatureFromMarkerRange (entry, this_range, key, qualifiers);
       } 
       catch (EntryInformationException e) 
       {
