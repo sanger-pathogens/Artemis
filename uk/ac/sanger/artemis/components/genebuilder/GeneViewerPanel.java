@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.71 2007-10-17 09:21:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.72 2007-10-18 10:54:26 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.Iterator;
+import java.util.Vector;
 import java.awt.geom.RoundRectangle2D;
 
 import uk.ac.sanger.artemis.Entry;
@@ -773,33 +774,25 @@ public class GeneViewerPanel extends JPanel
           }
         }
         
-        List utr_3 = chado_gene.get3UtrOfTranscript(transcript_name);
-        List utr_5 = chado_gene.get5UtrOfTranscript(transcript_name);
-        List utrs = null;
+        final List utr_3 = chado_gene.get3UtrOfTranscript(transcript_name);
+        final List utr_5 = chado_gene.get5UtrOfTranscript(transcript_name);
+        final List utrs = new Vector();
         if(utr_3 != null)
-          utrs = utr_3;
+          utrs.addAll(utr_3);
         if(utr_5 != null)
+          utrs.addAll(utr_5);
+        
+        for(int j = 0; j < utrs.size(); j++)
         {
-          if(utrs == null)
-            utrs = utr_5;
-          else
-            utrs.addAll(utr_5);
+          Feature utr = (Feature) utrs.get(j);
+          Range range = utr.getLocation().getTotalRange();
+          int utr_start = border
+              + (int) ((range.getStart() - start) * fraction);
+          int utr_end = border + (int) ((range.getEnd() - start) * fraction);
+          if(p.x >= utr_start && p.x <= utr_end)
+            return utr;
         }
         
-        if(utrs != null)
-        {
-          for(int j=0; j<utrs.size(); j++)
-          {
-            Feature utr = (Feature)utrs.get(j);
-            Range range = utr.getLocation().getTotalRange();
-            int utr_start = border
-                + (int) ((range.getStart() - start) * fraction);
-            int utr_end = border
-                + (int) ((range.getEnd() - start) * fraction);
-            if(p.x >= utr_start && p.x <= utr_end)
-              return utr;
-          }
-        }
         
         // anything else
         List others = chado_gene.getOtherFeaturesOfTranscript(transcript_name);
