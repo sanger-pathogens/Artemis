@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.50 2007-10-16 16:03:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.51 2007-10-18 16:17:22 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -29,8 +29,10 @@ import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.MarkerRange;
 
+import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.GFFDocumentEntry;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.OutOfDateException;
 import uk.ac.sanger.artemis.io.LocationParseException;
 import uk.ac.sanger.artemis.io.PartialSequence;
@@ -49,7 +51,9 @@ import uk.ac.sanger.artemis.io.StreamQualifier;
 import uk.ac.sanger.artemis.io.QualifierInfo;
 
 import uk.ac.sanger.artemis.components.ProgressThread;
+import uk.ac.sanger.artemis.components.genebuilder.GeneBuilderFrame;
 import uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
 import uk.ac.sanger.artemis.components.genebuilder.gff.GffPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
@@ -68,7 +72,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.50 2007-10-16 16:03:29 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.51 2007-10-18 16:17:22 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -1043,6 +1047,15 @@ public class FeatureEdit extends JPanel
    **/
   private void complementLocation() 
   {
+    if(GeneUtils.isDatabaseEntry(entry_group))
+    {
+      final ChadoCanonicalGene chadoGene = 
+        ((GFFStreamFeature)getFeature().getEmblFeature()).getChadoGene();
+      GeneUtils.complementGeneModel(chadoGene);
+      ((GeneBuilderFrame)frame).dispose(true);
+      return;  
+    }
+    
     if(rationalizeLocation()) 
     {
       if(location_text.getText().startsWith("complement(")) 
