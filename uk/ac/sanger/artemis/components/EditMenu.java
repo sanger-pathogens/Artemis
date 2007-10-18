@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.36 2007-10-16 19:36:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.37 2007-10-18 19:23:51 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -58,7 +58,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.36 2007-10-16 19:36:53 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.37 2007-10-18 19:23:51 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -1253,31 +1253,31 @@ public class EditMenu extends SelectionMenu
         {
           final FeatureSegment this_segment = segments.elementAt(j);
           ranges.add(this_segment.getRawRange());
-          
-          final String segId = 
-            ((GFFStreamFeature)this_feature.getEmblFeature()).getSegmentID(this_segment.getRawRange());
-          id_range_store.put(segId,this_segment.getRawRange());
         }         
       }
       
       for(int i=0; i<features_to_merge.size(); i++)
       {
         final Feature this_feature = features_to_merge.elementAt(i);
-        ((GFFStreamFeature)this_feature.getEmblFeature()).setSegmentRangeStore(id_range_store);
-        
+
         // remove the duplicate feature
         if(i > 0)
-          this_feature.getEntry().remove(this_feature, true);
+          this_feature.getEntry().remove(this_feature, false);
       }
 
+      
       // add the segments
-      uk.ac.sanger.artemis.chado.ChadoTransactionManager.addSegments = false;
+      //uk.ac.sanger.artemis.chado.ChadoTransactionManager.addSegments = false;
       for(int i = 0; i < ranges.size(); i++)
       {
         final Range range = (Range)ranges.get(i);
+        final String segId = chadoGene.autoGenerateSplicedFeatureName(transcriptId);
+        id_range_store.put(segId,range);
+        ((GFFStreamFeature)merge_feature.getEmblFeature()).setSegmentRangeStore(id_range_store);
+        
         merge_feature.addSegment(range);
       }
-      uk.ac.sanger.artemis.chado.ChadoTransactionManager.addSegments = true;
+      //uk.ac.sanger.artemis.chado.ChadoTransactionManager.addSegments = true;
       
       // set the new ID for the joined feature
       final String ID = ((GFFStreamFeature)merge_feature.getEmblFeature()).getSegmentID(
