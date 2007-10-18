@@ -5,7 +5,7 @@
 #
 # key               Qualifiers (@=mandatory)
 # =======           ========================
-#region              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified description locus stable_id ec_number gene_symbol Ontology_term dbxref molecule_type size organism_name strain topology localization gff_source gff_seqname score 
+region              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified description locus stable_id ec_number gene_symbol Ontology_term dbxref molecule_type size organism_name strain topology localization gff_source gff_seqname score 
 #contig              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain topology localization gff_source gff_seqname score 
 #supercontig         ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain topology localization gff_source gff_seqname score 
 #chromosome          ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified note comment description locus stable_id ec_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain topology localization gff_source gff_seqname score 
