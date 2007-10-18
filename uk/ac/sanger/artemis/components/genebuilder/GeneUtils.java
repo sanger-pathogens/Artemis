@@ -89,6 +89,39 @@ public class GeneUtils
   }
   
   /**
+   * Used to reverse complement all the gene model features
+   * @param chadoGene
+   */
+  public static void complementGeneModel(final ChadoCanonicalGene chadoGene)
+  {
+    if(chadoGene == null)
+      return;
+    try
+    {
+      final Feature gene = chadoGene.getGene();
+      final boolean complement = gene.getLocation().isComplement();
+      gene.setLocation(gene.getLocation().getComplement());
+      final Set kids = chadoGene.getChildren(gene);
+      final Iterator it = kids.iterator();
+      while(it.hasNext())
+      {
+        final Feature f = (Feature)it.next();
+        final RangeVector rv = f.getLocation().getRanges();
+        rv.reverse();
+        f.setLocation(new Location(rv, !complement));
+      }
+    }
+    catch(ReadOnlyException e)
+    {
+      e.printStackTrace();
+    }
+    catch(OutOfRangeException e)
+    {
+      e.printStackTrace();
+    }
+  }
+  
+  /**
    * Given a collection of features, determine if these should be
    * shown or hidden in the Artemis display
    * @param features
