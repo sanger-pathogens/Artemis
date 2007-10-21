@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Selector.java,v 1.8 2007-07-09 12:17:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Selector.java,v 1.9 2007-10-21 11:34:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -39,6 +39,7 @@ import uk.ac.sanger.artemis.util.StringVector;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.StringTokenizer;
 
 import javax.swing.*;
 
@@ -47,7 +48,7 @@ import javax.swing.*;
  *  features in an EntryGroup on key and contents.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Selector.java,v 1.8 2007-07-09 12:17:52 tjc Exp $
+ *  @version $Id: Selector.java,v 1.9 2007-10-21 11:34:57 tjc Exp $
  **/
 
 public class Selector extends JFrame
@@ -624,12 +625,14 @@ public class Selector extends JFrame
             final FeaturePredicateVector temp_predicates =
               new FeaturePredicateVector();
 
-            final StringVector words =
-              StringVector.getStrings(search_text, " ");
+            //final StringVector words =
+            //  StringVector.getStrings(search_text, " ");
+            
+            final StringTokenizer tok = new StringTokenizer(search_text, " \n");
 
-            for(int i = 0 ; i < words.size() ; ++i) 
+            while(tok.hasMoreTokens()) 
             {
-              final String this_word =(String)words.elementAt(i);
+              final String this_word = tok.nextToken().trim();
               final FeaturePredicate new_predicate =
                 new FeatureKeyQualifierPredicate(key_selector.getSelectedItem(),
                                                  qualifier_name,
