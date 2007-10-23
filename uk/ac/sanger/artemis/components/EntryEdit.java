@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.55 2007-10-12 15:16:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.56 2007-10-23 17:06:27 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.55 2007-10-12 15:16:19 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.56 2007-10-23 17:06:27 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1627,6 +1627,10 @@ public class EntryEdit extends JFrame
           continue;
       }
       catch(InvalidRelationException e)
+      {
+        continue;
+      }
+      catch(NullPointerException npe)
       {
         continue;
       }
