@@ -936,7 +936,7 @@ public class CVPanel extends JPanel
       term_list = new JExtendedComboBox(terms);
     
       Dimension d = term_list.getPreferredSize();
-      d = new Dimension(280,(int)d.getHeight());
+      d = new Dimension(500,(int)d.getHeight());
       term_list.setPreferredSize(d);
     
       term_list.setRenderer(new CVCellRenderer());
