@@ -21,8 +21,8 @@
       enhancementEnabled="true" 
       lazyLoadingEnabled="true" 
       maxRequests="128" 
-      maxSessions="10" 
-      maxTransactions="5" 
+      maxSessions="3" 
+      maxTransactions="3" 
       useStatementNamespaces="false" 
   /> 
   
@@ -41,7 +41,10 @@
       <property name="JDBC.Driver" value="org.postgresql.Driver"/> 
       <property name="JDBC.ConnectionURL" value="jdbc:postgresql://${chado}"/> 
       <property name="JDBC.Username" value="${username}"/> 
-      <property name="JDBC.Password" value="${password}"/> 
+      <property name="JDBC.Password" value="${password}"/>
+      <property value="3" name="Pool.MaximumActiveConnections"/>
+      <property value="1" name="Pool.MaximumIdleConnections"/>
+      <property value="1000" name="Pool.MaximumWait"/>
     </dataSource> 
   </transactionManager> 
  
