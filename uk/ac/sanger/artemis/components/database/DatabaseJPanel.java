@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.11 2007-09-07 14:05:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.12 2007-10-24 17:35:58 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -77,6 +77,8 @@ public class DatabaseJPanel extends JPanel
   private boolean splitGFFEntry = false;
   private JTree tree;
   private DatabaseDocument doc;
+  private static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(DatabaseJPanel.class);
   
   public DatabaseJPanel(final DatabaseEntrySource entry_source,
                         final Splash splash_main)
@@ -198,7 +200,8 @@ public class DatabaseJPanel extends JPanel
         }
         catch(RuntimeException re)
         {
-          DatabaseEntrySource entry_source = new DatabaseEntrySource();
+          logger4j.warn(re.getMessage());
+          final DatabaseEntrySource entry_source = new DatabaseEntrySource();
           entry_source.setLocation(true);
 
           String url = entry_source.getLocation();
