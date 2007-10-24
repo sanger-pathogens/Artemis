@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.8 2007-10-16 17:43:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.9 2007-10-24 13:53:58 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -62,7 +62,9 @@ public class QualifierTextArea extends JTextPane
 {
   private static final long serialVersionUID = 1L;
   private static String[] DATABASES = 
-          { "SWALL", "EMBL", "UniProt", "PMID", "PubMed", "InterPro", "OrthoMCLDB" };
+          { "SWALL", "EMBL", "UniProt", "PMID", 
+            "PubMed", "InterPro", "OrthoMCLDB",
+            "Pfam"};
   private static Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
   private static Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
   private static Cursor chand = new Cursor(Cursor.HAND_CURSOR);
@@ -274,6 +276,11 @@ public class QualifierTextArea extends JTextPane
     return "http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=";
   }
   
+  public static String getPfamSite()
+  {
+    return "http://pfam.sanger.ac.uk/family?acc="; 
+  }
+  
   /**
    * Process double click event.
    * @param e
@@ -306,6 +313,13 @@ public class QualifierTextArea extends JTextPane
       if(id.length < 2)
         return;
       cmd = getOrthoMCLSite()+id[1];
+    }
+    else if(hyperlinkText.indexOf("Pfam") > -1)
+    {
+      String id[] = hyperlinkText.split(":");
+      if(id.length < 2)
+        return;
+      cmd = getPfamSite()+id[1];
     }
     else
     {
