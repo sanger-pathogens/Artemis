@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.56 2007-10-23 17:06:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.57 2007-10-24 15:08:55 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.56 2007-10-23 17:06:27 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.57 2007-10-24 15:08:55 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -118,6 +118,8 @@ public class EntryEdit extends JFrame
   
   private ChadoTransactionManager ctm = new ChadoTransactionManager();
   private CommitButton commitButton;
+  private static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(EntryEdit.class);
   
   /**
    *  Create a new EntryEdit object and JFrame.
@@ -1588,8 +1590,9 @@ public class EntryEdit extends JFrame
     {
       frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       new MessageDialog(frame,
-                 "No default entry to write to");
+                 "Problem writing to the database - check log window");
       npe.printStackTrace();
+      logger4j.error(npe.getMessage()); 
     }
     
     if(ctm.hasTransactions())
@@ -1632,6 +1635,8 @@ public class EntryEdit extends JFrame
       }
       catch(NullPointerException npe)
       {
+        npe.printStackTrace();
+        logger4j.error(ifeature.getLocation().toStringShort());
         continue;
       }
       
