@@ -23,6 +23,8 @@ package uk.ac.sanger.artemis.components.genebuilder;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -119,6 +121,45 @@ public class GeneUtils
     {
       e.printStackTrace();
     }
+  }
+  
+  public static void addSegment(final GFFStreamFeature feature,
+                                final Range range,
+                                final String transcriptName) 
+         throws ReadOnlyException, EntryInformationException
+  {
+    // add new ID
+    final Hashtable id_store = feature.getSegmentRangeStore();
+    String prefix[] = null;
+    Enumeration enum_ids = id_store.keys();
+    while(enum_ids.hasMoreElements())
+    {
+      String id = (String) enum_ids.nextElement();
+      prefix = feature.getPrefix(id, ':');
+      if(prefix[0] != null)
+        break;
+    }
+
+    // USE PREFIX TO CREATE NEW ID
+    final String ID;
+    if(prefix[0] != null)
+    {
+      int auto_num = feature.getAutoNumber(prefix[0], ':');
+      ID = prefix[0] + ":" + auto_num;
+      feature.getSegmentRangeStore().put(ID, range);
+    }
+    else
+    {
+      String key = feature.getKey().toString();
+      ID = transcriptName + ":" + key + ":1";
+      feature.getSegmentRangeStore().put(ID, range);
+    }
+
+    RangeVector rv = (RangeVector)feature.getLocation().getRanges().clone();
+    if(!rv.containsRange(range))
+      rv.add(range);
+    
+    feature.setQualifier(new Qualifier("ID", feature.getSegmentID( rv )));
   }
   
   /**
