@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RangeVector.java,v 1.2 2005-07-27 08:24:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RangeVector.java,v 1.3 2007-10-25 19:25:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -31,7 +31,7 @@ import java.util.Vector;
  *  This class implements a Vector of Range objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: RangeVector.java,v 1.2 2005-07-27 08:24:17 tjc Exp $
+ *  @version $Id: RangeVector.java,v 1.3 2007-10-25 19:25:00 tjc Exp $
  *
  **/
 
@@ -66,6 +66,17 @@ public class RangeVector extends Vector
       setElementAt(elementAt(swap_position), i);
       setElementAt(tmp, swap_position);
     }
+  }
+  
+  public boolean containsRange(final Range r)
+  {
+    for(int i=0; i<size(); i++)
+    {
+      Range thisRange = (Range)elementAt(i);
+      if(r.equals(thisRange))
+        return true;
+    }
+    return false;
   }
   
 }
