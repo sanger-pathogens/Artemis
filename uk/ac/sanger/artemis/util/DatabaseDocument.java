@@ -2444,9 +2444,7 @@ public class DatabaseDocument extends Document
           names_checked.add(uniquename);
           final String keyName = tsn.getFeatureKey();
           unchanged = checkFeatureTimestamp(schema, uniquename, 
-              tsn.getLastModified(), dao, keyName,
-              tsn.getFeatureObject(),
-              featureIdStore);
+              dao, keyName, featureIdStore, tsn);
           if(!unchanged)
           {
             if(useTransactions)
@@ -2693,12 +2691,14 @@ public class DatabaseDocument extends Document
    */
   public boolean checkFeatureTimestamp(final String schema,
                                        final String uniquename,
-                                       final Timestamp timestamp,
                                        final GmodDAO dao,
                                        final String keyName,
-                                       final Object featureObject,
-                                       final Hashtable featureIdStore)
+                                       final Hashtable featureIdStore,
+                                       final ChadoTransaction tsn)
   {
+    final Timestamp timestamp  = tsn.getLastModified();
+    final Object featureObject = tsn.getFeatureObject();
+    
     final Feature feature = dao.getFeatureByUniqueName(uniquename, keyName);
     if(feature == null)
       return true;
@@ -2708,8 +2708,14 @@ public class DatabaseDocument extends Document
     if(featureObject instanceof FeatureProp)
       ((FeatureProp)featureObject).setFeature(feature);
     else if(featureObject instanceof FeatureLoc)
-      ((FeatureLoc)featureObject).setFeatureByFeatureId(feature);
-      
+    {
+      if(((FeatureLoc)featureObject).getFeatureByFeatureId().getUniqueName().equals(uniquename))
+      {
+        logger4j.debug("Setting featureId for:"  + uniquename );
+        ((FeatureLoc)featureObject).setFeatureByFeatureId(feature);
+      }
+    }
+    
     final Timestamp now = feature.getTimeLastModified();
     
     if(now != null && timestamp != null)
