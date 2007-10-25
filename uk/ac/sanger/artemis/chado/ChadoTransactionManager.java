@@ -29,6 +29,7 @@ import uk.ac.sanger.artemis.FeatureSegment;
 import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.OrthoParalogTable;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.SimilarityTable;
@@ -238,96 +239,42 @@ public class ChadoTransactionManager
         RangeVector rv_new = event.getNewLocation().getRanges();
         RangeVector rv_old = event.getOldLocation().getRanges();
          
-        logger4j.debug("SEGMENT_CHANGED "+rv_new.size()+"  "+rv_old.size());
-        
-        if(rv_old.size() > rv_new.size()) // segment deleted
-        {
-          // delete segment
-          int ideleted;
-          Vector deleted = new Vector();
-          boolean found;
-          for(ideleted=0; ideleted<rv_old.size(); ideleted++)
-          {   
-            Range range = (Range)rv_old.get(ideleted);
-            found = false;
-            for(int j=0; j<rv_new.size(); j++)
-            {
-              if( ((Range)rv_new.get(j)).equals(range) )
-                found = true;     
-            }
-            
-            if(!found)
-              deleted.add(new Integer(ideleted));
-          }
-   
-          for(int i=0; i<deleted.size();i++)
-          {
-            ideleted = ((Integer)deleted.elementAt(i)).intValue();
-            Range range_old = (Range)rv_old.elementAt(ideleted);
-            String seg_id   = feature.getSegmentID(range_old);
-            deleteFeature(seg_id, feature.getKey().getKeyString(), feature);
-            feature.getSegmentRangeStore().remove(seg_id);
-            logger4j.debug("SEGMENT_CHANGED DELETED: "+seg_id);
-          }
-          
-          String new_id = feature.getSegmentID(rv_new);
-          Qualifier qualifier = new Qualifier("ID", new_id);
-          try
-          {
-            feature.setQualifier(qualifier);
-          }
-          catch(ReadOnlyException e)
-          {
-            e.printStackTrace();
-          }
-          catch(EntryInformationException e)
-          {
-            e.printStackTrace();
-          }
-          
-          // update feature_relationship.rank
-          processFeatureRelationshipRank(feature, rv_new, ChadoTransaction.UPDATE);
-        }
-        else if(rv_old.size() < rv_new.size()) // feature segment added
-        {
-          if(addSegments)
-          {
-            FeatureSegmentVector segments = ((uk.ac.sanger.artemis.Feature) feature
-                .getUserData()).getSegments();
-
-            FeatureSegment segment;
-            for(int iadd = 0; iadd < segments.size(); iadd++)
-            {
-              segment = segments.elementAt(iadd);
-              Range range = segment.getRawRange();
-              boolean found = false;
-              for(int j = 0; j < rv_old.size(); j++)
-              {
-                if(((Range) rv_old.get(j)).equals(range))
-                  found = true;
-              }
-
-              if(found)
-                continue;
-
-              String segment_uniquename = feature.getSegmentID(range);
-              logger4j.debug("SEGMENT_CHANGED ADDED: "+segment_uniquename);
-              insertFeatureSegment(segment, segment_uniquename);
-            }
-          }
-          
-          processFeatureRelationshipRank(feature, rv_new, ChadoTransaction.UPDATE);
-        }
+        segmentNumberChanged(feature, rv_new, rv_old);
       }
       else if(event.getType() == FeatureChangeEvent.LOCATION_CHANGED)
       {
-        RangeVector rv_new = event.getNewLocation().getRanges();
-        RangeVector rv_old = event.getOldLocation().getRanges();
+        final RangeVector rv_new = event.getNewLocation().getRanges();
+        final RangeVector rv_old = event.getOldLocation().getRanges();
 
         logger4j.debug("LOCATION_CHANGED "+feature.getFirstBase()+".."+feature.getLastBase()+
                               "   new="+rv_new.size()+" old="+rv_old.size());
         if(rv_new.size() != rv_old.size())
+        {
+          // location and segment number change
+          for(int i=0;i<rv_new.size();i++)
+          {  
+            final Range range = (Range) rv_new.get(i);
+            if(!rv_old.containsRange(range))
+            {     
+              try
+              {
+                final String parent = 
+                  (String)feature.getQualifierByName("Parent").getValues().get(0);
+                GeneUtils.addSegment(feature, range, parent);
+              }
+              catch(ReadOnlyException e)
+              {
+                e.printStackTrace();
+              }
+              catch(EntryInformationException e)
+              {
+                e.printStackTrace();
+              }
+            }
+          }
+          segmentNumberChanged(feature, rv_new, rv_old);
           return;
+        }
         
         ChadoTransaction tsn;
         int ichanged;
@@ -356,7 +303,9 @@ public class ChadoTransactionManager
             seg_id   = feature.getSegmentID(range_old);
           
           if(feature.getSegmentRangeStore() != null)
+          {
             feature.getSegmentRangeStore().put(seg_id, range_new);
+          }
           
           if(sql.size() > 0)
           {
@@ -517,6 +466,73 @@ public class ChadoTransactionManager
     }
 
 //  System.out.println(event.getEntry().getName());
+  }
+  
+  
+  private void segmentNumberChanged(final GFFStreamFeature feature,
+                                    final RangeVector rv_new,
+                                    final RangeVector rv_old)
+  {
+    logger4j.debug("SEGMENT_CHANGED "+rv_new.size()+"  "+rv_old.size());
+    
+    if(rv_old.size() > rv_new.size()) // segment deleted
+    {
+      // delete segment
+      Vector deleted = new Vector();
+
+      for(int ideleted=0; ideleted<rv_old.size(); ideleted++)
+      {   
+        final Range range = (Range)rv_old.get(ideleted);
+        if(!rv_new.containsRange(range))
+          deleted.add(new Integer(ideleted));
+      }
+
+      for(int i=0; i<deleted.size();i++)
+      {
+        Range range_old = (Range)rv_old.elementAt(
+              ((Integer)deleted.elementAt(i)).intValue());
+        String seg_id   = feature.getSegmentID(range_old);
+        deleteFeature(seg_id, feature.getKey().getKeyString(), feature);
+        feature.getSegmentRangeStore().remove(seg_id);
+        logger4j.debug("SEGMENT_CHANGED DELETED: "+seg_id);
+      }
+      
+      String new_id = feature.getSegmentID(rv_new);
+      Qualifier qualifier = new Qualifier("ID", new_id);
+      try
+      {
+        feature.setQualifier(qualifier);
+      }
+      catch(ReadOnlyException e)
+      {
+        e.printStackTrace();
+      }
+      catch(EntryInformationException e)
+      {
+        e.printStackTrace();
+      }
+    }
+
+    if(addSegments)
+    {
+      FeatureSegmentVector segments = ((uk.ac.sanger.artemis.Feature) feature
+          .getUserData()).getSegments();
+
+      for(int iadd = 0; iadd < segments.size(); iadd++)
+      {
+        final FeatureSegment segment = segments.elementAt(iadd);
+        final Range range = segment.getRawRange();
+        if(rv_old.containsRange(range))
+          continue;
+
+        String segment_uniquename = feature.getSegmentID(range);
+        logger4j.debug("SEGMENT_CHANGED ADDED: " + segment_uniquename);
+        insertFeatureSegment(segment, segment_uniquename);
+      }
+    }
+    
+    
+    processFeatureRelationshipRank(feature, rv_new, ChadoTransaction.UPDATE);
   }
   
   /**
