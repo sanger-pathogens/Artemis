@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.60 2007-10-10 08:08:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.61 2007-10-25 19:24:25 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -49,7 +49,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.60 2007-10-10 08:08:57 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.61 2007-10-25 19:24:25 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -399,7 +399,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     this.gff_lines = new StringVector(line);
   }
 
-
   /**
   *
   * Store for spliced regions of segments ID's and ranges.
@@ -457,7 +456,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       {
         String key  = (String)enum_ranges.nextElement();
         Range range = (Range)id_range_store.get(key);
-        if(range.getStart() == r.getStart() ||
+        if(range.getStart() == r.getStart() &&
            range.getEnd()   == r.getEnd())
           return key;
       }
