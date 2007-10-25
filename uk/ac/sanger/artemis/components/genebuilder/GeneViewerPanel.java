@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.72 2007-10-18 10:54:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.73 2007-10-25 19:23:27 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -29,7 +29,6 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Hashtable;
 import java.util.Set;
@@ -151,7 +150,8 @@ public class GeneViewerPanel extends JPanel
     {
       public void mouseDragged(MouseEvent event)
       {
-        if(event.isPopupTrigger() || entry_group == null)
+        if(event.isPopupTrigger() || entry_group == null ||
+           event.getButton() != MouseEvent.BUTTON1)
           return;
 
         int select_start = (int) ((event.getX() - border) / fraction) + start;
@@ -1589,38 +1589,8 @@ public class GeneViewerPanel extends JPanel
       else
       {
         // add new ID
-        final Hashtable id_store = feature.getSegmentRangeStore();
-        String prefix[] = null;
-        Enumeration enum_ids = id_store.keys();
-        while(enum_ids.hasMoreElements())
-        {
-          String id = (String) enum_ids.nextElement();
-          prefix = feature.getPrefix(id, ':');
-          if(prefix[0] != null)
-            break;
-        }
-
-        // USE PREFIX TO CREATE NEW ID
-        final String ID;
-        if(prefix[0] != null)
-        {
-          int auto_num = feature.getAutoNumber(prefix[0], ':');
-          ID = prefix[0] + ":" + auto_num;
-          feature.getSegmentRangeStore().put(ID, range);
-        }
-        else
-        {
-          String key = feature.getKey().toString();
-          ID = transcript_name + ":" + key + ":1";
-          feature.getSegmentRangeStore().put(ID, range);
-        }
-        
-        RangeVector rv = (RangeVector)feature.getLocation().getRanges().clone();
-        rv.add(range);
-
+        GeneUtils.addSegment(feature, range, transcript_name);
         final QualifierVector old_qualifiers = feature.getQualifiers().copy();
-        feature.setQualifier(new Qualifier("ID", feature.getSegmentID( rv )));
-        
         ((uk.ac.sanger.artemis.Feature)feature.getUserData()).addSegment(range, old_qualifiers);
         gene_builder.setActiveFeature((uk.ac.sanger.artemis.Feature)feature.getUserData(), false);
       }
