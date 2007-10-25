@@ -1213,7 +1213,7 @@ public class DatabaseDocument extends Document
       this_buff.append("Dbxref=");
       for(int j=0; j<dbxref.size(); j++)
       {
-        this_buff.append((String)dbxref.get(j));
+        this_buff.append(GFFStreamFeature.encode((String)dbxref.get(j)));
         if(j<dbxref.size()-1)
           this_buff.append(",");
       }
