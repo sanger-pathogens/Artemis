@@ -124,7 +124,7 @@ public class GeneUtils
   }
   
   public static void addSegment(final GFFStreamFeature feature,
-                                final Range range,
+                                final RangeVector rangesToAdd,
                                 final String transcriptName) 
          throws ReadOnlyException, EntryInformationException
   {
@@ -141,23 +141,27 @@ public class GeneUtils
     }
 
     // USE PREFIX TO CREATE NEW ID
-    final String ID;
-    if(prefix[0] != null)
-    {
-      int auto_num = feature.getAutoNumber(prefix[0], ':');
-      ID = prefix[0] + ":" + auto_num;
-      feature.getSegmentRangeStore().put(ID, range);
-    }
-    else
-    {
-      String key = feature.getKey().toString();
-      ID = transcriptName + ":" + key + ":1";
-      feature.getSegmentRangeStore().put(ID, range);
-    }
-
     RangeVector rv = (RangeVector)feature.getLocation().getRanges().clone();
-    if(!rv.containsRange(range))
-      rv.add(range);
+    for(int i=0; i<rangesToAdd.size(); i++)
+    {
+      final Range range = (Range) rangesToAdd.elementAt(i);
+      final String ID;
+      if(prefix[0] != null)
+      {
+        int auto_num = feature.getAutoNumber(prefix[0], ':');
+        ID = prefix[0] + ":" + auto_num;
+        feature.getSegmentRangeStore().put(ID, range);
+      }
+      else
+      {
+        String key = feature.getKey().toString();
+        ID = transcriptName + ":" + key + ":1";
+        feature.getSegmentRangeStore().put(ID, range);
+      }
+
+      if(!rv.containsRange(range))
+        rv.add(range);
+    }
     
     feature.setQualifier(new Qualifier("ID", feature.getSegmentID( rv )));
   }

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.74 2007-10-26 07:35:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.75 2007-10-30 09:59:33 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -1589,7 +1589,9 @@ public class GeneViewerPanel extends JPanel
       else
       {
         // add new ID
-        GeneUtils.addSegment(feature, range, transcript_name);
+        final RangeVector ranges = new RangeVector();
+        ranges.add(range);
+        GeneUtils.addSegment(feature, ranges, transcript_name);
         final QualifierVector old_qualifiers = feature.getQualifiers().copy();
         ((uk.ac.sanger.artemis.Feature)feature.getUserData()).addSegment(range, old_qualifiers);
         gene_builder.setActiveFeature((uk.ac.sanger.artemis.Feature)feature.getUserData(), false);
