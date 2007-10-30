@@ -925,6 +925,18 @@ public class ChadoTransactionManager
       return;
     }
     
+    if(feature != null)
+    {
+      // delete from internal chado gene model
+      final ChadoCanonicalGene chado_gene = feature.getChadoGene();
+      if(chado_gene != null)
+      {
+        Object deleteFeature = chado_gene.getFeatureFromId(uniquename);
+        if(deleteFeature != null)
+          chado_gene.deleteFeature((uk.ac.sanger.artemis.io.Feature)deleteFeature);
+      }
+    }
+    
     chado_feature.setCvTerm(cvTerm);
     logger4j.debug("FEATURE_DELETED "+uniquename+" cv name="+
          cvTerm.getCv().getName()+" term="+cvTerm.getName());
