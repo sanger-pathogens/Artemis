@@ -251,27 +251,29 @@ public class ChadoTransactionManager
         if(rv_new.size() != rv_old.size())
         {
           // location and segment number change
+          final RangeVector rangesToAdd = new RangeVector();
           for(int i=0;i<rv_new.size();i++)
           {  
             final Range range = (Range) rv_new.get(i);
             if(!rv_old.containsRange(range))
-            {     
-              try
-              {
-                final String parent = 
-                  (String)feature.getQualifierByName("Parent").getValues().get(0);
-                GeneUtils.addSegment(feature, range, parent);
-              }
-              catch(ReadOnlyException e)
-              {
-                e.printStackTrace();
-              }
-              catch(EntryInformationException e)
-              {
-                e.printStackTrace();
-              }
-            }
+              rangesToAdd.add(range);
           }
+
+          try
+          {
+            final String parent = 
+              (String)feature.getQualifierByName("Parent").getValues().get(0);
+            GeneUtils.addSegment(feature, rangesToAdd, parent);
+          }
+          catch(ReadOnlyException e)
+          {
+            e.printStackTrace();
+          }
+          catch(EntryInformationException e)
+          {
+            e.printStackTrace();
+          }
+          
           segmentNumberChanged(feature, rv_new, rv_old);
           return;
         }
@@ -468,49 +470,47 @@ public class ChadoTransactionManager
 //  System.out.println(event.getEntry().getName());
   }
   
-  
+  /**
+   * Process segment additions and deletions
+   * @param feature
+   * @param rv_new
+   * @param rv_old
+   */
   private void segmentNumberChanged(final GFFStreamFeature feature,
                                     final RangeVector rv_new,
                                     final RangeVector rv_old)
   {
     logger4j.debug("SEGMENT_CHANGED "+rv_new.size()+"  "+rv_old.size());
-    
-    if(rv_old.size() > rv_new.size()) // segment deleted
+
+    // check for deleted segments
+    final Vector deleted = new Vector();
+    for(int ideleted = 0; ideleted < rv_old.size(); ideleted++)
     {
-      // delete segment
-      Vector deleted = new Vector();
+      final Range range = (Range) rv_old.get(ideleted);
+      if(!rv_new.containsRange(range))
+        deleted.add(new Integer(ideleted));
+    }
 
-      for(int ideleted=0; ideleted<rv_old.size(); ideleted++)
-      {   
-        final Range range = (Range)rv_old.get(ideleted);
-        if(!rv_new.containsRange(range))
-          deleted.add(new Integer(ideleted));
-      }
+    for(int i = 0; i < deleted.size(); i++)
+    {
+      Range range_old = (Range) rv_old.elementAt(((Integer) deleted
+          .elementAt(i)).intValue());
+      String seg_id = feature.getSegmentID(range_old);
+      deleteFeature(seg_id, feature.getKey().getKeyString(), feature);
+      feature.getSegmentRangeStore().remove(seg_id);
+      logger4j.debug("SEGMENT_CHANGED DELETED: " + seg_id);
+    }
 
-      for(int i=0; i<deleted.size();i++)
-      {
-        Range range_old = (Range)rv_old.elementAt(
-              ((Integer)deleted.elementAt(i)).intValue());
-        String seg_id   = feature.getSegmentID(range_old);
-        deleteFeature(seg_id, feature.getKey().getKeyString(), feature);
-        feature.getSegmentRangeStore().remove(seg_id);
-        logger4j.debug("SEGMENT_CHANGED DELETED: "+seg_id);
-      }
-      
+    if(deleted.size() > 0)
+    {
       String new_id = feature.getSegmentID(rv_new);
       Qualifier qualifier = new Qualifier("ID", new_id);
       try
       {
         feature.setQualifier(qualifier);
       }
-      catch(ReadOnlyException e)
-      {
-        e.printStackTrace();
-      }
-      catch(EntryInformationException e)
-      {
-        e.printStackTrace();
-      }
+      catch(ReadOnlyException e){}
+      catch(EntryInformationException e){}
     }
 
     if(addSegments)
@@ -530,8 +530,7 @@ public class ChadoTransactionManager
         insertFeatureSegment(segment, segment_uniquename);
       }
     }
-    
-    
+
     processFeatureRelationshipRank(feature, rv_new, ChadoTransaction.UPDATE);
   }
   
@@ -548,7 +547,7 @@ public class ChadoTransactionManager
     ChadoTransaction tsn;
     Hashtable feature_relationship_rank_store = new Hashtable();
     Qualifier qualifier_relation = feature.getQualifierByName("Parent");
-    
+
     for(int rank=0; rank<rv_new.size(); rank++)
     {
       Range range   = (Range)rv_new.elementAt(rank);
