@@ -71,6 +71,15 @@ public class JExtendedComboBox extends JComboBox
 
   private void setHorizontalScrollBar()
   { 
+    /*
+    setRenderer(new ComboBoxRenderer());
+    // has to be editable
+    setEditable(true);
+    // get the combo box' editor component
+    JTextComponent editor = (JTextComponent) getEditor().getEditorComponent();
+    // change the editor's document to our BadDocument
+    editor.setDocument(new ComboDocument(this));
+     */
     BasicComboPopup popup = (BasicComboPopup)getUI().getAccessibleChild(this,0);//Popup
 
     if(popup==null)
@@ -106,7 +115,7 @@ public class JExtendedComboBox extends JComboBox
         final boolean cellHasFocus) 
     {
       String str;
-      if(value instanceof String)
+      if(value instanceof String || value == null)
         str = (value == null) ? "" : value.toString();
       else
         str = ((CvTerm)value).getName();
