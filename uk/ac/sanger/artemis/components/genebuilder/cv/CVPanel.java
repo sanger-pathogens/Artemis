@@ -934,12 +934,11 @@ public class CVPanel extends JPanel
     {
       Collections.sort(terms, new CvTermsComparator());
       term_list = new JExtendedComboBox(terms);
-    
-      Dimension d = term_list.getPreferredSize();
-      d = new Dimension(500,(int)d.getHeight());
+
+      Dimension d = new Dimension(500,term_list.getPreferredSize().height);
       term_list.setPreferredSize(d);
-    
-      term_list.setRenderer(new CVCellRenderer());
+      term_list.setMaximumSize(d);
+      //term_list.setRenderer(new CVCellRenderer());
     }
     else
       xBox.remove(term_list);
@@ -1019,30 +1018,6 @@ public class CVPanel extends JPanel
     }
   }
   
-  /**
-   * Cell renderer for CvTerm's
-   */
-  class CVCellRenderer extends JLabel implements ListCellRenderer 
-  {
-    /** */
-    private static final long serialVersionUID = 1L;
-
-    public CVCellRenderer() 
-    {
-      super();
-    }
-
-    public Component getListCellRendererComponent(JList list,
-                                                  Object value,
-                                                  int index,
-                                                  boolean isSelected,
-                                                  boolean cellHasFocus) 
-    {
-      setText(((CvTerm)value).getName());
-      //setToolTipText(((CvTerm)value).getCv().getName());
-      return this;
-    }
-  }
   
   class StringVectorComparator implements Comparator
   {

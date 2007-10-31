@@ -25,19 +25,24 @@
 package uk.ac.sanger.artemis.components.genebuilder;
 
 import java.awt.Component;
-import java.awt.FontMetrics;
+import java.awt.Dimension;
 import java.util.Vector;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ListCellRenderer;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicComboPopup;
+import javax.swing.plaf.basic.ComboPopup;
 
 import org.gmod.schema.cv.CvTerm;
+
 
 /**
  * JComboBox with horizontal scrollbar
@@ -52,6 +57,7 @@ public class JExtendedComboBox extends JComboBox
   { 
     super(str);
     setRenderer(new ComboBoxRenderer());
+    //setUI(new ComboUI());
     setHorizontalScrollBar();
   } 
   
@@ -59,42 +65,31 @@ public class JExtendedComboBox extends JComboBox
   { 
     super(vector);
     setRenderer(new ComboBoxRenderer());
+    //setUI(new ComboUI());
     setHorizontalScrollBar();
   } 
 
   private void setHorizontalScrollBar()
   { 
-    FontMetrics fm = getFontMetrics(getFont()); 
-    BasicComboPopup popup = (BasicComboPopup)getUI().getAccessibleChild(this,0);//Popup 
+    BasicComboPopup popup = (BasicComboPopup)getUI().getAccessibleChild(this,0);//Popup
+
     if(popup==null)
       return; 
    
-    int size = (int)getPreferredSize().getWidth(); 
-    
-    for(int i=0; i<getItemCount(); i++)
-    { 
-      String str;
-      if(getItemAt(i) instanceof String)
-        str = (String)getItemAt(i); 
-      else
-        str = ((CvTerm)getItemAt(i)).getName();
-      
-      if(size<fm.stringWidth(str)) 
-        size = fm.stringWidth(str); 
-    } 
-    
-    Component comp = popup.getComponent(0); //JScrollPane 
-    JScrollPane scrollpane = null; 
-    if(comp instanceof JScrollPane) 
-    { 
-      scrollpane = (JScrollPane)comp; 
-      scrollpane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-    } 
+    for(int i=0; i<popup.getComponentCount(); i++)
+    {
+      Component comp = popup.getComponent(i);
+      if(comp instanceof JScrollPane) 
+      {
+        JScrollPane scrollpane = (JScrollPane)comp;
+        scrollpane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        return;
+      }
+    }
   }
   
   class ComboBoxRenderer extends JLabel implements ListCellRenderer 
   {
-
     private static final long serialVersionUID = 1L;
     private JSeparator separator;
 
@@ -110,7 +105,12 @@ public class JExtendedComboBox extends JComboBox
         final int index,  final boolean isSelected,
         final boolean cellHasFocus) 
     {
-      String str = (value == null) ? "" : value.toString();
+      String str;
+      if(value instanceof String)
+        str = (value == null) ? "" : value.toString();
+      else
+        str = ((CvTerm)value).getName();
+
       if (SEPARATOR.equals(str))
         return separator;
  
@@ -128,6 +128,67 @@ public class JExtendedComboBox extends JComboBox
       setText(str);
       return this;
     }
+  }
+  
+  public class ComboUI extends BasicComboBoxUI
+  {
+    public ComboUI()
+    {
+      super();
+      setUI(JExtendedComboBox.this.getUI());
+    }
+    
+    protected ComboPopup createPopup()
+    {
+      BasicComboPopup popup = new ComboBoxPopup(JExtendedComboBox.this);
+      return popup;
+    }
+  }
+  
+  class ComboBoxPopup extends BasicComboPopup 
+  {
+    public ComboBoxPopup(JExtendedComboBox combo)
+    {
+      super(combo);
+    }
+
+    private static final long serialVersionUID = 1L;
+
+    protected JScrollPane createScroller() 
+    {
+      return new JScrollPane(list,
+       ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED );
+    }  
+  }
+
+  
+  public static void main(String args[])
+  {
+    final String options[] = { "<PREV", "CANCEL", "NEXT>"};   
+    
+    Vector terms = new Vector();
+    terms.add("Test test test test test test");
+    terms.add("Test test test test test test test test test test");
+    terms.add("Test test test test test test test test test test test"+ 
+        " test test test test test test test test test test test test test"+
+        " test test test test test test test test test test test test test"+
+        " test test test test test test test test test test test test test"+
+        " test test test test test test test test test test test test test"+
+        " test test test test test test test test test test test test test test test test test test");
+    JExtendedComboBox term_list = new JExtendedComboBox(terms);
+
+    Dimension d = new Dimension(500,term_list.getPreferredSize().height);
+    term_list.setPreferredSize(d);
+    term_list.setMaximumSize(d);
+   
+    JOptionPane.showOptionDialog(null, term_list,
+        "CV term selection",
+         JOptionPane.YES_NO_CANCEL_OPTION,
+         JOptionPane.QUESTION_MESSAGE,
+         null,
+         options,
+         options[2]);
   }
   
 }
