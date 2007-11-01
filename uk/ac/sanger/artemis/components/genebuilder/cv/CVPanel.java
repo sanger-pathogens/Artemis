@@ -39,12 +39,10 @@ import java.util.Vector;
 import javax.swing.Box;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
 import javax.swing.JButton;
-import javax.swing.ListCellRenderer;
 
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
@@ -933,7 +931,7 @@ public class CVPanel extends JPanel
     if(term_list == null)
     {
       Collections.sort(terms, new CvTermsComparator());
-      term_list = new JExtendedComboBox(terms);
+      term_list = new JExtendedComboBox(terms, true);
 
       Dimension d = new Dimension(500,term_list.getPreferredSize().height);
       term_list.setPreferredSize(d);
