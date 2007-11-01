@@ -218,7 +218,7 @@ public class DatabaseEntrySource implements EntrySource, Serializable
   }
 
 
-  protected DatabaseDocument getDatabaseDocument()
+  public DatabaseDocument getDatabaseDocument()
   {
     return new DatabaseDocument(location, pfield);
   }
