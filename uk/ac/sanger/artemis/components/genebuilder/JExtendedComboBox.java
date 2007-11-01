@@ -26,6 +26,7 @@ package uk.ac.sanger.artemis.components.genebuilder;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.util.Collections;
 import java.util.Vector;
 
 import javax.swing.JComboBox;
@@ -37,9 +38,8 @@ import javax.swing.JSeparator;
 import javax.swing.ListCellRenderer;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicComboPopup;
-import javax.swing.plaf.basic.ComboPopup;
+import javax.swing.text.JTextComponent;
 
 import org.gmod.schema.cv.CvTerm;
 
@@ -49,37 +49,54 @@ import org.gmod.schema.cv.CvTerm;
  */
 public class JExtendedComboBox extends JComboBox
 { 
-  /** */
   private static final long serialVersionUID = 1L;
   public static String SEPARATOR = "SEPARATOR";
   
-  public JExtendedComboBox(String str[])
+  /**
+   * @param str
+   * @param useAutoComplete  set true to use auto-complete
+   */
+  public JExtendedComboBox(String str[], final boolean useAutoComplete)
   { 
     super(str);
-    setRenderer(new ComboBoxRenderer());
-    //setUI(new ComboUI());
-    setHorizontalScrollBar();
+    init(useAutoComplete);
+  } 
+  
+  /**
+   * @param str
+   * @param useAutoComplete  set true to use auto-complete
+   */
+  public JExtendedComboBox(Vector vector, final boolean useAutoComplete)
+  { 
+    super(vector);
+    init(useAutoComplete);
+  } 
+
+  public JExtendedComboBox(String str[])
+  { 
+    this(str, false);
   } 
   
   public JExtendedComboBox(Vector vector)
   { 
-    super(vector);
-    setRenderer(new ComboBoxRenderer());
-    //setUI(new ComboUI());
-    setHorizontalScrollBar();
-  } 
+    this(vector, false);
+  }
 
-  private void setHorizontalScrollBar()
-  { 
-    /*
+  /**
+   * Set up renderer, auto-complete and horizontal scroll bar
+   * @param useAutoComplete
+   */
+  private void init(final boolean useAutoComplete)
+  {
     setRenderer(new ComboBoxRenderer());
-    // has to be editable
-    setEditable(true);
-    // get the combo box' editor component
-    JTextComponent editor = (JTextComponent) getEditor().getEditorComponent();
-    // change the editor's document to our BadDocument
-    editor.setDocument(new ComboDocument(this));
-     */
+    
+    if(useAutoComplete)
+    {
+      setEditable(true);
+      JTextComponent editor = (JTextComponent) getEditor().getEditorComponent();
+      editor.setDocument(new AutoCompleteComboDocument(this));
+    }
+    
     BasicComboPopup popup = (BasicComboPopup)getUI().getAccessibleChild(this,0);//Popup
 
     if(popup==null)
@@ -139,6 +156,7 @@ public class JExtendedComboBox extends JComboBox
     }
   }
   
+  /*
   public class ComboUI extends BasicComboBoxUI
   {
     public ComboUI()
@@ -170,22 +188,21 @@ public class JExtendedComboBox extends JComboBox
       ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED );
     }  
   }
-
+  */
   
   public static void main(String args[])
   {
+    uk.ac.sanger.artemis.components.database.DatabaseEntrySource entry_source = 
+      new uk.ac.sanger.artemis.components.database.DatabaseEntrySource();
+    entry_source.setLocation(true);
+    uk.ac.sanger.artemis.util.DatabaseDocument doc = entry_source.getDatabaseDocument();
+    Vector terms = doc.getCvTermsByCvName(
+        uk.ac.sanger.artemis.util.DatabaseDocument.PRODUCTS_TAG_CVNAME);
+    Collections.sort(terms, 
+        new uk.ac.sanger.artemis.components.genebuilder.cv.CvTermsComparator());
     final String options[] = { "<PREV", "CANCEL", "NEXT>"};   
     
-    Vector terms = new Vector();
-    terms.add("Test test test test test test");
-    terms.add("Test test test test test test test test test test");
-    terms.add("Test test test test test test test test test test test"+ 
-        " test test test test test test test test test test test test test"+
-        " test test test test test test test test test test test test test"+
-        " test test test test test test test test test test test test test"+
-        " test test test test test test test test test test test test test"+
-        " test test test test test test test test test test test test test test test test test test");
-    JExtendedComboBox term_list = new JExtendedComboBox(terms);
+    JExtendedComboBox term_list = new JExtendedComboBox(terms, true);
 
     Dimension d = new Dimension(500,term_list.getPreferredSize().height);
     term_list.setPreferredSize(d);
