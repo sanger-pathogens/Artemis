@@ -1696,6 +1696,19 @@ public class DatabaseDocument extends Document
     return cvterms;
   }
   
+  /**
+   * Get CvTerm's in a given CV
+   * @param cvName
+   * @return
+   */
+  public Vector getCvTermsByCvName(final String cvName)
+  {
+    if(cvterms == null)
+      getCvterms(getDAOOnly());
+    
+    return getCvterms("", cvName);
+  }
+  
   public List getDatabaseNames()
   {
     GmodDAO dao = getDAOOnly();
