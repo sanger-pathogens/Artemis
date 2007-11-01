@@ -35,6 +35,7 @@ public class CvTermsComparator implements Comparator
     CvTerm cvTerm1 = (CvTerm)o1;
     CvTerm cvTerm2 = (CvTerm)o2;
     
-    return cvTerm1.getName().compareTo( cvTerm2.getName() );
+    return cvTerm1.getName().toLowerCase().compareTo( 
+           cvTerm2.getName().toLowerCase() );
   }   
 }
