@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.15 2007-10-11 13:34:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.16 2007-11-01 13:47:07 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -46,7 +46,7 @@ import javax.swing.JFrame;
  *  The main window for the Artemis Comparison Tool.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ActMain.java,v 1.15 2007-10-11 13:34:34 tjc Exp $
+ *  @version $Id: ActMain.java,v 1.16 2007-11-01 13:47:07 tjc Exp $
  **/
 
 public class ActMain extends Splash 
@@ -306,12 +306,14 @@ public class ActMain extends Splash
                              (String)this_file_name);
           return false;
         }
-  
-        final Bases embl_bases = new Bases(sequence);
-        EntryGroup entry_group = new SimpleEntryGroup(embl_bases);
         
         if(entry == null)
-          entry = new Entry(entry_group.getBases(), embl_entry);
+        {
+          final Bases embl_bases = new Bases(sequence);
+          entry = new Entry(embl_bases, embl_entry);
+        }
+        
+        EntryGroup entry_group = new SimpleEntryGroup(entry.getBases());
         
         entry_group.add(entry);
         entry_group_array[i / 2] = entry_group;
