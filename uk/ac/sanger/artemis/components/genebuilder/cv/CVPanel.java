@@ -959,6 +959,17 @@ public class CVPanel extends JPanel
       return new CvTerm();
     }
     
+    if(term_list.getSelectedItem() instanceof String)
+    {
+      final String selectedStr = (String)term_list.getSelectedItem();
+      for(int i=0; i<terms.size(); i++)
+      {
+        CvTerm cvTerm = (CvTerm)terms.get(i);
+        if(cvTerm.getName().equals(selectedStr))
+          return cvTerm;
+      }
+    }
+    
     return (CvTerm)term_list.getSelectedItem();
   }
   
