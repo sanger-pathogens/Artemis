@@ -137,10 +137,21 @@ public class ChadoTransactionManager
   {
     
   }
+
   
   public void setEntryGroup(final EntryGroup entryGroup)
   {
     this.entryGroup = entryGroup;
+  }
+  
+  private void logMDC()
+  {
+	try
+	{
+  	  DatabaseDocument.initMDC((DatabaseDocument)
+        ((DocumentEntry)entryGroup.getSequenceEntry().getEMBLEntry()).getDocument());
+	}
+	catch(Exception e){}
   }
   
   /**
@@ -148,6 +159,7 @@ public class ChadoTransactionManager
    **/
   public void sequenceChanged(final SequenceChangeEvent event)
   {
+	logMDC();
     if(event.getType() == SequenceChangeEvent.DELETION ||
        event.getType() == SequenceChangeEvent.INSERTION)
     {
@@ -226,6 +238,7 @@ public class ChadoTransactionManager
    **/ 
   public void featureChanged(FeatureChangeEvent event)
   {
+	logMDC();
     if(event.featureHasChanged())
     {
       if(!(event.getFeature().getEmblFeature() instanceof GFFStreamFeature))
@@ -381,6 +394,7 @@ public class ChadoTransactionManager
    **/
   public void entryChanged(EntryChangeEvent event)
   {
+	logMDC();
     if(event.getType() == EntryChangeEvent.FEATURE_ADDED)
     { 
       // if this is a duplicate feature then ignore
@@ -2252,6 +2266,7 @@ public class ChadoTransactionManager
   public void commit(final DatabaseDocument dbDoc,
                      final boolean force)
   {
+	DatabaseDocument.initMDC(dbDoc);
     int retVal = dbDoc.commit(sql, force);
     
     if(retVal > 0)
