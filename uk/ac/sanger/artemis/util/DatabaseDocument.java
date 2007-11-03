@@ -61,6 +61,7 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.io.*;
 import java.net.ConnectException;
+import java.net.InetAddress;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -163,6 +164,7 @@ public class DatabaseDocument extends Document
       iBatis = true;
       System.setProperty("chado", location);
     }
+    init();
   }
 
   
@@ -191,6 +193,7 @@ public class DatabaseDocument extends Document
       iBatis = true;
       System.setProperty("chado", location);
     }
+    init();
   }
 
   /**
@@ -225,6 +228,7 @@ public class DatabaseDocument extends Document
     }
     
     reset(location, schema);
+    init();
   }
 
   /**
@@ -250,6 +254,7 @@ public class DatabaseDocument extends Document
       iBatis = true;
       System.setProperty("chado", location);
     }
+    init();
   }
   
   public DatabaseDocument(String location, JPasswordField pfield,
@@ -267,6 +272,7 @@ public class DatabaseDocument extends Document
       iBatis = true;
       System.setProperty("chado", location);
     }
+    init();
   }
   
   /**
@@ -289,6 +295,7 @@ public class DatabaseDocument extends Document
     this.progress_listener = progress_listener;
     this.range = range;
     this.geneFeature = geneFeature;
+    init();
   }
   
   /**
@@ -310,6 +317,28 @@ public class DatabaseDocument extends Document
          originalDocument.getPfield(),
          srcFeatureId, schema, gene_builder);
     this.progress_listener = progress_listener;
+    init();
+  }
+  
+  
+  private void init()
+  {
+    // add username & host to MDC data for logging
+    try
+	{
+      org.apache.log4j.MDC.put("username",getUserName());
+  	}
+	catch(NullPointerException npe)
+	{
+	  org.apache.log4j.MDC.put("username",System.getProperty("user.name"));
+	}
+	
+	try 
+	{
+	  org.apache.log4j.MDC.put("host",
+    		  InetAddress.getLocalHost().getHostAddress());
+	} 
+	catch(Exception e) {}
   }
   
   /**
