@@ -164,7 +164,7 @@ public class DatabaseDocument extends Document
       iBatis = true;
       System.setProperty("chado", location);
     }
-    init();
+    initMDC(this);
   }
 
   
@@ -193,7 +193,7 @@ public class DatabaseDocument extends Document
       iBatis = true;
       System.setProperty("chado", location);
     }
-    init();
+    initMDC(this);
   }
 
   /**
@@ -228,7 +228,7 @@ public class DatabaseDocument extends Document
     }
     
     reset(location, schema);
-    init();
+    initMDC(this);
   }
 
   /**
@@ -254,7 +254,7 @@ public class DatabaseDocument extends Document
       iBatis = true;
       System.setProperty("chado", location);
     }
-    init();
+    initMDC(this);
   }
   
   public DatabaseDocument(String location, JPasswordField pfield,
@@ -272,7 +272,7 @@ public class DatabaseDocument extends Document
       iBatis = true;
       System.setProperty("chado", location);
     }
-    init();
+    initMDC(this);
   }
   
   /**
@@ -295,7 +295,6 @@ public class DatabaseDocument extends Document
     this.progress_listener = progress_listener;
     this.range = range;
     this.geneFeature = geneFeature;
-    init();
   }
   
   /**
@@ -317,16 +316,15 @@ public class DatabaseDocument extends Document
          originalDocument.getPfield(),
          srcFeatureId, schema, gene_builder);
     this.progress_listener = progress_listener;
-    init();
   }
   
   
-  private void init()
+  public static void initMDC(final DatabaseDocument doc)
   {
     // add username & host to MDC data for logging
     try
 	{
-      org.apache.log4j.MDC.put("username",getUserName());
+      org.apache.log4j.MDC.put("username",doc.getUserName());
   	}
 	catch(NullPointerException npe)
 	{
