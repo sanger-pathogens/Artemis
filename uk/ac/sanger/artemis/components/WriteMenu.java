@@ -20,24 +20,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.6 2006-01-16 10:01:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.7 2007-11-05 10:40:18 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
 
-import uk.ac.sanger.artemis.io.Sequence;
+import uk.ac.sanger.artemis.io.EntryInformationException;
+import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.StreamSequence;
 import uk.ac.sanger.artemis.io.FastaStreamSequence;
 import uk.ac.sanger.artemis.io.RawStreamSequence;
 import uk.ac.sanger.artemis.io.EmblStreamSequence;
 import uk.ac.sanger.artemis.io.GenbankStreamSequence;
 import uk.ac.sanger.artemis.io.StreamSequenceFactory;
-import uk.ac.sanger.artemis.io.Range;
 
-import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
@@ -46,10 +46,12 @@ import javax.swing.*;
  *  A menu of commands for writing out protein and bases.
  *
  *  @author Kim Rutherford
- *  @version $Id: WriteMenu.java,v 1.6 2006-01-16 10:01:25 tjc Exp $
+ *  @version $Id: WriteMenu.java,v 1.7 2007-11-05 10:40:18 tjc Exp $
  **/
 public class WriteMenu extends SelectionMenu 
 {
+  private static final long serialVersionUID = 1L;
+
   /**
    *  Create a new WriteMenu component.
    *  @param frame The JFrame that owns this JMenu.
@@ -76,6 +78,38 @@ public class WriteMenu extends SelectionMenu
 
     add(aa_item);
 
+    
+    final JMenuItem aa_to_qualifier_item = new JMenuItem("Amino Acids Of Selected Features to Qualifier");
+    aa_to_qualifier_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        final FeatureVector features_to_write =
+          getSelection().getAllFeatures();
+
+        try
+        {
+          for(int i = 0; i < features_to_write.size(); ++i) 
+          {
+            final Feature selection_feature = features_to_write.elementAt(i);
+            final String translation_string =
+              selection_feature.getTranslation().toString().toUpperCase();
+            selection_feature.setQualifier(new Qualifier("translation", translation_string));
+          }
+        }
+        catch(ReadOnlyException e)
+        {
+          e.printStackTrace();
+        }
+        catch(EntryInformationException e)
+        {
+          e.printStackTrace();
+        }
+      }
+    });
+
+    add(aa_to_qualifier_item);
+    
     final JMenuItem pir_item =
       new JMenuItem("PIR Database Of Selected Features");
     pir_item.addActionListener(new ActionListener() 
