@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.28 2007-05-30 07:55:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.29 2007-11-07 09:11:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.28 2007-05-30 07:55:19 tjc Exp $
+ *  @version $Id: Splash.java,v 1.29 2007-11-07 09:11:09 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -141,6 +141,7 @@ abstract public class Splash extends JFrame
       }
     }
 
+    logger4j.info("Working directory: "+System.getProperty("user.dir"));
     this.program_name    = program_name;
     this.program_version = program_version;
 
