@@ -646,6 +646,7 @@ public class GeneUtils
     setLocation(chado_gene.getGene(), gene_start, gene_end);
   }
   
+  
   /**
    * Check and adjust transcript boundary
    * @param transcript
@@ -724,6 +725,66 @@ public class GeneUtils
     if(pp_start == Integer.MAX_VALUE || pp_end == -1)
        return;
     setLocation(protein, pp_start, pp_end);
+  }
+  
+  /**
+   * Converts a gene to pseudogene or vice-versa
+   * @param chado_gene
+   * @throws EntryInformationException 
+   * @throws ReadOnlyException 
+   * @throws OutOfRangeException 
+   */
+  public static void convertPseudo(final ChadoCanonicalGene chado_gene) 
+         throws ReadOnlyException, EntryInformationException, OutOfRangeException
+  {
+    final Key geneKey = chado_gene.getGene().getKey();
+    
+    boolean convertToPseudogene = false;
+    
+    uk.ac.sanger.artemis.Feature gene = (uk.ac.sanger.artemis.Feature)chado_gene.getGene().getUserData();
+    if(geneKey.equals("gene"))
+    {
+      gene.set(new Key("pseudogene"), gene.getLocation(), gene.getQualifiers());
+      convertToPseudogene = true;
+    }
+    else if(geneKey.equals("pseudogene"))
+      gene.set(new Key("gene"), gene.getLocation(), gene.getQualifiers());
+    else
+      return;
+    
+    final List transcripts = chado_gene.getTranscripts();
+    for(int i=0; i<transcripts.size(); i++)
+    {
+      final uk.ac.sanger.artemis.Feature transcript = (
+          uk.ac.sanger.artemis.Feature)((Feature)transcripts.get(i)).getUserData();
+      final String transcriptName = getUniqueName(transcript.getEmblFeature());
+      final List exons;
+      if(convertToPseudogene)
+      {
+        exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, 
+                                         DatabaseDocument.EXONMODEL);
+        transcript.set(new Key("pseudogenic_transcript"), transcript.getLocation(), 
+            transcript.getQualifiers());
+      }
+      else
+      {
+        exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, 
+                                                 "pseudogenic_exon");
+        transcript.set(new Key("mRNA"), transcript.getLocation(), transcript.getQualifiers());
+      }
+      
+      if(exons == null)
+        continue;
+      
+      for(int j=0; j<exons.size(); j++)
+      {
+        final uk.ac.sanger.artemis.Feature exon = (uk.ac.sanger.artemis.Feature)((Feature)exons.get(j)).getUserData();
+        if(convertToPseudogene)
+          exon.set(new Key("pseudogenic_exon"), exon.getLocation(), exon.getQualifiers());
+        else
+          exon.set(new Key(DatabaseDocument.EXONMODEL), exon.getLocation(), exon.getQualifiers());
+      }
+    }
   }
   
   private static Range setLocation(final Feature f, 

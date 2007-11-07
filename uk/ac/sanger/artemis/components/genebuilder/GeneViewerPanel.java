@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.75 2007-10-30 09:59:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.76 2007-11-07 16:26:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -368,7 +368,7 @@ public class GeneViewerPanel extends JPanel
     });
     menu.add(createTranscript);
     
-    final JMenu createFeature = new JMenu("Add feature to transcript from selected range");
+    final JMenu createFeatureMenu = new JMenu("Add feature to transcript from selected range");
     
     final JMenuItem createExon = new JMenuItem("exon");
     createExon.addActionListener(new ActionListener()
@@ -417,7 +417,7 @@ public class GeneViewerPanel extends JPanel
                        range_selected, uniquename, selection, exonKey, gene_builder);
       }
     });
-    createFeature.add(createExon);
+    createFeatureMenu.add(createExon);
     
     
     
@@ -492,12 +492,12 @@ public class GeneViewerPanel extends JPanel
         addProteinFeature(chado_gene, entry_group, transcriptName, transcript);
       }
     });
-    createFeature.add(createFeatureProtein);
-    createFeature.add(createFeature5Utr);
-    createFeature.add(createFeature3Utr);
-    createFeature.add(createFeatureDna);
+    createFeatureMenu.add(createFeatureProtein);
+    createFeatureMenu.add(createFeature5Utr);
+    createFeatureMenu.add(createFeature3Utr);
+    createFeatureMenu.add(createFeatureDna);
     
-    menu.add(createFeature);
+    menu.add(createFeatureMenu);
     
     menu.add(new JSeparator());
     JMenuItem adjustCoords = new JMenuItem("Adjust selected transcripts coordinates");
@@ -533,6 +533,34 @@ public class GeneViewerPanel extends JPanel
       }
     });
     menu.add(adjustGeneCoords);
+    
+    menu.add(new JSeparator());
+    
+    final JMenuItem convertPsuedoMenu = new JMenuItem("Convert gene to/from pseudogene");
+    convertPsuedoMenu.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)  
+      {
+        try
+        {
+          GeneUtils.convertPseudo(chado_gene);
+          gene_builder.dispose(true);
+        }
+        catch(ReadOnlyException e)
+        {
+          e.printStackTrace();
+        }
+        catch(EntryInformationException e)
+        {
+          e.printStackTrace();
+        }
+        catch(OutOfRangeException e)
+        {
+          e.printStackTrace();
+        }
+      }
+    });
+    menu.add(convertPsuedoMenu);
   }
   
   public static uk.ac.sanger.artemis.Feature 
