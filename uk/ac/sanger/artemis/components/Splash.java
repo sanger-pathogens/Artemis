@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.29 2007-11-07 09:11:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.30 2007-11-09 11:28:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.29 2007-11-07 09:11:09 tjc Exp $
+ *  @version $Id: Splash.java,v 1.30 2007-11-09 11:28:31 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -144,6 +144,23 @@ abstract public class Splash extends JFrame
     logger4j.info("Working directory: "+System.getProperty("user.dir"));
     this.program_name    = program_name;
     this.program_version = program_version;
+    
+    final ClassLoader cl = this.getClass().getClassLoader();
+    try
+    {
+      String line;
+      InputStream in = cl.getResourceAsStream("etc/versions");
+      BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+      while((line = reader.readLine()) != null)
+      {
+        if(line.startsWith(program_title))
+          this.program_version = line.substring( program_title.length() ).trim();
+      }
+    }
+    catch (Exception ex)
+    {
+      logger4j.debug(ex.getMessage());
+    }
 
     addWindowListener(new WindowAdapter() 
     {
@@ -192,7 +209,7 @@ abstract public class Splash extends JFrame
     getContentPane().add(helix_canvas, "Center");
     getContentPane().add(status_line, "South");
 
-    ClassLoader cl = this.getClass().getClassLoader();
+    //ClassLoader cl = this.getClass().getClassLoader();
     ImageIcon icon = new ImageIcon(cl.getResource("images/icon.gif"));
 
     if(icon != null) 
