@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.37 2007-10-18 19:23:51 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.38 2007-11-09 09:49:25 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -58,7 +58,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.37 2007-10-18 19:23:51 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.38 2007-11-09 09:49:25 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -364,10 +364,8 @@ public class EditMenu extends SelectionMenu
 
     final JMenuItem unmerge_all_feature_item = new JMenuItem("Unmerge All Feature Segments");
     if(GeneUtils.isDatabaseEntry(entry_group))
-    {
-      unmerge_feature_item.setEnabled(false);
       unmerge_all_feature_item.setEnabled(false);
-    }
+    
     unmerge_all_feature_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)
@@ -1423,8 +1421,27 @@ public class EditMenu extends SelectionMenu
 
       try 
       {
-        final Feature new_feature = segment_feature.duplicate();;
-
+        final Feature new_feature;
+        if(segment_feature.getEmblFeature() instanceof GFFStreamFeature)
+        {
+          final FeatureVector chadoGenes = new FeatureVector();
+          chadoGenes.add(segment_feature);
+          final Vector duplicateGenes = duplicateGeneFeatures(frame, chadoGenes, entry_group);
+          
+          // get the new duplicate spliced feature
+          ChadoCanonicalGene chado_gene = (ChadoCanonicalGene)duplicateGenes.get(0);
+          // assumes single transcript
+          uk.ac.sanger.artemis.io.Feature transcript = 
+            (uk.ac.sanger.artemis.io.Feature)chado_gene.getTranscripts().get(0);
+          // get the spliced feature with the same key as the segment
+          // selected to unmerge
+          uk.ac.sanger.artemis.io.Feature spliced = (uk.ac.sanger.artemis.io.Feature)
+            chado_gene.getSpliceSitesOfTranscript(GeneUtils.getUniqueName(transcript), 
+              first_segment.getFeature().getKey().getKeyString()).get(0);
+          new_feature = (Feature)spliced.getUserData();
+        }
+        else
+          new_feature = segment_feature.duplicate(true);
         // we set the Selection later
         selection.clear ();
 
@@ -1441,14 +1458,14 @@ public class EditMenu extends SelectionMenu
         // remove the first segment of new_feature index_of_first_segment times
         for (int i = 0; i <= index_of_first_segment; ++i) 
           new_feature.getSegments ().elementAt (0).removeFromFeature ();
-        
-        // set GFF ID's
+
         if(segment_feature.getEmblFeature() instanceof GFFStreamFeature)
         {
-          setGffId(first_segment.getFeature(), new_feature);
-          setGffId(first_segment.getFeature(), segment_feature);
+          GeneUtils.checkGeneBoundary(
+              ((GFFStreamFeature)segment_feature.getEmblFeature()).getChadoGene());
+          GeneUtils.checkGeneBoundary(
+              ((GFFStreamFeature)new_feature.getEmblFeature()).getChadoGene());
         }
-
         selection.set (segment_feature.getSegments ().lastElement ());
         selection.add (new_feature.getSegments ().elementAt (0));
       } 
@@ -1782,7 +1799,7 @@ public class EditMenu extends SelectionMenu
     }
   }
   
-  protected static void duplicateGeneFeatures(final JFrame frame,
+  protected static Vector duplicateGeneFeatures(final JFrame frame,
       final FeatureVector features,
       final EntryGroup entry_group) 
   {
@@ -1791,10 +1808,10 @@ public class EditMenu extends SelectionMenu
       new MessageDialog (frame,
                          "one or more of the selected features is read-only " +
                          "- cannot continue");
-      return;
+      return null;
     }
 
-    GeneUtils.duplicateGeneModel(frame, features, entry_group);
+    return GeneUtils.duplicateGeneModel(frame, features, entry_group);
   }
 
   /**
