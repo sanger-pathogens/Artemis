@@ -284,11 +284,12 @@ public class GeneUtils
   /**
    * 
    */
-  public static void duplicateGeneModel(final JFrame frame,
+  public static Vector duplicateGeneModel(final JFrame frame,
       final FeatureVector features_to_duplicate,
       final EntryGroup entry_group)
   {
     final Vector duplicatedGenes = new Vector();
+    final Vector newGenes = new Vector();
     for (int i = 0 ; i < features_to_duplicate.size () ; ++i) 
     {
       final uk.ac.sanger.artemis.Feature this_feature = 
@@ -307,6 +308,7 @@ public class GeneUtils
         
         final ChadoCanonicalGene chadoGene = gffFeature.getChadoGene();
         final ChadoCanonicalGene newchadoGene = new ChadoCanonicalGene();
+        newGenes.add(newchadoGene);
         ((GFFStreamFeature)newGeneFeature.getEmblFeature()).setChadoGene(newchadoGene);
         newchadoGene.setGene(newGeneFeature.getEmblFeature());
         
@@ -357,6 +359,7 @@ public class GeneUtils
     }
     
     duplicatedGenes.clear();
+    return newGenes;
   }
   
   
