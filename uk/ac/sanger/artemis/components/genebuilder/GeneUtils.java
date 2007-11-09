@@ -50,6 +50,7 @@ import uk.ac.sanger.artemis.io.Feature;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.io.KeyVector;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
@@ -72,16 +73,7 @@ import uk.ac.sanger.artemis.Selection;
 public class GeneUtils
 {
   private static final long serialVersionUID = 1L;
-  private static Vector showFeatures = new Vector();
   private static Vector hideFeatures = new Vector();
-  
-  static 
-  {
-    showFeatures.add("gene");
-    showFeatures.add("pseudogene");
-    showFeatures.add("exon-model");
-    showFeatures.add("pseudogenic_exon");
-  }
   
   static
   {
@@ -166,6 +158,35 @@ public class GeneUtils
     feature.setQualifier(new Qualifier("ID", feature.getSegmentID( rv )));
   }
   
+  
+  /**
+   * Sorts the elements of the vector using a simple O(n^2) selection
+   * sort.
+   */
+  private static void sort(Vector v)
+  {
+    int smallest;
+
+    for (int i = 0; i < v.size (); ++i)
+    {
+      //find smallest remaining element
+      smallest = i;
+      for(int j = i + 1 ; j < v.size () ; ++j)
+      {
+        if(((String)v.get(j)).compareTo( (String)v.get(smallest)) < 0)
+          smallest = j;
+      }
+      //exchange smallest and i
+      if (smallest != i)
+      {
+        final String tmp = (String)v.get(i);
+        v.setElementAt (v.get(smallest), i);
+        v.setElementAt (tmp, smallest);
+      }
+    }
+  }
+
+  
   /**
    * Given a collection of features, determine if these should be
    * shown or hidden in the Artemis display
@@ -173,6 +194,18 @@ public class GeneUtils
    */
   public static void defineShowHideGeneFeatures(final FeatureVector features)
   {
+    final KeyVector keys = 
+      features.elementAt(0).getEntry().getEntryInformation().getSortedValidKeys ();
+    final Vector showFeatures = new Vector();
+    for(int i=0; i<keys.size(); i++)
+    {
+      String keyStr = ((Key)keys.get(i)).getKeyString();
+      if( !hideFeatures.contains(keyStr) )
+        showFeatures.add(keyStr);
+    }
+    
+    sort(hideFeatures);
+    
     final DefaultListModel showListModel = new DefaultListModel();
     for(int i=0; i<showFeatures.size(); i++)
       showListModel.addElement(showFeatures.get(i));
@@ -193,12 +226,14 @@ public class GeneUtils
         while(!displayList.isSelectionEmpty())
         {
           final String hideKey = (String)displayList.getSelectedValue();
-          hideListModel.addElement(hideKey);
-          showListModel.removeElement(hideKey);
           
           hideFeatures.add(hideKey);
           if(showFeatures.contains(hideKey))
             showFeatures.remove(hideKey);
+          
+          sort(hideFeatures);
+          hideListModel.add(hideFeatures.indexOf(hideKey), hideKey);
+          showListModel.removeElement(hideKey);
         }
       }
     });
@@ -220,12 +255,14 @@ public class GeneUtils
         while(!hideList.isSelectionEmpty())
         {
           final String showKey = (String)hideList.getSelectedValue();
-          showListModel.addElement(showKey);
-          hideListModel.removeElement(showKey);
           
           if(hideFeatures.contains(showKey))
             hideFeatures.remove(showKey);
           showFeatures.add(showKey);
+          sort(showFeatures);
+          
+          showListModel.add(showFeatures.indexOf(showKey), showKey);
+          hideListModel.removeElement(showKey);
         }
       }
     });
@@ -264,7 +301,7 @@ public class GeneUtils
         final String key = feature.getKey().getKeyString();
         if(hideFeatures.contains(key))
           ((GFFStreamFeature)feature).setVisible(false);
-        else if(showFeatures.contains(key))
+        else 
           ((GFFStreamFeature)feature).setVisible(true);
       }
     }
