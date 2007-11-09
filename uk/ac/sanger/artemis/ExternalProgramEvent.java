@@ -20,18 +20,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgramEvent.java,v 1.1 2004-06-09 09:44:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgramEvent.java,v 1.2 2007-11-09 10:36:30 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
 
-import uk.ac.sanger.jcon.job.*;
+//import uk.ac.sanger.jcon.job.*;
 
 /**
  *  An event that represents a change in the state of an ExternalProgram.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ExternalProgramEvent.java,v 1.1 2004-06-09 09:44:29 tjc Exp $
+ *  @version $Id: ExternalProgramEvent.java,v 1.2 2007-11-09 10:36:30 tjc Exp $
  **/
 
 public class ExternalProgramEvent {
@@ -40,13 +40,15 @@ public class ExternalProgramEvent {
    *  @param message A summary of the event.
    *  @param task The Task that caused this event.
    **/
+  /*
   public ExternalProgramEvent (final int type, final String message,
                                final Task task) {
     this.type = type;
     this.message = message;
     this.task = task;
   }
-
+  */
+  
   /**
    *  Create a new ExternalProgramEvent object of the given type.
    *  @param message A summary of the event.
@@ -87,9 +89,9 @@ public class ExternalProgramEvent {
    *  Return the Task that was passed to the constructor or null if a Process
    *  was passed to the constructor.
    **/
-  public Task getTask () {
+  /*public Task getTask () {
     return task;
-  }
+  }*/
 
   /**
    *  Return the Process that was passed to the constructor or null if a
@@ -113,7 +115,7 @@ public class ExternalProgramEvent {
    *  The Task that was passed to the constructor or null if a Process was
    *  passed to the constructor.
    **/
-  private Task task = null;
+  //private Task task = null;
 
   /**
    *  The Process that was passed to the constructor or null if a Task was
