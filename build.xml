@@ -113,9 +113,9 @@
   <!-- Compiles the source directory -->
   <target name="compile" depends="init,compile-idl,prepare-src">
     <javac
-    	  srcdir="${build.src.main}"
+      srcdir="${build.src.main}"
       destdir="${build.dest.main}"
-    	  excludes="nsdb/**,seqdb/**,type/**,lib/**,src/**,uk/ac/sanger/artemis/components/MacHandler.java,uk/ac/sanger/artemis/components/filetree/FileTree.java,uk/ac/sanger/artemis/components/filetree/SshFileTree.java,uk/ac/sanger/artemis/ExternalProgramUtils.java"
+      excludes="nsdb/**,seqdb/**,type/**,lib/**,src/**,uk/ac/sanger/artemis/components/MacHandler.java,uk/ac/sanger/artemis/components/filetree/FileTree.java,uk/ac/sanger/artemis/components/filetree/SshFileTree.java,uk/ac/sanger/artemis/ExternalProgramUtils.java"
       deprecation="false"
       depend="no"
       debug="true">
@@ -129,13 +129,13 @@
       jarfile="${build.dir}/chado-access.jar"
       basedir="${build.dest.main}"
       manifest="META-INF/MANIFEST.MF"
-      includes="uk/ac/sanger/artemis/chado/**"
+      includes="uk/ac/sanger/artemis/chado/**,uk/ac/sanger/artemis/util/ByteBuffer*"
     />
   	<jar
   	  jarfile="${build.dir}/chado-access.jar"
       update="yes"
   	  basedir="${build.src.main}"
-  	  includes="artemis_sqlmap/**"
+  	  includes="artemis_sqlmap/**,uk/ac/sanger/artemis/chado/**,uk/ac/sanger/artemis/util/ByteBuffer*"
   	/>
   </target>
 
