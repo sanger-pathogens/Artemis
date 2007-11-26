@@ -52,8 +52,6 @@ import java.awt.event.MouseEvent;
 import java.awt.Dimension;
 import java.net.ConnectException;
 import java.sql.SQLException;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Collection;
@@ -114,8 +112,6 @@ public class ChadoDemo
   
   /** row data containing results */
   private String rowData[][];
-
-  private static Hashtable cvterms;
   
   private List pubDbXRefs[];
   
@@ -502,37 +498,6 @@ public class ChadoDemo
     
     return true;
   }
-
-  /**
-   * Look up the cvterm_id for a controlled vocabulary name.
-   * @param name  
-   * @return
-   */
-  public static Long getCvtermID(String name)
-  {
-    Enumeration enum_cvterm = cvterms.keys();
-    while(enum_cvterm.hasMoreElements())
-    {
-      Long key = (Long)enum_cvterm.nextElement();
-      if(name.equals( ((CvTerm)cvterms.get(key)).getName() ))
-        return key;
-    }
-    return null;
-  }
-
-  
-  public static CvTerm getCvTermByCvTermName(String cvterm_name)
-  {
-    Enumeration enum_cvterm = cvterms.elements();
-    while(enum_cvterm.hasMoreElements())
-    {
-      CvTerm cvterm = (CvTerm)enum_cvterm.nextElement();
-      if(cvterm_name.equals( cvterm.getName() ))
-        return cvterm;
-    }
-    
-    return null;
-  }
   
   
   public class SelectionListener implements ListSelectionListener
@@ -667,11 +632,6 @@ public class ChadoDemo
     attr_text.setText(decode((new String(attr_buff.getBytes()))));
   }
 
-  private static CvTerm getCvTerm(final int id, 
-          final GmodDAO dao)
-  {
-    return dao.getCvTermById(id);
-  }
   
   /**
    * Appends controlled vocabulary terms to the buffer
@@ -688,7 +648,7 @@ public class ChadoDemo
                                           final List pubDbXRefs,
                                           final boolean gene_builder)
   {
-    CvTerm cvterm =  getCvTerm( feature_cvterm.getCvTerm().getCvTermId(), dao);
+    CvTerm cvterm = dao.getCvTermById( feature_cvterm.getCvTerm().getCvTermId() );
     DbXRef dbXRef = feature_cvterm.getCvTerm().getDbXRef();
     
     if(cvterm.getCv().getName().startsWith(CONTROLLED_CURATION_TAG_CVNAME))
@@ -747,8 +707,7 @@ public class ChadoDemo
       {
         FeatureCvTermProp feature_cvtermprop = 
           (FeatureCvTermProp)feature_cvtermprops.get(i);
-        attr_buff.append(getCvTerm(feature_cvtermprop.getCvTerm()
-            .getCvTermId(), dao).getName());
+        attr_buff.append( dao.getCvTermById( feature_cvtermprop.getCvTerm().getCvTermId() ).getName());
         attr_buff.append("=");
         attr_buff.append(feature_cvtermprop.getValue());
         if(i < feature_cvtermprops.size()-1)
@@ -867,8 +826,7 @@ public class ChadoDemo
         if(feature_cvtermprop.getValue() == null)
           continue;
         
-        attr_buff.append(getCvTerm(feature_cvtermprop.getCvTerm()
-            .getCvTermId(), dao).getName());
+        attr_buff.append(dao.getCvTermById(feature_cvtermprop.getCvTerm().getCvTermId()).getName());
         attr_buff.append("=");
         attr_buff.append(feature_cvtermprop.getValue());
         if(i < feature_cvtermprops.size()-1)
