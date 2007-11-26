@@ -2616,7 +2616,8 @@ public class DatabaseDocument extends Document
     if(tsn.getGff_feature() == null)
       return null;
     if(tsn.getGff_feature().getSegmentRangeStore() == null ||
-       tsn.getGff_feature().getSegmentRangeStore().size() < 2)
+       tsn.getGff_feature().getSegmentRangeStore().size() < 2 ||
+       tsn.getFeatureObject() instanceof FeatureProp)
       return new Object[]{ tsn.getUniquename() };
     else 
       return tsn.getGff_feature().getSegmentRangeStore().keySet().toArray();
