@@ -1347,7 +1347,8 @@ public class ChadoTransactionManager
       tsn = new ChadoTransaction(type,
           featureprop,
           feature.getLastModified(), feature, feature.getKey().getKeyString(),
-          "FEATUREPROP: ID="+uniquename+" "+qualifier_string);       
+          "FEATUREPROP: ID="+uniquename+" "+qualifier_string);
+      tsn.setUniquename(uniquename);
       sql.add(tsn);
     }
   }
