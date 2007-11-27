@@ -20,11 +20,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupInfoDisplay.java,v 1.2 2004-12-14 15:53:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupInfoDisplay.java,v 1.3 2007-11-27 15:34:36 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
 
+import uk.ac.sanger.artemis.Entry;
+import uk.ac.sanger.artemis.EntryChangeEvent;
+import uk.ac.sanger.artemis.EntryChangeListener;
+import uk.ac.sanger.artemis.EntryGroup;
+import uk.ac.sanger.artemis.EntryGroupChangeEvent;
+import uk.ac.sanger.artemis.EntryGroupChangeListener;
+import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.FeatureChangeEvent;
+import uk.ac.sanger.artemis.FeatureChangeListener;
+import uk.ac.sanger.artemis.FeatureEnumeration;
+import uk.ac.sanger.artemis.FeaturePredicate;
+import uk.ac.sanger.artemis.FeatureSegmentVector;
+import uk.ac.sanger.artemis.FilteredEntryGroup;
+import uk.ac.sanger.artemis.SimpleEntryGroup;
+import uk.ac.sanger.artemis.sequence.Bases;
+import uk.ac.sanger.artemis.sequence.NoSequenceException;
+import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
+import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
+import uk.ac.sanger.artemis.sequence.Strand;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Qualifier;
@@ -33,31 +53,42 @@ import uk.ac.sanger.artemis.io.FuzzyRange;
 import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 
-import uk.ac.sanger.artemis.*;
-import uk.ac.sanger.artemis.sequence.*;
-
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Hashtable;
 import java.util.Enumeration;
-import java.awt.event.*;
+import java.util.Vector;
 
 import javax.swing.JFrame;
+
+import org.apache.log4j.Level;
 
 /**
  *  This component will show general information about an EntryGroup.  It will
  *  show the sequence length, GC content and a summary of the active entries.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryGroupInfoDisplay.java,v 1.2 2004-12-14 15:53:11 tjc Exp $
+ *  @version $Id: EntryGroupInfoDisplay.java,v 1.3 2007-11-27 15:34:36 tjc Exp $
  **/
 
 public class EntryGroupInfoDisplay
     implements FeatureChangeListener, EntryChangeListener,
                EntryGroupChangeListener, SequenceChangeListener 
 {
-  /**
-   *  Summarize both strands.
-   **/
+  /** Summarize both strands. */
   final static public int BOTH = 3;
+  
+  /** This is the EntryGroup object that we are viewing. */
+  private EntryGroup entry_group;
+
+  /** The strand indicator that was passed to the constructor. */
+  private int strand_flag;
+
+  /** The FileViewer object that is displaying the EntryGroup. */
+  private FileViewer file_viewer;
+
+  /** The Frame that was passed to the constructor. */
+  private JFrame parent_frame;
 
   /**
    *  Create a new EntryGroupInfoDisplay object to summarize all features on
@@ -255,18 +286,28 @@ public class EntryGroupInfoDisplay
   {
     final String frame_name = getFrameName();
     file_viewer.setTitle(frame_name);
-    
-    final StringBuffer buffer = new StringBuffer();
 
-    buffer.append(frame_name + "\n\n");
-    buffer.append("Number of bases: " +
+    file_viewer.appendString(frame_name + "\n\n", Level.INFO);
+    file_viewer.appendString("Number of bases: " +
                   entry_group.getSequenceLength() + "\n");
-    buffer.append("Number of features in the active entries: " +
+    file_viewer.appendString("Number of features in the active entries: " +
                   entry_group.getAllFeaturesCount() + "\n\n");
 
-    final Bases entry_group_bases = entry_group.getBases();
+    final String otherKeys[] = 
+    { "misc_RNA", "rRNA",
+      "snoRNA",   "tRNA",
+      "snRNA" };
 
-    // cds_count - gene_count = pseudo gene count
+    int others_count[] = new int[otherKeys.length];
+    StringBuffer other_bases_buffer[] = new StringBuffer[otherKeys.length];
+    int other_bases_count_with_introns[] = new int[otherKeys.length];
+    for(int i=0; i<others_count.length; i++)
+    {
+      others_count[i] = 0;
+      other_bases_count_with_introns[i] = 0;
+      other_bases_buffer[i] = new StringBuffer();
+    }
+    
     int gene_count = 0;
     int cds_count  = 0;
     int spliced_gene_count = 0;
@@ -282,6 +323,7 @@ public class EntryGroupInfoDisplay
     final Hashtable table = new Hashtable();
     final FeatureEnumeration feature_enumerator = entry_group.features();
 
+    int index;
     while(feature_enumerator.hasMoreFeatures())
     {
       final Feature this_feature = feature_enumerator.nextFeature();
@@ -365,7 +407,15 @@ public class EntryGroupInfoDisplay
                                            this_feature.getRawFirstBase() + 1;
         }
       }
+      else if((index=containsKey(otherKeys, key_string)) > -1)
+      {
+        others_count[index]++;
+        other_bases_buffer[index].append(this_feature.getBases());
+        other_bases_count_with_introns[index] += this_feature.getRawLastBase() -
+                                                 this_feature.getRawFirstBase() + 1;
+      }
     }
+
 
     final String gene_bases    = gene_bases_buffer.toString();
     final int gene_bases_count = gene_bases.length();
@@ -377,7 +427,7 @@ public class EntryGroupInfoDisplay
     {
       if(gene_count > 0) 
       {
-        buffer.append("Genes (CDS features without a /pseudo qualifier):\n");
+        file_viewer.appendString("Genes (CDS features without a /pseudo qualifier):\n", Level.INFO);
 
         final int non_spliced_gene_count = gene_count - spliced_gene_count;
         final int non_spliced_gene_bases_count =
@@ -385,96 +435,139 @@ public class EntryGroupInfoDisplay
 
         if(spliced_gene_count > 0) 
         {
-          buffer.append("   spliced:\n");
-          buffer.append("      count: " + spliced_gene_count + "\n");
-          buffer.append("      bases: " + spliced_gene_bases_count + "\n");
-          buffer.append("      introns: " + intron_count + "\n");
+          file_viewer.appendString("   spliced:\n");
+          file_viewer.appendString("      count: " + spliced_gene_count + "\n");
+          file_viewer.appendString("      bases: " + spliced_gene_bases_count + "\n");
+          file_viewer.appendString("      introns: " + intron_count + "\n");
         }
 
         if(non_spliced_gene_count > 0) 
         {
-          buffer.append("   non-spliced:\n");
-          buffer.append("      count: " + non_spliced_gene_count + "\n");
-          buffer.append("      bases: " + non_spliced_gene_bases_count +
+          file_viewer.appendString("   non-spliced:\n");
+          file_viewer.appendString("      count: " + non_spliced_gene_count + "\n");
+          file_viewer.appendString("      bases: " + non_spliced_gene_bases_count +
                         "\n");
         }
 
-        buffer.append("   all:\n");
-        buffer.append("      count: " + gene_count + "\n");
-        buffer.append("      partials: " + partial_count + "\n");
+        file_viewer.appendString("   all:\n");
+        file_viewer.appendString("      count: " + gene_count + "\n");
+        file_viewer.appendString("      partials: " + partial_count + "\n");
         if(exon_count == gene_count) 
         {
-          buffer.append("      bases: "
+          file_viewer.appendString("      bases: "
                         + gene_bases_count + "\n");
         } 
         else
         {
-          buffer.append("      bases(excluding introns): "
+          file_viewer.appendString("      bases(excluding introns): "
                         + gene_bases_count + "\n");
-          buffer.append("      bases(including introns): "
+          file_viewer.appendString("      bases(including introns): "
                         + gene_bases_count_with_introns + "\n");
-          buffer.append("      exons: " + exon_count + "\n");
-          buffer.append("      average exon length: " +
+          file_viewer.appendString("      exons: " + exon_count + "\n");
+          file_viewer.appendString("      average exon length: " +
                         10L * gene_bases_count / exon_count / 10.0 + "\n");
-          buffer.append("      average intron length: " +
+          file_viewer.appendString("      average intron length: " +
                         10L * (gene_bases_count_with_introns -
                                gene_bases_count) /
                         (exon_count - gene_count) / 10.0 + "\n");
-          buffer.append("      average number of exons per gene: " +
+          file_viewer.appendString("      average number of exons per gene: " +
                         100L * exon_count / gene_count / 100.00 + "\n");
         }
-        buffer.append("      density: " +
+        file_viewer.appendString("      density: " +
                       1000000L * gene_count /
                       entry_group.getSequenceLength() / 1000.0 +
                       " genes per kb   (" +
                       entry_group.getSequenceLength() / gene_count +
                        " bases per gene)\n");
-        buffer.append("      average length: " +
+        file_viewer.appendString("      average length: " +
                       gene_bases_count / gene_count + "\n");
-        buffer.append("      average length (including introns): " +
+        file_viewer.appendString("      average length (including introns): " +
                       gene_bases_count_with_introns / gene_count + "\n");
-        buffer.append("      coding percentage: " +
+        file_viewer.appendString("      coding percentage: " +
                       1000L * gene_bases_count /
                       entry_group.getSequenceLength() / 10.0 + "\n");
-        buffer.append("      coding percentage (including introns): " +
+        file_viewer.appendString("      coding percentage (including introns): " +
                       1000L * gene_bases_count_with_introns /
                       entry_group.getSequenceLength() / 10.0 + "\n\n");
 
-        buffer.append("      gene sequence composition:\n\n");
+        file_viewer.appendString("      gene sequence composition:\n\n");
 
         final StringVector gene_base_summary =
           SelectionViewer.getBaseSummary(gene_bases);
 
         for(int i = 0 ; i < gene_base_summary.size() ; ++i)
         {
-          buffer.append("         ");
-          buffer.append(gene_base_summary.elementAt(i)).append("\n");
+          file_viewer.appendString("         ");
+          file_viewer.appendString(gene_base_summary.elementAt(i)+"\n");
         }
 
-        buffer.append("\n");
+        file_viewer.appendString("\n");
       }
 
       if(pseudo_gene_count > 0)
       {
-        buffer.append("Pseudo genes (CDS features with a /pseudo " +
-                      "qualifier):\n");
+        file_viewer.appendString("Pseudo genes (CDS features with a /pseudo " +
+                      "qualifier):\n", Level.INFO);
 
-        buffer.append("   count: " + pseudo_gene_count + "\n");
-        buffer.append("   bases: " + pseudo_gene_bases_count + "\n");
-        buffer.append("   average length: " +
+        file_viewer.appendString("   count: " + pseudo_gene_count + "\n");
+        file_viewer.appendString("   bases: " + pseudo_gene_bases_count + "\n");
+        file_viewer.appendString("   average length: " +
                       pseudo_gene_bases_count / pseudo_gene_count + "\n\n");
       }
 
       if(pseudo_gene_count > 0) 
       {
-        buffer.append("All CDS features:\n");
-        buffer.append("   count: " + cds_count + "\n");
-        buffer.append("   bases: " + cds_bases_count + "\n");
-        buffer.append("   average length: " +
+        file_viewer.appendString("All CDS features:\n",Level.INFO);
+        file_viewer.appendString("   count: " + cds_count + "\n");
+        file_viewer.appendString("   bases: " + cds_bases_count + "\n");
+        file_viewer.appendString("   average length: " +
                       cds_bases_count / cds_count + "\n\n");
       }
     }
 
+    Vector none = null;
+    for(int i=0; i<others_count.length; i++)
+    {  
+      if(others_count[i]>0)
+      {    
+        file_viewer.appendString(otherKeys[i]+":", Level.INFO);
+        file_viewer.appendString("\n      bases(excluding introns): "
+            + other_bases_buffer[i].length() + "\n");
+        file_viewer.appendString("      bases(including introns): "
+            + other_bases_count_with_introns[i]);
+        
+        file_viewer.appendString("\n\n      "+otherKeys[i]+" sequence composition:\n\n");
+        final StringVector other_base_summary =
+          SelectionViewer.getBaseSummary(other_bases_buffer[i].toString());
+
+        for(int j = 0 ; j < other_base_summary.size() ; ++j)
+        {
+          file_viewer.appendString("         ");
+          file_viewer.appendString(other_base_summary.elementAt(j)+"\n");
+        }
+        file_viewer.appendString("\n");
+      }
+      else
+      {
+        if(none == null)
+          none = new Vector();
+        none.add(otherKeys[i]);
+      }
+    }
+    
+    if(none != null)
+    {
+      for(int i=0; i<none.size(); i++)
+      {
+        file_viewer.appendString((String) none.get(i), Level.INFO);
+        if(i<none.size()-1)
+          file_viewer.appendString(",", Level.INFO);
+        else
+          file_viewer.appendString(":", Level.INFO);
+      }
+      file_viewer.appendString(" none\n\n");
+    }
+    
     final Strand strand;
 
     if(strand_flag == Bases.FORWARD || strand_flag == BOTH) 
@@ -485,12 +578,12 @@ public class EntryGroupInfoDisplay
     final StringVector base_summary =
       SelectionViewer.getBaseSummary(strand.getStrandBases());
 
-    buffer.append("\nOverall sequence composition:\n\n");
+    file_viewer.appendString("\nOverall sequence composition:\n\n", Level.INFO);
 
     for(int i = 0 ; i < base_summary.size() ; ++i) 
-      buffer.append(base_summary.elementAt(i)).append("\n");
+      file_viewer.appendString(base_summary.elementAt(i)+"\n");
 
-    buffer.append("\nSummary of the active entries:\n");
+    file_viewer.appendString("\nSummary of the active entries:\n", Level.INFO);
 
     final Enumeration e = table.keys();
 
@@ -499,7 +592,7 @@ public class EntryGroupInfoDisplay
       final String this_key = (String)e.nextElement();
       final Hashtable colour_table = (Hashtable)table.get(this_key);
 
-      buffer.append(this_key + ": ");
+      file_viewer.appendString(this_key + ": ");
 
       final StringBuffer colour_string = new StringBuffer();
 
@@ -530,30 +623,34 @@ public class EntryGroupInfoDisplay
                                end_string + "\n");
       }
 
-      buffer.append(total + "\n");
-      buffer.append(colour_string);
+      file_viewer.appendString(total + "\n");
     }
-
-    file_viewer.setText(buffer.toString());
+  }
+  
+  private int containsKey(final String keys[], final String keyStr)
+  {
+    for(int i=0; i<keys.length; i++)
+    {
+      if(keys[i].equals(keyStr))
+        return i;
+    }
+    return -1;
   }
 
-  /**
-   *  This is the EntryGroup object that we are viewing.
-   **/
-  private EntryGroup entry_group;
+  public static void main(final String args[])
+  {
+    final FileDialogEntrySource entry_source = new FileDialogEntrySource(null, null);
+    
+    try
+    {
+      final Entry entry = entry_source.getEntry(true);
+      final EntryGroup entry_group =
+          new SimpleEntryGroup(entry.getBases());
+      entry_group.add(entry);
+      new EntryGroupInfoDisplay(new JFrame(), entry_group);
+    }
+    catch(OutOfRangeException e) {}
+    catch(NoSequenceException e) {}
 
-  /**
-   *  The strand indicator that was passed to the constructor.
-   **/
-  private int strand_flag;
-
-  /**
-   *  The FileViewer object that is displaying the EntryGroup.
-   **/
-  private FileViewer file_viewer;
-
-  /**
-   *  The Frame that was passed to the constructor.
-   **/
-  private JFrame parent_frame;
+  }
 }
