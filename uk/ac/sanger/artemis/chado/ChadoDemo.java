@@ -44,6 +44,7 @@ import org.gmod.schema.sequence.FeatureLoc;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -190,6 +191,7 @@ public class ChadoDemo
       v_schemas.add(o.getCommonName());
     }
 
+    final JFrame frame = new JFrame("Feature Search");
     final JPanel panel = new JPanel(new BorderLayout());
     final JList schema_list = new JList(v_schemas);
     schema_list.setSelectedValue(schema, true);
@@ -221,6 +223,7 @@ public class ChadoDemo
 
       public void actionPerformed(ActionEvent event)
       {
+        frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         String search_gene = gene_text.getText();
         String schema = (String)schema_list.getSelectedValue();
         List schema_search;
@@ -238,18 +241,20 @@ public class ChadoDemo
 
           result_table = new JTable(rowData, columnNames);
           result_table.getSelectionModel().addListSelectionListener(
-                                         new SelectionListener(dao));
+                                         new SelectionListener(dao, frame));
           result_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
           result_table.addMouseListener(new MouseAdapter()
           {
             public void mouseClicked(MouseEvent e)
             {
+              frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
               int row = result_table.getSelectedRow();
  
               if(pubDbXRefs[row] == null)
                 pubDbXRefs[row] = dao.getPubDbXRef();
               showAttributes(dao, pubDbXRefs[row]);
+              frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
           });
 
@@ -266,6 +271,7 @@ public class ChadoDemo
           // TODO Auto-generated catch block
           e.printStackTrace();
         }
+        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
     xbox.add(findButt);
@@ -291,7 +297,7 @@ public class ChadoDemo
     
     panel.add(tabbedPane, BorderLayout.CENTER);
 
-    JFrame frame = new JFrame("Feature Search");
+    
     frame.getContentPane().add(panel);
     frame.setJMenuBar(getJMenuBar(dao));
     frame.pack();
@@ -502,21 +508,26 @@ public class ChadoDemo
   
   public class SelectionListener implements ListSelectionListener
   {
-	private GmodDAO dao;
-    public SelectionListener(final GmodDAO dao)
+	  private GmodDAO dao;
+    private JFrame frame;
+    
+    public SelectionListener(final GmodDAO dao, final JFrame frame)
     {
       super();
       this.dao = dao;
+      this.frame = frame;
     }
     
     public void valueChanged(ListSelectionEvent e)
     {
+      frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
       int row = result_table.getSelectedRow();
       //reset(location, rowData[row][0]);
 
       if(pubDbXRefs[row] == null)
         pubDbXRefs[row] = dao.getPubDbXRef();
       showAttributes(dao, pubDbXRefs[row]);
+      frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
   }
   
