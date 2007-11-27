@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.14 2007-08-02 13:34:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.15 2007-11-27 15:33:27 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -60,7 +60,7 @@ import uk.ac.sanger.artemis.Options;
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.14 2007-08-02 13:34:07 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.15 2007-11-27 15:33:27 tjc Exp $
  *
  **/
 
@@ -294,9 +294,7 @@ public class FileViewer extends JFrame
    *  @param read_string The string to read the contents of the viewer from.
    **/
   protected void appendString(String read_string) 
-  {
-    Document doc = textPane.getStyledDocument();
-    
+  { 
     final Level level;
     if(read_string.indexOf("FATAL") > -1)
       level = Level.FATAL;
@@ -308,7 +306,12 @@ public class FileViewer extends JFrame
       level = Level.INFO;
     else
       level = Level.DEBUG;
-    
+    appendString(read_string, level);
+  }
+  
+  protected void appendString(final String read_string, final Level level) 
+  {
+    final Document doc = textPane.getStyledDocument();
     try
     {
       doc.insertString(doc.getLength(), read_string, 
