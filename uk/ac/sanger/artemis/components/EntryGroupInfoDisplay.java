@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupInfoDisplay.java,v 1.4 2007-11-28 10:54:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupInfoDisplay.java,v 1.5 2007-11-28 14:00:51 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import org.apache.log4j.Level;
  *  show the sequence length, GC content and a summary of the active entries.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryGroupInfoDisplay.java,v 1.4 2007-11-28 10:54:29 tjc Exp $
+ *  @version $Id: EntryGroupInfoDisplay.java,v 1.5 2007-11-28 14:00:51 tjc Exp $
  **/
 
 public class EntryGroupInfoDisplay
@@ -295,7 +295,7 @@ public class EntryGroupInfoDisplay
     final String otherKeys[] = 
     { "misc_RNA", "rRNA",
       "snoRNA",   "tRNA",
-      "snRNA" };
+      "snRNA", "3'UTR", "5'UTR" };
 
     int others_count[] = new int[otherKeys.length];
     StringBuffer other_bases_buffer[] = new StringBuffer[otherKeys.length];
