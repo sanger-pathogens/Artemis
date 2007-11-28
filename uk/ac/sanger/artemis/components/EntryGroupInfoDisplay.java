@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupInfoDisplay.java,v 1.3 2007-11-27 15:34:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupInfoDisplay.java,v 1.4 2007-11-28 10:54:29 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -57,7 +57,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Hashtable;
 import java.util.Enumeration;
-import java.util.Vector;
 
 import javax.swing.JFrame;
 
@@ -68,7 +67,7 @@ import org.apache.log4j.Level;
  *  show the sequence length, GC content and a summary of the active entries.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryGroupInfoDisplay.java,v 1.3 2007-11-27 15:34:36 tjc Exp $
+ *  @version $Id: EntryGroupInfoDisplay.java,v 1.4 2007-11-28 10:54:29 tjc Exp $
  **/
 
 public class EntryGroupInfoDisplay
@@ -525,7 +524,7 @@ public class EntryGroupInfoDisplay
       }
     }
 
-    Vector none = null;
+    //Vector none = null;
     for(int i=0; i<others_count.length; i++)
     {  
       if(others_count[i]>0)
@@ -547,14 +546,15 @@ public class EntryGroupInfoDisplay
         }
         file_viewer.appendString("\n");
       }
-      else
+    /*else
       {
         if(none == null)
           none = new Vector();
         none.add(otherKeys[i]);
-      }
+      }*/
     }
     
+    /*
     if(none != null)
     {
       for(int i=0; i<none.size(); i++)
@@ -567,6 +567,7 @@ public class EntryGroupInfoDisplay
       }
       file_viewer.appendString(" none\n\n");
     }
+    */
     
     final Strand strand;
 
