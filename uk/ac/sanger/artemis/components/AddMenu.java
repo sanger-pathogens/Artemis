@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.31 2007-10-18 15:05:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.32 2007-12-12 16:03:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -73,7 +73,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.31 2007-10-18 15:05:52 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.32 2007-12-12 16:03:09 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -265,6 +265,15 @@ public class AddMenu extends SelectionMenu
     if(entry_group.getDefaultEntry().getEMBLEntry() instanceof 
         uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
       create_intron_features_item.setEnabled(false);
+    
+    final JMenuItem create_intergenic_features_item =
+      new JMenuItem ("Create Intergenic Features");
+    create_intergenic_features_item.addActionListener(new ActionListener () {
+      public void actionPerformed (ActionEvent event) {
+        createIntergenicFeatures(getParentFrame (), entry_group);
+      }
+    });
+    add (create_intergenic_features_item);
 
     final JMenuItem create_exon_features_item =
       new JMenuItem ("Create Exon Features");
@@ -833,6 +842,93 @@ public class AddMenu extends SelectionMenu
     }
   }
 
+  
+  /**
+   *  Create intergenic regions between CDS.
+   *  @param frame The Frame to use for MessageDialog components.
+   *  @param entry_group The EntryGroup to create the features in.
+   **/
+  static void createIntergenicFeatures (final JFrame frame,
+                                    final EntryGroup entry_group) 
+  {
+    try {
+      entry_group.getActionController ().startAction ();
+
+      final FeatureKeyPredicate predicate = new FeatureKeyPredicate(Key.CDS);
+      final FeatureVector cdsFeatures = new FeatureVector ();
+
+      final FeatureEnumeration feature_enum = entry_group.features ();
+      while (feature_enum.hasMoreFeatures ()) 
+      {
+        final Feature current_feature = feature_enum.nextFeature ();
+        if(predicate.testPredicate (current_feature)) 
+          cdsFeatures.add (current_feature);
+      }
+
+
+      RangeVector cdsRanges = new RangeVector();
+      for (int i = 0; i < cdsFeatures.size (); ++i)
+      {
+        final Feature selection_feature = cdsFeatures.elementAt(i);
+        final Location cds_location = selection_feature.getLocation();
+        final Range cds_range = cds_location.getTotalRange();
+
+        cdsRanges.add(cds_range);
+        
+        //if (cds_location.isComplement ()) {
+        //  cds_ranges.reverse ();
+        //}
+      }
+      
+      int prevEnd = 1;
+      
+      for(int i=0; i < cdsRanges.size(); i++)
+      {
+        Range r = (Range)cdsRanges.get(i);
+        int currentStart = r.getStart();
+        
+        if(i==0 && r.getStart()==1)
+        {
+          prevEnd = r.getEnd();
+          continue;
+        }
+        
+        try 
+        {
+          Range new_range = new Range(prevEnd + 1,
+                                      currentStart - 1);
+          Location location = new Location(new_range);
+          final Key key = new Key ("misc_feature");
+          final QualifierVector qualifiers = new QualifierVector ();
+          entry_group.getDefaultEntry().createFeature(key,
+              location, qualifiers);
+          prevEnd = r.getEnd();
+          
+          if(i==cdsRanges.size()-1)
+          {
+            if(entry_group.getSequenceLength() > r.getEnd())
+            {
+              new_range = new Range(prevEnd + 1,
+                  entry_group.getSequenceLength());
+              location = new Location(new_range);
+              entry_group.getDefaultEntry().createFeature(key,
+                                        location, qualifiers);
+            }
+          }
+        } 
+        catch (OutOfRangeException e) {}
+        catch(ReadOnlyException e)  {}
+        catch(EntryInformationException e) {}
+        
+      }
+    } 
+    finally 
+    {
+      entry_group.getActionController ().endAction ();
+    }
+  }
+
+  
   /**
    *  Create a new exon for each FeatureSegment in the selected CDS features.
    *  The exons are created in the Entry that contains the CDSs.
