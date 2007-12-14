@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.51 2007-10-18 16:17:22 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.52 2007-12-14 11:11:21 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.MarkerRange;
 
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.GFFDocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
@@ -63,6 +64,8 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 import java.util.Collections;
 import java.util.Comparator;
@@ -72,7 +75,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.51 2007-10-18 16:17:22 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.52 2007-12-14 11:11:21 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -495,6 +498,20 @@ public class FeatureEdit extends JPanel
         complementLocation();
       }
     });
+    
+    if(((DocumentEntry)getFeature().getEmblFeature().getEntry()).getDocument() 
+        instanceof DatabaseDocument)
+    {
+      final JButton refresh_button = new JButton("Refresh");
+      location_button_panel.add(refresh_button);
+      refresh_button.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          refresh();
+        }
+      });
+    }
 
     final JButton grab_button = new JButton("Grab Range");
     location_button_panel.add(grab_button);
@@ -945,7 +962,83 @@ public class FeatureEdit extends JPanel
     add(middle_panel, "Center");
   }
 
+  /**
+   * Refresh the annotation for the active feature
+   */
+  private void refresh()
+  {
+    // refresh from the database
+    final DatabaseDocument originalDocument =
+      (DatabaseDocument)((DocumentEntry)edit_feature.getEmblFeature().getEntry()).getDocument();
 
+    final Set uniquenames = ((GFFStreamFeature)edit_feature.getEmblFeature()).getSegmentRangeStore().keySet();
+    final Iterator it = uniquenames.iterator();
+    final String uniquename = (String)it.next();
+    final DatabaseDocument newDocument = new DatabaseDocument(originalDocument,
+        uniquename, null, true, null);
+    newDocument.setReadChildren(false);
+    
+    try
+    {
+      DatabaseDocumentEntry dbentry = new DatabaseDocumentEntry(newDocument, null);
+      uk.ac.sanger.artemis.io.Feature databaseFeature = dbentry.getAllFeatures().featureAt(0);
+      
+      // compare timelastmodified
+      Qualifier qualifier = edit_feature.getQualifierByName("timelastmodified");
+      String active_timelastmodified = (String)qualifier.getValues().get(0);
+      qualifier = databaseFeature.getQualifierByName("timelastmodified");
+      String database_timelastmodified = (String)qualifier.getValues().get(0);
+      
+      if(active_timelastmodified.equals(database_timelastmodified))
+      {
+        JOptionPane.showMessageDialog(this, 
+            "No new changes found for the feature\n"+
+            uniquename+"\n"+
+            "in the database since:\n"+database_timelastmodified, 
+            "No Updates", JOptionPane.INFORMATION_MESSAGE);
+        return;
+      }
+      else
+      {
+        JOptionPane.showMessageDialog(this, 
+            "Changes found for the feature\n"+
+            uniquename+"\n"+
+            "in the database at:\n"+database_timelastmodified, 
+            "Changes Found", JOptionPane.INFORMATION_MESSAGE);
+      }
+      
+      final QualifierVector db_qv = databaseFeature.getQualifiers();
+      final QualifierVector qv = edit_feature.getQualifiers();
+      final QualifierVector new_qv = new QualifierVector();
+      
+      for(int i=0; i<qv.size(); i++)
+      {
+        Qualifier q = (Qualifier)qv.get(i);
+        if(q.getName().equals("Parent") ||
+           q.getName().equals("Derives_from") ||
+           q.getName().equals("ID")  )
+          new_qv.addQualifierValues(q);
+      }
+      
+      
+      for(int i=0; i<db_qv.size(); i++)
+      {
+        Qualifier q = (Qualifier)db_qv.get(i);
+        if(q.getName().equals("Parent") ||
+           q.getName().equals("Derives_from") ||
+           q.getName().equals("ID")  )
+          continue;
+        new_qv.add(q);  
+      }
+      
+      edit_feature.getQualifiers().removeAllElements();
+      edit_feature.getQualifiers().addAll(new_qv);
+      updateQualifiers();
+    }
+    catch(EntryInformationException e) {}
+    catch(IOException e) {}    
+  }
+  
   /**
    * Add the annotation view as tabbed or in a single pane
    * @param lower_panel
