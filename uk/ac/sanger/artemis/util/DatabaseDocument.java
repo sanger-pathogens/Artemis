@@ -122,6 +122,9 @@ public class DatabaseDocument extends Document
   
   private boolean gene_builder;
   
+  // include children in reading from the database
+  private boolean readChildren = true;
+  
   private Range range;
   
   private Feature geneFeature;
@@ -323,20 +326,25 @@ public class DatabaseDocument extends Document
   {
     // add username & host to MDC data for logging
     try
-	{
+  	{
       org.apache.log4j.MDC.put("username",doc.getUserName());
   	}
-	catch(NullPointerException npe)
-	{
-	  org.apache.log4j.MDC.put("username",System.getProperty("user.name"));
-	}
+  	catch(NullPointerException npe)
+	  {
+	    org.apache.log4j.MDC.put("username",System.getProperty("user.name"));
+	  }
 	
-	try 
-	{
-	  org.apache.log4j.MDC.put("host",
+	  try 
+	  {
+	    org.apache.log4j.MDC.put("host",
     		  InetAddress.getLocalHost().getHostAddress());
-	} 
-	catch(Exception e) {}
+	  } 
+	  catch(Exception e) {}
+  }
+  
+  public void setReadChildren(final boolean readChildren)
+  {
+    this.readChildren = readChildren; 
   }
   
   /**
@@ -459,7 +467,7 @@ public class DatabaseDocument extends Document
         schemaList.add(schema);
           
         ByteBuffer bb = getGeneFeature(srcFeatureId,
-                                       schemaList, dao);          
+                                       schemaList, dao, readChildren);          
         return new ByteArrayInputStream(bb.getBytes());
       }
       else if(range != null)
@@ -902,7 +910,8 @@ public class DatabaseDocument extends Document
    */
   private ByteBuffer getGeneFeature(final String search_gene, 
                                     final List schema_search,
-                                    GmodDAO dao) 
+                                    GmodDAO dao, 
+                                    final boolean readChildren) 
           throws SQLException, ReadFormatException, ConnectException
   {
     if(DatabaseDocument.cvterms == null)
@@ -954,6 +963,12 @@ public class DatabaseDocument extends Document
         id_store, parent.getUniqueName(), src_id, buff, chadoFeature);
     
 
+    if(!readChildren)
+    {
+      logger4j.debug( new String(buff.getBytes()) );
+      return buff;
+    }
+    
     // get children of gene
     List relations = new Vector(chadoFeature.getFeatureRelationshipsForObjectId());
     
