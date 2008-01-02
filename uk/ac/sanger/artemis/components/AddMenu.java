@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.32 2007-12-12 16:03:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.33 2008-01-02 11:19:44 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -73,7 +73,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.32 2007-12-12 16:03:09 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.33 2008-01-02 11:19:44 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -854,7 +854,12 @@ public class AddMenu extends SelectionMenu
     try {
       entry_group.getActionController ().startAction ();
 
-      final FeatureKeyPredicate predicate = new FeatureKeyPredicate(Key.CDS);
+      final FeatureKeyPredicate predicate;
+      
+      if(GeneUtils.isDatabaseEntry(entry_group))
+        predicate = new FeatureKeyPredicate(new Key("gene"));
+      else
+        predicate = new FeatureKeyPredicate(Key.CDS);
       final FeatureVector cdsFeatures = new FeatureVector ();
 
       final FeatureEnumeration feature_enum = entry_group.features ();
@@ -864,7 +869,6 @@ public class AddMenu extends SelectionMenu
         if(predicate.testPredicate (current_feature)) 
           cdsFeatures.add (current_feature);
       }
-
 
       RangeVector cdsRanges = new RangeVector();
       for (int i = 0; i < cdsFeatures.size (); ++i)
@@ -898,7 +902,12 @@ public class AddMenu extends SelectionMenu
           Range new_range = new Range(prevEnd + 1,
                                       currentStart - 1);
           Location location = new Location(new_range);
-          final Key key = new Key ("misc_feature");
+          final Key key;
+          
+          if(GeneUtils.isDatabaseEntry(entry_group))
+            key = new Key ("region");            
+          else
+            key = new Key ("misc_feature");
           final QualifierVector qualifiers = new QualifierVector ();
           entry_group.getDefaultEntry().createFeature(key,
               location, qualifiers);
