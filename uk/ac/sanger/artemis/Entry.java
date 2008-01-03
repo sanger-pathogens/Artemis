@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.9 2007-07-05 16:08:45 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.10 2008-01-03 11:19:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -28,6 +28,7 @@ package uk.ac.sanger.artemis;
 import uk.ac.sanger.artemis.sequence.*;
 
 import uk.ac.sanger.artemis.util.*;
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.EmblStreamFeature;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.EmblDocumentEntry;
@@ -58,7 +59,7 @@ import java.io.File;
  *  possible events.)
  *
  *  @author Kim Rutherford
- *  @version $Id: Entry.java,v 1.9 2007-07-05 16:08:45 tjc Exp $
+ *  @version $Id: Entry.java,v 1.10 2008-01-03 11:19:34 tjc Exp $
  **/
 
 public class Entry implements FeatureChangeListener, Selectable 
@@ -223,8 +224,16 @@ public class Entry implements FeatureChangeListener, Selectable
   {
     final FileDocument file_document = new FileDocument(file);
 
+    final EntryInformation artemis_entry_information;
+    
+    if(getEMBLEntry() instanceof DatabaseDocumentEntry &&
+       destination_type == DocumentEntryFactory.EMBL_FORMAT)
+      artemis_entry_information = Options.getArtemisEntryInformation();
+    else
+      artemis_entry_information = getEntryInformation();
+    
     final DocumentEntry document_entry =
-      (DocumentEntry)getEMBLEntryAsNewType(getEntryInformation(),
+      (DocumentEntry)getEMBLEntryAsNewType(artemis_entry_information,
                                            destination_type, force);
     document_entry.save(file_document);
   }
