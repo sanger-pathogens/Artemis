@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.18 2007-11-01 14:50:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.19 2008-01-03 13:39:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -53,7 +53,7 @@ import javax.swing.JMenuItem;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.18 2007-11-01 14:50:12 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.19 2008-01-03 13:39:16 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
@@ -501,7 +501,7 @@ public class MultiComparator extends JFrame
            RemoteFileDocument node =
                (RemoteFileDocument)(((DocumentEntry)entry.getEMBLEntry()).getDocument());
 
-           File file = new File( ((DocumentEntry)entry.getEMBLEntry()).getDocument().toString() );
+           File file = new File( ((DocumentEntry)entry.getEMBLEntry()).getDocument().getLocation().toString() );
            node.saveEntry(file);
         }
 
