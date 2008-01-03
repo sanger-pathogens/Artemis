@@ -97,8 +97,10 @@
             parameterClass="Synonym">
       SELECT * FROM feature_synonym 
       WHERE
-        synonym_id=(SELECT synonym_id FROM synonym WHERE 
-        name=#name#) AND is_current
+        synonym_id=
+		( SELECT synonym_id FROM synonym WHERE name=#name#
+	      <isNotNull property="cvTerm">  AND type_id=#cvTerm.cvTermId# </isNotNull> )
+		AND is_current
     </select>
 
 
