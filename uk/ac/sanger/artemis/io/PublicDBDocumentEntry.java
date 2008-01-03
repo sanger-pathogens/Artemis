@@ -20,11 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.4 2007-09-25 09:59:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.5 2008-01-03 11:18:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.IOException;
@@ -35,7 +36,7 @@ import java.io.IOException;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.4 2007-09-25 09:59:57 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.5 2008-01-03 11:18:05 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -144,6 +145,17 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     
     Key key = feature.getKey();
     QualifierVector qualifiers = feature.getQualifiers().copy();
+    
+    if(key.getKeyString().equals("mRNA"))
+    {
+      // add protein qualifiers to transcript
+      final String transcriptName = GeneUtils.getUniqueName(feature);
+      final Feature protein = 
+        ((GFFStreamFeature)feature).getChadoGene().getProteinOfTranscript(transcriptName);
+      if(protein != null)
+        qualifiers.addAll(protein.getQualifiers().copy());
+    }
+    
     try
     {
       int index = qualifiers.indexOfQualifierWithName("comment");
@@ -165,6 +177,14 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       
       if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
         key = new Key("CDS");
+      else if(key.getKeyString().equals("polypeptide_motif"))
+        key = new Key("CDS_motif");
+      else if(key.getKeyString().equals("five_prime_UTR"))
+        key = new Key("5'UTR");
+      else if(key.getKeyString().equals("three_prime_UTR"))
+        key = new Key("3'UTR");
+      else if(key.getKeyString().equals("polypepide"))
+        return null;
       else if(key.getKeyString().startsWith("pseudo"))
       {
         if(key.getKeyString().equals("pseudogenic_transcript"))
@@ -192,6 +212,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       //
       // create separate exon features for each range in a CDS
       // (returns an array of SimpleDocumentFeature)
+      /*
       if(key.getKeyString().equals("CDS"))
       {
         RangeVector ranges = feature.getLocation().getRanges();
@@ -214,7 +235,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         }
         return features;
       }
-      
+      */
       
       
       if(this instanceof EmblDocumentEntry)
