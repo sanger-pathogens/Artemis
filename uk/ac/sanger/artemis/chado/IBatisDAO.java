@@ -1001,12 +1001,7 @@ public class IBatisDAO extends GmodDAO
     cvTerm.setCv(cv);
     
     DbXRef dbXRef = cvTerm.getDbXRef();
-    Db db = dbXRef.getDb();
-    db.setDbId(getDbId(db).intValue());
-    dbXRef.setDb(db);
-    
-    insertDbXRef(dbXRef);
-    dbXRef.setDbXRefId( getDbXRefId(cvTerm.getDbXRef()).intValue() );
+    dbXRef = loadDbXRef(dbXRef);
     cvTerm.setDbXRef(dbXRef);
     
     sqlMap.insert("insertCvTerm", cvTerm);
