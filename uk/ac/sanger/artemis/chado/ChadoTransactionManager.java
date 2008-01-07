@@ -588,8 +588,10 @@ public class ChadoTransactionManager
           
           //
           // should be retrieved from relationship ontology !!
-          CvTerm cvterm = new CvTerm();
-          cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").intValue());
+          CvTerm cvterm = DatabaseDocument.getCvTermByCvAndCvTerm("part_of", "relationship");
+          
+          //CvTerm cvterm = new CvTerm();
+          //cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").intValue());
           
           feature_relationship.setFeatureByObjectId(parent);
           feature_relationship.setFeatureBySubjectId(chado_feature);
@@ -683,8 +685,10 @@ public class ChadoTransactionManager
           
           //
           // should be retrieved from relationship ontology !!
-          CvTerm cvterm = new CvTerm();
-          cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").intValue());
+          CvTerm cvterm = DatabaseDocument.getCvTermByCvAndCvTerm("part_of", "relationship");
+          
+          //CvTerm cvterm = new CvTerm();
+          //cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").intValue());
           
           feature_relationship.setFeatureByObjectId(parent);
           feature_relationship.setFeatureBySubjectId(chado_feature);
@@ -811,8 +815,10 @@ public class ChadoTransactionManager
           
           //
           // should be retrieved from relationship ontology !!
-          CvTerm cvterm = new CvTerm();
-          cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").intValue());
+          CvTerm cvterm = DatabaseDocument.getCvTermByCvAndCvTerm("part_of", "relationship");
+          
+          //CvTerm cvterm = new CvTerm();
+          //cvterm.setCvTermId(DatabaseDocument.getCvtermID("part_of").intValue());
           
           feature_relationship.setFeatureByObjectId(parent);
           feature_relationship.setFeatureBySubjectId(chado_feature);
