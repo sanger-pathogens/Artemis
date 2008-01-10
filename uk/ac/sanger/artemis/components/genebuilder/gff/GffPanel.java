@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.9 2008-01-10 09:47:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.10 2008-01-10 09:54:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -77,7 +77,7 @@ public class GffPanel extends JPanel
    * @param qualifier
    * @return
    */
-  public boolean isGffTag(final Qualifier qualifier, final Feature feature)
+  public boolean isPropertiesTag(final Qualifier qualifier, final Feature feature)
   {
     if(qualifier.getName().equals("ID") ||
        qualifier.getName().equals("feature_id") ||
@@ -391,7 +391,7 @@ public class GffPanel extends JPanel
     for(int i = 0 ; i < qualifiers.size(); ++i) 
     {
       Qualifier qualifier = (Qualifier)qualifiers.elementAt(i);
-      if(isGffTag(qualifier, feature))
+      if(isPropertiesTag(qualifier, feature))
         gffQualifiers.addElement(qualifier.copy());
     }
    

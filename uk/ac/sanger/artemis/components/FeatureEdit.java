@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.53 2008-01-10 09:49:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.54 2008-01-10 09:55:29 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -75,7 +75,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.53 2008-01-10 09:49:11 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.54 2008-01-10 09:55:29 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -1654,7 +1654,7 @@ public class FeatureEdit extends JPanel
       // strip out CV qualifiers
       //
       if( (cvForm != null       && cvForm.isCvTag(this_qualifier)) ||
-          (gffPanel != null     && gffPanel.isGffTag(this_qualifier, getFeature())) ||
+          (gffPanel != null     && gffPanel.isPropertiesTag(this_qualifier, getFeature())) ||
           (matchForm != null && matchForm.isMatchTag(this_qualifier)) )
         continue;
       
