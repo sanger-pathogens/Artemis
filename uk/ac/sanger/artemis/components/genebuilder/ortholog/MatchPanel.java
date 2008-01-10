@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.22 2007-10-16 16:02:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.23 2008-01-10 14:17:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -80,6 +80,9 @@ public class MatchPanel extends JPanel
     //    CLUSTER, 
           SIMILARITY };
   private DocumentEntry entry;
+  
+  // used to test if match panel has contents
+  private boolean empty = true;
   
   public MatchPanel(final Feature feature, final DocumentEntry entry)
   {
@@ -147,6 +150,7 @@ public class MatchPanel extends JPanel
    */
   private Component createMatchQualifiersComponent(final Feature feature)
   {
+    empty = true;
     editableComponents = new Vector();
     final Qualifier orthoQualifier   = matchQualifiers.getQualifierByName(ORTHOLOG);
     final Qualifier paraQualifier    = matchQualifiers.getQualifierByName(PARALOG);
@@ -180,6 +184,7 @@ public class MatchPanel extends JPanel
     ///
     if(orthoQualifier != null || paraQualifier != null)
     {
+      empty = false;
       if(orthoQualifier != null && orthoQualifier instanceof QualifierLazyLoading)
         ((QualifierLazyLoading)orthoQualifier).setForceLoad(true);
       
@@ -216,6 +221,7 @@ public class MatchPanel extends JPanel
       if(OrthoParalogTable.hasCluster(orthoQualifier, paraQualifier,
           (GFFStreamFeature)feature.getEmblFeature()))
       {
+        empty = false;
         if(OrthoParalogTable.hasOrthoParlaog(orthoQualifier, paraQualifier,
             (GFFStreamFeature)feature.getEmblFeature()))
           GeneEditorPanel.addLightSeparator(matchVerticalBox);
@@ -281,6 +287,7 @@ public class MatchPanel extends JPanel
     
     if(simQualifier != null)
     {
+      empty = false;
       if(simQualifier instanceof QualifierLazyLoading)
         ((QualifierLazyLoading)simQualifier).setForceLoad(true);
       
@@ -522,6 +529,16 @@ public class MatchPanel extends JPanel
   public void featureChanged(FeatureChangeEvent event)
   {
     updateFromFeature(event.getFeature());
+  }
+
+  public boolean isEmpty()
+  {
+    return empty;
+  }
+
+  public void setEmpty(boolean empty)
+  {
+    this.empty = empty;
   }
   
 }

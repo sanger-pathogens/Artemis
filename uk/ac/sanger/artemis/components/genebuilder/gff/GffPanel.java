@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.10 2008-01-10 09:54:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.11 2008-01-10 14:17:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -65,6 +65,7 @@ public class GffPanel extends JPanel
   private JTextField timeTextField;
   private Hashtable featureSynonyms;
   private Feature feature;
+  private boolean empty = true;
   
   public GffPanel(final Feature feature)
   {
@@ -93,6 +94,7 @@ public class GffPanel extends JPanel
   
   private Component createGffQualifiersComponent()
   {
+    empty = true;
     int nrows = 0;
     
     Qualifier idQualifier          = gffQualifiers.getQualifierByName("ID");
@@ -118,6 +120,7 @@ public class GffPanel extends JPanel
       if( ChadoTransactionManager.isSynonymTag(qualifier.getName(), 
           (GFFStreamFeature)feature.getEmblFeature()) )
       {
+        empty = false;
         int current = 0;
         final StringVector values = qualifier.getValues();
         final Vector featureSynonym = new Vector();
@@ -561,6 +564,16 @@ public class GffPanel extends JPanel
   public void featureChanged(FeatureChangeEvent event)
   {
     updateFromFeature(event.getFeature());
+  }
+
+  public boolean isEmpty()
+  {
+    return empty;
+  }
+
+  public void setEmpty(boolean empty)
+  {
+    this.empty = empty;
   }
   
 }

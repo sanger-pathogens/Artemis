@@ -29,6 +29,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.EventListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -55,42 +56,84 @@ public class GeneEditorPanel extends JPanel
   private static final long serialVersionUID = 1L;
   private static Color STEEL_BLUE = new Color(25, 25, 112);
   private static Color LIGHT_STEEL_BLUE = new Color(176, 196, 222);
+  
+  private OpenSectionButton coreButton;
+  private OpenSectionButton cvButton;
+  private OpenSectionButton matchButton;
+  private OpenSectionButton propertiesButton;
+  
+  private QualifierTextArea qualifier_text_area;
+  private CVPanel cvForm;
+  private MatchPanel matchForm;
+  private GffPanel propertiesPanel;
 
   /**
    * Gene editor panel - showing annotation in a single panel.
    * @param qualifier_text_area
    * @param cvForm
    * @param matchForm
-   * @param gffPanel
+   * @param propertiesPanel
    */
   public GeneEditorPanel(final QualifierTextArea qualifier_text_area,
                          final CVPanel cvForm, 
                          final MatchPanel matchForm,
-                         final GffPanel gffPanel)
+                         final GffPanel propertiesPanel)
   {
+    this.qualifier_text_area = qualifier_text_area;
+    this.cvForm = cvForm;
+    this.matchForm = matchForm;
+    this.propertiesPanel = propertiesPanel;
+    
     setLayout( new BoxLayout(this, BoxLayout.PAGE_AXIS) );
     setBackground(Color.WHITE);
     JScrollPane jspCore = new JScrollPane(qualifier_text_area);
     jspCore.setPreferredSize(new Dimension(jspCore.getPreferredSize().width, 100));
     
     addDarkSeparator(this);
-    addOpenClosePanel("Core",jspCore);
+    coreButton = addOpenClosePanel("Core",jspCore);
     add(jspCore);
     
     addDarkSeparator(this);
-    addOpenClosePanel("Controlled Vocabulary", cvForm);
+    cvButton = addOpenClosePanel("Controlled Vocabulary", cvForm);
     add(cvForm);
     
     addDarkSeparator(this);
-    addOpenClosePanel("Match", matchForm);
+    matchButton = addOpenClosePanel("Match", matchForm);
     add(matchForm);
     
     addDarkSeparator(this);
-    addOpenClosePanel("Properties", gffPanel);
-    add(gffPanel);
+    propertiesButton = addOpenClosePanel("Properties", propertiesPanel);
+    add(propertiesPanel);
     add(Box.createVerticalGlue());
   }
 
+  /**
+   * Open/close the sections if they contain elements or
+   * are empty.
+   */
+  public void updatePanelState()
+  {
+    if(qualifier_text_area.getText().equals(""))
+      coreButton.setOpen(false);
+    else
+      coreButton.setOpen(true);
+    
+    if(cvForm.isEmpty())
+      cvButton.setOpen(false);
+    else
+      cvButton.setOpen(true);
+    
+    if(matchForm.isEmpty())
+      matchButton.setOpen(false);
+    else
+      matchButton.setOpen(true);
+    
+    if(propertiesPanel.isEmpty())
+      propertiesButton.setOpen(false);
+    else
+      propertiesButton.setOpen(true);
+  }
+  
   /**
    * Add a Separator to a given component
    * @param comp
@@ -138,8 +181,8 @@ public class GeneEditorPanel extends JPanel
     addSeparator(comp, false);
   }
   
-  private void addOpenClosePanel(final String name,
-                                 final JComponent panel)
+  private OpenSectionButton addOpenClosePanel(final String name,
+                                              final JComponent panel)
   {
     final JPanel bannerPanel = new JPanel();
     bannerPanel.setLayout(new BoxLayout(bannerPanel, BoxLayout.LINE_AXIS));
@@ -151,34 +194,8 @@ public class GeneEditorPanel extends JPanel
     font = font.deriveFont(Font.BOLD);
     nameLabel.setFont(font);
     
-    Dimension size = new Dimension(35,20);
+    final OpenSectionButton openButton = new OpenSectionButton("-", panel);
 
-    final JButton openButton = new JButton("-");
-    openButton.setForeground(STEEL_BLUE);
-    openButton.setFont(font);
-    openButton.setBorderPainted(false);
-    openButton.setOpaque(false);
-    openButton.setPreferredSize(size);
-    openButton.setMaximumSize(size);
-    openButton.addActionListener(new ActionListener()
-    {
-
-      public void actionPerformed(ActionEvent e)
-      {
-        if(openButton.getText().equals("-"))
-        {
-          openButton.setText("+");
-          panel.setVisible(false);
-        }
-        else
-        {
-          openButton.setText("-");
-          panel.setVisible(true);
-        }
-      }
-      
-    });
-    
     bannerPanel.add(nameLabel);
     bannerPanel.add(Box.createHorizontalGlue());
     bannerPanel.add(openButton);
@@ -186,5 +203,60 @@ public class GeneEditorPanel extends JPanel
        new Dimension(bannerPanel.getPreferredSize().width, 20));
     
     add(bannerPanel);
+    return openButton;
+  }
+  
+  public class OpenSectionButton extends JButton 
+  {
+    private static final long serialVersionUID = 1L;
+    private JComponent panel;
+    
+    public OpenSectionButton(final String text, final JComponent panel)
+    {
+      super(text);
+      this.panel = panel;
+
+      Dimension size = new Dimension(35,20);
+      setForeground(STEEL_BLUE);
+      Font font = getFont();
+      font = font.deriveFont(Font.BOLD);
+      setFont(font);
+      setBorderPainted(false);
+      setOpaque(false);
+      setPreferredSize(size);
+      setMaximumSize(size);
+
+      addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          updateButton();
+        }  
+      });
+    }
+    
+    private void updateButton()
+    {
+      if(getText().equals("-"))
+      {
+        setText("+");
+        panel.setVisible(false);
+      }
+      else
+      {
+        setText("-");
+        panel.setVisible(true);
+      }
+    }
+    
+    public void setOpen(final boolean isOpen)
+    {
+      if(isOpen && getText().equals("-"))
+        return;
+      if(!isOpen && getText().equals("+"))
+        return;
+      updateButton();
+    }
+
   }
 }

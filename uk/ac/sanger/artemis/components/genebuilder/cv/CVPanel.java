@@ -82,6 +82,9 @@ public class CVPanel extends JPanel
   private Feature feature;
   private DatabaseDocument doc;
   
+  //used to test if cv panel has contents
+  private boolean empty = true;
+  
   public CVPanel(final Feature feature)
   {
     super(new BorderLayout());
@@ -125,6 +128,7 @@ public class CVPanel extends JPanel
    */
   private Component createCVQualifiersComponent()
   {
+    empty = true;
     Vector cv_tags = new Vector();
     cv_tags.add("GO");
     cv_tags.add("controlled_curation");
@@ -176,6 +180,7 @@ public class CVPanel extends JPanel
 
       if(this_qualifier.getName().equals("GO"))
       {
+        empty = false;
         final Box yBox = Box.createVerticalBox();
         if(hide_show_GO == null)
           hide_show_GO = new JButton("-");
@@ -254,6 +259,7 @@ public class CVPanel extends JPanel
       final Qualifier this_qualifier = (Qualifier)cvQualifiers.elementAt(qualifier_index);
       if(this_qualifier.getName().equals("controlled_curation"))
       {
+        empty = false;
         final StringVector qualifier_strings = this_qualifier.getValues();
         
         final Box yBox = Box.createVerticalBox();
@@ -349,6 +355,7 @@ public class CVPanel extends JPanel
           .elementAt(qualifier_index);
       if(this_qualifier.getName().equals("class"))
       {
+        empty = false;
         final StringVector qualifier_strings = this_qualifier.getValues();
         n++;
         
@@ -409,6 +416,7 @@ public class CVPanel extends JPanel
               .elementAt(value_index);
           if(this_qualifier.getName().equals("product"))
           {
+            empty = false;
             JLabel label = new JLabel("product");
             if(go_dimension != null)
               label.setPreferredSize(go_dimension);
@@ -1068,6 +1076,17 @@ public class CVPanel extends JPanel
       
       return field;
     }
+  }
+
+
+  public boolean isEmpty()
+  {
+    return empty;
+  }
+
+  public void setEmpty(boolean empty)
+  {
+    this.empty = empty;
   }
   
 }
