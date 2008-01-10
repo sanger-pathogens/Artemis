@@ -51,6 +51,7 @@ public class JExtendedComboBox extends JComboBox
 { 
   private static final long serialVersionUID = 1L;
   public static String SEPARATOR = "SEPARATOR";
+  private int current;
   
   /**
    * @param str
@@ -215,6 +216,16 @@ public class JExtendedComboBox extends JComboBox
          null,
          options,
          options[2]);
+  }
+
+  public int getCurrent()
+  {
+    return current;
+  }
+
+  public void setCurrent(int current)
+  {
+    this.current = current;
   }
   
 }
