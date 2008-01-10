@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.54 2008-01-10 09:55:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.55 2008-01-10 14:18:38 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -75,7 +75,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.54 2008-01-10 09:55:29 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.55 2008-01-10 14:18:38 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -147,7 +147,7 @@ public class FeatureEdit extends JPanel
   private CVPanel cvForm;
   
   /** GFF tab */
-  private GffPanel gffPanel;
+  private GffPanel propertiesPanel;
   
   /** similarity/ortholog/paralog tab */
   private MatchPanel matchForm;
@@ -155,6 +155,8 @@ public class FeatureEdit extends JPanel
   private EntryInformation entry_information;
   
   private static boolean isTabbedView = false;
+  
+  private GeneEditorPanel editorPanel;
   
   /**
    *  Create a new FeatureEdit object from the given Feature.
@@ -241,8 +243,8 @@ public class FeatureEdit extends JPanel
     getFeature().removeFeatureChangeListener(this);
     if(cvForm != null)
       getFeature().removeFeatureChangeListener(cvForm);
-    if(gffPanel != null)
-      getFeature().removeFeatureChangeListener(gffPanel);
+    if(propertiesPanel != null)
+      getFeature().removeFeatureChangeListener(propertiesPanel);
     if(matchForm != null)
       getFeature().removeFeatureChangeListener(matchForm);
   }
@@ -922,8 +924,8 @@ public class FeatureEdit extends JPanel
           (DocumentEntry)getFeature().getEmblFeature().getEntry());
       matchForm.setBackground(Color.WHITE);
       
-      gffPanel = new GffPanel(getFeature());
-      gffPanel.setBackground(Color.WHITE);
+      propertiesPanel = new GffPanel(getFeature());
+      propertiesPanel.setBackground(Color.WHITE);
 
       addGffAnnotationView(lower_panel);
       
@@ -1066,8 +1068,8 @@ public class FeatureEdit extends JPanel
       matchForm.setVisible(true);   // ensure visible
       jspOrtholog.setPreferredSize(getPreferredSize());
       tabbedPane.add("Match", jspOrtholog);
-      JScrollPane jspGff = new JScrollPane(gffPanel);
-      gffPanel.setVisible(true);    // ensure visible
+      JScrollPane jspGff = new JScrollPane(propertiesPanel);
+      propertiesPanel.setVisible(true);    // ensure visible
       jspGff.setPreferredSize(jspCore.getPreferredSize());
       tabbedPane.add("Properties", jspGff);
       lower_panel.add(tabbedPane, "Center");
@@ -1080,8 +1082,9 @@ public class FeatureEdit extends JPanel
           lower_panel.remove(c[i]);
       }
       
-      JScrollPane jsp = new JScrollPane(
-          new GeneEditorPanel(qualifier_text_area, cvForm, matchForm, gffPanel));
+      editorPanel = new GeneEditorPanel(qualifier_text_area, cvForm, matchForm, propertiesPanel);
+      JScrollPane jsp = new JScrollPane(editorPanel);
+          
       jsp.setPreferredSize(
           new Dimension(qualifier_text_area.getPreferredSize().width,
                         (int)(qualifier_text_area.getPreferredSize().height*1.5)));
@@ -1625,15 +1628,18 @@ public class FeatureEdit extends JPanel
   private void updateQualifiers() 
   {
     qualifier_text_area.setText(getQualifierString());
-    
+
     if(cvForm != null)
       cvForm.updateFromFeature(getFeature());
     
-    if(gffPanel != null)
-      gffPanel.updateFromFeature(getFeature());
+    if(propertiesPanel != null)
+      propertiesPanel.updateFromFeature(getFeature());
     
     if(matchForm != null)
       matchForm.updateFromFeature(getFeature());
+    
+    if(!isTabbedView && editorPanel != null)
+      editorPanel.updatePanelState();
   }
 
   /**
@@ -1654,7 +1660,7 @@ public class FeatureEdit extends JPanel
       // strip out CV qualifiers
       //
       if( (cvForm != null       && cvForm.isCvTag(this_qualifier)) ||
-          (gffPanel != null     && gffPanel.isPropertiesTag(this_qualifier, getFeature())) ||
+          (propertiesPanel != null     && propertiesPanel.isPropertiesTag(this_qualifier, getFeature())) ||
           (matchForm != null && matchForm.isMatchTag(this_qualifier)) )
         continue;
       
@@ -1733,9 +1739,9 @@ public class FeatureEdit extends JPanel
           qualifiers.addAll(cvQualifiers);
       }
       
-      if(gffPanel != null)
+      if(propertiesPanel != null)
       {
-        QualifierVector gffQualifiers = gffPanel.getGffQualifiers(getFeature());
+        QualifierVector gffQualifiers = propertiesPanel.getGffQualifiers(getFeature());
         if(gffQualifiers != null && gffQualifiers.size() > 0)
           qualifiers.addAll(gffQualifiers);
       }
