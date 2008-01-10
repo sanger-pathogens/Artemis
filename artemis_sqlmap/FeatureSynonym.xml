@@ -100,7 +100,6 @@
         synonym_id=
 		( SELECT synonym_id FROM synonym WHERE name=#name#
 	      <isNotNull property="cvTerm">  AND type_id=#cvTerm.cvTermId# </isNotNull> )
-		AND is_current
     </select>
 
 
@@ -113,10 +112,11 @@
     </delete>
   
     <insert id="insertFeatureAlias" parameterClass="FeatureSynonym">
-      INSERT INTO feature_synonym ( synonym_id, feature_id, pub_id )
+      INSERT INTO feature_synonym
+		( synonym_id, feature_id, pub_id, is_current )
       VALUES ( $synonym.synonymId$ , 
               (SELECT feature_id FROM feature WHERE uniquename=#feature.uniqueName#), 
-              1)
+              1, #current# )
     </insert>
   
 </sqlMap> 
