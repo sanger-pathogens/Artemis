@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.37 2007-10-17 14:32:02 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.38 2008-01-10 09:41:20 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -560,7 +560,8 @@ extra_qualifiers_gff = \
     orthologous_to "text" \
     paralogous_to "text" \
     similarity "text" \
-    systematic_id "text"
+    systematic_id "text" \
+    temporary_systematic_id "text"
 
 # this is a list of extra qualifiers that are legal but are not displayed in
 # popup menus (such as the one in the feature editor window).  this hack is
@@ -684,6 +685,7 @@ invisible_qualifiers_gff= \
     PCR_conditions \
     plasmid        \
     pop_variant    \
+    primary_name \
     product        \
     protein_id     \
     replace        \
@@ -702,7 +704,10 @@ invisible_qualifiers_gff= \
     sub_clone      \
     sub_species    \
     sub_strain     \
+    synonym \
+    systematic_id \
     Target         \
+    temporary_systematic_id \
     timelastmodified  \
     tissue_lib     \
     tissue_type    \
