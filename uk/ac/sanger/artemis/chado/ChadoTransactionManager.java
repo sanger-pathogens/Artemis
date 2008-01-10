@@ -1068,8 +1068,8 @@ public class ChadoTransactionManager
    * @param tag
    * @return  true if the tag is a GFF3 predefined tag
    */
-  private static boolean isSynonymTag(final String tag,
-                               final GFFStreamFeature feature)
+  public static boolean isSynonymTag(final String tag,
+                                     final GFFStreamFeature feature)
   {
     if(synonym_tags == null)
     {
@@ -1091,6 +1091,7 @@ public class ChadoTransactionManager
     for(int i=0; i<synonym_tags.length; i++)
       if(tag.equals(synonym_tags[i]))
         return true;
+    
     return false;
   }
   
@@ -1850,7 +1851,10 @@ public class ChadoTransactionManager
   }
   
   /**
-   * Create the <code>FeatureSynonym</code> object
+   * Create the <code>FeatureSynonym</code> object.
+   * If the synonym is not current then the qualifier ends with
+   * current=false (e.g. /systematic_id=xyz;current=false
+   * 
    * @param qualifier_name
    * @param qualifier_string
    * @param uniqueName
@@ -1859,7 +1863,15 @@ public class ChadoTransactionManager
   private FeatureSynonym getFeatureSynonym(final String qualifier_name,
                                            final String qualifier_string,
                                            final String uniqueName)
-  {
+  { 
+    boolean isCurrent = true;
+    StringVector strings = StringVector.getStrings(qualifier_string, ";");
+    final String synonymValue = ((String)strings.get(0));
+    if(strings.size() > 1 && ((String)strings.get(1)).equals("current=false"))
+      isCurrent = false;
+    else 
+      isCurrent = true;
+    
     Integer lcvterm_id = DatabaseDocument.getCvtermID(qualifier_name);
     FeatureSynonym feature_synonym = new FeatureSynonym();
     org.gmod.schema.sequence.Feature chado_feature = 
@@ -1869,11 +1881,12 @@ public class ChadoTransactionManager
     Synonym synonym = new Synonym();
     CvTerm cvterm = new CvTerm();
     cvterm.setCvTermId(lcvterm_id.intValue());
-    synonym.setName(qualifier_string);
+    synonym.setName(synonymValue);
     synonym.setCvTerm(cvterm);
     
     feature_synonym.setSynonym(synonym);
-    feature_synonym.setFeature(chado_feature); 
+    feature_synonym.setFeature(chado_feature);
+    feature_synonym.setCurrent(isCurrent);
     return feature_synonym;
   }
   
