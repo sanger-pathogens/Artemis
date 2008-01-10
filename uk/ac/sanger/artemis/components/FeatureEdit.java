@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.52 2007-12-14 11:11:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.53 2008-01-10 09:49:11 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -75,7 +75,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.52 2007-12-14 11:11:21 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.53 2008-01-10 09:49:11 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -1069,7 +1069,7 @@ public class FeatureEdit extends JPanel
       JScrollPane jspGff = new JScrollPane(gffPanel);
       gffPanel.setVisible(true);    // ensure visible
       jspGff.setPreferredSize(jspCore.getPreferredSize());
-      tabbedPane.add("GFF", jspGff);
+      tabbedPane.add("Properties", jspGff);
       lower_panel.add(tabbedPane, "Center");
     }
     else
@@ -1654,7 +1654,7 @@ public class FeatureEdit extends JPanel
       // strip out CV qualifiers
       //
       if( (cvForm != null       && cvForm.isCvTag(this_qualifier)) ||
-          (gffPanel != null     && gffPanel.isGffTag(this_qualifier)) ||
+          (gffPanel != null     && gffPanel.isGffTag(this_qualifier, getFeature())) ||
           (matchForm != null && matchForm.isMatchTag(this_qualifier)) )
         continue;
       
@@ -1735,7 +1735,7 @@ public class FeatureEdit extends JPanel
       
       if(gffPanel != null)
       {
-        QualifierVector gffQualifiers = gffPanel.getGffQualifiers();
+        QualifierVector gffQualifiers = gffPanel.getGffQualifiers(getFeature());
         if(gffQualifiers != null && gffQualifiers.size() > 0)
           qualifiers.addAll(gffQualifiers);
       }
