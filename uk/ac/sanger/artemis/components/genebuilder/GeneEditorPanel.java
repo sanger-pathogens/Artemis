@@ -86,7 +86,7 @@ public class GeneEditorPanel extends JPanel
     add(matchForm);
     
     addDarkSeparator(this);
-    addOpenClosePanel("GFF", gffPanel);
+    addOpenClosePanel("Properties", gffPanel);
     add(gffPanel);
     add(Box.createVerticalGlue());
   }
