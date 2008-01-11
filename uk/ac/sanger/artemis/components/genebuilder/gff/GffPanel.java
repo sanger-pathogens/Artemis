@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.13 2008-01-11 14:17:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.14 2008-01-11 15:03:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -571,7 +571,11 @@ public class GffPanel extends JPanel
     c.gridy = nrows;
     c.ipadx = 5;
     c.fill = GridBagConstraints.NONE;
-    c.anchor = GridBagConstraints.NORTHEAST;
+    
+    if(isSystematicId(qualifier.getName()))
+      c.anchor = GridBagConstraints.EAST;
+    else
+      c.anchor = GridBagConstraints.NORTHEAST;
     gridPanel.add(sysidField, c);
 
     c.gridx = 1;
