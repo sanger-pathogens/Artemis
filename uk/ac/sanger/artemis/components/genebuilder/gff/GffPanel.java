@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.11 2008-01-10 14:17:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.12 2008-01-11 11:51:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -30,15 +30,18 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.Box;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -49,6 +52,7 @@ import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
+import uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Qualifier;
@@ -63,7 +67,6 @@ public class GffPanel extends JPanel
   private QualifierVector gffQualifiers;
   private JTextField uniquenameTextField;
   private JTextField timeTextField;
-  private Hashtable featureSynonyms;
   private Feature feature;
   private boolean empty = true;
   
@@ -108,113 +111,54 @@ public class GffPanel extends JPanel
     GridBagLayout grid = new GridBagLayout();
     GridBagConstraints c = new GridBagConstraints();
     
-    int maxLabelWidth = new JLabel("temporary_systematic_id").getPreferredSize().width;
+    int maxLabelWidth = new JLabel("temporary_systematic_id ").getPreferredSize().width;
 
-    c.ipady = 5;
+    c.ipady = 3;
     JPanel gridPanel = new JPanel(grid);
     gridPanel.setBackground(Color.WHITE);
     
+    //
+    // create components for synonym qualifiers
+    int maxSynonymWidth = 0;
     for(int i=0; i<gffQualifiers.size(); i++)
     {
       final Qualifier qualifier = (Qualifier)gffQualifiers.get(i);
       if( ChadoTransactionManager.isSynonymTag(qualifier.getName(), 
-          (GFFStreamFeature)feature.getEmblFeature()) )
+          (GFFStreamFeature)feature.getEmblFeature()) &&
+          isSystematicId(qualifier.getName()))
       {
-        empty = false;
-        int current = 0;
-        final StringVector values = qualifier.getValues();
-        final Vector featureSynonym = new Vector();
-        for(int j=0; j<values.size(); j++)
-        {
-          String value = (String) values.get(j);
-          StringVector strings = StringVector.getStrings(value, ";");
-          
-          if(strings.size()>1)
-            featureSynonym.add((String) strings.get(0));
-          else
-            featureSynonym.add(0, value);
-        }
-        
-        if(featureSynonyms == null)
-          featureSynonyms = new Hashtable();
-        
-        final JLabel sysidField = new JLabel(qualifier.getName());
-        sysidField.setHorizontalAlignment(SwingConstants.RIGHT);
-        sysidField.setPreferredSize(new Dimension(maxLabelWidth, 
-                         sysidField.getPreferredSize().height));
-        c.gridx = 0;
-        c.gridy = nrows;
-        c.ipadx = 5;
-        c.anchor = GridBagConstraints.EAST;
-        gridPanel.add(sysidField, c);
-
-        final JExtendedComboBox comboBox = new JExtendedComboBox(featureSynonym);
-        featureSynonyms.put(qualifier.getName(), comboBox);
-        comboBox.setSelectedIndex(current);
-        comboBox.setCurrent(current);
-        comboBox.setOpaque(false);
-        comboBox.addActionListener(new ActionListener()
-        {
-          public void actionPerformed(ActionEvent e)
-          {     
-            if(comboBox.getSelectedIndex() == comboBox.getCurrent())
-              return;
-            
-            int select = JOptionPane.showConfirmDialog(null, 
-                "Change the current value of "+
-                qualifier.getName()+" to "+comboBox.getSelectedItem()+"?", 
-                qualifier.getName()+" change", 
-                JOptionPane.OK_CANCEL_OPTION);
-            if(select == JOptionPane.CANCEL_OPTION)
-              comboBox.setSelectedIndex(comboBox.getCurrent());
-            else
-            {
-              StringVector values = qualifier.getValues();
-              StringVector newValues = new StringVector();
-              String selectedValue = (String) comboBox.getSelectedItem();
-              
-              for(int i =0; i<values.size(); i++)
-              {
-                String value = (String) values.get(i);
-                StringVector strings = StringVector.getStrings(value, ";");
-                if(selectedValue.equals(strings.get(0)))
-                  value = selectedValue;
-                else
-                  value = strings.get(0)+";current=false";
-                
-                newValues.add(value);
-              }
-              int index = gffQualifiers.indexOfQualifierWithName(qualifier.getName());
-              gffQualifiers.remove(index);
-              gffQualifiers.add(index, new Qualifier(qualifier.getName(), newValues));
-              comboBox.setCurrent(comboBox.getSelectedIndex());
-            }
-          }
-        });
-        //comboBoxWidth = comboBox.getPreferredSize().width;
-        
-        c.gridx = 1;
-        c.gridy = nrows;
-        c.ipadx = 45;
-        c.anchor = GridBagConstraints.WEST;
-        gridPanel.add(comboBox, c);
-        
-        c.gridx = 2;
-        c.gridy = nrows;
-        gridPanel.add(Box.createHorizontalStrut(25), c);
-        
+        addSynonymComponent(qualifier, c, gridPanel, nrows,
+            maxLabelWidth, maxSynonymWidth);  
         nrows++;
       }
     }
     
-    Dimension cellDimension = null;
-    //int featIdWidth   = 0;
+    boolean firstFound = true;
+    for(int i=0; i<gffQualifiers.size(); i++)
+    {
+      final Qualifier qualifier = (Qualifier)gffQualifiers.get(i);
+      if( ChadoTransactionManager.isSynonymTag(qualifier.getName(), 
+          (GFFStreamFeature)feature.getEmblFeature()) &&
+          !isSystematicId(qualifier.getName()))
+      {
+        if(firstFound && nrows > 0)
+        {
+          addJSeparator(gridPanel, nrows, maxSynonymWidth);
+          nrows++;
+        }
+        addSynonymComponent(qualifier, c, gridPanel, nrows, 
+            maxLabelWidth, maxSynonymWidth);  
+        nrows++;
+        firstFound = false;
+      }
+    }
     
+    Dimension cellDimension = null;
     nrows = 0;
     if(idQualifier != null)
     {
       final String uniquename = (String)idQualifier.getValues().get(0);
-      JLabel idField = new JLabel("ID");
+      JLabel idField = new JLabel("Internal ID");
       
       uniquenameTextField = new JTextField(uniquename);
       cellDimension = new Dimension(uniquenameTextField.getPreferredSize().width+10,
@@ -227,12 +171,14 @@ public class GffPanel extends JPanel
       c.gridx = 3;
       c.gridy = 0;
       c.ipadx = 5;
-      c.anchor = GridBagConstraints.EAST;
+      c.fill = GridBagConstraints.NONE;
+      c.anchor = GridBagConstraints.NORTHEAST;
       gridPanel.add(idField, c);
       c.gridx = 4;
       c.gridy = 0;
       c.ipadx = 0;
-      c.anchor = GridBagConstraints.WEST;
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.anchor = GridBagConstraints.NORTHWEST;
       gridPanel.add(uniquenameTextField, c);
       
       Qualifier featIdQualifier = gffQualifiers.getQualifierByName("feature_id");
@@ -241,15 +187,6 @@ public class GffPanel extends JPanel
         
         idField.setToolTipText("feature_id="+(String)featIdQualifier.getValues().get(0));
         uniquenameTextField.setToolTipText("feature_id="+(String)featIdQualifier.getValues().get(0));
-        /*
-        JLabel featId = new JLabel();
-        featIdWidth = featId.getPreferredSize().width;
-        c.gridx = 4;
-        c.gridy = 0;
-        c.ipadx = 0;
-        c.anchor = GridBagConstraints.WEST;
-        gridPanel.add(featId, c);
-        */
       }
       nrows++;
     }
@@ -274,12 +211,14 @@ public class GffPanel extends JPanel
         c.gridx = 3;
         c.gridy = nrows;
         c.ipadx = 5;
-        c.anchor = GridBagConstraints.EAST;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.NORTHEAST;
         gridPanel.add(parentField, c); 
         c.gridx = 4;
         c.gridy = nrows;
         c.ipadx = 0;
-        c.anchor = GridBagConstraints.WEST;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.NORTHWEST;
         gridPanel.add(parentTextField, c); 
         nrows++;
       }
@@ -305,12 +244,14 @@ public class GffPanel extends JPanel
         c.gridx = 3;
         c.gridy = nrows;
         c.ipadx = 5;
-        c.anchor = GridBagConstraints.EAST;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.NORTHEAST;
         gridPanel.add(derivesFromsField, c); 
         c.gridx = 4;
         c.gridy = nrows;
         c.ipadx = 0;
-        c.anchor = GridBagConstraints.WEST;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.NORTHWEST;
         gridPanel.add(derivesFromTextField, c); 
         nrows++;
       }
@@ -336,12 +277,14 @@ public class GffPanel extends JPanel
       c.gridx = 3;
       c.gridy = nrows;
       c.ipadx = 5;
-      c.anchor = GridBagConstraints.EAST;
+      c.fill = GridBagConstraints.NONE;
+      c.anchor = GridBagConstraints.NORTHEAST;
       gridPanel.add(timeField, c);
       c.gridx = 4;
       c.gridy = nrows;
       c.ipadx = 0;
-      c.anchor = GridBagConstraints.WEST;
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.anchor = GridBagConstraints.NORTHWEST;
       gridPanel.add(timeTextField, c);
       nrows++;
     }  
@@ -352,7 +295,7 @@ public class GffPanel extends JPanel
     // add/remove buttons
     Box xBox = Box.createHorizontalBox();
 
-    final JButton addSynonym = new JButton("ADD SYNONYM");
+    final JButton addSynonym = new JButton("ADD");
     addSynonym.setOpaque(false);
     addSynonym.addActionListener(new ActionListener()
     {
@@ -364,7 +307,7 @@ public class GffPanel extends JPanel
     xBox.add(addSynonym);
     xBox.add(Box.createHorizontalStrut(10));
     
-    final JButton removeSynonym = new JButton("REMOVE SYNONYM");
+    final JButton removeSynonym = new JButton("REMOVE");
     removeSynonym.setOpaque(false);
     removeSynonym.addActionListener(new ActionListener()
     {
@@ -427,6 +370,12 @@ public class GffPanel extends JPanel
     return gffQualifiers;
   }
   
+  private boolean isSystematicId(final String synonymType)
+  {
+    if(synonymType.indexOf("systematic_id") > -1)
+      return true;
+    return false;
+  }
   
   private void removeSynonym()
   {
@@ -510,7 +459,9 @@ public class GffPanel extends JPanel
     xBox.add(newSynonym);
     
     final JCheckBox current = new JCheckBox("make current", true);
-    xBox.add(current);
+    
+    if(isSystematicId(synonymName))
+      xBox.add(current);
     
     select = JOptionPane.showConfirmDialog(null, xBox, 
         "Input name", JOptionPane.OK_CANCEL_OPTION);
@@ -521,7 +472,7 @@ public class GffPanel extends JPanel
     Qualifier synonymQualifier = gffQualifiers.getQualifierByName(synonymName);
     
     String newSynonymValue = newSynonym.getText();
-    if(!current.isSelected())
+    if(isSystematicId(synonymName) && !current.isSelected())
       newSynonymValue = newSynonymValue + ";current=false";
     
     if(synonymQualifier == null)
@@ -540,7 +491,7 @@ public class GffPanel extends JPanel
       StringVector str = StringVector.getStrings(thisValue, ";");
       String synonymValue = (String) str.get(0);
       
-      if(!synonymValue.equals(newSynonymValue))
+      if(isSystematicId(synonymName) && !synonymValue.equals(newSynonymValue))
         if(current.isSelected() && !thisValue.endsWith(";current=false"))
           thisValue = thisValue + ";current=false";
       
@@ -560,6 +511,149 @@ public class GffPanel extends JPanel
     revalidate();
   }
   
+  private void addJSeparator(final JPanel gridPanel, 
+                             final int nrows, 
+                             final int maxLabelWidth)
+  {
+    GridBagConstraints c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = nrows;
+    c.ipady = 6;
+    c.gridwidth = 2;
+    c.anchor = GridBagConstraints.CENTER;
+    c.fill   = GridBagConstraints.HORIZONTAL;
+    JSeparator separator = GeneEditorPanel.getSeparator(gridPanel, false);
+    separator.setPreferredSize(new Dimension(maxLabelWidth, separator
+        .getPreferredSize().height));
+    gridPanel.add(separator, c);
+  }
+  
+  /**
+   * Add the synonym components
+   * @param qualifier
+   * @param c
+   * @param gridPanel
+   * @param nrows
+   * @param maxLabelWidth
+   * @param maxSynonymWidth
+   * @return
+   */
+  private void addSynonymComponent(final Qualifier qualifier, 
+                                   final GridBagConstraints c, 
+                                   final JPanel gridPanel, 
+                                   final int nrows, 
+                                   final int maxLabelWidth,
+                                   int maxSynonymWidth)
+  {
+    empty = false;
+    int current = 0;
+    final StringVector values = qualifier.getValues();
+    final Vector featureSynonym = new Vector();
+    for(int j=0; j<values.size(); j++)
+    {
+      String value = (String) values.get(j);
+      StringVector strings = StringVector.getStrings(value, ";");
+      
+      if(strings.size()>1)
+        featureSynonym.add((String) strings.get(0));
+      else
+        featureSynonym.add(0, value);
+    }
+    
+    final JLabel sysidField = new JLabel(qualifier.getName()+" ");
+    sysidField.setPreferredSize(new Dimension(maxLabelWidth, 
+                     sysidField.getPreferredSize().height));
+    sysidField.setHorizontalAlignment(SwingConstants.RIGHT);
+    
+    c.gridx = 0;
+    c.gridy = nrows;
+    c.ipadx = 5;
+    c.fill = GridBagConstraints.NONE;
+    c.anchor = GridBagConstraints.NORTHEAST;
+    gridPanel.add(sysidField, c);
+
+    c.gridx = 1;
+    c.gridy = nrows;
+    c.ipadx = 5;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.anchor = GridBagConstraints.NORTHWEST;
+    
+    if(isSystematicId(qualifier.getName()))
+    {
+      final JExtendedComboBox comboBox = new JExtendedComboBox(
+                                               featureSynonym);
+      comboBox.setSelectedIndex(current);
+      comboBox.setCurrent(current);
+      comboBox.setOpaque(false);
+      comboBox.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          comboBoxAction(comboBox, qualifier);
+        }
+      });
+      
+      gridPanel.add(comboBox, c);
+    }
+    else
+    { 
+      final DefaultListModel listModel = new DefaultListModel();
+      for(int k = featureSynonym.size()-1; k > -1; k--)
+        listModel.addElement(featureSynonym.get(k));
+      
+      final JList name_list = new JList(listModel);
+      
+      if(featureSynonym.size() > 5)
+      {
+        final JScrollPane jsp = new JScrollPane(name_list);
+        gridPanel.add(jsp, c);
+      }
+      else
+        gridPanel.add(name_list, c);
+    }
+    
+    c.gridx = 2;
+    c.gridy = nrows;
+    
+    gridPanel.add(Box.createHorizontalStrut(25), c);
+  }
+  
+  private void comboBoxAction(final JExtendedComboBox comboBox,
+                              final Qualifier qualifier)
+  {
+    if(comboBox.getSelectedIndex() == comboBox.getCurrent())
+      return;
+    
+    int select = JOptionPane.showConfirmDialog(null, 
+        "Change the current value of "+
+        qualifier.getName()+" to "+comboBox.getSelectedItem()+"?", 
+        qualifier.getName()+" change", 
+        JOptionPane.OK_CANCEL_OPTION);
+    if(select == JOptionPane.CANCEL_OPTION)
+      comboBox.setSelectedIndex(comboBox.getCurrent());
+    else
+    {
+      StringVector values = qualifier.getValues();
+      StringVector newValues = new StringVector();
+      String selectedValue = (String) comboBox.getSelectedItem();
+      
+      for(int i =0; i<values.size(); i++)
+      {
+        String value = (String) values.get(i);
+        StringVector strings = StringVector.getStrings(value, ";");
+        if(selectedValue.equals(strings.get(0)))
+          value = selectedValue;
+        else
+          value = strings.get(0)+";current=false";
+        
+        newValues.add(value);
+      }
+      int index = gffQualifiers.indexOfQualifierWithName(qualifier.getName());
+      gffQualifiers.remove(index);
+      gffQualifiers.add(index, new Qualifier(qualifier.getName(), newValues));
+      comboBox.setCurrent(comboBox.getSelectedIndex());
+    }  
+  }
   
   public void featureChanged(FeatureChangeEvent event)
   {
@@ -575,5 +669,4 @@ public class GffPanel extends JPanel
   {
     this.empty = empty;
   }
-  
 }

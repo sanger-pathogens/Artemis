@@ -29,7 +29,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.EventListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -90,6 +89,10 @@ public class GeneEditorPanel extends JPanel
     jspCore.setPreferredSize(new Dimension(jspCore.getPreferredSize().width, 100));
     
     addDarkSeparator(this);
+    propertiesButton = addOpenClosePanel("Properties", propertiesPanel);
+    add(propertiesPanel);
+    
+    addDarkSeparator(this);
     coreButton = addOpenClosePanel("Core",jspCore);
     add(jspCore);
     
@@ -101,9 +104,6 @@ public class GeneEditorPanel extends JPanel
     matchButton = addOpenClosePanel("Match", matchForm);
     add(matchForm);
     
-    addDarkSeparator(this);
-    propertiesButton = addOpenClosePanel("Properties", propertiesPanel);
-    add(propertiesPanel);
     add(Box.createVerticalGlue());
   }
 
@@ -140,8 +140,8 @@ public class GeneEditorPanel extends JPanel
    * @param parent
    * @param useLightColor
    */
-  private static void addSeparator(final JComponent comp,
-                                   final boolean useLightColor)
+  public static JSeparator getSeparator(final JComponent comp,
+                                           final boolean useLightColor)
   {
     final JSeparator separator = new JSeparator();
 
@@ -158,7 +158,8 @@ public class GeneEditorPanel extends JPanel
         new Dimension(comp.getPreferredSize().width,
                       separator.getPreferredSize().height));
     separator.setMaximumSize(new Dimension(1500,10));
-    comp.add(separator);
+
+    return separator;
   }
   
   /**
@@ -168,7 +169,8 @@ public class GeneEditorPanel extends JPanel
    */
   public static void addLightSeparator(final JComponent comp)
   {
-    addSeparator(comp, true);
+    JSeparator separator = getSeparator(comp, true);
+    comp.add(separator);
   }
   
   /**
@@ -178,7 +180,8 @@ public class GeneEditorPanel extends JPanel
    */
   public static void addDarkSeparator(final JComponent comp)
   {
-    addSeparator(comp, false);
+    JSeparator separator = getSeparator(comp, false);
+    comp.add(separator);
   }
   
   private OpenSectionButton addOpenClosePanel(final String name,
