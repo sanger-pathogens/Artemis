@@ -26,7 +26,7 @@ package uk.ac.sanger.artemis.components.genebuilder;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.util.Collections;
+import java.awt.Font;
 import java.util.Vector;
 
 import javax.swing.JComboBox;
@@ -52,6 +52,7 @@ public class JExtendedComboBox extends JComboBox
   private static final long serialVersionUID = 1L;
   public static String SEPARATOR = "SEPARATOR";
   private int current;
+  private boolean highLightCurrent = false;
   
   /**
    * @param str
@@ -151,7 +152,12 @@ public class JExtendedComboBox extends JComboBox
         setBackground(list.getBackground());
         setForeground(list.getForeground());
       }
-      setFont(list.getFont());
+      
+      Font f = list.getFont();
+      if(isHighLightCurrent() && index == getCurrent())
+        f = f.deriveFont(Font.BOLD);
+
+      setFont(f);
       setText(str);
       return this;
     }
@@ -193,6 +199,7 @@ public class JExtendedComboBox extends JComboBox
   
   public static void main(String args[])
   {
+    /*
     uk.ac.sanger.artemis.components.database.DatabaseEntrySource entry_source = 
       new uk.ac.sanger.artemis.components.database.DatabaseEntrySource();
     entry_source.setLocation(true);
@@ -201,10 +208,14 @@ public class JExtendedComboBox extends JComboBox
         uk.ac.sanger.artemis.util.DatabaseDocument.PRODUCTS_TAG_CVNAME);
     Collections.sort(terms, 
         new uk.ac.sanger.artemis.components.genebuilder.cv.CvTermsComparator());
+    */
     final String options[] = { "<PREV", "CANCEL", "NEXT>"};   
     
-    JExtendedComboBox term_list = new JExtendedComboBox(terms, true);
-
+    String[] terms = { "aaaa", "bbbb", "cccc" };
+    JExtendedComboBox term_list = new JExtendedComboBox(terms);
+    term_list.setCurrent(0);
+    term_list.setHighLightCurrent(true);
+    
     Dimension d = new Dimension(500,term_list.getPreferredSize().height);
     term_list.setPreferredSize(d);
     term_list.setMaximumSize(d);
@@ -227,5 +238,14 @@ public class JExtendedComboBox extends JComboBox
   {
     this.current = current;
   }
-  
+
+  public boolean isHighLightCurrent()
+  {
+    return highLightCurrent;
+  }
+
+  public void setHighLightCurrent(boolean highLightCurrent)
+  {
+    this.highLightCurrent = highLightCurrent;
+  }
 }

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.12 2008-01-11 11:51:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.13 2008-01-11 14:17:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -297,6 +297,7 @@ public class GffPanel extends JPanel
 
     final JButton addSynonym = new JButton("ADD");
     addSynonym.setOpaque(false);
+    addSynonym.setToolTipText("Add id or synonym");
     addSynonym.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -309,6 +310,7 @@ public class GffPanel extends JPanel
     
     final JButton removeSynonym = new JButton("REMOVE");
     removeSynonym.setOpaque(false);
+    removeSynonym.setToolTipText("Remove id or synonym");
     removeSynonym.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -582,6 +584,7 @@ public class GffPanel extends JPanel
     {
       final JExtendedComboBox comboBox = new JExtendedComboBox(
                                                featureSynonym);
+      comboBox.setHighLightCurrent(true);
       comboBox.setSelectedIndex(current);
       comboBox.setCurrent(current);
       comboBox.setOpaque(false);
@@ -592,6 +595,10 @@ public class GffPanel extends JPanel
           comboBoxAction(comboBox, qualifier);
         }
       });
+      
+      final String tt = "current "+qualifier.getName()+" is shown";
+      sysidField.setToolTipText(tt);
+      comboBox.setToolTipText(tt);
       
       gridPanel.add(comboBox, c);
     }
