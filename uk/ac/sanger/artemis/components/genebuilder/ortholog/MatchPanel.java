@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.23 2008-01-10 14:17:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.24 2008-01-14 14:08:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -524,6 +524,11 @@ public class MatchPanel extends JPanel
       }
     }
     return matchQualifiers;
+  }
+  
+  public static String getDescription()
+  {
+    return "Ortholog/Paralog/Similarity";  
   }
   
   public void featureChanged(FeatureChangeEvent event)

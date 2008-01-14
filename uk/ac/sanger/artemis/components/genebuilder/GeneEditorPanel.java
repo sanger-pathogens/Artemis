@@ -89,19 +89,21 @@ public class GeneEditorPanel extends JPanel
     jspCore.setPreferredSize(new Dimension(jspCore.getPreferredSize().width, 100));
     
     addDarkSeparator(this);
-    propertiesButton = addOpenClosePanel("Properties", propertiesPanel);
+    propertiesButton = addOpenClosePanel("Properties", propertiesPanel, null);
     add(propertiesPanel);
     
     addDarkSeparator(this);
-    coreButton = addOpenClosePanel("Core",jspCore);
+    coreButton = addOpenClosePanel("Core",jspCore, null);
     add(jspCore);
     
     addDarkSeparator(this);
-    cvButton = addOpenClosePanel("Controlled Vocabulary", cvForm);
+    cvButton = addOpenClosePanel("Controlled Vocabulary", cvForm,
+        CVPanel.getDescription());
     add(cvForm);
     
     addDarkSeparator(this);
-    matchButton = addOpenClosePanel("Match", matchForm);
+    matchButton = addOpenClosePanel("Match", matchForm, 
+        MatchPanel.getDescription());
     add(matchForm);
     
     add(Box.createVerticalGlue());
@@ -176,7 +178,6 @@ public class GeneEditorPanel extends JPanel
   /**
    * Add a dark Separator to a given component
    * @param comp
-   * @param parent
    */
   public static void addDarkSeparator(final JComponent comp)
   {
@@ -184,10 +185,20 @@ public class GeneEditorPanel extends JPanel
     comp.add(separator);
   }
   
+  /**
+   * @param name
+   * @param panel
+   * @param tt
+   * @return
+   */
   private OpenSectionButton addOpenClosePanel(final String name,
-                                              final JComponent panel)
+                                              final JComponent panel,
+                                              final String tt)
   {
     final JPanel bannerPanel = new JPanel();
+    
+    if(tt != null)
+      bannerPanel.setToolTipText(tt);
     bannerPanel.setLayout(new BoxLayout(bannerPanel, BoxLayout.LINE_AXIS));
     bannerPanel.setBackground(LIGHT_STEEL_BLUE);
     

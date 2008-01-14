@@ -1002,6 +1002,15 @@ public class CVPanel extends JPanel
     return select;
   }
   
+  public static String getDescription()
+  {
+    final StringBuffer buff = new StringBuffer(); 
+    buff.append("Section for controlled vocabulary qualifiers:\n");
+    buff.append("GO, controlled_curation, product, Riley class");
+    
+    return buff.toString();
+  }
+  
   
   /**
    *  Implementation of the FeatureChangeListener interface.  We need to
