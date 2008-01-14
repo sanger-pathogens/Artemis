@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.38 2007-11-09 09:49:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.39 2008-01-14 17:18:25 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -58,7 +58,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.38 2007-11-09 09:49:25 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.39 2008-01-14 17:18:25 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -651,7 +651,39 @@ public class EditMenu extends SelectionMenu
         addBases();
       }
     });
-
+    
+    
+    final JMenuItem replace_bases_item = new JMenuItem("Replace Bases At Selection");
+    replace_bases_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        MarkerRange marker_range = getSelection ().getMarkerRange ();
+        int start = getSelection().getHighestBaseOfSelection().getPosition();
+        boolean hasDeleted = deleteSelectedBases();
+        
+        if(!hasDeleted)
+          return;
+        
+        if(!marker_range.isForwardMarker())
+        {
+          try
+          {
+            marker_range = new MarkerRange(
+                getEntryGroup().getBases().getReverseStrand(),
+                start,start+1);
+          }
+          catch(OutOfRangeException e)
+          {
+            e.printStackTrace();
+            return;
+          }
+        }
+        getSelection ().setMarkerRange (marker_range);
+        addBases();
+        getSelection ().setMarkerRange (null);
+      }
+    });
 
     if(Options.getOptions().getPropertyTruthValue("val_mode")) 
     {
@@ -722,6 +754,8 @@ public class EditMenu extends SelectionMenu
       add(add_bases_from_file_item);
     }
 
+    add(replace_bases_item);
+    
     if(owner instanceof FeatureDisplay)
     {
       add(new JSeparator());
@@ -2542,23 +2576,23 @@ public class EditMenu extends SelectionMenu
   /**
    *  Delete the selected bases after asking the user for confimation.
    **/
-  private void deleteSelectedBases () {
+  private boolean deleteSelectedBases () {
     if (!checkForSelectionRange ()) {
-      return;
+      return false;
     }
 
     final MarkerRange marker_range = getSelection ().getMarkerRange ();
 
     if (marker_range.getCount () == getEntryGroup ().getSequenceLength ()) {
       new MessageDialog (getParentFrame (), "You can't delete every base");
-      return;
+      return false;
     }
 
     if (getEntryGroup ().isReadOnly ()) {
       new MessageDialog (getParentFrame (),
                          "one of the current entries or features is " +
                          "read-only - connot continue");
-      return;
+      return false;
     }
 
     final Range raw_range = marker_range.getRawRange ();
@@ -2592,7 +2626,7 @@ public class EditMenu extends SelectionMenu
           "read only - cannot continue";
         new MessageDialog (getParentFrame (), message);
         getSelection ().setMarkerRange (marker_range);
-        return;
+        return false;
       }
 
       for (int feature_index = 0 ;
@@ -2615,7 +2649,7 @@ public class EditMenu extends SelectionMenu
             new MessageDialog (getParentFrame (),
                                "the selected range overlaps the " +
                                "start or end of an exon - cannot continue");
-            return;
+            return false;
           }
         }
       }
@@ -2635,7 +2669,7 @@ public class EditMenu extends SelectionMenu
                          "Are you sure you want to delete the " +
                          "selected bases?");
       if (!dialog.getResult ()) {
-        return;
+        return false;
       }
     }
 
@@ -2650,8 +2684,9 @@ public class EditMenu extends SelectionMenu
 
       new MessageDialog (getParentFrame (),
                          "the bases are read only - cannot delete");
-      return;
+      return false;
     }
+    return true;
   }
 
   /**
