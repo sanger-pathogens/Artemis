@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierChoice.java,v 1.5 2007-07-09 12:17:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierChoice.java,v 1.6 2008-01-14 10:05:50 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.JComboBox;
  *  key.
  *
  *  @author Kim Rutherford
- *  @version $Id: QualifierChoice.java,v 1.5 2007-07-09 12:17:23 tjc Exp $
+ *  @version $Id: QualifierChoice.java,v 1.6 2008-01-14 10:05:50 tjc Exp $
  **/
 
 public class QualifierChoice extends JComboBox 
@@ -179,7 +179,7 @@ public class QualifierChoice extends JComboBox
       {
         if (indexOf ("locus_tag") != -1) 
           setSelectedQualifierByName ("locus_tag");
-        else 
+        else if( this.getModel().getSize() > 0)
           setSelectedIndex (0);
       }
     } 
