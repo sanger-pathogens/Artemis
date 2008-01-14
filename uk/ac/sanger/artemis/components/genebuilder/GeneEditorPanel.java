@@ -153,7 +153,7 @@ public class GeneEditorPanel extends JPanel
     //separator.setPreferredSize(new Dimension(width,10));
     // add glue to expand the separator horizontally
     comp.add(Box.createHorizontalGlue());
-    comp.add(Box.createVerticalStrut(5));
+    comp.add(Box.createVerticalStrut(3));
     separator.setPreferredSize(
         new Dimension(comp.getPreferredSize().width,
                       separator.getPreferredSize().height));
@@ -203,7 +203,7 @@ public class GeneEditorPanel extends JPanel
     bannerPanel.add(Box.createHorizontalGlue());
     bannerPanel.add(openButton);
     bannerPanel.setPreferredSize(
-       new Dimension(bannerPanel.getPreferredSize().width, 20));
+       new Dimension(bannerPanel.getPreferredSize().width, 18));
     
     add(bannerPanel);
     return openButton;
