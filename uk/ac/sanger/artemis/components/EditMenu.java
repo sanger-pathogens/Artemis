@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.39 2008-01-14 17:18:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.40 2008-01-15 10:21:01 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -58,7 +58,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.39 2008-01-14 17:18:25 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.40 2008-01-15 10:21:01 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -315,6 +315,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
+    final JMenu qualifier_menu = new JMenu("Qualifier(s)");
     final JMenuItem add_qualifiers_item = new JMenuItem("Change Qualifiers Of Selected ...");
     add_qualifiers_item.addActionListener(new ActionListener() 
     {
@@ -374,6 +375,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
+    final JMenu feature_menu = new JMenu("Feature(s)");
     final JMenuItem duplicate_item  = new JMenuItem("Duplicate Selected Features");
     duplicate_item.setAccelerator(DUPLICATE_KEY);
     duplicate_item.addActionListener(new ActionListener() 
@@ -471,6 +473,7 @@ public class EditMenu extends SelectionMenu
       }
     }
 
+    final JMenu trim_menu = new JMenu("Trim");
     final JMenuItem trim_to_any_item = new JMenuItem("Trim Selected Features To Any");
     trim_to_any_item.addActionListener(new ActionListener() 
     {
@@ -513,6 +516,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
+    final JMenu extend_menu = new JMenu("Extend");
     final JMenuItem extend_to_prev_stop_item =
       new JMenuItem("Extend to Previous Stop Codon");
     extend_to_prev_stop_item.setAccelerator(EXTEND_TO_PREVIOUS_STOP_CODON_KEY);
@@ -634,12 +638,15 @@ public class EditMenu extends SelectionMenu
       }
     });
 
+    final JMenu bases_item = new JMenu("Bases");
+    
     final JMenuItem delete_bases_item = new JMenuItem("Delete Selected Bases");
     delete_bases_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event)
       {
-        deleteSelectedBases();
+        deleteSelectedBases("Are you sure you want to delete the " +
+                            "selected bases?");
       }
     });
 
@@ -660,7 +667,9 @@ public class EditMenu extends SelectionMenu
       {
         MarkerRange marker_range = getSelection ().getMarkerRange ();
         int start = getSelection().getHighestBaseOfSelection().getPosition();
-        boolean hasDeleted = deleteSelectedBases();
+        boolean hasDeleted = deleteSelectedBases(
+            "Are you sure you want to replace the " +
+            "selected bases?");
         
         if(!hasDeleted)
           return;
@@ -709,35 +718,40 @@ public class EditMenu extends SelectionMenu
       addSeparator();
     }
 
-    add(add_qualifiers_item);
-    add(remove_qualifier_item);
-    add(convert_qualifier_item);
-    add(duplicate_item);
-    add(merge_features_item);
-    add(unmerge_feature_item);
-    add(unmerge_all_feature_item);
-    add(delete_features_item);
-    add(delete_segments_item);
-    add(delete_introns_item);
+    add(qualifier_menu);
+    qualifier_menu.add(add_qualifiers_item);
+    qualifier_menu.add(remove_qualifier_item);
+    qualifier_menu.add(convert_qualifier_item);
+    add(feature_menu);
+    feature_menu.add(duplicate_item);
+    feature_menu.add(merge_features_item);
+    feature_menu.add(unmerge_feature_item);
+    feature_menu.add(unmerge_all_feature_item);
+    feature_menu.add(delete_features_item);
+    feature_menu.add(delete_segments_item);
+    feature_menu.add(delete_introns_item);
     addSeparator();
     add(move_features_menu);
     add(copy_features_menu);
     addSeparator();
-    add(trim_item);
-    add(trim_to_any_item);
-    add(trim_to_next_item);
-    add(trim_to_next_any_item);
-    add(extend_to_prev_stop_item);
-    add(extend_to_next_stop_item);
+    add(trim_menu);
+    trim_menu.add(trim_item);
+    trim_menu.add(trim_to_any_item);
+    trim_menu.add(trim_to_next_item);
+    trim_menu.add(trim_to_next_any_item);
+    add(extend_menu);
+    extend_menu.add(extend_to_prev_stop_item);
+    extend_menu.add(extend_to_next_stop_item);
     add(fix_stop_codons_item);
-    add(extend_to_next_stop_and_fix_item);
+    extend_menu.add(extend_to_next_stop_and_fix_item);
     addSeparator();
     add(auto_gene_name_item);
     add(fix_gene_names_item);
-    add(reverse_complement_item); 
-    add(reverse_complement_range_item);
-    add(delete_bases_item);
-    add(add_bases_item);
+    add(bases_item);
+    bases_item.add(reverse_complement_item); 
+    bases_item.add(reverse_complement_range_item);
+    bases_item.add(delete_bases_item);
+    bases_item.add(add_bases_item);
 
     if(Options.readWritePossible()) 
     {
@@ -751,10 +765,10 @@ public class EditMenu extends SelectionMenu
         }
       });
 
-      add(add_bases_from_file_item);
+      bases_item.add(add_bases_from_file_item);
     }
 
-    add(replace_bases_item);
+    bases_item.add(replace_bases_item);
     
     if(owner instanceof FeatureDisplay)
     {
@@ -2576,7 +2590,7 @@ public class EditMenu extends SelectionMenu
   /**
    *  Delete the selected bases after asking the user for confimation.
    **/
-  private boolean deleteSelectedBases () {
+  private boolean deleteSelectedBases (final String description) {
     if (!checkForSelectionRange ()) {
       return false;
     }
@@ -2665,9 +2679,7 @@ public class EditMenu extends SelectionMenu
 
     if (Options.getOptions ().isNoddyMode ()) {
       final YesNoDialog dialog =
-        new YesNoDialog (getParentFrame (),
-                         "Are you sure you want to delete the " +
-                         "selected bases?");
+        new YesNoDialog (getParentFrame (), description);
       if (!dialog.getResult ()) {
         return false;
       }
