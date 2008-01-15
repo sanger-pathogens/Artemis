@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.40 2008-01-15 10:21:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.41 2008-01-15 10:39:23 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -58,7 +58,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.40 2008-01-15 10:21:01 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.41 2008-01-15 10:39:23 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -315,8 +315,8 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenu qualifier_menu = new JMenu("Qualifier(s)");
-    final JMenuItem add_qualifiers_item = new JMenuItem("Change Qualifiers Of Selected ...");
+    final JMenu qualifier_menu = new JMenu("Qualifier(s) of Selected Feature");
+    final JMenuItem add_qualifiers_item = new JMenuItem("Change ...");
     add_qualifiers_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -325,7 +325,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem remove_qualifier_item = new JMenuItem("Remove Qualifier Of Selected ...");
+    final JMenuItem remove_qualifier_item = new JMenuItem("Remove ...");
     remove_qualifier_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -334,7 +334,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem convert_qualifier_item = new JMenuItem("Convert Qualifier Of Selected ...");
+    final JMenuItem convert_qualifier_item = new JMenuItem("Convert ...");
     convert_qualifier_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -343,7 +343,8 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem merge_features_item = new JMenuItem("Merge Selected Features");
+    final JMenu feature_menu = new JMenu("Selected Feature(s)");
+    final JMenuItem merge_features_item = new JMenuItem("Merge");
     merge_features_item.setAccelerator(MERGE_FEATURES_KEY);
     merge_features_item.addActionListener(new ActionListener() 
     {
@@ -353,7 +354,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem unmerge_feature_item = new JMenuItem("Unmerge Selected Feature");
+    final JMenuItem unmerge_feature_item = new JMenuItem("Unmerge");
       
     unmerge_feature_item.addActionListener(new ActionListener() 
     {
@@ -363,7 +364,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem unmerge_all_feature_item = new JMenuItem("Unmerge All Feature Segments");
+    final JMenuItem unmerge_all_feature_item = new JMenuItem("Unmerge All Segments");
     if(GeneUtils.isDatabaseEntry(entry_group))
       unmerge_all_feature_item.setEnabled(false);
     
@@ -375,8 +376,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenu feature_menu = new JMenu("Feature(s)");
-    final JMenuItem duplicate_item  = new JMenuItem("Duplicate Selected Features");
+    final JMenuItem duplicate_item  = new JMenuItem("Duplicate");
     duplicate_item.setAccelerator(DUPLICATE_KEY);
     duplicate_item.addActionListener(new ActionListener() 
     {
@@ -388,7 +388,7 @@ public class EditMenu extends SelectionMenu
     });
    
     
-    final JMenuItem delete_features_item = new JMenuItem("Delete Selected Features");
+    final JMenuItem delete_features_item = new JMenuItem("Delete");
     delete_features_item.setAccelerator(DELETE_FEATURES_KEY);
     delete_features_item.addActionListener(new ActionListener() 
     {
@@ -399,7 +399,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem delete_segments_item = new JMenuItem("Delete Selected Exons");
+    final JMenuItem delete_segments_item = new JMenuItem("Delete Exons");
     delete_segments_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -409,7 +409,7 @@ public class EditMenu extends SelectionMenu
     });
 
     final JMenuItem delete_introns_item =
-      new JMenuItem("Remove Introns of Selected Features");
+      new JMenuItem("Remove Introns");
     delete_introns_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event) 
@@ -473,8 +473,8 @@ public class EditMenu extends SelectionMenu
       }
     }
 
-    final JMenu trim_menu = new JMenu("Trim");
-    final JMenuItem trim_to_any_item = new JMenuItem("Trim Selected Features To Any");
+    final JMenu trim_menu = new JMenu("Trim Selected Features");
+    final JMenuItem trim_to_any_item = new JMenuItem("To Any");
     trim_to_any_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) {
@@ -483,7 +483,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem trim_item = new JMenuItem("Trim Selected Features To Met");
+    final JMenuItem trim_item = new JMenuItem("To Met");
     trim_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event) 
@@ -494,7 +494,7 @@ public class EditMenu extends SelectionMenu
     });
 
     final JMenuItem trim_to_next_any_item =
-      new JMenuItem("Trim Selected Features To Next Any");
+      new JMenuItem("To Next Any");
     trim_to_next_any_item.setAccelerator(TRIM_FEATURES_TO_NEXT_ANY_KEY);
     trim_to_next_any_item.addActionListener(new ActionListener()
     {
@@ -505,7 +505,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem trim_to_next_item = new JMenuItem("Trim Selected Features To Next Met");
+    final JMenuItem trim_to_next_item = new JMenuItem("To Next Met");
     trim_to_next_item.setAccelerator(TRIM_FEATURES_KEY);
     trim_to_next_item.addActionListener(new ActionListener()
     {
@@ -518,7 +518,7 @@ public class EditMenu extends SelectionMenu
 
     final JMenu extend_menu = new JMenu("Extend");
     final JMenuItem extend_to_prev_stop_item =
-      new JMenuItem("Extend to Previous Stop Codon");
+      new JMenuItem("To Previous Stop Codon");
     extend_to_prev_stop_item.setAccelerator(EXTEND_TO_PREVIOUS_STOP_CODON_KEY);
     extend_to_prev_stop_item.addActionListener(new ActionListener()
     {
@@ -529,7 +529,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem extend_to_next_stop_item = new JMenuItem("Extend to Next Stop Codon");
+    final JMenuItem extend_to_next_stop_item = new JMenuItem("To Next Stop Codon");
     extend_to_next_stop_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event) 
@@ -548,7 +548,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem extend_to_next_stop_and_fix_item = new JMenuItem("Extend to Next Stop Codon and Fix");
+    final JMenuItem extend_to_next_stop_and_fix_item = new JMenuItem("To Next Stop Codon and Fix");
     extend_to_next_stop_and_fix_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event) 
