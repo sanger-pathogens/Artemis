@@ -35,7 +35,7 @@
 ]>
 <!-- see: http://www.pcmedia.co.nz/~michaelh/intro-to-sgml/html/c04.htm-->
 <!-- and: http://www.pcmedia.co.nz/~michaelh/intro-to-sgml/html/template.sgml-->
-<!-- $Header: //tmp/pathsoft/artemis/docs/manual.sgml,v 1.7 2006-03-02 13:08:47 tjc Exp $ -->
+<!-- $Header: //tmp/pathsoft/artemis/docs/manual.sgml,v 1.8 2008-01-15 16:36:19 tjc Exp $ -->
 <BOOK ID="index">
   <TITLE> The &art; Manual </TITLE>
   <BOOKINFO>
@@ -44,7 +44,7 @@
     </PRODUCTNAME>
     <PUBDATE>22 February 1999</PUBDATE>
     <COPYRIGHT>
-      <YEAR>1999-2006</YEAR>
+      <YEAR>1999-2008</YEAR>
       <HOLDER>Genome Research Limited</HOLDER>
     </COPYRIGHT>
     <LEGALNOTICE>
@@ -71,7 +71,7 @@
     </LEGALNOTICE>
     <ABSTRACT>
       <PARA>
-This document describes release 8 of &art; a DNA sequence viewer and
+This document describes release 10 of &art; a DNA sequence viewer and
 sequence annotation tool.
       </PARA>
     </ABSTRACT>

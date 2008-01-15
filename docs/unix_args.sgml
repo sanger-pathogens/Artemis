@@ -27,16 +27,6 @@ file.
       </PARA>
     </SECT2>
 
-    <SECT2 ID="UNIXARGS-FAST">
-      <TITLE><LITERAL>-fast</LITERAL></TITLE>
-      <PARA>
-On Digital Unix (AKA Tru64) the <LITERAL>-fast</LITERAL> flag selects the
-"fast" Java virtual machine, which usually gives &prog; a big speed boast.
-This isn't on by default because the fast VM uses a lot more memory and it
-isn't as reliable.
-      </PARA>
-    </SECT2>
-
     <SECT2 ID="UNIXARGS-MEM">
       <TITLE><LITERAL>-Xmsn -Xmxn</LITERAL></TITLE>
       <PARA>

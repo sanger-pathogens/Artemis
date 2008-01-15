@@ -8,33 +8,24 @@ Explorer is not sufficient to run &prog;.
   <ITEMIZEDLIST>
     <LISTITEM>
       <PARA>
-UNIX users should get the current Java version from the <ULINK
+Linux, UNIX users should get the current Java version from the <ULINK
 URL="http://java.sun.com/">Sun</ULINK>.
-      </PARA>
-    </LISTITEM>
-    <LISTITEM>
-      <PARA>
-<ULINK URL="http://www.linux.org/">GNU/Linux</ULINK> users should install the latest
-java stable Java release from
-<ULINK URL="http://www.blackdown.org/">Blackdown.org</ULINK> .
-The Sun versions of Java 1.3.1, 1.4.0 and 1.4.1 have
-various long-standing bugs which make them unsuitable for Artemis.
-Newer releases from Sun may fix these problems.
       </PARA>
     </LISTITEM>
     <LISTITEM>
       <PARA>
 Windows users should get latest stable release from <ULINK
 URL="http://java.sun.com/">Java version</ULINK> 
-from Sun Microsystems.
+from Sun.
 On some versions of Windows (such as Windows 2000) you will need be have
 administrator privileges for your machine to successfully install Java.
       </PARA>
     </LISTITEM>
     <LISTITEM>
       <PARA>
-Macintosh users with MacOS X (i.e. MacOS version 10) or better do not need to
-install Java because it comes as a standard feature of the operating system.
+Macintosh users with MacOS X should have java installed. You can get the 
+latest version from <ULINK URL="http://developer.apple.com/java/download/">Apple</ULINK>.
+
 Note, however, that Java on the older versions of MacOS X has irritating
 bugs so we recommend using the latest version of MacOS, which runs &prog; well.
 Macintosh users with older MacOS versions cannot use this release of &prog;.

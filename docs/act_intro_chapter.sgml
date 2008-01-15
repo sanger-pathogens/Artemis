@@ -94,7 +94,7 @@ and the software contents displayed by double clicking on it. Open an read the
     <SECT2 ID="DOSINSTALLATION">
       <TITLE>Installation Instructions for Windows</TITLE>
       <PARA>
-On Windows systems with Java (version 1.3 or higher), installing &prog;
+On Windows systems with Java (version 1.5 or higher), installing &prog;
 is as simple as downloading the the act.jar file to an appropriate 
 place (such as the desktop or the Programs folder). When downloading
 some versions of windows mistake this file for a zip file ensure it
