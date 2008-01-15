@@ -1,5 +1,7 @@
 Version ??
 
+	Add option to replace selected bases in 'Edit' menu.
+	
 	Option to create features in intergenic regions added.
 
 	Feature editor now marks hyperlinks to UniProt, EMBL and PubMed, 
