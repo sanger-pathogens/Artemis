@@ -880,66 +880,95 @@ no errors in the formatting of the header.
     </PARA>
   </SECT2>
 
-  <SECT2 ID="EDITMENU-CHANGE-QUALIFIERS">
-    <TITLE>Change Qualifiers of Selected ...</TITLE>
+  <SECT2 ID="QUALIFIERS">
+  <TITLE>Qualifier(s) of Selected Feature</TITLE>
+  <SECT3 ID="EDITMENU-CHANGE-QUALIFIERS">
+    <TITLE>Change ...</TITLE>
     <PARA>
 This function allows the user to add or change qualifiers on all the selected
 features in one operation.  The main part of the window acts like the
 qualifier editing field of the feature edit window (see <XREF
 LINKEND="EDITMENU-EDIT-SELECTED-FEATURES">).
     </PARA>
-  </SECT2>
+  </SECT3>
 
-  <SECT2 ID="EDITMENU-REMOVE-QUALIFIERS">
-    <TITLE>Remove Qualifiers of Selected ...</TITLE>
+  <SECT3 ID="EDITMENU-REMOVE-QUALIFIERS">
+    <TITLE>Remove ...</TITLE>
     <PARA>
 This function allows the user to remove all qualifiers with a particular name
 from all the selected features.
     </PARA>
+  </SECT3>
+
+  <SECT3 ID="EDITMENU-CONVERT-QUALIFIERS">
+    <TITLE>Convert ...</TITLE>
+    <PARA>
+This function allows the user to convert all qualifiers of a particular type
+to another qualifier for all the selected features.
+    </PARA>
+  </SECT3>
   </SECT2>
 
-  <SECT2 ID="EDITMENU-DUPLICATE-SELECTED-FEATURES">
-    <TITLE>Duplicate Selected Features</TITLE>
+  <SECT2 ID="EDITMENU-SELECTED-FEATURES">
+  <TITLE>Selected Feature(s)</TITLE>
+  <SECT3 ID="EDITMENU-DUPLICATE-SELECTED-FEATURES">
+    <TITLE>Duplicate</TITLE>
     <PARA>
 Make a copy of each selected feature.  Each new feature will be added just
 after the original in the same entry as the original.  [shortcut key: D]
     </PARA>
-  </SECT2>
+  </SECT3>
 
-  <SECT2 ID="EDITMENU-MERGE-SELECTED-FEATURES">
-    <TITLE>Merge Selected Features</TITLE>
+  <SECT3 ID="EDITMENU-MERGE-SELECTED-FEATURES">
+    <TITLE>Merge</TITLE>
     <PARA>
 Create a new feature that contains all the exons and qualifiers of the
 selected features.  The selected features must all have the same key.
 [shortcut key: M]
     </PARA>
-  </SECT2>
+  </SECT3>
 
-  <SECT2 ID="EDITMENU-UNMERGE-SELECTED-FEATURE">
-    <TITLE>Unmerge Selected Feature</TITLE>
+  <SECT3 ID="EDITMENU-UNMERGE-SELECTED-FEATURE">
+    <TITLE>Unmerge</TITLE>
     <PARA>
 If the selection contains exactly two exons and those exons are adjacent in
 the same feature, split the feature into two pieces between the exons.  The
 original feature is truncated and a new feature is created.  The qualifiers of
 the old feature are copied to new feature.
     </PARA>
-  </SECT2>
+  </SECT3>
 
-  <SECT2 ID="EDITMENU-DELETE-SELECTED-FEATURES">
-    <TITLE>Delete Selected Features</TITLE>
+  <SECT3 ID="EDITMENU-UNMERGE-ALL-SEGMENTS">
+    <TITLE>Unmerge All Segments</TITLE>
+    <PARA>
+All exons in a feature are unmerged.
+    </PARA>
+  </SECT3>
+
+  <SECT3 ID="EDITMENU-DELETE-SELECTED-FEATURES">
+    <TITLE>Delete</TITLE>
     <PARA>
 Remove each selected feature from it's entry.
 [shortcut key: control-delete]
     </PARA>
-  </SECT2>
+  </SECT3>
 
-  <SECT2 ID="DELETE-SELECTED-EXONS">
-    <TITLE>Delete Selected Exons</TITLE>
+  <SECT3 ID="DELETE-SELECTED-EXONS">
+    <TITLE>Delete Exons</TITLE>
     <PARA>
 Delete the selected exons.  The last exon of a feature can't be deleted
 (delete the whole feature instead).
     </PARA>
+  </SECT3>
+
+  <SECT3 ID="DELETE-SELECTED-INTRONS">
+    <TITLE>Remove Introns</TITLE>
+    <PARA>
+Delete the selected introns.
+    </PARA>
+  </SECT3>
   </SECT2>
+
 
   <SECT2 ID="EDITMENU-MOVE-SELECTED-FEATURES">
     <TITLE>Move Selected Features To</TITLE>
@@ -957,8 +986,10 @@ from the sub-menu.
     </PARA>
   </SECT2>
 
-  <SECT2 ID="EDITMENU-TRIM-SELECTED-FEATURES-TO-MET">
-    <TITLE>Trim Selected Features To Met</TITLE>
+  <SECT2 ID="EDITMENU-TRIM">
+   <TITLE>Trim Selected Features</TITLE>
+  <SECT3 ID="EDITMENU-TRIM-SELECTED-FEATURES-TO-MET">
+    <TITLE>To Met</TITLE>
     <PARA>
 For each of the selected features this function will attempt to move the start
 position to the first ATG in the feature if the feature does not already start
@@ -966,10 +997,10 @@ on a ATG codon.  If there is no ATG in the first thirty percent of the bases
 of the feature the start position will be unchanged.  The search will stop at
 the end of the first segment of a multi-segment feature.
     </PARA>
-  </SECT2>
+  </SECT3>
 
-  <SECT2 ID="EDITMENU-TRIM-SELECTED-FEATURES-TO-ANY">
-    <TITLE>Trim Selected Features To Any</TITLE>
+  <SECT3 ID="EDITMENU-TRIM-SELECTED-FEATURES-TO-ANY">
+    <TITLE>To Any</TITLE>
     <PARA>
 This works in the same way as "Trim Selected Features To Met", but will
 attempt to move the start position of the feature to the first TTG, ATG or GTG
@@ -977,10 +1008,10 @@ in the feature if it does not already start on one of those codons.  As above
 it will only search the first thirty percent of the feature bases and will
 only search the first segment of a multi-segment feature.
     </PARA>
-  </SECT2>
+  </SECT3>
 
-  <SECT2 ID="EDITMENU-TRIM-SELECTED-FEATURES-TO-NEXT-MET">
-    <TITLE>Trim Selected Features To Next Met</TITLE>
+  <SECT3 ID="EDITMENU-TRIM-SELECTED-FEATURES-TO-NEXT-MET">
+    <TITLE>To Next Met</TITLE>
     <PARA>
 For each of the selected features this function will attempt to move the start
 position to the next ATG in the feature (the first codon is skipped).  If
@@ -989,10 +1020,10 @@ start position will be unchanged.  The search will stop at the end of the
 first segment of a multi-segment feature.
 [shortcut key: T]
     </PARA>
-  </SECT2>
+  </SECT3>
 
-  <SECT2 ID="EDITMENU-TRIM-SELECTED-FEATURES-TO-NEXT-ANY">
-    <TITLE>Trim Selected Features To Next Any</TITLE>
+  <SECT3 ID="EDITMENU-TRIM-SELECTED-FEATURES-TO-NEXT-ANY">
+    <TITLE>To Next Any</TITLE>
     <PARA>
 This works in the same way as "Trim Selected Features To Next Met", but will
 attempt to move the start position of the feature to the next TTG, ATG or GTG
@@ -1001,24 +1032,36 @@ first thirty percent of the feature bases and will only search the first
 segment of a multi-segment feature.
 [shortcut key: Y]
     </PARA>
+  </SECT3>
   </SECT2>
 
-  <SECT2 ID="EDITMENU-EXTEND-TO-PREVIOUS-STOP-CODON">
-    <TITLE>Extend to Previous Stop Codon</TITLE>
+  <SECT2 ID="EDITMENU-EXTEND">
+    <TITLE>Extend Selected Features</TITLE>
+  <SECT3 ID="EDITMENU-EXTEND-TO-PREVIOUS-STOP-CODON">
+    <TITLE>To Previous Stop Codon</TITLE>
     <PARA>
 Extend each of the selected features which do not start on a stop codon so
 that each feature starts just after the previous stop codon in this reading
 frame.
 [shortcut key: Q]
     </PARA>
-  </SECT2>
+  </SECT3>
 
-  <SECT2 ID="EDITMENU-EXTEND-TO-NEXT-STOP-CODON">
-    <TITLE>Extend to Next Stop Codon</TITLE>
+  <SECT3 ID="EDITMENU-EXTEND-TO-NEXT-STOP-CODON">
+    <TITLE>To Next Stop Codon</TITLE>
     <PARA>
 Extend each of the selected features which do not end on a stop codon so that
 each feature ends just before the next stop codon in this reading frame.
     </PARA>
+  </SECT3>
+
+  <SECT3 ID="EDITMENU-EXTEND-TO-NEXT-STOP-CODON-FIX">
+    <TITLE>To Next Stop Codon and Fix</TITLE>
+    <PARA>
+Same as above but in addition this fixes the stop codons.
+    </PARA>
+  </SECT3>
+
   </SECT2>
 
   <SECT2 ID="EDITMENU-FIX-STOP-CODONS">
@@ -1057,15 +1100,17 @@ Warn about inconsistencies such as overlapping CDSs.
     </PARA>
   </SECT2>
 
-  <SECT2 ID="EDITMENU-REVERSE-AND-COMPLEMENT">
+  <SECT2 ID="EDITMENU-BASES">
+    <TITLE>Bases</TITLE>
+  <SECT3 ID="EDITMENU-REVERSE-AND-COMPLEMENT">
     <TITLE>Reverse And Complement</TITLE>
     <PARA>
 Reverse and complement the sequence and all the features in all the entries
 (active and inactive).
     </PARA>
-  </SECT2>
+  </SECT3>
 
-  <SECT2 ID="EDITMENU-REVERSE-AND-COMPLEMENT-CONTIG"> 
+  <SECT3 ID="EDITMENU-REVERSE-AND-COMPLEMENT-CONTIG"> 
     <TITLE>Reverse And Complement Selected Contig</TITLE>
     <PARA>
 Reverse and complement the sequence and all the features in a selected 
@@ -1075,18 +1120,18 @@ deleted. The changes to the comparison file can be saved by right clicking
 in the comparison window and selecting "Save Comparison File...". However,
 ideally the comparison between the two sequences should be recalculated.
     </PARA>
-  </SECT2>
+  </SECT3>
 
 
-  <SECT2 ID="EDITMENU-DELETE-SELECTED-BASES">
+  <SECT3 ID="EDITMENU-DELETE-SELECTED-BASES">
     <TITLE>Delete Selected Bases</TITLE>
     <PARA>
 Deletes the selected range of bases (if any) from both strands.  The deletion
 will not proceed if the selected range overlaps any features.
     </PARA>
-  </SECT2>
+  </SECT3>
 
-  <SECT2 ID="EDITMENU-ADD-BASES-AT-SELECTION">
+  <SECT3 ID="EDITMENU-ADD-BASES-AT-SELECTION">
     <TITLE>Add Bases At Selection</TITLE>
     <PARA>
 Prompt the user for some bases to insert just before the selected bases.  The
@@ -1095,14 +1140,23 @@ inserted anywhere in the sequence, including inside a feature.  The same
 bases, reversed and complemented, will be inserted at the corresponding place
 on the opposite strand.
     </PARA>
-  </SECT2>
+  </SECT3>
 
-  <SECT2 ID="EDITMENU-ADD-FROM-FILE">
+  <SECT3 ID="EDITMENU-ADD-FROM-FILE">
     <TITLE>Add Bases From File ...</TITLE>
     <PARA>
 Prompt the user for the name of a file containing the bases to insert just
 before the selected bases.
     </PARA>
+  </SECT3>
+
+  <SECT3 ID="EDITMENU-REPLACE-BASES-AT-SELECTION">
+    <TITLE>Replace Bases At Selection</TITLE>
+    <PARA>
+Prompt the user for some bases to replace the selected bases.
+    </PARA>
+  </SECT3>
+
   </SECT2>
 
   <SECT2 ID="EDITMENU-CONTIG-REORDERING">
