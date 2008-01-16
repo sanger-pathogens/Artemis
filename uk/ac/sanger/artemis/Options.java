@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.11 2007-09-07 14:12:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.12 2008-01-16 16:07:50 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -44,7 +44,7 @@ import java.util.*;
  *  read in new options.
  *
  *  @author Kim Rutherford
- *  @version $Id: Options.java,v 1.11 2007-09-07 14:12:08 tjc Exp $
+ *  @version $Id: Options.java,v 1.12 2008-01-16 16:07:50 tjc Exp $
  **/
 
 public class Options extends Properties 
@@ -327,8 +327,9 @@ public class Options extends Properties
     setDefaultColourMap();
 
     readOptions();
+    setChadoOptions();
+    
     readSystemOptions();
-
     resetCachedValues();
 
 /////
@@ -342,6 +343,25 @@ public class Options extends Properties
 //  }
 /////
 
+  }
+  
+  private void setChadoOptions()
+  {
+    final StringVector exon_models = getOptionValues("chado_exon_model");
+    if(exon_models != null)
+    {
+      DatabaseDocument.EXONMODEL = (String)exon_models.elementAt(0);
+      if(getProperty("colour_of_" + DatabaseDocument.EXONMODEL) == null)
+        put("colour_of_" + DatabaseDocument.EXONMODEL, "7");
+    }
+    
+    final StringVector chado_transcript = getOptionValues("chado_transcript");
+    if(chado_transcript != null)
+    {
+      DatabaseDocument.TRANSCRIPT = (String)chado_transcript.elementAt(0);
+      if(getProperty("colour_of_" + DatabaseDocument.TRANSCRIPT) == null)
+        put("colour_of_" + DatabaseDocument.TRANSCRIPT, "1");
+    }
   }
 
   /**
@@ -860,7 +880,7 @@ public class Options extends Properties
    *  Set the default colour number for each a feature key.
    **/
   private void setDefaultFeatureColours() 
-  {
+  { 
     final Object[] key_colour_map = 
     {
       "CDS", "5",
