@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.38 2008-01-10 09:41:20 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.39 2008-01-16 16:08:47 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -771,3 +771,7 @@ common_keys = \
 #srs_url = http://srs.sanger.ac.uk/srsbin/cgi-bin/ 
 srs_url = http://srs.ebi.ac.uk/srsbin/cgi-bin/
 pubmed_url = http://www.ncbi.nlm.nih.gov/sites/entrez?Db=pubmed&Cmd=ShowDetailView&TermToSearch= 
+
+# chado gene model features default types
+chado_exon_model=CDS
+#chado_transcript=transcript
