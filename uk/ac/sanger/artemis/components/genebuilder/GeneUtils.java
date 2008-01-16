@@ -78,7 +78,7 @@ public class GeneUtils
   static
   {
     hideFeatures.add("polypeptide");
-    hideFeatures.add("mRNA");
+    hideFeatures.add(DatabaseDocument.TRANSCRIPT);
     hideFeatures.add("pseudogenic_transcript");
   }
   
@@ -810,7 +810,7 @@ public class GeneUtils
       {
         exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, 
                                                  "pseudogenic_exon");
-        transcript.set(new Key("mRNA"), transcript.getLocation(), transcript.getQualifiers());
+        transcript.set(new Key(DatabaseDocument.TRANSCRIPT), transcript.getLocation(), transcript.getQualifiers());
       }
       
       if(exons == null)
