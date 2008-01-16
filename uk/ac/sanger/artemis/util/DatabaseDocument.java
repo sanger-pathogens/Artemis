@@ -129,7 +129,8 @@ public class DatabaseDocument extends Document
   
   private Feature geneFeature;
   
-  public static String EXONMODEL = "exon-model";
+  public static String EXONMODEL  = "exon-model";
+  public static String TRANSCRIPT = "mRNA";
   
   /** list of controlled_curation CV names */
   private static Vector cvControledCuratioNames;
@@ -144,6 +145,7 @@ public class DatabaseDocument extends Document
   
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(DatabaseDocument.class);
+
   
   /**
    * 
