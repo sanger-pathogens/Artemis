@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Selector.java,v 1.9 2007-10-21 11:34:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Selector.java,v 1.10 2008-01-17 12:31:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -39,6 +39,8 @@ import uk.ac.sanger.artemis.util.StringVector;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.StringTokenizer;
 
 import javax.swing.*;
@@ -48,7 +50,7 @@ import javax.swing.*;
  *  features in an EntryGroup on key and contents.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Selector.java,v 1.9 2007-10-21 11:34:57 tjc Exp $
+ *  @version $Id: Selector.java,v 1.10 2008-01-17 12:31:06 tjc Exp $
  **/
 
 public class Selector extends JFrame
@@ -854,6 +856,8 @@ public class Selector extends JFrame
           
           final Location location = feature.getLocation();
           final RangeVector ranges = location.getRanges();
+          Collections.sort(ranges, new RangeComparator());
+          
           final Strand strand = feature.getStrand();
           int pos1;
           int pos2;
@@ -892,10 +896,11 @@ public class Selector extends JFrame
               if(bases.length < 3)
                 return true;
               
+              int length = feature_range.getCount();
               if( bases[0] != 'g' ||
                  (bases[1] != 't' && bases[1] != 'c') ||
-                  bases[bases.length-1] != 'g' ||
-                  bases[bases.length-2] != 'a' )
+                  bases[length-1] != 'g' ||
+                  bases[length-2] != 'a' )
               {
                 return true;
               }
@@ -1021,6 +1026,16 @@ public class Selector extends JFrame
   private EntryGroup getEntryGroup() 
   {
     return entry_group;
+  }
+  
+  class RangeComparator implements Comparator
+  {
+    public int compare(Object o1, Object o2)
+    {
+      int start1 = ((Range)o1).getStart();
+      int start2 = ((Range)o2).getStart();
+      return start1-start2;
+    }
   }
 
 }
