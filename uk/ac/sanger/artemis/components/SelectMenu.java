@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.11 2007-10-01 14:54:45 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.12 2008-01-17 09:53:47 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -60,7 +60,7 @@ import javax.swing.KeyStroke;
  *  "Select by key".
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectMenu.java,v 1.11 2007-10-01 14:54:45 tjc Exp $
+ *  @version $Id: SelectMenu.java,v 1.12 2008-01-17 09:53:47 tjc Exp $
  **/
 
 public class SelectMenu extends SelectionMenu 
@@ -302,7 +302,8 @@ public class SelectMenu extends SelectionMenu
     if(isDatabaseGroup)
     {
       select_non_pseudo_cds_item.setEnabled(false);
-      select_all_cds_item = new JMenuItem("All Exon Model Features");
+      select_all_cds_item = new JMenuItem("All "+
+          DatabaseDocument.EXONMODEL+" Features");
     }
     else
       select_all_cds_item = new JMenuItem("All CDS Features");

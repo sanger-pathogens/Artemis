@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.78 2008-01-17 09:36:51 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.79 2008-01-17 09:55:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -500,7 +500,7 @@ public class GeneViewerPanel extends JPanel
     menu.add(createFeatureMenu);
     
     menu.add(new JSeparator());
-    JMenuItem adjustCoords = new JMenuItem("Adjust selected transcript coordinates");
+    JMenuItem adjustCoords = new JMenuItem("Fix selected transcript coordinates");
     adjustCoords.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)  
@@ -523,7 +523,7 @@ public class GeneViewerPanel extends JPanel
     menu.add(adjustCoords);
     
     
-    JMenuItem adjustGeneCoords = new JMenuItem("Adjust gene model coordinates");
+    JMenuItem adjustGeneCoords = new JMenuItem("Fix gene model coordinates");
     adjustGeneCoords.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)  

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.21 2007-10-01 14:50:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePopup.java,v 1.22 2008-01-17 09:57:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -40,7 +40,7 @@ import javax.swing.*;
  *  FeaturePopup class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePopup.java,v 1.21 2007-10-01 14:50:34 tjc Exp $
+ *  @version $Id: FeaturePopup.java,v 1.22 2008-01-17 09:57:06 tjc Exp $
  *
  **/
 
@@ -608,7 +608,7 @@ public class FeaturePopup extends JPopupMenu
     
     if(isDatabaseGroup)
     {
-      feature_display_menus[20] = new JMenuItem("Gene Model Display Features ...");
+      feature_display_menus[20] = new JMenuItem("Show/Hide Features ...");
       feature_display_menus[20].addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
