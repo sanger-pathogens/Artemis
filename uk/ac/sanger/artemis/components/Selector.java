@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Selector.java,v 1.10 2008-01-17 12:31:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Selector.java,v 1.11 2008-01-17 16:00:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -50,7 +50,7 @@ import javax.swing.*;
  *  features in an EntryGroup on key and contents.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Selector.java,v 1.10 2008-01-17 12:31:06 tjc Exp $
+ *  @version $Id: Selector.java,v 1.11 2008-01-17 16:00:31 tjc Exp $
  **/
 
 public class Selector extends JFrame
@@ -92,6 +92,9 @@ public class Selector extends JFrame
    *  This is the Selection that was passed to the constructor.
    **/
   final private Selection selection;
+  
+  public static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(Selector.class);
   
   /**
    *  Create a new Selector that van set the given Selection.
@@ -854,31 +857,18 @@ public class Selector extends JFrame
           if(feature.getSegments().size() < 2)
             return false;
           
-          final Location location = feature.getLocation();
+          final Location location = feature.getLocation().copy();
           final RangeVector ranges = location.getRanges();
           Collections.sort(ranges, new RangeComparator());
           
           final Strand strand = feature.getStrand();
-          int pos1;
-          int pos2;
           for(int i = 0; i < ranges.size () -1; ++i) 
           {
-            if(location.isComplement())
-            {
-              pos1 = ranges.size()-i-1;
-              pos2 = pos1-1;
-            }
-            else
-            {
-              pos1 = i;
-              pos2 = i+1;
-            }
-            
             final int end_of_range_1 =
-              ((Range)ranges.elementAt(pos1)).getEnd ();
+              ((Range)ranges.elementAt(i)).getEnd ();
             final int start_of_range_2 =
-              ((Range)ranges.elementAt(pos2)).getStart ();
-
+              ((Range)ranges.elementAt(i+1)).getStart ();
+            
             // ignore - the exons overlap so there is no room for an intron
             if(end_of_range_1 > start_of_range_2) 
               continue;
@@ -887,14 +877,23 @@ public class Selector extends JFrame
             {
               Range feature_range = new Range(end_of_range_1 + 1,
                                               start_of_range_2 - 1);
+
               final char bases[];
               if(location.isComplement())
-                bases = Bases.reverseComplement(strand.getRawSubSequenceC(feature_range));
+              {
+                final char tmp_bases[] = strand.getRawSubSequenceC(feature_range);
+                final char tmp2_bases[] = new char[feature_range.getCount()];
+                
+                for(int j=0; j<tmp2_bases.length; j++)
+                  tmp2_bases[j] = tmp_bases[j];
+                bases = Bases.reverseComplement(  tmp2_bases );
+              }
               else
                 bases = strand.getRawSubSequenceC(feature_range);
                            
               if(bases.length < 3)
                 return true;
+
               
               int length = feature_range.getCount();
               if( bases[0] != 'g' ||
@@ -902,6 +901,7 @@ public class Selector extends JFrame
                   bases[length-1] != 'g' ||
                   bases[length-2] != 'a' )
               {
+                logger4j.info("INTRON SPLICE SITE: "+end_of_range_1+".."+start_of_range_2);
                 return true;
               }
               
