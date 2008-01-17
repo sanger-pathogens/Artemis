@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.43 2008-01-16 09:58:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.44 2008-01-17 10:15:56 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -58,7 +58,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.43 2008-01-16 09:58:32 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.44 2008-01-17 10:15:56 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -772,7 +772,7 @@ public class EditMenu extends SelectionMenu
     
     if(owner instanceof FeatureDisplay)
     {
-      add(new JSeparator());
+      addSeparator();
       add(contig_reordering);
     }
   }
