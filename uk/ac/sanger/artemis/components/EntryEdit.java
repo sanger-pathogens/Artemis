@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.57 2007-10-24 15:08:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.58 2008-01-18 12:13:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.57 2007-10-24 15:08:55 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.58 2008-01-18 12:13:42 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1617,7 +1617,11 @@ public class EntryEdit extends JFrame
     if(changed_features == null)
       return true;
     
-    FeatureVector features = entry_group.getAllFeatures();
+    // filter out non-db entries
+    FilteredEntryGroup db_entry_group = new FilteredEntryGroup(entry_group, 
+                                            new FeatureDatabasePredicate(), 
+                                           "Database Entries");
+    FeatureVector features = db_entry_group.getAllFeatures();
     FeatureVector duplicateIDs = new FeatureVector();
     for(int i=0; i<features.size()-1; i++)
     {
@@ -2019,4 +2023,22 @@ class SaveEntryAsSubmissionActionListener extends EntryActionListener
                              DocumentEntryFactory.ANY_FORMAT);
   }
 }
+
+class FeatureDatabasePredicate implements FeaturePredicate
+{
+
+  public FeatureDatabasePredicate()
+  {
+  }
+
+  public boolean testPredicate(final Feature feature)
+  {
+    if(feature.getEntry().getEMBLEntry() instanceof DatabaseDocumentEntry)
+      return true;
+    else
+      return false;
+  }
+
+}
+
 
