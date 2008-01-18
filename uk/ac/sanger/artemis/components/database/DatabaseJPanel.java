@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.12 2007-10-24 17:35:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.13 2008-01-18 15:54:47 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -50,6 +50,7 @@ import javax.swing.border.Border;
 import javax.swing.tree.TreePath;
 
 import org.gmod.schema.organism.Organism;
+import org.gmod.schema.sequence.Feature;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
@@ -160,6 +161,35 @@ public class DatabaseJPanel extends JPanel
     {
     }
   }
+  
+  /**
+   * Open an Artemis EntryEdit window
+   * @param entry_source
+   * @param splash_main
+   * @param stream_progress_listener
+   * @param entryName                 e.g. Pfalciparum:Pf3D7_09
+   * @return
+   */
+  public static EntryEdit show(final DatabaseEntrySource entry_source,
+                          final Splash splash_main,
+                          final InputStreamProgressListener stream_progress_listener,
+                          final String entryName)
+  {
+    final String entry[] = entryName.split(":");
+    String url = (String)entry_source.getLocation();
+    int index  = url.indexOf("?");
+    
+    String userName = url.substring(index+1).trim();
+    if(userName.startsWith("user="))
+      userName = userName.substring(5);
+    
+    DatabaseDocument doc = entry_source.getDatabaseDocument();
+    Feature f = doc.getFeatureByUniquename(entry[1]);
+    
+    return openEntry(Integer.toString(f.getFeatureId()), entry_source, 
+        splash_main.getCanvas(), splash_main.getStatusLabel(), stream_progress_listener,
+        false, splash_main,  entry[1], userName);
+  }
 
   /**
    * Retrieve a database entry.
@@ -224,7 +254,7 @@ public class DatabaseJPanel extends JPanel
   }
 
   
-  private static void openEntry(
+  private static EntryEdit openEntry(
       final String srcfeatureId,
       final DatabaseEntrySource entry_source, 
       final JComponent srcComponent,
@@ -252,7 +282,7 @@ public class DatabaseJPanel extends JPanel
       {
         srcComponent.setCursor(cdone);
         status_line.setText("No entry.");
-        return;
+        return null;
       }
 
       final EntryEdit new_entry_edit = ArtemisMain.makeEntryEdit(entry);
@@ -275,6 +305,7 @@ public class DatabaseJPanel extends JPanel
 
       new_entry_edit.setVisible(true);
       status_line.setText("Sequence loaded.");
+      return new_entry_edit;
     }
     catch(OutOfRangeException e)
     {
@@ -290,6 +321,7 @@ public class DatabaseJPanel extends JPanel
     {
       new MessageDialog(splash_main, "read failed due to IO error: " + e);
     }
+    return null;
   }
 
 
