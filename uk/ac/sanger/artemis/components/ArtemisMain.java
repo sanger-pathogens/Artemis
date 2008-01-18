@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.26 2007-08-07 10:42:08 art Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.27 2008-01-18 15:50:11 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -46,12 +46,13 @@ import java.awt.Toolkit;
 import java.io.*;
 import java.awt.datatransfer.*;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.26 2007-08-07 10:42:08 art Exp $
+ *  @version $Id: ArtemisMain.java,v 1.27 2008-01-18 15:50:11 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -73,7 +74,7 @@ public class ArtemisMain extends Splash
    *  The constructor creates all the components for the main Artemis 
    *  window and sets up all the menu callbacks.
    **/
-  public ArtemisMain() 
+  public ArtemisMain(final String args[]) 
   {
     super("Artemis", "Artemis", version);
 
@@ -144,7 +145,8 @@ public class ArtemisMain extends Splash
     //  Options.getOptions().getPropertyTruthValue("sanger_options");
 
     //makeMenuItem(file_menu, "Database Entry ...", menu_listener);
-    if(System.getProperty("chado") != null)
+    if(System.getProperty("chado") != null && 
+        (args.length < 1 || args[0].indexOf(':') == -1))
       fm = new LocalAndRemoteFileManager(ArtemisMain.this);
 
     menu_listener = new ActionListener() 
@@ -357,7 +359,19 @@ public class ArtemisMain extends Splash
                              new_entry_name + " has an out of range " +
                              "location: " + e.getMessage());
         }
-      } 
+      }
+      else if(System.getProperty("chado") != null && new_entry_name.indexOf(':')>-1)
+      {
+        Splash.logger4j.info("OPEN ENTRY "+new_entry_name);
+        getStatusLabel().setText("Connecting ...");
+        DatabaseEntrySource entry_source = new DatabaseEntrySource();
+        if(!entry_source.setLocation(true))
+          return;
+        
+        last_entry_edit =
+          DatabaseJPanel.show(entry_source, this,
+              getInputStreamProgressListener(), new_entry_name);
+      }
       else
       {
         // new sequence file
@@ -367,6 +381,19 @@ public class ArtemisMain extends Splash
           last_entry_edit.setVisible(true);
           last_entry_edit = null;
         }
+
+      
+        if (new_entry_name.indexOf ("://") == -1) 
+        {
+          File file = new File (new_entry_name);
+          if(!file.exists())
+          {
+            JOptionPane.showMessageDialog(null, "File "+ 
+                new_entry_name +" not found.\n"+
+                "Check the file name.", "File Not Found", 
+                JOptionPane.WARNING_MESSAGE);
+          }
+        }  
 
         final Document entry_document =
           DocumentFactory.makeDocument(new_entry_name);
@@ -743,7 +770,7 @@ public class ArtemisMain extends Splash
    **/
   public static void main(final String [] args) 
   {
-    final ArtemisMain main_window = new ArtemisMain();
+    final ArtemisMain main_window = new ArtemisMain(args);
     main_window.setVisible(true);
 
     SwingWorker entryWorker = new SwingWorker()
