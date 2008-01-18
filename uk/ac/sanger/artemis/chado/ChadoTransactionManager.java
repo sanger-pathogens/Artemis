@@ -1679,6 +1679,9 @@ public class ChadoTransactionManager
           qualifierString, old_qualifier_strings))
         return;
       
+      if(qualifierString.equals(""))
+        return;
+      
       logger4j.debug(uniquename+"  in handleReservedTags() INSERT "+qualifierName+" "+
           qualifierString);
       
