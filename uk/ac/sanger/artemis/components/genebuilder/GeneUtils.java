@@ -366,15 +366,27 @@ public class GeneUtils
           
           newFeatures= duplicateFeatures(chadoGene.get3UtrOfTranscript(transcriptName), newchadoGene);
           for(int k=0; k<newFeatures.size(); k++)
-            newchadoGene.add3PrimeUtr(newTranscriptName, (Feature)newFeatures.get(k));
+          {
+            uk.ac.sanger.artemis.Feature utrFeature = 
+              (uk.ac.sanger.artemis.Feature)newFeatures.get(k);
+            newchadoGene.add3PrimeUtr(newTranscriptName, utrFeature.getEmblFeature());
+          }
           
           newFeatures = duplicateFeatures(chadoGene.get5UtrOfTranscript(transcriptName), newchadoGene);
           for(int k=0; k<newFeatures.size(); k++)
-            newchadoGene.add5PrimeUtr(newTranscriptName, (Feature)newFeatures.get(k));
+          {
+            uk.ac.sanger.artemis.Feature utrFeature = 
+              (uk.ac.sanger.artemis.Feature)newFeatures.get(k);
+            newchadoGene.add5PrimeUtr(newTranscriptName, utrFeature.getEmblFeature());
+          }
           
           newFeatures = duplicateFeatures(chadoGene.getOtherFeaturesOfTranscript(transcriptName), newchadoGene);
           for(int k=0; k<newFeatures.size(); k++)
-            newchadoGene.addOtherFeatures(newTranscriptName, (Feature)newFeatures.get(k));
+          {
+            uk.ac.sanger.artemis.Feature otherFeature = 
+              (uk.ac.sanger.artemis.Feature)newFeatures.get(k);
+            newchadoGene.addOtherFeatures(newTranscriptName, otherFeature.getEmblFeature());
+          }
 
           newFeatures = duplicateFeatures(chadoGene.getSplicedFeaturesOfTranscript(transcriptName), newchadoGene);
           for(int k=0; k<newFeatures.size(); k++)
