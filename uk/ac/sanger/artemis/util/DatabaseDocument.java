@@ -127,6 +127,7 @@ public class DatabaseDocument extends Document
   // include children in reading from the database
   private boolean readChildren = true;
   
+  // range to retrieve features for
   private Range range;
   
   private Feature geneFeature;
@@ -480,14 +481,21 @@ public class DatabaseDocument extends Document
         // Retrieve all features within a range
        // List schemaList = new Vector();
        // schemaList.add(schema);
-        
-        Collection featureLocs = geneFeature.getFeatureLocsForFeatureId();
-        Iterator it = featureLocs.iterator();
-        final FeatureLoc featureLoc = (FeatureLoc)it.next();
+        final Feature srcFeature;
+        if(geneFeature != null)
+        {
+          Collection featureLocs = geneFeature.getFeatureLocsForFeatureId();
+          Iterator it = featureLocs.iterator();
+          final FeatureLoc featureLoc = (FeatureLoc)it.next();
 
-        final Feature srcFeature = featureLoc.getFeatureBySrcFeatureId();
-        setName(srcFeature.getUniqueName());
-        this.srcFeatureId = Integer.toString(srcFeature.getFeatureId());
+          srcFeature = featureLoc.getFeatureBySrcFeatureId();
+          setName(srcFeature.getUniqueName());
+          this.srcFeatureId = Integer.toString(srcFeature.getFeatureId());
+        }
+        else
+        {
+          srcFeature = dao.getFeatureById(Integer.parseInt(srcFeatureId));
+        }
         
         ByteBuffer entryBuffer = getFeaturesInRange(srcFeature, range, dao);
         getChadoSequence(srcFeature, entryBuffer);
@@ -2965,5 +2973,10 @@ public class DatabaseDocument extends Document
     {
       getCvterms(dao);
     }
+  }
+
+  public void setRange(Range range)
+  {
+    this.range = range;
   }
 }
