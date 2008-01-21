@@ -44,6 +44,7 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.InvalidKeyException;
 import uk.ac.sanger.artemis.io.EntryInformationException;
+import uk.ac.sanger.artemis.io.Range;
 
 /**
  * 
@@ -108,7 +109,14 @@ public class DatabaseEntrySource implements EntrySource, Serializable
       InputStreamProgressListener progress_listener)
       throws OutOfRangeException, NoSequenceException, IOException
   {
-    return makeFromID(null, id, schema, false, progress_listener);
+    return makeFromID(null, id, schema, false, progress_listener, null);
+  }
+  
+  public Entry getEntry(String id, String schema,
+      InputStreamProgressListener progress_listener, Range range)
+      throws OutOfRangeException, NoSequenceException, IOException
+  {
+    return makeFromID(null, id, schema, false, progress_listener, range);
   }
 
   /**
@@ -251,9 +259,10 @@ public class DatabaseEntrySource implements EntrySource, Serializable
    *              Thrown if one of the features in the Entry is out of range of
    *              the Bases object.
    */
-  protected Entry makeFromID(final Bases bases, final String id,
+  private Entry makeFromID(final Bases bases, final String id,
                              final String schema, final boolean read_only,
-                             InputStreamProgressListener progress_listener)
+                             InputStreamProgressListener progress_listener, 
+                             final Range range)
              throws OutOfRangeException, IOException
   {
     try
@@ -266,7 +275,10 @@ public class DatabaseEntrySource implements EntrySource, Serializable
       else
       {
         DatabaseDocument doc = new DatabaseDocument(location, pfield, id,
-                                                    schema, splitGFFEntry, progress_listener);
+                                                    schema, splitGFFEntry, 
+                                                    progress_listener);
+        if(range != null)
+          doc.setRange(range);
         db_entry = new DatabaseDocumentEntry(doc, null);
       }
 

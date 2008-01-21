@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.13 2008-01-18 15:54:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.14 2008-01-21 16:15:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -34,6 +34,7 @@ import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.io.Range;
 
 import javax.swing.JComponent;
 import javax.swing.JTree;
@@ -167,7 +168,8 @@ public class DatabaseJPanel extends JPanel
    * @param entry_source
    * @param splash_main
    * @param stream_progress_listener
-   * @param entryName                 e.g. Pfalciparum:Pf3D7_09
+   * @param entryName                 e.g. Pfalciparum:Pf3D7_09 or 
+   *                                  Pfalciparum:Pf3D7_09:20050..40000
    * @return
    */
   public static EntryEdit show(final DatabaseEntrySource entry_source,
@@ -184,11 +186,30 @@ public class DatabaseJPanel extends JPanel
       userName = userName.substring(5);
     
     DatabaseDocument doc = entry_source.getDatabaseDocument();
+    
+    Range range = null;
+    if(entry.length>2)
+    {
+      if(entry[2].indexOf("..") > -1)
+      {
+        String ranges[] = entry[2].split("\\.\\.");
+        if(ranges.length == 2)
+        {
+          try
+          {
+            range = new Range(Integer.parseInt(ranges[0]), 
+                              Integer.parseInt(ranges[1]));
+          }
+          catch(Exception e){ e.printStackTrace(); }
+        }
+      }
+    }
+    
     Feature f = doc.getFeatureByUniquename(entry[1]);
     
     return openEntry(Integer.toString(f.getFeatureId()), entry_source, 
         splash_main.getCanvas(), splash_main.getStatusLabel(), stream_progress_listener,
-        false, splash_main,  entry[1], userName);
+        false, splash_main,  entry[1], userName, range);
   }
 
   /**
@@ -226,7 +247,7 @@ public class DatabaseJPanel extends JPanel
         try
         {
           openEntry(srcfeatureId, entry_source, srcComponent, status_line, stream_progress_listener,
-              splitGFFEntry, splash_main, dbDocumentName, userName);
+              splitGFFEntry, splash_main, dbDocumentName, userName, null);
         }
         catch(RuntimeException re)
         {
@@ -242,7 +263,7 @@ public class DatabaseJPanel extends JPanel
             userName = userName.substring(5);
             
           openEntry(srcfeatureId, entry_source, srcComponent, status_line, stream_progress_listener,
-              splitGFFEntry, splash_main, dbDocumentName, userName);
+              splitGFFEntry, splash_main, dbDocumentName, userName, null);
         }
         srcComponent.setCursor(cdone);
         return null;
@@ -253,7 +274,20 @@ public class DatabaseJPanel extends JPanel
 
   }
 
-  
+  /**
+   * 
+   * @param srcfeatureId
+   * @param entry_source
+   * @param srcComponent
+   * @param status_line
+   * @param stream_progress_listener
+   * @param splitGFFEntry
+   * @param splash_main
+   * @param dbDocumentName
+   * @param userName
+   * @param range           range for to retrieve features in
+   * @return
+   */
   private static EntryEdit openEntry(
       final String srcfeatureId,
       final DatabaseEntrySource entry_source, 
@@ -263,15 +297,18 @@ public class DatabaseJPanel extends JPanel
       final boolean splitGFFEntry,
       final Splash splash_main, 
       final String dbDocumentName,
-      final String userName) 
+      final String userName,
+      final Range range) 
   {
     Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
     try
     {
+      if(range != null)
+        logger4j.info("LOAD FEATURES IN THE RANGE : "+range.toString());
       entry_source.setSplitGFF(splitGFFEntry);
 
       final Entry entry = entry_source.getEntry(srcfeatureId, userName,
-          stream_progress_listener);
+          stream_progress_listener, range);
 
       DatabaseDocumentEntry db_entry = (DatabaseDocumentEntry) entry
           .getEMBLEntry();

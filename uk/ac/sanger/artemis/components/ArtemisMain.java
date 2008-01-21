@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.27 2008-01-18 15:50:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.28 2008-01-21 16:15:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -52,7 +52,7 @@ import javax.swing.JOptionPane;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.27 2008-01-18 15:50:11 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.28 2008-01-21 16:15:39 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -362,6 +362,7 @@ public class ArtemisMain extends Splash
       }
       else if(System.getProperty("chado") != null && new_entry_name.indexOf(':')>-1)
       {
+        // open from database e.g. Pfalciparum:Pf3D7_09:95000..150000
         Splash.logger4j.info("OPEN ENTRY "+new_entry_name);
         getStatusLabel().setText("Connecting ...");
         DatabaseEntrySource entry_source = new DatabaseEntrySource();
