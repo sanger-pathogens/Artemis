@@ -120,6 +120,8 @@ public class DatabaseDocument extends Document
 
   private List schema_list;
   
+  private static List organismNames;
+  
   private boolean gene_builder;
   
   // include children in reading from the database
@@ -1772,9 +1774,12 @@ public class DatabaseDocument extends Document
   
   public List getOrganismNames()
   {
+    if(organismNames != null && organismNames.size() > 0)
+      return organismNames;
+    
     GmodDAO dao = getDAOOnly();
     List organisms = dao.getOrganisms();
-    List organismNames = new Vector();
+    organismNames = new Vector();
     Iterator it = organisms.iterator();
     while(it.hasNext())
     {
@@ -2285,6 +2290,12 @@ public class DatabaseDocument extends Document
                   
             if(db == null)
               db = new HashMap();
+            if(organismNames == null)
+              organismNames = new Vector();
+            
+            if(!organismNames.contains(orgName))
+              organismNames.add(orgName);         
+            
             db.put(orgName + " - " + typeName + " - " + feature.getUniqueName(),
                    Integer.toString(feature.getFeatureId())); 
           }
