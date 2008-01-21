@@ -942,6 +942,12 @@ public class SshJTreeTable extends JTable
         return;
       }
 
+      RemoteFileNode node = (RemoteFileNode)ePath.getLastPathComponent();
+      if(!node.isDirectory())
+      {
+        e.rejectDrag();
+        return;
+      }
       tree.setSelectionPath(ePath);
       e.acceptDrag(DnDConstants.ACTION_COPY_OR_MOVE);
     }
