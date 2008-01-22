@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.12 2007-10-02 14:15:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.13 2008-01-22 10:05:47 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -52,7 +52,7 @@ import com.sshtools.j2ssh.sftp.FileAttributes;
  *  A popup menu with viewing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: ViewMenu.java,v 1.12 2007-10-02 14:15:21 tjc Exp $
+ *  @version $Id: ViewMenu.java,v 1.13 2008-01-22 10:05:47 tjc Exp $
  **/
 
 public class ViewMenu extends SelectionMenu 
@@ -104,7 +104,7 @@ public class ViewMenu extends SelectionMenu
 
     this.base_plot_group = base_plot_group;
 
-    final JMenuItem plot_features_item = new JMenuItem("Show Feature Plots");
+    final JMenuItem plot_features_item = new JMenuItem("Feature Plots");
     plot_features_item.setAccelerator(PLOT_FEATURES_KEY);
     plot_features_item.addActionListener(new ActionListener()
     {
@@ -114,7 +114,7 @@ public class ViewMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem view_feature_item = new JMenuItem("View Selected Features");
+    final JMenuItem view_feature_item = new JMenuItem("Selected Features");
     view_feature_item.setAccelerator(VIEW_FEATURES_KEY);
     view_feature_item.addActionListener(new ActionListener() 
     {
@@ -124,14 +124,14 @@ public class ViewMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem view_selection_item = new JMenuItem("View Selection");
+    final JMenuItem view_selection_item = new JMenuItem("Selection");
     view_selection_item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         new SelectionViewer(getSelection(), entry_group);
       }
     });
 
-    final JMenuItem feature_info_item = new JMenuItem("Show Feature Statistics");
+    final JMenuItem feature_info_item = new JMenuItem("Feature Statistics");
     feature_info_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -140,7 +140,7 @@ public class ViewMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem view_bases_item = new JMenuItem("View Bases Of Selection");
+    final JMenuItem view_bases_item = new JMenuItem("Bases Of Selection");
     view_bases_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event) 
@@ -150,7 +150,7 @@ public class ViewMenu extends SelectionMenu
     });
 
     final JMenuItem view_bases_as_fasta_item =
-      new JMenuItem("View Bases Of Selection As FASTA");
+      new JMenuItem("Bases Of Selection As FASTA");
     view_bases_as_fasta_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -159,7 +159,7 @@ public class ViewMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem view_aa_item = new JMenuItem("View Amino Acids Of Selection");
+    final JMenuItem view_aa_item = new JMenuItem("Amino Acids Of Selection");
     view_aa_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -169,7 +169,7 @@ public class ViewMenu extends SelectionMenu
     });
 
     final JMenuItem view_aa_as_fasta_item =
-      new JMenuItem("View Amino Acids Of Selection As FASTA");
+      new JMenuItem("Amino Acids Of Selection As FASTA");
     view_aa_as_fasta_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -178,7 +178,7 @@ public class ViewMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem overview_item = new JMenuItem("Show Overview");
+    final JMenuItem overview_item = new JMenuItem("Overview");
     overview_item.setAccelerator(OVERVIEW_KEY);
     overview_item.addActionListener(new ActionListener() 
     {
@@ -188,7 +188,7 @@ public class ViewMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem forward_overview_item = new JMenuItem("Show Forward Strand Overview");
+    final JMenuItem forward_overview_item = new JMenuItem("Forward Strand Overview");
     forward_overview_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)
@@ -198,7 +198,7 @@ public class ViewMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem reverse_overview_item = new JMenuItem("Show Reverse Strand Overview");
+    final JMenuItem reverse_overview_item = new JMenuItem("Reverse Strand Overview");
     reverse_overview_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event)
@@ -208,7 +208,7 @@ public class ViewMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem view_cds_item = new JMenuItem("Show CDS Genes And Products");
+    final JMenuItem view_cds_item = new JMenuItem("CDS Genes And Products");
     if(GeneUtils.isDatabaseEntry(entry_group))
       view_cds_item.setEnabled(false);
     view_cds_item.addActionListener(new ActionListener() 
