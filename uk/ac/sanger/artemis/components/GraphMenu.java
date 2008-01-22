@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.2 2007-10-17 09:45:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.3 2008-01-22 15:02:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.*;
  *  This menu controls one particular BasePlotGroup.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: GraphMenu.java,v 1.2 2007-10-17 09:45:15 tjc Exp $
+ *  @version $Id: GraphMenu.java,v 1.3 2008-01-22 15:02:00 tjc Exp $
  **/
 
 public class GraphMenu extends JMenu {
@@ -123,7 +123,7 @@ public class GraphMenu extends JMenu {
     for (int i = 0 ; i < orig_algorithms.length ; ++i) {
       final BaseAlgorithm this_algorithm = orig_algorithms[i];
 
-      if(this_algorithm.getAlgorithmName().startsWith("AT Deviation"))
+      if(this_algorithm.getAlgorithmName().startsWith("Cumulative AT"))
         useSubMenu = true;
       addAlgorithm (this_algorithm, false, useSubMenu);
     }
