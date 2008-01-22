@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.44 2008-01-17 10:15:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.45 2008-01-22 16:01:33 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -58,7 +58,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.44 2008-01-17 10:15:56 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.45 2008-01-22 16:01:33 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -263,7 +263,18 @@ public class EditMenu extends SelectionMenu
       {
         FeatureDisplay display = (FeatureDisplay)owner;
         FeatureVector contig_features = display.getContigs();
-         
+        
+        if(contig_features == null || contig_features.size() < 1)
+        {
+          final Vector contigKeys = FeatureDisplay.getContigKeys();
+          String msg = "No contig feature keys found:\n";
+          for(int i=0; i<contigKeys.size(); i++)
+            msg = msg+(String)contigKeys.get(i)+"\n";
+          JOptionPane.showMessageDialog(display, 
+              msg, "No Contigs Found", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+        
         final JFrame frame = new JFrame("Contig Tool");
 
         JScrollPane jsp = new JScrollPane();
@@ -295,7 +306,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem edit_feature_item = new JMenuItem("Edit Selected Features");
+    final JMenuItem edit_feature_item = new JMenuItem("Selected Features in Editor");
     edit_feature_item.setAccelerator(EDIT_FEATURES_KEY);
     edit_feature_item.addActionListener(new ActionListener() 
     {
@@ -306,7 +317,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem edit_subsequence_item = new JMenuItem("Edit Subsequence (and Features)");
+    final JMenuItem edit_subsequence_item = new JMenuItem("Subsequence (and Features)");
     edit_subsequence_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -418,7 +429,7 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    final JMenuItem edit_header_item = new JMenuItem("Edit Header Of Default Entry");
+    final JMenuItem edit_header_item = new JMenuItem("Header Of Default Entry");
     edit_header_item.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event)
@@ -694,14 +705,6 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-    if(Options.getOptions().getPropertyTruthValue("val_mode")) 
-    {
-      add(edit_feature_item);
-      add(edit_subsequence_item);
-      addSeparator();
-      add(edit_header_item);
-      addSeparator();
-    }
 
     if(Options.getOptions().getUndoLevels() > 0) 
     {
@@ -709,14 +712,10 @@ public class EditMenu extends SelectionMenu
       addSeparator();
     }
 
-    if(!Options.getOptions().getPropertyTruthValue("val_mode")) 
-    {
-      add(edit_feature_item);
-      add(edit_subsequence_item);
-      addSeparator();
-      add(edit_header_item);
-      addSeparator();
-    }
+    add(edit_feature_item);
+    add(edit_subsequence_item);
+    addSeparator();
+
 
     add(qualifier_menu);
     qualifier_menu.add(add_qualifiers_item);
@@ -775,6 +774,10 @@ public class EditMenu extends SelectionMenu
       addSeparator();
       add(contig_reordering);
     }
+    
+    addSeparator();
+    add(edit_header_item);
+
   }
 
   /**
