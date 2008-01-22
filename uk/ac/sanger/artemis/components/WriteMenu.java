@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.7 2007-11-05 10:40:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.8 2008-01-22 15:07:26 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -46,7 +46,7 @@ import javax.swing.*;
  *  A menu of commands for writing out protein and bases.
  *
  *  @author Kim Rutherford
- *  @version $Id: WriteMenu.java,v 1.7 2007-11-05 10:40:18 tjc Exp $
+ *  @version $Id: WriteMenu.java,v 1.8 2008-01-22 15:07:26 tjc Exp $
  **/
 public class WriteMenu extends SelectionMenu 
 {
@@ -282,7 +282,7 @@ public class WriteMenu extends SelectionMenu
 
     addSeparator();
 
-    final JMenu write_all_bases_menu = new JMenu("Write All Bases");
+    final JMenu write_all_bases_menu = new JMenu("All Bases");
 
     final JMenuItem write_raw_item = new JMenuItem("Raw Format");
     write_raw_item.addActionListener(new ActionListener()
@@ -333,7 +333,7 @@ public class WriteMenu extends SelectionMenu
     addSeparator();
 
     final JMenuItem codon_usage_item =
-      new JMenuItem("Write Codon Usage of Selected Features");
+      new JMenuItem("Codon Usage of Selected Features");
     codon_usage_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)
