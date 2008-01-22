@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.33 2008-01-02 11:19:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.34 2008-01-22 13:33:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -73,7 +73,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.33 2008-01-02 11:19:44 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.34 2008-01-22 13:33:53 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -170,7 +170,7 @@ public class AddMenu extends SelectionMenu
     add (new_feature_item);
 
     final JMenuItem create_feature_from_range_item =
-      new JMenuItem ("Create Feature From Base Range");
+      new JMenuItem ("Feature From Base Range");
     create_feature_from_range_item.setAccelerator (CREATE_FROM_BASE_RANGE_KEY);
     create_feature_from_range_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
@@ -185,15 +185,17 @@ public class AddMenu extends SelectionMenu
     if(GeneUtils.isDatabaseEntry(entry_group))
     {
       final JMenuItem create_gene_model_from_range_item = new JMenuItem(
-          "Create Gene Model From Base Range");
+          "Gene Model From Base Range");
       // create_gene_model_from_range_item.setAccelerator
       // (CREATE_FROM_BASE_RANGE_KEY);
       create_gene_model_from_range_item.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent event)
         {
+          entry_group.getActionController ().startAction ();
           GeneUtils.createGeneModel(getParentFrame(), getSelection(),
               entry_group, getGotoEventSource());
+          entry_group.getActionController ().endAction ();
         }
       });
       add (create_gene_model_from_range_item);
@@ -205,7 +207,7 @@ public class AddMenu extends SelectionMenu
     if(alignQueryViewer != null || alignSubjectViewer != null)
     {
       JMenuItem create_difference_feature  =
-        new JMenuItem("Create Features From Non-matching Regions");
+        new JMenuItem("Features From Non-matching Regions");
       create_difference_feature.addActionListener(new ActionListener()
       {
         public void actionPerformed (ActionEvent event) 
@@ -253,7 +255,7 @@ public class AddMenu extends SelectionMenu
     }
 
     final JMenuItem create_intron_features_item =
-      new JMenuItem ("Create Intron Features");
+      new JMenuItem ("Intron Features");
     create_intron_features_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         createIntronFeatures (getParentFrame (), getSelection (),
@@ -267,7 +269,7 @@ public class AddMenu extends SelectionMenu
       create_intron_features_item.setEnabled(false);
     
     final JMenuItem create_intergenic_features_item =
-      new JMenuItem ("Create Intergenic Features");
+      new JMenuItem ("Intergenic Features");
     create_intergenic_features_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         createIntergenicFeatures(getParentFrame (), entry_group);
@@ -276,7 +278,7 @@ public class AddMenu extends SelectionMenu
     add (create_intergenic_features_item);
 
     final JMenuItem create_exon_features_item =
-      new JMenuItem ("Create Exon Features");
+      new JMenuItem ("Exon Features");
     create_exon_features_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         createExonFeatures (getParentFrame (), getSelection (),
@@ -290,7 +292,7 @@ public class AddMenu extends SelectionMenu
       create_exon_features_item.setEnabled(false);
 
     final JMenuItem create_gene_features_item =
-      new JMenuItem ("Create Gene Features");
+      new JMenuItem ("Gene Features");
     create_gene_features_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         createGeneFeatures (getParentFrame (), getSelection (),
