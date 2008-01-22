@@ -209,7 +209,7 @@ contain only those features that were not in the selection beforehand.
   </PARA>
 
   <SECT2 ID="VIEWMENU-VIEW-SELECTED-FEATURES">
-    <TITLE>View Selected Features</TITLE>
+    <TITLE>Selected Features</TITLE>
     <PARA>
 Open a view window for each selected feature showing it's feature table entry.
 [shortcut key: V]
@@ -217,7 +217,7 @@ Open a view window for each selected feature showing it's feature table entry.
   </SECT2>
 
   <SECT2 ID="VIEWMENU-VIEW-SELECTION">
-    <TITLE>View Selection</TITLE>
+    <TITLE>Selection</TITLE>
     <PARA>
 Open a view window that will show the current selection.  The window is
 updated as the selection changes, so it can be left open.
@@ -251,7 +251,7 @@ LINKEND="RUNMENU">)]]>.
   </SECT2>
 
   <SECT2 ID="VIEWMENU-SHOW-CDS-GENES-PRODUCTS">
-    <TITLE>Show CDS Genes And Products</TITLE>
+    <TITLE>CDS Genes And Products</TITLE>
     <PARA>
 Pop up a feature list (see <XREF LINKEND="FEATURELIST">) of the CDS showing
 the gene names (from the /gene qualifier) and
@@ -341,7 +341,7 @@ useful for bookmarking a collection of features for later use.
   </SECT2>
 
   <SECT2 ID="VIEWMENU-SHOW-OVERVIEW">
-    <TITLE>Show Overview</TITLE>
+    <TITLE>Overview</TITLE>
     <PARA>
 Open a new window the will show a summary of the active entries and some
 statistics about the sequence (such as the GC content).
@@ -462,7 +462,7 @@ A summary of the number of features of each key (type) and their colours.
   </SECT2>
 
   <SECT2 ID="VIEWMENU-SHOW-FORWARD-OVERVIEW">
-    <TITLE>Show Forward Strand Overview</TITLE>
+    <TITLE>Forward Strand Overview</TITLE>
     <PARA>
 Open a new window the will show a summary of the features and bases of the
 forward strand.
@@ -470,7 +470,7 @@ forward strand.
   </SECT2>
 
   <SECT2 ID="VIEWMENU-SHOW-REVERSE-OVERVIEW">
-    <TITLE>Show Reverse Strand Overview</TITLE>
+    <TITLE>Reverse Strand Overview</TITLE>
     <PARA>
 Open a new window the will show a summary of the features and bases of the
 reverse strand.
@@ -478,7 +478,7 @@ reverse strand.
   </SECT2>
 
   <SECT2 ID="VIEWMENU-VIEW-FEATURE-BASES">
-    <TITLE>View Feature Bases</TITLE>
+    <TITLE>Feature Bases</TITLE>
     <PARA>
 Create a view window for each selected feature, which shows bases of the
 feature.
@@ -486,7 +486,7 @@ feature.
   </SECT2>
 
   <SECT2 ID="VIEWMENU-VIEW-FEATURE-BASES-FASTA">
-    <TITLE>View Feature Bases As FASTA</TITLE>
+    <TITLE>Feature Bases As FASTA</TITLE>
     <PARA>
 Create a view window for each selected feature, which shows bases of the
 feature in FASTA format.
@@ -494,7 +494,7 @@ feature in FASTA format.
   </SECT2>
 
   <SECT2 ID="VIEWMENU-VIEW-FEATURE-AMINO-ACIDS">
-    <TITLE>View Feature Amino Acids</TITLE>
+    <TITLE>Feature Amino Acids</TITLE>
     <PARA>
 Create a view window for each selected feature, which shows amino acids of the
 feature.
@@ -502,7 +502,7 @@ feature.
   </SECT2>
 
   <SECT2 ID="VIEWMENU-VIEW-FEATURE-AMINO-ACIDS-FASTA">
-    <TITLE>View Feature Amino Acids As FASTA</TITLE>
+    <TITLE>Feature Amino Acids As FASTA</TITLE>
     <PARA>
 Create a view window for each selected feature, which shows amino acids of the
 feature in FASTA format.
@@ -510,7 +510,7 @@ feature in FASTA format.
   </SECT2>
 
   <SECT2 ID="VIEWMENU-SHOW-FEATURE-STATISTICS">
-    <TITLE>Show Feature Statistics</TITLE>
+    <TITLE>Feature Statistics</TITLE>
     <PARA>
 Show some statistics about each selected feature.  On the left on the feature
 information window is the amino acid composition of the feature.  On the right
@@ -519,7 +519,7 @@ is the codon composition of the feature.
   </SECT2>
 
   <SECT2 ID="VIEWMENU-SHOW-FEATURE-PLOTS">
-    <TITLE>Show Feature Plots</TITLE>
+    <TITLE>Feature Plots</TITLE>
     <PARA>
 Open a window for each selected feature that shows a plot of the
 Kyte-Doolittle Hydrophobicity [short name: <LITERAL>hydrophobicity</LITERAL>],
@@ -754,7 +754,7 @@ options file (see <XREF LINKEND="OPTIONS-UNDO-LEVELS">).  [shortcut key: U]
   </SECT2>
 
   <SECT2 ID="EDITMENU-EDIT-SELECTED-FEATURES">
-    <TITLE>Edit Selected Features</TITLE>
+    <TITLE>Selected Features in Editor</TITLE>
     <PARA>
 Open an edit window for each selected feature.  [shortcut key: E]
     </PARA>
@@ -864,19 +864,10 @@ performed until there all errors have been fixed.
   </SECT2>
 
   <SECT2 ID="EDITMENU-SUBSEQUENCE">
-    <TITLE>Edit Subsequence (and Features)</TITLE>
+    <TITLE>Subsequence (and Features)</TITLE>
     <PARA>
 Make a copy (in a new edit window) of the selected bases and the features in
 that range.  Any features that overlap the end of the range will be truncated.
-    </PARA>
-  </SECT2>
-
-  <SECT2 ID="EDITMENU-EDIT-HEADER">
-    <TITLE>Edit Header Of Default Entry</TITLE>
-    <PARA>
-Open a edit window containing the header of the default entry.  Changes made
-in the edit window will be applied immediately to the entry provided there are
-no errors in the formatting of the header.
     </PARA>
   </SECT2>
 
@@ -1179,6 +1170,15 @@ two sequences should be recalculated.
     </PARA>
   </SECT2>
 
+  <SECT2 ID="EDITMENU-EDIT-HEADER">
+    <TITLE>Header Of Default Entry</TITLE>
+    <PARA>
+Open a edit window containing the header of the default entry.  Changes made
+in the edit window will be applied immediately to the entry provided there are
+no errors in the formatting of the header.
+    </PARA>
+  </SECT2>
+
 </SECT1>
 
 <SECT1 ID="CREATEMENU">
@@ -1198,7 +1198,7 @@ and which has no qualifiers (see <XREF LINKEND="CONCEPTS-QUALIFIERS">).
   </SECT2>
 
   <SECT2 ID="CREATEMENU-CREATE-FEATURE-FROM-BASE-RANGE">
-    <TITLE>Create Feature From Base Range</TITLE>
+    <TITLE>Feature From Base Range</TITLE>
     <PARA>
 Create a new feature in the default entry with a key of "misc_feature", no
 qualifiers and a location that exactly matches the selected range of bases.
@@ -1208,7 +1208,7 @@ If no bases are selected an error will be reported.
   </SECT2>
 
   <SECT2 ID="CREATEMENU-CREATE-FEATURES-FROM-NON-MATCHING-REGIONS">
-    <TITLE>Create Features From Non-matching Regions</TITLE>
+    <TITLE>Features From Non-matching Regions</TITLE>
     <PARA>
 Create features in ACT spanning all the regions where a match is not to be
 found.
@@ -1362,7 +1362,7 @@ each selected feature to the file in the selected format.
   </SECT2>
 
   <SECT2 ID="WRITEMENU-ALL-BASES">
-    <TITLE>Write All Bases</TITLE>
+    <TITLE>All Bases</TITLE>
     <PARA>
 Prompt for a file name, then write the complete sequence to that file in the
 selected format.
@@ -1370,7 +1370,7 @@ selected format.
   </SECT2>
 
   <SECT2 ID="WRITEMENU-CODON-USAGE">
-    <TITLE>Write Codon Usage of Selected Features</TITLE>
+    <TITLE>Codon Usage of Selected Features</TITLE>
     <PARA>
 Prompt for a file name, then write a codon usage table for the selected
 features.  The file in written in the same format as the data at <ULINK
