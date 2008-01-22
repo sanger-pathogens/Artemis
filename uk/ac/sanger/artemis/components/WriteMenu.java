@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.8 2008-01-22 15:07:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.9 2008-01-22 15:18:13 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -46,7 +46,7 @@ import javax.swing.*;
  *  A menu of commands for writing out protein and bases.
  *
  *  @author Kim Rutherford
- *  @version $Id: WriteMenu.java,v 1.8 2008-01-22 15:07:26 tjc Exp $
+ *  @version $Id: WriteMenu.java,v 1.9 2008-01-22 15:18:13 tjc Exp $
  **/
 public class WriteMenu extends SelectionMenu 
 {
@@ -867,7 +867,7 @@ public class WriteMenu extends SelectionMenu
    *  writeDownstreamBases(). 
    *  @return A string of the form "100:200 reverse" or "1:2222 forward".
    **/
-  private static String getWriteRange(final Feature feature) 
+  /*private static String getWriteRange(final Feature feature) 
   {
     return (feature.isForwardFeature() ?
             feature.getFirstCodingBaseMarker().getRawPosition() + ":" +
@@ -876,7 +876,7 @@ public class WriteMenu extends SelectionMenu
             feature.getLastBaseMarker().getRawPosition() + ":" +
             feature.getFirstCodingBaseMarker().getRawPosition() +
             " reverse");
-  }
+  }*/
 
   
   /**
