@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.15 2007-11-27 15:33:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.16 2008-01-23 14:22:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -60,7 +60,7 @@ import uk.ac.sanger.artemis.Options;
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.15 2007-11-27 15:33:27 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.16 2008-01-23 14:22:49 tjc Exp $
  *
  **/
 
@@ -77,6 +77,8 @@ public class FileViewer extends JFrame
 
   private Hashtable fontAttributes;
 
+  private static Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+  
   /**
    *  The size of the last FileViewer JFrame to be resized.  When a new
    *  FileViewer component is created it is given the current value of this
@@ -99,16 +101,22 @@ public class FileViewer extends JFrame
    **/
   public FileViewer(final String label) 
   {
-    this(label, true);
+    this(label, true, true);
   }
 
+  public FileViewer(final String label, final boolean visible)
+  {
+    this(label, visible, true);  
+  }
+  
   /**
    *  Create a new FileViewer component.
    *  @param label The name to attach to the new JFrame.
    *  @param visible The new FileViewer will be made visible if and only if
    *    this argument is true.
    **/
-  public FileViewer(final String label, final boolean visible) 
+  public FileViewer(final String label, final boolean visible, 
+                    final boolean showClearButton) 
   {
     super(label);
 
@@ -122,23 +130,13 @@ public class FileViewer extends JFrame
       /** */
       private static final long serialVersionUID = 1L;
 
-      public void setSize(Dimension d)
-      {
-        if (d.width < getParent().getSize().width)
-          d.width = getParent().getSize().width;
- 
-        super.setSize(d);
-      }
- 
       public boolean getScrollableTracksViewportWidth()
       {
         return false;
       }
     };
-    //lineHeight = textPane.getFontMetrics( textPane.getFont() ).getHeight();
-    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     
-    JScrollPane scroller = new JScrollPane(textPane);
+    final JScrollPane scroller = new JScrollPane(textPane);
     scroller.setPreferredSize(new Dimension((int)screen.getWidth()/2,
                                             (int)screen.getHeight()/2));
     textPane.setEditable(false);
@@ -163,16 +161,19 @@ public class FileViewer extends JFrame
     });
     button_panel.add(close_button);
     
-    final JButton clearbutton = new JButton("Clear");
-    clearbutton.addActionListener(new ActionListener() 
+    if(showClearButton)
     {
-      public void actionPerformed(ActionEvent e) 
+      final JButton clearbutton = new JButton("Clear");
+      clearbutton.addActionListener(new ActionListener()
       {
-        clear();
-      }
-    });
-    button_panel.add(clearbutton);
-
+        public void actionPerformed(ActionEvent e)
+        {
+          clear();
+        }
+      });
+      button_panel.add(clearbutton);
+    }
+    
     addWindowListener(new WindowAdapter() 
     {
       public void windowClosing(WindowEvent event) 
@@ -200,7 +201,6 @@ public class FileViewer extends JFrame
 
     pack();
 
-//  final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
     if(saved_position == null) 
     {
@@ -224,7 +224,8 @@ public class FileViewer extends JFrame
       setSize(saved_size);
     }
     
-    setVisible(visible);
+    if(visible)
+      setVisible(true);
     createDefaultFontAttributes();
   }
 

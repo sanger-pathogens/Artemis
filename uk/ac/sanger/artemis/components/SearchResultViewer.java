@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SearchResultViewer.java,v 1.4 2007-04-02 13:34:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SearchResultViewer.java,v 1.5 2008-01-23 14:22:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.JButton;
  *  ability to send the results to a netscape process.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SearchResultViewer.java,v 1.4 2007-04-02 13:34:23 tjc Exp $
+ *  @version $Id: SearchResultViewer.java,v 1.5 2008-01-23 14:22:49 tjc Exp $
  **/
 
 public class SearchResultViewer extends FileViewer 
@@ -60,7 +60,7 @@ public class SearchResultViewer extends FileViewer
                             final Document document)
       throws IOException 
   {
-    super (label, false);
+    super (label, false, false);
 
     try 
     {
