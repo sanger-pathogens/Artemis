@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.9 2007-10-24 13:53:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.10 2008-01-23 10:51:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -216,7 +216,7 @@ public class QualifierTextArea extends JTextPane
                                      final String db)
   {
     int ind = 0;
-    while((ind = s.indexOf(db, ind)) > -1)
+    while((ind = s.indexOf(db+":", ind)) > -1)
     {
       int ind2 = getEndOfLink(s,ind);
       getStyledDocument().setCharacterAttributes(ind, ind2-ind, 
@@ -368,6 +368,16 @@ public class QualifierTextArea extends JTextPane
   {
     final Point pt = new Point(e.getX(), e.getY());
     final int pos = viewToModel(pt);
+    
+    try
+    {
+      final int viewPos = modelToView(pos).x;
+      if(Math.abs(viewPos-e.getX())>5)
+        return null;
+    }
+    catch(BadLocationException e2){}
+    
+    
     final int start;
     if(pos < 15)
       start = 0;
