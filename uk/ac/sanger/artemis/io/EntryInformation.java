@@ -20,12 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/EntryInformation.java,v 1.2 2008-01-24 14:13:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/EntryInformation.java,v 1.3 2008-01-24 14:15:30 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.io;
 
-import uk.ac.sanger.artemis.util.*;
+import uk.ac.sanger.artemis.util.StringVector;
 
 
 /**
@@ -33,7 +33,7 @@ import uk.ac.sanger.artemis.util.*;
  *  keys and qualifiers of an entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryInformation.java,v 1.2 2008-01-24 14:13:34 tjc Exp $
+ *  @version $Id: EntryInformation.java,v 1.3 2008-01-24 14:15:30 tjc Exp $
  **/
 
 public interface EntryInformation {
