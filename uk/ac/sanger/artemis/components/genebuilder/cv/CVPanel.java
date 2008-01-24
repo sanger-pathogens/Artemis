@@ -29,6 +29,8 @@ import java.awt.Component;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
@@ -726,21 +728,54 @@ public class CVPanel extends JPanel
     repaint();
   }
   
+  /**
+   * Add a new CvTerm to the database
+   * @param cvNames
+   */
   private void addCvTermToDB(final java.util.List cvNames)
   {
-    final Box xBox = Box.createHorizontalBox();
+    final JPanel gridPanel = new JPanel(new GridBagLayout());
+    final GridBagConstraints c = new GridBagConstraints();
+
     final JExtendedComboBox comboCV = 
       new JExtendedComboBox(new Vector(cvNames));
     comboCV.addItem(JExtendedComboBox.SEPARATOR);
     comboCV.addItem(ChadoTransactionManager.PRODUCT_CV);
-    xBox.add(new JLabel("CV:"));
-    xBox.add(comboCV);
+    
+    c.anchor = GridBagConstraints.WEST;
+    c.ipadx = 5;
+    c.gridx = 0;
+    c.gridy = 0;
+    
+    gridPanel.add(new JLabel("Controlled vocabulary:"), c);
+    
+    c.gridx = 1;
+    gridPanel.add(new JLabel("Term to add:"), c);
+    
+    c.gridy = 1;
+    c.gridx = 0;
+    gridPanel.add(comboCV, c);
+    
+    c.gridy = 1;
+    c.gridx = 1;
     final JTextField term = new JTextField(25);
-    xBox.add(new JLabel("  term:"));
-    xBox.add(term);
+    gridPanel.add(term, c);
+    
+    c.gridy = 2;
+    c.gridx = 0;
+    gridPanel.add(new JLabel("Definition (optional):"), c);
+    
+    c.gridy = 3;
+    c.gridx = 0;
+    c.gridwidth = 2;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    final JTextField definition = new JTextField();
+    gridPanel.add(definition, c);
+    
     
     int select = JOptionPane.showConfirmDialog(null, 
-        xBox, "Add a new term to the database", JOptionPane.OK_CANCEL_OPTION);
+        gridPanel, "Add a new term to the database", 
+        JOptionPane.OK_CANCEL_OPTION);
     
     if(select == JOptionPane.CANCEL_OPTION)
       return;
@@ -753,7 +788,8 @@ public class CVPanel extends JPanel
     
     final CvTerm cvTerm = ChadoTransactionManager.getCvTerm(
         term.getText().trim(), 
-        (String)comboCV.getSelectedItem(), db);
+        (String)comboCV.getSelectedItem(), 
+        definition.getText().trim(), db);
     
     try
     {
