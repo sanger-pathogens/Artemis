@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.5 2008-01-03 11:18:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.6 2008-01-24 15:45:37 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.io.IOException;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.5 2008-01-03 11:18:05 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.6 2008-01-24 15:45:37 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -146,6 +146,8 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     Key key = feature.getKey();
     QualifierVector qualifiers = feature.getQualifiers().copy();
     
+    if(key.getKeyString().equals("transcript"))
+      key = new Key("mRNA");
     if(key.getKeyString().equals("mRNA"))
     {
       // add protein qualifiers to transcript
