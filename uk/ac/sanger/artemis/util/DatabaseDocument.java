@@ -2324,6 +2324,7 @@ public class DatabaseDocument extends Document
     catch(RuntimeException sqlExp)
     {
       JOptionPane.showMessageDialog(null, "SQL Problems...\n"+
+                                    getLocation()+"\n"+
                                     sqlExp.getMessage(), 
                                     "SQL Error",
                                     JOptionPane.ERROR_MESSAGE);
@@ -2343,6 +2344,7 @@ public class DatabaseDocument extends Document
     catch(java.sql.SQLException sqlExp)
     {
       JOptionPane.showMessageDialog(null, "SQL Problems....\n"+
+                                    getLocation()+"\n"+
                                     sqlExp.getMessage(), 
                                     "SQL Error",
                                     JOptionPane.ERROR_MESSAGE);
