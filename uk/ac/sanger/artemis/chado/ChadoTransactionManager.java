@@ -2076,14 +2076,18 @@ public class ChadoTransactionManager
   }
   
   public static CvTerm getCvTerm(final String cvTermName, final String cvName,
-                                  final String dbName)
+                                 final String definition,
+                                 final String dbName)
   {
     CvTerm cvTerm = new CvTerm();
     cvTerm.setName(cvTermName);
     Cv cv = new Cv();
     cv.setName(cvName);
     cvTerm.setCv(cv);
-
+    
+    if(definition != null && !definition.equals(""))
+      cvTerm.setDefinition(definition);
+    
     // need to create a unique dbxref for the cvterm
     DbXRef dbXRef = new DbXRef();
     Db db = new Db();
@@ -2104,7 +2108,7 @@ public class ChadoTransactionManager
   private CvTerm createCvTerm(final String cvTermName, final String cvName,
                               final String dbName)
   {
-    final CvTerm cvTerm = getCvTerm(cvTermName, cvName, dbName);
+    final CvTerm cvTerm = getCvTerm(cvTermName, cvName, null, dbName);
     
     logger4j.debug("INSERT cvTerm "+cvTermName);
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT,
