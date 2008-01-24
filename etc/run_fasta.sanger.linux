@@ -1,0 +1,447 @@
+#!/bin/sh -
+
+# this script will run a search program on a sequence input file or on each
+# file in a file of filenames
+
+# to customise this script see the function called run_one_prog below
+
+
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta.sanger.linux,v 1.1 2008-01-24 10:48:29 tjc Exp $"
+
+PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
+
+
+if [ $# = 4 -a x$1 = x-onefile ]
+then
+    shift
+    ONEFILE=t
+    DATABASE=$3 export DATABASE
+else
+    if [ $# = 2 ]
+    then
+        DATABASE=$2 export DATABASE
+    else
+        echo usage: $0 -onefile input_file output_file database 1>&2
+        echo    or: $0 file_of_filenames database 1>&2
+        exit 1
+    fi
+fi
+
+
+#
+# Exchange DB name for fasta reference
+#
+if [ "$DATABASE" = "%uniprot" ]; then
+  DATABASE="%U";
+elif [ "$DATABASE" = "%uniprot_archaea" ]; then
+  DATABASE="%A";
+elif [ "$DATABASE" = "%uniprot_bacteria" ]; then
+  DATABASE="%B";
+elif [ "$DATABASE" = "%uniprot_eukaryota" ]; then
+  DATABASE="%E";
+elif [ "$DATABASE" = "%uniprot_viruses" ]; then
+  DATABASE="%V";
+elif [ "$DATABASE" = "%uniprot_rest" ]; then
+  DATABASE="%R";
+elif [ "$DATABASE" = "%malaria" ]; then
+  DATABASE="%M";
+elif [ "$DATABASE" = "%kineto_aa" ]; then
+  DATABASE="%K";
+fi
+
+# expand any ~ or environment variables
+EXPANDED_DATABASE=`echo "echo $DATABASE" | /bin/csh -f`
+
+### change this function to suit your site:
+
+run_one_prog () {
+    INPUT_FILE=$1
+    OUTPUT_FILE=$2
+    DATABASE=$3
+
+### strip out directory from command line
+
+    IN=`echo $INPUT_FILE | sed -n -e "s|$PWD//||p"`
+ 
+    if test "$IN" != "" && test -f $IN; then
+      INPUT_FILE="$IN"
+    fi
+   
+    echo "\n\nIN=$IN\nPWD=$PWD\nINPUT_FILE=$INPUT_FILE\n\n"
+    ### change these lines:
+
+    ### get sequence size
+    seq_size=`infoseq "$INPUT_FILE" -length -only -auto | awk '{ sum += $1 } END { print sum }'`
+
+    FASTLIBS=/nfs/disk222/yeastpub/bio-soft/fasta/pubseqgbs export FASTLIBS
+#   EXEC=/nfs/disk222/yeastpub/bio-soft/fasta/fasta33_t
+#   EXEC=/nfs/disk222/yeastpub/bio-soft/fasta/fasta33
+    EXEC=/software/pathogen/external/applications/fasta/fasta35
+
+    echo "about to start $EXEC with input from $INPUT_FILE and output to" 1>&2
+    echo "$OUTPUT_FILE using database $DATABASE" 1>&2
+
+    # add/change the flags to suit your site:
+    COMMAND="$EXEC -B -S -q -b 100 -H $INPUT_FILE $DATABASE ktup 2"
+
+    echo "command line: $COMMAND" 1>&2
+
+#    lsrun -R 'select[blast && mem > 500] rusage[r1m=1:mem=500]' -v $COMMAND 2>&1 > $OUTPUT_FILE | 
+
+     if [ "$seq_size" -lt 50000 ]
+     then
+       bsub -q normal -n 1 -R 'select[blast && mem > 500] rusage[r1m=1:mem=500]' -I $COMMAND 2>&1 > $OUTPUT_FILE |
+         tee ${PROG}_errors.new 1>&2
+     else
+       bsub -q "longblastq" -n 1 -R 'select[blast && mem > 500] rusage[r1m=1:mem=500]' -I $COMMAND 2>&1 > $OUTPUT_FILE |
+         tee ${PROG}_errors.new 1>&2
+     fi
+
+    #### end of changes
+
+
+    # Artemis can read compressed files
+    gzip -9 $OUTPUT_FILE &
+
+    if [ -s ${PROG}_errors.new ]
+    then
+        ( echo ERROR running $PROG: ; echo; 
+          echo ===================================================
+          cat ${PROG}_errors.new ) >> $OUTPUT_FILE
+        cat ${PROG}_errors.new >> ${PROG}_errors
+    fi
+}
+
+PERL_PROG_1='
+
+local *BSUB;
+
+my $file     = $ARGV[0];
+my $database = $ARGV[1];
+my $pwd      = $ARGV[2];
+chomp $file;
+chomp $database;
+
+$ENV{'FASTLIBS'} = "/nfs/disk222/yeastpub/bio-soft/fasta/pubseqgbs_test";
+
+
+open(BSUB, "| bsub -q normal -o fasta_errors -n 1 -R \"select[blast && mem > 500] rusage[r1m=1:mem=500]\" -K") or die "could not open bsub pipe : $!";
+open(LIST_FILE,$file);
+
+$EXEC="/nfs/disk222/yeastpub/bio-soft/fasta/fasta33_t";
+$EXEC="/software/pathogen/external/applications/fasta/fasta35";
+
+while(my $inFile = <LIST_FILE>)
+{
+  chomp($inFile);
+
+  if($inFile =~ m/^($pwd)(.*)/)
+  {
+    my $inFile_tmp = $2;
+    while($inFile_tmp =~ m/^(\/)(.*)/)
+    {
+      $inFile_tmp = $2;
+    }
+
+    if( -e $inFile_tmp )
+    {
+      $inFile = $inFile_tmp;
+    }
+  }
+ 
+  if($inFile =~ m/^(\S{100})/)
+  {
+    if($inFile =~ m/^(\S{90,})(fasta\/\S+)/)
+    {
+      my $inFile_tmp = $1;
+
+      if( -e $inFile_tmp )
+      {
+        print BSUB "cd $inFile_tmp\n";
+        $inFile = $2;
+      }
+    }
+  }
+
+  print BSUB "$EXEC -B -S -q -b 100 -H $inFile $database ktup 2 > $inFile\.out\n";
+  print BSUB "gzip -9 $inFile\.out\n";
+}
+close BSUB or die "--Could not submit job : $!";
+close LIST_FILE;
+'
+
+
+
+PERL_PROG='
+
+local *BSUB;
+
+my $file     = $ARGV[0];
+my $database = $ARGV[1];
+my $pwd      = $ARGV[2];
+chomp $file;
+chomp $database;
+
+$ENV{'FASTLIBS'} = "/nfs/disk222/yeastpub/bio-soft/fasta/pubseqgbs_test";
+open(LIST_FILE,$file);
+
+$EXEC="/nfs/disk222/yeastpub/bio-soft/fasta/fasta33";
+$EXEC="/software/pathogen/external/applications/fasta/fasta35";
+$NEW_WDIR=".";
+$NUM_JOBS=0;
+
+while(my $inFile = <LIST_FILE>)
+{ 
+  $NUM_JOBS++;
+  chomp($inFile);
+
+  if($inFile =~ m/^($pwd)(.*)/)
+  {
+    my $inFile_tmp = $2;
+    while($inFile_tmp =~ m/^(\/)(.*)/)
+    {
+      $inFile_tmp = $2;
+    }
+
+    if( -e $inFile_tmp )
+    {
+      $inFile = $inFile_tmp;
+    }
+  }
+ 
+
+  if($inFile =~ m/^(\S{100})/)
+  {
+    if($inFile =~ m/^(\S{90,})(fasta\/\S+)/)
+    {
+      my $inFile_tmp = $1;
+
+      if( -e $inFile_tmp )
+      {
+        $NEW_WDIR=$inFile_tmp;
+        $inFile = $2;
+      }
+    }
+  }
+  # find number of leading zero
+
+  if($inFile =~ m/^(.*)(fasta\/)([^\/]*)(0{4})(\d{1})$/)
+  {
+    push(@jobs10, $inFile);
+  }
+  elsif($inFile =~ m/^(.*)(fasta\/)([^\/]*)(0{3})(\d{2})$/)
+  {
+    push(@jobs100, $inFile);
+  }
+  elsif($inFile =~ m/^(.*)(fasta\/)([^\/]*)(0{2})(\d{3})$/)
+  {
+    push(@jobs1000, $inFile);
+  }
+  elsif($inFile =~ m/^(.*)(fasta\/)([^\/]*)(0{1})(\d{4})$/)
+  {
+    push(@jobs10000, $inFile);
+  }
+  else
+  {
+    push(@jobs100000, $inFile);
+  }
+}
+close LIST_FILE;
+
+if(defined @jobs10)
+{
+  my( $num ) = sprintf( "%04d", 0);
+  submit($num, @jobs10);
+}
+
+if(defined @jobs100)
+{
+  my( $num ) = sprintf( "%03d", 0);
+  submit($num, @jobs100);
+}
+
+if(defined @jobs1000)
+{
+  my( $num ) = sprintf( "%02d", 0);
+  submit($num, @jobs1000);
+}
+
+if(defined @jobs10000)
+{
+  my( $num ) = sprintf( "%01d", 0);
+  submit($num, @jobs10000);
+}
+
+if(defined @jobs100000)
+{
+  submit("", @jobs100000);
+}
+
+for($count = 0; $count < @bsub_jobs; $count++)
+{
+  open(BSUB, "| bsub -q normal -R \"select[mem > 1] rusage[mem=1]\" -o /dev/null -e /dev/null -w \"ended($bsub_jobs[$count])\" -K -J \"$bsub_jobs[$count]\_fin\"")  or die "could not open bsub pipe  : $!";
+  print BSUB "\"echo finished > /dev/null\" > /dev/null 2> /dev/null";
+  close BSUB; # or die "--Could not submit job : $!";
+} 
+ 
+
+sub submit
+{
+  my ($num, @jobs) = @_;
+   
+  my $prefix;
+  my @starts;
+  my @prefixes;
+
+  if($jobs[0] =~ m/^(.*)(\/fasta\/)([^\/]*)(\d{5})/)
+  {
+    $prefix = $1.$2.$3;
+    push(@starts, "$4");
+  }
+  elsif($jobs[0] =~ m/^(fasta\/)([^\/]*)(\d{5})/)
+  {
+    $prefix = $1.$2;
+    push(@starts, "$3");
+  }
+
+  # escape characters
+  if($prefix =~ /(\+|\?|\*|\[|\])/)
+  {
+    $prefix =~ s/\+/\\+/;
+    $prefix =~ s/\?/\\?/;
+    $prefix =~ s/\*/\\*/;
+    $prefix =~ s/\[/\\[/;
+    $prefix =~ s/\]/\\]/;
+  }
+  push(@prefixes, $prefix);
+
+  
+  #different entries have different prefixes
+  for($count =0; $count < @jobs; $count++)
+  {
+    if($jobs[$count] !~ m/^$prefix(.*)/)
+    {
+      if($jobs[$count] =~ m/^(.*)(fasta\/)([^\/]*)(\d{5})/)
+      {
+        $prefix = $1.$2.$3;
+
+        push(@starts, "$4");
+
+        if($prefix =~ /(\+|\?|\*|\[|\])/)
+        {
+          $prefix =~ s/\+/\\+/;
+          $prefix =~ s/\?/\\?/;
+          $prefix =~ s/\*/\\*/;
+          $prefix =~ s/\[/\\[/;
+          $prefix =~ s/\]/\\]/;
+        }
+
+        push(@prefixes, $prefix);
+      }
+    }
+  }
+
+  for($count =0; $count < @prefixes; $count++)
+  {
+    $prefix = $prefixes[$count];
+    $start  = $starts[$count];
+
+    # build the index description that need to be run
+    $index="$start-";
+    $end="$start";
+    for($j =0; $j < @jobs; $j++)
+    {
+      if($jobs[$j] =~ m/^$prefix(.*)/)
+      {
+        if($jobs[$j] =~ m/^(.*)(fasta\/)([^\/]*)(\d{5})/)
+        {
+          if($j == @jobs-1)
+          {
+            $index = "$index$4";
+          }
+          elsif($end+1 >= $4)
+          {
+            $end = "$4";
+          }
+          else
+          {
+            $index = "$index$end,$4-"
+          }
+        }
+      }
+    }
+
+    if($index =~ m/(\-)$/)
+    {
+      $index = "$index$end";
+    }
+
+    bsub($prefix, $index, $num);
+  }
+}
+
+
+# start job arrays
+sub bsub
+{
+  my ($prefix, $index, $num) = @_;
+
+  my $name = $prefix;
+ 
+  if($prefix =~ m/(\/fasta\/)(.*)/)
+  {
+    $name = "$2";
+  }
+
+  my $random = int( rand( 999+1 ) );
+  
+  push(@bsub_jobs, "$name$random\_fasta");
+
+  my $QUEUE="long";
+  if($NUM_JOBS <= 6)
+  {
+    $QUEUE="normal";
+  }
+
+  open(BSUB, "| bsub -q $QUEUE -o /dev/null -n 1 -R \"select[mem > 500] rusage[mem=500]\" -J$name$random\_fasta\"[$index]%16\"")  or die "could not open bsub pipe  : $!";
+  print BSUB "cd $NEW_WDIR\n";
+  print BSUB "$EXEC -B -S -q -b 100 -H $prefix$num";
+  print BSUB "\${LSB_JOBINDEX} $database ktup 2 > $prefix$num";
+  print BSUB "\${LSB_JOBINDEX}\.out\n";
+
+  print BSUB "gzip -9f $prefix$num";
+  print BSUB "\${LSB_JOBINDEX}\.out\n";
+
+ close BSUB or die "--Could not submit job : $!";
+}
+
+'
+
+(echo "#!/bin/sh -"; echo "kill $$") > $PROG.kill
+
+chmod a+x $PROG.kill
+
+HOSTNAME=`hostname`
+REMOTE=N
+
+case $HOSTNAME in
+    deskpro*)
+      REMOTE=Y ;;
+    *)
+esac
+
+if [ x$ONEFILE = x ]
+then
+   if [ $REMOTE = "Y" ]; then
+      WDIR=`pwd`
+      export WDIR
+      CMD=`echo $PERL_PROG_1`
+      ssh babel "cd $WDIR; perl -w -e '$CMD' \"$1\" \"$EXPANDED_DATABASE\" \"$PWD\""
+   else
+      perl -w -e "$PERL_PROG" "$1" "$EXPANDED_DATABASE" "$PWD"
+   fi
+else
+    run_one_prog $1 $2 $EXPANDED_DATABASE
+fi
+
+exit 0
