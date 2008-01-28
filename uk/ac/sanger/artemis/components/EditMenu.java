@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.45 2008-01-22 16:01:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.46 2008-01-28 16:33:28 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -58,7 +58,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.45 2008-01-22 16:01:33 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.46 2008-01-28 16:33:28 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -253,6 +253,17 @@ public class EditMenu extends SelectionMenu
       public void actionPerformed(ActionEvent event) 
       {
         undo(getParentFrame(), getSelection(), getEntryGroup());
+      }
+    });
+    
+    
+    final JMenuItem redo_item = new JMenuItem("Redo");
+    redo_item.setAccelerator(UNDO_KEY);
+    redo_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        redo(getParentFrame(), getSelection(), getEntryGroup());
       }
     });
 
@@ -705,17 +716,27 @@ public class EditMenu extends SelectionMenu
       }
     });
 
-
+    
+    if(Options.getOptions().getPropertyTruthValue("val_mode"))
+    {
+      add(edit_feature_item);
+      add(edit_subsequence_item);
+      addSeparator();
+    }
+    
     if(Options.getOptions().getUndoLevels() > 0) 
     {
       add(undo_item);
+      add(redo_item);
       addSeparator();
     }
 
-    add(edit_feature_item);
-    add(edit_subsequence_item);
-    addSeparator();
-
+    if(!Options.getOptions().getPropertyTruthValue("val_mode"))
+    {
+      add(edit_feature_item);
+      add(edit_subsequence_item);
+      addSeparator();
+    }
 
     add(qualifier_menu);
     qualifier_menu.add(add_qualifiers_item);
@@ -804,6 +825,23 @@ public class EditMenu extends SelectionMenu
       new MessageDialog(frame, "sorry - no further undo information");
   }
 
+  private static void redo(final JFrame frame, final Selection selection,
+      final EntryGroup entry_group)
+  {
+    // undo disabled
+    if(Options.getOptions().getUndoLevels() == 0)
+      return;
+
+    // clear the selection because something in the selection might
+    // disappear after the undo() eg. create a feature, select it then undo
+    //if(entry_group.getActionController().canUndo())
+    selection.clear();
+
+    if(!entry_group.getActionController().redo())
+      new MessageDialog(frame, "sorry - no further redo information");
+  }
+  
+  
   /**
    *  Open an edit window (FeatureEdit) for each of the selected features.
    *  The edit component will listen for feature change events and update
