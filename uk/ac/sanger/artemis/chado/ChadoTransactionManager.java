@@ -467,11 +467,11 @@ public class ChadoTransactionManager
           {
             Range range = (Range)ranges.get(i);
             feature_uniquename = gff_feature.getSegmentID(range);
-            deleteFeature(feature_uniquename, gff_feature.getKey().getKeyString(), null);
+            deleteFeature(feature_uniquename, gff_feature.getKey().getKeyString(), gff_feature);
           }    
         }
         else
-          deleteFeature(feature_uniquename, gff_feature.getKey().getKeyString(), null);
+          deleteFeature(feature_uniquename, gff_feature.getKey().getKeyString(), gff_feature);
         
         deleteSimilarity(feature_uniquename, gff_feature);
       }
@@ -951,9 +951,24 @@ public class ChadoTransactionManager
       final ChadoCanonicalGene chado_gene = feature.getChadoGene();
       if(chado_gene != null)
       {
-        Object deleteFeature = chado_gene.getFeatureFromId(uniquename);
-        if(deleteFeature != null)
-          chado_gene.deleteFeature((uk.ac.sanger.artemis.io.Feature)deleteFeature);
+        String msg = "DELETE FROM CHADO MODEL ";
+        if(feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
+        {
+          if(feature.getSegmentRangeStore() != null)
+          {
+            feature.getSegmentRangeStore().remove(uniquename);
+          
+            if(feature.getSegmentRangeStore().size() == 0)
+              chado_gene.deleteFeature(feature);
+            msg = msg + " ** " + DatabaseDocument.EXONMODEL + " ";
+          }
+        }
+        else
+          chado_gene.deleteFeature(feature);
+        logger4j.debug(msg+uniquename);
+        //Object deleteFeature = chado_gene.getFeatureFromId(uniquename);
+        //if(deleteFeature != null)
+        //  chado_gene.deleteFeature((uk.ac.sanger.artemis.io.Feature)deleteFeature);
       }
     }
     
