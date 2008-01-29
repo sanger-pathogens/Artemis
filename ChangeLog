@@ -1,5 +1,7 @@
 Version ??
 
+	Add redo function to 'Edit' menu
+	
 	Add option to replace selected bases in 'Edit' menu.
 	
 	Option to create features in intergenic regions added.
@@ -16,7 +18,7 @@ Version ??
 	Implemented option for ORF creation to take into account boundaries
 	of multiple fasta sequences, so that they do not cross them.
 
-	Implemented the ability to run and store fasta anad blast search 
+	Implemented the ability to run and store fasta and blast search 
 	results for multiple databases... E.g. fasta searches on uniprot 
 	and on user's own database, stored in multiple fasta_file qualifiers.
 
