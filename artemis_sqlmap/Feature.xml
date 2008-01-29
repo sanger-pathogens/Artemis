@@ -304,7 +304,8 @@
 	LEFT JOIN analysis a ON af.analysis_id=a.analysis_id
     WHERE  f.feature_id IN 
         (  SELECT feature_id FROM featureloc WHERE srcfeature_id IN 
-         ( SELECT feature_id  FROM featureloc WHERE srcfeature_id=$value$) ) 
+         ( SELECT feature_id  FROM featureloc WHERE srcfeature_id=$value$) )
+	AND f.type_id != (SELECT cvterm_id FROM cvterm where name='polypeptide_domain')
     ORDER BY f.feature_id
   </select>
 
