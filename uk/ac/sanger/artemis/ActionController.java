@@ -20,10 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ActionController.java,v 1.4 2008-01-29 15:20:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ActionController.java,v 1.5 2008-01-29 15:45:26 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
+
+import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JMenuItem;
 
@@ -40,7 +43,7 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
  *  This class is maintains a Vector of Action objects to allow Undo.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ActionController.java,v 1.4 2008-01-29 15:20:33 tjc Exp $
+ *  @version $Id: ActionController.java,v 1.5 2008-01-29 15:45:26 tjc Exp $
  **/
 
 public class ActionController
@@ -57,8 +60,8 @@ public class ActionController
   private ActionVector undo_action_vector = new ActionVector ();
   private ActionVector redo_action_vector = new ActionVector ();
 
-  private JMenuItem undo;
-  private JMenuItem redo;
+  private List undo;
+  private List redo;
   
   /**
    *  Note the start of an action.  Create a new Action and add all
@@ -110,10 +113,7 @@ public class ActionController
   {
     undo_action_vector = new ActionVector();
     redo_action_vector = new ActionVector();
-    if(undo != null)
-      undo.setEnabled(false);
-    if(redo != null)
-      redo.setEnabled(false);
+    setEnabledMenuItems();
   }
 
   /**
@@ -161,18 +161,26 @@ public class ActionController
   {
     if(undo != null)
     {
-      if(undo_action_vector.size()>0)
-        undo.setEnabled(true);
-      else
-        undo.setEnabled(false);
+      for(int i=0; i<undo.size(); i++)
+      {
+        JMenuItem undo_item = (JMenuItem) undo.get(i);
+        if(undo_action_vector.size()>0)
+          undo_item.setEnabled(true);
+        else
+          undo_item.setEnabled(false);
+      }
     }
     
     if(redo != null)
     {
-      if(redo_action_vector.size()>0)
-        redo.setEnabled(true);
-      else
-        redo.setEnabled(false);
+      for(int i=0; i<redo.size(); i++)
+      {
+        JMenuItem redo_item = (JMenuItem) redo.get(i);
+        if(redo_action_vector.size()>0)
+          redo_item.setEnabled(true);
+        else
+          redo_item.setEnabled(false); 
+      }
     }
   }
  
@@ -343,13 +351,17 @@ public class ActionController
     discardUndoRedo ();
   }
 
-  public void addUndoMenu(final JMenuItem undo)
+  public void addUndoMenu(final JMenuItem undo_item)
   {
-    this.undo = undo; 
+    if(undo == null)
+      undo = new Vector();
+    undo.add(undo_item); 
   }
   
-  public void addRedoMenu(final JMenuItem redo)
+  public void addRedoMenu(final JMenuItem redo_item)
   {
-    this.redo = redo;
+    if(redo == null)
+      redo = new Vector();
+    redo.add(redo_item);
   }  
 }
