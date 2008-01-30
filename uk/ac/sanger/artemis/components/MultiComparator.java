@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.19 2008-01-03 13:39:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.20 2008-01-30 11:24:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -53,7 +53,7 @@ import javax.swing.JMenuItem;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.19 2008-01-03 13:39:16 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.20 2008-01-30 11:24:36 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
@@ -570,9 +570,9 @@ public class MultiComparator extends JFrame
     final JMenu create_menu = new JMenu("Create");
     create_menu.setMnemonic(KeyEvent.VK_C);
     menu_bar.add(create_menu);
-    final JMenu write_menu = new JMenu("Write");
+    /*final JMenu write_menu = new JMenu("Write");
     write_menu.setMnemonic(KeyEvent.VK_W);
-    menu_bar.add(write_menu);
+    menu_bar.add(write_menu);*/
     JMenu run_menu = null;
     if(Options.isUnixHost()) 
     {
@@ -657,12 +657,12 @@ public class MultiComparator extends JFrame
                       sub_menu_name);
         create_menu.add(this_create_menu);
 
-        final WriteMenu this_write_menu =
+        /*final WriteMenu this_write_menu =
           new WriteMenu(this,
                          getSelectionArray()[i],
                          getEntryGroupArray()[i],
                          sub_menu_name);
-        write_menu.add(this_write_menu);
+        write_menu.add(this_write_menu);*/
 
         if(Options.isUnixHost()) 
         {
@@ -903,6 +903,14 @@ public class MultiComparator extends JFrame
         });
 
         entry_group_menu.add(save_all_menu);
+        entry_group_menu.addSeparator();
+        
+        
+        final WriteMenu this_write_menu =
+          new WriteMenu(this,
+                         getSelectionArray()[i],
+                         getEntryGroupArray()[i]);
+        entry_group_menu.add(this_write_menu);
         entry_group_menu.addSeparator();
       }
 
