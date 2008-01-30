@@ -166,9 +166,9 @@
          <isGreaterThan property="featureLoc.featureBySrcFeatureId.featureId" compareValue="0"> 
            srcfeature_id=$featureLoc.featureBySrcFeatureId.featureId$ 
          </isGreaterThan>
-		 <isGreaterThan property="featureLoc.fmin" compareValue="0" prepend="AND"> 
-           <![CDATA[ fl.fmin > $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
-         </isGreaterThan>
+		 <isGreaterEqual property="featureLoc.fmin" compareValue="0" prepend="AND"> 
+           <![CDATA[ fl.fmin >= $featureLoc.fmin$ AND fl.fmax < $featureLoc.fmax$ ]]>
+         </isGreaterEqual>
          <isNotNull property="uniqueName">                        
            uniquename LIKE #uniqueName# 
          </isNotNull>

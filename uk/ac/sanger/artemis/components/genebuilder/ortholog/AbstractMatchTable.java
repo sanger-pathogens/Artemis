@@ -271,8 +271,8 @@ abstract class AbstractMatchTable
         try
         {
           int start = featureLoc.getFmin().intValue()-10000;
-          if(start <= 1)
-            start = 2;
+          if(start <= 0)
+            start = 1;
           Range range = new Range(start,featureLoc.getFmax().intValue()+10000);
           final DatabaseDocument newDoc = new DatabaseDocument(
               doc, gene[0], geneFeature, range,
