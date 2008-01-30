@@ -34,7 +34,6 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileFilter;
 import java.awt.event.*;
-import java.awt.geom.*;
 import java.awt.*;
 import java.util.Properties;
 import java.util.Enumeration;
@@ -556,23 +555,6 @@ public class LocalAndRemoteFileManager extends JFrame
 
     return mBar;
   }
-
-  /**
-  *
-  * Used to draw a Shape.
-  *
-  */
-  public static GeneralPath makeShape(float loc[][]) 
-  {
-    GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);
-
-    path.moveTo(loc[0][0],loc[0][1]);
-
-    for(int i=1; i<loc.length; i++)
-      path.lineTo(loc[i][0],loc[i][1]);
-    
-    return path;
-  }
   
   
   private class DbConnectionThread extends Thread
@@ -607,8 +589,8 @@ public class LocalAndRemoteFileManager extends JFrame
 
   public static void main(String args[])
   {
-    final javax.swing.LookAndFeel look_and_feel =
-      javax.swing.UIManager.getLookAndFeel();
+    //final javax.swing.LookAndFeel look_and_feel =
+    //  javax.swing.UIManager.getLookAndFeel();
 
     final javax.swing.plaf.FontUIResource font_ui_resource =
       Options.getOptions().getFontUIResource();

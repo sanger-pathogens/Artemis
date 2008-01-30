@@ -302,23 +302,5 @@ public class FileManager extends JFrame
     return mBar;
   }
 
-  /**
-  *
-  * Used to draw a Shape.
-  *
-  */
-  public static GeneralPath makeShape(float loc[][]) 
-  {
-    GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);
-
-    path.moveTo(loc[0][0],loc[0][1]);
-
-    for(int i=1; i<loc.length; i++)
-      path.lineTo(loc[i][0],loc[i][1]);
-    
-    return path;
-  }
-
-
 }
 
