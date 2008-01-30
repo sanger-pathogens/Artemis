@@ -20,13 +20,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.9 2008-01-22 15:18:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.10 2008-01-30 09:57:46 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
 
-import uk.ac.sanger.artemis.*;
-import uk.ac.sanger.artemis.sequence.*;
+import uk.ac.sanger.artemis.EntryGroup;
+import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.FeatureVector;
+import uk.ac.sanger.artemis.Selection;
+import uk.ac.sanger.artemis.sequence.Bases;
+import uk.ac.sanger.artemis.sequence.MarkerRange;
+import uk.ac.sanger.artemis.sequence.Strand;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 
 import uk.ac.sanger.artemis.io.EntryInformationException;
@@ -38,15 +43,26 @@ import uk.ac.sanger.artemis.io.EmblStreamSequence;
 import uk.ac.sanger.artemis.io.GenbankStreamSequence;
 import uk.ac.sanger.artemis.io.StreamSequenceFactory;
 
-import java.awt.event.*;
-import java.io.*;
-import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.swing.Box;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 /**
  *  A menu of commands for writing out protein and bases.
  *
  *  @author Kim Rutherford
- *  @version $Id: WriteMenu.java,v 1.9 2008-01-22 15:18:13 tjc Exp $
+ *  @version $Id: WriteMenu.java,v 1.10 2008-01-30 09:57:46 tjc Exp $
  **/
 public class WriteMenu extends SelectionMenu 
 {
