@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.48 2008-01-29 15:22:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.49 2008-01-30 09:16:20 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -58,7 +58,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.48 2008-01-29 15:22:07 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.49 2008-01-30 09:16:20 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -247,7 +247,6 @@ public class EditMenu extends SelectionMenu
     removeAll();
 
     final JMenuItem undo_item = new JMenuItem("Undo");
-    undo_item.setEnabled(false);
     getEntryGroup().getActionController().addUndoMenu(undo_item);
     undo_item.setAccelerator(UNDO_KEY);
     undo_item.addActionListener(new ActionListener() 
@@ -261,7 +260,6 @@ public class EditMenu extends SelectionMenu
     
     final JMenuItem redo_item = new JMenuItem("Redo");
     //redo_item.setAccelerator(REDO_KEY);
-    redo_item.setEnabled(false);
     getEntryGroup().getActionController().addRedoMenu(redo_item);
     redo_item.addActionListener(new ActionListener() 
     {
