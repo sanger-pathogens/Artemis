@@ -852,7 +852,7 @@ public class DatabaseDocument extends Document
   { 
     ByteBuffer buff = new ByteBuffer();
 
-    logger4j.debug("GET FEATURES IN RANGE::");
+    logger4j.debug("GET FEATURES IN RANGE:: "+range.toString());
     List featuresInRange = dao.getFeaturesByRange(range.getStart()-1, 
                                 range.getEnd(), 0, srcFeature, null);
     
