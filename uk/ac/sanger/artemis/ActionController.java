@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ActionController.java,v 1.5 2008-01-29 15:45:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ActionController.java,v 1.6 2008-01-30 09:15:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -43,7 +43,7 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
  *  This class is maintains a Vector of Action objects to allow Undo.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ActionController.java,v 1.5 2008-01-29 15:45:26 tjc Exp $
+ *  @version $Id: ActionController.java,v 1.6 2008-01-30 09:15:31 tjc Exp $
  **/
 
 public class ActionController
@@ -157,6 +157,9 @@ public class ActionController
     return true;
   }
   
+  /**
+   * Enable undo/redo menu if they contain Action's
+   */
   private void setEnabledMenuItems()
   {
     if(undo != null)
@@ -355,7 +358,8 @@ public class ActionController
   {
     if(undo == null)
       undo = new Vector();
-    undo.add(undo_item); 
+    undo.add(undo_item);
+    setEnabledMenuItems();
   }
   
   public void addRedoMenu(final JMenuItem redo_item)
@@ -363,5 +367,6 @@ public class ActionController
     if(redo == null)
       redo = new Vector();
     redo.add(redo_item);
+    setEnabledMenuItems();
   }  
 }
