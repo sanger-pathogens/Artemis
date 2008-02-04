@@ -152,6 +152,19 @@ yes on startup.  (See <XREF LINKEND="VIEWS-POPUPMENU-TOGGLES-FRAMEFEATURES">)
       </PARA>
     </SECT2>
 
+    <SECT2 ID="OPTIONS-FRAME-LINE-FEATURES">
+      <TITLE><LITERAL>frame_line_features</LITERAL></TITLE>
+      <PARA>
+This is a list of the feature keys that should be shown by default on the
+frame lines. e.g.
+        <SYNOPSIS>
+frame_line_features =  \
+  CDS \
+  polypeptide
+        </SYNOPSIS>
+      </PARA>
+    </SECT2>
+
     <SECT2 ID="OPTIONS-FEATURE-LABELS">
       <TITLE><LITERAL>feature_labels</LITERAL></TITLE>
       <PARA>
