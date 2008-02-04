@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.39 2008-01-16 16:08:47 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.40 2008-02-04 16:54:59 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -357,6 +357,10 @@ show_results = no
 # default to true on start up
 features_on_frame_lines = no
 
+# features to show on the frame line
+#frame_line_features =  \
+#  CDS \
+#  polypeptide
 
 # if this option is "yes" the "feature labels" option will
 # default to true on start up
