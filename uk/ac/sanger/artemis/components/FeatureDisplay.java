@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.53 2008-01-30 14:40:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.54 2008-02-04 17:04:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -70,7 +70,7 @@ import javax.swing.JFrame;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.53 2008-01-30 14:40:16 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.54 2008-02-04 17:04:42 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -344,6 +344,12 @@ public class FeatureDisplay extends EntryGroupPanel
     show_labels =
       Options.getOptions().getPropertyTruthValue("feature_labels");
 
+    
+    final StringVector frame_line_features = 
+      Options.getOptions().getOptionValues("frame_line_features");
+    if(frame_line_features != null)
+      protein_keys = frame_line_features.toArray();
+    
     addComponentListener(new ComponentAdapter()
     {
       public void componentResized(ComponentEvent e) 
