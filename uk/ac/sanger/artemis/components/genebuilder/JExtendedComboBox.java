@@ -29,16 +29,19 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.util.Vector;
 
+import javax.swing.Box;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ListCellRenderer;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.basic.BasicComboPopup;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.text.JTextComponent;
 
 import org.gmod.schema.cv.CvTerm;
@@ -99,19 +102,26 @@ public class JExtendedComboBox extends JComboBox
       editor.setDocument(new AutoCompleteComboDocument(this));
     }
     
-    BasicComboPopup popup = (BasicComboPopup)getUI().getAccessibleChild(this,0);//Popup
-
-    if(popup==null)
-      return; 
-   
-    for(int i=0; i<popup.getComponentCount(); i++)
+    addPopupMenuListener(new ComboPopupMenuLister());
+    //setUI(new ComboUI());
+  }
+  
+  class ComboPopupMenuLister implements PopupMenuListener
+  {
+    public void popupMenuCanceled(PopupMenuEvent e){}
+    public void popupMenuWillBecomeInvisible(PopupMenuEvent e){}
+    
+    public void popupMenuWillBecomeVisible(PopupMenuEvent e)
     {
-      Component comp = popup.getComponent(i);
-      if(comp instanceof JScrollPane) 
-      {
-        JScrollPane scrollpane = (JScrollPane)comp;
-        scrollpane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+      Object comp = getUI().getAccessibleChild(JExtendedComboBox.this, 0);
+      if (!(comp instanceof JPopupMenu)) 
         return;
+
+      JComponent scrollPane = (JComponent) ((JPopupMenu) comp).getComponent(0);
+      if (scrollPane instanceof JScrollPane) 
+      {
+        JScrollPane sp = (JScrollPane) scrollPane;
+        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
       }
     }
   }
@@ -163,39 +173,43 @@ public class JExtendedComboBox extends JComboBox
     }
   }
   
-  /*
-  public class ComboUI extends BasicComboBoxUI
+  
+  /*public class ComboUI extends BasicComboBoxUI
   {
-    public ComboUI()
-    {
-      super();
-      setUI(JExtendedComboBox.this.getUI());
-    }
-    
     protected ComboPopup createPopup()
     {
-      BasicComboPopup popup = new ComboBoxPopup(JExtendedComboBox.this);
-      return popup;
+      return new BasicComboPopup(comboBox)
+      {
+        private static final long serialVersionUID = 1L;
+
+        protected JScrollPane createScroller() 
+        {
+          return new JScrollPane( list, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED );
+        }
+      };
     }
-  }
-  
-  class ComboBoxPopup extends BasicComboPopup 
+  }*/
+
+  public int getCurrent()
   {
-    public ComboBoxPopup(JExtendedComboBox combo)
-    {
-      super(combo);
-    }
-
-    private static final long serialVersionUID = 1L;
-
-    protected JScrollPane createScroller() 
-    {
-      return new JScrollPane(list,
-       ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED );
-    }  
+    return current;
   }
-  */
+
+  public void setCurrent(int current)
+  {
+    this.current = current;
+  }
+
+  public boolean isHighLightCurrent()
+  {
+    return highLightCurrent;
+  }
+
+  public void setHighLightCurrent(boolean highLightCurrent)
+  {
+    this.highLightCurrent = highLightCurrent;
+  }
   
   public static void main(String args[])
   {
@@ -216,36 +230,19 @@ public class JExtendedComboBox extends JComboBox
     term_list.setCurrent(0);
     term_list.setHighLightCurrent(true);
     
-    Dimension d = new Dimension(500,term_list.getPreferredSize().height);
+    Box xbox = Box.createHorizontalBox();
+    xbox.add(term_list);
+    
+    Dimension d = new Dimension(70,term_list.getPreferredSize().height);
     term_list.setPreferredSize(d);
     term_list.setMaximumSize(d);
    
-    JOptionPane.showOptionDialog(null, term_list,
+    JOptionPane.showOptionDialog(null, xbox,
         "CV term selection",
          JOptionPane.YES_NO_CANCEL_OPTION,
          JOptionPane.QUESTION_MESSAGE,
          null,
          options,
          options[2]);
-  }
-
-  public int getCurrent()
-  {
-    return current;
-  }
-
-  public void setCurrent(int current)
-  {
-    this.current = current;
-  }
-
-  public boolean isHighLightCurrent()
-  {
-    return highLightCurrent;
-  }
-
-  public void setHighLightCurrent(boolean highLightCurrent)
-  {
-    this.highLightCurrent = highLightCurrent;
   }
 }
