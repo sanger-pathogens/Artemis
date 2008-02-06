@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.34 2008-01-22 13:33:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.35 2008-02-06 12:17:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -73,7 +73,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.34 2008-01-22 13:33:53 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.35 2008-02-06 12:17:53 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -169,9 +169,12 @@ public class AddMenu extends SelectionMenu
 
     add (new_feature_item);
 
+   
     final JMenuItem create_feature_from_range_item =
       new JMenuItem ("Feature From Base Range");
-    create_feature_from_range_item.setAccelerator (CREATE_FROM_BASE_RANGE_KEY);
+    
+    if(!GeneUtils.isDatabaseEntry(entry_group))
+      create_feature_from_range_item.setAccelerator (CREATE_FROM_BASE_RANGE_KEY);
     create_feature_from_range_item.addActionListener(new ActionListener () {
       public void actionPerformed (ActionEvent event) {
         createFeatureFromBaseRange (getParentFrame (), getSelection (),
@@ -186,8 +189,7 @@ public class AddMenu extends SelectionMenu
     {
       final JMenuItem create_gene_model_from_range_item = new JMenuItem(
           "Gene Model From Base Range");
-      // create_gene_model_from_range_item.setAccelerator
-      // (CREATE_FROM_BASE_RANGE_KEY);
+      create_gene_model_from_range_item.setAccelerator(CREATE_FROM_BASE_RANGE_KEY);
       create_gene_model_from_range_item.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent event)
