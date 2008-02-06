@@ -1,6 +1,7 @@
 Version ??
 
-	Add redo function to 'Edit' menu
+	Add redo function to 'Edit' menu. Also enable/disable undo and
+	redo menu items when available/not available.
 	
 	Add option to replace selected bases in 'Edit' menu.
 	
