@@ -952,7 +952,8 @@ public class ChadoTransactionManager
       if(chado_gene != null)
       {
         String msg = "DELETE FROM CHADO MODEL ";
-        if(feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
+        if(feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL) ||
+           feature.getKey().getKeyString().equals("pseudogenic_exon"))
         {
           if(feature.getSegmentRangeStore() != null)
           {
