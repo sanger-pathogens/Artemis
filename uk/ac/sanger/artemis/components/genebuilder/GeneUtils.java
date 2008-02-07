@@ -764,6 +764,10 @@ public class GeneUtils
     if(exons != null)
       dnaFeatures.addAll(exons);
     
+    exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, "pseudogenic_exon");
+    if(exons != null)
+      dnaFeatures.addAll(exons);
+    
     for(int i=0; i<dnaFeatures.size(); i++)
     {
       Feature dnaFeature = (Feature)dnaFeatures.get(i);
