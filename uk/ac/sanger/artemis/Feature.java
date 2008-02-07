@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.31 2008-01-16 15:29:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.32 2008-02-07 19:29:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -60,7 +60,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.31 2008-01-16 15:29:05 tjc Exp $
+ *  @version $Id: Feature.java,v 1.32 2008-02-07 19:29:49 tjc Exp $
  **/
 
 public class Feature
@@ -1209,7 +1209,7 @@ public class Feature
   
   public boolean hasValidStopCodon() 
   {
-    return hasValidStartCodon(false);
+    return hasValidStopCodon(false);
   }
 
   /**
