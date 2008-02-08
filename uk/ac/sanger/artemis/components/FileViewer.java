@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.16 2008-01-23 14:22:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FileViewer.java,v 1.17 2008-02-08 14:34:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -60,7 +60,7 @@ import uk.ac.sanger.artemis.Options;
  *  be viewed.
  *
  *  @author Kim Rutherford
- *  @version $Id: FileViewer.java,v 1.16 2008-01-23 14:22:49 tjc Exp $
+ *  @version $Id: FileViewer.java,v 1.17 2008-02-08 14:34:34 tjc Exp $
  *
  **/
 
@@ -137,11 +137,14 @@ public class FileViewer extends JFrame
     };
     
     final JScrollPane scroller = new JScrollPane(textPane);
-    scroller.setPreferredSize(new Dimension((int)screen.getWidth()/2,
-                                            (int)screen.getHeight()/2));
+    Dimension d = new Dimension((int)screen.getWidth()/2,
+        (int)screen.getHeight()/2);
+    scroller.setPreferredSize(d);
+    
     textPane.setEditable(false);
     textPane.setFont(font);
     textPane.setBackground(Color.white);
+    textPane.setPreferredSize(d);
     
     getContentPane().add(scroller, "Center");
 
