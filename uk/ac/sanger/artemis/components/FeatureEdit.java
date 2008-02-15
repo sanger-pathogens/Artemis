@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.56 2008-01-11 11:52:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.57 2008-02-15 09:58:06 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -75,7 +75,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.56 2008-01-11 11:52:36 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.57 2008-02-15 09:58:06 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -501,8 +501,7 @@ public class FeatureEdit extends JPanel
       }
     });
     
-    if(((DocumentEntry)getFeature().getEmblFeature().getEntry()).getDocument() 
-        instanceof DatabaseDocument)
+    if(GeneUtils.isDatabaseEntry(entry_group))
     {
       final JButton refresh_button = new JButton("Refresh");
       location_button_panel.add(refresh_button);
@@ -914,8 +913,7 @@ public class FeatureEdit extends JPanel
 
     final JPanel ok_cancel_update_panel = new JPanel(flow_layout);
     Box fillerBox = Box.createHorizontalBox();
-    if(((DocumentEntry)getFeature().getEmblFeature().getEntry()).getDocument() 
-        instanceof DatabaseDocument)
+    if(GeneUtils.isDatabaseEntry(entry_group))
     {
       cvForm = new CVPanel(getFeature());
       cvForm.setBackground(Color.WHITE);
