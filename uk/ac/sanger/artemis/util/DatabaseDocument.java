@@ -1262,9 +1262,23 @@ public class DatabaseDocument extends Document
       this_buff.append(clusterOrthoParalog);
     
     // append dbxrefs
-    if(dbxref != null && dbxref.size() > 0)
+    boolean foundPrimaryDbXRef = false;
+    if(feat.getDbXRef() != null)
     {
       this_buff.append("Dbxref=");
+      this_buff.append(GFFStreamFeature.encode(
+          feat.getDbXRef().getDb().getName()+":"+feat.getDbXRef().getAccession()));
+      foundPrimaryDbXRef = true;
+      if(dbxref == null || dbxref.size() == 0)
+        this_buff.append(";");
+    }
+    
+    if(dbxref != null && dbxref.size() > 0)
+    {
+      if(foundPrimaryDbXRef)
+        this_buff.append(",");
+      else
+        this_buff.append("Dbxref=");
       for(int j=0; j<dbxref.size(); j++)
       {
         this_buff.append(GFFStreamFeature.encode((String)dbxref.get(j)));
