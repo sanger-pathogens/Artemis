@@ -32,6 +32,8 @@
   <resultMap id="map-feature" class="Feature" 
 	         groupBy="featureId" extends="map-basicfeature">
 	<result property="organism.organismId" column="organism_id"/>
+	<result property="dbXRef" column="dbXRefId"
+                              select="getDbXRefByDbXRefId" />
 	<result property="featureProps" resultMap="FeatureProp.map-featureprop" />
    	<result property="featureRelationshipsForSubjectId" 
    	            resultMap="FeatureRelationship.map-feature-relationship-for-objectId"  /> 
@@ -140,6 +142,7 @@
       timelastmodified, 
       f.feature_id AS id, 
 	  f.organism_id,
+	  f.dbxref_id AS dbXRefId,
 	  fr.feature_relationship_id,
       fr.object_id,
       fr.type_id AS relation_type_id,
