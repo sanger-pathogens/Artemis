@@ -748,10 +748,19 @@ functions in the File menu is used<![ %artemis-only; [
     <TITLE>Undo</TITLE>
     <PARA>
 This function will undo the last change that was made using the Edit or Create
-menus.  Up to 20 changes can be undone.  This limit can be changed in the
+menus.  Up to 20 changes can be undone. This menu item is only enabled when 
+there is something to undo. This limit can be changed in the
 options file (see <XREF LINKEND="OPTIONS-UNDO-LEVELS">).  [shortcut key: U]
     </PARA>
   </SECT2>
+
+  <SECT2 ID="EDITMENU-REDO">
+    <TITLE>Redo</TITLE>
+    <PARA>
+This function will redo the last undo operation.
+    </PARA>
+  </SECT2>
+
 
   <SECT2 ID="EDITMENU-EDIT-SELECTED-FEATURES">
     <TITLE>Selected Features in Editor</TITLE>
