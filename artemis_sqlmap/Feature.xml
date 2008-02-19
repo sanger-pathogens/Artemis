@@ -32,8 +32,7 @@
   <resultMap id="map-feature" class="Feature" 
 	         groupBy="featureId" extends="map-basicfeature">
 	<result property="organism.organismId" column="organism_id"/>
-	<result property="dbXRef" column="dbXRefId"
-                              select="getDbXRefByDbXRefId" />
+	<result property="dbXRef" resultMap="DbXRef.select-dbxref" />
 	<result property="featureProps" resultMap="FeatureProp.map-featureprop" />
    	<result property="featureRelationshipsForSubjectId" 
    	            resultMap="FeatureRelationship.map-feature-relationship-for-objectId"  /> 
@@ -142,7 +141,8 @@
       timelastmodified, 
       f.feature_id AS id, 
 	  f.organism_id,
-	  f.dbxref_id AS dbXRefId,
+	  dbx.*,
+	  db.*,
 	  fr.feature_relationship_id,
       fr.object_id,
       fr.type_id AS relation_type_id,
@@ -164,6 +164,8 @@
     LEFT JOIN feature_relationship fr ON fr.subject_id = f.feature_id
     LEFT JOIN featureprop fp          ON fp.feature_id = f.feature_id
     LEFT JOIN featureloc fl           ON f.feature_id  = fl.feature_id
+	LEFT JOIN dbxref dbx              ON f.dbxref_id   = dbx.dbxref_id
+	LEFT JOIN db                      ON dbx.db_id     = db.db_id
     WHERE
         <dynamic>
          <isGreaterThan property="featureLoc.featureBySrcFeatureId.featureId" compareValue="0"> 
@@ -333,7 +335,8 @@
     WHERE  f.feature_id IN 
       (  SELECT feature_id FROM featureloc WHERE srcfeature_id IN
         <iterate open="(" close=")" conjunction=","> $[]$ </iterate>
-      ) 
+      )
+	AND f.type_id != (SELECT cvterm_id FROM cvterm where name='polypeptide_domain')
     ORDER BY f.feature_id
   </select>
 
