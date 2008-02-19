@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.32 2007-11-09 11:56:37 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.33 2008-02-19 09:52:27 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -285,7 +285,7 @@ artemis.jar : $(CLASSES)
 	jar cmf manifest-act act.jar images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
 	                     artemis_sqlmap org uk com net nsdb type seqdb LICENSE.Apache j2ssh.properties; \
 	rm -f etc/log4j.properties; \
-	jar cmf manifest-art artemis_mac.jar images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
+	jar cmf manifest-art artemis_mac.jar images/icon.gif images/helix.gif images/sanger-centre.gif README \
 	        uk nsdb type seqdb LICENSE.Apache j2ssh.properties
 
 clean :
