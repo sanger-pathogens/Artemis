@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.24 2008-01-14 14:08:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.25 2008-02-21 16:42:15 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -27,6 +27,8 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -39,6 +41,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+
+import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.sequence.FeatureCvTerm;
 
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
@@ -277,16 +282,17 @@ public class MatchPanel extends JPanel
       }
     });
     */
-    xBox = Box.createHorizontalBox();
-    //xBox.add(addSimButton);
-    final JLabel simLabel = new JLabel("Similarity:");
-    simLabel.setFont( simLabel.getFont().deriveFont(Font.BOLD ));
-    xBox.add(simLabel);
-    xBox.add(Box.createHorizontalGlue());
-    matchVerticalBox.add(xBox);
+    
     
     if(simQualifier != null)
     {
+      xBox = Box.createHorizontalBox();
+      final JLabel simLabel = new JLabel("Similarity:");
+      simLabel.setFont( simLabel.getFont().deriveFont(Font.BOLD ));
+      xBox.add(simLabel);
+      xBox.add(Box.createHorizontalGlue());
+      matchVerticalBox.add(xBox);
+      
       empty = false;
       if(simQualifier instanceof QualifierLazyLoading)
         ((QualifierLazyLoading)simQualifier).setForceLoad(true);
@@ -340,6 +346,7 @@ public class MatchPanel extends JPanel
     String uniqueName = null;
     String label = "Add Ortholog/Paralog";
     int select;
+    Vector polypeptides = new Vector();
     while(!found)
     {
       select = JOptionPane.showConfirmDialog(null, xBox,
@@ -350,8 +357,17 @@ public class MatchPanel extends JPanel
       try
       {
         uniqueName = geneField.getText().trim();
-        final Vector polypep = doc.getPolypeptideNames(uniqueName);
-        polypepList = new JComboBox(polypep);
+        polypeptides = doc.getPolypeptideFeatures(uniqueName);
+        final Vector polypeptideNames = new Vector();
+        
+        for(int i=0; i<polypeptides.size(); i++)
+        {
+          org.gmod.schema.sequence.Feature ppfeature = 
+            (org.gmod.schema.sequence.Feature)polypeptides.get(i);
+          polypeptideNames.add(ppfeature.getUniqueName());
+        }
+        
+        polypepList = new JComboBox(polypeptideNames);
         found = true;
       }
       catch(NullPointerException npe)
@@ -382,15 +398,56 @@ public class MatchPanel extends JPanel
     if(orthoparaLogTable != null)
       rank = orthoparaLogTable.getTable().getRowCount();
     
-    
-    final String qualifierStr = ((String)dbs.getSelectedItem())+":"+
+    // find product
+    String product = getProductFromFeatures(polypeptides, 
+                                            (String)polypepList.getSelectedItem());
+
+    String qualifierStr = ((String)dbs.getSelectedItem())+":"+
                                 uniqueName+" link="+
                                 polypepList.getSelectedItem()+" type="+
                                 type+"; rank="+rank;
+    
+    if(product != null)
+      qualifierStr = qualifierStr.concat("; product="+product);
+    
     if(ortho.isSelected())
       add(ORTHOLOG, qualifierStr, feature);
     else
       add(PARALOG, qualifierStr, feature);
+  }
+  
+  /**
+   * Return the product for the feature with the given uniquename 
+   * from a list of features.
+   * @param polypeptides
+   * @param selectedPolyPetideName
+   * @return
+   */
+  private String getProductFromFeatures(final Vector features, 
+                                        final String uniqueName)
+  {
+    for(int i=0; i<features.size(); i++)
+    {
+      org.gmod.schema.sequence.Feature ppfeature = 
+        (org.gmod.schema.sequence.Feature)features.get(i);
+      if(ppfeature.getUniqueName().equals(uniqueName))
+      {
+        Collection fc = ppfeature.getFeatureCvTerms();
+        Iterator it = fc.iterator();
+        while(it.hasNext())
+        {
+          FeatureCvTerm featureCvTerm = (FeatureCvTerm)it.next();
+          CvTerm cvTerm = featureCvTerm.getCvTerm();
+          
+          if(cvTerm.getCv().getName().equals(
+              uk.ac.sanger.artemis.chado.ChadoTransactionManager.PRODUCT_CV))
+          {
+            return cvTerm.getName();
+          }
+        }
+      }
+    }
+    return null;
   }
   
   /**

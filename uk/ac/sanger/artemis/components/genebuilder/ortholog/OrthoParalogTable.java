@@ -74,7 +74,7 @@ import uk.ac.sanger.artemis.util.StringVector;
 
 public class OrthoParalogTable extends AbstractMatchTable
 {
-  private static int NUMBER_COLUMNS = 9;
+  private static int NUMBER_COLUMNS = 10;
   private Vector rowData   = new Vector();
   private Vector tableData = new Vector(NUMBER_COLUMNS);
   private JTable table;
@@ -90,6 +90,7 @@ public class OrthoParalogTable extends AbstractMatchTable
   protected final static String ROW_TYPE_COL = "Type";
   protected final static String PROGRAM_COL = "Program";
   protected final static String ORGANISM_COL = "Organism";
+  protected final static String PRODUCT_COL = "Product";
   protected final static String GENE_COL = "Gene";
   protected final static String LINK_COL = "Link";
   protected final static String VIEW_BUTTON_COL = "View";
@@ -133,8 +134,9 @@ public class OrthoParalogTable extends AbstractMatchTable
     tableData.setElementAt(ORGANISM_COL,4);
     tableData.setElementAt(GENE_COL,5);
     tableData.setElementAt(LINK_COL,6);
-    tableData.setElementAt(VIEW_BUTTON_COL,7);
-    tableData.setElementAt(REMOVE_BUTTON_COL,8);
+    tableData.setElementAt(PRODUCT_COL,7);
+    tableData.setElementAt(VIEW_BUTTON_COL,8);
+    tableData.setElementAt(REMOVE_BUTTON_COL,9);
     
     // add row data
     int columnIndex;
@@ -217,7 +219,7 @@ public class OrthoParalogTable extends AbstractMatchTable
       }
     });
     
-    final TableColumn[] hideColumns = new TableColumn[3];
+    final TableColumn[] hideColumns = new TableColumn[4];
     
     hideColumns[0] = table.getColumn(ROW_TYPE_HIDE_COL);
     hideColumns[1] = table.getColumn(MATCH_NAME_COL);
@@ -225,9 +227,12 @@ public class OrthoParalogTable extends AbstractMatchTable
       hideColumns[2] = table.getColumn(REMOVE_BUTTON_COL);
     else
       hideColumns[2] = table.getColumn(CLUSTER_NAME_COL);
+    hideColumns[3] = table.getColumn(PRODUCT_COL);
 
     for(int i=0; i<hideColumns.length; i++)
     {
+      if(i == 3 && !showCluster)
+        continue;
       hideColumns[i].setMinWidth(0);
       hideColumns[i].setMaxWidth(0);
     }
@@ -263,13 +268,17 @@ public class OrthoParalogTable extends AbstractMatchTable
     packColumn(table, getColumnIndex(LINK_COL), 4);
     packColumn(table, getColumnIndex(ORGANISM_COL), 4);
     packColumn(table, getColumnIndex(VIEW_BUTTON_COL), 4);
+
     if(showCluster)
     {
       packColumn(table, getColumnIndex(CLUSTER_NAME_COL), 4);
       packColumn(table, getColumnIndex(PROGRAM_COL), 4);
     }
     else
+    {
       packColumn(table, getColumnIndex(ROW_TYPE_COL), 4);
+      packColumn(table, getColumnIndex(PRODUCT_COL), 4);
+    }
     
     // remove JButton column
     col = table.getColumn(REMOVE_BUTTON_COL);
@@ -323,6 +332,14 @@ public class OrthoParalogTable extends AbstractMatchTable
         program = program.substring(8);
     }
     
+    String product = "";
+    if(rowStr.size() > 1)
+    {
+      product = ArtemisUtils.getString(rowStr, "product=");
+      if(!product.equals(""))
+        product = product.substring(8);
+    }
+    
     int columnIndex;
     for(int k = 0; k < orthoparalogs.length; k++)
     {
@@ -351,6 +368,9 @@ public class OrthoParalogTable extends AbstractMatchTable
       
       columnIndex = tableData.indexOf(ROW_TYPE_HIDE_COL);
       thisRowData.setElementAt(qualifierName, columnIndex);
+      
+      columnIndex = tableData.indexOf(PRODUCT_COL);
+      thisRowData.setElementAt(product, columnIndex);
       
       columnIndex = tableData.indexOf(ROW_TYPE_COL);
       
@@ -836,6 +856,7 @@ public class OrthoParalogTable extends AbstractMatchTable
     private final JLabel program = new JLabel();
     private final JLabel symbol = new JLabel();
     private final JLabel organism = new JLabel();
+    private final JLabel product = new JLabel();
     private final JTextArea descriptionTextArea = new JTextArea();
     private final JLabel clusterName = new JLabel();
     private final JLabel matchName = new JLabel();
@@ -852,6 +873,7 @@ public class OrthoParalogTable extends AbstractMatchTable
       clusterName.setOpaque(true);
       organism.setOpaque(true);
       link.setOpaque(true);
+      product.setOpaque(true);
       
       descriptionTextArea.setLineWrap(true);
       descriptionTextArea.setWrapStyleWord(true);
@@ -911,6 +933,11 @@ public class OrthoParalogTable extends AbstractMatchTable
       {
         organism.setText(text);
         c = organism;
+      }
+      else if(column == getColumnIndex(PRODUCT_COL))
+      {
+        product.setText(text);
+        c = product;
       }
       else if(column == getColumnIndex(LINK_COL))
       {
