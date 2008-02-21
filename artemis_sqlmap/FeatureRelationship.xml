@@ -29,6 +29,9 @@
 		<result property="featureBySubjectId.uniqueName" column="subject_name"/>
 		<result property="featureBySubjectId.organism.commonName" column="subject_common_name"/>
 		<result property="featureBySubjectId.cvTerm.name" column="subject_cvterm" />
+		<result property="featureBySubjectId.featureCvTerms"
+			                           column="{{uniqueName=subject_name}}"
+			                           select="getFeatureCvTermsByFeature"/>
 		<result property="featureBySubjectId.featureRelationshipsForSubjectId" 
 			                           column="{{subject_id=subject_id}}" 
                                        select="getParentFeatureRelationship" /> 

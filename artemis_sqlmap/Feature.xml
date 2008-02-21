@@ -62,7 +62,9 @@
     <result property="featureRelationshipsForSubjectId" column="{subject_id=id}" 
                                        select="getFeatureRelationship" /> 
     <result property="featureSynonyms" column="{feature.uniqueName=uniqueName}" 
-                                       select="getLazyFeatureSynonymsByUniquename" />                          
+                                       select="getLazyFeatureSynonymsByUniquename" />
+	<result property="featureCvTerms"  column="{{uniqueName=uniquename}}"
+			                           select="getFeatureCvTermsByFeature"/>                         
     <result property="organism" column="{organismId=organismId}" 
                                 select="getOrganism" />
   </resultMap>
@@ -289,35 +291,9 @@
     WHERE f.feature_id IN <iterate open="(" close=")" conjunction=","> $[]$ </iterate>
   </select>	
 	
-	
-  <!-- Returns matches for all features on a given srcfeature -->
-  <select id="getLazySimilarityMatches" parameterClass="java.lang.Integer" 
-                             resultMap="map-similaritymatch">
-    SELECT 
-      timelastmodified, 
-      f.feature_id AS id, 
-      f.uniquename, 
-      f.type_id,
-      f.name AS feature_name,
-	  f.seqlen,
-      srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, fl.rank,
-	  rawscore, normscore, significance, identity, a.analysis_id,
-	  a.name, description, program, programversion, algorithm, sourcename, sourceversion,sourceuri, timeexecuted
-    FROM feature f 
-    LEFT JOIN featureloc fl ON f.feature_id=fl.feature_id
-	LEFT JOIN analysisfeature af ON f.feature_id=af.feature_id 
-	LEFT JOIN analysis a ON af.analysis_id=a.analysis_id
-    WHERE  f.feature_id IN 
-        (  SELECT feature_id FROM featureloc WHERE srcfeature_id IN 
-         ( SELECT feature_id  FROM featureloc WHERE srcfeature_id=$value$) )
-	AND f.type_id != (SELECT cvterm_id FROM cvterm where name='polypeptide_domain')
-    ORDER BY f.feature_id
-  </select>
 
-  <!-- Returns matches for a list of feature_id's -->
-  <select id="getLazySimilarityMatchesByFeatureIds" parameterClass="java.util.List" 
-                             resultMap="map-similaritymatch">
-    SELECT 
+  <sql id="selectSimilarityMatch">
+	SELECT 
       timelastmodified, 
       f.feature_id AS id, 
       f.uniquename, 
@@ -332,11 +308,26 @@
     LEFT JOIN featureloc fl ON f.feature_id=fl.feature_id
 	LEFT JOIN analysisfeature af ON f.feature_id=af.feature_id
 	LEFT JOIN analysis a ON af.analysis_id=a.analysis_id
-    WHERE  f.feature_id IN 
+    WHERE f.type_id != (SELECT cvterm_id FROM cvterm where name='polypeptide_domain')
+	AND f.feature_id IN
+  </sql>
+	
+  <!-- Returns matches for all features on a given srcfeature -->
+  <select id="getLazySimilarityMatches" parameterClass="java.lang.Integer" 
+                             resultMap="map-similaritymatch">
+	<include refid="selectSimilarityMatch"/>
+        (  SELECT feature_id FROM featureloc WHERE srcfeature_id IN 
+         ( SELECT feature_id  FROM featureloc WHERE srcfeature_id=$value$) )
+    ORDER BY f.feature_id
+  </select>
+
+  <!-- Returns matches for a list of feature_id's -->
+  <select id="getLazySimilarityMatchesByFeatureIds" parameterClass="java.util.List" 
+                             resultMap="map-similaritymatch">
+    <include refid="selectSimilarityMatch"/> 
       (  SELECT feature_id FROM featureloc WHERE srcfeature_id IN
         <iterate open="(" close=")" conjunction=","> $[]$ </iterate>
       )
-	AND f.type_id != (SELECT cvterm_id FROM cvterm where name='polypeptide_domain')
     ORDER BY f.feature_id
   </select>
 
