@@ -7,8 +7,9 @@ Version ??
 	
 	Option to create features in intergenic regions added.
 
-	Feature editor now marks hyperlinks to UniProt, EMBL and PubMed, 
-	that are opened in the browser.
+	Feature editor now marks hyperlinks to SWALL, EMBL, UniProt, 
+	PMID, PubMed, InterPro, OrthoMCLDB, Pfam that are opened in 
+	the browser.
 	
 	Added "Convert Qualifier of Selected..." option to the Edit menu.
 	This allows the user to change the names of qualifiers for all
