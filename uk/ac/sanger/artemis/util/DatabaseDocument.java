@@ -2081,7 +2081,7 @@ public class DatabaseDocument extends Document
    * @param geneName
    * @return
    */
-  public Vector getPolypeptideNames(final String geneName)
+  /*public Vector getPolypeptideNames(final String geneName)
   {
     Vector polypeptides = getPolypeptideFeatures(geneName);
     Vector polypeptideNames = new Vector(polypeptides.size());
@@ -2091,7 +2091,7 @@ public class DatabaseDocument extends Document
       polypeptideNames.add(feature.getUniqueName());
     }
     return polypeptideNames;
-  }
+  }*/
   
   public List getClustersByFeatureIds(final List featureIds)
   {
