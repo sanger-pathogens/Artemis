@@ -35,6 +35,7 @@ import java.util.Vector;
 import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureRelationship;
 
 import uk.ac.sanger.artemis.io.DocumentEntry;
@@ -247,7 +248,7 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
         Feature subjectFeature = fr.getFeatureBySubjectId();
         
         if(subjectFeature.getFeatureId() != Integer.parseInt(featureId))
-        {
+        { 
           if(!value.equals(""))
             value = value.concat(", ");
           
@@ -263,6 +264,14 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
               subjectFeature.getUniqueName());
           
           value = value.concat(" type="+fr.getCvTerm().getName());
+          
+          if(!clusterFeature.getUniqueName().startsWith("CLUSTER_") &&
+             fr.getCvTerm().getName().equals("orthologous_to"))
+          {
+            String product = getProduct(subjectFeature);
+            if(product != null)
+              value = value.concat("; product="+product);
+          }
           
           cnt++;
         }
@@ -291,12 +300,30 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
     
     value = value.concat("; "+rank);
 
-    
     //
     //
     loadGeneName = false;
 
     return value;
+  }
+  
+  private String getProduct(final Feature subjectFeature)
+  {
+    Collection featureCvTerms = subjectFeature.getFeatureCvTerms();
+    
+    if(featureCvTerms != null)
+    {
+      Iterator itFCT = featureCvTerms.iterator();
+      while(itFCT.hasNext())
+      {
+        FeatureCvTerm featureCvTerm = (FeatureCvTerm) itFCT.next();
+        CvTerm cvTerm = featureCvTerm.getCvTerm();
+        if(cvTerm.getCv().getName().equals(
+            uk.ac.sanger.artemis.chado.ChadoTransactionManager.PRODUCT_CV))
+          return featureCvTerm.getCvTerm().getName();
+      }
+    }
+    return null;
   }
   
   private String getGeneName(final Feature subjectFeature)
