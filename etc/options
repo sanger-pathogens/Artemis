@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.40 2008-02-04 16:54:59 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.41 2008-02-22 15:56:57 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -772,9 +772,18 @@ common_keys = \
     tRNA unsure variation -10_signal -35_signal CDS_motif gene \
     BLASTN_HIT BLASTCDS 3'UTR 5'UTR
 
-#srs_url = http://srs.sanger.ac.uk/srsbin/cgi-bin/ 
+# SRS
 srs_url = http://srs.ebi.ac.uk/srsbin/cgi-bin/
-pubmed_url = http://www.ncbi.nlm.nih.gov/sites/entrez?Db=pubmed&Cmd=ShowDetailView&TermToSearch= 
+
+# hyperlinked databases in feature editor
+hyperlinks = \
+  EMBL+SWALL+UniProt+UniProtKB srs_url \
+  PubMed+PMID http://www.ncbi.nlm.nih.gov/sites/entrez?Db=pubmed&Cmd=ShowDetailView&TermToSearch= \
+  InterPro http://www.ebi.ac.uk/interpro/ISearch?query= \
+  OrthoMCLDB http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac= \
+  Pfam http://pfam.sanger.ac.uk/family?acc= \
+  SMART http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN= \
+  Prosite http://www.expasy.org/prosite/
 
 # chado gene model features default types
 chado_exon_model=CDS

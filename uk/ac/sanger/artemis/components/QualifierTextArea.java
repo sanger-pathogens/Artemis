@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.10 2008-01-23 10:51:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.11 2008-02-22 15:56:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -44,6 +44,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Vector;
 
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
@@ -61,15 +62,13 @@ public class QualifierTextArea extends JTextPane
     implements MouseMotionListener
 {
   private static final long serialVersionUID = 1L;
-  private static String[] DATABASES = 
-          { "SWALL", "EMBL", "UniProt", "PMID", 
-            "PubMed", "InterPro", "OrthoMCLDB",
-            "Pfam"};
+  private static Vector DATABASES = new Vector();
   private static Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
   private static Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
   private static Cursor chand = new Cursor(Cursor.HAND_CURSOR);
   private static Style DEFAULT_STYLE = 
     StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+  private static StringVector dbsLinks;
   
   /**
    *  Create a new QualifierTextArea containing no text.
@@ -83,6 +82,17 @@ public class QualifierTextArea extends JTextPane
             40 :
             18);
     int ncolumns = 81;
+    
+    if(dbsLinks == null)
+    {
+      dbsLinks = Options.getOptions().getOptionValues("hyperlinks");
+      for(int i=0; i<dbsLinks.size(); i+=2)
+      {
+        String dbs[] = ((String)dbsLinks.get(i)).split("\\+");
+        for(int j=0; j<dbs.length; j++)
+          DATABASES.add(dbs[j]);
+      }
+    }
     
     setPreferredSize(new Dimension( ncolumns*getColumnWidth(), nrows*getRowHeight() ));
     setBackground (Color.white);
@@ -113,8 +123,8 @@ public class QualifierTextArea extends JTextPane
     {
       doc.insertString(doc.getLength(), s, getLogicalStyle());
       
-      for(int i=0; i<DATABASES.length; i++)
-        setStyleForHyperLinks(s, DATABASES[i]);
+      for(int i=0; i<DATABASES.size(); i++)
+        setStyleForHyperLinks(s, (String)DATABASES.get(i));
     }
     catch(BadLocationException e)
     {
@@ -145,8 +155,8 @@ public class QualifierTextArea extends JTextPane
     // ensure we have the default style set
     getStyledDocument().setCharacterAttributes(0, text.length(), 
                  DEFAULT_STYLE, true);
-    for(int i=0; i<DATABASES.length; i++)
-      setStyleForHyperLinks(text, DATABASES[i]);
+    for(int i=0; i<DATABASES.size(); i++)
+      setStyleForHyperLinks(text, (String)DATABASES.get(i));
   }
 
   /**
@@ -249,37 +259,15 @@ public class QualifierTextArea extends JTextPane
   private int getStartOfLink(final String s)
   {
     int lastIndexLink = -1;
-    for(int i=0; i<DATABASES.length; i++)
+    for(int i=0; i<DATABASES.size(); i++)
     {
-      int index = s.lastIndexOf(DATABASES[i]);
+      int index = s.lastIndexOf((String)DATABASES.get(i));
       if(index > lastIndexLink)
         lastIndexLink = index;
     }
     return lastIndexLink;
   }
-  
-  public static String getPubMedSite()
-  {
-    StringVector pubmed = Options.getOptions().getOptionValues("pubmed_url");
-    if(pubmed != null)
-      return (String)pubmed.elementAt(0);
-    return "http://www.ncbi.nlm.nih.gov/sites/entrez?Db=pubmed&Cmd=ShowDetailView&TermToSearch=";
-  }
-  
-  public static String getInterProSite()
-  {
-	  return "http://www.ebi.ac.uk/interpro/ISearch?query=";
-  }
-  
-  public static String getOrthoMCLSite()
-  {
-    return "http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=";
-  }
-  
-  public static String getPfamSite()
-  {
-    return "http://pfam.sanger.ac.uk/family?acc="; 
-  }
+
   
   /**
    * Process double click event.
@@ -290,51 +278,64 @@ public class QualifierTextArea extends JTextPane
     final String hyperlinkText = getHyperlinkTextAtMouseEvent(e);
     if(hyperlinkText == null)
       return;
+    
+    for(int i=0; i<dbsLinks.size(); i+=2)
+    {
+      String names[] = ((String)dbsLinks.get(i)).split("\\+");
       
-    final String cmd;
-    if(hyperlinkText.indexOf("PMID")   > -1 ||
-        hyperlinkText.indexOf("PubMed") > -1)
-    {
-      String id[] = hyperlinkText.split(":");
-      if(id.length < 2)
-        return;
-      cmd = getPubMedSite()+id[1];
+      for(int j=0; j<names.length; j++)
+      {
+        if(hyperlinkText.indexOf(names[j]) > -1)
+        {
+          String id[] = hyperlinkText.split(":");
+          if(id.length < 2)
+            return;
+          
+          String link = (String)dbsLinks.get(i+1);
+          
+          if(link.equals("srs_url"))
+            sendToBrowser( getSrsLink(hyperlinkText) );
+          else
+            sendToBrowser(link + id[1]);
+          return;
+        }
+      }
     }
-    else if(hyperlinkText.indexOf("InterPro") > -1)
-    {
-      String id[] = hyperlinkText.split(":");
-      if(id.length < 2)
-        return;
-      cmd = getInterProSite()+id[1];
-    }
-    else if(hyperlinkText.indexOf("OrthoMCLDB") > -1)
-    {
-      String id[] = hyperlinkText.split(":");
-      if(id.length < 2)
-        return;
-      cmd = getOrthoMCLSite()+id[1];
-    }
-    else if(hyperlinkText.indexOf("Pfam") > -1)
-    {
-      String id[] = hyperlinkText.split(":");
-      if(id.length < 2)
-        return;
-      cmd = getPfamSite()+id[1];
-    }
-    else
-    {
-      String cmd2 = DataCollectionPane.getSrsSite()+"/wgetz?-e+["+hyperlinkText+"]";
+  }
 
-      int ind = cmd2.indexOf("UniProt:");
-      // link to uniprot accession
-      if(ind > -1)
-        cmd2 = cmd2.substring(0,ind+7)+"-acc:"+
-               cmd2.substring(ind+8);
-      if(cmd2.indexOf("ebi.ac.uk") > -1)
-        cmd2 = cmd2 + "+-vn+2";
-      cmd = cmd2;
-    }
-      
+  /**
+   * Get SRS hyperlink
+   * @param hyperlinkText
+   * @return
+   */
+  private String getSrsLink(String hyperlinkText)
+  {
+    String cmd = DataCollectionPane.getSrsSite() + 
+               "/wgetz?-e+[" + hyperlinkText + "]";
+
+    int ind = cmd.indexOf("UniProt:");
+    // link to uniprot accession
+    if(ind > -1)
+      cmd = cmd.substring(0, ind + 7) + "-acc:"
+                       + cmd.substring(ind + 8);
+
+    ind = cmd.indexOf("UniProtKB:");
+    // link to uniprotkb accession
+    if(ind > -1)
+      cmd = cmd.substring(0, ind + 7) + "-acc:"
+                      + cmd.substring(ind + 10);
+
+    if(cmd.indexOf("ebi.ac.uk") > -1)
+      cmd = cmd + "+-vn+2";
+    return cmd;
+  }
+
+  /**
+   * Send hyperlink to browser
+   * @param cmd
+   */
+  private void sendToBrowser(final String cmd)
+  {
     SwingWorker browserLaunch = new SwingWorker()
     {
       public Object construct()
@@ -347,7 +348,7 @@ public class QualifierTextArea extends JTextPane
     };
     browserLaunch.start();
   }
-
+  
   public void mouseDragged(MouseEvent e){}
   public void mouseMoved(MouseEvent e)
   {

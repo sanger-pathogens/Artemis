@@ -1,4 +1,4 @@
-Version ??
+Version 10
 
 	Add redo function to 'Edit' menu. Also enable/disable undo and
 	redo menu items when available/not available.
@@ -9,7 +9,7 @@ Version ??
 
 	Feature editor now marks hyperlinks to SWALL, EMBL, UniProt, 
 	PMID, PubMed, InterPro, OrthoMCLDB, Pfam that are opened in 
-	the browser.
+	the browser. Now configured in the options file.
 	
 	Added "Convert Qualifier of Selected..." option to the Edit menu.
 	This allows the user to change the names of qualifiers for all
