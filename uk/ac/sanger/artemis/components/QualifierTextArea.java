@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.11 2008-02-22 15:56:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.12 2008-02-25 11:40:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -237,22 +237,27 @@ public class QualifierTextArea extends JTextPane
   
   private int getEndOfLink(String s, int ind)
   {
-    int ind2 = s.indexOf(" ",ind);
-    if(ind2 == -1)
-      ind2 = s.indexOf(";",ind);
-
-    int ind3 = s.indexOf(")",ind);
-    if(ind3>-1 && (ind3<ind2 || ind2 == -1))
-      ind2 = ind3;
-    ind3 = s.indexOf(";",ind);
-    if(ind3>-1 && (ind3<ind2 || ind2 == -1))
-      ind2 = ind3;
-    ind3 = s.indexOf("\"",ind);
-    if(ind3>-1 && (ind3<ind2 || ind2 == -1))
-      ind2 = ind3;
-    ind3 = s.indexOf("\n",ind);
-    if(ind3>-1 && (ind3<ind2 || ind2 == -1))
-      ind2 = ind3;
+    final char endOfLinkChar[] = { 
+        ' ',
+        ';',
+        ')',
+        ']',
+        ';',
+        ',',
+        '\"',
+        '\n' };
+    
+    
+    int ind2 = s.indexOf(endOfLinkChar[0],ind);
+    int ind3;
+    
+    for(int i=1; i<endOfLinkChar.length; i++)
+    {
+      ind3 = s.indexOf(endOfLinkChar[i],ind);
+      if(ind3>-1 && (ind3<ind2 || ind2 == -1))
+        ind2 = ind3;
+    }
+    
     return ind2;
   }
   
