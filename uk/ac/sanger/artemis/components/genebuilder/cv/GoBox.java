@@ -239,7 +239,9 @@ class GoBox extends AbstractCvBox
       return true;
     
     old = getField("evidence=", origQualifierString);
-    if(!old.equalsIgnoreCase(evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
+    
+    if(evidenceList.getSelectedIndex() > -1 &&
+       !old.equalsIgnoreCase(evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
       return true;
     
     old = getField("qualifier=", origQualifierString);
