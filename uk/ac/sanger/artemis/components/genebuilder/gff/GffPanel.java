@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.14 2008-01-11 15:03:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.15 2008-02-25 14:15:33 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -437,7 +437,8 @@ public class GffPanel extends JPanel
   
   private void addSynonym()
   {
-    final Vector synonyms = DatabaseDocument.getCvterms("", "genedb_synonym_type");
+    final Vector synonyms = DatabaseDocument.getCvterms("", 
+        ChadoTransactionManager.SYNONYM_TAG_CVNAME);
     final JExtendedComboBox list = new JExtendedComboBox(synonyms);
     final String options[] = { "CANCEL", "NEXT>"};   
     

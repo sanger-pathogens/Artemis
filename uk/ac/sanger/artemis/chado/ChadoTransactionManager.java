@@ -126,7 +126,7 @@ public class ChadoTransactionManager
   
   //synonym tags from cv
   private static String synonym_tags[] = null;
-  private static String SYNONYM_TAG_CVNAME = "genedb_synonym_type";
+  public static String SYNONYM_TAG_CVNAME = "genedb_synonym_type";
   private EntryGroup entryGroup;
   // Db where db entries  are stored corresponding to controlled curation CV terms
   public static String CONTROLLED_CURATION_DB = "CCGEN";
