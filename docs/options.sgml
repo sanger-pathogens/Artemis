@@ -278,6 +278,14 @@ common_keys = \
       </PARA>
     </SECT2>
 
+    <SECT2 ID="OPTIONS-HYPERLINKS">
+      <TITLE><LITERAL>hyperlinks</LITERAL></TITLE>
+      <PARA>
+This is a list of databases and their URL's for Artemis to provide
+hyperlinks in the Feature Editor (see <XREF LINKEND="EDITMENU-EDIT-SELECTED-FEATURES">).
+      </PARA>
+    </SECT2>
+
     <SECT2 ID="OPTIONS-UNDO-LEVELS">
       <TITLE><LITERAL>undo_levels</LITERAL></TITLE>
       <PARA>
