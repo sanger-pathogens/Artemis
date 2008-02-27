@@ -1216,6 +1216,14 @@ If no bases are selected an error will be reported.
     </PARA>
   </SECT2>
 
+  <SECT2 ID="CREATEMENU-CREATE-INTERGENIC-FEATURES">
+    <TITLE>Intergeneic Features</TITLE>
+    <PARA>
+Create new features between CDS features in the default entry all with the "misc_feature" key.
+    </PARA>
+  </SECT2>
+
+
   <SECT2 ID="CREATEMENU-CREATE-FEATURES-FROM-NON-MATCHING-REGIONS">
     <TITLE>Features From Non-matching Regions</TITLE>
     <PARA>
