@@ -477,6 +477,11 @@ public class FastaTextPane extends JScrollPane
             if(ind1 > -1)
             {
               ind2 = line.indexOf("ungapped)",ind1);
+              
+              // fasta34 changed to similar
+              if(ind2 == -1)
+                ind2 = line.indexOf("similar)",ind1);
+              
               if(ind2 > -1)
                 hi.setUngapped(line.substring(ind1+1,ind2).trim());
             }
