@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.9 2008-03-06 14:34:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.10 2008-03-06 16:36:01 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import javax.swing.JTextField;
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.9 2008-03-06 14:34:05 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.10 2008-03-06 16:36:01 tjc Exp $
  **/
 
 public class BasePlot extends Plot
@@ -385,8 +385,17 @@ public class BasePlot extends Plot
     else
       defaultKey = Key.CDS;
     
+    Entry entry = entryGroup.getDefaultEntry();
+    if(entry == null)
+    {
+      JOptionPane.showMessageDialog(null, 
+          "Please select a default entry\nand try again!", "No default entry", 
+          JOptionPane.WARNING_MESSAGE);
+      return;
+    }
+    
     KeyChoice keyChoice = new KeyChoice(
-        entryGroup.getDefaultEntry().getEntryInformation(), defaultKey);
+        entry.getEntryInformation(), defaultKey);
 
     c.gridx = 1;
     c.gridy = 2;
@@ -440,8 +449,8 @@ public class BasePlot extends Plot
     
     for(int i = 0 ; i < number_of_values ; ++i) 
     {
-      getBaseAlgorithm().getValues(i * step_size,
-                                   i * step_size +
+      getBaseAlgorithm().getValues((i * step_size) + 1,
+                                   (i * step_size) + 1 +
                                    getWindowSize() - 1,
                                    temp_values);
 
