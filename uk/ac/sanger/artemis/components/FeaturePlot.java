@@ -20,13 +20,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePlot.java,v 1.4 2004-11-29 14:09:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePlot.java,v 1.5 2008-03-06 14:40:07 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.sequence.*;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.*;
+import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.plot.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -36,7 +39,7 @@ import java.awt.event.*;
  *  particular feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePlot.java,v 1.4 2004-11-29 14:09:54 tjc Exp $
+ *  @version $Id: FeaturePlot.java,v 1.5 2008-03-06 14:40:07 tjc Exp $
  **/
 
 public class FeaturePlot extends Plot
@@ -388,4 +391,9 @@ public class FeaturePlot extends Plot
    *  DisplayAdjustmentEvent.
    **/
   private int width_in_bases;
+
+  protected void calculateFeatures() throws ReadOnlyException, EntryInformationException, OutOfRangeException
+  {
+    // TODO Auto-generated method stub
+  }
 }
