@@ -20,17 +20,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.12 2006-10-09 12:21:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.13 2008-03-06 14:34:05 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.plot.*;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
 
 import java.awt.*;
 import java.awt.event.*;
 
+import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -48,7 +52,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.12 2006-10-09 12:21:52 tjc Exp $
+ *  @version $Id: Plot.java,v 1.13 2008-03-06 14:34:05 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -108,6 +112,9 @@ public abstract class Plot extends JPanel
    *  the canvas (see drawCrossHair()).
    **/
   protected abstract int getPointPosition(final int canvas_x_position);
+  
+  protected abstract void calculateFeatures()
+            throws ReadOnlyException, EntryInformationException, OutOfRangeException;  
 
   /** number of graph lines to be drawn */
   private int numPlots;
@@ -347,8 +354,8 @@ public abstract class Plot extends JPanel
         popup.add(scaling_toggle);
         popup.addSeparator();
 
-        final JMenuItem max_window_size =
-              new JMenuItem("Maximum Window Size:");
+        final JMenu max_window_size =
+              new JMenu("Maximum Window Size");
 
         popup.add(max_window_size);
 
@@ -380,7 +387,41 @@ public abstract class Plot extends JPanel
             }
           });
 
-          popup.add(window_size_item);
+          max_window_size.add(window_size_item);
+        }
+        
+        if(numPlots == 1 && getAlgorithm() instanceof BaseAlgorithm)
+        {
+          popup.addSeparator();
+          final JMenuItem createFeatures =
+            new JMenuItem("Create features from graph peaks...");
+          popup.add(createFeatures);
+          
+          createFeatures.addActionListener(new ActionListener() 
+          {
+            public void actionPerformed(ActionEvent e) 
+            {
+              try
+              {
+                calculateFeatures();
+              }
+              catch(ReadOnlyException e1)
+              {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+              }
+              catch(EntryInformationException e1)
+              {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+              }
+              catch(OutOfRangeException e1)
+              {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+              }
+            }
+          });
         }
 
         parent.add(popup);

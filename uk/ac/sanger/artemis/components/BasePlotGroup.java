@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlotGroup.java,v 1.6 2004-11-30 16:16:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlotGroup.java,v 1.7 2008-03-06 14:34:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -42,7 +42,7 @@ import javax.swing.*;
  *  which can toggled off and on.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlotGroup.java,v 1.6 2004-11-30 16:16:17 tjc Exp $
+ *  @version $Id: BasePlotGroup.java,v 1.7 2008-03-06 14:34:05 tjc Exp $
  **/
 
 public class BasePlotGroup extends JPanel
@@ -355,7 +355,7 @@ public class BasePlotGroup extends JPanel
                             GridBagConstraints constraints) 
   {
     final BasePlot new_base_plot =
-      new BasePlot(algorithm, getSelection(), getGotoEventSource());
+      new BasePlot(algorithm, getSelection(), getGotoEventSource(), entry_group);
 
     gridbag.setConstraints(new_base_plot, constraints);
     add(new_base_plot);

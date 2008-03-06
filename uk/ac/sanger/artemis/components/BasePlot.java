@@ -20,19 +20,33 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.8 2007-06-20 15:49:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.9 2008-03-06 14:34:05 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+import uk.ac.sanger.artemis.io.EntryInformationException;
+import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.io.Location;
+import uk.ac.sanger.artemis.io.Qualifier;
+import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.plot.*;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.text.NumberFormat;
+
+import javax.swing.Box;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 
 /**
@@ -40,12 +54,14 @@ import java.text.NumberFormat;
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.8 2007-06-20 15:49:32 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.9 2008-03-06 14:34:05 tjc Exp $
  **/
 
 public class BasePlot extends Plot
     implements DisplayAdjustmentListener, SelectionChangeListener 
 {
+  private static final long serialVersionUID = 1L;
+
   /**
    *  The start base to plot, as obtained from the DisplayAdjustmentEvent.
    **/
@@ -117,6 +133,8 @@ public class BasePlot extends Plot
    **/
   private float max_value = Float.MIN_VALUE;
   
+  private EntryGroup entryGroup;
+  
   /**
    *  Used by getPreferredSize() and getMinimumSize();
    **/
@@ -152,14 +170,16 @@ public class BasePlot extends Plot
    **/
   public BasePlot(final BaseAlgorithm algorithm,
                   final Selection selection,
-                  final GotoEventSource goto_event_source) 
+                  final GotoEventSource goto_event_source,
+                  final EntryGroup entryGroup) 
   {
     super(algorithm, false);   // false means don't draw the scale line
 
     this.selection = selection;
     this.goto_event_source = goto_event_source;
     this.bases = getBaseAlgorithm().getBases();
-
+    this.entryGroup  = entryGroup;
+    
     getSelection().addSelectionChangeListener(this);
 
     setToolTipText("tool_tip");
@@ -317,6 +337,155 @@ public class BasePlot extends Plot
     return width_in_bases;
   }
 
+  /**
+   *  Recalculate the values in value_array_array, step_size, min_value and
+   *  max_value.
+   * @throws OutOfRangeException 
+   * @throws EntryInformationException 
+   * @throws ReadOnlyException 
+   * @throws OutOfRangeException 
+   * @throws EntryInformationException 
+   * @throws ReadOnlyException 
+   **/
+  protected void calculateFeatures() 
+            throws ReadOnlyException, EntryInformationException, OutOfRangeException
+  {
+    GridBagLayout gridbag = new GridBagLayout();
+    JPanel pane = new JPanel(gridbag);
+
+    GridBagConstraints c = new GridBagConstraints();
+
+    c.anchor = GridBagConstraints.EAST;
+    c.gridx = 0;
+    c.gridy = 0;
+    pane.add(new JLabel("Minimum feature size:"), c);
+    
+    c.gridx = 0;
+    c.gridy = 1;
+    pane.add(new JLabel("Cut-off value:"), c);
+    
+    c.gridx = 0;
+    c.gridy = 2;
+    pane.add(new JLabel("Key:"), c);
+    
+    JTextField minSize = new JTextField(String.valueOf (100), 15);
+    c.anchor = GridBagConstraints.WEST;
+    c.gridx = 1;
+    c.gridy = 0;
+    pane.add(minSize, c);
+    
+    JTextField cutoffField = new JTextField(getAlgorithm().getAverage().toString(),15);
+    c.gridx = 1;
+    c.gridy = 1;
+    pane.add(cutoffField,c);
+    
+    final Key defaultKey;
+    if(GeneUtils.isDatabaseEntry(entryGroup))
+      defaultKey = new Key("region");
+    else
+      defaultKey = Key.CDS;
+    
+    KeyChoice keyChoice = new KeyChoice(
+        entryGroup.getDefaultEntry().getEntryInformation(), defaultKey);
+
+    c.gridx = 1;
+    c.gridy = 2;
+    pane.add(keyChoice, c);
+    
+    int select = JOptionPane.showConfirmDialog(null, 
+                                pane, "Options", 
+                                JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
+    
+    if(select == JOptionPane.CANCEL_OPTION)
+      return;
+    
+    int minFeatureSize = Integer.parseInt(minSize.getText());
+    float cutoff = Float.parseFloat(cutoffField.getText());
+    Key key = keyChoice.getSelectedItem();
+    
+    final int end = getBaseAlgorithm().getBases().getLength();
+    final int window_size = getWindowSize();
+    final Integer default_step_size =
+      getAlgorithm().getDefaultStepSize(window_size);
+    if(default_step_size == null) 
+      step_size = 1;
+    else
+    {
+      if(default_step_size.intValue() < window_size) 
+        step_size = default_step_size.intValue();
+      else
+        step_size = window_size;
+    }
+    
+    // the number of plot points in the graph
+    final int number_of_values =
+      (end - (getWindowSize() - step_size)) / step_size;
+
+    getBaseAlgorithm().setRevCompDisplay(rev_comp_display);
+
+    // just one graph calculated
+    float [] temp_values = new float [1];
+    int featureStart = -1;
+    
+    final Entry new_entry =
+      entryGroup.createEntry ("CDS_" + minFeatureSize + "_" +
+                              getBaseAlgorithm().getAlgorithmShortName());
+    
+    float average = 0.f;
+    int averageCount = 0;
+    final String noteField = "Auto-generated from "+getAlgorithm().getAlgorithmName()+
+                             " plot;"+" window size="+getWindowSize()+
+                             "; score cut-off="+cutoffField.getText();
+    
+    for(int i = 0 ; i < number_of_values ; ++i) 
+    {
+      getBaseAlgorithm().getValues(i * step_size,
+                                   i * step_size +
+                                   getWindowSize() - 1,
+                                   temp_values);
+
+      final float current_value = temp_values[0];
+      int pos = getWindowSize()/2 + (i * step_size) + 1;
+      
+      if(current_value > cutoff)
+      {
+        average+=current_value;
+        averageCount++;
+      }
+      
+      if(current_value > cutoff && featureStart == -1)
+      {
+        featureStart = pos;
+      }
+      else if(current_value <= cutoff && featureStart > -1)
+      { 
+        if(pos-featureStart < minFeatureSize)
+        {
+          average = 0.f;
+          averageCount = 0;
+          featureStart = -1;
+          continue;
+        }
+        
+        // create feature 
+        MarkerRange range = new MarkerRange(getBaseAlgorithm().getStrand(),
+                                            featureStart, pos);
+        final Location new_location = range.createLocation();
+        
+        average = average/averageCount;
+        QualifierVector qualifiers = new QualifierVector();
+        qualifiers.add(new Qualifier("score", Float.toString(average)));
+        qualifiers.add(new Qualifier("note", noteField));
+        
+        new_entry.createFeature(key, new_location, qualifiers);
+        featureStart = -1;
+        average = 0.f;
+        averageCount = 0;
+      }
+    }
+    return;
+  }
 
   /**
    *  Recalculate the values in value_array_array, step_size, min_value and
