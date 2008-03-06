@@ -1,3 +1,9 @@
+Version x
+
+	Added option to "Create features from graph peaks". For a graph 
+	this creates features in regions above a given cut-off and above 
+	a given feature size.
+	
 Version 10
 
 	Add redo function to 'Edit' menu. Also enable/disable undo and
