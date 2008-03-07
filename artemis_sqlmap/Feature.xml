@@ -163,9 +163,12 @@
       fp.value,
       fl.phase
     FROM feature f
+	LEFT JOIN featureloc fl ON ( f.feature_id  = fl.feature_id
+	  <isGreaterThan property="featureLoc.featureBySrcFeatureId.featureId" compareValue="0"> 
+          AND srcfeature_id=$featureLoc.featureBySrcFeatureId.featureId$ 
+      </isGreaterThan> )
     LEFT JOIN feature_relationship fr ON fr.subject_id = f.feature_id
     LEFT JOIN featureprop fp          ON fp.feature_id = f.feature_id
-    LEFT JOIN featureloc fl           ON f.feature_id  = fl.feature_id
 	LEFT JOIN dbxref dbx              ON f.dbxref_id   = dbx.dbxref_id
 	LEFT JOIN db                      ON dbx.db_id     = db.db_id
     WHERE
@@ -369,6 +372,7 @@
   </select>
 
 
+  <!--
   <select id="getResidueFeatures" parameterClass="java.lang.Integer"
             resultMap="map-feature-with-residues-result">
     SELECT feature.name, uniquename, feature_id, type_id, 
@@ -381,12 +385,6 @@
 	  cvterm.name!='mRNA' AND cvterm.name!='pseudogenic_transcript' AND 
 	  cvterm.name!='polypeptide' AND
 	  residues notnull AND residues NOT LIKE '' ORDER BY common_name
-       <!--
-         <iterate prepend="AND" property="cvTermIds" conjunction="OR" open="(" close=")">
-           type_id=#cvTermIds[]#
-         </iterate>
-       ORDER BY abbreviation, type_id 
-       -->
   </select>
 	
   <select id="getResidueFeaturesByOrganismCommonName" parameterClass="java.lang.String"
@@ -402,7 +400,35 @@
 	  cvterm.name!='polypeptide' AND
 	  residues notnull AND residues NOT LIKE '' ORDER BY common_name
   </select>
+  -->
 	
+  
+  <select id="getResidueFeatures" parameterClass="java.lang.Integer"
+            resultMap="map-feature-with-residues-result">
+	SELECT feature.name, uniquename, feature_id, type_id, feature.organism_id, 
+	       abbreviation, genus, species, common_name, cvterm.name AS cvterm_name 
+	FROM cvterm 
+	LEFT JOIN feature ON cvterm.cvterm_id=feature.type_id 
+	LEFT JOIN organism ON organism.organism_id=feature.organism_id 
+	WHERE <isNotNull> feature.organism_id=$value$ AND </isNotNull>
+	  ( cvterm.name LIKE '%chromosome%' OR cvterm.name LIKE '%sequence%' OR 
+	    cvterm.name IN ('ultra_scaffold', 'golden_path_region') ) 
+	AND residues notnull AND residues != '' ORDER BY common_name
+  </select>
+	
+  <select id="getResidueFeaturesByOrganismCommonName" parameterClass="java.lang.String"
+            resultMap="map-feature-with-residues-result">
+    SELECT feature.name, uniquename, feature_id, type_id, 
+	       feature.organism_id, abbreviation, genus, species, common_name
+	FROM cvterm 
+	LEFT JOIN feature ON cvterm.cvterm_id=feature.type_id 
+	LEFT JOIN organism ON organism.organism_id=feature.organism_id 
+	WHERE <isNotNull> organism.common_name=#value# AND </isNotNull>
+	  ( cvterm.name LIKE '%chromosome%' OR cvterm.name LIKE '%sequence%' OR 
+	    cvterm.name IN ('ultra_scaffold', 'golden_path_region') ) 
+	AND residues notnull AND residues != '' ORDER BY common_name	  
+  </select>
+  
 		
   <select id="getResiduesByUniqueName" parameterClass="java.lang.String"
             resultMap="map-feature-residues">
