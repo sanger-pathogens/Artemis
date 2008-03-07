@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.55 2008-02-15 16:59:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.56 2008-03-07 12:20:44 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -70,7 +70,7 @@ import javax.swing.JFrame;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.55 2008-02-15 16:59:03 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.56 2008-03-07 12:20:44 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -280,6 +280,8 @@ public class FeatureDisplay extends EntryGroupPanel
   private static Color dark_green = new Color(0, 150, 0);
 
   private final int scrollbar_style;
+  
+  private static Vector contigKeys;
 
   private Object[] protein_keys = { "CDS", 
                                     "exon", 
@@ -4838,12 +4840,27 @@ public class FeatureDisplay extends EntryGroupPanel
 
   protected static Vector getContigKeys()
   {
-    Vector contig_keys = new Vector(3);
-    contig_keys.add("fasta_record");
-    contig_keys.add("contig");
-    contig_keys.add("insertion_gap");
+    if(contigKeys == null)
+    {
+      contigKeys = new Vector(3);
+      contigKeys.add("fasta_record");
+      contigKeys.add("contig");
+      contigKeys.add("insertion_gap");
+    }
     
-    return contig_keys;
+    return contigKeys;
+  }
+  
+  protected static Vector getAllPossibleContigKeys()
+  {
+    Vector allPossibleContigKeys = new Vector();
+    allPossibleContigKeys.add("fasta_record");
+    allPossibleContigKeys.add("contig");
+    allPossibleContigKeys.add("insertion_gap");
+    allPossibleContigKeys.add("gap");
+    allPossibleContigKeys.add("scaffold");
+    allPossibleContigKeys.add("source");
+    return allPossibleContigKeys;
   }
 
   /**

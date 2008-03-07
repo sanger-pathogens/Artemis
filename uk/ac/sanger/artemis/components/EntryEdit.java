@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.59 2008-01-30 09:56:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.60 2008-03-07 12:20:44 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.59 2008-01-30 09:56:57 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.60 2008-03-07 12:20:44 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1435,6 +1435,104 @@ public class EntryEdit extends JFrame
         
         tabPane.add("Short Cuts", shortcut_pane);
         
+        //
+        // Contig ordering options
+        //
+        final Vector contigKeys = FeatureDisplay.getContigKeys();
+        final Vector allPossibleContigKeys = FeatureDisplay.getAllPossibleContigKeys();
+        final Vector nonContigKeys = new Vector();
+        
+        for(int i=0; i<allPossibleContigKeys.size(); i++)
+        {
+          String keyStr = ((String)allPossibleContigKeys.get(i));
+          if( !contigKeys.contains(keyStr) )
+            nonContigKeys.add(keyStr);
+        }
+        
+        
+        final DefaultListModel showListModel = new DefaultListModel();
+        for(int i=0; i<contigKeys.size(); i++)
+          showListModel.addElement(contigKeys.get(i));
+        final JList displayList = new JList(showListModel);
+        
+        
+        final DefaultListModel hideListModel = new DefaultListModel();
+        for(int i=0; i<nonContigKeys.size(); i++)
+          hideListModel.addElement(nonContigKeys.get(i));
+        final JList hideList = new JList(hideListModel);
+        
+        
+        final JButton hide_butt = new JButton(">>");
+        hide_butt.addActionListener(new ActionListener()
+        {
+          public void actionPerformed(ActionEvent e)
+          {
+            while(!displayList.isSelectionEmpty())
+            {
+              final String hideKey = (String)displayList.getSelectedValue();
+              
+              nonContigKeys.add(hideKey);
+              if(contigKeys.contains(hideKey))
+                contigKeys.remove(hideKey);
+
+              hideListModel.add(nonContigKeys.indexOf(hideKey), hideKey);
+              showListModel.removeElement(hideKey);
+            }
+          }
+        });
+
+        
+        final JPanel panel = new JPanel(new BorderLayout());
+        final JPanel contigPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        
+        c.anchor = GridBagConstraints.NORTHWEST;
+      
+        c.ipadx = 50;
+        c.gridx = 0;
+        c.gridy = 0;
+        contigPanel.add(new JLabel("Contig Ordering Features:"),c);
+        c.gridy = 1;
+        JScrollPane jspContig = new JScrollPane(displayList);
+        Dimension d = new Dimension(300, jspContig.getPreferredSize().height);
+        jspContig.setPreferredSize(d);
+        contigPanel.add(jspContig,c);
+        c.gridy = 2;
+        contigPanel.add(hide_butt,c);
+        
+        final JButton show_butt = new JButton("<<");
+        show_butt.addActionListener(new ActionListener()
+        {
+          public void actionPerformed(ActionEvent e)
+          {
+            while(!hideList.isSelectionEmpty())
+            {
+              final String showKey = (String)hideList.getSelectedValue();
+              
+              if(nonContigKeys.contains(showKey))
+                nonContigKeys.remove(showKey);
+              contigKeys.add(showKey);
+              
+              showListModel.add(contigKeys.indexOf(showKey), showKey);
+              hideListModel.removeElement(showKey);
+            }
+          }
+        });
+
+        c.gridx = 1;
+        c.gridy = 0;
+        contigPanel.add(new JLabel("Non-Contig Ordering Features:"),c);
+        c.gridy = 1;
+        JScrollPane jspNonContig = new JScrollPane(hideList);
+        jspNonContig.setPreferredSize(d);
+        contigPanel.add(jspNonContig,c);
+        c.gridy = 2;
+        contigPanel.add(show_butt,c);
+ 
+        panel.add(contigPanel, BorderLayout.CENTER);
+        tabPane.add("Contig Tool Options", panel);
+
+        
         /*String urlString = (String)Options.getOptions().getOptionValues("srs_url").elementAt(0);
         Box yBox = Box.createVerticalBox();
         JTextField srsField = new JTextField(urlString);
@@ -1487,8 +1585,8 @@ public class EntryEdit extends JFrame
               break;
             FastaTextPane.cacheHits[i] = cacheHits[i];
           }
-        }
-
+        } 
+        
      }
     });
     file_menu.add(prefs);
