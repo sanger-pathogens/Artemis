@@ -51,8 +51,7 @@
         <isNotNull property="significance"> ,significance </isNotNull>
         <isNotNull property="identity">     ,identity </isNotNull>)
       VALUES
-        ( $feature.featureId$,
-          (SELECT analysis_id FROM analysis WHERE program=#analysis.program#)
+        ( $feature.featureId$, $analysis.analysisId$
           <isNotNull property="rawScore">     ,$rawScore$ </isNotNull>
           <isNotNull property="normScore">    ,$normScore$ </isNotNull>
           <isNotNull property="significance"> ,$significance$ </isNotNull>
