@@ -150,6 +150,16 @@ public abstract class GmodDAO
   }
  
   
+  public List getFeaturesByOrganism(Organism organism)
+  {
+    return null;
+  }
+  
+  public List getFeaturesByUniqueNames(List name)
+  {
+    return null;  
+  }
+  
   //////
   ////// SchemaDaoI
   //////

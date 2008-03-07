@@ -943,6 +943,11 @@ public class IBatisDAO extends GmodDAO
     subjectLoc.setFeatureByFeatureId(matchFeature);
     sqlMap.insert("insertFeatureLoc", subjectLoc);
     
+    
+    // insert analysis
+    Integer analysisId =  (Integer) sqlMap.insert("insertAnalysis", analysisFeature.getAnalysis());
+    analysisFeature.getAnalysis().setAnalysisId(analysisId.intValue());
+    
     // insert analysis feature
     matchFeature.setFeatureId(matchFeatureId);
     analysisFeature.setFeature(matchFeature);

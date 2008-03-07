@@ -323,6 +323,7 @@ public class ArtemisUtils
         ";");
 
     analysis.setProgram((String) qualifier_strings.get(0));
+    analysis.setProgramVersion("1.0");
 
     // primary dbxref
     DbXRef dbXRef_1 = new DbXRef();

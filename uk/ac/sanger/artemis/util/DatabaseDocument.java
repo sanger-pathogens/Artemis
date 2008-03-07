@@ -2240,9 +2240,9 @@ public class DatabaseDocument extends Document
       
       schema_list = dao.getOrganisms();
       
-      Organism org = new Organism();
+      /*Organism org = new Organism();
       org.setCommonName("web");
-      schema_list.add(org);
+      schema_list.add(org);*/
       
       final List pg_schemas = dao.getSchema();
       
@@ -2270,6 +2270,12 @@ public class DatabaseDocument extends Document
       {
         final Organism organism = (Organism)it.next();
         String orgName = organism.getCommonName();
+        
+        if(orgName == null || orgName.equals(""))
+        {
+          orgName = organism.getGenus() + "." + organism.getSpecies();
+          organism.setCommonName(orgName);
+        }
         
         // search to see if this is in its own schema
         Iterator schemasIt = pg_schemas.iterator();
