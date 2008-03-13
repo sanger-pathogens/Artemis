@@ -1,4 +1,8 @@
-Version x
+Version 10.1/7.1
+
+   	Fix for creating intergenic features for overlapping CDS's.
+
+	Add option to preferences for defining contig ordering features.
 
 	Added option to "Create features from graph peaks". For a graph 
 	this creates features in regions above a given cut-off and above 
