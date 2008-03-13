@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.37 2008-03-13 09:51:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.38 2008-03-13 15:20:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -55,6 +55,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Comparator;
 import java.util.Vector;
 import java.util.Enumeration;
 
@@ -73,7 +74,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.37 2008-03-13 09:51:17 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.38 2008-03-13 15:20:32 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -855,17 +856,28 @@ public class AddMenu extends SelectionMenu
   static void createIntergenicFeatures (final JFrame frame,
                                     final EntryGroup entry_group) 
   {
-    try {
+    try 
+    {
       entry_group.getActionController ().startAction ();
 
-      final FeatureKeyPredicate predicate;
+      final FeaturePredicate predicate;
       
       if(GeneUtils.isDatabaseEntry(entry_group))
         predicate = new FeatureKeyPredicate(new Key("gene"));
       else
-        predicate = new FeatureKeyPredicate(Key.CDS);
-      final FeatureVector cdsFeatures = new FeatureVector ();
-
+      {
+        final FeaturePredicateVector temp_predicates =
+          new FeaturePredicateVector();
+        
+        temp_predicates.add(new FeatureKeyPredicate(Key.CDS));
+        temp_predicates.add(new FeatureKeyPredicate(new Key("tRNA")));
+        
+        predicate =
+          new FeaturePredicateConjunction(temp_predicates,
+                                          FeaturePredicateConjunction.OR);
+      }
+      
+      FeatureVector cdsFeatures = new FeatureVector ();
       final FeatureEnumeration feature_enum = entry_group.features ();
       while (feature_enum.hasMoreFeatures ()) 
       {
@@ -874,39 +886,33 @@ public class AddMenu extends SelectionMenu
           cdsFeatures.add (current_feature);
       }
 
-      RangeVector cdsRanges = new RangeVector();
-      for (int i = 0; i < cdsFeatures.size (); ++i)
-      {
-        final Feature selection_feature = cdsFeatures.elementAt(i);
-        final Location cds_location = selection_feature.getLocation();
-        final Range cds_range = cds_location.getTotalRange();
-
-        cdsRanges.add(cds_range);
-        
-        //if (cds_location.isComplement ()) {
-        //  cds_ranges.reverse ();
-        //}
-      }
+      cdsFeatures = cdsFeatures.sort(feature_comparator);
       
-      int prevEnd = 1;
+      int prevEnd = 0;
       Entry newEntry = null;
+      boolean prevForward = true;
       
-      for(int i=0; i < cdsRanges.size(); i++)
+      for(int i=0; i < cdsFeatures.size (); i++)
       {
-        Range r = (Range)cdsRanges.get(i);
+        final Feature this_feature = cdsFeatures.elementAt(i);
+        final Location cds_location = this_feature.getLocation();
+        final Range r = cds_location.getTotalRange();
+        
         int currentStart = r.getStart();
         
         if(i==0 && r.getStart()==1)
         {
           prevEnd = r.getEnd();
-          
+          prevForward = this_feature.isForwardFeature();
           // check for overlapping CDS
-          if(i<cdsRanges.size()-1)
+          if(i<cdsFeatures.size()-1)
           {
         	  int next = i+1; 	
-            while(((Range)cdsRanges.get(next)).getStart() <= prevEnd)
+            while(getTotalRange((Feature)cdsFeatures.elementAt(next)).getStart() <= prevEnd+1)
             {
-              prevEnd = ((Range)cdsRanges.get(next)).getEnd();
+              Feature f = (Feature)cdsFeatures.elementAt(next);
+              prevEnd = getTotalRange(f).getEnd();
+              prevForward = f.isForwardFeature();
               i = next;
               next++;
             }
@@ -925,34 +931,62 @@ public class AddMenu extends SelectionMenu
             key = new Key ("region");            
           else
             key = new Key ("misc_feature");
+          
+          
+          // intergenic regions (IGR) - flanking CDS 4 possible:
+          // IGR-F (forward):  cds> IGR cds>
+          // IGR-R (reverse): <cds IGR <cds
+          // IGR-B (both): <cds IGR cds>
+          // IGR-X: cds> IGR <cds
+          String note;
+          
+          if(this_feature.isForwardFeature())
+          {
+            if(prevForward)
+              note = "IGR-F";
+            else
+              note = "IGR-B";
+          }
+          else
+          {
+            if(prevForward)
+              note = "IGR-X";
+            else
+              note = "IGR-R";
+          }
           final QualifierVector qualifiers = new QualifierVector ();
+          final Qualifier qualifier = new Qualifier("note", note);
+          qualifiers.add(qualifier);
           
           if(newEntry == null)
             newEntry = entry_group.createEntry("intergenic");
           
           newEntry.createFeature(key, location, qualifiers);
           prevEnd = r.getEnd();
+          prevForward = this_feature.isForwardFeature();
           
           // check for overlapping CDS
-          if(i<cdsRanges.size()-1)
+          if(i<cdsFeatures.size()-1)
           {
         	  int next = i+1;
-            while( next < cdsRanges.size() &&
-            	  ((Range)cdsRanges.get(next)).getStart() <= prevEnd)
+            while( next < cdsFeatures.size() &&
+                  getTotalRange((Feature)cdsFeatures.elementAt(next)).getStart() <= prevEnd+1)
             {
-              prevEnd = ((Range)cdsRanges.get(next)).getEnd();
+              Feature f = (Feature)cdsFeatures.elementAt(next);
+              prevEnd = getTotalRange(f).getEnd();
+              prevForward = f.isForwardFeature();
               i = next;
               next++;
             }
           }
-          else if(i==cdsRanges.size()-1)
+          else if(i==cdsFeatures.size()-1)
           {
             if(entry_group.getSequenceLength() > r.getEnd())
             {
               new_range = new Range(prevEnd + 1,
                   entry_group.getSequenceLength());
               location = new Location(new_range);
-              entry_group.getDefaultEntry().createFeature(key,
+              newEntry.createFeature(key,
                                         location, qualifiers);
             }
           }
@@ -968,6 +1002,40 @@ public class AddMenu extends SelectionMenu
       entry_group.getActionController ().endAction ();
     }
   }
+
+  private static Range getTotalRange(Feature f)
+  {
+    return ((Range) f.getLocation().getTotalRange() );
+  }
+  
+  /**
+   *  This is used by getSortedFeaturesInRange().
+   **/
+  final private static Comparator feature_comparator = new Comparator()
+  {
+    /**
+     *  Compare two Objects with respect to ordering.
+     *  @return a negative number if feature1_object is less than
+     *    feature2_object ; a positive number if feature1_object is greater
+     *    than feature2_object; else 0
+     **/
+    public int compare(final Object feature1_object,
+                       final Object feature2_object)
+    {
+      final Feature feature1 =(Feature) feature1_object;
+      final Feature feature2 =(Feature) feature2_object;
+
+      final int feature1_start = feature1.getLocation().getTotalRange().getStart();
+      final int feature2_start = feature2.getLocation().getTotalRange().getStart();
+
+      if(feature1_start < feature2_start)
+        return -1;
+      else if(feature1_start > feature2_start)
+        return 1;
+
+      return 1;
+    }
+  };
 
   
   /**
