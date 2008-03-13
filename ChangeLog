@@ -1,7 +1,13 @@
 Version 10.1/7.1
 
-   	Fix for creating intergenic features for overlapping CDS's.
-
+   	Fix for creating intergenic features for overlapping CDS's. Also
+   	add note based on which one of the 4 cases with respect to the 
+   	flanking CDS it belongs to, i.e.:
+ 	IGR-F (forward):  cds> IGR cds>
+	IGR-R (reverse): <cds IGR <cds
+	IGR-B (both): <cds IGR cds>
+	IGR-X: cds> IGR <cds
+	
 	Add option to preferences for defining contig ordering features.
 
 	Added option to "Create features from graph peaks". For a graph 
