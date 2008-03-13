@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.36 2008-03-12 20:57:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.37 2008-03-13 09:51:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -73,7 +73,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.36 2008-03-12 20:57:24 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.37 2008-03-13 09:51:17 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -889,6 +889,7 @@ public class AddMenu extends SelectionMenu
       }
       
       int prevEnd = 1;
+      Entry newEntry = null;
       
       for(int i=0; i < cdsRanges.size(); i++)
       {
@@ -902,7 +903,7 @@ public class AddMenu extends SelectionMenu
           // check for overlapping CDS
           if(i<cdsRanges.size()-1)
           {
-        	int next = i+1; 	
+        	  int next = i+1; 	
             while(((Range)cdsRanges.get(next)).getStart() <= prevEnd)
             {
               prevEnd = ((Range)cdsRanges.get(next)).getEnd();
@@ -925,14 +926,17 @@ public class AddMenu extends SelectionMenu
           else
             key = new Key ("misc_feature");
           final QualifierVector qualifiers = new QualifierVector ();
-          entry_group.getDefaultEntry().createFeature(key,
-              location, qualifiers);
+          
+          if(newEntry == null)
+            newEntry = entry_group.createEntry("intergenic");
+          
+          newEntry.createFeature(key, location, qualifiers);
           prevEnd = r.getEnd();
           
           // check for overlapping CDS
           if(i<cdsRanges.size()-1)
           {
-        	int next = i+1;
+        	  int next = i+1;
             while( next < cdsRanges.size() &&
             	  ((Range)cdsRanges.get(next)).getStart() <= prevEnd)
             {
