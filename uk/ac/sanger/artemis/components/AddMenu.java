@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.38 2008-03-13 15:20:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.39 2008-03-19 11:03:58 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -74,7 +74,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.38 2008-03-13 15:20:32 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.39 2008-03-19 11:03:58 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -979,7 +979,7 @@ public class AddMenu extends SelectionMenu
               next++;
             }
           }
-          else if(i==cdsFeatures.size()-1)
+          if(i==cdsFeatures.size()-1)
           {
             if(entry_group.getSequenceLength() > r.getEnd())
             {
