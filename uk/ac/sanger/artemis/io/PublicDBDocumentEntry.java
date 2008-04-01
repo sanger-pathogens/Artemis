@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.6 2008-01-24 15:45:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.7 2008-04-01 10:14:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.io.IOException;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.6 2008-01-24 15:45:37 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.7 2008-04-01 10:14:04 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -146,16 +146,20 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     Key key = feature.getKey();
     QualifierVector qualifiers = feature.getQualifiers().copy();
     
-    if(key.getKeyString().equals("transcript"))
-      key = new Key("mRNA");
-    if(key.getKeyString().equals("mRNA"))
+    if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
     {
-      // add protein qualifiers to transcript
-      final String transcriptName = GeneUtils.getUniqueName(feature);
-      final Feature protein = 
-        ((GFFStreamFeature)feature).getChadoGene().getProteinOfTranscript(transcriptName);
+      ChadoCanonicalGene chadoGene = ((GFFStreamFeature)feature).getChadoGene();
+
+      final String name = GeneUtils.getUniqueName(feature);
+      final String transcriptName = chadoGene.getTranscriptFromName(name);
+      
+      // add protein qualifiers to CDS
+      final Feature protein = chadoGene.getProteinOfTranscript(transcriptName);
       if(protein != null)
         qualifiers.addAll(protein.getQualifiers().copy());
+      
+      // add gene qualifiers to CDS
+      qualifiers.addAll(chadoGene.getGene().getQualifiers().copy());
     }
     
     try
@@ -185,7 +189,12 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         key = new Key("5'UTR");
       else if(key.getKeyString().equals("three_prime_UTR"))
         key = new Key("3'UTR");
-      else if(key.getKeyString().equals("polypepide"))
+      else if(key.getKeyString().equals("polypeptide"))
+        return null;
+      else if(key.getKeyString().equals("gene"))
+        return null;
+      else if(key.getKeyString().equals("transcript") || 
+              key.getKeyString().equals("mRNA"))
         return null;
       else if(key.getKeyString().startsWith("pseudo"))
       {
