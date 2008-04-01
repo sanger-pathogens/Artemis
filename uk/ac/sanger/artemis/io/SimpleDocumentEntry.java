@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.21 2007-09-25 09:59:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.22 2008-04-01 10:14:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -38,7 +38,7 @@ import javax.swing.JOptionPane;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.21 2007-09-25 09:59:57 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.22 2008-04-01 10:14:42 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -340,8 +340,13 @@ abstract public class SimpleDocumentEntry
       {
         if(force) 
         {
-          if(forcedAdd((SimpleDocumentFeature)makeNativeFeature(new_feature, true)) == null)
-            failed.append(new_feature.getKey().getKeyString()+"\n"); 
+          Feature f = (SimpleDocumentFeature)makeNativeFeature(new_feature, true);
+          
+          if(f != null)
+          {
+            if(forcedAdd(f) == null)
+              failed.append(new_feature.getKey().getKeyString()+"\n");
+          }
         }
         else
         {
