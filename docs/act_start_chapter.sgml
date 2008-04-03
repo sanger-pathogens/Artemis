@@ -47,7 +47,7 @@ an easier to read format.  MSPcrunch much be run with the
     <PARA>
        Anthony Underwood and Jonathan Green at the <ULINK URL="http://www.hpa.org.uk/">
        Health Protection Agency</ULINK> have developed an online tool, <ULINK 
-       URL="http://193.129.245.227/pise/double_act.html">Double ACT</ULINK>, to generate
+       URL="http://www.hpa-bioinfotools.org.uk/pise/double_act.html">Double ACT</ULINK>, to generate
        ACT comparison files.
     </PARA>
 
