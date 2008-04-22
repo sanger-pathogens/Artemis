@@ -132,6 +132,10 @@ public class DatabaseDocument extends Document
   
   private Feature geneFeature;
   
+  private Hashtable idFeatureStore;
+  
+  private boolean lazyFeatureLoad = true;
+  
   public static String EXONMODEL  = "exon-model";
   public static String TRANSCRIPT = "mRNA";
   
@@ -607,7 +611,8 @@ public class DatabaseDocument extends Document
    *                            extract
    * @return   the <code>ByteBuffer</code> array of GFF lines
    */
-  private ByteBuffer[] getGff(final GmodDAO dao, final Feature srcFeature)
+  private ByteBuffer[] getGff(final GmodDAO dao, 
+                              final Feature srcFeature)
   {
     //final int srcfeature_id = Integer.parseInt(srcFeatureId);
     
@@ -619,41 +624,62 @@ public class DatabaseDocument extends Document
     Feature child = new Feature();
     child.setFeatureLoc(featureloc);
     
-    List featList = dao.getFeaturesByLocatedOnFeature(child);
-    ByteBuffer[] buffers = new ByteBuffer[types.length + 1];
+    final List featList = dao.getFeaturesByLocatedOnFeature(child);
+    final ByteBuffer[] buffers = new ByteBuffer[types.length + 1];
     for(int i = 0; i < buffers.length; i++)
       buffers[i] = new ByteBuffer();
     
     ByteBuffer this_buff;
 
     int feature_size = featList.size();
-    Hashtable id_store = new Hashtable(feature_size);
+    final Hashtable id_store = new Hashtable(feature_size);
 
-    // build feature name store
+    // build feature store
     for(int i = 0; i < feature_size; i++)
     {
       Feature feat = (Feature)featList.get(i);
-      String name       = feat.getUniqueName();
-      String featureId = Integer.toString(feat.getFeatureId());
-
-      id_store.put(featureId, name);
+      id_store.put(Integer.toString(feat.getFeatureId()), feat);
     }
     
-    // get all dbrefs & synonyms etc
-    Hashtable dbxrefs = IBatisDAO.mergeDbXRef(
-        dao.getFeatureDbXRefsBySrcFeature(srcFeature));
-    Hashtable synonym = getAllFeatureSynonyms(
-        dao.getFeatureSynonymsBySrcFeature(srcFeature));
-    Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, 
-        dao.getFeatureCvTermsBySrcFeature(srcFeature));
-    Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, 
-        dao.getFeatureCvTermDbXRefBySrcFeature(srcFeature));
-    Hashtable featureCvTermPubs = getFeatureCvTermPub(dao, 
-        dao.getFeatureCvTermPubBySrcFeature(srcFeature));
-    Hashtable featurePubs = getFeaturePubsBySrcFeature(dao,srcFeature);
+    if(lazyFeatureLoad)
+      idFeatureStore = id_store;
     
-    List pubDbXRefs= dao.getPubDbXRef();
-
+    // get all dbrefs & synonyms etc
+    final Hashtable dbxrefs;
+    final Hashtable synonym;
+    final Hashtable featureCvTerms;
+    final Hashtable featureCvTermDbXRefs;
+    final Hashtable featureCvTermPubs;
+    final Hashtable featurePubs;
+    final List pubDbXRefs;
+    
+    if(lazyFeatureLoad)
+    {
+      dbxrefs = null;
+      synonym = null;
+      featureCvTerms = null;
+      featureCvTermDbXRefs = null;
+      featureCvTermPubs = null;
+      featurePubs = null;
+      pubDbXRefs = null;
+    }
+    else
+    {
+      dbxrefs= IBatisDAO.mergeDbXRef(
+        dao.getFeatureDbXRefsBySrcFeature(srcFeature));
+      synonym = getAllFeatureSynonyms(
+        dao.getFeatureSynonymsBySrcFeature(srcFeature));
+      featureCvTerms = getFeatureCvTermsByFeature(dao, 
+        dao.getFeatureCvTermsBySrcFeature(srcFeature));
+      featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, 
+        dao.getFeatureCvTermDbXRefBySrcFeature(srcFeature));
+      featureCvTermPubs = getFeatureCvTermPub(dao, 
+        dao.getFeatureCvTermPubBySrcFeature(srcFeature));
+      featurePubs = getFeaturePubsBySrcFeature(dao,srcFeature);
+    
+      pubDbXRefs= dao.getPubDbXRef();
+    }
+    
     // create gff byte stream
     for(int i = 0; i < feature_size; i++)
     { 
@@ -668,7 +694,6 @@ public class DatabaseDocument extends Document
           this_buff = buffers[j];
       }
 
-      
       chadoToGFF(feat, srcFeature.getUniqueName(),
                  dbxrefs, synonym, featureCvTerms,
                  pubDbXRefs, featureCvTermDbXRefs, featureCvTermPubs,
@@ -888,16 +913,14 @@ public class DatabaseDocument extends Document
     for(int i = 0; i < featuresInRange.size(); i++)
     {
       Feature chadoFeature = (Feature)featuresInRange.get(i);
-      String name       = chadoFeature.getUniqueName();
       String featureId = Integer.toString(chadoFeature.getFeatureId());
-      id_store.put(featureId, name);
+      id_store.put(featureId, chadoFeature);
     }
     
     for(int i=0; i<featuresInRange.size(); i++)
     {
       Feature chadoFeature = (Feature)featuresInRange.get(i);
-      id_store.put(Integer.toString(chadoFeature.getFeatureId()), chadoFeature
-          .getUniqueName());
+      id_store.put(Integer.toString(chadoFeature.getFeatureId()), chadoFeature);
 
       chadoToGFF(chadoFeature, srcFeature.getUniqueName(), dbxrefs, synonym, featureCvTerms,
           pubDbXRefs, featureCvTermDbXRefs, featureCvTermPubs, featurePubs,
@@ -929,7 +952,7 @@ public class DatabaseDocument extends Document
     if(DatabaseDocument.cvterms == null)
       getCvterms(dao);
     
-    Hashtable id_store = new Hashtable();
+    final Hashtable id_store = new Hashtable();
 
     boolean singleSchema = true;
     final List pg_schemas = dao.getSchema(); 
@@ -954,7 +977,7 @@ public class DatabaseDocument extends Document
     
     ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();
     id_store.put(Integer.toString(chadoFeature.getFeatureId()), 
-                 chadoFeature.getUniqueName());
+                 chadoFeature);
 
     List featurelocs = new Vector(chadoFeature.getFeatureLocsForFeatureId());
     FeatureLoc featureloc = (FeatureLoc) featurelocs.get(0);
@@ -1037,28 +1060,28 @@ public class DatabaseDocument extends Document
       chadoFeature = (Feature)dao.getFeatureById(featureId); 
 
     id_store.put(Integer.toString(chadoFeature.getFeatureId()), 
-                 chadoFeature.getUniqueName());
+                 chadoFeature);
 
     FeatureLoc loc = getFeatureLoc(new Vector(
         chadoFeature.getFeatureLocsForFeatureId()), srcFeatureId);
-    Hashtable dbxrefs = IBatisDAO.mergeDbXRef(
+    final Hashtable dbxrefs = IBatisDAO.mergeDbXRef(
         dao.getFeatureDbXRefsByFeatureUniquename(chadoFeature.getUniqueName()));
     
-    Hashtable synonym = getAllFeatureSynonyms( 
+    final Hashtable synonym = getAllFeatureSynonyms( 
         dao.getFeatureSynonymsByFeatureUniquename(chadoFeature.getUniqueName()));
     
-    Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, 
+    final Hashtable featureCvTerms = getFeatureCvTermsByFeature(dao, 
                                   dao.getFeatureCvTermsByFeature(chadoFeature));
     
-    Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, 
+    final Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, 
                              dao.getFeatureCvTermDbXRefByFeature(chadoFeature));
     
-    Hashtable featureCvTermPubs = getFeatureCvTermPub(dao,
+    final Hashtable featureCvTermPubs = getFeatureCvTermPub(dao,
                              dao.getFeatureCvTermPubByFeature(chadoFeature));
     
     Feature srcFeature = new Feature();
     srcFeature.setFeatureId(srcFeatureId);
-    Hashtable featurePubs = getFeaturePubsBySrcFeature(dao,srcFeature);
+    final Hashtable featurePubs = getFeaturePubsBySrcFeature(dao,srcFeature);
     List pubDbXRefs= dao.getPubDbXRef();
     chadoToGFF(chadoFeature, parentName, dbxrefs, synonym, featureCvTerms,
         pubDbXRefs, featureCvTermDbXRefs, featureCvTermPubs, featurePubs, 
@@ -1172,7 +1195,7 @@ public class DatabaseDocument extends Document
 
     // look up parent name
     if(parent_id != null && id_store != null &&  id_store.containsKey(parent_id))
-      parent_id = (String)id_store.get(parent_id);
+      parent_id = ((Feature)id_store.get(parent_id)).getUniqueName();
  
     // make gff format
     
@@ -2111,6 +2134,7 @@ public class DatabaseDocument extends Document
     return dao.getFeatureDbXRefsByFeatureId(featureIds);
   }
   
+  
   /**
    * Used by SimilarityLazyQualifierValue.bulkRetrieve() to get the match features
    * @param featureIds the <code>List</code> of feature_id's
@@ -3000,5 +3024,23 @@ public class DatabaseDocument extends Document
   public void setRange(Range range)
   {
     this.range = range;
+  }
+
+
+  public Hashtable getIdFeatureStore()
+  {
+    return idFeatureStore;
+  }
+
+
+  public boolean isLazyFeatureLoad()
+  {
+    return lazyFeatureLoad;
+  }
+
+
+  public void setLazyFeatureLoad(boolean lazyFeatureLoad)
+  {
+    this.lazyFeatureLoad = lazyFeatureLoad;
   }
 }
