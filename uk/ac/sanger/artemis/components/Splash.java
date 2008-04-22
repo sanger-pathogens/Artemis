@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.32 2008-04-22 12:16:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.33 2008-04-22 12:27:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.32 2008-04-22 12:16:44 tjc Exp $
+ *  @version $Id: Splash.java,v 1.33 2008-04-22 12:27:42 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -345,8 +345,8 @@ abstract public class Splash extends JFrame
 
       public void paint(final Graphics g) 
       {
-        final boolean simple_splash_screen =
-          Options.getOptions().getPropertyTruthValue("simple_splash_screen");
+        /*final boolean simple_splash_screen =
+          Options.getOptions().getPropertyTruthValue("simple_splash_screen");*/
 
         g.setColor(Color.white);
 
@@ -365,7 +365,7 @@ abstract public class Splash extends JFrame
           {
             tracker.waitForAll();
             helix_height = helix.getHeight(this);
-            helix_width = helix.getWidth(this);
+            //helix_width = helix.getWidth(this);
           }
           catch(InterruptedException e) 
           {
@@ -373,7 +373,6 @@ abstract public class Splash extends JFrame
           }
         }
 
-        int yPos = this.getHeight() - helix_height;
         g.drawImage(helix,
                     0, 0, this);
                     //helix_height, this);
@@ -388,25 +387,12 @@ abstract public class Splash extends JFrame
        **/
       private Image helix = null;
 
-      /**
-       *  The image of the Sanger logo.  This is set in paint().
-       **/
-      private Image sanger = null;
-
-      /**
-       *  The height of the Sanger logo.  This is set in paint().
-       **/
-      private int sanger_height;
 
       /**
        *  The height of the Sanger DNA logo.  This is set in paint().
        **/
       private int helix_height;
 
-      /**
-       *  The width of the Sanger DNA logo.  This is set in paint().
-       **/
-      private int helix_width;
     };
   }
 
