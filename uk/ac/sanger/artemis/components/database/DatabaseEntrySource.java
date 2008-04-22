@@ -41,6 +41,7 @@ import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.InvalidKeyException;
 import uk.ac.sanger.artemis.io.EntryInformationException;
@@ -277,6 +278,7 @@ public class DatabaseEntrySource implements EntrySource, Serializable
         DatabaseDocument doc = new DatabaseDocument(location, pfield, id,
                                                     schema, splitGFFEntry, 
                                                     progress_listener);
+        doc.setLazyFeatureLoad(LocalAndRemoteFileManager.lazyLoad.isSelected());
         if(range != null)
           doc.setRange(range);
         db_entry = new DatabaseDocumentEntry(doc, null);

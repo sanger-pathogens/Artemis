@@ -227,6 +227,7 @@ abstract class AbstractMatchTable
     DatabaseDocumentEntry db_entry = null;
     DatabaseDocument newdoc = new DatabaseDocument(doc, 
             uniquename, schema, isGeneEditor, stream_progress_listener);
+    newdoc.setLazyFeatureLoad(false);
     
     try
     {
@@ -277,6 +278,7 @@ abstract class AbstractMatchTable
           final DatabaseDocument newDoc = new DatabaseDocument(
               doc, gene[0], geneFeature, range,
               stream_progress_listener);
+          newDoc.setLazyFeatureLoad(false);
           
           DatabaseDocumentEntry db_entry = new DatabaseDocumentEntry(newDoc, null);
           Bases bases = new Bases(db_entry.getSequence());
