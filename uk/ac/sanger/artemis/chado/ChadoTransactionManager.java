@@ -1444,6 +1444,10 @@ public class ChadoTransactionManager
          int index = qualifierString.indexOf("=");
          qualifierString = qualifierString.substring(index+1);
          
+         // strip out double quotes
+         if(qualifierString.startsWith("\"\""))
+           qualifierString = qualifierString.replaceAll("\"\"", "\"");
+         
          if(qualifierName.equals("Dbxref"))
          {
            logger4j.debug(uniquename+"  in handleReservedTags() DELETE db="+
