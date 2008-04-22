@@ -49,6 +49,8 @@ public class LocalAndRemoteFileManager extends JFrame
   private SshJTreeTable sshtree;
   private JSplitPane treePane = null;
   private DatabaseEntrySource entry_source;
+  public static JCheckBoxMenuItem lazyLoad = 
+    new JCheckBoxMenuItem("Lazy load feature data", false);
 
   public LocalAndRemoteFileManager(JFrame frame)
   {
@@ -535,6 +537,12 @@ public class LocalAndRemoteFileManager extends JFrame
     group.add(prefH);
 //  prefH.setSelected(true);
 
+    if(System.getProperty("chado") != null)
+    {
+      fileMenu.add(new JSeparator());
+      fileMenu.add(lazyLoad);
+    }
+    
     JMenuItem fileMenuClose = new JMenuItem("Close");
     fileMenuClose.addActionListener(new ActionListener()
     {
@@ -543,6 +551,7 @@ public class LocalAndRemoteFileManager extends JFrame
         setVisible(false);
       }
     });
+    fileMenu.add(new JSeparator());
     fileMenu.add(fileMenuClose);
 
     // remote tool bar set up
@@ -613,5 +622,6 @@ public class LocalAndRemoteFileManager extends JFrame
   {
     return entry_source;
   }
+
 }
 
