@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.61 2007-10-25 19:24:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.62 2008-04-22 08:51:25 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -49,7 +49,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.61 2007-10-25 19:24:25 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.62 2008-04-22 08:51:25 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -85,6 +85,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   private String gffSource;
   /** duplication count */
   private short duplicate = 0;
+  private boolean lazyLoaded = false;
+  private org.gmod.schema.sequence.Feature chadoLazyFeature;
   
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
@@ -1205,6 +1207,27 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   public void setGffSource(String gffSource)
   {
     this.gffSource = gffSource;
+  }
+
+  public boolean isLazyLoaded()
+  {
+    return lazyLoaded;
+  }
+
+  public void setLazyLoaded(boolean lazyLoaded)
+  {
+    this.lazyLoaded = lazyLoaded;
+  }
+
+  public org.gmod.schema.sequence.Feature getChadoLazyFeature()
+  {
+    return chadoLazyFeature;
+  }
+
+  public void setChadoLazyFeature(
+      org.gmod.schema.sequence.Feature chadoLazyFeature)
+  {
+    this.chadoLazyFeature = chadoLazyFeature;
   }
   
 }
