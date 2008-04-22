@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.31 2008-02-19 10:23:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.32 2008-04-22 12:16:44 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.31 2008-02-19 10:23:29 tjc Exp $
+ *  @version $Id: Splash.java,v 1.32 2008-04-22 12:16:44 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame 
@@ -325,25 +325,20 @@ abstract public class Splash extends JFrame
         FontMetrics fm = this.getFontMetrics(g.getFont());
         final int font_height = fm.getHeight() + 3;
         g.setColor(Color.black);
-        final int left_margin = 5;
+        final int left_margin = 150;
+        final int yPos = helix_height+5;
 
         g.drawString(program_name,
-                     helix_width + left_margin, font_height);
+                     left_margin, yPos+font_height);
         g.drawString(program_version,
-                      helix_width + left_margin, font_height * 2);
-//      if(Options.getOptions().isEukaryoticMode()) 
-//        g.drawString("[Eukaryotic mode]",
-//                      helix_width + left_margin, font_height * 3);
-//      else
-//        g.drawString("[Prokaryotic mode]",
-//                      helix_width + left_margin, font_height * 3);
+                     left_margin, yPos+(font_height * 2));
         g.drawString(geneticCode,
-                     helix_width + left_margin, font_height * 3);
+                     left_margin, yPos+(font_height * 3));
 
         g.drawString("Copyright 1998 - 2008",
-                      helix_width + left_margin, font_height * 9 / 2);
+                     left_margin, yPos+(font_height * 9 / 2));
         g.drawString("Genome Research Limited",
-                      helix_width + left_margin, font_height * 11 / 2);
+                     left_margin, yPos+(font_height * 11 / 2));
 
         return font_height;
       }
@@ -357,38 +352,20 @@ abstract public class Splash extends JFrame
 
         g.fillRect(0, 0, this.getSize().width, this.getSize().height);
 
-        if(simple_splash_screen) {
-          // java SIGILL bug work-around
-          textPaint(g);
-          return;
-        }
-
         if(helix == null) 
         {
-//        Toolkit toolkit = Toolkit.getDefaultToolkit();
-//        final URL helix_url = Splash.class.getResource("/uk.ac.sanger.artemis/helix.gif");
-//        helix = toolkit.getImage(helix_url);
-
           ClassLoader cl = this.getClass().getClassLoader();
-          ImageIcon helix_icon = new ImageIcon(cl.getResource("images/helix.gif"));
+          ImageIcon helix_icon = new ImageIcon(cl.getResource("images/PSUlogo.gif"));  //"images/helix.gif"));
           helix = helix_icon.getImage();
-
-//        final URL sanger_url =
-//          Splash.class.getResource("/uk.ac.sanger.artemis/sanger-centre.gif");
-//        sanger = toolkit.getImage(sanger_url);
-          ImageIcon sanger_icon = new ImageIcon(cl.getResource("images/sanger-centre.gif"));
-          sanger = sanger_icon.getImage();
 
           tracker = new MediaTracker(this);
           tracker.addImage(helix, 0);
-          tracker.addImage(sanger, 1);
 
           try 
           {
             tracker.waitForAll();
             helix_height = helix.getHeight(this);
             helix_width = helix.getWidth(this);
-            sanger_height = sanger.getHeight(this);
           }
           catch(InterruptedException e) 
           {
@@ -396,20 +373,12 @@ abstract public class Splash extends JFrame
           }
         }
 
-        if(helix_height > 0)
-          for(int i=0; i*helix_height<=this.getSize().height; ++i) 
-            g.drawImage(helix,
-                        0,
-                        i * helix_height, this);
+        int yPos = this.getHeight() - helix_height;
+        g.drawImage(helix,
+                    0, 0, this);
+                    //helix_height, this);
 
-        final int font_height = textPaint(g);
-
-        int sanger_position = this.getSize().height - sanger_height;
-
-        if(sanger_position > font_height * 5.5) 
-          g.drawImage(sanger,
-                       helix_width + 5,
-                       sanger_position, this);
+        textPaint(g);
       }
 
       MediaTracker tracker = null;
