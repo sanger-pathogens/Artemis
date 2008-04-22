@@ -140,6 +140,13 @@ public abstract class GmodDAO
   public abstract List getFeatureSynonymsBySrcFeature(Feature srcFeature);
   
   /**
+   * Return the FeatureSynonym's for all Feature's given their feature_id's
+   * @param 
+   * @return
+   */
+  public abstract List getFeatureSynonymsByFeatureIds(List featureIds);
+  
+  /**
    * Return a list of features that have this particular cvterm 
    * @param cvTermName the CvTerm name
    * @return a (possibly empty) List<Feature> of children

@@ -27,7 +27,7 @@
    	    <result property="pub.pubId" column="pub_id"/>
    	    <result property="current" column="is_current"/>
    	    <result property="internal" column="is_internal"/>
-   	    <result property="synonym.synonymId" column="synonym_id"/>
+		<result property="synonym.synonymId" column="synonym_id"/>
    	    <result property="synonym.name" column="name"/>
    	    <result property="synonym.synonymSgml" column="synonym_sgml"/>
   	    <result property="synonym.cvTerm.cvTermId" column="type_id" />
@@ -40,6 +40,15 @@
    	    <result property="current" column="is_current"/>
    	    <result property="internal" column="is_internal"/>
    	    <result property="synonym" column="synonym_id" select="getSynonymBySynonymId"/>
+     </resultMap>
+	
+	 <resultMap id="map-alias-part-lazy2" 
+               class="FeatureSynonym">
+   	    <result property="feature.featureId" column="feature_id"/>
+   	    <result property="pub.pubId" column="pub_id"/>
+   	    <result property="current" column="is_current"/>
+   	    <result property="internal" column="is_internal"/>
+		<result property="synonym" resultMap="Synonym.map-synonym-lazy"/>
      </resultMap>
      
      <resultMap id="map-alias-lazy" 
@@ -92,6 +101,15 @@
       </isGreaterThan>)
 	-->
     </select>
+	
+	<select id="getFeatureSynonymsByFeatureIds" resultMap="map-alias-part-lazy2">
+      SELECT fs.*, s.name, s.synonym_sgml, s.type_id 
+      FROM feature_synonym fs 
+      LEFT JOIN synonym s  ON fs.synonym_id=s.synonym_id 
+	  WHERE fs.feature_id IN 	
+	  <iterate open="(" close=")" conjunction=","> $[]$ </iterate>
+    </select>
+	
 	
     <select id="getLazyFeatureSynonymsByUniquename" resultMap="map-alias-part-lazy"
             parameterClass="FeatureSynonym">

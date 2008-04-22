@@ -387,6 +387,12 @@ public class IBatisDAO extends GmodDAO
       sqlMap.queryForList("getFeatureSynonymsBySrcFeature", srcFeature);
   }
   
+  public List getFeatureSynonymsByFeatureIds(final List featuresIds)
+  {
+    return
+      sqlMap.queryForList("getFeatureSynonymsByFeatureIds", featuresIds);
+  }
+  
   /**
    * Return all the FeatureDbXRefs for a given feature, <b>specified by name</b>, or all if 
    * <code>null</code> is passed
