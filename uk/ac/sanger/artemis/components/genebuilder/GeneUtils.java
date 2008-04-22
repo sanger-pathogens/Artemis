@@ -23,6 +23,7 @@ package uk.ac.sanger.artemis.components.genebuilder;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -39,6 +40,11 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import org.gmod.schema.sequence.FeatureCvTerm;
+import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.FeaturePub;
+import org.gmod.schema.sequence.FeatureSynonym;
 
 import uk.ac.sanger.artemis.components.EditMenu;
 import uk.ac.sanger.artemis.components.MessageDialog;
@@ -57,6 +63,7 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.sequence.MarkerRange;
+import uk.ac.sanger.artemis.util.ByteBuffer;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
@@ -80,6 +87,109 @@ public class GeneUtils
     hideFeatures.add("polypeptide");
     hideFeatures.add(DatabaseDocument.TRANSCRIPT);
     hideFeatures.add("pseudogenic_transcript");
+  }
+  
+  /**
+   * Used when a whole sequence is loaded in and the features are loaded
+   * lazily
+   * @param feature
+   */
+  public static void addLazyQualifiers(final GFFStreamFeature feature)
+  {
+    if(feature.isLazyLoaded() || feature.getChadoLazyFeature() == null)
+      return;
+    
+    // synonyms
+    final Collection featureSynonyms = feature.getChadoLazyFeature().getFeatureSynonyms();
+    
+    final Iterator it = featureSynonyms.iterator();
+    while(it.hasNext())
+    {
+      final FeatureSynonym featureSynonym = (FeatureSynonym) it.next();
+      final String name = featureSynonym.getSynonym().getCvTerm().getName();
+      String value = featureSynonym.getSynonym().getName();
+      
+      if(!featureSynonym.isCurrent())
+        value.concat(GFFStreamFeature.encode(";current=false"));      
+      
+      Qualifier qualifier = feature.getQualifiers().getQualifierByName(name);
+      if(qualifier == null)
+        qualifier = new Qualifier(name, value);
+      else
+        qualifier.addValue(value);
+      
+      feature.getQualifiers().setQualifier(qualifier);
+    }
+    
+    // dbxrefs
+    final Collection featureDbXRefs = feature.getChadoLazyFeature().getFeatureDbXRefs();
+    final Iterator it2 = featureDbXRefs.iterator();
+    while(it2.hasNext())
+    {
+      final FeatureDbXRef featureDbXRef = (FeatureDbXRef) it2.next();
+      String value = featureDbXRef.getDbXRef().getDb().getName() + ":" + 
+                     featureDbXRef.getDbXRef().getAccession();
+      
+      Qualifier qualifier = feature.getQualifiers().getQualifierByName("Dbxref");
+      if(qualifier == null)
+        qualifier = new Qualifier("Dbxref", value);
+      else
+        qualifier.addValue(value);
+      feature.getQualifiers().setQualifier(qualifier);
+    }
+    
+    
+    // feature cvterms (GO, product....)
+    final Collection featureCvTerms = feature.getChadoLazyFeature().getFeatureCvTerms();
+    final Iterator it3 = featureCvTerms.iterator();
+    
+    while(it3.hasNext())
+    {
+      FeatureCvTerm featureCvTerm = (FeatureCvTerm)it3.next();
+      List featureCvTermDbXRefList = null;
+      
+      if(featureCvTerm.getFeatureCvTermDbXRefs() != null)
+        featureCvTermDbXRefList = new Vector(featureCvTerm.getFeatureCvTermDbXRefs());
+      
+      List featureCvTermPubList = null;
+      
+      if(featureCvTerm.getFeatureCvTermPubs() != null)
+        featureCvTermPubList = new Vector(featureCvTerm.getFeatureCvTermPubs());
+       
+      ByteBuffer this_buff = new ByteBuffer();
+      DatabaseDocument.appendControlledVocabulary(this_buff, null, featureCvTerm,
+                                 featureCvTermDbXRefList,featureCvTermPubList, null, false);
+      
+      final String qualifierString = new String(this_buff.getBytes());
+      int ind = qualifierString.indexOf('=');
+      final String name  = qualifierString.substring(0, ind);
+      final String value = GFFStreamFeature.decode(
+          qualifierString.substring(ind+1, qualifierString.length()-1));
+      
+      Qualifier qualifier = feature.getQualifiers().getQualifierByName(name);
+      if(qualifier == null)
+        qualifier = new Qualifier(name, value);
+      else
+        qualifier.addValue(value);
+      feature.getQualifiers().setQualifier(qualifier);
+    }
+    
+    // feature pubs - literature
+    final Collection featurePubs = feature.getChadoLazyFeature().getFeaturePubs();
+    final Iterator it4 = featurePubs.iterator();
+    while(it4.hasNext())
+    {
+      FeaturePub featurePub = (FeaturePub)it4.next();
+      
+      Qualifier qualifier = feature.getQualifiers().getQualifierByName("literature");
+      if(qualifier == null)
+        qualifier = new Qualifier("literature", featurePub.getPub().getUniqueName());
+      else
+        qualifier.addValue(featurePub.getPub().getUniqueName());
+      feature.getQualifiers().setQualifier(qualifier);
+    }
+    
+    feature.setLazyLoaded(true);
   }
   
   /**
