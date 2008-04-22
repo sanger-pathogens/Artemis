@@ -41,6 +41,14 @@
     <result property="featureLoc.fmax" column="fmax" nullValue="0"/>
     <result property="featureLoc.phase" column="phase"/>
     <result property="cvTerm.cvTermId" column="type_id"/>
+	  
+    <result property="featureSynonyms" column="{feature.uniqueName=uniqueName}" 
+                                       select="getLazyFeatureSynonymsByUniquename" />
+	<result property="featureDbXRefs" column="{featureId=id}"
+                                      select="getFeatureDbXRef" />
+	<result property="featureCvTerms"  column="{{uniqueName=uniquename}}"
+			                           select="getFeatureCvTermsByFeature"/>
+	<result property="featurePubs" column="{featureId=id}" select="getFeaturePubsByFeature"/>  
   </resultMap>
 
   <!-- mapping for feature table and lazy loading of feature_dbxref, feature_relationship,
@@ -433,7 +441,7 @@
   <select id="getResiduesByUniqueName" parameterClass="java.lang.String"
             resultMap="map-feature-residues">
 	SELECT substr(residues, fl.fmin+1, fl.fmax-fl.fmin) AS residues, 
-	       seqlen AS seqLen, fl.fmin, fl.fmax, fl.strand, fl.phase
+	       length(residues) AS seqLen, fl.fmin, fl.fmax, fl.strand, fl.phase
 	FROM featureloc fl 
 	LEFT JOIN feature f ON fl.srcfeature_id=f.feature_id 
 	WHERE fl.feature_id=(SELECT feature_id FROM feature WHERE uniquename=#value#);
