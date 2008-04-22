@@ -44,6 +44,17 @@
         </isGreaterThan>)
         ORDER BY f.uniquename
      </select>
+	
+	
+	 <select id="getFeaturePubsByFeature" parameterClass="org.gmod.schema.sequence.Feature"
+		     resultMap="map-featurepubs">
+        SELECT
+          f.feature_id AS id, pub.*
+        FROM feature f
+        INNER JOIN feature_pub fpub ON fpub.feature_id = f.feature_id 
+        LEFT JOIN pub               ON fpub.pub_id=pub.pub_id  
+        WHERE f.feature_id = $featureId$
+     </select>
      
      <insert id="insertFeaturePub" parameterClass="FeaturePub">
        INSERT INTO feature_pub
