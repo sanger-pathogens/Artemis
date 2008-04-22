@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.57 2008-02-15 09:58:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.58 2008-04-22 08:48:56 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -71,11 +71,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import javax.swing.*;
 
+
 /**
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.57 2008-02-15 09:58:06 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.58 2008-04-22 08:48:56 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -1628,19 +1629,26 @@ public class FeatureEdit extends JPanel
    **/
   private void updateQualifiers() 
   {
+    if(GeneUtils.isDatabaseEntry(entry_group))
+      GeneUtils.addLazyQualifiers((GFFStreamFeature)getFeature().getEmblFeature());
+    
     qualifier_text_area.setText(getQualifierString());
+    
+    if(GeneUtils.isDatabaseEntry(entry_group))
+    {  
+      // load synonym
+      if(cvForm != null)
+        cvForm.updateFromFeature(getFeature());
 
-    if(cvForm != null)
-      cvForm.updateFromFeature(getFeature());
-    
-    if(propertiesPanel != null)
-      propertiesPanel.updateFromFeature(getFeature());
-    
-    if(matchForm != null)
-      matchForm.updateFromFeature(getFeature());
-    
-    if(!isTabbedView && editorPanel != null)
-      editorPanel.updatePanelState();
+      if(propertiesPanel != null)
+        propertiesPanel.updateFromFeature(getFeature());
+
+      if(matchForm != null)
+        matchForm.updateFromFeature(getFeature());
+
+      if(!isTabbedView && editorPanel != null)
+        editorPanel.updatePanelState();
+    }
   }
 
   /**
