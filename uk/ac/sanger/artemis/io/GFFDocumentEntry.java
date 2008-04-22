@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.52 2007-10-15 08:39:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.53 2008-04-22 08:52:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -43,7 +43,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.52 2007-10-15 08:39:29 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.53 2008-04-22 08:52:48 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -266,9 +266,28 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       }
   
       //
-      // load /similarity - lazily
+      // 
       if(getDocument() instanceof DatabaseDocument)
-        loadSimilarityLazyData(original_features);
+      {
+        DatabaseDocument doc = (DatabaseDocument)getDocument();
+          
+        if(!doc.isLazyFeatureLoad())
+          loadSimilarityLazyData(original_features); // load /similarity - lazily
+        else
+        {
+          // using lazy loading - add the lazy chado feature to GFFStreamFeature
+          final Hashtable idFeatureStore = doc.getIdFeatureStore();
+          for(int i = 0 ; i < original_features.size() ; ++i) 
+          {
+            this_feature = original_features.featureAt(i);
+            String featureId = (String) this_feature.getQualifierByName("feature_id").getValues().get(0);
+            org.gmod.schema.sequence.Feature chadoLazyFeature = 
+              (org.gmod.schema.sequence.Feature)idFeatureStore.get(featureId);
+            ((GFFStreamFeature)this_feature).setChadoLazyFeature(chadoLazyFeature);
+          }
+          idFeatureStore.clear();
+        }
+      }
 
       // now join exons
       //combineFeatures();
