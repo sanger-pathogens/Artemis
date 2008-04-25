@@ -53,6 +53,8 @@ unique_bit=$$.`hostname`
 file_arg=`echo $file_arg | sed 's@^/tmp_mnt/nfs/@/nfs/@' | sed 's@^/tmp_mnt/tmp_nfs/@/nfs/@'`
 # fix for pcs3:
 file_arg=`echo $file_arg | sed 's@^/yeastpub4/@/nfs/disk222/yeastpub4/@'`
+# fix for pcs4:
+file_arg=`echo $file_arg | sed 's@^/.automount/pcs3/root/nfs/@/nfs/@'`
 
 
 if [ -f ./$file_arg ]
