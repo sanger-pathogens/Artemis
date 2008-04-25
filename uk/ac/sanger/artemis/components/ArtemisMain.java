@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.28 2008-01-21 16:15:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.29 2008-04-25 09:58:29 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -52,7 +52,7 @@ import javax.swing.JOptionPane;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.28 2008-01-21 16:15:39 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.29 2008-04-25 09:58:29 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -137,7 +137,7 @@ public class ArtemisMain extends Splash
     {
       public void actionPerformed(ActionEvent event)
       {
-        launchDatabaseJFrame(true);
+        launchDatabaseJFrame();
       }
     };
 
@@ -256,7 +256,7 @@ public class ArtemisMain extends Splash
   * Launch database manager window
   *
   */
-  private void launchDatabaseJFrame(final boolean prompt_user)
+  private void launchDatabaseJFrame()
   {
     SwingWorker entryWorker = new SwingWorker()
     {
@@ -264,7 +264,11 @@ public class ArtemisMain extends Splash
       {
         getStatusLabel().setText("Connecting ...");
         DatabaseEntrySource entry_source = new DatabaseEntrySource();
-        if(!entry_source.setLocation(prompt_user))
+        boolean promptUser = true;
+        if(System.getProperty("read_only") != null)
+          promptUser = false;
+        
+        if(!entry_source.setLocation(promptUser))
           return null;
 
         JFrame frame = new JFrame("Organism List");
@@ -366,7 +370,12 @@ public class ArtemisMain extends Splash
         Splash.logger4j.info("OPEN ENTRY "+new_entry_name);
         getStatusLabel().setText("Connecting ...");
         DatabaseEntrySource entry_source = new DatabaseEntrySource();
-        if(!entry_source.setLocation(true))
+
+        boolean promptUser = true;
+        if(System.getProperty("read_only") != null)
+          promptUser = false;
+        
+        if(!entry_source.setLocation(promptUser))
           return;
         
         last_entry_edit =

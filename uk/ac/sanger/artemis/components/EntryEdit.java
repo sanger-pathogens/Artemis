@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.60 2008-03-07 12:20:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.61 2008-04-25 09:58:29 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.60 2008-03-07 12:20:44 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.61 2008-04-25 09:58:29 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -163,11 +163,14 @@ public class EntryEdit extends JFrame
         getEntryGroup().getBases().addSequenceChangeListener(ctm, 0);
         ctm.setEntryGroup(getEntryGroup());
         
-        commitButton = new CommitButton();
-        getEntryGroup().addFeatureChangeListener(commitButton);
-        getEntryGroup().addEntryChangeListener(commitButton);
-        getEntryGroup().getBases().addSequenceChangeListener(commitButton, 0);
-        xBox.add(commitButton);
+        if(!getEntryGroup().getDefaultEntry().getEMBLEntry().isReadOnly())
+        {
+          commitButton = new CommitButton();
+          getEntryGroup().addFeatureChangeListener(commitButton);
+          getEntryGroup().addEntryChangeListener(commitButton);
+          getEntryGroup().getBases().addSequenceChangeListener(commitButton, 0);
+          xBox.add(commitButton);
+        }
       }
     }
 
@@ -1091,7 +1094,7 @@ public class EntryEdit extends JFrame
           db = true;
       }
 
-      if(db)
+      if(db && !getEntryGroup().getDefaultEntry().getEMBLEntry().isReadOnly())
       {
         final JMenuItem commit = new JMenuItem("Commit to Database");
         commit.addActionListener(new ActionListener()

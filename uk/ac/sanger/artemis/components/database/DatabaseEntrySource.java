@@ -62,6 +62,8 @@ public class DatabaseEntrySource implements EntrySource, Serializable
   private JPasswordField pfield;
 
   private boolean splitGFFEntry;
+  
+  private boolean readOnly = false;
 
   /**
    * Create a new DatabaseEntrySource.
@@ -110,14 +112,14 @@ public class DatabaseEntrySource implements EntrySource, Serializable
       InputStreamProgressListener progress_listener)
       throws OutOfRangeException, NoSequenceException, IOException
   {
-    return makeFromID(null, id, schema, false, progress_listener, null);
+    return makeFromID(null, id, schema, progress_listener, null);
   }
   
   public Entry getEntry(String id, String schema,
       InputStreamProgressListener progress_listener, Range range)
       throws OutOfRangeException, NoSequenceException, IOException
   {
-    return makeFromID(null, id, schema, false, progress_listener, range);
+    return makeFromID(null, id, schema, progress_listener, range);
   }
 
   /**
@@ -143,7 +145,7 @@ public class DatabaseEntrySource implements EntrySource, Serializable
    * jdbc:postgresql://host:port/database?user=username
    * 
    */
-  public boolean setLocation(final boolean prompt_user)
+  public boolean setLocation(final boolean promptUser)
   {
     Container bacross = new Container();
     bacross.setLayout(new GridLayout(6, 2, 5, 5));
@@ -210,13 +212,16 @@ public class DatabaseEntrySource implements EntrySource, Serializable
       }
     }
 
-    int n = JOptionPane.showConfirmDialog(null, bacross,
+    if(promptUser)
+    {
+      int n = JOptionPane.showConfirmDialog(null, bacross,
                                           "Enter Database Address",
                                           JOptionPane.OK_CANCEL_OPTION,
                                           JOptionPane.QUESTION_MESSAGE);
-    if(n == JOptionPane.CANCEL_OPTION)
-      return false;
-
+      if(n == JOptionPane.CANCEL_OPTION)
+        return false;
+    }
+    
     location = "jdbc:postgresql://" + 
                inServer.getText().trim() + ":" +
                inPort.getText().trim() + "/" +
@@ -253,15 +258,12 @@ public class DatabaseEntrySource implements EntrySource, Serializable
    *          The id of the entry in the database
    * @param schema
    *          The schema of the entry in the database
-   * @param read_only
-   *          true if and only if a read-only Entry should be created (some are
-   *          always read only).
    * @exception OutOfRangeException
    *              Thrown if one of the features in the Entry is out of range of
    *              the Bases object.
    */
   private Entry makeFromID(final Bases bases, final String id,
-                             final String schema, final boolean read_only,
+                             final String schema, 
                              InputStreamProgressListener progress_listener, 
                              final Range range)
              throws OutOfRangeException, IOException
@@ -270,20 +272,16 @@ public class DatabaseEntrySource implements EntrySource, Serializable
     {
       DatabaseDocumentEntry db_entry = null;
 
-      if(read_only)
-      {
-      }
-      else
-      {
-        DatabaseDocument doc = new DatabaseDocument(location, pfield, id,
-                                                    schema, splitGFFEntry, 
-                                                    progress_listener);
-        doc.setLazyFeatureLoad(LocalAndRemoteFileManager.lazyLoad.isSelected());
-        if(range != null)
-          doc.setRange(range);
-        db_entry = new DatabaseDocumentEntry(doc, null);
-      }
-
+      DatabaseDocument doc = new DatabaseDocument(location, pfield, id,
+                                                  schema, splitGFFEntry, 
+                                                  progress_listener);
+      doc.setLazyFeatureLoad(LocalAndRemoteFileManager.lazyLoad.isSelected());
+      if(range != null)
+        doc.setRange(range);
+      db_entry = new DatabaseDocumentEntry(doc, null);
+        
+      db_entry.setReadOnly(isReadOnly());
+      
       final Bases real_bases;
 
       if(bases == null)
@@ -355,5 +353,15 @@ public class DatabaseEntrySource implements EntrySource, Serializable
   public JPasswordField getPfield()
   {
     return pfield;
+  }
+
+  public boolean isReadOnly()
+  {
+    return readOnly;
+  }
+
+  public void setReadOnly(boolean readOnly)
+  {
+    this.readOnly = readOnly;
   }
 }

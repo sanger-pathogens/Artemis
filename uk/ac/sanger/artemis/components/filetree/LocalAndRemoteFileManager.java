@@ -145,7 +145,15 @@ public class LocalAndRemoteFileManager extends JFrame
     { 
       setTitle("Database and File Manager");
       entry_source = new DatabaseEntrySource();
-      if(!entry_source.setLocation(true))
+      
+      boolean promptUser = true;
+      if(System.getProperty("read_only") != null)
+      {
+        promptUser = false;
+        entry_source.setReadOnly(true);
+      }
+      
+      if(!entry_source.setLocation(promptUser))
         return;
     
       JLabel label  = new JLabel(" Database Loading...");
