@@ -1,12 +1,12 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.35 2008-04-22 12:49:31 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.36 2008-05-01 12:06:47 tjc Exp $
 
 SHELL=/bin/sh
 
 #OPT_FLAGS = -g -deprecation
 
-JAVAC := javac -source 1.4 -target 1.4 $(OPT_FLAGS) $(EXTRA_FLAGS)
+JAVAC := javac -source 1.5 -target 1.5 $(OPT_FLAGS) $(EXTRA_FLAGS)
 
 REAL_CLASSPATH := CLASSPATH=lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ibatis/ibatis-2.3.0.677.jar:lib/ibatis/log4j-1.2.14.jar:lib/chado-14-interface.jar:.
 
