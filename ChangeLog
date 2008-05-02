@@ -1,4 +1,4 @@
-Version 10.1/7.1
+Version 10.+/7.+
 
    	Fix for creating intergenic features for overlapping CDS's. Also
    	add note based on which one of the 4 cases with respect to the 
@@ -13,6 +13,10 @@ Version 10.1/7.1
 	Added option to "Create features from graph peaks". For a graph 
 	this creates features in regions above a given cut-off and above 
 	a given feature size.
+	
+	Add -Dread_only option for read only databases.
+	
+	Add option to graphs to be able to adjust their height.
 	
 Version 10
 
@@ -31,7 +35,7 @@ Version 10
 	This allows the user to change the names of qualifiers for all
 	selected features.
 	
-	Now using new release of j2ssh (0.2.9). This requires Jav1.5+.
+	Now using new release of j2ssh (0.2.9). This requires Java1.5+.
 
 	Implemented option for ORF creation to take into account boundaries
 	of multiple fasta sequences, so that they do not cross them.
