@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlotGroup.java,v 1.7 2008-03-06 14:34:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlotGroup.java,v 1.8 2008-05-02 12:50:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -30,19 +30,17 @@ import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.plot.*;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.io.IOException;
-import java.io.File;
 import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 /**
  *  This is a super-component containing several BasePlot components, each of
  *  which can toggled off and on.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlotGroup.java,v 1.7 2008-03-06 14:34:05 tjc Exp $
+ *  @version $Id: BasePlotGroup.java,v 1.8 2008-05-02 12:50:01 tjc Exp $
  **/
 
 public class BasePlotGroup extends JPanel
