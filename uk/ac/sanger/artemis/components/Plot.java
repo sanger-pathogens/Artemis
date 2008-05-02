@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.13 2008-03-06 14:34:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.14 2008-05-02 12:51:38 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -52,7 +52,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.13 2008-03-06 14:34:05 tjc Exp $
+ *  @version $Id: Plot.java,v 1.14 2008-05-02 12:51:38 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -423,7 +423,63 @@ public abstract class Plot extends JPanel
             }
           });
         }
+   
+        popup.addSeparator();
+        final JMenu graphHeight = new JMenu("Graph Height");
+        popup.add(graphHeight);
+        final JMenuItem smaller = new JMenuItem("smaller");
+        final JMenuItem larger  = new JMenuItem("larger");
+        final JMenuItem setHeight = new JMenuItem("set...");
+        
+        graphHeight.add(smaller);
+        graphHeight.add(larger);
+        graphHeight.add(setHeight);
 
+        smaller.addActionListener(new ActionListener()
+        {
+          public void actionPerformed(ActionEvent e)
+          {
+            Dimension d = getSize();
+            rescale((int)(d.height*0.9f));
+          }
+        });
+        
+        larger.addActionListener(new ActionListener()
+        {
+          public void actionPerformed(ActionEvent e)
+          {
+            Dimension d = getSize();
+            rescale((int)(d.height*1.1f));
+          }
+        });
+        
+
+        setHeight.addActionListener(new ActionListener()
+        {
+
+          public void actionPerformed(ActionEvent e)
+          {
+            final JTextField newGraphHgt = new JTextField(Integer.toString(getSize().height));
+            String window_options[] = { "Set Window Size", "Cancel" };
+            int select = JOptionPane.showOptionDialog(null,
+                                         newGraphHgt,
+                                        "Set Window Size",
+                                         JOptionPane.DEFAULT_OPTION,
+                                         JOptionPane.QUESTION_MESSAGE,
+                                         null, window_options, window_options[0]);
+            
+            if(select == 1)
+              return;
+            
+            try
+            {
+              final int value = Integer.parseInt(newGraphHgt.getText().trim());
+              rescale(value);
+            }
+            catch(NumberFormatException nfe){}
+          }
+        });
+        
         parent.add(popup);
         popup.show(parent, event.getX(), event.getY());
       } 
@@ -471,6 +527,19 @@ public abstract class Plot extends JPanel
     }
   };
 
+  
+  private void rescale(int hgt)
+  {
+    setSize(getSize().width, hgt);
+    
+    if(Plot.this instanceof BasePlot)
+      BasePlot.HEIGHT = getSize().height;
+    else if(Plot.this instanceof FeaturePlot)
+      FeaturePlot.HEIGHT = getSize().height;
+    
+    offscreen = null;
+    revalidate();
+  }
 
   /**
    *  Return true if and only if the given MouseEvent (a mouse press) should
