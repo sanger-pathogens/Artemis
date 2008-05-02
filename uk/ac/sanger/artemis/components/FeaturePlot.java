@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePlot.java,v 1.5 2008-03-06 14:40:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePlot.java,v 1.6 2008-05-02 12:50:37 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -32,14 +32,13 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.plot.*;
 import java.awt.*;
-import java.awt.event.*;
 
 /**
  *  The components of this class display a plot of a FeatureAlgorithm for a
  *  particular feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePlot.java,v 1.5 2008-03-06 14:40:07 tjc Exp $
+ *  @version $Id: FeaturePlot.java,v 1.6 2008-05-02 12:50:37 tjc Exp $
  **/
 
 public class FeaturePlot extends Plot
@@ -61,7 +60,7 @@ public class FeaturePlot extends Plot
   /**
    *  Used by getPreferredSize () and getMinimumSize ();
    **/
-  private final static int HEIGHT;
+  protected static int HEIGHT;
 
   static {
     final Integer feature_plot_height =

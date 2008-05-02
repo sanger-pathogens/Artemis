@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.10 2008-03-06 16:36:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.11 2008-05-02 12:50:37 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -33,7 +33,6 @@ import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
-import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.plot.*;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
@@ -42,7 +41,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.NumberFormat;
 
-import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -54,7 +52,7 @@ import javax.swing.JTextField;
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.10 2008-03-06 16:36:01 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.11 2008-05-02 12:50:37 tjc Exp $
  **/
 
 public class BasePlot extends Plot
@@ -138,7 +136,7 @@ public class BasePlot extends Plot
   /**
    *  Used by getPreferredSize() and getMinimumSize();
    **/
-  private final static int HEIGHT;
+  protected static int HEIGHT;
 
   static 
   {
@@ -152,7 +150,7 @@ public class BasePlot extends Plot
       if(screen.height <= 600) 
         HEIGHT = 100;
       else 
-        HEIGHT = 150;
+        HEIGHT = 120;
     }
     else
       HEIGHT = base_plot_height.intValue();
