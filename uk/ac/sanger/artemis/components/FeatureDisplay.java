@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.56 2008-03-07 12:20:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.57 2008-05-06 09:41:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -70,7 +70,7 @@ import javax.swing.JFrame;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.56 2008-03-07 12:20:44 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.57 2008-05-06 09:41:14 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -4924,10 +4924,9 @@ public class FeatureDisplay extends EntryGroupPanel
       //
       // Test that there are no features overlapping contig boundaries
       //
-      final FeatureEnumeration test_enumerator = getEntryGroup().features();
-      FeaturePredicate predicate = new FeaturePredicate()
+      final FeaturePredicate overlapPredicate = new FeaturePredicate()
       {
-        FeatureVector contig_features = getContigs();
+        private FeatureVector contig_features = getContigs();
         public boolean testPredicate(final Feature feature)
         {
           final Location loc = feature.getLocation();
@@ -4943,28 +4942,31 @@ public class FeatureDisplay extends EntryGroupPanel
             
             if( (this_start > start && this_start < end) ||
                 (this_end > start && this_end < end) )
-              return false;
+              return true;
           }
-         
-          return true;
+          return false;
         }
       };
 
-      while(test_enumerator.hasMoreFeatures())
+      
+      final FilteredEntryGroup filtered_entry_group =
+        new FilteredEntryGroup(getEntryGroup(), overlapPredicate, "Overlapping Features");
+
+      if(filtered_entry_group.getAllFeaturesCount() > 0)
       {
-        final Feature this_feature = test_enumerator.nextFeature();
-        if(!predicate.testPredicate(this_feature))
-        {
-          JOptionPane.showMessageDialog(null,
-              "There is a feature ("+this_feature.getIDString()+
-              ") overlapping the contig boundary at:\n"+
-              this_feature.getLocation().getFirstBase()+".."+
-              this_feature.getLocation().getLastBase()+
-              "\nThis needs fixing before contigs can be reordered.",
-              "Warning",
-              JOptionPane.WARNING_MESSAGE);
-          return;
-        }
+        JOptionPane.showMessageDialog(null,
+            "There is/are "+filtered_entry_group.getAllFeaturesCount()+
+            " feature(s) overlapping the contig boundaries."+
+            "\nA list of these features will appear."+
+            "\nThis needs fixing before contigs can be reordered.",
+            "Warning",
+            JOptionPane.WARNING_MESSAGE);
+        
+        FeatureListFrame list = new FeatureListFrame("Overlapping Features (to be fixed before reordering)",
+            getSelection(), getGotoEventSource(), filtered_entry_group, getBasePlotGroup());
+        list.setVisible(true);
+        
+        return;
       }
       
       // rearrange contig order
