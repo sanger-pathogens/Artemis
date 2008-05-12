@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.42 2008-04-01 09:59:11 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.43 2008-05-12 10:01:23 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -316,7 +316,7 @@ sequence_file_suffixes = embl gbk genbank gff tab_embl seq dna \
 
 
 # the default height for the base plot window
-base_plot_height = 150
+base_plot_height = 100
 
 
 # the default height for the feature plot window
