@@ -1,0 +1,77 @@
+<html>
+<head>
+   <meta name="keywords" content="java, biology, bioinformatics, EMBOSS, Jemboss, Artemis">
+
+   <title>Jemboss & Artemis - Circular Plot</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+
+<h1>DNA Circular Plot</h1>
+
+
+	This is a collaborative project between <a href="http://sf.net/projects/emboss">Jemboss</a> and 
+	<a href="http://www.sanger.ac.uk/Software/Artemis">Artemis</a>. It makes use
+	of the existing circular plot in Jemboss and the Artemis sequence libraries.
+
+<p>
+	It can be used to generate images of circular DNA maps to display regions 
+	and features of interest. The images can be inserted 
+	into a document or printed out directly. As this uses Artemis it can read in the
+	common file formats EMBL, GenBank and GFF3.
+</p>
+<p>
+	The circular plots are interactive. The sections below describe how the 
+	circular plot can be altered and enhanced to arrive at the best view.
+</p>
+	
+	<h2>Editing Features</h2>
+	Each feature drawn can be double clicked on to open up a properties window.
+	This allows the label, start and end coordinates, colour and line width to 
+	be changed. There is also an option to show or hide the label.
+	
+	<h2>Dragging Features in a Track</h2>
+	
+	Features can be dragged by selecting a feature and holding the mouse button
+	down then dragging towards or away from the circular plot center. This alters 
+	all the features in that track, moving them towards or away from the center.
+	
+	<h2>Defining Tracks</h2>
+	
+	Tracks of features of different radii can be set up. The features included in
+	a track can be defined using the "Track Manager". Features can then be filtered
+	to define what types of features are displayed on a given track. The feature
+	key (e.g. CDS) and a qualifier can be used along with which strand (forward or
+	reverse) the feature is on. The qualifier value can be a single value or a list of
+	values. For example, if the qualifier "gene" is used with the values "a b c", then those
+	three genes will be displayed on the track. Selecting 'Not' means that it will pick
+	out everyting for a track except that qualifier. 
+	
+<p>
+	The size of the track can be defined in the track manager. Also the position of
+	the track can be set as a fraction of the radii. This is an alternative to
+	dragging the features in a track to a different position. Features can be either
+	coloured based on the colour qualifier or given all given the same colour within
+	that track.
+</p>
+	
+	<h2>Graphs</h2>
+
+	The %GC and GC skew ((G-C)/(G+C)) can be displayed. There is an options menu
+	for eah plot to define the step size and window size for the calculation. The
+	colours above and below the average for the plot can be selected to highlight
+	the different regions. A user defined plot can be read in, this takes the same
+	form as a single user plot in Artemis. This will prompt the user for the name 
+	of a data file which should contain one line per base of sequence and 
+	one floating point number per line.
+
+	<h2>Ticks</h2>
+	
+	Major and minor ticks can be adjusted from the 'Tick Marks...' menu. An interval
+	for each of these can be set. Numbering for the ticks can optionally be turned off.
+
+	<h2>Read in Entry on Separate Track</h2>
+	
+	As with Artemis, it is possible to overlay features from a separate file. From the
+	'File' menu there is an option to 'Read in Entry on Separate Track'. This creates
+	an extra track and adds all the features to the track.
