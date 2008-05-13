@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.57 2008-05-06 09:41:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.58 2008-05-13 14:38:06 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -70,7 +70,7 @@ import javax.swing.JFrame;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.57 2008-05-06 09:41:14 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.58 2008-05-13 14:38:06 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -4868,7 +4868,7 @@ public class FeatureDisplay extends EntryGroupPanel
   */
   protected FeatureVector getContigs()
   {
-    FeatureVector contig_features = new FeatureVector();
+    final FeatureVector tmpContigFeatures = new FeatureVector();
     // find all fasta_record features
     Vector contigKeys = getContigKeys();
     final FeaturePredicate key_predicate_contig[]
@@ -4881,7 +4881,6 @@ public class FeatureDisplay extends EntryGroupPanel
                                              false);
 
     final FeatureEnumeration test_enumerator = getEntryGroup().features();
-    contig_features = new FeatureVector();
 
     while(test_enumerator.hasMoreFeatures())
     {
@@ -4890,10 +4889,47 @@ public class FeatureDisplay extends EntryGroupPanel
       for(int i=0; i<contigKeys.size(); i++)
       {
         if(key_predicate_contig[i].testPredicate(this_feature))
-          contig_features.add(this_feature);
+          tmpContigFeatures.add(this_feature);
       }
     }
-    return contig_features;
+    
+    
+    final FeaturePredicate subsetPredicate = new FeaturePredicate()
+    {
+      public boolean testPredicate(final Feature feature)
+      {
+        final Location loc = feature.getLocation();
+        final int start = loc.getFirstBase();
+        final int end   = loc.getLastBase();
+
+        for(int i=0; i<tmpContigFeatures.size(); i++)
+        {
+          Feature contig = tmpContigFeatures.elementAt(i);
+          if(contig.getSystematicName().equals(feature.getSystematicName()))
+            continue;
+          
+          int this_start = contig.getLocation().getFirstBase();
+          int this_end   = contig.getLocation().getLastBase();
+
+          if( (this_start >= start && this_start < end) &&
+              (this_end > start && this_end <= end) )
+            return true;
+        }
+        return false;
+      }
+    };
+    
+    FeatureVector contigFeatures = new FeatureVector();
+    for(int i=0; i<tmpContigFeatures.size(); i++)
+    {
+      Feature contig = tmpContigFeatures.elementAt(i);
+      if(subsetPredicate.testPredicate(contig))
+        contigFeatures.add(contig);
+    }
+    
+    tmpContigFeatures.removeAllElements();
+    
+    return contigFeatures;
   }
 
   /**
@@ -4929,6 +4965,9 @@ public class FeatureDisplay extends EntryGroupPanel
         private FeatureVector contig_features = getContigs();
         public boolean testPredicate(final Feature feature)
         {
+          //if(getContigKeys().contains(feature.getKey().getKeyString()))
+          //  return false;
+          
           final Location loc = feature.getLocation();
 
           final int start = loc.getFirstBase();
