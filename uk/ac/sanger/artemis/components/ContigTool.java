@@ -85,12 +85,15 @@ public class ContigTool extends JPanel
     MultiLineToolTipUI.initialize();
     setToolTipText("");   //enable tooltip display
 
-    for(int i=0; i<contig_features.size(); i++)
+    /*for(int i=0; i<contig_features.size(); i++)
     {
       final Range this_feature_range = contig_features.elementAt(i).getMaxRawRange();
       length += ((this_feature_range.getEnd() - this_feature_range.getStart())/scale);
-    }
+    }*/
    
+    length += contig_features.elementAt(0).getStrand().getSequenceLength() / scale;
+    
+    
     Dimension dim = new Dimension(length, 20);
     setPreferredSize(dim);
 
