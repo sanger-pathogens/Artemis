@@ -1809,7 +1809,7 @@ public class ChadoTransactionManager
     featureloc.setFmax(new Integer(range_new.getEnd()));
     featureloc.setFmin(new Integer(range_new.getStart()-1));
     
-    if(gffFeature.getFeature_relationship_rank_store() != null)
+    /*if(gffFeature.getFeature_relationship_rank_store() != null)
     {
       final Hashtable rank_hash = gffFeature.getFeature_relationship_rank_store();
       if(rank_hash.containsKey(seg_id))
@@ -1820,8 +1820,9 @@ public class ChadoTransactionManager
       else
         featureloc.setRank(0);
     }
-    else
-      featureloc.setRank(0);
+    else*/
+      
+    featureloc.setRank(0);
     
     boolean is_complement = gffFeature.getLocation().isComplement();
     if(is_complement)
