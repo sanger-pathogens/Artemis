@@ -39,9 +39,15 @@ import java.awt.event.*;
 import java.util.Vector;
 
 import java.awt.geom.RoundRectangle2D;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.border.Border;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.*;
 import java.awt.dnd.*;
 
@@ -50,7 +56,7 @@ public class ContigTool extends JPanel
                   DragSourceListener, Autoscroll,
                   SelectionChangeListener
 {
-
+  private static final long serialVersionUID = 1L;
   private FeatureVector contig_features;
   private FeatureDisplay feature_display;
   private Selection selection;
@@ -329,14 +335,8 @@ public class ContigTool extends JPanel
   private void adjustSize(final JScrollPane jsp)
   {
     length = xbound*2;
-    for(int i=0; i<contig_features.size(); i++)
-    {
-      final Range this_feature_range = contig_features.elementAt(i).getMaxRawRange();
-      length += ((this_feature_range.getEnd() - this_feature_range.getStart())/scale);
-    }
-
-    Dimension dim = new Dimension(length, 60);
-    setPreferredSize(dim);
+    length += contig_features.elementAt(0).getStrand().getSequenceLength() / scale;
+    setPreferredSize(new Dimension(length, 60));
     jsp.revalidate();
   }
 
@@ -402,13 +402,11 @@ public class ContigTool extends JPanel
         g2.setStroke(stroke2);
       else
         g2.setStroke(stroke1);
- 
+
       g2.drawRect(xstart, 10, xend-xstart, 20);
 
       final String label_or_gene = feature.getIDString();
-      final int string_width = fm.stringWidth(label_or_gene);
-
-      Shape saved_clip = g.getClip();
+      final Shape saved_clip = g.getClip();
       g2.setColor(Color.black);
       g2.setClip(xstart, 10, xend-xstart, 20);
       g2.drawString(label_or_gene, xstart,
@@ -416,18 +414,14 @@ public class ContigTool extends JPanel
       g2.setClip(saved_clip);
     }
 
-
     g2.setStroke(stroke);
     if(highlight_drop_base > 0)
     {
       g2.setColor(Color.red);
       final int draw_x_position = xbound + highlight_drop_base/scale;
-      int nlines = 16;
-
       g.drawLine(draw_x_position, 0,
                  draw_x_position, 100);
     }
-
   }
 
   /**
@@ -496,7 +490,7 @@ public class ContigTool extends JPanel
 // drop
   public void drop(DropTargetDropEvent e)
   {
-    Transferable t = e.getTransferable();
+    //Transferable t = e.getTransferable();
     if(e.isDataFlavorSupported(DataFlavor.stringFlavor))
     {
       FeatureVector selected_features = getSelection().getSelectedFeatures();
@@ -561,7 +555,7 @@ public class ContigTool extends JPanel
       ImageIcon icon = new ImageIcon(cl.getResource("images/icon.gif"));
       final Image icon_image = icon.getImage();
 
-      TransferableContig tcontig = new TransferableContig(selected_features.elementAt(0));
+      //TransferableContig tcontig = new TransferableContig(selected_features.elementAt(0));
       StringSelection name = new StringSelection(selected_features.elementAt(0).getGeneName());
 
       e.startDrag(DragSource.DefaultCopyDrop,     // cursor
