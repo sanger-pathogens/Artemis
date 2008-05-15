@@ -201,6 +201,7 @@ public class GeneEdit
     DatabaseDocument doc = new DatabaseDocument(location, pfield, 
                                                 uniqueName,
                                                 schema, true);
+    doc.setLazyFeatureLoad(false);
     try
     {
       db_entry = new DatabaseDocumentEntry(doc, null);
