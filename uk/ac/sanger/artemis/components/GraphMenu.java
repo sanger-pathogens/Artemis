@@ -20,14 +20,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.3 2008-01-22 15:02:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.4 2008-05-15 09:56:47 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
-import uk.ac.sanger.artemis.*;
-import uk.ac.sanger.artemis.plot.*;
-import uk.ac.sanger.artemis.sequence.*;
+import uk.ac.sanger.artemis.EntryGroup;
+import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.plot.Algorithm;
+import uk.ac.sanger.artemis.plot.BaseAlgorithm;
+import uk.ac.sanger.artemis.plot.CodonUsageAlgorithm;
+import uk.ac.sanger.artemis.plot.CodonUsageWeight;
+import uk.ac.sanger.artemis.plot.UserDataAlgorithm;
+import uk.ac.sanger.artemis.sequence.Strand;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,10 +48,41 @@ import javax.swing.*;
  *  This menu controls one particular BasePlotGroup.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: GraphMenu.java,v 1.3 2008-01-22 15:02:00 tjc Exp $
+ *  @version $Id: GraphMenu.java,v 1.4 2008-05-15 09:56:47 tjc Exp $
  **/
 
-public class GraphMenu extends JMenu {
+public class GraphMenu extends JMenu 
+{
+  private static final long serialVersionUID = 1L;
+
+  /**
+   *  The JFrame reference that was passed to the constructor.
+   **/
+  private JFrame frame;
+
+  /**
+   *  The BasePlotGroup that was passed to the constructor.
+   **/
+  private BasePlotGroup base_plot_group;
+
+  /**
+   *  The EntryGroup object that was passed to the constructor.
+   **/
+  private EntryGroup entry_group = null;
+
+  /**
+   *  The FeatureDisplay that was passed to the constructor.
+   **/
+  private FeatureDisplay feature_display;
+  
+  private JMenu menuSubMenu = new JMenu("Other Graphs");
+
+  /**
+   *  This list of the CheckboxMenuItems for the graphs is stored so that we
+   *  can turn them all off with "Hide All Graphs".
+   **/
+  private Vector algorithm_menu_items = new Vector ();
+  
   /**
    *  Create a new GraphMenu object and all it's menu items.
    *  @param frame The JFrame that owns this JMenu.
@@ -60,25 +96,27 @@ public class GraphMenu extends JMenu {
                     final EntryGroup entry_group,
                     final BasePlotGroup base_plot_group,
                     final FeatureDisplay feature_display,
-                    final String menu_name) {
+                    final String menu_name) 
+  {
     super (menu_name);
     this.frame = frame;
     this.entry_group = entry_group;
     this.base_plot_group = base_plot_group;
-    this.view_menu = view_menu;
-    this.add_menu = add_menu;
     this.feature_display = feature_display;
 
     final BaseAlgorithm [] orig_algorithms =
       base_plot_group.getPlotAlgorithms ();
 
     final JMenuItem hide_all_graphs_item = new JMenuItem ("Hide All Graphs");
-    hide_all_graphs_item.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent event) {
+    hide_all_graphs_item.addActionListener (new ActionListener () 
+    {
+      public void actionPerformed (ActionEvent event)
+      {
         final BaseAlgorithm [] current_algorithms =
           base_plot_group.getPlotAlgorithms ();
 
-        for (int i = 0 ; i < current_algorithms.length ; ++i) {
+        for (int i = 0 ; i < current_algorithms.length ; ++i)
+        {
           final BaseAlgorithm this_algorithm = current_algorithms[i];
 
           base_plot_group.setVisibleByAlgorithm (this_algorithm, false);
@@ -88,7 +126,8 @@ public class GraphMenu extends JMenu {
 
           this_menu_item.setState (false);
         }
-        if (getParent () != null) {
+        if (getParent () != null) 
+        {
           // XXX change to revalidate().
           frame.validate ();
         }
@@ -98,18 +137,23 @@ public class GraphMenu extends JMenu {
 
     addSeparator ();
 
-    if (Options.readWritePossible ()) {
+    if (Options.readWritePossible ()) 
+    {
       final JMenuItem usage_plot_item = new JMenuItem ("Add Usage Plots ...");
-      usage_plot_item.addActionListener (new ActionListener () {
-        public void actionPerformed (ActionEvent event) {
+      usage_plot_item.addActionListener (new ActionListener () 
+      {
+        public void actionPerformed (ActionEvent event) 
+        {
           addUsagePlot ();
         }
       });
       add (usage_plot_item);
 
       final JMenuItem user_plot_item = new JMenuItem ("Add User Plot ...");
-      user_plot_item.addActionListener (new ActionListener () {
-        public void actionPerformed (ActionEvent event) {
+      user_plot_item.addActionListener (new ActionListener () 
+      {
+        public void actionPerformed (ActionEvent event)
+        {
           addUserPlot ();
         }
       });
@@ -120,7 +164,8 @@ public class GraphMenu extends JMenu {
     }
 
     boolean useSubMenu = false;
-    for (int i = 0 ; i < orig_algorithms.length ; ++i) {
+    for (int i = 0 ; i < orig_algorithms.length ; ++i)
+    {
       final BaseAlgorithm this_algorithm = orig_algorithms[i];
 
       if(this_algorithm.getAlgorithmName().startsWith("Cumulative AT"))
@@ -130,19 +175,24 @@ public class GraphMenu extends JMenu {
     if(useSubMenu)
       add(menuSubMenu);
 
-    if (Options.getOptions ().getProperty ("codon_usage_file") != null) {
+    if (Options.getOptions ().getProperty ("codon_usage_file") != null)
+    {
       final String codon_usage_file_name =
         Options.getOptions ().getProperty ("codon_usage_file");
 
-      try {
+      try 
+      {
         addUsagePlot (new File (codon_usage_file_name), true, false);
         addUsagePlot (new File (codon_usage_file_name), false, false);
 
-        if (getParent () != null) {
+        if (getParent () != null)
+        {
           // XXX change to revalidate().
           frame.validate ();
         }
-      } catch (IOException e) {
+      } 
+      catch (IOException e) 
+      {
         new MessageDialog (frame, "error while reading usage data: " + e);
       }
     }
@@ -160,7 +210,8 @@ public class GraphMenu extends JMenu {
   public GraphMenu (final JFrame frame,
                     final EntryGroup entry_group,
                     final BasePlotGroup base_plot_group,
-                    final FeatureDisplay feature_display) {
+                    final FeatureDisplay feature_display) 
+  {
     this (frame, entry_group, base_plot_group, feature_display, "Graph");
   }
 
@@ -172,15 +223,17 @@ public class GraphMenu extends JMenu {
    **/
   public JCheckBoxMenuItem addAlgorithm (final BaseAlgorithm algorithm,
                                         final boolean is_visible,
-                                        final boolean useSubMenu) {
-
+                                        final boolean useSubMenu) 
+  {
     final JCheckBoxMenuItem new_item =
       new JCheckBoxMenuItem (algorithm.getAlgorithmName ());
 
     new_item.setState (is_visible);
 
-    new_item.addItemListener (new ItemListener () {
-      public void itemStateChanged(ItemEvent event) {
+    new_item.addItemListener (new ItemListener () 
+    {
+      public void itemStateChanged(ItemEvent event) 
+      {
         base_plot_group.setVisibleByAlgorithm (algorithm,
                                                new_item.getState ());
       }
@@ -201,7 +254,8 @@ public class GraphMenu extends JMenu {
    *  file, then make and add forward and a reverse BasePlot component using
    *  the data.
    **/
-  public void addUsagePlot () {
+  public void addUsagePlot () 
+  {
     final JFrame frame = Utilities.getComponentFrame (base_plot_group);
 
     final StickyFileChooser dialog = new StickyFileChooser ();
@@ -212,7 +266,8 @@ public class GraphMenu extends JMenu {
     final int status = dialog.showOpenDialog (frame);
 
     if (status != JFileChooser.APPROVE_OPTION ||
-        dialog.getSelectedFile () == null) {
+        dialog.getSelectedFile () == null)
+    {
       return;
     }
 
@@ -220,8 +275,10 @@ public class GraphMenu extends JMenu {
       new File (dialog.getCurrentDirectory (),
                 dialog.getSelectedFile ().getName ());
 
-    if (file.length () != 0) {
-      try {
+    if (file.length () != 0)
+    {
+      try 
+      {
         final BasePlot new_forward_plot =
           addUsagePlot (file, true, true);
         final BasePlot new_reverse_plot =
@@ -232,7 +289,9 @@ public class GraphMenu extends JMenu {
 
         base_plot_group.setVisibleByAlgorithm (forward_algorithm, true);
         base_plot_group.setVisibleByAlgorithm (reverse_algorithm, true);
-      } catch (IOException e) {
+      } 
+      catch (IOException e) 
+      {
         new MessageDialog (Utilities.getComponentFrame (base_plot_group),
                            "error while reading usage data: " + e);
       }
@@ -251,10 +310,12 @@ public class GraphMenu extends JMenu {
   private BasePlot addUsagePlot (final File codon_usage_file,
                                  final boolean use_forward_strand,
                                  final boolean is_visible)
-      throws IOException {
+      throws IOException 
+  {
     final CodonUsageAlgorithm codon_usage_algorithm;
 
-    if (use_forward_strand) {
+    if (use_forward_strand) 
+    {
       final Strand forward_strand =
         entry_group.getBases ().getForwardStrand ();
 
@@ -263,7 +324,9 @@ public class GraphMenu extends JMenu {
 
       codon_usage_algorithm =
         new CodonUsageAlgorithm (forward_strand, usage_weights);
-    } else {
+    } 
+    else 
+    {
       final Strand backward_strand =
         entry_group.getBases ().getReverseStrand ();
 
@@ -300,18 +363,21 @@ public class GraphMenu extends JMenu {
   /**
    *  Add a UserDataAlgorithm to the display.
    **/
-  private void addUserPlot () {
+  private void addUserPlot () 
+  {
     final JFrame frame = Utilities.getComponentFrame (base_plot_group);
-
     final StickyFileChooser dialog = new StickyFileChooser ();
 
     dialog.setDialogTitle ("Select a data file name ...");
     dialog.setDialogType (JFileChooser.OPEN_DIALOG);
-
+    final JCheckBox logTransform = new JCheckBox("Use log(data+1)", false);
+    dialog.setAccessory(logTransform);
+    
     final int status = dialog.showOpenDialog (frame);
 
     if (status != JFileChooser.APPROVE_OPTION ||
-        dialog.getSelectedFile () == null) {
+        dialog.getSelectedFile () == null) 
+    {
       return;
     }
 
@@ -319,16 +385,18 @@ public class GraphMenu extends JMenu {
       new File (dialog.getCurrentDirectory (),
                 dialog.getSelectedFile ().getName ());
 
-    if (file.length () != 0) {
+    if (file.length () != 0) 
+    {
       final uk.ac.sanger.artemis.util.Document document =
         new uk.ac.sanger.artemis.util.FileDocument (file);
 
       final Strand forward_strand =
         getEntryGroup ().getBases ().getForwardStrand ();
 
-      try {
+      try 
+      {
         final UserDataAlgorithm new_algorithm =
-          new UserDataAlgorithm (forward_strand, document);
+          new UserDataAlgorithm (forward_strand, document, logTransform.isSelected());
 
         final BasePlot new_base_plot =
           base_plot_group.addAlgorithm (new_algorithm);
@@ -350,11 +418,14 @@ public class GraphMenu extends JMenu {
 
         base_plot_group.displayAdjustmentValueChanged (event);
 
-        if (getParent () != null) {
+        if (getParent () != null) 
+        {
           // XXX change to revalidate().
           frame.validate ();
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) 
+      {
         new MessageDialog (Utilities.getComponentFrame (base_plot_group),
                            "error while reading user data: " + e);
       }
@@ -364,52 +435,17 @@ public class GraphMenu extends JMenu {
   /**
    *  Return the JFrame that was passed to the constructor.
    **/
-  public JFrame getParentFrame () {
+  public JFrame getParentFrame () 
+  {
     return frame;
   }
 
   /**
    *  Return the EntryGroup that was passed to the constructor.
    **/
-  private EntryGroup getEntryGroup () {
+  private EntryGroup getEntryGroup () 
+  {
     return entry_group;
   }
 
-  /**
-   *  The JFrame reference that was passed to the constructor.
-   **/
-  private JFrame frame;
-
-  /**
-   *  The BasePlotGroup that was passed to the constructor.
-   **/
-  private BasePlotGroup base_plot_group;
-
-  /**
-   *  The EntryGroup object that was passed to the constructor.
-   **/
-  private EntryGroup entry_group = null;
-
-  /**
-   *  This ViewMenu is updated when a usage plot is added.
-   **/
-  private ViewMenu view_menu;
-
-  /**
-   *  This AddMenu is updated when a usage plot is added.
-   **/
-  private AddMenu add_menu;
-
-  /**
-   *  The FeatureDisplay that was passed to the constructor.
-   **/
-  private FeatureDisplay feature_display;
-  
-  private JMenu menuSubMenu = new JMenu("Other Graphs");
-
-  /**
-   *  This list of the CheckboxMenuItems for the graphs is stored so that we
-   *  can turn them all off with "Hide All Graphs".
-   **/
-  private Vector algorithm_menu_items = new Vector ();
 }
