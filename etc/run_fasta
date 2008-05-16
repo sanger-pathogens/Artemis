@@ -6,7 +6,7 @@
 # to customise this script see the function called run_one_prog below
 
 
-RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.17 2007-04-16 15:35:45 tjc Exp $"
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_fasta,v 1.18 2008-05-16 10:15:49 tjc Exp $"
 
 PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
 
@@ -30,22 +30,24 @@ fi
 #
 # Exchange DB name for fasta reference
 #
-if [ "$DATABASE" = "%uniprot" ]; then
-  DATABASE="%U";
-elif [ "$DATABASE" = "%uniprot_archaea" ]; then
-  DATABASE="%A";
-elif [ "$DATABASE" = "%uniprot_bacteria" ]; then
-  DATABASE="%B";
-elif [ "$DATABASE" = "%uniprot_eukaryota" ]; then
-  DATABASE="%E";
-elif [ "$DATABASE" = "%uniprot_viruses" ]; then
-  DATABASE="%V";
-elif [ "$DATABASE" = "%uniprot_rest" ]; then
-  DATABASE="%R";
-elif [ "$DATABASE" = "%malaria" ]; then
-  DATABASE="%M";
-elif [ "$DATABASE" = "%kineto_aa" ]; then
-  DATABASE="%K";
+if [ -f "$FASTLIBS" ]; then
+  if [ "$DATABASE" = "%uniprot" ]; then
+    DATABASE="%U";
+  elif [ "$DATABASE" = "%uniprot_archaea" ]; then
+    DATABASE="%A";
+  elif [ "$DATABASE" = "%uniprot_bacteria" ]; then
+    DATABASE="%B";
+  elif [ "$DATABASE" = "%uniprot_eukaryota" ]; then
+    DATABASE="%E";
+  elif [ "$DATABASE" = "%uniprot_viruses" ]; then
+    DATABASE="%V";
+  elif [ "$DATABASE" = "%uniprot_rest" ]; then
+    DATABASE="%R";
+  elif [ "$DATABASE" = "%malaria" ]; then
+    DATABASE="%M";
+  elif [ "$DATABASE" = "%kineto_aa" ]; then
+    DATABASE="%K";
+  fi
 fi
 
 # expand any ~ or environment variables
