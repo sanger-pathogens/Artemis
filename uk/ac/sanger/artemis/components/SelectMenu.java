@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.12 2008-01-17 09:53:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectMenu.java,v 1.13 2008-05-21 14:14:04 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -60,7 +60,7 @@ import javax.swing.KeyStroke;
  *  "Select by key".
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectMenu.java,v 1.12 2008-01-17 09:53:47 tjc Exp $
+ *  @version $Id: SelectMenu.java,v 1.13 2008-05-21 14:14:04 tjc Exp $
  **/
 
 public class SelectMenu extends SelectionMenu 
@@ -241,7 +241,7 @@ public class SelectMenu extends SelectionMenu
           else
           {
             final Vector diffs1 = alignQueryViewer.getDifferenceCoords(false);
-            final Vector diffs2 = alignSubjectViewer.getDifferenceCoords(false);
+            final Vector diffs2 = alignSubjectViewer.getDifferenceCoords(true);
             diffs = AddMenu.union(diffs1,diffs2);
           }
 
