@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.39 2008-03-19 11:03:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.40 2008-05-21 14:15:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -74,7 +74,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.39 2008-03-19 11:03:58 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.40 2008-05-21 14:15:54 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -379,9 +379,9 @@ public class AddMenu extends SelectionMenu
   * @param v2 Vector of Integer coordinates
   *  
   */
-  protected static Vector union(Vector v1, Vector v2)
+  protected static Vector union(final Vector v1, final Vector v2)
   {
-    Vector union = new Vector();
+    final Vector union = new Vector();
 
     for(int i=0; i<v1.size(); i++)
     {
@@ -405,7 +405,7 @@ public class AddMenu extends SelectionMenu
           if(iend < jend)
             jend = iend;
 
-          Integer coords[] = new Integer[2];
+          final Integer coords[] = new Integer[2];
           coords[0] = new Integer(istart);
           coords[1] = new Integer(jend);
           union.add(coords);
