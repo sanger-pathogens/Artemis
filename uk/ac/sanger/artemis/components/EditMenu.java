@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.49 2008-01-30 09:16:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.50 2008-05-22 15:03:05 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -52,13 +52,14 @@ import javax.swing.*;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Hashtable;
 import java.util.Vector;
 
 /**
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.49 2008-01-30 09:16:20 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.50 2008-05-22 15:03:05 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -91,6 +92,10 @@ public class EditMenu extends SelectionMenu
 
   public static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(EditMenu.class);
+  
+  /** records the gene builders that are open */
+  private static Hashtable geneBuilderHash;
+  
   /**
    *  Create a new EditMenu object.
    *  @param frame The JFrame that owns this JMenu.
@@ -880,7 +885,7 @@ public class EditMenu extends SelectionMenu
       selection.set(features_to_edit);
     frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
   }
-
+  
   public static boolean editSelectedFeatures(
       final EntryGroup entry_group,
       final Selection selection,
@@ -892,8 +897,29 @@ public class EditMenu extends SelectionMenu
     if(selection_feature.getEmblFeature() instanceof GFFStreamFeature &&
         ((GFFStreamFeature)selection_feature.getEmblFeature()).getChadoGene() != null)
     {
-      new GeneBuilderFrame(selection_feature, entry_group,
-                           selection, goto_event_source);
+      if(geneBuilderHash == null)
+         geneBuilderHash = new Hashtable();
+      
+      final String gene = 
+        ((GFFStreamFeature)selection_feature.getEmblFeature()).getChadoGene().getGeneUniqueName();
+      
+      
+      if(geneBuilderHash.containsKey(gene) &&
+         JOptionPane.showConfirmDialog(null, 
+         "Show gene builder already open\nfor this gene model?", gene, 
+         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+      {
+        ((GeneBuilderFrame)geneBuilderHash.get(gene)).toFront();
+      }
+      else
+      {
+        final GeneBuilderFrame gbFrame = 
+             new GeneBuilderFrame(selection_feature, entry_group,
+                                  selection, goto_event_source);
+        gbFrame.addGeneBuilderHash(geneBuilderHash);
+        geneBuilderHash.put(gene, gbFrame);
+      }
+      
       return false;
     }
     else

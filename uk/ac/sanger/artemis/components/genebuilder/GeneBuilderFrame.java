@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.39 2007-10-15 11:49:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.40 2008-05-22 15:03:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -99,6 +99,7 @@ public class GeneBuilderFrame extends JFrame
   private ChadoTransactionManager chadoTransactionManager;
   private EntryGroup entry_group;
   private GotoEventSource goto_event_source;
+  private Hashtable geneBuilderHash;
   
   public GeneBuilderFrame(Feature feature,
                           final EntryGroup entry_group,
@@ -304,12 +305,35 @@ public class GeneBuilderFrame extends JFrame
       }
     }
     
+    if(geneBuilderHash != null)
+    {
+      geneBuilderHash.remove(chado_gene.getGeneUniqueName());
+    }
+    
     if(reopen)
-      new GeneBuilderFrame(active_feature, entry_group, 
-                           selection, goto_event_source, 
-                           chadoTransactionManager);
+    {
+      final GeneBuilderFrame gbFrame =
+        new GeneBuilderFrame(active_feature, entry_group, 
+                             selection, goto_event_source, 
+                             chadoTransactionManager);
+      if(geneBuilderHash != null)
+      {
+        gbFrame.addGeneBuilderHash(geneBuilderHash);
+        geneBuilderHash.put(chado_gene.getGeneUniqueName(), gbFrame);
+      }
+    }
     
     super.dispose();
+  }
+  
+  /**
+   * Add the hash from EditMenu. This records what gene builders are
+   * open.
+   * @param geneBuilderFocusHash
+   */
+  public void addGeneBuilderHash(final Hashtable geneBuilderHash)
+  {
+    this.geneBuilderHash = geneBuilderHash;
   }
   
   /**
@@ -652,7 +676,6 @@ public class GeneBuilderFrame extends JFrame
     {
       viewer.repaint();
       tree.setSelection(GeneBuilderFrame.this.selection);
-    }
-    
+    } 
   }
 }
