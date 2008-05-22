@@ -6,7 +6,7 @@
 # necessary a symbolic link can be made to this script from
 # /usr/local/bin/ or elsewhere.
 
-# $Header: //tmp/pathsoft/artemis/art,v 1.21 2007-03-01 14:37:47 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/art,v 1.22 2008-05-22 08:34:35 tjc Exp $
 
 # resolve links - $0 may be a link
 PRG=$0
@@ -53,7 +53,7 @@ fi
 
 if [ "$http_proxy" != "" ]
 then
-  ARTEMIS_PROPERTIES="$ARTEMIS_PROPERTIES -DproxySet=true "`echo $http_proxy | sed 's/http:\/\/\(.*\):\(.*\)/ -DproxyHost=\1 -DproxyPort=\2/'`
+  ARTEMIS_PROPERTIES="$ARTEMIS_PROPERTIES -DproxySet=true "`echo $http_proxy | sed 's/http:\/\/\(.*\):\(.*\)/ -Dhttp.proxyHost=\1 -Dhttp.proxyPort=\2/'`
 fi
 
 
