@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.61 2008-04-25 09:58:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.62 2008-05-22 15:04:19 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.61 2008-04-25 09:58:29 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.62 2008-05-22 15:04:19 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1659,7 +1659,7 @@ public class EntryEdit extends JFrame
       }
       
       int select = JOptionPane.showConfirmDialog(frame, 
-          "Commit "+ctm.numberTransaction()+" change(s) to the database?", 
+          "Commit "+ctm.getTransactionCount()+" change(s) to the database?", 
           "Commit", JOptionPane.OK_CANCEL_OPTION);
       if(select == JOptionPane.CANCEL_OPTION)
         return false;
@@ -1890,6 +1890,30 @@ public class EntryEdit extends JFrame
         }    
       });
       
+      addMouseListener(new MouseAdapter()
+      {
+        public void mouseReleased(MouseEvent e)
+        {
+          if(e.getButton() == MouseEvent.BUTTON3)
+          {
+            logger4j.debug(
+               (ctm.getTransactionCount()>0 ? 
+                   ctm.getTransactionCount()+" commit(s):" : "Nothing to commit"));
+            for(int i=0; i<ctm.getTransactionCount(); i++)
+            {
+              uk.ac.sanger.artemis.chado.ChadoTransaction tsn = 
+                ctm.getTransactionAt(i);
+              
+              String key = "";
+              if(tsn.getFeatureKey() != null)
+                key = "KEY="+tsn.getFeatureKey()+" ";
+              logger4j.debug("["+
+               tsn.getTypeAsString()+"] "+key+tsn.getLogComment());
+            }
+          }
+        }
+      });
+      
       setMargin(new Insets(0,2,0,2));
       setToolTipText("commit to database");
       
@@ -1899,7 +1923,7 @@ public class EntryEdit extends JFrame
     public String getToolTipText()
     {
       if(ctm.hasTransactions())
-        return Integer.toString(ctm.numberTransaction());
+        return Integer.toString(ctm.getTransactionCount());
       else
         return "no transaction to commit";
     }

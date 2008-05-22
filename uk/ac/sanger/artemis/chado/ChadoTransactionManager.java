@@ -2356,11 +2356,14 @@ public class ChadoTransactionManager
     return false;
   }
   
-  public int numberTransaction()
+  public int getTransactionCount()
   {
     return sql.size();
   }
   
-  
+  public ChadoTransaction getTransactionAt(final int index)
+  {
+    return (ChadoTransaction)sql.elementAt(index);
+  }
 }
 
