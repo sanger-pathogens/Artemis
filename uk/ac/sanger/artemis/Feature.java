@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.32 2008-02-07 19:29:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.33 2008-05-29 15:17:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -50,6 +50,7 @@ import java.awt.Color;
 import java.util.Vector;
 import java.io.*;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 /**
  *  This class extends an embl.Feature with the other information needed by
@@ -60,7 +61,7 @@ import java.util.Date;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.32 2008-02-07 19:29:49 tjc Exp $
+ *  @version $Id: Feature.java,v 1.33 2008-05-29 15:17:56 tjc Exp $
  **/
 
 public class Feature
@@ -1116,6 +1117,27 @@ public class Feature
                               final boolean match_substring,
                               final StringVector qualifier_names) 
   {
+    return findOrReplaceText(search_text, fold_case, match_substring, 
+                             qualifier_names, null);
+  }
+  
+  /**
+   *  Return true if and only if any qualifier in this feature contains the
+   *  given text string.
+   *  @param search_text The text to search for.
+   *  @param fold_case If true then the text comparisons will ignore case.
+   *  @param match_substring If true then matches to substrings are allowed.
+   *  @param qualifier_names If null search all qualifiers, otherwise just
+   *    search these names,
+   *  @param replaceText text to replace all qualifier value matches. If null
+   *    then returns true if text found.
+   **/
+  public boolean findOrReplaceText(final String search_text,
+                              final boolean fold_case,
+                              final boolean match_substring,
+                              final StringVector qualifier_names,
+                              final String replaceText) 
+  {
     final String real_search_text;
 
     if(fold_case) 
@@ -1124,12 +1146,15 @@ public class Feature
       real_search_text = search_text;
 
     final QualifierVector qualifiers = getQualifiers();
+    QualifierVector newQualifiers = null;
     int qual_size =  qualifiers.size();
 
+    boolean hasReplacedText = false;
+    
     for(int i = 0; i  < qual_size; ++i) 
     {
       final Qualifier this_qualifier = (Qualifier)qualifiers.elementAt(i);
-
+   
       if(qualifier_names != null &&
          !qualifier_names.contains(this_qualifier.getName())) 
         continue;
@@ -1138,7 +1163,9 @@ public class Feature
 
       if(values != null)
       {
+        StringVector newValues = null;
         int val_size = values.size();
+        
         for(int values_index = 0; values_index < val_size; 
              ++values_index) 
         {
@@ -1153,13 +1180,58 @@ public class Feature
           if(! match_substring &&
              this_value_string.equals(real_search_text) ||
              match_substring &&
-             this_value_string.indexOf(real_search_text) != -1) 
-            return true;
+             this_value_string.indexOf(real_search_text) != -1)
+          {
+            // found the match & return true if replace function off
+            if(replaceText == null)
+              return true;
+            
+            String new_text = replaceText;
+            if(match_substring)
+            {
+              final String value_string = (String)values.elementAt(values_index);
+              new_text =
+                  Pattern.compile(real_search_text, Pattern.CASE_INSENSITIVE)
+                  .matcher(value_string).replaceAll(replaceText);
+            }
+            if(newValues == null)
+              newValues = this_qualifier.getValues();
+            
+            newValues.setElementAt(new_text, values_index);
+          }
+        }
+        
+        if(newValues != null)
+        {
+          if(newQualifiers == null)
+            newQualifiers = new QualifierVector();
+          newQualifiers.setQualifier(
+              new Qualifier(this_qualifier.getName(),newValues));
+          hasReplacedText = true;
         }
       }
     }
-
-    return false;
+    
+    if(newQualifiers != null)
+    {
+      for(int i=0; i<newQualifiers.size(); i++)
+      {
+        try
+        {
+          setQualifier((Qualifier) newQualifiers.elementAt(i));
+        }
+        catch(ReadOnlyException e)
+        {
+          e.printStackTrace();
+        }
+        catch(EntryInformationException e)
+        {
+          e.printStackTrace();
+        }
+      }
+    }
+    
+    return hasReplacedText;
   }
 
   public boolean hasValidStartCodon() 
