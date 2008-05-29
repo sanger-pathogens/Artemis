@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/KeyChoice.java,v 1.3 2006-08-09 16:35:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/KeyChoice.java,v 1.4 2008-05-29 15:16:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -41,7 +41,7 @@ import javax.swing.*;
  *  This component is a Choice component that shows the possible feature keys.
  *
  *  @author Kim Rutherford
- *  @version $Id: KeyChoice.java,v 1.3 2006-08-09 16:35:31 tjc Exp $
+ *  @version $Id: KeyChoice.java,v 1.4 2008-05-29 15:16:28 tjc Exp $
  **/
 public class KeyChoice extends JPanel {
   /**
@@ -182,6 +182,12 @@ public class KeyChoice extends JPanel {
     return -1;
   }
 
+  public void setEnabled(final boolean isEnabled)
+  {
+    key_chooser.setEnabled(isEnabled);
+    repaint();
+  }
+  
   /**
    *  The Key that was passed to the constructor.
    **/
