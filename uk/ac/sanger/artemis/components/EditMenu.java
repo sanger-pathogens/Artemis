@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.50 2008-05-22 15:03:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.51 2008-05-29 15:15:51 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.50 2008-05-22 15:03:05 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.51 2008-05-29 15:15:51 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -371,6 +371,17 @@ public class EditMenu extends SelectionMenu
         convertQualifier(getParentFrame(), getSelection());
       }
     });
+    
+    final JMenuItem find_and_replace_qualifier_item = new JMenuItem("Find/Replace Qualifier Text ...");
+    find_and_replace_qualifier_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        new FindAndReplace(getSelection(), goto_event_source, 
+                           entry_group, base_plot_group);
+      }
+    });
+    
 
     final JMenu feature_menu = new JMenu("Selected Feature(s)");
     final JMenuItem merge_features_item = new JMenuItem("Merge");
@@ -745,6 +756,7 @@ public class EditMenu extends SelectionMenu
       addSeparator();
     }
 
+    add(find_and_replace_qualifier_item);
     add(qualifier_menu);
     qualifier_menu.add(add_qualifiers_item);
     qualifier_menu.add(remove_qualifier_item);
@@ -1805,7 +1817,7 @@ public class EditMenu extends SelectionMenu
 
     choice_frame.setVisible (true);
   }
-  
+
   
   /**
    * Offer the user a choice of qualifier to convert the name of
