@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.14 2008-05-02 12:51:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.15 2008-05-29 13:34:25 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -52,7 +52,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.14 2008-05-02 12:51:38 tjc Exp $
+ *  @version $Id: Plot.java,v 1.15 2008-05-29 13:34:25 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -245,6 +245,17 @@ public abstract class Plot extends JPanel
               Box bdown   = Box.createVerticalBox();
               Box bacross;
             
+              if(frameColour.length < numPlots)
+              {
+                frameColour = new Color[numPlots];
+                frameColour[0] = Color.red;
+                frameColour[1] = new Color(0,200,0);
+                frameColour[2] = Color.blue;
+                
+                for(int i=3; i<numPlots; i++)
+                  frameColour[i] = Color.black;
+              }
+              
               for(int i=0; i<numPlots; i++)
               {
                 final int colourNumber = i;

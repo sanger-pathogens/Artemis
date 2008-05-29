@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.11 2008-05-02 12:50:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.12 2008-05-29 13:34:25 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -52,7 +52,7 @@ import javax.swing.JTextField;
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.11 2008-05-02 12:50:37 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.12 2008-05-29 13:34:25 tjc Exp $
  **/
 
 public class BasePlot extends Plot
@@ -643,7 +643,11 @@ public class BasePlot extends Plot
         g.setColor(Color.black);
       else 
       {
-        switch(value_index) 
+        if(value_index < frameColour.length)
+          g.setColor(frameColour[value_index]);
+        else
+          g.setColor(Color.black);
+        /*switch(value_index) 
         {
           case 0:
             g.setColor(frameColour[0]);
@@ -656,7 +660,7 @@ public class BasePlot extends Plot
             break;
           default:
             g.setColor(frameColour[3]);
-        }
+        }*/
       }
 
       final int offset;
