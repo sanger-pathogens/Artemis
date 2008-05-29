@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignMatchViewer.java,v 1.2 2004-07-01 13:41:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignMatchViewer.java,v 1.3 2008-05-29 14:18:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -29,6 +29,10 @@ import uk.ac.sanger.artemis.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
@@ -40,7 +44,7 @@ import java.util.Collections;
  *  A component for viewing AlignMatchVectors selected in an AlignmentViewer.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignMatchViewer.java,v 1.2 2004-07-01 13:41:26 tjc Exp $
+ *  @version $Id: AlignMatchViewer.java,v 1.3 2008-05-29 14:18:48 tjc Exp $
  **/
 
 public class AlignMatchViewer extends JFrame 
@@ -102,6 +106,16 @@ public class AlignMatchViewer extends JFrame
 
     final JMenuBar menu_bar = new JMenuBar();
     final JMenu file_menu = new JMenu("File");
+    
+    final JMenuItem save = new JMenuItem("Save List to File...");
+    save.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent arg0)
+      {
+        saveMatchList();
+      }
+    });
+    
     final JMenuItem close = new JMenuItem("Close");
     close.addActionListener(new ActionListener () 
     {
@@ -112,6 +126,7 @@ public class AlignMatchViewer extends JFrame
       }
     });
 
+    file_menu.add (save);
     file_menu.add (close);
     menu_bar.add (file_menu);
 
@@ -189,7 +204,7 @@ public class AlignMatchViewer extends JFrame
 
     list.setBackground(Color.white);
 
-    getContentPane().add(list, "Center");
+    getContentPane().add(new JScrollPane(list), "Center");
 
     final JPanel panel = new JPanel();
 
@@ -404,5 +419,55 @@ public class AlignMatchViewer extends JFrame
     list.setEnabled(true);
     list.setVisible(true);
   }
+  
+  
+  /**
+   *  Save the text of the match list to a file.
+   **/
+  private void saveMatchList()
+  {
+    final StickyFileChooser file_dialog = new StickyFileChooser();
+
+    file_dialog.setDialogTitle("Choose save file ...");
+    file_dialog.setDialogType(JFileChooser.SAVE_DIALOG);
+    final int status = file_dialog.showSaveDialog(this);
+
+    if(status != JFileChooser.APPROVE_OPTION ||
+       file_dialog.getSelectedFile() == null)
+      return;
+
+    final File write_file =
+      new File(file_dialog.getCurrentDirectory(),
+                file_dialog.getSelectedFile().getName());
+
+    if(write_file.exists())
+    {
+      final YesNoDialog yes_no_dialog =
+        new YesNoDialog(this,
+                         "this file exists: " + write_file +
+                         " overwrite it?");
+      if(yes_no_dialog.getResult())
+      {
+        // yes - continue
+      }
+      else
+        return;
+    }
+
+    try
+    {
+      final PrintWriter writer =
+        new PrintWriter(new FileWriter(write_file));
+
+      for(int i = 0 ; i < list.getModel().getSize() ; ++i)
+        writer.println(list.getModel().getElementAt(i));
+      writer.close();
+    }
+    catch(IOException e)
+    {
+      new MessageDialog(this, "error while writing: " + e.getMessage());
+    }
+  }
+
 
 }
