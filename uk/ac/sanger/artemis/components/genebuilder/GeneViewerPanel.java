@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.79 2008-01-17 09:55:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.80 2008-06-03 10:37:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -623,7 +623,8 @@ public class GeneViewerPanel extends JPanel
     int ypos = border;
     
     // draw gene
-    g2d.drawString(gene.getIDString(), border, ypos);
+    g2d.drawString(gene.getIDString()+
+        ( GeneUtils.isObsolete((GFFStreamFeature)embl_gene) ? " (obsolete)" : "") , border, ypos);
     drawFeature(g2d, border, 
                 getSize().width - border, 
                 ypos, gene.getColour(), 1, 
@@ -1014,7 +1015,8 @@ public class GeneViewerPanel extends JPanel
 
     g2d.setColor( transcript.getColour() );
 
-    g2d.drawString(transcript.getIDString(), border, ypos);
+    g2d.drawString(transcript.getIDString() +
+        ( GeneUtils.isObsolete((GFFStreamFeature)embl_transcript) ? " (obsolete)" : ""), border, ypos);
     drawFeature(g2d, t_start, t_end, 
                 ypos, transcript.getColour(), 1, 
                 selection.contains(transcript), 2.f);
