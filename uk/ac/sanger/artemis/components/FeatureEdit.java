@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.58 2008-04-22 08:48:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.59 2008-06-03 10:37:53 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -56,7 +56,7 @@ import uk.ac.sanger.artemis.components.genebuilder.GeneBuilderFrame;
 import uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
-import uk.ac.sanger.artemis.components.genebuilder.gff.GffPanel;
+import uk.ac.sanger.artemis.components.genebuilder.gff.PropertiesPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
 
 import java.awt.*;
@@ -76,7 +76,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.58 2008-04-22 08:48:56 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.59 2008-06-03 10:37:53 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -148,7 +148,7 @@ public class FeatureEdit extends JPanel
   private CVPanel cvForm;
   
   /** GFF tab */
-  private GffPanel propertiesPanel;
+  private PropertiesPanel propertiesPanel;
   
   /** similarity/ortholog/paralog tab */
   private MatchPanel matchForm;
@@ -330,6 +330,9 @@ public class FeatureEdit extends JPanel
           updateFromFeature();
         else
         {
+          if(!event.getFeature().getIDString().equals(getFeature().getIDString()))
+            break;
+          
           final String message =
             "warning: the qualifiers have changed outside the editor - " +
             "view now?";
@@ -895,6 +898,10 @@ public class FeatureEdit extends JPanel
           if(setFeature()) 
           {
             stopListening();
+            
+            if(propertiesPanel != null)
+              propertiesPanel.updateObsoleteSettings();
+            
             frame.dispose();
           }
         }
@@ -923,7 +930,7 @@ public class FeatureEdit extends JPanel
           (DocumentEntry)getFeature().getEmblFeature().getEntry());
       matchForm.setBackground(Color.WHITE);
       
-      propertiesPanel = new GffPanel(getFeature());
+      propertiesPanel = new PropertiesPanel(getFeature());
       propertiesPanel.setBackground(Color.WHITE);
 
       addGffAnnotationView(lower_panel);
