@@ -26,7 +26,8 @@
    	<result property="featureId" column="id"/>
     <result property="uniqueName" column="uniquename"/>
     <result property="name" column="feature_name"/>
-    <result property="seqLen" column="seqlen" nullValue="-1" />                                             
+    <result property="seqLen" column="seqlen" nullValue="-1" />
+	<result property="obsolete" column="obsolete" />
   </resultMap>
 	
   <resultMap id="map-feature" class="Feature" 
@@ -151,6 +152,7 @@
       timelastmodified, 
       f.feature_id AS id, 
 	  f.organism_id,
+	  f.is_obsolete AS obsolete,
 	  dbx.*,
 	  db.*,
 	  fr.feature_relationship_id,
@@ -201,6 +203,7 @@
 	  f.feature_id AS id,
 	  uniquename,
 	  organism_id AS organismId,
+	  f.is_obsolete AS obsolete,
 	  f.name AS feature_name,
 	  f.type_id,
 	  f.dbxref_id AS dbXRefId,
@@ -245,6 +248,7 @@
 	  f.feature_id AS id,
 	  uniquename,
 	  organism_id AS organismId,
+	  f.is_obsolete AS obsolete,
 	  f.name AS feature_name,
 	  f.type_id,
 	  f.dbxref_id AS dbXRefId,
@@ -270,6 +274,7 @@
 	  f.feature_id AS id,
 	  uniquename,
 	  organism_id AS organismId,
+	  f.is_obsolete AS obsolete,
 	  f.name AS feature_name,
 	  f.type_id,
 	  f.dbxref_id,
@@ -289,6 +294,7 @@
 	  f.feature_id AS id,
 	  uniquename,
 	  organism_id AS organismId,
+	  f.is_obsolete AS obsolete,
 	  f.name AS feature_name,
 	  f.type_id,
 	  f.dbxref_id AS dbXRefId,
@@ -307,7 +313,8 @@
 	SELECT 
       timelastmodified, 
       f.feature_id AS id, 
-      f.uniquename, 
+      f.uniquename,
+	  f.is_obsolete AS obsolete, 
       f.type_id,
       f.name AS feature_name,
 	  f.seqlen,
@@ -460,7 +467,7 @@
   <update id="updateFeature"
           parameterClass="Feature">
     UPDATE feature
-    SET uniquename=#uniqueName#
+    SET uniquename=#uniqueName#, is_obsolete=#obsolete#
       <isNotNull property="cvTerm.cvTermId">  , type_id=$cvTerm.cvTermId$ </isNotNull>
       <isNotNull property="timeLastModified"> , timelastmodified=#timeLastModified# </isNotNull>
     WHERE feature_id=$featureId$
