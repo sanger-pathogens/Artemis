@@ -1254,6 +1254,7 @@ public class DatabaseDocument extends Document
     }
 
     this_buff.append("timelastmodified=" + timelastmodified + ";");
+    this_buff.append("isObsolete=" + Boolean.toString(feat.isObsolete()) + ";");
     
     // this is the chado feature_relationship.rank used
     // to order joined features e.g. exons
@@ -2568,6 +2569,7 @@ public class DatabaseDocument extends Document
 
           names_checked.add(uniquename);
           final String keyName = tsn.getFeatureKey();
+
           unchanged = checkFeatureTimestamp(schema, uniquename, 
               dao, keyName, featureIdStore, tsn);
           if(!unchanged)
@@ -2579,7 +2581,7 @@ public class DatabaseDocument extends Document
         }
       }  
       
-
+      final Timestamp ts = new Timestamp(new java.util.Date().getTime());
       //
       // commit to database
       for(ncommit = 0; ncommit < sql.size(); ncommit++)
@@ -2587,7 +2589,7 @@ public class DatabaseDocument extends Document
         try
         {
           ChadoTransaction tsn = (ChadoTransaction) sql.get(ncommit);
-          commitChadoTransaction(tsn, dao);
+          commitChadoTransaction(tsn, dao, ts);
         }
         catch (RuntimeException re)
         {
@@ -2600,7 +2602,6 @@ public class DatabaseDocument extends Document
 
       //
       // update timelastmodified timestamp
-      final Timestamp ts = new Timestamp(new java.util.Date().getTime());
       names_checked = new Vector();
       for(int i = 0; i < sql.size(); i++)
       {
@@ -2609,6 +2610,14 @@ public class DatabaseDocument extends Document
              
         if(uniquenames == null)
           continue;
+        
+        if(tsn.getType() == ChadoTransaction.UPDATE &&
+           tsn.getFeatureObject() instanceof Feature)
+        {
+          for(int j=0; j<uniquenames.length; j++)
+            names_checked.add((String) uniquenames[j]);
+          continue;  
+        }
         
         for(int j=0; j<uniquenames.length; j++)
         {
@@ -2623,11 +2632,12 @@ public class DatabaseDocument extends Document
           // retieve from featureId store
           if(featureIdStore != null && featureIdStore.containsKey(uniquename))
           {
-            int featureId = ((Integer) featureIdStore.get(uniquename))
-                .intValue();
+            Feature f = (Feature) featureIdStore.get(uniquename);
+
             feature = new Feature();
-            feature.setFeatureId(featureId);
+            feature.setFeatureId(f.getFeatureId());
             feature.setUniqueName(uniquename);
+            feature.setObsolete(f.isObsolete());
           }
           else
             feature = dao.getFeatureByUniqueName(uniquename, 
@@ -2753,14 +2763,15 @@ public class DatabaseDocument extends Document
    * @param dao
    */
   private void commitChadoTransaction(final ChadoTransaction tsn,
-                                      final GmodDAO dao)
+                                      final GmodDAO dao,
+                                      final Timestamp ts)
   {
     if(tsn.getType() == ChadoTransaction.UPDATE)
     {
       if(tsn.getFeatureObject() instanceof Feature)
       {
         Feature feature = (Feature)tsn.getFeatureObject();
-        
+
         if(feature.getUniqueName() != null)
         {
           final String uniquename;
@@ -2777,6 +2788,7 @@ public class DatabaseDocument extends Document
           
           tsn.setOldUniquename(feature.getUniqueName());
         }
+        feature.setTimeLastModified(ts);
       }
       dao.merge(tsn.getFeatureObject());
       //dao.updateAttributes(tsn);
@@ -2829,7 +2841,7 @@ public class DatabaseDocument extends Document
     if(feature == null)
       return true;
     
-    featureIdStore.put(uniquename, new Integer(feature.getFeatureId()));
+    featureIdStore.put(uniquename, feature);
     
     if(featureObject instanceof FeatureProp)
       ((FeatureProp)featureObject).setFeature(feature);

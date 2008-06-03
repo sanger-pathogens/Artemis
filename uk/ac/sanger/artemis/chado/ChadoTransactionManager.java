@@ -1253,7 +1253,10 @@ public class ChadoTransactionManager
           continue;
       }
 
-      if(isReservedTag(name) || isSynonymTag(name, feature) || isCvTag(name))
+      if(isReservedTag(name) || 
+         isSynonymTag(name, feature) || 
+         isCvTag(name) ||
+         name.equals("isObsolete"))
       {
         handleReservedTags(feature, uniquename, 
                            this_qualifier,
@@ -1407,28 +1410,9 @@ public class ChadoTransactionManager
     else
       qualifierName = new_qualifier.getName();
     
-    if(qualifierName.equals("ID"))
-    { 
-      // this shouldn't be possible
-      if(new_qualifier.getValues() == null)
-        return;
-      
-      org.gmod.schema.sequence.Feature chado_feature =
-        new org.gmod.schema.sequence.Feature();
-     
-      chado_feature.setUniqueName((String)new_qualifier.getValues().get(0));
-     
-      logger4j.debug(uniquename+"  in handleReservedTags() NEW="+
-          (String)new_qualifier.getValues().get(0)+" OLD="+
-          (String)old_qualifier.getValues().get(0));
-      ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
-                chado_feature,
-                feature.getLastModified(), feature, feature.getKey().getKeyString(),
-                "UNIQUENAME: ID="+(String)new_qualifier.getValues().get(0)+" OLD="+
-                                  (String)old_qualifier.getValues().get(0));
-      tsn.setOldUniquename( (String)old_qualifier.getValues().get(0) );
-     
-      sql.add(tsn);
+    if(qualifierName.equals("ID") || qualifierName.equals("isObsolete"))
+    {
+      updateFeature(feature, qualifierName, new_qualifier, old_qualifier);
       return;
     }
     
@@ -1728,6 +1712,78 @@ public class ChadoTransactionManager
     }
     else
       logger4j.warn("Ignoring reserved tag "+qualifierName); 
+  }
+  
+  /**
+   * Update feature - uniquename and is_obsolete
+   * @param feature
+   * @param qualifierName
+   * @param new_qualifier
+   * @param old_qualifier
+   */
+  private void updateFeature(final GFFStreamFeature feature,
+                             final String qualifierName,
+                             final Qualifier new_qualifier,
+                             final Qualifier old_qualifier)
+  {
+//  this shouldn't be possible
+    if(new_qualifier.getValues() == null)
+      return;
+   
+    final String uniqueName[];
+    final String isObsolete;
+    final String log;
+    if(qualifierName.equals("ID"))
+    {
+      uniqueName = new String[1];
+      uniqueName[0] = (String)new_qualifier.getValues().get(0);
+      isObsolete = (String) feature.getQualifierByName("isObsolete").getValues().get(0);
+      log = "UNIQUENAME: ID=";
+    }
+    else
+    {
+      if(feature.getFeature_relationship_rank_store() != null)
+      {
+        Hashtable rank_hash = feature.getFeature_relationship_rank_store();
+        Enumeration id_keys= rank_hash.keys();
+        uniqueName = new String[rank_hash.size()];
+        int next = 0;
+        while(id_keys.hasMoreElements())
+        {
+          uniqueName[next] = (String)id_keys.nextElement();
+          next++;
+        }
+      }
+      else
+      {
+        uniqueName = new String[1];
+        uniqueName[0] = (String) feature.getQualifierByName("ID").getValues().get(0);
+      }
+      isObsolete = (String)new_qualifier.getValues().get(0);
+      
+      log = "IS_OBSOLETE:";
+    }
+    
+    for(int i = 0; i < uniqueName.length; i++)
+    {
+      org.gmod.schema.sequence.Feature chadoFeature = new org.gmod.schema.sequence.Feature();
+      chadoFeature.setUniqueName(uniqueName[i]);
+      chadoFeature.setObsolete(Boolean.parseBoolean(isObsolete));
+
+      logger4j.debug(uniqueName[i] + " " + log
+          + (String) new_qualifier.getValues().get(0) + " OLD="
+          + (String) old_qualifier.getValues().get(0));
+      ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
+          chadoFeature, feature.getLastModified(), feature, 
+          feature.getKey().getKeyString(), "ID="+uniqueName[i] + " " +
+          log + (String) new_qualifier.getValues().get(0)
+              + " OLD=" + (String) old_qualifier.getValues().get(0));
+
+      if(qualifierName.equals("ID"))
+        tsn.setOldUniquename((String) old_qualifier.getValues().get(0));
+
+      sql.add(tsn);
+    }
   }
   
   /**

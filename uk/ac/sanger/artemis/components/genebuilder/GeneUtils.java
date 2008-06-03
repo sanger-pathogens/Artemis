@@ -34,6 +34,7 @@ import java.util.Vector;
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -81,6 +82,7 @@ public class GeneUtils
 {
   private static final long serialVersionUID = 1L;
   private static Vector hideFeatures = new Vector();
+  private static JCheckBox showObsolete = new JCheckBox("Show Obsolete Features",false);
   
   static
   {
@@ -383,6 +385,8 @@ public class GeneUtils
     bdown.add(new JScrollPane(hideList));
     bdown.add(show_butt);
     hideShowPanel.add(bdown, BorderLayout.EAST);
+    
+    hideShowPanel.add(showObsolete, BorderLayout.SOUTH);
 
     int select = JOptionPane.showConfirmDialog(null, hideShowPanel,
                             "Gene Model Features Displayed...",
@@ -408,6 +412,15 @@ public class GeneUtils
       
       if(feature instanceof GFFStreamFeature)
       {
+        if(isObsolete((GFFStreamFeature)feature))
+        {
+          if(!showObsolete.isSelected())
+          {
+            ((GFFStreamFeature)feature).setVisible(false);
+            continue;
+          }
+        }
+        
         final String key = feature.getKey().getKeyString();
         if(hideFeatures.contains(key))
           ((GFFStreamFeature)feature).setVisible(false);
@@ -427,6 +440,22 @@ public class GeneUtils
     return hideFeatures.contains(key);
   }
   
+  /**
+   * Test if this feature is obsolete
+   * @param feature
+   * @return
+   */
+  public static boolean isObsolete(final uk.ac.sanger.artemis.io.GFFStreamFeature feature)
+  {
+    Qualifier qualifier = feature.getQualifierByName("isObsolete");
+    if(qualifier == null)
+      return false;
+    
+    if( ((String)qualifier.getValues().get(0)).equals("true") )
+      return true;
+    
+    return false;
+  }
   
   /**
    * 
