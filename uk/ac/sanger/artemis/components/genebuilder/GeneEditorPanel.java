@@ -41,7 +41,7 @@ import javax.swing.JSeparator;
 
 import uk.ac.sanger.artemis.components.QualifierTextArea;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
-import uk.ac.sanger.artemis.components.genebuilder.gff.GffPanel;
+import uk.ac.sanger.artemis.components.genebuilder.gff.PropertiesPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
 
 
@@ -64,7 +64,7 @@ public class GeneEditorPanel extends JPanel
   private QualifierTextArea qualifier_text_area;
   private CVPanel cvForm;
   private MatchPanel matchForm;
-  private GffPanel propertiesPanel;
+  private PropertiesPanel propertiesPanel;
 
   /**
    * Gene editor panel - showing annotation in a single panel.
@@ -76,7 +76,7 @@ public class GeneEditorPanel extends JPanel
   public GeneEditorPanel(final QualifierTextArea qualifier_text_area,
                          final CVPanel cvForm, 
                          final MatchPanel matchForm,
-                         final GffPanel propertiesPanel)
+                         final PropertiesPanel propertiesPanel)
   {
     this.qualifier_text_area = qualifier_text_area;
     this.cvForm = cvForm;
