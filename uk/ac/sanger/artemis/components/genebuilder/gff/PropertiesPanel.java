@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/GffPanel.java,v 1.15 2008-02-25 14:15:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.1 2008-06-03 10:34:59 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -30,6 +30,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -53,6 +55,7 @@ import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Qualifier;
@@ -60,17 +63,19 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
-public class GffPanel extends JPanel
+public class PropertiesPanel extends JPanel
                       implements FeatureChangeListener
 {
   private static final long serialVersionUID = 1L;
   private QualifierVector gffQualifiers;
   private JTextField uniquenameTextField;
-  private JTextField timeTextField;
+  private JCheckBox obsoleteField;
   private Feature feature;
   private boolean empty = true;
+  /** track if feature isObsolete flag has changed */
+  private boolean obsoleteChanged = false;
   
-  public GffPanel(final Feature feature)
+  public PropertiesPanel(final Feature feature)
   {
     super(new FlowLayout(FlowLayout.LEFT));
     updateFromFeature(feature);
@@ -89,6 +94,7 @@ public class GffPanel extends JPanel
        qualifier.getName().equals("Derives_from") ||
        qualifier.getName().equals("feature_relationship_rank") ||
        qualifier.getName().equals("timelastmodified") ||
+       qualifier.getName().equals("isObsolete") ||
        ChadoTransactionManager.isSynonymTag(qualifier.getName(), 
            (GFFStreamFeature)feature.getEmblFeature()))
       return true;
@@ -104,6 +110,7 @@ public class GffPanel extends JPanel
     Qualifier parentQualifier      = gffQualifiers.getQualifierByName("Parent");
     Qualifier derivesFromQualifier = gffQualifiers.getQualifierByName("Derives_from");
     Qualifier timeQualifier        = gffQualifiers.getQualifierByName("timelastmodified");
+    Qualifier obsoleteQualifier    = gffQualifiers.getQualifierByName("isObsolete");
     
     Box gffBox = Box.createVerticalBox();
     gffBox.add(Box.createVerticalStrut(5));
@@ -266,7 +273,7 @@ public class GffPanel extends JPanel
       //timeField.setPreferredSize(new Dimension(timeField.getPreferredSize().width+10,
       //                 timeField.getPreferredSize().height));
       
-      timeTextField = new JTextField(time);
+      JTextField timeTextField = new JTextField(time);
       if(cellDimension == null ||
          cellDimension.width < timeTextField.getPreferredSize().width+10)
          cellDimension = new Dimension(timeTextField.getPreferredSize().width+10,
@@ -288,7 +295,35 @@ public class GffPanel extends JPanel
       gridPanel.add(timeTextField, c);
       nrows++;
     }  
-    
+
+
+    if(obsoleteQualifier != null)
+    {
+      boolean isObsolete = Boolean.parseBoolean((String) obsoleteQualifier.getValues().get(0));
+      obsoleteField = new JCheckBox("is obsolete", isObsolete);
+      obsoleteField.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          int result = JOptionPane.showConfirmDialog(
+              PropertiesPanel.this, "Change this feature to be "+
+              (obsoleteField.isSelected() ? "obsolete!" : "not obsolete!"), 
+              "Change obsolete option", JOptionPane.OK_CANCEL_OPTION);
+          if(result == JOptionPane.CANCEL_OPTION)
+            obsoleteField.setSelected(!obsoleteField.isSelected());
+        }
+      });
+      c.gridx = 3;
+      c.gridy = nrows;
+      c.ipadx = 5;
+      c.fill = GridBagConstraints.NONE;
+      c.anchor = GridBagConstraints.NORTHEAST;
+      gridPanel.add(obsoleteField, c);
+
+      nrows++;
+    } 
+
+
     gffBox.add(gridPanel);
     
     
@@ -345,6 +380,7 @@ public class GffPanel extends JPanel
    
     feature.addFeatureChangeListener(this);  
     add(createGffQualifiersComponent());
+
     repaint();
     revalidate();
   }
@@ -368,8 +404,80 @@ public class GffPanel extends JPanel
       }
     }
 
+    Qualifier isObsoleteQualifier = gffQualifiers.getQualifierByName("isObsolete");
+    if(isObsoleteQualifier != null)
+    {
+      String isObsoleteOld = (String) isObsoleteQualifier.getValues().get(0);
+      String isObsoleteNew = Boolean.toString(obsoleteField.isSelected());
+      
+      if( !isObsoleteNew.equals(isObsoleteOld) )
+      { 
+        gffQualifiers.remove(isObsoleteQualifier);
+        isObsoleteQualifier = new Qualifier("isObsolete", isObsoleteNew);
+        gffQualifiers.addElement(isObsoleteQualifier);
+        obsoleteChanged = true;
+      }
+    }
     
     return gffQualifiers;
+  }
+  
+  /**
+   * If the isObsolete qualifier for this feature has been changed this 
+   * method allows the user to optionaly update the isObsolete qualifier 
+   * of the children feature.
+   */
+  public void updateObsoleteSettings()
+  {
+    if(!obsoleteChanged)
+      return;
+    
+    obsoleteChanged = false;
+
+    GFFStreamFeature gffFeature = (GFFStreamFeature)feature.getEmblFeature();
+    Qualifier isObsoleteQualifier = gffFeature.getQualifierByName("isObsolete");
+    String isObsoleteNew = (String) isObsoleteQualifier.getValues().get(0);
+    if(isObsoleteNew.equals("true"))
+      gffFeature.setVisible(false);
+    else
+      gffFeature.setVisible(true); 
+    
+    Set children = gffFeature.getChadoGene().getChildren(gffFeature);
+ 
+    
+    if(children.size() > 0)
+    {
+      Qualifier idQualifier = gffFeature.getQualifierByName("ID");
+      
+      int select = JOptionPane.showConfirmDialog(PropertiesPanel.this, 
+          "Make children of "+idQualifier.getValues().get(0)+"\n"+
+          (isObsoleteNew.equals("true") ? "obsolete?" : "not obsolete?"), 
+          "Update Children", 
+          JOptionPane.YES_NO_OPTION);
+      
+      if(select == JOptionPane.YES_OPTION)
+      {
+        try
+        {
+          Iterator it = children.iterator();
+          while(it.hasNext())
+          {
+            GFFStreamFeature gffChildFeature = (GFFStreamFeature)it.next();
+            Feature f = (Feature)gffChildFeature.getUserData();
+            f.setQualifier(new Qualifier("isObsolete", isObsoleteNew));
+            gffChildFeature.setVisible(true);    
+            
+            if(isObsoleteNew.equals("true") ||
+               GeneUtils.isHiddenFeature( gffChildFeature.getKey().getKeyString() ))
+              gffChildFeature.setVisible(false);
+          }
+        }
+        catch(Exception e)
+        {
+          e.printStackTrace();
+        }
+      }    
+    }  
   }
   
   private boolean isSystematicId(final String synonymType)
