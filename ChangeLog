@@ -1,5 +1,13 @@
 Version 10.+/7.+
 
+	Qualifier text find/replace tool added.
+	
+	Provide option to log transform user data.
+
+	Graph height option given in the graph popup menu.
+	
+	Improved error reporting for contig reordering.
+
    	Fix for creating intergenic features for overlapping CDS's. Also
    	add note based on which one of the 4 cases with respect to the 
    	flanking CDS it belongs to, i.e.:
@@ -17,6 +25,8 @@ Version 10.+/7.+
 	Add -Dread_only option for read only databases.
 	
 	Add option to graphs to be able to adjust their height.
+	
+	Add option to lazy load feature data from database.
 	
 Version 10
 
