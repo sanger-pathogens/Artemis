@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.53 2008-04-22 08:52:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.54 2008-06-03 10:38:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -43,7 +43,7 @@ import java.sql.Timestamp;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.53 2008-04-22 08:52:48 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.54 2008-06-03 10:38:48 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -159,7 +159,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       {
         this_feature = original_features.featureAt(i);
         final String key = this_feature.getKey().getKeyString();
-        if(GeneUtils.isHiddenFeature(key))
+        if(GeneUtils.isHiddenFeature(key) ||
+           GeneUtils.isObsolete((GFFStreamFeature)this_feature))
           ((GFFStreamFeature)this_feature).setVisible(false);
         
         if(key.equals("gene") || key.equals("pseudogene"))
@@ -641,6 +642,11 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     id_qualifier.removeValue((String)(id_qualifier.getValues()).elementAt(0));
     id_qualifier.addValue(ID);
     
+    
+    // set visibility
+    if(GeneUtils.isHiddenFeature(new_feature.getKey().getKeyString()) ||
+       GeneUtils.isObsolete(new_feature))
+      new_feature.setVisible(false);
     
     try
     {
