@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.40 2008-05-22 15:03:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.41 2008-06-04 09:15:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -321,6 +321,14 @@ public class GeneBuilderFrame extends JFrame
         gbFrame.addGeneBuilderHash(geneBuilderHash);
         geneBuilderHash.put(chado_gene.getGeneUniqueName(), gbFrame);
       }
+    }
+    else if(!GeneUtils.isBoundaryOK(chado_gene))
+    {
+      int result = JOptionPane.showConfirmDialog(this, 
+          "Gene model boundary needs fixing.\nFix this now?", 
+          "Gene Boundary", JOptionPane.YES_NO_OPTION);
+      if(result == JOptionPane.YES_OPTION)
+        GeneUtils.checkGeneBoundary(chado_gene);
     }
     
     super.dispose();
