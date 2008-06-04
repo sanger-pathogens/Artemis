@@ -808,6 +808,80 @@ public class GeneUtils
       chado_gene.deleteFeature(embl_feature);
     }
   }
+
+  /**
+   * Check gene model boundaries for any inconsistencies
+   * @param chado_gene
+   * @return true is gene model ranges are correct
+   */
+  public static boolean isBoundaryOK(final ChadoCanonicalGene chado_gene)
+  {
+    final Range geneRange = chado_gene.getGene().getLocation().getTotalRange();
+    final List transcripts = chado_gene.getTranscripts();
+    int geneStart = Integer.MAX_VALUE;
+    int geneEnd = -1;
+    
+    for(int i=0; i<transcripts.size(); i++)
+    {
+      final Feature transcript = (Feature)transcripts.get(i);
+      final Range transcriptRange = transcript.getLocation().getTotalRange();
+      int transcriptStart = Integer.MAX_VALUE;
+      int transcriptEnd = -1;
+      
+      if(transcriptRange.getStart() < geneRange.getStart() ||
+         transcriptRange.getEnd()   > geneRange.getEnd())
+        return false;
+      
+      if(transcriptRange.getStart() < geneStart)
+        geneStart = transcriptRange.getStart();
+      if(transcriptRange.getEnd() > geneEnd)
+        geneEnd = transcriptRange.getEnd();
+      
+      final Feature protein = 
+        chado_gene.getProteinOfTranscript(GeneUtils.getUniqueName(transcript));
+      String proteinName = null;
+      if(protein != null)
+        proteinName = GeneUtils.getUniqueName(protein);
+      
+      final Set children = chado_gene.getChildren(transcript);
+      final Iterator it = children.iterator();
+      while(it.hasNext())
+      {
+        final Feature feature = (Feature) it.next();
+        final Range childRange = feature.getLocation().getTotalRange();
+        if(childRange.getStart() < transcriptRange.getStart() ||
+           childRange.getEnd()   > transcriptRange.getEnd())
+          return false;
+
+        if(proteinName != null &&
+           GeneUtils.getUniqueName(feature).equals(proteinName))
+          continue;
+        
+        if(childRange.getStart() < transcriptStart)
+          transcriptStart = childRange.getStart();
+        if(childRange.getEnd() > transcriptEnd )
+          transcriptEnd = childRange.getEnd();
+      }
+      
+      if((transcriptRange.getStart() != transcriptStart && transcriptStart < Integer.MAX_VALUE) ||
+         (transcriptRange.getEnd()   != transcriptEnd   && transcriptEnd   > -1))
+        return false;
+
+      if(protein != null)
+      {
+        final Range proteinRange = protein.getLocation().getTotalRange();
+        if(proteinRange.getStart() != transcriptStart &&
+           proteinRange.getEnd()   != transcriptEnd)
+          return false;
+      }
+    }
+    
+    if((geneRange.getStart() != geneStart && geneStart < Integer.MAX_VALUE) ||
+       (geneRange.getEnd()   != geneEnd   && geneEnd   > -1))
+      return false;
+    
+    return true;
+  }
   
   /**
    * Adjust transcript and gene boundaries
