@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntryAutosaveThread.java,v 1.6 2007-04-13 14:48:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/DocumentEntryAutosaveThread.java,v 1.7 2008-06-10 15:33:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,7 +33,7 @@ import java.io.*;
  *  called #entry_name# every 120 seconds.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: DocumentEntryAutosaveThread.java,v 1.6 2007-04-13 14:48:21 tjc Exp $
+ *  @version $Id: DocumentEntryAutosaveThread.java,v 1.7 2008-06-10 15:33:53 tjc Exp $
  **/
 
 public class DocumentEntryAutosaveThread extends Thread {
@@ -109,6 +109,10 @@ public class DocumentEntryAutosaveThread extends Thread {
           // changed since we started writing.  since this thread doesn't
           // change the tree, this exception is harmless, so we ignore it
           // and try again later
+        }
+        catch(NullPointerException npe)
+        {
+          break;
         }
       } else {
         if (have_saved) {
