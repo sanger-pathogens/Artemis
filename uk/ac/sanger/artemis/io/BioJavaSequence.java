@@ -3,11 +3,8 @@ package uk.ac.sanger.artemis.io;
 
 import java.lang.IndexOutOfBoundsException;
 import java.lang.String;
-import java.util.Iterator;
 
 import org.biojava.bio.symbol.Edit;
-import org.biojava.bio.symbol.Symbol;
-import org.biojava.bio.symbol.SymbolList;
 import org.biojava.bio.seq.io.SymbolListCharSequence;
 import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.bio.symbol.IllegalAlphabetException;
@@ -123,6 +120,10 @@ public class BioJavaSequence implements Sequence
     }
   }
 
+  public void clear()
+  {
+  }
+  
     private void countSymbols()
     {
       final SymbolListCharSequence slcs = new SymbolListCharSequence (symbols);

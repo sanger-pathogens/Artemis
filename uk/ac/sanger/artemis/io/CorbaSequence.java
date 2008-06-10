@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/CorbaSequence.java,v 1.3 2005-07-08 15:11:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/CorbaSequence.java,v 1.4 2008-06-10 15:33:13 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import java.io.IOException;
  *  object.
  *
  *  @author Kim Rutherford
- *  @version $Id: CorbaSequence.java,v 1.3 2005-07-08 15:11:12 tjc Exp $
+ *  @version $Id: CorbaSequence.java,v 1.4 2008-06-10 15:33:13 tjc Exp $
  **/
 
 public class CorbaSequence implements Sequence {
@@ -138,6 +138,8 @@ public class CorbaSequence implements Sequence {
     return
       length () - (getCCount () + getACount () + getTCount () + getGCount ());
   }
+
+  public void clear() {}
 
   /**
    *  The sequence that was read from the Corba object by the constructor.

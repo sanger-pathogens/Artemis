@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Sequence.java,v 1.3 2005-07-08 15:11:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Sequence.java,v 1.4 2008-06-10 15:33:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -32,7 +32,7 @@ import org.biojava.bio.symbol.IllegalSymbolException;
  *  Sequence interface
  *
  *  @author Kim Rutherford
- *  @version $Id: Sequence.java,v 1.3 2005-07-08 15:11:12 tjc Exp $
+ *  @version $Id: Sequence.java,v 1.4 2008-06-10 15:33:13 tjc Exp $
  *
  */
 
@@ -84,4 +84,6 @@ public interface Sequence
    *  Return the count of non-g,c,t,a bases in the whole sequence.
    **/
   int getOtherCount();
+  
+  void clear();
 }

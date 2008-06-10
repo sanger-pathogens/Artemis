@@ -211,4 +211,9 @@ public class PartialSequence implements Sequence
   {
     return phase;
   }
+  
+  public void clear()
+  {
+    sequence = null;
+  }
 }
