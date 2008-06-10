@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.80 2008-06-03 10:37:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.81 2008-06-10 10:58:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -368,6 +368,19 @@ public class GeneViewerPanel extends JPanel
     });
     menu.add(createTranscript);
     
+    
+    final JMenuItem duplicateTranscript = new JMenuItem("Duplicate selected transcript");
+    duplicateTranscript.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)  
+      {
+        duplicateTranscript(entry_group);
+        repaint();
+      }
+    });
+    menu.add(duplicateTranscript);
+    
+    
     final JMenu createFeatureMenu = new JMenu("Add to transcript in selected range");
     
     final JMenuItem createExon = new JMenuItem("exon");
@@ -427,7 +440,7 @@ public class GeneViewerPanel extends JPanel
       public void actionPerformed(ActionEvent event)  
       {
         addDnaFeature(last_cursor_position, selection, 
-                      entry_group, new Key("five_prime_UTR"), "5UTR");
+                      entry_group, new Key("five_prime_UTR"));
       }
     });
     
@@ -438,7 +451,7 @@ public class GeneViewerPanel extends JPanel
       public void actionPerformed(ActionEvent event)  
       {
         addDnaFeature(last_cursor_position, selection, 
-                      entry_group, new Key("three_prime_UTR"), "3UTR");
+                      entry_group, new Key("three_prime_UTR"));
       }
     });
     
@@ -449,7 +462,7 @@ public class GeneViewerPanel extends JPanel
       public void actionPerformed(ActionEvent event)  
       {
         addDnaFeature(last_cursor_position, selection, 
-                      entry_group, new Key("region"), "region");
+                      entry_group, new Key("region"));
       }
     });
     
@@ -567,6 +580,14 @@ public class GeneViewerPanel extends JPanel
                      createTranscript(final ChadoCanonicalGene chadoGene,
                                       final EntryGroup entry_group)
   {
+    return createTranscript(chadoGene, entry_group, chadoGene.getGene().getLocation());
+  }
+  
+  private static uk.ac.sanger.artemis.Feature 
+                     createTranscript(final ChadoCanonicalGene chadoGene,
+                                      final EntryGroup entry_group,
+                                      final Location location)
+  {
     try
     {
       String gene_name = 
@@ -587,8 +608,7 @@ public class GeneViewerPanel extends JPanel
         transcriptKey = new Key(DatabaseDocument.TRANSCRIPT);
       
       uk.ac.sanger.artemis.Feature feature = createFeature(
-                    chadoGene.getGene().getLocation(),
-                    entry_group, transcriptKey,
+                    location, entry_group, transcriptKey,
                     qualifiers);
       
       ((GFFStreamFeature)(feature.getEmblFeature())).setChadoGene(chadoGene);
@@ -597,7 +617,6 @@ public class GeneViewerPanel extends JPanel
     }
     catch(InvalidRelationException e)
     {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return null;
@@ -679,6 +698,60 @@ public class GeneViewerPanel extends JPanel
       }
     }
     setPreferredSize(new Dimension(getSize().width, ypos+border));
+  }
+  
+  /**
+   * Duplicate the selected transcript and children
+   * @param entry_group
+   */
+  private void duplicateTranscript(final EntryGroup entry_group)
+  {
+    FeatureVector features = selection.getAllFeatures();
+    Feature transcript = null;
+    
+    if(features.size() == 1)
+      transcript = features.elementAt(0).getEmblFeature();
+    
+    if(transcript == null || 
+       transcript.getKey().getKeyString().indexOf(DatabaseDocument.TRANSCRIPT) == -1)
+    {
+      JOptionPane.showMessageDialog(null, 
+          "Select a single transcript and try again.", 
+          "Transcript Selection",
+          JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+
+    final uk.ac.sanger.artemis.Feature newTranscript =
+      createTranscript(chado_gene, entry_group, transcript.getLocation());
+    String newTranscriptName = getQualifier(newTranscript.getEmblFeature(), "ID");
+    last_cursor_position = getPointFromTranscriptName(newTranscriptName);
+    
+    Set childFeatures = chado_gene.getChildren(transcript);
+    Iterator it = childFeatures.iterator();
+    while(it.hasNext())
+    {
+      Feature f = (Feature)it.next();
+      if(f.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL) ||
+         f.getKey().getKeyString().equals("pseudogenic_exon") )
+      {
+        GFFStreamFeature gff_exon = null;
+        RangeVector ranges = f.getLocation().getRanges();
+        
+        for(int i=0; i<ranges.size(); i++)
+          gff_exon = addExonFeature(chado_gene, entry_group, gff_exon, 
+              (Range)ranges.get(i), newTranscriptName, selection, f.getKey(), gene_builder);
+      }
+      else if(!f.getKey().equals("polypeptide"))
+      {
+        selection.clear();
+        selection.add((uk.ac.sanger.artemis.Feature) f.getUserData());
+        addDnaFeature(last_cursor_position, selection, entry_group, f.getKey());
+      }
+    }
+
+    addProteinFeature(chado_gene, entry_group, newTranscriptName, 
+                      newTranscript); 
   }
   
   /**
@@ -842,6 +915,25 @@ public class GeneViewerPanel extends JPanel
       }
     }
          
+    return null;
+  }
+  
+  /**
+   * Get the Point for a given transcript name
+   * @param transcriptName
+   * @return
+   */
+  private Point getPointFromTranscriptName(final String transcriptName) 
+  {
+    final List transcripts = chado_gene.getTranscripts();
+    
+    for(int i=0; i<transcripts.size(); i++)
+    {
+      String name = GeneUtils.getUniqueName((Feature)transcripts.get(i));
+      if( name.equals(transcriptName) )
+        return new Point(1, (border*3)+(getTranscriptSize()*i));
+    }
+    
     return null;
   }
   
@@ -1508,11 +1600,19 @@ public class GeneViewerPanel extends JPanel
   private void addDnaFeature(final Point last_cursor_position,
                              final Selection selection,
                              final EntryGroup entry_group,
-                             final Key key,
-                             final String name)
+                             final Key key)
   {
     if(last_cursor_position == null)
       return;
+    
+    final String name;
+    if(key.getKeyString().equals("five_prime_UTR"))
+      name = "5UTR";
+    else if(key.getKeyString().equals("three_prime_UTR"))
+      name = "3UTR";
+    else
+      name = key.getKeyString();
+    
     Feature transcript = getTranscriptAt(last_cursor_position);
     String transcriptName  = getQualifier(transcript, "ID");
     Range range_selected = selection.getSelectionRange();
@@ -1578,7 +1678,7 @@ public class GeneViewerPanel extends JPanel
    * @param range
    * @param transcript_name
    */
-  public static void addExonFeature(
+  public static GFFStreamFeature addExonFeature(
                               final ChadoCanonicalGene chadoGene,
                               final EntryGroup entry_group,
                               final GFFStreamFeature feature, Range range,
@@ -1615,6 +1715,7 @@ public class GeneViewerPanel extends JPanel
           id_range_store.put(ID, range);
           gff_exon.setSegmentRangeStore(id_range_store);
         }
+        return gff_exon;
       }
       else
       {
@@ -1640,6 +1741,7 @@ public class GeneViewerPanel extends JPanel
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+    return feature;
   }
   
   
