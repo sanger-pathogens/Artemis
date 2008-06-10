@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.62 2008-05-22 15:04:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.63 2008-06-10 15:35:40 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.62 2008-05-22 15:04:19 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.63 2008-06-10 15:35:40 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -621,7 +621,10 @@ public class EntryEdit extends JFrame
     getEntryGroup().removeEntryChangeListener(this);
 
     getEntryGroup().unref();
+    
     dispose();
+    getEntryGroup().getBases().clearCodonCache();
+    getEntryGroup().getBases().getSequence().clear();
   }
 
   /**
