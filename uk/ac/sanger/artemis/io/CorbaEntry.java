@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/CorbaEntry.java,v 1.1 2004-06-09 09:48:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/CorbaEntry.java,v 1.2 2008-06-11 15:12:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -40,7 +40,7 @@ import java.util.NoSuchElementException;
  *  a Corba server.
  *
  *  @author Kim Rutherford
- *  @version $Id: CorbaEntry.java,v 1.1 2004-06-09 09:48:59 tjc Exp $
+ *  @version $Id: CorbaEntry.java,v 1.2 2008-06-11 15:12:20 tjc Exp $
  **/
 
 public class CorbaEntry extends ReadOnlyEntry
@@ -234,4 +234,10 @@ public class CorbaEntry extends ReadOnlyEntry
    *  The EntryInformation object that was passed to the constructor.
    **/
   final private EntryInformation entry_information;
+
+  public void dispose()
+  {
+    // TODO Auto-generated method stub
+    
+  }
 }

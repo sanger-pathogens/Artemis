@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RWCorbaEntry.java,v 1.2 2004-11-24 11:55:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RWCorbaEntry.java,v 1.3 2008-06-11 15:12:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -41,7 +41,7 @@ import java.util.NoSuchElementException;
  *  coming from a Corba server.
  *
  *  @author Kim Rutherford
- *  @version $Id: RWCorbaEntry.java,v 1.2 2004-11-24 11:55:52 tjc Exp $
+ *  @version $Id: RWCorbaEntry.java,v 1.3 2008-06-11 15:12:20 tjc Exp $
  **/
 
 public class RWCorbaEntry extends EMBLObject
@@ -507,6 +507,12 @@ public class RWCorbaEntry extends EMBLObject
    *  The EntryInformation object that was passed to the constructor.
    **/
   final private EntryInformation entry_information;
+
+  public void dispose()
+  {
+    // TODO Auto-generated method stub
+    
+  }
 }
 
 

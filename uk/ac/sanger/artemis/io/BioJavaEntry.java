@@ -433,4 +433,9 @@ public class BioJavaEntry implements Entry
   private Sequence artemisSequence;
   private org.biojava.bio.seq.Sequence bioJavaSequence;
   private SequenceFormat sequenceFormat;
+  public void dispose()
+  {
+    // TODO Auto-generated method stub
+    
+  }
 }

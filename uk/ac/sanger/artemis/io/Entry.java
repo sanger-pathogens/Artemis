@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Entry.java,v 1.1 2004-06-09 09:49:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Entry.java,v 1.2 2008-06-11 15:12:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import java.io.*;
  *  Objects of this class represent one EMBL entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: Entry.java,v 1.1 2004-06-09 09:49:14 tjc Exp $
+ *  @version $Id: Entry.java,v 1.2 2008-06-11 15:12:20 tjc Exp $
  *
  **/
 
@@ -214,4 +214,9 @@ public interface Entry
    *  Return the EntryInformation object for this Entry.
    **/
   EntryInformation getEntryInformation();
+  
+  /**
+   * Dispose of entry objects
+   */
+  void dispose();
 }

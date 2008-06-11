@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.23 2008-04-22 14:28:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.24 2008-06-11 15:12:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -38,7 +38,7 @@ import javax.swing.JOptionPane;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.23 2008-04-22 14:28:05 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.24 2008-06-11 15:12:20 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -1293,4 +1293,10 @@ abstract public class SimpleDocumentEntry
      ((ReadListener)listeners.elementAt(i)).notify(event);
   }
 
+  public void dispose()
+  {
+    for(int i=0; i<line_groups.size(); i++)
+      line_groups.removeElementAt(i);
+    line_groups = null;
+  }
 }
