@@ -20,13 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleEntryGroup.java,v 1.7 2008-06-11 15:13:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleEntryGroup.java,v 1.8 2008-06-11 15:15:23 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
 
 import uk.ac.sanger.artemis.sequence.*;
-import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.StreamSequence;
 import uk.ac.sanger.artemis.io.SimpleDocumentEntry;
@@ -35,9 +34,7 @@ import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
-import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 
-import java.io.IOException;
 import java.util.Vector;
 import java.util.NoSuchElementException;
 
@@ -47,7 +44,7 @@ import java.util.NoSuchElementException;
  *  once.  Objects of this class act a bit like single Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: SimpleEntryGroup.java,v 1.7 2008-06-11 15:13:49 tjc Exp $
+ *  @version $Id: SimpleEntryGroup.java,v 1.8 2008-06-11 15:15:23 tjc Exp $
  **/
 
 public class SimpleEntryGroup extends EntryVector
