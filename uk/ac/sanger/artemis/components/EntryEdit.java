@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.63 2008-06-10 15:35:40 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.64 2008-06-11 15:16:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.63 2008-06-10 15:35:40 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.64 2008-06-11 15:16:42 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -114,8 +114,6 @@ public class EntryEdit extends JFrame
 
   private SelectionInfoDisplay selection_info;
  
-  private JTabbedPane shortcut_pane = new JTabbedPane();
-  
   private ChadoTransactionManager ctm = new ChadoTransactionManager();
   private CommitButton commitButton;
   private static org.apache.log4j.Logger logger4j = 
@@ -970,14 +968,12 @@ public class EntryEdit extends JFrame
                      base_plot_group);
     select_menu.setMnemonic(KeyEvent.VK_S);
     menu_bar.add(select_menu);
-    shortcut_pane.add("Select Menu", select_menu.getShortCuts());
 
     ViewMenu view_menu = new ViewMenu(this, getSelection(),
                              getGotoEventSource(), getEntryGroup(),
                              base_plot_group);
     view_menu.setMnemonic(KeyEvent.VK_V);
     menu_bar.add(view_menu);
-    shortcut_pane.add("View Menu", view_menu.getShortCuts());
 
     JMenu goto_menu = new GotoMenu(this, getSelection(),
                              getGotoEventSource(), getEntryGroup());
@@ -991,7 +987,6 @@ public class EntryEdit extends JFrame
                                base_plot_group, feature_display);
       edit_menu.setMnemonic(KeyEvent.VK_E);
       menu_bar.add(edit_menu);
-      shortcut_pane.add("Edit Menu", edit_menu.getShortCuts());
 
       AddMenu add_menu = new AddMenu(this, getSelection(), getEntryGroup(),
                              getGotoEventSource(), base_plot_group);
@@ -1322,11 +1317,24 @@ public class EntryEdit extends JFrame
       {
         final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
+        int nmenus = EntryEdit.super.getJMenuBar().getMenuCount();
+        final JTabbedPane shortcut_pane = new JTabbedPane();
+        
+        for(int i=0; i<nmenus; i++)
+        {
+          JMenu menu = EntryEdit.super.getJMenuBar().getMenu(i);
+          if(menu instanceof SelectionMenu &&
+             ( menu instanceof SelectMenu ||
+               menu instanceof EditMenu ||
+               menu instanceof ViewMenu ))
+            shortcut_pane.add(menu.getText()+" Menu", ((SelectionMenu)menu).getShortCuts());
+        }
+        
         shortcut_pane.setPreferredSize(new Dimension(
                            shortcut_pane.getPreferredSize().width+50,
                            screen.height/2));
 
-        JTabbedPane tabPane = new JTabbedPane();
+        final JTabbedPane tabPane = new JTabbedPane();
         
         //
         // Display names
@@ -1591,8 +1599,7 @@ public class EntryEdit extends JFrame
               break;
             FastaTextPane.cacheHits[i] = cacheHits[i];
           }
-        } 
-        
+        }
      }
     });
     file_menu.add(prefs);
