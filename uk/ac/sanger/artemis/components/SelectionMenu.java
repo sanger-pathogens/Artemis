@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionMenu.java,v 1.8 2007-10-02 14:16:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/SelectionMenu.java,v 1.9 2008-06-11 15:17:43 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -39,7 +39,7 @@ import java.util.Vector;
  *  getParentFrame() to find the owning JFrame of the menu.
  *
  *  @author Kim Rutherford
- *  @version $Id: SelectionMenu.java,v 1.8 2007-10-02 14:16:13 tjc Exp $
+ *  @version $Id: SelectionMenu.java,v 1.9 2008-06-11 15:17:43 tjc Exp $
  **/
 
 public class SelectionMenu extends JMenu 
@@ -298,7 +298,7 @@ public class SelectionMenu extends JMenu
 
   private void getJMenuItems(JMenu menu, Vector menu_items)
   {
-    Component menus[] = menu.getMenuComponents();
+    final Component menus[] = menu.getMenuComponents();
     for(int i=0; i<menus.length; i++)
     {
       if(menus[i] instanceof JMenuItem)
@@ -308,10 +308,8 @@ public class SelectionMenu extends JMenu
 
   protected JScrollPane getShortCuts()
   {
-    Vector menu_items = new Vector();
-//  getJMenuItems(this, menu_items);
-
-    Component menus[] = getMenuComponents();
+    final Vector menu_items = new Vector();
+    final Component menus[] = getMenuComponents();
     for(int i=0; i<menus.length; i++)
     {
       if(menus[i] instanceof JMenu)
@@ -383,7 +381,6 @@ public class SelectionMenu extends JMenu
         }
       });
 
-
       bacross.add(Box.createHorizontalGlue());
       bacross.add(combo);
       bacross.add(mod_combo);
@@ -392,9 +389,8 @@ public class SelectionMenu extends JMenu
 
     bdown.add(Box.createVerticalGlue());
 
-    JScrollPane jsp = new JScrollPane(bdown);
+    final JScrollPane jsp = new JScrollPane(bdown);
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-
     jsp.setPreferredSize(new Dimension(jsp.getPreferredSize().width,
                          screen.height/2));
 
