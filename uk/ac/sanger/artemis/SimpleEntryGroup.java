@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleEntryGroup.java,v 1.6 2007-06-27 13:12:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/SimpleEntryGroup.java,v 1.7 2008-06-11 15:13:49 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -47,7 +47,7 @@ import java.util.NoSuchElementException;
  *  once.  Objects of this class act a bit like single Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: SimpleEntryGroup.java,v 1.6 2007-06-27 13:12:34 tjc Exp $
+ *  @version $Id: SimpleEntryGroup.java,v 1.7 2008-06-11 15:13:49 tjc Exp $
  **/
 
 public class SimpleEntryGroup extends EntryVector
@@ -428,6 +428,8 @@ public class SimpleEntryGroup extends EntryVector
       {
         final Entry this_entry = elementAt(0);
         remove(this_entry);
+        
+        this_entry.getEMBLEntry().dispose();
       }
 
       // now inform the listeners that the EntryGroup is no more
