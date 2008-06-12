@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.59 2008-06-12 09:58:03 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.60 2008-06-12 12:15:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -72,7 +72,7 @@ import javax.swing.JFrame;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.59 2008-06-12 09:58:03 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.60 2008-06-12 12:15:09 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -2339,6 +2339,7 @@ public class FeatureDisplay extends EntryGroupPanel
   
   /**
    * Check if this feature is an exon and is a child of a non-coding transcript
+   * and is part of a database entry.
    * @param feature
    * @param key
    * @return
@@ -2348,7 +2349,8 @@ public class FeatureDisplay extends EntryGroupPanel
     if(key.equals(DatabaseDocument.EXONMODEL) && 
        GeneUtils.isDatabaseEntry(getEntryGroup()))
     {
-      final String nonCodingTranscripts[] = { "tRNA", "rRNA", "snRNA", "snoRNA" };
+      final String nonCodingTranscripts[] =
+            { "tRNA", "rRNA", "snRNA", "snoRNA", "ncRNA", "scRNA" };
       try
       {
         Qualifier qualifier = feature.getQualifierByName("Parent");
