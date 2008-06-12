@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.58 2008-05-13 14:38:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.59 2008-06-12 09:58:03 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -32,6 +32,8 @@ import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.FileDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
+import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
+import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.SimpleEntryInformation;
@@ -70,7 +72,7 @@ import javax.swing.JFrame;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.58 2008-05-13 14:38:06 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.59 2008-06-12 09:58:03 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -2321,10 +2323,50 @@ public class FeatureDisplay extends EntryGroupPanel
   private boolean isProteinFeature(Feature feature)
   {
     final String key = feature.getKey().toString();
+    
+    if(isExonOfNonCodingTranscript(feature, key))
+      return false;
+     
     for(int i=0; i<protein_keys.length; i++)
     {
       if(key.equals((String)protein_keys[i]))
+      {
         return true;
+      }
+    }
+    return false;
+  }
+  
+  /**
+   * Check if this feature is an exon and is a child of a non-coding transcript
+   * @param feature
+   * @param key
+   * @return
+   */
+  private boolean isExonOfNonCodingTranscript(final Feature feature, final String key)
+  {
+    if(key.equals(DatabaseDocument.EXONMODEL) && 
+       GeneUtils.isDatabaseEntry(getEntryGroup()))
+    {
+      final String nonCodingTranscripts[] = { "tRNA", "rRNA", "snRNA", "snoRNA" };
+      try
+      {
+        Qualifier qualifier = feature.getQualifierByName("Parent");
+        if(qualifier != null)
+        {
+          final ChadoCanonicalGene chadoGene = 
+            ((GFFStreamFeature)feature.getEmblFeature()).getChadoGene();
+          final String transcriptName = (String)qualifier.getValues().get(0);
+          final GFFStreamFeature transcript = 
+            (GFFStreamFeature)chadoGene.getFeatureFromId(transcriptName);
+          final String transcriptKey = transcript.getKey().getKeyString();
+
+          for(int i=0; i<nonCodingTranscripts.length; i++)
+            if(nonCodingTranscripts[i].equals(transcriptKey))
+              return true;
+        }
+      }
+      catch(Exception e){}
     }
     return false;
   }
