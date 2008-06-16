@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.8 2008-05-22 15:00:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.9 2008-06-16 12:13:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.io.IOException;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.8 2008-05-22 15:00:48 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.9 2008-06-16 12:13:14 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -142,7 +142,8 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
           "feature_id", 
           "Parent", 
           "Derives_from",
-          "feature_relationship_rank"
+          "feature_relationship_rank",
+          "isObsolete"
         };
     
     Key key = feature.getKey();
