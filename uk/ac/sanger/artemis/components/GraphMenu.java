@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.4 2008-05-15 09:56:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.5 2008-06-16 12:11:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import javax.swing.*;
  *  This menu controls one particular BasePlotGroup.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: GraphMenu.java,v 1.4 2008-05-15 09:56:47 tjc Exp $
+ *  @version $Id: GraphMenu.java,v 1.5 2008-06-16 12:11:01 tjc Exp $
  **/
 
 public class GraphMenu extends JMenu 
@@ -82,6 +82,8 @@ public class GraphMenu extends JMenu
    *  can turn them all off with "Hide All Graphs".
    **/
   private Vector algorithm_menu_items = new Vector ();
+
+  private JSplitPane splitPane;
   
   /**
    *  Create a new GraphMenu object and all it's menu items.
@@ -96,13 +98,15 @@ public class GraphMenu extends JMenu
                     final EntryGroup entry_group,
                     final BasePlotGroup base_plot_group,
                     final FeatureDisplay feature_display,
-                    final String menu_name) 
+                    final String menu_name, 
+                    final JSplitPane splitPane) 
   {
     super (menu_name);
     this.frame = frame;
     this.entry_group = entry_group;
     this.base_plot_group = base_plot_group;
     this.feature_display = feature_display;
+    this.splitPane = splitPane;
 
     final BaseAlgorithm [] orig_algorithms =
       base_plot_group.getPlotAlgorithms ();
@@ -145,6 +149,7 @@ public class GraphMenu extends JMenu
         public void actionPerformed (ActionEvent event) 
         {
           addUsagePlot ();
+          adjustSplitPane(true);
         }
       });
       add (usage_plot_item);
@@ -155,6 +160,7 @@ public class GraphMenu extends JMenu
         public void actionPerformed (ActionEvent event)
         {
           addUserPlot ();
+          adjustSplitPane(true);
         }
       });
 
@@ -210,9 +216,10 @@ public class GraphMenu extends JMenu
   public GraphMenu (final JFrame frame,
                     final EntryGroup entry_group,
                     final BasePlotGroup base_plot_group,
-                    final FeatureDisplay feature_display) 
+                    final FeatureDisplay feature_display,
+                    final JSplitPane splitPane) 
   {
-    this (frame, entry_group, base_plot_group, feature_display, "Graph");
+    this (frame, entry_group, base_plot_group, feature_display, "Graph",splitPane);
   }
 
   /**
@@ -235,7 +242,8 @@ public class GraphMenu extends JMenu
       public void itemStateChanged(ItemEvent event) 
       {
         base_plot_group.setVisibleByAlgorithm (algorithm,
-                                               new_item.getState ());
+                                               new_item.isSelected());
+        adjustSplitPane(new_item.isSelected());
       }
     });
 
@@ -247,6 +255,41 @@ public class GraphMenu extends JMenu
     algorithm_menu_items.addElement (new_item);
 
     return new_item;
+  }
+  
+  /**
+   * Adjust the JSplitPane divider position if all plots are
+   * hidden or if a single graph has been made visible.
+   * @param thisGraphOn
+   */
+  private void adjustSplitPane(final boolean thisGraphOn)
+  {
+    if(splitPane == null)
+      return;
+      
+    final BaseAlgorithm [] current_algorithms =
+      base_plot_group.getPlotAlgorithms ();
+
+    int nvisible = 0;
+    for (int i = 0 ; i < current_algorithms.length ; ++i)
+    {
+      final JCheckBoxMenuItem this_menu_item =
+        (JCheckBoxMenuItem) algorithm_menu_items.elementAt (i);
+
+       if(this_menu_item.isSelected())
+         nvisible++;
+    }
+
+    if(nvisible == 0)
+    {
+      splitPane.setDividerSize(0);
+      splitPane.setDividerLocation(0);
+    }
+    else if(thisGraphOn && nvisible == 1)
+    {
+      splitPane.setDividerSize(3);
+      splitPane.setDividerLocation(0.2d);
+    }
   }
 
   /**

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.20 2008-01-30 11:24:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.21 2008-06-16 12:11:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -53,7 +53,7 @@ import javax.swing.JMenuItem;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.20 2008-01-30 11:24:36 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.21 2008-06-16 12:11:01 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
@@ -679,7 +679,7 @@ public class MultiComparator extends JFrame
                        getEntryGroupArray()[i],
                        getBasePlotGroupArray()[i],
                        getFeatureDisplayArray()[i],
-                       sub_menu_name);
+                       sub_menu_name, null);
       graph_menu.add(this_graph_menu);
     }
 

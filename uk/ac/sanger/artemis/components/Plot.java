@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.15 2008-05-29 13:34:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.16 2008-06-16 12:11:01 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -41,6 +41,7 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.Box;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JCheckBoxMenuItem;
@@ -52,7 +53,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.15 2008-05-29 13:34:25 tjc Exp $
+ *  @version $Id: Plot.java,v 1.16 2008-06-16 12:11:01 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -124,6 +125,8 @@ public abstract class Plot extends JPanel
                                   new Color(0,200,0), 
                                   Color.blue,
                                   Color.black };
+  
+  private int lastPaintHeight = getHeight();
  
   /**
    *  Create a new plot component.
@@ -434,63 +437,68 @@ public abstract class Plot extends JPanel
             }
           });
         }
-   
-        popup.addSeparator();
-        final JMenu graphHeight = new JMenu("Graph Height");
-        popup.add(graphHeight);
-        final JMenuItem smaller = new JMenuItem("smaller");
-        final JMenuItem larger  = new JMenuItem("larger");
-        final JMenuItem setHeight = new JMenuItem("set...");
-        
-        graphHeight.add(smaller);
-        graphHeight.add(larger);
-        graphHeight.add(setHeight);
 
-        smaller.addActionListener(new ActionListener()
-        {
-          public void actionPerformed(ActionEvent e)
-          {
-            Dimension d = getSize();
-            rescale((int)(d.height*0.9f));
-          }
-        });
-        
-        larger.addActionListener(new ActionListener()
-        {
-          public void actionPerformed(ActionEvent e)
-          {
-            Dimension d = getSize();
-            rescale((int)(d.height*1.1f));
-          }
-        });
-        
+        final JSplitPane splitPane = getJSplitPane();
 
-        setHeight.addActionListener(new ActionListener()
+        if(splitPane == null)
         {
+          popup.addSeparator();
+          final JMenu graphHeight = new JMenu("Graph Height");
+          popup.add(graphHeight);
+          final JMenuItem smaller = new JMenuItem("smaller");
+          final JMenuItem larger = new JMenuItem("larger");
+          final JMenuItem setHeight = new JMenuItem("set...");
 
-          public void actionPerformed(ActionEvent e)
+          graphHeight.add(smaller);
+          graphHeight.add(larger);
+          graphHeight.add(setHeight);
+
+          smaller.addActionListener(new ActionListener()
           {
-            final JTextField newGraphHgt = new JTextField(Integer.toString(getSize().height));
-            String window_options[] = { "Set Window Size", "Cancel" };
-            int select = JOptionPane.showOptionDialog(null,
-                                         newGraphHgt,
-                                        "Set Window Size",
-                                         JOptionPane.DEFAULT_OPTION,
-                                         JOptionPane.QUESTION_MESSAGE,
-                                         null, window_options, window_options[0]);
-            
-            if(select == 1)
-              return;
-            
-            try
+            public void actionPerformed(ActionEvent e)
             {
-              final int value = Integer.parseInt(newGraphHgt.getText().trim());
-              rescale(value);
+              Dimension d = getSize();
+              rescale((int) (d.height * 0.9f));
             }
-            catch(NumberFormatException nfe){}
-          }
-        });
-        
+          });
+
+          larger.addActionListener(new ActionListener()
+          {
+            public void actionPerformed(ActionEvent e)
+            {
+              Dimension d = getSize();
+              rescale((int) (d.height * 1.1f));
+            }
+          });
+
+          setHeight.addActionListener(new ActionListener()
+          {
+            public void actionPerformed(ActionEvent e)
+            {
+              final JTextField newGraphHgt = new JTextField(Integer
+                  .toString(getSize().height));
+              String window_options[] = { "Set Window Size", "Cancel" };
+              int select = JOptionPane.showOptionDialog(null, newGraphHgt,
+                  "Set Window Size", JOptionPane.DEFAULT_OPTION,
+                  JOptionPane.QUESTION_MESSAGE, null, window_options,
+                  window_options[0]);
+
+              if(select == 1)
+                return;
+
+              try
+              {
+                final int value = Integer
+                    .parseInt(newGraphHgt.getText().trim());
+                rescale(value);
+              }
+              catch(NumberFormatException nfe)
+              {
+              }
+            }
+          });
+        }
+
         parent.add(popup);
         popup.show(parent, event.getX(), event.getY());
       } 
@@ -538,7 +546,35 @@ public abstract class Plot extends JPanel
     }
   };
 
+  /**
+   * Find JSplitPane parent container or null if it does not
+   * belong to one.
+   * @return
+   */
+  private JSplitPane getJSplitPane()
+  {
+    JComponent child = Plot.this;
+    JSplitPane splitPane = null;
+    int count = 0;
+    try
+    {
+      while(splitPane == null && count < 10)
+      {
+        JComponent plotParent = (JComponent) child.getParent();
+        if(plotParent instanceof JSplitPane)
+          splitPane = (JSplitPane) plotParent;
+        child = plotParent;
+        count++;
+      }
+    }
+    catch(Exception e){}
+    return splitPane;
+  }
   
+  /**
+   * Reset graph height
+   * @param hgt
+   */
   private void rescale(int hgt)
   {
     setSize(getSize().width, hgt);
@@ -645,12 +681,12 @@ public abstract class Plot extends JPanel
     if(height <= 0 || width <= 0) 
       return;
 
-    if(offscreen == null) 
+    if(offscreen == null || lastPaintHeight != height)
       offscreen = createImage(width, height);
 
     Graphics og = offscreen.getGraphics();
     og.setClip(0, 0, width, height);
-    og.setColor(new Color(240, 240, 240));
+    og.setColor(Color.WHITE);
     og.fillRect(0, 0, width, height);
 
     // Redraw the graph on the canvas using the algorithm from the
@@ -659,6 +695,7 @@ public abstract class Plot extends JPanel
     drawLabels(og,numPlots);
     g.drawImage(offscreen, 0, 0, null);
     og.dispose();
+    lastPaintHeight = height;
   }
 
   protected void resetOffscreenImage()
@@ -1011,4 +1048,5 @@ public abstract class Plot extends JPanel
     
     return plot_values[ypos];
   }
+  
 }

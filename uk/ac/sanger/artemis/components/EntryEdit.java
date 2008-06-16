@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.64 2008-06-11 15:16:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.65 2008-06-16 12:11:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.64 2008-06-11 15:16:42 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.65 2008-06-16 12:11:01 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -211,11 +211,24 @@ public class EntryEdit extends JFrame
 
     group_display.setVisible(entry_buttons_option);
 
+
+    final JPanel mainPanel = new JPanel(new BorderLayout());
+    // set minimum size - this is then the smallest the split
+    // pane divider can make this panel
+    mainPanel.setMinimumSize(new Dimension(100,100));
+    final Box main_box_panel = Box.createVerticalBox();
+    mainPanel.add(main_box_panel, BorderLayout.NORTH);
+    
     base_plot_group =
       new BasePlotGroup(getEntryGroup(), this, getSelection(),
                         getGotoEventSource());
-    box_panel.add(base_plot_group);
+    //box_panel.add(base_plot_group);
 
+    final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
+                                             base_plot_group, mainPanel);
+
+    splitPane.setDividerSize(0);
+    splitPane.setResizeWeight(0.);
     base_plot_group.setVisible(true);
 
     // one line per entry display
@@ -242,8 +255,8 @@ public class EntryEdit extends JFrame
         validate();
       }
     });
-    box_panel.add(one_line_button_box_across);
-    box_panel.add(one_line_per_entry_display);
+    main_box_panel.add(one_line_button_box_across);
+    main_box_panel.add(one_line_per_entry_display);
 
     // feature display
     feature_display =
@@ -285,8 +298,8 @@ public class EntryEdit extends JFrame
         feature_display.setVisible(!feature_display.isVisible());
       }
     });
-    box_panel.add(feature_display_button_box_across);
-    box_panel.add(feature_display);
+    main_box_panel.add(feature_display_button_box_across);
+    main_box_panel.add(feature_display);
     feature_display.setVisible(true);
 
     // base display
@@ -310,8 +323,8 @@ public class EntryEdit extends JFrame
         base_display.setVisible(!base_display.isVisible());
       }
     });
-    box_panel.add(base_display_button_box_across);
-    box_panel.add(base_display);
+    main_box_panel.add(base_display_button_box_across);
+    main_box_panel.add(base_display);
 
     final boolean show_base_view;
 
@@ -363,7 +376,7 @@ public class EntryEdit extends JFrame
         pack();
       }
     });
-    box_panel.add(box_across);
+    main_box_panel.add(box_across);
 
     if(Options.getOptions().getPropertyTruthValue("show_list"))  
     {
@@ -376,8 +389,10 @@ public class EntryEdit extends JFrame
       feature_list.setVisible(false);
     }
 
-    getContentPane().add(jsp_feature_list, "Center");
-    makeMenus();
+    mainPanel.add(jsp_feature_list, "Center");
+    getContentPane().add(splitPane, BorderLayout.CENTER);
+    
+    makeMenus(splitPane);
     pack();
 
     ClassLoader cl = this.getClass().getClassLoader();
@@ -947,7 +962,7 @@ public class EntryEdit extends JFrame
   /**
    *  Make and add the menus for this component.
    **/
-  private void makeMenus() 
+  private void makeMenus(final JSplitPane splitPane) 
   {
     //final Font default_font = getDefaultFont();
 
@@ -1007,7 +1022,7 @@ public class EntryEdit extends JFrame
 
     JMenu graph_menu = new GraphMenu(this, getEntryGroup(),
                                      base_plot_group,
-                                     feature_display);
+                                     feature_display, splitPane);
     graph_menu.setMnemonic(KeyEvent.VK_G);
     menu_bar.add(graph_menu);
 

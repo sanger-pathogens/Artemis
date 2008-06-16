@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.12 2008-05-29 13:34:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.13 2008-06-16 12:11:01 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -52,7 +52,7 @@ import javax.swing.JTextField;
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.12 2008-05-29 13:34:25 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.13 2008-06-16 12:11:01 tjc Exp $
  **/
 
 public class BasePlot extends Plot
@@ -178,6 +178,7 @@ public class BasePlot extends Plot
     this.bases = getBaseAlgorithm().getBases();
     this.entryGroup  = entryGroup;
     
+    setBackground(Color.WHITE);
     getSelection().addSelectionChangeListener(this);
 
     setToolTipText("tool_tip");
@@ -265,10 +266,10 @@ public class BasePlot extends Plot
   /**
    *  Overridden to set the component height to 150.
    **/
-  public Dimension getMinimumSize() 
+  /*public Dimension getMinimumSize() 
   {
     return (new Dimension(getSize().width, HEIGHT));
-  }
+  }*/
 
   /**
    *  Implementation of the DisplayAdjustmentListener interface.  Invoked when

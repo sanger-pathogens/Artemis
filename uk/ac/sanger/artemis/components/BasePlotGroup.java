@@ -4,7 +4,7 @@
  *
  * This file is part of Artemis
  *
- * Copyright (C) 1998,1999,2000  Genome Research Limited
+ * Copyright (C) 1998-2008  Genome Research Limited
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlotGroup.java,v 1.8 2008-05-02 12:50:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlotGroup.java,v 1.9 2008-06-16 12:11:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -40,12 +40,44 @@ import javax.swing.JPanel;
  *  which can toggled off and on.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlotGroup.java,v 1.8 2008-05-02 12:50:01 tjc Exp $
+ *  @version $Id: BasePlotGroup.java,v 1.9 2008-06-16 12:11:01 tjc Exp $
  **/
 
 public class BasePlotGroup extends JPanel
                            implements DisplayAdjustmentListener 
 {
+  /**
+   *  The EntryGroup that contains the sequence that this JComponent is
+   *  displaying.
+   **/
+  private final EntryGroup entry_group;
+
+  /**
+   *  This array contains the Algorithm objects of the BasePlot components in
+   *  this BasePlotGroup, as set by the constructor.
+   **/
+  private final Vector plot_value_producers = new Vector ();
+
+  /**
+   *  The layout object used by this component.
+   **/
+  private final GridBagLayout gridbag = new GridBagLayout();
+
+  /**
+   *  The constraints object used by this component.
+   **/
+  private final GridBagConstraints c = new GridBagConstraints();
+
+  /**
+   *  The Selection that was passed to the constructor.
+   **/
+  private Selection selection;
+
+  /**
+   *  The GotoEventSource that was passed to the constructor.
+   **/
+  private GotoEventSource goto_event_source;
+  
   /**
    *  Create a new BasePlotGroup component for the given EntryGroup.
    *  @param selection Used to set and display the current selection in the
@@ -59,7 +91,6 @@ public class BasePlotGroup extends JPanel
                        final Selection selection,
                        final GotoEventSource goto_event_source) 
   {
-    this.owning_component = owning_component;
     this.entry_group = entry_group;
     this.selection = selection;
     this.goto_event_source = goto_event_source;
@@ -71,69 +102,15 @@ public class BasePlotGroup extends JPanel
     final Strand reverse_strand =
       entry_group.getBases().getReverseStrand();
 
-    // the following arrays are from failed tests
-    final float [] [] test_weights = 
-    {
-      {1, 0,39,99,11}, // a
-      {76,8,15,1,45},  // c
-      {2,0,42,0,6},    // g
-      {21,91,4,0,38}   // t
-    };
-
-    final float[][] test_weights2 = 
-    {
-      {11,11,10, 8,11,10,11,11, 7, 8,25, 3,100,  0,27},
-      {29,33,30,30,32,34,37,38,39,36,26,75,  0,  0,14},
-      {14,12,10,10, 9,11,10, 9, 7, 6,26, 1,  0,100,49},
-      {46,44,50,52,48,45,42,43,47,51,23,21,  0,  0,10}
-    };
-
-    final float[][] test_weights3 = 
-    {
-      {0,0,1,0,0,0},
-      {0,0,0,1,0,0},
-      {1,0,0,0,1,0},
-      {0,1,0,0,0,1},
-    };
-
-    final float[] cai_test = 
-    {
-      0.113F, 1.0F,   0.117F, 1.0F,
-      1.0F,   0.693F, 0.036F, 0.005F,
-      0.071F, 1.0F,   0.0F,   0.0F,
-      1.0F,   0.077F, 0.0F,   1.0F,
-
-      0.006F, 0.003F, 0.039F, 0.003F,
-      0.047F, 0.009F, 1.0F,   0.002F,
-      0.245F, 1.0F,   1.0F,   0.007F,
-      0.137F, 0.002F, 0.002F, 0.002F,
-
-      0.823F, 1.0F,   0.003F, 1.0F,
-      0.921F, 1.0F,   0.012F, 0.006F,
-      0.053F, 1.0F,   0.135F, 1.0F,
-      0.021F, 0.031F, 1.0F,   0.003F,
-
-      1.0F,   0.831F, 0.002F, 0.018F,
-      1.0F,   0.316F, 0.015F, 0.001F,
-      0.554F, 1.0F,   1.0F,   0.016F,
-      1.0F,   0.02F,  0.002F, 0.004F
-    };
-
-//    plot_algorithms_temp.add(new CAIWindowAlgorithm(forward_strand, cai_test));
-//    plot_algorithms_temp.add(new UserBaseAlgorithm(forward_strand, "test", test_weights));
-//    plot_algorithms_temp.add(new UserBaseAlgorithm(forward_strand, "test2", test_weights2));
-//    plot_algorithms_temp.add(new UserBaseAlgorithm(forward_strand, "test3", test_weights3));
-
     setLayout(gridbag);
+    setBackground(Color.WHITE);
 
-    c.fill = GridBagConstraints.HORIZONTAL;
+    c.fill = GridBagConstraints.BOTH;
     c.anchor = GridBagConstraints.NORTH;
     c.gridwidth = GridBagConstraints.REMAINDER;
-    c.gridheight = 1;
     c.weightx = 1;
-    c.weighty = 0;
-
-    c.insets = new Insets(0,0,5,0);
+    c.weighty = 1;
+    c.insets = new Insets(0,0,2,0);
 
     addAlgorithm(new GCWindowAlgorithm(forward_strand));
     addAlgorithm(new GCSDWindowAlgorithm(forward_strand));
@@ -160,28 +137,22 @@ public class BasePlotGroup extends JPanel
     //Scaled Chi
     addAlgorithm(new ScaledChiAlgorithm(forward_strand));
     addAlgorithm(new ScaledChiAlgorithm(reverse_strand));
-//  addAlgorithm(new ScaledChiRevAlgorithm(reverse_strand));
 
     //Corrected Scaled Chi Square
     addAlgorithm(new CSCSAlgorithm(forward_strand));
     addAlgorithm(new CSCSAlgorithm(reverse_strand));
-//  addAlgorithm(new CSCSRevAlgorithm(reverse_strand));
 
     //Mutational Response Index
     addAlgorithm(new MRIAlgorithm(forward_strand));
     addAlgorithm(new MRIAlgorithm(reverse_strand));
-//  addAlgorithm(new MRIRevAlgorithm(reverse_strand));
 
     //Effective Codon Number
     addAlgorithm(new NcAlgorithm(forward_strand));
     addAlgorithm(new NcAlgorithm(reverse_strand));
-//  addAlgorithm(new NcRevAlgorithm(reverse_strand));
 
     //Intrinsic Codon Deviation Index
     addAlgorithm(new ICDIAlgorithm(forward_strand));
     addAlgorithm(new ICDIAlgorithm(reverse_strand));
-//  addAlgorithm(new ICDIRevAlgorithm(reverse_strand));
-
   }
 
  
@@ -392,41 +363,4 @@ public class BasePlotGroup extends JPanel
   {
     return goto_event_source;
   }
-
-  /**
-   *  The EntryGroup that contains the sequence that this JComponent is
-   *  displaying.
-   **/
-  private final EntryGroup entry_group;
-
-  /**
-   *  This array contains the Algorithm objects of the BasePlot components in
-   *  this BasePlotGroup, as set by the constructor.
-   **/
-  private final Vector plot_value_producers = new Vector ();
-
-  /**
-   *  The layout object used by this component.
-   **/
-  private final GridBagLayout gridbag = new GridBagLayout();
-
-  /**
-   *  The constraints object used by this component.
-   **/
-  private final GridBagConstraints c = new GridBagConstraints();
-
-  /**
-   *  The Selection that was passed to the constructor.
-   **/
-  private Selection selection;
-
-  /**
-   *  The GotoEventSource that was passed to the constructor.
-   **/
-  private GotoEventSource goto_event_source;
-
-  /**
-   *  This is a reference to the parent Container of this BasePlot object.
-   **/
-  private Component owning_component;
 }
