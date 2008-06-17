@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.65 2008-06-16 12:11:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.66 2008-06-17 15:15:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -31,6 +31,7 @@ import uk.ac.sanger.artemis.chado.ClusterLazyQualifierValue;
 import uk.ac.sanger.artemis.chado.SimilarityLazyQualifierValue;
 import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.editor.BigPane;
 import uk.ac.sanger.artemis.editor.FastaTextPane;
 import uk.ac.sanger.artemis.editor.HitInfo;
@@ -67,7 +68,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.65 2008-06-16 12:11:01 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.66 2008-06-17 15:15:54 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -702,69 +703,8 @@ public class EntryEdit extends JFrame
     }
 
     
-    if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
-    {    
-      final List lazySimilarityValues = new Vector();
-      final List lazyClusterValues = new Vector();
-      final FeatureVector features = entry.getAllFeatures();
-      // find any lazy values to be loaded
-      
-      
-      for(int i=0; i<features.size(); i++)
-      {
-        QualifierVector qualifiers = features.elementAt(i).getQualifiers();
-        for(int j=0; j<qualifiers.size(); j++)
-        {
-          Qualifier qualifier = (Qualifier)qualifiers.get(j);
-          if(qualifier instanceof QualifierLazyLoading &&
-             !((QualifierLazyLoading)qualifier).isAllLazyValuesLoaded())
-          {
-            if( ((QualifierLazyLoading)qualifier).getValue(0) instanceof SimilarityLazyQualifierValue )
-              lazySimilarityValues.addAll( ((QualifierLazyLoading)qualifier).getLazyValues() );
-            else if( ((QualifierLazyLoading)qualifier).getValue(0) instanceof ClusterLazyQualifierValue )
-            {
-              lazyClusterValues.addAll( ((QualifierLazyLoading)qualifier).getLazyValues() );
-            }
-            else
-              ((QualifierLazyLoading)qualifier).setForceLoad(true);
-          }
-        }
-      }
-      
-      if(lazySimilarityValues.size() > 0 || lazyClusterValues.size() > 0)
-      {
-        int n = JOptionPane.showConfirmDialog(null,
-          "Load and write to file all qualifers from the database?"+
-          "\nThis may take a few minutes.",
-          "Load All Data",
-          JOptionPane.YES_NO_OPTION);
-        
-        if(n == JOptionPane.YES_OPTION)
-        {     
-          setCursor(new Cursor(Cursor.WAIT_CURSOR));
-          final DatabaseDocument document = 
-            (DatabaseDocument)((DocumentEntry)entry.getEMBLEntry()).getDocument();
-          
-          if(lazySimilarityValues.size() > 0)
-            SimilarityLazyQualifierValue.bulkRetrieve(lazySimilarityValues,document);
-          
-          if(lazyClusterValues.size() > 0)
-            ClusterLazyQualifierValue.setClusterFromValueList(lazyClusterValues, document);
-          
-          for(int i=0; i<features.size(); i++)
-          {
-            QualifierVector qualifiers = features.elementAt(i).getQualifiers();
-            for(int j=0; j<qualifiers.size(); j++)
-            {
-              Qualifier qualifier = (Qualifier)qualifiers.get(j);
-              if(qualifier instanceof QualifierLazyLoading)
-                ((QualifierLazyLoading)qualifier).setForceLoad(true);
-            }
-          }
-          setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        }
-      }
-    }
+    if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry) 
+      GeneUtils.lazyLoadAll(entry, this);
 
     
 //  if(!System.getProperty("os.arch").equals("alpha"))

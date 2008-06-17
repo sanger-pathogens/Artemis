@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.9 2008-06-16 12:13:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.10 2008-06-17 15:15:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.io.IOException;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.9 2008-06-16 12:13:14 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.10 2008-06-17 15:15:54 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -165,24 +165,27 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       qualifiers.addAll(chadoGene.getGene().getQualifiers().copy());
     }
     
+    
+    final String[][] QUALIFIERS_TO_MAP =
+    {
+        {"comment", "note"},
+        {"Dbxref", "db_xref"},
+        {"private", "note"},
+        {"orthologous_to", "ortholog"},
+        {"paralogous_to", "paralog"}
+    };
+    
     try
     {
-      int index = qualifiers.indexOfQualifierWithName("comment");
-      
-      if(index > -1)
-      {
-        StringVector comments = ((Qualifier)qualifiers.get(index)).getValues();
-        Qualifier noteQualifier = new Qualifier("note", comments);
-        qualifiers.setQualifier(noteQualifier);
-      }
+      for(int i=0; i<QUALIFIERS_TO_MAP.length; i++)
+        changeQualifierName(qualifiers, QUALIFIERS_TO_MAP[i][0], QUALIFIERS_TO_MAP[i][1]);
       
       for(int i=0; i<QUALIFIERS_TO_REMOVE.length; i++)
       {
-        index = qualifiers.indexOfQualifierWithName(QUALIFIERS_TO_REMOVE[i]);
-        if(index > -1)
-          qualifiers.removeElementAt(index);
+        qualifiers.removeQualifierByName(QUALIFIERS_TO_REMOVE[i]);
+        qualifiers.removeQualifierByName(QUALIFIERS_TO_REMOVE[i]);
+        qualifiers.removeQualifierByName(QUALIFIERS_TO_REMOVE[i]);
       }
-
       
       if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
         key = new Key("CDS");
@@ -195,6 +198,8 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       else if(key.getKeyString().equals("polypeptide"))
         return null;
       else if(key.getKeyString().equals("gene"))
+        return null;
+      else if(key.getKeyString().equals("centromere"))
         return null;
       else if(key.getKeyString().equals("transcript") || 
               key.getKeyString().equals("mRNA"))
@@ -274,13 +279,34 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
   }
   
   /**
+   * Change the name of a qualifier
+   * @param qualifiers
+   * @param oldName
+   * @param newName
+   */
+  private void changeQualifierName(final QualifierVector qualifiers, 
+                                   final String oldName, 
+                                   final String newName)
+  {
+    int index = qualifiers.indexOfQualifierWithName(oldName);
+    
+    if(index > -1)
+    {
+      StringVector values = ((Qualifier)qualifiers.get(index)).getValues();
+      qualifiers.removeQualifierByName(oldName);
+      Qualifier newQualifier = new Qualifier(newName, values);
+      qualifiers.setQualifier(newQualifier);
+    }  
+  }
+  
+  /**
    *  If the given Sequence can be added directly to this Entry, then return a
    *  copy of it, otherwise create and return a new feature of the appropriate
    *  type for this Entry.
    **/
   protected StreamSequence makeNativeSequence (final Sequence sequence) 
   {
-    if(this instanceof EmblDocumentEntry) 
+    if(this instanceof EmblDocumentEntry)
       return new EmblStreamSequence (sequence);
     else 
       return new GenbankStreamSequence (sequence);

@@ -26,9 +26,11 @@ import java.io.File;
 import java.io.IOException;
 
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
@@ -39,13 +41,19 @@ class ReadAndWriteEntry
 
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(ReadAndWriteEntry.class);
-  
-
-  
-  public static Entry readEntryFromDatabase(final String srcFeatureId) 
+ 
+  /**
+   * Read from the database, given a srcFeature uniquename
+   * @param uniqueName
+   * @return
+   * @throws OutOfRangeException
+   * @throws NoSequenceException
+   * @throws IOException
+   */
+  public static Entry readEntryFromDatabase(final String uniqueName) 
          throws OutOfRangeException, NoSequenceException, IOException
   {
-    DatabaseEntrySource entry_source = new DatabaseEntrySource();
+    final DatabaseEntrySource entry_source = new DatabaseEntrySource();
     boolean promptUser = true;
     if(System.getProperty("read_only") != null)
       promptUser = false;
@@ -59,6 +67,8 @@ class ReadAndWriteEntry
     String userName = url.substring(index+1).trim();
     if(userName.startsWith("user="))
       userName = userName.substring(5);
+    
+    final String srcFeatureId = getFeatureId(entry_source, uniqueName);
     
     final InputStreamProgressListener stream_progress_listener =
         new InputStreamProgressListener() 
@@ -75,26 +85,47 @@ class ReadAndWriteEntry
       }
     };
     return entry_source.getEntry(srcFeatureId, userName, 
-                                    stream_progress_listener);
+                                 stream_progress_listener);
   }
   
-  public static void writeEntry(final Entry entry) 
+  /**
+   * Write entry to a file
+   * @param entry
+   * @param file
+   * @throws IOException
+   * @throws EntryInformationException
+   */
+  public static void writeEntry(final Entry entry, final File file) 
          throws IOException, EntryInformationException
   {
-    File file = new File("x");
+    System.out.println(file.getAbsolutePath());
+    GeneUtils.lazyLoadAll(entry, null);
     entry.save(file, DocumentEntryFactory.EMBL_FORMAT, false);
+  }
+  
+  /**
+   * Get feature id
+   * @param entry_source
+   * @param srcUniqueName
+   * @return
+   */
+  public static String getFeatureId(
+      final DatabaseEntrySource entry_source, final String srcUniqueName)
+  {
+    final DatabaseDocument doc = entry_source.getDatabaseDocument();
+    org.gmod.schema.sequence.Feature feature = doc.getFeatureByUniquename(srcUniqueName);
+    return Integer.toString(feature.getFeatureId());
   }
   
   public static void main(final String args[])
   {
     try
     {
-      Entry entry = ReadAndWriteEntry.readEntryFromDatabase("1");
-      ReadAndWriteEntry.writeEntry(entry);
+      Entry entry = ReadAndWriteEntry.readEntryFromDatabase("Pf3D7_03");
+      ReadAndWriteEntry.writeEntry(entry,new File("Pf3D7_03"));
     }
     catch(Exception e)
     {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

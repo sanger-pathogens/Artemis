@@ -21,6 +21,7 @@
 package uk.ac.sanger.artemis.components.genebuilder;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -47,11 +48,14 @@ import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeaturePub;
 import org.gmod.schema.sequence.FeatureSynonym;
 
+import uk.ac.sanger.artemis.chado.ClusterLazyQualifierValue;
+import uk.ac.sanger.artemis.chado.SimilarityLazyQualifierValue;
 import uk.ac.sanger.artemis.components.EditMenu;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.SelectionMenu;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Feature;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
@@ -60,6 +64,7 @@ import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.KeyVector;
 import uk.ac.sanger.artemis.io.Location;
 import uk.ac.sanger.artemis.io.Qualifier;
+import uk.ac.sanger.artemis.io.QualifierLazyLoading;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -270,6 +275,71 @@ public class GeneUtils
     feature.setQualifier(new Qualifier("ID", feature.getSegmentID( rv )));
   }
   
+  public static void lazyLoadAll(final Entry entry, final JFrame parent)
+  {
+    final List lazySimilarityValues = new Vector();
+    final List lazyClusterValues = new Vector();
+    final FeatureVector features = entry.getAllFeatures();
+    // find any lazy values to be loaded
+    
+    
+    for(int i=0; i<features.size(); i++)
+    {
+      QualifierVector qualifiers = features.elementAt(i).getQualifiers();
+      for(int j=0; j<qualifiers.size(); j++)
+      {
+        Qualifier qualifier = (Qualifier)qualifiers.get(j);
+        if(qualifier instanceof QualifierLazyLoading &&
+           !((QualifierLazyLoading)qualifier).isAllLazyValuesLoaded())
+        {
+          if( ((QualifierLazyLoading)qualifier).getValue(0) instanceof SimilarityLazyQualifierValue )
+            lazySimilarityValues.addAll( ((QualifierLazyLoading)qualifier).getLazyValues() );
+          else if( ((QualifierLazyLoading)qualifier).getValue(0) instanceof ClusterLazyQualifierValue )
+          {
+            lazyClusterValues.addAll( ((QualifierLazyLoading)qualifier).getLazyValues() );
+          }
+          else
+            ((QualifierLazyLoading)qualifier).setForceLoad(true);
+        }
+      }
+    }
+    
+    if(lazySimilarityValues.size() > 0 || lazyClusterValues.size() > 0)
+    {
+      int n = JOptionPane.showConfirmDialog(null,
+        "Load and write to file all qualifers from the database?"+
+        "\nThis may take a few minutes.",
+        "Load All Data",
+        JOptionPane.YES_NO_OPTION);
+      
+      if(n == JOptionPane.YES_OPTION)
+      {
+        if(parent != null)
+          parent.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        final DatabaseDocument document = 
+          (DatabaseDocument)((DocumentEntry)entry.getEMBLEntry()).getDocument();
+        
+        if(lazySimilarityValues.size() > 0)
+          SimilarityLazyQualifierValue.bulkRetrieve(lazySimilarityValues,document);
+        
+        if(lazyClusterValues.size() > 0)
+          ClusterLazyQualifierValue.setClusterFromValueList(lazyClusterValues, document);
+        
+        for(int i=0; i<features.size(); i++)
+        {
+          QualifierVector qualifiers = features.elementAt(i).getQualifiers();
+          for(int j=0; j<qualifiers.size(); j++)
+          {
+            Qualifier qualifier = (Qualifier)qualifiers.get(j);
+            if(qualifier instanceof QualifierLazyLoading)
+              ((QualifierLazyLoading)qualifier).setForceLoad(true);
+          }
+        }
+        if(parent != null)
+          parent.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      }
+    }
+  }
   
   /**
    * Sorts the elements of the vector using a simple O(n^2) selection
