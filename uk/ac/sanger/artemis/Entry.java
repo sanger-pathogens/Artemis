@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.10 2008-01-03 11:19:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Entry.java,v 1.11 2008-06-20 10:00:25 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -59,7 +59,7 @@ import java.io.File;
  *  possible events.)
  *
  *  @author Kim Rutherford
- *  @version $Id: Entry.java,v 1.10 2008-01-03 11:19:34 tjc Exp $
+ *  @version $Id: Entry.java,v 1.11 2008-06-20 10:00:25 tjc Exp $
  **/
 
 public class Entry implements FeatureChangeListener, Selectable 
@@ -222,8 +222,6 @@ public class Entry implements FeatureChangeListener, Selectable
                    final boolean force)
       throws IOException, EntryInformationException 
   {
-    final FileDocument file_document = new FileDocument(file);
-
     final EntryInformation artemis_entry_information;
     
     if(getEMBLEntry() instanceof DatabaseDocumentEntry &&
@@ -232,6 +230,33 @@ public class Entry implements FeatureChangeListener, Selectable
     else
       artemis_entry_information = getEntryInformation();
     
+    save(file, destination_type, force, artemis_entry_information);
+  }
+  
+  
+  /**
+   *  Save the changes to this Entry to the file.  If this object is read only
+   *  a ReadOnlyException will be thrown.  This method only works when the
+   *  underlying embl.Entry object is a DocumentEntry.
+   *  @param destination_type Should be one of EMBL_FORMAT, GENBANK_FORMAT,
+   *    GFF_FORMAT or ANY_FORMAT.  If ANY_FORMAT then the Entry will
+   *    be saved in the same format it was created, otherwise it will be saved
+   *    in the given format.
+   *  @param force If true then invalid qualifiers and any features with
+   *    invalid keys will be quietly thrown away when saving.  "Invalid" means
+   *    that the key/qualifier is not allowed to occur in the destination type
+   *   (probably determined by the default EntryInformation object of the
+   *    destination type).  If false an EntryInformationException will be
+   *    thrown for invalid keys or qualifiers.
+   *  @exception EntryInformationException Thrown if force is false and if the
+   *    destination type cannot contain the Key, Qualifier or Key/Qualifier
+   *    combination of one of the features in this Entry.
+   **/
+  public void save(final File file, final int destination_type,
+                   final boolean force, final EntryInformation artemis_entry_information)
+      throws IOException, EntryInformationException 
+  {
+    final FileDocument file_document = new FileDocument(file);
     final DocumentEntry document_entry =
       (DocumentEntry)getEMBLEntryAsNewType(artemis_entry_information,
                                            destination_type, force);
