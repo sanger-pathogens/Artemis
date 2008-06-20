@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.40 2008-05-21 14:15:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.41 2008-06-20 09:48:33 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -74,7 +74,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.40 2008-05-21 14:15:54 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.41 2008-06-20 09:48:33 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -892,6 +892,7 @@ public class AddMenu extends SelectionMenu
       Entry newEntry = null;
       boolean prevForward = true;
       
+      // search for intergenic regions
       for(int i=0; i < cdsFeatures.size (); i++)
       {
         final Feature this_feature = cdsFeatures.elementAt(i);
@@ -911,8 +912,13 @@ public class AddMenu extends SelectionMenu
             while(getTotalRange((Feature)cdsFeatures.elementAt(next)).getStart() <= prevEnd+1)
             {
               Feature f = (Feature)cdsFeatures.elementAt(next);
-              prevEnd = getTotalRange(f).getEnd();
-              prevForward = f.isForwardFeature();
+              
+              if(prevEnd < getTotalRange(f).getEnd())
+              {
+                prevEnd = getTotalRange(f).getEnd();
+                prevForward = f.isForwardFeature();
+              }
+              
               i = next;
               next++;
             }
@@ -973,8 +979,12 @@ public class AddMenu extends SelectionMenu
                   getTotalRange((Feature)cdsFeatures.elementAt(next)).getStart() <= prevEnd+1)
             {
               Feature f = (Feature)cdsFeatures.elementAt(next);
-              prevEnd = getTotalRange(f).getEnd();
-              prevForward = f.isForwardFeature();
+              
+              if(prevEnd < getTotalRange(f).getEnd())
+              {
+                prevEnd = getTotalRange(f).getEnd();
+                prevForward = f.isForwardFeature();
+              }
               i = next;
               next++;
             }
@@ -1033,7 +1043,13 @@ public class AddMenu extends SelectionMenu
       else if(feature1_start > feature2_start)
         return 1;
 
-      return 1;
+      final int feature1_end = feature1.getLocation().getTotalRange().getEnd();
+      final int feature2_end = feature2.getLocation().getTotalRange().getEnd();
+      
+      if(feature1_end < feature2_end)
+        return -1;
+      else
+        return 1;
     }
   };
 
