@@ -28,13 +28,23 @@ import java.io.IOException;
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
+import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
+import uk.ac.sanger.artemis.io.Feature;
+import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.io.KeyVector;
+import uk.ac.sanger.artemis.io.Qualifier;
+import uk.ac.sanger.artemis.io.QualifierInfo;
+import uk.ac.sanger.artemis.io.QualifierInfoException;
+import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.Entry;
+import uk.ac.sanger.artemis.FeatureVector;
+import uk.ac.sanger.artemis.Options;
 
 class ReadAndWriteEntry
 {
@@ -100,7 +110,55 @@ class ReadAndWriteEntry
   {
     System.out.println(file.getAbsolutePath());
     GeneUtils.lazyLoadAll(entry, null);
-    entry.save(file, DocumentEntryFactory.EMBL_FORMAT, false);
+
+    EntryInformation artemis_entry_information = Options.getArtemisEntryInformation();
+    
+    FeatureVector features = entry.getAllFeatures();
+    for(int i=0; i<features.size(); i++)
+    {
+      addAllKeysQualifiers(artemis_entry_information, features.elementAt(i).getEmblFeature());
+    }
+    entry.save(file, DocumentEntryFactory.EMBL_FORMAT, false, artemis_entry_information);
+  }
+  
+  private static void addAllKeysQualifiers(final EntryInformation entry_information,
+                                           final Feature feature)
+  {
+    final Key new_key = feature.getKey();
+    if(!entry_information.isValidKey(new_key))
+    {
+      entry_information.addKey(new_key);
+    }
+    
+    final QualifierVector feature_qualifiers = feature.getQualifiers();
+    
+    // check the qualifiers
+    for(int i = 0 ; i < feature_qualifiers.size() ; ++i)
+    {
+      final Qualifier this_qualifier = (Qualifier)feature_qualifiers.elementAt(i);
+      final String this_qualifier_name = this_qualifier.getName();
+
+      if(!entry_information.isValidQualifier(new_key, this_qualifier_name)) 
+      {
+        QualifierInfo qualifierInfo = entry_information.getQualifierInfo(this_qualifier_name);
+        if(qualifierInfo == null)
+        {
+          KeyVector keys = new KeyVector();
+          qualifierInfo = new QualifierInfo(this_qualifier_name, QualifierInfo.ANY,
+                                            keys, null, false);
+          try
+          {
+            entry_information.addQualifierInfo(qualifierInfo);
+          }
+          catch(QualifierInfoException e)
+          {
+            e.printStackTrace();
+          }
+        }
+        qualifierInfo.getValidKeys().add(new_key);
+      }
+    }
+
   }
   
   /**

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.10 2008-06-17 15:15:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.11 2008-06-20 09:58:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.io.IOException;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.10 2008-06-17 15:15:54 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.11 2008-06-20 09:58:09 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -149,6 +149,28 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     Key key = feature.getKey();
     QualifierVector qualifiers = feature.getQualifiers().copy();
     
+    if(getEntryInformation().isValidQualifier(QUALIFIERS_TO_REMOVE[0]))
+    {
+      try
+      {
+        if(this instanceof EmblDocumentEntry)
+          return new EmblStreamFeature (
+              key, 
+              feature.getLocation(), 
+              qualifiers);
+        else
+          return new GenbankStreamFeature (
+            key, 
+            feature.getLocation(), 
+            qualifiers);
+      }
+      catch(InvalidRelationException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+    
     if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
     {
       ChadoCanonicalGene chadoGene = ((GFFStreamFeature)feature).getChadoGene();
@@ -166,6 +188,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     }
     
     
+    
     final String[][] QUALIFIERS_TO_MAP =
     {
         {"comment", "note"},
@@ -178,13 +201,21 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     try
     {
       for(int i=0; i<QUALIFIERS_TO_MAP.length; i++)
-        changeQualifierName(qualifiers, QUALIFIERS_TO_MAP[i][0], QUALIFIERS_TO_MAP[i][1]);
+      {
+        if(!getEntryInformation().isValidQualifier(QUALIFIERS_TO_MAP[i][0]))
+        {
+          changeQualifierName(qualifiers, QUALIFIERS_TO_MAP[i][0], QUALIFIERS_TO_MAP[i][1]);
+        }
+      }
       
       for(int i=0; i<QUALIFIERS_TO_REMOVE.length; i++)
       {
-        qualifiers.removeQualifierByName(QUALIFIERS_TO_REMOVE[i]);
-        qualifiers.removeQualifierByName(QUALIFIERS_TO_REMOVE[i]);
-        qualifiers.removeQualifierByName(QUALIFIERS_TO_REMOVE[i]);
+        if(!getEntryInformation().isValidQualifier(QUALIFIERS_TO_REMOVE[i]))
+        {
+          qualifiers.removeQualifierByName(QUALIFIERS_TO_REMOVE[i]);
+          qualifiers.removeQualifierByName(QUALIFIERS_TO_REMOVE[i]);
+          qualifiers.removeQualifierByName(QUALIFIERS_TO_REMOVE[i]);
+        }
       }
       
       if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
