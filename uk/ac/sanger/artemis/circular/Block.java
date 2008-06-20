@@ -588,8 +588,12 @@ public class Block implements Transferable
       getTrack().setPosition(y);
   }
 
+  protected double getMidAngle()
+  {
+    return Math.abs(getAngStart() + (getAngEnd()/2.d));
+  }
 
-  public Point[] getMidPoint()
+  protected Point[] getLinePoints(final int extraLength)
   {
     if(current_dna.isCircular())
     {
@@ -599,46 +603,65 @@ public class Block implements Transferable
       double x_origin = location.x+dradii;
       double y_origin = location.y+dradii+DNADraw.Y_SHIFT;
 
-      double midAngle = Math.abs(getAngStart() + (getAngEnd()/2.d));
-
+      double midAngle = getMidAngle();
       double trackPos = (track.getPosition()*dradii)+(track.getSize()/2.f);
       
-      double x = 0.d;
-      double y = 0.d;
+      double x  = 0.d;
+      double y  = 0.d;
       double x2 = 0.d;
-      int lineLength = 100;
+      double y2 = 0.d;
+      double x3 = 0.d;
+      int lineLength = 100+extraLength;
       
       if(midAngle <= 90.d)
       {
         x = (Math.sin(Math.toRadians(midAngle)) * trackPos)+x_origin;
         y = y_origin-(Math.cos(Math.toRadians(midAngle)) * trackPos);
-        x2 = x + lineLength;
+        
+        x2 = (Math.sin(Math.toRadians(midAngle)) * (trackPos+lineLength))+x_origin;
+        y2 = y_origin-(Math.cos(Math.toRadians(midAngle)) * (trackPos+lineLength));
+        
+        x3 = x2+10;
       }
       else if(midAngle <= 180.d)
       {
         midAngle-=90;
         x = (Math.cos(Math.toRadians(midAngle)) * trackPos)+x_origin;
         y = (Math.sin(Math.toRadians(midAngle)) * trackPos)+y_origin;
-        x2 = x + lineLength;
+        
+        x2 = (Math.cos(Math.toRadians(midAngle)) * (trackPos+lineLength))+x_origin;
+        y2 = (Math.sin(Math.toRadians(midAngle)) * (trackPos+lineLength))+y_origin;
+        
+        x3 = x2+10;
       }
       else if(midAngle <= 270.d)
       {
         midAngle-=180;
         x = x_origin-(Math.sin(Math.toRadians(midAngle)) * trackPos);
         y = (Math.cos(Math.toRadians(midAngle)) * trackPos)+y_origin;
-        x2 = x - lineLength;
+        
+        x2 = x_origin-(Math.sin(Math.toRadians(midAngle)) * (trackPos+lineLength));
+        y2 = (Math.cos(Math.toRadians(midAngle)) * (trackPos+lineLength))+y_origin;
+        
+        x3 = x2-10;
       }
       else if(midAngle <= 360.d)
       {
         midAngle-=270;
         x = x_origin-(Math.cos(Math.toRadians(midAngle)) * trackPos);
         y = y_origin-(Math.sin(Math.toRadians(midAngle)) * trackPos);
-        x2 = x - lineLength;
+        
+        x2 = x_origin-(Math.cos(Math.toRadians(midAngle)) * (trackPos+lineLength));
+        y2 = y_origin-(Math.sin(Math.toRadians(midAngle)) * (trackPos+lineLength));
+        
+        x3 = x2-10;
       }
       
-      final Point[] line = new Point[2];
+      final Point[] line = new Point[3];
       line[0] = new Point((int)x, (int)y);
-      line[1] = new Point((int)x2, (int)y);
+      line[1] = new Point((int)x2, (int)y2);
+      line[2] = new Point((int)x3, (int)y2);
+      
       return line;
     }
     else

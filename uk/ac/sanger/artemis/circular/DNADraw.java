@@ -40,6 +40,7 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -913,11 +914,25 @@ public class DNADraw extends ScrollPanel
 
   public Hashtable getFeaturePoints()
   {
+    Collections.sort(block, new BlockComparator());
     final Hashtable h = new Hashtable(block.size());
+    int len = 0;
+    double lastAngle = -10.d;
+    
     for(int i=0; i<block.size(); i++)
     {
       Block b = (Block)block.get(i);
-      h.put(b.getFeature().getIDString()+";"+b.getBstart()+".."+b.getBend(), b.getMidPoint());
+      double thisAngle = b.getMidAngle();
+      
+      if( Math.abs(thisAngle - lastAngle ) < 2 )
+        len = len+10;
+      else
+        len = 0;
+      
+      h.put(b.getFeature().getIDString()+";"+b.getBstart()+".."+b.getBend(),
+            b.getLinePoints( len ));
+      
+      lastAngle = thisAngle;
     }
     return h;
   }
@@ -1681,6 +1696,7 @@ public class DNADraw extends ScrollPanel
         
         g2.setColor(Color.DARK_GRAY);
         g2.drawLine(p[0].x,p[0].y,p[1].x,p[1].y);
+        g2.drawLine(p[1].x,p[1].y,p[2].x,p[2].y);
         //g2.drawString(label, p[0].x,p[0].y);
       }
     }
