@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.11 2008-06-20 09:58:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.12 2008-06-23 10:24:07 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.io.IOException;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.11 2008-06-20 09:58:09 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.12 2008-06-23 10:24:07 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -151,6 +151,8 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     
     if(getEntryInformation().isValidQualifier(QUALIFIERS_TO_REMOVE[0]))
     {
+      if(key.getKeyString().startsWith("pseudo"))
+        key = handlePseudo(key,qualifiers);
       try
       {
         if(this instanceof EmblDocumentEntry)
@@ -186,8 +188,6 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       // add gene qualifiers to CDS
       qualifiers.addAll(chadoGene.getGene().getQualifiers().copy());
     }
-    
-    
     
     final String[][] QUALIFIERS_TO_MAP =
     {
@@ -236,27 +236,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
               key.getKeyString().equals("mRNA"))
         return null;
       else if(key.getKeyString().startsWith("pseudo"))
-      {
-        if(key.getKeyString().equals("pseudogenic_transcript"))
-          key = new Key("mRNA");
-        else if(key.getKeyString().equals("pseudogenic_exon"))
-          key = new Key("exon");
-        else if(key.getKeyString().equals("pseudogene"))
-          key = new Key("gene");
-        
-        qualifiers.setQualifier(new Qualifier("pseudo"));
-        
-        if(!getEntryInformation().isValidQualifier(key, "pseudo"))
-        {
-          try
-          {
-            getEntryInformation().addQualifierInfo(
-                 new QualifierInfo("pseudo", QualifierInfo.NO_VALUE,
-                          null, null, true));
-          }
-          catch(QualifierInfoException e){}
-        }
-      }
+        key = handlePseudo(key,qualifiers);
       
       
       //
@@ -310,7 +290,37 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
   }
   
   /**
+   * 
+   * @param key
+   * @param qualifiers
+   */
+  private Key handlePseudo(Key key, final QualifierVector qualifiers)
+  {
+    if(key.getKeyString().equals("pseudogenic_transcript"))
+      key = new Key("mRNA");
+    else if(key.getKeyString().equals("pseudogenic_exon"))
+      key = new Key("CDS");
+    else if(key.getKeyString().equals("pseudogene"))
+      key = new Key("gene");
+
+    qualifiers.setQualifier(new Qualifier("pseudo"));
+
+    if(!getEntryInformation().isValidQualifier(key, "pseudo"))
+    {
+      try
+      {
+        getEntryInformation().addQualifierInfo(
+            new QualifierInfo("pseudo", QualifierInfo.NO_VALUE, null, null,
+                true));
+      }
+      catch(QualifierInfoException e){}
+    }
+    return key;
+  }
+  
+  /**
    * Change the name of a qualifier
+   * 
    * @param qualifiers
    * @param oldName
    * @param newName

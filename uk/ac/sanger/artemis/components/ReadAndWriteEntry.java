@@ -102,32 +102,41 @@ class ReadAndWriteEntry
    * Write entry to a file
    * @param entry
    * @param file
+   * @param flatten if true the gene model is flattened
    * @throws IOException
    * @throws EntryInformationException
    */
-  public static void writeEntry(final Entry entry, final File file) 
+  public static void writeEntry(final Entry entry, final File file,
+                                final boolean flatten) 
          throws IOException, EntryInformationException
   {
     System.out.println(file.getAbsolutePath());
     GeneUtils.lazyLoadAll(entry, null);
 
     EntryInformation artemis_entry_information = Options.getArtemisEntryInformation();
-    
-    FeatureVector features = entry.getAllFeatures();
-    for(int i=0; i<features.size(); i++)
+    if(!flatten)
     {
-      addAllKeysQualifiers(artemis_entry_information, features.elementAt(i).getEmblFeature());
+      final FeatureVector features = entry.getAllFeatures();
+      for(int i=0; i<features.size(); i++)
+        addAllKeysQualifiers(artemis_entry_information, features.elementAt(i).getEmblFeature());
     }
     entry.save(file, DocumentEntryFactory.EMBL_FORMAT, false, artemis_entry_information);
   }
   
+  /**
+   * Add all keys and qualifiers for a given feature to the EntryInformation 
+   * @param entry_information
+   * @param feature
+   */
   private static void addAllKeysQualifiers(final EntryInformation entry_information,
                                            final Feature feature)
   {
     final Key new_key = feature.getKey();
+    boolean keyAdded = false;
     if(!entry_information.isValidKey(new_key))
     {
       entry_information.addKey(new_key);
+      keyAdded = true;
     }
     
     final QualifierVector feature_qualifiers = feature.getQualifiers();
@@ -138,13 +147,16 @@ class ReadAndWriteEntry
       final Qualifier this_qualifier = (Qualifier)feature_qualifiers.elementAt(i);
       final String this_qualifier_name = this_qualifier.getName();
 
-      if(!entry_information.isValidQualifier(new_key, this_qualifier_name)) 
+      if(!entry_information.isValidQualifier(this_qualifier_name) ||
+         !entry_information.isValidQualifier(new_key, this_qualifier_name) ||
+         keyAdded) 
       {
         QualifierInfo qualifierInfo = entry_information.getQualifierInfo(this_qualifier_name);
+        
         if(qualifierInfo == null)
         {
           KeyVector keys = new KeyVector();
-          qualifierInfo = new QualifierInfo(this_qualifier_name, QualifierInfo.ANY,
+          qualifierInfo = new QualifierInfo(this_qualifier_name, QualifierInfo.QUOTED_TEXT,
                                             keys, null, false);
           try
           {
@@ -155,7 +167,9 @@ class ReadAndWriteEntry
             e.printStackTrace();
           }
         }
-        qualifierInfo.getValidKeys().add(new_key);
+        
+        if(qualifierInfo.getValidKeys() != null)
+          qualifierInfo.getValidKeys().add(new_key);
       }
     }
 
@@ -180,7 +194,11 @@ class ReadAndWriteEntry
     try
     {
       Entry entry = ReadAndWriteEntry.readEntryFromDatabase("Pf3D7_03");
-      ReadAndWriteEntry.writeEntry(entry,new File("Pf3D7_03"));
+      ReadAndWriteEntry.writeEntry(
+          entry, new File("Pf3D7_03.flatten"), true);
+      
+      ReadAndWriteEntry.writeEntry(
+          entry, new File("Pf3D7_03.not-flatten"), false);
     }
     catch(Exception e)
     {
