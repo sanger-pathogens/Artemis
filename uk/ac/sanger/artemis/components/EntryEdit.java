@@ -20,18 +20,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.66 2008-06-17 15:15:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.67 2008-06-23 13:31:26 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
-import uk.ac.sanger.artemis.chado.ClusterLazyQualifierValue;
-import uk.ac.sanger.artemis.chado.SimilarityLazyQualifierValue;
 import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
-import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.editor.BigPane;
 import uk.ac.sanger.artemis.editor.FastaTextPane;
 import uk.ac.sanger.artemis.editor.HitInfo;
@@ -48,9 +45,6 @@ import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
-import uk.ac.sanger.artemis.io.Qualifier;
-import uk.ac.sanger.artemis.io.QualifierLazyLoading;
-import uk.ac.sanger.artemis.io.QualifierVector;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -68,7 +62,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.66 2008-06-17 15:15:54 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.67 2008-06-23 13:31:26 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -702,11 +696,6 @@ public class EntryEdit extends JFrame
         return;
     }
 
-    
-    if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry) 
-      GeneUtils.lazyLoadAll(entry, this);
-
-    
 //  if(!System.getProperty("os.arch").equals("alpha"))
 //  {
     

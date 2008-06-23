@@ -20,13 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.7 2007-03-01 15:43:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.8 2008-06-23 13:31:26 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.util.*;
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.Entry;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.ReadFormatException;
@@ -41,7 +42,7 @@ import javax.swing.*;
  *  This class is a JFileChooser that can read EMBL Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryFileDialog.java,v 1.7 2007-03-01 15:43:46 tjc Exp $
+ *  @version $Id: EntryFileDialog.java,v 1.8 2008-06-23 13:31:26 tjc Exp $
  **/
 
 public class EntryFileDialog extends StickyFileChooser 
@@ -377,10 +378,17 @@ public class EntryFileDialog extends StickyFileChooser
           useAccessory = true;
         }
 
+        JCheckBox flattenGeneModel = new JCheckBox("Flatten Gene Model",
+                                                    true);
         if(((DocumentEntry)entry.getEMBLEntry()).getDocument() 
                                        instanceof RemoteFileDocument)
         {
           yBox.add(remoteSave);
+          useAccessory = true;
+        }
+        else if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
+        {
+          yBox.add(flattenGeneModel);
           useAccessory = true;
         }
 
@@ -433,7 +441,10 @@ public class EntryFileDialog extends StickyFileChooser
                              false);
         try 
         {
-          if(include_diana_extensions) 
+          if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
+            ReadAndWriteEntry.writeEntry(entry, file, 
+                flattenGeneModel.isSelected(), false, destination_type);
+          else if(include_diana_extensions) 
             entry.save(file, destination_type, false);
           else 
             entry.saveStandardOnly(file, destination_type, true);
@@ -448,7 +459,10 @@ public class EntryFileDialog extends StickyFileChooser
           {
             try 
             {
-              if(include_diana_extensions) 
+              if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
+                ReadAndWriteEntry.writeEntry(entry, file, 
+                    flattenGeneModel.isSelected(), true, destination_type);
+              else if(include_diana_extensions) 
                 entry.save(file, destination_type, true);
               else 
                 entry.saveStandardOnly(file, destination_type, true);

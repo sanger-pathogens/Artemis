@@ -107,10 +107,11 @@ class ReadAndWriteEntry
    * @throws EntryInformationException
    */
   public static void writeEntry(final Entry entry, final File file,
-                                final boolean flatten) 
+                                final boolean flatten, 
+                                final boolean force,
+                                final int destination_type) 
          throws IOException, EntryInformationException
   {
-    System.out.println(file.getAbsolutePath());
     GeneUtils.lazyLoadAll(entry, null);
 
     EntryInformation artemis_entry_information = Options.getArtemisEntryInformation();
@@ -120,7 +121,7 @@ class ReadAndWriteEntry
       for(int i=0; i<features.size(); i++)
         addAllKeysQualifiers(artemis_entry_information, features.elementAt(i).getEmblFeature());
     }
-    entry.save(file, DocumentEntryFactory.EMBL_FORMAT, false, artemis_entry_information);
+    entry.save(file, destination_type, force, artemis_entry_information);
   }
   
   /**
@@ -195,10 +196,12 @@ class ReadAndWriteEntry
     {
       Entry entry = ReadAndWriteEntry.readEntryFromDatabase("Pf3D7_03");
       ReadAndWriteEntry.writeEntry(
-          entry, new File("Pf3D7_03.flatten"), true);
+          entry, new File("Pf3D7_03.flatten"), true, false, 
+          DocumentEntryFactory.EMBL_FORMAT);
       
       ReadAndWriteEntry.writeEntry(
-          entry, new File("Pf3D7_03.not-flatten"), false);
+          entry, new File("Pf3D7_03.not-flatten"), false, false,
+          DocumentEntryFactory.EMBL_FORMAT);
     }
     catch(Exception e)
     {

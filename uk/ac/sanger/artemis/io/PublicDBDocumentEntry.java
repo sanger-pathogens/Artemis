@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.12 2008-06-23 10:24:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.13 2008-06-23 13:31:26 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,7 +36,7 @@ import java.io.IOException;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.12 2008-06-23 10:24:07 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.13 2008-06-23 13:31:26 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -153,6 +153,13 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     {
       if(key.getKeyString().startsWith("pseudo"))
         key = handlePseudo(key,qualifiers);
+      else if(key.getKeyString().equals("polypeptide_motif"))
+        key = new Key("CDS_motif");
+      else if(key.getKeyString().equals("five_prime_UTR"))
+        key = new Key("5'UTR");
+      else if(key.getKeyString().equals("three_prime_UTR"))
+        key = new Key("3'UTR");
+      
       try
       {
         if(this instanceof EmblDocumentEntry)
@@ -173,6 +180,8 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       }
     }
     
+    
+    // flatten gene model - combining qualifiers
     if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
     {
       ChadoCanonicalGene chadoGene = ((GFFStreamFeature)feature).getChadoGene();
