@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.8 2008-06-23 13:31:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.9 2008-06-23 13:53:46 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -42,7 +42,7 @@ import javax.swing.*;
  *  This class is a JFileChooser that can read EMBL Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryFileDialog.java,v 1.8 2008-06-23 13:31:26 tjc Exp $
+ *  @version $Id: EntryFileDialog.java,v 1.9 2008-06-23 13:53:46 tjc Exp $
  **/
 
 public class EntryFileDialog extends StickyFileChooser 
@@ -442,7 +442,7 @@ public class EntryFileDialog extends StickyFileChooser
         try 
         {
           if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
-            ReadAndWriteEntry.writeEntry(entry, file, 
+            ReadAndWriteEntry.writeDatabaseEntryToFile(entry, file, 
                 flattenGeneModel.isSelected(), false, destination_type);
           else if(include_diana_extensions) 
             entry.save(file, destination_type, false);
@@ -460,7 +460,7 @@ public class EntryFileDialog extends StickyFileChooser
             try 
             {
               if(entry.getEMBLEntry() instanceof DatabaseDocumentEntry)
-                ReadAndWriteEntry.writeEntry(entry, file, 
+                ReadAndWriteEntry.writeDatabaseEntryToFile(entry, file, 
                     flattenGeneModel.isSelected(), true, destination_type);
               else if(include_diana_extensions) 
                 entry.save(file, destination_type, true);

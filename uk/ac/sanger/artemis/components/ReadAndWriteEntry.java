@@ -102,14 +102,21 @@ class ReadAndWriteEntry
    * Write entry to a file
    * @param entry
    * @param file
-   * @param flatten if true the gene model is flattened
+   * @param flatten Flatten the gene model and combine the qualifiers if true.
+   *    If false it will write all features and qualifiers out.
+   * @param force invalid qualifiers and any features with invalid keys will 
+   *    be quietly thrown away when saving.
+   * @param destination_type Should be one of EMBL_FORMAT, GENBANK_FORMAT,
+   *    GFF_FORMAT or ANY_FORMAT.  If ANY_FORMAT then the Entry will
+   *    be saved in the same format it was created, otherwise it will be saved
+   *    in the given format.
    * @throws IOException
    * @throws EntryInformationException
    */
-  public static void writeEntry(final Entry entry, final File file,
-                                final boolean flatten, 
-                                final boolean force,
-                                final int destination_type) 
+  public static void writeDatabaseEntryToFile(final Entry entry, final File file,
+                                              final boolean flatten, 
+                                              final boolean force,
+                                              final int destination_type) 
          throws IOException, EntryInformationException
   {
     GeneUtils.lazyLoadAll(entry, null);
@@ -195,11 +202,11 @@ class ReadAndWriteEntry
     try
     {
       Entry entry = ReadAndWriteEntry.readEntryFromDatabase("Pf3D7_03");
-      ReadAndWriteEntry.writeEntry(
+      ReadAndWriteEntry.writeDatabaseEntryToFile(
           entry, new File("Pf3D7_03.flatten"), true, false, 
           DocumentEntryFactory.EMBL_FORMAT);
       
-      ReadAndWriteEntry.writeEntry(
+      ReadAndWriteEntry.writeDatabaseEntryToFile(
           entry, new File("Pf3D7_03.not-flatten"), false, false,
           DocumentEntryFactory.EMBL_FORMAT);
     }
