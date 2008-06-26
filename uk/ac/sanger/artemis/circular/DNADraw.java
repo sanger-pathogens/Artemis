@@ -353,6 +353,8 @@ public class DNADraw extends ScrollPanel
 
   protected void addBlock(Block b)
   {
+    if(getGeneticMarker() == null)
+      setGeneticMarker(new Vector());
     this.getGeneticMarker().add(b);
     validate();
   }
