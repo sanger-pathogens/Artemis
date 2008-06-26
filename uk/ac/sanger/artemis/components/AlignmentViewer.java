@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.41 2006-02-14 11:47:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AlignmentViewer.java,v 1.42 2008-06-26 09:47:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -30,7 +30,6 @@ import uk.ac.sanger.artemis.sequence.Strand;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
-import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -49,7 +48,7 @@ import java.io.IOException;
  *  ComparisonData object.
  *
  *  @author Kim Rutherford
- *  @version $Id: AlignmentViewer.java,v 1.41 2006-02-14 11:47:25 tjc Exp $
+ *  @version $Id: AlignmentViewer.java,v 1.42 2008-06-26 09:47:18 tjc Exp $
  **/
 
 public class AlignmentViewer extends CanvasPanel
@@ -337,43 +336,37 @@ public class AlignmentViewer extends CanvasPanel
     final Strand current_subject_fwd_strand =
                               getSubjectForwardStrand();
 
-    final int subject_length =
-          current_subject_fwd_strand.getSequenceLength();
+    final int subject_length = current_subject_fwd_strand.getSequenceLength();
 
-    for(int range_index = 0; range_index < select_ranges_size;
-        ++range_index) 
+    for(int match_index = 0; match_index < all_matches_length; ++match_index)
     {
-      final Range select_range = (Range)select_ranges.elementAt(range_index);
-      final int select_range_start = select_range.getStart();
-      final int select_range_end   = select_range.getEnd();
+      final AlignMatch this_match = all_matches[match_index];
 
- 
-      for(int match_index = 0; match_index < all_matches_length;
-          ++match_index) 
+      if(!isVisible(this_match))
+        continue;
+
+      int subject_sequence_start = getRealSubjectSequenceStart(this_match,
+          subject_length,
+          (getOrigSubjectForwardStrand() != current_subject_fwd_strand));
+      int subject_sequence_end = getRealSubjectSequenceEnd(this_match,
+          subject_length,
+          (getOrigSubjectForwardStrand() != current_subject_fwd_strand));
+
+      if(subject_sequence_end < subject_sequence_start)
       {
-        final AlignMatch this_match = all_matches[match_index];
+        final int tmp = subject_sequence_start;
+        subject_sequence_start = subject_sequence_end;
+        subject_sequence_end = tmp;
+      }
 
-        if(!isVisible(this_match)) 
-          continue;
+      for(int range_index = 0; range_index < select_ranges_size; ++range_index)
+      {
+        final Range select_range = (Range) select_ranges.elementAt(range_index);
+        final int select_range_start = select_range.getStart();
+        final int select_range_end = select_range.getEnd();
 
-        int subject_sequence_start =
-          getRealSubjectSequenceStart(this_match, subject_length,
-                                      (getOrigSubjectForwardStrand () !=
-                                      current_subject_fwd_strand));
-        int subject_sequence_end =
-          getRealSubjectSequenceEnd(this_match, subject_length,
-                                    (getOrigSubjectForwardStrand () !=
-                                    current_subject_fwd_strand));
-
-        if(subject_sequence_end < subject_sequence_start) 
-        {
-          final int tmp = subject_sequence_start;
-          subject_sequence_start = subject_sequence_end;
-          subject_sequence_end = tmp;
-        }
-
-        if(select_range_start < subject_sequence_start &&
-           select_range_end   < subject_sequence_start) 
+        if(select_range_start < subject_sequence_start
+            && select_range_end < subject_sequence_start)
           continue;
 
         if(select_range_start > subject_sequence_end &&
@@ -383,8 +376,9 @@ public class AlignmentViewer extends CanvasPanel
         if(selected_matches == null) 
           selected_matches = new AlignMatchVector();
 
-        if(!selected_matches.contains(this_match)) 
-          selected_matches.add(this_match);
+        //if(!selected_matches.contains(this_match)) 
+        selected_matches.add(this_match);
+        break;
       }
     }
 
@@ -409,39 +403,34 @@ public class AlignmentViewer extends CanvasPanel
     final int query_length =
           current_query_forward_strand.getSequenceLength();
 
-    for(int range_index = 0; range_index < select_ranges_size;
-        ++range_index) 
+    for(int match_index = 0; match_index < all_matches_length; ++match_index)
     {
-      final Range select_range = (Range)select_ranges.elementAt(range_index);
-      final int select_range_start = select_range.getStart();
-      final int select_range_end   = select_range.getEnd();
+      final AlignMatch this_match = all_matches[match_index];
 
-      for(int match_index = 0; match_index < all_matches_length;
-          ++match_index) 
+      if(!isVisible(this_match))
+        continue;
+
+      int query_sequence_start = getRealQuerySequenceStart(this_match,
+          query_length,
+          (getOrigQueryForwardStrand() != current_query_forward_strand));
+      int query_sequence_end = getRealQuerySequenceEnd(this_match,
+          query_length,
+          (getOrigQueryForwardStrand() != current_query_forward_strand));
+
+      if(query_sequence_end < query_sequence_start)
       {
-        final AlignMatch this_match = all_matches[match_index];
+        final int tmp = query_sequence_start;
+        query_sequence_start = query_sequence_end;
+        query_sequence_end = tmp;
+      }
 
-        if(!isVisible (this_match)) 
-          continue;
-
-        int query_sequence_start =
-          getRealQuerySequenceStart(this_match, query_length,
-                                    (getOrigQueryForwardStrand() !=
-                                    current_query_forward_strand));
-        int query_sequence_end =
-          getRealQuerySequenceEnd(this_match, query_length,
-                                  (getOrigQueryForwardStrand() !=
-                                  current_query_forward_strand));
-
-        if(query_sequence_end < query_sequence_start) 
-        {
-          final int tmp = query_sequence_start;
-          query_sequence_start = query_sequence_end;
-          query_sequence_end = tmp;
-        }
-
-        if(select_range_start < query_sequence_start &&
-           select_range_end < query_sequence_start) 
+      for(int range_index = 0; range_index < select_ranges_size; ++range_index)
+      {
+        final Range select_range = (Range) select_ranges.elementAt(range_index);
+        final int select_range_start = select_range.getStart();
+        final int select_range_end = select_range.getEnd();
+        if(select_range_start < query_sequence_start
+            && select_range_end < query_sequence_start) 
           continue;
 
         if(select_range_start > query_sequence_end &&
@@ -451,11 +440,12 @@ public class AlignmentViewer extends CanvasPanel
         if(selected_matches == null) 
           selected_matches = new AlignMatchVector();
 
-        if(!selected_matches.contains(this_match)) 
-          selected_matches.add(this_match);
+        //if(!selected_matches.contains(this_match)) 
+        selected_matches.add(this_match);
+        break;
       }
     }
-
+    
     if(selected_matches != null)
       selectionChanged();
     else
