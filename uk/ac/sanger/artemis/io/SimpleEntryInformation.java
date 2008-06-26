@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleEntryInformation.java,v 1.4 2007-10-10 14:32:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleEntryInformation.java,v 1.5 2008-06-26 09:38:54 tjc Exp $
  */
 
 
@@ -28,14 +28,13 @@ package uk.ac.sanger.artemis.io;
 
 import uk.ac.sanger.artemis.util.*;
 
-import java.util.*;
 
 /**
  *  A SimpleEntryInformation is an EntryInformation object allows any key or
  *  qualifier.
  *
  *  @author Kim Rutherford
- *  @version $Id: SimpleEntryInformation.java,v 1.4 2007-10-10 14:32:50 tjc Exp $
+ *  @version $Id: SimpleEntryInformation.java,v 1.5 2008-06-26 09:38:54 tjc Exp $
  **/
 
 public class SimpleEntryInformation
