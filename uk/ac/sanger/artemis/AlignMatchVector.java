@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/AlignMatchVector.java,v 1.2 2006-08-09 16:35:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/AlignMatchVector.java,v 1.3 2008-06-26 09:38:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -28,13 +28,12 @@ package uk.ac.sanger.artemis;
 import uk.ac.sanger.artemis.util.FastVector;
 
 import java.util.Comparator;
-import java.util.Collections;
 
 /**
  *  This class is a Vector of AlignMatch objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: AlignMatchVector.java,v 1.2 2006-08-09 16:35:31 tjc Exp $
+ *  @version $Id: AlignMatchVector.java,v 1.3 2008-06-26 09:38:13 tjc Exp $
  **/
 
 public class AlignMatchVector {
@@ -79,11 +78,7 @@ public class AlignMatchVector {
    *  Return true if this object contains the given AlignMatch.
    **/
   public boolean contains (AlignMatch item) {
-    if (indexOf (item) == -1) {
-      return false;
-    } else {
-      return true;
-    }
+    return vector.contains(item);
   }
 
   /**
