@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Selection.java,v 1.2 2005-04-07 16:27:51 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Selection.java,v 1.3 2008-06-26 09:36:50 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -40,7 +40,7 @@ import java.awt.datatransfer.*;
  *  the user has selected.
  *
  *  @author Kim Rutherford
- *  @version $Id: Selection.java,v 1.2 2005-04-07 16:27:51 tjc Exp $
+ *  @version $Id: Selection.java,v 1.3 2008-06-26 09:36:50 tjc Exp $
  *
  **/
 
@@ -142,10 +142,10 @@ public class Selection
       if (event.getType () == FeatureChangeEvent.QUALIFIER_CHANGED ||
           event.getType () == FeatureChangeEvent.KEY_CHANGED) {
         // no need to reset the cache in this case
-        final SelectionChangeEvent selection_change_event =
+        /*final SelectionChangeEvent selection_change_event =
           new SelectionChangeEvent (this, SelectionChangeEvent.OBJECT_CHANGED);
 
-        fireAction (selection_listener_list, selection_change_event);
+        fireAction (selection_listener_list, selection_change_event);*/
       } else {
         changeSelection (SelectionChangeEvent.OBJECT_CHANGED);
       }
