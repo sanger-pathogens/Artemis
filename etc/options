@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.43 2008-05-12 10:01:23 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.44 2008-06-26 12:52:20 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -557,6 +557,8 @@ extra_qualifiers_gff = \
     blastp+go_file "text" \
     blastx_file "text" \
     cluster "text" \
+    colour text \
+    color text \
     controlled_curation "text" \
     fasta_file "text" \
     GO "text" \
