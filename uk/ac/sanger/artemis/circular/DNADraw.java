@@ -139,12 +139,16 @@ public class DNADraw extends ScrollPanel
     setOpaque(false);
     setToolTipText("");
     
-    DragSource dragSource = DragSource.getDefaultDragSource();
-    dragSource.createDefaultDragGestureRecognizer(
-       this,                             // component where drag originates
-       DnDConstants.ACTION_COPY_OR_MOVE, // actions
-       this);      
-    setDropTarget(new DropTarget(this,this));
+    if( System.getProperty("java.awt.headless") == null ||
+       !System.getProperty("java.awt.headless").equals("true") )
+    {
+      DragSource dragSource = DragSource.getDefaultDragSource();
+      dragSource.createDefaultDragGestureRecognizer(
+         this,                             // component where drag originates
+         DnDConstants.ACTION_COPY_OR_MOVE, // actions
+         this);      
+      setDropTarget(new DropTarget(this,this));
+    }
     lineAttr = new Hashtable();
     lineAttr.put("start",new Integer(0));
     lineAttr.put("end",new Integer(4000));
