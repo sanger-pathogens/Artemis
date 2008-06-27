@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCSDWindowAlgorithm.java,v 1.1 2004-06-09 09:51:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCSDWindowAlgorithm.java,v 1.2 2008-06-27 10:01:30 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -39,7 +39,7 @@ import uk.ac.sanger.artemis.sequence.*;
  *  to use is set in the constructor.
  *
  *  @author Kim Rutherford
- *  @version $Id: GCSDWindowAlgorithm.java,v 1.1 2004-06-09 09:51:29 tjc Exp $
+ *  @version $Id: GCSDWindowAlgorithm.java,v 1.2 2008-06-27 10:01:30 tjc Exp $
  **/
 
 public class GCSDWindowAlgorithm extends BaseAlgorithm {
@@ -82,18 +82,18 @@ public class GCSDWindowAlgorithm extends BaseAlgorithm {
       }
     }
 
-    final String sequence;
+    final char[] sequence;
 
     try {
-      sequence = getStrand ().getSubSequence (new Range (start, end));
+      sequence = getStrand ().getBases().getSubSequenceC (new Range (start, end), Strand.FORWARD);
     } catch (OutOfRangeException e) {
       throw new Error ("internal error - unexpected exception: " + e);
     }
 
     float gc_count = 0;
 
-    for (int i = 0 ; i < sequence.length () ; ++i) {
-      final char this_char = sequence.charAt (i);
+    for (int i = 0 ; i < sequence.length  ; ++i) {
+      final char this_char = sequence[i];
 //      System.out.println (this_char);
 
       if (this_char == 'g' || this_char == 'c') {
@@ -101,7 +101,7 @@ public class GCSDWindowAlgorithm extends BaseAlgorithm {
       }
     }
 
-    final float gc_content = gc_count/sequence.length () * 100;
+    final float gc_content = gc_count/sequence.length * 100;
 
     final float gc_average =
       getStrand ().getBases ().getAverageGCPercent ();
@@ -122,8 +122,17 @@ public class GCSDWindowAlgorithm extends BaseAlgorithm {
 
     final int sequence_length = getStrand ().getBases ().getLength ();
 
-    final String bases = getStrand ().getBases ().toString ();
-
+    //final String bases = getStrand ().getBases ().toString ();
+    char[] bases = null;
+    try
+    {
+      bases = getStrand ().getBases ().getSubSequenceC(new Range(1,sequence_length), Strand.FORWARD);
+    }
+    catch(OutOfRangeException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     // the number of windows to search
     final int window_count = sequence_length - window_size;
 
@@ -141,14 +150,14 @@ public class GCSDWindowAlgorithm extends BaseAlgorithm {
 
     for (int i = - window_size ; i < window_count ; ++i) {
       if (i > 0) {
-        final char previous_char = bases.charAt (i - 1);
+        final char previous_char = bases[i - 1];
 
         if (previous_char == 'g' || previous_char == 'c') {
           --current_gc_count;
         }
       }
 
-      final char new_char = bases.charAt (i + window_size);
+      final char new_char = bases[i + window_size];
 
       if (new_char == 'g' || new_char == 'c') {
         ++current_gc_count;

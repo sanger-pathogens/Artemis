@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/KarlinSigAlgorithm.java,v 1.3 2006-11-09 15:08:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/KarlinSigAlgorithm.java,v 1.4 2008-06-27 10:01:30 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -42,7 +42,7 @@ import uk.ac.sanger.artemis.sequence.*;
  *  constructor.
  *
  *  @author Kim Rutherford
- *  @version $Id: KarlinSigAlgorithm.java,v 1.3 2006-11-09 15:08:08 tjc Exp $
+ *  @version $Id: KarlinSigAlgorithm.java,v 1.4 2008-06-27 10:01:30 tjc Exp $
  **/
 
 public class KarlinSigAlgorithm extends BaseAlgorithm {
@@ -206,21 +206,14 @@ public class KarlinSigAlgorithm extends BaseAlgorithm {
     final int [] base_counts = new int [4];
     final int [][] dinucleotide_base_counts = new int [4][4];
 
-    char this_f_base = 0;
-    char next_f_base = 0;
-    char this_r_base = 0;
-    char next_r_base = 0;
-    int this_f_base_index = 0;
+    int this_f_base_index = Bases.getIndexOfBase (sequence_forward_raw[0]);
     int next_f_base_index = 0;
-    int this_r_base_index = 0;
+    int this_r_base_index = Bases.getIndexOfBase (sequence_reverse_raw[0]);
     int next_r_base_index = 0;
 
-    for (int i = 0 ; i < sequence_forward_raw.length - 1 ; ++i) {
-      this_f_base = sequence_forward_raw[i];
-      next_f_base = sequence_forward_raw[i + 1];
-
-      this_f_base_index = Bases.getIndexOfBase (this_f_base);
-      next_f_base_index = Bases.getIndexOfBase (next_f_base);
+    for (int i = 0 ; i < sequence_forward_raw.length - 1 ; ++i) 
+    {
+      next_f_base_index = Bases.getIndexOfBase (sequence_forward_raw[i + 1]);
 
       if (this_f_base_index < 4 && next_f_base_index < 4) {
         ++base_counts[this_f_base_index];
@@ -229,11 +222,7 @@ public class KarlinSigAlgorithm extends BaseAlgorithm {
         // ignore Ns
       }
 
-      this_r_base = sequence_reverse_raw[i];
-      next_r_base = sequence_reverse_raw[i + 1];
-
-      this_r_base_index = Bases.getIndexOfBase (this_r_base);
-      next_r_base_index = Bases.getIndexOfBase (next_r_base);
+      next_r_base_index = Bases.getIndexOfBase (sequence_reverse_raw[i + 1]);
 
       if (this_r_base_index < 4 && next_r_base_index < 4) {
         ++base_counts[this_r_base_index];
@@ -241,25 +230,27 @@ public class KarlinSigAlgorithm extends BaseAlgorithm {
       } else {
         // ignore Ns
       }
+      
+      this_f_base_index = next_f_base_index;
+      this_r_base_index = next_r_base_index;
     }
 
     // remember to add the last base
-    if (next_f_base_index < 4) {
+    if (next_f_base_index < 4) 
       ++base_counts[next_f_base_index];
-    }
-    if (next_r_base_index < 4) {
+
+    if (next_r_base_index < 4) 
       ++base_counts[next_r_base_index];
-    }
 
 
     for (int first_base_index = 0 ;
          first_base_index < 4 ;
-         ++first_base_index) {
-
+         ++first_base_index) 
+    {
       for (int second_base_index = 0 ;
            second_base_index < 4 ;
-           ++second_base_index) {
-
+           ++second_base_index) 
+      {
         final float dinucleotide_frequency =
           1f * dinucleotide_base_counts[first_base_index][second_base_index] /
           (sequence_reverse_raw.length - 1) / 2;

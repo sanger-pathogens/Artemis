@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCWindowAlgorithm.java,v 1.1 2004-06-09 09:51:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCWindowAlgorithm.java,v 1.2 2008-06-27 10:01:30 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.plot;
@@ -37,7 +37,7 @@ import uk.ac.sanger.artemis.sequence.*;
  *  constructor.
  *
  *  @author Kim Rutherford
- *  @version $Id: GCWindowAlgorithm.java,v 1.1 2004-06-09 09:51:31 tjc Exp $
+ *  @version $Id: GCWindowAlgorithm.java,v 1.2 2008-06-27 10:01:30 tjc Exp $
  **/
 
 public class GCWindowAlgorithm extends BaseAlgorithm {
@@ -59,28 +59,27 @@ public class GCWindowAlgorithm extends BaseAlgorithm {
    *    this array.
    **/
   public void getValues (int start, int end, final float [] values) {
-    final String sequence;
+    final char[] sequence;
 
     try {
-      sequence = getStrand ().getSubSequence (new Range (start, end));
+      sequence = getStrand ().getBases().getSubSequenceC(
+          new Range (start, end), Strand.FORWARD);
     } catch (OutOfRangeException e) {
       throw new Error ("internal error - unexpected exception: " + e);
     }
 
     float gc_count = 0;
 
-    for (int i = 0 ; i < sequence.length () ; ++i) {
-      final char this_char = sequence.charAt (i);
-//      System.out.println (this_char);
-
-      if (this_char == 'g' || this_char == 'c') {
+    final int sequence_length = sequence.length;
+    for (int i = 0 ; i < sequence_length ; ++i) 
+    {
+      if (sequence[i] == 'g' || sequence[i] == 'c') 
         ++gc_count;
-      }
     }
 
 //    System.out.println ("start: " + start + " end: " + end + " returning: " + gc_count/sequence.length ()); 
 
-    values[0] = gc_count/sequence.length () * 100;
+    values[0] = gc_count/sequence_length * 100;
   }
 
   /**
