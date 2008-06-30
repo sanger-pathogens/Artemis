@@ -1737,7 +1737,11 @@ public class ChadoTransactionManager
     {
       uniqueName = new String[1];
       uniqueName[0] = (String)new_qualifier.getValues().get(0);
-      isObsolete = (String) feature.getQualifierByName("isObsolete").getValues().get(0);
+      
+      if(feature.getQualifierByName("isObsolete") != null)
+        isObsolete = (String) feature.getQualifierByName("isObsolete").getValues().get(0);
+      else
+        isObsolete = "false";
       log = "UNIQUENAME: ID=";
     }
     else
