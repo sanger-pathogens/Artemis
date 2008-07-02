@@ -20,13 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.67 2008-06-23 13:31:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.68 2008-07-02 13:13:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
+import uk.ac.sanger.artemis.chado.CommitFrame;
 import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
 import uk.ac.sanger.artemis.editor.BigPane;
@@ -62,7 +63,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.67 2008-06-23 13:31:26 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.68 2008-07-02 13:13:23 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -620,6 +621,7 @@ public class EntryEdit extends JFrame
     {
       getEntryGroup().removeFeatureChangeListener(commitButton);
       getEntryGroup().removeEntryChangeListener(commitButton);
+      commitButton.close();
     }
     
     getEntryGroup().removeFeatureChangeListener(selection);
@@ -1589,37 +1591,78 @@ public class EntryEdit extends JFrame
 
   }
   
-  protected static boolean commitToDatabase(final EntryGroup entry_group,
+  private static boolean canCommitChecks(final EntryGroup entry_group,
                                          final ChadoTransactionManager ctm,
                                          final JFrame frame,
                                          final Selection selection,
                                          final GotoEventSource getGotoEventSource,
                                          final BasePlotGroup  base_plot_group)
   {
-    try
+    if(entry_group.getDefaultEntry() == null)
     {
-      if(entry_group.getDefaultEntry() == null)
-      {
-        JOptionPane.showMessageDialog(frame, 
-            "No default entry selected.\n"+
-            "Select the default from the entry bar at the top.");
-        return false; 
-      }
-      else if(!ctm.hasTransactions())
-      {
-        JOptionPane.showMessageDialog(frame, 
-            "No changes to commit to the database.");
-        return false;
-      }
-      
+      JOptionPane.showMessageDialog(frame, 
+          "No default entry selected.\n"+
+          "Select the default from the entry bar at the top.");
+      return false; 
+    }
+    else if(!ctm.hasTransactions())
+    {
+      JOptionPane.showMessageDialog(frame, 
+          "No changes to commit to the database.");
+      return false;
+    }
+    
+    if(System.getProperty("nocommit") == null ||
+       System.getProperty("nocommit").equals("false"))
+    {
       int select = JOptionPane.showConfirmDialog(frame, 
           "Commit "+ctm.getTransactionCount()+" change(s) to the database?", 
           "Commit", JOptionPane.OK_CANCEL_OPTION);
       if(select == JOptionPane.CANCEL_OPTION)
         return false;
-      
-      if(!isUniqueID(entry_group, ctm, selection, 
-            getGotoEventSource, base_plot_group))
+    }
+    
+    if(!isUniqueID(entry_group, ctm, selection, 
+          getGotoEventSource, base_plot_group))
+      return false;
+    return true;
+  }
+
+  public static boolean commitToDatabase(final EntryGroup entry_group,
+      final ChadoTransactionManager ctm,
+      final JFrame frame,
+      final Selection selection,
+      final GotoEventSource getGotoEventSource,
+      final BasePlotGroup  base_plot_group)
+  {
+    return commitToDatabase(entry_group, ctm, frame, selection,
+                   getGotoEventSource, base_plot_group, false);
+  }
+  
+  /**
+   * Commit back to the database.
+   * @param entry_group
+   * @param ctm
+   * @param frame
+   * @param selection
+   * @param getGotoEventSource
+   * @param base_plot_group
+   * @param force force the commit - i.e. commit everything that doesn't
+   * trow an exception
+   * @return
+   */
+  private static boolean commitToDatabase(final EntryGroup entry_group,
+                                          final ChadoTransactionManager ctm,
+                                          final JFrame frame,
+                                          final Selection selection,
+                                          final GotoEventSource getGotoEventSource,
+                                          final BasePlotGroup  base_plot_group,
+                                          final boolean force)
+  {
+    try
+    {
+      if(!canCommitChecks(entry_group, ctm, frame, selection,
+                        getGotoEventSource, base_plot_group))
         return false;
       
       final Document dbDoc =
@@ -1628,9 +1671,11 @@ public class EntryEdit extends JFrame
       if(dbDoc instanceof DatabaseDocument)
       {
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        ctm.commit((DatabaseDocument)dbDoc, false);
+        ChadoTransactionManager.commit((DatabaseDocument)dbDoc, force, ctm);
         
-        if(ctm.hasTransactions())
+        final String nocommit = System.getProperty("nocommit");
+        if(!force && ctm.hasTransactions() &&
+           (nocommit == null || nocommit.equals("false")))
         {
           int forceCommit = JOptionPane.showConfirmDialog(frame, 
               "Force commit (saving any changes that can be\n"+ 
@@ -1638,7 +1683,7 @@ public class EntryEdit extends JFrame
               "Force Database Commit", JOptionPane.OK_CANCEL_OPTION);
           
           if(forceCommit == JOptionPane.OK_OPTION)
-            ctm.commit((DatabaseDocument)dbDoc, true);
+            ChadoTransactionManager.commit((DatabaseDocument)dbDoc, true, ctm);
         }
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
@@ -1826,6 +1871,8 @@ public class EntryEdit extends JFrame
   {
     private static final long serialVersionUID = 1L;
     private Color DEFAULT_FOREGROUND;
+    private CommitFrame commitFrame;
+    
     public CommitButton()
     {
       super("Commit");
@@ -1836,10 +1883,13 @@ public class EntryEdit extends JFrame
         public void actionPerformed(ActionEvent e)
         {
           if(commitToDatabase(entry_group, ctm, EntryEdit.this, 
-                selection, goto_event_source, base_plot_group))
+                selection, goto_event_source, base_plot_group, false))
           {
             setForeground(DEFAULT_FOREGROUND);
             setFont(getFont().deriveFont(Font.PLAIN));
+            
+            if(commitFrame != null)
+              commitFrame.setList(ctm);
           }
         }    
       });
@@ -1850,20 +1900,9 @@ public class EntryEdit extends JFrame
         {
           if(e.getButton() == MouseEvent.BUTTON3)
           {
-            logger4j.debug(
-               (ctm.getTransactionCount()>0 ? 
-                   ctm.getTransactionCount()+" commit(s):" : "Nothing to commit"));
-            for(int i=0; i<ctm.getTransactionCount(); i++)
-            {
-              uk.ac.sanger.artemis.chado.ChadoTransaction tsn = 
-                ctm.getTransactionAt(i);
-              
-              String key = "";
-              if(tsn.getFeatureKey() != null)
-                key = "KEY="+tsn.getFeatureKey()+" ";
-              logger4j.debug("["+
-               tsn.getTypeAsString()+"] "+key+tsn.getLogComment());
-            }
+            commitFrame =
+              new CommitFrame(ctm, entry_group, EntryEdit.this, 
+                selection, goto_event_source, base_plot_group);
           }
         }
       });
@@ -1884,6 +1923,8 @@ public class EntryEdit extends JFrame
 
     public void featureChanged(FeatureChangeEvent event)
     {
+      if(commitFrame != null)
+        commitFrame.setList(ctm);
       if(ctm.hasTransactions())
       {
         setFont(getFont().deriveFont(Font.BOLD));
@@ -1893,6 +1934,8 @@ public class EntryEdit extends JFrame
 
     public void sequenceChanged(SequenceChangeEvent event)
     {
+      if(commitFrame != null)
+        commitFrame.setList(ctm);
       if(ctm.hasTransactions())
       {
         setForeground(Color.red);
@@ -1902,12 +1945,20 @@ public class EntryEdit extends JFrame
 
     public void entryChanged(EntryChangeEvent event)
     {
+      if(commitFrame != null)
+        commitFrame.setList(ctm);
       if(ctm.hasTransactions())
       {
         setForeground(Color.red);
         setFont(getFont().deriveFont(Font.BOLD)); 
       }
-    }    
+    }
+    
+    protected void close()
+    {
+      if(commitFrame != null)
+        commitFrame.dispose();
+    }
   }
 
 }
