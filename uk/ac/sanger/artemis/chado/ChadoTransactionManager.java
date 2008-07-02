@@ -132,7 +132,10 @@ public class ChadoTransactionManager
   public static String CONTROLLED_CURATION_DB = "CCGEN";
   public static String PRODUCT_DB = "PRODUCT";
   public static String PRODUCT_CV = "genedb_products";
-
+  
+  // number of SQL commands successfully processed during a commit
+  public static int commitReturnValue = 0;
+  
   public ChadoTransactionManager()
   {
     
@@ -2365,43 +2368,48 @@ public class ChadoTransactionManager
     return features;
   }
   
-
   /**
    * Commit the transactions back to the database.  
    * @param dbDoc
    * @param force ignore any sql commits that fail
+   * @param ctm
    */
-  public void commit(final DatabaseDocument dbDoc,
-                     final boolean force)
+  public static void commit(final DatabaseDocument dbDoc,
+                            final boolean force,
+                            final ChadoTransactionManager ctm)
   {
-	DatabaseDocument.initMDC(dbDoc);
-    int retVal = dbDoc.commit(sql, force);
+	  DatabaseDocument.initMDC(dbDoc);
+    commitReturnValue = dbDoc.commit(ctm.getSql(), force);
     
-    if(retVal > 0)
+    boolean nocommit = true;
+    if(System.getProperty("nocommit") == null ||
+       System.getProperty("nocommit").equals("false"))
+      nocommit = false;
+
+    if(commitReturnValue == ctm.getSql().size())
     {
-      for(int i=0; i<sql.size() && i<retVal; i++)
+      if(!nocommit)
       {
-        ChadoTransaction tsn = (ChadoTransaction)sql.get(i);
-        String key = "";
-        if(tsn.getFeatureKey() != null)
-          key = "KEY="+tsn.getFeatureKey()+" ";
-        logger4j.debug("COMMIT DONE ["+
-                       tsn.getTypeAsString()+"] "+key+tsn.getLogComment()); 
+        for(int i = 0; i < ctm.getSql().size() && i < commitReturnValue; i++)
+        {
+          ChadoTransaction tsn = (ChadoTransaction) ctm.getSql().get(i);
+          String key = "";
+          if(tsn.getFeatureKey() != null)
+            key = "KEY=" + tsn.getFeatureKey() + " ";
+          logger4j.debug("COMMIT DONE [" + tsn.getTypeAsString() + "] " + key
+              + tsn.getLogComment());
+        }
       }
+      
+      logger4j.debug("COMMIT SUCCESS");
+      if(!nocommit)
+        ctm.setSql(new Vector());
     }
-    
-    if(retVal == sql.size())
+    else if(commitReturnValue > 0)
     {
-      logger4j.debug("COMMIT COMPLETE");
-      sql = new Vector();
-    }
-    else if(retVal > 0)
-    {
-      logger4j.warn("PARTIAL COMMIT: REMOVE SQL ALREADY COMMITTED");
-      final Vector new_sql = new Vector();
-      for(int i=retVal; i<sql.size(); i++)
-        new_sql.add(sql.get(i));
-      sql = new_sql;
+      ChadoTransaction tsn = (ChadoTransaction) ctm.getSql().get(commitReturnValue);
+      logger4j.warn("COMMIT FAILED AT [" + tsn.getTypeAsString() + "] " + 
+                    tsn.getLogComment());
     }
   }
   
@@ -2424,6 +2432,24 @@ public class ChadoTransactionManager
   public ChadoTransaction getTransactionAt(final int index)
   {
     return (ChadoTransaction)sql.elementAt(index);
+  }
+
+
+  public Vector getSql()
+  {
+    return sql;
+  }
+
+
+  public void setSql(Vector sql)
+  {
+    this.sql = sql;
+  }
+
+
+  public int getCommitReturnValue()
+  {
+    return commitReturnValue;
   }
 }
 

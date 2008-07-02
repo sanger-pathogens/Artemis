@@ -2531,21 +2531,26 @@ public class DatabaseDocument extends Document
    * @param sql the collection of <code>ChadoTransaction</code> objects
    * @return
    */
-  public int commit(final Vector sql, final boolean force)
+  public int commit(final Vector sql,
+                    final boolean force)
   {
     GmodDAO dao = null;
     int ncommit = -1;
-    Hashtable featureIdStore = new Hashtable();
-    
+    final Hashtable featureIdStore = new Hashtable();
     boolean useTransactions = false;
-    if(!force && dao instanceof IBatisDAO)
-      useTransactions = true;
-    
+
     try
     {
       dao = getDAO();
+      
+      if(!force && dao instanceof IBatisDAO)
+        useTransactions = true;
+      
       if(useTransactions)
+      {
         ((IBatisDAO) dao).startTransaction();
+        logger4j.debug("START TRANSACTION");
+      }
       boolean unchanged;
       
       //
@@ -2654,11 +2659,16 @@ public class DatabaseDocument extends Document
         gff_feature.setLastModified(ts);
       }
 
-      if(useTransactions && System.getProperty("nocommit") == null)
+      final String nocommit = System.getProperty("nocommit");
+      if( useTransactions && 
+          (nocommit == null || nocommit.equals("false")))
       {
         ((IBatisDAO) dao).commitTransaction();
-        logger4j.debug("COMMIT COMPLETE");
+        logger4j.debug("TRANSACTION COMPLETE");
       }
+      else if(useTransactions && 
+          (nocommit != null && nocommit.equals("true")))
+        logger4j.debug("TRANSACTION NOT COMMITTED : nocommit property set to true");
     }
     catch (java.sql.SQLException sqlExp)
     {
@@ -2683,7 +2693,7 @@ public class DatabaseDocument extends Document
           "Problems Writing to Database ",
           JOptionPane.ERROR_MESSAGE);
       logger4j.error(msg);
-      re.printStackTrace();
+      //re.printStackTrace();
     }
     finally
     {
@@ -2691,8 +2701,9 @@ public class DatabaseDocument extends Document
         try
         {
           ((IBatisDAO) dao).endTransaction();
+          logger4j.debug("END TRANSACTION");
         }
-        catch(SQLException e){}
+        catch(SQLException e){ e.printStackTrace(); }
     }
     
     if(featureIdStore != null)
