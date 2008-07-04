@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.9 2008-06-23 13:53:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.10 2008-07-04 15:21:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -34,6 +34,7 @@ import uk.ac.sanger.artemis.io.ReadFormatException;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.io.ReadAndWriteEntry;
 
 import java.io.*;
 import javax.swing.*;
@@ -42,7 +43,7 @@ import javax.swing.*;
  *  This class is a JFileChooser that can read EMBL Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryFileDialog.java,v 1.9 2008-06-23 13:53:46 tjc Exp $
+ *  @version $Id: EntryFileDialog.java,v 1.10 2008-07-04 15:21:05 tjc Exp $
  **/
 
 public class EntryFileDialog extends StickyFileChooser 
