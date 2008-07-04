@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.13 2008-06-23 13:31:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.14 2008-07-04 15:20:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,12 +36,24 @@ import java.io.IOException;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.13 2008-06-23 13:31:26 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.14 2008-07-04 15:20:09 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
     implements DocumentEntry 
 {
+  
+  final private static String[][] MAP_KEYS = 
+  {
+    {"pseudogenic_transcript", "mRNA"},
+    {"pseudogenic_exon", "CDS"},
+    {"pseudogene", "gene"},
+    {DatabaseDocument.EXONMODEL, "CDS"},
+    {"polypeptide_motif", "CDS_motif"},
+    {"five_prime_UTR", "5'UTR"},
+    {"three_prime_UTR", "3'UTR"}
+  };
+  
   /**
    *  Create a new PublicDBDocumentEntry object associated with the given
    *  Document.
@@ -153,12 +165,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     {
       if(key.getKeyString().startsWith("pseudo"))
         key = handlePseudo(key,qualifiers);
-      else if(key.getKeyString().equals("polypeptide_motif"))
-        key = new Key("CDS_motif");
-      else if(key.getKeyString().equals("five_prime_UTR"))
-        key = new Key("5'UTR");
-      else if(key.getKeyString().equals("three_prime_UTR"))
-        key = new Key("3'UTR");
+      key = mapKeys(key);
       
       try
       {
@@ -227,15 +234,12 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         }
       }
       
-      if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
-        key = new Key("CDS");
-      else if(key.getKeyString().equals("polypeptide_motif"))
-        key = new Key("CDS_motif");
-      else if(key.getKeyString().equals("five_prime_UTR"))
-        key = new Key("5'UTR");
-      else if(key.getKeyString().equals("three_prime_UTR"))
-        key = new Key("3'UTR");
-      else if(key.getKeyString().equals("polypeptide"))
+      if(key.getKeyString().startsWith("pseudo"))
+        key = handlePseudo(key, qualifiers);
+     
+      key = mapKeys(key);
+      
+      if(key.getKeyString().equals("polypeptide"))
         return null;
       else if(key.getKeyString().equals("gene"))
         return null;
@@ -244,8 +248,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       else if(key.getKeyString().equals("transcript") || 
               key.getKeyString().equals("mRNA"))
         return null;
-      else if(key.getKeyString().startsWith("pseudo"))
-        key = handlePseudo(key,qualifiers);
+      
       
       
       //
@@ -323,6 +326,21 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
                 true));
       }
       catch(QualifierInfoException e){}
+    }
+    return key;
+  }
+  
+  /**
+   * 
+   * @param key
+   * @return
+   */
+  protected static Key mapKeys(Key key)
+  {
+    for(int i=0; i<MAP_KEYS.length; i++)
+    {
+      if(key.getKeyString().equals(MAP_KEYS[i][0]))
+        return new Key(MAP_KEYS[i][1]);
     }
     return key;
   }
