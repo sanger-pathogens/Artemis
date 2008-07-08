@@ -184,7 +184,10 @@ public class ChadoTransaction
 
   public String getLogComment()
   {
-    return logComment;
+    String key = "";
+    if(getFeatureKey() != null)
+      key = " KEY=" + getFeatureKey();
+    return "["+getTypeAsString()+"] "+logComment+key;
   }
 
 }

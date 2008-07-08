@@ -53,7 +53,7 @@ public class CommitFrame extends JFrame
 {
   private static final long serialVersionUID = 1L;
   private JList commitList = new JList();
-  private Color HIGHLIGHT_FOREGROUND = Color.red;
+  private Color HIGHLIGHT = Color.red;
   private static Cursor CBUSY = new Cursor(Cursor.WAIT_CURSOR);
   private static Cursor CDONE = new Cursor(Cursor.DEFAULT_CURSOR);
   private JButton testCommitButton = new JButton("Test Commit");
@@ -73,7 +73,7 @@ public class CommitFrame extends JFrame
     panel.add(new JScrollPane(commitList), BorderLayout.CENTER);
     
     commitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    commitList.setSelectionForeground(HIGHLIGHT_FOREGROUND);
+    commitList.setSelectionBackground(HIGHLIGHT);
     
     final Box xBox = Box.createHorizontalBox();
     xBox.add(Box.createHorizontalGlue());
@@ -141,11 +141,7 @@ public class CommitFrame extends JFrame
       uk.ac.sanger.artemis.chado.ChadoTransaction tsn = 
         ctm.getTransactionAt(i);
       
-      String key = "";
-      if(tsn.getFeatureKey() != null)
-        key = "KEY="+tsn.getFeatureKey()+" ";
-      
-      transactions.add("["+tsn.getTypeAsString()+"] "+key+tsn.getLogComment());
+      transactions.add(tsn.getLogComment());
     }
     
     commitList.setListData(transactions);

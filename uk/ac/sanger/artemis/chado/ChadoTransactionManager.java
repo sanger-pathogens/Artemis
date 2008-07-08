@@ -557,8 +557,8 @@ public class ChadoTransactionManager
    * @param rv_new
    */ 
   private void processFeatureRelationshipRank(final GFFStreamFeature feature,
-                                             final RangeVector rv_new,
-                                             final int type)
+                                              final RangeVector rv_new,
+                                              final int type)
   {   
     // update feature_relationship.rank
     ChadoTransaction tsn;
@@ -606,8 +606,8 @@ public class ChadoTransactionManager
               feature_relationship,
               feature.getLastModified(), feature,
               feature.getKey().getKeyString(),
-              "FEATURE_RELATIONSHIP: ID="+seq_id+" "+
-              rank+" part_of "+parent.getUniqueName());
+              "FEATURE_RELATIONSHIP: ID="+seq_id+
+              " part_of "+parent.getUniqueName()+" RANK="+rank);
           sql.add(tsn);
         }
       }
@@ -667,6 +667,11 @@ public class ChadoTransactionManager
               new org.gmod.schema.sequence.Feature();
     chado_feature.setFeatureLoc(featureloc);
     
+    final StringBuffer log = new StringBuffer();
+    log.append("FEATURELOC="+
+        ((featureloc.getStrand().intValue() == -1) ? "complement(" : "(")+
+         (featureloc.getFmin().intValue()+1)+".."+featureloc.getFmax().intValue()+")");
+    
     try
     { 
       // relationship attributes
@@ -697,6 +702,8 @@ public class ChadoTransactionManager
           feature_relationship.setFeatureBySubjectId(chado_feature);
           feature_relationship.setCvTerm(cvterm);
           featureRelationshipsForSubjectId.add(feature_relationship);
+          
+          log.append(" PART_OF="+parent.getUniqueName());
         }
       }
       
@@ -724,6 +731,7 @@ public class ChadoTransactionManager
           feature_relationship.setFeatureBySubjectId(chado_feature);
           feature_relationship.setCvTerm(cvterm);
           featureRelationshipsForSubjectId.add(feature_relationship);
+          log.append(" DERIVES_FROM="+parent.getUniqueName());
         }
       }
       chado_feature.setFeatureRelationshipsForSubjectId(
@@ -756,7 +764,9 @@ public class ChadoTransactionManager
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT,
                                chado_feature,
                                null, (GFFStreamFeature)feature.getEmblFeature(), null,
-                               "FEATURE: ID="+feature_uniquename+" "+key);
+                               "FEATURE: ID="+feature_uniquename+
+                               " "+log.toString()+
+                               " KEY="+key);
     sql.add(tsn); 
     
     addQualifiers(feature.getQualifiers(), chado_feature, 
@@ -878,7 +888,7 @@ public class ChadoTransactionManager
     ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.INSERT,
         chado_feature,
         null, (GFFStreamFeature)segment.getFeature().getEmblFeature(), null,
-        "SEGMENT: ID="+segment_uniquename+" "+key);
+        "SEGMENT: ID="+segment_uniquename+" KEY="+key);
    
     sql.add(tsn);  
   }
@@ -1217,7 +1227,7 @@ public class ChadoTransactionManager
           continue;
         }
 
-        processFeatureProp(feature, null, -1, ChadoTransaction.DELETE, 
+        processFeatureProp(feature, name, null, -1, ChadoTransaction.DELETE, 
                            uniquename, lcvterm_id);
       }
     }
@@ -1299,7 +1309,7 @@ public class ChadoTransactionManager
           if(index > -1)
             qualifier_string = qualifier_string.substring(index+1);
           
-          processFeatureProp(feature, qualifier_string, rank, ChadoTransaction.UPDATE, 
+          processFeatureProp(feature, name, qualifier_string, rank, ChadoTransaction.UPDATE, 
                              uniquename, lcvterm_id);
         }
 
@@ -1311,7 +1321,7 @@ public class ChadoTransactionManager
         //
         if(old_index > -1)
         {
-          processFeatureProp(feature, null, -1, ChadoTransaction.DELETE, 
+          processFeatureProp(feature, name, null, -1, ChadoTransaction.DELETE, 
                              uniquename, lcvterm_id);
         }
           
@@ -1326,7 +1336,7 @@ public class ChadoTransactionManager
           if(index > -1)
             qualifier_string = qualifier_string.substring(index+1);
          
-          processFeatureProp(feature, qualifier_string, rank, ChadoTransaction.INSERT, 
+          processFeatureProp(feature, name, qualifier_string, rank, ChadoTransaction.INSERT, 
                              uniquename, lcvterm_id);
         }
 
@@ -1343,6 +1353,7 @@ public class ChadoTransactionManager
    * @param lcvterm_id
    */
   private void processFeatureProp(final GFFStreamFeature feature,
+      final String qualifier_name,
       final String qualifier_string, final int rank,
       final int type, String uniquename, Integer lcvterm_id)
   {
@@ -1361,7 +1372,7 @@ public class ChadoTransactionManager
         tsn = new ChadoTransaction(type,
             featureprop,
             feature.getLastModified(), feature, feature.getKey().getKeyString(),
-            "FEATUREPROP: ID="+uniquename+" "+qualifier_string);
+            "FEATUREPROP: ID="+uniquename+" "+qualifier_name+"="+qualifier_string);
         
         tsn.setUniquename(uniquename);
         sql.add(tsn);
@@ -1372,11 +1383,11 @@ public class ChadoTransactionManager
       FeatureProp featureprop = getFeatureProp(uniquename,
                          qualifier_string, lcvterm_id, rank);
     
-      logger4j.debug("FEATUREPROP transaction type="+type+" "+qualifier_string);
+      logger4j.debug("FEATUREPROP "+type+" "+qualifier_string);
       tsn = new ChadoTransaction(type,
           featureprop,
           feature.getLastModified(), feature, feature.getKey().getKeyString(),
-          "FEATUREPROP: ID="+uniquename+" "+qualifier_string);
+          "FEATUREPROP: ID="+uniquename+" "+qualifier_name+"="+qualifier_string);
       tsn.setUniquename(uniquename);
       sql.add(tsn);
     }
@@ -1818,7 +1829,7 @@ public class ChadoTransactionManager
                                    feature.getLastModified(), feature,
                                    feature.getKey().getKeyString(),
                                    "FEATURELOC: ID="+seqId+" "+
-                                   feature.getKey().getKeyString()+" "+featureloc.getFmin()+".."+featureloc.getFmax());
+                                   featureloc.getFmin()+".."+featureloc.getFmax());
         sql.add(tsn);
       }
     }
@@ -1832,7 +1843,7 @@ public class ChadoTransactionManager
                                feature.getLastModified(), feature,
                                feature.getKey().getKeyString(),
                                "FEATURELOC: ID="+uniquename+" "+
-                               feature.getKey().getKeyString()+" "+featureloc.getFmin()+".."+featureloc.getFmax());
+                               featureloc.getFmin()+".."+featureloc.getFmax());
       sql.add(tsn);
     }
   }
@@ -2393,11 +2404,7 @@ public class ChadoTransactionManager
         for(int i = 0; i < ctm.getSql().size() && i < commitReturnValue; i++)
         {
           ChadoTransaction tsn = (ChadoTransaction) ctm.getSql().get(i);
-          String key = "";
-          if(tsn.getFeatureKey() != null)
-            key = "KEY=" + tsn.getFeatureKey() + " ";
-          logger4j.debug("COMMIT DONE [" + tsn.getTypeAsString() + "] " + key
-              + tsn.getLogComment());
+          logger4j.debug("COMMIT DONE " + tsn.getLogComment());
         }
       }
       
@@ -2408,8 +2415,7 @@ public class ChadoTransactionManager
     else if(commitReturnValue > 0)
     {
       ChadoTransaction tsn = (ChadoTransaction) ctm.getSql().get(commitReturnValue);
-      logger4j.warn("COMMIT FAILED AT [" + tsn.getTypeAsString() + "] " + 
-                    tsn.getLogComment());
+      logger4j.warn("COMMIT FAILED AT " + tsn.getLogComment());
     }
   }
   
