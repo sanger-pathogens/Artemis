@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.51 2008-05-29 15:15:51 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.52 2008-07-09 14:29:52 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.51 2008-05-29 15:15:51 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.52 2008-07-09 14:29:52 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -3236,7 +3236,26 @@ public class EditMenu extends SelectionMenu
             new MessageDialog(frame, message);
             return false;
           }
-          features_to_change.add(this_feature);
+          
+          
+          // for exons check they are in this cds's range
+          if(this_feature.getKey().equals("exon"))
+          {
+            Range exon_range = this_feature.getMaxRawRange();
+            RangeVector ranges = cds_to_fix.getLocation().getRanges();
+            
+            for(int j=0; j<ranges.size(); j++)
+            {
+              Range range = (Range)ranges.get(j);
+              if(exon_range.equals(range))
+              {
+                features_to_change.add(this_feature);
+                break;
+              }
+            }
+          }
+          else
+            features_to_change.add(this_feature);
         }
       }
 
