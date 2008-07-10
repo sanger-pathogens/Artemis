@@ -1,5 +1,8 @@
 Version 10.+/7.+
 
+	Edit menu option for adding a translation qualifier to selected
+	CDS features.
+
 	Implemented a commit manager for the database mode. This
 	highlights transactions that produce an error.
 	
