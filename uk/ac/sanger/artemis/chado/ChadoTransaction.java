@@ -92,6 +92,22 @@ public class ChadoTransaction
       this.featureKey   = featureKey;
   }
 
+  /**
+   * Copy this transaction
+   * @return
+   */
+  public ChadoTransaction copy()
+  {
+    final ChadoTransaction tsn = new ChadoTransaction(getType(), getFeatureObject(), 
+        getLastModified(), getGff_feature(), 
+        getFeatureKey(), logComment);
+    
+    if(uniquename != null)
+      tsn.setUniquename(uniquename);
+    
+    tsn.setOldUniquename(old_uniquename);
+    return tsn;
+  }
 
   /**
    * The type of SQL transaction
@@ -168,11 +184,6 @@ public class ChadoTransaction
   public GFFStreamFeature getGff_feature()
   {
     return gff_feature;
-  }
-
-  public void setGff_feature(GFFStreamFeature gff_feature)
-  {
-    this.gff_feature = gff_feature;
   }
 
 

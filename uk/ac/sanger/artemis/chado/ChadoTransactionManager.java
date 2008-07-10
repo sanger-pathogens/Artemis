@@ -2390,20 +2390,22 @@ public class ChadoTransactionManager
                             final ChadoTransactionManager ctm)
   {
 	  DatabaseDocument.initMDC(dbDoc);
-    commitReturnValue = dbDoc.commit(ctm.getSql(), force);
+    
+    final Vector sqlCopy = ctm.getSql();
+    commitReturnValue = dbDoc.commit(sqlCopy, force);
     
     boolean nocommit = true;
     if(System.getProperty("nocommit") == null ||
        System.getProperty("nocommit").equals("false"))
       nocommit = false;
 
-    if(commitReturnValue == ctm.getSql().size())
+    if(commitReturnValue == sqlCopy.size())
     {
       if(!nocommit)
       {
-        for(int i = 0; i < ctm.getSql().size() && i < commitReturnValue; i++)
+        for(int i = 0; i < sqlCopy.size() && i < commitReturnValue; i++)
         {
-          ChadoTransaction tsn = (ChadoTransaction) ctm.getSql().get(i);
+          ChadoTransaction tsn = (ChadoTransaction) sqlCopy.get(i);
           logger4j.debug("COMMIT DONE " + tsn.getLogComment());
         }
       }
@@ -2414,9 +2416,10 @@ public class ChadoTransactionManager
     }
     else if(commitReturnValue > 0)
     {
-      ChadoTransaction tsn = (ChadoTransaction) ctm.getSql().get(commitReturnValue);
+      ChadoTransaction tsn = (ChadoTransaction) sqlCopy.get(commitReturnValue);
       logger4j.warn("COMMIT FAILED AT " + tsn.getLogComment());
     }
+    sqlCopy.clear();
   }
   
   /**
@@ -2443,7 +2446,15 @@ public class ChadoTransactionManager
 
   public Vector getSql()
   {
-    return sql;
+    final Vector tmpSql = new Vector(sql.size());
+    
+    for(int i=0;i<sql.size();i++)
+    {
+      ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
+      tmpSql.add(tsn.copy());
+    }
+    
+    return tmpSql;
   }
 
 
