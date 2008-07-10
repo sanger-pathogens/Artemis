@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.52 2008-07-09 14:29:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.53 2008-07-10 15:15:32 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.52 2008-07-09 14:29:52 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.53 2008-07-10 15:15:32 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -369,6 +369,15 @@ public class EditMenu extends SelectionMenu
       public void actionPerformed(ActionEvent event) 
       {
         convertQualifier(getParentFrame(), getSelection());
+      }
+    });
+    
+    final JMenuItem add_translation_qualifier_item = new JMenuItem("Add translation to CDS");
+    add_translation_qualifier_item.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {  
+        addTranslationQualifierToCDS(getParentFrame(), getSelection());
       }
     });
     
@@ -761,6 +770,8 @@ public class EditMenu extends SelectionMenu
     qualifier_menu.add(add_qualifiers_item);
     qualifier_menu.add(remove_qualifier_item);
     qualifier_menu.add(convert_qualifier_item);
+    qualifier_menu.addSeparator();
+    qualifier_menu.add(add_translation_qualifier_item);
     add(feature_menu);
     feature_menu.add(duplicate_item);
     feature_menu.add(merge_features_item);
@@ -1926,6 +1937,56 @@ public class EditMenu extends SelectionMenu
     } finally {
       entry_group.getActionController ().endAction ();
     }
+  }
+  
+
+  /**
+   * Add /translastion to selected CDS features.
+   * @param frame
+   * @param selection
+   */
+  private void addTranslationQualifierToCDS(final JFrame frame,
+                                     final Selection selection)
+  {
+    if (!checkForSelectionFeatures (frame, selection))
+      return;
+
+    final FeatureVector selected_features = selection.getAllFeatures ();
+    
+    final FeatureKeyPredicate predicate = 
+      new FeatureKeyPredicate(Key.CDS);
+    
+    for(int i=0; i<selected_features.size(); i++)
+      if(!predicate.testPredicate(selected_features.elementAt(i)))
+      {
+        JOptionPane.showMessageDialog(getParentFrame(),
+            "Not all selected features are CDS features.\n"+
+            "Select just CDS features and try again.", 
+            "Not All CDSs", JOptionPane.WARNING_MESSAGE);
+        return;
+      }
+    
+    entry_group.getActionController().startAction();
+    try
+    {
+      for(int i = 0; i < selected_features.size(); i++)
+      {
+        Feature feature = selected_features.elementAt(i);
+        final String sequence = feature.getTranslation().toString()
+            .toUpperCase();
+        final Qualifier qualifier = new Qualifier("translation", sequence);
+        feature.setQualifier(qualifier);
+      }
+    }        
+    catch(ReadOnlyException e)
+    {
+      e.printStackTrace();
+    }
+    catch(EntryInformationException e)
+    {
+      e.printStackTrace();
+    }
+    entry_group.getActionController().endAction();
   }
   
   protected static Vector duplicateGeneFeatures(final JFrame frame,
