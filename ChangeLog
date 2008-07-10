@@ -1,5 +1,17 @@
 Version 10.+/7.+
 
+	Implemented a commit manager for the database mode. This
+	highlights transactions that produce an error.
+	
+	Make the chado transaction log messages more human readable.
+
+    Add ability to write file formats from Artemis in database mode.
+    With option to collapse the gene hierarchy (gene, transcript, exon) 
+    into a CDS feature.
+
+	Graphs are now added to a split pane. So that their size can be 
+	defined by dragging the divider at the bottom of the graphs.
+
 	Qualifier text find/replace tool added.
 	
 	Provide option to log transform user data.
