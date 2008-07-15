@@ -89,7 +89,7 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
   }
 
   /**
-   * This speeds up loading for a list of ortho/paralogs
+   * This speeds up loading for a list of ortho/paralogs/clusters
    * @param values List of ClusterLazyQualifierValue
    * @param feature
    */
@@ -102,98 +102,34 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
       ClusterLazyQualifierValue  lazyValue = (ClusterLazyQualifierValue)values.get(i);
       StringVector strings = StringVector.getStrings(lazyValue.getValue(), ";");
       String f_id[] = ArtemisUtils.getString(strings, "object_id=").split("=");
+      
       Integer clusterFeatureId = Integer.valueOf(f_id[1]);
       clusterFeatureIds.add(clusterFeatureId);
       lazyValue.initCluster();
-      hash.put(clusterFeatureId, lazyValue);
+      
+      final Vector v;
+      if(hash.containsKey(clusterFeatureId))
+        v = (Vector)hash.get(clusterFeatureId);
+      else
+        v = new Vector();
+        
+      v.add(lazyValue);
+      hash.put(clusterFeatureId, v);
     }
     
     //final Document document = ((DocumentEntry)feature.getEntry()).getDocument();
     List allClusters = ((DatabaseDocument)document).getClustersByFeatureIds(clusterFeatureIds);
-    
-   
-    // 
-    // get parent gene
-    /*
-    List subjectIds = new Vector();
+
     for(int i=0;i<allClusters.size(); i++)
     {
       final Feature clusterFeature = (Feature)allClusters.get(i);
-      final Collection subjects = clusterFeature.getFeatureRelationshipsForSubjectId();
-      final Iterator it = subjects.iterator();
-      while(it.hasNext())
+      
+      final Vector v = (Vector)hash.get(new Integer(clusterFeature.getFeatureId()));
+      for(int j=0; j<v.size(); j++)
       {
-        FeatureRelationship fr = (FeatureRelationship)it.next();
-        Feature subjectFeature = fr.getFeatureBySubjectId();
-        subjectIds.add(new Integer(subjectFeature.getFeatureId()));
+        ClusterLazyQualifierValue lazyValue = (ClusterLazyQualifierValue)v.get(j);
+        lazyValue.addToCluster(clusterFeature);
       }
-    }
-    
-    List geneFeatures = 
-      ((DatabaseDocument)document).getParentFeaturesByChildFeatureIds(subjectIds);
-    final Hashtable genes = new Hashtable(geneFeatures.size());
-    subjectIds = new Vector();
-    for(int i=0; i<geneFeatures.size(); i++)
-    {
-      FeatureRelationship gene = (FeatureRelationship)geneFeatures.get(i);
-
-      if(gene.getFeatureByObjectId().getCvTerm().getName().equals("gene") ||
-         gene.getFeatureByObjectId().getCvTerm().getName().equals("pseudogene"))
-      {
-        genes.put(new Integer(gene.getFeatureBySubjectId().getFeatureId()), 
-                              gene.getFeatureByObjectId().getUniqueName());
-      }
-      else
-      {
-        Integer objectId = new Integer(gene.getFeatureByObjectId().getFeatureId());
-        subjectIds.add(objectId);
-        genes.put(new Integer(gene.getFeatureBySubjectId().getFeatureId()), objectId);
-      }
-    }
-    
-    geneFeatures = 
-      ((DatabaseDocument)document).getParentFeaturesByChildFeatureIds(subjectIds);
-    for(int i=0; i<geneFeatures.size(); i++)
-    {
-      FeatureRelationship gene = (FeatureRelationship)geneFeatures.get(i);
-
-      if(gene.getFeatureByObjectId().getCvTerm().getName().equals("gene") ||
-         gene.getFeatureByObjectId().getCvTerm().getName().equals("pseudogene"))
-      {
-        Integer subjectId = new Integer(gene.getFeatureBySubjectId().getFeatureId());
-        
-        if(genes.containsValue(subjectId))
-        {
-          Enumeration keys = genes.keys();
-          while(keys.hasMoreElements())
-          {
-            Integer key = (Integer)keys.nextElement();
-            Object val = genes.get(key);
-            if(val instanceof Integer && subjectId.equals(val))
-              genes.put(key, gene.getFeatureByObjectId().getUniqueName());
-          }
-        }
-      }
-    }
-    
-    Enumeration keys = genes.keys();
-    while(keys.hasMoreElements())
-    {
-      Integer key = (Integer)keys.nextElement();
-      Object val = genes.get(key);
-      if(val instanceof String)
-      {
-        System.out.println(key.intValue()+"  "+val);
-      }
-    }
-    */
-    
-    for(int i=0;i<allClusters.size(); i++)
-    {
-      final Feature clusterFeature = (Feature)allClusters.get(i);
-      ClusterLazyQualifierValue lazyValue = 
-        (ClusterLazyQualifierValue)hash.get(new Integer(clusterFeature.getFeatureId()));
-      lazyValue.addToCluster(clusterFeature);
     }
   }
   

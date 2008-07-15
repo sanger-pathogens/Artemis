@@ -275,14 +275,19 @@ public class GeneUtils
     feature.setQualifier(new Qualifier("ID", feature.getSegmentID( rv )));
   }
   
+  /**
+   * Used when writing the database entry to a file. This routine
+   * forces lazy-loading qualifier values to be read in full.
+   * @param entry
+   * @param parent
+   */
   public static void lazyLoadAll(final Entry entry, final JFrame parent)
   {
     final List lazySimilarityValues = new Vector();
     final List lazyClusterValues = new Vector();
     final FeatureVector features = entry.getAllFeatures();
     // find any lazy values to be loaded
-    
-    
+     
     for(int i=0; i<features.size(); i++)
     {
       QualifierVector qualifiers = features.elementAt(i).getQualifiers();
@@ -296,10 +301,11 @@ public class GeneUtils
             lazySimilarityValues.addAll( ((QualifierLazyLoading)qualifier).getLazyValues() );
           else if( ((QualifierLazyLoading)qualifier).getValue(0) instanceof ClusterLazyQualifierValue )
           {
-            lazyClusterValues.addAll( ((QualifierLazyLoading)qualifier).getLazyValues() );
+            List lazyValues = ((QualifierLazyLoading)qualifier).getLazyValues();
+            lazyClusterValues.addAll(lazyValues);
           }
-          else
-            ((QualifierLazyLoading)qualifier).setForceLoad(true);
+          
+          ((QualifierLazyLoading)qualifier).setForceLoad(true);
         }
       }
     }
@@ -324,17 +330,7 @@ public class GeneUtils
         
         if(lazyClusterValues.size() > 0)
           ClusterLazyQualifierValue.setClusterFromValueList(lazyClusterValues, document);
-        
-        for(int i=0; i<features.size(); i++)
-        {
-          QualifierVector qualifiers = features.elementAt(i).getQualifiers();
-          for(int j=0; j<qualifiers.size(); j++)
-          {
-            Qualifier qualifier = (Qualifier)qualifiers.get(j);
-            if(qualifier instanceof QualifierLazyLoading)
-              ((QualifierLazyLoading)qualifier).setForceLoad(true);
-          }
-        }
+
         if(parent != null)
           parent.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
