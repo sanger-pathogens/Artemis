@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.14 2008-07-04 15:20:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.15 2008-07-15 15:40:08 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -36,22 +36,38 @@ import java.io.IOException;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.14 2008-07-04 15:20:09 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.15 2008-07-15 15:40:08 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
     implements DocumentEntry 
 {
-  
-  final private static String[][] MAP_KEYS = 
+  // database keys mapping to EMBL keys with any extra
+  // qualifiers to add in.
+  final private static Object[][] DATABASE_MAP_KEYS = 
   {
-    {"pseudogenic_transcript", "mRNA"},
-    {"pseudogenic_exon", "CDS"},
-    {"pseudogene", "gene"},
-    {DatabaseDocument.EXONMODEL, "CDS"},
-    {"polypeptide_motif", "CDS_motif"},
-    {"five_prime_UTR", "5'UTR"},
-    {"three_prime_UTR", "3'UTR"}
+    {"pseudogenic_transcript", "mRNA", new Qualifier("pseudo")},
+    {"pseudogenic_exon", "CDS", new Qualifier("pseudo")},
+    {"pseudogene", "gene", new Qualifier("pseudo")},
+    {DatabaseDocument.EXONMODEL, "CDS", null},
+    {"polypeptide_motif", "CDS_motif", null},
+    {"five_prime_UTR", "5'UTR", null},
+    {"three_prime_UTR", "3'UTR", null},
+    {"polypeptide_domain", "CDS_domain", null},
+    {"region", "misc_feature", null},
+    {"remark", "misc_feature", null},
+    {"sequence_difference", "misc_feature", null},
+    {"SECIS_element", "misc_feature", new Qualifier("note", "SECIS_element")}
+  };
+  
+  // database qualifiers mapping to EMBL qualifiers
+  final static String[][] DATABASE_QUALIFIERS_TO_MAP =
+  {
+      {"comment", "note"},
+      {"Dbxref", "db_xref"},
+      {"private", "note"},
+      {"orthologous_to", "ortholog"},
+      {"paralogous_to", "paralog"}
   };
   
   /**
@@ -163,9 +179,9 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     
     if(getEntryInformation().isValidQualifier(QUALIFIERS_TO_REMOVE[0]))
     {
-      if(key.getKeyString().startsWith("pseudo"))
-        key = handlePseudo(key,qualifiers);
-      key = mapKeys(key);
+      /*if(key.getKeyString().startsWith("pseudo"))
+        key = handlePseudo(key,qualifiers);*/
+      key = map(key, qualifiers);
       
       try
       {
@@ -189,6 +205,8 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     
     
     // flatten gene model - combining qualifiers
+    key = map(key, qualifiers);
+    
     if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
     {
       ChadoCanonicalGene chadoGene = ((GFFStreamFeature)feature).getChadoGene();
@@ -197,48 +215,35 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       final String transcriptName = chadoGene.getTranscriptFromName(name);
       
       // add protein qualifiers to CDS
-      final Feature protein = chadoGene.getProteinOfTranscript(transcriptName);
-      if(protein != null)
-        qualifiers.addAll(protein.getQualifiers().copy());
+      try
+      {
+        final Feature protein = chadoGene.getProteinOfTranscript(transcriptName);
+        if(protein != null)
+          combineQualifiers(qualifiers, protein.getQualifiers().copy());
+      }
+      catch(NullPointerException npe){}
       
       // add gene qualifiers to CDS
-      qualifiers.addAll(chadoGene.getGene().getQualifiers().copy());
+      combineQualifiers(qualifiers, chadoGene.getGene().getQualifiers().copy());
     }
-    
-    final String[][] QUALIFIERS_TO_MAP =
-    {
-        {"comment", "note"},
-        {"Dbxref", "db_xref"},
-        {"private", "note"},
-        {"orthologous_to", "ortholog"},
-        {"paralogous_to", "paralog"}
-    };
     
     try
     {
-      for(int i=0; i<QUALIFIERS_TO_MAP.length; i++)
+      for(int i=0; i<DATABASE_QUALIFIERS_TO_MAP.length; i++)
       {
-        if(!getEntryInformation().isValidQualifier(QUALIFIERS_TO_MAP[i][0]))
+        if(!getEntryInformation().isValidQualifier(DATABASE_QUALIFIERS_TO_MAP[i][0]))
         {
-          changeQualifierName(qualifiers, QUALIFIERS_TO_MAP[i][0], QUALIFIERS_TO_MAP[i][1]);
+          changeQualifierName(qualifiers, DATABASE_QUALIFIERS_TO_MAP[i][0], 
+                                          DATABASE_QUALIFIERS_TO_MAP[i][1]);
         }
       }
       
       for(int i=0; i<QUALIFIERS_TO_REMOVE.length; i++)
       {
         if(!getEntryInformation().isValidQualifier(QUALIFIERS_TO_REMOVE[i]))
-        {
           qualifiers.removeQualifierByName(QUALIFIERS_TO_REMOVE[i]);
-          qualifiers.removeQualifierByName(QUALIFIERS_TO_REMOVE[i]);
-          qualifiers.removeQualifierByName(QUALIFIERS_TO_REMOVE[i]);
-        }
       }
-      
-      if(key.getKeyString().startsWith("pseudo"))
-        key = handlePseudo(key, qualifiers);
      
-      key = mapKeys(key);
-      
       if(key.getKeyString().equals("polypeptide"))
         return null;
       else if(key.getKeyString().equals("gene"))
@@ -248,36 +253,6 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       else if(key.getKeyString().equals("transcript") || 
               key.getKeyString().equals("mRNA"))
         return null;
-      
-      
-      
-      //
-      // create separate exon features for each range in a CDS
-      // (returns an array of SimpleDocumentFeature)
-      /*
-      if(key.getKeyString().equals("CDS"))
-      {
-        RangeVector ranges = feature.getLocation().getRanges();
-        SimpleDocumentFeature[] features = 
-          new SimpleDocumentFeature[ranges.size() + 1];
-        features[0] = new EmblStreamFeature(key, feature.getLocation(),
-            qualifiers);
-
-        for(int i = 0; i < ranges.size(); i++)
-        {
-          try
-          {
-            features[i + 1] = new EmblStreamFeature(new Key("exon"),
-                new Location((Range) ranges.get(i)), qualifiers);
-          }
-          catch(OutOfRangeException e)
-          {
-            e.printStackTrace();
-          }
-        }
-        return features;
-      }
-      */
       
       
       if(this instanceof EmblDocumentEntry)
@@ -302,45 +277,104 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
   }
   
   /**
-   * 
-   * @param key
+   * Merge qualifiers
    * @param qualifiers
+   * @param newQualifiers
    */
-  private Key handlePseudo(Key key, final QualifierVector qualifiers)
+  private void combineQualifiers(final QualifierVector qualifiers,
+                                 final QualifierVector newQualifiers)
   {
-    if(key.getKeyString().equals("pseudogenic_transcript"))
-      key = new Key("mRNA");
-    else if(key.getKeyString().equals("pseudogenic_exon"))
-      key = new Key("CDS");
-    else if(key.getKeyString().equals("pseudogene"))
-      key = new Key("gene");
-
-    qualifiers.setQualifier(new Qualifier("pseudo"));
-
-    if(!getEntryInformation().isValidQualifier(key, "pseudo"))
+    Qualifier qualifier;
+    for(int i=0; i<newQualifiers.size(); i++)
     {
-      try
+      Qualifier newQualifier = (Qualifier) newQualifiers.get(i);
+      
+      if(newQualifier.getName().equals("orthologous_to"))
       {
-        getEntryInformation().addQualifierInfo(
-            new QualifierInfo("pseudo", QualifierInfo.NO_VALUE, null, null,
-                true));
+        final StringVector newValues = newQualifier.getValues();
+        final StringVector tmpNewValues = new StringVector();
+        for(int j=0; j<newValues.size(); j++)
+        {
+          if(!newValues.get(j).equals(""))
+            tmpNewValues.add(newValues.get(j));
+        }
+        newQualifier = new Qualifier("orthologous_to", tmpNewValues);
       }
-      catch(QualifierInfoException e){}
+      
+      if( (qualifier = qualifiers.getQualifierByName(newQualifier.getName())) != null)
+      { 
+        final StringVector newValues = newQualifier.getValues();
+        final StringVector values = qualifier.getValues();
+        for(int j=0; j<newValues.size(); j++)
+        {
+          String newValue = (String) newValues.get(j);
+          if(!values.contains(newValue))
+            qualifier.addValue(newValue);
+        }
+      }
+      else
+        qualifiers.addElement(newQualifier);
     }
-    return key;
   }
+  
+
   
   /**
    * 
    * @param key
    * @return
    */
-  protected static Key mapKeys(Key key)
+  protected static Key mapKeys(final Key key)
   {
-    for(int i=0; i<MAP_KEYS.length; i++)
+    for(int i=0; i<DATABASE_MAP_KEYS.length; i++)
     {
-      if(key.getKeyString().equals(MAP_KEYS[i][0]))
-        return new Key(MAP_KEYS[i][1]);
+      if(key.getKeyString().equals(DATABASE_MAP_KEYS[i][0]))
+        return new Key((String)DATABASE_MAP_KEYS[i][1]);
+    }
+    return key;
+  }
+  
+  
+  /**
+   * Maps database (SO) keys to EMBl keys. It will add any extra qualifiers
+   * found in the 3rd column of DATABASE_MAP_KEYS.
+   * @param key
+   * @return
+   */
+  private Key map(final Key key, final QualifierVector qualifiers)
+  {
+    for(int i=0; i<DATABASE_MAP_KEYS.length; i++)
+    {
+      if(key.getKeyString().equals(DATABASE_MAP_KEYS[i][0]))
+      {
+        Key mappedKey = new Key((String)DATABASE_MAP_KEYS[i][1]);
+        if(DATABASE_MAP_KEYS[i][2] != null)
+        {
+          
+          Qualifier newQualifier = (Qualifier) DATABASE_MAP_KEYS[i][2];
+          if(!getEntryInformation().isValidQualifier(mappedKey, newQualifier.getName()))
+          {
+            try
+            {
+              int nvalues = newQualifier.getValues().size();
+              final int type;
+              if(nvalues == 0)
+                type = QualifierInfo.NO_VALUE;
+              else
+                type = QualifierInfo.QUOTED_TEXT;
+              getEntryInformation().addQualifierInfo(
+                  new QualifierInfo(newQualifier.getName(), 
+                      type, null, null,
+                      false));
+            }
+            catch(QualifierInfoException e){}
+          }
+          
+          qualifiers.addQualifierValues(newQualifier);
+        }
+        
+        return mappedKey;
+      }
     }
     return key;
   }
@@ -363,7 +397,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       StringVector values = ((Qualifier)qualifiers.get(index)).getValues();
       qualifiers.removeQualifierByName(oldName);
       Qualifier newQualifier = new Qualifier(newName, values);
-      qualifiers.setQualifier(newQualifier);
+      qualifiers.addQualifierValues(newQualifier);
     }  
   }
   
