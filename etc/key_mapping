@@ -1,6 +1,6 @@
 # CHADO (SO) database key mappings (used for writing out to file)
 #
-# CHADO                 	map     		qualifier (optional)
+# CHADO                 	map to 		    qualifier (optional)
 pseudogenic_transcript      mRNA            pseudo
 pseudogenic_exon            CDS             pseudo
 pseudogene                  gene            pseudo
