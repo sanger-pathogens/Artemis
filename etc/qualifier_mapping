@@ -1,0 +1,17 @@
+# CHADO database qualifier mappings (used for writing out to file)
+#
+# CHADO                 	map     	
+comment                     note
+Dbxref                      db_xref
+private                     note
+orthologous_to              ortholog
+paralogous_to               paralog
+#
+# CHADO qualifiers to be ignored
+timelastmodified
+ID
+feature_id
+Parent
+Derives_from
+feature_relationship_rank
+isObsolete

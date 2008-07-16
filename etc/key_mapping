@@ -1,0 +1,14 @@
+# CHADO (SO) database key mappings (used for writing out to file)
+#
+# CHADO                 	map     		qualifier (optional)
+pseudogenic_transcript      mRNA            pseudo
+pseudogenic_exon            CDS             pseudo
+pseudogene                  gene            pseudo
+polypeptide_motif           CDS_motif
+five_prime_UTR              5'UTR
+three_prime_UTR             3'UTR
+polypeptide_domain          CDS_domain
+region                      misc_feature
+remark                      misc_feature
+sequence_difference         misc_feature
+SECIS_element               misc_feature    note=SECIS_element
