@@ -20,15 +20,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.15 2008-07-15 15:40:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.16 2008-07-16 10:12:44 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.Vector;
 
 /**
  *  This class extends the Entry class with the data for the entry coming from
@@ -36,7 +41,7 @@ import java.io.IOException;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.15 2008-07-15 15:40:08 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.16 2008-07-16 10:12:44 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -44,31 +49,14 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
 {
   // database keys mapping to EMBL keys with any extra
   // qualifiers to add in.
-  final private static Object[][] DATABASE_MAP_KEYS = 
-  {
-    {"pseudogenic_transcript", "mRNA", new Qualifier("pseudo")},
-    {"pseudogenic_exon", "CDS", new Qualifier("pseudo")},
-    {"pseudogene", "gene", new Qualifier("pseudo")},
-    {DatabaseDocument.EXONMODEL, "CDS", null},
-    {"polypeptide_motif", "CDS_motif", null},
-    {"five_prime_UTR", "5'UTR", null},
-    {"three_prime_UTR", "3'UTR", null},
-    {"polypeptide_domain", "CDS_domain", null},
-    {"region", "misc_feature", null},
-    {"remark", "misc_feature", null},
-    {"sequence_difference", "misc_feature", null},
-    {"SECIS_element", "misc_feature", new Qualifier("note", "SECIS_element")}
-  };
+  private static Object[][] DATABASE_MAP_KEYS;
   
   // database qualifiers mapping to EMBL qualifiers
-  final static String[][] DATABASE_QUALIFIERS_TO_MAP =
-  {
-      {"comment", "note"},
-      {"Dbxref", "db_xref"},
-      {"private", "note"},
-      {"orthologous_to", "ortholog"},
-      {"paralogous_to", "paralog"}
-  };
+  private static String[][] DATABASE_QUALIFIERS_TO_MAP;
+  
+  // database qualifiers to ignore when converting to embl
+  private static Object[] DATABASE_QUALIFIERS_TO_REMOVE;
+  
   
   /**
    *  Create a new PublicDBDocumentEntry object associated with the given
@@ -154,6 +142,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         return new GenbankStreamFeature(feature);
     }
   }
+ 
 
   /**
    * Map GFF features to EMBL/Genbank
@@ -162,27 +151,15 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
    */
   private Object mapGffToNativeFeature(final Feature feature)
   {
-    final String[] QUALIFIERS_TO_REMOVE = 
-        { 
-          "timelastmodified", 
-          "ID", 
-          "comment",   // convert to note
-          "feature_id", 
-          "Parent", 
-          "Derives_from",
-          "feature_relationship_rank",
-          "isObsolete"
-        };
+    if(DATABASE_MAP_KEYS == null)
+      initDatabaseMappings();
     
     Key key = feature.getKey();
     QualifierVector qualifiers = feature.getQualifiers().copy();
     
-    if(getEntryInformation().isValidQualifier(QUALIFIERS_TO_REMOVE[0]))
-    {
-      /*if(key.getKeyString().startsWith("pseudo"))
-        key = handlePseudo(key,qualifiers);*/
-      key = map(key, qualifiers);
-      
+    key = map(key, qualifiers);
+    if(getEntryInformation().isValidQualifier((String) DATABASE_QUALIFIERS_TO_REMOVE[0]))
+    { 
       try
       {
         if(this instanceof EmblDocumentEntry)
@@ -203,10 +180,8 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       }
     }
     
-    
+
     // flatten gene model - combining qualifiers
-    key = map(key, qualifiers);
-    
     if(key.getKeyString().equals(DatabaseDocument.EXONMODEL))
     {
       ChadoCanonicalGene chadoGene = ((GFFStreamFeature)feature).getChadoGene();
@@ -238,10 +213,10 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         }
       }
       
-      for(int i=0; i<QUALIFIERS_TO_REMOVE.length; i++)
+      for(int i=0; i<DATABASE_QUALIFIERS_TO_REMOVE.length; i++)
       {
-        if(!getEntryInformation().isValidQualifier(QUALIFIERS_TO_REMOVE[i]))
-          qualifiers.removeQualifierByName(QUALIFIERS_TO_REMOVE[i]);
+        if(!getEntryInformation().isValidQualifier((String) DATABASE_QUALIFIERS_TO_REMOVE[i]))
+          qualifiers.removeQualifierByName((String) DATABASE_QUALIFIERS_TO_REMOVE[i]);
       }
      
       if(key.getKeyString().equals("polypeptide"))
@@ -298,6 +273,8 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
           if(!newValues.get(j).equals(""))
             tmpNewValues.add(newValues.get(j));
         }
+        if(tmpNewValues.size() == 0)
+          continue;
         newQualifier = new Qualifier("orthologous_to", tmpNewValues);
       }
       
@@ -320,12 +297,14 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
 
   
   /**
-   * 
+   * Maps database (SO) keys to EMBl keys.
    * @param key
    * @return
    */
   protected static Key mapKeys(final Key key)
   {
+    if(DATABASE_MAP_KEYS == null)
+      initDatabaseMappings();
     for(int i=0; i<DATABASE_MAP_KEYS.length; i++)
     {
       if(key.getKeyString().equals(DATABASE_MAP_KEYS[i][0]))
@@ -343,6 +322,8 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
    */
   private Key map(final Key key, final QualifierVector qualifiers)
   {
+    if(DATABASE_MAP_KEYS == null)
+      initDatabaseMappings();
     for(int i=0; i<DATABASE_MAP_KEYS.length; i++)
     {
       if(key.getKeyString().equals(DATABASE_MAP_KEYS[i][0]))
@@ -356,7 +337,12 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
           {
             try
             {
-              int nvalues = newQualifier.getValues().size();
+              final int nvalues;
+              if(newQualifier.getValues() == null)
+                nvalues = 0;
+              else
+                nvalues = newQualifier.getValues().size();
+              
               final int type;
               if(nvalues == 0)
                 type = QualifierInfo.NO_VALUE;
@@ -412,5 +398,91 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       return new EmblStreamSequence (sequence);
     else 
       return new GenbankStreamSequence (sequence);
+  }
+  
+  /**
+   *  Read key and qualifier mappings for CHADO to EMBL
+   **/
+  private static void initDatabaseMappings()
+  {
+    final InputStream keyStream =
+      Options.class.getResourceAsStream("/etc/key_mapping");
+    final InputStream qualifierStream =
+      Options.class.getResourceAsStream("/etc/qualifier_mapping");
+    
+    final Properties keyMapProperties = new Properties();
+    final Properties qualifierMapProperties = new Properties();
+    try
+    {
+      keyMapProperties.load(keyStream);
+      qualifierMapProperties.load(qualifierStream);
+    }
+    catch(IOException e)
+    {
+      e.printStackTrace();
+    }
+
+    // parse the keyMapProperties
+    DATABASE_MAP_KEYS = new Object[keyMapProperties.size()][3];
+    final Enumeration keysenum = keyMapProperties.propertyNames();
+    int n = 0;
+    while(keysenum.hasMoreElements()) 
+    {
+      String current_map_name = (String) keysenum.nextElement();
+
+      final StringVector property_values =
+          Options.getPropertyValues(keyMapProperties, current_map_name);
+
+      DATABASE_MAP_KEYS[n][0] = current_map_name;
+      DATABASE_MAP_KEYS[n][1] = property_values.get(0);
+      if(property_values.size() == 2)
+      {
+        String qualifierString[] = ((String)property_values.get(1)).split("=");
+        final uk.ac.sanger.artemis.io.Qualifier qualifier;
+        if(qualifierString.length == 2)
+          qualifier = new uk.ac.sanger.artemis.io.Qualifier(qualifierString[0], qualifierString[1]);
+        else
+          qualifier = new uk.ac.sanger.artemis.io.Qualifier(qualifierString[0]);
+        DATABASE_MAP_KEYS[n][2] = qualifier; 
+      }
+      else
+        DATABASE_MAP_KEYS[n][2] = null;
+      n++; 
+    }
+    
+    // parse the qualifier mappings
+    Enumeration qualifiersenum = qualifierMapProperties.propertyNames();
+    n = 0;
+
+    Vector qualifiersToRemove = new Vector();
+    while(qualifiersenum.hasMoreElements()) 
+    {
+      String current_map_name = (String) qualifiersenum.nextElement();
+      final StringVector property_values =
+        Options.getPropertyValues(qualifierMapProperties, current_map_name);
+      if(property_values == null || property_values.size() == 0)
+        qualifiersToRemove.add(current_map_name);
+      else
+        n++;
+    }
+    
+    DATABASE_QUALIFIERS_TO_MAP = new String[n][2];
+    DATABASE_QUALIFIERS_TO_REMOVE = qualifiersToRemove.toArray();
+    
+    qualifiersenum = qualifierMapProperties.propertyNames();
+    n = 0;
+
+    while(qualifiersenum.hasMoreElements()) 
+    {
+      String current_map_name = (String) qualifiersenum.nextElement();
+      final StringVector property_values =
+        Options.getPropertyValues(qualifierMapProperties, current_map_name);
+      if(property_values != null && property_values.size() > 0)
+      {
+        DATABASE_QUALIFIERS_TO_MAP[n][0] = current_map_name;
+        DATABASE_QUALIFIERS_TO_MAP[n][1] = (String) property_values.get(0);
+        n++;
+      }
+    }
   }
 }
