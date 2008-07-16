@@ -312,11 +312,13 @@ public class GeneUtils
     
     if(lazySimilarityValues.size() > 0 || lazyClusterValues.size() > 0)
     {
-      int n = JOptionPane.showConfirmDialog(null,
-        "Load and write to file all qualifers from the database?"+
-        "\nThis may take a few minutes.",
-        "Load All Data",
-        JOptionPane.YES_NO_OPTION);
+      int n = JOptionPane.YES_OPTION;  
+      if(parent != null)
+        n =  JOptionPane.showConfirmDialog(parent,
+          "Load and write to file all qualifers from the database?"+
+          "\nThis may take a few minutes.",
+          "Load All Data",
+          JOptionPane.YES_NO_OPTION);
       
       if(n == JOptionPane.YES_OPTION)
       {

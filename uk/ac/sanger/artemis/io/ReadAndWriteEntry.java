@@ -25,6 +25,8 @@ package uk.ac.sanger.artemis.io;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JFrame;
+
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
@@ -106,10 +108,11 @@ public class ReadAndWriteEntry
   public static void writeDatabaseEntryToFile(final Entry entry, final File file,
                                               final boolean flatten, 
                                               final boolean force,
-                                              final int destination_type) 
+                                              final int destination_type,
+                                              final JFrame parent) 
          throws IOException, EntryInformationException
   {
-    GeneUtils.lazyLoadAll(entry, null);
+    GeneUtils.lazyLoadAll(entry, parent);
 
     EntryInformation artemis_entry_information = Options.getArtemisEntryInformation();
     if(!flatten)
@@ -197,11 +200,11 @@ public class ReadAndWriteEntry
       Entry entry = ReadAndWriteEntry.readEntryFromDatabase("Pf3D7_03");
       ReadAndWriteEntry.writeDatabaseEntryToFile(
           entry, new File("Pf3D7_03.flatten"), true, false, 
-          DocumentEntryFactory.EMBL_FORMAT);
+          DocumentEntryFactory.EMBL_FORMAT, null);
       
       ReadAndWriteEntry.writeDatabaseEntryToFile(
           entry, new File("Pf3D7_03.not-flatten"), false, false,
-          DocumentEntryFactory.EMBL_FORMAT);
+          DocumentEntryFactory.EMBL_FORMAT, null);
     }
     catch(Exception e)
     {
