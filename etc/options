@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.44 2008-06-26 12:52:20 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.45 2008-07-16 11:02:51 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -567,6 +567,7 @@ extra_qualifiers_gff = \
     paralogous_to "text" \
     primary_name "text" \
     similarity "text" \
+    stop_codon_redefined_as_selenocysteine "text" \
     synonym "text" \
     systematic_id "text" \
     temporary_systematic_id "text"
