@@ -1437,7 +1437,8 @@ public class ChadoTransactionManager
       String qualifierString = (String)old_qualifier_strings.elementAt(i);
       
       if( new_qualifier_strings == null ||
-         !new_qualifier_strings.contains(qualifierString) )
+         !new_qualifier_strings.contains(qualifierString) ||
+         isRemovingDuplicateQualifiers(i, new_qualifier_strings, old_qualifier_strings, qualifierString))
       {
          int index = qualifierString.indexOf("=");
          qualifierString = qualifierString.substring(index+1);
@@ -1569,8 +1570,40 @@ public class ChadoTransactionManager
         addReservedTag(qualifierString, qualifierName, uniquename,
             feature, old_qualifier_strings, new_qualifier_strings, false);
       }
-    }  
+    }   
+  }
+  
+  /**
+   * Check to see if the qualifier appears in the old qualifiers more than
+   * the new qualifiers
+   * @param index
+   * @param newValues
+   * @param oldValues
+   * @param qualifier_string
+   * @return
+   */
+  private boolean isRemovingDuplicateQualifiers(final int index,
+                                                final StringVector newValues,
+                                                final StringVector oldValues,
+                                                final String qualifier_string)
+  {
+    if(index > oldValues.indexOf(qualifier_string))
+      return false;
     
+    int n_new = 0;
+    int n_old = 0;
+    
+    for(int i=0; i<newValues.size(); i++)
+      if(((String)newValues.get(i)).equals(qualifier_string))
+         n_new++;
+    
+    for(int i=0; i<oldValues.size(); i++)
+      if(((String)oldValues.get(i)).equals(qualifier_string))
+         n_old++;
+    
+    if(n_new < n_old)
+      return true;
+    return false;
   }
   
   /**
