@@ -52,6 +52,7 @@ function         yes        "text"
 gene             no         "text"
 germline         yes        none
 haplotype        no         "text"
+inference        no         "text"
 insertion_seq    no         "text"
 isolation_source no         "text"
 isolate          no         "text"
