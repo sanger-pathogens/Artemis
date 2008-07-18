@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.45 2008-07-16 11:02:51 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.46 2008-07-18 13:23:42 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -786,6 +786,7 @@ hyperlinks = \
   PubMed+PMID http://www.ncbi.nlm.nih.gov/sites/entrez?Db=pubmed&Cmd=ShowDetailView&TermToSearch= \
   InterPro http://www.ebi.ac.uk/interpro/ISearch?query= \
   OrthoMCLDB http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac= \
+  PlasmoDB http://plasmodb.org/plasmodb/servlet/sv?page=gene&source_id= \
   Pfam http://pfam.sanger.ac.uk/family?acc= \
   SMART http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN= \
   Prosite http://www.expasy.org/prosite/
