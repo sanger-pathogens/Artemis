@@ -79,7 +79,7 @@ public class FindAndReplace extends JFrame
       final EntryGroup entry_group,
       final BasePlotGroup base_plot_group)
   {
-    super("Find/Replace/Delete");
+    super("Search");
     
     this.entry_group = entry_group;
     
@@ -318,7 +318,7 @@ public class FindAndReplace extends JFrame
     c.gridx = 0;
     c.gridy = 0;
     c.gridwidth = 3;
-    panel.add(new JLabel("Search for duplicate qualifiers:"), c);
+    panel.add(new JLabel("Search features for duplicate qualifiers:"), c);
     
     c.gridwidth = 1;
     
