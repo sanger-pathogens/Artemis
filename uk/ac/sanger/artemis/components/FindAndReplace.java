@@ -22,23 +22,24 @@
 
 package uk.ac.sanger.artemis.components;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.regex.Pattern;
 
-import javax.swing.ButtonGroup;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
-import javax.swing.JSeparator;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
@@ -46,6 +47,7 @@ import uk.ac.sanger.artemis.EntryGroupChangeEvent;
 import uk.ac.sanger.artemis.EntryGroupChangeListener;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureKeyQualifierPredicate;
+import uk.ac.sanger.artemis.FeaturePredicate;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.FilteredEntryGroup;
 import uk.ac.sanger.artemis.GotoEventSource;
@@ -58,22 +60,85 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.StringVector;
 
+
 public class FindAndReplace extends JFrame
        implements EntryGroupChangeListener 
 {
   private static final long serialVersionUID = 1L;
   private EntryGroup entry_group;
   
+  /**
+   * Find, replace and delete qualifiers
+   * @param selection
+   * @param goto_event_source
+   * @param entry_group
+   * @param base_plot_group
+   */
   public FindAndReplace(final Selection selection,
       final GotoEventSource goto_event_source,
       final EntryGroup entry_group,
       final BasePlotGroup base_plot_group)
   {
-    super("Find/Replace Qualifier Text");
+    super("Find/Replace/Delete");
+    
+    this.entry_group = entry_group;
+    
+    final JTabbedPane tabPane = new JTabbedPane();
+    getContentPane().add(tabPane, BorderLayout.CENTER);
+    addFindReplaceTab(selection, goto_event_source, 
+        base_plot_group, tabPane);
+    addFindDeleteDuplicateTab(selection, goto_event_source, 
+        entry_group, base_plot_group, tabPane);
+    
+    addWindowListener(new WindowAdapter() 
+    {
+      public void windowClosing(WindowEvent event) 
+      {
+        entry_group.removeEntryGroupChangeListener(FindAndReplace.this);
+        FindAndReplace.this.dispose();
+      }
+    });
+    
+    final Box xbox = Box.createHorizontalBox();
+    final JButton closeButton = new JButton("Close");
+    
+    closeButton.setHorizontalAlignment(SwingConstants.LEFT);
+    closeButton.addActionListener(new ActionListener()
+    {
 
+      public void actionPerformed(ActionEvent e)
+      {
+        entry_group.removeEntryGroupChangeListener(FindAndReplace.this);
+        FindAndReplace.this.dispose();
+      }
+      
+    });
+    xbox.add(closeButton);
+    xbox.add(Box.createHorizontalGlue());
+    getContentPane().add(xbox, BorderLayout.SOUTH);
+    
+    pack();
+    
+    Utilities.centreFrame(this);
+    setVisible(true);
+  }
+  
+  /**
+   * Find and replace option for qualifier text
+   * @param selection
+   * @param goto_event_source
+   * @param base_plot_group
+   * @param tabPane
+   */
+  private void addFindReplaceTab(final Selection selection,
+      final GotoEventSource goto_event_source,
+      final BasePlotGroup base_plot_group,
+      final JTabbedPane tabPane)
+  {
     GridBagLayout gridbag = new GridBagLayout();
-    getContentPane().setLayout(gridbag);
-
+    JPanel panel = new JPanel(gridbag);
+    tabPane.addTab("Qualifier Text", panel);
+    
     GridBagConstraints c = new GridBagConstraints();
 
     c.fill = GridBagConstraints.HORIZONTAL;
@@ -105,20 +170,20 @@ public class FindAndReplace extends JFrame
     final JTextField findTextField = new JTextField(15);
     c.gridx = 0;
     c.gridy = ++ypos;
-    getContentPane().add(new JLabel("Find:"),c);
+    panel.add(new JLabel("Find:"),c);
     c.gridx = 1;
-    getContentPane().add(findTextField, c);
+    panel.add(findTextField, c);
     
     final JTextField replaceTextField = new JTextField(15);
     c.gridx = 0;
     c.gridy = ++ypos;
-    getContentPane().add(new JLabel("Replace with:"), c);
+    panel.add(new JLabel("Replace with:"), c);
     c.gridx = 1;
-    getContentPane().add(replaceTextField, c);
+    panel.add(replaceTextField, c);
     
     c.gridx = 0;
     c.gridy = ++ypos;
-    getContentPane().add(key_selector,c);
+    panel.add(key_selector,c);
     
     final JCheckBox selectedKeyButton = new JCheckBox("Restrict to Selected Key", false);
     selectedKeyButton.addActionListener(new ActionListener()
@@ -132,18 +197,18 @@ public class FindAndReplace extends JFrame
       }
     });
     c.gridx = 1;
-    getContentPane().add(selectedKeyButton,c);
+    panel.add(selectedKeyButton,c);
     
     
 
     final JCheckBox caseSensitive = new JCheckBox("Case sensitive", true);
     c.gridx = 0;
     c.gridy = ++ypos;
-    getContentPane().add(caseSensitive, c);
+    panel.add(caseSensitive, c);
     
     final JCheckBox qualifierValueSubString = new JCheckBox("Match substring", true);
     c.gridy = ++ypos;
-    getContentPane().add(qualifierValueSubString, c);
+    panel.add(qualifierValueSubString, c);
     
     final JButton findButton = new JButton("Find");
     findButton.addActionListener(new ActionListener()
@@ -178,7 +243,7 @@ public class FindAndReplace extends JFrame
     });
     c.gridx = 0;
     c.gridy = ++ypos;
-    getContentPane().add(findButton, c);
+    panel.add(findButton, c);
     
     final JButton replaceButton = new JButton("Replace");
     replaceButton.addActionListener(new ActionListener()
@@ -221,7 +286,102 @@ public class FindAndReplace extends JFrame
       }
     });
     c.gridx = 1;
-    getContentPane().add(replaceButton, c);
+    panel.add(replaceButton, c);
+  }
+  
+  /**
+   * Search and delete options for duplicate qualifiers on features
+   * @param selection
+   * @param goto_event_source
+   * @param entry_group
+   * @param base_plot_group
+   * @param tabPane
+   */
+  public void addFindDeleteDuplicateTab(final Selection selection,
+                        final GotoEventSource goto_event_source,
+                        final EntryGroup entry_group,
+                        final BasePlotGroup base_plot_group,
+                        final JTabbedPane tabPane)
+  {
+    GridBagLayout gridbag = new GridBagLayout();
+    final JPanel panel = new JPanel(gridbag);
+    tabPane.addTab("Duplicate Qualifiers", panel);
+    panel.setLayout(gridbag);
+
+    GridBagConstraints c = new GridBagConstraints();
+
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.anchor = GridBagConstraints.WEST;
+    c.ipadx = 5;
+    c.ipady = 5;
+    
+    c.gridx = 0;
+    c.gridy = 0;
+    c.gridwidth = 3;
+    panel.add(new JLabel("Search for duplicate qualifiers:"), c);
+    
+    c.gridwidth = 1;
+    
+    final JButton findButton = new JButton("Find");
+    findButton.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        final FeaturePredicate predicate = new FeaturePredicate ()
+        {
+          public boolean testPredicate (final Feature feature)
+          {
+            return findOrDeleteDuplicate(feature, false);
+          }
+        }; 
+        
+        final FilteredEntryGroup filtered_entry_group =
+          new FilteredEntryGroup(entry_group, predicate, "Features with duplicate qualifiers");
+
+        final FeatureListFrame feature_list_frame =
+          new FeatureListFrame("Features Found",
+                               selection,
+                               goto_event_source, filtered_entry_group,
+                               base_plot_group);
+
+        feature_list_frame.setVisible(true);
+      }
+    });
+    c.gridx = 0;
+    c.gridy = 1;
+    panel.add(findButton, c);
+    
+    final JButton deleteButton = new JButton("Delete");
+    deleteButton.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+ 
+        final FeaturePredicate predicate = new FeaturePredicate ()
+        {
+          public boolean testPredicate(final Feature feature)
+          {
+            return findOrDeleteDuplicate(feature, true);
+          }
+        }; 
+        
+        int ncount = 0;
+        final FeatureVector features = entry_group.getAllFeatures();
+        for(int i=0; i<features.size(); i++)
+        {
+          if(predicate.testPredicate(features.elementAt(i)))
+            ncount++;
+        }
+        
+        JOptionPane.showMessageDialog(FindAndReplace.this, 
+            ( (ncount>0) ? "Duplicate qualifiers in "+ncount+" feature(s) deleted." :
+            "No duplicate qualifiers found."), 
+            "Duplicate Qualifiers", 
+            JOptionPane.INFORMATION_MESSAGE); 
+      }
+    });
+    c.gridx = 1;
+    panel.add(deleteButton, c);
     
     addWindowListener(new WindowAdapter() 
     {
@@ -231,10 +391,7 @@ public class FindAndReplace extends JFrame
         FindAndReplace.this.dispose();
       }
     });
-    pack();
-    
-    Utilities.centreFrame(this);
-    setVisible(true);
+
   }
   
   /**
@@ -288,12 +445,13 @@ public class FindAndReplace extends JFrame
             return true;
         }
 
-        newQualifiers.setQualifier(
+        if(values.size() != newValues.size())
+          newQualifiers.setQualifier(
               new Qualifier(this_qualifier.getName(),newValues));
       }
     }
     
-    if(!delete)
+    if(!delete || newQualifiers.size() == 0)
       return false;
     
     for(int i = 0; i < newQualifiers.size(); i++)
@@ -311,8 +469,7 @@ public class FindAndReplace extends JFrame
         e.printStackTrace();
       }
     }
-    
-    return false;
+    return true;
   }
   
 }
