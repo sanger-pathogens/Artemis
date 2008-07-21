@@ -365,6 +365,7 @@ public class FindAndReplace extends JFrame
           }
         }; 
         
+        entry_group.getActionController().startAction();
         int ncount = 0;
         final FeatureVector features = entry_group.getAllFeatures();
         for(int i=0; i<features.size(); i++)
@@ -372,6 +373,7 @@ public class FindAndReplace extends JFrame
           if(predicate.testPredicate(features.elementAt(i)))
             ncount++;
         }
+        entry_group.getActionController().endAction();
         
         JOptionPane.showMessageDialog(FindAndReplace.this, 
             ( (ncount>0) ? "Duplicate qualifiers in "+ncount+" feature(s) deleted." :
