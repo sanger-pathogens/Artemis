@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.54 2008-07-21 08:07:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.55 2008-07-21 15:42:21 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.54 2008-07-21 08:07:12 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.55 2008-07-21 15:42:21 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -458,6 +458,15 @@ public class EditMenu extends SelectionMenu
         removeIntrons();
       }
     });
+    
+    final JMenuItem convert_keys_item = new JMenuItem("Convert Keys ...");
+    convert_keys_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        convertKeys(getParentFrame(), getSelection());
+      }
+    });
 
     final JMenuItem edit_header_item = new JMenuItem("Header Of Default Entry");
     edit_header_item.addActionListener(new ActionListener() 
@@ -762,7 +771,6 @@ public class EditMenu extends SelectionMenu
     qualifier_menu.add(add_qualifiers_item);
     qualifier_menu.add(remove_qualifier_item);
     qualifier_menu.add(convert_qualifier_item);
-    qualifier_menu.addSeparator();
     add(feature_menu);
     feature_menu.add(duplicate_item);
     feature_menu.add(merge_features_item);
@@ -771,6 +779,7 @@ public class EditMenu extends SelectionMenu
     feature_menu.add(delete_features_item);
     feature_menu.add(delete_segments_item);
     feature_menu.add(delete_introns_item);
+    feature_menu.add(convert_keys_item);
     addSeparator();
     add(move_features_menu);
     add(copy_features_menu);
@@ -1820,6 +1829,66 @@ public class EditMenu extends SelectionMenu
     choice_frame.setVisible (true);
   }
 
+  
+  private void convertKeys(final JFrame frame, 
+                           final Selection selection)
+  {
+    if (!checkForSelectionFeatures (frame, selection)) 
+      return;
+
+    final FeatureVector selected_features = selection.getAllFeatures ();
+    
+    Entry default_entry = getEntryGroup().getDefaultEntry();
+    if(default_entry == null)
+      default_entry = getEntryGroup().elementAt(0);
+  
+    final EntryInformation default_entry_information =
+                        default_entry.getEntryInformation();
+
+    final KeyChoice key_selector = new KeyChoice(default_entry_information);
+    final String options[] = { "Convert", "Cancel" };
+    
+    final int opt = JOptionPane.showOptionDialog(frame, 
+        key_selector, "Convert Key(s) of Selected Features", 
+        JOptionPane.OK_CANCEL_OPTION,
+        JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+    if(opt == 1)
+      return;
+    
+    entry_group.getActionController ().startAction ();
+    try
+    {
+      for(int i=0; i<selected_features.size(); i++)
+      {
+        Feature feature = selected_features.elementAt(i);
+        feature.set(key_selector.getSelectedItem(), 
+              feature.getLocation(), feature.getQualifiers());
+      }
+    }
+    catch(ReadOnlyException e)
+    {
+      JOptionPane.showMessageDialog(frame, 
+          "Cannot convert read-only features.", 
+          "Error Converting Key(s)", JOptionPane.ERROR_MESSAGE);
+    }
+    catch(EntryInformationException e)
+    {
+      JOptionPane.showMessageDialog(frame, 
+          e.getMessage(), 
+          "Error Converting Key(s)", JOptionPane.ERROR_MESSAGE);
+    }
+    catch(OutOfRangeException e)
+    {
+      JOptionPane.showMessageDialog(frame, 
+          e.getMessage(), 
+          "Error Converting Key(s)", JOptionPane.ERROR_MESSAGE);
+    }
+    finally
+    {
+      entry_group.getActionController ().endAction();
+    }
+  }
   
   /**
    * Offer the user a choice of qualifier to convert the name of
