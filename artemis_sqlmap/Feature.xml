@@ -326,7 +326,9 @@
     LEFT JOIN featureloc fl ON f.feature_id=fl.feature_id
 	LEFT JOIN analysisfeature af ON f.feature_id=af.feature_id
 	LEFT JOIN analysis a ON af.analysis_id=a.analysis_id
-    WHERE f.type_id != (SELECT cvterm_id FROM cvterm where name='polypeptide_domain')
+    WHERE f.type_id NOT IN (SELECT cvterm_id FROM cvterm where name='polypeptide_domain'
+         OR name='membrane_structure' OR name='non_cytoplasm_location' 
+	 OR name='transmembrane' OR name='cytoplasm_location')
 	AND f.feature_id IN
   </sql>
 	
