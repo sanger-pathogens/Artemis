@@ -20,35 +20,46 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/KeyChooser.java,v 1.1 2004-06-09 09:47:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/KeyChooser.java,v 1.2 2008-07-21 16:03:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
-import uk.ac.sanger.artemis.*;
-
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.EntryInformation;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 
 /**
  *  This component is a KeyChoice component in a JFrame (see addItemListener ()
  *  and removeItemListener () for details).
  *
  *  @author Kim Rutherford
- *  @version $Id: KeyChooser.java,v 1.1 2004-06-09 09:47:00 tjc Exp $
+ *  @version $Id: KeyChooser.java,v 1.2 2008-07-21 16:03:18 tjc Exp $
  **/
-public class KeyChooser extends JFrame {
+public class KeyChooser extends JFrame 
+{
+  private static final long serialVersionUID = 1L;
+
+  private KeyChoice key_choice;
+
+  final private JButton ok_button = new JButton ("OK");
+  
   /**
    *  Create a new KeyChooser component with CDS as the default key.
    *  @param entry_information The object to get the list of possible
    *    keys from.
    **/
-  public KeyChooser (final EntryInformation entry_information) {
+  public KeyChooser (final EntryInformation entry_information) 
+  {
     this (entry_information, Key.CDS);
   }
 
@@ -58,7 +69,8 @@ public class KeyChooser extends JFrame {
    *    keys from.
    **/
   public KeyChooser (final EntryInformation entry_information,
-                     final Key default_key) {
+                     final Key default_key) 
+  {
     key_choice = new KeyChoice (entry_information, default_key);
 
     getContentPane ().add (key_choice, "Center");
@@ -66,53 +78,53 @@ public class KeyChooser extends JFrame {
     final JPanel panel = new JPanel ();
 
     panel.add (ok_button);
-    ok_button.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent e) {
+    ok_button.addActionListener (new ActionListener () 
+    {
+      public void actionPerformed (ActionEvent e) 
+      {
         KeyChooser.this.dispose ();
       }
     });
 
+    final JButton close_button = new JButton ("Cancel");
     panel.add (close_button);
-    close_button.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent e) {
+    close_button.addActionListener (new ActionListener ()
+    {
+      public void actionPerformed (ActionEvent e) 
+      {
         KeyChooser.this.dispose ();
       }
     });
 
     getContentPane ().add (panel, "South");
-    pack ();
 
-    addWindowListener (new WindowAdapter () {
-      public void windowClosing (WindowEvent event) {
+    addWindowListener (new WindowAdapter () 
+    {
+      public void windowClosing (WindowEvent event)
+      {
         KeyChooser.this.dispose ();
       }
     });
 
-    pack ();
+    pack();
 
-    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    setLocation (new Point ((screen.width - getSize ().width) / 2,
-                            (screen.height - getSize ().height) / 2));
+    Utilities.centreFrame(this);
   }
 
   /**
    *  Return the KeyChoice component that is displayed in this JFrame.
    **/
-  public KeyChoice getKeyChoice () {
+  protected KeyChoice getKeyChoice () 
+  {
     return key_choice;
   }
 
   /**
    *  Return the reference of the OK button of this KeyChooser.
    **/
-  public JButton getOKButton () {
+  protected JButton getOKButton ()
+  {
     return ok_button;
   }
-
-  private KeyChoice key_choice;
-
-  final private JButton ok_button = new JButton ("OK");
-
-  final private JButton close_button = new JButton ("Cancel");
 }
 
