@@ -1,7 +1,7 @@
 Version 10.+/7.+
 
-	Edit menu option for adding a translation qualifier to selected
-	CDS features.
+	New Edit menu option for finding and replacing qualifier text. This 
+	includes an option to search for duplicate qualifiers.
 
 	Implemented a commit manager for the database mode. This
 	highlights transactions that produce an error.
