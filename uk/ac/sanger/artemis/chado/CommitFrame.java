@@ -27,7 +27,9 @@ package uk.ac.sanger.artemis.chado;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -70,10 +72,15 @@ public class CommitFrame extends JFrame
     final JPanel panel = (JPanel) getContentPane();
     panel.setLayout(new BorderLayout());
     
-    panel.add(new JScrollPane(commitList), BorderLayout.CENTER);
+    final JScrollPane jsp =  new JScrollPane(commitList);
+    
+    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    jsp.setPreferredSize(new Dimension(screen.width/2, jsp.getPreferredSize().height));
+    panel.add(jsp, BorderLayout.CENTER);
     
     commitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     commitList.setSelectionBackground(HIGHLIGHT);
+    commitList.setVisibleRowCount(10);
     
     final Box xBox = Box.createHorizontalBox();
     xBox.add(Box.createHorizontalGlue());
