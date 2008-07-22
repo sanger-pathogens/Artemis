@@ -1,5 +1,8 @@
 Version 10.+/7.+
 
+	New Edit->Selected Feature(s)->Convert Keys option to convert
+	keys of selected features.
+
 	New Edit menu option for finding and replacing qualifier text. This 
 	includes an option to search for duplicate qualifiers.
 
