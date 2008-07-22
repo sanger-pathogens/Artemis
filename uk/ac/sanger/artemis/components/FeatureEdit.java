@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.59 2008-06-03 10:37:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.60 2008-07-22 12:40:54 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -76,7 +76,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.59 2008-06-03 10:37:53 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.60 2008-07-22 12:40:54 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -441,7 +441,7 @@ public class FeatureEdit extends JPanel
             
               final String go_string = "aspect=; term=; GOid=GO:; "+
                                        "evidence=ISS; db_xref=GOC:unpublished; " +
-                                       "with=UniProt:; date=" + result_buffer;
+                                       "with=UniProtKB:; date=" + result_buffer;
               qualifier_text_area.append("=\"" + go_string + "\"");
             } 
             else if(qualifier_name.equals("controlled_curation"))
