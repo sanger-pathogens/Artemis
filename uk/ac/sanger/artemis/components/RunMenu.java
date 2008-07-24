@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.9 2007-02-28 15:47:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.10 2008-07-24 13:49:00 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -31,15 +31,19 @@ import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.InvalidKeyException;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import java.awt.event.*;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
 
 /**
  *  A JMenu of external commands/functions.
  *
  *  @author Kim Rutherford
- *  @version $Id: RunMenu.java,v 1.9 2007-02-28 15:47:56 tjc Exp $
+ *  @version $Id: RunMenu.java,v 1.10 2008-07-24 13:49:00 tjc Exp $
  **/
 
 public class RunMenu extends SelectionMenu 
@@ -49,8 +53,8 @@ public class RunMenu extends SelectionMenu
   private static final long serialVersionUID = 1L;
   private JMenu fastaMenu = null;
   private JMenu fastaMenuOptions = null;
-  private JMenu blastpMenu = null;
-  private JMenu blastpMenuOptions = null;
+  private Hashtable blastMenu = null;
+  private Hashtable blastMenuOptions = null;
 
   /**
    *  Create a new RunMenu object.
@@ -78,34 +82,6 @@ public class RunMenu extends SelectionMenu
 
     for(int i = 0; i < external_programs_size; ++i) 
       makeOptionsMenuItem(external_programs.elementAt(i));
-
-//  if(Options.getOptions().getProperty("jcon_min_jobs") != null) 
-//  {
-//    addSeparator();
-//    final JMenuItem jcon_status = new JMenuItem("Show Job Status ...");
-
-//    jcon_status.addActionListener(new ActionListener() 
-//    {
-//      public void actionPerformed(ActionEvent event) 
-//      {
-//        try 
-//        {
-//          final int ids[] = getIds();
-//          TaskViewerFrame tvf = new TaskViewerFrame(ids);
-
-//          tvf.setSize(400, 600);
-//          tvf.setVisible(true);
-//        }
-//        catch(Exception e) 
-//        {
-//          e.printStackTrace();
-//          new MessageDialog(frame, "unable to view job status: " + e);
-//        }
-//      }
-//    });
-
-//    add(jcon_status);
-//  }
   }
 
   /**
@@ -140,7 +116,7 @@ public class RunMenu extends SelectionMenu
       if(options_string.length() > 0) 
       {
         if(program_name.startsWith("fasta") ||
-           program_name.startsWith("blastp"))
+           program_name.indexOf("blast")>-1)
           new_menu = new JMenuItem(options_string);
         else 
           new_menu = new JMenuItem("Run " + program_name + " (" +
@@ -225,14 +201,21 @@ public class RunMenu extends SelectionMenu
       }
       fastaMenu.add(new_menu);
     }
-    else if(program.getName().startsWith("blastp"))
+    else if(program.getName().indexOf("blast")>-1)
     {
-      if(blastpMenu == null)
+      if(blastMenu == null)
+        blastMenu = new Hashtable();
+
+      if(!blastMenu.containsKey(program.getName()))
       {
-        blastpMenu = new JMenu("Run blastp on selected features against");
-        add(blastpMenu);
+        JMenu topMenu = new JMenu("Run "+program.getName()+
+                          " on selected features against");
+        blastMenu.put(program.getName(), topMenu);
+        add(topMenu);
       }
-      blastpMenu.add(new_menu);
+      
+      JMenu topMenu = (JMenu) blastMenu.get(program.getName());
+      topMenu.add(new_menu);
     }
     else
       add(new_menu);
@@ -261,15 +244,22 @@ public class RunMenu extends SelectionMenu
       new_options_menu = new JMenuItem(program.getProgramOptions());
       fastaMenuOptions.add(new_options_menu);
     }  
-    else if(program_name.startsWith("blastp"))
+    else if(program_name.indexOf("blast")>-1)
     {
-      if(blastpMenuOptions == null)
+      if(blastMenuOptions == null)
+        blastMenuOptions = new Hashtable();
+      
+      String menuStr = "Set " + program_name + " options";
+      if(!blastMenuOptions.containsKey(menuStr))
       {
-        blastpMenuOptions = new JMenu("Set " + program_name + " options");
-        add(blastpMenuOptions);
+        JMenu topMenu = new JMenu(menuStr);
+        blastMenuOptions.put(menuStr, topMenu);
+        add(topMenu);
       }
+      
+      JMenu topMenu = (JMenu) blastMenuOptions.get(menuStr);
       new_options_menu = new JMenuItem(program.getProgramOptions());
-      blastpMenuOptions.add(new_options_menu);
+      topMenu.add(new_options_menu);
     }
     else
     {
@@ -286,56 +276,4 @@ public class RunMenu extends SelectionMenu
     });
   }
 
-  /**
-   *  
-   **/
-//private int[] getIds() 
-//{
-//  final FeatureVector selected_features = getSelection().getAllFeatures();
-//  final Vector ids_vector = new Vector();
-
-//  for(int feature_index = 0; feature_index < selected_features.size();
-//      ++feature_index) 
-//  {
-//    final Feature this_feature = selected_features.elementAt(feature_index);
-
-//    try
-//    {
-//      final Qualifier job_qualifier =
-//        this_feature.getQualifierByName("job");
-//      
-//      final StringVector values = job_qualifier.getValues();
-
-//      if(values != null && values.size() > 0) 
-//      {
-//        for(int value_index=0; value_index<values.size();
-//            ++value_index) 
-//        {
-//          final String job_value = values.elementAt(value_index);
-//          final StringVector bits = StringVector.getStrings(job_value);
-
-//          if(bits.size() > 4 && bits.elementAt(2).equals("task:")) 
-//          {
-//            try 
-//            {
-//              final Integer task_id = Integer.valueOf(bits.elementAt(3));
-
-//              if(!ids_vector.contains(task_id)) 
-//                ids_vector.add(task_id);
-//            }
-//            catch(NumberFormatException e) {}
-//          }
-//        }
-//      }
-//    } 
-//    catch(InvalidRelationException e) {}
-//  }
-
-//  final int[] ids = new int[ids_vector.size()];
-
-//  for(int i=0 ; i<ids.length ; ++i) 
-//    ids[i] =((Integer)ids_vector.elementAt(i)).intValue();
-
-//  return ids;
-//}
 }
