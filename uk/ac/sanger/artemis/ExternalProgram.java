@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.18 2007-05-16 16:11:51 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.19 2008-07-24 13:50:51 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -49,7 +49,7 @@ import javax.swing.JProgressBar;
  *  and contains methods for invoking it.
  *
  *  @author Kim Rutherford
- *  @version $Id: ExternalProgram.java,v 1.18 2007-05-16 16:11:51 tjc Exp $
+ *  @version $Id: ExternalProgram.java,v 1.19 2008-07-24 13:50:51 tjc Exp $
  **/
 
 public class ExternalProgram 
@@ -252,7 +252,7 @@ public class ExternalProgram
   {
     final JFrame fsend = new JFrame();
     fsend.setUndecorated(true);
-    final int max = 20;
+    final int max = 25;
     final JProgressBar progressBar = new JProgressBar(0,max);
     progressBar.setStringPainted(true);
     progressBar.setString("Sending "+getName()+" process now!");
@@ -266,7 +266,7 @@ public class ExternalProgram
         {
           for(int i=0; i<max; i++)
           {
-            Thread.sleep(150);
+            Thread.sleep(40);
             progressBar.setValue(i);
           }
           fsend.dispose();
