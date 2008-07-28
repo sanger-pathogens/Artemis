@@ -1060,6 +1060,8 @@ public class FastaTextPane extends JScrollPane
             if(ind1 > -1)
             {
               int ind2 = line.indexOf(';');
+              if(ind2 < 0)
+                ind2 = line.length();
               thisHit.setEC_number(line.substring(3, ind2).trim());
             }
           }
