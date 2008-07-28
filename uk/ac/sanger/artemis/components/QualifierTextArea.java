@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.12 2008-02-25 11:40:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.13 2008-07-28 16:18:55 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -266,7 +266,7 @@ public class QualifierTextArea extends JTextPane
     int lastIndexLink = -1;
     for(int i=0; i<DATABASES.size(); i++)
     {
-      int index = s.lastIndexOf((String)DATABASES.get(i));
+      int index = s.lastIndexOf((String)DATABASES.get(i)+":");
       if(index > lastIndexLink)
         lastIndexLink = index;
     }
