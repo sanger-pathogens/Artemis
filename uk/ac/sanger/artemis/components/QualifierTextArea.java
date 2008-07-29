@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.13 2008-07-28 16:18:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.14 2008-07-29 10:35:47 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -226,7 +226,7 @@ public class QualifierTextArea extends JTextPane
                                      final String db)
   {
     int ind = 0;
-    while((ind = s.indexOf(db+":", ind)) > -1)
+    while((ind = indexOfIgnoreCase(s, db+":", ind)) > -1)
     {
       int ind2 = getEndOfLink(s,ind);
       getStyledDocument().setCharacterAttributes(ind, ind2-ind, 
@@ -266,7 +266,7 @@ public class QualifierTextArea extends JTextPane
     int lastIndexLink = -1;
     for(int i=0; i<DATABASES.size(); i++)
     {
-      int index = s.lastIndexOf((String)DATABASES.get(i)+":");
+      int index = lastIndexOfIgnoreCase(s, (String)DATABASES.get(i)+":");
       if(index > lastIndexLink)
         lastIndexLink = index;
     }
@@ -290,7 +290,7 @@ public class QualifierTextArea extends JTextPane
       
       for(int j=0; j<names.length; j++)
       {
-        if(hyperlinkText.indexOf(names[j]) > -1)
+        if(indexOfIgnoreCase(hyperlinkText, names[j], 0) > -1)
         {
           String id[] = hyperlinkText.split(":");
           if(id.length < 2)
@@ -352,6 +352,17 @@ public class QualifierTextArea extends JTextPane
       }
     };
     browserLaunch.start();
+  }
+  
+  
+  private int lastIndexOfIgnoreCase(String a, String b)
+  {
+    return a.toLowerCase().lastIndexOf(b.toLowerCase());
+  }
+  
+  private int indexOfIgnoreCase(String a, String b, int fromPos)
+  {
+    return a.toLowerCase().indexOf(b.toLowerCase(), fromPos);
   }
   
   public void mouseDragged(MouseEvent e){}
