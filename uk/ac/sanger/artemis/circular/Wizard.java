@@ -44,6 +44,7 @@ import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
+import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 
@@ -271,7 +272,8 @@ public class Wizard
   
   
   
-  protected static DNADraw readEntry(final DNADraw dna_current)
+  protected static DNADraw readEntry(final DNADraw dna_current,
+                                     final Bases bases)
   {
     Options.getOptions();
     uk.ac.sanger.artemis.components.FileDialogEntrySource entrySource = 
@@ -279,7 +281,7 @@ public class Wizard
 
     try
     {
-      final Entry entry = entrySource.getEntry(true);
+      final Entry entry = entrySource.getEntry(bases,true);
       dna_current.getArtemisEntryGroup().add(entry);
 
       FeatureVector features = entry.getAllFeatures();
@@ -313,14 +315,12 @@ public class Wizard
     }
     catch(OutOfRangeException e)
     {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      JOptionPane.showMessageDialog(null, 
+          "Feature found out of range:\n"+
+          e.getMessage(),"Out of Range", 
+          JOptionPane.WARNING_MESSAGE);
     }
-    catch(NoSequenceException e)
-    {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+
     return dna_current;
   }
   

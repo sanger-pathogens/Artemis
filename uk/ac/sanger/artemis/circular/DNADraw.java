@@ -1010,7 +1010,7 @@ public class DNADraw extends ScrollPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        Wizard.readEntry(DNADraw.this);
+        Wizard.readEntry(DNADraw.this, getBases());
         viewer.refresh();
         repaint();
       }
