@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.25 2008-02-21 16:42:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.26 2008-07-31 16:14:15 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -79,6 +79,7 @@ public class MatchPanel extends JPanel
   public static String PARALOG  = "paralogous_to";
   //public static String CLUSTER  = "cluster";
   public static String SIMILARITY = "similarity";
+  
   private static String[] SO_CLUSTER_NAMES = { 
           ORTHOLOG, 
           PARALOG, 
@@ -118,6 +119,7 @@ public class MatchPanel extends JPanel
       if(qualifierName.equals(SO_CLUSTER_NAMES[i]) || 
          qualifierName.startsWith("/"+SO_CLUSTER_NAMES[i]+"="))
         return true;
+
     return false;
   }
   
@@ -135,18 +137,6 @@ public class MatchPanel extends JPanel
     return false;
   }
   
-  /**
-   * Return true if this is a similarity qualifier
-   * @param qualifierName
-   * @return
-   */
-  public static boolean isSimilarityTag(final String qualifierName)
-  {
-    if(qualifierName.equals(SIMILARITY) || 
-       qualifierName.startsWith("/"+SIMILARITY+"="))
-      return true;
-    return false;
-  }
   
   /**
    * Create components for ortholog, paralog, cluster and similarity
@@ -204,20 +194,24 @@ public class MatchPanel extends JPanel
         
         orthoparaLogTable = new OrthoParalogTable(doc, orthoQualifier,
             paraQualifier, feature, false);
-        addHideShowButton(orthoparaLogTable.getTable(), hide_show_ortho);
-        xBox.add(hide_show_ortho);
-        editableComponents.add(orthoparaLogTable);
+        
+        if(orthoparaLogTable.getTable().getRowCount() > 0)
+        {
+          addHideShowButton(orthoparaLogTable.getTable(), hide_show_ortho);
+          xBox.add(hide_show_ortho);
+          editableComponents.add(orthoparaLogTable);
 
-        Box horizontalBox = Box.createHorizontalBox();
-        horizontalBox.add(orthoparaLogTable.getTable().getTableHeader());
-        horizontalBox.add(Box.createHorizontalGlue());
-        matchVerticalBox.add(horizontalBox);
+          Box horizontalBox = Box.createHorizontalBox();
+          horizontalBox.add(orthoparaLogTable.getTable().getTableHeader());
+          horizontalBox.add(Box.createHorizontalGlue());
+          matchVerticalBox.add(horizontalBox);
       
       
-        horizontalBox = Box.createHorizontalBox();
-        horizontalBox.add(orthoparaLogTable.getTable());
-        horizontalBox.add(Box.createHorizontalGlue());
-        matchVerticalBox.add(horizontalBox);
+          horizontalBox = Box.createHorizontalBox();
+          horizontalBox.add(orthoparaLogTable.getTable());
+          horizontalBox.add(Box.createHorizontalGlue());
+          matchVerticalBox.add(horizontalBox);
+        }
       }
       
       //
@@ -309,7 +303,7 @@ public class MatchPanel extends JPanel
       matchVerticalBox.add(similarityTable.getTable().getTableHeader());
       matchVerticalBox.add(similarityTable.getTable());
     }
-
+    
     return matchVerticalBox;
   }
   
