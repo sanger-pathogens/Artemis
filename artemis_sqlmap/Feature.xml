@@ -108,10 +108,14 @@
 	   
   <resultMap id="map-similaritymatch" class="Feature" 
 	         groupBy="featureId" extends="map-basicfeature">       
-    <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
+    <result property="cvTerm.cvTermId" column="type_id"  />
     <result property="featureLocsForFeatureId" resultMap="FeatureLoc.map-location" />
 	<result property="featureProps" column="{feature_id=id}" 
                                        select="getFeaturePropByFeatureId" />
+	<result property="featureDbXRefs" column="{featureId=id}"
+                                      select="getFeatureDbXRef" />
+	<result property="dbXRef" column="dbXRefId"
+                              select="getDbXRefByDbXRefId" />
     <result property="analysisFeatures" resultMap="AnalysisFeature.map-analysisfeature" />                                                
   </resultMap>
 	
@@ -316,6 +320,7 @@
       f.uniquename,
 	  f.is_obsolete AS obsolete, 
       f.type_id,
+	  f.dbxref_id AS dbXRefId,
       f.name AS feature_name,
 	  f.seqlen,
 	  f.residues,
@@ -326,10 +331,7 @@
     LEFT JOIN featureloc fl ON f.feature_id=fl.feature_id
 	LEFT JOIN analysisfeature af ON f.feature_id=af.feature_id
 	LEFT JOIN analysis a ON af.analysis_id=a.analysis_id
-    WHERE f.type_id NOT IN (SELECT cvterm_id FROM cvterm where name='polypeptide_domain'
-         OR name='membrane_structure' OR name='non_cytoplasm_location' 
-	 OR name='transmembrane' OR name='cytoplasm_location')
-	AND f.feature_id IN
+    WHERE f.feature_id IN
   </sql>
 	
   <!-- Returns matches for all features on a given srcfeature -->
