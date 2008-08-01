@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.14 2008-07-29 10:35:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.15 2008-08-01 12:49:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Vector;
 
+import javax.swing.JComponent;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
@@ -62,13 +63,13 @@ public class QualifierTextArea extends JTextPane
     implements MouseMotionListener
 {
   private static final long serialVersionUID = 1L;
-  private static Vector DATABASES = new Vector();
   private static Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
   private static Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
   private static Cursor chand = new Cursor(Cursor.HAND_CURSOR);
   private static Style DEFAULT_STYLE = 
     StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
   private static StringVector dbsLinks;
+  public static Vector DATABASES = new Vector();
   
   /**
    *  Create a new QualifierTextArea containing no text.
@@ -107,8 +108,9 @@ public class QualifierTextArea extends JTextPane
     {
       public void mouseClicked(MouseEvent e)
       {
-        if(e.getClickCount() == 1) 
-          handleMouseSingleClick(e);
+        if(e.getClickCount() == 1)
+          handleMouseSingleClick(getHyperlinkTextAtMouseEvent(e),
+              QualifierTextArea.this);
       }
     });
     
@@ -235,7 +237,7 @@ public class QualifierTextArea extends JTextPane
     }
   }
   
-  private int getEndOfLink(String s, int ind)
+  public static int getEndOfLink(String s, int ind)
   {
     final char endOfLinkChar[] = { 
         ' ',
@@ -276,11 +278,13 @@ public class QualifierTextArea extends JTextPane
   
   /**
    * Process double click event.
-   * @param e
+   * @param hyperlinkText
+   * @param c
    */
-  private void handleMouseSingleClick(final MouseEvent e)
+  public static void handleMouseSingleClick(
+      final String hyperlinkText,
+      final JComponent c)
   {
-    final String hyperlinkText = getHyperlinkTextAtMouseEvent(e);
     if(hyperlinkText == null)
       return;
     
@@ -299,9 +303,9 @@ public class QualifierTextArea extends JTextPane
           String link = (String)dbsLinks.get(i+1);
           
           if(link.equals("srs_url"))
-            sendToBrowser( getSrsLink(hyperlinkText) );
+            sendToBrowser( getSrsLink(hyperlinkText), c );
           else
-            sendToBrowser(link + id[1]);
+            sendToBrowser(link + id[1], c);
           return;
         }
       }
@@ -313,7 +317,7 @@ public class QualifierTextArea extends JTextPane
    * @param hyperlinkText
    * @return
    */
-  private String getSrsLink(String hyperlinkText)
+  private static String getSrsLink(String hyperlinkText)
   {
     String cmd = DataCollectionPane.getSrsSite() + 
                "/wgetz?-e+[" + hyperlinkText + "]";
@@ -339,15 +343,15 @@ public class QualifierTextArea extends JTextPane
    * Send hyperlink to browser
    * @param cmd
    */
-  private void sendToBrowser(final String cmd)
+  private static void sendToBrowser(final String cmd, final JComponent c)
   {
     SwingWorker browserLaunch = new SwingWorker()
     {
       public Object construct()
       {
-        setCursor(cbusy);
+        c.setCursor(cbusy);
         BrowserControl.displayURL(cmd);
-        setCursor(cdone);
+        c.setCursor(cdone);
         return null;
       }
     };
@@ -360,7 +364,7 @@ public class QualifierTextArea extends JTextPane
     return a.toLowerCase().lastIndexOf(b.toLowerCase());
   }
   
-  private int indexOfIgnoreCase(String a, String b, int fromPos)
+  private static int indexOfIgnoreCase(String a, String b, int fromPos)
   {
     return a.toLowerCase().indexOf(b.toLowerCase(), fromPos);
   }
