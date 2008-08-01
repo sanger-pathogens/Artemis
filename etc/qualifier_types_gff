@@ -63,6 +63,7 @@ comment          no         "text"
 cons_splice      yes        (::)    5'site 3'site
 country          no         "text"
 cultivar         no         "text"
+cytoplasm_location no       "text"
 db_xref          no         "text"
 dev_stage        no         "text"
 direction        yes        list    LEFT RIGHT BOTH
@@ -77,6 +78,7 @@ frequency        yes        real    0.0  1.0
 function         yes        "text"
 gene             no         "text"
 germline         yes        none
+GPI_anchor_cleavage_site no "text"
 haplotype        no         "text"
 insertion_seq    no         "text"
 isolation_source no         "text"
@@ -87,8 +89,10 @@ lab_host         no         "text"
 locus_tag        no         "text"
 macronuclear     no         none
 map              no         "text"
+membrane_structure no       "text"
 mod_base         no         modbase
 mol_type         no         "text"
+non_cytoplasm_location no   "text"
 note             no         "text"
 number           yes        number  1 99999999
 operon           no         "text"
@@ -117,6 +121,7 @@ sequenced_mol    no         "list"  "cDNA" "cDNA to genomic RNA" \
 serotype         no         "text"
 serovar          no         "text"
 sex              no         "text"
+signal_peptide   no         "text"
 specific_host    no         "text"
 specimen_voucher no         "text"
 standard_name    no         "text"
@@ -129,4 +134,5 @@ tissue_lib       no         "text"
 tissue_type      no         "text"
 transgenic       no         "text"
 translation      no         "text"
+transmembrane    no         "text"
 DNA_transposon   no         "text"

@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.48 2008-07-24 15:58:31 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.49 2008-08-01 12:41:46 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -654,6 +654,7 @@ invisible_qualifiers_gff= \
     controlled_curation \
     country        \
     cultivar       \
+    cytoplasm_location \
     DNA_transposon \
     Derives_from   \
     dev_stage      \
@@ -670,6 +671,7 @@ invisible_qualifiers_gff= \
     gff_seqname    \
     gff_source     \
     GO             \
+    GPI_anchor_cleavage_site \
     ID             \
     insertion_seq  \
     isoelectric    \
@@ -681,9 +683,11 @@ invisible_qualifiers_gff= \
     macronuclear   \
     map            \
     mass           \
+    membrane_structure \
     mod_base       \
     mol_type       \
     Name           \
+    non_cytoplasm_location \
     Note           \
     note           \
     Ontology_term  \
@@ -705,6 +709,7 @@ invisible_qualifiers_gff= \
     serotype       \
     serovar        \
     sex            \
+    signal_peptide \
     similarity     \
     source         \
     specific_host  \
@@ -721,6 +726,7 @@ invisible_qualifiers_gff= \
     timelastmodified  \
     tissue_lib     \
     tissue_type    \
+    transmembrane  \
     transgenic     \
     translation
 
@@ -790,7 +796,11 @@ hyperlinks = \
   PlasmoDB http://plasmodb.org/plasmodb/servlet/sv?page=gene&source_id= \
   Pfam http://pfam.sanger.ac.uk/family?acc= \
   SMART http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN= \
-  Prosite http://www.expasy.org/prosite/
+  Prosite http://www.expasy.org/prosite/ \
+  ProDom http://prodom.prabi.fr/prodom/current/cgi-bin/request.pl?question=DBEN&query= \
+  PIRSF http://pir.georgetown.edu/cgi-bin/ipcSF?id= \
+  TIGR_TIGRFAMS http://cmr.tigr.org/tigr-scripts/CMR/HmmReport.cgi?hmm_acc= \
+  OPI http://chemlims.com/OPI/MServlet.ChemInfo?module=GeneGo&act=findGenes&Gene_Name_=
 
 # chado gene model features default types
 chado_exon_model=CDS
