@@ -20,12 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.54 2008-06-03 10:38:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.55 2008-08-01 12:51:15 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
-import uk.ac.sanger.artemis.chado.SimilarityLazyQualifierValue;
+import uk.ac.sanger.artemis.chado.FeatureLocLazyQualifierValue;
 import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.util.*;
@@ -39,11 +39,13 @@ import java.util.Set;
 import java.util.Vector;
 import java.sql.Timestamp;
 
+import org.gmod.schema.cv.CvTerm;
+
 /**
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.54 2008-06-03 10:38:48 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.55 2008-08-01 12:51:15 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -346,10 +348,31 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       }
     }
     
+    final Hashtable cvTermCache = new Hashtable();
     for(int i=0; i<matches.size(); i++)
     {
       org.gmod.schema.sequence.Feature matchFeature =
            (org.gmod.schema.sequence.Feature)matches.get(i);
+      
+      Integer cvTermId = new Integer(matchFeature.getCvTerm().getCvTermId());
+      final org.gmod.schema.cv.CvTerm cvTerm;
+      
+      if(cvTermCache.containsKey(cvTermId))
+        cvTerm = (CvTerm) cvTermCache.get(cvTermId);
+      else
+      {
+        cvTerm = 
+           DatabaseDocument.getCvTermByCvTermId(matchFeature.getCvTerm().getCvTermId(), null);
+        cvTermCache.put(cvTermId, cvTerm);
+      }
+      
+      matchFeature.setCvTerm(cvTerm);
+      final String qualifierName;
+      
+      if(cvTerm.getName().indexOf("match") > -1)
+        qualifierName = "similarity";
+      else
+        qualifierName = cvTerm.getName();
       
       java.util.Collection featureLocs = matchFeature.getFeatureLocsForFeatureId();
       java.util.Iterator it = featureLocs.iterator();
@@ -362,12 +385,12 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           (Feature)temp_lookup_hash.get(Integer.toString(featureLoc.getSrcFeatureId()));
         
         if(queryFeature != null)
-        {
-          Qualifier qualifier = queryFeature.getQualifierByName("similarity");
-          final SimilarityLazyQualifierValue sim = 
-            new SimilarityLazyQualifierValue(matchFeature, featureLoc.getSrcFeatureId());
+        { 
+          Qualifier qualifier = queryFeature.getQualifierByName(qualifierName);
+          final FeatureLocLazyQualifierValue sim = 
+            new FeatureLocLazyQualifierValue(matchFeature, featureLoc.getSrcFeatureId());
           if(qualifier == null)
-            qualifier = new QualifierLazyLoading("similarity", sim);
+            qualifier = new QualifierLazyLoading(qualifierName, sim);
           else
             ((QualifierLazyLoading)qualifier).addValue(sim);
 
@@ -390,6 +413,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
 
       }
     }
+    cvTermCache.clear();
     temp_lookup_hash.clear(); 
   }
   
