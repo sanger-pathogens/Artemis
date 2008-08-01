@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.60 2008-07-22 12:40:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.61 2008-08-01 12:46:56 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -55,6 +55,7 @@ import uk.ac.sanger.artemis.components.ProgressThread;
 import uk.ac.sanger.artemis.components.genebuilder.GeneBuilderFrame;
 import uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+import uk.ac.sanger.artemis.components.genebuilder.ProteinMapPanel;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
 import uk.ac.sanger.artemis.components.genebuilder.gff.PropertiesPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
@@ -76,7 +77,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.60 2008-07-22 12:40:54 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.61 2008-08-01 12:46:56 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -1091,7 +1092,8 @@ public class FeatureEdit extends JPanel
           lower_panel.remove(c[i]);
       }
       
-      editorPanel = new GeneEditorPanel(qualifier_text_area, cvForm, matchForm, propertiesPanel);
+      editorPanel = new GeneEditorPanel(qualifier_text_area, cvForm,
+          matchForm, propertiesPanel);
       JScrollPane jsp = new JScrollPane(editorPanel);
           
       jsp.setPreferredSize(
@@ -1677,7 +1679,8 @@ public class FeatureEdit extends JPanel
       //
       if( (cvForm != null       && cvForm.isCvTag(this_qualifier)) ||
           (propertiesPanel != null     && propertiesPanel.isPropertiesTag(this_qualifier, getFeature())) ||
-          (matchForm != null && matchForm.isMatchTag(this_qualifier)) )
+          (matchForm != null && matchForm.isMatchTag(this_qualifier)) ||
+          (propertiesPanel != null && ProteinMapPanel.isProteinMapElement(this_qualifier)) )
         continue;
       
       if(this_qualifier instanceof QualifierLazyLoading)
@@ -1760,6 +1763,10 @@ public class FeatureEdit extends JPanel
         QualifierVector gffQualifiers = propertiesPanel.getGffQualifiers(getFeature());
         if(gffQualifiers != null && gffQualifiers.size() > 0)
           qualifiers.addAll(gffQualifiers);
+        
+        QualifierVector mapQualifiers = ProteinMapPanel.getProteinMapQualifiers(getFeature());
+        if(mapQualifiers != null && mapQualifiers.size() > 0)
+          qualifiers.addAll(mapQualifiers);
       }
       
       if(matchForm != null)
