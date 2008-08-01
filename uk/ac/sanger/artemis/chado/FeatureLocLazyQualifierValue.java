@@ -1,4 +1,4 @@
-/* 
+/* FeatureLocLazyQualifierValue
  *
  * created: 2007
  *
@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.gmod.schema.analysis.AnalysisFeature;
+import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.sequence.FeatureDbXRef;
 import org.gmod.schema.sequence.FeatureLoc;
 import org.gmod.schema.sequence.FeatureProp;
@@ -41,7 +42,7 @@ import org.gmod.schema.sequence.Feature;
 import uk.ac.sanger.artemis.io.LazyQualifierValue;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 
-public class SimilarityLazyQualifierValue implements LazyQualifierValue
+public class FeatureLocLazyQualifierValue implements LazyQualifierValue
 {
   /** match feature associated with the similarity */
   private Feature matchFeature;
@@ -53,11 +54,13 @@ public class SimilarityLazyQualifierValue implements LazyQualifierValue
   private boolean lazyLoaded = false;
   
   /**
-   * Qualifier object to handle lazy loading of similarity data
+   * Qualifier object to handle lazy loading of properties that
+   * are featureloc'ed to the feature being read in. e.g. similarity,
+   * polypeptide_domain, protein predictions (TMHMM, signal_peptide).
    * @param matchFeature
    * @param featureId
    */
-  public SimilarityLazyQualifierValue(final Feature matchFeature, final int featureId)
+  public FeatureLocLazyQualifierValue(final Feature matchFeature, final int featureId)
   {
     this.matchFeature = matchFeature;
     this.featureId    = featureId;
@@ -77,7 +80,7 @@ public class SimilarityLazyQualifierValue implements LazyQualifierValue
     
     while(it.hasNext())
     {
-      SimilarityLazyQualifierValue thisSimilarity = (SimilarityLazyQualifierValue)it.next();
+      FeatureLocLazyQualifierValue thisSimilarity = (FeatureLocLazyQualifierValue)it.next();
       Feature thisMatchFeature = thisSimilarity.getMatchFeature();
       Collection featureLocs = thisMatchFeature.getFeatureLocsForFeatureId();
       Iterator it2 = featureLocs.iterator();
@@ -192,9 +195,19 @@ public class SimilarityLazyQualifierValue implements LazyQualifierValue
 
     Collection analysisFeatures = matchFeature.getAnalysisFeatures();
     Iterator it3 = analysisFeatures.iterator();
-    AnalysisFeature analysisFeature = (AnalysisFeature) it3.next();
-
-    buff.append(analysisFeature.getAnalysis().getProgram()+";");
+    AnalysisFeature analysisFeature = null;
+    
+    if(it3.hasNext())  // attached analysisfeature 
+    {
+      analysisFeature = (AnalysisFeature) it3.next();
+      buff.append(analysisFeature.getAnalysis().getProgram()+";");
+    }
+    else
+    {
+      // predictions and polypeptide_domains have dbxrefs
+      buff.append(getMatchFeatureDbXRefs());
+    }
+    
 
     org.gmod.schema.sequence.Feature subject = null;
     org.gmod.schema.sequence.FeatureLoc queryLoc   = null;
@@ -279,16 +292,20 @@ public class SimilarityLazyQualifierValue implements LazyQualifierValue
     else
       buff.append(";");
     
-    if(analysisFeature.getIdentity() != null)
+    if(analysisFeature != null && analysisFeature.getIdentity() != null)
       buff.append("id="+analysisFeature.getIdentity()+"%;");
-    if(analysisFeature.getSignificance() != null)
+    if(analysisFeature != null && analysisFeature.getSignificance() != null)
       buff.append("E()="+analysisFeature.getSignificance()+";");
-    if(analysisFeature.getRawScore() != null)
+    if(analysisFeature != null && analysisFeature.getRawScore() != null)
       buff.append("score="+analysisFeature.getRawScore()+";");
     
     if(queryLoc != null && queryLoc.getFmin().intValue() > -1)
     {
-      int fmin = queryLoc.getFmin().intValue()+1;
+      final int fmin;
+      if(queryLoc.getFmin().compareTo(queryLoc.getFmax()) == 0)
+        fmin = queryLoc.getFmin().intValue();
+      else
+        fmin = queryLoc.getFmin().intValue()+1;
       buff.append("query "+fmin+"-"+queryLoc.getFmax());
       if(matchFeature.getCvTerm().getName().equals("protein_match"))
         buff.append(" aa;");
@@ -333,6 +350,42 @@ public class SimilarityLazyQualifierValue implements LazyQualifierValue
     return new String(buff);
   }
   
+  /**
+   * Get dbxrefs associated with the match feature
+   * @return
+   */
+  private String getMatchFeatureDbXRefs()
+  {
+    final StringBuffer dbXRefs = new StringBuffer();
+    final Collection featureDbXRefs = matchFeature.getFeatureDbXRefs();
+    final Iterator it3 = featureDbXRefs.iterator();
+    while(it3.hasNext())
+    {
+      DbXRef dbXRef = ((FeatureDbXRef) it3.next()).getDbXRef();
+      dbXRefs.append(dbXRef.getDb().getName()+":"+
+                               dbXRef.getAccession());
+      
+      if( dbXRef.getDescription() != null && 
+         !dbXRef.getDescription().equals("") )
+        dbXRefs.append(" :\t"+dbXRef.getDescription());
+      dbXRefs.append(";");
+    }
+    
+    final DbXRef dbXRef = matchFeature.getDbXRef();
+    
+    if(dbXRef != null)
+    {
+      dbXRefs.append(dbXRef.getDb().getName()+":"+
+                   dbXRef.getAccession());
+    
+      /*if( dbXRef.getDescription() != null && 
+         !dbXRef.getDescription().equals("") )
+       dbXRefs.append(" :\t"+dbXRef.getDescription()+";");*/
+      dbXRefs.append(";");
+    }
+    
+    return dbXRefs.toString();
+  }
   
   private String getSoftString()
   {
