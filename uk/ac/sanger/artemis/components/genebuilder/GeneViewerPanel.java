@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.81 2008-06-10 10:58:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.82 2008-08-01 12:46:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -34,7 +34,6 @@ import java.util.Hashtable;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.Vector;
-import java.awt.geom.RoundRectangle2D;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
@@ -63,21 +62,14 @@ import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 
-public class GeneViewerPanel extends JPanel
+public class GeneViewerPanel extends MapPanel
 {
   
   /** */
   private static final long serialVersionUID = 1L;
-  private ChadoCanonicalGene chado_gene;
-  private int border = 15;
-  /** Used to colour the frames. */
-  //private Color light_grey = new Color(240, 240, 240);
+
   /** pop up menu */
   private JPopupMenu popup;
-  /** overlay transcript features */
-  //private boolean overlay_transcripts = false;
-  
-  private Selection selection;
 
   private float fraction;
   
@@ -791,21 +783,7 @@ public class GeneViewerPanel extends JPanel
     }
     return new_feature;
   }
-  
-  /**
-   * Macro for getting the size of the transcipt and
-   * exon image.
-   * @return
-   */
-  protected int getTranscriptSize()
-  {
-    return (2 * border) + (getFontHeight() * 3);  
-  }
-  
-  protected int getViewerBorder()
-  {
-    return border; 
-  }
+ 
   
   /**
    * Return the closest transcript feature from a given point on the
@@ -1353,42 +1331,7 @@ public class GeneViewerPanel extends JPanel
     }
   }
   
-  /**
-   * Draw rectangular box for a feature.
-   * @param g2d
-   * @param start   start of feature
-   * @param end     end of feature
-   * @param ypos    y position
-   * @param colour  feature colour
-   * @param size    parameter to control the height of the feature
-   */
-  private void drawFeature(Graphics2D g2d, int start, int end, 
-                           int ypos, Color colour, float size,
-                           boolean selected, float selected_size)
-  {
-    RoundRectangle2D e = new RoundRectangle2D.Float(start, ypos, 
-        end-start,
-        getFontHeight()*size, 0, ypos);
 
-    if(colour == null)
-      colour = Color.BLACK;
-    
-    GradientPaint gp = new GradientPaint(start, ypos, 
-        colour,
-        start, ypos+( (getFontHeight()/2) * size ), 
-        Color.white, true);
-    g2d.setPaint(gp); 
-    g2d.fill(e);
-    
-    if(selected)
-      g2d.setStroke(new BasicStroke(selected_size));
-    else
-      g2d.setStroke(new BasicStroke(1.f));
-    
-    // draw boundary
-    g2d.setColor(Color.BLACK);
-    g2d.draw(e);
-  }
   
   /**
    * Get the <code>Color</code> for a feature from its colour attribute.
@@ -1517,14 +1460,6 @@ public class GeneViewerPanel extends JPanel
     else 
       return 0;
   }*/
-  
-  
-  
-  private int getFontHeight()
-  {
-    final FontMetrics fm = this.getFontMetrics(getFont());
-    return fm.getHeight();  
-  }
 
  
   private static uk.ac.sanger.artemis.Feature addFeature(

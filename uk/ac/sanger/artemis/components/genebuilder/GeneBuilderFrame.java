@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.42 2008-07-02 13:12:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.43 2008-08-01 12:46:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -169,9 +169,26 @@ public class GeneBuilderFrame extends JFrame
     xBox.add(buildCheckBoxes(viewer, chado_gene));
     xBox.add(viewer);
     
-    JScrollPane jsp_viewer = new JScrollPane(xBox);
+    final JTabbedPane tabMapViewer = new JTabbedPane();
+    
+    final JScrollPane jsp_viewer = new JScrollPane(xBox);
     jsp_viewer.getViewport().setBackground(Color.white);
     jsp_viewer.setPreferredSize( viewer.getPreferredSize() );
+    tabMapViewer.addTab("Gene Map", jsp_viewer);
+    
+    //
+    // protein map
+    if(ProteinMapPanel.hasProteinMapElement(active_feature.getEmblFeature()))
+    {
+      final ProteinMapPanel proteinMap = 
+        new ProteinMapPanel(active_feature.getEmblFeature(), 
+                            gff_feature.getChadoGene(), selection);
+      
+      final JScrollPane jsp_ppviewer = new JScrollPane(proteinMap);
+      jsp_ppviewer.getViewport().setBackground(Color.white);
+      jsp_ppviewer.setPreferredSize( proteinMap.getPreferredSize() );
+      tabMapViewer.addTab("Protein Map", jsp_ppviewer);
+    }
     
     ///
     status_line.setFont(Options.getOptions().getFont());
@@ -190,7 +207,7 @@ public class GeneBuilderFrame extends JFrame
     jsp_viewer.setColumnHeaderView(status_line);
     ///
     
-    JSplitPane top = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jsp_tree, jsp_viewer);
+    JSplitPane top = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jsp_tree, tabMapViewer);
     JSplitPane all = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
     all.setTopComponent(top);
     

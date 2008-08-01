@@ -49,7 +49,7 @@ import org.gmod.schema.sequence.FeaturePub;
 import org.gmod.schema.sequence.FeatureSynonym;
 
 import uk.ac.sanger.artemis.chado.ClusterLazyQualifierValue;
-import uk.ac.sanger.artemis.chado.SimilarityLazyQualifierValue;
+import uk.ac.sanger.artemis.chado.FeatureLocLazyQualifierValue;
 import uk.ac.sanger.artemis.components.EditMenu;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.SelectionMenu;
@@ -297,7 +297,7 @@ public class GeneUtils
         if(qualifier instanceof QualifierLazyLoading &&
            !((QualifierLazyLoading)qualifier).isAllLazyValuesLoaded())
         {
-          if( ((QualifierLazyLoading)qualifier).getValue(0) instanceof SimilarityLazyQualifierValue )
+          if( ((QualifierLazyLoading)qualifier).getValue(0) instanceof FeatureLocLazyQualifierValue )
             lazySimilarityValues.addAll( ((QualifierLazyLoading)qualifier).getLazyValues() );
           else if( ((QualifierLazyLoading)qualifier).getValue(0) instanceof ClusterLazyQualifierValue )
           {
@@ -328,7 +328,7 @@ public class GeneUtils
           (DatabaseDocument)((DocumentEntry)entry.getEMBLEntry()).getDocument();
         
         if(lazySimilarityValues.size() > 0)
-          SimilarityLazyQualifierValue.bulkRetrieve(lazySimilarityValues,document);
+          FeatureLocLazyQualifierValue.bulkRetrieve(lazySimilarityValues,document);
         
         if(lazyClusterValues.size() > 0)
           ClusterLazyQualifierValue.setClusterFromValueList(lazyClusterValues, document);
