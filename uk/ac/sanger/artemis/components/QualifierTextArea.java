@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.15 2008-08-01 12:49:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/QualifierTextArea.java,v 1.16 2008-08-04 08:19:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -230,9 +230,16 @@ public class QualifierTextArea extends JTextPane
     int ind = 0;
     while((ind = indexOfIgnoreCase(s, db+":", ind)) > -1)
     {
-      int ind2 = getEndOfLink(s,ind);
-      getStyledDocument().setCharacterAttributes(ind, ind2-ind, 
-                             getStyle("Blue Underline"), true);
+      if(s.charAt(ind-1) != '%')
+      {
+        int ind2 = getEndOfLink(s,ind);
+        int ind3 = s.indexOf('/', ind);
+        
+        if(ind3 < 0 || ind3 > ind2)
+          getStyledDocument().setCharacterAttributes(ind, ind2-ind, 
+                                 getStyle("Blue Underline"), true);
+      }
+
       ind = ind+1;
     }
   }
