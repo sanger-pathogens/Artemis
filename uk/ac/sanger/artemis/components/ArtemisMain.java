@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.29 2008-04-25 09:58:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.30 2008-08-05 10:20:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -52,7 +52,7 @@ import javax.swing.JOptionPane;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.29 2008-04-25 09:58:29 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.30 2008-08-05 10:20:56 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -373,7 +373,10 @@ public class ArtemisMain extends Splash
 
         boolean promptUser = true;
         if(System.getProperty("read_only") != null)
+        {
           promptUser = false;
+          entry_source.setReadOnly(true);
+        }
         
         if(!entry_source.setLocation(promptUser))
           return;
