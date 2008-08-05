@@ -110,6 +110,7 @@ public class ChadoTransactionManager
               "Ontology_term",
               "score",
               "codon_start",
+              "isObsolete",
               MatchPanel.SIMILARITY,
               MatchPanel.ORTHOLOG,
               MatchPanel.PARALOG,
@@ -1031,8 +1032,7 @@ public class ChadoTransactionManager
           // ignore reserved tags
           if(isReservedTag(name) || 
              isSynonymTag(name, feature) || 
-             isCvTag(name) ||
-             name.equals("isObsolete"))
+             isCvTag(name))
           {
             if(!name.equals("Parent") && !name.equals("Derives_from"))
               addReservedTag(name+"="+qualifierStr, name, 
@@ -1271,8 +1271,7 @@ public class ChadoTransactionManager
 
       if(isReservedTag(name) || 
          isSynonymTag(name, feature) || 
-         isCvTag(name) ||
-         name.equals("isObsolete"))
+         isCvTag(name))
       {
         handleReservedTags(feature, uniquename, 
                            this_qualifier,
