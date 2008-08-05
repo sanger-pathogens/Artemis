@@ -1029,7 +1029,10 @@ public class ChadoTransactionManager
         {
           final String qualifierStr = (String)qualifier_values.elementAt(value_index);
           // ignore reserved tags
-          if(isReservedTag(name) || isSynonymTag(name, feature) || isCvTag(name))
+          if(isReservedTag(name) || 
+             isSynonymTag(name, feature) || 
+             isCvTag(name) ||
+             name.equals("isObsolete"))
           {
             if(!name.equals("Parent") && !name.equals("Derives_from"))
               addReservedTag(name+"="+qualifierStr, name, 
@@ -1044,8 +1047,8 @@ public class ChadoTransactionManager
           featureprop.setRank(value_index);
           featureprop.setCvTerm(cvTerm);
           chado_feature.addFeatureProp(featureprop);
-  
-          logger4j.debug("ADD FEATUREPROP="+(String)qualifier_values.elementAt(value_index));
+
+          logger4j.debug("ADD FEATUREPROP "+name+"="+(String)qualifier_values.elementAt(value_index));
         }
       }
       catch(NullPointerException npe)
