@@ -359,6 +359,9 @@ public class FeatureLocLazyQualifierValue implements LazyQualifierValue
     final StringBuffer dbXRefs = new StringBuffer();
     final Collection featureDbXRefs = matchFeature.getFeatureDbXRefs();
     final Iterator it3 = featureDbXRefs.iterator();
+    if(it3 == null)
+      return "";
+    
     while(it3.hasNext())
     {
       DbXRef dbXRef = ((FeatureDbXRef) it3.next()).getDbXRef();
