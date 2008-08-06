@@ -441,7 +441,8 @@ public class FindAndReplace extends JFrame
           if(this_value_string == null) 
             continue;
             
-          if(!newValues.contains(this_value_string))
+          if(!newValues.contains(this_value_string) || 
+              this_value_string.startsWith("LAZY LOADING"))  // ignore lazy data not loaded yet
             newValues.add(this_value_string);
           else if(!delete)
             return true;
