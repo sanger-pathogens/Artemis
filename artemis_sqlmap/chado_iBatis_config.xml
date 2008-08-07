@@ -42,9 +42,14 @@
       <property name="JDBC.ConnectionURL" value="jdbc:postgresql://${chado}"/> 
       <property name="JDBC.Username" value="${username}"/> 
       <property name="JDBC.Password" value="${password}"/>
-      <property value="3" name="Pool.MaximumActiveConnections"/>
-      <property value="1" name="Pool.MaximumIdleConnections"/>
+      <property name="Pool.MaximumActiveConnections" value="3" />
+      <property name="Pool.MaximumIdleConnections"   value="1"/>
+      <property name="Pool.MaximumCheckoutTime" value="1800000" />
 	  <property name="Pool.TimeToWait" value="10000"/>
+	  <property name="Pool.PingQuery" value="select * from cv"/>
+      <property name="Pool.PingEnabled" value="true"/>
+      <property name="Pool.PingConnectionsOlderThan" value="0"/>
+      <property name="Pool.PingConnectionsNotUsedFor" value="1800000"/>
     </dataSource> 
   </transactionManager> 
  
