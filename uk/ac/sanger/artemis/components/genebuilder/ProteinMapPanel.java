@@ -66,10 +66,10 @@ public class ProteinMapPanel extends MapPanel
   private static String PlasmoAP_SCORE = "PlasmoAP_score";
   private static String[] SIGNALP = 
   { 
-    "signal_peptide",
-    "SignalP_prediction", 
-    "signal_peptide_probability",
-    "signal_anchor_probability" 
+    "signal_peptide"
+    //"SignalP_prediction", 
+    //"signal_peptide_probability",
+    //"signal_anchor_probability" 
   };
   
   private static String POLYPEPTIDE_DOMAIN = "polypeptide_domain";
