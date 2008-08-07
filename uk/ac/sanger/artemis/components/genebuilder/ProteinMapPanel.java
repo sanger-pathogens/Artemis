@@ -63,7 +63,7 @@ public class ProteinMapPanel extends MapPanel
     "cytoplasm_location" 
   };
   private static String GPI_ANCHORED   = "GPI_anchor_cleavage_site";
-  private static String PlasmoAP_SCORE = "PlasmoAP_score";
+  //private static String PlasmoAP_SCORE = "PlasmoAP_score";
   private static String[] SIGNALP = 
   { 
     "signal_peptide"
@@ -80,7 +80,7 @@ public class ProteinMapPanel extends MapPanel
     Collections.addAll(PROTEIN_MAP_ELEMENTS, TMHMM);
     Collections.addAll(PROTEIN_MAP_ELEMENTS, SIGNALP);
     PROTEIN_MAP_ELEMENTS.add(GPI_ANCHORED);
-    PROTEIN_MAP_ELEMENTS.add(PlasmoAP_SCORE);
+    //PROTEIN_MAP_ELEMENTS.add(PlasmoAP_SCORE);
     PROTEIN_MAP_ELEMENTS.add(POLYPEPTIDE_DOMAIN);
   }
 
