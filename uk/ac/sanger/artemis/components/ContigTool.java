@@ -200,31 +200,31 @@ public class ContigTool extends JPanel
     });
 
     // set popup menu items
-    JMenuItem zoomIn = new JMenuItem("Zoom In - x0.1");
+    JMenuItem zoomIn = new JMenuItem("Zoom In - x0.2");
     popup.add(zoomIn);
     zoomIn.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)
       {
-        if(scale < 10)
+        if(scale < 5)
         {
           scale = 1; 
           return;
         }
 
-        scale = scale / 10;  
+        scale = scale / 5;  
         adjustSize(jsp);
         repaint();
       }
     });
 
-    JMenuItem zoomOut = new JMenuItem("Zoom Out - x10");
+    JMenuItem zoomOut = new JMenuItem("Zoom Out - x5");
     popup.add(zoomOut);
     zoomOut.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)
       {
-        scale = scale * 10;
+        scale = scale * 5;
         adjustSize(jsp);
         repaint();
       }
