@@ -43,6 +43,7 @@ import java.awt.geom.RoundRectangle2D;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -199,32 +200,51 @@ public class ContigTool extends JPanel
       }
     });
 
-    // set popup menu items
-    JMenuItem zoomIn = new JMenuItem("Zoom In - x0.2");
+    JMenu zoomIn = new JMenu("Zoom In");
     popup.add(zoomIn);
-    zoomIn.addActionListener(new ActionListener()
+    // set popup menu items
+    JMenuItem zoomIn5 = new JMenuItem("x 1/5");
+    zoomIn.add(zoomIn5);
+    zoomIn5.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)
       {
-        if(scale < 5)
-        {
-          scale = 1; 
-          return;
-        }
-
-        scale = scale / 5;  
-        adjustSize(jsp);
-        repaint();
+        zoomIn(5,jsp);
+      }
+    });
+    
+    JMenuItem zoomIn10 = new JMenuItem("x 1/10");
+    zoomIn.add(zoomIn10);
+    zoomIn10.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        zoomIn(10,jsp);
       }
     });
 
-    JMenuItem zoomOut = new JMenuItem("Zoom Out - x5");
+    
+    JMenu zoomOut = new JMenu("Zoom Out");
     popup.add(zoomOut);
-    zoomOut.addActionListener(new ActionListener()
+    JMenuItem zoomOut5 = new JMenuItem("x5");
+    zoomOut.add(zoomOut5);
+    zoomOut5.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)
       {
         scale = scale * 5;
+        adjustSize(jsp);
+        repaint();
+      }
+    });
+    
+    JMenuItem zoomOut10 = new JMenuItem("x10");
+    zoomOut.add(zoomOut10);
+    zoomOut10.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        scale = scale * 10;
         adjustSize(jsp);
         repaint();
       }
@@ -246,6 +266,19 @@ public class ContigTool extends JPanel
     status_line.setBorder(compound);
   }
 
+  private void zoomIn(final int factor, final JScrollPane jsp)
+  {
+    if(scale < factor)
+    {
+      scale = 1; 
+      return;
+    }
+
+    scale = scale / factor;  
+    adjustSize(jsp);
+    repaint();  
+  }
+  
   /**
    *  
    * Clear all selected features
