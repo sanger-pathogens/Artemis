@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.4 2008-05-15 09:57:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.5 2008-08-08 15:49:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -31,6 +31,7 @@ import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.io.ReadFormatException;
 
 import java.io.*;
+import java.util.regex.Pattern;
 
 /**
  *  Objects of this class have one useful method - getValues (), which takes a
@@ -39,7 +40,7 @@ import java.io.*;
  *  set in the constructor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: UserDataAlgorithm.java,v 1.4 2008-05-15 09:57:31 tjc Exp $
+ *  @version $Id: UserDataAlgorithm.java,v 1.5 2008-08-08 15:49:39 tjc Exp $
  **/
 
 public class UserDataAlgorithm extends BaseAlgorithm
@@ -52,12 +53,12 @@ public class UserDataAlgorithm extends BaseAlgorithm
   /**
    *  The maximum value in the data array.
    **/
-  private float data_max = -9999999;
+  private float data_max = Float.MAX_VALUE;
 
   /**
    *  The minimum value in the data array.
    **/
-  private float data_min = 9999999;
+  private float data_min = Float.MAX_VALUE;
 
   /**
    *  The average calculated by readData ().
@@ -98,6 +99,7 @@ public class UserDataAlgorithm extends BaseAlgorithm
     data = new float [strand.getSequenceLength ()][tokens.size ()];
 
     readData (pushback_reader);
+    pushback_reader.close();
   }
 
   /**
@@ -108,24 +110,25 @@ public class UserDataAlgorithm extends BaseAlgorithm
   {
     String line = null;
     int count = 0;
-
+    final int seqLength = getStrand ().getSequenceLength ();
+    final Pattern patt = Pattern.compile("\\s+");
+    
     while ((line = pushback_reader.readLine ()) != null)
     {
-
-      if (count >= getStrand ().getSequenceLength ()) 
+      if (count >= seqLength) 
         throw new ReadFormatException ("too many values in input file");
 
-      final StringVector tokens = StringVector.getStrings (line, " ");
-      //final int read_base;
+      //final StringVector tokens = StringVector.getStrings (line, " ");
 
-      if (tokens.size () == data[0].length) 
+      String tokens[] = patt.split(line); //line.split("\\s+");  
+      if (tokens.length == data[0].length) 
       {
-        for (int i = 0 ; i < tokens.size () ; ++i)
+        for (int i = 0 ; i < tokens.length ; ++i)
         {
           try 
           {
-            float value =
-              Float.valueOf ((String)tokens.elementAt (i)).floatValue ();
+            float value = Float.parseFloat(tokens[i]);
+              //Float.valueOf ((String)tokens.elementAt (i)).floatValue ();
 
             if(logTransform)
               value = (float) Math.log(value+1);
@@ -143,18 +146,18 @@ public class UserDataAlgorithm extends BaseAlgorithm
           catch (NumberFormatException e) 
           {
             throw new ReadFormatException ("cannot understand this number: " +
-                                           tokens.elementAt (i) + " - " +
+                                           tokens[i] + " - " +
                                            e.getMessage ());
           }
         }
       } 
       else 
-        throw new ReadFormatException ("line has the wrong number of fields");
+        throw new ReadFormatException ("line has the wrong number of fields:\n"+line);
 
       ++count;
     }
 
-    average_value /= data[0].length * getStrand ().getSequenceLength ();
+    average_value /= data[0].length * seqLength;
   }
 
   /**
