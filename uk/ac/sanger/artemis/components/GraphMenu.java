@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.5 2008-06-16 12:11:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.6 2008-08-08 15:48:22 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -34,6 +34,7 @@ import uk.ac.sanger.artemis.plot.CodonUsageWeight;
 import uk.ac.sanger.artemis.plot.UserDataAlgorithm;
 import uk.ac.sanger.artemis.sequence.Strand;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -48,7 +49,7 @@ import javax.swing.*;
  *  This menu controls one particular BasePlotGroup.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: GraphMenu.java,v 1.5 2008-06-16 12:11:01 tjc Exp $
+ *  @version $Id: GraphMenu.java,v 1.6 2008-08-08 15:48:22 tjc Exp $
  **/
 
 public class GraphMenu extends JMenu 
@@ -428,6 +429,7 @@ public class GraphMenu extends JMenu
       new File (dialog.getCurrentDirectory (),
                 dialog.getSelectedFile ().getName ());
 
+    frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
     if (file.length () != 0) 
     {
       final uk.ac.sanger.artemis.util.Document document =
@@ -473,6 +475,7 @@ public class GraphMenu extends JMenu
                            "error while reading user data: " + e);
       }
     }
+    frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
   }
 
   /**
