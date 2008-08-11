@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.61 2008-08-01 12:46:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.62 2008-08-11 10:31:51 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -77,7 +77,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.61 2008-08-01 12:46:56 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.62 2008-08-11 10:31:51 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -506,7 +506,7 @@ public class FeatureEdit extends JPanel
       }
     });
     
-    if(GeneUtils.isDatabaseEntry(entry_group))
+    if(GeneUtils.isDatabaseEntry(getFeature().getEmblFeature()))
     {
       final JButton refresh_button = new JButton("Refresh");
       location_button_panel.add(refresh_button);
@@ -922,7 +922,7 @@ public class FeatureEdit extends JPanel
 
     final JPanel ok_cancel_update_panel = new JPanel(flow_layout);
     Box fillerBox = Box.createHorizontalBox();
-    if(GeneUtils.isDatabaseEntry(entry_group))
+    if(GeneUtils.isDatabaseEntry(getFeature().getEmblFeature()))
     {
       cvForm = new CVPanel(getFeature());
       cvForm.setBackground(Color.WHITE);
@@ -985,6 +985,7 @@ public class FeatureEdit extends JPanel
     final String uniquename = (String)it.next();
     final DatabaseDocument newDocument = new DatabaseDocument(originalDocument,
         uniquename, null, true, null);
+    newDocument.setLazyFeatureLoad(false);
     newDocument.setReadChildren(false);
     
     try
@@ -1154,7 +1155,7 @@ public class FeatureEdit extends JPanel
    **/
   private void complementLocation() 
   {
-    if(GeneUtils.isDatabaseEntry(entry_group))
+    if(GeneUtils.isDatabaseEntry(getFeature().getEmblFeature()))
     {
       final ChadoCanonicalGene chadoGene = 
         ((GFFStreamFeature)getFeature().getEmblFeature()).getChadoGene();
@@ -1638,12 +1639,12 @@ public class FeatureEdit extends JPanel
    **/
   private void updateQualifiers() 
   {
-    if(GeneUtils.isDatabaseEntry(entry_group))
+    if(GeneUtils.isDatabaseEntry(getFeature().getEmblFeature()))
       GeneUtils.addLazyQualifiers((GFFStreamFeature)getFeature().getEmblFeature());
     
     qualifier_text_area.setText(getQualifierString());
     
-    if(GeneUtils.isDatabaseEntry(entry_group))
+    if(GeneUtils.isDatabaseEntry(getFeature().getEmblFeature()))
     {  
       // load synonym
       if(cvForm != null)
