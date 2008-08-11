@@ -845,6 +845,20 @@ public class GeneUtils
     return false;
   }
   
+  
+  /**
+   * Given a feature determine if it belongs to a database entry
+   * @param entryGroup
+   * @return
+   */
+  public static boolean isDatabaseEntry(final Feature feature)
+  {
+    if( feature.getEntry() instanceof DatabaseDocumentEntry )
+      return true;
+
+    return false;
+  }
+  
 
   private static void deleteFeature(uk.ac.sanger.artemis.Feature feature)
       throws ReadOnlyException
