@@ -1,5 +1,7 @@
 Version 10.+/7.+
 
+    Optimisation of reading in user graphs.
+
 	New Edit->Selected Feature(s)->Convert Keys option to convert
 	keys of selected features.
 
@@ -20,9 +22,7 @@ Version 10.+/7.+
 
 	Qualifier text find/replace tool added.
 	
-	Provide option to log transform user data.
-
-	Graph height option given in the graph popup menu.
+	Provide option to log transform user data plot.
 	
 	Improved error reporting for contig reordering.
 
