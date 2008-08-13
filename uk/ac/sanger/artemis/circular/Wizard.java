@@ -346,11 +346,11 @@ public class Wizard
     else
       radioButtons = new JRadioButton[2];
     final ButtonGroup group = new ButtonGroup();
-    radioButtons[0] = new JRadioButton("Read in data file");
+    radioButtons[0] = new JRadioButton("Read in sequence file");
     group.add(radioButtons[0]);
     radioButtons[1] = new JRadioButton("Create new dna display");
     group.add(radioButtons[1]);
-    radioButtons[1].setSelected(true);
+    radioButtons[0].setSelected(true);
     bdown.add(radioButtons[0]);
     bdown.add(radioButtons[1]);
 
