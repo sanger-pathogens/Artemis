@@ -23,6 +23,9 @@ package uk.ac.sanger.artemis.circular;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.regex.Pattern;
+
+import javax.swing.JOptionPane;
 
 import uk.ac.sanger.artemis.io.ReadFormatException;
 import uk.ac.sanger.artemis.util.Document;
@@ -72,6 +75,7 @@ public class UserGraph extends Graph
     pushback_reader.pushBack (first_line);
     data = new float [getBases().getLength()];
     readData (pushback_reader);
+    pushback_reader.close();
   }
  
  /**
@@ -95,44 +99,53 @@ public class UserGraph extends Graph
   {
     String line = null;
     int count = 0;
-
-    while ((line = pushback_reader.readLine ()) != null) 
+    final int seqLength = getBases().getLength();
+    final Pattern patt = Pattern.compile("\\s+");
+    
+    while ((line = pushback_reader.readLine ()) != null)
     {
-      if(count >= getBases().getLength()) 
+      if (count >= seqLength) 
         throw new ReadFormatException ("too many values in input file");
 
-      final StringVector tokens = StringVector.getStrings (line, " ");
-
-      if(tokens.size () == 1) 
+      String tokens[] = patt.split(line);  
+      if (tokens.length == 1) 
       {
-        try 
+        for (int i = 0 ; i < tokens.length ; ++i)
         {
-          final float value =
-              Float.valueOf ((String)tokens.elementAt (0)).floatValue ();
+          try 
+          {
+            float value = Float.parseFloat(tokens[i]);
+            
+            if (value > data_max) 
+              data_max = value;
 
-          if (value > data_max)
-            data_max = value;
+            if (value < data_min)
+              data_min = value;
 
-          if (value < data_min)
-            data_min = value;
+            data[count] = value;
 
-          data[count] = value;
-          average_value += value;
-        } 
-        catch (NumberFormatException e) 
-        {
-          throw new ReadFormatException ("cannot understand this number: " +
-                                         tokens.elementAt (0) + " - " +
-                                         e.getMessage ());
+            average_value += value;
+          } 
+          catch (NumberFormatException e) 
+          {
+            throw new ReadFormatException ("cannot understand this number: " +
+                                           tokens[i] + " - " +
+                                           e.getMessage ());
+          }
         }
       } 
-      else 
+      else
       {
-        throw new ReadFormatException ("line has the wrong number of fields");
+        JOptionPane.showMessageDialog(null, 
+            "Line has the wrong number of fields:\n"+line+
+            "\nOnly one column allowed.", 
+            "Data Columns", JOptionPane.WARNING_MESSAGE);
+        return;
       }
+
       ++count;
     }
-
-    average_value /= getBases().getLength();
+    average_value /= seqLength;
   }
+  
 }
