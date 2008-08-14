@@ -1396,9 +1396,9 @@ public class DNADraw extends ScrollPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        ClassLoader cl = DNADraw.this.getClass().getClassLoader();
-        URL url = cl.getResource("etc/readmeDNADraw.html");
-        BrowserControl.displayURL(url.toString());
+        /*ClassLoader cl = DNADraw.this.getClass().getClassLoader();
+        URL url = cl.getResource("etc/readmeDNADraw.html");*/
+        BrowserControl.displayURL("http://www.sanger.ac.uk/Software/Artemis/circular/");
       }
     });
 
