@@ -60,7 +60,6 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.IOException;
-import java.net.URL;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -129,7 +128,14 @@ public class DNADraw extends ScrollPanel
   protected static int THETA = -90;
   private TrackViewer viewer;
   private AffineTransform original;
-
+  
+  // linear plot variables
+  private int numberOfLines;
+  private int basesPerLine = 10000;
+  private float lineHeight = 100.f;
+  private float singleBaseWidth;
+  private int border2;
+  
   public DNADraw()
   {
     super(new BorderLayout()); 
@@ -335,8 +341,7 @@ public class DNADraw extends ScrollPanel
   protected void paintComponent(Graphics g)
   {
     super.paintComponent(g);
-    Graphics2D g2 = (Graphics2D)g;
-    
+    Graphics2D g2 = (Graphics2D)g;  
 
     if(isCircular())
       drawCircularPanel(g2,true);
@@ -366,7 +371,7 @@ public class DNADraw extends ScrollPanel
     double hgt = fm.getAscent();
     g2.setColor(Color.black);
     double widDash = 4;
-
+    
     int lineSize = 5;
     try
     {
@@ -378,18 +383,33 @@ public class DNADraw extends ScrollPanel
     }
     g2.setStroke(new BasicStroke((float)lineSize));
 
-    double widthPanel  = getWidth();
-    double ddiameter  = widthPanel-border.getWidth();
-    int diameter = (int)ddiameter;
-    int ymid = getHeight()/2;
+    border2 = border.width/2;
 
     g2.setStroke(new BasicStroke((float)lineSize));
-    g2.drawLine(location.x,ymid,
-                diameter,ymid);   
-
-    int start = getStart();
-    int end   = getEnd();
-
+    
+    int lastBase  = getEnd();
+    numberOfLines = Math.round( (lastBase/basesPerLine) + 0.5f);
+    
+    int height = (int) ((numberOfLines * lineHeight)+border.height);
+    Dimension size = new Dimension(getWidth(),height);
+    setPreferredSize(size);
+    setSize(size);
+    
+    singleBaseWidth = (float)(getWidth()-border.width)/(float)basesPerLine;
+    
+    for(int i=0; i<numberOfLines; i++)
+    {
+      int ypos = (int) (border2+lineHeight+(lineHeight*i));
+      
+      if(i<numberOfLines-1)
+        g2.drawLine(border2,ypos,getWidth()-border2,ypos);
+      else
+      {
+        int lastLineWidth = (int) ((lastBase-(i*basesPerLine))*singleBaseWidth)+border2;
+        g2.drawLine(border2,ypos,lastLineWidth,ypos);
+      }
+    }
+    
     g2.setColor(Color.black);
     g2.setStroke(new BasicStroke(1.f));
 
@@ -400,25 +420,37 @@ public class DNADraw extends ScrollPanel
     while(enumTk.hasMoreElements())
     {
       int tick = ((Integer)enumTk.nextElement()).intValue();
-      int x = ((diameter-location.x)*(tick-start)/(end-start))+location.x;
-      int y = ymid+(int)((lineSize+widDash)/2);
-      g2.drawLine(x,ymid,x,y);
+      int lineNumber = Math.round((float)(tick-1)/((float)basesPerLine) + 0.5f)-1;
+      
+      int ypos = (int) (border2+lineHeight+(lineHeight*lineNumber));
+      int xpos = (int) ((tick-(lineNumber*basesPerLine))*singleBaseWidth)+border2;
+      int y = ypos+(int)((lineSize+widDash)/2);
+      
+      g2.drawLine(xpos,ypos,xpos,y);
     }
 
     enumTk = majorTicks.elements();
     while(enumTk.hasMoreElements())
     {
       int tick = ((Integer)enumTk.nextElement()).intValue();
-      int x = ((diameter-location.x)*(tick-start)/(end-start))+location.x;
-      int y = ymid+(lineSize/2)+(int)widDash;
-      g2.drawLine(x,ymid,x,y);
+      int lineNumber = Math.round((float)(tick-1)/((float)basesPerLine) + 0.5f)-1;
+      
+      if(lineNumber < 0)
+        lineNumber = 0;
+      
+      int ypos = (int) (border2+lineHeight+(lineHeight*lineNumber));
+      int xpos = (int) ((tick-(lineNumber*basesPerLine))*singleBaseWidth)+border2;
+      int y = ypos+(int)((lineSize+widDash)/2);
+      
+      g2.drawLine(xpos,ypos,xpos,y);
+      
       String label = Integer.toString(tick);
-      x-=(fm.stringWidth(label)/2);
+      xpos-=(fm.stringWidth(label)/2);
       y+=hgt;
-      g2.drawString(label,x,y);
+      g2.drawString(label,xpos,y);
     }
 
-    if(restrictionEnzyme != null)
+    /*if(restrictionEnzyme != null)
     {
       enumTk = restrictionEnzyme.elements();
       while(enumTk.hasMoreElements())
@@ -434,7 +466,7 @@ public class DNADraw extends ScrollPanel
         y-=hgt;
         g2.drawString(reLabel,x,y);
       }
-    }
+    }*/
 
     // draw features
     Vector markers = getGeneticMarker();
@@ -946,6 +978,14 @@ public class DNADraw extends ScrollPanel
   public void setLineAttributes(Hashtable lineAttr)
   {
     this.lineAttr = lineAttr;
+    
+    if(isCircular())
+    {
+      setSize(panelSize);
+      setPreferredSize(panelSize);
+    }
+    revalidate();
+    repaint();
   }
 
 
@@ -1037,7 +1077,7 @@ public class DNADraw extends ScrollPanel
       public void actionPerformed(ActionEvent e)
       {
         PrintDNAImage pdnai = new PrintDNAImage(current_dna);
-        pdnai.print();
+        pdnai.printAsSinglePage();
       }
     });
     printMenu.add(printImage);
@@ -1384,7 +1424,19 @@ public class DNADraw extends ScrollPanel
         repaint();
       }
     });
-    optionMenu.add(labelTick);
+    optionMenu.add(labelTick);  
+
+    final JCheckBoxMenuItem asCircular = new JCheckBoxMenuItem("Circular Plot", isCircular());
+    asCircular.addItemListener(new ItemListener()
+    {
+
+      public void itemStateChanged(ItemEvent e)
+      {
+        lineAttr.put("circular",new Boolean(asCircular.isSelected()));
+        setLineAttributes(lineAttr);
+      }
+    });
+    optionMenu.add(asCircular);
 
 // help manu
     JMenu helpMenu = new JMenu("Help");
@@ -1675,6 +1727,66 @@ public class DNADraw extends ScrollPanel
     
     //dna.add(dna.new BlockPanel(dna));
     f.setVisible(true);
+  }
+
+
+  public int getBasesPerLine()
+  {
+    return basesPerLine;
+  }
+
+
+  public void setBasesPerLine(int basesPerLine)
+  {
+    this.basesPerLine = basesPerLine;
+  }
+
+
+  public int getNumberOfLines()
+  {
+    return numberOfLines;
+  }
+
+
+  public void setNumberOfLines(int numberOfLines)
+  {
+    this.numberOfLines = numberOfLines;
+  }
+
+
+  public float getLineHeight()
+  {
+    return lineHeight;
+  }
+
+
+  public void setLineHeight(float lineHeight)
+  {
+    this.lineHeight = lineHeight;
+  }
+
+
+  public float getSingleBaseWidth()
+  {
+    return singleBaseWidth;
+  }
+
+
+  public void setSingleBaseWidth(float singleBaseWidth)
+  {
+    this.singleBaseWidth = singleBaseWidth;
+  }
+
+
+  public int getBorder2()
+  {
+    return border2;
+  }
+
+
+  public void setBorder2(int border2)
+  {
+    this.border2 = border2;
   }
   
   /*class BlockPanel extends JPanel

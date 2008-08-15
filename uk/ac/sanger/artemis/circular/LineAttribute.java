@@ -22,12 +22,14 @@
 package uk.ac.sanger.artemis.circular;
 
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.KeyStroke;
 import javax.swing.event.*;
@@ -37,6 +39,7 @@ import java.util.Hashtable;
 
 public class LineAttribute extends JPanel
 {
+  private static final long serialVersionUID = 1L;
   private Hashtable lineAttr = new Hashtable();
   private TextFieldInt start;
   private TextFieldInt end;
@@ -52,7 +55,7 @@ public class LineAttribute extends JPanel
     Box bacross = Box.createHorizontalBox();
 
     // circular or linear dna
-    /*ButtonGroup group = new ButtonGroup();
+    ButtonGroup group = new ButtonGroup();
     final JRadioButton jcirc = new JRadioButton("Circular");
     jcirc.addActionListener(new ActionListener()
     {
@@ -75,15 +78,16 @@ public class LineAttribute extends JPanel
       }
     });
     group.add(jline);
-    jcirc.setSelected(true);*/
-    lineAttr.put("circular",new Boolean(true));
-    /*bacross.add(jcirc); 
+    jcirc.setSelected( draw.isCircular() );
+    jline.setSelected( !draw.isCircular() );
+    lineAttr.put("circular",new Boolean(draw.isCircular()));
+    bacross.add(jcirc); 
     bacross.add(jline);
     bacross.add(Box.createHorizontalGlue());
     bdown.add(bacross);
 
     // start position
-    bdown.add(Box.createVerticalStrut(4));*/
+    bdown.add(Box.createVerticalStrut(4));
     bacross = Box.createHorizontalBox();
     start = new TextFieldInt();
     start.addActionListener(new ActionListener()
@@ -101,7 +105,7 @@ public class LineAttribute extends JPanel
     if(draw != null)
       start.setValue(draw.getStart());
     else
-      start.setValue(0);
+      start.setValue(1);
 
     start.setPreferredSize(d);
     start.setMaximumSize(d);

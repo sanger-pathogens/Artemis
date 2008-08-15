@@ -28,6 +28,7 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.swing.event.*;
 
@@ -38,7 +39,7 @@ public class Block implements Transferable
   private double angStart;
   private double angEnd;
 
-  private Rectangle rect = new Rectangle();
+  private Vector rect;
   private boolean drawLabel = false;
   final public static DataFlavor BLOCK =
          new DataFlavor(Block.class, "Block");
@@ -217,7 +218,7 @@ public class Block implements Transferable
     {
       public void actionPerformed(ActionEvent e)
       {
-        dialog.show();
+        dialog.setVisible(true);
       }
     });
     bacross = Box.createHorizontalBox();
@@ -350,7 +351,7 @@ public class Block implements Transferable
     f.setVisible(true);
   }
 
-  protected void drawLinear(Graphics2D g2)
+  protected void drawLinear(final Graphics2D g2)
   {
     RenderingHints qualityHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
         RenderingHints.VALUE_ANTIALIAS_ON); 
@@ -361,31 +362,34 @@ public class Block implements Transferable
     String markerLabel = getLabel();
     int bstart = getBstart();
     int bend   = getBend();
+    
    
-    float strokeSize2 = getStrokeSize()/2.f;
-
     FontMetrics fm = g2.getFontMetrics();
-    //double hgt = fm.getAscent();
     g2.setColor(getColour());
 
-    double ddiameter   = current_dna.getDiameter();
-    double heightPanel = current_dna.getHeight();
-    Point location = current_dna.getLocationPoint();
-    int ymid  = (int)(heightPanel/2.);
+    //int shift = (int)getTrack().getPosition();
 
-    int shift = (int)getTrack().getPosition();
-    if(shift > 1 && shift < (int)heightPanel)
-      ymid  = shift;
+    int basesPerLine    = current_dna.getBasesPerLine();
+    int lineNumberStart = Math.round((float)(bstart-1)/((float)basesPerLine) + 0.5f)-1;
+    int lineNumberEnd   = Math.round((float)(bend-1)/((float)basesPerLine) + 0.5f)-1;
+    float singleBaseWidth = current_dna.getSingleBaseWidth();
+     
+    int border2 = current_dna.getBorder2();
+    
+    int ypos = (int) ( (lineNumberStart*current_dna.getLineHeight()) - (strokeSize/2.f) -
+                        ((1-track.getPosition())*current_dna.getLineHeight())  +
+                        border2+current_dna.getLineHeight());
 
-    int start = current_dna.getStart();
-    int end   = current_dna.getEnd();
-    g2.setStroke(new BasicStroke(strokeSize));
+    int xstart = (int) ((bstart-(lineNumberStart*basesPerLine))*singleBaseWidth)+border2;
+    int xend   = (int) ((bend-(lineNumberEnd*basesPerLine))*singleBaseWidth)+border2;
+    
+    BasicStroke basicstroke = new BasicStroke(
+        strokeSize,
+        BasicStroke.CAP_BUTT, 
+        BasicStroke.JOIN_MITER);
+    g2.setStroke(basicstroke);
 
-    int xend   = (((int)ddiameter-location.x)*(bend-start)/
-                   (end-start))+location.x-(int)strokeSize2;
-    int xstart = (((int)ddiameter-location.x)*(bstart-start)/
-                   (end-start))+location.x+(int)strokeSize2;
-    if(arrowHead)
+    /*if(arrowHead)
     {
       xend-=strokeSize2;
       int[] xPoints = {xend,xend,xend+(int)strokeSize};
@@ -402,15 +406,52 @@ public class Block implements Transferable
       g2.fillPolygon(xPoints,yPoints,3);
       g2.drawLine(xstart,ymid,xend,ymid);
     }
-    else
-      g2.drawLine(xstart,ymid,xend,ymid);
+    else*/
+    
+    if(rect == null)
+      rect = new Vector();
 
+    Rectangle r;
+    
+    if(lineNumberEnd > lineNumberStart)
+    {
+      g2.drawLine(xstart,ypos,current_dna.getWidth()-border2,ypos);
+      r = new Rectangle();
+      r.setLocation(xstart,ypos);
+      r.setSize(current_dna.getWidth()-border2-xstart,(int)strokeSize);
+      rect.add(r);
+      
+      for(int i=lineNumberStart+1; i<lineNumberEnd; i++)
+      {
+        ypos = (int) ( (i*current_dna.getLineHeight()) - (strokeSize/2.f) -
+            ((1-track.getPosition())*current_dna.getLineHeight())  +
+            border2+current_dna.getLineHeight());
+        g2.drawLine(border2,ypos,current_dna.getWidth()-border2,ypos);
+        
+        r = new Rectangle();
+        r.setLocation(border2,ypos);
+        r.setSize(current_dna.getWidth()-border2-border2,(int)strokeSize);
+        rect.add(r);
+      }
+      
+      ypos = (int) ( (lineNumberEnd*current_dna.getLineHeight()) - (strokeSize/2.f) -
+          ((1-track.getPosition())*current_dna.getLineHeight())  +
+          border2+current_dna.getLineHeight());
+      xstart = border2;
+    }
+    
+    g2.drawLine(xstart,ypos,xend,ypos);
+
+    r = new Rectangle();
+    r.setLocation(xstart,ypos);
+    r.setSize(xend-xstart,(int)strokeSize);
+    rect.add(r);
+    
+    
     if(drawLabel)
     {
-      rect.setLocation(xstart,ymid-(int)strokeSize2);
-      rect.setSize(xend-xstart,(int)strokeSize);
       int xmid = xstart+(int)(((xend-xstart)/2.)-(fm.stringWidth(markerLabel)/2.));
-      g2.drawString(markerLabel,xmid,ymid-strokeSize);
+      g2.drawString(markerLabel,xmid,ypos-strokeSize);
     } 
   }
 
@@ -718,7 +759,14 @@ public class Block implements Transferable
       }
     }
     else
-      return rect.contains(x,y);
+    {
+      for(int i=0; i<rect.size(); i++)
+      {
+        Rectangle r = (Rectangle)rect.get(i);
+        if(r.contains(x,y))
+          return true;
+      }
+    }
     
     return false;
   }

@@ -27,6 +27,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
+import java.awt.print.Paper;
 import java.awt.print.PrinterJob;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,7 +36,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Hashtable;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JComboBox;
@@ -66,20 +66,15 @@ import javax.swing.border.Border;
 */
 public class PrintDNAImage extends ScrollPanel
 {
+  private static final long serialVersionUID = 1L;
+
   /** page format */
   private PageFormat format = null;
-  /** page number to print    */
-  private int pageIndex = 0;
+
   /** alignment sequence panel */
   private DNADraw dna;
-  /** prefix of file           */
-//private String filePrefix;
   /** status field for print preview */
   private JTextField statusField = new JTextField("");
-  /** number of residues per line    */
-  private int nResPerLine = 0;
-  /** line attributes */
-  private Hashtable lineAttr;
   /** type (jpeg/png) */
   private String type;
 
@@ -93,7 +88,6 @@ public class PrintDNAImage extends ScrollPanel
     super();
     this.dna = dna;
 
-    lineAttr = dna.getLineAttributes();
     setBackground(Color.white);
   }
 
@@ -118,7 +112,7 @@ public class PrintDNAImage extends ScrollPanel
   * Print to a jpeg or png file
   *
   */
-  public void print()
+/*  public void print()
   {
     if(format == null)
       getFormatDialog();
@@ -138,7 +132,7 @@ public class PrintDNAImage extends ScrollPanel
       JOptionPane.showMessageDialog(this,
             "This option requires Java 1.4 or higher.");
     }
-  }
+  }*/
 
 
   /**
@@ -236,7 +230,7 @@ public class PrintDNAImage extends ScrollPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        print();
+        printAsSinglePage();
       }
     });
     printMenu.add(printImage);
@@ -271,7 +265,7 @@ public class PrintDNAImage extends ScrollPanel
     String cwd = System.getProperty("user.dir");
     JFileChooser fc = new JFileChooser(cwd);
     File fselect = new File(cwd+System.getProperty("file.separator")+
-                            "dna_image.jpeg"); 
+                            "dna.jpg"); 
     fc.setSelectedFile(fselect);
 
 // file name prefix
@@ -287,6 +281,8 @@ public class PrintDNAImage extends ScrollPanel
     Box bacross = Box.createHorizontalBox();
     JComboBox formatSelect = 
        new JComboBox(javax.imageio.ImageIO.getWriterFormatNames());
+    formatSelect.setSelectedItem("jpg");
+    
     Dimension d = formatSelect.getPreferredSize();
     formatSelect.setMaximumSize(d);
     bacross.add(Box.createHorizontalGlue());
@@ -324,7 +320,42 @@ public class PrintDNAImage extends ScrollPanel
       System.out.println("Java 1.4+ is required");
     }
   }
+  
+  
+  
 
+  /**
+  * Print to one jpeg or png file
+  */
+  public void printAsSinglePage()
+  {
+    //PrinterJob printerJob = PrinterJob.getPrinterJob();
+    format = new PageFormat();
+
+    File file = showOptions();
+    
+    Dimension d = dna.getSize();
+    double imageWidth  = d.getWidth();
+    double imageHeight = d.getHeight();
+    Paper paper  = format.getPaper();
+
+    paper.setSize(imageWidth,imageHeight);
+
+    paper.setImageableArea(0,0,
+                           imageWidth,imageHeight+imageHeight);
+    format.setPaper(paper);
+
+    try
+    {
+      RenderedImage rendImage = createDNAImage(0);
+      writeImageToFile(rendImage,file,type);
+    }
+    catch(NoClassDefFoundError ex)
+    {
+      JOptionPane.showMessageDialog(this,
+            "This option requires Java 1.4 or higher.");
+    }
+  }
 
 }
 
