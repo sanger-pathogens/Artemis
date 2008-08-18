@@ -333,6 +333,8 @@ public class PrintDNAImage extends ScrollPanel
     format = new PageFormat();
 
     File file = showOptions();
+    if(file == null)
+      return;
     
     Dimension d = dna.getSize();
     double imageWidth  = d.getWidth();
