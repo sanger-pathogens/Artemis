@@ -28,6 +28,8 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
@@ -65,9 +67,11 @@ import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -130,8 +134,9 @@ public class DNADraw extends ScrollPanel
   private AffineTransform original;
   
   // linear plot variables
+  private JMenuItem linearPlotOptions = new JMenuItem("Linear plot...");;
   private int numberOfLines;
-  private int basesPerLine = 10000;
+  private int basesPerLine = 20000;
   private float lineHeight = 100.f;
   private float singleBaseWidth;
   private int border2;
@@ -984,6 +989,8 @@ public class DNADraw extends ScrollPanel
       setSize(panelSize);
       setPreferredSize(panelSize);
     }
+    
+    linearPlotOptions.setEnabled(!isCircular());
     revalidate();
     repaint();
   }
@@ -1071,7 +1078,7 @@ public class DNADraw extends ScrollPanel
     });
     printMenu.add(print);
 
-    JMenuItem printImage = new JMenuItem("Print png/jpeg Image...");
+    JMenuItem printImage = new JMenuItem("Save As jpeg/png Image...");
     printImage.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -1426,6 +1433,49 @@ public class DNADraw extends ScrollPanel
     });
     optionMenu.add(labelTick);  
 
+    
+    linearPlotOptions.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        GridBagLayout grid = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        c.ipady = 3;
+        c.ipadx = 5;
+
+        JPanel optionBox = new JPanel(grid);
+        c.gridx = 1; 
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.WEST;
+        TextFieldFloat lineHeightField = new TextFieldFloat();
+        lineHeightField.setValue(getLineHeight());
+        optionBox.add(lineHeightField, c);
+        c.gridx = 0;
+        c.anchor = GridBagConstraints.EAST;
+        optionBox.add(new JLabel("Line Height"), c);
+        
+        c.gridx = 1; 
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.WEST;
+        TextFieldInt basesPerLineField = new TextFieldInt();
+        basesPerLineField.setValue(getBasesPerLine());
+        optionBox.add(basesPerLineField, c);
+        c.gridx = 0;
+        c.anchor = GridBagConstraints.EAST;
+        optionBox.add(new JLabel("Bases Per Line"), c);
+        
+        JOptionPane.showMessageDialog(DNADraw.this, optionBox,
+            "Linear Plot Options", JOptionPane.QUESTION_MESSAGE);
+        
+        setLineHeight( (float) lineHeightField.getValue() );
+        setBasesPerLine(basesPerLineField.getValue());
+        revalidate();
+        repaint();
+      }
+    });
+    linearPlotOptions.setEnabled(!isCircular());
+    optionMenu.add(linearPlotOptions);  
+    
     final JCheckBoxMenuItem asCircular = new JCheckBoxMenuItem("Circular Plot", isCircular());
     asCircular.addItemListener(new ItemListener()
     {
@@ -1434,6 +1484,7 @@ public class DNADraw extends ScrollPanel
       {
         lineAttr.put("circular",new Boolean(asCircular.isSelected()));
         setLineAttributes(lineAttr);
+        linearPlotOptions.setEnabled(!isCircular());
       }
     });
     optionMenu.add(asCircular);
