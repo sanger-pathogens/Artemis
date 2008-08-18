@@ -34,8 +34,6 @@ import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import uk.ac.sanger.artemis.sequence.Bases;
 
@@ -69,7 +67,10 @@ public abstract class Graph extends JPanel
   {
     super.paintComponent(g);
     Graphics2D g2  = (Graphics2D)g;
-    draw(g2);
+    if(getCurrentDna().isCircular())
+      draw(g2);
+    else
+      drawLinear(g2);
   }
   
   /**
@@ -162,6 +163,79 @@ public abstract class Graph extends JPanel
       g2.drawLine(avVal, 0, val, 0);
     }
     g2.setTransform(origin);
+  }
+  
+  
+  public void drawLinear(Graphics2D g2)
+  {
+    RenderingHints qualityHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+        RenderingHints.VALUE_ANTIALIAS_ON); 
+    qualityHints.put(RenderingHints.KEY_RENDERING,               
+    RenderingHints.VALUE_RENDER_QUALITY); 
+    g2.setRenderingHints(qualityHints);
+
+    int basesPerLine = getCurrentDna().getBasesPerLine();
+    float lineHeight = getCurrentDna().getLineHeight();
+    float singleBaseWidth = getCurrentDna().getSingleBaseWidth();
+    int border2 = getCurrentDna().getBorder2();
+    
+    Bases bases = getBases();
+    
+    int nvalues = bases.getLength()/getBaseStepSize();
+    
+    if(value_array == null)
+    {
+      value_array = new float [nvalues];
+      gcAverage   = 0;
+      for(int i=0; i<nvalues; i++)
+      {
+        int start = (i*getBaseStepSize())+1;
+        int end = start+getWindowSize();
+        
+        if(end > bases.getLength())
+          end = bases.getLength();
+        
+        value_array[i] = calculateValue(start, end);
+        if(value_array[i] > maxValue)
+          maxValue = value_array[i];
+        if(value_array[i] < minValue)
+          minValue = value_array[i];
+        gcAverage += value_array[i];
+      }
+      gcAverage = gcAverage/nvalues;
+    }
+    
+    int minPos = (int)(lineHeight*(1-getTrack()));
+    int maxPos = minPos + (int)(lineHeight*getGraphHeight());
+    
+    BasicStroke basicstroke = new BasicStroke(
+        getStrokeSize(),
+        BasicStroke.CAP_BUTT, 
+        BasicStroke.JOIN_MITER);
+    g2.setStroke(basicstroke);
+    
+    int avVal = minPos - (int)( ((gcAverage-minValue)/(maxValue-minValue))*(maxPos-minPos) );
+    for(int i=0;i<nvalues-1; i++)
+    {
+      float xA = value_array[i];
+       
+      if(value_array[i] >= gcAverage)
+        g2.setColor(getPlusColour());
+      else
+        g2.setColor(getMinusColour());
+
+      int val = minPos - (int)( ((xA-minValue)/(maxValue-minValue))*(maxPos-minPos) );
+      
+      int basePos = (i*getBaseStepSize())+1;
+      int lineNumber = Math.round((float)(basePos-1)/((float)basesPerLine) + 0.5f)-1;
+      
+      int xpos = (int) ((basePos-(lineNumber*basesPerLine))*singleBaseWidth)+border2;
+      
+      int ypos = (int) ( (lineNumber*lineHeight) - (strokeSize/2.f) -
+          (getTrack()*lineHeight) + border2);
+      
+      g2.drawLine(xpos, avVal+ypos, xpos, val+ypos);
+    }
   }
 
   protected int getWindowSize()
@@ -298,16 +372,18 @@ public abstract class Graph extends JPanel
     
     c.gridx = 1;
     c.anchor = GridBagConstraints.WEST;
-    final JSlider slider = new JSlider(1,60,(int)(getGraphHeight()*100));
-    slider.addChangeListener(new ChangeListener()
+    //final JSlider slider = new JSlider(1,60,(int)(getGraphHeight()*100));
+    final TextFieldFloat graphHeightField = new TextFieldFloat();
+    graphHeightField.setValue(getGraphHeight());
+    graphHeightField.addActionListener(new ActionListener()
     {
-      public void stateChanged(ChangeEvent e)
+      public void actionPerformed(ActionEvent e)
       {
-        setGraphHeight(slider.getValue()/100.f);
+        setGraphHeight((float) graphHeightField.getValue());
         repaint();
       }
     });
-    optionBox.add(slider, c);
+    optionBox.add(graphHeightField, c);
     
     
     // WINDOW SIZE
@@ -362,16 +438,18 @@ public abstract class Graph extends JPanel
     
     c.gridx = 1;
     c.anchor = GridBagConstraints.WEST;
-    final JSlider trackSlider = new JSlider(1,10,(int)(getTrack()*10));
-    trackSlider.addChangeListener(new ChangeListener()
+    final TextFieldFloat trackField = new TextFieldFloat();
+    trackField.setValue(getTrack());
+    
+    trackField.addActionListener(new ActionListener()
     {
-      public void stateChanged(ChangeEvent e)
+      public void actionPerformed(ActionEvent e)
       {
-        setTrack(trackSlider.getValue()/10.f);
+        setTrack(trackField.getValue());
         repaint();
       }
     });
-    optionBox.add(trackSlider, c);
+    optionBox.add(trackField, c);
     
     // COLOUR
     final JButton button = new JButton();
@@ -421,6 +499,10 @@ public abstract class Graph extends JPanel
     JOptionPane.showMessageDialog(null, 
         optionBox, "Graph Options", 
         JOptionPane.PLAIN_MESSAGE);
+    
+    setGraphHeight((float) graphHeightField.getValue());
+    setTrack(trackField.getValue());
+    repaint();
   }
   
   private void setColorButton(final JButton button,
@@ -446,7 +528,7 @@ public abstract class Graph extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        dialog.show();
+        dialog.setVisible(true);
       }
     });
   }
