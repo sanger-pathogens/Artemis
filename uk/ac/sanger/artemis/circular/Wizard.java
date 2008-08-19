@@ -250,10 +250,12 @@ public class Wizard
         div = 100000;
       int tick = entry.getBases().getLength()/div;
       tick = tick*(div/10);
+      int tick2 = tick/2;
+      tick = tick2*2;
   
       dna_current.setGeneticMarker(block);
       dna_current.setRestrictionEnzyme(new Vector());
-      dna_current.setMinorTickInterval(tick);
+      dna_current.setMinorTickInterval(tick2);
       dna_current.setTickInterval(tick);
     }
     catch(OutOfRangeException e)

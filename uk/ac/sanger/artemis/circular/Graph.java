@@ -177,7 +177,8 @@ public abstract class Graph extends JPanel
     int basesPerLine = getCurrentDna().getBasesPerLine();
     float lineHeight = getCurrentDna().getLineHeight();
     float singleBaseWidth = getCurrentDna().getSingleBaseWidth();
-    int border2 = getCurrentDna().getBorder2();
+    int borderWidth2 = getCurrentDna().getBorderWidth2();
+    int borderHeight2 = getCurrentDna().getBorderHeight2();
     
     Bases bases = getBases();
     
@@ -205,6 +206,7 @@ public abstract class Graph extends JPanel
       gcAverage = gcAverage/nvalues;
     }
     
+    
     int minPos = (int)(lineHeight*(1-getTrack()));
     int maxPos = minPos + (int)(lineHeight*getGraphHeight());
     
@@ -224,15 +226,14 @@ public abstract class Graph extends JPanel
       else
         g2.setColor(getMinusColour());
 
-      int val = minPos - (int)( ((xA-minValue)/(maxValue-minValue))*(maxPos-minPos) );
-      
       int basePos = (i*getBaseStepSize())+1;
       int lineNumber = Math.round((float)(basePos-1)/((float)basesPerLine) + 0.5f)-1;
       
-      int xpos = (int) ((basePos-(lineNumber*basesPerLine))*singleBaseWidth)+border2;
+      int ypos = (int)(borderHeight2 + (lineNumber*lineHeight) 
+          + (lineHeight*getGraphHeight()));
       
-      int ypos = (int) ( (lineNumber*lineHeight) - (strokeSize/2.f) -
-          (getTrack()*lineHeight) + border2);
+      int val = minPos - (int)( ((xA-minValue)/(maxValue-minValue))*(maxPos-minPos) );
+      int xpos = (int) ((basePos-(lineNumber*basesPerLine))*singleBaseWidth)+borderWidth2;
       
       g2.drawLine(xpos, avVal+ypos, xpos, val+ypos);
     }

@@ -374,14 +374,15 @@ public class Block implements Transferable
     int lineNumberEnd   = Math.round((float)(bend-1)/((float)basesPerLine) + 0.5f)-1;
     float singleBaseWidth = current_dna.getSingleBaseWidth();
      
-    int border2 = current_dna.getBorder2();
+    int borderWidth2 = current_dna.getBorderWidth2();
+    int borderHeight2 = current_dna.getBorderHeight2();
     
     int ypos = (int) ( (lineNumberStart*current_dna.getLineHeight()) - (strokeSize/2.f) -
                         ((1-track.getPosition())*current_dna.getLineHeight())  +
-                        border2+current_dna.getLineHeight());
+                        borderHeight2+current_dna.getLineHeight());
 
-    int xstart = (int) ((bstart-(lineNumberStart*basesPerLine))*singleBaseWidth)+border2;
-    int xend   = (int) ((bend-(lineNumberEnd*basesPerLine))*singleBaseWidth)+border2;
+    int xstart = (int) ((bstart-(lineNumberStart*basesPerLine))*singleBaseWidth)+borderWidth2;
+    int xend   = (int) ((bend-(lineNumberEnd*basesPerLine))*singleBaseWidth)+borderWidth2;
     
     BasicStroke basicstroke = new BasicStroke(
         strokeSize,
@@ -415,29 +416,29 @@ public class Block implements Transferable
     
     if(lineNumberEnd > lineNumberStart)
     {
-      g2.drawLine(xstart,ypos,current_dna.getWidth()-border2,ypos);
+      g2.drawLine(xstart,ypos,current_dna.getWidth()-borderWidth2,ypos);
       r = new Rectangle();
       r.setLocation(xstart,ypos);
-      r.setSize(current_dna.getWidth()-border2-xstart,(int)strokeSize);
+      r.setSize(current_dna.getWidth()-borderWidth2-xstart,(int)strokeSize);
       rect.add(r);
       
       for(int i=lineNumberStart+1; i<lineNumberEnd; i++)
       {
         ypos = (int) ( (i*current_dna.getLineHeight()) - (strokeSize/2.f) -
             ((1-track.getPosition())*current_dna.getLineHeight())  +
-            border2+current_dna.getLineHeight());
-        g2.drawLine(border2,ypos,current_dna.getWidth()-border2,ypos);
+            borderHeight2+current_dna.getLineHeight());
+        g2.drawLine(borderWidth2,ypos,current_dna.getWidth()-borderWidth2,ypos);
         
         r = new Rectangle();
-        r.setLocation(border2,ypos);
-        r.setSize(current_dna.getWidth()-border2-border2,(int)strokeSize);
+        r.setLocation(borderWidth2,ypos);
+        r.setSize(current_dna.getWidth()-borderWidth2-borderWidth2,(int)strokeSize);
         rect.add(r);
       }
       
       ypos = (int) ( (lineNumberEnd*current_dna.getLineHeight()) - (strokeSize/2.f) -
           ((1-track.getPosition())*current_dna.getLineHeight())  +
-          border2+current_dna.getLineHeight());
-      xstart = border2;
+          borderHeight2+current_dna.getLineHeight());
+      xstart = borderWidth2;
     }
     
     g2.drawLine(xstart,ypos,xend,ypos);

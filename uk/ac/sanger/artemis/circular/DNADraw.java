@@ -137,9 +137,10 @@ public class DNADraw extends ScrollPanel
   private JMenuItem linearPlotOptions = new JMenuItem("Linear plot...");;
   private int numberOfLines;
   private int basesPerLine = 20000;
-  private float lineHeight = 100.f;
+  private float lineHeight = 200.f;
   private float singleBaseWidth;
-  private int border2;
+  private int borderWidth2;
+  private int borderHeight2;
   
   public DNADraw()
   {
@@ -282,6 +283,7 @@ public class DNADraw extends ScrollPanel
     if(!isCircular())
       setPreferredSize(linearPanelSize);
     
+    basesPerLine = majorTick;
     calculateTickPosistions();
   }
 
@@ -372,6 +374,12 @@ public class DNADraw extends ScrollPanel
 
   protected void drawLinearPanel(Graphics2D g2)
   {
+    RenderingHints qualityHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+        RenderingHints.VALUE_ANTIALIAS_ON); 
+    qualityHints.put(RenderingHints.KEY_RENDERING,               
+    RenderingHints.VALUE_RENDER_QUALITY); 
+    g2.setRenderingHints(qualityHints);
+    
     FontMetrics fm = g2.getFontMetrics();
     double hgt = fm.getAscent();
     g2.setColor(Color.black);
@@ -386,11 +394,15 @@ public class DNADraw extends ScrollPanel
     {
       System.out.println("No line size specified using default!");
     }
-    g2.setStroke(new BasicStroke((float)lineSize));
 
-    border2 = border.width/2;
-
-    g2.setStroke(new BasicStroke((float)lineSize));
+    borderWidth2  = border.width/2;
+    borderHeight2 = border.height/2;
+    
+    BasicStroke basicstroke = new BasicStroke(
+        lineSize,
+        BasicStroke.CAP_BUTT, 
+        BasicStroke.JOIN_MITER);
+    g2.setStroke(basicstroke);
     
     int lastBase  = getEnd();
     numberOfLines = Math.round( (lastBase/basesPerLine) + 0.5f);
@@ -404,14 +416,14 @@ public class DNADraw extends ScrollPanel
     
     for(int i=0; i<numberOfLines; i++)
     {
-      int ypos = (int) (border2+lineHeight+(lineHeight*i));
+      int ypos = (int) (borderHeight2+lineHeight+(lineHeight*i));
       
       if(i<numberOfLines-1)
-        g2.drawLine(border2,ypos,getWidth()-border2,ypos);
+        g2.drawLine(borderWidth2,ypos,getWidth()-borderWidth2,ypos);
       else
       {
-        int lastLineWidth = (int) ((lastBase-(i*basesPerLine))*singleBaseWidth)+border2;
-        g2.drawLine(border2,ypos,lastLineWidth,ypos);
+        int lastLineWidth = (int) ((lastBase-(i*basesPerLine))*singleBaseWidth)+borderWidth2;
+        g2.drawLine(borderWidth2,ypos,lastLineWidth,ypos);
       }
     }
     
@@ -427,8 +439,8 @@ public class DNADraw extends ScrollPanel
       int tick = ((Integer)enumTk.nextElement()).intValue();
       int lineNumber = Math.round((float)(tick-1)/((float)basesPerLine) + 0.5f)-1;
       
-      int ypos = (int) (border2+lineHeight+(lineHeight*lineNumber));
-      int xpos = (int) ((tick-(lineNumber*basesPerLine))*singleBaseWidth)+border2;
+      int ypos = (int) (borderHeight2+lineHeight+(lineHeight*lineNumber));
+      int xpos = (int) ((tick-(lineNumber*basesPerLine))*singleBaseWidth)+borderWidth2;
       int y = ypos+(int)((lineSize+widDash)/2);
       
       g2.drawLine(xpos,ypos,xpos,y);
@@ -443,8 +455,8 @@ public class DNADraw extends ScrollPanel
       if(lineNumber < 0)
         lineNumber = 0;
       
-      int ypos = (int) (border2+lineHeight+(lineHeight*lineNumber));
-      int xpos = (int) ((tick-(lineNumber*basesPerLine))*singleBaseWidth)+border2;
+      int ypos = (int) (borderHeight2+lineHeight+(lineHeight*lineNumber));
+      int xpos = (int) ((tick-(lineNumber*basesPerLine))*singleBaseWidth)+borderWidth2;
       int y = ypos+(int)((lineSize+widDash)/2);
       
       g2.drawLine(xpos,ypos,xpos,y);
@@ -602,7 +614,11 @@ public class DNADraw extends ScrollPanel
     }
 
     if(majorTicks == null || minorTicks == null)
+    {
       calculateTickPosistions();
+      if(majorTick>0)
+        basesPerLine = majorTick;
+    }
     //major ticks
     drawCircularTicks(g2,ddiameter,ddiameter2,diameter,origin,
                       widthPanel,heightPanel,rad,pi,widDash,fm,
@@ -744,7 +760,7 @@ public class DNADraw extends ScrollPanel
   * Calculate the tick marks to be drawn
   *
   */
-  protected void calculateTickPosistions()
+  protected void calculateTickPosistions() 
   {
     minorTicks = new Vector();
     majorTicks = new Vector();
@@ -905,11 +921,26 @@ public class DNADraw extends ScrollPanel
       drawLinearPanel(g2);
 
     if(gcGraph != null && containsGraph(gcGraph))
-      gcGraph.draw(g2);
+    {
+      if(isCircular())
+        gcGraph.draw(g2);
+      else
+        gcGraph.drawLinear(g2);
+    }
     if(gcSkewGraph != null && containsGraph(gcSkewGraph))
-      gcSkewGraph.draw(g2);
+    {
+      if(isCircular())
+        gcSkewGraph.draw(g2);
+      else
+        gcSkewGraph.drawLinear(g2);
+    }
     if(userGraph != null && containsGraph(userGraph))
-      userGraph.draw(g2);    
+    {
+      if(isCircular())
+        userGraph.draw(g2);
+      else
+        userGraph.drawLinear(g2);
+    }
   }
 
   /**
@@ -1065,18 +1096,16 @@ public class DNADraw extends ScrollPanel
     fileMenu.add(readInEntry);
     
 // print
-    final JMenu printMenu = new JMenu("Print");
+    final JMenuItem printMenu = new JMenuItem("Print...");
     fileMenu.add(printMenu);
 
-    JMenuItem print = new JMenuItem("Print postscript");
-    print.addActionListener(new ActionListener()
+    printMenu.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
         doPrintActions();
       }
     });
-    printMenu.add(print);
 
     JMenuItem printImage = new JMenuItem("Save As jpeg/png Image...");
     printImage.addActionListener(new ActionListener()
@@ -1087,7 +1116,7 @@ public class DNADraw extends ScrollPanel
         pdnai.printAsSinglePage();
       }
     });
-    printMenu.add(printImage);
+    fileMenu.add(printImage);
 
 // print preview
     JMenuItem printPreview = new JMenuItem("Print Preview...");
@@ -1349,7 +1378,7 @@ public class DNADraw extends ScrollPanel
     optionMenu.add(tracksMenu);
     
     
-    JMenuItem line = new JMenuItem("DNA Properties...");
+    /*JMenuItem line = new JMenuItem("DNA Properties...");
     line.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -1364,7 +1393,7 @@ public class DNADraw extends ScrollPanel
         f.setVisible(true);
       }
     });
-    optionMenu.add(line);
+    optionMenu.add(line);*/
 
     
     JMenuItem tickMarks = new JMenuItem("Tick marks...");
@@ -1421,6 +1450,17 @@ public class DNADraw extends ScrollPanel
     });
     optionMenu.add(reSites);
     
+    linearPlotOptions.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        showLinearPlotOptions();
+      }
+    });
+    linearPlotOptions.setEnabled(!isCircular());
+    optionMenu.add(linearPlotOptions);  
+    optionMenu.addSeparator();
+    
     final JCheckBoxMenuItem labelTick = new JCheckBoxMenuItem("Show tick numbers", labelTicks);
     labelTick.addItemListener(new ItemListener()
     {
@@ -1433,50 +1473,7 @@ public class DNADraw extends ScrollPanel
     });
     optionMenu.add(labelTick);  
 
-    
-    linearPlotOptions.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        GridBagLayout grid = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        c.ipady = 3;
-        c.ipadx = 5;
-
-        JPanel optionBox = new JPanel(grid);
-        c.gridx = 1; 
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.WEST;
-        TextFieldFloat lineHeightField = new TextFieldFloat();
-        lineHeightField.setValue(getLineHeight());
-        optionBox.add(lineHeightField, c);
-        c.gridx = 0;
-        c.anchor = GridBagConstraints.EAST;
-        optionBox.add(new JLabel("Line Height"), c);
-        
-        c.gridx = 1; 
-        c.gridy = 1;
-        c.anchor = GridBagConstraints.WEST;
-        TextFieldInt basesPerLineField = new TextFieldInt();
-        basesPerLineField.setValue(getBasesPerLine());
-        optionBox.add(basesPerLineField, c);
-        c.gridx = 0;
-        c.anchor = GridBagConstraints.EAST;
-        optionBox.add(new JLabel("Bases Per Line"), c);
-        
-        JOptionPane.showMessageDialog(DNADraw.this, optionBox,
-            "Linear Plot Options", JOptionPane.QUESTION_MESSAGE);
-        
-        setLineHeight( (float) lineHeightField.getValue() );
-        setBasesPerLine(basesPerLineField.getValue());
-        revalidate();
-        repaint();
-      }
-    });
-    linearPlotOptions.setEnabled(!isCircular());
-    optionMenu.add(linearPlotOptions);  
-    
-    final JCheckBoxMenuItem asCircular = new JCheckBoxMenuItem("Circular Plot", isCircular());
+    final JCheckBoxMenuItem asCircular = new JCheckBoxMenuItem("Display as Circular Plot", isCircular());
     asCircular.addItemListener(new ItemListener()
     {
 
@@ -1508,6 +1505,45 @@ public class DNADraw extends ScrollPanel
     return menuBar;
   }
 
+  /**
+   * Provide options for the linear plot
+   */
+  private void showLinearPlotOptions()
+  {
+    GridBagLayout grid = new GridBagLayout();
+    GridBagConstraints c = new GridBagConstraints();
+    c.ipady = 3;
+    c.ipadx = 5;
+
+    JPanel optionBox = new JPanel(grid);
+    c.gridx = 1; 
+    c.gridy = 0;
+    c.anchor = GridBagConstraints.WEST;
+    TextFieldFloat lineHeightField = new TextFieldFloat();
+    lineHeightField.setValue(getLineHeight());
+    optionBox.add(lineHeightField, c);
+    c.gridx = 0;
+    c.anchor = GridBagConstraints.EAST;
+    optionBox.add(new JLabel("Line Height"), c);
+    
+    c.gridx = 1; 
+    c.gridy = 1;
+    c.anchor = GridBagConstraints.WEST;
+    TextFieldInt basesPerLineField = new TextFieldInt();
+    basesPerLineField.setValue(getBasesPerLine());
+    optionBox.add(basesPerLineField, c);
+    c.gridx = 0;
+    c.anchor = GridBagConstraints.EAST;
+    optionBox.add(new JLabel("Bases Per Line"), c);
+    
+    JOptionPane.showMessageDialog(null, optionBox,
+        "Linear Plot Options", JOptionPane.QUESTION_MESSAGE);
+    
+    setLineHeight( (float) lineHeightField.getValue() );
+    setBasesPerLine(basesPerLineField.getValue());
+    revalidate();
+    repaint();
+  }
   
   public void setCloseAndDispose(boolean close, JFrame mainFrame)
   {
@@ -1829,15 +1865,27 @@ public class DNADraw extends ScrollPanel
   }
 
 
-  public int getBorder2()
+  public int getBorderWidth2()
   {
-    return border2;
+    return borderWidth2;
   }
 
 
-  public void setBorder2(int border2)
+  public void setBorderWidth2(int borderWidth2)
   {
-    this.border2 = border2;
+    this.borderWidth2 = borderWidth2;
+  }
+
+
+  public int getBorderHeight2()
+  {
+    return borderHeight2;
+  }
+
+
+  public void setBorderHeight2(int borderHeight2)
+  {
+    this.borderHeight2 = borderHeight2;
   }
   
   /*class BlockPanel extends JPanel
