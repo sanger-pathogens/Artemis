@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.68 2008-07-02 13:13:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.69 2008-08-20 09:46:22 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -28,6 +28,7 @@ package uk.ac.sanger.artemis.components;
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.chado.CommitFrame;
+import uk.ac.sanger.artemis.circular.DNADraw;
 import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
 import uk.ac.sanger.artemis.editor.BigPane;
@@ -63,7 +64,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.68 2008-07-02 13:13:23 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.69 2008-08-20 09:46:22 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1253,8 +1254,34 @@ public class EntryEdit extends JFrame
 
     file_menu.add(clone_entry_edit);
     file_menu.addSeparator();
+    
     printMenu();
 
+    file_menu.addSeparator();
+    final JMenuItem open_dna_viewer = new JMenuItem("Open in DNAPlot");
+    open_dna_viewer.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        Entry entry = getEntryGroup().getSequenceEntry();
+
+        final DNADraw dna = 
+          uk.ac.sanger.artemis.circular.Wizard.getDNADrawFromArtemisEntry(null, 
+            getEntryGroup(), entry);
+        final JFrame f = new JFrame("DNA Viewer");
+        dna.setCloseAndDispose(true, f);
+
+        JScrollPane jsp = new JScrollPane(dna);
+        jsp.getViewport().setBackground(Color.white);
+        f.getContentPane().add(jsp);
+        f.setJMenuBar(dna.createMenuBar());
+        f.pack();
+        Utilities.centreFrame(f);
+        f.setVisible(true);
+      }
+    });
+    file_menu.add(open_dna_viewer);
+    
     file_menu.addSeparator();
     final JMenuItem prefs = new JMenuItem("Preferences");
     prefs.addActionListener(new ActionListener()
