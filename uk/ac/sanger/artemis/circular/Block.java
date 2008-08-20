@@ -390,24 +390,14 @@ public class Block implements Transferable
         BasicStroke.JOIN_MITER);
     g2.setStroke(basicstroke);
 
-    /*if(arrowHead)
+    if(arrowTail)
     {
-      xend-=strokeSize2;
-      int[] xPoints = {xend,xend,xend+(int)strokeSize};
-      int[] yPoints = {ymid+(int)strokeSize,ymid-(int)strokeSize,ymid};
+      int[] xPoints = {xstart+(int)strokeSize,xstart+(int)strokeSize,xstart};
+      int[] yPoints = {ypos+(int)strokeSize,ypos-(int)strokeSize,ypos};
+      xstart+=strokeSize/2;
       g2.fillPolygon(xPoints,yPoints,3);
-      g2.drawLine(xstart,ymid,xend,ymid);
-   
     }
-    else if(arrowTail)
-    {
-      xstart+=strokeSize2;
-      int[] xPoints = {xstart,xstart,xstart-(int)strokeSize};
-      int[] yPoints = {ymid+(int)strokeSize,ymid-(int)strokeSize,ymid};
-      g2.fillPolygon(xPoints,yPoints,3);
-      g2.drawLine(xstart,ymid,xend,ymid);
-    }
-    else*/
+    
     
     if(rect == null)
       rect = new Vector();
@@ -441,8 +431,16 @@ public class Block implements Transferable
       xstart = borderWidth2;
     }
     
+    if(arrowHead)
+    {
+      int[] xPoints = {xend-(int)strokeSize,xend-(int)strokeSize,xend};
+      int[] yPoints = {ypos+(int)strokeSize,ypos-(int)strokeSize,ypos};
+      xend-=strokeSize/2;
+      g2.fillPolygon(xPoints,yPoints,3);
+    }
+    
     g2.drawLine(xstart,ypos,xend,ypos);
-
+    
     r = new Rectangle();
     r.setLocation(xstart,ypos);
     r.setSize(xend-xstart,(int)strokeSize);
@@ -484,48 +482,12 @@ public class Block implements Transferable
     AffineTransform origin  = g2.getTransform();
     AffineTransform newOrig = (AffineTransform)(origin.clone());
 
-    //angle taken by brush stroke
-    double stroke  = Math.toDegrees(Math.asin(getStrokeSize()/(dradii)));
-    double stroke2 = stroke/2.d;
     angStart = current_dna.getAngleFromPosition(bstart,rad) ;
     angEnd   = current_dna.getAngleFromPosition(bend,rad)  - angStart;
 
     double shift = dradii*(1.d-getTrack().getPosition());
     double bdiameter = ddiameter*getTrack().getPosition();
  
-    if(arrowHead)
-    {
-      angEnd += stroke2;
-      newOrig.rotate(Math.toRadians(-angStart-angEnd),
-                     widthPanel/2.d,heightPanel/2.d);
-      angEnd += stroke2/3.d;
-      int xmid = location.x+(int)(ddiameter-shift);
-      int ymid = location.y+(int)(dradii);
-      int[] xPoints = {xmid-(int)getStrokeSize(),xmid+(int)getStrokeSize(),xmid};
-      int[] yPoints = {ymid,ymid,ymid+(int)getStrokeSize()};
-      g2.setTransform(newOrig);
-      g2.fillPolygon(xPoints,yPoints,3);
-    }
-    else if(arrowTail)
-    {
-      angStart += stroke2;
-      newOrig.rotate(Math.toRadians(-angStart),
-                     widthPanel/2.d,heightPanel/2.d);
-      angStart -= stroke;
-      angEnd += stroke2;
-
-      int xmid = location.x+(int)(ddiameter-shift);
-      int ymid = location.y+(int)(dradii);
-      int[] xPoints = {xmid-(int)getStrokeSize(),xmid+(int)getStrokeSize(),xmid};
-      int[] yPoints = {ymid+(int)getStrokeSize(),ymid+(int)getStrokeSize(),ymid};
-      g2.setTransform(newOrig);
-      g2.fillPolygon(xPoints,yPoints,3);
-    }
- 
-
-    g2.setTransform(origin);
-    // double arcLength = Math.toRadians(angEnd)*(bdiameter/2.);
-    
     // 
     // to avoid rounding problems convert to int's 
     int strokeInt2 = Math.round(getStrokeSize()/2.f);
@@ -533,8 +495,43 @@ public class Block implements Transferable
     
     int d2 = (int)(bdiameter/2.d);
     int d  = d2*2;
+    
     int locx = location.x+(int)shift;
     int locy = location.y+(int)shift;
+    
+    if(arrowHead)
+    {
+      newOrig.rotate(Math.toRadians(-angStart-angEnd),
+          locx+d2,locy+d2);
+      
+      int xmid = locx+d;
+      int ymid = location.y+(int)(dradii);
+      int[] xPoints = {xmid-strokeInt,xmid+strokeInt,xmid};
+      int[] yPoints = {ymid-strokeInt,ymid-strokeInt,ymid};
+      g2.setTransform(newOrig);
+      g2.fillPolygon(xPoints,yPoints,3);
+      angEnd +=  Math.toDegrees(Math.atan(((float)(strokeInt)*0.8f)/(float)d2));
+    }
+    else if(arrowTail)
+    {
+      newOrig.rotate(Math.toRadians(-angStart),
+          locx+d2,locy+d2);
+
+      int xmid = locx+d;
+      int ymid = location.y+(int)(dradii);
+      int[] xPoints = {xmid-strokeInt,xmid+strokeInt,xmid};
+      int[] yPoints = {ymid+strokeInt,ymid+strokeInt,ymid};
+      g2.setTransform(newOrig);
+      g2.fillPolygon(xPoints,yPoints,3);
+      
+      double adj = Math.toDegrees(Math.atan(((float)strokeInt*0.8f)/(float)d2));
+      angStart -=  adj;
+      angEnd += adj;
+    }
+ 
+
+    g2.setTransform(origin);
+    // double arcLength = Math.toRadians(angEnd)*(bdiameter/2.);
     
     // if too small draw arc as a line
     if(Math.abs(angEnd) < 0.5d)
