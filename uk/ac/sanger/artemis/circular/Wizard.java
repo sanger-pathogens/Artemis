@@ -38,6 +38,7 @@ import javax.swing.JSeparator;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
+import uk.ac.sanger.artemis.EntryVector;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Options;
@@ -71,7 +72,7 @@ public class Wizard
                                      // option 1 - create dna display
                                      // option 2 - edit existing dna
     if(n == 0)
-      dna = getFeaturesFromFile(dna_current);
+      dna = getDNADrawFromFile(dna_current);
     else if(n == 1 || n == 2)
     {
       Vector block = new Vector();
@@ -168,114 +169,139 @@ public class Wizard
     }
   }
 
-  protected static DNADraw getFeaturesFromFile(DNADraw dna_current)
+  /**
+   * Create a DNADraw panel from a file
+   * @param dna_current
+   * @return
+   */
+  protected static DNADraw getDNADrawFromFile(DNADraw dna_current)
   {
     Options.getOptions();
     uk.ac.sanger.artemis.components.FileDialogEntrySource entrySource = 
       new uk.ac.sanger.artemis.components.FileDialogEntrySource(null, null);
-
+    
+    final EntryGroup entryGroup = new SimpleEntryGroup();
+    Entry entry;
     try
     {
-      final EntryGroup entryGroup = new SimpleEntryGroup();
-      final Entry entry = entrySource.getEntry(true);
+      entry = entrySource.getEntry(true);
       entryGroup.add(entry);
-      
-      for(int i=0; i<tracks.length; i++)
-        tracks[i].setEntry(entry);
-      
-      
-      FeatureVector features = entry.getAllFeatures();
-      Vector block = new Vector();
-
-      if(dna_current == null)
-        dna_current = new DNADraw();
-      
-      dna_current.setArtemisEntryGroup(entryGroup);
-      
-      Hashtable lineAttr = new Hashtable();
-      lineAttr.put("lsize",new Integer(1));
-      lineAttr.put("circular",new Boolean(true));
-      lineAttr.put("start",new Integer(0));
-      lineAttr.put("end",new Integer(entry.getBases().getLength()));
-
-      dna_current.setLineAttributes(lineAttr);       
-
-      for(int i=0; i<features.size(); i++)
-      {
-        Feature f = features.elementAt(i);
-        
-        RangeVector ranges = f.getLocation().getRanges();
-        
-        for(int j=0; j<ranges.size(); j++)
-        {
-          Range range = (Range) ranges.get(j);
-
-          Color col = f.getColour();
-          if(col == null || col.equals(Color.white))
-            col = Color.lightGray;
-
-          Track track;
-          
-          if(TRACK_1.isOnTrack(f))
-            track = TRACK_1;
-          else if(TRACK_2.isOnTrack(f))
-            track = TRACK_2;
-          else if(TRACK_3.isOnTrack(f))
-            track = TRACK_3;
-          else if(TRACK_4.isOnTrack(f))
-            track = TRACK_4;
-          else
-            track = TRACK_5;
-          
-          Block drawBlock = new Block(f.getIDString(), 
-              range.getStart(),
-              range.getEnd(), 
-              col, 
-              10.f, 
-              track, dna_current);
-          
-          drawBlock.setFeature(f);
-          block.add(drawBlock);
-        }
-      }
-      
-      int div;
-      if(entry.getBases().getLength() < 1000)
-        div = 100;
-      else if(entry.getBases().getLength() < 10000)
-        div = 1000;
-      else if(entry.getBases().getLength() < 100000)
-        div = 10000;
-      else
-        div = 100000;
-      int tick = entry.getBases().getLength()/div;
-      tick = tick*(div/10);
-      int tick2 = tick/2;
-      tick = tick2*2;
-  
-      dna_current.setGeneticMarker(block);
-      dna_current.setRestrictionEnzyme(new Vector());
-      dna_current.setMinorTickInterval(tick2);
-      dna_current.setTickInterval(tick);
+      return getDNADrawFromArtemisEntry(dna_current, entryGroup, entry);
     }
     catch(OutOfRangeException e)
     {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     catch(NoSequenceException e)
     {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      JOptionPane.showMessageDialog(null, "No sequence found!", 
+          "Sequence Missing", JOptionPane.WARNING_MESSAGE);
+    }
+    return null;
+  }
+  
+  /**
+   * Create a DNADraw panel from an entry
+   * @param dna_current
+   * @param entryGroup
+   * @param entry
+   * @return
+   */
+  public static DNADraw getDNADrawFromArtemisEntry(DNADraw dna_current,
+                                             final EntryGroup entryGroup,
+                                             final Entry entry)
+  {
+    for(int i=0; i<tracks.length; i++)
+      tracks[i].setEntry(entry);
+          
+    FeatureVector features = entry.getAllFeatures();
+    Vector block = new Vector();
+
+    if(dna_current == null)
+      dna_current = new DNADraw();
+
+    dna_current.setArtemisEntryGroup(entryGroup);
+
+    Hashtable lineAttr = new Hashtable();
+    lineAttr.put("lsize", new Integer(1));
+    lineAttr.put("circular", new Boolean(true));
+    lineAttr.put("start", new Integer(0));
+    lineAttr.put("end", new Integer(entry.getBases().getLength()));
+
+    dna_current.setLineAttributes(lineAttr);
+
+    for(int i = 0; i < features.size(); i++)
+    {
+      Feature f = features.elementAt(i);
+
+      RangeVector ranges = f.getLocation().getRanges();
+
+      for(int j = 0; j < ranges.size(); j++)
+      {
+        Range range = (Range) ranges.get(j);
+
+        Color col = f.getColour();
+        if(col == null || col.equals(Color.white))
+          col = Color.lightGray;
+
+        Track track;
+
+        if(TRACK_1.isOnTrack(f))
+          track = TRACK_1;
+        else if(TRACK_2.isOnTrack(f))
+          track = TRACK_2;
+        else if(TRACK_3.isOnTrack(f))
+          track = TRACK_3;
+        else if(TRACK_4.isOnTrack(f))
+          track = TRACK_4;
+        else
+          track = TRACK_5;
+
+        Block drawBlock = new Block(f.getIDString(), range.getStart(), range
+            .getEnd(), col, 10.f, track, dna_current);
+
+        drawBlock.setFeature(f);
+        block.add(drawBlock);
+      }
+    }
+
+    int div;
+    if(entry.getBases().getLength() < 1000)
+      div = 100;
+    else if(entry.getBases().getLength() < 10000)
+      div = 1000;
+    else if(entry.getBases().getLength() < 100000)
+      div = 10000;
+    else
+      div = 100000;
+    int tick = entry.getBases().getLength() / div;
+    tick = tick * (div / 10);
+    int tick2 = tick / 2;
+    tick = tick2 * 2;
+
+    dna_current.setGeneticMarker(block);
+    dna_current.setRestrictionEnzyme(new Vector());
+    dna_current.setMinorTickInterval(tick2);
+    dna_current.setTickInterval(tick);
+
+    EntryVector entries = entryGroup.getActiveEntries();
+    for(int i=0; i<entries.size(); i++)
+    {
+      Entry this_entry = entries.elementAt(i);
+      if(!this_entry.getName().equals(entry.getName()))
+        addFeaturesFromEntry(this_entry, dna_current);
     }
     return dna_current;
   }
   
-  
-  
-  
-  protected static DNADraw readEntry(final DNADraw dna_current,
-                                     final Bases bases)
+  /**
+   * Read a new entry from a file
+   * @param dna_current
+   * @param bases
+   * @return
+   */ 
+  public static DNADraw readEntry(final DNADraw dna_current,
+                                  final Bases bases)
   {
     Options.getOptions();
     uk.ac.sanger.artemis.components.FileDialogEntrySource entrySource = 
@@ -286,34 +312,7 @@ public class Wizard
       final Entry entry = entrySource.getEntry(bases,true);
       dna_current.getArtemisEntryGroup().add(entry);
 
-      FeatureVector features = entry.getAllFeatures();
-
-      Track track = addTrack(entry);
-      
-      for(int i=0; i<features.size(); i++)
-      {
-        Feature f = features.elementAt(i);
-        RangeVector ranges = f.getLocation().getRanges();
-        
-        for(int j=0; j<ranges.size(); j++)
-        {
-          Range range = (Range) ranges.get(j);
-
-          Color col = f.getColour();
-          if(col == null || col.equals(Color.white))
-            col = Color.lightGray;
-          
-          Block drawBlock = new Block(f.getIDString(), 
-              range.getStart(),
-              range.getEnd(), 
-              col, 
-              10.f, 
-              track, dna_current);
-          
-          drawBlock.setFeature(f);
-          dna_current.getGeneticMarker().add(drawBlock);
-        }
-      }
+      addFeaturesFromEntry(entry, dna_current);
     }
     catch(OutOfRangeException e)
     {
@@ -326,8 +325,43 @@ public class Wizard
     return dna_current;
   }
   
-  
-  
+  /**
+   * Add features from an entry to a new track
+   * @param entry
+   * @param dna_current
+   */
+  private static void addFeaturesFromEntry(final Entry entry, 
+                                   final DNADraw dna_current)
+  {
+    FeatureVector features = entry.getAllFeatures();
+
+    Track track = addTrack(entry);
+    
+    for(int i=0; i<features.size(); i++)
+    {
+      Feature f = features.elementAt(i);
+      RangeVector ranges = f.getLocation().getRanges();
+      
+      for(int j=0; j<ranges.size(); j++)
+      {
+        Range range = (Range) ranges.get(j);
+
+        Color col = f.getColour();
+        if(col == null || col.equals(Color.white))
+          col = Color.lightGray;
+        
+        Block drawBlock = new Block(f.getIDString(), 
+            range.getStart(),
+            range.getEnd(), 
+            col, 
+            10.f, 
+            track, dna_current);
+        
+        drawBlock.setFeature(f);
+        dna_current.getGeneticMarker().add(drawBlock);
+      }
+    }
+  }
   
   
 

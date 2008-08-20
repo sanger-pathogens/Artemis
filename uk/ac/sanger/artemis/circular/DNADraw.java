@@ -1058,7 +1058,7 @@ public class DNADraw extends ScrollPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        Wizard.getFeaturesFromFile(DNADraw.this);
+        Wizard.getDNADrawFromFile(DNADraw.this);
         majorTicks = null;
 
         if(gcGraph != null)
@@ -1132,7 +1132,11 @@ public class DNADraw extends ScrollPanel
     fileMenu.add(new JSeparator());
 
 
-    JMenuItem fileMenuExit = new JMenuItem("Exit");
+    final JMenuItem fileMenuExit;
+    if(!close)
+      fileMenuExit = new JMenuItem("Exit");
+    else
+      fileMenuExit = new JMenuItem("Close");
     fileMenuExit.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)

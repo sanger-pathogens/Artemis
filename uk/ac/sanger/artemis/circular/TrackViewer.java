@@ -40,6 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureKeyPredicate;
 import uk.ac.sanger.artemis.FeatureKeyQualifierPredicate;
@@ -129,8 +130,11 @@ class TrackViewer extends JFrame
       else
         key = new Key("-");
       
+      Entry entry = dnaDraw.getArtemisEntryGroup().getDefaultEntry();
+      if(entry == null)
+        entry = dnaDraw.getArtemisEntryGroup().getSequenceEntry();
       keyChoice[i] = new KeyChoice(
-          dnaDraw.getArtemisEntryGroup().getDefaultEntry().getEntryInformation(),key);
+          entry.getEntryInformation(),key);
 
       optionBox.add(keyChoice[i], c);
       
@@ -167,7 +171,7 @@ class TrackViewer extends JFrame
       else
       {
         qualifierChoice[i] = new QualifierChoice(
-            dnaDraw.getArtemisEntryGroup().getDefaultEntry().getEntryInformation(),key, qualifier, false);
+            entry.getEntryInformation(),key, qualifier, false);
         optionBox.add(qualifierChoice[i], c);
         c.gridx = 4;
         qualifierValue[i] = new JTextField(track.getQualifierValue(), 10);
