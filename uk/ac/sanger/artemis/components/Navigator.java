@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Navigator.java,v 1.1 2004-06-09 09:47:10 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Navigator.java,v 1.2 2008-09-02 15:50:15 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -39,11 +39,123 @@ import javax.swing.*;
  *  This component allows the user to navigate around the Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: Navigator.java,v 1.1 2004-06-09 09:47:10 tjc Exp $
+ *  @version $Id: Navigator.java,v 1.2 2008-09-02 15:50:15 tjc Exp $
  **/
 
 public class Navigator extends JFrame
-    implements EntryGroupChangeListener {
+    implements EntryGroupChangeListener 
+{
+  private static final long serialVersionUID = 1L;
+
+  /**
+   *  The JRadioButton that selects the goto base function.
+   **/
+  final JRadioButton goto_base_button;
+
+  /**
+   *  The JRadioButton that selects the goto base pattern function.
+   **/
+  final JRadioButton goto_base_pattern_button;
+
+  /**
+   *  The JRadioButton that selects the find amino acid sequence function.
+   **/
+  final JRadioButton goto_aa_pattern_button;
+
+  /**
+   *  The JRadioButton that selects the goto feature qualifier value function.
+   **/
+  final JRadioButton goto_qualifier_button;
+
+  /**
+   *  The JRadioButton that selects the goto gene name function.
+   **/
+  final JRadioButton goto_gene_name_button;
+
+  /**
+   *  The JRadioButton that selects the goto feature key function.
+   **/
+  final JRadioButton goto_key_button;
+
+  /**
+   *  This contains the pattern to search for if the user has selected the
+   *  goto base function.
+   **/
+  final JTextField goto_base_text;
+
+  /**
+   *  This contains the pattern to search for if the user has selected the
+   *  goto base pattern function.
+   **/
+  final JTextField goto_base_pattern_text;
+
+  /**
+   *  This contains the pattern to search for if the user has selected the
+   *  goto amino acid function.
+   **/
+  final JTextField goto_aa_pattern_text;
+
+  /**
+   *  This contains the pattern to search for if the user has selected the
+   *  goto qualifier value function.
+   **/
+  final JTextField goto_qualifier_textfield;
+
+  /**
+   *  This contains the pattern to search for if the user has selected the
+   *  goto gene name function.
+   **/
+  final JTextField goto_gene_name_textfield;
+
+  /**
+   *  This contains the key to search for if the user has selected the
+   *  goto key function.
+   **/
+  final JTextField goto_feature_key_textfield;
+
+  /**
+   *  The user selects this JRadioButton if the search should start at first/last
+   *  base or first/last feature (depending on the search type).
+   **/
+  JRadioButton start_at_an_end_button;
+
+  /**
+   *  The user selects this JRadioButton if the search should start at the
+   *  position of the current selection.
+   **/
+  final JRadioButton start_at_selection_button;
+
+  /**
+   *  If checked the search will go backwards.
+   **/
+  final JCheckBox search_backward_button;
+
+  /**
+   *  If checked the search will ignore the case of the query and subject.
+   **/
+  final JCheckBox ignore_case_button;
+
+  /**
+   *  If checked the search text is allowed to match a substring of a
+   *  qualifier value.
+   **/
+  final JCheckBox partial_match_button;
+
+  /**
+   *  The GotoEventSource object that was passed to the constructor.
+   **/
+  final GotoEventSource goto_event_source;
+
+  /**
+   *  The EntryGroup object that was passed to the constructor.
+   **/
+  final EntryGroup entry_group;
+
+  /**
+   *  This is the Selection that was passed to the constructor.
+   **/
+  final private Selection selection;
+  
   /**
    *  Create a new Navigator component.
    *  @param selection The Selection that the commands will operate on.
@@ -53,7 +165,8 @@ public class Navigator extends JFrame
    **/
   public Navigator (final Selection selection,
                     final GotoEventSource goto_event_source,
-                    final EntryGroup entry_group) {
+                    final EntryGroup entry_group) 
+  {
     super ("Artemis Navigator");
 
     this.selection = selection;
@@ -273,9 +386,9 @@ public class Navigator extends JFrame
 
     option_button_panel.setLayout (new FlowLayout (FlowLayout.LEFT));
 
-    search_backward_button = new JRadioButton ("Search Backward", false);
-    ignore_case_button = new JRadioButton ("Ignore Case", true);
-    partial_match_button = new JRadioButton ("Allow Substring Matches", true);
+    search_backward_button = new JCheckBox ("Search Backward", false);
+    ignore_case_button = new JCheckBox ("Ignore Case", true);
+    partial_match_button = new JCheckBox ("Allow Substring Matches", true);
 
     option_button_panel.add (search_backward_button);
     option_button_panel.add (ignore_case_button);
@@ -822,112 +935,5 @@ public class Navigator extends JFrame
     return entry_group;
   }
 
-  /**
-   *  The JRadioButton that selects the goto base function.
-   **/
-  final JRadioButton goto_base_button;
 
-  /**
-   *  The JRadioButton that selects the goto base pattern function.
-   **/
-  final JRadioButton goto_base_pattern_button;
-
-  /**
-   *  The JRadioButton that selects the find amino acid sequence function.
-   **/
-  final JRadioButton goto_aa_pattern_button;
-
-  /**
-   *  The JRadioButton that selects the goto feature qualifier value function.
-   **/
-  final JRadioButton goto_qualifier_button;
-
-  /**
-   *  The JRadioButton that selects the goto gene name function.
-   **/
-  final JRadioButton goto_gene_name_button;
-
-  /**
-   *  The JRadioButton that selects the goto feature key function.
-   **/
-  final JRadioButton goto_key_button;
-
-  /**
-   *  This contains the pattern to search for if the user has selected the
-   *  goto base function.
-   **/
-  final JTextField goto_base_text;
-
-  /**
-   *  This contains the pattern to search for if the user has selected the
-   *  goto base pattern function.
-   **/
-  final JTextField goto_base_pattern_text;
-
-  /**
-   *  This contains the pattern to search for if the user has selected the
-   *  goto amino acid function.
-   **/
-  final JTextField goto_aa_pattern_text;
-
-  /**
-   *  This contains the pattern to search for if the user has selected the
-   *  goto qualifier value function.
-   **/
-  final JTextField goto_qualifier_textfield;
-
-  /**
-   *  This contains the pattern to search for if the user has selected the
-   *  goto gene name function.
-   **/
-  final JTextField goto_gene_name_textfield;
-
-  /**
-   *  This contains the key to search for if the user has selected the
-   *  goto key function.
-   **/
-  final JTextField goto_feature_key_textfield;
-
-  /**
-   *  The user selects this JRadioButton if the search should start at first/last
-   *  base or first/last feature (depending on the search type).
-   **/
-  JRadioButton start_at_an_end_button;
-
-  /**
-   *  The user selects this JRadioButton if the search should start at the
-   *  position of the current selection.
-   **/
-  final JRadioButton start_at_selection_button;
-
-  /**
-   *  If checked the search will go backwards.
-   **/
-  final JRadioButton search_backward_button;
-
-  /**
-   *  If checked the search will ignore the case of the query and subject.
-   **/
-  final JRadioButton ignore_case_button;
-
-  /**
-   *  If checked the search text is allowed to match a substring of a
-   *  qualifier value.
-   **/
-  final JRadioButton partial_match_button;
-
-  /**
-   *  The GotoEventSource object that was passed to the constructor.
-   **/
-  final GotoEventSource goto_event_source;
-
-  /**
-   *  The EntryGroup object that was passed to the constructor.
-   **/
-  final EntryGroup entry_group;
-
-  /**
-   *  This is the Selection that was passed to the constructor.
-   **/
-  final private Selection selection;
 }
