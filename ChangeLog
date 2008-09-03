@@ -1,5 +1,7 @@
 Version 10.+/7.+
 
+	Added print to PostScript option in Artemis and ACT
+
     Optimisation of reading in user graphs.
 
 	New Edit->Selected Feature(s)->Convert Keys option to convert
