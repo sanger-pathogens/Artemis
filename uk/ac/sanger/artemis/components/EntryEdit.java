@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.69 2008-08-20 09:46:22 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.70 2008-09-03 10:58:33 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -64,7 +64,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.69 2008-08-20 09:46:22 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.70 2008-09-03 10:58:33 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1593,7 +1593,7 @@ public class EntryEdit extends JFrame
 
   private void printMenu()
   {
-    JMenuItem printImage = new JMenuItem("Print Image Files (png/jpeg)...");
+    JMenuItem printImage = new JMenuItem("Save As Image Files (png/jpeg)...");
     printImage.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -1603,6 +1603,18 @@ public class EntryEdit extends JFrame
       }
     });
     file_menu.add(printImage);
+    
+    JMenuItem printPS = new JMenuItem("Print...");
+    printPS.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        PrintArtemis part = new PrintArtemis(EntryEdit.this);
+        part.validate();
+        part.doPrintActions();
+      }
+    });
+    file_menu.add(printPS);
 
 // print preview
     JMenuItem printPreview = new JMenuItem("Print Preview");

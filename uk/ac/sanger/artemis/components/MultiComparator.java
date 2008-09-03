@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.21 2008-06-16 12:11:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/MultiComparator.java,v 1.22 2008-09-03 10:58:33 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -53,7 +53,7 @@ import javax.swing.JMenuItem;
  *  to keep them synchronized.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: MultiComparator.java,v 1.21 2008-06-16 12:11:01 tjc Exp $
+ *  @version $Id: MultiComparator.java,v 1.22 2008-09-03 10:58:33 tjc Exp $
  **/
 
 public class MultiComparator extends JFrame 
@@ -727,8 +727,7 @@ public class MultiComparator extends JFrame
    **/ 
   private void printMenu()
   {
-    JMenuItem printImage = new JMenuItem("Print Image Files (png/jpeg)...");
-    PrintACT pact = new PrintACT(this);
+    JMenuItem printImage = new JMenuItem("Save As Image Files (png/jpeg)...");
     printImage.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -738,6 +737,17 @@ public class MultiComparator extends JFrame
       }
     });
     file_menu.add(printImage);
+    
+    JMenuItem printPS = new JMenuItem("Print...");
+    printPS.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        PrintACT pact = new PrintACT(MultiComparator.this);
+        pact.doPrintActions();
+      }
+    });
+    file_menu.add(printPS);
 
 // print preview
     JMenuItem printPreview = new JMenuItem("Print Preview");
