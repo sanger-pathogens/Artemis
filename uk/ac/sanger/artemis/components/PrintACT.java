@@ -22,18 +22,33 @@
 package uk.ac.sanger.artemis.components;
 
 import java.awt.*;
-import java.awt.print.Paper;
-import java.awt.print.PageFormat;
-import java.awt.print.PrinterJob;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.awt.event.*;
-import javax.swing.*;
-import java.util.*;
-import java.io.*;
-import javax.swing.border.*;
-import javax.imageio.*;
-import javax.imageio.stream.*;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.Box;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.KeyStroke;
 
 import uk.ac.sanger.artemis.editor.ScrollPanel;
 
@@ -42,9 +57,9 @@ import uk.ac.sanger.artemis.editor.ScrollPanel;
 * Use to print images from ACT
 *
 */
-public class PrintACT extends ScrollPanel
+public class PrintACT extends ScrollPanel implements Printable
 {
-
+  private static final long serialVersionUID = 1L;
   /** act display to create image from */
   private MultiComparator mc;
   private JCheckBox drawLabels = new JCheckBox("Show labels on alignment");
@@ -173,7 +188,7 @@ public class PrintACT extends ScrollPanel
     menuBar.add(filemenu);
 
 // print png/jpeg
-    JMenuItem printImage = new JMenuItem("Print Image Files (png/jpeg)...");
+    JMenuItem printImage = new JMenuItem("Save As Image Files (png/jpeg)...");
     printImage.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -182,6 +197,17 @@ public class PrintACT extends ScrollPanel
       }
     });
     filemenu.add(printImage);
+    
+//  print PostScript
+    JMenuItem printPS = new JMenuItem("Print...");
+    printPS.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        doPrintActions();
+      }
+    });
+    filemenu.add(printPS);
 
 // close
     filemenu.add(new JSeparator());
@@ -299,6 +325,25 @@ public class PrintACT extends ScrollPanel
   */
   private RenderedImage createImage()
   {
+    Dimension d = getImageSize();
+
+    // Create a buffered image in which to draw
+    BufferedImage bufferedImage = new BufferedImage(
+                                  d.width,d.height,
+                                  BufferedImage.TYPE_INT_RGB);
+    // Create a graphics contents on the buffered image
+    Graphics2D g2d = bufferedImage.createGraphics();
+    paintComponent(g2d);
+
+    return bufferedImage;
+  }
+
+  /**
+   * Get the size of the image
+   * @return
+   */
+  private Dimension getImageSize()
+  {
     int width  = 999999;
     int height = 0;
     for(int i = 0; i < mc.getFeatureDisplayArray().length; ++i)
@@ -342,19 +387,9 @@ public class PrintACT extends ScrollPanel
           width = mc.getAlignmentViewerArray()[i].getWidth();
       }
     }
-
-    // Create a buffered image in which to draw
-    BufferedImage bufferedImage = new BufferedImage(
-                                  width,height,
-                                  BufferedImage.TYPE_INT_RGB);
-    // Create a graphics contents on the buffered image
-    Graphics2D g2d = bufferedImage.createGraphics();
-    paintComponent(g2d);
-
-    return bufferedImage;
+    return new Dimension(width, height);
   }
-
-
+  
   /**
   *
   * Write out the image
@@ -375,6 +410,51 @@ public class PrintACT extends ScrollPanel
       System.out.println("Java 1.4+ is required");
       e.printStackTrace();
     }
+  }
+  
+  protected void doPrintActions()
+  {
+    final PrinterJob pj=PrinterJob.getPrinterJob();
+    pj.setPrintable(PrintACT.this);
+    pj.printDialog();
+    try
+    {
+      pj.print();
+    }
+    catch (Exception PrintException) {}
+  }
+  
+  /**
+  *
+  * The method @print@ must be implemented for @Printable@ interface.
+  * Parameters are supplied by system.
+  *
+  */
+  public int print(Graphics g, PageFormat pf, int pageIndex) throws PrinterException
+  {
+    Graphics2D g2 = (Graphics2D) g;
+
+//  RepaintManager.currentManager(this).setDoubleBufferingEnabled(false);
+    Dimension d = getImageSize();    //get size of document
+    double panelWidth  = d.width;    //width in pixels
+    double panelHeight = d.height;   //height in pixels
+    
+    double pageHeight = pf.getImageableHeight();   //height of printer page
+    double pageWidth  = pf.getImageableWidth();    //width of printer page
+    double scale = pageWidth/panelWidth;
+    int totalNumPages = (int)Math.ceil(scale * panelHeight / pageHeight);
+    // Make sure not print empty pages
+    if(pageIndex >= totalNumPages)
+     return Printable.NO_SUCH_PAGE;
+
+    // Shift Graphic to line up with beginning of print-imageable region
+    g2.translate(pf.getImageableX(), pf.getImageableY());
+    // Shift Graphic to line up with beginning of next page to print
+    g2.translate(0f, -pageIndex*pageHeight);
+    // Scale the page so the width fits...
+    g2.scale(scale, scale);
+    paintComponent(g2);
+    return Printable.PAGE_EXISTS;
   }
 
 }

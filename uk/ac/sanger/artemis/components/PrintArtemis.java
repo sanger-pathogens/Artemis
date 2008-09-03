@@ -24,11 +24,13 @@ package uk.ac.sanger.artemis.components;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
-import javax.imageio.*;
-import javax.imageio.stream.*;
 
 import uk.ac.sanger.artemis.editor.ScrollPanel;
 
@@ -37,8 +39,9 @@ import uk.ac.sanger.artemis.editor.ScrollPanel;
 * Use to print images from Artemis
 *
 */
-public class PrintArtemis extends ScrollPanel
+public class PrintArtemis extends ScrollPanel implements Printable 
 {
+  private static final long serialVersionUID = 1L;
 
   /** entry to create image from */
   private EntryEdit entry;
@@ -183,7 +186,7 @@ public class PrintArtemis extends ScrollPanel
     menuBar.add(filemenu);
 
 // print png/jpeg
-    JMenuItem printImage = new JMenuItem("Print Image Files (png/jpeg)...");
+    JMenuItem printImage = new JMenuItem("Save As Image Files (png/jpeg)...");
     printImage.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -192,6 +195,17 @@ public class PrintArtemis extends ScrollPanel
       }
     });
     filemenu.add(printImage);
+    
+//  print PostScript
+    JMenuItem printPS = new JMenuItem("Print...");
+    printPS.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        doPrintActions();
+      }
+    });
+    filemenu.add(printPS);
 
 // close
     filemenu.add(new JSeparator());
@@ -421,13 +435,23 @@ public class PrintArtemis extends ScrollPanel
             "This option requires Java 1.4 or higher.");
     }
   }
-
+  
+  protected void doPrintActions()
+  {
+    final PrinterJob pj=PrinterJob.getPrinterJob();
+    pj.setPrintable(PrintArtemis.this);
+    pj.printDialog();
+    try
+    {
+      pj.print();
+    }
+    catch (Exception PrintException) {}
+  }
+  
   /**
-  *
   *  Returns a generated image
   *  @param pageIndex   page number
   *  @return            image
-  *
   */
   private RenderedImage createImage()
   {
@@ -445,12 +469,10 @@ public class PrintArtemis extends ScrollPanel
 
 
   /**
-  *
   * Write out the image
   * @param image        image
   * @param file         file to write image to
   * @param type         type of image
-  *
   */
   private void writeImageToFile(RenderedImage image,
                                File file, String type)
@@ -466,4 +488,43 @@ public class PrintArtemis extends ScrollPanel
     }
   }
 
+  /**
+  *
+  * The method @print@ must be implemented for @Printable@ interface.
+  * Parameters are supplied by system.
+  *
+  */
+  public int print(Graphics g, PageFormat pf, int pageIndex) throws PrinterException
+  {
+    setImageSize();
+    Graphics2D g2 = (Graphics2D) g;
+
+//  RepaintManager.currentManager(this).setDoubleBufferingEnabled(false);
+    Dimension d = this.getSize();    //get size of document
+    double panelWidth  = d.width;    //width in pixels
+    double panelHeight = d.height;   //height in pixels
+    
+    if(panelWidth == 0)
+    {
+      d = this.getPreferredSize();
+      panelWidth  = d.width;    
+      panelHeight = d.height;  
+    }
+    double pageHeight = pf.getImageableHeight();   //height of printer page
+    double pageWidth  = pf.getImageableWidth();    //width of printer page
+    double scale = pageWidth/panelWidth;
+    int totalNumPages = (int)Math.ceil(scale * panelHeight / pageHeight);
+    // Make sure not print empty pages
+    if(pageIndex >= totalNumPages)
+     return Printable.NO_SUCH_PAGE;
+
+    // Shift Graphic to line up with beginning of print-imageable region
+    g2.translate(pf.getImageableX(), pf.getImageableY());
+    // Shift Graphic to line up with beginning of next page to print
+    g2.translate(0f, -pageIndex*pageHeight);
+    // Scale the page so the width fits...
+    g2.scale(scale, scale);
+    paintComponent(g2);
+    return Printable.PAGE_EXISTS;
+  }
 }
