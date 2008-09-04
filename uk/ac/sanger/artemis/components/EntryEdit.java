@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.70 2008-09-03 10:58:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.71 2008-09-04 15:49:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -46,11 +46,13 @@ import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.io.GenbankTblOutputStream;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+
 import javax.swing.*;
 
 import com.sshtools.j2ssh.sftp.FileAttributes;
@@ -64,7 +66,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.70 2008-09-03 10:58:33 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.71 2008-09-04 15:49:28 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1139,6 +1141,7 @@ public class EntryEdit extends JFrame
         final JMenu save_as         = new JMenu("New File");
         final JMenu save_as_embl    = new JMenu("EMBL Format");
         final JMenu save_as_genbank = new JMenu("GENBANK Format");
+        final JMenu save_as_genbank_only = new JMenu("Sequin Table Format");
         final JMenu save_as_gff     = new JMenu("GFF Format");
         final JMenu save_embl_only  = new JMenu("EMBL Submission Format");
         final int entry_group_size  = getEntryGroup().size();
@@ -1176,9 +1179,17 @@ public class EntryEdit extends JFrame
             new SaveEntryAsGenbankActionListener(this, this_entry);
 
           final JMenuItem save_as_genbank_item = new JMenuItem(entry_name);
-
           save_as_genbank_item.addActionListener(save_as_genbank_listener);
 
+          final JMenuItem save_as_genbank_only_item = new JMenuItem(entry_name);
+          save_as_genbank_only_item.addActionListener(new ActionListener()
+          {
+            public void actionPerformed(ActionEvent e)
+            {
+              GenbankTblOutputStream.writeEntryAsTbl(this_entry, EntryEdit.this); 
+            }
+          });
+          
           final ActionListener save_as_gff_listener =
             new SaveEntryAsGFFActionListener(this, this_entry);
 
@@ -1209,6 +1220,7 @@ public class EntryEdit extends JFrame
           save_as.add(save_as_item);
           save_as_embl.add(save_as_embl_item);
           save_as_genbank.add(save_as_genbank_item);
+          save_as_genbank_only.add(save_as_genbank_only_item);
           save_as_gff.add(save_as_gff_item);
           save_embl_only.add(save_embl_only_item);
         }
@@ -1216,6 +1228,7 @@ public class EntryEdit extends JFrame
         save_as_menu.add(save_as);
         save_as_menu.add(save_as_embl);
         save_as_menu.add(save_as_genbank);
+        save_as_menu.add(save_as_genbank_only);
         save_as_menu.add(save_as_gff);
         save_as_menu.addSeparator();
         save_as_menu.add(save_embl_only);
