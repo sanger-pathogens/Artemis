@@ -149,6 +149,10 @@ public class GenbankTblOutputStream
     {
       Qualifier current_qualifier = (Qualifier) qualifiers.elementAt(j);
 
+      if(feature.getKey().getKeyString().equals("CDS") &&
+         current_qualifier.getName ().equals("translation"))
+        continue;
+      
       final QualifierInfo qualifier_info =
         entry_information.getQualifierInfo (current_qualifier.getName ());
 
@@ -167,6 +171,7 @@ public class GenbankTblOutputStream
           qualifierStr = qualifierStr.substring(1);
         if(qualifierStr.endsWith("\""))
           qualifierStr = qualifierStr.substring(0, qualifierStr.length()-1);
+        
         writer.write("\n\t\t\t"+current_qualifier.getName()+"\t"+
             qualifierStr);
       }
