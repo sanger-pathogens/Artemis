@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/FeatureComparator.java,v 1.1 2004-06-09 09:49:22 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/FeatureComparator.java,v 1.2 2008-09-08 10:36:30 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import java.util.Comparator;
  *  example ordering: 1..100, 1..200, 50..100, 150..250.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureComparator.java,v 1.1 2004-06-09 09:49:22 tjc Exp $
+ *  @version $Id: FeatureComparator.java,v 1.2 2008-09-08 10:36:30 tjc Exp $
  **/
 
 public class FeatureComparator implements Comparator {
@@ -167,6 +167,7 @@ public class FeatureComparator implements Comparator {
 
   final private String keys_to_sort_first[] = {
     "source",
+    "gene",
     "CDS"
   };
 }
