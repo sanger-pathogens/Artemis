@@ -98,6 +98,7 @@ public class GeneEdit
       DatabaseEntrySource entry_source = new DatabaseEntrySource();
       entry_source.setLocation(true);
       final String location = entry_source.getLocation();
+      pfield = entry_source.getPfield();
       
       final GmodDAO dao = getDAO(location);
       showFeatureSearchPanel(dao, location);
