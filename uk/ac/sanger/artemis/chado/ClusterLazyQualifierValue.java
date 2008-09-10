@@ -159,6 +159,10 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
     {
       final List featureIds = new Vector();
       String f_id[] = ArtemisUtils.getString(strings, "object_id=").split("=");
+      
+      if(f_id.length < 2)
+        return value;
+      
       featureIds.add( Integer.valueOf(f_id[1]) );
       final Document document = ((DocumentEntry)feature.getEntry()).getDocument();
       clusters = ((DatabaseDocument)document).getClustersByFeatureIds(featureIds);
