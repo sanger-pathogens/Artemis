@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.24 2008-06-11 15:12:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.25 2008-09-10 10:40:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -29,6 +29,8 @@ import uk.ac.sanger.artemis.util.*;
 
 import java.io.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
@@ -38,7 +40,7 @@ import javax.swing.JOptionPane;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.24 2008-06-11 15:12:20 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.25 2008-09-10 10:40:57 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -331,7 +333,7 @@ abstract public class SimpleDocumentEntry
 
     final FeatureEnumeration feature_enum = new_entry.features();
 
-    final StringBuffer failed = new StringBuffer();
+    Set failed = null;
     while(feature_enum.hasMoreFeatures()) 
     {
       final Feature new_feature = feature_enum.nextFeature();
@@ -345,7 +347,11 @@ abstract public class SimpleDocumentEntry
           if(f != null)
           {
             if(forcedAdd(f) == null)
-              failed.append(new_feature.getKey().getKeyString()+"\n");
+            {
+              if(failed == null)
+                failed = new HashSet();
+              failed.add(new_feature.getKey().getKeyString());
+            }
           }
         }
         else
@@ -367,12 +373,14 @@ abstract public class SimpleDocumentEntry
       }
     }
 
-    if(!failed.toString().equals(""))
+    if(failed != null)
+    {
       JOptionPane.showMessageDialog(null, 
           "Failed to use the following keys\n"+
           failed.toString(),
           "Warning - unknown keys",
           JOptionPane.WARNING_MESSAGE);
+    }
     
     final Sequence new_sequence = new_entry.getSequence();
 
