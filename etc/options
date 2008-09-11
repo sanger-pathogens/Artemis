@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.49 2008-08-01 12:41:46 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.50 2008-09-11 10:23:37 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -405,7 +405,7 @@ extra_keys = \
     TMM signalP
 
 # this list is added to the keys from the feature_keys_gff file
-extra_keys_gff =
+extra_keys_gff = CDS
 
 # Names of qualifiers to search when attempting to find the primary or display
 # name of a gene.  These qualifiers names are searched in order when looking
@@ -772,6 +772,15 @@ feature_dna_programs = \
 
 application_programs = \
     jalview
+
+ncbi_dna_search = \
+   blastn http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?PAGE=Nucleotides&PROGRAM=blastn&MEGABLAST=on&BLAST_PROGRAMS=blastn&PAGE_TYPE=BlastSearch&DATABASE=nr&SHOW_DEFAULTS=on&QUERY= \
+   blastx http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?PAGE=Translations&PROGRAM=blastx&BLAST_PROGRAMS=blastx&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&QUERY= \
+   tblastx http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?PAGE=Translations&PROGRAM=tblastx&BLAST_PROGRAMS=tblastx&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&QUERY=
+
+ncbi_protein_search = \
+   blastp http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?PAGE=Proteins&PROGRAM=blastp&BLAST_PROGRAMS=blastp&PAGE_TYPE=BlastSearch&QUERY= \
+   tblastn http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?PAGE=Translations&PROGRAM=tblastn&BLAST_PROGRAMS=tblastn&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&QUERY=
 
 mess_fasta_hits = 10
 

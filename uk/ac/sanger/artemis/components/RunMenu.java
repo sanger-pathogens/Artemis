@@ -20,13 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.10 2008-07-24 13:49:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.11 2008-09-11 10:26:30 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
+import uk.ac.sanger.artemis.editor.BrowserControl;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.InvalidKeyException;
 
@@ -43,7 +44,7 @@ import javax.swing.JMenuItem;
  *  A JMenu of external commands/functions.
  *
  *  @author Kim Rutherford
- *  @version $Id: RunMenu.java,v 1.10 2008-07-24 13:49:00 tjc Exp $
+ *  @version $Id: RunMenu.java,v 1.11 2008-09-11 10:26:30 tjc Exp $
  **/
 
 public class RunMenu extends SelectionMenu 
@@ -68,20 +69,25 @@ public class RunMenu extends SelectionMenu
   {
     super(frame, menu_name, selection);
 
-    final ExternalProgramVector external_programs =
-            Options.getOptions().getExternalPrograms();
+    addNCBISearches(selection);
+    
+    if(Options.isUnixHost())
+    {
+      final ExternalProgramVector external_programs = Options.getOptions()
+          .getExternalPrograms();
 
-    boolean sanger_options = 
-            Options.getOptions().getPropertyTruthValue("sanger_options");
+      boolean sanger_options = Options.getOptions().getPropertyTruthValue(
+          "sanger_options");
 
-    final int external_programs_size = external_programs.size();
-    for(int i = 0; i < external_programs_size; ++i) 
-      makeMenuItem(external_programs.elementAt(i), sanger_options);
+      final int external_programs_size = external_programs.size();
+      for(int i = 0; i < external_programs_size; ++i)
+        makeMenuItem(external_programs.elementAt(i), sanger_options);
 
-    addSeparator();
+      addSeparator();
 
-    for(int i = 0; i < external_programs_size; ++i) 
-      makeOptionsMenuItem(external_programs.elementAt(i));
+      for(int i = 0; i < external_programs_size; ++i)
+        makeOptionsMenuItem(external_programs.elementAt(i));
+    }
   }
 
   /**
@@ -96,7 +102,43 @@ public class RunMenu extends SelectionMenu
     this(frame, selection, "Run");
   }
 
+  /**
+   * Add menu for NCBI web searches
+   * @param selection
+   */
+  private void addNCBISearches(final Selection selection)
+  {
+    final JMenu ncbiSearchLinks = new JMenu("NCBI Searches");
+    add(ncbiSearchLinks);
+    
+    final ExternalProgramVector ncbi_protein = 
+      Options.getOptions().getNCBIPrograms();
+    
+    for(int i = 0; i < ncbi_protein.size(); ++i) 
+    {
+      final ExternalProgram program = (ExternalProgram)ncbi_protein.elementAt(i);
+      final String programName = program.getName();
 
+      final JMenuItem programMenu = new JMenuItem(programName);
+      ncbiSearchLinks.add(programMenu);
+      programMenu.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent arg0)
+        {
+          final FeatureVector features = selection.getAllFeatures();
+          final String residues;
+          
+          if(program.getType() == ExternalProgram.AA_PROGRAM)
+            residues = features.elementAt(0).getTranslation().toString().toUpperCase();
+          else
+            residues = features.elementAt(0).getBases();
+          
+          BrowserControl.displayURL(program.getProgramOptions()+residues);
+        }
+      });
+    }
+  }
+  
   /**
    *  Make a new menu item for running the given ExternalProgram object.
    *  @param program Create two menu items for this program.
