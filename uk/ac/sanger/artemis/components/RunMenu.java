@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.11 2008-09-11 10:26:30 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.12 2008-09-11 10:51:53 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -38,13 +38,14 @@ import java.awt.event.*;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 
 /**
  *  A JMenu of external commands/functions.
  *
  *  @author Kim Rutherford
- *  @version $Id: RunMenu.java,v 1.11 2008-09-11 10:26:30 tjc Exp $
+ *  @version $Id: RunMenu.java,v 1.12 2008-09-11 10:51:53 tjc Exp $
  **/
 
 public class RunMenu extends SelectionMenu 
@@ -126,6 +127,14 @@ public class RunMenu extends SelectionMenu
         public void actionPerformed(ActionEvent arg0)
         {
           final FeatureVector features = selection.getAllFeatures();
+          
+          if(features.size() != 1)
+          {
+            JOptionPane.showMessageDialog(RunMenu.this,
+                "Selected a single feature to send to NCBI for searching.", 
+                "NCBI Search", JOptionPane.INFORMATION_MESSAGE);
+            return; 
+          }
           final String residues;
           
           if(program.getType() == ExternalProgram.AA_PROGRAM)
