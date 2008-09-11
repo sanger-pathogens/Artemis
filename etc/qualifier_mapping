@@ -6,6 +6,7 @@ Dbxref                      db_xref
 private                     note
 orthologous_to              ortholog
 paralogous_to               paralog
+polypeptide_domain          note
 #
 # CHADO qualifiers to be ignored
 timelastmodified
