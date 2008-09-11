@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.12 2008-01-16 16:07:50 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.13 2008-09-11 10:27:23 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -44,7 +44,7 @@ import java.util.*;
  *  read in new options.
  *
  *  @author Kim Rutherford
- *  @version $Id: Options.java,v 1.12 2008-01-16 16:07:50 tjc Exp $
+ *  @version $Id: Options.java,v 1.13 2008-09-11 10:27:23 tjc Exp $
  **/
 
 public class Options extends Properties 
@@ -93,6 +93,9 @@ public class Options extends Properties
 
   /** A vector containing ExternalProgram objects that we can run. */
   private ExternalProgramVector external_programs = null;
+  
+  /** A vector containing ExternalProgram objects that we can run. */
+  private ExternalProgramVector ncbi_programs = null;
 
   /** A vector of those objects listening for option change events. */
   private Hashtable option_listener_hash = new Hashtable();
@@ -756,6 +759,60 @@ public class Options extends Properties
     return external_programs;
   }
 
+  
+  
+  /**
+   *  Return a vector containing the ncbi ExternalProgram objects of all the
+   *  external programs that we can use.
+   **/
+  public ExternalProgramVector getNCBIPrograms() 
+  {
+    if(ncbi_programs == null) 
+    {
+      ncbi_programs = new ExternalProgramVector();
+
+      final StringVector protein_value_strings =
+            getOptionValues("ncbi_protein_search");
+
+      if(protein_value_strings != null) 
+      {
+        for(int i = 0; i < protein_value_strings.size() / 2; ++i) 
+        {
+          final String program_name =
+            (String)protein_value_strings.elementAt(i * 2);
+          final String program_options =
+            (String)protein_value_strings.elementAt(i * 2 + 1);
+
+          final ExternalProgram program =
+            new ExternalProgram(program_name, program_options,
+                                ExternalProgram.AA_PROGRAM);
+
+          ncbi_programs.add(program);
+        }
+      }
+
+      final StringVector dna_value_strings =
+        getOptionValues("ncbi_dna_search");
+
+      if(dna_value_strings != null) 
+      {
+        for(int i = 0; i < dna_value_strings.size() / 2; ++i) 
+        {
+          final String program_name =
+            (String)dna_value_strings.elementAt(i * 2);
+          final String program_options =
+            (String)dna_value_strings.elementAt(i * 2 + 1);
+
+          final ExternalProgram program =
+            new ExternalProgram(program_name, program_options,
+                                       ExternalProgram.DNA_PROGRAM);
+
+          ncbi_programs.add(program);
+        }
+      }
+    }
+    return ncbi_programs;
+  }
 
   /**
    *  Return a StringVector containing the bases of the possible start codons
