@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.71 2008-09-04 15:49:28 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.72 2008-09-11 10:24:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -66,7 +66,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.71 2008-09-04 15:49:28 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.72 2008-09-11 10:24:31 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -946,12 +946,9 @@ public class EntryEdit extends JFrame
       write_menu.setMnemonic(KeyEvent.VK_W);
       menu_bar.add(write_menu);*/
 
-      if(Options.isUnixHost()) 
-      {
-        JMenu run_menu = new RunMenu(this, getSelection());
-        run_menu.setMnemonic(KeyEvent.VK_R);
-        menu_bar.add(run_menu);
-      }
+      JMenu run_menu = new RunMenu(this, getSelection());
+      run_menu.setMnemonic(KeyEvent.VK_R);
+      menu_bar.add(run_menu);
     }
 
     JMenu graph_menu = new GraphMenu(this, getEntryGroup(),
