@@ -1675,7 +1675,7 @@ public class DNADraw extends ScrollPanel
       {
         Point loc = e.getLocation();
         Block b   = (Block)t.getTransferData(Block.BLOCK);
-        b.setBlockLocation(loc.x,loc.y);
+        b.setBlockLocation(loc.x,loc.y,viewer);
         DNADraw.this.repaint();
       }
       catch(Exception ufe){} 

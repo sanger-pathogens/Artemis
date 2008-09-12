@@ -610,7 +610,7 @@ public class Block implements Transferable
   * @param x    x position 
   * @param y    y position
   */
-  public void setBlockLocation(int x, int y)
+  public void setBlockLocation(int x, int y, final TrackViewer viewer)
   {
     if(current_dna.isCircular())
     {
@@ -625,6 +625,7 @@ public class Block implements Transferable
     }
     else
       getTrack().setPosition(y);
+    viewer.refresh();
   }
 
   protected double getMidAngle()
