@@ -59,6 +59,16 @@ class TrackViewer extends JFrame
   private static final long serialVersionUID = 1L;
   private DNADraw dnaDraw;
   
+  private KeyChoice keyChoice[];
+  private QualifierChoice qualifierChoice[];
+  private JTextField qualifierValue[];
+  private JCheckBox notQualifier[];
+  private JCheckBox showForward[];
+  private JCheckBox showReverse[];
+  private JCheckBox showAny[];
+  private TextFieldFloat trackSize[];
+  private TextFieldFloat trackPosition[];
+  
   public TrackViewer(final DNADraw dnaDraw)
   {
     super("Track Manager");
@@ -85,15 +95,15 @@ class TrackViewer extends JFrame
     c.ipadx = 5;
 
     final JPanel optionBox = new JPanel(grid);
-    final KeyChoice keyChoice[] = new KeyChoice[tracks.length];
-    final QualifierChoice qualifierChoice[] = new QualifierChoice[tracks.length];
-    final JTextField qualifierValue[] = new JTextField[tracks.length];
-    final JCheckBox notQualifier[] = new JCheckBox[tracks.length];
-    final JCheckBox showForward[] = new JCheckBox[tracks.length];
-    final JCheckBox showReverse[] = new JCheckBox[tracks.length];
-    final JCheckBox showAny[] = new JCheckBox[tracks.length];
-    final TextFieldFloat trackSize[] = new TextFieldFloat[tracks.length];
-    final TextFieldFloat trackPosition[] = new TextFieldFloat[tracks.length];
+    keyChoice       = new KeyChoice[tracks.length];
+    qualifierChoice = new QualifierChoice[tracks.length];
+    qualifierValue  = new JTextField[tracks.length];
+    notQualifier    = new JCheckBox[tracks.length];
+    showForward     = new JCheckBox[tracks.length];
+    showReverse     = new JCheckBox[tracks.length];
+    showAny         = new JCheckBox[tracks.length];
+    trackSize       = new TextFieldFloat[tracks.length];
+    trackPosition   = new TextFieldFloat[tracks.length];
     
     c.anchor = GridBagConstraints.WEST;
     c.gridx = 0;
@@ -310,6 +320,26 @@ class TrackViewer extends JFrame
         }
       });
       optionBox.add(colourSelection, c);
+      
+      
+      c.gridx = 12;
+      final int trackIndex = i;
+      final JButton deleteTrack = new JButton("DELETE");
+      deleteTrack.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          Wizard.deleteTrack(trackIndex);
+          getContentPane().removeAll();
+          getContentPane().add(getPanelComponents());
+          pack();
+          setVisible(true);
+          update(Wizard.getTracks(), keyChoice, qualifierChoice, qualifierValue,
+              notQualifier, showForward, showReverse,
+              showAny, trackSize, trackPosition);
+        }
+      });
+      optionBox.add(deleteTrack, c);
     }
     
     c.gridx = 0;
@@ -322,120 +352,9 @@ class TrackViewer extends JFrame
     {
       public void actionPerformed(ActionEvent e)
       {
-        
-        // update tracks
-        for(int i=0; i<tracks.length; i++)
-        {
-          if(keyChoice[i].getSelectedItem().getKeyString().equals("-"))
-          {
-            tracks[i].setFeaturePredicate(null);
-            tracks[i].setAny(showAny[i].isSelected());
-            tracks[i].setKeyStr("-");
-          }
-          else
-          {
-            tracks[i].setKeyStr(keyChoice[i].getSelectedItem().getKeyString());
-            if(qualifierChoice[i] == null)
-            {
-              tracks[i].setFeaturePredicate(new FeatureKeyPredicate(keyChoice[i].getSelectedItem()));
-              tracks[i].setQualifier(null);
-            }
-            else
-            {
-              if(qualifierValue[i].getText().trim().equals(""))
-              {
-                tracks[i].setFeaturePredicate(
-                    new FeatureKeyQualifierPredicate(keyChoice[i].getSelectedItem(),
-                      (String)qualifierChoice[i].getSelectedItem(), !notQualifier[i].isSelected()));
-              }
-              else
-              {
-                
-                final FeaturePredicateVector temp_predicates =
-                  new FeaturePredicateVector();
-
-                //final StringVector words =
-                //  StringVector.getStrings(search_text, " ");
-                
-                final StringTokenizer tok = new StringTokenizer(qualifierValue[i].getText(), " \n");
-
-                while(tok.hasMoreTokens()) 
-                {
-                  final String this_word = tok.nextToken().trim();
-                  final FeaturePredicate new_predicate =
-                    new FeatureKeyQualifierPredicate(keyChoice[i].getSelectedItem(),
-                                                     (String)qualifierChoice[i].getSelectedItem(),
-                                                     this_word,
-                                                     false,
-                                                     true);
-
-                  temp_predicates.add(new_predicate);
-                }
-
-                FeaturePredicateConjunction key_and_qualifier_predicate =
-                  new FeaturePredicateConjunction(temp_predicates,
-                                                  FeaturePredicateConjunction.OR);
-                
-                
-                tracks[i].setFeaturePredicate(key_and_qualifier_predicate);
-              }
-              tracks[i].setQualifier((String)qualifierChoice[i].getSelectedItem());
-              tracks[i].setQualifierValue(qualifierValue[i].getText());
-            }
-            tracks[i].setAny(false);
-          }
-          tracks[i].setShowForward(showForward[i].isSelected());
-          tracks[i].setShowReverse(showReverse[i].isSelected());
-          tracks[i].setSize((float) trackSize[i].getValue());
-          tracks[i].setPosition(trackPosition[i].getValue());
-        }
-        
-        // update viewer
-        dnaDraw.getBlock().removeAll(dnaDraw.getBlock());
-        final FeatureVector features = dnaDraw.getArtemisEntryGroup().getAllFeatures();
-        
-        
-        for(int i=0; i<features.size(); i++)
-        {   
-          Feature f = features.elementAt(i);
-          Vector myTracks = new Vector();
-          
-          for(int j=0; j<tracks.length; j++)
-          {
-            if(tracks[j].isOnTrack(f))
-              myTracks.add(tracks[j]);
-          }
-          
-          if(myTracks.size() < 1)
-            continue;
-          
-          Color col = f.getColour();
-          if(col == null || col.equals(Color.white))
-            col = Color.lightGray;
-          
-          RangeVector ranges = f.getLocation().getRanges();
-          
-          for(int j=0; j<ranges.size(); j++)
-          {
-            Range range = (Range) ranges.get(j);    
-   
-            for(int k=0; k<myTracks.size(); k++)
-            {
-              Track myTrack = (Track)myTracks.get(k);
-              Block drawBlock = new Block(f.getIDString(), 
-                range.getStart(),
-                range.getEnd(), 
-                col, 
-                myTrack.getSize(), 
-                myTrack, dnaDraw);
-          
-              drawBlock.setFeature(f);
-              dnaDraw.getBlock().add(drawBlock);
-            }
-          }
-        }
-        
-        dnaDraw.repaint();
+         update(tracks, keyChoice, qualifierChoice, qualifierValue,
+                notQualifier, showForward, showReverse,
+                showAny, trackSize, trackPosition);
       }
     });
     
@@ -449,7 +368,13 @@ class TrackViewer extends JFrame
     {
       public void actionPerformed(ActionEvent e)
       {
-        Wizard.addTrack( Wizard.getTracks()[0].getEntry() );
+        Entry entry;
+        if(Wizard.getTracks().length > 0)
+          entry = Wizard.getTracks()[0].getEntry();
+        else
+          entry = dnaDraw.getArtemisEntryGroup().elementAt(0);
+        
+        Wizard.addTrack( entry );
         getContentPane().removeAll();
         getContentPane().add(getPanelComponents());
         pack();
@@ -458,6 +383,132 @@ class TrackViewer extends JFrame
     });
     
     return optionBox;
+  }
+  
+  private void update(final Track[] tracks, 
+                      final KeyChoice keyChoice[], 
+                      final QualifierChoice qualifierChoice[],
+                      final JTextField qualifierValue[] ,
+                      final JCheckBox notQualifier[],
+                      final JCheckBox showForward[],
+                      final JCheckBox showReverse[],
+                      final JCheckBox showAny[],
+                      final TextFieldFloat trackSize[],
+                      final TextFieldFloat trackPosition[])
+  {      
+    // update tracks
+    for(int i=0; i<tracks.length; i++)
+    {
+      if(keyChoice[i].getSelectedItem().getKeyString().equals("-"))
+      {
+        tracks[i].setFeaturePredicate(null);
+        tracks[i].setAny(showAny[i].isSelected());
+        tracks[i].setKeyStr("-");
+      }
+      else
+      {
+        tracks[i].setKeyStr(keyChoice[i].getSelectedItem().getKeyString());
+        if(qualifierChoice[i] == null)
+        {
+          tracks[i].setFeaturePredicate(new FeatureKeyPredicate(keyChoice[i].getSelectedItem()));
+          tracks[i].setQualifier(null);
+        }
+        else
+        {
+          if(qualifierValue[i].getText().trim().equals(""))
+          {
+            tracks[i].setFeaturePredicate(
+                new FeatureKeyQualifierPredicate(keyChoice[i].getSelectedItem(),
+                  (String)qualifierChoice[i].getSelectedItem(), !notQualifier[i].isSelected()));
+          }
+          else
+          {
+            
+            final FeaturePredicateVector temp_predicates =
+              new FeaturePredicateVector();
+
+            //final StringVector words =
+            //  StringVector.getStrings(search_text, " ");
+            
+            final StringTokenizer tok = new StringTokenizer(qualifierValue[i].getText(), " \n");
+
+            while(tok.hasMoreTokens()) 
+            {
+              final String this_word = tok.nextToken().trim();
+              final FeaturePredicate new_predicate =
+                new FeatureKeyQualifierPredicate(keyChoice[i].getSelectedItem(),
+                                                 (String)qualifierChoice[i].getSelectedItem(),
+                                                 this_word,
+                                                 false,
+                                                 true);
+
+              temp_predicates.add(new_predicate);
+            }
+
+            FeaturePredicateConjunction key_and_qualifier_predicate =
+              new FeaturePredicateConjunction(temp_predicates,
+                                              FeaturePredicateConjunction.OR);
+            
+            
+            tracks[i].setFeaturePredicate(key_and_qualifier_predicate);
+          }
+          tracks[i].setQualifier((String)qualifierChoice[i].getSelectedItem());
+          tracks[i].setQualifierValue(qualifierValue[i].getText());
+        }
+        tracks[i].setAny(false);
+      }
+      tracks[i].setShowForward(showForward[i].isSelected());
+      tracks[i].setShowReverse(showReverse[i].isSelected());
+      tracks[i].setSize((float) trackSize[i].getValue());
+      tracks[i].setPosition(trackPosition[i].getValue());
+    }
+    
+    // update viewer
+    dnaDraw.getBlock().removeAll(dnaDraw.getBlock());
+    final FeatureVector features = dnaDraw.getArtemisEntryGroup().getAllFeatures();
+    
+    
+    for(int i=0; i<features.size(); i++)
+    {   
+      Feature f = features.elementAt(i);
+      Vector myTracks = new Vector();
+      
+      for(int j=0; j<tracks.length; j++)
+      {
+        if(tracks[j].isOnTrack(f))
+          myTracks.add(tracks[j]);
+      }
+      
+      if(myTracks.size() < 1)
+        continue;
+      
+      Color col = f.getColour();
+      if(col == null || col.equals(Color.white))
+        col = Color.lightGray;
+      
+      RangeVector ranges = f.getLocation().getRanges();
+      
+      for(int j=0; j<ranges.size(); j++)
+      {
+        Range range = (Range) ranges.get(j);    
+
+        for(int k=0; k<myTracks.size(); k++)
+        {
+          Track myTrack = (Track)myTracks.get(k);
+          Block drawBlock = new Block(f.getIDString(), 
+            range.getStart(),
+            range.getEnd(), 
+            col, 
+            myTrack.getSize(), 
+            myTrack, dnaDraw);
+      
+          drawBlock.setFeature(f);
+          dnaDraw.getBlock().add(drawBlock);
+        }
+      }
+    }
+    
+    dnaDraw.repaint();
   }
 
 }

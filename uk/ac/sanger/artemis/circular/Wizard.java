@@ -336,7 +336,7 @@ public class Wizard
     FeatureVector features = entry.getAllFeatures();
 
     Track track = addTrack(entry);
-    
+    track.setAny(true);
     for(int i=0; i<features.size(); i++)
     {
       Feature f = features.elementAt(i);
@@ -427,11 +427,32 @@ public class Wizard
     for(int i=0; i<tracks.length; i++)
       newTracks[i] = tracks[i];
     
-    Track newTrack = new Track(
-        tracks[tracks.length-1].getPosition()-0.05, entry);
+    final double position;
+    if(tracks.length > 1)
+      position = tracks[tracks.length-1].getPosition()-0.05;
+    else
+      position = 0.95;
+    Track newTrack = new Track(position, entry);
     newTracks[tracks.length] = newTrack;
     Wizard.tracks = newTracks;
     return newTrack;
+  }
+  
+  protected static void deleteTrack(int trackIndex)
+  {
+    Track[] tracks = getTracks();
+    Track[] newTracks = new Track[tracks.length-1];
+    int count = 0;
+    for(int i=0; i<tracks.length; i++)
+    {
+      if(i == trackIndex)
+        continue;
+      
+      newTracks[count] = tracks[i];
+      count++;
+    }
+
+    Wizard.tracks = newTracks;
   }
 }
 
