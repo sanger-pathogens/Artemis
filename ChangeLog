@@ -1,6 +1,9 @@
 Version 10.+/7.+
 
-	Added print to PostScript option in Artemis and ACT
+	Add NCBI search link to run menu. This transfers the sequence automatically
+	to the NCBI web page.
+	
+	Added print to PostScript option in Artemis and ACT.
 
     Optimisation of reading in user graphs.
 
