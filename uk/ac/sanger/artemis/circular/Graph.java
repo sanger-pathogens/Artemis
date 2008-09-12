@@ -52,8 +52,8 @@ public abstract class Graph extends JPanel
   private int strokeSize = 1;
   /** track to place the graph on - as a fraction of the radii*/
   private double track = .4d;
-  private Color minusColour = Color.RED;
-  private Color plusColour  = Color.BLUE;
+  private Color minusColour = new Color(0.6f, 0.f, 0.6f);
+  private Color plusColour  = new Color(0.7f, 0.7f, 0.1f);
   
   public Graph(DNADraw currentDna)
   {
