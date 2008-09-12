@@ -36,6 +36,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -329,10 +330,19 @@ class TrackViewer extends JFrame
       {
         public void actionPerformed(ActionEvent e)
         {
+          int val = JOptionPane.showConfirmDialog(dnaDraw, 
+              "Delete track "+(trackIndex+1)+"?", 
+              "Confirm", JOptionPane.OK_CANCEL_OPTION);
+          if(val == JOptionPane.CANCEL_OPTION)
+            return;
+          
           Wizard.deleteTrack(trackIndex);
           getContentPane().removeAll();
-          getContentPane().add(getPanelComponents());
+                   
+          JScrollPane jsp = new JScrollPane(getPanelComponents());
+          getContentPane().add(jsp); 
           pack();
+ 
           setVisible(true);
           update(Wizard.getTracks(), keyChoice, qualifierChoice, qualifierValue,
               notQualifier, showForward, showReverse,
@@ -376,8 +386,11 @@ class TrackViewer extends JFrame
         
         Wizard.addTrack( entry );
         getContentPane().removeAll();
-        getContentPane().add(getPanelComponents());
+        
+        JScrollPane jsp = new JScrollPane(getPanelComponents());
+        getContentPane().add(jsp); 
         pack();
+
         setVisible(true);
       }
     });
