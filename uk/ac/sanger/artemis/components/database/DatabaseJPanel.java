@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.14 2008-01-21 16:15:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.15 2008-09-15 10:49:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -499,11 +499,12 @@ public class DatabaseJPanel extends JPanel
       for(int j = start; j < v_organism_size; j++)
       {
         String seq_name  = (String)v_organism[j];
-
-        if(seq_name.toLowerCase().startsWith(name.toLowerCase()))
+        int ind1 = seq_name.indexOf("- ");
+        
+        if(seq_name.substring(0, ind1).trim().toLowerCase().equals(name.toLowerCase()))
         {
           final String featureId = (String)entries.get(seq_name);
-          int ind1 = seq_name.indexOf("- ");
+          
           int ind2 = seq_name.lastIndexOf("- ");
 
           final String schema = seq_name.substring(0, ind1).trim();
