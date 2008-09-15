@@ -116,7 +116,7 @@
         LEFT JOIN db ON dbxref.db_id=db.db_id
         <dynamic>
           <isNotNull property="uniqueName" prepend="WHERE">
-            feature_id=(SELECT feature_id FROM feature WHERE uniquename=#uniqueName#)
+            feature_id IN (SELECT feature_id FROM feature WHERE uniquename=#uniqueName#)
           </isNotNull>
         </dynamic>
         ORDER BY fc.feature_cvterm_id, fc.rank, type_id, fcp.rank;
