@@ -88,6 +88,8 @@ public class GeneUtils
   private static final long serialVersionUID = 1L;
   private static Vector hideFeatures = new Vector();
   private static JCheckBox showObsolete = new JCheckBox("Show Obsolete Features",false);
+  private static String nonCodingTranscripts[] =
+                                { "tRNA", "rRNA", "snRNA", "snoRNA", "ncRNA", "scRNA" };
   
   static
   {
@@ -1178,8 +1180,32 @@ public class GeneUtils
     return null;
   }
   
+  /**
+   * Return an array on non-coding transcripts
+   * @return
+   */
+  public static String[] getNonCodingTranscripts()
+  {
+    return nonCodingTranscripts;
+  }
+  
+  /**
+   * Test if the key given is a non-coding transcript key
+   * @param key
+   * @return
+   */
+  public static boolean isNonCodingTranscripts(final Key key)
+  {
+    for(int i=0; i<nonCodingTranscripts.length; i++)
+      if(nonCodingTranscripts[i].equals(key.getKeyString()))
+        return true;
+    return false;
+  }
+  
   public static void main(String args[])
   {
     GeneUtils.defineShowHideGeneFeatures(new FeatureVector());
   }
+
+
 }
