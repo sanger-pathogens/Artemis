@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.16 2008-07-16 10:12:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.17 2008-09-16 14:42:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -41,7 +41,7 @@ import java.util.Vector;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.16 2008-07-16 10:12:44 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.17 2008-09-16 14:42:12 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -57,6 +57,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
   // database qualifiers to ignore when converting to embl
   private static Object[] DATABASE_QUALIFIERS_TO_REMOVE;
   
+  public static boolean IGNORE_OBSOLETE_FEATURES = true;
   
   /**
    *  Create a new PublicDBDocumentEntry object associated with the given
@@ -157,6 +158,18 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     Key key = feature.getKey();
     QualifierVector qualifiers = feature.getQualifiers().copy();
     
+    // ignore if obsolete
+    if(IGNORE_OBSOLETE_FEATURES)
+    {
+      Qualifier isObsoleteQualifier = qualifiers.getQualifierByName("isObsolete");
+      if(isObsoleteQualifier != null)
+      {
+        String value = (String)isObsoleteQualifier.getValues().get(0);
+        if(Boolean.parseBoolean(value))
+          return null;
+      }
+    }
+    
     key = map(key, qualifiers);
     if(getEntryInformation().isValidQualifier((String) DATABASE_QUALIFIERS_TO_REMOVE[0]))
     { 
@@ -189,12 +202,22 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       final String name = GeneUtils.getUniqueName(feature);
       final String transcriptName = chadoGene.getTranscriptFromName(name);
       
-      // add protein qualifiers to CDS
+      StringVector sv = new StringVector();
+      sv.add(transcriptName);
+      final Feature transcript = chadoGene.containsTranscript(sv);
+      
+      if(transcript != null && GeneUtils.isNonCodingTranscripts(transcript.getKey()))
+        return null;
+      
+      // add transcript & protein qualifiers to CDS
       try
       {
         final Feature protein = chadoGene.getProteinOfTranscript(transcriptName);
         if(protein != null)
           combineQualifiers(qualifiers, protein.getQualifiers().copy());
+
+        if(transcript != null)
+          combineQualifiers(qualifiers, transcript.getQualifiers().copy());
       }
       catch(NullPointerException npe){}
       
