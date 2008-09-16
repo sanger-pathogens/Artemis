@@ -7,6 +7,17 @@ private                     note
 orthologous_to              ortholog
 paralogous_to               paralog
 polypeptide_domain          note
+PlasmoAP_score              note
+membrane_structure          note
+non_cytoplasm_location      note
+cytoplasm_location          note
+transmembrane               note
+signal_anchor_probability   note
+signal_peptide_probability  note
+signal_peptide              note
+SignalP_prediction          note
+GPI_anchored                note
+GPI_anchor_cleavage_site    note
 #
 # CHADO qualifiers to be ignored
 timelastmodified
