@@ -96,6 +96,7 @@ public class ReadAndWriteEntry
    * @param file
    * @param flatten Flatten the gene model and combine the qualifiers if true.
    *    If false it will write all features and qualifiers out.
+   * @param ignore obsolete features if true
    * @param force invalid qualifiers and any features with invalid keys will 
    *    be quietly thrown away when saving.
    * @param destination_type Should be one of EMBL_FORMAT, GENBANK_FORMAT,
@@ -106,7 +107,8 @@ public class ReadAndWriteEntry
    * @throws EntryInformationException
    */
   public static void writeDatabaseEntryToFile(final Entry entry, final File file,
-                                              final boolean flatten, 
+                                              final boolean flatten,
+                                              final boolean ignoreObsolete,
                                               final boolean force,
                                               final int destination_type,
                                               final JFrame parent) 
@@ -121,6 +123,7 @@ public class ReadAndWriteEntry
       for(int i=0; i<features.size(); i++)
         addAllKeysQualifiers(artemis_entry_information, features.elementAt(i).getEmblFeature());
     }
+    PublicDBDocumentEntry.IGNORE_OBSOLETE_FEATURES = ignoreObsolete;
     entry.save(file, destination_type, force, artemis_entry_information);
   }
   
@@ -199,11 +202,11 @@ public class ReadAndWriteEntry
     {
       Entry entry = ReadAndWriteEntry.readEntryFromDatabase("Pf3D7_03");
       ReadAndWriteEntry.writeDatabaseEntryToFile(
-          entry, new File("Pf3D7_03.flatten"), true, false, 
+          entry, new File("Pf3D7_03.flatten"), true, true, false, 
           DocumentEntryFactory.EMBL_FORMAT, null);
       
       ReadAndWriteEntry.writeDatabaseEntryToFile(
-          entry, new File("Pf3D7_03.not-flatten"), false, false,
+          entry, new File("Pf3D7_03.not-flatten"), false, true, false,
           DocumentEntryFactory.EMBL_FORMAT, null);
     }
     catch(Exception e)
