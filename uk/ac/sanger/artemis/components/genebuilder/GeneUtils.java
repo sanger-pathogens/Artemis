@@ -185,17 +185,23 @@ public class GeneUtils
     
     // feature pubs - literature
     final Collection featurePubs = feature.getChadoLazyFeature().getFeaturePubs();
-    final Iterator it4 = featurePubs.iterator();
-    while(it4.hasNext())
+    
+    if(featurePubs != null)
     {
-      FeaturePub featurePub = (FeaturePub)it4.next();
-      
-      Qualifier qualifier = feature.getQualifiers().getQualifierByName("literature");
-      if(qualifier == null)
-        qualifier = new Qualifier("literature", featurePub.getPub().getUniqueName());
-      else
-        qualifier.addValue(featurePub.getPub().getUniqueName());
-      feature.getQualifiers().setQualifier(qualifier);
+      final Iterator it4 = featurePubs.iterator();
+      while(it4.hasNext())
+      {
+        FeaturePub featurePub = (FeaturePub) it4.next();
+
+        Qualifier qualifier = feature.getQualifiers().getQualifierByName(
+            "literature");
+        if(qualifier == null)
+          qualifier = new Qualifier("literature", featurePub.getPub()
+              .getUniqueName());
+        else
+          qualifier.addValue(featurePub.getPub().getUniqueName());
+        feature.getQualifiers().setQualifier(qualifier);
+      }
     }
     
     feature.setLazyLoaded(true);
