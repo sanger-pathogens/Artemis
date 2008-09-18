@@ -50,6 +50,7 @@ import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 import org.gmod.schema.sequence.FeatureCvTermPub;
+import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
@@ -949,8 +950,12 @@ public class DatabaseDocument extends Document
                                     final boolean readChildren) 
           throws SQLException, ReadFormatException, ConnectException
   {
+    CvTermThread cvThread = null;
     if(DatabaseDocument.cvterms == null)
-      getCvterms(dao);
+    {
+      cvThread = new CvTermThread(dao);
+      cvThread.start();
+    }
     
     final Hashtable id_store = new Hashtable();
 
@@ -1030,8 +1035,21 @@ public class DatabaseDocument extends Document
     }
 
     logger4j.debug( new String(buff.getBytes()) );
-    
 
+    // now wait for cvterm to be loaded
+    if(cvThread != null)
+    {
+      while(cvThread.isAlive())
+        try
+        {
+          Thread.sleep(10);
+        }
+        catch(InterruptedException e)
+        {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+    }
     
     return buff;
   }
@@ -1243,7 +1261,9 @@ public class DatabaseDocument extends Document
 
     this_buff.append("ID=" + name + ";");
     this_buff.append("feature_id=" + featureId.toString() + ";");
-
+    
+    if(feat.getName() != null)
+      this_buff.append("Name=" + feat.getName() + ";");
    
     if(parent_id != null && !parent_id.equals("0"))
     {
@@ -1799,7 +1819,10 @@ public class DatabaseDocument extends Document
   public Vector getCvTermsByCvName(final String cvName)
   {
     if(cvterms == null)
+    {
+      logger4j.debug("getCvTermsByCvName LOADING CVTERMS");
       getCvterms(getDAOOnly());
+    }
     
     return getCvterms("", cvName);
   }
@@ -1890,7 +1913,14 @@ public class DatabaseDocument extends Document
       DatabaseDocument doc = (DatabaseDocument)feature.getDocumentEntry().getDocument();
       try
       {
-        cvterms = getCvterms(doc.getDAO());
+        Cv cv = new Cv();
+        cv.setName(cv_name);
+        List synonymCvTerms = doc.getDAO().getCvTermByNameInCv(null, cv);
+        String synonymNames[] = new String[synonymCvTerms.size()];
+        for(int i=0; i<synonymCvTerms.size(); i++)
+          synonymNames[i] = ((CvTerm) synonymCvTerms.get(i)).getName();
+
+        return synonymNames;
       }
       catch(ConnectException e){}
       catch(SQLException e){}   
