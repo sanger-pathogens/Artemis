@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.55 2008-08-01 12:51:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.56 2008-09-18 08:14:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -45,7 +45,7 @@ import org.gmod.schema.cv.CvTerm;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.55 2008-08-01 12:51:15 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.56 2008-09-18 08:14:54 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -362,7 +362,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       else
       {
         cvTerm = 
-           DatabaseDocument.getCvTermByCvTermId(matchFeature.getCvTerm().getCvTermId(), null);
+           DatabaseDocument.getCvTermByCvTermId(matchFeature.getCvTerm().getCvTermId(), 
+                                                (Feature)fv.elementAt(0));
         cvTermCache.put(cvTermId, cvTerm);
       }
       
