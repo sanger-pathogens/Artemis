@@ -72,9 +72,6 @@ import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 /**
  * Chado data access example code. This searches for features by their
  * uniquename and returns their properties and attributes.
- * 
- * @author tjc
- * 
  */
 public class GeneEdit
 {
@@ -113,7 +110,22 @@ public class GeneEdit
           + sqlExp.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
       sqlExp.printStackTrace();
     }
+  }
+  
+  public GeneEdit(final String geneName)
+  {
+    DatabaseEntrySource entry_source = new DatabaseEntrySource();
+    
+    boolean promptUser = true;
+    if(System.getProperty("read_only") != null)
+      promptUser = false;
+    entry_source.setLocation(promptUser);
+    final String location = entry_source.getLocation();
+    pfield = entry_source.getPfield();
 
+    if(System.getProperty("show_log") != null)
+      GeneSplash.showLog();
+    openGeneBuilder(geneName, null, location);
   }
 
   /**
@@ -165,20 +177,7 @@ public class GeneEdit
           schema_search.add(schema);
         }
 
-        SwingWorker entryWorker = new SwingWorker()
-        {
-          public Object construct()
-          {
-            DatabaseDocumentEntry entry = makeEntry(schema, search_gene,
-                                                    location, pfield);
-            //entry.setReadOnly(true);
-            showGeneEditor(schema, search_gene, entry);
-            return null;
-          }
-        };
-        entryWorker.start();
-        
-        
+        openGeneBuilder(search_gene, schema, location);
       }
     });
     xbox.add(findButt);
@@ -193,6 +192,24 @@ public class GeneEdit
     frame.setVisible(true);
   }
 
+  private void openGeneBuilder(final String search_gene, 
+                               final String organism,
+                               final String location)
+  {
+    SwingWorker entryWorker = new SwingWorker()
+    {
+      public Object construct()
+      {
+        DatabaseDocumentEntry entry = makeEntry(organism, search_gene,
+                                                location, pfield);
+        //entry.setReadOnly(true);
+        showGeneEditor(organism, search_gene, entry);
+        return null;
+      }
+    };
+    entryWorker.start();  
+  }
+  
   private DatabaseDocumentEntry makeEntry(final String schema, 
                                           final String uniqueName,
                                           final String location,
@@ -364,6 +381,10 @@ public class GeneEdit
       if(value instanceof javax.swing.plaf.FontUIResource) 
         UIManager.put(key, font_ui_resource);
     }
-    new GeneEdit();
+    if(args.length == 1)
+      new GeneEdit(args[0]);
+    else
+      new GeneEdit();
+    
   }
 }
