@@ -2681,6 +2681,7 @@ public class DatabaseDocument extends Document
           if(feature != null)
           {
             feature.setTimeLastModified(ts);
+            feature.setName("0");  // do not change name
             dao.merge(feature);
           }
         }

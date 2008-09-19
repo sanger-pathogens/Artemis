@@ -625,10 +625,11 @@ public class ChadoTransactionManager
   private void insertFeature(final Feature feature)
   {
     String feature_uniquename = null;
+    Qualifier qualifier_name = null;
     try
     {
       final Qualifier qualifier_uniquename = feature.getQualifierByName("ID");
-
+      qualifier_name = feature.getQualifierByName("Name");
       if(qualifier_uniquename != null)
       {
         feature_uniquename = (String)(qualifier_uniquename.getValues()).elementAt(0);
@@ -741,7 +742,8 @@ public class ChadoTransactionManager
     catch(InvalidRelationException ire){}
     
     chado_feature.setUniqueName(feature_uniquename);
-    chado_feature.setName(feature_uniquename);
+    if(qualifier_name != null)
+      chado_feature.setName((String)(qualifier_name.getValues()).elementAt(0));
 
     String key = feature.getKey().toString();
     if(key.equals(DatabaseDocument.EXONMODEL))
@@ -1426,7 +1428,9 @@ public class ChadoTransactionManager
     else
       qualifierName = new_qualifier.getName();
     
-    if(qualifierName.equals("ID") || qualifierName.equals("isObsolete"))
+    if(qualifierName.equals("ID") || 
+       qualifierName.equals("isObsolete") || 
+       qualifierName.equals("Name"))
     {
       updateFeature(feature, qualifierName, new_qualifier, old_qualifier);
       return;
@@ -1764,7 +1768,7 @@ public class ChadoTransactionManager
   }
   
   /**
-   * Update feature - uniquename and is_obsolete
+   * Update feature - uniquename, name and is_obsolete
    * @param feature
    * @param qualifierName
    * @param new_qualifier
@@ -1774,13 +1778,11 @@ public class ChadoTransactionManager
                              final String qualifierName,
                              final Qualifier new_qualifier,
                              final Qualifier old_qualifier)
-  {
-//  this shouldn't be possible
-    if(new_qualifier.getValues() == null)
-      return;
-   
+  {  
     final String uniqueName[];
     final String isObsolete;
+    String name = null;
+    
     final String log;
     if(qualifierName.equals("ID"))
     {
@@ -1812,25 +1814,44 @@ public class ChadoTransactionManager
         uniqueName = new String[1];
         uniqueName[0] = (String) feature.getQualifierByName("ID").getValues().get(0);
       }
-      isObsolete = (String)new_qualifier.getValues().get(0);
       
-      log = "IS_OBSOLETE:";
+      if(qualifierName.equals("Name"))
+      {
+        if(feature.getQualifierByName("isObsolete") != null)
+          isObsolete = (String) feature.getQualifierByName("isObsolete").getValues().get(0);
+        else
+          isObsolete = "false";
+        if(new_qualifier != null)
+          name = (String)new_qualifier.getValues().get(0);
+        log = "PRIMARY NAME:";
+      }
+      else
+      {  
+        isObsolete = (String)new_qualifier.getValues().get(0);
+        log = "IS_OBSOLETE:";
+      }
     }
     
     for(int i = 0; i < uniqueName.length; i++)
     {
       org.gmod.schema.sequence.Feature chadoFeature = new org.gmod.schema.sequence.Feature();
       chadoFeature.setUniqueName(uniqueName[i]);
+      
+      if(qualifierName.equals("Name"))
+        chadoFeature.setName(name);
+      else
+        chadoFeature.setName("0");
+      
       chadoFeature.setObsolete(Boolean.parseBoolean(isObsolete));
 
-      logger4j.debug(uniqueName[i] + " " + log
-          + (String) new_qualifier.getValues().get(0) + " OLD="
-          + (String) old_qualifier.getValues().get(0));
+      String logVal = uniqueName[i] + " " + log
+                      + (new_qualifier !=null ? (String) new_qualifier.getValues().get(0) : "NULL")
+                      + " OLD=" 
+                      + (old_qualifier != null ? (String) old_qualifier.getValues().get(0) : "NULL");
+      logger4j.debug(logVal);
       ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
           chadoFeature, feature.getLastModified(), feature, 
-          feature.getKey().getKeyString(), "ID="+uniqueName[i] + " " +
-          log + (String) new_qualifier.getValues().get(0)
-              + " OLD=" + (String) old_qualifier.getValues().get(0));
+          feature.getKey().getKeyString(), "ID="+logVal);
 
       if(qualifierName.equals("ID"))
         tsn.setOldUniquename((String) old_qualifier.getValues().get(0));

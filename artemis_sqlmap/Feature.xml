@@ -472,6 +472,7 @@
           parameterClass="Feature">
     UPDATE feature
     SET uniquename=#uniqueName#, is_obsolete=#obsolete#
+	  <isNotEqual property="name" compareValue="0">  , name=#name# </isNotEqual>
       <isNotNull property="cvTerm.cvTermId">  , type_id=$cvTerm.cvTermId$ </isNotNull>
       <isNotNull property="timeLastModified"> , timelastmodified=#timeLastModified# </isNotNull>
     WHERE feature_id=$featureId$
