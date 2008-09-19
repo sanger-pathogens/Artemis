@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.1 2008-06-03 10:34:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.2 2008-09-19 12:39:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -69,8 +69,10 @@ public class PropertiesPanel extends JPanel
   private static final long serialVersionUID = 1L;
   private QualifierVector gffQualifiers;
   private JTextField uniquenameTextField;
+  private JTextField primaryNameTextField;
   private JCheckBox obsoleteField;
   private Feature feature;
+  /** controls if this panel is automatically closed or open */
   private boolean empty = true;
   /** track if feature isObsolete flag has changed */
   private boolean obsoleteChanged = false;
@@ -89,6 +91,7 @@ public class PropertiesPanel extends JPanel
   public boolean isPropertiesTag(final Qualifier qualifier, final Feature feature)
   {
     if(qualifier.getName().equals("ID") ||
+       qualifier.getName().equals("Name") ||
        qualifier.getName().equals("feature_id") ||
        qualifier.getName().equals("Parent") ||
        qualifier.getName().equals("Derives_from") ||
@@ -107,6 +110,7 @@ public class PropertiesPanel extends JPanel
     int nrows = 0;
     
     Qualifier idQualifier          = gffQualifiers.getQualifierByName("ID");
+    Qualifier nameQualifier        = gffQualifiers.getQualifierByName("Name");
     Qualifier parentQualifier      = gffQualifiers.getQualifierByName("Parent");
     Qualifier derivesFromQualifier = gffQualifiers.getQualifierByName("Derives_from");
     Qualifier timeQualifier        = gffQualifiers.getQualifierByName("timelastmodified");
@@ -165,7 +169,7 @@ public class PropertiesPanel extends JPanel
     if(idQualifier != null)
     {
       final String uniquename = (String)idQualifier.getValues().get(0);
-      JLabel idField = new JLabel("Internal ID");
+      JLabel idField = new JLabel("ID");
       
       uniquenameTextField = new JTextField(uniquename);
       cellDimension = new Dimension(uniquenameTextField.getPreferredSize().width+10,
@@ -176,16 +180,15 @@ public class PropertiesPanel extends JPanel
       uniquenameTextField.setMaximumSize(cellDimension);
       
       c.gridx = 3;
-      c.gridy = 0;
+      c.gridy = nrows;
       c.ipadx = 5;
       c.fill = GridBagConstraints.NONE;
-      c.anchor = GridBagConstraints.NORTHEAST;
+      c.anchor = GridBagConstraints.SOUTHEAST;
       gridPanel.add(idField, c);
       c.gridx = 4;
-      c.gridy = 0;
       c.ipadx = 0;
       c.fill = GridBagConstraints.HORIZONTAL;
-      c.anchor = GridBagConstraints.NORTHWEST;
+      c.anchor = GridBagConstraints.SOUTHWEST;
       gridPanel.add(uniquenameTextField, c);
       
       Qualifier featIdQualifier = gffQualifiers.getQualifierByName("feature_id");
@@ -195,6 +198,41 @@ public class PropertiesPanel extends JPanel
         idField.setToolTipText("feature_id="+(String)featIdQualifier.getValues().get(0));
         uniquenameTextField.setToolTipText("feature_id="+(String)featIdQualifier.getValues().get(0));
       }
+      nrows++;
+    }
+    
+    
+    
+    if(!feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
+    {
+      primaryNameTextField = new JTextField();
+      if(nameQualifier != null)
+      {
+        primaryNameTextField.setText((String)nameQualifier.getValues().get(0));
+        empty = false;
+      }
+  
+      JLabel idField = new JLabel("Primary Name");
+      if(cellDimension == null)
+        cellDimension = new Dimension(primaryNameTextField.getPreferredSize().width+10,
+                                      idField.getPreferredSize().height+10);
+      
+      if(feature.getKey().getKeyString().indexOf("exon") > -1)
+        primaryNameTextField.setEditable(false);
+      primaryNameTextField.setMaximumSize(cellDimension);
+      
+      c.gridx = 3;
+      c.gridy = nrows;
+      c.ipadx = 5;
+      c.fill = GridBagConstraints.NONE;
+      c.anchor = GridBagConstraints.EAST;
+      gridPanel.add(idField, c);
+      c.gridx = 4;
+      c.gridy = nrows;
+      c.ipadx = 0;
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.anchor = GridBagConstraints.NORTHWEST;
+      gridPanel.add(primaryNameTextField, c);
       nrows++;
     }
     
@@ -219,7 +257,7 @@ public class PropertiesPanel extends JPanel
         c.gridy = nrows;
         c.ipadx = 5;
         c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.NORTHEAST;
+        c.anchor = GridBagConstraints.EAST;
         gridPanel.add(parentField, c); 
         c.gridx = 4;
         c.gridy = nrows;
@@ -252,7 +290,7 @@ public class PropertiesPanel extends JPanel
         c.gridy = nrows;
         c.ipadx = 5;
         c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.NORTHEAST;
+        c.anchor = GridBagConstraints.EAST;
         gridPanel.add(derivesFromsField, c); 
         c.gridx = 4;
         c.gridy = nrows;
@@ -263,7 +301,6 @@ public class PropertiesPanel extends JPanel
         nrows++;
       }
     }
-    
     
     if(timeQualifier != null)
     {
@@ -285,7 +322,7 @@ public class PropertiesPanel extends JPanel
       c.gridy = nrows;
       c.ipadx = 5;
       c.fill = GridBagConstraints.NONE;
-      c.anchor = GridBagConstraints.NORTHEAST;
+      c.anchor = GridBagConstraints.EAST;
       gridPanel.add(timeField, c);
       c.gridx = 4;
       c.gridy = nrows;
@@ -301,6 +338,7 @@ public class PropertiesPanel extends JPanel
     {
       boolean isObsolete = Boolean.parseBoolean((String) obsoleteQualifier.getValues().get(0));
       obsoleteField = new JCheckBox("is obsolete", isObsolete);
+      obsoleteField.setOpaque(false);
       obsoleteField.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
@@ -322,15 +360,13 @@ public class PropertiesPanel extends JPanel
 
       nrows++;
     } 
-
-
     gffBox.add(gridPanel);
     
     
     // add/remove buttons
     Box xBox = Box.createHorizontalBox();
-
-    final JButton addSynonym = new JButton("ADD");
+    
+    final JButton addSynonym = new JButton("ADD SYNONYM");
     addSynonym.setOpaque(false);
     addSynonym.setToolTipText("Add id or synonym");
     addSynonym.addActionListener(new ActionListener()
@@ -343,7 +379,7 @@ public class PropertiesPanel extends JPanel
     xBox.add(addSynonym);
     xBox.add(Box.createHorizontalStrut(10));
     
-    final JButton removeSynonym = new JButton("REMOVE");
+    final JButton removeSynonym = new JButton("REMOVE SYNONYM");
     removeSynonym.setOpaque(false);
     removeSynonym.setToolTipText("Remove id or synonym");
     removeSynonym.addActionListener(new ActionListener()
@@ -404,6 +440,20 @@ public class PropertiesPanel extends JPanel
       }
     }
 
+    Qualifier nameQualifier = gffQualifiers.getQualifierByName("Name");
+    if( (nameQualifier != null &&
+       !((String)(nameQualifier.getValues().get(0))).equals(primaryNameTextField.getText())) ||
+       primaryNameTextField != null)
+    {
+      gffQualifiers.remove(nameQualifier);
+      
+      if(!primaryNameTextField.getText().equals(""))
+      {
+        nameQualifier = new Qualifier("Name", primaryNameTextField.getText());
+        gffQualifiers.addElement(nameQualifier);
+      }
+    }
+    
     Qualifier isObsoleteQualifier = gffQualifiers.getQualifierByName("isObsolete");
     if(isObsoleteQualifier != null)
     {
@@ -629,7 +679,7 @@ public class PropertiesPanel extends JPanel
     GridBagConstraints c = new GridBagConstraints();
     c.gridx = 0;
     c.gridy = nrows;
-    c.ipady = 6;
+    c.ipady = 3;
     c.gridwidth = 2;
     c.anchor = GridBagConstraints.CENTER;
     c.fill   = GridBagConstraints.HORIZONTAL;
