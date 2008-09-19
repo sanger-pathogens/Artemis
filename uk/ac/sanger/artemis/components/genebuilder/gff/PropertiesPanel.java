@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.2 2008-09-19 12:39:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.3 2008-09-19 15:19:41 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -42,6 +43,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
@@ -76,6 +78,7 @@ public class PropertiesPanel extends JPanel
   private boolean empty = true;
   /** track if feature isObsolete flag has changed */
   private boolean obsoleteChanged = false;
+  private ButtonGroup phaseButtonGroup;
   
   public PropertiesPanel(final Feature feature)
   {
@@ -98,6 +101,7 @@ public class PropertiesPanel extends JPanel
        qualifier.getName().equals("feature_relationship_rank") ||
        qualifier.getName().equals("timelastmodified") ||
        qualifier.getName().equals("isObsolete") ||
+       qualifier.getName().equals("codon_start") ||
        ChadoTransactionManager.isSynonymTag(qualifier.getName(), 
            (GFFStreamFeature)feature.getEmblFeature()))
       return true;
@@ -201,7 +205,7 @@ public class PropertiesPanel extends JPanel
       nrows++;
     }
     
-    
+     
     
     if(!feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
     {
@@ -333,7 +337,15 @@ public class PropertiesPanel extends JPanel
       nrows++;
     }  
 
-
+    // phase of translation wrt / codon_start
+    if(feature.getEntry().getEntryInformation().isValidQualifier(
+        feature.getKey(), "codon_start"))
+    {
+      c.gridy = nrows;
+      addPhaseComponent(c, gridPanel);
+      nrows++;
+    }
+    
     if(obsoleteQualifier != null)
     {
       boolean isObsolete = Boolean.parseBoolean((String) obsoleteQualifier.getValues().get(0));
@@ -451,6 +463,34 @@ public class PropertiesPanel extends JPanel
       {
         nameQualifier = new Qualifier("Name", primaryNameTextField.getText());
         gffQualifiers.addElement(nameQualifier);
+      }
+    }
+    
+    if(phaseButtonGroup != null)
+    {
+      String selectionCmd = phaseButtonGroup.getSelection().getActionCommand();
+      
+      Qualifier phaseQualifier = gffQualifiers.getQualifierByName("codon_start");
+      if(phaseQualifier == null)
+      {
+        if(!selectionCmd.equals(""))
+        {
+          phaseQualifier = new Qualifier("codon_start", selectionCmd);
+          gffQualifiers.addElement(phaseQualifier);
+        }
+      }
+      else
+      {
+        String oldPhase = (String)phaseQualifier.getValues().get(0);
+        if(!oldPhase.equals(phaseButtonGroup))
+        {
+          gffQualifiers.remove(phaseQualifier);
+          if(!selectionCmd.equals(""))
+          {
+            phaseQualifier = new Qualifier("codon_start", selectionCmd);
+            gffQualifiers.addElement(phaseQualifier);
+          }
+        }
       }
     }
     
@@ -593,6 +633,7 @@ public class PropertiesPanel extends JPanel
     revalidate();
   }
   
+  
   private void addSynonym()
   {
     final Vector synonyms = DatabaseDocument.getCvterms("", 
@@ -687,6 +728,65 @@ public class PropertiesPanel extends JPanel
     separator.setPreferredSize(new Dimension(maxLabelWidth, separator
         .getPreferredSize().height));
     gridPanel.add(separator, c);
+  }
+  
+  /**
+   * Add codon_start component to the properties panel
+   * @param c
+   * @param gridPanel
+   */
+  private void addPhaseComponent(final GridBagConstraints c, final JPanel gridPanel)
+  {
+    Qualifier qualifierCodonStart = gffQualifiers.getQualifierByName("codon_start");
+    phaseButtonGroup = new ButtonGroup();
+ 
+    JRadioButton phase1 = new JRadioButton("1");
+    phase1.setOpaque(false);
+    phase1.setActionCommand("1");
+    phaseButtonGroup.add(phase1);
+    JRadioButton phase2 = new JRadioButton("2");
+    phase2.setOpaque(false);
+    phase2.setActionCommand("2");
+    phaseButtonGroup.add(phase2);
+    JRadioButton phase3 = new JRadioButton("3");
+    phase3.setOpaque(false);
+    phase3.setActionCommand("3");
+    phaseButtonGroup.add(phase3);
+    JRadioButton phaseNone = new JRadioButton("Default");
+    phaseNone.setOpaque(false);
+    phaseNone.setActionCommand("");
+    phaseButtonGroup.add(phaseNone);
+    
+    if(qualifierCodonStart == null)
+      phaseNone.setSelected(true);
+    else
+    {
+      int codon_start = feature.getCodonStart();
+      empty = false;
+      switch (codon_start)
+      {
+        case 1:  phase1.setSelected(true); break;
+        case 2:  phase2.setSelected(true); break;
+        case 3:  phase3.setSelected(true); break;
+        default: phaseNone.setSelected(true);break;
+      }
+    }
+    
+    Box xBox = Box.createHorizontalBox();
+    c.gridx = 3;
+    c.anchor = GridBagConstraints.EAST;
+    c.fill = GridBagConstraints.NONE;
+    c.ipadx = 5;
+    gridPanel.add(new JLabel("Codon Start"), c);
+    xBox.add(phase1);
+    xBox.add(phase2);
+    xBox.add(phase3);
+    xBox.add(phaseNone);
+    xBox.add(Box.createHorizontalGlue());
+    c.gridx = 4;
+    c.anchor = GridBagConstraints.WEST;
+    c.ipadx = 0;
+    gridPanel.add(xBox, c);
   }
   
   /**
