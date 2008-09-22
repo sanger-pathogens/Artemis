@@ -34,25 +34,25 @@
  	FROM feature_dbxref dbx_f 
         LEFT JOIN dbxref dbx ON dbx.dbxref_id=dbx_f.dbxref_id
         LEFT JOIN db ON db.db_id=dbx.db_id 
-        LEFT JOIN feature f ON dbx_f.feature_id=f.feature_id
+        <!--LEFT JOIN feature f ON dbx_f.feature_id=f.feature_id-->
         <isNotNull property="uniqueName"> 
-          WHERE f.uniquename=#uniqueName#
+          WHERE dbx_f.feature_id=(SELECT feature_id FROM feature where uniquename=#uniqueName#)
         </isNotNull>
         <isGreaterThan property="featureId" compareValue="0">
           WHERE dbx_f.feature_id=$featureId$
         </isGreaterThan>
-        ORDER BY f.type_id,  uniquename
+        ORDER BY feature_id
   </select>
 	
   <select id="getFeatureDbXRefsByFeatureId" resultMap="map-feature-of-feature-dbxref">
    	SELECT db.name, dbx.accession, dbx.version, dbx.description,
-   	       f.feature_id, dbx_f.is_current
+   	       dbx_f.feature_id, dbx_f.is_current
  	FROM feature_dbxref dbx_f 
     LEFT JOIN dbxref dbx ON dbx.dbxref_id=dbx_f.dbxref_id
     LEFT JOIN db ON db.db_id=dbx.db_id 
-    RIGHT JOIN feature f ON dbx_f.feature_id=f.feature_id
-    WHERE f.feature_id IN <iterate open="(" close=")" conjunction=","> $[]$ </iterate>
-    ORDER BY f.type_id,  uniquename
+    <!-- RIGHT JOIN feature f ON dbx_f.feature_id=f.feature_id -->
+    WHERE dbx_f.feature_id IN <iterate open="(" close=")" conjunction=","> $[]$ </iterate>
+    ORDER BY dbx_f.feature_id
   </select>
 
   <select id="getFeatureDbXRefsBySrcFeature" 
