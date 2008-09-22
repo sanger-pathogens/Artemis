@@ -133,6 +133,13 @@ public abstract class GmodDAO
   public abstract List getFeaturePubsBySrcFeature(Feature srcFeature);
   
   /**
+   * Return the FeaturePub's for a Feature
+   * @param feature
+   * @return
+   */
+  public abstract List getFeaturePubsByFeature(Feature feature);
+  
+  /**
    * Return the FeatureSynonym's for all Feature's given their srcfeature_id
    * @param srcFeatureId
    * @return

@@ -153,6 +153,11 @@ public class JdbcDAO extends GmodDAO
     return null;
   }
   
+  public List getFeaturePubsByFeature(final Feature feature)
+  {
+    return null;
+  }
+  
   public List getSimilarityMatches(final Integer srcFeatureId)
   {
     return null;

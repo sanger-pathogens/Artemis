@@ -162,6 +162,13 @@ public class IBatisDAO extends GmodDAO
     return sqlMap.queryForList("getFeaturePubsBySrcFeature",
                                srcFeature);
   }
+  
+  
+  public List getFeaturePubsByFeature(final Feature feature)
+  {
+    return sqlMap.queryForList("getFeaturePubsByFeature",
+                               feature);
+  }
 
   public List getClustersByFeatureIds(final List featureIds)
   {
