@@ -52,8 +52,15 @@
           f.feature_id AS id, pub.*
         FROM feature f
         INNER JOIN feature_pub fpub ON fpub.feature_id = f.feature_id 
-        LEFT JOIN pub               ON fpub.pub_id=pub.pub_id  
-        WHERE f.feature_id = $featureId$
+        LEFT JOIN pub               ON fpub.pub_id=pub.pub_id 
+        <isGreaterThan property="featureId" compareValue="0">
+          WHERE f.feature_id = $featureId$
+        </isGreaterThan>
+		<isEqual property="featureId" compareValue="0">
+	      <isNotNull property="uniqueName"> 
+            WHERE f.uniquename=#uniqueName#
+          </isNotNull>
+	    </isEqual>
      </select>
      
      <insert id="insertFeaturePub" parameterClass="FeaturePub">
