@@ -676,7 +676,8 @@ public class DatabaseDocument extends Document
         dao.getFeatureCvTermDbXRefBySrcFeature(srcFeature));
       featureCvTermPubs = getFeatureCvTermPub(dao, 
         dao.getFeatureCvTermPubBySrcFeature(srcFeature));
-      featurePubs = getFeaturePubsBySrcFeature(dao,srcFeature);
+      featurePubs = getFeaturePubs(dao,
+        dao.getFeaturePubsBySrcFeature(srcFeature));
     
       pubDbXRefs= dao.getPubDbXRef();
     }
@@ -741,15 +742,13 @@ public class DatabaseDocument extends Document
   /**
    * Get FeaturePub's (i.e. /literature qualifiers).
    * @param dao
-   * @param srcfeature_id
+   * @param list
    * @return
    */
-  private Hashtable getFeaturePubsBySrcFeature(final GmodDAO dao,
-                                               final Feature srcFeature)
+  private Hashtable getFeaturePubs(final GmodDAO dao,
+                                   final List list)
   {
-    List list = dao.getFeaturePubsBySrcFeature(srcFeature);
-    
-    Hashtable featurePubs = new Hashtable();
+    final Hashtable featurePubs = new Hashtable();
     Integer featureId;
     List value;
     FeaturePub featurePub;
@@ -904,7 +903,8 @@ public class DatabaseDocument extends Document
         dao.getFeatureCvTermDbXRefBySrcFeature(srcFeature));
     Hashtable featureCvTermPubs = getFeatureCvTermPub(dao, 
         dao.getFeatureCvTermPubBySrcFeature(srcFeature));
-    Hashtable featurePubs = getFeaturePubsBySrcFeature(dao,srcFeature);
+    Hashtable featurePubs = getFeaturePubs(dao,
+        dao.getFeaturePubsBySrcFeature(srcFeature));
 
     List pubDbXRefs = dao.getPubDbXRef();
     
@@ -992,13 +992,15 @@ public class DatabaseDocument extends Document
     Feature parent = new Feature();
     parent.setFeatureId(src_id);
 
+    logger4j.debug("GET PARENT FEATURE");
     parent = dao.getFeatureById(src_id);
     
     chado_gene.setSeqlen(parent.getSeqLen());
     chado_gene.setSrcfeature_id(src_id);
 
-    ByteBuffer buff = new ByteBuffer();
+    final ByteBuffer buff = new ByteBuffer();
     
+    logger4j.debug("BUILD GENE GFF LINE");
     buildGffLineFromId(dao, chadoFeature.getFeatureId(), 
         id_store, parent.getUniqueName(), src_id, buff, chadoFeature);
     
@@ -1015,12 +1017,14 @@ public class DatabaseDocument extends Document
     for(int i = 0; i < relations.size(); i++)
     {
       //Feature transcript = new Feature();
-      
       int id = ((FeatureRelationship) relations.get(i)).getFeatureBySubjectId().getFeatureId();
-      
       Feature transcript = buildGffLineFromId(dao, id, id_store, parent.getUniqueName(), 
                                               src_id, buff, null);
 
+      if( transcript.getCvTerm().getName() == null || 
+         (transcript.getCvTerm().getName().indexOf("RNA") < 0 &&
+          transcript.getCvTerm().getName().indexOf("transcript") < 0 ) )
+        continue;
       // get children of transcript - exons and pp
       List transcipt_relations = new Vector(
           transcript.getFeatureRelationshipsForObjectId());
@@ -1034,7 +1038,7 @@ public class DatabaseDocument extends Document
       }
     }
 
-    logger4j.debug( new String(buff.getBytes()) );
+    logger4j.debug( "GFF:\n"+new String(buff.getBytes()) );
 
     // now wait for cvterm to be loaded
     if(cvThread != null)
@@ -1080,8 +1084,14 @@ public class DatabaseDocument extends Document
     id_store.put(Integer.toString(chadoFeature.getFeatureId()), 
                  chadoFeature);
 
-    FeatureLoc loc = getFeatureLoc(new Vector(
+    final FeatureLoc loc = getFeatureLoc(new Vector(
         chadoFeature.getFeatureLocsForFeatureId()), srcFeatureId);
+    
+    if(loc == null)
+    {
+      logger4j.debug("FEATURELOC NOT FOUND :: "+chadoFeature.getUniqueName());
+      return null;
+    }
     final Hashtable dbxrefs = IBatisDAO.mergeDbXRef(
         dao.getFeatureDbXRefsByFeatureUniquename(chadoFeature.getUniqueName()));
     
@@ -1094,13 +1104,18 @@ public class DatabaseDocument extends Document
     final Hashtable featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, 
                              dao.getFeatureCvTermDbXRefByFeature(chadoFeature));
     
-    final Hashtable featureCvTermPubs = getFeatureCvTermPub(dao,
-                             dao.getFeatureCvTermPubByFeature(chadoFeature));
+    Hashtable featureCvTermPubs = null;
     
-    Feature srcFeature = new Feature();
-    srcFeature.setFeatureId(srcFeatureId);
-    final Hashtable featurePubs = getFeaturePubsBySrcFeature(dao,srcFeature);
-    List pubDbXRefs= dao.getPubDbXRef();
+    try
+    {
+      featureCvTermPubs = getFeatureCvTermPub(dao,
+                          dao.getFeatureCvTermPubByFeature(chadoFeature));
+    }
+    catch(RuntimeException re){re.printStackTrace();}
+
+    final Hashtable featurePubs = getFeaturePubs(dao,
+        dao.getFeaturePubsByFeature(chadoFeature));
+    List pubDbXRefs= new Vector(); //dao.getPubDbXRef();
     chadoToGFF(chadoFeature, parentName, dbxrefs, synonym, featureCvTerms,
         pubDbXRefs, featureCvTermDbXRefs, featureCvTermPubs, featurePubs, 
         id_store, dao, loc, this_buff, gene_builder);  
@@ -2995,6 +3010,12 @@ public class DatabaseDocument extends Document
     return null;
   }
   
+  /**
+   * Find from a list the FeatureLoc with a given srcFeature
+   * @param locs
+   * @param srcfeature_id
+   * @return
+   */
   public static FeatureLoc getFeatureLoc(List locs, int srcfeature_id)
   {
     for(int i=0; i<locs.size(); i++)
