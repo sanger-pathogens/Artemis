@@ -40,9 +40,9 @@
     <resultMap id="select-relationship" class="FeatureRelationship">
 		<result property="featureRelationshipId" column="feature_relationship_id"/>
         <result property="featureBySubjectId" column="subject_id" 
-			                                  select="getLazyFeatureById" />
+			                                  select="getLazyFeatureNoResiduesById" />
         <result property="featureByObjectId"  column="object_id"
-			                                  select="getLazyFeatureById" />
+			                                  select="getLazyFeatureNoResiduesById" />
         <result property="value" column="value" />
         <result property="rank" column="rank" />
         <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />

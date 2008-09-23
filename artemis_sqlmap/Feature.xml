@@ -54,9 +54,9 @@
 
   <!-- mapping for feature table and lazy loading of feature_dbxref, feature_relationship,
        featureprop, organism tables -->
-  <resultMap id="map-feature-lazy" class="Feature" 
+	
+    <resultMap id="map-feature-lazy-no-residues" class="Feature" 
 	         extends="map-basicfeature">
-    <result property="residues" column="residues" />
     <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
     <result property="dbXRef" column="dbXRefId"
                               select="getDbXRefByDbXRefId" />
@@ -76,6 +76,11 @@
 			                           select="getFeatureCvTermsByFeature"/>                         
     <result property="organism" column="{organismId=organismId}" 
                                 select="getOrganism" />
+  </resultMap>	
+	
+  <resultMap id="map-feature-lazy" class="Feature" 
+	         extends="map-feature-lazy-no-residues">
+    <result property="residues" column="residues" />
   </resultMap>
 	
 	
@@ -246,6 +251,21 @@
   </select>
 	
 
+  <select id="getLazyFeatureNoResiduesById" resultMap ="map-feature-lazy-no-residues" >
+	SELECT
+	  timelastmodified,
+	  f.feature_id AS id,
+	  uniquename,
+	  organism_id AS organismId,
+	  f.is_obsolete AS obsolete,
+	  f.name AS feature_name,
+	  f.type_id,
+	  f.dbxref_id AS dbXRefId,
+	  f.seqlen
+	FROM feature f
+    WHERE f.feature_id=$featureId$
+  </select>
+	
   <select id="getLazyFeatureById" resultMap ="map-feature-lazy" >
 	SELECT
 	  timelastmodified,
