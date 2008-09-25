@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.62 2008-04-22 08:51:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.63 2008-09-25 10:14:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -49,7 +49,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.62 2008-04-22 08:51:25 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.63 2008-09-25 10:14:01 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -615,7 +615,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
                              { "+",  "%2B" },
                              { " ",  "+"   },  // white space
                              { "(",  "%28" },  // left bracket
-                             { ")",  "%29" }   // right bracket
+                             { ")",  "%29" },  // right bracket
+                             { "\n", "%5C" }   // new-line 
                            };
 
     int ind;
@@ -781,9 +782,12 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       if(source_str == null && source != null)
        source_str = source;
 
+      String key = getKey().getKeyString();
+      if(key.equals("CDS"))
+        key = "exon";
       writer.write(seqname + "\t" +
                    source_str + "\t" +
-                   getKey() + "\t" +
+                   key + "\t" +
                    start + "\t" +
                    end + "\t" +
                    score.getValues() .elementAt(0)+ "\t" +
