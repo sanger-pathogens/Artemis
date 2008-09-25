@@ -14,6 +14,7 @@
         
      <resultMap id="map-location-lazy"
                 class="FeatureLoc">
+		<result property="featureByFeatureId.featureId" column="feature_id" />
         <result property="srcFeatureId" column="srcfeature_id" nullValue="-999" />
         <result property="featureBySrcFeatureId" column="{featureId=srcfeature_id}" 
                                                  select="getLazyFeatureNoResiduesById" />
@@ -26,27 +27,20 @@
         <result property="rank"      column="rank"/>
      </resultMap>
      
-	 <resultMap id="map-location"
-                class="FeatureLoc">
-        <result property="srcFeatureId" column="srcfeature_id" nullValue="-999" />
-        <result property="featureBySrcFeatureId" column="{featureId=srcfeature_id}" 
-                                                 select="getFeatureById" />
-        <result property="fmin"   column="fmin"   nullValue="-999" />
-        <result property="fmax"   column="fmax"   nullValue="-999" />
-        <result property="strand" column="strand" nullValue="0" />
-        <result property="phase"  column="phase"  nullValue="0" />
-        <result property="residueInfo"  column="residue_info"/>
-        <result property="locGroup"  column="locgroup"/>
-        <result property="rank"      column="rank"/>
-     </resultMap>
 	  
      <!--  select featureloc -->
      <select id="getFeatureLoc" resultMap="map-location-lazy">
-       SELECT srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank
+       SELECT feature_id, srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank
        FROM  featureloc
        WHERE featureloc.feature_id=#id#
      </select>
      
+	 <select id="getFeatureLocsByListOfIds" resultMap ="map-location-lazy">
+	   SELECT feature_id, srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank
+       FROM  featureloc
+       WHERE featureloc.feature_id IN <iterate open="(" close=")" conjunction=","> $[]$ </iterate>
+     </select>
+	
      <!-- used to find match meature from the subject and query featureId -->
      <select id="getFeatureIdBySrcFeatureId" parameterClass="Feature" resultClass="java.lang.Integer">
         <iterate property="featureLocsForFeatureId" conjunction="INTERSECT" >
