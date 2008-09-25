@@ -993,7 +993,7 @@ public class DatabaseDocument extends Document
     parent.setFeatureId(src_id);
 
     logger4j.debug("GET PARENT FEATURE");
-    parent = dao.getFeatureById(src_id);
+    parent = dao.getLazyFeatureNoResiduesById(new Integer(src_id));
     
     chado_gene.setSeqlen(parent.getSeqLen());
     chado_gene.setSrcfeature_id(src_id);
