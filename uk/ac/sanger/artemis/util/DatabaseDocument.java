@@ -1013,19 +1013,25 @@ public class DatabaseDocument extends Document
     
     // get children of gene
     List relations = new Vector(chadoFeature.getFeatureRelationshipsForObjectId());
-    
+    Set idsSeen = new HashSet();
     for(int i = 0; i < relations.size(); i++)
     {
       //Feature transcript = new Feature();
       int id = ((FeatureRelationship) relations.get(i)).getFeatureBySubjectId().getFeatureId();
+      Integer idInt = new Integer(id);
+      if(idsSeen.contains(idInt))
+        continue;
+      idsSeen.add(idInt);
       Feature transcript = buildGffLineFromId(dao, id, id_store, parent.getUniqueName(), 
                                               src_id, buff, null);
 
-      if( transcript.getCvTerm().getName() == null || 
+      if( transcript == null || transcript.getCvTerm() == null ||
+          transcript.getCvTerm().getName() == null || 
          (transcript.getCvTerm().getName().indexOf("RNA") < 0 &&
           transcript.getCvTerm().getName().indexOf("transcript") < 0 ) )
         continue;
       // get children of transcript - exons and pp
+      logger4j.debug("GET CHILDREN OF "+transcript.getName());
       List transcipt_relations = new Vector(
           transcript.getFeatureRelationshipsForObjectId());
 
@@ -1208,7 +1214,8 @@ public class DatabaseDocument extends Document
           cvTermName = fr.getCvTerm().getName();
       
         if(cvTermName.equals("derives_from") || cvTermName.equals("part_of") ||
-           cvTermName.equals("proper_part_of"))
+           cvTermName.equals("proper_part_of") || 
+           cvTermName.equals("partof") || cvTermName.equals("producedby")) // flybase
         {
           parent_relationship = cvTermName;
           parent_id = Integer.toString(fr.getFeatureByObjectId().getFeatureId());
@@ -2205,6 +2212,12 @@ public class DatabaseDocument extends Document
       return dao.getSimilarityMatches(new Integer(srcFeatureId));
     else
       return dao.getSimilarityMatchesByFeatureIds(featureIds);
+  }
+  
+  public List getFeatureLocsByListOfIds(List featureIds)
+  {
+    GmodDAO dao = getDAOOnly();
+    return dao.getFeatureLocsByListOfIds(featureIds);
   }
   
   /**
