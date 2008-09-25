@@ -501,17 +501,37 @@ public class ProteinMapPanel extends MapPanel
   }
 
   /**
-   * Check if a feature contains a protein map qualifier
+   * Check if a feature contains a protein map qualifier. Return a list 
+   * of the protein features containing protein map qualifiers.
    * @param feature
    * @return
    */
-  public static boolean hasProteinMapElement(final Feature feature)
+  public static List getProteinsWithProteinMapElement(final GFFStreamFeature feature)
   {
-    QualifierVector qualifiers = feature.getQualifiers();
-    for(int i=0; i<qualifiers.size(); i++)
-      if(isProteinMapElement((Qualifier)qualifiers.get(i)))
-        return true;
-    return false;
+    List transcripts = feature.getChadoGene().getTranscripts();
+    List proteins = null;
+    if(transcripts != null)
+    {
+      for(int i=0; i<transcripts.size(); i++)
+      {
+        Feature transcript = (Feature)transcripts.get(i);
+        String transcriptName = GeneUtils.getUniqueName(transcript);
+        Feature protein = feature.getChadoGene().getProteinOfTranscript(transcriptName);
+        
+        if(protein != null)
+        {
+          QualifierVector qualifiers = protein.getQualifiers();
+          for(int j=0; j<qualifiers.size(); j++)
+            if(isProteinMapElement((Qualifier)qualifiers.get(j)))
+            {
+              if(proteins == null)
+                proteins = new Vector();
+              proteins.add(protein);
+            }
+        }
+      }
+    }
+    return proteins;
   }
   
   public static boolean isProteinMapElement(final Qualifier this_qualifier)

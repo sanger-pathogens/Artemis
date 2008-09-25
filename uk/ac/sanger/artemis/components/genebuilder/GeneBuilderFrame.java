@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.43 2008-08-01 12:46:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.44 2008-09-25 10:12:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -178,10 +178,11 @@ public class GeneBuilderFrame extends JFrame
     
     //
     // protein map
-    if(ProteinMapPanel.hasProteinMapElement(active_feature.getEmblFeature()))
+    List proteins = ProteinMapPanel.getProteinsWithProteinMapElement(gff_feature);
+    if(proteins != null)
     {
       final ProteinMapPanel proteinMap = 
-        new ProteinMapPanel(active_feature.getEmblFeature(), 
+        new ProteinMapPanel((GFFStreamFeature) proteins.get(0), 
                             gff_feature.getChadoGene(), selection);
       
       final JScrollPane jsp_ppviewer = new JScrollPane(proteinMap);
