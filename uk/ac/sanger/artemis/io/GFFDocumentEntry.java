@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.56 2008-09-18 08:14:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.57 2008-09-25 10:15:59 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -40,12 +40,13 @@ import java.util.Vector;
 import java.sql.Timestamp;
 
 import org.gmod.schema.cv.CvTerm;
+import org.gmod.schema.sequence.FeatureLoc;
 
 /**
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.56 2008-09-18 08:14:54 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.57 2008-09-25 10:15:59 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -275,7 +276,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         DatabaseDocument doc = (DatabaseDocument)getDocument();
           
         if(!doc.isLazyFeatureLoad())
-          loadSimilarityLazyData(original_features); // load /similarity - lazily
+          loadFeatureLocLazyData(original_features); 
         else
         {
           // using lazy loading - add the lazy chado feature to GFFStreamFeature
@@ -299,9 +300,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       {
         ChadoCanonicalGene gene = (ChadoCanonicalGene)enum_genes.nextElement();
         combineChadoExons(gene);
-      }
-      
-      
+      } 
 
     }
     catch(InvalidRelationException e)
@@ -311,11 +310,11 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
   }
   
   /**
-   * Get 'similarity' qualifiers
+   * Get 'similarity', polypeptide_domain qualifiers
    * @param fv
    * @throws InvalidRelationException
    */
-  private void loadSimilarityLazyData(final FeatureVector fv)
+  private void loadFeatureLocLazyData(final FeatureVector fv)
           throws InvalidRelationException
   {
     final DatabaseDocument doc = (DatabaseDocument)getDocument();
@@ -334,7 +333,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     else
       matches = doc.getSimilarityMatches(null);
     
-    Hashtable temp_lookup_hash = new Hashtable(matches.size()/2);
+    final Hashtable temp_lookup_hash = new Hashtable(matches.size()/2);
     String f_id;
     for(int i=0; i<fv.size(); i++)
     {
@@ -347,6 +346,11 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
         temp_lookup_hash.put(f_id, f);
       }
     }
+    
+    // bulk load featureLocs and create hash 
+    final Hashtable hashFeatureLocs = getFeatureLocsHash(doc, matches);
+    if(hashFeatureLocs == null)
+      return;
     
     final Hashtable cvTermCache = new Hashtable();
     for(int i=0; i<matches.size(); i++)
@@ -375,7 +379,14 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       else
         qualifierName = cvTerm.getName();
       
-      java.util.Collection featureLocs = matchFeature.getFeatureLocsForFeatureId();
+      
+      final List featureLocs = 
+        (List) hashFeatureLocs.get(new Integer(matchFeature.getFeatureId()));
+      if(featureLocs == null)
+        continue;
+      
+      matchFeature.setFeatureLocsForFeatureId(featureLocs);
+      //java.util.Collection featureLocs = matchFeature.getFeatureLocsForFeatureId();
       java.util.Iterator it = featureLocs.iterator();
       while(it.hasNext())
       {
@@ -401,17 +412,14 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           }
           catch(ReadOnlyException e)
           {
-            // TODO Auto-generated catch block
             e.printStackTrace();
           }
           catch(EntryInformationException e)
           {
-            // TODO Auto-generated catch block
             e.printStackTrace();
           }
           break;
         }
-
       }
     }
     cvTermCache.clear();
@@ -492,6 +500,44 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     combineFeaturesFromHash(forward_feature_groups);
     combineFeaturesFromHash(reverse_feature_groups);
   }*/
+
+  
+  /**
+   * Bulk load match features featureLoc's and create a Hashtable with the
+   * feature_id's as keys and a list of the corresponding featureLocs as values.
+   * @param doc
+   * @param matches
+   * @return the hashtable; null if no featureLocs are found
+   */
+  private Hashtable getFeatureLocsHash(final DatabaseDocument doc, final List matches)
+  {
+    final List matchFeatureIds = new Vector(matches.size());
+    for(int i=0; i< matches.size(); i++)
+    {
+      String matchFeatureId = Integer.toString( 
+          ((org.gmod.schema.sequence.Feature)matches.get(i)).getFeatureId() );
+      matchFeatureIds.add( matchFeatureId );
+    }
+    
+    final List allFeatureLocs = doc.getFeatureLocsByListOfIds(matchFeatureIds);
+    if(allFeatureLocs == null)
+      return null;
+    
+    Hashtable hashFeatureLocs = new Hashtable();
+    for(int i=0;i<allFeatureLocs.size(); i++)
+    {
+      FeatureLoc featureLoc = (FeatureLoc)allFeatureLocs.get(i);
+      Integer featureId = new Integer(featureLoc.getFeatureByFeatureId().getFeatureId());
+      List list;
+      if(hashFeatureLocs.containsKey(featureId))
+        list = (List) hashFeatureLocs.get(featureId);
+      else
+        list = new Vector();
+      list.add(featureLoc);
+      hashFeatureLocs.put(featureId, list);
+    }
+    return hashFeatureLocs;
+  }
 
   /**
    *  Combine the features (which are exons) and delete the orignals from this
