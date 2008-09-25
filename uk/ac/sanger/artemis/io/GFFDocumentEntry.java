@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.57 2008-09-25 10:15:59 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.58 2008-09-25 15:34:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -46,7 +46,7 @@ import org.gmod.schema.sequence.FeatureLoc;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.57 2008-09-25 10:15:59 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.58 2008-09-25 15:34:24 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -274,10 +274,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       if(getDocument() instanceof DatabaseDocument)
       {
         DatabaseDocument doc = (DatabaseDocument)getDocument();
-          
-        if(!doc.isLazyFeatureLoad())
-          loadFeatureLocLazyData(original_features); 
-        else
+        loadFeatureLocLazyData(original_features); 
+        if(doc.isLazyFeatureLoad())
         {
           // using lazy loading - add the lazy chado feature to GFFStreamFeature
           final Hashtable idFeatureStore = doc.getIdFeatureStore();
@@ -347,38 +345,24 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       }
     }
     
-    // bulk load featureLocs and create hash 
+    // bulk load featureLocs and create lookup hash 
     final Hashtable hashFeatureLocs = getFeatureLocsHash(doc, matches);
     if(hashFeatureLocs == null)
       return;
     
     final Hashtable cvTermCache = new Hashtable();
+    final Feature f = (Feature)fv.elementAt(0);
     for(int i=0; i<matches.size(); i++)
     {
       org.gmod.schema.sequence.Feature matchFeature =
            (org.gmod.schema.sequence.Feature)matches.get(i);
       
-      Integer cvTermId = new Integer(matchFeature.getCvTerm().getCvTermId());
-      final org.gmod.schema.cv.CvTerm cvTerm;
-      
-      if(cvTermCache.containsKey(cvTermId))
-        cvTerm = (CvTerm) cvTermCache.get(cvTermId);
-      else
-      {
-        cvTerm = 
-           DatabaseDocument.getCvTermByCvTermId(matchFeature.getCvTerm().getCvTermId(), 
-                                                (Feature)fv.elementAt(0));
-        cvTermCache.put(cvTermId, cvTerm);
-      }
-      
-      matchFeature.setCvTerm(cvTerm);
+      final CvTerm cvTerm = getCvTermFromCache(cvTermCache, matchFeature, f);
       final String qualifierName;
-      
       if(cvTerm.getName().indexOf("match") > -1)
         qualifierName = "similarity";
       else
         qualifierName = cvTerm.getName();
-      
       
       final List featureLocs = 
         (List) hashFeatureLocs.get(new Integer(matchFeature.getFeatureId()));
@@ -390,9 +374,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       java.util.Iterator it = featureLocs.iterator();
       while(it.hasNext())
       {
-        final org.gmod.schema.sequence.FeatureLoc featureLoc =
-          (org.gmod.schema.sequence.FeatureLoc)it.next();
-
+        final FeatureLoc featureLoc = (FeatureLoc)it.next();
         final Feature queryFeature = 
           (Feature)temp_lookup_hash.get(Integer.toString(featureLoc.getSrcFeatureId()));
         
@@ -424,6 +406,35 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     }
     cvTermCache.clear();
     temp_lookup_hash.clear(); 
+  }
+  
+  /**
+   * Retrieve a CvTerm from a Hashtable with keys equal to the cvterm_id
+   * and values of the corresponding  CvTerm. If the term is not in the cache 
+   * then look it up in the main DatabaseDocument cache.
+   * @param cvTermCache
+   * @param matchFeature
+   * @param f
+   * @return
+   */
+  private CvTerm getCvTermFromCache(final Hashtable cvTermCache,
+                                    final org.gmod.schema.sequence.Feature matchFeature,
+                                    final Feature f)
+  {
+    final Integer cvTermId = new Integer(matchFeature.getCvTerm().getCvTermId());
+    final CvTerm cvTerm;
+    
+    if(cvTermCache.containsKey(cvTermId))
+      cvTerm = (CvTerm) cvTermCache.get(cvTermId);
+    else
+    {
+      cvTerm = DatabaseDocument.getCvTermByCvTermId(
+          matchFeature.getCvTerm().getCvTermId(), f);
+      cvTermCache.put(cvTermId, cvTerm);
+    }
+    
+    matchFeature.setCvTerm(cvTerm);
+    return cvTerm;
   }
   
   /**
