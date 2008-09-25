@@ -12,7 +12,11 @@
 	
   <cacheModel id="feature-cache" type ="LRU" readOnly="true"> 
       <flushInterval hours="24"/>  
-      <property name="cache-size" value="4" /> 
+	  <flushOnExecute statement="insertFeature"/>
+      <flushOnExecute statement="updateFeature"/>
+      <flushOnExecute statement="deleteFeature"/>
+	  <flushOnExecute statement="deleteFeatureById"/>
+      <property name="cache-size" value="10" /> 
   </cacheModel> 
 	                 
   <parameterMap id="schema-cvlist" 
@@ -110,18 +114,21 @@
 	<result property="featureLoc.strand" column="strand" nullValue="0" />
 	<result property="featureLoc.phase"  column="phase"  nullValue="0" />
   </resultMap>
-	   
-  <resultMap id="map-similaritymatch" class="Feature" 
+	
+	
+  <resultMap id="map-similaritymatch-lazy" class="Feature" 
 	         groupBy="featureId" extends="map-basicfeature">       
     <result property="cvTerm.cvTermId" column="type_id"  />
-    <result property="featureLocsForFeatureId" resultMap="FeatureLoc.map-location" />
+	<result property="featureLocsForFeatureId" column="{id=id}" 
+                                               select="getFeatureLoc" />
 	<result property="featureProps" column="{feature_id=id}" 
                                        select="getFeaturePropByFeatureId" />
 	<result property="featureDbXRefs" column="{featureId=id}"
                                       select="getFeatureDbXRef" />
 	<result property="dbXRef" column="dbXRefId"
                               select="getDbXRefByDbXRefId" />
-    <result property="analysisFeatures" resultMap="AnalysisFeature.map-analysisfeature" />                                                
+    <result property="analysisFeatures" column="{feature_id=id}"
+		             select="getAnalysisFeaturesByFeatureId" />                                                
   </resultMap>
 	
 
@@ -224,34 +231,34 @@
 	     LEFT JOIN cvterm ON f.type_id=cvterm.cvterm_id
 	   </isNotNull>
 	 </dynamic>
-	WHERE
-	 <dynamic>
+
+	 <dynamic prepend="WHERE">
        <isGreaterThan property="featureId" compareValue="0"> 
-         f.feature_id=$featureId$ AND
+         f.feature_id=$featureId$
        </isGreaterThan>
           
-       <isNotNull property="uniqueName">                                 
+       <isNotNull property="uniqueName" prepend="AND">                            
          <isNotNull property="featureSynonyms">
            <iterate property="featureSynonyms" conjunction="OR" open="(" close=") OR">
             f.feature_id=#featureSynonyms[].feature.featureId#
            </iterate>
          </isNotNull>
-         ( uniquename LIKE #uniqueName# ESCAPE '/' OR f.name LIKE #uniqueName# ESCAPE '/') AND              
+         ( uniquename=#uniqueName# )            
        </isNotNull>
           
-       <isGreaterThan property="cvTerm.cvTermId" compareValue="0"> 
-         f.type_id=$cvTerm.cvTermId$ AND
+       <isGreaterThan property="cvTerm.cvTermId" compareValue="0" prepend="AND"> 
+         f.type_id=$cvTerm.cvTermId$
        </isGreaterThan>
           
-       <isNotNull property="cvTerm.name"> 
-         cvterm.name=#cvTerm.name# AND
+       <isNotNull property="cvTerm.name" prepend="AND"> 
+         cvterm.name=#cvTerm.name#
        </isNotNull>
      </dynamic>
-     f.feature_id > 0 
   </select>
 	
 
-  <select id="getLazyFeatureNoResiduesById" resultMap ="map-feature-lazy-no-residues" >
+  <select id="getLazyFeatureNoResiduesById" resultMap ="map-feature-lazy-no-residues" 
+	  cacheModel="feature-cache">
 	SELECT
 	  timelastmodified,
 	  f.feature_id AS id,
@@ -343,20 +350,17 @@
 	  f.dbxref_id AS dbXRefId,
       f.name AS feature_name,
 	  f.seqlen,
-	  f.residues,
-      srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, fl.rank,
-	  rawscore, normscore, significance, identity, a.analysis_id,
-	  a.name, description, program, programversion, algorithm, sourcename, sourceversion,sourceuri, timeexecuted
-    FROM feature f 
-    LEFT JOIN featureloc fl ON f.feature_id=fl.feature_id
+	  f.residues
+      FROM feature f 
+    <!--LEFT JOIN featureloc fl ON f.feature_id=fl.feature_id
 	LEFT JOIN analysisfeature af ON f.feature_id=af.feature_id
-	LEFT JOIN analysis a ON af.analysis_id=a.analysis_id
+	LEFT JOIN analysis a ON af.analysis_id=a.analysis_id-->
     WHERE f.feature_id IN
   </sql>
 	
   <!-- Returns matches for all features on a given srcfeature -->
   <select id="getLazySimilarityMatches" parameterClass="java.lang.Integer" 
-                             resultMap="map-similaritymatch">
+                             resultMap="map-similaritymatch-lazy">
 	<include refid="selectSimilarityMatch"/>
         (  SELECT feature_id FROM featureloc WHERE srcfeature_id IN 
          ( SELECT feature_id  FROM featureloc WHERE srcfeature_id=$value$) )
@@ -365,7 +369,7 @@
 
   <!-- Returns matches for a list of feature_id's -->
   <select id="getLazySimilarityMatchesByFeatureIds" parameterClass="java.util.List" 
-                             resultMap="map-similaritymatch">
+                             resultMap="map-similaritymatch-lazy">
     <include refid="selectSimilarityMatch"/> 
       (  SELECT feature_id FROM featureloc WHERE srcfeature_id IN
         <iterate open="(" close=")" conjunction=","> $[]$ </iterate>
