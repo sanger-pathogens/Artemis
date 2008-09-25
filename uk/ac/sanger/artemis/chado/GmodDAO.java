@@ -55,6 +55,14 @@ public abstract class GmodDAO
   public abstract List getParentFeaturesByChildFeatureIds(final List subjectIds);
   
   /**
+   * Return a <code>List</code> of featureLoc's corresponding for a
+   * <code>List</code> of feature_id's.
+   * @param featureIds the list of featureIds to search
+   * @return a (possibly empty) List<Feature>
+   */
+  public abstract List getFeatureLocsByListOfIds(final Collection featureIds);
+  
+  /**
    * Return all the Feature.featureDbXRefs for a <code>List</code> of feature_id's. 
    * These are grouped by their feature_id and returned in a <code>List</code>
    * of Feature's.

@@ -28,6 +28,7 @@ import javax.swing.JPasswordField;
 
 import java.sql.*;
 import java.io.*;
+import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 
@@ -137,6 +138,11 @@ public class JdbcDAO extends GmodDAO
   }
 
   public List getFeatureSynonymsByFeatureIds(final List featuresIds)
+  {
+    return null;
+  }
+  
+  public List getFeatureLocsByListOfIds(final Collection featureIds)
   {
     return null;
   }
