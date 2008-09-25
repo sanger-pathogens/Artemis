@@ -614,8 +614,8 @@ abstract class AbstractMatchTable
             //entry.setReadOnly(true);
             GeneEdit.showGeneEditor(reference[0], reference[1], entry);
           }
-        }
-       isChanged = true;
+       }
+       //isChanged = true;
        linkButton.setCursor(Cursor.getDefaultCursor());
        return linkButton.getActionCommand();
      }
