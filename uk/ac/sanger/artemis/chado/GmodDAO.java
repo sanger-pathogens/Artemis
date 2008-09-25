@@ -53,6 +53,7 @@ public abstract class GmodDAO
   public abstract List getSimilarityMatches(final Integer srcFeatureId);
   public abstract List getClustersByFeatureIds(final List featureIds);
   public abstract List getParentFeaturesByChildFeatureIds(final List subjectIds);
+  public abstract Feature getLazyFeatureNoResiduesById(final Integer featureId);
   
   /**
    * Return a <code>List</code> of featureLoc's corresponding for a

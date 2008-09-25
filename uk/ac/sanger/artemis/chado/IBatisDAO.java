@@ -100,6 +100,12 @@ public class IBatisDAO extends GmodDAO
   ////// SequenceDaoI
   //////
   //////
+  
+  public Feature getLazyFeatureNoResiduesById(final Integer featureId)
+  {
+    return (Feature)sqlMap.queryForObject("getLazyFeatureNoResiduesById",featureId);
+  }
+  
   public List getFeatureDbXRefsByFeatureId(final List featureIds)
   {
     return sqlMap.queryForList("getFeatureDbXRefsByFeatureId",featureIds);

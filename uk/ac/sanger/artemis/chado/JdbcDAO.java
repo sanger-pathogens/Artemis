@@ -101,6 +101,11 @@ public class JdbcDAO extends GmodDAO
   //////
   //////
   
+  public Feature getLazyFeatureNoResiduesById(final Integer featureId)
+  {
+    return null;
+  }
+  
   public List getClustersByFeatureIds(List featureIds)
   {
     // TODO Auto-generated method stub
