@@ -493,16 +493,17 @@ public class DatabaseDocument extends Document
           Iterator it = featureLocs.iterator();
           final FeatureLoc featureLoc = (FeatureLoc)it.next();
 
-          srcFeature = featureLoc.getFeatureBySrcFeatureId();
+          int srcfeatureid = featureLoc.getFeatureBySrcFeatureId().getFeatureId();
+          srcFeature = dao.getFeatureById(srcfeatureid);
           setName(srcFeature.getUniqueName());
-          this.srcFeatureId = Integer.toString(srcFeature.getFeatureId());
+          this.srcFeatureId = Integer.toString(srcfeatureid);     
         }
         else
         {
           srcFeature = dao.getFeatureById(Integer.parseInt(srcFeatureId));
         }
         
-        ByteBuffer entryBuffer = getFeaturesInRange(srcFeature, range, dao);
+        final ByteBuffer entryBuffer = getFeaturesInRange(srcFeature, range, dao);
         getChadoSequence(srcFeature, entryBuffer);
 
         return new ByteArrayInputStream(entryBuffer.getBytes());
