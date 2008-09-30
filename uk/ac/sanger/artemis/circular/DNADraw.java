@@ -547,7 +547,6 @@ public class DNADraw extends ScrollPanel
     g2.drawArc(location.x+shift,location.y+shift,
         (int)(diameter*0.9),(int)(diameter*0.9),0,360);*/
 
-
     AffineTransform newOrig;
 
     if(restrictionEnzyme != null)
@@ -624,12 +623,11 @@ public class DNADraw extends ScrollPanel
                       widthPanel,heightPanel,rad,pi,widDash,fm,
                       lineSize,record,majorTicks,false);
 
-
     //minor ticks
     drawCircularTicks(g2,ddiameter,ddiameter2,diameter,origin,
                       widthPanel,heightPanel,rad,pi,widDash/2,fm,
                       lineSize,record,minorTicks,true);
-    
+
     // draw features
     Vector markers = getGeneticMarker();
     for(int i=0; i<markers.size(); i++)
@@ -645,7 +643,7 @@ public class DNADraw extends ScrollPanel
             double ddiameter2, int diameter, AffineTransform origin,
             double widthPanel,double heightPanel, double rad, double pi,
             double widDash, FontMetrics fm, int lineSize,
-            boolean record, Vector ticks, boolean smallTicks)
+            boolean record, Vector ticks, final boolean smallTicks)
   {
 
     double hgt = fm.getAscent();
@@ -714,6 +712,7 @@ public class DNADraw extends ScrollPanel
           x = tickMinorXPositions[index];
           y = tickMinorYPositions[index];
         }
+        else
         {
           x = tickMajorXPositions[index];
           y = tickMajorYPositions[index];
@@ -899,17 +898,26 @@ public class DNADraw extends ScrollPanel
     double pageWidth  = pf.getImageableWidth();    //width of printer page
     double scale = pageWidth/panelWidth;
     int totalNumPages = (int)Math.ceil(scale * panelHeight / pageHeight);
+
     // Make sure not print empty pages
     if(pageIndex >= totalNumPages)
-     return Printable.NO_SUCH_PAGE;
-
+    {
+      System.out.println("NO SUCH PAGE "+pageIndex); 
+      return Printable.NO_SUCH_PAGE;
+    }
+    
     // Shift Graphic to line up with beginning of print-imageable region
     g2.translate(pf.getImageableX(), pf.getImageableY());
     // Shift Graphic to line up with beginning of next page to print
     g2.translate(0f, -pageIndex*pageHeight);
     // Scale the page so the width fits...
     g2.scale(scale, scale);
-    drawAll(g2,false);
+    
+    try
+    {
+      drawAll(g2,false);
+    }
+    catch(Exception e){ e.printStackTrace(); }
     return Printable.PAGE_EXISTS;
   }
 
@@ -965,9 +973,11 @@ public class DNADraw extends ScrollPanel
     pj.printDialog();
     try
     {
+      setCursor(new Cursor(Cursor.WAIT_CURSOR));
       pj.print();
+      setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
-    catch (Exception PrintException) {}
+    catch (Exception pe) { pe.printStackTrace(); }
   }
 
 
