@@ -501,8 +501,16 @@ public abstract class Graph extends JPanel
         optionBox, "Graph Options", 
         JOptionPane.PLAIN_MESSAGE);
     
-    setGraphHeight((float) graphHeightField.getValue());
-    setTrack(trackField.getValue());
+    try
+    {
+      setGraphHeight((float) graphHeightField.getValue());
+      setWindowSize(winSize.getValue());
+      setBaseStepSize(stepSize.getValue());
+      setTrack(trackField.getValue());
+      //setMinusColour(colorChooser.getColor());
+      //setPlusColour(colorChooser2.getColor());
+    }
+    catch(Exception e){ e.printStackTrace(); }
     repaint();
   }
   
