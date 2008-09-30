@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.63 2008-09-25 10:14:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.64 2008-09-30 13:21:52 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -49,7 +49,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.63 2008-09-25 10:14:01 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.64 2008-09-30 13:21:52 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -68,6 +68,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
   /** store for spliced features containing id and range of each segment */
   private Hashtable id_range_store;
+  
+  /** store a record of the new and old uniquenames that have been changed */
+  private Hashtable newIdMapToOldId;
 
   /** store the Timestamp for the feature */
   private Timestamp timelastmodified;
@@ -420,6 +423,20 @@ public class GFFStreamFeature extends SimpleDocumentFeature
                          this.getLocation().getTotalRange());
     }
     return id_range_store;
+  }
+  
+  public Hashtable getNewIdMapToOldId()
+  {
+    return newIdMapToOldId;
+  }
+  
+  /**
+   * Used when changing spliced feature uniquenames
+   * @param newIdMapToOldId
+   */
+  public void setNewIdMapToOldId(Hashtable newIdMapToOldId)
+  {
+    this.newIdMapToOldId = newIdMapToOldId;
   }
   
   /**
