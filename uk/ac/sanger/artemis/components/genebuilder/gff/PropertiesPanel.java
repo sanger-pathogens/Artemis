@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.3 2008-09-19 15:19:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.4 2008-09-30 13:16:01 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -179,7 +179,7 @@ public class PropertiesPanel extends JPanel
       cellDimension = new Dimension(uniquenameTextField.getPreferredSize().width+10,
                                     idField.getPreferredSize().height+10);
       
-      if(feature.getKey().getKeyString().indexOf("exon") > -1)
+      if(feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
         uniquenameTextField.setEditable(false);
       uniquenameTextField.setMaximumSize(cellDimension);
       
@@ -216,13 +216,11 @@ public class PropertiesPanel extends JPanel
         empty = false;
       }
   
-      JLabel idField = new JLabel("Primary Name");
+      final JLabel nameField = new JLabel("Name");
       if(cellDimension == null)
         cellDimension = new Dimension(primaryNameTextField.getPreferredSize().width+10,
-                                      idField.getPreferredSize().height+10);
-      
-      if(feature.getKey().getKeyString().indexOf("exon") > -1)
-        primaryNameTextField.setEditable(false);
+            nameField.getPreferredSize().height+10);
+
       primaryNameTextField.setMaximumSize(cellDimension);
       
       c.gridx = 3;
@@ -230,7 +228,7 @@ public class PropertiesPanel extends JPanel
       c.ipadx = 5;
       c.fill = GridBagConstraints.NONE;
       c.anchor = GridBagConstraints.EAST;
-      gridPanel.add(idField, c);
+      gridPanel.add(nameField, c);
       c.gridx = 4;
       c.gridy = nrows;
       c.ipadx = 0;
@@ -446,22 +444,31 @@ public class PropertiesPanel extends JPanel
     {
       if(!uniquenameTextField.getText().equals(""))
       {
+        final String newName = uniquenameTextField.getText().trim();
+        final String oldName = ((String) (idQualifier.getValues().get(0))).trim();
         gffQualifiers.remove(idQualifier);
-        idQualifier = new Qualifier("ID", uniquenameTextField.getText());
+        idQualifier = new Qualifier("ID", newName);
         gffQualifiers.addElement(idQualifier);
+        
+        GFFStreamFeature gffFeature = (GFFStreamFeature)feature.getEmblFeature();
+        if(gffFeature.getChadoGene() != null)
+        {
+          Set children = gffFeature.getChadoGene().getChildren(gffFeature);
+          gffFeature.getChadoGene().updateUniqueName(oldName, newName, children);
+        }
       }
     }
 
-    Qualifier nameQualifier = gffQualifiers.getQualifierByName("Name");
-    if( (nameQualifier != null &&
-       !((String)(nameQualifier.getValues().get(0))).equals(primaryNameTextField.getText())) ||
-       primaryNameTextField != null)
+    if(!feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
     {
-      gffQualifiers.remove(nameQualifier);
-      
-      if(!primaryNameTextField.getText().equals(""))
+      Qualifier nameQualifier = gffQualifiers.getQualifierByName("Name");
+      if( (nameQualifier != null &&
+       !((String)(nameQualifier.getValues().get(0))).equals(primaryNameTextField.getText())) ||
+       (primaryNameTextField != null && !primaryNameTextField.getText().equals("")))
       {
-        nameQualifier = new Qualifier("Name", primaryNameTextField.getText());
+        gffQualifiers.remove(nameQualifier);   
+        final String newName = primaryNameTextField.getText().trim();
+        nameQualifier = new Qualifier("Name", newName);
         gffQualifiers.addElement(nameQualifier);
       }
     }
@@ -532,9 +539,10 @@ public class PropertiesPanel extends JPanel
     else
       gffFeature.setVisible(true); 
     
+    if(gffFeature.getChadoGene() == null)
+      return;
     Set children = gffFeature.getChadoGene().getChildren(gffFeature);
  
-    
     if(children.size() > 0)
     {
       Qualifier idQualifier = gffFeature.getQualifierByName("ID");
