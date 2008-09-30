@@ -56,6 +56,7 @@ import uk.ac.sanger.artemis.EntryChangeListener;
 import uk.ac.sanger.artemis.EntryChangeEvent;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Hashtable;
@@ -1780,14 +1781,35 @@ public class ChadoTransactionManager
                              final Qualifier old_qualifier)
   {  
     final String uniqueName[];
+    String oldUniqueNames[] = null;
     final String isObsolete;
     String name = null;
     
     final String log;
     if(qualifierName.equals("ID"))
     {
-      uniqueName = new String[1];
-      uniqueName[0] = (String)new_qualifier.getValues().get(0);
+      Hashtable segmentRangeStore = feature.getSegmentRangeStore();
+      if(segmentRangeStore != null && segmentRangeStore.size() > 1)
+      {
+        Hashtable mappingIds = feature.getNewIdMapToOldId();
+        
+        Object newKeys[] = segmentRangeStore.keySet().toArray();
+        uniqueName = new String[newKeys.length];
+        oldUniqueNames = new String[newKeys.length];
+        
+        for(int i=0; i<newKeys.length; i++)
+        {
+          uniqueName[i]     = (String)newKeys[i];
+          oldUniqueNames[i] = (String)mappingIds.get(uniqueName[i]);
+        }
+      }
+      else
+      {
+        uniqueName = new String[1];
+        oldUniqueNames = new String[1];
+        uniqueName[0]  = (String)new_qualifier.getValues().get(0);
+        oldUniqueNames[0] = (String) old_qualifier.getValues().get(0);
+      }
       
       if(feature.getQualifierByName("isObsolete") != null)
         isObsolete = (String) feature.getQualifierByName("isObsolete").getValues().get(0);
@@ -1834,7 +1856,8 @@ public class ChadoTransactionManager
     
     for(int i = 0; i < uniqueName.length; i++)
     {
-      org.gmod.schema.sequence.Feature chadoFeature = new org.gmod.schema.sequence.Feature();
+      org.gmod.schema.sequence.Feature chadoFeature = 
+        new org.gmod.schema.sequence.Feature();
       chadoFeature.setUniqueName(uniqueName[i]);
       
       if(qualifierName.equals("Name"))
@@ -1845,18 +1868,38 @@ public class ChadoTransactionManager
       chadoFeature.setObsolete(Boolean.parseBoolean(isObsolete));
 
       String logVal = uniqueName[i] + " " + log
-                      + (new_qualifier !=null ? (String) new_qualifier.getValues().get(0) : "NULL")
-                      + " OLD=" 
-                      + (old_qualifier != null ? (String) old_qualifier.getValues().get(0) : "NULL");
+                 + (new_qualifier !=null ? (String) new_qualifier.getValues().get(0) : "NULL")
+                 + " OLD=" 
+                 + (old_qualifier != null ? (String) old_qualifier.getValues().get(0) : "NULL");
       logger4j.debug(logVal);
       ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.UPDATE,
           chadoFeature, feature.getLastModified(), feature, 
           feature.getKey().getKeyString(), "ID="+logVal);
 
-      if(qualifierName.equals("ID"))
-        tsn.setOldUniquename((String) old_qualifier.getValues().get(0));
+      if(qualifierName.equals("ID") && oldUniqueNames != null)
+        tsn.setOldUniquename(oldUniqueNames[i]);
 
       sql.add(tsn);
+    }
+    
+    // change uniquename of child features
+    if(qualifierName.equals("ID"))
+    {
+      GFFStreamFeature gffFeature = ((GFFStreamFeature)feature);
+      if(gffFeature.getChadoGene() == null)
+        return;
+      Set children = gffFeature.getChadoGene().getChildren(gffFeature);
+      if(children != null && children.size()>0)
+      {
+        final String prefix = uniqueName[0].split(":")[0];
+        int val = JOptionPane.showConfirmDialog(null, 
+            "Change name of children based on this ["+prefix+"]?", 
+            "Name Change", JOptionPane.OK_CANCEL_OPTION);
+        
+        if(val == JOptionPane.OK_OPTION)
+          GeneUtils.propagateId(((GFFStreamFeature)feature), 
+                                prefix, children);
+      }
     }
   }
   
