@@ -1087,6 +1087,102 @@ public class GeneUtils
   }
   
   /**
+   * For a feature propagate the uniquename as the prefix for
+   * the associated children.
+   * @param gene
+   * @param newName
+   * @param children
+   */
+  public static void propagateId(final GFFStreamFeature feature,
+                                 final String newName, 
+                                 final Set children)
+  {
+    final ChadoCanonicalGene gene = feature.getChadoGene();
+    final Iterator it = children.iterator();
+    while(it.hasNext())
+    {
+      final GFFStreamFeature child = (GFFStreamFeature)it.next();
+      final Hashtable segmentHash  = child.getSegmentRangeStore();
+      
+      final String oldId = getUniqueName(child);
+      
+      final Set childrenOfChild = gene.getChildren(child);
+      int index;
+      if((index = oldId.indexOf(':')) > -1)
+      {
+        final String newId;
+        if(segmentHash != null && segmentHash.size() > 1)
+        {
+          final Set idKeys = segmentHash.keySet();
+          final Hashtable newSegmentHash = new Hashtable(idKeys.size());
+          final Iterator itKeys = idKeys.iterator();
+          final Hashtable newIdMapToOldId = new Hashtable(idKeys.size());
+          while(itKeys.hasNext())
+          {
+            String oldKey = (String)itKeys.next();
+            index = oldKey.indexOf(':');
+            final String newKey = newName + oldKey.substring(index);
+            Object range = segmentHash.get(oldKey);
+
+            newSegmentHash.put(newKey, range);
+            newIdMapToOldId.put(newKey, oldKey);
+          }
+          child.setSegmentRangeStore(newSegmentHash);
+          child.setNewIdMapToOldId(newIdMapToOldId);
+          newId = child.getSegmentID(child.getLocation().getRanges());
+        }
+        else
+          newId = newName + oldId.substring(index);
+        try
+        {
+          ((uk.ac.sanger.artemis.Feature) child.getUserData())
+              .setQualifier(new Qualifier("ID", newId));
+          gene.updateUniqueName(oldId, newId, childrenOfChild);
+        }
+        catch(ReadOnlyException e)
+        {
+          e.printStackTrace();
+        }
+        catch(EntryInformationException e)
+        {
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+  
+  /**
+   * Fix parent (Parent and Derives_from) qualifiers. Used when the
+   * uniqueName of the parent has been changed.
+   * @param oldName
+   * @param newName
+   * @param children
+   */
+  public static void fixParentQualifier(final String oldName,
+                                        final String newName, 
+                                        final Set children)
+  {
+    final Iterator it = children.iterator();
+    while(it.hasNext())
+    {
+      Feature child = (Feature)it.next();
+      QualifierVector qualifiers = child.getQualifiers();
+      if( qualifiers.getQualifierByName("Parent") != null &&
+          ((String)(qualifiers.getQualifierByName("Parent").getValues().get(0))).equals(oldName) )
+      {
+        qualifiers.removeQualifierByName("Parent");
+        qualifiers.setQualifier(new Qualifier("Parent", newName));
+      }
+      else if( qualifiers.getQualifierByName("Derives_from") != null &&
+          ((String)(qualifiers.getQualifierByName("Derives_from").getValues().get(0))).equals(oldName) )
+      {
+        qualifiers.removeQualifierByName("Derives_from");
+        qualifiers.setQualifier(new Qualifier("Derives_from", newName));
+      }
+    }
+  }
+  
+  /**
    * Converts a gene to pseudogene or vice-versa
    * @param chado_gene
    * @throws EntryInformationException 
@@ -1212,6 +1308,4 @@ public class GeneUtils
   {
     GeneUtils.defineShowHideGeneFeatures(new FeatureVector());
   }
-
-
 }
