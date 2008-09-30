@@ -20,11 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.29 2007-10-18 19:25:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.30 2008-09-30 13:24:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.StringVector;
@@ -136,6 +137,45 @@ public class ChadoCanonicalGene
         e.printStackTrace();
       }
     }  
+  }
+  
+  /**
+   * This should be called if the uniqueName of a gene model 
+   * feature is changed.
+   * @param oldName
+   * @param newName
+   * @param children
+   */
+  public void updateUniqueName(final String oldName, 
+                               final String newName,
+                               final Set children)
+  {
+    updateNames(splicedFeatures,oldName,newName);
+    updateNames(proteins,oldName,newName);
+    updateNames(three_prime_utr,oldName,newName);
+    updateNames(five_prime_utr,oldName,newName);
+    updateNames(other_features,oldName,newName);
+    
+    if(children != null)
+      GeneUtils.fixParentQualifier(oldName, newName, children);
+  }
+  
+  /**
+   * Utility for changing the key used in a Hashtable
+   * @param hash
+   * @param oldName
+   * @param newName
+   */
+  private static void updateNames(final Hashtable hash,
+                                  final String oldName, 
+                                  final String newName)
+  {
+    Object features = hash.get(oldName);
+    if(features != null)
+    {
+      hash.remove(oldName);
+      hash.put(newName, features);
+    }
   }
   
   /**
