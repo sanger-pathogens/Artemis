@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.39 2008-08-14 10:01:25 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.40 2008-10-01 12:50:31 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -251,7 +251,7 @@ dist :
 	mkdir tar_build/artemis
 	rm -f artemis_compiled_latest.tar.gz
 	tar cf - $(OTHER_FILES) act art etc | (cd tar_build/artemis; tar xf -)
-	tar cf - artemis_sqlmap uk nsdb type seqdb lib | (cd tar_build/artemis; tar xf -)
+	tar cf - artemis_sqlmap dnaplot uk nsdb type seqdb lib | (cd tar_build/artemis; tar xf -)
 	(cd tar_build; find . -name 'CVS' -print | xargs rm -rf; tar cvf ../artemis_compiled.tar artemis)
 
 jar : all artemis.jar
@@ -283,7 +283,7 @@ artemis.jar : $(CLASSES)
 	jar cmf manifest-art artemis.jar images/PSUlogo.gif images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
 	                     artemis_sqlmap org uk com net nsdb type seqdb LICENSE.Apache j2ssh.properties; \
         echo "Main-Class: uk.ac.sanger.artemis.circular.DNADraw" > manifest-circular; \
-        jar cmf manifest-circular circular.jar images/PSUlogo.gif README etc \
+        jar cmf manifest-circular DNAPlot.jar images/PSUlogo.gif README etc \
                              uk org/gmod org/apache org/biojava/bio/ LICENSE.Apache j2ssh.properties; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ActMain" > manifest-act; \
 	jar cmf manifest-act act.jar images/PSUlogo.gif images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
