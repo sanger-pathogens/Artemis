@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.58 2008-09-25 15:34:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.59 2008-10-01 11:35:30 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -46,7 +46,7 @@ import org.gmod.schema.sequence.FeatureLoc;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.58 2008-09-25 15:34:24 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.59 2008-10-01 11:35:30 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -331,6 +331,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     else
       matches = doc.getSimilarityMatches(null);
     
+    if(matches == null || matches.size() < 1)
+      return;
     final Hashtable temp_lookup_hash = new Hashtable(matches.size()/2);
     String f_id;
     for(int i=0; i<fv.size(); i++)
