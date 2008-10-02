@@ -610,7 +610,7 @@ public class Block implements Transferable
   * @param x    x position 
   * @param y    y position
   */
-  public void setBlockLocation(int x, int y, final TrackViewer viewer)
+  public void setBlockLocation(int x, int y, final TrackManager viewer)
   {
     if(current_dna.isCircular())
     {

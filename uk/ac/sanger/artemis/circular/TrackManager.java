@@ -29,13 +29,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -51,11 +62,12 @@ import uk.ac.sanger.artemis.FeaturePredicateVector;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.components.KeyChoice;
 import uk.ac.sanger.artemis.components.QualifierChoice;
+import uk.ac.sanger.artemis.components.StickyFileChooser;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
 
-class TrackViewer extends JFrame
+class TrackManager extends JFrame
 {
   private static final long serialVersionUID = 1L;
   private DNADraw dnaDraw;
@@ -70,21 +82,147 @@ class TrackViewer extends JFrame
   private TextFieldFloat trackSize[];
   private TextFieldFloat trackPosition[];
   
-  public TrackViewer(final DNADraw dnaDraw)
+  public TrackManager(final DNADraw dnaDraw)
   {
     super("Track Manager");
     this.dnaDraw = dnaDraw;
     setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    
+    createMenu();
     JScrollPane jsp = new JScrollPane(getPanelComponents());
     getContentPane().add(jsp); 
     pack();
   }
   
-  protected void refresh()
+  /**
+   * Create a menu for the track manager.
+   */
+  private void createMenu()
   {
-    getContentPane().removeAll();
-    getContentPane().add(getPanelComponents()); 
-    pack();
+    final JMenu menuFile = new JMenu("File");
+    final JMenuBar menuBar = new JMenuBar();
+    setJMenuBar(menuBar);
+    menuBar.add(menuFile);
+    menuFile.add(getExportTrackTemplateMenuItem(this, dnaDraw));
+    menuFile.add(getImportTrackTemplateMenuItem(this));
+    final JMenuItem closeMenu = new JMenuItem("Close");
+    closeMenu.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        TrackManager.this.setVisible(false);
+      }
+    });
+    menuFile.add(closeMenu);
+  }
+  
+  protected JMenuItem getImportTrackTemplateMenuItem(final JFrame f)
+  {
+    final JMenuItem readTemplate = new JMenuItem("Import Track Template...");
+    readTemplate.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent arg0)
+      {
+        StickyFileChooser fileDialog = new StickyFileChooser();
+        int status = fileDialog.showOpenDialog(f);
+        if(status == JFileChooser.CANCEL_OPTION)
+          return;
+
+        final File fileRead = fileDialog.getSelectedFile();
+        if(!fileRead.exists())
+        {
+          JOptionPane.showMessageDialog(f, 
+              fileRead.getName()+" not found.", 
+              "Problem Reading File", 
+              JOptionPane.WARNING_MESSAGE);
+          return;
+        }
+        
+        try
+        {
+          final FileReader reader = new FileReader(fileRead);
+          BufferedReader inputStream = new BufferedReader(reader);
+          String inLine = null;
+          
+          Track[] tracks = Wizard.getTracks();
+          int trackCount = 0;
+
+          while ((inLine = inputStream.readLine()) != null) 
+          {
+            if(inLine.startsWith("#") || inLine.trim().equals(""))
+              continue;
+            
+            if(trackCount >= tracks.length)
+            {
+              addTrack();
+              tracks = Wizard.getTracks();
+            }
+            tracks[trackCount].setPropertiesFromTemplate(inLine);
+            trackCount++;
+          }
+          inputStream.close();
+          reader.close();
+          refresh();
+        }
+        catch(FileNotFoundException e)
+        {
+          e.printStackTrace();
+        }
+        catch(IOException e)
+        {
+          e.printStackTrace();
+        }
+      }
+    });
+    return readTemplate;
+  }
+  
+  /**
+   * Menu Item with associated ActionListener for exporting the properties
+   * of this track.
+   * @param f
+   * @return
+   */
+  protected static JMenuItem getExportTrackTemplateMenuItem(final JFrame f,
+                                                            final DNADraw dnaDraw)
+  {
+    final JMenuItem saveTemplate = new JMenuItem("Export Track Template...");
+    saveTemplate.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent arg0)
+      {
+        StickyFileChooser fileDialog = new StickyFileChooser();
+        int status = fileDialog.showSaveDialog(f);
+        if(status == JFileChooser.CANCEL_OPTION)
+          return;
+        
+        final File fileWrite = fileDialog.getSelectedFile();
+        if(fileWrite.exists())
+        {
+          status = JOptionPane.showConfirmDialog(f, fileWrite.getName()+
+                      " exists. Overwrite?", 
+                      "Selected File Exists", 
+                      JOptionPane.OK_CANCEL_OPTION);
+          if(status == JFileChooser.CANCEL_OPTION)
+            return;
+        }
+        
+        final Track[] tracks = Wizard.getTracks();
+        try
+        {
+          final Writer writer = new FileWriter(fileWrite);
+          Track.writeHeader(writer, dnaDraw);
+          for(int i=0; i<tracks.length; i++)
+            tracks[i].write(writer);
+          writer.close();
+        }
+        catch(IOException e)
+        {
+          e.printStackTrace();
+        }
+      }
+    });
+    return saveTemplate;
   }
   
   private JPanel getPanelComponents()
@@ -344,9 +482,7 @@ class TrackViewer extends JFrame
           pack();
  
           setVisible(true);
-          update(Wizard.getTracks(), keyChoice, qualifierChoice, qualifierValue,
-              notQualifier, showForward, showReverse,
-              showAny, trackSize, trackPosition);
+          update(Wizard.getTracks());
         }
       });
       optionBox.add(deleteTrack, c);
@@ -362,9 +498,7 @@ class TrackViewer extends JFrame
     {
       public void actionPerformed(ActionEvent e)
       {
-         update(tracks, keyChoice, qualifierChoice, qualifierValue,
-                notQualifier, showForward, showReverse,
-                showAny, trackSize, trackPosition);
+         update(tracks);
       }
     });
     
@@ -378,36 +512,39 @@ class TrackViewer extends JFrame
     {
       public void actionPerformed(ActionEvent e)
       {
-        Entry entry;
-        if(Wizard.getTracks().length > 0)
-          entry = Wizard.getTracks()[0].getEntry();
-        else
-          entry = dnaDraw.getArtemisEntryGroup().elementAt(0);
-        
-        Wizard.addTrack( entry );
-        getContentPane().removeAll();
-        
-        JScrollPane jsp = new JScrollPane(getPanelComponents());
-        getContentPane().add(jsp); 
-        pack();
-
-        setVisible(true);
+        addTrack();
       }
     });
     
     return optionBox;
   }
   
-  private void update(final Track[] tracks, 
-                      final KeyChoice keyChoice[], 
-                      final QualifierChoice qualifierChoice[],
-                      final JTextField qualifierValue[] ,
-                      final JCheckBox notQualifier[],
-                      final JCheckBox showForward[],
-                      final JCheckBox showReverse[],
-                      final JCheckBox showAny[],
-                      final TextFieldFloat trackSize[],
-                      final TextFieldFloat trackPosition[])
+  protected void refresh()
+  {
+    getContentPane().removeAll();
+    JScrollPane jsp = new JScrollPane(getPanelComponents());
+    getContentPane().add(jsp); 
+    pack();
+  }
+  
+  private void addTrack()
+  {
+    Entry entry;
+    if(Wizard.getTracks().length > 0)
+      entry = Wizard.getTracks()[0].getEntry();
+    else
+      entry = dnaDraw.getArtemisEntryGroup().elementAt(0);
+    
+    Wizard.addTrack( entry );
+    refresh();
+    setVisible(true);
+  }
+  
+  /**
+   * Update the tracks based on the Track Manager settings
+   * @param tracks
+   */
+  protected void update(final Track[] tracks)
   {      
     // update tracks
     for(int i=0; i<tracks.length; i++)
@@ -472,14 +609,20 @@ class TrackViewer extends JFrame
       }
       tracks[i].setShowForward(showForward[i].isSelected());
       tracks[i].setShowReverse(showReverse[i].isSelected());
+      tracks[i].setNotQualifier(!notQualifier[i].isSelected());
       tracks[i].setSize((float) trackSize[i].getValue());
       tracks[i].setPosition(trackPosition[i].getValue());
     }
     
     // update viewer
+    updateDNADraw(dnaDraw, tracks);
+  }
+  
+  
+  private static void updateDNADraw(final DNADraw dnaDraw, final Track[] tracks)
+  {
     dnaDraw.getBlock().removeAll(dnaDraw.getBlock());
     final FeatureVector features = dnaDraw.getArtemisEntryGroup().getAllFeatures();
-    
     
     for(int i=0; i<features.size(); i++)
     {   

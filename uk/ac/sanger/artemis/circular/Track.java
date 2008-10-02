@@ -21,6 +21,11 @@
 package uk.ac.sanger.artemis.circular;
 
 import java.awt.Color;
+import java.io.IOException;
+import java.io.Writer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.Feature;
@@ -28,6 +33,7 @@ import uk.ac.sanger.artemis.FeatureKeyPredicate;
 import uk.ac.sanger.artemis.FeatureKeyQualifierPredicate;
 import uk.ac.sanger.artemis.FeaturePredicate;
 import uk.ac.sanger.artemis.io.Key;
+import uk.ac.sanger.artemis.util.FileDocument;
 
 public class Track
 {
@@ -234,5 +240,127 @@ public class Track
   public void setColour(Color colour)
   {
     this.colour = colour;
+  }
+  
+  protected void setPropertiesFromTemplate(final String line)
+  {
+    final String properties[] = line.split("\t");
+
+    setPosition(Double.parseDouble(properties[0]));
+    setSize(Float.parseFloat(properties[1]));
+    setShowForward(Boolean.parseBoolean(properties[2]));
+    setShowReverse(Boolean.parseBoolean(properties[3]));
+    setNotQualifier(Boolean.parseBoolean(properties[4]));
+    setAny(Boolean.parseBoolean(properties[5]));
+    
+    if(properties[6].equals("null"))
+      setKeyStr(null);
+    else
+      setKeyStr(properties[6]);
+    if(properties[7].equals("null"))
+      setQualifier(null);
+    else
+      setQualifier(properties[7]);
+    if(properties[8].equals("null"))
+      setQualifierValue(null);
+    else
+      setQualifierValue(properties[8]);
+    if(properties[9].equals("null"))
+      setColour(null);
+    else
+    {
+      String colourRGB[] = properties[9].split(":");
+      Color colour = new Color(Integer.parseInt(colourRGB[0]),
+                               Integer.parseInt(colourRGB[1]),
+                               Integer.parseInt(colourRGB[2]));
+      setColour(colour);
+    }
+  }
+  
+  /**
+   * Write the track properties out
+   * @param writer
+   * @throws IOException
+   */
+  protected void write(final Writer writer) throws IOException
+  { 
+    writer.write(position+"\t"+
+                 size+"\t"+
+                 showForward+"\t"+
+                 showReverse+"\t"+
+                 isNotQualifier()+"\t"+
+                 any+"\t"+
+                 keyStr+"\t"+
+                 qualifier+"\t"+
+                 qualifierValue+"\t"+
+                 ( colour != null ? 
+                     colour.getRed()+":"+colour.getGreen()+":"+colour.getBlue() : null)+"\t"+
+                 ( entry != null ? entry.getName()+"\t"+entry.getRootDocument() : null )+
+                 "\n");
+  }
+  
+  /**
+   * Write a header line for the track properties
+   * @param writer
+   * @throws IOException
+   */
+  protected static void writeHeader(final Writer writer, final DNADraw dna) throws IOException
+  {
+    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");      
+    writer.write("## DNA Plot :: track template (created: "+
+        dateFormat.format(new Date())+")\n");
+    writer.write("# line attributes: start="+dna.getStart()+
+                                     " end="+dna.getEnd()+" " +
+                                "line_size="+dna.getLineSize()+
+                                " circular="+dna.isCircular());
+                                
+    if(!dna.isCircular())
+      writer.write(" line_height="+dna.getLineHeight()+
+                   " bases_per_line="+dna.getBasesPerLine());
+    
+    writer.write("\n# tick marks: major="+dna.getTickInterval()+
+                              " minor="+dna.getMinorTickInterval()+"\n");
+    
+    // graphs
+    if(dna.getUserGraph() != null && dna.containsGraph(dna.getUserGraph()))
+    {
+      FileDocument doc = (FileDocument) ((UserGraph)dna.getUserGraph()).getDocument();
+      String fileName = doc.getFile().getAbsolutePath();
+      
+      writer.write("# User Graph: "+dna.getUserGraph().getOptionsStr()+
+                   " file_name="+fileName+"\n");
+    }
+    if(dna.getGcGraph() != null && dna.containsGraph(dna.getGcGraph()))
+      writer.write("# GC Graph: "+dna.getGcGraph().getOptionsStr()+"\n");
+    if(dna.getGcSkewGraph() != null && dna.containsGraph(dna.getGcSkewGraph()))
+      writer.write("# GC Skew Graph: "+dna.getGcSkewGraph().getOptionsStr()+"\n");
+    
+    writer.write(
+        "# Columns are:\n"+
+        "# POS  - track position\n"+
+        "# SIZE - track size\n"+
+        "# FWD  - show forward strand features\n"+
+        "# REV  - show reverse strand features\n"+
+        "# NOT  - use NOT\n"+
+        "# ANY  - show any features\n"+
+        "# KEY  - show features of this key\n"+
+        "# QUAL - show features with this qualifier\n"+
+        "# VAL  - show features with this qualifier value(s)\n"+
+        "# COL  - colour for this track e.g. 255:0:0 (R:G:B) or NULL\n"+
+        "# NAME - file entry name or null\n"+
+        "# DIR  - root directory for this file\n#\n");
+    writer.write(
+        "#POS\t"+
+        "SIZE\t"+
+        "FWD\t"+
+        "REV\t"+
+        "NOT \t"+
+        "ANY\t"+
+        "KEY\t"+
+        "QUAL\t"+
+        "VAL\t"+
+        "COL\t"+
+        "NAME\t"+
+        "DIR\n");
   }
 }

@@ -24,14 +24,21 @@ package uk.ac.sanger.artemis.circular;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Vector;
 import java.util.Hashtable;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -43,10 +50,17 @@ import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
+import uk.ac.sanger.artemis.components.EntryFileDialog;
+import uk.ac.sanger.artemis.components.MessageDialog;
+import uk.ac.sanger.artemis.components.StickyFileChooser;
+import uk.ac.sanger.artemis.components.Utilities;
+import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
+import uk.ac.sanger.artemis.util.Document;
+import uk.ac.sanger.artemis.util.DocumentFactory;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 
 
@@ -73,6 +87,18 @@ public class Wizard
                                      // option 2 - edit existing dna
     if(n == 0)
       dna = getDNADrawFromFile(dna_current);
+    else if(n == 3)
+    {
+      StickyFileChooser chooser = new StickyFileChooser();
+      chooser.showOpenDialog(null);
+
+      File fileTemplate = chooser.getSelectedFile();
+      if(!fileTemplate.exists())
+        JOptionPane.showMessageDialog(null, 
+            fileTemplate.getName()+" cannot be found!", 
+            "Missing File", JOptionPane.WARNING_MESSAGE);
+      loadTemplate(fileTemplate);
+    }
     else if(n == 1 || n == 2)
     {
       Vector block = new Vector();
@@ -165,8 +191,286 @@ public class Wizard
   
       s = la.getEnd();
       dna.setEnd(s);
-
     }
+  }
+  
+  /**
+   * Open a DNA plot based on a template file
+   * @param template
+   */
+  public Wizard(final File template)
+  {
+    loadTemplate(template);
+  }
+  
+  /**
+   * Load from a template file
+   * @param template
+   */
+  private void loadTemplate(final File template)
+  {
+    final JFrame f = new JFrame();
+    f.setUndecorated(true);
+    JPanel panel = (JPanel) f.getContentPane();
+    JProgressBar progress = new JProgressBar(1,10);
+    progress.setStringPainted(true);
+    progress.setString("Reading from "+template.getName()+"   ");
+    progress.setValue(2);
+    progress.setPreferredSize(new Dimension(350, progress.getPreferredSize().height));
+    panel.add(progress, BorderLayout.CENTER);
+    f.pack();
+    Utilities.centreFrame(f);
+    f.setVisible(true);
+    
+    if(dna == null)
+      dna = new DNADraw();
+    Options.getOptions();
+    
+
+    try
+    {
+      final FileReader reader = new FileReader(template);
+      final BufferedReader inputStream = new BufferedReader(reader);
+      final EntryGroup entryGroup = new SimpleEntryGroup();
+      final Hashtable fileEntrys = new Hashtable();
+      Vector v_tracks = new Vector();
+      String inLine = null;
+      String lineAttrStr[]  = null;
+      String tickMarksStr[] = null;
+      String gcGraphStr[]      = null;
+      String gcSkewGraphStr[]  = null;
+      String userGraphStr[]    = null;
+      
+      String lineAttrStart    = "# line attributes:";
+      String tickMarksStart   = "# tick marks:";
+      String gcGraphStart     = "# GC Graph:";
+      String gcSkewGraphStart = "# GC Skew Graph:";
+      String userGraphStart   = "# User Graph:";
+      
+      while((inLine = inputStream.readLine()) != null)
+      {
+        if(inLine.startsWith("#") || inLine.trim().equals(""))
+        {
+          if(inLine.startsWith(lineAttrStart))
+            lineAttrStr = inLine.substring(lineAttrStart.length()).trim().split("[=\\s]");
+          else if(inLine.startsWith(tickMarksStart))
+            tickMarksStr = inLine.substring(tickMarksStart.length()).trim().split("[=\\s]");
+          else if(inLine.startsWith(gcGraphStart))
+            gcGraphStr = inLine.substring(gcGraphStart.length()).trim().split("[=\\s]");
+          else if(inLine.startsWith(gcSkewGraphStart))
+            gcSkewGraphStr = inLine.substring(gcSkewGraphStart.length()).trim().split("[=\\s]");
+          else if(inLine.startsWith(userGraphStart))
+            userGraphStr = inLine.substring(userGraphStart.length()).trim().split("[=\\s]");
+          continue;
+        }
+
+        String properties[] = inLine.split("\t");
+        String fileName = properties[11] + File.separator + properties[10];
+        Entry entry;
+        if(!fileEntrys.containsKey(fileName))
+        {
+          progress.setString("Reading "+properties[10]);
+          progress.setValue(4);
+          entry = getEntry(fileName, entryGroup);
+          if(entry == null)
+            continue;
+          fileEntrys.put(fileName, entry);
+        }
+        else
+        {
+          entry = (Entry)fileEntrys.get(fileName);
+        }
+        
+        Track track = new Track(.9,entry);
+        track.setPropertiesFromTemplate(inLine);
+        v_tracks.add(track);
+      }
+      inputStream.close();
+      reader.close();
+      
+      progress.setString("Read template "+template.getName());
+      progress.setValue(7);
+      Track[] newTracks = new Track[v_tracks.size()];
+      for(int i=0; i<v_tracks.size(); i++)
+        newTracks[i] = (Track) v_tracks.get(i);
+      
+      Wizard.tracks = newTracks;
+
+      dna.setArtemisEntryGroup(entryGroup);
+
+      int sequenceLength = entryGroup.getSequenceEntry().getBases().getLength();
+      
+      Hashtable lineAttr = new Hashtable();
+      lineAttr.put("lsize", new Integer(1));
+      lineAttr.put("circular", new Boolean(true));
+      lineAttr.put("start", new Integer(0));
+      lineAttr.put("end", new Integer(sequenceLength));
+      if(lineAttrStr != null)
+      {
+        for(int i=0; i<lineAttrStr.length; i++)
+        {
+          if(lineAttrStr[i].startsWith("line_size"))
+            lineAttr.put("lsize", new Integer(lineAttrStr[i+1]));
+          else if(lineAttrStr[i].startsWith("circular"))
+            lineAttr.put("circular", new Boolean(lineAttrStr[i+1]));
+          else if(lineAttrStr[i].startsWith("line_height"))
+            dna.setLineHeight(Float.parseFloat(lineAttrStr[i+1]));
+          else if(lineAttrStr[i].startsWith("bases_per_line"))
+            dna.setBasesPerLine(Integer.parseInt(lineAttrStr[i+1]));
+        }
+      }
+      dna.setLineAttributes(lineAttr);
+
+      final int div;
+      if(sequenceLength < 1000)
+        div = 100;
+      else if(sequenceLength < 10000)
+        div = 1000;
+      else if(sequenceLength < 100000)
+        div = 10000;
+      else
+        div = 100000;
+      int tick = sequenceLength / div;
+      tick = tick * (div / 10);
+      int tick2 = tick / 2;
+      tick = tick2 * 2;
+      
+      if(tickMarksStr != null)
+      {
+        for(int i=0; i<tickMarksStr.length; i++)
+        {
+          if(tickMarksStr[i].startsWith("major"))
+            tick = Integer.parseInt(tickMarksStr[i+1]);
+          else if(tickMarksStr[i].startsWith("minor"))
+            tick2 = Integer.parseInt(tickMarksStr[i+1]);
+        }
+      }
+
+      dna.setGeneticMarker(new Vector());
+      dna.setRestrictionEnzyme(new Vector());
+      dna.setMinorTickInterval(tick2);
+      dna.setTickInterval(tick);
+      
+      TrackManager trackManager = dna.getTrackManager();
+      if(trackManager == null)
+      {
+        trackManager = new TrackManager(dna);
+        dna.setTrackManager(trackManager);
+      }
+      trackManager.update(tracks);
+      loadGraphs(gcGraphStr, gcSkewGraphStr, userGraphStr, dna, progress);
+    }
+    catch(FileNotFoundException e)
+    {
+      e.printStackTrace();
+    }
+    catch(IOException e)
+    {
+      e.printStackTrace();
+    }
+    catch(NoSequenceException e)
+    {
+      e.printStackTrace();
+    }
+    f.dispose();
+  }
+  
+  /**
+   * 
+   * @param gcGraphStr
+   * @param gcSkewGraphStr
+   * @param userGraphStr
+   * @param dna
+   */
+  private void loadGraphs(final String gcGraphStr[], 
+                          final String gcSkewGraphStr[], 
+                          final String userGraphStr[],
+                          final DNADraw dna,
+                          final JProgressBar progress)
+  {
+    if(gcGraphStr != null)
+    {
+      if(progress != null)
+        progress.setString("Calculating GC graph points");
+      GCGraph gcGraph = new GCGraph(dna);
+      gcGraph.setOptionsStr(gcGraphStr);
+      dna.setGcGraph(gcGraph);
+      gcGraph.calcGraphValues();
+      dna.add(gcGraph);
+    }
+    if(gcSkewGraphStr != null)
+    {
+      if(progress != null)
+        progress.setString("Calculating GC Skew graph points");
+      GCSkewGraph gcSkewGraph = new GCSkewGraph(dna);
+      gcSkewGraph.setOptionsStr(gcSkewGraphStr);
+      dna.setGcSkewGraph(gcSkewGraph);
+      gcSkewGraph.calcGraphValues();
+      dna.add(gcSkewGraph);
+    }
+    if(userGraphStr != null)
+    {
+      String fileName = null;
+      for(int i=0;i<userGraphStr.length; i++)
+      {
+        if(userGraphStr[i].startsWith("file_name"))
+          fileName = userGraphStr[i+1];
+      }
+      final uk.ac.sanger.artemis.util.Document document =
+        new uk.ac.sanger.artemis.util.FileDocument(new File(fileName));
+      try
+      {
+        if(progress != null)
+          progress.setString("Calculating user graph points");
+        UserGraph userGraph = new UserGraph(dna, document);
+        userGraph.setOptionsStr(userGraphStr);
+        dna.setUserGraph(userGraph);
+        userGraph.calcGraphValues();
+        dna.add(userGraph);
+      }
+      catch(IOException e)
+      {
+        e.printStackTrace();
+        return;
+      }
+    }
+  }
+  
+  private Entry getEntry(final String entryFileName, final EntryGroup entryGroup) 
+                   throws NoSequenceException
+  {
+    final Document entry_document = DocumentFactory.makeDocument(entryFileName);
+    final EntryInformation artemis_entry_information =
+      Options.getArtemisEntryInformation();
+    
+    final uk.ac.sanger.artemis.io.Entry new_embl_entry =
+      EntryFileDialog.getEntryFromFile(null, entry_document,
+                                       artemis_entry_information,
+                                       false);
+
+    if(new_embl_entry == null)  // the read failed
+      return null;
+
+    Entry entry = null;
+    try
+    {
+      Bases bases = null;
+      if(entryGroup.getSequenceEntry() != null)
+        bases = entryGroup.getSequenceEntry().getBases();
+      if(bases == null)
+        entry = new Entry(new_embl_entry);
+      else
+        entry = new Entry(bases,new_embl_entry);
+      
+      entryGroup.add(entry);
+    } 
+    catch(OutOfRangeException e) 
+    {
+      new MessageDialog(null, "read failed: one of the features in " +
+          entryFileName + " has an out of range " +
+                        "location: " + e.getMessage());
+    }
+    return entry;
   }
 
   /**
@@ -377,10 +681,8 @@ public class Wizard
 
     JRadioButton[] radioButtons;
 
-    if(dna_current !=  null)
-      radioButtons = new JRadioButton[3];
-    else
-      radioButtons = new JRadioButton[2];
+    radioButtons = new JRadioButton[3];
+
     final ButtonGroup group = new ButtonGroup();
     radioButtons[0] = new JRadioButton("Read in sequence file");
     group.add(radioButtons[0]);
@@ -390,14 +692,20 @@ public class Wizard
     bdown.add(radioButtons[0]);
     bdown.add(radioButtons[1]);
 
+    radioButtons[0].setSelected(true);
     if(dna_current !=  null)
     {
       radioButtons[2] = new JRadioButton("Edit current dna display");
       group.add(radioButtons[2]);
       radioButtons[2].setSelected(true);
-      bdown.add(radioButtons[2]);
     }
-
+    else
+    {
+      radioButtons[2] = new JRadioButton("Read template file");
+      group.add(radioButtons[2]);  
+    }
+    bdown.add(radioButtons[2]);
+    
     JPanel pane = new JPanel(new BorderLayout());
     pane.add(bdown);
     JOptionPane.showMessageDialog(null, 
@@ -408,8 +716,10 @@ public class Wizard
       return 0;
     else if(radioButtons[1].isSelected())
       return 1;
-    else if(radioButtons[2].isSelected())
+    else if(radioButtons[2].isSelected() && dna_current !=  null)
       return 2;
+    else if(radioButtons[2].isSelected())
+      return 3;
      
     return 1;
   }

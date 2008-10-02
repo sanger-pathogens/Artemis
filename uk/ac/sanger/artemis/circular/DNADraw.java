@@ -61,7 +61,11 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -87,7 +91,6 @@ public class DNADraw extends ScrollPanel
                      implements Printable, DragGestureListener,
                      DragSourceListener, DropTargetListener
 {
-
   private static final long serialVersionUID = 1L;
   public static JScrollPane jsp;
   private DNADraw current_dna;
@@ -130,7 +133,7 @@ public class DNADraw extends ScrollPanel
   private Graph userGraph;
   protected static int Y_SHIFT = -35;
   protected static int THETA = -90;
-  private TrackViewer viewer;
+  private TrackManager trackManager;
   private AffineTransform original;
   
   // linear plot variables
@@ -197,7 +200,28 @@ public class DNADraw extends ScrollPanel
     this.addMouseListener(mouseListener);
   }
   
-
+  private String getVersion()
+  {
+    final ClassLoader cl = this.getClass().getClassLoader();
+    try
+    {
+      String line;
+      InputStream in = cl.getResourceAsStream("etc/versions");
+      BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+      while((line = reader.readLine()) != null)
+      {
+        if(line.startsWith("DNAPlot"))
+          return line.substring( "DNAPlot".length() ).trim();
+      }
+      reader.close();
+      in.close();
+    }
+    catch (Exception ex)
+    {
+    }
+    return null;
+  }
+  
   /**
    * Add list of features to a track
    * @param features
@@ -956,7 +980,7 @@ public class DNADraw extends ScrollPanel
    * @param g
    * @return
    */
-  private boolean containsGraph(Graph g)
+  protected boolean containsGraph(Graph g)
   {
     int ncomponents = getComponentCount();
     for(int i=0; i<ncomponents; i++)
@@ -1099,7 +1123,7 @@ public class DNADraw extends ScrollPanel
       public void actionPerformed(ActionEvent e)
       {
         Wizard.readEntry(DNADraw.this, getBases());
-        viewer.refresh();
+        trackManager.refresh();
         repaint();
       }
     });
@@ -1141,7 +1165,13 @@ public class DNADraw extends ScrollPanel
     fileMenu.add(printPreview);
     fileMenu.add(new JSeparator());
 
-
+    fileMenu.add(TrackManager.getExportTrackTemplateMenuItem(null, this));
+    
+    if(trackManager == null)
+      trackManager = new TrackManager(DNADraw.this);
+    fileMenu.add(trackManager.getImportTrackTemplateMenuItem(null));
+    fileMenu.add(new JSeparator());
+    
     final JMenuItem fileMenuExit;
     if(!close)
       fileMenuExit = new JMenuItem("Exit");
@@ -1199,7 +1229,11 @@ public class DNADraw extends ScrollPanel
     graph_menu.add(gc);
     
     final JCheckBoxMenuItem gcPlot = new JCheckBoxMenuItem("Draw");
-    gcPlot.setState(false);
+    
+    if(gcGraph == null)
+      gcPlot.setState(false);
+    else
+      gcPlot.setState(true);
     gcPlot.addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent event) 
@@ -1236,8 +1270,12 @@ public class DNADraw extends ScrollPanel
     JMenu gcSkew = new JMenu("GC Skew");
     graph_menu.add(gcSkew);
     
-    final JCheckBoxMenuItem gcSkewPlot = new JCheckBoxMenuItem("GC Skew plot");
-    gcSkewPlot.setState(false);
+    final JCheckBoxMenuItem gcSkewPlot = new JCheckBoxMenuItem("Draw");
+    if(gcSkewGraph == null)
+      gcSkewPlot.setState(false);
+    else
+      gcSkewPlot.setState(true);
+
     gcSkewPlot.addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent event) 
@@ -1277,8 +1315,11 @@ public class DNADraw extends ScrollPanel
     
     JMenu user = new JMenu("User");
     graph_menu.add(user);
-    final JCheckBoxMenuItem userPlot = new JCheckBoxMenuItem("User plot");
-    userPlot.setState(false);
+    final JCheckBoxMenuItem userPlot = new JCheckBoxMenuItem("Draw");
+    if(userGraph == null)
+      userPlot.setState(false);
+    else
+      userPlot.setState(true);
     userPlot.addItemListener(new ItemListener() 
     {
       public void itemStateChanged(ItemEvent event) 
@@ -1377,12 +1418,12 @@ public class DNADraw extends ScrollPanel
 
     if(getArtemisEntryGroup() != null)
     {
-      viewer = new TrackViewer(DNADraw.this);
+      trackManager = new TrackManager(DNADraw.this);
       tracksMenu.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
         {
-          viewer.setVisible(true);
+          trackManager.setVisible(true);
         }
       });
     }
@@ -1685,7 +1726,7 @@ public class DNADraw extends ScrollPanel
       {
         Point loc = e.getLocation();
         Block b   = (Block)t.getTransferData(Block.BLOCK);
-        b.setBlockLocation(loc.x,loc.y,viewer);
+        b.setBlockLocation(loc.x,loc.y,trackManager);
         DNADraw.this.repaint();
       }
       catch(Exception ufe){} 
@@ -1724,110 +1765,6 @@ public class DNADraw extends ScrollPanel
   protected Vector getBlock()
   {
     return block;
-  }
-  
-  public static void main(String arg[])
-  {
-    final Wizard wiz = new Wizard(null);
-    final DNADraw dna = wiz.getDNADraw();
-     
-    /**
-    final DNADraw dna = new DNADraw();
-    final String seq =         
-    "taaaggtagaattggaaaaattggaaaaattggaaaaatcatgtgatcac"+
-    "tgtaaaacaactaacaaatgcaagaatgattatgataaaaataaatgtga"+
-    "aaagtgtaaaacgagatgtcaacaatatgataattttattcttaaatgga"+
-    "aaactctattcgatatacaatctaagaaatacaaagaattgtatgaacca"+
-    "atagatacaaaaaactctacttatgatcatgttgaaaattttgtacaaaa"+
-    "gttgaaaaaatataaaaatgaatgttctgttgaaagcgtttctgaatatc"+
-    "ttcatgaaacaagtaagtgtttgaattataaatttgatgaaaatgatggt"+
-    "tcttctaatatacgatcatatgcttttgaagaaacaccaaaaagttataa"+
-    "agaagcttgcagttgtacattaccttctaagaatccattggataattgtc"+
-    "ctaccgatcaaaacaaagatgtatgtaaggaattacaaacttttaccttc"+
-    "tgctcgaagaatgattatgataataatcttgataattggaacgcatacct"+
-    "tgttcttaatagttcagatgataataaaggtgtattgattcctccaagaa"+
-    "gaagacatttatgtacaagacctatcactgcatataattatagaaaaggt"+
-    "gataaagaaattttaaaaaaaaaacttcttacttctgctttcagtcaagg"+
-    "acaattgttaggtcaaaaatataaatcggaagaagagttgtgctttgagg"+
-    "caatgaaatatagttatgcagattattccgatataattaaaggaactgat"+
-    "atgatggacacttcattatctgaaaaaattaaaaaaatatttgaaacatc"+
-    "aaatcaagacactgaagattgtaaaacatggtgggaaaaaaatagaagtc"+
-    "atgtatggcacgctatgttatgtggatatatatcaaaaaacaaaaatgag"+
-    "aacattaacccaaaatggtgtaatgtacctactgaagatggaactgatca"+
-    "attcttaagatggttaattgaatgggcaatgcaagcatgtaaagaaaaga"+
-    "aacgtgtaagggattcattaaaaacaaaatgtcgttgttcaaacaaagat"+
-    "aattttaaagcgtcagaattattaagacaacctggatgtcagaatgatat"+
-    "tagaaaatatattagcttgaatatattgatacaaaattcaatggaaaatc"+
-    "taaatataaaatataaaaaattcaaagatcaatcttcaggtttagggttc"+
-    "agggtttagggttcagggtttagggtttagggttcagggttttaggttta"+
-    "gggttcagggtttagggttcagggtttagggtttagggttcagggtttta"+
-    "gggtttagggttcagggtttagggtttaggtttagggtttaggtttaggg"+
-    "ttcagggtttaggtttagggttcagggtttaggtttagggttcagggttt"+
-    "agggttcagggttcagggtttagggttccggtttagggttcagggttcag"+
-    "ggtttagggtttagggtttagggttcagggttcaggtttagggtttaggg"+
-    "ttcagggtttagggtttaggtttcagggtttagggtttagggtttagggt"+
-    "ttaggtttagggtttagggtttaggtttagggtttagggttcatggttta"+
-    "gggtttagggtttagggtttagggtttagggtttaggtttagggttgtgg"+
-    "tttagggtttagggtttagggttcagggtttagggtttagggttcagggt";
-    
-    Bases bases = new Bases(new uk.ac.sanger.artemis.io.RawStreamSequence(seq));
-    
-    dna.setBases( bases  );
-    int sequenceLength = bases.getLength();
-    
-    
-    // set sequence length and
-    Hashtable lineAttr = new Hashtable();
-    lineAttr.put("lsize",new Integer(1));
-    lineAttr.put("circular",new Boolean(true));
-    lineAttr.put("start",new Integer(0));
-    lineAttr.put("end",new Integer(sequenceLength));
-    dna.setLineAttributes(lineAttr);   
-    
-    // set ticks
-    int div;
-    if(sequenceLength < 1000)
-      div = 100;
-    else if(sequenceLength < 10000)
-      div = 1000;
-    else if(sequenceLength < 100000)
-      div = 10000;
-    else
-      div = 100000;
-    int tick = sequenceLength/div;
-    tick = tick*(div/10);
-    dna.setMinorTickInterval(tick);
-    dna.setTickInterval(tick);
-     
-    final List features = new Vector();
-    features.add(new Feature("a", 20, 250, 2));
-    features.add(new Feature("b", 300, 550, 2));
-
-    final Track track = new Track(0.9);
-    dna.setGeneticMarker(new Vector());
-    dna.addFeaturesToTrack(features, track, true);
-    
-    final Track track2 = new Track(0.8);
-    dna.addFeatureToTrack(new Feature("cc", 1400, 1555, 5), track2, true);
-    **/
-    
-    //
-    final JFrame f = new JFrame("DNA Viewer");
-
-    Dimension d = f.getToolkit().getScreenSize();
-    jsp = new JScrollPane(dna);
-    jsp.getViewport().setBackground(Color.white);
-    f.getContentPane().add(jsp);
-    f.setJMenuBar(dna.createMenuBar());
-    
-    //dna.add(new Graph(dna));
-    f.pack();
-    f.setLocation(((int)d.getWidth()-f.getWidth())/4,
-                  ((int)d.getHeight()-f.getHeight())/2);
-
-    
-    //dna.add(dna.new BlockPanel(dna));
-    f.setVisible(true);
   }
 
 
@@ -1900,6 +1837,83 @@ public class DNADraw extends ScrollPanel
   public void setBorderHeight2(int borderHeight2)
   {
     this.borderHeight2 = borderHeight2;
+  }
+
+  public TrackManager getTrackManager()
+  {
+    return trackManager;
+  }
+
+  public void setTrackManager(TrackManager trackManager)
+  {
+    this.trackManager = trackManager;
+  }
+
+  public Graph getGcGraph()
+  {
+    return gcGraph;
+  }
+
+  public void setGcGraph(Graph gcGraph)
+  {
+    this.gcGraph = gcGraph;
+  }
+
+  public Graph getGcSkewGraph()
+  {
+    return gcSkewGraph;
+  }
+
+  public void setGcSkewGraph(Graph gcSkewGraph)
+  {
+    this.gcSkewGraph = gcSkewGraph;
+  }
+
+  public Graph getUserGraph()
+  {
+    return userGraph;
+  }
+
+  public void setUserGraph(Graph userGraph)
+  {
+    this.userGraph = userGraph;
+  }
+  
+  public static void main(String arg[])
+  {
+    final Wizard wiz;
+    
+    if(arg.length > 0 && arg[0].equals("-t"))
+    {
+      final File fileTemplate = new File(arg[1]);
+      wiz = new Wizard(fileTemplate);
+    }
+    else
+      wiz = new Wizard((DNADraw)null);
+    final DNADraw dna = wiz.getDNADraw();
+    
+    //
+    final String version = dna.getVersion();
+    final JFrame f = new JFrame();
+    if(version == null)
+      f.setTitle("DNA Plot");
+    else
+      f.setTitle("DNA Plot :: "+version);
+      
+    Dimension d = f.getToolkit().getScreenSize();
+    jsp = new JScrollPane(dna);
+    jsp.getViewport().setBackground(Color.white);
+    f.getContentPane().add(jsp);
+    f.setJMenuBar(dna.createMenuBar());
+    
+    //dna.add(new Graph(dna));
+    f.pack();
+    f.setLocation(((int)d.getWidth()-f.getWidth())/4,
+                  ((int)d.getHeight()-f.getHeight())/2);
+
+    
+    //dna.add(dna.new BlockPanel(dna));
+    f.setVisible(true);
   }
   
   /*class BlockPanel extends JPanel

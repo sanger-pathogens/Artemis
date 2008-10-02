@@ -102,26 +102,7 @@ public abstract class Graph extends JPanel
     int nvalues = bases.getLength()/getBaseStepSize();
     
     if(value_array == null)
-    {
-      value_array = new float [nvalues];
-      gcAverage   = 0;
-      for(int i=0; i<nvalues; i++)
-      {
-        int start = (i*getBaseStepSize())+1;
-        int end = start+getWindowSize();
-        
-        if(end > bases.getLength())
-          end = bases.getLength();
-        
-        value_array[i] = calculateValue(start, end);
-        if(value_array[i] > maxValue)
-          maxValue = value_array[i];
-        if(value_array[i] < minValue)
-          minValue = value_array[i];
-        gcAverage += value_array[i];
-      }
-      gcAverage = gcAverage/nvalues;
-    }
+      calcGraphValues();
     
     int minPos = (int)((ddiameter/2.d)*getTrack());
     int maxPos = minPos + (int)((ddiameter/2.d)*getGraphHeight());
@@ -181,31 +162,10 @@ public abstract class Graph extends JPanel
     int borderHeight2 = getCurrentDna().getBorderHeight2();
     
     Bases bases = getBases();
-    
     int nvalues = bases.getLength()/getBaseStepSize();
     
     if(value_array == null)
-    {
-      value_array = new float [nvalues];
-      gcAverage   = 0;
-      for(int i=0; i<nvalues; i++)
-      {
-        int start = (i*getBaseStepSize())+1;
-        int end = start+getWindowSize();
-        
-        if(end > bases.getLength())
-          end = bases.getLength();
-        
-        value_array[i] = calculateValue(start, end);
-        if(value_array[i] > maxValue)
-          maxValue = value_array[i];
-        if(value_array[i] < minValue)
-          minValue = value_array[i];
-        gcAverage += value_array[i];
-      }
-      gcAverage = gcAverage/nvalues;
-    }
-    
+      calcGraphValues();
     
     int minPos = (int)(lineHeight*(1-getTrack()));
     int maxPos = minPos + (int)(lineHeight*getGraphHeight());
@@ -239,6 +199,30 @@ public abstract class Graph extends JPanel
     }
   }
 
+  protected void calcGraphValues()
+  {
+    Bases bases = getBases();
+    int nvalues = bases.getLength()/getBaseStepSize();
+    value_array = new float [nvalues];
+    gcAverage   = 0;
+    for(int i=0; i<nvalues; i++)
+    {
+      int start = (i*getBaseStepSize())+1;
+      int end = start+getWindowSize();
+      
+      if(end > bases.getLength())
+        end = bases.getLength();
+      
+      value_array[i] = calculateValue(start, end);
+      if(value_array[i] > maxValue)
+        maxValue = value_array[i];
+      if(value_array[i] < minValue)
+        minValue = value_array[i];
+      gcAverage += value_array[i];
+    }
+    gcAverage = gcAverage/nvalues;
+  }
+  
   protected int getWindowSize()
   {
     return windowSize;
@@ -512,6 +496,55 @@ public abstract class Graph extends JPanel
     }
     catch(Exception e){ e.printStackTrace(); }
     repaint();
+  }
+  
+  /**
+   * Used to write out options to template file
+   * @return
+   */
+  protected String getOptionsStr()
+  {
+    return "height="+getGraphHeight()+" window_size="+getWindowSize()+
+           " base_step_size="+getBaseStepSize()+" track="+getTrack()+
+           " minus_colour="+getMinusColour().getRed()+":"+
+                            getMinusColour().getGreen()+":"+
+                            getMinusColour().getBlue()+
+           " plus_colour="+getPlusColour().getRed()+":"+
+                           getPlusColour().getGreen()+":"+
+                           getPlusColour().getBlue();
+  }
+  
+  /**
+   * Used when reading in a template file
+   * @param options
+   */
+  protected void setOptionsStr(final String options[])
+  {
+    for(int i=0; i<options.length; i++)
+    {
+      if(options[i].startsWith("height"))
+        setGraphHeight(Float.parseFloat(options[i+1]));
+      else if(options[i].startsWith("window_size"))
+        setWindowSize(Integer.parseInt(options[i+1]));
+      else if(options[i].startsWith("base_step_size"))
+        setBaseStepSize(Integer.parseInt(options[i+1]));
+      else if(options[i].startsWith("track"))
+        setTrack(Double.parseDouble(options[i+1]));
+      else if(options[i].startsWith("minus_colour"))
+      {
+        String col[] = options[i+1].split(":");
+        setMinusColour(new Color(Integer.parseInt(col[0]),
+                                 Integer.parseInt(col[1]),
+                                 Integer.parseInt(col[2])));
+      }
+      else if(options[i].startsWith("plus_colour"))
+      {
+        String col[] = options[i+1].split(":");
+        setPlusColour(new Color(Integer.parseInt(col[0]),
+                                 Integer.parseInt(col[1]),
+                                 Integer.parseInt(col[2])));
+      }
+    }
   }
   
   private void setColorButton(final JButton button,

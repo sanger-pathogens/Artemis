@@ -55,12 +55,15 @@ public class UserGraph extends Graph
    *  The average calculated by readData ().
    **/
   private float average_value = 0;
+  
+  private Document document;
 
   
   public UserGraph(DNADraw currentDna, final Document document)
          throws IOException
   {
     super(currentDna);
+    this.document = document;
     
     final Reader document_reader = document.getReader();
     LinePushBackReader pushback_reader =
@@ -146,6 +149,11 @@ public class UserGraph extends Graph
       ++count;
     }
     average_value /= seqLength;
+  }
+
+  public Document getDocument()
+  {
+    return document;
   }
   
 }
