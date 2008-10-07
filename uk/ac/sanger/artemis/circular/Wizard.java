@@ -34,11 +34,9 @@ import java.util.Hashtable;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -53,7 +51,6 @@ import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.StickyFileChooser;
-import uk.ac.sanger.artemis.components.Utilities;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -209,23 +206,13 @@ public class Wizard
    */
   private void loadTemplate(final File template)
   {
-    final JFrame f = new JFrame();
-    f.setUndecorated(true);
-    JPanel panel = (JPanel) f.getContentPane();
-    JProgressBar progress = new JProgressBar(1,10);
-    progress.setStringPainted(true);
+    final ProgressFrame progress = new ProgressFrame();
     progress.setString("Reading from "+template.getName()+"   ");
     progress.setValue(2);
-    progress.setPreferredSize(new Dimension(350, progress.getPreferredSize().height));
-    panel.add(progress, BorderLayout.CENTER);
-    f.pack();
-    Utilities.centreFrame(f);
-    f.setVisible(true);
     
     if(dna == null)
       dna = new DNADraw();
-    Options.getOptions();
-    
+    Options.getOptions();  
 
     try
     {
@@ -372,11 +359,11 @@ public class Wizard
     {
       e.printStackTrace();
     }
-    f.dispose();
+    progress.dispose();
   }
   
   /**
-   * 
+   * Load graphs using template file details
    * @param gcGraphStr
    * @param gcSkewGraphStr
    * @param userGraphStr
@@ -386,7 +373,7 @@ public class Wizard
                           final String gcSkewGraphStr[], 
                           final String userGraphStr[],
                           final DNADraw dna,
-                          final JProgressBar progress)
+                          final ProgressFrame progress)
   {
     if(gcGraphStr != null)
     {
@@ -436,6 +423,13 @@ public class Wizard
     }
   }
   
+  /**
+   * Return an Artemis entry from a file 
+   * @param entryFileName
+   * @param entryGroup
+   * @return
+   * @throws NoSequenceException
+   */
   private Entry getEntry(final String entryFileName, final EntryGroup entryGroup) 
                    throws NoSequenceException
   {
