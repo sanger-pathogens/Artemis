@@ -20,8 +20,7 @@
 
 package uk.ac.sanger.artemis.circular;
 
-import uk.ac.sanger.artemis.io.Range;
-import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.io.Sequence;
 
 public class GCGraph extends Graph
 {
@@ -38,35 +37,28 @@ public class GCGraph extends Graph
    **/
   protected float calculateValue(int start, int end)
   {
-    String sequence;
-    try 
+    char[] sequence;
+    if(end<=getBases().getLength())
+      sequence = 
+        getBases().getSequence().getCharSubSequence(start, end);
+    else 
     {
-      if(end<=getBases().getLength())
-        sequence = 
-          getBases().getForwardStrand().getSubSequence (new Range (start, end));
-      else 
-      {
-        sequence = getBases().getForwardStrand().getSubSequence (
-                   new Range (start, getBases().getLength()));
-      sequence = sequence +
-                   getBases().getForwardStrand().getSubSequence (
-               new Range (1, getWindowSize()-(getBases().getLength()-start)));
-      }
-    } 
-    catch (OutOfRangeException e) 
-    {
-      throw new Error ("internal error - unexpected exception: " + e);
+      final Sequence s = getBases().getSequence();
+      char[] seq1 = s.getCharSubSequence(start, getBases().getLength());
+      char[] seq2 = s.getCharSubSequence(1, getWindowSize()-(getBases().getLength()-start));
+      sequence = new char[seq1.length+seq2.length];
+      System.arraycopy(seq1, 0, sequence, 0, seq1.length);
+      System.arraycopy(seq2, 0, sequence, seq1.length-1, seq2.length);
     }
-
     
     float gc_count = 0;
 
-    for (int i = 0 ; i < sequence.length() ; ++i) 
+    for (int i = 0 ; i < sequence.length ; ++i) 
     {
-      final char this_char = sequence.charAt (i);
+      final char this_char = sequence[i];
       if (this_char == 'g' || this_char == 'c')
         ++gc_count;
     }
-    return gc_count/sequence.length() * 100;
+    return gc_count/sequence.length * 100;
   }
 }
