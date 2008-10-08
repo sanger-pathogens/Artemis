@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Navigator.java,v 1.2 2008-09-02 15:50:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Navigator.java,v 1.3 2008-10-08 07:57:11 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -39,7 +39,7 @@ import javax.swing.*;
  *  This component allows the user to navigate around the Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: Navigator.java,v 1.2 2008-09-02 15:50:15 tjc Exp $
+ *  @version $Id: Navigator.java,v 1.3 2008-10-08 07:57:11 tjc Exp $
  **/
 
 public class Navigator extends JFrame
@@ -708,7 +708,7 @@ public class Navigator extends JFrame
    **/
   private void doGotoAAPattern () {
     final String pattern_string =
-      goto_aa_pattern_text.getText ().trim ();
+      goto_aa_pattern_text.getText ().trim ().toUpperCase();
 
     if (pattern_string.length () == 0) {
       new MessageDialog (this, "you have not entered a pattern to go to");
