@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.55 2008-07-21 15:42:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.56 2008-10-08 15:28:31 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.55 2008-07-21 15:42:21 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.56 2008-10-08 15:28:31 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -838,7 +838,7 @@ public class EditMenu extends SelectionMenu
    *  @param entry_group Used to get the ActionController for calling
    *    ActionController.undo().
    **/
-  private static void undo(final JFrame frame,
+  protected static void undo(final JFrame frame,
                           final Selection selection,
                           final EntryGroup entry_group) 
   {
@@ -2485,7 +2485,7 @@ public class EditMenu extends SelectionMenu
    *    feature currently start on a start codon.  If false then the feature
    *    will only be trimmed if the feature doesn't start on a start codon.
    **/
-  private static void trimSelected (final JFrame frame,
+  protected static void trimSelected (final JFrame frame,
                                    final Selection selection,
                                    final EntryGroup entry_group,
                                    final boolean trim_to_any,
@@ -2551,7 +2551,7 @@ public class EditMenu extends SelectionMenu
    *    is extended to the previous stop codon (but it won't include the
    *    previous stop).
    **/
-  private static void extendToORF(final JFrame frame,
+  protected static void extendToORF(final JFrame frame,
                                  final Selection selection,
                                  final EntryGroup entry_group,
                                  final boolean extend_to_next_stop) 
