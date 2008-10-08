@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupPanel.java,v 1.8 2008-02-06 13:09:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupPanel.java,v 1.9 2008-10-08 15:31:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -37,7 +37,7 @@ import javax.swing.*;
  *  A JPanel that can show an EntryGroup(in some way).
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: EntryGroupPanel.java,v 1.8 2008-02-06 13:09:13 tjc Exp $
+ *  @version $Id: EntryGroupPanel.java,v 1.9 2008-10-08 15:31:48 tjc Exp $
  **/
 
 abstract public class EntryGroupPanel extends CanvasPanel 
@@ -180,10 +180,35 @@ abstract public class EntryGroupPanel extends CanvasPanel
   private void handleKeyPress(final KeyEvent event) 
   {
     // this is done so that menu shortcuts don't cause each action to be
-    // performed twice
-    if(!event.isShiftDown() && event.getModifiers() != 0) 
+    // performed twice   
+    if(!event.isShiftDown() && event.getModifiers() != 0)
+    {
+      if(getParentFrame() instanceof MultiComparator &&
+         event.getModifiers() == InputEvent.ALT_MASK)
+      {
+        int event_key_code = event.getKeyCode();
+        switch(event_key_code)
+        {
+        case EditMenu.TRIM_FEATURES_KEY_CODE:
+          EditMenu.trimSelected(getParentFrame(), getSelection(),
+              getEntryGroup(), false, true);
+          break;
+        case EditMenu.TRIM_FEATURES_TO_NEXT_ANY_KEY_CODE:
+          EditMenu.trimSelected(getParentFrame(), getSelection(),
+              getEntryGroup(), true, true);
+          break;
+        case EditMenu.EXTEND_TO_PREVIOUS_STOP_CODON_KEY_CODE:
+          EditMenu.extendToORF(getParentFrame(), getSelection(),
+              getEntryGroup(), false);
+          break;
+        case EditMenu.UNDO_KEY_CODE:
+          EditMenu.undo(getParentFrame(), getSelection(), getEntryGroup());
+          break;
+        }
+      }
       return;
-
+    }
+    
     final FeatureVector selected_features = getSelection().getAllFeatures();
 
     if(selected_features.size() == 0) 
@@ -318,8 +343,8 @@ abstract public class EntryGroupPanel extends CanvasPanel
           break;
 //      case EditMenu.TRIM_FEATURES_KEY_CODE:
 //        EditMenu.trimSelected(getParentFrame(), getSelection(),
-//                               getEntryGroup(), false, true);
-//        break;
+//                              getEntryGroup(), false, true);
+//       break;
 //      case EditMenu.TRIM_FEATURES_TO_NEXT_ANY_KEY_CODE:
 //        EditMenu.trimSelected(getParentFrame(), getSelection(),
 //                               getEntryGroup(), true, true);
