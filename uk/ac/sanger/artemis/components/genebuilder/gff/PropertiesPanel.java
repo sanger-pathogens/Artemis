@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.4 2008-09-30 13:16:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.5 2008-10-08 10:25:27 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -815,18 +815,25 @@ public class PropertiesPanel extends JPanel
                                    int maxSynonymWidth)
   {
     empty = false;
-    int current = 0;
+    int current = -1;
     final StringVector values = qualifier.getValues();
     final Vector featureSynonym = new Vector();
+    if(isSystematicId(qualifier.getName()))
+      featureSynonym.add("-");
+    
     for(int j=0; j<values.size(); j++)
     {
       String value = (String) values.get(j);
       StringVector strings = StringVector.getStrings(value, ";");
       
+      // if the value ends with ';current=false' then it is NOT current
       if(strings.size()>1)
         featureSynonym.add((String) strings.get(0));
       else
+      {
+        current = 0;
         featureSynonym.add(0, value);
+      }
     }
     
     final JLabel sysidField = new JLabel(qualifier.getName()+" ");
@@ -852,9 +859,13 @@ public class PropertiesPanel extends JPanel
     c.anchor = GridBagConstraints.NORTHWEST;
     
     if(isSystematicId(qualifier.getName()))
-    {
+    {    
       final JExtendedComboBox comboBox = new JExtendedComboBox(
                                                featureSynonym);
+      
+      if(current == -1)
+        current = featureSynonym.indexOf("-");
+      
       comboBox.setHighLightCurrent(true);
       comboBox.setSelectedIndex(current);
       comboBox.setCurrent(current);
@@ -863,7 +874,7 @@ public class PropertiesPanel extends JPanel
       {
         public void actionPerformed(ActionEvent e)
         {
-          comboBoxAction(comboBox, qualifier);
+          comboBoxActionForSysId(comboBox, qualifier);
         }
       });
       
@@ -896,15 +907,29 @@ public class PropertiesPanel extends JPanel
     gridPanel.add(Box.createHorizontalStrut(25), c);
   }
   
-  private void comboBoxAction(final JExtendedComboBox comboBox,
-                              final Qualifier qualifier)
+  /**
+   * Process changes made in the systematic_id combobox. This
+   * is designed to show the current sys_id if there is one or
+   * "-" if there is no current sys_id. Any non-current sys_id's
+   * are shown in the drop down list of the combo.
+   * @param comboBox
+   * @param qualifier
+   */
+  private void comboBoxActionForSysId(final JExtendedComboBox comboBox,
+                                      final Qualifier qualifier)
   {
     if(comboBox.getSelectedIndex() == comboBox.getCurrent())
       return;
     
+    final String msg;
+    if(comboBox.getSelectedItem().equals("-"))
+      msg = "Change so there is no current value.";
+    else
+      msg = "Change the current value of "+
+      qualifier.getName()+" to "+comboBox.getSelectedItem()+"?";
+      
     int select = JOptionPane.showConfirmDialog(null, 
-        "Change the current value of "+
-        qualifier.getName()+" to "+comboBox.getSelectedItem()+"?", 
+        msg, 
         qualifier.getName()+" change", 
         JOptionPane.OK_CANCEL_OPTION);
     if(select == JOptionPane.CANCEL_OPTION)
@@ -918,6 +943,10 @@ public class PropertiesPanel extends JPanel
       for(int i =0; i<values.size(); i++)
       {
         String value = (String) values.get(i);
+        
+        if(value.equals("-"))
+          continue;
+        
         StringVector strings = StringVector.getStrings(value, ";");
         if(selectedValue.equals(strings.get(0)))
           value = selectedValue;
