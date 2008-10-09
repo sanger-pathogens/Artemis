@@ -24,7 +24,9 @@
 
 package uk.ac.sanger.artemis.components.genebuilder;
 
-import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -45,7 +47,6 @@ import javax.swing.JPanel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.Box;
 import javax.swing.UIManager;
 
 import org.gmod.schema.organism.Organism;
@@ -83,7 +84,6 @@ public class GeneEdit
 
   /** password fields */
   private JPasswordField pfield;
-
 
   /**
    * Standalone gene editing (i.e. outside of Artemis)
@@ -125,7 +125,7 @@ public class GeneEdit
 
     if(System.getProperty("show_log") != null)
       GeneSplash.showLog();
-    openGeneBuilder(geneName, null, location);
+    openGeneBuilder(geneName, null, location, null);
   }
 
   /**
@@ -149,21 +149,26 @@ public class GeneEdit
     
     v_schemas.add(0, "All");
 
-    final JPanel panel = new JPanel(new BorderLayout());
+    final JPanel panel = new JPanel(new GridBagLayout());
+    GridBagConstraints c = new GridBagConstraints();
+    
     final JComboBox schema_list = new JComboBox(v_schemas);
     schema_list.setSelectedItem(schema);
 
-    Box xbox = Box.createHorizontalBox();
     final JTextField gene_text = new JTextField(20);
-    gene_text.setText("BPSS0002"); //"SPAC212.04c");
-    xbox.add(gene_text);
-    xbox.add(schema_list);
+    gene_text.setText("PFA0005w"); //"SPAC212.04c");
+    
+    c.gridx = 0;
+    c.gridy = 0;
+    panel.add(gene_text,c);
+    c.gridx = 1;
+    panel.add(schema_list,c);
     gene_text.selectAll();
     
-    JButton findButt = new JButton("RETRIEVE");
+    final GeneSplash frame = new GeneSplash();
+    final JButton findButt = new JButton("OPEN GENE BUILDER");
     findButt.addActionListener(new ActionListener()
     {
-
       public void actionPerformed(ActionEvent event)
       {
         final String search_gene = gene_text.getText();
@@ -177,15 +182,14 @@ public class GeneEdit
           schema_search.add(schema);
         }
 
-        openGeneBuilder(search_gene, schema, location);
+        openGeneBuilder(search_gene, schema, location, frame);
       }
     });
-    xbox.add(findButt);
-    xbox.add(Box.createHorizontalGlue());
+
+    c.gridx = 1;
+    c.gridy = 1;
+    panel.add(findButt, c);
     
-    panel.add(xbox, BorderLayout.NORTH);
-    
-    GeneSplash frame = new GeneSplash();
     frame.getContentPane().add(panel);
     frame.setJMenuBar(getJMenuBar(dao));
     frame.pack();
@@ -194,16 +198,19 @@ public class GeneEdit
 
   private void openGeneBuilder(final String search_gene, 
                                final String organism,
-                               final String location)
+                               final String location,
+                               final GeneSplash frame)
   {
     SwingWorker entryWorker = new SwingWorker()
     {
       public Object construct()
       {
+        frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         DatabaseDocumentEntry entry = makeEntry(organism, search_gene,
                                                 location, pfield);
         //entry.setReadOnly(true);
         showGeneEditor(organism, search_gene, entry);
+        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         return null;
       }
     };
@@ -285,7 +292,7 @@ public class GeneEdit
     try
     {
       // create Entry
-      Entry entry = new Entry(dbentry);
+      new Entry(dbentry);
     }
     catch(OutOfRangeException e)
     {
@@ -359,7 +366,7 @@ public class GeneEdit
 
     public GeneSplash()
     {
-      super("Feature Search", "Gene Editor");  
+      super("Gene Search", "Gene Builder");  
     }
     
     protected void exit()
@@ -367,6 +374,8 @@ public class GeneEdit
     }
     
   }
+  
+
   
   public static void main(String args[])
   {
