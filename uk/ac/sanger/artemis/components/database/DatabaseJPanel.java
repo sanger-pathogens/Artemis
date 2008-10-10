@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.15 2008-09-15 10:49:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.16 2008-10-10 14:45:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -50,7 +50,6 @@ import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import javax.swing.tree.TreePath;
 
-import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
 
 import java.awt.BorderLayout;
@@ -70,6 +69,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 public class DatabaseJPanel extends JPanel
 {
@@ -432,7 +432,7 @@ public class DatabaseJPanel extends JPanel
         entries = doc.getDatabaseEntries();
         
         final DatabaseTreeNode top = new DatabaseTreeNode("");
-        createNodes(top, doc.getSchema(), doc, entries);
+        createNodes(top, doc, entries);
         return new DatabaseJTree(top);
       }
       catch(ConnectException e)
@@ -460,14 +460,10 @@ public class DatabaseJPanel extends JPanel
    * @param doc       DatabaseDocument
    * @param organism  sequences collection
    */
-  private void createNodes(DatabaseTreeNode top, List schemas,
+  private void createNodes(DatabaseTreeNode top,
                            DatabaseDocument doc,
                            HashMap entries)
   {
-    DatabaseTreeNode schema_node;
-    DatabaseTreeNode seq_node;
-    DatabaseTreeNode typ_node;
-
     final Object v_organism[] = entries.keySet().toArray();
     
     final int v_organism_size = v_organism.length;
@@ -479,37 +475,42 @@ public class DatabaseJPanel extends JPanel
       } 
     });
     
+    final List organisms = new Vector();
+    for(int i = 0; i < v_organism_size; i++)
+    {
+      String seqNames[]  = ((String)v_organism[i]).split("-");
+      if(!organisms.contains(seqNames[0]))
+        organisms.add(seqNames[0]);
+    }
+
     int start = 0;
     boolean seen;
+    String seqFullName;
+    DatabaseTreeNode schema_node;
+    DatabaseTreeNode seq_node;
+    DatabaseTreeNode typ_node;
     
-    for(int i=0; i<schemas.size(); i++)
+    for(int i=0; i<organisms.size(); i++)
     {
       int nchild = 0;
-      String name;
+      String name = (String)organisms.get(i);
       seen = false;
       
-      if(schemas.get(i) instanceof String)
-        name = (String)schemas.get(i);
-      else
-        name = ((Organism)schemas.get(i)).getCommonName();
-       
       schema_node = new DatabaseTreeNode(name);
       final HashMap seq_type_node = new HashMap();
 
       for(int j = start; j < v_organism_size; j++)
       {
-        String seq_name  = (String)v_organism[j];
-        int ind1 = seq_name.indexOf("- ");
-        
-        if(seq_name.substring(0, ind1).trim().toLowerCase().equals(name.toLowerCase()))
-        {
-          final String featureId = (String)entries.get(seq_name);
-          
-          int ind2 = seq_name.lastIndexOf("- ");
+        seqFullName = (String)v_organism[j];
+        String seqNames[]  = seqFullName.split("-");
 
-          final String schema = seq_name.substring(0, ind1).trim();
-          String type = seq_name.substring(ind1 + 2, ind2 - 1);
-          seq_name = seq_name.substring(ind2 + 2);
+        if(seqNames[0].trim().toLowerCase().equals(name.toLowerCase().trim()))
+        {
+          final String featureId = (String)entries.get(seqFullName);
+          
+          final String schema = seqNames[0].trim();
+          String type = seqNames[1].trim();
+          String thisSeqName = seqNames[2].trim();
 
           if(!seq_type_node.containsKey(type))
           {
@@ -520,11 +521,10 @@ public class DatabaseJPanel extends JPanel
           else
             typ_node = (DatabaseTreeNode) seq_type_node.get(type);
 
-          seq_node = new DatabaseTreeNode(seq_name,
+          seq_node = new DatabaseTreeNode(thisSeqName,
                                           featureId, schema, 
                                           doc.getUserName(),
                                           doc.isSingleSchema());
-          
           typ_node.add(seq_node);
           nchild++;
           
