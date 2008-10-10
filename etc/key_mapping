@@ -12,3 +12,4 @@ region                      misc_feature
 remark                      misc_feature
 sequence_difference         misc_feature
 SECIS_element               misc_feature    note=SECIS_element
+contig                      source
