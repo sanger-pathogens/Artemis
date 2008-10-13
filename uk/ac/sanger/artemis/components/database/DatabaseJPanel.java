@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.16 2008-10-10 14:45:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.17 2008-10-13 15:03:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -66,8 +66,10 @@ import java.io.*;
 import java.net.ConnectException;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
@@ -465,7 +467,6 @@ public class DatabaseJPanel extends JPanel
                            HashMap entries)
   {
     final Object v_organism[] = entries.keySet().toArray();
-    
     final int v_organism_size = v_organism.length;
     Arrays.sort(v_organism, new Comparator()
     {
@@ -475,74 +476,75 @@ public class DatabaseJPanel extends JPanel
       } 
     });
     
-    final List organisms = new Vector();
-    for(int i = 0; i < v_organism_size; i++)
-    {
-      String seqNames[]  = ((String)v_organism[i]).split("-");
-      if(!organisms.contains(seqNames[0]))
-        organisms.add(seqNames[0]);
-    }
-
-    int start = 0;
-    boolean seen;
+    final Hashtable organismNodes = new Hashtable();
+    final List organism = new Vector();
+    
     String seqFullName;
-    DatabaseTreeNode schema_node;
     DatabaseTreeNode seq_node;
     DatabaseTreeNode typ_node;
-    
-    for(int i=0; i<organisms.size(); i++)
+
+    for(int i = 0; i < v_organism_size; i++)
     {
-      int nchild = 0;
-      String name = (String)organisms.get(i);
-      seen = false;
+      seqFullName = (String) v_organism[i];
+      String seqNames[] = seqFullName.split("-");
       
-      schema_node = new DatabaseTreeNode(name);
-      final HashMap seq_type_node = new HashMap();
-
-      for(int j = start; j < v_organism_size; j++)
+      final String featureId = (String) entries.get(seqFullName);
+      final String schema = seqNames[0].trim();
+      String type = seqNames[1].trim();
+      String thisSeqName = seqNames[2].trim();
+      
+      if(!organismNodes.containsKey(schema))
       {
-        seqFullName = (String)v_organism[j];
-        String seqNames[]  = seqFullName.split("-");
-
-        if(seqNames[0].trim().toLowerCase().equals(name.toLowerCase().trim()))
-        {
-          final String featureId = (String)entries.get(seqFullName);
-          
-          final String schema = seqNames[0].trim();
-          String type = seqNames[1].trim();
-          String thisSeqName = seqNames[2].trim();
-
-          if(!seq_type_node.containsKey(type))
-          {
-            typ_node = new DatabaseTreeNode(type);
-            seq_type_node.put(type, typ_node);
-            schema_node.add(typ_node);
-          }
-          else
-            typ_node = (DatabaseTreeNode) seq_type_node.get(type);
-
-          seq_node = new DatabaseTreeNode(thisSeqName,
-                                          featureId, schema, 
-                                          doc.getUserName(),
-                                          doc.isSingleSchema());
-          typ_node.add(seq_node);
-          nchild++;
-          
-          start = j;
-          seen = true;
-        }
-        else if(seen)
-          break;
+        organismNodes.put(schema, new DatabaseTreeNode(schema));
+        organism.add(schema);
       }
-      if(nchild > 0)
-        top.add(schema_node);
+      
+      DatabaseTreeNode organismNode = (DatabaseTreeNode) organismNodes.get(schema);
+      typ_node = getChild(organismNode, type);
+      if(typ_node == null)
+      {
+        typ_node = new DatabaseTreeNode(type);
+        organismNode.add(typ_node);
+      }
+
+      seq_node = new DatabaseTreeNode(thisSeqName, featureId, schema,
+                            doc.getUserName(), doc.isSingleSchema());
+      typ_node.add(seq_node);
+    }
+    
+    // add organism nodes that have child nodes
+    Collections.sort(organism);   
+    for(int i=0; i<organism.size(); i++)
+    {
+      String name = (String) organism.get(i);
+      DatabaseTreeNode organismNode = (DatabaseTreeNode) organismNodes.get(name);
+      if(organismNode.getChildCount() > 0)
+        top.add(organismNode);
     }
   }
   
   /**
-   *  An InputStreamProgressListener used to update the error label with the
-   *  current number of chars read.
-   **/
+   * Get a child of a parent node with a given name.
+   * @param parentNode
+   * @param childNodeName
+   * @return
+   */
+  private DatabaseTreeNode getChild(final DatabaseTreeNode parentNode,
+                                    final String childNodeName)
+  {
+    for(int j=0; j<parentNode.getChildCount(); j++)
+    {
+      DatabaseTreeNode node = (DatabaseTreeNode) parentNode.getChildAt(j);
+      if(((String)node.getUserObject()).equals(childNodeName))
+        return node;
+    }
+    return null;
+  }
+  
+  /**
+   * An InputStreamProgressListener used to update the error label with the
+   * current number of chars read.
+   */
   private final InputStreamProgressListener stream_progress_listener =
     new InputStreamProgressListener() 
   {
