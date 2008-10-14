@@ -212,7 +212,10 @@ public class ReadAndWriteEntry
       //
       //
       
-      final String names[] = {
+      final String names[];
+      
+      if(args == null || args.length < 1)
+        names = new String[]{
           "bin.fas", 
           "chab01.fas",
           "chab02.fas",
@@ -229,6 +232,8 @@ public class ReadAndWriteEntry
           "chab13.fas",
           "chab14.fas",
           "chab99.fas" };
+      else
+        names = args;
       
       for(int i=0;i < names.length; i++)
       {
