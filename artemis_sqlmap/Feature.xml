@@ -189,10 +189,7 @@
       fp.value,
       fl.phase
     FROM feature f
-	LEFT JOIN featureloc fl ON ( f.feature_id  = fl.feature_id
-	  <isGreaterThan property="featureLoc.featureBySrcFeatureId.featureId" compareValue="0"> 
-          AND srcfeature_id=$featureLoc.featureBySrcFeatureId.featureId$ 
-      </isGreaterThan> )
+	LEFT JOIN featureloc fl ON ( f.feature_id  = fl.feature_id )
     LEFT JOIN feature_relationship fr ON fr.subject_id = f.feature_id
     LEFT JOIN featureprop fp          ON fp.feature_id = f.feature_id
 	LEFT JOIN dbxref dbx              ON f.dbxref_id   = dbx.dbxref_id
