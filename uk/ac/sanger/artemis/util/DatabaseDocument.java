@@ -651,7 +651,7 @@ public class DatabaseDocument extends Document
     final Hashtable synonym;
     final Hashtable featureCvTerms;
     final Hashtable featureCvTermDbXRefs;
-    final Hashtable featureCvTermPubs;
+    Hashtable featureCvTermPubs = null;
     final Hashtable featurePubs;
     final List pubDbXRefs;
     
@@ -675,11 +675,27 @@ public class DatabaseDocument extends Document
         dao.getFeatureCvTermsBySrcFeature(srcFeature));
       featureCvTermDbXRefs = getFeatureCvTermDbXRef(dao, 
         dao.getFeatureCvTermDbXRefBySrcFeature(srcFeature));
-      featureCvTermPubs = getFeatureCvTermPub(dao, 
-        dao.getFeatureCvTermPubBySrcFeature(srcFeature));
+      
+      try
+      {
+        featureCvTermPubs = getFeatureCvTermPub(dao, 
+          dao.getFeatureCvTermPubBySrcFeature(srcFeature));
+      } 
+      catch(Exception e) 
+      { 
+        e.printStackTrace();
+        if(dao instanceof IBatisDAO)
+        {
+          try
+          {
+            ((IBatisDAO) dao).endTransaction();
+            ((IBatisDAO) dao).startTransaction();
+          }
+          catch(SQLException sqle){}  
+        }
+      }
       featurePubs = getFeaturePubs(dao,
-        dao.getFeaturePubsBySrcFeature(srcFeature));
-    
+          dao.getFeaturePubsBySrcFeature(srcFeature));
       pubDbXRefs= dao.getPubDbXRef();
     }
     
