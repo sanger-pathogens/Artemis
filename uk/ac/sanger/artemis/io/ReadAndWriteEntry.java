@@ -200,14 +200,44 @@ public class ReadAndWriteEntry
   {
     try
     {
-      Entry entry = ReadAndWriteEntry.readEntryFromDatabase("Pf3D7_03");
+      /*Entry entry = ReadAndWriteEntry.readEntryFromDatabase("Pf3D7_03");
       ReadAndWriteEntry.writeDatabaseEntryToFile(
           entry, new File("Pf3D7_03.flatten"), true, true, false, 
           DocumentEntryFactory.EMBL_FORMAT, null);
       
       ReadAndWriteEntry.writeDatabaseEntryToFile(
           entry, new File("Pf3D7_03.not-flatten"), false, true, false,
+          DocumentEntryFactory.EMBL_FORMAT, null);*/
+      
+      //
+      //
+      
+      final String names[] = {
+          "bin.fas", 
+          "chab01.fas",
+          "chab02.fas",
+          "chab03.fas",
+          "chab04.fas",
+          "chab05.fas",
+          "chab06.fas",
+          "chab07.fas",
+          "chab08.fas",
+          "chab09.fas",
+          "chab10.fas",
+          "chab11.fas",
+          "chab12.fas",
+          "chab13.fas",
+          "chab14.fas",
+          "chab99.fas" };
+      
+      for(int i=0;i < names.length; i++)
+      {
+        System.out.println(i+" "+names[i]);
+        Entry entry = ReadAndWriteEntry.readEntryFromDatabase(names[i]);
+        ReadAndWriteEntry.writeDatabaseEntryToFile(
+          entry, new File(names[i]+".embl"), true, true, false, 
           DocumentEntryFactory.EMBL_FORMAT, null);
+      }
     }
     catch(Exception e)
     {
