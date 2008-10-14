@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.17 2008-09-16 14:42:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.18 2008-10-14 10:11:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -41,7 +41,7 @@ import java.util.Vector;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.17 2008-09-16 14:42:12 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.18 2008-10-14 10:11:39 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -209,6 +209,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       if(transcript != null && GeneUtils.isNonCodingTranscripts(transcript.getKey()))
         return null;
       
+      qualifiers.removeQualifierByName("ID");
       // add transcript & protein qualifiers to CDS
       try
       {
@@ -286,6 +287,10 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     for(int i=0; i<newQualifiers.size(); i++)
     {
       Qualifier newQualifier = (Qualifier) newQualifiers.get(i);
+      
+      if( newQualifier.getName().equals("ID") &&
+          ((String)newQualifier.getValues().get(0)).indexOf(':') > -1 )
+        continue;
       
       if(newQualifier.getName().equals("orthologous_to"))
       {
