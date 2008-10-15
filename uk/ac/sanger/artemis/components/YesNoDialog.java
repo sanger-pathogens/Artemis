@@ -20,27 +20,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/YesNoDialog.java,v 1.1 2004-06-09 09:48:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/YesNoDialog.java,v 1.2 2008-10-15 13:45:58 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
-import uk.ac.sanger.artemis.Options;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *  A popup dialog box that displays a message and then waits for the to press
  *  yes or no.
  *
  *  @author Kim Rutherford
- *  @version $Id: YesNoDialog.java,v 1.1 2004-06-09 09:48:01 tjc Exp $
+ *  @version $Id: YesNoDialog.java,v 1.2 2008-10-15 13:45:58 tjc Exp $
  **/
 
-public class YesNoDialog extends JDialog {
+public class YesNoDialog
+{
+  private JFrame parent;
+  private String title;
+  private String message;
+  
   /**
    *  Create a new YesNoDialog component.  The constructor does not show ()
    *  the dialog, call getResult () to do that.
@@ -48,37 +49,11 @@ public class YesNoDialog extends JDialog {
    *  @param title The title of the new dialog JFrame.
    *  @param message The message to display in the JDialog.
    **/
-  public YesNoDialog (JFrame parent, String title, String message) {
-    super (parent, message, true);
-    
-    getContentPane ().add (new JLabel (message), "North");
-
-    final JPanel panel = new JPanel ();
-
-    panel.add (yes_button);
-    yes_button.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent e) {
-        button_result = true;
-        setVisible (false);
-        YesNoDialog.this.dispose ();
-      }
-    });
-
-    panel.add (no_button);
-    no_button.addActionListener (new ActionListener () {
-      public void actionPerformed (ActionEvent e) {
-        button_result = false;
-        setVisible (false);
-        YesNoDialog.this.dispose ();
-      }
-    });
-
-    getContentPane ().add (panel, "South");
-    pack ();
-        
-    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    setLocation (new Point ((screen.width - getSize ().width) / 2,
-                            (screen.height - getSize ().height) / 2));
+  public YesNoDialog (JFrame parent, String title, String message) 
+  {
+    this.parent = parent;
+    this.title  = title;
+    this.message = message;
   }
 
   /**
@@ -88,8 +63,9 @@ public class YesNoDialog extends JDialog {
    *  @param message The message to display in the JDialog and to uise as the
    *    title string.
    **/
-  public YesNoDialog (JFrame parent, String message) {
-    this (parent, message, message);
+  public YesNoDialog (JFrame parent, String message) 
+  {
+    this (parent, null, message);
   }
   
   /**
@@ -97,19 +73,14 @@ public class YesNoDialog extends JDialog {
    *  press the Yes button or the No button.
    *  @return true is the user pressed Yes, false otherwise.
    **/
-  public boolean getResult () {
-    setVisible (true);
-    
-    return button_result;
+  protected boolean getResult () 
+  {
+    int result = JOptionPane.showConfirmDialog(
+        parent, message, title, 
+        JOptionPane.YES_NO_OPTION);
+    if(result == JOptionPane.YES_OPTION)
+      return true;
+    return false;
   }
-
-  final JButton yes_button = new JButton ("Yes");
-
-  final JButton no_button = new JButton ("No");
-
-  /**
-   *  Set by the yes and no button action listeners and read by getResult ().
-   **/
-  boolean button_result;
 }
 
