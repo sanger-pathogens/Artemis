@@ -206,7 +206,6 @@
            uniquename LIKE #uniqueName# 
          </isNotNull>
        </dynamic>
-    ORDER BY f.type_id,  uniquename
   </select>
  
   <select id="getLazyFeature" resultMap ="map-feature-lazy" 
