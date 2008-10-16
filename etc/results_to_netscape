@@ -11,28 +11,21 @@
 # If you are under KDE, you should use Konqueror then
 # If you are under MAC OS X, use Safari
 
-if [ -f "/usr/bin/X11/real-netscape" ]
-then
-  NETSCAPE=/usr/bin/X11/real-netscape
-elif [ -f "/usr/bin/mozilla" ]
-then
-  NETSCAPE=/usr/bin/mozilla
-elif [ -f "/usr/bin/open" ]
-then
+if [ `uname` = Darwin ]; then
   NETSCAPE=/usr/bin/open
-elif [ -f "/Applications/Safari.app/Contents/MacOS/Safari" ]
-then
-  NETSCAPE=/Applications/Safari.app/Contents/MacOS/Safari
-elif [ -f "/Applications/Camino.app/Contents/MacOS/Camino" ]
-then
-  NETSCAPE=/Applications/Camino.app/Contents/MacOS/Camino
+else
+  for f in /usr/bin/x-www-browser \
+         /usr/bin/X11/real-netscape \
+         /usr/bin/firefox \
+         /usr/bin/iceweasel \
+         /usr/bin/mozilla; do
+    if [ -f $f ]; then
+      NETSCAPE=$f
+      break
+    fi
+  done
 fi
 
-
-#NETSCAPE=/usr/bin/X11/real-netscape
-#NETSCAPE=/usr/bin/mozilla
-# MAC OS X   
-# NETSCAPE=/Applications/Safari.app/Contents/MacOS/Safari
 
 if [ -f "$DIANA_ENVIRONMENT_FILE" ]
 then
