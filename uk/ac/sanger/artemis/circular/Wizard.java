@@ -286,7 +286,13 @@ public class Wizard
         }
 
         String properties[] = inLine.split("\t");
-        String fileName = properties[11] + File.separator + properties[10];
+        
+        final String separator;
+        if (properties[11].indexOf ("://") != -1)
+          separator = "/";
+        else
+          separator = File.separator;
+        String fileName = properties[11] + separator  + properties[10];
         Entry entry;
         if(!fileEntrys.containsKey(fileName))
         {
