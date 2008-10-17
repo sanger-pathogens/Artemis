@@ -404,6 +404,9 @@ class TrackManager extends JFrame
           final JButton colourButton = GeneticMarker.setUpColorButton(col);
           c.gridx = 0;
           c.gridy = 0;
+          optionBox.add(new JLabel("Pick a Colour:"),c);
+          c.gridx = 1;
+          c.gridy = 0;
           optionBox.add(colourButton,c);
              
           final JCheckBox colourQualifier = new JCheckBox("Use colour qualifier");
@@ -434,12 +437,13 @@ class TrackManager extends JFrame
               dnaDraw.repaint();
             }
           });
-          c.gridx = 1;
+          c.gridx = 2;
           c.gridy = 0;
           optionBox.add(ok,c);
           
           c.gridx = 1;
           c.gridy = 1;
+          c.gridwidth = 2;
           optionBox.add(colourQualifier, c);
           
           c.gridx = 1;

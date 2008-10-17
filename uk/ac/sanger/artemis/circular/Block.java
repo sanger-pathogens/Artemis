@@ -23,6 +23,7 @@ package uk.ac.sanger.artemis.circular;
 import uk.ac.sanger.artemis.Feature;
 
 import javax.swing.*;
+
 import java.awt.geom.AffineTransform;
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -195,41 +196,28 @@ public class Block implements Transferable
     bdown.add(bacross);
 
 //Set up the dialog that the button brings up.
-    final JButton button = new JButton("");
-    button.setBackground(colour);
-    final JColorChooser colorChooser = new JColorChooser();
-    ActionListener okListener = new ActionListener()
+    final JButton colourButton = GeneticMarker.setUpColorButton(colour);
+    final JButton applyButton = new JButton("Apply Colour");
+
+    applyButton.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
-        setColour(colorChooser.getColor());
-        button.setBackground(colorChooser.getColor());
+        setColour(colourButton.getBackground());
         if(draw != null)
           draw.repaint();
       }
-    };
-    final JDialog dialog = JColorChooser.createDialog(button,
-                                "Pick a Color",true,
-                                colorChooser, okListener,
-                                null);
- 
-    //Here's the code that brings up the dialog.
-    button.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        dialog.setVisible(true);
-      }
     });
+
     bacross = Box.createHorizontalBox();
-    bacross.add(button);
+    bacross.add(new JLabel("Pick a Colour: "));
+    bacross.add(colourButton);
+    bacross.add(applyButton);
+    
     bacross.add(Box.createHorizontalGlue());
     bdown.add(bacross);
 
-
-    bacross = Box.createHorizontalBox();
-    
-    
+    bacross = Box.createHorizontalBox();    
     final JSlider slider;
     
     if(strokeSize <= 25)
