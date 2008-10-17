@@ -62,7 +62,6 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1884,10 +1883,7 @@ public class DNADraw extends ScrollPanel
     final Wizard wiz;
     
     if(arg.length > 0 && arg[0].equals("-t"))
-    {
-      final File fileTemplate = new File(arg[1]);
-      wiz = new Wizard(fileTemplate);
-    }
+      wiz = new Wizard(arg[1]);
     else
       wiz = new Wizard((DNADraw)null);
     final DNADraw dna = wiz.getDNADraw();

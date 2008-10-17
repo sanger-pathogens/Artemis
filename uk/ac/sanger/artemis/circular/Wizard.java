@@ -29,6 +29,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Vector;
 import java.util.Hashtable;
 
@@ -94,7 +97,7 @@ public class Wizard
         JOptionPane.showMessageDialog(null, 
             fileTemplate.getName()+" cannot be found!", 
             "Missing File", JOptionPane.WARNING_MESSAGE);
-      loadTemplate(fileTemplate);
+      loadTemplate(chooser.getSelectedFile());
     }
     else if(n == 1 || n == 2)
     {
@@ -195,29 +198,60 @@ public class Wizard
    * Open a DNA plot based on a template file
    * @param template
    */
-  public Wizard(final File template)
+  public Wizard(final String templateName)
   {
-    loadTemplate(template);
+    loadTemplate(templateName);
   }
   
   /**
    * Load from a template file
    * @param template
    */
-  private void loadTemplate(final File template)
+  private void loadTemplate(final String templateName)
   {
     final ProgressFrame progress = new ProgressFrame();
-    progress.setString("Reading from "+template.getName()+"   ");
+    progress.setString("Reading from "+templateName+"   ");
     progress.setValue(2);
     
     if(dna == null)
       dna = new DNADraw();
-    Options.getOptions();  
-
+    Options.getOptions();
+    final BufferedReader inputStream = getReader(templateName);
+    loadTemplate(inputStream, templateName, progress);
+  }
+  
+  /**
+   * Load from a template file
+   * @param template
+   */
+  private void loadTemplate(final File templateFile)
+  {
+    final ProgressFrame progress = new ProgressFrame();
+    progress.setString("Reading from "+templateFile.getName()+"   ");
+    progress.setValue(2);
+    
+    if(dna == null)
+      dna = new DNADraw();
+    Options.getOptions();
+    FileReader reader;
     try
     {
-      final FileReader reader = new FileReader(template);
+      reader = new FileReader(templateFile);
       final BufferedReader inputStream = new BufferedReader(reader);
+      loadTemplate(inputStream, templateFile.getName(), progress);
+    }
+    catch(FileNotFoundException e)
+    {
+      e.printStackTrace();
+    }
+  }
+  
+  private void loadTemplate(final BufferedReader inputStream,
+                            final String templateName,
+                            final ProgressFrame progress)
+  {
+    try
+    {
       final EntryGroup entryGroup = new SimpleEntryGroup();
       final Hashtable fileEntrys = new Hashtable();
       Vector v_tracks = new Vector();
@@ -273,9 +307,8 @@ public class Wizard
         v_tracks.add(track);
       }
       inputStream.close();
-      reader.close();
       
-      progress.setString("Read template "+template.getName());
+      progress.setString("Read template "+templateName);
       progress.setValue(7);
       Track[] newTracks = new Track[v_tracks.size()];
       for(int i=0; i<v_tracks.size(); i++)
@@ -757,6 +790,51 @@ public class Wizard
     }
 
     Wizard.tracks = newTracks;
+  }
+  
+  /**
+   * Return reader for a file or a URL
+   * @param templateName
+   * @return
+   */
+  private BufferedReader getReader(final String templateName)
+  {
+    final File fileTemplate = new File(templateName);
+    BufferedReader inputStream = null;
+    if(!fileTemplate.exists())
+    {
+      if (templateName.indexOf ("://") != -1) 
+      {
+        URL template;
+        try
+        {
+          template = new URL(templateName);
+          inputStream = new BufferedReader(
+              new InputStreamReader(template.openStream()));
+        }
+        catch(MalformedURLException e)
+        {
+          e.printStackTrace();
+        }
+        catch(IOException e)
+        {
+          e.printStackTrace();
+        }
+      } 
+    }
+    else
+    {
+      try
+      {
+        FileReader reader = new FileReader(fileTemplate);
+        inputStream = new BufferedReader(reader);
+      }
+      catch(FileNotFoundException e)
+      {
+        e.printStackTrace();
+      }
+    }
+    return inputStream;
   }
 }
 
