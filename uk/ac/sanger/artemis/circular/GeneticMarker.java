@@ -323,6 +323,7 @@ public class GeneticMarker extends JPanel
     };
     button.setBackground(col);
     button.setBorderPainted(false);
+    button.setOpaque(true);
     button.setMargin(new Insets(0,0,0,0));
     Dimension d = new Dimension(25,25);
     button.setPreferredSize(d);
