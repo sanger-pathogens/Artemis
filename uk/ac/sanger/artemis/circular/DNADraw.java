@@ -1910,6 +1910,9 @@ public class DNADraw extends ScrollPanel
     
     //dna.add(dna.new BlockPanel(dna));
     f.setVisible(true);
+    
+    if(wiz.getWorkerGraph() != null)
+      wiz.getWorkerGraph().start();
   }
   
   /*class BlockPanel extends JPanel

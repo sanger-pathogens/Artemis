@@ -54,6 +54,7 @@ import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.StickyFileChooser;
+import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -77,7 +78,7 @@ public class Wizard
   public static Track TRACK_4 = new Track(0.8d,  "misc_feature", true, true, null);
   public static Track TRACK_5 = new Track(0.75d, null, true, true, null);
 
-  
+  private SwingWorker workerGraph;
   public static Track[] tracks = { TRACK_1, TRACK_2, TRACK_3, TRACK_4, TRACK_5 };
   
   public Wizard(DNADraw dna_current)
@@ -384,7 +385,18 @@ public class Wizard
         dna.setTrackManager(trackManager);
       }
       trackManager.update(tracks);
-      loadGraphs(gcGraphStr, gcSkewGraphStr, userGraphStr, dna, progress);
+      
+      final String[] this_gcGraphStr = gcGraphStr;
+      final String[] this_gcSkewGraphStr = gcSkewGraphStr;
+      final String[] this_userGraphStr = userGraphStr;
+      workerGraph = new SwingWorker()
+      {
+        public Object construct()
+        {
+          loadGraphs(this_gcGraphStr, this_gcSkewGraphStr, this_userGraphStr, dna, progress);
+          return null;
+        } 
+      };
     }
     catch(FileNotFoundException e)
     {
@@ -398,7 +410,6 @@ public class Wizard
     {
       e.printStackTrace();
     }
-    progress.dispose();
   }
   
   /**
@@ -423,6 +434,8 @@ public class Wizard
       dna.setGcGraph(gcGraph);
       gcGraph.calcGraphValues();
       dna.add(gcGraph);
+      dna.repaint();
+      dna.revalidate();
     }
     if(gcSkewGraphStr != null)
     {
@@ -433,6 +446,8 @@ public class Wizard
       dna.setGcSkewGraph(gcSkewGraph);
       gcSkewGraph.calcGraphValues();
       dna.add(gcSkewGraph);
+      dna.repaint();
+      dna.revalidate();
     }
     if(userGraphStr != null)
     {
@@ -453,6 +468,8 @@ public class Wizard
         dna.setUserGraph(userGraph);
         userGraph.calcGraphValues();
         dna.add(userGraph);
+        dna.repaint();
+        dna.revalidate();
       }
       catch(IOException e)
       {
@@ -460,6 +477,7 @@ public class Wizard
         return;
       }
     }
+    progress.dispose();
   }
   
   /**
@@ -841,6 +859,11 @@ public class Wizard
       }
     }
     return inputStream;
+  }
+
+  public SwingWorker getWorkerGraph()
+  {
+    return workerGraph;
   }
 }
 
