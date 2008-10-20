@@ -425,10 +425,13 @@ public class Wizard
                           final DNADraw dna,
                           final ProgressFrame progress)
   {
+    
     if(gcGraphStr != null)
     {
       if(progress != null)
+      {
         progress.setString("Calculating GC graph points");
+      }
       GCGraph gcGraph = new GCGraph(dna);
       gcGraph.setOptionsStr(gcGraphStr);
       dna.setGcGraph(gcGraph);
@@ -440,7 +443,10 @@ public class Wizard
     if(gcSkewGraphStr != null)
     {
       if(progress != null)
+      {
         progress.setString("Calculating GC Skew graph points");
+        progress.setValue(8);
+      }
       GCSkewGraph gcSkewGraph = new GCSkewGraph(dna);
       gcSkewGraph.setOptionsStr(gcSkewGraphStr);
       dna.setGcSkewGraph(gcSkewGraph);
@@ -462,7 +468,10 @@ public class Wizard
       try
       {
         if(progress != null)
+        {
           progress.setString("Calculating user graph points");
+          progress.setValue(9);
+        }
         UserGraph userGraph = new UserGraph(dna, document);
         userGraph.setOptionsStr(userGraphStr);
         dna.setUserGraph(userGraph);

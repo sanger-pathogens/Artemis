@@ -26,6 +26,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
+import uk.ac.sanger.artemis.components.Utilities;
+
 
 class ProgressFrame extends JFrame
 {
@@ -39,15 +41,16 @@ class ProgressFrame extends JFrame
     progress = new JProgressBar(1,10);
     progress.setStringPainted(true);
     progress.setValue(2);
-    progress.setPreferredSize(new Dimension(350, progress.getPreferredSize().height));
+    progress.setPreferredSize(new Dimension(450, progress.getPreferredSize().height));
     panel.add(progress, BorderLayout.CENTER);
     pack();
-    //Utilities.centreFrame(this);
+    Utilities.centreFrame(this);
     setVisible(true);
   }
   
   protected void setString(String s)
   {
+    toFront();
     progress.setString(s);
   }
 
