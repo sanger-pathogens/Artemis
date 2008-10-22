@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.31 2008-10-22 10:35:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.32 2008-10-22 14:41:21 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,12 +47,13 @@ import java.io.*;
 import java.awt.datatransfer.*;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.31 2008-10-22 10:35:56 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.32 2008-10-22 14:41:21 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -774,20 +775,16 @@ public class ArtemisMain extends Splash
    *  Main entry point for the stand-alone version of Artemis.
    **/
   public static void main(final String [] args) 
-  {
-    final ArtemisMain main_window = new ArtemisMain(args);
-    main_window.setVisible(true);
-
-    SwingWorker entryWorker = new SwingWorker()
+  { 
+    SwingUtilities.invokeLater(new Runnable() 
     {
-      public Object construct()
+      public void run() 
       {
-        // read the entries given on the command line and in the diana.ini file
+        final ArtemisMain main_window = new ArtemisMain(args);
+        main_window.setVisible(true);
         main_window.readArgsAndOptions(args);
-        return null;
       }
-    };
-    entryWorker.start();
+    });
   }
 
 }
