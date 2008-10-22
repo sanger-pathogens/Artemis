@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.35 2008-10-22 12:26:05 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.36 2008-10-22 14:39:37 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -47,7 +47,7 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.35 2008-10-22 12:26:05 tjc Exp $
+ *  @version $Id: Splash.java,v 1.36 2008-10-22 14:39:37 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame
@@ -257,6 +257,7 @@ abstract public class Splash extends JFrame
   {
     if(isMac()) 
     {
+      setWorkingDirectory();
       try 
       {
         // Generate and register the OSXAdapter, passing it a hash of all the methods we wish to
@@ -276,7 +277,6 @@ abstract public class Splash extends JFrame
         logger4j.error("Error while loading the OSXAdapter:");
         logger4j.error(e.getMessage());
       }
-      setWorkingDirectory();
     }
     logger4j.info("Working directory: "+System.getProperty("user.dir"));
   }
