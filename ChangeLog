@@ -1,5 +1,7 @@
 Version 10.+/7.+
 
+	On MacOSX - enable dropping files on Artemis application to open sequences
+
 	Add NCBI search link to run menu. This transfers the sequence automatically
 	to the NCBI web page.
 	
