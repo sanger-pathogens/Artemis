@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.33 2008-04-22 12:27:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.34 2008-10-22 10:35:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -39,7 +39,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
-import java.lang.reflect.Constructor;
 import java.util.Properties;
 
 
@@ -48,10 +47,10 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.33 2008-04-22 12:27:42 tjc Exp $
+ *  @version $Id: Splash.java,v 1.34 2008-10-22 10:35:56 tjc Exp $
  **/
 
-abstract public class Splash extends JFrame 
+abstract public class Splash extends JFrame
 {
 
   /**
@@ -106,6 +105,8 @@ abstract public class Splash extends JFrame
     initLogger();
     
     logger4j.info(System.getProperty("java.version"));
+    logger4j.info(System.getProperty("java.vendor"));
+    logger4j.info(System.getProperty("java.home"));
     logger4j.info(System.getProperty("os.name"));
     logger4j.info("Starting application: "+program_name);
   }
@@ -122,26 +123,6 @@ abstract public class Splash extends JFrame
   {
     this(program_title+" "+program_version, program_name);
     
-    if(isMac()) 
-    {
-      setWorkingDirectory();
-
-      try
-      {
-        Object[] args = { this, program_title };
-        Class[] arglist = { Splash.class, String.class };
-        Class mac_class = Class.forName(
-            "uk.ac.sanger.artemis.components.MacHandler");
-        Constructor new_one = mac_class.getConstructor(arglist);
-        new_one.newInstance(args);
-      }
-      catch(Exception e)
-      {
-        System.out.println(e);
-      }
-    }
-
-    logger4j.info("Working directory: "+System.getProperty("user.dir"));
     this.program_name    = program_name;
     this.program_version = program_version;
     
@@ -236,12 +217,12 @@ abstract public class Splash extends JFrame
 
     final int x = 460;
     final int y = 250;
-
     setSize(x, y);
 
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     setLocation(new Point((screen.width - getSize().width) / 2,
                           (screen.height - getSize().height) / 2));
+    registerForMacOSXEvents();
   }
 
   public static void initLogger()
@@ -268,13 +249,44 @@ abstract public class Splash extends JFrame
     }
   }
   
+  /**
+   * Generic registration with the Mac OS X application menu
+   * Checks the platform, then attempts to register with the Apple EAWT
+   */
+  private void registerForMacOSXEvents()
+  {
+    if(isMac()) 
+    {
+      try 
+      {
+        // Generate and register the OSXAdapter, passing it a hash of all the methods we wish to
+        // use as delegates for various com.apple.eawt.ApplicationListener methods
+        Class splashClass = Class.forName("uk.ac.sanger.artemis.components.Splash");
+        OSXAdapter.setQuitHandler(this, 
+            splashClass.getDeclaredMethod("exitApp", (Class[])null));
+        OSXAdapter.setAboutHandler(this, 
+            splashClass.getDeclaredMethod("about", (Class[])null));
+        //OSXAdapter.setPreferencesHandler(this, 
+        //  splashClass.getDeclaredMethod("preferences", (Class[])null));
+        OSXAdapter.setFileHandler(this, 
+            splashClass.getDeclaredMethod("loadFile", new Class[] { String.class }));
+      } 
+      catch (Exception e)
+      {
+        logger4j.error("Error while loading the OSXAdapter:");
+        logger4j.error(e.getMessage());
+      }
+      setWorkingDirectory();
+    }
+    logger4j.info("Working directory: "+System.getProperty("user.dir"));
+  }
+  
   private boolean isMac() 
   {
     return System.getProperty("mrj.version") != null;
   }
-
  
-  public void about()
+  protected void about()
   {
     ClassLoader cl = this.getClass().getClassLoader();
     ImageIcon icon = new ImageIcon(cl.getResource("images/icon.gif"));
@@ -284,10 +296,17 @@ abstract public class Splash extends JFrame
                         "\nunder the terms of the GNU General Public License.",
             "About", JOptionPane.INFORMATION_MESSAGE,
             icon);
-
-//  JOptionPane.showMessageDialog(this,
-//          getTitle()+ "\nthis is free software and is distributed"+
-//                      "\nunder the terms of the GNU General Public License.");
+  }
+  
+  protected void loadFile(final String fileName)
+  {
+    if(this instanceof ArtemisMain)
+    {
+      JOptionPane.showMessageDialog(this,
+          "OPEN "+fileName,
+           "About", JOptionPane.INFORMATION_MESSAGE);
+      ((ArtemisMain)this).readArgsAndOptions(new String[]{ fileName });
+    }
   }
 
 

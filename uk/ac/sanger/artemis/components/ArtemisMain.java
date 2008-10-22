@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.30 2008-08-05 10:20:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.31 2008-10-22 10:35:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -52,7 +52,7 @@ import javax.swing.JOptionPane;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.30 2008-08-05 10:20:56 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.31 2008-10-22 10:35:56 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -169,15 +169,6 @@ public class ArtemisMain extends Splash
         handleCanvasMousePress(event);
       }
     });
-
-//  java.util.Properties props = System.getProperties();
-//  java.util.Enumeration en = props.propertyNames();
-//  while(en.hasMoreElements())
-//  {
-//    String prop = (String)en.nextElement();
-//    System.out.println(prop+":: "+props.getProperty(prop));
-//  }
-
   }
 
 
@@ -278,7 +269,7 @@ public class ArtemisMain extends Splash
         frame.pack();
         Utilities.rightJustifyFrame(frame);
         frame.setVisible(true);
-        frame.setJMenuBar(pane.makeMenuBar(entry_source, ArtemisMain.this));
+        //frame.setJMenuBar(pane.makeMenuBar(entry_source, ArtemisMain.this));
         getStatusLabel().setText("");
         return null;
       }
@@ -448,16 +439,16 @@ public class ArtemisMain extends Splash
       last_entry_edit.getGotoEventSource().gotoBase(
           Integer.parseInt(System.getProperty("offset")));
     
+    last_entry_edit.setVisible(true);
     for(int entry_index=0; entry_index<entry_edit_objects.size();
         ++entry_index)
     {
-      entry_edit_objects.elementAt(entry_index).setVisible(true);
-      
       if(System.getProperty("offset") != null)
         entry_edit_objects.elementAt(entry_index).getGotoEventSource().gotoBase(
             Integer.parseInt(System.getProperty("offset")));
     }
   }
+  
 
   /**
    *
@@ -760,6 +751,7 @@ public class ArtemisMain extends Splash
 	  return entry_edit_objects;
   }
 
+  
   /**
    *  Close the main frame and all EntryEdit frames and then this frame,
    *  then exit.
