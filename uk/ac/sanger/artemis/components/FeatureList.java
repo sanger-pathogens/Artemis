@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.26 2007-10-04 10:26:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.27 2008-10-23 14:38:55 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -29,7 +29,7 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.plot.CodonUsageAlgorithm;
 
-import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
@@ -63,7 +63,7 @@ import javax.swing.JComponent;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.26 2007-10-04 10:26:24 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.27 2008-10-23 14:38:55 tjc Exp $
  *
  **/
 
@@ -73,17 +73,10 @@ public class FeatureList extends EntryGroupPanel
              SelectionChangeListener, DisplayComponent
 {
 
-  /**
-   *  This variable is true if correlation scores should be shown in the list.
-   **/
+  /** true if correlation scores should be shown */
   private boolean show_correlation_scores = false;
 
-  /** Index of the first visible feature in the list. */
-  private int first_index;
-
-  /**
-   *  This is set to true by selectionChanged() and used by paintComponent().
-   **/
+  /** set to true by selectionChanged() and used by paintComponent(). */
   private boolean selection_changed_flag = false;
 
   /** colour used to draw the background. */
@@ -132,12 +125,8 @@ public class FeatureList extends EntryGroupPanel
   {
     super(entry_group, selection, goto_event_source, base_plot_group);
 
-    for(int i=0; i<getEntryGroup().size(); i++)
-    {
-      if(getEntryGroup().elementAt(i).getEMBLEntry() instanceof DatabaseDocumentEntry)
-        isDatabaseGroup = true;
-    }
-    
+    isDatabaseGroup = GeneUtils.isDatabaseEntry(getEntryGroup());
+
     addMouseListener(new MouseAdapter() 
     {
       private FeaturePopup popup = null;
@@ -394,40 +383,9 @@ public class FeatureList extends EntryGroupPanel
   }
 
   /**
-   *  Return a vector containing the text that is shown in the list - one
-   *  String per line.
-   **/
-  public StringVector getListStrings() 
-  {
-    final StringVector return_vector = new StringVector();
-    final FeatureEnumeration test_enumerator = getEntryGroup().features();
-
-    while(test_enumerator.hasMoreFeatures()) 
-    {
-      final Feature this_feature = test_enumerator.nextFeature();
-      return_vector.add(makeFeatureString(this_feature, true));
-    }
-
-    return return_vector;
-  }
-
-
-  /**
-   *  Set the first visible index.
-   **/
-  public void setFirstIndex(final int first_index) 
-  {
-    this.first_index = first_index;
-    repaint();
-  }
-
-
-  /**
-  *
   * Return the JViewport that this component is contained in.
-  *
   */
-  protected JViewport getViewport()
+  private JViewport getViewport()
   {
     if(viewport != null)
       return viewport;
@@ -568,8 +526,9 @@ public class FeatureList extends EntryGroupPanel
         final int index_of_first_selected_feature =
                          entry_group.indexOf(first_selected_feature);
 
-        if(index_of_first_selected_feature < first_line_in_view ||
-           index_of_first_selected_feature >= first_line_in_view + numberLines)
+        if( index_of_first_selected_feature > -1 &&
+           (index_of_first_selected_feature < first_line_in_view ||
+            index_of_first_selected_feature >= first_line_in_view + numberLines))
         {
           getViewport().setViewPosition(new Point(0,
                                 index_of_first_selected_feature * getLineHeight()));
