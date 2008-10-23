@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.27 2008-10-23 14:38:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureList.java,v 1.28 2008-10-23 14:44:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -63,7 +63,7 @@ import javax.swing.JComponent;
  *  Features.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureList.java,v 1.27 2008-10-23 14:38:55 tjc Exp $
+ *  @version $Id: FeatureList.java,v 1.28 2008-10-23 14:44:28 tjc Exp $
  *
  **/
 
@@ -76,7 +76,9 @@ public class FeatureList extends EntryGroupPanel
   /** true if correlation scores should be shown */
   private boolean show_correlation_scores = false;
 
-  /** set to true by selectionChanged() and used by paintComponent(). */
+  /**
+   *  This is set to true by selectionChanged() and used by paintComponent().
+   **/
   private boolean selection_changed_flag = false;
 
   /** colour used to draw the background. */
@@ -383,9 +385,28 @@ public class FeatureList extends EntryGroupPanel
   }
 
   /**
+   *  Return a vector containing the text that is shown in the list - one
+   *  String per line.
+   **/
+  protected StringVector getListStrings() 
+  {
+    final StringVector return_vector = new StringVector();
+    final FeatureEnumeration test_enumerator = getEntryGroup().features();
+
+    while(test_enumerator.hasMoreFeatures()) 
+    {
+      final Feature this_feature = test_enumerator.nextFeature();
+      return_vector.add(makeFeatureString(this_feature, true));
+    }
+
+    return return_vector;
+  }
+
+
+  /**
   * Return the JViewport that this component is contained in.
   */
-  private JViewport getViewport()
+  protected JViewport getViewport()
   {
     if(viewport != null)
       return viewport;
