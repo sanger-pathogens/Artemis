@@ -1892,9 +1892,9 @@ public class DNADraw extends ScrollPanel
     final String version = dna.getVersion();
     final JFrame f = new JFrame();
     if(version == null)
-      f.setTitle("DNA Plot");
+      f.setTitle("DNAPlotter");
     else
-      f.setTitle("DNA Plot :: "+version);
+      f.setTitle("DNAPlotter :: "+version);
       
     Dimension d = f.getToolkit().getScreenSize();
     jsp = new JScrollPane(dna);
