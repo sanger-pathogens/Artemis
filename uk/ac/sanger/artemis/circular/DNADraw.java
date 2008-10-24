@@ -91,7 +91,7 @@ public class DNADraw extends ScrollPanel
                      DragSourceListener, DropTargetListener
 {
   private static final long serialVersionUID = 1L;
-  public static JScrollPane jsp;
+  public static JScrollPane jsp = new JScrollPane();
   private DNADraw current_dna;
   private JFrame mainFrame;
 
@@ -1405,9 +1405,7 @@ public class DNADraw extends ScrollPanel
     {
       public void actionPerformed(ActionEvent e)
       {   
-        Wizard wiz = new Wizard(current_dna);
-        current_dna = wiz.getDNADraw();
-        jsp.setViewportView(current_dna);
+        new Wizard(current_dna);
       }
     });
     optionMenu.add(wizard);
@@ -1417,7 +1415,8 @@ public class DNADraw extends ScrollPanel
 
     if(getArtemisEntryGroup() != null)
     {
-      trackManager = new TrackManager(DNADraw.this);
+      if(trackManager == null)
+        trackManager = new TrackManager(DNADraw.this);
       tracksMenu.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
@@ -1897,7 +1896,8 @@ public class DNADraw extends ScrollPanel
       f.setTitle("DNAPlotter :: "+version);
       
     Dimension d = f.getToolkit().getScreenSize();
-    jsp = new JScrollPane(dna);
+
+    jsp.setViewportView(dna);
     jsp.getViewport().setBackground(Color.white);
     f.getContentPane().add(jsp);
     f.setJMenuBar(dna.createMenuBar());

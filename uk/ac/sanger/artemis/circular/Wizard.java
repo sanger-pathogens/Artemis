@@ -84,11 +84,11 @@ public class Wizard
   public Wizard(DNADraw dna_current)
   {
     int n = getOption(dna_current);  // option 0 - read data file
-                                     // option 1 - create dna display
-                                     // option 2 - edit existing dna
+                                     // option 1 - edit existing dna
+                                     // option 2 - read template
     if(n == 0)
       dna = getDNADrawFromFile(dna_current);
-    else if(n == 3)
+    else if(n == 2)
     {
       StickyFileChooser chooser = new StickyFileChooser();
       chooser.showOpenDialog(null);
@@ -100,7 +100,7 @@ public class Wizard
             "Missing File", JOptionPane.WARNING_MESSAGE);
       loadTemplate(chooser.getSelectedFile());
     }
-    else if(n == 1 || n == 2)
+    else if(n == 1)
     {
       Vector block = new Vector();
       Vector restrictionEnzyme = new Vector();
@@ -741,30 +741,29 @@ public class Wizard
 
     JRadioButton[] radioButtons;
 
-    radioButtons = new JRadioButton[3];
+    radioButtons = new JRadioButton[2];
 
     final ButtonGroup group = new ButtonGroup();
     radioButtons[0] = new JRadioButton("Read in sequence file");
     group.add(radioButtons[0]);
-    radioButtons[1] = new JRadioButton("Create new dna display");
-    group.add(radioButtons[1]);
+
     radioButtons[0].setSelected(true);
     bdown.add(radioButtons[0]);
-    bdown.add(radioButtons[1]);
+
 
     radioButtons[0].setSelected(true);
     if(dna_current !=  null)
     {
-      radioButtons[2] = new JRadioButton("Edit current dna display");
-      group.add(radioButtons[2]);
-      radioButtons[2].setSelected(true);
+      radioButtons[1] = new JRadioButton("Edit current dna display");
+      group.add(radioButtons[1]);
+      radioButtons[1].setSelected(true);
     }
     else
     {
-      radioButtons[2] = new JRadioButton("Read template file");
-      group.add(radioButtons[2]);  
+      radioButtons[1] = new JRadioButton("Read template file");
+      group.add(radioButtons[1]);  
     }
-    bdown.add(radioButtons[2]);
+    bdown.add(radioButtons[1]);
     
     JPanel pane = new JPanel(new BorderLayout());
     pane.add(bdown);
@@ -774,12 +773,10 @@ public class Wizard
 
     if(radioButtons[0].isSelected())
       return 0;
-    else if(radioButtons[1].isSelected())
+    else if(radioButtons[1].isSelected() && dna_current !=  null)
       return 1;
-    else if(radioButtons[2].isSelected() && dna_current !=  null)
+    else if(radioButtons[1].isSelected())
       return 2;
-    else if(radioButtons[2].isSelected())
-      return 3;
      
     return 1;
   }
