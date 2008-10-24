@@ -199,7 +199,7 @@ public class DNADraw extends ScrollPanel
     this.addMouseListener(mouseListener);
   }
   
-  private String getVersion()
+  public String getVersion()
   {
     final ClassLoader cl = this.getClass().getClassLoader();
     try
