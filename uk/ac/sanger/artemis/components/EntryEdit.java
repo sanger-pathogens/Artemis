@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.72 2008-09-11 10:24:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.73 2008-10-24 10:16:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -66,7 +66,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.72 2008-09-11 10:24:31 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.73 2008-10-24 10:16:09 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1268,7 +1268,7 @@ public class EntryEdit extends JFrame
     printMenu();
 
     file_menu.addSeparator();
-    final JMenuItem open_dna_viewer = new JMenuItem("Open in DNAPlot");
+    final JMenuItem open_dna_viewer = new JMenuItem("Open in DNAPlotter");
     open_dna_viewer.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
@@ -1278,7 +1278,12 @@ public class EntryEdit extends JFrame
         final DNADraw dna = 
           uk.ac.sanger.artemis.circular.Wizard.getDNADrawFromArtemisEntry(null, 
             getEntryGroup(), entry);
-        final JFrame f = new JFrame("DNA Viewer");
+        final String version = dna.getVersion();
+        final JFrame f = new JFrame();
+        if(version == null)
+          f.setTitle("DNAPlotter");
+        else
+          f.setTitle("DNAPlotter :: "+version);
         dna.setCloseAndDispose(true, f);
 
         JScrollPane jsp = new JScrollPane(dna);
