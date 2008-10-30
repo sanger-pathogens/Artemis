@@ -227,7 +227,7 @@ echo "rm -f $new_file > /dev/null 2>&1" | at now + 12 hours
 
 # MAC OS X => Safari browser
 # The command then is the following
-if [ -f "/usr/bin/open" ]
+if [ -f "/usr/bin/open" -a `uname` = Darwin ]
 then
   /usr/bin/open $new_file
   exit 0
