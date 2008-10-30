@@ -152,7 +152,7 @@ public class JdbcDAO extends GmodDAO
     return null;
   }
   
-  public Feature getResiduesByUniqueName(String uniqueName)
+  public List getResiduesByUniqueName(String uniqueName)
   {
     // TODO Auto-generated method stub
     return null;

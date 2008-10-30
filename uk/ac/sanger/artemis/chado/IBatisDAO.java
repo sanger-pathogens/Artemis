@@ -111,9 +111,9 @@ public class IBatisDAO extends GmodDAO
     return sqlMap.queryForList("getFeatureDbXRefsByFeatureId",featureIds);
   }
   
-  public Feature getResiduesByUniqueName(final String uniqueName)
+  public List getResiduesByUniqueName(final String uniqueName)
   {
-    return (Feature)sqlMap.queryForObject("getResiduesByUniqueName",uniqueName);
+    return sqlMap.queryForList("getResiduesByUniqueName",uniqueName);
   }
   
   public List getResidueFeatures(final Integer organismId)

@@ -101,7 +101,7 @@ public abstract class GmodDAO
    * @param uniqueName
    * @return
    */
-  public abstract Feature getResiduesByUniqueName(final String uniqueName);
+  public abstract List getResiduesByUniqueName(final String uniqueName);
   
   /**
    * Return all the Feature.featureProps for a <code>List</code> of feature_id's. 
