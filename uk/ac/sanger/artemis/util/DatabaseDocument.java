@@ -108,7 +108,7 @@ public class DatabaseDocument extends Document
   private ByteBuffer gff_buff;
 
   /** entries to split into */
-  private String[] types = { "exon", "gene", "CDS", "transcript" };
+  private String[] types = { "repeat_region", "transcript" };
 
   /** true if splitting the GFF into entries */
   private boolean splitGFFEntry;
@@ -592,11 +592,7 @@ public class DatabaseDocument extends Document
       if(gff_buffer[i].size() == 0)
         continue;
 
-      String name;
-      if(i >= types.length)
-        name = "other";
-      else
-        name = types[i];
+      String name = types[i-1];
 
       new_docs[nentries] = new DatabaseDocument(location, pfield, id, schema,
                                                 gff_buffer[i], name);
@@ -706,11 +702,11 @@ public class DatabaseDocument extends Document
       Feature feat = (Feature)featList.get(i);
       int type_id = feat.getCvTerm().getCvTermId();
       String typeName = getCvtermName(type_id, dao, gene_builder);
-      this_buff = buffers[types.length];
+      this_buff = buffers[0];
       for(int j = 0; j < types.length; j++)
       {
         if(types[j].equals(typeName))
-          this_buff = buffers[j];
+          this_buff = buffers[j+1];
       }
 
       chadoToGFF(feat, srcFeature.getUniqueName(),
@@ -2086,7 +2082,7 @@ public class DatabaseDocument extends Document
    */
   public PartialSequence getChadoSequence(final String uniqueName)
   {
-    Feature feature = getDAOOnly().getResiduesByUniqueName(uniqueName);
+    Feature feature = (Feature) getDAOOnly().getResiduesByUniqueName(uniqueName).get(0);
     char[] c = getChars(feature.getResidues());
     
     PartialSequence ps = new PartialSequence(c, feature.getSeqLen(),
