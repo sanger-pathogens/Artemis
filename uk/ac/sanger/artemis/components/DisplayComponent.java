@@ -20,26 +20,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DisplayComponent.java,v 1.1 2004-06-09 09:46:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/DisplayComponent.java,v 1.2 2008-10-30 15:25:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
-import uk.ac.sanger.artemis.EntryGroup;
-import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.GotoEventSource;
 
-import javax.swing.*;
+import javax.swing.JFrame;
 
 /**
  *  Interface discribing those methods common to all the classes in
  *  uk.ac.sanger.artemis.components that can display EntryGroup objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: DisplayComponent.java,v 1.1 2004-06-09 09:46:15 tjc Exp $
+ *  @version $Id: DisplayComponent.java,v 1.2 2008-10-30 15:25:24 tjc Exp $
  **/
 
-public interface DisplayComponent {
+public interface DisplayComponent
+{
   /**
    *  Return an object that implements the GotoEventSource interface.
    **/
