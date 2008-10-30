@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.5 2008-08-08 15:49:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.6 2008-10-30 17:18:28 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  *  set in the constructor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: UserDataAlgorithm.java,v 1.5 2008-08-08 15:49:39 tjc Exp $
+ *  @version $Id: UserDataAlgorithm.java,v 1.6 2008-10-30 17:18:28 tjc Exp $
  **/
 
 public class UserDataAlgorithm extends BaseAlgorithm
@@ -53,7 +53,7 @@ public class UserDataAlgorithm extends BaseAlgorithm
   /**
    *  The maximum value in the data array.
    **/
-  private float data_max = Float.MAX_VALUE;
+  private float data_max = Float.MIN_VALUE;
 
   /**
    *  The minimum value in the data array.
