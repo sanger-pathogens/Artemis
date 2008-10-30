@@ -205,12 +205,15 @@ public class GeneEdit
     {
       public Object construct()
       {
-        frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        if(frame != null)
+          frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         DatabaseDocumentEntry entry = makeEntry(organism, search_gene,
                                                 location, pfield);
         //entry.setReadOnly(true);
         showGeneEditor(organism, search_gene, entry);
-        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        
+        if(frame != null)
+          frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         return null;
       }
     };
