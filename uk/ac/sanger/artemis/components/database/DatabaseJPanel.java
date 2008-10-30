@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.17 2008-10-13 15:03:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.18 2008-10-30 15:37:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -39,11 +39,6 @@ import uk.ac.sanger.artemis.io.Range;
 import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.BorderFactory;
@@ -53,8 +48,6 @@ import javax.swing.tree.TreePath;
 import org.gmod.schema.sequence.Feature;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -96,7 +89,7 @@ public class DatabaseJPanel extends JPanel
       public void mouseClicked(MouseEvent e)
       {
         if(e.getClickCount() == 2 && !e.isPopupTrigger())
-          showSelected(entry_source, tree, splash_main);
+          showSelected(entry_source, splash_main);
       }
     };
     tree.addMouseListener(mouseListener);
@@ -136,8 +129,8 @@ public class DatabaseJPanel extends JPanel
    * @param tree
    * @param splash_main
    */
-  private void showSelected(final DatabaseEntrySource entry_source,
-      final JTree tree, final Splash splash_main)
+  public void showSelected(final DatabaseEntrySource entry_source,
+                           final Splash splash_main)
   {
     try
     {
@@ -331,6 +324,7 @@ public class DatabaseJPanel extends JPanel
       {
         final DatabaseDocumentEntry[] entries = entry_source.makeFromGff(
             (DatabaseDocument) db_entry.getDocument(), srcfeatureId, userName);
+
         for(int i = 0; i < entries.length; i++)
         {
           if(entries[i] == null)
@@ -361,62 +355,6 @@ public class DatabaseJPanel extends JPanel
       new MessageDialog(splash_main, "read failed due to IO error: " + e);
     }
     return null;
-  }
-
-
-
-  /**
-   * Create a menu bar 
-   * @param entry_source
-   * @param splash_main
-   * @return
-   */
-  public JMenuBar makeMenuBar(final DatabaseEntrySource entry_source,
-                              final Splash splash_main)
-  {
-    JMenuBar mBar = new JMenuBar();
-    JMenu fileMenu = new JMenu("File");
-    mBar.add(fileMenu);
-
-    JMenuItem fileShow = new JMenuItem("Open Selected Sequence ...");
-    fileShow.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        showSelected(entry_source, tree, splash_main);
-      }
-    });
-    fileMenu.add(fileShow);
-    fileMenu.add(new JSeparator());
-
-    JMenuItem fileMenuClose = new JMenuItem("Close");
-    fileMenuClose.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        setVisible(false);
-      }
-    });
-    fileMenu.add(fileMenuClose);
-
-    JMenu optionMenu = new JMenu("Options");
-    mBar.add(optionMenu);
-
-    final JCheckBoxMenuItem splitGFF = new JCheckBoxMenuItem(
-                    "Split GFF into entries", splitGFFEntry);
-    splitGFF.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        if(splitGFF.isSelected())
-          splitGFFEntry = true;
-        else
-          splitGFFEntry = false;
-      }
-    });
-    optionMenu.add(splitGFF);
-
-    return mBar;
   }
   
   /**
@@ -562,4 +500,9 @@ public class DatabaseJPanel extends JPanel
       status_line.setText(progress);
     }
   };
+
+  public void setSplitGFFEntry(boolean splitGFFEntry)
+  {
+    this.splitGFFEntry = splitGFFEntry;
+  }
 }

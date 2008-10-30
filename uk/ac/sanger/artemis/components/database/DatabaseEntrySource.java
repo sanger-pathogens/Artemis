@@ -332,7 +332,10 @@ public class DatabaseEntrySource implements EntrySource, Serializable
       db_entry = new DatabaseDocumentEntry[new_docs.length];
 
       for(int i = 0; i < new_docs.length; i++)
+      {
+        new_docs[i].setLazyFeatureLoad(doc.isLazyFeatureLoad());
         db_entry[i] = new DatabaseDocumentEntry(new_docs[i], null);
+      }
     }
     catch (EntryInformationException e)
     {

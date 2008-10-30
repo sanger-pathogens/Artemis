@@ -141,6 +141,7 @@ public class LocalAndRemoteFileManager extends JFrame
     JPanel pane = (JPanel)getContentPane();
     pane.setLayout(new BorderLayout());
     
+    DbConnectionThread dbthread = null;
     if(System.getProperty("chado") != null)
     { 
       setTitle("Database and File Manager");
@@ -165,8 +166,8 @@ public class LocalAndRemoteFileManager extends JFrame
       JSplitPane mainSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                             dbPane, treePane);
       
-      DbConnectionThread dbthread = new DbConnectionThread(mainSplit, 
-                                    panelSize, entry_source, dbPane);
+      dbthread = new DbConnectionThread(mainSplit, panelSize, 
+                                        entry_source, dbPane);
       dbthread.start();
 
       treePane.setDividerLocation((int)(screen.getHeight()/4));
@@ -181,7 +182,7 @@ public class LocalAndRemoteFileManager extends JFrame
       treePane.setDividerLocation((int)(screen.getHeight()/4));
     }
     setJMenuBar(makeMenuBar(pane,ftree,sshtree,localPanel,
-                            remotePanel,treePane,panelSize));
+                            remotePanel,treePane,panelSize,dbthread));
     localPanel.add(getFileFileterComboBox(ftree), BorderLayout.SOUTH);
 
     localTree.setPreferredSize(panelSize);
@@ -493,9 +494,11 @@ public class LocalAndRemoteFileManager extends JFrame
   * @param ftree  file tree display
   *
   */
-  private JMenuBar makeMenuBar(JPanel pane, final JTreeTable ftree, final SshJTreeTable sshtree,
+  private JMenuBar makeMenuBar(JPanel pane, 
+                               final JTreeTable ftree, final SshJTreeTable sshtree,
                                final JPanel localPanel, final JPanel remotePanel,
-                               final JSplitPane treePane, final Dimension panelSize)
+                               final JSplitPane treePane, final Dimension panelSize,
+                               final DbConnectionThread dbthread)
   {
     JMenuBar mBar = new JMenuBar();
     JMenu fileMenu = new JMenu("File");
@@ -548,6 +551,28 @@ public class LocalAndRemoteFileManager extends JFrame
     if(System.getProperty("chado") != null)
     {
       fileMenu.add(new JSeparator());
+      JMenuItem fileShow = new JMenuItem("Open Selected Database Sequence ...");
+      fileShow.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          if(dbthread.getDatabaseJPanel() != null)
+            dbthread.getDatabaseJPanel().showSelected(entry_source, null);
+        }
+      });
+      fileMenu.add(fileShow);
+      
+      final JCheckBoxMenuItem splitGFF = new JCheckBoxMenuItem(
+          "Split GFF into entries", false);
+      splitGFF.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          dbthread.setSplitGFFEntry(splitGFF.isSelected());
+        }
+      });
+      fileMenu.add(splitGFF);
+      
       fileMenu.add(lazyLoad);
     }
     
@@ -580,6 +605,8 @@ public class LocalAndRemoteFileManager extends JFrame
     private Dimension panelSize;
     private DatabaseEntrySource entry_source;
     private JPanel topPanel;
+    private DatabaseJPanel dbPane;
+    private boolean splitGFFEntry = false;
     
     public DbConnectionThread(final JSplitPane dbSplitPane,
                               final Dimension panelSize,
@@ -595,11 +622,24 @@ public class LocalAndRemoteFileManager extends JFrame
     public void run()
     {
       topPanel.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-      final DatabaseJPanel dbPane = new DatabaseJPanel(entry_source,
-          null);
+      dbPane = new DatabaseJPanel(entry_source, null);
       dbPane.setPreferredSize(panelSize);
+      dbPane.setSplitGFFEntry(splitGFFEntry);
       dbSplitPane.setTopComponent(dbPane);
       topPanel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    }
+    
+    protected void setSplitGFFEntry(final boolean splitGFFEntry)
+    {
+      if(dbPane != null)
+        dbPane.setSplitGFFEntry(splitGFFEntry);
+      else
+        this.splitGFFEntry = splitGFFEntry;
+    }
+    
+    protected DatabaseJPanel getDatabaseJPanel()
+    {
+      return dbPane;
     }
   }
 
