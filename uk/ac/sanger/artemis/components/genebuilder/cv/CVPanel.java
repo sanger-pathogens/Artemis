@@ -39,6 +39,7 @@ import java.util.Vector;
 
 
 import javax.swing.Box;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -933,13 +934,18 @@ public class CVPanel extends JPanel
   private Object promptKeyWord(final Box xBox, final String cv_name)
   {
     final String options[] = { "<PREV", "CANCEL", "NEXT>"};
-    final JTextField tfield = new JTextField(10);
+    final JTextField tfield = new JTextField(25);
     tfield.setSelectionStart(0);
     tfield.setSelectionEnd(tfield.getText().length());
     tfield.setSelectedTextColor(Color.blue);
     xBox.add(tfield);
     
-    int select = JOptionPane.showOptionDialog(null, xBox,
+    final Box yBox = Box.createVerticalBox();
+    yBox.add(xBox);
+    final JCheckBox ignoreCase = new JCheckBox("Ignore case",false);
+    yBox.add(ignoreCase);
+    
+    int select = JOptionPane.showOptionDialog(null, yBox,
         "keyword term selection",
          JOptionPane.YES_NO_CANCEL_OPTION,
          JOptionPane.QUESTION_MESSAGE,
@@ -958,7 +964,8 @@ public class CVPanel extends JPanel
     xBox.remove(tfield);
     
     logger4j.debug("CvTerm cache lookup: "+tfield.getText().trim()+" from "+cv_name);
-    return DatabaseDocument.getCvterms(tfield.getText().trim(), cv_name);
+    return DatabaseDocument.getCvterms(tfield.getText().trim(), 
+                             cv_name, ignoreCase.isSelected());
   }
   
   /**

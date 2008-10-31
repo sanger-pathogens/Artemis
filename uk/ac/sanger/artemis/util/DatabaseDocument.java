@@ -1859,7 +1859,7 @@ public class DatabaseDocument extends Document
       getCvterms(getDAOOnly());
     }
     
-    return getCvterms("", cvName);
+    return getCvterms("", cvName, false);
   }
   
   public List getDatabaseNames()
@@ -1893,7 +1893,9 @@ public class DatabaseDocument extends Document
     return organismNames;
   }
   
-  public static Vector getCvterms(final String search_str, final String cv_name)
+  public static Vector getCvterms(final String search_str, 
+                                  final String cv_name,
+                                  final boolean ignoreCase)
   {
     final Vector cvterm_match = new Vector();
     
@@ -1905,16 +1907,43 @@ public class DatabaseDocument extends Document
       
       if(cvterm.getCv().getName().startsWith(cv_name))
       {
-        if(cvterm.getName().indexOf(search_str) > -1)
-          cvterm_match.add(cvterm);
+        if(ignoreCase)
+        {
+          if(indexOfIgnoreCase(cvterm.getName(),search_str,0) > -1)
+            cvterm_match.add(cvterm);
+        }
+        else
+        {
+          if(cvterm.getName().indexOf(search_str) > -1)
+            cvterm_match.add(cvterm);
+        }
       }
     }
-    
     return cvterm_match;
   }
   
   /**
+   * Similar to <code>String.indexOf(String, int)</code>, but it ignores
+   * case
+   */
+   private static int indexOfIgnoreCase(String textToSearch, 
+                                        String pattern,
+                                        int fromIndex)
+  {
+    int n = pattern.length();
+    while(textToSearch.length() > ((fromIndex + n) - 1))
+    {
+      if(textToSearch.regionMatches(true, fromIndex, pattern, 0, n))
+        return fromIndex;
+      fromIndex++;
+    }
+    return -1;
+  }
+
+  
+  /**
    * Get a list of the CV names
+   * 
    * @return
    */
   public static List getCvControledCurationNames()
