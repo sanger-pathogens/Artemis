@@ -43,7 +43,9 @@ public class ReadAndWriteEntry
 
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(ReadAndWriteEntry.class);
- 
+
+  private static DatabaseEntrySource ENTRY_SOURCE;
+  
   /**
    * Read from the database, given a srcFeature uniquename
    * @param uniqueName
@@ -52,16 +54,21 @@ public class ReadAndWriteEntry
    * @throws NoSequenceException
    * @throws IOException
    */
-  public static Entry readEntryFromDatabase(final String uniqueName) 
+  public static Entry readEntryFromDatabase(final String uniqueName,
+                                            DatabaseEntrySource entry_source) 
          throws OutOfRangeException, NoSequenceException, IOException
   {
-    final DatabaseEntrySource entry_source = new DatabaseEntrySource();
-    boolean promptUser = true;
-    if(System.getProperty("read_only") != null)
-      promptUser = false;
+    if(entry_source == null)
+    {
+      ReadAndWriteEntry.ENTRY_SOURCE = new DatabaseEntrySource();
+      entry_source = ENTRY_SOURCE;
+      boolean promptUser = true;
+      if(System.getProperty("read_only") != null)
+        promptUser = false;
 
-    if(!entry_source.setLocation(promptUser))
-      return null;
+      if(!entry_source.setLocation(promptUser))
+        return null;
+    }
     
     String url = (String)entry_source.getLocation();
     int index  = url.indexOf("?");
@@ -88,6 +95,20 @@ public class ReadAndWriteEntry
     };
     return entry_source.getEntry(srcFeatureId, userName, 
                                  stream_progress_listener);
+  }
+  
+  /**
+   * Read from the database, given a srcFeature uniquename
+   * @param uniqueName
+   * @return
+   * @throws OutOfRangeException
+   * @throws NoSequenceException
+   * @throws IOException
+   */
+  public static Entry readEntryFromDatabase(final String uniqueName) 
+         throws OutOfRangeException, NoSequenceException, IOException
+  {
+    return readEntryFromDatabase(uniqueName, null);
   }
   
   /**
@@ -200,47 +221,70 @@ public class ReadAndWriteEntry
   {
     try
     {
-      /*Entry entry = ReadAndWriteEntry.readEntryFromDatabase("Pf3D7_03");
-      ReadAndWriteEntry.writeDatabaseEntryToFile(
-          entry, new File("Pf3D7_03.flatten"), true, true, false, 
-          DocumentEntryFactory.EMBL_FORMAT, null);
+      String names[];
+      boolean flatten = true;
+      boolean ignoreObsolete = true;
       
-      ReadAndWriteEntry.writeDatabaseEntryToFile(
-          entry, new File("Pf3D7_03.not-flatten"), false, true, false,
-          DocumentEntryFactory.EMBL_FORMAT, null);*/
-      
-      //
-      //
-      
-      final String names[];
+      if(args != null && args.length == 1 && args[0].startsWith("-h"))
+      {
+        System.out.println("-h\tshow help");
+        System.out.println("-f\t[y|n] flatten the gene model, default is y");
+        System.out.println("-i\t[y|n] ignore obsolete features, default is y");
+        System.out.println("-s\tspace separated list of sequences to read and write out");
+        System.exit(0);
+      }
       
       if(args == null || args.length < 1)
         names = new String[]{
           "bin.fas", 
           "chab01.fas",
           "chab02.fas",
-          "chab03.fas",
-          "chab04.fas",
-          "chab05.fas",
-          "chab06.fas",
-          "chab07.fas",
-          "chab08.fas",
-          "chab09.fas",
-          "chab10.fas",
-          "chab11.fas",
-          "chab12.fas",
-          "chab13.fas",
-          "chab14.fas",
           "chab99.fas" };
       else
+      {
         names = args;
+        
+        for(int i=0; i<args.length; i++)
+          if(args[i].toLowerCase().equals("-f"))
+          {
+            if(i+1<args.length && args[i+1].toLowerCase().equals("n"))
+              flatten = false;
+          }
+        
+        for(int i=0; i<args.length; i++)
+          if(args[i].toLowerCase().equals("-i"))
+          {
+            if(i+1<args.length && args[i+1].toLowerCase().equals("n"))
+              ignoreObsolete = false;
+          }
+
+        java.util.Vector files = null;
+        for(int i=0; i<args.length; i++)
+        {
+          if(args[i].toLowerCase().equals("-s"))
+          {
+            files = new java.util.Vector();
+            for(int j=i+1; j<args.length; j++)
+            {
+              if(args[j].startsWith("-"))
+                break;
+              files.add(args[j]);
+            }
+          }
+        }
+        if(files != null && files.size() > 0)
+        {
+          names = new String[files.size()];
+          files.toArray(names);
+        }
+      }
       
       for(int i=0;i < names.length; i++)
       {
-        System.out.println(i+" "+names[i]);
-        Entry entry = ReadAndWriteEntry.readEntryFromDatabase(names[i]);
+        System.out.println(i+" read and write :: "+names[i]);
+        Entry entry = ReadAndWriteEntry.readEntryFromDatabase(names[i], ENTRY_SOURCE);
         ReadAndWriteEntry.writeDatabaseEntryToFile(
-          entry, new File(names[i]+".embl"), true, true, false, 
+          entry, new File(names[i]+".embl"), flatten, ignoreObsolete, false, 
           DocumentEntryFactory.EMBL_FORMAT, null);
       }
     }
