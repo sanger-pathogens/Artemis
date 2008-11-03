@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.6 2008-08-08 15:48:22 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.7 2008-11-03 09:28:08 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import javax.swing.*;
  *  This menu controls one particular BasePlotGroup.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: GraphMenu.java,v 1.6 2008-08-08 15:48:22 tjc Exp $
+ *  @version $Id: GraphMenu.java,v 1.7 2008-11-03 09:28:08 tjc Exp $
  **/
 
 public class GraphMenu extends JMenu 
@@ -160,8 +160,20 @@ public class GraphMenu extends JMenu
       {
         public void actionPerformed (ActionEvent event)
         {
-          addUserPlot ();
-          adjustSplitPane(true);
+          try
+          {
+            addUserPlot ();
+            adjustSplitPane(true);
+          }
+          catch(java.lang.OutOfMemoryError emem)
+          {
+            JOptionPane.showMessageDialog(frame, 
+                "Out of memory. Increase the maximum memory"+
+                "\navailable for this application and try again.", 
+                "Out Of Memory", 
+                JOptionPane.WARNING_MESSAGE);
+            frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+          }
         }
       });
 
