@@ -2,6 +2,7 @@
 #
 # CHADO                 	map     	
 comment                     note
+Note                        note
 Dbxref                      db_xref
 private                     note
 orthologous_to              ortholog
