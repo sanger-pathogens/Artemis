@@ -107,8 +107,13 @@ public class DatabaseDocument extends Document
 
   private ByteBuffer gff_buff;
 
-  /** entries to split into */
-  private String[] types = { "repeat_region", "transcript" };
+  /** entries to split into - each is given a name and the features within the entry */
+  private String[][][] types = 
+  { 
+      { {"repeats"}   , {"repeat_region", "direct_repeat"} }, 
+      { {"EST"}       , {"EST_match", "match_part"} },
+      { {"contig+gap"}, {"contig", "gap"}}
+  };
 
   /** true if splitting the GFF into entries */
   private boolean splitGFFEntry;
@@ -592,7 +597,7 @@ public class DatabaseDocument extends Document
       if(gff_buffer[i].size() == 0)
         continue;
 
-      String name = types[i-1];
+      String name = types[i-1][0][0];
 
       new_docs[nentries] = new DatabaseDocument(location, pfield, id, schema,
                                                 gff_buffer[i], name);
@@ -705,8 +710,9 @@ public class DatabaseDocument extends Document
       this_buff = buffers[0];
       for(int j = 0; j < types.length; j++)
       {
-        if(types[j].equals(typeName))
-          this_buff = buffers[j+1];
+        for(int k=0; k<types[j][1].length; k++)
+          if(types[j][1][k].equals(typeName))
+            this_buff = buffers[j+1];
       }
 
       chadoToGFF(feat, srcFeature.getUniqueName(),
