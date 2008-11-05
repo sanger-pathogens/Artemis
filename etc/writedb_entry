@@ -8,8 +8,20 @@
 
 args="$*"
 
-ARTEMIS_HOME=/software/pathogen/projects/artemis/current/
-ARTEMIS_HOME=/software/pathogen/projects/artemis/test/
+PRG=$0
+progname=`basename $0`
+
+while [ -h "$PRG" ] ; do
+  ls=`ls -ld "$PRG"`
+  link=`expr "$ls" : '.*-> \(.*\)$'`
+  if expr "$link" : '.*/.*' > /dev/null; then
+      PRG="$link"
+  else
+      PRG="`dirname $PRG`/$link"
+  fi
+done
+
+ARTEMIS_HOME=`dirname "$PRG"`/..
 
 CLASSPATH=$ARTEMIS_HOME:$ARTEMIS_HOME/lib/biojava.jar:$ARTEMIS_HOME/lib/jemAlign.jar:$ARTEMIS_HOME/lib/jakarta-regexp-1.2.jar:$ARTEMIS_HOME/lib/macos.jar:$ARTEMIS_HOME/lib/postgresql-8.1-407.jdbc2ee.jar:$ARTEMIS_HOME/lib/chado-14-interface.jar:$CLASSPATH
 
