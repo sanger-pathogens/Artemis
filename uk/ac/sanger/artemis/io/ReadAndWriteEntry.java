@@ -263,13 +263,25 @@ public class ReadAndWriteEntry
         {
           if(args[i].toLowerCase().equals("-s"))
           {
-            files = new java.util.Vector();
+            if(files == null)
+              files = new java.util.Vector();
             for(int j=i+1; j<args.length; j++)
             {
               if(args[j].startsWith("-"))
                 break;
               files.add(args[j]);
             }
+          }
+          else if(args[i].startsWith("-"))
+          {
+            i++;
+          }
+          else
+          {
+            if(files == null)
+              files = new java.util.Vector();
+            if(!files.contains(args[i]))
+              files.add(args[i]);
           }
         }
         if(files != null && files.size() > 0)
@@ -281,7 +293,7 @@ public class ReadAndWriteEntry
       
       for(int i=0;i < names.length; i++)
       {
-        System.out.println(i+" read and write :: "+names[i]);
+        System.out.println("read and write :: "+names[i]+".embl");
         Entry entry = ReadAndWriteEntry.readEntryFromDatabase(names[i], ENTRY_SOURCE);
         ReadAndWriteEntry.writeDatabaseEntryToFile(
           entry, new File(names[i]+".embl"), flatten, ignoreObsolete, false, 
