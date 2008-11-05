@@ -1,0 +1,42 @@
+#!/bin/sh -
+# 
+# This script reads and writes entries from a database. 
+# Examples:
+# writedb_entry -help
+# writedb_entry -s Pf3D7_01 Pf3D7_05 Pf3D7_07
+#
+
+args="$*"
+
+ARTEMIS_HOME=/software/pathogen/projects/artemis/current/
+ARTEMIS_HOME=/software/pathogen/projects/artemis/test/
+
+CLASSPATH=$ARTEMIS_HOME:$ARTEMIS_HOME/lib/biojava.jar:$ARTEMIS_HOME/lib/jemAlign.jar:$ARTEMIS_HOME/lib/jakarta-regexp-1.2.jar:$ARTEMIS_HOME/lib/macos.jar:$ARTEMIS_HOME/lib/postgresql-8.1-407.jdbc2ee.jar:$ARTEMIS_HOME/lib/chado-14-interface.jar:$CLASSPATH
+
+# iBatis jars
+CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$ARTEMIS_HOME/lib/ibatis/:$ARTEMIS_HOME/lib/ibatis/log4j-1.2.14.jar:$ARTEMIS_HOME/lib/ibatis/cglib-nodep-2.2.jar:$ARTEMIS_HOME/lib/retrotranslator-runtime-1.1.0.jar
+export CLASSPATH
+
+FLAGS="-mx512m -ms20m -Djdbc.drivers=org.postgresql.Driver -Dibatis"
+DEFAULT_CONNECTION="-Dchado=pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot?genedb_ro -Dread_only"
+
+if [ $# = 0 ]
+then
+    :
+else
+   while test $# != 0
+       do
+       case $1 in
+       -Dchado*)
+          DEFAULT_CONNECTION="$1" ;;
+       -D*) 
+          FLAGS="$FLAGS $1" ;;
+       *) break ;;
+       esac
+       shift
+   done
+fi
+
+echo starting to write with flags: $DEFAULT_CONNECTION $FLAGS 1>&2
+
+java $DEFAULT_CONNECTION $FLAGS uk.ac.sanger.artemis.io.ReadAndWriteEntry $*
