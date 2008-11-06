@@ -22,10 +22,16 @@
 
 package uk.ac.sanger.artemis.io;
 
+import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
@@ -225,79 +231,112 @@ public class ReadAndWriteEntry
       boolean flatten = true;
       boolean ignoreObsolete = true;
       
-      if(args != null && args.length == 1 && args[0].startsWith("-h"))
+      if( (args != null && args.length == 1 && args[0].startsWith("-h")) ||
+          (args == null || args.length < 1))
       {
         System.out.println("-h\tshow help");
         System.out.println("-f\t[y|n] flatten the gene model, default is y");
         System.out.println("-i\t[y|n] ignore obsolete features, default is y");
         System.out.println("-s\tspace separated list of sequences to read and write out");
+        System.out.println("-o\t[EMBL|GFF] output format, default is EMBL");
         System.exit(0);
       }
       
-      if(args == null || args.length < 1)
-        names = new String[]{
-          "bin.fas", 
-          "chab01.fas",
-          "chab02.fas",
-          "chab99.fas" };
-      else
-      {
-        names = args;
-        
-        for(int i=0; i<args.length; i++)
-          if(args[i].toLowerCase().equals("-f"))
-          {
-            if(i+1<args.length && args[i+1].toLowerCase().equals("n"))
-              flatten = false;
-          }
-        
-        for(int i=0; i<args.length; i++)
-          if(args[i].toLowerCase().equals("-i"))
-          {
-            if(i+1<args.length && args[i+1].toLowerCase().equals("n"))
-              ignoreObsolete = false;
-          }
 
-        java.util.Vector files = null;
-        for(int i=0; i<args.length; i++)
+      names = args;
+      int format = DocumentEntryFactory.EMBL_FORMAT;
+      String suffix = ".embl";
+      
+      for(int i = 0; i < args.length; i++)
+      {
+        if(args[i].toLowerCase().equals("-f"))
         {
-          if(args[i].toLowerCase().equals("-s"))
+          if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
+            flatten = false;
+        }
+
+        if(args[i].toLowerCase().equals("-i"))
+        {
+          if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
+            ignoreObsolete = false;
+        }
+        
+        if(args[i].toLowerCase().equals("-o"))
+        {
+          if(i + 1 < args.length && args[i + 1].toLowerCase().equals("gff"))
           {
-            if(files == null)
-              files = new java.util.Vector();
-            for(int j=i+1; j<args.length; j++)
-            {
-              if(args[j].startsWith("-"))
-                break;
-              files.add(args[j]);
-            }
-          }
-          else if(args[i].startsWith("-"))
-          {
-            i++;
-          }
-          else
-          {
-            if(files == null)
-              files = new java.util.Vector();
-            if(!files.contains(args[i]))
-              files.add(args[i]);
+            format = DocumentEntryFactory.GFF_FORMAT;
+            suffix = ".gff";
           }
         }
-        if(files != null && files.size() > 0)
+      }
+      
+      java.util.Vector files = null;
+      for(int i = 0; i < args.length; i++)
+      {
+        if(args[i].toLowerCase().equals("-s"))
         {
-          names = new String[files.size()];
-          files.toArray(names);
+          if(files == null)
+            files = new java.util.Vector();
+          for(int j = i + 1; j < args.length; j++)
+          {
+            if(args[j].startsWith("-"))
+              break;
+            files.add(args[j]);
+          }
         }
+        else if(args[i].startsWith("-"))
+        {
+          i++;
+        }
+        else
+        {
+          if(files == null)
+            files = new java.util.Vector();
+          if(!files.contains(args[i]))
+            files.add(args[i]);
+        }
+      }
+      if(files != null && files.size() > 0)
+      {
+        names = new String[files.size()];
+        files.toArray(names);
       }
       
       for(int i=0;i < names.length; i++)
       {
-        System.out.println("read and write :: "+names[i]+".embl");
+        System.out.println("read :: "+names[i]+" write :: "+names[i]+suffix);
         Entry entry = ReadAndWriteEntry.readEntryFromDatabase(names[i], ENTRY_SOURCE);
-        ReadAndWriteEntry.writeDatabaseEntryToFile(
-          entry, new File(names[i]+".embl"), flatten, ignoreObsolete, false, 
-          DocumentEntryFactory.EMBL_FORMAT, null);
+        
+        try
+        {
+          ReadAndWriteEntry.writeDatabaseEntryToFile(
+            entry, new File(names[i]+suffix), flatten, ignoreObsolete, false, 
+            format, null);
+        }
+        catch(EntryInformationException eie)
+        {
+          final JPanel msgPanel = new JPanel(new BorderLayout());
+          msgPanel.add(new JLabel("Destination format can't handle all " +
+              "keys/qualifiers - continue?"), BorderLayout.NORTH);
+          JTextArea msgError = new JTextArea(eie.getMessage());
+          msgError.setLineWrap(true);
+          msgError.setEditable(false);
+          JScrollPane scollMsg = new JScrollPane(msgError);
+          msgPanel.add(scollMsg, BorderLayout.CENTER);
+          
+          int val = JOptionPane.showConfirmDialog(null,
+              msgPanel, 
+              "Keys/Qualifier", JOptionPane.OK_CANCEL_OPTION, 
+              JOptionPane.QUESTION_MESSAGE);
+
+          if(val == JOptionPane.OK_OPTION) 
+          {
+            ReadAndWriteEntry.writeDatabaseEntryToFile(
+              entry, new File(names[i]+suffix), flatten, ignoreObsolete, true, 
+              format, null);
+          }
+        }
       }
     }
     catch(Exception e)
