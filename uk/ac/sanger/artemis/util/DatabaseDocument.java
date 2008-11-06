@@ -108,7 +108,7 @@ public class DatabaseDocument extends Document
   private ByteBuffer gff_buff;
 
   /** entries to split into - each is given a name and the features within the entry */
-  private String[][][] types = 
+  private static String[][][] TYPES = 
   { 
       { {"repeats"}   , {"repeat_region", "direct_repeat"} }, 
       { {"EST"}       , {"EST_match", "match_part"} },
@@ -597,7 +597,7 @@ public class DatabaseDocument extends Document
       if(gff_buffer[i].size() == 0)
         continue;
 
-      String name = types[i-1][0][0];
+      String name = TYPES[i-1][0][0];
 
       new_docs[nentries] = new DatabaseDocument(location, pfield, id, schema,
                                                 gff_buffer[i], name);
@@ -628,7 +628,7 @@ public class DatabaseDocument extends Document
     child.setFeatureLoc(featureloc);
     
     final List featList = dao.getFeaturesByLocatedOnFeature(child);
-    final ByteBuffer[] buffers = new ByteBuffer[types.length + 1];
+    final ByteBuffer[] buffers = new ByteBuffer[TYPES.length + 1];
     for(int i = 0; i < buffers.length; i++)
       buffers[i] = new ByteBuffer();
     
@@ -708,10 +708,10 @@ public class DatabaseDocument extends Document
       int type_id = feat.getCvTerm().getCvTermId();
       String typeName = getCvtermName(type_id, dao, gene_builder);
       this_buff = buffers[0];
-      for(int j = 0; j < types.length; j++)
+      for(int j = 0; j < TYPES.length; j++)
       {
-        for(int k=0; k<types[j][1].length; k++)
-          if(types[j][1][k].equals(typeName))
+        for(int k=0; k<TYPES[j][1].length; k++)
+          if(TYPES[j][1][k].equals(typeName))
             this_buff = buffers[j+1];
       }
 
@@ -3178,5 +3178,24 @@ public class DatabaseDocument extends Document
   public void setLazyFeatureLoad(boolean lazyFeatureLoad)
   {
     this.lazyFeatureLoad = lazyFeatureLoad;
+  }
+
+  /**
+   * Set the types that define what entries are created. Each is given an
+   * entry name and the features within that entry.
+   * @param types
+   */
+  public static void setTYPES(String[][][] types)
+  {
+    TYPES = types;
+  }
+
+  /**
+   * Get the types that define what entries are created.
+   * @return
+   */
+  public static String[][][] getTYPES()
+  {
+    return TYPES;
   }
 }
