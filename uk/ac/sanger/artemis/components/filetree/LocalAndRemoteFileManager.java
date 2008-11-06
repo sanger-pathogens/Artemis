@@ -563,11 +563,24 @@ public class LocalAndRemoteFileManager extends JFrame
       fileMenu.add(fileShow);
       
       final JCheckBoxMenuItem splitGFF = new JCheckBoxMenuItem(
-          "Split GFF into entries", false);
+          "Split into entries ...", false);
       splitGFF.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
         {
+          if(splitGFF.isSelected())
+          {
+            DatabaseEntryFilterPanel messagePanel = new DatabaseEntryFilterPanel();
+            int val = JOptionPane.showConfirmDialog(
+                LocalAndRemoteFileManager.this, messagePanel, "Define Entry",
+                JOptionPane.OK_CANCEL_OPTION);
+
+            if(val == JOptionPane.OK_OPTION)
+              messagePanel.setTypesForEntries();
+            else
+              splitGFF.setSelected(false);
+          }
+          
           dbthread.setSplitGFFEntry(splitGFF.isSelected());
         }
       });
