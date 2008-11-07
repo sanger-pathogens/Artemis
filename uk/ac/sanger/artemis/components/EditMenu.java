@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.57 2008-10-08 15:37:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.58 2008-11-07 16:11:34 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -59,7 +59,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.57 2008-10-08 15:37:13 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.58 2008-11-07 16:11:34 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -890,13 +890,47 @@ public class EditMenu extends SelectionMenu
                                    final GotoEventSource goto_event_source) 
   {
     frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-    final int MAX_SELECTED_FEATURES = 25;
+    int MAX_SELECTED_FEATURES = 25;
     final FeatureVector features_to_edit = selection.getAllFeatures();
     boolean featureEdit = true;
     
     if(features_to_edit.size() > MAX_SELECTED_FEATURES)
-      new MessageDialog(frame, "warning: only editing the first " +
-                        MAX_SELECTED_FEATURES + " selected features");
+    {
+      final JPanel msgPanel = new JPanel(new BorderLayout());
+      msgPanel.add(new JLabel("warning: only editing the first " +
+          MAX_SELECTED_FEATURES + " selected features"), BorderLayout.CENTER);
+      final JCheckBox allFeatures = new JCheckBox("ignore this and show all",false);
+      msgPanel.add(allFeatures, BorderLayout.SOUTH);
+      
+      int val = JOptionPane.showConfirmDialog(frame, 
+          msgPanel, 
+          features_to_edit.size()+" features selected", 
+          JOptionPane.OK_CANCEL_OPTION, 
+          JOptionPane.WARNING_MESSAGE);
+
+      if(val == JOptionPane.CANCEL_OPTION)
+      {
+        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        return;
+      }
+      if(allFeatures.isSelected())
+      {
+        if(features_to_edit.size() > 50)
+        {
+          val = JOptionPane.showConfirmDialog(frame, 
+              "warning: about to open "+features_to_edit.size()+" edit windows", 
+            features_to_edit.size()+" features selected", 
+            JOptionPane.OK_CANCEL_OPTION, 
+            JOptionPane.WARNING_MESSAGE);
+          if(val == JOptionPane.CANCEL_OPTION)
+          {
+            frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            return;
+          }
+        }
+        MAX_SELECTED_FEATURES = features_to_edit.size();
+      }
+    }
 
     for(int i = 0; i < features_to_edit.size() && i < MAX_SELECTED_FEATURES;
         ++i)
