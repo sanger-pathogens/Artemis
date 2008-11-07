@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamQualifier.java,v 1.2 2005-10-11 14:20:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/StreamQualifier.java,v 1.3 2008-11-07 17:54:26 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import java.io.IOException;
  *  This class contains routines for reading and writing Qualifiers.
  *
  *  @author Kim Rutherford
- *  @version $Id: StreamQualifier.java,v 1.2 2005-10-11 14:20:31 tjc Exp $
+ *  @version $Id: StreamQualifier.java,v 1.3 2008-11-07 17:54:26 tjc Exp $
  **/
 
 public // XXX
@@ -177,6 +177,7 @@ class StreamQualifier {
            ) {
       if (' ' == current_char ||
           '\n' == current_char ||
+          '\r' == current_char ||
           '\t' == current_char) {
         // read a whitespace character so go back to the top of the loop
         continue;
