@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.5 2008-10-08 10:25:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.6 2008-11-07 12:19:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -645,7 +645,7 @@ public class PropertiesPanel extends JPanel
   private void addSynonym()
   {
     final Vector synonyms = DatabaseDocument.getCvterms("", 
-        ChadoTransactionManager.SYNONYM_TAG_CVNAME);
+        ChadoTransactionManager.SYNONYM_TAG_CVNAME, false);
     final JExtendedComboBox list = new JExtendedComboBox(synonyms);
     final String options[] = { "CANCEL", "NEXT>"};   
     
