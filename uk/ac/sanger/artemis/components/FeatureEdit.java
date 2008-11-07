@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.62 2008-08-11 10:31:51 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.63 2008-11-07 12:07:08 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -77,7 +77,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.62 2008-08-11 10:31:51 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.63 2008-11-07 12:07:08 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -159,6 +159,8 @@ public class FeatureEdit extends JPanel
   private static boolean isTabbedView = false;
   
   private GeneEditorPanel editorPanel;
+  
+  private static String LINE_SEPARATOR = System.getProperty("line.separator");
   
   /**
    *  Create a new FeatureEdit object from the given Feature.
@@ -475,7 +477,7 @@ public class FeatureEdit extends JPanel
             qualifier_text_area.append("=");
         }
 
-        qualifier_text_area.append("\n");
+        qualifier_text_area.append(LINE_SEPARATOR);
       }
     });
 
@@ -1219,7 +1221,7 @@ public class FeatureEdit extends JPanel
         final String qualifier_string =
           (String)qualifier_strings.elementAt(value_index);
 
-        buffer.append(tidyHelper(qualifier_string) + "\n");
+        buffer.append(tidyHelper(qualifier_string) + LINE_SEPARATOR);
       }
     }
 
@@ -1260,7 +1262,7 @@ public class FeatureEdit extends JPanel
       final String qualifier_string = 
                            (String)qual_str.elementAt(i);
 
-      buffer.append(tidyHelper(qualifier_string) + "\n");
+      buffer.append(tidyHelper(qualifier_string) + LINE_SEPARATOR);
     }
 
     qualifier_text_area.setText(buffer.toString());
@@ -1697,7 +1699,7 @@ public class FeatureEdit extends JPanel
           ++value_index)
       {
         final String qualifier_string = (String)qualifier_strings.elementAt(value_index);
-        buffer.append(qualifier_string + "\n");
+        buffer.append(qualifier_string + LINE_SEPARATOR);
       }
     }
 
