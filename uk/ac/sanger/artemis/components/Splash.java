@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.36 2008-10-22 14:39:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.37 2008-11-10 17:10:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,6 +38,7 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.Border;
 import java.util.Properties;
 
@@ -47,7 +48,7 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.36 2008-10-22 14:39:37 tjc Exp $
+ *  @version $Id: Splash.java,v 1.37 2008-11-10 17:10:16 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame
@@ -583,6 +584,47 @@ abstract public class Splash extends JFrame
     };
     makeMenuItem(options_menu, "Set Working Directory...", menu_listener);
 
+    JMenu lafMenu = new JMenu("Look and Feel");
+    final LookAndFeelInfo[] lafInfo = UIManager.getInstalledLookAndFeels();
+    ButtonGroup group = new ButtonGroup();
+    for(int i=0; i<lafInfo.length; i++)
+    {
+      JCheckBoxMenuItem laf = new JCheckBoxMenuItem(lafInfo[i].getName());
+      group.add(laf);
+      lafMenu.add(laf);
+      final LookAndFeelInfo thisLAF = lafInfo[i];
+      
+      if(UIManager.getLookAndFeel().getClass().getName().equals(thisLAF.getClassName()))
+        laf.setSelected(true);
+      
+      laf.addItemListener(new ItemListener() 
+      {
+        public void itemStateChanged(ItemEvent event) 
+        {
+          if(event.getStateChange() == ItemEvent.DESELECTED)
+            return;
+          
+          Frame[] frames = JFrame.getFrames();
+          try
+          {
+            UIManager.setLookAndFeel(thisLAF.getClassName());
+          }
+          catch(Exception e1)
+          {
+            e1.printStackTrace();
+            return;
+          }
+
+          for(int i = 0; i < frames.length; i++)
+          {
+            SwingUtilities.updateComponentTreeUI(frames[i]);
+            frames[i].repaint();
+          }
+          logger4j.debug("Set look and feel to: " + thisLAF.getClassName());
+        }
+      });
+    }
+    options_menu.add(lafMenu);
   }
 
   /**
