@@ -23,6 +23,7 @@
 package uk.ac.sanger.artemis.components;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -54,6 +55,7 @@ import uk.ac.sanger.artemis.GotoEventSource;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
+import uk.ac.sanger.artemis.io.GFFDocumentEntry;
 import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
@@ -155,37 +157,56 @@ public class FindAndReplace extends JFrame
     Entry default_entry = entry_group.getDefaultEntry();
     if(default_entry == null)
       default_entry = entry_group.elementAt(0);
-  
+    
+    boolean isGFF = false;
+    if(default_entry.getEMBLEntry() instanceof GFFDocumentEntry)
+      isGFF = true;
+    
     final EntryInformation default_entry_information =
                         default_entry.getEntryInformation();
 
     final KeyChoice key_selector = new KeyChoice(default_entry_information);
     key_selector.setEnabled(false);
-    
-    //final StringVector qualifierNames =
-    //  Feature.getAllQualifierNames (selected_features);
-    
+    final QualifierChoice qualifier_selector = new QualifierChoice(
+        default_entry_information, null, null, isGFF);
+    qualifier_selector.setEnabled(false);
+
+    // column 1
     int ypos = 0;
-    
     final JTextField findTextField = new JTextField(15);
     c.gridx = 0;
-    c.gridy = ++ypos;
+    c.gridy = ypos;
+    c.anchor = GridBagConstraints.EAST;
+    c.fill   = GridBagConstraints.NONE;
     panel.add(new JLabel("Find:"),c);
-    c.gridx = 1;
-    panel.add(findTextField, c);
-    
     final JTextField replaceTextField = new JTextField(15);
-    c.gridx = 0;
     c.gridy = ++ypos;
     panel.add(new JLabel("Replace with:"), c);
-    c.gridx = 1;
-    panel.add(replaceTextField, c);
-    
-    c.gridx = 0;
     c.gridy = ++ypos;
     panel.add(key_selector,c);
+    c.gridy = ++ypos;
+    panel.add(qualifier_selector,c);
+    final JCheckBox caseSensitive = new JCheckBox("Case sensitive", true);
+    c.fill   = GridBagConstraints.HORIZONTAL;
+    c.gridy = ++ypos;
+    panel.add(caseSensitive, c);
     
-    final JCheckBox selectedKeyButton = new JCheckBox("Restrict to Selected Key", false);
+    final JCheckBox qualifierValueSubString = new JCheckBox("Match substring", true);
+    c.gridy = ++ypos;
+    panel.add(qualifierValueSubString, c);
+    
+    
+    // column 2
+    ypos = 0;
+    c.anchor = GridBagConstraints.WEST;
+    c.gridx = 1;
+    c.gridy = ypos;
+    panel.add(findTextField, c);
+    
+    c.gridy = ++ypos;
+    panel.add(replaceTextField, c);
+    
+    final JCheckBox selectedKeyButton = new JCheckBox("Restrict to a Key", false);
     selectedKeyButton.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -196,19 +217,24 @@ public class FindAndReplace extends JFrame
           key_selector.setEnabled(false);
       }
     });
-    c.gridx = 1;
+    c.gridy = ++ypos;
     panel.add(selectedKeyButton,c);
     
-    
-
-    final JCheckBox caseSensitive = new JCheckBox("Case sensitive", true);
-    c.gridx = 0;
+    final JCheckBox selectedQualifierButton = new JCheckBox("Restrict to a Qualifier", false);
+    selectedQualifierButton.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if(selectedQualifierButton.isSelected())
+          qualifier_selector.setEnabled(true);
+        else
+          qualifier_selector.setEnabled(false);
+      }
+    });
     c.gridy = ++ypos;
-    panel.add(caseSensitive, c);
+    panel.add(selectedQualifierButton,c);
     
-    final JCheckBox qualifierValueSubString = new JCheckBox("Match substring", true);
-    c.gridy = ++ypos;
-    panel.add(qualifierValueSubString, c);
+    
     
     final JButton findButton = new JButton("Find");
     findButton.addActionListener(new ActionListener()
@@ -218,13 +244,17 @@ public class FindAndReplace extends JFrame
         if(findTextField.getText().equals(""))
           JOptionPane.showMessageDialog(FindAndReplace.this,
               "No text entered!", "No Text", JOptionPane.WARNING_MESSAGE);
-        
+        setCursor(new Cursor(Cursor.WAIT_CURSOR));
         Key key = null;
         if(selectedKeyButton.isSelected())
           key = key_selector.getSelectedItem();
         
+        String qualifierName = null;
+        if(selectedQualifierButton.isSelected())
+          qualifierName = (String) qualifier_selector.getSelectedItem();
+        
         FeatureKeyQualifierPredicate predicate = 
-                         new FeatureKeyQualifierPredicate(key, null,
+                         new FeatureKeyQualifierPredicate(key, qualifierName,
                                                           findTextField.getText(), 
                                                           qualifierValueSubString.isSelected(), 
                                                           !caseSensitive.isSelected());
@@ -237,10 +267,12 @@ public class FindAndReplace extends JFrame
                                selection,
                                goto_event_source, filtered_entry_group,
                                base_plot_group);
+        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
         feature_list_frame.setVisible(true);
       }
     });
+    ypos+=3;
     c.gridx = 0;
     c.gridy = ++ypos;
     panel.add(findButton, c);
@@ -250,12 +282,22 @@ public class FindAndReplace extends JFrame
     {
       public void actionPerformed(ActionEvent e)
       {
+        setCursor(new Cursor(Cursor.WAIT_CURSOR));
         Key key = null;
         if(selectedKeyButton.isSelected())
           key = key_selector.getSelectedItem();
         
+        String qualifierName = null;
+        StringVector qualifierStrings = null;
+        if(selectedQualifierButton.isSelected())
+        {
+          qualifierName = (String) qualifier_selector.getSelectedItem();
+          qualifierStrings = new StringVector();
+          qualifierStrings.add(qualifierName);
+        }
+        
         FeatureKeyQualifierPredicate predicate = 
-          new FeatureKeyQualifierPredicate(key, null,
+          new FeatureKeyQualifierPredicate(key, qualifierName,
                                            findTextField.getText(), 
                                            qualifierValueSubString.isSelected(), 
                                            !caseSensitive.isSelected());
@@ -266,16 +308,17 @@ public class FindAndReplace extends JFrame
         entry_group.getActionController().startAction();
         
         FeatureVector features = filtered_entry_group.getAllFeatures();
+        
         for(int i=0; i<features.size(); i++)
         {
           final Feature feature = features.elementAt(i);
           feature.findOrReplaceText(findTextField.getText(),
               !caseSensitive.isSelected(), qualifierValueSubString.isSelected(), 
-              null, replaceTextField.getText());
+              qualifierStrings, replaceTextField.getText());
         }
         
         entry_group.getActionController().endAction();
-        
+        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 /*        final FeatureListFrame feature_list_frame =
           new FeatureListFrame("Features Found and Text Replaced",
                                selection,
