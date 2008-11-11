@@ -49,6 +49,8 @@ import uk.ac.sanger.artemis.EntryGroupChangeListener;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureKeyQualifierPredicate;
 import uk.ac.sanger.artemis.FeaturePredicate;
+import uk.ac.sanger.artemis.FeaturePredicateConjunction;
+import uk.ac.sanger.artemis.FeaturePredicateVector;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.FilteredEntryGroup;
 import uk.ac.sanger.artemis.GotoEventSource;
@@ -234,7 +236,9 @@ public class FindAndReplace extends JFrame
     c.gridy = ++ypos;
     panel.add(selectedQualifierButton,c);
     
-    
+    final JCheckBox qualifierValueUseBoolean = new JCheckBox("Use boolean operator (&, |)", false);
+    c.gridy = ++ypos;
+    panel.add(qualifierValueUseBoolean, c);
     
     final JButton findButton = new JButton("Find");
     findButton.addActionListener(new ActionListener()
@@ -243,7 +247,7 @@ public class FindAndReplace extends JFrame
       {
         if(findTextField.getText().equals(""))
           JOptionPane.showMessageDialog(FindAndReplace.this,
-              "No text entered!", "No Text", JOptionPane.WARNING_MESSAGE);
+              "No text entered.", "No Text", JOptionPane.WARNING_MESSAGE);
         setCursor(new Cursor(Cursor.WAIT_CURSOR));
         Key key = null;
         if(selectedKeyButton.isSelected())
@@ -253,11 +257,18 @@ public class FindAndReplace extends JFrame
         if(selectedQualifierButton.isSelected())
           qualifierName = (String) qualifier_selector.getSelectedItem();
         
-        FeatureKeyQualifierPredicate predicate = 
-                         new FeatureKeyQualifierPredicate(key, qualifierName,
-                                                          findTextField.getText(), 
-                                                          qualifierValueSubString.isSelected(), 
-                                                          !caseSensitive.isSelected());
+        final FeaturePredicate predicate;
+        if(qualifierValueUseBoolean.isSelected())
+        {
+          predicate = constructFeaturePredicateFromBooleanList(
+              findTextField.getText(), key, qualifierName, 
+              qualifierValueSubString.isSelected(), !caseSensitive.isSelected());
+        }
+        else
+          predicate = new FeatureKeyQualifierPredicate(key, qualifierName,
+                                                       findTextField.getText(), 
+                                                       qualifierValueSubString.isSelected(), 
+                                                       !caseSensitive.isSelected());
         
         final FilteredEntryGroup filtered_entry_group =
           new FilteredEntryGroup(entry_group, predicate, findTextField.getText());
@@ -282,6 +293,16 @@ public class FindAndReplace extends JFrame
     {
       public void actionPerformed(ActionEvent e)
       {
+        if(qualifierValueUseBoolean.isSelected())
+        {
+          int val = JOptionPane.showConfirmDialog(
+              FindAndReplace.this, 
+              "Boolean operators can ONLY be used with the Find function.", 
+              "Replace", JOptionPane.OK_CANCEL_OPTION);
+          if(val == JOptionPane.CANCEL_OPTION)
+            return;
+        }
+        
         setCursor(new Cursor(Cursor.WAIT_CURSOR));
         Key key = null;
         if(selectedKeyButton.isSelected())
@@ -296,11 +317,11 @@ public class FindAndReplace extends JFrame
           qualifierStrings.add(qualifierName);
         }
         
-        FeatureKeyQualifierPredicate predicate = 
-          new FeatureKeyQualifierPredicate(key, qualifierName,
-                                           findTextField.getText(), 
-                                           qualifierValueSubString.isSelected(), 
-                                           !caseSensitive.isSelected());
+        final FeaturePredicate predicate = 
+            new FeatureKeyQualifierPredicate(key, qualifierName,
+                                             findTextField.getText(), 
+                                             qualifierValueSubString.isSelected(), 
+                                             !caseSensitive.isSelected());
 
         final FilteredEntryGroup filtered_entry_group =
           new FilteredEntryGroup(entry_group, predicate, findTextField.getText());
@@ -456,6 +477,66 @@ public class FindAndReplace extends JFrame
     }
   }
   
+  /**
+   * Construct a FeaturePredicate from a string with conditional (& / |).
+   * @param text
+   * @param key
+   * @param qualifierName
+   * @param isSubString
+   * @param isCaseInsensitive
+   * @return
+   */
+  private FeaturePredicate constructFeaturePredicateFromBooleanList(
+                           final String text,
+                           final Key key,
+                           final String qualifierName,
+                           final boolean isSubString,
+                           final boolean isCaseInsensitive)
+  {
+    final String valuesAnd[] = text.split("&");
+    final FeaturePredicateVector andPredicates = new FeaturePredicateVector();
+    final FeaturePredicateVector orPredicates  = new FeaturePredicateVector();
+    
+    // process string 
+    for(int i=0; i<valuesAnd.length; i++)
+    {
+      if(valuesAnd[i].indexOf('|')>-1)
+      {
+        String valuesOr[] = valuesAnd[i].trim().split("\\|");
+        for(int j=0; j<valuesOr.length; j++)
+        { 
+          orPredicates.add(new FeatureKeyQualifierPredicate(key, qualifierName,
+              valuesOr[j].trim(), 
+              isSubString, 
+              isCaseInsensitive));
+        }
+      }
+      else 
+      {
+        andPredicates.add(new FeatureKeyQualifierPredicate(key, qualifierName,
+                                                 valuesAnd[i].trim(), 
+                                                 isSubString, 
+                                                 isCaseInsensitive));
+      }
+    }
+    
+    if(andPredicates.size() == 0 && orPredicates.size() == 0)
+      return new FeatureKeyQualifierPredicate(key, qualifierName,
+          text, isSubString, isCaseInsensitive);
+    else if(andPredicates.size() == 0)
+      return new FeaturePredicateConjunction(orPredicates, FeaturePredicateConjunction.OR);
+    else if(orPredicates.size() == 0)
+      return new FeaturePredicateConjunction(andPredicates, FeaturePredicateConjunction.AND);
+
+    // combine & / | results
+    FeaturePredicateConjunction andPredicateConj =
+      new FeaturePredicateConjunction(andPredicates, FeaturePredicateConjunction.AND);
+    FeaturePredicateConjunction orPredicateConj =
+      new FeaturePredicateConjunction(orPredicates, FeaturePredicateConjunction.OR);
+    return new FeaturePredicateConjunction(andPredicateConj, 
+                                           orPredicateConj, 
+                                           FeaturePredicateConjunction.AND);
+  }
   
   /**
    *  Return true if duplicate qualifier values found
