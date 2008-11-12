@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureAminoAcidViewer.java,v 1.1 2004-06-09 09:46:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureAminoAcidViewer.java,v 1.2 2008-11-12 16:49:58 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -34,7 +34,7 @@ import java.awt.event.*;
  *  sequence up to date.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureAminoAcidViewer.java,v 1.1 2004-06-09 09:46:35 tjc Exp $
+ *  @version $Id: FeatureAminoAcidViewer.java,v 1.2 2008-11-12 16:49:58 tjc Exp $
  **/
 
 public class FeatureAminoAcidViewer
@@ -51,7 +51,6 @@ public class FeatureAminoAcidViewer
                                  final boolean include_numbers) {
     this.feature = feature;
     this.entry = feature.getEntry ();
-    this.include_numbers = include_numbers;
 
     sequence_viewer =
       new SequenceViewer ("Feature base viewer for feature:" +
@@ -164,9 +163,4 @@ public class FeatureAminoAcidViewer
    **/
   private Entry entry;
 
-  /**
-   *  If true then the amino acids will be numbered (every second line of the
-   *  display will be numbers rather than sequence).
-   **/
-  private final boolean include_numbers;
 }
