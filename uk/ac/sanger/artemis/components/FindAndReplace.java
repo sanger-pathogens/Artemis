@@ -197,6 +197,12 @@ public class FindAndReplace extends JFrame
     c.gridy = ++ypos;
     panel.add(qualifierValueSubString, c);
     
+    final JCheckBox qualifierValueUseBoolean = new JCheckBox(
+                                        "Use boolean search (and, or, &, |)", false);
+    c.gridy = ++ypos;
+    c.gridwidth = 2;
+    panel.add(qualifierValueUseBoolean, c);
+    c.gridwidth = 1;
     
     // column 2
     ypos = 0;
@@ -236,9 +242,6 @@ public class FindAndReplace extends JFrame
     c.gridy = ++ypos;
     panel.add(selectedQualifierButton,c);
     
-    final JCheckBox qualifierValueUseBoolean = new JCheckBox("Use boolean operator (&, |)", false);
-    c.gridy = ++ypos;
-    panel.add(qualifierValueUseBoolean, c);
     
     final JButton findButton = new JButton("Find");
     findButton.addActionListener(new ActionListener()
@@ -272,15 +275,19 @@ public class FindAndReplace extends JFrame
         
         final FilteredEntryGroup filtered_entry_group =
           new FilteredEntryGroup(entry_group, predicate, findTextField.getText());
-
-        final FeatureListFrame feature_list_frame =
-          new FeatureListFrame("Features Found",
-                               selection,
-                               goto_event_source, filtered_entry_group,
-                               base_plot_group);
+        
+        if(filtered_entry_group.getAllFeaturesCount() < 1)
+          JOptionPane.showMessageDialog(FindAndReplace.this, "No matches found.");
+        else
+        {
+          final FeatureListFrame feature_list_frame =
+             new FeatureListFrame("Features Found",
+                                  selection,
+                                  goto_event_source, filtered_entry_group,
+                                  base_plot_group);
+          feature_list_frame.setVisible(true);
+        }
         setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-
-        feature_list_frame.setVisible(true);
       }
     });
     ypos+=3;
@@ -487,12 +494,17 @@ public class FindAndReplace extends JFrame
    * @return
    */
   private FeaturePredicate constructFeaturePredicateFromBooleanList(
-                           final String text,
+                           String text,
                            final Key key,
                            final String qualifierName,
                            final boolean isSubString,
                            final boolean isCaseInsensitive)
   {
+    text = text.replaceAll(" && ", " & ");
+    text = text.replaceAll(" (a|A)(n|N)(d|D) ", " & ");
+    text = text.replaceAll(" \\|\\| ", " \\| ");
+    text = text.replaceAll(" (o|O)(r|R) ", " \\| ");
+    
     final String valuesAnd[] = text.split("&");
     final FeaturePredicateVector andPredicates = new FeaturePredicateVector();
     final FeaturePredicateVector orPredicates  = new FeaturePredicateVector();
