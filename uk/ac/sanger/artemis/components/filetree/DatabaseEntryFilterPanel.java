@@ -21,15 +21,18 @@
 package uk.ac.sanger.artemis.components.filetree;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
 import uk.ac.sanger.artemis.components.KeyChoice;
@@ -56,20 +59,54 @@ public class DatabaseEntryFilterPanel extends JPanel
 
     // current feature types in each entry
     String types[][][] = DatabaseDocument.getTYPES();
-
-    c.gridx = 0;
-    c.gridy = 0;
-    add(new JLabel("Name"), c);
-    c.gridx = 1;
-    add(new JLabel("Feature Key List"), c);
     nameField = new JTextField[types.length];
     keyList = new JComboBox[types.length];
+    
+    c.gridx = 1;
+    c.gridy = 0;
+    c.anchor = GridBagConstraints.WEST;
+    JLabel nameLabel = new JLabel("Entry Name");
+    Font fontBold = nameLabel.getFont().deriveFont(Font.BOLD);
+    nameLabel.setFont(fontBold);
+    add(nameLabel, c);
+    c.gridx = 2;
+    JLabel featureKeyLabel = new JLabel("Feature Key List");
+    featureKeyLabel.setFont(fontBold);
+    add(featureKeyLabel, c);
+    c.gridx = 3;
+    c.gridwidth = 3;
+    JLabel featureKeyEditLabel = new JLabel("Edit Feature Key List");
+    featureKeyEditLabel.setFont(fontBold);
+    add(featureKeyEditLabel, c);
+    c.gridwidth = 1;
+    
+    c.gridy = 1;
+    c.gridx = 0;
+    c.fill  = GridBagConstraints.BOTH;
+    c.gridwidth = 6;
+    add(new JSeparator(), c);
+    c.gridwidth = 1;
+    c.gridy = 2;
+    add(Box.createVerticalStrut(10), c);
+    c.fill  = GridBagConstraints.NONE;
+    
+    c.gridx = 0;
+    c.gridy = 3;
+    add(new JLabel("1 "), c);
+    c.gridx = 1;
+    add(new JLabel("Default"), c);
+    
     for(int i = 0; i < types.length; i++)
     {
       final KeyChoice keyChoice = new KeyChoice(new GFFEntryInformation());
-      c.gridx = 0;
-      c.gridy = i + 1;
+      int gridx = 0;
       
+      c.gridx = gridx;
+      c.gridy = i + 4;
+      
+      add(new JLabel(Integer.toString(i+2)), c);
+      
+      c.gridx = ++gridx;
       nameField[i] = new JTextField(types[i][0][0], 20);
       add(nameField[i], c);
       
@@ -81,9 +118,9 @@ public class DatabaseEntryFilterPanel extends JPanel
       keyList[i].setEditable(false);
       final JComboBox thiskeyList = keyList[i];
       
-      c.gridx = 1;
+      c.gridx = ++gridx;
       add(keyList[i], c);
-      c.gridx = 2;
+      c.gridx = ++gridx;
       JButton deleteKey = new JButton("Delete");
       add(deleteKey, c);
       deleteKey.addActionListener(new ActionListener()
@@ -95,10 +132,10 @@ public class DatabaseEntryFilterPanel extends JPanel
         }
       });
       
-      c.gridx = 3;
+      c.gridx = ++gridx;
       JButton addKey = new JButton("Add :");
       add(addKey, c);
-      c.gridx = 4;
+      c.gridx = ++gridx;
       
       add(keyChoice, c);
       
