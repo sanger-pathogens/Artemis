@@ -12,8 +12,9 @@ Version 10.+/7.+
 	New Edit->Selected Feature(s)->Convert Keys option to convert
 	keys of selected features.
 
-	New Edit menu option for finding and replacing qualifier text. This 
-	includes an option to search for duplicate qualifiers.
+	New Edit menu option for finding and replacing qualifier text. This
+	has an option for boolean searches (e.g. and, or, &, |) of qualifier
+	text. This includes an option to search for duplicate qualifiers.
 
 	Implemented a commit manager for the database mode. This
 	highlights transactions that produce an error.
@@ -27,8 +28,6 @@ Version 10.+/7.+
 	Graphs are now added to a split pane. So that their size can be 
 	defined by dragging the divider at the bottom of the graphs.
 
-	Qualifier text find/replace tool added.
-	
 	Provide option to log transform user data plot.
 	
 	Improved error reporting for contig reordering.
