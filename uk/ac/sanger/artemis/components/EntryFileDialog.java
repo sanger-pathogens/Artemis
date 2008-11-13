@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.13 2008-09-16 14:39:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryFileDialog.java,v 1.14 2008-11-13 08:54:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -43,7 +43,7 @@ import javax.swing.*;
  *  This class is a JFileChooser that can read EMBL Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryFileDialog.java,v 1.13 2008-09-16 14:39:52 tjc Exp $
+ *  @version $Id: EntryFileDialog.java,v 1.14 2008-11-13 08:54:10 tjc Exp $
  **/
 
 public class EntryFileDialog extends StickyFileChooser 
@@ -245,7 +245,7 @@ public class EntryFileDialog extends StickyFileChooser
       throw new Error("internal error - unexpected exception: " + e);
     }
 
-    if(read_event_logger.seenMessage())
+    if(read_event_logger.seenMessage() && !Options.isBlackBeltMode())
     {
       final YesNoDialog yes_no_dialog = new YesNoDialog(frame,
                          "there were warnings while reading - view now?");
