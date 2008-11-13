@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.41 2008-10-30 16:38:08 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.42 2008-11-13 09:44:15 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -251,7 +251,7 @@ dist :
 	mkdir tar_build/artemis
 	rm -f artemis_compiled_latest.tar.gz
 	tar cf - $(OTHER_FILES) act art etc | (cd tar_build/artemis; tar xf -)
-	tar cf - artemis_sqlmap dnaplot uk nsdb type seqdb lib | (cd tar_build/artemis; tar xf -)
+	tar cf - artemis_sqlmap dnaplotter uk nsdb type seqdb lib | (cd tar_build/artemis; tar xf -)
 	(cd tar_build; find . -name 'CVS' -print | xargs rm -rf; tar cvf ../artemis_compiled.tar artemis)
 
 jar : all artemis.jar
