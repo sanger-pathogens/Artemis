@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.38 2008-11-13 08:53:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.39 2008-11-13 14:14:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -37,6 +37,7 @@ import uk.ac.sanger.artemis.sequence.AminoAcidSequence;
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.Border;
@@ -48,7 +49,7 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.38 2008-11-13 08:53:26 tjc Exp $
+ *  @version $Id: Splash.java,v 1.39 2008-11-13 14:14:31 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame
@@ -463,9 +464,7 @@ abstract public class Splash extends JFrame
 
     setJMenuBar(menu_bar);
 
-    ActionListener menu_listener = null;
-
-    menu_listener = new ActionListener() 
+    ActionListener menu_listener = new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
       {
@@ -624,6 +623,39 @@ abstract public class Splash extends JFrame
       });
     }
     options_menu.add(lafMenu);
+    
+    // list JFrames that are open
+    final JMenu framesMenu = new JMenu("Windows");
+    menu_bar.add(framesMenu);
+    framesMenu.addItemListener(new ItemListener()
+    {
+      public void itemStateChanged(ItemEvent event)
+      {
+        framesMenu.removeAll();
+        Frame[] frames = JFrame.getFrames();
+        for(int i=0;i<frames.length;i++)
+        {
+          if( !(frames[i] instanceof JFrame) ||
+              !frames[i].isVisible())
+            continue;
+          
+          final JFrame thisFrame = (JFrame)frames[i];
+          JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(thisFrame.getTitle(), false);
+          if(thisFrame.isActive())
+            menuItem.setSelected(true);
+          framesMenu.add(menuItem);
+          
+          menuItem.addActionListener(new ActionListener()
+          {
+            public void actionPerformed(ActionEvent e)
+            {
+              thisFrame.toFront();
+              thisFrame.requestFocus();
+            }
+          });
+        }
+      }
+    });
   }
 
   /**
