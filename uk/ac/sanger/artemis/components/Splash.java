@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.37 2008-11-10 17:10:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.38 2008-11-13 08:53:26 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.37 2008-11-10 17:10:16 tjc Exp $
+ *  @version $Id: Splash.java,v 1.38 2008-11-13 08:53:26 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame
@@ -530,8 +530,7 @@ abstract public class Splash extends JFrame
     });
     options_menu.add(highlight_active_entry_item);
 
-    if(Options.getOptions().getPropertyTruthValue("sanger_options") &&
-        Options.getOptions().getProperty("black_belt_mode") != null) 
+    if(Options.getOptions().getProperty("black_belt_mode") != null) 
     {
       final JCheckBoxMenuItem black_belt_mode_item =
         new JCheckBoxMenuItem("Black Belt Mode");
