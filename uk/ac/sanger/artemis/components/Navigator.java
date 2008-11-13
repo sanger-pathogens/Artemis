@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Navigator.java,v 1.3 2008-10-08 07:57:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Navigator.java,v 1.4 2008-11-13 12:02:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -39,7 +39,7 @@ import javax.swing.*;
  *  This component allows the user to navigate around the Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: Navigator.java,v 1.3 2008-10-08 07:57:11 tjc Exp $
+ *  @version $Id: Navigator.java,v 1.4 2008-11-13 12:02:36 tjc Exp $
  **/
 
 public class Navigator extends JFrame
@@ -351,35 +351,27 @@ public class Navigator extends JFrame
     final ButtonGroup start_position_button_group =
       new ButtonGroup ();
 
-    final JPanel start_at_an_end_panel = new JPanel ();
+    final JPanel start_at_an_end_panel = new JPanel (new FlowLayout(FlowLayout.LEFT));
 
     start_at_an_end_button =
-      new JRadioButton ("Start search at beginning (or end)", true);
+      new JRadioButton ("beginning (or end)", true);
 
     start_position_button_group.add (start_at_an_end_button);
 
     c.gridwidth = GridBagConstraints.REMAINDER;
 
-    start_at_an_end_panel.setLayout (new FlowLayout (FlowLayout.LEFT));
+    start_at_an_end_panel.add (new JLabel(" Start search at:"));
     start_at_an_end_panel.add (start_at_an_end_button);
 
-    gridbag.setConstraints (start_at_an_end_panel, c);
-    getContentPane ().add (start_at_an_end_panel);
-
-
-    final JPanel start_at_selection_panel = new JPanel ();
-
     start_at_selection_button =
-      new JRadioButton ("Start search at selection", false);
+      new JRadioButton ("selection", false);
     start_position_button_group.add (start_at_selection_button);
 
-    start_at_selection_panel.setLayout (new FlowLayout (FlowLayout.LEFT));
-    start_at_selection_panel.add (start_at_selection_button);
+    start_at_an_end_panel.add (start_at_selection_button);
 
     c.gridwidth = GridBagConstraints.REMAINDER;
-
-    gridbag.setConstraints (start_at_selection_panel, c);
-    getContentPane ().add (start_at_selection_panel);
+    getContentPane ().add (Box.createVerticalStrut(5), c);
+    getContentPane ().add (start_at_an_end_panel, c);
 
 
     final JPanel option_button_panel = new JPanel ();
@@ -394,10 +386,8 @@ public class Navigator extends JFrame
     option_button_panel.add (ignore_case_button);
     option_button_panel.add (partial_match_button);
 
-    c.gridwidth = GridBagConstraints.REMAINDER;
-
-    gridbag.setConstraints (option_button_panel, c);
-    getContentPane ().add (option_button_panel);
+    getContentPane ().add (Box.createVerticalStrut(5), c);
+    getContentPane ().add (option_button_panel, c);
 
 
     final JButton goto_button = new JButton ("Goto");
