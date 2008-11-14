@@ -2,6 +2,12 @@ Version 10.+/7.+
 
     Use black_belt_mode to supress warnings when opening Artemis.
     
+    Script (writedb_entry) added to make it easier to write out 
+    multiple entries as EMBL / GFF files from chado. This uses Artemis 
+    read-write libraries and does not require each sequence to be 
+    launched from the database. For command line help run: 
+    etc/writedb_entry -help
+
 	On MacOSX - enable dropping files on Artemis application to open sequences
 
 	Add NCBI search link to run menu. This transfers the sequence automatically
