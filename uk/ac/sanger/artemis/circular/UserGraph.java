@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 
 import uk.ac.sanger.artemis.io.ReadFormatException;
-import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.LinePushBackReader;
 import uk.ac.sanger.artemis.util.StringVector;
 
@@ -56,16 +55,16 @@ public class UserGraph extends Graph
    **/
   private float average_value = 0;
   
-  private Document document;
+  private String fileName;
 
   
-  public UserGraph(DNADraw currentDna, final Document document)
+  public UserGraph(DNADraw currentDna, final String fileName)
          throws IOException
   {
     super(currentDna);
-    this.document = document;
+    this.fileName = fileName;
     
-    final Reader document_reader = document.getReader();
+    final Reader document_reader = Wizard.getReader(fileName);
     LinePushBackReader pushback_reader =
       new LinePushBackReader(document_reader);
 
@@ -151,9 +150,9 @@ public class UserGraph extends Graph
     average_value /= seqLength;
   }
 
-  public Document getDocument()
+  protected String getFileName()
   {
-    return document;
+    return fileName;
   }
   
 }

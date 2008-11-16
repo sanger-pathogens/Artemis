@@ -33,7 +33,6 @@ import uk.ac.sanger.artemis.FeatureKeyPredicate;
 import uk.ac.sanger.artemis.FeatureKeyQualifierPredicate;
 import uk.ac.sanger.artemis.FeaturePredicate;
 import uk.ac.sanger.artemis.io.Key;
-import uk.ac.sanger.artemis.util.FileDocument;
 
 public class Track
 {
@@ -324,8 +323,7 @@ public class Track
     // graphs
     if(dna.getUserGraph() != null && dna.containsGraph(dna.getUserGraph()))
     {
-      FileDocument doc = (FileDocument) ((UserGraph)dna.getUserGraph()).getDocument();
-      String fileName = doc.getFile().getAbsolutePath();
+      String fileName = ((UserGraph)dna.getUserGraph()).getFileName();
       
       writer.write("# User Graph: "+dna.getUserGraph().getOptionsStr()+
                    " file_name="+fileName+"\n");

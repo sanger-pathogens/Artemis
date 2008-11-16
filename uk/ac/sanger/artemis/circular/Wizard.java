@@ -463,8 +463,8 @@ public class Wizard
         if(userGraphStr[i].startsWith("file_name"))
           fileName = userGraphStr[i+1];
       }
-      final uk.ac.sanger.artemis.util.Document document =
-        new uk.ac.sanger.artemis.util.FileDocument(new File(fileName));
+      //final uk.ac.sanger.artemis.util.Document document =
+      //  new uk.ac.sanger.artemis.util.FileDocument(new File(fileName));
       try
       {
         if(progress != null)
@@ -472,7 +472,7 @@ public class Wizard
           progress.setString("Calculating user graph points");
           progress.setValue(9);
         }
-        UserGraph userGraph = new UserGraph(dna, document);
+        UserGraph userGraph = new UserGraph(dna, fileName);
         userGraph.setOptionsStr(userGraphStr);
         dna.setUserGraph(userGraph);
         userGraph.calcGraphValues();
@@ -827,7 +827,7 @@ public class Wizard
    * @param templateName
    * @return
    */
-  private BufferedReader getReader(final String templateName)
+  protected static BufferedReader getReader(final String templateName)
   {
     final File fileTemplate = new File(templateName);
     BufferedReader inputStream = null;

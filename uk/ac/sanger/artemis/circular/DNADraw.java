@@ -1346,12 +1346,12 @@ public class DNADraw extends ScrollPanel
           if(file.length() == 0)
             return;
           
-          final uk.ac.sanger.artemis.util.Document document =
-              new uk.ac.sanger.artemis.util.FileDocument (file);
+          //final uk.ac.sanger.artemis.util.Document document =
+          //    new uk.ac.sanger.artemis.util.FileDocument (file);
           
           try
           {
-            userGraph = new UserGraph(DNADraw.this, document);
+            userGraph = new UserGraph(DNADraw.this, file.getAbsolutePath());
           }
           catch(IOException e)
           {
@@ -1364,7 +1364,7 @@ public class DNADraw extends ScrollPanel
             setCursor(new Cursor(Cursor.WAIT_CURSOR));
             try
             {
-              userGraph = new UserGraph(DNADraw.this, document);
+              userGraph = new UserGraph(DNADraw.this, file.getAbsolutePath());
             }
             catch(IOException e)
             {
