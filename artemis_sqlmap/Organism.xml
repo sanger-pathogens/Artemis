@@ -59,5 +59,26 @@
 			f.feature_id=$featureId$
 		</isNull>
     </select>
+	
+	<select id="getOrganismsContainingSrcFeatures" resultClass="org.gmod.schema.organism.Organism">
+	  SELECT DISTINCT ON( feature.organism_id )  
+		organism.organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment
+		FROM feature 
+		join  organism using (organism_id) 
+		join cvterm on feature.type_id = cvterm.cvterm_id 
+		WHERE residues notnull AND residues != '' 
+		AND ( <include refid="source_feature_cvterm_names"/> ) 
+	</select>
+	
+	<select id="getTopLevelOrganisms" resultClass="org.gmod.schema.organism.Organism">
+	  SELECT DISTINCT ON( feature.organism_id )  
+		organism.organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment
+		FROM feature 
+		join  organism using (organism_id) 
+		join cvterm on feature.type_id = cvterm.cvterm_id 
+		JOIN featureprop using (feature_id)
+		WHERE featureprop.type_id in 
+		  (SELECT cvterm_id FROM cvterm JOIN cv using (cv_id) WHERE cv.name = 'genedb_misc' AND cvterm.name = 'top_level_seq' ) 
+	</select>	
  
 </sqlMap> 
