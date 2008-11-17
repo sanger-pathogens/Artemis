@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.18 2008-10-30 15:37:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.19 2008-11-17 13:51:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -45,6 +45,7 @@ import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import javax.swing.tree.TreePath;
 
+import org.gmod.schema.organism.Organism;
 import org.gmod.schema.sequence.Feature;
 
 import java.awt.BorderLayout;
@@ -56,15 +57,8 @@ import java.awt.Toolkit;
 import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.io.*;
-import java.net.ConnectException;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 public class DatabaseJPanel extends JPanel
 {
@@ -140,11 +134,7 @@ public class DatabaseJPanel extends JPanel
       DatabaseTreeNode seq_node = 
         (DatabaseTreeNode)path.getLastPathComponent();
       String node_name = (String)seq_node.getUserObject();
-      String userName;
-      if(!doc.isSingleSchema())
-        userName = seq_node.getSchema();
-      else
-        userName = doc.getUserName();
+      String userName = doc.getUserName();
 
       String id = seq_node.getFeatureId(); 
       if(id != null)
@@ -241,6 +231,8 @@ public class DatabaseJPanel extends JPanel
         srcComponent.setCursor(cbusy);
         try
         {
+          while(DatabaseDocument.isCvThreadAlive())
+            Thread.sleep(5);
           openEntry(srcfeatureId, entry_source, srcComponent, status_line, stream_progress_listener,
               splitGFFEntry, splash_main, dbDocumentName, userName, null);
         }
@@ -259,6 +251,10 @@ public class DatabaseJPanel extends JPanel
             
           openEntry(srcfeatureId, entry_source, srcComponent, status_line, stream_progress_listener,
               splitGFFEntry, splash_main, dbDocumentName, userName, null);
+        }
+        catch(InterruptedException e)
+        {
+          e.printStackTrace();
         }
         srcComponent.setCursor(cdone);
         return null;
@@ -369,113 +365,29 @@ public class DatabaseJPanel extends JPanel
       try
       {
         doc = entry_source.getDatabaseDocument();
-        entries = doc.getDatabaseEntries();
-        
         final DatabaseTreeNode top = new DatabaseTreeNode("");
-        createNodes(top, doc, entries);
+        
+        final List organisms = doc.getOrganismsContainingSrcFeatures();
+        for(int i=0; i<organisms.size(); i++)
+        {
+          Organism org = (Organism)organisms.get(i);
+          
+          String name = org.getCommonName();
+          if(name == null || name.equals(""))
+            name = org.getGenus() + "." + org.getSpecies();
+          DatabaseTreeNode orgNode = 
+            new DatabaseTreeNode(name, false, org, doc.getUserName(), doc);
+          top.add(orgNode); 
+        }
         return new DatabaseJTree(top);
       }
-      catch(ConnectException e)
+      catch(Exception e)
       {
-        entry_source.setLocation(true);
-      }
-      catch(SQLException e)
-      {
-        entry_source.setLocation(true);
-      }
-      catch(RuntimeException p)
-      {
-        entry_source.setLocation(true);
+        if(!entry_source.setLocation(true))
+          return null;
       }
     }
 
-    return null;
-  }
-
-
-  /**
-   * Create the nodes of the organism JTree
-   * @param top       root node
-   * @param schema    <code>List</code>
-   * @param doc       DatabaseDocument
-   * @param organism  sequences collection
-   */
-  private void createNodes(DatabaseTreeNode top,
-                           DatabaseDocument doc,
-                           HashMap entries)
-  {
-    final Object v_organism[] = entries.keySet().toArray();
-    final int v_organism_size = v_organism.length;
-    Arrays.sort(v_organism, new Comparator()
-    {
-      public int compare(Object o1, Object o2)
-      {
-        return ((String)o1).compareToIgnoreCase( (String)o2 );
-      } 
-    });
-    
-    final Hashtable organismNodes = new Hashtable();
-    final List organism = new Vector();
-    
-    String seqFullName;
-    DatabaseTreeNode seq_node;
-    DatabaseTreeNode typ_node;
-
-    for(int i = 0; i < v_organism_size; i++)
-    {
-      seqFullName = (String) v_organism[i];
-      String seqNames[] = seqFullName.split("-");
-      
-      final String featureId = (String) entries.get(seqFullName);
-      final String schema = seqNames[0].trim();
-      String type = seqNames[1].trim();
-      String thisSeqName = seqNames[2].trim();
-      
-      if(!organismNodes.containsKey(schema))
-      {
-        organismNodes.put(schema, new DatabaseTreeNode(schema));
-        organism.add(schema);
-      }
-      
-      DatabaseTreeNode organismNode = (DatabaseTreeNode) organismNodes.get(schema);
-      typ_node = getChild(organismNode, type);
-      if(typ_node == null)
-      {
-        typ_node = new DatabaseTreeNode(type);
-        organismNode.add(typ_node);
-      }
-
-      seq_node = new DatabaseTreeNode(thisSeqName, featureId, schema,
-                            doc.getUserName(), doc.isSingleSchema());
-      typ_node.add(seq_node);
-    }
-    
-    // add organism nodes that have child nodes
-    Collections.sort(organism);   
-    for(int i=0; i<organism.size(); i++)
-    {
-      String name = (String) organism.get(i);
-      DatabaseTreeNode organismNode = (DatabaseTreeNode) organismNodes.get(name);
-      if(organismNode.getChildCount() > 0)
-        top.add(organismNode);
-    }
-  }
-  
-  /**
-   * Get a child of a parent node with a given name.
-   * @param parentNode
-   * @param childNodeName
-   * @return
-   */
-  private DatabaseTreeNode getChild(final DatabaseTreeNode parentNode,
-                                    final String childNodeName)
-  {
-    for(int j=0; j<parentNode.getChildCount(); j++)
-    {
-      DatabaseTreeNode node = (DatabaseTreeNode) parentNode.getChildAt(j);
-      if(((String)node.getUserObject()).equals(childNodeName))
-        return node;
-    }
     return null;
   }
   

@@ -29,8 +29,15 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.gmod.schema.organism.Organism;
+import org.gmod.schema.sequence.Feature;
+
+import uk.ac.sanger.artemis.util.DatabaseDocument;
+
 import java.io.Serializable;
 import java.io.IOException;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
 *
@@ -40,7 +47,7 @@ import java.io.IOException;
 public class DatabaseTreeNode extends DefaultMutableTreeNode 
                  implements Transferable, Serializable
 {
-  
+  private static final long serialVersionUID = 1L;
   public static final DataFlavor DATABASETREENODE = 
           new DataFlavor(DatabaseTreeNode.class, "Work Package");
   public static final DataFlavor STRING_DATA_FLAVOUR = 
@@ -48,29 +55,106 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
   private static final DataFlavor flavors[] = 
          { DATABASETREENODE, DataFlavor.stringFlavor };
   
-  
   private String featureId;
-  private String schema;
+  private Organism organism;
+  private boolean isLeaf = false;
   private String userName;
-  private boolean singleSchema;
-    
+  private DatabaseDocument dbDoc;
+  private boolean explored = false;
+   
   public DatabaseTreeNode(final String name)
   { 
     super(name);
   }
-
-  public DatabaseTreeNode(final String name,
-                          final String featureId,
-                          final String schema,
+  
+  public DatabaseTreeNode(final String name, 
+                          final boolean isLeaf)
+  {
+    super(name);
+    this.isLeaf = isLeaf;
+  }
+    
+  /**
+   * Top node constructor
+   * @param name
+   * @param isLeaf
+   * @param organism
+   * @param userName
+   * @param dbDoc
+   */
+  public DatabaseTreeNode(final String name, 
+                          final boolean isLeaf,
+                          final Organism organism,
                           final String userName,
-                          final boolean singleSchema)
+                          final DatabaseDocument dbDoc)
   { 
     super(name);
-    this.featureId    = featureId;
-    this.schema       = schema;
-    this.userName     = userName;
-    this.singleSchema = singleSchema;
+    this.isLeaf   = isLeaf;
+    this.organism = organism;
+    this.userName = userName;
+    this.dbDoc    = dbDoc;
   }
+
+  /**
+   * Leaf constructor
+   * @param name
+   * @param organism
+   * @param featureId
+   * @param userName
+   */
+  public DatabaseTreeNode(final String name,
+                          final Organism organism,
+                          final String featureId,
+                          final String userName)
+  { 
+    super(name);
+    this.organism  = organism;
+    this.featureId = featureId;
+    this.userName  = userName;
+  }
+  
+  /** @return   true if node is a directory */
+  public boolean getAllowsChildren() { return !isLeaf; }
+  /** @return         true if node is a file */
+  public boolean isLeaf() { return isLeaf; }
+  /** @return         true if node is a directory */
+  public boolean isDirectory() { return !isLeaf; }
+  /** @return         true if explored */
+  public boolean isExplored() { return explored; }
+
+  /**
+   * Explore the tree node if this is a node with child nodes.
+   */
+  public void explore()
+  {
+    if(isLeaf)
+      return;
+    
+    List sequenceList = dbDoc.getResidueFeatures(new Integer(getOrganism().getOrganismId()));
+    Hashtable sequenceNode = new Hashtable();
+    
+    for(int i=0;i<sequenceList.size(); i++)
+    {
+      Feature f = (Feature)sequenceList.get(i);
+      DatabaseTreeNode typeNode;
+      if(!sequenceNode.containsKey(f.getCvTerm().getName()))
+      {
+        typeNode = new DatabaseTreeNode(f.getCvTerm().getName(), false);
+        add(typeNode);
+        sequenceNode.put(f.getCvTerm().getName(), typeNode);
+      }
+      else
+        typeNode = (DatabaseTreeNode) sequenceNode.get(f.getCvTerm().getName());
+      
+      DatabaseTreeNode seqNode = new DatabaseTreeNode(
+          f.getUniqueName(), getOrganism(), Integer.toString(f.getFeatureId()), getUserName());
+      seqNode.isLeaf = true;
+      typeNode.add(seqNode);
+      typeNode.explored = true;
+    }
+    explored = true;
+  }
+  
     
 // Transferable
   public DataFlavor[] getTransferDataFlavors()
@@ -90,10 +174,15 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
   {
     if(d.equals(DATABASETREENODE))
       return new DatabaseTreeNode((String)getUserObject(), 
-                                  getFeatureId(), getSchema(),
-                                  getUserName(), isSingleSchema());
+                                  organism,
+                                  getFeatureId(), getUserName());
     else if(d.equals(DataFlavor.stringFlavor))
-      return getSchema()+":featureId="+getFeatureId();
+    {
+      String name = getOrganism().getCommonName();
+      if(name == null || name.equals(""))
+        name = getOrganism().getGenus() + "." + getOrganism().getSpecies();
+      return name+":featureId="+getFeatureId();
+    }
     else throw new UnsupportedFlavorException(d);
   }
 
@@ -103,15 +192,6 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     return featureId;
   }
 
-  public String getSchema()
-  {
-    return schema;
-  }
-  
-  public boolean isSingleSchema()
-  {
-    return singleSchema;
-  }
   
 //Serializable
   private void writeObject(java.io.ObjectOutputStream out) throws IOException
@@ -125,11 +205,14 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     in.defaultReadObject();
   }
 
+  public Organism getOrganism()
+  {
+    return organism;
+  }
+
   public String getUserName()
   {
     return userName;
   }
-
-
 
 }

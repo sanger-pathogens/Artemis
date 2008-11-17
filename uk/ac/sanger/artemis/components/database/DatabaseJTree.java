@@ -25,6 +25,7 @@
 package uk.ac.sanger.artemis.components.database;
 
 
+import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
@@ -39,6 +40,9 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JTree;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -72,7 +76,31 @@ public class DatabaseJTree extends JTree
       dragSource.createDefaultDragGestureRecognizer(
          this,                             // component where drag originates
          DnDConstants.ACTION_COPY_OR_MOVE, // actions
-         this);                            // drag gesture recognizer   
+         this);                            // drag gesture recognizer
+      
+      addTreeExpansionListener(new TreeExpansionListener() 
+      {
+        public void treeExpanded(TreeExpansionEvent e)
+        {
+          TreePath path = e.getPath();
+          if(path != null) 
+          {
+            setCursor(new Cursor(Cursor.WAIT_CURSOR));
+            DatabaseTreeNode node = (DatabaseTreeNode)path.getLastPathComponent();
+
+            if(!node.isExplored()) 
+            {
+              node.explore();
+              DefaultTreeModel model = (DefaultTreeModel)getModel();
+              model.nodeStructureChanged(node);
+            }
+            setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+          }
+        }
+        public void treeCollapsed(TreeExpansionEvent e){}
+      });
+
+
     }
 
     private boolean isLeafSelection()
