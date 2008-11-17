@@ -101,6 +101,11 @@ public class JdbcDAO extends GmodDAO
   //////
   //////
   
+  public List getOrganismsContainingSrcFeatures()
+  {
+    return null;
+  }
+  
   public Feature getLazyFeatureNoResiduesById(final Integer featureId)
   {
     return null;

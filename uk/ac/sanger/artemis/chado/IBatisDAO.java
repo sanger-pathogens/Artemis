@@ -118,7 +118,12 @@ public class IBatisDAO extends GmodDAO
   
   public List getResidueFeatures(final Integer organismId)
   {
-    return sqlMap.queryForList("getResidueFeatures",organismId);
+
+    CvTerm cvTerm = getCvTermByNameAndCvName("top_level_seq", "genedb_misc");
+    if(cvTerm  != null)
+      return sqlMap.queryForList("getTopLevelFeatures",organismId);
+    else
+      return sqlMap.queryForList("getResidueFeatures",organismId);
   }
   
   public List getResidueFeaturesByOrganismCommonName(final String commonName)
@@ -492,8 +497,6 @@ public class IBatisDAO extends GmodDAO
   
   /**
    * Return a list of top-level features 
-   * 
-   *  
    * @return a (possibly empty) List<Feature> of children
    */
   public List getTopLevelFeatures()
@@ -570,9 +573,22 @@ public class IBatisDAO extends GmodDAO
    */
   public List getResidueFeatures()
   { 
-    return sqlMap.queryForList("getResidueFeatures",null);
+    CvTerm cvTerm = getCvTermByNameAndCvName("top_level_seq", "genedb_misc");
+    if(cvTerm  != null)
+      return sqlMap.queryForList("getTopLevelFeatures",null);
+    else
+      return sqlMap.queryForList("getResidueFeatures",null);
   }
 
+  public List getOrganismsContainingSrcFeatures()
+  {
+    CvTerm cvTerm = getCvTermByNameAndCvName("top_level_seq", "genedb_misc");
+    if(cvTerm  != null)
+      return sqlMap.queryForList("getTopLevelOrganisms", null);
+    else  
+      return sqlMap.queryForList("getOrganismsContainingSrcFeatures", null);
+  }
+  
   /**
    *
    * For a schema return the type_id's with residues.
