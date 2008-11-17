@@ -123,7 +123,11 @@ public class TextFieldSink extends JTextField implements DropTargetListener
         setCursor(new Cursor(Cursor.WAIT_CURSOR));
         dbNode = 
           (DatabaseTreeNode)t.getTransferData(DatabaseTreeNode.DATABASETREENODE);
-        this.replaceSelection(dbNode.getSchema()+":featureId="+dbNode.getFeatureId());
+        
+        String name = dbNode.getOrganism().getCommonName();
+        if(name == null || name.equals(""))
+          name = dbNode.getOrganism().getGenus() + "." + dbNode.getOrganism().getSpecies();
+        this.replaceSelection(name+":featureId="+dbNode.getFeatureId());
 
         e.dropComplete(true);
         setCursor(new Cursor(Cursor.DEFAULT_CURSOR));

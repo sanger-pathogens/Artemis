@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.16 2007-11-01 13:47:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ActMain.java,v 1.17 2008-11-17 13:52:34 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -46,7 +46,7 @@ import javax.swing.JFrame;
  *  The main window for the Artemis Comparison Tool.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ActMain.java,v 1.16 2007-11-01 13:47:07 tjc Exp $
+ *  @version $Id: ActMain.java,v 1.17 2008-11-17 13:52:34 tjc Exp $
  **/
 
 public class ActMain extends Splash 
@@ -255,15 +255,8 @@ public class ActMain extends Splash
          
           try
           {
-            final String userName;
-            if(!dbNode.isSingleSchema())
-              userName = dbNode.getSchema();
-            else
-              userName = dbNode.getUserName();
-            
             entry = dbEntrySource.getEntry(dbNode.getFeatureId(), 
-                                                userName,
-                                                progress_listener);
+                dbNode.getUserName(), progress_listener);
             embl_entry = (DatabaseDocumentEntry)entry.getEMBLEntry();
           }
           catch(NoSequenceException e)
