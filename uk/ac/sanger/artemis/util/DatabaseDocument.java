@@ -67,7 +67,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.Vector;
 import java.util.Enumeration;
@@ -80,9 +79,7 @@ import javax.swing.JPasswordField;
 
 /**
  * Objects of this class are Documents created from a relational database.
- * 
  */
-
 public class DatabaseDocument extends Document
 {
   private String name = null;
@@ -147,6 +144,8 @@ public class DatabaseDocument extends Document
   
   /** list of controlled_curation CV names */
   private static Vector cvControledCuratioNames;
+  
+  private static CvTermThread cvThread;
   
   // controlled vocabulary
   /** controlled_curation controlled vocabulary */
@@ -2269,208 +2268,41 @@ public class DatabaseDocument extends Document
   }
   
   /**
-   * Create a hashtable of the available entries with residues.
-   * @return a <code>Hashtable</code> of the <code>String</code>
-   *          representation (schema-type-feature_name) and the
-   *          corresponding feature_id
+   * Get a list of the organisms with sequences
+   * @return
    * @throws ConnectException
    * @throws java.sql.SQLException
    */
-  public HashMap getDatabaseEntriesMultiSchema()
-                   throws ConnectException, java.sql.SQLException
+  public List getOrganismsContainingSrcFeatures()
+         throws ConnectException, java.sql.SQLException
   {
-    String schema = null;
-    HashMap db    = null;
+    List list = null;
     try
     { 
       GmodDAO dao = getDAO();
-      schema_list = dao.getSchema(); 
-      
-      Iterator it = schema_list.iterator();
-        
-      while(it.hasNext())
-      {
-        schema = (String)it.next();
-        
-        reset((String)getLocation(),  schema);
-
-        try
-        {
-          dao = getDAO();
-          List list_residue_features = dao.getResidueFeatures();
-          
-          Iterator it_residue_features = list_residue_features.iterator();
-          while(it_residue_features.hasNext())
-          {
-            Feature feature = (Feature)it_residue_features.next();
-            String typeName = getCvtermName(feature.getCvTerm().getCvTermId(), getDAO(), gene_builder); 
-          
-            if(db == null)
-              db = new HashMap();
-            db.put(schema + " - " + typeName + " - " + feature.getUniqueName(),
-                   Integer.toString(feature.getFeatureId()));
-          }
-        }
-        catch(RuntimeException e){}
-        catch(java.sql.SQLException sqlExp){}
-      }
-      
-    }
-    catch(RuntimeException sqlExp)
-    {
-      JOptionPane.showMessageDialog(null, "SQL Problems...\n"+
-                                    sqlExp.getMessage(), 
-                                    "SQL Error",
-                                    JOptionPane.ERROR_MESSAGE);
-      
-      logger4j.debug(sqlExp.getMessage());
-      //sqlExp.printStackTrace();
-    }
-    catch(ConnectException exp)
-    {
-      JOptionPane.showMessageDialog(null, "Connection Problems...\n"+
-            exp.getMessage(), 
-            "Connection Error",
-            JOptionPane.ERROR_MESSAGE);
-      logger4j.debug(exp.getMessage());
-      throw exp;
-    }
-    catch(java.sql.SQLException sqlExp)
-    {
-      JOptionPane.showMessageDialog(null, "SQL Problems....\n"+
-                                    sqlExp.getMessage(), 
-                                    "SQL Error",
-                                    JOptionPane.ERROR_MESSAGE);
-      logger4j.debug(sqlExp.getMessage());
-      throw sqlExp;
-    }
-    
-    return db;
-  }
-  
-  
-  /**
-   * Create a hashtable of the available entries with residues.
-   * 
-   * @return a <code>Hashtable</code> of the <code>String</code>
-   *          representation (schema-type-feature_name) and the
-   *          corresponding feature_id
-   * @throws ConnectException
-   * @throws java.sql.SQLException
-   */
-  public HashMap getDatabaseEntries()
-                   throws ConnectException, java.sql.SQLException
-  {
-
-    HashMap db = null;
-    try
-    { 
-      GmodDAO dao = getDAO();
-      CvTermThread cvThread = new CvTermThread(dao);
+      cvThread = new CvTermThread(dao);
       cvThread.start();
       
-      schema_list = dao.getOrganisms();
+      list = dao.getOrganismsContainingSrcFeatures();
       
-      /*Organism org = new Organism();
-      org.setCommonName("web");
-      schema_list.add(org);*/
-      
-      final List pg_schemas = dao.getSchema();
-      
-      // build a lookup hash of residue features in the
-      // main schema
-      Hashtable residueFeaturesLookup = new Hashtable();
-      List list_residue_features = dao.getResidueFeatures();
-      for(int i=0; i<list_residue_features.size(); i++)
+      Collections.sort(list, new Comparator()
       {
-        Feature feature = (Feature)list_residue_features.get(i);
-        Integer organismId = new Integer(feature.getOrganism().getOrganismId());
-        List features;
-        if(residueFeaturesLookup.containsKey(organismId))
-          features= (List)residueFeaturesLookup.get(organismId);
-        else
-          features = new Vector();
-        features.add(feature);
-        residueFeaturesLookup.put(organismId, features);
-      }
-      
-      // loop over organisms to identify those with features 
-      // containing residues
-      Iterator it = schema_list.iterator();
-      while(it.hasNext())
-      {
-        final Organism organism = (Organism)it.next();
-        String orgName = organism.getCommonName();
-        
-        if(orgName == null || orgName.equals(""))
+        public int compare(Object o1, Object o2)
         {
-          orgName = organism.getGenus() + "." + organism.getSpecies();
-          organism.setCommonName(orgName);
-        }
-        
-        // search to see if this is in its own schema
-        Iterator schemasIt = pg_schemas.iterator();
-        while(schemasIt.hasNext())
-        {
-          schema = (String)schemasIt.next();         
-          if( schema.equalsIgnoreCase(organism.getCommonName()) )
-          {
-            reset((String)getLocation(),  schema);
-            dao = getDAO();
-            orgName = schema;
-
-            singleSchema = false;
-            break;
-          }
-        }
-        
-        try
-        {
-          if(organism.getOrganismId() > 0)
-          {
-            Integer organismId = new Integer(organism.getOrganismId());
-            
-            if(residueFeaturesLookup.containsKey(organismId))
-              list_residue_features = (List)residueFeaturesLookup.get(organismId);
-            else if(singleSchema && residueFeaturesLookup.size()>0)
-              continue;
-            else
-              list_residue_features = dao.getResidueFeatures(organismId);
-          }
-          else
-            list_residue_features = 
-              dao.getResidueFeaturesByOrganismCommonName(organism.getCommonName());
+          Organism org1 = (Organism)o1;
+          Organism org2 = (Organism)o2;
           
-          Iterator it_residue_features = list_residue_features.iterator();
-          while(it_residue_features.hasNext())
-          {
-            final Feature feature = (Feature)it_residue_features.next();
-            final String typeName = feature.getCvTerm().getName();
-                  
-            if(db == null)
-              db = new HashMap();
-            if(organismNames == null)
-              organismNames = new Vector();
-            
-            if(!organismNames.contains(orgName))
-              organismNames.add(orgName);         
-            
-            db.put(orgName + " - " + typeName + " - " + feature.getUniqueName(),
-                   Integer.toString(feature.getFeatureId())); 
-          }
-        }
-        catch(RuntimeException e)
-        {
-          e.printStackTrace();
-        }
-      }
-      
-      residueFeaturesLookup.clear();
-      list_residue_features.clear();
-      
-      // now wait for cvterm to be loaded
-      while(cvThread.isAlive())
-        Thread.sleep(10);
+          String name1 = org1.getCommonName();
+          String name2 = org2.getCommonName();
+          
+          if(name1 == null)
+            name1 = org1.getGenus() + "." + org1.getSpecies();
+          
+          if(name2 == null)
+            name2 = org2.getGenus() + "." + org2.getSpecies();
+          return name1.compareToIgnoreCase( name2 );
+        } 
+      });  
     }
     catch(RuntimeException sqlExp)
     {
@@ -2481,7 +2313,6 @@ public class DatabaseDocument extends Document
                                     JOptionPane.ERROR_MESSAGE);
       
       logger4j.debug(sqlExp.getMessage());
-      //sqlExp.printStackTrace();
     }
     catch(ConnectException exp)
     {
@@ -2502,13 +2333,24 @@ public class DatabaseDocument extends Document
       logger4j.debug(sqlExp.getMessage());
       throw sqlExp;
     }
-    catch(InterruptedException e)
-    {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    
-    return db;
+
+    return list;
+  }
+  
+  public static boolean isCvThreadAlive()
+  {
+    if(cvThread == null)
+      return false;
+
+    if(cvThread.isAlive())
+      return true;
+    else
+      return false;
+  }
+  
+  public List getResidueFeatures(Integer organismId)
+  {
+    return getDAOOnly().getResidueFeatures(organismId);  
   }
   
   /**
