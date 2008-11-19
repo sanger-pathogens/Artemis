@@ -180,7 +180,7 @@ public class ChadoDemo
     int index = location.indexOf('=') + 1;
     String schema = location.substring(index);
     
-    final List schemas = dao.getOrganisms();;
+    final List schemas = dao.getOrganismsContainingSrcFeatures();
 
     Vector v_schemas = new Vector();
     v_schemas.add(0, "All");
@@ -202,8 +202,7 @@ public class ChadoDemo
     JScrollPane jsp = new JScrollPane(schema_list);
 
     Box xbox = Box.createHorizontalBox();
-    final JTextField gene_text = new JTextField(20);
-    gene_text.setText("PFA0005w");
+    final JTextField gene_text = new JTextField("PFA0005w*",20);
     xbox.add(gene_text);
     gene_text.selectAll();
 
