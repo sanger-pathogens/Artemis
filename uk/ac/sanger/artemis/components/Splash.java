@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.39 2008-11-13 14:14:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.40 2008-11-19 12:22:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.39 2008-11-13 14:14:31 tjc Exp $
+ *  @version $Id: Splash.java,v 1.40 2008-11-19 12:22:14 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame
@@ -513,7 +513,31 @@ abstract public class Splash extends JFrame
     });
     options_menu.add(j2ssh_option);
     options_menu.addSeparator();
+    
+    
+    final JCheckBoxMenuItem autohide_option = new JCheckBoxMenuItem(
+                                         "Auto hide scrollbar");
 
+    if(System.getProperty("autohide") != null)
+      autohide_option.setState(true);
+    else
+      autohide_option.setState(false);
+
+    autohide_option.addItemListener(new ItemListener()
+    {
+      public void itemStateChanged(ItemEvent event)
+      {
+        final boolean item_state = autohide_option.getState();
+        if(item_state)
+          System.setProperty("autohide", "");
+        else
+          System.setProperty("autohide", "false");
+      }
+    });
+    options_menu.add(autohide_option);
+    options_menu.addSeparator();
+
+    
     final JCheckBoxMenuItem highlight_active_entry_item =
       new JCheckBoxMenuItem("Highlight Active Entry");
     final boolean highlight_active_entry_state =

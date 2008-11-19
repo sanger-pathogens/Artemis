@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.62 2008-09-16 14:40:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.63 2008-11-19 12:22:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -72,7 +72,7 @@ import javax.swing.JFrame;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.62 2008-09-16 14:40:48 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.63 2008-11-19 12:22:14 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -118,7 +118,7 @@ public class FeatureDisplay extends EntryGroupPanel
   private JScrollBar scrollbar = null;
 
   /** A scroll bar for changing the viewing scale. */
-  private JScrollBar scale_changer = null;
+  private ZoomScrollBar scale_changer = null;
 
   /** Used to colour the frames. */
   private Color light_grey = new Color(240, 240, 240);
@@ -3683,7 +3683,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Add mouse and key listeners to the canvas.
    **/
   private void addListeners() 
-  {
+  { 
     addMouseListener(new MouseAdapter() 
     {
       private FeaturePopup popup = null;
@@ -4344,26 +4344,13 @@ public class FeatureDisplay extends EntryGroupPanel
    **/
   private void createScaleScrollbar() 
   {
-    scale_changer = new JScrollBar(Scrollbar.VERTICAL);
-    // try to arrange for the scrollbar to have a maximum value big enough
-    // that the whole sequence can be visible at once
-    final int MAX_FACTOR =
-      (int)Math.round(Math.log(getSequenceLength()/20) /  Math.log(3));
-    scale_changer.setValues(getScaleFactor(), 1, 0, MAX_FACTOR);
-    scale_changer.setBlockIncrement(1);
-    scale_changer.setUnitIncrement(1);
-    scale_changer.addAdjustmentListener(new AdjustmentListener() 
-    {
-      public void adjustmentValueChanged(AdjustmentEvent e) 
-      {
-        setScaleFactor(e.getValue());
-      }
-    });
-
-    add(scale_changer, "East");
-
-    if(scale_factor >= MAX_FACTOR) 
-      setScaleFactor(MAX_FACTOR - 1);
+    scale_changer = new ZoomScrollBar(this);
+    
+    if(System.getProperty("autohide") == null ||
+       System.getProperty("autohide").equals("false") )
+      add(scale_changer, "East");
+    else
+      scale_changer.addMouseMotionListenerToFeatureDisplay();
   }
 
   /**
@@ -5222,5 +5209,10 @@ public class FeatureDisplay extends EntryGroupPanel
   }
   public void dragOver(DragSourceDragEvent e) {}
   public void dropActionChanged(DragSourceDragEvent e) {}
+
+  protected ZoomScrollBar getScaleChanger()
+  {
+    return scale_changer;
+  }
 
 }
