@@ -32,12 +32,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -140,7 +142,7 @@ public class FindAndReplace extends JFrame
       final JTabbedPane tabPane)
   {
     GridBagLayout gridbag = new GridBagLayout();
-    JPanel panel = new JPanel(gridbag);
+    final JPanel panel = new JPanel(gridbag);
     tabPane.addTab("Qualifier Text", panel);
     
     GridBagConstraints c = new GridBagConstraints();
@@ -197,16 +199,70 @@ public class FindAndReplace extends JFrame
     c.gridy = ++ypos;
     panel.add(qualifierValueSubString, c);
     
-    final JCheckBox qualifierValueUseBoolean = new JCheckBox(
-                                        "Use boolean search (and, or, &, |)", false);
+    // boolean searches
     c.gridy = ++ypos;
+    c.anchor = GridBagConstraints.WEST;
+    c.fill   = GridBagConstraints.NONE;
+    final JButton booleanSearch = new JButton("Show Boolean Search Options");
+    panel.add(booleanSearch, c);
+    
+    final JPanel booleanSearchPanel = new JPanel(gridbag);
+    ButtonGroup buttonGroup = new ButtonGroup();
+    final JRadioButton qualifierValueUseBoolean = new JRadioButton(
+                                        "Use boolean operators (and, or, &, |)", false);
+    c.gridy = ++ypos;
+    booleanSearchPanel.add(qualifierValueUseBoolean, c);
+    
+    final JRadioButton qualifierValueMatchAny = new JRadioButton(
+        "Match any string (i.e. x OR y)", false);
+    c.gridy = ++ypos;
+    booleanSearchPanel.add(qualifierValueMatchAny, c);
+
+    final JRadioButton qualifierValueMatchAll = new JRadioButton(
+        "Match all strings (i.e. x AND y)", false);
+    c.gridy = ++ypos;
+    booleanSearchPanel.add(qualifierValueMatchAll, c);
+    
+    final JRadioButton noBooleanSearch = new JRadioButton(
+        "No boolean search", false);
+    c.gridy = ++ypos;
+    booleanSearchPanel.add(noBooleanSearch, c);
+    
     c.gridwidth = 2;
-    panel.add(qualifierValueUseBoolean, c);
+    panel.add(booleanSearchPanel, c);
     c.gridwidth = 1;
+    
+    buttonGroup.add(qualifierValueUseBoolean);
+    buttonGroup.add(qualifierValueMatchAny);
+    buttonGroup.add(qualifierValueMatchAll);
+    buttonGroup.add(noBooleanSearch);
+    booleanSearchPanel.setVisible(false);
+    noBooleanSearch.setSelected(true);
+    
+    booleanSearch.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if(booleanSearch.getText().startsWith("Show "))
+        {
+          booleanSearch.setText("Hide Boolean Search Options");
+          booleanSearchPanel.setVisible(true);
+        }
+        else
+        {
+          booleanSearch.setText("Show Boolean Search Options");
+          booleanSearchPanel.setVisible(false);
+        }
+        panel.repaint();
+        FindAndReplace.this.pack();
+        FindAndReplace.this.setVisible(true);
+      }
+    });
     
     // column 2
     ypos = 0;
     c.anchor = GridBagConstraints.WEST;
+    c.fill   = GridBagConstraints.HORIZONTAL;
     c.gridx = 1;
     c.gridy = ypos;
     panel.add(findTextField, c);
@@ -261,10 +317,18 @@ public class FindAndReplace extends JFrame
           qualifierName = (String) qualifier_selector.getSelectedItem();
         
         final FeaturePredicate predicate;
-        if(qualifierValueUseBoolean.isSelected())
+        if(qualifierValueUseBoolean.isSelected() ||
+           qualifierValueMatchAny.isSelected() ||
+           qualifierValueMatchAll.isSelected())
         {
+          String findText = findTextField.getText();
+
+          if(qualifierValueMatchAny.isSelected())
+            findText = findText.trim().replaceAll("\\s+", " | ");
+          else if(qualifierValueMatchAll.isSelected())
+            findText = findText.trim().replaceAll("\\s+", " & ");
           predicate = constructFeaturePredicateFromBooleanList(
-              findTextField.getText(), key, qualifierName, 
+              findText, key, qualifierName, 
               qualifierValueSubString.isSelected(), !caseSensitive.isSelected());
         }
         else
@@ -290,7 +354,7 @@ public class FindAndReplace extends JFrame
         setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
-    ypos+=3;
+    ypos+=8;
     c.gridx = 0;
     c.gridy = ++ypos;
     panel.add(findButton, c);
