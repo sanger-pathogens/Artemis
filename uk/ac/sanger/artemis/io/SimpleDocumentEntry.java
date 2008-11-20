@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.25 2008-09-10 10:40:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.26 2008-11-20 16:39:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -40,7 +40,7 @@ import javax.swing.JOptionPane;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.25 2008-09-10 10:40:57 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.26 2008-11-20 16:39:49 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -88,7 +88,7 @@ abstract public class SimpleDocumentEntry
    *  Set to true in the constructor while features are added.  setDirtyFlag()
    *  will do nothing while this is true.
    **/
-  private boolean in_constructor = false;
+  protected boolean in_constructor = false;
 
   /**
    *  Create a new SimpleDocumentEntry from the given Document.
@@ -1203,8 +1203,6 @@ abstract public class SimpleDocumentEntry
     }
     else
     {
-//  XXX FIXME - disabled for now because the code is suspect
-
        if(autosave_thread == null && getName() != null) 
        {
          // this is the first change so start autosaving
@@ -1212,9 +1210,7 @@ abstract public class SimpleDocumentEntry
          autosave_thread.start();
        }
 
-
       final java.util.Calendar calendar = java.util.Calendar.getInstance();
-
       last_change_time = calendar.getTime();
     }
   }

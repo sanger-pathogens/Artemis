@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.59 2008-10-01 11:35:30 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.60 2008-11-20 16:39:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -46,7 +46,7 @@ import org.gmod.schema.sequence.FeatureLoc;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.59 2008-10-01 11:35:30 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.60 2008-11-20 16:39:49 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -69,10 +69,11 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       throws IOException, EntryInformationException 
   {
     super(new GFFEntryInformation(), document, listener);
-
+    super.in_constructor = true;
     // join the separate exons into one feature (if appropriate)
     //combineFeatures();
     combineGeneFeatures();
+    super.in_constructor = false;
     finished_constructor = true;
   }
 
