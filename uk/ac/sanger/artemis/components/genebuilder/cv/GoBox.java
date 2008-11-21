@@ -42,7 +42,7 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
-class GoBox extends AbstractCvBox
+public class GoBox extends AbstractCvBox
 {
   protected static String[][] evidenceCodes = 
   { 
@@ -347,6 +347,33 @@ class GoBox extends AbstractCvBox
     }
     
     return evidenceListDimension;
+  }
+  
+  /**
+   * Given the string:
+   * aspect=F;GOid=GO:0003674;term=molecular_function;evidence=No biological Data available
+   * return the string:
+   * aspect=F;GOid=GO:0003674;term=molecular_function;evidence=ND
+   * @param goText
+   * @return
+   */
+  public static String getEvidenceCodeGoTextFromText(String goText)
+  {
+    final String oldEvidence = getField("evidence=", goText); 
+    String newEvidence = oldEvidence;
+    
+    for(int i=0; i<evidenceCodes[2].length; i++)
+    {
+      if(evidenceCodes[2][i].equalsIgnoreCase(oldEvidence.toLowerCase()))
+      {
+        newEvidence = evidenceCodes[0][i];
+        break;
+      }
+    }
+    
+    if(!oldEvidence.equals(newEvidence))
+      goText = goText.replaceAll(oldEvidence, newEvidence);
+    return goText;
   }
   
 }
