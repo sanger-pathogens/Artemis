@@ -43,7 +43,7 @@ abstract class AbstractCvBox
    * @param qualifierString
    * @return
    */
-  protected String getField(final String fieldName, final String qualifierString)
+  protected static String getField(final String fieldName, final String qualifierString)
   {
     String field = "";
     
