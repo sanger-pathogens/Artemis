@@ -20,13 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.18 2008-10-14 10:11:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.19 2008-11-21 14:27:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+import uk.ac.sanger.artemis.components.genebuilder.cv.GoBox;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ import java.util.Vector;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.18 2008-10-14 10:11:39 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.19 2008-11-21 14:27:20 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -291,6 +292,21 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       if( newQualifier.getName().equals("ID") &&
           ((String)newQualifier.getValues().get(0)).indexOf(':') > -1 )
         continue;
+      
+      
+      // convert GO evidence to codes (e.g. ND=No biological Data available)
+      if(newQualifier.getName().equals("GO"))
+      {
+        final StringVector newValues = newQualifier.getValues();
+        final StringVector tmpNewValues = new StringVector();
+        for(int j=0; j<newValues.size(); j++)
+        {
+          String val = GoBox.getEvidenceCodeGoTextFromText((String)newValues.get(j));
+          tmpNewValues.add(val);
+        }
+ 
+        newQualifier = new Qualifier("GO", tmpNewValues);
+      }
       
       if(newQualifier.getName().equals("orthologous_to"))
       {
