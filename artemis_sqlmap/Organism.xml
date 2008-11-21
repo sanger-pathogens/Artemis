@@ -75,7 +75,6 @@
 		organism.organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment
 		FROM feature 
 		join  organism using (organism_id) 
-		join cvterm on feature.type_id = cvterm.cvterm_id 
 		JOIN featureprop using (feature_id)
 		WHERE featureprop.type_id in 
 		  (SELECT cvterm_id FROM cvterm JOIN cv using (cv_id) WHERE cv.name = 'genedb_misc' AND cvterm.name = 'top_level_seq' ) 
