@@ -1527,7 +1527,22 @@ public class DatabaseDocument extends Document
     else if(cvterm.getCv().getName().equals(DatabaseDocument.PRODUCTS_TAG_CVNAME))
     {
       attr_buff.append("product=");
-      attr_buff.append(GFFStreamFeature.encode(feature_cvterm.getCvTerm().getName())+";");
+      attr_buff.append(GFFStreamFeature.encode("term="+feature_cvterm.getCvTerm().getName()));
+      
+      // look for evidence codes
+      List feature_cvtermprops = (List) feature_cvterm.getFeatureCvTermProps();
+      for(int i = 0; i < feature_cvtermprops.size(); i++)
+      {
+        FeatureCvTermProp feature_cvtermprop = 
+          (FeatureCvTermProp)feature_cvtermprops.get(i);
+        attr_buff.append("%3B");
+        attr_buff.append(getCvtermName(feature_cvtermprop.getCvTerm()
+            .getCvTermId(), dao, gene_builder));
+        attr_buff.append("=");
+        attr_buff.append(GFFStreamFeature.encode(feature_cvtermprop.getValue()));
+      }
+      
+      attr_buff.append(";");
     }
     else if(cvterm.getCv().getName().equals(DatabaseDocument.RILEY_TAG_CVNAME))
     {

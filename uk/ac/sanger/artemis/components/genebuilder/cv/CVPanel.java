@@ -142,7 +142,6 @@ public class CVPanel extends JPanel
     
     final Dimension dimension  = new Dimension(100, 
         (new JTextField()).getPreferredSize().height);
-    final Dimension dimension4 = new Dimension(dimension.width*4, dimension.height);
 
     Box cvBox = Box.createVerticalBox();
     
@@ -392,8 +391,6 @@ public class CVPanel extends JPanel
           xBox.add(Box.createHorizontalGlue());
           xBox.add(getRemoveButton(this_qualifier, v_index));
           cvBox.add(xBox);
-
-          // Splash.logger4j.debug(this_qualifier.getName());
         }
       }
     }
@@ -420,25 +417,19 @@ public class CVPanel extends JPanel
           if(this_qualifier.getName().equals("product"))
           {
             empty = false;
-            JLabel label = new JLabel("product");
-            if(go_dimension != null)
-              label.setPreferredSize(go_dimension);
-            xBox.add(label);
             
-            JTextField termTextField = new JTextField(qualifierString);
-            termTextField.setOpaque(false);
-            termTextField.setEditable(false);
-            termTextField.setToolTipText("term column");
-            termTextField.setPreferredSize(dimension4);
-            termTextField.setMaximumSize(dimension4);
-            termTextField.setCaretPosition(0);
+            xBox = Box.createHorizontalBox();            
+            final ProductBox productBox = new ProductBox(
+                    this_qualifier,
+                    qualifierString, value_index, 
+                    dimension, go_dimension);
+            editableComponents.add(productBox);
             
-            xBox.add(termTextField);
+            xBox = productBox.getBox();
             xBox.add(Box.createHorizontalGlue());
-            xBox.add(getRemoveButton(this_qualifier, v_index));
+            xBox.add(getRemoveButton(this_qualifier, v_index));         
             cvBox.add(xBox);
           }
-          //Splash.logger4j.debug(this_qualifier.getName());
         }
       }
     }
@@ -709,7 +700,7 @@ public class CVPanel extends JPanel
     else if(cv_type.equals("controlled_curation"))
       cv_qualifier.addValue("term="+cvterm.getName());
     else if(cv_type.equals("product"))
-      cv_qualifier.addValue(cvterm.getName());
+      cv_qualifier.addValue("term="+cvterm.getName());
     else if(cv_type.equals("class"))
       cv_qualifier.addValue(cvterm.getDbXRef().getAccession()+
                             "::"+cvterm.getCvTermId());

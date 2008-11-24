@@ -2165,19 +2165,7 @@ public class ChadoTransactionManager
     chado_feature.setUniqueName(uniqueName);
     feature_cvterm.setFeature(chado_feature);
     
-    if(qualifier_name.toLowerCase().equals("product"))
-    {
-      CvTerm cvTerm = getCvTerm(qualifier_string, "genedb_products");
-
-      if(cvTerm == null)
-        cvTerm = createCvTerm(qualifier_string, 
-            PRODUCT_CV, PRODUCT_DB);
-      
-      feature_cvterm.setCvTerm(cvTerm);
-      logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
-      return feature_cvterm;
-    }
-    else if(qualifier_name.toLowerCase().equals("class"))
+    if(qualifier_name.toLowerCase().equals("class"))
     {
       int index = qualifier_string.indexOf("::");
 
@@ -2192,10 +2180,11 @@ public class ChadoTransactionManager
     List featureCvTermProps = new Vector();
     StringVector strings = StringVector.getStrings(qualifier_string, ";");
     
-    String cvName = null;
-    
+    String cvName = null; 
     if(qualifier_name.equals("controlled_curation"))
       cvName = "CC_";
+    else if(qualifier_name.equals("product"))
+      cvName = PRODUCT_CV;
     
     for(int i=0; i<strings.size(); i++)
     {    
@@ -2205,7 +2194,12 @@ public class ChadoTransactionManager
       if(this_qualifier_part_lowercase.startsWith("term="))
       {
         final String cvTermName = this_qualifier_part.substring(5);
-        final CvTerm cvTerm = getCvTerm(cvTermName, cvName);
+        CvTerm cvTerm = getCvTerm(cvTermName, cvName);
+        
+        if(cvTerm == null && cvName.equals(PRODUCT_CV))
+          cvTerm = createCvTerm(qualifier_string, 
+              PRODUCT_CV, PRODUCT_DB);
+        
         feature_cvterm.setCvTerm(cvTerm);
         logger4j.debug("CV name "+cvName);
         continue;
