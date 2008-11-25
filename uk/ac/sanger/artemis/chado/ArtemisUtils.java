@@ -494,12 +494,12 @@ public class ArtemisUtils
 
     // query location
     String queryLoc = getString(qualifier_strings, "query");
-    final FeatureLoc featureLoc = getFeatureLoc(queryLoc, queryFeature, strand, 1);
+    final FeatureLoc featureLoc = getFeatureLoc(queryLoc, queryFeature, strand, 0);
     matchFeature.addFeatureLocsForFeatureId(featureLoc);
 
     // subject location
     String subjectLoc = getString(qualifier_strings, "subject");
-    final FeatureLoc subjectFeatureLoc = getFeatureLoc(subjectLoc, subjectFeature, strand, 0);
+    final FeatureLoc subjectFeatureLoc = getFeatureLoc(subjectLoc, subjectFeature, strand, 1);
     matchFeature.addFeatureLocsForFeatureId(subjectFeatureLoc);
 
     return analysisFeature;
