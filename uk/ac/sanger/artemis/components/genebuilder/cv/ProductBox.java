@@ -66,18 +66,16 @@ class ProductBox extends AbstractCvBox
     termTextField.setOpaque(false);
     termTextField.setEditable(false);
     
+    final Dimension d;
     if(go_dimension != null)
-    {
-      final Dimension d = new Dimension(go_dimension.width+dimension.width,
-                                        dimension.height);
-      termTextField.setPreferredSize(d);
-      termTextField.setMaximumSize(d);
-    }
+      d = new Dimension(go_dimension.width+(dimension.width*4),
+                                            dimension.height);
     else
-    {
-      termTextField.setPreferredSize(dimension);
-      termTextField.setMaximumSize(dimension);
-    }
+      d = new Dimension((dimension.width*4), dimension.height);
+
+    termTextField.setPreferredSize(d);
+    termTextField.setMaximumSize(d);
+    
     termTextField.setCaretPosition(0);
     xBox.add(termTextField);
  
@@ -89,10 +87,10 @@ class ProductBox extends AbstractCvBox
     evidenceList.setToolTipText("evidence column");
     evidenceList.setSelectedIndex( GoBox.getEvidenceIndex(evidence) );
   
-    Dimension d = evidenceList.getPreferredSize();
-    d = new Dimension(80,(int)d.getHeight());
-    evidenceList.setPreferredSize(d);
-    evidenceList.setMaximumSize(d);
+    Dimension de = evidenceList.getPreferredSize();
+    de = new Dimension(80,(int)de.getHeight());
+    evidenceList.setPreferredSize(de);
+    evidenceList.setMaximumSize(de);
     evidenceList.setActionCommand("evidence=");
     xBox.add(evidenceList);
   }
