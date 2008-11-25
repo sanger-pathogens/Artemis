@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.19 2008-11-21 14:27:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.20 2008-11-25 11:01:30 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,6 +35,8 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *  This class extends the Entry class with the data for the entry coming from
@@ -42,7 +44,7 @@ import java.util.Vector;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.19 2008-11-21 14:27:20 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.20 2008-11-25 11:01:30 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -308,7 +310,8 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         newQualifier = new Qualifier("GO", tmpNewValues);
       }
       
-      if(newQualifier.getName().equals("orthologous_to"))
+      if(newQualifier.getName().equals("orthologous_to") ||
+         newQualifier.getName().equals("paralogous_to"))
       {
         final StringVector newValues = newQualifier.getValues();
         final StringVector tmpNewValues = new StringVector();
@@ -319,7 +322,30 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         }
         if(tmpNewValues.size() == 0)
           continue;
-        newQualifier = new Qualifier("orthologous_to", tmpNewValues);
+        
+        Pattern p = Pattern.compile("\\w+:link=\\w+");
+        for(int j=0; j<tmpNewValues.size(); j++)
+        {
+          String valueStr = (String)tmpNewValues.get(j);
+          String newValueStr;
+          int indexEnd = valueStr.indexOf(';');
+          String endStr = "";
+          if(indexEnd > -1)
+            endStr = valueStr.substring(indexEnd);
+          Matcher m = p.matcher(valueStr);
+          while(m.find())
+          {
+            int index = valueStr.indexOf("link=", m.start());
+            newValueStr = valueStr.substring(m.start(), index)+
+                          valueStr.substring(index+5, m.end())+endStr;
+            if(newQualifier.getName().equals("orthologous_to"))
+              newQualifier = new Qualifier("orthologous_to", newValueStr);
+            else
+              newQualifier = new Qualifier("paralogous_to", newValueStr);
+            qualifiers.addElement(newQualifier);
+          }
+        }
+        continue;
       }
       
       if( (qualifier = qualifiers.getQualifierByName(newQualifier.getName())) != null)
@@ -411,24 +437,31 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
   
   /**
    * Change the name of a qualifier
-   * 
    * @param qualifiers
    * @param oldName
    * @param newName
    */
-  private void changeQualifierName(final QualifierVector qualifiers, 
+  private void changeQualifierName(QualifierVector qualifiers, 
                                    final String oldName, 
                                    final String newName)
   {
-    int index = qualifiers.indexOfQualifierWithName(oldName);
-    
-    if(index > -1)
+    QualifierVector tmpQualifiers = new QualifierVector();
+    for(int i=0; i<qualifiers.size(); i++)
     {
-      StringVector values = ((Qualifier)qualifiers.get(index)).getValues();
-      qualifiers.removeQualifierByName(oldName);
-      Qualifier newQualifier = new Qualifier(newName, values);
-      qualifiers.addQualifierValues(newQualifier);
-    }  
+      Qualifier qualifier = (Qualifier) qualifiers.elementAt(i);
+      if(!qualifier.getName().equals(oldName))
+      {
+        tmpQualifiers.addElement(qualifier);
+        continue;
+      }
+
+      Qualifier newQualifier = new Qualifier(newName, qualifier.getValues());
+      tmpQualifiers.addQualifierValues(newQualifier);
+    }
+    qualifiers.removeAllElements();
+    
+    for(int i=0; i<tmpQualifiers.size(); i++)
+      qualifiers.addElement(tmpQualifiers.elementAt(i));
   }
   
   /**
