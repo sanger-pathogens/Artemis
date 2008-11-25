@@ -939,7 +939,7 @@ public class IBatisDAO extends GmodDAO
     
     // insert match feature
     int value = 1;
-    List matches = getFeaturesByUniqueName(matchFeature.getUniqueName()+"/_%");
+    List matches = getFeaturesByUniqueName(matchFeature.getUniqueName()+"_%");
     
     for(int i=0; i<matches.size(); i++)
     {

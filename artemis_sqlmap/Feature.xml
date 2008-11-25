@@ -237,7 +237,7 @@
             f.feature_id=#featureSynonyms[].feature.featureId#
            </iterate>
          </isNotNull>
-         ( uniquename=#uniqueName# )            
+         ( uniquename LIKE #uniqueName# )            
        </isNotNull>
           
        <isGreaterThan property="cvTerm.cvTermId" compareValue="0" prepend="AND"> 
