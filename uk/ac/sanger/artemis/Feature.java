@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.33 2008-05-29 15:17:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.34 2008-11-26 11:39:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -61,7 +61,7 @@ import java.util.regex.Pattern;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.33 2008-05-29 15:17:56 tjc Exp $
+ *  @version $Id: Feature.java,v 1.34 2008-11-26 11:39:36 tjc Exp $
  **/
 
 public class Feature
@@ -1708,7 +1708,13 @@ public class Feature
   {
     try 
     {
-      return getValueOfQualifier("product");
+      final String product = getValueOfQualifier("product");
+      if( product != null && 
+          getEmblFeature() instanceof GFFStreamFeature &&
+          product.startsWith("term=") )
+        return product.substring(5);
+      
+      return product;
     }
     catch(InvalidRelationException e) 
     {
