@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.63 2008-11-19 12:22:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.64 2008-11-27 10:48:19 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -72,7 +72,7 @@ import javax.swing.JFrame;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.63 2008-11-19 12:22:14 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.64 2008-11-27 10:48:19 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -892,7 +892,9 @@ public class FeatureDisplay extends EntryGroupPanel
       this.scale_factor = scale_factor;
 
       setScaleValue();
-      scale_changer.setValue(scale_factor);
+      
+      if(scale_changer != null)
+        scale_changer.setValue(scale_factor);
       setCentreVisibleForwardBase(remember_position);
       fixScrollbar();
       fireAdjustmentEvent(DisplayAdjustmentEvent.SCALE_ADJUST_EVENT);
