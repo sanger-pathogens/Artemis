@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ZoomScrollBar.java,v 1.1 2008-11-19 12:22:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ZoomScrollBar.java,v 1.2 2008-11-27 10:48:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -60,7 +60,10 @@ class ZoomScrollBar extends JScrollBar
     });
 
     if(display.getScaleFactor() >= MAX_FACTOR) 
+    {
       display.setScaleFactor(MAX_FACTOR - 1);
+      setValue(display.getScaleFactor());
+    }
   }
   
   /**
