@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.19 2008-11-17 13:51:57 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.20 2008-11-28 17:52:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -239,6 +239,8 @@ public class DatabaseJPanel extends JPanel
         catch(RuntimeException re)
         {
           logger4j.warn(re.getMessage());
+
+          re.printStackTrace();
           final DatabaseEntrySource entry_source = new DatabaseEntrySource();
           entry_source.setLocation(true);
 
