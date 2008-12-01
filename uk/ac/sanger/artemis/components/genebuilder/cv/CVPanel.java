@@ -174,7 +174,13 @@ public class CVPanel extends JPanel
     cvBox.add(xBox);
 
     Dimension go_dimension = null;
-    int n = 0;
+    int nGo = 0;
+    
+    
+    
+    
+    Box goBox = null;
+    Box goHeadings = null;
     for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
         ++qualifier_index) 
     {
@@ -183,16 +189,19 @@ public class CVPanel extends JPanel
       if(this_qualifier.getName().equals("GO"))
       {
         empty = false;
-        final Box yBox = Box.createVerticalBox();
+
         if(hide_show_GO == null)
           hide_show_GO = new JButton("-");
         
-        addHideShowButton(yBox, hide_show_GO);
+        if(goBox == null)
+          goBox = Box.createVerticalBox();
         
-        Box xHeadings = Box.createHorizontalBox();
-        cvBox.add(xHeadings);
+        addHideShowButton(goBox, hide_show_GO);
         
-        n++;
+        if(goHeadings == null)
+          goHeadings = Box.createHorizontalBox();
+        
+        nGo++;
         final StringVector qualifier_strings = this_qualifier.getValues();
         
         for(int value_index = 0; value_index < qualifier_strings.size();
@@ -212,46 +221,87 @@ public class CVPanel extends JPanel
           xBox.add(Box.createHorizontalGlue());
           xBox.add(getRemoveButton(this_qualifier, v_index));
           
-          yBox.add(xBox);
+          goBox.add(xBox);
         }
         
         // add column headings
         JLabel lab = new JLabel("GO terms");
         lab.setPreferredSize(go_dimension);
         lab.setFont(lab.getFont().deriveFont(Font.BOLD));
-        xHeadings.add(lab);
+        goHeadings.add(lab);
         final JLabel withLabel = new JLabel("WITH/FROM");
         withLabel.setPreferredSize(dimension);
-        xHeadings.add(withLabel);
+        goHeadings.add(withLabel);
         
         final JLabel dbxrefLabel = new JLabel("Dbxref");
         dbxrefLabel.setPreferredSize(dimension);
-        xHeadings.add(dbxrefLabel);
+        goHeadings.add(dbxrefLabel);
         
         final JLabel evidenceLabel = new JLabel("Evidence");
         evidenceLabel.setPreferredSize(GoBox.getEvidenceListDimension());
-        xHeadings.add(evidenceLabel);
+        goHeadings.add(evidenceLabel);
         
         final JLabel qualLabel = new JLabel("Qualifier");
         qualLabel.setPreferredSize(dimension);
-        xHeadings.add(qualLabel);
+        goHeadings.add(qualLabel);
         
         final JLabel dateLabel = new JLabel("Date");
-        xHeadings.add(dateLabel);
+        goHeadings.add(dateLabel);
         
-        xHeadings.add(Box.createHorizontalGlue());
-        xHeadings.add(hide_show_GO);
+        goHeadings.add(Box.createHorizontalGlue());
+        goHeadings.add(hide_show_GO);
               
-        // add go rows
-        cvBox.add(yBox);
         if(hide_show_GO.getText().equals("+"))
-          yBox.setVisible(false);
+          goBox.setVisible(false);
       }
     }
     
+
+    
+    int n = 0;
+    for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
+        ++qualifier_index) 
+    {
+      final Qualifier this_qualifier = (Qualifier)cvQualifiers.elementAt(qualifier_index);
+      if(this_qualifier.getName().equals("product"))
+      {
+        final StringVector qualifier_strings = this_qualifier.getValues();
+
+        for(int value_index = 0; value_index < qualifier_strings.size(); ++value_index)
+        {
+          final int v_index = value_index;
+
+          xBox = Box.createHorizontalBox();
+          final String qualifierString = (String) qualifier_strings
+              .elementAt(value_index);
+          
+          empty = false;
+            
+          xBox = Box.createHorizontalBox();            
+          final ProductBox productBox = new ProductBox(
+                    this_qualifier,
+                    qualifierString, value_index, 
+                    dimension, go_dimension);
+          editableComponents.add(productBox);
+            
+          xBox = productBox.getBox();
+          xBox.add(Box.createHorizontalGlue());
+          xBox.add(getRemoveButton(this_qualifier, v_index));         
+          n++;
+          cvBox.add(xBox); 
+        }
+      }
+    }
     
     if(n > 0)
       GeneEditorPanel.addLightSeparator(cvBox);
+    
+    if(goBox != null)
+    {
+      cvBox.add(goHeadings);
+      cvBox.add(goBox);
+      GeneEditorPanel.addLightSeparator(cvBox);
+    }
     
     
     n = 0;
@@ -396,43 +446,7 @@ public class CVPanel extends JPanel
     }
     
     
-    if(n > 0)
-      GeneEditorPanel.addLightSeparator(cvBox);
-    
-    for(int qualifier_index = 0; qualifier_index < cvQualifiers.size();
-        ++qualifier_index) 
-    {
-      final Qualifier this_qualifier = (Qualifier)cvQualifiers.elementAt(qualifier_index);
-      if(cv_tags.contains(this_qualifier.getName()))
-      {
-        final StringVector qualifier_strings = this_qualifier.getValues();
 
-        for(int value_index = 0; value_index < qualifier_strings.size(); ++value_index)
-        {
-          final int v_index = value_index;
-
-          xBox = Box.createHorizontalBox();
-          final String qualifierString = (String) qualifier_strings
-              .elementAt(value_index);
-          if(this_qualifier.getName().equals("product"))
-          {
-            empty = false;
-            
-            xBox = Box.createHorizontalBox();            
-            final ProductBox productBox = new ProductBox(
-                    this_qualifier,
-                    qualifierString, value_index, 
-                    dimension, go_dimension);
-            editableComponents.add(productBox);
-            
-            xBox = productBox.getBox();
-            xBox.add(Box.createHorizontalGlue());
-            xBox.add(getRemoveButton(this_qualifier, v_index));         
-            cvBox.add(xBox);
-          }
-        }
-      }
-    }
     
     cvBox.add(Box.createVerticalGlue());
     validate();

@@ -25,9 +25,11 @@
 package uk.ac.sanger.artemis.components.genebuilder.cv;
 
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 
 import javax.swing.Box;
 import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import uk.ac.sanger.artemis.components.Splash;
@@ -40,7 +42,9 @@ class ProductBox extends AbstractCvBox
 {
   private Box xBox;
   private int value_index;
-  private JTextField termTextField;
+  private ProductTextArea termTextField;
+  private JTextField withTextField;
+  private JTextField dbxrefTextField;
   private JExtendedComboBox evidenceList;
   private String origQualifierString;
   private Qualifier origQualifier;
@@ -57,28 +61,37 @@ class ProductBox extends AbstractCvBox
     this.xBox = Box.createHorizontalBox();
     
     JLabel label = new JLabel("product");
-    if(go_dimension != null)
-      label.setPreferredSize(go_dimension);
-    xBox.add(label);
     
     final String term = getField("term=", qualifierString);
-    termTextField = new JTextField(term);
-    termTextField.setOpaque(false);
-    termTextField.setEditable(false);
+    termTextField = new ProductTextArea(term, go_dimension, dimension);
     
-    final Dimension d;
-    if(go_dimension != null)
-      d = new Dimension(go_dimension.width+(dimension.width*4),
-                                            dimension.height);
-    else
-      d = new Dimension((dimension.width*4), dimension.height);
-
-    termTextField.setPreferredSize(d);
-    termTextField.setMaximumSize(d);
+    label.setPreferredSize(
+        new Dimension(termTextField.getLabelWidth(), label.getPreferredSize().height));
+    xBox.add(label);
     
-    termTextField.setCaretPosition(0);
     xBox.add(termTextField);
- 
+    
+    // the WITH column is associated with one or more FeatureCvTermDbXRef
+    String with = getField("with=", qualifierString);
+    withTextField = new JTextField(with);
+    withTextField.setToolTipText("with/from column");
+    withTextField.setPreferredSize(dimension);
+    withTextField.setMaximumSize(dimension);
+    withTextField.setActionCommand("with=");
+    
+    xBox.add(withTextField);
+
+    // N.B. for /GO the db_xref is a Pub (for primary pubs) 
+    //      or FeatureCvTermPub (for others) in /GO
+    String dbxref = getField("db_xref=", qualifierString);
+    dbxrefTextField = new JTextField(dbxref);
+    dbxrefTextField.setToolTipText("dbxref column");
+    dbxrefTextField.setPreferredSize(dimension);
+    dbxrefTextField.setMaximumSize(dimension);
+    dbxrefTextField.setActionCommand("db_xref=");
+    
+    xBox.add(dbxrefTextField); 
+    
     // feature_cvterm_prop's
     String evidence = getField("evidence=", qualifierString);
     
@@ -100,10 +113,19 @@ class ProductBox extends AbstractCvBox
    */
   protected boolean isQualifierChanged()
   {
-    String old = getField("evidence=", origQualifierString);
-    if(!(old.equals("") && evidenceList.getSelectedIndex() == -1) )
-      if(!old.equals(GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
-        return true;
+    String old = getField("with=", origQualifierString);
+    if(!old.equals(withTextField.getText().trim()))
+      return true;
+    
+    old = getField("db_xref=", origQualifierString);
+    if(!old.equals(dbxrefTextField.getText().trim()))
+      return true;
+    
+    old = getField("evidence=", origQualifierString);
+    if(evidenceList.getSelectedIndex() > -1 &&
+       !old.equalsIgnoreCase(GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
+      return true;
+    
     return false;
   }
 
@@ -128,19 +150,80 @@ class ProductBox extends AbstractCvBox
   {
     String newQualifierString = origQualifierString;
     
-    String old = getField("evidence=", origQualifierString);
-    if(evidenceList.getSelectedIndex() > -1 &&
-       !old.equals(GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
+    String old = getField("with=", origQualifierString);
+    if(!old.equals(withTextField.getText().trim()))
     {
-      newQualifierString = 
-        changeField("evidence=", GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ], 
+      newQualifierString = changeField("with=", withTextField.getText().trim(), 
                                        newQualifierString);
     }
+    
+    old = getField("db_xref=", origQualifierString);
+    if(!old.equals(dbxrefTextField.getText().trim()))
+    {    
+      newQualifierString = changeField("db_xref=", dbxrefTextField.getText().trim(), 
+                                       newQualifierString);
+    }
+    
+    old = getField("evidence=", origQualifierString);
+    if(!old.equals(GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
+    {
+      newQualifierString = changeField("evidence=", 
+                   GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ], 
+                                       newQualifierString);
+    }
+
     return newQualifierString;
   }
   
   protected Box getBox()
   {
     return xBox;
+  }
+  
+  class ProductTextArea extends JTextArea
+  {
+    private static final long serialVersionUID = 1L;
+    private int labelWidth;
+    
+    public ProductTextArea(final String text, 
+                           final Dimension go_dimension,
+                           final Dimension dimension)
+    {
+      super(text);
+      setOpaque(false);
+      setEditable(false);
+      setLineWrap(true);
+      setWrapStyleWord(true);
+      FontMetrics fm  = getFontMetrics(getFont());
+      int stringWidth = fm.stringWidth(text);
+      
+      if(go_dimension != null)
+        labelWidth = go_dimension.width;
+      else
+        labelWidth= fm.stringWidth("GO:0001234 [F] ");
+      
+      int width = labelWidth+(dimension.width*2);
+
+      int rows = Math.round((stringWidth/width)+.5f);
+      
+      int indexSpace = text.indexOf(' ');
+      if(indexSpace > -1 && fm.stringWidth(text.substring(0, indexSpace)) > width)
+        rows++;
+      
+      int rowHeight = getTextRowHeight();
+      Dimension d = new Dimension(width, (int) (rowHeight*rows) );
+      setPreferredSize(d);
+      setMaximumSize(d);
+    }
+    
+    protected int getTextRowHeight()
+    {
+      return super.getRowHeight();
+    }
+    
+    protected int getLabelWidth()
+    {
+      return labelWidth;
+    }
   }
 }
