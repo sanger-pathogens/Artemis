@@ -1,0 +1,93 @@
+#!/bin/sh -
+
+# this script will run a search program on a sequence input file or on each
+# file in a file of filenames
+
+# to customise this script see the function called run_one_prog below
+
+
+RCS_HEADER="$Header: //tmp/pathsoft/artemis/etc/run_netblastp,v 1.1 2008-12-01 08:52:51 tjc Exp $"
+
+PROG=`echo $RCS_HEADER | sed 's/.*run_\(.*\),v.*/\1/'`
+
+
+if [ $# = 4 -a x$1 = x-onefile ]
+then
+    shift
+    ONEFILE=t
+    DATABASE=$3 export DATABASE
+else
+    if [ $# = 2 ]
+    then
+        DATABASE=$2 export DATABASE
+    else
+        echo usage: $0 -onefile input_file output_file database
+        echo    or: $0 file_of_filenames database
+        exit 1
+    fi
+fi
+
+
+# expand any ~ or environment variables
+EXPANDED_DATABASE=`echo "echo $DATABASE" | /bin/csh -f`
+
+
+### change this function to suit your site:
+
+run_one_prog () {
+    INPUT_FILE=$1
+    OUTPUT_FILE=$2
+    DATABASE=$3
+
+
+    ### change these lines:
+    EXEC=${EXEC-`which blastcl3 2>/dev/null`}
+
+    if [ ! -x "$EXEC" ]; then
+      EXEC=`find Artemis* -name blastcl3 2>/dev/null`
+      if [ ! -x "$EXEC" ]; then
+        EXEC=`find ../.. -name blastcl3 2>/dev/null`
+      fi
+    fi
+
+    echo "about to start $EXEC with input from $INPUT_FILE and output to"
+    echo "$OUTPUT_FILE using database $DATABASE"
+
+    EXTRA_ARGS=
+
+    # add/change the flags to suit your site:
+    $EXEC -d $DATABASE -i $INPUT_FILE -p blastp \
+      $EXTRA_ARGS -o $OUTPUT_FILE | 
+      tee ${PROG}_errors.new 1>&2
+
+    #### end of changes
+
+
+    # Artemis can read compressed files
+    gzip -9 $OUTPUT_FILE &
+
+    if [ -s ${PROG}_errors.new ]
+    then
+        ( echo ERROR running $PROG: ; echo; 
+          echo ===================================================
+          cat ${PROG}_errors.new ) >> $OUTPUT_FILE
+        cat ${PROG}_errors.new >> ${PROG}_errors
+    fi
+}
+
+(echo "#!/bin/sh -"; echo "kill $$") > $PROG.kill
+
+chmod a+x $PROG.kill
+
+if [ x$ONEFILE = x ]
+then
+    for i in `cat $1`
+    do
+        run_one_prog $i $i.out $EXPANDED_DATABASE
+    done
+
+else
+    run_one_prog $1 $2 $EXPANDED_DATABASE
+fi
+
+exit 0
