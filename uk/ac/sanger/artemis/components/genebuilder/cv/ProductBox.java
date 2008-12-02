@@ -38,6 +38,9 @@ import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.StringVector;
 
+/**
+ * Product display box
+ */
 class ProductBox extends AbstractCvBox
 {
   private Box xBox;
@@ -64,7 +67,7 @@ class ProductBox extends AbstractCvBox
     
     final String term = getField("term=", qualifierString);
     termTextField = new ProductTextArea(term, go_dimension, dimension);
-    
+
     label.setPreferredSize(
         new Dimension(termTextField.getLabelWidth(), label.getPreferredSize().height));
     xBox.add(label);
@@ -180,6 +183,9 @@ class ProductBox extends AbstractCvBox
     return xBox;
   }
   
+  /** 
+   * Text component for product qualifier value.
+   */
   class ProductTextArea extends JTextArea
   {
     private static final long serialVersionUID = 1L;
@@ -195,7 +201,7 @@ class ProductBox extends AbstractCvBox
       setLineWrap(true);
       setWrapStyleWord(true);
       FontMetrics fm  = getFontMetrics(getFont());
-      int stringWidth = fm.stringWidth(text);
+      
       
       if(go_dimension != null)
         labelWidth = go_dimension.width;
@@ -203,22 +209,40 @@ class ProductBox extends AbstractCvBox
         labelWidth= fm.stringWidth("GO:0001234 [F] ");
       
       int width = labelWidth+(dimension.width*2);
-
-      int rows = Math.round((stringWidth/width)+.5f);
+      int rows = getNumberOfLines(fm, text, width);
       
-      int indexSpace = text.indexOf(' ');
-      if(indexSpace > -1 && fm.stringWidth(text.substring(0, indexSpace)) > width)
-        rows++;
-      
-      int rowHeight = getTextRowHeight();
-      Dimension d = new Dimension(width, (int) (rowHeight*rows) );
+      final Dimension d = new Dimension(width, (int) (getRowHeight()*rows) );
       setPreferredSize(d);
       setMaximumSize(d);
     }
     
-    protected int getTextRowHeight()
+    /**
+     * Calculate the number of lines, taking into account line wrapping at
+     * word boundaries (whitespace).
+     * @param fm
+     * @param text
+     * @param width
+     * @return
+     */
+    private int getNumberOfLines(FontMetrics fm, final String text, final int width)
     {
-      return super.getRowHeight();
+      final String words[] = text.split("\\s");
+      int lineOffset = 0;
+      int lineNumber = 1;
+      for(int i=0; i<words.length;i++)
+      {
+        int thisWordLength = fm.stringWidth(words[i]);
+        lineOffset+=thisWordLength;
+        if(lineOffset>width)
+        {
+          lineNumber++;
+          lineOffset = thisWordLength;
+        }
+      }
+      
+      /*int stringWidth = fm.stringWidth(text);
+      int rows = Math.round((stringWidth/width)+.5f);*/
+      return lineNumber;
     }
     
     protected int getLabelWidth()
