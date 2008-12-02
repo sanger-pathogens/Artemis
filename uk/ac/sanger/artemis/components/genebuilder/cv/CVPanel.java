@@ -288,6 +288,7 @@ public class CVPanel extends JPanel
           xBox.add(Box.createHorizontalGlue());
           xBox.add(getRemoveButton(this_qualifier, v_index));         
           n++;
+          cvBox.add(productBox.getHeadingsBox()); 
           cvBox.add(xBox); 
         }
       }

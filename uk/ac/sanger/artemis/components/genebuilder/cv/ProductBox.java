@@ -51,6 +51,7 @@ class ProductBox extends AbstractCvBox
   private JExtendedComboBox evidenceList;
   private String origQualifierString;
   private Qualifier origQualifier;
+  private Box xHeadings = Box.createHorizontalBox();
   
   public ProductBox(final Qualifier qualifier,
                     final String qualifierString,
@@ -109,6 +110,20 @@ class ProductBox extends AbstractCvBox
     evidenceList.setMaximumSize(de);
     evidenceList.setActionCommand("evidence=");
     xBox.add(evidenceList);
+    
+    
+    xHeadings.add(Box.createRigidArea(new Dimension(
+        label.getPreferredSize().width+termTextField.getPreferredSize().width,0)));
+    JLabel withLabel = new JLabel("WITH/FROM");
+    withLabel.setPreferredSize(dimension);
+    withLabel.setMaximumSize(dimension);
+    xHeadings.add(withLabel);
+    
+    JLabel dbxrefLabel = new JLabel("Dbxref");
+    dbxrefLabel.setPreferredSize(dimension);
+    dbxrefLabel.setMaximumSize(dimension);
+    xHeadings.add(dbxrefLabel);
+    xHeadings.add(Box.createHorizontalGlue());
   }
 
   /**
@@ -181,6 +196,11 @@ class ProductBox extends AbstractCvBox
   protected Box getBox()
   {
     return xBox;
+  }
+  
+  protected Box getHeadingsBox()
+  {
+    return xHeadings;
   }
   
   /** 
