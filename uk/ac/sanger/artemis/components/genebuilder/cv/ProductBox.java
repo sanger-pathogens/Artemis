@@ -25,6 +25,7 @@
 package uk.ac.sanger.artemis.components.genebuilder.cv;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 
 import javax.swing.Box;
@@ -64,14 +65,8 @@ class ProductBox extends AbstractCvBox
     this.value_index  = value_index;
     this.xBox = Box.createHorizontalBox();
     
-    JLabel label = new JLabel("product");
-    
     final String term = getField("term=", qualifierString);
     termTextField = new ProductTextArea(term, go_dimension, dimension);
-
-    label.setPreferredSize(
-        new Dimension(termTextField.getLabelWidth(), label.getPreferredSize().height));
-    xBox.add(label);
     
     xBox.add(termTextField);
     
@@ -111,9 +106,13 @@ class ProductBox extends AbstractCvBox
     evidenceList.setActionCommand("evidence=");
     xBox.add(evidenceList);
     
+   
+    JLabel lab = new JLabel("Product");
+    lab.setFont(lab.getFont().deriveFont(Font.BOLD));
+    xHeadings.add(lab);
     
     xHeadings.add(Box.createRigidArea(new Dimension(
-        label.getPreferredSize().width+termTextField.getPreferredSize().width,0)));
+         termTextField.getPreferredSize().width-lab.getPreferredSize().width,0)));
     JLabel withLabel = new JLabel("WITH/FROM");
     withLabel.setPreferredSize(dimension);
     withLabel.setMaximumSize(dimension);
