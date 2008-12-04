@@ -314,6 +314,9 @@ public class DatabaseEntrySource implements EntrySource, Serializable
  
 }
 
+/**
+ * Database login panel
+ */
 class DatabaseLoginPrompt extends JPanel
 {
   private static final long serialVersionUID = 1L;
@@ -375,54 +378,10 @@ class DatabaseLoginPrompt extends JPanel
     // given -Dchado=localhost:port/dbname?username
     if(System.getProperty("chado") != null)
       setFromURL(System.getProperty("chado").trim());
-    
-    // known servers
-    StringVector serversVector = Options.getOptions().getOptionValues("chado_servers");
-    if(serversVector == null)
-    {
-      serversVector = new StringVector();
-      serversVector.add("snapshot");
-      serversVector.add("pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot?genedb_ro");
-    }
-    
-    if(System.getProperty("chado") != null &&
-       !serversVector.contains(System.getProperty("chado").trim()))
-    {
-      serversVector.add(0, "Default");
-      serversVector.add(1, System.getProperty("chado").trim());
-    }
-    
-    final String servers[][] = new String[2][serversVector.size()/2];
-    
-    int nserver = 0;
-    for(int i=0; i<serversVector.size(); i+=2)
-    {
-      servers[0][nserver] = (String) serversVector.get(i);
-      servers[1][nserver] = (String) serversVector.get(i+1);
-      nserver++;
-    }
-    
-    final JExtendedComboBox serverSelection = new JExtendedComboBox(
-        servers[0], false);
-    
-    serverSelection.addItemListener(new ItemListener()
-    {
-      public void itemStateChanged(ItemEvent arg0)
-      {
-        String selectedServerUrl = null;
-        for(int i=0; i<servers[0].length; i++)
-        {
-          if(serverSelection.getSelectedItem().equals(servers[0][i]))
-            selectedServerUrl = servers[1][i];
-        }
-        if(selectedServerUrl != null)
-          setFromURL(selectedServerUrl);
-      } 
-    });
-    
+
     c.gridx = 1;
     c.gridy = ++nrow;
-    add(serverSelection, c);
+    add(getServerComboBox(), c);
     
     c.gridx = 0;
     c.anchor = GridBagConstraints.EAST;
@@ -461,6 +420,60 @@ class DatabaseLoginPrompt extends JPanel
         }
       }
     }  
+  }
+  
+  /**
+   * Get a combo box of the available database servers.
+   * @return
+   */
+  private JExtendedComboBox getServerComboBox()
+  {
+    // known servers
+    StringVector serversVector = Options.getOptions().getOptionValues("chado_servers");
+    if(serversVector == null)
+    {
+      serversVector = new StringVector();
+      serversVector.add("snapshot");
+      serversVector.add("pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot?genedb_ro");
+    }
+    
+    
+    // set the default to the chado property value
+    if(System.getProperty("chado") != null &&
+       !serversVector.contains(System.getProperty("chado").trim()))
+    {
+      serversVector.add(0, "Default");
+      serversVector.add(1, System.getProperty("chado").trim());
+    }
+    
+    final String servers[][] = new String[2][serversVector.size()/2];
+    
+    int nserver = 0;
+    for(int i=0; i<serversVector.size(); i+=2)
+    {
+      servers[0][nserver] = (String) serversVector.get(i);
+      servers[1][nserver] = (String) serversVector.get(i+1);
+      nserver++;
+    }
+    
+    final JExtendedComboBox serverSelection = new JExtendedComboBox(
+        servers[0], false);
+    
+    serverSelection.addItemListener(new ItemListener()
+    {
+      public void itemStateChanged(ItemEvent arg0)
+      {
+        String selectedServerUrl = null;
+        for(int i=0; i<servers[0].length; i++)
+        {
+          if(serverSelection.getSelectedItem().equals(servers[0][i]))
+            selectedServerUrl = servers[1][i];
+        }
+        if(selectedServerUrl != null)
+          setFromURL(selectedServerUrl);
+      } 
+    });
+    return serverSelection;
   }
   
   public JPasswordField getPfield()
