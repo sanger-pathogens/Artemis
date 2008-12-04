@@ -433,7 +433,7 @@ class DatabaseLoginPrompt extends JPanel
     if(serversVector == null)
     {
       serversVector = new StringVector();
-      serversVector.add("snapshot");
+      serversVector.add("GeneDB (read-only)");
       serversVector.add("pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot?genedb_ro");
     }
     
