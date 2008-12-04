@@ -24,24 +24,30 @@
 
 package uk.ac.sanger.artemis.components.database;
 
-import java.awt.Container;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.Serializable;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntrySource;
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager;
+import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.InvalidKeyException;
 import uk.ac.sanger.artemis.io.EntryInformationException;
@@ -147,74 +153,11 @@ public class DatabaseEntrySource implements EntrySource, Serializable
    */
   public boolean setLocation(final boolean promptUser)
   {
-    Container bacross = new Container();
-    bacross.setLayout(new GridLayout(6, 2, 5, 5));
-
-    JLabel lServer = new JLabel("Server : ");
-    bacross.add(lServer);
-    JTextField inServer = new JTextField("localhost");
-    bacross.add(inServer);
-
-    JLabel lPort = new JLabel("Port : ");
-    bacross.add(lPort);
-    JTextField inPort = new JTextField("5432");
-    bacross.add(inPort);
-
-    JLabel lDB = new JLabel("Database : ");
-    bacross.add(lDB);
-    JTextField inDB = new JTextField("chado");
-    bacross.add(inDB);
-
-    JLabel lUser = new JLabel("User : ");
-    bacross.add(lUser);
-    JTextField inUser = new JTextField("afumigatus");
-    bacross.add(inUser);
-
-    JLabel lpasswd = new JLabel("Password : ");
-    bacross.add(lpasswd);
-    pfield = new JPasswordField(16);
-    bacross.add(pfield);
-
-    // given -Dchado=localhost:port/dbname?username
-    if(System.getProperty("chado") != null)
-    {
-      String db_url = System.getProperty("chado").trim();
-      
-      if(db_url.startsWith("jdbc:postgresql://"))
-        db_url = db_url.substring(18);
-      
-      int index;
-      if((index = db_url.indexOf(":")) > -1)
-      {
-        inServer.setText(db_url.substring(0, index));
-        int index2;
-        if((index2 = db_url.indexOf("/")) > -1)
-        {
-          inPort.setText(db_url.substring(index + 1, index2));
-          int index3;
-          if((index3 = db_url.indexOf("?")) > -1)
-          {
-            inDB.setText(db_url.substring(index2 + 1, index3));
-            
-            String user = db_url.substring(index3 + 1);
-            if(user.startsWith("user="))
-              user = user.substring(5);
-            inUser.setText(user);
-
-            /*
-             * if(!prompt_user) { location = "jdbc:postgresql://"
-             * +inServer.getText().trim()+ ":" +inPort.getText().trim()+ "/"
-             * +inDB.getText().trim()+ "?user=" +inUser.getText().trim(); return
-             * true; }
-             */
-          }
-        }
-      }
-    }
+    DatabaseLoginPrompt promptPanel = new DatabaseLoginPrompt();
 
     if(promptUser)
     {
-      int n = JOptionPane.showConfirmDialog(null, bacross,
+      int n = JOptionPane.showConfirmDialog(null, promptPanel,
                                           "Enter Database Address",
                                           JOptionPane.OK_CANCEL_OPTION,
                                           JOptionPane.QUESTION_MESSAGE);
@@ -222,11 +165,12 @@ public class DatabaseEntrySource implements EntrySource, Serializable
         return false;
     }
     
+    pfield = promptPanel.getPfield();
     location = "jdbc:postgresql://" + 
-               inServer.getText().trim() + ":" +
-               inPort.getText().trim() + "/" +
-               inDB.getText().trim() + "?user=" +
-               inUser.getText().trim();
+               promptPanel.getServer() + ":" +
+               promptPanel.getPort() + "/" +
+               promptPanel.getDb() + "?user=" +
+               promptPanel.getUser();
 
     return true;
   }
@@ -366,5 +310,181 @@ public class DatabaseEntrySource implements EntrySource, Serializable
   public void setReadOnly(boolean readOnly)
   {
     this.readOnly = readOnly;
+  }
+ 
+}
+
+class DatabaseLoginPrompt extends JPanel
+{
+  private static final long serialVersionUID = 1L;
+  private JPasswordField pfield;
+  private JTextField server;
+  private JTextField port;
+  private JTextField db;
+  private JTextField user;
+  public DatabaseLoginPrompt()
+  {
+    super(new GridBagLayout());
+
+    final GridBagConstraints c = new GridBagConstraints();
+    
+    // column 1
+    int nrow = 1;
+    c.anchor = GridBagConstraints.EAST;
+    c.gridx = 0;
+    c.gridy = nrow;
+    add(new JLabel("Server : "), c);
+
+    c.gridy = ++nrow;
+    add(new JLabel("Port : "), c);
+
+    c.gridy = ++nrow;
+    add(new JLabel("Database : "), c);
+
+    c.gridy = ++nrow;
+    add(new JLabel("User : "), c);
+
+    c.gridy = ++nrow;
+    add(new JLabel("Password : "), c);
+
+    // column 2
+    nrow = 1;
+    c.anchor = GridBagConstraints.WEST;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.gridx = 1;
+    c.gridy = nrow;
+    server = new JTextField("localhost");
+    add(server, c);
+    
+    c.gridy = ++nrow;
+    port = new JTextField("5432");
+    add(port, c);
+
+    c.gridy = ++nrow;
+    db = new JTextField("chado");
+    add(db, c);
+
+    c.gridy = ++nrow;
+    user = new JTextField("afumigatus");
+    add(user, c);
+    
+    c.gridy = ++nrow;
+    pfield = new JPasswordField(16);
+    add(pfield, c);
+
+    // given -Dchado=localhost:port/dbname?username
+    if(System.getProperty("chado") != null)
+      setFromURL(System.getProperty("chado").trim());
+    
+    // known servers
+    StringVector serversVector = Options.getOptions().getOptionValues("chado_servers");
+    if(serversVector == null)
+    {
+      serversVector = new StringVector();
+      serversVector.add("snapshot");
+      serversVector.add("pathdbsrv1-dmz.sanger.ac.uk:5432/snapshot?genedb_ro");
+    }
+    
+    if(System.getProperty("chado") != null &&
+       !serversVector.contains(System.getProperty("chado").trim()))
+    {
+      serversVector.add(0, "Default");
+      serversVector.add(1, System.getProperty("chado").trim());
+    }
+    
+    final String servers[][] = new String[2][serversVector.size()/2];
+    
+    int nserver = 0;
+    for(int i=0; i<serversVector.size(); i+=2)
+    {
+      servers[0][nserver] = (String) serversVector.get(i);
+      servers[1][nserver] = (String) serversVector.get(i+1);
+      nserver++;
+    }
+    
+    final JExtendedComboBox serverSelection = new JExtendedComboBox(
+        servers[0], false);
+    
+    serverSelection.addItemListener(new ItemListener()
+    {
+      public void itemStateChanged(ItemEvent arg0)
+      {
+        String selectedServerUrl = null;
+        for(int i=0; i<servers[0].length; i++)
+        {
+          if(serverSelection.getSelectedItem().equals(servers[0][i]))
+            selectedServerUrl = servers[1][i];
+        }
+        if(selectedServerUrl != null)
+          setFromURL(selectedServerUrl);
+      } 
+    });
+    
+    c.gridx = 1;
+    c.gridy = ++nrow;
+    add(serverSelection, c);
+    
+    c.gridx = 0;
+    c.anchor = GridBagConstraints.EAST;
+    add(new JLabel("Available databases : "), c);
+  }
+  
+  private void setFromURL(String db_url)
+  {
+    if(db_url.startsWith("jdbc:postgresql://"))
+      db_url = db_url.substring(18);
+    
+    int index;
+    if((index = db_url.indexOf(":")) > -1)
+    {
+      server.setText(db_url.substring(0, index));
+      int index2;
+      if((index2 = db_url.indexOf("/")) > -1)
+      {
+        port.setText(db_url.substring(index + 1, index2));
+        int index3;
+        if((index3 = db_url.indexOf("?")) > -1)
+        {
+          db.setText(db_url.substring(index2 + 1, index3));
+          
+          String userStr = db_url.substring(index3 + 1);
+          if(userStr.startsWith("user="))
+            userStr = userStr.substring(5);
+          user.setText(userStr);
+
+          /*
+           * if(!prompt_user) { location = "jdbc:postgresql://"
+           * +inServer.getText().trim()+ ":" +inPort.getText().trim()+ "/"
+           * +inDB.getText().trim()+ "?user=" +inUser.getText().trim(); return
+           * true; }
+           */
+        }
+      }
+    }  
+  }
+  
+  public JPasswordField getPfield()
+  {
+    return pfield;
+  }
+
+  public String getDb()
+  {
+    return db.getText().trim();
+  }
+
+  public String getPort()
+  {
+    return port.getText().trim();
+  }
+
+  public String getServer()
+  {
+    return server.getText().trim();
+  }
+
+  public String getUser()
+  {
+    return user.getText().trim();
   }
 }
