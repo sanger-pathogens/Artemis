@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RawStreamSequence.java,v 1.9 2005-12-12 15:56:45 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/RawStreamSequence.java,v 1.10 2008-12-09 11:48:14 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -35,7 +35,7 @@ import java.util.Vector;
  *  This is a subclass of StreamSequence containing raw sequence.
  *
  *  @author Kim Rutherford
- *  @version $Id: RawStreamSequence.java,v 1.9 2005-12-12 15:56:45 tjc Exp $
+ *  @version $Id: RawStreamSequence.java,v 1.10 2008-12-09 11:48:14 tjc Exp $
  **/
 
 public class RawStreamSequence extends StreamSequence 
@@ -286,6 +286,31 @@ public class RawStreamSequence extends StreamSequence
       }
     }
   }
+  
+  /**
+   * Set the fasta header positions when the complete sequence is reverse complemented.
+   * @param contigRanges
+   */
+  public void setFastaHeaderPositionsOnReverseComplement(final RangeVector contigRanges)
+  {
+    if(fasta_header_positions != null && fasta_header_positions.size() > 0)
+    {
+      int length = length();
+
+      for(int i = 0 ; i < fasta_header_positions.size(); ++i)
+      {
+        int current_position = ((Integer)fasta_header_positions.elementAt(i)).intValue();
+        for(int j=0; j<contigRanges.size(); j++)
+        {
+          Range range = (Range) contigRanges.get(j);
+          int start = range.getStart()-1;
+          if(start == current_position)
+            fasta_header_positions.set(i, new Integer(length-range.getEnd()));
+        }
+      }
+    }
+  }
+
 
   /**
    *  Return an array containing the character positions of the fasta header
