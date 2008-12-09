@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.58 2008-11-07 16:11:34 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.59 2008-12-09 11:50:25 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -43,6 +43,7 @@ import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.OutOfDateException;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.RawStreamSequence;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -59,7 +60,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.58 2008-11-07 16:11:34 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.59 2008-12-09 11:50:25 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -659,12 +660,12 @@ public class EditMenu extends SelectionMenu
         if(selected_features.size() == 1)
         {
           final Feature selection_feature = selected_features.elementAt(0);
-
+          final Range range = selection_feature.getMaxRawRange();
           final YesNoDialog dialog =
                 new YesNoDialog (getParentFrame (),
                                  "Are you sure you want to reverse complement this " +
-                                 "region "+ selection_feature.getFirstBase()+".."+
-                                            selection_feature.getLastBase()+"?");
+                                 "region "+ range.getStart()+".."+
+                                            range.getEnd()+"?");
          if(!dialog.getResult())
            return;
 
@@ -2747,8 +2748,10 @@ public class EditMenu extends SelectionMenu
    *  Reverse and complement the sequence and all the features in all Entry
    *  objects.
    **/
-  private void reverseAndComplement () {
-    if (getEntryGroup ().isReadOnly ()) {
+  private void reverseAndComplement () 
+  {
+    if (getEntryGroup ().isReadOnly ())
+    {
       final String message =
         "one or more of the entries or features are read only - " +
         "cannot continue";
@@ -2761,15 +2764,20 @@ public class EditMenu extends SelectionMenu
                        "Are you sure you want to reverse complement all " +
                        "entries?");
 
-    if (!dialog.getResult ()) {
+    if (!dialog.getResult ())
       return;
-    }
 
-    try {
+    try
+    {  
+      if(getEntryGroup().getBases().getSequence() instanceof RawStreamSequence)
+        setFastaHeaderPositionsOnReverseComplement(
+            (RawStreamSequence) getEntryGroup().getBases().getSequence());
+      
       getEntryGroup ().reverseComplement ();
-
       makeSelectionStartVisible ();
-    } catch (ReadOnlyException e) {
+    } 
+    catch (ReadOnlyException e) 
+    {
       final String message =
         "one of the entries is read only - cannot continue";
       new MessageDialog (getParentFrame (), message);
@@ -2777,6 +2785,29 @@ public class EditMenu extends SelectionMenu
     }
   }
 
+  /**
+   * Set the fasta header positions.
+   * @param sequence
+   */
+  private void setFastaHeaderPositionsOnReverseComplement(final RawStreamSequence sequence)
+  {
+    // find all fasta_record features
+    final FeaturePredicate key_predicate_contig
+          = new FeatureKeyQualifierPredicate(new Key("fasta_record"),
+                                             null, // match any qialifier
+                                             false);
+
+    final RangeVector contigRanges = new RangeVector();
+    for(int i=0; i<getEntryGroup().getAllFeatures().size(); i++)
+    {
+      uk.ac.sanger.artemis.Feature contig = 
+           getEntryGroup().getAllFeatures().elementAt(i);
+      if(key_predicate_contig.testPredicate(contig))
+        contigRanges.add(contig.getLocation().getTotalRange());
+    }
+    sequence.setFastaHeaderPositionsOnReverseComplement(contigRanges);  
+  }
+  
   /**
    *  Delete the selected bases after asking the user for confimation.
    **/
