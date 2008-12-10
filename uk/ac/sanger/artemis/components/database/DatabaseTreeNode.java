@@ -56,7 +56,8 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
          { DATABASETREENODE, DataFlavor.stringFlavor };
   
   private String featureId;
-  private Organism organism;
+  private transient Organism organism;
+  private String organismCommonName;
   private boolean isLeaf = false;
   private String userName;
   private DatabaseDocument dbDoc;
@@ -93,6 +94,7 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     this.organism = organism;
     this.userName = userName;
     this.dbDoc    = dbDoc;
+    setOrganismCommonName();
   }
 
   /**
@@ -111,6 +113,19 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     this.organism  = organism;
     this.featureId = featureId;
     this.userName  = userName;
+    setOrganismCommonName();
+  }
+  
+  public String getOrganismCommonName()
+  {
+	return organismCommonName;
+  }
+  
+  private void setOrganismCommonName()
+  {
+	this.organismCommonName = getOrganism().getCommonName();
+	if(organismCommonName == null || organismCommonName.equals(""))
+	  organismCommonName = getOrganism().getGenus() + "." + getOrganism().getSpecies();
   }
   
   /** @return   true if node is a directory */

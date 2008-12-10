@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.32 2008-10-22 14:41:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ArtemisMain.java,v 1.33 2008-12-10 16:43:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -53,7 +53,7 @@ import javax.swing.SwingUtilities;
  *  The main window for the Artemis sequence editor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: ArtemisMain.java,v 1.32 2008-10-22 14:41:21 tjc Exp $
+ *  @version $Id: ArtemisMain.java,v 1.33 2008-12-10 16:43:38 tjc Exp $
  **/
 
 public class ArtemisMain extends Splash 
@@ -146,9 +146,6 @@ public class ArtemisMain extends Splash
     //  Options.getOptions().getPropertyTruthValue("sanger_options");
 
     //makeMenuItem(file_menu, "Database Entry ...", menu_listener);
-    if(System.getProperty("chado") != null && 
-        (args.length < 1 || args[0].indexOf(':') == -1))
-      fm = new LocalAndRemoteFileManager(ArtemisMain.this);
 
     menu_listener = new ActionListener() 
     {
@@ -281,10 +278,14 @@ public class ArtemisMain extends Splash
   /**
    *  Read the entries named in args and in the diana.ini file.
    **/
-  public void readArgsAndOptions(final String [] args)
+  protected void readArgsAndOptions(final String [] args)
   {
     if(args.length == 0) 
     {
+      if(System.getProperty("chado") != null && 
+         (args.length < 1 || args[0].indexOf(':') == -1))
+        fm = new LocalAndRemoteFileManager(ArtemisMain.this);
+        
       // open the entries given in the options file(diana.ini)
       readDefaultEntries();
       return;

@@ -124,9 +124,7 @@ public class TextFieldSink extends JTextField implements DropTargetListener
         dbNode = 
           (DatabaseTreeNode)t.getTransferData(DatabaseTreeNode.DATABASETREENODE);
         
-        String name = dbNode.getOrganism().getCommonName();
-        if(name == null || name.equals(""))
-          name = dbNode.getOrganism().getGenus() + "." + dbNode.getOrganism().getSpecies();
+        String name = dbNode.getOrganismCommonName();
         this.replaceSelection(name+":featureId="+dbNode.getFeatureId());
 
         e.dropComplete(true);

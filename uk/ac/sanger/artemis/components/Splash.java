@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.40 2008-11-19 12:22:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.41 2008-12-10 16:43:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.40 2008-11-19 12:22:14 tjc Exp $
+ *  @version $Id: Splash.java,v 1.41 2008-12-10 16:43:38 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame
@@ -89,6 +89,7 @@ abstract public class Splash extends JFrame
 
   protected JMenu options_menu;
 
+  private JCheckBoxMenuItem geneCode[];
   private String geneticCode;
 
   private static boolean save_wd_properties = false;
@@ -906,7 +907,7 @@ abstract public class Splash extends JFrame
   * Construct menu for genetic code tables.
   *
   */
-  protected void makeGeneticCodeMenu(final JMenu options_menu)
+  private void makeGeneticCodeMenu(final JMenu options_menu)
   {
     // available genetic codes
 
@@ -939,7 +940,8 @@ abstract public class Splash extends JFrame
     }
     
     ButtonGroup gcodeGroup = new ButtonGroup();
-
+    geneCode = new JCheckBoxMenuItem[gcodes.length];
+    
     for(int i = 0; i< gcodes.length; i++)
     {
       if(gcodes[i].equals("-"))
@@ -952,19 +954,20 @@ abstract public class Splash extends JFrame
 
       String num = Integer.toString(i+1);
       final String gc_name = num+". "+gcodes[i];
-      final JCheckBoxMenuItem geneCode = new JCheckBoxMenuItem(gc_name);
-      gcodeGroup.add(geneCode);
-      geneCode.setActionCommand(num);
+      geneCode[i] = new JCheckBoxMenuItem(gc_name);
+      gcodeGroup.add(geneCode[i]);
+      final int menuNum = i;
+      geneCode[i].setActionCommand(num);
 
-      geneCode.addItemListener(new ItemListener()
+      geneCode[i].addItemListener(new ItemListener()
       {
         public void itemStateChanged(ItemEvent event)
         {
-          if(geneCode.getState())
+          if(geneCode[menuNum].getState())
           {
             geneticCode = gc_name;
-            String tab = "translation_table_"+geneCode.getActionCommand();
-            String startCodons = "start_codons_"+geneCode.getActionCommand();
+            String tab = "translation_table_"+geneCode[menuNum].getActionCommand();
+            String startCodons = "start_codons_"+geneCode[menuNum].getActionCommand();
 
             StringVector options_file_table =
                          Options.getOptions().getOptionValues(tab);
@@ -1023,11 +1026,40 @@ abstract public class Splash extends JFrame
           }
         }
       });
-      options_menu.add(geneCode);
+      options_menu.add(geneCode[i]);
 
       if(i == default_code)
-        geneCode.setState(true);
+        geneCode[i].setState(true);
     }
+  }
+  
+  /**
+   * Set the Genetic Code number
+   * @param geneticCodeValue
+   */
+  public void setTranslationTable(final String geneticCodeValue)
+  {
+	for(int i=0;i<geneCode.length;i++)
+	{
+	  if(geneCode[i] == null)
+		continue;
+
+	  if( geneCode[i].getActionCommand().equals(geneticCodeValue) && 
+	     !geneCode[i].getState() )
+	  {  
+		int val = JOptionPane.showConfirmDialog(null, 
+		    		"Change translation table to:\n"+
+		    		geneCode[i].getText(), 
+			    	"Confirm Translation Table Change",
+		    		JOptionPane.OK_CANCEL_OPTION);
+		if(val == JOptionPane.CANCEL_OPTION)
+		  return;
+		logger4j.debug("SET GENETIC CODE translationTable="
+					+ geneticCodeValue);
+	    geneCode[i].setState(true);
+		break; 
+	  }
+	}
   }
   
   /**

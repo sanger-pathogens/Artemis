@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.20 2008-11-28 17:52:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.21 2008-12-10 16:43:38 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -37,6 +37,7 @@ import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.Range;
 
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JTree;
 import javax.swing.JScrollPane;
 import javax.swing.JPanel;
@@ -46,6 +47,7 @@ import javax.swing.border.Border;
 import javax.swing.tree.TreePath;
 
 import org.gmod.schema.organism.Organism;
+import org.gmod.schema.organism.OrganismProp;
 import org.gmod.schema.sequence.Feature;
 
 import java.awt.BorderLayout;
@@ -53,11 +55,13 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.io.*;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class DatabaseJPanel extends JPanel
@@ -136,15 +140,40 @@ public class DatabaseJPanel extends JPanel
       String node_name = (String)seq_node.getUserObject();
       String userName = doc.getUserName();
 
-      String id = seq_node.getFeatureId(); 
+      final String id = seq_node.getFeatureId();
       if(id != null)
-        getEntryEditFromDatabase(id, entry_source, tree, 
+      {
+    	getEntryEditFromDatabase(id, entry_source, tree, 
             status_line, stream_progress_listener, 
             splitGFFEntry, splash_main, 
             node_name, userName);
+    	
+    	Frame[] frames = JFrame.getFrames();
+    	Splash splash = null;
+        for(int i=0;i<frames.length;i++)
+        {
+          if(frames[i] instanceof Splash)
+          {
+        	splash = (Splash)frames[i];
+        	break;
+          }
+        }
+        
+        if(splash != null)
+        {
+          final Iterator it = seq_node.getOrganism().getOrganismProps().iterator();
+          while (it.hasNext()) 
+          {
+	        OrganismProp organismProp = (OrganismProp) it.next();
+     	    if (organismProp.getCvTerm().getName().equals("translationTable"))
+		   	  splash.setTranslationTable(organismProp.getValue());
+		  }
+        }
+      }
     }
     catch(NullPointerException npe)
     {
+    	npe.printStackTrace();
     }
   }
   
