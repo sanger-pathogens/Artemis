@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+ 
+<!DOCTYPE sqlMap 
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd"> 
+ 
+<sqlMap namespace="OrganismProp">    
+      <resultMap id="map-organismprop-with-cvterm-lazy" 
+                class="org.gmod.schema.organism.OrganismProp">
+        <result property="value" column="value" />
+        <result property="rank" column="rank" />
+        <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
+     </resultMap>
+     
+     <select id="getOrganismPropByOrganismIdLazy" resultMap="map-organismprop-with-cvterm-lazy">
+       SELECT type_id, value, rank 
+       FROM organismprop
+       WHERE organism_id=#organism_id#
+     </select>    
+</sqlMap> 

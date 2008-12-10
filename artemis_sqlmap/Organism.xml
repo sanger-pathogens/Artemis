@@ -10,7 +10,17 @@
       <flushInterval hours="24"/>  
       <property name="cache-size" value="100" /> 
     </cacheModel> 
-
+    
+    <resultMap id="map-organism" class="org.gmod.schema.organism.Organism">
+       <result property="organismId" column="organismId"/>
+       <result property="abbreviation" column="abbreviation"/>
+       <result property="commonName" column="commonName"/>
+       <result property="genus" column="genus"/>
+       <result property="species" column="species"/>
+       <result property="comment" column="comment"/>
+       <result property="organismProps" column="organismId" select="getOrganismPropByOrganismIdLazy"/>
+    </resultMap>
+    
     <select id="getOrganism"
      resultClass="org.gmod.schema.organism.Organism"> 
       SELECT organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment 
@@ -60,7 +70,7 @@
 		</isNull>
     </select>
 	
-	<select id="getOrganismsContainingSrcFeatures" resultClass="org.gmod.schema.organism.Organism">
+	<select id="getOrganismsContainingSrcFeatures" resultMap="map-organism">
 	  SELECT DISTINCT ON( feature.organism_id )  
 		organism.organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment
 		FROM feature 
@@ -70,7 +80,7 @@
 		AND ( <include refid="source_feature_cvterm_names"/> ) 
 	</select>
 	
-	<select id="getTopLevelOrganisms" resultClass="org.gmod.schema.organism.Organism">
+	<select id="getTopLevelOrganisms" resultMap="map-organism">
 	  SELECT DISTINCT ON( feature.organism_id )  
 		organism.organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment
 		FROM feature 
