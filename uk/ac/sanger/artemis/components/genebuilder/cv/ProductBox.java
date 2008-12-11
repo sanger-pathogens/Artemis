@@ -27,6 +27,7 @@ package uk.ac.sanger.artemis.components.genebuilder.cv;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.util.StringTokenizer;
 
 import javax.swing.Box;
 import javax.swing.JLabel;
@@ -245,12 +246,14 @@ class ProductBox extends AbstractCvBox
      */
     private int getNumberOfLines(FontMetrics fm, final String text, final int width)
     {
-      final String words[] = text.split("\\s");
+      String delim = " \\t\\n\\f\\r";
+      StringTokenizer tok = new StringTokenizer(text, delim, true);
+      //final String words[] = text.split("\\s");
       int lineOffset = 0;
       int lineNumber = 1;
-      for(int i=0; i<words.length;i++)
+      while(tok.hasMoreTokens())
       {
-        int thisWordLength = fm.stringWidth(words[i]);
+        int thisWordLength = fm.stringWidth(tok.nextToken());
         lineOffset+=thisWordLength;
         if(lineOffset>width)
         {
@@ -258,7 +261,7 @@ class ProductBox extends AbstractCvBox
           lineOffset = thisWordLength;
         }
       }
-      
+
       /*int stringWidth = fm.stringWidth(text);
       int rows = Math.round((stringWidth/width)+.5f);*/
       return lineNumber;
