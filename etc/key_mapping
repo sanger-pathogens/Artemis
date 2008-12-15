@@ -17,4 +17,4 @@ PCR_product                                misc_feature    note=PCR_product
 dinucleotide_repeat_microsatellite_feature misc_feature    note=dinucleotide_repeat_microsatellite_feature
 EST_match                                  misc_feature    note=EST_match
 match_part                                 misc_feature    note=match_part
-direct_repeat                              misc_feature    note=direct_repeat
+direct_repeat                              repeat_region   rpt_type=direct
