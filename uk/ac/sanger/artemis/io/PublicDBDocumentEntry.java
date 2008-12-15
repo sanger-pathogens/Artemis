@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.21 2008-12-15 11:40:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.22 2008-12-15 14:07:57 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.21 2008-12-15 11:40:53 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.22 2008-12-15 14:07:57 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -321,6 +321,21 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         }
  
         newQualifier = new Qualifier("GO", tmpNewValues);
+      }
+      
+      if(newQualifier.getName().equals("product"))
+      {
+        final StringVector newValues = newQualifier.getValues();
+        final StringVector tmpNewValues = new StringVector();
+        for(int j=0; j<newValues.size(); j++)
+        {
+          String val = (String)newValues.get(j);
+          if(val.startsWith("term=") && val.endsWith(";"))
+            val = val.substring(5,  val.length()-1);
+          tmpNewValues.add(val);
+        }
+ 
+        newQualifier = new Qualifier("product", tmpNewValues);
       }
       
       if(newQualifier.getName().equals("orthologous_to") ||
