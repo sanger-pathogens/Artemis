@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.20 2008-11-25 11:01:30 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/PublicDBDocumentEntry.java,v 1.21 2008-12-15 11:40:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,6 +33,7 @@ import uk.ac.sanger.artemis.util.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -44,7 +45,7 @@ import java.util.regex.Pattern;
  *  entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: PublicDBDocumentEntry.java,v 1.20 2008-11-25 11:01:30 tjc Exp $
+ *  @version $Id: PublicDBDocumentEntry.java,v 1.21 2008-12-15 11:40:53 tjc Exp $
  **/
 
 public class PublicDBDocumentEntry extends SimpleDocumentEntry
@@ -213,6 +214,7 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         return null;
       
       qualifiers.removeQualifierByName("ID");
+      int ntranscripts = 0;
       // add transcript & protein qualifiers to CDS
       try
       {
@@ -221,12 +223,22 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
           combineQualifiers(qualifiers, protein.getQualifiers().copy());
 
         if(transcript != null)
-          combineQualifiers(qualifiers, transcript.getQualifiers().copy());
+          ntranscripts = handleTranscripts(qualifiers, transcript, ntranscripts, chadoGene);
       }
       catch(NullPointerException npe){}
       
       // add gene qualifiers to CDS
-      combineQualifiers(qualifiers, chadoGene.getGene().getQualifiers().copy());
+      QualifierVector geneQualifiers = chadoGene.getGene().getQualifiers().copy();
+      
+      // multiple transcripts
+      if(ntranscripts > 1 && geneQualifiers.getQualifierByName("ID") != null)
+      {
+      	Qualifier newIDQualifier = 
+        	new Qualifier("shared_id", (String)geneQualifiers.getQualifierByName("ID").getValues().get(0));
+    	addNewQualifier(qualifiers, newIDQualifier);
+    	geneQualifiers.removeQualifierByName("ID");
+      }
+      combineQualifiers(qualifiers, geneQualifiers);
     }
     
     try
@@ -293,8 +305,9 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
       
       if( newQualifier.getName().equals("ID") &&
           ((String)newQualifier.getValues().get(0)).indexOf(':') > -1 )
-        continue;
-      
+      {
+    	continue;
+      }
       
       // convert GO evidence to codes (e.g. ND=No biological Data available)
       if(newQualifier.getName().equals("GO"))
@@ -348,23 +361,67 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
         continue;
       }
       
-      if( (qualifier = qualifiers.getQualifierByName(newQualifier.getName())) != null)
-      { 
-        final StringVector newValues = newQualifier.getValues();
-        final StringVector values = qualifier.getValues();
-        for(int j=0; j<newValues.size(); j++)
-        {
-          String newValue = (String) newValues.get(j);
-          if(!values.contains(newValue))
-            qualifier.addValue(newValue);
-        }
-      }
-      else
-        qualifiers.addElement(newQualifier);
+      addNewQualifier(qualifiers, newQualifier);
     }
   }
   
+  /**
+   * Add a new qualifier to a list of qualifiers
+   * @param qualifiers
+   * @param newQualifier
+   */
+  private void addNewQualifier(QualifierVector qualifiers, Qualifier newQualifier)
+  {
+	Qualifier qualifier;
+    if( (qualifier = qualifiers.getQualifierByName(newQualifier.getName())) != null)
+    { 
+      final StringVector newValues = newQualifier.getValues();
+      final StringVector values = qualifier.getValues();
+      for(int j=0; j<newValues.size(); j++)
+      {
+        String newValue = (String) newValues.get(j);
+        if(!values.contains(newValue))
+          qualifier.addValue(newValue);
+      }
+    }
+    else
+      qualifiers.addElement(newQualifier);
+  }
 
+  /**
+   * Routine to combine transcript qualifiers and for multiple transcripts 
+   * create links to the other transcripts (other_transcript) and 
+   * to use the transcript ID.
+   * @param qualifiers
+   * @param transcript
+   * @param ntranscripts
+   * @param chadoGene
+   */
+  private int handleTranscripts(QualifierVector qualifiers, 
+		                        Feature transcript,
+		                        int ntranscripts,
+		                        ChadoCanonicalGene chadoGene)
+  {
+	QualifierVector transcriptQualifiers = transcript.getQualifiers().copy();
+    combineQualifiers(qualifiers, transcriptQualifiers);
+    ntranscripts = chadoGene.getTranscripts().size();
+    if(ntranscripts > 1)
+    {
+      addNewQualifier(qualifiers, transcriptQualifiers.getQualifierByName("ID"));
+      List transcripts = chadoGene.getTranscripts();
+      for(int i=0;i<ntranscripts;i++)
+      {
+        Feature thisTranscript = (Feature)transcripts.get(i);
+        String thisTranscriptName = GeneUtils.getUniqueName(thisTranscript);
+        if(!thisTranscriptName.equals( GeneUtils.getUniqueName(transcript )))
+        {
+          Qualifier qualifier = new Qualifier("other_transcript", thisTranscriptName);
+          addNewQualifier(qualifiers, qualifier);
+        }
+      }
+    }
+    return ntranscripts;
+  }
   
   /**
    * Maps database (SO) keys to EMBl keys.
