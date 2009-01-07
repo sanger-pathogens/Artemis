@@ -1377,9 +1377,13 @@ called "ambiguous bases".
 <SECT1 ID="RUNMENU">
   <TITLE>The Run Menu</TITLE>
   <PARA>
-This menu is used for running external programs on UNIX or GNU/Linux and is
-not available
-on other operating systems.  Once configured correctly, running an external
+This menu is primarily used for running external programs on UNIX.
+Additionally there is a menu option to send sequences from selected
+features to the <ULINK URL="http://blast.ncbi.nlm.nih.gov/Blast.cgi"
+TYPE="external">NCBI web BLAST</ULINK>.
+  </PARA>
+  <PARA>
+Once configured correctly, running an external
 program should be as simple as selecting some features of interest, then
 choosing one of the items from the run menu.  When the external programs
 finishes the results can viewed using the "Search Results" item in the View
