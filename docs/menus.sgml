@@ -880,6 +880,56 @@ that range.  Any features that overlap the end of the range will be truncated.
     </PARA>
   </SECT2>
 
+  <SECT2 ID="EDITMENU-FINDANDREPLACE">
+    <TITLE>Find Or Replace Qualifier Text</TITLE>
+    <PARA>
+    This opens a search window with options to find or replace qualifier
+    text. The search can be restricted to features with a given key and/or 
+    it can be restricted to a given qualifier name.
+    </PARA>
+    <PARA>
+    Boolean operators (and/or) can be used in the search. Clicking on the
+    <LITERAL>Show Boolean Search Options</LITERAL> displays 4 options. 
+
+    <ORDEREDLIST>
+      <LISTITEM>
+      <PARA>
+      The <LITERAL>Use boolean operators (and, or, & |)</LITERAL> means that
+      it uses any of these operators that are in the <LITERAL>Find</LITERAL> text field.
+      </PARA>
+      </LISTITEM>
+      <LISTITEM>
+      <PARA>
+      The <LITERAL>Match any string (i.e. x OR y)</LITERAL> means that the words in
+      the <LITERAL>Find</LITERAL> text field will be separated by an OR
+      condition. So that it finds those features with qulaifiers that contain any of the 
+      words.
+      </PARA>
+      </LISTITEM>
+      <LISTITEM>
+      <PARA>
+      The <LITERAL>Match all string (i.e. x AND y)</LITERAL> means that the words in
+      the <LITERAL>Find</LITERAL> text field will be separated by an AND
+      condition. So that it finds those features with qulaifiers that contain all of the
+      words.
+      </PARA>
+      </LISTITEM>
+      <LISTITEM>
+      <PARA>
+      The <LITERAL>No boolean search</LITERAL> option is the default. This
+      means it searches for those features with qualifiers that contain the complete
+      text from the <LITERAL>Find</LITERAL> text field.
+      </PARA>
+      </LISTITEM>
+    </ORDEREDLIST>
+    </PARA>
+    <PARA>
+    In addition selecting the Duplicate Qualifiers tab provides options to
+    search for or delete duplicate qualifiers.
+    </PARA>
+  </SECT2>
+
+
   <SECT2 ID="QUALIFIERS">
   <TITLE>Qualifier(s) of Selected Feature</TITLE>
   <SECT3 ID="EDITMENU-CHANGE-QUALIFIERS">
