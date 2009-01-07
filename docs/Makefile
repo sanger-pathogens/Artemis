@@ -1,8 +1,8 @@
-# $Header: //tmp/pathsoft/artemis/docs/Makefile,v 1.1 2004-06-10 09:19:58 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/docs/Makefile,v 1.2 2009-01-07 09:25:57 tjc Exp $
 
 SHELL=/bin/sh
 
-SANGER_CAT = /nfs/disk222/yeastpub/bio-soft/docbook-sgml/dtd_4.1/CATALOG
+SANGER_CAT = /software/pathogen/projects/artemis/docbook-sgml/dtd_4.1/CATALOG
 
 JADE = jade
 JADE_PARAM = -t sgml -c $(SANGER_CAT) -d ../artemis.dsl\#html
