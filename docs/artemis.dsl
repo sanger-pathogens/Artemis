@@ -1,10 +1,10 @@
 <!DOCTYPE style-sheet PUBLIC "-//James Clark//DTD DSSSL Style Sheet//EN" [
-<!ENTITY html-docbook-ss SYSTEM "/nfs/disk222/yeastpub/bio-soft/docbook-sgml/stylesheets_1.64/html/docbook.dsl" CDATA DSSSL>
-<!ENTITY tex-docbook-ss SYSTEM "/nfs/disk222/yeastpub/bio-soft/docbook-sgml/stylesheets_1.64/print/docbook.dsl" CDATA DSSSL>
+<!ENTITY html-docbook-ss SYSTEM "/software/pathogen/projects/artemis/docbook-sgml/stylesheets_1.64/html/docbook.dsl" CDATA DSSSL>
+<!ENTITY tex-docbook-ss SYSTEM "/software/pathogen/projects/artemis/docbook-sgml/stylesheets_1.64/print/docbook.dsl" CDATA DSSSL>
 ]>
 
 <!-- 
-$Header: //tmp/pathsoft/artemis/docs/artemis.dsl,v 1.1 2004-06-10 09:20:11 tjc Exp $
+$Header: //tmp/pathsoft/artemis/docs/artemis.dsl,v 1.2 2009-01-07 09:26:49 tjc Exp $
 -->
 
 <style-specification id="html" use="html-spec">
