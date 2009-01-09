@@ -64,6 +64,7 @@ import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.components.SwingWorker;
@@ -280,7 +281,53 @@ public class GeneEdit
     return mbar;
   }
 
-  public static void showGeneEditor(final String schema,
+  /**
+   * Make an entry for a single gene.
+   * @param organism
+   * @param uniquename
+   * @param doc
+   * @param stream_progress_listener
+   * @return
+   */
+  public static DatabaseDocumentEntry makeGeneEntry(final String organism, 
+                                      final String uniquename,
+                                      final DatabaseDocument doc,
+                                      final InputStreamProgressListener stream_progress_listener)
+  {
+    DatabaseDocumentEntry db_entry = null;
+    DatabaseDocument newdoc = new DatabaseDocument(doc, 
+            uniquename, organism, true, stream_progress_listener);
+    newdoc.setLazyFeatureLoad(false);
+    
+    try
+    {
+      db_entry = new DatabaseDocumentEntry(newdoc, null);
+    }
+    catch(EntryInformationException e)
+    {
+      e.printStackTrace();
+    }
+    catch(IOException e)
+    {
+      e.printStackTrace();
+    }
+    catch(NullPointerException npe)
+    {
+      JOptionPane.showMessageDialog(null, organism+":"+uniquename+
+          " not found!", "Warning", JOptionPane.WARNING_MESSAGE);
+    }
+    return db_entry;
+  }
+  
+  
+  
+  /**
+   * 
+   * @param organism
+   * @param uniqueName
+   * @param dbentry
+   */
+  public static void showGeneEditor(final String organism,
                                     final String uniqueName,
                                     final DatabaseDocumentEntry dbentry)
   {
