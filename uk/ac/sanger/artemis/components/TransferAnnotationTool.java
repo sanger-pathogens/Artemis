@@ -38,14 +38,25 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeaturePredicate;
 import uk.ac.sanger.artemis.FeatureVector;
+import uk.ac.sanger.artemis.SimpleEntryGroup;
+import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
+import uk.ac.sanger.artemis.components.genebuilder.GeneEdit;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
+import uk.ac.sanger.artemis.sequence.NoSequenceException;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
+import uk.ac.sanger.artemis.util.InputStreamProgressListener;
+import uk.ac.sanger.artemis.util.OutOfRangeException;
 
 class TransferAnnotationTool extends JFrame
 {
@@ -62,9 +73,12 @@ class TransferAnnotationTool extends JFrame
     "orthologous_to",
     "paralogous_to",
     "fasta_file",
-    "blastp_file"
+    "blastp_file",
+    "blastn_file",
+    "systematic_id",
+    "previous_systematic_id"
   };
-
+  
   public TransferAnnotationTool(final Feature feature, 
   		                          final EntryGroup entryGroup)
   {
@@ -106,6 +120,8 @@ class TransferAnnotationTool extends JFrame
       c.gridy = ++nrows;
     }
 
+    
+    
     c.gridx = 1;
     c.gridy = 1;
     c.gridheight = nrows;
@@ -132,16 +148,23 @@ class TransferAnnotationTool extends JFrame
     });
     pane.add(toggle, c);
 
+    final JCheckBox sameKeyCheckBox = new JCheckBox("Add to feature of same key", true);
+
     final JButton transfer = new JButton(">>TRANSFER");
     transfer.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
-        transferAnnotation(qualifierCheckBoxes, geneNameTextArea, feature, entryGroup);
+        transferAnnotation(qualifierCheckBoxes, geneNameTextArea, feature, 
+        		entryGroup, sameKeyCheckBox.isSelected());
       }
     });
     c.gridx = 1;
     pane.add(transfer, c);
+    
+    c.gridy = ++nrows;
+    c.gridx = 1;
+    pane.add(sameKeyCheckBox, c);
 
     final JButton close = new JButton("CLOSE");
     close.addActionListener(new ActionListener()
@@ -182,11 +205,12 @@ class TransferAnnotationTool extends JFrame
    */
   private void transferAnnotation(final Vector qualifierCheckBoxes, 
   		                            final JTextArea geneNameTextArea,
-  		                            final Feature feature,
-  		                            final EntryGroup entryGroup)
+  		                            final Feature orginatingFeature,
+  		                            final EntryGroup entryGroup,
+  		                            final boolean sameKey)
   {
     // transfer selected annotation to genes
-  	final QualifierVector qualifiers = feature.getQualifiers();
+  	final QualifierVector qualifiers = orginatingFeature.getQualifiers();
   	final QualifierVector qualifiersToTransfer = new QualifierVector();
   	for(int i = 0; i < qualifierCheckBoxes.size(); i++)
     {
@@ -198,59 +222,185 @@ class TransferAnnotationTool extends JFrame
   		}
     }
   	
-  	final String geneNames[] = geneNameTextArea.getText().split("\\s");
-  	final String key = feature.getKey().getKeyString();
+  	String geneNames[] = geneNameTextArea.getText().split("\\s");
+
+  	final String key = orginatingFeature.getKey().getKeyString();
   	final FeatureVector features = entryGroup.getAllFeatures();
 
-  	final FeaturePredicate predicate = new FeaturePredicate()
-  	{
-			public boolean testPredicate(Feature feature)
-			{
-	     	String chadoGeneName = null;
-	     	if(GeneUtils.isDatabaseEntry(entryGroup))
-	     	{	
-	     		GFFStreamFeature gffFeature = ((GFFStreamFeature)feature.getEmblFeature());
-	     		if(gffFeature.getChadoGene() != null)
-	     		  chadoGeneName = gffFeature.getChadoGene().getGeneUniqueName();
-	     	}
-	      	
-				String thisFeatureSystematicName = feature.getSystematicName();
-				for(int i=0;i<geneNames.length;i++)
-				{
-					if(feature.getKey().getKeyString().equals(key))
-					{
-						if( geneNames[i].equals(thisFeatureSystematicName) ||
-								(chadoGeneName != null && geneNames[i].equals(chadoGeneName)) )
-						{
-							return true;
-						}
-					}
-				}
-				return false;
-			}
-  	};
-  	
   	// transfer selected annotation
   	entryGroup.getActionController().startAction();
-  	for(int i=0; i<features.size(); i++)
+  	geneNames = transfer(features, qualifiersToTransfer, key, 
+  			                 sameKey, GeneUtils.isDatabaseEntry(entryGroup), geneNames);
+  	entryGroup.getActionController().endAction();
+  	
+  	//
+  	// Commit changes to genes not in Artemis but in the database
+  	//
+   /* DatabaseDocumentEntry db_entry = 
+    	(DatabaseDocumentEntry) orginatingFeature.getEntry().getEMBLEntry();
+    DatabaseDocument doc = (DatabaseDocument) db_entry.getDocument();
+
+  	for(int i=0; i<geneNames.length; i++)
   	{
-  	  Feature thisFeature = features.elementAt(i);
-  	  if(predicate.testPredicate(thisFeature))
-  	  {
-  	  	for(int j=0; j<qualifiersToTransfer.size(); j++)
-  	  	{
-  	  		Qualifier qualifier = (Qualifier) qualifiersToTransfer.elementAt(j);
-  	      try
+  		System.out.println(geneNames[i]);
+  		DatabaseDocumentEntry newDbEntry = GeneEdit.makeGeneEntry(null, geneNames[i], doc, null);
+  		char[] c = new char[1];
+      PartialSequence ps = new PartialSequence(c, 100, 0, null, null);
+      newDbEntry.setPartialSequence(ps);
+      Entry entry = null;
+      try
+      {
+        entry = new Entry(newDbEntry);
+      }
+      catch(Exception e) { e.printStackTrace(); }
+      
+      SimpleEntryGroup entry_group = new SimpleEntryGroup();
+      entry_group.addElement(entry);
+      
+      ChadoTransactionManager ctm = new ChadoTransactionManager();
+      entry_group.addFeatureChangeListener(ctm);
+      entry_group.addEntryChangeListener(ctm);
+      ctm.setEntryGroup(entry_group);
+      
+  		geneNames = transfer(entry.getAllFeatures(), qualifiersToTransfer, key, 
+          sameKey, true, geneNames);
+  		ChadoTransactionManager.commit(
+  				(DatabaseDocument)newDbEntry.getDocument(), false, ctm);
+  		
+      //if(newDbEntry != null)
+      //  GeneEdit.showGeneEditor(null, geneNames[i], newDbEntry);
+  	}*/
+  }
+  
+  /**
+   * 
+   * @param features
+   * @param qualifiersToTransfer
+   * @param key
+   * @param sameKey
+   * @param isDatabaseEntry
+   * @param geneNames
+   * @return
+   */
+  private String[] transfer(final FeatureVector features,
+  		                      final QualifierVector qualifiersToTransfer,
+  		                      final String key, 
+  		                      final boolean sameKey,
+  		                      final boolean isDatabaseEntry,
+  		                      String[] geneNames)
+	{
+		final TransferFeaturePredicate predicate = new TransferFeaturePredicate(
+				key, sameKey, isDatabaseEntry, geneNames);
+
+		for (int i = 0; i < features.size(); i++)
+		{
+			Feature thisFeature = features.elementAt(i);
+			if (predicate.testPredicate(thisFeature))
+			{
+				for (int j = 0; j < qualifiersToTransfer.size(); j++)
+				{
+					Qualifier qualifier = (Qualifier) qualifiersToTransfer.elementAt(j);
+					try
 					{
-  	      	thisFeature.addQualifierValues(qualifier);
-					} 
-  	      catch (Exception e1)
+						thisFeature.addQualifierValues(qualifier);
+					} catch (Exception e1)
 					{
 						e1.printStackTrace();
-					} 
-  	  	}
-  	  }
+					}
+				}
+				geneNames = removeArrayElement(geneNames, predicate.getGeneName());
+			}
+		}
+		return geneNames;
+	}
+  
+  /**
+   * Remove a string from an array of strings. If the string appears multiple 
+   * times in the array this method will delete all occurrences.
+   * @param strArr
+   * @param str
+   * @return
+   */
+  private String[] removeArrayElement(final String strArr[], final String str)
+  {
+  	String[] newarray = new String[strArr.length - 1];
+  	int count = 0;
+  	for(int i=0;i<strArr.length; i++)
+  	{
+  		if(strArr[i].equals(str))
+  			continue;
+  		
+  	  // not found str return original array
+  		if(count>=newarray.length) 
+  			return strArr;
+  		newarray[count] = strArr[i];
+  		count++;
   	}
-  	entryGroup.getActionController().endAction();
+  	
+  	if(count < newarray.length)
+  	{
+  		String[] tmparray = new String[count];
+  		System.arraycopy(newarray, 0, tmparray, 0, count);
+  		newarray = tmparray;
+  	}
+  	
+    return newarray;
+  }
+   
+  /**
+   * Test if the feature is nominated to have annotation transferred
+   * to it.
+   */
+  class TransferFeaturePredicate implements FeaturePredicate
+  {
+  	private String geneName;
+  	private String key;
+  	private boolean sameKey;
+  	private boolean isDatabaseEntry;
+  	private String[] geneNames;
+  	
+  	public TransferFeaturePredicate(final String key, 
+  			                            final boolean sameKey,
+  			                            final boolean isDatabaseEntry,
+  			                            final String[] geneNames)
+  	{
+  		this.key             = key;
+  		this.sameKey         = sameKey;
+  		this.isDatabaseEntry = isDatabaseEntry;
+  		this.geneNames       = geneNames;
+  	}
+  	
+		public boolean testPredicate(Feature targetFeature)
+		{
+			String targetKey = targetFeature.getKey().getKeyString();
+			if(!sameKey || !targetKey.equals(key))
+				return false;
+			
+     	String chadoGeneName = null;
+     	if(isDatabaseEntry)
+     	{	
+     		GFFStreamFeature gffFeature = ((GFFStreamFeature)targetFeature.getEmblFeature());
+     		if(gffFeature.getChadoGene() != null)
+     		  chadoGeneName = gffFeature.getChadoGene().getGeneUniqueName();
+     	}
+      	
+			String thisFeatureSystematicName = targetFeature.getSystematicName();
+			
+			for(int i=0;i<geneNames.length;i++)
+			{
+				if( geneNames[i].equals(thisFeatureSystematicName) ||
+						(chadoGeneName != null && geneNames[i].equals(chadoGeneName)) )
+				{
+					geneName = geneNames[i];
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public String getGeneName()
+		{
+			return geneName;
+		}
   }
 }
