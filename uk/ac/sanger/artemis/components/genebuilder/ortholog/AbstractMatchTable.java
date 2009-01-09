@@ -46,7 +46,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -211,43 +210,6 @@ abstract class AbstractMatchTable
     if(field.startsWith("="))
       field = field.substring(1);
     return field;
-  }
-  
-  /**
-   * 
-   * @param schema
-   * @param uniquename
-   * @return
-   */
-  private DatabaseDocumentEntry makeEntry(final String schema, 
-                                          final String uniquename,
-                                          final DatabaseDocument doc,
-                                          final boolean isGeneEditor)
-  {
-    DatabaseDocumentEntry db_entry = null;
-    DatabaseDocument newdoc = new DatabaseDocument(doc, 
-            uniquename, schema, isGeneEditor, stream_progress_listener);
-    newdoc.setLazyFeatureLoad(false);
-    
-    try
-    {
-      db_entry = new DatabaseDocumentEntry(newdoc, null);
-    }
-    catch(EntryInformationException e)
-    {
-      e.printStackTrace();
-    }
-    catch(IOException e)
-    {
-      e.printStackTrace();
-    }
-    catch(NullPointerException npe)
-    {
-      JOptionPane.showMessageDialog(null, schema+":"+uniquename+
-          " not found!", "Warning", JOptionPane.WARNING_MESSAGE);
-    }
-
-    return db_entry;
   }
   
   protected void openArtemis(final DatabaseDocument doc, final int selectedRow)
@@ -607,7 +569,8 @@ abstract class AbstractMatchTable
           // open gene editor for this gene link
           linkButton.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
           final String reference[] = linkButton.getActionCommand().split(":");
-          DatabaseDocumentEntry entry = makeEntry(reference[0], reference[1], doc, true);
+          DatabaseDocumentEntry entry = GeneEdit.makeGeneEntry(
+          		reference[0], reference[1], doc, stream_progress_listener);
 
           if(entry != null)
           {
