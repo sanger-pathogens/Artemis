@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.64 2008-09-30 13:21:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.65 2009-01-13 10:42:26 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -38,6 +38,7 @@ import java.text.SimpleDateFormat;
 
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.chado.ClusterLazyQualifierValue;
+import uk.ac.sanger.artemis.components.genebuilder.ProteinMapPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
 import uk.ac.sanger.artemis.util.LinePushBackReader;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
@@ -49,7 +50,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.64 2008-09-30 13:21:52 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.65 2009-01-13 10:42:26 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -231,11 +232,23 @@ public class GFFStreamFeature extends SimpleDocumentFeature
               (String) getQualifierByName("Derives_from").getValues().get(0);
             setQualifier(new Qualifier("Derives_from", duplicatePrefix+derives_from));
           }
-          removeQualifierByName("feature_id");
-          removeQualifierByName("timelastmodified");
-          removeQualifierByName("feature_relationship_rank");
-          //removeQualifierByName(MatchPanel.ORTHOLOG);
-          //removeQualifierByName(MatchPanel.PARALOG);
+          
+          // remove qualifiers that don't get transferred to duplicate
+          final String removeQualifierNames[] = 
+            {  "feature_id", 
+          		 "timelastmodified", 
+          		 "feature_relationship_rank", 
+          		 ProteinMapPanel.POLYPEPTIDE_DOMAIN,
+          		 ProteinMapPanel.TMHMM[0],
+          		 ProteinMapPanel.TMHMM[1],
+          		 ProteinMapPanel.TMHMM[2],
+          		 ProteinMapPanel.TMHMM[3],
+          		 MatchPanel.ORTHOLOG,
+          		 MatchPanel.ORTHOLOG
+          	};
+          
+          for(int i=0;i<removeQualifierNames.length; i++)
+            removeQualifierByName(removeQualifierNames[i]);
         }
         catch(ReadOnlyException e){}
         catch(EntryInformationException e){}
