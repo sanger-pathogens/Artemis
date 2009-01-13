@@ -55,7 +55,7 @@ import uk.ac.sanger.artemis.util.StringVector;
 public class ProteinMapPanel extends MapPanel
 {
   private static final long serialVersionUID = 1L;
-  private static String[] TMHMM = 
+  public static String[] TMHMM = 
   { 
     "membrane_structure", 
     "non_cytoplasm_location", 
@@ -72,7 +72,7 @@ public class ProteinMapPanel extends MapPanel
     //"signal_anchor_probability" 
   };
   
-  private static String POLYPEPTIDE_DOMAIN = "polypeptide_domain";
+  public static String POLYPEPTIDE_DOMAIN = "polypeptide_domain";
   
   private static Vector PROTEIN_MAP_ELEMENTS = new Vector();
   static
