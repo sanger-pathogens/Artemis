@@ -246,7 +246,7 @@ class ProductBox extends AbstractCvBox
      */
     private int getNumberOfLines(FontMetrics fm, final String text, final int width)
     {
-      String delim = " \\t\\n\\f\\r";
+    	String delim = " \t\n\f\r";
       StringTokenizer tok = new StringTokenizer(text, delim, true);
       //final String words[] = text.split("\\s");
       int lineOffset = 0;
