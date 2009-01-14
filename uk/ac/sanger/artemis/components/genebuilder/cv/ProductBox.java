@@ -101,7 +101,7 @@ class ProductBox extends AbstractCvBox
     evidenceList.setSelectedIndex( GoBox.getEvidenceIndex(evidence) );
   
     Dimension de = evidenceList.getPreferredSize();
-    de = new Dimension(80,(int)de.getHeight());
+    de = new Dimension(90,(int)de.getHeight());
     evidenceList.setPreferredSize(de);
     evidenceList.setMaximumSize(de);
     evidenceList.setActionCommand("evidence=");

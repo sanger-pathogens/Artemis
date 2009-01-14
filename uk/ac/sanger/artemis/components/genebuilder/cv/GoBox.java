@@ -186,7 +186,7 @@ public class GoBox extends AbstractCvBox
     evidenceList.setSelectedIndex( getEvidenceIndex(evidence) );
   
     evidenceListDimension = evidenceList.getPreferredSize();
-    evidenceListDimension = new Dimension(80,(int)evidenceListDimension.getHeight());
+    evidenceListDimension = new Dimension(90,(int)evidenceListDimension.getHeight());
     evidenceList.setPreferredSize(evidenceListDimension);
     evidenceList.setMaximumSize(evidenceListDimension);
     evidenceList.setActionCommand("evidence=");
