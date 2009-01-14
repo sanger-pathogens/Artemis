@@ -230,7 +230,7 @@ public class GeneEditorPanel extends JPanel
       super(text);
       this.panel = panel;
 
-      Dimension size = new Dimension(35,20);
+      Dimension size = new Dimension(55,20);
       setForeground(STEEL_BLUE);
       Font font = getFont();
       font = font.deriveFont(Font.BOLD);
