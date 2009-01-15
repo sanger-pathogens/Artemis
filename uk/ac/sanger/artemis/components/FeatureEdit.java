@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.64 2008-11-07 17:50:54 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.65 2009-01-15 10:31:02 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -77,7 +77,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.64 2008-11-07 17:50:54 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.65 2009-01-15 10:31:02 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -360,15 +360,15 @@ public class FeatureEdit extends JPanel
     qualifier_text_area = new QualifierTextArea();
     //qualifier_text_area.setWrapStyleWord(true);
 
-    FlowLayout flowLayoutZeroHgap = new FlowLayout(FlowLayout.LEADING);
-    flowLayoutZeroHgap.setHgap(0);
+    FlowLayout flowLayoutZeroHVgap = new FlowLayout(FlowLayout.LEADING, 0, 0);
+
     key_choice =
       new KeyChoice(getEntryInformation(),getFeature().getKey());
-    key_choice.setLayout(flowLayoutZeroHgap);
+    key_choice.setLayout(flowLayoutZeroHVgap);
     final JPanel key_and_qualifier_panel = new JPanel();
     location_text.setBackground(Color.white);
 
-    final JPanel key_panel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+    final JPanel key_panel = new JPanel(flowLayoutZeroHVgap);
     final JLabel locLabel = new JLabel("Location: ");
     final JLabel keyLabel = new JLabel("Key: ");
     keyLabel.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -488,7 +488,8 @@ public class FeatureEdit extends JPanel
     //final JPanel outer_location_button_panel = new JPanel(flowLayoutZeroHgap);
     //outer_location_button_panel.setLayout(new BorderLayout(0,0));
 
-    final JPanel location_button_panel = new JPanel(flowLayoutZeroHgap);
+    final JToolBar location_button_panel = new JToolBar();
+    location_button_panel.setRollover(true);
     //outer_location_button_panel.add(location_button_panel, "West");
     lower_panel.add(location_button_panel, "North");
     
@@ -583,6 +584,16 @@ public class FeatureEdit extends JPanel
         }
       });
     }
+    
+    final JButton transferAnnotationBbutton = new JButton("TAT");
+    //location_button_panel.add(transferAnnotationBbutton);
+    transferAnnotationBbutton.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e) 
+      {
+        new TransferAnnotationTool(getFeature(), entry_group);
+      }
+    });
 
     /*if(Options.getOptions().getProperty("external_editor") != null)
     {

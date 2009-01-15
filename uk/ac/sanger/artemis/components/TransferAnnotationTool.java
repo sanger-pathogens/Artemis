@@ -24,6 +24,7 @@
 
 package uk.ac.sanger.artemis.components;
 
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -35,6 +36,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
@@ -52,11 +54,7 @@ import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
-import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
-import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
-import uk.ac.sanger.artemis.util.InputStreamProgressListener;
-import uk.ac.sanger.artemis.util.OutOfRangeException;
 
 class TransferAnnotationTool extends JFrame
 {
@@ -209,6 +207,7 @@ class TransferAnnotationTool extends JFrame
   		                            final EntryGroup entryGroup,
   		                            final boolean sameKey)
   {
+  	setCursor(new Cursor(Cursor.WAIT_CURSOR));
     // transfer selected annotation to genes
   	final QualifierVector qualifiers = orginatingFeature.getQualifiers();
   	final QualifierVector qualifiersToTransfer = new QualifierVector();
@@ -236,14 +235,24 @@ class TransferAnnotationTool extends JFrame
   	//
   	// Commit changes to genes not in Artemis but in the database
   	//
-   /* DatabaseDocumentEntry db_entry = 
+    DatabaseDocumentEntry db_entry = 
     	(DatabaseDocumentEntry) orginatingFeature.getEntry().getEMBLEntry();
     DatabaseDocument doc = (DatabaseDocument) db_entry.getDocument();
-
+    Vector genesNotFound = null;
+    
   	for(int i=0; i<geneNames.length; i++)
   	{
-  		System.out.println(geneNames[i]);
-  		DatabaseDocumentEntry newDbEntry = GeneEdit.makeGeneEntry(null, geneNames[i], doc, null);
+  		DatabaseDocumentEntry newDbEntry = 
+  				GeneEdit.makeGeneEntry(null, geneNames[i], doc, null);
+  		
+  		if(newDbEntry == null)
+  		{
+  			if(genesNotFound == null)
+  				genesNotFound = new Vector();
+  			genesNotFound.add(geneNames[i]);
+  		  continue;	
+  		}
+  		
   		char[] c = new char[1];
       PartialSequence ps = new PartialSequence(c, 100, 0, null, null);
       newDbEntry.setPartialSequence(ps);
@@ -262,14 +271,23 @@ class TransferAnnotationTool extends JFrame
       entry_group.addEntryChangeListener(ctm);
       ctm.setEntryGroup(entry_group);
       
-  		geneNames = transfer(entry.getAllFeatures(), qualifiersToTransfer, key, 
+  		transfer(entry.getAllFeatures(), qualifiersToTransfer, key, 
           sameKey, true, geneNames);
   		ChadoTransactionManager.commit(
   				(DatabaseDocument)newDbEntry.getDocument(), false, ctm);
   		
+  		entry_group.removeFeatureChangeListener(ctm);
+  		entry_group.removeEntryChangeListener(ctm);
       //if(newDbEntry != null)
       //  GeneEdit.showGeneEditor(null, geneNames[i], newDbEntry);
-  	}*/
+  	}
+  	
+  	setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+  	
+  	if(genesNotFound != null)
+  		JOptionPane.showMessageDialog(this, 
+  				"Gene(s) Not Found:\n"+genesNotFound.toString(), 
+  				"Gene(s) Not Found", JOptionPane.WARNING_MESSAGE);
   }
   
   /**
