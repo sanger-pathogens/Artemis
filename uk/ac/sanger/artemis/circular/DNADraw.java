@@ -1641,7 +1641,7 @@ public class DNADraw extends ScrollPanel
     calculateTickPosistions();
   }
 
-  private Block getBlockAtLocation(Point loc)
+  public Block getBlockAtLocation(Point loc)
   {
     for(int i=0; i<block.size(); i++)
     {
