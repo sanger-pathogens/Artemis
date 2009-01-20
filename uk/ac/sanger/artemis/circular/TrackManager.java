@@ -67,7 +67,7 @@ import uk.ac.sanger.artemis.io.Key;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
 
-class TrackManager extends JFrame
+public class TrackManager extends JFrame
 {
   private static final long serialVersionUID = 1L;
   private DNADraw dnaDraw;
@@ -548,7 +548,7 @@ class TrackManager extends JFrame
    * Update the tracks based on the Track Manager settings
    * @param tracks
    */
-  protected void update(final Track[] tracks)
+  public void update(final Track[] tracks)
   {      
     // update tracks
     for(int i=0; i<tracks.length; i++)
