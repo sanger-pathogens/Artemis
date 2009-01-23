@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.42 2008-11-13 09:44:15 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.43 2009-01-23 11:13:01 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -201,7 +201,9 @@ NAMES:= \
 	uk/ac/sanger/artemis/io/QualifierInfoVector \
 	uk/ac/sanger/artemis/io/QualifierInfoHash \
 	uk/ac/sanger/artemis/chado/DbSqlConfig \
-        uk/ac/sanger/artemis/circular/DNADraw
+        uk/ac/sanger/artemis/circular/DNADraw \
+	 uk/ac/sanger/artemis/circular/digest/Utils \
+	uk/ac/sanger/artemis/circular/digest/CircularGenomeController
 
 CLASSES := $(NAMES:%=%.class)
 SOURCES := $(NAMES:%=%.java)
