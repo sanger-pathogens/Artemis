@@ -55,7 +55,8 @@ public class EmbossTableParser
 			if ("Start".equals(parts[0]))
 				continue;
 			
-			CutSite cutSite = new CutSite(parts[5], parts[6], parts[7], parts[8], parts[2]);
+			CutSite cutSite = new CutSite(
+					parts[3], parts[5], parts[6], parts[7], parts[8], parts[2]);
 			list.add(cutSite);
 		}
 		return list;

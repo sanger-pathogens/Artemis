@@ -28,13 +28,21 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+
+import uk.ac.sanger.artemis.components.FileViewer;
 
 public class InSilicoGelPanel extends JPanel
                               implements ActionListener
@@ -48,13 +56,21 @@ public class InSilicoGelPanel extends JPanel
 	private int MIN_FRAGMENT_LENGTH = Integer.MAX_VALUE;
 	private boolean drawLog = false;
 	private JPopupMenu popup;
+	private File restrictOutput;
 
-
+  /**
+   * @param genomeLength
+   * @param cutSites
+   * @param panelHeight
+   * @param restrictOutput
+   */
 	public InSilicoGelPanel(final int genomeLength,
 			                    final List<CutSite> cutSites,
-			                    final int panelHeight)
+			                    final int panelHeight,
+			                    final File restrictOutput)
 	{
-		this.panelHeight  = panelHeight;
+		this.panelHeight    = panelHeight;
+		this.restrictOutput = restrictOutput;
 
 		setBackground(Color.white);
 		setPreferredSize(new Dimension(160,panelHeight));
@@ -70,7 +86,7 @@ public class InSilicoGelPanel extends JPanel
 			else
 			{
 				len = cutSite.getFivePrime()-lastSite;
-				System.out.println(i+" **** "+len.toString());
+				
 				FragmentBand band = new FragmentBand();
 				band.genomeFragmentLength = len;
 				band.bandCutSite = cutSite;
@@ -90,7 +106,7 @@ public class InSilicoGelPanel extends JPanel
 		genomeFragments.add(band);
 		if(len > MAX_FRAGMENT_LENGTH)
 			MAX_FRAGMENT_LENGTH = len;
-		System.out.println(len.toString());
+		//System.out.println(len.toString());
 		
 		MouseListener popupListener = new PopupListener();
 		addMouseListener(popupListener);
@@ -106,6 +122,10 @@ public class InSilicoGelPanel extends JPanel
     group.add(linearScale);
     group.add(logScale);
     linearScale.setSelected(true);
+    
+    JMenuItem showCutSites = new JMenuItem("Show cut site details");
+    popup.add(showCutSites);
+    showCutSites.addActionListener(this);
 	}
 	
 	/**
@@ -135,7 +155,7 @@ public class InSilicoGelPanel extends JPanel
 			else
 				y = gelHeight+marginHeight-(int)( ((float)(gelHeight)/
 						(float)(MAX_FRAGMENT_LENGTH-MIN_FRAGMENT_LENGTH)) * fragmentLength );
-		
+			
 			if(!genomeFragments.get(i).bandCutSite.isHighlighted())
 			{
 				g2D.setStroke(stroke);
@@ -143,10 +163,49 @@ public class InSilicoGelPanel extends JPanel
 			}
 			else
 			{
+				g2D.setColor(Color.black);
+				g2D.drawString(genomeFragments.get(i).bandCutSite.getEnzymeName(),
+	                     marginWidth+marginWidth+2, y);
 				g2D.setStroke(stroke2);
 				g2D.setColor(Color.yellow);
 			}
 			g2D.drawLine(marginWidth, y, marginWidth+marginWidth, y);
+		}
+		
+		drawScale(g2D, stroke,gelHeight);
+	}
+	
+	/**
+	 * Draw the fragment length scale
+	 * @param g2D
+	 * @param stroke
+	 * @param gelHeight
+	 */
+	private void drawScale(Graphics2D g2D, BasicStroke stroke, int gelHeight)
+	{
+		g2D.setColor(Color.black);
+		g2D.setStroke(stroke);
+		NumberFormat formatter = new DecimalFormat("#0.0");
+		
+		int nscale = 8;
+		if(isDrawLog())
+			nscale = 5;
+		
+  	float range = (MAX_FRAGMENT_LENGTH-MIN_FRAGMENT_LENGTH)/(float)nscale;
+	  for(int i=0;i<nscale+1; i++)
+		{
+			float length = MIN_FRAGMENT_LENGTH+(range*i);
+				
+			int y;
+			if(isDrawLog())
+				y = getLogValue((int)length, marginHeight, gelHeight);
+			else
+				y = gelHeight+marginHeight-(int)( ((float)(gelHeight)/
+		  		(float)(MAX_FRAGMENT_LENGTH-MIN_FRAGMENT_LENGTH)) * length );
+			
+			 g2D.drawLine(marginWidth, y, marginWidth-10, y);
+			 
+			 g2D.drawString(formatter.format(length/1000)+"kb",0,y); 
 		}
 	}
 	
@@ -206,11 +265,34 @@ public class InSilicoGelPanel extends JPanel
 
 	public void actionPerformed(ActionEvent e)
 	{
-		JRadioButtonMenuItem radioButton = (JRadioButtonMenuItem)e.getSource();
-		if(radioButton.isSelected())
+		if (e.getSource() instanceof JRadioButtonMenuItem)
 		{
-			setDrawLog(radioButton.getText().startsWith("Log"));
-			repaint();
+			JRadioButtonMenuItem radioButton = (JRadioButtonMenuItem) e.getSource();
+			if (radioButton.isSelected())
+			{
+				setDrawLog(radioButton.getText().startsWith("Log"));
+				repaint();
+			}
+		}
+		else
+		{
+			final FileViewer viewer = new FileViewer(
+					restrictOutput.getName(), true, false);
+			BufferedReader br;
+			try
+			{
+				br = new BufferedReader(new FileReader(restrictOutput));
+
+				StringBuffer buff = new StringBuffer();
+				String line;
+				while ((line = br.readLine()) != null)
+					buff.append(line + "\n");
+				viewer.getTextPane().setText(buff.toString());
+			} 
+			catch (Exception e2)
+			{
+				e2.printStackTrace();
+			}
 		}
 	}
 }

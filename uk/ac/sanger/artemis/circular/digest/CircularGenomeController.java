@@ -124,7 +124,7 @@ public class CircularGenomeController
 			final DNADraw dna = Utils.createDNADrawFromReportDetails(rd, entryGroup);
 
 	    final InSilicoGelPanel inSilicoGelPanel = 
-	    	new InSilicoGelPanel(rd.length, rd.cutSites, dna.getHeight());
+	    	new InSilicoGelPanel(rd.length, rd.cutSites, dna.getHeight(), output);
 	    
 			MouseMotionListener mouseMotionListener = new MouseMotionAdapter() 
 	    {

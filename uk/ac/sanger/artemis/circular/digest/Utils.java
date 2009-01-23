@@ -140,10 +140,7 @@ public class Utils
 				counter++;
 				continue;
 			}
-			
-			//circularFeature = createFeature(lastCutPosFwd, cutSite.getEnd(), counter, sequenceLength);
-		  //dna.addFeatureToTrack(circularFeature, forward, false);
-			//System.out.println(lastCutPosFwd+".."+cutSite.getEnd()+"="+(cutSite.getEnd()-lastCutPosFwd));
+
 		  addFeature(lastCutPos, cutSite.getFivePrime(),
 					       counter, newEntry, dna, cutSite.isForward());
 			lastCutPos = cutSite.getFivePrime();
@@ -168,8 +165,17 @@ public class Utils
 		return dna;
 	}
 
+	/**
+	 * Add a new feature to the entry with the given coordinates
+	 * @param coord1
+	 * @param coord2
+	 * @param counter
+	 * @param newEntry
+	 * @param dna
+	 * @param isForward
+	 */
 	private static void addFeature(int coord1, int coord2,
-                          int counter, Entry newEntry, 
+                          int counter, Entry entry, 
                           DNADraw dna, boolean isForward)
 	{
 		String colour;
@@ -184,8 +190,7 @@ public class Utils
 		{
 			QualifierVector qualifiers = new QualifierVector();
 			qualifiers.add(new Qualifier("colour",colour));
-			final MarkerRange r;
-			
+			final MarkerRange r;		
 			
 			if(isForward)
 				qualifiers.add(new Qualifier("note","plus"));
@@ -200,18 +205,16 @@ public class Utils
 						dna.getArtemisEntryGroup().getSequenceEntry().getBases().getReverseStrand(),
 						coord1,coord2);*/
 			
-			int len = r.getCount();
+			//int len = r.getCount();
 
 			uk.ac.sanger.artemis.io.Feature f = new uk.ac.sanger.artemis.io.EmblStreamFeature(
 					new Key("misc_feature"),
 					r.createLocation(),
 					qualifiers);
-			newEntry.add(new uk.ac.sanger.artemis.Feature(f), false);
+			entry.add(new uk.ac.sanger.artemis.Feature(f), false);
 			
-			if(!isForward)
-			{
-				System.out.println(counter+" "+coord1+".."+coord2+"   "+f.getLocation().toStringShort());
-			}
+			//if(!isForward)
+			//	System.out.println(counter+" "+coord1+".."+coord2+"   "+f.getLocation().toStringShort());
 		}
 		catch (Exception e)
 		{

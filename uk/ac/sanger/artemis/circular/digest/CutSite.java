@@ -20,6 +20,7 @@ package uk.ac.sanger.artemis.circular.digest;
 
 public class CutSite
 {
+	private String enzymeName;
 	private int fivePrime;
 	private int threePrime;
 	private int fivePrimeRev;
@@ -27,10 +28,12 @@ public class CutSite
 	private boolean forward = false;
   private boolean highlighted = false;
 
-	CutSite(String fivePrimeStr, String threePrimeStr,
+	CutSite(final String enzymeName,
+			    String fivePrimeStr, String threePrimeStr,
 			    String fivePrimeRevStr, String threePrimeRevStr,
 			    String strand)
 	{
+		this.enzymeName = enzymeName;
 		this.fivePrime  = Integer.parseInt(fivePrimeStr);
 		this.threePrime = Integer.parseInt(threePrimeStr);
 		if(!fivePrimeRevStr.equals("."))
@@ -75,5 +78,10 @@ public class CutSite
 	public void setHighlighted(boolean highlighted)
 	{
 		this.highlighted = highlighted;
+	}
+	
+	public String getEnzymeName()
+	{
+		return enzymeName;
 	}
 }
