@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Location.java,v 1.7 2005-11-15 14:02:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/Location.java,v 1.8 2009-02-02 16:05:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -34,7 +34,7 @@ import uk.ac.sanger.artemis.io.LocationLexer.TokenEnumeration;
  *  functions for parsing and manipulating the location.
  *
  *  @author Kim Rutherford
- *  @version $Id: Location.java,v 1.7 2005-11-15 14:02:37 tjc Exp $
+ *  @version $Id: Location.java,v 1.8 2009-02-02 16:05:32 tjc Exp $
  *
  */
 public class Location 
@@ -920,13 +920,16 @@ public class Location
 
       Range child_range =  null;
       if(child_node.getType() == LocationParseNode.COMPLEMENT)
-        child_range = child_node.getComplementChild().getRange();
+      {
+      	if(child_node.getComplementChild().getType() == LocationParseNode.RANGE)
+         	child_range = child_node.getComplementChild().getRange();
+      }
       else if(child_node.getType() == LocationParseNode.RANGE)
         child_range = child_node.getRange();
 
       if((child_node.getType() == LocationParseNode.RANGE ||
           child_node.getType() == LocationParseNode.COMPLEMENT) &&
-          child_range.equals(range))
+          (child_range != null && child_range.equals(range)))
       {
         if(child_node.getType() == LocationParseNode.COMPLEMENT)
           return true;
