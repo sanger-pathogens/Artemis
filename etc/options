@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.52 2008-12-04 11:57:12 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.53 2009-02-03 16:18:49 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -568,7 +568,7 @@ extra_qualifiers_gff = \
     polypeptide_domain "text" \
     primary_name "text" \
     similarity "text" \
-    stop_codon_redefined_as_selenocysteine "text" \
+    stop_codon_redefined_as_selenocysteine none \
     synonym "text" \
     systematic_id "text" \
     temporary_systematic_id "text"
@@ -671,9 +671,11 @@ invisible_qualifiers_gff= \
     gff_seqname    \
     gff_source     \
     GO             \
+    GPI_anchored \
     GPI_anchor_cleavage_site \
     ID             \
     insertion_seq  \
+    isObsolete \
     isoelectric    \
     isolation_source \
     isolate        \
@@ -698,6 +700,7 @@ invisible_qualifiers_gff= \
     Parent         \
     PCR_conditions \
     plasmid        \
+    PlasmoAP_score \
     pop_variant    \
     primary_name \
     product        \
@@ -709,7 +712,10 @@ invisible_qualifiers_gff= \
     serotype       \
     serovar        \
     sex            \
+    signal_anchor_probability \
     signal_peptide \
+    signal_peptide_probability \
+    SignalP_prediction \
     similarity     \
     source         \
     specific_host  \
