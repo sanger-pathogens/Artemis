@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.34 2008-11-26 11:39:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Feature.java,v 1.35 2009-02-03 11:36:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis;
@@ -61,7 +61,7 @@ import java.util.regex.Pattern;
  *  embl.Feature and embl.Entry objects.
  *
  *  @author Kim Rutherford
- *  @version $Id: Feature.java,v 1.34 2008-11-26 11:39:36 tjc Exp $
+ *  @version $Id: Feature.java,v 1.35 2009-02-03 11:36:39 tjc Exp $
  **/
 
 public class Feature
@@ -1672,7 +1672,7 @@ public class Feature
             for(int j=0; j<values.size(); j++)
             {
               final String value = (String)values.elementAt(j);
-              if(value != null && !value.endsWith("current=false"))
+              if(value != null && !value.endsWith("current=false") && !value.equals(""))
                 return value;
             }
           }
