@@ -151,10 +151,8 @@
     <result property="cvTerm.cvTermId" column="type_id"/>
     <result property="cvTerm.name" column="cvterm_name"/>  
 	<!--<result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />-->
-	<result property="organism.organismId" column="organism_id"/>
-	<result property="organism.genus" column="genus"/>
-	<result property="organism.species" column="species"/>
-    <result property="organism.commonName" column="common_name"/>
+    <result property="organism" column="{organismId=organism_id}" 
+                                select="getOrganism" />
   </resultMap>
      
   <!-- SQL --> 
@@ -446,43 +444,40 @@
   <select id="getResidueFeatures" parameterClass="java.lang.Integer"
             resultMap="map-feature-with-residues-result">
 	SELECT uniquename, feature_id, type_id, feature.organism_id, 
-	       genus, species, common_name, cvterm.name AS cvterm_name 
+	       cvterm.name AS cvterm_name 
 	FROM cvterm 
 	LEFT JOIN feature ON cvterm.cvterm_id=feature.type_id 
-	LEFT JOIN organism ON organism.organism_id=feature.organism_id 
 	WHERE <isNotNull> feature.organism_id=$value$ AND </isNotNull>
 	  residues notnull AND residues != '' AND
 	  ( <include refid="source_feature_cvterm_names"/> ) 
-	ORDER BY common_name, uniquename
+	ORDER BY uniquename
   </select>
 
 		
   <select id="getTopLevelFeatures" parameterClass="java.lang.Integer"
             resultMap="map-feature-with-residues-result">
 	SELECT feature.name, uniquename, feature_id, feature.type_id, feature.organism_id, 
-	       genus, species, common_name, cvterm.name AS cvterm_name  
+	       cvterm.name AS cvterm_name  
 	FROM feature 
-	JOIN organism using (organism_id) 
 	JOIN cvterm on feature.type_id = cvterm.cvterm_id 
 	JOIN featureprop using (feature_id) 
 	WHERE  <isNotNull> feature.organism_id=$value$ AND </isNotNull>
 	  featureprop.type_id in (
 	  SELECT cvterm_id FROM cvterm JOIN cv using (cv_id) WHERE cv.name = 'genedb_misc' AND cvterm.name = 'top_level_seq' )
-	  ORDER BY common_name, uniquename
+	  ORDER BY uniquename
   </select>
 	
 	
   <select id="getResidueFeaturesByOrganismCommonName" parameterClass="java.lang.String"
             resultMap="map-feature-with-residues-result">
     SELECT uniquename, feature_id, type_id, 
-	       feature.organism_id, genus, species, common_name
+	       feature.organism_id
 	FROM cvterm 
 	LEFT JOIN feature ON cvterm.cvterm_id=feature.type_id 
-	LEFT JOIN organism ON organism.organism_id=feature.organism_id 
 	WHERE <isNotNull> organism.common_name=#value# AND </isNotNull>
 	  residues notnull AND residues != '' AND
 	  ( <include refid="source_feature_cvterm_names"/> ) 
-	ORDER BY common_name, uniquename
+	ORDER BY uniquename
   </select>
   
 		
