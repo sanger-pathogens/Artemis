@@ -25,7 +25,9 @@
     <parameter property="featureCvTerms" javaType="java.util.List"/>
   </parameterMap> 
 
-  <resultMap id="map-basicfeature" class="Feature">       
+  <!-- resultMap templates below -->
+
+  <resultMap id="template-basicfeature" class="Feature">       
     <result property="timeLastModified" column="timelastmodified"/>
    	<result property="featureId" column="id"/>
     <result property="uniqueName" column="uniquename"/>
@@ -33,9 +35,30 @@
     <result property="seqLen" column="seqlen" nullValue="-1" />
 	<result property="obsolete" column="obsolete" />
   </resultMap>
-	
-  <resultMap id="map-feature" class="Feature" 
-	         groupBy="featureId" extends="map-basicfeature">
+  
+  <resultMap id="template-basicfeature-all-lazy" class="Feature" 
+	         extends="template-basicfeature">
+    <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
+    <result property="dbXRef" column="dbXRefId"
+                              select="getDbXRefByDbXRefId" />
+    <result property="featureLocsForFeatureId" column="{id=id}" 
+                                               select="getFeatureLoc" />
+    <result property="featureProps" column="{feature_id=id}" 
+                                       select="getFeaturePropByFeatureId" />
+    <result property="featureDbXRefs" column="{featureId=id}"
+                                      select="getFeatureDbXRef" />
+    <result property="featureRelationshipsForObjectId" column="{object_id=id}" 
+                                       select="getFeatureRelationship" />  
+    <result property="featureRelationshipsForSubjectId" column="{subject_id=id}" 
+                                       select="getFeatureRelationship" /> 
+    <result property="featureSynonyms" column="{feature.uniqueName=uniqueName}" 
+                                       select="getLazyFeatureSynonymsByUniquename" />                       
+    <result property="organism" column="{organismId=organismId}" 
+                                select="getOrganism" />
+  </resultMap>	
+  
+  <resultMap id="template-feature" class="Feature" 
+	         extends="template-basicfeature">
 	<result property="organism.organismId" column="organism_id"/>
 	<result property="dbXRef" resultMap="DbXRef.select-dbxref" />
 	<result property="featureProps" resultMap="FeatureProp.map-featureprop" />
@@ -51,42 +74,44 @@
                                        select="getLazyFeatureSynonymsByUniquename" />
 	<result property="featureDbXRefs" column="{featureId=id}"
                                       select="getFeatureDbXRef" />
-	<result property="featureCvTerms"  column="{{uniqueName=uniquename}}"
-			                           select="getFeatureCvTermsByFeature"/>
 	<result property="featurePubs" column="{featureId=id}" select="getFeaturePubsByFeature"/>  
   </resultMap>
+  
+  <!-- resultMap proper below -->
+  
+  <resultMap id="map-feature" class="Feature" 
+	         groupBy="featureId" extends="template-feature">
+	<result property="featureCvTerms"  column="{{uniqueName=uniquename}}"
+			                           select="getFeatureCvTermsByFeature"/> 
+  </resultMap>
+  
+  <resultMap id="map-feature-no-rank" class="Feature" 
+	         groupBy="featureId" extends="template-feature">
+	<result property="featureCvTerms"  column="{{uniqueName=uniquename}}"
+			                           select="getFeatureCvTermsNoRankByFeature"/> 
+  </resultMap>
+  
 
-  <!-- mapping for feature table and lazy loading of feature_dbxref, feature_relationship,
-       featureprop, organism tables -->
-	
-    <resultMap id="map-feature-lazy-no-residues" class="Feature" 
-	         extends="map-basicfeature">
-    <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
-    <result property="dbXRef" column="dbXRefId"
-                              select="getDbXRefByDbXRefId" />
-    <result property="featureLocsForFeatureId" column="{id=id}" 
-                                               select="getFeatureLoc" />
-    <result property="featureProps" column="{feature_id=id}" 
-                                       select="getFeaturePropByFeatureId" />
-    <result property="featureDbXRefs" column="{featureId=id}"
-                                      select="getFeatureDbXRef" />
-    <result property="featureRelationshipsForObjectId" column="{object_id=id}" 
-                                       select="getFeatureRelationship" />  
-    <result property="featureRelationshipsForSubjectId" column="{subject_id=id}" 
-                                       select="getFeatureRelationship" /> 
-    <result property="featureSynonyms" column="{feature.uniqueName=uniqueName}" 
-                                       select="getLazyFeatureSynonymsByUniquename" />
+  <!-- mapping for feature table and lazy loading -->  
+  <resultMap id="map-feature-lazy-no-residues" class="Feature" 
+	         extends="template-basicfeature-all-lazy">
 	<result property="featureCvTerms"  column="{{uniqueName=uniquename}}"
 			                           select="getFeatureCvTermsByFeature"/>                         
-    <result property="organism" column="{organismId=organismId}" 
-                                select="getOrganism" />
   </resultMap>	
 	
   <resultMap id="map-feature-lazy" class="Feature" 
-	         extends="map-feature-lazy-no-residues">
+	         extends="template-basicfeature-all-lazy">
+	<result property="featureCvTerms"  column="{{uniqueName=uniquename}}"
+			                           select="getFeatureCvTermsByFeature"/>  
     <result property="residues" column="residues" />
   </resultMap>
-	
+  
+  <resultMap id="map-feature-lazy-no-rank" class="Feature" 
+	         extends="template-basicfeature-all-lazy">
+	<result property="featureCvTerms"  column="{{uniqueName=uniquename}}"
+			                           select="getFeatureCvTermsNoRankByFeature"/>      
+    <result property="residues" column="residues" />
+  </resultMap>
 	
   <resultMap id="map-feature-name-lazy" class="Feature">
 	 <result property="featureId" column="id"/>
@@ -94,11 +119,10 @@
 	 <result property="cvTerm.name" column="name" />
 	 <result property="featureRelationshipsForSubjectId" column="{subject_id=id}" 
                                        select="getParentFeatureRelationship" /> 
-  </resultMap>
-	  	
+  </resultMap>  	
 	
   <resultMap id="map-feature-withprop" class="Feature" 
-	         groupBy="featureId" extends="map-basicfeature">
+	         groupBy="featureId" extends="template-basicfeature">
     <result property="cvTerm" column="type_id" select="getCvtermByCvTermId" />
     <result property="featureProps" resultMap="FeatureProp.map-featureprop" />
     <result property="featureDbXRefs" column="{featureId=id}"
@@ -117,7 +141,7 @@
 	
 	
   <resultMap id="map-similaritymatch-lazy" class="Feature" 
-	         groupBy="featureId" extends="map-basicfeature">       
+	         groupBy="featureId" extends="template-basicfeature">       
     <result property="cvTerm.cvTermId" column="type_id"  />
 	<result property="featureLocsForFeatureId" column="{id=id}" 
                                                select="getFeatureLoc" />
@@ -157,10 +181,8 @@
      
   <!-- SQL --> 
   <!-- get feature -->
-
-  <select id="getFeature" parameterClass="Feature" 
-                          resultMap="map-feature">
-    SELECT
+  <sql id="sql-feature">
+      SELECT
       timelastmodified, 
       f.feature_id AS id, 
 	  f.organism_id,
@@ -202,11 +224,20 @@
            uniquename LIKE #uniqueName# 
          </isNotNull>
        </dynamic>
+  </sql>
+  
+  <select id="getFeature" parameterClass="Feature" 
+                          resultMap="map-feature">
+    <include refid="sql-feature"/>
+  </select>
+  
+  <select id="getFeatureNoFeatureCvTermRank" parameterClass="Feature" 
+                          resultMap="map-feature-no-rank">
+    <include refid="sql-feature"/>
   </select>
  
-  <select id="getLazyFeature" resultMap ="map-feature-lazy" 
-                              parameterClass="Feature">
-	SELECT
+  <sql id="sql-lazy-feature">
+   	SELECT
 	  timelastmodified,
 	  f.feature_id AS id,
 	  uniquename,
@@ -246,6 +277,17 @@
          cvterm.name=#cvTerm.name#
        </isNotNull>
      </dynamic>
+  </sql>
+  
+  <select id="getLazyFeature" resultMap ="map-feature-lazy" 
+                              parameterClass="Feature">
+    <include refid="sql-lazy-feature"/>
+  </select>
+  
+  <select id="getLazyFeatureNoFeatureCvTermRank"
+                              resultMap ="map-feature-lazy-no-rank" 
+                              parameterClass="Feature">
+    <include refid="sql-lazy-feature"/>
   </select>
 	
 
@@ -262,52 +304,6 @@
 	  f.dbxref_id AS dbXRefId,
 	  f.seqlen
 	FROM feature f
-    WHERE f.feature_id=$featureId$
-  </select>
-	
-  <select id="getLazyFeatureById" resultMap ="map-feature-lazy" >
-	SELECT
-	  timelastmodified,
-	  f.feature_id AS id,
-	  uniquename,
-	  organism_id AS organismId,
-	  f.is_obsolete AS obsolete,
-	  f.name AS feature_name,
-	  f.type_id,
-	  f.dbxref_id AS dbXRefId,
-	  f.seqlen,
-	  residues
-	FROM feature f
-    WHERE f.feature_id=$featureId$
-  </select>
-	
-  <select id="getLazyFeatureNameAndTypeById" resultMap ="map-feature-name-lazy" >
-	SELECT
-	  uniquename, cvTerm.name, feature_id AS id
-	FROM feature f
-	LEFT JOIN cvterm ON cvterm.cvterm_id=type_id
-    WHERE f.feature_id=$featureId$
-  </select>
-	
-	
-  <select id="getFeatureById" resultMap ="map-feature-withprop" 
-		cacheModel="feature-cache">
-	SELECT
-	  timelastmodified,
-	  f.feature_id AS id,
-	  uniquename,
-	  organism_id AS organismId,
-	  f.is_obsolete AS obsolete,
-	  f.name AS feature_name,
-	  f.type_id,
-	  f.dbxref_id,
-	  f.seqlen,
-	  fp.type_id AS prop_type_id, fp.rank AS prop_rank, fp.value, fp.featureprop_id,
-	  dbxref.*, db.*
-    FROM feature f
-    LEFT JOIN featureprop fp ON fp.feature_id=f.feature_id
-	LEFT JOIN dbxref ON f.dbxref_id=dbxref.dbxref_id
-	LEFT JOIN db ON dbxref.db_id=db.db_id
     WHERE f.feature_id=$featureId$
   </select>
     
@@ -406,36 +402,6 @@
     SELECT DISTINCT type_id FROM feature WHERE residues notnull
   </select>
 
-
-  <!--
-  <select id="getResidueFeatures" parameterClass="java.lang.Integer"
-            resultMap="map-feature-with-residues-result">
-    SELECT feature.name, uniquename, feature_id, type_id, 
-	       feature.organism_id, abbreviation, genus, species, common_name,
-	       cvterm.name AS cvterm_name
-    FROM feature 
-	LEFT JOIN organism ON organism.organism_id=feature.organism_id
-	LEFT JOIN cvterm ON cvterm.cvterm_id=feature.type_id
-	WHERE  <isNotNull> feature.organism_id=$value$ AND </isNotNull>
-	  cvterm.name!='mRNA' AND cvterm.name!='pseudogenic_transcript' AND 
-	  cvterm.name!='polypeptide' AND
-	  residues notnull AND residues NOT LIKE '' ORDER BY common_name
-  </select>
-	
-  <select id="getResidueFeaturesByOrganismCommonName" parameterClass="java.lang.String"
-            resultMap="map-feature-with-residues-result">
-    SELECT feature.name, uniquename, feature_id, type_id, 
-	       feature.organism_id, abbreviation, genus, species, common_name,
-	       cvterm.name AS cvterm_name
-    FROM feature 
-	LEFT JOIN organism ON organism.organism_id=feature.organism_id
-	LEFT JOIN cvterm ON cvterm.cvterm_id=feature.type_id
-	WHERE  <isNotNull> organism.common_name=#value# AND </isNotNull>
-	  cvterm.name!='mRNA' AND cvterm.name!='pseudogenic_transcript' AND
-	  cvterm.name!='polypeptide' AND
-	  residues notnull AND residues NOT LIKE '' ORDER BY common_name
-  </select>
-  -->
 
   <sql id="source_feature_cvterm_names">
 	  cvterm.name LIKE '%chromosome%' OR cvterm.name LIKE '%sequence%' OR 

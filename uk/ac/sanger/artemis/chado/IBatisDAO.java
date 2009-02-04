@@ -64,6 +64,8 @@ public class IBatisDAO extends GmodDAO
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(IBatisDAO.class);
   private SqlMapClientWrapper sqlMap;
+  private boolean featureCvTermRank        = true;
+  private boolean featureCvTermRankChecked = false;
   
   /**
    * Define a iBatis data access object. This uses <code>DbSqlConfig</code>
@@ -87,6 +89,33 @@ public class IBatisDAO extends GmodDAO
     sqlMap.close();
   }
 
+  /**
+   * Test to see if this is an old chado database version
+   * without the feature_cvterm.rank column.
+   * @return true if the feature_cvterm.rank column exists.
+   */
+  private boolean isFeatureCvTermRank()
+  {
+  	if(featureCvTermRankChecked)
+  		return featureCvTermRank;
+  	
+    String schema = ArtemisUtils.getCurrentSchema();   
+    // check column names
+    List list = sqlMap.queryForList("getFeatureCvTermColumnsForASchema", schema);   
+    featureCvTermRank = false;
+    for(int i=0; i<list.size(); i++)
+    {
+      if( ((String)list.get(i)).equals("rank") )
+      {  
+      	featureCvTermRank = true;
+        break;
+      }
+    }
+    
+    featureCvTermRankChecked = true;
+    return featureCvTermRank;
+  }
+  
   //////
   ////// GeneralDaoI
   //////
@@ -143,23 +172,7 @@ public class IBatisDAO extends GmodDAO
   
   public List getFeatureCvTermsBySrcFeature(Feature srcFeature)
   {
-//  find whether current schema has a feature_cvterm.rank column
-    String schema = ArtemisUtils.getCurrentSchema();
-    
-    // check column names
-    List list = sqlMap.queryForList("getFeatureCvTermColumnsForASchema", schema);
-    
-    boolean rank_exists = false;
-    for(int i=0; i<list.size(); i++)
-    {
-      if( ((String)list.get(i)).equals("rank") )
-      {  
-        rank_exists = true;
-        break;
-      }
-    }
-     
-    if(rank_exists)
+  	if(isFeatureCvTermRank())
     {
       logger4j.debug("USE getFeatureCvTermsBySrcFeature()");
       return sqlMap.queryForList("getFeatureCvTermsBySrcFeature",
@@ -223,7 +236,11 @@ public class IBatisDAO extends GmodDAO
     org.gmod.schema.sequence.Feature feature = 
       new org.gmod.schema.sequence.Feature();
     feature.setFeatureId(id);
-    return (Feature)sqlMap.queryForObject("getLazyFeature", feature);
+    
+    if(isFeatureCvTermRank())
+      return (Feature)sqlMap.queryForObject("getLazyFeature", feature);
+    else
+    	return (Feature)sqlMap.queryForObject("getLazyFeatureNoFeatureCvTermRank", feature);
   }
   
   public List getFeaturesByListOfIds(final List featureIds)
@@ -236,7 +253,11 @@ public class IBatisDAO extends GmodDAO
     org.gmod.schema.sequence.Feature feature = 
       new org.gmod.schema.sequence.Feature();
     feature.setUniqueName(uniquename);
-    return sqlMap.queryForList("getLazyFeature", feature);
+    
+    if(isFeatureCvTermRank())
+      return sqlMap.queryForList("getLazyFeature", feature);
+    else
+    	return sqlMap.queryForList("getLazyFeatureNoFeatureCvTermRank", feature);
   }
   
   public Feature getFeatureByUniqueName(String uniquename, String featureType) 
@@ -249,7 +270,10 @@ public class IBatisDAO extends GmodDAO
     cvTerm.setName(featureType);
     feature.setCvTerm(cvTerm);
     
-    return (Feature)sqlMap.queryForObject("getLazyFeature", feature);
+    if(isFeatureCvTermRank())
+      return (Feature)sqlMap.queryForObject("getLazyFeature", feature);
+    else
+    	return (Feature)sqlMap.queryForObject("getLazyFeatureNoFeatureCvTermRank", feature);
   }
    
   
@@ -270,10 +294,10 @@ public class IBatisDAO extends GmodDAO
     feature.setUniqueName(name);
     feature.setFeatureSynonyms(feature_synonym_list);
 
-    List features = sqlMap.queryForList("getLazyFeature", feature);
-    
-    return features;
-    
+    if(isFeatureCvTermRank())
+      return sqlMap.queryForList("getLazyFeature", feature);
+    else
+    	return sqlMap.queryForList("getLazyFeatureNoFeatureCvTermRank", feature);
   }
   
   /**
@@ -318,11 +342,10 @@ public class IBatisDAO extends GmodDAO
    */
   public List getFeaturesByLocatedOnFeature(final Feature feature)
   { 
-    List feature_list = sqlMap.queryForList("getFeature", feature);
-
-    // merge same features in the list
-    //return mergeList(feature_list);
-    return feature_list;
+  	if(isFeatureCvTermRank())
+      return sqlMap.queryForList("getFeature", feature);
+  	else
+  		return sqlMap.queryForList("getFeatureNoFeatureCvTermRank", feature);
   }
   
   /**
@@ -349,23 +372,7 @@ public class IBatisDAO extends GmodDAO
    */
   public List getFeatureCvTermsByFeature(Feature feature)
   {  
-    // find whether current schema has a feature_cvterm.rank column
-    String schema = ArtemisUtils.getCurrentSchema();
-    
-    // check column names
-    List list = sqlMap.queryForList("getFeatureCvTermColumnsForASchema", schema);
-    
-    boolean rank_exists = false;
-    for(int i=0; i<list.size(); i++)
-    {
-      if( ((String)list.get(i)).equals("rank") )
-      {  
-        rank_exists = true;
-        break;
-      }
-    }
-     
-    if(rank_exists)
+    if(isFeatureCvTermRank())
       return
         sqlMap.queryForList("getFeatureCvTermsByFeature", feature);
     else
