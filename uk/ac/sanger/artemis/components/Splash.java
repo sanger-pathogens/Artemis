@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.41 2008-12-10 16:43:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Splash.java,v 1.42 2009-02-05 11:43:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import java.util.Properties;
  *  Base class that creates a generic "Splash Screen"
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: Splash.java,v 1.41 2008-12-10 16:43:38 tjc Exp $
+ *  @version $Id: Splash.java,v 1.42 2009-02-05 11:43:23 tjc Exp $
  **/
 
 abstract public class Splash extends JFrame
@@ -352,7 +352,7 @@ abstract public class Splash extends JFrame
         g.drawString(geneticCode,
                      left_margin, yPos+(font_height * 3));
 
-        g.drawString("Copyright 1998 - 2008",
+        g.drawString("Copyright 1998 - 2009",
                      left_margin, yPos+(font_height * 9 / 2));
         g.drawString("Genome Research Limited",
                      left_margin, yPos+(font_height * 11 / 2));
