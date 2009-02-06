@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.26 2008-07-31 16:14:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.27 2009-02-06 11:34:51 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -29,6 +29,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -575,6 +576,22 @@ public class MatchPanel extends JPanel
       }
     }
     return matchQualifiers;
+  }
+  
+  public List getGeneNameList()
+  {
+  	if(orthoparaLogTable == null || orthoparaLogTable.getTable().getRowCount()<1)
+  		return null;
+  	
+  	int columnIndex = orthoparaLogTable.getColumnIndex(orthoparaLogTable.GENE_COL);
+  	List geneNames = new Vector(orthoparaLogTable.getTable().getRowCount());
+  	for(int row=0; row<orthoparaLogTable.getTable().getRowCount(); row++)
+  	{
+  		String name[] = 
+  			((String)orthoparaLogTable.getTable().getValueAt(row, columnIndex)).split(":");
+  		geneNames.add(name[name.length-1]);
+  	}
+  	return geneNames;
   }
   
   public static String getDescription()
