@@ -20,23 +20,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/CanvasPanel.java,v 1.4 2004-12-14 11:38:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/CanvasPanel.java,v 1.5 2009-02-06 14:58:40 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
-import uk.ac.sanger.artemis.Options;
-
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.FontMetrics;
+import javax.swing.JPanel;
 
 /**
  *  This is a JPanel that contains a JPanel containing a JComponent.  Both Panels
  *  have BorderLayout.  The JComponent is added at "Center".
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: CanvasPanel.java,v 1.4 2004-12-14 11:38:11 tjc Exp $
+ *  @version $Id: CanvasPanel.java,v 1.5 2009-02-06 14:58:40 tjc Exp $
  **/
 
 abstract public class CanvasPanel extends JPanel 
@@ -44,18 +42,11 @@ abstract public class CanvasPanel extends JPanel
   /** The height of the font used in this component. */
   private int font_ascent;
 
-  /** maximum height of the font used in this component. */
-  private int font_max_ascent;
-
   /** descent of the font used in this component. */
   private int font_descent;
 
-  /** The(maximum) width of the font used in this component. */
+  /** The (maximum) width of the font used in this component. */
   private int font_width;
-
-  /** base line of the font used in this component. */
-  private int font_base_line;
-
 
   /**
    *  Create a new JPanel(mid_panel) and a JComponent.
@@ -76,14 +67,13 @@ abstract public class CanvasPanel extends JPanel
     // find the width of a wide character
     font_width = fm.charWidth('M');
     font_ascent = fm.getAscent();
-    font_max_ascent = fm.getMaxAscent();
     font_descent = fm.getDescent();
   }
 
   /**
    *  Return the width of our font, as calculated by setFontInfo().
    **/
-  public int getFontWidth() 
+  protected int getFontWidth() 
   {
     return font_width;
   }
@@ -92,7 +82,7 @@ abstract public class CanvasPanel extends JPanel
    *  Return the ascent(height above the baseline) of our font, as calculated
    *  by setFontInfo().
    **/
-  public int getFontAscent() 
+  protected int getFontAscent() 
   {
     return font_ascent;
   }
@@ -101,7 +91,7 @@ abstract public class CanvasPanel extends JPanel
    *  Return the max ascent(height above the baseline) of our font, as
    *  calculated by setFontInfo().
    **/
-  public int getFontMaxAscent() 
+  protected int getFontMaxAscent() 
   {
     return font_ascent;
   }
@@ -109,7 +99,7 @@ abstract public class CanvasPanel extends JPanel
   /**
    *  Return the descent of our font, as calculated by setFontInfo().
    **/
-  public int getFontDescent() 
+  protected int getFontDescent() 
   {
     return font_descent;
   }
@@ -117,7 +107,7 @@ abstract public class CanvasPanel extends JPanel
   /**
    *  The max ascent + descent of the default font.
    **/
-  public int getFontHeight() 
+  protected int getFontHeight() 
   {
     return getFontMaxAscent() + getFontDescent();
   }
