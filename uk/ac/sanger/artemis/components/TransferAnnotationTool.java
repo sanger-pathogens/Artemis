@@ -30,6 +30,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -78,7 +79,8 @@ class TransferAnnotationTool extends JFrame
   };
   
   public TransferAnnotationTool(final Feature feature, 
-  		                          final EntryGroup entryGroup)
+  		                          final EntryGroup entryGroup,
+  		                          final List geneNames)
   {
     super("Transfer Annotation Tool :: "
         + feature.getIDString());
@@ -112,13 +114,12 @@ class TransferAnnotationTool extends JFrame
       if(isNonTransferable(qualifier.getName()))
           continue;
 
-      JCheckBox checkBox = new JCheckBox(qualifier.getName(), true);
+      JCheckBox checkBox = new JCheckBox(qualifier.getName(), false);
       pane.add(checkBox, c);
       qualifierCheckBoxes.add(checkBox);
       c.gridy = ++nrows;
     }
 
-    
     
     c.gridx = 1;
     c.gridy = 1;
@@ -127,6 +128,15 @@ class TransferAnnotationTool extends JFrame
     final JTextArea geneNameTextArea = new JTextArea("gene1");
     geneNameTextArea.setEditable(true);
     pane.add(geneNameTextArea, c);
+    
+    if(geneNames != null)
+    {
+    	geneNameTextArea.setText("");
+    	for(int i=0;i<geneNames.size(); i++)
+    	{
+    		geneNameTextArea.append((String) geneNames.get(i)+"\n");
+    	}
+    }
 
     c.gridy = ++nrows;
     c.gridheight = 1;
