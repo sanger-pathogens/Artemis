@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.65 2009-01-15 10:31:02 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.66 2009-02-06 11:35:48 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -77,7 +77,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.65 2009-01-15 10:31:02 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.66 2009-02-06 11:35:48 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -591,7 +591,11 @@ public class FeatureEdit extends JPanel
     {
       public void actionPerformed(ActionEvent e) 
       {
-        new TransferAnnotationTool(getFeature(), entry_group);
+      	java.util.List geneNames = null;
+      	if(matchForm != null)
+      		geneNames = matchForm.getGeneNameList();
+      	
+        new TransferAnnotationTool(getFeature(), entry_group, geneNames);
       }
     });
 
