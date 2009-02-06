@@ -1,6 +1,6 @@
 # This is a GNU Makefile for Artemis
 
-# $Header: //tmp/pathsoft/artemis/Makefile,v 1.43 2009-01-23 11:13:01 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/Makefile,v 1.44 2009-02-06 10:27:29 tjc Exp $
 
 SHELL=/bin/sh
 
@@ -285,7 +285,7 @@ artemis.jar : $(CLASSES)
 	jar cmf manifest-art artemis.jar images/PSUlogo.gif images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
 	                     artemis_sqlmap org uk com net nsdb type seqdb LICENSE.Apache j2ssh.properties; \
         echo "Main-Class: uk.ac.sanger.artemis.circular.DNADraw" > manifest-circular; \
-        jar cmf manifest-circular DNAPlot.jar images/PSUlogo.gif README etc \
+        jar cmf manifest-circular DNAPlotter.jar images/PSUlogo.gif README etc \
                              uk org/gmod org/apache org/biojava/bio/ LICENSE.Apache j2ssh.properties; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ActMain" > manifest-act; \
 	jar cmf manifest-act act.jar images/PSUlogo.gif images/icon.gif images/helix.gif images/sanger-centre.gif README etc \
