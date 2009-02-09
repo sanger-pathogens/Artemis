@@ -251,13 +251,22 @@ old and new window.
     </PARA>
   </SECT2>
 
-  <SECT2 ID="FILEMENU-PRINT-WINDOW">
-    <TITLE>Print Image Files (PNG/JPEG)</TITLE>
+  <SECT2 ID="FILEMENU-IMAGE-WINDOW">
+    <TITLE>Save As Image Files (png/jpeg)</TITLE>
     <PARA>
 Print out the contents of the current window. All or some of the
 window panels can be select  for printing to an image file. 
     </PARA>
   </SECT2>
+
+   <SECT2 ID="FILEMENU-PRINT-WINDOW">
+     <TITLE>Print</TITLE>
+     <PARA>
+This option can be used to print the contents of the current window
+to a file as PostScript or to a printer.
+     </PARA>
+    </SECT2>
+
 
   <SECT2 ID="FILEMENU-PRINT-PREVIEW-WINDOW">
     <TITLE>Print Preview</TITLE>
