@@ -1,6 +1,6 @@
 Version 10.+/7.+
 
-    Use black_belt_mode to supress warnings when opening Artemis.
+    Use black_belt_mode to suppress warnings when opening Artemis.
     
     Script (writedb_entry) added to make it easier to write out 
     multiple entries as EMBL / GFF files from chado. This uses Artemis 
@@ -9,9 +9,13 @@ Version 10.+/7.+
     etc/writedb_entry -help
 
 	On MacOSX - enable dropping files on Artemis application to open sequences
+	with file extensions: gff, embl, EMBL, genbank, gbk, fasta, seq, art and 
+	dna (defined in Artemis.app/Contents/Info.plist).
 
 	Add NCBI search link to run menu. This transfers the sequence automatically
 	to the NCBI web page.
+	
+	Add support for writing Sequin table format.
 	
 	Added print to PostScript option in Artemis and ACT.
 
@@ -55,8 +59,6 @@ Version 10.+/7.+
 	a given feature size.
 	
 	Add -Dread_only option for read only databases.
-	
-	Add option to graphs to be able to adjust their height.
 	
 	Add option to lazy load feature data from database.
 	
