@@ -42,7 +42,11 @@
 		So the command line will look something like this example:
         <pre> ./art -Dchado="localhost:2996/test?tjc" -Dibatis \
              -Djdbc.drivers=org.postgresql.Driver</pre>
-		
+	
+For a read only connection -Dread_only is specified on the command line:
+        <pre> ./art -Dchado="db.genedb.org:5432/snapshot?genedb_ro" -Dibatis \
+             -Djdbc.drivers=org.postgresql.Driver -Dread_only</pre>
+	
         <a NAME="READ"></a><h2>Reading From the Database</h2>
 		On a successful login a database and file manager window will open up. 
         The database manager will display "Database Loading...". The organisms
@@ -139,9 +143,15 @@
             <p>
 			<ul>
 				<li><b>Properties</b><br>
-					This contains properties such as the synonyms, time last modified and the
-					internal ID. Synonyms are added as a controlled vocabulary (these are in 
-                    a cv named '<i>genedb_synonym_type</i>').
+		    This contains properties such as the synonyms and time last modified. Also
+		    the ID and Name of the feature are given here, for a gene feature this is
+                    used as a systematic identifier and a primary name.
+		    Synonyms are added as a controlled vocabulary (these are in 
+                    a cv named '<i>genedb_synonym_type</i>'). The 'is obsolete' check box is
+                    used to indicate if this is an obsolete feature. The feature is then marked
+                    as obsolete in the database. Artemis (by default) does not show obsolete 
+    		    features in the feature display and they are shown greyed out in the 
+   		    feature list.
 
                     <center><p><b><i>Properties section</i></b><br>
                     <img src="Properties.gif" border="1"></center>
