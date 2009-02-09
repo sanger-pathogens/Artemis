@@ -40,8 +40,8 @@ corresponds to a cvterm name that matches:
 </li>
 </ol>
 When the organisms with the source feature have been identified these are displayed. When 
-a user clicks on an organism it then builds the types (e.g. chromosome, contig) of source 
-feature and the underlying features that have residues (getResidueFeatures in Feature.xml).
+a user clicks on an organism it opens that node and finds the types (e.g. chromosome, contig) of source 
+features and the underlying features that have residues (getResidueFeatures in Feature.xml).
 <p>
 <h3><a name="OPENART">Opening the main Artemis/ACT window</a></h3>
 <p>
