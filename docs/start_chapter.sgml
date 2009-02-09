@@ -73,7 +73,10 @@ java -classpath lib/biojava.jar:lib/jemAlign.jar:lib/j2ssh/j2ssh-core.jar:lib/ib
     <PARA>
 On Macintosh machines &prog; can be started by double clicking on the Artemis
 icon. The icon can be added to the dock by dragging it from a 'Finder' window
-and dropping it onto the position in the dock you want it.
+and dropping it onto the position in the dock you want it. In addition
+sequence files (with gff, embl, EMBL, genbank, gbk, fasta, seq, art file name
+extensions) can be dragged and dropped on to the Artemis application image to 
+open them up.
     </PARA>
   </SECT1>
 
