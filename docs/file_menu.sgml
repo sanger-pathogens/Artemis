@@ -122,6 +122,18 @@ will be discarded instead).
       </PARA>
     </SECT3>
 
+    <SECT3 ID="FILEMENU-SAVE-ENTRY-AS-SEQUIN">
+      <TITLE>Sequin Table Format</TITLE>
+      <PARA>
+This saves a file in <ULINK
+URL="http://www.ncbi.nlm.nih.gov/Sequin/table.html" TYPE="external">Sequin table format
+</ULINK> which is used by <ULINK
+URL="http://www.ncbi.nlm.nih.gov/Sequin/" TYPE="external">Sequin
+</ULINK>.
+     </PARA>
+    </SECT3>
+
+
     <SECT3 ID="FILEMENU-SAVE-ENTRY-AS-GFF">
       <TITLE>GFF Format</TITLE>
       <PARA>
