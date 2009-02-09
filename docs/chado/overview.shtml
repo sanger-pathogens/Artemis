@@ -183,7 +183,8 @@ For a read only connection -Dread_only is specified on the command line:
                     or cellular_component CV's.
 
                     <p>Products are stored in Chado as a CV (<i>i.e.</i> in cvterm in 
-                    a cv named '<i>genedb_products</i>').
+                    a cv named '<i>genedb_products</i>'). They can be given evidence codes
+                    and have associated WITH/FROM and Dbxref columns.
 
                     <p>Other generic controlled curations can be found by Artemis and shown 
                     if their CV name in Chado is prefixed with '<i>CC_</i>' (<i>e.g.</i> 
