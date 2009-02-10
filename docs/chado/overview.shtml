@@ -13,6 +13,7 @@
 <li><a href="#WRITE">Writing To The Database</a>
 <li><a href="#GENEBUILDER">Opening the Standalone Gene Builder</a>
 <li><a href="#COMMUNITY+ANNOTATION">Community Annotation</a>
+<li><a href="#WRITING-SEQUENCE-FILES">Writing Out Sequence Files</a>
 </ul>
 		<a NAME="CONNECT"></a><h2>Connecting to a Chado Database</h2>
 		The following java flags are used when running Artemis when connecting to a
@@ -260,4 +261,21 @@ For a read only connection -Dread_only is specified on the command line:
        <i>timelastmodified</i>.
        If the corresponding feature in the database has changed by another user it will
        ask whether to continue with the commit process.
+
+       <a NAME="WRITING-SEQUENCE-FILES"></a><h3>Writing Out Sequence Files</h3>
+       Artemis can write out EMBL and GFF files from the database. An option is given to
+       optionally flatten the gene model to just a CDS feature. Also an option is given to ignore
+       any obsolete features. For EMBL it uses mappings for conversion of the keys and qualifiers. 
+       These mappings are stored in the 'etc/key_mapping' and 'etc/qualifier_mapping'
+       files.
+       <p>
+       A script (etc/write_db_entry) is also provided as a means of writing out multiple
+       sequences from the database. The script takes the following options:
+       <pre>
+-h      show help
+-f      [y|n] flatten the gene model, default is y
+-i      [y|n] ignore obsolete features, default is y
+-s      space separated list of sequences to read and write out
+-o      [EMBL|GFF] output format, default is EMBL
+       </pre>
 
