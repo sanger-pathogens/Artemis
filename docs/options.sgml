@@ -335,6 +335,22 @@ more information.
       </PARA>
     </SECT2>
 
+    <SECT2 ID="OPTIONS-NCBI-DNA-PROGRAMS">
+      <TITLE><LITERAL>ncbi_dna_search</LITERAL></TITLE>
+      <PARA>
+This lists the NCBI web-BLAST applications that the bases of a selected feature can
+be sent to. See <XREF LINKEND="RUNMENU">.
+      </PARA>
+    </SECT2>
+
+    <SECT2 ID="OPTIONS-NCBI-PROTEIN-PROGRAMS">
+      <TITLE><LITERAL>ncbi_protein_search</LITERAL></TITLE>
+      <PARA>
+This lists the NCBI web-BLAST applications that the translation of a selected feature can
+be sent to. See <XREF LINKEND="RUNMENU">.
+      </PARA>
+    </SECT2>
+
     <SECT2 ID="OPTIONS-COLOUR">
       <TITLE>Setting Colours</TITLE>
       <PARA>
