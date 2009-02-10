@@ -400,6 +400,39 @@ gc_content_default_window_size = 150
 See also <XREF LINKEND="GRAPHS">.
       </PARA>
     </SECT2>
+
+    <SECT2 ID="OPTIONS-CHADO">
+      <TITLE>Options For A Chado Database</TITLE>
+
+    <SECT3 ID="OPTIONS-CHADO-EXON-MODEL">
+       <TITLE><LITERAL>chado_exon_model</LITERAL></TITLE>
+       <PARA>
+       This is the feature key used when chado exons are joined and displayed in &prog;.
+       For example: <SYNOPSIS>chado_exon_model=CDS</SYNOPSIS> 
+       [default: "exon-model"] 
+       </PARA>
+    </SECT3>
+
+    <SECT3 ID="OPTIONS-CHADO-TRANSCRIPT">
+        <TITLE><LITERAL>chado_transcript</LITERAL></TITLE>
+	<PARA>
+	This is the feature key used when chado transcripts are created in a gene 
+	model. [default: "mRNA"] 
+	</PARA>
+    </SECT3>
+
+    <SECT3 ID="OPTIONS-CHADO-SERVERS">
+      <TITLE><LITERAL>chado_servers</LITERAL></TITLE>
+      <PARA>
+      This can be used to provide a list of available databases. For example:
+      <SYNOPSIS>chado_servers = \
+        test localhost:5432/test?userName \
+	genedb_ro db.genedb.org:5432/snapshot?genedb_ro
+      </SYNOPSIS>
+      </PARA>
+    </SECT3>
+
+    </SECT2>
   </SECT1>
 
   <SECT1 ID="OPTIONS-FILE">
