@@ -1546,7 +1546,8 @@ GUG  8.3( 12422)  GCG  5.3(  8011)  GAG 21.3( 31979)  GGG  4.3(  6497)
 the GC content graph (see <XREF LINKEND="GRAPHMENU-GC-CONTENT">).  This menu
 item will prompt the user for the name of a data file which should contain one
 line per base of sequence and one floating point number per line.  &prog; will
-plot each data point over the corresponding base.
+plot each data point over the corresponding base. When a file is prompted for
+there is an option which if selected will mean the log transform is plotted.
     </PARA>
   </SECT2>
 
