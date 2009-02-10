@@ -57,7 +57,11 @@ is on will be highlighted in yellow.
 Show the log of informational messages from &prog;.  Currently the log window
 is only used on UNIX and GNU/Linux systems to show the output of external
 programs.  This menu item is only available when running &prog; on UNIX or
-GNU/Linux systems.
+GNU/Linux systems. The logging is controlled by <ULINK
+URL="http://logging.apache.org/log4j/1.2/index.html">log4j</ULINK>. The
+log4j.properties file (etc/log4j.properties in the source distribution) sets
+the level of logging. This can be used to send the logging information to
+other places such as a file.
     </PARA>
   </SECT3>
   
