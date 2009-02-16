@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.event.*;
+import java.awt.geom.Arc2D;
 
 public class Block implements Transferable
 {
@@ -522,9 +523,9 @@ public class Block implements Transferable
     // double arcLength = Math.toRadians(angEnd)*(bdiameter/2.);
     
     // if too small draw arc as a line
-    if(Math.abs(angEnd) < 0.5d)
+    if(Math.abs(angEnd) < 0.4d)
     {
-      newOrig = (AffineTransform) (origin.clone());
+    	newOrig = (AffineTransform) (origin.clone());
       
       int xLine = d2-strokeInt2 ; 
       newOrig.translate(locx+d2,locy+d2);
@@ -547,9 +548,12 @@ public class Block implements Transferable
           BasicStroke.JOIN_MITER);
 
       g2.setStroke(basicstroke);
-      g2.drawArc(locx,locy, d, d,
+      /*g2.drawArc(locx,locy, d, d,
                Math.round(Math.round(angStart)),
-               Math.round(Math.round(angEnd)));
+               Math.round(Math.round(angEnd)));*/
+      
+      g2.draw(new Arc2D.Double(locx,locy, d, d, angStart, angEnd,
+          Arc2D.OPEN));
     }
     
     g2.setTransform(origin);
