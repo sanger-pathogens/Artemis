@@ -209,8 +209,8 @@ public class DNADraw extends ScrollPanel
       BufferedReader reader = new BufferedReader(new InputStreamReader(in));
       while((line = reader.readLine()) != null)
       {
-        if(line.startsWith("DNAPlot"))
-          return line.substring( "DNAPlot".length() ).trim();
+        if(line.startsWith("DNAPlotter"))
+          return line.substring( "DNAPlotter".length() ).trim();
       }
       reader.close();
       in.close();
