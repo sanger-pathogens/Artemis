@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.59 2008-12-09 11:50:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.60 2009-02-17 13:34:45 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -31,6 +31,7 @@ import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.components.genebuilder.GeneBuilderFrame;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.genebuilder.GeneViewerPanel;
+import uk.ac.sanger.artemis.components.genebuilder.gff.PropertiesPanel;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.io.RangeVector;
@@ -60,7 +61,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.59 2008-12-09 11:50:25 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.60 2009-02-17 13:34:45 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -2147,34 +2148,67 @@ public class EditMenu extends SelectionMenu
    **/
   protected static void deleteSelectedFeatures (final JFrame frame,
                                       final Selection selection,
-                                      final EntryGroup entry_group) {
-    try {
+                                      final EntryGroup entry_group) 
+  {
+    try 
+    {
       entry_group.getActionController ().startAction ();
 
       final FeatureVector features_to_delete = selection.getAllFeatures ();
-
       final String feature_count_string;
-
-      if (features_to_delete.size () == 1) {
+      if (features_to_delete.size () == 1)
         feature_count_string = "the selected feature";
-      } else {
+      else
         feature_count_string = features_to_delete.size () + " features";
-      }
 
-      if (Options.getOptions ().isNoddyMode ()) {
-        // 0 means always popup a YesNoDialog
-        if (!checkForSelectionFeatures (frame, selection, 0,
+      if (Options.getOptions ().isNoddyMode ()) 
+      {
+      	if(GeneUtils.isDatabaseEntry(entry_group))
+      	{
+      		Box boption = Box.createVerticalBox();
+      		JCheckBox delete = new JCheckBox("permanently delete", false);
+      		boption.add(new JLabel("Make "+feature_count_string+" obsolete?"));
+      		boption.add(delete);
+      		int res = JOptionPane.showConfirmDialog(frame, 
+      				boption, "Make obsolete", JOptionPane.OK_CANCEL_OPTION, 
+      				JOptionPane.QUESTION_MESSAGE);
+      		if(res == JOptionPane.CANCEL_OPTION)
+      			return;
+      		
+      		// make obsolete rather than permanently delete
+      		if(!delete.isSelected())
+      		{
+      			for(int i=0; i<features_to_delete.size(); i++)
+      			{
+      				final Feature currentFeature = features_to_delete.elementAt(i);
+      				try
+							{
+								currentFeature.setQualifier(new Qualifier("isObsolete", "true"));
+	              PropertiesPanel.updateObsoleteSettings(
+	      						(GFFStreamFeature)currentFeature.getEmblFeature());
+							} 
+      				catch (Exception e)
+							{
+								e.printStackTrace();
+							} 	
+      			}
+      			return;
+      		}
+      	}
+      	if (!checkForSelectionFeatures (frame, selection, 0,
                                         "really delete " +
-                                        feature_count_string + "?")) {
-          return;
-        }
+                                        feature_count_string + "?")) 
+      	{
+      		return;
+      	}
       }
 
       // clear the selection now so that it doesn't need to be updated as each
       // feature is deleted
       selection.clear ();
 
-      while (features_to_delete.size () > 0) {
+      while (features_to_delete.size () > 0) 
+      {
         // delete in reverse order for speed
 
         final Feature current_selection_feature =
@@ -2182,19 +2216,24 @@ public class EditMenu extends SelectionMenu
 
         features_to_delete.removeElementAt (features_to_delete.size () - 1);
 
-        try {
+        try 
+        {
           current_selection_feature.removeFromEntry ();
-        } catch (ReadOnlyException e) {
+        } 
+        catch (ReadOnlyException e) 
+        {
           selection.set (current_selection_feature);
 
-          if (features_to_delete.size () == 1) {
+          if (features_to_delete.size () == 1) 
+          {
             final String message =
               "the selected feature (" +
               current_selection_feature.getIDString () +
               ") is read only - cannot continue";
             new MessageDialog (frame, message);
-
-          } else {
+          } 
+          else 
+          {
             final String message =
               "one of the selected features (" +
               current_selection_feature.getIDString () +
@@ -2210,7 +2249,9 @@ public class EditMenu extends SelectionMenu
           return;
         }
       }
-    } finally {
+    } 
+    finally 
+    {
       entry_group.getActionController ().endAction ();
     }
   }

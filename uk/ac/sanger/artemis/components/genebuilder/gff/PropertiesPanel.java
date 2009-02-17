@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.6 2008-11-07 12:19:13 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.7 2009-02-17 13:34:45 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -530,8 +530,11 @@ public class PropertiesPanel extends JPanel
       return;
     
     obsoleteChanged = false;
-
-    GFFStreamFeature gffFeature = (GFFStreamFeature)feature.getEmblFeature();
+    updateObsoleteSettings((GFFStreamFeature)feature.getEmblFeature());
+  }
+  
+  public static void updateObsoleteSettings(GFFStreamFeature gffFeature)
+  {
     Qualifier isObsoleteQualifier = gffFeature.getQualifierByName("isObsolete");
     String isObsoleteNew = (String) isObsoleteQualifier.getValues().get(0);
     if(isObsoleteNew.equals("true"))
@@ -547,7 +550,7 @@ public class PropertiesPanel extends JPanel
     {
       Qualifier idQualifier = gffFeature.getQualifierByName("ID");
       
-      int select = JOptionPane.showConfirmDialog(PropertiesPanel.this, 
+      int select = JOptionPane.showConfirmDialog(null, 
           "Make children of "+idQualifier.getValues().get(0)+"\n"+
           (isObsoleteNew.equals("true") ? "obsolete?" : "not obsolete?"), 
           "Update Children", 
