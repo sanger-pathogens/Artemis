@@ -30,8 +30,8 @@ import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.sequence.MarkerRange;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -41,16 +41,17 @@ public class Utils
 {
 	//private static final Logger logger = Logger.getLogger(Utils.class);
 
-	public static ReportDetails findCutSitesFromEmbossReport(String fileName)
+	protected static ReportDetails findCutSitesFromEmbossReport(Reader reader)
 	{
 		EmbossTableParser etp = new EmbossTableParser();
 		ReportDetails ret = new ReportDetails();
 		try
 		{
-			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			BufferedReader br = new BufferedReader(reader);
 			ret.cutSites = etp.parse(br);
 			ret.length = etp.getLength();
-		} catch (IOException exp)
+		}
+		catch (IOException exp)
 		{
 			throw new RuntimeException("Couldn't read, or parse results");
 		}
@@ -64,7 +65,7 @@ public class Utils
 	 * @param entryGroup
 	 * @return
 	 */
-	public static DNADraw createDNADrawFromReportDetails(final ReportDetails rd, 
+	protected static DNADraw createDNADrawFromReportDetails(final ReportDetails rd, 
 			                                                 final EntryGroup entryGroup)
 	{
 		DNADraw dna = new DNADraw();

@@ -40,9 +40,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -63,10 +65,12 @@ public class CircularGenomeController
 	 * Create in-silico PFGE from a restriction enzyme digest and draw
 	 * alongside DNAPlotter
 	 */
-	protected void setup(CircularGenomeCommandBean cgcb, String fileName) throws Exception
+	protected void setup(CircularGenomeCommandBean cgcb, List<String> fileNames) 
+	          throws Exception
 	{
 		try
 		{
+			String fileName = fileNames.get(0);
 			EntryGroup entryGroup = getEntryGroupFromFile(fileName);		
 			if(fileName == null)
 			{
@@ -114,7 +118,8 @@ public class CircularGenomeController
 			}
 			p.waitFor();
 			
-			final ReportDetails rd = Utils.findCutSitesFromEmbossReport(output.getCanonicalPath());
+			final ReportDetails rd = Utils.findCutSitesFromEmbossReport(
+					new FileReader(output.getCanonicalPath()));
 
 			if (rd.cutSites.size() == 0)
 				JOptionPane.showMessageDialog(null,
@@ -173,8 +178,10 @@ public class CircularGenomeController
 	    Dimension d = f.getToolkit().getScreenSize();
 
 	    JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+	    JScrollPane jspDNA = new JScrollPane(dna);
+	    
 	    mainPanel.add(inSilicoGelPanel);
-	    mainPanel.add(dna);
+	    mainPanel.add(jspDNA);
 	    
 	    JScrollPane jsp = new JScrollPane(mainPanel);
 	    jsp.getViewport().setBackground(Color.white);
@@ -288,21 +295,28 @@ public class CircularGenomeController
 		CircularGenomeController controller = new CircularGenomeController();
 		try
 		{
-			String fileName = null;
+			List fileNames = null;
 			if(args != null && args.length > 0)
 			{
 				if(args.length == 1)
-		  		fileName = args[0];
+				{
+					fileNames = new Vector();
+					fileNames.add(args[0]);
+				}
 				
 				for(int i=0; i<args.length; i++)
 				{
 					if(args[i].startsWith("-enz"))
 						command.setEnzymeName(args[i+1]);
 					else if(args[i].startsWith("-seq"))
-						fileName = args[i+1];
+					{
+						if(fileNames == null)
+							fileNames = new Vector();
+						fileNames.add(args[i+1]);
+					}
 				}
 			}
-			controller.setup(command, fileName);
+			controller.setup(command, fileNames);
 		} 
 		catch (Exception e)
 		{
