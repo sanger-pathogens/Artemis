@@ -1,0 +1,41 @@
+########################################
+# Program: restrict
+# Rundate: Wed 18 Feb 2009 11:01:39
+# Commandline: restrict
+#    [-sequence] /Users/tjc/foo.embl
+#    -auto
+#    -limit y
+#    -enzymes HincII,hinfI,ppiI,hindiii
+#    -outfile /private/tmp/circular_genome57650.txt
+# Report_format: table
+# Report_file: /private/tmp/circular_genome57650.txt
+########################################
+
+#=======================================
+#
+# Sequence:      from: 1   to: 41243
+# HitCount: 158
+#
+# Minimum cuts per enzyme: 1
+# Maximum cuts per enzyme: 2000000000
+# Minimum length of recognition site: 4
+# Blunt ends allowed
+# Sticky ends allowed
+# DNA is linear
+# Ambiguities allowed
+#
+#=======================================
+
+  Start     End  Strand Enzyme_name Restriction_site 5prime 3prime 5primerev 3primerev
+     81      86       + HindIII     AAGCTT               81     85         .         .
+    140     144       + HinfI       GANTC               140    143         .         .
+  40956   40960       + HinfI       GANTC             40956  40959         .         .
+  41036   41041       + HindII      GTYRAC            41038  41038         .         .
+
+#---------------------------------------
+#---------------------------------------
+
+#---------------------------------------
+# Total_sequences: 1
+# Total_hitcount: 158
+#---------------------------------------

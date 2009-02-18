@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+
+<!--
+
+  Ant build file for Artemis Test Suite
+
+-->
+
+<project default="test" basedir=".">
+
+  <target name="init">
+    <tstamp />
+    <property name="name" value="artemis test suite" />
+    <property name="version" value="live" />
+    <property name="build.compiler" value="modern" />
+    <property name="classpath" value="." />
+    <property name="src.tests.dir" value="." />
+  	<property name="src.lib.dir" value="lib" />
+
+    <property name="build.dir" value="./ant-build" />
+
+    <!-- Subdirectories for tests source and classes -->
+    <property name="build.src.tests" value="${build.dir}/src/tests" />
+    <property name="build.dest.tests" value="${build.dir}/classes/tests" />
+  	
+    <!-- Compile classpath -->
+    <path id="compile.classpath">
+        <!-- Main classes from build -->
+    	<pathelement path="${classpath}" />
+    	<pathelement path="../ant-build/classes/main/" />
+        <pathelement path="${build.dest.tests}" />
+        <!-- Dependency classes -->
+        <fileset dir="${src.lib.dir}">
+        	 <include name="**/*.jar" />
+        </fileset>
+    </path>
+  </target>
+
+  <!-- Prepares the build directory -->
+  <target name="prepare" depends="init">
+    <mkdir dir="${build.dir}" />
+  </target>
+
+  <!-- Prepares the source code -->
+  <target name="prepare-core" depends="init,prepare">
+    <!-- Creates directories -->
+    <mkdir dir="${build.src.tests}" />
+	<mkdir dir="${build.dest.tests}" />
+
+    <!-- Copies src files -->
+    <copy todir="${build.src.tests}">
+	  <fileset dir="${src.tests.dir}">
+	   	<exclude name="**/CVS/**" />
+	  	<exclude name="**/data/**" />
+	  	<exclude name="**/lib/**" />
+	  </fileset>
+    </copy>
+
+	<!-- Copies jars -->
+	<copy todir="${build.dir}">
+	  <fileset dir="${src.lib.dir}">
+	    <include name="*.jar" />
+      </fileset>
+	</copy>
+  </target>
+	
+  <!-- Compiles the source directory -->
+  <target name="compile" depends="init,prepare-core">
+	 <javac
+	  fork="true"
+	  srcdir="${build.src.tests}"
+	  destdir="${build.dest.tests}"
+	  deprecation="false"
+	  depend="no"
+	  debug="true">
+	  <classpath refid="compile.classpath"/>
+	</javac>
+  </target>	
+	
+  <target name="test" depends="compile">
+  	<junit description="alltests" fork="yes">
+  	 <jvmarg value="-DEMBOSS_ROOT=/Users/tjc/EMBOSS/emboss/"/>
+  	 <batchtest todir="${build.dest.tests}">
+  	 	<fileset dir="${build.src.tests}">
+  	 		<include name="uk/ac/sanger/artemis/circular/digest/**Test.java"/>
+  	 	</fileset>
+  	 </batchtest>
+  	 <formatter type="plain" usefile="false"/>
+  	 <classpath refid="compile.classpath"/> 
+  	</junit>
+  </target>
+	
+  <!-- Cleans everything -->
+  <target name="clean" depends="init">
+    <delete dir="${build.dir}" />
+  </target>
+</project>
