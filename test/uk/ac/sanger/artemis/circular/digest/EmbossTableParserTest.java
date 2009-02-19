@@ -47,6 +47,15 @@ public class EmbossTableParserTest
     InputStreamReader reader = new InputStreamReader(inputStream);
     EmbossTableParser etp = new EmbossTableParser();
     
-    etp.parse(new BufferedReader(reader));
+    List<CutSite> cutSites = etp.parse(new BufferedReader(reader));
+    CutSite firstCutSite = cutSites.get(0);
+		
+		assertEquals("Number of cut sites", cutSites.size(), 4);
+		assertEquals("Enzyme name", firstCutSite.getEnzymeName(), "HindIII");
+		assertEquals("3prime", firstCutSite.getThreePrime(), 85);
+		assertEquals("5prime", firstCutSite.getFivePrime(), 81);
+		assertEquals("3prime-rev", firstCutSite.getThreePrimeRev(), 0);
+		assertEquals("5prime-rev", firstCutSite.getFivePrimeRev(), 0);
+		assertTrue("Cut site strand", firstCutSite.isForward());
 	}
 }

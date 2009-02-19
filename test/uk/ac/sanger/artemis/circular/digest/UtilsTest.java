@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.sanger.artemis.circular.digest.CutSite;
@@ -32,6 +33,7 @@ public class UtilsTest
 	/**
 	 * Test that restrict output is parsed
 	 */
+	@Ignore("Use EmbossTableParserTest")
 	@Test
 	public void testFindCutSitesFromEmbossReport()
 	{
