@@ -74,6 +74,7 @@
       <fileset dir="${src.dir}">
       	<exclude name="**/CVS/**" />
       	<exclude name="test/**" />
+      	<exclude name="ant-build/**" />
       </fileset>
     </copy>
 
