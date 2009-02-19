@@ -80,7 +80,7 @@
 	
   <target name="test" depends="compile">
   	<junit description="alltests" fork="yes">
-  	 <jvmarg value="-DEMBOSS_ROOT=/Users/tjc/EMBOSS/emboss/"/>
+  	 <jvmarg value="-DEMBOSS_ROOT=${EMBOSS_ROOT}"/>
   	 <batchtest todir="${build.dest.tests}">
   	 	<fileset dir="${build.src.tests}">
   	 		<include name="uk/ac/sanger/artemis/circular/digest/**Test.java"/>
