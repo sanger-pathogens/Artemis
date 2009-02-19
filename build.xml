@@ -73,6 +73,7 @@
     <copy todir="${build.src.main}">
       <fileset dir="${src.dir}">
       	<exclude name="**/CVS/**" />
+      	<exclude name="test/**" />
       </fileset>
     </copy>
 
