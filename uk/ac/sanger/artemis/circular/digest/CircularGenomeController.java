@@ -36,10 +36,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,9 +50,13 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
 /**
  * 
@@ -62,149 +69,242 @@ public class CircularGenomeController
 	}
 
 	/**
-	 * Create in-silico PFGE from a restriction enzyme digest and draw
-	 * alongside DNAPlotter
+	 * Create in-silico Pulse Field Gel Electrophoresis from a restriction enzyme 
+	 * digest and draw alongside DNAPlotter
 	 */
-	protected void setup(CircularGenomeCommandBean cgcb, List<String> fileNames) 
+	protected void setup(String enzymes, List<File> sequenceFiles) 
 	          throws Exception
 	{
+		// add each sequence file to a different entry group
+		List<EntryGroup> entries = new Vector<EntryGroup>();
+		if(sequenceFiles != null && sequenceFiles.size() > 0)
+		{
+			for(int i=0; i<sequenceFiles.size(); i++)
+			{
+			  EntryGroup entryGroup = getEntryGroupFromFile(sequenceFiles.get(i));	
+			  entries.add(entryGroup);
+			}
+		}
+		else
+		{
+    	EntryGroup entryGroup = getEntryGroupFromFile(null);		
+			File sequenceFile = new File(
+		   		((File)entryGroup.getSequenceEntry().getRootDocument().getLocation()).getAbsolutePath()+
+				  File.separator+entryGroup.getSequenceEntry().getName());
+			sequenceFiles.add(sequenceFile);
+			entries.add(entryGroup);
+		}
+		
+		if(enzymes == null)
+			enzymes = promptForEnzymes();
+		
+		// run restrict
+		List<File> restrictOutputs = new Vector<File>(sequenceFiles.size());
+		for(int i=0; i<sequenceFiles.size(); i++)
+		{
+			File sequenceFile = sequenceFiles.get(i);
+		  File restrictOutput = File.createTempFile("restrict_"+sequenceFile.getName(), ".txt");
+		  restrictOutputs.add(restrictOutput);
+	  	runEmbossRestrict(sequenceFile.getAbsolutePath(), enzymes, restrictOutput);
+		}
+		drawResults(restrictOutputs, entries, sequenceFiles, enzymes);
+	}
+		
+	/**
+	 * Run the EMBOSS application restrict. This uses the EMBOSS_ROOT
+	 * property to define the location of EMBOSS>
+	 * @param fileName
+	 * @param cgcb
+	 * @param restrictOutput
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	private void runEmbossRestrict(final String fileName,
+			                           final String enzymes,
+			                           final File restrictOutput) 
+	        throws IOException, InterruptedException
+	{
+		String[] args =
+		{
+			System.getProperty("EMBOSS_ROOT") + "/bin/restrict", 
+			fileName, "-auto", 
+			"-limit", "y", 
+			"-enzymes", enzymes, 
+			"-out", restrictOutput.getCanonicalPath() 
+		};
+			
+		ProcessBuilder pb = new ProcessBuilder(args);
+		pb.redirectErrorStream(true);
+		Process p = pb.start();
+		System.err.print("**");
 		try
 		{
-			String fileName = fileNames.get(0);
-			EntryGroup entryGroup = getEntryGroupFromFile(fileName);		
-			if(fileName == null)
+			InputStream is = p.getInputStream();
+			int inchar;
+			while ((inchar = is.read()) != -1)
 			{
-				fileName = 
-		   		((File)entryGroup.getSequenceEntry().getRootDocument().getLocation()).getAbsolutePath()+
-				  File.separator+entryGroup.getSequenceEntry().getName();
+				char c = (char) inchar;
+				System.err.print(c);
 			}
-			
-			if(cgcb.getEnzymeName() == null)
-			{
-				// prompt for enzymes
-				promptForEnzymes(cgcb);
-			}
-			
-			File output = File.createTempFile("circular_genome", ".txt");
-			String[] args =
-			{
-				System.getProperty("EMBOSS_ROOT") + "/bin/restrict", 
-				fileName, "-auto", 
-				"-limit", "y", 
-				"-enzymes", cgcb.getEnzymeName(), 
-				"-out", output.getCanonicalPath() 
-			};
-			
-			ProcessBuilder pb = new ProcessBuilder(args);
-			pb.redirectErrorStream(true);
-			Process p = pb.start();
-			System.err.print("**");
-			try
-			{
-				InputStream is = p.getInputStream();
-				int inchar;
-				while ((inchar = is.read()) != -1)
-				{
-					char c = (char) inchar;
-					System.err.print(c);
-				}
-				System.err.println("**");
-				p.waitFor();
-				System.err.println("Process exited with '" + p.exitValue() + "'");
-			} 
-			catch (InterruptedException exp)
-			{
-				exp.printStackTrace();
-			}
+			System.err.println("**");
 			p.waitFor();
-			
-			final ReportDetails rd = Utils.findCutSitesFromEmbossReport(
-					new FileReader(output.getCanonicalPath()));
-
-			if (rd.cutSites.size() == 0)
-				JOptionPane.showMessageDialog(null,
-						 "No cut site found.",
-						 "RE Digest Results", JOptionPane.INFORMATION_MESSAGE);
-		 
-			final DNADraw dna = Utils.createDNADrawFromReportDetails(rd, entryGroup);
-
-	    final InSilicoGelPanel inSilicoGelPanel = 
-	    	new InSilicoGelPanel(rd.length, rd.cutSites, dna.getHeight(), output);
-	    
-			MouseMotionListener mouseMotionListener = new MouseMotionAdapter() 
-	    {
-	      public void mouseMoved(MouseEvent me)
-	      {
-	      	List<CutSite> cutSites = rd.cutSites;
-	        final Block b = dna.getBlockAtLocation(me.getPoint());
-	        if(b != null && b.isOverMe(me.getX(), me.getY()))
-	        {
-	          int bend   = b.getBend();
-	          int bstart = b.getBstart();
-
-	          if(bend == rd.length)
-	          {
-	          	((CutSite)cutSites.get(0)).setHighlighted(true);
-	          	for (int i = 1; i < cutSites.size(); i++)
-	          		((CutSite) cutSites.get(i)).setHighlighted(false);
-	          }
-	          else
-						{
-							for (int i = 0; i < cutSites.size(); i++)
-							{
-								CutSite cutSite = (CutSite) cutSites.get(i);
-
-								if (bend == cutSite.getFivePrime())
-									cutSite.setHighlighted(true);
-								else
-									cutSite.setHighlighted(false);
-							}
-						}
-	        }
-	        else
-	        {
-	        	for(int i=0; i<cutSites.size(); i++)
-		        {
-		          CutSite cutSite = (CutSite) cutSites.get(i);
-		          cutSite.setHighlighted(false);
-		        }
-	        }
-	        inSilicoGelPanel.repaint();
-	      }
-	    };
-	    dna.addMouseMotionListener(mouseMotionListener);
-			
-			final JFrame f = new JFrame(cgcb.getEnzymeName()+" ::: "+fileName);
-	    Dimension d = f.getToolkit().getScreenSize();
-
-	    JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-	    JScrollPane jspDNA = new JScrollPane(dna);
-	    
-	    mainPanel.add(inSilicoGelPanel);
-	    mainPanel.add(jspDNA);
-	    
-	    JScrollPane jsp = new JScrollPane(mainPanel);
-	    jsp.getViewport().setBackground(Color.white);
-	    f.getContentPane().add(jsp);
-	    f.setJMenuBar(dna.createMenuBar());
-
-	    f.pack();
-	    f.setLocation(((int)d.getWidth()-f.getWidth())/4,
-	                  ((int)d.getHeight()-f.getHeight())/2);
-	    f.setVisible(true);
+			System.err.println("Process exited with '" + p.exitValue() + "'");
 		} 
-		catch (IOException exp)
+		catch (InterruptedException exp)
 		{
 			exp.printStackTrace();
 		}
+		p.waitFor();
 	}
+	
+	/**
+	 * Display the result in DNAPlotter and the virtual digest.
+	 * @param restrictOutput
+	 * @param entryGroup
+	 * @param fileName
+	 * @param cgcb
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private void drawResults(final List<File> restrictOutputs,
+			                     final List<EntryGroup> entries,
+			                     final List<File> sequenceFiles,
+			                     final String enzymes) 
+	        throws FileNotFoundException, IOException
+	{
+		JTabbedPane tabbedPane = new JTabbedPane();
+		JPanel gelPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		for(int i=0; i<entries.size(); i++)
+		{
+		  final ReportDetails rd = Utils.findCutSitesFromEmbossReport(
+					new FileReader(restrictOutputs.get(i).getCanonicalPath()));
+
+	  	if (rd.cutSites.size() == 0)
+		  	JOptionPane.showMessageDialog(null,
+						 "No cut site found.",
+						 "RE Digest Results", JOptionPane.INFORMATION_MESSAGE);
+		 
+	  	final DNADraw dna = Utils.createDNADrawFromReportDetails(rd, entries.get(i));
+	  	tabbedPane.add(sequenceFiles.get(i).getName(), dna);
+	    final InSilicoGelPanel inSilicoGelPanel = 
+	    	new InSilicoGelPanel(rd.length, rd.cutSites, dna.getHeight(), 
+	    			                 restrictOutputs.get(i));
+	    gelPanel.add(inSilicoGelPanel);
+	    addMouseListener(rd, dna, inSilicoGelPanel);
+		}
+	  
+		final JFrame f = new JFrame(enzymes);
+    Dimension d = f.getToolkit().getScreenSize();
+
+    JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    mainPanel.setBackground(Color.white);
+    JScrollPane jspDNA = new JScrollPane(tabbedPane);
+    
+    mainPanel.add(gelPanel);
+    mainPanel.add(jspDNA);
+    
+    JScrollPane jsp = new JScrollPane(mainPanel);
+    jsp.getViewport().setBackground(Color.white);
+    f.getContentPane().add(jsp);
+
+    f.pack();
+    f.setLocation(((int)d.getWidth()-f.getWidth())/4,
+                  ((int)d.getHeight()-f.getHeight())/2);
+    f.setVisible(true);
+	}
+	
+  /**
+   * Add mouse lister to highlight bands on the virtual digest when
+   * the mouse is over the corresponding feature in the circular plot.
+   * @param rd
+   * @param dna
+   * @param inSilicoGelPanel
+   */
+	private void addMouseListener(final ReportDetails rd,
+		                          	final DNADraw dna,
+		                          	final InSilicoGelPanel inSilicoGelPanel)
+	{
+		final JPopupMenu popup = new JPopupMenu();
+    final JMenuBar menuBar = dna.createMenuBar();
+
+    JMenu[] menus = new JMenu[menuBar.getMenuCount()];
+    for(int i=0;i<menuBar.getMenuCount(); i++)
+    	menus[i] = menuBar.getMenu(i);
+    
+    for(int i=0;i<menus.length; i++)
+      popup.add(menus[i]);
+    
+		MouseMotionListener mouseMotionListener = new MouseMotionAdapter() 
+	  {
+	    public void mouseMoved(MouseEvent me)
+	    {
+	      List<CutSite> cutSites = rd.cutSites;
+	      final Block b = dna.getBlockAtLocation(me.getPoint());
+	      if(b != null && b.isOverMe(me.getX(), me.getY()))
+	      {
+	        int bend   = b.getBend();
+	        //int bstart = b.getBstart();
+
+	        if(bend == rd.length)
+	        {
+	         	((CutSite)cutSites.get(0)).setHighlighted(true);
+	         	for (int i = 1; i < cutSites.size(); i++)
+	         		((CutSite) cutSites.get(i)).setHighlighted(false);
+	        }
+	        else
+					{
+						for (int i = 0; i < cutSites.size(); i++)
+						{
+							CutSite cutSite = (CutSite) cutSites.get(i);
+							if (bend == cutSite.getFivePrime())
+								cutSite.setHighlighted(true);
+							else
+								cutSite.setHighlighted(false);
+						}
+					}
+        }
+        else
+        {
+        	for(int i=0; i<cutSites.size(); i++)
+	        {
+	          CutSite cutSite = (CutSite) cutSites.get(i);
+	          cutSite.setHighlighted(false);
+	        }
+        }
+        inSilicoGelPanel.repaint();
+	    }
+    };
+    dna.addMouseMotionListener(mouseMotionListener);
+    
+		MouseListener popupListener = new MouseAdapter() 
+	  {
+      public void mousePressed(MouseEvent e) 
+      {
+        maybeShowPopup(e);
+      }
+      
+      public void mouseReleased(MouseEvent e) 
+      {
+        maybeShowPopup(e);
+      }
+
+      private void maybeShowPopup(MouseEvent e)
+      {
+        if (e.isPopupTrigger()) 
+          popup.show(e.getComponent(),
+                     e.getX(), e.getY());
+      }
+    };
+    dna.addMouseListener(popupListener);
+  }
+
 	
   /**
    * Create a DNADraw panel from a file
    * @param dna_current
    * @return
    */
-  private static EntryGroup getEntryGroupFromFile(String fileName)
+  private static EntryGroup getEntryGroupFromFile(File fileName)
   {
     Options.getOptions();
     final EntryGroup entryGroup = new SimpleEntryGroup();
@@ -235,7 +335,7 @@ public class CircularGenomeController
    * @throws NoSequenceException
    * @throws OutOfRangeException 
    */
-  private static Entry getEntry(final String entryFileName) 
+  private static Entry getEntry(final File entryFileName) 
                    throws NoSequenceException, OutOfRangeException
   {
 
@@ -248,7 +348,8 @@ public class CircularGenomeController
       return entry;
   	}
   	
-    final Document entry_document = DocumentFactory.makeDocument(entryFileName);
+    final Document entry_document = DocumentFactory.makeDocument(
+    		                        entryFileName.getAbsolutePath());
     final EntryInformation artemis_entry_information =
       Options.getArtemisEntryInformation();
     
@@ -274,11 +375,10 @@ public class CircularGenomeController
     return entry;
   }
   
-  private void promptForEnzymes(CircularGenomeCommandBean cgcb)
+  private String promptForEnzymes()
   {
-  	String enzymes = JOptionPane.showInputDialog(null, 
+  	return JOptionPane.showInputDialog(null, 
   			"Enzymes", "HincII,hinfI,ppiI,hindiii");
-  	cgcb.setEnzymeName(enzymes);
   }
 
 	public static void main(String args[])
@@ -291,32 +391,32 @@ public class CircularGenomeController
 			System.setProperty("EMBOSS_ROOT",embossRoot.trim());
 		}
 		
-		CircularGenomeCommandBean command   = new CircularGenomeCommandBean();
+		String enzymes = null;
 		CircularGenomeController controller = new CircularGenomeController();
 		try
 		{
-			List fileNames = null;
+			List<File> fileNames = null;
 			if(args != null && args.length > 0)
 			{
 				if(args.length == 1)
 				{
-					fileNames = new Vector();
-					fileNames.add(args[0]);
+					fileNames = new Vector<File>();
+					fileNames.add(new File(args[0]));
 				}
 				
 				for(int i=0; i<args.length; i++)
 				{
 					if(args[i].startsWith("-enz"))
-						command.setEnzymeName(args[i+1]);
+						enzymes = args[i+1];
 					else if(args[i].startsWith("-seq"))
 					{
 						if(fileNames == null)
-							fileNames = new Vector();
-						fileNames.add(args[i+1]);
+							fileNames = new Vector<File>();
+						fileNames.add(new File(args[i+1]));
 					}
 				}
 			}
-			controller.setup(command, fileNames);
+			controller.setup(enzymes, fileNames);
 		} 
 		catch (Exception e)
 		{
@@ -325,18 +425,3 @@ public class CircularGenomeController
 	}
 
 };
-
-class CircularGenomeCommandBean 
-{
-	private String enzymeName;
-
-	public String getEnzymeName()
-	{
-		return this.enzymeName;
-	}
-
-	public void setEnzymeName(String enzymeName)
-	{
-		this.enzymeName = enzymeName;
-	}
-}
