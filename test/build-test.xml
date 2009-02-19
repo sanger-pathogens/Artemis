@@ -53,6 +53,7 @@
 	   	<exclude name="**/CVS/**" />
 	  	<exclude name="**/data/**" />
 	  	<exclude name="**/lib/**" />
+	  	<exclude name="**/ant-build/**" />
 	  </fileset>
     </copy>
 
