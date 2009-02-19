@@ -79,6 +79,7 @@
   </target>	
 	
   <target name="test" depends="compile">
+  	<echo>Running test with EMBOSS_ROOT=${EMBOSS_ROOT}</echo>
   	<junit description="alltests" fork="yes">
   	 <jvmarg value="-DEMBOSS_ROOT=${EMBOSS_ROOT}"/>
   	 <batchtest todir="${build.dest.tests}">
