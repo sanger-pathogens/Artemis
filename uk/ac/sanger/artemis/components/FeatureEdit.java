@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.66 2009-02-06 11:35:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.67 2009-02-23 10:35:43 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -77,7 +77,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.66 2009-02-06 11:35:48 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.67 2009-02-23 10:35:43 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -586,7 +586,7 @@ public class FeatureEdit extends JPanel
     }
     
     final JButton transferAnnotationBbutton = new JButton("TAT");
-    //location_button_panel.add(transferAnnotationBbutton);
+    location_button_panel.add(transferAnnotationBbutton);
     transferAnnotationBbutton.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e) 
@@ -1822,6 +1822,19 @@ public class FeatureEdit extends JPanel
           getFeature().set(key, location, qualifiers);
         else 
           return false;
+      }
+      catch(java.lang.Error err)
+      {
+        err.printStackTrace();
+
+        if(err.getMessage().indexOf("InvalidRelationException")>-1)
+        {
+          JScrollPane jsp = new JScrollPane(new JLabel(err.getMessage()));
+          jsp.setPreferredSize(new Dimension(200,100));
+          JOptionPane.showMessageDialog(null, jsp, 
+    				  "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return false;
       }
     } 
     catch(EntryInformationException e) 
