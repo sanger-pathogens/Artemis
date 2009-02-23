@@ -19,7 +19,7 @@ intron              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ont
 exon                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified codon_start description locus stable_id EC_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain topology localization gff_source gff_seqname score 
 three_prime_UTR     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified systematic_id note comment 
 five_prime_UTR      ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified systematic_id note comment 
-transcript          ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified 
+transcript          ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified private comment
 primary_transcript  ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
 tRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
 rRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
