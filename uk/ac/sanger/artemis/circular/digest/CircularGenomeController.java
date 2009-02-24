@@ -24,9 +24,12 @@ import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.circular.Block;
 import uk.ac.sanger.artemis.circular.DNADraw;
+import uk.ac.sanger.artemis.components.ArtemisMain;
+import uk.ac.sanger.artemis.components.EntryEdit;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.io.EntryInformation;
+import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.DocumentFactory;
@@ -35,12 +38,17 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Point;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -52,17 +60,21 @@ import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 /**
  * 
  */
 public class CircularGenomeController
 {
+	private Block lastBlock = null;
 
 	public CircularGenomeController()
 	{
@@ -194,7 +206,8 @@ public class CircularGenomeController
 		}
 	  
 		final JFrame f = new JFrame(enzymes);
-    Dimension d = f.getToolkit().getScreenSize();
+		addMenuBar(f);
+		Dimension d = f.getToolkit().getScreenSize();
 
     JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     mainPanel.setBackground(Color.white);
@@ -211,6 +224,45 @@ public class CircularGenomeController
     f.setLocation(((int)d.getWidth()-f.getWidth())/4,
                   ((int)d.getHeight()-f.getHeight())/2);
     f.setVisible(true);
+	}
+	
+	/**
+	 * Add the menu bar
+	 * @param f
+	 */             
+	private void addMenuBar(final JFrame f)
+	{
+    f.addWindowListener(new WindowAdapter() 
+    {
+      public void windowClosing(WindowEvent event) 
+      {
+        exitApp(f);
+      }
+    });
+    
+    JMenuBar menuBar = new JMenuBar();
+
+    JMenu fileMenu = new JMenu("File");
+    menuBar.add(fileMenu);
+    JMenuItem exitMenu = new JMenuItem("Exit");
+    exitMenu.addActionListener(new ActionListener()
+    {
+			public void actionPerformed(ActionEvent e)
+			{
+        exitApp(f);
+			}	
+    });
+    fileMenu.add(exitMenu);
+    f.setJMenuBar(menuBar);
+	}
+	
+	/**
+	 * 
+	 * @param f
+	 */
+	private void exitApp(JFrame f)
+	{
+		f.dispose();
 	}
 	
   /**
@@ -233,6 +285,45 @@ public class CircularGenomeController
     
     for(int i=0;i<menus.length; i++)
       popup.add(menus[i]);
+    
+    final JMenuItem openArtemis = new JMenuItem("Open in Artemis...");
+    openArtemis.addActionListener(new ActionListener()
+    {
+			public void actionPerformed(ActionEvent e)
+			{
+				if(lastBlock == null)
+				{
+					SwingUtilities.invokeLater(new Runnable() 
+			    {
+			      public void run() 
+			      {
+			        final ArtemisMain main_window = new ArtemisMain(null);
+			        main_window.setVisible(true);
+							final EntryEdit entryEdit = new EntryEdit(dna.getArtemisEntryGroup());
+							entryEdit.setVisible(true);
+			      }
+			    });
+				}
+				else
+				{
+					try
+					{
+		        final ArtemisMain main_window = new ArtemisMain(null);
+		        main_window.setVisible(true);
+						Range range = new Range(lastBlock.getBstart(), lastBlock.getBend());
+				    final EntryGroup entryGroup = dna.getArtemisEntryGroup().truncate(range);
+				    final EntryEdit entryEdit = new EntryEdit(entryGroup);
+						entryEdit.setVisible(true);
+					} 
+					catch (OutOfRangeException e1)
+					{
+						e1.printStackTrace();
+					}
+				}
+			}
+    });
+    
+    popup.add(openArtemis);
     
 		MouseMotionListener mouseMotionListener = new MouseMotionAdapter() 
 	  {
@@ -291,8 +382,18 @@ public class CircularGenomeController
       private void maybeShowPopup(MouseEvent e)
       {
         if (e.isPopupTrigger()) 
-          popup.show(e.getComponent(),
+        {
+        	lastBlock = dna.getBlockAtLocation(e.getPoint());
+ 
+        	if(lastBlock == null)
+        		openArtemis.setText("Open in Artemis...");
+        	else
+        		openArtemis.setText("Open in Artemis ["+
+        				lastBlock.getBstart()+".."+lastBlock.getBend()+"]...");
+        
+        	popup.show(e.getComponent(),
                      e.getX(), e.getY());
+        }
       }
     };
     dna.addMouseListener(popupListener);
@@ -307,11 +408,16 @@ public class CircularGenomeController
   private static EntryGroup getEntryGroupFromFile(File fileName)
   {
     Options.getOptions();
-    final EntryGroup entryGroup = new SimpleEntryGroup();
+    final EntryGroup entryGroup; 
    
     try
     {
     	Entry entry = getEntry(fileName);
+    	
+    	if(entry.getBases() != null)
+    		entryGroup = new SimpleEntryGroup(entry.getBases());
+    	else
+    		entryGroup = new SimpleEntryGroup();
       entryGroup.add(entry);
       return entryGroup;
     }
