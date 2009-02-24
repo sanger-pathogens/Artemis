@@ -38,7 +38,6 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Point;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -67,179 +66,173 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 /**
  * 
  */
 public class CircularGenomeController
 {
-	private Block lastBlock = null;
+  private Block lastBlock = null;
 
-	public CircularGenomeController()
-	{
-	}
+  public CircularGenomeController()
+  {
+  }
 
-	/**
-	 * Create in-silico Pulse Field Gel Electrophoresis from a restriction enzyme 
-	 * digest and draw alongside DNAPlotter
-	 */
-	protected void setup(String enzymes, List<File> sequenceFiles) 
-	          throws Exception
-	{
-		// add each sequence file to a different entry group
-		List<EntryGroup> entries = new Vector<EntryGroup>();
-		if(sequenceFiles != null && sequenceFiles.size() > 0)
-		{
-			for(int i=0; i<sequenceFiles.size(); i++)
-			{
-			  EntryGroup entryGroup = getEntryGroupFromFile(sequenceFiles.get(i));	
-			  entries.add(entryGroup);
-			}
-		}
-		else
-		{
-    	EntryGroup entryGroup = getEntryGroupFromFile(null);		
-			File sequenceFile = new File(
-		   		((File)entryGroup.getSequenceEntry().getRootDocument().getLocation()).getAbsolutePath()+
-				  File.separator+entryGroup.getSequenceEntry().getName());
-			sequenceFiles.add(sequenceFile);
-			entries.add(entryGroup);
-		}
-		
-		if(enzymes == null)
-			enzymes = promptForEnzymes();
-		
-		// run restrict
-		List<File> restrictOutputs = new Vector<File>(sequenceFiles.size());
-		for(int i=0; i<sequenceFiles.size(); i++)
-		{
-			File sequenceFile = sequenceFiles.get(i);
-		  File restrictOutput = File.createTempFile("restrict_"+sequenceFile.getName(), ".txt");
-		  restrictOutputs.add(restrictOutput);
-	  	runEmbossRestrict(sequenceFile.getAbsolutePath(), enzymes, restrictOutput);
-		}
-		drawResults(restrictOutputs, entries, sequenceFiles, enzymes);
-	}
-		
-	/**
-	 * Run the EMBOSS application restrict. This uses the EMBOSS_ROOT
-	 * property to define the location of EMBOSS>
-	 * @param fileName
-	 * @param cgcb
-	 * @param restrictOutput
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	private void runEmbossRestrict(final String fileName,
-			                           final String enzymes,
-			                           final File restrictOutput) 
-	        throws IOException, InterruptedException
-	{
-		String[] args =
-		{
-			System.getProperty("EMBOSS_ROOT") + "/bin/restrict", 
-			fileName, "-auto", 
-			"-limit", "y", 
-			"-enzymes", enzymes, 
-			"-out", restrictOutput.getCanonicalPath() 
-		};
-			
-		ProcessBuilder pb = new ProcessBuilder(args);
-		pb.redirectErrorStream(true);
-		Process p = pb.start();
-		System.err.print("**");
-		try
-		{
-			InputStream is = p.getInputStream();
-			int inchar;
-			while ((inchar = is.read()) != -1)
-			{
-				char c = (char) inchar;
-				System.err.print(c);
-			}
-			System.err.println("**");
-			p.waitFor();
-			System.err.println("Process exited with '" + p.exitValue() + "'");
-		} 
-		catch (InterruptedException exp)
-		{
-			exp.printStackTrace();
-		}
-		p.waitFor();
-	}
-	
-	/**
-	 * Display the result in DNAPlotter and the virtual digest.
-	 * @param restrictOutput
-	 * @param entryGroup
-	 * @param fileName
-	 * @param cgcb
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	private void drawResults(final List<File> restrictOutputs,
-			                     final List<EntryGroup> entries,
-			                     final List<File> sequenceFiles,
-			                     final String enzymes) 
-	        throws FileNotFoundException, IOException
-	{
-		JTabbedPane tabbedPane = new JTabbedPane();
-		JPanel gelPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		for(int i=0; i<entries.size(); i++)
-		{
-		  final ReportDetails rd = Utils.findCutSitesFromEmbossReport(
-					new FileReader(restrictOutputs.get(i).getCanonicalPath()));
+  /**
+   * Create in-silico Pulse Field Gel Electrophoresis from a restriction enzyme
+   * digest and draw alongside DNAPlotter
+   */
+  protected void setup(String enzymes, List<File> sequenceFiles)
+      throws Exception
+  {
+    // add each sequence file to a different entry group
+    List<EntryGroup> entries = new Vector<EntryGroup>();
+    if (sequenceFiles != null && sequenceFiles.size() > 0)
+    {
+      for (int i = 0; i < sequenceFiles.size(); i++)
+      {
+        EntryGroup entryGroup = getEntryGroupFromFile(sequenceFiles.get(i));
+        entries.add(entryGroup);
+      }
+    }
+    else
+    {
+      EntryGroup entryGroup = getEntryGroupFromFile(null);
+      File sequenceFile = new File(((File) entryGroup.getSequenceEntry()
+          .getRootDocument().getLocation()).getAbsolutePath()
+          + File.separator + entryGroup.getSequenceEntry().getName());
+      sequenceFiles.add(sequenceFile);
+      entries.add(entryGroup);
+    }
 
-	  	if (rd.cutSites.size() == 0)
-		  	JOptionPane.showMessageDialog(null,
-						 "No cut site found.",
-						 "RE Digest Results", JOptionPane.INFORMATION_MESSAGE);
-		 
-	  	final DNADraw dna = Utils.createDNADrawFromReportDetails(rd, entries.get(i));
-	  	tabbedPane.add(sequenceFiles.get(i).getName(), dna);
-	    final InSilicoGelPanel inSilicoGelPanel = 
-	    	new InSilicoGelPanel(rd.length, rd.cutSites, dna.getHeight(), 
-	    			                 restrictOutputs.get(i));
-	    gelPanel.add(inSilicoGelPanel);
-	    addMouseListener(rd, dna, inSilicoGelPanel);
-		}
-	  
-		final JFrame f = new JFrame(enzymes);
-		addMenuBar(f);
-		Dimension d = f.getToolkit().getScreenSize();
+    if (enzymes == null)
+      enzymes = promptForEnzymes();
+
+    // run restrict
+    List<File> restrictOutputs = new Vector<File>(sequenceFiles.size());
+    for (int i = 0; i < sequenceFiles.size(); i++)
+    {
+      File sequenceFile = sequenceFiles.get(i);
+      File restrictOutput = File.createTempFile("restrict_"
+          + sequenceFile.getName(), ".txt");
+      restrictOutputs.add(restrictOutput);
+      runEmbossRestrict(sequenceFile.getAbsolutePath(), enzymes, restrictOutput);
+    }
+    drawResults(restrictOutputs, entries, sequenceFiles, enzymes);
+  }
+
+  /**
+   * Run the EMBOSS application restrict. This uses the EMBOSS_ROOT property to
+   * define the location of EMBOSS>
+   * 
+   * @param fileName
+   * @param cgcb
+   * @param restrictOutput
+   * @throws IOException
+   * @throws InterruptedException
+   */
+  private void runEmbossRestrict(final String fileName, final String enzymes,
+      final File restrictOutput) throws IOException, InterruptedException
+  {
+    String[] args = { 
+        System.getProperty("EMBOSS_ROOT") + "/bin/restrict", fileName, "-auto",
+        "-limit", "y", "-enzymes", enzymes, "-out",
+        restrictOutput.getCanonicalPath() };
+
+    ProcessBuilder pb = new ProcessBuilder(args);
+    pb.redirectErrorStream(true);
+    Process p = pb.start();
+    System.err.print("**");
+    try
+    {
+      InputStream is = p.getInputStream();
+      int inchar;
+      while ((inchar = is.read()) != -1)
+      {
+        char c = (char) inchar;
+        System.err.print(c);
+      }
+      System.err.println("**");
+      p.waitFor();
+      System.err.println("Process exited with '" + p.exitValue() + "'");
+    }
+    catch (InterruptedException exp)
+    {
+      exp.printStackTrace();
+    }
+    p.waitFor();
+  }
+
+  /**
+   * Display the result in DNAPlotter and the virtual digest.
+   * 
+   * @param restrictOutput
+   * @param entryGroup
+   * @param fileName
+   * @param cgcb
+   * @throws FileNotFoundException
+   * @throws IOException
+   */
+  private void drawResults(final List<File> restrictOutputs,
+      final List<EntryGroup> entries, final List<File> sequenceFiles,
+      final String enzymes) throws FileNotFoundException, IOException
+  {
+    JTabbedPane tabbedPane = new JTabbedPane();
+    JPanel gelPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    for (int i = 0; i < entries.size(); i++)
+    {
+      final ReportDetails rd = Utils.findCutSitesFromEmbossReport(
+          new FileReader(restrictOutputs.get(i).getCanonicalPath()));
+
+      if (rd.cutSites.size() == 0)
+        JOptionPane.showMessageDialog(null, "No cut site found.",
+            "RE Digest Results", JOptionPane.INFORMATION_MESSAGE);
+
+      final DNADraw dna = Utils.createDNADrawFromReportDetails(rd, entries
+          .get(i));
+      tabbedPane.add(sequenceFiles.get(i).getName(), dna);
+      final InSilicoGelPanel inSilicoGelPanel = new InSilicoGelPanel(rd.length,
+          rd.cutSites, dna.getHeight(), restrictOutputs.get(i));
+      gelPanel.add(inSilicoGelPanel);
+      addMouseListener(rd, dna, inSilicoGelPanel);
+    }
+
+    final JFrame f = new JFrame(enzymes);
+    addMenuBar(f);
+    Dimension d = f.getToolkit().getScreenSize();
 
     JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     mainPanel.setBackground(Color.white);
     JScrollPane jspDNA = new JScrollPane(tabbedPane);
-    
+
     mainPanel.add(gelPanel);
     mainPanel.add(jspDNA);
-    
+
     JScrollPane jsp = new JScrollPane(mainPanel);
     jsp.getViewport().setBackground(Color.white);
     f.getContentPane().add(jsp);
 
     f.pack();
-    f.setLocation(((int)d.getWidth()-f.getWidth())/4,
-                  ((int)d.getHeight()-f.getHeight())/2);
+    f.setLocation(((int) d.getWidth() - f.getWidth()) / 4,
+        ((int) d.getHeight() - f.getHeight()) / 2);
     f.setVisible(true);
-	}
-	
-	/**
-	 * Add the menu bar
-	 * @param f
-	 */             
-	private void addMenuBar(final JFrame f)
-	{
-    f.addWindowListener(new WindowAdapter() 
+  }
+
+  /**
+   * Add the menu bar
+   * 
+   * @param f
+   */
+  private void addMenuBar(final JFrame f)
+  {
+    f.addWindowListener(new WindowAdapter()
     {
-      public void windowClosing(WindowEvent event) 
+      public void windowClosing(WindowEvent event)
       {
         exitApp(f);
       }
     });
-    
+
     JMenuBar menuBar = new JMenuBar();
 
     JMenu fileMenu = new JMenu("File");
@@ -247,287 +240,287 @@ public class CircularGenomeController
     JMenuItem exitMenu = new JMenuItem("Exit");
     exitMenu.addActionListener(new ActionListener()
     {
-			public void actionPerformed(ActionEvent e)
-			{
+      public void actionPerformed(ActionEvent e)
+      {
         exitApp(f);
-			}	
+      }
     });
     fileMenu.add(exitMenu);
     f.setJMenuBar(menuBar);
-	}
-	
-	/**
-	 * 
-	 * @param f
-	 */
-	private void exitApp(JFrame f)
-	{
-		f.dispose();
-	}
-	
+  }
+
   /**
-   * Add mouse lister to highlight bands on the virtual digest when
-   * the mouse is over the corresponding feature in the circular plot.
+   * 
+   * @param f
+   */
+  private void exitApp(JFrame f)
+  {
+    f.dispose();
+  }
+
+  /**
+   * Add mouse lister to highlight bands on the virtual digest when the mouse is
+   * over the corresponding feature in the circular plot.
+   * 
    * @param rd
    * @param dna
    * @param inSilicoGelPanel
    */
-	private void addMouseListener(final ReportDetails rd,
-		                          	final DNADraw dna,
-		                          	final InSilicoGelPanel inSilicoGelPanel)
-	{
-		final JPopupMenu popup = new JPopupMenu();
+  private void addMouseListener(final ReportDetails rd, final DNADraw dna,
+                                final InSilicoGelPanel inSilicoGelPanel)
+  {
+    final JPopupMenu popup = new JPopupMenu();
     final JMenuBar menuBar = dna.createMenuBar();
 
     JMenu[] menus = new JMenu[menuBar.getMenuCount()];
-    for(int i=0;i<menuBar.getMenuCount(); i++)
-    	menus[i] = menuBar.getMenu(i);
-    
-    for(int i=0;i<menus.length; i++)
+    for (int i = 0; i < menuBar.getMenuCount(); i++)
+      menus[i] = menuBar.getMenu(i);
+
+    for (int i = 0; i < menus.length; i++)
       popup.add(menus[i]);
-    
+
     final JMenuItem openArtemis = new JMenuItem("Open in Artemis...");
     openArtemis.addActionListener(new ActionListener()
     {
-			public void actionPerformed(ActionEvent e)
-			{
-				if(lastBlock == null)
-				{
-					SwingUtilities.invokeLater(new Runnable() 
-			    {
-			      public void run() 
-			      {
-			        final ArtemisMain main_window = new ArtemisMain(null);
-			        main_window.setVisible(true);
-							final EntryEdit entryEdit = new EntryEdit(dna.getArtemisEntryGroup());
-							entryEdit.setVisible(true);
-			      }
-			    });
-				}
-				else
-				{
-					try
-					{
-		        final ArtemisMain main_window = new ArtemisMain(null);
-		        main_window.setVisible(true);
-						Range range = new Range(lastBlock.getBstart(), lastBlock.getBend());
-				    final EntryGroup entryGroup = dna.getArtemisEntryGroup().truncate(range);
-				    final EntryEdit entryEdit = new EntryEdit(entryGroup);
-						entryEdit.setVisible(true);
-					} 
-					catch (OutOfRangeException e1)
-					{
-						e1.printStackTrace();
-					}
-				}
-			}
-    });
-    
-    popup.add(openArtemis);
-    
-		MouseMotionListener mouseMotionListener = new MouseMotionAdapter() 
-	  {
-	    public void mouseMoved(MouseEvent me)
-	    {
-	      List<CutSite> cutSites = rd.cutSites;
-	      final Block b = dna.getBlockAtLocation(me.getPoint());
-	      if(b != null && b.isOverMe(me.getX(), me.getY()))
-	      {
-	        int bend   = b.getBend();
-	        //int bstart = b.getBstart();
-
-	        if(bend == rd.length)
-	        {
-	         	((CutSite)cutSites.get(0)).setHighlighted(true);
-	         	for (int i = 1; i < cutSites.size(); i++)
-	         		((CutSite) cutSites.get(i)).setHighlighted(false);
-	        }
-	        else
-					{
-						for (int i = 0; i < cutSites.size(); i++)
-						{
-							CutSite cutSite = (CutSite) cutSites.get(i);
-							if (bend == cutSite.getFivePrime())
-								cutSite.setHighlighted(true);
-							else
-								cutSite.setHighlighted(false);
-						}
-					}
+      public void actionPerformed(ActionEvent e)
+      {
+        if (lastBlock == null)
+        {
+          SwingUtilities.invokeLater(new Runnable()
+          {
+            public void run()
+            {
+              final ArtemisMain main_window = new ArtemisMain(null);
+              main_window.setVisible(true);
+              final EntryEdit entryEdit = new EntryEdit(dna
+                  .getArtemisEntryGroup());
+              entryEdit.setVisible(true);
+            }
+          });
         }
         else
         {
-        	for(int i=0; i<cutSites.size(); i++)
-	        {
-	          CutSite cutSite = (CutSite) cutSites.get(i);
-	          cutSite.setHighlighted(false);
-	        }
+          try
+          {
+            final ArtemisMain main_window = new ArtemisMain(null);
+            main_window.setVisible(true);
+            Range range = new Range(lastBlock.getBstart(), lastBlock.getBend());
+            final EntryGroup entryGroup = dna.getArtemisEntryGroup().truncate(
+                range);
+            final EntryEdit entryEdit = new EntryEdit(entryGroup);
+            entryEdit.setVisible(true);
+          }
+          catch (OutOfRangeException e1)
+          {
+            e1.printStackTrace();
+          }
+        }
+      }
+    });
+
+    popup.add(openArtemis);
+
+    MouseMotionListener mouseMotionListener = new MouseMotionAdapter()
+    {
+      public void mouseMoved(MouseEvent me)
+      {
+        List<CutSite> cutSites = rd.cutSites;
+        final Block b = dna.getBlockAtLocation(me.getPoint());
+        if (b != null && b.isOverMe(me.getX(), me.getY()))
+        {
+          int bend = b.getBend();
+          // int bstart = b.getBstart();
+
+          if (bend == rd.length)
+          {
+            ((CutSite) cutSites.get(0)).setHighlighted(true);
+            for (int i = 1; i < cutSites.size(); i++)
+              ((CutSite) cutSites.get(i)).setHighlighted(false);
+          }
+          else
+          {
+            for (int i = 0; i < cutSites.size(); i++)
+            {
+              CutSite cutSite = (CutSite) cutSites.get(i);
+              if (bend == cutSite.getFivePrime())
+                cutSite.setHighlighted(true);
+              else
+                cutSite.setHighlighted(false);
+            }
+          }
+        }
+        else
+        {
+          for (int i = 0; i < cutSites.size(); i++)
+          {
+            CutSite cutSite = (CutSite) cutSites.get(i);
+            cutSite.setHighlighted(false);
+          }
         }
         inSilicoGelPanel.repaint();
-	    }
+      }
     };
     dna.addMouseMotionListener(mouseMotionListener);
-    
-		MouseListener popupListener = new MouseAdapter() 
-	  {
-      public void mousePressed(MouseEvent e) 
+
+    MouseListener popupListener = new MouseAdapter()
+    {
+      public void mousePressed(MouseEvent e)
       {
         maybeShowPopup(e);
       }
-      
-      public void mouseReleased(MouseEvent e) 
+
+      public void mouseReleased(MouseEvent e)
       {
         maybeShowPopup(e);
       }
 
       private void maybeShowPopup(MouseEvent e)
       {
-        if (e.isPopupTrigger()) 
+        if (e.isPopupTrigger())
         {
-        	lastBlock = dna.getBlockAtLocation(e.getPoint());
- 
-        	if(lastBlock == null)
-        		openArtemis.setText("Open in Artemis...");
-        	else
-        		openArtemis.setText("Open in Artemis ["+
-        				lastBlock.getBstart()+".."+lastBlock.getBend()+"]...");
-        
-        	popup.show(e.getComponent(),
-                     e.getX(), e.getY());
+          lastBlock = dna.getBlockAtLocation(e.getPoint());
+
+          if (lastBlock == null)
+            openArtemis.setText("Open in Artemis...");
+          else
+            openArtemis.setText("Open in Artemis [" + lastBlock.getBstart()
+                + ".." + lastBlock.getBend() + "]...");
+
+          popup.show(e.getComponent(), e.getX(), e.getY());
         }
       }
     };
     dna.addMouseListener(popupListener);
   }
 
-	
   /**
    * Create a DNADraw panel from a file
+   * 
    * @param dna_current
    * @return
    */
   private static EntryGroup getEntryGroupFromFile(File fileName)
   {
     Options.getOptions();
-    final EntryGroup entryGroup; 
-   
+    final EntryGroup entryGroup;
+
     try
     {
-    	Entry entry = getEntry(fileName);
-    	
-    	if(entry.getBases() != null)
-    		entryGroup = new SimpleEntryGroup(entry.getBases());
-    	else
-    		entryGroup = new SimpleEntryGroup();
+      Entry entry = getEntry(fileName);
+
+      if (entry.getBases() != null)
+        entryGroup = new SimpleEntryGroup(entry.getBases());
+      else
+        entryGroup = new SimpleEntryGroup();
       entryGroup.add(entry);
       return entryGroup;
     }
-    catch(OutOfRangeException e)
+    catch (OutOfRangeException e)
     {
       e.printStackTrace();
     }
-    catch(NoSequenceException e)
+    catch (NoSequenceException e)
     {
-      JOptionPane.showMessageDialog(null, "No sequence found!", 
+      JOptionPane.showMessageDialog(null, "No sequence found!",
           "Sequence Missing", JOptionPane.WARNING_MESSAGE);
     }
     return null;
   }
-  
+
   /**
-   * Return an Artemis entry from a file 
+   * Return an Artemis entry from a file
+   * 
    * @param entryFileName
    * @param entryGroup
    * @return
    * @throws NoSequenceException
-   * @throws OutOfRangeException 
+   * @throws OutOfRangeException
    */
-  private static Entry getEntry(final File entryFileName) 
-                   throws NoSequenceException, OutOfRangeException
+  private static Entry getEntry(final File entryFileName)
+      throws NoSequenceException, OutOfRangeException
   {
 
-  	if(entryFileName == null)
-  	{
-    	// no file - prompt for a file
-  		uk.ac.sanger.artemis.components.FileDialogEntrySource entrySource = 
-        new uk.ac.sanger.artemis.components.FileDialogEntrySource(null, null);
+    if (entryFileName == null)
+    {
+      // no file - prompt for a file
+      uk.ac.sanger.artemis.components.FileDialogEntrySource entrySource = new uk.ac.sanger.artemis.components.FileDialogEntrySource(
+          null, null);
       Entry entry = entrySource.getEntry(true);
       return entry;
-  	}
-  	
-    final Document entry_document = DocumentFactory.makeDocument(
-    		                        entryFileName.getAbsolutePath());
-    final EntryInformation artemis_entry_information =
-      Options.getArtemisEntryInformation();
-    
-    final uk.ac.sanger.artemis.io.Entry new_embl_entry =
-      EntryFileDialog.getEntryFromFile(null, entry_document,
-                                       artemis_entry_information,
-                                       false);
+    }
 
-    if(new_embl_entry == null)  // the read failed
+    final Document entry_document = DocumentFactory.makeDocument(entryFileName
+        .getAbsolutePath());
+    final EntryInformation artemis_entry_information = Options
+        .getArtemisEntryInformation();
+
+    final uk.ac.sanger.artemis.io.Entry new_embl_entry = EntryFileDialog
+        .getEntryFromFile(null, entry_document, artemis_entry_information,
+            false);
+
+    if (new_embl_entry == null) // the read failed
       return null;
 
     Entry entry = null;
     try
     {
       entry = new Entry(new_embl_entry);
-    } 
-    catch(OutOfRangeException e) 
+    }
+    catch (OutOfRangeException e)
     {
-      new MessageDialog(null, "read failed: one of the features in " +
-          entryFileName + " has an out of range " +
-                        "location: " + e.getMessage());
+      new MessageDialog(null, "read failed: one of the features in "
+          + entryFileName + " has an out of range " + "location: "
+          + e.getMessage());
     }
     return entry;
   }
-  
+
   private String promptForEnzymes()
   {
-  	return JOptionPane.showInputDialog(null, 
-  			"Enzymes", "HincII,hinfI,ppiI,hindiii");
+    return JOptionPane.showInputDialog(null, "Enzymes",
+        "HincII,hinfI,ppiI,hindiii");
   }
 
-	public static void main(String args[])
-	{
-		if(System.getProperty("EMBOSS_ROOT") == null)
-		{
-			String embossRoot = JOptionPane.showInputDialog(null,
-					"Input the EMBOSS installation directory",
-					"/usr/local/emboss");
-			System.setProperty("EMBOSS_ROOT",embossRoot.trim());
-		}
-		
-		String enzymes = null;
-		CircularGenomeController controller = new CircularGenomeController();
-		try
-		{
-			List<File> fileNames = null;
-			if(args != null && args.length > 0)
-			{
-				if(args.length == 1)
-				{
-					fileNames = new Vector<File>();
-					fileNames.add(new File(args[0]));
-				}
-				
-				for(int i=0; i<args.length; i++)
-				{
-					if(args[i].startsWith("-enz"))
-						enzymes = args[i+1];
-					else if(args[i].startsWith("-seq"))
-					{
-						if(fileNames == null)
-							fileNames = new Vector<File>();
-						fileNames.add(new File(args[i+1]));
-					}
-				}
-			}
-			controller.setup(enzymes, fileNames);
-		} 
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
+  public static void main(String args[])
+  {
+    if (System.getProperty("EMBOSS_ROOT") == null)
+    {
+      String embossRoot = JOptionPane.showInputDialog(null,
+          "Input the EMBOSS installation directory", "/usr/local/emboss");
+      System.setProperty("EMBOSS_ROOT", embossRoot.trim());
+    }
+
+    String enzymes = null;
+    CircularGenomeController controller = new CircularGenomeController();
+    try
+    {
+      List<File> fileNames = null;
+      if (args != null && args.length > 0)
+      {
+        if (args.length == 1)
+        {
+          fileNames = new Vector<File>();
+          fileNames.add(new File(args[0]));
+        }
+
+        for (int i = 0; i < args.length; i++)
+        {
+          if (args[i].startsWith("-enz"))
+            enzymes = args[i + 1];
+          else if (args[i].startsWith("-seq"))
+          {
+            if (fileNames == null)
+              fileNames = new Vector<File>();
+            fileNames.add(new File(args[i + 1]));
+          }
+        }
+      }
+      controller.setup(enzymes, fileNames);
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+  }
 
 };
