@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.16 2008-06-16 12:11:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.17 2009-02-25 11:10:41 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -53,7 +53,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.16 2008-06-16 12:11:01 tjc Exp $
+ *  @version $Id: Plot.java,v 1.17 2009-02-25 11:10:41 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -117,11 +117,13 @@ public abstract class Plot extends JPanel
   protected abstract void calculateFeatures()
             throws ReadOnlyException, EntryInformationException, OutOfRangeException;  
 
+  protected abstract void showAveragesForRange();
+  
   /** number of graph lines to be drawn */
   private int numPlots;
 
   /** colour array for graph drawing */
-  private Color frameColour[] = { Color.red, 
+  protected Color frameColour[] = { Color.red, 
                                   new Color(0,200,0), 
                                   Color.blue,
                                   Color.black };
@@ -437,6 +439,23 @@ public abstract class Plot extends JPanel
             }
           });
         }
+        
+        
+        ///
+        final JMenuItem showAverages =
+          new JMenuItem("Values and average(s) for selected range...");
+        
+        if(Plot.this instanceof BasePlot)
+          popup.add(showAverages);
+        
+        showAverages.addActionListener(new ActionListener() 
+        {
+          public void actionPerformed(ActionEvent e) 
+          {
+            showAveragesForRange();
+          }
+        });
+        
 
         final JSplitPane splitPane = getJSplitPane();
 

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.13 2008-06-16 12:11:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.14 2009-02-25 11:10:41 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -46,13 +46,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.apache.log4j.Level;
+
 
 /**
  *  A component for plotting functions over the base sequence.  Scrolling and
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.13 2008-06-16 12:11:01 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.14 2009-02-25 11:10:41 tjc Exp $
  **/
 
 public class BasePlot extends Plot
@@ -495,6 +497,66 @@ public class BasePlot extends Plot
     return;
   }
 
+  protected void showAveragesForRange()
+  {
+    final int end = getBaseAlgorithm().getBases().getLength();
+
+    // the number of plot points in the graph
+    final int number_of_values =
+      (end - (getWindowSize() - step_size)) / step_size;
+
+    if(getSelectionStartMarker() == null)
+    {
+      JOptionPane.showMessageDialog(null, "No range selected.",
+                         "Message", JOptionPane.INFORMATION_MESSAGE);
+      return; 
+    }
+     
+    int rangeStart = getSelectionStartMarker().getRawPosition();
+    int rangeEnd   = getSelectionEndMarker().getRawPosition();
+  
+    final int numPlots =  getBaseAlgorithm().getValueCount();
+    float[] temp_values = new float [numPlots];
+    float[] av_values   = new float [numPlots];
+    
+    int count = 0;
+    
+    FileViewer fileViewer = new FileViewer(
+        getBaseAlgorithm().getAlgorithmShortName()+" :: "+
+        rangeStart+".."+rangeEnd);
+    fileViewer.appendString("Base\tValue(s)\n\n",Level.INFO);
+
+    for(int i = 0 ; i < number_of_values ; ++i) 
+    {
+      int pos = getWindowSize()/2 + (i * step_size) + 1;
+      
+      if(pos < rangeStart || pos > rangeEnd)
+        continue;
+      
+      getBaseAlgorithm().getValues((i * step_size) + 1,
+                                   (i * step_size) + 1 +
+                                   getWindowSize() - 1,
+                                   temp_values);
+      
+      fileViewer.appendString(pos+"\t");
+      for(int j=0; j<numPlots; j++)
+      {
+        av_values[j] += temp_values[j];
+        fileViewer.appendString(temp_values[j]+"\t");
+      }
+      fileViewer.appendString("\n");
+      
+      count++;
+    }
+    
+    fileViewer.appendString("\n\nAverage Value(s)\n",Level.INFO);
+    fileViewer.appendString(    "================\n",Level.INFO);
+    
+    for(int j=0; j<numPlots; j++)
+      fileViewer.appendString(Integer.toString(j+1)+"\t"+
+                              Float.toString(av_values[j]/count)+"\n");
+  }
+  
   /**
    *  Recalculate the values in value_array_array, step_size, min_value and
    *  max_value.

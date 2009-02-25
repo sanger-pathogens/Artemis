@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePlot.java,v 1.6 2008-05-02 12:50:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePlot.java,v 1.7 2009-02-25 11:10:41 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,7 +38,7 @@ import java.awt.*;
  *  particular feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePlot.java,v 1.6 2008-05-02 12:50:37 tjc Exp $
+ *  @version $Id: FeaturePlot.java,v 1.7 2009-02-25 11:10:41 tjc Exp $
  **/
 
 public class FeaturePlot extends Plot
@@ -395,4 +395,6 @@ public class FeaturePlot extends Plot
   {
     // TODO Auto-generated method stub
   }
+
+  protected void showAveragesForRange() {}
 }
