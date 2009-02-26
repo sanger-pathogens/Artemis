@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.53 2009-02-03 16:18:49 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.54 2009-02-26 16:27:31 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -817,6 +817,9 @@ hyperlinks = \
   TIGR_TIGRFAMS http://cmr.tigr.org/tigr-scripts/CMR/HmmReport.cgi?hmm_acc= \
   OPI http://chemlims.com/OPI/MServlet.ChemInfo?module=GeneGo&act=findGenes&Gene_Name_=
 
+#
+# CHADO DATABASE OPTIONS 
+#
 # chado gene model features default types
 chado_exon_model=CDS
 #chado_transcript=transcript
@@ -825,3 +828,6 @@ chado_exon_model=CDS
 #chado_servers = \
 #  malaria_workshop localhost:10101/malaria_workshop?pathdb \
 #  bigtest localhost:10120/test?pathdb
+
+# define how product qualifiers are stored (as a cv or as a featureprop)
+product_cv=yes
