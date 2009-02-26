@@ -54,6 +54,7 @@ import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.EntryChangeListener;
 import uk.ac.sanger.artemis.EntryChangeEvent;
+import uk.ac.sanger.artemis.Options;
 
 import java.util.Collection;
 import java.util.Set;
@@ -120,11 +121,13 @@ public class ChadoTransactionManager
               "gff_seqname" };   // seqID of coord system
            
   //controlled vocab tags
-  public static String cv_tags[] =
-            { "GO",
-              "controlled_curation",
-              "product",
-              "class" };
+  public static String cv_tags[];
+  
+  static
+  {
+    initCV();
+  }
+
   
   //synonym tags from cv
   private static String synonym_tags[] = null;
@@ -143,6 +146,26 @@ public class ChadoTransactionManager
     
   }
 
+  private static void initCV()
+  {
+    if(Options.getOptions().getPropertyTruthValue("product_cv"))
+    { 
+      logger4j.debug("PRODUCT STORED AS A CV (product_cv=yes)");
+      cv_tags = new String[]
+        { "GO",
+          "controlled_curation",
+          "product",
+          "class" };
+    }
+    else
+    {
+      logger4j.debug("PRODUCT STORED AS A FEATUREPROP (product_cv=no)");
+      cv_tags = new String[]
+        { "GO",
+          "controlled_curation",
+          "class" };
+    }
+  }
   
   public void setEntryGroup(final EntryGroup entryGroup)
   {
