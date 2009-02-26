@@ -66,7 +66,12 @@ class ProductBox extends AbstractCvBox
     this.value_index  = value_index;
     this.xBox = Box.createHorizontalBox();
     
-    final String term = getField("term=", qualifierString);
+    String term = getField("term=", qualifierString);
+
+    // this may not be stored as a CV
+    if(term.equals(""))
+      term = qualifierString;
+   
     termTextField = new ProductTextArea(term, go_dimension, dimension);
     
     xBox.add(termTextField);
