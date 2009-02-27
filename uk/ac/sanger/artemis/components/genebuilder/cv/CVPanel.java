@@ -117,12 +117,7 @@ public class CVPanel extends JPanel
     if(qualifierName.startsWith("/"))
       qualifierName = qualifierName.substring(1);
     
-    if(qualifierName.equals("product") ||
-       qualifierName.equals("controlled_curation") ||
-       qualifierName.equals("GO") ||
-       qualifierName.equals("class"))
-      return true;
-    return false;
+    return ChadoTransactionManager.isCvTag(qualifierName);
   }
   
   /**
@@ -572,7 +567,7 @@ public class CVPanel extends JPanel
   {
     final Box xBox = Box.createHorizontalBox();
     final JExtendedComboBox comboCV = 
-      new JExtendedComboBox(ChadoTransactionManager.cv_tags);
+      new JExtendedComboBox(ChadoTransactionManager.CV_NAME);
  
     final java.util.List cvNames = 
       DatabaseDocument.getCvControledCurationNames();
