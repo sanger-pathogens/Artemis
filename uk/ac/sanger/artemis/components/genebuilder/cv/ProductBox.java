@@ -68,7 +68,7 @@ class ProductBox extends AbstractCvBox
     
     String term = getField("term=", qualifierString);
 
-    // this may not be stored as a CV
+    // this may not be stored as a CV (product_cv=no?)
     if(term.equals(""))
       term = qualifierString;
    
