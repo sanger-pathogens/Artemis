@@ -121,7 +121,7 @@ public class ChadoTransactionManager
               "gff_seqname" };   // seqID of coord system
            
   //controlled vocab tags
-  public static String cv_tags[];
+  public static String CV_NAME[];
   
   static
   {
@@ -151,7 +151,7 @@ public class ChadoTransactionManager
     if(Options.getOptions().getPropertyTruthValue("product_cv"))
     { 
       logger4j.debug("PRODUCT STORED AS A CV (product_cv=yes)");
-      cv_tags = new String[]
+      CV_NAME = new String[]
         { "GO",
           "controlled_curation",
           "product",
@@ -160,7 +160,7 @@ public class ChadoTransactionManager
     else
     {
       logger4j.debug("PRODUCT STORED AS A FEATUREPROP (product_cv=no)");
-      cv_tags = new String[]
+      CV_NAME = new String[]
         { "GO",
           "controlled_curation",
           "class" };
@@ -1113,10 +1113,10 @@ public class ChadoTransactionManager
    * @param tag
    * @return  true if the tag is a CV tag
    */
-  private static boolean isCvTag(final String tag)
+  public static boolean isCvTag(final String tag)
   {
-    for(int i=0; i<cv_tags.length; i++)
-      if(tag.equals(cv_tags[i]))
+    for(int i=0; i<CV_NAME.length; i++)
+      if(tag.equals(CV_NAME[i]))
         return true;
     return false;
   }
