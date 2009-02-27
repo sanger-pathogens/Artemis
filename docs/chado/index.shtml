@@ -16,7 +16,8 @@
 	<ul>
 	<li><a href="overview.shtml">Overview Document</a></li>
 	<li><a href="admin.shtml">Admin Document</a></li>
-	<li><a href="storage.html">Data storage</a> (for the Pathogen Group)</li>
+	<li><a href="storage.html">Data Storage</a> (for the Pathogen Group)</li>
+	<li><a href="dbloading.shtml">Data Loading Examples</a></li>
 	</ul>
       
 <p>
