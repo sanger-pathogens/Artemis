@@ -28,6 +28,7 @@ import uk.ac.sanger.artemis.components.ArtemisMain;
 import uk.ac.sanger.artemis.components.EntryEdit;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.MessageDialog;
+import uk.ac.sanger.artemis.components.StickyFileChooser;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
@@ -73,6 +74,9 @@ import javax.swing.SwingUtilities;
 public class CircularGenomeController
 {
   private Block lastBlock = null;
+  private JPanel gelPanel;
+  private int hgt;
+  private JFrame frame = new JFrame();
 
   public CircularGenomeController()
   {
@@ -178,28 +182,30 @@ public class CircularGenomeController
       final String enzymes) throws FileNotFoundException, IOException
   {
     JTabbedPane tabbedPane = new JTabbedPane();
-    JPanel gelPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    gelPanel= new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     for (int i = 0; i < entries.size(); i++)
     {
       final ReportDetails rd = Utils.findCutSitesFromEmbossReport(
           new FileReader(restrictOutputs.get(i).getCanonicalPath()));
 
-      if (rd.cutSites.size() == 0)
+      if(rd.cutSites.size() == 0)
         JOptionPane.showMessageDialog(null, "No cut site found.",
             "RE Digest Results", JOptionPane.INFORMATION_MESSAGE);
 
-      final DNADraw dna = Utils.createDNADrawFromReportDetails(rd, entries
-          .get(i));
+      final DNADraw dna = Utils.createDNADrawFromReportDetails(
+          rd, entries.get(i));
       tabbedPane.add(sequenceFiles.get(i).getName(), dna);
+      
+      hgt = dna.getHeight();
       final InSilicoGelPanel inSilicoGelPanel = new InSilicoGelPanel(rd.length,
-          rd.cutSites, dna.getHeight(), restrictOutputs.get(i));
+          rd.cutSites, hgt, restrictOutputs.get(i));
       gelPanel.add(inSilicoGelPanel);
       addMouseListener(rd, dna, inSilicoGelPanel);
     }
 
-    final JFrame f = new JFrame(enzymes);
-    addMenuBar(f);
-    Dimension d = f.getToolkit().getScreenSize();
+    frame.setTitle (enzymes);
+    addMenuBar(frame);
+    Dimension d = frame.getToolkit().getScreenSize();
 
     JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     mainPanel.setBackground(Color.white);
@@ -210,12 +216,12 @@ public class CircularGenomeController
 
     JScrollPane jsp = new JScrollPane(mainPanel);
     jsp.getViewport().setBackground(Color.white);
-    f.getContentPane().add(jsp);
+    frame.getContentPane().add(jsp);
 
-    f.pack();
-    f.setLocation(((int) d.getWidth() - f.getWidth()) / 4,
-        ((int) d.getHeight() - f.getHeight()) / 2);
-    f.setVisible(true);
+    frame.pack();
+    frame.setLocation(((int) d.getWidth() - frame.getWidth()) / 4,
+        ((int) d.getHeight() - frame.getHeight()) / 2);
+    frame.setVisible(true);
   }
 
   /**
@@ -237,6 +243,42 @@ public class CircularGenomeController
 
     JMenu fileMenu = new JMenu("File");
     menuBar.add(fileMenu);
+    
+    JMenuItem loadExpData = new JMenuItem("Load experimental data...");
+    loadExpData.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        StickyFileChooser fileChooser = new StickyFileChooser();
+        int ret = fileChooser.showOpenDialog(null);
+        if(ret == StickyFileChooser.CANCEL_OPTION)
+          return;
+        
+        File expFile = fileChooser.getSelectedFile();
+        FileReader reader;
+        try
+        {
+          reader = new FileReader(expFile);
+          final List<FragmentBand> bands = Utils.findCutSitesFromExperiment(reader);
+          final InSilicoGelPanel inSilicoGelPanel = new InSilicoGelPanel(bands, hgt, expFile); 
+          gelPanel.add(inSilicoGelPanel);
+          frame.validate();
+        }
+        catch (FileNotFoundException e1)
+        {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        }
+        catch (IOException e2)
+        {
+          // TODO Auto-generated catch block
+          e2.printStackTrace();
+        }
+      }
+    });
+    fileMenu.add(loadExpData);
+    fileMenu.addSeparator();
+    
     JMenuItem exitMenu = new JMenuItem("Exit");
     exitMenu.addActionListener(new ActionListener()
     {
@@ -246,6 +288,7 @@ public class CircularGenomeController
       }
     });
     fileMenu.add(exitMenu);
+    
     f.setJMenuBar(menuBar);
   }
 
