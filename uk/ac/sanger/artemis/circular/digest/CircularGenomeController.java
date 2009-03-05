@@ -189,8 +189,11 @@ public class CircularGenomeController
           new FileReader(restrictOutputs.get(i).getCanonicalPath()));
 
       if(rd.cutSites.size() == 0)
-        JOptionPane.showMessageDialog(null, "No cut site found.",
+      {
+        JOptionPane.showMessageDialog(null, 
+            "No cut site found for "+sequenceFiles.get(i).getName(),
             "RE Digest Results", JOptionPane.INFORMATION_MESSAGE);
+      }
 
       final DNADraw dna = Utils.createDNADrawFromReportDetails(
           rd, entries.get(i));
