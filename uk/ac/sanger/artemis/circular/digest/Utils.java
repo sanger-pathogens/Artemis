@@ -138,15 +138,25 @@ public class Utils
     Wizard.tracks[2] = fileTrack;
 
     int counter = 0;
-    if (rd.cutSites.size() == 1)
+    /*if (rd.cutSites.size() == 1)
     {
       CutSite cutSite = rd.cutSites.get(0);
       // dna.addFeatureToTrack(createFeature(cutSite.getEnd(), rd.length
       // + cutSite.getStart(), 1, sequenceLength), forward, false);
       addFeature(cutSite.getFivePrime(), rd.length, counter, newEntry, dna,
           cutSite.isForward());
+      
+      dna.setGeneticMarker(new Vector());
+      TrackManager trackManager = dna.getTrackManager();
+      if (trackManager == null)
+      {
+        trackManager = new TrackManager(dna);
+        dna.setTrackManager(trackManager);
+      }
+      trackManager.update(Wizard.tracks);
+
       return dna;
-    }
+    }*/
 
     Iterator<CutSite> it = rd.cutSites.iterator();
     CutSite firstCutSite = null;
