@@ -51,8 +51,8 @@ public class InSilicoGelPanel extends JPanel implements ActionListener
   private int marginWidth = 60;
   private int panelHeight;
   private List<FragmentBand> genomeFragments = new Vector<FragmentBand>();
-  private int MAX_FRAGMENT_LENGTH = 0;
-  private int MIN_FRAGMENT_LENGTH = Integer.MAX_VALUE;
+  private static int MAX_FRAGMENT_LENGTH = 0;
+  private static int MIN_FRAGMENT_LENGTH = Integer.MAX_VALUE;
   private boolean drawLog = false;
   private JPopupMenu popup;
   private File restrictOutput;
@@ -96,8 +96,12 @@ public class InSilicoGelPanel extends JPanel implements ActionListener
     len = genomeLength - lastSite + firstSiteEnd;
     FragmentBand band = new FragmentBand();
     band.genomeFragmentLength = len;
-    band.bandCutSite = cutSites.get(0);
-    genomeFragments.add(band);
+    
+    if(cutSites.size() > 0)
+    {
+      band.bandCutSite = cutSites.get(0);
+      genomeFragments.add(band);
+    }
     if (len > MAX_FRAGMENT_LENGTH)
       MAX_FRAGMENT_LENGTH = len;
     // System.out.println(len.toString());
