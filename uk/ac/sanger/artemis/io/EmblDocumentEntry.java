@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/EmblDocumentEntry.java,v 1.1 2004-06-09 09:49:09 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/EmblDocumentEntry.java,v 1.2 2009-03-06 12:12:24 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -32,7 +32,7 @@ import java.io.IOException;
  *  A DocumentEntry that can read an EMBL entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: EmblDocumentEntry.java,v 1.1 2004-06-09 09:49:09 tjc Exp $
+ *  @version $Id: EmblDocumentEntry.java,v 1.2 2009-03-06 12:12:24 tjc Exp $
  **/
 public class EmblDocumentEntry extends PublicDBDocumentEntry 
 {
@@ -81,6 +81,15 @@ public class EmblDocumentEntry extends PublicDBDocumentEntry
       throws EntryInformationException 
   {
     super(entry_information, new_entry, force);
+
+    try
+    {
+      if(getHeaderText() == null &&
+         new_entry.getHeaderText() != null &&
+         new_entry.getHeaderText().startsWith("ID"))
+        setHeaderText(new_entry.getHeaderText());
+    }
+    catch (Exception e){}
   }
 
   /**
