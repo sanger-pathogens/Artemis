@@ -151,6 +151,17 @@ public class ReadAndWriteEntry
         addAllKeysQualifiers(artemis_entry_information, features.elementAt(i).getEmblFeature());
     }
     PublicDBDocumentEntry.IGNORE_OBSOLETE_FEATURES = ignoreObsolete;
+    
+    if(destination_type == DocumentEntryFactory.EMBL_FORMAT &&
+       (entry.getHeaderText() == null || 
+        entry.getHeaderText().equals("")))
+    {
+      String header = "ID   XXX";
+      if(entry.getFeatureCount() > 0)
+        header = header.concat("\nFH   Key             "+
+                               "Location/Qualifiers\nFH\n");
+      entry.setHeaderText(header);
+    }
     entry.save(file, destination_type, force, artemis_entry_information);
   }
   
