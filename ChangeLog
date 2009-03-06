@@ -1,4 +1,11 @@
-Version 10.+/7.+
+Version 11+
+	New graph popup menu option to show the values and average for
+	a selected range.
+	
+	Added product_cv database option to define if the product is
+	stored as a controlled vocabulary or as a feature property (featureprop).
+
+Version 11
 
     Use black_belt_mode to suppress warnings when opening Artemis.
     
