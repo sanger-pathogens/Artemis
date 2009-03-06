@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupInfoDisplay.java,v 1.7 2008-02-08 15:57:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupInfoDisplay.java,v 1.8 2009-03-06 09:00:39 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import org.apache.log4j.Level;
  *  show the sequence length, GC content and a summary of the active entries.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryGroupInfoDisplay.java,v 1.7 2008-02-08 15:57:26 tjc Exp $
+ *  @version $Id: EntryGroupInfoDisplay.java,v 1.8 2009-03-06 09:00:39 tjc Exp $
  **/
 
 public class EntryGroupInfoDisplay
@@ -133,7 +133,7 @@ public class EntryGroupInfoDisplay
         new FilteredEntryGroup(entry_group, forward_feature_predicate,
                                "forward strand features");
 
-      entry_group = filtered_entry_group;
+      this.entry_group = filtered_entry_group;
     }
     else
     {
@@ -152,7 +152,7 @@ public class EntryGroupInfoDisplay
           new FilteredEntryGroup(entry_group, reverse_feature_predicate,
                                  "reverse strand features");
 
-        entry_group = filtered_entry_group;
+        this.entry_group = filtered_entry_group;
       } 
       else
       {
@@ -164,10 +164,10 @@ public class EntryGroupInfoDisplay
     file_viewer = new FileViewer(getFrameName());
     updateView();
 
-    entry_group.addEntryChangeListener(this);
-    entry_group.addFeatureChangeListener(this);
-    entry_group.addEntryGroupChangeListener(this);
-    entry_group.getBases().addSequenceChangeListener(this,
+    this.entry_group.addEntryChangeListener(this);
+    this.entry_group.addFeatureChangeListener(this);
+    this.entry_group.addEntryGroupChangeListener(this);
+    this.entry_group.getBases().addSequenceChangeListener(this,
                                                      Bases.MAX_PRIORITY);
 
     file_viewer.addWindowListener(new WindowAdapter() 
