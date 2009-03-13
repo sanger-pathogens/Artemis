@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCSDWindowAlgorithm.java,v 1.2 2008-06-27 10:01:30 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCSDWindowAlgorithm.java,v 1.3 2009-03-13 20:39:37 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -39,7 +39,7 @@ import uk.ac.sanger.artemis.sequence.*;
  *  to use is set in the constructor.
  *
  *  @author Kim Rutherford
- *  @version $Id: GCSDWindowAlgorithm.java,v 1.2 2008-06-27 10:01:30 tjc Exp $
+ *  @version $Id: GCSDWindowAlgorithm.java,v 1.3 2009-03-13 20:39:37 tjc Exp $
  **/
 
 public class GCSDWindowAlgorithm extends BaseAlgorithm {
@@ -85,7 +85,7 @@ public class GCSDWindowAlgorithm extends BaseAlgorithm {
     final char[] sequence;
 
     try {
-      sequence = getStrand ().getBases().getSubSequenceC (new Range (start, end), Strand.FORWARD);
+      sequence = getStrand ().getBases().getSubSequenceC (new Range (start, end), getStrand().getDirection());
     } catch (OutOfRangeException e) {
       throw new Error ("internal error - unexpected exception: " + e);
     }
