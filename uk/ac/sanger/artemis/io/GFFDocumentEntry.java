@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.60 2008-11-20 16:39:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.61 2009-03-16 14:20:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -46,7 +46,7 @@ import org.gmod.schema.sequence.FeatureLoc;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.60 2008-11-20 16:39:49 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.61 2009-03-16 14:20:20 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -163,8 +163,9 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       {
         this_feature = original_features.featureAt(i);
         final String key = this_feature.getKey().getKeyString();
-        if(GeneUtils.isHiddenFeature(key) ||
-           GeneUtils.isObsolete((GFFStreamFeature)this_feature))
+        if(this_feature instanceof GFFStreamFeature &&
+           (GeneUtils.isHiddenFeature(key) ||
+            GeneUtils.isObsolete((GFFStreamFeature)this_feature)))
           ((GFFStreamFeature)this_feature).setVisible(false);
         
         if(key.equals("gene") || key.equals("pseudogene"))
