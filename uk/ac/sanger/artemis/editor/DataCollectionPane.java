@@ -825,9 +825,17 @@ public class DataCollectionPane extends JScrollPane
 
       if(product != null && !product.equals(""))
       {
-        if(product.endsWith("."))
+        if(product.endsWith(".") ||
+           product.endsWith(";"))
           product = product.substring(0,product.length()-1);
-
+    
+        int ind;
+        if((product.startsWith("RecName:") || 
+            product.startsWith("SubName:") ||
+            product.startsWith("AltName:")) &&
+            (ind = product.indexOf("="))>0)
+          product = product.substring(ind+1);
+        
         orthoText.append("\n<br>\n/product=\""+product.toLowerCase()+"\"");
       }
     }
