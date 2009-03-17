@@ -26,12 +26,9 @@ package uk.ac.sanger.artemis.components.genebuilder.cv;
 
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.util.StringTokenizer;
 
 import javax.swing.Box;
 import javax.swing.JLabel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import uk.ac.sanger.artemis.components.Splash;
@@ -47,7 +44,7 @@ class ProductBox extends AbstractCvBox
 {
   private Box xBox;
   private int value_index;
-  private ProductTextArea termTextField;
+  private WrapTextArea termTextField;
   private JTextField withTextField;
   private JTextField dbxrefTextField;
   private JExtendedComboBox evidenceList;
@@ -72,7 +69,7 @@ class ProductBox extends AbstractCvBox
     if(term.equals(""))
       term = qualifierString;
    
-    termTextField = new ProductTextArea(term, go_dimension, dimension);
+    termTextField = new WrapTextArea(term, go_dimension, dimension.width*2);
     
     xBox.add(termTextField);
     
@@ -208,73 +205,5 @@ class ProductBox extends AbstractCvBox
     return xHeadings;
   }
   
-  /** 
-   * Text component for product qualifier value.
-   */
-  class ProductTextArea extends JTextArea
-  {
-    private static final long serialVersionUID = 1L;
-    private int labelWidth;
-    
-    public ProductTextArea(final String text, 
-                           final Dimension go_dimension,
-                           final Dimension dimension)
-    {
-      super(text);
-      setOpaque(false);
-      setEditable(false);
-      setLineWrap(true);
-      setWrapStyleWord(true);
-      FontMetrics fm  = getFontMetrics(getFont());
-      
-      
-      if(go_dimension != null)
-        labelWidth = go_dimension.width;
-      else
-        labelWidth= fm.stringWidth("GO:0001234 [F] ");
-      
-      int width = labelWidth+(dimension.width*2);
-      int rows = getNumberOfLines(fm, text, width);
-      
-      final Dimension d = new Dimension(width, (int) (getRowHeight()*rows) );
-      setPreferredSize(d);
-      setMaximumSize(d);
-    }
-    
-    /**
-     * Calculate the number of lines, taking into account line wrapping at
-     * word boundaries (whitespace).
-     * @param fm
-     * @param text
-     * @param width
-     * @return
-     */
-    private int getNumberOfLines(FontMetrics fm, final String text, final int width)
-    {
-    	String delim = " \t\n\f\r";
-      StringTokenizer tok = new StringTokenizer(text, delim, true);
-      //final String words[] = text.split("\\s");
-      int lineOffset = 0;
-      int lineNumber = 1;
-      while(tok.hasMoreTokens())
-      {
-        int thisWordLength = fm.stringWidth(tok.nextToken());
-        lineOffset+=thisWordLength;
-        if(lineOffset>width)
-        {
-          lineNumber++;
-          lineOffset = thisWordLength;
-        }
-      }
 
-      /*int stringWidth = fm.stringWidth(text);
-      int rows = Math.round((stringWidth/width)+.5f);*/
-      return lineNumber;
-    }
-    
-    protected int getLabelWidth()
-    {
-      return labelWidth;
-    }
-  }
 }
