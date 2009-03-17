@@ -213,7 +213,9 @@ public class GoBox extends AbstractCvBox
   {
     for(int i=0; i<evidenceCodes[2].length; i++)
     {
-      if(evidenceCodes[2][i].equalsIgnoreCase(evidence))
+      // look for full text or abbreviation of the code
+      if(evidenceCodes[2][i].equalsIgnoreCase(evidence) ||
+         evidenceCodes[0][i].equalsIgnoreCase(evidence))
         return i;
     }
     
