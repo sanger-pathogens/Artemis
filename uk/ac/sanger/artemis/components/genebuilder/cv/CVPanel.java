@@ -378,6 +378,7 @@ public class CVPanel extends JPanel
           xBox.add(Box.createHorizontalGlue());
           xBox.add(getRemoveButton(this_qualifier, value_index));         
           yBox.add(xBox);
+          yBox.add(Box.createVerticalStrut(2));
         }
   
         // add CC rows
