@@ -25,6 +25,7 @@
 package uk.ac.sanger.artemis.components.genebuilder.cv;
 
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 
 import javax.swing.Box;
 import javax.swing.JTextField;
@@ -42,7 +43,7 @@ class ControlledCurationBox extends AbstractCvBox
 {
   private Box xBox;
   private int value_index;
-  private JTextField termTextField;
+  private WrapTextArea termTextField;
   private JTextField dbxrefTextField;
   private JExtendedComboBox evidenceList;
   private JTextField qualfTextField;
@@ -70,23 +71,27 @@ class ControlledCurationBox extends AbstractCvBox
     final String term = getField("term=", qualifierString);
     final CvTerm cvTerm = DatabaseDocument.getCvTermByCvPartAndCvTerm(term,"CC");
 
-    termTextField = new JTextField(term);
+    termTextField = new WrapTextArea(term, go_dimension, dimension.width);
     termTextField.setOpaque(false);
     termTextField.setEditable(false);
     termTextField.setToolTipText(cvTerm.getCv().getName());
     
+    final Dimension d;
     if(go_dimension != null)
     {
-      final Dimension d = new Dimension(go_dimension.width+dimension.width,
-                                        dimension.height);
-      termTextField.setPreferredSize(d);
-      termTextField.setMaximumSize(d);
+      d = new Dimension(go_dimension.width+dimension.width,
+          termTextField.getPreferredSize().height);
     }
     else
     {
-      termTextField.setPreferredSize(dimension);
-      termTextField.setMaximumSize(dimension);
+      FontMetrics fm  = termTextField.getFontMetrics(termTextField.getFont());
+      int width= fm.stringWidth("GO:0001234 [F] ");
+      d = new Dimension(width+dimension.width,
+          termTextField.getPreferredSize().height);
     }
+    termTextField.setPreferredSize(d);
+    termTextField.setMaximumSize(d);
+    
     termTextField.setCaretPosition(0);
     xBox.add(termTextField);
     
@@ -107,10 +112,10 @@ class ControlledCurationBox extends AbstractCvBox
     evidenceList.setToolTipText("evidence column");
     evidenceList.setSelectedIndex( GoBox.getEvidenceIndex(evidence) );
   
-    Dimension d = evidenceList.getPreferredSize();
-    d = new Dimension(80,(int)d.getHeight());
-    evidenceList.setPreferredSize(d);
-    evidenceList.setMaximumSize(d);
+    Dimension d2 = evidenceList.getPreferredSize();
+    d2 = new Dimension(90,(int)d2.getHeight());
+    evidenceList.setPreferredSize(d2);
+    evidenceList.setMaximumSize(d2);
     evidenceList.setActionCommand("evidence=");
     xBox.add(evidenceList);
     
@@ -138,8 +143,10 @@ class ControlledCurationBox extends AbstractCvBox
       return true;
     
     old = getField("evidence=", origQualifierString);
+    
     if(!(old.equals("") && evidenceList.getSelectedIndex() == -1) )
-      if(!old.equals(GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
+      if(!old.equals(GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]) &&
+         !old.equals(GoBox.evidenceCodes[0][ evidenceList.getSelectedIndex() ]))
         return true;
     
     old = getField("qualifier=", origQualifierString);
