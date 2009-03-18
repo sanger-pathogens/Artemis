@@ -52,10 +52,12 @@ import uk.ac.sanger.artemis.components.genebuilder.GeneEdit;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.StringVector;
 
 class TransferAnnotationTool extends JFrame
 {
@@ -69,12 +71,17 @@ class TransferAnnotationTool extends JFrame
     "Parent",
     "isObsolete",
     "timelastmodified",
+    "cytoplasm_location",
+    "non_cytoplasm_location",
     "orthologous_to",
     "paralogous_to",
+    "PlasmoAP_score",
+    "polypeptide_domain",
     "fasta_file",
     "blastp_file",
     "blastn_file",
     "systematic_id",
+    "transmembrane",
     "previous_systematic_id"
   };
   
@@ -311,36 +318,81 @@ class TransferAnnotationTool extends JFrame
    * @return
    */
   private String[] transfer(final FeatureVector features,
-  		                      final QualifierVector qualifiersToTransfer,
-  		                      final String key, 
-  		                      final boolean sameKey,
-  		                      final boolean isDatabaseEntry,
-  		                      String[] geneNames)
-	{
-		final TransferFeaturePredicate predicate = new TransferFeaturePredicate(
-				key, sameKey, isDatabaseEntry, geneNames);
+                            final QualifierVector qualifiersToTransfer, 
+                            final String key,
+                            final boolean sameKey, 
+                            final boolean isDatabaseEntry, 
+                            String[] geneNames)
+  {
+    final TransferFeaturePredicate predicate = new TransferFeaturePredicate(
+        key, sameKey, isDatabaseEntry, geneNames);
 
-		for (int i = 0; i < features.size(); i++)
-		{
-			Feature thisFeature = features.elementAt(i);
-			if (predicate.testPredicate(thisFeature))
-			{
-				for (int j = 0; j < qualifiersToTransfer.size(); j++)
-				{
-					Qualifier qualifier = (Qualifier) qualifiersToTransfer.elementAt(j);
-					try
-					{
-						thisFeature.addQualifierValues(qualifier);
-					} catch (Exception e1)
-					{
-						e1.printStackTrace();
-					}
-				}
-				geneNames = removeArrayElement(geneNames, predicate.getGeneName());
-			}
-		}
-		return geneNames;
-	}
+    for (int i = 0; i < features.size(); i++)
+    {
+      Feature thisFeature = features.elementAt(i);
+      if (predicate.testPredicate(thisFeature))
+      {
+        for (int j = 0; j < qualifiersToTransfer.size(); j++)
+        {
+          Qualifier newQualifier = (Qualifier) qualifiersToTransfer.elementAt(j);
+          
+          try
+          {
+            final StringVector oldValues; 
+            if(thisFeature.getQualifierByName(newQualifier.getName()) == null)
+              oldValues = null;
+            else 
+              oldValues = 
+                thisFeature.getQualifierByName(newQualifier.getName()).getValues();
+            
+            final Qualifier newQualifierTmp =
+              getQualifierWithoutDuplicateValues(newQualifier, oldValues);
+            if(newQualifierTmp == null)
+              continue;
+            thisFeature.addQualifierValues(newQualifierTmp);
+          }
+          catch (Exception e1)
+          {
+            e1.printStackTrace();
+          }
+        }
+        geneNames = removeArrayElement(geneNames, predicate.getGeneName());
+      }
+    }
+    return geneNames;
+  }
+  
+  /**
+   * Return a qualifier copy of the qualifier provided that does not contain
+   * any of the values in the StringVector.
+   * @param newQualifier
+   * @param oldValues
+   * @return
+   * @throws InvalidRelationException
+   */
+  private Qualifier getQualifierWithoutDuplicateValues( 
+      final Qualifier qualifier,
+      final StringVector values) throws InvalidRelationException
+  {
+    final Qualifier newQualifier;
+    if (values == null || values.size() < 1)
+      newQualifier = qualifier;
+    else
+    {
+      StringVector newValues =  qualifier.getValues();
+      StringVector valuesToAdd = new StringVector();
+      for (int k = 0; k < newValues.size(); k++)
+      {
+        if(!values.contains(newValues.get(k)))
+          valuesToAdd.add(newValues.get(k));
+      }
+
+      if(valuesToAdd.size() == 0)
+        return null;
+      newQualifier = new Qualifier(qualifier.getName(), valuesToAdd);
+    }
+    return newQualifier;
+  }
   
   /**
    * Remove a string from an array of strings. If the string appears multiple 
