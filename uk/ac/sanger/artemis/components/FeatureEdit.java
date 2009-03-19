@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.67 2009-02-23 10:35:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureEdit.java,v 1.68 2009-03-19 11:04:41 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -77,7 +77,7 @@ import javax.swing.*;
  *  FeatureEdit class
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureEdit.java,v 1.67 2009-02-23 10:35:43 tjc Exp $
+ *  @version $Id: FeatureEdit.java,v 1.68 2009-03-19 11:04:41 tjc Exp $
  **/
 public class FeatureEdit extends JPanel
                          implements EntryChangeListener, FeatureChangeListener 
@@ -1947,6 +1947,15 @@ public class FeatureEdit extends JPanel
   public static void setTabbedView(boolean isTabbedView)
   {
     FeatureEdit.isTabbedView = isTabbedView;
+  }
+  
+  /**
+   * Set whether the feature is obsolete (database mode).
+   * @param obsoleteChanged
+   */
+  public void setObsoleteChanged(boolean obsoleteChanged)
+  {
+    propertiesPanel.setObsoleteChanged(obsoleteChanged);
   }
 
 }
