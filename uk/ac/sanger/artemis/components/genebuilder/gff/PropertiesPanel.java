@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.7 2009-02-17 13:34:45 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.8 2009-03-19 11:06:42 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -78,6 +78,7 @@ public class PropertiesPanel extends JPanel
   private boolean empty = true;
   /** track if feature isObsolete flag has changed */
   private boolean obsoleteChanged = false;
+
   private ButtonGroup phaseButtonGroup;
   
   public PropertiesPanel(final Feature feature)
@@ -978,5 +979,10 @@ public class PropertiesPanel extends JPanel
   public void setEmpty(boolean empty)
   {
     this.empty = empty;
+  }
+  
+  public void setObsoleteChanged(boolean obsoleteChanged)
+  {
+    obsoleteField.setSelected(obsoleteChanged);
   }
 }
