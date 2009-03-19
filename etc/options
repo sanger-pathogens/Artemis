@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.54 2009-02-26 16:27:31 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.55 2009-03-19 11:27:56 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -831,3 +831,7 @@ chado_exon_model=CDS
 
 # define how product qualifiers are stored (as a cv or as a featureprop)
 product_cv=yes
+
+# set default delete behaviour to make things obsolete, if
+# this is not provided the default is to permanently delete
+set_obsolete_on_delete=yes
