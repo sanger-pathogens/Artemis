@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.44 2008-09-25 10:12:24 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.45 2009-03-19 11:05:27 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -598,6 +598,10 @@ public class GeneBuilderFrame extends JFrame
     startListening(feature);
   }
   
+  protected FeatureEdit getFeatureEdit()
+  {
+    return feature_editor;
+  }
   
   private Entry getEntry()
   {
