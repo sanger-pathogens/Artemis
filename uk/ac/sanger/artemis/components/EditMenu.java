@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.60 2009-02-17 13:34:45 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.61 2009-03-19 11:31:11 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -61,7 +61,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.60 2009-02-17 13:34:45 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.61 2009-03-19 11:31:11 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -2166,7 +2166,8 @@ public class EditMenu extends SelectionMenu
       	if(GeneUtils.isDatabaseEntry(entry_group))
       	{
       		Box boption = Box.createVerticalBox();
-      		JCheckBox delete = new JCheckBox("permanently delete", false);
+      		JCheckBox delete = new JCheckBox("permanently delete", 
+      		  !Options.getOptions().getPropertyTruthValue("set_obsolete_on_delete"));
       		boption.add(new JLabel("Make "+feature_count_string+" obsolete?"));
       		boption.add(delete);
       		int res = JOptionPane.showConfirmDialog(frame, 
