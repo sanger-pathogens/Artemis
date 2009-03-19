@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.82 2008-08-01 12:46:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.83 2009-03-19 11:29:39 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -247,27 +247,7 @@ public class GeneViewerPanel extends MapPanel
     {
       public void actionPerformed(ActionEvent event)  
       {
-        FeatureVector features = selection.getAllFeatures();
-        
-        int option = JOptionPane.showConfirmDialog(null, 
-            "Delete selected features", 
-            "Delete selected features", 
-            JOptionPane.OK_CANCEL_OPTION);
-        
-        if(option == JOptionPane.CANCEL_OPTION)
-          return;
-        try
-        {
-          for(int i = 0; i < features.size(); i++)
-            GeneUtils.deleteAllFeature(features.elementAt(i), chado_gene);
-           
-          repaint();
-        }
-        catch(ReadOnlyException e)
-        {
-          e.printStackTrace();
-        }
-        
+        deleteFeatures();
       }
     });
     menu.add(deleteMenu);
@@ -566,6 +546,51 @@ public class GeneViewerPanel extends MapPanel
       }
     });
     menu.add(convertPsuedoMenu);
+  }
+  
+  /**
+   * Delete or make features obsolete
+   */
+  private void deleteFeatures()
+  {
+    FeatureVector features = selection.getAllFeatures();
+    
+    final String feature_count_string;
+    if (features.size () < 2)
+      feature_count_string = "the selected feature";
+    else
+      feature_count_string = features.size () + " features";
+
+    Box boption = Box.createVerticalBox();
+
+    JCheckBox delete = new JCheckBox("permanently delete", 
+        !Options.getOptions().getPropertyTruthValue("set_obsolete_on_delete"));
+    boption.add(new JLabel("Make "+feature_count_string+" obsolete?"));
+    boption.add(delete);
+    int option = JOptionPane.showConfirmDialog(null,
+                  boption, "Make obsolete", 
+                  JOptionPane.OK_CANCEL_OPTION,
+                  JOptionPane.QUESTION_MESSAGE);
+    if(option == JOptionPane.CANCEL_OPTION)
+            return;
+    
+    try
+    {
+      if(delete.isSelected())
+      {
+        for(int i = 0; i < features.size(); i++)
+          GeneUtils.deleteAllFeature(features.elementAt(i), chado_gene);
+        repaint();
+      }
+      else
+        gene_builder.getFeatureEdit().setObsoleteChanged(true);
+    }
+    catch(ReadOnlyException e)
+    {
+      JOptionPane.showMessageDialog(null, 
+          e.getMessage(), "Read Only", 
+          JOptionPane.WARNING_MESSAGE);
+    }  
   }
   
   public static uk.ac.sanger.artemis.Feature 
