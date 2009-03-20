@@ -1,10 +1,10 @@
 /* TransferAnnotationTool.java
  *
- * created: 2008
+ * created: 2009
  *
  * This file is part of Artemis
  *
- * Copyright (C) 2008  Genome Research Limited
+ * Copyright (C) 2009  Genome Research Limited
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 package uk.ac.sanger.artemis.components;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -44,11 +45,13 @@ import java.util.Vector;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 import uk.ac.sanger.artemis.Entry;
@@ -95,12 +98,21 @@ class TransferAnnotationTool extends JFrame
     "transmembrane",
     "previous_systematic_id"
   };
+  
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(TransferAnnotationTool.class);
   
+  private Color STEEL_BLUE = new Color(25, 25, 112);
+  
+  /**
+   * Tool for transferring annotation from one feature to other feature(s)
+   * @param feature
+   * @param entryGroup
+   * @param geneNames
+   */
   public TransferAnnotationTool(final Feature feature, 
-  		                          final EntryGroup entryGroup,
-  		                          final List geneNames)
+  		                        final EntryGroup entryGroup,
+  		                        final List geneNames)
   {
     super("Transfer Annotation Tool :: "
         + feature.getIDString());
@@ -109,20 +121,49 @@ class TransferAnnotationTool extends JFrame
     JPanel panel = new JPanel(flow);
     JPanel pane = new JPanel(new GridBagLayout());
     JScrollPane jsp = new JScrollPane(panel);
- 
+    panel.setBackground(Color.white);
+    pane.setBackground(Color.white);
     panel.add(pane);
     
     JPanel framePanel = (JPanel)getContentPane();
     framePanel.add(jsp, BorderLayout.CENTER);
     framePanel.setPreferredSize(new Dimension(600,600));
     
+    final Vector geneNameCheckBoxes = new Vector();
+    final Hashtable qualifierCheckBoxes = new Hashtable();
+
+    addMainPanel(feature, pane, qualifierCheckBoxes, 
+                 geneNameCheckBoxes, geneNames);
+    addBottomButtons(qualifierCheckBoxes, geneNameCheckBoxes, 
+                     framePanel, feature, entryGroup);
+    
+    pack();
+    setVisible(true);
+  }
+  
+  /**
+   * Construct the panel for setting up the gene list and the
+   * list of qualifiers to transfer.
+   * @param feature
+   * @param pane
+   * @param qualifierCheckBoxes
+   * @param geneNameCheckBoxes
+   * @param geneNames
+   */
+  private void addMainPanel(final Feature feature, 
+                            final JPanel pane, 
+                            final Hashtable qualifierCheckBoxes, 
+                            final Vector geneNameCheckBoxes,
+                            final List geneNames)
+  {
     GridBagConstraints c = new GridBagConstraints();
     int nrows = 0;
 
     c.anchor = GridBagConstraints.NORTHWEST;
     c.gridx = 2;
     c.gridy = 0;
-
+    c.ipadx = 0;
+    
     JLabel geneLabel = new JLabel(feature.getIDString() + " Qualifiers");
     geneLabel.setFont(geneLabel.getFont().deriveFont(Font.BOLD));
     pane.add(geneLabel, c);
@@ -135,8 +176,7 @@ class TransferAnnotationTool extends JFrame
     c.gridy = ++nrows;
     c.gridy = ++nrows;
     c.anchor = GridBagConstraints.WEST;
-
-    final Hashtable qualifierCheckBoxes = new Hashtable();
+  
     final QualifierVector qualifiers = feature.getQualifiers();
     for(int i = 0; i < qualifiers.size(); i++)
     {
@@ -179,7 +219,6 @@ class TransferAnnotationTool extends JFrame
     c.gridheight = nrows;
     c.fill = GridBagConstraints.BOTH;
 
-    final Vector geneNameCheckBoxes = new Vector();
     final Box geneNameBox = Box.createVerticalBox();
     pane.add(geneNameBox, c);
     
@@ -213,7 +252,7 @@ class TransferAnnotationTool extends JFrame
     });
     pane.add(toggle, c);
       
-    
+    Box xBox = Box.createHorizontalBox();
     final JButton toggleGeneList = new JButton("Toggle");
     toggleGeneList.addActionListener(new ActionListener()
     {
@@ -226,25 +265,76 @@ class TransferAnnotationTool extends JFrame
         }
       }
     });
-    c.gridx = 0;
-    pane.add(toggleGeneList, c);
+    xBox.add(toggleGeneList); 
     
+    final JButton addGenes = new JButton("Add");
+    addGenes.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        JTextArea geneNameTextArea = new JTextArea();
+        geneNameTextArea.setEditable(true);
+        JScrollPane jsp = new JScrollPane(geneNameTextArea);
+        
+        int res = JOptionPane.showConfirmDialog(TransferAnnotationTool.this,
+                 jsp, "Paste Features to Add", 
+                 JOptionPane.OK_CANCEL_OPTION);
+        if(res == JOptionPane.CANCEL_OPTION)
+          return;
+        
+        String geneNames[] = geneNameTextArea.getText().split("\\s");
+        for(int i=0;i<geneNames.length; i++)
+        {
+          if(geneNames[i] == null || geneNames[i].equals(""))
+            continue;
+           JCheckBox cb = new JCheckBox(geneNames[i],true);
+           geneNameBox.add(cb);
+           geneNameCheckBoxes.add(cb);
+        }
+        pane.revalidate();
+      }
+    });
+    xBox.add(addGenes); 
+    c.gridx = 0;
+    pane.add(xBox, c);  
+  }
 
+
+  /**
+   * Add panel for the transfer and close button.
+   * @param qualifierCheckBoxes
+   * @param geneNameCheckBoxes
+   * @param framePanel
+   * @param feature
+   * @param entryGroup
+   */
+  private void addBottomButtons(final Hashtable qualifierCheckBoxes,
+                                final Vector geneNameCheckBoxes,
+                                final JPanel framePanel,
+                                final Feature feature, 
+                                final EntryGroup entryGroup)
+  {
     final JCheckBox sameKeyCheckBox = new JCheckBox("Add to feature of same key", true);
+    
+    final JCheckBox overwriteCheckBox = new JCheckBox("Overwrite", false);
+    overwriteCheckBox.setToolTipText("overwrite rather than append values");
     
     Box buttonBox = Box.createHorizontalBox();
     final JButton transfer = new JButton(">>TRANSFER");
+    transfer.setToolTipText("transfer annotation");
     transfer.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
         transferAnnotation(qualifierCheckBoxes, geneNameCheckBoxes, feature, 
-        		entryGroup, sameKeyCheckBox.isSelected());
+                entryGroup, sameKeyCheckBox.isSelected(),
+                overwriteCheckBox.isSelected());
       }
     });
     Box yBox = Box.createVerticalBox();
     yBox.add(transfer);
     yBox.add(sameKeyCheckBox);
+    yBox.add(overwriteCheckBox);
     buttonBox.add(yBox);
     
     final JButton close = new JButton("CLOSE");
@@ -261,49 +351,53 @@ class TransferAnnotationTool extends JFrame
     buttonBox.add(yBox);
     buttonBox.add(Box.createHorizontalGlue());
     framePanel.add(buttonBox, BorderLayout.SOUTH);
-    
-    pack();
-    setVisible(true);
   }
-
+  
+  /**
+   * Set up the expander button to display qualifier values.
+   * @param butt - expander button
+   * @param qualifier - the qualifer that is being displayed
+   * @param qualifierValueBox - Box containing the values
+   * @param qualifierNameCheckBox - JCheckBox for the given qualifier
+   * @param pane
+   * @return
+   */
   private Vector setExpanderButton(final JButton butt,
                                    final Qualifier qualifier, 
                                    final Box qualifierValueBox,
-                                   final JCheckBox qualifierNameCheckBox,
+                                   final JCheckBox qualifierNameCheckBox, 
                                    final JPanel pane)
   {
-    butt.setMargin(new Insets(0,0,0,0));
+    butt.setMargin(new Insets(0, 0, 0, 0));
     butt.setHorizontalAlignment(SwingConstants.RIGHT);
+    butt.setHorizontalTextPosition(SwingConstants.RIGHT);
     butt.setBorderPainted(false);
-    butt.setFont(new Font("SansSerif", Font.BOLD, 11));
-    butt.setPreferredSize(new Dimension(butt.getPreferredSize().width,11));
+    butt.setFont(butt.getFont().deriveFont(Font.BOLD));
+    butt.setForeground(STEEL_BLUE);
     
     butt.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
-        if(butt.getText().equals("+"))
-        {
+        if (butt.getText().equals("+"))
           butt.setText("-");
-          qualifierValueBox.setVisible(true);
-        }
         else
-        {
           butt.setText("+");
-          qualifierValueBox.setVisible(false);
-        }
+
+        qualifierValueBox.setVisible(butt.getText().equals("-"));
         pane.revalidate();
       }
     });
-    
+
     // set-up qualifier values list
     qualifierValueBox.setVisible(false);
     Vector qualifierValuesCheckBox = new Vector();
     StringVector values = qualifier.getValues();
-    for(int i=0; i<values.size(); i++)
+    for (int i = 0; i < values.size(); i++)
     {
-      JCheckBox cb = new JCheckBox((String)values.get(i), 
-                     qualifierNameCheckBox.isSelected());
+      JCheckBox cb = new JCheckBox((String) values.get(i),
+          qualifierNameCheckBox.isSelected());
+      cb.setFont(cb.getFont().deriveFont(Font.ITALIC));
       qualifierValueBox.add(cb);
       qualifierValuesCheckBox.add(cb);
     }
@@ -327,17 +421,20 @@ class TransferAnnotationTool extends JFrame
   
   /**
    * Transfer selected qualifiers to the list of features defined
-   * by the names in the JTextArea 
+   * by the selected names.
    * @param qualifierCheckBoxes - list of qualifier check boxes
    * @param geneNameTextArea - text with a list of feature names to transfer to
    * @param feature - feature to copy from 
    * @param entryGroup
+   * @param sameKey
+   * @param overwrite
    */
   private void transferAnnotation(final Hashtable qualifierCheckBoxes, 
   		                          final Vector geneNameCheckBoxes,
   		                          final Feature orginatingFeature,
   		                          final EntryGroup entryGroup,
-  		                          final boolean sameKey)
+  		                          final boolean sameKey,
+  		                          final boolean overwrite)
   {
   	setCursor(new Cursor(Cursor.WAIT_CURSOR));
     // transfer selected annotation to genes
@@ -407,7 +504,8 @@ class TransferAnnotationTool extends JFrame
   	// transfer selected annotation
   	entryGroup.getActionController().startAction();
   	geneNames = transfer(features, qualifiersToTransfer, key, 
-  			                 sameKey, GeneUtils.isDatabaseEntry(entryGroup), geneNames);
+  			             sameKey, overwrite, 
+  			             GeneUtils.isDatabaseEntry(entryGroup), geneNames);
   	entryGroup.getActionController().endAction();
   	
   	//
@@ -453,7 +551,7 @@ class TransferAnnotationTool extends JFrame
       ctm.setEntryGroup(entry_group);
 
       transfer(entry.getAllFeatures(), qualifiersToTransfer, key, sameKey,
-          true, geneNames);
+          overwrite, true, geneNames);
       ChadoTransactionManager.commit((DatabaseDocument) newDbEntry
           .getDocument(), false, ctm);
 
@@ -484,7 +582,8 @@ class TransferAnnotationTool extends JFrame
   private String[] transfer(final FeatureVector features,
                             final QualifierVector qualifiersToTransfer, 
                             final String key,
-                            final boolean sameKey, 
+                            final boolean sameKey,
+                            final boolean overwrite,
                             final boolean isDatabaseEntry, 
                             String[] geneNames)
   {
@@ -502,18 +601,23 @@ class TransferAnnotationTool extends JFrame
           
           try
           {
-            final StringVector oldValues; 
-            if(thisFeature.getQualifierByName(newQualifier.getName()) == null)
-              oldValues = null;
-            else 
-              oldValues = 
-                thisFeature.getQualifierByName(newQualifier.getName()).getValues();
-            
-            final Qualifier newQualifierTmp =
-              getQualifierWithoutDuplicateValues(newQualifier, oldValues);
-            if(newQualifierTmp == null)
-              continue;
-            thisFeature.addQualifierValues(newQualifierTmp);
+            if(overwrite)
+              thisFeature.setQualifier(newQualifier);
+            else
+            {
+              final StringVector oldValues;
+              if (thisFeature.getQualifierByName(newQualifier.getName()) == null)
+                oldValues = null;
+              else
+                oldValues = thisFeature.getQualifierByName(
+                    newQualifier.getName()).getValues();
+
+              final Qualifier newQualifierTmp = getQualifierWithoutDuplicateValues(
+                  newQualifier, oldValues);
+              if (newQualifierTmp == null)
+                continue;
+              thisFeature.addQualifierValues(newQualifierTmp);
+            }
           }
           catch (Exception e1)
           {
@@ -647,4 +751,5 @@ class TransferAnnotationTool extends JFrame
 			return geneName;
 		}
   }
+ 
 }
