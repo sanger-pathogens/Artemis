@@ -671,27 +671,27 @@ class TransferAnnotationTool extends JFrame
    */
   private String[] removeArrayElement(final String strArr[], final String str)
   {
-  	String[] newarray = new String[strArr.length - 1];
-  	int count = 0;
-  	for(int i=0;i<strArr.length; i++)
-  	{
-  		if(strArr[i].equals(str))
-  			continue;
-  		
-  	  // not found str return original array
-  		if(count>=newarray.length) 
-  			return strArr;
-  		newarray[count] = strArr[i];
-  		count++;
-  	}
-  	
-  	if(count < newarray.length)
-  	{
-  		String[] tmparray = new String[count];
-  		System.arraycopy(newarray, 0, tmparray, 0, count);
-  		newarray = tmparray;
-  	}
-  	
+    String[] newarray = new String[strArr.length - 1];
+    int count = 0;
+    for (int i = 0; i < strArr.length; i++)
+    {
+      if (strArr[i].equals(str))
+        continue;
+
+      // not found str return original array
+      if (count >= newarray.length)
+        return strArr;
+      newarray[count] = strArr[i];
+      count++;
+    }
+
+    if (count < newarray.length)
+    {
+      String[] tmparray = new String[count];
+      System.arraycopy(newarray, 0, tmparray, 0, count);
+      newarray = tmparray;
+    }
+
     return newarray;
   }
    
@@ -701,55 +701,54 @@ class TransferAnnotationTool extends JFrame
    */
   class TransferFeaturePredicate implements FeaturePredicate
   {
-  	private String geneName;
-  	private String key;
-  	private boolean sameKey;
-  	private boolean isDatabaseEntry;
-  	private String[] geneNames;
-  	
-  	public TransferFeaturePredicate(final String key, 
-  			                            final boolean sameKey,
-  			                            final boolean isDatabaseEntry,
-  			                            final String[] geneNames)
-  	{
-  		this.key             = key;
-  		this.sameKey         = sameKey;
-  		this.isDatabaseEntry = isDatabaseEntry;
-  		this.geneNames       = geneNames;
-  	}
-  	
-		public boolean testPredicate(Feature targetFeature)
-		{
-			String targetKey = targetFeature.getKey().getKeyString();
-			if(!sameKey || !targetKey.equals(key))
-				return false;
-			
-     	String chadoGeneName = null;
-     	if(isDatabaseEntry)
-     	{	
-     		GFFStreamFeature gffFeature = ((GFFStreamFeature)targetFeature.getEmblFeature());
-     		if(gffFeature.getChadoGene() != null)
-     		  chadoGeneName = gffFeature.getChadoGene().getGeneUniqueName();
-     	}
-      	
-			String thisFeatureSystematicName = targetFeature.getSystematicName();
-			
-			for(int i=0;i<geneNames.length;i++)
-			{
-				if( geneNames[i].equals(thisFeatureSystematicName) ||
-						(chadoGeneName != null && geneNames[i].equals(chadoGeneName)) )
-				{
-					geneName = geneNames[i];
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		public String getGeneName()
-		{
-			return geneName;
-		}
+    private String geneName;
+    private String key;
+    private boolean sameKey;
+    private boolean isDatabaseEntry;
+    private String[] geneNames;
+
+    public TransferFeaturePredicate(final String key, final boolean sameKey,
+        final boolean isDatabaseEntry, final String[] geneNames)
+    {
+      this.key = key;
+      this.sameKey = sameKey;
+      this.isDatabaseEntry = isDatabaseEntry;
+      this.geneNames = geneNames;
+    }
+
+    public boolean testPredicate(Feature targetFeature)
+    {
+      String targetKey = targetFeature.getKey().getKeyString();
+      if (!sameKey || !targetKey.equals(key))
+        return false;
+
+      String chadoGeneName = null;
+      if (isDatabaseEntry)
+      {
+        GFFStreamFeature gffFeature = 
+          ((GFFStreamFeature) targetFeature.getEmblFeature());
+        if (gffFeature.getChadoGene() != null)
+          chadoGeneName = gffFeature.getChadoGene().getGeneUniqueName();
+      }
+
+      String thisFeatureSystematicName = targetFeature.getSystematicName();
+
+      for (int i = 0; i < geneNames.length; i++)
+      {
+        if (geneNames[i].equals(thisFeatureSystematicName)
+            || (chadoGeneName != null && geneNames[i].equals(chadoGeneName)))
+        {
+          geneName = geneNames[i];
+          return true;
+        }
+      }
+      return false;
+    }
+
+    public String getGeneName()
+    {
+      return geneName;
+    }
   }
  
 }
