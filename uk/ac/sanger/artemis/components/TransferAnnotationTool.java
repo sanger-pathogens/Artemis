@@ -45,7 +45,6 @@ import java.util.Vector;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -63,6 +62,7 @@ import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.components.genebuilder.GeneEdit;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
@@ -222,7 +222,6 @@ class TransferAnnotationTool extends JFrame
     final Box geneNameBox = Box.createVerticalBox();
     pane.add(geneNameBox, c);
     
-
     if(geneNames != null)
     {
       for(int i = 0; i < geneNames.size(); i++)
@@ -277,7 +276,7 @@ class TransferAnnotationTool extends JFrame
         JScrollPane jsp = new JScrollPane(geneNameTextArea);
         
         int res = JOptionPane.showConfirmDialog(TransferAnnotationTool.this,
-                 jsp, "Paste Features to Add", 
+                 jsp, "Paste Feature Names to Add", 
                  JOptionPane.OK_CANCEL_OPTION);
         if(res == JOptionPane.CANCEL_OPTION)
           return;
@@ -697,7 +696,8 @@ class TransferAnnotationTool extends JFrame
    
   /**
    * Test if the feature is nominated to have annotation transferred
-   * to it.
+   * to it. For genes in a chado database it looks at the gene name
+   * and transcript name.
    */
   class TransferFeaturePredicate implements FeaturePredicate
   {
@@ -707,8 +707,10 @@ class TransferAnnotationTool extends JFrame
     private boolean isDatabaseEntry;
     private String[] geneNames;
 
-    public TransferFeaturePredicate(final String key, final boolean sameKey,
-        final boolean isDatabaseEntry, final String[] geneNames)
+    public TransferFeaturePredicate(final String key, 
+                                    final boolean sameKey,
+                                    final boolean isDatabaseEntry, 
+                                    final String[] geneNames)
     {
       this.key = key;
       this.sameKey = sameKey;
@@ -722,21 +724,32 @@ class TransferAnnotationTool extends JFrame
       if (!sameKey || !targetKey.equals(key))
         return false;
 
-      String chadoGeneName = null;
+      Vector chadoNames = null;
       if (isDatabaseEntry)
       {
         GFFStreamFeature gffFeature = 
           ((GFFStreamFeature) targetFeature.getEmblFeature());
         if (gffFeature.getChadoGene() != null)
-          chadoGeneName = gffFeature.getChadoGene().getGeneUniqueName();
+        {
+          chadoNames = new Vector();
+          
+          ChadoCanonicalGene chadoGene = gffFeature.getChadoGene();
+          chadoNames.add(chadoGene.getGeneUniqueName());
+          List transcripts = chadoGene.getTranscripts();
+          for(int i=0;i<transcripts.size();i++)
+          {
+            GFFStreamFeature feature = (GFFStreamFeature) transcripts.get(i);
+            chadoNames.add(GeneUtils.getUniqueName(feature));
+          }
+        }
       }
 
       String thisFeatureSystematicName = targetFeature.getSystematicName();
 
       for (int i = 0; i < geneNames.length; i++)
       {
-        if (geneNames[i].equals(thisFeatureSystematicName)
-            || (chadoGeneName != null && geneNames[i].equals(chadoGeneName)))
+        if(geneNames[i].equals(thisFeatureSystematicName) ||
+           (chadoNames != null && chadoNames.contains(geneNames[i])))
         {
           geneName = geneNames[i];
           return true;
@@ -745,7 +758,7 @@ class TransferAnnotationTool extends JFrame
       return false;
     }
 
-    public String getGeneName()
+    protected String getGeneName()
     {
       return geneName;
     }
