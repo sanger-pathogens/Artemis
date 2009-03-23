@@ -89,6 +89,7 @@ class TransferAnnotationTool extends JFrame
     "non_cytoplasm_location",
     "orthologous_to",
     "paralogous_to",
+    "pepstats_file",
     "PlasmoAP_score",
     "polypeptide_domain",
     "fasta_file",
@@ -180,38 +181,8 @@ class TransferAnnotationTool extends JFrame
     final QualifierVector qualifiers = feature.getQualifiers();
     for(int i = 0; i < qualifiers.size(); i++)
     {
-      Qualifier qualifier = ((Qualifier) qualifiers.get(i));
-
-      if(isNonTransferable(qualifier.getName()))
-          continue;
-
-      final JCheckBox qualifierNameCheckBox = new JCheckBox(qualifier.getName(), false);
-      c.gridx = 1;
-      Box qualifierValueBox = Box.createVerticalBox();
-      
-      JButton detailsShowHide = new JButton("+");
-      final Vector qualifierValuesCheckBox = setExpanderButton(detailsShowHide,
-          qualifier, qualifierValueBox, qualifierNameCheckBox, pane);
-      
-      qualifierNameCheckBox.addItemListener(new ItemListener()
-      {
-        public void itemStateChanged(ItemEvent e)
-        {
-          for(int i=0; i<qualifierValuesCheckBox.size(); i++)
-          {
-            JCheckBox cb = (JCheckBox) qualifierValuesCheckBox.get(i);
-            cb.setSelected(qualifierNameCheckBox.isSelected());
-          }
-        }        
-      });
-      pane.add(detailsShowHide, c);
-      c.gridx = 2;
-
-      pane.add(qualifierNameCheckBox, c);
-      qualifierCheckBoxes.put(qualifierNameCheckBox, qualifierValuesCheckBox);
-      c.gridy = ++nrows;
-      pane.add(qualifierValueBox, c);
-      c.gridy = ++nrows;
+      nrows = addQualifierComponents(pane, (Qualifier) qualifiers.get(i), 
+                                          qualifierCheckBoxes, c, nrows);
     }
 
     c.gridx = 0;
@@ -352,6 +323,55 @@ class TransferAnnotationTool extends JFrame
     framePanel.add(buttonBox, BorderLayout.SOUTH);
   }
   
+  
+  /**
+   * Add a qualifier to the list of transferable annotation
+   * @param pane
+   * @param qualifier
+   * @param qualifierCheckBoxes
+   * @param c
+   * @param nrows
+   * @return
+   */
+  private int addQualifierComponents(final JPanel pane,
+                                     final Qualifier qualifier, 
+                                     final Hashtable qualifierCheckBoxes,
+                                     final GridBagConstraints c,
+                                     int nrows)
+  {
+    if(isNonTransferable(qualifier.getName()))
+      return nrows;
+    
+    final JCheckBox qualifierNameCheckBox = new JCheckBox(qualifier.getName(), false);
+    c.gridx = 1;
+    Box qualifierValueBox = Box.createVerticalBox();
+    
+    JButton detailsShowHide = new JButton("+");
+    final Vector qualifierValuesCheckBox = setExpanderButton(detailsShowHide,
+        qualifier, qualifierValueBox, qualifierNameCheckBox, pane);
+    
+    qualifierNameCheckBox.addItemListener(new ItemListener()
+    {
+      public void itemStateChanged(ItemEvent e)
+      {
+        for(int i=0; i<qualifierValuesCheckBox.size(); i++)
+        {
+          JCheckBox cb = (JCheckBox) qualifierValuesCheckBox.get(i);
+          cb.setSelected(qualifierNameCheckBox.isSelected());
+        }
+      }        
+    });
+    pane.add(detailsShowHide, c);
+    c.gridx = 2;
+
+    pane.add(qualifierNameCheckBox, c);
+    qualifierCheckBoxes.put(qualifierNameCheckBox, qualifierValuesCheckBox);
+    c.gridy = ++nrows;
+    pane.add(qualifierValueBox, c);
+    c.gridy = ++nrows;
+    return nrows;
+  }
+  
   /**
    * Set up the expander button to display qualifier values.
    * @param butt - expander button
@@ -435,7 +455,6 @@ class TransferAnnotationTool extends JFrame
   		                          final boolean sameKey,
   		                          final boolean overwrite)
   {
-  	setCursor(new Cursor(Cursor.WAIT_CURSOR));
     // transfer selected annotation to genes
     final QualifierVector qualifiers = orginatingFeature.getQualifiers();
     final QualifierVector qualifiersToTransfer = new QualifierVector();
@@ -482,6 +501,16 @@ class TransferAnnotationTool extends JFrame
         "Warning", JOptionPane.WARNING_MESSAGE);
   	  return;
   	}
+  	else if(overwrite)
+  	{
+  	  int res = JOptionPane.showConfirmDialog(this, 
+  	      "Overwrite selected annotation for "+count+" feature(s)?", 
+  	      "Overwrite", JOptionPane.OK_CANCEL_OPTION);
+  	  if(res == JOptionPane.CANCEL_OPTION)
+  	    return;
+  	}
+  	
+  	setCursor(new Cursor(Cursor.WAIT_CURSOR));
   	
   	String geneNames[] = new String[count];
   	count = 0;
@@ -495,7 +524,6 @@ class TransferAnnotationTool extends JFrame
         count++;
       }
     }
-  	//geneNameTextArea.getText().split("\\s");
 
   	final String key = orginatingFeature.getKey().getKeyString();
   	final FeatureVector features = entryGroup.getAllFeatures();
@@ -510,56 +538,58 @@ class TransferAnnotationTool extends JFrame
   	//
   	// Commit changes to genes not in Artemis but in the database
   	//
-    DatabaseDocumentEntry db_entry = 
-    	(DatabaseDocumentEntry) orginatingFeature.getEntry().getEMBLEntry();
-    DatabaseDocument doc = (DatabaseDocument) db_entry.getDocument();
     Vector genesNotFound = null;
-    
-  	for (int i = 0; i < geneNames.length; i++)
+    if (orginatingFeature.getEntry().getEMBLEntry() instanceof DatabaseDocumentEntry)
     {
-      DatabaseDocumentEntry newDbEntry = GeneEdit.makeGeneEntry(null,
-          geneNames[i], doc, null);
+      DatabaseDocumentEntry db_entry =
+        (DatabaseDocumentEntry) orginatingFeature.getEntry().getEMBLEntry();
+      DatabaseDocument doc = (DatabaseDocument) db_entry.getDocument();
 
-      if (newDbEntry == null)
+      for (int i = 0; i < geneNames.length; i++)
       {
-        if (genesNotFound == null)
-          genesNotFound = new Vector();
-        genesNotFound.add(geneNames[i]);
-        continue;
+        DatabaseDocumentEntry newDbEntry = GeneEdit.makeGeneEntry(null,
+            geneNames[i], doc, null);
+
+        if (newDbEntry == null)
+        {
+          if (genesNotFound == null)
+            genesNotFound = new Vector();
+          genesNotFound.add(geneNames[i]);
+          continue;
+        }
+
+        char[] c = new char[1];
+        PartialSequence ps = new PartialSequence(c, 100, 0, null, null);
+        newDbEntry.setPartialSequence(ps);
+        Entry entry = null;
+        try
+        {
+          entry = new Entry(newDbEntry);
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+        }
+
+        SimpleEntryGroup entry_group = new SimpleEntryGroup();
+        entry_group.addElement(entry);
+
+        ChadoTransactionManager ctm = new ChadoTransactionManager();
+        entry_group.addFeatureChangeListener(ctm);
+        entry_group.addEntryChangeListener(ctm);
+        ctm.setEntryGroup(entry_group);
+
+        transfer(entry.getAllFeatures(), qualifiersToTransfer, key, sameKey,
+            overwrite, true, geneNames);
+        ChadoTransactionManager.commit((DatabaseDocument) newDbEntry
+            .getDocument(), false, ctm);
+
+        entry_group.removeFeatureChangeListener(ctm);
+        entry_group.removeEntryChangeListener(ctm);
+        // if(newDbEntry != null)
+        // GeneEdit.showGeneEditor(null, geneNames[i], newDbEntry);
       }
-
-      char[] c = new char[1];
-      PartialSequence ps = new PartialSequence(c, 100, 0, null, null);
-      newDbEntry.setPartialSequence(ps);
-      Entry entry = null;
-      try
-      {
-        entry = new Entry(newDbEntry);
-      }
-      catch (Exception e)
-      {
-        e.printStackTrace();
-      }
-
-      SimpleEntryGroup entry_group = new SimpleEntryGroup();
-      entry_group.addElement(entry);
-
-      ChadoTransactionManager ctm = new ChadoTransactionManager();
-      entry_group.addFeatureChangeListener(ctm);
-      entry_group.addEntryChangeListener(ctm);
-      ctm.setEntryGroup(entry_group);
-
-      transfer(entry.getAllFeatures(), qualifiersToTransfer, key, sameKey,
-          overwrite, true, geneNames);
-      ChadoTransactionManager.commit((DatabaseDocument) newDbEntry
-          .getDocument(), false, ctm);
-
-      entry_group.removeFeatureChangeListener(ctm);
-      entry_group.removeEntryChangeListener(ctm);
-      // if(newDbEntry != null)
-      // GeneEdit.showGeneEditor(null, geneNames[i], newDbEntry);
     }
-  	
   	setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
   	
   	if(genesNotFound != null)
@@ -721,7 +751,7 @@ class TransferAnnotationTool extends JFrame
     public boolean testPredicate(Feature targetFeature)
     {
       String targetKey = targetFeature.getKey().getKeyString();
-      if (!sameKey || !targetKey.equals(key))
+      if (sameKey && !targetKey.equals(key))
         return false;
 
       Vector chadoNames = null;
@@ -745,7 +775,6 @@ class TransferAnnotationTool extends JFrame
       }
 
       String thisFeatureSystematicName = targetFeature.getSystematicName();
-
       for (int i = 0; i < geneNames.length; i++)
       {
         if(geneNames[i].equals(thisFeatureSystematicName) ||
