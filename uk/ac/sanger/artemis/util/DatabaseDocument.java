@@ -98,7 +98,7 @@ public class DatabaseDocument extends Document
   private JdbcDAO jdbcDAO = null;
 
   /** iBatis DAO */
-  private IBatisDAO connIB = null;
+  private static IBatisDAO connIB = null;
 
   private ByteBuffer[] gff_buffer;
 
