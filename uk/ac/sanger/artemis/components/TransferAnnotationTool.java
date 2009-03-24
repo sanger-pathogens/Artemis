@@ -169,14 +169,13 @@ class TransferAnnotationTool extends JFrame
     c.anchor = GridBagConstraints.NORTHWEST;
     c.gridx = 2;
     c.gridy = 0;
-    c.ipadx = 0;
+    c.ipadx = 50;
     
     JLabel geneLabel = new JLabel("Qualifier(s)");
     geneLabel.setFont(geneLabel.getFont().deriveFont(Font.BOLD));
     pane.add(geneLabel, c);
     
     c.gridy = 0;
-    c.ipadx = 0;
     c.gridx = 0;
     JLabel label = new JLabel("Gene List");
     label.setFont(label.getFont().deriveFont(Font.BOLD));
@@ -393,10 +392,12 @@ class TransferAnnotationTool extends JFrame
         for(int i = 0; i < qualifierPanels.size(); i++)
         {
           QualifierPanel qP = (QualifierPanel) qualifierPanels.get(i);
-          transferAnnotation(qP.getQualifierCheckBoxes(), 
+          int res = transferAnnotation(qP.getQualifierCheckBoxes(), 
               geneNameCheckBoxes, qP.getFeature(), entryGroup, 
               sameKeyCheckBox.isSelected(),
               overwriteCheckBox.isSelected());
+          if(res == -1)
+            break;
         }
       }
     });
@@ -448,12 +449,12 @@ class TransferAnnotationTool extends JFrame
    * @param sameKey
    * @param overwrite
    */
-  private void transferAnnotation(final Hashtable qualifierCheckBoxes, 
-  		                          final Vector geneNameCheckBoxes,
-  		                          final Feature orginatingFeature,
-  		                          final EntryGroup entryGroup,
-  		                          final boolean sameKey,
-  		                          final boolean overwrite)
+  private int transferAnnotation(final Hashtable qualifierCheckBoxes, 
+  		                         final Vector geneNameCheckBoxes,
+  		                         final Feature orginatingFeature,
+  		                         final EntryGroup entryGroup,
+  		                         final boolean sameKey,
+  		                         final boolean overwrite)
   {
     // transfer selected annotation to genes
     final QualifierVector qualifiers = orginatingFeature.getQualifiers();
@@ -499,7 +500,7 @@ class TransferAnnotationTool extends JFrame
   	  JOptionPane.showMessageDialog(this, 
         "No genes selected.", 
         "Warning", JOptionPane.WARNING_MESSAGE);
-  	  return;
+  	  return -1;
   	} 
   	
   	setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -588,6 +589,7 @@ class TransferAnnotationTool extends JFrame
   		JOptionPane.showMessageDialog(this, 
   				"Gene(s) Not Found:\n"+genesNotFound.toString(), 
   				"Gene(s) Not Found", JOptionPane.WARNING_MESSAGE);
+  	return 0;
   }
   
   /**
