@@ -41,7 +41,7 @@
       <property name="JDBC.ConnectionURL" value="jdbc:postgresql://${chado}"/> 
       <property name="JDBC.Username" value="${username}"/> 
       <property name="JDBC.Password" value="${password}"/>
-      <property name="Pool.MaximumActiveConnections" value="3" />
+      <property name="Pool.MaximumActiveConnections" value="2" />
       <property name="Pool.MaximumIdleConnections"   value="1"/>
       <property name="Pool.MaximumCheckoutTime" value="1800000" />
 	  <property name="Pool.TimeToWait" value="10000"/>
