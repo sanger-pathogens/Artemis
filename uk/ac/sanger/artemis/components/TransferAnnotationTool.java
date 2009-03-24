@@ -55,7 +55,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
@@ -109,7 +108,7 @@ class TransferAnnotationTool extends JFrame
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(TransferAnnotationTool.class);
   
-  private Color STEEL_BLUE = new Color(25, 25, 112);
+  protected static Color STEEL_BLUE = new Color(25, 25, 112);
   
   /**
    * Tool for transferring annotation from one feature to other feature(s)
@@ -389,6 +388,7 @@ class TransferAnnotationTool extends JFrame
             return;
         }
         
+        setCursor(new Cursor(Cursor.WAIT_CURSOR));
         for(int i = 0; i < qualifierPanels.size(); i++)
         {
           QualifierPanel qP = (QualifierPanel) qualifierPanels.get(i);
@@ -399,6 +399,7 @@ class TransferAnnotationTool extends JFrame
           if(res == -1)
             break;
         }
+        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }
     });
     Box yBox = Box.createVerticalBox();
@@ -429,7 +430,7 @@ class TransferAnnotationTool extends JFrame
    * @param qualifierName
    * @return
    */
-  private boolean isNonTransferable(String qualifierName)
+  protected static boolean isNonTransferable(String qualifierName)
   {
     for(int i=0; i<NON_TRANSFERABLE_QUALIFIERS.length; i++)
     {
@@ -449,7 +450,8 @@ class TransferAnnotationTool extends JFrame
    * @param sameKey
    * @param overwrite
    */
-  private int transferAnnotation(final Hashtable qualifierCheckBoxes, 
+  protected static int transferAnnotation(
+                                 final Hashtable qualifierCheckBoxes, 
   		                         final Vector geneNameCheckBoxes,
   		                         final Feature orginatingFeature,
   		                         final EntryGroup entryGroup,
@@ -496,14 +498,11 @@ class TransferAnnotationTool extends JFrame
   	
   	if(count < 1)
   	{
-  	  setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-  	  JOptionPane.showMessageDialog(this, 
+  	  JOptionPane.showMessageDialog(null, 
         "No genes selected.", 
         "Warning", JOptionPane.WARNING_MESSAGE);
   	  return -1;
   	} 
-  	
-  	setCursor(new Cursor(Cursor.WAIT_CURSOR));
   	
   	String geneNames[] = new String[count];
   	count = 0;
@@ -583,10 +582,9 @@ class TransferAnnotationTool extends JFrame
         // GeneEdit.showGeneEditor(null, geneNames[i], newDbEntry);
       }
     }
-  	setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
   	
   	if(genesNotFound != null)
-  		JOptionPane.showMessageDialog(this, 
+  		JOptionPane.showMessageDialog(null, 
   				"Gene(s) Not Found:\n"+genesNotFound.toString(), 
   				"Gene(s) Not Found", JOptionPane.WARNING_MESSAGE);
   	return 0;
@@ -602,7 +600,7 @@ class TransferAnnotationTool extends JFrame
    * @param geneNames
    * @return
    */
-  private String[] transfer(final FeatureVector features,
+  private static String[] transfer(final FeatureVector features,
                             final QualifierVector qualifiersToTransfer, 
                             final String key,
                             final boolean sameKey,
@@ -661,7 +659,7 @@ class TransferAnnotationTool extends JFrame
    * @return
    * @throws InvalidRelationException
    */
-  private Qualifier getQualifierWithoutDuplicateValues( 
+  private static Qualifier getQualifierWithoutDuplicateValues( 
       final Qualifier qualifier,
       final StringVector values) throws InvalidRelationException
   {
@@ -692,7 +690,7 @@ class TransferAnnotationTool extends JFrame
    * @param str
    * @return
    */
-  private String[] removeArrayElement(final String strArr[], final String str)
+  private static String[] removeArrayElement(final String strArr[], final String str)
   {
     String[] newarray = new String[strArr.length - 1];
     int count = 0;
@@ -718,221 +716,223 @@ class TransferAnnotationTool extends JFrame
     return newarray;
   }
    
-  class QualifierPanel extends JPanel
+
+ 
+}
+
+class QualifierPanel extends JPanel
+{
+  private Hashtable qualifierCheckBoxes = new Hashtable();
+  private Feature feature;
+  protected int nrows = 0;
+  
+  public QualifierPanel(Feature feature, String title)
   {
-    private Hashtable qualifierCheckBoxes = new Hashtable();
-    private Feature feature;
-    protected int nrows = 0;
+    super(new GridBagLayout());
+    
+    this.feature = feature;
+    
+    TitledBorder titleBorder = BorderFactory.createTitledBorder(
+        BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), title);
+    titleBorder.setTitleJustification(TitledBorder.LEFT);
+    titleBorder.setTitleColor(TransferAnnotationTool.STEEL_BLUE);
+    setBorder(titleBorder);
+    
+    GridBagConstraints c = new GridBagConstraints();
+    c.anchor = GridBagConstraints.WEST;
+    c.ipadx = 0;
+    final QualifierVector qualifiers = feature.getQualifiers();
 
-    public QualifierPanel(Feature feature, String title)
+    for(int i = 0; i < qualifiers.size(); i++)
     {
-      super(new GridBagLayout());
-      
-      this.feature = feature;
-      
-      TitledBorder titleBorder = BorderFactory.createTitledBorder(
-          BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), title);
-      titleBorder.setTitleJustification(TitledBorder.LEFT);
-      titleBorder.setTitleColor(STEEL_BLUE);
-      setBorder(titleBorder);
-      
-      GridBagConstraints c = new GridBagConstraints();
-      c.anchor = GridBagConstraints.WEST;
-      c.ipadx = 0;
-      final QualifierVector qualifiers = feature.getQualifiers();
-
-      for(int i = 0; i < qualifiers.size(); i++)
-      {
-        nrows = 
-          addQualifierComponents((Qualifier) qualifiers.get(i), 
-                                qualifierCheckBoxes, c, nrows);
-      }
-      
-      setMinimumSize(new Dimension(
-          titleBorder.getMinimumSize(this).width, 
-                     getMinimumSize().height));
+      nrows = 
+        addQualifierComponents((Qualifier) qualifiers.get(i), 
+                              qualifierCheckBoxes, c, nrows);
     }
     
-    /**
-     * Add a qualifier to the list of transferable annotation
-     * @param pane
-     * @param qualifier
-     * @param qualifierCheckBoxes
-     * @param c
-     * @param nrows
-     * @return
-     */
-    private int addQualifierComponents(final Qualifier qualifier, 
-                                       final Hashtable qualifierCheckBoxes,
-                                       final GridBagConstraints c,
-                                       int nrows)
-    {
-      if(isNonTransferable(qualifier.getName()))
-        return nrows;
-      
-      final JCheckBox qualifierNameCheckBox = new JCheckBox(qualifier.getName(), false);
-      c.gridx = 1;
-      c.fill = GridBagConstraints.NONE;
-      c.weightx = 0.d;
-      Box qualifierValueBox = Box.createVerticalBox();
-      
-      JButton detailsShowHide = new JButton("+");
-      final Vector qualifierValuesCheckBox = setExpanderButton(detailsShowHide,
-          qualifier, qualifierValueBox, qualifierNameCheckBox);
-      
-      qualifierNameCheckBox.addItemListener(new ItemListener()
-      {
-        public void itemStateChanged(ItemEvent e)
-        {
-          for(int i=0; i<qualifierValuesCheckBox.size(); i++)
-          {
-            JCheckBox cb = (JCheckBox) qualifierValuesCheckBox.get(i);
-            cb.setSelected(qualifierNameCheckBox.isSelected());
-          }
-        }        
-      });
-      add(detailsShowHide, c);
-      
-      c.fill = GridBagConstraints.HORIZONTAL;
-      c.weightx = 100; 
-      c.gridx = 2;
-
-      add(qualifierNameCheckBox, c);
-      qualifierCheckBoxes.put(qualifierNameCheckBox, qualifierValuesCheckBox);
-      c.gridy = ++nrows;
-      add(qualifierValueBox, c);
-      c.gridy = ++nrows;
-      return nrows;
-    }
-    
-    /**
-     * Set up the expander button to display qualifier values.
-     * @param butt - expander button
-     * @param qualifier - the qualifer that is being displayed
-     * @param qualifierValueBox - Box containing the values
-     * @param qualifierNameCheckBox - JCheckBox for the given qualifier
-     * @param pane
-     * @return
-     */
-    private Vector setExpanderButton(final JButton butt,
-                                     final Qualifier qualifier, 
-                                     final Box qualifierValueBox,
-                                     final JCheckBox qualifierNameCheckBox)
-    {
-      butt.setMargin(new Insets(0, 0, 0, 0));
-      butt.setHorizontalAlignment(SwingConstants.RIGHT);
-      butt.setHorizontalTextPosition(SwingConstants.RIGHT);
-      butt.setBorderPainted(false);
-      butt.setFont(butt.getFont().deriveFont(Font.BOLD));
-      butt.setForeground(STEEL_BLUE);
-      
-      butt.addActionListener(new ActionListener()
-      {
-        public void actionPerformed(ActionEvent e)
-        {
-          if (butt.getText().equals("+"))
-            butt.setText("-");
-          else
-            butt.setText("+");
-
-          qualifierValueBox.setVisible(butt.getText().equals("-"));
-          revalidate();
-        }
-      });
-
-      // set-up qualifier values list
-      qualifierValueBox.setVisible(false);
-      Vector qualifierValuesCheckBox = new Vector();
-      StringVector values = qualifier.getValues();
-      for (int i = 0; i < values.size(); i++)
-      {
-        JCheckBox cb = new JCheckBox((String) values.get(i),
-            qualifierNameCheckBox.isSelected());
-        cb.setFont(cb.getFont().deriveFont(Font.ITALIC));
-        qualifierValueBox.add(cb);
-        qualifierValuesCheckBox.add(cb);
-      }
-      return qualifierValuesCheckBox;
-    }
-    
-    protected Hashtable getQualifierCheckBoxes()
-    {
-      return qualifierCheckBoxes;
-    }
-    
-    protected Feature getFeature()
-    {
-      return feature;
-    }
+    setMinimumSize(new Dimension(
+        titleBorder.getMinimumSize(this).width, 
+                   getMinimumSize().height));
   }
   
   /**
-   * Test if the feature is nominated to have annotation transferred
-   * to it. For genes in a chado database it looks at the gene name
-   * and transcript name.
+   * Add a qualifier to the list of transferable annotation
+   * @param pane
+   * @param qualifier
+   * @param qualifierCheckBoxes
+   * @param c
+   * @param nrows
+   * @return
    */
-  class TransferFeaturePredicate implements FeaturePredicate
+  private int addQualifierComponents(final Qualifier qualifier, 
+                                     final Hashtable qualifierCheckBoxes,
+                                     final GridBagConstraints c,
+                                     int nrows)
   {
-    private String geneName;
-    private String key;
-    private boolean sameKey;
-    private boolean isDatabaseEntry;
-    private String[] geneNames;
-
-    public TransferFeaturePredicate(final String key, 
-                                    final boolean sameKey,
-                                    final boolean isDatabaseEntry, 
-                                    final String[] geneNames)
+    if(TransferAnnotationTool.isNonTransferable(qualifier.getName()))
+      return nrows;
+    
+    final JCheckBox qualifierNameCheckBox = new JCheckBox(qualifier.getName(), false);
+    c.gridx = 1;
+    c.fill = GridBagConstraints.NONE;
+    c.weightx = 0.d;
+    Box qualifierValueBox = Box.createVerticalBox();
+    
+    JButton detailsShowHide = new JButton("+");
+    final Vector qualifierValuesCheckBox = setExpanderButton(detailsShowHide,
+        qualifier, qualifierValueBox, qualifierNameCheckBox);
+    
+    qualifierNameCheckBox.addItemListener(new ItemListener()
     {
-      this.key = key;
-      this.sameKey = sameKey;
-      this.isDatabaseEntry = isDatabaseEntry;
-      this.geneNames = geneNames;
-    }
-
-    public boolean testPredicate(Feature targetFeature)
-    {
-      String targetKey = targetFeature.getKey().getKeyString();
-      if (sameKey && !targetKey.equals(key))
-        return false;
-
-      Vector chadoNames = null;
-      if (isDatabaseEntry)
+      public void itemStateChanged(ItemEvent e)
       {
-        GFFStreamFeature gffFeature = 
-          ((GFFStreamFeature) targetFeature.getEmblFeature());
-        if (gffFeature.getChadoGene() != null)
+        for(int i=0; i<qualifierValuesCheckBox.size(); i++)
         {
-          chadoNames = new Vector();
-          
-          ChadoCanonicalGene chadoGene = gffFeature.getChadoGene();
-          chadoNames.add(chadoGene.getGeneUniqueName());
-          List transcripts = chadoGene.getTranscripts();
-          for(int i=0;i<transcripts.size();i++)
-          {
-            GFFStreamFeature feature = (GFFStreamFeature) transcripts.get(i);
-            chadoNames.add(GeneUtils.getUniqueName(feature));
-          }
+          JCheckBox cb = (JCheckBox) qualifierValuesCheckBox.get(i);
+          cb.setSelected(qualifierNameCheckBox.isSelected());
         }
-      }
+      }        
+    });
+    add(detailsShowHide, c);
+    
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.weightx = 100; 
+    c.gridx = 2;
 
-      String thisFeatureSystematicName = targetFeature.getSystematicName();
-      for (int i = 0; i < geneNames.length; i++)
-      {
-        if(geneNames[i].equals(thisFeatureSystematicName) ||
-           (chadoNames != null && chadoNames.contains(geneNames[i])))
-        {
-          geneName = geneNames[i];
-          return true;
-        }
-      }
-      return false;
-    }
-
-    protected String getGeneName()
-    {
-      return geneName;
-    }
+    add(qualifierNameCheckBox, c);
+    qualifierCheckBoxes.put(qualifierNameCheckBox, qualifierValuesCheckBox);
+    c.gridy = ++nrows;
+    add(qualifierValueBox, c);
+    c.gridy = ++nrows;
+    return nrows;
   }
- 
+  
+  /**
+   * Set up the expander button to display qualifier values.
+   * @param butt - expander button
+   * @param qualifier - the qualifer that is being displayed
+   * @param qualifierValueBox - Box containing the values
+   * @param qualifierNameCheckBox - JCheckBox for the given qualifier
+   * @param pane
+   * @return
+   */
+  private Vector setExpanderButton(final JButton butt,
+                                   final Qualifier qualifier, 
+                                   final Box qualifierValueBox,
+                                   final JCheckBox qualifierNameCheckBox)
+  {
+    butt.setMargin(new Insets(0, 0, 0, 0));
+    butt.setHorizontalAlignment(SwingConstants.RIGHT);
+    butt.setHorizontalTextPosition(SwingConstants.RIGHT);
+    butt.setBorderPainted(false);
+    butt.setFont(butt.getFont().deriveFont(Font.BOLD));
+    butt.setForeground(TransferAnnotationTool.STEEL_BLUE);
+    
+    butt.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if (butt.getText().equals("+"))
+          butt.setText("-");
+        else
+          butt.setText("+");
+
+        qualifierValueBox.setVisible(butt.getText().equals("-"));
+        revalidate();
+      }
+    });
+
+    // set-up qualifier values list
+    qualifierValueBox.setVisible(false);
+    Vector qualifierValuesCheckBox = new Vector();
+    StringVector values = qualifier.getValues();
+    for (int i = 0; i < values.size(); i++)
+    {
+      JCheckBox cb = new JCheckBox((String) values.get(i),
+          qualifierNameCheckBox.isSelected());
+      cb.setFont(cb.getFont().deriveFont(Font.ITALIC));
+      qualifierValueBox.add(cb);
+      qualifierValuesCheckBox.add(cb);
+    }
+    return qualifierValuesCheckBox;
+  }
+  
+  protected Hashtable getQualifierCheckBoxes()
+  {
+    return qualifierCheckBoxes;
+  }
+  
+  protected Feature getFeature()
+  {
+    return feature;
+  }
+}
+
+/**
+ * Test if the feature is nominated to have annotation transferred
+ * to it. For genes in a chado database it looks at the gene name
+ * and transcript name.
+ */
+class TransferFeaturePredicate implements FeaturePredicate
+{
+  private String geneName;
+  private String key;
+  private boolean sameKey;
+  private boolean isDatabaseEntry;
+  private String[] geneNames;
+
+  public TransferFeaturePredicate(final String key, 
+                                  final boolean sameKey,
+                                  final boolean isDatabaseEntry, 
+                                  final String[] geneNames)
+  {
+    this.key = key;
+    this.sameKey = sameKey;
+    this.isDatabaseEntry = isDatabaseEntry;
+    this.geneNames = geneNames;
+  }
+
+  public boolean testPredicate(Feature targetFeature)
+  {
+    String targetKey = targetFeature.getKey().getKeyString();
+    if (sameKey && !targetKey.equals(key))
+      return false;
+
+    Vector chadoNames = null;
+    if (isDatabaseEntry)
+    {
+      GFFStreamFeature gffFeature = 
+        ((GFFStreamFeature) targetFeature.getEmblFeature());
+      if (gffFeature.getChadoGene() != null)
+      {
+        chadoNames = new Vector();
+        
+        ChadoCanonicalGene chadoGene = gffFeature.getChadoGene();
+        chadoNames.add(chadoGene.getGeneUniqueName());
+        List transcripts = chadoGene.getTranscripts();
+        for(int i=0;i<transcripts.size();i++)
+        {
+          GFFStreamFeature feature = (GFFStreamFeature) transcripts.get(i);
+          chadoNames.add(GeneUtils.getUniqueName(feature));
+        }
+      }
+    }
+
+    String thisFeatureSystematicName = targetFeature.getSystematicName();
+    for (int i = 0; i < geneNames.length; i++)
+    {
+      if(geneNames[i].equals(thisFeatureSystematicName) ||
+         (chadoNames != null && chadoNames.contains(geneNames[i])))
+      {
+        geneName = geneNames[i];
+        return true;
+      }
+    }
+    return false;
+  }
+
+  protected String getGeneName()
+  {
+    return geneName;
+  }
 }
