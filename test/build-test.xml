@@ -1,12 +1,8 @@
 <?xml version="1.0"?>
 
-<!--
+<!--  Ant build file for Artemis Test Suite -->
 
-  Ant build file for Artemis Test Suite
-
--->
-
-<project default="test" basedir=".">
+<project name="artemis.test" default="test" basedir=".">
 
   <target name="init">
     <tstamp />
@@ -16,6 +12,7 @@
     <property name="classpath" value="." />
     <property name="src.tests.dir" value="." />
   	<property name="src.lib.dir" value="lib" />
+  	<property name="mainlib.dir" value="../lib" />
 
     <property name="build.dir" value="./ant-build" />
 
@@ -33,6 +30,10 @@
         <fileset dir="${src.lib.dir}">
         	 <include name="**/*.jar" />
         </fileset>
+        <fileset dir="${mainlib.dir}">
+        	 <include name="**/*.jar" />
+        </fileset>
+    	<pathelement path=".." />
     </path>
   </target>
 
@@ -84,7 +85,8 @@
   	 <jvmarg value="-DEMBOSS_ROOT=${EMBOSS_ROOT}"/>
   	 <batchtest todir="${build.dest.tests}">
   	 	<fileset dir="${build.src.tests}">
-  	 		<include name="uk/ac/sanger/artemis/circular/digest/**Test.java"/>
+  	 		<include name="uk/ac/sanger/artemis/**/**Test.java"/>
+  	 		<include name="uk/ac/sanger/artemis/**/**/**Test.java"/>
   	 	</fileset>
   	 </batchtest>
   	 <formatter type="plain" usefile="false"/>
