@@ -10,6 +10,7 @@
 <li><a href="#GENE">Gene Representation</a>
 <li><a href="#GENEBUILDING">Gene Building</a>
 <li><a href="#MERGE+SPLIT">Gene merging and splitting</a>
+<li><a href="#TAT">Transfer Annotation Tool</a>
 <li><a href="#WRITE">Writing To The Database</a>
 <li><a href="#GENEBUILDER">Opening the Standalone Gene Builder</a>
 <li><a href="#COMMUNITY+ANNOTATION">Community Annotation</a>
@@ -234,6 +235,38 @@ For a read only connection -Dread_only is specified on the command line:
        On unmerging the annotation and synonyms are maintained in both gene models. 
        The second gene model component features are given a new internal ID (uniquename) 
        based on the original and prefixed with DUP1-. 
+
+ 
+       <a NAME="TAT"></a><h3>Transfer Annotation Tool</h3>      
+       The Transfer Annotation Tool (TAT) within Artemis can be used to transfer annotation 
+       between features within an EMBL file or features within the same Chado database. It 
+       is opened by clicking on the "TAT" button in the Feature Editor or, in database mode, 
+       the Gene Builder.
+
+       <center><p><b><i>Transferring Annotation</i></b><br>
+                    <img src="TAT.gif"></center>
+
+       <p>
+       The left hand column shows the list of orthologous genes. Features can be added to 
+       this by clicking the "Add" button and pasting their systematic ID in. Multiple genes 
+       can be added by separating their names with spaces or line returns. The genes to 
+       transfer annotation to can be selected or de-selected. The toggle button above the gene 
+       list will toggle the selection.
+
+       <p>
+       On the right hand side are the qualifiers associated with the feature and any other 
+       features in the gene model. The qualifiers to be transferred are selected from this 
+       list. The '+' button expands to show the list of values associated with that qualifier 
+       from which those to be transferred can be selected.
+
+       <p>
+       Qualifiers on different features of the gene model that are selected will be transferred 
+       to the equivalent feature type in the genes they will be added to.
+
+       <p>
+       The default behavior is for qualifiers to be appended to any existing qualifiers. 
+       However if the 'Overwrite' check box is selected at the bottom of the tool then existing 
+       qualifiers of the same type will get deleted and it will add in the new qualifiers.
 
        <a NAME="WRITE"></a><h3>Writing To The Database</h3>
        When a feature or qualifier is changed, added or deleted the '<i>Commit</i>' button (on 
