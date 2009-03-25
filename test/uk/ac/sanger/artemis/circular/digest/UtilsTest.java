@@ -30,32 +30,32 @@ import uk.ac.sanger.artemis.circular.digest.CutSite;
 
 public class UtilsTest
 {
-	/**
-	 * Test that restrict output is parsed
-	 */
-	@Ignore("Use EmbossTableParserTest")
-	@Test
-	public void testFindCutSitesFromEmbossReport()
-	{
-    final InputStream inputStream =
-      UtilsTest.class.getResourceAsStream("/data/foo.restrict");
+  /**
+   * Test that restrict output is parsed
+   */
+  @Ignore("Use EmbossTableParserTest")
+  @Test
+  public void testFindCutSitesFromEmbossReport()
+  {
+    final InputStream inputStream = UtilsTest.class
+        .getResourceAsStream("/data/foo.restrict");
 
     InputStreamReader reader = new InputStreamReader(inputStream);
     ReportDetails report = Utils.findCutSitesFromEmbossReport(reader);
-    
-		assertNotNull("ReportDetails null",report);
-		assertEquals("Sequence length",report.length, 41243);
-		
-		List<CutSite> cutSites = report.cutSites;
-		CutSite firstCutSite = cutSites.get(0);
-		
-		assertEquals("Number of cut sites", cutSites.size(), 4);
-		assertEquals("Enzyme name", firstCutSite.getEnzymeName(), "HindIII");
-		assertEquals("3prime", firstCutSite.getThreePrime(), 85);
-		assertEquals("5prime", firstCutSite.getFivePrime(), 81);
-		assertEquals("3prime-rev", firstCutSite.getThreePrimeRev(), 0);
-		assertEquals("5prime-rev", firstCutSite.getFivePrimeRev(), 0);
-		assertTrue("Cut site strand", firstCutSite.isForward());
-	}
-	
+
+    assertNotNull("ReportDetails null", report);
+    assertEquals("Sequence length", report.length, 41243);
+
+    List<CutSite> cutSites = report.cutSites;
+    CutSite firstCutSite = cutSites.get(0);
+
+    assertEquals("Number of cut sites", cutSites.size(), 4);
+    assertEquals("Enzyme name", firstCutSite.getEnzymeName(), "HindIII");
+    assertEquals("3prime", firstCutSite.getThreePrime(), 85);
+    assertEquals("5prime", firstCutSite.getFivePrime(), 81);
+    assertEquals("3prime-rev", firstCutSite.getThreePrimeRev(), 0);
+    assertEquals("5prime-rev", firstCutSite.getFivePrimeRev(), 0);
+    assertTrue("Cut site strand", firstCutSite.isForward());
+  }
+
 }

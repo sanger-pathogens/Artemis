@@ -25,23 +25,23 @@ import org.junit.Test;
 
 public class CircularGenomeControllerTest
 {
-	/**
-	 * Test that EMBOSS_ROOT is set
-	 */
-	@Test
-	public void testEmbossRoot()
-	{
-		assertNotNull("EMBOSS_ROOT not set", System.getProperty("EMBOSS_ROOT"));
-	}
+  /**
+   * Test that EMBOSS_ROOT is set
+   */
+  @Test
+  public void testEmbossRoot()
+  {
+    assertNotNull("EMBOSS_ROOT not set", System.getProperty("EMBOSS_ROOT"));
+  }
 
-	/**
-	 * Test that restrict can be found
-	 */
-	@Test
-	public void testEmbossInstalled()
-	{
-		String restrictPath = System.getProperty("EMBOSS_ROOT") + "/bin/restrict";
-		File restrict = new File(restrictPath);
-		assertTrue("restrict not found at: " + restrictPath, restrict.exists());
-	}
+  /**
+   * Test that restrict can be found
+   */
+  @Test
+  public void testEmbossInstalled()
+  {
+    String restrictPath = System.getProperty("EMBOSS_ROOT") + "/bin/restrict";
+    File restrict = new File(restrictPath);
+    assertTrue("restrict not found at: " + restrictPath, restrict.exists());
+  }
 }
