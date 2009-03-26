@@ -389,17 +389,33 @@ class TransferAnnotationTool extends JFrame
         }
         
         setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        StringBuffer buff = new StringBuffer();
+        StringBuffer summary = new StringBuffer();
         for(int i = 0; i < qualifierPanels.size(); i++)
         {
           QualifierPanel qP = (QualifierPanel) qualifierPanels.get(i);
           int res = transferAnnotation(qP.getQualifierCheckBoxes(), 
               geneNameCheckBoxes, qP.getFeature(), entryGroup, 
               sameKeyCheckBox.isSelected(),
-              overwriteCheckBox.isSelected());
+              overwriteCheckBox.isSelected(), buff, summary);
           if(res == -1)
             break;
         }
+        
+        if(buff.length() > 0)
+          logger4j.debug("TRANSFERRED ANNOTATION SUMMARY:\n"+buff.toString());
         setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        
+        if(summary.length()>0)
+        {
+          final JTextArea list = new JTextArea(summary.toString());
+          final JScrollPane jsp = new JScrollPane(list);
+          jsp.setPreferredSize(new Dimension(300,200));
+          JOptionPane.showMessageDialog(
+              TransferAnnotationTool.this, jsp, 
+              "Summary of Genes Changed",
+              JOptionPane.INFORMATION_MESSAGE);
+        }
       }
     });
     Box yBox = Box.createVerticalBox();
@@ -456,7 +472,9 @@ class TransferAnnotationTool extends JFrame
   		                         final Feature orginatingFeature,
   		                         final EntryGroup entryGroup,
   		                         final boolean sameKey,
-  		                         final boolean overwrite)
+  		                         final boolean overwrite,
+  		                         final StringBuffer buff,
+  		                         final StringBuffer genesUpdated)
   {
     // transfer selected annotation to genes
     final QualifierVector qualifiers = orginatingFeature.getQualifiers();
@@ -522,9 +540,8 @@ class TransferAnnotationTool extends JFrame
 
   	// transfer selected annotation
   	entryGroup.getActionController().startAction();
-  	geneNames = transfer(features, qualifiersToTransfer, key, 
-  			             sameKey, overwrite, 
-  			             GeneUtils.isDatabaseEntry(entryGroup), geneNames);
+  	geneNames = transfer(features, qualifiersToTransfer, key, sameKey, overwrite, 
+  			             GeneUtils.isDatabaseEntry(entryGroup), geneNames, genesUpdated);
   	entryGroup.getActionController().endAction();
   	
   	//
@@ -572,7 +589,10 @@ class TransferAnnotationTool extends JFrame
         ctm.setEntryGroup(entry_group);
 
         transfer(entry.getAllFeatures(), qualifiersToTransfer, key, sameKey,
-            overwrite, true, geneNames);
+            overwrite, true, geneNames, genesUpdated);
+        
+        for(int j=0; j<ctm.getTransactionCount(); j++)
+          buff.append(ctm.getTransactionAt(j).getLogComment()+"\n");
         ChadoTransactionManager.commit((DatabaseDocument) newDbEntry
             .getDocument(), false, ctm);
 
@@ -606,7 +626,8 @@ class TransferAnnotationTool extends JFrame
                             final boolean sameKey,
                             final boolean overwrite,
                             final boolean isDatabaseEntry, 
-                            String[] geneNames)
+                            String[] geneNames,
+                            final StringBuffer genesUpdated)
   {
     final TransferFeaturePredicate predicate = new TransferFeaturePredicate(
         key, sameKey, isDatabaseEntry, geneNames);
@@ -616,14 +637,19 @@ class TransferAnnotationTool extends JFrame
       Feature thisFeature = features.elementAt(i);
       if (predicate.testPredicate(thisFeature))
       {
+        StringBuffer qualifierBuffer = new StringBuffer();
         for (int j = 0; j < qualifiersToTransfer.size(); j++)
         {
           Qualifier newQualifier = (Qualifier) qualifiersToTransfer.elementAt(j);
-          
+          String qualifierName = newQualifier.getName();
           try
           {
             if(overwrite)
+            {
               thisFeature.setQualifier(newQualifier);
+              qualifierBuffer.append("  "+qualifierName+" (overwritten)\n"+
+                  parseStringVector(newQualifier.getValues()));
+            }
             else
             {
               final StringVector oldValues;
@@ -638,6 +664,8 @@ class TransferAnnotationTool extends JFrame
               if (newQualifierTmp == null)
                 continue;
               thisFeature.addQualifierValues(newQualifierTmp);
+              qualifierBuffer.append("  "+qualifierName+" (added)\n"+
+                  parseStringVector(newQualifier.getValues()));
             }
           }
           catch (Exception e1)
@@ -646,9 +674,25 @@ class TransferAnnotationTool extends JFrame
           }
         }
         geneNames = removeArrayElement(geneNames, predicate.getGeneName());
+        if(qualifierBuffer.length() > 0)
+          genesUpdated.append(thisFeature.getSystematicName()+
+                              " ("+key+")\n"+qualifierBuffer);
       }
     }
     return geneNames;
+  }
+  
+  /**
+   * Get a StringBuffer representation of the values in a StringVector
+   * @param v
+   * @return
+   */
+  private static StringBuffer parseStringVector(final StringVector v)
+  {
+    StringBuffer buff = new StringBuffer();
+    for(int i=0; i<v.size(); i++)
+      buff.append("    "+v.elementAt(i)+"\n");
+    return buff;
   }
   
   /**
