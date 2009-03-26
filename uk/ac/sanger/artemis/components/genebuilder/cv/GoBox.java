@@ -25,8 +25,12 @@
 package uk.ac.sanger.artemis.components.genebuilder.cv;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.Vector;
 
 import javax.swing.Box;
@@ -35,8 +39,11 @@ import javax.swing.JTextField;
 
 import org.gmod.schema.cv.CvTerm;
 
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 import uk.ac.sanger.artemis.components.Splash;
+import uk.ac.sanger.artemis.components.SwingWorker;
+import uk.ac.sanger.artemis.editor.BrowserControl;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
@@ -99,6 +106,10 @@ public class GoBox extends AbstractCvBox
   private DatePanel dateField;
   private String origQualifierString;
   private Qualifier origQualifier;
+  private static Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
+  private static Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
+  private static Cursor chand = new Cursor(Cursor.HAND_CURSOR);
+  private static String AMIGOURL;
   
   protected GoBox(final Qualifier qualifier,
                   final String qualifierString,
@@ -117,7 +128,9 @@ public class GoBox extends AbstractCvBox
     final String term = getField("term=", qualifierString);
     CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(term);
 
-    JLabel goTermField = new JLabel(goId);
+    final JLabel goTermField = new JLabel(goId);
+    addGoLabelLiteners(goTermField);
+    
     JLabel goAspect = null;
     
     Font font = goTermField.getFont().deriveFont(Font.BOLD);
@@ -207,6 +220,63 @@ public class GoBox extends AbstractCvBox
     
     editable.add(dateField);
     xBox.add(dateField.getDateSpinner());
+  }
+  
+  /**
+   * Add GO listeners for opening Amigo.
+   * @param goTermField
+   */
+  private void addGoLabelLiteners(final JLabel goTermField)
+  {
+    setAmigoUrl();
+    goTermField.addMouseListener(new MouseAdapter()
+    {
+      public void mouseClicked(final MouseEvent e)
+      {
+        SwingWorker browserLaunch = new SwingWorker()
+        {
+          public Object construct()
+          {
+            if(e.getClickCount() == 1)
+            {
+              goTermField.setCursor(cbusy);
+              BrowserControl.displayURL(AMIGOURL+goTermField.getText());
+              goTermField.setCursor(cdone);
+            }
+            return null;
+          }
+        };
+        browserLaunch.start();
+      }
+    });
+    
+    goTermField.addMouseMotionListener(new MouseMotionAdapter()
+    {
+      public void mouseMoved(MouseEvent e)
+      {
+        goTermField.setCursor(chand);
+      }
+    });
+  }
+  
+  /**
+   * Set the Amigo URL for hyperlinking GO terms.
+   */
+  private void setAmigoUrl()
+  {
+    if(AMIGOURL == null)
+    {
+      StringVector dbsLinks = Options.getOptions().getOptionValues("hyperlinks");
+      for(int i=0; i<dbsLinks.size(); i+=2)
+      {
+        if(dbsLinks.get(i).equals("GO"))
+        {
+          AMIGOURL = (String) dbsLinks.get(i+1);
+          return;
+        }
+      }
+      AMIGOURL = "http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=";
+    }
   }
   
   protected static int getEvidenceIndex(String evidence)
