@@ -917,6 +917,8 @@ public class GeneUtils
       final Range transcriptRange = transcript.getLocation().getTotalRange();
       int transcriptStart = Integer.MAX_VALUE;
       int transcriptEnd = -1;
+      int ppStart = Integer.MAX_VALUE;
+      int ppEnd   = -1;
       
       if(transcriptRange.getStart() < geneRange.getStart() ||
          transcriptRange.getEnd()   > geneRange.getEnd())
@@ -951,6 +953,14 @@ public class GeneUtils
           transcriptStart = childRange.getStart();
         if(childRange.getEnd() > transcriptEnd )
           transcriptEnd = childRange.getEnd();
+        
+        if(feature.getKey().equals(DatabaseDocument.EXONMODEL))
+        {
+          if(childRange.getStart() < ppStart)
+            ppStart = childRange.getStart();
+          if(childRange.getEnd() > ppEnd )
+            ppEnd   = childRange.getEnd();
+        }
       }
       
       if((transcriptRange.getStart() != transcriptStart && transcriptStart < Integer.MAX_VALUE) ||
@@ -960,8 +970,8 @@ public class GeneUtils
       if(protein != null)
       {
         final Range proteinRange = protein.getLocation().getTotalRange();
-        if(proteinRange.getStart() != transcriptStart &&
-           proteinRange.getEnd()   != transcriptEnd)
+        if(proteinRange.getStart() != ppStart ||
+           proteinRange.getEnd()   != ppEnd)
           return false;
       }
     }
@@ -1058,10 +1068,10 @@ public class GeneUtils
     int pp_end = -1;
     
     final List dnaFeatures = new Vector();
-    if(chado_gene.get3UtrOfTranscript(transcriptName) != null)
+/*    if(chado_gene.get3UtrOfTranscript(transcriptName) != null)
       dnaFeatures.addAll(chado_gene.get3UtrOfTranscript(transcriptName));
     if(chado_gene.get5UtrOfTranscript(transcriptName) != null)
-      dnaFeatures.addAll(chado_gene.get5UtrOfTranscript(transcriptName)); 
+      dnaFeatures.addAll(chado_gene.get5UtrOfTranscript(transcriptName));*/ 
     
     List exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, DatabaseDocument.EXONMODEL);
     if(exons != null)
