@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.25 2007-04-17 12:55:01 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/sequence/Bases.java,v 1.26 2009-03-27 14:00:51 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.sequence;
@@ -45,7 +45,7 @@ import java.util.Iterator;
  *  non-base letter returns '@'.
  *
  *  @author Kim Rutherford
- *  @version $Id: Bases.java,v 1.25 2007-04-17 12:55:01 tjc Exp $ */
+ *  @version $Id: Bases.java,v 1.26 2009-03-27 14:00:51 tjc Exp $ */
 
 public class Bases 
 {
@@ -1181,7 +1181,7 @@ public class Bases
     {
       // if not first contig
       if(new_base_pos != 1)
-        System.arraycopy(old_sequence, 0, new_sequence, 0, new_base_pos-2);
+        System.arraycopy(old_sequence, 0, new_sequence, 0, new_base_pos-1);
 
       contig_length = range_end_index - range_start_index + 1;
       // copy in new sequence fragment that has been reverse complemented
@@ -1214,7 +1214,7 @@ public class Bases
       if(new_base_pos < getLength()+1)
         System.arraycopy(old_sequence, new_base_pos-1,
                          new_sequence, new_base_pos-1,
-                         getLength()-new_base_pos);
+                         getLength()-new_base_pos+1);
     }
     
 
