@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.21 2008-12-10 16:43:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.22 2009-03-27 09:03:55 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -414,6 +414,7 @@ public class DatabaseJPanel extends JPanel
       }
       catch(Exception e)
       {
+        doc.reset();
         if(!entry_source.setLocation(true))
           return null;
       }
