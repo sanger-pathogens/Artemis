@@ -65,6 +65,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
@@ -183,6 +184,7 @@ public class CircularGenomeController
   {
     JTabbedPane tabbedPane = new JTabbedPane();
     gelPanel= new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    Dimension preferredSize = null;
     for (int i = 0; i < entries.size(); i++)
     {
       final ReportDetails rd = Utils.findCutSitesFromEmbossReport(
@@ -201,8 +203,10 @@ public class CircularGenomeController
       
       hgt = dna.getHeight();
       final InSilicoGelPanel inSilicoGelPanel = new InSilicoGelPanel(rd.length,
-          rd.cutSites, hgt, restrictOutputs.get(i));
+          rd.cutSites, hgt, restrictOutputs.get(i),
+          sequenceFiles.get(i).getName());
       gelPanel.add(inSilicoGelPanel);
+      preferredSize = inSilicoGelPanel.getPreferredSize();
       addMouseListener(rd, dna, inSilicoGelPanel);
     }
 
@@ -210,12 +214,18 @@ public class CircularGenomeController
     addMenuBar(frame);
     Dimension d = frame.getToolkit().getScreenSize();
 
-    JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    JScrollPane jspGel = new JScrollPane(gelPanel);
+    
+    Dimension dgel = new Dimension(
+        preferredSize.width* (entries.size()>1 ? 2 : 1), preferredSize.height);
+    jspGel.setPreferredSize(dgel);
+    gelPanel.setMinimumSize(dgel);
+    gelPanel.setBackground(Color.white);
+    
+    JScrollPane jspTabbedPane = new JScrollPane(tabbedPane);
+    JSplitPane mainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false, 
+        jspGel, jspTabbedPane);
     mainPanel.setBackground(Color.white);
-    JScrollPane jspDNA = new JScrollPane(tabbedPane);
-
-    mainPanel.add(gelPanel);
-    mainPanel.add(jspDNA);
 
     JScrollPane jsp = new JScrollPane(mainPanel);
     jsp.getViewport().setBackground(Color.white);
@@ -263,7 +273,8 @@ public class CircularGenomeController
         {
           reader = new FileReader(expFile);
           final List<FragmentBand> bands = Utils.findCutSitesFromExperiment(reader);
-          final InSilicoGelPanel inSilicoGelPanel = new InSilicoGelPanel(bands, hgt, expFile); 
+          final InSilicoGelPanel inSilicoGelPanel = new InSilicoGelPanel(
+              bands, hgt, expFile, expFile.getName()); 
           gelPanel.add(inSilicoGelPanel);
           frame.validate();
         }
