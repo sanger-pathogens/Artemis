@@ -48,7 +48,7 @@ public class InSilicoGelPanel extends JPanel implements ActionListener
 {
   private static final long serialVersionUID = 1L;
   private int marginHeight = 50;
-  private int marginWidth = 60;
+  private int marginWidth = 55;
   private int panelHeight;
   private List<FragmentBand> genomeFragments = new Vector<FragmentBand>();
   private static int MAX_FRAGMENT_LENGTH = 0;
@@ -64,10 +64,12 @@ public class InSilicoGelPanel extends JPanel implements ActionListener
    * @param restrictOutput
    */
   public InSilicoGelPanel(final int genomeLength, final List<CutSite> cutSites,
-      final int panelHeight, final File restrictOutput)
+      final int panelHeight, final File restrictOutput,
+      final String name)
   {
     this.panelHeight = panelHeight;
     this.restrictOutput = restrictOutput;
+    setToolTipText(name);
 
     Integer len;
     int firstSiteEnd = 0;
@@ -110,12 +112,14 @@ public class InSilicoGelPanel extends JPanel implements ActionListener
   }
   
   public InSilicoGelPanel(final List<FragmentBand> genomeFragments,
-      final int panelHeight, final File restrictOutput)
+      final int panelHeight, final File restrictOutput,
+      final String name)
   {
     this.panelHeight = panelHeight;
     this.restrictOutput = restrictOutput;
     this.genomeFragments = genomeFragments;
    
+    setToolTipText(name);
     for(int i=0; i<genomeFragments.size(); i++)
     {
       int len = genomeFragments.get(i).genomeFragmentLength;
@@ -133,7 +137,7 @@ public class InSilicoGelPanel extends JPanel implements ActionListener
   private void init()
   {
     setBackground(Color.white);
-    setPreferredSize(new Dimension(160, panelHeight));
+    setPreferredSize(new Dimension(150, panelHeight));
     
     MouseListener popupListener = new PopupListener();
     addMouseListener(popupListener);
