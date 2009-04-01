@@ -126,10 +126,12 @@ public class ReadAndWriteEntry
    * @param ignore obsolete features if true
    * @param force invalid qualifiers and any features with invalid keys will 
    *    be quietly thrown away when saving.
+   * @param include_diana_extensions false if writing EMBL submission format.
    * @param destination_type Should be one of EMBL_FORMAT, GENBANK_FORMAT,
    *    GFF_FORMAT or ANY_FORMAT.  If ANY_FORMAT then the Entry will
    *    be saved in the same format it was created, otherwise it will be saved
    *    in the given format.
+   * @param parent
    * @throws IOException
    * @throws EntryInformationException
    */
@@ -137,6 +139,7 @@ public class ReadAndWriteEntry
                                               final boolean flatten,
                                               final boolean ignoreObsolete,
                                               final boolean force,
+                                              final boolean include_diana_extensions,
                                               final int destination_type,
                                               final JFrame parent) 
          throws IOException, EntryInformationException
@@ -162,7 +165,11 @@ public class ReadAndWriteEntry
                                "Location/Qualifiers\nFH\n");
       entry.setHeaderText(header);
     }
-    entry.save(file, destination_type, force, artemis_entry_information);
+    
+    if(include_diana_extensions)
+      entry.save(file, destination_type, force, artemis_entry_information);
+    else
+      entry.saveStandardOnly(file, destination_type, force);
   }
   
   /**
@@ -250,12 +257,14 @@ public class ReadAndWriteEntry
         System.out.println("-i\t[y|n] ignore obsolete features, default is y");
         System.out.println("-s\tspace separated list of sequences to read and write out");
         System.out.println("-o\t[EMBL|GFF] output format, default is EMBL");
+        System.out.println("-a\t[y|n] for EMBL submission format change to n, default is y");
         System.exit(0);
       }
       
 
       names = args;
       int format = DocumentEntryFactory.EMBL_FORMAT;
+      boolean include_diana_extensions = true;
       String suffix = ".embl";
       
       for(int i = 0; i < args.length; i++)
@@ -270,6 +279,12 @@ public class ReadAndWriteEntry
         {
           if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
             ignoreObsolete = false;
+        }
+        
+        if(args[i].toLowerCase().equals("-a"))
+        {
+          if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
+            include_diana_extensions = false;
         }
         
         if(args[i].toLowerCase().equals("-o"))
@@ -313,6 +328,7 @@ public class ReadAndWriteEntry
         names = new String[files.size()];
         files.toArray(names);
       }
+     
       
       for(int i=0;i < names.length; i++)
       {
@@ -322,7 +338,8 @@ public class ReadAndWriteEntry
         try
         {
           ReadAndWriteEntry.writeDatabaseEntryToFile(
-            entry, new File(names[i]+suffix), flatten, ignoreObsolete, false, 
+            entry, new File(names[i]+suffix), flatten, ignoreObsolete, 
+            false, include_diana_extensions,
             format, null);
         }
         catch(EntryInformationException eie)
@@ -344,7 +361,8 @@ public class ReadAndWriteEntry
           if(val == JOptionPane.OK_OPTION) 
           {
             ReadAndWriteEntry.writeDatabaseEntryToFile(
-              entry, new File(names[i]+suffix), flatten, ignoreObsolete, true, 
+              entry, new File(names[i]+suffix), flatten, ignoreObsolete, 
+              true, include_diana_extensions, 
               format, null);
           }
         }
