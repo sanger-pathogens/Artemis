@@ -485,7 +485,11 @@
       </dynamic>
       substring(residues from $endBase$ for $basesToEnd$),
       seqlen=$seqLen$
-    WHERE feature_id=$featureId$
+    WHERE 
+     <isNotEqual property="featureId" compareValue="-1">feature_id=$featureId$</isNotEqual>
+     <isEqual property="featureId" compareValue="-1">
+        feature_id=(SELECT feature_id FROM feature WHERE uniquename=#uniqueName#)
+     </isEqual>
   </update>
     
   <!--  INSERT  -->
@@ -494,6 +498,7 @@
     INSERT INTO feature 
       ( feature_id, organism_id, name, uniquename, type_id
         <isGreaterThan property="seqLen" compareValue="0"> , seqlen </isGreaterThan>
+        <isNotNull property="residues"> , residues </isNotNull>
         <isNotNull property="dbXRef.dbXRefId"> , dbxref_id </isNotNull> )
     VALUES
       ( nextval('feature_feature_id_seq'),
@@ -502,6 +507,7 @@
         #uniqueName#,
         $cvTerm.cvTermId$
         <isGreaterThan property="seqLen" compareValue="0"> , $seqLen$ </isGreaterThan>
+        <isNotNull property="residues"> , #residues# </isNotNull>
         <isNotNull property="dbXRef.dbXRefId"> , $dbXRef.dbXRefId$ </isNotNull> )
   </insert>
    
