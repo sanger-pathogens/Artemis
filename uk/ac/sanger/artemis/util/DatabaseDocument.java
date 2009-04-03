@@ -38,6 +38,7 @@ import uk.ac.sanger.artemis.chado.JdbcDAO;
 import uk.ac.sanger.artemis.chado.GmodDAO;
 import uk.ac.sanger.artemis.chado.ChadoTransaction;
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.Splash;
 
 import org.gmod.schema.sequence.Feature;
@@ -1722,10 +1723,10 @@ public class DatabaseDocument extends Document
        Splash.logger4j.debug("Checking PubDbXRef and not found Pub "+
                            feature_cvterm.getPub().getUniqueName());
       
-       JOptionPane.showMessageDialog(null, "Cannot find pub_dbxref for:\n"+
+       /*JOptionPane.showMessageDialog(null, "Cannot find pub_dbxref for:\n"+
            feature_cvterm.getPub().getUniqueName(), 
            "Database Error",
-           JOptionPane.ERROR_MESSAGE);
+           JOptionPane.ERROR_MESSAGE);*/
      }
   }
   
@@ -2814,6 +2815,17 @@ public class DatabaseDocument extends Document
           Feature featureBySrcFeatureId = new Feature();
           featureBySrcFeatureId.setFeatureId(Integer.parseInt(srcFeatureId));
           featureloc.setFeatureBySrcFeatureId(featureBySrcFeatureId);
+        }
+        
+        if(tsn.getFeatureObject() instanceof Feature)
+        {
+          String keyStr = tsn.getGff_feature().getKey().getKeyString();
+          if(GeneUtils.isFeatureToUpdateResidues(keyStr))
+          {
+            String residues = GeneUtils.deriveResidues(tsn.getGff_feature());
+            if(residues != null)
+              ((Feature)tsn.getFeatureObject()).setResidues(residues.getBytes());
+          }
         }
         dao.persist(tsn.getFeatureObject());
       }
