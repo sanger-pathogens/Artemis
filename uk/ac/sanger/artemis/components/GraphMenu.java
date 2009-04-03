@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.7 2008-11-03 09:28:08 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.8 2009-04-03 11:01:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import javax.swing.*;
  *  This menu controls one particular BasePlotGroup.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: GraphMenu.java,v 1.7 2008-11-03 09:28:08 tjc Exp $
+ *  @version $Id: GraphMenu.java,v 1.8 2009-04-03 11:01:48 tjc Exp $
  **/
 
 public class GraphMenu extends JMenu 
@@ -203,7 +203,7 @@ public class GraphMenu extends JMenu
       {
         addUsagePlot (new File (codon_usage_file_name), true, false);
         addUsagePlot (new File (codon_usage_file_name), false, false);
-
+        
         if (getParent () != null)
         {
           // XXX change to revalidate().
@@ -283,6 +283,7 @@ public class GraphMenu extends JMenu
     final BaseAlgorithm [] current_algorithms =
       base_plot_group.getPlotAlgorithms ();
 
+    boolean usageDisplayed = false;
     int nvisible = 0;
     for (int i = 0 ; i < current_algorithms.length ; ++i)
     {
@@ -290,7 +291,13 @@ public class GraphMenu extends JMenu
         (JCheckBoxMenuItem) algorithm_menu_items.elementAt (i);
 
        if(this_menu_item.isSelected())
+       {
          nvisible++;
+         if(this_menu_item.getText().indexOf("Codon Usage") > -1)
+           usageDisplayed = true;
+         else
+           usageDisplayed = false;
+       }
     }
 
     if(nvisible == 0)
@@ -298,7 +305,8 @@ public class GraphMenu extends JMenu
       splitPane.setDividerSize(0);
       splitPane.setDividerLocation(0);
     }
-    else if(thisGraphOn && nvisible == 1)
+    else if( ( thisGraphOn && nvisible == 1 ) ||
+             (usageDisplayed && nvisible == 2) )
     {
       splitPane.setDividerSize(3);
       splitPane.setDividerLocation(0.2d);
