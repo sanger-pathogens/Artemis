@@ -381,8 +381,22 @@ public class ChadoTransactionManager
                                      feature.getKey().getKeyString(),
                                      "FEATURELOC: ID="+seg_id+" "+
                                      featureloc.getFmin()+".."+featureloc.getFmax());
-
           sql.add(tsn);
+          
+          String keyStr = tsn.getGff_feature().getKey().getKeyString();
+          if(GeneUtils.isFeatureToUpdateResidues(keyStr))
+          {   
+            FeatureForUpdatingResidues featureForUpdatingResidues =
+              GeneUtils.getFeatureForUpdatingResidues(tsn.getGff_feature());
+            if(featureForUpdatingResidues != null)
+            {
+              ChadoTransaction tsnResidue = 
+                new ChadoTransaction(ChadoTransaction.UPDATE, 
+                  featureForUpdatingResidues, 
+                  null, null, null, "SEQUENCE UPDATE ");
+              sql.add(tsnResidue);
+            }
+          }
         }
         
       }
