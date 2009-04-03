@@ -49,6 +49,7 @@ import org.gmod.schema.sequence.FeaturePub;
 import org.gmod.schema.sequence.FeatureSynonym;
 
 import uk.ac.sanger.artemis.chado.ClusterLazyQualifierValue;
+import uk.ac.sanger.artemis.chado.FeatureForUpdatingResidues;
 import uk.ac.sanger.artemis.chado.FeatureLocLazyQualifierValue;
 import uk.ac.sanger.artemis.components.EditMenu;
 import uk.ac.sanger.artemis.components.MessageDialog;
@@ -73,6 +74,7 @@ import uk.ac.sanger.artemis.util.ByteBuffer;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
+import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.EntryVector;
@@ -80,6 +82,7 @@ import uk.ac.sanger.artemis.FeatureKeyQualifierPredicate;
 import uk.ac.sanger.artemis.FeaturePredicate;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.GotoEventSource;
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
 
 
@@ -90,6 +93,8 @@ public class GeneUtils
   private static JCheckBox showObsolete = new JCheckBox("Show Obsolete Features",false);
   private static String nonCodingTranscripts[] =
                                 { "tRNA", "rRNA", "snRNA", "snoRNA", "ncRNA", "scRNA" };
+  private static StringVector featuresToUpdateResidues = 
+    Options.getOptions().getOptionValues("sequence_update_features");
   
   static
   {
@@ -1312,6 +1317,78 @@ public class GeneUtils
       if(nonCodingTranscripts[i].equals(key.getKeyString()))
         return true;
     return false;
+  }
+  
+  public static String deriveResidues(final GFFStreamFeature gffFeature)
+  {
+    final ChadoCanonicalGene chadoGene = gffFeature.getChadoGene();
+
+    boolean isProteinFeature = 
+      ((uk.ac.sanger.artemis.Feature)gffFeature.getUserData()).isProteinFeature();
+       
+    String residues = null;
+    try
+    {
+      String transcriptName =
+        chadoGene.getTranscriptFromName(GeneUtils.getUniqueName(gffFeature));
+      List splicedFeatures = 
+        chadoGene.getSplicedFeaturesOfTranscript(transcriptName);
+
+      for (int i = 0; i < splicedFeatures.size(); i++)
+      {
+        Feature emblFeature = (Feature) splicedFeatures.get(i);
+        if (emblFeature.getKey().getKeyString().equals(
+            DatabaseDocument.EXONMODEL))
+        {
+          uk.ac.sanger.artemis.Feature f = 
+            (uk.ac.sanger.artemis.Feature) emblFeature.getUserData();
+          if (!isProteinFeature)
+            residues = f.getTranslationBases();
+          else
+            residues = f.getTranslation().toString();
+        }
+      }
+    }
+    catch (Exception e){  }
+
+    return residues;
+  }
+  
+  public static FeatureForUpdatingResidues getFeatureForUpdatingResidues(
+      final GFFStreamFeature gffFeature)
+  {
+    String residues = deriveResidues(gffFeature);
+    if(residues == null)
+      return null;
+    final FeatureForUpdatingResidues chadoFeature = new FeatureForUpdatingResidues();
+    chadoFeature.setStartBase(0);
+    chadoFeature.setLength(residues.length());
+    chadoFeature.setNewSubSequence(residues);
+    
+    if(gffFeature.getQualifierByName("feature_id") != null)
+      chadoFeature.setFeatureId( Integer.parseInt( (String)
+          gffFeature.getQualifierByName("feature_id").getValues().get(0)) );
+    else
+    {
+      chadoFeature.setFeatureId(-1);
+      chadoFeature.setUniqueName(getUniqueName(gffFeature));
+    }
+    chadoFeature.setSeqLen(residues.length());
+    return chadoFeature;
+  }
+  
+  /**
+   * Look at the sequence_update_features property in the options
+   * file to see if this is a feature to update residues for.
+   * @param keyStr
+   * @return
+   */
+  public static boolean isFeatureToUpdateResidues(final String keyStr)
+  {
+    if(featuresToUpdateResidues == null)
+      return false;
+    
+    return featuresToUpdateResidues.contains(keyStr);
   }
   
   public static void main(String args[])
