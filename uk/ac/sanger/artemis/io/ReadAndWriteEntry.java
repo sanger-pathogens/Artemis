@@ -353,17 +353,17 @@ public class ReadAndWriteEntry
           JScrollPane scollMsg = new JScrollPane(msgError);
           msgPanel.add(scollMsg, BorderLayout.CENTER);
           
-          int val = JOptionPane.showConfirmDialog(null,
-              msgPanel, 
-              "Keys/Qualifier", JOptionPane.OK_CANCEL_OPTION, 
-              JOptionPane.QUESTION_MESSAGE);
+          int val = JOptionPane.OK_OPTION;
+          if(System.getProperty("noprompt") == null)
+            val = JOptionPane.showConfirmDialog(null, msgPanel,
+                "Keys/Qualifier", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
 
-          if(val == JOptionPane.OK_OPTION) 
+          if (val == JOptionPane.OK_OPTION)
           {
-            ReadAndWriteEntry.writeDatabaseEntryToFile(
-              entry, new File(names[i]+suffix), flatten, ignoreObsolete, 
-              true, include_diana_extensions, 
-              format, null);
+            ReadAndWriteEntry.writeDatabaseEntryToFile(entry, new File(
+                  names[i] + suffix), flatten, ignoreObsolete, true,
+                  include_diana_extensions, format, null);
           }
         }
       }
