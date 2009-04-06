@@ -959,7 +959,8 @@ public class GeneUtils
         if(childRange.getEnd() > transcriptEnd )
           transcriptEnd = childRange.getEnd();
         
-        if(feature.getKey().equals(DatabaseDocument.EXONMODEL))
+        if(feature.getKey().equals(DatabaseDocument.EXONMODEL) ||
+           feature.getKey().equals("pseudogenic_exon"))
         {
           if(childRange.getStart() < ppStart)
             ppStart = childRange.getStart();
