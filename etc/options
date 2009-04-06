@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.58 2009-04-03 15:06:02 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.59 2009-04-06 14:18:22 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -840,4 +840,4 @@ set_obsolete_on_delete=yes
 
 # list of features to record residues for in the database
 # - these are included when inserting or updating their featurelocs
-sequence_update_features = polypeptide mRNA
+sequence_update_features = polypeptide mRNA rRNA tRNA snRNA snoRNA
