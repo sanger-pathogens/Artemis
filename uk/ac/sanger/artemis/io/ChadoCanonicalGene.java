@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.30 2008-09-30 13:24:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.31 2009-04-06 15:22:56 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -549,6 +549,29 @@ public class ChadoCanonicalGene
     return null;
   }
   
+  /**
+   * Return the transcript from the name of a constituent feature
+   * @param constituent feature name
+   * @return transcript 
+   */
+  public Feature getTranscriptFeatureFromName(final String name)
+  {
+    String transcriptName = getTranscriptFromName(name);
+    if(transcriptName == null)
+      return null;
+    
+    try
+    {
+      for (int i = 0; i < transcripts.size(); i++)
+      {
+        Feature feature = (Feature) transcripts.get(i);
+        if (getQualifier(feature, "ID").equals(transcriptName))
+          return feature;
+      }
+    }
+    catch (InvalidRelationException ire){}
+    return null;
+  }
   
   /**
    * Return the transcript from the name of a constituent feature
