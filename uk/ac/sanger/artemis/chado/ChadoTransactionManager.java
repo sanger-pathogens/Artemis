@@ -382,21 +382,7 @@ public class ChadoTransactionManager
                                      "FEATURELOC: ID="+seg_id+" "+
                                      featureloc.getFmin()+".."+featureloc.getFmax());
           sql.add(tsn);
-          
-          String keyStr = tsn.getGff_feature().getKey().getKeyString();
-          if(GeneUtils.isFeatureToUpdateResidues(keyStr))
-          {   
-            FeatureForUpdatingResidues featureForUpdatingResidues =
-              GeneUtils.getFeatureForUpdatingResidues(tsn.getGff_feature());
-            if(featureForUpdatingResidues != null)
-            {
-              ChadoTransaction tsnResidue = 
-                new ChadoTransaction(ChadoTransaction.UPDATE, 
-                  featureForUpdatingResidues, 
-                  null, null, null, "SEQUENCE UPDATE ");
-              sql.add(tsnResidue);
-            }
-          }
+          updateResidueColumn(tsn);
         }
         
       }
@@ -524,6 +510,28 @@ public class ChadoTransactionManager
     }
 
 //  System.out.println(event.getEntry().getName());
+  }
+  
+  /**
+   * Update this features residue column where necessary.
+   * @param tsn
+   */
+  private void updateResidueColumn(final ChadoTransaction tsn)
+  {
+    String keyStr = tsn.getGff_feature().getKey().getKeyString();
+    if(GeneUtils.isFeatureToUpdateResidues(keyStr))
+    {   
+      FeatureForUpdatingResidues featureForUpdatingResidues =
+        GeneUtils.getFeatureForUpdatingResidues(tsn.getGff_feature());
+      if(featureForUpdatingResidues != null)
+      {
+        ChadoTransaction tsnResidue = 
+          new ChadoTransaction(ChadoTransaction.UPDATE, 
+            featureForUpdatingResidues, 
+            null, null, null, "SEQUENCE UPDATE ");
+        sql.add(tsnResidue);
+      }
+    } 
   }
   
   /**
@@ -931,7 +939,11 @@ public class ChadoTransactionManager
         null, (GFFStreamFeature)segment.getFeature().getEmblFeature(), null,
         "SEGMENT: ID="+segment_uniquename+" KEY="+key);
    
-    sql.add(tsn);  
+    sql.add(tsn);
+    
+    List tsns = DatabaseDocument.getUpdateResiduesColumnTransactions(tsn);
+    if(tsns != null)
+      sql.addAll(tsns);
   }
   
   /**
@@ -1036,7 +1048,10 @@ public class ChadoTransactionManager
         null, feature, featureKey,
         "FEATURE: ID="+uniquename+" "+featureKey);
 
-    sql.add(tsn); 
+    sql.add(tsn);
+    List tsns = DatabaseDocument.getUpdateResiduesColumnTransactions(tsn);
+    if(tsns != null)
+      sql.addAll(tsns);
   }
 
   /**

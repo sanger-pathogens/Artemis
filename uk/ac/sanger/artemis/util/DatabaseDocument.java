@@ -24,6 +24,7 @@
 
 package uk.ac.sanger.artemis.util;
 
+import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
@@ -33,6 +34,7 @@ import uk.ac.sanger.artemis.io.ReadFormatException;
 
 import uk.ac.sanger.artemis.chado.ArtemisUtils;
 import uk.ac.sanger.artemis.chado.ChadoCvTermView;
+import uk.ac.sanger.artemis.chado.FeatureForUpdatingResidues;
 import uk.ac.sanger.artemis.chado.IBatisDAO;
 import uk.ac.sanger.artemis.chado.JdbcDAO;
 import uk.ac.sanger.artemis.chado.GmodDAO;
@@ -2799,7 +2801,18 @@ public class DatabaseDocument extends Document
         feature.setTimeLastModified(ts);
       }
       dao.merge(tsn.getFeatureObject());
-      //dao.updateAttributes(tsn);
+      
+      if(tsn.getFeatureObject() instanceof FeatureLoc)
+      {
+        // if CDS featureloc is changed update residues on
+        // associated features
+        List tsns = getUpdateResiduesColumnTransactions(tsn);
+        if(tsns != null)
+        {
+          for(int i=0; i<tsns.size(); i++)
+            dao.merge( ((ChadoTransaction)tsns.get(i)).getFeatureObject() );
+        }
+      }
     }
     else if(tsn.getType() == ChadoTransaction.INSERT)
     {
@@ -2899,6 +2912,64 @@ public class DatabaseDocument extends Document
       }
     }
     return true;
+  }
+  
+  /**
+   * Update residues column when the CDS featureloc is updated
+   * @param tsn
+   */
+  public static List getUpdateResiduesColumnTransactions(
+                                        final ChadoTransaction tsn)
+  {
+    String keyStr = tsn.getGff_feature().getKey().getKeyString();
+    List transactions = null;
+    if(DatabaseDocument.EXONMODEL.equals(keyStr) &&
+       Options.getOptions().getOptionValues("sequence_update_features") != null)
+    {
+      ChadoCanonicalGene chadoGene = tsn.getGff_feature().getChadoGene();
+      uk.ac.sanger.artemis.io.Feature transcript = 
+        chadoGene.getTranscriptFeatureFromName(
+          GeneUtils.getUniqueName(tsn.getGff_feature()));
+
+      if(transcript != null)
+      {
+        FeatureForUpdatingResidues featureForUpdatingResidues =
+          GeneUtils.getFeatureForUpdatingResidues((GFFStreamFeature) transcript);
+        if(featureForUpdatingResidues != null)
+        {
+          ChadoTransaction tsnResidue = 
+            new ChadoTransaction(ChadoTransaction.UPDATE, 
+              featureForUpdatingResidues, 
+              null, null, null, "SEQUENCE UPDATE "+
+              GeneUtils.getUniqueName(transcript));
+          if(transactions == null)
+            transactions = new Vector();
+          transactions.add(tsnResidue);
+          logger4j.debug(tsnResidue.getLogComment());
+        }
+      
+        uk.ac.sanger.artemis.io.Feature pp =
+          chadoGene.getProteinOfTranscript(GeneUtils.getUniqueName(transcript));
+        if(pp != null)
+        {
+          FeatureForUpdatingResidues ppForUpdatingResidues =
+            GeneUtils.getFeatureForUpdatingResidues((GFFStreamFeature) pp);
+          if(ppForUpdatingResidues != null)
+          {
+            ChadoTransaction tsnResidue = 
+              new ChadoTransaction(ChadoTransaction.UPDATE, 
+                  ppForUpdatingResidues, 
+                null, null, null, "SEQUENCE UPDATE "+
+                GeneUtils.getUniqueName(pp));
+            if(transactions == null)
+              transactions = new Vector();
+            transactions.add(tsnResidue);
+            logger4j.debug(tsnResidue.getLogComment());
+          }
+        }
+      }
+    }
+    return transactions;
   }
 
   

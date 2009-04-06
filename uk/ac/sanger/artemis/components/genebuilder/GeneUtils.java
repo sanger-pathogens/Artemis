@@ -1331,6 +1331,7 @@ public class GeneUtils
     {
       String transcriptName =
         chadoGene.getTranscriptFromName(GeneUtils.getUniqueName(gffFeature));
+      
       List splicedFeatures = 
         chadoGene.getSplicedFeaturesOfTranscript(transcriptName);
 
@@ -1357,6 +1358,8 @@ public class GeneUtils
   public static FeatureForUpdatingResidues getFeatureForUpdatingResidues(
       final GFFStreamFeature gffFeature)
   {
+    if(!isFeatureToUpdateResidues(gffFeature.getKey().getKeyString()))
+      return null;
     String residues = deriveResidues(gffFeature);
     if(residues == null)
       return null;
