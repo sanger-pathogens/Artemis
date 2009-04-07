@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/Algorithm.java,v 1.1 2004-06-09 09:51:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/Algorithm.java,v 1.2 2009-04-07 09:11:29 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -31,10 +31,50 @@ import uk.ac.sanger.artemis.Options;
  *  This class represents an algorithm that can be plotted.
  *
  *  @author Kim Rutherford
- *  @version $Id: Algorithm.java,v 1.1 2004-06-09 09:51:15 tjc Exp $
+ *  @version $Id: Algorithm.java,v 1.2 2009-04-07 09:11:29 tjc Exp $
  **/
 
 public abstract class Algorithm {
+  
+  
+  /**
+   *  The name of this algorithm, as passed to the constructor.
+   **/
+  private String algorithm_name;
+
+  /**
+   *  The short (one word) name of this algorithm, as passed to the
+   *  constructor.
+   **/
+  private String algorithm_short_name;
+
+  /**
+   *  Set by disableMaxAndMin () and enableMaxAndMin ().
+   **/
+  private boolean max_min_disabled = false;
+
+  /**
+   *  Set by the constructor by looking at the options with this name:
+   *  getAlgorithmShortName () + "_default_window_size"
+   **/
+  private Integer options_window_size = null;
+
+  /**
+   *  Set by the constructor by looking at the options with this name:
+   *  getAlgorithmShortName () + "_default_min_window_size"
+   **/
+  private Integer options_max_window_size = null;
+
+  /**
+   *  Set by the constructor by looking at the options with this name:
+   *  getAlgorithmShortName () + "_default_min_window_size"
+   **/
+  private Integer options_min_window_size = null;
+  
+  private boolean userMaxMin = false;
+  private float userMin = Float.MIN_VALUE;
+  private float userMax = Float.MAX_VALUE;
+  
   /**
    *  Create a new Algorithm object.
    *  @param algorithm_name A String used to identify this algorithm to the
@@ -47,7 +87,8 @@ public abstract class Algorithm {
    *    gc_content_default_min_window_size.
    **/
   public Algorithm (final String algorithm_name,
-                    final String algorithm_short_name) {
+                    final String algorithm_short_name) 
+  {
     this.algorithm_name = algorithm_name;
     this.algorithm_short_name = algorithm_short_name;
 
@@ -98,7 +139,8 @@ public abstract class Algorithm {
   /**
    *  Return the name of this algorithm.
    **/
-  public String getAlgorithmName () {
+  public String getAlgorithmName () 
+  {
      return algorithm_name;
   }
 
@@ -106,7 +148,8 @@ public abstract class Algorithm {
    *  Return the short (one word) name of this algorithm, as passed tp the
    *  constructor.
    **/
-  public String getAlgorithmShortName () {
+  public String getAlgorithmShortName () 
+  {
      return algorithm_short_name;
   }
 
@@ -115,7 +158,8 @@ public abstract class Algorithm {
    *  @return null is returned if this algorithm doesn't have optimal window
    *    size.
    **/
-  public Integer getDefaultWindowSize () {
+  public Integer getDefaultWindowSize () 
+  {
     return options_window_size;
   } 
 
@@ -124,7 +168,8 @@ public abstract class Algorithm {
    *  @return null is returned if this algorithm doesn't have maximum window
    *    size.
    **/
-  public Integer getDefaultMaxWindowSize () {
+  public Integer getDefaultMaxWindowSize ()
+  {
     return options_max_window_size;
   } 
 
@@ -133,7 +178,8 @@ public abstract class Algorithm {
    *  @return null is returned if this algorithm doesn't have minimum window
    *    size.
    **/
-  public Integer getDefaultMinWindowSize () {
+  public Integer getDefaultMinWindowSize () 
+  {
     return options_min_window_size;
   } 
 
@@ -142,7 +188,8 @@ public abstract class Algorithm {
    *  @return null is returned if this algorithm doesn't have optimal step
    *    size.
    **/
-  public Integer getDefaultStepSize (int window_size) {
+  public Integer getDefaultStepSize (int window_size) 
+  {
     return null;
   } 
 
@@ -152,19 +199,22 @@ public abstract class Algorithm {
    *  @return null is returned if this algorithm doesn't have a fixed maximum
    *    or if maxAndMinDisabled () is true.
    **/
-  final public Float getMaximum () {
-    if (scalingFlag ()) {
+  final public Float getMaximum () 
+  {
+    if (scalingFlag ())
       return null;
-    } else {
+    else if(isUserMaxMin())
+      return getUserMax();
+    else
       return getMaximumInternal ();
-    }
   } 
 
   /**
    *  Return the maximum value of this algorithm.
    *  @return null is returned if this algorithm doesn't have a fixed maximum.
    **/
-  protected Float getMaximumInternal () {
+  protected Float getMaximumInternal () 
+  {
     return null;
   } 
 
@@ -174,19 +224,22 @@ public abstract class Algorithm {
    *  @return null is returned if this algorithm doesn't have a fixed minimum
    *    or if maxAndMinDisabled () is true.
    **/
-  final public Float getMinimum () {
-    if (scalingFlag ()) {
+  final public Float getMinimum () 
+  {
+    if (scalingFlag ()) 
       return null;
-    } else {
+    else if(isUserMaxMin())
+      return getUserMin();
+    else
       return getMinimumInternal ();
-    }
   } 
 
   /**
    *  Return the minimum value of this algorithm.
    *  @return null is returned if this algorithm doesn't have a fixed minimum.
    **/
-  protected Float getMinimumInternal () {
+  protected Float getMinimumInternal () 
+  {
     return null;
   } 
 
@@ -195,7 +248,8 @@ public abstract class Algorithm {
    *  @return null is returned if this algorithm doesn't have an average or if
    *    the average can't be calculated.
    **/
-  public Float getAverage () {
+  public Float getAverage () 
+  {
     return null;
   }
 
@@ -203,7 +257,8 @@ public abstract class Algorithm {
    *  Force getMinimum () and getMaximum () to return null if and only if
    *  enable_scaling is true.
    **/
-  public void setScalingFlag (final boolean enable_scaling) {
+  public void setScalingFlag (final boolean enable_scaling) 
+  {
     max_min_disabled = enable_scaling;
   }
 
@@ -211,41 +266,38 @@ public abstract class Algorithm {
    *  Return true if and only if getMaximum () and getMinimum () should return
    *  null.
    **/
-  public boolean scalingFlag () {
+  public boolean scalingFlag ()
+  {
     return max_min_disabled;
   }
   
-  /**
-   *  The name of this algorithm, as passed to the constructor.
-   **/
-  private String algorithm_name;
+  public float getUserMin()
+  {
+    return userMin;
+  }
 
-  /**
-   *  The short (one word) name of this algorithm, as passed to the
-   *  constructor.
-   **/
-  private String algorithm_short_name;
+  public void setUserMin(float userMin)
+  {
+    this.userMin = userMin;
+  }
 
-  /**
-   *  Set by disableMaxAndMin () and enableMaxAndMin ().
-   **/
-  private boolean max_min_disabled = false;
+  public float getUserMax()
+  {
+    return userMax;
+  }
 
-  /**
-   *  Set by the constructor by looking at the options with this name:
-   *  getAlgorithmShortName () + "_default_window_size"
-   **/
-  private Integer options_window_size = null;
+  public void setUserMax(float userMax)
+  {
+    this.userMax = userMax;
+  }
+  
+  public boolean isUserMaxMin()
+  {
+    return userMaxMin;
+  }
 
-  /**
-   *  Set by the constructor by looking at the options with this name:
-   *  getAlgorithmShortName () + "_default_min_window_size"
-   **/
-  private Integer options_max_window_size = null;
-
-  /**
-   *  Set by the constructor by looking at the options with this name:
-   *  getAlgorithmShortName () + "_default_min_window_size"
-   **/
-  private Integer options_min_window_size = null;
+  public void setUserMaxMin(boolean userMaxMin)
+  {
+    this.userMaxMin = userMaxMin;
+  }
 }
