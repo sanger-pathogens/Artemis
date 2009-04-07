@@ -26,6 +26,9 @@ package uk.ac.sanger.artemis.components.alignment;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -38,10 +41,12 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
-import javax.swing.JMenuItem;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
+import javax.swing.JTextField;
 
 import uk.ac.sanger.artemis.components.DisplayAdjustmentEvent;
 import uk.ac.sanger.artemis.components.DisplayAdjustmentListener;
@@ -56,9 +61,11 @@ public class LookSeqPanel extends JPanel
   private ImageIcon ii;
   private String urlStr;
   private String queryStr;
+
   private FeatureDisplay feature_display;
   private int lastStart = -1;
   private int lastEnd   = -1;
+  private int drawCrossHairAt = -1;
   final JPopupMenu popup  = new JPopupMenu("Plot Options");
 
   public LookSeqPanel()
@@ -88,7 +95,7 @@ public class LookSeqPanel extends JPanel
   
   private void setUpPopupMenu()
   {
-    JCheckBoxMenuItem optionCoverage = new JCheckBoxMenuItem("Show coverage", false);
+    JCheckBoxMenuItem optionCoverage = new JCheckBoxMenuItem("Coverage", false);
     optionCoverage.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -100,8 +107,7 @@ public class LookSeqPanel extends JPanel
     });
     popup.add(optionCoverage);
     
-    JCheckBoxMenuItem optionIndel = new JCheckBoxMenuItem("Show paired reads", true);
-    
+    JCheckBoxMenuItem optionIndel = new JCheckBoxMenuItem("Paired reads", true);
     optionIndel.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -113,9 +119,22 @@ public class LookSeqPanel extends JPanel
     });
     popup.add(optionIndel);
     
+    JCheckBoxMenuItem optionPileup = new JCheckBoxMenuItem("Pileup", false);
+    optionPileup.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        queryStr = queryStr.replaceFirst("view=\\w+", "view=pileup");
+        setImage(urlStr, queryStr);
+        revalidate();
+      }
+    });
+    popup.add(optionPileup);
+    
     ButtonGroup group = new ButtonGroup();
     group.add(optionCoverage);
     group.add(optionIndel);
+    group.add(optionPileup);
     
     popup.add(new JSeparator());
     final JCheckBoxMenuItem perfectIndel = 
@@ -214,7 +233,6 @@ public class LookSeqPanel extends JPanel
     this.urlStr = urlStr;
     this.queryStr = queryStr;
     
-    
     try
     {
       ii = new ImageIcon(new URL(urlStr+queryStr));
@@ -235,37 +253,51 @@ public class LookSeqPanel extends JPanel
     super.paintComponent(g);
     if(ii != null)
       ii.paintIcon(this,g,0,0);
-  }
-  
-  
-  public void displayAdjustmentValueChanged(DisplayAdjustmentEvent event)
-  {   
-    if(lastStart == event.getStart() && lastEnd == event.getEnd())
-      return;
     
-    lastStart = event.getStart();
-    lastEnd   = event.getEnd();
-    queryStr = queryStr.replaceFirst("from=\\d+", "from="+Integer.toString(event.getStart()));
-    queryStr = queryStr.replaceFirst("to=\\d+", "to="+Integer.toString(event.getEnd()));    
-
-    if(feature_display != null)
-    {
-      int width = feature_display.getSize().width;
-      queryStr = queryStr.replaceFirst("width=\\d+", "width="+Integer.toString(width));
-    }
-    //System.out.println("displayAdjustmentValueChanged() "+
-    //    event.getStart()+".."+event.getEnd());
-    displayImage();
+    if(drawCrossHairAt > -1)
+      drawCrossHair(g);
   }
   
-  private void displayImage()
+  private void drawCrossHair(Graphics g)
   {
+    int xpos = (int) ((((float)drawCrossHairAt/(lastEnd-lastStart)))*getWidth());
+    g.drawLine(xpos, 0, xpos, getHeight());
+    g.drawString(Integer.toString(drawCrossHairAt+lastStart), xpos+1, 10);
+  }
+  
+  public void displayAdjustmentValueChanged(final DisplayAdjustmentEvent event)
+  {   
     SwingWorker worker = new SwingWorker()
     {
       public Object construct()
       {
+        if(lastStart == event.getStart() && lastEnd == event.getEnd())
+          return null;
+        try
+        {
+          Thread.currentThread().sleep(500);
+        }
+        catch (InterruptedException e)
+        {
+          e.printStackTrace();
+        }
+        
+        if(event.getStart() != ((FeatureDisplay)event.getSource()).getForwardBaseAtLeftEdge())
+          return null;
+      
+        lastStart = event.getStart();
+        lastEnd   = event.getEnd();
+        queryStr = queryStr.replaceFirst("from=\\d+", "from="+Integer.toString(event.getStart()));
+        queryStr = queryStr.replaceFirst("to=\\d+", "to="+Integer.toString(event.getEnd()));    
+
+        if(feature_display != null)
+        {
+          int width = feature_display.getSize().width;
+          queryStr = queryStr.replaceFirst("width=\\d+", "width="+Integer.toString(width));
+        }
+        
         setImage(urlStr, queryStr);
-        //System.out.println(queryStr);
+        drawCrossHairAt = -1;
         repaint();
         return null;
       }
@@ -285,6 +317,11 @@ public class LookSeqPanel extends JPanel
     revalidate();
   }
   
+  private int getBasePositionAt(int position)
+  {
+    return (int) ((((float)position)/getWidth())*(lastEnd-lastStart));
+  }
+  
   final MouseListener mouseListener = new MouseAdapter()
   {
     /**
@@ -292,11 +329,91 @@ public class LookSeqPanel extends JPanel
      **/
     public void mousePressed(MouseEvent event)
     {
-      if(!event.isPopupTrigger())
-        return;
-      popup.show(LookSeqPanel.this, event.getX(), event.getY());
+      if(event.isPopupTrigger())
+        popup.show(LookSeqPanel.this, event.getX(), event.getY());
+      else if(event.getClickCount() == 1 && 
+              event.getButton() == MouseEvent.BUTTON1)
+      {
+        drawCrossHairAt = getBasePositionAt(event.getX());
+        repaint();
+      }
+      else if(event.getClickCount() == 2)
+      {
+        drawCrossHairAt = -1;
+        repaint();
+      }
     }
   };
+
+  public void setFeatureDisplay(FeatureDisplay feature_display)
+  {
+    this.feature_display = feature_display;
+  }
+  
+  public void showOptions()
+  {
+    final JPanel optionsPanel = new JPanel(new GridBagLayout());
+    GridBagConstraints c = new GridBagConstraints();
+    final JTextField urlStrField = new JTextField(urlStr);
+    c.gridy = 0;
+    c.gridx = 0;
+    c.anchor = GridBagConstraints.EAST;
+    optionsPanel.add(new JLabel("Server:"), c);
+    c.gridx = 1;
+    c.anchor = GridBagConstraints.WEST;
+    optionsPanel.add(urlStrField, c);
+    
+    String sampleStr = getText(queryStr,"chr=");
+    final JTextField sampleField = new JTextField(sampleStr,40);
+    c.gridy = 1;
+    c.gridx = 0;
+    c.anchor = GridBagConstraints.EAST;
+    optionsPanel.add(new JLabel("Sample:"), c);
+    c.gridx = 1;
+    c.anchor = GridBagConstraints.WEST;
+    optionsPanel.add(sampleField, c);
+    
+    String laneStr = getText(queryStr,"lane=");
+    final JTextField laneField = new JTextField(laneStr,40);
+    c.gridy = 2;
+    c.gridx = 0;
+    c.anchor = GridBagConstraints.EAST;
+    optionsPanel.add(new JLabel("Lane:"), c);
+    c.gridx = 1;
+    c.anchor = GridBagConstraints.WEST;
+    optionsPanel.add(laneField, c);
+    
+    String window_options[] = { "Display" };
+    int select = JOptionPane.showOptionDialog(null, 
+        optionsPanel,
+        "Lookseq Options", JOptionPane.DEFAULT_OPTION,
+        JOptionPane.QUESTION_MESSAGE, null, window_options,
+        window_options[0]);
+    
+    urlStr = urlStrField.getText().trim();
+    queryStr = queryStr.replaceFirst(
+        "chr=\\w+", "chr="+sampleField.getText().trim());
+    
+    queryStr = queryStr.replaceFirst(
+        "lane=\\w+", "lane="+laneField.getText().trim());
+  }
+  
+  private String getText(String str, String subStr)
+  {
+    int beginIndex = str.indexOf(subStr);
+    if(beginIndex == -1)
+      return null;
+    
+    int endIndex = str.indexOf("&", beginIndex);
+    if(endIndex == -1)
+      endIndex = str.length();
+    return str.substring(beginIndex+subStr.length(), endIndex);
+  }
+  
+  public String getQueryStr()
+  {
+    return queryStr;
+  }
   
   public static void main(String args[])
   {
@@ -308,11 +425,6 @@ public class LookSeqPanel extends JPanel
     f.getContentPane().add(lookseq);
     f.pack();
     f.setVisible(true);
-  }
-
-  public void setFeatureDisplay(FeatureDisplay feature_display)
-  {
-    this.feature_display = feature_display;
   }
 }
 
