@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.14 2009-02-25 11:10:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.15 2009-04-07 09:43:48 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import org.apache.log4j.Level;
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.14 2009-02-25 11:10:41 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.15 2009-04-07 09:43:48 tjc Exp $
  **/
 
 public class BasePlot extends Plot
@@ -966,5 +966,24 @@ public class BasePlot extends Plot
     return tt;
   }
 
- 
+
+  public void setMin_value(float min_value)
+  {
+    this.min_value = min_value;
+  }
+
+  public void setMax_value(float max_value)
+  {
+    this.max_value = max_value;
+  }
+
+  public float getMin_value()
+  {
+    return min_value;
+  }
+
+  public float getMax_value()
+  {
+    return max_value;
+  }
 }

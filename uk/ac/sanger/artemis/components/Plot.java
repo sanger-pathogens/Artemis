@@ -20,12 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.17 2009-02-25 11:10:41 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.18 2009-04-07 09:43:26 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.circular.TextFieldFloat;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.plot.*;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
@@ -53,7 +54,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.17 2009-02-25 11:10:41 tjc Exp $
+ *  @version $Id: Plot.java,v 1.18 2009-04-07 09:43:26 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -368,6 +369,48 @@ public abstract class Plot extends JPanel
         });
 
         popup.add(scaling_toggle);
+        
+        
+        if(Plot.this instanceof BasePlot)
+        {
+          final JMenuItem showMinMaxValues =
+            new JMenuItem("Set Min/Max Values...");
+          popup.add(showMinMaxValues);
+          showMinMaxValues.addActionListener(new ActionListener() 
+          {
+            public void actionPerformed(ActionEvent e) 
+            {
+              JPanel gridPane = new JPanel(new GridLayout(2,2));
+              TextFieldFloat minValue = new TextFieldFloat();
+              minValue.setValue( ((BasePlot)Plot.this).getMin_value() );
+              gridPane.add(new JLabel("Min:"));
+              gridPane.add(minValue);
+              
+              TextFieldFloat maxValue = new TextFieldFloat();
+              maxValue.setValue( ((BasePlot)Plot.this).getMax_value() );
+              gridPane.add(new JLabel("Max:"));
+              gridPane.add(maxValue);
+
+              String window_options[] = { "Set", "Cancel" };
+              int select = JOptionPane.showOptionDialog(null, gridPane,
+                  "Set Min/Max Plot Values", JOptionPane.DEFAULT_OPTION,
+                  JOptionPane.QUESTION_MESSAGE, null, window_options,
+                  window_options[0]);
+              if(select == 1)
+                return;
+              
+              getAlgorithm().setUserMaxMin(true);
+              getAlgorithm().setUserMin((float) minValue.getValue());
+              getAlgorithm().setUserMax((float) maxValue.getValue());
+              ((BasePlot)Plot.this).setMin_value((float) minValue.getValue());
+              ((BasePlot)Plot.this).setMax_value((float) maxValue.getValue());
+              getAlgorithm().setScalingFlag(false);
+              repaint();
+            }
+          });
+        }
+        
+        
         popup.addSeparator();
 
         final JMenu max_window_size =
@@ -441,21 +484,21 @@ public abstract class Plot extends JPanel
         }
         
         
-        ///
-        final JMenuItem showAverages =
-          new JMenuItem("Values and average(s) for selected range...");
-        
+        ///       
         if(Plot.this instanceof BasePlot)
+        { 
+          final JMenuItem showAverages =
+            new JMenuItem("Values and average(s) for selected range...");
           popup.add(showAverages);
         
-        showAverages.addActionListener(new ActionListener() 
-        {
-          public void actionPerformed(ActionEvent e) 
+          showAverages.addActionListener(new ActionListener() 
           {
-            showAveragesForRange();
-          }
-        });
-        
+            public void actionPerformed(ActionEvent e) 
+            {
+              showAveragesForRange();
+            }
+          });
+        }
 
         final JSplitPane splitPane = getJSplitPane();
 
