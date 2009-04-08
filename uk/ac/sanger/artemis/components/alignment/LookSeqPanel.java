@@ -28,7 +28,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -39,15 +38,18 @@ import java.net.URL;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
+import uk.ac.sanger.artemis.circular.TextFieldInt;
 import uk.ac.sanger.artemis.components.DisplayAdjustmentEvent;
 import uk.ac.sanger.artemis.components.DisplayAdjustmentListener;
 import uk.ac.sanger.artemis.components.FeatureDisplay;
@@ -59,7 +61,9 @@ public class LookSeqPanel extends JPanel
   private static final long serialVersionUID = 1L;
   /** image icon */
   private ImageIcon ii;
+  /** URL lookseq service */
   private String urlStr;
+  /** the query options (appended to lookseq service url) */
   private String queryStr;
 
   private FeatureDisplay feature_display;
@@ -81,11 +85,6 @@ public class LookSeqPanel extends JPanel
     setUpPopupMenu();
   }
   
-  /**
-   * 
-   * @param urlStr
-   * @param query
-   */
   public LookSeqPanel(final String urlStr, final String queryStr)
   {
     super();
@@ -93,6 +92,9 @@ public class LookSeqPanel extends JPanel
     setUpPopupMenu();
   }
   
+  /**
+   * Build the popup menu.
+   */
   private void setUpPopupMenu()
   {
     JCheckBoxMenuItem optionCoverage = new JCheckBoxMenuItem("Coverage", false);
@@ -182,7 +184,7 @@ public class LookSeqPanel extends JPanel
     popup.add(single);
     
     final JCheckBoxMenuItem inversions_ext = 
-      new JCheckBoxMenuItem("Show inversions_ext", true);
+      new JCheckBoxMenuItem("Show inversions_ext", false);
     inversions_ext.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -198,7 +200,7 @@ public class LookSeqPanel extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        setDisplayOption(inversions_ext.isSelected(), "pairlinks");
+        setDisplayOption(pairlinks.isSelected(), "pairlinks");
       }
     });
     popup.add(pairlinks);
@@ -209,7 +211,7 @@ public class LookSeqPanel extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
-        setDisplayOption(inversions_ext.isSelected(), "potsnps");
+        setDisplayOption(potsnps.isSelected(), "potsnps");
       }
     });
     popup.add(potsnps);
@@ -225,6 +227,15 @@ public class LookSeqPanel extends JPanel
     });
     popup.add(uniqueness);
     
+    final JMenuItem setIndelMaxSize = new JMenuItem("Maximum InDel Size...");
+    setIndelMaxSize.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        setMaxIndelSize();
+      }
+    });
+    popup.add(setIndelMaxSize);
     addMouseListener(mouseListener);
   }
 
@@ -265,6 +276,65 @@ public class LookSeqPanel extends JPanel
     g.drawString(Integer.toString(drawCrossHairAt+lastStart), xpos+1, 10);
   }
   
+  /**
+   * Set the maximum size.
+   */
+  private void setMaxIndelSize()
+  {
+    JPanel panel = new JPanel(new GridBagLayout());
+    GridBagConstraints c = new GridBagConstraints();
+   
+    String maxdist = getText(queryStr,"maxdist=");
+    c.gridx = 0;
+    c.gridy = 0;
+    panel.add(new JLabel("Set maximum indel size"), c);
+    
+    TextFieldInt maxIndel = new TextFieldInt();
+    maxIndel.setColumns(10);
+    c.gridx = 1;
+    c.anchor = GridBagConstraints.WEST;
+    panel.add(maxIndel, c);
+    
+    JCheckBox defaultValue = new JCheckBox("use default"); 
+    c.gridy = 1;
+    panel.add(defaultValue, c);
+    
+    if(maxdist == null)
+      defaultValue.setSelected(true);
+    else
+    {
+      defaultValue.setSelected(false);
+      maxIndel.setValue(Integer.parseInt(maxdist));
+    }
+    
+    String window_options[] = { "Set", "Cancel" };
+    int select = JOptionPane.showOptionDialog(null, 
+        panel, "Lookseq Options", JOptionPane.DEFAULT_OPTION,
+        JOptionPane.QUESTION_MESSAGE, null, window_options,
+        window_options[0]);
+
+    if(select == 1)
+      return;
+    if(defaultValue.isSelected())
+      queryStr = queryStr.replaceFirst(
+          "&maxdist=\\w+", "");
+    else
+    {
+      if(queryStr.indexOf("maxdist=") > -1)
+        queryStr = queryStr.replaceFirst(
+            "&maxdist=\\w+", "&maxdist="+maxIndel.getText().trim());
+      else
+        queryStr = queryStr.concat("&maxdist="+maxIndel.getText().trim());
+    }
+    
+    setImage(urlStr, queryStr);
+    repaint();
+    revalidate();
+  }
+  
+  /**
+   * Called when the display is changed.
+   */
   public void displayAdjustmentValueChanged(final DisplayAdjustmentEvent event)
   {   
     SwingWorker worker = new SwingWorker()
@@ -287,24 +357,55 @@ public class LookSeqPanel extends JPanel
       
         lastStart = event.getStart();
         lastEnd   = event.getEnd();
-        queryStr = queryStr.replaceFirst("from=\\d+", "from="+Integer.toString(event.getStart()));
-        queryStr = queryStr.replaceFirst("to=\\d+", "to="+Integer.toString(event.getEnd()));    
-
-        if(feature_display != null)
-        {
-          int width = feature_display.getSize().width;
-          queryStr = queryStr.replaceFirst("width=\\d+", "width="+Integer.toString(width));
-        }
-        
-        setImage(urlStr, queryStr);
-        drawCrossHairAt = -1;
-        repaint();
+        setDisplay(lastStart, lastEnd, event);
         return null;
       }
     };
     worker.start();
   }
   
+  /**
+   * Set the start and end base positions to display.
+   * @param start
+   * @param end
+   * @param event
+   */
+  public void setDisplay(int start,
+                         int end,
+                         DisplayAdjustmentEvent event)
+  {
+    queryStr = queryStr.replaceFirst("from=\\d+", "from="+Integer.toString(start));
+    queryStr = queryStr.replaceFirst("to=\\d+", "to="+Integer.toString(end));    
+
+    if(feature_display != null)
+    {
+      int width = feature_display.getSize().width;
+      
+      int possible_last_base =
+        (int)(feature_display.getForwardBaseAtLeftEdge() + 
+              feature_display.getMaxVisibleBases());
+      
+      // scale the image when scrolled passed the sequence length
+      if(possible_last_base > end)
+        width = (int)(width * (float)((float)(end-start)/
+                                      (float)(possible_last_base-start)));
+      
+      queryStr = queryStr.replaceFirst("width=\\d+", "width="+Integer.toString(width));
+    }
+    
+    setImage(urlStr, queryStr);
+    drawCrossHairAt = -1;
+    repaint();
+    if(event == null || 
+       event.getType() == DisplayAdjustmentEvent.SCALE_ADJUST_EVENT)
+      revalidate();
+  }
+  
+  /**
+   * Utility for changing display options.
+   * @param selected
+   * @param option
+   */
   private void setDisplayOption(boolean selected, String option)
   {
     if(selected)
@@ -317,6 +418,11 @@ public class LookSeqPanel extends JPanel
     revalidate();
   }
   
+  /**
+   * Get the base position from the pixel position on the panel
+   * @param position
+   * @return
+   */
   private int getBasePositionAt(int position)
   {
     return (int) ((((float)position)/getWidth())*(lastEnd-lastStart));
@@ -350,6 +456,9 @@ public class LookSeqPanel extends JPanel
     this.feature_display = feature_display;
   }
   
+  /**
+   * Show Lookseq options
+   */
   public void showOptions()
   {
     final JPanel optionsPanel = new JPanel(new GridBagLayout());
@@ -398,6 +507,12 @@ public class LookSeqPanel extends JPanel
         "lane=\\w+", "lane="+laneField.getText().trim());
   }
   
+  /**
+   * Return the value of a sub-string in a string
+   * @param str
+   * @param subStr
+   * @return
+   */
   private String getText(String str, String subStr)
   {
     int beginIndex = str.indexOf(subStr);
