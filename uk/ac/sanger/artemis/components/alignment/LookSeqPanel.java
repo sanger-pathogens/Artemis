@@ -173,7 +173,7 @@ public class LookSeqPanel extends JPanel
     popup.add(inversions);
     
     final JCheckBoxMenuItem single = 
-      new JCheckBoxMenuItem("Show single reads", true);
+      new JCheckBoxMenuItem("Show single reads", false);
     single.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -226,6 +226,7 @@ public class LookSeqPanel extends JPanel
       }
     });
     popup.add(uniqueness);
+    popup.add(new JSeparator());
     
     final JMenuItem setIndelMaxSize = new JMenuItem("Maximum InDel Size...");
     setIndelMaxSize.addActionListener(new ActionListener()
