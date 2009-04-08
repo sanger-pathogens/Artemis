@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.74 2008-12-11 16:56:15 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.75 2009-04-08 14:39:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -29,6 +29,7 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.chado.CommitFrame;
 import uk.ac.sanger.artemis.circular.DNADraw;
+import uk.ac.sanger.artemis.components.alignment.LookSeqPanel;
 import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
 import uk.ac.sanger.artemis.editor.BigPane;
@@ -66,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.74 2008-12-11 16:56:15 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.75 2009-04-08 14:39:09 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -230,6 +231,20 @@ public class EntryEdit extends JFrame
     splitPane.setResizeWeight(0.);
     base_plot_group.setVisible(true);
 
+    // lookseq read alignment
+    LookSeqPanel lookseqPanel = null;
+    JScrollPane jspLookSeq = null;
+    if(Options.getOptions().getProperty("lookseq") != null)
+    {
+      lookseqPanel = new LookSeqPanel();
+      jspLookSeq = new JScrollPane(lookseqPanel,
+          JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+          JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      jspLookSeq.setPreferredSize(new Dimension(jspLookSeq.getPreferredSize().width, 200));
+      jspLookSeq.setVisible(false);
+      main_box_panel.add(jspLookSeq);
+    }
+    
     // one line per entry display
     one_line_per_entry_display =
       new FeatureDisplay(getEntryGroup(), getSelection(),
@@ -391,7 +406,7 @@ public class EntryEdit extends JFrame
     mainPanel.add(jsp_feature_list, "Center");
     getContentPane().add(splitPane, BorderLayout.CENTER);
     
-    makeMenus(splitPane);
+    makeMenus(splitPane, jspLookSeq, lookseqPanel);
     pack();
 
     ClassLoader cl = this.getClass().getClassLoader();
@@ -708,7 +723,6 @@ public class EntryEdit extends JFrame
     {
       SwingWorker worker = new SwingWorker()
       {
-
         public Object construct()
         {
           final EntryFileDialog file_dialog = new EntryFileDialog(
@@ -895,8 +909,11 @@ public class EntryEdit extends JFrame
 
   /**
    *  Make and add the menus for this component.
+   * @param lookseqPanel 
    **/
-  private void makeMenus(final JSplitPane splitPane) 
+  private void makeMenus(final JSplitPane splitPane,
+                         final JScrollPane jspLookSeq, 
+                         final LookSeqPanel lookseqPanel) 
   {
     //final Font default_font = getDefaultFont();
 
@@ -1014,6 +1031,49 @@ public class EntryEdit extends JFrame
       }
     });
     display_menu.add(show_feature_list_item);
+    
+    if (lookseqPanel != null)
+    {
+      final JCheckBoxMenuItem show_lookseq_item = new JCheckBoxMenuItem(
+          "Show lookseq");
+      show_lookseq_item.setState(jspLookSeq.isVisible());
+      show_lookseq_item.addItemListener(new ItemListener()
+      {
+        public void itemStateChanged(ItemEvent event)
+        {
+          if (show_lookseq_item.getState())
+          {
+            if (lookseqPanel.getQueryStr() == null)
+            {
+              String urlStr = Options.getOptions().getProperty("lookseq");
+              // String urlStr =
+              // "http://www.sanger.ac.uk/cgi-bin/teams/team112/lookseq/get_data.pl?";
+              String queryStr = "from="
+                  + feature_display.getForwardBaseAtLeftEdge()
+                  + "&to=8000"
+                  + "&chr=MAL1&output=image&width=1024&lane=sample_2a&view=indel&display=|perfect|snps|inversions|pairlinks|potsnps|uniqueness|&debug=0";
+
+              lookseqPanel.setImage(urlStr, queryStr);
+            }
+
+            lookseqPanel.setFeatureDisplay(feature_display);
+            lookseqPanel.showOptions();
+            feature_display.addDisplayAdjustmentListener(lookseqPanel);
+          }
+          else
+            feature_display.removeDisplayAdjustmentListener(lookseqPanel);
+
+          jspLookSeq.setVisible(show_lookseq_item.getState());
+
+          if (show_lookseq_item.getState())
+            lookseqPanel.setDisplay(feature_display.getForwardBaseAtLeftEdge(),
+                feature_display.getLastVisibleForwardBase(), null);
+
+          validate();
+        }
+      });
+      display_menu.add(show_lookseq_item);
+    }
 
     menu_bar.add(display_menu);
   }
