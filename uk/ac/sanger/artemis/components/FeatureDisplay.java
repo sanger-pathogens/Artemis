@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.64 2008-11-27 10:48:19 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.65 2009-04-08 13:42:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -72,7 +72,7 @@ import javax.swing.JFrame;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.64 2008-11-27 10:48:19 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.65 2009-04-08 13:42:17 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -4570,7 +4570,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  being display in the forward direction will be the reverse strand if
    *  rev_comp_display is true.
    **/
-  protected int getForwardBaseAtLeftEdge() 
+  public int getForwardBaseAtLeftEdge() 
   {
     return left_edge_base;
   }
@@ -4686,7 +4686,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Return the number of bases we can fit on screen at once, ie the number
    *  that will fit side by side on the canvas.
    **/
-  protected int getMaxVisibleBases() 
+  public int getMaxVisibleBases() 
   {
     return (int)(getWidth()/getScaleValue());
   }
