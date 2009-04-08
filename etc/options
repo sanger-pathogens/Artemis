@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.60 2009-04-08 14:37:18 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.61 2009-04-08 15:14:58 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -821,7 +821,9 @@ hyperlinks = \
   Superfamily http://supfam.org/SUPERFAMILY/cgi-bin/scop.cgi?ipid=
 
 # Lookseq url
-#lookseq = http://www.sanger.ac.uk/cgi-bin/teams/team112/lookseq/get_data.pl?
+lookseq = http://www.sanger.ac.uk/cgi-bin/teams/team112/lookseq/get_data.pl?
+lookseq_chr  = MAL3
+lookseq_lane = sample_7a
 
 #
 # CHADO DATABASE OPTIONS 
