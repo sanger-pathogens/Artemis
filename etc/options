@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.59 2009-04-06 14:18:22 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.60 2009-04-08 14:37:18 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -817,7 +817,11 @@ hyperlinks = \
   TIGR_TIGRFAMS http://cmr.tigr.org/tigr-scripts/CMR/HmmReport.cgi?hmm_acc= \
   OPI http://chemlims.com/OPI/MServlet.ChemInfo?module=GeneGo&act=findGenes&Gene_Name_= \
   GO http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term= \
-  PANTHER http://www.pantherdb.org/panther/family.do?clsAccession=
+  PANTHER http://www.pantherdb.org/panther/family.do?clsAccession= \
+  Superfamily http://supfam.org/SUPERFAMILY/cgi-bin/scop.cgi?ipid=
+
+# Lookseq url
+#lookseq = http://www.sanger.ac.uk/cgi-bin/teams/team112/lookseq/get_data.pl?
 
 #
 # CHADO DATABASE OPTIONS 
