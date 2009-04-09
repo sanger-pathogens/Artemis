@@ -1652,6 +1652,17 @@ public class DNADraw extends ScrollPanel
     return null;
   }
   
+  public Block getBlockAtBasePosition(int bend)
+  {
+    for(int i=0; i<block.size(); i++)
+    {
+      Block b = (Block) block.get(i);
+      if(b.getBend() == bend)
+        return b;
+    }
+    return null;
+  }
+  
 ////////////////////
 // DRAG AND DROP
 ////////////////////
