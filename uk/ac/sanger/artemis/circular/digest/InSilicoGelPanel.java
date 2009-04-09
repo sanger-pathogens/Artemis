@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -42,6 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
+import uk.ac.sanger.artemis.circular.Block;
 import uk.ac.sanger.artemis.components.FileViewer;
 
 public class InSilicoGelPanel extends JPanel implements ActionListener
@@ -179,15 +181,7 @@ public class InSilicoGelPanel extends JPanel implements ActionListener
 
     for (int i = 0; i < genomeFragments.size(); i++)
     {
-      int fragmentLength = genomeFragments.get(i).genomeFragmentLength;
-
-      final int y;
-      if (isDrawLog())
-        y = getLogValue(fragmentLength, marginHeight, gelHeight);
-      else
-        y = gelHeight
-            + marginHeight
-            - (int) (((float) (gelHeight) / (float) (MAX_FRAGMENT_LENGTH - MIN_FRAGMENT_LENGTH)) * fragmentLength);
+      final int y = getYPosition(genomeFragments.get(i), gelHeight);
 
       if ((genomeFragments.get(i).bandCutSite == null) || 
           !genomeFragments.get(i).bandCutSite.isHighlighted())
@@ -207,6 +201,19 @@ public class InSilicoGelPanel extends JPanel implements ActionListener
     }
 
     drawScale(g2D, stroke, gelHeight);
+  }
+  
+  private int getYPosition(final FragmentBand band, int gelHeight)
+  {
+    int fragmentLength = band.genomeFragmentLength;
+    final int y;
+    if (isDrawLog())
+      y = getLogValue(fragmentLength, marginHeight, gelHeight);
+    else
+      y = gelHeight
+          + marginHeight
+          - (int) (((float) (gelHeight) / (float) (MAX_FRAGMENT_LENGTH - MIN_FRAGMENT_LENGTH)) * fragmentLength);
+    return y;
   }
 
   /**
@@ -247,6 +254,19 @@ public class InSilicoGelPanel extends JPanel implements ActionListener
 
   private static final double LOG10SCALE = 1.d / Math.log(10);
 
+  protected FragmentBand getBandAtLocation(Point loc)
+  {
+    int gelHeight = (panelHeight - (2 * marginHeight));
+    for (int i = 0; i < genomeFragments.size(); i++)
+    {
+      int y = getYPosition(genomeFragments.get(i), gelHeight);
+
+      if(loc.y == y)
+        return genomeFragments.get(i);
+    }
+    return null;
+  }
+  
   /**
    * Get base 10 commons log
    * 

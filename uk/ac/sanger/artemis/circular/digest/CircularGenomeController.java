@@ -448,6 +448,32 @@ public class CircularGenomeController
       }
     };
     dna.addMouseListener(popupListener);
+
+    MouseMotionListener gelMouseMotionListener = new MouseMotionAdapter()
+    {
+      Block lastBlock = null;
+      Color lastBlockColour = null;
+      public void mouseMoved(MouseEvent me)
+      {
+        final FragmentBand band = inSilicoGelPanel.getBandAtLocation(me.getPoint());
+        if(lastBlock != null)
+        {
+          lastBlock.setColour(lastBlockColour);
+          dna.repaint();
+        }
+        if(band != null)
+        {
+          CutSite cs = band.bandCutSite;
+          lastBlock = dna.getBlockAtBasePosition(cs.getFivePrime());
+          lastBlockColour = lastBlock.getColour();
+          lastBlock.setColour(Color.GREEN);
+          dna.repaint();
+        }
+        else
+          lastBlock = null;
+      }
+    };
+    inSilicoGelPanel.addMouseMotionListener(gelMouseMotionListener);
   }
 
   /**
