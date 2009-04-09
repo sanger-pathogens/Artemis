@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.76 2009-04-08 15:16:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.77 2009-04-09 08:15:58 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.76 2009-04-08 15:16:44 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.77 2009-04-09 08:15:58 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1055,11 +1055,11 @@ public class EntryEdit extends JFrame
 
               if(Options.getOptions().getProperty("lookseq_chr") != null)
                 queryStr = queryStr.replaceFirst(
-                    "chr=\\w+", "chr="+Options.getOptions().getProperty("lookseq_chr").trim());
+                    "chr=[^&]+", "chr="+Options.getOptions().getProperty("lookseq_chr").trim());
               
               if(Options.getOptions().getProperty("lookseq_lane") != null)
                 queryStr = queryStr.replaceFirst(
-                    "lane=\\w+", "lane="+Options.getOptions().getProperty("lookseq_lane").trim());
+                    "lane=[^&]+", "lane="+Options.getOptions().getProperty("lookseq_lane").trim());
               
               lookseqPanel.setImage(urlStr, queryStr);
             }
