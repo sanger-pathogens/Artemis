@@ -71,6 +71,8 @@ public class LookSeqPanel extends JPanel
   private int lastEnd   = -1;
   private int drawCrossHairAt = -1;
   final JPopupMenu popup  = new JPopupMenu("Plot Options");
+  private static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(LookSeqPanel.class);
 
   public LookSeqPanel()
   {
@@ -250,6 +252,7 @@ public class LookSeqPanel extends JPanel
       ii = new ImageIcon(new URL(urlStr+queryStr));
       setPreferredSize(new Dimension(ii.getIconWidth(),
           ii.getIconHeight()));
+      logger4j.debug("LookSeq URL :: "+urlStr+queryStr);
     }
     catch (MalformedURLException e)
     {
@@ -502,10 +505,10 @@ public class LookSeqPanel extends JPanel
     
     urlStr = urlStrField.getText().trim();
     queryStr = queryStr.replaceFirst(
-        "chr=\\w+", "chr="+sampleField.getText().trim());
+        "chr=[^&]+", "chr="+sampleField.getText().trim());
     
     queryStr = queryStr.replaceFirst(
-        "lane=\\w+", "lane="+laneField.getText().trim());
+        "lane=[^&]+", "lane="+laneField.getText().trim());
   }
   
   /**
