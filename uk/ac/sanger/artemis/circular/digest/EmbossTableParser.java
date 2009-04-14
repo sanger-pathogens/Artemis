@@ -55,8 +55,14 @@ public class EmbossTableParser
 			if ("Start".equals(parts[0]))
 				continue;
 			
-			CutSite cutSite = new CutSite(
+			CutSite cutSite;
+			
+			if(parts.length > 8) // new EMBOSS format
+			  cutSite = new CutSite(
 					parts[3], parts[5], parts[6], parts[7], parts[8], parts[2]);
+			else
+			  cutSite = new CutSite(
+			      parts[2], parts[4], parts[5], parts[6], parts[7], "+");
 			list.add(cutSite);
 		}
 		return list;
