@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.26 2008-11-20 16:39:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.27 2009-04-16 08:28:21 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -40,7 +40,7 @@ import javax.swing.JOptionPane;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.26 2008-11-20 16:39:49 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.27 2009-04-16 08:28:21 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -228,12 +228,15 @@ abstract public class SimpleDocumentEntry
 
             fake_fasta_features.add(new_feature);
 
-            // record coordinates to adjust feature coordinateds
+            // record coordinates to adjust feature coordinates
             if(isGFF)
             {
               if(contig_ranges == null)
-                contig_ranges = new Hashtable();
-              contig_ranges.put(header_strings[i], new_range);
+                contig_ranges = new Hashtable();           
+
+              // find the sequence id from the header
+              String thisHeader[] = header_strings[i].split("\\s");
+              contig_ranges.put(thisHeader[0], new_range);
             }
           }
           catch(InvalidRelationException e) 
