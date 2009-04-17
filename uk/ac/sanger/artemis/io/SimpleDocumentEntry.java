@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.27 2009-04-16 08:28:21 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.28 2009-04-17 13:51:37 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -40,7 +40,7 @@ import javax.swing.JOptionPane;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.27 2009-04-16 08:28:21 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.28 2009-04-17 13:51:37 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -114,15 +114,14 @@ abstract public class SimpleDocumentEntry
     if(read_listener != null)
       addReadListener(read_listener);
 
-//tjc  final Reader in_file = getDocument().getReader();
-
     final LinePushBackReader pushback_reader =
               getDocument().getLinePushBackReader();
 
     LineGroup new_line_group;
 
     boolean isGFF = false;
-
+    final int MAX_LOOP = 9999;
+    
     while((new_line_group =
             LineGroup.readNextLineGroup(pushback_reader)) != null) 
     {
@@ -137,7 +136,6 @@ abstract public class SimpleDocumentEntry
         // try several times because adding the Feature may cause more than
         // one exception
         int i;
-        final int MAX_LOOP = 9999;
         EntryInformationException saved_error = null;
 
         for(i = 0; i<MAX_LOOP; ++i) 
@@ -162,6 +160,8 @@ abstract public class SimpleDocumentEntry
         addLineGroup(new_line_group);
     }
 
+    pushback_reader.close();
+    
     // we added some features above hence:
     last_change_time = null;
 
