@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.65 2009-01-13 10:42:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.66 2009-04-17 13:38:44 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -50,7 +50,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.65 2009-01-13 10:42:26 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.66 2009-04-17 13:38:44 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -91,6 +91,31 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   private short duplicate = 0;
   private boolean lazyLoaded = false;
   private org.gmod.schema.sequence.Feature chadoLazyFeature;
+  
+  private static String MAP_DECODE[][] = {
+    { " ",  "%20" },  // white space
+    { ",",  "%2C" },  // comma
+    { ";",  "%3B" },  // semi-colon
+    { "=",  "%3D" },  // equals
+    { "\t", "%09" },  // tab
+    { " ",  "+"   },  // white space
+    { "+",  "%2B" },
+    { "(",  "%28" },  // left bracket
+    { ")",  "%29" }   // right bracket
+  };
+  
+  private static String MAP_ENCODE[][] = {
+//  { " ",  "%20" },  // white space
+    { ",",  "%2C" },  // comma 
+    { ";",  "%3B" },  // semi-colon
+    { "=",  "%3D" },  // equals
+    { "\t", "%09" },  // tab
+    { "+",  "%2B" },
+    { " ",  "+"   },  // white space
+    { "(",  "%28" },  // left bracket
+    { ")",  "%29" },  // right bracket
+    { "\n", "%5C" }   // new-line 
+  };
   
   /**
    *  Create a new GFFStreamFeature object.  The feature should be added
@@ -589,36 +614,24 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     return auto;
   }
   
+
+  
   /**
-  *
   * For gff-version 3:
   * http://song.sourceforge.net/gff3-jan04.shtml
   *
   * Remove URL escaping rule (e.g. space="%20" or "+")
-  *
   */
   public static String decode(String s)
   {
-    final String map[][] = {
-                             { " ",  "%20" },  // white space
-                             { ",",  "%2C" },  // comma
-                             { ";",  "%3B" },  // semi-colon
-                             { "=",  "%3D" },  // equals
-                             { "\t", "%09" },  // tab
-                             { " ",  "+"   },  // white space
-                             { "+",  "%2B" },
-                             { "(",  "%28" },  // left bracket
-                             { ")",  "%29" }   // right bracket
-                           };
-
     int ind;
     String enc;
     String dec;
 
-    for(int i=0; i<map.length; i++)
+    for(int i=0; i<MAP_DECODE.length; i++)
     {
-      enc = map[i][1];
-      dec = map[i][0];
+      enc = MAP_DECODE[i][1];
+      dec = MAP_DECODE[i][0];
       while( (ind = s.indexOf(enc)) > -1)
         s = s.substring(0,ind) + dec + s.substring(ind+enc.length());
     }
@@ -626,37 +639,23 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     return s;
   }
 
+  
   /**
-  *
   * For gff-version 3:
   * http://song.sourceforge.net/gff3-jan04.shtml
   *
   * Add URL escaping rule (e.g. space="%20" or "+")
-  *
   */
   public static String encode(String s)
   {
-    final String map[][] = {
-//                           { " ",  "%20" },  // white space
-                             { ",",  "%2C" },  // comma 
-                             { ";",  "%3B" },  // semi-colon
-                             { "=",  "%3D" },  // equals
-                             { "\t", "%09" },  // tab
-                             { "+",  "%2B" },
-                             { " ",  "+"   },  // white space
-                             { "(",  "%28" },  // left bracket
-                             { ")",  "%29" },  // right bracket
-                             { "\n", "%5C" }   // new-line 
-                           };
-
     int ind;
     String enc;
     String dec;
 
-    for(int i=0; i<map.length; i++)
+    for(int i=0; i<MAP_ENCODE.length; i++)
     {
-      enc = map[i][1];
-      dec = map[i][0];
+      enc = MAP_ENCODE[i][1];
+      dec = MAP_ENCODE[i][0];
       while( (ind = s.indexOf(dec)) > -1 )
         s = s.substring(0,ind) + enc + s.substring(ind+1);
     }
