@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.22 2009-03-27 09:03:55 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.23 2009-04-17 11:02:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -28,16 +28,24 @@ package uk.ac.sanger.artemis.components.database;
 import uk.ac.sanger.artemis.components.*;
 
 import uk.ac.sanger.artemis.Entry;
+import uk.ac.sanger.artemis.FeatureVector;
+import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.Range;
 
+import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.JScrollPane;
 import javax.swing.JPanel;
@@ -49,8 +57,13 @@ import javax.swing.tree.TreePath;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.organism.OrganismProp;
 import org.gmod.schema.sequence.Feature;
+import org.gmod.schema.sequence.FeatureLoc;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -114,11 +127,38 @@ public class DatabaseJPanel extends JPanel
     status_line.setBorder(compound);
     add(status_line, BorderLayout.SOUTH);
     
-    JLabel title_line = new JLabel("Database List");
+    Box xBox = Box.createHorizontalBox();   
+    JLabel title_line = new JLabel("DATABASE");
     title_line.setMinimumSize(new Dimension(100, font_height));
-    title_line.setPreferredSize(new Dimension(100, font_height));
+    title_line.setPreferredSize(new Dimension(250, font_height));
     title_line.setBorder(compound);
-    add(title_line, BorderLayout.NORTH);
+    xBox.add(title_line);
+    
+    final JTextField openGeneText = new JTextField(6);
+    openGeneText.addKeyListener(new KeyAdapter() 
+    {
+      public void keyPressed(KeyEvent e) 
+      {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER)
+          getEntryEditFromDatabase(entry_source, splash_main,
+              openGeneText.getText().trim());
+      } 
+    });
+    JButton openBtn = new JButton("Open:");
+    openBtn.setToolTipText("Open Artemis for a chromosome or at a given gene");
+    openBtn.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        getEntryEditFromDatabase(entry_source, splash_main,
+            openGeneText.getText().trim());
+      }
+    });
+    xBox.add(Box.createHorizontalGlue());
+    xBox.add(openBtn);
+    xBox.add(openGeneText);
+    
+    add(xBox, BorderLayout.NORTH);
   }
 
   /**
@@ -173,7 +213,7 @@ public class DatabaseJPanel extends JPanel
     }
     catch(NullPointerException npe)
     {
-    	npe.printStackTrace();
+      npe.printStackTrace();
     }
   }
   
@@ -190,6 +230,35 @@ public class DatabaseJPanel extends JPanel
                           final Splash splash_main,
                           final InputStreamProgressListener stream_progress_listener,
                           final String entryName)
+  {
+    return show(entry_source,
+        (splash_main == null ? null : splash_main.getCanvas()), 
+        (splash_main == null ? null : splash_main.getStatusLabel()),
+        splash_main, stream_progress_listener,
+        entryName, false, false);
+  }
+  
+
+  /**
+   * Open an Artemis EntryEdit window
+   * @param entry_source
+   * @param srcComponent
+   * @param status_line
+   * @param splash_main
+   * @param stream_progress_listener
+   * @param entryName    e.g. Pfalciparum:Pf3D7_09 or 
+   *                          Pfalciparum:Pf3D7_09:20050..40000
+   * @param isNotSrcFeature true is the entry name may not be a source feature
+   * @return
+   */
+  public static EntryEdit show(final DatabaseEntrySource entry_source,
+                          final JComponent srcComponent,
+                          final JLabel status_line,
+                          final Splash splash_main,
+                          final InputStreamProgressListener stream_progress_listener,
+                          final String entryName,
+                          final boolean isNotSrcFeature,
+                          final boolean splitGFFEntry)
   {
     final String entry[] = entryName.split(":");
     String url = (String)entry_source.getLocation();
@@ -221,9 +290,17 @@ public class DatabaseJPanel extends JPanel
     
     Feature f = doc.getFeatureByUniquename(entry[1]);
     
+    if(isNotSrcFeature && f.getFeatureLocsForFeatureId() != null
+                       && f.getFeatureLocsForFeatureId().size() > 0)
+    {
+      Iterator it = f.getFeatureLocsForFeatureId().iterator();
+      f = ((FeatureLoc) it.next()).getFeatureBySrcFeatureId();
+    }
+    
     return openEntry(Integer.toString(f.getFeatureId()), entry_source, 
-        splash_main.getCanvas(), splash_main.getStatusLabel(), stream_progress_listener,
-        false, splash_main,  entry[1], userName, range);
+        srcComponent, status_line, 
+        stream_progress_listener,
+        splitGFFEntry, splash_main,  f.getUniqueName(), userName, range);
   }
 
   /**
@@ -297,7 +374,52 @@ public class DatabaseJPanel extends JPanel
   }
 
   /**
-   * 
+   * Open an Artemis entry given a feature name. If the name is
+   * a feature on the sequence (i.e. not the source feature) the
+   * display will open at that region.
+   * @param entry_source
+   * @param splash_main
+   * @param featureName
+   */
+  private void getEntryEditFromDatabase(final DatabaseEntrySource entry_source,
+                         final Splash splash_main,
+                         final String featureName)
+  {
+    SwingWorker entryWorker = new SwingWorker()
+    {
+      public Object construct()
+      {
+        Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
+        Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
+        try
+        {
+          DatabaseJPanel.this.setCursor(cbusy);
+          EntryEdit ee = show(entry_source, 
+             DatabaseJPanel.this, status_line, splash_main,
+             stream_progress_listener, ":" + featureName,
+             true, splitGFFEntry);
+          goTo(ee, featureName);
+        }
+        catch (NullPointerException npe)
+        {
+          //npe.printStackTrace();
+          JOptionPane.showMessageDialog(DatabaseJPanel.this, 
+              featureName + " not found!", 
+              "Failed to Open", JOptionPane.WARNING_MESSAGE);
+          logger4j.debug(featureName + " not found!");
+        }
+        finally
+        {
+          DatabaseJPanel.this.setCursor(cdone);
+        }
+        return null;
+      }
+    };
+    entryWorker.start();
+  }
+  
+  /**
+   * Open an Artemis entry
    * @param srcfeatureId
    * @param entry_source
    * @param srcComponent
@@ -419,7 +541,6 @@ public class DatabaseJPanel extends JPanel
           return null;
       }
     }
-
     return null;
   }
   
@@ -448,5 +569,31 @@ public class DatabaseJPanel extends JPanel
   public void setSplitGFFEntry(boolean splitGFFEntry)
   {
     this.splitGFFEntry = splitGFFEntry;
+  }
+  
+  /**
+   * Go to a named feature
+   * @param ee
+   * @param geneName
+   */
+  private static void goTo(final EntryEdit ee, final String geneName)
+  {
+    Selection selection = ee.getSelection();
+    selection.clear();
+
+    final StringVector qualifiers_to_search = new StringVector();
+    qualifiers_to_search.add(Options.getOptions().getAllGeneNames());
+
+    FeatureVector features = ee.getEntryGroup().getAllFeatures();
+    for (int i = 0; i < features.size(); i++)
+    {
+      uk.ac.sanger.artemis.Feature thisFeature = features.elementAt(i);
+      if (thisFeature.containsText(geneName, true, false, qualifiers_to_search))
+      {
+        selection.set(thisFeature);
+        break;
+      }
+    }
+    ee.getGotoEventSource().gotoBase(selection.getLowestBaseOfSelection());
   }
 }
