@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/MSPcrunchStreamFeature.java,v 1.6 2006-02-14 13:04:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/MSPcrunchStreamFeature.java,v 1.7 2009-04-20 14:41:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -33,12 +33,15 @@ import java.io.*;
  *  A StreamFeature that thinks it is a MSPcrunch feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: MSPcrunchStreamFeature.java,v 1.6 2006-02-14 13:04:42 tjc Exp $
+ *  @version $Id: MSPcrunchStreamFeature.java,v 1.7 2009-04-20 14:41:35 tjc Exp $
  **/
 
 public class MSPcrunchStreamFeature
     extends SimpleDocumentFeature
     implements DocumentFeature, StreamFeature, ComparableFeature {
+  
+  private static Key KEY_X = new Key ("CRUNCH_X");
+  private static Key KEY_D = new Key ("CRUNCH_D");
 
   /**
    *  Create a new MSPcrunchStreamFeature object.  The feature should be added
@@ -225,6 +228,8 @@ public class MSPcrunchStreamFeature
             desc_buffer.append (" ");
         }
         description = desc_buffer.toString ();
+        
+        setKey(KEY_X);
       } 
       else 
       {
@@ -233,8 +238,10 @@ public class MSPcrunchStreamFeature
         subject_end = line_bits[6];
         subject_id  = line_bits[7];
         description = line_bits[8];
+        
+        setKey(KEY_D);
       }
-
+      
       final Qualifier blast_score_qualifier =
         new Qualifier ("blast_score", line_bits[0]);
 
@@ -266,16 +273,6 @@ public class MSPcrunchStreamFeature
       setQualifier (subject_start_qualifier);
       setQualifier (subject_end_qualifier);
       setQualifier (subject_id_qualifier);
-
-      final Key key;
-
-      if (crunch_x) {
-        key = new Key ("CRUNCH_X");
-      } else {
-        key = new Key ("CRUNCH_D");
-      }
-
-      setKey (key);
 
 //    final StringVector note_values = new StringVector ();
 //    note_values.add (description);
