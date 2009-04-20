@@ -123,23 +123,24 @@ public class ChadoTransactionManager
   //controlled vocab tags
   public static String CV_NAME[];
   
-  static
-  {
-    initCV();
-  }
-
-  
   //synonym tags from cv
   private static String synonym_tags[] = null;
-  public static String SYNONYM_TAG_CVNAME = "genedb_synonym_type";
+  public static String SYNONYM_TAG_CVNAME = 
+         Options.getOptions().getProperty("synonym_cvname");
   private EntryGroup entryGroup;
   // Db where db entries  are stored corresponding to controlled curation CV terms
   public static String CONTROLLED_CURATION_DB = "CCGEN";
   public static String PRODUCT_DB = "PRODUCT";
-  public static String PRODUCT_CV = "genedb_products";
+  public static String PRODUCT_CV = 
+         Options.getOptions().getProperty("product_cvname");
   
   // number of SQL commands successfully processed during a commit
   public static int commitReturnValue = 0;
+  
+  static
+  {
+    initCV();
+  }
   
   public ChadoTransactionManager()
   {
@@ -150,7 +151,7 @@ public class ChadoTransactionManager
   {
     if(Options.getOptions().getPropertyTruthValue("product_cv"))
     { 
-      logger4j.debug("PRODUCT STORED AS A CV (product_cv=yes)");
+      logger4j.debug("PRODUCT STORED AS A CV (product_cv=yes) IN "+PRODUCT_CV);
       CV_NAME = new String[]
         { "GO",
           "controlled_curation",
@@ -165,6 +166,7 @@ public class ChadoTransactionManager
           "controlled_curation",
           "class" };
     }
+    logger4j.debug("SYNONYM NAMES ARE STORED IN "+SYNONYM_TAG_CVNAME);
   }
   
   public void setEntryGroup(final EntryGroup entryGroup)
