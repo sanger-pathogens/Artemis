@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LineGroup.java,v 1.12 2009-03-04 16:50:02 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/LineGroup.java,v 1.13 2009-04-20 14:39:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -37,7 +37,7 @@ import uk.ac.sanger.artemis.util.LinePushBackReader;
  *  that start with FT.
  *
  *  @author Kim Rutherford
- *  @version $Id: LineGroup.java,v 1.12 2009-03-04 16:50:02 tjc Exp $
+ *  @version $Id: LineGroup.java,v 1.13 2009-04-20 14:39:10 tjc Exp $
  *
  */
 
@@ -400,13 +400,12 @@ abstract class LineGroup
   private static int countChars (final String s, final char c)
   {
     int count = 0;
-
-    for (int i = 0 ; i < s.length () ; ++i) 
+    int index = 0;
+    while((index = s.indexOf(c, index)) > -1)
     {
-      if (s.charAt (i) == c) 
-        ++count;
+      count++;
+      index++;
     }
-
     return count;
   }
 
