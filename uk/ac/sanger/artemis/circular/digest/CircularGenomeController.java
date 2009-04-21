@@ -220,7 +220,7 @@ public class CircularGenomeController
       addMouseListener(rd, dna, inSilicoGelPanel);
     }
 
-    frame.setTitle (enzymes);
+    frame.setTitle ("Sandpiper :: "+enzymes);
     addMenuBar(frame);
     Dimension d = frame.getToolkit().getScreenSize();
 

@@ -43,7 +43,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
-import uk.ac.sanger.artemis.circular.Block;
 import uk.ac.sanger.artemis.components.FileViewer;
 
 public class InSilicoGelPanel extends JPanel implements ActionListener
