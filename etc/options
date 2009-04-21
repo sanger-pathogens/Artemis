@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.63 2009-04-20 07:41:14 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.64 2009-04-21 13:00:25 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -818,17 +818,13 @@ hyperlinks = \
   OPI http://chemlims.com/OPI/MServlet.ChemInfo?module=GeneGo&act=findGenes&Gene_Name_= \
   GO http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term= \
   PANTHER http://www.pantherdb.org/panther/family.do?clsAccession= \
-  Superfamily http://supfam.org/SUPERFAMILY/cgi-bin/scop.cgi?ipid=
+  Superfamily http://supfam.org/SUPERFAMILY/cgi-bin/scop.cgi?ipid= \
+  PDB http://www.rcsb.org/pdb/explore.do?structureId=
 
 # Lookseq url
 #lookseq = http://www.sanger.ac.uk/cgi-bin/teams/team112/lookseq/get_data.pl?
 #lookseq_chr  = MAL1
 #lookseq_lane = sample_7a
-
-#lookseq = http://intwebdev.sanger.ac.uk/cgi-bin/teams/team81/lookseq/get_data.pl?
-#lookseq_chr  = seq2
-#lookseq_lane = aln_srt.bam
-
 
 #
 # CHADO DATABASE OPTIONS 
