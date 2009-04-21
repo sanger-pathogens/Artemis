@@ -86,8 +86,14 @@ public class CircularGenomeController
   /**
    * Create in-silico Pulse Field Gel Electrophoresis from a restriction enzyme
    * digest and draw alongside DNAPlotter
+   * @param enzymes
+   * @param sequenceFiles
+   * @param restrictOutputs
+   * @throws Exception
    */
-  protected void setup(String enzymes, List<File> sequenceFiles)
+  protected void setup(String enzymes, 
+                       List<File> sequenceFiles,
+                       List<File> restrictOutputs)
       throws Exception
   {
     // add each sequence file to a different entry group
@@ -114,14 +120,18 @@ public class CircularGenomeController
       enzymes = promptForEnzymes();
 
     // run restrict
-    List<File> restrictOutputs = new Vector<File>(sequenceFiles.size());
-    for (int i = 0; i < sequenceFiles.size(); i++)
+    if(restrictOutputs == null)
     {
-      File sequenceFile = sequenceFiles.get(i);
-      File restrictOutput = File.createTempFile("restrict_"
-          + sequenceFile.getName(), ".txt");
-      restrictOutputs.add(restrictOutput);
-      runEmbossRestrict(sequenceFile.getAbsolutePath(), enzymes, restrictOutput);
+      restrictOutputs = new Vector<File>(sequenceFiles.size());
+      for (int i = 0; i < sequenceFiles.size(); i++)
+      {
+        File sequenceFile = sequenceFiles.get(i);
+        File restrictOutput = File.createTempFile("restrict_"
+            + sequenceFile.getName(), ".txt");
+        restrictOutputs.add(restrictOutput);
+        runEmbossRestrict(sequenceFile.getAbsolutePath(), enzymes,
+            restrictOutput);
+      }
     }
     drawResults(restrictOutputs, entries, sequenceFiles, enzymes);
   }
@@ -578,10 +588,21 @@ public class CircularGenomeController
     try
     {
       List<File> fileNames = null;
+      List<File> restrictOutputs = null;
       if (args != null && args.length > 0)
       {
         if (args.length == 1)
         {
+          if(args[0].startsWith("-h"))
+          {
+            System.out.println("-h\t\tshow help");
+            System.out.println("-enz\t\tcomma separated list of digest enzymes (optional)");
+            System.out.println("-seq\t\tspace separated list of sequences (optional)");
+            System.out.println(
+                "-restrict\tspace separated lists of EMBOSS restrict output "+
+                "in the same order as the sequences (optional).");
+            System.exit(0); 
+          }
           fileNames = new Vector<File>();
           fileNames.add(new File(args[0]));
         }
@@ -594,11 +615,29 @@ public class CircularGenomeController
           {
             if (fileNames == null)
               fileNames = new Vector<File>();
-            fileNames.add(new File(args[i + 1]));
+            
+            for(int j = i + 1; j < args.length; j++)
+            {
+              if(args[j].startsWith("-"))
+                break;
+              fileNames.add(new File(args[j]));
+            }
+          }
+          else if (args[i].startsWith("-restrict"))
+          {
+            if (restrictOutputs == null)
+              restrictOutputs = new Vector<File>();
+            
+            for(int j = i + 1; j < args.length; j++)
+            {
+              if(args[j].startsWith("-"))
+                break;
+              restrictOutputs.add(new File(args[j]));
+            }
           }
         }
       }
-      controller.setup(enzymes, fileNames);
+      controller.setup(enzymes, fileNames, restrictOutputs);
     }
     catch (Exception e)
     {
