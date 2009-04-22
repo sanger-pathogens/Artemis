@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.13 2008-01-22 10:05:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.14 2009-04-22 08:49:11 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -52,7 +52,7 @@ import com.sshtools.j2ssh.sftp.FileAttributes;
  *  A popup menu with viewing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: ViewMenu.java,v 1.13 2008-01-22 10:05:47 tjc Exp $
+ *  @version $Id: ViewMenu.java,v 1.14 2009-04-22 08:49:11 tjc Exp $
  **/
 
 public class ViewMenu extends SelectionMenu 
@@ -418,6 +418,20 @@ public class ViewMenu extends SelectionMenu
       }
     });
 
+
+    final JMenuItem filter_by_multiple_sys_id =
+      new JMenuItem("Multiple Systematic Name Qualifier ...");
+    filter_by_multiple_sys_id.addActionListener(new ActionListener() 
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        showFilterByMultipleID(getParentFrame(), selection,
+                               entry_group, goto_event_source,
+                               base_plot_group);
+      }
+    });
+    
+    
     final JMenuItem filter_by_selection_item =
       new JMenuItem("Selected Features ...");
     filter_by_selection_item.addActionListener(new ActionListener() 
@@ -438,6 +452,7 @@ public class ViewMenu extends SelectionMenu
     feature_filters_menu.add(overlapping_cds_features_item);
     feature_filters_menu.add(same_stop_cds_features_item);
     feature_filters_menu.add(missing_qualifier_features_item);
+    feature_filters_menu.add(filter_by_multiple_sys_id);
     feature_filters_menu.addSeparator();
     feature_filters_menu.add(filter_by_key_item);
     feature_filters_menu.add(filter_by_selection_item);
@@ -1157,6 +1172,59 @@ public class ViewMenu extends SelectionMenu
 
     feature_list_frame.setVisible (true);
   }
+  
+  
+  /**
+   *  Popup a FeatureListFrame containing the features that have multiple
+   *  systematic ID qualifiers (e.g. two or more systematic_id or locus_tag).
+   *  @param parent_frame The parent JFrame.
+   *  @param selection The Selection to pass to the FeatureList.
+   *  @param entry_group The EntryGroup to pass to the FilteredEntryGroup.
+   *  @param goto_source The GotoEventSource to pass to the FeatureList.
+   *  @param base_plot_group The BasePlotGroup associated with this JMenu -
+   *    needed to call getCodonUsageAlgorithm()
+   **/
+  protected static void showFilterByMultipleID(final JFrame parent_frame,
+                      final Selection selection, final EntryGroup entry_group,
+                      final GotoEventSource goto_source,
+                      final BasePlotGroup base_plot_group)
+  {
+    final FeaturePredicate feature_predicate = new FeaturePredicate () 
+    {
+      public boolean testPredicate (final Feature feature) 
+      {
+        StringVector names = Options.getOptions().getSystematicQualifierNames();
+        
+        for(int i=0; i<names.size(); i++)
+        {
+          try
+          {
+            Qualifier qualifier = feature.getQualifierByName((String) names.get(i));
+            if(qualifier != null && qualifier.getValues().size() > 1)
+              return true;
+          }
+          catch (InvalidRelationException e){}
+        }
+        return false;
+      }
+    };
+
+    final String filter_name =
+      "features that have multiple systematic name qualifiers " +
+      "(filtered from: " + parent_frame.getTitle () + ")";
+
+    final FilteredEntryGroup filtered_entry_group =
+      new FilteredEntryGroup (entry_group, feature_predicate, filter_name);
+
+    final FeatureListFrame feature_list_frame =
+      new FeatureListFrame (filter_name,
+                            selection, goto_source, filtered_entry_group,
+                            base_plot_group);
+
+    feature_list_frame.setVisible (true);
+  }
+
+  
 
   /**
    *  Popup a FeatureListFrame containing only those features that are
