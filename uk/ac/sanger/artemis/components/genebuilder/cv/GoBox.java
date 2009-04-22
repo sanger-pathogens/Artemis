@@ -28,6 +28,8 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -35,6 +37,7 @@ import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.gmod.schema.cv.CvTerm;
@@ -56,42 +59,42 @@ public class GoBox extends AbstractCvBox
      {"EXP", "IC", "IDA", "IEA", "IEP", "IGC", "IGI", 
       "IMP", "IPI", "ISA", "ISM", "ISO", "ISS", 
       "NAS", "ND", "RCA", "TAS", "NR" }, 
-     {"EXP\t:: inferred from experiment",
-      "IC \t:: inferred by curator",
-      "IDA\t:: inferred from direct assay",
-      "IEA\t:: inferred from electronic annotation",
-      "IEP\t:: inferred from expression pattern",
-      "IGC\t:: inferred from genomic context",
-      "IGI\t:: inferred from genetic interaction",
-      "IMP\t:: inferred from mutant phenotype",
-      "IPI\t:: inferred from physical interaction",
-      "ISA\t:: inferred from sequence alignment",
-      "ISM\t:: inferred from sequence model",
-      "ISO\t:: inferred from sequence orthology",
-      "ISS\t:: inferred from sequence or structural similarity",
-      "NAS\t:: non-traceable author statement",
-      "ND \t:: no biological data available",
-      "RCA\t:: inferred from reviewed computational analysis",
-      "TAS\t:: traceable author statement",
-      "NR \t:: not recorded"},
-      { "inferred from experiment",
-        "inferred by curator",
-        "inferred from direct assay",
-        "inferred from electronic annotation",
-        "inferred from expression pattern",
-        "inferred from genomic context",
-        "inferred from genetic interaction",
-        "inferred from mutant phenotype",
-        "inferred from physical interaction",
-        "inferred from sequence alignment",
-        "inferred from sequence model",
-        "inferred from sequence orthology",
-        "inferred from sequence or structural similarity",
-        "non-traceable author statement",
-        "no biological data available",
-        "inferred from reviewed computational analysis",
-        "traceable author statement",
-        "not recorded"}
+     {"EXP\t:: Inferred from Experiment",
+      "IC \t:: Inferred by Curator",
+      "IDA\t:: Inferred from Direct Assay",
+      "IEA\t:: Inferred from Electronic Annotation",
+      "IEP\t:: Inferred from Expression Pattern",
+      "IGC\t:: Inferred from Genomic Context",
+      "IGI\t:: Inferred from Genetic Interaction",
+      "IMP\t:: Inferred from Mutant Phenotype",
+      "IPI\t:: Inferred from Physical Interaction",
+      "ISA\t:: Inferred from Sequence Alignment",
+      "ISM\t:: Inferred from Sequence Model",
+      "ISO\t:: Inferred from Sequence Orthology",
+      "ISS\t:: Inferred from Sequence or Structural Similarity",
+      "NAS\t:: Non-traceable Author Statement",
+      "ND \t:: No biological Data available",
+      "RCA\t:: inferred from Reviewed Computational Analysis",
+      "TAS\t:: Traceable Author Statement",
+      "NR \t:: Not Recorded"},
+      { "Inferred from Experiment",
+        "Inferred by Curator",
+        "Inferred from Direct Assay",
+        "Inferred from Electronic Annotation",
+        "Inferred from Expression Pattern",
+        "Inferred from Genomic Context",
+        "Inferred from Genetic Interaction",
+        "Inferred from Mutant Phenotype",
+        "Inferred from Physical Interaction",
+        "Inferred from Sequence Alignment",
+        "Inferred from Sequence Model",
+        "Inferred from Sequence Orthology",
+        "Inferred from Sequence or Structural Similarity",
+        "Non-traceable Author Statement",
+        "No biological Data available",
+        "inferred from Reviewed Computational Analysis",
+        "Traceable Author Statement",
+        "Not Recorded"}
   };
   
   private Dimension go_dimension;
@@ -197,7 +200,17 @@ public class GoBox extends AbstractCvBox
     evidenceList.setOpaque(false);
     evidenceList.setToolTipText("evidence column");
     evidenceList.setSelectedIndex( getEvidenceIndex(evidence) );
-  
+    evidenceList.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if(((String)evidenceList.getSelectedItem()).startsWith("NR \t::"))
+          JOptionPane.showMessageDialog(null, 
+              "This evicence code is obsolete:\n"+
+              evidenceList.getSelectedItem(), 
+              "Obsolete Evidence Code", JOptionPane.WARNING_MESSAGE);
+      } 
+    });
     evidenceListDimension = evidenceList.getPreferredSize();
     evidenceListDimension = new Dimension(90,(int)evidenceListDimension.getHeight());
     evidenceList.setPreferredSize(evidenceListDimension);
