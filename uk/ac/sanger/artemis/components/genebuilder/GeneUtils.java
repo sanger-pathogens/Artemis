@@ -1127,7 +1127,9 @@ public class GeneUtils
       if((index = oldId.indexOf(':')) > -1)
       {
         final String newId;
-        if(segmentHash != null && segmentHash.size() > 1)
+        if(  segmentHash != null && 
+           ( segmentHash.size() > 1 ||
+             child.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL)))
         {
           final Set idKeys = segmentHash.keySet();
           final Hashtable newSegmentHash = new Hashtable(idKeys.size());

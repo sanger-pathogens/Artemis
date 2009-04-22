@@ -1843,7 +1843,9 @@ public class ChadoTransactionManager
     if(qualifierName.equals("ID"))
     {
       Hashtable segmentRangeStore = feature.getSegmentRangeStore();
-      if(segmentRangeStore != null && segmentRangeStore.size() > 1)
+      if(   segmentRangeStore != null && 
+          ( segmentRangeStore.size() > 1 || 
+          feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL)) )
       {
         Hashtable mappingIds = feature.getNewIdMapToOldId();
         
