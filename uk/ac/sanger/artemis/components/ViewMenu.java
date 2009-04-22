@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.14 2009-04-22 08:49:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/ViewMenu.java,v 1.15 2009-04-22 08:50:13 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -52,7 +52,7 @@ import com.sshtools.j2ssh.sftp.FileAttributes;
  *  A popup menu with viewing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: ViewMenu.java,v 1.14 2009-04-22 08:49:11 tjc Exp $
+ *  @version $Id: ViewMenu.java,v 1.15 2009-04-22 08:50:13 tjc Exp $
  **/
 
 public class ViewMenu extends SelectionMenu 
@@ -420,7 +420,7 @@ public class ViewMenu extends SelectionMenu
 
 
     final JMenuItem filter_by_multiple_sys_id =
-      new JMenuItem("Multiple Systematic Name Qualifier ...");
+      new JMenuItem("Duplicate Systematic Name Qualifier ...");
     filter_by_multiple_sys_id.addActionListener(new ActionListener() 
     {
       public void actionPerformed(ActionEvent event) 
