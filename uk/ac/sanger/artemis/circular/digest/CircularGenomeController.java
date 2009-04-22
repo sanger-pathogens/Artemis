@@ -323,6 +323,7 @@ public class CircularGenomeController
   private void exitApp(JFrame f)
   {
     f.dispose();
+    System.exit(0);
   }
 
   /**
