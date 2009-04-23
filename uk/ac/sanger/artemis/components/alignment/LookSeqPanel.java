@@ -539,6 +539,7 @@ public class LookSeqPanel extends JPanel
     {
       System.getProperties().put("http.proxyHost", proxyHostField.getText().trim());
       System.getProperties().put("http.proxyPort", proxyPortField.getText().trim());
+      System.getProperties().put("proxySet","true");
     }
     
     urlStr = urlStrField.getText().trim();
