@@ -1,4 +1,7 @@
 Version 11+
+    Option added in the View->Filter Features menu to search for Duplicate
+    Systematic Name Qualifier.
+
     LookSeq analysis panel can be displayed by setting the lookseq 
     value in the options file. An option under the Display menu then
     is used to shows the LookSeq read alignment panel in Artemis.
