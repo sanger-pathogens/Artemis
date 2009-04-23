@@ -98,7 +98,7 @@ public class LookSeqPanel extends JPanel
    * Build the popup menu.
    */
   private void setUpPopupMenu()
-  {
+  {     
     JCheckBoxMenuItem optionCoverage = new JCheckBoxMenuItem("Coverage", false);
     optionCoverage.addActionListener(new ActionListener()
     {
@@ -252,7 +252,9 @@ public class LookSeqPanel extends JPanel
       ii = new ImageIcon(new URL(urlStr+queryStr));
       setPreferredSize(new Dimension(ii.getIconWidth(),
           ii.getIconHeight()));
-      logger4j.debug("LookSeq URL :: "+urlStr+queryStr);
+      logger4j.debug("LookSeq URL    :: "+urlStr+queryStr);
+      logger4j.debug("Proxy Settings :: "+System.getProperty("http.proxyHost")+":"+
+                                          System.getProperty("http.proxyPort"));
     }
     catch (MalformedURLException e)
     {
@@ -496,12 +498,48 @@ public class LookSeqPanel extends JPanel
     c.anchor = GridBagConstraints.WEST;
     optionsPanel.add(laneField, c);
     
+    
+    
+    String proxyHost = "";
+    if(System.getProperty("http.proxyHost") != null)
+      proxyHost = System.getProperty("http.proxyHost");
+    
+    final JTextField proxyHostField = new JTextField(proxyHost,40);
+    c.gridy = 3;
+    c.gridx = 0;
+    c.anchor = GridBagConstraints.EAST;
+    optionsPanel.add(new JLabel("Proxy Host:"), c);
+    c.gridx = 1;
+    c.anchor = GridBagConstraints.WEST;
+    optionsPanel.add(proxyHostField, c);
+    
+    
+    String proxyPort = "";
+    if(System.getProperty("http.proxyPort") != null)
+      proxyPort = System.getProperty("http.proxyPort");
+    
+    final JTextField proxyPortField = new JTextField(proxyPort,40);
+    c.gridy = 4;
+    c.gridx = 0;
+    c.anchor = GridBagConstraints.EAST;
+    optionsPanel.add(new JLabel("Proxy Port:"), c);
+    c.gridx = 1;
+    c.anchor = GridBagConstraints.WEST;
+    optionsPanel.add(proxyPortField, c);
+    
+    
     String window_options[] = { "Display" };
     int select = JOptionPane.showOptionDialog(null, 
         optionsPanel,
         "Lookseq Options", JOptionPane.DEFAULT_OPTION,
         JOptionPane.QUESTION_MESSAGE, null, window_options,
         window_options[0]);
+    
+    if(!proxyHostField.getText().trim().equals(""))
+    {
+      System.getProperties().put("http.proxyHost", proxyHostField.getText().trim());
+      System.getProperties().put("http.proxyPort", proxyPortField.getText().trim());
+    }
     
     urlStr = urlStrField.getText().trim();
     queryStr = queryStr.replaceFirst(
