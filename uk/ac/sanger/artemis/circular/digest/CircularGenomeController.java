@@ -57,6 +57,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.Box;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -67,6 +69,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 /**
@@ -78,6 +81,7 @@ public class CircularGenomeController
   private JPanel gelPanel;
   private int hgt;
   private JFrame frame = new JFrame();
+  private boolean methylation = false;
 
   public CircularGenomeController()
   {
@@ -89,13 +93,16 @@ public class CircularGenomeController
    * @param enzymes
    * @param sequenceFiles
    * @param restrictOutputs
+   * @param methylation if true then RE recognition sites will not match methylated bases
    * @throws Exception
    */
   protected void setup(String enzymes, 
                        List<File> sequenceFiles,
-                       List<File> restrictOutputs)
+                       List<File> restrictOutputs,
+                       boolean methylation)
       throws Exception
   {
+    this.methylation = methylation;
     // add each sequence file to a different entry group
     List<EntryGroup> entries = new Vector<EntryGroup>();
     if (sequenceFiles != null && sequenceFiles.size() > 0)
@@ -146,18 +153,21 @@ public class CircularGenomeController
    * @throws IOException
    * @throws InterruptedException
    */
-  private void runEmbossRestrict(final String fileName, final String enzymes,
-      final File restrictOutput) throws IOException, InterruptedException
+  private void runEmbossRestrict(final String fileName, 
+                                 final String enzymes,
+                                 final File restrictOutput) throws IOException, InterruptedException
   {
     String[] args = { 
         System.getProperty("EMBOSS_ROOT") + "/bin/restrict", fileName, "-auto",
-        "-limit", "y", "-enzymes", enzymes, "-out",
+        "-limit", "y", "-enzymes", enzymes, 
+        methylation ? "-methylation" : "", 
+        "-out",
         restrictOutput.getCanonicalPath() };
 
     ProcessBuilder pb = new ProcessBuilder(args);
     pb.redirectErrorStream(true);
     Process p = pb.start();
-    System.err.print("**");
+    System.err.print("** Running restrict");
     try
     {
       InputStream is = p.getInputStream();
@@ -569,10 +579,21 @@ public class CircularGenomeController
     return entry;
   }
 
+  /**
+   * Prompt for the enzyme list.
+   * @return
+   */
   private String promptForEnzymes()
   {
-    return JOptionPane.showInputDialog(null, "Enzymes",
-        "HincII,hinfI,ppiI,hindiii");
+    Box yBox = Box.createVerticalBox();
+    JTextField enzymeList = new JTextField("HincII,hinfI,ppiI,hindiii");
+    yBox.add(enzymeList);
+    JCheckBox methylationCheckBox = new JCheckBox("do not match methylated bases", methylation);
+    yBox.add(methylationCheckBox);
+    
+    JOptionPane.showMessageDialog(null, yBox, "Enzyme", JOptionPane.QUESTION_MESSAGE);
+    methylation = methylationCheckBox.isSelected();
+    return enzymeList.getText().trim();
   }
 
   public static void main(String args[])
@@ -586,6 +607,7 @@ public class CircularGenomeController
 
     String enzymes = null;
     CircularGenomeController controller = new CircularGenomeController();
+    boolean methylation = false;
     try
     {
       List<File> fileNames = null;
@@ -600,6 +622,9 @@ public class CircularGenomeController
             System.out.println("-enz\t\tcomma separated list of digest enzymes (optional)");
             System.out.println("-seq\t\tspace separated list of sequences (optional)");
             System.out.println(
+                "-methylation\tif this is set then RE recognition sites "+
+                "will not match methylated bases.");
+            System.out.println(
                 "-restrict\tspace separated lists of EMBOSS restrict output "+
                 "in the same order as the sequences (optional).");
             System.exit(0); 
@@ -612,6 +637,8 @@ public class CircularGenomeController
         {
           if (args[i].startsWith("-enz"))
             enzymes = args[i + 1];
+          else if (args[i].startsWith("-meth"))
+            methylation = true;
           else if (args[i].startsWith("-seq"))
           {
             if (fileNames == null)
@@ -638,7 +665,7 @@ public class CircularGenomeController
           }
         }
       }
-      controller.setup(enzymes, fileNames, restrictOutputs);
+      controller.setup(enzymes, fileNames, restrictOutputs, methylation);
     }
     catch (Exception e)
     {
