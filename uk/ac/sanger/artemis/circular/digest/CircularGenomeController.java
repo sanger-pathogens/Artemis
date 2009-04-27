@@ -119,6 +119,9 @@ public class CircularGenomeController
       File sequenceFile = new File(((File) entryGroup.getSequenceEntry()
           .getRootDocument().getLocation()).getAbsolutePath()
           + File.separator + entryGroup.getSequenceEntry().getName());
+      
+      if(sequenceFiles == null)
+        sequenceFiles = new Vector();
       sequenceFiles.add(sequenceFile);
       entries.add(entryGroup);
     }
