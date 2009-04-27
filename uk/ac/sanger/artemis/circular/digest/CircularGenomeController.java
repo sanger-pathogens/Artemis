@@ -362,37 +362,26 @@ public class CircularGenomeController
     {
       public void actionPerformed(ActionEvent e)
       {
-        if (lastBlock == null)
+        Range range = null;
+        try
         {
-          SwingUtilities.invokeLater(new Runnable()
-          {
-            public void run()
-            {
-              final ArtemisMain main_window = new ArtemisMain(null);
-              main_window.setVisible(true);
-              final EntryEdit entryEdit = new EntryEdit(dna
-                  .getArtemisEntryGroup());
-              entryEdit.setVisible(true);
-            }
-          });
+          if (lastBlock == null)
+            range = new Range(1, dna.getArtemisEntryGroup().getBases()
+                .getLength());
+          else
+            range = new Range(lastBlock.getBstart(), lastBlock.getBend());
         }
-        else
+        catch (OutOfRangeException e1)
         {
-          try
-          {
-            final ArtemisMain main_window = new ArtemisMain(null);
-            main_window.setVisible(true);
-            Range range = new Range(lastBlock.getBstart(), lastBlock.getBend());
-            final EntryGroup entryGroup = dna.getArtemisEntryGroup().truncate(
-                range);
-            final EntryEdit entryEdit = new EntryEdit(entryGroup);
-            entryEdit.setVisible(true);
-          }
-          catch (OutOfRangeException e1)
-          {
-            e1.printStackTrace();
-          }
-        }
+          e1.printStackTrace();
+          return;
+        } 
+        final ArtemisMain main_window = new ArtemisMain(null);
+        main_window.setVisible(false);
+        final EntryGroup entryGroup = dna.getArtemisEntryGroup().truncate(
+            range);
+        final EntryEdit entryEdit = new EntryEdit(entryGroup);
+        entryEdit.setVisible(true);
       }
     });
 
@@ -588,7 +577,8 @@ public class CircularGenomeController
     Box yBox = Box.createVerticalBox();
     JTextField enzymeList = new JTextField("HincII,hinfI,ppiI,hindiii");
     yBox.add(enzymeList);
-    JCheckBox methylationCheckBox = new JCheckBox("do not match methylated bases", methylation);
+    JCheckBox methylationCheckBox = new JCheckBox(
+        "RE sites will not match methylated bases", methylation);
     yBox.add(methylationCheckBox);
     
     JOptionPane.showMessageDialog(null, yBox, "Enzyme", JOptionPane.QUESTION_MESSAGE);
