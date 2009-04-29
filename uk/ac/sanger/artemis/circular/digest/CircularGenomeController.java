@@ -58,6 +58,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -70,7 +71,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 /**
  * 
@@ -148,8 +148,7 @@ public class CircularGenomeController
 
   /**
    * Run the EMBOSS application restrict. This uses the EMBOSS_ROOT property to
-   * define the location of EMBOSS>
-   * 
+   * define the location of EMBOSS.
    * @param fileName
    * @param cgcb
    * @param restrictOutput
@@ -599,71 +598,92 @@ public class CircularGenomeController
     }
 
     String enzymes = null;
-    CircularGenomeController controller = new CircularGenomeController();
+    final CircularGenomeController controller = new CircularGenomeController();
     boolean methylation = false;
-    try
-    {
-      List<File> fileNames = null;
-      List<File> restrictOutputs = null;
-      if (args != null && args.length > 0)
-      {
-        if (args.length == 1)
-        {
-          if(args[0].startsWith("-h"))
-          {
-            System.out.println("-h\t\tshow help");
-            System.out.println("-enz\t\tcomma separated list of digest enzymes (optional)");
-            System.out.println("-seq\t\tspace separated list of sequences (optional)");
-            System.out.println(
-                "-methylation\tif this is set then RE recognition sites "+
-                "will not match methylated bases.");
-            System.out.println(
-                "-restrict\tspace separated lists of EMBOSS restrict output "+
-                "in the same order as the sequences (optional).");
-            System.exit(0); 
-          }
-          fileNames = new Vector<File>();
-          fileNames.add(new File(args[0]));
-        }
 
-        for (int i = 0; i < args.length; i++)
+    List<File> fileNames = null;
+    List<File> restrictOutputs = null;
+    if (args != null && args.length > 0)
+    {
+      if (args.length == 1)
+      {
+        if (args[0].startsWith("-h"))
         {
-          if (args[i].startsWith("-enz"))
-            enzymes = args[i + 1];
-          else if (args[i].startsWith("-meth"))
-            methylation = true;
-          else if (args[i].startsWith("-seq"))
+          System.out.println("-h\t\tshow help");
+          System.out
+              .println("-enz\t\tcomma separated list of digest enzymes (optional)");
+          System.out
+              .println("-seq\t\tspace separated list of sequences (optional)");
+          System.out
+              .println("-methylation\tif this is set then RE recognition sites "
+                  + "will not match methylated bases.");
+          System.out
+              .println("-restrict\tspace separated lists of EMBOSS restrict output "
+                  + "in the same order as the sequences (optional).");
+          System.exit(0);
+        }
+        fileNames = new Vector<File>();
+        fileNames.add(new File(args[0]));
+      }
+
+      for (int i = 0; i < args.length; i++)
+      {
+        if (args[i].startsWith("-enz"))
+          enzymes = args[i + 1];
+        else if (args[i].startsWith("-meth"))
+          methylation = true;
+        else if (args[i].startsWith("-seq"))
+        {
+          if (fileNames == null)
+            fileNames = new Vector<File>();
+
+          for (int j = i + 1; j < args.length; j++)
           {
-            if (fileNames == null)
-              fileNames = new Vector<File>();
-            
-            for(int j = i + 1; j < args.length; j++)
-            {
-              if(args[j].startsWith("-"))
-                break;
-              fileNames.add(new File(args[j]));
-            }
+            if (args[j].startsWith("-"))
+              break;
+            fileNames.add(new File(args[j]));
           }
-          else if (args[i].startsWith("-restrict"))
+        }
+        else if (args[i].startsWith("-restrict"))
+        {
+          if (restrictOutputs == null)
+            restrictOutputs = new Vector<File>();
+
+          for (int j = i + 1; j < args.length; j++)
           {
-            if (restrictOutputs == null)
-              restrictOutputs = new Vector<File>();
-            
-            for(int j = i + 1; j < args.length; j++)
-            {
-              if(args[j].startsWith("-"))
-                break;
-              restrictOutputs.add(new File(args[j]));
-            }
+            if (args[j].startsWith("-"))
+              break;
+            restrictOutputs.add(new File(args[j]));
           }
         }
       }
-      controller.setup(enzymes, fileNames, restrictOutputs, methylation);
     }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-    }
-  }
 
+    final FileSelectionPanel selectionPanel = new FileSelectionPanel(enzymes,
+        fileNames, restrictOutputs, methylation);
+    final JFrame f = new JFrame("Options and File Selection");
+    ActionListener displayButtonListener = new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        try
+        {
+          f.dispose();
+          if(selectionPanel.getEmbossRootField() != null)
+            System.getProperties().put("EMBOSS_ROOT",
+                selectionPanel.getEmbossRootField().getText().trim());
+          controller.setup(selectionPanel.getEnzymes(), 
+                           selectionPanel.getSequenceFiles(), 
+                           selectionPanel.getRestrictOutputs(),
+                           selectionPanel.isMethylation());
+        }
+        catch (Exception ex)
+        {
+          ex.printStackTrace();
+        }
+      }
+    };
+    selectionPanel.showJFrame(f, displayButtonListener);
+
+  }
 };
