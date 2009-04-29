@@ -100,7 +100,7 @@ class FileSelectionPanel extends JPanel
     row++;
     
     c.gridy = row;
-    add(Box.createVerticalStrut(5), c);
+    add(Box.createVerticalStrut(10), c);
     row++;
     
     if(restrictOutputs == null || restrictOutputs.size() == 0)
@@ -108,17 +108,22 @@ class FileSelectionPanel extends JPanel
       embossRootField = new JTextField(System.getProperty("EMBOSS_ROOT"), 30);
       c.gridy = row;
       c.gridx = 0;
-      c.anchor = GridBagConstraints.EAST;
-      add(new JLabel("EMBOSS location "), c);
+      add(new JLabel(" EMBOSS location: "), c);
       c.gridx = 1;
-      c.anchor = GridBagConstraints.WEST;
       add(embossRootField, c);
       row++;
       
       c.gridy = row;
-      add(Box.createVerticalStrut(5), c);
+      add(Box.createVerticalStrut(10), c);
       row++;
     }
+    
+    
+    c.gridy = row;
+    c.gridx = 0;
+    c.anchor = GridBagConstraints.WEST;
+    add(new JLabel(" Sequence file(s): "), c);
+    row++;
     
     if(sequenceFiles == null || sequenceFiles.size() < 1)
       addSelectionRow(null);
