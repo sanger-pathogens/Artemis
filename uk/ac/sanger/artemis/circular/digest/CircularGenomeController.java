@@ -37,6 +37,7 @@ import uk.ac.sanger.artemis.util.DocumentFactory;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
@@ -668,7 +669,7 @@ public class CircularGenomeController
       {
         try
         {
-          f.dispose();
+          f.setCursor(new Cursor(Cursor.WAIT_CURSOR));
           if(selectionPanel.getEmbossRootField() != null)
             System.getProperties().put("EMBOSS_ROOT",
                 selectionPanel.getEmbossRootField().getText().trim());
@@ -676,10 +677,15 @@ public class CircularGenomeController
                            selectionPanel.getSequenceFiles(), 
                            selectionPanel.getRestrictOutputs(),
                            selectionPanel.isMethylation());
+          f.dispose();
         }
         catch (Exception ex)
         {
           ex.printStackTrace();
+        }
+        finally
+        {
+          f.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
       }
     };
