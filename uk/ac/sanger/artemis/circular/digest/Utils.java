@@ -112,6 +112,9 @@ public class Utils
       div = 100000;
     int tickNum = sequenceLength / div;
     int tick = tickNum * (div / 10);
+    
+    if(tick < 1)
+      tick = 2;
     while ((sequenceLength % tick) < (div / 10))
     {
       tickNum++;
