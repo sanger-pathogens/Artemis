@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.77 2009-04-09 08:15:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.78 2009-04-30 15:58:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -67,7 +67,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.77 2009-04-09 08:15:58 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.78 2009-04-30 15:58:32 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1061,7 +1061,7 @@ public class EntryEdit extends JFrame
                 queryStr = queryStr.replaceFirst(
                     "lane=[^&]+", "lane="+Options.getOptions().getProperty("lookseq_lane").trim());
               
-              lookseqPanel.setImage(urlStr, queryStr);
+              lookseqPanel.setUrl(urlStr, queryStr);
             }
 
             lookseqPanel.setFeatureDisplay(feature_display);
