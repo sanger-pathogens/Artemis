@@ -24,18 +24,24 @@
 
 package uk.ac.sanger.artemis.components.alignment;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.color.ColorSpace;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorConvertOp;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -60,7 +66,7 @@ public class LookSeqPanel extends JPanel
 {
   private static final long serialVersionUID = 1L;
   /** image icon */
-  private ImageIcon ii;
+  private BufferedImage ii;
   /** URL lookseq service */
   private String urlStr;
   /** the query options (appended to lookseq service url) */
@@ -71,6 +77,7 @@ public class LookSeqPanel extends JPanel
   private int lastEnd   = -1;
   private int drawCrossHairAt = -1;
   final JPopupMenu popup  = new JPopupMenu("Plot Options");
+  private boolean isGreyedOut = false;
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(LookSeqPanel.class);
 
@@ -83,7 +90,14 @@ public class LookSeqPanel extends JPanel
   public LookSeqPanel(URL url)
   {
     super();
-    ii = new ImageIcon(url);
+    try
+    {
+      ii = ImageIO.read(url);
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
     setUpPopupMenu();
   }
   
@@ -241,6 +255,12 @@ public class LookSeqPanel extends JPanel
     popup.add(setIndelMaxSize);
     addMouseListener(mouseListener);
   }
+  
+  public void setUrl(final String urlStr, final String queryStr)
+  {
+    this.urlStr = urlStr;
+    this.queryStr = queryStr;
+  }
 
   public void setImage(final String urlStr, final String queryStr)
   {
@@ -249,14 +269,18 @@ public class LookSeqPanel extends JPanel
     
     try
     {
-      ii = new ImageIcon(new URL(urlStr+queryStr));
-      setPreferredSize(new Dimension(ii.getIconWidth(),
-          ii.getIconHeight()));
+      ii  = ImageIO.read(new URL(urlStr+queryStr));
+
+      setPreferredSize(new Dimension(ii.getWidth(), ii.getHeight()));
       logger4j.debug("LookSeq URL    :: "+urlStr+queryStr);
       logger4j.debug("Proxy Settings :: "+System.getProperty("http.proxyHost")+":"+
                                           System.getProperty("http.proxyPort"));
     }
     catch (MalformedURLException e)
+    {
+      e.printStackTrace();
+    }
+    catch (IOException e)
     {
       e.printStackTrace();
     }
@@ -269,7 +293,15 @@ public class LookSeqPanel extends JPanel
   {
     super.paintComponent(g);
     if(ii != null)
-      ii.paintIcon(this,g,0,0);
+    {
+      if(isGreyedOut)
+      {
+        ColorSpace csGray = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+        new ImageIcon(new ColorConvertOp(csGray, null).filter(ii, null)).paintIcon(this,g,0,0); 
+      }
+      else
+        new ImageIcon(ii).paintIcon(this,g,0,0);
+    }
     
     if(drawCrossHairAt > -1)
       drawCrossHair(g);
@@ -359,8 +391,16 @@ public class LookSeqPanel extends JPanel
         }
         
         if(event.getStart() != ((FeatureDisplay)event.getSource()).getForwardBaseAtLeftEdge())
+        {
+          if(!isGreyedOut)
+          {
+            isGreyedOut = true;
+            repaint();
+          }
           return null;
+        }
       
+        isGreyedOut = false;
         lastStart = event.getStart();
         lastEnd   = event.getEnd();
         setDisplay(lastStart, lastEnd, event);
@@ -529,7 +569,7 @@ public class LookSeqPanel extends JPanel
     
     
     String window_options[] = { "Display" };
-    int select = JOptionPane.showOptionDialog(null, 
+    JOptionPane.showOptionDialog(null, 
         optionsPanel,
         "Lookseq Options", JOptionPane.DEFAULT_OPTION,
         JOptionPane.QUESTION_MESSAGE, null, window_options,
