@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.10 2008-01-30 09:57:46 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.11 2009-05-05 16:18:43 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -34,6 +34,7 @@ import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.sequence.Strand;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 
+import uk.ac.sanger.artemis.circular.TextFieldInt;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.StreamSequence;
@@ -43,6 +44,9 @@ import uk.ac.sanger.artemis.io.EmblStreamSequence;
 import uk.ac.sanger.artemis.io.GenbankStreamSequence;
 import uk.ac.sanger.artemis.io.StreamSequenceFactory;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -53,16 +57,18 @@ import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
  *  A menu of commands for writing out protein and bases.
  *
  *  @author Kim Rutherford
- *  @version $Id: WriteMenu.java,v 1.10 2008-01-30 09:57:46 tjc Exp $
+ *  @version $Id: WriteMenu.java,v 1.11 2009-05-05 16:18:43 tjc Exp $
  **/
 public class WriteMenu extends SelectionMenu 
 {
@@ -296,6 +302,18 @@ public class WriteMenu extends SelectionMenu
 
     add(downstream_bases_menu);
 
+    addSeparator();
+    
+    final JMenuItem write_combo_bases = new JMenuItem("Upstream+Feature+Downstream Bases ...");
+    write_combo_bases.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event) 
+      {
+        writeComboBases();
+      }
+    });
+    add(write_combo_bases);
+    
     addSeparator();
 
     final JMenu write_all_bases_menu = new JMenu("All Bases");
@@ -788,6 +806,119 @@ public class WriteMenu extends SelectionMenu
     });
 
     text_requester.setVisible(true);
+  }
+  
+  /**
+   * Write a combination of upstream + feature + downstream bases for 
+   * selected features.
+   */
+  private void writeComboBases()
+  {
+    TextFieldInt upstreamBases   = new TextFieldInt();
+    upstreamBases.setValue(0);
+    Dimension preferredSize = new Dimension(200, 
+         upstreamBases.getPreferredSize().height);
+    upstreamBases.setPreferredSize(preferredSize);
+    TextFieldInt downstreamBases = new TextFieldInt();
+    downstreamBases.setValue(0);
+    downstreamBases.setPreferredSize(preferredSize);
+    TextFieldInt featureBases = new TextFieldInt();
+    featureBases.setValue(0);
+    featureBases.setPreferredSize(preferredSize);
+    JCheckBox allFeatureBases = new JCheckBox("All bases of the feature(s)", false);
+    
+    int row = 0;
+    JPanel gridPanel = new JPanel(new GridBagLayout());
+    GridBagConstraints c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = row;
+    c.anchor = GridBagConstraints.WEST;
+    
+    gridPanel.add(new JLabel("Number of bases upstream of each feature to write:"), c);
+    c.gridy = ++row;
+    gridPanel.add(upstreamBases, c);
+    c.gridy = ++row;
+    gridPanel.add(Box.createVerticalStrut(15), c);
+    
+    c.gridy = ++row;
+    gridPanel.add(new JLabel("Number of feature bases to write:"), c);
+    c.gridy = ++row;
+    gridPanel.add(featureBases, c);
+    c.gridy = ++row;
+    gridPanel.add(allFeatureBases, c);
+    c.gridy = ++row;
+    gridPanel.add(Box.createVerticalStrut(15), c);
+    
+    c.gridy = ++row;
+    gridPanel.add(new JLabel("Number of bases downstream of each feature to write:"),c);
+    c.gridy = ++row;
+    gridPanel.add(downstreamBases, c);
+    
+    JOptionPane.showMessageDialog(null, gridPanel, 
+                   "Bases to write to FASTA file for selected features", 
+                   JOptionPane.QUESTION_MESSAGE);
+    
+    int output_type = StreamSequenceFactory.FASTA_FORMAT;
+    final File write_file =
+      getWriteFile("Select an output file name ...",
+                   "bases_" + getSequenceFileName(output_type), null);
+    if(write_file == null)
+      return;
+    
+    try 
+    {
+      final FileWriter writer = new FileWriter(write_file);
+      final FeatureVector features_to_write =
+        getSelection().getAllFeatures();
+
+      int upstream_base_count   = upstreamBases.getValue();
+      int downstream_base_count = downstreamBases.getValue();
+      int feature_base_count    = featureBases.getValue();
+      
+      for(int i = 0; i < features_to_write.size(); ++i) 
+      {
+        final Feature selection_feature =
+          features_to_write.elementAt(i);
+ 
+        StringBuffer sequenceBuff = new StringBuffer();
+        
+        if(upstream_base_count > 0)
+          sequenceBuff.append(
+              selection_feature.getUpstreamBases(upstream_base_count));
+        
+        if(allFeatureBases.isSelected())       
+          sequenceBuff.append(selection_feature.getBases());
+        else if (feature_base_count > 0)
+          sequenceBuff.append(
+              selection_feature.getBases().substring(0, feature_base_count));
+        
+        if(downstream_base_count > 0)
+          sequenceBuff.append(
+            selection_feature.getDownstreamBases(downstream_base_count));
+
+        final String header_line =
+          selection_feature.getIDString() + " - " +
+          sequenceBuff.length();
+
+        final StreamSequence stream_sequence =
+          getStreamSequence(sequenceBuff.toString(),
+                            header_line,
+                            output_type);
+        
+        stream_sequence.writeToStream(writer);
+      }
+
+      writer.close();
+    } 
+    catch(IOException e) 
+    {
+      new MessageDialog(getParentFrame(),
+                        "error while writing: " + e.getMessage());
+    }
+    
+    if(write_file == null)
+      return;
+    
   }
 
   /**
