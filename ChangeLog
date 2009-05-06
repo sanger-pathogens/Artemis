@@ -1,4 +1,7 @@
 Version 11+
+	Added an option to the Write menu for writing a combination of upstream 
+	+ feature + downstream bases for selected features.
+
     Option added in the View->Filter Features menu to search for Duplicate
     Systematic Name Qualifier.
 
