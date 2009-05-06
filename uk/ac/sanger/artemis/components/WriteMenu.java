@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.11 2009-05-05 16:18:43 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/WriteMenu.java,v 1.12 2009-05-06 10:53:51 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -68,7 +68,7 @@ import javax.swing.JTextField;
  *  A menu of commands for writing out protein and bases.
  *
  *  @author Kim Rutherford
- *  @version $Id: WriteMenu.java,v 1.11 2009-05-05 16:18:43 tjc Exp $
+ *  @version $Id: WriteMenu.java,v 1.12 2009-05-06 10:53:51 tjc Exp $
  **/
 public class WriteMenu extends SelectionMenu 
 {
@@ -880,25 +880,36 @@ public class WriteMenu extends SelectionMenu
         final Feature selection_feature =
           features_to_write.elementAt(i);
  
+        String header_line =
+          selection_feature.getIDString();
         StringBuffer sequenceBuff = new StringBuffer();
         
         if(upstream_base_count > 0)
+        {
           sequenceBuff.append(
               selection_feature.getUpstreamBases(upstream_base_count));
+          header_line = header_line.concat(" : upstream - "+upstream_base_count);
+        }
         
         if(allFeatureBases.isSelected())       
-          sequenceBuff.append(selection_feature.getBases());
+        {
+          String bases = selection_feature.getBases();
+          sequenceBuff.append(bases);
+          header_line = header_line.concat(" : complete feature - "+bases.length());
+        }
         else if (feature_base_count > 0)
+        {
           sequenceBuff.append(
               selection_feature.getBases().substring(0, feature_base_count));
+          header_line = header_line.concat(" : feature - "+feature_base_count);
+        }
         
         if(downstream_base_count > 0)
+        {
           sequenceBuff.append(
             selection_feature.getDownstreamBases(downstream_base_count));
-
-        final String header_line =
-          selection_feature.getIDString() + " - " +
-          sequenceBuff.length();
+          header_line = header_line.concat(" : downstream - "+downstream_base_count);
+        }
 
         final StreamSequence stream_sequence =
           getStreamSequence(sequenceBuff.toString(),
