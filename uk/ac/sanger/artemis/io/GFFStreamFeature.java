@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.66 2009-04-17 13:38:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.67 2009-05-07 08:25:25 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -50,7 +50,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.66 2009-04-17 13:38:44 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.67 2009-05-07 08:25:25 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -91,7 +91,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   private short duplicate = 0;
   private boolean lazyLoaded = false;
   private org.gmod.schema.sequence.Feature chadoLazyFeature;
+  private boolean readOnlyFeature = false;
   
+
   private static String MAP_DECODE[][] = {
     { " ",  "%20" },  // white space
     { ",",  "%2C" },  // comma
@@ -101,7 +103,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     { " ",  "+"   },  // white space
     { "+",  "%2B" },
     { "(",  "%28" },  // left bracket
-    { ")",  "%29" }   // right bracket
+    { ")",  "%29" },  // right bracket
+    { "'", "\"" }
   };
   
   private static String MAP_ENCODE[][] = {
@@ -1201,7 +1204,23 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     
     qualifier.addValue(date_format.format(timelastmodified));
   }
+  
+  /**
+   *  Returns true if and only if this Feature can't be changed or can't be
+   *  removed from it's entry.
+   **/
+  public boolean isReadOnly () 
+  {
+    if(readOnlyFeature)
+      return true;
+    return super.isReadOnly();
+  }
 
+  public void setReadOnlyFeature(boolean readOnlyFeature)
+  {
+    this.readOnlyFeature = readOnlyFeature;
+  }
+  
   public ChadoCanonicalGene getChadoGene()
   {
     return chadoGene;
