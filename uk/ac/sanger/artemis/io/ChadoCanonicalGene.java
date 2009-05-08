@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.31 2009-04-06 15:22:56 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.32 2009-05-08 08:36:58 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -30,6 +30,8 @@ import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.StringVector;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Vector;
 import java.util.Hashtable;
@@ -39,6 +41,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.gmod.schema.sequence.FeatureLoc;
 
 /**
  *  Used by GFFStreamFeature to represent the chado canonical gene.
@@ -1183,5 +1187,66 @@ public class ChadoCanonicalGene
   public Hashtable getSplicedFeatures()
   {
     return splicedFeatures;
+  }
+  
+  /**
+   * Get the nucleotide location for a featureloc in amino acid
+   * coordinates.
+   * @param proteinFeature
+   * @param featureLocToProtein
+   * @return
+   * @throws LocationParseException
+   */
+  public Location getNucLocation(final Feature proteinFeature, 
+                                 final FeatureLoc featureLocToProtein) 
+         throws LocationParseException
+  {
+    String transcriptName = getTranscriptFromName(
+                         GeneUtils.getUniqueName(proteinFeature));
+    List spliced = getSplicedFeaturesOfTranscript(transcriptName);
+    RangeVector ranges = new RangeVector();
+    for(int i=0; i<spliced.size(); i++)
+    {
+      Feature f = (Feature) spliced.get(i);
+      if(f.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
+        ranges.addAll(f.getLocation().getRanges());
+    }
+    
+    int start = proteinFeature.getLocation().getFirstBase();
+    int fmin = start+(featureLocToProtein.getFmin()*3)+1;
+    int fmax = start+(featureLocToProtein.getFmax()*3);
+
+    if(ranges.size()>1)
+    {
+      Collections.sort(ranges, new RangeComparator());
+
+      for(int i=0;i<ranges.size()-1; i++)
+      {
+        Range range1 = (Range) ranges.get(i);
+        Range range2 = (Range) ranges.get(i+1);
+        if(fmin > range1.getEnd())
+          fmin += range2.getStart()-range1.getEnd();
+        if(fmax > range1.getEnd())
+          fmax += range2.getStart()-range1.getEnd();
+      }
+    }
+
+    Location location;
+    if(proteinFeature.getLocation().isComplement())
+      location = new Location("complement("+fmin+".."+fmax+")");
+    else
+      location = new Location(fmin+".."+fmax); 
+    return location;
+  }
+  
+  
+  class RangeComparator implements Comparator
+  {
+    public int compare(Object o1, Object o2)
+    {
+      int start1 = ((Range)o1).getStart();
+      int start2 = ((Range)o2).getStart();
+      return start1-start2;
+    }
   }
 }
