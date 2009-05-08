@@ -20,13 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.61 2009-03-16 14:20:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.62 2009-05-08 08:38:23 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
 import uk.ac.sanger.artemis.chado.FeatureLocLazyQualifierValue;
 import uk.ac.sanger.artemis.components.Splash;
+import uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.util.*;
 
@@ -46,7 +47,7 @@ import org.gmod.schema.sequence.FeatureLoc;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.61 2009-03-16 14:20:20 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.62 2009-05-08 08:38:23 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -368,6 +369,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       else
         qualifierName = cvTerm.getName();
       
+
       final List featureLocs = 
         (List) hashFeatureLocs.get(new Integer(matchFeature.getFeatureId()));
       if(featureLocs == null)
@@ -404,6 +406,11 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           {
             e.printStackTrace();
           }
+          
+          if(qualifierName.equals("polypeptide_domain") && 
+             LocalAndRemoteFileManager.domainLoad.isSelected()) 
+            addDomain(queryFeature, featureLoc, matchFeature);
+
           break;
         }
       }
@@ -439,6 +446,44 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     
     matchFeature.setCvTerm(cvTerm);
     return cvTerm;
+  }
+  
+  /**
+   * Add domain features as read-only features
+   * @param queryFeature
+   * @param featureLoc
+   * @param matchFeature
+   */
+  private void addDomain(final Feature queryFeature, 
+                         final FeatureLoc featureLoc,
+                         org.gmod.schema.sequence.Feature matchFeature)
+  {
+    try
+    {
+      int start = queryFeature.getLocation().getFirstBase();
+      Location location;
+      
+      ChadoCanonicalGene chadoGene = ((GFFStreamFeature)queryFeature).getChadoGene();
+      if(chadoGene != null)
+        location = chadoGene.getNucLocation(queryFeature, featureLoc);
+      else if(queryFeature.getLocation().isComplement())
+        location = new Location("complement("+
+            (start+(featureLoc.getFmin()*3)+1)+".."+(start+(featureLoc.getFmax()*3))+")");
+      else
+        location = new Location(
+            (start+(featureLoc.getFmin()*3)+1)+".."+(start+(featureLoc.getFmax()*3)));
+   
+      final GFFStreamFeature newFeature = new GFFStreamFeature(
+          new Key("polypeptide_domain"), 
+          location, null);
+      newFeature.setReadOnlyFeature(true);
+      newFeature.setChadoLazyFeature(matchFeature);
+      add(newFeature);
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
   }
   
   /**
