@@ -51,6 +51,9 @@ public class LocalAndRemoteFileManager extends JFrame
   private DatabaseEntrySource entry_source;
   public static JCheckBoxMenuItem lazyLoad = 
     new JCheckBoxMenuItem("Lazy load feature data", false);
+  
+  public static JCheckBoxMenuItem domainLoad = 
+    new JCheckBoxMenuItem("Display protein domains", false);
 
   public LocalAndRemoteFileManager(JFrame frame)
   {
@@ -586,6 +589,7 @@ public class LocalAndRemoteFileManager extends JFrame
       });
       fileMenu.add(splitGFF);
       
+      fileMenu.add(domainLoad);
       fileMenu.add(lazyLoad);
     }
     
