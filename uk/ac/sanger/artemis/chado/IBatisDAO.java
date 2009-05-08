@@ -47,6 +47,7 @@ import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.pub.Pub;
+import org.gmod.schema.pub.PubDbXRef;
 import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
@@ -1234,6 +1235,11 @@ public class IBatisDAO extends GmodDAO
   protected void insertPub(Pub pub)
   {
     sqlMap.insert("insertPub", pub);
+  }
+  
+  protected void insertPubDbXRef(PubDbXRef pubDbXRef)
+  {
+    sqlMap.insert("insertPubDbXRef", pubDbXRef);
   }
   
   

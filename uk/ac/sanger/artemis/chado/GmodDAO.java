@@ -36,6 +36,7 @@ import org.gmod.schema.general.Db;
 import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.pub.Pub;
+import org.gmod.schema.pub.PubDbXRef;
 import org.gmod.schema.sequence.Feature;
 import org.gmod.schema.sequence.FeatureCvTerm;
 import org.gmod.schema.sequence.FeatureCvTermDbXRef;
@@ -48,7 +49,8 @@ import uk.ac.sanger.artemis.util.DatabaseDocument;
 public abstract class GmodDAO 
        implements SequenceDaoI, SchemaDaoI, OrganismDaoI, CvDaoI, PubDaoI, GeneralDaoI
 {
-  
+  private static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(GmodDAO.class);
   public abstract List getOrganismsContainingSrcFeatures();
   public abstract List getSimilarityMatchesByFeatureIds(final List featureIds);
   public abstract List getSimilarityMatches(final Integer srcFeatureId);
@@ -472,9 +474,43 @@ public abstract class GmodDAO
       
       insertPub(pub);
       pubResult = getPubByUniqueName(pub);
+      
+      // add PubDbXRef
+      loadPubDbXRef(pubResult);
     }
     
     return pubResult;
+  }
+  
+  /**
+   * Create PubDbXRef for new Pub's and to handle links to
+   * links to eg, pubmed.
+   * @param pub
+   */
+  private void loadPubDbXRef(final Pub pub)
+  {
+    try
+    {
+      int index = pub.getUniqueName().indexOf(':');
+      if (index > -1)
+      {
+        DbXRef dbXRef = new DbXRef();
+        dbXRef.setAccession(pub.getUniqueName().substring(index + 1));
+        Db db = new Db();
+        db.setName(pub.getUniqueName().substring(0, index));
+        dbXRef.setDb(db);
+        dbXRef = loadDbXRef(dbXRef);
+
+        PubDbXRef pubDbXRef = new PubDbXRef();
+        pubDbXRef.setDbXRef(dbXRef);
+        pubDbXRef.setPub(pub);
+        insertPubDbXRef(pubDbXRef);
+      }
+    }
+    catch (Exception e)
+    {
+      logger4j.warn("GmodDAO.loadPubDbXRef() :: "+e.getMessage());
+    }
   }
   
   /**
@@ -547,6 +583,7 @@ public abstract class GmodDAO
   protected abstract void insertDbXRef(DbXRef dbXRef);
   protected abstract Pub getPubByUniqueName(Pub pub);
   protected abstract void insertPub(Pub pub);
+  protected abstract void insertPubDbXRef(PubDbXRef pubDbXRef);
   protected abstract void insertFeatureCvTerm(final FeatureCvTerm feature_cvterm);
   protected abstract int getCurrval(String seq_id);
   protected abstract void insertFeatureCvTermProp(FeatureCvTermProp featureCvTermProp);

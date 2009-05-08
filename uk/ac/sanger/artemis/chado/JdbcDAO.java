@@ -2285,8 +2285,9 @@ public class JdbcDAO extends GmodDAO
       throw new RuntimeException(sqle);
     }
   }
-
-
-
-
+  
+  protected void insertPubDbXRef(PubDbXRef pubDbXRef)
+  {
+    
+  }
 }
