@@ -185,7 +185,8 @@ class ProductBox extends AbstractCvBox
     }
     
     old = getField("evidence=", origQualifierString);
-    if(!old.equals(GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
+    if(evidenceList.getSelectedIndex() > -1 &&
+       !old.equals(GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]))
     {
       newQualifierString = changeField("evidence=", 
                    GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ], 
