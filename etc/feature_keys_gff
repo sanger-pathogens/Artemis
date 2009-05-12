@@ -21,12 +21,12 @@ three_prime_UTR     ID Name Alias Parent Note Target Gap Derives_from Dbxref Ont
 five_prime_UTR      ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified systematic_id note comment private curation
 transcript          ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified private comment
 primary_transcript  ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
-tRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
-rRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
-mRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
-snRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
-scRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
-snoRNA              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation 
+tRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation private
+rRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation private
+mRNA                ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation private
+snRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation private
+scRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation private
+snoRNA              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation private
 polypeptide_domain  ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified 
 signal_peptide      ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified 
 match               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified 
