@@ -145,7 +145,7 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
     clusters = new Vector();
   }
   
-  private String getHardString()
+  private synchronized String getHardString()
   { 
     lazyLoaded = true;
     final String featureId = (String) feature.getQualifierByName("feature_id").getValues().get(0);

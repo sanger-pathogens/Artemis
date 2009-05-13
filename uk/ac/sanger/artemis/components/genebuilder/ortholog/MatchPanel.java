@@ -17,12 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.28 2009-03-25 16:25:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.29 2009-05-13 10:43:07 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -42,6 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.FeatureCvTerm;
@@ -56,6 +58,8 @@ import uk.ac.sanger.artemis.io.QualifierLazyLoading;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
+import uk.ac.sanger.artemis.components.FeatureEdit;
+import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 
@@ -90,12 +94,15 @@ public class MatchPanel extends JPanel
   
   // used to test if match panel has contents
   private boolean empty = true;
+  private static boolean LOADING = false;
+  private FeatureEdit feature_edit;
   
-  public MatchPanel(final Feature feature, final DocumentEntry entry)
+  public MatchPanel(final FeatureEdit feature_edit, 
+                    final DocumentEntry entry)
   {
     super(new BorderLayout());
     this.entry = entry;
-    updateFromFeature(feature);
+    this.feature_edit = feature_edit;
   }
   
   /**
@@ -483,26 +490,47 @@ public class MatchPanel extends JPanel
    * Update ortho/paralogs for a feature
    * @param feature
    */
-  public void updateFromFeature(final Feature feature)
+  public synchronized void updateFromFeature(final Feature feature)
   {
-    removeAll();
-    if(matchQualifiers != null)
-      feature.removeFeatureChangeListener(this);
-    //matchQualifiers = feature.getQualifiers().copy();
+    final JLabel loadingData = new JLabel("LOADING DATA...");
+    loadingData.setForeground(Color.red);
+    add(loadingData, BorderLayout.NORTH);
+    
+    if (matchQualifiers != null)
+      feature.removeFeatureChangeListener(MatchPanel.this);
     
     matchQualifiers = new QualifierVector();
-    final QualifierVector qualifiers = feature.getQualifiers();  
-    for(int i = 0 ; i < qualifiers.size(); ++i) 
+    final QualifierVector qualifiers = feature.getQualifiers();
+    for (int i = 0; i < qualifiers.size(); ++i)
     {
-      Qualifier qualifier = (Qualifier)qualifiers.elementAt(i);
-      if(isMatchTag(qualifier))
+      final Qualifier qualifier = (Qualifier) qualifiers.elementAt(i);
+      if (isMatchTag(qualifier))
         matchQualifiers.addElement(qualifier.copy());
     }
-   
-    feature.addFeatureChangeListener(this);  
-    add(createMatchQualifiersComponent(feature));
-    repaint();
-    revalidate();
+
+    if(matchQualifiers.size() < 1)
+      LOADING = false;
+    else
+      LOADING = true;
+    
+    SwingUtilities.invokeLater(new Runnable()
+    {
+      public void run()
+      {
+        removeAll();
+        feature.addFeatureChangeListener(MatchPanel.this);
+        Component matchComponent = createMatchQualifiersComponent(feature);
+        LOADING = false;
+        
+        if(feature_edit.getFeature().getSystematicName().equals(
+           feature.getSystematicName()))
+          add(matchComponent);
+       
+        remove(loadingData);
+        repaint();
+        revalidate();
+      }
+    });
   }
   
   public void updateFromQualifiers(final QualifierVector qualfiers,
@@ -614,6 +642,8 @@ public class MatchPanel extends JPanel
 
   public boolean isEmpty()
   {
+    if(LOADING)
+      return false;
     return empty;
   }
 

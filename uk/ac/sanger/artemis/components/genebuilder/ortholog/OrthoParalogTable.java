@@ -914,7 +914,8 @@ public class OrthoParalogTable extends AbstractMatchTable
       if(column == getColumnIndex(GENE_COL))
       {
         String geneStr[] = text.split(":");
-        gene.setText(geneStr[1]);
+        if(geneStr.length > 1)
+          gene.setText(geneStr[1]);
         
         if(isSelected) 
         {
