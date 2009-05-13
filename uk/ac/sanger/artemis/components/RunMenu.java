@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.12 2008-09-11 10:51:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/RunMenu.java,v 1.13 2009-05-13 15:53:14 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -45,7 +45,7 @@ import javax.swing.JOptionPane;
  *  A JMenu of external commands/functions.
  *
  *  @author Kim Rutherford
- *  @version $Id: RunMenu.java,v 1.12 2008-09-11 10:51:53 tjc Exp $
+ *  @version $Id: RunMenu.java,v 1.13 2009-05-13 15:53:14 tjc Exp $
  **/
 
 public class RunMenu extends SelectionMenu 
@@ -71,7 +71,7 @@ public class RunMenu extends SelectionMenu
     super(frame, menu_name, selection);
 
     addNCBISearches(selection);
-    
+    addPfamSearches(selection);
     if(Options.isUnixHost())
     {
       final ExternalProgramVector external_programs = Options.getOptions()
@@ -103,6 +103,31 @@ public class RunMenu extends SelectionMenu
     this(frame, selection, "Run");
   }
 
+  private void addPfamSearches(final Selection selection)
+  {
+    final JMenuItem ncbiSearchLinks = new JMenuItem("Pfam Search");
+    add(ncbiSearchLinks);
+    ncbiSearchLinks.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent arg0)
+      {
+        final FeatureVector features = selection.getAllFeatures();
+        
+        if(features.size() != 1)
+        {
+          JOptionPane.showMessageDialog(RunMenu.this,
+              "Selected a single feature to send to NCBI for searching.", 
+              "NCBI Search", JOptionPane.INFORMATION_MESSAGE);
+          return; 
+        }
+        final String residues = features.elementAt(0).getTranslation().toString().toUpperCase();
+
+        RunPfamSearchThread pfamSearch = new RunPfamSearchThread(residues);
+        pfamSearch.start();
+      }
+    });
+  }
+  
   /**
    * Add menu for NCBI web searches
    * @param selection
