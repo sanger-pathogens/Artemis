@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.19 2008-07-24 13:50:51 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.20 2009-05-13 15:47:52 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -29,27 +29,22 @@ import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DocumentEntry;
-import uk.ac.sanger.artemis.components.SwingWorker;
-import uk.ac.sanger.artemis.components.Utilities;
+import uk.ac.sanger.artemis.components.ProgressBarFrame;
 import uk.ac.sanger.artemis.components.filetree.RemoteFileNode;
 import uk.ac.sanger.artemis.j2ssh.FileTransferProgressMonitor;
 import uk.ac.sanger.artemis.j2ssh.FTProgress;
 
-import java.awt.Color;
 import java.io.*;
 import java.text.*;
 import java.util.Hashtable;
 import java.util.Enumeration;
-
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
 
 /**
  *  Each object of this class represents one external executable or script,
  *  and contains methods for invoking it.
  *
  *  @author Kim Rutherford
- *  @version $Id: ExternalProgram.java,v 1.19 2008-07-24 13:50:51 tjc Exp $
+ *  @version $Id: ExternalProgram.java,v 1.20 2009-05-13 15:47:52 tjc Exp $
  **/
 
 public class ExternalProgram 
@@ -200,7 +195,7 @@ public class ExternalProgram
           uk.ac.sanger.artemis.j2ssh.SshPSUClient ssh =
                 new uk.ac.sanger.artemis.j2ssh.SshPSUClient(args);
           ssh.start();
-          nowSendingProgressBar();
+          new ProgressBarFrame(1, getName());
           return null;
         }
 
@@ -232,7 +227,7 @@ public class ExternalProgram
 
         //
         //
-        nowSendingProgressBar();
+        new ProgressBarFrame(1, getName());
         return new ProcessMonitor(process, getName(), logger);
       } 
       catch(SecurityException e) 
@@ -245,43 +240,6 @@ public class ExternalProgram
 //  }
   }
   
-  /**
-   * Let the user know the process is being run with a progress bar
-   */
-  private void nowSendingProgressBar()
-  {
-    final JFrame fsend = new JFrame();
-    fsend.setUndecorated(true);
-    final int max = 25;
-    final JProgressBar progressBar = new JProgressBar(0,max);
-    progressBar.setStringPainted(true);
-    progressBar.setString("Sending "+getName()+" process now!");
-    progressBar.setBackground(Color.white);
-
-    SwingWorker batchWorker = new SwingWorker()
-    {
-      public Object construct()
-      {
-        try
-        {
-          for(int i=0; i<max; i++)
-          {
-            Thread.sleep(40);
-            progressBar.setValue(i);
-          }
-          fsend.dispose();
-        }
-        catch(InterruptedException intr){}
-        return null;
-      }
-    };
-
-    fsend.getContentPane().add(progressBar);
-    fsend.pack();
-    Utilities.centreFrame(fsend);
-    fsend.setVisible(true);
-    batchWorker.start();
-  }
 
   /**
    *  Write sequence files for each of the given features and add a
