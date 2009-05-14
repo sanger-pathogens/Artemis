@@ -593,7 +593,7 @@ public class IBatisDAO extends GmodDAO
 
   public List getOrganismsContainingSrcFeatures()
   {
-    CvTerm cvTerm = getCvTermByNameAndCvName("top_level_seq", "genedb_misc");
+    CvTerm cvTerm = getCvTermByNameAndCvName("populated", "genedb_misc");
     if(cvTerm  != null)
       return sqlMap.queryForList("getTopLevelOrganisms", null);
     else  

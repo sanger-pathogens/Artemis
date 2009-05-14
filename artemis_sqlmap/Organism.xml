@@ -81,13 +81,15 @@
 	</select>
 	
 	<select id="getTopLevelOrganisms" resultMap="map-organism">
-	  SELECT DISTINCT ON( feature.organism_id )  
-		organism.organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment
-		FROM feature 
-		join  organism using (organism_id) 
-		JOIN featureprop using (feature_id)
-		WHERE featureprop.type_id in 
-		  (SELECT cvterm_id FROM cvterm JOIN cv using (cv_id) WHERE cv.name = 'genedb_misc' AND cvterm.name = 'top_level_seq' ) 
+	  SELECT organism.organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment
+      FROM organism
+      WHERE exists (
+        SELECT *
+        FROM organismprop
+        JOIN cvterm on organismprop.type_id = cvterm.cvterm_id
+        JOIN cv using (cv_id)
+        WHERE organism_id = organism.organism_id
+        AND cv.name = 'genedb_misc' and cvterm.name = 'populated' )
 	</select>	
  
 </sqlMap> 
