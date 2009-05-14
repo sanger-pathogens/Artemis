@@ -291,6 +291,53 @@
   </select>
 	
 
+
+
+
+
+  <sql id="sql-lazy-feature-exact-name">
+   	SELECT
+	  timelastmodified,
+	  f.feature_id AS id,
+	  uniquename,
+	  organism_id AS organismId,
+	  f.is_obsolete AS obsolete,
+	  f.name AS feature_name,
+	  f.type_id,
+	  f.dbxref_id AS dbXRefId,
+	  f.seqlen,
+	  residues
+	FROM feature f
+	 <dynamic>
+	   <isNotNull property="cvTerm.name">
+	     LEFT JOIN cvterm ON f.type_id=cvterm.cvterm_id
+	   </isNotNull>
+	 </dynamic>
+	 WHERE ( uniquename = #uniqueName# )               
+     <isGreaterThan property="cvTerm.cvTermId" compareValue="0" prepend="AND"> 
+        f.type_id=$cvTerm.cvTermId$
+     </isGreaterThan>
+     <isNotNull property="cvTerm.name" prepend="AND"> 
+        cvterm.name=#cvTerm.name#
+     </isNotNull>
+  </sql>
+
+
+
+  <select id="getLazyFeatureExact" resultMap ="map-feature-lazy" 
+                              parameterClass="Feature">
+    <include refid="sql-lazy-feature-exact-name"/>
+  </select>
+  
+  <select id="getLazyFeatureExactNoFeatureCvTermRank"
+                              resultMap ="map-feature-lazy-no-rank" 
+                              parameterClass="Feature">
+    <include refid="sql-lazy-feature-exact-name"/>
+  </select>
+
+
+
+
   <select id="getLazyFeatureNoResiduesById" resultMap ="map-feature-lazy-no-residues" 
 	  cacheModel="feature-cache">
 	SELECT
