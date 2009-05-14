@@ -261,6 +261,9 @@ public class IBatisDAO extends GmodDAO
     	return sqlMap.queryForList("getLazyFeatureNoFeatureCvTermRank", feature);
   }
   
+  /**
+   * Return a <code>Feature</code> based on its uniquename and type_id
+   */
   public Feature getFeatureByUniqueName(String uniquename, String featureType) 
   {
     org.gmod.schema.sequence.Feature feature = 
@@ -272,9 +275,9 @@ public class IBatisDAO extends GmodDAO
     feature.setCvTerm(cvTerm);
     
     if(isFeatureCvTermRank())
-      return (Feature)sqlMap.queryForObject("getLazyFeature", feature);
+      return (Feature)sqlMap.queryForObject("getLazyFeatureExact", feature);
     else
-    	return (Feature)sqlMap.queryForObject("getLazyFeatureNoFeatureCvTermRank", feature);
+    	return (Feature)sqlMap.queryForObject("getLazyFeatureExactNoFeatureCvTermRank", feature);
   }
    
   
