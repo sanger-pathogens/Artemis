@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.29 2009-05-13 10:43:07 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.30 2009-05-14 14:25:27 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -43,7 +43,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.FeatureCvTerm;
@@ -491,11 +490,7 @@ public class MatchPanel extends JPanel
    * @param feature
    */
   public synchronized void updateFromFeature(final Feature feature)
-  {
-    final JLabel loadingData = new JLabel("LOADING DATA...");
-    loadingData.setForeground(Color.red);
-    add(loadingData, BorderLayout.NORTH);
-    
+  {   
     if (matchQualifiers != null)
       feature.removeFeatureChangeListener(MatchPanel.this);
     
@@ -513,11 +508,15 @@ public class MatchPanel extends JPanel
     else
       LOADING = true;
     
-    SwingUtilities.invokeLater(new Runnable()
+    SwingWorker createMatchWorker = new SwingWorker()
     {
-      public void run()
+      public Object construct()
       {
         removeAll();
+        final JLabel loadingData = new JLabel("LOADING DATA...");
+        loadingData.setForeground(Color.red);
+        add(loadingData, BorderLayout.NORTH);
+
         feature.addFeatureChangeListener(MatchPanel.this);
         Component matchComponent = createMatchQualifiersComponent(feature);
         LOADING = false;
@@ -529,8 +528,10 @@ public class MatchPanel extends JPanel
         remove(loadingData);
         repaint();
         revalidate();
+        return null;
       }
-    });
+    };
+    createMatchWorker.start();
   }
   
   public void updateFromQualifiers(final QualifierVector qualfiers,
