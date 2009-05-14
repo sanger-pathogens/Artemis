@@ -2554,7 +2554,6 @@ public class DatabaseDocument extends Document
       //
       // check feature timestamps have not changed
       Vector names_checked = new Vector();
-      
       for(int i = 0; i < sql.size(); i++)
       {
         final ChadoTransaction tsn = (ChadoTransaction)sql.get(i);
@@ -2583,7 +2582,7 @@ public class DatabaseDocument extends Document
           }
         }
       }  
-      
+
       final Timestamp ts = new Timestamp(new java.util.Date().getTime());
       //
       // commit to database
@@ -2645,7 +2644,6 @@ public class DatabaseDocument extends Document
           else
             feature = dao.getFeatureByUniqueName(uniquename, 
                                        tsn.getFeatureKey());
-
           if(feature != null)
           {
             feature.setTimeLastModified(ts);
@@ -2829,8 +2827,9 @@ public class DatabaseDocument extends Document
           featureBySrcFeatureId.setFeatureId(Integer.parseInt(srcFeatureId));
           featureloc.setFeatureBySrcFeatureId(featureBySrcFeatureId);
         }
-        
-        if(tsn.getFeatureObject() instanceof Feature)
+
+        if(tsn.getFeatureObject() instanceof Feature &&
+           tsn.getGff_feature() != null)
         {
           String keyStr = tsn.getGff_feature().getKey().getKeyString();
           if(GeneUtils.isFeatureToUpdateResidues(keyStr))
