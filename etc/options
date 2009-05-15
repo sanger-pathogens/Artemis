@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.64 2009-04-21 13:00:25 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.65 2009-05-15 16:03:39 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -780,13 +780,13 @@ application_programs = \
     jalview
 
 ncbi_dna_search = \
-   blastn http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?PAGE=Nucleotides&PROGRAM=blastn&MEGABLAST=on&BLAST_PROGRAMS=blastn&PAGE_TYPE=BlastSearch&DATABASE=nr&SHOW_DEFAULTS=on&QUERY= \
-   blastx http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?PAGE=Translations&PROGRAM=blastx&BLAST_PROGRAMS=blastx&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&QUERY= \
-   tblastx http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?PAGE=Translations&PROGRAM=tblastx&BLAST_PROGRAMS=tblastx&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&QUERY=
+   blastn http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=Nucleotides&PROGRAM=blastn&MEGABLAST=on&BLAST_PROGRAMS=blastn&PAGE_TYPE=BlastSearch&DATABASE=nr&SHOW_DEFAULTS=on&QUERY= \
+   blastx http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=Translations&PROGRAM=blastx&BLAST_PROGRAMS=blastx&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&QUERY= \
+   tblastx http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=Translations&PROGRAM=tblastx&BLAST_PROGRAMS=tblastx&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&QUERY=
 
 ncbi_protein_search = \
-   blastp http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?PAGE=Proteins&PROGRAM=blastp&BLAST_PROGRAMS=blastp&PAGE_TYPE=BlastSearch&QUERY= \
-   tblastn http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?PAGE=Translations&PROGRAM=tblastn&BLAST_PROGRAMS=tblastn&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&QUERY=
+   blastp http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=Proteins&PROGRAM=blastp&BLAST_PROGRAMS=blastp&PAGE_TYPE=BlastSearch&QUERY= \
+   tblastn http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=Translations&PROGRAM=tblastn&BLAST_PROGRAMS=tblastn&PAGE_TYPE=BlastSearch&SHOW_DEFAULTS=on&QUERY=
 
 mess_fasta_hits = 10
 
