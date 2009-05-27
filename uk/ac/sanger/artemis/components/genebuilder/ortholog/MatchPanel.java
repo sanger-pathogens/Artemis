@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.30 2009-05-14 14:25:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/ortholog/MatchPanel.java,v 1.31 2009-05-27 15:00:10 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.ortholog;
@@ -29,6 +29,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -36,6 +37,7 @@ import java.util.Vector;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -47,19 +49,29 @@ import javax.swing.JTextField;
 import org.gmod.schema.cv.CvTerm;
 import org.gmod.schema.sequence.FeatureCvTerm;
 
+import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.FeatureChangeEvent;
 import uk.ac.sanger.artemis.FeatureChangeListener;
 import uk.ac.sanger.artemis.Feature;
+import uk.ac.sanger.artemis.FeatureVector;
+import uk.ac.sanger.artemis.SimpleEntryGroup;
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
+import uk.ac.sanger.artemis.io.PartialSequence;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierLazyLoading;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.StringVector;
+import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.components.FeatureEdit;
 import uk.ac.sanger.artemis.components.SwingWorker;
+import uk.ac.sanger.artemis.components.genebuilder.GeneEdit;
 import uk.ac.sanger.artemis.components.genebuilder.GeneEditorPanel;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
 
 /**
@@ -359,12 +371,19 @@ public class MatchPanel extends JPanel
       {
         uniqueName = geneField.getText().trim();
         polypeptides = doc.getPolypeptideFeatures(uniqueName);
+        
         final Vector polypeptideNames = new Vector();
         
         for(int i=0; i<polypeptides.size(); i++)
         {
           org.gmod.schema.sequence.Feature ppfeature = 
             (org.gmod.schema.sequence.Feature)polypeptides.get(i);
+          
+          if(!ppfeature.getOrganism().getCommonName().equals(dbs.getSelectedItem()))
+            JOptionPane.showMessageDialog(null, "Found in "+
+                ppfeature.getOrganism().getCommonName(), "Organism Mismatch", 
+                JOptionPane.WARNING_MESSAGE);
+          
           polypeptideNames.add(ppfeature.getUniqueName());
         }
         
@@ -383,6 +402,21 @@ public class MatchPanel extends JPanel
     yBoxPeptide.add(new JLabel("Add annotation to selected feature"));
     yBoxPeptide.add(Box.createHorizontalGlue());
     xBox.add(yBoxPeptide);
+    
+    // if there are existing links the optionally transfer annotation link
+    final Qualifier orthoQualifier   = matchQualifiers.getQualifierByName(ORTHOLOG);
+    final Qualifier paraQualifier    = matchQualifiers.getQualifierByName(PARALOG);
+    JCheckBox transferToList = null;
+    if(orthoQualifier != null || paraQualifier != null)
+    {
+      transferToList = 
+        new JCheckBox("Add to the existing list of ortho/paralogs", false);
+      yBoxPeptide = Box.createHorizontalBox();
+      yBoxPeptide.add(transferToList);
+      yBoxPeptide.add(Box.createHorizontalGlue());
+      xBox.add(yBoxPeptide);
+    }
+    
     select = JOptionPane.showConfirmDialog(null, 
         xBox, "Add Ortholog/Paralog",
         JOptionPane.OK_CANCEL_OPTION);
@@ -415,6 +449,152 @@ public class MatchPanel extends JPanel
       add(ORTHOLOG, qualifierStr, feature);
     else
       add(PARALOG, qualifierStr, feature);
+    
+    if(transferToList != null && transferToList.isSelected())
+    {
+      try
+      {
+        addToExistingList((DatabaseDocumentEntry) feature.getEntry().getEMBLEntry(), 
+                       (String)dbs.getSelectedItem()+":"+uniqueName,
+                       (String)polypepList.getSelectedItem(),
+                       (String)dbs.getSelectedItem());
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+      }
+    }
+  }
+  
+  /**
+   * Add a link to any existing ortho/paralog genes.
+   * @param db_entry
+   * @param orthoOrParaLog   new ortholog/paralog gene (e.g. Pfalciparum:PFA0010c)
+   * @param orthoOrParaLogLink this is the name of the feature (usualy polypep)
+   * that stores the ortholog/paralog link (e.g. Pfalciparum:PFA0010c:pep)
+   * @param organismCommonName
+   * @throws ReadOnlyException
+   * @throws EntryInformationException
+   */
+  private void addToExistingList(
+                         final DatabaseDocumentEntry db_entry,
+                         final String orthoOrParaLog,
+                         final String orthoOrParaLogLink,
+                         final String organismCommonName) 
+          throws ReadOnlyException, EntryInformationException
+  {
+    DatabaseDocument doc = (DatabaseDocument) db_entry.getDocument();
+    String TYPES[] = { ORTHOLOG, PARALOG };
+    for(int i=0; i<TYPES.length; i++)
+    {
+      final Qualifier qualifier = matchQualifiers.getQualifierByName(TYPES[i]);
+      if(qualifier != null)
+        addToList(doc, qualifier, orthoOrParaLog, 
+                  orthoOrParaLogLink, organismCommonName);
+    }
+  }
+  
+  /**
+   * Add a link to any existing ortho/paralog genes.
+   * @param doc
+   * @param thisQualifier
+   * @param orthoOrParaLog
+   * @param orthoOrParaLogLink
+   * @throws ReadOnlyException
+   * @throws EntryInformationException
+   */
+  private void addToList(final DatabaseDocument doc, 
+                         final Qualifier thisQualifier, 
+                         final String orthoOrParaLog,
+                         final String orthoOrParaLogLink,
+                         final String organismCommonName) 
+          throws ReadOnlyException, EntryInformationException
+  {
+    StringVector values = thisQualifier.getValues();
+    
+    for (int i = 0; i < values.size(); i++)
+    {
+      String link = AbstractMatchTable.getField("link", (String) values.get(i));
+      link = link.split(" ")[0];
+      if(link.equals(orthoOrParaLogLink))
+        continue;
+      
+      DatabaseDocumentEntry newDbEntry = GeneEdit.makeGeneEntry(null,
+          link, doc, null);
+
+      if (newDbEntry == null)
+        continue;
+
+      char[] c = new char[1];
+      PartialSequence ps = new PartialSequence(c, 100, 0, null, null);
+      newDbEntry.setPartialSequence(ps);
+      Entry entry = null;
+      try
+      {
+        entry = new Entry(newDbEntry);
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+      }
+
+      SimpleEntryGroup entry_group = new SimpleEntryGroup();
+      entry_group.addElement(entry);
+
+      ChadoTransactionManager ctm = new ChadoTransactionManager();
+      entry_group.addFeatureChangeListener(ctm);
+      ctm.setEntryGroup(entry_group);
+
+      
+      FeatureVector features = entry_group.getAllFeatures();     
+      Feature existingLinkedFeature = features.elementAt(0);
+      
+      org.gmod.schema.sequence.Feature f =
+        ((DatabaseDocument)newDbEntry.getDocument()).getFeatureByUniquename(
+              GeneUtils.getUniqueName(existingLinkedFeature.getEmblFeature()));
+      
+      final String TYPE;
+      if(f.getOrganism().getCommonName().equals(organismCommonName))
+        TYPE = PARALOG;
+      else
+        TYPE = ORTHOLOG;
+     
+      int rank;
+      QualifierVector qualifiers = existingLinkedFeature.getQualifiers();
+      Qualifier qualifier = qualifiers.getQualifierByName(TYPE);
+      
+      if(qualifier == null || qualifier.getValues().size() < 1)
+        rank = 0;
+      else
+      {
+        ((QualifierLazyLoading)qualifier).setForceLoad(true);
+        rank = qualifier.getValues().size();
+      }
+      String qualifierStr = orthoOrParaLog+" link="+orthoOrParaLogLink+
+                            " type="+TYPE+"; rank="+rank;
+
+      int index;
+      if(qualifier == null)
+      {
+        qualifier = new Qualifier(TYPE);
+        index = -1;
+      }
+      else
+       index = qualifiers.indexOf(qualifier);
+         
+
+      StringVector sv = qualifier.getValues();
+      if(sv == null)
+        sv = new StringVector();
+      sv.add(qualifierStr);
+      
+      existingLinkedFeature.setQualifier(new Qualifier(TYPE, sv));
+      // ADD SQL TO EXISTING ChadoTransactionManager?
+      ChadoTransactionManager.commit((DatabaseDocument) newDbEntry
+          .getDocument(), false, ctm);
+
+      entry_group.removeFeatureChangeListener(ctm);
+    }
   }
   
   /**
@@ -550,7 +730,7 @@ public class MatchPanel extends JPanel
    * @param value
    * @param feature
    */
-  public void add(final String name, final String value, final Feature feature)
+  private void add(final String name, final String value, final Feature feature)
   {
     final int index;
     
