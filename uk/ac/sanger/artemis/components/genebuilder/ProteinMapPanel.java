@@ -58,9 +58,12 @@ public class ProteinMapPanel extends MapPanel
   public static String[] TMHMM = 
   { 
     "membrane_structure", 
-    "non_cytoplasm_location", 
-    "transmembrane", 
-    "cytoplasm_location" 
+    "non_cytoplasm_location",
+    "non_cytoplasmic_polypeptide_region",
+    "transmembrane",
+    "transmembrane_polypeptide_region",
+    "cytoplasm_location",
+    "cytoplasmic_polypeptide_region"
   };
   private static String GPI_ANCHORED   = "GPI_anchor_cleavage_site";
   //private static String PlasmoAP_SCORE = "PlasmoAP_score";

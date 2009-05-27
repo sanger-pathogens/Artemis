@@ -90,8 +90,10 @@ class TransferAnnotationTool extends JFrame
     "isObsolete",
     "timelastmodified",
     "cytoplasm_location",
+    "cytoplasmic_polypeptide_region",
     "membrane_structure",
     "non_cytoplasm_location",
+    "non_cytoplasmic_polypeptide_region",
     "orthologous_to",
     "paralogous_to",
     "pepstats_file",
@@ -102,6 +104,7 @@ class TransferAnnotationTool extends JFrame
     "blastn_file",
     "systematic_id",
     "transmembrane",
+    "transmembrane_polypeptide_region",
     "previous_systematic_id"
   };
   
