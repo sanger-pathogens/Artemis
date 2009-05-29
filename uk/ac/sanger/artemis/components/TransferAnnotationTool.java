@@ -833,6 +833,16 @@ class QualifierPanel extends JPanel
     {
       public void itemStateChanged(ItemEvent e)
       {
+        if(qualifierNameCheckBox.isSelected())
+        {
+          for(int i=0; i<qualifierValuesCheckBox.size(); i++)
+          {
+            JCheckBox cb = (JCheckBox) qualifierValuesCheckBox.get(i);
+            if(cb.isSelected())
+              return;
+          }
+        }
+        
         for(int i=0; i<qualifierValuesCheckBox.size(); i++)
         {
           JCheckBox cb = (JCheckBox) qualifierValuesCheckBox.get(i);
