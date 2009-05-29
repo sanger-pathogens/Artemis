@@ -147,8 +147,8 @@ public class DatabaseEntryFilterPanel extends JPanel
           for(int i=0; i<thiskeyList.getItemCount(); i++)
             if(thiskeyList.getItemAt(i).equals(keyChoice.getSelectedItem()))
               return;
-          thiskeyList.addItem(keyChoice.getSelectedItem());
-          thiskeyList.setSelectedItem(keyChoice.getSelectedItem());
+          thiskeyList.addItem(keyChoice.getSelectedItem().getKeyString());
+          thiskeyList.setSelectedItem(keyChoice.getSelectedItem().getKeyString());
         }
       });
     }
