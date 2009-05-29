@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupDisplay.java,v 1.4 2007-10-11 10:17:06 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryGroupDisplay.java,v 1.5 2009-05-29 10:16:15 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -37,7 +37,7 @@ import javax.swing.*;
  *  objects in an EntryGroup.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryGroupDisplay.java,v 1.4 2007-10-11 10:17:06 tjc Exp $
+ *  @version $Id: EntryGroupDisplay.java,v 1.5 2009-05-29 10:16:15 tjc Exp $
  **/
 
 public class EntryGroupDisplay extends JPanel
@@ -178,7 +178,7 @@ public class EntryGroupDisplay extends JPanel
       entry_name = "no name";
     
     new_component = new JCheckBox(entry_name, entry_group.isActive(entry));
-
+    new_component.setOpaque(true);
     setEntryHighlight(entry, new_component);
 
     new_component.addItemListener(new ItemListener() 
@@ -235,7 +235,7 @@ public class EntryGroupDisplay extends JPanel
   private void setEntryHighlight(final Entry entry,
                                   final JCheckBox component)
   {
-    final String label = component.getText();
+    //final String label = component.getText();
 
     if(entry_group.getDefaultEntry() == entry) 
       component.setBackground(Color.yellow);
