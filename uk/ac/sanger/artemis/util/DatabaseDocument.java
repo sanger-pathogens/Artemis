@@ -2202,11 +2202,7 @@ public class DatabaseDocument extends Document
   public Feature getFeatureByUniquename(final String uniqueName) 
   {
     GmodDAO dao = getDAOOnly();
-    List features = dao.getFeaturesByUniqueName(uniqueName);
-    if(features == null || features.size() < 1)
-      return null;
-      
-    return (Feature)(dao.getFeaturesByUniqueName(uniqueName).get(0));
+    return (Feature) dao.getFeatureByUniqueName(uniqueName, null);
   }
   
   /**
