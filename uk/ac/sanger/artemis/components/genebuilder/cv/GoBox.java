@@ -354,6 +354,9 @@ public class GoBox extends AbstractCvBox
     return value_index;  
   }
   
+  /**
+   * Update the qualifier from the GO form.
+   */
   protected void updateQualifier(final QualifierVector qv)
   {
     int index = qv.indexOfQualifierWithName(origQualifier.getName());
@@ -362,19 +365,51 @@ public class GoBox extends AbstractCvBox
     final String goId = getField("GOid=", origQualifierString);
     
     StringVector values = newQualifier.getValues();
-    
-    int value_index = -10;
-    
+    Vector values_index = new Vector();
     for(int i=0; i<values.size(); i++)
     {
       String newGoId = getField("GOid=", (String)values.get(i));
       if(newGoId.equals(goId))
+        values_index.add(new Integer(i));
+    }
+  
+    int value_index = -99;
+    if(values_index.size() > 0)
+    {
+      if(values_index.size() == 1)
+        value_index = ((Integer)values_index.get(0)).intValue();
+      else
       {
-        value_index = i;
-        break;
+        final String with = getField("with=", origQualifierString);
+        final String evidence = getField("evidence=", origQualifierString);
+        final String dbxref = getField("dbxref=", origQualifierString);
+        for(int i=0; i<values_index.size(); i++)
+        {
+          int ind = ((Integer)values_index.get(i)).intValue();
+          value_index = ind;
+          String value = (String) values.get(ind);
+
+          String thisEvidence = getField("evidence=", value);
+          if(thisEvidence.equals(evidence))
+            break;
+
+          if(!with.equals(""))
+          {
+            String thisWith = getField("with=", value);
+            if(thisWith.equals(with))
+              break;
+          }
+          
+          if(!dbxref.equals(""))
+          {
+            String thisDbxref = getField("dbxref=", value);
+            if(thisDbxref.equals(dbxref))
+              break;
+          }
+        }
       }
     }
-    
+
     if(value_index > -1)
       values.remove(value_index);
     
