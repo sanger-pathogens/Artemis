@@ -20,19 +20,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/FeatureTable.java,v 1.1 2004-06-09 09:49:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/FeatureTable.java,v 1.2 2009-06-01 09:45:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
-
-import java.util.Vector;
-import java.util.NoSuchElementException;
 
 /**
  *  This object contains all the features in an entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureTable.java,v 1.1 2004-06-09 09:49:25 tjc Exp $
+ *  @version $Id: FeatureTable.java,v 1.2 2009-06-01 09:45:32 tjc Exp $
  */
 
 abstract class FeatureTable extends LineGroup {
