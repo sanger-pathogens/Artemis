@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.41 2008-06-20 09:48:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/AddMenu.java,v 1.42 2009-06-01 09:49:07 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -74,7 +74,7 @@ import javax.swing.KeyStroke;
  *  should have been called CreateMenu.
  *
  *  @author Kim Rutherford
- *  @version $Id: AddMenu.java,v 1.41 2008-06-20 09:48:33 tjc Exp $
+ *  @version $Id: AddMenu.java,v 1.42 2009-06-01 09:49:07 tjc Exp $
  **/
 public class AddMenu extends SelectionMenu 
 {
@@ -639,7 +639,7 @@ public class AddMenu extends SelectionMenu
         if(isDatabaseEntry)
         {
           String uniquename = GeneUtils.promptForUniquename(entry_group, 
-                                     range.isForwardMarker());
+                                     range.isForwardMarker(), range.getRawRange());
           Qualifier qualifier = new Qualifier("ID", uniquename);
           qualifiers = new QualifierVector();
           qualifiers.add(qualifier);
