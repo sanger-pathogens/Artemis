@@ -832,6 +832,56 @@ public class GeneUtils
   }
   
   /**
+   * Prompt the user for an ID and provide a default automated ID
+   * based on the range.
+   * @param entry_group
+   * @param is_forward
+   * @param range
+   * @return
+   */
+  public static String promptForUniquename(final EntryGroup entry_group,
+                                           final boolean is_forward,
+                                           final Range range)
+  {
+    final Entry default_entry = entry_group.getDefaultEntry ();
+    String id = null;
+    
+    if(default_entry.getEMBLEntry() instanceof 
+        uk.ac.sanger.artemis.io.DatabaseDocumentEntry)
+    { 
+     
+      while(id == null || 
+            id.equals("") ||
+            id.equals("to_be_set"))
+      {
+        String msg = "Provide a unique ID ";
+        
+        if(!is_forward)
+          msg = msg + "for reverse strand : ";
+        else
+          msg = msg + ": ";
+        
+        
+        id = JOptionPane.showInputDialog(null, msg, 
+            default_entry.getName()+":"+
+            range.getStart()+".."+
+            range.getEnd());
+        
+        if(!isUniqueID(entry_group, id))
+        {
+          JOptionPane.showMessageDialog(null, 
+              "ID "+id+" not unique.\nEnter a unique ID.", 
+              "ID Not Unique", 
+              JOptionPane.WARNING_MESSAGE);
+          id = null;
+        }
+      }
+    }
+    return id;
+  }
+  
+  
+  /**
    * Test to ensure ID (chado uniquename) is unique.
    * @param entry_group
    * @param id
