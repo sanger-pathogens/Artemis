@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.23 2009-04-17 11:02:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.24 2009-06-02 13:49:49 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -128,7 +128,8 @@ public class DatabaseJPanel extends JPanel
     add(status_line, BorderLayout.SOUTH);
     
     Box xBox = Box.createHorizontalBox();   
-    JLabel title_line = new JLabel("DATABASE");
+    JLabel title_line = new JLabel("DATABASE :: "+
+        entry_source.getDatabaseDocument().getName());
     title_line.setMinimumSize(new Dimension(100, font_height));
     title_line.setPreferredSize(new Dimension(250, font_height));
     title_line.setBorder(compound);
@@ -519,6 +520,38 @@ public class DatabaseJPanel extends JPanel
       {
         doc = entry_source.getDatabaseDocument();
         final DatabaseTreeNode top = new DatabaseTreeNode("");
+
+        File cacheFile = new File(DatabaseTreeNode.CACHE_PATH+
+            ((String)doc.getLocation()).replaceAll("/", ":"));
+        
+        if(System.getProperty("database_manager_cache_off") == null &&
+           cacheFile.exists())
+        {
+          doc.ping();
+          doc.loadCvTerms();
+          DatabaseTreeNode node = null;
+          try
+          {
+            FileInputStream fis = new FileInputStream(cacheFile);
+            logger4j.debug("USING CACHE :: "+cacheFile.getAbsolutePath());
+            ObjectInputStream in = new ObjectInputStream(fis);
+            node = (DatabaseTreeNode) in.readObject();
+            node.setDbDoc(doc);
+            in.close();
+            
+            return new DatabaseJTree((DatabaseTreeNode) node.getParent());
+          }
+          catch (IOException ex)
+          {
+            ex.printStackTrace();
+          }
+          catch (ClassNotFoundException ex)
+          {
+            ex.printStackTrace();
+          }
+        }
+        else if(System.getProperty("database_manager_cache_off") != null)
+          logger4j.debug("Database manager cache off");
         
         final List organisms = doc.getOrganismsContainingSrcFeatures();
         for(int i=0; i<organisms.size(); i++)
@@ -528,8 +561,9 @@ public class DatabaseJPanel extends JPanel
           String name = org.getCommonName();
           if(name == null || name.equals(""))
             name = org.getGenus() + "." + org.getSpecies();
+
           DatabaseTreeNode orgNode = 
-            new DatabaseTreeNode(name, false, org, doc.getUserName(), doc);
+              new DatabaseTreeNode(name, false, org, doc.getUserName(), doc);
           top.add(orgNode); 
         }
         return new DatabaseJTree(top);

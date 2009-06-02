@@ -34,6 +34,9 @@ import org.gmod.schema.sequence.Feature;
 
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.IOException;
 import java.util.Hashtable;
@@ -47,6 +50,9 @@ import java.util.List;
 public class DatabaseTreeNode extends DefaultMutableTreeNode 
                  implements Transferable, Serializable
 {
+  public static String CACHE_PATH = 
+    System.getProperty("user.home") + File.separatorChar +
+    ".artemis" + File.separatorChar + "cache" + File.separatorChar;
   private static final long serialVersionUID = 1L;
   public static final DataFlavor DATABASETREENODE = 
           new DataFlavor(DatabaseTreeNode.class, "Work Package");
@@ -60,7 +66,7 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
   private String organismCommonName;
   private boolean isLeaf = false;
   private String userName;
-  private DatabaseDocument dbDoc;
+  private static transient DatabaseDocument dbDoc;
   private boolean explored = false;
    
   public DatabaseTreeNode(final String name)
@@ -163,11 +169,37 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
       
       DatabaseTreeNode seqNode = new DatabaseTreeNode(
           f.getUniqueName(), getOrganism(), Integer.toString(f.getFeatureId()), getUserName());
+
       seqNode.isLeaf = true;
       typeNode.add(seqNode);
       typeNode.explored = true;
     }
     explored = true;
+    
+    if(System.getProperty("database_manager_cache_off") == null)
+      writeCache();
+  }
+  
+  /**
+   * Write out this node to the cache directory
+   */
+  private void writeCache()
+  {
+    try
+    {
+      File dir = new File(CACHE_PATH);
+      if(!dir.exists())
+        dir.mkdirs();
+      FileOutputStream fos = new FileOutputStream(CACHE_PATH + 
+           ((String)dbDoc.getLocation()).replaceAll("/", ":"));
+      ObjectOutputStream out = new ObjectOutputStream(fos);
+      out.writeObject(this);
+      out.close();
+    }
+    catch (IOException ex)
+    {
+      ex.printStackTrace();
+    }
   }
   
     
@@ -207,6 +239,11 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     return featureId;
   }
 
+  public void setDbDoc(DatabaseDocument dbDoc)
+  {
+    this.dbDoc = dbDoc;
+  }
+  
   
 //Serializable
   private void writeObject(java.io.ObjectOutputStream out) throws IOException
@@ -222,6 +259,9 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
 
   public Organism getOrganism()
   {
+    if(organism == null && organismCommonName != null)
+      organism = dbDoc.getOrganismByCommonName(organismCommonName);
+
     return organism;
   }
 

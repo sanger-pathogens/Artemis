@@ -23,6 +23,7 @@ package uk.ac.sanger.artemis.components.filetree;
 
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 import uk.ac.sanger.artemis.components.database.DatabaseJPanel;
+import uk.ac.sanger.artemis.components.database.DatabaseTreeNode;
 import uk.ac.sanger.artemis.j2ssh.SshLogin;
 import uk.ac.sanger.artemis.j2ssh.SshFileManager;
 import uk.ac.sanger.artemis.util.StringVector;
@@ -591,6 +592,27 @@ public class LocalAndRemoteFileManager extends JFrame
       
       fileMenu.add(domainLoad);
       fileMenu.add(lazyLoad);
+      
+      JMenuItem clearCache = new JMenuItem("Clear database manager cache");
+      clearCache.addActionListener(new ActionListener()
+      {
+
+        public void actionPerformed(ActionEvent e)
+        {
+          File cacheDir = new File(DatabaseTreeNode.CACHE_PATH);
+          
+          if(cacheDir.exists())
+          {
+            File cacheFiles[] = cacheDir.listFiles();
+            if(cacheFiles != null)
+            {
+              for(int i=0; i<cacheFiles.length; i++)
+                cacheFiles[i].delete();
+            }
+          }
+        }
+      });
+      fileMenu.add(clearCache);
     }
     
     JMenuItem fileMenuClose = new JMenuItem("Close");

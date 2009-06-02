@@ -1931,6 +1931,12 @@ public class DatabaseDocument extends Document
     return names;
   }
   
+  public Organism getOrganismByCommonName(final String commonName)
+  {
+    GmodDAO dao = getDAOOnly();
+    return dao.getOrganismByCommonName(commonName);
+  }
+  
   public List getOrganismNames()
   {
     if(organismNames != null && organismNames.size() > 0)
@@ -2311,6 +2317,28 @@ public class DatabaseDocument extends Document
   {
     GmodDAO dao = getDAOOnly();
     return dao.getFeatureLocsByListOfIds(featureIds);
+  }
+  
+  /**
+   * Test the database connection.
+   * @throws ConnectException
+   * @throws SQLException
+   */
+  public void ping() throws ConnectException, SQLException
+  {
+    getDAO().getAllCvs();
+  }
+  
+  /**
+   * Load the cvterms
+   * @throws ConnectException
+   * @throws SQLException
+   */
+  public void loadCvTerms() throws ConnectException, SQLException
+  {
+    GmodDAO dao = getDAO();
+    cvThread = new CvTermThread(dao);
+    cvThread.start();
   }
   
   /**
