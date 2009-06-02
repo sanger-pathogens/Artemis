@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.8 2009-04-03 11:01:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.9 2009-06-02 15:32:00 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -49,7 +49,7 @@ import javax.swing.*;
  *  This menu controls one particular BasePlotGroup.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: GraphMenu.java,v 1.8 2009-04-03 11:01:48 tjc Exp $
+ *  @version $Id: GraphMenu.java,v 1.9 2009-06-02 15:32:00 tjc Exp $
  **/
 
 public class GraphMenu extends JMenu 
@@ -241,14 +241,12 @@ public class GraphMenu extends JMenu
    *    only if this is true.
    *  @return The new JCheckBoxMenuItem
    **/
-  public JCheckBoxMenuItem addAlgorithm (final BaseAlgorithm algorithm,
+  private JCheckBoxMenuItem addAlgorithm (final BaseAlgorithm algorithm,
                                         final boolean is_visible,
                                         final boolean useSubMenu) 
   {
     final JCheckBoxMenuItem new_item =
-      new JCheckBoxMenuItem (algorithm.getAlgorithmName ());
-
-    new_item.setState (is_visible);
+      new JCheckBoxMenuItem (algorithm.getAlgorithmName (), is_visible);
 
     new_item.addItemListener (new ItemListener () 
     {
@@ -318,7 +316,7 @@ public class GraphMenu extends JMenu
    *  file, then make and add forward and a reverse BasePlot component using
    *  the data.
    **/
-  public void addUsagePlot () 
+  private void addUsagePlot () 
   {
     final JFrame frame = Utilities.getComponentFrame (base_plot_group);
 
@@ -501,7 +499,7 @@ public class GraphMenu extends JMenu
   /**
    *  Return the JFrame that was passed to the constructor.
    **/
-  public JFrame getParentFrame () 
+  private JFrame getParentFrame () 
   {
     return frame;
   }
