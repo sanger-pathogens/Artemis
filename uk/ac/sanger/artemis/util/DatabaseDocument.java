@@ -2950,6 +2950,9 @@ public class DatabaseDocument extends Document
        Options.getOptions().getOptionValues("sequence_update_features") != null)
     {
       ChadoCanonicalGene chadoGene = tsn.getGff_feature().getChadoGene();
+      if(chadoGene == null)
+        return null;
+      
       uk.ac.sanger.artemis.io.Feature transcript = 
         chadoGene.getTranscriptFeatureFromName(
           GeneUtils.getUniqueName(tsn.getGff_feature()));
