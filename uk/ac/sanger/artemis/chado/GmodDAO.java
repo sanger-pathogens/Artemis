@@ -51,6 +51,7 @@ public abstract class GmodDAO
 {
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(GmodDAO.class);
+
   public abstract List getOrganismsContainingSrcFeatures();
   public abstract List getSimilarityMatchesByFeatureIds(final List featureIds);
   public abstract List getSimilarityMatches(final Integer srcFeatureId);
@@ -267,10 +268,7 @@ public abstract class GmodDAO
    * @param commonName the short name to look up
    * @return the corresponding organism, or null
    */
-  public Organism getOrganismByCommonName(String commonName)
-  {
-    return null;
-  }
+  public abstract Organism getOrganismByCommonName(String commonName);
 
   /**
    * Get a list of the common name of all the organisms.

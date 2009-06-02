@@ -2290,4 +2290,9 @@ public class JdbcDAO extends GmodDAO
   {
     
   }
+  
+  public Organism getOrganismByCommonName(String commonName)
+  {
+    return null; 
+  }
 }

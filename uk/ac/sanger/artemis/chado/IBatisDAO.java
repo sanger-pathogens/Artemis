@@ -692,6 +692,13 @@ public class IBatisDAO extends GmodDAO
     return sqlMap.queryForList("getOrganism", null);
   }
   
+  public Organism getOrganismByCommonName(String commonName)
+  {
+    Organism o = new Organism();
+    o.setCommonName(commonName);
+    return (Organism)sqlMap.queryForObject("getOrganism", o);
+  }
+  
   //////
   ////// PubDaoI
   //////
