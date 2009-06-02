@@ -22,7 +22,7 @@
     </resultMap>
     
     <select id="getOrganism"
-     resultClass="org.gmod.schema.organism.Organism"> 
+     resultMap="map-organism"> 
       SELECT organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment 
       FROM organism
       <dynamic>
