@@ -180,8 +180,19 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
         continue;
 
       final Collection subjects = clusterFeature.getFeatureRelationshipsForSubjectId();
-      final Iterator it = subjects.iterator();
+      Iterator it = subjects.iterator();
       int cnt = 0;
+      
+      while(it.hasNext())
+      {
+        FeatureRelationship fr = (FeatureRelationship)it.next();
+        Feature subjectFeature = fr.getFeatureBySubjectId();
+        
+        if(subjectFeature.getFeatureId() != Integer.parseInt(featureId))
+          cnt++;
+      }
+      
+      it = subjects.iterator();
       while(it.hasNext())
       {
         FeatureRelationship fr = (FeatureRelationship)it.next();
@@ -205,15 +216,14 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
           
           value = value.concat(" type="+fr.getCvTerm().getName());
           
-          if(!clusterFeature.getUniqueName().startsWith("CLUSTER_") &&
+          // if not a cluster
+          if(cnt < 2 &&
              fr.getCvTerm().getName().equals("orthologous_to"))
           {
             String product = getProduct(subjectFeature);
             if(product != null)
               value = value.concat("; product="+product);
           }
-          
-          cnt++;
         }
       }
       if(cnt > 1 || 
