@@ -1,4 +1,19 @@
 Version 11+
+    The database manager is cached between sessions (this can is on by default 
+    and can be switched off with -Ddatabase_manager_cache_off). There is an 
+    option under the File menu to clear this cache.
+    
+    A checkbox has been added to the window for adding ortholog/paralog links
+    in the Gene Builder. If this is selected it adds links between existing 
+    ortholog/paralogs and the new ortholog/paralog. By default this is off.
+    
+    An option has been added to the database manager to display polypeptide 
+    domains in the feature display (as well as the protein map in the Gene
+    Builder).
+    
+    An option has been added to the Run menu for doing a search of the Pfam
+    database.
+    
 	Added an option to the Write menu for writing a combination of upstream 
 	+ feature + downstream bases for selected features.
 
