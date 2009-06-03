@@ -155,6 +155,10 @@ public class JTreeTable extends JTable
     JMenuItem menuItem = new JMenuItem("Refresh");
     menuItem.addActionListener(this);
     popup.add(menuItem);
+    
+    JMenuItem gotoItem = new JMenuItem("GoTo Directory...");
+    gotoItem.addActionListener(this);
+    popup.add(gotoItem);
     popup.add(new JSeparator());
     //open menu
     JMenu openMenu = new JMenu("Open With");
@@ -229,7 +233,7 @@ public class JTreeTable extends JTable
     revalidate();
   }
 
-  public void refreshAll()
+  protected void refreshAll()
   {
     FileSystemModel model = (FileSystemModel)tree.getModel();
     Object root = model.getRoot();
@@ -321,6 +325,31 @@ public class JTreeTable extends JTable
       tree.repaint();
       revalidate();
       repaint();
+      return;
+    }
+   
+    if(source.getText().startsWith("GoTo Directory"))
+    {
+      String dir = JOptionPane.showInputDialog(this, "GoTo Directory", 
+          System.getProperty("home.dir"));
+      
+      File fileDir = new File(dir);
+      if(!fileDir.exists())
+      {
+        JOptionPane.showMessageDialog(this, dir + " not found.");
+        return;
+      }
+      else if(fileDir.isFile())
+      {
+        JOptionPane.showMessageDialog(this, dir + " is a file.");
+        return;
+      }
+      FileNode rootNode = (FileNode) ((DefaultTreeModel)tree.getModel()).getRoot();
+      FileNode newNode = new FileNode(fileDir);
+      rootNode.add(newNode);
+      
+      ((DefaultTreeModel)tree.getModel()).nodeStructureChanged(rootNode);
+      revalidate();
       return;
     }
 
