@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.24 2009-06-02 13:49:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/database/DatabaseJPanel.java,v 1.25 2009-06-03 10:24:17 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.database;
@@ -522,7 +522,7 @@ public class DatabaseJPanel extends JPanel
         final DatabaseTreeNode top = new DatabaseTreeNode("");
 
         File cacheFile = new File(DatabaseTreeNode.CACHE_PATH+
-            ((String)doc.getLocation()).replaceAll("/", ":"));
+            ((String)doc.getLocation()).replaceAll("[/:=\\?]", "_"));
         
         if(System.getProperty("database_manager_cache_off") == null &&
            cacheFile.exists())

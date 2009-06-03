@@ -27,6 +27,8 @@ package uk.ac.sanger.artemis.components.database;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
+
+import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.gmod.schema.organism.Organism;
@@ -119,7 +121,8 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     this.organism  = organism;
     this.featureId = featureId;
     this.userName  = userName;
-    setOrganismCommonName();
+    if(getOrganism() != null)
+      setOrganismCommonName();
   }
   
   public String getOrganismCommonName()
@@ -190,15 +193,16 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
       File dir = new File(CACHE_PATH);
       if(!dir.exists())
         dir.mkdirs();
-      FileOutputStream fos = new FileOutputStream(CACHE_PATH + 
-           ((String)dbDoc.getLocation()).replaceAll("/", ":"));
+      FileOutputStream fos = new FileOutputStream(CACHE_PATH +
+          ((String)dbDoc.getLocation()).replaceAll("[/:=\\?]", "_"));
+      
       ObjectOutputStream out = new ObjectOutputStream(fos);
       out.writeObject(this);
       out.close();
     }
-    catch (IOException ex)
+    catch(Exception ex)
     {
-      ex.printStackTrace();
+      JOptionPane.showMessageDialog(null, ex.getMessage());
     }
   }
   
@@ -239,11 +243,23 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
     return featureId;
   }
 
-  public void setDbDoc(DatabaseDocument dbDoc)
+  protected void setDbDoc(DatabaseDocument dbDoc)
   {
-    this.dbDoc = dbDoc;
+    DatabaseTreeNode.dbDoc = dbDoc;
   }
   
+  protected Organism getOrganism()
+  {
+    if(organism == null && organismCommonName != null)
+      organism = dbDoc.getOrganismByCommonName(organismCommonName);
+
+    return organism;
+  }
+
+  public String getUserName()
+  {
+    return userName;
+  }
   
 //Serializable
   private void writeObject(java.io.ObjectOutputStream out) throws IOException
@@ -256,18 +272,4 @@ public class DatabaseTreeNode extends DefaultMutableTreeNode
   {
     in.defaultReadObject();
   }
-
-  public Organism getOrganism()
-  {
-    if(organism == null && organismCommonName != null)
-      organism = dbDoc.getOrganismByCommonName(organismCommonName);
-
-    return organism;
-  }
-
-  public String getUserName()
-  {
-    return userName;
-  }
-
 }
