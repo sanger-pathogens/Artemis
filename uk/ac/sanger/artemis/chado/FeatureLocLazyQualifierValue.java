@@ -202,7 +202,9 @@ public class FeatureLocLazyQualifierValue implements LazyQualifierValue
       analysisFeature = (AnalysisFeature) it3.next();
       buff.append(analysisFeature.getAnalysis().getProgram()+";");
     }
-    else
+    
+    if(analysisFeature == null ||
+       matchFeature.getCvTerm().getName().equals("polypeptide_domain"))
     {
       // predictions and polypeptide_domains have dbxrefs
       buff.append(getMatchFeatureDbXRefs());
