@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.15 2009-04-07 09:43:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.16 2009-06-05 10:29:31 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import org.apache.log4j.Level;
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.15 2009-04-07 09:43:48 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.16 2009-06-05 10:29:31 tjc Exp $
  **/
 
 public class BasePlot extends Plot
@@ -340,16 +340,9 @@ public class BasePlot extends Plot
 
   /**
    *  Recalculate the values in value_array_array, step_size, min_value and
-   *  max_value.
-   * @throws OutOfRangeException 
-   * @throws EntryInformationException 
-   * @throws ReadOnlyException 
-   * @throws OutOfRangeException 
-   * @throws EntryInformationException 
-   * @throws ReadOnlyException 
+   *  max_value. 
    **/
-  protected void calculateFeatures() 
-            throws ReadOnlyException, EntryInformationException, OutOfRangeException
+  protected void calculateFeatures(boolean fromPeak) 
   {
     GridBagLayout gridbag = new GridBagLayout();
     JPanel pane = new JPanel(gridbag);
@@ -446,8 +439,10 @@ public class BasePlot extends Plot
     int averageCount = 0;
     final String noteField = "Auto-generated from "+getAlgorithm().getAlgorithmName()+
                              " plot;"+" window size="+getWindowSize()+
-                             "; score cut-off="+cutoffField.getText();
+                             "; score cut-off="+cutoffField.getText()+
+                             (fromPeak ? "; from the peaks" : "; from the trough");
     
+    int lastPos = 0;
     for(int i = 0 ; i < number_of_values ; ++i) 
     {
       getBaseAlgorithm().getValues((i * step_size) + 1,
@@ -457,6 +452,8 @@ public class BasePlot extends Plot
 
       final float current_value = temp_values[0];
       int pos = getWindowSize()/2 + (i * step_size) + 1;
+      if(i == 0)
+        lastPos = pos;
       
       if(current_value > cutoff)
       {
@@ -464,35 +461,80 @@ public class BasePlot extends Plot
         averageCount++;
       }
       
-      if(current_value > cutoff && featureStart == -1)
+      try
       {
-        featureStart = pos;
-      }
-      else if(current_value <= cutoff && featureStart > -1)
-      { 
-        if(pos-featureStart < minFeatureSize)
+        if (fromPeak && current_value > cutoff && featureStart == -1)
+          featureStart = pos;
+        else if (!fromPeak && current_value < cutoff && featureStart == -1)
+          featureStart = pos;
+        else if (fromPeak && current_value < cutoff && featureStart > -1)
         {
+          if (lastPos - featureStart < minFeatureSize)
+          {
+            average = 0.f;
+            averageCount = 0;
+            featureStart = -1;
+            continue;
+          }
+
+          // create feature
+          MarkerRange range = new MarkerRange(
+             getBaseAlgorithm().getStrand(), featureStart,lastPos);
+          final Location new_location = range.createLocation();
+
+          average = average / averageCount;
+          QualifierVector qualifiers = new QualifierVector();
+          qualifiers.add(new Qualifier("score", Float.toString(average)));
+          qualifiers.add(new Qualifier("note", noteField));
+
+          new_entry.createFeature(key, new_location, qualifiers);
+          featureStart = -1;
           average = 0.f;
           averageCount = 0;
-          featureStart = -1;
-          continue;
         }
-        
-        // create feature 
-        MarkerRange range = new MarkerRange(getBaseAlgorithm().getStrand(),
-                                            featureStart, pos);
-        final Location new_location = range.createLocation();
-        
-        average = average/averageCount;
-        QualifierVector qualifiers = new QualifierVector();
-        qualifiers.add(new Qualifier("score", Float.toString(average)));
-        qualifiers.add(new Qualifier("note", noteField));
-        
-        new_entry.createFeature(key, new_location, qualifiers);
-        featureStart = -1;
-        average = 0.f;
-        averageCount = 0;
+        else if (!fromPeak && current_value > cutoff && featureStart > -1)
+        {
+          if (lastPos - featureStart < minFeatureSize)
+          {
+            average = 0.f;
+            averageCount = 0;
+            featureStart = -1;
+            continue;
+          }
+
+          // create feature
+          MarkerRange range = new MarkerRange(
+              getBaseAlgorithm().getStrand(), featureStart, lastPos);
+          final Location new_location = range.createLocation();
+
+          average = average / averageCount;
+          QualifierVector qualifiers = new QualifierVector();
+          qualifiers.add(new Qualifier("score", Float.toString(average)));
+          qualifiers.add(new Qualifier("note", noteField));
+
+          new_entry.createFeature(key, new_location, qualifiers);
+          featureStart = -1;
+          average = 0.f;
+          averageCount = 0;
+        }
       }
+      catch (OutOfRangeException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      catch (ReadOnlyException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      catch (EntryInformationException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+
+      lastPos = pos;
     }
     return;
   }

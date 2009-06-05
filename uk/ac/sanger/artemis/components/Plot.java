@@ -20,17 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.18 2009-04-07 09:43:26 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.19 2009-06-05 10:29:31 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.circular.TextFieldFloat;
-import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.plot.*;
-import uk.ac.sanger.artemis.util.OutOfRangeException;
-import uk.ac.sanger.artemis.util.ReadOnlyException;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -54,7 +51,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.18 2009-04-07 09:43:26 tjc Exp $
+ *  @version $Id: Plot.java,v 1.19 2009-06-05 10:29:31 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -115,8 +112,7 @@ public abstract class Plot extends JPanel
    **/
   protected abstract int getPointPosition(final int canvas_x_position);
   
-  protected abstract void calculateFeatures()
-            throws ReadOnlyException, EntryInformationException, OutOfRangeException;  
+  protected abstract void calculateFeatures(boolean fromPeak);  
 
   protected abstract void showAveragesForRange();
   
@@ -452,38 +448,35 @@ public abstract class Plot extends JPanel
         if(numPlots == 1 && getAlgorithm() instanceof BaseAlgorithm)
         {
           popup.addSeparator();
-          final JMenuItem createFeatures =
-            new JMenuItem("Create features from graph peaks...");
-          popup.add(createFeatures);
           
-          createFeatures.addActionListener(new ActionListener() 
+          final JMenu createFeaturesFrom = new JMenu("Create features from graph");
+          popup.add(createFeaturesFrom);
+          
+          final JMenuItem createFeaturesFromPeak =
+            new JMenuItem("peaks...");
+          createFeaturesFrom.add(createFeaturesFromPeak);
+          
+          createFeaturesFromPeak.addActionListener(new ActionListener() 
           {
             public void actionPerformed(ActionEvent e) 
             {
-              try
-              {
-                calculateFeatures();
-              }
-              catch(ReadOnlyException e1)
-              {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-              }
-              catch(EntryInformationException e1)
-              {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-              }
-              catch(OutOfRangeException e1)
-              {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-              }
+              calculateFeatures(true);
+            }
+          });
+          
+          final JMenuItem createFeaturesFromDip =
+            new JMenuItem("trough...");
+          createFeaturesFrom.add(createFeaturesFromDip);
+          
+          createFeaturesFromDip.addActionListener(new ActionListener() 
+          {
+            public void actionPerformed(ActionEvent e) 
+            {
+              calculateFeatures(false);
             }
           });
         }
-        
-        
+
         ///       
         if(Plot.this instanceof BasePlot)
         { 
