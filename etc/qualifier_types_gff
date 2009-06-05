@@ -64,6 +64,7 @@ cons_splice      yes        (::)    5'site 3'site
 country          no         "text"
 cultivar         no         "text"
 cytoplasm_location no       "text"
+cytoplasmic_polypeptide_region no       "text"
 db_xref          no         "text"
 dev_stage        no         "text"
 direction        yes        list    LEFT RIGHT BOTH
@@ -93,6 +94,7 @@ membrane_structure no       "text"
 mod_base         no         modbase
 mol_type         no         "text"
 non_cytoplasm_location no   "text"
+non_cytoplasmic_polypeptide_region no   "text"
 note             no         "text"
 number           yes        number  1 99999999
 operon           no         "text"
@@ -135,4 +137,5 @@ tissue_type      no         "text"
 transgenic       no         "text"
 translation      no         "text"
 transmembrane    no         "text"
+transmembrane_polypeptide_region    no         "text"
 DNA_transposon   no         "text"
