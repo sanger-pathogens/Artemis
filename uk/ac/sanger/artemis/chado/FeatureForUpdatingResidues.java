@@ -33,6 +33,7 @@ public class FeatureForUpdatingResidues extends Feature
   private int basesToEnd;
   private int length;
   private String newSubSequence;
+  private boolean isResidueUpdate = false;
   
   public int getEndBase()
   {
@@ -74,6 +75,13 @@ public class FeatureForUpdatingResidues extends Feature
   {
     this.length = length;
   }
-  
+  public boolean isResidueUpdate()
+  {
+    return isResidueUpdate;
+  }
+  public void setResidueUpdate(boolean isResidueUpdate)
+  {
+    this.isResidueUpdate = isResidueUpdate;
+  }
   
 }

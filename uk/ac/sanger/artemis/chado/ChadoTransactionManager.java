@@ -530,7 +530,7 @@ public class ChadoTransactionManager
         ChadoTransaction tsnResidue = 
           new ChadoTransaction(ChadoTransaction.UPDATE, 
             featureForUpdatingResidues, 
-            null, null, null, "SEQUENCE UPDATE ");
+            null, null, null, "RESIDUE SEQUENCE UPDATE ");
         sql.add(tsnResidue);
       }
     } 

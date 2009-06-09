@@ -1433,6 +1433,7 @@ public class GeneUtils
     chadoFeature.setStartBase(0);
     chadoFeature.setLength(residues.length());
     chadoFeature.setNewSubSequence(residues);
+    chadoFeature.setResidueUpdate(true);
     
     if(gffFeature.getQualifierByName("feature_id") != null)
       chadoFeature.setFeatureId( Integer.parseInt( (String)
