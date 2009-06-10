@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.32 2009-05-08 08:36:58 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.33 2009-06-10 09:00:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -602,19 +602,23 @@ public class ChadoCanonicalGene
       {
         String transcriptName = (String)transcriptNames.get(i);
         List splicedSegments = getSplicedFeaturesOfTranscript(transcriptName);
-        for(int j=0; j<splicedSegments.size(); j++)
+        
+        if(splicedSegments != null)
         {
-          Feature segment = (Feature)splicedSegments.get(j);
-          try
+          for(int j=0; j<splicedSegments.size(); j++)
           {
-            String segmentName = (String)segment.getQualifierByName("ID").getValues().get(0);
-            if(name.equals(segmentName))
-              return transcriptName;
-          }
-          catch(InvalidRelationException e)
-          {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Feature segment = (Feature)splicedSegments.get(j);
+            try
+            {
+              String segmentName = (String)segment.getQualifierByName("ID").getValues().get(0);
+              if(name.equals(segmentName))
+                return transcriptName;
+            }
+            catch(InvalidRelationException e)
+            {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
           }
         }
       }
