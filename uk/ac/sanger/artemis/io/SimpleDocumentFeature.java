@@ -20,19 +20,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentFeature.java,v 1.3 2005-11-28 16:46:38 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentFeature.java,v 1.4 2009-06-10 09:47:40 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
 import uk.ac.sanger.artemis.util.*;
-import java.io.*;
 
 /**
  *  SimpleDocumentFeature class
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentFeature.java,v 1.3 2005-11-28 16:46:38 tjc Exp $
+ *  @version $Id: SimpleDocumentFeature.java,v 1.4 2009-06-10 09:47:40 tjc Exp $
  **/
 
 abstract class SimpleDocumentFeature extends LineGroup
