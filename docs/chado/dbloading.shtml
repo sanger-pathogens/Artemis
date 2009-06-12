@@ -53,7 +53,8 @@ make ontologies
 <li><b>Examples of Loading Sequences into the Database.</b>
 <p><b>NC_001142:</b><p>
 You may find the following loading fails and you need to insert 'processed_transcript' 
-as a sequence ontology cvterm.
+as a sequence ontology cvterm. Or change them to 'mature_transcript' in the gff file
+(e.g. sed s'|processed_transcript|mature_transcript|' NC_001142.gff).
 
 <pre>
 cat NC_001142.gbk | perl /usr/local/bin/bp_genbank2gff3.pl -noCDS -in stdin -out stdout > NC_001142.gff
