@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.66 2009-05-26 10:43:13 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.67 2009-06-12 14:03:50 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -832,6 +832,9 @@ hyperlinks = \
 #
 # chado gene model features default types
 chado_exon_model=CDS
+
+# infer CDS and UTR features from gene model
+chado_infer_CDS=no
 #chado_transcript=transcript
 
 # provide a list of available servers
