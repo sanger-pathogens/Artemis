@@ -144,6 +144,7 @@ public class DatabaseDocument extends Document
   
   public static String EXONMODEL  = "exon-model";
   public static String TRANSCRIPT = "mRNA";
+  public static boolean CHADO_INFER_CDS = false;
   
   /** list of controlled_curation CV names */
   private static Vector cvControledCuratioNames;
@@ -2966,7 +2967,7 @@ public class DatabaseDocument extends Document
           ChadoTransaction tsnResidue = 
             new ChadoTransaction(ChadoTransaction.UPDATE, 
               featureForUpdatingResidues, 
-              null, null, null, "SEQUENCE UPDATE "+
+              null, null, null, "RESIDUE SEQUENCE UPDATE "+
               GeneUtils.getUniqueName(transcript));
           if(transactions == null)
             transactions = new Vector();
@@ -2985,7 +2986,7 @@ public class DatabaseDocument extends Document
             ChadoTransaction tsnResidue = 
               new ChadoTransaction(ChadoTransaction.UPDATE, 
                   ppForUpdatingResidues, 
-                null, null, null, "SEQUENCE UPDATE "+
+                null, null, null, "RESIDUE SEQUENCE UPDATE "+
                 GeneUtils.getUniqueName(pp));
             if(transactions == null)
               transactions = new Vector();

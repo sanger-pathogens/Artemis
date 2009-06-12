@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.45 2009-03-19 11:05:27 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.46 2009-06-12 13:50:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -129,7 +129,8 @@ public class GeneBuilderFrame extends JFrame
     setTitle(title);
     
     this.selection = selection;
-    if(feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL))
+    if(feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL) ||
+       (DatabaseDocument.CHADO_INFER_CDS && feature.getKey().getKeyString().equals("CDS")))
     {
       Feature proteinFeature = getProteinFeature(feature, selection);
       if(proteinFeature != null)

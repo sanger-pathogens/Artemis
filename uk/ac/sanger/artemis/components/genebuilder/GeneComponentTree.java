@@ -20,12 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.22 2007-10-16 16:02:47 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneComponentTree.java,v 1.23 2009-06-12 13:50:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
 
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
+import uk.ac.sanger.artemis.io.DatabaseInferredFeature;
 import uk.ac.sanger.artemis.io.Feature;
 import uk.ac.sanger.artemis.io.InvalidRelationException;
 import uk.ac.sanger.artemis.Selection;
@@ -154,6 +155,9 @@ public class GeneComponentTree extends JTree
         for(int j = 0; j < exons.size(); j++)
         {
           exon = (Feature) exons.get(j);
+          
+          if(exon instanceof DatabaseInferredFeature)
+            continue;
           exon_id = (String) exon.getQualifierByName("ID").getValues().get(0);
 
           exon_node = new DefaultMutableTreeNode(exon_id);

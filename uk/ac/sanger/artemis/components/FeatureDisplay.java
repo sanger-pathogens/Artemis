@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.65 2009-04-08 13:42:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeatureDisplay.java,v 1.66 2009-06-12 13:50:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -72,7 +72,7 @@ import javax.swing.JFrame;
  *  This component is used for displaying an Entry.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeatureDisplay.java,v 1.65 2009-04-08 13:42:17 tjc Exp $
+ *  @version $Id: FeatureDisplay.java,v 1.66 2009-06-12 13:50:35 tjc Exp $
  **/
 
 public class FeatureDisplay extends EntryGroupPanel
@@ -286,10 +286,8 @@ public class FeatureDisplay extends EntryGroupPanel
   private static Vector contigKeys;
 
   private Object[] protein_keys = { "CDS", 
-                                    "exon", 
                                     "BLASTCDS",
-                                    "polypeptide", 
-                                    DatabaseDocument.EXONMODEL };
+                                    "polypeptide" };
 
   /**
    *  Create a new FeatureDisplay object with the horizontal scrollbar at the

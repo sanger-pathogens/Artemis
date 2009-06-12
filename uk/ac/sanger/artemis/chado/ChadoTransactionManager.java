@@ -34,6 +34,7 @@ import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.OrthoParalogTable;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.SimilarityTable;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.io.DatabaseInferredFeature;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.QualifierLazyLoading;
 import uk.ac.sanger.artemis.io.QualifierVector;
@@ -271,7 +272,8 @@ public class ChadoTransactionManager
 	logMDC();
     if(event.featureHasChanged())
     {
-      if(!(event.getFeature().getEmblFeature() instanceof GFFStreamFeature))
+      if(!(event.getFeature().getEmblFeature() instanceof GFFStreamFeature) ||
+          (event.getFeature().getEmblFeature() instanceof DatabaseInferredFeature))
         return;
       
       final GFFStreamFeature feature = 
@@ -447,7 +449,8 @@ public class ChadoTransactionManager
         return;
       }
      
-      if(!(event.getFeature().getEmblFeature() instanceof GFFStreamFeature))
+      if(!(event.getFeature().getEmblFeature() instanceof GFFStreamFeature) ||
+           event.getFeature().getEmblFeature() instanceof DatabaseInferredFeature)
         return;
       
       final Feature feature = event.getFeature();

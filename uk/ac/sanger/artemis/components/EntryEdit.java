@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.78 2009-04-30 15:58:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.79 2009-06-12 13:50:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -43,6 +43,7 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.Document;
+import uk.ac.sanger.artemis.io.DatabaseInferredFeature;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.DocumentEntryFactory;
 import uk.ac.sanger.artemis.io.EntryInformationException;
@@ -67,7 +68,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.78 2009-04-30 15:58:32 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.79 2009-06-12 13:50:35 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -169,6 +170,9 @@ public class EntryEdit extends JFrame
           getEntryGroup().getBases().addSequenceChangeListener(commitButton, 0);
           xBox.add(commitButton);
         }
+        
+        if(DatabaseDocument.CHADO_INFER_CDS)
+          DatabaseInferredFeature.addListenersToEntryGroup(getEntryGroup());
       }
     }
 

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.62 2009-05-08 08:38:23 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.63 2009-06-12 13:50:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -47,7 +47,7 @@ import org.gmod.schema.sequence.FeatureLoc;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.62 2009-05-08 08:38:23 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.63 2009-06-12 13:50:35 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -301,6 +301,57 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       {
         ChadoCanonicalGene gene = (ChadoCanonicalGene)enum_genes.nextElement();
         combineChadoExons(gene);
+        
+        
+        
+        // inferring CDS and UTRs
+        if(DatabaseDocument.CHADO_INFER_CDS)
+        {
+          final Vector transcripts = (Vector)gene.getTranscripts();
+          gene.correctSpliceSiteAssignments();
+          
+          for(int i=0; i<transcripts.size(); i++)
+          {
+            GFFStreamFeature transcript = (GFFStreamFeature)transcripts.get(i);
+            String transcript_id = null;
+            transcript_id = GeneUtils.getUniqueName(transcript);
+            
+            List exons = gene.getSpliceSitesOfTranscript(transcript_id, "exon");
+            if(exons == null)
+              continue;
+            
+            Iterator it = exons.iterator();
+            while(it.hasNext())
+            {
+              final GFFStreamFeature exonFeature = (GFFStreamFeature)it.next();
+
+              QualifierVector qualifiers = new QualifierVector();
+              qualifiers.add(new Qualifier("ID", transcript_id+":CDS"));
+              qualifiers.add(new Qualifier("Parent", transcript_id));
+              
+              DatabaseInferredFeature cdsFeature = new DatabaseInferredFeature(
+                  Key.CDS, exonFeature.getLocation(), qualifiers, gene);
+              
+              try
+              {
+                gene.addSplicedFeatures(transcript_id, cdsFeature);
+                forcedAdd(cdsFeature);
+                
+                
+                
+                /*Feature protein;
+                if((protein = gene.getProteinOfTranscript(transcript_id)) != null)
+                  cdsFeature.addFeatureListener(protein);*/
+              }
+              catch (ReadOnlyException e)
+              {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+              }
+              
+            }
+          }
+        }
       } 
 
     }
@@ -605,7 +656,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
    *  FeatureVector containing the feature that are in that group.  Groups
    *  that have more than one member will be combined.
    **/
-  public void combineChadoExons(ChadoCanonicalGene gene) 
+  private void combineChadoExons(ChadoCanonicalGene gene) 
   {
     final Vector transcripts = (Vector)gene.getTranscripts();
     gene.correctSpliceSiteAssignments();

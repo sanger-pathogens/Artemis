@@ -57,6 +57,7 @@ import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.SelectionMenu;
 import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.io.DatabaseInferredFeature;
 import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Feature;
@@ -726,7 +727,7 @@ public class GeneUtils
       return;
     }
     
-    final QualifierVector qualifiers = new QualifierVector();
+    QualifierVector qualifiers = new QualifierVector();
     final String uniquename = promptForUniquename(entry_group, 
                                    range.isForwardMarker());
     final Qualifier qualifier = new Qualifier("ID", uniquename);
@@ -756,7 +757,8 @@ public class GeneUtils
          (String)transcript.getQualifierByName("ID").getValues().get(0);
       
       // add exon
-      GeneViewerPanel.addExonFeature(chadoGene, entry_group, 
+      GFFStreamFeature exonFeature =
+         GeneViewerPanel.addExonFeature(chadoGene, entry_group, 
           null, new_location.getTotalRange(), transcriptId, selection, 
           new Key(DatabaseDocument.EXONMODEL), null);
       
@@ -764,6 +766,11 @@ public class GeneUtils
       uk.ac.sanger.artemis.Feature polypep =
         GeneViewerPanel.addProteinFeature(chadoGene, entry_group, transcriptId, transcript);
       newFeatures.add(polypep);
+      
+      // add inferred CDS
+      if(DatabaseDocument.CHADO_INFER_CDS)
+        DatabaseInferredFeature.createFeature(transcriptId, exonFeature, 
+                              chadoGene, entry_group.getDefaultEntry());
       
       showHideGeneFeatures(newFeatures);
       selection.clear();

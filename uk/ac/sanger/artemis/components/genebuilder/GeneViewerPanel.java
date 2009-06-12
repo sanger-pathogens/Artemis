@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.83 2009-03-19 11:29:39 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.84 2009-06-12 13:50:35 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -44,6 +44,7 @@ import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.Selection;
 import uk.ac.sanger.artemis.FeatureVector;
 
+import uk.ac.sanger.artemis.io.DatabaseInferredFeature;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.Feature;
 import uk.ac.sanger.artemis.io.GFFStreamFeature;
@@ -1142,7 +1143,9 @@ public class GeneViewerPanel extends MapPanel
           int last_ypos = 0;
 
           Feature embl_exon = (Feature) splicedFeatures.get(i);
-
+          if(embl_exon instanceof DatabaseInferredFeature)
+            continue;
+          
           uk.ac.sanger.artemis.Feature exon = (uk.ac.sanger.artemis.Feature) embl_exon
               .getUserData();
 
