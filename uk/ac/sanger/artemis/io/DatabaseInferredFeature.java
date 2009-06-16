@@ -128,8 +128,19 @@ public class DatabaseInferredFeature
       
       if( !proteinRange.contains(exonRange) )
       {
-        if(exonRange.getStart() >= proteinRange.getStart() &&
-           exonRange.getStart() < proteinRange.getEnd())
+        if(exonRange.getStart () < proteinRange.getStart () &&
+           exonRange.getEnd ()   > proteinRange.getEnd ())
+        {
+          try
+          {
+            r_diff_5.add(new Range(exonRange.getStart(), proteinRange.getStart()-1));
+            r_new.add(new Range(proteinRange.getStart(), proteinRange.getEnd()));
+            r_diff_3.add(new Range(proteinRange.getEnd()+1, exonRange.getEnd()));
+          }
+          catch (OutOfRangeException e){ e.printStackTrace(); }
+        }
+        else if(exonRange.getStart() >= proteinRange.getStart() &&
+                exonRange.getStart() < proteinRange.getEnd())
         {   
           // exon is partially CDS and UTR
           try
