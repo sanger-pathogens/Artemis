@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.84 2009-06-12 13:50:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneViewerPanel.java,v 1.85 2009-06-18 14:59:05 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -479,8 +479,12 @@ public class GeneViewerPanel extends MapPanel
       }
     });
     createFeatureMenu.add(createFeatureProtein);
-    createFeatureMenu.add(createFeature5Utr);
-    createFeatureMenu.add(createFeature3Utr);
+    
+    if(!DatabaseDocument.CHADO_INFER_CDS)
+    {
+      createFeatureMenu.add(createFeature5Utr);
+      createFeatureMenu.add(createFeature3Utr);
+    }
     createFeatureMenu.add(createFeatureDna);
     
     menu.add(createFeatureMenu);

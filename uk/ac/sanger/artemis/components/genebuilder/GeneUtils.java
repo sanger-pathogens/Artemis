@@ -1029,7 +1029,9 @@ public class GeneUtils
         if(childRange.getEnd() > transcriptEnd )
           transcriptEnd = childRange.getEnd();
         
-        if(feature.getKey().equals(DatabaseDocument.EXONMODEL) ||
+        String keyStr = feature.getKey().getKeyString();
+        if( (DatabaseDocument.CHADO_INFER_CDS  && keyStr.equals("CDS")) ||
+            (!DatabaseDocument.CHADO_INFER_CDS && keyStr.equals(DatabaseDocument.EXONMODEL)) ||
            feature.getKey().equals("pseudogenic_exon"))
         {
           if(childRange.getStart() < ppStart)
@@ -1052,6 +1054,7 @@ public class GeneUtils
       }
     }
     
+    // check gene range
     if((geneRange.getStart() != geneStart && geneStart < Integer.MAX_VALUE) ||
        (geneRange.getEnd()   != geneEnd   && geneEnd   > -1))
       return false;
@@ -1132,6 +1135,11 @@ public class GeneUtils
     return null;
   }
   
+  /**
+   * Check and adjust protein boundary
+   * @param transcript
+   * @param chado_gene
+   */
   public static void checkProteinBoundary(final Feature transcript,
                                           final ChadoCanonicalGene chado_gene)
   {
@@ -1149,7 +1157,12 @@ public class GeneUtils
     if(chado_gene.get5UtrOfTranscript(transcriptName) != null)
       dnaFeatures.addAll(chado_gene.get5UtrOfTranscript(transcriptName));*/ 
     
-    List exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, DatabaseDocument.EXONMODEL);
+    List exons;
+    
+    if(DatabaseDocument.CHADO_INFER_CDS)
+      exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, "CDS");
+    else
+      exons = chado_gene.getSpliceSitesOfTranscript(transcriptName, DatabaseDocument.EXONMODEL);
     if(exons != null)
       dnaFeatures.addAll(exons);
     
