@@ -118,63 +118,24 @@ public class DatabaseInferredFeature
       ((Feature)(getChadoGene().getSpliceSitesOfTranscript(transcriptID, "exon").get(0)));
     
     RangeVector r_old = exonFeature.getLocation().getRanges();
-    RangeVector r_new = new RangeVector();
+    RangeVector r_cds = new RangeVector();
     RangeVector r_diff_5 = new RangeVector();
     RangeVector r_diff_3 = new RangeVector();
+    boolean isComplement = exonFeature.getLocation().isComplement();
     
     for(int i=0; i<r_old.size(); i++)
     {
       Range exonRange = (Range) r_old.get(i);
-      
-      if( !proteinRange.contains(exonRange) )
-      {
-        if(exonRange.getStart () < proteinRange.getStart () &&
-           exonRange.getEnd ()   > proteinRange.getEnd ())
-        {
-          try
-          {
-            r_diff_5.add(new Range(exonRange.getStart(), proteinRange.getStart()-1));
-            r_new.add(new Range(proteinRange.getStart(), proteinRange.getEnd()));
-            r_diff_3.add(new Range(proteinRange.getEnd()+1, exonRange.getEnd()));
-          }
-          catch (OutOfRangeException e){ e.printStackTrace(); }
-        }
-        else if(exonRange.getStart() >= proteinRange.getStart() &&
-                exonRange.getStart() < proteinRange.getEnd())
-        {   
-          // exon is partially CDS and UTR
-          try
-          {
-            r_new.add(new Range(exonRange.getStart(), proteinRange.getEnd()));
-            r_diff_3.add(new Range(proteinRange.getEnd()+1, exonRange.getEnd()));
-          }
-          catch (OutOfRangeException e){ e.printStackTrace(); }
-        }
-        else if(exonRange.getEnd() > proteinRange.getStart() &&
-                exonRange.getEnd() <= proteinRange.getEnd())
-        {
-          try
-          {
-            r_new.add(new Range(proteinRange.getStart(), exonRange.getEnd()));
-            r_diff_5.add(new Range(exonRange.getStart(), proteinRange.getStart()-1));
-          }
-          catch (OutOfRangeException e){ e.printStackTrace(); }
-        }
-        else if(exonRange.getStart() < proteinRange.getStart())
-          r_diff_5.add(exonRange);
-        else if(exonRange.getStart() > proteinRange.getStart())
-          r_diff_3.add(exonRange);
-      }
-      else
-        r_new.add(exonRange);
+      findRanges(proteinRange, exonRange, isComplement,
+                 r_diff_5, r_diff_3, r_cds);
     }
     
     //
     // update CDS location
     try
     {
-      if(!containsAll(r_new, getLocation().getRanges()))
-        super.setLocation(new Location(r_new, getLocation().isComplement()));
+      if(!containsAll(r_cds, getLocation().getRanges()))
+        super.setLocation(new Location(r_cds, getLocation().isComplement()));
     }
     catch (ReadOnlyException e)
     {
@@ -193,11 +154,10 @@ public class DatabaseInferredFeature
     {
       if (r_diff_5.size() > 0)
       {
-        RangeVector oldRanges = new RangeVector();
         List listUTR = getChadoGene().get5UtrOfTranscript(transcriptID);
-        boolean isFound = containsAll(listUTR,  r_diff_5, oldRanges);
+        boolean isFound = containsAll(listUTR,  r_diff_5);
           
-        if(!isFound || oldRanges.size() != r_diff_5.size())
+        if(!isFound)
         {
           Feature utrFeature = addUTR(transcriptID, "five_prime_UTR", r_diff_5, 
               getChadoGene().get5UtrOfTranscript(transcriptID), entry);
@@ -209,11 +169,10 @@ public class DatabaseInferredFeature
       
       if(r_diff_3.size() > 0)
       {
-        RangeVector oldRanges = new RangeVector();
         List listUTR = getChadoGene().get3UtrOfTranscript(transcriptID);
-        boolean isFound = containsAll(listUTR,  r_diff_3, oldRanges);
+        boolean isFound = containsAll(listUTR,  r_diff_3);
           
-        if(!isFound || oldRanges.size() != r_diff_3.size())
+        if(!isFound)
         { 
           Feature utrFeature = addUTR(transcriptID, "three_prime_UTR", r_diff_3, 
               getChadoGene().get3UtrOfTranscript(transcriptID), entry);
@@ -231,6 +190,82 @@ public class DatabaseInferredFeature
     {
       e.printStackTrace();
     }
+  }
+  
+  /**
+   * Classify the ranges based on the exon and protein ranges. 
+   * The range is divided into 5'UTR, 3'UTR and CDS ranges.
+   * @param proteinRange
+   * @param exonRange
+   * @param isComplement
+   * @param r_diff_5
+   * @param r_diff_3
+   * @param r_cds
+   */
+  private void findRanges(Range proteinRange, 
+                          Range exonRange,
+                          boolean isComplement,
+                          RangeVector r_diff_5,
+                          RangeVector r_diff_3,
+                          RangeVector r_cds)
+  {
+    if( !proteinRange.contains(exonRange) )
+    {
+      if(exonRange.getStart () < proteinRange.getStart () &&
+         exonRange.getEnd ()   > proteinRange.getEnd ())
+      {
+        try
+        {
+          if(isComplement)
+          {
+            r_diff_3.add(new Range(exonRange.getStart(), proteinRange.getStart()-1));
+            r_diff_5.add(new Range(proteinRange.getEnd()+1, exonRange.getEnd()));
+          }
+          else
+          {
+            r_diff_5.add(new Range(exonRange.getStart(), proteinRange.getStart()-1));
+            r_diff_3.add(new Range(proteinRange.getEnd()+1, exonRange.getEnd()));
+          }
+          r_cds.add(new Range(proteinRange.getStart(), proteinRange.getEnd()));
+        }
+        catch (OutOfRangeException e){ e.printStackTrace(); }
+      }
+      else if(exonRange.getStart() >= proteinRange.getStart() &&
+              exonRange.getStart() < proteinRange.getEnd())
+      {   
+        // exon is partially CDS and UTR
+        try
+        {
+          r_cds.add(new Range(exonRange.getStart(), proteinRange.getEnd()));
+          
+          if(isComplement)
+            r_diff_5.add(new Range(proteinRange.getEnd()+1, exonRange.getEnd()));
+          else
+            r_diff_3.add(new Range(proteinRange.getEnd()+1, exonRange.getEnd()));
+        }
+        catch (OutOfRangeException e){ e.printStackTrace(); }
+      }
+      else if(exonRange.getEnd() > proteinRange.getStart() &&
+              exonRange.getEnd() <= proteinRange.getEnd())
+      {
+        try
+        {
+          r_cds.add(new Range(proteinRange.getStart(), exonRange.getEnd()));
+          
+          if(isComplement)
+            r_diff_3.add(new Range(exonRange.getStart(), proteinRange.getStart()-1));
+          else
+            r_diff_5.add(new Range(exonRange.getStart(), proteinRange.getStart()-1));
+        }
+        catch (OutOfRangeException e){ e.printStackTrace(); }
+      }
+      else if(exonRange.getStart() < proteinRange.getStart())
+        r_diff_5.add(exonRange);
+      else if(exonRange.getStart() > proteinRange.getStart())
+        r_diff_3.add(exonRange);
+    }
+    else
+      r_cds.add(exonRange);
   }
   
   /**
@@ -340,13 +375,12 @@ public class DatabaseInferredFeature
    * new <code>RangeVector</code>.
    * @param listUTR
    * @param newRanges
-   * @param oldRanges
    * @return
    */
   private boolean containsAll(List listUTR, 
-                              RangeVector newRanges, 
-                              RangeVector oldRanges)
+                              RangeVector newRanges)
   {
+    RangeVector oldRanges = new RangeVector();
     if(listUTR != null)
     {
       for(int i=0;i<listUTR.size(); i++)
@@ -368,6 +402,8 @@ public class DatabaseInferredFeature
   private boolean containsAll(RangeVector newRanges, 
                               RangeVector oldRanges)
   {
+    if(newRanges.size() != oldRanges.size())
+      return false;
     for(int i=0; i<oldRanges.size(); i++)
     {
       if(!newRanges.containsRange( (Range)oldRanges.get(i) ))
