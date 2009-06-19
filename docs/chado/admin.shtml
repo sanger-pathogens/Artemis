@@ -17,6 +17,10 @@ using and setting up an Artemis and ACT connection with a Chado database.
 
 <h3><a name="DATABASEMANAGER">Opening the Database Manager</a></h3>
 <p>
+The Artemis Database Manager is cached between sessions in the directory
+'.artemis/cache' in the users home directory. There is an option under the File menu
+to clear this cache.
+<p>
 To open the Artemis Database Manager panel (from which the browser is launched), 
 Artemis looks initially for the existence of the cvterm.name = 'top_level_seq' which 
 belongs to cv.name = 'genedb_misc'. If these exist it follows method A:
@@ -101,31 +105,67 @@ Feature. The joined exons become an Artemis CDS feature (GFFStreamFeature), whic
 the uniquenames of the original exons in the database.
 
 <p>
-<h3><a name="CONFIG">Option File Configuration</a></h3>
+<h3><a name="CONFIG">Artemis Chado Configuration</a></h3>
+
+This is an example extract from the Artemis options file for the chado related options:
+
 <p>
-Artemis combines the exons stored in chado and describes it as an 'exon-model' 
-feature by default (defined by uk.ac.sanger.artemis.util.DatabaseDocument.EXONMODEL).
-The chado_exon_model flag in the options file allows this to be changed. 
-<p>
-When a gene model is created in Artemis it creates the transcript as a 'mRNA' 
-feature by default (defined by uk.ac.sanger.artemis.util.DatabaseDocument.TRANSCRIPT).
-The chado_transcript flag in the options file allows this to be changed.
-<p>
-A list of available databases can be configured in the options file (chado_servers flag).
-For each an alias is given followed by its location (host:port/database?user), each alias
-is displayed in a drop down menu in the login box.
-<p>
-Below is an example configuration option:
-<pre>
+<pre style="color: #0000FF;">
+#
+# CHADO DATABASE OPTIONS 
+#
 # chado gene model features default types
 chado_exon_model=CDS
 #chado_transcript=transcript
 
+# infer CDS and UTR features from gene model
+chado_infer_CDS_UTR=no
+
 # provide a list of available servers
 chado_servers = \
-   test localhost:5432/test?userName \
-   genedb_ro db.genedb.org:5432/snapshot?genedb_ro
+  workshop localhost:10101/workshop?user \
+  GeneDB db.genedb.org:5432/snapshot?genedb_ro
+
+# define how product qualifiers are stored (as a cv or as a featureprop)
+product_cv=yes
+product_cvname = genedb_products
+# cv containing synonym names
+synonym_cvname = genedb_synonym_type
+
+# set default delete behaviour to make things obsolete, if
+# this is not provided the default is to permanently delete
+set_obsolete_on_delete=yes
+
+# list of features to record residues for in the database
+# - these are included when inserting or updating their featurelocs
+sequence_update_features = polypeptide mRNA rRNA tRNA snRNA snoRNA
 </pre>
+
+<p>
+Artemis combines the exons stored in chado and describes it as a 'CDS' 
+feature by default. The <b>chado_exon_model</b> flag in the options file 
+allows this to be changed. 
+<p>
+When a gene model is created in Artemis it creates the transcript as a 'mRNA' 
+feature by default. The <b>chado_transcript</b> flag in the options file allows this 
+to be changed.
+<p>
+For Artemis the default gene model representation is described in the <a href="overview.shtml#GENE">
+overview</a>. In this representation the UTRs are explicitly created in the database.
+However the gmod loader (gmod_bulk_load_gff3.pl) does not create the UTRs and they can 
+be inferred from the exon and protein features. If the gmod loader is used then Artemis
+can infer the CDS and UTR features by setting <b>chado_infer_CDS_UTR=yes</b> in the 
+options file.
+<p>
+A list of available databases can be configured in the options file with the <b>chado_servers</b> flag.
+For each database an alias is given followed by its location (host:port/database?user), each alias
+is displayed in a drop down menu in the login box.
+<p>
+If product qualifiers are stored as an ontology (in cvterm) then set <b>product_cv=yes</b>
+and set <b>product_cvname</b> is set to the name of the controlled vocabulary (cv) used in chado.
+<p>
+When features are deleted in Artemis the default behaviour can be set to make these
+features obsolete rather than permanently delete them from the database.
 
 <a name="GENEBUILDER"></a><h3>Opening the Standalone Gene Builder</h3>
 <p>
