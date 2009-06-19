@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.14 2009-06-12 13:50:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/Options.java,v 1.15 2009-06-19 15:18:04 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
@@ -44,7 +44,7 @@ import java.util.*;
  *  read in new options.
  *
  *  @author Kim Rutherford
- *  @version $Id: Options.java,v 1.14 2009-06-12 13:50:35 tjc Exp $
+ *  @version $Id: Options.java,v 1.15 2009-06-19 15:18:04 tjc Exp $
  **/
 
 public class Options extends Properties 
@@ -366,7 +366,7 @@ public class Options extends Properties
         put("colour_of_" + DatabaseDocument.TRANSCRIPT, "1");
     }
     
-    DatabaseDocument.CHADO_INFER_CDS = getPropertyTruthValue("chado_infer_CDS");
+    DatabaseDocument.CHADO_INFER_CDS = getPropertyTruthValue("chado_infer_CDS_UTR");
     if(DatabaseDocument.CHADO_INFER_CDS)
       DatabaseDocument.EXONMODEL = "exon";
   }
