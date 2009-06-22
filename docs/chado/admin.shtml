@@ -155,7 +155,9 @@ overview</a>. In this representation the UTRs are explicitly created in the data
 However the gmod loader (gmod_bulk_load_gff3.pl) does not create the UTRs and they can 
 be inferred from the exon and protein features. If the gmod loader is used then Artemis
 can infer the CDS and UTR features by setting <b>chado_infer_CDS_UTR=yes</b> in the 
-options file.
+options file. Adjusting the polypeptide boundaries in the Gene Builder will result in the generation 
+or deletion of UTRs.
+
 <p>
 A list of available databases can be configured in the options file with the <b>chado_servers</b> flag.
 For each database an alias is given followed by its location (host:port/database?user), each alias
