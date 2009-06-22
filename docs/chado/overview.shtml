@@ -110,7 +110,8 @@ For a read only connection -Dread_only is specified on the command line:
 		<p>
 		For the scenario where both the CDS and UTRs are not stored and their positions can be 
 		inferred from the exon and polypeptide features set <i>chado_infer_CDS_UTR=yes</i> in the 
-		Artemis <a href="admin.shtml#CONFIG">options file</a>.
+		Artemis <a href="admin.shtml#CONFIG">options file</a>. Adjusting the polypeptide boundaries
+		in the Gene Builder will then result in the generation or deletion of UTRs.
 		<a NAME="GENEBUILDING"></a><h3>Gene Building</h3>
 		A gene can be created in Artemis (or ACT) by highlighting a base range and selecting
         from the '<i>Create</i>' menu the '<i>Gene Model From Base Range</i>' option. 
