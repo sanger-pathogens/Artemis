@@ -590,6 +590,8 @@ public class LocalAndRemoteFileManager extends JFrame
       });
       fileMenu.add(splitGFF);
       
+      if(Options.getOptions().getPropertyTruthValue("show_polypeptide_domains"))
+        domainLoad.setSelected(true);
       fileMenu.add(domainLoad);
       fileMenu.add(lazyLoad);
       
