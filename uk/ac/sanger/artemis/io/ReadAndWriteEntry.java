@@ -159,7 +159,12 @@ public class ReadAndWriteEntry
        (entry.getHeaderText() == null || 
         entry.getHeaderText().equals("")))
     {
-      String header = "ID   XXX";
+      String name = file.getName();
+      int ind = name.lastIndexOf(".");
+      if(ind > -1)
+        name = name.substring(0, ind);
+      
+      String header = "ID   "+name;
       if(entry.getFeatureCount() > 0)
         header = header.concat("\nFH   Key             "+
                                "Location/Qualifiers\nFH\n");
