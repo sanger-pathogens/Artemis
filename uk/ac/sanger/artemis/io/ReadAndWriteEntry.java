@@ -164,7 +164,8 @@ public class ReadAndWriteEntry
       if(ind > -1)
         name = name.substring(0, ind);
       
-      String header = "ID   "+name;
+      int length = entry.getBases().getLength();
+      String header = "ID   "+name+"; SV ; ; ; ; ; "+length+" BP.";
       if(entry.getFeatureCount() > 0)
         header = header.concat("\nFH   Key             "+
                                "Location/Qualifiers\nFH\n");
