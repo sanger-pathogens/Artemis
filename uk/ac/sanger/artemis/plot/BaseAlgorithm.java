@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/BaseAlgorithm.java,v 1.7 2006-06-23 10:40:14 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/BaseAlgorithm.java,v 1.8 2009-06-24 15:41:04 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -38,7 +38,7 @@ import java.awt.BasicStroke;
  *  Strand of DNA, meaning the algorithm can't change strand part way along.
  *
  *  @author Kim Rutherford
- *  @version $Id: BaseAlgorithm.java,v 1.7 2006-06-23 10:40:14 tjc Exp $
+ *  @version $Id: BaseAlgorithm.java,v 1.8 2009-06-24 15:41:04 tjc Exp $
  **/
 
 public abstract class BaseAlgorithm extends Algorithm 
@@ -105,12 +105,11 @@ public abstract class BaseAlgorithm extends Algorithm
 
 
   /**
-  *
   *  Draw in a legend
-  *
   */
   public void drawLegend(Graphics g, int font_height,
-                         int font_width, Color[] frameColour)
+                         int font_width, Color[] frameColour,
+                         int numPlots)
   {
     Graphics2D g2d = (Graphics2D)g;
 
@@ -119,23 +118,18 @@ public abstract class BaseAlgorithm extends Algorithm
 
     if( (strand.isForwardStrand() && !isRevCompDisplay()) ||
         (!strand.isForwardStrand() && isRevCompDisplay()))
-    {
-      g2d.setColor(Color.black);
-      g2d.drawString("1",0,font_height);
-      g2d.drawString("2",font_width*5,font_height);
-      g2d.drawString("3",font_width*10,font_height);
-
-      BasicStroke stroke = (BasicStroke)g2d.getStroke();
-      g2d.setStroke(new BasicStroke(3.f));
-      g2d.setColor(frameColour[0]);
-      g2d.drawLine(font_width*2, lineHgt, font_width*4, lineHgt);
-     
-      g2d.setColor(frameColour[1]);
-      g2d.drawLine(font_width*7, lineHgt, font_width*9, lineHgt);
-
-      g2d.setColor(frameColour[2]);
-      g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
-      g2d.setStroke(stroke);
+    {     
+      for(int i=0; i<numPlots; i++)
+      {
+        g2d.setColor(Color.black);
+        g2d.drawString(Integer.toString(i+1),i*5*font_width,font_height);
+        
+        BasicStroke stroke = (BasicStroke)g2d.getStroke();
+        g2d.setStroke(new BasicStroke(3.f));
+        g2d.setColor(frameColour[i]);
+        g2d.drawLine(font_width*(2 + (i*5)), lineHgt, font_width*(4 + (i*5)), lineHgt);
+        g2d.setStroke(stroke);
+      }
     }
     else
     {

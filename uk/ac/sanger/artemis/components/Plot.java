@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.19 2009-06-05 10:29:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.20 2009-06-24 15:41:04 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -51,7 +51,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.19 2009-06-05 10:29:31 tjc Exp $
+ *  @version $Id: Plot.java,v 1.20 2009-06-24 15:41:04 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -120,9 +120,13 @@ public abstract class Plot extends JPanel
   private int numPlots;
 
   /** colour array for graph drawing */
-  protected Color frameColour[] = { Color.red, 
+  protected Color frameColour[] = { 
+                                  Color.red, 
                                   new Color(0,200,0), 
                                   Color.blue,
+                                  Color.magenta,
+                                  Color.orange,
+                                  Color.yellow,
                                   Color.black };
   
   private int lastPaintHeight = getHeight();
@@ -965,18 +969,18 @@ public abstract class Plot extends JPanel
 
     g.drawString(desc, 2, font_height);
 
-    if(numPlots < 3)
+    if(numPlots < 3 || numPlots > 10)
       return;
 
     final FontMetrics fm = g.getFontMetrics();
     int font_width = fm.stringWidth("2");
 
-    int width = getWidth() - window_changer.getWidth() - (15*font_width);
+    int width = getWidth() - window_changer.getWidth() -
+               ((5*numPlots)*font_width);
 
-    
     g.translate(width,0);
     ((BaseAlgorithm)getAlgorithm()).drawLegend(g,font_height,
-                                               font_width,frameColour);
+                                               font_width,frameColour, numPlots);
     g.translate(-width,0);
   }
 
