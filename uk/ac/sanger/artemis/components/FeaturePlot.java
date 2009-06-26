@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePlot.java,v 1.8 2009-06-05 10:29:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/FeaturePlot.java,v 1.9 2009-06-26 15:52:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -38,7 +38,7 @@ import java.awt.*;
  *  particular feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: FeaturePlot.java,v 1.8 2009-06-05 10:29:31 tjc Exp $
+ *  @version $Id: FeaturePlot.java,v 1.9 2009-06-26 15:52:48 tjc Exp $
  **/
 
 public class FeaturePlot extends Plot
@@ -280,7 +280,7 @@ public class FeaturePlot extends Plot
    *  end_base.  This method plots BaseWindowAlgorithm objects only.
    *  @param g The object to draw into.
    **/
-  protected int drawMultiValueGraph (Graphics g, Color[] frameColour) {
+  protected int drawMultiValueGraph (Graphics g, LineAttributes[] lines) {
     if (recalculate_flag) {
       recalculateValues ();
     }

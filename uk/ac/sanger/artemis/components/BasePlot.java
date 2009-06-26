@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.16 2009-06-05 10:29:31 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.17 2009-06-26 15:52:48 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import org.apache.log4j.Level;
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.16 2009-06-05 10:29:31 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.17 2009-06-26 15:52:48 tjc Exp $
  **/
 
 public class BasePlot extends Plot
@@ -718,11 +718,11 @@ public class BasePlot extends Plot
    *  end_base.  This method plots BaseWindowAlgorithm objects only.
    *  @param g The object to draw into.
    **/
-  public int drawMultiValueGraph(Graphics g, Color[] frameColour) 
+  public int drawMultiValueGraph(Graphics g, LineAttributes[] lines) 
   {
     if(recalculate_flag)
       recalculateValues();
-
+    
     if(value_array_array == null) 
     {
       // there is nothing to draw - probably because the sequence is too short
@@ -741,32 +741,17 @@ public class BasePlot extends Plot
     if(number_of_values > 1) 
       drawGlobalAverage(g, min_value, max_value);
 
+    Stroke stroke = ((Graphics2D)g).getStroke();
     for(int value_index = 0; value_index < get_values_return_count;
         ++value_index)
     {
-      if(get_values_return_count == 1) 
-        g.setColor(Color.black);
-      else 
+      if(value_index < lines.length)
       {
-        if(value_index < frameColour.length)
-          g.setColor(frameColour[value_index]);
-        else
-          g.setColor(Color.black);
-        /*switch(value_index) 
-        {
-          case 0:
-            g.setColor(frameColour[0]);
-            break;
-          case 1:
-            g.setColor(frameColour[1]);
-            break;
-          case 2:
-            g.setColor(frameColour[2]);
-            break;
-          default:
-            g.setColor(frameColour[3]);
-        }*/
+        g.setColor(lines[value_index].getLineColour());
+        ((Graphics2D)g).setStroke(lines[value_index].getStroke());
       }
+      else
+        g.setColor(Color.black);
 
       final int offset;
 
@@ -780,7 +765,8 @@ public class BasePlot extends Plot
                  offset,
                  value_array_array[value_index]);
     }
-
+    ((Graphics2D)g).setStroke(stroke);
+    
     drawMinMax(g, min_value, max_value);
 
     if(getCrossHairPosition() >= 0)

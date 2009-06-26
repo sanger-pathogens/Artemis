@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.20 2009-06-24 15:41:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.21 2009-06-26 15:52:48 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -36,9 +36,6 @@ import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.Box;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JOptionPane;
@@ -51,7 +48,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.20 2009-06-24 15:41:04 tjc Exp $
+ *  @version $Id: Plot.java,v 1.21 2009-06-26 15:52:48 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -120,14 +117,7 @@ public abstract class Plot extends JPanel
   private int numPlots;
 
   /** colour array for graph drawing */
-  protected Color frameColour[] = { 
-                                  Color.red, 
-                                  new Color(0,200,0), 
-                                  Color.blue,
-                                  Color.magenta,
-                                  Color.orange,
-                                  Color.yellow,
-                                  Color.black };
+  protected LineAttributes lines[];
   
   private int lastPaintHeight = getHeight();
  
@@ -241,64 +231,16 @@ public abstract class Plot extends JPanel
         final JPopupMenu popup  = new JPopupMenu("Plot Options");
 
         // configure colours for multiple graph plots
-        if(numPlots > 1)  
+        final JMenuItem config = new JMenuItem("Configure...");
+        config.addActionListener(new ActionListener()
         {
-          final JMenuItem config = new JMenuItem("Configure...");
-          config.addActionListener(new ActionListener()
+          public void actionPerformed(ActionEvent _)
           {
-            public void actionPerformed(ActionEvent _)
-            {
-              Box bdown   = Box.createVerticalBox();
-              Box bacross;
-            
-              if(frameColour.length < numPlots)
-              {
-                frameColour = new Color[numPlots];
-                frameColour[0] = Color.red;
-                frameColour[1] = new Color(0,200,0);
-                frameColour[2] = Color.blue;
-                
-                for(int i=3; i<numPlots; i++)
-                  frameColour[i] = Color.black;
-              }
-              
-              for(int i=0; i<numPlots; i++)
-              {
-                final int colourNumber = i;
-                bacross = Box.createHorizontalBox();
-                final JLabel colourLabel = new JLabel("   ");
-                colourLabel.setBackground(frameColour[i]);
-                colourLabel.setOpaque(true);
-                bacross.add(colourLabel);
-                bacross.add(Box.createHorizontalStrut(2));
+            lines = LineAttributes.configurePlots(numPlots, lines, Plot.this);
+          }
+        });
+        popup.add(config);
 
-                JButton butt = new JButton("Select");
-                butt.addActionListener(new ActionListener()
-                {
-                  public void actionPerformed(ActionEvent _)
-                  {
-                    Color newColour = JColorChooser.showDialog(null, "Colour Chooser",
-                                                               frameColour[colourNumber]);
-                    frameColour[colourNumber] = newColour;
-                    colourLabel.setBackground(frameColour[colourNumber]);
-                    repaint();
-                  }
-                });
-                bacross.add(butt);
-                bdown.add(bacross);
-                bdown.add(Box.createVerticalStrut(2));
-              }
-
-              String config_options[] = { "OK" };
-              int select = JOptionPane.showOptionDialog(null,
-                                          bdown, "Configure Colours",
-                                           JOptionPane.DEFAULT_OPTION,
-                                           JOptionPane.QUESTION_MESSAGE,
-                                           null, config_options, config_options[0]);
-            }
-          });
-          popup.add(config);
-        }
 
         final JMenuItem setScale = new JMenuItem("Set the Window Size...");
         setScale.addActionListener(new ActionListener()
@@ -750,7 +692,15 @@ public abstract class Plot extends JPanel
 
     // Redraw the graph on the canvas using the algorithm from the
     // constructor.
-    numPlots = drawMultiValueGraph(og,frameColour);
+
+    if(lines == null && getAlgorithm() instanceof BaseAlgorithm)
+    {
+      final int get_values_return_count =
+       ((BaseAlgorithm)getAlgorithm()).getValueCount();
+      lines = LineAttributes.init(get_values_return_count);
+    }
+    
+    numPlots = drawMultiValueGraph(og,lines);
     drawLabels(og,numPlots);
     g.drawImage(offscreen, 0, 0, null);
     og.dispose();
@@ -904,7 +854,7 @@ public abstract class Plot extends JPanel
    *  Redraw the graph on the canvas using the algorithm.
    *  @param g The object to draw into.
    **/
-  protected abstract int drawMultiValueGraph(final Graphics g, Color[] frameColour);
+  protected abstract int drawMultiValueGraph(final Graphics g, LineAttributes[] lines);
 
   /**
    *  Draw a line representing the average of the algorithm over the feature.
@@ -979,8 +929,9 @@ public abstract class Plot extends JPanel
                ((5*numPlots)*font_width);
 
     g.translate(width,0);
+    // note GCFrameAlgorithm overrides this
     ((BaseAlgorithm)getAlgorithm()).drawLegend(g,font_height,
-                                               font_width,frameColour, numPlots);
+                                               font_width,lines, numPlots);
     g.translate(-width,0);
   }
 

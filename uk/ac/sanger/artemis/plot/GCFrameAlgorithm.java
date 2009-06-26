@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCFrameAlgorithm.java,v 1.7 2006-06-23 14:56:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/GCFrameAlgorithm.java,v 1.8 2009-06-26 15:52:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -38,7 +38,7 @@ import java.awt.*;
  *  constructor.
  *
  *  @author Kim Rutherford
- *  @version $Id: GCFrameAlgorithm.java,v 1.7 2006-06-23 14:56:36 tjc Exp $
+ *  @version $Id: GCFrameAlgorithm.java,v 1.8 2009-06-26 15:52:48 tjc Exp $
  **/
 public class GCFrameAlgorithm extends BaseAlgorithm 
 {
@@ -142,72 +142,12 @@ public class GCFrameAlgorithm extends BaseAlgorithm
   }
 
   /**
-  *
   *  Override drawLegend() 
-  *
   */
   public void drawLegend(Graphics g, int font_height,
-                         int font_width, Color[] frameColour)
+                         int font_width, LineAttributes[] lines, int numPlots)
   {
     return;
-    /*
-    final Strand strand = getStrand();
-    if(strand.isForwardStrand())
-      super.drawLegend(g,font_height,font_width,frameColour);
-    else
-    {
-      Graphics2D g2d = (Graphics2D)g;
-
-      FontMetrics fm = g2d.getFontMetrics();
-      int lineHgt    = 3 * font_height/4;
-      int frame = strand.getSequenceLength() % 3;
-
-//    System.out.println("MOD "+frame);
-      g2d.setColor(Color.black);
-      g2d.drawString("4",0,font_height);
-      g2d.drawString("5",font_width*5,font_height);
-      g2d.drawString("6",font_width*10,font_height);
-
-      BasicStroke stroke = (BasicStroke)g2d.getStroke();
-      g2d.setStroke(new BasicStroke(3.f));
-
-     // switch(frame)
-     // {
-     //   case 0:
-          g2d.setColor(frameColour[1]);
-          g2d.drawLine(font_width*2, lineHgt, font_width*4, lineHgt);
- 
-          g2d.setColor(frameColour[2]);
-          g2d.drawLine(font_width*7, lineHgt, font_width*9, lineHgt);
-
-          g2d.setColor(frameColour[0]);
-          g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
-          g2d.setStroke(stroke);
-          return;
-        case 1:
-          g2d.setColor(frameColour[2]);
-          g2d.drawLine(font_width*2, lineHgt, font_width*4, lineHgt);
-
-          g2d.setColor(frameColour[0]);
-          g2d.drawLine(font_width*7, lineHgt, font_width*9, lineHgt);
-
-          g2d.setColor(frameColour[1]);
-          g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
-          g2d.setStroke(stroke);
-          return;
-        case 2:
-          g2d.setColor(frameColour[1]);
-          g2d.drawLine(font_width*2, lineHgt, font_width*4, lineHgt);
-
-          g2d.setColor(frameColour[2]);
-          g2d.drawLine(font_width*7, lineHgt, font_width*9, lineHgt);
-
-          g2d.setColor(frameColour[0]);
-          g2d.drawLine(font_width*12, lineHgt, font_width*14, lineHgt);
-          g2d.setStroke(stroke);
-          return;
-      } 
-    } */
   }
 
 

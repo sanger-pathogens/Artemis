@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/BaseAlgorithm.java,v 1.8 2009-06-24 15:41:04 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/BaseAlgorithm.java,v 1.9 2009-06-26 15:52:48 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -38,7 +38,7 @@ import java.awt.BasicStroke;
  *  Strand of DNA, meaning the algorithm can't change strand part way along.
  *
  *  @author Kim Rutherford
- *  @version $Id: BaseAlgorithm.java,v 1.8 2009-06-24 15:41:04 tjc Exp $
+ *  @version $Id: BaseAlgorithm.java,v 1.9 2009-06-26 15:52:48 tjc Exp $
  **/
 
 public abstract class BaseAlgorithm extends Algorithm 
@@ -108,7 +108,7 @@ public abstract class BaseAlgorithm extends Algorithm
   *  Draw in a legend
   */
   public void drawLegend(Graphics g, int font_height,
-                         int font_width, Color[] frameColour,
+                         int font_width, LineAttributes[] lines,
                          int numPlots)
   {
     Graphics2D g2d = (Graphics2D)g;
@@ -126,7 +126,7 @@ public abstract class BaseAlgorithm extends Algorithm
         
         BasicStroke stroke = (BasicStroke)g2d.getStroke();
         g2d.setStroke(new BasicStroke(3.f));
-        g2d.setColor(frameColour[i]);
+        g2d.setColor(lines[i].getLineColour());
         g2d.drawLine(font_width*(2 + (i*5)), lineHgt, font_width*(4 + (i*5)), lineHgt);
         g2d.setStroke(stroke);
       }
@@ -174,19 +174,19 @@ public abstract class BaseAlgorithm extends Algorithm
       switch(frame)
       {
          case 0:
-           col4 = frameColour[1];
-           col5 = frameColour[2];
-           col6 = frameColour[0];
+           col4 = lines[1].getLineColour();
+           col5 = lines[2].getLineColour();
+           col6 = lines[0].getLineColour();
            break;
          case 1:
-           col4 = frameColour[2];
-           col5 = frameColour[0];
-           col6 = frameColour[1];
+           col4 = lines[2].getLineColour();
+           col5 = lines[0].getLineColour();
+           col6 = lines[1].getLineColour();
            break;
          case 2:
-           col4 = frameColour[0];
-           col5 = frameColour[1];
-           col6 = frameColour[2];
+           col4 = lines[0].getLineColour();
+           col5 = lines[1].getLineColour();
+           col6 = lines[2].getLineColour();
            break;
       }
     
