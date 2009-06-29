@@ -1545,10 +1545,57 @@ GUG  8.3( 12422)  GCG  5.3(  8011)  GAG 21.3( 31979)  GGG  4.3(  6497)
 &prog; is able to display some types of user data in a graph that looks like
 the GC content graph (see <XREF LINKEND="GRAPHMENU-GC-CONTENT">).  This menu
 item will prompt the user for the name of a data file which should contain one
-line per base of sequence and one floating point number per line.  &prog; will
-plot each data point over the corresponding base. When a file is prompted for
-there is an option which if selected will mean the log transform is plotted.
-    </PARA>
+of two possible graph file formats:
+
+</PARA>
+   <ORDEREDLIST ID="GRAPH-FORMAT">
+      <LISTITEM ID="GRAPH-FORMAT-1">
+      <PARA>
+       one line per base and one or more columns of integer or floating point 
+       values per line. The number of lines should match the number of bases in
+       the sequence. &prog; will plot each data point for the corresponding base.
+       Each column represents a data set for a line. Example extract:
+
+<SYNOPSIS>
+21.4    1910.7
+44      1126.1
+1911.7  0
+0       0
+0       1782.0
+1937.5  65.4
+...
+</SYNOPSIS>
+
+      </PARA>
+      </LISTITEM>
+      <LISTITEM ID="GRAPH-FORMAT-2">
+      <PARA>
+      the first column corresponds to the base position and is an integer. 
+      Note to distinguish this format from the previous format the first 
+      line of the file must start with a '#'. The next column(s) are the data 
+      values. Example extract:
+
+<SYNOPSIS>
+# BASE  VAL1  VAL2  VAL3  VAL4  VAL5  VAL6
+176 2204.8  848.23  0       0       0       536.04
+278 804.99      0       837.2   0       681.63  0
+452 0   699.98  0       0       0       251.18
+553 0   0       0       0       0       52.4
+654 0   0       0       0       334.2   0
+686 0   0       652.78  0       0       0
+831 0   0       0       0       0       67.97
+...
+</SYNOPSIS>
+
+      </PARA>
+      </LISTITEM>
+    </ORDEREDLIST>
+
+<PARA>
+When a file is prompted for there is an option which if selected will mean
+the log transform is plotted.
+</PARA>
+
   </SECT2>
 
   <SECT2 ID="GRAPHMENU-GC-CONTENT">
