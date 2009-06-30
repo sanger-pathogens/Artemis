@@ -1341,6 +1341,10 @@ public class DatabaseDocument extends Document
     this_buff.append("timelastmodified=" + timelastmodified + ";");
     this_buff.append("isObsolete=" + Boolean.toString(feat.isObsolete()) + ";");
     
+    if(featureloc.isFminPartial())
+      this_buff.append("isFminPartial;");
+    if(featureloc.isFmaxPartial())
+      this_buff.append("isFmaxPartial;");
     // this is the chado feature_relationship.rank used
     // to order joined features e.g. exons
     if(rank > -1)
