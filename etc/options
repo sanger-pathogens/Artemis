@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.69 2009-06-22 10:20:49 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.70 2009-06-30 10:21:14 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -562,6 +562,8 @@ extra_qualifiers_gff = \
     controlled_curation "text" \
     fasta_file "text" \
     GO "text" \
+    isFminPartial none \
+    isFmaxPartial none \
     note "text" \
     orthologous_to "text" \
     paralogous_to "text" \
@@ -675,6 +677,8 @@ invisible_qualifiers_gff= \
     GPI_anchor_cleavage_site \
     ID             \
     insertion_seq  \
+    isFminPartial \
+    isFmaxPartial \
     isObsolete \
     isoelectric    \
     isolation_source \
