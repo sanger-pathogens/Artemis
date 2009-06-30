@@ -22,21 +22,23 @@
         <result property="fmax"   column="fmax"   nullValue="-999" />
         <result property="strand" column="strand" nullValue="0" />
         <result property="phase"  column="phase" />
-        <result property="residueInfo"  column="residue_info"/>
-        <result property="locGroup"  column="locgroup"/>
-        <result property="rank"      column="rank"/>
+        <result property="residueInfo" column="residue_info"/>
+        <result property="locGroup"    column="locgroup"/>
+        <result property="rank"        column="rank"/>
+        <result property="fminPartial" column="is_fmin_partial"/>
+        <result property="fmaxPartial" column="is_fmax_partial"/>
      </resultMap>
      
 	  
      <!--  select featureloc -->
      <select id="getFeatureLoc" resultMap="map-location-lazy">
-       SELECT feature_id, srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank
+       SELECT feature_id, srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank, is_fmin_partial, is_fmax_partial
        FROM  featureloc
        WHERE featureloc.feature_id=#id#
      </select>
      
 	 <select id="getFeatureLocsByListOfIds" resultMap ="map-location-lazy">
-	   SELECT feature_id, srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank
+	   SELECT feature_id, srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank, is_fmin_partial, is_fmax_partial
        FROM  featureloc
        WHERE featureloc.feature_id IN <iterate open="(" close=")" conjunction=","> $[]$ </iterate>
      </select>
@@ -54,7 +56,9 @@
     <update id="updateFeatureLoc" 
             parameterClass="FeatureLoc">
       UPDATE featureloc
-      SET fmin=$fmin$, fmax=$fmax$, rank=$rank$, strand=$strand$
+      SET fmin=$fmin$, fmax=$fmax$, rank=$rank$, strand=$strand$,
+          is_fmin_partial=#fminPartial#,
+          is_fmax_partial=#fmaxPartial#
       <isNotNull property="phase">
         , phase=$phase$
       </isNotNull>

@@ -68,6 +68,8 @@
     <result property="featureLoc.fmin" column="fmin" nullValue="-1"/>
     <result property="featureLoc.fmax" column="fmax" nullValue="0"/>
     <result property="featureLoc.phase" column="phase"/>
+    <result property="featureLoc.fminPartial" column="is_fmin_partial"/>
+    <result property="featureLoc.fmaxPartial" column="is_fmax_partial"/>
     <result property="cvTerm.cvTermId" column="type_id"/>
 	  
     <result property="featureSynonyms" column="{feature.uniqueName=uniqueName}" 
@@ -205,7 +207,9 @@
       fp.type_id AS prop_type_id,
       fp.rank AS prop_rank,
       fp.value,
-      fl.phase
+      fl.phase,
+      fl.is_fmin_partial, 
+      fl.is_fmax_partial
     FROM feature f
 	LEFT JOIN featureloc fl ON ( f.feature_id  = fl.feature_id )
     LEFT JOIN feature_relationship fr ON fr.subject_id = f.feature_id
