@@ -1,0 +1,103 @@
+#!/bin/sh -
+
+# This script will start Artemis on a UNIX system.  This script should
+# be left in the same directory as the rest of the Artemis
+# distribution, so that the java class files can be found.  If
+# necessary a symbolic link can be made to this script from
+# /usr/local/bin/ or elsewhere.
+
+# $Header: //tmp/pathsoft/artemis/etc/gene_builder,v 1.1 2009-06-30 15:47:36 tjc Exp $
+
+# resolve links - $0 may be a link
+PRG=$0
+progname=`basename $0`
+
+while [ -h "$PRG" ] ; do
+  ls=`ls -ld "$PRG"`
+  link=`expr "$ls" : '.*-> \(.*\)$'`
+  if expr "$link" : '.*/.*' > /dev/null; then
+    PRG="$link"
+  else
+    PRG="`dirname $PRG`/$link"
+  fi
+done
+
+ARTEMIS_HOME=`dirname "$PRG"`/..
+
+CLASSPATH=$ARTEMIS_HOME:$ARTEMIS_HOME/lib/biojava.jar:$ARTEMIS_HOME/lib/jemAlign.jar:$ARTEMIS_HOME/lib/jakarta-regexp-1.2.jar:$ARTEMIS_HOME/lib/macos.jar:$ARTEMIS_HOME/lib/postgresql-8.1-407.jdbc2ee.jar:$ARTEMIS_HOME/lib/chado-14-interface.jar:$CLASSPATH
+
+# j2ssh jars
+CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/j2ssh/commons-logging.jar:$ARTEMIS_HOME/lib/j2ssh/j2ssh-core.jar:$ARTEMIS_HOME/lib/j2ssh/
+
+# iBatis jars
+CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$ARTEMIS_HOME/lib/ibatis/:$ARTEMIS_HOME/lib/ibatis/log4j-1.2.14.jar:$ARTEMIS_HOME/lib/ibatis/cglib-nodep-2.2.jar:$ARTEMIS_HOME/lib/retrotranslator-runtime-1.1.0.jar:$ARTEMIS_HOME/etc
+export CLASSPATH
+
+
+ARTEMIS_PROPERTIES="-Dartemis.environment=UNIX"
+
+# Allow URLs to work from behind firewalls
+if [ "$http_proxy" = "" ]
+then
+  http_proxy=$HTTP_PROXY
+fi
+
+if [ "$http_proxy" = "" ]
+then
+  http_proxy=$HTTP_proxy
+fi
+
+if [ "$http_proxy" != "" ]
+then
+  ARTEMIS_PROPERTIES="$ARTEMIS_PROPERTIES -DproxySet=true "`echo $http_proxy | sed 's/http:\/\/\(.*\):\(.*\)/ -Dhttp.proxyHost=\1 -Dhttp.proxyPort=\2/'`
+fi
+
+
+# "-mx500m" sets the maximum amount of memory that Artemis can use.  This may
+# need to be increased when dealing with large files
+MEM="-mx500m -ms20m"
+
+if [ "$JVM_FLAGS" = "" ]
+then
+    FLAGS="$MEM -noverify"
+else
+    FLAGS="$MEM -noverify $JVM_FLAGS"
+fi
+
+
+if [ $# = 0 ]
+then
+    :
+else
+    while test $# != 0
+    do
+        case $1 in
+        -options) FLAGS="$FLAGS -Dextra_options=$2"; shift ;;
+        -D*) FLAGS="$FLAGS $1" ;;
+        *) break ;;
+        esac
+        shift
+    done
+fi
+
+FLAGS=$FAST_FLAG$FLAGS
+
+if [ "$JAVA_VM" = "" ]
+then
+    if [ "$DEBUG" = yes ]
+    then
+        JAVA=java_g
+    else
+        JAVA=java
+    fi
+else
+    JAVA=$JAVA_VM
+fi
+
+PLATTMP=`uname`
+if [ "$PLATTMP" = "Darwin" ]
+then
+  FLAGS="$FLAGS -Dapple.laf.useScreenMenuBar=true -Dcom.apple.mrj.application.apple.menu.about.name=Artemis"
+fi
+
+$JAVA -Djdbc.drivers=org.postgresql.Driver $FLAGS $ARTEMIS_PROPERTIES uk.ac.sanger.artemis.components.genebuilder.GeneEdit $*
