@@ -113,6 +113,8 @@ public class ChadoTransactionManager
               "Ontology_term",
               "score",
               "codon_start",
+              "isFminPartial",
+              "isFmaxPartial",
               "isObsolete",
               MatchPanel.SIMILARITY,
               MatchPanel.ORTHOLOG,
@@ -1528,9 +1530,10 @@ public class ChadoTransactionManager
                "DBXREF: ID="+uniquename+" "+qualifierString);
            sql.add(tsn);
          }
-         else if(qualifierName.equals("codon_start"))
+         else if(qualifierName.equals("codon_start") ||
+                 qualifierName.equals("isFminPartial") ||
+                 qualifierName.equals("isFmaxPartial"))
          {
-           logger4j.debug(uniquename+"  in handleReservedTags() update codon_start");
            updateFeatureLoc(feature, uniquename);
          }
          else if(qualifierName.equals("literature"))
@@ -1711,9 +1714,10 @@ public class ChadoTransactionManager
           "DBXREF: ID="+uniquename+" "+qualifierString);
       sql.add(tsn);
     }
-    else if(qualifierName.equals("codon_start"))
+    else if(qualifierName.equals("codon_start") ||
+            qualifierName.equals("isFminPartial") ||
+            qualifierName.equals("isFmaxPartial"))
     {
-      logger4j.debug(uniquename+"  in handleReservedTags() update codon_start");
       updateFeatureLoc(feature, uniquename);
     }
     else if(qualifierName.equals("literature"))
@@ -2076,6 +2080,16 @@ public class ChadoTransactionManager
     }
     else
       featureloc.setPhase(null);
+    
+    if(gffFeature.getQualifierByName("isFminPartial") != null)
+      featureloc.setFminPartial(true);
+    else
+      featureloc.setFminPartial(false);
+    
+    if(gffFeature.getQualifierByName("isFmaxPartial") != null)
+      featureloc.setFmaxPartial(true);
+    else
+      featureloc.setFmaxPartial(false);
     
     return featureloc;
   }
