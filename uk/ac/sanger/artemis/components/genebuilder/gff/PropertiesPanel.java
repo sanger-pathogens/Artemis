@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.8 2009-03-19 11:06:42 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.9 2009-06-30 10:28:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -73,6 +73,9 @@ public class PropertiesPanel extends JPanel
   private JTextField uniquenameTextField;
   private JTextField primaryNameTextField;
   private JCheckBox obsoleteField;
+  private JCheckBox partialField5prime;
+  private JCheckBox partialField3prime;
+  
   private Feature feature;
   /** controls if this panel is automatically closed or open */
   private boolean empty = true;
@@ -102,6 +105,8 @@ public class PropertiesPanel extends JPanel
        qualifier.getName().equals("feature_relationship_rank") ||
        qualifier.getName().equals("timelastmodified") ||
        qualifier.getName().equals("isObsolete") ||
+       qualifier.getName().equals("isFminPartial") ||
+       qualifier.getName().equals("isFmaxPartial") ||
        qualifier.getName().equals("codon_start") ||
        ChadoTransactionManager.isSynonymTag(qualifier.getName(), 
            (GFFStreamFeature)feature.getEmblFeature()))
@@ -120,6 +125,20 @@ public class PropertiesPanel extends JPanel
     Qualifier derivesFromQualifier = gffQualifiers.getQualifierByName("Derives_from");
     Qualifier timeQualifier        = gffQualifiers.getQualifierByName("timelastmodified");
     Qualifier obsoleteQualifier    = gffQualifiers.getQualifierByName("isObsolete");
+
+    Qualifier isPartialQualfier5;
+    Qualifier isPartialQualfier3;
+    if(feature.isForwardFeature())
+    {
+      isPartialQualfier5   = gffQualifiers.getQualifierByName("isFminPartial");
+      isPartialQualfier3   = gffQualifiers.getQualifierByName("isFmaxPartial");
+    }
+    else
+    {
+      isPartialQualfier3   = gffQualifiers.getQualifierByName("isFminPartial");
+      isPartialQualfier5   = gffQualifiers.getQualifierByName("isFmaxPartial");
+    }
+    
     
     Box gffBox = Box.createVerticalBox();
     gffBox.add(Box.createVerticalStrut(5));
@@ -362,15 +381,30 @@ public class PropertiesPanel extends JPanel
             obsoleteField.setSelected(!obsoleteField.isSelected());
         }
       });
-      c.gridx = 3;
+      c.gridx = 4;
       c.gridy = nrows;
       c.ipadx = 5;
       c.fill = GridBagConstraints.NONE;
-      c.anchor = GridBagConstraints.NORTHEAST;
+      c.anchor = GridBagConstraints.NORTHWEST;
       gridPanel.add(obsoleteField, c);
-
-      nrows++;
-    } 
+    }
+    
+    c.gridx = 3;
+    c.gridy = nrows;
+    c.ipadx = 5;
+    c.fill = GridBagConstraints.NONE;
+    c.anchor = GridBagConstraints.NORTHWEST;
+    nrows++;
+    partialField5prime = new JCheckBox("is partial 5'", 
+        ( isPartialQualfier5 != null ) ? true : false);
+    gridPanel.add(partialField5prime, c);
+    c.gridy = nrows;
+    nrows++;
+    partialField3prime = new JCheckBox("is partial 3'", 
+        ( isPartialQualfier3 != null ) ? true : false);
+    gridPanel.add(partialField3prime, c);
+    nrows++;
+    
     gffBox.add(gridPanel);
     
     
@@ -517,6 +551,42 @@ public class PropertiesPanel extends JPanel
       }
     }
     
+    Qualifier isPartial5primeQualifier; 
+    if(feature.isForwardFeature())
+      isPartial5primeQualifier = gffQualifiers.getQualifierByName("isFminPartial");
+    else
+      isPartial5primeQualifier = gffQualifiers.getQualifierByName("isFmaxPartial");
+    if(isPartial5primeQualifier != null)
+    {
+      if(!partialField5prime.isSelected())
+        gffQualifiers.remove(isPartial5primeQualifier);
+    }
+    else if(partialField5prime.isSelected())
+    {
+      if(feature.isForwardFeature())
+        gffQualifiers.addElement(new Qualifier("isFminPartial"));
+      else
+        gffQualifiers.addElement(new Qualifier("isFmaxPartial"));
+    }
+    
+    Qualifier isPartial3primeQualifier;
+    if(feature.isForwardFeature())
+      isPartial3primeQualifier = gffQualifiers.getQualifierByName("isFmaxPartial");
+    else
+      isPartial3primeQualifier = gffQualifiers.getQualifierByName("isFminPartial");
+    if(isPartial3primeQualifier != null)
+    {
+      if(!partialField3prime.isSelected())
+        gffQualifiers.remove(isPartial3primeQualifier);
+    }
+    else if(partialField3prime.isSelected())
+    {
+      if(feature.isForwardFeature())
+        gffQualifiers.addElement(new Qualifier("isFmaxPartial"));
+      else
+        gffQualifiers.addElement(new Qualifier("isFminPartial"));
+    }
+
     return gffQualifiers;
   }
   
