@@ -1,4 +1,12 @@
 Version 11+
+	Added a new user plot file format with the first column specifying
+	a base position.
+	
+	More configure options have been added to the graphs to enable
+	configuration of the graph line style and size.
+	
+	GoTo directory option added to file manager to assist navigation.
+	
     The database manager is cached between sessions (this can is on by default 
     and can be switched off with -Ddatabase_manager_cache_off). There is an 
     option under the File menu to clear this cache.
