@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.9 2009-06-30 10:28:12 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/gff/PropertiesPanel.java,v 1.10 2009-07-01 08:23:09 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder.gff;
@@ -397,11 +397,13 @@ public class PropertiesPanel extends JPanel
     nrows++;
     partialField5prime = new JCheckBox("is partial 5'", 
         ( isPartialQualfier5 != null ) ? true : false);
+    partialField5prime.setOpaque(false);
     gridPanel.add(partialField5prime, c);
     c.gridy = nrows;
     nrows++;
     partialField3prime = new JCheckBox("is partial 3'", 
         ( isPartialQualfier3 != null ) ? true : false);
+    partialField3prime.setOpaque(false);
     gridPanel.add(partialField3prime, c);
     nrows++;
     
