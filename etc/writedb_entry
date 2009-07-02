@@ -6,10 +6,26 @@
 # writedb_entry -s Pf3D7_01 Pf3D7_05 Pf3D7_07
 #
 
-if [ -z "$ARTEMIS_HOME" ]; then
-  PRG=`readlink -f "$0"`
-  ARTEMIS_HOME=`dirname "$PRG"`/..
-fi
+#if [ -z "$ARTEMIS_HOME" ]; then
+#  PRG=`readlink -f "$0"`
+#  echo $PRG
+#  ARTEMIS_HOME=`dirname "$PRG"`/..
+#fi
+
+PRG=$0
+progname=`basename $0`
+
+while [ -h "$PRG" ] ; do
+  ls=`ls -ld "$PRG"`
+  link=`expr "$ls" : '.*-> \(.*\)$'`
+  if expr "$link" : '.*/.*' > /dev/null; then
+    PRG="$link"
+  else
+    PRG="`dirname $PRG`/$link"
+  fi
+done
+
+ARTEMIS_HOME=`dirname "$PRG"`/..
 
 CLASSPATH="$ARTEMIS_HOME:$ARTEMIS_HOME/lib/biojava.jar:$ARTEMIS_HOME/lib/jemAlign.jar:$ARTEMIS_HOME/lib/jakarta-regexp-1.2.jar:$ARTEMIS_HOME/lib/macos.jar:$ARTEMIS_HOME/lib/postgresql-8.1-407.jdbc2ee.jar:$ARTEMIS_HOME/lib/chado-14-interface.jar:$CLASSPATH"
 
