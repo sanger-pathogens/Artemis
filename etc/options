@@ -2,7 +2,7 @@
 
 # (Note that comment lines start with a hash (#) symbol)
 
-# $Header: //tmp/pathsoft/artemis/etc/options,v 1.70 2009-06-30 10:21:14 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/etc/options,v 1.71 2009-07-03 08:26:42 tjc Exp $
 
 # This file should contain option settings that look like this:
 #
@@ -824,7 +824,8 @@ hyperlinks = \
   PANTHER http://www.pantherdb.org/panther/family.do?clsAccession= \
   Superfamily http://supfam.org/SUPERFAMILY/cgi-bin/scop.cgi?ipid= \
   PDB http://www.rcsb.org/pdb/explore.do?structureId= \
-  AID http://pubchem.ncbi.nlm.nih.gov/assay/assay.cgi?aid=
+  AID http://pubchem.ncbi.nlm.nih.gov/assay/assay.cgi?aid= \
+  GeneID http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&cmd=Retrieve&dopt=full_report&list_uids=
 
 # Lookseq url
 #lookseq = http://www.sanger.ac.uk/cgi-bin/teams/team112/lookseq/get_data.pl?
