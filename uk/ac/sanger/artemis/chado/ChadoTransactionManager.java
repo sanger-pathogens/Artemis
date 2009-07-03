@@ -2318,6 +2318,10 @@ public class ChadoTransactionManager
         logger4j.debug("FeatureCvTermProp = "+this_qualifier_part_lowercase);
         CvTerm cvTerm = getCvTerm(this_qualifier_part.substring(0,index), null);
         
+        if(cvTerm == null)
+          JOptionPane.showMessageDialog(null, 
+              "This cv term is missing :\n"+this_qualifier_part.substring(0,index), 
+              "cv term not found", JOptionPane.ERROR_MESSAGE);
         FeatureCvTermProp featureCvTermProp = new FeatureCvTermProp();
         featureCvTermProp.setValue(prop);
         featureCvTermProp.setCvTerm(cvTerm);
