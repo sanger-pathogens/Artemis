@@ -29,6 +29,7 @@ import java.awt.Component;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -338,7 +339,7 @@ public class CVPanel extends JPanel
                             dimension.height));
           else
             termLabel.setPreferredSize(
-                new Dimension(dimension.width,
+                new Dimension(getWidthOfGoField()+dimension.width,
                               dimension.height));
           xHeadings.add(termLabel);
           
@@ -483,6 +484,12 @@ public class CVPanel extends JPanel
   }
   
 
+  private static int getWidthOfGoField()
+  {
+    JTextField textField = new JTextField();
+    FontMetrics fm  = textField.getFontMetrics(textField.getFont());
+    return fm.stringWidth("GO:0001234 [F] ");  
+  }
   
   private JButton getRemoveButton(final Qualifier this_qualifier, 
                                   final int v_index)
