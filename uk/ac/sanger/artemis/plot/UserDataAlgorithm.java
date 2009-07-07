@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.8 2009-06-24 14:42:33 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.9 2009-07-07 14:37:44 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
  *  set in the constructor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: UserDataAlgorithm.java,v 1.8 2009-06-24 14:42:33 tjc Exp $
+ *  @version $Id: UserDataAlgorithm.java,v 1.9 2009-07-07 14:37:44 tjc Exp $
  **/
 
 public class UserDataAlgorithm extends BaseAlgorithm
@@ -78,6 +78,8 @@ public class UserDataAlgorithm extends BaseAlgorithm
   /** Format type for this instance */
   private int FORMAT = BASE_PER_LINE_FORMAT;
   
+  private LineAttributes lines[];
+  
   /**
    *  Create a new UserDataAlgorithm object. This reads a file
    *  which can be one of two types of formats:
@@ -103,10 +105,15 @@ public class UserDataAlgorithm extends BaseAlgorithm
     String first_line = pushback_reader.readLine ();
     if(first_line.startsWith("#"))
     {
+      readLineAttributes(first_line);
       FORMAT = BASE_SPECIFIED_FORMAT;
       first_line = pushback_reader.readLine ().trim();
-      while(first_line.equals("") || first_line.equals("#"))
+      readLineAttributes(first_line);
+      while(first_line.equals("") || first_line.startsWith("#"))
+      {
         first_line = pushback_reader.readLine ().trim();
+        readLineAttributes(first_line);
+      }
     }
     else
       FORMAT = BASE_PER_LINE_FORMAT;
@@ -261,6 +268,44 @@ public class UserDataAlgorithm extends BaseAlgorithm
     }
   }
 
+  /**
+   * Read the line colour from the header. There should be
+   * one per line and space separated.
+   * @param line
+   */
+  private void readLineAttributes(String line)
+  {
+    if(line.indexOf("colour") == -1 &&
+       line.indexOf("color")  == -1)
+      return;
+    
+    int index = line.indexOf("colour");
+    if(index == -1)
+      index = line.indexOf("color");
+    
+    index = line.indexOf(" ", index+1);
+    line = line.substring(index).trim();
+    String rgbValues[] = line.split(" ");
+    
+    try
+    {
+      lines = new LineAttributes[rgbValues.length];   
+      for(int i=0; i<rgbValues.length; i++)
+        lines[i] = new LineAttributes(LineAttributes.parse(rgbValues[i]));
+    }
+    catch(Exception e){ e.printStackTrace(); }
+  }
+  
+  /**
+   * Return any LineAttributes read from the header (for
+   * BASE_SPECIFIED_FORMAT).
+   * @return
+   */
+  public LineAttributes[] getLineAttributes()
+  {
+    return lines;
+  }
+  
   /**
    *  Return the number of values a call to getValues () will return - one
    *  in this case.
