@@ -164,6 +164,33 @@ public class LineAttributes
   }
   
   /**
+   * From a string representation of a colour return the
+   * corresponding <code>Color</code>.
+   * @param colourStr the string to parse
+   * @return
+   */
+  public static Color parse(String colourStr)
+  {
+    if(colourStr.indexOf(":") > -1)
+    {
+      String colourStrs[] = colourStr.split(":");
+      return new Color(Integer.parseInt(colourStrs[0]),
+                       Integer.parseInt(colourStrs[1]), 
+                       Integer.parseInt(colourStrs[2]));
+    }
+    
+    if ( colourStr.startsWith("#") ) 
+      colourStr = colourStr.substring(1);
+    
+    colourStr = colourStr.toLowerCase();
+    if (colourStr.length() > 6)
+      throw new NumberFormatException("not a 24 bit representation of the color"); 
+   
+    Color color = new Color( Integer.parseInt( colourStr , 16 ) );
+    return color;
+  }
+  
+  /**
    * Utility used by uk.ac.sanger.artemis.components.Plot
    * @param numPlots
    * @param lines
