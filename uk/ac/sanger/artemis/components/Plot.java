@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.21 2009-06-26 15:52:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.22 2009-07-07 14:38:35 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.21 2009-06-26 15:52:48 tjc Exp $
+ *  @version $Id: Plot.java,v 1.22 2009-07-07 14:38:35 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -697,7 +697,11 @@ public abstract class Plot extends JPanel
     {
       final int get_values_return_count =
        ((BaseAlgorithm)getAlgorithm()).getValueCount();
-      lines = LineAttributes.init(get_values_return_count);
+      
+      if(getAlgorithm() instanceof UserDataAlgorithm)
+        lines = ((UserDataAlgorithm)getAlgorithm()).getLineAttributes();
+      if(lines == null)
+        lines = LineAttributes.init(get_values_return_count);
     }
     
     numPlots = drawMultiValueGraph(og,lines);
