@@ -171,9 +171,10 @@ public class LineAttributes
    */
   public static Color parse(String colourStr)
   {
-    if(colourStr.indexOf(":") > -1)
+    if(colourStr.indexOf(":") > -1 ||
+       colourStr.indexOf(",") > -1)
     {
-      String colourStrs[] = colourStr.split(":");
+      String colourStrs[] = colourStr.split("[:,]");
       return new Color(Integer.parseInt(colourStrs[0]),
                        Integer.parseInt(colourStrs[1]), 
                        Integer.parseInt(colourStrs[2]));
@@ -184,7 +185,8 @@ public class LineAttributes
     
     colourStr = colourStr.toLowerCase();
     if (colourStr.length() > 6)
-      throw new NumberFormatException("not a 24 bit representation of the color"); 
+      throw new NumberFormatException(colourStr+
+          " not a 24 bit representation of the color"); 
    
     Color color = new Color( Integer.parseInt( colourStr , 16 ) );
     return color;
@@ -301,6 +303,7 @@ public class LineAttributes
     plot.repaint();
   }
 }
+
 
 /**
  * Renderer for the JComboBox to define different line styles.
