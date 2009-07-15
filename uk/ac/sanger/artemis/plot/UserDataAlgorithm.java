@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.9 2009-07-07 14:37:44 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.10 2009-07-15 12:20:30 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.sequence.*;
 import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.io.ReadFormatException;
 
+import java.awt.Color;
 import java.io.*;
 import java.util.HashMap;
 import java.util.regex.Pattern;
@@ -41,7 +42,7 @@ import java.util.regex.Pattern;
  *  set in the constructor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: UserDataAlgorithm.java,v 1.9 2009-07-07 14:37:44 tjc Exp $
+ *  @version $Id: UserDataAlgorithm.java,v 1.10 2009-07-15 12:20:30 tjc Exp $
  **/
 
 public class UserDataAlgorithm extends BaseAlgorithm
@@ -52,11 +53,17 @@ public class UserDataAlgorithm extends BaseAlgorithm
   /** Base position is specified in the first column file format */
   private static int BASE_SPECIFIED_FORMAT = 2;
   
+  /** Wiggle format */
+  private static int WIGGLE_VARIABLE_STEP_FORMAT = 3;
+  private static int WIGGLE_FIXED_STEP_FORMAT = 4;
+  
   /** The data read by the constructor - for BASE_PER_LINE_FORMAT */
   private float data[][] = null;
   
-  /** The data read by the constructor - for BASE_SPECIFIED_FORMAT */
-  private HashMap<Integer, float[]> dataMap;
+  /** The data read by the constructor - for BASE_SPECIFIED_FORMAT 
+                                       - and WIGGLE_VARIABLE_STEP_FORMAT
+                                       - and WIGGLE_FIXED_STEP_FORMAT */
+  private HashMap<Integer, Float[]> dataMap;
   
   /** The maximum value in the data array. */
   private float data_max = Float.MIN_VALUE;
@@ -80,6 +87,8 @@ public class UserDataAlgorithm extends BaseAlgorithm
   
   private LineAttributes lines[];
   
+  public Wiggle wiggle[];
+  
   /**
    *  Create a new UserDataAlgorithm object. This reads a file
    *  which can be one of two types of formats:
@@ -101,23 +110,24 @@ public class UserDataAlgorithm extends BaseAlgorithm
     final Reader document_reader = document.getReader ();
 
     LinePushBackReader pushback_reader = new LinePushBackReader (document_reader);
-
-    String first_line = pushback_reader.readLine ();
-    if(first_line.startsWith("#"))
+    String first_line = pushback_reader.readLine (); 
+    
+    Pattern dataPattern = Pattern.compile("^\\s*([\\d\\.]+\\s*)+$");
+    if(dataPattern.matcher(first_line).matches())
+      FORMAT = BASE_PER_LINE_FORMAT;
+    else
     {
-      readLineAttributes(first_line);
-      FORMAT = BASE_SPECIFIED_FORMAT;
-      first_line = pushback_reader.readLine ().trim();
-      readLineAttributes(first_line);
-      while(first_line.equals("") || first_line.startsWith("#"))
+      StringBuffer header = new StringBuffer(first_line+"\n");
+
+      while(!dataPattern.matcher(first_line).matches())
       {
         first_line = pushback_reader.readLine ().trim();
-        readLineAttributes(first_line);
+        header.append(first_line+"\n");
       }
+      
+      FORMAT = parseHeader(header);
     }
-    else
-      FORMAT = BASE_PER_LINE_FORMAT;
-    
+
     final Pattern patt = Pattern.compile("\\s+");
     String tokens[] = patt.split(first_line);
     
@@ -130,7 +140,11 @@ public class UserDataAlgorithm extends BaseAlgorithm
     if(FORMAT == BASE_PER_LINE_FORMAT)
       data = new float [strand.getSequenceLength ()][tokens.length];
     
-    readData (pushback_reader);
+    if(FORMAT == BASE_SPECIFIED_FORMAT ||
+       FORMAT == BASE_PER_LINE_FORMAT)
+      readData(pushback_reader);
+    else
+      readWiggle(pushback_reader);
     pushback_reader.close();
   }
 
@@ -157,13 +171,13 @@ public class UserDataAlgorithm extends BaseAlgorithm
         throw new ReadFormatException ("line has the wrong number of fields:\n"+line);
       
       int base = 0;
-      
-      float line_data[] = new float[tokens.length-1];
+      Float line_data[] = new Float[tokens.length-1];
       for (int i = 0 ; i < tokens.length ; ++i)
       {
         try 
         {
-          if(FORMAT == BASE_SPECIFIED_FORMAT && i == 0)
+          if( FORMAT == BASE_SPECIFIED_FORMAT &&
+              i == 0)
           {
             int last_base = base;
             base = (int) Float.parseFloat(tokens[i]);
@@ -176,7 +190,7 @@ public class UserDataAlgorithm extends BaseAlgorithm
                (base - last_base) > 0)
               estimate_window_size = base - last_base;
             if(dataMap == null)
-              dataMap = new HashMap<Integer, float[]>();
+              dataMap = new HashMap<Integer, Float[]>();
             continue;
           }
             
@@ -218,6 +232,88 @@ public class UserDataAlgorithm extends BaseAlgorithm
         default_window_size = estimate_window_size;
     }
   }
+  
+  /**
+   *  Read all from buffered_reader into data.
+   **/
+  private void readWiggle (final LinePushBackReader pushback_reader)
+      throws IOException
+  {
+    String line = null;
+    int count = 0;
+    int stepCount = 0;
+    final int seqLength = getStrand ().getSequenceLength ();
+    final Pattern patt = Pattern.compile("\\s+");
+
+    dataMap = new HashMap<Integer, Float[]>();
+    this.number_of_values = 1;
+    
+    while ((line = pushback_reader.readLine ()) != null)
+    {
+      if(line.startsWith("track"))
+      {
+        parseTrackLine(line);
+        continue;
+      }
+      else if(line.startsWith("variableStep ") ||
+              line.startsWith("fixedStep"))
+      {
+        FORMAT = parseWiggle(line);
+        stepCount = 0;
+        this.number_of_values++;
+        continue;
+      }
+      else if(line.startsWith("#"))
+        continue;
+      
+      String tokens[] = patt.split(line.trim()); 
+      int base = 0;
+
+      int valueIndex = 0;
+      try 
+      {
+        if(FORMAT == WIGGLE_VARIABLE_STEP_FORMAT)
+        {
+          base = (int) Float.parseFloat(tokens[0]);
+          valueIndex = 1;
+        }
+        else
+        {
+          base  = wiggle[wiggle.length-1].start + 
+           (stepCount*wiggle[wiggle.length-1].step);
+        }
+        
+        if(base > seqLength)
+          throw new ReadFormatException (
+                "the base position ("+base+") is greater than the sequence length:\n"+line);
+    
+        float value = Float.parseFloat(tokens[valueIndex]);
+        if(logTransform)
+          value = (float) Math.log(value+1);
+
+        if (value > data_max) 
+          data_max = value;
+        if (value < data_min)
+          data_min = value;
+        
+        Float valueArray[] = new Float[number_of_values];
+        valueArray[number_of_values-1] = value;
+        dataMap.put(base, valueArray);
+  
+        count++;
+        stepCount++;
+        average_value += value;
+      } 
+      catch (NumberFormatException e) 
+      {
+        throw new ReadFormatException ("cannot understand this number: " +
+                                       tokens[valueIndex] + " - " +e.getMessage ());
+      } 
+    }
+
+    average_value = average_value/count;
+    default_window_size = 1;
+  }
 
   /**
    *  Return the value of the function between a pair of bases.
@@ -238,7 +334,9 @@ public class UserDataAlgorithm extends BaseAlgorithm
       start = getStrand().getBases().getComplementPosition(tend);
     }
     
-    if(FORMAT == BASE_SPECIFIED_FORMAT)
+    if(FORMAT == BASE_SPECIFIED_FORMAT ||
+       FORMAT == WIGGLE_VARIABLE_STEP_FORMAT ||
+       FORMAT == WIGGLE_FIXED_STEP_FORMAT)
     {
       for (int i = 0 ; i < value_count ; ++i) 
       {
@@ -246,9 +344,11 @@ public class UserDataAlgorithm extends BaseAlgorithm
         int count = 0;
         for (int base = start ; base <= end ; ++base) 
         {
-          if(dataMap.containsKey(base))
+          if(dataMap.containsKey(base) && 
+             ((Float[])dataMap.get(base)).length > i &&
+             ((Float[])dataMap.get(base))[i] != null)
           {
-            values[i] += ((float[])dataMap.get(base))[i];
+            values[i] += ((Float[])dataMap.get(base))[i];
             count++;
           }
         }
@@ -269,33 +369,175 @@ public class UserDataAlgorithm extends BaseAlgorithm
   }
 
   /**
-   * Read the line colour from the header. There should be
+   * Determine the graph file format.
+   * Read the line colour from the header, there should be
    * one per line and space separated.
    * @param line
+   * @throws ReadFormatException 
    */
-  private void readLineAttributes(String line)
+  private int parseHeader(StringBuffer headerText) throws ReadFormatException
   {
-    if(line.indexOf("colour") == -1 &&
-       line.indexOf("color")  == -1)
-      return;
+    FORMAT = BASE_SPECIFIED_FORMAT;
     
-    int index = line.indexOf("colour");
-    if(index == -1)
-      index = line.indexOf("color");
-    
-    index = line.indexOf(" ", index+1);
-    line = line.substring(index).trim();
-    String rgbValues[] = line.split(" ");
-    
+    BufferedReader reader = new BufferedReader(
+        new StringReader(headerText.toString()));
+      
+    String line = null;
     try
     {
-      lines = new LineAttributes[rgbValues.length];   
-      for(int i=0; i<rgbValues.length; i++)
-        lines[i] = new LineAttributes(LineAttributes.parse(rgbValues[i]));
+      while ((line = reader.readLine()) != null) 
+      {
+        if((line.indexOf("colour") == -1 && 
+            line.indexOf("color")  == -1 ) ||
+            line.startsWith("track"))
+        {
+          if(line.startsWith("track "))
+            parseTrackLine(line);
+          else  if(line.startsWith("variableStep ") ||
+                   line.startsWith("fixedStep"))
+            FORMAT = parseWiggle(line);
+
+          continue;
+        }
+
+        int index = line.indexOf("colour");
+        if (index == -1)
+          index = line.indexOf("color");
+
+        index = line.indexOf(" ", index + 1);
+        line = line.substring(index).trim();
+        String rgbValues[] = line.split(" ");
+
+        lines = new LineAttributes[rgbValues.length];
+        for (int j = 0; j < rgbValues.length; j++)
+          lines[j] = new LineAttributes(LineAttributes.parse(rgbValues[j]));
+      }
     }
-    catch(Exception e){ e.printStackTrace(); }
+    catch (NumberFormatException e) 
+    {
+      throw new ReadFormatException ("cannot understand this number: " +
+                                     line + " - " +e.getMessage ());
+    } 
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+    return FORMAT;
   }
   
+  /**
+   * http://genome.ucsc.edu/goldenPath/help/hgWiggleTrackHelp.html
+   * 
+   * All options are placed in a single line separated by spaces:
+   *
+   *  track type=wiggle_0 name=track_label description=center_label
+   *        visibility=display_mode color=r,g,b altColor=r,g,b
+   *        priority=priority autoScale=on|off
+   *        gridDefault=on|off maxHeightPixels=max:default:min
+   *        graphType=bar|points viewLimits=lower:upper
+   *        yLineMark=real-value yLineOnOff=on|off
+   *        windowingFunction=maximum|mean|minimum smoothingWindow=off|2-16
+   *
+   * @param trackLine
+   */
+  private void parseTrackLine(String trackLine)
+  {
+    String colour = "0,0,0";
+    int beginIndex = trackLine.indexOf(" color=");
+    if(beginIndex > -1)
+    {
+      beginIndex+=7;
+      int endIndex   = trackLine.indexOf(" ", beginIndex);
+      colour = trackLine.substring(beginIndex, endIndex);
+    }
+    
+    incrementLines(LineAttributes.parse(colour));
+  }
+  
+  private void incrementLines(Color colour)
+  {
+    LineAttributes line = new LineAttributes(colour);
+    
+    if(lines == null)
+      lines = new LineAttributes[1];
+    else
+    {
+      LineAttributes linesTmp[] = new LineAttributes[lines.length];
+      System.arraycopy(lines, 0, linesTmp, 0, lines.length);
+      lines = new LineAttributes[linesTmp.length+1];
+      System.arraycopy(linesTmp, 0, lines, 0, linesTmp.length);
+    }
+    lines[lines.length-1] = line;
+  }
+  
+  /**
+   * Wiggle formats  (default: span=1) :
+   * variableStep  chrom=chrN  [span=windowSize]
+   * fixedStep  chrom=chrN  start=position  step=stepInterval  [span=windowSize]
+   * @param line
+   * @return
+   */
+  private int parseWiggle(String line) throws NumberFormatException
+  {
+    if(line.startsWith("variableStep "))
+      FORMAT = WIGGLE_VARIABLE_STEP_FORMAT;
+    else if (line.startsWith("fixedStep "))
+      FORMAT = WIGGLE_FIXED_STEP_FORMAT;
+    
+    if(wiggle == null)
+    {
+      wiggle = new Wiggle[lines.length];
+      for(int i=0; i<wiggle.length; i++)
+        wiggle[i] = new Wiggle();
+    }
+    else
+    {
+      Wiggle wiggleTmp[] = new Wiggle[wiggle.length];
+      System.arraycopy(wiggle, 0, wiggleTmp, 0, wiggle.length);
+      wiggle = new Wiggle[wiggleTmp.length+1];
+      System.arraycopy(wiggleTmp, 0, wiggle, 0, wiggleTmp.length);
+      wiggle[wiggle.length-1] = new Wiggle();
+    }
+    
+    if(wiggle.length > lines.length)
+      incrementLines(lines[lines.length-1].getLineColour());
+    
+    if(FORMAT == WIGGLE_FIXED_STEP_FORMAT)
+    {
+      wiggle[wiggle.length-1].start = 
+        Integer.parseInt(getSubString(" start=" ,line));
+
+      wiggle[wiggle.length-1].step = 
+        Integer.parseInt(getSubString(" step=" ,line));
+    }
+    
+    int beginIndex = line.indexOf(" span=");
+    if(beginIndex > -1)
+    {
+      wiggle[wiggle.length-1].span = 
+        Integer.parseInt(getSubString(" span=" ,line));
+    }
+    
+    return FORMAT;
+  }
+
+
+  /**
+   * Find the value of a key within a string.
+   * @param key
+   * @param line
+   * @return
+   */
+  private String getSubString(String key, String line)
+  {
+    int beginIndex = line.indexOf(key)+key.length();
+    int endIndex   = line.indexOf(" ", beginIndex);
+    if(endIndex == -1)
+      endIndex = line.length();
+    return line.substring(beginIndex, endIndex);
+  }
+
+
   /**
    * Return any LineAttributes read from the header (for
    * BASE_SPECIFIED_FORMAT).
@@ -313,7 +555,7 @@ public class UserDataAlgorithm extends BaseAlgorithm
   public int getValueCount () 
   {
     if(FORMAT == BASE_SPECIFIED_FORMAT)
-      return number_of_values -1;
+      return number_of_values - 1;
     return number_of_values;
   }
 
@@ -383,5 +625,29 @@ public class UserDataAlgorithm extends BaseAlgorithm
   {
     return new Float (average_value);
   }
-
+  
+  public int getWiggleStart(int index)
+  {
+    return wiggle[index].start;
+  }
+  
+  public int getWiggleSpan(int index)
+  {
+    return wiggle[index].span;
+  }
+  
+  public boolean isWiggleFormat()
+  {
+    if(FORMAT == WIGGLE_VARIABLE_STEP_FORMAT || 
+       FORMAT == WIGGLE_FIXED_STEP_FORMAT)
+      return true;
+    return false;
+  }
+  
+  class Wiggle
+  {
+    int start;
+    int step;
+    int span = 0;
+  }
 }

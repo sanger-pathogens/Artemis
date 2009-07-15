@@ -81,6 +81,11 @@ public class LineAttributes
   private static BasicStroke[] STROKES = 
        new BasicStroke[]{ style1, style2, style3 };
   
+  /** fill in underneath wiggle plots */
+  public static String WIGGLE_TYPES[]    = 
+          { "Open", "Filled", "Heat Map" };
+  private String wiggleType = WIGGLE_TYPES[0];
+
   /**
    * Contruct a LineAttributes instance
    * @param lineColour
@@ -135,6 +140,11 @@ public class LineAttributes
       return 0;
   }
   
+  public String getWiggleType()
+  {
+    return wiggleType;
+  }
+
   public static LineAttributes[]  init(int numPlots)
   {
     final Color frameColour[] = { 
@@ -213,23 +223,39 @@ public class LineAttributes
     else
       thislines = lines;
 
+    boolean isWiggle = false;
+    if(plot.getAlgorithm() instanceof UserDataAlgorithm)
+    {
+      if(((UserDataAlgorithm)plot.getAlgorithm()).isWiggleFormat())
+        isWiggle = true;
+    }
+    
+    int gridx = 0;
     c.gridy = 0;
-    c.gridx = 0;
+    c.gridx = gridx++;
+    gridx++;
     panel.add(new JLabel("Colour"), c);
-    c.gridx = 2;
+    c.gridx = gridx++;
     panel.add(new JLabel("Line style"), c);
-    c.gridx = 3;
+    
+    if(isWiggle)
+    {
+      c.gridx = gridx++;
+      panel.add(new JLabel("Plot style"), c);
+    }
+    c.gridx = gridx;
     panel.add(new JLabel("Line size"), c);
     
     for(int i=0; i<numPlots; i++)
     {
       c.gridy = i+1;
       final int colourNumber = i;
+      gridx = 0;
 
       final JLabel colourLabel = new JLabel("   ");
       colourLabel.setBackground(thislines[i].getLineColour());
       colourLabel.setOpaque(true);
-      c.gridx = 0;
+      c.gridx = gridx++;
       panel.add(colourLabel,c);
 
       JButton butt = new JButton("Select");
@@ -244,7 +270,7 @@ public class LineAttributes
           plot.repaint();
         }
       });
-      c.gridx = 1;
+      c.gridx = gridx++;
       panel.add(butt, c);
       
       // line style
@@ -266,8 +292,26 @@ public class LineAttributes
           setLineSize(plot, slider, thislines, colourNumber);
         }
       });
-      c.gridx = 2;
+      c.gridx = gridx++;
       panel.add(lineStyle, c);
+      
+      // open / filled
+      if(isWiggle)
+      {
+        final JComboBox openPlot = new JComboBox(WIGGLE_TYPES);
+        openPlot.setSelectedItem(thislines[colourNumber].wiggleType);
+        openPlot.addActionListener(new ActionListener()
+        {
+          public void actionPerformed(ActionEvent e)
+          {
+            thislines[colourNumber].wiggleType =
+              (String) openPlot.getSelectedItem();
+             plot.repaint();
+          }
+        });
+        c.gridx = gridx++;
+        panel.add(openPlot, c);
+      }
       
       // line size
       slider.addChangeListener(new ChangeListener()
@@ -277,7 +321,7 @@ public class LineAttributes
           setLineSize(plot, slider, thislines, colourNumber);
         }
       });
-      c.gridx = 3;
+      c.gridx = gridx;
       panel.add(slider, c);
       
     }

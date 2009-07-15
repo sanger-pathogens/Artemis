@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.17 2009-06-26 15:52:48 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.18 2009-07-15 12:20:30 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import org.apache.log4j.Level;
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.17 2009-06-26 15:52:48 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.18 2009-07-15 12:20:30 tjc Exp $
  **/
 
 public class BasePlot extends Plot
@@ -738,7 +738,14 @@ public class BasePlot extends Plot
 
     final int number_of_values = value_array_array[0].length;
 
-    if(number_of_values > 1) 
+    boolean isWiggle = false;
+    if(getAlgorithm() instanceof UserDataAlgorithm)
+    {
+      if( ((UserDataAlgorithm)getAlgorithm()).wiggle != null )
+        isWiggle = true;
+    }
+    
+    if(number_of_values > 1 && !isWiggle) 
       drawGlobalAverage(g, min_value, max_value);
 
     Stroke stroke = ((Graphics2D)g).getStroke();
@@ -760,10 +767,16 @@ public class BasePlot extends Plot
       else
         offset = 0;
 
-      drawPoints(g, min_value, max_value, step_size, window_size,
-                 getWidthInBases(),
-                 offset,
-                 value_array_array[value_index]);
+      if(!isWiggle)
+        drawPoints(g, min_value, max_value, step_size, window_size,
+                   getWidthInBases(),
+                   offset,
+                   value_array_array[value_index]);
+      else
+        drawWiggle(g, min_value, max_value, step_size, window_size,
+                   getWidthInBases(),
+                   offset,
+                   value_array_array[value_index], value_index);
     }
     ((Graphics2D)g).setStroke(stroke);
     
@@ -856,6 +869,140 @@ public class BasePlot extends Plot
 
     return get_values_return_count;
   }
+  
+  
+  /**
+   *  Plot the given wiggle format onto a Graphics object.
+   *  @param min_value The minimum of the plot_values.
+   *  @param max_value The maximum of the plot_values.
+   *  @param step_size The current step size for this algorithm.  This is
+   *    never greater than window_size.
+   *  @param window_size The window size used in calculating plot_values.
+   *  @param total_unit_count The maximum number of residues/bases we can
+   *    show.  This is used to draw the scale line and to calculate the
+   *    distance (in pixels) between plot points.
+   *  @param start_position The distance from the edge of the canvas (measured
+   *    in residues/bases) to start drawing the plot.
+   *  @param plot_values The values to plot.
+   **/
+  protected void drawWiggle(final Graphics g,
+                            final float min_value, final float max_value,
+                            final int step_size, final int window_size,
+                            final int total_unit_count,
+                            final int start_position,
+                            final float [] plot_values,
+                            final int value_index) 
+  {
+    final float residues_per_pixel =
+      (float) total_unit_count / getSize().width;
+
+    // this is the height of the graph (slightly smaller than the canvas for
+    // ease of viewing).
+    final int graph_height = getSize().height -
+      getLabelHeight() -       // leave room for the algorithm name
+      getScaleHeight() -       // leave room for the scale
+      2;
+
+    // too small to draw
+    if(graph_height < 5) 
+      return;
+
+    String wiggleType = lines[value_index].getWiggleType();
+    Color definedColours[] = null;
+    int NUMBER_OF_SHADES = 100;
+    if(wiggleType.equals(LineAttributes.WIGGLE_TYPES[2]))
+    {
+      definedColours = makeColours(lines[value_index].getLineColour(),
+                                   NUMBER_OF_SHADES);
+    }
+    
+    final int number_of_values = plot_values.length;
+    int start_residue;
+    int end_residue;
+    int start_x;
+    int end_x;
+
+    for(int i = 0; i<number_of_values - 1; ++i) 
+    {
+      if(plot_values[i] == 0)
+        continue;
+      
+      int span = ((UserDataAlgorithm)getAlgorithm()).getWiggleSpan(value_index);
+      
+      start_residue = window_size / 2 + i * step_size + start_position;
+      end_residue   = start_residue + span;
+
+      start_x = (int)(start_residue / residues_per_pixel);
+      end_x = (int)(end_residue / residues_per_pixel);
+
+      // this is a number between 0.0 and 1.0
+      final float scaled_start_value =
+        (plot_values[i] - min_value) / (max_value - min_value);
+      final int start_y =
+        graph_height - (int)(scaled_start_value * graph_height) +
+        getLabelHeight() + 1;
+
+      if(wiggleType.equals(LineAttributes.WIGGLE_TYPES[0]))
+      {
+        g.drawLine(start_x, graph_height+getLabelHeight() + 1, start_x, start_y);
+        g.drawLine(start_x, start_y, end_x, start_y);
+        g.drawLine(end_x, graph_height+getLabelHeight() + 1, end_x, start_y); 
+      }
+      else if(wiggleType.equals(LineAttributes.WIGGLE_TYPES[1]))
+        g.fillRect(start_x, start_y, end_x-start_x, graph_height+getLabelHeight() + 1);
+      else
+      {
+        // set color based on value
+        int colourIndex = 
+          (int)(definedColours.length * 0.999 * scaled_start_value);
+
+        if(colourIndex > definedColours.length - 1)
+          colourIndex = definedColours.length - 1;
+        else if (colourIndex < 0)
+          colourIndex = 0;
+        
+        g.setColor(definedColours[ colourIndex ]);
+        g.fillRect(start_x, getLabelHeight() + 1, 
+             end_x-start_x, graph_height+getLabelHeight() + 1);
+      }
+    }
+  }
+  
+  /**
+   * Generate the colours for heat map plots.
+   * @param col
+   * @param NUMBER_OF_SHADES
+   * @return
+   */
+  private Color[] makeColours(Color col, int NUMBER_OF_SHADES)
+  {
+    Color definedColour[] = new Color[NUMBER_OF_SHADES];
+    for(int i = 0; i < NUMBER_OF_SHADES; ++i)
+    {
+      int R = col.getRed();
+      int G = col.getGreen();
+      int B = col.getBlue();
+
+      float scale = ((float)(NUMBER_OF_SHADES-i) * (float)(255 / NUMBER_OF_SHADES )) ;
+      
+      if((R+scale) < 253)
+        R += scale;
+      else
+        R = 253;
+      if((G+scale) < 253)
+        G += scale;
+      else
+        G = 253;
+      if((B+scale) < 253)
+        B += scale;
+      else
+        B = 253;
+
+      definedColour[i] = new Color(R,G,B);
+    }
+    return definedColour;
+  }
+
 
   /**
    *  Get the position in the Feature of the given canvas x position.  This
