@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.22 2009-07-07 14:38:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.23 2009-07-15 12:18:29 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.22 2009-07-07 14:38:35 tjc Exp $
+ *  @version $Id: Plot.java,v 1.23 2009-07-15 12:18:29 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -997,7 +997,7 @@ public abstract class Plot extends JPanel
   /**
    *  Return the amount of vertical space (in pixels) to use for the scale.
    **/
-  private int getScaleHeight() 
+  protected int getScaleHeight() 
   {
     if(draw_scale) 
       return getFontHeight() + 2;
@@ -1009,7 +1009,7 @@ public abstract class Plot extends JPanel
    *  Return the height in algorithm name and label line (returns the font
    *  height plus a small amount).
    **/
-  private int getLabelHeight() 
+  protected int getLabelHeight() 
   {
     return getFontHeight() + 2;
   }
