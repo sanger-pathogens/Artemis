@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.23 2009-07-15 12:18:29 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.24 2009-07-16 14:17:11 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.23 2009-07-15 12:18:29 tjc Exp $
+ *  @version $Id: Plot.java,v 1.24 2009-07-16 14:17:11 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -807,7 +807,10 @@ public abstract class Plot extends JPanel
                             final int step_size, final int window_size,
                             final int total_unit_count,
                             final int start_position,
-                            final float [] plot_values) 
+                            final float [] plot_values,
+                            final int value_index,
+                            final int numberPlots,
+                            final boolean isWiggle) 
   {
     final float residues_per_pixel =
       (float) total_unit_count / getSize().width;
@@ -823,6 +826,20 @@ public abstract class Plot extends JPanel
     if(graph_height < 5) 
       return;
 
+    Color definedColours[] = null;
+    String plotType = null;
+    if(lines != null)
+    {
+      plotType = lines[value_index].getPlotType();
+    
+      int NUMBER_OF_SHADES = 100;
+      if(plotType.equals(LineAttributes.PLOT_TYPES[2]))
+      {
+        definedColours = makeColours(lines[value_index].getLineColour(),
+                                     NUMBER_OF_SHADES);
+      }
+    }
+
     final int number_of_values = plot_values.length;
     int start_residue;
     int end_residue;
@@ -831,10 +848,18 @@ public abstract class Plot extends JPanel
 
     for(int i = 0; i<number_of_values - 1; ++i) 
     {
+      if(isWiggle && plot_values[i] == 0)
+        continue;
       start_residue = window_size / 2 + i * step_size + start_position;
-      end_residue   = start_residue + step_size;
-
       start_x = (int)(start_residue / residues_per_pixel);
+      
+      if(isWiggle)
+      {
+        int span = ((UserDataAlgorithm)getAlgorithm()).getWiggleSpan(value_index);
+        end_residue   = start_residue + span;
+      }
+      else
+        end_residue   = start_residue + step_size;
       end_x = (int)(end_residue / residues_per_pixel);
 
       // this is a number between 0.0 and 1.0
@@ -849,9 +874,85 @@ public abstract class Plot extends JPanel
       final int end_y =
         graph_height - (int)(scaled_end_value * graph_height) +
         getLabelHeight() + 1;
+      
+      if(plotType == null ||
+         plotType.equals(LineAttributes.PLOT_TYPES[0]))
+      {
+        if(isWiggle)
+        {
+          g.drawLine(start_x, graph_height+getLabelHeight() + 1, start_x, start_y);
+          g.drawLine(start_x, start_y, end_x, start_y);
+          g.drawLine(end_x, graph_height+getLabelHeight() + 1, end_x, start_y);
+        }
+        else
+          g.drawLine(start_x, start_y, end_x, end_y);
+      }
+      else if(plotType.equals(LineAttributes.PLOT_TYPES[1]))
+      {
+        if(isWiggle)
+          g.fillRect(start_x, start_y, end_x-start_x, graph_height+getLabelHeight() + 1);
+        {
+          int xPoints[] = { start_x, end_x, end_x, start_x };
+          int yPoints[] = { start_y, end_y,  
+              graph_height+getLabelHeight() + 1,
+              graph_height+getLabelHeight() + 1};
+          g.fillPolygon(xPoints, yPoints, 4);
+        }
+      }
+      else
+      {
+        int ytop = getLabelHeight() + 1 + 
+                   (value_index*(graph_height/numberPlots));
+        int ybtm = (graph_height/numberPlots);
 
-      g.drawLine(start_x, start_y, end_x, end_y);
+        // set color based on value
+        int colourIndex = 
+          (int)(definedColours.length * 0.999 * scaled_start_value);
+
+        if(colourIndex > definedColours.length - 1)
+          colourIndex = definedColours.length - 1;
+        else if (colourIndex < 0)
+          colourIndex = 0;
+        
+        g.setColor(definedColours[ colourIndex ]);
+        g.fillRect(start_x, ytop, end_x-start_x, ybtm);
+      }
     }
+  }
+  
+  /**
+   * Generate the colours for heat map plots.
+   * @param col
+   * @param NUMBER_OF_SHADES
+   * @return
+   */
+  protected Color[] makeColours(Color col, int NUMBER_OF_SHADES)
+  {
+    Color definedColour[] = new Color[NUMBER_OF_SHADES];
+    for(int i = 0; i < NUMBER_OF_SHADES; ++i)
+    {
+      int R = col.getRed();
+      int G = col.getGreen();
+      int B = col.getBlue();
+
+      float scale = ((float)(NUMBER_OF_SHADES-i) * (float)(255 / NUMBER_OF_SHADES )) ;
+      
+      if((R+scale) < 253)
+        R += scale;
+      else
+        R = 253;
+      if((G+scale) < 253)
+        G += scale;
+      else
+        G = 253;
+      if((B+scale) < 253)
+        B += scale;
+      else
+        B = 253;
+
+      definedColour[i] = new Color(R,G,B);
+    }
+    return definedColour;
   }
 
   /**

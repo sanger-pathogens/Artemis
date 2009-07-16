@@ -82,9 +82,9 @@ public class LineAttributes
        new BasicStroke[]{ style1, style2, style3 };
   
   /** fill in underneath wiggle plots */
-  public static String WIGGLE_TYPES[]    = 
+  public static String PLOT_TYPES[]    = 
           { "Open", "Filled", "Heat Map" };
-  private String wiggleType = WIGGLE_TYPES[0];
+  private String plotType = PLOT_TYPES[0];
 
   /**
    * Contruct a LineAttributes instance
@@ -140,9 +140,9 @@ public class LineAttributes
       return 0;
   }
   
-  public String getWiggleType()
+  public String getPlotType()
   {
-    return wiggleType;
+    return plotType;
   }
 
   public static LineAttributes[]  init(int numPlots)
@@ -231,24 +231,41 @@ public class LineAttributes
     }
     
     int gridx = 0;
-    c.gridy = 0;
+    int gridy = 0;
+    c.gridy = gridy++;
+    c.gridx = gridx;
+    // open / filled    
+    panel.add(new JLabel("Plot Options:"), c);
+    final JComboBox openPlot = new JComboBox(PLOT_TYPES);
+    openPlot.setSelectedItem(thislines[0].plotType);
+    openPlot.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        for(int i=0; i<numPlots; i++)
+          thislines[i].plotType =    
+            (String) openPlot.getSelectedItem();
+        plot.repaint();
+      }
+    });
+    c.gridy = gridy++;
+    panel.add(openPlot, c);
+    
+    c.gridy = gridy++;
+    panel.add(new JLabel("Line Options:"), c);
     c.gridx = gridx++;
+    c.gridy = gridy++;
     gridx++;
     panel.add(new JLabel("Colour"), c);
     c.gridx = gridx++;
     panel.add(new JLabel("Line style"), c);
-    
-    if(isWiggle)
-    {
-      c.gridx = gridx++;
-      panel.add(new JLabel("Plot style"), c);
-    }
+   
     c.gridx = gridx;
     panel.add(new JLabel("Line size"), c);
     
     for(int i=0; i<numPlots; i++)
     {
-      c.gridy = i+1;
+      c.gridy = gridy++;
       final int colourNumber = i;
       gridx = 0;
 
@@ -295,23 +312,6 @@ public class LineAttributes
       c.gridx = gridx++;
       panel.add(lineStyle, c);
       
-      // open / filled
-      if(isWiggle)
-      {
-        final JComboBox openPlot = new JComboBox(WIGGLE_TYPES);
-        openPlot.setSelectedItem(thislines[colourNumber].wiggleType);
-        openPlot.addActionListener(new ActionListener()
-        {
-          public void actionPerformed(ActionEvent e)
-          {
-            thislines[colourNumber].wiggleType =
-              (String) openPlot.getSelectedItem();
-             plot.repaint();
-          }
-        });
-        c.gridx = gridx++;
-        panel.add(openPlot, c);
-      }
       
       // line size
       slider.addChangeListener(new ChangeListener()
