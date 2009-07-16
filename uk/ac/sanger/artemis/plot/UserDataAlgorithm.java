@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.10 2009-07-15 12:20:30 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.11 2009-07-16 14:14:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
  *  set in the constructor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: UserDataAlgorithm.java,v 1.10 2009-07-15 12:20:30 tjc Exp $
+ *  @version $Id: UserDataAlgorithm.java,v 1.11 2009-07-16 14:14:32 tjc Exp $
  **/
 
 public class UserDataAlgorithm extends BaseAlgorithm
@@ -296,7 +296,14 @@ public class UserDataAlgorithm extends BaseAlgorithm
         if (value < data_min)
           data_min = value;
         
-        Float valueArray[] = new Float[number_of_values];
+        final Float valueArray[] = new Float[number_of_values];;
+        if(dataMap.containsKey(base))
+        {
+          Float oldValues[] = dataMap.get(base);
+          for(int i=0; i<oldValues.length; i++)
+            valueArray[i] = oldValues[i];
+        }
+
         valueArray[number_of_values-1] = value;
         dataMap.put(base, valueArray);
   
