@@ -1545,7 +1545,7 @@ GUG  8.3( 12422)  GCG  5.3(  8011)  GAG 21.3( 31979)  GGG  4.3(  6497)
 &prog; is able to display some types of user data in a graph that looks like
 the GC content graph (see <XREF LINKEND="GRAPHMENU-GC-CONTENT">).  This menu
 item will prompt the user for the name of a data file which should contain one
-of two possible graph file formats:
+of four possible graph file formats:
 
 </PARA>
    <ORDEREDLIST ID="GRAPH-FORMAT">
@@ -1572,11 +1572,14 @@ of two possible graph file formats:
       <PARA>
       the first column corresponds to the base position and is an integer. 
       Note to distinguish this format from the previous format the first 
-      line of the file must start with a '#'. The next column(s) are the data 
+      line of the file must start with a '#'. Line colours can be specified
+      in the header using the keyword colour followed by space separated
+      R:G:B values for each line. The next rows(s) are the data 
       values. Example extract:
 
 <SYNOPSIS>
 # BASE  VAL1  VAL2  VAL3  VAL4  VAL5  VAL6
+# colour 5:150:55 255:0:0 0:255:0 0:0:255 100:100:100 50:150:50
 176 2204.8  848.23  0       0       0       536.04
 278 804.99      0       837.2   0       681.63  0
 452 0   699.98  0       0       0       251.18
@@ -1588,6 +1591,49 @@ of two possible graph file formats:
 </SYNOPSIS>
 
       </PARA>
+      </LISTITEM>
+      <LISTITEM ID="GRAPH-FORMAT-3">
+      <PARA>
+      the next two formats are types of <ULINK
+      URL="https://cgwb.nci.nih.gov/goldenPath/help/wiggle.html" TYPE="external">
+      Wiggle formats</ULINK>. The first is variableStep. Note that &prog; only supports 
+      the colour element in the track line.
+      </PARA>
+<SYNOPSIS>
+track type=wiggle_0 color=255,200,0
+variableStep chrom=chr19 span=10
+310 1 
+320 12 
+330 18 
+340 6 
+350 5 
+430 3 
+440 1 
+</SYNOPSIS>
+      <PARA>
+      Right clicking on the graph and selecting the
+      'Configure...' option will display the 'Plot style' option for wiggle plots.
+      The plots can be displayed as histograms or as a heat map.
+      </PARA>
+      </LISTITEM>
+      <LISTITEM ID="GRAPH-FORMAT-4">
+      <PARA>
+      the last format supported by &prog; is fixedStep and is again a Wiggle format. 
+      </PARA>
+<SYNOPSIS>
+track type=wiggle_0 name="fixedStep" description="fixedStep format" visibility=full autoScale=off viewLimits=0:1000 color=0,200,100 maxHeightPixels=100:50:20 graphType=points priority=20
+fixedStep chrom=chr19 start=7401 step=300 span=200
+1000
+ 900
+ 800
+ 700
+ 600
+ 500
+ 400
+ 300
+ 200
+ 100
+</SYNOPSIS>
       </LISTITEM>
     </ORDEREDLIST>
 
