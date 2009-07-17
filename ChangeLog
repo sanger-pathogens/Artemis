@@ -1,4 +1,10 @@
 Version 11+
+	All graphs can now be configured to be plotted as line graphs
+	or heat maps.
+	
+	Added support for wiggle (variableStep/fixedStep) plots that can be 
+	displayed as histograms or heat maps.
+	
 	Added a new user plot file format with the first column specifying
 	a base position.
 	
