@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.11 2009-07-16 14:14:32 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.12 2009-07-20 15:11:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -31,9 +31,15 @@ import uk.ac.sanger.artemis.util.*;
 import uk.ac.sanger.artemis.io.ReadFormatException;
 
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.io.*;
 import java.util.HashMap;
 import java.util.regex.Pattern;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  *  Objects of this class have one useful method - getValues (), which takes a
@@ -42,20 +48,22 @@ import java.util.regex.Pattern;
  *  set in the constructor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: UserDataAlgorithm.java,v 1.11 2009-07-16 14:14:32 tjc Exp $
+ *  @version $Id: UserDataAlgorithm.java,v 1.12 2009-07-20 15:11:18 tjc Exp $
  **/
 
 public class UserDataAlgorithm extends BaseAlgorithm
 {
   /** A base per line file format */
-  private static int BASE_PER_LINE_FORMAT  = 1;
+  public static int BASE_PER_LINE_FORMAT  = 1;
   
   /** Base position is specified in the first column file format */
-  private static int BASE_SPECIFIED_FORMAT = 2;
+  public static int BASE_SPECIFIED_FORMAT = 2;
   
   /** Wiggle format */
-  private static int WIGGLE_VARIABLE_STEP_FORMAT = 3;
-  private static int WIGGLE_FIXED_STEP_FORMAT = 4;
+  public static int WIGGLE_VARIABLE_STEP_FORMAT = 3;
+  public static int WIGGLE_FIXED_STEP_FORMAT = 4;
+  
+  public static int BLAST_FORMAT = 5;
   
   /** The data read by the constructor - for BASE_PER_LINE_FORMAT */
   private float data[][] = null;
@@ -83,7 +91,7 @@ public class UserDataAlgorithm extends BaseAlgorithm
   private boolean logTransform;
   
   /** Format type for this instance */
-  private int FORMAT = BASE_PER_LINE_FORMAT;
+  public int FORMAT = BASE_PER_LINE_FORMAT;
   
   private LineAttributes lines[];
   
@@ -113,10 +121,16 @@ public class UserDataAlgorithm extends BaseAlgorithm
     String first_line = pushback_reader.readLine (); 
     
     Pattern dataPattern = Pattern.compile("^\\s*([\\d\\.]+\\s*)+$");
+    Pattern blastPattern = Pattern.compile(
+      "^(\\S+\\t+){2}[\\d\\.]+\\t+(\\d+\\t+){7}\\S+\\t+(\\d+)$");
     if(dataPattern.matcher(first_line).matches())
       FORMAT = BASE_PER_LINE_FORMAT;
-    else
+    else if(blastPattern.matcher(first_line).matches())
     {
+      FORMAT = BLAST_FORMAT;
+    }
+    else
+    { 
       StringBuffer header = new StringBuffer(first_line+"\n");
 
       while(!dataPattern.matcher(first_line).matches())
@@ -143,6 +157,8 @@ public class UserDataAlgorithm extends BaseAlgorithm
     if(FORMAT == BASE_SPECIFIED_FORMAT ||
        FORMAT == BASE_PER_LINE_FORMAT)
       readData(pushback_reader);
+    else if(FORMAT == BLAST_FORMAT)
+      readBlast(pushback_reader);
     else
       readWiggle(pushback_reader);
     pushback_reader.close();
@@ -322,6 +338,105 @@ public class UserDataAlgorithm extends BaseAlgorithm
     default_window_size = 1;
   }
 
+  
+  /**
+   *  Read all from buffered_reader into data.
+   **/
+  private void readBlast (final LinePushBackReader pushback_reader)
+      throws IOException
+  {
+    String line = null;
+    int count = 0;
+    int lineNum = 0;
+    final int seqLength = getStrand ().getSequenceLength ();
+    final Pattern patt = Pattern.compile("\\t+");
+
+    dataMap = new HashMap<Integer, Float[]>();
+    this.number_of_values = 1;
+    int coordIndexStart = 6;
+    int coordIndexEnd   = 7;
+    
+    while ((line = pushback_reader.readLine ()) != null)
+    { 
+      String tokens[] = patt.split(line.trim());
+      
+      if(lineNum == 0)
+      {
+        final JPanel message = new JPanel(new GridLayout(2,1));
+
+        JCheckBox query = new JCheckBox("Query "+tokens[0], true);
+        message.add(query);
+        JCheckBox subj  = new JCheckBox("Subject "+tokens[1], false);
+        message.add(subj);
+        ButtonGroup group = new ButtonGroup();
+        group.add(query);
+        group.add(subj);
+        
+        JOptionPane.showConfirmDialog(null, message, 
+            "Use Coordinates From", JOptionPane.OK_OPTION);
+        if(subj.isSelected())
+        {
+          coordIndexStart = 8;
+          coordIndexEnd = 9;
+        }
+      }
+      lineNum++;
+      
+      int startBase = Integer.parseInt(tokens[coordIndexStart]);
+      int endBase   = Integer.parseInt(tokens[coordIndexEnd]);
+      float value   = Float.parseFloat(tokens[11]);
+      
+      int valueIndex = 0;
+      try 
+      {
+        if(startBase > seqLength || endBase > seqLength)
+          throw new ReadFormatException (
+                "the location ("+startBase+".."+endBase+
+                ") is outside than the sequence length:\n"+line);
+
+        if(logTransform)
+          value = (float) Math.log(value+1);
+
+        if (value > data_max) 
+          data_max = value;
+        if (value < data_min)
+          data_min = value;
+        
+        if(startBase > endBase)
+        {
+          int tmpStart = startBase;
+          startBase = endBase;
+          endBase   = tmpStart;
+        }
+                   
+        final Float valueArray[] = new Float[number_of_values];
+        for (int base = startBase; base <= endBase; base++)
+        {
+          if (dataMap.containsKey(base))
+          {
+            Float oldValues[] = dataMap.get(base);
+            if(oldValues[0] > value)
+              value = oldValues[0];
+          }
+
+          valueArray[number_of_values - 1] = value;
+          dataMap.put(base, valueArray);
+          count++;
+        }
+
+        average_value += value;
+      } 
+      catch (NumberFormatException e) 
+      {
+        throw new ReadFormatException ("cannot understand this number: " +
+                                       tokens[valueIndex] + " - " +e.getMessage ());
+      } 
+    }
+
+    average_value = average_value/count;
+    default_window_size = 1;
+  }
+
   /**
    *  Return the value of the function between a pair of bases.
    *  @param start The start base (included in the range).
@@ -343,7 +458,8 @@ public class UserDataAlgorithm extends BaseAlgorithm
     
     if(FORMAT == BASE_SPECIFIED_FORMAT ||
        FORMAT == WIGGLE_VARIABLE_STEP_FORMAT ||
-       FORMAT == WIGGLE_FIXED_STEP_FORMAT)
+       FORMAT == WIGGLE_FIXED_STEP_FORMAT ||
+       FORMAT == BLAST_FORMAT)
     {
       for (int i = 0 ; i < value_count ; ++i) 
       {

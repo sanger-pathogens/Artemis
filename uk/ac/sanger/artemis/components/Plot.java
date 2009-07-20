@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.24 2009-07-16 14:17:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.25 2009-07-20 15:11:17 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.24 2009-07-16 14:17:11 tjc Exp $
+ *  @version $Id: Plot.java,v 1.25 2009-07-20 15:11:17 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -810,7 +810,8 @@ public abstract class Plot extends JPanel
                             final float [] plot_values,
                             final int value_index,
                             final int numberPlots,
-                            final boolean isWiggle) 
+                            final boolean isWiggle,
+                            final boolean isBlast) 
   {
     final float residues_per_pixel =
       (float) total_unit_count / getSize().width;
@@ -848,8 +849,11 @@ public abstract class Plot extends JPanel
 
     for(int i = 0; i<number_of_values - 1; ++i) 
     {
-      if(isWiggle && plot_values[i] == 0)
-        continue;
+      if( (isBlast || isWiggle) && plot_values[i] == 0)
+      {
+        if( !(isBlast && plotType.equals(LineAttributes.PLOT_TYPES[0])) )
+          continue;
+      }
       start_residue = window_size / 2 + i * step_size + start_position;
       start_x = (int)(start_residue / residues_per_pixel);
       
@@ -937,18 +941,18 @@ public abstract class Plot extends JPanel
 
       float scale = ((float)(NUMBER_OF_SHADES-i) * (float)(255 / NUMBER_OF_SHADES )) ;
       
-      if((R+scale) < 253)
+      if((R+scale) < 254)
         R += scale;
       else
-        R = 253;
-      if((G+scale) < 253)
+        R = 254;
+      if((G+scale) < 254)
         G += scale;
       else
-        G = 253;
-      if((B+scale) < 253)
+        G = 254;
+      if((B+scale) < 254)
         B += scale;
       else
-        B = 253;
+        B = 254;
 
       definedColour[i] = new Color(R,G,B);
     }

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.19 2009-07-16 14:17:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/BasePlot.java,v 1.20 2009-07-20 15:11:17 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -54,7 +54,7 @@ import org.apache.log4j.Level;
  *  scale is tied to a FeatureDisplay component.
  *
  *  @author Kim Rutherford
- *  @version $Id: BasePlot.java,v 1.19 2009-07-16 14:17:11 tjc Exp $
+ *  @version $Id: BasePlot.java,v 1.20 2009-07-20 15:11:17 tjc Exp $
  **/
 
 public class BasePlot extends Plot
@@ -739,10 +739,16 @@ public class BasePlot extends Plot
     final int number_of_values = value_array_array[0].length;
 
     boolean isWiggle = false;
+    boolean isBlast  = false;
     if(getAlgorithm() instanceof UserDataAlgorithm)
     {
-      if( ((UserDataAlgorithm)getAlgorithm()).wiggle != null )
+      int format = ((UserDataAlgorithm)getAlgorithm()).FORMAT;
+      if(format == UserDataAlgorithm.WIGGLE_FIXED_STEP_FORMAT ||
+         format == UserDataAlgorithm.WIGGLE_VARIABLE_STEP_FORMAT)
         isWiggle = true;
+      
+      if(format == UserDataAlgorithm.BLAST_FORMAT)
+        isBlast = true;
     }
     
     if(number_of_values > 1 && !isWiggle) 
@@ -771,7 +777,7 @@ public class BasePlot extends Plot
                    getWidthInBases(),
                    offset,
                    value_array_array[value_index], value_index, 
-                   get_values_return_count, isWiggle);
+                   get_values_return_count, isWiggle, isBlast);
     }
     ((Graphics2D)g).setStroke(stroke);
     
