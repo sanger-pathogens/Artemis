@@ -5,6 +5,7 @@
 #
 # key               Qualifiers (@=mandatory)
 # =======           ========================
+centromere          ID Name Alias Parent Note Target Gap Derives_from feature_id timelastmodified
 region              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified description locus stable_id EC_number gene_symbol Ontology_term dbxref molecule_type size organism_name strain topology localization gff_source gff_seqname score 
 #contig              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified description locus stable_id EC_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain topology localization gff_source gff_seqname score 
 #supercontig         ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified description locus stable_id EC_number gene_symbol Ontology_term Dbxref molecule_type size organism_name strain topology localization gff_source gff_seqname score 
@@ -28,6 +29,7 @@ snRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ont
 scRNA               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation private
 snoRNA              ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified product note comment controlled_curation private
 polypeptide_domain  ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified 
+polypeptide_motif   ID Name Alias Parent Note Target Gap Derives_from feature_id timelastmodified
 signal_peptide      ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified 
 match               ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified 
 nucleotide_match    ID Name Alias Parent Note Target Gap Derives_from Dbxref Ontology_term feature_id timelastmodified gff_source gff_seqname score 
