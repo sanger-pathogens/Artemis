@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.12 2009-07-20 15:11:18 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.13 2009-07-21 08:36:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -48,7 +48,7 @@ import javax.swing.JPanel;
  *  set in the constructor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: UserDataAlgorithm.java,v 1.12 2009-07-20 15:11:18 tjc Exp $
+ *  @version $Id: UserDataAlgorithm.java,v 1.13 2009-07-21 08:36:20 tjc Exp $
  **/
 
 public class UserDataAlgorithm extends BaseAlgorithm
@@ -64,6 +64,7 @@ public class UserDataAlgorithm extends BaseAlgorithm
   public static int WIGGLE_FIXED_STEP_FORMAT = 4;
   
   public static int BLAST_FORMAT = 5;
+  public static int MSPCRUNCH_BLAST_FORMAT = 6;
   
   /** The data read by the constructor - for BASE_PER_LINE_FORMAT */
   private float data[][] = null;
@@ -122,13 +123,16 @@ public class UserDataAlgorithm extends BaseAlgorithm
     
     Pattern dataPattern = Pattern.compile("^\\s*([\\d\\.]+\\s*)+$");
     Pattern blastPattern = Pattern.compile(
-      "^(\\S+\\t+){2}[\\d\\.]+\\t+(\\d+\\t+){7}\\S+\\t+(\\d+)$");
+      "^(\\S+\\t+){2}[\\d\\.]+\\t+(\\d+\\t+){7}\\S+\\t+(\\s*\\d+)$");
+    Pattern mspCrunchPattern = Pattern.compile(
+        "^\\d+\\s[\\d\\.]+(\\s\\d+){2}\\s\\D\\S+(\\s\\d+){2}\\s\\D\\S+.*");
+    
     if(dataPattern.matcher(first_line).matches())
       FORMAT = BASE_PER_LINE_FORMAT;
     else if(blastPattern.matcher(first_line).matches())
-    {
       FORMAT = BLAST_FORMAT;
-    }
+    else if(mspCrunchPattern.matcher(first_line).matches())
+      FORMAT = MSPCRUNCH_BLAST_FORMAT;
     else
     { 
       StringBuffer header = new StringBuffer(first_line+"\n");
@@ -157,7 +161,8 @@ public class UserDataAlgorithm extends BaseAlgorithm
     if(FORMAT == BASE_SPECIFIED_FORMAT ||
        FORMAT == BASE_PER_LINE_FORMAT)
       readData(pushback_reader);
-    else if(FORMAT == BLAST_FORMAT)
+    else if(FORMAT == BLAST_FORMAT ||
+            FORMAT == MSPCRUNCH_BLAST_FORMAT)
       readBlast(pushback_reader);
     else
       readWiggle(pushback_reader);
@@ -349,12 +354,25 @@ public class UserDataAlgorithm extends BaseAlgorithm
     int count = 0;
     int lineNum = 0;
     final int seqLength = getStrand ().getSequenceLength ();
-    final Pattern patt = Pattern.compile("\\t+");
-
+    final Pattern patt;
+    
+    if(FORMAT == BLAST_FORMAT)
+      patt = Pattern.compile("\\t+");
+    else
+      patt = Pattern.compile("\\s");
+    
     dataMap = new HashMap<Integer, Float[]>();
     this.number_of_values = 1;
+    
     int coordIndexStart = 6;
     int coordIndexEnd   = 7;
+    
+    if(FORMAT == MSPCRUNCH_BLAST_FORMAT)
+    {
+      coordIndexStart = 2;
+      coordIndexEnd   = 3;
+    }
+    
     
     while ((line = pushback_reader.readLine ()) != null)
     { 
@@ -364,9 +382,12 @@ public class UserDataAlgorithm extends BaseAlgorithm
       {
         final JPanel message = new JPanel(new GridLayout(2,1));
 
-        JCheckBox query = new JCheckBox("Query "+tokens[0], true);
+        String queryStr = (FORMAT == BLAST_FORMAT) ? tokens[0] : tokens[4];
+        String subjStr  = (FORMAT == BLAST_FORMAT) ? tokens[1] : tokens[7];
+        
+        JCheckBox query = new JCheckBox(queryStr, true);
         message.add(query);
-        JCheckBox subj  = new JCheckBox("Subject "+tokens[1], false);
+        JCheckBox subj  = new JCheckBox(subjStr, false);
         message.add(subj);
         ButtonGroup group = new ButtonGroup();
         group.add(query);
@@ -376,15 +397,27 @@ public class UserDataAlgorithm extends BaseAlgorithm
             "Use Coordinates From", JOptionPane.OK_OPTION);
         if(subj.isSelected())
         {
-          coordIndexStart = 8;
-          coordIndexEnd = 9;
+          if(FORMAT == BLAST_FORMAT)
+          {
+            coordIndexStart = 8;
+            coordIndexEnd = 9;
+          }
+          else
+          {
+            coordIndexStart = 5;
+            coordIndexEnd = 6;
+          }
         }
       }
       lineNum++;
       
       int startBase = Integer.parseInt(tokens[coordIndexStart]);
       int endBase   = Integer.parseInt(tokens[coordIndexEnd]);
-      float value   = Float.parseFloat(tokens[11]);
+      float value;
+      if(FORMAT == BLAST_FORMAT)
+        value = Float.parseFloat(tokens[11]);
+      else
+        value = Float.parseFloat(tokens[0]);
       
       int valueIndex = 0;
       try 
@@ -408,19 +441,24 @@ public class UserDataAlgorithm extends BaseAlgorithm
           startBase = endBase;
           endBase   = tmpStart;
         }
-                   
+            
         final Float valueArray[] = new Float[number_of_values];
         for (int base = startBase; base <= endBase; base++)
         {
           if (dataMap.containsKey(base))
           {
             Float oldValues[] = dataMap.get(base);
-            if(oldValues[0] > value)
-              value = oldValues[0];
+            if(oldValues[0] < value)
+            {
+              valueArray[number_of_values - 1] = value;
+              dataMap.put(base, valueArray);
+            }
           }
-
-          valueArray[number_of_values - 1] = value;
-          dataMap.put(base, valueArray);
+          else
+          {
+            valueArray[number_of_values - 1] = value;
+            dataMap.put(base, valueArray);
+          }
           count++;
         }
 
@@ -435,6 +473,8 @@ public class UserDataAlgorithm extends BaseAlgorithm
 
     average_value = average_value/count;
     default_window_size = 1;
+    
+    FORMAT = BLAST_FORMAT;
   }
 
   /**
