@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.67 2009-05-07 08:25:25 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.68 2009-07-21 17:25:42 gv1 Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -50,7 +50,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.67 2009-05-07 08:25:25 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.68 2009-07-21 17:25:42 gv1 Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -807,6 +807,8 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         else
           frame = ".";
       }
+      
+      
 
       final String myId = getSegmentID(this_range);
       final String attribute_string = unParseAttributes(myId);
@@ -888,11 +890,13 @@ public class GFFStreamFeature extends SimpleDocumentFeature
     for(int i=1; i<names_length; i++)
     {
       this_qualifier = (Qualifier)qualifiers.getQualifierByName(names[i]);
- 
-      if(this_qualifier == null)
+      
+      if(this_qualifier == null) 
         continue;
-
-      final String this_qualifier_str = getQualifierString(this_qualifier);
+      
+      // GSV :: see new getQualifierString signature
+      // this qualifier is one of the reserved qualifiers 
+      final String this_qualifier_str = getQualifierString(this_qualifier, true);
       if(this_qualifier_str == null)
         continue;
 
@@ -901,7 +905,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       buffer.append(this_qualifier_str);
       count++;
     }
-
+    
     boolean lname;
     final int qualifiers_size = qualifiers.size();
     for(int i = 0; i < qualifiers_size; i++) 
@@ -916,7 +920,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       if(lname)
         continue;
       
-      String this_qualifier_str = getQualifierString(this_qualifier);
+      // GSV :: see new getQualifierString signature
+      // this qualifier is NOT one of the reserved qualifiers 
+      String this_qualifier_str = getQualifierString(this_qualifier, false);
       
       if(this_qualifier_str == null)
         continue;
@@ -932,9 +938,13 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   /**
    * Used to write out the GFF attributes.
    * @param q the qualifier to represent as a <code>String</code>
+   * @param reserved indicate if this is one of the reserved tags or not
    * @return  the <code>String</code> representation
+   * 
+   * GSV: modified the signature to force the caller to declare if this 
+   * qualifier is one of the reserved ones.
    */
-  private String getQualifierString(Qualifier q)
+  private String getQualifierString(Qualifier q, boolean reserved )
   {
     StringBuffer buffer = new StringBuffer();
     final String name = q.getName();
@@ -944,8 +954,25 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       return null;
 
     final StringVector values = q.getValues();
-    buffer.append(encode(name));
-
+    
+    /* 
+     * GSV :
+     * 
+     * The Bio::FeatureIO perl module falls over if there are Uppercased 
+     * attribute names for tags which aren't part of the standard reserved 
+     * set. So we lowercase these, since in the specification it says :
+     * 
+     * "All attributes that begin with an uppercase letter are reserved for
+     * later use.  Attributes that begin with a lowercase letter can be used
+     * freely by applications."
+     * 
+     * see http://www.sequenceontology.org/gff3.shtml
+     */
+    String nameToBuffer = encode(name);
+    if (! reserved)
+    	nameToBuffer = Character.toLowerCase(nameToBuffer.charAt(0)) + nameToBuffer.substring(1);
+    buffer.append(nameToBuffer);
+    
     if(values != null)
     {
       buffer.append('=');
