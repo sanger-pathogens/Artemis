@@ -1545,7 +1545,7 @@ GUG  8.3( 12422)  GCG  5.3(  8011)  GAG 21.3( 31979)  GGG  4.3(  6497)
 &prog; is able to display some types of user data in a graph that looks like
 the GC content graph (see <XREF LINKEND="GRAPHMENU-GC-CONTENT">).  This menu
 item will prompt the user for the name of a data file which should contain one
-of four possible graph file formats:
+of the following possible graph file formats:
 
 </PARA>
    <ORDEREDLIST ID="GRAPH-FORMAT">
@@ -1635,6 +1635,17 @@ fixedStep chrom=chr19 start=7401 step=300 span=200
  100
 </SYNOPSIS>
       </LISTITEM>
+      <LISTITEM ID="GRAPH-FORMAT-5">
+      <PARA>
+      Blast tabular format. The blastall command must be run with the -m 8 flag which 
+      generates one line of information per HSP. Alternatively the MSPcrunch file format
+      can be read in as a graph file format. &prog; will prompt the user to determine
+      whether it uses the query or subject coordinates to plot the graph.
+      </PARA>
+<SYNOPSIS>
+</SYNOPSIS>
+      </LISTITEM>
+
     </ORDEREDLIST>
 
 <PARA>
