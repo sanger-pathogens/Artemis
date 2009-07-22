@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.13 2009-07-21 08:36:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/plot/UserDataAlgorithm.java,v 1.14 2009-07-22 12:51:54 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.plot;
@@ -48,7 +48,7 @@ import javax.swing.JPanel;
  *  set in the constructor.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: UserDataAlgorithm.java,v 1.13 2009-07-21 08:36:20 tjc Exp $
+ *  @version $Id: UserDataAlgorithm.java,v 1.14 2009-07-22 12:51:54 tjc Exp $
  **/
 
 public class UserDataAlgorithm extends BaseAlgorithm
@@ -167,6 +167,7 @@ public class UserDataAlgorithm extends BaseAlgorithm
     else
       readWiggle(pushback_reader);
     pushback_reader.close();
+    document_reader.close();
   }
 
   /**
