@@ -60,6 +60,9 @@ import org.gmod.schema.general.DbXRef;
 import org.gmod.schema.organism.Organism;
 import org.gmod.schema.pub.PubDbXRef;
 import org.gmod.schema.pub.Pub;
+import org.postgresql.largeobject.LargeObjectManager;
+
+import com.ibatis.common.jdbc.SimpleDataSource;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -2451,6 +2454,73 @@ public class DatabaseDocument extends Document
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+  
+  /**
+   * Get a list of the available graphs
+   * @return
+   */
+  public List getGraphs()
+  {
+    GmodDAO dao = getDAOOnly();
+    
+    List list = dao.getTableColumns("graph");
+    if(list == null || list.size() == 0)
+      return null;
+    return dao.getGraphs(Integer.parseInt(srcFeatureId));
+  }
+  
+  /**
+   * Get the graph data from the database. 
+   * This uses JDBC and the org.postgresql.largeobject API.
+   * @param graphId
+   * @param name
+   * @return
+   */
+  public LargeObjectDocument getGraphData(int graphId, String name)
+  {
+    LargeObjectDocument doc = null;
+    try
+    {
+      // this causes class cast problems probably because it gets
+      // a pool connection rather than the underlying real connection
+      // Connection conn = ((SimpleDataSource)connIB.getDataSource()).getConnection();
+      SimpleDataSource ds = (SimpleDataSource)connIB.getDataSource();
+      Connection conn = DriverManager.getConnection(
+          ds.getJdbcUrl(), ds.getJdbcUsername(), ds.getJdbcPassword());
+
+
+      // All LargeObject API calls must be within a transaction
+      conn.setAutoCommit(false);
+
+      // Get the Large Object Manager to perform operations with
+      LargeObjectManager lobj =
+         ((org.postgresql.PGConnection)conn).getLargeObjectAPI();
+      
+      PreparedStatement pstmt =
+          conn.prepareStatement("SELECT * FROM graph WHERE graph_id=?");
+      pstmt.setInt(1, graphId);
+      ResultSet rs = pstmt.executeQuery();
+      
+      if (rs != null) 
+      {
+        while(rs.next()) 
+        {
+          // open the large object for reading
+          int oid = rs.getInt(5);
+          doc = new LargeObjectDocument(ds.getJdbcUrl(), name, 
+             lobj.open(oid, LargeObjectManager.READ));
+        }
+        rs.close();
+      }
+      pstmt.close();
+    }
+    catch (SQLException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return doc;
   }
   
   /**

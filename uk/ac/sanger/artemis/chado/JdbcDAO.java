@@ -2295,4 +2295,28 @@ public class JdbcDAO extends GmodDAO
   {
     return null; 
   }
+
+  public Graph getGraph(Integer graphId)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public List getGraphs(Integer featureId)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public List getFeaturesByUniqueNames(List arg0)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public List getTableColumns(String tableName)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

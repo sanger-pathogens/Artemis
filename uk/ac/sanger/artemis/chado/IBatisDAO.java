@@ -52,6 +52,7 @@ import org.gmod.schema.analysis.AnalysisFeature;
 import org.gmod.schema.cv.Cv;
 import org.gmod.schema.cv.CvTerm;
 
+import javax.sql.DataSource;
 import javax.swing.JPasswordField;
 
 /**
@@ -88,6 +89,11 @@ public class IBatisDAO extends GmodDAO
   public void close() throws SQLException
   {
     sqlMap.close();
+  }
+  
+  public DataSource getDataSource() throws SQLException
+  {
+    return sqlMap.getSqlMap().getDataSource();
   }
 
   /**
@@ -713,6 +719,26 @@ public class IBatisDAO extends GmodDAO
     return sqlMap.queryForList("getPubDbXRef", null);
   }
   
+  
+  //
+  // Graph data
+  public Graph getGraph(final Integer graphId)
+  {
+    //return (Graph) sqlMap.queryForObject("getGraph", graphId);
+    return null;
+  }
+  
+  
+  public List getGraphs(final Integer featureId)
+  {
+    return sqlMap.queryForList("getGraphs", featureId);
+  }
+  
+  public List getTableColumns(String tableName)
+  {
+    return sqlMap.queryForList("getTableColumns", tableName);
+  }
+  
 //
 // WRITE BACK
 //
@@ -1252,8 +1278,7 @@ public class IBatisDAO extends GmodDAO
   {
     sqlMap.insert("insertPubDbXRef", pubDbXRef);
   }
-  
-  
+
   public void startTransaction() throws SQLException
   { 
     sqlMap.startTransaction();
@@ -1300,5 +1325,4 @@ public class IBatisDAO extends GmodDAO
     }
     return dbxrefHash;
   }
-
 }

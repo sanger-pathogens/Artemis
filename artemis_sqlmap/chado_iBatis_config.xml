@@ -98,6 +98,7 @@
   <sqlMap resource="artemis_sqlmap/Synonym.xml" />
   <sqlMap resource="artemis_sqlmap/AnalysisFeature.xml" />
   <sqlMap resource="artemis_sqlmap/Analysis.xml" />
+  <sqlMap resource="artemis_sqlmap/Graph.xml" />
   
 </sqlMapConfig> 
 

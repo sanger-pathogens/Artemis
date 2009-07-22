@@ -20,19 +20,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.9 2009-06-02 15:32:00 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.10 2009-07-22 12:53:36 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
 
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.chado.Graph;
+import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
+import uk.ac.sanger.artemis.io.DocumentEntry;
 import uk.ac.sanger.artemis.plot.Algorithm;
 import uk.ac.sanger.artemis.plot.BaseAlgorithm;
 import uk.ac.sanger.artemis.plot.CodonUsageAlgorithm;
 import uk.ac.sanger.artemis.plot.CodonUsageWeight;
 import uk.ac.sanger.artemis.plot.UserDataAlgorithm;
 import uk.ac.sanger.artemis.sequence.Strand;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
+import uk.ac.sanger.artemis.util.Document;
 
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
@@ -41,6 +46,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.File;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.*;
@@ -49,7 +55,7 @@ import javax.swing.*;
  *  This menu controls one particular BasePlotGroup.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: GraphMenu.java,v 1.9 2009-06-02 15:32:00 tjc Exp $
+ *  @version $Id: GraphMenu.java,v 1.10 2009-07-22 12:53:36 tjc Exp $
  **/
 
 public class GraphMenu extends JMenu 
@@ -178,7 +184,20 @@ public class GraphMenu extends JMenu
       });
 
       add (user_plot_item);
+      
+      if(getEntryGroup().getSequenceEntry().getEMBLEntry() instanceof 
+         DatabaseDocumentEntry)
+      {
+        final JMenu database_user_plot = new JMenu("Add Database Plot ...");
+        final DatabaseDocument dbDoc = 
+          (DatabaseDocument) ((DocumentEntry) entry_group
+            .getSequenceEntry().getEMBLEntry()).getDocument();
 
+        boolean hasGraphs = addDatabaseUserPlot(dbDoc, database_user_plot);
+        database_user_plot.setEnabled(hasGraphs);
+        add(database_user_plot);
+      }
+      
       addSeparator ();
     }
 
@@ -422,6 +441,80 @@ public class GraphMenu extends JMenu
     return new_plot;
   }
 
+  /**
+   * Add a UserDataAlgorithm from the database to the display. 
+   * This returns true only if graph data is found.
+   * @param dbDoc
+   * @param database_user_plot
+   * @return
+   */
+  private boolean addDatabaseUserPlot(final DatabaseDocument dbDoc,
+                                      final JMenu database_user_plot)
+  {
+    List graphs = dbDoc.getGraphs();
+    if(graphs == null || graphs.size() == 0)
+      return false;
+    
+    for (int i = 0; i < graphs.size(); i++)
+    {
+      final Graph graph = (Graph) graphs.get(i);
+      JMenuItem menuGraph = new JMenuItem(graph.getName());
+      database_user_plot.add(menuGraph);
+      
+      menuGraph.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent event)
+        {
+          try
+          {
+            Document doc = dbDoc.getGraphData(graph.getGraphId(), graph.getName());
+            final JCheckBox logTransform = new JCheckBox("Use log(data+1)", false);
+            JOptionPane.showMessageDialog(frame, logTransform, 
+                "Transform", JOptionPane.QUESTION_MESSAGE);
+            frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+            try
+            {
+              UserDataAlgorithm new_algorithm = new UserDataAlgorithm(
+                  getEntryGroup().getBases().getForwardStrand(), doc, 
+                  logTransform.isSelected());
+              final BasePlot new_base_plot = base_plot_group.addAlgorithm(new_algorithm);
+
+              base_plot_group.setVisibleByAlgorithm(new_algorithm, true);
+              addAlgorithm(new_algorithm, true, false);
+
+              // XXX hack to force the BasePlot to initialise
+              final DisplayAdjustmentEvent e = new DisplayAdjustmentEvent(
+                  this, feature_display.getFirstVisibleForwardBase(),
+                  feature_display.getLastVisibleForwardBase(),
+                  feature_display.getMaxVisibleBases(), 
+                  feature_display.getScaleValue(),
+                  feature_display.getScaleFactor(),
+                  feature_display.isRevCompDisplay(),
+                  DisplayAdjustmentEvent.ALL_CHANGE_ADJUST_EVENT);
+
+              base_plot_group.displayAdjustmentValueChanged(e);
+            }
+            catch (IOException e)
+            {
+              e.printStackTrace();
+            }
+            frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            adjustSplitPane(true);
+          }
+          catch (java.lang.OutOfMemoryError emem)
+          {
+            JOptionPane.showMessageDialog(frame,
+                "Out of memory. Increase the maximum memory"
+                    + "\navailable for this application and try again.",
+                "Out Of Memory", JOptionPane.WARNING_MESSAGE);
+            frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+          }
+        }
+      });
+    }
+    return true;
+  }
+  
   /**
    *  Add a UserDataAlgorithm to the display.
    **/

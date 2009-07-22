@@ -52,6 +52,10 @@ public abstract class GmodDAO
   private static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(GmodDAO.class);
 
+  public abstract Graph getGraph(final Integer graphId);
+  public abstract List getGraphs(final Integer featureId);
+  public abstract List getTableColumns(final String tableName);
+  
   public abstract List getOrganismsContainingSrcFeatures();
   public abstract List getSimilarityMatchesByFeatureIds(final List featureIds);
   public abstract List getSimilarityMatches(final Integer srcFeatureId);
