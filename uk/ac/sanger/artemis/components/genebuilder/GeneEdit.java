@@ -210,7 +210,9 @@ public class GeneEdit
           frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         DatabaseDocumentEntry entry = makeEntry(organism, search_gene,
                                                 location, pfield);
-        //entry.setReadOnly(true);
+        
+        if(System.getProperty("read_only") != null)
+          entry.setReadOnly(true);
         showGeneEditor(organism, search_gene, entry);
         
         if(frame != null)
