@@ -28,11 +28,11 @@
   </resultMap>
   
   <select id="getGraphs" resultMap="select-graph">
-    SELECT graph_id, feature_id, name, description FROM graph WHERE feature_id=$featureId$
+    SELECT graph_id, feature_id, name, description FROM graph.graph WHERE feature_id=$featureId$
   </select>
   
   <select id="getGraph" resultMap="select-graphdata">
-    SELECT * FROM graph WHERE graph_id=$graphId$
+    SELECT * FROM graph.graph WHERE graph_id=$graphId$
   </select>
   
   <select id="getTableColumns" parameterClass="java.lang.String"
