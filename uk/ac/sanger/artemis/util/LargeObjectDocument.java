@@ -84,7 +84,7 @@ public class LargeObjectDocument extends Document
     catch (SQLException e)
     {
       e.printStackTrace();
-      throw new IOException( e );
+      throw new IOException( e.getMessage() );
     }
   }
 
