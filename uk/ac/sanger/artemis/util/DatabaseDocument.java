@@ -2498,7 +2498,7 @@ public class DatabaseDocument extends Document
          ((org.postgresql.PGConnection)conn).getLargeObjectAPI();
       
       PreparedStatement pstmt =
-          conn.prepareStatement("SELECT * FROM graph WHERE graph_id=?");
+          conn.prepareStatement("SELECT * FROM graph.graph WHERE graph_id=?");
       pstmt.setInt(1, graphId);
       ResultSet rs = pstmt.executeQuery();
       
