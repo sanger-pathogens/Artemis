@@ -50,6 +50,7 @@ focus            no         none
 frequency        yes        real    0.0  1.0
 function         yes        "text"
 gene             no         "text"
+gene_synonym     no         "text"
 germline         yes        none
 haplotype        no         "text"
 inference        no         "text"
@@ -65,6 +66,10 @@ map              no         "text"
 mod_base         no         modbase
 mol_type         no         "text"
 note             no         "text"
+ncRNA_class      no         list    antisense_RNA autocatalytically_spliced_intron \
+                                    ribozyme hammerhead_ribozyme RNase_P_RNA RNase_MRP_RNA \
+                                    telomerase_RNA guide_RNA rasiRNA scRNA siRNA \
+                                    miRNA piRNA snoRNA snRNA SRP_RNA vault_RNA Y_RNA other
 number           yes        number  1 99999999
 operon           no         "text"
 organell         no         "text"
