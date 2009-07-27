@@ -12,7 +12,7 @@
 5'UTR           allele citation db_xref evidence function gene inference label locus_tag map note partial standard_name usedin
 5'clip          allele citation db_xref evidence function gene inference label locus_tag map note partial standard_name usedin
 CAAT_signal     allele citation db_xref evidence gene inference label locus_tag map note partial usedin
-CDS             EC_number allele citation codon codon_start db_xref evidence exception function gene inference label locus_tag map note number operon partial product protein_id pseudo standard_name transl_except transl_table translation usedin
+CDS             EC_number allele citation codon codon_start db_xref evidence exception function gene inference label locus_tag map note number operon partial product protein_id pseudo standard_name transl_except transl_table translation usedin gene_synonym
 C_region        allele citation codon codon_start db_xref evidence gene inference label locus_tag map note partial product pseudo standard_name transl_except translation usedin
 D-loop          allele citation db_xref evidence gene inference label locus_tag map note partial usedin
 D_segment       allele citation codon codon_start db_xref evidence gene inference label locus_tag map note partial product pseudo standard_name transl_except translation usedin
