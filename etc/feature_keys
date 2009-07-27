@@ -7,9 +7,9 @@
 -               EC_number PCR_conditions allele anticodon bound_moiety cell_line cell_type chromosome citation clone clone_lib codon codon_start cons_splice country cultivar db_xref dev_stage direction ecotype environmental_sa evidence exception focus frequency function gene germline haplotype inference insertion_seq isolate isolation_source lab_host label locus_tag macronuclear map mod_base mol_type note number organelle organism partial phenotype plasmid pop_variant product protein_id proviral pseudo rearranged replace rpt_family rpt_type rpt_unit segment sequenced_mol serotype serovar sex specific_host specimen_voucher standard_name strain sub_clone sub_species sub_strain tissue_lib tissue_type transgenic transl_except transl_table translation transposon usedin variety virion
 -10_signal      allele citation db_xref evidence function gene inference label locus_tag map note operon partial standard_name usedin
 -35_signal      allele citation db_xref evidence function gene inference label locus_tag map note operon partial standard_name usedin
-3'UTR           allele citation db_xref evidence function gene inference label locus_tag map note partial standard_name usedin
+3'UTR           allele citation db_xref evidence function gene inference label locus_tag map note partial standard_name usedin gene_synonym
 3'clip          allele citation db_xref evidence function gene inference label locus_tag map note partial standard_name usedin
-5'UTR           allele citation db_xref evidence function gene inference label locus_tag map note partial standard_name usedin
+5'UTR           allele citation db_xref evidence function gene inference label locus_tag map note partial standard_name usedin gene_synonym
 5'clip          allele citation db_xref evidence function gene inference label locus_tag map note partial standard_name usedin
 CAAT_signal     allele citation db_xref evidence gene inference label locus_tag map note partial usedin
 CDS             EC_number allele citation codon codon_start db_xref evidence exception function gene inference label locus_tag map note number operon partial product protein_id pseudo standard_name transl_except transl_table translation usedin gene_synonym
@@ -33,7 +33,7 @@ exon            EC_number allele citation codon codon_start db_xref evidence fun
 gap             @estimated_length
 gene            allele citation db_xref evidence function gene inference label locus_tag map note operon partial phenotype product pseudo standard_name usedin gene_synonym
 iDNA            allele citation db_xref evidence function gene inference label locus_tag map note number partial standard_name usedin
-intron          allele citation cons_splice db_xref evidence function gene inference label locus_tag map note number partial standard_name usedin
+intron          allele citation cons_splice db_xref evidence function gene inference label locus_tag map note number partial standard_name usedin gene_synonym
 mRNA            allele citation db_xref evidence exception function gene inference label locus_tag map note operon partial product pseudo standard_name transcript_id usedin
 mat_peptide     EC_number allele citation codon codon_start db_xref evidence function gene inference label locus_tag map note partial product pseudo standard_name transl_except usedin
 misc_RNA        allele citation db_xref evidence function gene inference label locus_tag map note operon partial product standard_name usedin
