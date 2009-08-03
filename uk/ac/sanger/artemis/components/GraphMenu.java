@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.10 2009-07-22 12:53:36 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/GraphMenu.java,v 1.11 2009-08-03 10:29:32 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -55,7 +55,7 @@ import javax.swing.*;
  *  This menu controls one particular BasePlotGroup.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: GraphMenu.java,v 1.10 2009-07-22 12:53:36 tjc Exp $
+ *  @version $Id: GraphMenu.java,v 1.11 2009-08-03 10:29:32 tjc Exp $
  **/
 
 public class GraphMenu extends JMenu 
@@ -193,9 +193,16 @@ public class GraphMenu extends JMenu
           (DatabaseDocument) ((DocumentEntry) entry_group
             .getSequenceEntry().getEMBLEntry()).getDocument();
 
-        boolean hasGraphs = addDatabaseUserPlot(dbDoc, database_user_plot);
-        database_user_plot.setEnabled(hasGraphs);
-        add(database_user_plot);
+        try
+        {
+          boolean hasGraphs = addDatabaseUserPlot(dbDoc, database_user_plot);
+          database_user_plot.setEnabled(hasGraphs);
+          add(database_user_plot);
+        }
+        catch(Exception e)
+        {
+          e.printStackTrace();
+        }
       }
       
       addSeparator ();
