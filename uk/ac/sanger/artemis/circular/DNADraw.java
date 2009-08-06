@@ -129,7 +129,11 @@ public class DNADraw extends ScrollPanel
   private Bases bases;
   private Graph gcGraph;
   private Graph gcSkewGraph;
-  private Graph userGraph;
+  private Vector<Graph> userGraphs = new Vector<Graph>();
+  
+  final JMenu userDraw = new JMenu("Draw");
+  final JMenu userOptions = new JMenu("Options");
+  
   protected static int Y_SHIFT = -35;
   protected static int THETA = -90;
   private TrackManager trackManager;
@@ -965,12 +969,19 @@ public class DNADraw extends ScrollPanel
       else
         gcSkewGraph.drawLinear(g2);
     }
-    if(userGraph != null && containsGraph(userGraph))
+    if(userGraphs.size() > 0)
     {
-      if(isCircular())
-        userGraph.draw(g2);
-      else
-        userGraph.drawLinear(g2);
+      for(int i=0; i<userGraphs.size(); i++)
+      {
+        Graph userGraph = userGraphs.get(i);
+        if(containsGraph(userGraph))
+        {
+          if(isCircular())
+            userGraph.draw(g2);
+          else
+            userGraph.drawLinear(g2);
+        }
+      }
     }
   }
 
@@ -1314,41 +1325,51 @@ public class DNADraw extends ScrollPanel
     
     JMenu user = new JMenu("User");
     graph_menu.add(user);
-    final JCheckBoxMenuItem userPlot = new JCheckBoxMenuItem("Draw");
-    if(userGraph == null)
-      userPlot.setState(false);
-    else
-      userPlot.setState(true);
-    userPlot.addItemListener(new ItemListener() 
+    
+    final JMenuItem userPlot = new JMenuItem("Add");
+    userPlot.addActionListener(new ActionListener() 
     {
-      public void itemStateChanged(ItemEvent event) 
+      public void actionPerformed(ActionEvent ae) 
       {
-        if(userPlot.isSelected())
-        {
-          final uk.ac.sanger.artemis.components.StickyFileChooser dialog =
+        final uk.ac.sanger.artemis.components.StickyFileChooser dialog =
             new uk.ac.sanger.artemis.components.StickyFileChooser ();
 
-          dialog.setDialogTitle ("Select a data file name ...");
-          dialog.setDialogType (JFileChooser.OPEN_DIALOG);
+        dialog.setDialogTitle ("Select a data file name ...");
+        dialog.setDialogType (JFileChooser.OPEN_DIALOG);
 
-          final int status = dialog.showOpenDialog (null);
+        final int status = dialog.showOpenDialog (null);
 
-          if(status != JFileChooser.APPROVE_OPTION ||
-             dialog.getSelectedFile () == null) 
-          {
-            return;
-          }
+        if(status != JFileChooser.APPROVE_OPTION ||
+           dialog.getSelectedFile () == null) 
+        {
+          return;
+        }
 
-          final java.io.File file =
+        final java.io.File file =
             new java.io.File (dialog.getCurrentDirectory (),
                       dialog.getSelectedFile ().getName ());
 
-          if(file.length() == 0)
-            return;
+        if(file.length() == 0)
+          return;
           
-          //final uk.ac.sanger.artemis.util.Document document =
-          //    new uk.ac.sanger.artemis.util.FileDocument (file);
+        //final uk.ac.sanger.artemis.util.Document document =
+        //    new uk.ac.sanger.artemis.util.FileDocument (file);
           
+        UserGraph userGraph;
+        try
+        {
+          userGraph = 
+            new UserGraph(DNADraw.this, file.getAbsolutePath());
+        }
+        catch(IOException e)
+        {
+          e.printStackTrace();
+          return;
+        }
+          
+        if(userGraph == null)
+        {
+          setCursor(new Cursor(Cursor.WAIT_CURSOR));
           try
           {
             userGraph = new UserGraph(DNADraw.this, file.getAbsolutePath());
@@ -1356,43 +1377,21 @@ public class DNADraw extends ScrollPanel
           catch(IOException e)
           {
             e.printStackTrace();
-            return;
           }
-          
-          if(userGraph == null)
-          {
-            setCursor(new Cursor(Cursor.WAIT_CURSOR));
-            try
-            {
-              userGraph = new UserGraph(DNADraw.this, file.getAbsolutePath());
-            }
-            catch(IOException e)
-            {
-              e.printStackTrace();
-            }
-            userGraph.setTrack(0.2);
-            setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-          }
-          add(userGraph);
-          revalidate();
+          userGraph.setTrack(0.2);
+          setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
-        else
-          remove(userGraph);
+
+        setUserGraph(userGraph);
+        add(userGraph);
+        
+        revalidate();
         repaint();
       }
     });
     user.add(userPlot);
-
-    
-    JMenuItem userOptions = new JMenuItem("Options...");
+    user.add(userDraw);
     user.add(userOptions);
-    userOptions.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        userGraph.showOptions();
-      } 
-    });
     
     
 // options menu
@@ -1862,6 +1861,11 @@ public class DNADraw extends ScrollPanel
   {
     return gcGraph;
   }
+  
+  public Vector<Graph> getUserGraphs()
+  {
+    return userGraphs;
+  }
 
   public void setGcGraph(Graph gcGraph)
   {
@@ -1878,14 +1882,35 @@ public class DNADraw extends ScrollPanel
     this.gcSkewGraph = gcSkewGraph;
   }
 
-  public Graph getUserGraph()
-  {
-    return userGraph;
-  }
 
-  public void setUserGraph(Graph userGraph)
+  protected void setUserGraph(final UserGraph thisUserGraph)
   {
-    this.userGraph = userGraph;
+    userGraphs.add(thisUserGraph);
+
+    JMenuItem thisGraphOptions = new JMenuItem(thisUserGraph.getFileName());
+    thisGraphOptions.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        thisUserGraph.showOptions();
+      } 
+    });
+    userOptions.add(thisGraphOptions);
+    
+    final JCheckBoxMenuItem thisGraphDraw = 
+      new JCheckBoxMenuItem(thisUserGraph.getFileName());
+    thisGraphDraw.setSelected(true);
+    thisGraphDraw.addItemListener(new ItemListener()
+    {
+      public void itemStateChanged(ItemEvent e)
+      {
+        if(thisGraphDraw.isSelected())
+          thisUserGraph.setVisible(true);
+        else
+          thisUserGraph.setVisible(false);
+      }
+    });
+    userDraw.add(thisGraphDraw);
   }
   
   public static void main(String arg[])

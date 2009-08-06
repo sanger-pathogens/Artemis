@@ -26,6 +26,7 @@ import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Vector;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.Feature;
@@ -321,13 +322,18 @@ public class Track
                               " minor="+dna.getMinorTickInterval()+"\n");
     
     // graphs
-    if(dna.getUserGraph() != null && dna.containsGraph(dna.getUserGraph()))
+    Vector<Graph> userGraphs = dna.getUserGraphs();
+    for(int i=0; i<userGraphs.size(); i++)
     {
-      String fileName = ((UserGraph)dna.getUserGraph()).getFileName();
-      
-      writer.write("# User Graph: "+dna.getUserGraph().getOptionsStr()+
-                   " file_name="+fileName+"\n");
+      Graph userGraph = userGraphs.get(i);
+      if(dna.containsGraph(userGraph))
+      {
+        String fileName = ((UserGraph)userGraph).getFileName();  
+        writer.write("# User Graph: "+userGraph.getOptionsStr()+
+                     " file_name="+fileName+"\n");
+      }
     }
+  
     if(dna.getGcGraph() != null && dna.containsGraph(dna.getGcGraph()))
       writer.write("# GC Graph: "+dna.getGcGraph().getOptionsStr()+"\n");
     if(dna.getGcSkewGraph() != null && dna.containsGraph(dna.getGcSkewGraph()))
