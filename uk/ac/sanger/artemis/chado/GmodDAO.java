@@ -43,6 +43,7 @@ import org.gmod.schema.sequence.FeatureCvTermDbXRef;
 import org.gmod.schema.sequence.FeatureCvTermProp;
 import org.gmod.schema.sequence.FeatureCvTermPub;
 import org.gmod.schema.sequence.FeatureDbXRef;
+import org.gmod.schema.sequence.FeatureLoc;
 
 import uk.ac.sanger.artemis.util.DatabaseDocument;
 
@@ -62,6 +63,10 @@ public abstract class GmodDAO
   public abstract List getClustersByFeatureIds(final List featureIds);
   public abstract List getParentFeaturesByChildFeatureIds(final List subjectIds);
   public abstract Feature getLazyFeatureNoResiduesById(final Integer featureId);
+  
+  
+  public abstract List getFeatureLocsByFeatureId(int featureId);
+  public abstract List getFeatureLocsBySrcFeatureId(int srcFeatureId);
   
   /**
    * Return a <code>List</code> of featureLoc's corresponding for a

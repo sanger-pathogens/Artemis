@@ -152,6 +152,16 @@ public class JdbcDAO extends GmodDAO
     return null;
   }
   
+  public List getFeatureLocsByFeatureId(int featureId)
+  {
+    return null;
+  }
+  
+  public List getFeatureLocsBySrcFeatureId(int srcFeatureId)
+  {
+    return null; 
+  }
+  
   public List getFeatureLocsByListOfIds(final Collection featureIds)
   {
     return null;
