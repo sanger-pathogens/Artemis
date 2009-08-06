@@ -293,8 +293,9 @@ public class ChadoTransactionManager
         final RangeVector rv_new = event.getNewLocation().getRanges();
         final RangeVector rv_old = event.getOldLocation().getRanges();
 
-        logger4j.debug("LOCATION_CHANGED "+feature.getFirstBase()+".."+feature.getLastBase()+
-                              "   new="+rv_new.size()+" old="+rv_old.size());
+        logger4j.debug("LOCATION_CHANGED "+
+                       feature.getFirstBase()+".."+feature.getLastBase()+
+                       " new="+rv_new.size()+" old="+rv_old.size());
         if(rv_new.size() != rv_old.size())
         {
           // location and segment number change
@@ -2044,21 +2045,16 @@ public class ChadoTransactionManager
     featureloc.setFeatureByFeatureId(chado_feature);
     featureloc.setFmax(new Integer(range_new.getEnd()));
     featureloc.setFmin(new Integer(range_new.getStart()-1));
+    //featureloc.setRank(0);
     
-    /*if(gffFeature.getFeature_relationship_rank_store() != null)
-    {
-      final Hashtable rank_hash = gffFeature.getFeature_relationship_rank_store();
-      if(rank_hash.containsKey(seg_id))
-      {
-        Integer rank = (Integer)rank_hash.get(seg_id);
-        featureloc.setRank(rank.intValue());
-      }
-      else
-        featureloc.setRank(0);
-    }
-    else*/
-      
-    featureloc.setRank(0);
+    DatabaseDocument doc =
+      (DatabaseDocument)gffFeature.getDocumentEntry().getDocument();
+   
+    org.gmod.schema.sequence.Feature featureBySrcFeatureId =
+                      new org.gmod.schema.sequence.Feature();
+    featureBySrcFeatureId.setFeatureId(Integer.parseInt(doc.getSrcFeatureId()));
+    featureloc.setFeatureBySrcFeatureId(featureBySrcFeatureId);
+    
     
     boolean is_complement = gffFeature.getLocation().isComplement();
     if(is_complement)
@@ -2464,6 +2460,15 @@ public class ChadoTransactionManager
       
       if(this_part.equals("null"))
         continue;
+      
+      if(ind == -1)
+      {
+        JOptionPane.showMessageDialog(null, 
+            this_part+" does not appear to be in\n"+
+            "a valid format (e.g. XXX:YYY). This will be ignored.", 
+            "Invalid DbXRef or Pub", JOptionPane.WARNING_MESSAGE);
+        continue;
+      }
       
       final String dbName = this_part.substring(0, ind);
       final String accession = this_part.substring(ind+1);
