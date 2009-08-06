@@ -7,8 +7,6 @@
 
 <sqlMap namespace="FeatureLoc"> 
  
-
-     
      <typeAlias alias="FeatureLoc"
         type="org.gmod.schema.sequence.FeatureLoc"/>
         
@@ -37,26 +35,32 @@
        WHERE featureloc.feature_id=#id#
      </select>
      
+     <select id="getFeatureLocBySrcFeatureId" resultMap="map-location-lazy">
+       SELECT feature_id, srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank, is_fmin_partial, is_fmax_partial
+       FROM  featureloc
+       WHERE srcfeature_id=#id#
+     </select>
+     
 	 <select id="getFeatureLocsByListOfIds" resultMap ="map-location-lazy">
 	   SELECT feature_id, srcfeature_id, fmin, fmax, strand, phase, residue_info, locgroup, rank, is_fmin_partial, is_fmax_partial
        FROM  featureloc
        WHERE featureloc.feature_id IN <iterate open="(" close=")" conjunction=","> $[]$ </iterate>
      </select>
 	
-     <!-- used to find match meature from the subject and query featureId -->
+     <!-- used to find match feature from the subject and query featureId -->
      <select id="getFeatureIdBySrcFeatureId" parameterClass="Feature" resultClass="java.lang.Integer">
         <iterate property="featureLocsForFeatureId" conjunction="INTERSECT" >
            SELECT feature_id FROM featureloc WHERE srcfeature_id=#featureLocsForFeatureId[].featureBySrcFeatureId.featureId#  
         </iterate>
      </select>
      
-    <!--  WRITE BACK METHODS  -->
+   <!--  WRITE BACK METHODS  -->
     
-    <!--  UPDATE  -->
-    <update id="updateFeatureLoc" 
+   <!--  UPDATE  -->
+   <update id="updateFeatureLoc" 
             parameterClass="FeatureLoc">
       UPDATE featureloc
-      SET fmin=$fmin$, fmax=$fmax$, rank=$rank$, strand=$strand$,
+      SET fmin=$fmin$, fmax=$fmax$, strand=$strand$,
           is_fmin_partial=#fminPartial#,
           is_fmax_partial=#fmaxPartial#
       <isNotNull property="phase">
@@ -66,15 +70,18 @@
         , phase=NULL
       </isNull>
       WHERE
-        <isGreaterThan property="featureByFeatureId.featureId" compareValue="0">
-          feature_id=$featureByFeatureId.featureId$
-        </isGreaterThan>
-        <isLessEqual property="featureByFeatureId.featureId" compareValue="0">
-           <isNotNull property="featureByFeatureId.uniqueName">
-             feature_id=(SELECT feature_id FROM feature WHERE uniquename=#featureByFeatureId.uniqueName#)
-           </isNotNull>
-        </isLessEqual>
-    </update>
+      <isGreaterThan property="featureByFeatureId.featureId" compareValue="0">
+        feature_id=$featureByFeatureId.featureId$
+      </isGreaterThan>
+      <isLessEqual property="featureByFeatureId.featureId" compareValue="0">
+         <isNotNull property="featureByFeatureId.uniqueName">
+           feature_id=(SELECT feature_id FROM feature WHERE uniquename=#featureByFeatureId.uniqueName#)
+         </isNotNull>
+      </isLessEqual>
+      <isGreaterThan property="featureBySrcFeatureId.featureId" compareValue="0" prepend="AND">
+        srcfeature_id=$featureBySrcFeatureId.featureId$
+      </isGreaterThan>
+   </update>
    
    <update id="updateFeatureLocByChangingSequence" 
             parameterClass="uk.ac.sanger.artemis.chado.FeatureForUpdatingResidues">
