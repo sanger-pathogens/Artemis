@@ -754,7 +754,7 @@ public class IBatisDAO extends GmodDAO
   public void merge(Object o) 
   {
     if(o instanceof FeatureLoc)
-      sqlMap.update("updateFeatureLoc", o);
+      updateFeatureLoc((FeatureLoc)o);
     else if(o instanceof Feature)
     {
       /*Feature f = (Feature)o;
@@ -839,7 +839,65 @@ public class IBatisDAO extends GmodDAO
       deleteAnalysisFeature((AnalysisFeature)o);
   }
 
+  /**
+   * Update a featureLoc. This checks if there are multiple featureLocs
+   * associated with this feature and will update all of them.
+   * @param featureLoc
+   */
+  private void updateFeatureLoc(FeatureLoc featureLoc)
+  {
+    List featureLocs = sqlMap.queryForList("getFeatureLoc", 
+        featureLoc.getFeatureByFeatureId().getFeatureId());
+    
+    if(featureLocs.size() > 1)
+    {
+      // the feature appears to have multiple featureLocs
+      int srcFeatureId = featureLoc.getFeatureBySrcFeatureId().getFeatureId();
+      int newFmin = featureLoc.getFmin();
+      int newFmax = featureLoc.getFmax();
+      int diffFmin = 0;
+      int diffFmax = 0;
 
+      for(int i=0; i<featureLocs.size(); i++)
+      {
+        FeatureLoc thisFeatureLoc = (FeatureLoc) featureLocs.get(i);
+        int thisSrcFeatureId = 
+          thisFeatureLoc.getFeatureBySrcFeatureId().getFeatureId();
+        if(srcFeatureId == thisSrcFeatureId)
+        {
+          diffFmin = newFmin-thisFeatureLoc.getFmin();
+          diffFmax = newFmax-thisFeatureLoc.getFmax();
+          break;
+        }
+      }
+      
+      for(int i=0; i<featureLocs.size(); i++)
+      {
+        FeatureLoc thisFeatureLoc = (FeatureLoc) featureLocs.get(i);
+        int thisSrcFeatureId = 
+          thisFeatureLoc.getFeatureBySrcFeatureId().getFeatureId();
+        if(srcFeatureId != thisSrcFeatureId)
+        {
+          thisFeatureLoc.setFmin(thisFeatureLoc.getFmin()+diffFmin);
+          thisFeatureLoc.setFmax(thisFeatureLoc.getFmax()+diffFmax);
+          sqlMap.update("updateFeatureLoc", thisFeatureLoc);
+        }
+      }
+    }
+    sqlMap.update("updateFeatureLoc", featureLoc);
+  }
+
+  public List getFeatureLocsByFeatureId(int featureId)
+  {
+    return sqlMap.queryForList("getFeatureLoc",featureId);
+  }
+  
+  public List getFeatureLocsBySrcFeatureId(int srcFeatureId)
+  {
+    return sqlMap.queryForList("getFeatureLocBySrcFeatureId",
+                                srcFeatureId);
+  }
+  
   /**
    * Insert a feature into the database defined by the <code>Feature</code>.
    * @param feature   the feature to insert
