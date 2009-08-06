@@ -2897,6 +2897,15 @@ public class DatabaseDocument extends Document
         }
         feature.setTimeLastModified(ts);
       }
+      
+      if(tsn.getFeatureObject() instanceof FeatureLoc)
+      {
+        // update any featurelocs on the polypeptide
+        String keyStr = tsn.getGff_feature().getKey().getKeyString();
+        if(keyStr.equals("polypeptide"))
+          adjustChildCoordinates((FeatureLoc)tsn.getFeatureObject(), dao);
+      }
+      
       dao.merge(tsn.getFeatureObject());
       
       if(tsn.getFeatureObject() instanceof FeatureLoc)
@@ -3010,6 +3019,47 @@ public class DatabaseDocument extends Document
       }
     }
     return true;
+  }
+  
+  /**
+   * Adjust the coordinates of features located on the feature which
+   * has coordinates being changed.
+   * @param newFeatureLoc
+   * @param dao
+   */
+  private void adjustChildCoordinates(final FeatureLoc newFeatureLoc,
+                                      final GmodDAO dao)
+  {
+    int featureId = newFeatureLoc.getFeatureByFeatureId().getFeatureId();
+    int srcFeatureId = newFeatureLoc.getFeatureBySrcFeatureId().getFeatureId();
+    List oldFeatureLocs = dao.getFeatureLocsByFeatureId(featureId);
+    FeatureLoc oldFeatureLoc = null;
+    
+    for(int i=0; i<oldFeatureLocs.size(); i++)
+    {
+      FeatureLoc fl = (FeatureLoc) oldFeatureLocs.get(i);
+      if(srcFeatureId == fl.getFeatureBySrcFeatureId().getFeatureId())
+      {
+        oldFeatureLoc = fl;
+        break;
+      }
+    }
+    
+    if(oldFeatureLoc == null)
+      return;
+    
+    if(oldFeatureLoc.getFmin() != newFeatureLoc.getFmin())
+    {
+      List featureLocsBySrcFeatureId =
+        dao.getFeatureLocsBySrcFeatureId(featureId);
+      for(int i=0; i<featureLocsBySrcFeatureId.size(); i++)
+      {  
+        FeatureLoc onPolyPepLoc = (FeatureLoc)featureLocsBySrcFeatureId.get(i);
+        onPolyPepLoc.setFmin(onPolyPepLoc.getFmin() -
+            (newFeatureLoc.getFmin() - oldFeatureLoc.getFmin()));
+        dao.merge(onPolyPepLoc);
+      }
+    }
   }
   
   /**
