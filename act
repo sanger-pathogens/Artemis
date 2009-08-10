@@ -7,7 +7,7 @@
 # /usr/local/bin/ or elsewhere.
 
 
-# $Header: //tmp/pathsoft/artemis/act,v 1.14 2008-10-28 13:38:29 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/act,v 1.15 2009-08-10 08:14:46 tjc Exp $
 
 # resolve links - $0 may be a link
 PRG=$0
@@ -29,7 +29,7 @@ done
 ACT_HOME=`dirname "$PRG"`/.
 
 
-CLASSPATH=$ACT_HOME:$ACT_HOME/lib/JacORB.jar:$ACT_HOME/lib/jemAlign.jar:$ACT_HOME/lib/jakarta-regexp-1.2.jar:$ACT_HOME/lib/macos.jar:$ACT_HOME/lib/chado-14-interface.jar:$ACT_HOME/lib/postgresql-8.1-407.jdbc2ee.jar:$CLASSPATH
+CLASSPATH=$ACT_HOME:$ACT_HOME/lib/JacORB.jar:$ACT_HOME/lib/jemAlign.jar:$ACT_HOME/lib/jakarta-regexp-1.2.jar:$ACT_HOME/lib/macos.jar:$ACT_HOME/lib/chado-14-interface.jar:$ACT_HOME/lib/postgresql-8.4-701.jdbc3.jar:$CLASSPATH
 
 # j2ssh jars
 CLASSPATH=$CLASSPATH:$ACT_HOME/lib/j2ssh/commons-logging.jar:$ACT_HOME/lib/j2ssh/j2ssh-core.jar:$ACT_HOME/lib/j2ssh/
