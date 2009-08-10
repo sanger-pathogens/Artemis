@@ -699,6 +699,7 @@ public class CVPanel extends JPanel
        !cv_type.equals("class"))
       cv_type = "controlled_curation";
     
+    cvQualifiers = getCvQualifiers();
     Qualifier cv_qualifier = cvQualifiers.getQualifierByName(cv_type);
     
     final int index;
@@ -709,7 +710,7 @@ public class CVPanel extends JPanel
     }
     else
      index = cvQualifiers.indexOf(cv_qualifier);
-       
+    
     if(cv_type.equals("GO"))
       cv_qualifier.addValue("GOid=GO:"+cvterm.getDbXRef().getAccession()+";"+
           "aspect="+cv_name+";"+
@@ -816,6 +817,7 @@ public class CVPanel extends JPanel
   private void removeCvTerm(final String qualifier_name, 
                             final int value_index)
   {
+    cvQualifiers = getCvQualifiers();
     Qualifier qual = cvQualifiers.getQualifierByName(qualifier_name);
     StringVector values = qual.getValues();
     values.remove(value_index);
