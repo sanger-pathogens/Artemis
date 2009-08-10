@@ -59,7 +59,6 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -122,7 +121,7 @@ public class CircularGenomeController
           + File.separator + entryGroup.getSequenceEntry().getName());
       
       if(sequenceFiles == null)
-        sequenceFiles = new Vector();
+        sequenceFiles = new Vector<File>();
       sequenceFiles.add(sequenceFile);
       entries.add(entryGroup);
     }
