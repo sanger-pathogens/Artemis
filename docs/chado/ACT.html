@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<title>Artemis - Chado tutorial</title>
+
+</head>
+<body>
+
+<h2>Generating ACT Comparison File</h2>
+
+<p>BLAST is used to generate the ACT comparison file (for more details see the <a href="http://www.sanger.ac.uk/Software/ACT/">ACT manual</a>) one of the 
+sequences needs to be made the database sequence and indexed with formatdb: 
+</p><pre>formatdb -i NC_004314.fasta -p 'F' 
+</pre>
+<p>The other sequence is the query and you can then search for matches between these: 
+</p>
+<pre>blastall -p tblastx -d NC_004314.fasta -i NC_011907.fasta -o NC_004314_v_NC_011907_tblastx -m 8 
+</pre><p>or 
+</p>
+<pre>blastall -p blastn -d NC_004314.fasta -i NC_011907.fasta -o NC_004314_v_NC_011907_blastn -m 8 -e 0.1
+</pre>
+<p>Use the '-m 8' option to provide the tabular output that ACT uses.
+</p><p>An alternative to this is to use <a href="http://www.webact.org">WebACT</a> or <a href="http://www.hpa-bioinfotools.org.uk/pise/double_act.html">Double ACT</a> to generate the comparison file.
+</p>
+</body>
+</html>
