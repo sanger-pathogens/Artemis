@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.33 2009-06-10 09:00:16 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/ChadoCanonicalGene.java,v 1.34 2009-08-11 08:59:46 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -855,10 +855,10 @@ public class ChadoCanonicalGene
     {
       String name = getQualifier(getGene(), "ID");
       int auto = 1;
-      while( isTranscript( name + ":" + transcript_key + ":" + auto ) &&
+      while( isTranscript( name + "." + auto ) &&
              auto < 50)
         auto++;
-      return name + ":" + transcript_key + ":" + auto;
+      return name + "." + auto;
     }
     catch(InvalidRelationException e)
     {
@@ -877,7 +877,9 @@ public class ChadoCanonicalGene
   {
     try
     {
-      int index = transcript_id.lastIndexOf(':');
+      int index = transcript_id.lastIndexOf('.');
+      if(index == -1)
+        index = transcript_id.lastIndexOf(':');
       int transcript_number = -1;
       String name = (String)getGene().getQualifierByName("ID").getValues().get(0);
       
@@ -906,7 +908,7 @@ public class ChadoCanonicalGene
       if(transcript_number == 0)
         name = name + ":exon:";
       else
-        name = name + ":" + transcript_number + ":exon:";
+        name = name + "." + transcript_number + ":exon:";
       
       int auto = 1;
       while( isSplicedFeatures(name + auto) && auto < 50)
@@ -930,7 +932,9 @@ public class ChadoCanonicalGene
   {
     try
     {
-      int index = transcript_id.lastIndexOf(':');
+      int index = transcript_id.lastIndexOf('.');
+      if(index == -1)
+        index = transcript_id.lastIndexOf(':');
       int transcript_number = -1;
       
       if(index > -1)
@@ -958,7 +962,7 @@ public class ChadoCanonicalGene
       
       String name = (String)getGene().getQualifierByName("ID").getValues().get(0);
 
-      return name + ":" + transcript_number + ":pep";
+      return name + "." + transcript_number + ":pep";
     }
     catch(InvalidRelationException e)
     {
@@ -986,7 +990,7 @@ public class ChadoCanonicalGene
     final Pattern pattern = Pattern.compile("\\d+$");
     final Matcher matcher = pattern.matcher(transcript_id);
     if(matcher.find())
-      featureName = featureName+":"+matcher.group()+":"+keyName;
+      featureName = featureName+"."+matcher.group()+":"+keyName;
     else
       featureName = featureName+":"+keyName;
     
