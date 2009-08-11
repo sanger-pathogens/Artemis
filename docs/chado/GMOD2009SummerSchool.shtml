@@ -146,7 +146,7 @@ make
 </p><p>
 The Artemis Database Manager and File Manager will open once your login has been authenticated. The top part of this relates to the Chado database and the bottom comprises the file management:
 </p><p>
-<a href="DatabaseManager.gif" class="image" title="Database Manager"><img alt="Image:DatabaseManager.gif" src="DatabaseManager.gif" width="434" height="867" border="0" /></a>
+<a href="databasemanager.gif" class="image" title="Database Manager"><img alt="Image:DatabaseManager.gif" src="databasemanager.gif" width="434" height="867" border="0" /></a>
 </p><p>
 Select the sequence NC_004314 and double click on it to open it up in Artemis.
 </p><p>
@@ -168,7 +168,7 @@ There are 3 main components to the Artemis window. The two top Feature Displays 
 </pre>
 <p>For any of the gene features in Artemis you can select them and press the short cut key 'E' (Edit-&gt;Selected Features in Editor). This opens up the Gene Builder. Within this the Gene Model can be edited and annotation added.
 </p><p>
-<a href="GeneBuilder.gif" class="image" title="GeneBuilder"><img alt="GeneBuilder" src="GeneBuilder.gif" width="760" height="921" border="0" /></a>
+<a href="genebuilder.gif" class="image" title="GeneBuilder"><img alt="GeneBuilder" src="genebuilder.gif" width="760" height="921" border="0" /></a>
 </p><p>
 It is also possible to launch the Artemis Gene Builder in a standalone mode for a particular gene:
 </p>
