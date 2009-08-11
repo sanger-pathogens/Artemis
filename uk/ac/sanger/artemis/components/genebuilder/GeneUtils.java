@@ -1206,8 +1206,12 @@ public class GeneUtils
       final String oldId = getUniqueName(child);
       
       final Set childrenOfChild = gene.getChildren(child);
-      int index;
-      if((index = oldId.indexOf(':')) > -1)
+      int index = oldId.indexOf('.');
+      
+      if(index == -1)
+        index = oldId.indexOf(':');
+      
+      if(index > -1)
       {
         final String newId;
         if(  segmentHash != null && 
@@ -1221,7 +1225,9 @@ public class GeneUtils
           while(itKeys.hasNext())
           {
             String oldKey = (String)itKeys.next();
-            index = oldKey.indexOf(':');
+            index = oldKey.indexOf('.');
+            if(index == -1)
+              index = oldKey.indexOf(':');
             final String newKey = newName + oldKey.substring(index);
             Object range = segmentHash.get(oldKey);
 

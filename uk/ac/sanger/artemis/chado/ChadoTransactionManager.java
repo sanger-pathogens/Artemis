@@ -1955,7 +1955,12 @@ public class ChadoTransactionManager
       Set children = gffFeature.getChadoGene().getChildren(gffFeature);
       if(children != null && children.size()>0)
       {
-        final String prefix = uniqueName[0].split(":")[0];
+        final String prefix;
+
+        if(uniqueName[0].indexOf(".") > -1)
+          prefix = uniqueName[0].split("\\.")[0];
+        else
+          prefix = uniqueName[0].split(":")[0];
         int val = JOptionPane.showConfirmDialog(null, 
             "Change name of children based on this ["+prefix+"]?", 
             "Name Change", JOptionPane.OK_CANCEL_OPTION);
