@@ -28,7 +28,7 @@
 </li><li> <a href="#References" title="">References</a>
 </li></ul>
 
-<a name="Overview"></a><h1>Overview</h1>
+<a name="Overview"></a><h2>Overview</h2>
 <p>In this tutorial we present how to install and configure 
 <a href="http://www.sanger.ac.uk/Software/Artemis/">Artemis</a> and 
 <a href="http://www.sanger.ac.uk/Software/ACT/">ACT</a> to use with a 
@@ -40,7 +40,7 @@ to the Chado session for more details on this.
 </p>
 
 
-<a name="Download_and_Install_Postgres"></a><h1>Download and Install Postgres</h1>
+<a name="Download_and_Install_Postgres"></a><h2>Download and Install Postgres</h2>
 
 <pre>./configure --prefix=/home/gmod/gmod_test/pgsl --with-pgport=5432 --with-includes=/Developer
 make
@@ -60,7 +60,7 @@ createuser --createdb username
 createlang plpgsql template1
 createdb --port=5432 chado_pathogen
 </pre>
-<a name="Download_and_Install_Chado"></a><h1>Download and Install Chado</h1>
+<a name="Download_and_Install_Chado"></a><h2>Download and Install Chado</h2>
 
 <ul><li> Download stable release (gmod-1.0.tar.gz)
 </li><li> Install BioPerl (<a href="http://www.bioperl.org/wiki/Installing_Bioperl_for_Unix" class="external free" title="http://www.bioperl.org/wiki/Installing_Bioperl_for_Unix" rel="nofollow">http://www.bioperl.org/wiki/Installing_Bioperl_for_Unix</a>)
@@ -82,7 +82,7 @@ make prepdb
 make ontologies
 </pre>
 <a name="Examples_of_Loading_Sequences_into_the_Database">
-</a><h1>Examples of Loading Sequences into the Database</h1>
+</a><h2>Examples of Loading Sequences into the Database</h2>
 <p>In this section we detail how to load 3 Plasmodium sequences into Chado for viewing in Artemis and ACT. Alternatively you can use your own sequences of interest.
 </p><p>The GenBank files are available from Entrez with the links below. Make sure you download it with the sequence by clicking on the option 'Show sequence' and 'Update View'. Then go to the Download menu and select GenBank(Full):
 
@@ -122,7 +122,7 @@ gmod_bulk_load_gff3.pl -organism Pknowlesi -dbname chado_pathogen \
     -dbuser gmod -dbport 5432 -dbpass dd -recreate_cache &lt; NC_011909.gbk.gff
 
 </pre>
-<a name="Download_Artemis_and_ACT"></a><h1>Download Artemis and ACT</h1>
+<a name="Download_Artemis_and_ACT"></a><h2>Download Artemis and ACT</h2>
 <p>You can download <a href="http://www.sanger.ac.uk/Software/Artemis/" class="external text" title="http://www.sanger.ac.uk/Software/Artemis/" rel="nofollow">Artemis</a> and <a href="http://www.sanger.ac.uk/Software/ACT/" class="external text" title="http://www.sanger.ac.uk/Software/ACT/" rel="nofollow">ACT</a> from their home pages at the Sanger Institute. For the most up-to-date developments download the software from the CVS server:
 </p>
 <pre>cvs -d&nbsp;:pserver:cvsuser@cvs.sanger.ac.uk:/cvsroot/pathsoft co artemis
@@ -134,7 +134,7 @@ make
 </pre>
 <p>Or download the development version from the <a href="http://www.sanger.ac.uk/Software/Artemis/#development" class="external text" title="http://www.sanger.ac.uk/Software/Artemis/#development" rel="nofollow">Development section</a> on the Artemis home page. Note that on the Artemis web site there is also a <a href="http://www.sanger.ac.uk/Software/Artemis/stable/" class="external text" title="http://www.sanger.ac.uk/Software/Artemis/stable/" rel="nofollow">stable</a> release available.
 </p>
-<a name="Running_Artemis"></a><h1>Running Artemis</h1>
+<a name="Running_Artemis"></a><h2>Running Artemis</h2>
 
 <p>Try running the 'art' script in the download:
 </p>
@@ -182,7 +182,7 @@ It is also possible to launch the Artemis Gene Builder in a standalone mode for 
 <p>Note using the JVM option 'show_log' will open the log window.
 </p>
 
-<a name="Configuration_Options"></a><h1>Configuration Options</h1>
+<a name="Configuration_Options"></a><h2>Configuration Options</h2>
 <p>Edit 'etc/options' (to change settings globally) or create a file ~/.artemis_options in your home directory (for your own settings). There are various flags that can be used to configure Artemis and ACT with Chado.
 </p><p><b>chado_servers</b> This allows you to provide a list of available servers for the user to select:
 </p>
@@ -236,11 +236,11 @@ It is also possible to launch the Artemis Gene Builder in a standalone mode for 
 
 <p><b>sequence_update_features</b> This lists the features that Artemis will maintain the feature.residue column for. This is generally useful for polypeptide and transcript features.
 </p>
-<a name="Artemis_Database_Manager"></a><h1>Artemis Database Manager</h1>
+<a name="Artemis_Database_Manager"></a><h2>Artemis Database Manager</h2>
 <p>The database manager provides the list of organisms that have features with residues (currently Artemis searches for these on features of type: '*chromosome*', '*sequence*', 'supercontig', 'ultra_scaffold', 'golden_path_region', 'contig'). The database manager is cached between sessions (this is on by default and can be switched off with -Ddatabase_manager_cache_off). There is an option under the File menu to clear this cache.
 </p>
-<a name="Adding_Controlled_Vocabulary_Qualifiers_in_the_Artemis_Gene_Builder"></a><h1>
-Adding Controlled Vocabulary Qualifiers in the Artemis Gene Builder</h1>
+<a name="Adding_Controlled_Vocabulary_Qualifiers_in_the_Artemis_Gene_Builder"></a><h2>
+Adding Controlled Vocabulary Qualifiers in the Artemis Gene Builder</h2>
 
 <p>These use evidence codes which are stored as a feature_cvtermprop's with a type_id which corresponds to a cvterm.name = 'evidence'. There is a useful SQL script (etc/chado_extra.sql) in the Artemis distribution for creating this term in Chado. Run this on the chado_pathogen instance of the database:
 </p>
@@ -274,15 +274,15 @@ Adding Controlled Vocabulary Qualifiers in the Artemis Gene Builder</h1>
 Click on CC_test and hit the 'Next' button. This opens a keyword selection box. If you leave this blank all the terms are retrieved and displayed. If you keep clicking 'Next' this term is then added to the 'Controlled Vocabulary' section.
 </p><p>
 </p>
-<a name="Transfer_Annotation_Tool_.28TAT.29"></a><h1>Transfer Annotation Tool (TAT)</h1>
+<a name="Transfer_Annotation_Tool_.28TAT.29"></a><h2>Transfer Annotation Tool (TAT)</h2>
 
 <p>This tool can be accessed from the Gene Builder - look for the TAT button. It allows you to transfer annotation between sequences. In database mode Artemis provides an editable list of genes constructed from ortholog/parlog links. These links can be added in the Gene Builder in the Match section (for example you can try creating the ortholog link between PF10_0165 in  Pfalciparum and PKH_060110 in Pknowlesi).
 
 </p>
-<a name="Logging_Information"></a><h1>Logging Information</h1>
+<a name="Logging_Information"></a><h2>Logging Information</h2>
 <p>Note that you can easily access the logging information Artemis produces. In the Artemis launch window under the 'Options' menu select the 'Show Log Window', this provides the logs. This is controlled by etc/log4j.properties. The logs can be useful for debugging and for monitoring activity if appended to a central file. See the <a href="http://logging.apache.org/log4j/" class="external text" title="http://logging.apache.org/log4j/" rel="nofollow">log4j</a> documentation for more information.
 </p>
-<a name="Running_ACT"></a><h1>Running ACT</h1>
+<a name="Running_ACT"></a><h2>Running ACT</h2>
 
 <p>ACT can read sequences in from the database as well. However, it currently does not read the BLAST comparisons from Chado but reads this data from files. These comparisons are displayed as the matches between the sequences. To distinguish forward and reverse matches the forward matches are red and reverse matches are blue.
 </p><p>For convenience the comparison files have been pre-generated for this exercise and can be downloaded from:
@@ -314,7 +314,7 @@ Zooming out you will see that Pfalciparum chromosome 10 matches to regions in Pk
 
 </p><p>
 </p>
-<a name="Writing_Out_Sequence_Files"></a><h1>Writing Out Sequence Files</h1>
+<a name="Writing_Out_Sequence_Files"></a><h2>Writing Out Sequence Files</h2>
 <p>Artemis can write out EMBL and GFF files for an entry opened from the database. You can optionally flatten the gene model (i.e. gene, transcript, exon) to just a CDS feature. Also an option is given to ignore any obsolete features. For EMBL it uses mappings for conversion of the keys and qualifiers. These mappings are stored in the 'etc/key_mapping' and 'etc/qualifier_mapping' files.
 </p><p>A utility script (etc/write_db_entry) is also provided as a means of writing out multiple sequences from the database. The script takes the following options:
 </p>
@@ -330,10 +330,10 @@ Zooming out you will see that Pfalciparum chromosome 10 matches to regions in Pk
 <pre>etc/writedb_entry -Dchado="localhost:5432/chado_pathogen?gmod" NC_004314
 </pre>
 
-<a name="Mailing_List"></a><h1>Mailing List</h1>
+<a name="Mailing_List"></a><h2>Mailing List</h2>
 <p>There is an Artemis mailing list: <a href="http://lists.sanger.ac.uk/mailman/listinfo/artemis-users" class="external text" title="http://lists.sanger.ac.uk/mailman/listinfo/artemis-users" rel="nofollow">artemis-user</a>.
 </p>
-<a name="References"></a><h1>References</h1>
+<a name="References"></a><h2>References</h2>
 <p><a href="http://www.sanger.ac.uk/Software/Artemis/" class="external text" title="http://www.sanger.ac.uk/Software/Artemis/" rel="nofollow">Artemis home page</a><br /><a href="http://www.sanger.ac.uk/Software/ACT/" class="external text" title="http://www.sanger.ac.uk/Software/ACT/" rel="nofollow">ACT home page</a><br /><a href="http://www.sanger.ac.uk/Software/Artemis/v11/chado/" class="external text" title="http://www.sanger.ac.uk/Software/Artemis/v11/chado/" rel="nofollow">Artemis Connecting to Chado Databases</a><br /><a href="http://www.sanger.ac.uk/Software/Artemis/v11/database/chado.practical.guide.pdf" class="external text" title="http://www.sanger.ac.uk/Software/Artemis/v11/database/chado.practical.guide.pdf" rel="nofollow">User Practical Guide</a>
 
 </p><p>
