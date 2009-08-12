@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.63 2009-06-12 13:50:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.64 2009-08-12 10:33:37 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -47,7 +47,7 @@ import org.gmod.schema.sequence.FeatureLoc;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.63 2009-06-12 13:50:35 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.64 2009-08-12 10:33:37 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -804,7 +804,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     new_feature.setSegmentRangeStore(id_range_store);
     new_feature
         .setFeature_relationship_rank_store(feature_relationship_rank_store);
-
+    new_feature.setGffSource(first_old_feature.getGffSource());
+    new_feature.setGffSeqName(first_old_feature.getGffSeqName());
     
 //  set the ID
     String ID;
