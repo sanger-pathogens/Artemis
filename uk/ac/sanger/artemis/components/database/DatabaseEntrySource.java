@@ -48,6 +48,7 @@ import uk.ac.sanger.artemis.util.OutOfRangeException;
 import uk.ac.sanger.artemis.util.StringVector;
 import uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
+import uk.ac.sanger.artemis.io.UI;
 import uk.ac.sanger.artemis.io.DatabaseDocumentEntry;
 import uk.ac.sanger.artemis.io.InvalidKeyException;
 import uk.ac.sanger.artemis.io.EntryInformationException;
@@ -153,19 +154,38 @@ public class DatabaseEntrySource implements EntrySource, Serializable
    */
   public boolean setLocation(final boolean promptUser)
   {
-    DatabaseLoginPrompt promptPanel = new DatabaseLoginPrompt();
-
+    ILoginPrompt promptPanel; // = new DatabaseLoginPrompt();
+    
+    if (UI.mode == UI.UIMode.SWING)
+	{
+		promptPanel = new DatabaseLoginPrompt();
+	}
+    else
+	{
+    	promptPanel = new DatabaseLoginPromptConsole();
+	}
+	
+    
     if(promptUser)
     {
-      int n = JOptionPane.showConfirmDialog(null, promptPanel,
-                                          "Enter Database Address",
-                                          JOptionPane.OK_CANCEL_OPTION,
-                                          JOptionPane.QUESTION_MESSAGE);
-      if(n == JOptionPane.CANCEL_OPTION)
-        return false;
+    	
+    	boolean userEntered = promptPanel.prompt();
+    	if (userEntered == false)
+    	{
+    		return false;
+    	}
+    	
+//    	
+//      int n = JOptionPane.showConfirmDialog(null, promptPanel,
+//                                          "Enter Database Address",
+//                                          JOptionPane.OK_CANCEL_OPTION,
+//                                          JOptionPane.QUESTION_MESSAGE);
+//      if(n == JOptionPane.CANCEL_OPTION)
+//        return false;
     }
     
     pfield = promptPanel.getPfield();
+    
     location = "jdbc:postgresql://" + 
                promptPanel.getServer() + ":" +
                promptPanel.getPort() + "/" +
@@ -174,10 +194,13 @@ public class DatabaseEntrySource implements EntrySource, Serializable
 
     return true;
   }
-
+  
+  
 
   public DatabaseDocument getDatabaseDocument()
   {
+//	ArtemisConsole.info(location, "location");
+//	ArtemisConsole.info(pfield.getText(), "password");
     return new DatabaseDocument(location, pfield);
   }
 
@@ -232,10 +255,10 @@ public class DatabaseEntrySource implements EntrySource, Serializable
       {
         if (db_entry.getSequence() == null)
         {
-          JOptionPane.showMessageDialog(null,
-              "The selected entry contains no sequence: " + id, "No Sequence",
-              JOptionPane.ERROR_MESSAGE);
-
+//          JOptionPane.showMessageDialog(null,
+//              "The selected entry contains no sequence: " + id, "No Sequence",
+//              JOptionPane.ERROR_MESSAGE);
+          UI.error("The selected entry contains no sequence: " + id, "No Sequence");
           return null;
         }
 
@@ -248,17 +271,19 @@ public class DatabaseEntrySource implements EntrySource, Serializable
     }
     catch(InvalidKeyException e)
     {
-      JOptionPane.showMessageDialog(null, 
-                                    "Unexpected error while accessing " +
-                                    id + ": " + e,
-                                    "Invalid Key", JOptionPane.ERROR_MESSAGE);
+//      JOptionPane.showMessageDialog(null, 
+//                                    "Unexpected error while accessing " +
+//                                    id + ": " + e,
+//                                    "Invalid Key", JOptionPane.ERROR_MESSAGE);
+      UI.error("Unexpected error while accessing " + id + ": " + e, "Invalid Key");
     }
     catch(EntryInformationException e)
     {
-      JOptionPane.showMessageDialog(null, 
-                                    "Failed to get entry: " + e,
-                                    "Entry Information Exception",
-                                    JOptionPane.ERROR_MESSAGE);
+//      JOptionPane.showMessageDialog(null, 
+//                                    "Failed to get entry: " + e,
+//                                    "Entry Information Exception",
+//                                    JOptionPane.ERROR_MESSAGE);
+      UI.error("Failed to get entry: " + e,"Entry Information Exception");
     }
 
     return null;
@@ -283,10 +308,11 @@ public class DatabaseEntrySource implements EntrySource, Serializable
     }
     catch (EntryInformationException e)
     {
-      JOptionPane.showMessageDialog(null, 
-                                    "Failed to get entry: " + e,
-                                    "Entry Information Exception",
-                                    JOptionPane.ERROR_MESSAGE);
+//      JOptionPane.showMessageDialog(null, 
+//                                    "Failed to get entry: " + e,
+//                                    "Entry Information Exception",
+//                                    JOptionPane.ERROR_MESSAGE);
+      UI.error("Failed to get entry: " + e,"Entry Information Exception");
     }
 
     return db_entry;
@@ -314,10 +340,23 @@ public class DatabaseEntrySource implements EntrySource, Serializable
  
 }
 
+/*
+ * A common interface for login prompting, irrespective of the implementation. 
+ */
+interface ILoginPrompt
+{
+	boolean prompt();
+	JPasswordField getPfield();
+	String getServer();
+    String getPort();
+    String getDb();
+    String getUser();
+}
+
 /**
  * Database login panel
  */
-class DatabaseLoginPrompt extends JPanel
+class DatabaseLoginPrompt extends JPanel implements ILoginPrompt
 {
   private static final long serialVersionUID = 1L;
   private JPasswordField pfield;
@@ -378,7 +417,13 @@ class DatabaseLoginPrompt extends JPanel
     // given -Dchado=localhost:port/dbname?username
     if(System.getProperty("chado") != null)
       setFromURL(System.getProperty("chado").trim());
-
+    
+    if (System.getProperty("chadoPassword") != null)
+    {
+    	//System.out.println("detected chadoPassword: " + System.getProperty("chadoPassword"));
+    	pfield.setText(System.getProperty("chadoPassword"));
+    }
+    
     c.gridx = 1;
     c.gridy = ++nrow;
     add(getServerComboBox(), c);
@@ -386,6 +431,18 @@ class DatabaseLoginPrompt extends JPanel
     c.gridx = 0;
     c.anchor = GridBagConstraints.EAST;
     add(new JLabel("Available databases : "), c);
+  }
+  
+  public boolean prompt()
+  {
+	  int n = JOptionPane.showConfirmDialog(null, this,
+              "Enter Database Address",
+              JOptionPane.OK_CANCEL_OPTION,
+              JOptionPane.QUESTION_MESSAGE);
+	  
+	  if(n == JOptionPane.CANCEL_OPTION)
+		  return false;
+	return true;
   }
   
   private void setFromURL(String db_url)
@@ -501,3 +558,124 @@ class DatabaseLoginPrompt extends JPanel
     return user.getText().trim();
   }
 }
+
+class DatabaseLoginPromptConsole implements ILoginPrompt
+{
+	private String password;
+	private String server;
+	private String port;
+	private String db;
+	private String user;
+
+	public DatabaseLoginPromptConsole()
+	{
+		
+		if(System.getProperty("chado") != null)
+		{
+			//System.out.println("detected chado : " + System.getProperty("chado"));
+			setFromURL(System.getProperty("chado").trim());
+		}
+			
+		
+		if (System.getProperty("chadoPassword") != null)
+	    {
+	    	//System.out.println("detected chadoPassword: " + System.getProperty("chadoPassword"));
+	    	password = System.getProperty("chadoPassword");
+	    }
+	}
+	
+	private void setFromURL(String db_url)
+	  {
+	    if(db_url.startsWith("jdbc:postgresql://"))
+	      db_url = db_url.substring(18);
+	    
+	    int index;
+	    if((index = db_url.indexOf(":")) > -1)
+	    {
+	      server = (db_url.substring(0, index));
+	      int index2;
+	      if((index2 = db_url.indexOf("/")) > -1)
+	      {
+	        port = (db_url.substring(index + 1, index2));
+	        int index3;
+	        if((index3 = db_url.indexOf("?")) > -1)
+	        {
+	          db = (db_url.substring(index2 + 1, index3));
+	          
+	          String userStr = db_url.substring(index3 + 1);
+	          if(userStr.startsWith("user="))
+	            userStr = userStr.substring(5);
+	          user = (userStr);
+
+	        }
+	      }
+	    }  
+	  }
+	
+	public JPasswordField getPfield()
+	{
+		JPasswordField pfield = new JPasswordField(16);
+		pfield.setText(password);
+		return pfield;
+	}
+	
+	public String getDb()
+	{
+		return db;
+	}
+	
+	public String getPort()
+	{
+		return port;
+	}
+	
+	public String getServer()
+	{
+		return server;
+	}
+	
+	public String getUser()
+	{
+		return user;
+	}
+
+	public boolean prompt() 
+	{
+		boolean userEntered = false;
+		
+		if (UI.mode == UI.UIMode.SCRIPT)
+		{
+			return false;
+		}
+		
+		if (db == null)
+		{
+			db = UI.userInput("Database", false);
+			userEntered = true;
+		}
+		if (port == null)
+		{
+			port = UI.userInput("Port", false);
+			userEntered = true;
+		}
+		if (server == null)
+		{
+			server = UI.userInput("Server",false);
+			userEntered = true;
+		}
+		if (user == null)
+		{
+			user = UI.userInput("User", false);
+			userEntered = true;
+		}
+		if (password == null)
+		{
+			password = UI.userInput("Enter Password", true);
+			userEntered = true;
+		}
+		
+		return userEntered;
+	}
+}
+
+
