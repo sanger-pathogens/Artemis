@@ -58,7 +58,7 @@ public class UI {
 	    return result.trim();
     }
 	
-	public static boolean booleanUserInput(final String prompt)
+	public static boolean booleanUserInput(final String label, final String message)
 	{
 		if (mode == UIMode.SCRIPT)
 		{
@@ -68,9 +68,8 @@ public class UI {
 		else if (mode == UIMode.SWING)
 		{
 			final JPanel msgPanel = new JPanel(new BorderLayout());
-            msgPanel.add(new JLabel("Destination format can't handle all " +
-                "keys/qualifiers - continue?"), BorderLayout.NORTH);
-            JTextArea msgError = new JTextArea(prompt);
+            msgPanel.add(new JLabel(label), BorderLayout.NORTH);
+            JTextArea msgError = new JTextArea(message);
             msgError.setLineWrap(true);
             msgError.setEditable(false);
             JScrollPane scollMsg = new JScrollPane(msgError);
@@ -90,7 +89,7 @@ public class UI {
 		boolean valid = false;
 		while ( valid == false )
 		{
-			input = userInput(prompt + "(y/n)", false);
+			input = userInput(label + "\n" + message + "(y/n)", false);
 			if (input.equals("y"))
 				valid = true;
 			else if (input.equals("n"))
