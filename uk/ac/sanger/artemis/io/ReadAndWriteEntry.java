@@ -25,6 +25,8 @@ package uk.ac.sanger.artemis.io;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -40,6 +42,7 @@ import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
+import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Options;
@@ -69,7 +72,8 @@ public class ReadAndWriteEntry
       ReadAndWriteEntry.ENTRY_SOURCE = new DatabaseEntrySource();
       entry_source = ENTRY_SOURCE;
       boolean promptUser = true;
-      if(System.getProperty("read_only") != null)
+      //if(System.getProperty("read_only") != null)
+      if (UI.mode == UI.UIMode.SCRIPT)
         promptUser = false;
 
       if(!entry_source.setLocation(promptUser))
@@ -172,11 +176,13 @@ public class ReadAndWriteEntry
       entry.setHeaderText(header);
     }
     
+    
     if(include_diana_extensions)
       entry.save(file, destination_type, force, artemis_entry_information);
     else
       entry.saveStandardOnly(file, destination_type, force);
   }
+  
   
   /**
    * Add all keys and qualifiers for a given feature to the EntryInformation 
@@ -259,15 +265,25 @@ public class ReadAndWriteEntry
           (args == null || args.length < 1))
       {
         System.out.println("-h\tshow help");
+        
+        
         System.out.println("-f\t[y|n] flatten the gene model, default is y");
         System.out.println("-i\t[y|n] ignore obsolete features, default is y");
         System.out.println("-s\tspace separated list of sequences to read and write out");
         System.out.println("-o\t[EMBL|GFF] output format, default is EMBL");
         System.out.println("-a\t[y|n] for EMBL submission format change to n, default is y");
+        
+        // note that read_only and noprompt -D parameters redundant now
+        System.out.println("New parameters:");
+        System.out.println("-c\the URL for your Chado database e.g. db.genedb.org:5432/snapshot?genedb_ro (if not using default)");
+        System.out.println("-u\t[swing|console|script] the UI mode : run in swing (with popup dialog boxes) mode, run in console mode (choices entered in the console window), or in script mode (all choices default to continue, all parameters passed on command line) ");
+        System.out.println("-p\tthe password for connecting to the Chado database");
+        
+        
         System.exit(0);
       }
       
-
+      
       names = args;
       int format = DocumentEntryFactory.EMBL_FORMAT;
       boolean include_diana_extensions = true;
@@ -275,25 +291,26 @@ public class ReadAndWriteEntry
       
       for(int i = 0; i < args.length; i++)
       {
-        if(args[i].toLowerCase().equals("-f"))
+    	String key = args[i].toLowerCase();
+        if (key.equals("-f"))
         {
           if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
             flatten = false;
         }
 
-        if(args[i].toLowerCase().equals("-i"))
+        if (key.equals("-i"))
         {
           if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
             ignoreObsolete = false;
         }
         
-        if(args[i].toLowerCase().equals("-a"))
+        if (key.equals("-a"))
         {
           if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
             include_diana_extensions = false;
         }
         
-        if(args[i].toLowerCase().equals("-o"))
+        if (key.equals("-o"))
         {
           if(i + 1 < args.length && args[i + 1].toLowerCase().equals("gff"))
           {
@@ -301,7 +318,26 @@ public class ReadAndWriteEntry
             suffix = ".gff";
           }
         }
+        
+        // GSV :: added these command-line parameters
+        // note that read_only and noprompt -D parameters redundant now
+        if (key.equals("-u"))
+        {
+        	System.setProperty("uimode", args[i + 1]);
+        }
+        
+        if (key.equals("-c"))
+        {
+        	System.setProperty("chado", args[i + 1]);
+        }
+        if (key.equals("-p"))
+        {
+        	System.setProperty("chadoPassword", args[i + 1]);
+        }
       }
+      
+      // run this after all the system properties have been set
+      UI.initalise();
       
       java.util.Vector files = null;
       for(int i = 0; i < args.length; i++)
@@ -350,27 +386,18 @@ public class ReadAndWriteEntry
         }
         catch(EntryInformationException eie)
         {
-          final JPanel msgPanel = new JPanel(new BorderLayout());
-          msgPanel.add(new JLabel("Destination format can't handle all " +
-              "keys/qualifiers - continue?"), BorderLayout.NORTH);
-          JTextArea msgError = new JTextArea(eie.getMessage());
-          msgError.setLineWrap(true);
-          msgError.setEditable(false);
-          JScrollPane scollMsg = new JScrollPane(msgError);
-          msgPanel.add(scollMsg, BorderLayout.CENTER);
-          
-          int val = JOptionPane.OK_OPTION;
-          if(System.getProperty("noprompt") == null)
-            val = JOptionPane.showConfirmDialog(null, msgPanel,
-                "Keys/Qualifier", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
-
-          if (val == JOptionPane.OK_OPTION)
-          {
-            ReadAndWriteEntry.writeDatabaseEntryToFile(entry, new File(
-                  names[i] + suffix), flatten, ignoreObsolete, true,
-                  include_diana_extensions, format, null);
-          }
+        	UI.warn(eie.getMessage(), "UhOh!");
+        	eie.printStackTrace();
+        	
+        	String message = "Destination format can't handle all keys/qualifiers - continue?";
+        	boolean canContinue = UI.booleanUserInput(message);
+        	
+        	if (canContinue)
+        	{
+        		ReadAndWriteEntry.writeDatabaseEntryToFile(entry, new File(
+        			names[i] + suffix), flatten, ignoreObsolete, true,
+        			include_diana_extensions, format, null);
+        	}
         }
       }
     }
