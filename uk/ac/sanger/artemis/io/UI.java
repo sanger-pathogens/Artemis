@@ -30,9 +30,10 @@ public class UI {
 	
 	public static void initalise()
 	{
-		String uimodeProperty = System.getProperty("uimode").toUpperCase();
+		String uimodeProperty = System.getProperty("uimode");
 		if (uimodeProperty != null)
 		{
+		    uimodeProperty = uimodeProperty.toUpperCase();
 			for (UIMode mode : UIMode.values())
 			{
 				if (mode.toString().equals(uimodeProperty))
