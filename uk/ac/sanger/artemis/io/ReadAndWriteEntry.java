@@ -389,8 +389,8 @@ public class ReadAndWriteEntry
         	UI.warn(eie.getMessage(), "UhOh!");
         	eie.printStackTrace();
         	
-        	String message = "Destination format can't handle all keys/qualifiers - continue?";
-        	boolean canContinue = UI.booleanUserInput(message);
+        	String label = "Destination format can't handle all keys/qualifiers - continue?";
+        	boolean canContinue = UI.booleanUserInput(label, eie.getMessage());
         	
         	if (canContinue)
         	{
