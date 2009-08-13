@@ -386,7 +386,7 @@ public class ReadAndWriteEntry
         }
         catch(EntryInformationException eie)
         {
-        	UI.warn(eie.getMessage(), "UhOh!");
+          //UI.warn(eie.getMessage(), "UhOh!");
         	eie.printStackTrace();
         	
         	String label = "Destination format can't handle all keys/qualifiers - continue?";
