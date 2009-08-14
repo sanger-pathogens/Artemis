@@ -1665,8 +1665,7 @@ public class DatabaseDocument extends Document
       {
         FeatureCvTermDbXRef featureCvTermDbXRef =
           (FeatureCvTermDbXRef)featureCvTermDbXRefs.get(i);
-        
-        
+          
         if(feature_cvterm.getFeatureCvTermId() != 
           featureCvTermDbXRef.getFeatureCvTerm().getFeatureCvTermId())
         {
@@ -1675,7 +1674,7 @@ public class DatabaseDocument extends Document
         
         if(nfound == 0)
           attr_buff.append("with=");
-        else if(nfound > 1)
+        else if(nfound > 0)
           attr_buff.append("|");
         
         DbXRef fc_dbXRef = featureCvTermDbXRef.getDbXRef();
@@ -1686,6 +1685,7 @@ public class DatabaseDocument extends Document
       
       if(nfound > 0)
         attr_buff.append("%3B");
+
     }
     
     List feature_cvtermprops = (List)feature_cvterm
