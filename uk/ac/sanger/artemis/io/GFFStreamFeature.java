@@ -20,19 +20,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.70 2009-08-13 15:24:44 gv1 Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.71 2009-08-14 10:16:53 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
 
 
-
-
-
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.List;
-
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.io.IOException;
@@ -55,7 +51,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.70 2009-08-13 15:24:44 gv1 Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.71 2009-08-14 10:16:53 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -97,7 +93,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   private boolean lazyLoaded = false;
   private org.gmod.schema.sequence.Feature chadoLazyFeature;
   private boolean readOnlyFeature = false;
-  
   
 
   private static String MAP_DECODE[][] = {
@@ -194,7 +189,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   public GFFStreamFeature(final Feature feature)
   {
     this(feature, false);
-    
   }
   
   /**
@@ -206,8 +200,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   public GFFStreamFeature(final Feature feature, final boolean isDuplicatedInChado) 
   {
     this(feature.getKey(), feature.getLocation(), feature.getQualifiers());
-    
-
     
     if(feature instanceof GFFStreamFeature)
     {
@@ -289,9 +281,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         }
         catch(ReadOnlyException e){}
         catch(EntryInformationException e){}
-      } else
+      }
+      else
       {
-    	  chadoGene = ((GFFStreamFeature)feature).chadoGene;
+        chadoGene = ((GFFStreamFeature)feature).chadoGene;
       }
     }
   }
@@ -739,8 +732,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   }
 
   protected static Hashtable contig_ranges;
-  private Range this_range;
-  private String frame;
 
   /**
    *  Write this Feature to the given stream.
@@ -753,12 +744,11 @@ public class GFFStreamFeature extends SimpleDocumentFeature
   {
     final RangeVector ranges = getLocation().getRanges();
     final int ranges_size = ranges.size();
-    
-    //  final Hashtable contig_ranges = SimpleDocumentEntry.getContigRanges();
 
+//  final Hashtable contig_ranges = SimpleDocumentEntry.getContigRanges();
     for(int i = 0; i < ranges_size; ++i) 
     {
-      this_range = (Range)ranges.elementAt(i);
+      Range this_range = (Range)ranges.elementAt(i);
 
       String seqname = getGffSeqName();
       String source  = getGffSource();
@@ -804,7 +794,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
           group = gene;
       }
 
-      frame = ".";
+      String frame = ".";
 
       final Qualifier codon_start = getQualifierByName("codon_start");
 
@@ -821,11 +811,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         else
           frame = ".";
       }
-      
-      
 
       final String myId = getSegmentID(this_range);
-      final String attribute_string = unParseAttributes(myId);
+      String attribute_string = unParseAttributes(myId);
 
       if(source_str == null && source != null)
        source_str = source;
@@ -833,6 +821,10 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       String key = getKey().getKeyString();
       if(key.equals("CDS"))
         key = "exon";
+      
+      String translation = getTranslation();
+      if(translation != null)
+        attribute_string = attribute_string + ";" + translation;
       writer.write(seqname + "\t" +
                    source_str + "\t" +
                    key + "\t" +
@@ -890,8 +882,6 @@ public class GFFStreamFeature extends SimpleDocumentFeature
                              "Derives_from",
                              "Target", "Gap", "Note", 
                              "Dbxref", "Ontology_term" };
-    
-    
     int count = 0;
     Qualifier this_qualifier;
     final int names_length = names.length;
@@ -910,16 +900,9 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       if(this_qualifier == null) 
         continue;
       
-      if(this_qualifier.getValues().toString().length() <= 2)
-    	  continue;
-      
       // GSV :: see new getQualifierString signature
       // this qualifier is one of the reserved qualifiers 
       final String this_qualifier_str = getQualifierString(this_qualifier, true);
-      
-      if (this_qualifier_str.length() == 0)
-    	  continue;
-      
       if(this_qualifier_str == null)
         continue;
 
@@ -929,14 +912,12 @@ public class GFFStreamFeature extends SimpleDocumentFeature
       count++;
     }
     
-    addTranslation();
-	
     boolean lname;
     final int qualifiers_size = qualifiers.size();
     for(int i = 0; i < qualifiers_size; i++) 
     {
       this_qualifier = (Qualifier)qualifiers.elementAt(i);
-      
+
       lname = false;
       for(int j=0; j<names_length; j++)
         if(this_qualifier.getName().equals(names[j]))
@@ -946,7 +927,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
         continue;
       
       // GSV :: see new getQualifierString signature
-      // this qualifier is NOT one of the reserved qualifiers
+      // this qualifier is NOT one of the reserved qualifiers 
       String this_qualifier_str = getQualifierString(this_qualifier, false);
       
       if(this_qualifier_str == null)
@@ -959,55 +940,29 @@ public class GFFStreamFeature extends SimpleDocumentFeature
 
     return buffer.toString();
   }
+
   
-  
-  /*
-   * 
-   * Adds translations to polypeptide features.
+  /**
+   * Get the translation qualifier string for polypeptide features.
    */
-  private void addTranslation() 
+  private String getTranslation() 
   {
-	if (! getKey().getKeyString().equals("polypeptide"))
-		return;
-	
-	ChadoCanonicalGene ccg = this.chadoGene;
-  
-	String id = this.getQualifierByName("ID").getValues().toString() ;
-	if (ccg != null)
-	{
-	  @SuppressWarnings("unused")
-	  uk.ac.sanger.artemis.Feature f = new uk.ac.sanger.artemis.Feature(this);
-	  // the above line constructs the appropriate userData within this current GFFStreamFeature object, 
-	  // which is required by the following GeneUtils.deriveResidues()
-	  
-	  String residues = GeneUtils.deriveResidues(this);
-	  if (residues != null)
-	  {
-		  Qualifier translation = new Qualifier("translation");
-		  translation.addValue(residues);
-		  try {
-			  setQualifier(translation);
-		  } catch (Exception e) {
-			  UI.warn(e.getMessage(), e.getClass().toString());
-		  }
-	  } else
-	  {
-		  // UI.warn(id + " has no translatable residues, is pseudogene? " + ccg.getGene().getKey().getKeyString(), "empty residues");
-	  }
-	} else
-	{
-	  // UI.warn(id + " has no ChadoCanonicalGene ", "no canonical gene");
-  
-	  Qualifier comment = new Qualifier("autogenerated_comment");
-	  comment.addValue( "this polypeptide has no parent gene associated, probably unknown transcript"  );
-	  try {
-		  setQualifier(comment);
-	  } catch (Exception e) {
-		  UI.warn(e.getMessage(), e.getClass().toString());
-	  }
-	}
+    if (! getKey().getKeyString().equals("polypeptide"))
+        return null;
+    if (chadoGene != null)
+    {
+      if(getUserData() == null)
+      {
+        uk.ac.sanger.artemis.Feature f = new uk.ac.sanger.artemis.Feature(this);
+      }
+      // the above line constructs the appropriate userData within this current GFFStreamFeature object, 
+      // which is required by the following GeneUtils.deriveResidues()     
+      String residues = GeneUtils.deriveResidues(this);
+      if (residues != null)
+        return "translation="+residues;
+    } 
+    return null;
   }
-  
   
   /**
    * Used to write out the GFF attributes.
@@ -1044,7 +999,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
      */
     String nameToBuffer = encode(name);
     if (! reserved)
-    	nameToBuffer = nameToBuffer.toLowerCase(); //Character.toLowerCase(nameToBuffer.charAt(0)) + nameToBuffer.substring(1);
+    	nameToBuffer = Character.toLowerCase(nameToBuffer.charAt(0)) + nameToBuffer.substring(1);
     buffer.append(nameToBuffer);
     
     if(values != null)
