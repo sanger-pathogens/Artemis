@@ -183,7 +183,8 @@ public class DatabaseDocument extends Document
     if(location.indexOf('=') > -1)
       this.schema = location.substring( location.indexOf('=')+ 1);
     
-    if(System.getProperty("ibatis") != null)
+    if(System.getProperty("ibatis") != null ||
+       System.getProperty("jdbc") == null)
     {
       iBatis = true;
       System.setProperty("chado", location);
@@ -212,7 +213,8 @@ public class DatabaseDocument extends Document
     this.srcFeatureId = srcFeatureId;
     this.schema = schema;
 
-    if(System.getProperty("ibatis") != null)
+    if(System.getProperty("ibatis") != null ||
+       System.getProperty("jdbc") == null)
     {
       iBatis = true;
       System.setProperty("chado", location);
@@ -245,7 +247,8 @@ public class DatabaseDocument extends Document
     this.schema = schema;
     this.splitGFFEntry = splitGFFEntry;
     this.progress_listener = progress_listener;
-    if(System.getProperty("ibatis") != null)
+    if(System.getProperty("ibatis") != null ||
+       System.getProperty("jdbc") == null)
     {
       iBatis = true;
       System.setProperty("chado", location);
@@ -273,7 +276,8 @@ public class DatabaseDocument extends Document
     this.schema = schema;
     this.gene_builder = gene_builder;
 
-    if(System.getProperty("ibatis") != null)
+    if(System.getProperty("ibatis") != null ||
+       System.getProperty("jdbc") == null)
     {
       iBatis = true;
       System.setProperty("chado", location);
@@ -291,7 +295,8 @@ public class DatabaseDocument extends Document
     this.schema = schema;
     this.gff_buff = gff_buff;
     this.name = name;
-    if(System.getProperty("ibatis") != null)
+    if(System.getProperty("ibatis") != null ||
+       System.getProperty("jdbc") == null)
     {
       iBatis = true;
       System.setProperty("chado", location);
