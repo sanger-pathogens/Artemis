@@ -22,18 +22,10 @@
 
 package uk.ac.sanger.artemis.io;
 
-import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Hashtable;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
@@ -42,7 +34,6 @@ import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.InputStreamProgressEvent;
 import uk.ac.sanger.artemis.util.InputStreamProgressListener;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
-import uk.ac.sanger.artemis.util.ReadOnlyException;
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.FeatureVector;
 import uk.ac.sanger.artemis.Options;
@@ -399,6 +390,7 @@ public class ReadAndWriteEntry
         			include_diana_extensions, format, null);
         	}
         }
+        entry.dispose();
       }
     }
     catch(Exception e)
