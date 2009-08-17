@@ -20,17 +20,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.20 2009-05-13 15:47:52 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/ExternalProgram.java,v 1.21 2009-08-17 15:49:25 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis;
 
 import uk.ac.sanger.artemis.util.*;
+import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.EntryInformationException;
 import uk.ac.sanger.artemis.io.DocumentEntry;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.components.ProgressBarFrame;
 import uk.ac.sanger.artemis.components.filetree.RemoteFileNode;
+import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.j2ssh.FileTransferProgressMonitor;
 import uk.ac.sanger.artemis.j2ssh.FTProgress;
 
@@ -44,7 +47,7 @@ import java.util.Enumeration;
  *  and contains methods for invoking it.
  *
  *  @author Kim Rutherford
- *  @version $Id: ExternalProgram.java,v 1.20 2009-05-13 15:47:52 tjc Exp $
+ *  @version $Id: ExternalProgram.java,v 1.21 2009-08-17 15:49:25 tjc Exp $
  **/
 
 public class ExternalProgram 
@@ -425,42 +428,13 @@ public class ExternalProgram
 
       if(program_type != APPLICATION) 
       {
-        uk.ac.sanger.artemis.io.Qualifier new_qualifier;
+        setFeatureQualifier(this_feature, new_qualifier_name, new_file_name);
         
-        if(getName().startsWith("fast") || getName().startsWith("blast"))
+        if( ((DocumentEntry)entry.getEMBLEntry()).getDocument()
+             instanceof DatabaseDocument )
         {
-          new_qualifier = this_feature.getQualifierByName(new_qualifier_name);
-          String db = getProgramOptions().trim();
-
-          int ind;
-          if((ind = db.indexOf(' ')) > -1)
-            db.substring(0, ind);
-
-          if(new_qualifier == null)
-            new_qualifier = new uk.ac.sanger.artemis.io.Qualifier(
-                new_qualifier_name, db + ":" + new_file_name + ".out");
-          else
-          {
-            // search for existing 'db:' values
-            final StringVector values = new_qualifier.getValues();
-            for(int j = 0; j < values.size(); j++)
-            {
-              String value = (String) values.get(j);
-              if(value.startsWith(db + ":"))
-                values.remove(value);
-            }
-
-            new_qualifier.addValues(values);
-            values.add(db + ":" + new_file_name + ".out");
-            new_qualifier = new uk.ac.sanger.artemis.io.Qualifier(
-                new_qualifier_name, values);
-          }
+          setProteinFeatureQualifier(this_feature, new_qualifier_name, new_file_name);
         }
-        else
-          new_qualifier = new uk.ac.sanger.artemis.io.Qualifier(
-              new_qualifier_name, new_file_name + ".out");
-        
-        this_feature.setQualifier(new_qualifier);
       }
     }
 
@@ -487,6 +461,86 @@ public class ExternalProgram
 
 
     return file_of_filenames;
+  }
+  
+  /**
+   * Add a qualifier link to the program results
+   * @param this_feature
+   * @param new_qualifier_name
+   * @param new_file_name
+   * @throws ReadOnlyException
+   * @throws EntryInformationException
+   */
+  private void setFeatureQualifier(final Feature this_feature, 
+                                   final String new_qualifier_name,
+                                   final String new_file_name) 
+          throws ReadOnlyException, EntryInformationException
+  {
+    uk.ac.sanger.artemis.io.Qualifier new_qualifier;
+    
+    if(getName().startsWith("fast") || getName().startsWith("blast"))
+    {
+      new_qualifier = this_feature.getQualifierByName(new_qualifier_name);
+      String db = getProgramOptions().trim();
+
+      int ind;
+      if((ind = db.indexOf(' ')) > -1)
+        db.substring(0, ind);
+
+      if(new_qualifier == null)
+        new_qualifier = new uk.ac.sanger.artemis.io.Qualifier(
+            new_qualifier_name, db + ":" + new_file_name + ".out");
+      else
+      {
+        // search for existing 'db:' values
+        final StringVector values = new_qualifier.getValues();
+        for(int j = 0; j < values.size(); j++)
+        {
+          String value = (String) values.get(j);
+          if(value.startsWith(db + ":"))
+            values.remove(value);
+        }
+
+        new_qualifier.addValues(values);
+        values.add(db + ":" + new_file_name + ".out");
+        new_qualifier = new uk.ac.sanger.artemis.io.Qualifier(
+            new_qualifier_name, values);
+      }
+    }
+    else
+      new_qualifier = new uk.ac.sanger.artemis.io.Qualifier(
+          new_qualifier_name, new_file_name + ".out");
+    
+    this_feature.setQualifier(new_qualifier);
+  }
+  
+  /**
+   * In database mode add a link on the polypeptide to the results file.
+   * @param this_feature
+   * @param new_qualifier_name
+   * @param new_file_name
+   */
+  private void setProteinFeatureQualifier(final Feature this_feature, 
+                                          final String new_qualifier_name,
+                                          final String new_file_name)
+  {
+    try
+    {
+      if(this_feature.getKey().getKeyString().equals(DatabaseDocument.EXONMODEL)
+          && this_feature.getEmblFeature() instanceof GFFStreamFeature)
+      {
+        GFFStreamFeature gffFeature = (GFFStreamFeature)(this_feature.getEmblFeature());
+        ChadoCanonicalGene chado_gene = gffFeature.getChadoGene();
+        String transcriptName = chado_gene.getTranscriptFromName(GeneUtils.getUniqueName(gffFeature));
+        Feature protein = 
+          (Feature)chado_gene.getProteinOfTranscript(transcriptName).getUserData();
+        setFeatureQualifier(protein, new_qualifier_name, new_file_name);
+      }
+    }
+    catch(Exception e)
+    {
+      logger4j.debug(e.getMessage());
+    }
   }
 
   /**
