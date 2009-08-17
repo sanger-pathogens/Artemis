@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.61 2009-03-19 11:31:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EditMenu.java,v 1.62 2009-08-17 12:29:04 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -61,7 +61,7 @@ import java.util.Vector;
  *  A menu with editing commands.
  *
  *  @author Kim Rutherford
- *  @version $Id: EditMenu.java,v 1.61 2009-03-19 11:31:11 tjc Exp $
+ *  @version $Id: EditMenu.java,v 1.62 2009-08-17 12:29:04 tjc Exp $
  **/
 
 public class EditMenu extends SelectionMenu
@@ -3334,7 +3334,8 @@ public class EditMenu extends SelectionMenu
    **/
   private static boolean fixGeneNamesHelper(final JFrame frame,
                                             final EntryGroup entry_group,
-                                            final Feature cds_to_fix) 
+                                            final Feature cds_to_fix,
+                                            final String name) 
   {
     if(cds_to_fix.isReadOnly()) 
     {
@@ -3344,7 +3345,7 @@ public class EditMenu extends SelectionMenu
       new MessageDialog(frame, message);
       return false;
     }
-
+  
     try 
     {
       final Strand cds_to_fix_strand = cds_to_fix.getStrand();
@@ -3466,17 +3467,16 @@ public class EditMenu extends SelectionMenu
 
         if(!dialog.getResult())
           return false;
-      }
-
+      }   
+      
       final StringVector gene_names = new StringVector ();
-
       for(int i = 0; i < features_to_change.size(); ++i)
       {
         final Feature test_feature =
           features_to_change.elementAt(i);
 
         final StringVector test_feature_gene_names =
-          test_feature.getValuesOfQualifier("gene");
+          test_feature.getValuesOfQualifier(name);
 
         if(test_feature_gene_names != null) 
         {
@@ -3498,7 +3498,7 @@ public class EditMenu extends SelectionMenu
       for(int i = 0; i < features_to_change.size(); ++i)
       {
         final Feature this_feature = features_to_change.elementAt(i);
-        final Qualifier qualifier = new Qualifier("gene", gene_names);
+        final Qualifier qualifier = new Qualifier(name, gene_names);
         this_feature.setQualifier(qualifier);
       }
     } 
@@ -3540,6 +3540,14 @@ public class EditMenu extends SelectionMenu
       final FeatureVector features_to_fix = selection.getAllFeatures();
       int cds_features_found = 0;
 
+      StringVector names = Options.getOptions().getSystematicQualifierNames();
+      JList types = new JList(names);
+      types.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      types.setSelectedValue("gene", true);
+      JOptionPane.showMessageDialog(frame, types,
+              "Qualifier to Transfer", JOptionPane.QUESTION_MESSAGE);
+      String name = (String) types.getSelectedValue();
+      
       for(int i = 0; i < features_to_fix.size(); ++i)
       {
         final Feature selection_feature = features_to_fix.elementAt(i);
@@ -3547,7 +3555,7 @@ public class EditMenu extends SelectionMenu
         if(selection_feature.isCDS()) 
         {
           ++cds_features_found;
-          if(!fixGeneNamesHelper(frame, entry_group, selection_feature))
+          if(!fixGeneNamesHelper(frame, entry_group, selection_feature, name))
             return;
         }
       }
