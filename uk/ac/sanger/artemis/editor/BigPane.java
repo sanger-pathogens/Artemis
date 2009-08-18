@@ -26,6 +26,8 @@ package uk.ac.sanger.artemis.editor;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.BorderLayout;
@@ -56,14 +58,18 @@ import javax.swing.JToolBar;
 
 import uk.ac.sanger.artemis.Feature;
 import uk.ac.sanger.artemis.FeatureVector;
+import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.components.QualifierTextArea;
 import uk.ac.sanger.artemis.components.genebuilder.cv.CVPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
+import uk.ac.sanger.artemis.io.ChadoCanonicalGene;
 import uk.ac.sanger.artemis.io.EntryInformation;
+import uk.ac.sanger.artemis.io.GFFStreamFeature;
 import uk.ac.sanger.artemis.io.Qualifier;
 import uk.ac.sanger.artemis.io.QualifierInfo;
 import uk.ac.sanger.artemis.io.QualifierVector;
 import uk.ac.sanger.artemis.io.StreamQualifier;
+import uk.ac.sanger.artemis.util.DatabaseDocument;
 import uk.ac.sanger.artemis.util.StringVector;
 
 
@@ -262,15 +268,29 @@ public class BigPane extends JFrame
       }
     });
     applyButt.setBackground(new Color(0,0,81));
-    applyButt.setForeground(Color.white);
+    applyButt.setForeground(Color.red);
     applyButt.setBorderPainted(false);
     applyButt.setMargin(new Insets(0,0,0,0));
     applyButt.setFont(font);
     toolBar.add(applyButt);
-
-    addNote.addActionListener(new ActionListener()
+    
+    JButton closeButt = new JButton("CLOSE");
+    closeButt.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
+      {
+        onClose();
+      }
+    });
+    closeButt.setBackground(new Color(0,0,81));
+    closeButt.setBorderPainted(false);
+    closeButt.setMargin(new Insets(0,0,0,0));
+    closeButt.setFont(font);
+    toolBar.add(closeButt);
+
+    addNote.addItemListener(new ItemListener()
+    {
+      public void itemStateChanged(ItemEvent e)
       {
         if(addNote.isSelected())
           dataView.updateNote();
@@ -321,6 +341,10 @@ public class BigPane extends JFrame
     Qualifier productQualifier = null;
     String otherString = null;
     
+    ChadoCanonicalGene chadoGene =
+      ((GFFStreamFeature)edit_feature.getEmblFeature()).getChadoGene();
+    
+    
     final StringVector v = StringVector.getStrings(dataViewStringOriginal, "\n");
     for(int i=0; i<v.size(); i++)
     {
@@ -345,7 +369,6 @@ public class BigPane extends JFrame
           value = value.substring(1);
         if(value.endsWith("\""))
           value = value.substring(0, value.length()-1);
-        //System.out.println(key+" = "+value);
 
         if(MatchPanel.isMatchTag(key))
         {
@@ -359,7 +382,54 @@ public class BigPane extends JFrame
         {
           if(productQualifier == null)
             productQualifier = new Qualifier("product");
-          productQualifier.addValue(value);
+          
+          if( productQualifier.getValues() == null ||
+              !containsProductValue(productQualifier.getValues(),value))
+          {
+            if(value.startsWith("term="))
+              productQualifier.addValue(value);
+            else
+            {
+              org.gmod.schema.cv.CvTerm cvTerm = 
+              DatabaseDocument.getCvTermByCvPartAndCvTerm(value, ChadoTransactionManager.PRODUCT_CV);
+            
+              if(cvTerm == null)
+              {
+                int val = JOptionPane.showConfirmDialog(this, 
+                  "This term is missing from the database:\n"+
+                  value+"\nAdd this to the database?", 
+                  "Add Product",JOptionPane.OK_CANCEL_OPTION);
+                if(val == JOptionPane.CANCEL_OPTION)
+                  return;
+              }
+              productQualifier.addValue("term="+value+";");
+            }
+          }
+        }
+      }
+      else if(value.startsWith("/gene=") && chadoGene != null)
+      {
+        // Added as the Name qualifier on the gene feature, also
+        // added to the peptide with first letter made uppercase
+        String nameGene = value.substring(6);
+        if(nameGene.startsWith("\""))
+          nameGene = nameGene.substring(1);
+        if(nameGene.endsWith("\""))
+          nameGene = nameGene.substring(0, nameGene.length()-1);
+        
+        String namePep =
+          Character.toUpperCase(nameGene.charAt(0)) + nameGene.substring(1);
+
+        Qualifier qualifierGene = new Qualifier("Name", nameGene);
+        Qualifier qualifierPep = new Qualifier("Name", namePep);
+        try
+        {
+          ((Feature)chadoGene.getGene().getUserData()).setQualifier(qualifierGene);
+          edit_feature.setQualifier(qualifierPep);
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
         }
       }
       else
@@ -379,16 +449,42 @@ public class BigPane extends JFrame
         cvQualifiers.remove(productIndex);
       else
         productIndex = 0;
+
       cvQualifiers.add(productIndex, productQualifier);
       cvForm.updateFromQualifiers(cvQualifiers);
     }
     
     if(otherString != null)
     {
-      otherString = qualifierTextArea.getText() + "\n" +
+      otherString = qualifierTextArea.getText() + 
+                    (qualifierTextArea.getText().endsWith("\n") ? "" : "\n") +
                     otherString;
       qualifierTextArea.setText(otherString);
     } 
+  }
+  
+  /**
+   * Check the values of a StringVector to see if it already contains
+   * a new value.
+   * @param values
+   * @param newValue
+   * @return
+   */
+  private boolean containsProductValue(StringVector values, String newValue)
+  {
+    for(int i=0; i<values.size(); i++)
+    {
+      String thisValue = (String)values.get(i);
+      if(thisValue.startsWith("term="))
+      {
+        thisValue = thisValue.substring(5);
+        if(thisValue.endsWith(";"))
+          thisValue = thisValue.substring(0, thisValue.length()-1);
+      }
+      if(thisValue.equals(newValue))
+        return true;
+    }
+    return false;
   }
   
   private boolean askToUpdate()
@@ -529,36 +625,9 @@ public class BigPane extends JFrame
   */
   private void onClose()
   {
-    //if(qualifierTextArea == null)
-    //  System.exit(0);
-
     // remember the splitpane divider locations
     dataView.setDataDividerLocation();
     dataView.setAnnotationDividerLocation();
-
-    // update feature text
-    /*
-    if(qualifierTextArea != null)
-    {
-      final String oldTxt = qualifierTextArea.getText().trim();
-      final String newTxt = dataView.getFeatureText().trim();
-
-      // changes have been made to feature annotation
-      if(!oldTxt.equals(newTxt))
-      {
-        int ok = JOptionPane.showConfirmDialog(BigPane.this,
-                          "Apply changes now?",
-                          "Apply Changes",
-                          JOptionPane.YES_NO_CANCEL_OPTION,
-                          JOptionPane.QUESTION_MESSAGE);
-
-        if(ok == JOptionPane.CANCEL_OPTION)
-          return;
-
-        if(ok == JOptionPane.OK_OPTION)
-          qualifierTextArea.setText(newTxt);
-      }
-    }*/
     
     transferAnnotation(true);
     // stop getz processes
