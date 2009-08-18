@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.25 2009-07-20 15:11:17 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/Plot.java,v 1.26 2009-08-18 09:01:44 tjc Exp $
  **/
 
 package uk.ac.sanger.artemis.components;
@@ -48,7 +48,7 @@ import javax.swing.JPopupMenu;
  *  This class implements a simple plot component.
  *
  *  @author Kim Rutherford
- *  @version $Id: Plot.java,v 1.25 2009-07-20 15:11:17 tjc Exp $
+ *  @version $Id: Plot.java,v 1.26 2009-08-18 09:01:44 tjc Exp $
  **/
 
 public abstract class Plot extends JPanel 
@@ -833,7 +833,7 @@ public abstract class Plot extends JPanel
     {
       plotType = lines[value_index].getPlotType();
     
-      int NUMBER_OF_SHADES = 100;
+      int NUMBER_OF_SHADES = 254;
       if(plotType.equals(LineAttributes.PLOT_TYPES[2]))
       {
         definedColours = makeColours(lines[value_index].getLineColour(),
@@ -941,15 +941,15 @@ public abstract class Plot extends JPanel
 
       float scale = ((float)(NUMBER_OF_SHADES-i) * (float)(255 / NUMBER_OF_SHADES )) ;
       
-      if((R+scale) < 254)
+      if((R+scale) <= 255)
         R += scale;
       else
         R = 254;
-      if((G+scale) < 254)
+      if((G+scale) <= 255)
         G += scale;
       else
         G = 254;
-      if((B+scale) < 254)
+      if((B+scale) <= 255)
         B += scale;
       else
         B = 254;
