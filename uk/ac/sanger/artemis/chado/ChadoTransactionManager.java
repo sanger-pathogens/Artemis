@@ -1456,6 +1456,38 @@ public class ChadoTransactionManager
       tsn.setUniquename(uniquename);
       sql.add(tsn);
     }
+    
+    // synchronise the polypeptide and exon colours
+    if(qualifier_name.equals("colour") &&
+       feature.getKey().getKeyString().equals("polypeptide"))
+    {
+      synchColourInGeneModel(feature, uniquename,
+          new Qualifier(qualifier_name, qualifier_string));
+    }
+  }
+  
+  /**
+   * Synchronise the colour on the exons
+   * @param feature
+   * @param uniquename
+   */
+  private void synchColourInGeneModel(final GFFStreamFeature feature,
+                                      final String uniquename,
+                                      final Qualifier colourQualifier)
+  {
+    try
+    {
+      ChadoCanonicalGene gene = feature.getChadoGene();
+      uk.ac.sanger.artemis.io.Feature transcript =
+        gene.getTranscriptFeatureFromName(uniquename);
+      List exons = gene.getSpliceSitesOfTranscript(
+          GeneUtils.getUniqueName(transcript), DatabaseDocument.EXONMODEL);
+      Feature exon = 
+        ((Feature)((uk.ac.sanger.artemis.io.Feature)exons.get(0)).getUserData());
+      exon.setQualifier(colourQualifier);
+      exon.resetColour();
+    }
+    catch (Exception e){}
   }
   
   /**
@@ -2264,14 +2296,14 @@ public class ChadoTransactionManager
     {    
       final String this_qualifier_part = ((String)strings.get(i)).trim();
       final String this_qualifier_part_lowercase = this_qualifier_part.toLowerCase();
-      
+
       if(this_qualifier_part_lowercase.startsWith("term="))
       {
         final String cvTermName = this_qualifier_part.substring(5);
         CvTerm cvTerm = getCvTerm(cvTermName, cvName);
         
         if(cvTerm == null && cvName.equals(PRODUCT_CV))
-          cvTerm = createCvTerm(qualifier_string, 
+          cvTerm = createCvTerm(cvTermName, 
               PRODUCT_CV, PRODUCT_DB);
         
         feature_cvterm.setCvTerm(cvTerm);
