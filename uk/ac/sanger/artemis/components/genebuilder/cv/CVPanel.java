@@ -423,17 +423,15 @@ public class CVPanel extends JPanel
 
           int index = qualifierString.indexOf("::");
           String classStr = qualifierString.substring(0, index);
-          JTextField termTextField = new JTextField(classStr);
+          JLabel termTextField = new JLabel(classStr);
           termTextField.setOpaque(false);
-          termTextField.setEditable(false);
-          
+
           termTextField
               .setToolTipText(DatabaseDocument.getCvTermByCvTermId(
                   Integer.parseInt(qualifierString.substring(index + 2)), feature.getEmblFeature())
-                  .getName());
+                  .getDefinition());
           termTextField.setPreferredSize(dimension);
           termTextField.setMaximumSize(dimension);
-          termTextField.setCaretPosition(0);
 
           xBox.add(termTextField);
           xBox.add(Box.createHorizontalGlue());
@@ -442,9 +440,6 @@ public class CVPanel extends JPanel
         }
       }
     }
-    
-    
-
     
     cvBox.add(Box.createVerticalGlue());
     validate();
@@ -692,51 +687,7 @@ public class CVPanel extends JPanel
       }
 
     }
-
-    if(!cv_type.equals("GO") &&
-       !cv_type.equals("controlled_curation") && 
-       !cv_type.equals("product") &&
-       !cv_type.equals("class"))
-      cv_type = "controlled_curation";
-    
-    cvQualifiers = getCvQualifiers();
-    Qualifier cv_qualifier = cvQualifiers.getQualifierByName(cv_type);
-    
-    final int index;
-    if(cv_qualifier == null)
-    {
-      cv_qualifier = new Qualifier(cv_type);
-      index = -1;
-    }
-    else
-     index = cvQualifiers.indexOf(cv_qualifier);
-    
-    if(cv_type.equals("GO"))
-      cv_qualifier.addValue("GOid=GO:"+cvterm.getDbXRef().getAccession()+";"+
-          "aspect="+cv_name+";"+
-          "term="+cvterm.getName()+";"+
-          "evidence="+ GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]);
-    else if(cv_type.equals("controlled_curation"))
-      cv_qualifier.addValue("term="+cvterm.getName());
-    else if(cv_type.equals("product"))
-      cv_qualifier.addValue("term="+cvterm.getName());
-    else if(cv_type.equals("class"))
-      cv_qualifier.addValue(cvterm.getDbXRef().getAccession()+
-                            "::"+cvterm.getCvTermId());
-    
-    if(index > -1)
-    {
-      cvQualifiers.remove(index);
-      cvQualifiers.add(index, cv_qualifier);
-    }
-    else
-      cvQualifiers.add(cv_qualifier);
-    
-    removeAll();
-    add(createCVQualifiersComponent(),
-        BorderLayout.CENTER);
-    revalidate();
-    repaint();
+    addCvTermQualifier(cvterm, cv_name, cv_type);
   }
   
   /**
@@ -783,6 +734,12 @@ public class CVPanel extends JPanel
     final JTextField definition = new JTextField();
     gridPanel.add(definition, c);
     
+    c.gridy = 4;
+    c.gridx = 0;
+    c.gridwidth = 1;
+    final JCheckBox addToAnnotation = new JCheckBox("Add to annotation", false);
+    gridPanel.add(addToAnnotation, c);
+    
     
     int select = JOptionPane.showConfirmDialog(null, 
         gridPanel, "Add a new term to the database", 
@@ -805,6 +762,14 @@ public class CVPanel extends JPanel
     try
     {
       doc.insertCvTerm(cvTerm);
+      
+      if(addToAnnotation.isSelected())
+      {
+        String type = (String)comboCV.getSelectedItem();
+        if(DatabaseDocument.PRODUCTS_TAG_CVNAME.equals(type))
+          type = "product";
+        addCvTermQualifier(cvTerm, null, type);
+      }
     }
     catch(RuntimeException re)
     {
@@ -812,6 +777,60 @@ public class CVPanel extends JPanel
           "Problems Writing to Database ",
           JOptionPane.ERROR_MESSAGE);
     }
+  }
+  
+  /**
+   * Add CvTerm qualifier
+   * @param cvterm
+   * @param go_name
+   * @param cv_type
+   */
+  private void addCvTermQualifier(CvTerm cvterm, final String go_name, String cv_type)
+  {
+    if(!cv_type.equals("GO") &&
+       !cv_type.equals("controlled_curation") && 
+       !cv_type.equals("product") &&
+       !cv_type.equals("class"))
+      cv_type = "controlled_curation";
+     
+     cvQualifiers = getCvQualifiers();
+     Qualifier cv_qualifier = cvQualifiers.getQualifierByName(cv_type);
+     
+     final int index;
+     if(cv_qualifier == null)
+     {
+       cv_qualifier = new Qualifier(cv_type);
+       index = -1;
+     }
+     else
+      index = cvQualifiers.indexOf(cv_qualifier);
+     
+     if(cv_type.equals("GO"))
+       cv_qualifier.addValue("GOid=GO:"+cvterm.getDbXRef().getAccession()+";"+
+           "aspect="+go_name+";"+
+           "term="+cvterm.getName()+";"+
+           "evidence="+ GoBox.evidenceCodes[2][ evidenceList.getSelectedIndex() ]);
+     else if(cv_type.equals("controlled_curation"))
+       cv_qualifier.addValue("term="+cvterm.getName());
+     else if(cv_type.equals("product"))
+       cv_qualifier.addValue("term="+cvterm.getName());
+     else if(cv_type.equals("class"))
+       cv_qualifier.addValue(cvterm.getDbXRef().getAccession()+
+                             "::"+cvterm.getCvTermId());
+     
+     if(index > -1)
+     {
+       cvQualifiers.remove(index);
+       cvQualifiers.add(index, cv_qualifier);
+     }
+     else
+       cvQualifiers.add(cv_qualifier);
+     
+     removeAll();
+     add(createCVQualifiersComponent(),
+         BorderLayout.CENTER);
+     revalidate();
+     repaint();
   }
   
   private void removeCvTerm(final String qualifier_name, 
