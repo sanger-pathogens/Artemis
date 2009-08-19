@@ -649,8 +649,14 @@ public class FindAndReplace extends JFrame
         }
 
         if(values.size() != newValues.size())
-          newQualifiers.setQualifier(
+        {
+          if(newValues.size() != 0)
+            newQualifiers.setQualifier(
               new Qualifier(this_qualifier.getName(),newValues));
+          else
+            newQualifiers.setQualifier(
+                new Qualifier(this_qualifier.getName()));
+        }
       }
     }
     
