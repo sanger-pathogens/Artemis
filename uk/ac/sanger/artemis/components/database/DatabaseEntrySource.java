@@ -657,35 +657,29 @@ class DatabaseLoginPromptConsole implements ILoginPrompt
 		{
 			return false;
 		}
-		String commentPrefix = "\n";
-		String commentSuffix = " parameter passed to the program, please provide one.";
+        
 		if (db == null)
 		{
-		    System.out.println(commentPrefix + "No database" + commentSuffix);
-			db = UI.userInput("Database", false);
+			db = UI.userInput("Enter Database", false);
 			userEntered = true;
 		}
 		if (port == null)
 		{
-		    System.out.println(commentPrefix + "No port" + commentSuffix);
-			port = UI.userInput("Port", false);
+			port = UI.userInput("Enter Port", false);
 			userEntered = true;
 		}
 		if (server == null)
 		{
-		    System.out.println(commentPrefix + "No server" + commentSuffix);
-			server = UI.userInput("Server",false);
+			server = UI.userInput("Enter Server",false);
 			userEntered = true;
 		}
 		if (user == null)
 		{
-		    System.out.println(commentPrefix + "No user" + commentSuffix);
-			user = UI.userInput("User", false);
+			user = UI.userInput("Enter User", false);
 			userEntered = true;
 		}
 		if (password == null)
 		{
-		    System.out.println(commentPrefix + "No password" + commentSuffix);
 			password = UI.userInput("Enter Password", true);
 			userEntered = true;
 		}
