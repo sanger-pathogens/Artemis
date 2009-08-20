@@ -66,13 +66,13 @@ public class UI {
     {
         if (password == true)
         {
-            UIEraserThread et = new UIEraserThread(prompt + ":  " );
+            UIEraserThread et = new UIEraserThread(prompt + ": ");
             Thread mask = new Thread(et);
             mask.start();
             String result = input();
             et.stopMasking();
             mask.stop();
-            // System.out.println("Password: " + result);
+            // System.out.println("Password: '" + result + "'");
             return result;
         }
         System.out.print(prompt + ": " );
@@ -83,7 +83,7 @@ public class UI {
 	{
 		if (mode == UIMode.SCRIPT)
 		{
-		    System.out.println(label + " : " + message + " : y");
+		    System.out.println(label + " : " + message + " (in script mode so continuing...)");
 			return true;
 		}
 		
@@ -106,9 +106,6 @@ public class UI {
             return (val == JOptionPane.OK_OPTION) ? true : false;
             
 		} 
-		
-		String input = "";
-		boolean valid = false;
 		
 		return boolConsoleInput(label + "\n" + message + "(y/n)");
 	}
@@ -151,21 +148,14 @@ public class UI {
 	
 	public static void message(String messageType, String message, String heading)
 	{
-		switch (mode)
-		{
-			case SWING:
-				JOptionPane.showMessageDialog(null, message,heading, JOptionPane.ERROR_MESSAGE);
-			break;
-			default:
-				System.out.println(messageType + " :: " + heading + " :: " + message);
-			break;
-		}
+	    if ((mode == UIMode.SCRIPT) || (mode == UIMode.CONSOLE))
+        {
+            System.out.println(messageType + " :: " + heading + " :: " + message);
+	    }
+	    else if (mode == UIMode.SWING)
+	    {
+	        JOptionPane.showMessageDialog(null, message,heading, JOptionPane.ERROR_MESSAGE);
+	    } 
 	}
-	
-	
-	
-	
-    
-	
 	
 }
