@@ -266,10 +266,10 @@ public class ReadAndWriteEntry
         
         // note that read_only and noprompt -D parameters redundant now
         System.out.println("New parameters:");
-        System.out.println("-c\the URL for your Chado database e.g. db.genedb.org:5432/snapshot?genedb_ro (if not using default)");
+        System.out.println("-c\tthe URL for your Chado database e.g. db.genedb.org:5432/snapshot?genedb_ro (if not using default)");
         System.out.println("-u\t[swing|console|script] the UI mode : run in swing (with popup dialog boxes) mode, run in console mode (choices entered in the console window), or in script mode (all choices default to continue, all parameters passed on command line) ");
         System.out.println("-p\tthe password for connecting to the Chado database");
-        
+        System.out.println("-fp\t the file path (the folder you want to save the files in)");
         
         System.exit(0);
       }
@@ -279,6 +279,8 @@ public class ReadAndWriteEntry
       int format = DocumentEntryFactory.EMBL_FORMAT;
       boolean include_diana_extensions = true;
       String suffix = ".embl";
+      
+      String filePath = "";
       
       for(int i = 0; i < args.length; i++)
       {
@@ -325,6 +327,10 @@ public class ReadAndWriteEntry
         {
         	System.setProperty("chadoPassword", args[i + 1]);
         }
+        if (key.equals("-fp"))
+        {
+        	filePath = args[i + 1];
+        }
       }
       
       // run this after all the system properties have been set
@@ -362,32 +368,39 @@ public class ReadAndWriteEntry
         files.toArray(names);
       }
      
+      if (filePath.length() != 0)
+      {
+			filePath += "/";
+      }
       
       for(int i=0;i < names.length; i++)
       {
         System.out.println("read :: "+names[i]+" write :: "+names[i]+suffix);
+        logger4j.info("read :: "+names[i]+" write :: "+names[i]+suffix);
+        
         Entry entry = ReadAndWriteEntry.readEntryFromDatabase(names[i], ENTRY_SOURCE);
         
         try
         {
           ReadAndWriteEntry.writeDatabaseEntryToFile(
-            entry, new File(names[i]+suffix), flatten, ignoreObsolete, 
+            entry, new File(filePath + names[i]+suffix), flatten, ignoreObsolete, 
             false, include_diana_extensions,
             format, null);
+          System.out.println("done");
+          logger4j.info("done");
         }
         catch(EntryInformationException eie)
         {
-          //UI.warn(eie.getMessage(), "UhOh!");
-        	//eie.printStackTrace();
-        	
         	String label = "Destination format can't handle all keys/qualifiers - continue?";
         	boolean canContinue = UI.booleanUserInput(label, eie.getMessage());
         	
         	if (canContinue)
         	{
-        		ReadAndWriteEntry.writeDatabaseEntryToFile(entry, new File(
-        			names[i] + suffix), flatten, ignoreObsolete, true,
+        		ReadAndWriteEntry.writeDatabaseEntryToFile(entry, new File(filePath + names[i] + suffix), 
+        				flatten, ignoreObsolete, true,
         			include_diana_extensions, format, null);
+        		System.out.println("done");
+        		logger4j.info("done");
         	}
         }
         entry.dispose();
