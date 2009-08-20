@@ -475,6 +475,14 @@ class DatabaseLoginPrompt extends JPanel implements ILoginPrompt
            * true; }
            */
         }
+        /** 
+            @TODO GSV determine if the case where a user only passes in db name without a user name should be handled like this:
+            } else
+	        {
+	            db = (db_url.substring(index2 + 1));
+	        }
+	    /*/
+        
       }
     }  
   }
@@ -607,6 +615,9 @@ class DatabaseLoginPromptConsole implements ILoginPrompt
 	            userStr = userStr.substring(5);
 	          user = (userStr);
 
+	        } else
+	        {
+	            db = (db_url.substring(index2 + 1));
 	        }
 	      }
 	    }  
@@ -642,39 +653,50 @@ class DatabaseLoginPromptConsole implements ILoginPrompt
 	public boolean prompt() 
 	{
 		boolean userEntered = false;
-		
 		if (UI.mode == UI.UIMode.SCRIPT)
 		{
 			return false;
 		}
-		
+		String commentPrefix = "\n";
+		String commentSuffix = " parameter passed to the program, please provide one.";
 		if (db == null)
 		{
+		    System.out.println(commentPrefix + "No database" + commentSuffix);
 			db = UI.userInput("Database", false);
 			userEntered = true;
 		}
 		if (port == null)
 		{
+		    System.out.println(commentPrefix + "No port" + commentSuffix);
 			port = UI.userInput("Port", false);
 			userEntered = true;
 		}
 		if (server == null)
 		{
+		    System.out.println(commentPrefix + "No server" + commentSuffix);
 			server = UI.userInput("Server",false);
 			userEntered = true;
 		}
 		if (user == null)
 		{
+		    System.out.println(commentPrefix + "No user" + commentSuffix);
 			user = UI.userInput("User", false);
 			userEntered = true;
 		}
 		if (password == null)
 		{
+		    System.out.println(commentPrefix + "No password" + commentSuffix);
 			password = UI.userInput("Enter Password", true);
 			userEntered = true;
 		}
 		
-		return userEntered;
+		/**
+		    GSV found that that this should always return true
+		    or else the connection doesn't use some of the
+		    parameters passed in on the command line and fails
+		    @TODO must investigate why...
+		*/
+		return true;
 	}
 }
 
