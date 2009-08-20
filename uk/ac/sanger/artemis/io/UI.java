@@ -8,6 +8,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.IOException;
+
 /*
  * A class mediating between the IO package classes and the user. Determines 
  * how the user should be prompted (if at all) during the execution of file 
@@ -44,25 +48,42 @@ public class UI {
 		}
 	}
 	
+	private static String input()
+	{
+	    InputStreamReader reader = new InputStreamReader (System.in);
+        BufferedReader buf_reader = new BufferedReader (reader);
+        String result = "";
+        try {
+          result = buf_reader.readLine().trim(); // read the number as a string
+        }
+        catch (IOException ioe) {
+          System.out.println ("IO exception = " + ioe);
+        }
+        return result.trim();
+	}
+	
 	public static String userInput( final String prompt, final boolean password )
     {
-		String result;
-		if (password)
-		{
-			final char[] pChars = System.console().readPassword( prompt + ": " );
-			result = new String (pChars);
-		} else
-		{
-			result = System.console().readLine( prompt + ": " );
-		}
-	    
-	    return result.trim();
+        if (password == true)
+        {
+            UIEraserThread et = new UIEraserThread(prompt + ":  " );
+            Thread mask = new Thread(et);
+            mask.start();
+            String result = input();
+            et.stopMasking();
+            mask.stop();
+            // System.out.println("Password: " + result);
+            return result;
+        }
+        System.out.print(prompt + ": " );
+        return input();
     }
 	
 	public static boolean booleanUserInput(final String label, final String message)
 	{
 		if (mode == UIMode.SCRIPT)
 		{
+		    System.out.println(label + " : " + message + " : y");
 			return true;
 		}
 		
@@ -77,8 +98,8 @@ public class UI {
             msgPanel.add(scollMsg, BorderLayout.CENTER);
             
             int val = JOptionPane.OK_OPTION;
-            if(System.getProperty("noprompt") == null)
-              val = JOptionPane.showConfirmDialog(null, msgPanel,
+            //if(System.getProperty("noprompt") == null)
+            val = JOptionPane.showConfirmDialog(null, msgPanel,
                   "Keys/Qualifier", JOptionPane.OK_CANCEL_OPTION,
                   JOptionPane.QUESTION_MESSAGE);
             
@@ -88,17 +109,29 @@ public class UI {
 		
 		String input = "";
 		boolean valid = false;
-		while ( valid == false )
-		{
-			input = userInput(label + "\n" + message + "(y/n)", false);
-			if (input.equals("y"))
-				valid = true;
-			else if (input.equals("n"))
-				valid = true;
-		}
-		if (input.equals("y"))
-			return true;
-		return false;
+		
+		return boolConsoleInput(label + "\n" + message + "(y/n)");
+	}
+	
+	private static boolean boolConsoleInput(String prompt)
+	{
+	    System.out.print(prompt + ": " );
+	    InputStreamReader reader = new InputStreamReader (System.in);
+        BufferedReader buf_reader = new BufferedReader (reader);
+        String result = "";
+        try {
+          result = buf_reader.readLine().trim(); // read the number as a string
+        }
+        catch (IOException ioe) {
+          System.out.println ("IO exception = " + ioe);
+        }
+	    // System.out.println("Entered '" + result + "'");
+	    if (result.equals("y"))
+	        return true;
+	    if (result.equals("n"))
+	        return false;
+	    System.out.println("Please answer y or n");
+	    return boolConsoleInput(prompt);
 	}
 	
 	public static void info(String message, String heading)
@@ -128,5 +161,11 @@ public class UI {
 			break;
 		}
 	}
+	
+	
+	
+	
+    
+	
 	
 }
