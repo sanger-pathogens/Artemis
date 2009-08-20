@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.28 2009-04-17 13:51:37 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.29 2009-08-20 15:25:14 gv1 Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -40,7 +40,7 @@ import javax.swing.JOptionPane;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.28 2009-04-17 13:51:37 tjc Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.29 2009-08-20 15:25:14 gv1 Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -378,11 +378,12 @@ abstract public class SimpleDocumentEntry
 
     if(failed != null)
     {
-      JOptionPane.showMessageDialog(null, 
-          "Failed to use the following keys\n"+
-          failed.toString(),
-          "Warning - unknown keys",
-          JOptionPane.WARNING_MESSAGE);
+//      JOptionPane.showMessageDialog(null, 
+//          "Failed to use the following keys\n"+
+//          failed.toString(),
+//          "Warning - unknown keys",
+//          JOptionPane.WARNING_MESSAGE);
+      UI.warn("Failed to use the following keys\n"+failed.toString(), "Warning - unknown keys");
     }
     
     final Sequence new_sequence = new_entry.getSequence();
