@@ -1,8 +1,30 @@
-
+/* RunSamTools
+ *
+ * created: 2009
+ *
+ * This file is part of Artemis
+ *
+ * Copyright(C) 2009  Genome Research Limited
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or(at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
 package uk.ac.sanger.artemis.components.alignment;
 
 import java.io.*;
-import javax.swing.JTextArea;
+import java.util.List;
 
 /**
 * Used to run an samtools process this reads stdout and 
@@ -14,10 +36,10 @@ public class RunSamTools
   /** running process */
   private Process p;
   /** standard out */
-  private StringBuffer stdout = new StringBuffer();
+  private List<Read> readsInView;
   /** standard error */
   private StringBuffer stderr = new StringBuffer();
-  
+  private StringBuffer stdout = new StringBuffer();
   private String initialIOError = null;
   
   /** running directory */
@@ -26,8 +48,6 @@ public class RunSamTools
   private String status;
   private StdoutHandler stdouth;
   private StderrHandler stderrh;
-  private JTextArea textArea;
-
 
   /**
   * @param cmd              command to run
@@ -35,9 +55,12 @@ public class RunSamTools
   * @param project          running directory
   */
   public RunSamTools(String cmd[], 
-                     String[] envp, File project)
+                     String[] envp,
+                     File project,
+                     List<Read> readsInView)
   {
     //this.project = project;
+    this.readsInView = readsInView;
     status = "0";
 
     Runtime run = Runtime.getRuntime();
@@ -116,29 +139,36 @@ public class RunSamTools
   */
   private void readProcessStdout()
   {
-    BufferedInputStream stdoutStream = null;
+    InputStreamReader stdoutStream = null;
     BufferedReader stdoutRead = null;
     try
     {
       //String line;
       stdoutStream =
-         new BufferedInputStream(p.getInputStream());
+         new InputStreamReader(p.getInputStream());
       stdoutRead =
-         new BufferedReader(new InputStreamReader(stdoutStream));
-    
-      char c[] = new char[200];
-      int nc = 0;
-      String chunk;
-
-      while((nc = stdoutRead.read(c,0,200)) != -1)
+         new BufferedReader(stdoutStream);    
+      
+      String line;
+      while((line = stdoutRead.readLine()) != null)
       {
-        chunk  = new String(c,0,nc);
-        stdout = stdout.append(chunk);
-        if(textArea != null)
+        if(readsInView != null)
         {
-          textArea.append(chunk);
-          textArea.setCaretPosition(textArea.getDocument().getLength());
+          String fields[] = line.split("\t");
+
+          Read pread = new Read();
+          pread.qname = fields[0];
+          pread.flag  = Integer.parseInt(fields[1]);
+          pread.rname = fields[2];
+          pread.pos   = Integer.parseInt(fields[3]);
+          pread.mapq  = Short.parseShort(fields[4]);
+          pread.mpos  = Integer.parseInt(fields[7]);
+          pread.isize = Integer.parseInt(fields[8]);
+          pread.seq   = fields[9];
+          readsInView.add(pread);
         }
+        else
+          stdout.append(line+"\n");
       }
     }
     catch (IOException io)
@@ -172,59 +202,43 @@ public class RunSamTools
   }
 
   /**
-  * This method can be called after the process has completed
-  * to write the stdout to the project directory.
-  */
-//  private void writeStdout()
-//  {
-//    if(project != null)
-//    {
-//      PrintWriter out = null;
-//      String fname = "";
-//      try
-//      {
-//        fname = project.getCanonicalPath() + 
-//                             "/application_stdout";
-//        File so = new File(fname);
-//
-//        if(!so.exists())
-//          so.createNewFile();
-//
-//        out = new PrintWriter(new FileWriter(fname,true));
-//        out.println(stdout);
-//      }
-//      catch(IOException ioe)
-//      {
-//        System.err.println("RunEmbossApplication2: Error writing" +
-//                            fname);
-//      }
-//      finally
-//      {
-//        if(out!=null)
-//          out.close();
-//      }
-//    }
-//  }
-
-  /**
-  * @return standard out
-  */
-  public String getProcessStdout()
-  {
-    try
+   * @return standard out
+   */
+   public void waitForStdout()
+   {
+     try
+     {
+       // make sure we hang around for stdout
+       while(stdouth.isAlive())
+         Thread.sleep(10);
+     }
+     catch(InterruptedException ie)
+     {
+       ie.printStackTrace();
+     }
+                                                                                 
+     return;
+   }
+   
+   /**
+    * @return standard out
+    */
+    public String getProcessStdout()
     {
-      // make sure we hang around for stdout
-      while(stdouth.isAlive())
-        Thread.sleep(10);
+      try
+      {
+        // make sure we hang around for stdout
+        while(stdouth.isAlive())
+          Thread.sleep(10);
+      }
+      catch(InterruptedException ie)
+      {
+        ie.printStackTrace();
+      }
+                                                                                  
+      return stdout.toString();
     }
-    catch(InterruptedException ie)
-    {
-      ie.printStackTrace();
-    }
-                                                                                
-    return stdout.toString();
-  }
-
+   
   /**
   * @return stderr
   */

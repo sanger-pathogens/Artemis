@@ -1,4 +1,26 @@
-
+/* JamView
+ *
+ * created: 2009
+ *
+ * This file is part of Artemis
+ *
+ * Copyright(C) 2009  Genome Research Limited
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or(at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ */
 package uk.ac.sanger.artemis.components.alignment;
 
 import java.awt.BasicStroke;
@@ -61,7 +83,7 @@ public class JamView extends JPanel
   private Hashtable<String, Integer> seqLengths = new Hashtable<String, Integer>();
   private Vector<String> seqNames = new Vector<String>();
   private String bam;
-  private String sam;
+
   private EntryGroup entryGroup;
   private JScrollPane jspView;
   private JComboBox combo;
@@ -121,10 +143,13 @@ public class JamView extends JPanel
    */
   private void readHeader()
   {
-	String cmd[] = { "/Users/tjc/BAM/samtools-0.1.5c/samtools",  
+    String samtoolCmd = "";
+    if(System.getProperty("samtoolDir") != null)
+      samtoolCmd = System.getProperty("samtoolDir");
+    String cmd[] = { samtoolCmd+File.separator+"samtools",  
 			     "view", "-H", bam };
 	
-    RunSamTools samtools = new RunSamTools(cmd, null, null);
+    RunSamTools samtools = new RunSamTools(cmd, null, null, null);
 	
     if(samtools.getProcessStderr() != null)
       System.out.println(samtools.getProcessStderr());
@@ -181,42 +206,17 @@ public class JamView extends JPanel
 	for(int i=0; i<cmd.length;i++)
 	  System.out.print(cmd[i]+" ");
 	System.out.println();
-	RunSamTools samtools = new RunSamTools(cmd, null, null);
+	
+    if(readsInView == null)
+      readsInView = new Vector<Read>();
+    else
+      readsInView.clear();
+	RunSamTools samtools = new RunSamTools(cmd, null, null, readsInView);
 		
 	if(samtools.getProcessStderr() != null)
       System.out.println(samtools.getProcessStderr());
 	    
-	sam = samtools.getProcessStdout();
-
-	StringReader samReader = new StringReader(sam);
-	BufferedReader buff = new BufferedReader(samReader);
-	String line;
-	try 
-	{
-	  if(readsInView == null)
-	    readsInView = new Vector<Read>();
-	  else
-		readsInView.clear();
-	  while((line = buff.readLine()) != null)
-	  {
-		String fields[] = line.split("\t");
-
-		Read pread = new Read();
-		pread.qname = fields[0];
-		pread.flag  = Integer.parseInt(fields[1]);
-		pread.rname = fields[2];
-		pread.pos   = Integer.parseInt(fields[3]);
-		pread.mapq  = Short.parseShort(fields[4]);
-		pread.mpos  = Integer.parseInt(fields[7]);
-		pread.isize = Integer.parseInt(fields[8]);
-		pread.seq   = fields[9];
-		readsInView.add(pread);
-	  }
-	} 
-	catch (IOException e) 
-	{
-	  e.printStackTrace();
-	}
+	samtools.waitForStdout();
   }
   
   /**
@@ -465,6 +465,8 @@ public class JamView extends JPanel
     {
       public void itemStateChanged(ItemEvent e)
       {
+        laststart = -1;
+        lastend   = -1;
         setZoomLevel(JamView.this.nbasesInView);
       }
     });
@@ -492,7 +494,6 @@ public class JamView extends JPanel
     {
       public void mouseClicked(MouseEvent e)
       {
-        System.out.println("CLICK");
         JamView.this.requestFocus();
       }
     });
@@ -627,20 +628,6 @@ public class JamView extends JPanel
                         "location: " + e.getMessage());
     }
     return entry;
-  }
-  
-  class Read
-  {
-    String qname; // query name
-    int flag;     // bitwise flag
-    String rname; // reference name
-    int pos;      // leftmost coordinate
-    short mapq;   // MAPping Quality
-    String cigar; // extended CIGAR string
-    String mrnm;  // Mate Reference sequence NaMe; Ò=Ó if the same as rname
-    int mpos;     // leftmost Mate POSition
-    int isize;    // inferred Insert SIZE
-    String seq;   // query SEQuence; Ò=Ó for a match to the reference; n/N/. for ambiguity
   }
   
   class ReadComparator implements Comparator
