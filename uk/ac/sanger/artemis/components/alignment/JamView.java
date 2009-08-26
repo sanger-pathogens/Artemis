@@ -8,6 +8,8 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
@@ -17,7 +19,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collections;
@@ -28,6 +33,7 @@ import java.util.Vector;
 
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.Scrollable;
@@ -87,10 +93,14 @@ public class JamView extends JPanel
         e.printStackTrace();
       }
     }
+    
     readHeader();
     
+    // set font size
+    setFont(getFont().deriveFont(12.f));
     final javax.swing.plaf.FontUIResource font_ui_resource =
-      Options.getOptions().getFontUIResource();
+      new javax.swing.plaf.FontUIResource(getFont());
+   //  Options.getOptions().getFontUIResource();
 
     java.util.Enumeration keys = UIManager.getDefaults().keys();
     while(keys.hasMoreElements()) 
@@ -101,12 +111,14 @@ public class JamView extends JPanel
         UIManager.put(key, font_ui_resource);
     }
     FontMetrics fm  = getFontMetrics(getFont());
-    int boundWidth = fm.stringWidth("A")/5;
-    ALIGNMENT_PIX_PER_BASE  = fm.stringWidth("A")+boundWidth;
-
-    System.out.println(getFont().getFontName());
+    ALIGNMENT_PIX_PER_BASE  = (int) (fm.stringWidth("A")*1.1);
+    
+    System.out.println("Font size "+getFont().getSize());
   }
   
+  /**
+   * Read the BAM/SAM header
+   */
   private void readHeader()
   {
 	String cmd[] = { "/Users/tjc/BAM/samtools-0.1.5c/samtools",  
@@ -150,10 +162,20 @@ public class JamView extends JPanel
 	}
   }
   
-  private void readFromBam(int start, int end, boolean pair_sort)
+  /**
+   * Read data from BAM/SAM file for a region.
+   * @param start
+   * @param end
+   * @param pair_sort
+   */
+  private void readFromBam(int start, int end)
   {
     String refName = (String) combo.getSelectedItem();
-	String cmd[] = { "/Users/tjc/BAM/samtools-0.1.5c/samtools",  
+    
+    String samtoolCmd = "";
+    if(System.getProperty("samtoolDir") != null)
+      samtoolCmd = System.getProperty("samtoolDir");
+	String cmd[] = { samtoolCmd+File.separator+"samtools",  
 				     "view", bam, refName+":"+start+"-"+end };
 		
 	for(int i=0; i<cmd.length;i++)
@@ -190,9 +212,6 @@ public class JamView extends JPanel
 		pread.seq   = fields[9];
 		readsInView.add(pread);
 	  }
-	   
-	  if(pair_sort)
-	    Collections.sort(readsInView, new ReadComparator());
 	} 
 	catch (IOException e) 
 	{
@@ -213,38 +232,54 @@ public class JamView extends JPanel
 
 	float pixPerBase = ((float)getWidth())/(float)(seqLength);
 	
-	if(pixPerBase >= ALIGNMENT_PIX_PER_BASE)
-	  drawAlignment(g2, seqLength, pixPerBase);
-	else
-      drawLineView(g2, seqLength, pixPerBase);
-  }
-  
-  private void drawAlignment(Graphics2D g2, int seqLength, float pixPerBase)
-  {
     double x = jspView.getViewport().getViewRect().getX();
     int start = (int) (seqLength * ( (float)x / (float)getWidth()));
     int end   = (int) (start + ((float)jspView.getViewport().getWidth() / 
                                 (float)pixPerBase));
 
     if(laststart != start ||
-       lastend != end)
-      readFromBam(start, end, false);
+       lastend   != end)
+    {
+      try
+      {
+        readFromBam(start, end);      
+        if(pixPerBase < ALIGNMENT_PIX_PER_BASE)
+          Collections.sort(readsInView, new ReadComparator());
+      }
+      catch(OutOfMemoryError ome)
+      {
+        JOptionPane.showMessageDialog(this, "Out of Memory");
+        return;
+      }
+    }
     
     laststart = start;
     lastend   = end;
+	if(pixPerBase >= ALIGNMENT_PIX_PER_BASE)
+	  drawBaseAlignment(g2, seqLength, pixPerBase, start, end);
+	else
+      drawLineView(g2, seqLength, pixPerBase, start, end);
+  }
+  
+  private void drawBaseAlignment(Graphics2D g2, int seqLength, 
+                                 float pixPerBase, int start, int end)
+  {
+    FontMetrics fm =  getFontMetrics(getFont());
+    int ypos = fm.getHeight();
     
-    int ypos = 1;
-    
+    drawBaseScale(g2, start, end, ypos);
     boolean draw[] = new boolean[readsInView.size()];
     for(int i=0; i<readsInView.size(); i++)
       draw[i] = false;
+    
+    ypos+=6;
     
     for(int i=0; i<readsInView.size(); i++)
     {
       if (!draw[i])
       {
         Read thisRead = readsInView.get(i);
-        ypos = ypos + 10;
+        ypos+=10;
 
         drawSequence(g2, thisRead, pixPerBase, ypos);
         draw[i] = true;
@@ -259,14 +294,27 @@ public class JamView extends JPanel
             {
               drawSequence(g2, nextRead, pixPerBase, ypos);
               draw[j] = true;
-              break;
+              thisEnd = nextRead.pos+nextRead.seq.length();
             }
           }
         }
       }
     }
+    
+    if(ypos > getHeight())
+    {
+      setPreferredSize(new Dimension(getWidth(), ypos));
+      revalidate();
+    }
   }
   
+  /**
+   * Draw the query sequence
+   * @param g2
+   * @param read
+   * @param pixPerBase
+   * @param ypos
+   */
   private void drawSequence(Graphics2D g2, Read read, float pixPerBase, int ypos)
   {
     if ((read.flag & 0x0001) != 0x0001 || 
@@ -285,20 +333,8 @@ public class JamView extends JPanel
     
   }
   
-  private void drawLineView(Graphics2D g2, int seqLength, float pixPerBase)
-  {
-    double x = jspView.getViewport().getViewRect().getX();
-    int start = (int) (seqLength * ( (float)x / (float)getWidth()));
-    int end   = (int) (start + ((float)jspView.getViewport().getWidth() / 
-                                (float)pixPerBase));
-
-    if(laststart != start ||
-       lastend != end)
-      readFromBam(start, end, true);
-    
-    laststart = start;
-    lastend   = end;
-    
+  private void drawLineView(Graphics2D g2, int seqLength, float pixPerBase, int start, int end)
+  {   
     drawScale(g2, start, end, pixPerBase);
     
     Stroke originalStroke = g2.getStroke();
@@ -346,6 +382,19 @@ public class JamView extends JPanel
     }
   }
   
+  private void drawBaseScale(Graphics2D g2, int start, int end, int ypos)
+  {
+    int startMark = (((int)(start/10))*10)+1;
+
+    for(int i=startMark; i<end; i+=10)
+    {
+      int xpos = (i-1)*ALIGNMENT_PIX_PER_BASE;
+      g2.drawString(Integer.toString(i), xpos, ypos);
+      
+      xpos+=(ALIGNMENT_PIX_PER_BASE/2);
+      g2.drawLine(xpos, ypos+1, xpos, ypos+5);
+    }
+  }
   
   private void drawScale(Graphics2D g2, int start, int end, float pixPerBase)
   {
@@ -405,10 +454,11 @@ public class JamView extends JPanel
     return thisStart;
   }
   
-  public void showJFrame()
+  public void addToPanel(final JPanel panel)
   {
-    JFrame frame = new JFrame("JamTool");
-
+    JPanel topPanel = new JPanel(new GridBagLayout());
+    GridBagConstraints gc = new GridBagConstraints();
+    
     combo = new JComboBox(seqNames);
     combo.setEditable(false);
     combo.addItemListener(new ItemListener()
@@ -418,22 +468,34 @@ public class JamView extends JPanel
         setZoomLevel(JamView.this.nbasesInView);
       }
     });
+    gc.fill = GridBagConstraints.NONE;
+    gc.anchor = GridBagConstraints.FIRST_LINE_START;
+    topPanel.add(combo, gc);
     
-    frame.setPreferredSize(new Dimension(1000,500));
+    panel.setPreferredSize(new Dimension(1000,500));
     setLength(nbasesInView);
     
     jspView = new JScrollPane(this, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                                     JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         
-    JPanel panel = (JPanel) frame.getContentPane();
-
     panel.setLayout(new BorderLayout());
-    panel.add(combo, BorderLayout.NORTH);
+    panel.add(topPanel, BorderLayout.NORTH);
     panel.add(jspView, BorderLayout.CENTER);
-    frame.pack();
+
+    jspView.getVerticalScrollBar().setValue(
+        jspView.getVerticalScrollBar().getMaximum());
     
     setFocusable(true);
     requestFocusInWindow();
+    
+    addMouseListener(new MouseAdapter()
+    {
+      public void mouseClicked(MouseEvent e)
+      {
+        System.out.println("CLICK");
+        JamView.this.requestFocus();
+      }
+    });
     
     addKeyListener(new KeyAdapter()
     {
@@ -464,8 +526,6 @@ public class JamView extends JPanel
       public void focusGained(FocusEvent fe) {}
       public void focusLost(FocusEvent fe) {}
     });
-
-    frame.setVisible(true);
   }
   
   private int getBaseAtStartOfView()
@@ -515,7 +575,10 @@ public class JamView extends JPanel
     
     System.out.println(pixPerBase+"  "+ALIGNMENT_PIX_PER_BASE);
     if(pixPerBase > ALIGNMENT_PIX_PER_BASE)
+    {
       pixPerBase = ALIGNMENT_PIX_PER_BASE;
+      jspView.getVerticalScrollBar().setValue(0);
+    }
     Dimension d = new Dimension();
     d.setSize((seqLength*pixPerBase), 800.d);
     setPreferredSize(d);
@@ -645,12 +708,36 @@ public class JamView extends JPanel
   public static void main(String[] args)
   {
     String bam = args[0];
-    int nbasesInView = Integer.parseInt(args[1]);
+    int nbasesInView = 1000;
     String reference = null;
-    //if(args.length > 2)
-    //  reference = args[2];
     
+    for(int i=0;i<args.length; i++)
+    {
+      if(args[i].equals("-a"))
+        bam = args[++i];
+      else if(args[i].equals("-r"))
+        reference = args[++i];
+      else if(args[i].equals("-v"))
+        nbasesInView = Integer.parseInt(args[++i]);
+      else if(args[i].equals("-s"))
+        System.setProperty("samtoolDir", args[++i]);
+      else if(args[i].startsWith("-h"))
+      { 
+        System.out.println("-h\t show help");
+        
+        System.out.println("-a\t BAM/SAM file to display");
+        System.out.println("-r\t reference file (optional)");
+        System.out.println("-v\t number of bases to display in the view (optional)");
+        System.out.println("-s\t samtool directory");
+
+        System.exit(0);
+      }
+    }
+
     JamView view = new JamView(bam, reference, nbasesInView);
-    view.showJFrame();
+    JFrame frame = new JFrame("JAM");
+    view.addToPanel((JPanel)frame.getContentPane());
+    frame.pack();
+    frame.setVisible(true);
   }
 }
