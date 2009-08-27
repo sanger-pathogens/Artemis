@@ -162,6 +162,8 @@ public class RunSamTools
           pread.rname = fields[2];
           pread.pos   = Integer.parseInt(fields[3]);
           pread.mapq  = Short.parseShort(fields[4]);
+          pread.cigar = fields[5];
+          pread.mrnm  = fields[6];
           pread.mpos  = Integer.parseInt(fields[7]);
           pread.isize = Integer.parseInt(fields[8]);
           pread.seq   = fields[9];

@@ -35,6 +35,8 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
@@ -43,6 +45,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -53,6 +57,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -87,6 +92,7 @@ public class JamView extends JPanel
   private EntryGroup entryGroup;
   private JScrollPane jspView;
   private JComboBox combo;
+  private JCheckBox checkBoxSingle;
   private int nbasesInView;
   private int laststart;
   private int lastend;
@@ -134,8 +140,6 @@ public class JamView extends JPanel
     }
     FontMetrics fm  = getFontMetrics(getFont());
     ALIGNMENT_PIX_PER_BASE  = (int) (fm.stringWidth("A")*1.1);
-    
-    System.out.println("Font size "+getFont().getSize());
   }
   
   /**
@@ -200,8 +204,10 @@ public class JamView extends JPanel
     String samtoolCmd = "";
     if(System.getProperty("samtoolDir") != null)
       samtoolCmd = System.getProperty("samtoolDir");
+    
 	String cmd[] = { samtoolCmd+File.separator+"samtools",  
-				     "view", bam, refName+":"+start+"-"+end };
+				     "view", 
+				     bam, refName+":"+start+"-"+end };
 		
 	for(int i=0; i<cmd.length;i++)
 	  System.out.print(cmd[i]+" ");
@@ -339,46 +345,93 @@ public class JamView extends JPanel
     
     Stroke originalStroke = g2.getStroke();
     Stroke stroke =
-            new BasicStroke (2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
+            new BasicStroke (1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
     int scaleHeight = 15;
     
     for(int i=0; i<readsInView.size(); i++)
     {
       Read thisRead = readsInView.get(i);
-      Read nextRead = null;
-      
-      if( (thisRead.flag & 0x0001) != 0x0001 ||
-          (thisRead.flag & 0x0008) == 0x0008 )  // not single read
-        continue;
-      
-      if(i < readsInView.size()-1)
+      Read nextRead = null;      
+
+      if( (thisRead.flag & 0x0001) != 0x0001 || // read is not paired in sequencing
+          (thisRead.flag & 0x0008) == 0x0008 )  // mate is unmapped 
       {
-        nextRead = readsInView.get(i+1);
-        i++;
+        if(checkBoxSingle.isSelected())
+        {
+          System.out.println("HERE "+thisRead.qname+
+              "\t\t pos "+thisRead.pos+"\tseq length "+thisRead.seq.length()+
+              "\tisize "+thisRead.isize);
+          int ypos = (getHeight() - scaleHeight) - thisRead.seq.length();
+          g2.setColor(Color.orange);
+          drawRead(g2, thisRead, pixPerBase, stroke, ypos);
+        }
+        continue;
       }
       
-      if(nextRead != null &&
-         (nextRead.flag & 0x0001) == 0x0001 &&
-         (nextRead.flag & 0x0008) != 0x0008 )
-      {         
+      int ypos = (getHeight() - scaleHeight) - ( Math.abs(thisRead.isize) );
+      if(i < readsInView.size()-1)
+      {
+        nextRead = readsInView.get(++i);
+        
         if(thisRead.qname.equals(nextRead.qname))
         {
-          if( (thisRead.flag & 0x0010) == 0x0010 &&
+          if( (thisRead.flag & 0x0010) == 0x0010 && // strand of the query (1 for reverse)
               (nextRead.flag & 0x0010) == 0x0010 )
             g2.setColor(Color.red);
           else
             g2.setColor(Color.blue);
+ 
+          int thisEnd = drawRead(g2, thisRead, pixPerBase, stroke, ypos)[1];
+          int nextStart = drawRead(g2, nextRead, pixPerBase, stroke, ypos)[0];
           
-          int ypos = (getHeight() - scaleHeight) - ( Math.abs(thisRead.isize) );
-          int thisStart = drawRead(g2, thisRead, pixPerBase, stroke, ypos);
-          int nextStart = drawRead(g2, nextRead, pixPerBase, stroke, ypos);
-          g2.setStroke(originalStroke);
-          g2.setColor(Color.LIGHT_GRAY);
-          g2.drawLine(thisStart, ypos, nextStart, ypos);
+          if(thisEnd < nextStart && (nextStart-thisEnd)*pixPerBase > 2.f)
+          {
+            g2.setStroke(originalStroke);
+            g2.setColor(Color.LIGHT_GRAY);
+            g2.drawLine((int)(thisEnd*pixPerBase), ypos, (int)(nextStart*pixPerBase), ypos);
+          }
         }
         else
+        {
+          drawLoneRead(g2, thisRead, ypos, pixPerBase, originalStroke, stroke);
           i--;
+        }
       }
+      else
+      {
+        drawLoneRead(g2, thisRead, ypos, pixPerBase, originalStroke, stroke);
+      }
+    }
+  }
+  
+  /**
+   * Draw a read that apparently has a read mate that is not in view.
+   * @param g2
+   * @param thisRead
+   * @param ypos
+   * @param pixPerBase
+   * @param originalStroke
+   * @param stroke
+   */
+  private void drawLoneRead(Graphics2D g2, Read thisRead, int ypos, 
+      float pixPerBase, Stroke originalStroke, Stroke stroke)
+  {
+    boolean drawLine = true;
+    g2.setColor(Color.blue); 
+    if(ypos <= 0)
+    {
+      ypos = thisRead.seq.length();
+      drawLine = false;
+      g2.setColor(Color.orange); 
+    }
+
+    int thisEnd = drawRead(g2, thisRead, pixPerBase, stroke, ypos)[1];
+    if(drawLine)
+    {
+      g2.setStroke(originalStroke);
+      g2.setColor(Color.LIGHT_GRAY);
+      int nextStart = (int) ((thisRead.mpos-1)*pixPerBase);
+      g2.drawLine((int)(thisEnd*pixPerBase), ypos, nextStart, ypos);
     }
   }
   
@@ -444,14 +497,14 @@ public class JamView extends JPanel
     }
   }
   
-  private int drawRead(Graphics2D g2, Read read,
+  private int[] drawRead(Graphics2D g2, Read read,
 		               float pixPerBase, Stroke stroke, int ypos)
   {
-    int thisStart = (int) ((read.pos-1)*pixPerBase);
-    int thisEnd   = (int) (thisStart + (read.seq.length()*pixPerBase));
+    int thisStart = read.pos-1;
+    int thisEnd   = thisStart + read.seq.length();
     g2.setStroke(stroke);
-    g2.drawLine(thisStart, ypos, thisEnd, ypos);
-    return thisStart;
+    g2.drawLine((int)(thisStart*pixPerBase), ypos, (int)(thisEnd*pixPerBase), ypos);
+    return new int[] { thisStart, thisEnd };
   }
   
   public void addToPanel(final JPanel panel)
@@ -474,6 +527,16 @@ public class JamView extends JPanel
     gc.anchor = GridBagConstraints.FIRST_LINE_START;
     topPanel.add(combo, gc);
     
+    checkBoxSingle = new JCheckBox("Single Reads");
+    checkBoxSingle.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        repaint();
+      }
+    });
+    topPanel.add(checkBoxSingle, gc);
+    
     panel.setPreferredSize(new Dimension(1000,500));
     setLength(nbasesInView);
     
@@ -486,10 +549,7 @@ public class JamView extends JPanel
 
     jspView.getVerticalScrollBar().setValue(
         jspView.getVerticalScrollBar().getMaximum());
-    
-    setFocusable(true);
-    requestFocusInWindow();
-    
+       
     addMouseListener(new MouseAdapter()
     {
       public void mouseClicked(MouseEvent e)
@@ -522,6 +582,8 @@ public class JamView extends JPanel
       }
     });
     
+    setFocusable(true);
+    requestFocusInWindow();
     addFocusListener(new FocusListener() 
     {
       public void focusGained(FocusEvent fe) {}
@@ -721,10 +783,22 @@ public class JamView extends JPanel
       }
     }
 
-    JamView view = new JamView(bam, reference, nbasesInView);
+    final JamView view = new JamView(bam, reference, nbasesInView);
     JFrame frame = new JFrame("JAM");
+    
+    frame.addWindowFocusListener(new WindowFocusListener()
+    {
+      public void windowGainedFocus(WindowEvent e)
+      {
+        view.requestFocus();
+      }
+      public void windowLostFocus(WindowEvent e){}
+    });
+    
     view.addToPanel((JPanel)frame.getContentPane());
     frame.pack();
+    view.jspView.getVerticalScrollBar().setValue(
+        view.jspView.getVerticalScrollBar().getMaximum());
     frame.setVisible(true);
   }
 }

@@ -35,4 +35,18 @@ class Read
   int mpos;     // leftmost Mate POSition
   int isize;    // inferred Insert SIZE
   String seq;   // query SEQuence; Ò=Ó for a match to the reference; n/N/. for ambiguity
+  
+  public String toString()
+  {
+    return qname+"\t"+
+           flag+"\t"+
+           rname+"\t"+
+           pos+"\t"+
+           mapq+"\t"+
+           cigar+"\t"+
+           mrnm+"\t"+
+           mpos+"\t"+
+           isize+"\t"+
+           seq;
+  }
 }
