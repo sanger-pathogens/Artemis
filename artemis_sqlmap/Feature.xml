@@ -440,7 +440,7 @@
 	LEFT JOIN cvterm AS cv_fr ON cv_fr.cvterm_id=fr.type_id
 	LEFT JOIN cvterm AS cv_f  ON cv_f.cvterm_id=f.type_id
 	WHERE f.feature_id IN <iterate open="(" close=")" conjunction=","> #[]# </iterate>
-	  AND cv_f.name LIKE '%match%'
+	  AND (cv_fr.name='orthologous_to' OR cv_fr.name='paralogous_to') <!-- cv_f.name LIKE '%match%' -->
   </select>
 
   <select id="getSchema" resultClass="java.lang.String">
