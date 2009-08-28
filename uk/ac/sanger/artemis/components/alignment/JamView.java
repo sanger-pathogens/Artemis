@@ -93,6 +93,7 @@ public class JamView extends JPanel
   private JScrollPane jspView;
   private JComboBox combo;
   private JCheckBox checkBoxSingle;
+  Ruler ruler = new Ruler();
   private int nbasesInView;
   private int laststart;
   private int lastend;
@@ -268,12 +269,16 @@ public class JamView extends JPanel
   }
   
   private void drawBaseAlignment(Graphics2D g2, int seqLength, 
-                                 float pixPerBase, int start, int end)
+                                 float pixPerBase, final int start, final int end)
   {
     FontMetrics fm =  getFontMetrics(getFont());
-    int ypos = fm.getHeight();
+    int ypos = 0;
     
-    drawBaseScale(g2, start, end, ypos);
+    ruler.start = start;
+    ruler.end = end;
+    ruler.repaint();
+    
+    //drawBaseScale(g2, start, end, ypos);
     boolean draw[] = new boolean[readsInView.size()];
     for(int i=0; i<readsInView.size(); i++)
       draw[i] = false;
@@ -441,7 +446,7 @@ public class JamView extends JPanel
 
     for(int i=startMark; i<end; i+=10)
     {
-      int xpos = (i-1)*ALIGNMENT_PIX_PER_BASE;
+      int xpos = (i-1-start)*ALIGNMENT_PIX_PER_BASE;
       g2.drawString(Integer.toString(i), xpos, ypos);
       
       xpos+=(ALIGNMENT_PIX_PER_BASE/2);
@@ -641,7 +646,10 @@ public class JamView extends JPanel
     {
       pixPerBase = ALIGNMENT_PIX_PER_BASE;
       jspView.getVerticalScrollBar().setValue(0);
+      jspView.setColumnHeaderView(ruler);
     }
+    else if(jspView != null)
+      jspView.setColumnHeaderView(null);
     Dimension d = new Dimension();
     d.setSize((seqLength*pixPerBase), 800.d);
     setPreferredSize(d);
@@ -690,6 +698,27 @@ public class JamView extends JPanel
                         "location: " + e.getMessage());
     }
     return entry;
+  }
+  
+  class Ruler extends JPanel
+  {
+    int start;
+    int end;
+    
+    public Ruler()
+    {
+      super();
+      setPreferredSize(new Dimension(getPreferredSize().width, 15));
+      setBackground(Color.white);
+      setFont(getFont().deriveFont(11.f));
+    }
+    
+    public void paintComponent(Graphics g)
+    {
+      super.paintComponent(g);
+      Graphics2D g2 = (Graphics2D)g;
+      drawBaseScale(g2, start, end, 12);
+    }
   }
   
   class ReadComparator implements Comparator
