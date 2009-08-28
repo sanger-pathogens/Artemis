@@ -56,6 +56,7 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
   private boolean loadGeneName = false;
   
   private String value;
+  private String name;
   private GFFStreamFeature feature;
   private List clusters;
   
@@ -64,9 +65,12 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
    * @param matchFeature
    * @param featureId
    */
-  public ClusterLazyQualifierValue(final String value, final GFFStreamFeature feature)
+  public ClusterLazyQualifierValue(final String value, 
+                                   final String name,
+                                   final GFFStreamFeature feature)
   {
     this.value = value;
+    this.name = name;
     this.feature = feature;
   }
 
@@ -177,7 +181,34 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
       final Feature clusterFeature = (Feature)clusters.get(i);
       
       if(clusterFeature.getCvTerm().getName().indexOf("match") < 0)
+      {
+        // this looks like an ortho/paralog stored without a match feature
+        // and just a feature relationship between features
+        if(clusterFeature.getCvTerm().getName().equals("polypeptide") ||
+           clusterFeature.getCvTerm().getName().equals("gene"))
+        {
+          final DatabaseDocument document = 
+            (DatabaseDocument)feature.getDocumentEntry().getDocument();
+          Feature matchFeature = 
+            document.getFeatureByUniquename(clusterFeature.getUniqueName());
+
+          value = value.concat(matchFeature.getOrganism().getCommonName()+":");
+          if(loadGeneName)
+          {
+            String geneName = getGeneName(matchFeature);
+            value = value.concat(geneName+" ");
+          }
+  
+          value = value.concat("link="+matchFeature.getUniqueName());
+          value = value.concat(" type="+name);
+  
+          String product = getProduct(matchFeature);
+          if(product != null)
+            value = value.concat("; product="+product);
+        }
+        
         continue;
+      }
 
       final Collection subjects = clusterFeature.getFeatureRelationshipsForSubjectId();
       Iterator it = subjects.iterator();

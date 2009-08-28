@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.71 2009-08-14 10:16:53 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFStreamFeature.java,v 1.72 2009-08-28 10:33:12 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -51,7 +51,7 @@ import uk.ac.sanger.artemis.util.StringVector;
  *  A StreamFeature that thinks it is a GFF feature.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFStreamFeature.java,v 1.71 2009-08-14 10:16:53 tjc Exp $
+ *  @version $Id: GFFStreamFeature.java,v 1.72 2009-08-28 10:33:12 tjc Exp $
  **/
 
 public class GFFStreamFeature extends SimpleDocumentFeature
@@ -362,7 +362,7 @@ public class GFFStreamFeature extends SimpleDocumentFeature
             List lazyValues = new Vector();
             for(int i=0; i<values.size(); i++)
               lazyValues.add(
-                  new ClusterLazyQualifierValue( (String)values.get(i), 
+                  new ClusterLazyQualifierValue( (String)values.get(i), name,
                                          this ));
             
             setQualifier(new QualifierLazyLoading(name, lazyValues));
