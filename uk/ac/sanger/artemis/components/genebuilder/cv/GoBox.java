@@ -44,7 +44,6 @@ import org.gmod.schema.cv.CvTerm;
 
 import uk.ac.sanger.artemis.Options;
 import uk.ac.sanger.artemis.components.genebuilder.JExtendedComboBox;
-import uk.ac.sanger.artemis.components.Splash;
 import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.editor.BrowserControl;
 import uk.ac.sanger.artemis.io.Qualifier;
@@ -427,8 +426,8 @@ public class GoBox extends AbstractCvBox
     
     String updatedQualifierString = updateQualifierString();
     
-    logger4j.warn(origQualifierString);
-    logger4j.warn(updatedQualifierString);
+    logger4j.debug(origQualifierString);
+    logger4j.debug(updatedQualifierString);
     oldValues.add(value_index, updatedQualifierString);
     
     origQualifier = new Qualifier(origQualifier.getName(), oldValues);
