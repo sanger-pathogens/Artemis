@@ -159,4 +159,12 @@
           $cvTerm.cvTermId$, $rank$ )
    </insert>
    
+   <delete id="deleteFeatureRelationship" 
+           parameterClass="FeatureRelationship">
+      DELETE FROM feature_relationship WHERE 
+       object_id=(SELECT feature_id FROM feature WHERE uniquename=#featureByObjectId.uniqueName#) 
+      AND 
+       subject_id=(SELECT feature_id FROM feature WHERE uniquename=#featureBySubjectId.uniqueName#) 
+      AND type_id=$cvTerm.cvTermId$;
+   </delete>
 </sqlMap> 

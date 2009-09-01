@@ -835,6 +835,8 @@ public class IBatisDAO extends GmodDAO
       sqlMap.delete("deleteFeatureCvTerm", o);
     else if(o instanceof FeaturePub)
       sqlMap.delete("deleteFeaturePub", o);
+    else if(o instanceof FeatureRelationship)
+      sqlMap.delete("deleteFeatureRelationship", o);
     else if(o instanceof AnalysisFeature)
       deleteAnalysisFeature((AnalysisFeature)o);
   }
