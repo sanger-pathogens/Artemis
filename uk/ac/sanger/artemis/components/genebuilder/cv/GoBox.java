@@ -112,6 +112,10 @@ public class GoBox extends AbstractCvBox
   private static Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
   private static Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
   private static Cursor chand = new Cursor(Cursor.HAND_CURSOR);
+  
+  public static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(GoBox.class);
+  
   private static String AMIGOURL;
   
   protected GoBox(final Qualifier qualifier,
@@ -360,66 +364,74 @@ public class GoBox extends AbstractCvBox
   protected void updateQualifier(final QualifierVector qv)
   {
     int index = qv.indexOfQualifierWithName(origQualifier.getName());
-    Qualifier newQualifier = qv.getQualifierByName(origQualifier.getName());
+    Qualifier oldQualifier = qv.getQualifierByName(origQualifier.getName());
     
     final String goId = getField("GOid=", origQualifierString);
     
-    StringVector values = newQualifier.getValues();
+    StringVector oldValues = oldQualifier.getValues();
     Vector values_index = new Vector();
-    for(int i=0; i<values.size(); i++)
+    for(int i=0; i<oldValues.size(); i++)
     {
-      String newGoId = getField("GOid=", (String)values.get(i));
+      String oldValue = (String)oldValues.get(i);
+      String newGoId = getField("GOid=", oldValue);
       if(newGoId.equals(goId))
         values_index.add(new Integer(i));
     }
   
-    int value_index = -99;
     if(values_index.size() > 0)
-    {
-      if(values_index.size() == 1)
-        value_index = ((Integer)values_index.get(0)).intValue();
-      else
+    { 
+      String oldValue = (String) oldValues.get(value_index);
+      String oldGoId  = getField("GOid=", oldValue);
+      
+      if(!goId.equals(oldGoId))
       {
-        final String with = getField("with=", origQualifierString);
-        final String evidence = getField("evidence=", origQualifierString);
-        final String dbxref = getField("dbxref=", origQualifierString);
-        for(int i=0; i<values_index.size(); i++)
+        if(values_index.size() == 1)
+        value_index = ((Integer)values_index.get(0)).intValue();
+        else
         {
-          int ind = ((Integer)values_index.get(i)).intValue();
-          value_index = ind;
-          String value = (String) values.get(ind);
-
-          String thisEvidence = getField("evidence=", value);
-          if(thisEvidence.equals(evidence))
-            break;
-
-          if(!with.equals(""))
+          final String with = getField("with=", origQualifierString);
+          final String evidence = getField("evidence=", origQualifierString);
+          final String dbxref = getField("dbxref=", origQualifierString);
+          for(int i=0; i<values_index.size(); i++)
           {
-            String thisWith = getField("with=", value);
-            if(thisWith.equals(with))
-              break;
-          }
+            int ind = ((Integer)values_index.get(i)).intValue();
+            value_index = ind;
+            String value = (String) oldValues.get(ind);
+
+            if(!with.equals(""))
+            {
+              String thisWith = getField("with=", value);
+              if(thisWith.equals(with))
+                break;
+            }
           
-          if(!dbxref.equals(""))
-          {
-            String thisDbxref = getField("dbxref=", value);
-            if(thisDbxref.equals(dbxref))
+            if(!dbxref.equals(""))
+            {
+              String thisDbxref = getField("dbxref=", value);
+              if(thisDbxref.equals(dbxref))
+                break;
+            }
+          
+            String thisEvidence = getField("evidence=", value);
+            if(thisEvidence.equals(evidence))
               break;
           }
         }
       }
     }
+    else
+      value_index = -99;
 
     if(value_index > -1)
-      values.remove(value_index);
+      oldValues.remove(value_index);
     
     String updatedQualifierString = updateQualifierString();
     
-    Splash.logger4j.debug(origQualifierString);
-    Splash.logger4j.debug(updatedQualifierString);
-    values.add(value_index, updatedQualifierString);
+    logger4j.warn(origQualifierString);
+    logger4j.warn(updatedQualifierString);
+    oldValues.add(value_index, updatedQualifierString);
     
-    origQualifier = new Qualifier(origQualifier.getName(), values);
+    origQualifier = new Qualifier(origQualifier.getName(), oldValues);
     qv.remove(index);
     qv.add(index, origQualifier);
   }
@@ -462,7 +474,7 @@ public class GoBox extends AbstractCvBox
       newQualifierString = changeField("date=", dateField.getText().trim(), 
                                        newQualifierString);
     }
-    
+
     return newQualifierString;
   }
 
