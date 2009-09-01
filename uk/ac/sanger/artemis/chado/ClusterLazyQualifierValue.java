@@ -204,7 +204,9 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
   
           String product = getProduct(matchFeature);
           if(product != null)
-            value = value.concat("; product="+product);
+            value = value.concat(";product="+product);
+          
+          value = value.concat(";match_name="+matchFeature.getUniqueName());
         }
         
         continue;

@@ -518,7 +518,8 @@ public class ArtemisUtils
    * @return
    */
   protected static Feature getMatchFeatureWithFeatureRelations(final String uniqueName,
-      final String qualifierName, String qualifierString, final GFFStreamFeature feature)
+      final String qualifierName, String qualifierString, final GFFStreamFeature feature,
+      final boolean isDelete)
   {
     final int queryFeatureId;
     
@@ -559,7 +560,18 @@ public class ArtemisUtils
     String matchName   = getString(qualifierStrings, "match_name");
     String clusterName = getString(qualifierStrings, "cluster_name");
     if(!matchName.equals(""))
-      matchFeature.setUniqueName(matchName.substring(11));
+    {
+      // there is no match feature just a direct feature_relationship link
+      if(link.equals(matchName.substring(11)))
+      {
+        if(isDelete)
+          return null;
+        else
+          matchFeature.setUniqueName("ORTHO_PARA_" + uniqueName + "_" + link);
+      }
+      else
+        matchFeature.setUniqueName(matchName.substring(11));
+    }
     else if(!clusterName.equals(""))
       matchFeature.setUniqueName(clusterName.substring(13));
     else

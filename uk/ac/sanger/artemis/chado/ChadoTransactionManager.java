@@ -98,7 +98,7 @@ public class ChadoTransactionManager
     org.apache.log4j.Logger.getLogger(ChadoTransactionManager.class);
   
   public static boolean addSegments = true;
-  private Vector sql = new Vector();
+  private Vector<ChadoTransaction> sql = new Vector<ChadoTransaction>();
   
   /** GFF3 predefined tags, i.e. not feature_prop's */
   private static String reserved_tags[] = 
@@ -1644,13 +1644,21 @@ public class ChadoTransactionManager
            
            org.gmod.schema.sequence.Feature matchFeature =
              ArtemisUtils.getMatchFeatureWithFeatureRelations(uniquename, qualifierName, 
-                 qualifierString, feature);
+                 qualifierString, feature, true);
            
-           tsn = new ChadoTransaction(ChadoTransaction.DELETE,
-               matchFeature,
-               null, (GFFStreamFeature)null, feature.getKey().getKeyString(),
-               qualifierName.toUpperCase()+ ": ID="+uniquename+" "+qualifierString);
-           sql.add(tsn);  
+           if(matchFeature == null)
+           {
+             logger4j.debug("NO MATCH FEATURE FOUND. DELETE FEATURE_RELATIONSHIP");
+             deleteFeatureRelationShip(qualifierName, qualifierString, uniquename, feature);
+           }
+           else
+           {
+             tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+                 matchFeature,
+                 null, (GFFStreamFeature)null, feature.getKey().getKeyString(),
+                 qualifierName.toUpperCase()+ ": ID="+uniquename+" "+qualifierString);
+             sql.add(tsn);
+           }
          }
          else
            logger4j.warn("Ignoring reserved tag missing : "+qualifierName);
@@ -1839,7 +1847,7 @@ public class ChadoTransactionManager
       
       org.gmod.schema.sequence.Feature matchFeature =
         ArtemisUtils.getMatchFeatureWithFeatureRelations(uniquename, qualifierName, 
-            qualifierString, feature);
+            qualifierString, feature, false);
       
       if(isDuplicate)
       {
@@ -2371,6 +2379,45 @@ public class ChadoTransactionManager
     
     logger4j.debug("Finished building FeatureCvTerm for "+uniqueName);
     return feature_cvterm;
+  }
+  
+  private void deleteFeatureRelationShip(final String qualifierName, 
+                                         final String qualifierString, 
+                                         final String uniquename,
+                                         final GFFStreamFeature feature)
+  {
+    FeatureRelationship fr = new FeatureRelationship();
+    
+    // orthologous_to or paralogous_to should be retrieved from sequence ontology !!
+    CvTerm cvterm = DatabaseDocument.getCvTermByCvAndCvTerm(qualifierName, "sequence");
+    
+    org.gmod.schema.sequence.Feature objectFeature = new org.gmod.schema.sequence.Feature();
+    objectFeature.setUniqueName(uniquename);
+    
+    int index1 = qualifierString.indexOf("link=")+5;
+    int index2 = qualifierString.indexOf("type=");
+    String link = qualifierString.substring(index1, index2).trim();
+    org.gmod.schema.sequence.Feature subjectFeature = new org.gmod.schema.sequence.Feature();
+    subjectFeature.setUniqueName(link);
+    
+    fr.setFeatureByObjectId(objectFeature);
+    fr.setFeatureBySubjectId(subjectFeature);
+    fr.setCvTerm(cvterm);
+
+    ChadoTransaction tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+        fr,
+        null, (GFFStreamFeature)null, feature.getKey().getKeyString(),
+        qualifierName.toUpperCase()+ ": ID="+uniquename+" "+qualifierString);
+    sql.add(tsn);
+    
+    
+    fr.setFeatureByObjectId(subjectFeature);
+    fr.setFeatureBySubjectId(objectFeature);
+    tsn = new ChadoTransaction(ChadoTransaction.DELETE,
+        fr,
+        null, (GFFStreamFeature)null, feature.getKey().getKeyString(),
+        qualifierName.toUpperCase()+ ": ID="+uniquename+" "+qualifierString);
+    sql.add(tsn);
   }
   
   public static CvTerm getCvTerm(final String cvTermName, final String cvName,
