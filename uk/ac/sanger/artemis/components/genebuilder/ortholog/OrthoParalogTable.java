@@ -698,6 +698,11 @@ public class OrthoParalogTable extends AbstractMatchTable
     String clusterName = (String)getTable().getValueAt(row, getColumnIndex(CLUSTER_NAME_COL));
     if(clusterName != null && !clusterName.equals(""))
       orthologStr.append("cluster_name="+clusterName+ ";" ); // cluster name
+
+    String product = (String)getTable().getValueAt(row, getColumnIndex(PRODUCT_COL));
+    if(product != null && !product.equals(""))
+      orthologStr.append("product="+product+ ";" );
+    
     
     String matchName = (String)getTable().getValueAt(row, getColumnIndex(MATCH_NAME_COL));
     if(matchName != null && !matchName.equals(""))
