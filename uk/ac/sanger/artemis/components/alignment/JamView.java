@@ -74,6 +74,7 @@ import uk.ac.sanger.artemis.SimpleEntryGroup;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.io.EntryInformation;
+import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.sequence.Bases;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.Document;
@@ -89,10 +90,11 @@ public class JamView extends JPanel
   private Vector<String> seqNames = new Vector<String>();
   private String bam;
 
-  private EntryGroup entryGroup;
+  private Bases bases;
   private JScrollPane jspView;
   private JComboBox combo;
   private JCheckBox checkBoxSingle;
+
   Ruler ruler = new Ruler();
   private int nbasesInView;
   private int laststart;
@@ -112,7 +114,7 @@ public class JamView extends JPanel
     
     if(reference != null)
     {
-      entryGroup = new SimpleEntryGroup();
+      EntryGroup entryGroup = new SimpleEntryGroup();
       try
       {
         getEntry(reference,entryGroup);
@@ -279,18 +281,49 @@ public class JamView extends JPanel
     ruler.repaint();
     
     //drawBaseScale(g2, start, end, ypos);
+    ypos+=6;
+    if(bases != null)
+    {
+      // draw the reference sequence
+      ypos+=11;
+      try
+      {
+        int seqEnd = end+1;
+        if(seqEnd > bases.getLength())
+          seqEnd = bases.getLength();
+        
+        int seqStart = start;
+        if(seqStart < 1)
+          seqStart = 1;
+        String seq = bases.getSubSequence(new Range(seqStart, seqEnd), Bases.FORWARD);
+        int xpos;
+
+        for(int i=0;i<seq.length(); i++)
+        {
+          xpos = ((seqStart-1) + i)*ALIGNMENT_PIX_PER_BASE;
+          g2.drawString(seq.substring(i, i+1).toUpperCase(), xpos, ypos);
+          System.out.print(seq.substring(i, i+1).toUpperCase());
+        }
+        System.out.println();
+      }
+      catch (OutOfRangeException e)
+      {
+        e.printStackTrace();
+      }
+    }
+    
     boolean draw[] = new boolean[readsInView.size()];
     for(int i=0; i<readsInView.size(); i++)
       draw[i] = false;
     
-    ypos+=6;
+    
     
     for(int i=0; i<readsInView.size(); i++)
     {
       if (!draw[i])
       {
         Read thisRead = readsInView.get(i);
-        ypos+=10;
+        ypos+=11;
 
         drawSequence(g2, thisRead, pixPerBase, ypos);
         draw[i] = true;
@@ -363,9 +396,6 @@ public class JamView extends JPanel
       {
         if(checkBoxSingle.isSelected())
         {
-          System.out.println("HERE "+thisRead.qname+
-              "\t\t pos "+thisRead.pos+"\tseq length "+thisRead.seq.length()+
-              "\tisize "+thisRead.isize);
           int ypos = (getHeight() - scaleHeight) - thisRead.seq.length();
           g2.setColor(Color.orange);
           drawRead(g2, thisRead, pixPerBase, stroke, ypos);
@@ -422,7 +452,11 @@ public class JamView extends JPanel
       float pixPerBase, Stroke originalStroke, Stroke stroke)
   {
     boolean drawLine = true;
-    g2.setColor(Color.blue); 
+    if( (thisRead.flag & 0x0010) == 0x0010 ) // strand of the query (1 for reverse)
+      g2.setColor(Color.red);
+    else
+      g2.setColor(Color.blue);
+    
     if(ypos <= 0)
     {
       ypos = thisRead.seq.length();
@@ -645,11 +679,15 @@ public class JamView extends JPanel
     if(pixPerBase > ALIGNMENT_PIX_PER_BASE)
     {
       pixPerBase = ALIGNMENT_PIX_PER_BASE;
+      checkBoxSingle.setVisible(false);
       jspView.getVerticalScrollBar().setValue(0);
       jspView.setColumnHeaderView(ruler);
     }
     else if(jspView != null)
+    {
+      checkBoxSingle.setVisible(true);
       jspView.setColumnHeaderView(null);
+    }
     Dimension d = new Dimension();
     d.setSize((seqLength*pixPerBase), 800.d);
     setPreferredSize(d);
@@ -681,11 +719,14 @@ public class JamView extends JPanel
     Entry entry = null;
     try
     {
-      Bases bases = null;
       if(entryGroup.getSequenceEntry() != null)
         bases = entryGroup.getSequenceEntry().getBases();
+      
       if(bases == null)
+      {
         entry = new Entry(new_embl_entry);
+        bases = entry.getBases();
+      }
       else
         entry = new Entry(bases,new_embl_entry);
       
