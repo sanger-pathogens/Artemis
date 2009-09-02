@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.65 2009-08-25 08:39:49 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.66 2009-09-02 13:44:03 gv1 Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -32,6 +32,7 @@ import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -47,7 +48,7 @@ import org.gmod.schema.sequence.FeatureLoc;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.65 2009-08-25 08:39:49 tjc Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.66 2009-09-02 13:44:03 gv1 Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -108,6 +109,18 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     super(new GFFEntryInformation());
     finished_constructor = true;
   }
+  
+  /*
+   * Adds a header before beginning the writing. (GSV)
+   * @see uk.ac.sanger.artemis.io.SimpleDocumentEntry#writeToStream(java.io.Writer)
+   */
+  @Override
+  public void writeToStream(final Writer writer)
+	throws IOException 
+  {
+    writer.write("##gff-version   3\n");
+    super.writeToStream(writer);
+  }
 
   /**
    *  Returns true if and only if this entry is read only.  For now this
@@ -126,6 +139,9 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
   {
     this.isReadOnly = isReadOnly;
   }
+  
+  
+ 
 
   /**
    *  If the given feature can be added directly to this Entry, then return
@@ -163,6 +179,9 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
   {
     return new FastaStreamSequence(sequence);
   }
+  
+  
+  
 
   private void combineGeneFeatures()
   {
@@ -195,6 +214,11 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           }
         }
       }
+      
+      
+      
+      
+      
 
       // find the transcripts
       Hashtable transcripts_lookup = new Hashtable();
@@ -229,11 +253,18 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       }
       
       
+  
+      
+      
       // find exons & protein
       String key;
       for(int i = 0 ; i < original_features.size() ; ++i) 
       {
         this_feature = original_features.featureAt(i);
+        
+        
+        
+        
         // exons
         key = this_feature.getKey().getKeyString();
         //if(!key.equals("exon") && !key.equals("polypeptide") &&
@@ -281,10 +312,17 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
             else
               gene.addOtherFeatures(parent, this_feature);
           }
+          
+          	
         } 
           
+        
+        
       }
-  
+      
+      
+     
+
       //
       // 
       if(getDocument() instanceof DatabaseDocument)
@@ -298,6 +336,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           for(int i = 0 ; i < original_features.size() ; ++i) 
           {
             this_feature = original_features.featureAt(i);
+            System.out.println(this_feature);
             String featureId = (String) this_feature.getQualifierByName("feature_id").getValues().get(0);
             org.gmod.schema.sequence.Feature chadoLazyFeature = 
               (org.gmod.schema.sequence.Feature)idFeatureStore.get(featureId);
@@ -365,8 +404,13 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
             }
           }
         }
+        
+        
+        
+        
+        
       } 
-
+      
     }
     catch(InvalidRelationException e)
     {
