@@ -549,12 +549,17 @@ public class DatabaseDocument extends Document
       ByteBuffer entryBuffer = new ByteBuffer();
       try
       {
+        entryBuffer.append("##gff-version 3\n");
+        
         ByteBuffer sequenceBuffer = new ByteBuffer();
         if(dao instanceof IBatisDAO)
           ((IBatisDAO) dao).startTransaction();
 
         logger4j.debug("RETRIEVE SOURCE FEATURE FROM: "+getLocation());
         Feature srcFeature = getChadoSequence(dao, sequenceBuffer);
+        
+        entryBuffer.append("#sequence-region " + srcFeature.getUniqueName() +
+            " 1 " + srcFeature.getResidues().length + "\n");
         gff_buffer = getGff(dao, srcFeature);
         
         if(splitGFFEntry)
@@ -740,6 +745,7 @@ public class DatabaseDocument extends Document
       int type_id = feat.getCvTerm().getCvTermId();
       String typeName = getCvtermName(type_id, dao, gene_builder);
       this_buff = buffers[0];
+
       for(int j = 0; j < TYPES.length; j++)
       {
         for(int k=0; k<TYPES[j][1].length; k++)
