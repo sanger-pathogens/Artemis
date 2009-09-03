@@ -85,6 +85,8 @@ public class GeneEdit
 
   /** password fields */
   private JPasswordField pfield;
+  
+  private String geneName;
 
   /**
    * Standalone gene editing (i.e. outside of Artemis)
@@ -116,6 +118,7 @@ public class GeneEdit
   public GeneEdit(final String geneName)
   {
     DatabaseEntrySource entry_source = new DatabaseEntrySource();
+    this.geneName = geneName;
     
     boolean promptUser = true;
     if(System.getProperty("read_only") != null)
@@ -126,7 +129,7 @@ public class GeneEdit
 
     if(System.getProperty("show_log") != null)
       GeneSplash.showLog();
-    openGeneBuilder(geneName, null, location, null);
+    openGeneBuilder(null, location, null);
   }
 
   /**
@@ -172,7 +175,7 @@ public class GeneEdit
     {
       public void actionPerformed(ActionEvent event)
       {
-        final String search_gene = gene_text.getText();
+        GeneEdit.this.geneName = gene_text.getText().trim();
         final String schema = (String)schema_list.getSelectedItem();
         List schema_search;
         if(schema.equalsIgnoreCase("All"))
@@ -183,7 +186,7 @@ public class GeneEdit
           schema_search.add(schema);
         }
 
-        openGeneBuilder(search_gene, schema, location, frame);
+        openGeneBuilder(schema, location, frame);
       }
     });
 
@@ -197,8 +200,7 @@ public class GeneEdit
     frame.setVisible(true);
   }
 
-  private void openGeneBuilder(final String search_gene, 
-                               final String organism,
+  private void openGeneBuilder(final String organism,
                                final String location,
                                final GeneSplash frame)
   {
@@ -208,12 +210,12 @@ public class GeneEdit
       {
         if(frame != null)
           frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        DatabaseDocumentEntry entry = makeEntry(organism, search_gene,
+        DatabaseDocumentEntry entry = makeEntry(organism, 
                                                 location, pfield);
         
         if(System.getProperty("read_only") != null)
           entry.setReadOnly(true);
-        showGeneEditor(organism, search_gene, entry);
+        showGeneEditor(organism, geneName, entry);
         
         if(frame != null)
           frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -224,26 +226,31 @@ public class GeneEdit
   }
   
   private DatabaseDocumentEntry makeEntry(final String schema, 
-                                          final String uniqueName,
                                           final String location,
                                           final JPasswordField pfield)
   {
     DatabaseDocumentEntry db_entry = null;
     DatabaseDocument doc = new DatabaseDocument(location, pfield, 
-                                                uniqueName,
+                                                 geneName,
                                                 schema, true);
     doc.setLazyFeatureLoad(false);
+
     try
     {
       db_entry = new DatabaseDocumentEntry(doc, null);
     }
-    catch(EntryInformationException e)
+    catch(Exception e)
     {
-      e.printStackTrace();
-    }
-    catch(IOException e)
-    {
-      e.printStackTrace();
+      org.gmod.schema.sequence.Feature chadoFeature = 
+        doc.getChadoGeneByAnyCurrentName(geneName);
+      if(chadoFeature != null)
+      {
+        JOptionPane.showMessageDialog(null, 
+            geneName+" appears to be a synonym for "+chadoFeature.getUniqueName(), 
+            geneName, JOptionPane.INFORMATION_MESSAGE);
+        geneName = chadoFeature.getUniqueName();
+        db_entry = makeEntry(schema, location, pfield);
+      }
     }
 
     return db_entry;  
