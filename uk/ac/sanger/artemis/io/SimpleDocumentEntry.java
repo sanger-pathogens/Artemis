@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.29 2009-08-20 15:25:14 gv1 Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/SimpleDocumentEntry.java,v 1.30 2009-09-03 13:33:18 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -40,7 +40,7 @@ import javax.swing.JOptionPane;
  *  This class contains the methods common to all DocumentEntry objects.
  *
  *  @author Kim Rutherford <kmr@sanger.ac.uk>
- *  @version $Id: SimpleDocumentEntry.java,v 1.29 2009-08-20 15:25:14 gv1 Exp $
+ *  @version $Id: SimpleDocumentEntry.java,v 1.30 2009-09-03 13:33:18 tjc Exp $
  **/
 
 abstract public class SimpleDocumentEntry
@@ -321,7 +321,8 @@ abstract public class SimpleDocumentEntry
   {
     this.entry_information = new SimpleEntryInformation(entry_information);
 
-    if(new_entry.getClass().equals(this.getClass())) 
+    if(new_entry.getClass().equals(this.getClass()) ||
+        (this instanceof GFFDocumentEntry && new_entry instanceof DatabaseDocumentEntry)) 
     {
       try
       {
