@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.67 2009-09-03 13:38:14 gv1 Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.68 2009-09-03 13:40:02 gv1 Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -48,7 +48,7 @@ import org.gmod.schema.sequence.FeatureLoc;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.67 2009-09-03 13:38:14 gv1 Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.68 2009-09-03 13:40:02 gv1 Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -311,7 +311,6 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           for(int i = 0 ; i < original_features.size() ; ++i) 
           {
             this_feature = original_features.featureAt(i);
-            System.out.println(this_feature);
             String featureId = (String) this_feature.getQualifierByName("feature_id").getValues().get(0);
             org.gmod.schema.sequence.Feature chadoLazyFeature = 
               (org.gmod.schema.sequence.Feature)idFeatureStore.get(featureId);
