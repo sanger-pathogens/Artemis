@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.66 2009-09-02 13:44:03 gv1 Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.67 2009-09-03 13:38:14 gv1 Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -48,7 +48,7 @@ import org.gmod.schema.sequence.FeatureLoc;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.66 2009-09-02 13:44:03 gv1 Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.67 2009-09-03 13:38:14 gv1 Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -110,18 +110,6 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     finished_constructor = true;
   }
   
-  /*
-   * Adds a header before beginning the writing. (GSV)
-   * @see uk.ac.sanger.artemis.io.SimpleDocumentEntry#writeToStream(java.io.Writer)
-   */
-  @Override
-  public void writeToStream(final Writer writer)
-	throws IOException 
-  {
-    writer.write("##gff-version   3\n");
-    super.writeToStream(writer);
-  }
-
   /**
    *  Returns true if and only if this entry is read only.  For now this
    *  always returns true - GFFDocumentEntry objects can't be changed.
@@ -154,20 +142,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     if(!copy && feature instanceof GFFStreamFeature) 
       return (GFFStreamFeature)feature;
     else 
-    {
-      if(PublicDBDocumentEntry.IGNORE_OBSOLETE_FEATURES)
-      {
-        Qualifier isObsoleteQualifier = 
-          feature.getQualifiers().getQualifierByName("isObsolete");
-        if(isObsoleteQualifier != null)
-        {
-          String value = (String)isObsoleteQualifier.getValues().get(0);
-          if(Boolean.parseBoolean(value))
-            return null;
-        }
-      }
       return new GFFStreamFeature(feature);
-    }
   }
 
   /**
