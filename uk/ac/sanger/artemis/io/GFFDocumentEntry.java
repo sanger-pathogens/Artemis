@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.68 2009-09-03 13:40:02 gv1 Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/io/GFFDocumentEntry.java,v 1.69 2009-09-03 13:47:31 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.io;
@@ -32,7 +32,6 @@ import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.util.*;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -48,7 +47,7 @@ import org.gmod.schema.sequence.FeatureLoc;
  *  A DocumentEntry that can read an GFF entry from a Document.
  *
  *  @author Kim Rutherford
- *  @version $Id: GFFDocumentEntry.java,v 1.68 2009-09-03 13:40:02 gv1 Exp $
+ *  @version $Id: GFFDocumentEntry.java,v 1.69 2009-09-03 13:47:31 tjc Exp $
  **/
 
 public class GFFDocumentEntry extends SimpleDocumentEntry
@@ -109,7 +108,7 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     super(new GFFEntryInformation());
     finished_constructor = true;
   }
-  
+
   /**
    *  Returns true if and only if this entry is read only.  For now this
    *  always returns true - GFFDocumentEntry objects can't be changed.
@@ -127,9 +126,6 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
   {
     this.isReadOnly = isReadOnly;
   }
-  
-  
- 
 
   /**
    *  If the given feature can be added directly to this Entry, then return
@@ -142,7 +138,20 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
     if(!copy && feature instanceof GFFStreamFeature) 
       return (GFFStreamFeature)feature;
     else 
+    {
+      if(PublicDBDocumentEntry.IGNORE_OBSOLETE_FEATURES)
+      {
+        Qualifier isObsoleteQualifier = 
+          feature.getQualifiers().getQualifierByName("isObsolete");
+        if(isObsoleteQualifier != null)
+        {
+          String value = (String)isObsoleteQualifier.getValues().get(0);
+          if(Boolean.parseBoolean(value))
+            return null;
+        }
+      }
       return new GFFStreamFeature(feature);
+    }
   }
 
   /**
@@ -154,9 +163,6 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
   {
     return new FastaStreamSequence(sequence);
   }
-  
-  
-  
 
   private void combineGeneFeatures()
   {
@@ -189,11 +195,6 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
           }
         }
       }
-      
-      
-      
-      
-      
 
       // find the transcripts
       Hashtable transcripts_lookup = new Hashtable();
@@ -228,18 +229,11 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
       }
       
       
-  
-      
-      
       // find exons & protein
       String key;
       for(int i = 0 ; i < original_features.size() ; ++i) 
       {
         this_feature = original_features.featureAt(i);
-        
-        
-        
-        
         // exons
         key = this_feature.getKey().getKeyString();
         //if(!key.equals("exon") && !key.equals("polypeptide") &&
@@ -287,17 +281,10 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
             else
               gene.addOtherFeatures(parent, this_feature);
           }
-          
-          	
         } 
           
-        
-        
       }
-      
-      
-     
-
+  
       //
       // 
       if(getDocument() instanceof DatabaseDocument)
@@ -378,13 +365,8 @@ public class GFFDocumentEntry extends SimpleDocumentEntry
             }
           }
         }
-        
-        
-        
-        
-        
       } 
-      
+
     }
     catch(InvalidRelationException e)
     {
