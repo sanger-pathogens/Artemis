@@ -26,6 +26,7 @@ package uk.ac.sanger.artemis.components.alignment;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -53,19 +54,31 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+
+import net.sf.samtools.SAMFileHeader;
+import net.sf.samtools.SAMFileReader;
+import net.sf.samtools.SAMReadGroupRecord;
+import net.sf.samtools.SAMRecord;
+import net.sf.samtools.SAMRecordQueryNameComparator;
+import net.sf.samtools.SAMSequenceRecord;
+import net.sf.samtools.SAMFileReader.ValidationStringency;
+import net.sf.samtools.util.CloseableIterator;
 
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
@@ -85,7 +98,7 @@ public class JamView extends JPanel
                      implements Scrollable
 {
   private static final long serialVersionUID = 1L;
-  private List<Read> readsInView;
+  private List<SAMRecord> readsInView;
   private Hashtable<String, Integer> seqLengths = new Hashtable<String, Integer>();
   private Vector<String> seqNames = new Vector<String>();
   private String bam;
@@ -94,13 +107,17 @@ public class JamView extends JPanel
   private JScrollPane jspView;
   private JComboBox combo;
   private JCheckBox checkBoxSingle;
-
+  private JCheckBox checkBoxSNPs;
+  
   Ruler ruler = new Ruler();
   private int nbasesInView;
   private int laststart;
   private int lastend;
   private int maxUnitIncrement = 4;
+  private Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
+  private Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
   private int ALIGNMENT_PIX_PER_BASE;
+  public static boolean PICARD = true;
 
  
   public JamView(String bam, 
@@ -125,7 +142,10 @@ public class JamView extends JPanel
       }
     }
     
-    readHeader();
+    if(PICARD)
+      readHeaderPicard();
+    else
+      readHeader();
     
     // set font size
     setFont(getFont().deriveFont(12.f));
@@ -133,7 +153,7 @@ public class JamView extends JPanel
       new javax.swing.plaf.FontUIResource(getFont());
    //  Options.getOptions().getFontUIResource();
 
-    java.util.Enumeration keys = UIManager.getDefaults().keys();
+    Enumeration<Object> keys = UIManager.getDefaults().keys();
     while(keys.hasMoreElements()) 
     {
       Object key = keys.nextElement();
@@ -193,7 +213,24 @@ public class JamView extends JPanel
 	  e.printStackTrace();
 	}
   }
-  
+
+  private void readHeaderPicard()
+  {
+    File bamFile = new File(bam);
+    File indexFile = new File(bam+".bai");
+    final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
+    SAMFileHeader header = inputSam.getFileHeader();
+    List<SAMSequenceRecord> readGroups = header.getSequenceDictionary().getSequences();
+    
+    for(int i=0; i<readGroups.size(); i++)
+    {
+      seqLengths.put(readGroups.get(i).getSequenceName(),
+                     readGroups.get(i).getSequenceLength());
+      seqNames.add(readGroups.get(i).getSequenceName());
+    }
+    inputSam.close();
+  }
+
   /**
    * Read data from BAM/SAM file for a region.
    * @param start
@@ -217,7 +254,7 @@ public class JamView extends JPanel
 	System.out.println();
 	
     if(readsInView == null)
-      readsInView = new Vector<Read>();
+      readsInView = new Vector<SAMRecord>();
     else
       readsInView.clear();
 	RunSamTools samtools = new RunSamTools(cmd, null, null, readsInView);
@@ -226,6 +263,39 @@ public class JamView extends JPanel
       System.out.println(samtools.getProcessStderr());
 	    
 	samtools.waitForStdout();
+  }
+  
+  /**
+   * Read a SAM or BAM file.
+   */
+  private void readFromBamPicard(int start, int end)
+  {
+    // Open the input file.  Automatically detects whether input is SAM or BAM
+    // and delegates to a reader implementation for the appropriate format.
+    File bamFile = new File(bam);
+    File indexFile = new File(bam+".bai");
+    final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
+    inputSam.setValidationStringency(ValidationStringency.SILENT);
+    
+    if(readsInView == null)
+      readsInView = new Vector<SAMRecord>();
+    else
+      readsInView.clear();
+    String refName = (String) combo.getSelectedItem();
+    CloseableIterator<SAMRecord> it = inputSam.queryOverlapping(refName, start, end);
+    while ( it.hasNext() )
+    {
+      try
+      {
+        SAMRecord samRecord = it.next();
+        readsInView.add(samRecord);
+      }
+      catch(Exception e)
+      {
+        System.out.println(e.getMessage());
+      }
+    }
+    inputSam.close();
   }
   
   /**
@@ -251,9 +321,13 @@ public class JamView extends JPanel
     {
       try
       {
-        readFromBam(start, end);      
-        if(pixPerBase < ALIGNMENT_PIX_PER_BASE)
-          Collections.sort(readsInView, new ReadComparator());
+        setCursor(cbusy);
+        
+        if(PICARD)
+          readFromBamPicard(start, end);
+        else
+          readFromBam(start, end);
+        setCursor(cdone);
       }
       catch(OutOfMemoryError ome)
       {
@@ -267,21 +341,33 @@ public class JamView extends JPanel
 	if(pixPerBase >= ALIGNMENT_PIX_PER_BASE)
 	  drawBaseAlignment(g2, seqLength, pixPerBase, start, end);
 	else
-      drawLineView(g2, seqLength, pixPerBase, start, end);
+	{
+	  Collections.sort(readsInView, new ReadComparator());
+	  drawLineView(g2, seqLength, pixPerBase, start, end);
+	}
   }
   
+  /**
+   * Draw the zoomed-in base view.
+   * @param g2
+   * @param seqLength
+   * @param pixPerBase
+   * @param start
+   * @param end
+   */
   private void drawBaseAlignment(Graphics2D g2, int seqLength, 
                                  float pixPerBase, final int start, final int end)
   {
-    FontMetrics fm =  getFontMetrics(getFont());
     int ypos = 0;
     
     ruler.start = start;
     ruler.end = end;
     ruler.repaint();
     
-    //drawBaseScale(g2, start, end, ypos);
     ypos+=6;
+    
+    char[] refSeq = null;
+    int refSeqStart = start;
     if(bases != null)
     {
       // draw the reference sequence
@@ -291,20 +377,19 @@ public class JamView extends JPanel
         int seqEnd = end+1;
         if(seqEnd > bases.getLength())
           seqEnd = bases.getLength();
-        
-        int seqStart = start;
-        if(seqStart < 1)
-          seqStart = 1;
-        String seq = bases.getSubSequence(new Range(seqStart, seqEnd), Bases.FORWARD);
+
+        if(refSeqStart < 1)
+          refSeqStart = 1;
+        refSeq = 
+          bases.getSubSequenceC(new Range(refSeqStart, seqEnd), Bases.FORWARD);
         int xpos;
 
-        for(int i=0;i<seq.length(); i++)
+        for(int i=0;i<refSeq.length; i++)
         {
-          xpos = ((seqStart-1) + i)*ALIGNMENT_PIX_PER_BASE;
-          g2.drawString(seq.substring(i, i+1).toUpperCase(), xpos, ypos);
-          System.out.print(seq.substring(i, i+1).toUpperCase());
+          xpos = ((refSeqStart-1) + i)*ALIGNMENT_PIX_PER_BASE;
+          refSeq[i] = Character.toUpperCase(refSeq[i]);
+          g2.drawChars(refSeq, i, 1, xpos, ypos);
         }
-        System.out.println();
       }
       catch (OutOfRangeException e)
       {
@@ -312,33 +397,36 @@ public class JamView extends JPanel
       }
     }
     
-    boolean draw[] = new boolean[readsInView.size()];
+    boolean drawn[] = new boolean[readsInView.size()];
     for(int i=0; i<readsInView.size(); i++)
-      draw[i] = false;
-    
-    
+      drawn[i] = false;
     
     for(int i=0; i<readsInView.size(); i++)
     {
-      if (!draw[i])
+      if (!drawn[i])
       {
-        Read thisRead = readsInView.get(i);
+        SAMRecord thisRead = readsInView.get(i);
         ypos+=11;
 
-        drawSequence(g2, thisRead, pixPerBase, ypos);
-        draw[i] = true;
+        drawSequence(g2, thisRead, pixPerBase, ypos, refSeq, refSeqStart);
+        drawn[i] = true;
         
-        int thisEnd = thisRead.pos+thisRead.seq.length();
+        int thisEnd = thisRead.getAlignmentEnd();
+        if(thisEnd == 0)
+          thisEnd = thisRead.getAlignmentStart()+thisRead.getReadLength();
+        
         for(int j=i+1; j<readsInView.size(); j++)
         {
-          if (!draw[j])
+          if (!drawn[j])
           {
-            Read nextRead = readsInView.get(j);
-            if(nextRead.pos > thisEnd+1)
+            SAMRecord nextRead = readsInView.get(j);
+            if(nextRead.getAlignmentStart() > thisEnd+1)
             {
-              drawSequence(g2, nextRead, pixPerBase, ypos);
-              draw[j] = true;
-              thisEnd = nextRead.pos+nextRead.seq.length();
+              drawSequence(g2, nextRead, pixPerBase, ypos, refSeq, refSeqStart);
+              drawn[j] = true;
+              thisEnd = nextRead.getAlignmentEnd();
+              if(thisEnd == 0)
+                thisEnd = nextRead.getAlignmentStart()+nextRead.getReadLength();
             }
           }
         }
@@ -359,24 +447,44 @@ public class JamView extends JPanel
    * @param pixPerBase
    * @param ypos
    */
-  private void drawSequence(Graphics2D g2, Read read, float pixPerBase, int ypos)
+  private void drawSequence(Graphics2D g2, SAMRecord samRecord, 
+                            float pixPerBase, int ypos, char[] refSeq, int refSeqStart)
   {
-    if ((read.flag & 0x0001) != 0x0001 || 
-        (read.flag & 0x0008) == 0x0008)
+    if (!samRecord.getReadPairedFlag() ||  // read is not paired in sequencing
+        samRecord.getMateUnmappedFlag() )  // mate is unmapped )  // mate is unmapped 
       g2.setColor(Color.black);
     else
       g2.setColor(Color.blue);
     
+    Color col = g2.getColor();
     int xpos;
-    
-    for(int i=0;i<read.seq.length(); i++)
+    String seq = samRecord.getReadString();
+
+    for(int i=0;i<seq.length(); i++)
     {
-      xpos = ((read.pos-1) + i)*ALIGNMENT_PIX_PER_BASE;
-      g2.drawString(read.seq.substring(i, i+1), xpos, ypos);
+      xpos = ((samRecord.getAlignmentStart()-1) + i)*ALIGNMENT_PIX_PER_BASE;
+      
+      if(checkBoxSNPs.isSelected() && refSeq != null)
+      {
+        int refPos = samRecord.getAlignmentStart()-refSeqStart+i;
+  
+        if(refPos >= 0 && refPos < refSeq.length && seq.charAt(i) != refSeq[refPos])
+          g2.setColor(Color.red);
+        else
+          g2.setColor(col);
+      }
+      g2.drawString(seq.substring(i, i+1), xpos, ypos);
     }
-    
   }
   
+  /**
+   * Draw zoomed-out view.
+   * @param g2
+   * @param seqLength
+   * @param pixPerBase
+   * @param start
+   * @param end
+   */
   private void drawLineView(Graphics2D g2, int seqLength, float pixPerBase, int start, int end)
   {   
     drawScale(g2, start, end, pixPerBase);
@@ -388,53 +496,55 @@ public class JamView extends JPanel
     
     for(int i=0; i<readsInView.size(); i++)
     {
-      Read thisRead = readsInView.get(i);
-      Read nextRead = null;      
+      SAMRecord samRecord = readsInView.get(i);
+      SAMRecord samNextRecord = null;      
 
-      if( (thisRead.flag & 0x0001) != 0x0001 || // read is not paired in sequencing
-          (thisRead.flag & 0x0008) == 0x0008 )  // mate is unmapped 
+      if( !samRecord.getReadPairedFlag() ||  // read is not paired in sequencing
+          samRecord.getMateUnmappedFlag() )  // mate is unmapped )  // mate is unmapped 
       {
         if(checkBoxSingle.isSelected())
         {
-          int ypos = (getHeight() - scaleHeight) - thisRead.seq.length();
+          int ypos = (getHeight() - scaleHeight) - samRecord.getReadString().length();
           g2.setColor(Color.orange);
-          drawRead(g2, thisRead, pixPerBase, stroke, ypos);
+          drawRead(g2, samRecord, pixPerBase, stroke, ypos);
         }
         continue;
       }
       
-      int ypos = (getHeight() - scaleHeight) - ( Math.abs(thisRead.isize) );
+      int ypos = (getHeight() - scaleHeight) - ( Math.abs(samRecord.getInferredInsertSize()) );
       if(i < readsInView.size()-1)
       {
-        nextRead = readsInView.get(++i);
+        samNextRecord = readsInView.get(++i);
         
-        if(thisRead.qname.equals(nextRead.qname))
+        if(samRecord.getReadName().equals(samNextRecord.getReadName()))
         {
-          if( (thisRead.flag & 0x0010) == 0x0010 && // strand of the query (1 for reverse)
-              (nextRead.flag & 0x0010) == 0x0010 )
+          if( samRecord.getReadNegativeStrandFlag() && // strand of the query (1 for reverse)
+              samNextRecord.getReadNegativeStrandFlag() )
             g2.setColor(Color.red);
           else
             g2.setColor(Color.blue);
  
-          int thisEnd = drawRead(g2, thisRead, pixPerBase, stroke, ypos)[1];
-          int nextStart = drawRead(g2, nextRead, pixPerBase, stroke, ypos)[0];
+          drawRead(g2, samRecord, pixPerBase, stroke, ypos);
+          drawRead(g2, samNextRecord, pixPerBase, stroke, ypos);
           
-          if(thisEnd < nextStart && (nextStart-thisEnd)*pixPerBase > 2.f)
+          if(samRecord.getAlignmentEnd() < samNextRecord.getAlignmentStart() && 
+              (samNextRecord.getAlignmentStart()-samRecord.getAlignmentEnd())*pixPerBase > 2.f)
           {
             g2.setStroke(originalStroke);
             g2.setColor(Color.LIGHT_GRAY);
-            g2.drawLine((int)(thisEnd*pixPerBase), ypos, (int)(nextStart*pixPerBase), ypos);
+            g2.drawLine((int)(samRecord.getAlignmentEnd()*pixPerBase), ypos, 
+                        (int)(samNextRecord.getAlignmentStart()*pixPerBase), ypos);
           }
         }
         else
         {
-          drawLoneRead(g2, thisRead, ypos, pixPerBase, originalStroke, stroke);
+          drawLoneRead(g2, samRecord, ypos, pixPerBase, originalStroke, stroke);
           i--;
         }
       }
       else
       {
-        drawLoneRead(g2, thisRead, ypos, pixPerBase, originalStroke, stroke);
+        drawLoneRead(g2, samRecord, ypos, pixPerBase, originalStroke, stroke);
       }
     }
   }
@@ -448,45 +558,34 @@ public class JamView extends JPanel
    * @param originalStroke
    * @param stroke
    */
-  private void drawLoneRead(Graphics2D g2, Read thisRead, int ypos, 
+  private void drawLoneRead(Graphics2D g2, SAMRecord samRecord, int ypos, 
       float pixPerBase, Stroke originalStroke, Stroke stroke)
   {
     boolean drawLine = true;
-    if( (thisRead.flag & 0x0010) == 0x0010 ) // strand of the query (1 for reverse)
+    if(samRecord.getReadNegativeStrandFlag()) // strand of the query (1 for reverse)
       g2.setColor(Color.red);
     else
       g2.setColor(Color.blue);
     
     if(ypos <= 0)
     {
-      ypos = thisRead.seq.length();
+      ypos = samRecord.getReadString().length();
       drawLine = false;
       g2.setColor(Color.orange); 
     }
 
-    int thisEnd = drawRead(g2, thisRead, pixPerBase, stroke, ypos)[1];
+    int thisStart = samRecord.getAlignmentStart()-1;
+    int thisEnd   = thisStart + samRecord.getReadString().length();
+    drawRead(g2, samRecord, pixPerBase, stroke, ypos);
     if(drawLine)
     {
       g2.setStroke(originalStroke);
       g2.setColor(Color.LIGHT_GRAY);
-      int nextStart = (int) ((thisRead.mpos-1)*pixPerBase);
+      int nextStart = (int) ((samRecord.getMateAlignmentStart()-1)*pixPerBase);
       g2.drawLine((int)(thisEnd*pixPerBase), ypos, nextStart, ypos);
     }
   }
-  
-  private void drawBaseScale(Graphics2D g2, int start, int end, int ypos)
-  {
-    int startMark = (((int)(start/10))*10)+1;
 
-    for(int i=startMark; i<end; i+=10)
-    {
-      int xpos = (i-1-start)*ALIGNMENT_PIX_PER_BASE;
-      g2.drawString(Integer.toString(i), xpos, ypos);
-      
-      xpos+=(ALIGNMENT_PIX_PER_BASE/2);
-      g2.drawLine(xpos, ypos+1, xpos, ypos+5);
-    }
-  }
   
   private void drawScale(Graphics2D g2, int start, int end, float pixPerBase)
   {
@@ -536,14 +635,41 @@ public class JamView extends JPanel
     }
   }
   
-  private int[] drawRead(Graphics2D g2, Read read,
+  private void drawRead(Graphics2D g2, SAMRecord thisRead,
 		               float pixPerBase, Stroke stroke, int ypos)
   {
-    int thisStart = read.pos-1;
-    int thisEnd   = thisStart + read.seq.length();
+    int thisStart = thisRead.getAlignmentStart()-1;
+    int thisEnd   = thisRead.getAlignmentEnd();
     g2.setStroke(stroke);
-    g2.drawLine((int)(thisStart*pixPerBase), ypos, (int)(thisEnd*pixPerBase), ypos);
-    return new int[] { thisStart, thisEnd };
+    g2.drawLine((int) (thisStart * pixPerBase), ypos,
+                (int) (thisEnd * pixPerBase), ypos);
+
+    if (checkBoxSNPs.isSelected())
+    {
+      try
+      {
+        char[] refSeq = bases.getSubSequenceC(
+            new Range(thisStart + 1, thisEnd), Bases.FORWARD);
+        byte[] readSeq = thisRead.getReadBases();
+
+        Color col = g2.getColor();
+
+        g2.setColor(Color.red);
+        for (int i = 0; i < refSeq.length && i < readSeq.length; i++)
+        {
+          if (Character.toUpperCase(refSeq[i]) != readSeq[i])
+          {
+            g2.drawLine((int) ((thisStart + i) * pixPerBase), ypos + 1,
+                (int) ((thisStart + i) * pixPerBase), ypos - 1);
+          }
+        }
+        g2.setColor(col);
+      }
+      catch (OutOfRangeException e)
+      {
+        e.printStackTrace();
+      }
+    }
   }
   
   public void addToPanel(final JPanel panel)
@@ -563,7 +689,7 @@ public class JamView extends JPanel
       }
     });
     gc.fill = GridBagConstraints.NONE;
-    gc.anchor = GridBagConstraints.FIRST_LINE_START;
+    gc.anchor = GridBagConstraints.NORTHWEST;
     topPanel.add(combo, gc);
     
     checkBoxSingle = new JCheckBox("Single Reads");
@@ -576,19 +702,53 @@ public class JamView extends JPanel
     });
     topPanel.add(checkBoxSingle, gc);
     
+    
+    checkBoxSNPs = new JCheckBox("SNPs");
+    checkBoxSNPs.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        repaint();
+      }
+    });
+    topPanel.add(checkBoxSNPs, gc);
+    
+    final JTextField baseText = new JTextField(10);
+    JButton goTo = new JButton("GoTo:");
+    goTo.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        try
+        {
+          int basePosition = Integer.parseInt(baseText.getText());
+          goToBasePosition(basePosition);
+        }
+        catch(NumberFormatException nfe)
+        {
+          JOptionPane.showMessageDialog(JamView.this, 
+                 "Expecting a base number!", 
+                 "Number Format", JOptionPane.WARNING_MESSAGE);
+        }
+      }
+    });
+    topPanel.add(goTo, gc);
+    topPanel.add(baseText, gc);
+
     panel.setPreferredSize(new Dimension(1000,500));
     setLength(nbasesInView);
-    
-    jspView = new JScrollPane(this, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                    JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        
+
+    jspView = new JScrollPane(this, 
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+
     panel.setLayout(new BorderLayout());
     panel.add(topPanel, BorderLayout.NORTH);
     panel.add(jspView, BorderLayout.CENTER);
 
     jspView.getVerticalScrollBar().setValue(
         jspView.getVerticalScrollBar().getMaximum());
-       
+
     addMouseListener(new MouseAdapter()
     {
       public void mouseClicked(MouseEvent e)
@@ -606,13 +766,13 @@ public class JamView extends JPanel
           case KeyEvent.VK_UP:
             int startBase = getBaseAtStartOfView();
             setZoomLevel( (int) (JamView.this.nbasesInView*1.1) );
-            setViewToBasePosition(startBase);
+            goToBasePosition(startBase);
             repaint();
             break;
           case KeyEvent.VK_DOWN:
             startBase = getBaseAtStartOfView();
             setZoomLevel( (int) (JamView.this.nbasesInView*.9) );
-            setViewToBasePosition(startBase);
+            goToBasePosition(startBase);
             repaint();
             break;
           default:
@@ -655,7 +815,7 @@ public class JamView extends JPanel
    * Set the ViewPort so it starts at the given base position.
    * @param base
    */
-  private void setViewToBasePosition(int base)
+  private void goToBasePosition(int base)
   {
     Point p = jspView.getViewport().getViewPosition();
     
@@ -692,7 +852,7 @@ public class JamView extends JPanel
     d.setSize((seqLength*pixPerBase), 800.d);
     setPreferredSize(d);
   }
-  
+
   /**
    * Return an Artemis entry from a file 
    * @param entryFileName
@@ -741,11 +901,13 @@ public class JamView extends JPanel
     return entry;
   }
   
+
   class Ruler extends JPanel
   {
+    private static final long serialVersionUID = 1L;
     int start;
     int end;
-    
+
     public Ruler()
     {
       super();
@@ -753,25 +915,40 @@ public class JamView extends JPanel
       setBackground(Color.white);
       setFont(getFont().deriveFont(11.f));
     }
-    
+
     public void paintComponent(Graphics g)
     {
       super.paintComponent(g);
       Graphics2D g2 = (Graphics2D)g;
       drawBaseScale(g2, start, end, 12);
     }
+
+    private void drawBaseScale(Graphics2D g2, int start, int end, int ypos)
+    {
+      int startMark = (((int)(start/10))*10)+1;
+
+      for(int i=startMark; i<end; i+=10)
+      {
+        int xpos = (i-1-start)*ALIGNMENT_PIX_PER_BASE;
+        g2.drawString(Integer.toString(i), xpos, ypos);
+        
+        xpos+=(ALIGNMENT_PIX_PER_BASE/2);
+        g2.drawLine(xpos, ypos+1, xpos, ypos+5);
+      }
+    }
   }
   
-  class ReadComparator implements Comparator
+  class ReadComparator implements Comparator<Object>
   {
     public int compare(Object o1, Object o2) 
     {
-      Read pr1 = (Read) o1;
-      Read pr2 = (Read) o2;
+      SAMRecord pr1 = (SAMRecord) o1;
+      SAMRecord pr2 = (SAMRecord) o2;
       
-      return pr1.qname.compareTo(pr2.qname);
+      return pr1.getReadName().compareTo(pr2.getReadName());
     }
   }
+
 
   public Dimension getPreferredScrollableViewportSize()
   {
@@ -867,8 +1044,8 @@ public class JamView extends JPanel
     
     view.addToPanel((JPanel)frame.getContentPane());
     frame.pack();
+    frame.setVisible(true);
     view.jspView.getVerticalScrollBar().setValue(
         view.jspView.getVerticalScrollBar().getMaximum());
-    frame.setVisible(true);
   }
 }

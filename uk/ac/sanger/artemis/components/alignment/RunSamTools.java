@@ -26,6 +26,8 @@ package uk.ac.sanger.artemis.components.alignment;
 import java.io.*;
 import java.util.List;
 
+import net.sf.samtools.SAMRecord;
+
 /**
 * Used to run an samtools process this reads stdout and 
 * stderr in separate threads.
@@ -36,7 +38,7 @@ public class RunSamTools
   /** running process */
   private Process p;
   /** standard out */
-  private List<Read> readsInView;
+  private List<SAMRecord> readsInView;
   /** standard error */
   private StringBuffer stderr = new StringBuffer();
   private StringBuffer stdout = new StringBuffer();
@@ -57,7 +59,7 @@ public class RunSamTools
   public RunSamTools(String cmd[], 
                      String[] envp,
                      File project,
-                     List<Read> readsInView)
+                     List<SAMRecord> readsInView)
   {
     //this.project = project;
     this.readsInView = readsInView;
@@ -156,17 +158,18 @@ public class RunSamTools
         {
           String fields[] = line.split("\t");
 
-          Read pread = new Read();
-          pread.qname = fields[0];
-          pread.flag  = Integer.parseInt(fields[1]);
-          pread.rname = fields[2];
-          pread.pos   = Integer.parseInt(fields[3]);
-          pread.mapq  = Short.parseShort(fields[4]);
-          pread.cigar = fields[5];
-          pread.mrnm  = fields[6];
-          pread.mpos  = Integer.parseInt(fields[7]);
-          pread.isize = Integer.parseInt(fields[8]);
-          pread.seq   = fields[9];
+          SAMRecord pread = new SAMRecord(null);
+          pread.setReadName(fields[0]);
+          pread.setFlags(Integer.parseInt(fields[1]));
+          pread.setReferenceName(fields[2]);
+          pread.setAlignmentStart(Integer.parseInt(fields[3]));
+          pread.setMappingQuality(Integer.parseInt(fields[4]));
+          pread.setCigarString(fields[5]);
+          pread.setMateReferenceName(fields[6]);
+          pread.setMateAlignmentStart( Integer.parseInt(fields[7]));
+          pread.setInferredInsertSize(Integer.parseInt(fields[8]));
+          pread.setReadString(fields[9]);
+          
           readsInView.add(pread);
         }
         else
