@@ -999,7 +999,7 @@ public class DatabaseDocument extends Document
                                     final List schema_search,
                                     GmodDAO dao, 
                                     final boolean readChildren) 
-          throws SQLException, ReadFormatException, ConnectException
+          throws SQLException, ReadFormatException, ConnectException, IOException
   {
     CvTermThread cvThread = null;
     if(DatabaseDocument.cvterms == null)
@@ -1028,8 +1028,11 @@ public class DatabaseDocument extends Document
     else
       reset((String)getLocation(), (String)schema_search.get(0));
     dao = getDAO();
-    Feature chadoFeature = 
-      (Feature)(dao.getFeaturesByUniqueName(search_gene).get(0));
+    
+    List features = dao.getFeaturesByUniqueName(search_gene);
+    if(features == null || features.size() == 0)
+      throw new IOException();
+    Feature chadoFeature = (Feature)(features.get(0));
     
     ChadoCanonicalGene chado_gene = new ChadoCanonicalGene();
     id_store.put(Integer.toString(chadoFeature.getFeatureId()), 
@@ -2097,6 +2100,31 @@ public class DatabaseDocument extends Document
     Feature feature = dao.getFeatureById(Integer.parseInt(srcFeatureId));
     getChadoSequence(feature, buff);
     return feature;
+  }
+  
+  /**
+   * Find the gene by the ID or synonym on the gene or transcript.
+   * @param id
+   * @return
+   */
+  public Feature getChadoGeneByAnyCurrentName(String id)
+  {
+    Feature chadoFeature = 
+      (Feature)(getDAOOnly().getFeaturesByAnyCurrentName(id).get(0));
+    
+    if(!chadoFeature.getCvTerm().equals("gene"))
+    {
+      Iterator<FeatureRelationship> parents =
+        chadoFeature.getFeatureRelationshipsForSubjectId().iterator();
+      while(parents.hasNext())
+      {
+        FeatureRelationship fr = parents.next();
+        Feature parent = fr.getFeatureByObjectId();
+        if(parent.getCvTerm().getName().equals("gene"))
+          chadoFeature = parent;
+      }
+    }
+    return chadoFeature;
   }
   
   
