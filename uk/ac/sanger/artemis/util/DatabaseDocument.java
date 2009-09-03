@@ -558,7 +558,7 @@ public class DatabaseDocument extends Document
         logger4j.debug("RETRIEVE SOURCE FEATURE FROM: "+getLocation());
         Feature srcFeature = getChadoSequence(dao, sequenceBuffer);
         
-        entryBuffer.append("#sequence-region " + srcFeature.getUniqueName() +
+        entryBuffer.append("##sequence-region " + srcFeature.getUniqueName() +
             " 1 " + srcFeature.getResidues().length + "\n");
         gff_buffer = getGff(dao, srcFeature);
         
