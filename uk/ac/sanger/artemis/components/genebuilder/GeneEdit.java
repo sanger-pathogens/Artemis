@@ -246,7 +246,8 @@ public class GeneEdit
       if(chadoFeature != null)
       {
         JOptionPane.showMessageDialog(null, 
-            geneName+" appears to be a synonym for "+chadoFeature.getUniqueName(), 
+            geneName+" appears to be a synonym for "+chadoFeature.getUniqueName()+
+            "\nNow opening "+chadoFeature.getUniqueName(), 
             geneName, JOptionPane.INFORMATION_MESSAGE);
         geneName = chadoFeature.getUniqueName();
         db_entry = makeEntry(schema, location, pfield);
