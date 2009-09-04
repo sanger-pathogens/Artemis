@@ -784,6 +784,34 @@ public class JamView extends JPanel
     topPanel.add(goTo, gc);
     topPanel.add(baseText, gc);
 
+    JButton zoomIn = new JButton("+");
+    zoomIn.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        int startBase = getBaseAtStartOfView();
+        setZoomLevel( (int) (JamView.this.nbasesInView*1.1) );
+        goToBasePosition(startBase);
+        repaint();
+      }
+    });
+    topPanel.add(zoomIn, gc);
+    
+    
+    JButton zoomOut = new JButton("-");
+    zoomOut.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        int startBase = getBaseAtStartOfView();
+        setZoomLevel( (int) (JamView.this.nbasesInView*.9) );
+        goToBasePosition(startBase);
+        repaint();
+      }
+    });
+    topPanel.add(zoomOut, gc);
+    
+    
     panel.setPreferredSize(new Dimension(1000,500));
     setLength(nbasesInView);
 
