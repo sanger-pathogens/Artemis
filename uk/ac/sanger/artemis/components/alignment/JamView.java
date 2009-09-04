@@ -71,6 +71,7 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
+import net.sf.samtools.AlignmentBlock;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMRecord;
@@ -327,6 +328,8 @@ public class JamView extends JPanel
           readFromBamPicard(start, end);
         else
           readFromBam(start, end);
+
+        Collections.sort(readsInView, new SAMRecordComparator());
         setCursor(cdone);
       }
       catch(OutOfMemoryError ome)
@@ -341,10 +344,7 @@ public class JamView extends JPanel
 	if(pixPerBase >= ALIGNMENT_PIX_PER_BASE)
 	  drawBaseAlignment(g2, seqLength, pixPerBase, start, end);
 	else
-	{
-	  Collections.sort(readsInView, new SAMRecordComparator());
 	  drawLineView(g2, seqLength, pixPerBase, start, end);
-	}
   }
   
   /**
@@ -458,22 +458,27 @@ public class JamView extends JPanel
     
     Color col = g2.getColor();
     int xpos;
-    String seq = samRecord.getReadString();
+    String readSeq = samRecord.getReadString();
 
-    for(int i=0;i<seq.length(); i++)
+    List<AlignmentBlock> blocks = samRecord.getAlignmentBlocks();
+    for(int i=0; i<blocks.size(); i++)
     {
-      xpos = ((samRecord.getAlignmentStart()-1) + i)*ALIGNMENT_PIX_PER_BASE;
-      
-      // colour SNPs red
-      if(checkBoxSNPs.isSelected() && refSeq != null)
+      AlignmentBlock block = blocks.get(i);
+      for(int j=0; j<block.getLength(); j++)
       {
-        int refPos = samRecord.getAlignmentStart()-refSeqStart+i;
-        if(refPos >= 0 && refPos < refSeq.length && seq.charAt(i) != refSeq[refPos])
-          g2.setColor(Color.red);
-        else
-          g2.setColor(col);
+        int readPos = block.getReadStart()-1+j;
+        xpos  = block.getReferenceStart()+j;
+        int refPos = xpos-refSeqStart;
+        
+        if(checkBoxSNPs.isSelected() && refSeq != null && refPos > 0 && refPos < refSeq.length)
+        { 
+          if(readSeq.charAt(readPos) != refSeq[refPos])
+            g2.setColor(Color.red);
+          else
+            g2.setColor(col);
+        }
+        g2.drawString(readSeq.substring(readPos, readPos+1), xpos*ALIGNMENT_PIX_PER_BASE, ypos);
       }
-      g2.drawString(seq.substring(i, i+1), xpos, ypos);
     }
   }
   
@@ -672,6 +677,10 @@ public class JamView extends JPanel
   {
     int thisStart = thisRead.getAlignmentStart();
     int thisEnd   = thisRead.getAlignmentEnd();
+    
+    // use alignment blocks of the contiguous alignment of
+    // subsets of read bases to a reference sequence
+    List<AlignmentBlock> blocks = thisRead.getAlignmentBlocks();
     try
     {
       char[] refSeq = bases.getSubSequenceC(
@@ -679,16 +688,25 @@ public class JamView extends JPanel
       byte[] readSeq = thisRead.getReadBases();
 
       Color col = g2.getColor();
-
       g2.setColor(Color.red);
-      for (int i = 0; i < refSeq.length && i < readSeq.length; i++)
+
+      for(int i=0; i<blocks.size(); i++)
       {
-        if (Character.toUpperCase(refSeq[i]) != readSeq[i])
+        AlignmentBlock block = blocks.get(i);
+        for(int j=0; j<block.getLength(); j++)
         {
-          g2.drawLine((int) ((thisStart + i) * pixPerBase), ypos + 2,
-                      (int) ((thisStart + i) * pixPerBase), ypos - 2);
+          int readPos = block.getReadStart()-1+j;
+          int refPos  = block.getReferenceStart()+j;
+
+          if (Character.toUpperCase(refSeq[refPos-thisStart]) != readSeq[readPos])
+          {
+            g2.drawLine((int) ((thisStart + i) * pixPerBase), ypos + 2,
+                        (int) ((thisStart + i) * pixPerBase), ypos - 2);
+          }
         }
+        
       }
+
       g2.setColor(col);
     }
     catch (OutOfRangeException e)
@@ -733,6 +751,12 @@ public class JamView extends JPanel
     {
       public void actionPerformed(ActionEvent e)
       {
+        if(checkBoxSNPs.isSelected() && bases == null)
+        {
+          JOptionPane.showMessageDialog(null,
+              "No reference sequence supplied to identify SNPs.", 
+              "SNPs", JOptionPane.INFORMATION_MESSAGE);
+        }
         repaint();
       }
     });
@@ -1077,8 +1101,9 @@ public class JamView extends JPanel
     
     view.addJamToPanel((JPanel)frame.getContentPane());
     frame.pack();
-    frame.setVisible(true);
+
     view.jspView.getVerticalScrollBar().setValue(
         view.jspView.getVerticalScrollBar().getMaximum());
+    frame.setVisible(true);
   }
 }
