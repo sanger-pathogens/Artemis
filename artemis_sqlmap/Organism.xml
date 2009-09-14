@@ -8,7 +8,7 @@
       
     <cacheModel id="organism-cache" type ="LRU" readOnly="true"> 
       <flushInterval hours="24"/>  
-      <property name="cache-size" value="100" /> 
+      <property name="cache-size" value="85" /> 
     </cacheModel> 
     
     <resultMap id="map-organism" class="org.gmod.schema.organism.Organism">
@@ -21,8 +21,7 @@
        <result property="organismProps" column="organismId" select="getOrganismPropByOrganismIdLazy"/>
     </resultMap>
     
-    <select id="getOrganism"
-     resultMap="map-organism"> 
+    <select id="getOrganism" resultMap="map-organism" cacheModel="organism-cache"> 
       SELECT organism_id AS organismId, abbreviation, genus, species, common_name AS commonName, comment 
       FROM organism
       <dynamic>
