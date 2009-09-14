@@ -53,7 +53,7 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
   /** data loaded */
   private boolean lazyLoaded = false;
   /** include gene name */
-  private boolean loadGeneName = false;
+  private boolean loadGeneName = true;
   
   private String value;
   private String name;
@@ -76,7 +76,7 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
 
   public String getString()
   {
-    if(forceLoad && (!lazyLoaded || loadGeneName))
+    if(forceLoad && !lazyLoaded)
       return getHardString();
     else
       return value;

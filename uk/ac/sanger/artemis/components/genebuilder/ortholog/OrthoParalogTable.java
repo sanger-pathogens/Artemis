@@ -154,7 +154,9 @@ public class OrthoParalogTable extends AbstractMatchTable
         for(int j=0; j<lazyValues.size(); j++)
         {
           ClusterLazyQualifierValue lazyValue = (ClusterLazyQualifierValue)lazyValues.get(j);
-          lazyValue.setLoadGeneName(true);
+          
+          if(!lazyValue.isLazyLoaded())
+            lazyValue.setLoadGeneName(true);
         }
       }
       
