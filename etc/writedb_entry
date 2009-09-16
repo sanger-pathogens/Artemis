@@ -33,7 +33,7 @@ CLASSPATH="$ARTEMIS_HOME:$ARTEMIS_HOME/lib/biojava.jar:$ARTEMIS_HOME/lib/jemAlig
 CLASSPATH="$CLASSPATH:$ARTEMIS_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$ARTEMIS_HOME/lib/ibatis/:$ARTEMIS_HOME/lib/ibatis/log4j-1.2.14.jar:$ARTEMIS_HOME/lib/ibatis/cglib-nodep-2.2.jar:$ARTEMIS_HOME/lib/retrotranslator-runtime-1.1.0.jar"
 export CLASSPATH
 
-FLAGS="-mx512m -ms20m -Djdbc.drivers=org.postgresql.Driver -Dibatis"
+FLAGS="-mx1024m -ms20m -Djdbc.drivers=org.postgresql.Driver -Dibatis"
 DEFAULT_CONNECTION="-Dchado=db.genedb.org:5432/snapshot?genedb_ro -Dread_only"
 
 while test $# != 0
@@ -47,6 +47,18 @@ while test $# != 0
     esac
     shift
 done
+
+# searches for the -c option (needs to know the index)
+idx=0
+for arg in "$@"
+do
+	if [ '-c' == "${arg}" ]; then
+		let "nextID = $idx + 1";
+		DEFAULT_CONNECTION="-Dchado=${!nextID}"		
+	fi
+	let idx++
+done
+
 
 echo starting to write with flags: $DEFAULT_CONNECTION $FLAGS 1>&2
 
