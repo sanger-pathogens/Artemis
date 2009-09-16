@@ -46,6 +46,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.BufferedReader;
@@ -65,11 +66,14 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import net.sf.samtools.AlignmentBlock;
 import net.sf.samtools.SAMFileHeader;
@@ -82,19 +86,26 @@ import net.sf.samtools.util.CloseableIterator;
 import uk.ac.sanger.artemis.Entry;
 import uk.ac.sanger.artemis.EntryGroup;
 import uk.ac.sanger.artemis.Options;
+import uk.ac.sanger.artemis.Selection;
+import uk.ac.sanger.artemis.SelectionChangeEvent;
+import uk.ac.sanger.artemis.SelectionChangeListener;
 import uk.ac.sanger.artemis.SimpleEntryGroup;
+import uk.ac.sanger.artemis.components.DisplayAdjustmentEvent;
+import uk.ac.sanger.artemis.components.DisplayAdjustmentListener;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
+import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.sequence.Bases;
+import uk.ac.sanger.artemis.sequence.MarkerRange;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.DocumentFactory;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 
 public class JamView extends JPanel
-                     implements Scrollable
+                     implements Scrollable, DisplayAdjustmentListener, SelectionChangeListener
 {
   private static final long serialVersionUID = 1L;
   private List<SAMRecord> readsInView;
@@ -108,15 +119,27 @@ public class JamView extends JPanel
   private JCheckBox checkBoxSingle;
   private JCheckBox checkBoxSNPs;
   
+  private FeatureDisplay feature_display;
+  private Selection selection;
+  private JPanel mainPanel;
+  private boolean showScale = true;
   private Ruler ruler = new Ruler();
   private int nbasesInView;
+  
+  private int startBase = -1;
+  private int endBase   = -1;
   private int laststart;
   private int lastend;
-  private int maxUnitIncrement = 4;
+  private int maxUnitIncrement = 8;
   private Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
   private Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
+  
+  private boolean showBaseAlignment = false;
+  /** Used to colour the frames. */
+  private Color light_grey = new Color(200, 200, 200);
   private int ALIGNMENT_PIX_PER_BASE;
   
+  private JPopupMenu popup;
   // use the picard library otherwise call samtools
   public static boolean PICARD = true;
 
@@ -149,11 +172,14 @@ public class JamView extends JPanel
       readHeader();
     
     // set font size
-    setFont(getFont().deriveFont(12.f));
-    final javax.swing.plaf.FontUIResource font_ui_resource =
-      new javax.swing.plaf.FontUIResource(getFont());
-   //  Options.getOptions().getFontUIResource();
+    //setFont(getFont().deriveFont(12.f));
 
+    //Options.getOptions().getFontUIResource();
+    //final javax.swing.plaf.FontUIResource font_ui_resource =
+    //  new javax.swing.plaf.FontUIResource(getFont());
+    final javax.swing.plaf.FontUIResource font_ui_resource =
+      Options.getOptions().getFontUIResource();
+    
     Enumeration<Object> keys = UIManager.getDefaults().keys();
     while(keys.hasMoreElements()) 
     {
@@ -162,8 +188,11 @@ public class JamView extends JPanel
       if(value instanceof javax.swing.plaf.FontUIResource) 
         UIManager.put(key, font_ui_resource);
     }
+    
+    setFont(Options.getOptions().getFont());
     FontMetrics fm  = getFontMetrics(getFont());
-    ALIGNMENT_PIX_PER_BASE  = (int) (fm.stringWidth("A")*1.1);
+    ALIGNMENT_PIX_PER_BASE = fm.charWidth('M');
+    selection = new Selection(null);
   }
   
   /**
@@ -302,28 +331,41 @@ public class JamView extends JPanel
   /**
    * Override
    */
-  public void paintComponent(Graphics g)
+  protected void paintComponent(Graphics g)
   {
 	super.paintComponent(g);
 	Graphics2D g2 = (Graphics2D)g;
 
 	String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
-
 	float pixPerBase = ((float)getWidth())/(float)(seqLength);
 	
-    double x = jspView.getViewport().getViewRect().getX();
-    int start = (int) (seqLength * ( (float)x / (float)getWidth()));
-    int end   = (int) (start + ((float)jspView.getViewport().getWidth() / 
-                                (float)pixPerBase));
+    int start;
+    final int end;
+    
+    if(startBase > 0)
+      start = startBase;
+    else
+    {
+      double x = jspView.getViewport().getViewRect().getX();
+      start = (int) (seqLength * ( (float)x / (float)getWidth()));
+    }
+    
+    if(endBase > 0)
+      end = endBase;
+    else
+      end   = (int) (start + ((float)jspView.getViewport().getWidth() / 
+                              (float)pixPerBase));
 
+    //System.out.println("paintComponent "+start+".."+end);
+    
     if(laststart != start ||
        lastend   != end)
     {
       try
       {
         setCursor(cbusy);
-        
+
         if(PICARD)
           readFromBamPicard(start, end);
         else
@@ -341,7 +383,7 @@ public class JamView extends JPanel
     
     laststart = start;
     lastend   = end;
-	if(pixPerBase >= ALIGNMENT_PIX_PER_BASE)
+	if(pixPerBase*2 >= ALIGNMENT_PIX_PER_BASE)
 	  drawBaseAlignment(g2, seqLength, pixPerBase, start, end);
 	else
 	  drawLineView(g2, seqLength, pixPerBase, start, end);
@@ -358,44 +400,51 @@ public class JamView extends JPanel
   private void drawBaseAlignment(Graphics2D g2, int seqLength, 
                                  float pixPerBase, final int start, final int end)
   {
-    int ypos = 0;
-    
     ruler.start = start;
     ruler.end = end;
     ruler.repaint();
     
-    ypos+=6;
+    int ypos = 0;
+    drawSelectionRange(g2, pixPerBase, start, end);
     
-    char[] refSeq = null;
+    String refSeq = null;
     int refSeqStart = start;
     if(bases != null)
     {
       // draw the reference sequence
       ypos+=11;
+
       try
       {
-        int seqEnd = end+1;
+        int seqEnd = end+2;
         if(seqEnd > bases.getLength())
           seqEnd = bases.getLength();
 
         if(refSeqStart < 1)
           refSeqStart = 1;
         refSeq = 
-          bases.getSubSequenceC(new Range(refSeqStart, seqEnd), Bases.FORWARD);
-        int xpos;
-
-        for(int i=0;i<refSeq.length; i++)
-        {
-          xpos = ((refSeqStart-1) + i)*ALIGNMENT_PIX_PER_BASE;
-          refSeq[i] = Character.toUpperCase(refSeq[i]);
-          g2.drawChars(refSeq, i, 1, xpos, ypos);
-        }
+          bases.getSubSequence(new Range(refSeqStart, seqEnd), Bases.FORWARD).toUpperCase();
+        int xpos = (refSeqStart-1)*ALIGNMENT_PIX_PER_BASE;
+        
+        g2.setColor(light_grey);
+        g2.fillRect(xpos, ypos-11, 
+            jspView.getViewport().getWidth()+(ALIGNMENT_PIX_PER_BASE*2), 11);
+        
+        g2.setColor(Color.black);
+        g2.drawString(refSeq, xpos, ypos);
+        
+        //for(int i=0;i<refSeq.length(); i++)
+        //{
+          //xpos = ((refSeqStart-1) + i)*ALIGNMENT_PIX_PER_BASE;
+          //g2.drawString(refSeq.substring(i, i+1), xpos, ypos);
+        //}
       }
       catch (OutOfRangeException e)
       {
         e.printStackTrace();
       }
     }
+
     
     boolean drawn[] = new boolean[readsInView.size()];
     for(int i=0; i<readsInView.size(); i++)
@@ -448,7 +497,7 @@ public class JamView extends JPanel
    * @param ypos
    */
   private void drawSequence(Graphics2D g2, SAMRecord samRecord, 
-                            float pixPerBase, int ypos, char[] refSeq, int refSeqStart)
+                            float pixPerBase, int ypos, String refSeq, int refSeqStart)
   {
     if (!samRecord.getReadPairedFlag() ||  // read is not paired in sequencing
         samRecord.getMateUnmappedFlag() )  // mate is unmapped )  // mate is unmapped 
@@ -467,12 +516,12 @@ public class JamView extends JPanel
       for(int j=0; j<block.getLength(); j++)
       {
         int readPos = block.getReadStart()-1+j;
-        xpos  = block.getReferenceStart()+j;
-        int refPos = xpos-refSeqStart;
+        xpos  = block.getReferenceStart()-1+j;
+        int refPos = xpos-refSeqStart+1;
         
-        if(checkBoxSNPs.isSelected() && refSeq != null && refPos > 0 && refPos < refSeq.length)
+        if(checkBoxSNPs.isSelected() && refSeq != null && refPos > 0 && refPos < refSeq.length())
         { 
-          if(readSeq.charAt(readPos) != refSeq[refPos])
+          if(readSeq.charAt(readPos) != refSeq.charAt(refPos))
             g2.setColor(Color.red);
           else
             g2.setColor(col);
@@ -491,13 +540,19 @@ public class JamView extends JPanel
    * @param end
    */
   private void drawLineView(Graphics2D g2, int seqLength, float pixPerBase, int start, int end)
-  {   
-    drawScale(g2, start, end, pixPerBase);
+  {
+    drawSelectionRange(g2, pixPerBase,start, end);
+    if(isShowScale())
+      drawScale(g2, start, end, pixPerBase);
     
     Stroke originalStroke = new BasicStroke (1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND); 
     Stroke stroke =
             new BasicStroke (1.3f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
-    int scaleHeight = 15;
+    int scaleHeight;
+    if(isShowScale())
+      scaleHeight = 15;
+    else
+      scaleHeight = 0;
     
     for(int i=0; i<readsInView.size(); i++)
     {
@@ -620,9 +675,9 @@ public class JamView extends JPanel
     else if(interval > 4000)
       drawTicks(g2, start, end, pixPerBase, 800);
     else if(interval > 1000)
-      drawTicks(g2, start, end, pixPerBase, 200);
+      drawTicks(g2, start, end, pixPerBase, 400);
     else
-      drawTicks(g2, start, end, pixPerBase, 50);
+      drawTicks(g2, start, end, pixPerBase, 100);
   }
   
   private void drawTicks(Graphics2D g2, int start, int end, float pixPerBase, int division)
@@ -663,6 +718,36 @@ public class JamView extends JPanel
 
     if (checkBoxSNPs.isSelected())
       showSNPsOnReads(g2, thisRead, pixPerBase, ypos);
+  }
+  
+  /**
+   * Highlight a selected range
+   * @param g2
+   * @param pixPerBase
+   * @param start
+   * @param end
+   */
+  private void drawSelectionRange(Graphics2D g2, float pixPerBase, int start, int end)
+  {
+    if(getSelection() != null)
+    {
+      Range selectedRange = getSelection().getSelectionRange();
+
+      if(selectedRange != null)
+      {
+        int rangeStart = selectedRange.getStart();
+        int rangeEnd   = selectedRange.getEnd();
+        
+        if(end < rangeStart || start > rangeEnd)
+          return;
+        
+        int x = (int) (pixPerBase*(rangeStart-1));
+        int width = (int) (pixPerBase*(rangeEnd-rangeStart+1));
+        
+        g2.setColor(Color.pink);
+        g2.fillRect(x, 0, width, getHeight());
+      }
+    }
   }
   
   /**
@@ -715,25 +800,40 @@ public class JamView extends JPanel
     }
   }
   
-  public void addJamToPanel(final JPanel panel)
+  /**
+   * Add the alignment view to the supplied <code>JPanel</code> in
+   * a <code>JScrollPane</code>.
+   * @param mainPanel  panel to add the alignment to
+   * @param showTopanel true in standalone mode to show buttons in
+   * a panel at the top rather than in a popup menu.
+   */
+  public void addJamToPanel(final JPanel mainPanel,
+                            final boolean showTopanel)
   {
-    JPanel topPanel = new JPanel(new GridBagLayout());
+    this.mainPanel = mainPanel;
+    popup = new JPopupMenu();
+
+    JPanel topPanel = null;
     GridBagConstraints gc = new GridBagConstraints();
-    
+
     combo = new JComboBox(seqNames);
     combo.setEditable(false);
-    combo.addItemListener(new ItemListener()
+    if(showTopanel)
     {
-      public void itemStateChanged(ItemEvent e)
+      topPanel = new JPanel(new GridBagLayout());
+      combo.addItemListener(new ItemListener()
       {
-        laststart = -1;
-        lastend   = -1;
-        setZoomLevel(JamView.this.nbasesInView);
-      }
-    });
-    gc.fill = GridBagConstraints.NONE;
-    gc.anchor = GridBagConstraints.NORTHWEST;
-    topPanel.add(combo, gc);
+        public void itemStateChanged(ItemEvent e)
+        {
+          laststart = -1;
+          lastend = -1;
+          setZoomLevel(JamView.this.nbasesInView);
+        }
+      });
+      gc.fill = GridBagConstraints.NONE;
+      gc.anchor = GridBagConstraints.NORTHWEST;
+      topPanel.add(combo, gc);
+    }
     
     checkBoxSingle = new JCheckBox("Single Reads");
     checkBoxSingle.addActionListener(new ActionListener()
@@ -743,9 +843,11 @@ public class JamView extends JPanel
         repaint();
       }
     });
-    topPanel.add(checkBoxSingle, gc);
-    
-    
+    if(topPanel != null)
+      topPanel.add(checkBoxSingle, gc);
+    else
+      popup.add(checkBoxSingle);
+
     checkBoxSNPs = new JCheckBox("SNPs");
     checkBoxSNPs.addActionListener(new ActionListener()
     {
@@ -760,104 +862,113 @@ public class JamView extends JPanel
         repaint();
       }
     });
-    topPanel.add(checkBoxSNPs, gc);
+    if(topPanel != null)
+      topPanel.add(checkBoxSNPs, gc);
+    else
+      popup.add(checkBoxSNPs, gc);
     
-    final JTextField baseText = new JTextField(10);
-    JButton goTo = new JButton("GoTo:");
-    goTo.addActionListener(new ActionListener()
+    if (topPanel != null)
     {
-      public void actionPerformed(ActionEvent e)
+      final JTextField baseText = new JTextField(10);
+      JButton goTo = new JButton("GoTo:");
+      goTo.addActionListener(new ActionListener()
       {
-        try
+        public void actionPerformed(ActionEvent e)
         {
-          int basePosition = Integer.parseInt(baseText.getText());
-          goToBasePosition(basePosition);
+          try
+          {
+            int basePosition = Integer.parseInt(baseText.getText());
+            goToBasePosition(basePosition);
+          }
+          catch (NumberFormatException nfe)
+          {
+            JOptionPane.showMessageDialog(JamView.this,
+                "Expecting a base number!", "Number Format",
+                JOptionPane.WARNING_MESSAGE);
+          }
         }
-        catch(NumberFormatException nfe)
+      });
+
+      topPanel.add(goTo, gc);
+      topPanel.add(baseText, gc);
+    }
+
+    if (topPanel != null)
+    {
+      JButton zoomIn = new JButton("+");
+      zoomIn.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
         {
-          JOptionPane.showMessageDialog(JamView.this, 
-                 "Expecting a base number!", 
-                 "Number Format", JOptionPane.WARNING_MESSAGE);
+          int startBase = getBaseAtStartOfView();
+          setZoomLevel((int) (JamView.this.nbasesInView * 1.1));
+          goToBasePosition(startBase);
+          repaint();
         }
-      }
-    });
-    topPanel.add(goTo, gc);
-    topPanel.add(baseText, gc);
+      });
+      topPanel.add(zoomIn, gc);
 
-    JButton zoomIn = new JButton("+");
-    zoomIn.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
+      JButton zoomOut = new JButton("-");
+      zoomOut.addActionListener(new ActionListener()
       {
-        int startBase = getBaseAtStartOfView();
-        setZoomLevel( (int) (JamView.this.nbasesInView*1.1) );
-        goToBasePosition(startBase);
-        repaint();
-      }
-    });
-    topPanel.add(zoomIn, gc);
-    
-    
-    JButton zoomOut = new JButton("-");
-    zoomOut.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        int startBase = getBaseAtStartOfView();
-        setZoomLevel( (int) (JamView.this.nbasesInView*.9) );
-        goToBasePosition(startBase);
-        repaint();
-      }
-    });
-    topPanel.add(zoomOut, gc);
-    
-    
-    panel.setPreferredSize(new Dimension(1000,500));
-    setLength(nbasesInView);
+        public void actionPerformed(ActionEvent e)
+        {
+          if (showBaseAlignment)
+            return;
+          int startBase = getBaseAtStartOfView();
+          setZoomLevel((int) (JamView.this.nbasesInView * .9));
+          goToBasePosition(startBase);
+          repaint();
+        }
+      });
+      topPanel.add(zoomOut, gc);
+    }
 
+    mainPanel.setPreferredSize(new Dimension(800,400));
     jspView = new JScrollPane(this, 
         JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
         JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-
-    panel.setLayout(new BorderLayout());
-    panel.add(topPanel, BorderLayout.NORTH);
-    panel.add(jspView, BorderLayout.CENTER);
+    
+    setDisplay(1, nbasesInView, null);
+    mainPanel.setLayout(new BorderLayout());
+    
+    if(topPanel != null)
+      mainPanel.add(topPanel, BorderLayout.NORTH);
+    mainPanel.add(jspView, BorderLayout.CENTER);
 
     jspView.getVerticalScrollBar().setValue(
         jspView.getVerticalScrollBar().getMaximum());
 
-    addMouseListener(new MouseAdapter()
+    if(topPanel != null)
     {
-      public void mouseClicked(MouseEvent e)
+      addKeyListener(new KeyAdapter()
       {
-        JamView.this.requestFocus();
-      }
-    });
-    
-    addKeyListener(new KeyAdapter()
-    {
-      public void keyPressed(final KeyEvent event)
-      {
-        switch(event.getKeyCode())
+        public void keyPressed(final KeyEvent event)
         {
+          switch (event.getKeyCode())
+          {
           case KeyEvent.VK_UP:
             int startBase = getBaseAtStartOfView();
-            setZoomLevel( (int) (JamView.this.nbasesInView*1.1) );
+            setZoomLevel((int) (JamView.this.nbasesInView * 1.1));
             goToBasePosition(startBase);
             repaint();
             break;
           case KeyEvent.VK_DOWN:
+            if (showBaseAlignment)
+              break;
             startBase = getBaseAtStartOfView();
-            setZoomLevel( (int) (JamView.this.nbasesInView*.9) );
+            setZoomLevel((int) (JamView.this.nbasesInView * .9));
             goToBasePosition(startBase);
             repaint();
             break;
           default:
             break;
+          }
         }
-      }
-    });
+      });
+    }
     
+    addMouseListener(new PopupListener());
     setFocusable(true);
     requestFocusInWindow();
     addFocusListener(new FocusListener() 
@@ -865,6 +976,21 @@ public class JamView extends JPanel
       public void focusGained(FocusEvent fe) {}
       public void focusLost(FocusEvent fe) {}
     });
+    // Listen for mouse motion events so that we can select ranges of bases.
+    addMouseMotionListener(new MouseMotionAdapter() 
+    {
+      public void mouseDragged(MouseEvent event) 
+      {
+        // adjust for scrollbar
+        handleCanvasMouseDrag(event);
+      }
+    });
+  }
+  
+  public void setVisible(boolean visible)
+  {
+    super.setVisible(visible);
+    mainPanel.setVisible(visible);
   }
   
   private int getBaseAtStartOfView()
@@ -883,7 +1009,8 @@ public class JamView extends JPanel
   private void setZoomLevel(final int nbasesInView)
   {
     this.nbasesInView = nbasesInView;
-    setLength(this.nbasesInView);
+    int start = getBaseAtStartOfView();
+    setDisplay(start,start+nbasesInView, null);
     revalidate();
     repaint();
   }
@@ -895,39 +1022,64 @@ public class JamView extends JPanel
   private void goToBasePosition(int base)
   {
     Point p = jspView.getViewport().getViewPosition();
-    
     String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
-    p.x = (int) ((getPreferredSize().width)*(((float)base)/(float)seqLength));
+    p.x = (int) ((getPreferredSize().width)*(((float)base-1)/(float)seqLength));
     jspView.getViewport().setViewPosition(p);
   }
-
+  
   /**
-   * Set the panel size based on the number of bases visible.
-   * @param nbasesInView
+   * Set the start and end base positions to display.
+   * @param start
+   * @param end
+   * @param event
    */
-  private void setLength(int basesToShow)
+  public void setDisplay(int start,
+                         int end,
+                         DisplayAdjustmentEvent event)
   {
+    this.startBase = start;
+    this.endBase   = end;
+    
     String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
-    double pixPerBase = 1000.d/(double)(basesToShow);
-    
-    System.out.println(pixPerBase+"  "+ALIGNMENT_PIX_PER_BASE);
-    if(pixPerBase > ALIGNMENT_PIX_PER_BASE)
+
+    double pixPerBase = getPixPerBase(start, end);
+    if(pixPerBase*2 > ALIGNMENT_PIX_PER_BASE)
     {
       pixPerBase = ALIGNMENT_PIX_PER_BASE;
       checkBoxSingle.setVisible(false);
       jspView.getVerticalScrollBar().setValue(0);
       jspView.setColumnHeaderView(ruler);
+      showBaseAlignment = true;
     }
     else if(jspView != null)
     {
       checkBoxSingle.setVisible(true);
       jspView.setColumnHeaderView(null);
+      showBaseAlignment = false;
     }
+    
     Dimension d = new Dimension();
     d.setSize((seqLength*pixPerBase), 800.d);
     setPreferredSize(d);
+    goToBasePosition(startBase);
+    
+    repaint();
+    if(event == null || 
+       event.getType() == DisplayAdjustmentEvent.SCALE_ADJUST_EVENT)
+      revalidate();
+    
+    this.startBase = -1;
+    this.endBase   = -1;
+  }
+  
+  private double getPixPerBase(int start, int end)
+  {
+    if(feature_display == null)
+      return 1000.d/(double)(end-start+1);
+    else
+      return feature_display.getWidth()/(double)(end-start+1);
   }
 
   /**
@@ -977,7 +1129,117 @@ public class JamView extends JPanel
     }
     return entry;
   }
+  
+  private boolean isShowScale()
+  {
+    return showScale;
+  }
 
+  public void setShowScale(boolean showScale)
+  {
+    this.showScale = showScale;
+  }
+  
+  public JScrollPane getJspView()
+  {
+    return jspView;
+  }
+
+  public void setFeatureDisplay(FeatureDisplay feature_display)
+  {
+    this.feature_display = feature_display;
+    this.selection = feature_display.getSelection();;
+  }
+  
+  public void setBases(Bases bases)
+  {
+    this.bases = bases;
+  }
+  
+  /**
+   * Remove JScrollPane border
+   */
+  public void removeBorder()
+  {
+    Border empty = new EmptyBorder(0,0,0,0);
+    jspView.setBorder(empty);
+  }
+  
+  /**
+   *  Handle a mouse drag event on the drawing canvas.
+   **/
+  private void handleCanvasMouseDrag(final MouseEvent event)
+  {
+    if(event.isShiftDown()) 
+      return;
+
+    String refName = (String) combo.getSelectedItem();
+    int seqLength = seqLengths.get(refName);
+    float pixPerBase = ((float)getWidth())/(float)(seqLength);
+    
+    
+
+/*    MarkerRange drag_range = getMarkerRangeFromPosition(event.getPoint());
+    selection.setMarkerRange(marker_range);
+    if(drag_range == null) 
+      return;
+
+    final MarkerRange selected_range = getSelection().getMarkerRange();
+
+    // if the start and current positions of the drag are not on the
+    // same Strand then ignore this event
+    if(selected_range != null &&
+       drag_range.getStrand() != selected_range.getStrand()) 
+      return;
+
+    try 
+    {
+      // user has dragged off the screen so use a marker at position 1
+      if(drag_range.getStart().getPosition() < 1) 
+        drag_range = new MarkerRange(drag_range.getStrand(), 1, 1);
+
+      // user has dragged off the screen so use a marker at position the
+      // end of the sequence
+      if(drag_range.getEnd().getPosition() > getSequenceLength()) 
+        drag_range = new MarkerRange(drag_range.getStrand(),
+                                      getSequenceLength(),
+                                      getSequenceLength());
+    }
+    catch(OutOfRangeException e) 
+    {
+      throw new Error("internal error - unexpected OutOfRangeException");
+    }
+
+    final boolean start_base_is_visible = baseVisible(drag_range.getStart());
+    final boolean end_base_is_visible   = baseVisible(drag_range.getEnd());
+
+    if(!start_base_is_visible) 
+      makeBaseVisible(drag_range.getStart());
+
+    if(!end_base_is_visible) 
+      makeBaseVisible(drag_range.getEnd());
+
+    // scrolling was necessary so update the visible features vector
+    if(!start_base_is_visible || !end_base_is_visible) 
+      needVisibleFeatureVectorUpdate();
+
+    final MarkerRange new_marker_range;
+
+    if(click_range == null) 
+      new_marker_range = drag_range;
+    else 
+      new_marker_range = selected_range.combineRanges(drag_range, true);
+
+    getSelection().setMarkerRange(new_marker_range);
+
+    repaint();*/
+  }
+  
+  private Selection getSelection()
+  {
+    return selection;
+  }
+  
   private class Ruler extends JPanel
   {
     private static final long serialVersionUID = 1L;
@@ -1013,6 +1275,37 @@ public class JamView extends JPanel
       }
     }
   }
+  
+  /**
+  *
+  * Popup menu listener
+  *
+  */
+  class PopupListener extends MouseAdapter
+  {
+    public void mouseClicked(MouseEvent e)
+    {
+      JamView.this.requestFocus();
+    }
+    
+    public void mousePressed(MouseEvent e)
+    {
+      maybeShowPopup(e);
+    }
+
+    public void mouseReleased(MouseEvent e)
+    {
+      maybeShowPopup(e);
+    }
+
+    private void maybeShowPopup(MouseEvent e)
+    {
+      if(e.isPopupTrigger())
+        popup.show(e.getComponent(),
+                e.getX(), e.getY());
+    }
+  }
+ 
   
   class SAMRecordComparator implements Comparator<Object>
   {
@@ -1086,6 +1379,14 @@ public class JamView extends JPanel
     }
   }
   
+  /**
+   * Artemis event notification
+   */
+  public void displayAdjustmentValueChanged(DisplayAdjustmentEvent event)
+  {
+    setDisplay(event.getStart(), event.getEnd(), event);
+  }
+  
   public static void main(String[] args)
   {
     String bam = args[0];
@@ -1127,11 +1428,16 @@ public class JamView extends JPanel
       public void windowLostFocus(WindowEvent e){}
     });
     
-    view.addJamToPanel((JPanel)frame.getContentPane());
+    view.addJamToPanel((JPanel)frame.getContentPane(), true);
     frame.pack();
 
     view.jspView.getVerticalScrollBar().setValue(
         view.jspView.getVerticalScrollBar().getMaximum());
     frame.setVisible(true);
+  }
+
+  public void selectionChanged(SelectionChangeEvent event)
+  {
+    repaint();
   }
 }
