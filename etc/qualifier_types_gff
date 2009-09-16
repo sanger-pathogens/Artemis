@@ -82,6 +82,7 @@ germline         yes        none
 GPI_anchor_cleavage_site no "text"
 haplotype        no         "text"
 insertion_seq    no         "text"
+isObsolete       no         text
 isolation_source no         "text"
 isolate          no         "text"
 kinetoplast      no         "opt"
