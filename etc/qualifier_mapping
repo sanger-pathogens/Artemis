@@ -19,7 +19,7 @@ signal_peptide              note
 SignalP_prediction          note
 GPI_anchored                note
 GPI_anchor_cleavage_site    note
-ID                          systematic_id
+ID                          locus_tag
 Name                        primary_name
 #
 # CHADO qualifiers to be ignored
