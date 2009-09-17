@@ -26,6 +26,7 @@ package uk.ac.sanger.artemis.components.alignment;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
@@ -33,6 +34,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
@@ -46,7 +48,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.BufferedReader;
@@ -405,7 +407,7 @@ public class JamView extends JPanel
     ruler.repaint();
     
     int ypos = 0;
-    drawSelectionRange(g2, pixPerBase, start, end);
+    
     
     String refSeq = null;
     int refSeqStart = start;
@@ -429,7 +431,7 @@ public class JamView extends JPanel
         g2.setColor(light_grey);
         g2.fillRect(xpos, ypos-11, 
             jspView.getViewport().getWidth()+(ALIGNMENT_PIX_PER_BASE*2), 11);
-        
+        drawSelectionRange(g2, pixPerBase, start, end);
         g2.setColor(Color.black);
         g2.drawString(refSeq, xpos, ypos);
         
@@ -444,6 +446,8 @@ public class JamView extends JPanel
         e.printStackTrace();
       }
     }
+    else
+      drawSelectionRange(g2, pixPerBase, start, end);
 
     
     boolean drawn[] = new boolean[readsInView.size()];
@@ -804,37 +808,71 @@ public class JamView extends JPanel
    * Add the alignment view to the supplied <code>JPanel</code> in
    * a <code>JScrollPane</code>.
    * @param mainPanel  panel to add the alignment to
-   * @param showTopanel true in standalone mode to show buttons in
-   * a panel at the top rather than in a popup menu.
+   * @param autohide automatically hide the top panel containing the buttons
    */
   public void addJamToPanel(final JPanel mainPanel,
-                            final boolean showTopanel)
+                            final boolean autohide,
+                            final FeatureDisplay feature_display)
   {
     this.mainPanel = mainPanel;
-    popup = new JPopupMenu();
-
-    JPanel topPanel = null;
+    
+    if(feature_display != null)
+    {
+      this.feature_display = feature_display;
+      this.selection = feature_display.getSelection();
+    }
+    
+    final JPanel topPanel = new JPanel(new GridBagLayout());
     GridBagConstraints gc = new GridBagConstraints();
+
+    // auto hide top panel
+    final JCheckBox buttonAutoHide = new JCheckBox("Auto-hide", autohide);
+    final MouseMotionListener mouseMotionListener = new MouseMotionListener()
+    {
+      public void mouseDragged(MouseEvent event)
+      {
+        handleCanvasMouseDragOrClick(event);
+      }
+      
+      public void mouseMoved(MouseEvent e)
+      {
+        int thisHgt = HEIGHT;
+        if (thisHgt < 5)
+          thisHgt = 15;
+
+        int y = (int) (e.getY() - jspView.getViewport().getViewRect().getY());
+        if (y < thisHgt)
+        {
+          if (!containsComponent(topPanel, mainPanel))
+            mainPanel.add(topPanel, BorderLayout.NORTH);
+        }
+        else
+        {
+          if (buttonAutoHide.isSelected() && containsComponent(topPanel, mainPanel))
+            mainPanel.remove(topPanel);
+        }
+        mainPanel.repaint();
+        mainPanel.revalidate();
+      }
+    };
+    addMouseMotionListener(mouseMotionListener);
 
     combo = new JComboBox(seqNames);
     combo.setEditable(false);
-    if(showTopanel)
+
+    combo.addItemListener(new ItemListener()
     {
-      topPanel = new JPanel(new GridBagLayout());
-      combo.addItemListener(new ItemListener()
+      public void itemStateChanged(ItemEvent e)
       {
-        public void itemStateChanged(ItemEvent e)
-        {
-          laststart = -1;
-          lastend = -1;
-          setZoomLevel(JamView.this.nbasesInView);
-        }
-      });
-      gc.fill = GridBagConstraints.NONE;
-      gc.anchor = GridBagConstraints.NORTHWEST;
-      topPanel.add(combo, gc);
-    }
-    
+        laststart = -1;
+        lastend = -1;
+        setZoomLevel(JamView.this.nbasesInView);
+      }
+    });
+    gc.fill = GridBagConstraints.NONE;
+    gc.anchor = GridBagConstraints.NORTHWEST;
+    topPanel.add(combo, gc);
+
     checkBoxSingle = new JCheckBox("Single Reads");
     checkBoxSingle.addActionListener(new ActionListener()
     {
@@ -843,31 +881,25 @@ public class JamView extends JPanel
         repaint();
       }
     });
-    if(topPanel != null)
-      topPanel.add(checkBoxSingle, gc);
-    else
-      popup.add(checkBoxSingle);
+    topPanel.add(checkBoxSingle, gc);
 
     checkBoxSNPs = new JCheckBox("SNPs");
     checkBoxSNPs.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
       {
-        if(checkBoxSNPs.isSelected() && bases == null)
+        if (checkBoxSNPs.isSelected() && bases == null)
         {
           JOptionPane.showMessageDialog(null,
-              "No reference sequence supplied to identify SNPs.", 
-              "SNPs", JOptionPane.INFORMATION_MESSAGE);
+              "No reference sequence supplied to identify SNPs.", "SNPs",
+              JOptionPane.INFORMATION_MESSAGE);
         }
         repaint();
       }
     });
-    if(topPanel != null)
-      topPanel.add(checkBoxSNPs, gc);
-    else
-      popup.add(checkBoxSNPs, gc);
-    
-    if (topPanel != null)
+    topPanel.add(checkBoxSNPs, gc);
+
+    if (feature_display == null)
     {
       final JTextField baseText = new JTextField(10);
       JButton goTo = new JButton("GoTo:");
@@ -888,14 +920,12 @@ public class JamView extends JPanel
           }
         }
       });
-
       topPanel.add(goTo, gc);
       topPanel.add(baseText, gc);
-    }
 
-    if (topPanel != null)
-    {
       JButton zoomIn = new JButton("+");
+      Insets ins = new Insets(0,0,0,0);
+      zoomIn.setMargin(ins);
       zoomIn.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
@@ -923,23 +953,23 @@ public class JamView extends JPanel
       });
       topPanel.add(zoomOut, gc);
     }
-
-    mainPanel.setPreferredSize(new Dimension(800,400));
-    jspView = new JScrollPane(this, 
-        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-        JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
     
+    topPanel.add(buttonAutoHide, gc);
+
+    mainPanel.setPreferredSize(new Dimension(800, 400));
+    jspView = new JScrollPane(this, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+
     setDisplay(1, nbasesInView, null);
     mainPanel.setLayout(new BorderLayout());
-    
-    if(topPanel != null)
-      mainPanel.add(topPanel, BorderLayout.NORTH);
+
+    mainPanel.add(topPanel, BorderLayout.NORTH);
     mainPanel.add(jspView, BorderLayout.CENTER);
 
     jspView.getVerticalScrollBar().setValue(
         jspView.getVerticalScrollBar().getMaximum());
 
-    if(topPanel != null)
+    if (feature_display == null)
     {
       addKeyListener(new KeyAdapter()
       {
@@ -967,24 +997,32 @@ public class JamView extends JPanel
         }
       });
     }
-    
+
     addMouseListener(new PopupListener());
     setFocusable(true);
     requestFocusInWindow();
-    addFocusListener(new FocusListener() 
+    addFocusListener(new FocusListener()
     {
-      public void focusGained(FocusEvent fe) {}
-      public void focusLost(FocusEvent fe) {}
+      public void focusGained(FocusEvent fe){}
+      public void focusLost(FocusEvent fe){}
     });
-    // Listen for mouse motion events so that we can select ranges of bases.
-    addMouseMotionListener(new MouseMotionAdapter() 
+  }
+  
+  /**
+   * Check to see if this component is contained by the display
+   * (FeatureDisplay) component.
+   * @return
+   */
+  private boolean containsComponent(JPanel topPanel, JPanel mainPanel)
+  {
+    Component[] c = mainPanel.getComponents();
+    for(int i=0; i<c.length; i++)
     {
-      public void mouseDragged(MouseEvent event) 
-      {
-        // adjust for scrollbar
-        handleCanvasMouseDrag(event);
-      }
-    });
+      if(c[i].equals(topPanel))
+        return true;
+    }
+    
+    return false;
   }
   
   public void setVisible(boolean visible)
@@ -1144,12 +1182,6 @@ public class JamView extends JPanel
   {
     return jspView;
   }
-
-  public void setFeatureDisplay(FeatureDisplay feature_display)
-  {
-    this.feature_display = feature_display;
-    this.selection = feature_display.getSelection();;
-  }
   
   public void setBases(Bases bases)
   {
@@ -1168,71 +1200,31 @@ public class JamView extends JPanel
   /**
    *  Handle a mouse drag event on the drawing canvas.
    **/
-  private void handleCanvasMouseDrag(final MouseEvent event)
+  private void handleCanvasMouseDragOrClick(final MouseEvent event)
   {
-    if(event.isShiftDown()) 
+    if(!showBaseAlignment || event.isShiftDown()) 
       return;
 
     String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
-    float pixPerBase = ((float)getWidth())/(float)(seqLength);
+    float pixPerBase = ((float)getWidth())/(float)(seqLength);    
+    int start = (int) Math.round(event.getPoint().getX()/pixPerBase);
+    if(start < 1)
+      start = 1;
+    if(start > seqLength)
+      start = seqLength;
     
-    
-
-/*    MarkerRange drag_range = getMarkerRangeFromPosition(event.getPoint());
-    selection.setMarkerRange(marker_range);
-    if(drag_range == null) 
-      return;
-
-    final MarkerRange selected_range = getSelection().getMarkerRange();
-
-    // if the start and current positions of the drag are not on the
-    // same Strand then ignore this event
-    if(selected_range != null &&
-       drag_range.getStrand() != selected_range.getStrand()) 
-      return;
-
-    try 
+    MarkerRange drag_range;
+    try
     {
-      // user has dragged off the screen so use a marker at position 1
-      if(drag_range.getStart().getPosition() < 1) 
-        drag_range = new MarkerRange(drag_range.getStrand(), 1, 1);
-
-      // user has dragged off the screen so use a marker at position the
-      // end of the sequence
-      if(drag_range.getEnd().getPosition() > getSequenceLength()) 
-        drag_range = new MarkerRange(drag_range.getStrand(),
-                                      getSequenceLength(),
-                                      getSequenceLength());
+      drag_range = new MarkerRange (bases.getForwardStrand(), start, start);
+      getSelection().setMarkerRange(drag_range);
+      repaint();
     }
-    catch(OutOfRangeException e) 
+    catch (OutOfRangeException e)
     {
-      throw new Error("internal error - unexpected OutOfRangeException");
+      e.printStackTrace();
     }
-
-    final boolean start_base_is_visible = baseVisible(drag_range.getStart());
-    final boolean end_base_is_visible   = baseVisible(drag_range.getEnd());
-
-    if(!start_base_is_visible) 
-      makeBaseVisible(drag_range.getStart());
-
-    if(!end_base_is_visible) 
-      makeBaseVisible(drag_range.getEnd());
-
-    // scrolling was necessary so update the visible features vector
-    if(!start_base_is_visible || !end_base_is_visible) 
-      needVisibleFeatureVectorUpdate();
-
-    final MarkerRange new_marker_range;
-
-    if(click_range == null) 
-      new_marker_range = drag_range;
-    else 
-      new_marker_range = selected_range.combineRanges(drag_range, true);
-
-    getSelection().setMarkerRange(new_marker_range);
-
-    repaint();*/
   }
   
   private Selection getSelection()
@@ -1277,15 +1269,14 @@ public class JamView extends JPanel
   }
   
   /**
-  *
   * Popup menu listener
-  *
   */
   class PopupListener extends MouseAdapter
   {
     public void mouseClicked(MouseEvent e)
     {
       JamView.this.requestFocus();
+      handleCanvasMouseDragOrClick(e);
     }
     
     public void mousePressed(MouseEvent e)
@@ -1428,7 +1419,7 @@ public class JamView extends JPanel
       public void windowLostFocus(WindowEvent e){}
     });
     
-    view.addJamToPanel((JPanel)frame.getContentPane(), true);
+    view.addJamToPanel((JPanel)frame.getContentPane(), false, null);
     frame.pack();
 
     view.jspView.getVerticalScrollBar().setValue(
