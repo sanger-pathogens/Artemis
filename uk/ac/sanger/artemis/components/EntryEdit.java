@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.79 2009-06-12 13:50:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.80 2009-09-17 15:36:20 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -29,6 +29,7 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.chado.CommitFrame;
 import uk.ac.sanger.artemis.circular.DNADraw;
+import uk.ac.sanger.artemis.components.alignment.JamView;
 import uk.ac.sanger.artemis.components.alignment.LookSeqPanel;
 import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
@@ -68,7 +69,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.79 2009-06-12 13:50:35 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.80 2009-09-17 15:36:20 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -108,6 +109,10 @@ public class EntryEdit extends JFrame
   /** This Object contains the current selection. */
   private Selection selection = null;
 
+  /** Alignment panel */
+  private JamView jamView;
+  private JPanel jamPanel;
+  
  /**
   *  The EntrySourceVector reference that is created in the constructor.
   **/
@@ -249,11 +254,17 @@ public class EntryEdit extends JFrame
       main_box_panel.add(jspLookSeq);
     }
     
+
+    
     // one line per entry display
     one_line_per_entry_display =
       new FeatureDisplay(getEntryGroup(), getSelection(),
                          getGotoEventSource(), base_plot_group);
-
+    
+    // read alignment panel
+    jamPanel = new JPanel();
+    main_box_panel.add(jamPanel);
+    
     one_line_per_entry_display.setShowLabels(false);
     one_line_per_entry_display.setOneLinePerEntry(true);
     one_line_per_entry_display.setVisible(false);
@@ -1087,6 +1098,31 @@ public class EntryEdit extends JFrame
       display_menu.add(show_lookseq_item);
     }
 
+    display_menu.addSeparator();
+    final JMenuItem show_Jam_item = new JMenuItem("BAM/SAM Alignment");
+    show_Jam_item.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent event)
+      {
+        if (!jamView.isVisible())
+        {
+          jamView.setVisible(true);
+          jamView.setDisplay(feature_display.getFirstVisibleForwardBase(),
+                             feature_display.getLastVisibleForwardBase(), null);
+          jamView.revalidate();
+          feature_display.addDisplayAdjustmentListener(jamView);
+          feature_display.getSelection().addSelectionChangeListener(jamView);
+        }
+        else
+        {
+          feature_display.removeDisplayAdjustmentListener(jamView);
+          feature_display.getSelection().removeSelectionChangeListener(jamView);
+          jamView.setVisible(false);
+        }
+      }
+    });
+    display_menu.add(show_Jam_item);
+
     menu_bar.add(display_menu);
   }
 
@@ -1184,6 +1220,47 @@ public class EntryEdit extends JFrame
         file_menu.add(read_features_menu);
       }
 
+      file_menu.addSeparator();
+      
+      JMenuItem read_bam_file = new JMenuItem("Read BAM/SAM");
+      read_bam_file.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          StickyFileChooser fileChooser = new StickyFileChooser();
+          int status = fileChooser.showOpenDialog(EntryEdit.this);
+          if(status != StickyFileChooser.APPROVE_OPTION)
+            return;
+          
+          File bamFile = fileChooser.getSelectedFile();
+          // check bam index file exists
+          File bamIndexFile = new File(bamFile.getAbsolutePath()+".bai");
+          if(!bamIndexFile.exists())
+          {
+            JOptionPane.showMessageDialog(EntryEdit.this, 
+                "BAM index file not found:"+bamIndexFile.getAbsolutePath(), 
+                "Missing Index File", JOptionPane.WARNING_MESSAGE);
+            return;
+          }
+
+          jamView = new JamView(bamFile.getAbsolutePath(), null, 2000);
+          jamView.setShowScale(false);
+          jamView.setBases(getEntryGroup().getBases());
+          jamView.addJamToPanel(jamPanel, true, feature_display);
+          jamView.getJspView().setHorizontalScrollBarPolicy(
+              JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+          jamView.removeBorder();
+          
+          jamView.setVisible(true);
+          jamView.setDisplay(feature_display.getFirstVisibleForwardBase(), 
+                             feature_display.getLastVisibleForwardBase(), null);
+          jamPanel.revalidate();
+          feature_display.addDisplayAdjustmentListener(jamView);
+          feature_display.getSelection().addSelectionChangeListener(jamView);
+        }
+      });
+      file_menu.add(read_bam_file);
+      
       file_menu.addSeparator();
 
       final JMenuItem save_default =
@@ -2281,7 +2358,7 @@ class SaveEntryAsSubmissionActionListener extends EntryActionListener
   public void actionPerformed(final ActionEvent event) 
   {
     getEntryEdit().saveEntry(getEntry(), false, true, false,
-                             DocumentEntryFactory.ANY_FORMAT);
+                             DocumentEntryFactory.EMBL_FORMAT);
   }
 }
 
