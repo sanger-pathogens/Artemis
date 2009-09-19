@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.80 2009-09-17 15:36:20 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.81 2009-09-19 07:56:11 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -69,7 +69,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.80 2009-09-17 15:36:20 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.81 2009-09-19 07:56:11 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -1250,8 +1250,6 @@ public class EntryEdit extends JFrame
           jamView.getJspView().setHorizontalScrollBarPolicy(
               JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
           jamView.removeBorder();
-          
-          jamView.setVisible(true);
           jamView.setDisplay(feature_display.getFirstVisibleForwardBase(), 
                              feature_display.getLastVisibleForwardBase(), null);
           jamPanel.revalidate();
