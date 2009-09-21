@@ -328,7 +328,7 @@ public class JamView extends JPanel
       }
     }
     inputSam.close();
-    System.out.println("readFromBamPicard "+start+".."+end);
+    //System.out.println("readFromBamPicard "+start+".."+end);
   }
   
   /**
@@ -364,7 +364,7 @@ public class JamView extends JPanel
       end   = (int) (start + ((float)width / (float)pixPerBase));
     }
 
-    System.out.println("paintComponent "+start+".."+end+"       "+startBase+".."+endBase+"  pixPerBase="+pixPerBase);
+    //System.out.println("paintComponent "+start+".."+end+"       "+startBase+".."+endBase+"  pixPerBase="+pixPerBase);
     
     if(laststart != start ||
        lastend   != end)
@@ -432,8 +432,6 @@ public class JamView extends JPanel
         refSeq = 
           bases.getSubSequence(new Range(refSeqStart, seqEnd), Bases.FORWARD).toUpperCase();
         int xpos = (refSeqStart-1)*ALIGNMENT_PIX_PER_BASE;
-        
-        System.out.println(refSeqStart+"  "+refSeq);
         
         g2.setColor(light_grey);
         g2.fillRect(xpos, ypos-11, 
@@ -1101,10 +1099,6 @@ public class JamView extends JPanel
     
     p.x = Math.round((float)width*((float)(base-1)/(float)seqLength));
     jspView.getViewport().setViewPosition(p);
-    
-    
-    System.out.println("goToBasePosition*** "+base+"  "+  
-        getBaseAtStartOfView()+" "+p.x+"  pixPerBase="+((float)width/(float)seqLength));
   }
   
   /**
@@ -1414,12 +1408,11 @@ public class JamView extends JPanel
    */
   public void displayAdjustmentValueChanged(DisplayAdjustmentEvent event)
   {
-    System.out.println("displayAdjustmentValueChanged() "+event.getStart()+".."+event.getEnd());
-    
     if(event.getType() == DisplayAdjustmentEvent.SCALE_ADJUST_EVENT)
     {
       this.nbasesInView = event.getWidthInBases();
       setDisplay(event.getStart(), event.getEnd(), event);
+      revalidate();
     }
     else
     {
