@@ -6,7 +6,7 @@
 # necessary a symbolic link can be made to this script from
 # /usr/local/bin/ or elsewhere.
 
-# $Header: //tmp/pathsoft/artemis/art,v 1.24 2009-08-10 08:12:21 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/art,v 1.25 2009-09-21 15:34:45 tjc Exp $
 
 # resolve links - $0 may be a link
 PRG=$0
@@ -35,6 +35,10 @@ CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/j2ssh/commons-logging.jar:$ARTEMIS_HOME/l
 
 # iBatis jars
 CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$ARTEMIS_HOME/lib/ibatis/:$ARTEMIS_HOME/lib/ibatis/log4j-1.2.14.jar:$ARTEMIS_HOME/lib/ibatis/cglib-nodep-2.2.jar:$ARTEMIS_HOME/lib/retrotranslator-runtime-1.1.0.jar
+export CLASSPATH
+
+# picard jars
+CLASSPATH=$CLASSPATH:lib/picard/sam-1.04.jar:lib/picard/picard-1.04.jar
 export CLASSPATH
 
 
