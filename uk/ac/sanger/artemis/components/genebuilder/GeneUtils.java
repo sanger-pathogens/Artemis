@@ -146,8 +146,15 @@ public class GeneUtils
         String value = dbxref.getDb().getName() + ":" + 
                        dbxref.getAccession();
         feature.getQualifiers().setQualifier(new Qualifier("Dbxref", value));
+        
+        if(feature.isReadOnly() && feature.getKey().equals("polypeptide_domain"))
+        {
+          value= "protein motif:"+value;
+          feature.getQualifiers().setQualifier(new Qualifier("inference", value));
+        }
       }
     }
+   
     
     final Collection featureDbXRefs = feature.getChadoLazyFeature().getFeatureDbXRefs();
     final Iterator it2 = featureDbXRefs.iterator();
@@ -360,6 +367,29 @@ public class GeneUtils
         if(lazyClusterValues.size() > 0)
           ClusterLazyQualifierValue.setClusterFromValueList(lazyClusterValues, document);
 
+        for(int i=0; i<features.size(); i++)
+        {
+          GFFStreamFeature feature = (GFFStreamFeature)(features.elementAt(i).getEmblFeature());
+          if(feature.isReadOnly() && 
+             feature.getKey().equals("polypeptide_domain") &&
+             feature.getChadoLazyFeature() != null)
+          {
+            // load dbxrefs for domains
+            if(feature.getQualifierByName("Dbxref") == null)
+            {
+              DbXRef dbxref = feature.getChadoLazyFeature().getDbXRef();
+              if(dbxref != null)
+              {
+                String value = dbxref.getDb().getName() + ":" + 
+                               dbxref.getAccession();
+                feature.getQualifiers().setQualifier(new Qualifier("Dbxref", value));
+                
+                value= "protein motif:"+value;
+                feature.getQualifiers().setQualifier(new Qualifier("inference", value));
+              }
+            }
+          }
+        }
         if(parent != null)
           parent.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
       }

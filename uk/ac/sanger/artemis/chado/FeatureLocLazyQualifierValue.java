@@ -82,6 +82,7 @@ public class FeatureLocLazyQualifierValue implements LazyQualifierValue
     {
       FeatureLocLazyQualifierValue thisSimilarity = (FeatureLocLazyQualifierValue)it.next();
       Feature thisMatchFeature = thisSimilarity.getMatchFeature();
+
       Collection featureLocs = thisMatchFeature.getFeatureLocsForFeatureId();
       Iterator it2 = featureLocs.iterator();
       
@@ -165,7 +166,7 @@ public class FeatureLocLazyQualifierValue implements LazyQualifierValue
       {
         Feature storedMatch = ((Feature)matchFeatures.get(featureId));
         storedMatch.setFeatureProps(thisMatch.getFeatureProps());
-        storedMatch.setDbXRef(thisMatch.getDbXRef());
+        //storedMatch.setDbXRef(thisMatch.getDbXRef());
       }
     }
     matchFeaturesWithProps.clear();
