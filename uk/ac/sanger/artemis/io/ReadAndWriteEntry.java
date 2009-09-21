@@ -28,6 +28,7 @@ import java.io.IOException;
 import javax.swing.JFrame;
 
 import uk.ac.sanger.artemis.components.database.DatabaseEntrySource;
+import uk.ac.sanger.artemis.components.filetree.LocalAndRemoteFileManager;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
 import uk.ac.sanger.artemis.sequence.NoSequenceException;
 import uk.ac.sanger.artemis.util.DatabaseDocument;
@@ -256,13 +257,13 @@ public class ReadAndWriteEntry
           (args == null || args.length < 1))
       {
         System.out.println("-h\tshow help");
-        
-        
+
         System.out.println("-f\t[y|n] flatten the gene model, default is y");
         System.out.println("-i\t[y|n] ignore obsolete features, default is y");
         System.out.println("-s\tspace separated list of sequences to read and write out");
         System.out.println("-o\t[EMBL|GFF] output format, default is EMBL");
         System.out.println("-a\t[y|n] for EMBL submission format change to n, default is y");
+        System.out.println("-pp\t[y|n] read polypeptide domain features, default is n");
         
         // note that read_only and noprompt -D parameters redundant now
         System.out.println("New parameters:");
@@ -310,6 +311,12 @@ public class ReadAndWriteEntry
             format = DocumentEntryFactory.GFF_FORMAT;
             suffix = ".gff";
           }
+        }
+ 
+        if (key.equals("-pp"))
+        {
+          if(i + 1 < args.length && args[i + 1].toLowerCase().equals("y"))
+            LocalAndRemoteFileManager.domainLoad.setSelected(true);
         }
         
         // GSV :: added these command-line parameters
