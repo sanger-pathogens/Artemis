@@ -18,6 +18,7 @@
 	<li><a href="admin.shtml">Admin Document</a></li>
 	<li><a href="storage.html">Data Storage</a> (for the Pathogen Group)</li>
 	<li><a href="dbloading.shtml">Data Loading Examples</a></li>
+	<li><a href="writedb_entry.html">Exporting from the command-line using writedb_entry</a></li>
 	</ul>
       
 <p>
