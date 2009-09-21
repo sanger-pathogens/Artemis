@@ -18,3 +18,4 @@ dinucleotide_repeat_microsatellite_feature misc_feature    note=dinucleotide_rep
 EST_match                                  misc_feature    note=EST_match
 match_part                                 misc_feature    note=match_part
 direct_repeat                              repeat_region   rpt_type=direct
+polypeptide_domain                         misc_feature
