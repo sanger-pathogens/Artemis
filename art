@@ -6,7 +6,7 @@
 # necessary a symbolic link can be made to this script from
 # /usr/local/bin/ or elsewhere.
 
-# $Header: //tmp/pathsoft/artemis/art,v 1.25 2009-09-21 15:34:45 tjc Exp $
+# $Header: //tmp/pathsoft/artemis/art,v 1.26 2009-09-21 15:45:47 tjc Exp $
 
 # resolve links - $0 may be a link
 PRG=$0
@@ -38,7 +38,7 @@ CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/ibatis/ibatis-2.3.4.726.jar:$ARTEMIS_HOME
 export CLASSPATH
 
 # picard jars
-CLASSPATH=$CLASSPATH:lib/picard/sam-1.04.jar:lib/picard/picard-1.04.jar
+CLASSPATH=$CLASSPATH:$ARTEMIS_HOME/lib/picard/sam-1.04.jar:$ARTEMIS_HOME/lib/picard/picard-1.04.jar
 export CLASSPATH
 
 
@@ -112,7 +112,7 @@ then
     then
         JAVA=java_g
     else
-        JAVA=java
+	JAVA=/software/pathogen/external/applications/java/java6/bin/java
     fi
 else
     JAVA=$JAVA_VM
