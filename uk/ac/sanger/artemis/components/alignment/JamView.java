@@ -1413,6 +1413,7 @@ public class JamView extends JPanel
       this.nbasesInView = event.getWidthInBases();
       setDisplay(event.getStart(), event.getEnd(), event);
       revalidate();
+      repaint();
     }
     else
     {
