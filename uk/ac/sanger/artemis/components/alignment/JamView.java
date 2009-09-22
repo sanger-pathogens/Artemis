@@ -144,6 +144,8 @@ public class JamView extends JPanel
   private JPopupMenu popup;
   // use the picard library otherwise call samtools
   public static boolean PICARD = true;
+  
+  private boolean painting = true;
 
  
   public JamView(String bam, 
@@ -328,7 +330,7 @@ public class JamView extends JPanel
       }
     }
     inputSam.close();
-    //System.out.println("readFromBamPicard "+start+".."+end);
+    System.out.println("readFromBamPicard "+start+".."+end);
   }
   
   /**
@@ -336,12 +338,15 @@ public class JamView extends JPanel
    */
   protected void paintComponent(Graphics g)
   {
+    if(!painting)
+      return;
+    
 	super.paintComponent(g);
 	Graphics2D g2 = (Graphics2D)g;
 
 	String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
-	float pixPerBase = ((float)getWidth())/((float)seqLength);
+	float pixPerBase = getPixPerBaseByWidth();
 	
     int start;
     final int end;
@@ -351,7 +356,7 @@ public class JamView extends JPanel
     else
     {
       double x = jspView.getViewport().getViewRect().getX();
-      start = 1 + (int) (seqLength * ( (float)x / (float)getWidth()));
+      start = 1 + (int) (seqLength * ( (float)x / (float)getPreferredSize().getWidth()));
     }
     
     if(endBase > 0)
@@ -364,7 +369,8 @@ public class JamView extends JPanel
       end   = (int) (start + ((float)width / (float)pixPerBase));
     }
 
-    //System.out.println("paintComponent "+start+".."+end+"       "+startBase+".."+endBase+"  pixPerBase="+pixPerBase);
+    System.out.println("paintComponent "+start+".."+end+"       "+startBase+".."+endBase+
+       "  pixPerBase="+pixPerBase+"  getPreferredSize().getWidth()="+getPreferredSize().getWidth());
     
     if(laststart != start ||
        lastend   != end)
@@ -390,11 +396,29 @@ public class JamView extends JPanel
     
     laststart = start;
     lastend   = end;
-	if(pixPerBase*2 >= ALIGNMENT_PIX_PER_BASE)
+	if(pixPerBase*3 >= ALIGNMENT_PIX_PER_BASE)
 	  drawBaseAlignment(g2, seqLength, pixPerBase, start, end);
 	else
 	  drawLineView(g2, seqLength, pixPerBase, start, end);
   }
+  
+  
+  private float getPixPerBaseByWidth()
+  {
+    String refName = (String) combo.getSelectedItem();
+    int seqLength = seqLengths.get(refName);
+    return ((float)getPreferredSize().getWidth())/((float)seqLength);
+  }
+  
+  private float getPixPerBaseByBasesInView()
+  {
+    int width = jspView.getViewport().getViewRect().width;
+    if(jspView.getVerticalScrollBar() != null)
+      width += jspView.getVerticalScrollBar().getWidth();
+    
+    return ((float)width)/(float)(nbasesInView); 
+  }
+  
   
   /**
    * Draw the zoomed-in base view.
@@ -493,7 +517,9 @@ public class JamView extends JPanel
     
     if(ypos > getHeight())
     {
-      setPreferredSize(new Dimension(getWidth(), ypos));
+      Dimension d = getPreferredSize();
+      d.setSize(getPreferredSize().getWidth(), ypos);
+      setPreferredSize(d);
       revalidate();
     }
   }
@@ -937,7 +963,6 @@ public class JamView extends JPanel
         {
           int startBase = getBaseAtStartOfView();
           setZoomLevel((int) (JamView.this.nbasesInView * 1.1));
-          revalidate();
           goToBasePosition(startBase);
         }
       });
@@ -952,7 +977,6 @@ public class JamView extends JPanel
             return;
           int startBase = getBaseAtStartOfView();
           setZoomLevel((int) (JamView.this.nbasesInView * .9));
-          revalidate();
           goToBasePosition(startBase);
         }
       });
@@ -962,7 +986,9 @@ public class JamView extends JPanel
     topPanel.add(buttonAutoHide, gc);
 
     mainPanel.setPreferredSize(new Dimension(900, 400));
-    jspView = new JScrollPane(this, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+    
+    jspView = new JScrollPane(this, 
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
         JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
     setDisplay(1, nbasesInView, null);
@@ -985,7 +1011,6 @@ public class JamView extends JPanel
           case KeyEvent.VK_UP:
             int startBase = getBaseAtStartOfView();
             setZoomLevel((int) (JamView.this.nbasesInView * 1.1));
-            revalidate();
             goToBasePosition(startBase);
             break;
           case KeyEvent.VK_DOWN:
@@ -1051,18 +1076,13 @@ public class JamView extends JPanel
   private void setZoomLevel(final int nbasesInView)
   {
     this.nbasesInView = nbasesInView;
-    int start = getBaseAtStartOfView();
 
-    System.out.println("setZoomLevel "+start);
+    System.out.println("setZoomLevel "+nbasesInView+"  "+getBaseAtStartOfView());
     String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
-    int width = jspView.getViewport().getViewRect().width;
-    if(jspView.getVerticalScrollBar() != null)
-      width += jspView.getVerticalScrollBar().getWidth();
-    
-    float pixPerBase = ((float)width)/(float)(nbasesInView); 
-    
-    if(pixPerBase*2 > ALIGNMENT_PIX_PER_BASE)
+    float pixPerBase = getPixPerBaseByBasesInView(); 
+
+    if(pixPerBase*3 > ALIGNMENT_PIX_PER_BASE)
     {
       pixPerBase = ALIGNMENT_PIX_PER_BASE;
       checkBoxSingle.setVisible(false);
@@ -1080,9 +1100,9 @@ public class JamView extends JPanel
     Dimension d = new Dimension();
     d.setSize((seqLength*pixPerBase), 800.d);
     setPreferredSize(d);
+    painting = false;
     revalidate();
-
-    repaint();
+    painting = true;
   }
   
   /**
@@ -1095,9 +1115,10 @@ public class JamView extends JPanel
     String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
     
-    int width = getPreferredSize().width;
+    float width = (float) getPreferredSize().getWidth();
     
-    p.x = Math.round((float)width*((float)(base-1)/(float)seqLength));
+    p.x = Math.round(width*((float)(base-1)/(float)seqLength));
+    System.out.println("goToBasePosition "+base);
     jspView.getViewport().setViewPosition(p);
   }
   
@@ -1113,12 +1134,23 @@ public class JamView extends JPanel
   {
     this.startBase = start;
     this.endBase   = end;
+    this.nbasesInView = end-start+1;
     
     String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
 
-    double pixPerBase = getPixPerBase(start, end);
-    if(pixPerBase*2 > ALIGNMENT_PIX_PER_BASE)
+    float pixPerBase;
+    if(jspView.getViewport().getViewRect().width > 0)
+      pixPerBase = getPixPerBaseByBasesInView();
+    else
+    {
+      if(feature_display == null)
+        pixPerBase = 1000.f/(float)(end-start+1);
+      else
+        pixPerBase = feature_display.getWidth()/(float)(end-start+1);
+    }
+
+    if(pixPerBase*3 > ALIGNMENT_PIX_PER_BASE)
     {
       pixPerBase = ALIGNMENT_PIX_PER_BASE;
       checkBoxSingle.setVisible(false);
@@ -1145,13 +1177,7 @@ public class JamView extends JPanel
     }
   }
   
-  private double getPixPerBase(int start, int end)
-  {
-    if(feature_display == null)
-      return 1000.d/(double)(end-start+1);
-    else
-      return feature_display.getWidth()/(double)(end-start+1);
-  }
+
 
   /**
    * Return an Artemis entry from a file 
@@ -1292,7 +1318,7 @@ public class JamView extends JPanel
 
       for(int i=startMark; i<end; i+=10)
       {
-        int xpos = (i-1-start)*ALIGNMENT_PIX_PER_BASE;
+        int xpos = (i-start)*ALIGNMENT_PIX_PER_BASE;
         g2.drawString(Integer.toString(i), xpos, ypos);
         
         xpos+=(ALIGNMENT_PIX_PER_BASE/2);
@@ -1410,14 +1436,23 @@ public class JamView extends JPanel
   {
     if(event.getType() == DisplayAdjustmentEvent.SCALE_ADJUST_EVENT)
     {
-      this.nbasesInView = event.getWidthInBases();
+      laststart = -1;
+      lastend = -1;
+      this.startBase = event.getStart();
+      this.endBase   = event.getEnd();
+      
+      int width = event.getEnd()-event.getStart()+1;
+      System.out.println("displayAdjustmentValueChanged() "+event.getStart()+".."+event.getEnd()+"  +width");
+
+      setZoomLevel(width);
+      goToBasePosition(event.getStart());
       setDisplay(event.getStart(), event.getEnd(), event);
-      revalidate();
       repaint();
     }
     else
     {
       setDisplay(event.getStart(), event.getEnd(), event);
+      repaint();
     }
   }
   
