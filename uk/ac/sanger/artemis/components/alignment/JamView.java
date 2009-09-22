@@ -356,7 +356,7 @@ public class JamView extends JPanel
     else
     {
       double x = jspView.getViewport().getViewRect().getX();
-      start = 1 + (int) (seqLength * ( (float)x / (float)getPreferredSize().getWidth()));
+      start = 1 + (int) (getMaxBasesInPanel(seqLength) * ( (float)x / (float)getPreferredSize().getWidth() ));
     }
     
     if(endBase > 0)
@@ -369,8 +369,8 @@ public class JamView extends JPanel
       end   = (int) (start + ((float)width / (float)pixPerBase));
     }
 
-    System.out.println("paintComponent "+start+".."+end+"       "+startBase+".."+endBase+
-       "  pixPerBase="+pixPerBase+"  getPreferredSize().getWidth()="+getPreferredSize().getWidth());
+    //System.out.println("paintComponent "+start+".."+end+"       "+startBase+".."+endBase+
+    //   "  pixPerBase="+pixPerBase+"  getPreferredSize().getWidth()="+getPreferredSize().getWidth());
     
     if(laststart != start ||
        lastend   != end)
@@ -407,7 +407,7 @@ public class JamView extends JPanel
   {
     String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
-    return ((float)getPreferredSize().getWidth())/((float)seqLength);
+    return ((float)getPreferredSize().getWidth())/(getMaxBasesInPanel(seqLength));
   }
   
   private float getPixPerBaseByBasesInView()
@@ -419,6 +419,13 @@ public class JamView extends JPanel
     return ((float)width)/(float)(nbasesInView); 
   }
   
+  private float getMaxBasesInPanel(int seqLength)
+  {
+    if(feature_display == null)
+      return (float)(seqLength);
+    else
+      return (float)(seqLength+nbasesInView);
+  }
   
   /**
    * Draw the zoomed-in base view.
@@ -523,6 +530,7 @@ public class JamView extends JPanel
       revalidate();
     }
   }
+
   
   /**
    * Draw the query sequence
@@ -1065,7 +1073,7 @@ public class JamView extends JPanel
     String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
     double x = jspView.getViewport().getViewRect().getX();
-    return (int) (seqLength * ( x / getWidth())) + 1;
+    return (int) (getMaxBasesInPanel(seqLength) * ( x / getWidth())) + 1;
   }
   
   /**
@@ -1077,7 +1085,7 @@ public class JamView extends JPanel
   {
     this.nbasesInView = nbasesInView;
 
-    System.out.println("setZoomLevel "+nbasesInView+"  "+getBaseAtStartOfView());
+    //System.out.println("setZoomLevel "+nbasesInView+"  "+getBaseAtStartOfView());
     String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
     float pixPerBase = getPixPerBaseByBasesInView(); 
@@ -1098,7 +1106,7 @@ public class JamView extends JPanel
     }
     
     Dimension d = new Dimension();
-    d.setSize((seqLength*pixPerBase), 800.d);
+    d.setSize((getMaxBasesInPanel(seqLength)*pixPerBase), 800.d);
     setPreferredSize(d);
     painting = false;
     revalidate();
@@ -1117,8 +1125,8 @@ public class JamView extends JPanel
     
     float width = (float) getPreferredSize().getWidth();
     
-    p.x = Math.round(width*((float)(base-1)/(float)seqLength));
-    System.out.println("goToBasePosition "+base);
+    p.x = Math.round(width*((float)(base-1)/(getMaxBasesInPanel(seqLength))));
+    //System.out.println("goToBasePosition "+base);
     jspView.getViewport().setViewPosition(p);
   }
   
@@ -1141,7 +1149,7 @@ public class JamView extends JPanel
 
     float pixPerBase;
     if(jspView.getViewport().getViewRect().width > 0)
-      pixPerBase = getPixPerBaseByBasesInView();
+      pixPerBase = this.getPixPerBaseByWidth(); // getPixPerBaseByBasesInView();
     else
     {
       if(feature_display == null)
@@ -1166,7 +1174,9 @@ public class JamView extends JPanel
     }
     
     Dimension d = new Dimension();
-    d.setSize((seqLength*pixPerBase), 800.d);
+    d.setSize((getMaxBasesInPanel(seqLength)*pixPerBase), 800.d);
+    
+    //System.out.println("setDisplay() "+d.getWidth());
     setPreferredSize(d);
     goToBasePosition(startBase);
     
@@ -1177,8 +1187,6 @@ public class JamView extends JPanel
     }
   }
   
-
-
   /**
    * Return an Artemis entry from a file 
    * @param entryFileName
@@ -1193,7 +1201,7 @@ public class JamView extends JPanel
     final EntryInformation artemis_entry_information =
       Options.getArtemisEntryInformation();
     
-    System.out.println(entryFileName);
+    //System.out.println(entryFileName);
     final uk.ac.sanger.artemis.io.Entry new_embl_entry =
       EntryFileDialog.getEntryFromFile(null, entry_document,
                                        artemis_entry_information,
@@ -1442,7 +1450,7 @@ public class JamView extends JPanel
       this.endBase   = event.getEnd();
       
       int width = event.getEnd()-event.getStart()+1;
-      System.out.println("displayAdjustmentValueChanged() "+event.getStart()+".."+event.getEnd()+"  +width");
+      //System.out.println("displayAdjustmentValueChanged() "+event.getStart()+".."+event.getEnd()+"  +width");
 
       setZoomLevel(width);
       goToBasePosition(event.getStart());
