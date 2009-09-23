@@ -120,6 +120,7 @@ public class JamView extends JPanel
   private JComboBox combo;
   private JCheckBox checkBoxSingle;
   private JCheckBox checkBoxSNPs;
+  private JCheckBox checkBoxStackView;
   
   private FeatureDisplay feature_display;
   private Selection selection;
@@ -144,8 +145,6 @@ public class JamView extends JPanel
   private JPopupMenu popup;
   // use the picard library otherwise call samtools
   public static boolean PICARD = true;
-  
-  private boolean painting = true;
 
  
   public JamView(String bam, 
@@ -338,9 +337,6 @@ public class JamView extends JPanel
    */
   protected void paintComponent(Graphics g)
   {
-    if(!painting)
-      return;
-    
 	super.paintComponent(g);
 	Graphics2D g2 = (Graphics2D)g;
 
@@ -384,7 +380,8 @@ public class JamView extends JPanel
         else
           readFromBam(start, end);
 
-        Collections.sort(readsInView, new SAMRecordComparator());
+        if(!checkBoxStackView.isSelected())
+          Collections.sort(readsInView, new SAMRecordComparator());
         setCursor(cdone);
       }
       catch(OutOfMemoryError ome)
@@ -399,7 +396,12 @@ public class JamView extends JPanel
 	if(pixPerBase*3 >= ALIGNMENT_PIX_PER_BASE)
 	  drawBaseAlignment(g2, seqLength, pixPerBase, start, end);
 	else
-	  drawLineView(g2, seqLength, pixPerBase, start, end);
+	{
+	  if(!checkBoxStackView.isSelected())
+	    drawLineView(g2, seqLength, pixPerBase, start, end);
+	  else
+	    drawStackView(g2, seqLength, pixPerBase, start, end);
+	}
   }
   
   
@@ -435,8 +437,11 @@ public class JamView extends JPanel
    * @param start
    * @param end
    */
-  private void drawBaseAlignment(Graphics2D g2, int seqLength, 
-                                 float pixPerBase, final int start, final int end)
+  private void drawBaseAlignment(Graphics2D g2, 
+                                 int seqLength, 
+                                 float pixPerBase, 
+                                 final int start, 
+                                 final int end)
   {
     ruler.start = start;
     ruler.end = end;
@@ -655,6 +660,69 @@ public class JamView extends JPanel
     drawYScale(g2, start, pixPerBase);
   }
   
+  
+  private void drawStackView(Graphics2D g2, 
+                             int seqLength, 
+                             float pixPerBase, 
+                             int start, 
+                             int end)
+  {
+    drawSelectionRange(g2, pixPerBase,start, end);
+    if(isShowScale())
+      drawScale(g2, start, end, pixPerBase);
+    
+    BasicStroke stroke = new BasicStroke(
+        1.3f,
+        BasicStroke.CAP_BUTT, 
+        BasicStroke.JOIN_MITER);
+    
+    int scaleHeight;
+    if(isShowScale())
+      scaleHeight = 15;
+    else
+      scaleHeight = 0;
+    
+    int ypos = (getHeight() - scaleHeight);
+    int lastEnd = 0;
+    
+    g2.setColor(Color.blue);
+    for(int i=0; i<readsInView.size(); i++)
+    {
+      SAMRecord samRecord = readsInView.get(i);
+   
+      int recordStart;
+      int recordEnd;
+      if(samRecord.getAlignmentEnd() > samRecord.getAlignmentStart())
+      {
+        recordStart = samRecord.getAlignmentStart();
+        recordEnd = samRecord.getAlignmentEnd();
+      }
+      else
+      {
+        recordStart = samRecord.getAlignmentEnd();
+        recordEnd = samRecord.getAlignmentStart();
+      }
+      
+      if(lastEnd < recordStart)
+      {
+        ypos = (getHeight() - scaleHeight)-2;
+        lastEnd = recordEnd;
+      }
+      else
+        ypos = ypos-2;
+
+      drawRead(g2, samRecord, pixPerBase, stroke, ypos);
+      
+      if(ypos > getHeight())
+      {
+        Dimension d = getPreferredSize();
+        d.setSize(getPreferredSize().getWidth(), ypos);
+        setPreferredSize(d);
+        revalidate();
+      }
+    }
+  }
+  
   /**
    * Draw a read that apparently has a read mate that is not in view.
    * @param g2
@@ -848,8 +916,8 @@ public class JamView extends JPanel
 
           if (Character.toUpperCase(refSeq[refPos-thisStart]) != readSeq[readPos])
           {
-            g2.drawLine((int) ((thisStart + i) * pixPerBase), ypos + 2,
-                        (int) ((thisStart + i) * pixPerBase), ypos - 2);
+            g2.drawLine((int) ((refPos) * pixPerBase), ypos + 2,
+                        (int) ((refPos) * pixPerBase), ypos - 2);
           }
         }
         
@@ -885,7 +953,8 @@ public class JamView extends JPanel
     GridBagConstraints gc = new GridBagConstraints();
 
     // auto hide top panel
-    final JCheckBox buttonAutoHide = new JCheckBox("Auto-hide", autohide);
+    final JCheckBox buttonAutoHide = new JCheckBox("Hide", autohide);
+    buttonAutoHide.setToolTipText("Auto-Hide");
     final MouseMotionListener mouseMotionListener = new MouseMotionListener()
     {
       public void mouseDragged(MouseEvent event)
@@ -957,8 +1026,20 @@ public class JamView extends JPanel
       }
     });
     topPanel.add(checkBoxSNPs, gc);
+    
+    checkBoxStackView = new JCheckBox("Stack");
+    checkBoxStackView.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        laststart = -1;
+        lastend = -1;
+        repaint();
+      }
+    });
+    topPanel.add(checkBoxStackView, gc);
 
-    if (feature_display == null)
+    if(feature_display == null)
     {
       final JTextField baseText = new JTextField(10);
       JButton goTo = new JButton("GoTo:");
@@ -1392,14 +1473,13 @@ public class JamView extends JPanel
       SAMRecord pr2 = (SAMRecord) o2;
       
       int cmp = pr1.getReadName().compareTo(pr2.getReadName());
-      
       if(cmp == 0)
       {
         if(pr1.getAlignmentStart() < pr2.getAlignmentStart())
           return -1;
         else
           return 1;
-      }
+      }   
       return cmp;
     }
   }
@@ -1507,7 +1587,7 @@ public class JamView extends JPanel
         System.out.println("-a\t BAM/SAM file to display");
         System.out.println("-r\t reference file (optional)");
         System.out.println("-v\t number of bases to display in the view (optional)");
-        System.out.println("-s\t samtool directory");
+        /*System.out.println("-s\t samtool directory");*/
 
         System.exit(0);
       }
