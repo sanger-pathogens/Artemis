@@ -382,7 +382,7 @@ public class JamView extends JPanel
         else
           readFromBam(start, end);
 
-        if(!checkBoxStackView.isSelected())
+        if(!checkBoxStackView.isSelected() || pixPerBase*3 >= ALIGNMENT_PIX_PER_BASE)
           Collections.sort(readsInView, new SAMRecordComparator());
         setCursor(cdone);
       }
