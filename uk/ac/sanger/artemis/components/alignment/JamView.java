@@ -699,6 +699,9 @@ public class JamView extends JPanel
       g2.setColor(Color.orange); 
     }  
     drawRead(g2, samRecord, pixPerBase, stroke, ypos);
+    
+    if (checkBoxSNPs.isSelected())
+      showSNPsOnReads(g2, samRecord, pixPerBase, ypos);
   }
 
   
