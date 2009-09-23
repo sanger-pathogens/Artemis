@@ -670,7 +670,7 @@ public class JamView extends JPanel
     int thisEnd   = thisStart + samRecord.getReadString().length();
     
     if(drawLine &&
-        (samRecord.getMateAlignmentStart()-samRecord.getAlignmentEnd())*pixPerBase > 2.f)
+        Math.abs(samRecord.getMateAlignmentStart()-samRecord.getAlignmentEnd())*pixPerBase > 2.f)
     {
       g2.setStroke(originalStroke);
       g2.setColor(Color.LIGHT_GRAY);
