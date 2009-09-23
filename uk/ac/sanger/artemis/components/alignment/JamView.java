@@ -139,7 +139,9 @@ public class JamView extends JPanel
   
   private boolean showBaseAlignment = false;
   /** Used to colour the frames. */
-  private Color light_grey = new Color(200, 200, 200);
+  private Color lightGrey = new Color(200, 200, 200);
+  private Color darkGreen = new Color(0, 150, 0);
+  
   private int ALIGNMENT_PIX_PER_BASE;
   
   private JPopupMenu popup;
@@ -448,8 +450,7 @@ public class JamView extends JPanel
     ruler.repaint();
     
     int ypos = 0;
-    
-    
+
     String refSeq = null;
     int refSeqStart = start;
     if(bases != null)
@@ -469,7 +470,7 @@ public class JamView extends JPanel
           bases.getSubSequence(new Range(refSeqStart, seqEnd), Bases.FORWARD).toUpperCase();
         int xpos = (refSeqStart-1)*ALIGNMENT_PIX_PER_BASE;
         
-        g2.setColor(light_grey);
+        g2.setColor(lightGrey);
         g2.fillRect(xpos, ypos-11, 
             jspView.getViewport().getWidth()+(ALIGNMENT_PIX_PER_BASE*2), 11);
         drawSelectionRange(g2, pixPerBase, start, end);
@@ -660,7 +661,20 @@ public class JamView extends JPanel
     drawYScale(g2, start, pixPerBase);
   }
   
-  
+  /**
+   * Draw the reads as lines in vertical stacks. The reads are colour 
+   * coded as follows:
+   * 
+   * blue  - reads are unique and are paired with a mapped mate
+   * black - reads are unique and are not paired or have an unmapped mate
+   * green - reads are non-unique
+   * 
+   * @param g2
+   * @param seqLength
+   * @param pixPerBase
+   * @param start
+   * @param end
+   */
   private void drawStackView(Graphics2D g2, 
                              int seqLength, 
                              float pixPerBase, 
@@ -683,43 +697,41 @@ public class JamView extends JPanel
       scaleHeight = 0;
     
     int ypos = (getHeight() - scaleHeight);
-    int lastEnd = 0;
+    int maxEnd = 0;
+    int lstStart = 0;
+    int lstEnd = 0;
     
     g2.setColor(Color.blue);
     for(int i=0; i<readsInView.size(); i++)
     {
       SAMRecord samRecord = readsInView.get(i);
-   
-      int recordStart;
-      int recordEnd;
-      if(samRecord.getAlignmentEnd() > samRecord.getAlignmentStart())
-      {
-        recordStart = samRecord.getAlignmentStart();
-        recordEnd = samRecord.getAlignmentEnd();
-      }
-      else
-      {
-        recordStart = samRecord.getAlignmentEnd();
-        recordEnd = samRecord.getAlignmentStart();
-      }
-      
-      if(lastEnd < recordStart)
-      {
-        ypos = (getHeight() - scaleHeight)-2;
-        lastEnd = recordEnd;
-      }
-      else
-        ypos = ypos-2;
 
-      drawRead(g2, samRecord, pixPerBase, stroke, ypos);
+      int recordStart = samRecord.getAlignmentStart();;
+      int recordEnd = samRecord.getAlignmentEnd();
       
-      if(ypos > getHeight())
-      {
-        Dimension d = getPreferredSize();
-        d.setSize(getPreferredSize().getWidth(), ypos);
-        setPreferredSize(d);
-        revalidate();
+      if(lstStart != recordStart || lstEnd != recordEnd)
+      { 
+        if (!samRecord.getReadPairedFlag() ||  // read is not paired in sequencing
+            samRecord.getMateUnmappedFlag() )  // mate is unmapped )  // mate is unmapped 
+          g2.setColor(Color.black);
+        else
+          g2.setColor(Color.blue);
+        
+        if(maxEnd < recordStart)
+        {
+          ypos = (getHeight() - scaleHeight)-2;
+          maxEnd = recordEnd+2;
+        }
+        else
+          ypos = ypos-2;
       }
+      else
+        g2.setColor(darkGreen);
+
+      lstStart = recordStart;
+      lstEnd   = recordEnd;
+      
+      drawRead(g2, samRecord, pixPerBase, stroke, ypos);
     }
   }
   
