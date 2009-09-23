@@ -651,6 +651,8 @@ public class JamView extends JPanel
         drawLoneRead(g2, samRecord, ypos, pixPerBase, originalStroke, stroke);
       }
     }
+    
+    drawYScale(g2, start, pixPerBase);
   }
   
   /**
@@ -752,6 +754,21 @@ public class JamView extends JPanel
         m = 0;
     }
   }
+  
+  
+  private void drawYScale(Graphics2D g2, int start, float pixPerBase)
+  {
+    g2.setColor(Color.black);
+    int maxY = getPreferredSize().height;
+    int xpos = (int) (pixPerBase*start);
+    
+    for(int i=100; i<maxY; i+=100)
+    {
+      g2.drawLine(xpos, getHeight()-i, xpos+2, getHeight()-i);
+      g2.drawString(Integer.toString(i), xpos+3, getHeight()-i);
+    }
+  }
+  
   
   private void drawRead(Graphics2D g2, SAMRecord thisRead,
 		                float pixPerBase, Stroke stroke, int ypos)
@@ -965,8 +982,8 @@ public class JamView extends JPanel
       topPanel.add(goTo, gc);
       topPanel.add(baseText, gc);
 
-      JButton zoomIn = new JButton("+");
-      Insets ins = new Insets(0,0,0,0);
+      JButton zoomIn = new JButton("-");
+      Insets ins = new Insets(1,1,1,1);
       zoomIn.setMargin(ins);
       zoomIn.addActionListener(new ActionListener()
       {
@@ -979,7 +996,8 @@ public class JamView extends JPanel
       });
       topPanel.add(zoomIn, gc);
 
-      JButton zoomOut = new JButton("-");
+      JButton zoomOut = new JButton("+");
+      zoomOut.setMargin(ins);
       zoomOut.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
@@ -1111,9 +1129,7 @@ public class JamView extends JPanel
     Dimension d = new Dimension();
     d.setSize((getMaxBasesInPanel(seqLength)*pixPerBase), 800.d);
     setPreferredSize(d);
-    painting = false;
     revalidate();
-    painting = true;
   }
   
   /**
@@ -1452,7 +1468,8 @@ public class JamView extends JPanel
       this.startBase = event.getStart();
       this.endBase   = event.getEnd();
       
-      int width = event.getEnd()-event.getStart()+1;
+      //int width = event.getEnd()-event.getStart()+1;
+      int width = feature_display.getMaxVisibleBases();
       //System.out.println("displayAdjustmentValueChanged() "+event.getStart()+".."+event.getEnd()+"  +width");
 
       setZoomLevel(width);
