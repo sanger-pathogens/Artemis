@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.46 2009-06-12 13:50:35 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/genebuilder/GeneBuilderFrame.java,v 1.47 2009-09-24 15:01:27 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components.genebuilder;
@@ -450,6 +450,7 @@ public class GeneBuilderFrame extends JFrame
   {  
     setCursor(new Cursor(Cursor.WAIT_CURSOR));
     this.active_feature = active_feature;
+    feature_editor.stopListening();
     feature_editor.setActiveFeature(active_feature, isSet);
     setTabTitle();
     setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
