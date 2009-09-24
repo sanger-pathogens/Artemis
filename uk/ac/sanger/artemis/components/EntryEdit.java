@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.81 2009-09-19 07:56:11 tjc Exp $
+ * $Header: //tmp/pathsoft/artemis/uk/ac/sanger/artemis/components/EntryEdit.java,v 1.82 2009-09-24 12:42:16 tjc Exp $
  */
 
 package uk.ac.sanger.artemis.components;
@@ -69,7 +69,7 @@ import java.util.Vector;
  *  Each object of this class is used to edit an EntryGroup object.
  *
  *  @author Kim Rutherford
- *  @version $Id: EntryEdit.java,v 1.81 2009-09-19 07:56:11 tjc Exp $
+ *  @version $Id: EntryEdit.java,v 1.82 2009-09-24 12:42:16 tjc Exp $
  *
  */
 public class EntryEdit extends JFrame
@@ -112,6 +112,7 @@ public class EntryEdit extends JFrame
   /** Alignment panel */
   private JamView jamView;
   private JPanel jamPanel;
+  private JSplitPane lowerSplitPane;
   
  /**
   *  The EntrySourceVector reference that is created in the constructor.
@@ -233,11 +234,21 @@ public class EntryEdit extends JFrame
                         getGotoEventSource());
     //box_panel.add(base_plot_group);
 
+    jamPanel = new JPanel();
+    lowerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
+                                    jamPanel, mainPanel);
+    lowerSplitPane.setResizeWeight(0.);
+    lowerSplitPane.setDividerSize(0);
+    lowerSplitPane.setDividerLocation(0);
+    
+    //lowerSplitPane.setBorder(null);
+    
     final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
-                                             base_plot_group, mainPanel);
+                                             base_plot_group, lowerSplitPane);
 
     splitPane.setDividerSize(0);
     splitPane.setResizeWeight(0.);
+    splitPane.setBorder(null);
     base_plot_group.setVisible(true);
 
     // lookseq read alignment
@@ -262,8 +273,7 @@ public class EntryEdit extends JFrame
                          getGotoEventSource(), base_plot_group);
     
     // read alignment panel
-    jamPanel = new JPanel();
-    main_box_panel.add(jamPanel);
+    //main_box_panel.add(jamPanel);
     
     one_line_per_entry_display.setShowLabels(false);
     one_line_per_entry_display.setOneLinePerEntry(true);
@@ -1099,7 +1109,7 @@ public class EntryEdit extends JFrame
     }
 
     display_menu.addSeparator();
-    final JMenuItem show_Jam_item = new JMenuItem("BAM/SAM Alignment");
+    final JMenuItem show_Jam_item = new JMenuItem("BAM Alignment");
     show_Jam_item.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent event)
@@ -1112,6 +1122,8 @@ public class EntryEdit extends JFrame
           jamView.revalidate();
           feature_display.addDisplayAdjustmentListener(jamView);
           feature_display.getSelection().addSelectionChangeListener(jamView);
+
+          lowerSplitPane.setDividerLocation(0.35d);
         }
         else
         {
@@ -1222,7 +1234,7 @@ public class EntryEdit extends JFrame
 
       file_menu.addSeparator();
       
-      JMenuItem read_bam_file = new JMenuItem("Read BAM/SAM");
+      JMenuItem read_bam_file = new JMenuItem("Read BAM ...");
       read_bam_file.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
@@ -1246,15 +1258,20 @@ public class EntryEdit extends JFrame
           jamView = new JamView(bamFile.getAbsolutePath(), null, 2000);
           jamView.setShowScale(false);
           jamView.setBases(getEntryGroup().getBases());
-          jamView.addJamToPanel(jamPanel, true, feature_display);
+          jamView.addJamToPanel(jamPanel, null, true, feature_display);
           jamView.getJspView().setHorizontalScrollBarPolicy(
               JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
           jamView.removeBorder();
           jamView.setDisplay(feature_display.getFirstVisibleForwardBase(), 
                              feature_display.getLastVisibleForwardBase(), null);
           jamPanel.revalidate();
+          jamView.getJspView().getVerticalScrollBar().setValue(
+              jamView.getJspView().getVerticalScrollBar().getMaximum());
           feature_display.addDisplayAdjustmentListener(jamView);
           feature_display.getSelection().addSelectionChangeListener(jamView);
+          
+          lowerSplitPane.setDividerSize(3);
+          lowerSplitPane.setDividerLocation(0.35d);
         }
       });
       file_menu.add(read_bam_file);
