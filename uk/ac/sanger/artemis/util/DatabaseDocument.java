@@ -2743,6 +2743,27 @@ public class DatabaseDocument extends Document
       //
       // update timelastmodified timestamp
       names_checked = new Vector();
+      
+      
+      //
+      // add all the UPDATE Feature transactions to the names_checked list
+      // these time stamps should already have been updated
+      for(int i = 0; i < sql.size(); i++)
+      {
+        final ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
+        if(tsn.getType() == ChadoTransaction.UPDATE &&
+           tsn.getFeatureObject() instanceof Feature)
+        {
+          final Object uniquenames[] = getUniqueNames(tsn);
+          if(uniquenames == null)
+            continue;
+          
+          for(int j=0; j<uniquenames.length; j++)
+            names_checked.add((String) uniquenames[j]); 
+        }
+      }
+      
+      
       for(int i = 0; i < sql.size(); i++)
       {
         final ChadoTransaction tsn = (ChadoTransaction) sql.get(i);
@@ -2750,14 +2771,6 @@ public class DatabaseDocument extends Document
              
         if(uniquenames == null)
           continue;
-        
-        if(tsn.getType() == ChadoTransaction.UPDATE &&
-           tsn.getFeatureObject() instanceof Feature)
-        {
-          for(int j=0; j<uniquenames.length; j++)
-            names_checked.add((String) uniquenames[j]);
-          continue;  
-        }
         
         for(int j=0; j<uniquenames.length; j++)
         {
@@ -2769,7 +2782,7 @@ public class DatabaseDocument extends Document
 
           final Feature feature;
 
-          // retieve from featureId store
+          // retrieve from featureId store
           if(featureIdStore != null && featureIdStore.containsKey(uniquename))
           {
             Feature f = (Feature) featureIdStore.get(uniquename);
