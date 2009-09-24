@@ -26,14 +26,12 @@ package uk.ac.sanger.artemis.components.alignment;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -64,8 +62,11 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -118,9 +119,9 @@ public class JamView extends JPanel
   private Bases bases;
   private JScrollPane jspView;
   private JComboBox combo;
-  private JCheckBox checkBoxSingle;
-  private JCheckBox checkBoxSNPs;
-  private JCheckBox checkBoxStackView;
+  private boolean isSingle = false;
+  private boolean isSNPs = false;
+  private boolean isStackView = false;
   
   private FeatureDisplay feature_display;
   private Selection selection;
@@ -331,7 +332,7 @@ public class JamView extends JPanel
       }
     }
     inputSam.close();
-    System.out.println("readFromBamPicard "+start+".."+end);
+    //System.out.println("readFromBamPicard "+start+".."+end);
   }
   
   /**
@@ -382,7 +383,7 @@ public class JamView extends JPanel
         else
           readFromBam(start, end);
 
-        if(!checkBoxStackView.isSelected() || pixPerBase*3 >= ALIGNMENT_PIX_PER_BASE)
+        if(!isStackView || pixPerBase*3 >= ALIGNMENT_PIX_PER_BASE)
           Collections.sort(readsInView, new SAMRecordComparator());
         setCursor(cdone);
       }
@@ -399,7 +400,7 @@ public class JamView extends JPanel
 	  drawBaseAlignment(g2, seqLength, pixPerBase, start, end);
 	else
 	{
-	  if(!checkBoxStackView.isSelected())
+	  if(!isStackView)
 	    drawLineView(g2, seqLength, pixPerBase, start, end);
 	  else
 	    drawStackView(g2, seqLength, pixPerBase, start, end);
@@ -568,7 +569,7 @@ public class JamView extends JPanel
         xpos  = block.getReferenceStart()-1+j;
         int refPos = xpos-refSeqStart+1;
         
-        if(checkBoxSNPs.isSelected() && refSeq != null && refPos > 0 && refPos < refSeq.length())
+        if(isSNPs && refSeq != null && refPos > 0 && refPos < refSeq.length())
         { 
           if(readSeq.charAt(readPos) != refSeq.charAt(refPos))
             g2.setColor(Color.red);
@@ -611,7 +612,7 @@ public class JamView extends JPanel
       if( !samRecord.getReadPairedFlag() ||  // read is not paired in sequencing
           samRecord.getMateUnmappedFlag() )  // mate is unmapped
       {
-        if(checkBoxSingle.isSelected())
+        if(isSingle)
         {
           int ypos = (getHeight() - scaleHeight) - samRecord.getReadString().length();
           g2.setColor(Color.orange);
@@ -782,7 +783,7 @@ public class JamView extends JPanel
     }  
     drawRead(g2, samRecord, pixPerBase, stroke, ypos);
     
-    if (checkBoxSNPs.isSelected())
+    if (isSNPs)
       showSNPsOnReads(g2, samRecord, pixPerBase, ypos);
   }
 
@@ -859,7 +860,7 @@ public class JamView extends JPanel
     g2.drawLine((int) (thisStart * pixPerBase), ypos,
                 (int) (thisEnd * pixPerBase), ypos);
 
-    if (checkBoxSNPs.isSelected())
+    if (isSNPs)
       showSNPsOnReads(g2, thisRead, pixPerBase, ypos);
   }
   
@@ -950,19 +951,25 @@ public class JamView extends JPanel
    * @param autohide automatically hide the top panel containing the buttons
    */
   public void addJamToPanel(final JPanel mainPanel,
+                            final JFrame frame,
                             final boolean autohide,
                             final FeatureDisplay feature_display)
   {
     this.mainPanel = mainPanel;
-    
+
+ 
+    final JComponent topPanel;
     if(feature_display != null)
     {
       this.feature_display = feature_display;
       this.selection = feature_display.getSelection();
+      topPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
     }
-    
-    final JPanel topPanel = new JPanel(new GridBagLayout());
-    GridBagConstraints gc = new GridBagConstraints();
+    else
+    { 
+      topPanel = new JMenuBar();
+      frame.setJMenuBar((JMenuBar)topPanel);
+    }
 
     // auto hide top panel
     final JCheckBox buttonAutoHide = new JCheckBox("Hide", autohide);
@@ -983,13 +990,12 @@ public class JamView extends JPanel
         int y = (int) (e.getY() - jspView.getViewport().getViewRect().getY());
         if (y < thisHgt)
         {
-          if (!containsComponent(topPanel, mainPanel))
-            mainPanel.add(topPanel, BorderLayout.NORTH);
+          topPanel.setVisible(true);
         }
         else
         {
-          if (buttonAutoHide.isSelected() && containsComponent(topPanel, mainPanel))
-            mainPanel.remove(topPanel);
+          if (buttonAutoHide.isSelected())
+            topPanel.setVisible(false);
         }
         mainPanel.repaint();
         mainPanel.revalidate();
@@ -999,7 +1005,6 @@ public class JamView extends JPanel
 
     combo = new JComboBox(seqNames);
     combo.setEditable(false);
-
     combo.addItemListener(new ItemListener()
     {
       public void itemStateChanged(ItemEvent e)
@@ -1009,52 +1014,13 @@ public class JamView extends JPanel
         setZoomLevel(JamView.this.nbasesInView);
       }
     });
-    gc.fill = GridBagConstraints.NONE;
-    gc.anchor = GridBagConstraints.NORTHWEST;
-    topPanel.add(combo, gc);
-
-    checkBoxSingle = new JCheckBox("Single Reads");
-    checkBoxSingle.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        repaint();
-      }
-    });
-    topPanel.add(checkBoxSingle, gc);
-
-    checkBoxSNPs = new JCheckBox("SNPs");
-    checkBoxSNPs.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        if (checkBoxSNPs.isSelected() && bases == null)
-        {
-          JOptionPane.showMessageDialog(null,
-              "No reference sequence supplied to identify SNPs.", "SNPs",
-              JOptionPane.INFORMATION_MESSAGE);
-        }
-        repaint();
-      }
-    });
-    topPanel.add(checkBoxSNPs, gc);
-    
-    checkBoxStackView = new JCheckBox("Stack");
-    checkBoxStackView.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        laststart = -1;
-        lastend = -1;
-        repaint();
-      }
-    });
-    topPanel.add(checkBoxStackView, gc);
+    topPanel.add(combo);
 
     if(feature_display == null)
     {
-      final JTextField baseText = new JTextField(10);
+      final JTextField baseText = new JTextField(8);
       JButton goTo = new JButton("GoTo:");
+      goTo.setToolTipText("Go to base position");
       goTo.addActionListener(new ActionListener()
       {
         public void actionPerformed(ActionEvent e)
@@ -1072,8 +1038,8 @@ public class JamView extends JPanel
           }
         }
       });
-      topPanel.add(goTo, gc);
-      topPanel.add(baseText, gc);
+      topPanel.add(goTo);
+      topPanel.add(baseText);
 
       JButton zoomIn = new JButton("-");
       Insets ins = new Insets(1,1,1,1);
@@ -1087,7 +1053,7 @@ public class JamView extends JPanel
           goToBasePosition(startBase);
         }
       });
-      topPanel.add(zoomIn, gc);
+      topPanel.add(zoomIn);
 
       JButton zoomOut = new JButton("+");
       zoomOut.setMargin(ins);
@@ -1102,10 +1068,10 @@ public class JamView extends JPanel
           goToBasePosition(startBase);
         }
       });
-      topPanel.add(zoomOut, gc);
+      topPanel.add(zoomOut);
     }
     
-    topPanel.add(buttonAutoHide, gc);
+    topPanel.add(buttonAutoHide);
 
     mainPanel.setPreferredSize(new Dimension(900, 400));
     
@@ -1116,7 +1082,8 @@ public class JamView extends JPanel
     setDisplay(1, nbasesInView, null);
     mainPanel.setLayout(new BorderLayout());
 
-    mainPanel.add(topPanel, BorderLayout.NORTH);
+    if(topPanel instanceof JPanel)
+      mainPanel.add(topPanel, BorderLayout.NORTH);
     mainPanel.add(jspView, BorderLayout.CENTER);
 
     jspView.getVerticalScrollBar().setValue(
@@ -1159,21 +1126,48 @@ public class JamView extends JPanel
     });
   }
   
-  /**
-   * Check to see if this component is contained by the display
-   * (FeatureDisplay) component.
-   * @return
-   */
-  private boolean containsComponent(JPanel topPanel, JPanel mainPanel)
+  private void createViewMenu(JComponent view)
   {
-    Component[] c = mainPanel.getComponents();
-    for(int i=0; i<c.length; i++)
+    JCheckBoxMenuItem checkBoxSingle = new JCheckBoxMenuItem("Single Reads");
+    checkBoxSingle.addActionListener(new ActionListener()
     {
-      if(c[i].equals(topPanel))
-        return true;
-    }
+      public void actionPerformed(ActionEvent e)
+      {
+        repaint();
+        isSingle = !isSingle;
+      }
+    });
+    view.add(checkBoxSingle);
+
+    JCheckBoxMenuItem checkBoxSNPs = new JCheckBoxMenuItem("SNPs");
+    checkBoxSNPs.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if (isSNPs && bases == null)
+        {
+          JOptionPane.showMessageDialog(null,
+              "No reference sequence supplied to identify SNPs.", "SNPs",
+              JOptionPane.INFORMATION_MESSAGE);
+        }
+        isSNPs = !isSNPs;
+        repaint();
+      }
+    });
+    view.add(checkBoxSNPs);
     
-    return false;
+    JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View");
+    checkBoxStackView.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        laststart = -1;
+        lastend = -1;
+        isStackView = !isStackView;
+        repaint();
+      }
+    });
+    view.add(checkBoxStackView);
   }
   
   public void setVisible(boolean visible)
@@ -1207,15 +1201,15 @@ public class JamView extends JPanel
     if(pixPerBase*3 > ALIGNMENT_PIX_PER_BASE)
     {
       pixPerBase = ALIGNMENT_PIX_PER_BASE;
-      checkBoxSingle.setVisible(false);
       jspView.getVerticalScrollBar().setValue(0);
       jspView.setColumnHeaderView(ruler);
       showBaseAlignment = true;
     }
     else if(jspView != null)
     {
-      checkBoxSingle.setVisible(true);
       jspView.setColumnHeaderView(null);
+      jspView.getVerticalScrollBar().setValue(
+          jspView.getVerticalScrollBar().getMaximum());
       showBaseAlignment = false;
     }
     
@@ -1273,14 +1267,12 @@ public class JamView extends JPanel
     if(pixPerBase*3 > ALIGNMENT_PIX_PER_BASE)
     {
       pixPerBase = ALIGNMENT_PIX_PER_BASE;
-      checkBoxSingle.setVisible(false);
       jspView.getVerticalScrollBar().setValue(0);
       jspView.setColumnHeaderView(ruler);
       showBaseAlignment = true;
     }
     else if(jspView != null)
     {
-      checkBoxSingle.setVisible(true);
       jspView.setColumnHeaderView(null);
       showBaseAlignment = false;
     }
@@ -1471,8 +1463,15 @@ public class JamView extends JPanel
     private void maybeShowPopup(MouseEvent e)
     {
       if(e.isPopupTrigger())
+      {
+        if(popup == null)
+        {
+          popup = new JPopupMenu();
+          createViewMenu(popup);
+        }
         popup.show(e.getComponent(),
                 e.getX(), e.getY());
+      }
     }
   }
  
@@ -1617,7 +1616,7 @@ public class JamView extends JPanel
       public void windowLostFocus(WindowEvent e){}
     });
     
-    view.addJamToPanel((JPanel)frame.getContentPane(), false, null);
+    view.addJamToPanel((JPanel)frame.getContentPane(), frame, false, null);
     frame.pack();
 
     view.jspView.getVerticalScrollBar().setValue(
