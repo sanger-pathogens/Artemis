@@ -49,6 +49,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.awt.geom.GeneralPath;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -122,10 +123,12 @@ public class JamView extends JPanel
   private boolean isSingle = false;
   private boolean isSNPs = false;
   private boolean isStackView = false;
+  private boolean isCoverage = false;
   
   private FeatureDisplay feature_display;
   private Selection selection;
   private JPanel mainPanel;
+  private CoveragePanel coveragePanel;
   private boolean showScale = true;
   private Ruler ruler = new Ruler();
   private int nbasesInView;
@@ -404,6 +407,13 @@ public class JamView extends JPanel
 	    drawLineView(g2, seqLength, pixPerBase, start, end);
 	  else
 	    drawStackView(g2, seqLength, pixPerBase, start, end);
+	  
+	  if(isCoverage)
+	  {
+	    coveragePanel.setStartAndEnd(start, end);
+	    coveragePanel.setPixPerBase(pixPerBase);
+	    coveragePanel.repaint();
+	  }
 	}
   }
   
@@ -956,8 +966,6 @@ public class JamView extends JPanel
                             final FeatureDisplay feature_display)
   {
     this.mainPanel = mainPanel;
-
- 
     final JComponent topPanel;
     if(feature_display != null)
     {
@@ -1085,7 +1093,12 @@ public class JamView extends JPanel
     if(topPanel instanceof JPanel)
       mainPanel.add(topPanel, BorderLayout.NORTH);
     mainPanel.add(jspView, BorderLayout.CENTER);
-
+    
+    coveragePanel = new CoveragePanel();
+    mainPanel.add(coveragePanel, BorderLayout.SOUTH);
+    coveragePanel.setPreferredSize(new Dimension(900, 100));
+    coveragePanel.setVisible(false);
+    
     jspView.getVerticalScrollBar().setValue(
         jspView.getVerticalScrollBar().getMaximum());
 
@@ -1168,6 +1181,19 @@ public class JamView extends JPanel
       }
     });
     view.add(checkBoxStackView);
+    
+    
+    JCheckBoxMenuItem checkBoxCoverage = new JCheckBoxMenuItem("Coverage");
+    checkBoxCoverage.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        isCoverage = !isCoverage;
+        coveragePanel.setVisible(isCoverage);
+        repaint();
+      }
+    });
+    view.add(checkBoxCoverage);
   }
   
   public void setVisible(boolean visible)
@@ -1403,6 +1429,83 @@ public class JamView extends JPanel
     return selection;
   }
   
+  private class CoveragePanel extends JPanel
+  {
+	private static final long serialVersionUID = 1L;
+
+    private int start;
+	private int end;
+	private float pixPerBase;
+    
+    public CoveragePanel()
+    {
+      super();
+      setBackground(Color.white);
+    }
+    
+	/**
+	 * Override
+	 */
+	protected void paintComponent(Graphics g)
+	{
+	  super.paintComponent(g);
+	  Graphics2D g2 = (Graphics2D)g;
+	  
+	  if(readsInView == null)
+	    return;
+	  
+	  int windowSize = 10;
+	  int nBins = Math.round((end-start+1.f)/windowSize);
+	  float coverage[] = new float[nBins];
+	  for(int i=0; i<coverage.length; i++)
+	    coverage[i] = 0.f;
+	  
+	  float max = 0.f;
+	  for(int i=0; i<readsInView.size(); i++)
+	  {
+	    SAMRecord thisRead = readsInView.get(i);
+	    int length = thisRead.getReadLength();
+	    
+	    for(int j=0; j<length;j++)
+	    {
+	      int bin = 
+	        Math.round(((thisRead.getAlignmentStart()-start) + j) / windowSize);
+
+	      if(bin < 0 || bin > coverage.length-1)
+	        continue;   
+	      coverage[bin]+=1;
+	      if(coverage[bin] > max)
+	        max = coverage[bin];
+	    }
+	  }
+	  
+	  g2.setColor(Color.blue);
+	  GeneralPath shape = new GeneralPath();
+	  shape.moveTo(0,getHeight());
+	  for(int i=0; i<coverage.length; i++)
+	  {
+	    float xpos = ((i*(windowSize)) - windowSize/2.f)*pixPerBase;
+	    shape.lineTo(xpos,
+	        getHeight() - ((coverage[i]/max)*getHeight()));
+	  }
+	        
+
+	  shape.lineTo(getWidth(),getHeight());
+	  g2.fill(shape);
+	}
+	
+	protected void setStartAndEnd(int start, int end)
+	{
+	  this.start = start;
+	  this.end = end;
+	}
+
+	public void setPixPerBase(float pixPerBase)
+	{
+	  this.pixPerBase = pixPerBase;
+	}
+  }
+  
   private class Ruler extends JPanel
   {
     private static final long serialVersionUID = 1L;
@@ -1575,6 +1678,13 @@ public class JamView extends JPanel
     }
   }
   
+  public void selectionChanged(SelectionChangeEvent event)
+  {
+    repaint();
+  }
+  
+  
+  
   public static void main(String[] args)
   {
     String bam = args[0];
@@ -1624,8 +1734,5 @@ public class JamView extends JPanel
     frame.setVisible(true);
   }
 
-  public void selectionChanged(SelectionChangeEvent event)
-  {
-    repaint();
-  }
+
 }
