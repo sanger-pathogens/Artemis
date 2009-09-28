@@ -254,7 +254,7 @@ dist :
 	rm -f artemis_compiled_latest.tar.gz
 	tar cf - $(OTHER_FILES) act art etc | (cd tar_build/artemis; tar xf -)
 	tar cf - artemis_sqlmap dnaplotter uk nsdb type seqdb lib | (cd tar_build/artemis; tar xf -)
-	(cd tar_build; find . -name 'CVS' -print | xargs rm -rf; tar cvf ../artemis_compiled.tar artemis)
+	(cd tar_build; find . -name 'CVS' -print | xargs rm -rf; find . -name '.svn' -print | xargs rm -rf; tar cvf ../artemis_compiled.tar artemis)
 
 jar : all artemis.jar
 
