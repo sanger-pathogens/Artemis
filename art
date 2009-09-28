@@ -112,7 +112,7 @@ then
     then
         JAVA=java_g
     else
-	JAVA=/software/pathogen/external/applications/java/java6/bin/java
+	JAVA=java
     fi
 else
     JAVA=$JAVA_VM
