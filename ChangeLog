@@ -1,4 +1,7 @@
 Version 11+
+	Added support to be able to read BAM files (using Picard) to display 
+	read alignments.
+
 	All graphs can now be configured to be plotted as line graphs
 	or heat maps.
 	
