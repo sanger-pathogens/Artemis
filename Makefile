@@ -275,10 +275,15 @@ artemis.jar : $(CLASSES)
             jar xvf $$fileJar; \
             rm -rf META-INF/MANIFEST.MF; \
           done; \
+          for fileJar in ../lib/picard/*.jar; do \
+            jar xvf $$fileJar; \
+            rm -rf META-INF/MANIFEST.MF; \
+          done; \
         fi; \
 	cp -R ../lib/LICENSE.Apache ../uk ../nsdb ../type ../seqdb ../etc ../images ../lib/j2ssh/j2ssh.properties \
 	      ../images/PSUlogo.gif ../images/icon.gif ../images/helix.gif ../images/sanger-centre.gif ../README ../artemis_sqlmap .
 	find jar_build -name '*.java' -print | xargs rm -f
+	find jar_build -name '.svn' -print | xargs rm -rf
 	cd jar_build; \
 	rm -rf META-INF/MANIFEST.MF; \
 	echo "Main-Class: uk.ac.sanger.artemis.components.ArtemisMain" > manifest-art; \
