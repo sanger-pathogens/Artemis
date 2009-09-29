@@ -23,9 +23,11 @@
  */
 package uk.ac.sanger.artemis.components.alignment;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -61,17 +63,20 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
@@ -123,6 +128,7 @@ public class JamView extends JPanel
   private boolean isSingle = false;
   private boolean isSNPs = false;
   private boolean isStackView = false;
+  private boolean isPairedStackView = false;
   private boolean isCoverage = false;
   
   private FeatureDisplay feature_display;
@@ -142,9 +148,17 @@ public class JamView extends JPanel
   private Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
   
   private boolean showBaseAlignment = false;
+  
+  AlphaComposite translucent = 
+    AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
+  
   /** Used to colour the frames. */
   private Color lightGrey = new Color(200, 200, 200);
   private Color darkGreen = new Color(0, 150, 0);
+  private Color lightBlue = new Color(30,144,255);
+  private Color darkOrange = new Color(255,140,0);
+  
+  private int maxHeight = 800;
   
   private int ALIGNMENT_PIX_PER_BASE;
   
@@ -403,11 +417,12 @@ public class JamView extends JPanel
 	  drawBaseAlignment(g2, seqLength, pixPerBase, start, end);
 	else
 	{
-	  if(!isStackView)
-	    drawLineView(g2, seqLength, pixPerBase, start, end);
-	  else
+	  if(isStackView)  
 	    drawStackView(g2, seqLength, pixPerBase, start, end);
-	  
+	  else if(isPairedStackView)
+	    drawPairedStackView(g2, seqLength, pixPerBase, start, end);
+	  else
+	    drawLineView(g2, seqLength, pixPerBase, start, end);
 	  if(isCoverage)
 	  {
 	    coveragePanel.setStartAndEnd(start, end);
@@ -644,8 +659,10 @@ public class JamView extends JPanel
           {
             g2.setStroke(originalStroke);
             g2.setColor(Color.LIGHT_GRAY);
-            g2.drawLine((int)(samRecord.getAlignmentEnd()*pixPerBase), ypos, 
-                        (int)(samNextRecord.getAlignmentStart()*pixPerBase), ypos);
+
+            drawTranslucentLine(g2, 
+                     (int)(samRecord.getAlignmentEnd()*pixPerBase), 
+                     (int)(samNextRecord.getAlignmentStart()*pixPerBase), ypos);
           }
           
           if( samRecord.getReadNegativeStrandFlag() && // strand of the query (1 for reverse)
@@ -678,7 +695,7 @@ public class JamView extends JPanel
    * 
    * blue  - reads are unique and are paired with a mapped mate
    * black - reads are unique and are not paired or have an unmapped mate
-   * green - reads are non-unique
+   * green - reads are duplicates
    * 
    * @param g2
    * @param seqLength
@@ -741,10 +758,142 @@ public class JamView extends JPanel
 
       lstStart = recordStart;
       lstEnd   = recordEnd;
-      
       drawRead(g2, samRecord, pixPerBase, stroke, ypos);
     }
   }
+  
+  
+  /**
+   * Draw the reads as lines in vertical stacks. The reads are colour 
+   * coded as follows:
+   * 
+   * blue  - reads are unique and are paired with a mapped mate
+   * black - reads are unique and are not paired or have an unmapped mate
+   * green - reads are duplicates
+   * 
+   * @param g2
+   * @param seqLength
+   * @param pixPerBase
+   * @param start
+   * @param end
+   */
+  private void drawPairedStackView(Graphics2D g2, 
+                                   int seqLength, 
+                                   float pixPerBase, 
+                                   int start, 
+                                   int end)
+  {
+    drawSelectionRange(g2, pixPerBase,start, end);
+    if(isShowScale())
+      drawScale(g2, start, end, pixPerBase);
+    
+    Vector<PairedRead> pairedReads = new Vector<PairedRead>();
+    for(int i=0; i<readsInView.size(); i++)
+    {
+      SAMRecord samRecord = readsInView.get(i);
+
+      if( !samRecord.getReadPairedFlag() ||  // read is not paired in sequencing
+          samRecord.getMateUnmappedFlag() )  // mate is unmapped
+        continue;
+
+      SAMRecord samNextRecord = null;      
+      if(i < readsInView.size()-1)
+      {
+        samNextRecord = readsInView.get(++i);
+        PairedRead pr = new PairedRead();
+        if(samRecord.getReadName().equals(samNextRecord.getReadName()))
+        { 
+          if(samRecord.getAlignmentStart() < samNextRecord.getAlignmentStart())
+          {
+            pr.sam1 = samRecord;
+            pr.sam2 = samNextRecord;
+          }
+          else
+          {
+            pr.sam2 = samRecord;
+            pr.sam1 = samNextRecord;
+          }
+          
+        }
+        else
+        {
+          --i;
+          pr.sam1 = samRecord;
+          pr.sam2 = null;
+        }
+        pairedReads.add(pr);
+      }
+    }
+    Collections.sort(pairedReads, new PairedReadComparator());
+    
+    Stroke originalStroke = new BasicStroke (1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND); 
+    Stroke stroke =
+            new BasicStroke (1.3f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
+    int scaleHeight;
+    if(isShowScale())
+      scaleHeight = 15;
+    else
+      scaleHeight = 0;
+    
+    int ypos = getHeight() - scaleHeight - 3;
+    int lastEnd = 0;
+    
+    for(int i=0; i<pairedReads.size(); i++)
+    {
+      PairedRead pr = pairedReads.get(i);
+      
+      if(pr.sam1.getAlignmentStart() > lastEnd)
+      {
+        ypos = getHeight() - scaleHeight - 3;
+        
+        if(pr.sam2 != null)
+        {  
+          lastEnd = pr.sam2.getAlignmentEnd();
+        }
+        else
+          lastEnd = pr.sam1.getAlignmentEnd();
+      }
+      else
+        ypos = ypos - 3;
+      
+      g2.setStroke(originalStroke);
+      g2.setColor(Color.LIGHT_GRAY);
+      
+      if(pr.sam2 != null)
+      {
+        drawTranslucentJointedLine(g2, 
+                    (int)(pr.sam1.getAlignmentEnd()*pixPerBase),
+                    (int)(pr.sam2.getAlignmentStart()*pixPerBase), ypos);
+      }
+      else
+      {
+        if(!pr.sam1.getMateUnmappedFlag())
+        {
+          int prStart;
+          
+          if(pr.sam1.getAlignmentStart() > pr.sam1.getMateAlignmentStart())
+            prStart = pr.sam1.getAlignmentEnd();
+          else
+            prStart = pr.sam1.getAlignmentStart();
+            
+          drawTranslucentJointedLine(g2, 
+              (int)(prStart*pixPerBase),
+              (int)(pr.sam1.getMateAlignmentStart()*pixPerBase), ypos);
+        }
+      }
+      
+      if( pr.sam1.getReadNegativeStrandFlag() && // strand of the query (1 for reverse)
+          ( pr.sam2 != null && pr.sam2.getReadNegativeStrandFlag() ) )
+        g2.setColor(Color.red);
+      else
+        g2.setColor(Color.blue);
+      drawRead(g2, pr.sam1, pixPerBase, stroke, ypos);
+      
+      if(pr.sam2 != null)
+        drawRead(g2, pr.sam2, pixPerBase, stroke, ypos);
+    }
+  }
+  
   
   /**
    * Draw a read that apparently has a read mate that is not in view.
@@ -758,12 +907,17 @@ public class JamView extends JPanel
   private void drawLoneRead(Graphics2D g2, SAMRecord samRecord, int ypos, 
       float pixPerBase, Stroke originalStroke, Stroke stroke)
   {
-    boolean drawLine = true;   
+    boolean offTheTop = false;
     int thisStart = samRecord.getAlignmentStart()-1;
     int thisEnd   = thisStart + samRecord.getReadString().length();
     
-    if(drawLine &&
-        Math.abs(samRecord.getMateAlignmentStart()-samRecord.getAlignmentEnd())*pixPerBase > 2.f)
+    if(ypos <= 0)
+    {
+      offTheTop = true;
+      ypos = samRecord.getReadString().length();
+    }
+      
+    if(Math.abs(samRecord.getMateAlignmentStart()-samRecord.getAlignmentEnd())*pixPerBase > 2.f)
     {
       g2.setStroke(originalStroke);
       g2.setColor(Color.LIGHT_GRAY);
@@ -771,26 +925,25 @@ public class JamView extends JPanel
       if(samRecord.getAlignmentEnd() < samRecord.getMateAlignmentStart())
       {
         int nextStart = (int) ((samRecord.getMateAlignmentStart()-1)*pixPerBase);
-        g2.drawLine((int)(thisStart*pixPerBase), ypos, nextStart, ypos);
+        drawTranslucentLine(g2, 
+            (int)(thisStart*pixPerBase), nextStart, ypos);
       }
       else
       {
         int nextStart = (int) ((samRecord.getMateAlignmentStart()-1)*pixPerBase);
-        g2.drawLine((int)(thisEnd*pixPerBase), ypos, nextStart, ypos);
+        drawTranslucentLine(g2, 
+            (int)(thisEnd*pixPerBase), nextStart, ypos);
       }
     }
     
-    if(samRecord.getReadNegativeStrandFlag()) // strand of the query (1 for reverse)
+    if(offTheTop)
+      g2.setColor(darkOrange); 
+    else if(samRecord.getReadNegativeStrandFlag()) // strand of the query (1 for reverse)
       g2.setColor(Color.red);
     else
       g2.setColor(Color.blue);
-    
-    if(ypos <= 0)
-    {
-      ypos = samRecord.getReadString().length();
-      drawLine = false;
-      g2.setColor(Color.orange); 
-    }  
+
+ 
     drawRead(g2, samRecord, pixPerBase, stroke, ypos);
     
     if (isSNPs)
@@ -902,6 +1055,40 @@ public class JamView extends JPanel
         g2.fillRect(x, 0, width, getHeight());
       }
     }
+  }
+  
+  /**
+   * Draw a translucent line
+   * @param g2
+   * @param start
+   * @param end
+   * @param ypos
+   */
+  private void drawTranslucentLine(Graphics2D g2, int start, int end, int ypos)
+  {
+    Composite origComposite = g2.getComposite();
+    g2.setComposite(translucent);
+    g2.drawLine(start, ypos, end, ypos);
+    g2.setComposite(origComposite);
+  }
+  
+  /**
+   * Draw a translucent line
+   * @param g2
+   * @param start
+   * @param end
+   * @param ypos
+   */
+  private void drawTranslucentJointedLine(Graphics2D g2, int start, int end, int ypos)
+  {
+    Composite origComposite = g2.getComposite();
+    g2.setComposite(translucent);
+    
+    int mid = (int) ((end-start)/2.f)+start;
+    //g2.drawLine(start, ypos, end, ypos);
+    g2.drawLine(start, ypos, mid, ypos-5);
+    g2.drawLine(mid, ypos-5, end, ypos);
+    g2.setComposite(origComposite);
   }
   
   /**
@@ -1169,7 +1356,9 @@ public class JamView extends JPanel
     });
     view.add(checkBoxSNPs);
     
-    JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View");
+    final JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View");
+    final JCheckBoxMenuItem checkBoxPairedStackView = new JCheckBoxMenuItem("Paired Stack View");
+    
     checkBoxStackView.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -1177,10 +1366,35 @@ public class JamView extends JPanel
         laststart = -1;
         lastend = -1;
         isStackView = !isStackView;
+        
+        if(isStackView)
+        {
+          isPairedStackView = !isStackView;
+          checkBoxPairedStackView.setSelected(!isStackView);
+        }
         repaint();
       }
     });
     view.add(checkBoxStackView);
+    
+
+    checkBoxPairedStackView.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        laststart = -1;
+        lastend = -1;
+        isPairedStackView = !isPairedStackView;
+        
+        if(isPairedStackView)
+        {
+          isStackView = !isPairedStackView;
+          checkBoxStackView.setSelected(!isPairedStackView);
+        }
+        repaint();
+      }
+    });
+    view.add(checkBoxPairedStackView);
     
     
     JCheckBoxMenuItem checkBoxCoverage = new JCheckBoxMenuItem("Coverage");
@@ -1194,6 +1408,33 @@ public class JamView extends JPanel
       }
     });
     view.add(checkBoxCoverage);
+    view.add(new JSeparator());
+    
+    JMenu maxHeightMenu = new JMenu("Plot Height");
+    view.add(maxHeightMenu);
+    
+    final String hgts[] = 
+       {"500", "800", "1000", "1500", "2500", "5000"};
+    
+    ButtonGroup bgroup = new ButtonGroup();
+    for(int i=0; i<hgts.length; i++)
+    {
+      final String hgt = hgts[i];
+      final JCheckBoxMenuItem maxHeightMenuItem = new JCheckBoxMenuItem(hgt);
+      bgroup.add(maxHeightMenuItem);
+      maxHeightMenuItem.setSelected(hgts[i].equals(Integer.toString(maxHeight)));
+      maxHeightMenu.add(maxHeightMenuItem);
+      maxHeightMenuItem.addActionListener(new ActionListener()
+      {
+        public void actionPerformed(ActionEvent e)
+        {
+          if(maxHeightMenuItem.isSelected())
+            maxHeight = Integer.parseInt(hgt);
+          int start = getBaseAtStartOfView();
+          setDisplay(start, nbasesInView+start, null);
+        }
+      });
+    }
   }
   
   public void setVisible(boolean visible)
@@ -1240,7 +1481,7 @@ public class JamView extends JPanel
     }
     
     Dimension d = new Dimension();
-    d.setSize((getMaxBasesInPanel(seqLength)*pixPerBase), 800.d);
+    d.setSize((getMaxBasesInPanel(seqLength)*pixPerBase), maxHeight);
     setPreferredSize(d);
     revalidate();
   }
@@ -1304,7 +1545,7 @@ public class JamView extends JPanel
     }
     
     Dimension d = new Dimension();
-    d.setSize((getMaxBasesInPanel(seqLength)*pixPerBase), 800.d);
+    d.setSize((getMaxBasesInPanel(seqLength)*pixPerBase), maxHeight);
     
     //System.out.println("setDisplay() "+d.getWidth());
     setPreferredSize(d);
@@ -1456,11 +1697,11 @@ public class JamView extends JPanel
 	  
 	  int windowSize = 10;
 	  int nBins = Math.round((end-start+1.f)/windowSize);
-	  float coverage[] = new float[nBins];
+	  int coverage[] = new int[nBins];
 	  for(int i=0; i<coverage.length; i++)
-	    coverage[i] = 0.f;
+	    coverage[i] = 0;
 	  
-	  float max = 0.f;
+	  int max = 0;
 	  for(int i=0; i<readsInView.size(); i++)
 	  {
 	    SAMRecord thisRead = readsInView.get(i);
@@ -1479,19 +1720,23 @@ public class JamView extends JPanel
 	    }
 	  }
 	  
-	  g2.setColor(Color.blue);
+	  g2.setColor(lightBlue);
 	  GeneralPath shape = new GeneralPath();
 	  shape.moveTo(0,getHeight());
 	  for(int i=0; i<coverage.length; i++)
 	  {
 	    float xpos = ((i*(windowSize)) - windowSize/2.f)*pixPerBase;
 	    shape.lineTo(xpos,
-	        getHeight() - ((coverage[i]/max)*getHeight()));
+	        getHeight() - (((float)coverage[i]/(float)max)*getHeight()));
 	  }
-	        
 
 	  shape.lineTo(getWidth(),getHeight());
 	  g2.fill(shape);
+
+	  String maxStr = Integer.toString(max);
+	  FontMetrics fm = getFontMetrics(getFont());
+	  g2.setColor(Color.black);
+	  g2.drawString(maxStr, getWidth()-fm.stringWidth(maxStr), fm.getHeight());
 	}
 	
 	protected void setStartAndEnd(int start, int end)
@@ -1578,7 +1823,6 @@ public class JamView extends JPanel
     }
   }
  
-  
   class SAMRecordComparator implements Comparator<Object>
   {
     public int compare(Object o1, Object o2) 
@@ -1596,6 +1840,32 @@ public class JamView extends JPanel
       }   
       return cmp;
     }
+  }
+  
+  
+  class PairedReadComparator implements Comparator<Object>
+  {
+    public int compare(Object o1, Object o2) 
+    {
+      PairedRead pr1 = (PairedRead) o1;
+      PairedRead pr2 = (PairedRead) o2;
+      
+      int start1 = pr1.sam1.getAlignmentStart();
+      if(pr1.sam1.getAlignmentEnd() < start1)
+        start1 = pr1.sam1.getAlignmentEnd();
+      
+      int start2 = pr2.sam1.getAlignmentStart();
+      if(pr2.sam1.getAlignmentEnd() < start2)
+        start2 = pr1.sam1.getAlignmentEnd();
+        
+      return start1-start2;
+    }
+  }
+  
+  class PairedRead
+  {
+    SAMRecord sam1;
+    SAMRecord sam2;
   }
 
 
@@ -1717,6 +1987,9 @@ public class JamView extends JPanel
     final JamView view = new JamView(bam, reference, nbasesInView);
     JFrame frame = new JFrame("JAM");
     
+    // translucent
+    //frame.getRootPane().putClientProperty("Window.alpha", new Float(0.9f));
+
     frame.addWindowFocusListener(new WindowFocusListener()
     {
       public void windowGainedFocus(WindowEvent e)
