@@ -161,6 +161,8 @@ public class JamView extends JPanel
   
   private Point lastMousePoint = null;
   private SAMRecord mouseOverSAMRecord = null;
+  // record of where a mouse drag starts
+  private int dragStart = -1;
   
   private int maxHeight = 800;
   
@@ -376,6 +378,7 @@ public class JamView extends JPanel
 	super.paintComponent(g);
 	Graphics2D g2 = (Graphics2D)g;
 
+	mouseOverSAMRecord = null;
 	String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
 	float pixPerBase = getPixPerBaseByWidth();
@@ -719,7 +722,7 @@ public class JamView extends JPanel
       }
     }
     
-    drawYScale(g2, start, pixPerBase);
+    drawYScale(g2, start, pixPerBase, scaleHeight);
   }
   
   /**
@@ -1032,21 +1035,35 @@ public class JamView extends JPanel
     }
   }
   
-  
-  private void drawYScale(Graphics2D g2, int start, float pixPerBase)
+  /**
+   * Draw a y-scale for inferred size (isize) of reads.
+   * @param g2
+   * @param start
+   * @param pixPerBase
+   * @param xScaleHeight
+   */
+  private void drawYScale(Graphics2D g2, int start, float pixPerBase, int xScaleHeight)
   {
     g2.setColor(Color.black);
-    int maxY = getPreferredSize().height;
+    int maxY = getPreferredSize().height-xScaleHeight;
     int xpos = (int) (pixPerBase*start);
     
     for(int i=100; i<maxY; i+=100)
     {
-      g2.drawLine(xpos, getHeight()-i, xpos+2, getHeight()-i);
-      g2.drawString(Integer.toString(i), xpos+3, getHeight()-i);
+      int ypos = getHeight()-i-xScaleHeight;
+      g2.drawLine(xpos, ypos, xpos+2, ypos);
+      g2.drawString(Integer.toString(i), xpos+3, ypos);
     }
   }
   
-  
+  /**
+   * Draw a given read.
+   * @param g2
+   * @param thisRead
+   * @param pixPerBase
+   * @param stroke
+   * @param ypos
+   */
   private void drawRead(Graphics2D g2, SAMRecord thisRead,
 		                float pixPerBase, Stroke stroke, int ypos)
   {
@@ -1056,7 +1073,7 @@ public class JamView extends JPanel
     g2.drawLine((int)(thisStart * pixPerBase), ypos,
                 (int)(thisEnd * pixPerBase), ypos);
 
-    
+    // test if the mouse is over this read
     if(lastMousePoint != null)
     {
       if(lastMousePoint.getY()+2 > ypos && lastMousePoint.getY()-2 < ypos)
@@ -1687,13 +1704,28 @@ public class JamView extends JPanel
    **/
   private void handleCanvasMouseDragOrClick(final MouseEvent event)
   {
-    if(!showBaseAlignment || event.isShiftDown()) 
+    if(event.isShiftDown()) 
       return;
 
+    if(event.getClickCount() > 1)
+    {
+      getSelection().clear();
+      repaint();
+      return;  
+    }
+    
+    int onmask = MouseEvent.BUTTON1_DOWN_MASK;
+    
     String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
     float pixPerBase = ((float)getWidth())/(float)(seqLength);    
     int start = (int) Math.round(event.getPoint().getX()/pixPerBase);
+    
+    if (dragStart < 0 && (event.getModifiersEx() & onmask) == onmask)
+      dragStart = start;
+    else if((event.getModifiersEx() & onmask) != onmask)
+      dragStart = -1;
+
     if(start < 1)
       start = 1;
     if(start > seqLength)
@@ -1702,7 +1734,10 @@ public class JamView extends JPanel
     MarkerRange drag_range;
     try
     {
-      drag_range = new MarkerRange (bases.getForwardStrand(), start, start);
+      if(dragStart < 0)
+        drag_range = new MarkerRange (bases.getForwardStrand(), start, start);
+      else
+        drag_range = new MarkerRange (bases.getForwardStrand(), dragStart, start);
       getSelection().setMarkerRange(drag_range);
       repaint();
     }
@@ -1852,6 +1887,7 @@ public class JamView extends JPanel
 
     public void mouseReleased(MouseEvent e)
     {
+      dragStart = -1;
       maybeShowPopup(e);
     }
 
