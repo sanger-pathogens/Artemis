@@ -104,6 +104,7 @@ import uk.ac.sanger.artemis.components.DisplayAdjustmentListener;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.MessageDialog;
+import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Range;
 import uk.ac.sanger.artemis.sequence.Bases;
@@ -157,6 +158,9 @@ public class JamView extends JPanel
   private Color darkGreen = new Color(0, 150, 0);
   private Color lightBlue = new Color(30,144,255);
   private Color darkOrange = new Color(255,140,0);
+  
+  private Point lastMousePoint = null;
+  private SAMRecord mouseOverSAMRecord = null;
   
   private int maxHeight = 800;
   
@@ -216,6 +220,18 @@ public class JamView extends JPanel
     FontMetrics fm  = getFontMetrics(getFont());
     ALIGNMENT_PIX_PER_BASE = fm.charWidth('M');
     selection = new Selection(null);
+    
+    MultiLineToolTipUI.initialize();
+    setToolTipText("");
+  }
+  
+  public String getToolTipText()
+  {
+    return ( mouseOverSAMRecord != null ? 
+        mouseOverSAMRecord.getReadName() + "\n" + 
+        mouseOverSAMRecord.getAlignmentStart() + ".." +
+        mouseOverSAMRecord.getAlignmentEnd() + "\nisize=" +
+        mouseOverSAMRecord.getInferredInsertSize(): null);
   }
   
   /**
@@ -582,12 +598,14 @@ public class JamView extends JPanel
     
     Color col = g2.getColor();
     int xpos;
+    int len = 0;
     String readSeq = samRecord.getReadString();
 
     List<AlignmentBlock> blocks = samRecord.getAlignmentBlocks();
     for(int i=0; i<blocks.size(); i++)
     {
       AlignmentBlock block = blocks.get(i);
+      len += block.getLength();
       for(int j=0; j<block.getLength(); j++)
       {
         int readPos = block.getReadStart()-1+j;
@@ -601,7 +619,21 @@ public class JamView extends JPanel
           else
             g2.setColor(col);
         }
+        
         g2.drawString(readSeq.substring(readPos, readPos+1), xpos*ALIGNMENT_PIX_PER_BASE, ypos);
+      }
+    }
+    
+    if(lastMousePoint != null)
+    {
+      int xstart = (blocks.get(0).getReferenceStart()-1)*ALIGNMENT_PIX_PER_BASE;
+      int xend   = (blocks.get(0).getReferenceStart()-1+len)*ALIGNMENT_PIX_PER_BASE;
+
+      if(lastMousePoint.getY() > ypos-11 && lastMousePoint.getY() < ypos)
+      if(lastMousePoint.getX() > xstart &&
+         lastMousePoint.getX() < xend)
+      {
+        mouseOverSAMRecord = samRecord;    
       }
     }
   }
@@ -620,9 +652,10 @@ public class JamView extends JPanel
     if(isShowScale())
       drawScale(g2, start, end, pixPerBase);
     
-    Stroke originalStroke = new BasicStroke (1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND); 
+    Stroke originalStroke =
+      new BasicStroke (1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND); 
     Stroke stroke =
-            new BasicStroke (1.3f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
+      new BasicStroke (1.3f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
     int scaleHeight;
     if(isShowScale())
       scaleHeight = 15;
@@ -1018,11 +1051,22 @@ public class JamView extends JPanel
 		                float pixPerBase, Stroke stroke, int ypos)
   {
     int thisStart = thisRead.getAlignmentStart()-1;
-    int thisEnd   = thisRead.getAlignmentEnd();
+    int thisEnd   = thisRead.getAlignmentEnd()-1;
     g2.setStroke(stroke);
-    g2.drawLine((int) (thisStart * pixPerBase), ypos,
-                (int) (thisEnd * pixPerBase), ypos);
+    g2.drawLine((int)(thisStart * pixPerBase), ypos,
+                (int)(thisEnd * pixPerBase), ypos);
 
+    
+    if(lastMousePoint != null)
+    {
+      if(lastMousePoint.getY()+2 > ypos && lastMousePoint.getY()-2 < ypos)
+      if(lastMousePoint.getX() > thisStart * pixPerBase &&
+         lastMousePoint.getX() < thisEnd * pixPerBase)
+      {
+        mouseOverSAMRecord = thisRead;
+      }
+    }
+    
     if (isSNPs)
       showSNPsOnReads(g2, thisRead, pixPerBase, ypos);
   }
@@ -1178,6 +1222,8 @@ public class JamView extends JPanel
       
       public void mouseMoved(MouseEvent e)
       {
+        lastMousePoint = e.getPoint();
+        
         int thisHgt = HEIGHT;
         if (thisHgt < 5)
           thisHgt = 15;
@@ -1516,6 +1562,7 @@ public class JamView extends JPanel
     this.startBase = start;
     this.endBase   = end;
     this.nbasesInView = end-start+1;
+    lastMousePoint = null;
     
     String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
