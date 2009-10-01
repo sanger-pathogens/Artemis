@@ -50,6 +50,7 @@ public class PrintArtemis extends ScrollPanel implements Printable
   private JCheckBox featDisplay     = new JCheckBox("Show Feature Display",true);
   private JCheckBox groupsDisplay   = new JCheckBox("Show Entries Loaded",true);
   private JCheckBox plotsDisplay    = new JCheckBox("Show Graphs",true);
+  private JCheckBox jamDisplay      = new JCheckBox("Show Read Alignment",true);
   private JCheckBox onelineDisplay  = new JCheckBox("Show One Line Display",true);
   private JCheckBox baseDisplay     = new JCheckBox("Show Bases Display",true);
   private JCheckBox featListDisplay = new JCheckBox("Show Feature List",true);
@@ -93,6 +94,12 @@ public class PrintArtemis extends ScrollPanel implements Printable
       entry.getBasePlotGroup().printComponent(g2d);
 //  g2d.translate(0,entry.getBasePlotGroup().getHeight());
 
+    if(jamDisplay.isSelected() && entry.getJamView() != null && entry.getJamView().isVisible())
+    {
+      entry.getJamPanel().paintComponents(g2d);
+      g2d.translate(0,entry.getJamPanel().getHeight());
+    }
+    
     // one line per entry
     if(onelineDisplay.isSelected())
     {
@@ -143,6 +150,10 @@ public class PrintArtemis extends ScrollPanel implements Printable
     if(groupsDisplay.isSelected())
       height += entry.getEntryGroupDisplay().getHeight();
 
+    if(jamDisplay.isSelected() && 
+       entry.getJamView() != null && entry.getJamView().isVisible())
+      height += entry.getJamPanel().getHeight();
+    
     if(plotsDisplay.isSelected())
       height += entry.getBasePlotGroup().getHeight();
 
@@ -268,7 +279,25 @@ public class PrintArtemis extends ScrollPanel implements Printable
       }
     });
     optionsmenu.add(showPlots);
-
+    
+    
+// draw read alignment viewer
+    JCheckBoxMenuItem showJam = new JCheckBoxMenuItem("Show Read Alignment View",
+                                                      jamDisplay.isSelected());
+    
+    if(entry.getJamView() == null || !entry.getJamView().isVisible())
+      showJam.setEnabled(false);
+    
+    showJam.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        jamDisplay.setSelected(!jamDisplay.isSelected());
+        repaint();
+      }
+    });
+    optionsmenu.add(showJam);
+    
 // draw one line 
     JCheckBoxMenuItem showOneLine = new JCheckBoxMenuItem("Show One Line Display",
                                                           onelineDisplay.isSelected());

@@ -528,6 +528,16 @@ public class EntryEdit extends JFrame
   {
     return base_plot_group;
   }
+  
+  protected JPanel getJamPanel()
+  {
+    return jamPanel;
+  }
+  
+  protected JPanel getJamView()
+  {
+    return jamView;
+  }
 
 
   /**
