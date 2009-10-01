@@ -1718,8 +1718,8 @@ public class JamView extends JPanel
     
     String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
-    float pixPerBase = ((float)getWidth())/(float)(seqLength);    
-    int start = (int) Math.round(event.getPoint().getX()/pixPerBase);
+    float pixPerBase = getPixPerBaseByWidth();
+    int start = (int) ( (event.getPoint().getX()/pixPerBase) + 1.f );
     
     if (dragStart < 0 && (event.getModifiersEx() & onmask) == onmask)
       dragStart = start;
