@@ -150,7 +150,7 @@ public class JamView extends JPanel
   
   private boolean showBaseAlignment = false;
   
-  AlphaComposite translucent = 
+  private AlphaComposite translucent = 
     AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
   
   /** Used to colour the frames. */
@@ -1704,9 +1704,9 @@ public class JamView extends JPanel
    **/
   private void handleCanvasMouseDragOrClick(final MouseEvent event)
   {
-    if(event.isShiftDown()) 
+    if(event.isShiftDown() || event.getButton() == MouseEvent.BUTTON3) 
       return;
-
+    
     if(event.getClickCount() > 1)
     {
       getSelection().clear();
@@ -1714,8 +1714,7 @@ public class JamView extends JPanel
       return;  
     }
     
-    int onmask = MouseEvent.BUTTON1_DOWN_MASK;
-    
+    int onmask = MouseEvent.BUTTON1_DOWN_MASK;  
     String refName = (String) combo.getSelectedItem();
     int seqLength = seqLengths.get(refName);
     float pixPerBase = getPixPerBaseByWidth();
@@ -1818,7 +1817,10 @@ public class JamView extends JPanel
 	  String maxStr = Integer.toString(max);
 	  FontMetrics fm = getFontMetrics(getFont());
 	  g2.setColor(Color.black);
-	  g2.drawString(maxStr, getWidth()-fm.stringWidth(maxStr), fm.getHeight());
+	  
+	  int xpos = getWidth() - fm.stringWidth(maxStr) - 
+	             jspView.getVerticalScrollBar().getWidth();
+	  g2.drawString(maxStr, xpos, fm.getHeight());
 	}
 	
 	protected void setStartAndEnd(int start, int end)
