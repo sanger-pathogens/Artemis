@@ -40,6 +40,8 @@ import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
@@ -51,13 +53,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.awt.geom.GeneralPath;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -75,6 +72,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
@@ -125,6 +123,8 @@ public class JamView extends JPanel
 
   private Bases bases;
   private JScrollPane jspView;
+  private JScrollBar scrollBar;
+  
   private JComboBox combo;
   private boolean isSingle = false;
   private boolean isSNPs = false;
@@ -156,7 +156,6 @@ public class JamView extends JPanel
   /** Used to colour the frames. */
   private Color lightGrey = new Color(200, 200, 200);
   private Color darkGreen = new Color(0, 150, 0);
-  private Color lightBlue = new Color(30,144,255);
   private Color darkOrange = new Color(255,140,0);
   
   private Point lastMousePoint = null;
@@ -166,11 +165,10 @@ public class JamView extends JPanel
   
   private int maxHeight = 800;
   
+  private boolean concatSequences = false;
   private int ALIGNMENT_PIX_PER_BASE;
   
   private JPopupMenu popup;
-  // use the picard library otherwise call samtools
-  public static boolean PICARD = true;
 
  
   public JamView(String bam, 
@@ -195,10 +193,7 @@ public class JamView extends JPanel
       }
     }
     
-    if(PICARD)
-      readHeaderPicard();
-    else
-      readHeader();
+    readHeaderPicard();
     
     // set font size
     //setFont(getFont().deriveFont(12.f));
@@ -233,12 +228,11 @@ public class JamView extends JPanel
         mouseOverSAMRecord.getReadName() + "\n" + 
         mouseOverSAMRecord.getAlignmentStart() + ".." +
         mouseOverSAMRecord.getAlignmentEnd() + "\nisize=" +
-        mouseOverSAMRecord.getInferredInsertSize(): null);
+        mouseOverSAMRecord.getInferredInsertSize() + "\nrname=" +
+        mouseOverSAMRecord.getReferenceName(): null);
   }
-  
-  /**
-   * Read the BAM/SAM header
-   */
+
+  /*
   private void readHeader()
   {
     String samtoolCmd = "";
@@ -285,29 +279,6 @@ public class JamView extends JPanel
 	}
   }
 
-  private void readHeaderPicard()
-  {
-    File bamFile = new File(bam);
-    File indexFile = new File(bam+".bai");
-    final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
-    SAMFileHeader header = inputSam.getFileHeader();
-    List<SAMSequenceRecord> readGroups = header.getSequenceDictionary().getSequences();
-    
-    for(int i=0; i<readGroups.size(); i++)
-    {
-      seqLengths.put(readGroups.get(i).getSequenceName(),
-                     readGroups.get(i).getSequenceLength());
-      seqNames.add(readGroups.get(i).getSequenceName());
-    }
-    inputSam.close();
-  }
-
-  /**
-   * Read data from BAM/SAM file for a region.
-   * @param start
-   * @param end
-   * @param pair_sort
-   */
   private void readFromBam(int start, int end)
   {
     String refName = (String) combo.getSelectedItem();
@@ -334,6 +305,24 @@ public class JamView extends JPanel
       System.out.println(samtools.getProcessStderr());
 	    
 	samtools.waitForStdout();
+  }*/
+  
+
+  private void readHeaderPicard()
+  {
+    File bamFile = new File(bam);
+    File indexFile = new File(bam+".bai");
+    final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
+    SAMFileHeader header = inputSam.getFileHeader();
+    List<SAMSequenceRecord> readGroups = header.getSequenceDictionary().getSequences();
+    
+    for(int i=0; i<readGroups.size(); i++)
+    {
+      seqLengths.put(readGroups.get(i).getSequenceName(),
+                     readGroups.get(i).getSequenceLength());
+      seqNames.add(readGroups.get(i).getSequenceName());
+    }
+    inputSam.close();
   }
   
   /**
@@ -352,7 +341,56 @@ public class JamView extends JPanel
       readsInView = new Vector<SAMRecord>();
     else
       readsInView.clear();
-    String refName = (String) combo.getSelectedItem();
+
+    if(concatSequences)
+    {
+      int len = 0;
+      int lastLen = 1;
+      for(int i=0; i<seqNames.size(); i++)
+      {
+        int thisLength = seqLengths.get(seqNames.get(i));
+        len += thisLength;
+
+        if( (lastLen >= start && lastLen < end) ||
+            (len >= start && len < end) ||
+            (start >= lastLen && start < len) ||
+            (end >= lastLen && end < len) )
+        {
+          int offset = getSequenceOffset(seqNames.get(i)); 
+          int thisStart = start - offset;
+          if(thisStart < 1)
+            thisStart = 1;
+          int thisEnd   = end - offset;
+          if(thisEnd > thisLength)
+            thisEnd = thisLength;
+          
+          System.out.println("READ "+seqNames.get(i)+"  "+thisStart+".."+thisEnd);
+          iterateOverBam(inputSam, seqNames.get(i), thisStart, thisEnd);
+        }
+        lastLen = len;
+      }
+    }
+    else
+    {
+      String refName = (String) combo.getSelectedItem();
+      iterateOverBam(inputSam, refName, start, end);
+    }
+    
+    inputSam.close();
+    //System.out.println("readFromBamPicard "+start+".."+end);
+  }
+  
+  /**
+   * Iterate over BAM file and load into the <code>List</code> of
+   * <code>SAMRecord</code>.
+   * @param inputSam
+   * @param refName
+   * @param start
+   * @param end
+   */
+  private void iterateOverBam(final SAMFileReader inputSam, 
+                              String refName, int start, int end)
+  {
     CloseableIterator<SAMRecord> it = inputSam.queryOverlapping(refName, start, end);
     while ( it.hasNext() )
     {
@@ -366,8 +404,36 @@ public class JamView extends JPanel
         System.out.println(e.getMessage());
       }
     }
-    inputSam.close();
-    //System.out.println("readFromBamPicard "+start+".."+end);
+    it.close();
+  }
+
+  private int getSequenceLength()
+  {
+    if(concatSequences)
+    {
+      int len = 0;
+      for(int i=0; i<seqNames.size(); i++)
+        len += seqLengths.get(seqNames.get(i));
+      return len;
+    }
+    else
+      return seqLengths.get((String) combo.getSelectedItem());
+  }
+  
+  protected int getSequenceOffset(String refName)
+  {
+    if(!concatSequences)
+      return 0;
+    int offset = 0;
+    for(int i=0; i<combo.getItemCount(); i++)
+    {
+      String thisSeqName = (String) combo.getItemAt(i);
+      if(refName.equals(thisSeqName))
+        return offset;
+      
+      offset += seqLengths.get(combo.getItemAt(i));
+    }
+    return offset;
   }
   
   /**
@@ -379,48 +445,42 @@ public class JamView extends JPanel
 	Graphics2D g2 = (Graphics2D)g;
 
 	mouseOverSAMRecord = null;
-	String refName = (String) combo.getSelectedItem();
-    int seqLength = seqLengths.get(refName);
+    int seqLength = getSequenceLength();
 	float pixPerBase = getPixPerBaseByWidth();
 	
     int start;
-    final int end;
+    int end;
     
     if(startBase > 0)
       start = startBase;
     else
-    {
-      double x = jspView.getViewport().getViewRect().getX();
-      start = 1 + (int) (getMaxBasesInPanel(seqLength) * ( (float)x / (float)getPreferredSize().getWidth() ));
-    }
+      start = getBaseAtStartOfView();
     
     if(endBase > 0)
       end = endBase;
     else
     {
-      int width = jspView.getViewport().getViewRect().width;
-      if(jspView.getVerticalScrollBar() != null)
-        width += jspView.getVerticalScrollBar().getWidth();
-      end   = (int) (start + ((float)width / (float)pixPerBase));
+      end   = start + nbasesInView - 1;
+      if(end > seqLength)
+        end = seqLength;
     }
 
-    //System.out.println("paintComponent "+start+".."+end+"       "+startBase+".."+endBase+
-    //   "  pixPerBase="+pixPerBase+"  getPreferredSize().getWidth()="+getPreferredSize().getWidth());
+
+    //System.out.println(start+".."+end+" " +
+    //		"sequence length = "+getSequenceLength()+
+    //		" pixPerBase="+pixPerBase);
     
+      
     if(laststart != start ||
        lastend   != end)
     {
+      setCursor(cbusy);
       try
       {
-        setCursor(cbusy);
-
-        if(PICARD)
-          readFromBamPicard(start, end);
-        else
-          readFromBam(start, end);
-
+        readFromBamPicard(start, end);
         if(!isStackView || pixPerBase*3 >= ALIGNMENT_PIX_PER_BASE)
           Collections.sort(readsInView, new SAMRecordComparator());
+
         setCursor(cdone);
       }
       catch(OutOfMemoryError ome)
@@ -454,26 +514,16 @@ public class JamView extends JPanel
   
   private float getPixPerBaseByWidth()
   {
-    String refName = (String) combo.getSelectedItem();
-    int seqLength = seqLengths.get(refName);
-    return ((float)getPreferredSize().getWidth())/(getMaxBasesInPanel(seqLength));
+    return (float)( getPreferredSize().getWidth() /nbasesInView);
   }
   
-  private float getPixPerBaseByBasesInView()
-  {
-    int width = jspView.getViewport().getViewRect().width;
-    if(jspView.getVerticalScrollBar() != null)
-      width += jspView.getVerticalScrollBar().getWidth();
-    
-    return ((float)width)/(float)(nbasesInView); 
-  }
   
-  private float getMaxBasesInPanel(int seqLength)
+  private int getMaxBasesInPanel(int seqLength)
   {
     if(feature_display == null)
-      return (float)(seqLength);
+      return seqLength+nbasesInView/2;
     else
-      return (float)(seqLength+nbasesInView);
+      return seqLength+nbasesInView;
   }
   
   /**
@@ -513,20 +563,14 @@ public class JamView extends JPanel
           refSeqStart = 1;
         refSeq = 
           bases.getSubSequence(new Range(refSeqStart, seqEnd), Bases.FORWARD).toUpperCase();
-        int xpos = (refSeqStart-1)*ALIGNMENT_PIX_PER_BASE;
+        
+        System.out.println(refSeqStart +" "+ seqEnd+" "+refSeq);
         
         g2.setColor(lightGrey);
-        g2.fillRect(xpos, ypos-11, 
-            jspView.getViewport().getWidth()+(ALIGNMENT_PIX_PER_BASE*2), 11);
+        g2.fillRect(0, ypos-11, getPreferredSize().width, 11);
         drawSelectionRange(g2, pixPerBase, start, end);
         g2.setColor(Color.black);
-        g2.drawString(refSeq, xpos, ypos);
-        
-        //for(int i=0;i<refSeq.length(); i++)
-        //{
-          //xpos = ((refSeqStart-1) + i)*ALIGNMENT_PIX_PER_BASE;
-          //g2.drawString(refSeq.substring(i, i+1), xpos, ypos);
-        //}
+        g2.drawString(refSeq, 0, ypos);
       }
       catch (OutOfRangeException e)
       {
@@ -603,7 +647,8 @@ public class JamView extends JPanel
     int xpos;
     int len = 0;
     String readSeq = samRecord.getReadString();
-
+    int offset = getSequenceOffset(samRecord.getReferenceName());
+    
     List<AlignmentBlock> blocks = samRecord.getAlignmentBlocks();
     for(int i=0; i<blocks.size(); i++)
     {
@@ -612,7 +657,7 @@ public class JamView extends JPanel
       for(int j=0; j<block.getLength(); j++)
       {
         int readPos = block.getReadStart()-1+j;
-        xpos  = block.getReferenceStart()-1+j;
+        xpos  = block.getReferenceStart()-1+j+offset;
         int refPos = xpos-refSeqStart+1;
         
         if(isSNPs && refSeq != null && refPos > 0 && refPos < refSeq.length())
@@ -623,14 +668,16 @@ public class JamView extends JPanel
             g2.setColor(col);
         }
         
-        g2.drawString(readSeq.substring(readPos, readPos+1), xpos*ALIGNMENT_PIX_PER_BASE, ypos);
+        g2.drawString(readSeq.substring(readPos, readPos+1), 
+                      refPos*ALIGNMENT_PIX_PER_BASE, ypos);
       }
     }
     
     if(lastMousePoint != null)
     {
-      int xstart = (blocks.get(0).getReferenceStart()-1)*ALIGNMENT_PIX_PER_BASE;
-      int xend   = (blocks.get(0).getReferenceStart()-1+len)*ALIGNMENT_PIX_PER_BASE;
+      int refPos = blocks.get(0).getReferenceStart()+offset-refSeqStart;
+      int xstart = refPos*ALIGNMENT_PIX_PER_BASE;
+      int xend   = (refPos+len)*ALIGNMENT_PIX_PER_BASE;
 
       if(lastMousePoint.getY() > ypos-11 && lastMousePoint.getY() < ypos)
       if(lastMousePoint.getX() > xstart &&
@@ -697,8 +744,8 @@ public class JamView extends JPanel
             g2.setColor(Color.LIGHT_GRAY);
 
             drawTranslucentLine(g2, 
-                     (int)(samRecord.getAlignmentEnd()*pixPerBase), 
-                     (int)(samNextRecord.getAlignmentStart()*pixPerBase), ypos);
+                   (int)((samRecord.getAlignmentEnd()-getBaseAtStartOfView())*pixPerBase), 
+                   (int)((samNextRecord.getAlignmentStart()-getBaseAtStartOfView())*pixPerBase), ypos);
           }
           
           if( samRecord.getReadNegativeStrandFlag() && // strand of the query (1 for reverse)
@@ -722,7 +769,7 @@ public class JamView extends JPanel
       }
     }
     
-    drawYScale(g2, start, pixPerBase, scaleHeight);
+    drawYScale(g2, scaleHeight);
   }
   
   /**
@@ -770,7 +817,7 @@ public class JamView extends JPanel
     {
       SAMRecord samRecord = readsInView.get(i);
 
-      int recordStart = samRecord.getAlignmentStart();;
+      int recordStart = samRecord.getAlignmentStart();
       int recordEnd = samRecord.getAlignmentEnd();
       
       if(lstStart != recordStart || lstEnd != recordEnd)
@@ -898,8 +945,8 @@ public class JamView extends JPanel
       if(pr.sam2 != null)
       {
         drawTranslucentJointedLine(g2, 
-                    (int)(pr.sam1.getAlignmentEnd()*pixPerBase),
-                    (int)(pr.sam2.getAlignmentStart()*pixPerBase), ypos);
+                (int)((pr.sam1.getAlignmentEnd()-getBaseAtStartOfView())*pixPerBase),
+                (int)((pr.sam2.getAlignmentStart()-getBaseAtStartOfView())*pixPerBase), ypos);
       }
       else
       {
@@ -913,8 +960,8 @@ public class JamView extends JPanel
             prStart = pr.sam1.getAlignmentStart();
             
           drawTranslucentJointedLine(g2, 
-              (int)(prStart*pixPerBase),
-              (int)(pr.sam1.getMateAlignmentStart()*pixPerBase), ypos);
+              (int)( (prStart-getBaseAtStartOfView())*pixPerBase),
+              (int)( (pr.sam1.getMateAlignmentStart()-getBaseAtStartOfView())*pixPerBase), ypos);
         }
       }
       
@@ -944,7 +991,8 @@ public class JamView extends JPanel
       float pixPerBase, Stroke originalStroke, Stroke stroke)
   {
     boolean offTheTop = false;
-    int thisStart = samRecord.getAlignmentStart()-1;
+    int offset = getSequenceOffset(samRecord.getReferenceName());
+    int thisStart = samRecord.getAlignmentStart()-1+offset;
     int thisEnd   = thisStart + samRecord.getReadString().length();
     
     if(ypos <= 0)
@@ -960,15 +1008,17 @@ public class JamView extends JPanel
       
       if(samRecord.getAlignmentEnd() < samRecord.getMateAlignmentStart())
       {
-        int nextStart = (int) ((samRecord.getMateAlignmentStart()-1)*pixPerBase);
+        int nextStart = 
+            (int)((samRecord.getMateAlignmentStart()-getBaseAtStartOfView()+offset)*pixPerBase);
         drawTranslucentLine(g2, 
-            (int)(thisStart*pixPerBase), nextStart, ypos);
+            (int)((thisStart-getBaseAtStartOfView())*pixPerBase), nextStart, ypos);
       }
       else
       {
-        int nextStart = (int) ((samRecord.getMateAlignmentStart()-1)*pixPerBase);
+        int nextStart = 
+            (int)((samRecord.getMateAlignmentStart()-getBaseAtStartOfView()+offset)*pixPerBase);
         drawTranslucentLine(g2, 
-            (int)(thisEnd*pixPerBase), nextStart, ypos);
+            (int)((thisEnd-getBaseAtStartOfView())*pixPerBase), nextStart, ypos);
       }
     }
     
@@ -983,15 +1033,15 @@ public class JamView extends JPanel
     drawRead(g2, samRecord, pixPerBase, stroke, ypos);
     
     if (isSNPs)
-      showSNPsOnReads(g2, samRecord, pixPerBase, ypos);
+      showSNPsOnReads(g2, samRecord, pixPerBase, ypos, offset);
   }
 
   
   private void drawScale(Graphics2D g2, int start, int end, float pixPerBase)
   {
     g2.setColor(Color.black);
-    g2.drawLine( (int)(start*pixPerBase), getHeight()-14,
-                 (int)(end*pixPerBase),   getHeight()-14);
+    g2.drawLine( 0, getHeight()-14,
+                 (int)((end - getBaseAtStartOfView())*pixPerBase),   getHeight()-14);
     int interval = end-start;
     
     if(interval > 256000)
@@ -1016,19 +1066,26 @@ public class JamView extends JPanel
       markStart = 1;
     
     int sm = markStart-(division/2);
-    
+    float x;
     if(sm > start)
-      g2.drawLine((int)(sm*pixPerBase), getHeight()-14,(int)(sm*pixPerBase), getHeight()-12);
+    {
+      x = (sm-getBaseAtStartOfView())*pixPerBase;
+      g2.drawLine((int)x, getHeight()-14,(int)x, getHeight()-12);
+    }
     
     for(int m=markStart; m<end; m+=division)
     {
-      g2.drawString(Integer.toString(m), m*pixPerBase, getHeight()-1);
-      g2.drawLine((int)(m*pixPerBase), getHeight()-14,(int)(m*pixPerBase), getHeight()-11);
+      x = (m-getBaseAtStartOfView())*pixPerBase;
+      g2.drawString(Integer.toString(m), x, getHeight()-1);
+      g2.drawLine((int)x, getHeight()-14,(int)x, getHeight()-11);
       
       sm = m+(division/2);
       
       if(sm < end)
-        g2.drawLine((int)(sm*pixPerBase), getHeight()-14,(int)(sm*pixPerBase), getHeight()-12);
+      {
+        x = (sm-getBaseAtStartOfView())*pixPerBase;
+        g2.drawLine((int)x, getHeight()-14,(int)x, getHeight()-12);
+      }
       
       if(m == 1)
         m = 0;
@@ -1038,21 +1095,18 @@ public class JamView extends JPanel
   /**
    * Draw a y-scale for inferred size (isize) of reads.
    * @param g2
-   * @param start
-   * @param pixPerBase
    * @param xScaleHeight
    */
-  private void drawYScale(Graphics2D g2, int start, float pixPerBase, int xScaleHeight)
+  private void drawYScale(Graphics2D g2, int xScaleHeight)
   {
     g2.setColor(Color.black);
     int maxY = getPreferredSize().height-xScaleHeight;
-    int xpos = (int) (pixPerBase*start);
     
     for(int i=100; i<maxY; i+=100)
     {
       int ypos = getHeight()-i-xScaleHeight;
-      g2.drawLine(xpos, ypos, xpos+2, ypos);
-      g2.drawString(Integer.toString(i), xpos+3, ypos);
+      g2.drawLine(0, ypos, 2, ypos);
+      g2.drawString(Integer.toString(i), 3, ypos);
     }
   }
   
@@ -1067,11 +1121,13 @@ public class JamView extends JPanel
   private void drawRead(Graphics2D g2, SAMRecord thisRead,
 		                float pixPerBase, Stroke stroke, int ypos)
   {
-    int thisStart = thisRead.getAlignmentStart()-1;
-    int thisEnd   = thisRead.getAlignmentEnd()-1;
+    int offset = getSequenceOffset(thisRead.getReferenceName());
+    
+    int thisStart = thisRead.getAlignmentStart()+offset-getBaseAtStartOfView();
+    int thisEnd   = thisRead.getAlignmentEnd()+offset-getBaseAtStartOfView();
     g2.setStroke(stroke);
-    g2.drawLine((int)(thisStart * pixPerBase), ypos,
-                (int)(thisEnd * pixPerBase), ypos);
+    g2.drawLine((int)( thisStart * pixPerBase), ypos,
+                (int)( thisEnd * pixPerBase), ypos);
 
     // test if the mouse is over this read
     if(lastMousePoint != null)
@@ -1085,7 +1141,7 @@ public class JamView extends JPanel
     }
     
     if (isSNPs)
-      showSNPsOnReads(g2, thisRead, pixPerBase, ypos);
+      showSNPsOnReads(g2, thisRead, pixPerBase, ypos, offset);
   }
   
   /**
@@ -1109,7 +1165,7 @@ public class JamView extends JPanel
         if(end < rangeStart || start > rangeEnd)
           return;
         
-        int x = (int) (pixPerBase*(rangeStart-1));
+        int x = (int) (pixPerBase*(rangeStart-getBaseAtStartOfView()));
         int width = (int) (pixPerBase*(rangeEnd-rangeStart+1));
         
         g2.setColor(Color.pink);
@@ -1160,7 +1216,7 @@ public class JamView extends JPanel
    * @param ypos
    */
   private void showSNPsOnReads(Graphics2D g2, SAMRecord thisRead,
-                               float pixPerBase, int ypos)
+                               float pixPerBase, int ypos, int offset)
   {
     int thisStart = thisRead.getAlignmentStart();
     int thisEnd   = thisRead.getAlignmentEnd();
@@ -1171,7 +1227,7 @@ public class JamView extends JPanel
     try
     {
       char[] refSeq = bases.getSubSequenceC(
-          new Range(thisStart, thisEnd), Bases.FORWARD);
+          new Range(thisStart+offset, thisEnd+offset), Bases.FORWARD);
       byte[] readSeq = thisRead.getReadBases();
 
       Color col = g2.getColor();
@@ -1187,8 +1243,8 @@ public class JamView extends JPanel
 
           if (Character.toUpperCase(refSeq[refPos-thisStart]) != readSeq[readPos])
           {
-            g2.drawLine((int) ((refPos) * pixPerBase), ypos + 2,
-                        (int) ((refPos) * pixPerBase), ypos - 2);
+            g2.drawLine((int) ((refPos+offset-getBaseAtStartOfView()) * pixPerBase), ypos + 2,
+                        (int) ((refPos+offset-getBaseAtStartOfView()) * pixPerBase), ypos - 2);
           }
         }
         
@@ -1220,6 +1276,16 @@ public class JamView extends JPanel
       this.feature_display = feature_display;
       this.selection = feature_display.getSelection();
       topPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+      
+      if(seqNames.size() > 1)
+      {
+        int len = 0;
+        for(int i=0; i<seqNames.size(); i++)
+          len += seqLengths.get(seqNames.get(i));
+      
+        if(len == feature_display.getSequenceLength())
+          concatSequences = true;
+      }
     }
     else
     { 
@@ -1286,7 +1352,7 @@ public class JamView extends JPanel
           try
           {
             int basePosition = Integer.parseInt(baseText.getText());
-            goToBasePosition(basePosition);
+            scrollBar.setValue(basePosition);
           }
           catch (NumberFormatException nfe)
           {
@@ -1306,9 +1372,7 @@ public class JamView extends JPanel
       {
         public void actionPerformed(ActionEvent e)
         {
-          int startBase = getBaseAtStartOfView();
           setZoomLevel((int) (JamView.this.nbasesInView * 1.1));
-          goToBasePosition(startBase);
         }
       });
       topPanel.add(zoomIn);
@@ -1321,9 +1385,7 @@ public class JamView extends JPanel
         {
           if (showBaseAlignment)
             return;
-          int startBase = getBaseAtStartOfView();
           setZoomLevel((int) (JamView.this.nbasesInView * .9));
-          goToBasePosition(startBase);
         }
       });
       topPanel.add(zoomOut);
@@ -1335,7 +1397,7 @@ public class JamView extends JPanel
     
     jspView = new JScrollPane(this, 
         JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-        JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
     setDisplay(1, nbasesInView, null);
     mainPanel.setLayout(new BorderLayout());
@@ -1344,8 +1406,27 @@ public class JamView extends JPanel
       mainPanel.add(topPanel, BorderLayout.NORTH);
     mainPanel.add(jspView, BorderLayout.CENTER);
     
-    coveragePanel = new CoveragePanel();
-    mainPanel.add(coveragePanel, BorderLayout.SOUTH);
+    JPanel bottomPanel = new JPanel(new BorderLayout());
+    
+    
+    coveragePanel = new CoveragePanel(this);
+    bottomPanel.add(coveragePanel, BorderLayout.CENTER);
+
+    if(feature_display == null)
+    {
+      scrollBar = new JScrollBar(JScrollBar.HORIZONTAL, 1, nbasesInView, 1,
+          getMaxBasesInPanel(getSequenceLength()));
+      scrollBar.addAdjustmentListener(new AdjustmentListener()
+      {
+        public void adjustmentValueChanged(AdjustmentEvent e)
+        {
+          repaint();
+        }
+      });
+      bottomPanel.add(scrollBar, BorderLayout.SOUTH);
+    }
+
+    mainPanel.add(bottomPanel, BorderLayout.SOUTH);
     coveragePanel.setPreferredSize(new Dimension(900, 100));
     coveragePanel.setVisible(false);
     
@@ -1361,16 +1442,12 @@ public class JamView extends JPanel
           switch (event.getKeyCode())
           {
           case KeyEvent.VK_UP:
-            int startBase = getBaseAtStartOfView();
             setZoomLevel((int) (JamView.this.nbasesInView * 1.1));
-            goToBasePosition(startBase);
             break;
           case KeyEvent.VK_DOWN:
             if (showBaseAlignment)
               break;
-            startBase = getBaseAtStartOfView();
             setZoomLevel((int) (JamView.this.nbasesInView * .9));
-            goToBasePosition(startBase);
             break;
           default:
             break;
@@ -1388,6 +1465,7 @@ public class JamView extends JPanel
       public void focusLost(FocusEvent fe){}
     });
   }
+
   
   private void createViewMenu(JComponent view)
   {
@@ -1508,10 +1586,10 @@ public class JamView extends JPanel
   
   private int getBaseAtStartOfView()
   {
-    String refName = (String) combo.getSelectedItem();
-    int seqLength = seqLengths.get(refName);
-    double x = jspView.getViewport().getViewRect().getX();
-    return (int) (getMaxBasesInPanel(seqLength) * ( x / getWidth())) + 1;
+    if(feature_display != null)
+      return feature_display.getForwardBaseAtLeftEdge();
+    else
+      return scrollBar.getValue();
   }
   
   /**
@@ -1521,16 +1599,15 @@ public class JamView extends JPanel
    */
   private void setZoomLevel(final int nbasesInView)
   {
+    int startValue = getBaseAtStartOfView();
     this.nbasesInView = nbasesInView;
-
-    //System.out.println("setZoomLevel "+nbasesInView+"  "+getBaseAtStartOfView());
-    String refName = (String) combo.getSelectedItem();
-    int seqLength = seqLengths.get(refName);
-    float pixPerBase = getPixPerBaseByBasesInView(); 
+    
+    float pixPerBase = getPixPerBaseByWidth(); 
 
     if(pixPerBase*3 > ALIGNMENT_PIX_PER_BASE)
     {
       pixPerBase = ALIGNMENT_PIX_PER_BASE;
+      this.nbasesInView = (int)(getPreferredSize().getWidth()/pixPerBase);
       jspView.getVerticalScrollBar().setValue(0);
       jspView.setColumnHeaderView(ruler);
       showBaseAlignment = true;
@@ -1543,28 +1620,12 @@ public class JamView extends JPanel
       showBaseAlignment = false;
     }
     
-    Dimension d = new Dimension();
-    d.setSize((getMaxBasesInPanel(seqLength)*pixPerBase), maxHeight);
-    setPreferredSize(d);
-    revalidate();
+    if(scrollBar != null)
+      scrollBar.setValues(startValue, nbasesInView, 1, 
+             getMaxBasesInPanel(getSequenceLength()));
   }
   
-  /**
-   * Set the ViewPort so it starts at the given base position.
-   * @param base
-   */
-  private void goToBasePosition(int base)
-  {
-    Point p = jspView.getViewport().getViewPosition();
-    String refName = (String) combo.getSelectedItem();
-    int seqLength = seqLengths.get(refName);
-    
-    float width = (float) getPreferredSize().getWidth();
-    
-    p.x = Math.round(width*((float)(base-1)/(getMaxBasesInPanel(seqLength))));
-    //System.out.println("goToBasePosition "+base);
-    jspView.getViewport().setViewPosition(p);
-  }
+
   
   /**
    * Set the start and end base positions to display.
@@ -1580,13 +1641,10 @@ public class JamView extends JPanel
     this.endBase   = end;
     this.nbasesInView = end-start+1;
     lastMousePoint = null;
-    
-    String refName = (String) combo.getSelectedItem();
-    int seqLength = seqLengths.get(refName);
 
     float pixPerBase;
     if(jspView.getViewport().getViewRect().width > 0)
-      pixPerBase = this.getPixPerBaseByWidth(); // getPixPerBaseByBasesInView();
+      pixPerBase = getPixPerBaseByWidth();
     else
     {
       if(feature_display == null)
@@ -1609,11 +1667,8 @@ public class JamView extends JPanel
     }
     
     Dimension d = new Dimension();
-    d.setSize((getMaxBasesInPanel(seqLength)*pixPerBase), maxHeight);
-    
-    //System.out.println("setDisplay() "+d.getWidth());
+    d.setSize(nbasesInView*pixPerBase, maxHeight);
     setPreferredSize(d);
-    goToBasePosition(startBase);
     
     if(event == null)
     {
@@ -1704,7 +1759,8 @@ public class JamView extends JPanel
    **/
   private void handleCanvasMouseDragOrClick(final MouseEvent event)
   {
-    if(event.isShiftDown() || event.getButton() == MouseEvent.BUTTON3) 
+    if(event.isShiftDown() || event.getButton() == MouseEvent.BUTTON3
+        || bases == null) 
       return;
     
     if(event.getClickCount() > 1)
@@ -1715,10 +1771,9 @@ public class JamView extends JPanel
     }
     
     int onmask = MouseEvent.BUTTON1_DOWN_MASK;  
-    String refName = (String) combo.getSelectedItem();
-    int seqLength = seqLengths.get(refName);
+    int seqLength = getSequenceLength();
     float pixPerBase = getPixPerBaseByWidth();
-    int start = (int) ( (event.getPoint().getX()/pixPerBase) + 1.f );
+    int start = (int) ( ( (event.getPoint().getX())/pixPerBase) + getBaseAtStartOfView() );
     
     if (dragStart < 0 && (event.getModifiersEx() & onmask) == onmask)
       dragStart = start;
@@ -1751,88 +1806,89 @@ public class JamView extends JPanel
     return selection;
   }
   
-  private class CoveragePanel extends JPanel
+  public List<SAMRecord> getReadsInView()
   {
-	private static final long serialVersionUID = 1L;
+    return readsInView;
+  }
 
-    private int start;
-	private int end;
-	private float pixPerBase;
-    
-    public CoveragePanel()
+  public Dimension getPreferredScrollableViewportSize()
+  {
+    return getPreferredSize();
+  }
+
+  public int getScrollableBlockIncrement(Rectangle visibleRect,
+      int orientation, int direction)
+  {
+    if (orientation == SwingConstants.HORIZONTAL)
+      return visibleRect.width - maxUnitIncrement;
+    else 
+      return visibleRect.height - maxUnitIncrement;
+  }
+
+  public boolean getScrollableTracksViewportHeight()
+  {
+    return false;
+  }
+
+  public boolean getScrollableTracksViewportWidth()
+  {
+    return false;
+  }
+
+  public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation,
+                                        int direction)
+  {
+  //Get the current position.
+    int currentPosition = 0;
+    if (orientation == SwingConstants.HORIZONTAL) 
+        currentPosition = visibleRect.x;
+    else 
+        currentPosition = visibleRect.y;
+
+    //Return the number of pixels between currentPosition
+    //and the nearest tick mark in the indicated direction.
+    if (direction < 0)
     {
-      super();
-      setBackground(Color.white);
+      int newPosition = currentPosition -
+                        (currentPosition / maxUnitIncrement)
+                         * maxUnitIncrement;
+      return (newPosition == 0) ? maxUnitIncrement : newPosition;
+    } 
+    else 
+    {
+      return ((currentPosition / maxUnitIncrement) + 1)
+              * maxUnitIncrement
+              - currentPosition;
     }
-    
-	/**
-	 * Override
-	 */
-	protected void paintComponent(Graphics g)
-	{
-	  super.paintComponent(g);
-	  Graphics2D g2 = (Graphics2D)g;
-	  
-	  if(readsInView == null)
-	    return;
-	  
-	  int windowSize = 10;
-	  int nBins = Math.round((end-start+1.f)/windowSize);
-	  int coverage[] = new int[nBins];
-	  for(int i=0; i<coverage.length; i++)
-	    coverage[i] = 0;
-	  
-	  int max = 0;
-	  for(int i=0; i<readsInView.size(); i++)
-	  {
-	    SAMRecord thisRead = readsInView.get(i);
-	    int length = thisRead.getReadLength();
-	    
-	    for(int j=0; j<length;j++)
-	    {
-	      int bin = 
-	        Math.round(((thisRead.getAlignmentStart()-start) + j) / windowSize);
+  }
+  
+  /**
+   * Artemis event notification
+   */
+  public void displayAdjustmentValueChanged(DisplayAdjustmentEvent event)
+  {
+    if(event.getType() == DisplayAdjustmentEvent.SCALE_ADJUST_EVENT)
+    {
+      laststart = -1;
+      lastend = -1;
+      this.startBase = event.getStart();
+      this.endBase   = event.getEnd();
 
-	      if(bin < 0 || bin > coverage.length-1)
-	        continue;   
-	      coverage[bin]+=1;
-	      if(coverage[bin] > max)
-	        max = coverage[bin];
-	    }
-	  }
-	  
-	  g2.setColor(lightBlue);
-	  GeneralPath shape = new GeneralPath();
-	  shape.moveTo(0,getHeight());
-	  for(int i=0; i<coverage.length; i++)
-	  {
-	    float xpos = ((i*(windowSize)) - windowSize/2.f)*pixPerBase;
-	    shape.lineTo(xpos,
-	        getHeight() - (((float)coverage[i]/(float)max)*getHeight()));
-	  }
-
-	  shape.lineTo(getWidth(),getHeight());
-	  g2.fill(shape);
-
-	  String maxStr = Integer.toString(max);
-	  FontMetrics fm = getFontMetrics(getFont());
-	  g2.setColor(Color.black);
-	  
-	  int xpos = getWidth() - fm.stringWidth(maxStr) - 
-	             jspView.getVerticalScrollBar().getWidth();
-	  g2.drawString(maxStr, xpos, fm.getHeight());
-	}
-	
-	protected void setStartAndEnd(int start, int end)
-	{
-	  this.start = start;
-	  this.end = end;
-	}
-
-	public void setPixPerBase(float pixPerBase)
-	{
-	  this.pixPerBase = pixPerBase;
-	}
+      int width = feature_display.getMaxVisibleBases();
+      setZoomLevel(width);
+      repaint();
+    }
+    else
+    {
+      setDisplay(event.getStart(), 
+          event.getStart()+feature_display.getMaxVisibleBases(), event);
+      repaint();
+    }
+  }
+  
+  public void selectionChanged(SelectionChangeEvent event)
+  {
+    repaint();
   }
   
   private class Ruler extends JPanel
@@ -1907,138 +1963,12 @@ public class JamView extends JPanel
       }
     }
   }
- 
-  class SAMRecordComparator implements Comparator<Object>
-  {
-    public int compare(Object o1, Object o2) 
-    {
-      SAMRecord pr1 = (SAMRecord) o1;
-      SAMRecord pr2 = (SAMRecord) o2;
-      
-      int cmp = pr1.getReadName().compareTo(pr2.getReadName());
-      if(cmp == 0)
-      {
-        if(pr1.getAlignmentStart() < pr2.getAlignmentStart())
-          return -1;
-        else
-          return 1;
-      }   
-      return cmp;
-    }
-  }
-  
-  
-  class PairedReadComparator implements Comparator<Object>
-  {
-    public int compare(Object o1, Object o2) 
-    {
-      PairedRead pr1 = (PairedRead) o1;
-      PairedRead pr2 = (PairedRead) o2;
-      
-      int start1 = pr1.sam1.getAlignmentStart();
-      if(pr1.sam1.getAlignmentEnd() < start1)
-        start1 = pr1.sam1.getAlignmentEnd();
-      
-      int start2 = pr2.sam1.getAlignmentStart();
-      if(pr2.sam1.getAlignmentEnd() < start2)
-        start2 = pr1.sam1.getAlignmentEnd();
-        
-      return start1-start2;
-    }
-  }
   
   class PairedRead
   {
     SAMRecord sam1;
     SAMRecord sam2;
   }
-
-
-  public Dimension getPreferredScrollableViewportSize()
-  {
-    return getPreferredSize();
-  }
-
-  public int getScrollableBlockIncrement(Rectangle visibleRect,
-      int orientation, int direction)
-  {
-    if (orientation == SwingConstants.HORIZONTAL)
-      return visibleRect.width - maxUnitIncrement;
-    else 
-      return visibleRect.height - maxUnitIncrement;
-  }
-
-  public boolean getScrollableTracksViewportHeight()
-  {
-    return false;
-  }
-
-  public boolean getScrollableTracksViewportWidth()
-  {
-    return false;
-  }
-
-  public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation,
-                                        int direction)
-  {
-  //Get the current position.
-    int currentPosition = 0;
-    if (orientation == SwingConstants.HORIZONTAL) 
-        currentPosition = visibleRect.x;
-    else 
-        currentPosition = visibleRect.y;
-
-    //Return the number of pixels between currentPosition
-    //and the nearest tick mark in the indicated direction.
-    if (direction < 0)
-    {
-      int newPosition = currentPosition -
-                        (currentPosition / maxUnitIncrement)
-                         * maxUnitIncrement;
-      return (newPosition == 0) ? maxUnitIncrement : newPosition;
-    } 
-    else 
-    {
-      return ((currentPosition / maxUnitIncrement) + 1)
-              * maxUnitIncrement
-              - currentPosition;
-    }
-  }
-  
-  /**
-   * Artemis event notification
-   */
-  public void displayAdjustmentValueChanged(DisplayAdjustmentEvent event)
-  {
-    if(event.getType() == DisplayAdjustmentEvent.SCALE_ADJUST_EVENT)
-    {
-      laststart = -1;
-      lastend = -1;
-      this.startBase = event.getStart();
-      this.endBase   = event.getEnd();
-      
-      //int width = event.getEnd()-event.getStart()+1;
-      int width = feature_display.getMaxVisibleBases();
-      //System.out.println("displayAdjustmentValueChanged() "+event.getStart()+".."+event.getEnd()+"  +width");
-
-      setZoomLevel(width);
-      goToBasePosition(event.getStart());
-      setDisplay(event.getStart(), event.getEnd(), event);
-      repaint();
-    }
-    else
-    {
-      setDisplay(event.getStart(), event.getEnd(), event);
-      repaint();
-    }
-  }
-  
-  public void selectionChanged(SelectionChangeEvent event)
-  {
-    repaint();
-  }
-  
-  
   
   public static void main(String[] args)
   {
