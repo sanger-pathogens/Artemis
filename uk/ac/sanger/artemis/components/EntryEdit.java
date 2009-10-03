@@ -29,7 +29,7 @@ import uk.ac.sanger.artemis.*;
 import uk.ac.sanger.artemis.chado.ChadoTransactionManager;
 import uk.ac.sanger.artemis.chado.CommitFrame;
 import uk.ac.sanger.artemis.circular.DNADraw;
-import uk.ac.sanger.artemis.components.alignment.JamView;
+import uk.ac.sanger.artemis.components.alignment.BamView;
 import uk.ac.sanger.artemis.components.alignment.LookSeqPanel;
 import uk.ac.sanger.artemis.components.filetree.FileList;
 import uk.ac.sanger.artemis.components.filetree.FileManager;
@@ -110,7 +110,7 @@ public class EntryEdit extends JFrame
   private Selection selection = null;
 
   /** Alignment panel */
-  private JamView jamView;
+  private BamView jamView;
   private JPanel jamPanel;
   private JSplitPane lowerSplitPane;
   
@@ -1265,7 +1265,7 @@ public class EntryEdit extends JFrame
             return;
           }
 
-          jamView = new JamView(bamFile.getAbsolutePath(), null, 2000);
+          jamView = new BamView(bamFile.getAbsolutePath(), null, 2000);
           jamView.setShowScale(false);
           jamView.setBases(getEntryGroup().getBases());
           jamView.addJamToPanel(jamPanel, null, true, feature_display);
