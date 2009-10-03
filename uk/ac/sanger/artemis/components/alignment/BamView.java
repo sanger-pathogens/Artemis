@@ -566,7 +566,7 @@ public class BamView extends JPanel
         
         g2.setColor(lightGrey);
         g2.fillRect(0, ypos-11, getPreferredSize().width, 11);
-        drawSelectionRange(g2, pixPerBase, start, end);
+        drawSelectionRange(g2, ALIGNMENT_PIX_PER_BASE, start, end);
         g2.setColor(Color.black);
         g2.drawString(refSeq, 0, ypos);
       }
@@ -576,7 +576,7 @@ public class BamView extends JPanel
       }
     }
     else
-      drawSelectionRange(g2, pixPerBase, start, end);
+      drawSelectionRange(g2, ALIGNMENT_PIX_PER_BASE, start, end);
 
     
     boolean drawn[] = new boolean[readsInView.size()];
@@ -590,7 +590,7 @@ public class BamView extends JPanel
         SAMRecord thisRead = readsInView.get(i);
         ypos+=11;
 
-        drawSequence(g2, thisRead, pixPerBase, ypos, refSeq, refSeqStart);
+        drawSequence(g2, thisRead, ypos, refSeq, refSeqStart);
         drawn[i] = true;
         
         int thisEnd = thisRead.getAlignmentEnd();
@@ -604,7 +604,7 @@ public class BamView extends JPanel
             SAMRecord nextRead = readsInView.get(j);
             if(nextRead.getAlignmentStart() > thisEnd+1)
             {
-              drawSequence(g2, nextRead, pixPerBase, ypos, refSeq, refSeqStart);
+              drawSequence(g2, nextRead, ypos, refSeq, refSeqStart);
               drawn[j] = true;
               thisEnd = nextRead.getAlignmentEnd();
               if(thisEnd == 0)
@@ -633,7 +633,7 @@ public class BamView extends JPanel
    * @param ypos
    */
   private void drawSequence(Graphics2D g2, SAMRecord samRecord, 
-                            float pixPerBase, int ypos, String refSeq, int refSeqStart)
+                            int ypos, String refSeq, int refSeqStart)
   {
     if (!samRecord.getReadPairedFlag() ||  // read is not paired in sequencing
         samRecord.getMateUnmappedFlag() )  // mate is unmapped )  // mate is unmapped 
