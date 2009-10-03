@@ -26,7 +26,7 @@ package uk.ac.sanger.artemis.components.alignment;
 
 import java.util.Comparator;
 
-import uk.ac.sanger.artemis.components.alignment.JamView.PairedRead;
+import uk.ac.sanger.artemis.components.alignment.BamView.PairedRead;
 
 
   class PairedReadComparator implements Comparator<Object>

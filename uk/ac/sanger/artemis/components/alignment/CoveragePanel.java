@@ -43,9 +43,9 @@ import net.sf.samtools.SAMRecord;
     private int end;
     private float pixPerBase;
     private Color lightBlue = new Color(30,144,255);
-    private JamView jamView;
+    private BamView jamView;
     
-    public CoveragePanel(JamView jamView)
+    public CoveragePanel(BamView jamView)
     {
       super();
       setBackground(Color.white);

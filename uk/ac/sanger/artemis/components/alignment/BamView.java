@@ -112,7 +112,7 @@ import uk.ac.sanger.artemis.util.Document;
 import uk.ac.sanger.artemis.util.DocumentFactory;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 
-public class JamView extends JPanel
+public class BamView extends JPanel
                      implements Scrollable, DisplayAdjustmentListener, SelectionChangeListener
 {
   private static final long serialVersionUID = 1L;
@@ -171,7 +171,7 @@ public class JamView extends JPanel
   private JPopupMenu popup;
 
  
-  public JamView(String bam, 
+  public BamView(String bam, 
                  String reference,
                  int nbasesInView)
   {
@@ -478,7 +478,7 @@ public class JamView extends JPanel
       try
       {
         readFromBamPicard(start, end);
-        if(!isStackView || pixPerBase*3 >= ALIGNMENT_PIX_PER_BASE)
+        if(!isStackView || pixPerBase*1.08f >= ALIGNMENT_PIX_PER_BASE)
           Collections.sort(readsInView, new SAMRecordComparator());
 
         setCursor(cdone);
@@ -492,7 +492,7 @@ public class JamView extends JPanel
     
     laststart = start;
     lastend   = end;
-	if(pixPerBase*3 >= ALIGNMENT_PIX_PER_BASE)
+	if(pixPerBase*1.08f >= ALIGNMENT_PIX_PER_BASE)
 	  drawBaseAlignment(g2, seqLength, pixPerBase, start, end);
 	else
 	{
@@ -521,7 +521,7 @@ public class JamView extends JPanel
   private int getMaxBasesInPanel(int seqLength)
   {
     if(feature_display == null)
-      return seqLength+nbasesInView/2;
+      return seqLength+nbasesInView/3;
     else
       return seqLength+nbasesInView;
   }
@@ -563,8 +563,6 @@ public class JamView extends JPanel
           refSeqStart = 1;
         refSeq = 
           bases.getSubSequence(new Range(refSeqStart, seqEnd), Bases.FORWARD).toUpperCase();
-        
-        System.out.println(refSeqStart +" "+ seqEnd+" "+refSeq);
         
         g2.setColor(lightGrey);
         g2.fillRect(0, ypos-11, getPreferredSize().width, 11);
@@ -1335,7 +1333,7 @@ public class JamView extends JPanel
       {
         laststart = -1;
         lastend = -1;
-        setZoomLevel(JamView.this.nbasesInView);
+        setZoomLevel(BamView.this.nbasesInView);
       }
     });
     topPanel.add(combo);
@@ -1356,7 +1354,7 @@ public class JamView extends JPanel
           }
           catch (NumberFormatException nfe)
           {
-            JOptionPane.showMessageDialog(JamView.this,
+            JOptionPane.showMessageDialog(BamView.this,
                 "Expecting a base number!", "Number Format",
                 JOptionPane.WARNING_MESSAGE);
           }
@@ -1372,7 +1370,7 @@ public class JamView extends JPanel
       {
         public void actionPerformed(ActionEvent e)
         {
-          setZoomLevel((int) (JamView.this.nbasesInView * 1.1));
+          setZoomLevel((int) (BamView.this.nbasesInView * 1.1));
         }
       });
       topPanel.add(zoomIn);
@@ -1385,7 +1383,7 @@ public class JamView extends JPanel
         {
           if (showBaseAlignment)
             return;
-          setZoomLevel((int) (JamView.this.nbasesInView * .9));
+          setZoomLevel((int) (BamView.this.nbasesInView * .9));
         }
       });
       topPanel.add(zoomOut);
@@ -1416,6 +1414,7 @@ public class JamView extends JPanel
     {
       scrollBar = new JScrollBar(JScrollBar.HORIZONTAL, 1, nbasesInView, 1,
           getMaxBasesInPanel(getSequenceLength()));
+      scrollBar.setUnitIncrement(nbasesInView/20);
       scrollBar.addAdjustmentListener(new AdjustmentListener()
       {
         public void adjustmentValueChanged(AdjustmentEvent e)
@@ -1442,12 +1441,12 @@ public class JamView extends JPanel
           switch (event.getKeyCode())
           {
           case KeyEvent.VK_UP:
-            setZoomLevel((int) (JamView.this.nbasesInView * 1.1));
+            setZoomLevel((int) (BamView.this.nbasesInView * 1.1));
             break;
           case KeyEvent.VK_DOWN:
             if (showBaseAlignment)
               break;
-            setZoomLevel((int) (JamView.this.nbasesInView * .9));
+            setZoomLevel((int) (BamView.this.nbasesInView * .9));
             break;
           default:
             break;
@@ -1601,10 +1600,9 @@ public class JamView extends JPanel
   {
     int startValue = getBaseAtStartOfView();
     this.nbasesInView = nbasesInView;
-    
     float pixPerBase = getPixPerBaseByWidth(); 
 
-    if(pixPerBase*3 > ALIGNMENT_PIX_PER_BASE)
+    if(pixPerBase*1.08f >= ALIGNMENT_PIX_PER_BASE)
     {
       pixPerBase = ALIGNMENT_PIX_PER_BASE;
       this.nbasesInView = (int)(getPreferredSize().getWidth()/pixPerBase);
@@ -1621,8 +1619,11 @@ public class JamView extends JPanel
     }
     
     if(scrollBar != null)
+    {
       scrollBar.setValues(startValue, nbasesInView, 1, 
              getMaxBasesInPanel(getSequenceLength()));
+      scrollBar.setUnitIncrement(nbasesInView/20);
+    }
   }
   
 
@@ -1653,7 +1654,7 @@ public class JamView extends JPanel
         pixPerBase = feature_display.getWidth()/(float)(end-start+1);
     }
 
-    if(pixPerBase*3 > ALIGNMENT_PIX_PER_BASE)
+    if(pixPerBase*1.08f >= ALIGNMENT_PIX_PER_BASE)
     {
       pixPerBase = ALIGNMENT_PIX_PER_BASE;
       jspView.getVerticalScrollBar().setValue(0);
@@ -1934,7 +1935,7 @@ public class JamView extends JPanel
   {
     public void mouseClicked(MouseEvent e)
     {
-      JamView.this.requestFocus();
+      BamView.this.requestFocus();
       handleCanvasMouseDragOrClick(e);
     }
     
@@ -1999,7 +2000,7 @@ public class JamView extends JPanel
       }
     }
 
-    final JamView view = new JamView(bam, reference, nbasesInView);
+    final BamView view = new BamView(bam, reference, nbasesInView);
     JFrame frame = new JFrame("JAM");
     
     // translucent
