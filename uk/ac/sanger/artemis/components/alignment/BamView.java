@@ -36,7 +36,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -76,8 +75,6 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.Scrollable;
-import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -113,7 +110,7 @@ import uk.ac.sanger.artemis.util.DocumentFactory;
 import uk.ac.sanger.artemis.util.OutOfRangeException;
 
 public class BamView extends JPanel
-                     implements Scrollable, DisplayAdjustmentListener, SelectionChangeListener
+                     implements DisplayAdjustmentListener, SelectionChangeListener
 {
   private static final long serialVersionUID = 1L;
   private List<SAMRecord> readsInView;
@@ -364,7 +361,7 @@ public class BamView extends JPanel
           if(thisEnd > thisLength)
             thisEnd = thisLength;
           
-          System.out.println("READ "+seqNames.get(i)+"  "+thisStart+".."+thisEnd);
+          //System.out.println("READ "+seqNames.get(i)+"  "+thisStart+".."+thisEnd);
           iterateOverBam(inputSam, seqNames.get(i), thisStart, thisEnd);
         }
         lastLen = len;
@@ -1431,7 +1428,8 @@ public class BamView extends JPanel
     
     jspView.getVerticalScrollBar().setValue(
         jspView.getVerticalScrollBar().getMaximum());
-
+    jspView.getVerticalScrollBar().setUnitIncrement(maxUnitIncrement);
+    
     if(feature_display == null)
     {
       addKeyListener(new KeyAdapter()
@@ -1810,57 +1808,6 @@ public class BamView extends JPanel
   public List<SAMRecord> getReadsInView()
   {
     return readsInView;
-  }
-
-  public Dimension getPreferredScrollableViewportSize()
-  {
-    return getPreferredSize();
-  }
-
-  public int getScrollableBlockIncrement(Rectangle visibleRect,
-      int orientation, int direction)
-  {
-    if (orientation == SwingConstants.HORIZONTAL)
-      return visibleRect.width - maxUnitIncrement;
-    else 
-      return visibleRect.height - maxUnitIncrement;
-  }
-
-  public boolean getScrollableTracksViewportHeight()
-  {
-    return false;
-  }
-
-  public boolean getScrollableTracksViewportWidth()
-  {
-    return false;
-  }
-
-  public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation,
-                                        int direction)
-  {
-  //Get the current position.
-    int currentPosition = 0;
-    if (orientation == SwingConstants.HORIZONTAL) 
-        currentPosition = visibleRect.x;
-    else 
-        currentPosition = visibleRect.y;
-
-    //Return the number of pixels between currentPosition
-    //and the nearest tick mark in the indicated direction.
-    if (direction < 0)
-    {
-      int newPosition = currentPosition -
-                        (currentPosition / maxUnitIncrement)
-                         * maxUnitIncrement;
-      return (newPosition == 0) ? maxUnitIncrement : newPosition;
-    } 
-    else 
-    {
-      return ((currentPosition / maxUnitIncrement) + 1)
-              * maxUnitIncrement
-              - currentPosition;
-    }
   }
   
   /**
