@@ -129,7 +129,7 @@ public abstract class StreamSequence
 
 //  int packStart = Math.round( (float)start/2.f ) - 1;
     int packStart = (start - 1) >> 1;
-    int packEnd   = Math.round( (float)end/2.f ); // end/2;
+    int packEnd   = (int) Math.round( (double)end/2.d ); // end/2;
     
     int count = 0;
     byte currStorageUnit;
