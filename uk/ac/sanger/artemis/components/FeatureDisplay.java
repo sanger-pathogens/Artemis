@@ -1212,7 +1212,7 @@ public class FeatureDisplay extends EntryGroupPanel
    *  Scroll the display so that the given base is in the middle of the screen.
    *  @param base The base to scroll to.
    **/
-  protected void makeBaseVisible(final int base) 
+  public void makeBaseVisible(final int base) 
   {
     makeBaseVisibleInternal(base, true, true);
   }

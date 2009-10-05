@@ -68,6 +68,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -157,6 +158,7 @@ public class BamView extends JPanel
   
   private Point lastMousePoint = null;
   private SAMRecord mouseOverSAMRecord = null;
+  private SAMRecord highlightSAMRecord = null;
   // record of where a mouse drag starts
   private int dragStart = -1;
   
@@ -811,9 +813,10 @@ public class BamView extends JPanel
     for(int i=0; i<readsInView.size(); i++)
     {
       SAMRecord samRecord = readsInView.get(i);
+      int offset = getSequenceOffset(samRecord.getReferenceName());
 
-      int recordStart = samRecord.getAlignmentStart();
-      int recordEnd = samRecord.getAlignmentEnd();
+      int recordStart = samRecord.getAlignmentStart()+offset;
+      int recordEnd = samRecord.getAlignmentEnd()+offset;
       
       if(lstStart != recordStart || lstEnd != recordEnd)
       { 
@@ -1120,9 +1123,25 @@ public class BamView extends JPanel
     
     int thisStart = thisRead.getAlignmentStart()+offset-getBaseAtStartOfView();
     int thisEnd   = thisRead.getAlignmentEnd()+offset-getBaseAtStartOfView();
+    
+    if(highlightSAMRecord != null && 
+       highlightSAMRecord.getReadName().equals(thisRead.getReadName()))
+     {
+       Stroke stroke2 =
+         new BasicStroke (3.f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
+       g2.setStroke(stroke2);
+       Color c = g2.getColor();
+       g2.setColor(Color.black);
+       g2.drawLine((int)( thisStart * pixPerBase), ypos,
+                   (int)( thisEnd * pixPerBase), ypos);
+       g2.setColor(c);
+     }
+    
     g2.setStroke(stroke);
     g2.drawLine((int)( thisStart * pixPerBase), ypos,
                 (int)( thisEnd * pixPerBase), ypos);
+    
+
 
     // test if the mouse is over this read
     if(lastMousePoint != null)
@@ -1762,6 +1781,7 @@ public class BamView extends JPanel
         || bases == null) 
       return;
     
+    highlightSAMRecord = null;
     if(event.getClickCount() > 1)
     {
       getSelection().clear();
@@ -1880,10 +1900,16 @@ public class BamView extends JPanel
   */
   class PopupListener extends MouseAdapter
   {
+	JMenuItem gotoMateMenuItem;
     public void mouseClicked(MouseEvent e)
     {
       BamView.this.requestFocus();
-      handleCanvasMouseDragOrClick(e);
+      
+      if(e.getClickCount() > 1)
+        getSelection().clear(); 
+      else if(e.getButton() == MouseEvent.BUTTON1)
+        highlightSAMRecord = mouseOverSAMRecord;
+      repaint();
     }
     
     public void mousePressed(MouseEvent e)
@@ -1905,6 +1931,38 @@ public class BamView extends JPanel
         {
           popup = new JPopupMenu();
           createViewMenu(popup);
+        }
+        
+        if(gotoMateMenuItem != null)
+          popup.remove(gotoMateMenuItem);
+        
+        if( mouseOverSAMRecord != null && 
+            mouseOverSAMRecord.getReadPairedFlag() &&
+           !mouseOverSAMRecord.getMateUnmappedFlag() )
+        {
+          final SAMRecord thisSAMRecord = mouseOverSAMRecord;
+          gotoMateMenuItem = new JMenuItem("Go to mate of : "+
+              thisSAMRecord.getReadName());
+          gotoMateMenuItem.addActionListener(new ActionListener()
+          {
+			public void actionPerformed(ActionEvent e) 
+			{
+			  String name = thisSAMRecord.getMateReferenceName();
+			  if(name.equals("="))
+			    name = thisSAMRecord.getReferenceName();
+			  int offset = getSequenceOffset(name);
+			  if(feature_display != null)
+			    feature_display.makeBaseVisible(
+			        thisSAMRecord.getMateAlignmentStart()+offset);
+			  else
+			    scrollBar.setValue(
+			        thisSAMRecord.getMateAlignmentStart()+offset-
+			        (nbasesInView/2));
+			  
+			  highlightSAMRecord = thisSAMRecord; 
+			}  
+          });
+          popup.add(gotoMateMenuItem);
         }
         popup.show(e.getComponent(),
                 e.getX(), e.getY());
@@ -1948,7 +2006,7 @@ public class BamView extends JPanel
     }
 
     final BamView view = new BamView(bam, reference, nbasesInView);
-    JFrame frame = new JFrame("JAM");
+    JFrame frame = new JFrame("BamView");
     
     // translucent
     //frame.getRootPane().putClientProperty("Window.alpha", new Float(0.9f));
