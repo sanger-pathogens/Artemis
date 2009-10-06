@@ -135,7 +135,7 @@ public class BamView extends JPanel
   private JPanel mainPanel;
   private CoveragePanel coveragePanel;
   private boolean showScale = true;
-  private Ruler ruler = new Ruler();
+  private Ruler ruler;
   private int nbasesInView;
   
   private int startBase = -1;
@@ -166,6 +166,7 @@ public class BamView extends JPanel
   
   private boolean concatSequences = false;
   private int ALIGNMENT_PIX_PER_BASE;
+  private int BASE_HEIGHT;
   
   private JPopupMenu popup;
 
@@ -215,6 +216,7 @@ public class BamView extends JPanel
     setFont(Options.getOptions().getFont());
     FontMetrics fm  = getFontMetrics(getFont());
     ALIGNMENT_PIX_PER_BASE = fm.charWidth('M');
+    BASE_HEIGHT = fm.getHeight();
     selection = new Selection(null);
     
     MultiLineToolTipUI.initialize();
@@ -491,7 +493,7 @@ public class BamView extends JPanel
     
     laststart = start;
     lastend   = end;
-	if(pixPerBase*1.08f >= ALIGNMENT_PIX_PER_BASE)
+	if(showBaseAlignment)
 	  drawBaseAlignment(g2, seqLength, pixPerBase, start, end);
 	else
 	{
@@ -513,7 +515,7 @@ public class BamView extends JPanel
   
   private float getPixPerBaseByWidth()
   {
-    return (float)( getPreferredSize().getWidth() /nbasesInView);
+    return (float)mainPanel.getWidth() / (float)nbasesInView;
   }
   
   
@@ -537,7 +539,7 @@ public class BamView extends JPanel
                                  int seqLength, 
                                  float pixPerBase, 
                                  final int start, 
-                                 final int end)
+                                 int end)
   {
     ruler.start = start;
     ruler.end = end;
@@ -547,6 +549,8 @@ public class BamView extends JPanel
 
     String refSeq = null;
     int refSeqStart = start;
+    
+    end = start + ( mainPanel.getWidth() * ALIGNMENT_PIX_PER_BASE );
     if(bases != null)
     {
       // draw the reference sequence
@@ -564,7 +568,7 @@ public class BamView extends JPanel
           bases.getSubSequence(new Range(refSeqStart, seqEnd), Bases.FORWARD).toUpperCase();
         
         g2.setColor(lightGrey);
-        g2.fillRect(0, ypos-11, getPreferredSize().width, 11);
+        g2.fillRect(0, ypos-11, mainPanel.getWidth(), 11);
         drawSelectionRange(g2, ALIGNMENT_PIX_PER_BASE, start, end);
         g2.setColor(Color.black);
         g2.drawString(refSeq, 0, ypos);
@@ -668,6 +672,17 @@ public class BamView extends JPanel
         g2.drawString(readSeq.substring(readPos, readPos+1), 
                       refPos*ALIGNMENT_PIX_PER_BASE, ypos);
       }
+    }
+    
+    // highlight
+    if(highlightSAMRecord != null &&
+       highlightSAMRecord.getReadName().equals(samRecord.getReadName()))
+    {
+      int refPos = blocks.get(0).getReferenceStart()+offset-refSeqStart;
+      int xstart = refPos*ALIGNMENT_PIX_PER_BASE;
+      int width  = len*ALIGNMENT_PIX_PER_BASE;
+      g2.setColor(Color.red);
+      g2.drawRect(xstart, ypos-BASE_HEIGHT, width, BASE_HEIGHT);
     }
     
     if(lastMousePoint != null)
@@ -990,8 +1005,8 @@ public class BamView extends JPanel
   {
     boolean offTheTop = false;
     int offset = getSequenceOffset(samRecord.getReferenceName());
-    int thisStart = samRecord.getAlignmentStart()-1+offset;
-    int thisEnd   = thisStart + samRecord.getReadString().length();
+    int thisStart = samRecord.getAlignmentStart()+offset;
+    int thisEnd   = thisStart + samRecord.getReadString().length() -1;
     
     if(ypos <= 0)
     {
@@ -1007,16 +1022,16 @@ public class BamView extends JPanel
       if(samRecord.getAlignmentEnd() < samRecord.getMateAlignmentStart())
       {
         int nextStart = 
-            (int)((samRecord.getMateAlignmentStart()-getBaseAtStartOfView()+offset)*pixPerBase);
+          (int)((samRecord.getMateAlignmentStart()-getBaseAtStartOfView()+offset)*pixPerBase);
         drawTranslucentLine(g2, 
-            (int)((thisStart-getBaseAtStartOfView())*pixPerBase), nextStart, ypos);
+          (int)((thisEnd-getBaseAtStartOfView())*pixPerBase), nextStart, ypos);
       }
       else
       {
         int nextStart = 
             (int)((samRecord.getMateAlignmentStart()-getBaseAtStartOfView()+offset)*pixPerBase);
         drawTranslucentLine(g2, 
-            (int)((thisEnd-getBaseAtStartOfView())*pixPerBase), nextStart, ypos);
+            (int)((thisStart-getBaseAtStartOfView())*pixPerBase), nextStart, ypos);
       }
     }
     
@@ -1622,8 +1637,11 @@ public class BamView extends JPanel
     if(pixPerBase*1.08f >= ALIGNMENT_PIX_PER_BASE)
     {
       pixPerBase = ALIGNMENT_PIX_PER_BASE;
-      this.nbasesInView = (int)(getPreferredSize().getWidth()/pixPerBase);
+      this.nbasesInView = (int)(mainPanel.getWidth()/pixPerBase);
       jspView.getVerticalScrollBar().setValue(0);
+      
+      if(ruler == null)
+        ruler = new Ruler();
       jspView.setColumnHeaderView(ruler);
       showBaseAlignment = true;
     }
@@ -1640,6 +1658,7 @@ public class BamView extends JPanel
       scrollBar.setValues(startValue, nbasesInView, 1, 
              getMaxBasesInPanel(getSequenceLength()));
       scrollBar.setUnitIncrement(nbasesInView/20);
+      scrollBar.setBlockIncrement(nbasesInView);
     }
   }
   
@@ -1777,8 +1796,7 @@ public class BamView extends JPanel
    **/
   private void handleCanvasMouseDragOrClick(final MouseEvent event)
   {
-    if(event.isShiftDown() || event.getButton() == MouseEvent.BUTTON3
-        || bases == null) 
+    if(event.getButton() == MouseEvent.BUTTON3 || bases == null) 
       return;
     
     highlightSAMRecord = null;
@@ -1789,20 +1807,30 @@ public class BamView extends JPanel
       return;  
     }
     
-    int onmask = MouseEvent.BUTTON1_DOWN_MASK;  
+    highlightRange(event, 
+        MouseEvent.BUTTON1_DOWN_MASK & MouseEvent.BUTTON2_DOWN_MASK);
+  }
+  
+  /**
+   * 
+   * @param event
+   * @param onmask
+   */
+  private void highlightRange(MouseEvent event, int onmask)
+  {
     int seqLength = getSequenceLength();
     float pixPerBase = getPixPerBaseByWidth();
     int start = (int) ( ( (event.getPoint().getX())/pixPerBase) + getBaseAtStartOfView() );
+    
+    if(start < 1)
+      start = 1;
+    if(start > seqLength)
+      start = seqLength;
     
     if (dragStart < 0 && (event.getModifiersEx() & onmask) == onmask)
       dragStart = start;
     else if((event.getModifiersEx() & onmask) != onmask)
       dragStart = -1;
-
-    if(start < 1)
-      start = 1;
-    if(start > seqLength)
-      start = seqLength;
     
     MarkerRange drag_range;
     try
@@ -1868,7 +1896,7 @@ public class BamView extends JPanel
     public Ruler()
     {
       super();
-      setPreferredSize(new Dimension(getPreferredSize().width, 15));
+      setPreferredSize(new Dimension(mainPanel.getWidth(), 15));
       setBackground(Color.white);
       setFont(getFont().deriveFont(11.f));
     }
@@ -1884,6 +1912,9 @@ public class BamView extends JPanel
     {
       int startMark = (((int)(start/10))*10)+1;
 
+      if(end > getSequenceLength())
+        end = getSequenceLength();
+      
       for(int i=startMark; i<end; i+=10)
       {
         int xpos = (i-start)*ALIGNMENT_PIX_PER_BASE;
@@ -1909,6 +1940,8 @@ public class BamView extends JPanel
         getSelection().clear(); 
       else if(e.getButton() == MouseEvent.BUTTON1)
         highlightSAMRecord = mouseOverSAMRecord;
+      else
+        highlightRange(e, MouseEvent.BUTTON2_DOWN_MASK);
       repaint();
     }
     
