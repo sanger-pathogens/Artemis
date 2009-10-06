@@ -3109,6 +3109,9 @@ public class DatabaseDocument extends Document
         FeatureLoc onPolyPepLoc = (FeatureLoc)featureLocsBySrcFeatureId.get(i);
         onPolyPepLoc.setFmin(onPolyPepLoc.getFmin() -
             (newFeatureLoc.getFmin() - oldFeatureLoc.getFmin()));
+        
+        onPolyPepLoc.setFmax(onPolyPepLoc.getFmax() -
+            (newFeatureLoc.getFmin() - oldFeatureLoc.getFmin()));
         dao.merge(onPolyPepLoc);
       }
     }
