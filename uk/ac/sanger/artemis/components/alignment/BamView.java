@@ -128,6 +128,7 @@ public class BamView extends JPanel
   private boolean isSNPs = false;
   private boolean isStackView = false;
   private boolean isPairedStackView = false;
+  private boolean isStrandStackView = false;
   private boolean isCoverage = false;
   
   private FeatureDisplay feature_display;
@@ -421,6 +422,13 @@ public class BamView extends JPanel
       return seqLengths.get((String) combo.getSelectedItem());
   }
   
+  /**
+   * For BAM files with multiple references sequences, calculate
+   * the offset from the start of the concatenated sequence for 
+   * a given reference.
+   * @param refName
+   * @return
+   */
   protected int getSequenceOffset(String refName)
   {
     if(!concatSequences)
@@ -479,7 +487,7 @@ public class BamView extends JPanel
       try
       {
         readFromBamPicard(start, end);
-        if(!isStackView || pixPerBase*1.08f >= ALIGNMENT_PIX_PER_BASE)
+        if((!isStackView && !isStrandStackView) || pixPerBase*1.08f >= ALIGNMENT_PIX_PER_BASE)
           Collections.sort(readsInView, new SAMRecordComparator());
 
         setCursor(cdone);
@@ -501,6 +509,8 @@ public class BamView extends JPanel
 	    drawStackView(g2, seqLength, pixPerBase, start, end);
 	  else if(isPairedStackView)
 	    drawPairedStackView(g2, seqLength, pixPerBase, start, end);
+	  else if(isStrandStackView)
+	    drawStrandStackView(g2, seqLength, pixPerBase, start, end);
 	  else
 	    drawLineView(g2, seqLength, pixPerBase, start, end);
 	  if(isCoverage)
@@ -711,8 +721,8 @@ public class BamView extends JPanel
   private void drawLineView(Graphics2D g2, int seqLength, float pixPerBase, int start, int end)
   {
     drawSelectionRange(g2, pixPerBase,start, end);
-    if(isShowScale())
-      drawScale(g2, start, end, pixPerBase);
+    if(showScale)
+      drawScale(g2, start, end, pixPerBase, getHeight());
     
     Stroke originalStroke =
       new BasicStroke (1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND); 
@@ -735,7 +745,7 @@ public class BamView extends JPanel
         if(isSingle)
         {
           int ypos = (getHeight() - scaleHeight) - samRecord.getReadString().length();
-          g2.setColor(Color.orange);
+          g2.setColor(Color.black);
           drawRead(g2, samRecord, pixPerBase, stroke, ypos);
         }
         continue;
@@ -806,7 +816,7 @@ public class BamView extends JPanel
   {
     drawSelectionRange(g2, pixPerBase,start, end);
     if(isShowScale())
-      drawScale(g2, start, end, pixPerBase);
+      drawScale(g2, start, end, pixPerBase, getHeight());
     
     BasicStroke stroke = new BasicStroke(
         1.3f,
@@ -858,6 +868,93 @@ public class BamView extends JPanel
     }
   }
   
+  /**
+   * Draw the reads as lines in vertical stacks. The reads are colour 
+   * coded as follows:
+   * 
+   * blue  - reads are unique and are paired with a mapped mate
+   * black - reads are unique and are not paired or have an unmapped mate
+   * green - reads are duplicates
+   * 
+   * @param g2
+   * @param seqLength
+   * @param pixPerBase
+   * @param start
+   * @param end
+   */
+  private void drawStrandStackView(Graphics2D g2, 
+                                   int seqLength, 
+                                   float pixPerBase, 
+                                   int start, 
+                                   int end)
+  {
+    drawSelectionRange(g2, pixPerBase,start, end);   
+    BasicStroke stroke = new BasicStroke(
+        1.3f,
+        BasicStroke.CAP_BUTT, 
+        BasicStroke.JOIN_MITER);
+    
+    int scaleHeight = 15;
+    drawScale(g2, start, end, pixPerBase, ((getHeight()+scaleHeight)/2));
+
+    int ymid = (getHeight()/ 2);
+    // positive strand    
+    drawStrand(g2, false, scaleHeight, ymid-(scaleHeight/2), -2, pixPerBase, stroke);
+    
+    // negative strand
+    drawStrand(g2, true, scaleHeight, ymid+(scaleHeight/2), 2, pixPerBase, stroke);
+  }
+  
+  private void drawStrand(Graphics2D g2, 
+                          boolean isStrandNegative, 
+                          int scaleHeight,
+                          int ymid,
+                          int ystep,
+                          float pixPerBase,
+                          Stroke stroke)
+  {
+    int ypos = (getHeight() - scaleHeight);
+    int maxEnd = 0;
+    int lstStart = 0;
+    int lstEnd = 0;
+    
+    g2.setColor(Color.blue);
+    
+    for(int i=0; i<readsInView.size(); i++)
+    {
+      SAMRecord samRecord = readsInView.get(i);
+      
+      if( samRecord.getReadNegativeStrandFlag() == isStrandNegative )
+      {
+        int offset = getSequenceOffset(samRecord.getReferenceName());
+        int recordStart = samRecord.getAlignmentStart()+offset;
+        int recordEnd   = samRecord.getAlignmentEnd()+offset;
+      
+        if(lstStart != recordStart || lstEnd != recordEnd)
+        { 
+          if (!samRecord.getReadPairedFlag() ||   // read is not paired in sequencing
+               samRecord.getMateUnmappedFlag() )  // mate is unmapped 
+            g2.setColor(Color.black);
+          else
+            g2.setColor(Color.blue);
+        
+          if(maxEnd < recordStart)
+          {
+            ypos = ymid + ystep;
+            maxEnd = recordEnd+2;
+          }
+          else
+            ypos = ypos + ystep;
+        }
+        else
+          g2.setColor(darkGreen);
+
+        lstStart = recordStart;
+        lstEnd   = recordEnd;
+        drawRead(g2, samRecord, pixPerBase, stroke, ypos);
+      }
+    }
+  }
   
   /**
    * Draw the reads as lines in vertical stacks. The reads are colour 
@@ -881,7 +978,7 @@ public class BamView extends JPanel
   {
     drawSelectionRange(g2, pixPerBase,start, end);
     if(isShowScale())
-      drawScale(g2, start, end, pixPerBase);
+      drawScale(g2, start, end, pixPerBase, getHeight());
     
     Vector<PairedRead> pairedReads = new Vector<PairedRead>();
     for(int i=0; i<readsInView.size(); i++)
@@ -1050,28 +1147,28 @@ public class BamView extends JPanel
   }
 
   
-  private void drawScale(Graphics2D g2, int start, int end, float pixPerBase)
+  private void drawScale(Graphics2D g2, int start, int end, float pixPerBase, int ypos)
   {
     g2.setColor(Color.black);
-    g2.drawLine( 0, getHeight()-14,
-                 (int)((end - getBaseAtStartOfView())*pixPerBase),   getHeight()-14);
+    g2.drawLine( 0, ypos-14,
+                 (int)((end - getBaseAtStartOfView())*pixPerBase),   ypos-14);
     int interval = end-start;
     
     if(interval > 256000)
-      drawTicks(g2, start, end, pixPerBase, 512000);
+      drawTicks(g2, start, end, pixPerBase, 512000, ypos);
     else if(interval > 64000)
-      drawTicks(g2, start, end, pixPerBase, 12800);
+      drawTicks(g2, start, end, pixPerBase, 12800, ypos);
     else if(interval > 16000)
-      drawTicks(g2, start, end, pixPerBase, 3200);
+      drawTicks(g2, start, end, pixPerBase, 3200, ypos);
     else if(interval > 4000)
-      drawTicks(g2, start, end, pixPerBase, 800);
+      drawTicks(g2, start, end, pixPerBase, 800, ypos);
     else if(interval > 1000)
-      drawTicks(g2, start, end, pixPerBase, 400);
+      drawTicks(g2, start, end, pixPerBase, 400, ypos);
     else
-      drawTicks(g2, start, end, pixPerBase, 100);
+      drawTicks(g2, start, end, pixPerBase, 100, ypos);
   }
   
-  private void drawTicks(Graphics2D g2, int start, int end, float pixPerBase, int division)
+  private void drawTicks(Graphics2D g2, int start, int end, float pixPerBase, int division, int ypos)
   {
     int markStart = (Math.round(start/division)*division);
     
@@ -1083,21 +1180,21 @@ public class BamView extends JPanel
     if(sm > start)
     {
       x = (sm-getBaseAtStartOfView())*pixPerBase;
-      g2.drawLine((int)x, getHeight()-14,(int)x, getHeight()-12);
+      g2.drawLine((int)x, ypos-14,(int)x, ypos-12);
     }
     
     for(int m=markStart; m<end; m+=division)
     {
       x = (m-getBaseAtStartOfView())*pixPerBase;
-      g2.drawString(Integer.toString(m), x, getHeight()-1);
-      g2.drawLine((int)x, getHeight()-14,(int)x, getHeight()-11);
+      g2.drawString(Integer.toString(m), x, ypos-1);
+      g2.drawLine((int)x, ypos-14,(int)x, ypos-11);
       
       sm = m+(division/2);
       
       if(sm < end)
       {
         x = (sm-getBaseAtStartOfView())*pixPerBase;
-        g2.drawLine((int)x, getHeight()-14,(int)x, getHeight()-12);
+        g2.drawLine((int)x, ypos-14,(int)x, ypos-12);
       }
       
       if(m == 1)
@@ -1329,7 +1426,7 @@ public class BamView extends JPanel
     {
       public void mouseDragged(MouseEvent event)
       {
-        handleCanvasMouseDragOrClick(event);
+        handleCanvasMouseDrag(event);
       }
       
       public void mouseMoved(MouseEvent e)
@@ -1436,8 +1533,6 @@ public class BamView extends JPanel
     mainPanel.add(jspView, BorderLayout.CENTER);
     
     JPanel bottomPanel = new JPanel(new BorderLayout());
-    
-    
     coveragePanel = new CoveragePanel(this);
     bottomPanel.add(coveragePanel, BorderLayout.CENTER);
 
@@ -1530,7 +1625,8 @@ public class BamView extends JPanel
     
     final JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View");
     final JCheckBoxMenuItem checkBoxPairedStackView = new JCheckBoxMenuItem("Paired Stack View");
-    
+    final JCheckBoxMenuItem checkBoxStrandStackView = new JCheckBoxMenuItem("Strand Stack View");
+
     checkBoxStackView.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -1542,7 +1638,9 @@ public class BamView extends JPanel
         if(isStackView)
         {
           isPairedStackView = !isStackView;
+          isStrandStackView = !isStackView;
           checkBoxPairedStackView.setSelected(!isStackView);
+          checkBoxStrandStackView.setSelected(!isStackView);
         }
         repaint();
       }
@@ -1561,13 +1659,35 @@ public class BamView extends JPanel
         if(isPairedStackView)
         {
           isStackView = !isPairedStackView;
+          isStrandStackView = !isPairedStackView;
           checkBoxStackView.setSelected(!isPairedStackView);
+          checkBoxStrandStackView.setSelected(!isPairedStackView);
         }
         repaint();
       }
     });
     view.add(checkBoxPairedStackView);
     
+    checkBoxStrandStackView.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        laststart = -1;
+        lastend = -1;
+        isStrandStackView = !isStrandStackView;
+        
+        if(isStrandStackView)
+        {
+          isStackView = !isStrandStackView;
+          isPairedStackView = !isStrandStackView;
+          checkBoxStackView.setSelected(!isStrandStackView);
+          checkBoxPairedStackView.setSelected(!isStrandStackView);
+          setViewportMidPoint();
+        }
+        repaint();
+      }
+    });
+    view.add(checkBoxStrandStackView);
     
     JCheckBoxMenuItem checkBoxCoverage = new JCheckBoxMenuItem("Coverage");
     checkBoxCoverage.addActionListener(new ActionListener()
@@ -1615,6 +1735,13 @@ public class BamView extends JPanel
     mainPanel.setVisible(visible);
   }
   
+  private void setViewportMidPoint()
+  {
+    Point p = jspView.getViewport().getLocation();
+    p.y = (getHeight() - jspView.getViewport().getViewRect().height)/2;
+    jspView.getViewport().setViewPosition(p);
+  }
+  
   private int getBaseAtStartOfView()
   {
     if(feature_display != null)
@@ -1648,8 +1775,10 @@ public class BamView extends JPanel
     else if(jspView != null)
     {
       jspView.setColumnHeaderView(null);
-      jspView.getVerticalScrollBar().setValue(
-          jspView.getVerticalScrollBar().getMaximum());
+      
+      if(!isStrandStackView)
+        jspView.getVerticalScrollBar().setValue(
+            jspView.getVerticalScrollBar().getMaximum());
       showBaseAlignment = false;
     }
     
@@ -1661,7 +1790,6 @@ public class BamView extends JPanel
       scrollBar.setBlockIncrement(nbasesInView);
     }
   }
-  
 
   
   /**
@@ -1794,7 +1922,7 @@ public class BamView extends JPanel
   /**
    *  Handle a mouse drag event on the drawing canvas.
    **/
-  private void handleCanvasMouseDragOrClick(final MouseEvent event)
+  private void handleCanvasMouseDrag(final MouseEvent event)
   {
     if(event.getButton() == MouseEvent.BUTTON3 || bases == null) 
       return;
@@ -1853,7 +1981,7 @@ public class BamView extends JPanel
     return selection;
   }
   
-  public List<SAMRecord> getReadsInView()
+  protected List<SAMRecord> getReadsInView()
   {
     return readsInView;
   }
