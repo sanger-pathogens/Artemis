@@ -1622,6 +1622,7 @@ public class BamView extends JPanel
       }
     });
     view.add(checkBoxSNPs);
+    view.add(new JSeparator());
     
     final JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View");
     final JCheckBoxMenuItem checkBoxPairedStackView = new JCheckBoxMenuItem("Paired Stack View");
@@ -1688,6 +1689,7 @@ public class BamView extends JPanel
       }
     });
     view.add(checkBoxStrandStackView);
+    view.add(new JSeparator());
     
     JCheckBoxMenuItem checkBoxCoverage = new JCheckBoxMenuItem("Coverage");
     checkBoxCoverage.addActionListener(new ActionListener()
