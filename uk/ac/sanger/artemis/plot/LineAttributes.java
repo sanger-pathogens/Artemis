@@ -33,6 +33,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -46,6 +47,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.ChangeEvent;
@@ -326,9 +328,20 @@ public class LineAttributes
       
     }
 
+    JScrollPane jsp = new JScrollPane(panel, 
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+    
+    if(panel.getPreferredSize().height > d.height/2)
+    {
+      d.setSize(jsp.getPreferredSize().width, d.height/2);
+      jsp.setPreferredSize(d);
+    }
+    
     String config_options[] = { "OK" };
     JOptionPane.showOptionDialog(null,
-                                 panel, "Configure Lines",
+                                 jsp, "Configure Lines",
                                  JOptionPane.DEFAULT_OPTION,
                                  JOptionPane.QUESTION_MESSAGE,
                                  null, config_options, config_options[0]);
