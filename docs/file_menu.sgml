@@ -71,6 +71,19 @@ the user.
     </PARA>
   </SECT2>
 
+  <SECT2 ID="FILEMENU-READ-BAM">
+    <TITLE>Read BAM ...</TITLE>
+     <PARA>
+Read a BAM file that has been sorted and indexed using <ULINK 
+URL="http://samtools.sourceforge.net/">samtools</ULINK>. This provides a view of
+sequence alignment mappings to a reference sequence. This require Artemis to 
+be run with Java 1.6 as it makes use of <ULINK URL="http://picard.sourceforge.net/">
+picard</ULINK> to read from the BAM file.
+      </PARA>
+  </SECT2>
+
+
+
   <SECT2 ID="FILEMENU-SAVE-DEFAULT-ENTRY">
     <TITLE>Save Default Entry</TITLE>
     <PARA>
