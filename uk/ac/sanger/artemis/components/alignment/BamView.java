@@ -1402,21 +1402,25 @@ public class BamView extends JPanel
       this.feature_display = feature_display;
       this.selection = feature_display.getSelection();
       topPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
-      
-      if(seqNames.size() > 1)
-      {
-        int len = 0;
-        for(int i=0; i<seqNames.size(); i++)
-          len += seqLengths.get(seqNames.get(i));
-      
-        if(len == feature_display.getSequenceLength())
-          concatSequences = true;
-      }
     }
     else
     { 
       topPanel = new JMenuBar();
       frame.setJMenuBar((JMenuBar)topPanel);
+    }
+    
+    if(seqNames.size() > 1)
+    {
+      int len = 0;
+      for(int i=0; i<seqNames.size(); i++)
+        len += seqLengths.get(seqNames.get(i));
+    
+      if(feature_display != null &&
+         len == feature_display.getSequenceLength())
+        concatSequences = true;
+      else if(bases != null &&
+          len == bases.getLength() )
+        concatSequences = true;
     }
 
     // auto hide top panel
