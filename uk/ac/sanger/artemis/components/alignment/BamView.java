@@ -53,6 +53,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -75,6 +77,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
@@ -100,6 +103,7 @@ import uk.ac.sanger.artemis.components.DisplayAdjustmentListener;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.MessageDialog;
+import uk.ac.sanger.artemis.components.Utilities;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Range;
@@ -148,6 +152,7 @@ public class BamView extends JPanel
   private Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
   
   private boolean showBaseAlignment = false;
+  private JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View");
   
   private AlphaComposite translucent = 
     AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
@@ -170,8 +175,8 @@ public class BamView extends JPanel
   private int BASE_HEIGHT;
   
   private JPopupMenu popup;
+  private PopupMessageFrame popFrame = new PopupMessageFrame();
 
- 
   public BamView(String bam, 
                  String reference,
                  int nbasesInView)
@@ -194,7 +199,16 @@ public class BamView extends JPanel
       }
     }
     
-    readHeaderPicard();
+    try
+    {
+      readHeaderPicard();
+    }
+    catch(java.lang.UnsupportedClassVersionError err)
+    {
+      JOptionPane.showMessageDialog(null, 
+          "This requires Java 1.6 or higher.", 
+          "Check Java Version", JOptionPane.WARNING_MESSAGE);
+    }
     
     // set font size
     //setFont(getFont().deriveFont(12.f));
@@ -338,7 +352,7 @@ public class BamView extends JPanel
     File indexFile = new File(bam+".bai");
     final SAMFileReader inputSam = new SAMFileReader(bamFile, indexFile);
     inputSam.setValidationStringency(ValidationStringency.SILENT);
-    
+ 
     if(readsInView == null)
       readsInView = new Vector<SAMRecord>();
     else
@@ -367,6 +381,7 @@ public class BamView extends JPanel
             thisEnd = thisLength;
           
           //System.out.println("READ "+seqNames.get(i)+"  "+thisStart+".."+thisEnd);
+          
           iterateOverBam(inputSam, seqNames.get(i), thisStart, thisEnd);
         }
         lastLen = len;
@@ -392,14 +407,29 @@ public class BamView extends JPanel
    */
   private void iterateOverBam(final SAMFileReader inputSam, 
                               String refName, int start, int end)
-  {
+  { 
     CloseableIterator<SAMRecord> it = inputSam.queryOverlapping(refName, start, end);
+    MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
+
     while ( it.hasNext() )
     {
       try
       {
         SAMRecord samRecord = it.next();
         readsInView.add(samRecord);
+        
+        float heapNow =
+            (float)((float)memory.getHeapMemoryUsage().getUsed()/(float)memory.getHeapMemoryUsage().getMax());
+        if(heapNow > 0.97)
+        {
+          popFrame.show("Memory Limit",
+              "Over 97 % of the maximum memory limit ("+
+              (memory.getHeapMemoryUsage().getMax()/1000000.f)+" Mb).\n"+
+              "Zoom in or consider increasing the memory for this application.",
+              BamView.this.getLocationOnScreen().y,
+              20000);
+          break;
+        }
       }
       catch(Exception e)
       {
@@ -479,14 +509,35 @@ public class BamView extends JPanel
     //		"sequence length = "+getSequenceLength()+
     //		" pixPerBase="+pixPerBase);
     
-      
+    boolean changeToStackView = false;
+    MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
     if(laststart != start ||
        lastend   != end)
     {
       setCursor(cbusy);
       try
       {
+        float heapFractionUsedBefore = (float)((float)memory.getHeapMemoryUsage().getUsed()/(float)memory.getHeapMemoryUsage().getMax());
+        //System.out.println("Heap memory used before "+heapFractionUsedBefore+"\n");
+        
         readFromBamPicard(start, end);
+
+        float heapFractionUsedAfter = 
+          (float)((float)memory.getHeapMemoryUsage().getUsed()/
+                  (float)memory.getHeapMemoryUsage().getMax());
+        
+        //System.out.println("Heap Max  : "+memory.getHeapMemoryUsage().getMax());
+        //System.out.println("Heap Used : "+memory.getHeapMemoryUsage().getUsed());
+        //System.out.println("Heap memory used "+heapFractionUsedAfter);
+
+        if((heapFractionUsedAfter-heapFractionUsedBefore) > 0.06 && !isStackView &&
+            heapFractionUsedAfter > 0.8)
+        {
+          checkBoxStackView.setSelected(true);
+          isStackView = true;
+          changeToStackView = true;
+        }
+        
         if((!isStackView && !isStrandStackView) || pixPerBase*1.08f >= ALIGNMENT_PIX_PER_BASE)
           Collections.sort(readsInView, new SAMRecordComparator());
 
@@ -495,6 +546,7 @@ public class BamView extends JPanel
       catch(OutOfMemoryError ome)
       {
         JOptionPane.showMessageDialog(this, "Out of Memory");
+        readsInView.clear();
         return;
       }
     }
@@ -519,6 +571,18 @@ public class BamView extends JPanel
 	    coveragePanel.setPixPerBase(pixPerBase);
 	    coveragePanel.repaint();
 	  }
+	}
+	
+	if(changeToStackView)
+	{
+	  popFrame.show("Stack View",
+          "Note :: Changed to the stack view to save memory.\n"+
+          "Currently this is using "+ 
+          (memory.getHeapMemoryUsage().getUsed()/1000000.f)+" Mb "+
+          "and the maximum\nmemory limit is "+
+          (memory.getHeapMemoryUsage().getMax()/1000000.f)+" Mb.",
+          BamView.this.getLocationOnScreen().y,
+          20000);
 	}
   }
   
@@ -1628,7 +1692,6 @@ public class BamView extends JPanel
     view.add(checkBoxSNPs);
     view.add(new JSeparator());
     
-    final JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View");
     final JCheckBoxMenuItem checkBoxPairedStackView = new JCheckBoxMenuItem("Paired Stack View");
     final JCheckBoxMenuItem checkBoxStrandStackView = new JCheckBoxMenuItem("Strand Stack View");
 
@@ -2142,6 +2205,58 @@ public class BamView extends JPanel
     SAMRecord sam1;
     SAMRecord sam2;
   }
+  
+  class PopupMessageFrame extends JFrame
+  {
+    private static final long serialVersionUID = 1L;
+    private JTextArea textArea = new JTextArea();
+    PopupMessageFrame()
+    {
+      getRootPane().putClientProperty("Window.alpha", new Float(0.8f));
+      textArea.setWrapStyleWord(true);
+      textArea.setEditable(false);
+      getContentPane().add(textArea);
+    }
+    
+    protected void show(String title, String msg, int ypos, long aliveTime)
+    {
+      setTitle(title);
+      textArea.setText(msg);
+      pack();
+      Utilities.centreJustifyFrame(this, ypos);
+      setVisible(true);
+      requestFocus();
+
+      HideFrameThread thread = new HideFrameThread(this, aliveTime);
+      thread.start();
+    }
+  }
+  
+  class HideFrameThread extends Thread
+  {
+    private long aliveTime;
+    private JFrame f;
+    
+    public HideFrameThread(JFrame f, long aliveTime)
+    {
+      this.f = f;
+      this.aliveTime = aliveTime; 
+    }
+    
+    public void run() 
+    {
+      try
+      {
+        Thread.sleep(aliveTime);
+      }
+      catch (InterruptedException e)
+      {
+        e.printStackTrace();
+      }
+      f.setVisible(false);
+    }
+  }
+
   
   public static void main(String[] args)
   {
