@@ -392,6 +392,9 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     { 
       final StringVector newValues = newQualifier.getValues();
       final StringVector values = qualifier.getValues();
+      
+      if(newValues == null)
+        return;
       for(int j=0; j<newValues.size(); j++)
       {
         String newValue = (String) newValues.get(j);
