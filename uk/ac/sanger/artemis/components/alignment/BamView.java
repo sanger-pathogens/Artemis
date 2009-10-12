@@ -176,7 +176,9 @@ public class BamView extends JPanel
   
   private JPopupMenu popup;
   private PopupMessageFrame popFrame = new PopupMessageFrame();
-
+  public static org.apache.log4j.Logger logger4j = 
+    org.apache.log4j.Logger.getLogger(BamView.class);
+  
   public BamView(String bam, 
                  String reference,
                  int nbasesInView)
@@ -410,25 +412,35 @@ public class BamView extends JPanel
   { 
     CloseableIterator<SAMRecord> it = inputSam.queryOverlapping(refName, start, end);
     MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
-
+    int checkMemAfter = 8000;
+    int cnt = 0;
+    
     while ( it.hasNext() )
     {
       try
       {
+        cnt++;
         SAMRecord samRecord = it.next();
         readsInView.add(samRecord);
         
-        float heapNow =
-            (float)((float)memory.getHeapMemoryUsage().getUsed()/(float)memory.getHeapMemoryUsage().getMax());
-        if(heapNow > 0.97)
+        if(cnt > checkMemAfter)
         {
-          popFrame.show("Memory Limit",
-              "Over 97 % of the maximum memory limit ("+
+          cnt = 0;
+          float heapFraction =
+            (float)((float)memory.getHeapMemoryUsage().getUsed()/
+                    (float)memory.getHeapMemoryUsage().getMax());
+          logger4j.debug("Heap memory usage (used/max): "+heapFraction);
+          
+          if(heapFraction > 0.97) 
+          {
+            popFrame.show("Data Read Incomplete",
+              "Over 97 % of the maximum memory\nlimit ("+
               (memory.getHeapMemoryUsage().getMax()/1000000.f)+" Mb).\n"+
-              "Zoom in or consider increasing the memory for this application.",
-              BamView.this.getLocationOnScreen().y,
+              "Zoom in or consider increasing the\nmemory for this application.",
+              mainPanel.getLocationOnScreen().y,
               20000);
-          break;
+            break;
+          }
         }
       }
       catch(Exception e)
@@ -581,7 +593,7 @@ public class BamView extends JPanel
           (memory.getHeapMemoryUsage().getUsed()/1000000.f)+" Mb "+
           "and the maximum\nmemory limit is "+
           (memory.getHeapMemoryUsage().getMax()/1000000.f)+" Mb.",
-          BamView.this.getLocationOnScreen().y,
+          mainPanel.getLocationOnScreen().y,
           20000);
 	}
   }
@@ -1692,9 +1704,34 @@ public class BamView extends JPanel
     view.add(checkBoxSNPs);
     view.add(new JSeparator());
     
+    ButtonGroup group = new ButtonGroup();
     final JCheckBoxMenuItem checkBoxPairedStackView = new JCheckBoxMenuItem("Paired Stack View");
     final JCheckBoxMenuItem checkBoxStrandStackView = new JCheckBoxMenuItem("Strand Stack View");
-
+    final JCheckBoxMenuItem checkIsizeStackView = new JCheckBoxMenuItem("Inferred Size View", true);
+    group.add(checkBoxStackView);
+    group.add(checkBoxPairedStackView);
+    group.add(checkBoxStrandStackView);
+    group.add(checkIsizeStackView);
+    
+    checkIsizeStackView.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        laststart = -1;
+        lastend = -1;
+        
+        if(checkIsizeStackView.isSelected())
+        {
+          isStackView = false;
+          isPairedStackView = false;
+          isStrandStackView = false;
+        }
+        repaint();
+      }
+    });
+    view.add(checkIsizeStackView);
+    
+    
     checkBoxStackView.addActionListener(new ActionListener()
     {
       public void actionPerformed(ActionEvent e)
@@ -2215,6 +2252,7 @@ public class BamView extends JPanel
       getRootPane().putClientProperty("Window.alpha", new Float(0.8f));
       textArea.setWrapStyleWord(true);
       textArea.setEditable(false);
+      setUndecorated(true);
       getContentPane().add(textArea);
     }
     
@@ -2223,7 +2261,8 @@ public class BamView extends JPanel
       setTitle(title);
       textArea.setText(msg);
       pack();
-      Utilities.centreJustifyFrame(this, ypos);
+      //PopupMessageFrame.this.setLocationRelativeTo(BamView.this);
+      Utilities.centreJustifyFrame(this, Math.abs(ypos));
       setVisible(true);
       requestFocus();
 
