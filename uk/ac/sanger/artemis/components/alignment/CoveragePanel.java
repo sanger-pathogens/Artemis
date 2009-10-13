@@ -80,7 +80,7 @@ import net.sf.samtools.SAMRecord;
         for(int j=0; j<length;j++)
         {
           int bin = 
-            Math.round(((thisRead.getAlignmentStart()-start) + j + offset) / windowSize);
+            (int)(((thisRead.getAlignmentStart()-start) + j + offset) / windowSize);
 
           if(bin < 0 || bin > coverage.length-1)
             continue;   

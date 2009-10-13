@@ -122,6 +122,7 @@ public class BamView extends JPanel
   private static final long serialVersionUID = 1L;
   private List<SAMRecord> readsInView;
   private Hashtable<String, Integer> seqLengths = new Hashtable<String, Integer>();
+  private Hashtable<String, Integer> offsetLengths;
   private Vector<String> seqNames = new Vector<String>();
   private String bam;
 
@@ -477,16 +478,19 @@ public class BamView extends JPanel
   {
     if(!concatSequences)
       return 0;
-    int offset = 0;
-    for(int i=0; i<combo.getItemCount(); i++)
-    {
-      String thisSeqName = (String) combo.getItemAt(i);
-      if(refName.equals(thisSeqName))
-        return offset;
-      
-      offset += seqLengths.get(combo.getItemAt(i));
+    
+    if(offsetLengths == null)
+    {   
+      offsetLengths = new Hashtable<String, Integer>(combo.getItemCount());
+      int offset = 0;
+      for(int i=0; i<combo.getItemCount(); i++)
+      {
+        String thisSeqName = (String) combo.getItemAt(i);
+        offsetLengths.put(thisSeqName, offset);
+        offset += seqLengths.get(combo.getItemAt(i));
+      }
     }
-    return offset;
+    return offsetLengths.get(refName);
   }
   
   /**
@@ -517,11 +521,6 @@ public class BamView extends JPanel
       if(end > seqLength)
         end = seqLength;
     }
-
-
-    //System.out.println(start+".."+end+" " +
-    //		"sequence length = "+getSequenceLength()+
-    //		" pixPerBase="+pixPerBase);
     
     boolean changeToStackView = false;
     MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
@@ -529,41 +528,48 @@ public class BamView extends JPanel
        lastend   != end)
     {
       setCursor(cbusy);
-      try
+      synchronized (this)
       {
-        float heapFractionUsedBefore = (float)((float)memory.getHeapMemoryUsage().getUsed()/(float)memory.getHeapMemoryUsage().getMax());
-        //System.out.println("Heap memory used before "+heapFractionUsedBefore+"\n");
-        
-        readFromBamPicard(start, end);
-
-        float heapFractionUsedAfter = 
-          (float)((float)memory.getHeapMemoryUsage().getUsed()/
-                  (float)memory.getHeapMemoryUsage().getMax());
-        
-        //System.out.println("Heap Max  : "+memory.getHeapMemoryUsage().getMax());
-        //System.out.println("Heap Used : "+memory.getHeapMemoryUsage().getUsed());
-        //System.out.println("Heap memory used "+heapFractionUsedAfter);
-
-        if((heapFractionUsedAfter-heapFractionUsedBefore) > 0.06 && !isStackView &&
-            heapFractionUsedAfter > 0.8)
+        try
         {
-          checkBoxStackView.setSelected(true);
-          isStackView = true;
-          changeToStackView = true;
-        }
-        
-        if((!isStackView && !isStrandStackView) || pixPerBase*1.08f >= ALIGNMENT_PIX_PER_BASE)
-          Collections.sort(readsInView, new SAMRecordComparator());
+          float heapFractionUsedBefore = (float) ((float) memory.getHeapMemoryUsage().getUsed() / 
+                                                  (float) memory.getHeapMemoryUsage().getMax());
+          readFromBamPicard(start, end);
+          float heapFractionUsedAfter = (float) ((float) memory.getHeapMemoryUsage().getUsed() / 
+                                                 (float) memory.getHeapMemoryUsage().getMax());
 
-        setCursor(cdone);
-      }
-      catch(OutOfMemoryError ome)
-      {
-        JOptionPane.showMessageDialog(this, "Out of Memory");
-        readsInView.clear();
-        return;
+          // System.out.println("Heap Max  : "+memory.getHeapMemoryUsage().getMax());
+          // System.out.println("Heap Used : "+memory.getHeapMemoryUsage().getUsed());
+          // System.out.println("Heap memory used "+heapFractionUsedAfter);
+
+          if ((heapFractionUsedAfter - heapFractionUsedBefore) > 0.06
+              && !isStackView && heapFractionUsedAfter > 0.8)
+          {
+            checkBoxStackView.setSelected(true);
+            isStackView = true;
+            changeToStackView = true;
+          }
+
+          if ((!isStackView && !isStrandStackView)
+              || pixPerBase * 1.08f >= ALIGNMENT_PIX_PER_BASE)
+          {
+            Collections.sort(readsInView, new SAMRecordComparator());
+          }
+
+          setCursor(cdone);
+        }
+        catch (OutOfMemoryError ome)
+        {
+          JOptionPane.showMessageDialog(this, "Out of Memory");
+          readsInView.clear();
+          return;
+        }
       }
     }
+    
+    //System.out.println(start+".."+end+" " +
+    //    "sequence length = "+getSequenceLength()+
+    //    " pixPerBase="+pixPerBase);
     
     laststart = start;
     lastend   = end;
@@ -674,33 +680,42 @@ public class BamView extends JPanel
     for(int i=0; i<readsInView.size(); i++)
       drawn[i] = false;
     
-    for(int i=0; i<readsInView.size(); i++)
+    Rectangle r = jspView.getViewport().getViewRect();
+    int nreads = readsInView.size();
+    
+    for(int i=0; i<nreads; i++)
     {
       if (!drawn[i])
       {
-        SAMRecord thisRead = readsInView.get(i);
         ypos+=11;
-
-        drawSequence(g2, thisRead, ypos, refSeq, refSeqStart);
+        
+        SAMRecord thisRead = readsInView.get(i);
+        if(ypos < r.getMaxY() || ypos > r.getMinY())
+          drawSequence(g2, thisRead, ypos, refSeq, refSeqStart);
         drawn[i] = true;
         
         int thisEnd = thisRead.getAlignmentEnd();
         if(thisEnd == 0)
           thisEnd = thisRead.getAlignmentStart()+thisRead.getReadLength();
         
-        for(int j=i+1; j<readsInView.size(); j++)
+        for(int j=i+1; j<nreads; j++)
         {
           if (!drawn[j])
           {
             SAMRecord nextRead = readsInView.get(j);
-            if(nextRead.getAlignmentStart() > thisEnd+1)
+            int nextStart = nextRead.getAlignmentStart();
+            if(nextStart > thisEnd+1)
             {
-              drawSequence(g2, nextRead, ypos, refSeq, refSeqStart);
+              if(ypos < r.getMaxY() || ypos > r.getMinY())
+                drawSequence(g2, nextRead, ypos, refSeq, refSeqStart);
+              
               drawn[j] = true;
               thisEnd = nextRead.getAlignmentEnd();
               if(thisEnd == 0)
-                thisEnd = nextRead.getAlignmentStart()+nextRead.getReadLength();
+                thisEnd = nextStart+nextRead.getReadLength();
             }
+            else if(ypos > r.getMaxY() || ypos < r.getMinY())
+              break;
           }
         }
       }
@@ -813,7 +828,7 @@ public class BamView extends JPanel
       scaleHeight = 0;
     
     int baseAtStartOfView = getBaseAtStartOfView();
-    Rectangle r = jspView.getViewport().getVisibleRect();
+    Rectangle r = jspView.getViewport().getViewRect();
     
     for(int i=0; i<readsInView.size(); i++)
     {
@@ -826,7 +841,7 @@ public class BamView extends JPanel
         if(isSingle)
         {
           int ypos = (getHeight() - scaleHeight) - samRecord.getReadString().length();
-          if(ypos > r.getMaxX() || ypos < r.getMinY())
+          if(ypos > r.getMaxY() || ypos < r.getMinY())
             continue;
           
           g2.setColor(Color.black);
@@ -836,7 +851,7 @@ public class BamView extends JPanel
       }
 
       int ypos = (getHeight() - scaleHeight) - ( Math.abs(samRecord.getInferredInsertSize()) );
-      if(ypos > r.getMaxX() || ypos < r.getMinY())
+      if(ypos > r.getMaxY() || ypos < r.getMinY())
         continue;
       
       if(i < readsInView.size()-1)
@@ -922,7 +937,7 @@ public class BamView extends JPanel
     int lstEnd = 0;
     int baseAtStartOfView = getBaseAtStartOfView();
     g2.setColor(Color.blue);
-    Rectangle r = jspView.getViewport().getVisibleRect();
+    Rectangle r = jspView.getViewport().getViewRect();
     
     for(int i=0; i<readsInView.size(); i++)
     {
@@ -954,7 +969,7 @@ public class BamView extends JPanel
       lstStart = recordStart;
       lstEnd   = recordEnd;
       
-      if(ypos > r.getMaxX() || ypos < r.getMinY())
+      if(ypos > r.getMaxY() || ypos < r.getMinY())
         continue;
       drawRead(g2, samRecord, pixPerBase, ypos, baseAtStartOfView);
     }
@@ -1011,7 +1026,7 @@ public class BamView extends JPanel
     int lstEnd = 0;
     int baseAtStartOfView = getBaseAtStartOfView();
     g2.setColor(Color.blue);
-    Rectangle r = jspView.getViewport().getVisibleRect();
+    Rectangle r = jspView.getViewport().getViewRect();
     
     for(int i=0; i<readsInView.size(); i++)
     {
@@ -1045,7 +1060,7 @@ public class BamView extends JPanel
         lstStart = recordStart;
         lstEnd   = recordEnd;
         
-        if(ypos > r.getMaxX() || ypos < r.getMinY())
+        if(ypos > r.getMaxY() || ypos < r.getMinY())
           continue;
         drawRead(g2, samRecord, pixPerBase, ypos, baseAtStartOfView);
       }
@@ -1129,7 +1144,7 @@ public class BamView extends JPanel
     int ypos = getHeight() - scaleHeight - 3;
     int lastEnd = 0;
     int baseAtStartOfView = getBaseAtStartOfView();
-    Rectangle r = jspView.getViewport().getVisibleRect();
+    Rectangle r = jspView.getViewport().getViewRect();
     
     for(int i=0; i<pairedReads.size(); i++)
     {
@@ -1149,7 +1164,7 @@ public class BamView extends JPanel
       else
         ypos = ypos - 3;
       
-      if(ypos > r.getMaxX() || ypos < r.getMinY())
+      if(ypos > r.getMaxY() || ypos < r.getMinY())
         continue;
       
       g2.setStroke(originalStroke);
@@ -2160,7 +2175,7 @@ public class BamView extends JPanel
         else
         {
           setDisplay(event.getStart(), 
-              event.getStart()+feature_display.getMaxVisibleBases(), event);
+            event.getStart()+feature_display.getMaxVisibleBases(), event);
           repaint();
         }
         return null;
