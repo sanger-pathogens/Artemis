@@ -104,6 +104,7 @@ import uk.ac.sanger.artemis.components.DisplayAdjustmentListener;
 import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.MessageDialog;
+import uk.ac.sanger.artemis.components.SwingWorker;
 import uk.ac.sanger.artemis.components.Utilities;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.EntryInformation;
@@ -2125,25 +2126,47 @@ public class BamView extends JPanel
   /**
    * Artemis event notification
    */
-  public void displayAdjustmentValueChanged(DisplayAdjustmentEvent event)
-  {
-    if(event.getType() == DisplayAdjustmentEvent.SCALE_ADJUST_EVENT)
+  public void displayAdjustmentValueChanged(final DisplayAdjustmentEvent event)
+  { 
+    SwingWorker worker = new SwingWorker()
     {
-      laststart = -1;
-      lastend = -1;
-      this.startBase = event.getStart();
-      this.endBase   = event.getEnd();
+      public Object construct()
+      {
+        try
+        {
+          Thread.sleep(500);
+        }
+        catch (InterruptedException e)
+        {
+          e.printStackTrace();
+        }
+        
+        if(event.getStart() != ((FeatureDisplay)event.getSource()).getForwardBaseAtLeftEdge())
+        {
+          return null;
+        }
+      
+        if(event.getType() == DisplayAdjustmentEvent.SCALE_ADJUST_EVENT)
+        {
+          laststart = -1;
+          lastend = -1;
+          BamView.this.startBase = event.getStart();
+          BamView.this.endBase   = event.getEnd();
 
-      int width = feature_display.getMaxVisibleBases();
-      setZoomLevel(width);
-      repaint();
-    }
-    else
-    {
-      setDisplay(event.getStart(), 
-          event.getStart()+feature_display.getMaxVisibleBases(), event);
-      repaint();
-    }
+          int width = feature_display.getMaxVisibleBases();
+          setZoomLevel(width);
+          repaint();
+        }
+        else
+        {
+          setDisplay(event.getStart(), 
+              event.getStart()+feature_display.getMaxVisibleBases(), event);
+          repaint();
+        }
+        return null;
+      }
+    };
+    worker.start();
   }
   
   public void selectionChanged(SelectionChangeEvent event)
