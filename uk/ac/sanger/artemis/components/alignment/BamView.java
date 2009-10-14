@@ -854,7 +854,7 @@ public class BamView extends JPanel
       }
 
       int ypos = (getHeight() - scaleHeight) - ( Math.abs(samRecord.getInferredInsertSize()) );
-      if(ypos > r.getMaxY() || ypos < r.getMinY())
+      if( (ypos > r.getMaxY() || ypos < r.getMinY()) && ypos > 0 )
         continue;
       
       if(i < readsInView.size()-1)
