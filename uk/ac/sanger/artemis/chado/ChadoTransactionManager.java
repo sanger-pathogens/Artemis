@@ -30,6 +30,7 @@ import uk.ac.sanger.artemis.FeatureSegmentVector;
 import uk.ac.sanger.artemis.sequence.SequenceChangeListener;
 import uk.ac.sanger.artemis.sequence.SequenceChangeEvent;
 import uk.ac.sanger.artemis.components.genebuilder.GeneUtils;
+import uk.ac.sanger.artemis.components.genebuilder.cv.GoBox;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.MatchPanel;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.OrthoParalogTable;
 import uk.ac.sanger.artemis.components.genebuilder.ortholog.SimilarityTable;
@@ -2308,7 +2309,12 @@ public class ChadoTransactionManager
       if(this_qualifier_part_lowercase.startsWith("term="))
       {
         final String cvTermName = this_qualifier_part.substring(5);
-        CvTerm cvTerm = getCvTerm(cvTermName, cvName);
+        CvTerm cvTerm;
+        
+        if(qualifier_name.startsWith("GO"))
+          cvTerm = GoBox.getGOCvTerm(cvTermName);
+        else
+          cvTerm = getCvTerm(cvTermName, cvName);
         
         if(cvTerm == null && cvName.equals(PRODUCT_CV))
           cvTerm = createCvTerm(cvTermName, 
