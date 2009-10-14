@@ -154,6 +154,7 @@ public class BamView extends JPanel
   private Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
   private Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
   
+  private boolean asynchronous = true;
   private boolean showBaseAlignment = false;
   private JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View");
   
@@ -179,6 +180,8 @@ public class BamView extends JPanel
   
   private JPopupMenu popup;
   private PopupMessageFrame popFrame = new PopupMessageFrame();
+  private PopupMessageFrame waitingFrame;
+  
   public static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(BamView.class);
   
@@ -1718,8 +1721,9 @@ public class BamView extends JPanel
   }
 
   
-  private void createViewMenu(JComponent view)
+  private void createMenus(JComponent view)
   {
+    JMenu showMenu = new JMenu("Show");
     JCheckBoxMenuItem checkBoxSingle = new JCheckBoxMenuItem("Single Reads");
     checkBoxSingle.addActionListener(new ActionListener()
     {
@@ -1729,7 +1733,7 @@ public class BamView extends JPanel
         isSingle = !isSingle;
       }
     });
-    view.add(checkBoxSingle);
+    showMenu.add(checkBoxSingle);
 
     JCheckBoxMenuItem checkBoxSNPs = new JCheckBoxMenuItem("SNPs");
     checkBoxSNPs.addActionListener(new ActionListener()
@@ -1746,9 +1750,23 @@ public class BamView extends JPanel
         repaint();
       }
     });
-    view.add(checkBoxSNPs);
-    view.add(new JSeparator());
+    showMenu.add(checkBoxSNPs);
+    
+    JCheckBoxMenuItem checkBoxCoverage = new JCheckBoxMenuItem("Coverage");
+    checkBoxCoverage.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        isCoverage = !isCoverage;
+        coveragePanel.setVisible(isCoverage);
+        repaint();
+      }
+    });
+    showMenu.add(checkBoxCoverage);
+    view.add(showMenu);
 
+    
+    JMenu viewMenu = new JMenu("Views");
     ButtonGroup group = new ButtonGroup();
     final JCheckBoxMenuItem checkBoxPairedStackView = new JCheckBoxMenuItem("Paired Stack View");
     final JCheckBoxMenuItem checkBoxStrandStackView = new JCheckBoxMenuItem("Strand Stack View");
@@ -1775,7 +1793,7 @@ public class BamView extends JPanel
         repaint();
       }
     });
-    view.add(checkIsizeStackView);
+    viewMenu.add(checkIsizeStackView);
     
     
     checkBoxStackView.addActionListener(new ActionListener()
@@ -1796,7 +1814,7 @@ public class BamView extends JPanel
         repaint();
       }
     });
-    view.add(checkBoxStackView);
+    viewMenu.add(checkBoxStackView);
     
 
     checkBoxPairedStackView.addActionListener(new ActionListener()
@@ -1817,7 +1835,7 @@ public class BamView extends JPanel
         repaint();
       }
     });
-    view.add(checkBoxPairedStackView);
+    viewMenu.add(checkBoxPairedStackView);
     
     checkBoxStrandStackView.addActionListener(new ActionListener()
     {
@@ -1838,20 +1856,24 @@ public class BamView extends JPanel
         repaint();
       }
     });
-    view.add(checkBoxStrandStackView);
-    view.add(new JSeparator());
+    viewMenu.add(checkBoxStrandStackView);
+    view.add(viewMenu);
+ 
     
-    JCheckBoxMenuItem checkBoxCoverage = new JCheckBoxMenuItem("Coverage");
-    checkBoxCoverage.addActionListener(new ActionListener()
+    if(feature_display != null)
     {
-      public void actionPerformed(ActionEvent e)
+      final JCheckBoxMenuItem checkBoxSync =
+        new JCheckBoxMenuItem("Asynchronous", asynchronous);
+      checkBoxSync.addActionListener(new ActionListener()
       {
-        isCoverage = !isCoverage;
-        coveragePanel.setVisible(isCoverage);
-        repaint();
-      }
-    });
-    view.add(checkBoxCoverage);
+        public void actionPerformed(ActionEvent e)
+        {
+          asynchronous = checkBoxSync.isSelected();
+        }
+      });
+      view.add(checkBoxSync);
+    }
+    
     view.add(new JSeparator());
     
     JMenu maxHeightMenu = new JMenu("Plot Height");
@@ -2142,7 +2164,14 @@ public class BamView extends JPanel
    * Artemis event notification
    */
   public void displayAdjustmentValueChanged(final DisplayAdjustmentEvent event)
-  { 
+  {
+    if(!asynchronous)
+    {
+      // if not asynchronous
+      displayAdjustmentWork(event);
+      return;
+    }
+    
     SwingWorker worker = new SwingWorker()
     {
       public Object construct()
@@ -2158,30 +2187,44 @@ public class BamView extends JPanel
         
         if(event.getStart() != ((FeatureDisplay)event.getSource()).getForwardBaseAtLeftEdge())
         {
+          if(waitingFrame == null)
+            waitingFrame = new PopupMessageFrame("waiting...");
+          waitingFrame.showWaiting();
           return null;
         }
       
-        if(event.getType() == DisplayAdjustmentEvent.SCALE_ADJUST_EVENT)
-        {
-          laststart = -1;
-          lastend = -1;
-          BamView.this.startBase = event.getStart();
-          BamView.this.endBase   = event.getEnd();
-
-          int width = feature_display.getMaxVisibleBases();
-          setZoomLevel(width);
-          repaint();
-        }
-        else
-        {
-          setDisplay(event.getStart(), 
-            event.getStart()+feature_display.getMaxVisibleBases(), event);
-          repaint();
-        }
+        displayAdjustmentWork(event);
+        if(waitingFrame != null)
+          waitingFrame.setVisible(false);
         return null;
       }
     };
     worker.start();
+  }
+  
+  /**
+   * Carry out the display agjustment event action.
+   * @param event
+   */
+  private void displayAdjustmentWork(final DisplayAdjustmentEvent event)
+  {
+    if(event.getType() == DisplayAdjustmentEvent.SCALE_ADJUST_EVENT)
+    {
+      laststart = -1;
+      lastend = -1;
+      BamView.this.startBase = event.getStart();
+      BamView.this.endBase   = event.getEnd();
+
+      int width = feature_display.getMaxVisibleBases();
+      setZoomLevel(width);
+      repaint();
+    }
+    else
+    {
+      setDisplay(event.getStart(), 
+        event.getStart()+feature_display.getMaxVisibleBases(), event);
+      repaint();
+    }
   }
   
   public void selectionChanged(SelectionChangeEvent event)
@@ -2265,7 +2308,7 @@ public class BamView extends JPanel
         if(popup == null)
         {
           popup = new JPopupMenu();
-          createViewMenu(popup);
+          createMenus(popup);
         }
         
         if(gotoMateMenuItem != null)
@@ -2317,11 +2360,31 @@ public class BamView extends JPanel
     private JTextArea textArea = new JTextArea();
     PopupMessageFrame()
     {
+      super();
       getRootPane().putClientProperty("Window.alpha", new Float(0.8f));
       textArea.setWrapStyleWord(true);
       textArea.setEditable(false);
       setUndecorated(true);
       getContentPane().add(textArea);
+    }
+    
+    PopupMessageFrame(String msg)
+    {
+      this();
+      textArea.setFont(textArea.getFont().deriveFont(14.f));
+      textArea.setText(msg);
+      setTitle(msg);
+      pack();   
+    }
+    
+    protected void showWaiting()
+    {
+      Point p = mainPanel.getLocationOnScreen();
+      p.x += (mainPanel.getWidth() - PopupMessageFrame.this.getWidth())/2;
+      p.y += mainPanel.getHeight()/2;
+      setLocation(p);
+      setVisible(true);
+      requestFocus();
     }
     
     protected void show(String title, String msg, int ypos, long aliveTime)
