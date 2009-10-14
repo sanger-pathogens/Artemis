@@ -132,8 +132,8 @@ public class GoBox extends AbstractCvBox
     
     String goId = getField("GOid=", qualifierString);
     final String term = getField("term=", qualifierString);
-    CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(term);
-
+    CvTerm cvTerm = getGOCvTerm(term);
+    
     final JLabel goTermField = new JLabel(goId);
     addGoLabelLiteners(goTermField);
     
@@ -236,6 +236,30 @@ public class GoBox extends AbstractCvBox
     
     editable.add(dateField);
     xBox.add(dateField.getDateSpinner());
+  }
+  
+  public static CvTerm getGOCvTerm(String term)
+  {
+    CvTerm cvTerm = DatabaseDocument.getCvTermByCvTermName(term);
+    
+    if(cvTerm.getCv().getName().indexOf("molecular_function") < 0 &&
+       cvTerm.getCv().getName().indexOf("biological_process") < 0 &&
+       cvTerm.getCv().getName().indexOf("cellular_component") < 0)
+    {
+      CvTerm thisCvTerm = DatabaseDocument.getCvTermByCvAndCvTerm(term,
+                                                 "molecular_function");
+      
+      if(thisCvTerm == null)
+        thisCvTerm = DatabaseDocument.getCvTermByCvAndCvTerm(term,
+                                            "biological_process");
+      
+      if(thisCvTerm == null)
+        thisCvTerm = DatabaseDocument.getCvTermByCvAndCvTerm(term,
+                                            "cellular_component");
+      if(thisCvTerm != null)
+        cvTerm = thisCvTerm;
+    }
+    return cvTerm;
   }
   
   /**
