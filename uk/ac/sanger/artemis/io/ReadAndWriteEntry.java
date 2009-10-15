@@ -262,11 +262,12 @@ public class ReadAndWriteEntry
         System.out.println("-i\t[y|n] ignore obsolete features, default is y");
         System.out.println("-s\tspace separated list of sequences to read and write out");
         System.out.println("-o\t[EMBL|GFF] output format, default is EMBL");
-        System.out.println("-a\t[y|n] for EMBL submission format change to n, default is y");
-        System.out.println("-pp\t[y|n] read polypeptide domain features, default is n");
         
         // note that read_only and noprompt -D parameters redundant now
-        System.out.println("New parameters:");
+        System.out.println("Advanced parameters:");
+        System.out.println("-z\t[y|n] gzip output, default is y");
+        System.out.println("-a\t[y|n] for EMBL submission format change to n, default is y");
+        System.out.println("-pp\t[y|n] read polypeptide domain features, default is n");
         System.out.println("-c\tthe URL for your Chado database e.g. db.genedb.org:5432/snapshot?genedb_ro (if not using default)");
         System.out.println("-u\t[swing|console|script] the UI mode : run in swing (with popup dialog boxes) mode, run in console mode (choices entered in the console window), or in script mode (all choices default to continue, all parameters passed on command line) ");
         System.out.println("-p\tthe password for connecting to the Chado database");
@@ -280,6 +281,7 @@ public class ReadAndWriteEntry
       int format = DocumentEntryFactory.EMBL_FORMAT;
       boolean include_diana_extensions = true;
       String suffix = ".embl";
+      boolean gzip = true;
       
       String filePath = "";
       
@@ -302,6 +304,12 @@ public class ReadAndWriteEntry
         {
           if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
             include_diana_extensions = false;
+        }
+        
+        if (key.equals("-z"))
+        {
+          if(i + 1 < args.length && args[i + 1].toLowerCase().equals("n"))
+            gzip = false;
         }
         
         if (key.equals("-o"))
@@ -375,13 +383,17 @@ public class ReadAndWriteEntry
         files.toArray(names);
       }
      
-      if (filePath.length() != 0)
+      if(filePath.length() != 0)
       {
-			filePath += "/";
+		filePath += "/";
       }
-      
+
+      if(gzip)
+        suffix = suffix + ".gz";
+
       for(int i=0;i < names.length; i++)
       {
+        
         System.out.println("read :: "+names[i]+" write :: "+names[i]+suffix);
         logger4j.info("read :: "+names[i]+" write :: "+names[i]+suffix);
         
