@@ -64,7 +64,10 @@ import net.sf.samtools.SAMRecord;
       if(readsInView == null)
         return;
       
-      int windowSize = 10;
+      int windowSize = (jamView.getBasesInView()/200);
+      if(windowSize < 5)
+        windowSize = 5;
+
       int nBins = Math.round((end-start+1.f)/windowSize);
       int coverage[] = new int[nBins];
       for(int i=0; i<coverage.length; i++)
