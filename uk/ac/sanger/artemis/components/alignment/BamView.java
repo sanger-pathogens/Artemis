@@ -2160,6 +2160,11 @@ public class BamView extends JPanel
     return readsInView;
   }
   
+  protected int getBasesInView()
+  {
+    return nbasesInView;
+  }
+  
   /**
    * Artemis event notification
    */
