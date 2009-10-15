@@ -157,6 +157,7 @@ public class BamView extends JPanel
   private boolean asynchronous = true;
   private boolean showBaseAlignment = false;
   private JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View");
+  private JCheckBoxMenuItem baseQualityColour = new JCheckBoxMenuItem("Colour by Base Quality");;
   
   private AlphaComposite translucent = 
     AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
@@ -756,6 +757,11 @@ public class BamView extends JPanel
     String readSeq = samRecord.getReadString();
     int offset = getSequenceOffset(samRecord.getReferenceName());
     
+    byte[] phredQuality = null;
+    
+    if(baseQualityColour.isSelected())
+      phredQuality = samRecord.getBaseQualities();
+
     List<AlignmentBlock> blocks = samRecord.getAlignmentBlocks();
     for(int i=0; i<blocks.size(); i++)
     {
@@ -764,9 +770,22 @@ public class BamView extends JPanel
       for(int j=0; j<block.getLength(); j++)
       {
         int readPos = block.getReadStart()-1+j;
-        xpos  = block.getReferenceStart()-1+j+offset;
-        int refPos = xpos-refSeqStart+1;
-        
+        xpos = block.getReferenceStart() - 1 + j + offset;
+        int refPos = xpos - refSeqStart + 1;
+
+        if(phredQuality != null)
+        {
+          byte baseQuality = phredQuality[readPos];
+          if (baseQuality < 10)
+            g2.setColor(Color.blue);
+          else if (baseQuality < 20)
+            g2.setColor(darkGreen);
+          else if (baseQuality < 30)
+            g2.setColor(darkOrange);
+          else
+            g2.setColor(Color.black);
+        }
+
         if(isSNPs && refSeq != null && refPos > 0 && refPos < refSeq.length())
         { 
           if(readSeq.charAt(readPos) != refSeq.charAt(refPos))
@@ -779,6 +798,7 @@ public class BamView extends JPanel
                       refPos*ALIGNMENT_PIX_PER_BASE, ypos);
       }
     }
+    
     
     // highlight
     if(highlightSAMRecord != null &&
@@ -1721,57 +1741,15 @@ public class BamView extends JPanel
   }
 
   
-  private void createMenus(JComponent view)
-  {
-    JMenu showMenu = new JMenu("Show");
-    JCheckBoxMenuItem checkBoxSingle = new JCheckBoxMenuItem("Single Reads");
-    checkBoxSingle.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        repaint();
-        isSingle = !isSingle;
-      }
-    });
-    showMenu.add(checkBoxSingle);
-
-    JCheckBoxMenuItem checkBoxSNPs = new JCheckBoxMenuItem("SNPs");
-    checkBoxSNPs.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        if (isSNPs && bases == null)
-        {
-          JOptionPane.showMessageDialog(null,
-              "No reference sequence supplied to identify SNPs.", "SNPs",
-              JOptionPane.INFORMATION_MESSAGE);
-        }
-        isSNPs = !isSNPs;
-        repaint();
-      }
-    });
-    showMenu.add(checkBoxSNPs);
-    
-    JCheckBoxMenuItem checkBoxCoverage = new JCheckBoxMenuItem("Coverage");
-    checkBoxCoverage.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        isCoverage = !isCoverage;
-        coveragePanel.setVisible(isCoverage);
-        repaint();
-      }
-    });
-    showMenu.add(checkBoxCoverage);
-    view.add(showMenu);
-
-    
+  private void createMenus(JComponent menu)
+  {   
     JMenu viewMenu = new JMenu("Views");
     ButtonGroup group = new ButtonGroup();
     final JCheckBoxMenuItem checkBoxPairedStackView = new JCheckBoxMenuItem("Paired Stack View");
     final JCheckBoxMenuItem checkBoxStrandStackView = new JCheckBoxMenuItem("Strand Stack View");
     final JCheckBoxMenuItem checkIsizeStackView = new JCheckBoxMenuItem("Inferred Size View", true);
     checkBoxStackView.setFont(checkIsizeStackView.getFont());
+    baseQualityColour.setFont(checkIsizeStackView.getFont());
     group.add(checkBoxStackView);
     group.add(checkBoxPairedStackView);
     group.add(checkBoxStrandStackView);
@@ -1856,9 +1834,68 @@ public class BamView extends JPanel
         repaint();
       }
     });
-    viewMenu.add(checkBoxStrandStackView);
-    view.add(viewMenu);
+    viewMenu.add(checkBoxStrandStackView);  
+    menu.add(viewMenu);
  
+    JMenu showMenu = new JMenu("Show");
+    JCheckBoxMenuItem checkBoxSingle = new JCheckBoxMenuItem("Single Reads");
+    checkBoxSingle.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        repaint();
+        isSingle = !isSingle;
+      }
+    });
+    showMenu.add(checkBoxSingle);
+
+    final JCheckBoxMenuItem checkBoxSNPs = new JCheckBoxMenuItem("SNPs");
+    checkBoxSNPs.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if (isSNPs && bases == null)
+        {
+          JOptionPane.showMessageDialog(null,
+              "No reference sequence supplied to identify SNPs.", "SNPs",
+              JOptionPane.INFORMATION_MESSAGE);
+        }
+        isSNPs = !isSNPs;
+        
+        if(isSNPs)
+          baseQualityColour.setSelected(false);
+        repaint();
+      }
+    });
+    showMenu.add(checkBoxSNPs);
+ 
+    baseQualityColour.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        if(baseQualityColour.isSelected())
+        {
+          checkBoxSNPs.setSelected(false);
+          isSNPs = false;
+        }
+        repaint();
+      }
+    });
+    showMenu.add(baseQualityColour);
+    showMenu.add(new JSeparator());
+    
+    JCheckBoxMenuItem checkBoxCoverage = new JCheckBoxMenuItem("Coverage");
+    checkBoxCoverage.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        isCoverage = !isCoverage;
+        coveragePanel.setVisible(isCoverage);
+        repaint();
+      }
+    });
+    showMenu.add(checkBoxCoverage);
+    menu.add(showMenu);
     
     if(feature_display != null)
     {
@@ -1871,13 +1908,13 @@ public class BamView extends JPanel
           asynchronous = checkBoxSync.isSelected();
         }
       });
-      view.add(checkBoxSync);
+      menu.add(checkBoxSync);
     }
     
-    view.add(new JSeparator());
+    menu.add(new JSeparator());
     
     JMenu maxHeightMenu = new JMenu("Plot Height");
-    view.add(maxHeightMenu);
+    menu.add(maxHeightMenu);
     
     final String hgts[] = 
        {"500", "800", "1000", "1500", "2500", "5000"};
@@ -1945,6 +1982,7 @@ public class BamView extends JPanel
         ruler = new Ruler();
       jspView.setColumnHeaderView(ruler);
       showBaseAlignment = true;
+      baseQualityColour.setEnabled(true);
     }
     else if(jspView != null)
     {
@@ -1954,6 +1992,7 @@ public class BamView extends JPanel
         jspView.getVerticalScrollBar().setValue(
             jspView.getVerticalScrollBar().getMaximum());
       showBaseAlignment = false;
+      baseQualityColour.setEnabled(false);
     }
     
     if(scrollBar != null)
@@ -1998,11 +2037,13 @@ public class BamView extends JPanel
       jspView.getVerticalScrollBar().setValue(0);
       jspView.setColumnHeaderView(ruler);
       showBaseAlignment = true;
+      baseQualityColour.setEnabled(true);
     }
     else if(jspView != null)
     {
       jspView.setColumnHeaderView(null);
       showBaseAlignment = false;
+      baseQualityColour.setEnabled(false);
     }
     
     Dimension d = new Dimension();
