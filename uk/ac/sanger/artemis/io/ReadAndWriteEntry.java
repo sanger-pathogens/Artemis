@@ -153,7 +153,8 @@ public class ReadAndWriteEntry
     
     if(destination_type == DocumentEntryFactory.EMBL_FORMAT &&
        (entry.getHeaderText() == null || 
-        entry.getHeaderText().equals("")))
+        entry.getHeaderText().equals("") ||
+        entry.getHeaderText().startsWith("#")))
     {
       String name = file.getName();
       int ind = name.lastIndexOf(".");
@@ -167,8 +168,7 @@ public class ReadAndWriteEntry
                                "Location/Qualifiers\nFH\n");
       entry.setHeaderText(header);
     }
-    
-    
+
     if(include_diana_extensions)
       entry.save(file, destination_type, force, artemis_entry_information);
     else
