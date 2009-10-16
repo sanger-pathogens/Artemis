@@ -28,7 +28,6 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Composite;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
@@ -42,8 +41,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
@@ -78,7 +75,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
@@ -105,7 +101,6 @@ import uk.ac.sanger.artemis.components.EntryFileDialog;
 import uk.ac.sanger.artemis.components.FeatureDisplay;
 import uk.ac.sanger.artemis.components.MessageDialog;
 import uk.ac.sanger.artemis.components.SwingWorker;
-import uk.ac.sanger.artemis.components.Utilities;
 import uk.ac.sanger.artemis.editor.MultiLineToolTipUI;
 import uk.ac.sanger.artemis.io.EntryInformation;
 import uk.ac.sanger.artemis.io.Range;
@@ -151,14 +146,12 @@ public class BamView extends JPanel
   private int laststart;
   private int lastend;
   private int maxUnitIncrement = 8;
-  private Cursor cbusy = new Cursor(Cursor.WAIT_CURSOR);
-  private Cursor cdone = new Cursor(Cursor.DEFAULT_CURSOR);
   
   private boolean asynchronous = true;
   private boolean showBaseAlignment = false;
   private JCheckBoxMenuItem checkBoxStackView = new JCheckBoxMenuItem("Stack View");
   private JCheckBoxMenuItem baseQualityColour = new JCheckBoxMenuItem("Colour by Base Quality");;
-  
+  private JCheckBoxMenuItem markInsertions = new JCheckBoxMenuItem("Mark Insertions");
   private AlphaComposite translucent = 
     AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
   
@@ -166,10 +159,12 @@ public class BamView extends JPanel
   private Color lightGrey = new Color(200, 200, 200);
   private Color darkGreen = new Color(0, 150, 0);
   private Color darkOrange = new Color(255,140,0);
+  private Color deepPink   = new Color(139,10,80);
   
   private Point lastMousePoint = null;
   private SAMRecord mouseOverSAMRecord = null;
   private SAMRecord highlightSAMRecord = null;
+  private String mouseOverInsertion;
   // record of where a mouse drag starts
   private int dragStart = -1;
   
@@ -181,7 +176,7 @@ public class BamView extends JPanel
   
   private JPopupMenu popup;
   private PopupMessageFrame popFrame = new PopupMessageFrame();
-  private PopupMessageFrame waitingFrame;
+  private PopupMessageFrame waitingFrame = new PopupMessageFrame("waiting...");
   
   public static org.apache.log4j.Logger logger4j = 
     org.apache.log4j.Logger.getLogger(BamView.class);
@@ -218,13 +213,7 @@ public class BamView extends JPanel
           "This requires Java 1.6 or higher.", 
           "Check Java Version", JOptionPane.WARNING_MESSAGE);
     }
-    
-    // set font size
-    //setFont(getFont().deriveFont(12.f));
 
-    //Options.getOptions().getFontUIResource();
-    //final javax.swing.plaf.FontUIResource font_ui_resource =
-    //  new javax.swing.plaf.FontUIResource(getFont());
     final javax.swing.plaf.FontUIResource font_ui_resource =
       Options.getOptions().getFontUIResource();
     
@@ -240,7 +229,7 @@ public class BamView extends JPanel
     setFont(Options.getOptions().getFont());
     FontMetrics fm  = getFontMetrics(getFont());
     ALIGNMENT_PIX_PER_BASE = fm.charWidth('M');
-    BASE_HEIGHT = fm.getHeight();
+    BASE_HEIGHT = fm.getMaxAscent();
     selection = new Selection(null);
     
     MultiLineToolTipUI.initialize();
@@ -249,12 +238,17 @@ public class BamView extends JPanel
   
   public String getToolTipText()
   {
-    return ( mouseOverSAMRecord != null ? 
+    String msg = (mouseOverSAMRecord != null ? 
         mouseOverSAMRecord.getReadName() + "\n" + 
         mouseOverSAMRecord.getAlignmentStart() + ".." +
         mouseOverSAMRecord.getAlignmentEnd() + "\nisize=" +
         mouseOverSAMRecord.getInferredInsertSize() + "\nrname=" +
-        mouseOverSAMRecord.getReferenceName(): null);
+        mouseOverSAMRecord.getReferenceName() : null);
+    
+    if(msg != null && mouseOverInsertion != null)
+      msg = msg + "\nInsertion at:" +mouseOverInsertion;
+    
+    return msg;
   }
 
   /*
@@ -445,7 +439,7 @@ public class BamView extends JPanel
               (memory.getHeapMemoryUsage().getMax()/1000000.f)+" Mb).\n"+
               "Zoom in or consider increasing the\nmemory for this application.",
               mainPanel.getLocationOnScreen().y,
-              20000);
+              15000);
             break;
           }
         }
@@ -531,7 +525,9 @@ public class BamView extends JPanel
     if(laststart != start ||
        lastend   != end)
     {
-      setCursor(cbusy);
+      if(!waitingFrame.isVisible())
+        waitingFrame.showWaiting("loading...", mainPanel);
+
       synchronized (this)
       {
         try
@@ -559,8 +555,6 @@ public class BamView extends JPanel
           {
             Collections.sort(readsInView, new SAMRecordComparator());
           }
-
-          setCursor(cdone);
         }
         catch (OutOfMemoryError ome)
         {
@@ -596,7 +590,8 @@ public class BamView extends JPanel
 	    coveragePanel.repaint();
 	  }
 	}
-	
+
+	waitingFrame.setVisible(false);
 	if(changeToStackView)
 	{
 	  popFrame.show("Stack View",
@@ -606,7 +601,7 @@ public class BamView extends JPanel
           "and the maximum\nmemory limit is "+
           (memory.getHeapMemoryUsage().getMax()/1000000.f)+" Mb.",
           mainPanel.getLocationOnScreen().y,
-          20000);
+          15000);
 	}
   }
   
@@ -679,6 +674,7 @@ public class BamView extends JPanel
     else
       drawSelectionRange(g2, ALIGNMENT_PIX_PER_BASE, start, end);
 
+    g2.setStroke(new BasicStroke (2.f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
     
     boolean drawn[] = new boolean[readsInView.size()];
     for(int i=0; i<readsInView.size(); i++)
@@ -753,38 +749,30 @@ public class BamView extends JPanel
     
     Color col = g2.getColor();
     int xpos;
-    int len = 0;
+    int len    = 0;
+    int refPos = 0;
     String readSeq = samRecord.getReadString();
     int offset = getSequenceOffset(samRecord.getReferenceName());
-    
+
     byte[] phredQuality = null;
-    
     if(baseQualityColour.isSelected())
       phredQuality = samRecord.getBaseQualities();
 
+    Hashtable<Integer, String> insertions = null;
     List<AlignmentBlock> blocks = samRecord.getAlignmentBlocks();
     for(int i=0; i<blocks.size(); i++)
     {
       AlignmentBlock block = blocks.get(i);
+      int blockStart = block.getReadStart();
       len += block.getLength();
       for(int j=0; j<block.getLength(); j++)
       {
-        int readPos = block.getReadStart()-1+j;
+        int readPos = blockStart-1+j;
         xpos = block.getReferenceStart() - 1 + j + offset;
-        int refPos = xpos - refSeqStart + 1;
+        refPos = xpos - refSeqStart + 1;
 
         if(phredQuality != null)
-        {
-          byte baseQuality = phredQuality[readPos];
-          if (baseQuality < 10)
-            g2.setColor(Color.blue);
-          else if (baseQuality < 20)
-            g2.setColor(darkGreen);
-          else if (baseQuality < 30)
-            g2.setColor(darkOrange);
-          else
-            g2.setColor(Color.black);
-        }
+          setColourByBaseQuality(g2, phredQuality[readPos]);
 
         if(isSNPs && refSeq != null && refPos > 0 && refPos < refSeq.length())
         { 
@@ -793,18 +781,43 @@ public class BamView extends JPanel
           else
             g2.setColor(col);
         }
-        
+
         g2.drawString(readSeq.substring(readPos, readPos+1), 
                       refPos*ALIGNMENT_PIX_PER_BASE, ypos);
       }
+      
+      // look for insertions
+      if(markInsertions.isSelected() && i < blocks.size()-1)
+      {
+        int blockEnd = blockStart+block.getLength();
+        int nextBlockStart = blocks.get(i+1).getReadStart();
+        int insertSize = nextBlockStart - blockEnd;
+        if(insertSize > 0)
+        {
+          if(insertions == null)
+            insertions = new Hashtable<Integer, String>();
+          
+          g2.setColor(deepPink);
+          
+          int xscreen = refPos*ALIGNMENT_PIX_PER_BASE;
+          insertions.put(xscreen, 
+              (samRecord.getAlignmentStart()+len-2)+" "+
+              readSeq.substring(blockEnd-1, nextBlockStart-1));
+          g2.drawLine(xscreen, ypos, xscreen, ypos-BASE_HEIGHT);
+          
+          // mark on reference sequence as well
+          if(bases != null)
+            g2.drawLine(xscreen, 11, xscreen, 11-BASE_HEIGHT);
+          g2.setColor(col);
+        }
+      }
     }
-    
-    
+
     // highlight
     if(highlightSAMRecord != null &&
        highlightSAMRecord.getReadName().equals(samRecord.getReadName()))
     {
-      int refPos = blocks.get(0).getReferenceStart()+offset-refSeqStart;
+      refPos = blocks.get(0).getReferenceStart()+offset-refSeqStart;
       int xstart = refPos*ALIGNMENT_PIX_PER_BASE;
       int width  = len*ALIGNMENT_PIX_PER_BASE;
       g2.setColor(Color.red);
@@ -813,7 +826,7 @@ public class BamView extends JPanel
     
     if(lastMousePoint != null)
     {
-      int refPos = blocks.get(0).getReferenceStart()+offset-refSeqStart;
+      refPos = blocks.get(0).getReferenceStart()+offset-refSeqStart;
       int xstart = refPos*ALIGNMENT_PIX_PER_BASE;
       int xend   = (refPos+len)*ALIGNMENT_PIX_PER_BASE;
 
@@ -821,9 +834,29 @@ public class BamView extends JPanel
       if(lastMousePoint.getX() > xstart &&
          lastMousePoint.getX() < xend)
       {
-        mouseOverSAMRecord = samRecord;    
+        mouseOverSAMRecord = samRecord;
+        
+        if(insertions != null)
+          mouseOverInsertion = insertions.get((int)lastMousePoint.getX());
       }
     }
+  }
+  
+  /**
+   * Colour bases on their mapping quality.
+   * @param g2
+   * @param baseQuality
+   */
+  private void setColourByBaseQuality(Graphics2D g2, byte baseQuality)
+  {
+    if (baseQuality < 10)
+      g2.setColor(Color.blue);
+    else if (baseQuality < 20)
+      g2.setColor(darkGreen);
+    else if (baseQuality < 30)
+      g2.setColor(darkOrange);
+    else
+      g2.setColor(Color.black);
   }
   
   /**
@@ -1733,11 +1766,6 @@ public class BamView extends JPanel
     addMouseListener(new PopupListener());
     setFocusable(true);
     requestFocusInWindow();
-    addFocusListener(new FocusListener()
-    {
-      public void focusGained(FocusEvent fe){}
-      public void focusLost(FocusEvent fe){}
-    });
   }
 
   
@@ -1750,6 +1778,8 @@ public class BamView extends JPanel
     final JCheckBoxMenuItem checkIsizeStackView = new JCheckBoxMenuItem("Inferred Size View", true);
     checkBoxStackView.setFont(checkIsizeStackView.getFont());
     baseQualityColour.setFont(checkIsizeStackView.getFont());
+    markInsertions.setFont(checkIsizeStackView.getFont());
+    
     group.add(checkBoxStackView);
     group.add(checkBoxPairedStackView);
     group.add(checkBoxStrandStackView);
@@ -1882,6 +1912,15 @@ public class BamView extends JPanel
       }
     });
     showMenu.add(baseQualityColour);
+    
+    markInsertions.addActionListener(new ActionListener()
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        repaint();
+      }
+    });
+    showMenu.add(markInsertions);
     showMenu.add(new JSeparator());
     
     JCheckBoxMenuItem checkBoxCoverage = new JCheckBoxMenuItem("Coverage");
@@ -1983,6 +2022,7 @@ public class BamView extends JPanel
       jspView.setColumnHeaderView(ruler);
       showBaseAlignment = true;
       baseQualityColour.setEnabled(true);
+      markInsertions.setEnabled(true);
     }
     else if(jspView != null)
     {
@@ -1993,6 +2033,7 @@ public class BamView extends JPanel
             jspView.getVerticalScrollBar().getMaximum());
       showBaseAlignment = false;
       baseQualityColour.setEnabled(false);
+      markInsertions.setEnabled(false);
     }
     
     if(scrollBar != null)
@@ -2038,12 +2079,14 @@ public class BamView extends JPanel
       jspView.setColumnHeaderView(ruler);
       showBaseAlignment = true;
       baseQualityColour.setEnabled(true);
+      markInsertions.setEnabled(true);
     }
     else if(jspView != null)
     {
       jspView.setColumnHeaderView(null);
       showBaseAlignment = false;
       baseQualityColour.setEnabled(false);
+      markInsertions.setEnabled(false);
     }
     
     Dimension d = new Dimension();
@@ -2233,15 +2276,12 @@ public class BamView extends JPanel
         
         if(event.getStart() != ((FeatureDisplay)event.getSource()).getForwardBaseAtLeftEdge())
         {
-          if(waitingFrame == null)
-            waitingFrame = new PopupMessageFrame("waiting...");
-          waitingFrame.showWaiting();
+          waitingFrame.showWaiting("waiting...", mainPanel);
           return null;
         }
       
         displayAdjustmentWork(event);
-        if(waitingFrame != null)
-          waitingFrame.setVisible(false);
+        waitingFrame.setVisible(false);
         return null;
       }
     };
@@ -2325,6 +2365,10 @@ public class BamView extends JPanel
 	JMenuItem gotoMateMenuItem;
     public void mouseClicked(MouseEvent e)
     {
+      if(e.isPopupTrigger() ||
+         e.getButton() == MouseEvent.BUTTON3)
+        return;
+      
       BamView.this.requestFocus();
       
       if(e.getClickCount() > 1)
@@ -2399,80 +2443,6 @@ public class BamView extends JPanel
     SAMRecord sam1;
     SAMRecord sam2;
   }
-  
-  class PopupMessageFrame extends JFrame
-  {
-    private static final long serialVersionUID = 1L;
-    private JTextArea textArea = new JTextArea();
-    PopupMessageFrame()
-    {
-      super();
-      getRootPane().putClientProperty("Window.alpha", new Float(0.8f));
-      textArea.setWrapStyleWord(true);
-      textArea.setEditable(false);
-      setUndecorated(true);
-      getContentPane().add(textArea);
-    }
-    
-    PopupMessageFrame(String msg)
-    {
-      this();
-      textArea.setFont(textArea.getFont().deriveFont(14.f));
-      textArea.setText(msg);
-      setTitle(msg);
-      pack();   
-    }
-    
-    protected void showWaiting()
-    {
-      Point p = mainPanel.getLocationOnScreen();
-      p.x += (mainPanel.getWidth() - PopupMessageFrame.this.getWidth())/2;
-      p.y += mainPanel.getHeight()/2;
-      setLocation(p);
-      setVisible(true);
-      requestFocus();
-    }
-    
-    protected void show(String title, String msg, int ypos, long aliveTime)
-    {
-      setTitle(title);
-      textArea.setText(msg);
-      pack();
-      //PopupMessageFrame.this.setLocationRelativeTo(BamView.this);
-      Utilities.centreJustifyFrame(this, Math.abs(ypos));
-      setVisible(true);
-      requestFocus();
-
-      HideFrameThread thread = new HideFrameThread(this, aliveTime);
-      thread.start();
-    }
-  }
-  
-  class HideFrameThread extends Thread
-  {
-    private long aliveTime;
-    private JFrame f;
-    
-    public HideFrameThread(JFrame f, long aliveTime)
-    {
-      this.f = f;
-      this.aliveTime = aliveTime; 
-    }
-    
-    public void run() 
-    {
-      try
-      {
-        Thread.sleep(aliveTime);
-      }
-      catch (InterruptedException e)
-      {
-        e.printStackTrace();
-      }
-      f.setVisible(false);
-    }
-  }
-
   
   public static void main(String[] args)
   {
