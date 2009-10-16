@@ -137,14 +137,23 @@ public class PublicDBDocumentEntry extends SimpleDocumentEntry
     } 
     else 
     {
-      if(feature instanceof GFFStreamFeature && feature.getEntry() instanceof DatabaseDocumentEntry)
-        return mapGffToNativeFeature(feature);
-      else if(feature instanceof GFFStreamFeature)
-        return new GFFStreamFeature(feature);
-      else if (this instanceof EmblDocumentEntry)
-        return new EmblStreamFeature(feature);
-      else
-        return new GenbankStreamFeature(feature);
+      try
+      {
+        if(feature instanceof GFFStreamFeature && feature.getEntry() instanceof DatabaseDocumentEntry)
+          return mapGffToNativeFeature(feature);
+        else if(feature instanceof GFFStreamFeature)
+          return new GFFStreamFeature(feature);
+        else if (this instanceof EmblDocumentEntry)
+          return new EmblStreamFeature(feature);
+        else
+          return new GenbankStreamFeature(feature);
+      }
+      catch(NullPointerException npe)
+      {
+        System.err.println( 
+            ((uk.ac.sanger.artemis.Feature)feature.getUserData()).getIDString() );
+        throw npe;
+      }
     }
   }
  
