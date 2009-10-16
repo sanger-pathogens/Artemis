@@ -240,8 +240,16 @@ public class ClusterLazyQualifierValue implements LazyQualifierValue
           
           if(loadGeneName)
           {
-            String geneName = getGeneName(subjectFeature);
-            value = value.concat(geneName+" ");
+            try
+            {
+              String geneName = getGeneName(subjectFeature);
+              value = value.concat(geneName+" ");
+            }
+            catch(NullPointerException npe)
+            {
+              System.err.println("Cannot get the gene name of "+
+                    subjectFeature.getUniqueName());
+            }
           }
           
           value = value.concat("link="+
