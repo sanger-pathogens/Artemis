@@ -23,14 +23,13 @@
  */
 package uk.ac.sanger.artemis.components.alignment;
 
+import java.awt.Dimension;
 import java.awt.Point;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-
-import uk.ac.sanger.artemis.components.SwingWorker;
-import uk.ac.sanger.artemis.components.Utilities;
+import javax.swing.SwingWorker;
 
 /**
  * Create undecorated popup frames.
@@ -39,7 +38,8 @@ class PopupMessageFrame extends JFrame
 {
   private static final long serialVersionUID = 1L;
   private JTextArea textArea = new JTextArea();
-
+  private double thisHeight;
+  
   PopupMessageFrame()
   {
     super();
@@ -57,53 +57,121 @@ class PopupMessageFrame extends JFrame
     textArea.setText(msg);
     setTitle(msg);
     pack();
+    thisHeight = getSize().getHeight();
   }
-
+  
   protected void showWaiting(final String msg, final JPanel mainPanel)
   {
-    textArea.setText(msg);
-    pack();
-    Point p = mainPanel.getLocationOnScreen();
-    p.x += (mainPanel.getWidth() - PopupMessageFrame.this.getWidth()) / 2;
-    p.y += mainPanel.getHeight() / 2;
-    setLocation(p);
-    SwingWorker worker = new SwingWorker()
-    {
-      public Object construct()
-      {
-        setVisible(true);
-        return null;
-      }
-    };
-    worker.start();
+    PopupThread hide = new PopupThread(true, msg, mainPanel);
+    hide.execute();
   }
 
-  protected void show(final String title, final String msg, final int ypos,
+  protected void hideFrame()
+  {
+    PopupThread hide = new PopupThread(false, null, null);
+    hide.execute();
+  }
+
+  protected void show(final String msg, final JPanel mainPanel,
       final long aliveTime)
   {
-    SwingWorker worker = new SwingWorker()
-    {
-      public Object construct()
-      {
-        setTitle(title);
-        textArea.setText(msg);
-        pack();
-        Utilities.centreJustifyFrame(PopupMessageFrame.this, Math.abs(ypos));
-        setVisible(true);
-        requestFocus();
-
-        try
-        {
-          Thread.sleep(aliveTime);
-        }
-        catch (InterruptedException e)
-        {
-          e.printStackTrace();
-        }
-        setVisible(false);
-        return null;
-      }
-    };
-    worker.start();
+    PopupThread p = new PopupThread(msg, mainPanel, aliveTime) ;
+    p.execute();
   }
+  
+  class PopupThread extends SwingWorker<String, Object> 
+  {
+    private boolean show;
+    private String msg;
+    private JPanel mainPanel;
+    private long aliveTime = -1;
+    
+    PopupThread(boolean show, String msg, JPanel mainPanel) 
+    {
+      this.show = show;
+      this.msg = msg;
+      this.mainPanel = mainPanel;
+    }
+    
+    PopupThread(String msg, JPanel mainPanel, long aliveTime) 
+    {
+      this(true, msg, mainPanel);
+      this.aliveTime = aliveTime;
+    }
+    
+    @Override
+    protected String doInBackground() throws Exception
+    {
+      if(aliveTime > 0)
+        showFrameForGivenTime();
+      else if(show)
+        showFrame();
+      else
+        hideFrame();
+      return null;
+    }
+    
+    private void hideFrame()
+    {
+      if(getSize().getHeight() < thisHeight)
+        return;
+
+      Dimension d = getSize();
+      double hgt = thisHeight/100.d;
+      try
+      {
+        for(int i=0; i<100; i++)
+        {
+          Thread.sleep(10);
+          d.setSize(d.getWidth(), thisHeight-(hgt*i));
+          setPreferredSize(d);
+          pack();
+        }
+      }
+      catch (InterruptedException e)
+      {
+        e.printStackTrace();
+      }
+      setVisible(false);
+      
+      d.setSize(d.getWidth(), thisHeight);
+      setPreferredSize(d);
+      pack();
+    }
+    
+    private void showFrame()
+    {
+      textArea.setText(msg);
+      pack();
+      Point p = mainPanel.getLocationOnScreen();
+      p.x += (mainPanel.getWidth() - PopupMessageFrame.this.getWidth()) / 2;
+      p.y += mainPanel.getHeight() / 2;
+      setLocation(p);
+      setVisible(true);
+    }
+    
+    private void showFrameForGivenTime()
+    {
+      textArea.setText(msg);
+      pack();
+      Point p = mainPanel.getLocationOnScreen();
+      p.x += (mainPanel.getWidth() - PopupMessageFrame.this.getWidth()) / 2;
+      p.y += mainPanel.getHeight() / 2;
+      setLocation(p);
+      
+      setVisible(true);
+      requestFocus();
+
+      try
+      {
+        Thread.sleep(aliveTime);
+      }
+      catch (InterruptedException e)
+      {
+        e.printStackTrace();
+      }
+      setVisible(false);
+    }
+  }
+
 }

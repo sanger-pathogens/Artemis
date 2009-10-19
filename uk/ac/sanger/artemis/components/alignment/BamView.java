@@ -434,11 +434,11 @@ public class BamView extends JPanel
           
           if(heapFraction > 0.97) 
           {
-            popFrame.show("Data Read Incomplete",
+            popFrame.show(
               "Over 97 % of the maximum memory\nlimit ("+
               (memory.getHeapMemoryUsage().getMax()/1000000.f)+" Mb).\n"+
               "Zoom in or consider increasing the\nmemory for this application.",
-              mainPanel.getLocationOnScreen().y,
+              mainPanel,
               15000);
             break;
           }
@@ -591,16 +591,17 @@ public class BamView extends JPanel
 	  }
 	}
 
-	waitingFrame.setVisible(false);
+	if(waitingFrame.isVisible())
+      waitingFrame.hideFrame();
 	if(changeToStackView)
 	{
-	  popFrame.show("Stack View",
+	  popFrame.show(
           "Note :: Changed to the stack view to save memory.\n"+
           "Currently this is using "+ 
           (memory.getHeapMemoryUsage().getUsed()/1000000.f)+" Mb "+
           "and the maximum\nmemory limit is "+
           (memory.getHeapMemoryUsage().getMax()/1000000.f)+" Mb.",
-          mainPanel.getLocationOnScreen().y,
+          mainPanel,
           15000);
 	}
   }
