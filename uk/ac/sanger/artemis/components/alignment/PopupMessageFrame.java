@@ -122,7 +122,7 @@ class PopupMessageFrame extends JFrame
       {
         for(int i=0; i<100; i++)
         {
-          Thread.sleep(10);
+          Thread.sleep(2);
           d.setSize(d.getWidth(), thisHeight-(hgt*i));
           setPreferredSize(d);
           pack();
