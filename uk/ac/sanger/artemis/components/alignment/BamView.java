@@ -2447,10 +2447,21 @@ public class BamView extends JPanel
   
   public static void main(String[] args)
   {
-    String bam = args[0];
-    int nbasesInView = 1000;
+    String bam;
     String reference = null;
-    
+    if(args.length == 0)
+    {
+      FileSelectionPanel fileSelection = new FileSelectionPanel();
+      fileSelection.showPanel();
+      bam = fileSelection.getBamFile();
+      reference = fileSelection.getReferenceFile();
+      if(reference == null || reference.equals(""))
+        reference = null;
+    }
+    else
+      bam = args[0];
+    int nbasesInView = 1000;
+
     for(int i=0;i<args.length; i++)
     {
       if(args[i].equals("-a"))
