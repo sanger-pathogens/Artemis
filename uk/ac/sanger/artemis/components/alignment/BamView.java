@@ -684,41 +684,49 @@ public class BamView extends JPanel
     Rectangle r = jspView.getViewport().getViewRect();
     int nreads = readsInView.size();
     
-    for(int i=0; i<nreads; i++)
+    for (int i = 0; i < nreads; i++)
     {
-      if (!drawn[i])
+      try
       {
-        ypos+=11;
-        
-        SAMRecord thisRead = readsInView.get(i);
-        if(ypos < r.getMaxY() || ypos > r.getMinY())
-          drawSequence(g2, thisRead, ypos, refSeq, refSeqStart);
-        drawn[i] = true;
-        
-        int thisEnd = thisRead.getAlignmentEnd();
-        if(thisEnd == 0)
-          thisEnd = thisRead.getAlignmentStart()+thisRead.getReadLength();
-        
-        for(int j=i+1; j<nreads; j++)
+        if (!drawn[i])
         {
-          if (!drawn[j])
+          ypos += 11;
+
+          SAMRecord thisRead = readsInView.get(i);
+          if (ypos < r.getMaxY() || ypos > r.getMinY())
+            drawSequence(g2, thisRead, ypos, refSeq, refSeqStart);
+          drawn[i] = true;
+
+          int thisEnd = thisRead.getAlignmentEnd();
+          if (thisEnd == 0)
+            thisEnd = thisRead.getAlignmentStart() + thisRead.getReadLength();
+
+          for (int j = i + 1; j < nreads; j++)
           {
-            SAMRecord nextRead = readsInView.get(j);
-            int nextStart = nextRead.getAlignmentStart();
-            if(nextStart > thisEnd+1)
+            if (!drawn[j])
             {
-              if(ypos < r.getMaxY() || ypos > r.getMinY())
-                drawSequence(g2, nextRead, ypos, refSeq, refSeqStart);
-              
-              drawn[j] = true;
-              thisEnd = nextRead.getAlignmentEnd();
-              if(thisEnd == 0)
-                thisEnd = nextStart+nextRead.getReadLength();
+              SAMRecord nextRead = readsInView.get(j);
+              int nextStart = nextRead.getAlignmentStart();
+              if (nextStart > thisEnd + 1)
+              {
+                if (ypos < r.getMaxY() || ypos > r.getMinY())
+                  drawSequence(g2, nextRead, ypos, refSeq, refSeqStart);
+
+                drawn[j] = true;
+                thisEnd = nextRead.getAlignmentEnd();
+                if (thisEnd == 0)
+                  thisEnd = nextStart + nextRead.getReadLength();
+              }
+              else if (ypos > r.getMaxY() || ypos < r.getMinY())
+                break;
             }
-            else if(ypos > r.getMaxY() || ypos < r.getMinY())
-              break;
           }
         }
+      }
+      catch (ArrayIndexOutOfBoundsException ae)
+      {
+        System.err.println(readsInView.size()+"  "+nreads);
+        ae.printStackTrace();
       }
     }
     
@@ -2071,23 +2079,6 @@ public class BamView extends JPanel
         pixPerBase = 1000.f/(float)(end-start+1);
       else
         pixPerBase = feature_display.getWidth()/(float)(end-start+1);
-    }
-
-    if(pixPerBase*1.08f >= ALIGNMENT_PIX_PER_BASE)
-    {
-      pixPerBase = ALIGNMENT_PIX_PER_BASE;
-      jspView.getVerticalScrollBar().setValue(0);
-      jspView.setColumnHeaderView(ruler);
-      showBaseAlignment = true;
-      baseQualityColour.setEnabled(true);
-      markInsertions.setEnabled(true);
-    }
-    else if(jspView != null)
-    {
-      jspView.setColumnHeaderView(null);
-      showBaseAlignment = false;
-      baseQualityColour.setEnabled(false);
-      markInsertions.setEnabled(false);
     }
     
     Dimension d = new Dimension();
