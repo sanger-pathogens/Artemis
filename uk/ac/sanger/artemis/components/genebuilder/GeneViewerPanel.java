@@ -1829,8 +1829,8 @@ public class GeneViewerPanel extends MapPanel
                 + (int) ((segment_range.getEnd() - start) * fraction);
             
             // allow very ends of features to be dragable
-            if( (e.getPoint().x >= segment_start && e.getPoint().x < segment_start+15 && e.getPoint().x <= segment_end) ||
-                (e.getPoint().x <= segment_end   && e.getPoint().x > segment_end-15   && e.getPoint().x >= segment_start) )
+            if( (e.getPoint().x >= segment_start && e.getPoint().x < segment_start+3 && e.getPoint().x <= segment_end) ||
+                (e.getPoint().x <= segment_end   && e.getPoint().x > segment_end-3   && e.getPoint().x >= segment_start) )
             {
               int segment_mid = (segment_start+segment_end)/2;
               
